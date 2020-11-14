@@ -1,0 +1,31 @@
+import React from 'react';
+import { ChakraProvider, extendTheme } from '@chakra-ui/react';
+import { Button } from './components/Button';
+import { colors } from './foundations/colors';
+import { typography } from './foundations/typography';
+
+const theme = extendTheme({
+  ...typography,
+  colors,
+  textStyles: {
+    inputLabel: {
+      fontSize: 'xs',
+      color: 'green.600',
+    },
+  },
+  components: {
+    Button,
+  },
+});
+
+interface Props {
+  children: React.ReactNode | React.ReactNode[];
+}
+
+export const ChakraUIProvider = ({ children }: Props) => {
+  return (
+    <ChakraProvider resetCSS theme={theme}>
+      {children}
+    </ChakraProvider>
+  );
+};
