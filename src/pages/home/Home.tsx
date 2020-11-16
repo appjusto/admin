@@ -10,7 +10,7 @@ const HomeRightImage = React.lazy(
   () => import(/* webpackPrefetch: true */ './img/HomeRightImage')
 );
 
-export const Home = () => {
+const Home = () => {
   return (
     <Flex>
       <Box w={[0, 1 / 3]} display={['none', 'revert']}>
@@ -49,3 +49,5 @@ export const Home = () => {
     </Flex>
   );
 };
+
+export default Home;

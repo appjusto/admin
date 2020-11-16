@@ -1,13 +1,11 @@
 import React from 'react';
 import { RootProvider } from './RootProvider';
-import { Home } from 'home/Home';
+import { Router } from './Router';
 
-function App() {
+export default function App() {
   return (
     <RootProvider>
-      <Home />
+      <Router />
     </RootProvider>
   );
 }
-
-export default App;
