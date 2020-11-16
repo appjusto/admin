@@ -17,4 +17,5 @@ export const colors = {
     700: '#697667',
   },
   yellow: '#FFE493',
+  red: '#DC3545',
 };
