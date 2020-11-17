@@ -3,7 +3,7 @@ import PageLayout from 'pages/PageLayout';
 import React from 'react';
 import { Link, Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
-import CategoryDrawer from './drawers/CategoryDrawer';
+import { CategoryDrawer } from './drawers/CategoryDrawer';
 
 const Menu = () => {
   // context

@@ -1,17 +1,8 @@
-import {
-  Button,
-  Drawer,
-  DrawerBody,
-  DrawerCloseButton,
-  DrawerContent,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerOverlay,
-} from '@chakra-ui/react';
 import { Input } from 'common/components/Input';
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { t } from 'utils/i18n';
+import { BaseDrawer } from './BaseDrawer';
 
 interface Props {
   isOpen: boolean;
@@ -22,43 +13,27 @@ type Params = {
   id: string;
 };
 
-const CategoryDrawer = ({ isOpen, onClose }: Props) => {
+export const CategoryDrawer = (props: Props) => {
   let { id } = useParams<Params>();
   console.log(id);
   const inputRef = React.useRef<HTMLInputElement>(null);
+  // handlers
+  const onSaveHandler = () => {
+    (async () => {
+      // TODO async work
+      props.onClose();
+    })();
+  };
+
+  // UI
   return (
-    <Drawer
-      placement="right"
-      size="lg"
-      isOpen={isOpen}
-      onClose={onClose}
+    <BaseDrawer
+      {...props}
+      title={t('Adicionar categoria')}
       initialFocusRef={inputRef}
+      onSave={onSaveHandler}
     >
-      <DrawerOverlay>
-        <DrawerContent>
-          <DrawerCloseButton />
-          <DrawerHeader>{t('Adicionar categoria')}</DrawerHeader>
-
-          <DrawerBody>
-            <Input
-              ref={inputRef}
-              label={t('Nova categoria')}
-              placeholder={t('Nome da categoria')}
-            />
-          </DrawerBody>
-
-          <DrawerFooter>
-            <Button width="full" color="blue">
-              {t('Salvar')}
-            </Button>
-            <Button width="full" variant="outline" ml={3} onClick={onClose}>
-              {t('Cancelar')}
-            </Button>
-          </DrawerFooter>
-        </DrawerContent>
-      </DrawerOverlay>
-    </Drawer>
+      <Input ref={inputRef} label={t('Nova categoria')} placeholder={t('Nome da categoria')} />
+    </BaseDrawer>
   );
 };
-
-export default CategoryDrawer;
