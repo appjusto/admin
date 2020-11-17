@@ -37,7 +37,6 @@ const LinksContainer = ({ children }: LinksContainerProps) => {
   return (
     <>
       {React.Children.map(children, (child) => {
-        console.log(child);
         return <LinkItem {...child.props}>{child}</LinkItem>;
       })}
     </>

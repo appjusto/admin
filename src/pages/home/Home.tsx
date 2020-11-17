@@ -1,5 +1,5 @@
 import { Box, Button, Center, Flex, FormControl, Text } from '@chakra-ui/react';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ReactComponent as Logo } from 'common/img/logo.svg';
 import { Input } from 'common/components/Input';
 
@@ -11,6 +11,15 @@ const HomeRightImage = React.lazy(
 );
 
 const Home = () => {
+  // refs
+  const inputRef = React.useRef<HTMLInputElement>(null);
+
+  // side effects
+  useEffect(() => {
+    inputRef?.current?.focus();
+  }, []);
+
+  // UI
   return (
     <Flex>
       <Box w={[0, 1 / 3]} display={['none', 'revert']}>
@@ -29,6 +38,7 @@ const Home = () => {
             <Box mt="4">
               <FormControl isRequired>
                 <Input
+                  ref={inputRef}
                   id="email"
                   label="E-mail"
                   placeholder="Endereço de e-mail"
