@@ -1,6 +1,7 @@
 import { Box } from '@chakra-ui/react';
 import React from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
+import { t } from 'utils/i18n';
 
 interface LinkItemProps {
   to: string;
@@ -21,9 +22,7 @@ const LinkItem = ({ to, children }: LinkItemProps) => {
       pl={match ? '0' : '4'}
       my="4"
     >
-      {match ? (
-        <Box w="4px" height="32px" bg="green.500" borderRadius="8px" mx="2" />
-      ) : null}
+      {match ? <Box w="4px" height="32px" bg="green.500" borderRadius="8px" mx="2" /> : null}
       {children}
     </Box>
   );
@@ -48,17 +47,17 @@ export const Links = () => {
     <Box ml="1">
       <Box>
         <LinksContainer>
-          <Link to="/">Início</Link>
-          <Link to="/">Pedidos</Link>
-          <Link to="/">Financeiro</Link>
+          <Link to="/">{t('Início')}</Link>
+          <Link to="/">{t('Pedidos')}</Link>
+          <Link to="/">{t('Financeiro')}</Link>
         </LinksContainer>
       </Box>
       <Box mt="10">
         <LinksContainer>
-          <Link to="/menu">Cardápio</Link>
-          <Link to="/">Horários</Link>
-          <Link to="/">Área de entrega</Link>
-          <Link to="/">Perfil do restaurante</Link>
+          <Link to="/menu">{t('Cardápio')}</Link>
+          <Link to="/">{t('Horários')}</Link>
+          <Link to="/">{t('Área de entrega')}</Link>
+          <Link to="/">{t('Perfil do restaurante')}</Link>
         </LinksContainer>
       </Box>
     </Box>

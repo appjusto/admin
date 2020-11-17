@@ -10,25 +10,14 @@ type BusinessContextInterface = {
   setBusiness: React.Dispatch<React.SetStateAction<Business | undefined>>;
 };
 
-const BusinessContext = React.createContext<
-  BusinessContextInterface | undefined
->(undefined);
+const BusinessContext = React.createContext<BusinessContextInterface | undefined>(undefined);
 
-export const BusinessProvider = (
-  props: React.ProviderProps<Business | undefined>
-) => {
-  const [business, setBusiness] = React.useState<Business | undefined>(
-    props.value
-  );
-  const value: BusinessContextInterface = React.useMemo(
-    () => ({ business, setBusiness }),
-    [business]
-  );
-  return (
-    <BusinessContext.Provider value={value}>
-      {props.children}
-    </BusinessContext.Provider>
-  );
+export const BusinessProvider = (props: React.ProviderProps<Business | undefined>) => {
+  const [business, setBusiness] = React.useState<Business | undefined>(props.value);
+  const value: BusinessContextInterface = React.useMemo(() => ({ business, setBusiness }), [
+    business,
+  ]);
+  return <BusinessContext.Provider value={value}>{props.children}</BusinessContext.Provider>;
 };
 
 export const useBusinessValue = () => {

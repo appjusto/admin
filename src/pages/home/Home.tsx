@@ -1,16 +1,17 @@
 import { Box, Button, Center, Flex, FormControl, Text } from '@chakra-ui/react';
-import React, { useEffect } from 'react';
-import { ReactComponent as Logo } from 'common/img/logo.svg';
 import { Input } from 'common/components/Input';
+import { ReactComponent as Logo } from 'common/img/logo.svg';
+import React, { useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
+import { t } from 'utils/i18n';
 
-const HomeLeftImage = React.lazy(
-  () => import(/* webpackPrefetch: true */ './img/HomeLeftImage')
-);
-const HomeRightImage = React.lazy(
-  () => import(/* webpackPrefetch: true */ './img/HomeRightImage')
-);
+const HomeLeftImage = React.lazy(() => import(/* webpackPrefetch: true */ './img/HomeLeftImage'));
+const HomeRightImage = React.lazy(() => import(/* webpackPrefetch: true */ './img/HomeRightImage'));
 
 const Home = () => {
+  // context
+  const history = useHistory();
+
   // refs
   const inputRef = React.useRef<HTMLInputElement>(null);
 
@@ -31,22 +32,22 @@ const Home = () => {
         <Box width="full" p="16">
           <Logo />
           <Box mt="8">
-            <Text fontSize="xl">Portal do Parceiro</Text>
+            <Text fontSize="xl">{t('Portal do Parrceiro')}</Text>
             <Text fontSize="md" color="gray.500">
-              Gerencie seu estabelecimento
+              {t('Gerencie seu estabelecimento')}
             </Text>
             <Box mt="4">
               <FormControl isRequired>
                 <Input
                   ref={inputRef}
                   id="email"
-                  label="E-mail"
-                  placeholder="Endereço de e-mail"
+                  label={t('E-mail')}
+                  placeholder={t('Endereço de e-mail')}
                 />
               </FormControl>
             </Box>
-            <Button width="full" mt="6">
-              Entrar
+            <Button width="full" mt="6" onClick={() => history.push('/menu')}>
+              {t('Entrar')}
             </Button>
           </Box>
         </Box>

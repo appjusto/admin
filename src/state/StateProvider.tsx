@@ -1,5 +1,4 @@
 import React from 'react';
-
 import { BusinessProvider } from './business/business';
 
 interface Props {

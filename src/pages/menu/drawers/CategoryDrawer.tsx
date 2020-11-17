@@ -11,6 +11,7 @@ import {
 import { Input } from 'common/components/Input';
 import React from 'react';
 import { useParams } from 'react-router-dom';
+import { t } from 'utils/i18n';
 
 interface Props {
   isOpen: boolean;
@@ -36,22 +37,22 @@ const CategoryDrawer = ({ isOpen, onClose }: Props) => {
       <DrawerOverlay>
         <DrawerContent>
           <DrawerCloseButton />
-          <DrawerHeader>Adicionar categoria</DrawerHeader>
+          <DrawerHeader>{t('Adicionar categoria')}</DrawerHeader>
 
           <DrawerBody>
             <Input
               ref={inputRef}
-              label="Nova categoria"
-              placeholder="Nome da categoria"
+              label={t('Nova categoria')}
+              placeholder={t('Nome da categoria')}
             />
           </DrawerBody>
 
           <DrawerFooter>
             <Button width="full" color="blue">
-              Salvar
+              {t('Salvar')}
             </Button>
             <Button width="full" variant="outline" ml={3} onClick={onClose}>
-              Cancelar
+              {t('Cancelar')}
             </Button>
           </DrawerFooter>
         </DrawerContent>

@@ -1,6 +1,6 @@
 import { Box } from '@chakra-ui/react';
-import React from 'react';
 import { ReactComponent as Logo } from 'common/img/logo.svg';
+import React from 'react';
 import BusinessInfo from './BusinessInfo';
 import { Links } from './Links';
 

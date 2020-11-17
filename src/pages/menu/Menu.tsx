@@ -1,21 +1,8 @@
-import React from 'react';
+import { Box, Button, Container, Heading, Input, Spacer, Text } from '@chakra-ui/react';
 import PageLayout from 'pages/PageLayout';
-import {
-  Box,
-  Button,
-  Container,
-  Heading,
-  Text,
-  Input,
-  Spacer,
-} from '@chakra-ui/react';
-import {
-  Link,
-  Route,
-  Switch,
-  useHistory,
-  useRouteMatch,
-} from 'react-router-dom';
+import React from 'react';
+import { Link, Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
+import { t } from 'utils/i18n';
 import CategoryDrawer from './drawers/CategoryDrawer';
 
 const Menu = () => {
@@ -28,21 +15,21 @@ const Menu = () => {
     <PageLayout>
       <Container maxW="md">
         <Heading fontSize="lg" mt="4">
-          Cardápio
+          {t('Cardápio')}
         </Heading>
-        <Text fontSize="sm">Defina o cardápio do seu restaurante.</Text>
+        <Text fontSize="sm">{t('Defina o cardápio do seu restaurante.')}</Text>
         <Box mt="6" d="flex">
           <Link to={`${url}/category/new`}>
-            <Button>Adicionar categoria</Button>
+            <Button>{t('Adicionar categoria')}</Button>
           </Link>
 
           <Link to={`${url}/product/new`}>
             <Button variant="outline" ml="2">
-              Adicionar produto
+              {t('Adicionar produto')}
             </Button>
           </Link>
           <Spacer />
-          <Input ml="32" placeholder="Encontre um produto adicionado" />
+          <Input ml="32" placeholder={t('Encontre um produto adicionado')} />
         </Box>
       </Container>
       <Switch>

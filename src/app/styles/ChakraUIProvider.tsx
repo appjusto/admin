@@ -1,5 +1,5 @@
-import React from 'react';
 import { ChakraProvider, extendTheme } from '@chakra-ui/react';
+import React from 'react';
 import { Button } from './components/Button';
 import { colors } from './foundations/colors';
 import { typography } from './foundations/typography';

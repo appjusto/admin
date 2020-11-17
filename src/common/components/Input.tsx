@@ -1,9 +1,4 @@
-import {
-  Box,
-  FormLabel,
-  Input as ChakraInput,
-  InputProps,
-} from '@chakra-ui/react';
+import { Box, FormLabel, Input as ChakraInput, InputProps } from '@chakra-ui/react';
 import React from 'react';
 
 interface Props extends InputProps {
@@ -19,13 +14,7 @@ export const Input = React.forwardRef<HTMLInputElement, Props>(
             {label}
           </FormLabel>
         )}
-        <ChakraInput
-          ref={ref}
-          variant="unstyled"
-          pb="1"
-          size="sm"
-          {...props}
-        ></ChakraInput>
+        <ChakraInput ref={ref} variant="unstyled" pb="1" size="sm" {...props}></ChakraInput>
       </Box>
     );
   }

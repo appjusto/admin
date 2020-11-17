@@ -10,8 +10,8 @@ export const Button = {
   // Variants
   variants: {
     solid: {
-      bg: 'green.500',
-      borderColor: 'green.500',
+      'bg': 'green.500',
+      'borderColor': 'green.500',
       ':hover': {
         bg: 'green.300',
         borderColor: 'green.300',
@@ -23,9 +23,9 @@ export const Button = {
       },
     },
     secondary: {
-      bg: 'gray.700',
-      borderColor: 'gray.700',
-      color: 'white',
+      'bg': 'gray.700',
+      'borderColor': 'gray.700',
+      'color': 'white',
       ':hover': {
         bg: 'gray.500',
         borderColor: 'gray.500',
@@ -36,8 +36,8 @@ export const Button = {
       },
     },
     outline: {
-      bg: 'white',
-      borderColor: 'black',
+      'bg': 'white',
+      'borderColor': 'black',
       ':hover': {
         color: 'gray.700',
         borderColor: 'gray.700',

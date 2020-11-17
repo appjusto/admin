@@ -1,6 +1,6 @@
 import React from 'react';
-import { ChakraUIProvider } from './styles/ChakraUIProvider';
 import { StateProvider } from 'state/StateProvider';
+import { ChakraUIProvider } from './styles/ChakraUIProvider';
 
 interface Props {
   children: React.ReactNode | React.ReactNode[];
