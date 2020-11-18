@@ -1,6 +1,6 @@
 import { Box, Circle, Text } from '@chakra-ui/react';
+import { useBusinessValue } from 'app/state/business/context';
 import React from 'react';
-import { useBusinessValue } from 'state/business/business';
 import { t } from 'utils/i18n';
 
 const BusinessInfo = () => {

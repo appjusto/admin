@@ -5,10 +5,10 @@ interface Business {
   status: 'open' | 'closed';
 }
 
-type BusinessContextInterface = {
+interface BusinessContextInterface {
   business: Business | undefined;
   setBusiness: React.Dispatch<React.SetStateAction<Business | undefined>>;
-};
+}
 
 const BusinessContext = React.createContext<BusinessContextInterface | undefined>(undefined);
 

@@ -1,4 +1,5 @@
 import { Box, Button, Center, Flex, FormControl, Text } from '@chakra-ui/react';
+import { useApi } from 'app/api/context';
 import { Input } from 'common/components/Input';
 import { ReactComponent as Logo } from 'common/img/logo.svg';
 import React, { useEffect } from 'react';
@@ -11,6 +12,9 @@ const HomeRightImage = React.lazy(() => import(/* webpackPrefetch: true */ './im
 const Home = () => {
   // context
   const history = useHistory();
+  const api = useApi();
+
+  console.log(api);
 
   // refs
   const inputRef = React.useRef<HTMLInputElement>(null);

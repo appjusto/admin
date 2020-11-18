@@ -1,5 +1,5 @@
 import React from 'react';
-import { BusinessProvider } from './business/business';
+import { BusinessProvider } from './business/context';
 
 interface Props {
   children: React.ReactNode;

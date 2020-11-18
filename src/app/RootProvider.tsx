@@ -1,5 +1,6 @@
+import { StateProvider } from 'app/state/StateProvider';
 import React from 'react';
-import { StateProvider } from 'state/StateProvider';
+import { ApiProvider } from './api/context';
 import { ChakraUIProvider } from './styles/ChakraUIProvider';
 
 interface Props {
@@ -8,8 +9,10 @@ interface Props {
 
 export const RootProvider = ({ children }: Props) => {
   return (
-    <StateProvider>
-      <ChakraUIProvider>{children}</ChakraUIProvider>
-    </StateProvider>
+    <ApiProvider>
+      <StateProvider>
+        <ChakraUIProvider>{children}</ChakraUIProvider>
+      </StateProvider>
+    </ApiProvider>
   );
 };
