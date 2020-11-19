@@ -11,6 +11,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { useApi } from 'app/api/context';
+import { getErrorMessage } from 'app/api/utils';
 import { Input } from 'common/components/Input';
 import { ReactComponent as Logo } from 'common/img/logo.svg';
 import React, { useEffect, useState } from 'react';
@@ -28,11 +29,7 @@ const Join = () => {
 
   // state
   const [email, setEmail] = useState('');
-  const [signIn, { isLoading, isSuccess, isError, error }] = useMutation<
-    void,
-    { message: string },
-    string
-  >(async (email: string) => {
+  const [signIn, { isLoading, isSuccess, isError, error }] = useMutation(async (email: string) => {
     api.auth().signInWithEmailLink(email, link);
   });
 
@@ -78,7 +75,7 @@ const Join = () => {
               <Alert status="error">
                 <AlertIcon />
                 <AlertTitle mr={2}>{t('Erro!')}</AlertTitle>
-                <AlertDescription>{error?.message ?? t('Tenta de novo?')}</AlertDescription>
+                <AlertDescription>{getErrorMessage(error) ?? t('Tenta de novo?')}</AlertDescription>
               </Alert>
             )}
           </Box>

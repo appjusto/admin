@@ -1,7 +1,7 @@
 import { Alert, AlertDescription, AlertIcon, AlertTitle, Box } from '@chakra-ui/react';
 import { useApi } from 'app/api/context';
 import { getErrorMessage } from 'app/api/utils';
-import { Category } from 'appjusto-types';
+import { Product } from 'appjusto-types';
 import { Input } from 'common/components/Input';
 import React from 'react';
 import { useMutation } from 'react-query';
@@ -16,23 +16,25 @@ interface Props {
 
 type Params = {
   categoryId: string;
+  productId: string;
 };
 
-export const CategoryDrawer = (props: Props) => {
+export const ProductDrawer = (props: Props) => {
   // context
   const api = useApi()!;
-  const { categoryId } = useParams<Params>();
-  const isNew = categoryId === 'new';
+  const { categoryId, productId } = useParams<Params>();
+  const isNew = productId === 'new';
 
   // state
   const [name, setName] = React.useState('');
-  const [addCategory, { isLoading, isError, error }] = useMutation(async (category: Category) => {
-    api.menu().addCategory(category);
+  const [addProduct, { isLoading, isError, error }] = useMutation(async (product: Product) => {
+    api.menu().addProduct(product);
   });
   const onSaveHandler = () => {
     (async () => {
-      await addCategory({
+      await addProduct({
         name,
+        categoryId,
         restaurantId: 'default',
       });
       props.onClose();
@@ -46,7 +48,7 @@ export const CategoryDrawer = (props: Props) => {
   return (
     <BaseDrawer
       {...props}
-      title={t('Adicionar categoria')}
+      title={t('Adicionar produto')}
       initialFocusRef={inputRef}
       onSave={onSaveHandler}
       isLoading={isLoading}
@@ -54,8 +56,8 @@ export const CategoryDrawer = (props: Props) => {
       <Input
         ref={inputRef}
         value={name}
-        label={t('Nova categoria')}
-        placeholder={t('Nome da categoria')}
+        label={t('Novo produto')}
+        placeholder={t('Nome do produto')}
         onChange={(ev) => setName(ev.target.value)}
       />
       {isError && (

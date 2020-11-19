@@ -11,6 +11,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { useApi } from 'app/api/context';
+import { getErrorMessage } from 'app/api/utils';
 import { Input } from 'common/components/Input';
 import { ReactComponent as Logo } from 'common/img/logo.svg';
 import React, { useEffect, useState } from 'react';
@@ -26,11 +27,9 @@ const Home = () => {
 
   // state
   const [email, setEmail] = useState('');
-  const [mutate, { isLoading, isSuccess, isError, error }] = useMutation<
-    void,
-    { message: string },
-    string
-  >((email: string) => api.auth().sendSignInLinkToEmail(email));
+  const [mutate, { isLoading, isSuccess, isError, error }] = useMutation((email: string) =>
+    api.auth().sendSignInLinkToEmail(email)
+  );
 
   // refs
   const emailRef = React.useRef<HTMLInputElement>(null);
@@ -77,7 +76,9 @@ const Home = () => {
                   <Alert status="error">
                     <AlertIcon />
                     <AlertTitle mr={2}>{t('Erro!')}</AlertTitle>
-                    <AlertDescription>{error?.message ?? t('Tenta de novo?')}</AlertDescription>
+                    <AlertDescription>
+                      {getErrorMessage(error) ?? t('Tenta de novo?')}
+                    </AlertDescription>
                   </Alert>
                 )}
                 {isSuccess && (

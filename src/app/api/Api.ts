@@ -5,6 +5,7 @@ import 'firebase/firestore';
 import 'firebase/functions';
 import 'firebase/storage';
 import AuthApi from './AuthApi';
+import MenuApi from './menu/MenuApi';
 import ProfileApi from './ProfileApi';
 
 export default class Api {
@@ -17,6 +18,7 @@ export default class Api {
 
   private _auth: AuthApi;
   private _profile: ProfileApi;
+  private _menu: MenuApi;
 
   constructor(config: ApiConfig) {
     if (!Api._firebaseInitialized) {
@@ -40,6 +42,7 @@ export default class Api {
 
     this._auth = new AuthApi(this._authentication, this._functions, config);
     this._profile = new ProfileApi(this._firestore, this._functions);
+    this._menu = new MenuApi(this._firestore, this._functions);
   }
 
   auth() {
@@ -48,5 +51,9 @@ export default class Api {
 
   profile() {
     return this._profile;
+  }
+
+  menu() {
+    return this._menu;
   }
 }

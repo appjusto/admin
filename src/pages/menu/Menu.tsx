@@ -1,18 +1,19 @@
 import { Box, Button, Container, Heading, Input, Spacer, Text } from '@chakra-ui/react';
-import { useProfile } from 'app/state/profile/context';
 import PageLayout from 'pages/PageLayout';
 import React from 'react';
 import { Link, Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
+import { Categories } from './Categories';
 import { CategoryDrawer } from './drawers/CategoryDrawer';
+import { ProductDrawer } from './drawers/ProductDrawer';
 
 const Menu = () => {
   // context
-  const profile = useProfile();
   const { path, url } = useRouteMatch();
   const history = useHistory();
 
-  console.log(profile);
+  // handler
+  const closeDrawerHandler = () => history.replace(path);
 
   // UI
   return (
@@ -27,7 +28,7 @@ const Menu = () => {
             <Button>{t('Adicionar categoria')}</Button>
           </Link>
 
-          <Link to={`${url}/product/new`}>
+          <Link to={`${url}/category/hardcoded/product/new`}>
             <Button variant="outline" ml="2">
               {t('Adicionar produto')}
             </Button>
@@ -35,10 +36,16 @@ const Menu = () => {
           <Spacer />
           <Input ml="32" placeholder={t('Encontre um produto adicionado')} />
         </Box>
+        <Box mt="2">
+          <Categories />
+        </Box>
       </Container>
       <Switch>
-        <Route path={`${path}/category/:id`}>
-          <CategoryDrawer isOpen onClose={() => history.replace(path)} />
+        <Route path={`${path}/category/:categoryId/product/:productId`}>
+          <ProductDrawer isOpen onClose={closeDrawerHandler} />
+        </Route>
+        <Route path={`${path}/category/:categoryId`}>
+          <CategoryDrawer isOpen onClose={closeDrawerHandler} />
         </Route>
       </Switch>
     </PageLayout>

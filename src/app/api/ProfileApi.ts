@@ -9,7 +9,7 @@ export default class ProfileApi {
 
   // private helpers
   private getProfileRef(id: string) {
-    return this.firestore.collection('business-managers').doc(id);
+    return this.firestore.collection('business').doc('access').collection('managers').doc(id);
   }
   private async createProfile(id: string) {
     await this.getProfileRef(id).set({

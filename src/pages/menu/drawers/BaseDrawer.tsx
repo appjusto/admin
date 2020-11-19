@@ -19,9 +19,17 @@ interface BaseDrawerProps {
   onClose(): void;
   children: React.ReactNode;
   initialFocusRef?: React.RefObject<FocusableElement>;
+  isLoading: boolean;
 }
 
-export const BaseDrawer = ({ title, children, onSave, onClose, ...props }: BaseDrawerProps) => {
+export const BaseDrawer = ({
+  title,
+  children,
+  onSave,
+  onClose,
+  isLoading,
+  ...props
+}: BaseDrawerProps) => {
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
       <DrawerOverlay>
@@ -32,10 +40,10 @@ export const BaseDrawer = ({ title, children, onSave, onClose, ...props }: BaseD
           <DrawerBody>{children}</DrawerBody>
 
           <DrawerFooter>
-            <Button width="full" color="blue" onClick={onSave}>
+            <Button width="full" color="blue" onClick={onSave} isLoading={isLoading}>
               {t('Salvar')}
             </Button>
-            <Button width="full" variant="outline" ml={3} onClick={onClose}>
+            <Button width="full" variant="outline" ml={3} onClick={onClose} isDisabled={isLoading}>
               {t('Cancelar')}
             </Button>
           </DrawerFooter>
