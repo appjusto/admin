@@ -16,6 +16,7 @@ export interface FirebaseOptions {
 }
 
 export interface ApiConfig {
+  publicURL: string;
   firebase: {
     config: FirebaseConfig;
     options: FirebaseOptions;

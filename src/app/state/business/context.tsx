@@ -1,9 +1,5 @@
+import { Business } from 'appjusto-types';
 import React from 'react';
-
-interface Business {
-  name: string;
-  status: 'open' | 'closed';
-}
 
 interface BusinessContextInterface {
   business: Business | undefined;

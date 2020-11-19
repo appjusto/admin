@@ -1,4 +1,5 @@
 import { Box, Button, Container, Heading, Input, Spacer, Text } from '@chakra-ui/react';
+import { useProfile } from 'app/state/profile/context';
 import PageLayout from 'pages/PageLayout';
 import React from 'react';
 import { Link, Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
@@ -7,8 +8,11 @@ import { CategoryDrawer } from './drawers/CategoryDrawer';
 
 const Menu = () => {
   // context
-  let { path, url } = useRouteMatch();
+  const profile = useProfile();
+  const { path, url } = useRouteMatch();
   const history = useHistory();
+
+  console.log(profile);
 
   // UI
   return (

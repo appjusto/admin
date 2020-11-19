@@ -4,26 +4,30 @@ import 'firebase/auth';
 import 'firebase/firestore';
 import 'firebase/functions';
 import 'firebase/storage';
+import AuthApi from './AuthApi';
+import ProfileApi from './ProfileApi';
 
 export default class Api {
-  static firebaseInitialized: boolean = false;
+  private static _firebaseInitialized: boolean = false;
 
-  private authentication: firebase.auth.Auth;
-  private firestore: firebase.firestore.Firestore;
-  private functions: firebase.functions.Functions;
-  private storage: firebase.storage.Storage;
+  private _authentication: firebase.auth.Auth;
+  private _firestore: firebase.firestore.Firestore;
+  private _functions: firebase.functions.Functions;
+  private _storage: firebase.storage.Storage;
+
+  private _auth: AuthApi;
+  private _profile: ProfileApi;
 
   constructor(config: ApiConfig) {
-    console.log(config);
-    if (!Api.firebaseInitialized) {
+    if (!Api._firebaseInitialized) {
       firebase.initializeApp({ ...config.firebase.config });
-      Api.firebaseInitialized = true;
+      Api._firebaseInitialized = true;
     }
 
-    this.authentication = firebase.auth();
-    this.firestore = firebase.firestore();
-    this.functions = firebase.functions();
-    this.storage = firebase.storage();
+    this._authentication = firebase.auth();
+    this._firestore = firebase.firestore();
+    this._functions = firebase.functions();
+    this._storage = firebase.storage();
 
     if (
       config.firebase.options.useEmulator &&
@@ -31,7 +35,18 @@ export default class Api {
       config.firebase.options.emulatorPort
     ) {
       const { emulatorHost, emulatorPort } = config.firebase.options;
-      this.firestore.useEmulator(emulatorHost, emulatorPort);
+      this._firestore.useEmulator(emulatorHost, emulatorPort);
     }
+
+    this._auth = new AuthApi(this._authentication, this._functions, config);
+    this._profile = new ProfileApi(this._firestore, this._functions);
+  }
+
+  auth() {
+    return this._auth;
+  }
+
+  profile() {
+    return this._profile;
   }
 }
