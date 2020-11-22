@@ -5,7 +5,6 @@ import { Category } from 'appjusto-types';
 import { Input } from 'common/components/Input';
 import React from 'react';
 import { useMutation } from 'react-query';
-import { useParams } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { BaseDrawer } from './BaseDrawer';
 
@@ -14,27 +13,29 @@ interface Props {
   onClose(): void;
 }
 
-type Params = {
-  categoryId: string;
-};
+// type Params = {
+//   categoryId: string;
+// };
 
 export const CategoryDrawer = (props: Props) => {
   // context
   const api = useApi()!;
-  const { categoryId } = useParams<Params>();
-  const isNew = categoryId === 'new';
+  // const { categoryId } = useParams<Params>();
+  // const isNew = categoryId === 'new';
 
   // state
   const [name, setName] = React.useState('');
   const [addCategory, { isLoading, isError, error }] = useMutation(async (category: Category) => {
-    api.menu().addCategory(category);
+    api.menu().addCategory('default', category);
   });
+
+  // handlers
   const onSaveHandler = () => {
     (async () => {
       await addCategory({
         name,
-        restaurantId: 'default',
       });
+
       props.onClose();
     })();
   };

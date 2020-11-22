@@ -22,20 +22,21 @@ type Params = {
 export const ProductDrawer = (props: Props) => {
   // context
   const api = useApi()!;
-  const { categoryId, productId } = useParams<Params>();
-  const isNew = productId === 'new';
+  // const { categoryId, productId } = useParams<Params>();
+  const { categoryId } = useParams<Params>();
+  // const isNew = productId === 'new';
 
   // state
   const [name, setName] = React.useState('');
   const [addProduct, { isLoading, isError, error }] = useMutation(async (product: Product) => {
-    api.menu().addProduct(product);
+    await api.menu().addProduct('default', product, categoryId);
   });
+
+  // handlers
   const onSaveHandler = () => {
     (async () => {
       await addProduct({
         name,
-        categoryId,
-        restaurantId: 'default',
       });
       props.onClose();
     })();

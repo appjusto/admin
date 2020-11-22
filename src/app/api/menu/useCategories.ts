@@ -6,7 +6,7 @@ export const useCategories = () => {
   const api = useApi()!;
   const [categories, setCategories] = React.useState<WithId<Category>[]>([]);
   React.useEffect(() => {
-    return api.menu().observeCategories({ restaurantId: 'default' }, setCategories);
+    return api.menu().observeCategories('default', setCategories);
   }, [api]);
   return categories;
 };

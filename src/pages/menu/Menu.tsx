@@ -1,4 +1,5 @@
 import { Box, Button, Container, Heading, Input, Spacer, Text } from '@chakra-ui/react';
+import { useMenuConfig } from 'app/api/menu/useMenuConfig';
 import PageLayout from 'pages/PageLayout';
 import React from 'react';
 import { Link, Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
@@ -11,6 +12,10 @@ const Menu = () => {
   // context
   const { path, url } = useRouteMatch();
   const history = useHistory();
+
+  // state
+  const { menuConfig } = useMenuConfig();
+  const lastCategory = menuConfig.categoriesOrder[menuConfig.categoriesOrder.length - 1];
 
   // handler
   const closeDrawerHandler = () => history.replace(path);
@@ -28,8 +33,8 @@ const Menu = () => {
             <Button>{t('Adicionar categoria')}</Button>
           </Link>
 
-          <Link to={`${url}/category/hardcoded/product/new`}>
-            <Button variant="outline" ml="2">
+          <Link to={`${url}/category/${lastCategory}/product/new`}>
+            <Button variant="outline" ml="2" isDisabled={!lastCategory}>
               {t('Adicionar produto')}
             </Button>
           </Link>
