@@ -5,6 +5,7 @@ import { useApi } from '../context';
 import { useCategories } from './useCategories';
 import { useMenuConfig } from './useMenuConfig';
 import { useProducts } from './useProducts';
+import { memoize } from 'lodash';
 
 export const useMenu = () => {
   // context
@@ -39,13 +40,17 @@ export const useMenu = () => {
   };
 
   // products
-  const getProductsByCategoryId = (categoryId: string) => {
-    const productsOrder = productsOrderByCategoryId[categoryId];
-    if (!productsOrder) return [];
-    return unorderedProducts
-      .filter((product) => productsOrder.indexOf(product.id) !== -1) // only in this category
-      .sort((a, b) => productsOrder.indexOf(a.id) - productsOrder.indexOf(b.id));
-  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const getProductsByCategoryId = React.useCallback(
+    memoize((categoryId: string) => {
+      const productsOrder = productsOrderByCategoryId[categoryId];
+      if (!productsOrder) return [];
+      return unorderedProducts
+        .filter((product) => productsOrder.indexOf(product.id) !== -1) // only in this category
+        .sort((a, b) => productsOrder.indexOf(a.id) - productsOrder.indexOf(b.id));
+    }),
+    [unorderedProducts, productsOrderByCategoryId]
+  );
 
   // update product order
   const updateProductIndex = (

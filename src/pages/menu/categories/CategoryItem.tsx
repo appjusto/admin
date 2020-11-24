@@ -11,7 +11,7 @@ interface Props {
   index: number;
 }
 
-export const CategoryItem = ({ category, products, index }: Props) => {
+export const CategoryItem = React.memo(({ category, products, index }: Props) => {
   return (
     <Draggable draggableId={category.id} index={index}>
       {(draggable) => (
@@ -49,4 +49,4 @@ export const CategoryItem = ({ category, products, index }: Props) => {
       )}
     </Draggable>
   );
-};
+});

@@ -19,7 +19,6 @@ export const Categories = () => {
     if (!destination) return; // dropped outside
     if (source.droppableId === destination.droppableId && source.index === destination.index)
       return; // same location
-    console.log(type, destination, source, draggableId);
     if (type === 'product') {
       updateProductIndex(
         draggableId,

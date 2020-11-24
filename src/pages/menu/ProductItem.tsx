@@ -9,7 +9,7 @@ interface Props {
   index: number;
 }
 
-export const ProductItem = ({ product, index }: Props) => {
+export const ProductItem = React.memo(({ product, index }: Props) => {
   return (
     <Draggable draggableId={product.id} index={index}>
       {(draggable, snapshot) => (
@@ -44,4 +44,4 @@ export const ProductItem = ({ product, index }: Props) => {
       )}
     </Draggable>
   );
-};
+});
