@@ -11,7 +11,7 @@ export const StateProvider = ({ children }: Props) => {
   return (
     <FirebaseUserProvider>
       <ProfileProvider>
-        <BusinessProvider value={{ name: 'Restaurante Novo', status: 'open' }}>
+        <BusinessProvider value={{ id: 'default', name: 'Restaurante Novo', status: 'open' }}>
           {children}
         </BusinessProvider>
       </ProfileProvider>

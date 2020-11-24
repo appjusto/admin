@@ -66,8 +66,9 @@ export default class MenuApi {
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
     const doc = await this.getCategoriesRef(businessId).add({
       ...category,
-      timestamp,
-    });
+      createdOn: timestamp,
+      updatedOn: timestamp,
+    } as Category);
     const menuConfigRef = this.getMenuConfigRef(businessId);
     const menuConfigSnapshot = await menuConfigRef.get();
     const menuConfig = menuConfigSnapshot.data() as MenuConfig;
@@ -79,6 +80,16 @@ export default class MenuApi {
       { merge: true }
     );
     return doc;
+  }
+
+  async updateCategory(businessId: string, categoryId: string, changes: Partial<Category>) {
+    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+    await this.getCategoriesRef(businessId)
+      .doc(categoryId)
+      .update({
+        ...changes,
+        updatedOn: timestamp,
+      } as Partial<Category>);
   }
 
   // products
@@ -102,8 +113,9 @@ export default class MenuApi {
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
     const doc = await this.getProductsRef(businessId).add({
       ...product,
-      timestamp,
-    });
+      createdOn: timestamp,
+      updatedOn: timestamp,
+    } as Product);
     const menuConfigRef = this.getMenuConfigRef(businessId);
     const menuConfigSnapshot = await menuConfigRef.get();
     const menuConfig = menuConfigSnapshot.data() as MenuConfig;
@@ -119,5 +131,15 @@ export default class MenuApi {
     );
 
     return doc;
+  }
+
+  async updateProduct(businessId: string, productId: string, changes: Partial<Product>) {
+    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+    await this.getProductsRef(businessId)
+      .doc(productId)
+      .update({
+        ...changes,
+        updatedOn: timestamp,
+      } as Partial<Product>);
   }
 }

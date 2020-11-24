@@ -1,6 +1,7 @@
 import { Alert, AlertDescription, AlertIcon, AlertTitle, Box } from '@chakra-ui/react';
 import { useApi } from 'app/api/context';
 import { getErrorMessage } from 'app/api/utils';
+import { useBusinessId } from 'app/state/business/context';
 import { Category } from 'appjusto-types';
 import { Input } from 'common/components/Input';
 import React from 'react';
@@ -20,13 +21,14 @@ interface Props {
 export const CategoryDrawer = (props: Props) => {
   // context
   const api = useApi()!;
+  const businessId = useBusinessId()!;
   // const { categoryId } = useParams<Params>();
   // const isNew = categoryId === 'new';
 
   // state
   const [name, setName] = React.useState('');
   const [addCategory, { isLoading, isError, error }] = useMutation(async (category: Category) => {
-    api.menu().addCategory('default', category);
+    api.menu().addCategory(businessId, category);
   });
 
   // handlers
@@ -34,6 +36,7 @@ export const CategoryDrawer = (props: Props) => {
     (async () => {
       await addCategory({
         name,
+        enabled: true,
       });
 
       props.onClose();

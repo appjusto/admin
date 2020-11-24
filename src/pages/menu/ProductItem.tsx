@@ -1,4 +1,6 @@
-import { Box, Flex, Image, Text } from '@chakra-ui/react';
+import { Box, Flex, Image, Spacer, Switch, Text } from '@chakra-ui/react';
+import { useApi } from 'app/api/context';
+import { useBusinessId } from 'app/state/business/context';
 import { Product, WithId } from 'appjusto-types';
 import { ReactComponent as DragHandle } from 'common/img/drag-handle.svg';
 import React from 'react';
@@ -10,6 +12,9 @@ interface Props {
 }
 
 export const ProductItem = React.memo(({ product, index }: Props) => {
+  const api = useApi()!;
+  const businessId = useBusinessId()!;
+
   return (
     <Draggable draggableId={product.id} index={index}>
       {(draggable, snapshot) => (
@@ -40,6 +45,14 @@ export const ProductItem = React.memo(({ product, index }: Props) => {
             </Text>
             <Text fontSize="xs">{product.name}</Text>
           </Box>
+          <Spacer />
+          <Switch
+            isChecked={product.enabled}
+            onChange={(ev) => {
+              ev.stopPropagation();
+              api.menu().updateProduct(businessId, product.id, { enabled: ev.target.checked });
+            }}
+          />
         </Flex>
       )}
     </Draggable>

@@ -1,6 +1,7 @@
 import { Alert, AlertDescription, AlertIcon, AlertTitle, Box } from '@chakra-ui/react';
 import { useApi } from 'app/api/context';
 import { getErrorMessage } from 'app/api/utils';
+import { useBusinessId } from 'app/state/business/context';
 import { Product } from 'appjusto-types';
 import { Input } from 'common/components/Input';
 import React from 'react';
@@ -22,6 +23,7 @@ type Params = {
 export const ProductDrawer = (props: Props) => {
   // context
   const api = useApi()!;
+  const businessId = useBusinessId()!;
   // const { categoryId, productId } = useParams<Params>();
   const { categoryId } = useParams<Params>();
   // const isNew = productId === 'new';
@@ -29,7 +31,7 @@ export const ProductDrawer = (props: Props) => {
   // state
   const [name, setName] = React.useState('');
   const [addProduct, { isLoading, isError, error }] = useMutation(async (product: Product) => {
-    await api.menu().addProduct('default', product, categoryId);
+    await api.menu().addProduct(businessId, product, categoryId);
   });
 
   // handlers
@@ -37,6 +39,7 @@ export const ProductDrawer = (props: Props) => {
     (async () => {
       await addProduct({
         name,
+        enabled: true,
       });
       props.onClose();
     })();

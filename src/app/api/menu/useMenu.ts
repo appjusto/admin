@@ -6,10 +6,12 @@ import { useCategories } from './useCategories';
 import { useMenuConfig } from './useMenuConfig';
 import { useProducts } from './useProducts';
 import { memoize } from 'lodash';
+import { useBusinessId } from 'app/state/business/context';
 
 export const useMenu = () => {
   // context
   const api = useApi()!;
+  const businessId = useBusinessId()!;
 
   // state
   const { menuConfig, setMenuConfig } = useMenuConfig(); // holds the order of categories and its products
@@ -36,7 +38,7 @@ export const useMenu = () => {
       categoriesOrder: arrayMove<string>(categoriesOrder, previousIndex, newIndex),
     };
     setMenuConfig(newMenuConfig); // optimistic update
-    api.menu().updateMenuConfig('default', newMenuConfig);
+    api.menu().updateMenuConfig(businessId, newMenuConfig);
   };
 
   // products
@@ -82,7 +84,7 @@ export const useMenu = () => {
       productsOrderByCategoryId: newProductsOrderByCategoryId,
     };
     setMenuConfig(newMenuConfig); // optimistic update
-    api.menu().updateMenuConfig('default', newMenuConfig);
+    api.menu().updateMenuConfig(businessId, newMenuConfig);
   };
 
   return { categories, getProductsByCategoryId, updateCategoryIndex, updateProductIndex };
