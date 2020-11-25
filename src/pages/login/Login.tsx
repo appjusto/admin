@@ -25,14 +25,16 @@ const Home = () => {
   // context
   const api = useApi()!;
 
-  // state
-  const [email, setEmail] = useState('');
-  const [mutate, { isLoading, isSuccess, isError, error }] = useMutation((email: string) =>
-    api.auth().sendSignInLinkToEmail(email)
-  );
-
   // refs
   const emailRef = React.useRef<HTMLInputElement>(null);
+
+  // state
+  const [email, setEmail] = useState('');
+
+  // mutations
+  const [loginWithEmail, { isLoading, isSuccess, isError, error }] = useMutation((email: string) =>
+    api.auth().sendSignInLinkToEmail(email)
+  );
 
   // side effects
   useEffect(() => {
@@ -41,7 +43,7 @@ const Home = () => {
 
   // handlers
   const loginHandler = () => {
-    mutate(email);
+    loginWithEmail(email);
   };
 
   // UI
