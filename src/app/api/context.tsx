@@ -14,5 +14,5 @@ export const ApiProvider = (props: ApiProviderProps) => {
 };
 
 export const useApi = () => {
-  return useContext(ApiContext);
+  return useContext(ApiContext)!;
 };

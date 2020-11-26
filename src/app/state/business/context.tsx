@@ -17,13 +17,13 @@ export const BusinessProvider = (props: React.ProviderProps<WithId<Business> | u
 };
 
 export const useBusinessValue = () => {
-  return React.useContext(BusinessContext)?.business;
+  return React.useContext(BusinessContext)!.business;
 };
 
 export const useBusinessId = () => {
-  return useBusinessValue()?.id;
+  return useBusinessValue()!.id;
 };
 
 export const useSetBusiness = () => {
-  return React.useContext(BusinessContext)?.setBusiness;
+  return React.useContext(BusinessContext)!.setBusiness;
 };

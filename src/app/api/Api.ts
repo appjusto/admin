@@ -5,6 +5,7 @@ import 'firebase/firestore';
 import 'firebase/functions';
 import 'firebase/storage';
 import AuthApi from './AuthApi';
+import FilesApi from './FilesApi';
 import MenuApi from './menu/MenuApi';
 import ProfileApi from './ProfileApi';
 
@@ -17,6 +18,7 @@ export default class Api {
   private _storage: firebase.storage.Storage;
 
   private _auth: AuthApi;
+  private _files: FilesApi;
   private _profile: ProfileApi;
   private _menu: MenuApi;
 
@@ -41,8 +43,9 @@ export default class Api {
     }
 
     this._auth = new AuthApi(this._authentication, this._functions, config);
+    this._files = new FilesApi(this._storage);
     this._profile = new ProfileApi(this._firestore, this._functions);
-    this._menu = new MenuApi(this._firestore, this._functions);
+    this._menu = new MenuApi(this._firestore, this._functions, this._files);
   }
 
   auth() {

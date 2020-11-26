@@ -1,9 +1,11 @@
-import { Box, Flex, Image, Spacer, Switch, Text } from '@chakra-ui/react';
+import { Box, Flex, IconButton, Image, Spacer, Switch, Text } from '@chakra-ui/react';
 import { useProductUpdate } from 'app/api/menu/products/useProductUpdate';
 import { Product, WithId } from 'appjusto-types';
 import { ReactComponent as DragHandle } from 'common/img/drag-handle.svg';
+import { ReactComponent as EditIcon } from 'common/img/edit-icon.svg';
 import React from 'react';
 import { Draggable } from 'react-beautiful-dnd';
+import { Link, useRouteMatch } from 'react-router-dom';
 
 interface Props {
   product: WithId<Product>;
@@ -11,6 +13,9 @@ interface Props {
 }
 
 export const ProductItem = React.memo(({ product, index }: Props) => {
+  // context
+  const { url } = useRouteMatch();
+
   // mutations
   const { updateProduct } = useProductUpdate(product.id);
 
@@ -53,6 +58,16 @@ export const ProductItem = React.memo(({ product, index }: Props) => {
               updateProduct({ enabled: ev.target.checked });
             }}
           />
+          <Link to={`${url}/product/${product.id}`}>
+            <IconButton
+              size="sm"
+              borderColor="gray.50"
+              ml="4"
+              aria-label="Edit product"
+              variant="outline"
+              icon={<EditIcon />}
+            />
+          </Link>
         </Flex>
       )}
     </Draggable>

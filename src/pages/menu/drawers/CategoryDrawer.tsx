@@ -1,11 +1,8 @@
 import { Alert, AlertDescription, AlertIcon, AlertTitle, Box } from '@chakra-ui/react';
-import { useApi } from 'app/api/context';
+import { useCategoryCreate } from 'app/api/menu/categories/useCategoryCreate';
 import { getErrorMessage } from 'app/api/utils';
-import { useBusinessId } from 'app/state/business/context';
-import { Category } from 'appjusto-types';
 import { Input } from 'common/components/Input';
 import React from 'react';
-import { useMutation } from 'react-query';
 import { t } from 'utils/i18n';
 import { BaseDrawer } from './BaseDrawer';
 
@@ -19,22 +16,20 @@ interface Props {
 // };
 
 export const CategoryDrawer = (props: Props) => {
-  // context
-  const api = useApi()!;
-  const businessId = useBusinessId()!;
   // const { categoryId } = useParams<Params>();
   // const isNew = categoryId === 'new';
 
+  // mutations
+  const { createCategory, result } = useCategoryCreate();
+  const { isLoading, isError, error } = result;
+
   // state
   const [name, setName] = React.useState('');
-  const [addCategory, { isLoading, isError, error }] = useMutation(async (category: Category) => {
-    api.menu().addCategory(businessId, category);
-  });
 
   // handlers
   const onSaveHandler = () => {
     (async () => {
-      await addCategory({
+      await createCategory({
         name,
         enabled: true,
       });

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useCategories } from './categories/useCategories';
-import { useMenuConfig } from './useMenuConfig';
+import { useMenuConfig } from './config/useMenuConfig';
 import { useProducts } from './products/useProducts';
 import { memoize } from 'lodash';
 
@@ -8,7 +8,7 @@ export const useMenu = () => {
   // state
   const unorderedCategories = useCategories();
   const unorderedProducts = useProducts();
-  const { menuConfig, updateCategoryIndex, updateProductIndex } = useMenuConfig(); // holds the order of categories and its products
+  const { menuConfig } = useMenuConfig(); // holds the order of categories and its products
   const { categoriesOrder, productsOrderByCategoryId } = menuConfig;
 
   // categories
@@ -35,5 +35,5 @@ export const useMenu = () => {
     [unorderedProducts, productsOrderByCategoryId]
   );
 
-  return { categories, getProductsByCategoryId, updateCategoryIndex, updateProductIndex };
+  return { categories, getProductsByCategoryId };
 };
