@@ -1,6 +1,7 @@
 import { useApi } from 'app/api/context';
 import * as functions from 'app/api/menu/config/functions';
 import { MenuConfig } from 'appjusto-types';
+import { isEmpty } from 'lodash';
 import React from 'react';
 import { useMutation } from 'react-query';
 import { useBusinessId } from '../business/context';
@@ -36,7 +37,9 @@ export const MenuConfigProvider = (
 
   // side effects
   React.useEffect(() => {
-    return api.menu().observeMenuConfig(businessId, setMenuConfig);
+    return api.menu().observeMenuConfig(businessId, (config) => {
+      setMenuConfig(!isEmpty(config) ? config : functions.empty());
+    });
   }, [api, businessId]);
 
   // return
