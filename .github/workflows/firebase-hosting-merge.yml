@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Removing local appjusto-types
-        run: yarn delete appjusto-types
+        run: yarn remove appjusto-types
       - name: Adding appjusto-types
         run: yarn add git+https://github.com/appjusto/types.git#business
       - name: Install dependencies
