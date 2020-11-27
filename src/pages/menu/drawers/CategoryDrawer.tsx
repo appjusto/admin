@@ -1,8 +1,10 @@
 import { Alert, AlertDescription, AlertIcon, AlertTitle, Box } from '@chakra-ui/react';
-import { useCategoryCreate } from 'app/api/menu/categories/useCategoryCreate';
+import { useCategory } from 'app/api/menu/categories/useCategory';
 import { getErrorMessage } from 'app/api/utils';
+import { useMenuConfigValue } from 'app/state/menu/config';
 import { Input } from 'common/components/Input';
 import React from 'react';
+import { useParams } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { BaseDrawer } from './BaseDrawer';
 
@@ -11,29 +13,36 @@ interface Props {
   onClose(): void;
 }
 
-// type Params = {
-//   categoryId: string;
-// };
+type Params = {
+  categoryId: string;
+};
 
 export const CategoryDrawer = (props: Props) => {
-  // const { categoryId } = useParams<Params>();
-  // const isNew = categoryId === 'new';
-
-  // mutations
-  const { createCategory, result } = useCategoryCreate();
-  const { isLoading, isError, error } = result;
+  const { categoryId } = useParams<Params>();
 
   // state
-  const [name, setName] = React.useState('');
+  const { addCategory } = useMenuConfigValue();
+  const { category, id, saveCategory, result } = useCategory(categoryId);
+  const { isLoading, isError, error } = result;
+  const [name, setName] = React.useState(category?.name ?? '');
+  const [enabled, setEnabled] = React.useState(category?.enabled ?? true);
+
+  // side effects
+  React.useEffect(() => {
+    if (category) {
+      setName(category.name);
+      setEnabled(category.enabled ?? true);
+    }
+  }, [category]);
 
   // handlers
   const onSaveHandler = () => {
     (async () => {
-      await createCategory({
+      await saveCategory({
         name,
         enabled: true,
       });
-
+      await addCategory(id);
       props.onClose();
     })();
   };

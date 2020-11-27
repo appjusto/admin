@@ -1,5 +1,5 @@
 import { Box, Flex, Heading, Spacer, Switch } from '@chakra-ui/react';
-import { useCategoryUpdate } from 'app/api/menu/categories/useCategoryUpdate';
+import { useCategory } from 'app/api/menu/categories/useCategory';
 import { Category, Product, WithId } from 'appjusto-types';
 import { ReactComponent as DragHandle } from 'common/img/drag-handle.svg';
 import React from 'react';
@@ -14,7 +14,7 @@ interface Props {
 
 export const CategoryItem = React.memo(({ category, products, index }: Props) => {
   // mutations
-  const { updateCategory } = useCategoryUpdate(category.id);
+  const { updateCategory } = useCategory(category.id);
 
   // UI
   return (

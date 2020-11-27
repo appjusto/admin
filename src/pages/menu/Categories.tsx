@@ -1,13 +1,15 @@
 import { Box } from '@chakra-ui/react';
-import { useMenu } from 'app/api/menu/useMenu';
+import { useCategories } from 'app/state/menu/categories';
 import { useMenuConfigValue } from 'app/state/menu/config';
+import { useGetProductsByCategoryId } from 'app/state/menu/products';
 import React from 'react';
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
 import { CategoryItem } from './categories/CategoryItem';
 
 export const Categories = () => {
   // state
-  const { categories, getProductsByCategoryId } = useMenu();
+  const categories = useCategories();
+  const getProductsByCategoryId = useGetProductsByCategoryId();
   const { updateCategoryIndex, updateProductIndex } = useMenuConfigValue();
 
   // handlers

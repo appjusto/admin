@@ -3,7 +3,7 @@ import { Category, WithId } from 'appjusto-types';
 import React from 'react';
 import { useApi } from '../../context';
 
-export const useCategories = () => {
+export const useObserveCategories = () => {
   // contex
   const api = useApi()!;
   const business = useBusinessValue()!;

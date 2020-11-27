@@ -5,8 +5,9 @@ export const empty = (): MenuConfig => ({ categoriesOrder: [], productsOrderByCa
 
 // categories
 
-export const addCategory = (menuConfig: MenuConfig | undefined, categoryId: string) => {
-  const { categoriesOrder, productsOrderByCategoryId } = menuConfig || empty();
+export const addCategory = (menuConfig: MenuConfig, categoryId: string) => {
+  const { categoriesOrder, productsOrderByCategoryId } = menuConfig;
+  if (categoriesOrder.indexOf(categoryId) !== -1) return menuConfig;
   return {
     categoriesOrder: [...categoriesOrder, categoryId],
     productsOrderByCategoryId: {

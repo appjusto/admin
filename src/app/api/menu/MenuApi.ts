@@ -19,6 +19,9 @@ export default class MenuApi {
   private getCategoriesRef(businessId: string) {
     return this.getBusinessRef(businessId).collection('categories');
   }
+  private getCategoryRef(businessId: string, categoryId: string) {
+    return this.getCategoriesRef(businessId).doc(categoryId);
+  }
   private getProductsRef(businessId: string) {
     return this.getBusinessRef(businessId).collection('products');
   }
@@ -70,9 +73,18 @@ export default class MenuApi {
     return unsubscribe;
   }
 
-  async createCategory(businessId: string, category: Category) {
+  createCategoryRef(businessId: string): string {
+    return this.getCategoriesRef(businessId).doc().id;
+  }
+
+  async fetchCategory(businessId: string, categoryId: string) {
+    const doc = await this.getCategoryRef(businessId, categoryId).get();
+    return documentAs<Category>(doc);
+  }
+
+  async createCategory(businessId: string, categoryId: string, category: Category) {
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
-    await this.getCategoriesRef(businessId).add({
+    await this.getCategoryRef(businessId, categoryId).set({
       ...category,
       createdOn: timestamp,
       updatedOn: timestamp,
@@ -81,12 +93,10 @@ export default class MenuApi {
 
   async updateCategory(businessId: string, categoryId: string, changes: Partial<Category>) {
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
-    await this.getCategoriesRef(businessId)
-      .doc(categoryId)
-      .update({
-        ...changes,
-        updatedOn: timestamp,
-      } as Partial<Category>);
+    await this.getCategoryRef(businessId, categoryId).update({
+      ...changes,
+      updatedOn: timestamp,
+    } as Partial<Category>);
   }
 
   // products

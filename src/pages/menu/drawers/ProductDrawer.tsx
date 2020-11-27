@@ -10,6 +10,7 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { BaseDrawer } from './BaseDrawer';
+import { CategorySelect } from './product/CategorySelect';
 
 interface Params {
   productId: string;
@@ -25,11 +26,11 @@ export const ProductDrawer = (props: Props) => {
   const { productId } = useParams<Params>();
 
   // state
-  const { updateProductCategory } = useMenuConfigValue();
-  const { product, id, image, saveProduct, uploadPhoto, isLoading, isError, error } = useProduct(
-    productId
-  );
+  const { getProductCategoryId, updateProductCategory } = useMenuConfigValue();
+  const { product, id, image, saveProduct, uploadPhoto, result } = useProduct(productId);
+  const { isLoading, isError, error } = result;
   const [name, setName] = React.useState(product?.name ?? '');
+  const [categoryId, setCategoryId] = React.useState<string | undefined>();
   const [description, setDescription] = React.useState(product?.description ?? '');
   const [price, setPrice] = React.useState(product?.price ?? 0);
   const [priceText, setPriceText] = React.useState(i18n.toCurrency(price));
@@ -37,19 +38,18 @@ export const ProductDrawer = (props: Props) => {
   const [enabled, setEnabled] = React.useState(product?.enabled ?? true);
   const [previewURL, setPreviewURL] = React.useState<string | undefined>();
 
-  console.log(id);
-
   // side effects
   React.useEffect(() => {
     if (product) {
       setName(product.name);
+      setCategoryId(getProductCategoryId(id));
       setDescription(product.description ?? '');
       setPrice(product.price ?? 0);
       setPriceText(i18n.toCurrency(product.price ?? 0));
       setExternalId(product.externalId ?? '');
       setEnabled(product.enabled ?? true);
     }
-  }, [product]);
+  }, [getProductCategoryId, id, product]);
 
   // handlers
   const onDropHandler = React.useCallback(
@@ -71,7 +71,7 @@ export const ProductDrawer = (props: Props) => {
         price,
         enabled,
       });
-      await updateProductCategory(id, 'oSKzVeapROF4K8Nawtw3');
+      await updateProductCategory(id, categoryId!);
       props.onClose();
     })();
   };
@@ -95,6 +95,8 @@ export const ProductDrawer = (props: Props) => {
         placeholder={t('Nome do produto')}
         onChange={(ev) => setName(ev.target.value)}
       />
+
+      <CategorySelect mt="4" value={categoryId} onChange={(ev) => setCategoryId(ev.target.value)} />
 
       <Box mt="4">
         <Textarea

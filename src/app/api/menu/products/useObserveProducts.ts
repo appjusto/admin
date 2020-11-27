@@ -3,7 +3,7 @@ import { Product, WithId } from 'appjusto-types';
 import React from 'react';
 import { useApi } from '../../context';
 
-export const useProducts = () => {
+export const useObserveProducts = () => {
   // context
   const api = useApi()!;
   const businessId = useBusinessId()!;

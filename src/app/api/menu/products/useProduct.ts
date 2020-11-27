@@ -25,27 +25,28 @@ export const useProduct = (id: string) => {
   });
 
   // mutations
-  const [saveProduct, saveResult] = useMutation(async (product: Product) => {
-    if (isNew) {
-      await api.menu().createProduct(businessId, productId, product);
-    } else {
-      await api.menu().updateProduct(businessId, productId, product);
-    }
-  });
+  const [createProduct, createResult] = useMutation(async (product: Product) =>
+    api.menu().createProduct(businessId, productId, product)
+  );
+  const [updateProduct, updateResult] = useMutation(async (product: Partial<Product>) =>
+    api.menu().updateProduct(businessId, productId, product)
+  );
   const [uploadPhoto, uploadResult] = useMutation((file: File) => {
     return api.menu().uploadProductPhoto(businessId, productId, file, setUploadProgress);
   });
+  const result = createResult || updateResult || uploadResult;
+  const saveProduct = isNew ? createProduct : updateProduct;
 
   // return
   return {
     product: fetchResult.data,
     id: productId,
     image: fetchProductURL.data,
+    createProduct,
+    updateProduct,
     saveProduct,
     uploadPhoto,
     uploadProgress,
-    isLoading: saveResult.isLoading || uploadResult.isLoading,
-    isError: saveResult.isError || uploadResult.isError,
-    error: saveResult.error || uploadResult.error,
+    result,
   };
 };

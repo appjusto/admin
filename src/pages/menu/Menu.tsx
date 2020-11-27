@@ -1,5 +1,5 @@
 import { Box, Button, Container, Heading, Input, Spacer, Text } from '@chakra-ui/react';
-import { MenuConfigProvider } from 'app/state/menu/config';
+import { MenuProvider } from 'app/state/menu/menu';
 import PageLayout from 'pages/PageLayout';
 import React from 'react';
 import { Link, Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
@@ -18,7 +18,7 @@ const Menu = () => {
 
   // UI
   return (
-    <MenuConfigProvider>
+    <MenuProvider>
       <PageLayout>
         <Container maxW="md">
           <Heading fontSize="lg" mt="4">
@@ -51,7 +51,7 @@ const Menu = () => {
           </Route>
         </Switch>
       </PageLayout>
-    </MenuConfigProvider>
+    </MenuProvider>
   );
 };
 

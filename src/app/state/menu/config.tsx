@@ -8,15 +8,17 @@ import { useBusinessId } from '../business/context';
 
 interface MenuConfigContextValue {
   menuConfig: MenuConfig;
-  updateProductCategory: (productId: string, categoryId: string) => void;
-  updateCategoryIndex: (categoryId: string, newIndex: number) => void;
+  getProductCategoryId: (productId: string) => string | undefined;
+  addCategory: (categoryId: string) => Promise<void>;
+  updateProductCategory: (productId: string, categoryId: string) => Promise<void>;
+  updateCategoryIndex: (categoryId: string, newIndex: number) => Promise<void>;
   updateProductIndex: (
     productId: string,
     fromCategoryId: string,
     toCategoryId: string,
     from: number,
     to: number
-  ) => void;
+  ) => Promise<void>;
 }
 
 const MenuConfigContext = React.createContext<MenuConfigContextValue | undefined>(undefined);
@@ -43,6 +45,12 @@ export const MenuConfigProvider = (
   }, [api, businessId]);
 
   // return
+  const addCategory = (categoryId: string) =>
+    updateMenuConfig(functions.addCategory(menuConfig, categoryId));
+
+  const getProductCategoryId = (productId: string) =>
+    functions.getProductCategoryId(menuConfig, productId);
+
   const updateProductCategory = async (productId: string, categoryId: string) => {
     const currentCategoryId = functions.getProductCategoryId(menuConfig, productId);
     // avoid update when category is the same
@@ -77,6 +85,8 @@ export const MenuConfigProvider = (
 
   const value = {
     menuConfig,
+    addCategory,
+    getProductCategoryId,
     updateProductCategory,
     updateCategoryIndex,
     updateProductIndex,
