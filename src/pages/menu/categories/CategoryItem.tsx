@@ -38,7 +38,9 @@ export const CategoryItem = React.memo(({ category, products, index }: Props) =>
             <Box bg="white" {...draggable.dragHandleProps} ref={draggable.innerRef}>
               <DragHandle />
             </Box>
-            <Heading ml="4">{category.name}</Heading>
+            <Heading fontSize="3xl" ml="4">
+              {category.name}
+            </Heading>
             <Spacer />
             <Switch
               isChecked={category.enabled}
