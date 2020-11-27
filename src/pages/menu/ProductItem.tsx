@@ -57,7 +57,7 @@ export const ProductItem = React.memo(({ product, index }: Props) => {
             <Text fontSize="lg" fontWeight="700">
               {product.name}
             </Text>
-            <Text fontSize="xs">{product.description}</Text>
+            <Text fontSize="sm">{product.description}</Text>
           </Box>
           <Spacer />
           <Switch
