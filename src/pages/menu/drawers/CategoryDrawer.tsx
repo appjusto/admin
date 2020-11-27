@@ -25,13 +25,13 @@ export const CategoryDrawer = (props: Props) => {
   const { category, id, saveCategory, result } = useCategory(categoryId);
   const { isLoading, isError, error } = result;
   const [name, setName] = React.useState(category?.name ?? '');
-  const [enabled, setEnabled] = React.useState(category?.enabled ?? true);
+  // const [enabled, setEnabled] = React.useState(category?.enabled ?? true);
 
   // side effects
   React.useEffect(() => {
     if (category) {
       setName(category.name);
-      setEnabled(category.enabled ?? true);
+      // setEnabled(category.enabled ?? true);
     }
   }, [category]);
 
