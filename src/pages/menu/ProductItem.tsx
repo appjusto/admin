@@ -1,5 +1,4 @@
 import { Box, Flex, Image, Spacer, Switch, Text } from '@chakra-ui/react';
-import { useApi } from 'app/api/context';
 import { useProductImageURL } from 'app/api/menu/products/useProductImageURL';
 import { useProductUpdate } from 'app/api/menu/products/useProductUpdate';
 import { Product, WithId } from 'appjusto-types';
@@ -16,7 +15,6 @@ interface Props {
 
 export const ProductItem = React.memo(({ product, index }: Props) => {
   // context
-  const api = useApi();
   const { url } = useRouteMatch();
 
   // queries
