@@ -3,6 +3,7 @@ import { useBusinessId } from 'app/state/business/context';
 import { Product } from 'appjusto-types';
 import { useMutation, useQuery } from 'react-query';
 import { useApi } from '../../context';
+import { useProductImageURL } from './useProductImageURL';
 
 export const useProduct = (id: string) => {
   // context
@@ -19,10 +20,7 @@ export const useProduct = (id: string) => {
   const fetchProduct = (key: string) => api.menu().fetchProduct(businessId, productId);
   const fetchResult = useQuery(['product', productId], fetchProduct, { enabled: !isNew });
 
-  const getProductURL = (key: string) => api.menu().getProductURL(businessId, productId);
-  const fetchProductURL = useQuery(['product:image', productId], getProductURL, {
-    enabled: !isNew,
-  });
+  const { data: image } = useProductImageURL(productId);
 
   // mutations
   const [createProduct, createResult] = useMutation(async (product: Product) =>
@@ -41,7 +39,7 @@ export const useProduct = (id: string) => {
   return {
     product: fetchResult.data,
     id: productId,
-    image: fetchProductURL.data,
+    image,
     createProduct,
     updateProduct,
     saveProduct,

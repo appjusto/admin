@@ -23,7 +23,7 @@ const HomeRightImage = React.lazy(() => import(/* webpackPrefetch: true */ './im
 
 const Home = () => {
   // context
-  const api = useApi()!;
+  const api = useApi();
 
   // refs
   const emailRef = React.useRef<HTMLInputElement>(null);
@@ -57,46 +57,53 @@ const Home = () => {
       <Center w={['100%', 1 / 3]}>
         <Box width="full" p="16">
           <Logo />
-          <Box mt="8">
-            <Text fontSize="xl">{t('Portal do Parrceiro')}</Text>
-            <Text fontSize="md" color="gray.500">
-              {t('Gerencie seu estabelecimento')}
-            </Text>
-            <Box mt="4">
-              <FormControl isRequired>
-                <Input
-                  ref={emailRef}
-                  id="email"
-                  label={t('E-mail')}
-                  placeholder={t('Endereço de e-mail')}
-                  value={email}
-                  onChange={(ev) => setEmail(ev.target.value)}
-                />
-              </FormControl>
-              <Box mt="6">
-                {isError && (
-                  <Alert status="error">
-                    <AlertIcon />
-                    <AlertTitle mr={2}>{t('Erro!')}</AlertTitle>
-                    <AlertDescription>
-                      {getErrorMessage(error) ?? t('Tenta de novo?')}
-                    </AlertDescription>
-                  </Alert>
-                )}
-                {isSuccess && (
-                  <Alert status="success">
-                    <AlertIcon />
-                    <AlertDescription>
-                      {t('Pronto! O link de acesso foi enviado para seu e-mail.')}
-                    </AlertDescription>
-                  </Alert>
-                )}
+          <form
+            onSubmit={(ev) => {
+              ev.preventDefault();
+              loginHandler();
+            }}
+          >
+            <Box mt="8">
+              <Text fontSize="xl">{t('Portal do Parceiro')}</Text>
+              <Text fontSize="md" color="gray.500">
+                {t('Gerencie seu estabelecimento')}
+              </Text>
+              <Box mt="4">
+                <FormControl isRequired>
+                  <Input
+                    ref={emailRef}
+                    id="email"
+                    label={t('E-mail')}
+                    placeholder={t('Endereço de e-mail')}
+                    value={email}
+                    onChange={(ev) => setEmail(ev.target.value)}
+                  />
+                </FormControl>
+                <Box mt="6">
+                  {isError && (
+                    <Alert status="error">
+                      <AlertIcon />
+                      <AlertTitle mr={2}>{t('Erro!')}</AlertTitle>
+                      <AlertDescription>
+                        {getErrorMessage(error) ?? t('Tenta de novo?')}
+                      </AlertDescription>
+                    </Alert>
+                  )}
+                  {isSuccess && (
+                    <Alert status="success">
+                      <AlertIcon />
+                      <AlertDescription>
+                        {t('Pronto! O link de acesso foi enviado para seu e-mail.')}
+                      </AlertDescription>
+                    </Alert>
+                  )}
+                </Box>
               </Box>
+              <Button width="full" mt="6" onClick={loginHandler} isLoading={isLoading}>
+                {t('Entrar')}
+              </Button>
             </Box>
-            <Button width="full" mt="6" onClick={loginHandler} isLoading={isLoading}>
-              {t('Entrar')}
-            </Button>
-          </Box>
+          </form>
         </Box>
       </Center>
       <Box w={[0, 1 / 3]} display={['none', 'revert']}>

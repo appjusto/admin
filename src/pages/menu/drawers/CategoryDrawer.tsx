@@ -59,24 +59,31 @@ export const CategoryDrawer = (props: Props) => {
       onSave={onSaveHandler}
       isLoading={isLoading}
     >
-      <Input
-        ref={inputRef}
-        value={name}
-        label={t('Nova categoria')}
-        placeholder={t('Nome da categoria')}
-        onChange={(ev) => setName(ev.target.value)}
-      />
-      {isError && (
-        <Box mt="6">
-          {isError && (
-            <Alert status="error">
-              <AlertIcon />
-              <AlertTitle mr={2}>{t('Erro!')}</AlertTitle>
-              <AlertDescription>{getErrorMessage(error) ?? t('Tenta de novo?')}</AlertDescription>
-            </Alert>
-          )}
-        </Box>
-      )}
+      <form
+        onSubmit={(ev) => {
+          ev.preventDefault();
+          onSaveHandler();
+        }}
+      >
+        <Input
+          ref={inputRef}
+          value={name}
+          label={t('Nova categoria')}
+          placeholder={t('Nome da categoria')}
+          onChange={(ev) => setName(ev.target.value)}
+        />
+        {isError && (
+          <Box mt="6">
+            {isError && (
+              <Alert status="error">
+                <AlertIcon />
+                <AlertTitle mr={2}>{t('Erro!')}</AlertTitle>
+                <AlertDescription>{getErrorMessage(error) ?? t('Tenta de novo?')}</AlertDescription>
+              </Alert>
+            )}
+          </Box>
+        )}
+      </form>
     </BaseDrawer>
   );
 };

@@ -1,9 +1,11 @@
 import { Box, Flex, Heading, Spacer, Switch } from '@chakra-ui/react';
 import { useCategory } from 'app/api/menu/categories/useCategory';
 import { Category, Product, WithId } from 'appjusto-types';
+import { EditButton } from 'common/components/buttons/EditButton';
 import { ReactComponent as DragHandle } from 'common/img/drag-handle.svg';
 import React from 'react';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
+import { Link, useRouteMatch } from 'react-router-dom';
 import { ProductItem } from '../ProductItem';
 
 interface Props {
@@ -13,6 +15,9 @@ interface Props {
 }
 
 export const CategoryItem = React.memo(({ category, products, index }: Props) => {
+  // context
+  const { url } = useRouteMatch();
+
   // mutations
   const { updateCategory } = useCategory(category.id);
 
@@ -23,6 +28,7 @@ export const CategoryItem = React.memo(({ category, products, index }: Props) =>
         <Box
           borderWidth="1px"
           borderRadius="lg"
+          bg="white"
           ref={draggable.innerRef}
           {...draggable.draggableProps}
           p="6"
@@ -41,13 +47,16 @@ export const CategoryItem = React.memo(({ category, products, index }: Props) =>
                 updateCategory({ enabled: ev.target.checked });
               }}
             />
+            <Link to={`${url}/category/${category.id}`}>
+              <EditButton />
+            </Link>
           </Flex>
           <Droppable droppableId={category.id} type="product">
             {(droppable, snapshot) => (
               <Box
                 ref={droppable.innerRef}
                 {...droppable.droppableProps}
-                bg={snapshot.isDraggingOver ? 'gray.500' : 'white'}
+                bg={snapshot.isDraggingOver ? 'gray.50' : 'white'}
                 minH={100}
               >
                 {products &&
