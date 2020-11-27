@@ -46,10 +46,10 @@ export const ProductItem = React.memo(({ product, index }: Props) => {
             <Image
               ml="4"
               src={image ?? undefined}
-              fallbackSrc="https://via.placeholder.com/96"
+              fallbackSrc="static/media/product-placeholder.png"
               boxSize="24"
               objectFit="contain"
-              borderRadius="full"
+              borderRadius="8px"
               alt="Product image"
             />
           </Link>
