@@ -1,4 +1,13 @@
-import { Box, Button, Container, Heading, Input, Spacer, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Container,
+  Heading,
+  Input,
+  Spacer,
+  Text,
+  useBreakpoint,
+} from '@chakra-ui/react';
 import { MenuProvider } from 'app/state/menu/menu';
 import PageLayout from 'pages/PageLayout';
 import React from 'react';
@@ -20,10 +29,17 @@ const Menu = () => {
   const closeDrawerHandler = () => history.replace(path);
 
   // UI
+  const breakpoint = useBreakpoint();
+  const Wrapper = ({ children }: { children: React.ReactNode }) =>
+    breakpoint === 'base' ? (
+      <Box p="6">{children}</Box>
+    ) : (
+      <Container maxW="md">{children}</Container>
+    );
   return (
     <MenuProvider>
       <PageLayout>
-        <Container maxW="md">
+        <Wrapper>
           <Heading fontSize="lg" mt="4">
             {t('Cardápio')}
           </Heading>
@@ -49,7 +65,7 @@ const Menu = () => {
           <Box mt="2">
             <Categories productSearch={productSearch} />
           </Box>
-        </Container>
+        </Wrapper>
         <Switch>
           <Route path={`${path}/product/:productId`}>
             <ProductDrawer isOpen onClose={closeDrawerHandler} />
