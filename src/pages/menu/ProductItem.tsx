@@ -42,7 +42,7 @@ export const ProductItem = React.memo(({ product, index }: Props) => {
           </Box>
           <Link to={`${url}/product/${product.id}`}>
             <Image
-              mh="4"
+              marginX="4"
               src={image ?? undefined}
               fallbackSrc="static/media/product-placeholder.png"
               boxSize="24"

@@ -13,6 +13,9 @@ const Menu = () => {
   const { path, url } = useRouteMatch();
   const history = useHistory();
 
+  // state
+  const [productSearch, setProductSearch] = React.useState('');
+
   // handler
   const closeDrawerHandler = () => history.replace(path);
 
@@ -36,10 +39,15 @@ const Menu = () => {
               </Button>
             </Link>
             <Spacer />
-            <Input ml="32" placeholder={t('Encontre um produto adicionado')} />
+            <Input
+              ml="32"
+              value={productSearch}
+              placeholder={t('Encontre um produto adicionado')}
+              onChange={(ev) => setProductSearch(ev.target.value)}
+            />
           </Box>
           <Box mt="2">
-            <Categories />
+            <Categories productSearch={productSearch} />
           </Box>
         </Container>
         <Switch>

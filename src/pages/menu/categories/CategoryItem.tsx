@@ -12,9 +12,10 @@ interface Props {
   category: WithId<Category>;
   products: WithId<Product>[];
   index: number;
+  hidden?: boolean;
 }
 
-export const CategoryItem = React.memo(({ category, products, index }: Props) => {
+export const CategoryItem = React.memo(({ category, products, index, hidden }: Props) => {
   // context
   const { url } = useRouteMatch();
 
@@ -33,6 +34,7 @@ export const CategoryItem = React.memo(({ category, products, index }: Props) =>
           {...draggable.draggableProps}
           p="6"
           mb="6"
+          d={hidden ? 'none' : 'block'}
         >
           <Flex alignItems="center" mb="6">
             <Box bg="white" {...draggable.dragHandleProps} ref={draggable.innerRef}>
