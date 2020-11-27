@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "endless-bolt-281414"
+  },
+  "targets": {
+    "endless-bolt-281414": {
+      "hosting": {
+        "admin": [
+          "appjusto-admin"
+        ]
+      }
+    }
+  }
+}
