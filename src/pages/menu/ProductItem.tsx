@@ -44,7 +44,7 @@ export const ProductItem = React.memo(({ product, index }: Props) => {
           </Box>
           <Link to={`${url}/product/${product.id}`}>
             <Image
-              ml="4"
+              mh="4"
               src={image ?? undefined}
               fallbackSrc="static/media/product-placeholder.png"
               boxSize="24"
@@ -53,7 +53,7 @@ export const ProductItem = React.memo(({ product, index }: Props) => {
               alt="Product image"
             />
           </Link>
-          <Box bg="white" ml="4">
+          <Box bg="white">
             <Text fontSize="lg" fontWeight="700">
               {product.name}
             </Text>
