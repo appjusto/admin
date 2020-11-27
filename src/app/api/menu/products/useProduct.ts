@@ -9,7 +9,8 @@ export const useProduct = (id: string) => {
   const api = useApi();
   const businessId = useBusinessId();
   const isNew = id === 'new';
-  const productId = isNew ? api.menu().createProductRef(businessId) : id;
+  const idRef = React.useRef(isNew ? api.menu().createProductRef(businessId) : id);
+  const productId = idRef.current;
 
   // state
   const [uploadProgress, setUploadProgress] = React.useState(0);
@@ -34,20 +35,17 @@ export const useProduct = (id: string) => {
   const [uploadPhoto, uploadResult] = useMutation((file: File) => {
     return api.menu().uploadProductPhoto(businessId, productId, file, setUploadProgress);
   });
-  const [updateCategory, updateCategoryResult] = useMutation((categoryId: string) =>
-    api.menu().updateProductCategory(businessId, productId, categoryId)
-  );
 
   // return
   return {
     product: fetchResult.data,
+    id: productId,
     image: fetchProductURL.data,
     saveProduct,
-    updateCategory,
     uploadPhoto,
     uploadProgress,
-    isLoading: saveResult.isLoading || updateCategoryResult.isLoading || uploadResult.isLoading,
-    isError: saveResult.isError || updateCategoryResult.isError || uploadResult.isError,
-    error: saveResult.error || updateCategoryResult.error || uploadResult.error,
+    isLoading: saveResult.isLoading || uploadResult.isLoading,
+    isError: saveResult.isError || uploadResult.isError,
+    error: saveResult.error || uploadResult.error,
   };
 };

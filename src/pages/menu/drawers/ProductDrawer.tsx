@@ -1,6 +1,7 @@
 import { Alert, AlertDescription, AlertIcon, AlertTitle, Box, Text } from '@chakra-ui/react';
 import { useProduct } from 'app/api/menu/products/useProduct';
 import { getErrorMessage } from 'app/api/utils';
+import { useMenuConfigValue } from 'app/state/menu/config';
 import { FileDropzone } from 'common/components/FileDropzone';
 import { Input } from 'common/components/Input';
 import { Textarea } from 'common/components/Textarea';
@@ -22,20 +23,12 @@ interface Props {
 export const ProductDrawer = (props: Props) => {
   // context
   const { productId } = useParams<Params>();
-  const isNew = productId === 'new';
 
   // state
-  const {
-    product,
-    image,
-    createProduct,
-    updateProduct,
-    uploadPhoto,
-    addToCategory,
-    isLoading,
-    isError,
-    error,
-  } = useProduct(productId);
+  const { updateProductCategory } = useMenuConfigValue();
+  const { product, id, image, saveProduct, uploadPhoto, isLoading, isError, error } = useProduct(
+    productId
+  );
   const [name, setName] = React.useState(product?.name ?? '');
   const [description, setDescription] = React.useState(product?.description ?? '');
   const [price, setPrice] = React.useState(product?.price ?? 0);
@@ -44,7 +37,7 @@ export const ProductDrawer = (props: Props) => {
   const [enabled, setEnabled] = React.useState(product?.enabled ?? true);
   const [previewURL, setPreviewURL] = React.useState<string | undefined>();
 
-  console.log(image);
+  console.log(id);
 
   // side effects
   React.useEffect(() => {
@@ -71,24 +64,14 @@ export const ProductDrawer = (props: Props) => {
 
   const onSaveHandler = () => {
     (async () => {
-      if (isNew) {
-        await createProduct({
-          name,
-          description,
-          externalId,
-          price,
-          enabled,
-        });
-        await addToCategory('a');
-      } else {
-        await updateProduct({
-          name,
-          description,
-          externalId,
-          price,
-          enabled,
-        });
-      }
+      await saveProduct({
+        name,
+        description,
+        externalId,
+        price,
+        enabled,
+      });
+      await updateProductCategory(id, 'oSKzVeapROF4K8Nawtw3');
       props.onClose();
     })();
   };

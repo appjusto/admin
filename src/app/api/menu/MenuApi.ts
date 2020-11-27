@@ -34,7 +34,7 @@ export default class MenuApi {
 
   // public
   // firestore
-  // menu
+  // menu config
   observeMenuConfig(
     businessId: string,
     resultHandler: (orders: MenuConfig) => void
@@ -51,7 +51,7 @@ export default class MenuApi {
   }
 
   async updateMenuConfig(businessId: string, menuConfig: MenuConfig) {
-    await this.getMenuConfigRef(businessId).update(menuConfig);
+    await this.getMenuConfigRef(businessId).set(menuConfig, { merge: true });
   }
 
   // categories
@@ -72,21 +72,11 @@ export default class MenuApi {
 
   async createCategory(businessId: string, category: Category) {
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
-    const doc = await this.getCategoriesRef(businessId).add({
+    await this.getCategoriesRef(businessId).add({
       ...category,
       createdOn: timestamp,
       updatedOn: timestamp,
     } as Category);
-    const menuConfigRef = this.getMenuConfigRef(businessId);
-    const menuConfigSnapshot = await menuConfigRef.get();
-    const menuConfig = menuConfigSnapshot.data() as MenuConfig;
-    const categoriesOrder = (menuConfig?.categoriesOrder ?? []).concat(doc.id);
-    await menuConfigRef.set(
-      {
-        categoriesOrder,
-      } as Partial<MenuConfig>,
-      { merge: true }
-    );
   }
 
   async updateCategory(businessId: string, categoryId: string, changes: Partial<Category>) {
@@ -159,32 +149,6 @@ export default class MenuApi {
   getProductURL(businessId: string, productId: string) {
     return this.files.getDownloadURL(
       `${this.getStoragePath(businessId)}/${productId}_1024x1024.jpg`
-    );
-  }
-
-  async updateProductCategory(businessId: string, categoryId: string, productId: string) {
-    const menuConfigRef = this.getMenuConfigRef(businessId);
-    const menuConfigSnapshot = await menuConfigRef.get();
-    const menuConfig = menuConfigSnapshot.data() as MenuConfig;
-    const { categoriesOrder, productsOrderByCategoryId } = menuConfig;
-
-    // removing from previous category
-    const previousCategoryId = (categoriesOrder ?? []).find(
-      (id) => productsOrderByCategoryId[id].indexOf(productId) !== -1
-    );
-
-    // adding to current category
-    const productsOrder = (menuConfig.productsOrderByCategoryId[categoryId] ?? []).concat(
-      productId
-    );
-    await menuConfigRef.set(
-      {
-        productsOrderByCategoryId: {
-          ...menuConfig.productsOrderByCategoryId,
-          [categoryId]: productsOrder,
-        },
-      } as Partial<MenuConfig>,
-      { merge: true }
     );
   }
 }

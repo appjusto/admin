@@ -53,13 +53,8 @@ export const addProductToCategory = (
   categoryId: string
 ) => {
   const { productsOrderByCategoryId } = menuConfig;
-  const previousCategoryId = getProductCategoryId(menuConfig, productId);
-  // avoid update when category is the same
-  if (previousCategoryId === categoryId) return menuConfig;
   return {
-    ...(previousCategoryId
-      ? removeProductFromCategory(menuConfig, productId, previousCategoryId)
-      : menuConfig),
+    ...menuConfig,
     productsOrderByCategoryId: {
       ...productsOrderByCategoryId,
       [categoryId]: (productsOrderByCategoryId[categoryId] ?? []).concat(productId),
@@ -69,7 +64,9 @@ export const addProductToCategory = (
 
 export const getProductCategoryId = (menuConfig: MenuConfig, productId: string) => {
   const { categoriesOrder, productsOrderByCategoryId } = menuConfig;
-  return categoriesOrder.find((id) => productsOrderByCategoryId[id].indexOf(productId) !== -1);
+  return categoriesOrder.find(
+    (id) => (productsOrderByCategoryId[id] ?? []).indexOf(productId) !== -1
+  );
 };
 
 export const removeProductFromCategory = (

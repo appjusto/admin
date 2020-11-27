@@ -7,15 +7,15 @@ import { useBusinessId } from '../business/context';
 
 interface MenuConfigContextValue {
   menuConfig: MenuConfig;
-  addProductToCategory: (productId: string, categoryId: string) => Promise<void>;
-  updateCategoryIndex: (categoryId: string, newIndex: number) => Promise<void>;
+  updateProductCategory: (productId: string, categoryId: string) => void;
+  updateCategoryIndex: (categoryId: string, newIndex: number) => void;
   updateProductIndex: (
     productId: string,
     fromCategoryId: string,
     toCategoryId: string,
     from: number,
     to: number
-  ) => Promise<void>;
+  ) => void;
 }
 
 const MenuConfigContext = React.createContext<MenuConfigContextValue | undefined>(undefined);
@@ -40,8 +40,23 @@ export const MenuConfigProvider = (
   }, [api, businessId]);
 
   // return
-  const addProductToCategory = (productId: string, categoryId: string) =>
-    updateMenuConfig(functions.addProductToCategory(menuConfig, productId, categoryId));
+  const updateProductCategory = async (productId: string, categoryId: string) => {
+    const currentCategoryId = functions.getProductCategoryId(menuConfig, productId);
+    // avoid update when category is the same
+    if (currentCategoryId === categoryId) return;
+    let nextMenuConfig: MenuConfig = menuConfig;
+    // remove product from its current category
+    if (currentCategoryId) {
+      nextMenuConfig = functions.removeProductFromCategory(
+        menuConfig,
+        productId,
+        currentCategoryId
+      );
+    }
+    // add to the new category
+    nextMenuConfig = functions.addProductToCategory(menuConfig, productId, categoryId);
+    updateMenuConfig(nextMenuConfig);
+  };
 
   const updateCategoryIndex = (categoryId: string, newIndex: number) =>
     updateMenuConfig(functions.updateCategoryIndex(menuConfig, categoryId, newIndex));
@@ -59,7 +74,7 @@ export const MenuConfigProvider = (
 
   const value = {
     menuConfig,
-    addProductToCategory,
+    updateProductCategory,
     updateCategoryIndex,
     updateProductIndex,
   } as MenuConfigContextValue;
