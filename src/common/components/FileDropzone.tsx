@@ -35,7 +35,7 @@ export const FileDropzone = ({
       <input {...getInputProps()} />
       <Center w="100%">
         {!preview && <DropImage />}
-        {preview && <Image src={preview} />}
+        {preview && <Image width={width} height={height} objectFit="contain" src={preview} />}
       </Center>
     </Flex>
   );
