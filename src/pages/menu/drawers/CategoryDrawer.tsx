@@ -2,7 +2,7 @@ import { Alert, AlertDescription, AlertIcon, AlertTitle, Box } from '@chakra-ui/
 import { useCategory } from 'app/api/menu/categories/useCategory';
 import { getErrorMessage } from 'app/api/utils';
 import { useMenuConfigValue } from 'app/state/menu/config';
-import { Input } from 'common/components/Input';
+import { Input } from 'common/components/form/Input';
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { t } from 'utils/i18n';

@@ -3,8 +3,8 @@ import { useProduct } from 'app/api/menu/products/useProduct';
 import { getErrorMessage } from 'app/api/utils';
 import { useMenuConfigValue } from 'app/state/menu/config';
 import { FileDropzone } from 'common/components/FileDropzone';
-import { Input } from 'common/components/Input';
-import { Textarea } from 'common/components/Textarea';
+import { Input } from 'common/components/form/Input';
+import { Textarea } from 'common/components/form/Textarea';
 import i18n from 'i18n-js';
 import React from 'react';
 import { useParams } from 'react-router-dom';
@@ -27,7 +27,7 @@ export const ProductDrawer = (props: Props) => {
 
   // state
   const { getProductCategoryId, updateProductCategory } = useMenuConfigValue();
-  const { product, id, image, saveProduct, uploadPhoto, result } = useProduct(productId);
+  const { product, id, isNew, image, saveProduct, uploadPhoto, result } = useProduct(productId);
   const { isLoading, isError, error } = result;
   const [name, setName] = React.useState(product?.name ?? '');
   const [categoryId, setCategoryId] = React.useState<string | undefined>();
@@ -83,7 +83,7 @@ export const ProductDrawer = (props: Props) => {
   return (
     <BaseDrawer
       {...props}
-      title={t('Adicionar produto')}
+      title={isNew ? t('Adicionar produto') : t('Alterar produto')}
       initialFocusRef={inputRef}
       onSave={onSaveHandler}
       isLoading={isLoading}
@@ -102,11 +102,9 @@ export const ProductDrawer = (props: Props) => {
           onChange={(ev) => setName(ev.target.value)}
         />
 
-        <CategorySelect
-          mt="4"
-          value={categoryId}
-          onChange={(ev) => setCategoryId(ev.target.value)}
-        />
+        <Box mt="4">
+          <CategorySelect value={categoryId} onChange={(ev) => setCategoryId(ev.target.value)} />
+        </Box>
 
         <Box mt="4">
           <Textarea

@@ -39,6 +39,7 @@ export const useProduct = (id: string) => {
   return {
     product: fetchResult.data,
     id: productId,
+    isNew,
     image,
     createProduct,
     updateProduct,
