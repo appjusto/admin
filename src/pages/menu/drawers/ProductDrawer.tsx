@@ -1,5 +1,5 @@
 import { Alert, AlertDescription, AlertIcon, AlertTitle, Box, Text } from '@chakra-ui/react';
-import { useProduct } from 'app/api/menu/products/useProduct';
+import { useProduct } from 'app/api/business/products/useProduct';
 import { getErrorMessage } from 'app/api/utils';
 import { useMenuConfigValue } from 'app/state/menu/config';
 import { FileDropzone } from 'common/components/FileDropzone';

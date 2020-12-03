@@ -57,7 +57,7 @@ export const Links = () => {
           <Link to="/menu">{t('Cardápio')}</Link>
           <Link to="/">{t('Horários')}</Link>
           <Link to="/">{t('Área de entrega')}</Link>
-          <Link to="/">{t('Perfil do restaurante')}</Link>
+          <Link to="/profile">{t('Perfil do restaurante')}</Link>
         </LinksContainer>
       </Box>
     </Box>

@@ -1,5 +1,5 @@
 import firebase from 'firebase/app';
-import { WithId, Category, Product } from 'appjusto-types';
+import { WithId, Category, Product, Business } from 'appjusto-types';
 import { documentAs, documentsAs } from '../utils';
 import { MenuConfig } from 'appjusto-types/menu';
 import FilesApi from '../FilesApi';
@@ -37,10 +37,25 @@ export default class MenuApi {
 
   // public
   // firestore
+  // business profile
+  observeBusinessProfile(
+    businessId: string,
+    resultHandler: (business: WithId<Business>) => void
+  ): firebase.Unsubscribe {
+    const unsubscribe = this.getBusinessRef(businessId).onSnapshot(
+      (doc) => {
+        resultHandler({ ...(doc.data() as Business), id: businessId });
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+    return unsubscribe;
+  }
   // menu config
   observeMenuConfig(
     businessId: string,
-    resultHandler: (orders: MenuConfig) => void
+    resultHandler: (menuConfig: MenuConfig) => void
   ): firebase.Unsubscribe {
     const unsubscribe = this.getMenuConfigRef(businessId).onSnapshot(
       (doc) => {
@@ -60,7 +75,7 @@ export default class MenuApi {
   // categories
   observeCategories(
     businessId: string,
-    resultHandler: (orders: WithId<Category>[]) => void
+    resultHandler: (categories: WithId<Category>[]) => void
   ): firebase.Unsubscribe {
     const unsubscribe = this.getCategoriesRef(businessId).onSnapshot(
       (querySnapshot) => {
@@ -102,7 +117,7 @@ export default class MenuApi {
   // products
   observeProducts(
     businessId: string,
-    resultHandler: (orders: WithId<Product>[]) => void
+    resultHandler: (products: WithId<Product>[]) => void
   ): firebase.Unsubscribe {
     const query = this.getProductsRef(businessId);
     const unsubscribe = query.onSnapshot(

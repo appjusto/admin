@@ -9,10 +9,12 @@ interface Props {
 const PageHeader = ({ title, subtitle }: Props) => {
   return (
     <>
-      <Heading fontSize="lg" mt="4">
+      <Heading color="black" fontSize="2xl" mt="4">
         {title}
       </Heading>
-      <Text fontSize="sm">{subtitle}</Text>
+      <Text mt="1" fontSize="sm">
+        {subtitle}
+      </Text>
     </>
   );
 };

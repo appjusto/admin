@@ -1,7 +1,7 @@
 import { useBusinessId } from 'app/state/business/context';
 import { Product, WithId } from 'appjusto-types';
 import React from 'react';
-import { useApi } from '../../context';
+import { useApi } from '../../../state/api/context';
 
 export const useObserveProducts = () => {
   // context
@@ -13,7 +13,7 @@ export const useObserveProducts = () => {
 
   // side effects
   React.useEffect(() => {
-    return api.menu().observeProducts(businessId, setProducts);
+    return api.business().observeProducts(businessId, setProducts);
   }, [api, businessId]);
 
   // return

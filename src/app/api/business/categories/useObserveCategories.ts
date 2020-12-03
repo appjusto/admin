@@ -1,7 +1,7 @@
 import { useBusinessValue } from 'app/state/business/context';
 import { Category, WithId } from 'appjusto-types';
 import React from 'react';
-import { useApi } from '../../context';
+import { useApi } from '../../../state/api/context';
 
 export const useObserveCategories = () => {
   // contex
@@ -13,7 +13,7 @@ export const useObserveCategories = () => {
 
   // side effects
   React.useEffect(() => {
-    return api.menu().observeCategories(business.id, setCategories);
+    return api.business().observeCategories(business.id, setCategories);
   }, [api, business.id]);
 
   // return

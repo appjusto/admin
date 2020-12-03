@@ -1,4 +1,4 @@
-import { ApiConfig } from 'app/config/types';
+import { ApiConfig } from 'app/api/config/types';
 import firebase from 'firebase/app';
 
 export default class AuthApi {

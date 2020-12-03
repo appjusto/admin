@@ -1,5 +1,5 @@
 import { Box, Flex, Heading, Spacer, Switch } from '@chakra-ui/react';
-import { useCategory } from 'app/api/menu/categories/useCategory';
+import { useCategory } from 'app/api/business/categories/useCategory';
 import { Category, Product, WithId } from 'appjusto-types';
 import { EditButton } from 'common/components/buttons/EditButton';
 import { ReactComponent as DragHandle } from 'common/img/drag-handle.svg';

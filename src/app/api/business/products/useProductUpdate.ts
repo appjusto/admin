@@ -1,7 +1,7 @@
 import { useBusinessId } from 'app/state/business/context';
 import { Product } from 'appjusto-types';
 import { useMutation } from 'react-query';
-import { useApi } from '../../context';
+import { useApi } from '../../../state/api/context';
 
 export const useProductUpdate = (productId: string) => {
   // context
@@ -10,7 +10,7 @@ export const useProductUpdate = (productId: string) => {
 
   // mutations
   const [updateProduct, result] = useMutation((changes: Partial<Product>) =>
-    api.menu().updateProduct(businessId, productId, changes)
+    api.business().updateProduct(businessId, productId, changes)
   );
 
   // return

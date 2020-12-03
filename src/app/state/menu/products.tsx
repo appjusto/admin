@@ -1,4 +1,4 @@
-import { useObserveProducts } from 'app/api/menu/products/useObserveProducts';
+import { useObserveProducts } from 'app/api/business/products/useObserveProducts';
 import { Product, WithId } from 'appjusto-types';
 import { memoize } from 'lodash';
 import React from 'react';

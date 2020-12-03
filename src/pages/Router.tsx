@@ -6,6 +6,7 @@ import { ProtectedRoute } from './ProtectedRoute';
 const Login = React.lazy(() => import(/* webpackPrefetch: true */ 'pages/login/Login'));
 const Join = React.lazy(() => import(/* webpackPrefetch: true */ 'pages/join/Join'));
 const Menu = React.lazy(() => import(/* webpackPrefetch: true */ 'pages/menu/Menu'));
+const Profile = React.lazy(() => import(/* webpackPrefetch: true */ 'pages/profile/Profile'));
 
 export const Router = () => {
   return (
@@ -15,6 +16,7 @@ export const Router = () => {
           <Route exact path="/" component={Login} />
           <Route path="/join" component={Join} />
           <ProtectedRoute path="/menu" component={Menu} />
+          <ProtectedRoute path="/profile" component={Profile} />
         </Switch>
       </React.Suspense>
     </BrowserRouter>

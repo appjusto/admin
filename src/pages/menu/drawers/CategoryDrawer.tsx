@@ -1,5 +1,5 @@
 import { Alert, AlertDescription, AlertIcon, AlertTitle, Box } from '@chakra-ui/react';
-import { useCategory } from 'app/api/menu/categories/useCategory';
+import { useCategory } from 'app/api/business/categories/useCategory';
 import { getErrorMessage } from 'app/api/utils';
 import { useMenuConfigValue } from 'app/state/menu/config';
 import { Input } from 'common/components/form/Input';

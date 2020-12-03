@@ -1,6 +1,6 @@
 import { Box, Flex, Image, Spacer, Switch, Text } from '@chakra-ui/react';
-import { useProductImageURL } from 'app/api/menu/products/useProductImageURL';
-import { useProductUpdate } from 'app/api/menu/products/useProductUpdate';
+import { useProductImageURL } from 'app/api/business/products/useProductImageURL';
+import { useProductUpdate } from 'app/api/business/products/useProductUpdate';
 import { Product, WithId } from 'appjusto-types';
 import { EditButton } from 'common/components/buttons/EditButton';
 import { ReactComponent as DragHandle } from 'common/img/drag-handle.svg';

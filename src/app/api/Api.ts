@@ -1,13 +1,13 @@
-import { ApiConfig } from 'app/config/types';
+import { ApiConfig } from 'app/api/config/types';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
 import 'firebase/functions';
 import 'firebase/storage';
-import AuthApi from './AuthApi';
+import AuthApi from './auth/AuthApi';
 import FilesApi from './FilesApi';
-import MenuApi from './menu/MenuApi';
-import ProfileApi from './ProfileApi';
+import BusinessApi from './business/BusinessApi';
+import ManagerProfile from './manager/ManagerProfile';
 
 export default class Api {
   private static _firebaseInitialized: boolean = false;
@@ -19,8 +19,8 @@ export default class Api {
 
   private _auth: AuthApi;
   private _files: FilesApi;
-  private _profile: ProfileApi;
-  private _menu: MenuApi;
+  private _manager: ManagerProfile;
+  private _business: BusinessApi;
 
   constructor(config: ApiConfig) {
     if (!Api._firebaseInitialized) {
@@ -44,19 +44,19 @@ export default class Api {
 
     this._auth = new AuthApi(this._authentication, this._functions, config);
     this._files = new FilesApi(this._storage);
-    this._profile = new ProfileApi(this._firestore, this._functions);
-    this._menu = new MenuApi(this._firestore, this._functions, this._files);
+    this._manager = new ManagerProfile(this._firestore, this._functions);
+    this._business = new BusinessApi(this._firestore, this._functions, this._files);
   }
 
   auth() {
     return this._auth;
   }
 
-  profile() {
-    return this._profile;
+  manager() {
+    return this._manager;
   }
 
-  menu() {
-    return this._menu;
+  business() {
+    return this._business;
   }
 }

@@ -1,4 +1,4 @@
-import { useObserveCategories } from 'app/api/menu/categories/useObserveCategories';
+import { useObserveCategories } from 'app/api/business/categories/useObserveCategories';
 import { Category, WithId } from 'appjusto-types';
 import React from 'react';
 import { useMenuConfigValue } from './config';

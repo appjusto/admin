@@ -1,7 +1,7 @@
 import { StateProvider } from 'app/state/StateProvider';
 import React from 'react';
 import { QueryCache, ReactQueryCacheProvider } from 'react-query';
-import { ApiProvider } from './api/context';
+import { ApiProvider } from './state/api/context';
 import { ChakraUIProvider } from './styles/ChakraUIProvider';
 
 interface Props {

@@ -1,6 +1,6 @@
-import { getConfig } from 'app/config';
+import { getConfig } from 'app/api/config';
 import React, { useContext } from 'react';
-import Api from './Api';
+import Api from '../../api/Api';
 
 const ApiContext = React.createContext<Api | undefined>(undefined);
 
