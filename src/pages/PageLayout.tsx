@@ -1,4 +1,4 @@
-import { Flex } from '@chakra-ui/react';
+import { Box, Container, Flex, useBreakpoint } from '@chakra-ui/react';
 import React from 'react';
 import Sidebar from './sidebar/Sidebar';
 
@@ -7,10 +7,17 @@ interface Props {
 }
 
 const PageLayout = ({ children }: Props) => {
+  const breakpoint = useBreakpoint();
+  const Wrapper = ({ children }: { children: React.ReactNode }) =>
+    breakpoint === 'base' ? (
+      <Box p="6">{children}</Box>
+    ) : (
+      <Container maxW="md">{children}</Container>
+    );
   return (
     <Flex>
       <Sidebar />
-      {children}
+      <Wrapper>{children}</Wrapper>
     </Flex>
   );
 };
