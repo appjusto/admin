@@ -1,7 +1,7 @@
 import { Alert, AlertDescription, AlertIcon, AlertTitle, Box, Text } from '@chakra-ui/react';
 import { useProduct } from 'app/api/business/products/useProduct';
 import { getErrorMessage } from 'app/api/utils';
-import { useMenuConfigValue } from 'app/state/menu/config';
+import { useContextMenuConfig } from 'app/state/menu/config';
 import { FileDropzone } from 'common/components/FileDropzone';
 import { Input } from 'common/components/form/Input';
 import { Textarea } from 'common/components/form/Textarea';
@@ -26,7 +26,7 @@ export const ProductDrawer = (props: Props) => {
   const { productId } = useParams<Params>();
 
   // state
-  const { getProductCategoryId, updateProductCategory } = useMenuConfigValue();
+  const { getProductCategoryId, updateProductCategory } = useContextMenuConfig();
   const { product, id, isNew, image, saveProduct, uploadPhoto, result } = useProduct(productId);
   const { isLoading, isError, error } = result;
   const [name, setName] = React.useState(product?.name ?? '');

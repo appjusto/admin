@@ -1,7 +1,8 @@
-import * as functions from 'app/api/business/config/functions';
 import { useMenuConfig } from 'app/api/business/config/useMenuConfig';
+import * as functions from 'app/api/business/menu/functions';
 import { MenuConfig } from 'appjusto-types';
 import React from 'react';
+import { useBusinessId } from '../business/context';
 
 interface MenuConfigContextValue {
   menuConfig: MenuConfig;
@@ -24,7 +25,8 @@ export const MenuConfigProvider = (
   props: Omit<React.ProviderProps<MenuConfigContextValue>, 'value'>
 ) => {
   // context
-  const { menuConfig, updateMenuConfig } = useMenuConfig();
+  const businessId = useBusinessId();
+  const { menuConfig, updateMenuConfig } = useMenuConfig(businessId);
 
   // return
   const addCategory = (categoryId: string) =>
@@ -77,6 +79,6 @@ export const MenuConfigProvider = (
   return <MenuConfigContext.Provider value={value}>{props.children}</MenuConfigContext.Provider>;
 };
 
-export const useMenuConfigValue = () => {
+export const useContextMenuConfig = () => {
   return React.useContext(MenuConfigContext)!;
 };

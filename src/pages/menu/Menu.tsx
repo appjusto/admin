@@ -1,5 +1,5 @@
 import { Box, Button, Input, Spacer } from '@chakra-ui/react';
-import { MenuProvider } from 'app/state/menu/menu';
+import { MenuConfigProvider } from 'app/state/menu/config';
 import PageHeader from 'pages/PageHeader';
 import PageLayout from 'pages/PageLayout';
 import React from 'react';
@@ -22,7 +22,7 @@ const Menu = () => {
 
   // UI
   return (
-    <MenuProvider>
+    <MenuConfigProvider>
       <PageLayout>
         <PageHeader title={t('Cardápio')} subtitle={t('Defina o cardápio do seu restaurante.')} />
         <Box mt="6" d="flex">
@@ -55,7 +55,7 @@ const Menu = () => {
           </Route>
         </Switch>
       </PageLayout>
-    </MenuProvider>
+    </MenuConfigProvider>
   );
 };
 

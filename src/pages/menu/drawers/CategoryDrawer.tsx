@@ -1,7 +1,7 @@
 import { Alert, AlertDescription, AlertIcon, AlertTitle, Box } from '@chakra-ui/react';
 import { useCategory } from 'app/api/business/categories/useCategory';
 import { getErrorMessage } from 'app/api/utils';
-import { useMenuConfigValue } from 'app/state/menu/config';
+import { useContextMenuConfig } from 'app/state/menu/config';
 import { Input } from 'common/components/form/Input';
 import React from 'react';
 import { useParams } from 'react-router-dom';
@@ -21,7 +21,7 @@ export const CategoryDrawer = (props: Props) => {
   const { categoryId } = useParams<Params>();
 
   // state
-  const { addCategory } = useMenuConfigValue();
+  const { addCategory } = useContextMenuConfig();
   const { category, id, saveCategory, result } = useCategory(categoryId);
   const { isLoading, isError, error } = result;
   const [name, setName] = React.useState(category?.name ?? '');

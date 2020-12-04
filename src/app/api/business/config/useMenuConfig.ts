@@ -1,14 +1,12 @@
 import React from 'react';
 import { useApi } from 'app/state/api/context';
-import { useBusinessId } from 'app/state/business/context';
 import { MenuConfig } from 'appjusto-types';
-import * as functions from 'app/api/business/config/functions';
+import * as functions from 'app/api/business/menu/functions';
 import { useMutation } from 'react-query';
 import { isEmpty } from 'lodash';
 
-export const useMenuConfig = () => {
+export const useMenuConfig = (businessId: string | undefined) => {
   const api = useApi();
-  const businessId = useBusinessId();
 
   //state
   const [menuConfig, setMenuConfig] = React.useState<MenuConfig>(functions.empty());

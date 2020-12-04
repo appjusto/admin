@@ -1,12 +1,10 @@
-import { useBusinessId } from 'app/state/business/context';
 import { Category, WithId } from 'appjusto-types';
 import React from 'react';
 import { useApi } from '../../../state/api/context';
 
-export const useObserveCategories = () => {
+export const useObserveCategories = (businessId: string | undefined) => {
   // contex
   const api = useApi();
-  const businessId = useBusinessId();
 
   // state
   const [categories, setCategories] = React.useState<WithId<Category>[]>([]);

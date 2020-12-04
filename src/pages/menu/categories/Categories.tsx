@@ -1,7 +1,7 @@
 import { Box } from '@chakra-ui/react';
-import { useCategories } from 'app/state/menu/categories';
-import { useMenuConfigValue } from 'app/state/menu/config';
-import { useGetProductsByCategoryId } from 'app/state/menu/products';
+import { useOrderedMenu } from 'app/api/business/menu/useOrderedMenu';
+import { useBusinessId } from 'app/state/business/context';
+import { useContextMenuConfig } from 'app/state/menu/config';
 import { Product, WithId } from 'appjusto-types';
 import { isEmpty } from 'lodash';
 import React from 'react';
@@ -14,9 +14,9 @@ interface Props {
 
 export const Categories = ({ productSearch }: Props) => {
   // state
-  const categories = useCategories();
-  const getProductsByCategoryId = useGetProductsByCategoryId();
-  const { updateCategoryIndex, updateProductIndex } = useMenuConfigValue();
+  const businessId = useBusinessId();
+  const categories = useOrderedMenu(businessId);
+  const { updateCategoryIndex, updateProductIndex } = useContextMenuConfig();
   const filterProductsWithSearch = (products: WithId<Product>[]) => {
     if (!productSearch || isEmpty(productSearch)) return products;
     const regexp = new RegExp(productSearch, 'i');
@@ -49,7 +49,7 @@ export const Categories = ({ productSearch }: Props) => {
         {(droppable) => (
           <Box ref={droppable.innerRef} {...droppable.droppableProps}>
             {categories.map((category, index) => {
-              const products = filterProductsWithSearch(getProductsByCategoryId(category.id));
+              const products = filterProductsWithSearch(category.products);
               return (
                 <CategoryItem
                   key={category.id}
