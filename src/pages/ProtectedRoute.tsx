@@ -1,5 +1,5 @@
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextManagerProfile } from 'app/state/manager/context';
-import { useContextFirebaseUser } from 'app/state/user/context';
 import React from 'react';
 import { Redirect, Route, RouteProps } from 'react-router-dom';
 

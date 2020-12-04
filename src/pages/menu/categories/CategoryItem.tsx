@@ -6,7 +6,7 @@ import { ReactComponent as DragHandle } from 'common/img/drag-handle.svg';
 import React from 'react';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
 import { Link, useRouteMatch } from 'react-router-dom';
-import { ProductItem } from '../ProductItem';
+import { ProductItem } from './ProductItem';
 
 interface Props {
   category: WithId<Category>;

@@ -35,5 +35,5 @@ export const ProductsProvider = (props: Omit<React.ProviderProps<WithId<Product>
 };
 
 export const useGetProductsByCategoryId = () => {
-  return React.useContext(ProductsContext)!;
+  return React.useContext(ProductsContext);
 };

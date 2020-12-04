@@ -28,5 +28,5 @@ export const CategoriesProvider = (
 };
 
 export const useCategories = () => {
-  return React.useContext(CategoriesContext)!;
+  return React.useContext(CategoriesContext);
 };

@@ -1,10 +1,10 @@
 import { Box, Circle, Text } from '@chakra-ui/react';
-import { useBusinessValue } from 'app/state/business/context';
+import { useContextBusiness } from 'app/state/business/context';
 import React from 'react';
 import { t } from 'utils/i18n';
 
 const BusinessInfo = () => {
-  const business = useBusinessValue();
+  const business = useContextBusiness();
   return (
     <Box>
       <Circle size="40px" bg="gray.400" />

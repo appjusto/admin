@@ -7,7 +7,7 @@ import { useApi } from '../../../state/api/context';
 export const useCategory = (id: string) => {
   // context
   const api = useApi();
-  const businessId = useBusinessId();
+  const businessId = useBusinessId()!;
   const isNew = id === 'new';
   const idRef = React.useRef(isNew ? api.business().createCategoryRef(businessId) : id);
   const categoryId = idRef.current;

@@ -1,7 +1,7 @@
 import { Image } from '@chakra-ui/react';
 import React from 'react';
-import image from './home-right@2x.jpg';
+import image from './login-left@2x.jpg';
 
-export default function HomeRightImage() {
+export default function LoginLeftImage() {
   return <Image src={image} objectFit="contain" alt="" />;
 }

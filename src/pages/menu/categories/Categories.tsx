@@ -6,7 +6,7 @@ import { Product, WithId } from 'appjusto-types';
 import { isEmpty } from 'lodash';
 import React from 'react';
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
-import { CategoryItem } from './categories/CategoryItem';
+import { CategoryItem } from './CategoryItem';
 
 interface Props {
   productSearch?: string;

@@ -8,7 +8,7 @@ import { useProductImageURL } from './useProductImageURL';
 export const useProduct = (id: string) => {
   // context
   const api = useApi();
-  const businessId = useBusinessId();
+  const businessId = useBusinessId()!;
   const isNew = id === 'new';
   const idRef = React.useRef(isNew ? api.business().createProductRef(businessId) : id);
   const productId = idRef.current;

@@ -5,7 +5,7 @@ import PageLayout from 'pages/PageLayout';
 import React from 'react';
 import { Link, Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
-import { Categories } from './Categories';
+import { Categories } from './categories/Categories';
 import { CategoryDrawer } from './drawers/CategoryDrawer';
 import { ProductDrawer } from './drawers/ProductDrawer';
 

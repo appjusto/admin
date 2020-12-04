@@ -5,14 +5,15 @@ import { useApi } from '../../../state/api/context';
 
 export const useObserveProducts = () => {
   // context
-  const api = useApi()!;
-  const businessId = useBusinessId()!;
+  const api = useApi();
+  const businessId = useBusinessId();
 
   // state
   const [products, setProducts] = React.useState<WithId<Product>[]>([]);
 
   // side effects
   React.useEffect(() => {
+    if (!businessId) return;
     return api.business().observeProducts(businessId, setProducts);
   }, [api, businessId]);
 

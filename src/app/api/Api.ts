@@ -7,7 +7,7 @@ import 'firebase/storage';
 import AuthApi from './auth/AuthApi';
 import FilesApi from './FilesApi';
 import BusinessApi from './business/BusinessApi';
-import ManagerProfile from './manager/ManagerProfile';
+import ManagerProfile from './manager/ManagerApi';
 
 export default class Api {
   private static _firebaseInitialized: boolean = false;

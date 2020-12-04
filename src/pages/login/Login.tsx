@@ -18,10 +18,12 @@ import React, { useEffect, useState } from 'react';
 import { useMutation } from 'react-query';
 import { t } from 'utils/i18n';
 
-const HomeLeftImage = React.lazy(() => import(/* webpackPrefetch: true */ './img/HomeLeftImage'));
-const HomeRightImage = React.lazy(() => import(/* webpackPrefetch: true */ './img/HomeRightImage'));
+const LoginLeftImage = React.lazy(() => import(/* webpackPrefetch: true */ './img/LoginLeftImage'));
+const LoginRightImage = React.lazy(
+  () => import(/* webpackPrefetch: true */ './img/LoginRightImage')
+);
 
-const Home = () => {
+const Login = () => {
   // context
   const api = useApi();
 
@@ -51,7 +53,7 @@ const Home = () => {
     <Flex>
       <Box w={[0, 1 / 3]} display={['none', 'revert']}>
         <React.Suspense fallback={null}>
-          <HomeLeftImage />
+          <LoginLeftImage />
         </React.Suspense>
       </Box>
       <Center w={['100%', 1 / 3]}>
@@ -108,11 +110,11 @@ const Home = () => {
       </Center>
       <Box w={[0, 1 / 3]} display={['none', 'revert']}>
         <React.Suspense fallback={null}>
-          <HomeRightImage />
+          <LoginRightImage />
         </React.Suspense>
       </Box>
     </Flex>
   );
 };
 
-export default Home;
+export default Login;
