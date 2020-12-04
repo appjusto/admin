@@ -52,6 +52,10 @@ export default class MenuApi {
     );
     return unsubscribe;
   }
+  async updateBusinessProfile(businessId: string, business: Partial<Business>) {
+    await this.getBusinessRef(businessId).set(business, { merge: true });
+  }
+
   // menu config
   observeMenuConfig(
     businessId: string,

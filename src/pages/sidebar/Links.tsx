@@ -47,7 +47,7 @@ export const Links = () => {
     <Box ml="1">
       <Box>
         <LinksContainer>
-          <Link to="/">{t('Início')}</Link>
+          <Link to="/home">{t('Início')}</Link>
           <Link to="/">{t('Pedidos')}</Link>
           <Link to="/">{t('Financeiro')}</Link>
         </LinksContainer>

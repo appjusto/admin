@@ -12,7 +12,7 @@ export const BusinessProvider = (props: Omit<React.ProviderProps<Business>, 'val
 
   React.useEffect(() => {
     if (!manager) return;
-    const firstBusinessId = manager?.businessIds?.find(() => true);
+    const firstBusinessId = manager.businessIds?.find(() => true);
     setSelectedBusinessId(firstBusinessId ?? null);
   }, [manager]);
 

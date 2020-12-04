@@ -5,7 +5,7 @@ import { useApi } from '../../../state/api/context';
 
 export const useObserveCategories = () => {
   // contex
-  const api = useApi()!;
+  const api = useApi();
   const businessId = useBusinessId();
 
   // state

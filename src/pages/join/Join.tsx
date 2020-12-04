@@ -48,7 +48,7 @@ const Join = () => {
   // UI
   if (!isLinkValid) return <Redirect to="/" />;
 
-  if (!isSuccess) return <Redirect to="/home" />;
+  if (!isSuccess) return <Redirect to="/menu" />;
 
   if (!isEmailSaved)
     return (

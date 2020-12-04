@@ -1,10 +1,7 @@
 import * as functions from 'app/api/business/config/functions';
-import { useApi } from 'app/state/api/context';
+import { useMenuConfig } from 'app/api/business/config/useMenuConfig';
 import { MenuConfig } from 'appjusto-types';
-import { isEmpty } from 'lodash';
 import React from 'react';
-import { useMutation } from 'react-query';
-import { useBusinessId } from '../business/context';
 
 interface MenuConfigContextValue {
   menuConfig: MenuConfig;
@@ -27,23 +24,7 @@ export const MenuConfigProvider = (
   props: Omit<React.ProviderProps<MenuConfigContextValue>, 'value'>
 ) => {
   // context
-  const api = useApi();
-  const businessId = useBusinessId();
-
-  //state
-  const [menuConfig, setMenuConfig] = React.useState<MenuConfig>(functions.empty());
-  const [updateMenuConfig] = useMutation(async (menuConfig: MenuConfig) => {
-    setMenuConfig(menuConfig); // optimistic update
-    api.business().updateMenuConfig(businessId!, menuConfig);
-  });
-
-  // side effects
-  React.useEffect(() => {
-    if (!businessId) return;
-    return api.business().observeMenuConfig(businessId, (config) => {
-      setMenuConfig(!isEmpty(config) ? config : functions.empty());
-    });
-  }, [api, businessId]);
+  const { menuConfig, updateMenuConfig } = useMenuConfig();
 
   // return
   const addCategory = (categoryId: string) =>

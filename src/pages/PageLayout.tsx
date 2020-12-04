@@ -6,14 +6,13 @@ interface Props {
   children: React.ReactNode | React.ReactNode[];
 }
 
-const PageLayout = ({ children }: Props) => {
+const Wrapper = ({ children }: Props) => {
   const breakpoint = useBreakpoint();
-  const Wrapper = ({ children }: { children: React.ReactNode }) =>
-    breakpoint === 'base' ? (
-      <Box p="6">{children}</Box>
-    ) : (
-      <Container maxW="md">{children}</Container>
-    );
+  if (breakpoint === 'base') <Box p="6">{children}</Box>;
+  return <Container maxW="md">{children}</Container>;
+};
+
+const PageLayout = ({ children }: Props) => {
   return (
     <Flex>
       <Sidebar />
