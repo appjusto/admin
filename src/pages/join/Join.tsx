@@ -8,7 +8,7 @@ import {
   Center,
   Container,
   FormControl,
-  Text,
+  Text
 } from '@chakra-ui/react';
 import { getErrorMessage } from 'app/api/utils';
 import { useApi } from 'app/state/api/context';
@@ -48,7 +48,7 @@ const Join = () => {
   // UI
   if (!isLinkValid) return <Redirect to="/" />;
 
-  if (!isSuccess) return <Redirect to="/menu" />;
+  if (isSuccess) return <Redirect to="/menu" />;
 
   if (!isEmailSaved)
     return (
