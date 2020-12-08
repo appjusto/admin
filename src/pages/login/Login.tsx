@@ -8,7 +8,7 @@ import {
   Center,
   Flex,
   FormControl,
-  Text,
+  Text
 } from '@chakra-ui/react';
 import { getErrorMessage } from 'app/api/utils';
 import { useApi } from 'app/state/api/context';

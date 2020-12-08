@@ -1,11 +1,11 @@
-import { Box, FormLabel, Textarea as ChakraTextarea, TextareaProps } from '@chakra-ui/react';
+import { Box, FormLabel, NumberInput as ChakraNumberInput, NumberInputField, NumberInputProps } from '@chakra-ui/react';
 import React from 'react';
 
-interface Props extends TextareaProps {
+interface Props extends NumberInputProps {
   label?: string;
 }
 
-export const Textarea = React.forwardRef<HTMLTextAreaElement, Props>(
+export const NumberInput = React.forwardRef<HTMLInputElement, Props>(
   ({ label, mt, mb, ml, mr, flex, ...props }: Props, ref) => {
     const boxProps = { mt, mb, ml, mr, flex };
     return (
@@ -15,7 +15,9 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, Props>(
             {label}
           </FormLabel>
         )}
-        <ChakraTextarea ref={ref} variant="unstyled" pb="1" size="sm" {...props} />
+        <ChakraNumberInput ref={ref} variant="unstyled" pb="1" size="sm" {...props}>
+          <NumberInputField />
+        </ChakraNumberInput>
       </Box>
     );
   }

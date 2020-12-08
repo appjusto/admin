@@ -7,9 +7,10 @@ interface Props extends SelectProps {
 }
 
 export const Select = React.forwardRef<HTMLSelectElement, Props>(
-  ({ label, ...props }: Props, ref) => {
+  ({ label, mt, mb, ml, mr, flex, ...props }: Props, ref) => {
+    const boxProps = { mt, mb, ml, mr, flex };
     return (
-      <Box borderWidth="1px" borderRadius="md" pl="2" pt="1">
+      <Box borderWidth="1px" borderRadius="md" pl="2" pt="1" {...boxProps}>
         {label && (
           <FormLabel htmlFor={props.id} textStyle="inputLabel" m="0">
             {label}
@@ -22,7 +23,7 @@ export const Select = React.forwardRef<HTMLSelectElement, Props>(
           size="md"
           icon={<SelectIcon />}
           {...props}
-        ></ChakraSelect>
+        />
       </Box>
     );
   }

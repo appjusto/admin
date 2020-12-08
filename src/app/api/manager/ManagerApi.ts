@@ -36,4 +36,8 @@ export default class ProfileApi {
     // returns the unsubscribe function
     return unsubscribe;
   }
+
+  async updateProfile(id: string, changes: Partial<ManagerProfile>) {
+    await this.getProfileRef(id).update(changes);
+  }
 }

@@ -1,9 +1,9 @@
 import { useManagerProfile } from 'app/api/manager/useManagerProfile';
-import { ManagerProfile } from 'appjusto-types';
+import { ManagerProfile, WithId } from 'appjusto-types';
 import React from 'react';
 import { useContextFirebaseUser } from '../auth/context';
 
-const ProfileContext = React.createContext<ManagerProfile | undefined>(undefined);
+const ProfileContext = React.createContext<WithId<ManagerProfile> | undefined>(undefined);
 
 export const ManagerProvider = (props: Omit<React.ProviderProps<ManagerProfile>, 'value'>) => {
   // user is undefined while firebase initializes
