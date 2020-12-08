@@ -1,5 +1,6 @@
 import { Box, Button, Center, Text } from '@chakra-ui/react';
 import { ReactComponent as Logo } from 'common/img/logo.svg';
+import { BusinessProfile } from 'pages/business-profile/BusinessProfile';
 import { ManagerProfile } from 'pages/manager-profile/ManagerProfile';
 import React from 'react';
 import { Link, Route, Switch, useRouteMatch } from 'react-router-dom';
@@ -9,7 +10,6 @@ import { OnboardingStep } from './OnboardingStep';
 
 const Onboarding = () => {
   const { path, url } = useRouteMatch();
-  console.log(path, url);
   return (
     <Switch>
       <Route exact path={`${path}`}>
@@ -34,7 +34,12 @@ const Onboarding = () => {
       </Route>
       <Route path={`${path}/1`}>
         <OnboardingStep>
-          <ManagerProfile />
+          <ManagerProfile redirect={`${path}/2`} />
+        </OnboardingStep>
+      </Route>
+      <Route path={`${path}/2`}>
+        <OnboardingStep>
+          <BusinessProfile redirect={`${path}/1`} />
         </OnboardingStep>
       </Route>
     </Switch>

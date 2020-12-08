@@ -5,14 +5,19 @@ import { useContextManagerProfile } from 'app/state/manager/context';
 import { Input } from 'common/components/form/Input';
 import { NumberInput } from 'common/components/form/NumberInput';
 import React from 'react';
+import { Redirect } from 'react-router-dom';
 import { t } from 'utils/i18n';
 
-export const ManagerProfile = () => {
+interface Props {
+  redirect: string;
+}
+
+export const ManagerProfile = ({ redirect }: Props) => {
   // context
   const user = useContextFirebaseUser();
   const profile = useContextManagerProfile();
   const { updateProfile, updateResult } = useUpdateManagerProfile();
-  const { isLoading } = updateResult;
+  const { isLoading, isSuccess } = updateResult;
 
   // state
   const [name, setName] = React.useState(profile?.name ?? '');
@@ -52,6 +57,7 @@ export const ManagerProfile = () => {
   }
 
   // UI
+  if (isSuccess) return <Redirect to={redirect} push />
   return (
     <Box w="368px">
       <form onSubmit={(ev) => {

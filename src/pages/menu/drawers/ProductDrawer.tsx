@@ -3,9 +3,9 @@ import { useProduct } from 'app/api/business/products/useProduct';
 import { getErrorMessage } from 'app/api/utils';
 import { useContextMenuConfig } from 'app/state/menu/config';
 import { FileDropzone } from 'common/components/FileDropzone';
+import { CurrencyInput } from 'common/components/form/CurrencyInput';
 import { Input } from 'common/components/form/Input';
 import { Textarea } from 'common/components/form/Textarea';
-import i18n from 'i18n-js';
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { t } from 'utils/i18n';
@@ -33,7 +33,6 @@ export const ProductDrawer = (props: Props) => {
   const [categoryId, setCategoryId] = React.useState<string | undefined>();
   const [description, setDescription] = React.useState(product?.description ?? '');
   const [price, setPrice] = React.useState(product?.price ?? 0);
-  const [priceText, setPriceText] = React.useState(i18n.toCurrency(price));
   const [externalId, setExternalId] = React.useState(product?.externalId ?? '');
   const [enabled, setEnabled] = React.useState(product?.enabled ?? true);
   const [previewURL, setPreviewURL] = React.useState<string | undefined>();
@@ -45,7 +44,7 @@ export const ProductDrawer = (props: Props) => {
       setCategoryId(getProductCategoryId(id));
       setDescription(product.description ?? '');
       setPrice(product.price ?? 0);
-      setPriceText(i18n.toCurrency(product.price ?? 0));
+      setPrice(product.price ?? 0);
       setExternalId(product.externalId ?? '');
       setEnabled(product.enabled ?? true);
     }
@@ -119,19 +118,11 @@ export const ProductDrawer = (props: Props) => {
         </Box>
 
         <Box mt="4">
-          <Input
-            value={priceText}
+          <CurrencyInput
+            value={price}
             label={t('Preço')}
             placeholder={t('0,00')}
-            onChange={(ev) => setPriceText(ev.target.value)}
-            onFocus={() => setPriceText(i18n.toNumber(price, { delimiter: ',', precision: 2 }))}
-            onBlur={() => {
-              const sanitizedPrice = priceText.replace(',', '.');
-              const priceAsNumber = parseFloat(sanitizedPrice);
-              const newPrice = !isNaN(priceAsNumber) ? priceAsNumber : 0;
-              setPrice(newPrice);
-              setPriceText(i18n.toCurrency(newPrice));
-            }}
+            onChangeValue={(value) => setPrice(value)}
           />
         </Box>
 
