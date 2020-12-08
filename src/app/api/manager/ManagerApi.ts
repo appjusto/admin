@@ -1,7 +1,7 @@
 import firebase from 'firebase/app';
 import { ManagerProfile, WithId } from 'appjusto-types';
 
-export default class ProfileApi {
+export default class ManagerApi {
   constructor(
     private firestore: firebase.firestore.Firestore,
     private functions: firebase.functions.Functions

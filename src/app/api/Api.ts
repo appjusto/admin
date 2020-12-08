@@ -7,7 +7,8 @@ import 'firebase/storage';
 import AuthApi from './auth/AuthApi';
 import FilesApi from './FilesApi';
 import BusinessApi from './business/BusinessApi';
-import ManagerProfile from './manager/ManagerApi';
+import ManagerApi from './manager/ManagerApi';
+import PlatformApi from './platform/PlatformApi';
 
 export default class Api {
   private static _firebaseInitialized: boolean = false;
@@ -19,7 +20,8 @@ export default class Api {
 
   private _auth: AuthApi;
   private _files: FilesApi;
-  private _manager: ManagerProfile;
+  private _platform: PlatformApi;
+  private _manager: ManagerApi;
   private _business: BusinessApi;
 
   constructor(config: ApiConfig) {
@@ -44,12 +46,17 @@ export default class Api {
 
     this._auth = new AuthApi(this._authentication, this._functions, config);
     this._files = new FilesApi(this._storage);
-    this._manager = new ManagerProfile(this._firestore, this._functions);
+    this._platform = new PlatformApi(this._firestore, this._functions);
+    this._manager = new ManagerApi(this._firestore, this._functions);
     this._business = new BusinessApi(this._firestore, this._functions, this._files);
   }
 
   auth() {
     return this._auth;
+  }
+
+  platform() {
+    return this._platform;
   }
 
   manager() {
@@ -59,4 +66,5 @@ export default class Api {
   business() {
     return this._business;
   }
+  
 }
