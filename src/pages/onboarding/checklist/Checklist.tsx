@@ -19,7 +19,7 @@ export const Checklist = (props: BoxProps) => {
   return (
     <Box {...props}>
       {items.map((item, i) => (
-        <OnboardingItem key={item} text={item} checked={currentStepIndex > i} currentStep={currentStepIndex === i} />
+        <OnboardingItem key={item} mt={i > 0 ? "4" : "0"} text={item} checked={currentStepIndex > i} currentStep={currentStepIndex === i} />
       ))}
     </Box>
   );

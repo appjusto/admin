@@ -37,9 +37,9 @@ export const ManagerProfile = ({ redirect }: Props) => {
     if (profile) {
       if (profile.name) setName(profile.name);
       if (profile.surname) setSurname(profile.surname);
-      if (profile.phone?.ddd) setSurname(profile.phone.ddd);
-      if (profile.phone?.number) setSurname(profile.phone.number);
-      if (profile.cpf) setSurname(profile.cpf);
+      if (profile.phone?.ddd) setDDD(profile.phone.ddd);
+      if (profile.phone?.number) setPhoneNumber(profile.phone.number);
+      if (profile.cpf) setCPF(profile.cpf);
     }
   }, [profile]);
 
