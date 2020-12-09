@@ -8,7 +8,7 @@ interface Props extends FlexProps {}
 export const OnboardingStep = ({ children }: Props) => {
   return (
     <Flex>
-      <Box w="45%" h="100vh" bg="gray.50">
+      <Box w="45%" h="100vh" bg="gray.50" flex={1}>
         <Center h="100%">
           <Box>
             <Logo />
@@ -16,11 +16,11 @@ export const OnboardingStep = ({ children }: Props) => {
           </Box>
         </Center>
       </Box>
-      <Box w="55%" h="100vh">
-        <Center h="100%">
+      <Flex direction="column" w="55%" h="100vh" overflow="scroll">
+        <Center flex={1}>
           {children}
         </Center>
-      </Box>
+      </Flex>
     </Flex>
   );
 }
