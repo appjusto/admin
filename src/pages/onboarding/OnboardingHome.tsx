@@ -1,5 +1,6 @@
 import { Box, Button, Center, Text } from '@chakra-ui/react';
 import { ReactComponent as Logo } from 'common/img/logo.svg';
+import { BankingInformation } from 'pages/business-profile/BankingInformation';
 import { BusinessProfile } from 'pages/business-profile/BusinessProfile';
 import { ManagerProfile } from 'pages/manager-profile/ManagerProfile';
 import React from 'react';
@@ -39,7 +40,12 @@ const Onboarding = () => {
       </Route>
       <Route path={`${path}/2`}>
         <OnboardingStep>
-          <BusinessProfile redirect={`${path}/1`} />
+          <BusinessProfile redirect={`${path}/3`} />
+        </OnboardingStep>
+      </Route>
+      <Route path={`${path}/3`}>
+        <OnboardingStep>
+          <BankingInformation redirect={`${path}/2`} />
         </OnboardingStep>
       </Route>
     </Switch>

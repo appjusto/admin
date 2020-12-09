@@ -1,5 +1,5 @@
 import firebase from 'firebase/app';
-import { WithId, Category, Product, Business } from 'appjusto-types';
+import { WithId, Category, Product, Business, BankAccount } from 'appjusto-types';
 import { documentAs, documentsAs } from '../utils';
 import { MenuConfig } from 'appjusto-types/menu';
 import FilesApi from '../FilesApi';
@@ -11,8 +11,8 @@ export default class MenuApi {
     private files: FilesApi
   ) {}
 
-  // private
-  // helpers
+  // private helpers
+  // firestora paths
   private getBusinessRef(businessId: string) {
     return this.firestore.collection('business').doc(businessId);
   }
@@ -31,6 +31,10 @@ export default class MenuApi {
   private getMenuConfigRef(businessId: string) {
     return this.getBusinessRef(businessId).collection('config').doc('menu');
   }
+  private getBankAccountRef(businessId: string) {
+    return this.getBusinessRef(businessId).collection('private').doc('bank')
+  }
+  // storage path
   private getBusinessStoragePath(businessId: string) {
     return `business/${businessId}`;
   }
@@ -72,10 +76,22 @@ export default class MenuApi {
     );
     return unsubscribe;
   }
-  async updateBusinessProfile(businessId: string, business: Partial<Business>) {
-    await this.getBusinessRef(businessId).set(business, { merge: true });
+
+  async updateBusinessProfile(businessId: string, changes: Partial<Business>) {
+    await this.getBusinessRef(businessId).set(changes, { merge: true });
   }
 
+  // bank account
+  async fetchBankAccount(businessId: string) {
+    const doc = await this.getBankAccountRef(businessId).get();
+    return documentAs<BankAccount>(doc);
+  }
+
+  async updateBankAccount(businessId: string, changes: Partial<BankAccount>) {
+    await this.getBankAccountRef(businessId).set(changes, { merge: true });
+  }
+
+  // logo
   uploadBusinessLogo(
     businessId: string,
     file: File,
@@ -87,11 +103,11 @@ export default class MenuApi {
       progressHandler
     );
   }
-
   getBusinessLogoURL(businessId: string) {
     return this.files.getDownloadURL(this.getBusinessLogoStoragePath(businessId));
   }
 
+  // cover image
   uploadBusinessCover(
     businessId: string,
     file: File,
@@ -103,7 +119,6 @@ export default class MenuApi {
       progressHandler
     );
   }
-
   getBusinessCoverURL(businessId: string) {
     return this.files.getDownloadURL(this.getBusinessCoverStoragePath(businessId));
   }
