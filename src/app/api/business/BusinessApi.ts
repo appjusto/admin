@@ -31,12 +31,26 @@ export default class MenuApi {
   private getMenuConfigRef(businessId: string) {
     return this.getBusinessRef(businessId).collection('config').doc('menu');
   }
-  private getStoragePath(businessId: string) {
-    return `business/${businessId}/menu/default/products`;
+  private getBusinessStoragePath(businessId: string) {
+    return `business/${businessId}`;
+  }
+  private getBusinessLogoUploadStoragePath(businessId: string) {
+    return `business/${businessId}/logo.jpg`;
+  }
+  private getBusinessLogoStoragePath(businessId: string) {
+    return `business/${businessId}/logo_1024x1024.jpg`;
+  }
+  private getProductsStoragePath(businessId: string) {
+    return `${this.getBusinessStoragePath(businessId)}/products`;
+  }
+  private getProductUploadStoragePath(businessId: string, productId: string) {
+    return `${this.getProductsStoragePath(businessId)}/${productId}.jpg`;
+  }
+  private getProductImageStoragePath(businessId: string, productId: string) {
+    return `${this.getProductsStoragePath(businessId)}/${productId}_1024x1024.jpg`;
   }
 
   // public
-  // firestore
   // business profile
   observeBusinessProfile(
     businessId: string,
@@ -54,6 +68,22 @@ export default class MenuApi {
   }
   async updateBusinessProfile(businessId: string, business: Partial<Business>) {
     await this.getBusinessRef(businessId).set(business, { merge: true });
+  }
+
+  uploadBusinessLogo(
+    businessId: string,
+    file: File,
+    progressHandler?: (progress: number) => void
+  ) {
+    return this.files.upload(
+      file,
+      this.getBusinessLogoUploadStoragePath(businessId),
+      progressHandler
+    );
+  }
+
+  getBusinessLogoURL(businessId: string) {
+    return this.files.getDownloadURL(this.getBusinessLogoStoragePath(businessId));
   }
 
   // menu config
@@ -170,14 +200,12 @@ export default class MenuApi {
   ) {
     return this.files.upload(
       file,
-      `${this.getStoragePath(businessId)}/${productId}.jpg`,
+      this.getProductUploadStoragePath(businessId, productId),
       progressHandler
     );
   }
 
-  getProductURL(businessId: string, productId: string) {
-    return this.files.getDownloadURL(
-      `${this.getStoragePath(businessId)}/${productId}_1024x1024.jpg`
-    );
+  getProductImageURL(businessId: string, productId: string) {
+    return this.files.getDownloadURL(this.getProductImageStoragePath(businessId, productId));
   }
 }

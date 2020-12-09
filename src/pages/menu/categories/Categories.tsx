@@ -1,6 +1,6 @@
 import { Box } from '@chakra-ui/react';
 import { useOrderedMenu } from 'app/api/business/menu/useOrderedMenu';
-import { useBusinessId } from 'app/state/business/context';
+import { useContextBusinessId } from 'app/state/business/context';
 import { useContextMenuConfig } from 'app/state/menu/config';
 import { Product, WithId } from 'appjusto-types';
 import { isEmpty } from 'lodash';
@@ -14,7 +14,7 @@ interface Props {
 
 export const Categories = ({ productSearch }: Props) => {
   // state
-  const businessId = useBusinessId();
+  const businessId = useContextBusinessId();
   const categories = useOrderedMenu(businessId);
   const { updateCategoryIndex, updateProductIndex } = useContextMenuConfig();
   const filterProductsWithSearch = (products: WithId<Product>[]) => {

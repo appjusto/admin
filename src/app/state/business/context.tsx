@@ -1,4 +1,4 @@
-import { useObserveBusinessProfile } from 'app/api/business/useObserveBusinessProfile';
+import { useObserveBusinessProfile } from 'app/api/business/profile/useObserveBusinessProfile';
 import { Business, WithId } from 'appjusto-types';
 import React from 'react';
 import { useContextManagerProfile } from '../manager/context';
@@ -23,6 +23,6 @@ export const useContextBusiness = () => {
   return React.useContext(BusinessContext);
 };
 
-export const useBusinessId = () => {
+export const useContextBusinessId = () => {
   return useContextBusiness()?.id;
 };

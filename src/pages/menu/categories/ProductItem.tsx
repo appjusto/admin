@@ -1,5 +1,5 @@
 import { Box, Flex, Image, Spacer, Switch, Text } from '@chakra-ui/react';
-import { useProductImageURL } from 'app/api/business/products/useProductImageURL';
+import { useProductImage } from 'app/api/business/products/useProductImage';
 import { useProductUpdate } from 'app/api/business/products/useProductUpdate';
 import { Product, WithId } from 'appjusto-types';
 import { EditButton } from 'common/components/buttons/EditButton';
@@ -18,7 +18,7 @@ export const ProductItem = React.memo(({ product, index }: Props) => {
   const { url } = useRouteMatch();
 
   // queries
-  const { data: image } = useProductImageURL(product.id);
+  const image = useProductImage(product.id);
 
   // mutations
   const { updateProduct } = useProductUpdate(product.id);

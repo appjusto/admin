@@ -1,14 +1,14 @@
 import React from 'react';
-import { useBusinessId } from 'app/state/business/context';
+import { useContextBusinessId } from 'app/state/business/context';
 import { Product } from 'appjusto-types';
 import { useMutation, useQuery } from 'react-query';
 import { useApi } from '../../../state/api/context';
-import { useProductImageURL } from './useProductImageURL';
+import { useProductImage } from './useProductImage';
 
 export const useProduct = (id: string) => {
   // context
   const api = useApi();
-  const businessId = useBusinessId()!;
+  const businessId = useContextBusinessId()!;
   const isNew = id === 'new';
   const idRef = React.useRef(isNew ? api.business().createProductRef(businessId) : id);
   const productId = idRef.current;
@@ -20,7 +20,7 @@ export const useProduct = (id: string) => {
   const fetchProduct = (key: string) => api.business().fetchProduct(businessId, productId);
   const fetchResult = useQuery(['product', productId], fetchProduct, { enabled: !isNew });
 
-  const { data: image } = useProductImageURL(productId);
+  const image = useProductImage(productId);
 
   // mutations
   const [createProduct, createResult] = useMutation(async (product: Product) =>

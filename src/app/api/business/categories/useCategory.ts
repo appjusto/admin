@@ -1,5 +1,5 @@
 import React from 'react';
-import { useBusinessId } from 'app/state/business/context';
+import { useContextBusinessId } from 'app/state/business/context';
 import { Category } from 'appjusto-types';
 import { useMutation, useQuery } from 'react-query';
 import { useApi } from '../../../state/api/context';
@@ -7,7 +7,7 @@ import { useApi } from '../../../state/api/context';
 export const useCategory = (id: string) => {
   // context
   const api = useApi();
-  const businessId = useBusinessId()!;
+  const businessId = useContextBusinessId()!;
   const isNew = id === 'new';
   const idRef = React.useRef(isNew ? api.business().createCategoryRef(businessId) : id);
   const categoryId = idRef.current;

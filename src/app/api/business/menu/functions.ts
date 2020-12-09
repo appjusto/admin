@@ -1,7 +1,6 @@
 import { arrayMove } from 'app/utils/arrayMove';
-import { Category, MenuConfig, Product, WithId } from 'appjusto-types';
+import { Category, CategoryWithProducts, MenuConfig, Product, WithId } from 'appjusto-types';
 import { ProductsByCategory } from 'appjusto-types';
-import { CategoryWithProducts } from '../types';
 
 export const empty = (): MenuConfig => ({ categoriesOrder: [], productsOrderByCategoryId: {} });
 
