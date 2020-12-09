@@ -3,9 +3,7 @@ import { ReactComponent as Logo } from 'common/img/logo.svg';
 import React from 'react';
 import { Checklist } from './checklist/Checklist';
 
-interface Props extends FlexProps {
-
-}
+interface Props extends FlexProps {}
 
 export const OnboardingStep = ({ children }: Props) => {
   return (
