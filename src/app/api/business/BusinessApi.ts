@@ -40,6 +40,12 @@ export default class MenuApi {
   private getBusinessLogoStoragePath(businessId: string) {
     return `business/${businessId}/logo_1024x1024.jpg`;
   }
+  private getBusinessCoverUploadStoragePath(businessId: string) {
+    return `business/${businessId}/cover.jpg`;
+  }
+  private getBusinessCoverStoragePath(businessId: string) {
+    return `business/${businessId}/cover_1024x1024.jpg`;
+  }
   private getProductsStoragePath(businessId: string) {
     return `${this.getBusinessStoragePath(businessId)}/products`;
   }
@@ -84,6 +90,22 @@ export default class MenuApi {
 
   getBusinessLogoURL(businessId: string) {
     return this.files.getDownloadURL(this.getBusinessLogoStoragePath(businessId));
+  }
+
+  uploadBusinessCover(
+    businessId: string,
+    file: File,
+    progressHandler?: (progress: number) => void
+  ) {
+    return this.files.upload(
+      file,
+      this.getBusinessCoverUploadStoragePath(businessId),
+      progressHandler
+    );
+  }
+
+  getBusinessCoverURL(businessId: string) {
+    return this.files.getDownloadURL(this.getBusinessCoverStoragePath(businessId));
   }
 
   // menu config
