@@ -25,7 +25,7 @@ const Profile = () => {
   // effects
   React.useEffect(() => {
     if (business) {
-      setName(business.name);
+      if (business.name) setName(business.name);
     }
   }, [business]);
 

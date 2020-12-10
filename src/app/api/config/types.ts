@@ -25,4 +25,5 @@ export interface ApiConfig {
 
 export interface AppConfig {
   api: ApiConfig;
+  googleMapsApiKey: string;
 }

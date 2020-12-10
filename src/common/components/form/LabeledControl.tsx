@@ -6,8 +6,19 @@ interface Props extends BoxProps {
   children: (props: any) => React.ReactNode | React.ReactNode[];
 }
 
-export const LabeledControl = ({ label, id, mt, mb, ml, mr, flex, children, ...props }: Props) => {
-  const boxProps = { mt, mb, ml, mr, flex };
+export const LabeledControl = ({
+  label,
+  id,
+  mt,
+  mb,
+  ml,
+  mr,
+  flex,
+  flexGrow,
+  children,
+  ...props
+}: Props) => {
+  const boxProps = { mt, mb, ml, mr, flex, flexGrow };
   return (
     <Box borderWidth="1px" borderRadius="md" pl="2" pt="1" {...boxProps}>
       {label && (
@@ -15,7 +26,15 @@ export const LabeledControl = ({ label, id, mt, mb, ml, mr, flex, children, ...p
           {label}
         </FormLabel>
       )}
-      {children({ id, padding: '0px', pb: '1', size: 'sm', borderWidth: '0px', focusBorderColor: '0px', ...props })}
+      {children({
+        id,
+        padding: '0px',
+        pb: '1',
+        size: 'sm',
+        borderWidth: '0px',
+        focusBorderColor: '0px',
+        ...props,
+      })}
     </Box>
   );
-}
+};

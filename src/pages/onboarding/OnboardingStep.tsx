@@ -12,15 +12,13 @@ export const OnboardingStep = ({ children }: Props) => {
         <Center h="100%">
           <Box>
             <Logo />
-          <Checklist mt="8" />
+            <Checklist mt="8" />
           </Box>
         </Center>
       </Box>
       <Flex direction="column" w="55%" h="100vh" overflow="scroll">
-        <Center flex={1}>
-          {children}
-        </Center>
+        <Center flex={1}>{children}</Center>
       </Flex>
     </Flex>
   );
-}
+};

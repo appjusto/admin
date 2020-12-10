@@ -44,27 +44,52 @@ export const BankingInformation = ({ redirect }: Props) => {
       agency,
       account,
       digit,
-    })
-  }
+    });
+  };
 
   // UI
-  if (isSuccess) return <Redirect to={redirect} push />
+  if (isSuccess) return <Redirect to={redirect} push />;
   return (
     <Box w="368px">
-      <form onSubmit={(ev) => {
-        ev.preventDefault();
-        submitHandler();
-      }}>
-        <Text fontSize="xl" color="black">{t('Dados bancários')}</Text>
+      <form
+        onSubmit={(ev) => {
+          ev.preventDefault();
+          submitHandler();
+        }}
+      >
+        <Text fontSize="xl" color="black">
+          {t('Dados bancários')}
+        </Text>
         <Text>{t('Informe para onde serão transferidos os repasses')}</Text>
         <BankSelect mt="4" value={name} onChange={(ev) => setName(ev.target.value)} />
-        <NumberInput mt="4" label={t('Agência')} placeholder={t('Número da agência')} value={agency} onChange={(value) => setAgency(value)} />
+        <NumberInput
+          mt="4"
+          label={t('Agência')}
+          placeholder={t('Número da agência')}
+          value={agency}
+          onChange={(value) => setAgency(value)}
+        />
         <Flex mt="4">
-          <NumberInput flex={3} label={t('Conta')} placeholder={t('0000')} value={account} onChange={(value) => setAccount(value)} />
-          <NumberInput flex={1} ml="4" label={t('Dígito')} placeholder={t('0')} value={digit} onChange={(value) => setDigit(value)} />
+          <NumberInput
+            flex={3}
+            label={t('Conta')}
+            placeholder={t('0000')}
+            value={account}
+            onChange={(value) => setAccount(value)}
+          />
+          <NumberInput
+            flex={1}
+            ml="4"
+            label={t('Dígito')}
+            placeholder={t('0')}
+            value={digit}
+            onChange={(value) => setDigit(value)}
+          />
         </Flex>
-        <Button mt="4" size="lg" onClick={submitHandler} isLoading={isLoading}>{t('Avançar')}</Button>
+        <Button mt="4" size="lg" onClick={submitHandler} isLoading={isLoading}>
+          {t('Avançar')}
+        </Button>
       </form>
     </Box>
   );
-}
+};

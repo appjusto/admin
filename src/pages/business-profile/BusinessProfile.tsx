@@ -4,7 +4,9 @@ import { useContextBusiness } from 'app/state/business/context';
 import { FileDropzone } from 'common/components/FileDropzone';
 import { CurrencyInput } from 'common/components/form/input/CurrencyInput';
 import { Input } from 'common/components/form/input/Input';
-import { NumberInput } from 'common/components/form/input/NumberInput';
+import { cnpjFormatter, cnpjMask } from 'common/components/form/input/pattern-input/formatters';
+import { numbersOnlyParser } from 'common/components/form/input/pattern-input/parsers';
+import { PatternInput } from 'common/components/form/input/pattern-input/PatternInput';
 import { Textarea } from 'common/components/form/input/Textarea';
 import React from 'react';
 import { Redirect } from 'react-router-dom';
@@ -27,9 +29,16 @@ export const BusinessProfile = ({ redirect }: Props) => {
   const [minimumOrder, setMinimumOrder] = React.useState(business?.minimumOrder ?? 0);
   const [logoPreviewURL, setLogoPreviewURL] = React.useState<string | undefined>();
   const [coverPreviewURL, setCoverPreviewURL] = React.useState<string | undefined>();
-  
+
   // queries & mutations
-  const { logo, cover, updateBusinessProfile, uploadLogo, uploadCover, result } = useBusinessProfile();
+  const {
+    logo,
+    cover,
+    updateBusinessProfile,
+    uploadLogo,
+    uploadCover,
+    result,
+  } = useBusinessProfile();
   const { isLoading, isSuccess } = result;
 
   // refs
@@ -58,50 +67,110 @@ export const BusinessProfile = ({ redirect }: Props) => {
       minimumOrder,
       cuisine: {
         id: cuisineId,
-        name: ''
-      }
-    })
-  }
+        name: '',
+      },
+    });
+  };
   const onDropLogoHandler = async (acceptedFiles: File[]) => {
     const [file] = acceptedFiles;
     const url = URL.createObjectURL(file);
     uploadLogo(file);
     setLogoPreviewURL(url);
-  }
+  };
 
   const onDropCoverHandler = async (acceptedFiles: File[]) => {
     const [file] = acceptedFiles;
     const url = URL.createObjectURL(file);
     uploadCover(file);
     setCoverPreviewURL(url);
-  }
+  };
 
   // UI
-  if (isSuccess) return <Redirect to={redirect} push />
+  if (isSuccess) return <Redirect to={redirect} push />;
   return (
     <Box w="368px" marginY="16">
-      <form onSubmit={(ev) => {
-        ev.preventDefault();
-        onSubmitHandler();
-      }}>
-        <Text fontSize="xl" color="black">{t('Sobre o restaurante')}</Text>
-        <Text mt="2" fontSize="md">{t('Essas informações serão vistas por seus visitantes')}</Text>
-        <Input mt="4" ref={nameRef} label={t('Nome')} placeholder={t('Nome')} value={name} onChange={(ev) => setName(ev.target.value)} />
-        <NumberInput mt="4" label={t('CNPJ')} placeholder={t('CNPJ do seu estabelecimento')} value={cnpj} onChange={(value) => setCNPJ(value)} />
+      <form
+        onSubmit={(ev) => {
+          ev.preventDefault();
+          onSubmitHandler();
+        }}
+      >
+        <Text fontSize="xl" color="black">
+          {t('Sobre o restaurante')}
+        </Text>
+        <Text mt="2" fontSize="md">
+          {t('Essas informações serão vistas por seus visitantes')}
+        </Text>
+        <Input
+          mt="4"
+          ref={nameRef}
+          label={t('Nome')}
+          placeholder={t('Nome')}
+          value={name}
+          onChange={(ev) => setName(ev.target.value)}
+        />
+        <PatternInput
+          mt="4"
+          label={t('CNPJ')}
+          placeholder={t('CNPJ do seu estabelecimento')}
+          mask={cnpjMask}
+          parser={numbersOnlyParser}
+          formatter={cnpjFormatter}
+          value={cnpj}
+          onValueChange={(value) => setCNPJ(value)}
+        />
         <CuisineSelect mt="4" value={cuisineId} onChange={(ev) => setCuisineId(ev.target.value)} />
-        <Textarea mt="4" label={t('Descrição')} placeholder={t('Descreva seu restaurante')} value={description} onChange={(ev) => setDescription(ev.target.value)} />
-        <CurrencyInput mt="4" label={t('Valor mínimo do pedido')} placeholder={t('R$ 0,00')} value={minimumOrder} onChangeValue={(value) => setMinimumOrder(value)} />
+        <Textarea
+          mt="4"
+          label={t('Descrição')}
+          placeholder={t('Descreva seu restaurante')}
+          value={description}
+          onChange={(ev) => setDescription(ev.target.value)}
+        />
+        <CurrencyInput
+          mt="4"
+          label={t('Valor mínimo do pedido')}
+          placeholder={t('R$ 0,00')}
+          value={minimumOrder}
+          onChangeValue={(value) => setMinimumOrder(value)}
+        />
         {/* logo */}
-        <Text mt="8" fontSize="xl" color="black">{t('Logo do estabelecimento')}</Text>
-        <Text mt="2" fontSize="md">{t('Para o logo do estabelecimento recomendamos imagens no formato quadrado (1:1) com no mínimo 200px de largura')}</Text>
-        <FileDropzone mt="4" width={200} height={200} onDropFile={onDropLogoHandler} preview={logoPreviewURL ?? logo} />
+        <Text mt="8" fontSize="xl" color="black">
+          {t('Logo do estabelecimento')}
+        </Text>
+        <Text mt="2" fontSize="md">
+          {t(
+            'Para o logo do estabelecimento recomendamos imagens no formato quadrado (1:1) com no mínimo 200px de largura'
+          )}
+        </Text>
+        <FileDropzone
+          mt="4"
+          width={200}
+          height={200}
+          onDropFile={onDropLogoHandler}
+          preview={logoPreviewURL ?? logo}
+        />
         {/* cover image */}
-        <Text mt="8" fontSize="xl" color="black">{t('Imagem de capa')}</Text>
-        <Text mt="2" fontSize="md">{t('Você pode ter também uma imagem de capa para o seu restaurante. Pode ser foto do local ou de algum prato específico. Recomendamos imagens na proporção retangular (16:9) com no mínimo 1280px de largura')}</Text>
-        <FileDropzone mt="4" width={464} height={260} onDropFile={onDropCoverHandler} preview={coverPreviewURL ?? cover} />
+        <Text mt="8" fontSize="xl" color="black">
+          {t('Imagem de capa')}
+        </Text>
+        <Text mt="2" fontSize="md">
+          {t(
+            'Você pode ter também uma imagem de capa para o seu restaurante. Pode ser foto do local ou de algum prato específico. Recomendamos imagens na proporção retangular (16:9) com no mínimo 1280px de largura'
+          )}
+        </Text>
+        <FileDropzone
+          mt="4"
+          width={464}
+          height={260}
+          onDropFile={onDropCoverHandler}
+          preview={coverPreviewURL ?? cover}
+        />
         {/* submit */}
-        <Button mt="4" size="lg" onClick={onSubmitHandler} isLoading={isLoading}>{t('Avançar')}</Button>
+        <Button mt="4" size="lg" onClick={onSubmitHandler} isLoading={isLoading}>
+          {t('Avançar')}
+        </Button>
       </form>
     </Box>
   );
-}
+};
