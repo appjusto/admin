@@ -1,6 +1,6 @@
 import { SelectProps } from '@chakra-ui/react';
 import { useCuisines } from 'app/api/platform/useCuisines';
-import { Select } from 'common/components/form/Select';
+import { Select } from 'common/components/form/select/Select';
 import React from 'react';
 import { t } from 'utils/i18n';
 

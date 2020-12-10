@@ -2,7 +2,7 @@ import { Box, Button, Text } from '@chakra-ui/react';
 import { useApi } from 'app/state/api/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { Business } from 'appjusto-types';
-import { Input } from 'common/components/form/Input';
+import { Input } from 'common/components/form/input/Input';
 import PageHeader from 'pages/PageHeader';
 import PageLayout from 'pages/PageLayout';
 import React from 'react';

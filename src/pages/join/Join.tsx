@@ -12,7 +12,7 @@ import {
 } from '@chakra-ui/react';
 import { getErrorMessage } from 'app/api/utils';
 import { useApi } from 'app/state/api/context';
-import { Input } from 'common/components/form/Input';
+import { Input } from 'common/components/form/input/Input';
 import { ReactComponent as Logo } from 'common/img/logo.svg';
 import React, { useEffect, useState } from 'react';
 import { useMutation } from 'react-query';

@@ -2,14 +2,14 @@ import { Box, Button, Text } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useContextBusiness } from 'app/state/business/context';
 import { FileDropzone } from 'common/components/FileDropzone';
-import { CurrencyInput } from 'common/components/form/CurrencyInput';
-import { Input } from 'common/components/form/Input';
-import { NumberInput } from 'common/components/form/NumberInput';
-import { Textarea } from 'common/components/form/Textarea';
+import { CurrencyInput } from 'common/components/form/input/CurrencyInput';
+import { Input } from 'common/components/form/input/Input';
+import { NumberInput } from 'common/components/form/input/NumberInput';
+import { Textarea } from 'common/components/form/input/Textarea';
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { t } from 'utils/i18n';
-import { CuisineSelect } from './CuisineSelect';
+import { CuisineSelect } from '../../common/components/form/select/CuisineSelect';
 
 interface Props {
   redirect: string;

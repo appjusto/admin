@@ -1,6 +1,6 @@
 import firebase from 'firebase/app';
 import { documentsAs } from '../utils';
-import { Cuisine } from 'appjusto-types';
+import { Bank, Cuisine } from 'appjusto-types';
 
 export default class PlatformApi {
   constructor(
@@ -18,12 +18,21 @@ export default class PlatformApi {
   private getCuisinesRef() {
     return this.getBusinessRef().collection('cuisines');
   }
+  private getBanksRef() {
+    return this.firestore.collection('banks');
+  }
 
   // public
   // firestore
   async fetchCuisines() {
     return documentsAs<Cuisine>((
       await this.getCuisinesRef().get()
+    ).docs);
+  }
+
+  async fetchBanks() {
+    return documentsAs<Bank>((
+      await this.getBanksRef().get()
     ).docs);
   }
 }

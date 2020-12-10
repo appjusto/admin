@@ -1,8 +1,8 @@
 import { Box, Button, Flex, Text } from '@chakra-ui/react';
 import { useBusinessBankAccount } from 'app/api/business/profile/useBusinessBankAccount';
 import { IuguBankName } from 'appjusto-types/payment/iugu';
-import { Input } from 'common/components/form/Input';
-import { NumberInput } from 'common/components/form/NumberInput';
+import { NumberInput } from 'common/components/form/input/NumberInput';
+import { BankSelect } from 'common/components/form/select/BankSelect';
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { t } from 'utils/i18n';
@@ -17,7 +17,7 @@ export const BankingInformation = ({ redirect }: Props) => {
   const { isLoading, isSuccess } = updateResult;
 
   // state
-  const [name, setName] = React.useState<IuguBankName | ''>(bankAccount?.name ?? '');
+  const [name, setName] = React.useState(bankAccount?.name ?? '');
   const [agency, setAgency] = React.useState(bankAccount?.agency ?? '');
   const [account, setAccount] = React.useState(bankAccount?.account ?? '');
   const [digit, setDigit] = React.useState(bankAccount?.digit ?? '');
@@ -41,7 +41,7 @@ export const BankingInformation = ({ redirect }: Props) => {
   // handlers
   const submitHandler = async () => {
     await updateBankAccount({
-      // name: name ?? 'BRB',
+      name: name as IuguBankName,
       agency,
       account,
       digit,
@@ -58,7 +58,7 @@ export const BankingInformation = ({ redirect }: Props) => {
       }}>
         <Text fontSize="xl" color="black">{t('Dados bancários')}</Text>
         <Text>{t('Informe para onde serão transferidos os repasses')}</Text>
-        <Input mt="4" ref={nameRef} label={t('Banco')} placeholder={t('Nome do seu banco')} value={name} onChange={(ev) => setName(ev.target.value as IuguBankName)} />
+        <BankSelect mt="4" value={name} onChange={(ev) => setName(ev.target.value)} />
         <NumberInput mt="4" label={t('Agência')} placeholder={t('Número da agência')} value={agency} onChange={(value) => setAgency(value)} />
         <Flex mt="4">
           <NumberInput flex={3} label={t('Conta')} placeholder={t('0000')} value={account} onChange={(value) => setAccount(value)} />
