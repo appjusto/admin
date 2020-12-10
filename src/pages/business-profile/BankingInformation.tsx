@@ -1,6 +1,5 @@
 import { Box, Button, Flex, Text } from '@chakra-ui/react';
 import { useBusinessBankAccount } from 'app/api/business/profile/useBusinessBankAccount';
-import { IuguBankName } from 'appjusto-types/payment/iugu';
 import { NumberInput } from 'common/components/form/input/NumberInput';
 import { BankSelect } from 'common/components/form/select/BankSelect';
 import React from 'react';
@@ -41,7 +40,7 @@ export const BankingInformation = ({ redirect }: Props) => {
   // handlers
   const submitHandler = async () => {
     await updateBankAccount({
-      name: name as IuguBankName,
+      name,
       agency,
       account,
       digit,
