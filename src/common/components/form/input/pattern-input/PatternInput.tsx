@@ -8,47 +8,53 @@ interface PatternInputProps extends InputProps {
   mask?: string;
 }
 
-export const PatternInput = ({
-  value,
-  placeholder: unfocusedPlaceholder,
-  mask,
-  parser,
-  formatter,
-  onValueChange,
-  onChange,
-  onBlur,
-  onFocus,
-  ...props
-}: PatternInputProps) => {
-  // state
-  const [placeholder, setPlaceholder] = React.useState(unfocusedPlaceholder);
-  const formattedValue = value ? (formatter ? formatter(String(value)) : value) : value;
+export const PatternInput = React.forwardRef<HTMLInputElement, PatternInputProps>(
+  (
+    {
+      value,
+      placeholder: unfocusedPlaceholder,
+      mask,
+      parser,
+      formatter,
+      onValueChange,
+      onChange,
+      onBlur,
+      onFocus,
+      ...props
+    }: PatternInputProps,
+    ref
+  ) => {
+    // state
+    const [placeholder, setPlaceholder] = React.useState(unfocusedPlaceholder);
+    const formattedValue = value ? (formatter ? formatter(String(value)) : value) : value;
 
-  // handlers
-  const onChangeHandler = (ev: React.ChangeEvent<HTMLInputElement>) => {
-    const value = ev.target.value;
-    onValueChange(parser(value));
-    if (onChange) onChange(ev);
-  };
-  const onFocusHandler = (ev: React.FocusEvent<HTMLInputElement>) => {
-    if (mask) setPlaceholder(mask);
-    if (onFocus) onFocus(ev);
-  };
-  const onBlurHandler = (ev: React.FocusEvent<HTMLInputElement>) => {
-    setPlaceholder(unfocusedPlaceholder);
-    if (onBlur) onBlur(ev);
-  };
+    // handlers
+    const onChangeHandler = (ev: React.ChangeEvent<HTMLInputElement>) => {
+      const value = ev.target.value;
+      onValueChange(parser(value));
+      if (onChange) onChange(ev);
+    };
+    const onFocusHandler = (ev: React.FocusEvent<HTMLInputElement>) => {
+      if (mask) setPlaceholder(mask);
+      if (onFocus) onFocus(ev);
+    };
+    const onBlurHandler = (ev: React.FocusEvent<HTMLInputElement>) => {
+      setPlaceholder(unfocusedPlaceholder);
+      if (onBlur) onBlur(ev);
+    };
 
-  // UI
-  return (
-    <Input
-      value={formattedValue}
-      placeholder={placeholder}
-      onChange={onChangeHandler}
-      onFocus={onFocusHandler}
-      onBlur={onBlurHandler}
-      maxLength={mask ? mask.length : undefined}
-      {...props}
-    />
-  );
-};
+    // UI
+    return (
+      <Input
+        ref={ref}
+        value={formattedValue}
+        placeholder={placeholder}
+        onChange={onChangeHandler}
+        onFocus={onFocusHandler}
+        onBlur={onBlurHandler}
+        maxLength={mask ? mask.length : undefined}
+        {...props}
+      />
+    );
+  }
+);
