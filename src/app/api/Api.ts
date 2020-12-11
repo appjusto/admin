@@ -9,6 +9,7 @@ import FilesApi from './FilesApi';
 import BusinessApi from './business/BusinessApi';
 import ManagerApi from './manager/ManagerApi';
 import PlatformApi from './platform/PlatformApi';
+import MapsApi from 'core/api/thirdparty/maps/MapsApi';
 
 export default class Api {
   private static _firebaseInitialized: boolean = false;
@@ -20,6 +21,7 @@ export default class Api {
 
   private _auth: AuthApi;
   private _files: FilesApi;
+  private _maps: MapsApi;
   private _platform: PlatformApi;
   private _manager: ManagerApi;
   private _business: BusinessApi;
@@ -46,6 +48,7 @@ export default class Api {
 
     this._auth = new AuthApi(this._authentication, this._functions, config);
     this._files = new FilesApi(this._storage);
+    this._maps = new MapsApi(config.googleMapsApiKey);
     this._platform = new PlatformApi(this._firestore, this._functions);
     this._manager = new ManagerApi(this._firestore, this._functions);
     this._business = new BusinessApi(this._firestore, this._functions, this._files);
@@ -53,6 +56,10 @@ export default class Api {
 
   auth() {
     return this._auth;
+  }
+
+  maps() {
+    return this._maps;
   }
 
   platform() {

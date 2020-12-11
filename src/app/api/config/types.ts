@@ -21,9 +21,9 @@ export interface ApiConfig {
     config: FirebaseConfig;
     options: FirebaseOptions;
   };
+  googleMapsApiKey: string;
 }
 
 export interface AppConfig {
   api: ApiConfig;
-  googleMapsApiKey: string;
 }

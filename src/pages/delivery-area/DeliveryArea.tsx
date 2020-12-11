@@ -1,14 +1,17 @@
 import { Box, Button, Flex, Text } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { getConfig } from 'app/api/config';
+import { useApi } from 'app/state/api/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { Input } from 'common/components/form/input/Input';
 import { NumberInput } from 'common/components/form/input/NumberInput';
 import { cepFormatter, cepMask } from 'common/components/form/input/pattern-input/formatters';
 import { numbersOnlyParser } from 'common/components/form/input/pattern-input/parsers';
 import { PatternInput } from 'common/components/form/input/pattern-input/PatternInput';
+import { coordsFromLatLnt, SaoPauloCoords } from 'core/api/thirdparty/maps/utils';
 import { fetchCEPInfo } from 'core/api/thirdparty/viacep';
 import GoogleMapReact from 'google-map-react';
+import { nanoid } from 'nanoid';
 import React from 'react';
 import { useQuery } from 'react-query';
 import { Redirect } from 'react-router-dom';
@@ -20,22 +23,40 @@ interface Props {
 
 export const DeliveryArea = ({ redirect }: Props) => {
   // context
+  const api = useApi();
   const business = useContextBusiness();
-  const { googleMapsApiKey } = getConfig();
+  const { googleMapsApiKey } = getConfig().api;
 
   // state
+  const [autocompleteSession] = React.useState(nanoid());
+  const [map, setMap] = React.useState<google.maps.Map>();
+  const [range, setRange] = React.useState<google.maps.Circle>();
   const [cep, setCEP] = React.useState(business?.businessAddress?.cep ?? '');
   const [number, setNumber] = React.useState(business?.businessAddress?.number ?? '');
   const [additional, setAdditional] = React.useState(business?.businessAddress?.additional ?? '');
-  const [deliveryRange, setDeliveryRange] = React.useState(business?.deliveryRange ?? 15);
+  const [deliveryRange, setDeliveryRange] = React.useState(business?.deliveryRange ?? 5);
 
   // queries & mutations
+  // business profile
   const { updateBusinessProfile, result } = useBusinessProfile();
   const { isLoading, isSuccess } = result;
-  const fetchCEP = (key: string) => fetchCEPInfo(cep);
-  const { data: cepInfo } = useQuery(['cep', cep], fetchCEP, { enabled: cep.length === 8 });
+  // cep
+  const { data: cepResult } = useQuery(['cep', cep], (_: string) => fetchCEPInfo(cep), {
+    enabled: cep.length === 8,
+  });
   const { logradouro, localidade, uf } =
-    !cepInfo || cepInfo.error ? { logradouro: '', localidade: '', uf: '' } : cepInfo;
+    !cepResult || cepResult.error ? { logradouro: '', localidade: '', uf: '' } : cepResult;
+  // geocoding
+  const geocode = (_: string, street: string, number: string, city: string, state: string) =>
+    api.maps().googleGeocode(`${street}, ${number} - ${city} - ${state}`, autocompleteSession);
+  const { data: geocodingResult } = useQuery(
+    ['geocoding', logradouro, number, localidade, uf],
+    geocode,
+    {
+      enabled: logradouro.length > 0 && number.length > 0,
+    }
+  );
+  const center = coordsFromLatLnt(geocodingResult ?? SaoPauloCoords);
 
   // refs
   const cepRef = React.useRef<HTMLInputElement>(null);
@@ -50,20 +71,30 @@ export const DeliveryArea = ({ redirect }: Props) => {
   React.useEffect(() => {
     if (business?.businessAddress) {
       if (business.businessAddress.cep) setCEP(business.businessAddress.cep);
-      if (business.businessAddress.number) setCEP(business.businessAddress.number);
-      if (business.businessAddress.additional) setCEP(business.businessAddress.additional);
+      if (business.businessAddress.number) setNumber(business.businessAddress.number);
+      if (business.businessAddress.additional) setAdditional(business.businessAddress.additional);
     }
   }, [business]);
-  // cep lookup
-  React.useEffect(() => {
-    if (cep.length === 8) console.log(cep);
-  }, [cep]);
   // after postal lookup, change focus to number input
   React.useEffect(() => {
-    if (cepInfo) numberRef?.current?.focus();
-  }, [cepInfo]);
-  // google maps geocoding
-  React.useEffect(() => {}, [number]);
+    if (cepResult) numberRef?.current?.focus();
+  }, [cepResult]);
+  // updating range
+  React.useEffect(() => {
+    if (map && range) {
+      range.setMap(map);
+    }
+  }, [map, range]);
+  React.useEffect(() => {
+    if (range && center) {
+      range.setCenter(center);
+    }
+  }, [center, range]);
+  React.useEffect(() => {
+    if (range) {
+      range.setRadius(deliveryRange * 1000);
+    }
+  }, [range, deliveryRange]);
 
   // handlers
   const onSubmitHandler = async () => {
@@ -83,7 +114,7 @@ export const DeliveryArea = ({ redirect }: Props) => {
   // UI
   if (isSuccess) return <Redirect to={redirect} push />;
   return (
-    <Box w="656px">
+    <Box w="656px" marginY="16" marginX="16">
       <form
         onSubmit={(ev) => {
           ev.preventDefault();
@@ -98,6 +129,7 @@ export const DeliveryArea = ({ redirect }: Props) => {
         </Text>
         <Flex flexGrow={0}>
           <PatternInput
+            ref={cepRef}
             mt="4"
             label={t('CEP')}
             placeholder={t('CEP')}
@@ -148,12 +180,31 @@ export const DeliveryArea = ({ redirect }: Props) => {
             onChange={(value) => setDeliveryRange(parseInt(value))}
           />
         </Flex>
-        <Box mt="6" w="656px" h="480px">
+        <Box
+          mt="6"
+          w={['164px', '246px', '328px', '410px', '574px', '656px']}
+          h={['120px', '180px', '240px', '300px', '420px', '480px']}
+        >
           <GoogleMapReact
             bootstrapURLKeys={{ key: googleMapsApiKey }}
-            defaultCenter={{ lat: 59.95, lng: 30.33 }}
-            defaultZoom={11}
-          />
+            defaultCenter={coordsFromLatLnt(SaoPauloCoords)}
+            center={center}
+            defaultZoom={12}
+            onGoogleApiLoaded={({ map }) => {
+              setRange(
+                new google.maps.Circle({
+                  strokeColor: '#FFFFFF',
+                  strokeOpacity: 0.8,
+                  strokeWeight: 2,
+                  fillColor: '#78E08F',
+                  fillOpacity: 0.5,
+                })
+              );
+              setMap(map);
+            }}
+          >
+            {/* <Range /> */}
+          </GoogleMapReact>
         </Box>
         <Button mt="4" size="lg" onClick={onSubmitHandler} isLoading={isLoading}>
           {t('Salvar e continuar')}

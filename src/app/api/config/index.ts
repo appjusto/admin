@@ -21,7 +21,7 @@ export const getConfig = (): AppConfig => {
           emulatorPort: parseInt(process.env.REACT_APP_FIREBASE_EMULATOR_PORT ?? '8080'),
         },
       },
+      googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY!
     },
-    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY!
   };
 };
