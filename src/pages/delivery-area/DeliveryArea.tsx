@@ -10,6 +10,7 @@ import { numbersOnlyParser } from 'common/components/form/input/pattern-input/pa
 import { PatternInput } from 'common/components/form/input/pattern-input/PatternInput';
 import { coordsFromLatLnt, SaoPauloCoords } from 'core/api/thirdparty/maps/utils';
 import { fetchCEPInfo } from 'core/api/thirdparty/viacep';
+import { safeParseInt } from 'core/numbers';
 import GoogleMapReact from 'google-map-react';
 import { nanoid } from 'nanoid';
 import React from 'react';
@@ -28,13 +29,16 @@ export const DeliveryArea = ({ redirect }: Props) => {
   const { googleMapsApiKey } = getConfig().api;
 
   // state
+  const defaultRadius = 15;
   const [autocompleteSession] = React.useState(nanoid());
   const [map, setMap] = React.useState<google.maps.Map>();
   const [range, setRange] = React.useState<google.maps.Circle>();
   const [cep, setCEP] = React.useState(business?.businessAddress?.cep ?? '');
   const [number, setNumber] = React.useState(business?.businessAddress?.number ?? '');
   const [additional, setAdditional] = React.useState(business?.businessAddress?.additional ?? '');
-  const [deliveryRange, setDeliveryRange] = React.useState(business?.deliveryRange ?? 5);
+  const [deliveryRange, setDeliveryRange] = React.useState(
+    String(business?.deliveryRange ?? defaultRadius)
+  );
 
   // queries & mutations
   // business profile
@@ -91,8 +95,9 @@ export const DeliveryArea = ({ redirect }: Props) => {
     }
   }, [center, range]);
   React.useEffect(() => {
+    const radius = safeParseInt(deliveryRange, defaultRadius) * 1000;
     if (range) {
-      range.setRadius(deliveryRange * 1000);
+      range.setRadius(radius);
     }
   }, [range, deliveryRange]);
 
@@ -107,7 +112,7 @@ export const DeliveryArea = ({ redirect }: Props) => {
         state: uf,
         additional,
       },
-      deliveryRange,
+      deliveryRange: safeParseInt(deliveryRange, defaultRadius),
     });
   };
 
@@ -177,7 +182,7 @@ export const DeliveryArea = ({ redirect }: Props) => {
             mt="6"
             label={t('Raio/ km')}
             value={deliveryRange}
-            onChange={(value) => setDeliveryRange(parseInt(value))}
+            onChange={(value) => setDeliveryRange(value)}
           />
         </Flex>
         <Box
@@ -189,7 +194,7 @@ export const DeliveryArea = ({ redirect }: Props) => {
             bootstrapURLKeys={{ key: googleMapsApiKey }}
             defaultCenter={coordsFromLatLnt(SaoPauloCoords)}
             center={center}
-            defaultZoom={12}
+            defaultZoom={11}
             onGoogleApiLoaded={({ map }) => {
               setRange(
                 new google.maps.Circle({
