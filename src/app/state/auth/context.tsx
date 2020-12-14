@@ -2,20 +2,30 @@ import { useFirebaseUser } from 'app/api/auth/useFirebaseUser';
 import firebase from 'firebase/app';
 import React from 'react';
 
-type FirebaseUser = firebase.User | undefined | null;
+const FirebaseUserContext = React.createContext<firebase.User | undefined | null>(undefined);
 
-const FirebaseUserContext = React.createContext<FirebaseUser | undefined>(undefined);
+interface Props {
+  children: React.ReactNode | React.ReactNode[];
+}
 
-export const FirebaseUserProvider = (props: Omit<React.ProviderProps<FirebaseUser>, 'value'>) => {
+export const FirebaseUserProvider = ({ children }: Props) => {
   const firebaseUser = useFirebaseUser();
 
   return (
-    <FirebaseUserContext.Provider value={firebaseUser}>
-      {props.children}
-    </FirebaseUserContext.Provider>
+    <FirebaseUserContext.Provider value={firebaseUser}>{children}</FirebaseUserContext.Provider>
   );
 };
 
 export const useContextFirebaseUser = () => {
   return React.useContext(FirebaseUserContext);
+};
+
+export const useContextFirebaseUserId = () => {
+  const user = useContextFirebaseUser();
+  return user?.uid;
+};
+
+export const useContextFirebaseUserEmail = () => {
+  const user = useContextFirebaseUser();
+  return user?.email;
 };

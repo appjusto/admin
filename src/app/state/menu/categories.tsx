@@ -7,9 +7,11 @@ import { useContextMenuConfig } from './config';
 
 const CategoriesContext = React.createContext<WithId<Category>[]>([]);
 
-export const CategoriesProvider = (
-  props: Omit<React.ProviderProps<WithId<Category>[]>, 'value'>
-) => {
+interface Props {
+  children: React.ReactNode | React.ReactNode[];
+}
+
+export const CategoriesProvider = ({ children }: Props) => {
   // context
   const businessId = useContextBusinessId();
   const { menuConfig } = useContextMenuConfig();
@@ -17,9 +19,7 @@ export const CategoriesProvider = (
   const unorderedCategories = useObserveCategories(businessId);
   const categories = getOrderedCategories(unorderedCategories, categoriesOrder);
 
-  return (
-    <CategoriesContext.Provider value={categories}>{props.children}</CategoriesContext.Provider>
-  );
+  return <CategoriesContext.Provider value={categories}>{children}</CategoriesContext.Provider>;
 };
 
 export const useContextCategories = () => {

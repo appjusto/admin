@@ -11,22 +11,15 @@ export default class ManagerApi {
   private getProfileRef(id: string) {
     return this.firestore.collection('managers').doc(id);
   }
-  private async createProfile(id: string) {
-    await this.getProfileRef(id).set({
-      situation: 'pending',
-    } as Partial<ManagerProfile>);
-  }
-
   // public
   // firestore
   observeProfile(
     id: string,
-    resultHandler: (profile: WithId<ManagerProfile>) => void
+    resultHandler: (profile: WithId<ManagerProfile> | null) => void
   ): firebase.Unsubscribe {
     const unsubscribe = this.getProfileRef(id).onSnapshot(
       async (doc) => {
-        // ensure profile exists
-        if (!doc.exists) await this.createProfile(id);
+        if (!doc.exists) resultHandler(null);
         else resultHandler({ ...(doc.data() as ManagerProfile), id });
       },
       (error) => {
@@ -35,6 +28,13 @@ export default class ManagerApi {
     );
     // returns the unsubscribe function
     return unsubscribe;
+  }
+
+  public async createProfile(id: string, email: string) {
+    await this.getProfileRef(id).set({
+      situation: 'pending',
+      email,
+    } as Partial<ManagerProfile>);
   }
 
   async updateProfile(id: string, changes: Partial<ManagerProfile>) {

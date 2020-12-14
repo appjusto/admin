@@ -13,8 +13,11 @@ export default class MenuApi {
 
   // private helpers
   // firestora paths
+  private getBusinessesRef() {
+    return this.firestore.collection('businesses');
+  }
   private getBusinessRef(businessId: string) {
-    return this.firestore.collection('business').doc(businessId);
+    return this.getBusinessesRef().doc(businessId);
   }
   private getCategoriesRef(businessId: string) {
     return this.getBusinessRef(businessId).collection('categories');
@@ -36,19 +39,19 @@ export default class MenuApi {
   }
   // storage path
   private getBusinessStoragePath(businessId: string) {
-    return `business/${businessId}`;
+    return `businesses/${businessId}`;
   }
   private getBusinessLogoUploadStoragePath(businessId: string) {
-    return `business/${businessId}/logo.jpg`;
+    return `${this.getBusinessStoragePath(businessId)}/logo.jpg`;
   }
   private getBusinessLogoStoragePath(businessId: string) {
-    return `business/${businessId}/logo_1024x1024.jpg`;
+    return `${this.getBusinessStoragePath(businessId)}/logo_1024x1024.jpg`;
   }
   private getBusinessCoverUploadStoragePath(businessId: string) {
-    return `business/${businessId}/cover.jpg`;
+    return `${this.getBusinessStoragePath(businessId)}/cover.jpg`;
   }
   private getBusinessCoverStoragePath(businessId: string) {
-    return `business/${businessId}/cover_1024x1024.jpg`;
+    return `${this.getBusinessStoragePath(businessId)}/cover_1024x1024.jpg`;
   }
   private getProductsStoragePath(businessId: string) {
     return `${this.getBusinessStoragePath(businessId)}/products`;
@@ -68,7 +71,7 @@ export default class MenuApi {
   ): firebase.Unsubscribe {
     const unsubscribe = this.getBusinessRef(businessId).onSnapshot(
       (doc) => {
-        resultHandler({ ...(doc.data() as Business), id: businessId });
+        if (doc.exists) resultHandler({ ...(doc.data() as Business), id: businessId });
       },
       (error) => {
         console.error(error);
@@ -77,8 +80,36 @@ export default class MenuApi {
     return unsubscribe;
   }
 
+  async createBusinessProfile(managerEmail: string) {
+    const doc = this.getBusinessesRef().doc();
+    await doc.set({
+      situation: 'pending',
+      managers: [managerEmail],
+    } as Partial<Business>);
+    return doc.id;
+  }
+
   async updateBusinessProfile(businessId: string, changes: Partial<Business>) {
     await this.getBusinessRef(businessId).set(changes, { merge: true });
+  }
+  
+  // managers
+  observeBusinessManagedBy(
+    email: string,
+    resultHandler: (categories: WithId<Business>[]) => void
+  ): firebase.Unsubscribe {
+    const unsubscribe = this.getBusinessesRef()
+      .where('managers', 'array-contains', email)
+      .orderBy('createdOn', 'desc')
+      .onSnapshot(
+        (querySnapshot) => {
+          resultHandler(documentsAs<Business>(querySnapshot.docs));
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+    return unsubscribe;
   }
 
   // bank account

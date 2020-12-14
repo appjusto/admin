@@ -1,22 +1,31 @@
-import { useObserveBusinessProfile } from 'app/api/business/profile/useObserveBusinessProfile';
+import { useObserveBusinessManagedBy } from 'app/api/business/profile/useObserveBusinessManagedBy';
 import { Business, WithId } from 'appjusto-types';
 import React from 'react';
-import { useContextManagerProfile } from '../manager/context';
+import { useApi } from '../api/context';
+import { useContextFirebaseUserEmail } from '../auth/context';
 
 const BusinessContext = React.createContext<WithId<Business> | undefined | null>(undefined);
 
-export const BusinessProvider = (props: Omit<React.ProviderProps<Business>, 'value'>) => {
-  const manager = useContextManagerProfile();
-  const [selectedBusinessId, setSelectedBusinessId] = React.useState<string | undefined | null>();
-  const business = useObserveBusinessProfile(selectedBusinessId);
+interface Props {
+  children: React.ReactNode | React.ReactNode[];
+}
 
+export const BusinessProvider = ({ children }: Props) => {
+  const api = useApi();
+  const email = useContextFirebaseUserEmail();
+  const businesses = useObserveBusinessManagedBy(email);
+  const [business, setBusiness] = React.useState<WithId<Business> | undefined>();
+
+  // side effects
+  // when manager's data becomes available
   React.useEffect(() => {
-    if (!manager) return;
-    const firstBusinessId = manager.businessIds?.find(() => true);
-    setSelectedBusinessId(firstBusinessId ?? null);
-  }, [manager]);
+    if (!email) return;
+    if (!businesses) return;
+    if (businesses.length === 0) api.business().createBusinessProfile(email);
+    else setBusiness(businesses.find(() => true));
+  }, [api, businesses, email]);
 
-  return <BusinessContext.Provider value={business}>{props.children}</BusinessContext.Provider>;
+  return <BusinessContext.Provider value={business}>{children}</BusinessContext.Provider>;
 };
 
 export const useContextBusiness = () => {
