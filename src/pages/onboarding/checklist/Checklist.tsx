@@ -15,15 +15,20 @@ export const Checklist = (props: BoxProps) => {
     t('Cadastrar dados bancários'),
     t('Definir endereço e raio de entrega'),
     t('Incluir o cardápio'),
-    t('Adicionar colaboradores')
+    // t('Adicionar colaboradores')
   ];
   return (
     <Box {...props}>
       {items.map((item, i) => (
-        <Link key={item} to={`${segments.join('/')}/${i+1}`}>
-          <OnboardingItem mt={i > 0 ? "4" : "0"} text={item} checked={currentStepIndex > i} currentStep={currentStepIndex === i} />
+        <Link key={item} to={`/onboarding/${i + 1}`}>
+          <OnboardingItem
+            mt={i > 0 ? '4' : '0'}
+            text={item}
+            checked={currentStepIndex > i}
+            currentStep={currentStepIndex === i}
+          />
         </Link>
       ))}
     </Box>
   );
-}
+};

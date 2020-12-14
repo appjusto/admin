@@ -1,6 +1,5 @@
 import { arrayMove } from 'app/utils/arrayMove';
-import { Category, CategoryWithProducts, MenuConfig, Product, WithId } from 'appjusto-types';
-import { ProductsByCategory } from 'appjusto-types';
+import { Category, CategoryWithProducts, MenuConfig, Product, ProductsByCategory, WithId } from 'appjusto-types';
 
 export const empty = (): MenuConfig => ({ categoriesOrder: [], productsOrderByCategoryId: {} });
 
@@ -95,6 +94,23 @@ export const removeProductFromCategory = (
       [categoryId]: productsOrderByCategoryId[categoryId].filter((id) => id !== productId),
     },
   } as MenuConfig;
+};
+
+export const updateProductCategory = (menuConfig: MenuConfig, productId: string, categoryId: string) => {
+  const currentCategoryId = getProductCategoryId(menuConfig, productId);
+  // avoid update when category is the same
+  if (currentCategoryId === categoryId) return menuConfig;
+  let nextMenuConfig: MenuConfig = menuConfig;
+  // remove product from its current category
+  if (currentCategoryId) {
+    nextMenuConfig = removeProductFromCategory(
+      menuConfig,
+      productId,
+      currentCategoryId
+    );
+  }
+  // add to the new category
+  return addProductToCategory(nextMenuConfig, productId, categoryId);
 };
 
 export const updateProductIndex = (

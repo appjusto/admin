@@ -11,7 +11,7 @@ import { Checklist } from './checklist/Checklist';
 import { OnboardingStep } from './OnboardingStep';
 
 const Onboarding = () => {
-  const { path, url } = useRouteMatch();
+  const { path } = useRouteMatch();
   return (
     <Switch>
       <Route exact path={`${path}`}>
@@ -42,7 +42,7 @@ const Onboarding = () => {
                 'No final desse processo, seu restaurante já estará cadastrado no AppJusto e pronto para receber pedidos. Vamos começar?'
               }
             </Text>
-            <Link to={`${url}/1`}>
+            <Link to={`${path}/1`}>
               <Button size="lg" mt="8">
                 {t('Começar')}
               </Button>

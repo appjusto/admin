@@ -85,6 +85,7 @@ export default class MenuApi {
     await doc.set({
       situation: 'pending',
       managers: [managerEmail],
+      type: 'restaurant'
     } as Partial<Business>);
     return doc.id;
   }

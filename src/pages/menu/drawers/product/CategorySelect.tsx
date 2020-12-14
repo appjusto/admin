@@ -4,9 +4,7 @@ import { Select } from 'common/components/form/select/Select';
 import React from 'react';
 import { t } from 'utils/i18n';
 
-interface Props extends SelectProps {}
-
-export const CategorySelect = (props: Props) => {
+export const CategorySelect = (props: SelectProps) => {
   const categories = useContextCategories();
   return (
     <Select label={t('Categoria')} placeholder={t('Selecione uma categoria')} {...props}>

@@ -1,6 +1,7 @@
 import { Alert, AlertDescription, AlertIcon, AlertTitle, Box, Text } from '@chakra-ui/react';
 import { useProduct } from 'app/api/business/products/useProduct';
 import { getErrorMessage } from 'app/api/utils';
+import { CategoriesProvider } from 'app/state/menu/categories';
 import { useContextMenuConfig } from 'app/state/menu/config';
 import { FileDropzone } from 'common/components/FileDropzone';
 import { CurrencyInput } from 'common/components/form/input/CurrencyInput';
@@ -102,7 +103,9 @@ export const ProductDrawer = (props: Props) => {
         />
 
         <Box mt="4">
-          <CategorySelect value={categoryId} onChange={(ev) => setCategoryId(ev.target.value)} />
+          <CategoriesProvider>
+            <CategorySelect value={categoryId} onChange={(ev) => setCategoryId(ev.target.value)} />
+          </CategoriesProvider>
         </Box>
 
         <Box mt="4">

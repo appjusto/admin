@@ -51,7 +51,7 @@ export const ManagerProfile = ({ redirect }: Props) => {
   }, [profile]);
 
   // handlers
-  const submitHandler = async () => {
+  const onSubmitHandler = async () => {
     await updateProfile({
       name,
       surname,
@@ -70,7 +70,7 @@ export const ManagerProfile = ({ redirect }: Props) => {
       <form
         onSubmit={(ev) => {
           ev.preventDefault();
-          submitHandler();
+          onSubmitHandler();
         }}
       >
         <Text fontSize="xl" color="black">
@@ -125,7 +125,7 @@ export const ManagerProfile = ({ redirect }: Props) => {
           value={cpf}
           onValueChange={(value) => setCPF(value)}
         />
-        <Button mt="4" size="lg" onClick={submitHandler} isLoading={isLoading}>
+        <Button mt="4" size="lg" onClick={onSubmitHandler} isLoading={isLoading}>
           {t('Avançar')}
         </Button>
       </form>
