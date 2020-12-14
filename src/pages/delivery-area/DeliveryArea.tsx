@@ -29,7 +29,7 @@ export const DeliveryArea = ({ redirect }: Props) => {
   const { googleMapsApiKey } = getConfig().api;
 
   // state
-  const defaultRadius = 15;
+  const defaultRadius = 10; // 10km
   const [autocompleteSession] = React.useState(nanoid());
   const [map, setMap] = React.useState<google.maps.Map>();
   const [range, setRange] = React.useState<google.maps.Circle>();
@@ -73,10 +73,11 @@ export const DeliveryArea = ({ redirect }: Props) => {
   }, []);
   // fill fields after initial load
   React.useEffect(() => {
-    if (business?.businessAddress) {
-      if (business.businessAddress.cep) setCEP(business.businessAddress.cep);
-      if (business.businessAddress.number) setNumber(business.businessAddress.number);
-      if (business.businessAddress.additional) setAdditional(business.businessAddress.additional);
+    if (business) {
+      if (business.businessAddress?.cep) setCEP(business.businessAddress.cep);
+      if (business.businessAddress?.number) setNumber(business.businessAddress.number);
+      if (business.businessAddress?.additional) setAdditional(business.businessAddress.additional);
+      if (business.deliveryRange) setDeliveryRange(String(business.deliveryRange));
     }
   }, [business]);
   // after postal lookup, change focus to number input
@@ -194,7 +195,7 @@ export const DeliveryArea = ({ redirect }: Props) => {
             bootstrapURLKeys={{ key: googleMapsApiKey }}
             defaultCenter={coordsFromLatLnt(SaoPauloCoords)}
             center={center}
-            defaultZoom={11}
+            defaultZoom={12}
             onGoogleApiLoaded={({ map }) => {
               setRange(
                 new google.maps.Circle({
@@ -207,6 +208,7 @@ export const DeliveryArea = ({ redirect }: Props) => {
               );
               setMap(map);
             }}
+            yesIWantToUseGoogleMapApiInternals
           >
             {/* <Range /> */}
           </GoogleMapReact>
