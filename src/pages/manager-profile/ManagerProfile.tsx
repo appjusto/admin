@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Text } from '@chakra-ui/react';
+import { Button, Flex, Text } from '@chakra-ui/react';
 import { useUpdateManagerProfile } from 'app/api/manager/useUpdateManagerProfile';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextManagerProfile } from 'app/state/manager/context';
@@ -66,7 +66,7 @@ export const ManagerProfile = ({ redirect }: Props) => {
   // UI
   if (isSuccess) return <Redirect to={redirect} push />;
   return (
-    <Box w="368px">
+    <>
       <form
         onSubmit={(ev) => {
           ev.preventDefault();
@@ -129,6 +129,6 @@ export const ManagerProfile = ({ redirect }: Props) => {
           {t('Avançar')}
         </Button>
       </form>
-    </Box>
+    </>
   );
 };

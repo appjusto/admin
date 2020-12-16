@@ -120,7 +120,7 @@ export const DeliveryArea = ({ redirect }: Props) => {
   // UI
   if (isSuccess) return <Redirect to={redirect} push />;
   return (
-    <Box w="656px" marginY="16" marginX="16">
+    <>
       <form
         onSubmit={(ev) => {
           ev.preventDefault();
@@ -217,6 +217,6 @@ export const DeliveryArea = ({ redirect }: Props) => {
           {t('Salvar e continuar')}
         </Button>
       </form>
-    </Box>
+    </>
   );
 };

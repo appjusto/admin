@@ -17,7 +17,11 @@ export const OnboardingStep = ({ children }: Props) => {
         </Center>
       </Box>
       <Flex direction="column" w="55%" h="100vh" overflow="scroll">
-        <Center flex={1}>{children}</Center>
+        <Center flex={1}>
+          <Box w={['246px', null, '328px', '656px']} m="16">
+            {children}
+          </Box>
+        </Center>
       </Flex>
     </Flex>
   );

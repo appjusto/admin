@@ -1,4 +1,4 @@
-import { Box, Button, Text } from '@chakra-ui/react';
+import { Button, Text } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useContextBusiness } from 'app/state/business/context';
 import { FileDropzone } from 'common/components/FileDropzone';
@@ -88,7 +88,7 @@ export const BusinessProfile = ({ redirect }: Props) => {
   // UI
   if (isSuccess) return <Redirect to={redirect} push />;
   return (
-    <Box w="368px" marginY="16">
+    <>
       <form
         onSubmit={(ev) => {
           ev.preventDefault();
@@ -171,6 +171,6 @@ export const BusinessProfile = ({ redirect }: Props) => {
           {t('Avançar')}
         </Button>
       </form>
-    </Box>
+    </>
   );
 };
