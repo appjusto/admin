@@ -9,14 +9,22 @@ interface Props {
 const Wrapper = ({ children }: Props) => {
   const breakpoint = useBreakpoint();
   if (breakpoint === 'base') <Box p="6">{children}</Box>;
-  return <Container maxW="md">{children}</Container>;
+  return (
+    <Container>
+      <Box w={['246px', '400px', '568px', '756px']} m="16">
+        {children}
+      </Box>
+    </Container>
+  );
 };
 
 const PageLayout = ({ children }: Props) => {
   return (
     <Flex>
       <Sidebar />
-      <Wrapper>{children}</Wrapper>
+      <Box>
+        <Wrapper>{children}</Wrapper>
+      </Box>
     </Flex>
   );
 };

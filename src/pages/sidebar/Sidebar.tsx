@@ -6,7 +6,7 @@ import { Links } from './Links';
 
 const Sidebar = () => {
   return (
-    <Box d={['none', 'block']} w="220px" h="100vh" bg="gray.300">
+    <Box d={['none', 'block']} w="220px" bg="gray.300" flexShrink={0}>
       <Box ml="4" mt="6">
         <Logo />
       </Box>
