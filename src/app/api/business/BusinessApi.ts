@@ -35,7 +35,7 @@ export default class MenuApi {
     return this.getBusinessRef(businessId).collection('config').doc('menu');
   }
   private getBankAccountRef(businessId: string) {
-    return this.getBusinessRef(businessId).collection('private').doc('bank')
+    return this.getBusinessRef(businessId).collection('private').doc('bank');
   }
   // storage path
   private getBusinessStoragePath(businessId: string) {
@@ -85,7 +85,7 @@ export default class MenuApi {
     await doc.set({
       situation: 'pending',
       managers: [managerEmail],
-      type: 'restaurant'
+      type: 'restaurant',
     } as Partial<Business>);
     return doc.id;
   }
@@ -93,7 +93,7 @@ export default class MenuApi {
   async updateBusinessProfile(businessId: string, changes: Partial<Business>) {
     await this.getBusinessRef(businessId).set(changes, { merge: true });
   }
-  
+
   // managers
   observeBusinessManagedBy(
     email: string,
@@ -124,11 +124,7 @@ export default class MenuApi {
   }
 
   // logo
-  uploadBusinessLogo(
-    businessId: string,
-    file: File,
-    progressHandler?: (progress: number) => void
-  ) {
+  uploadBusinessLogo(businessId: string, file: File, progressHandler?: (progress: number) => void) {
     return this.files.upload(
       file,
       this.getBusinessLogoUploadStoragePath(businessId),
