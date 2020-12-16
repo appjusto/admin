@@ -1,8 +1,8 @@
 import { Alert, AlertDescription, AlertIcon, AlertTitle, Box, Text } from '@chakra-ui/react';
+import * as menu from 'app/api/business/menu/functions';
 import { useProduct } from 'app/api/business/products/useProduct';
 import { getErrorMessage } from 'app/api/utils';
-import { CategoriesProvider } from 'app/state/menu/categories';
-import { useContextMenuConfig } from 'app/state/menu/config';
+import { useContextMenu } from 'app/state/menu/context';
 import { FileDropzone } from 'common/components/FileDropzone';
 import { CurrencyInput } from 'common/components/form/input/CurrencyInput';
 import { Input } from 'common/components/form/input/Input';
@@ -27,7 +27,7 @@ export const ProductDrawer = (props: Props) => {
   const { productId } = useParams<Params>();
 
   // state
-  const { getProductCategoryId, updateProductCategory } = useContextMenuConfig();
+  const { menuConfig, updateMenuConfig } = useContextMenu();
   const { product, id, isNew, image, saveProduct, uploadPhoto, result } = useProduct(productId);
   const { isLoading, isError, error } = result;
   const [name, setName] = React.useState(product?.name ?? '');
@@ -42,14 +42,14 @@ export const ProductDrawer = (props: Props) => {
   React.useEffect(() => {
     if (product) {
       setName(product.name);
-      setCategoryId(getProductCategoryId(id));
+      setCategoryId(menu.getProductCategoryId(menuConfig, id));
       setDescription(product.description ?? '');
       setPrice(product.price ?? 0);
       setPrice(product.price ?? 0);
       setExternalId(product.externalId ?? '');
       setEnabled(product.enabled ?? true);
     }
-  }, [getProductCategoryId, id, product]);
+  }, [id, product, menuConfig]);
 
   // handlers
   const onDropHandler = React.useCallback(
@@ -71,7 +71,7 @@ export const ProductDrawer = (props: Props) => {
         price,
         enabled,
       });
-      await updateProductCategory(id, categoryId!);
+      updateMenuConfig(menu.updateProductCategory(menuConfig, id, categoryId!));
       props.onClose();
     })();
   };
@@ -103,9 +103,7 @@ export const ProductDrawer = (props: Props) => {
         />
 
         <Box mt="4">
-          <CategoriesProvider>
-            <CategorySelect value={categoryId} onChange={(ev) => setCategoryId(ev.target.value)} />
-          </CategoriesProvider>
+          <CategorySelect value={categoryId} onChange={(ev) => setCategoryId(ev.target.value)} />
         </Box>
 
         <Box mt="4">

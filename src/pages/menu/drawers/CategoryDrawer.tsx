@@ -1,7 +1,8 @@
 import { Alert, AlertDescription, AlertIcon, AlertTitle, Box } from '@chakra-ui/react';
 import { useCategory } from 'app/api/business/categories/useCategory';
+import * as menu from 'app/api/business/menu/functions';
 import { getErrorMessage } from 'app/api/utils';
-import { useContextMenuConfig } from 'app/state/menu/config';
+import { useContextMenu } from 'app/state/menu/context';
 import { Input } from 'common/components/form/input/Input';
 import React from 'react';
 import { useParams } from 'react-router-dom';
@@ -21,7 +22,7 @@ export const CategoryDrawer = (props: Props) => {
   const { categoryId } = useParams<Params>();
 
   // state
-  const { addCategory } = useContextMenuConfig();
+  const { menuConfig, updateMenuConfig } = useContextMenu();
   const { category, id, saveCategory, result } = useCategory(categoryId);
   const { isLoading, isError, error } = result;
   const [name, setName] = React.useState(category?.name ?? '');
@@ -42,7 +43,7 @@ export const CategoryDrawer = (props: Props) => {
         name,
         enabled: true,
       });
-      await addCategory(id);
+      updateMenuConfig(menu.addCategory(menuConfig, id));
       props.onClose();
     })();
   };

@@ -1,7 +1,6 @@
 import { Box } from '@chakra-ui/react';
-import { useOrderedMenu } from 'app/api/business/menu/useOrderedMenu';
-import { useContextBusinessId } from 'app/state/business/context';
-import { useContextMenuConfig } from 'app/state/menu/config';
+import * as menu from 'app/api/business/menu/functions';
+import { useContextMenu } from 'app/state/menu/context';
 import { Product, WithId } from 'appjusto-types';
 import { isEmpty } from 'lodash';
 import React from 'react';
@@ -14,9 +13,7 @@ interface Props {
 
 export const Categories = ({ productSearch }: Props) => {
   // state
-  const businessId = useContextBusinessId();
-  const categories = useOrderedMenu(businessId);
-  const { updateCategoryIndex, updateProductIndex } = useContextMenuConfig();
+  const { categories, menuConfig, updateMenuConfig } = useContextMenu();
   const filterProductsWithSearch = (products: WithId<Product>[]) => {
     if (!productSearch || isEmpty(productSearch)) return products;
     const regexp = new RegExp(productSearch, 'i');
@@ -30,15 +27,18 @@ export const Categories = ({ productSearch }: Props) => {
     if (source.droppableId === destination.droppableId && source.index === destination.index)
       return; // same location
     if (type === 'product') {
-      updateProductIndex(
-        draggableId,
-        source.droppableId,
-        destination.droppableId,
-        source.index,
-        destination.index
+      updateMenuConfig(
+        menu.updateProductIndex(
+          menuConfig,
+          draggableId,
+          source.droppableId,
+          destination.droppableId,
+          source.index,
+          destination.index
+        )
       );
     } else if (type === 'category') {
-      updateCategoryIndex(draggableId, destination.index);
+      updateMenuConfig(menu.updateCategoryIndex(menuConfig, draggableId, destination.index));
     }
   };
 
