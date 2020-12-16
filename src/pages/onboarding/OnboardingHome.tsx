@@ -8,6 +8,7 @@ import React from 'react';
 import { Link, Route, Switch, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { Checklist } from './checklist/Checklist';
+import { OnboardingComplete } from './OnboardingComplete';
 import { OnboardingStep } from './OnboardingStep';
 
 const Onboarding = () => {
@@ -67,8 +68,11 @@ const Onboarding = () => {
       </Route>
       <Route path={`${path}/4`}>
         <OnboardingStep>
-          <DeliveryArea redirect={`${path}/3`} />
+          <DeliveryArea redirect={`${path}/complete`} />
         </OnboardingStep>
+      </Route>
+      <Route path={`${path}/complete`}>
+        <OnboardingComplete />
       </Route>
     </Switch>
   );

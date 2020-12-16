@@ -1,14 +1,26 @@
 import { Box, BoxProps } from '@chakra-ui/react';
+import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import React from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { OnboardingItem } from './ChecklistItem';
 
 export const Checklist = (props: BoxProps) => {
+  // context
+  const { updateBusinessProfile } = useBusinessProfile();
   const { path } = useRouteMatch();
   const segments = path.split('/');
   const lastSegment = segments.pop();
   const currentStepIndex = parseInt(lastSegment ?? '1') - 1;
+
+  // side effects
+  React.useEffect(() => {
+    updateBusinessProfile({
+      onboarding: lastSegment,
+    });
+  }, [lastSegment, updateBusinessProfile]);
+
+  // UI
   const items = [
     t('Preencher dados pessoais do administrador'),
     t('Criar perfil do restaurante'),

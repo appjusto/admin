@@ -5,7 +5,7 @@ import { DeliveryArea } from './DeliveryArea';
 const DeliveryAreaPage = () => {
   return (
     <PageLayout>
-      <DeliveryArea redirect="" />
+      <DeliveryArea />
     </PageLayout>
   );
 };

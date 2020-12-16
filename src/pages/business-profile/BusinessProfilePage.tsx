@@ -5,7 +5,7 @@ import { BusinessProfile } from './BusinessProfile';
 const DeliveryAreaPage = () => {
   return (
     <PageLayout>
-      <BusinessProfile redirect="" />
+      <BusinessProfile />
     </PageLayout>
   );
 };

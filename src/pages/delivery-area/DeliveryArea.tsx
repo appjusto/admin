@@ -20,7 +20,7 @@ import { Redirect } from 'react-router-dom';
 import { t } from 'utils/i18n';
 
 interface Props {
-  redirect: string;
+  redirect?: string;
 }
 
 export const DeliveryArea = ({ redirect }: Props) => {
@@ -119,7 +119,7 @@ export const DeliveryArea = ({ redirect }: Props) => {
   };
 
   // UI
-  if (isSuccess) return <Redirect to={redirect} push />;
+  if (isSuccess && redirect) return <Redirect to={redirect} push />;
   return (
     <>
       <form

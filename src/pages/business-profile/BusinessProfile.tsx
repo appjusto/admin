@@ -15,7 +15,7 @@ import { t } from 'utils/i18n';
 import { CuisineSelect } from '../../common/components/form/select/CuisineSelect';
 
 interface Props {
-  redirect: string;
+  redirect?: string;
 }
 
 export const BusinessProfile = ({ redirect }: Props) => {
@@ -87,7 +87,7 @@ export const BusinessProfile = ({ redirect }: Props) => {
   };
 
   // UI
-  if (isSuccess) return <Redirect to={redirect} push />;
+  if (isSuccess && redirect) return <Redirect to={redirect} push />;
   return (
     <>
       <form
