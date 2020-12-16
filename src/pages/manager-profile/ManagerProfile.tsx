@@ -1,4 +1,4 @@
-import { Button, Flex, Text } from '@chakra-ui/react';
+import { Button, Flex } from '@chakra-ui/react';
 import { useUpdateManagerProfile } from 'app/api/manager/useUpdateManagerProfile';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextManagerProfile } from 'app/state/manager/context';
@@ -11,6 +11,7 @@ import {
 } from 'common/components/form/input/pattern-input/formatters';
 import { numbersOnlyParser } from 'common/components/form/input/pattern-input/parsers';
 import { PatternInput } from 'common/components/form/input/pattern-input/PatternInput';
+import PageHeader from 'pages/PageHeader';
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { t } from 'utils/i18n';
@@ -73,10 +74,10 @@ export const ManagerProfile = ({ redirect }: Props) => {
           onSubmitHandler();
         }}
       >
-        <Text fontSize="xl" color="black">
-          {t('Informe seus dados')}
-        </Text>
-        <Text>{t('Informações do administrador da conta')}</Text>
+        <PageHeader
+          title={t('Informe seus dados')}
+          subtitle={t('Informações do administrador da conta')}
+        />
         <Input mt="8" label={t('E-mail')} value={user?.email ?? ''} isDisabled />
         <Input
           mt="4"

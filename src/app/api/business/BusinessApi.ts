@@ -19,6 +19,9 @@ export default class MenuApi {
   private getBusinessRef(businessId: string) {
     return this.getBusinessesRef().doc(businessId);
   }
+  private getBusinessPrivateRef(businessId: string) {
+    return this.getBusinessRef(businessId).collection('private');
+  }
   private getCategoriesRef(businessId: string) {
     return this.getBusinessRef(businessId).collection('categories');
   }
@@ -35,7 +38,7 @@ export default class MenuApi {
     return this.getBusinessRef(businessId).collection('config').doc('menu');
   }
   private getBankAccountRef(businessId: string) {
-    return this.getBusinessRef(businessId).collection('private').doc('bank');
+    return this.getBusinessPrivateRef(businessId).doc('bank');
   }
   // storage path
   private getBusinessStoragePath(businessId: string) {

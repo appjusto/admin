@@ -1,7 +1,8 @@
-import { Button, Flex, Text } from '@chakra-ui/react';
+import { Button, Flex } from '@chakra-ui/react';
 import { useBusinessBankAccount } from 'app/api/business/profile/useBusinessBankAccount';
 import { NumberInput } from 'common/components/form/input/NumberInput';
 import { BankSelect } from 'common/components/form/select/BankSelect';
+import PageHeader from 'pages/PageHeader';
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { t } from 'utils/i18n';
@@ -57,10 +58,10 @@ export const BankingInformation = ({ redirect }: Props) => {
           submitHandler();
         }}
       >
-        <Text fontSize="xl" color="black">
-          {t('Dados bancários')}
-        </Text>
-        <Text>{t('Informe para onde serão transferidos os repasses')}</Text>
+        <PageHeader
+          title={t('Dados bancários')}
+          subtitle={t('Informe para onde serão transferidos os repasses')}
+        />
         <BankSelect mt="4" value={name} onChange={(ev) => setName(ev.target.value)} />
         <NumberInput
           mt="4"

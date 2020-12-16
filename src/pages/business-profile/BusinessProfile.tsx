@@ -8,6 +8,7 @@ import { cnpjFormatter, cnpjMask } from 'common/components/form/input/pattern-in
 import { numbersOnlyParser } from 'common/components/form/input/pattern-input/parsers';
 import { PatternInput } from 'common/components/form/input/pattern-input/PatternInput';
 import { Textarea } from 'common/components/form/input/Textarea';
+import PageHeader from 'pages/PageHeader';
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { t } from 'utils/i18n';
@@ -95,12 +96,10 @@ export const BusinessProfile = ({ redirect }: Props) => {
           onSubmitHandler();
         }}
       >
-        <Text fontSize="xl" color="black">
-          {t('Sobre o restaurante')}
-        </Text>
-        <Text mt="2" fontSize="md">
-          {t('Essas informações serão vistas por seus visitantes')}
-        </Text>
+        <PageHeader
+          title={t('Sobre o restaurante')}
+          subtitle={t('Essas informações serão vistas por seus visitantes')}
+        />
         <Input
           mt="4"
           ref={nameRef}

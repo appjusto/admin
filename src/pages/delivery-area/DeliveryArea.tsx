@@ -13,6 +13,7 @@ import { fetchCEPInfo } from 'core/api/thirdparty/viacep';
 import { safeParseInt } from 'core/numbers';
 import GoogleMapReact from 'google-map-react';
 import { nanoid } from 'nanoid';
+import PageHeader from 'pages/PageHeader';
 import React from 'react';
 import { useQuery } from 'react-query';
 import { Redirect } from 'react-router-dom';
@@ -127,12 +128,11 @@ export const DeliveryArea = ({ redirect }: Props) => {
           onSubmitHandler();
         }}
       >
-        <Text fontSize="xl" color="black">
-          {t('Área de entrega')}
-        </Text>
-        <Text mt="2" fontSize="sm">
-          {t('O raio de entrega é calculado a partir do endereço determinado')}
-        </Text>
+        <PageHeader
+          title={t('Área de entrega')}
+          subtitle={t('O raio de entrega é calculado a partir do endereço determinado')}
+        />
+
         <Flex flexGrow={0}>
           <PatternInput
             ref={cepRef}
