@@ -2,7 +2,7 @@ export const IconButton = {
   // The styles all button have in common
   baseStyle: {
     border: '1px solid',
-    borderRadius: '8px',
+    borderRadius: 'lg',
     borderColor: 'gray.50',
   },
   // Variants

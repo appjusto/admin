@@ -48,7 +48,7 @@ export const Links = () => {
       <Box>
         <LinksContainer>
           <Link to="/home">{t('Início')}</Link>
-          <Link to="/">{t('Pedidos')}</Link>
+          <Link to="/orders">{t('Pedidos')}</Link>
           <Link to="/">{t('Financeiro')}</Link>
         </LinksContainer>
       </Box>

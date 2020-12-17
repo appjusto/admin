@@ -26,7 +26,7 @@ export const FileDropzone = ({
       bg={!isDragActive ? 'gray.50' : 'gray.300'}
       borderWidth="1px"
       borderColor="gray.500"
-      borderRadius="8px"
+      borderRadius="lg"
       width={width}
       height={height}
       {...props}

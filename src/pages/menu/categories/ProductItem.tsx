@@ -47,12 +47,12 @@ export const ProductItem = React.memo(({ product, index }: Props) => {
               fallbackSrc="/static/media/product-placeholder.png"
               boxSize="24"
               objectFit="contain"
-              borderRadius="8px"
+              borderRadius="lg"
               alt="Product image"
             />
           </Link>
           <Box bg="white">
-            <Text fontSize="lg" fontWeight="700">
+            <Text fontSize="lg" fontWeight="bold">
               {product.name}
             </Text>
             <Text fontSize="sm">{product.description}</Text>

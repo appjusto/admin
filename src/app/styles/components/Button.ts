@@ -5,7 +5,7 @@ export const Button = {
     fontSize: 'sm',
     color: 'black',
     border: '1px solid',
-    borderRadius: '8px',
+    borderRadius: 'lg',
   },
   // Variants
   variants: {
