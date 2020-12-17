@@ -1,4 +1,4 @@
-import { Button, Flex } from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/react';
 import { useUpdateManagerProfile } from 'app/api/manager/useUpdateManagerProfile';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextManagerProfile } from 'app/state/manager/context';
@@ -11,16 +11,14 @@ import {
 } from 'common/components/form/input/pattern-input/formatters';
 import { numbersOnlyParser } from 'common/components/form/input/pattern-input/parsers';
 import { PatternInput } from 'common/components/form/input/pattern-input/PatternInput';
+import { OnboardingProps } from 'pages/onboarding/types';
+import PageFooter from 'pages/PageFooter';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { t } from 'utils/i18n';
 
-interface Props {
-  redirect: string;
-}
-
-export const ManagerProfile = ({ redirect }: Props) => {
+export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
   // context
   const user = useContextFirebaseUser();
   const profile = useContextManagerProfile();
@@ -65,7 +63,7 @@ export const ManagerProfile = ({ redirect }: Props) => {
   };
 
   // UI
-  if (isSuccess) return <Redirect to={redirect} push />;
+  if (isSuccess && redirect) return <Redirect to={redirect} push />;
   return (
     <>
       <form
@@ -126,9 +124,12 @@ export const ManagerProfile = ({ redirect }: Props) => {
           value={cpf}
           onValueChange={(value) => setCPF(value)}
         />
-        <Button mt="4" size="lg" onClick={onSubmitHandler} isLoading={isLoading}>
-          {t('Avançar')}
-        </Button>
+        <PageFooter
+          onboarding={onboarding}
+          redirect={redirect}
+          isLoading={isLoading}
+          onSubmit={onSubmitHandler}
+        />
       </form>
     </>
   );

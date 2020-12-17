@@ -53,22 +53,22 @@ const Onboarding = () => {
       </Route>
       <Route path={`${path}/1`}>
         <OnboardingStep>
-          <ManagerProfile redirect={`${path}/2`} />
+          <ManagerProfile redirect={`${path}/2`} onboarding />
         </OnboardingStep>
       </Route>
       <Route path={`${path}/2`}>
         <OnboardingStep>
-          <BusinessProfile redirect={`${path}/3`} />
+          <BusinessProfile redirect={`${path}/3`} onboarding />
         </OnboardingStep>
       </Route>
       <Route path={`${path}/3`}>
         <OnboardingStep>
-          <BankingInformation redirect={`${path}/4`} />
+          <BankingInformation redirect={`${path}/4`} onboarding />
         </OnboardingStep>
       </Route>
       <Route path={`${path}/4`}>
         <OnboardingStep>
-          <DeliveryArea redirect={`${path}/complete`} />
+          <DeliveryArea redirect={`${path}/complete`} onboarding />
         </OnboardingStep>
       </Route>
       <Route path={`${path}/complete`}>

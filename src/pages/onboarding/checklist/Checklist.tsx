@@ -26,7 +26,7 @@ export const Checklist = (props: BoxProps) => {
     t('Criar perfil do restaurante'),
     t('Cadastrar dados bancários'),
     t('Definir endereço e raio de entrega'),
-    t('Incluir o cardápio'),
+    // t('Incluir o cardápio'),
     // t('Adicionar colaboradores')
   ];
   return (

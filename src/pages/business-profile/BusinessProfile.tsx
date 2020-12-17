@@ -1,4 +1,4 @@
-import { Button, Text } from '@chakra-ui/react';
+import { Text } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useContextBusiness } from 'app/state/business/context';
 import { FileDropzone } from 'common/components/FileDropzone';
@@ -8,17 +8,15 @@ import { cnpjFormatter, cnpjMask } from 'common/components/form/input/pattern-in
 import { numbersOnlyParser } from 'common/components/form/input/pattern-input/parsers';
 import { PatternInput } from 'common/components/form/input/pattern-input/PatternInput';
 import { Textarea } from 'common/components/form/input/Textarea';
+import { OnboardingProps } from 'pages/onboarding/types';
+import PageFooter from 'pages/PageFooter';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { CuisineSelect } from '../../common/components/form/select/CuisineSelect';
 
-interface Props {
-  redirect?: string;
-}
-
-export const BusinessProfile = ({ redirect }: Props) => {
+export const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   // context
   const business = useContextBusiness();
 
@@ -166,9 +164,12 @@ export const BusinessProfile = ({ redirect }: Props) => {
           preview={coverPreviewURL ?? cover}
         />
         {/* submit */}
-        <Button mt="4" size="lg" onClick={onSubmitHandler} isLoading={isLoading}>
-          {t('Avançar')}
-        </Button>
+        <PageFooter
+          onboarding={onboarding}
+          redirect={redirect}
+          isLoading={isLoading}
+          onSubmit={onSubmitHandler}
+        />
       </form>
     </>
   );

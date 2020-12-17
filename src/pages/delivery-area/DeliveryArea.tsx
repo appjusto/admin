@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Text } from '@chakra-ui/react';
+import { Box, Flex, Text } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { getConfig } from 'app/api/config';
 import { useApi } from 'app/state/api/context';
@@ -13,17 +13,15 @@ import { fetchCEPInfo } from 'core/api/thirdparty/viacep';
 import { safeParseInt } from 'core/numbers';
 import GoogleMapReact from 'google-map-react';
 import { nanoid } from 'nanoid';
+import { OnboardingProps } from 'pages/onboarding/types';
+import PageFooter from 'pages/PageFooter';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
 import { useQuery } from 'react-query';
 import { Redirect } from 'react-router-dom';
 import { t } from 'utils/i18n';
 
-interface Props {
-  redirect?: string;
-}
-
-export const DeliveryArea = ({ redirect }: Props) => {
+export const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
   // context
   const api = useApi();
   const business = useContextBusiness();
@@ -129,8 +127,8 @@ export const DeliveryArea = ({ redirect }: Props) => {
         }}
       >
         <PageHeader
-          title={t('Área de entrega')}
-          subtitle={t('O raio de entrega é calculado a partir do endereço determinado')}
+          title={t('Endereço do restaurante')}
+          subtitle={t('O raio de entrega é calculado a partir do endereço do seu restaurante')}
         />
 
         <Flex flexGrow={0}>
@@ -213,9 +211,12 @@ export const DeliveryArea = ({ redirect }: Props) => {
             {/* <Range /> */}
           </GoogleMapReact>
         </Box>
-        <Button mt="4" size="lg" onClick={onSubmitHandler} isLoading={isLoading}>
-          {t('Salvar e continuar')}
-        </Button>
+        <PageFooter
+          onboarding={onboarding}
+          redirect={redirect}
+          isLoading={isLoading}
+          onSubmit={onSubmitHandler}
+        />
       </form>
     </>
   );

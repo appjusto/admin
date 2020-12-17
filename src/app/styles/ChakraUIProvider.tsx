@@ -14,6 +14,10 @@ const theme = extendTheme({
       fontSize: 'xs',
       color: 'green.600',
     },
+    link: {
+      fontSize: 'sm',
+      textDecoration: 'underline',
+    },
   },
   components: {
     Button,

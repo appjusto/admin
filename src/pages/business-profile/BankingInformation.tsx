@@ -1,17 +1,15 @@
-import { Button, Flex } from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/react';
 import { useBusinessBankAccount } from 'app/api/business/profile/useBusinessBankAccount';
 import { NumberInput } from 'common/components/form/input/NumberInput';
 import { BankSelect } from 'common/components/form/select/BankSelect';
+import { OnboardingProps } from 'pages/onboarding/types';
+import PageFooter from 'pages/PageFooter';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { t } from 'utils/i18n';
 
-interface Props {
-  redirect: string;
-}
-
-export const BankingInformation = ({ redirect }: Props) => {
+export const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
   // context
   const { bankAccount, updateBankAccount, updateResult } = useBusinessBankAccount();
   const { isLoading, isSuccess } = updateResult;
@@ -39,7 +37,7 @@ export const BankingInformation = ({ redirect }: Props) => {
   }, [bankAccount]);
 
   // handlers
-  const submitHandler = async () => {
+  const onSubmitHandler = async () => {
     await updateBankAccount({
       name,
       agency,
@@ -49,13 +47,13 @@ export const BankingInformation = ({ redirect }: Props) => {
   };
 
   // UI
-  if (isSuccess) return <Redirect to={redirect} push />;
+  if (isSuccess && redirect) return <Redirect to={redirect} push />;
   return (
     <>
       <form
         onSubmit={(ev) => {
           ev.preventDefault();
-          submitHandler();
+          onSubmitHandler();
         }}
       >
         <PageHeader
@@ -87,9 +85,12 @@ export const BankingInformation = ({ redirect }: Props) => {
             onChange={(value) => setDigit(value)}
           />
         </Flex>
-        <Button mt="4" size="lg" onClick={submitHandler} isLoading={isLoading}>
-          {t('Avançar')}
-        </Button>
+        <PageFooter
+          onboarding={onboarding}
+          redirect={redirect}
+          isLoading={isLoading}
+          onSubmit={onSubmitHandler}
+        />
       </form>
     </>
   );
