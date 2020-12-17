@@ -8,7 +8,7 @@ import {
   Center,
   Flex,
   FormControl,
-  Text
+  Text,
 } from '@chakra-ui/react';
 import { getErrorMessage } from 'app/api/utils';
 import { useApi } from 'app/state/api/context';
@@ -74,6 +74,7 @@ const Login = () => {
                 <FormControl isRequired>
                   <Input
                     ref={emailRef}
+                    type="email"
                     id="email"
                     label={t('E-mail')}
                     placeholder={t('Endereço de e-mail')}

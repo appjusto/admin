@@ -8,13 +8,13 @@ import {
   Center,
   Container,
   FormControl,
-  Text
+  Text,
 } from '@chakra-ui/react';
 import { getErrorMessage } from 'app/api/utils';
 import { useApi } from 'app/state/api/context';
 import { Input } from 'common/components/form/input/Input';
-import { ReactComponent as Logo } from 'common/img/logo.svg';
-import React, { useEffect, useState } from 'react';
+import { Loading } from 'common/components/Loading';
+import React from 'react';
 import { useMutation } from 'react-query';
 import { Redirect } from 'react-router-dom';
 import { t } from 'utils/i18n';
@@ -28,7 +28,7 @@ const Join = () => {
   const isEmailSaved = Boolean(savedEmail);
 
   // state
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = React.useState('');
   const [signIn, { isLoading, isSuccess, isError, error }] = useMutation(async (email: string) => {
     api.auth().signInWithEmailLink(email, link);
   });
@@ -37,11 +37,11 @@ const Join = () => {
   const emailRef = React.useRef<HTMLInputElement>(null);
 
   // side effects
-  useEffect(() => {
+  React.useEffect(() => {
     emailRef?.current?.focus();
   }, []);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (isLinkValid && isEmailSaved) signIn(savedEmail!);
   }, [isLinkValid, isEmailSaved, signIn, savedEmail]);
 
@@ -82,11 +82,7 @@ const Join = () => {
         </Container>
       </Center>
     );
-  return (
-    <Center height="100vh">
-      <Logo />
-    </Center>
-  );
+  return <Loading />;
 };
 
 export default Join;

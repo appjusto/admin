@@ -1,7 +1,7 @@
 import { Box, Circle, Text } from '@chakra-ui/react';
 import { useContextBusiness } from 'app/state/business/context';
 import React from 'react';
-import { t } from 'utils/i18n';
+import { BusinessStatus } from './BusinessStatus';
 
 const BusinessInfo = () => {
   const business = useContextBusiness();
@@ -11,12 +11,7 @@ const BusinessInfo = () => {
       <Text fontSize="md" mt="2">
         {business?.name}
       </Text>
-      <Box d="flex" mt="0" alignItems="center">
-        <Circle size="8px" bg={business?.status === 'open' ? 'green.500' : 'red'} />
-        <Text fontSize="md" ml="2">
-          {business?.status === 'open' ? t('Aberto agora') : t('Fechado')}
-        </Text>
-      </Box>
+      <BusinessStatus />
     </Box>
   );
 };
