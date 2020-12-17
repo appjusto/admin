@@ -33,7 +33,7 @@ const Onboarding = () => {
               {'Você irá passar por essas etapas para cadastrar seu restaurante:'}
             </Text>
             <Box mt="8">
-              <Checklist />
+              <Checklist disabled />
             </Box>
             <Text mt="8" fontSize="md">
               {'Não se preocupe, você poderá pular qualquer etapa e voltar para preencher depois.'}
