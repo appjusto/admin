@@ -1,5 +1,6 @@
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextManagerProfile } from 'app/state/manager/context';
+import { Loading } from 'common/components/Loading';
 import React from 'react';
 import { Redirect, Route, RouteProps } from 'react-router-dom';
 
@@ -34,5 +35,5 @@ export const ProtectedRoute = (props: RouteProps) => {
   // load route when profile is loaded
   if (status === 'profile-loaded') return <Route {...props} />;
   // still loading user's profile
-  return <></>;
+  return <Loading />;
 };
