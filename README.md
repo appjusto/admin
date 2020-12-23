@@ -1,3 +1,31 @@
+# Setup
+
+## 1. Clone repo and install dependecies
+
+```bash
+git clone git@github.com:appjusto/admin.git
+cd admin && yarn install
+```
+
+## 2. Configure enviroment variables
+
+Create a file named `.env.local` filling up these variables:
+
+```bash
+echo "REACT_APP_PUBLIC_URL=
+REACT_APP_FIREBASE_API_KEY=
+REACT_APP_GOOGLE_MAPS_API_KEY=
+REACT_APP_FIREBASE_REGION=
+REACT_APP_FIREBASE_PROJECT_ID=
+REACT_APP_FIREBASE_MESSAGING_SENDER_ID=
+REACT_APP_FIREBASE_APP_ID=
+REACT_APP_FIREBASE_MEASUREMENT_ID=
+REACT_APP_FIREBASE_EMULATOR=
+REACT_APP_FIREBASE_EMULATOR_HOST=
+REACT_APP_FIREBASE_EMULATOR_PORT=
+" > .env.local2
+```
+
 ## Available Scripts
 
 In the project directory, you can run:
