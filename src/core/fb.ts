@@ -1,6 +1,6 @@
 import { WithId } from 'appjusto-types';
 import firebase from 'firebase/app';
-import { FirebaseError } from './types';
+import { FirebaseError } from '../app/api/types';
 
 export type FirebaseDocument =
   | firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>

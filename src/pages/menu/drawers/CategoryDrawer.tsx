@@ -1,9 +1,9 @@
 import { Alert, AlertDescription, AlertIcon, AlertTitle, Box } from '@chakra-ui/react';
 import { useCategory } from 'app/api/business/categories/useCategory';
 import * as menu from 'app/api/business/menu/functions';
-import { getErrorMessage } from 'app/api/utils';
 import { useContextMenu } from 'app/state/menu/context';
 import { Input } from 'common/components/form/input/Input';
+import { getErrorMessage } from 'core/fb';
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { t } from 'utils/i18n';

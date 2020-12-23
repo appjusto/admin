@@ -1,5 +1,5 @@
 import firebase from 'firebase/app';
-import { documentsAs } from '../utils';
+import { documentsAs } from '../../../core/fb';
 import { Bank, Cuisine } from 'appjusto-types';
 
 export default class PlatformApi {
@@ -12,27 +12,23 @@ export default class PlatformApi {
   private getPlatformRef() {
     return this.firestore.collection('platform');
   }
-  private getBusinessRef() {
-    return this.getPlatformRef().doc('business');
+  private getPlatformDatasRef() {
+    return this.getPlatformRef().doc('data');
   }
   private getCuisinesRef() {
-    return this.getBusinessRef().collection('cuisines');
+    return this.getPlatformDatasRef().collection('cuisines');
   }
   private getBanksRef() {
-    return this.firestore.collection('banks');
+    return this.getPlatformDatasRef().collection('banks');
   }
 
   // public
   // firestore
   async fetchCuisines() {
-    return documentsAs<Cuisine>((
-      await this.getCuisinesRef().get()
-    ).docs);
+    return documentsAs<Cuisine>((await this.getCuisinesRef().get()).docs);
   }
 
   async fetchBanks() {
-    return documentsAs<Bank>((
-      await this.getBanksRef().get()
-    ).docs);
+    return documentsAs<Bank>((await this.getBanksRef().get()).docs);
   }
 }

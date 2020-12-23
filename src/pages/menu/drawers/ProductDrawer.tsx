@@ -1,12 +1,12 @@
 import { Alert, AlertDescription, AlertIcon, AlertTitle, Box, Text } from '@chakra-ui/react';
 import * as menu from 'app/api/business/menu/functions';
 import { useProduct } from 'app/api/business/products/useProduct';
-import { getErrorMessage } from 'app/api/utils';
 import { useContextMenu } from 'app/state/menu/context';
 import { FileDropzone } from 'common/components/FileDropzone';
 import { CurrencyInput } from 'common/components/form/input/CurrencyInput';
 import { Input } from 'common/components/form/input/Input';
 import { Textarea } from 'common/components/form/input/Textarea';
+import { getErrorMessage } from 'core/fb';
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { t } from 'utils/i18n';

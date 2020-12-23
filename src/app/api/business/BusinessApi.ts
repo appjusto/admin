@@ -1,6 +1,6 @@
 import firebase from 'firebase/app';
 import { WithId, Category, Product, Business, BankAccount } from 'appjusto-types';
-import { documentAs, documentsAs } from '../utils';
+import { documentAs, documentsAs } from '../../../core/fb';
 import { MenuConfig } from 'appjusto-types/menu';
 import FilesApi from '../FilesApi';
 
@@ -89,6 +89,7 @@ export default class MenuApi {
       situation: 'pending',
       managers: [managerEmail],
       type: 'restaurant',
+      status: 'closed',
     } as Partial<Business>);
     return doc.id;
   }

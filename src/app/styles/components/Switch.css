@@ -6,6 +6,10 @@
   border-radius: 20px;
 }
 
+.chakra-switch .chakra-switch__track {
+  background-color: #ffffff;
+}
+
 .chakra-switch .chakra-switch__thumb {
   background-color: #ffe493;
   border-width: 2px;

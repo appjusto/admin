@@ -1,21 +1,25 @@
-import { Box, Circle, Flex, Text } from '@chakra-ui/react';
-import { Order } from 'appjusto-types';
+import { Box, Circle, Flex, Stack, Text } from '@chakra-ui/react';
+import { Order, WithId } from 'appjusto-types';
+import { ShowIf } from 'core/components/ShowIf';
 import React from 'react';
+import { OrdersKanbanListItem } from './OrdersKanbanListItem';
 
 interface Props {
   title: string;
-  orders: Order[];
+  orders: WithId<Order>[];
+  details?: string;
 }
 
-export const OrdersKanbanList = ({ title, orders }: Props) => {
+export const OrdersKanbanList = ({ title, orders, details }: Props) => {
   return (
-    <Box
+    <Flex
       w={['272px', '306px', '272px']}
       h={['452px']}
       borderRadius="lg"
       borderColor="gray.500"
       borderWidth="1px"
       borderTopWidth="0px"
+      direction="column"
     >
       <Box
         h={['60px']}
@@ -37,6 +41,24 @@ export const OrdersKanbanList = ({ title, orders }: Props) => {
           </Text>
         </Flex>
       </Box>
-    </Box>
+      <ShowIf test={orders.length === 0 && Boolean(details)}>
+        {() => (
+          <Flex flex={1} p="6" alignItems="center">
+            <Text fontSize="sm" textColor="gray.700" align="center">
+              {details}
+            </Text>
+          </Flex>
+        )}
+      </ShowIf>
+      <ShowIf test={orders.length > 0}>
+        {() => (
+          <Stack flex={1} p="4" overflow="scroll" overflowX="hidden">
+            {orders.map((order) => (
+              <OrdersKanbanListItem order={order} />
+            ))}
+          </Stack>
+        )}
+      </ShowIf>
+    </Flex>
   );
 };

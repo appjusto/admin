@@ -10,10 +10,10 @@ import {
   FormControl,
   Text,
 } from '@chakra-ui/react';
-import { getErrorMessage } from 'app/api/utils';
 import { useApi } from 'app/state/api/context';
 import { Input } from 'common/components/form/input/Input';
 import { Loading } from 'common/components/Loading';
+import { getErrorMessage } from 'core/fb';
 import React from 'react';
 import { useMutation } from 'react-query';
 import { Redirect } from 'react-router-dom';
