@@ -10,7 +10,7 @@ import {
   FormControl,
   Text,
 } from '@chakra-ui/react';
-import { useApi } from 'app/state/api/context';
+import { useContextApi } from 'app/state/api/context';
 import { Input } from 'common/components/form/input/Input';
 import { Loading } from 'common/components/Loading';
 import { getErrorMessage } from 'core/fb';
@@ -21,7 +21,7 @@ import { t } from 'utils/i18n';
 
 const Join = () => {
   // context
-  const api = useApi()!;
+  const api = useContextApi()!;
   const link = window.location.href;
   const savedEmail = api.auth().getSignInEmail();
   const isLinkValid = api.auth().isSignInWithEmailLink(link);

@@ -13,6 +13,6 @@ export const ApiProvider = (props: ApiProviderProps) => {
   return <ApiContext.Provider value={api}>{props.children}</ApiContext.Provider>;
 };
 
-export const useApi = () => {
+export const useContextApi = () => {
   return useContext(ApiContext)!;
 };

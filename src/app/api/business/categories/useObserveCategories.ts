@@ -1,10 +1,10 @@
 import { Category, WithId } from 'appjusto-types';
 import React from 'react';
-import { useApi } from '../../../state/api/context';
+import { useContextApi } from '../../../state/api/context';
 
 export const useObserveCategories = (businessId: string | undefined) => {
   // contex
-  const api = useApi();
+  const api = useContextApi();
 
   // state
   const [categories, setCategories] = React.useState<WithId<Category>[]>([]);

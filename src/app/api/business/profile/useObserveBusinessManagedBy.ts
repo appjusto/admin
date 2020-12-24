@@ -1,10 +1,10 @@
-import { useApi } from 'app/state/api/context';
+import { useContextApi } from 'app/state/api/context';
 import { Business, WithId } from 'appjusto-types';
 import React from 'react';
 
 export const useObserveBusinessManagedBy = (email: string | undefined | null) => {
   // contex
-  const api = useApi();
+  const api = useContextApi();
 
   // state
   const [businesses, setBusinesses] = React.useState<WithId<Business>[] | undefined>();

@@ -1,10 +1,10 @@
-import { useApi } from 'app/state/api/context';
+import { useContextApi } from 'app/state/api/context';
 import firebase from 'firebase/app';
 import React from 'react';
 
 export const useFirebaseUser = () => {
   // contex
-  const api = useApi();
+  const api = useContextApi();
 
   // state
   const [firebaseUser, setFirebaseUser] = React.useState<firebase.User | undefined | null>(

@@ -1,7 +1,7 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { getConfig } from 'app/api/config';
-import { useApi } from 'app/state/api/context';
+import { useContextApi } from 'app/state/api/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { Input } from 'common/components/form/input/Input';
 import { NumberInput } from 'common/components/form/input/NumberInput';
@@ -23,7 +23,7 @@ import { t } from 'utils/i18n';
 
 export const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
   // context
-  const api = useApi();
+  const api = useContextApi();
   const business = useContextBusiness();
   const { googleMapsApiKey } = getConfig().api;
 

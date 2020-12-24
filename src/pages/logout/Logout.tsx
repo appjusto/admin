@@ -1,12 +1,12 @@
 import { useFirebaseUser } from 'app/api/auth/useFirebaseUser';
-import { useApi } from 'app/state/api/context';
+import { useContextApi } from 'app/state/api/context';
 import { Loading } from 'common/components/Loading';
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 
 const Logout = () => {
   // context
-  const api = useApi();
+  const api = useContextApi();
   const user = useFirebaseUser();
 
   // side effects

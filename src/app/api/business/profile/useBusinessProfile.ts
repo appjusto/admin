@@ -1,12 +1,12 @@
+import { useContextApi } from 'app/state/api/context';
+import { useContextBusinessId } from 'app/state/business/context';
+import { Business } from 'appjusto-types';
 import React from 'react';
-import { useApi } from "app/state/api/context";
-import { useContextBusinessId } from "app/state/business/context";
-import { Business } from "appjusto-types";
-import { useMutation, useQuery, useQueryCache } from "react-query";
+import { useMutation, useQuery, useQueryCache } from 'react-query';
 
 export const useBusinessProfile = () => {
   // context
-  const api = useApi();
+  const api = useContextApi();
   const businessId = useContextBusinessId()!;
   const queryCache = useQueryCache();
 
@@ -35,5 +35,15 @@ export const useBusinessProfile = () => {
 
   // return
   const result = updateResult ?? uploadLogoResult ?? uploadCoverResult;
-  return { logo, cover, updateBusinessProfile, updateResult, uploadLogo, uploadLogoResult, uploadCover, uploadCoverResult, result };
-}
+  return {
+    logo,
+    cover,
+    updateBusinessProfile,
+    updateResult,
+    uploadLogo,
+    uploadLogoResult,
+    uploadCover,
+    uploadCoverResult,
+    result,
+  };
+};

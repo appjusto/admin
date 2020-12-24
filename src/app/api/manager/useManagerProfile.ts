@@ -1,17 +1,17 @@
-import { useApi } from 'app/state/api/context';
+import { useContextApi } from 'app/state/api/context';
 import { useContextFirebaseUserEmail, useContextFirebaseUserId } from 'app/state/auth/context';
 import { ManagerProfile, WithId } from 'appjusto-types';
 import React from 'react';
 
 export const useManagerProfile = () => {
   // contex
-  const api = useApi();
+  const api = useContextApi();
   const id = useContextFirebaseUserId();
   const email = useContextFirebaseUserEmail();
 
   // state
   const [profile, setProfile] = React.useState<WithId<ManagerProfile> | undefined | null>();
-  
+
   // side effects
   // observe profile
   React.useEffect(() => {
