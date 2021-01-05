@@ -14,5 +14,9 @@ export const ApiProvider = (props: ApiProviderProps) => {
 };
 
 export const useApi = () => {
-  return useContext(ApiContext)!;
+  const context = useContext(ApiContext);
+  if (!context) {
+    throw new Error('useApi must be used within the ApiProvider');
+  }
+  return context;
 };

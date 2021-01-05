@@ -17,11 +17,9 @@ import { getErrorMessage } from 'core/fb';
 import React, { useEffect, useState } from 'react';
 import { useMutation } from 'react-query';
 import { t } from 'utils/i18n';
-
-const LoginLeftImage = React.lazy(() => import(/* webpackPrefetch: true */ './img/LoginLeftImage'));
-const LoginRightImage = React.lazy(
-  () => import(/* webpackPrefetch: true */ './img/LoginRightImage')
-);
+import Image from '../../common/components/Image';
+import leftImage from './img/login-left@2x.jpg';
+import rightImage from './img/login-right@2x.jpg';
 
 const Login = () => {
   // context
@@ -50,14 +48,12 @@ const Login = () => {
 
   // UI
   return (
-    <Flex>
-      <Box w={[0, 1 / 3]} display={['none', 'revert']}>
-        <React.Suspense fallback={null}>
-          <LoginLeftImage />
-        </React.Suspense>
+    <Flex w="100wh" h="100vh" justifyContent={{ sm: 'center' }}>
+      <Box w={{ lg: 1 / 3 }} display={{ base: 'none', lg: 'revert' }}>
+        <Image src={leftImage} objectFit="contain" />
       </Box>
-      <Center w={['100%', 1 / 3]}>
-        <Box width="full" p="16">
+      <Center w={{ base: '100%', md: '80%', lg: 1 / 3 }}>
+        <Box width="full" p={{ base: '8', md: '16' }}>
           <Logo />
           <form
             onSubmit={(ev) => {
@@ -109,10 +105,8 @@ const Login = () => {
           </form>
         </Box>
       </Center>
-      <Box w={[0, 1 / 3]} display={['none', 'revert']}>
-        <React.Suspense fallback={null}>
-          <LoginRightImage />
-        </React.Suspense>
+      <Box w={{ lg: 1 / 3 }} display={{ base: 'none', lg: 'revert' }}>
+        <Image src={rightImage} objectFit="contain" />
       </Box>
     </Flex>
   );
