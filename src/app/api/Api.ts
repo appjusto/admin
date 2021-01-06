@@ -1,15 +1,16 @@
 import { ApiConfig } from 'app/api/config/types';
+import MapsApi from 'core/api/thirdparty/maps/MapsApi';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
 import 'firebase/functions';
 import 'firebase/storage';
 import AuthApi from './auth/AuthApi';
-import FilesApi from './FilesApi';
 import BusinessApi from './business/BusinessApi';
+import FilesApi from './FilesApi';
 import ManagerApi from './manager/ManagerApi';
+import OrderApi from './order/OrderApi';
 import PlatformApi from './platform/PlatformApi';
-import MapsApi from 'core/api/thirdparty/maps/MapsApi';
 
 export default class Api {
   private static _firebaseInitialized: boolean = false;
@@ -25,6 +26,7 @@ export default class Api {
   private _platform: PlatformApi;
   private _manager: ManagerApi;
   private _business: BusinessApi;
+  private _order: OrderApi;
 
   constructor(config: ApiConfig) {
     if (!Api._firebaseInitialized) {
@@ -52,6 +54,7 @@ export default class Api {
     this._platform = new PlatformApi(this._firestore, this._functions);
     this._manager = new ManagerApi(this._firestore, this._functions);
     this._business = new BusinessApi(this._firestore, this._functions, this._files);
+    this._order = new OrderApi(this._firestore, this._functions);
   }
 
   auth() {
@@ -73,5 +76,8 @@ export default class Api {
   business() {
     return this._business;
   }
-  
+
+  order() {
+    return this._order;
+  }
 }

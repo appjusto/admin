@@ -1,11 +1,11 @@
-import React from 'react';
-import { useApi } from 'app/state/api/context';
-import { MenuConfig } from 'appjusto-types';
 import * as menu from 'app/api/business/menu/functions';
+import { useContextApi } from 'app/state/api/context';
+import { MenuConfig } from 'appjusto-types';
 import { isEmpty } from 'lodash';
+import React from 'react';
 
 export const useObserveMenuConfig = (businessId: string | undefined) => {
-  const api = useApi();
+  const api = useContextApi();
 
   //state
   const [menuConfig, setMenuConfig] = React.useState<MenuConfig>(menu.empty());

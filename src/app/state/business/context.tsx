@@ -1,7 +1,7 @@
 import { useObserveBusinessManagedBy } from 'app/api/business/profile/useObserveBusinessManagedBy';
 import { Business, WithId } from 'appjusto-types';
 import React from 'react';
-import { useApi } from '../api/context';
+import { useContextApi } from '../api/context';
 import { useContextFirebaseUserEmail } from '../auth/context';
 
 const BusinessContext = React.createContext<WithId<Business> | undefined | null>(undefined);
@@ -11,7 +11,7 @@ interface Props {
 }
 
 export const BusinessProvider = ({ children }: Props) => {
-  const api = useApi();
+  const api = useContextApi();
   const email = useContextFirebaseUserEmail();
   const businesses = useObserveBusinessManagedBy(email);
   const [business, setBusiness] = React.useState<WithId<Business> | undefined>();

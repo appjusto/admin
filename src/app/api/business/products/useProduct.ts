@@ -1,13 +1,13 @@
-import React from 'react';
 import { useContextBusinessId } from 'app/state/business/context';
 import { Product } from 'appjusto-types';
+import React from 'react';
 import { useMutation, useQuery } from 'react-query';
-import { useApi } from '../../../state/api/context';
+import { useContextApi } from '../../../state/api/context';
 import { useProductImage } from './useProductImage';
 
 export const useProduct = (id: string) => {
   // context
-  const api = useApi();
+  const api = useContextApi();
   const businessId = useContextBusinessId()!;
   const isNew = id === 'new';
   const idRef = React.useRef(isNew ? api.business().createProductRef(businessId) : id);

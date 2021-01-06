@@ -1,11 +1,11 @@
-import { useApi } from "app/state/api/context";
-import { useContextManagerProfile } from "app/state/manager/context";
-import { ManagerProfile } from "appjusto-types";
-import { useMutation } from "react-query";
+import { useContextApi } from 'app/state/api/context';
+import { useContextManagerProfile } from 'app/state/manager/context';
+import { ManagerProfile } from 'appjusto-types';
+import { useMutation } from 'react-query';
 
 export const useUpdateManagerProfile = () => {
   // context
-  const api = useApi();
+  const api = useContextApi();
   const profile = useContextManagerProfile();
 
   // mutations
@@ -15,4 +15,4 @@ export const useUpdateManagerProfile = () => {
 
   // return
   return { updateProfile, updateResult };
-}
+};

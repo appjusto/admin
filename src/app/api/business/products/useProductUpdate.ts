@@ -1,11 +1,11 @@
 import { useContextBusinessId } from 'app/state/business/context';
 import { Product } from 'appjusto-types';
 import { useMutation } from 'react-query';
-import { useApi } from '../../../state/api/context';
+import { useContextApi } from '../../../state/api/context';
 
 export const useProductUpdate = (productId: string) => {
   // context
-  const api = useApi()!;
+  const api = useContextApi()!;
   const businessId = useContextBusinessId()!;
 
   // mutations

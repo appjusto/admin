@@ -10,7 +10,7 @@ import {
   FormControl,
   Text,
 } from '@chakra-ui/react';
-import { useApi } from 'app/state/api/context';
+import { useContextApi } from 'app/state/api/context';
 import { Input } from 'common/components/form/input/Input';
 import logo from 'common/img/logo.svg';
 import { getErrorMessage } from 'core/fb';
@@ -23,7 +23,7 @@ import rightImage from './img/login-right@2x.jpg';
 
 const Login = () => {
   // context
-  const api = useApi();
+  const api = useContextApi();
 
   // refs
   const emailRef = React.useRef<HTMLInputElement>(null);
