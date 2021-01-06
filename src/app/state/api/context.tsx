@@ -13,10 +13,10 @@ export const ApiProvider = (props: ApiProviderProps) => {
   return <ApiContext.Provider value={api}>{props.children}</ApiContext.Provider>;
 };
 
-export const useApi = () => {
+export const useContextApi = () => {
   const context = useContext(ApiContext);
   if (!context) {
-    throw new Error('useApi must be used within the ApiProvider');
+    throw new Error('useContextApi must be used within the ApiProvider');
   }
   return context;
 };
