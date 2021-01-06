@@ -19,11 +19,7 @@ import { useMutation } from 'react-query';
 import { t } from 'utils/i18n';
 import Image from '../../common/components/Image';
 import leftImage from './img/login-left@2x.jpg';
-
-//const LoginLeftImage = React.lazy(() => import(/* webpackPrefetch: true */ './img/LoginLeftImage'));
-const LoginRightImage = React.lazy(
-  () => import(/* webpackPrefetch: true */ './img/LoginRightImage')
-);
+import rightImage from './img/login-right@2x.jpg';
 
 const Login = () => {
   // context
@@ -54,7 +50,6 @@ const Login = () => {
   return (
     <Flex w="100wh" h="100vh" justifyContent={{ sm: 'center' }}>
       <Box w={{ lg: 1 / 3 }} display={{ base: 'none', lg: 'revert' }}>
-        {/*<LoginLeftImage />*/}
         <Image src={leftImage} w="100%" h="100vh" />
       </Box>
       <Center w={{ base: '100%', md: '80%', lg: 1 / 3 }}>
@@ -115,8 +110,7 @@ const Login = () => {
         </Box>
       </Center>
       <Box w={{ lg: 1 / 3 }} display={{ base: 'none', lg: 'revert' }}>
-        {/*<Image src={rightImage} w="100%" h="100vh" />*/}
-        <LoginRightImage />
+        <Image src={rightImage} w="100%" h="100vh" />
       </Box>
     </Flex>
   );
