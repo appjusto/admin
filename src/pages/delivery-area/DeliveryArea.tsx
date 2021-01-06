@@ -119,7 +119,7 @@ export const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
   // UI
   if (isSuccess && redirect) return <Redirect to={redirect} push />;
   return (
-    <>
+    <Box>
       <form
         onSubmit={(ev) => {
           ev.preventDefault();
@@ -190,8 +190,8 @@ export const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
           mt="6"
           //w={['246px', '328px', '410px', '574px', '656px']}
           //h={['180px', '240px', '300px', '420px', '480px']}
-          w={{ base: '328px', md: '380px', lg: '472px' }}
-          h={{ base: '240px', md: '260px', lg: '300px' }}
+          w={{ base: '328px', md: '380px', lg: '536px' }}
+          h={{ base: '240px', md: '260px', lg: '380px' }}
         >
           <GoogleMapReact
             bootstrapURLKeys={{ key: googleMapsApiKey }}
@@ -222,6 +222,6 @@ export const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
           onSubmit={onSubmitHandler}
         />
       </form>
-    </>
+    </Box>
   );
 };

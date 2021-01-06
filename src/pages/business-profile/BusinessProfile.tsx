@@ -1,4 +1,4 @@
-import { Text } from '@chakra-ui/react';
+import { Box, Text, useBreakpoint } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useContextBusiness } from 'app/state/business/context';
 import { FileDropzone } from 'common/components/FileDropzone';
@@ -85,9 +85,11 @@ export const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   };
 
   // UI
+  const breakpoint = useBreakpoint();
+
   if (isSuccess && redirect) return <Redirect to={redirect} push />;
   return (
-    <>
+    <Box maxW="464px">
       <form
         onSubmit={(ev) => {
           ev.preventDefault();
@@ -158,8 +160,8 @@ export const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
         </Text>
         <FileDropzone
           mt="4"
-          width={464}
-          height={260}
+          width={breakpoint == 'base' ? 328 : breakpoint == 'md' ? 420 : 464}
+          height={breakpoint == 'base' ? 180 : breakpoint == 'md' ? 235 : 260}
           onDropFile={onDropCoverHandler}
           preview={coverPreviewURL ?? cover}
         />
@@ -171,6 +173,6 @@ export const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
           onSubmit={onSubmitHandler}
         />
       </form>
-    </>
+    </Box>
   );
 };

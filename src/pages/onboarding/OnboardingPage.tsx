@@ -6,7 +6,7 @@ import React from 'react';
 import { Route, Switch, useRouteMatch } from 'react-router-dom';
 import { OnboardingComplete } from './OnboardingComplete';
 import OnboardingOpening from './OnboardingOpening';
-import { OnboardingStep } from './OnboardingStep';
+import OnboardingStep from './OnboardingStep';
 
 const Onboarding = () => {
   const { path } = useRouteMatch();

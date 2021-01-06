@@ -1,4 +1,4 @@
-import { Flex } from '@chakra-ui/react';
+import { Box, Flex } from '@chakra-ui/react';
 import { useBusinessBankAccount } from 'app/api/business/profile/useBusinessBankAccount';
 import { NumberInput } from 'common/components/form/input/NumberInput';
 import { BankSelect } from 'common/components/form/select/BankSelect';
@@ -49,7 +49,7 @@ export const BankingInformation = ({ onboarding, redirect }: OnboardingProps) =>
   // UI
   if (isSuccess && redirect) return <Redirect to={redirect} push />;
   return (
-    <>
+    <Box maxW="464px">
       <form
         onSubmit={(ev) => {
           ev.preventDefault();
@@ -92,6 +92,6 @@ export const BankingInformation = ({ onboarding, redirect }: OnboardingProps) =>
           onSubmit={onSubmitHandler}
         />
       </form>
-    </>
+    </Box>
   );
 };

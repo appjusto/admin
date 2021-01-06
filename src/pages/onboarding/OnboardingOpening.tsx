@@ -51,7 +51,7 @@ const OnboardingOpening = ({ path }: OpeningProps) => {
           }
         </Text>
         <Link to={`${path}/1`}>
-          <Button size="lg" mb="10">
+          <Button size="lg" fontSize="sm" fontWeight="500" fontFamily="Barlow" mb="10">
             {t('Começar')}
           </Button>
         </Link>

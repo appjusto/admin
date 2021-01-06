@@ -1,4 +1,4 @@
-import { Flex } from '@chakra-ui/react';
+import { Box, Flex } from '@chakra-ui/react';
 import { useUpdateManagerProfile } from 'app/api/manager/useUpdateManagerProfile';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextManagerProfile } from 'app/state/manager/context';
@@ -65,7 +65,7 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
   // UI
   if (isSuccess && redirect) return <Redirect to={redirect} push />;
   return (
-    <>
+    <Box maxW="368px">
       <form
         onSubmit={(ev) => {
           ev.preventDefault();
@@ -131,6 +131,6 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
           onSubmit={onSubmitHandler}
         />
       </form>
-    </>
+    </Box>
   );
 };

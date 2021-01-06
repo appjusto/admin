@@ -12,7 +12,14 @@ interface Props extends OnboardingProps {
 const PageFooter = ({ onboarding, redirect, isLoading, onSubmit }: Props) => {
   return (
     <Flex mt="4" alignItems="center">
-      <Button size="lg" onClick={onSubmit} isLoading={isLoading}>
+      <Button
+        size="lg"
+        fontSize="sm"
+        fontWeight="500"
+        fontFamily="Barlow"
+        onClick={onSubmit}
+        isLoading={isLoading}
+      >
         {onboarding ? t('Salvar e continuar') : t('Salvar')}
       </Button>
       {onboarding && redirect && (
