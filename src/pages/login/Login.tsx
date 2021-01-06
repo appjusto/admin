@@ -12,14 +12,18 @@ import {
 } from '@chakra-ui/react';
 import { useApi } from 'app/state/api/context';
 import { Input } from 'common/components/form/input/Input';
-import { ReactComponent as Logo } from 'common/img/logo.svg';
+import logo from 'common/img/logo.svg';
 import { getErrorMessage } from 'core/fb';
 import React, { useEffect, useState } from 'react';
 import { useMutation } from 'react-query';
 import { t } from 'utils/i18n';
 import Image from '../../common/components/Image';
 import leftImage from './img/login-left@2x.jpg';
-import rightImage from './img/login-right@2x.jpg';
+
+//const LoginLeftImage = React.lazy(() => import(/* webpackPrefetch: true */ './img/LoginLeftImage'));
+const LoginRightImage = React.lazy(
+  () => import(/* webpackPrefetch: true */ './img/LoginRightImage')
+);
 
 const Login = () => {
   // context
@@ -50,11 +54,14 @@ const Login = () => {
   return (
     <Flex w="100wh" h="100vh" justifyContent={{ sm: 'center' }}>
       <Box w={{ lg: 1 / 3 }} display={{ base: 'none', lg: 'revert' }}>
-        <Image src={leftImage} objectFit="contain" />
+        {/*<LoginLeftImage />*/}
+        <Image src={leftImage} w="100%" h="100vh" />
       </Box>
       <Center w={{ base: '100%', md: '80%', lg: 1 / 3 }}>
         <Box width="full" p={{ base: '8', md: '16' }}>
-          <Logo />
+          <Flex w="100%" justifyContent="center">
+            <Image src={logo} />
+          </Flex>
           <form
             onSubmit={(ev) => {
               ev.preventDefault();
@@ -62,8 +69,10 @@ const Login = () => {
             }}
           >
             <Box mt="8">
-              <Text fontSize="xl">{t('Portal do Parceiro')}</Text>
-              <Text fontSize="md" color="gray.500">
+              <Text fontSize="xl" textAlign="center">
+                {t('Portal do Parceiro')}
+              </Text>
+              <Text fontSize="md" textAlign="center" color="gray.500">
                 {t('Gerencie seu estabelecimento')}
               </Text>
               <Box mt="4">
@@ -78,9 +87,9 @@ const Login = () => {
                     onChange={(ev) => setEmail(ev.target.value)}
                   />
                 </FormControl>
-                <Box mt="6">
+                <Box>
                   {isError && (
-                    <Alert status="error">
+                    <Alert status="error" mt="6">
                       <AlertIcon />
                       <AlertTitle mr={2}>{t('Erro!')}</AlertTitle>
                       <AlertDescription>
@@ -89,7 +98,7 @@ const Login = () => {
                     </Alert>
                   )}
                   {isSuccess && (
-                    <Alert status="success">
+                    <Alert status="success" mt="6">
                       <AlertIcon />
                       <AlertDescription>
                         {t('Pronto! O link de acesso foi enviado para seu e-mail.')}
@@ -98,7 +107,7 @@ const Login = () => {
                   )}
                 </Box>
               </Box>
-              <Button width="full" mt="6" onClick={loginHandler} isLoading={isLoading}>
+              <Button width="full" h="60px" mt="6" onClick={loginHandler} isLoading={isLoading}>
                 {t('Entrar')}
               </Button>
             </Box>
@@ -106,7 +115,8 @@ const Login = () => {
         </Box>
       </Center>
       <Box w={{ lg: 1 / 3 }} display={{ base: 'none', lg: 'revert' }}>
-        <Image src={rightImage} objectFit="contain" />
+        {/*<Image src={rightImage} w="100%" h="100vh" />*/}
+        <LoginRightImage />
       </Box>
     </Flex>
   );

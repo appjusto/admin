@@ -1,5 +1,5 @@
 import { Box, Image as ChakraImg, ImageProps } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import VisibilitySensor from 'react-visibility-sensor';
 
 interface ImgProps extends ImageProps {
@@ -11,7 +11,7 @@ const Image: React.FC<ImgProps> = ({ src, srcMob, ...props }) => {
   const [load, setLoad] = useState(false);
   const [isActive, setIsActive] = useState(true);
   const [width, setWidth] = useState(0);
-  const updateWidth = () => {
+  const updateWidth = useCallback(() => {
     if (typeof window !== 'undefined') {
       let width =
         window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
@@ -25,12 +25,12 @@ const Image: React.FC<ImgProps> = ({ src, srcMob, ...props }) => {
         }
       });
     }
-  };
+  }, [srcMob]);
   useEffect(() => {
     updateWidth();
     window.addEventListener('resize', updateWidth);
     return () => window.removeEventListener('resize', updateWidth);
-  }, []);
+  }, [updateWidth]);
   const handleVisibility = (value: boolean) => {
     if (value) {
       setIsActive(false);

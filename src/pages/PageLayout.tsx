@@ -20,7 +20,7 @@ const Wrapper = ({ children }: Props) => {
 
 const PageLayout = ({ children }: Props) => {
   return (
-    <Flex>
+    <Flex w="100vw" minH="100vh">
       <Sidebar />
       <Box>
         <Wrapper>{children}</Wrapper>

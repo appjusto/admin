@@ -144,9 +144,9 @@ export const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
             onValueChange={(value) => setCEP(value)}
           />
         </Flex>
-        <Flex mt="4">
+        <Flex mt="4" flexDir={{ base: 'column', md: 'row' }}>
           <Input
-            flex={4}
+            flex={{ base: 1, md: 4 }}
             label={t('Endereço')}
             placeholder={t('Preenchimento automático')}
             value={logradouro}
@@ -154,7 +154,8 @@ export const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
           />
           <Input
             flex={1}
-            ml="4"
+            ml={{ base: '0', md: '4' }}
+            mt={{ base: '4', md: '0' }}
             label={t('Número')}
             ref={numberRef}
             placeholder={t('000')}
@@ -163,7 +164,8 @@ export const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
           />
           <Input
             flex={2}
-            ml="4"
+            ml={{ base: '0', md: '4' }}
+            mt={{ base: '4', md: '0' }}
             label={t('Complemento')}
             placeholder={t('Sem complemento')}
             value={additional}
@@ -186,8 +188,10 @@ export const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
         </Flex>
         <Box
           mt="6"
-          w={['164px', '246px', '328px', '410px', '574px', '656px']}
-          h={['120px', '180px', '240px', '300px', '420px', '480px']}
+          //w={['246px', '328px', '410px', '574px', '656px']}
+          //h={['180px', '240px', '300px', '420px', '480px']}
+          w={{ base: '328px', md: '380px', lg: '472px' }}
+          h={{ base: '240px', md: '260px', lg: '300px' }}
         >
           <GoogleMapReact
             bootstrapURLKeys={{ key: googleMapsApiKey }}
