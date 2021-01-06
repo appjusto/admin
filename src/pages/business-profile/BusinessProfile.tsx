@@ -160,8 +160,8 @@ export const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
         </Text>
         <FileDropzone
           mt="4"
-          width={breakpoint == 'base' ? 328 : breakpoint == 'md' ? 420 : 464}
-          height={breakpoint == 'base' ? 180 : breakpoint == 'md' ? 235 : 260}
+          width={breakpoint === 'base' ? 328 : breakpoint === 'md' ? 420 : 464}
+          height={breakpoint === 'base' ? 180 : breakpoint === 'md' ? 235 : 260}
           onDropFile={onDropCoverHandler}
           preview={coverPreviewURL ?? cover}
         />
