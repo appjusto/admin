@@ -1,6 +1,6 @@
 import firebase from 'firebase/app';
 
-export default class FirestoreRefs {
+export default class FirebaseRefs {
   constructor(
     private functions: firebase.functions.Functions,
     private firestore: firebase.firestore.Firestore

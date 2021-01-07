@@ -1,7 +1,7 @@
 import { ChatMessage, FoodOrderStatus, Issue, IssueType, Order, WithId } from 'appjusto-types';
 import { documentsAs } from 'core/fb';
 import firebase from 'firebase';
-import FirestoreRefs from '../FirebaseRefs';
+import FirebaseRefs from '../FirebaseRefs';
 
 export const ActiveFoodOrdersValues: FoodOrderStatus[] = [
   'confirming',
@@ -19,7 +19,7 @@ export type ObserveOrdersOptions = {
 };
 
 export default class OrderApi {
-  constructor(private refs: FirestoreRefs) {}
+  constructor(private refs: FirebaseRefs) {}
 
   // firestore
   observeOrders(

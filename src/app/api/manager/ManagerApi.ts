@@ -1,9 +1,9 @@
 import { ManagerProfile, WithId } from 'appjusto-types';
 import firebase from 'firebase/app';
-import FirestoreRefs from '../FirebaseRefs';
+import FirebaseRefs from '../FirebaseRefs';
 
 export default class ManagerApi {
-  constructor(private refs: FirestoreRefs) {}
+  constructor(private refs: FirebaseRefs) {}
 
   // firestore
   observeProfile(

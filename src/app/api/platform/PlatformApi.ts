@@ -1,9 +1,9 @@
 import { Bank, Cuisine } from 'appjusto-types';
 import { documentsAs } from '../../../core/fb';
-import FirestoreRefs from '../FirebaseRefs';
+import FirebaseRefs from '../FirebaseRefs';
 
 export default class PlatformApi {
-  constructor(private refs: FirestoreRefs) {}
+  constructor(private refs: FirebaseRefs) {}
 
   // firestore
   async fetchCuisines() {

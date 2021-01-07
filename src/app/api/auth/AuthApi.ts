@@ -1,10 +1,10 @@
 import { ApiConfig } from 'app/api/config/types';
 import firebase from 'firebase/app';
-import FirestoreRefs from '../FirebaseRefs';
+import FirebaseRefs from '../FirebaseRefs';
 
 export default class AuthApi {
   constructor(
-    private refs: FirestoreRefs,
+    private refs: FirebaseRefs,
     private auth: firebase.auth.Auth,
     private config: ApiConfig
   ) {}
