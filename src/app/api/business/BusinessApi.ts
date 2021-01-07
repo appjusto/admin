@@ -1,78 +1,19 @@
-import firebase from 'firebase/app';
-import { WithId, Category, Product, Business, BankAccount } from 'appjusto-types';
-import { documentAs, documentsAs } from '../../../core/fb';
+import { BankAccount, Business, Category, Product, WithId } from 'appjusto-types';
 import { MenuConfig } from 'appjusto-types/menu';
+import firebase from 'firebase/app';
+import { documentAs, documentsAs } from '../../../core/fb';
 import FilesApi from '../FilesApi';
+import FirestoreRefs from '../FirestoreRefs';
 
 export default class MenuApi {
-  constructor(
-    private firestore: firebase.firestore.Firestore,
-    private functions: firebase.functions.Functions,
-    private files: FilesApi
-  ) {}
+  constructor(private refs: FirestoreRefs, private files: FilesApi) {}
 
-  // private helpers
-  // firestora paths
-  private getBusinessesRef() {
-    return this.firestore.collection('businesses');
-  }
-  private getBusinessRef(businessId: string) {
-    return this.getBusinessesRef().doc(businessId);
-  }
-  private getBusinessPrivateRef(businessId: string) {
-    return this.getBusinessRef(businessId).collection('private');
-  }
-  private getCategoriesRef(businessId: string) {
-    return this.getBusinessRef(businessId).collection('categories');
-  }
-  private getCategoryRef(businessId: string, categoryId: string) {
-    return this.getCategoriesRef(businessId).doc(categoryId);
-  }
-  private getProductsRef(businessId: string) {
-    return this.getBusinessRef(businessId).collection('products');
-  }
-  private getProductRef(businessId: string, productId: string) {
-    return this.getProductsRef(businessId).doc(productId);
-  }
-  private getMenuConfigRef(businessId: string) {
-    return this.getBusinessRef(businessId).collection('config').doc('menu');
-  }
-  private getBankAccountRef(businessId: string) {
-    return this.getBusinessPrivateRef(businessId).doc('bank');
-  }
-  // storage path
-  private getBusinessStoragePath(businessId: string) {
-    return `businesses/${businessId}`;
-  }
-  private getBusinessLogoUploadStoragePath(businessId: string) {
-    return `${this.getBusinessStoragePath(businessId)}/logo.jpg`;
-  }
-  private getBusinessLogoStoragePath(businessId: string) {
-    return `${this.getBusinessStoragePath(businessId)}/logo_1024x1024.jpg`;
-  }
-  private getBusinessCoverUploadStoragePath(businessId: string) {
-    return `${this.getBusinessStoragePath(businessId)}/cover.jpg`;
-  }
-  private getBusinessCoverStoragePath(businessId: string) {
-    return `${this.getBusinessStoragePath(businessId)}/cover_1024x1024.jpg`;
-  }
-  private getProductsStoragePath(businessId: string) {
-    return `${this.getBusinessStoragePath(businessId)}/products`;
-  }
-  private getProductUploadStoragePath(businessId: string, productId: string) {
-    return `${this.getProductsStoragePath(businessId)}/${productId}.jpg`;
-  }
-  private getProductImageStoragePath(businessId: string, productId: string) {
-    return `${this.getProductsStoragePath(businessId)}/${productId}_1024x1024.jpg`;
-  }
-
-  // public
   // business profile
   observeBusinessProfile(
     businessId: string,
     resultHandler: (business: WithId<Business>) => void
   ): firebase.Unsubscribe {
-    const unsubscribe = this.getBusinessRef(businessId).onSnapshot(
+    const unsubscribe = this.refs.getBusinessRef(businessId).onSnapshot(
       (doc) => {
         if (doc.exists) resultHandler({ ...(doc.data() as Business), id: businessId });
       },
@@ -84,7 +25,7 @@ export default class MenuApi {
   }
 
   async createBusinessProfile(managerEmail: string) {
-    const doc = this.getBusinessesRef().doc();
+    const doc = this.refs.getBusinessesRef().doc();
     await doc.set({
       situation: 'pending',
       managers: [managerEmail],
@@ -95,7 +36,7 @@ export default class MenuApi {
   }
 
   async updateBusinessProfile(businessId: string, changes: Partial<Business>) {
-    await this.getBusinessRef(businessId).set(changes, { merge: true });
+    await this.refs.getBusinessRef(businessId).set(changes, { merge: true });
   }
 
   // managers
@@ -103,7 +44,8 @@ export default class MenuApi {
     email: string,
     resultHandler: (categories: WithId<Business>[]) => void
   ): firebase.Unsubscribe {
-    const unsubscribe = this.getBusinessesRef()
+    const unsubscribe = this.refs
+      .getBusinessesRef()
       .where('managers', 'array-contains', email)
       .orderBy('createdOn', 'desc')
       .onSnapshot(
@@ -119,24 +61,24 @@ export default class MenuApi {
 
   // bank account
   async fetchBankAccount(businessId: string) {
-    const doc = await this.getBankAccountRef(businessId).get();
+    const doc = await this.refs.getBusinessBankAccountRef(businessId).get();
     return documentAs<BankAccount>(doc);
   }
 
   async updateBankAccount(businessId: string, changes: Partial<BankAccount>) {
-    await this.getBankAccountRef(businessId).set(changes, { merge: true });
+    await this.refs.getBusinessBankAccountRef(businessId).set(changes, { merge: true });
   }
 
   // logo
   uploadBusinessLogo(businessId: string, file: File, progressHandler?: (progress: number) => void) {
     return this.files.upload(
       file,
-      this.getBusinessLogoUploadStoragePath(businessId),
+      this.refs.getBusinessLogoUploadStoragePath(businessId),
       progressHandler
     );
   }
   getBusinessLogoURL(businessId: string) {
-    return this.files.getDownloadURL(this.getBusinessLogoStoragePath(businessId));
+    return this.files.getDownloadURL(this.refs.getBusinessLogoStoragePath(businessId));
   }
 
   // cover image
@@ -147,12 +89,12 @@ export default class MenuApi {
   ) {
     return this.files.upload(
       file,
-      this.getBusinessCoverUploadStoragePath(businessId),
+      this.refs.getBusinessCoverUploadStoragePath(businessId),
       progressHandler
     );
   }
   getBusinessCoverURL(businessId: string) {
-    return this.files.getDownloadURL(this.getBusinessCoverStoragePath(businessId));
+    return this.files.getDownloadURL(this.refs.getBusinessCoverStoragePath(businessId));
   }
 
   // menu config
@@ -160,7 +102,7 @@ export default class MenuApi {
     businessId: string,
     resultHandler: (menuConfig: MenuConfig) => void
   ): firebase.Unsubscribe {
-    const unsubscribe = this.getMenuConfigRef(businessId).onSnapshot(
+    const unsubscribe = this.refs.getBusinessMenuConfigRef(businessId).onSnapshot(
       (doc) => {
         resultHandler({ ...(doc.data() as MenuConfig) });
       },
@@ -172,7 +114,7 @@ export default class MenuApi {
   }
 
   async updateMenuConfig(businessId: string, menuConfig: MenuConfig) {
-    await this.getMenuConfigRef(businessId).set(menuConfig, { merge: true });
+    await this.refs.getBusinessMenuConfigRef(businessId).set(menuConfig, { merge: true });
   }
 
   // categories
@@ -180,7 +122,7 @@ export default class MenuApi {
     businessId: string,
     resultHandler: (categories: WithId<Category>[]) => void
   ): firebase.Unsubscribe {
-    const unsubscribe = this.getCategoriesRef(businessId).onSnapshot(
+    const unsubscribe = this.refs.getBusinessCategoriesRef(businessId).onSnapshot(
       (querySnapshot) => {
         resultHandler(documentsAs<Category>(querySnapshot.docs));
       },
@@ -192,17 +134,17 @@ export default class MenuApi {
   }
 
   createCategoryRef(businessId: string): string {
-    return this.getCategoriesRef(businessId).doc().id;
+    return this.refs.getBusinessCategoriesRef(businessId).doc().id;
   }
 
   async fetchCategory(businessId: string, categoryId: string) {
-    const doc = await this.getCategoryRef(businessId, categoryId).get();
+    const doc = await this.refs.getBusinessCategoryRef(businessId, categoryId).get();
     return documentAs<Category>(doc);
   }
 
   async createCategory(businessId: string, categoryId: string, category: Category) {
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
-    await this.getCategoryRef(businessId, categoryId).set({
+    await this.refs.getBusinessCategoryRef(businessId, categoryId).set({
       ...category,
       createdOn: timestamp,
       updatedOn: timestamp,
@@ -211,7 +153,7 @@ export default class MenuApi {
 
   async updateCategory(businessId: string, categoryId: string, changes: Partial<Category>) {
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
-    await this.getCategoryRef(businessId, categoryId).update({
+    await this.refs.getBusinessCategoryRef(businessId, categoryId).update({
       ...changes,
       updatedOn: timestamp,
     } as Partial<Category>);
@@ -222,7 +164,7 @@ export default class MenuApi {
     businessId: string,
     resultHandler: (products: WithId<Product>[]) => void
   ): firebase.Unsubscribe {
-    const query = this.getProductsRef(businessId);
+    const query = this.refs.getBusinessProductsRef(businessId);
     const unsubscribe = query.onSnapshot(
       (querySnapshot) => {
         resultHandler(documentsAs<Product>(querySnapshot.docs));
@@ -235,18 +177,18 @@ export default class MenuApi {
   }
 
   createProductRef(businessId: string): string {
-    return this.getProductsRef(businessId).doc().id;
+    return this.refs.getBusinessProductsRef(businessId).doc().id;
   }
 
   async fetchProduct(businessId: string, productId: string) {
-    const doc = await this.getProductRef(businessId, productId).get();
+    const doc = await this.refs.getBusinessProductRef(businessId, productId).get();
     return documentAs<Product>(doc);
   }
 
   async createProduct(businessId: string, productId: string, product: Product) {
     // creating product
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
-    await this.getProductRef(businessId, productId).set({
+    await this.refs.getBusinessProductRef(businessId, productId).set({
       ...product,
       createdOn: timestamp,
       updatedOn: timestamp,
@@ -255,7 +197,7 @@ export default class MenuApi {
 
   async updateProduct(businessId: string, productId: string, changes: Partial<Product>) {
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
-    await this.getProductRef(businessId, productId).update({
+    await this.refs.getBusinessProductRef(businessId, productId).update({
       ...changes,
       updatedOn: timestamp,
     } as Partial<Product>);
@@ -269,12 +211,12 @@ export default class MenuApi {
   ) {
     return this.files.upload(
       file,
-      this.getProductUploadStoragePath(businessId, productId),
+      this.refs.getProductUploadStoragePath(businessId, productId),
       progressHandler
     );
   }
 
   getProductImageURL(businessId: string, productId: string) {
-    return this.files.getDownloadURL(this.getProductImageStoragePath(businessId, productId));
+    return this.files.getDownloadURL(this.refs.getProductImageStoragePath(businessId, productId));
   }
 }

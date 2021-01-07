@@ -8,6 +8,7 @@ import 'firebase/storage';
 import AuthApi from './auth/AuthApi';
 import BusinessApi from './business/BusinessApi';
 import FilesApi from './FilesApi';
+import FirestoreRefs from './FirestoreRefs';
 import ManagerApi from './manager/ManagerApi';
 import OrderApi from './order/OrderApi';
 import PlatformApi from './platform/PlatformApi';
@@ -20,6 +21,7 @@ export default class Api {
   private _functions: firebase.functions.Functions;
   private _storage: firebase.storage.Storage;
 
+  private _refs: FirestoreRefs;
   private _auth: AuthApi;
   private _files: FilesApi;
   private _maps: MapsApi;
@@ -48,13 +50,14 @@ export default class Api {
       this._firestore.useEmulator(emulatorHost, emulatorPort);
     }
 
-    this._auth = new AuthApi(this._authentication, this._functions, config);
+    this._refs = new FirestoreRefs(this._functions, this._firestore);
+    this._auth = new AuthApi(this._refs, this._authentication, config);
     this._files = new FilesApi(this._storage);
     this._maps = new MapsApi(config.googleMapsApiKey);
-    this._platform = new PlatformApi(this._firestore, this._functions);
-    this._manager = new ManagerApi(this._firestore, this._functions);
-    this._business = new BusinessApi(this._firestore, this._functions, this._files);
-    this._order = new OrderApi(this._firestore, this._functions);
+    this._platform = new PlatformApi(this._refs);
+    this._manager = new ManagerApi(this._refs);
+    this._business = new BusinessApi(this._refs, this._files);
+    this._order = new OrderApi(this._refs);
   }
 
   auth() {
