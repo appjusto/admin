@@ -50,12 +50,12 @@ const Login = () => {
   return (
     <Flex w="100wh" h="100vh" justifyContent={{ sm: 'center' }}>
       <Box w={{ lg: 1 / 3 }} display={{ base: 'none', lg: 'revert' }}>
-        <Image src={leftImage} w="100%" h="100vh" />
+        <Image src={leftImage} scrollCheck={false} w="100%" h="100vh" />
       </Box>
       <Center w={{ base: '100%', md: '80%', lg: 1 / 3 }}>
         <Box width="full" p={{ base: '8', md: '16' }}>
           <Flex w="100%" justifyContent="center">
-            <Image src={logo} />
+            <Image src={logo} scrollCheck={false} />
           </Flex>
           <form
             onSubmit={(ev) => {
@@ -110,7 +110,7 @@ const Login = () => {
         </Box>
       </Center>
       <Box w={{ lg: 1 / 3 }} display={{ base: 'none', lg: 'revert' }}>
-        <Image src={rightImage} w="100%" h="100vh" />
+        <Image src={rightImage} scrollCheck={false} w="100%" h="100vh" />
       </Box>
     </Flex>
   );
