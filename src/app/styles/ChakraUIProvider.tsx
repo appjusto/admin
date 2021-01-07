@@ -1,6 +1,7 @@
 import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import React from 'react';
 import { Button } from './components/Button';
+import { CustomInput } from './components/CustomInput';
 import { IconButton } from './components/IconButton';
 import { Switch } from './components/Switch';
 import { colors } from './foundations/colors';
@@ -20,6 +21,7 @@ const theme = extendTheme({
     },
   },
   components: {
+    CustomInput,
     Button,
     Switch,
     IconButton,

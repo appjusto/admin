@@ -5,13 +5,11 @@ import {
   AlertTitle,
   Box,
   Button,
-  Center,
   Flex,
-  FormControl,
   Text,
 } from '@chakra-ui/react';
 import { useContextApi } from 'app/state/api/context';
-import { Input } from 'common/components/form/input/Input';
+import { CustomInput } from 'common/components/form/input/CustomInput';
 import logo from 'common/img/logo.svg';
 import { getErrorMessage } from 'core/fb';
 import React, { useEffect, useState } from 'react';
@@ -49,67 +47,62 @@ const Login = () => {
   // UI
   return (
     <Flex w="100wh" h="100vh" justifyContent={{ sm: 'center' }}>
-      <Box w={{ lg: 1 / 3 }} display={{ base: 'none', lg: 'revert' }}>
+      <Box w={{ lg: 1 / 3 }} display={{ base: 'none', lg: 'block' }}>
         <Image src={leftImage} scrollCheck={false} w="100%" h="100vh" />
       </Box>
-      <Center w={{ base: '100%', md: '80%', lg: 1 / 3 }}>
-        <Box width="full" p={{ base: '8', md: '16' }}>
-          <Flex w="100%" justifyContent="center">
-            <Image src={logo} scrollCheck={false} />
-          </Flex>
-          <form
-            onSubmit={(ev) => {
-              ev.preventDefault();
-              loginHandler();
-            }}
-          >
-            <Box mt="8">
-              <Text fontSize="xl" textAlign="center">
-                {t('Portal do Parceiro')}
-              </Text>
-              <Text fontSize="md" textAlign="center" color="gray.500">
-                {t('Gerencie seu estabelecimento')}
-              </Text>
-              <Box mt="4">
-                <FormControl isRequired>
-                  <Input
-                    ref={emailRef}
-                    type="email"
-                    id="email"
-                    label={t('E-mail')}
-                    placeholder={t('Endereço de e-mail')}
-                    value={email}
-                    onChange={(ev) => setEmail(ev.target.value)}
-                  />
-                </FormControl>
-                <Box>
-                  {isError && (
-                    <Alert status="error" mt="6">
-                      <AlertIcon />
-                      <AlertTitle mr={2}>{t('Erro!')}</AlertTitle>
-                      <AlertDescription>
-                        {getErrorMessage(error) ?? t('Tenta de novo?')}
-                      </AlertDescription>
-                    </Alert>
-                  )}
-                  {isSuccess && (
-                    <Alert status="success" mt="6">
-                      <AlertIcon />
-                      <AlertDescription>
-                        {t('Pronto! O link de acesso foi enviado para seu e-mail.')}
-                      </AlertDescription>
-                    </Alert>
-                  )}
-                </Box>
-              </Box>
-              <Button width="full" h="60px" mt="6" onClick={loginHandler} isLoading={isLoading}>
-                {t('Entrar')}
-              </Button>
-            </Box>
-          </form>
-        </Box>
-      </Center>
-      <Box w={{ lg: 1 / 3 }} display={{ base: 'none', lg: 'revert' }}>
+      <Flex
+        flexDir="column"
+        justifyContent="center"
+        alignItems="center"
+        w={{ base: '100%', md: '80%', lg: 1 / 3 }}
+        px={{ base: '2', lg: '8' }}
+      >
+        <Image src={logo} scrollCheck={false} mb="8" />
+        <Text fontSize="xl" textAlign="center">
+          {t('Portal do Parceiro')}
+        </Text>
+        <Text fontSize="md" textAlign="center" color="gray.500">
+          {t('Gerencie seu estabelecimento')}
+        </Text>
+        <Flex
+          as="form"
+          w="100%"
+          flexDir="column"
+          onSubmit={(ev) => {
+            ev.preventDefault();
+            loginHandler();
+          }}
+        >
+          <CustomInput
+            isRequired
+            type="email"
+            id="login-email"
+            label={t('E-mail')}
+            placeholder={t('Endereço de e-mail')}
+            value={email}
+            handleChange={(ev) => setEmail(ev.target.value)}
+          />
+          {isError && (
+            <Alert status="error" mt="6">
+              <AlertIcon />
+              <AlertTitle mr={2}>{t('Erro!')}</AlertTitle>
+              <AlertDescription>{getErrorMessage(error) ?? t('Tenta de novo?')}</AlertDescription>
+            </Alert>
+          )}
+          {isSuccess && (
+            <Alert status="success" mt="6">
+              <AlertIcon />
+              <AlertDescription>
+                {t('Pronto! O link de acesso foi enviado para seu e-mail.')}
+              </AlertDescription>
+            </Alert>
+          )}
+          <Button type="submit" width="full" h="60px" mt="6" isLoading={isLoading}>
+            {t('Entrar')}
+          </Button>
+        </Flex>
+      </Flex>
+      <Box w={{ lg: 1 / 3 }} display={{ base: 'none', lg: 'block' }}>
         <Image src={rightImage} scrollCheck={false} w="100%" h="100vh" />
       </Box>
     </Flex>
