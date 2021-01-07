@@ -43,7 +43,6 @@ const Login = () => {
   const loginHandler = () => {
     loginWithEmail(email);
   };
-
   // UI
   return (
     <Flex w="100wh" h="100vh" justifyContent={{ sm: 'center' }}>
@@ -55,7 +54,7 @@ const Login = () => {
         justifyContent="center"
         alignItems="center"
         w={{ base: '100%', md: '80%', lg: 1 / 3 }}
-        px={{ base: '2', lg: '8' }}
+        px={{ base: '8', md: '24', lg: '8' }}
       >
         <Image src={logo} scrollCheck={false} mb="8" />
         <Text fontSize="xl" textAlign="center">
@@ -74,6 +73,7 @@ const Login = () => {
           }}
         >
           <CustomInput
+            ref={emailRef}
             isRequired
             type="email"
             id="login-email"
