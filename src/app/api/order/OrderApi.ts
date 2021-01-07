@@ -1,7 +1,7 @@
 import { ChatMessage, FoodOrderStatus, Issue, IssueType, Order, WithId } from 'appjusto-types';
 import { documentsAs } from 'core/fb';
 import firebase from 'firebase';
-import FirestoreRefs from '../FirestoreRefs';
+import FirestoreRefs from '../FirebaseRefs';
 
 export const ActiveFoodOrdersValues: FoodOrderStatus[] = [
   'confirming',

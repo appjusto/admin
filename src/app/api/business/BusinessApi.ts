@@ -3,7 +3,7 @@ import { MenuConfig } from 'appjusto-types/menu';
 import firebase from 'firebase/app';
 import { documentAs, documentsAs } from '../../../core/fb';
 import FilesApi from '../FilesApi';
-import FirestoreRefs from '../FirestoreRefs';
+import FirestoreRefs from '../FirebaseRefs';
 
 export default class MenuApi {
   constructor(private refs: FirestoreRefs, private files: FilesApi) {}

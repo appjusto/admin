@@ -1,6 +1,6 @@
 import { Bank, Cuisine } from 'appjusto-types';
 import { documentsAs } from '../../../core/fb';
-import FirestoreRefs from '../FirestoreRefs';
+import FirestoreRefs from '../FirebaseRefs';
 
 export default class PlatformApi {
   constructor(private refs: FirestoreRefs) {}

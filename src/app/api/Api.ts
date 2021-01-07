@@ -8,7 +8,7 @@ import 'firebase/storage';
 import AuthApi from './auth/AuthApi';
 import BusinessApi from './business/BusinessApi';
 import FilesApi from './FilesApi';
-import FirestoreRefs from './FirestoreRefs';
+import FirestoreRefs from './FirebaseRefs';
 import ManagerApi from './manager/ManagerApi';
 import OrderApi from './order/OrderApi';
 import PlatformApi from './platform/PlatformApi';
