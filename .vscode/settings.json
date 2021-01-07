@@ -8,13 +8,8 @@
       "source.organizeImports": true
     }
   },
-  "[typescript]": {
-    "editor.codeActionsOnSave": {
-      "source.organizeImports": true
-    }
-  },
   "typescript.tsdk": "node_modules/typescript/lib",
-  "files.watcherExclude": {
-    "**/node_modules/*/**": false
+  "files.exclude": {
+    "**/node_modules": true
   }
 }
