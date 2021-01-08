@@ -59,7 +59,7 @@ export const CustomPatternInput = React.forwardRef<HTMLInputElement, PatternInpu
       } else {
         setIsInvalid(false);
       }
-    }, [value]);
+    }, [value, validationLength]);
     // UI
     const styles = useMultiStyleConfig('CustomInput', {});
     return (
