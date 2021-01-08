@@ -1,14 +1,19 @@
 export const CustomInput = {
-  parts: ['label', 'input'],
+  parts: ['control', 'label', 'input'],
   baseStyle: {
+    control: {
+      position: 'relative',
+      mt: '16px',
+      zIndex: '1',
+    },
     label: {
+      position: 'absolute',
       fontFamily: 'Barlow',
-      fontSize: '13px',
-      fontWeight: '500',
-      lineHeight: '18px',
-      color: 'green.600',
-      ml: '16px',
-      mb: '-28px',
+      fontSize: '16px',
+      color: '#2F855A',
+      top: '8px',
+      left: '16px',
+      zIndex: '1000',
     },
     input: {
       fontFamily: 'Barlow',
@@ -19,6 +24,7 @@ export const CustomInput = {
       borderColor: '#C8D7CB',
       pt: '30px',
       pb: '9px',
+      zIndex: '1',
     },
   },
 };

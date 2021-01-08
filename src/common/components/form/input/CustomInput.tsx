@@ -1,18 +1,28 @@
 import { FormControl, FormLabel, Input, InputProps, useMultiStyleConfig } from '@chakra-ui/react';
 import React, { ChangeEvent, useState } from 'react';
 
-interface CustomInputProps extends InputProps {
+export interface CustomInputProps extends InputProps {
   id: string;
   label: string;
-  placeholder: string;
+  placeholder?: string;
   value: string;
   type?: string;
-  handleChange: (event: ChangeEvent<HTMLInputElement>) => void;
+  mr?: string | number | (string & {}) | undefined;
+  handleChange?: (event: ChangeEvent<HTMLInputElement>) => void;
 }
 
 export const CustomInput = React.forwardRef<HTMLInputElement, CustomInputProps>(
   (
-    { id, label, placeholder, value, type = 'text', handleChange, ...props }: CustomInputProps,
+    {
+      id,
+      label,
+      placeholder = '',
+      value,
+      type = 'text',
+      mr = 0,
+      handleChange = () => {},
+      ...props
+    }: CustomInputProps,
     ref
   ) => {
     const [isInvalid, setIsInvalid] = useState(false);
@@ -25,7 +35,7 @@ export const CustomInput = React.forwardRef<HTMLInputElement, CustomInputProps>(
       }
     };
     return (
-      <FormControl id={id} mt="24px" mr={['0', null, null, '16px']}>
+      <FormControl id={id} sx={styles.control} mr={mr}>
         <FormLabel sx={styles.label}>{label}</FormLabel>
         <Input
           ref={ref}
@@ -36,8 +46,7 @@ export const CustomInput = React.forwardRef<HTMLInputElement, CustomInputProps>(
           value={value}
           sx={styles.input}
           onChange={handleChange}
-          autoComplete="off"
-          onBlur={(ev) => handleValidity(ev)}
+          onBlur={handleValidity}
           errorBorderColor="red"
           {...props}
         />
