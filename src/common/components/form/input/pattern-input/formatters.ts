@@ -15,7 +15,7 @@ export const cnpjFormatter = (value: string = '') => {
     if (index === 12) return `${result}-${digit}`;
     return `${result}${digit}`;
   }, '');
-}
+};
 
 export const cepMask = '00000-000';
 export const cepFormatter = (value: string | undefined) => {
@@ -24,5 +24,20 @@ export const cepFormatter = (value: string | undefined) => {
   return [value.slice(0, 5), value.slice(5)].join('-');
 };
 
-export const phoneMask = '99999-9999';
-export const phoneFormatter = cepFormatter;
+export const phoneMask = '(81) 99999-9999';
+export const phoneFormatter = (value: string | undefined) => {
+  let formatedNumber = '';
+  if (value) {
+    const ddd = value.slice(0, 2);
+    const firstPart = value.slice(2, 7);
+    const secondPart = value.slice(7, 11);
+    if (secondPart === '' && firstPart !== '') {
+      formatedNumber = `(${ddd}) ${firstPart}`;
+    } else if (secondPart === '' && firstPart === '') {
+      formatedNumber = `(${ddd}`;
+    } else {
+      formatedNumber = `(${ddd}) ${firstPart}-${secondPart}`;
+    }
+  }
+  return formatedNumber;
+};

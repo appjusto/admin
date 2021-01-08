@@ -7,6 +7,7 @@ interface PatternInputProps extends InputProps {
   mask?: string;
   flex?: number | undefined;
   mr?: string | number | (string & {}) | undefined;
+  validationLength: number;
   parser: (value: string) => string;
   formatter?: (value: string | undefined) => string;
   onValueChange: (value: string) => void;
@@ -22,6 +23,7 @@ export const CustomPatternInput = React.forwardRef<HTMLInputElement, PatternInpu
       placeholder: unfocusedPlaceholder,
       flex,
       mr,
+      validationLength,
       parser,
       formatter,
       onValueChange,
@@ -35,6 +37,7 @@ export const CustomPatternInput = React.forwardRef<HTMLInputElement, PatternInpu
     // state
     const [placeholder, setPlaceholder] = React.useState(unfocusedPlaceholder);
     const formattedValue = value ? (formatter ? formatter(String(value)) : value) : value;
+    const [isInvalid, setIsInvalid] = React.useState(false);
     // handlers
     const onChangeHandler = (ev: React.ChangeEvent<HTMLInputElement>) => {
       const value = ev.target.value;
@@ -49,6 +52,14 @@ export const CustomPatternInput = React.forwardRef<HTMLInputElement, PatternInpu
       setPlaceholder(unfocusedPlaceholder);
       if (onBlur) onBlur(ev);
     };
+    // side effects
+    React.useEffect(() => {
+      if (value && value.toString().length < validationLength) {
+        setIsInvalid(true);
+      } else {
+        setIsInvalid(false);
+      }
+    }, [value]);
     // UI
     const styles = useMultiStyleConfig('CustomInput', {});
     return (
@@ -56,6 +67,7 @@ export const CustomPatternInput = React.forwardRef<HTMLInputElement, PatternInpu
         <FormLabel sx={styles.label}>{label}</FormLabel>
         <Input
           ref={ref}
+          isInvalid={isInvalid}
           sx={styles.input}
           value={formattedValue}
           placeholder={placeholder}
@@ -63,6 +75,7 @@ export const CustomPatternInput = React.forwardRef<HTMLInputElement, PatternInpu
           onFocus={onFocusHandler}
           onBlur={onBlurHandler}
           maxLength={mask ? mask.length : undefined}
+          errorBorderColor="red"
           {...props}
         />
       </FormControl>
