@@ -18,7 +18,7 @@ const PageFooter = ({ onboarding, redirect, isLoading, onSubmit }: Props) => {
         fontSize="sm"
         fontWeight="500"
         fontFamily="Barlow"
-        //onClick={onSubmit}
+        onClick={!onboarding ? onSubmit : () => {}}
         isLoading={isLoading}
         loadingText={t('Salvando')}
       >

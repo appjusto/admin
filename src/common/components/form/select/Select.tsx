@@ -1,4 +1,10 @@
-import { Box, FormLabel, Select as ChakraSelect, SelectProps } from '@chakra-ui/react';
+import {
+  FormControl,
+  FormLabel,
+  Select as ChakraSelect,
+  SelectProps,
+  useMultiStyleConfig,
+} from '@chakra-ui/react';
 import React from 'react';
 import { ReactComponent as SelectIcon } from './select-arrow.svg';
 
@@ -9,22 +15,16 @@ interface Props extends SelectProps {
 export const Select = React.forwardRef<HTMLSelectElement, Props>(
   ({ label, mt, mb, ml, mr, flex, ...props }: Props, ref) => {
     const boxProps = { mt, mb, ml, mr, flex };
+    const styles = useMultiStyleConfig('Select', {});
     return (
-      <Box borderWidth="1px" borderRadius="md" pl="2" pt="1" {...boxProps}>
+      <FormControl sx={styles.control} {...boxProps}>
         {label && (
-          <FormLabel htmlFor={props.id} textStyle="inputLabel" m="0">
+          <FormLabel htmlFor={props.id} sx={styles.label} textStyle="inputLabel">
             {label}
           </FormLabel>
         )}
-        <ChakraSelect
-          ref={ref}
-          variant="unstyled"
-          pb="1"
-          size="md"
-          icon={<SelectIcon />}
-          {...props}
-        />
-      </Box>
+        <ChakraSelect ref={ref} size="md" sx={styles.select} icon={<SelectIcon />} {...props} />
+      </FormControl>
     );
   }
 );

@@ -21,8 +21,11 @@ export const CustomPatternInput = React.forwardRef<HTMLInputElement, PatternInpu
       mask,
       value,
       placeholder: unfocusedPlaceholder,
-      flex,
+      mt,
+      mb,
       mr,
+      ml,
+      flex,
       validationLength,
       parser,
       formatter,
@@ -34,9 +37,11 @@ export const CustomPatternInput = React.forwardRef<HTMLInputElement, PatternInpu
     }: PatternInputProps,
     ref
   ) => {
+    // props
+    const controlProps = { mt, mb, mr, ml, flex };
+    const formattedValue = value ? (formatter ? formatter(String(value)) : value) : value;
     // state
     const [placeholder, setPlaceholder] = React.useState(unfocusedPlaceholder);
-    const formattedValue = value ? (formatter ? formatter(String(value)) : value) : value;
     const [isInvalid, setIsInvalid] = React.useState(false);
     // handlers
     const onChangeHandler = (ev: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,7 +68,7 @@ export const CustomPatternInput = React.forwardRef<HTMLInputElement, PatternInpu
     // UI
     const styles = useMultiStyleConfig('CustomInput', {});
     return (
-      <FormControl id={id} sx={styles.control} flex={flex ? flex : undefined} mr={mr}>
+      <FormControl id={id} sx={styles.control} {...controlProps}>
         <FormLabel sx={styles.label}>{label}</FormLabel>
         <Input
           ref={ref}

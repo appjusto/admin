@@ -1,5 +1,5 @@
-export const CustomInput = {
-  parts: ['control', 'label', 'input'],
+export const Select = {
+  parts: ['control', 'label', 'select'],
   baseStyle: {
     control: {
       position: 'relative',
@@ -15,13 +15,15 @@ export const CustomInput = {
       left: '16px',
       zIndex: '1000',
     },
-    input: {
+    select: {
       fontFamily: 'Barlow',
       width: '100%',
       fontSize: '16px',
       height: '60px',
       color: '#697667',
       borderColor: '#C8D7CB',
+      display: 'flex',
+      alignItems: 'flex-end',
       pt: '30px',
       pb: '9px',
       zIndex: '1',

@@ -3,6 +3,7 @@ import React from 'react';
 import { Button } from './components/Button';
 import { CustomInput } from './components/CustomInput';
 import { IconButton } from './components/IconButton';
+import { Select } from './components/Select';
 import { Switch } from './components/Switch';
 import { colors } from './foundations/colors';
 import { typography } from './foundations/typography';
@@ -22,6 +23,7 @@ const theme = extendTheme({
   },
   components: {
     CustomInput,
+    Select,
     Button,
     Switch,
     IconButton,

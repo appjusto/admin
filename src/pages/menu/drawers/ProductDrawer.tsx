@@ -120,6 +120,7 @@ export const ProductDrawer = (props: Props) => {
 
         <Box mt="4">
           <CurrencyInput
+            id="drawer-price"
             value={price}
             label={t('Preço')}
             placeholder={t('0,00')}

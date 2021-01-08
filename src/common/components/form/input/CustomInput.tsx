@@ -7,7 +7,6 @@ export interface CustomInputProps extends InputProps {
   placeholder?: string;
   value: string;
   type?: string;
-  mr?: string | number | (string & {}) | undefined;
   handleChange?: (event: ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -19,14 +18,19 @@ export const CustomInput = React.forwardRef<HTMLInputElement, CustomInputProps>(
       placeholder = '',
       value,
       type = 'text',
-      mr = 0,
       handleChange = () => {},
+      mt,
+      mb,
+      mr,
+      ml,
+      flex,
       ...props
     }: CustomInputProps,
     ref
   ) => {
     const [isInvalid, setIsInvalid] = useState(false);
     const styles = useMultiStyleConfig('CustomInput', {});
+    const controlProps = { mt, mb, mr, ml, flex };
     const handleValidity = (ev: ChangeEvent<HTMLInputElement>) => {
       if (value !== '' && !ev.target.validity.valid) {
         setIsInvalid(true);
@@ -35,12 +39,11 @@ export const CustomInput = React.forwardRef<HTMLInputElement, CustomInputProps>(
       }
     };
     return (
-      <FormControl id={id} sx={styles.control} mr={mr}>
+      <FormControl id={id} sx={styles.control} {...controlProps}>
         <FormLabel sx={styles.label}>{label}</FormLabel>
         <Input
           ref={ref}
           isInvalid={isInvalid}
-          isRequired
           type={type}
           placeholder={placeholder}
           value={value}
