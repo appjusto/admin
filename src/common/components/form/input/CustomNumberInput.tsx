@@ -25,7 +25,7 @@ export const CustomNumberInput = React.forwardRef<HTMLInputElement, Props>(
           return newState;
         }
       });
-    }, [value]);
+    }, [value, maxLength]);
     return (
       <FormControl id={id} sx={styles.control} {...controlProps}>
         {label && <FormLabel sx={styles.label}>{label}</FormLabel>}
