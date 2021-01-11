@@ -3,11 +3,11 @@ import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile'
 import { getConfig } from 'app/api/config';
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusiness } from 'app/state/business/context';
-import { Input } from 'common/components/form/input/Input';
-import { NumberInput } from 'common/components/form/input/NumberInput';
+import { CustomInput as Input } from 'common/components/form/input/CustomInput';
+import { CustomNumberInput as NumberInput } from 'common/components/form/input/CustomNumberInput';
+import { CustomPatternInput as PatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';
 import { cepFormatter, cepMask } from 'common/components/form/input/pattern-input/formatters';
 import { numbersOnlyParser } from 'common/components/form/input/pattern-input/parsers';
-import { PatternInput } from 'common/components/form/input/pattern-input/PatternInput';
 import { coordsFromLatLnt, SaoPauloCoords } from 'core/api/thirdparty/maps/utils';
 import { fetchCEPInfo } from 'core/api/thirdparty/viacep';
 import { safeParseInt } from 'core/numbers';
@@ -133,8 +133,9 @@ export const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
 
         <Flex flexGrow={0}>
           <PatternInput
+            isRequired
             ref={cepRef}
-            mt="4"
+            id="delivery-postalcode"
             label={t('CEP')}
             placeholder={t('CEP')}
             mask={cepMask}
@@ -142,10 +143,13 @@ export const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
             parser={numbersOnlyParser}
             value={cep}
             onValueChange={(value) => setCEP(value)}
+            validationLength={8}
           />
         </Flex>
-        <Flex mt="4" flexDir={{ base: 'column', md: 'row' }}>
+        <Flex flexDir={{ base: 'column', md: 'row' }}>
           <Input
+            isRequired
+            id="delivery-address"
             flex={{ base: 1, md: 4 }}
             label={t('Endereço')}
             placeholder={t('Preenchimento automático')}
@@ -153,6 +157,8 @@ export const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
             isReadOnly
           />
           <Input
+            isRequired
+            id="delivery-address-number"
             flex={1}
             ml={{ base: '0', md: '4' }}
             mt={{ base: '4', md: '0' }}
@@ -162,16 +168,14 @@ export const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
             value={number}
             onChange={(ev) => setNumber(ev.target.value)}
           />
-          <Input
-            flex={2}
-            ml={{ base: '0', md: '4' }}
-            mt={{ base: '4', md: '0' }}
-            label={t('Complemento')}
-            placeholder={t('Sem complemento')}
-            value={additional}
-            onChange={(ev) => setAdditional(ev.target.value)}
-          />
         </Flex>
+        <Input
+          id="delivery-complement"
+          label={t('Complemento')}
+          placeholder={t('Sem complemento')}
+          value={additional}
+          onChange={(ev) => setAdditional(ev.target.value)}
+        />
         <Text mt="8" fontSize="xl" color="black">
           {t('Raio de entrega')}
         </Text>
@@ -180,16 +184,18 @@ export const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
         </Text>
         <Flex flexGrow={0}>
           <NumberInput
-            mt="6"
+            isRequired
+            id="delivery-ray"
+            maxW="100px"
             label={t('Raio/ km')}
             value={deliveryRange}
-            onChange={(value) => setDeliveryRange(value)}
+            onChange={(ev: React.ChangeEvent<HTMLInputElement>) =>
+              setDeliveryRange(ev.target.value)
+            }
           />
         </Flex>
         <Box
           mt="6"
-          //w={['246px', '328px', '410px', '574px', '656px']}
-          //h={['180px', '240px', '300px', '420px', '480px']}
           w={{ base: '328px', md: '380px', lg: '536px' }}
           h={{ base: '240px', md: '260px', lg: '380px' }}
         >
