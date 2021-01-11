@@ -2,7 +2,7 @@ import { Box, Text, useBreakpoint } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useContextBusiness } from 'app/state/business/context';
 import { FileDropzone } from 'common/components/FileDropzone';
-import { CurrencyInput } from 'common/components/form/input/CurrencyInput';
+import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput2';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import { CustomPatternInput as PatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';
 import { cnpjFormatter, cnpjMask } from 'common/components/form/input/pattern-input/formatters';
