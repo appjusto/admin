@@ -20,33 +20,6 @@ export const getRawValue = (value: string) => {
   return result;
 };
 
-export const formatFloatToRawValue = (float: number) => {
-  let result = float.toString();
-  let precision = undefined;
-  if (result.length <= 2) {
-    result = `${result}00`;
-  } else {
-    precision = result.split('.')[1]?.length;
-    if (precision < 2) {
-      result = `${result}0`;
-    }
-  }
-  return result.replace('.', '');
-};
-
-export function formatToFloat(rawValue: string) {
-  let newString = rawValue;
-  if (newString.length < 2) {
-    newString = `0${newString}`;
-  }
-  const len = newString.length;
-  const dis = len - 2;
-  const arr = newString.split('');
-  arr.splice(dis, 0, '.');
-  const result = parseFloat(arr.join(''));
-  return result;
-}
-
 const repeatZeroes = (times: number) => {
   let result = '';
   let i = 0;

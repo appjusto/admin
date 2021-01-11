@@ -28,7 +28,7 @@ export const CurrencyInput = ({
   // side effects
   React.useLayoutEffect(() => {
     // keep internal state in sync with value received
-    // and format parent value to raw value
+    // and format value from number to string
     const parentRawValue = value.toString();
     setPriceText(parentRawValue);
   }, [value]);
