@@ -20,6 +20,7 @@ import React from 'react';
 import { useQuery } from 'react-query';
 import { Redirect } from 'react-router-dom';
 import { t } from 'utils/i18n';
+import { Marker } from '../../common/components/MapsMarker';
 
 export const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
   // context
@@ -60,6 +61,7 @@ export const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
     }
   );
   const center = coordsFromLatLnt(geocodingResult ?? SaoPauloCoords);
+  console.log(center);
 
   // refs
   const cepRef = React.useRef<HTMLInputElement>(null);
@@ -115,7 +117,7 @@ export const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
       deliveryRange: safeParseInt(deliveryRange, defaultRadius),
     });
   };
-
+  console.log(onboarding);
   // UI
   if (isSuccess && redirect) return <Redirect to={redirect} push />;
   return (
@@ -196,14 +198,14 @@ export const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
         </Flex>
         <Box
           mt="6"
-          w={{ base: '328px', md: '380px', lg: '536px' }}
-          h={{ base: '240px', md: '260px', lg: '380px' }}
+          w={{ base: '328px', md: '380px', lg: onboarding ? '536px' : '756px' }}
+          h={{ base: '240px', md: '260px', lg: onboarding ? '380px' : '420px' }}
         >
           <GoogleMapReact
             bootstrapURLKeys={{ key: googleMapsApiKey }}
             defaultCenter={coordsFromLatLnt(SaoPauloCoords)}
             center={center}
-            defaultZoom={12}
+            defaultZoom={onboarding ? 12 : 13}
             onGoogleApiLoaded={({ map }) => {
               setRange(
                 new google.maps.Circle({
@@ -218,7 +220,7 @@ export const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
             }}
             yesIWantToUseGoogleMapApiInternals
           >
-            {/* <Range /> */}
+            <Marker lat={center.lat} lng={center.lng} />
           </GoogleMapReact>
         </Box>
         <PageFooter
