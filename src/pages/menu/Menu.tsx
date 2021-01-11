@@ -1,4 +1,5 @@
 import { Box, Button, Input, Spacer } from '@chakra-ui/react';
+import { useContextBusinessId } from 'app/state/business/context';
 import { MenuProvider } from 'app/state/menu/context';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
@@ -10,6 +11,7 @@ import { ProductDrawer } from './drawers/ProductDrawer';
 
 export const Menu = () => {
   // context
+  const businessId = useContextBusinessId();
   const { path, url } = useRouteMatch();
   const history = useHistory();
 
@@ -21,7 +23,7 @@ export const Menu = () => {
 
   // UI
   return (
-    <MenuProvider>
+    <MenuProvider businessId={businessId}>
       <PageHeader title={t('Cardápio')} subtitle={t('Defina o cardápio do seu restaurante.')} />
       <Box mt="6" d="flex">
         <Link to={`${url}/category/new`}>
