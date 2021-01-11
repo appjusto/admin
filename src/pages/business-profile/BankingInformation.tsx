@@ -1,6 +1,6 @@
 import { Box, Flex } from '@chakra-ui/react';
 import { useBusinessBankAccount } from 'app/api/business/profile/useBusinessBankAccount';
-import { NumberInput } from 'common/components/form/input/NumberInput';
+import { CustomNumberInput as NumberInput } from 'common/components/form/input/CustomNumberInput';
 import { BankSelect } from 'common/components/form/select/BankSelect';
 import { OnboardingProps } from 'pages/onboarding/types';
 import PageFooter from 'pages/PageFooter';
@@ -60,29 +60,32 @@ export const BankingInformation = ({ onboarding, redirect }: OnboardingProps) =>
           title={t('Dados bancários')}
           subtitle={t('Informe para onde serão transferidos os repasses')}
         />
-        <BankSelect mt="4" value={name} onChange={(ev) => setName(ev.target.value)} />
+        <BankSelect value={name} onChange={(ev) => setName(ev.target.value)} />
         <NumberInput
-          mt="4"
+          id="banking-agency"
           label={t('Agência')}
           placeholder={t('Número da agência')}
           value={agency}
-          onChange={(value) => setAgency(value)}
+          onChange={(ev: React.ChangeEvent<HTMLInputElement>) => setAgency(ev.target.value)}
         />
-        <Flex mt="4">
+        <Flex>
           <NumberInput
+            id="banking-account"
+            mr="4"
             flex={3}
             label={t('Conta')}
             placeholder={t('0000')}
             value={account}
-            onChange={(value) => setAccount(value)}
+            onChange={(ev: React.ChangeEvent<HTMLInputElement>) => setAccount(ev.target.value)}
           />
           <NumberInput
+            id="banking-digit"
             flex={1}
-            ml="4"
             label={t('Dígito')}
             placeholder={t('0')}
             value={digit}
-            onChange={(value) => setDigit(value)}
+            onChange={(ev: React.ChangeEvent<HTMLInputElement>) => setDigit(ev.target.value)}
+            maxLength={1}
           />
         </Flex>
         <PageFooter

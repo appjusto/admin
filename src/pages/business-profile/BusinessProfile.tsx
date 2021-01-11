@@ -4,10 +4,10 @@ import { useContextBusiness } from 'app/state/business/context';
 import { FileDropzone } from 'common/components/FileDropzone';
 import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput2';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
+import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
 import { CustomPatternInput as PatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';
 import { cnpjFormatter, cnpjMask } from 'common/components/form/input/pattern-input/formatters';
 import { numbersOnlyParser } from 'common/components/form/input/pattern-input/parsers';
-import { Textarea } from 'common/components/form/input/Textarea';
 import { OnboardingProps } from 'pages/onboarding/types';
 import PageFooter from 'pages/PageFooter';
 import PageHeader from 'pages/PageHeader';
@@ -127,13 +127,15 @@ export const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
           onChange={(ev) => setCuisineId(ev.target.value)}
         />
         <Textarea
-          mt="4"
+          isRequired
+          id="business-description"
           label={t('Descrição')}
           placeholder={t('Descreva seu restaurante')}
           value={description}
           onChange={(ev) => setDescription(ev.target.value)}
         />
         <CurrencyInput
+          isRequired
           id="business-min-price"
           label={t('Valor mínimo do pedido')}
           placeholder={t('R$ 0,00')}

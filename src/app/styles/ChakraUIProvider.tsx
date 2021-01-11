@@ -2,6 +2,7 @@ import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import React from 'react';
 import { Button } from './components/Button';
 import { CustomInput } from './components/CustomInput';
+import { CustomTextarea } from './components/CustomTextarea';
 import { IconButton } from './components/IconButton';
 import { Select } from './components/Select';
 import { Switch } from './components/Switch';
@@ -23,6 +24,7 @@ const theme = extendTheme({
   },
   components: {
     CustomInput,
+    CustomTextarea,
     Select,
     Button,
     Switch,
