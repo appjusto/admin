@@ -1,6 +1,6 @@
 import { FormControl, FormLabel, Input, InputProps, useMultiStyleConfig } from '@chakra-ui/react';
 import React from 'react';
-import { formatFloatToRawValue, formattedRawValue, formatToFloat, getRawValue } from './utils';
+import { formattedRawValue, getRawValue } from './utils';
 
 interface Props extends InputProps {
   id: string;
@@ -29,14 +29,14 @@ export const CurrencyInput = ({
   React.useLayoutEffect(() => {
     // keep internal state in sync with value received
     // and format parent value to raw value
-    const parentRawValue = formatFloatToRawValue(value);
+    const parentRawValue = value.toString();
     setPriceText(parentRawValue);
   }, [value]);
   //handler
   const handleChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = getRawValue(ev.target.value);
-    const floatValue = formatToFloat(newValue);
-    onValueChange(floatValue);
+    const intValue = parseInt(newValue);
+    onValueChange(intValue);
   };
   // UI
   const styles = useMultiStyleConfig('CustomInput', {});
@@ -47,7 +47,6 @@ export const CurrencyInput = ({
         value={formattedRawValue(priceText)}
         onChange={handleChange}
         sx={styles.input}
-        maxLength={8}
         {...props}
       />
     </FormControl>

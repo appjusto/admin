@@ -141,6 +141,7 @@ export const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
           placeholder={t('R$ 0,00')}
           value={minimumOrder}
           onChangeValue={(value) => setMinimumOrder(value)}
+          maxLength={8}
         />
         {/* logo */}
         <Text mt="8" fontSize="xl" color="black">
