@@ -1,8 +1,9 @@
-import { Box, Flex } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
 import { useUpdateManagerProfile } from 'app/api/manager/useUpdateManagerProfile';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextManagerProfile } from 'app/state/manager/context';
-import { Input } from 'common/components/form/input/Input';
+import { CustomInput } from 'common/components/form/input/CustomInput';
+import { CustomPatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';
 import {
   cpfFormatter,
   cpfMask,
@@ -10,7 +11,6 @@ import {
   phoneMask,
 } from 'common/components/form/input/pattern-input/formatters';
 import { numbersOnlyParser } from 'common/components/form/input/pattern-input/parsers';
-import { PatternInput } from 'common/components/form/input/pattern-input/PatternInput';
 import { OnboardingProps } from 'pages/onboarding/types';
 import PageFooter from 'pages/PageFooter';
 import PageHeader from 'pages/PageHeader';
@@ -28,8 +28,7 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
   // state
   const [name, setName] = React.useState(profile?.name ?? '');
   const [surname, setSurname] = React.useState(profile?.surname ?? '');
-  const [ddd, setDDD] = React.useState(profile?.phone?.ddd ?? '');
-  const [phoneNumber, setPhoneNumber] = React.useState(profile?.phone?.number ?? '');
+  const [phoneNumber, setPhoneNumber] = React.useState(profile?.phone ?? '');
   const [cpf, setCPF] = React.useState(profile?.cpf ?? '');
 
   // refs
@@ -43,8 +42,7 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
     if (profile) {
       if (profile.name) setName(profile.name);
       if (profile.surname) setSurname(profile.surname);
-      if (profile.phone?.ddd) setDDD(profile.phone.ddd);
-      if (profile.phone?.number) setPhoneNumber(profile.phone.number);
+      if (profile.phone) setPhoneNumber(profile.phone);
       if (profile.cpf) setCPF(profile.cpf);
     }
   }, [profile]);
@@ -54,10 +52,7 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
     await updateProfile({
       name,
       surname,
-      phone: {
-        ddd,
-        number: phoneNumber,
-      },
+      phone: phoneNumber,
       cpf,
     });
   };
@@ -76,46 +71,44 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
           title={t('Informe seus dados')}
           subtitle={t('Informações do administrador da conta')}
         />
-        <Input mt="8" label={t('E-mail')} value={user?.email ?? ''} isDisabled />
-        <Input
-          mt="4"
+        <CustomInput
+          id="manager-profile-email"
+          label={t('E-mail')}
+          value={user?.email ?? ''}
+          isDisabled
+        />
+        <CustomInput
+          isRequired
+          id="manager-profile-name"
           ref={nameRef}
           label={t('Nome')}
           placeholder={t('Nome')}
           value={name}
           onChange={(ev) => setName(ev.target.value)}
         />
-        <Input
-          mt="4"
+        <CustomInput
+          isRequired
+          id="manager-profile-lastname"
           label={t('Sobrenome')}
           placeholder={t('Sobrenome')}
           value={surname}
           onChange={(ev) => setSurname(ev.target.value)}
         />
-        <Flex mt="4">
-          <PatternInput
-            flex={1}
-            label={t('DDD')}
-            placeholder={t('00')}
-            maxLength={2}
-            parser={numbersOnlyParser}
-            value={ddd}
-            onValueChange={(value) => setDDD(value)}
-          />
-          <PatternInput
-            flex={4}
-            ml="4"
-            label={t('Celular')}
-            placeholder={t('Número do seu celular')}
-            mask={phoneMask}
-            parser={numbersOnlyParser}
-            formatter={phoneFormatter}
-            value={phoneNumber}
-            onValueChange={(value) => setPhoneNumber(value)}
-          />
-        </Flex>
-        <PatternInput
-          mt="4"
+        <CustomPatternInput
+          isRequired
+          id="manager-phone"
+          label={t('Celular')}
+          placeholder={t('Número do seu celular')}
+          mask={phoneMask}
+          parser={numbersOnlyParser}
+          formatter={phoneFormatter}
+          value={phoneNumber}
+          onValueChange={(value) => setPhoneNumber(value)}
+          validationLength={11}
+        />
+        <CustomPatternInput
+          isRequired
+          id="manager-cpf"
           label={t('CPF')}
           placeholder={t('Número do seu CPF')}
           mask={cpfMask}
@@ -123,6 +116,7 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
           formatter={cpfFormatter}
           value={cpf}
           onValueChange={(value) => setCPF(value)}
+          validationLength={11}
         />
         <PageFooter
           onboarding={onboarding}

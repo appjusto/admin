@@ -13,12 +13,14 @@ const PageFooter = ({ onboarding, redirect, isLoading, onSubmit }: Props) => {
   return (
     <Flex mt="4" alignItems="center">
       <Button
+        type="submit"
         size="lg"
         fontSize="sm"
         fontWeight="500"
         fontFamily="Barlow"
-        onClick={onSubmit}
+        //onClick={onSubmit}
         isLoading={isLoading}
+        loadingText={t('Salvando')}
       >
         {onboarding ? t('Salvar e continuar') : t('Salvar')}
       </Button>
