@@ -55,6 +55,7 @@ export const CategoryDrawer = (props: Props) => {
   return (
     <BaseDrawer
       {...props}
+      type="category"
       isEditing={category ? true : false}
       title={category ? t('Editar categoria') : t('Adicionar categoria')}
       initialFocusRef={inputRef}

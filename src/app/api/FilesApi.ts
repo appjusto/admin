@@ -1,5 +1,4 @@
 import firebase from 'firebase/app';
-
 export default class FilesApi {
   constructor(private storage: firebase.storage.Storage) {}
 

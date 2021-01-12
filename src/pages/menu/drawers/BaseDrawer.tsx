@@ -15,6 +15,7 @@ import React from 'react';
 import { t } from 'utils/i18n';
 
 interface BaseDrawerProps {
+  type: string;
   isEditing: boolean;
   title: string;
   isOpen: boolean;
@@ -26,6 +27,7 @@ interface BaseDrawerProps {
 }
 
 export const BaseDrawer = ({
+  type,
   isEditing,
   title,
   children,
@@ -56,7 +58,7 @@ export const BaseDrawer = ({
                     onClick={() => setDeleteConfirm(true)}
                     isDisabled={isLoading}
                   >
-                    {t('Apagar categoria')}
+                    {type === 'category' ? t('Apagar categoria') : t('Apagar produto')}
                   </Button>
                 )}
               </Stack>
@@ -64,15 +66,17 @@ export const BaseDrawer = ({
               <Box mt="8" bg="#FFF8F8" border="1px solid red" borderRadius="lg" p="6">
                 <Text color="red">
                   {t(
-                    'Ao apagar a categoria, os itens adicionados a ela também serão excluídos. Tem certeza que deseja excluir essa categoria?'
+                    type === 'category'
+                      ? 'Ao apagar a categoria, os itens adicionados a ela também serão excluídos. Tem certeza que deseja excluir essa categoria?'
+                      : 'Tem certeza que deseja excluir este produto?'
                   )}
                 </Text>
                 <Stack mt="8" spacing={4} direction="row">
                   <Button width="full" onClick={() => setDeleteConfirm(false)}>
-                    {t('Manter categoria')}
+                    {t(type === 'category' ? 'Manter categoria' : 'Manter produto')}
                   </Button>
                   <Button width="full" variant="danger" onClick={() => setDeleteConfirm(false)}>
-                    {t('Apagar categoria')}
+                    {t(type === 'category' ? 'Apagar categoria' : 'Apagar produto')}
                   </Button>
                 </Stack>
               </Box>
