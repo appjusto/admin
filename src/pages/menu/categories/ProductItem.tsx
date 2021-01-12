@@ -20,12 +20,22 @@ export const ProductItem = React.memo(({ product, index }: Props) => {
   // context
   const { url } = useRouteMatch();
   console.log(product);
+  //state
+  const [price, setPrice] = React.useState(0);
   // queries
   const image = useProductImage(product.id);
   const srcImg = image ? image : '/static/media/product-placeholder.png';
-
   // mutations
   const { updateProduct } = useProductUpdate(product.id);
+  //handlres
+  const updatePriceState = (value: number | undefined) => {
+    console.log(value);
+    if (value || value == 0) setPrice(value);
+  };
+  //side effects
+  React.useEffect(() => {
+    updatePriceState(product.price);
+  }, [product.price]);
 
   // UI
   return (
@@ -66,8 +76,9 @@ export const ProductItem = React.memo(({ product, index }: Props) => {
                 mt="0"
                 id="product-price"
                 label={t('Preço')}
-                value={product.price ? product.price : 0}
-                onChangeValue={() => {}}
+                value={price}
+                onChangeValue={updatePriceState}
+                onBlur={() => updateProduct({ price: price })}
               />
             </Box>
           </Flex>
