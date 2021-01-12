@@ -57,11 +57,10 @@ export const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
     ['geocoding', logradouro, number, localidade, uf],
     geocode,
     {
-      enabled: logradouro.length > 0 && number.length > 0,
+      enabled: logradouro?.length > 0 && number.length > 0,
     }
   );
   const center = coordsFromLatLnt(geocodingResult ?? SaoPauloCoords);
-  console.log(center);
 
   // refs
   const cepRef = React.useRef<HTMLInputElement>(null);
@@ -117,7 +116,6 @@ export const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
       deliveryRange: safeParseInt(deliveryRange, defaultRadius),
     });
   };
-  console.log(onboarding);
   // UI
   if (isSuccess && redirect) return <Redirect to={redirect} push />;
   return (
