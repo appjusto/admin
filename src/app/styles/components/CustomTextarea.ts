@@ -3,7 +3,6 @@ export const CustomTextarea = {
   baseStyle: {
     control: {
       position: 'relative',
-      mt: '16px',
       zIndex: '1',
     },
     label: {

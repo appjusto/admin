@@ -11,7 +11,7 @@ interface Props extends InputProps {
 
 export const CurrencyInput = ({
   id,
-  mt,
+  mt = '16px',
   mb,
   mr,
   ml,

@@ -4,7 +4,7 @@ import Sidebar from './sidebar/Sidebar';
 
 const PageLayout = ({ children }: FlexProps) => {
   return (
-    <Flex w="100vw" h="100vh">
+    <Flex w="100vw" maxH="100vh">
       <Sidebar />
       <Flex w="100%" justifyContent="center" overflowY="scroll">
         <Container

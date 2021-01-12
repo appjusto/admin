@@ -21,7 +21,7 @@ export const CustomPatternInput = React.forwardRef<HTMLInputElement, PatternInpu
       mask,
       value,
       placeholder: unfocusedPlaceholder,
-      mt,
+      mt = '16px',
       mb,
       mr,
       ml,

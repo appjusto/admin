@@ -19,7 +19,7 @@ export const CustomInput = React.forwardRef<HTMLInputElement, CustomInputProps>(
       value,
       type = 'text',
       handleChange = () => {},
-      mt,
+      mt = '16px',
       mb,
       mr,
       ml,

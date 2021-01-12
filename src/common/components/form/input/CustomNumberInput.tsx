@@ -10,7 +10,7 @@ interface Props extends InputProps {
 }
 
 export const CustomNumberInput = React.forwardRef<HTMLInputElement, Props>(
-  ({ id, label, value, maxLength, mt, mb, ml, mr, flex, ...props }: Props, ref) => {
+  ({ id, label, value, maxLength, mt = '16px', mb, ml, mr, flex, ...props }: Props, ref) => {
     const [state, setState] = React.useState('');
     const controlProps = { mt, mb, ml, mr, flex };
     const styles = useMultiStyleConfig('CustomInput', {});

@@ -13,7 +13,7 @@ interface Props extends TextareaProps {
 }
 
 export const CustomTextarea = React.forwardRef<HTMLTextAreaElement, Props>(
-  ({ id, label, mt, mb, ml, mr, flex, ...props }: Props, ref) => {
+  ({ id, label, mt = '16px', mb, ml, mr, flex, ...props }: Props, ref) => {
     const controlProps = { mt, mb, ml, mr, flex };
     const styles = useMultiStyleConfig('CustomTextarea', {});
     return (
