@@ -3,9 +3,9 @@ import * as menu from 'app/api/business/menu/functions';
 import { useProduct } from 'app/api/business/products/useProduct';
 import { useContextMenu } from 'app/state/menu/context';
 import { FileDropzone } from 'common/components/FileDropzone';
-import { CurrencyInput } from 'common/components/form/input/CurrencyInput';
-import { Input } from 'common/components/form/input/Input';
-import { Textarea } from 'common/components/form/input/Textarea';
+import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput2';
+import { CustomInput as Input } from 'common/components/form/input/CustomInput';
+import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
 import { getErrorMessage } from 'core/fb';
 import React from 'react';
 import { useParams } from 'react-router-dom';
@@ -95,6 +95,7 @@ export const ProductDrawer = (props: Props) => {
         }}
       >
         <Input
+          id="product-drawer-name"
           ref={inputRef}
           value={name}
           label={t('Nome')}
@@ -108,6 +109,7 @@ export const ProductDrawer = (props: Props) => {
 
         <Box mt="4">
           <Textarea
+            id="product-drawer-description"
             value={description}
             label={t('Descrição')}
             placeholder={t('Descreva seu produto')}

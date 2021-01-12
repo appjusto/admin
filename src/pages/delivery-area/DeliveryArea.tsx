@@ -119,7 +119,7 @@ export const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
   // UI
   if (isSuccess && redirect) return <Redirect to={redirect} push />;
   return (
-    <Box pb="10" maxW="756px">
+    <Box maxW="756px">
       <form
         onSubmit={(ev) => {
           ev.preventDefault();
