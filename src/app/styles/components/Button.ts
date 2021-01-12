@@ -1,6 +1,7 @@
 export const Button = {
   // The styles all button have in common
   baseStyle: {
+    fontFamily: 'Barlow',
     fontWeight: 'medium',
     fontSize: 'sm',
     color: 'black',
@@ -50,7 +51,7 @@ export const Button = {
   },
   // The default size and variant values
   defaultProps: {
-    size: 'md',
     variant: 'solid',
+    size: 'lg',
   },
 };

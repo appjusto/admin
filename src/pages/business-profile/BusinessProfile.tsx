@@ -89,7 +89,7 @@ export const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
 
   if (isSuccess && redirect) return <Redirect to={redirect} push />;
   return (
-    <Box maxW="464px">
+    <Box maxW="464px" pb="10">
       <form
         onSubmit={(ev) => {
           ev.preventDefault();

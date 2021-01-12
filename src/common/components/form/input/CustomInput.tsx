@@ -3,7 +3,7 @@ import React, { ChangeEvent, useState } from 'react';
 
 export interface CustomInputProps extends InputProps {
   id: string;
-  label: string;
+  label?: string;
   placeholder?: string;
   value: string;
   type?: string;
@@ -40,7 +40,7 @@ export const CustomInput = React.forwardRef<HTMLInputElement, CustomInputProps>(
     };
     return (
       <FormControl id={id} sx={styles.control} {...controlProps}>
-        <FormLabel sx={styles.label}>{label}</FormLabel>
+        {label && <FormLabel sx={styles.label}>{label}</FormLabel>}
         <Input
           ref={ref}
           isInvalid={isInvalid}
