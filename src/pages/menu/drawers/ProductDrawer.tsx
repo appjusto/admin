@@ -82,6 +82,7 @@ export const ProductDrawer = (props: Props) => {
   // UI
   return (
     <BaseDrawer
+      isEditing={product ? true : false}
       {...props}
       title={isNew ? t('Adicionar produto') : t('Alterar produto')}
       initialFocusRef={inputRef}

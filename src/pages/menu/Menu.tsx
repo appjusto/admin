@@ -47,7 +47,7 @@ export const Menu = () => {
             <InputRightElement
               mt="20px"
               mr="8px"
-              children={<Icon w="24px" h="24px" as={SearchIcon} />}
+              children={<Icon w="22px" h="22px" as={SearchIcon} />}
             />
           </InputGroup>
         </Flex>

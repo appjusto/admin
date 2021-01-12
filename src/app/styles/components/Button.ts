@@ -48,6 +48,32 @@ export const Button = {
         borderColor: 'gray.500',
       },
     },
+    danger: {
+      'bg': 'red',
+      'color': 'white',
+      'borderColor': 'red',
+      ':hover': {
+        color: 'gray.700',
+        borderColor: 'gray.700',
+      },
+      ':disabled': {
+        color: 'gray.500',
+        borderColor: 'gray.500',
+      },
+    },
+    dangerLight: {
+      'bg': 'white',
+      'color': 'red',
+      'borderColor': 'red',
+      ':hover': {
+        color: 'gray.700',
+        borderColor: 'gray.700',
+      },
+      ':disabled': {
+        color: 'gray.500',
+        borderColor: 'gray.500',
+      },
+    },
   },
   // The default size and variant values
   defaultProps: {

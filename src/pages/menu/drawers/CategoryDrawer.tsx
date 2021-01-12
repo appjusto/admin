@@ -2,7 +2,7 @@ import { Alert, AlertDescription, AlertIcon, AlertTitle, Box } from '@chakra-ui/
 import { useCategory } from 'app/api/business/categories/useCategory';
 import * as menu from 'app/api/business/menu/functions';
 import { useContextMenu } from 'app/state/menu/context';
-import { Input } from 'common/components/form/input/Input';
+import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import { getErrorMessage } from 'core/fb';
 import React from 'react';
 import { useParams } from 'react-router-dom';
@@ -55,7 +55,8 @@ export const CategoryDrawer = (props: Props) => {
   return (
     <BaseDrawer
       {...props}
-      title={t('Adicionar categoria')}
+      isEditing={category ? true : false}
+      title={category ? t('Editar categoria') : t('Adicionar categoria')}
       initialFocusRef={inputRef}
       onSave={onSaveHandler}
       isLoading={isLoading}
@@ -67,6 +68,7 @@ export const CategoryDrawer = (props: Props) => {
         }}
       >
         <Input
+          id="category-drawer-name"
           ref={inputRef}
           value={name}
           label={t('Nova categoria')}

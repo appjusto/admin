@@ -217,6 +217,10 @@ export default class MenuApi {
     } as Partial<Category>);
   }
 
+  async deleteCategory(businessId: string, categoryId: string) {
+    await this.getCategoryRef(businessId, categoryId).delete();
+  }
+
   // products
   observeProducts(
     businessId: string,

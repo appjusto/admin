@@ -19,7 +19,6 @@ interface Props {
 export const ProductItem = React.memo(({ product, index }: Props) => {
   // context
   const { url } = useRouteMatch();
-  console.log(product);
   //state
   const [price, setPrice] = React.useState(0);
   // queries
@@ -29,14 +28,12 @@ export const ProductItem = React.memo(({ product, index }: Props) => {
   const { updateProduct } = useProductUpdate(product.id);
   //handlres
   const updatePriceState = (value: number | undefined) => {
-    console.log(value);
-    if (value || value == 0) setPrice(value);
+    if (value || value === 0) setPrice(value);
   };
   //side effects
   React.useEffect(() => {
     updatePriceState(product.price);
   }, [product.price]);
-
   // UI
   return (
     <Draggable draggableId={product.id} index={index}>
@@ -65,7 +62,7 @@ export const ProductItem = React.memo(({ product, index }: Props) => {
             />
           </Link>
           <Flex w="100%" justifyContent="space-between" px="8">
-            <Box bg="white">
+            <Box bg="white" mr="2">
               <Text fontSize="lg" fontWeight="bold">
                 {product.name}
               </Text>
@@ -74,7 +71,7 @@ export const ProductItem = React.memo(({ product, index }: Props) => {
             <Box maxW="120px">
               <CurrencyInput
                 mt="0"
-                id="product-price"
+                id={`prod-${product.id}-price`}
                 label={t('Preço')}
                 value={price}
                 onChangeValue={updatePriceState}
@@ -90,7 +87,6 @@ export const ProductItem = React.memo(({ product, index }: Props) => {
               updateProduct({ enabled: ev.target.checked });
             }}
           />
-
           <Link to={`${url}/product/${product.id}`}>
             <EditButton />
           </Link>

@@ -23,6 +23,9 @@ export const useCategory = (id: string) => {
   const [updateCategory, updateResult] = useMutation(async (category: Partial<Category>) =>
     api.business().updateCategory(businessId, categoryId, category)
   );
+  const [deleteCategory, deleteResult] = useMutation(async () =>
+    api.business().deleteCategory(businessId, categoryId)
+  );
   const saveCategory = isNew ? createCategory : updateCategory;
   const result = createResult || updateResult;
   // return
@@ -31,6 +34,7 @@ export const useCategory = (id: string) => {
     id: categoryId,
     createCategory,
     updateCategory,
+    deleteCategory,
     saveCategory,
     result,
   };
