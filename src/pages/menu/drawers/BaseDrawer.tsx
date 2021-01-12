@@ -49,7 +49,13 @@ export const BaseDrawer = ({
             {children}
             {!deleteConfirm ? (
               <Stack mt="8" spacing={4} direction="row">
-                <Button width="full" maxW="50%" onClick={onSave} isLoading={isLoading}>
+                <Button
+                  width="full"
+                  maxW="50%"
+                  onClick={onSave}
+                  isLoading={isLoading}
+                  loadingText={t('Salvando')}
+                >
                   {t('Salvar')}
                 </Button>
                 {isEditing && (
