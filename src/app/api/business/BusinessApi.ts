@@ -265,6 +265,10 @@ export default class MenuApi {
     } as Partial<Product>);
   }
 
+  async deleteProduct(businessId: string, productId: string) {
+    await this.getProductRef(businessId, productId).delete();
+  }
+
   uploadProductPhoto(
     businessId: string,
     productId: string,

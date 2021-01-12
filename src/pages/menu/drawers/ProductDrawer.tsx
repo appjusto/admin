@@ -28,7 +28,9 @@ export const ProductDrawer = (props: Props) => {
 
   // state
   const { menuConfig, updateMenuConfig } = useContextMenu();
-  const { product, id, isNew, image, saveProduct, uploadPhoto, result } = useProduct(productId);
+  const { product, id, isNew, image, saveProduct, uploadPhoto, deleteProduct, result } = useProduct(
+    productId
+  );
   const { isLoading, isError, error } = result;
   const [name, setName] = React.useState(product?.name ?? '');
   const [categoryId, setCategoryId] = React.useState<string | undefined>();
@@ -37,7 +39,6 @@ export const ProductDrawer = (props: Props) => {
   const [externalId, setExternalId] = React.useState(product?.externalId ?? '');
   const [enabled, setEnabled] = React.useState(product?.enabled ?? true);
   const [previewURL, setPreviewURL] = React.useState<string | undefined>();
-
   // side effects
   React.useEffect(() => {
     if (product) {
@@ -50,7 +51,6 @@ export const ProductDrawer = (props: Props) => {
       setEnabled(product.enabled ?? true);
     }
   }, [id, product, menuConfig]);
-
   // handlers
   const onDropHandler = React.useCallback(
     async (acceptedFiles: File[]) => {
@@ -75,6 +75,24 @@ export const ProductDrawer = (props: Props) => {
       props.onClose();
     })();
   };
+  const onDeleteHandler = () => {
+    (async () => {
+      if (categoryId && id) {
+        const orderedArray = menuConfig.productsOrderByCategoryId[categoryId];
+        const newArray = orderedArray.filter((prod) => prod !== id);
+        const newMenuConfig = {
+          ...menuConfig,
+          productsOrderByCategoryId: {
+            ...menuConfig.productsOrderByCategoryId,
+            [categoryId]: newArray,
+          },
+        };
+        await deleteProduct();
+        updateMenuConfig(newMenuConfig);
+      }
+      props.onClose();
+    })();
+  };
 
   // refs
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -88,6 +106,7 @@ export const ProductDrawer = (props: Props) => {
       title={isNew ? t('Adicionar produto') : t('Alterar produto')}
       initialFocusRef={inputRef}
       onSave={onSaveHandler}
+      onDelete={onDeleteHandler}
       isLoading={isLoading}
     >
       <form

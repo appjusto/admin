@@ -47,6 +47,10 @@ export const CategoryDrawer = (props: Props) => {
       props.onClose();
     })();
   };
+  const onDeleteHandler = () => {
+    console.log('delete');
+    props.onClose();
+  };
 
   // refs
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -60,6 +64,7 @@ export const CategoryDrawer = (props: Props) => {
       title={category ? t('Editar categoria') : t('Adicionar categoria')}
       initialFocusRef={inputRef}
       onSave={onSaveHandler}
+      onDelete={onDeleteHandler}
       isLoading={isLoading}
     >
       <form

@@ -6,7 +6,7 @@ import React from 'react';
 
 export const useObserveMenuConfig = (businessId: string | undefined) => {
   const api = useContextApi();
-
+  console.log(businessId);
   //state
   const [menuConfig, setMenuConfig] = React.useState<MenuConfig>(menu.empty());
   const updateMenuConfig = (menuConfig: MenuConfig) => {

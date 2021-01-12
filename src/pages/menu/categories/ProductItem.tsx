@@ -23,7 +23,6 @@ export const ProductItem = React.memo(({ product, index }: Props) => {
   const [price, setPrice] = React.useState(0);
   // queries
   const image = useProductImage(product.id);
-  console.log(image);
   const srcImg = image ? image : '/static/media/product-placeholder.png';
   // mutations
   const { updateProduct } = useProductUpdate(product.id);

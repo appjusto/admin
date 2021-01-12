@@ -20,6 +20,7 @@ interface BaseDrawerProps {
   title: string;
   isOpen: boolean;
   onSave(): void;
+  onDelete(): void;
   onClose(): void;
   children: React.ReactNode;
   initialFocusRef?: React.RefObject<FocusableElement>;
@@ -33,6 +34,7 @@ export const BaseDrawer = ({
   children,
   onSave,
   onClose,
+  onDelete,
   isLoading,
   ...props
 }: BaseDrawerProps) => {
@@ -75,7 +77,7 @@ export const BaseDrawer = ({
                   <Button width="full" onClick={() => setDeleteConfirm(false)}>
                     {t(type === 'category' ? 'Manter categoria' : 'Manter produto')}
                   </Button>
-                  <Button width="full" variant="danger" onClick={() => setDeleteConfirm(false)}>
+                  <Button width="full" variant="danger" onClick={onDelete}>
                     {t(type === 'category' ? 'Apagar categoria' : 'Apagar produto')}
                   </Button>
                 </Stack>
