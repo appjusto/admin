@@ -7,6 +7,7 @@ import {
   ProductsByCategory,
   WithId,
 } from 'appjusto-types';
+import { without, omit } from 'lodash';
 
 export const empty = (): MenuConfig => ({ categoriesOrder: [], productsOrderByCategoryId: {} });
 
@@ -25,16 +26,12 @@ export const addCategory = (menuConfig: MenuConfig, categoryId: string) => {
 };
 
 export const removeCategory = (menuConfig: MenuConfig, categoryId: string) => {
-  const { categoriesOrder } = menuConfig;
+  const { categoriesOrder, productsOrderByCategoryId } = menuConfig;
   const categoryIndex = categoriesOrder.indexOf(categoryId);
   if (categoryIndex === -1) return menuConfig;
-  const newCategoriesOrder = menuConfig.categoriesOrder.filter(
-    (category) => category !== categoryId
-  );
-  delete menuConfig.productsOrderByCategoryId[categoryId];
   return {
-    ...menuConfig,
-    categoriesOrder: newCategoriesOrder,
+    categoriesOrder: without(menuConfig.categoriesOrder, categoryId),
+    productsOrderByCategoryId: omit(productsOrderByCategoryId, [categoryId]),
   } as MenuConfig;
 };
 
