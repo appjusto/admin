@@ -28,14 +28,18 @@ export const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const [minimumOrder, setMinimumOrder] = React.useState(business?.minimumOrder ?? 0);
   const [logoPreviewURL, setLogoPreviewURL] = React.useState<string | undefined>();
   const [coverPreviewURL, setCoverPreviewURL] = React.useState<string | undefined>();
+  const [logo, setLogo] = React.useState<string | null>(business?.logo_url ?? null);
+  const [cover, setCover] = React.useState<string | null>(business?.cover_url ?? null);
 
   // queries & mutations
   const {
-    logo,
-    cover,
+    //logo,
+    //cover,
     updateBusinessProfile,
     uploadLogo,
     uploadCover,
+    getLogoUrl,
+    getCoverUrl,
     result,
   } = useBusinessProfile();
   const { isLoading, isSuccess } = result;
@@ -54,11 +58,26 @@ export const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
       if (business.description) setDescription(business.description);
       if (business.minimumOrder) setMinimumOrder(business.minimumOrder);
       if (business.cuisine?.id) setCuisineId(business.cuisine.id);
+      if (business.logo_url) setLogo(business.logo_url);
+      if (business.cover_url) setCover(business.cover_url);
     }
   }, [business]);
 
   // handlers
+  const getImageUrl = async (
+    image: string | null,
+    preview: string | undefined,
+    handler: () => Promise<string | null>
+  ) => {
+    let imageUrl = image ?? null;
+    if (!imageUrl && preview) {
+      imageUrl = await handler();
+    }
+    return imageUrl;
+  };
   const onSubmitHandler = async () => {
+    let logo_url = await getImageUrl(logo, logoPreviewURL, getLogoUrl);
+    let cover_url = await getImageUrl(cover, coverPreviewURL, getCoverUrl);
     await updateBusinessProfile({
       name,
       cnpj,
@@ -68,6 +87,8 @@ export const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
         id: cuisineId,
         name: '',
       },
+      logo_url,
+      cover_url,
     });
   };
   const onDropLogoHandler = async (acceptedFiles: File[]) => {
@@ -86,7 +107,6 @@ export const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
 
   // UI
   const breakpoint = useBreakpoint();
-
   if (isSuccess && redirect) return <Redirect to={redirect} push />;
   return (
     <Box maxW="464px">

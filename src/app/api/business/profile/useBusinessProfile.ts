@@ -2,7 +2,7 @@ import { useContextApi } from 'app/state/api/context';
 import { useContextBusinessId } from 'app/state/business/context';
 import { Business } from 'appjusto-types';
 import React from 'react';
-import { useMutation, useQuery, useQueryCache } from 'react-query';
+import { useMutation, useQueryCache } from 'react-query';
 
 export const useBusinessProfile = () => {
   // context
@@ -11,11 +11,11 @@ export const useBusinessProfile = () => {
   const queryCache = useQueryCache();
 
   // queries
-  const getBusinessLogoURL = (key: string) => api.business().getBusinessLogoURL(businessId);
-  const { data: logo } = useQuery(['business:logo', businessId], getBusinessLogoURL);
+  //const getBusinessLogoURL = (key: string) => api.business().getBusinessLogoURL(businessId);
+  //const { data: logo } = useQuery(['business:logo', businessId], getBusinessLogoURL);
 
-  const getBusinessCoverURL = (key: string) => api.business().getBusinessCoverURL(businessId);
-  const { data: cover } = useQuery(['business:cover', businessId], getBusinessCoverURL);
+  //const getBusinessCoverURL = (key: string) => api.business().getBusinessCoverURL(businessId);
+  //const { data: cover } = useQuery(['business:cover', businessId], getBusinessCoverURL);
 
   // mutations
   const [updateBusinessProfile, updateResult] = useMutation(async (changes: Partial<Business>) =>
@@ -28,6 +28,10 @@ export const useBusinessProfile = () => {
     api.business().uploadBusinessCover(businessId, file)
   );
 
+  //without mutations
+  const getLogoUrl = async () => await api.business().getBusinessLogoURL(businessId);
+  const getCoverUrl = async () => await api.business().getBusinessCoverURL(businessId);
+
   const { isSuccess: uploadSuccess } = uploadLogoResult;
   React.useEffect(() => {
     if (uploadSuccess) queryCache.invalidateQueries(['business:logo', businessId]);
@@ -36,14 +40,16 @@ export const useBusinessProfile = () => {
   // return
   const result = updateResult ?? uploadLogoResult ?? uploadCoverResult;
   return {
-    logo,
-    cover,
+    //logo,
+    //cover,
     updateBusinessProfile,
     updateResult,
     uploadLogo,
     uploadLogoResult,
     uploadCover,
     uploadCoverResult,
+    getLogoUrl,
+    getCoverUrl,
     result,
   };
 };

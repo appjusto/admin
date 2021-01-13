@@ -161,7 +161,6 @@ export const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
             id="delivery-address-number"
             flex={1}
             ml={{ base: '0', md: '4' }}
-            mt={{ base: '4', md: '0' }}
             label={t('Número')}
             ref={numberRef}
             placeholder={t('000')}
