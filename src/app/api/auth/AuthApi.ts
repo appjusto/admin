@@ -30,6 +30,7 @@ export default class AuthApi {
   }
 
   async signInWithEmailLink(email: string, link: string) {
+    await this.auth.signOut();
     const userCredential = await this.auth.signInWithEmailLink(email, link);
     window.localStorage.removeItem('email');
     return userCredential.user;
