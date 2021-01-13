@@ -23,7 +23,7 @@ export const CategoryDrawer = (props: Props) => {
 
   // state
   const { menuConfig, updateMenuConfig } = useContextMenu();
-  const { category, id, saveCategory, result } = useCategory(categoryId);
+  const { category, id, saveCategory, deleteCategory, result } = useCategory(categoryId);
   const { isLoading, isError, error } = result;
   const [name, setName] = React.useState(category?.name ?? '');
   // const [enabled, setEnabled] = React.useState(category?.enabled ?? true);
@@ -48,8 +48,22 @@ export const CategoryDrawer = (props: Props) => {
     })();
   };
   const onDeleteHandler = () => {
-    console.log('delete');
-    props.onClose();
+    (async () => {
+      const localMenuConfig = menuConfig;
+      const categoryProducts = localMenuConfig?.productsOrderByCategoryId[id];
+      const newCategoriesOrder = localMenuConfig.categoriesOrder.filter(
+        (categoryId) => categoryId !== id
+      );
+      delete localMenuConfig.productsOrderByCategoryId[id];
+      const newMenuConfig = {
+        ...localMenuConfig,
+        categoriesOrder: newCategoriesOrder,
+      };
+      console.log(newMenuConfig);
+      await deleteCategory(categoryProducts);
+      updateMenuConfig(newMenuConfig);
+      props.onClose();
+    })();
   };
 
   // refs

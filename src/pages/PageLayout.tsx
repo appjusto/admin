@@ -9,7 +9,7 @@ const PageLayout = ({ children }: FlexProps) => {
       <Flex w="100%" justifyContent="center">
         <Container
           w={{ base: '90%', lg: '100%' }}
-          maxW={{ lg: '1200px' }}
+          maxW={{ lg: '960px' }}
           pt={{ base: '6', md: '10' }}
           pb={{ base: '8', md: '14' }}
         >

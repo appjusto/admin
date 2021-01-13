@@ -89,8 +89,8 @@ export const ProductDrawer = (props: Props) => {
         };
         await deleteProduct();
         updateMenuConfig(newMenuConfig);
+        props.onClose();
       }
-      props.onClose();
     })();
   };
 

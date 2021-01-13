@@ -172,7 +172,8 @@ export default class MenuApi {
   }
 
   async updateMenuConfig(businessId: string, menuConfig: MenuConfig) {
-    await this.getMenuConfigRef(businessId).set(menuConfig, { merge: true });
+    //change merge to false for testing
+    await this.getMenuConfigRef(businessId).set(menuConfig, { merge: false });
   }
 
   // categories
@@ -217,7 +218,14 @@ export default class MenuApi {
     } as Partial<Category>);
   }
 
-  async deleteCategory(businessId: string, categoryId: string) {
+  async deleteCategory(businessId: string, categoryId: string, categoryProducts: string[]) {
+    console.log('categoryProducts', categoryProducts);
+    if (categoryProducts?.length > 0) {
+      categoryProducts.forEach((productId) => {
+        console.log('foreach on delete', productId);
+        this.deleteProduct(businessId, productId);
+      });
+    }
     await this.getCategoryRef(businessId, categoryId).delete();
   }
 
