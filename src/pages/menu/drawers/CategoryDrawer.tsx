@@ -49,19 +49,9 @@ export const CategoryDrawer = (props: Props) => {
   };
   const onDeleteHandler = () => {
     (async () => {
-      const localMenuConfig = menuConfig;
-      const categoryProducts = localMenuConfig?.productsOrderByCategoryId[id];
-      const newCategoriesOrder = localMenuConfig.categoriesOrder.filter(
-        (categoryId) => categoryId !== id
-      );
-      delete localMenuConfig.productsOrderByCategoryId[id];
-      const newMenuConfig = {
-        ...localMenuConfig,
-        categoriesOrder: newCategoriesOrder,
-      };
-      console.log(newMenuConfig);
+      const categoryProducts = menuConfig.productsOrderByCategoryId[id];
+      updateMenuConfig(menu.removeCategory(menuConfig, categoryId));
       await deleteCategory(categoryProducts);
-      updateMenuConfig(newMenuConfig);
       props.onClose();
     })();
   };

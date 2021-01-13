@@ -77,18 +77,9 @@ export const ProductDrawer = (props: Props) => {
   };
   const onDeleteHandler = () => {
     (async () => {
-      if (categoryId && id) {
-        const orderedArray = menuConfig.productsOrderByCategoryId[categoryId];
-        const newArray = orderedArray.filter((prod) => prod !== id);
-        const newMenuConfig = {
-          ...menuConfig,
-          productsOrderByCategoryId: {
-            ...menuConfig.productsOrderByCategoryId,
-            [categoryId]: newArray,
-          },
-        };
+      if (categoryId) {
+        updateMenuConfig(menu.removeProductFromCategory(menuConfig, id, categoryId));
         await deleteProduct();
-        updateMenuConfig(newMenuConfig);
         props.onClose();
       }
     })();

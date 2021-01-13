@@ -1,5 +1,12 @@
 import { arrayMove } from 'app/utils/arrayMove';
-import { Category, CategoryWithProducts, MenuConfig, Product, ProductsByCategory, WithId } from 'appjusto-types';
+import {
+  Category,
+  CategoryWithProducts,
+  MenuConfig,
+  Product,
+  ProductsByCategory,
+  WithId,
+} from 'appjusto-types';
 
 export const empty = (): MenuConfig => ({ categoriesOrder: [], productsOrderByCategoryId: {} });
 
@@ -18,18 +25,16 @@ export const addCategory = (menuConfig: MenuConfig, categoryId: string) => {
 };
 
 export const removeCategory = (menuConfig: MenuConfig, categoryId: string) => {
-  const { categoriesOrder, productsOrderByCategoryId } = menuConfig;
+  const { categoriesOrder } = menuConfig;
   const categoryIndex = categoriesOrder.indexOf(categoryId);
   if (categoryIndex === -1) return menuConfig;
+  const newCategoriesOrder = menuConfig.categoriesOrder.filter(
+    (category) => category !== categoryId
+  );
+  delete menuConfig.productsOrderByCategoryId[categoryId];
   return {
-    categoriesOrder: [
-      ...categoriesOrder.slice(0, categoryIndex),
-      ...categoriesOrder.slice(categoryIndex + 1),
-    ],
-    productsOrderByCategoryId: {
-      ...productsOrderByCategoryId,
-      [categoryId]: [],
-    },
+    ...menuConfig,
+    categoriesOrder: newCategoriesOrder,
   } as MenuConfig;
 };
 
@@ -96,18 +101,18 @@ export const removeProductFromCategory = (
   } as MenuConfig;
 };
 
-export const updateProductCategory = (menuConfig: MenuConfig, productId: string, categoryId: string) => {
+export const updateProductCategory = (
+  menuConfig: MenuConfig,
+  productId: string,
+  categoryId: string
+) => {
   const currentCategoryId = getProductCategoryId(menuConfig, productId);
   // avoid update when category is the same
   if (currentCategoryId === categoryId) return menuConfig;
   let nextMenuConfig: MenuConfig = menuConfig;
   // remove product from its current category
   if (currentCategoryId) {
-    nextMenuConfig = removeProductFromCategory(
-      menuConfig,
-      productId,
-      currentCategoryId
-    );
+    nextMenuConfig = removeProductFromCategory(menuConfig, productId, currentCategoryId);
   }
   // add to the new category
   return addProductToCategory(nextMenuConfig, productId, categoryId);
