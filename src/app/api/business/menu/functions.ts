@@ -93,7 +93,7 @@ export const removeProductFromCategory = (
     ...menuConfig,
     productsOrderByCategoryId: {
       ...productsOrderByCategoryId,
-      [categoryId]: productsOrderByCategoryId[categoryId].filter((id) => id !== productId),
+      [categoryId]: without(productsOrderByCategoryId[categoryId], productId),
     },
   } as MenuConfig;
 };

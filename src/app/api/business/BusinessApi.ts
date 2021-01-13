@@ -255,8 +255,10 @@ export default class MenuApi {
   async createProduct(businessId: string, productId: string, product: Product) {
     // creating product
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+    const image_url = await this.getProductImageURL(businessId, productId);
     await this.getProductRef(businessId, productId).set({
       ...product,
+      image_url,
       createdOn: timestamp,
       updatedOn: timestamp,
     } as Product);
@@ -264,8 +266,10 @@ export default class MenuApi {
 
   async updateProduct(businessId: string, productId: string, changes: Partial<Product>) {
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+    const image_url = await this.getProductImageURL(businessId, productId);
     await this.getProductRef(businessId, productId).update({
       ...changes,
+      image_url,
       updatedOn: timestamp,
     } as Partial<Product>);
   }

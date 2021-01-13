@@ -28,13 +28,16 @@ export const ProductDrawer = (props: Props) => {
 
   // state
   const { menuConfig, updateMenuConfig } = useContextMenu();
-  const { product, id, isNew, image, saveProduct, uploadPhoto, deleteProduct, result } = useProduct(
+  const { product, id, isNew, saveProduct, uploadPhoto, deleteProduct, result } = useProduct(
     productId
   );
   const { isLoading, isError, error } = result;
   const [name, setName] = React.useState(product?.name ?? '');
   const [categoryId, setCategoryId] = React.useState<string | undefined>();
   const [description, setDescription] = React.useState(product?.description ?? '');
+  const [imageUrl, setImageUrl] = React.useState<string | undefined>(
+    product?.image_url ?? undefined
+  );
   const [price, setPrice] = React.useState(product?.price ?? 0);
   const [externalId, setExternalId] = React.useState(product?.externalId ?? '');
   const [enabled, setEnabled] = React.useState(product?.enabled ?? true);
@@ -45,6 +48,7 @@ export const ProductDrawer = (props: Props) => {
       setName(product.name);
       setCategoryId(menu.getProductCategoryId(menuConfig, id));
       setDescription(product.description ?? '');
+      setImageUrl(product.image_url ?? '');
       setPrice(product.price ?? 0);
       setPrice(product.price ?? 0);
       setExternalId(product.externalId ?? '');
@@ -142,7 +146,7 @@ export const ProductDrawer = (props: Props) => {
           />
         </Box>
 
-        <FileDropzone mt="4" onDropFile={onDropHandler} preview={previewURL ?? image} />
+        <FileDropzone mt="4" onDropFile={onDropHandler} preview={previewURL ?? imageUrl} />
 
         {isError && (
           <Box mt="6">

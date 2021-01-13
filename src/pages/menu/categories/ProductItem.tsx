@@ -1,5 +1,4 @@
 import { Box, Flex, Spacer, Switch, Text } from '@chakra-ui/react';
-import { useProductImage } from 'app/api/business/products/useProductImage';
 import { useProductUpdate } from 'app/api/business/products/useProductUpdate';
 import { Product, WithId } from 'appjusto-types';
 import { EditButton } from 'common/components/buttons/EditButton';
@@ -22,8 +21,8 @@ export const ProductItem = React.memo(({ product, index }: Props) => {
   //state
   const [price, setPrice] = React.useState(0);
   // queries
-  const image = useProductImage(product.id);
-  const srcImg = image ? image : '/static/media/product-placeholder.png';
+  //const image = useProductImage(product.id);
+  const srcImg = product.image_url ? product.image_url : '/static/media/product-placeholder.png';
   // mutations
   const { updateProduct } = useProductUpdate(product.id);
   //handlres
