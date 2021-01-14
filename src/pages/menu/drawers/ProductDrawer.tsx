@@ -11,6 +11,7 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { BaseDrawer } from './BaseDrawer';
+import { DrawerButtons } from './DrawerButtons';
 import { CategorySelect } from './product/CategorySelect';
 
 interface Params {
@@ -96,13 +97,8 @@ export const ProductDrawer = (props: Props) => {
   return (
     <BaseDrawer
       {...props}
-      type="product"
-      isEditing={product ? true : false}
       title={isNew ? t('Adicionar produto') : t('Alterar produto')}
       initialFocusRef={inputRef}
-      onSave={onSaveHandler}
-      onDelete={onDeleteHandler}
-      isLoading={isLoading}
     >
       <form
         onSubmit={(ev) => {
@@ -111,6 +107,7 @@ export const ProductDrawer = (props: Props) => {
         }}
       >
         <Input
+          isRequired
           id="product-drawer-name"
           ref={inputRef}
           value={name}
@@ -120,16 +117,22 @@ export const ProductDrawer = (props: Props) => {
         />
 
         <Box mt="4">
-          <CategorySelect value={categoryId} onChange={(ev) => setCategoryId(ev.target.value)} />
+          <CategorySelect
+            isRequired
+            value={categoryId}
+            onChange={(ev) => setCategoryId(ev.target.value)}
+          />
         </Box>
 
         <Box mt="4">
           <Textarea
+            isRequired
             id="product-drawer-description"
             value={description}
             label={t('Descrição')}
             placeholder={t('Descreva seu produto')}
             onChange={(ev) => setDescription(ev.target.value)}
+            maxLength={1000}
           />
           <Text fontSize="xs" color="gray.700">
             {description.length}/1000
@@ -138,6 +141,7 @@ export const ProductDrawer = (props: Props) => {
 
         <Box mt="4">
           <CurrencyInput
+            isRequired
             id="drawer-price"
             value={price}
             label={t('Preço')}
@@ -147,7 +151,12 @@ export const ProductDrawer = (props: Props) => {
         </Box>
 
         <FileDropzone mt="4" onDropFile={onDropHandler} preview={previewURL ?? imageUrl} />
-
+        <DrawerButtons
+          type="product"
+          isEditing={product ? true : false}
+          onDelete={onDeleteHandler}
+          isLoading={isLoading}
+        />
         {isError && (
           <Box mt="6">
             {isError && (

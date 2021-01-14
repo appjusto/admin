@@ -31,6 +31,7 @@ export default class FilesApi {
       return null;
     }
   }
+
   async deleteStorageFile(path: string): Promise<boolean> {
     const path_to_160x = path.replace('_1024x1024', '_160x160');
     const ref_to_1024x = this.storage.ref().child(path);

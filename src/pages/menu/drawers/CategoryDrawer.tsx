@@ -8,6 +8,7 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { BaseDrawer } from './BaseDrawer';
+import { DrawerButtons } from './DrawerButtons';
 
 interface Props {
   isOpen: boolean;
@@ -63,13 +64,8 @@ export const CategoryDrawer = (props: Props) => {
   return (
     <BaseDrawer
       {...props}
-      type="category"
-      isEditing={category ? true : false}
       title={category ? t('Editar categoria') : t('Adicionar categoria')}
       initialFocusRef={inputRef}
-      onSave={onSaveHandler}
-      onDelete={onDeleteHandler}
-      isLoading={isLoading}
     >
       <form
         onSubmit={(ev) => {
@@ -78,12 +74,19 @@ export const CategoryDrawer = (props: Props) => {
         }}
       >
         <Input
+          isRequired
           id="category-drawer-name"
           ref={inputRef}
           value={name}
           label={t('Nova categoria')}
           placeholder={t('Nome da categoria')}
           onChange={(ev) => setName(ev.target.value)}
+        />
+        <DrawerButtons
+          type="category"
+          isEditing={category ? true : false}
+          onDelete={onDeleteHandler}
+          isLoading={isLoading}
         />
         {isError && (
           <Box mt="6">
