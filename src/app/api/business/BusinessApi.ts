@@ -275,6 +275,7 @@ export default class MenuApi {
   }
 
   async deleteProduct(businessId: string, productId: string) {
+    await this.files.deleteStorageFile(this.getProductImageStoragePath(businessId, productId));
     await this.getProductRef(businessId, productId).delete();
   }
 

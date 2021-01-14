@@ -5,7 +5,7 @@ import { EditButton } from 'common/components/buttons/EditButton';
 import { ReactComponent as DragHandle } from 'common/img/drag-handle.svg';
 import React from 'react';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
-import { Link, useRouteMatch } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { ProductItem } from './ProductItem';
 
 interface Props {
@@ -13,11 +13,12 @@ interface Props {
   products: WithId<Product>[];
   index: number;
   hidden?: boolean;
+  url: string;
 }
 
-export const CategoryItem = React.memo(({ category, products, index, hidden }: Props) => {
+export const CategoryItem = React.memo(({ category, products, index, hidden, url }: Props) => {
   // context
-  const { url } = useRouteMatch();
+  //const { url } = useRouteMatch();
 
   // mutations
   const { updateCategory } = useCategory(category.id);

@@ -5,6 +5,7 @@ import { Product, WithId } from 'appjusto-types';
 import { isEmpty } from 'lodash';
 import React from 'react';
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
+import { useRouteMatch } from 'react-router-dom';
 import { CategoryItem } from './CategoryItem';
 
 interface Props {
@@ -19,7 +20,7 @@ export const Categories = ({ productSearch }: Props) => {
     const regexp = new RegExp(productSearch, 'i');
     return products.filter((product) => regexp.test(product.name));
   };
-
+  const { url } = useRouteMatch();
   // handlers
   const onDragEnd = (result: DropResult) => {
     const { destination, source, draggableId, type } = result;
@@ -52,6 +53,7 @@ export const Categories = ({ productSearch }: Props) => {
               const products = filterProductsWithSearch(category.products);
               return (
                 <CategoryItem
+                  url={url}
                   key={category.id}
                   category={category}
                   products={products}
