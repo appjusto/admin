@@ -14,7 +14,7 @@ const Logout = () => {
     api.auth().signOut();
   }, [api]);
 
-  if (!user) return <Redirect to="/" />;
+  if (!user) return <Redirect to="/login" />;
   return <Loading />;
 };
 

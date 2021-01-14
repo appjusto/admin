@@ -27,11 +27,11 @@ export const Router = () => {
     <BrowserRouter>
       <React.Suspense fallback={<Loading />}>
         <Switch>
-          <Route exact path="/" component={Login} />
+          <Route path="/login" component={Login} />
           <Route path="/join" component={Join} />
+          <ProtectedRoute exact path="/" component={Home} />
           <ProtectedRoute path="/logout" component={Logout} />
           <ProtectedRoute path="/onboarding" component={Onboarding} />
-          <ProtectedRoute path="/home" component={Home} />
           <ProtectedRoute path="/menu" component={Menu} />
           <ProtectedRoute path="/orders" component={Orders} />
           <ProtectedRoute path="/delivery-area" component={DeliveryArea} />

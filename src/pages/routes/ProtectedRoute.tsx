@@ -31,7 +31,7 @@ export const ProtectedRoute = (props: RouteProps) => {
 
   // UI
   // redirects to / when user is not authenticated
-  if (status === 'unauthenticated') return <Redirect to="/" />;
+  if (status === 'unauthenticated') return <Redirect to="/login" />;
   // load route when profile is loaded
   if (status === 'profile-loaded') return <Route {...props} />;
   // still loading user's profile
