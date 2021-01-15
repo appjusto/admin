@@ -1,14 +1,11 @@
-import { Alert, AlertDescription, AlertIcon, AlertTitle, Box } from '@chakra-ui/react';
 import { useCategory } from 'app/api/business/categories/useCategory';
 import * as menu from 'app/api/business/menu/functions';
 import { useContextMenu } from 'app/state/menu/context';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
-import { getErrorMessage } from 'core/fb';
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { BaseDrawer } from './BaseDrawer';
-import { DrawerButtons } from './DrawerButtons';
 
 interface Props {
   isOpen: boolean;
@@ -66,40 +63,23 @@ export const CategoryDrawer = (props: Props) => {
       {...props}
       title={category ? t('Editar categoria') : t('Adicionar categoria')}
       initialFocusRef={inputRef}
+      type="category"
+      isLoading={isLoading}
+      isEditing={category ? true : false}
+      onSave={onSaveHandler}
+      onDelete={onDeleteHandler}
+      isError={isError}
+      error={error}
     >
-      <form
-        onSubmit={(ev) => {
-          ev.preventDefault();
-          onSaveHandler();
-        }}
-      >
-        <Input
-          isRequired
-          id="category-drawer-name"
-          ref={inputRef}
-          value={name}
-          label={t('Nova categoria')}
-          placeholder={t('Nome da categoria')}
-          onChange={(ev) => setName(ev.target.value)}
-        />
-        <DrawerButtons
-          type="category"
-          isEditing={category ? true : false}
-          onDelete={onDeleteHandler}
-          isLoading={isLoading}
-        />
-        {isError && (
-          <Box mt="6">
-            {isError && (
-              <Alert status="error">
-                <AlertIcon />
-                <AlertTitle mr={2}>{t('Erro!')}</AlertTitle>
-                <AlertDescription>{getErrorMessage(error) ?? t('Tenta de novo?')}</AlertDescription>
-              </Alert>
-            )}
-          </Box>
-        )}
-      </form>
+      <Input
+        isRequired
+        id="category-drawer-name"
+        ref={inputRef}
+        value={name}
+        label={t('Nova categoria')}
+        placeholder={t('Nome da categoria')}
+        onChange={(ev) => setName(ev.target.value)}
+      />
     </BaseDrawer>
   );
 };

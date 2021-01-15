@@ -1,4 +1,4 @@
-import { Alert, AlertDescription, AlertIcon, AlertTitle, Box, Text } from '@chakra-ui/react';
+import { Box, Text } from '@chakra-ui/react';
 import * as menu from 'app/api/business/menu/functions';
 import { useProduct } from 'app/api/business/products/useProduct';
 import { useContextMenu } from 'app/state/menu/context';
@@ -6,12 +6,10 @@ import { FileDropzone } from 'common/components/FileDropzone';
 import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput2';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
-import { getErrorMessage } from 'core/fb';
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { BaseDrawer } from './BaseDrawer';
-import { DrawerButtons } from './DrawerButtons';
 import { CategorySelect } from './product/CategorySelect';
 
 interface Params {
@@ -97,78 +95,57 @@ export const ProductDrawer = (props: Props) => {
   return (
     <BaseDrawer
       {...props}
+      type="product"
       title={isNew ? t('Adicionar produto') : t('Alterar produto')}
+      isLoading={isLoading}
+      isEditing={product ? true : false}
+      onSave={onSaveHandler}
+      onDelete={onDeleteHandler}
       initialFocusRef={inputRef}
+      isError={isError}
+      error={error}
     >
-      <form
-        onSubmit={(ev) => {
-          ev.preventDefault();
-          onSaveHandler();
-        }}
-      >
-        <Input
+      <Input
+        isRequired
+        id="product-drawer-name"
+        ref={inputRef}
+        value={name}
+        label={t('Nome')}
+        placeholder={t('Nome do produto')}
+        onChange={(ev) => setName(ev.target.value)}
+      />
+      <Box mt="4">
+        <CategorySelect
           isRequired
-          id="product-drawer-name"
-          ref={inputRef}
-          value={name}
-          label={t('Nome')}
-          placeholder={t('Nome do produto')}
-          onChange={(ev) => setName(ev.target.value)}
+          value={categoryId}
+          onChange={(ev) => setCategoryId(ev.target.value)}
         />
-
-        <Box mt="4">
-          <CategorySelect
-            isRequired
-            value={categoryId}
-            onChange={(ev) => setCategoryId(ev.target.value)}
-          />
-        </Box>
-
-        <Box mt="4">
-          <Textarea
-            isRequired
-            id="product-drawer-description"
-            value={description}
-            label={t('Descrição')}
-            placeholder={t('Descreva seu produto')}
-            onChange={(ev) => setDescription(ev.target.value)}
-            maxLength={1000}
-          />
-          <Text fontSize="xs" color="gray.700">
-            {description.length}/1000
-          </Text>
-        </Box>
-
-        <Box mt="4">
-          <CurrencyInput
-            isRequired
-            id="drawer-price"
-            value={price}
-            label={t('Preço')}
-            placeholder={t('0,00')}
-            onChangeValue={(value) => setPrice(value)}
-          />
-        </Box>
-
-        <FileDropzone mt="4" onDropFile={onDropHandler} preview={previewURL ?? imageUrl} />
-        <DrawerButtons
-          type="product"
-          isEditing={product ? true : false}
-          onDelete={onDeleteHandler}
-          isLoading={isLoading}
+      </Box>
+      <Box mt="4">
+        <Textarea
+          isRequired
+          id="product-drawer-description"
+          value={description}
+          label={t('Descrição')}
+          placeholder={t('Descreva seu produto')}
+          onChange={(ev) => setDescription(ev.target.value)}
+          maxLength={1000}
         />
-        {isError && (
-          <Box mt="6">
-            {isError && (
-              <Alert status="error">
-                <AlertIcon />
-                <AlertTitle mr={2}>{t('Erro!')}</AlertTitle>
-                <AlertDescription>{getErrorMessage(error) ?? t('Tenta de novo?')}</AlertDescription>
-              </Alert>
-            )}
-          </Box>
-        )}
-      </form>
+        <Text fontSize="xs" color="gray.700">
+          {description.length}/1000
+        </Text>
+      </Box>
+      <Box mt="4">
+        <CurrencyInput
+          isRequired
+          id="drawer-price"
+          value={price}
+          label={t('Preço')}
+          placeholder={t('0,00')}
+          onChangeValue={(value) => setPrice(value)}
+        />
+      </Box>
+      <FileDropzone mt="4" onDropFile={onDropHandler} preview={previewURL ?? imageUrl} />
     </BaseDrawer>
   );
 };
