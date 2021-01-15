@@ -20,9 +20,10 @@ const LinkItem = ({ to, children }: LinkItemProps) => {
       bg={match ? 'white' : ''}
       fontWeight={match ? '700' : ''}
       pl={match ? '0' : '4'}
-      my="4"
+      mt="2"
+      height="32px"
     >
-      {match ? <Box w="4px" height="32px" bg="green.500" borderRadius="8px" mx="2" /> : null}
+      {match ? <Box w="4px" height="100%" bg="green.500" borderRadius="8px" mx="2" /> : null}
       {children}
     </Box>
   );

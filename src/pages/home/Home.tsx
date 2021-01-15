@@ -1,4 +1,5 @@
 import { useContextBusiness } from 'app/state/business/context';
+import BankingInformation from 'pages/business-profile/BankingInformation';
 import PageLayout from 'pages/PageLayout';
 import React from 'react';
 import { Redirect, Route, Switch, useRouteMatch } from 'react-router-dom';
@@ -12,9 +13,9 @@ const DeliveryArea = React.lazy(
 const BusinessProfile = React.lazy(
   () => import(/* webpackPrefetch: true */ 'pages/business-profile/BusinessProfile')
 );
-const BankingInformation = React.lazy(
-  () => import(/* webpackPrefetch: true */ 'pages/business-profile/BankingInformation')
-);
+//const BankingInformation = React.lazy(
+//  () => import(/* webpackPrefetch: true */ 'pages/business-profile/BankingInformation')
+//);
 
 const Home = () => {
   // context
