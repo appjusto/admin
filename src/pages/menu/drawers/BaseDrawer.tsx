@@ -17,19 +17,18 @@ import {
 import { FocusableElement } from '@chakra-ui/utils';
 import { getErrorMessage } from 'core/fb';
 import React, { FormEvent } from 'react';
+import { Link as RouterLink, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { DrawerButtons } from './DrawerButtons';
 
 interface BaseDrawerProps {
   type: string;
-  productPage?: string;
   title: string;
   isOpen: boolean;
   isEditing: boolean;
   isLoading: boolean;
   isError: boolean;
   error: unknown | string | null;
-  setProductPage?: (value: string) => void;
   onSave(): void;
   onClose(): void;
   onDelete(): void;
@@ -39,19 +38,23 @@ interface BaseDrawerProps {
 
 export const BaseDrawer = ({
   type,
-  productPage = 'detail',
   title,
   isEditing,
   isLoading,
   isError,
   error,
-  setProductPage,
   onSave,
   onClose,
   onDelete,
   children,
   ...props
 }: BaseDrawerProps) => {
+  const { url } = useRouteMatch();
+  let isComplements = useRouteMatch({
+    path: `${url}/complements`,
+    exact: false,
+  });
+  console.log(isComplements);
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
       <DrawerOverlay>
@@ -62,21 +65,23 @@ export const BaseDrawer = ({
             {type === 'product' && (
               <Flex fontSize="sm" mt="4" flexDir="row" alignItems="flex-start" height="34px">
                 <Link
+                  as={RouterLink}
+                  to={`${url}`}
                   pb="2"
                   px="4"
                   mr="4"
                   _hover={{ textDecor: 'none' }}
-                  borderBottom={productPage === 'detail' ? '4px solid #78E08F' : 'none'}
-                  onClick={() => setProductPage && setProductPage('detail')}
+                  borderBottom={!isComplements ? '4px solid #78E08F' : 'none'}
                 >
                   Detalhes
                 </Link>
                 <Link
+                  as={RouterLink}
+                  to={`${url}/complements`}
                   pb="2"
                   px="4"
                   _hover={{ textDecor: 'none' }}
-                  borderBottom={productPage === 'complements' ? '4px solid #78E08F' : 'none'}
-                  onClick={() => setProductPage && setProductPage('complements')}
+                  borderBottom={isComplements ? '4px solid #78E08F' : 'none'}
                 >
                   Complementos
                 </Link>

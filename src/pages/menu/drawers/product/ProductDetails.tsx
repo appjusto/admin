@@ -9,14 +9,14 @@ import { StateProps } from './productReducer';
 
 interface ProductDetailsProps {
   state: StateProps;
-  handleChange(key: string, value: string | number | React.ReactText[] | boolean): void;
+  handleStateUpdate(key: string, value: string | number | React.ReactText[] | boolean): void;
   inputRef: React.RefObject<HTMLInputElement> | null | undefined;
   onDropHandler: (acceptedFiles: File[]) => Promise<void>;
 }
 
 export const ProductDetails = ({
   state,
-  handleChange,
+  handleStateUpdate,
   onDropHandler,
   inputRef,
 }: ProductDetailsProps) => {
@@ -40,12 +40,12 @@ export const ProductDetails = ({
         value={name}
         label={t('Nome')}
         placeholder={t('Nome do produto')}
-        onChange={(ev) => handleChange('name', ev.target.value)}
+        onChange={(ev) => handleStateUpdate('name', ev.target.value)}
       />
       <CategorySelect
         isRequired
         value={categoryId}
-        onChange={(ev) => handleChange('categoryId', ev.target.value)}
+        onChange={(ev) => handleStateUpdate('categoryId', ev.target.value)}
       />
       <Textarea
         isRequired
@@ -53,7 +53,7 @@ export const ProductDetails = ({
         value={description}
         label={t('Descrição')}
         placeholder={t('Descreva seu produto')}
-        onChange={(ev) => handleChange('description', ev.target.value)}
+        onChange={(ev) => handleStateUpdate('description', ev.target.value)}
         maxLength={1000}
       />
       <Text fontSize="xs" color="gray.700">
@@ -66,7 +66,7 @@ export const ProductDetails = ({
         value={price}
         label={t('Preço')}
         placeholder={t('0,00')}
-        onChangeValue={(value) => handleChange('price', value)}
+        onChangeValue={(value) => handleStateUpdate('price', value)}
       />
       <Text mt="8" color="black">
         {t('Caso possua um sistema de controle de PDV, insira o código abaixo:')}
@@ -77,7 +77,7 @@ export const ProductDetails = ({
         label="Código PDV"
         placeholder="000"
         value={pdvCod}
-        handleChange={(ev) => handleChange('pdvCod', ev.target.value)}
+        handleChange={(ev) => handleStateUpdate('pdvCod', ev.target.value)}
       />
       <Text mt="8" fontSize="20px" color="black">
         {t('Imagem do produto')}
@@ -92,7 +92,7 @@ export const ProductDetails = ({
       <CheckboxGroup
         colorScheme="green"
         value={classifications}
-        onChange={(value) => handleChange('classifications', value)}
+        onChange={(value) => handleStateUpdate('classifications', value)}
       >
         <VStack alignItems="flex-start" mt="4" color="Black" spacing={2}>
           <Checkbox iconColor="white" value="vegetarian">
@@ -120,7 +120,7 @@ export const ProductDetails = ({
           isChecked={enabled}
           onChange={(ev) => {
             ev.stopPropagation();
-            handleChange('enabled', ev.target.checked);
+            handleStateUpdate('enabled', ev.target.checked);
           }}
         />
         <Text ml="4" color="black">

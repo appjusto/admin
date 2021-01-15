@@ -11,7 +11,6 @@ export interface StateProps {
   previewURL?: string | undefined;
   externalId?: string;
   enabled: boolean;
-  productPage: string;
 }
 
 export type Actions = { type: 'update_state'; payload: Partial<StateProps> };

@@ -2,9 +2,10 @@ import * as menu from 'app/api/business/menu/functions';
 import { useProduct } from 'app/api/business/products/useProduct';
 import { useContextMenu } from 'app/state/menu/context';
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { Route, Switch, useParams, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { BaseDrawer } from './BaseDrawer';
+import { ProductComplements } from './product/ProductComplements';
 import { ProductDetails } from './product/ProductDetails';
 import { productReducer } from './product/productReducer';
 
@@ -28,7 +29,6 @@ const initialState = {
   previewURL: '',
   externalId: '',
   enabled: true,
-  productPage: 'detail',
 };
 
 export const ProductDrawer = (props: Props) => {
@@ -54,8 +54,9 @@ export const ProductDrawer = (props: Props) => {
     previewURL,
     externalId,
     enabled,
-    productPage,
   } = state;
+
+  const { path } = useRouteMatch();
   // side effects
   React.useEffect(() => {
     if (product) {
@@ -119,10 +120,6 @@ export const ProductDrawer = (props: Props) => {
     <BaseDrawer
       {...props}
       type="product"
-      productPage={productPage}
-      setProductPage={(value: string) =>
-        dispatch({ type: 'update_state', payload: { productPage: value } })
-      }
       title={isNew ? t('Adicionar produto') : t('Alterar produto')}
       isLoading={isLoading}
       isEditing={product ? true : false}
@@ -132,12 +129,26 @@ export const ProductDrawer = (props: Props) => {
       isError={isError}
       error={error}
     >
-      <ProductDetails
-        state={state}
-        handleChange={(key, value) => dispatch({ type: 'update_state', payload: { [key]: value } })}
-        inputRef={inputRef}
-        onDropHandler={onDropHandler}
-      />
+      <Switch>
+        <Route exact path={`${path}`}>
+          <ProductDetails
+            state={state}
+            handleStateUpdate={(key, value) =>
+              dispatch({ type: 'update_state', payload: { [key]: value } })
+            }
+            inputRef={inputRef}
+            onDropHandler={onDropHandler}
+          />
+        </Route>
+        <Route path={`${path}/complements`}>
+          <ProductComplements
+            state={state}
+            handleStateUpdate={(key, value) =>
+              dispatch({ type: 'update_state', payload: { [key]: value } })
+            }
+          />
+        </Route>
+      </Switch>
     </BaseDrawer>
   );
 };
