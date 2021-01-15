@@ -36,6 +36,32 @@ interface BaseDrawerProps {
   initialFocusRef?: React.RefObject<FocusableElement>;
 }
 
+interface LinkProps {
+  to: string;
+  label: string;
+}
+
+const DrawerLink = ({ to, label }: LinkProps) => {
+  let match = useRouteMatch({
+    path: to,
+    exact: to.includes('complements') ? false : true,
+  });
+  return (
+    <Link
+      as={RouterLink}
+      to={to}
+      pb="2"
+      px="4"
+      mr="4"
+      _hover={{ textDecor: 'none' }}
+      _focus={{ boxShadow: 'none' }}
+      borderBottom={match ? '4px solid #78E08F' : 'none'}
+    >
+      {label}
+    </Link>
+  );
+};
+
 export const BaseDrawer = ({
   type,
   title,
@@ -50,11 +76,6 @@ export const BaseDrawer = ({
   ...props
 }: BaseDrawerProps) => {
   const { url } = useRouteMatch();
-  let isComplements = useRouteMatch({
-    path: `${url}/complements`,
-    exact: false,
-  });
-  console.log(isComplements);
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
       <DrawerOverlay>
@@ -64,27 +85,8 @@ export const BaseDrawer = ({
             <Text>{title}</Text>
             {type === 'product' && (
               <Flex fontSize="sm" mt="4" flexDir="row" alignItems="flex-start" height="34px">
-                <Link
-                  as={RouterLink}
-                  to={`${url}`}
-                  pb="2"
-                  px="4"
-                  mr="4"
-                  _hover={{ textDecor: 'none' }}
-                  borderBottom={!isComplements ? '4px solid #78E08F' : 'none'}
-                >
-                  Detalhes
-                </Link>
-                <Link
-                  as={RouterLink}
-                  to={`${url}/complements`}
-                  pb="2"
-                  px="4"
-                  _hover={{ textDecor: 'none' }}
-                  borderBottom={isComplements ? '4px solid #78E08F' : 'none'}
-                >
-                  Complementos
-                </Link>
+                <DrawerLink to={`${url}`} label="Detalhes" />
+                <DrawerLink to={`${url}/complements`} label="Complementos" />
               </Flex>
             )}
           </DrawerHeader>
