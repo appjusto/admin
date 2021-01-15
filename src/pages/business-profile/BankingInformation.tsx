@@ -9,7 +9,7 @@ import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { t } from 'utils/i18n';
 
-export const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
+const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
   // context
   const { bankAccount, updateBankAccount, updateResult } = useBusinessBankAccount();
   const { isLoading, isSuccess } = updateResult;
@@ -98,3 +98,5 @@ export const BankingInformation = ({ onboarding, redirect }: OnboardingProps) =>
     </Box>
   );
 };
+
+export default BankingInformation;

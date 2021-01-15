@@ -10,7 +10,7 @@ import { Categories } from './categories/Categories';
 import { CategoryDrawer } from './drawers/CategoryDrawer';
 import { ProductDrawer } from './drawers/ProductDrawer';
 
-export const Menu = () => {
+const Menu = () => {
   // context
   const { path, url } = useRouteMatch();
   const history = useHistory();
@@ -66,3 +66,5 @@ export const Menu = () => {
     </MenuProvider>
   );
 };
+
+export default Menu;

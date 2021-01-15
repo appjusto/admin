@@ -43,22 +43,23 @@ const LinksContainer = ({ children }: LinksContainerProps) => {
 };
 
 export const Links = () => {
+  const { url } = useRouteMatch();
   return (
     <Box ml="1">
       <Box>
         <LinksContainer>
-          <Link to="/home">{t('Início')}</Link>
-          <Link to="/orders">{t('Pedidos')}</Link>
+          <Link to={`${url}`}>{t('Início')}</Link>
+          <Link to={`${url}/orders`}>{t('Pedidos')}</Link>
           <Link to="/">{t('Financeiro')}</Link>
         </LinksContainer>
       </Box>
       <Box mt="10">
         <LinksContainer>
-          <Link to="/menu">{t('Cardápio')}</Link>
+          <Link to={`${url}/menu`}>{t('Cardápio')}</Link>
           <Link to="/">{t('Horários')}</Link>
-          <Link to="/delivery-area">{t('Área de entrega')}</Link>
-          <Link to="/business-profile">{t('Perfil do restaurante')}</Link>
-          <Link to="/banking">{t('Informações bancárias')}</Link>
+          <Link to={`${url}/delivery-area`}>{t('Área de entrega')}</Link>
+          <Link to={`${url}/business-profile`}>{t('Perfil do restaurante')}</Link>
+          <Link to={`${url}/banking`}>{t('Informações bancárias')}</Link>
         </LinksContainer>
       </Box>
     </Box>

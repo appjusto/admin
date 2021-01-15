@@ -22,7 +22,7 @@ import { Redirect } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { Marker } from '../../common/components/MapsMarker';
 
-export const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
+const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
   // context
   const api = useContextApi();
   const business = useContextBusiness();
@@ -230,3 +230,5 @@ export const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
     </Box>
   );
 };
+
+export default DeliveryArea;

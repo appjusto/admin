@@ -1,6 +1,6 @@
-import { BankingInformation } from 'pages/business-profile/BankingInformation';
-import { BusinessProfile } from 'pages/business-profile/BusinessProfile';
-import { DeliveryArea } from 'pages/delivery-area/DeliveryArea';
+import BankingInformation from 'pages/business-profile/BankingInformation';
+import BusinessProfile from 'pages/business-profile/BusinessProfile';
+import DeliveryArea from 'pages/delivery-area/DeliveryArea';
 import { ManagerProfile } from 'pages/manager-profile/ManagerProfile';
 import React from 'react';
 import { Route, Switch, useRouteMatch } from 'react-router-dom';

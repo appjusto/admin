@@ -16,7 +16,7 @@ import { Redirect } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { CuisineSelect } from '../../common/components/form/select/CuisineSelect';
 
-export const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
+const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   // context
   const business = useContextBusiness();
 
@@ -206,3 +206,5 @@ export const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
     </Box>
   );
 };
+
+export default BusinessProfile;

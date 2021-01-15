@@ -12,6 +12,6 @@ export const OnboardingComplete = () => {
     });
   }, [updateBusinessProfile]);
 
-  if (isSuccess) return <Redirect to="/home" />;
+  if (isSuccess) return <Redirect to="/app" />;
   return <Loading />;
 };

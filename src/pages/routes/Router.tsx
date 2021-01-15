@@ -10,17 +10,6 @@ const Onboarding = React.lazy(
   () => import(/* webpackPrefetch: true */ 'pages/onboarding/OnboardingPage')
 );
 const Home = React.lazy(() => import(/* webpackPrefetch: true */ 'pages/home/Home'));
-const Menu = React.lazy(() => import(/* webpackPrefetch: true */ 'pages/menu/MenuPage'));
-const Orders = React.lazy(() => import(/* webpackPrefetch: true */ 'pages/orders/OrdersPage'));
-const DeliveryArea = React.lazy(
-  () => import(/* webpackPrefetch: true */ 'pages/delivery-area/DeliveryAreaPage')
-);
-const BusinessProfile = React.lazy(
-  () => import(/* webpackPrefetch: true */ 'pages/business-profile/BusinessProfilePage')
-);
-const BankingInformation = React.lazy(
-  () => import(/* webpackPrefetch: true */ 'pages/business-profile/BankingInformationPage')
-);
 
 export const Router = () => {
   return (
@@ -29,14 +18,10 @@ export const Router = () => {
         <Switch>
           <Route path="/login" component={Login} />
           <Route path="/join" component={Join} />
-          <ProtectedRoute exact path="/" component={Home} />
+          <ProtectedRoute exact path="/" />
+          <ProtectedRoute path="/app" component={Home} />
           <ProtectedRoute path="/logout" component={Logout} />
           <ProtectedRoute path="/onboarding" component={Onboarding} />
-          <ProtectedRoute path="/menu" component={Menu} />
-          <ProtectedRoute path="/orders" component={Orders} />
-          <ProtectedRoute path="/delivery-area" component={DeliveryArea} />
-          <ProtectedRoute path="/business-profile" component={BusinessProfile} />
-          <ProtectedRoute path="/banking" component={BankingInformation} />
         </Switch>
       </React.Suspense>
     </BrowserRouter>
