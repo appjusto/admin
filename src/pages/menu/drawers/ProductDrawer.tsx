@@ -45,6 +45,7 @@ export const ProductDrawer = (props: Props) => {
   const [externalId, setExternalId] = React.useState(product?.externalId ?? '');
   const [enabled, setEnabled] = React.useState(product?.enabled ?? true);
   const [previewURL, setPreviewURL] = React.useState<string | undefined>();
+  const [productPage, setProductPage] = React.useState('detail');
   // side effects
   React.useEffect(() => {
     if (product) {
@@ -104,6 +105,8 @@ export const ProductDrawer = (props: Props) => {
     <BaseDrawer
       {...props}
       type="product"
+      productPage={productPage}
+      setProductPage={(value: string) => setProductPage(value)}
       title={isNew ? t('Adicionar produto') : t('Alterar produto')}
       isLoading={isLoading}
       isEditing={product ? true : false}
@@ -149,7 +152,7 @@ export const ProductDrawer = (props: Props) => {
         onChangeValue={(value) => setPrice(value)}
       />
       <Text mt="8" color="black">
-        Caso possua um sistema de controle de PDV, insira o código abaixo:
+        {t('Caso possua um sistema de controle de PDV, insira o código abaixo:')}
       </Text>
       <CustomInput
         id="product-pdv"
@@ -159,9 +162,15 @@ export const ProductDrawer = (props: Props) => {
         value={pdvCod}
         handleChange={(ev) => setPdvCod(ev.target.value)}
       />
+      <Text mt="8" fontSize="20px" color="black">
+        {t('Imagem do produto')}
+      </Text>
+      <Text>
+        {t('Recomendamos imagens na proporção retangular (16:9) com no mínimo 1280px de largura')}
+      </Text>
       <FileDropzone mt="4" onDropFile={onDropHandler} preview={previewURL ?? imageUrl} />
-      <Text mt="8" color="black">
-        Classificações adicionais:
+      <Text mt="8" fontSize="20px" color="black">
+        {t('Classificações adicionais:')}
       </Text>
       <CheckboxGroup
         colorScheme="green"
@@ -170,22 +179,22 @@ export const ProductDrawer = (props: Props) => {
       >
         <VStack alignItems="flex-start" mt="4" color="Black" spacing={2}>
           <Checkbox iconColor="white" value="vegetarian">
-            Vegetariano
+            {t('Vegetariano')}
           </Checkbox>
           <Checkbox iconColor="white" value="vegan">
-            Vegano
+            {t('Vegano')}
           </Checkbox>
           <Checkbox iconColor="white" value="organic">
-            Orgânico
+            {t('Orgânico')}
           </Checkbox>
           <Checkbox iconColor="white" value="gluten_free">
-            Sem glúten
+            {t('Sem glúten')}
           </Checkbox>
           <Checkbox iconColor="white" value="no_sugar">
-            Sem açúcar
+            {t('Sem açúcar')}
           </Checkbox>
           <Checkbox iconColor="white" value="zero_lactose">
-            Zero lactose
+            {t('Zero lactose')}
           </Checkbox>
         </VStack>
       </CheckboxGroup>{' '}
@@ -198,7 +207,7 @@ export const ProductDrawer = (props: Props) => {
           }}
         />
         <Text ml="4" color="black">
-          Ativar produto após a criação
+          {t('Ativar produto após a criação')}
         </Text>
       </Flex>
     </BaseDrawer>
