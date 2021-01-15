@@ -53,6 +53,8 @@ const DrawerLink = ({ to, label }: LinkProps) => {
       pb="2"
       px="4"
       mr="4"
+      fontSize="lg"
+      fontWeight="500"
       _hover={{ textDecor: 'none' }}
       _focus={{ boxShadow: 'none' }}
       borderBottom={match ? '4px solid #78E08F' : 'none'}
@@ -76,15 +78,25 @@ export const BaseDrawer = ({
   ...props
 }: BaseDrawerProps) => {
   const { url } = useRouteMatch();
+  let isComplements = useRouteMatch({
+    path: `${url}/complements`,
+    exact: false,
+  });
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
       <DrawerOverlay>
         <DrawerContent>
           <DrawerCloseButton />
-          <DrawerHeader borderBottom={type === 'product' ? '1px solid #C8D7CB' : 'none'} pb="0">
-            <Text>{title}</Text>
+          <DrawerHeader
+            borderBottom={type === 'product' ? '1px solid #C8D7CB' : 'none'}
+            pb="0"
+            mb="8"
+          >
+            <Text fontSize="2xl" fontWeight="700">
+              {title}
+            </Text>
             {type === 'product' && (
-              <Flex fontSize="sm" mt="4" flexDir="row" alignItems="flex-start" height="34px">
+              <Flex fontSize="sm" mt="4" flexDir="row" alignItems="flex-start" height="38px">
                 <DrawerLink to={`${url}`} label="Detalhes" />
                 <DrawerLink to={`${url}/complements`} label="Complementos" />
               </Flex>
@@ -98,12 +110,14 @@ export const BaseDrawer = ({
               }}
             >
               {children}
-              <DrawerButtons
-                type={type}
-                isEditing={isEditing}
-                onDelete={onDelete}
-                isLoading={isLoading}
-              />
+              {!isComplements && (
+                <DrawerButtons
+                  type={type}
+                  isEditing={isEditing}
+                  onDelete={onDelete}
+                  isLoading={isLoading}
+                />
+              )}
               {isError && (
                 <Box mt="6">
                   {isError && (

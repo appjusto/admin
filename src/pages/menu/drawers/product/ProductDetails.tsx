@@ -68,25 +68,26 @@ export const ProductDetails = ({
         placeholder={t('0,00')}
         onChangeValue={(value) => handleStateUpdate('price', value)}
       />
-      <Text mt="8" color="black">
+      <Text mt="8" fontSize="sm" color="black">
         {t('Caso possua um sistema de controle de PDV, insira o código abaixo:')}
       </Text>
       <Input
         id="product-pdv"
+        mt="2"
         maxW="220px"
         label="Código PDV"
         placeholder="000"
         value={pdvCod}
         handleChange={(ev) => handleStateUpdate('pdvCod', ev.target.value)}
       />
-      <Text mt="8" fontSize="20px" color="black">
+      <Text mt="8" fontSize="xl" color="black">
         {t('Imagem do produto')}
       </Text>
       <Text>
         {t('Recomendamos imagens na proporção retangular (16:9) com no mínimo 1280px de largura')}
       </Text>
       <FileDropzone mt="4" onDropFile={onDropHandler} preview={previewURL ?? imageUrl} />
-      <Text mt="8" fontSize="20px" color="black">
+      <Text mt="8" fontSize="xl" color="black">
         {t('Classificações adicionais:')}
       </Text>
       <CheckboxGroup
