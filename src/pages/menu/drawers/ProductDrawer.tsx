@@ -1,10 +1,10 @@
-import { Box, Text } from '@chakra-ui/react';
+import { Checkbox, CheckboxGroup, Flex, Switch, Text, VStack } from '@chakra-ui/react';
 import * as menu from 'app/api/business/menu/functions';
 import { useProduct } from 'app/api/business/products/useProduct';
 import { useContextMenu } from 'app/state/menu/context';
 import { FileDropzone } from 'common/components/FileDropzone';
 import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput2';
-import { CustomInput as Input } from 'common/components/form/input/CustomInput';
+import { CustomInput, CustomInput as Input } from 'common/components/form/input/CustomInput';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
 import React from 'react';
 import { useParams } from 'react-router-dom';
@@ -38,6 +38,10 @@ export const ProductDrawer = (props: Props) => {
     product?.image_url ?? undefined
   );
   const [price, setPrice] = React.useState(product?.price ?? 0);
+  const [pdvCod, setPdvCod] = React.useState(product?.pdv ?? '');
+  const [classifications, setClassifications] = React.useState<React.ReactText[]>(
+    product?.classifications ?? []
+  );
   const [externalId, setExternalId] = React.useState(product?.externalId ?? '');
   const [enabled, setEnabled] = React.useState(product?.enabled ?? true);
   const [previewURL, setPreviewURL] = React.useState<string | undefined>();
@@ -50,6 +54,8 @@ export const ProductDrawer = (props: Props) => {
       setImageUrl(product.image_url ?? '');
       setPrice(product.price ?? 0);
       setPrice(product.price ?? 0);
+      setPdvCod(product.pdv ?? '');
+      setClassifications(product.classifications ?? []);
       setExternalId(product.externalId ?? '');
       setEnabled(product.enabled ?? true);
     }
@@ -73,6 +79,8 @@ export const ProductDrawer = (props: Props) => {
         externalId,
         price,
         enabled,
+        pdv: pdvCod,
+        classifications,
       });
       updateMenuConfig(menu.updateProductCategory(menuConfig, id, categoryId!));
       props.onClose();
@@ -114,38 +122,85 @@ export const ProductDrawer = (props: Props) => {
         placeholder={t('Nome do produto')}
         onChange={(ev) => setName(ev.target.value)}
       />
-      <Box mt="4">
-        <CategorySelect
-          isRequired
-          value={categoryId}
-          onChange={(ev) => setCategoryId(ev.target.value)}
-        />
-      </Box>
-      <Box mt="4">
-        <Textarea
-          isRequired
-          id="product-drawer-description"
-          value={description}
-          label={t('Descrição')}
-          placeholder={t('Descreva seu produto')}
-          onChange={(ev) => setDescription(ev.target.value)}
-          maxLength={1000}
-        />
-        <Text fontSize="xs" color="gray.700">
-          {description.length}/1000
-        </Text>
-      </Box>
-      <Box mt="4">
-        <CurrencyInput
-          isRequired
-          id="drawer-price"
-          value={price}
-          label={t('Preço')}
-          placeholder={t('0,00')}
-          onChangeValue={(value) => setPrice(value)}
-        />
-      </Box>
+      <CategorySelect
+        isRequired
+        value={categoryId}
+        onChange={(ev) => setCategoryId(ev.target.value)}
+      />
+      <Textarea
+        isRequired
+        id="product-drawer-description"
+        value={description}
+        label={t('Descrição')}
+        placeholder={t('Descreva seu produto')}
+        onChange={(ev) => setDescription(ev.target.value)}
+        maxLength={1000}
+      />
+      <Text fontSize="xs" color="gray.700">
+        {description.length}/1000
+      </Text>
+      <CurrencyInput
+        isRequired
+        maxW="220px"
+        id="drawer-price"
+        value={price}
+        label={t('Preço')}
+        placeholder={t('0,00')}
+        onChangeValue={(value) => setPrice(value)}
+      />
+      <Text mt="8" color="black">
+        Caso possua um sistema de controle de PDV, insira o código abaixo:
+      </Text>
+      <CustomInput
+        id="product-pdv"
+        maxW="220px"
+        label="Código PDV"
+        placeholder="000"
+        value={pdvCod}
+        handleChange={(ev) => setPdvCod(ev.target.value)}
+      />
       <FileDropzone mt="4" onDropFile={onDropHandler} preview={previewURL ?? imageUrl} />
+      <Text mt="8" color="black">
+        Classificações adicionais:
+      </Text>
+      <CheckboxGroup
+        colorScheme="green"
+        value={classifications}
+        onChange={(val) => setClassifications(val)}
+      >
+        <VStack alignItems="flex-start" mt="4" color="Black" spacing={2}>
+          <Checkbox iconColor="white" value="vegetarian">
+            Vegetariano
+          </Checkbox>
+          <Checkbox iconColor="white" value="vegan">
+            Vegano
+          </Checkbox>
+          <Checkbox iconColor="white" value="organic">
+            Orgânico
+          </Checkbox>
+          <Checkbox iconColor="white" value="gluten_free">
+            Sem glúten
+          </Checkbox>
+          <Checkbox iconColor="white" value="no_sugar">
+            Sem açúcar
+          </Checkbox>
+          <Checkbox iconColor="white" value="zero_lactose">
+            Zero lactose
+          </Checkbox>
+        </VStack>
+      </CheckboxGroup>{' '}
+      <Flex mt="8" flexDir="row" alignItems="center" spacing={2}>
+        <Switch
+          isChecked={enabled}
+          onChange={(ev) => {
+            ev.stopPropagation();
+            setEnabled(ev.target.checked);
+          }}
+        />
+        <Text ml="4" color="black">
+          Ativar produto após a criação
+        </Text>
+      </Flex>
     </BaseDrawer>
   );
 };
