@@ -6,9 +6,16 @@ interface ImgProps extends ImageProps {
   src: string;
   srcMob?: string;
   scrollCheck?: boolean;
+  eagerLoading?: boolean;
 }
 
-const Image: React.FC<ImgProps> = ({ src, srcMob, scrollCheck = true, ...props }) => {
+const Image: React.FC<ImgProps> = ({
+  src,
+  srcMob,
+  scrollCheck = true,
+  eagerLoading = false,
+  ...props
+}) => {
   const [loaded, setLoaded] = useState(false);
   const [width, setWidth] = useState(0);
   const rootNode = useRef(null);
@@ -43,6 +50,15 @@ const Image: React.FC<ImgProps> = ({ src, srcMob, scrollCheck = true, ...props }
       setLoaded(true);
     }
   }, [isVisible, loaded]);
+  if (eagerLoading) {
+    return (
+      <Box ref={rootNode}>
+        {width > 0 && (
+          <ChakraImg src={srcMob ? (width < 1000 ? srcMob : src) : src} ignoreFallback {...props} />
+        )}
+      </Box>
+    );
+  }
   return (
     <Box ref={rootNode} minW="1px" minH="1px">
       {width > 0 && loaded && (

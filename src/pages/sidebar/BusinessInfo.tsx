@@ -10,7 +10,7 @@ const BusinessInfo = () => {
     <Box>
       {business?.logo_url ? (
         <Box w="40px" h="40px">
-          <Image src={business.logo_url} borderRadius="20px" />
+          <Image src={business.logo_url} borderRadius="20px" eagerLoading />
         </Box>
       ) : (
         <Circle size="40px" bg="gray.400" />
