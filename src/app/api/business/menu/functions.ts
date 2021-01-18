@@ -1,15 +1,20 @@
 import { arrayMove } from 'app/utils/arrayMove';
-import {
-  Category,
-  CategoryWithProducts,
-  MenuConfig,
-  Product,
-  ProductsByCategory,
-  WithId,
-} from 'appjusto-types';
+import { Category, MenuConfig, Product, WithId } from 'appjusto-types';
+import { Complement, ComplementGroup } from 'appjusto-types/menu';
 import { without, omit } from 'lodash';
 
 export const empty = (): MenuConfig => ({ categoriesOrder: [], productsOrderByCategoryId: {} });
+
+//
+
+const ordered = <T extends Object>(
+  items: WithId<T>[],
+  order: string[]
+): WithId<T>[] => {
+  return items.filter((i) => order.indexOf(i.id) !== -1) // filtering out first
+    .sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id)
+  );
+};
 
 // categories
 
@@ -46,17 +51,6 @@ export const updateCategoryIndex = (
     ...menuConfig,
     categoriesOrder: arrayMove<string>(categoriesOrder, previousIndex, newIndex),
   } as MenuConfig;
-};
-
-export const getOrderedCategories = (
-  categories: WithId<Category>[],
-  order: string[]
-): WithId<Category>[] => {
-  return categories.sort((a, b) =>
-    order.indexOf(a.id) === -1
-      ? 1 // new categories go to the end by the default
-      : order.indexOf(a.id) - order.indexOf(b.id)
-  );
 };
 
 // products
@@ -147,30 +141,18 @@ export const updateProductIndex = (
   } as MenuConfig;
 };
 
-export const getProductsByCategoryId = (
-  products: WithId<Product>[],
-  categoryId: string,
-  productsOrderByCategoryId: ProductsByCategory
-) => {
-  const productsOrder = productsOrderByCategoryId[categoryId];
-  if (!productsOrder) return [];
-  return products
-    .filter((product) => productsOrder.indexOf(product.id) !== -1) // only in this category
-    .sort((a, b) => productsOrder.indexOf(a.id) - productsOrder.indexOf(b.id));
-};
-
 // menu
-export const getOrderedMenu = (
-  categories: WithId<Category>[],
-  products: WithId<Product>[],
+export const getOrderedMenu = <T extends object, T2 extends object>(
+  categories: WithId<T>[],
+  products: WithId<T2>[],
   config: MenuConfig
 ) => {
   if (categories.length === 0) return [];
   const { categoriesOrder, productsOrderByCategoryId } = config;
-  return getOrderedCategories(categories, categoriesOrder).map((category) => {
+  return ordered(categories, categoriesOrder).map((category) => {
     return {
       ...category,
-      products: getProductsByCategoryId(products, category.id, productsOrderByCategoryId),
-    } as CategoryWithProducts;
+      products: ordered(products, productsOrderByCategoryId[category.id]),
+    };
   });
 };

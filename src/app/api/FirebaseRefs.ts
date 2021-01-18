@@ -34,8 +34,16 @@ export default class FirebaseRefs {
     this.getBusinessCategoriesRef(businessId).doc(categoryId);
   getBusinessProductsRef = (businessId: string) =>
     this.getBusinessRef(businessId).collection('products');
-  getBusinessProductRef = (businessId: string, productId: string) =>
-    this.getBusinessProductsRef(businessId).doc(productId);
+  getBusinessProductRef = (businessId: string, id: string) =>
+    this.getBusinessProductsRef(businessId).doc(id);
+  getBusinessComplementsGroupsRef = (businessId: string) =>
+    this.getBusinessRef(businessId).collection('complementsgroups');
+  getBusinessComplementGroupRef = (businessId: string, id: string) =>
+    this.getBusinessComplementsGroupsRef(businessId).doc(id);
+  getBusinessComplementsRef = (businessId: string) =>
+    this.getBusinessRef(businessId).collection('complements');
+  getBusinessComplementRef = (businessId: string, id: string) =>
+    this.getBusinessComplementsRef(businessId).doc(id);
   getBusinessMenuConfigRef = (businessId: string) =>
     this.getBusinessRef(businessId).collection('config').doc('menu');
 

@@ -2,11 +2,11 @@ import { useObserveCategories } from 'app/api/business/categories/useObserveCate
 import * as menu from 'app/api/business/menu/functions';
 import { useObserveMenuConfig } from 'app/api/business/menu/useObserveMenuConfig';
 import { useObserveProducts } from 'app/api/business/products/useObserveProducts';
-import { CategoryWithProducts, MenuConfig } from 'appjusto-types';
+import { Category, MenuConfig, WithId } from 'appjusto-types';
 import React from 'react';
 
 interface MenuContextValue {
-  categories: CategoryWithProducts[];
+  categories: WithId<Category>[];
   menuConfig: MenuConfig;
   updateMenuConfig: (menuConfig: MenuConfig) => void;
 }

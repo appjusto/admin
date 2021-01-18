@@ -50,7 +50,7 @@ export const Categories = ({ productSearch }: Props) => {
         {(droppable) => (
           <Box ref={droppable.innerRef} {...droppable.droppableProps}>
             {categories.map((category, index) => {
-              const products = filterProductsWithSearch(category.products);
+              const products = filterProductsWithSearch(category.products!);
               return (
                 <CategoryItem
                   url={url}

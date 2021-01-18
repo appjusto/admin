@@ -1,5 +1,8 @@
+import { useObserveComplements } from 'app/api/business/complements/useObserveComplements';
 import * as menu from 'app/api/business/menu/functions';
 import { useProduct } from 'app/api/business/products/useProduct';
+import { useContextApi } from 'app/state/api/context';
+import { useContextBusinessId } from 'app/state/business/context';
 import { useContextMenu } from 'app/state/menu/context';
 import React from 'react';
 import { Route, Switch, useParams, useRouteMatch } from 'react-router-dom';
@@ -31,14 +34,23 @@ const initialState = {
 };
 
 export const ProductDrawer = (props: Props) => {
-  // context
+  // params
   const { productId } = useParams<Params>();
+  const { path } = useRouteMatch();
+  // context
+  const api = useContextApi();
+  const businessId = useContextBusinessId();
 
   // state
   const { menuConfig, updateMenuConfig } = useContextMenu();
   const { product, id, isNew, saveProduct, uploadPhoto, deleteProduct, result } = useProduct(
     productId
   );
+  const { groups, complements } = useObserveComplements(
+    businessId!,
+    product?.complementsEnabled === true
+  );
+  const sortedGroups = menu.getOrderedMenu(groups, complements, menuConfig);
   const { isLoading, isError, error } = result;
 
   const [state, dispatch] = React.useReducer(productReducer, initialState);
@@ -54,7 +66,6 @@ export const ProductDrawer = (props: Props) => {
     enabled,
   } = state;
 
-  const { path } = useRouteMatch();
   // side effects
   React.useEffect(() => {
     if (product) {

@@ -1,5 +1,5 @@
 import { BankAccount, Business, Category, Product, WithId } from 'appjusto-types';
-import { MenuConfig } from 'appjusto-types/menu';
+import { Complement, ComplementGroup, MenuConfig } from 'appjusto-types/menu';
 import firebase from 'firebase/app';
 import { documentAs, documentsAs } from '../../../core/fb';
 import FilesApi from '../FilesApi';
@@ -11,7 +11,7 @@ export default class MenuApi {
   // business profile
   observeBusinessProfile(
     businessId: string,
-    resultHandler: (business: WithId<Business>) => void
+    resultHandler: (result: WithId<Business>) => void
   ): firebase.Unsubscribe {
     const unsubscribe = this.refs.getBusinessRef(businessId).onSnapshot(
       (doc) => {
@@ -42,7 +42,7 @@ export default class MenuApi {
   // managers
   observeBusinessManagedBy(
     email: string,
-    resultHandler: (categories: WithId<Business>[]) => void
+    resultHandler: (result: WithId<Business>[]) => void
   ): firebase.Unsubscribe {
     const unsubscribe = this.refs
       .getBusinessesRef()
@@ -100,7 +100,7 @@ export default class MenuApi {
   // menu config
   observeMenuConfig(
     businessId: string,
-    resultHandler: (menuConfig: MenuConfig) => void
+    resultHandler: (result: MenuConfig) => void
   ): firebase.Unsubscribe {
     const unsubscribe = this.refs.getBusinessMenuConfigRef(businessId).onSnapshot(
       (doc) => {
@@ -120,7 +120,7 @@ export default class MenuApi {
   // categories
   observeCategories(
     businessId: string,
-    resultHandler: (categories: WithId<Category>[]) => void
+    resultHandler: (result: WithId<Category>[]) => void
   ): firebase.Unsubscribe {
     const unsubscribe = this.refs.getBusinessCategoriesRef(businessId).onSnapshot(
       (querySnapshot) => {
@@ -171,12 +171,28 @@ export default class MenuApi {
   // products
   observeProducts(
     businessId: string,
-    resultHandler: (products: WithId<Product>[]) => void
+    resultHandler: (result: WithId<Product>[]) => void
   ): firebase.Unsubscribe {
     const query = this.refs.getBusinessProductsRef(businessId);
     const unsubscribe = query.onSnapshot(
       (querySnapshot) => {
         resultHandler(documentsAs<Product>(querySnapshot.docs));
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+    return unsubscribe;
+  }
+  observeProduct(
+    businessId: string,
+    productId: string,
+    resultHandler: (result: WithId<Product>) => void
+  ): firebase.Unsubscribe {
+    const query = this.refs.getBusinessProductRef(businessId, productId);
+    const unsubscribe = query.onSnapshot(
+      (querySnapshot) => {
+        resultHandler(documentAs<Product>(querySnapshot));
       },
       (error) => {
         console.error(error);
@@ -236,5 +252,37 @@ export default class MenuApi {
 
   getProductImageURL(businessId: string, productId: string) {
     return this.files.getDownloadURL(this.refs.getProductImageStoragePath(businessId, productId));
+  }
+
+  // complements
+  observeComplementsGroups(
+    businessId: string,
+    resultHandler: (result: WithId<ComplementGroup>[]) => void
+  ): firebase.Unsubscribe {
+    const query = this.refs.getBusinessComplementsGroupsRef(businessId);
+    const unsubscribe = query.onSnapshot(
+      (querySnapshot) => {
+        resultHandler(documentsAs<ComplementGroup>(querySnapshot.docs));
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+    return unsubscribe;
+  }
+  observeComplements(
+    businessId: string,
+    resultHandler: (result: WithId<Complement>[]) => void
+  ): firebase.Unsubscribe {
+    const query = this.refs.getBusinessComplementsRef(businessId);
+    const unsubscribe = query.onSnapshot(
+      (querySnapshot) => {
+        resultHandler(documentsAs<Complement>(querySnapshot.docs));
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+    return unsubscribe;
   }
 }
