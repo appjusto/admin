@@ -4,7 +4,6 @@ import { useObserveMenuConfig } from 'app/api/business/menu/useObserveMenuConfig
 import { useObserveProducts } from 'app/api/business/products/useObserveProducts';
 import { CategoryWithProducts, MenuConfig } from 'appjusto-types';
 import React from 'react';
-import { useContextBusinessId } from '../business/context';
 
 interface MenuContextValue {
   categories: CategoryWithProducts[];
@@ -13,13 +12,13 @@ interface MenuContextValue {
 }
 
 interface Props {
+  businessId: string | undefined;
   children: React.ReactNode | React.ReactNode[];
 }
 
 const MenuProviderContext = React.createContext<MenuContextValue | undefined>(undefined);
 
-export const MenuProvider = ({ children }: Props) => {
-  const businessId = useContextBusinessId();
+export const MenuProvider = ({ businessId, children }: Props) => {
   const unorderedCategories = useObserveCategories(businessId);
   const products = useObserveProducts(businessId);
   const { menuConfig, updateMenuConfig } = useObserveMenuConfig(businessId);

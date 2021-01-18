@@ -1,10 +1,11 @@
 import { ApiConfig } from 'app/api/config/types';
 import firebase from 'firebase/app';
+import FirebaseRefs from '../FirebaseRefs';
 
 export default class AuthApi {
   constructor(
+    private refs: FirebaseRefs,
     private auth: firebase.auth.Auth,
-    private functions: firebase.functions.Functions,
     private config: ApiConfig
   ) {}
 
@@ -44,6 +45,6 @@ export default class AuthApi {
   }
 
   deleteAccount() {
-    return this.functions.httpsCallable('deleteAccount')();
+    return this.refs.getDeleteAccountCallable()();
   }
 }

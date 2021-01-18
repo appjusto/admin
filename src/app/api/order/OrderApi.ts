@@ -1,6 +1,7 @@
-import { ChatMessage, FoodOrderStatus, IssueType, Order, WithId } from 'appjusto-types';
+import { ChatMessage, FoodOrderStatus, Issue, IssueType, Order, WithId } from 'appjusto-types';
 import { documentsAs } from 'core/fb';
 import firebase from 'firebase';
+import FirebaseRefs from '../FirebaseRefs';
 
 export const ActiveFoodOrdersValues: FoodOrderStatus[] = [
   'confirming',
@@ -18,10 +19,7 @@ export type ObserveOrdersOptions = {
 };
 
 export default class OrderApi {
-  constructor(
-    private firestore: firebase.firestore.Firestore,
-    private functions: firebase.functions.Functions
-  ) {}
+  constructor(private refs: FirebaseRefs) {}
 
   // firestore
   observeOrders(
@@ -32,8 +30,8 @@ export default class OrderApi {
       ...(options.active ? ActiveFoodOrdersValues : []),
       ...(options.inactive ? InactiveFoodOrdersValues : []),
     ];
-    let query = this.firestore
-      .collection('orders')
+    let query = this.refs
+      .getOrdersRef()
       .orderBy('createdOn', 'desc')
       .where('status', 'in', statuses);
 
@@ -53,10 +51,8 @@ export default class OrderApi {
     orderId: string,
     resultHandler: (orders: WithId<ChatMessage>[]) => void
   ): firebase.Unsubscribe {
-    const unsubscribe = this.firestore
-      .collection('orders')
-      .doc(orderId)
-      .collection('chat')
+    const unsubscribe = this.refs
+      .getOrderChatRef(orderId)
       .orderBy('timestamp', 'asc')
       .onSnapshot(
         (querySnapshot) => {
@@ -72,24 +68,15 @@ export default class OrderApi {
 
   async sendMessage(orderId: string, message: Partial<ChatMessage>) {
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
-    return this.firestore
-      .collection('orders')
-      .doc(orderId)
-      .collection('chat')
-      .add({
-        ...message,
-        timestamp,
-      });
+    return this.refs.getOrderChatRef(orderId).add({
+      ...message,
+      timestamp,
+    });
   }
 
   async fetchIssues(type: IssueType) {
-    return (
-      await this.firestore
-        .collection('platform')
-        .doc('data')
-        .collection('issues')
-        .where('type', '==', type)
-        .get()
-    ).docs;
+    return documentsAs<Issue>(
+      (await this.refs.getIssuesRef().where('type', '==', type).get()).docs
+    );
   }
 }
