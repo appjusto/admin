@@ -23,7 +23,6 @@ const initialState = {
   categoryId: undefined,
   description: '',
   price: 0,
-  pdvCod: '',
   classifications: [],
   imageUrl: '',
   previewURL: '',
@@ -48,7 +47,6 @@ export const ProductDrawer = (props: Props) => {
     categoryId,
     description,
     price,
-    pdvCod,
     classifications,
     imageUrl,
     previewURL,
@@ -67,7 +65,6 @@ export const ProductDrawer = (props: Props) => {
           categoryId: menu.getProductCategoryId(menuConfig, id),
           description: product.description ?? '',
           price: product.price ?? 0,
-          pdvCod: product.pdv ?? '',
           classifications: product.classifications ?? [],
           imageUrl: product.image_url ?? '',
           externalId: product.externalId ?? '',
@@ -95,7 +92,6 @@ export const ProductDrawer = (props: Props) => {
         externalId,
         price,
         enabled,
-        pdv: pdvCod,
         classifications,
       });
       updateMenuConfig(menu.updateProductCategory(menuConfig, id, categoryId!));

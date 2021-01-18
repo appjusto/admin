@@ -5,8 +5,7 @@ export interface StateProps {
   categoryId: string | undefined;
   description?: string;
   price: number;
-  pdvCod: string;
-  classifications: React.ReactText[];
+  classifications: string[];
   imageUrl?: string | undefined;
   previewURL?: string | undefined;
   externalId?: string;

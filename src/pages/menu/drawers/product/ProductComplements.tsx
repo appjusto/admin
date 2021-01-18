@@ -39,11 +39,11 @@ export const ProductComplements = ({ state, handleStateUpdate }: ProductCompleme
     categoryId,
     description,
     price,
-    pdvCod,
     classifications,
     imageUrl,
     previewURL,
     enabled,
+    externalId,
   } = state;
   const [hasComplements, setHasComplements] = React.useState(false);
   return (
@@ -91,8 +91,8 @@ export const ProductComplements = ({ state, handleStateUpdate }: ProductCompleme
           </Text>
           <Text fontSize="sm">{t('Esse grupo é necessário para o pedido do prato?')}</Text>
           <RadioGroup
-            onChange={(value) => setHasComplements(value === '1' ? false : true)}
-            value={hasComplements ? '2' : '1'}
+            onChange={(value) => {}}
+            value={'1'}
             defaultValue="1"
             colorScheme="green"
             color="black"

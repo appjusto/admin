@@ -25,10 +25,10 @@ export const ProductDetails = ({
     categoryId,
     description,
     price,
-    pdvCod,
     classifications,
     imageUrl,
     previewURL,
+    externalId,
     enabled,
   } = state;
   return (
@@ -77,8 +77,8 @@ export const ProductDetails = ({
         maxW="220px"
         label="Código PDV"
         placeholder="000"
-        value={pdvCod}
-        handleChange={(ev) => handleStateUpdate('pdvCod', ev.target.value)}
+        value={externalId ? externalId : ''}
+        handleChange={(ev) => handleStateUpdate('externalId', ev.target.value)}
       />
       <Text mt="8" fontSize="xl" color="black">
         {t('Imagem do produto')}
