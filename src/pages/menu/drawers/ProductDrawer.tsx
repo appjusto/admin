@@ -50,7 +50,7 @@ export const ProductDrawer = (props: Props) => {
     businessId!,
     product?.complementsEnabled === true
   );
-  const sortedGroups = menu.getOrderedMenu(groups, complements, menuConfig);
+  const sortedGroups = menu.getOrderedMenu(groups, complements, product?.complementsOrder);
   const { isLoading, isError, error } = result;
 
   const [state, dispatch] = React.useReducer(productReducer, initialState);

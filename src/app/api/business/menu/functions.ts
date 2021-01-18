@@ -145,9 +145,9 @@ export const updateProductIndex = (
 export const getOrderedMenu = <T extends object, T2 extends object>(
   categories: WithId<T>[],
   products: WithId<T2>[],
-  config: MenuConfig
+  config: MenuConfig | undefined
 ) => {
-  if (categories.length === 0) return [];
+  if (categories.length === 0 || !config) return [];
   const { categoriesOrder, productsOrderByCategoryId } = config;
   return ordered(categories, categoriesOrder).map((category) => {
     return {
