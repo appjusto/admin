@@ -1,6 +1,6 @@
 import { useObserveComplements } from 'app/api/business/complements/useObserveComplements';
 import * as menu from 'app/api/business/menu/functions';
-import { useProduct } from 'app/api/business/products/useProduct';
+import { useProduct } from 'app/api/business/products/useProduct2';
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusinessId } from 'app/state/business/context';
 import { useContextMenu } from 'app/state/menu/context';
@@ -37,21 +37,18 @@ export const ProductDrawer = (props: Props) => {
   // params
   const { productId } = useParams<Params>();
   const { path } = useRouteMatch();
+  const isNew = productId === 'new';
   // context
   const api = useContextApi();
   const businessId = useContextBusinessId();
-
   // state
   const { menuConfig, updateMenuConfig } = useContextMenu();
-  const { product, id, isNew, saveProduct, uploadPhoto, deleteProduct, result } = useProduct(
-    productId
-  );
+  const product = useProduct(businessId, productId);
   const { groups, complements } = useObserveComplements(
     businessId!,
     product?.complementsEnabled === true
   );
   const sortedGroups = menu.getOrderedMenu(groups, complements, product?.complementsOrder);
-  const { isLoading, isError, error } = result;
 
   const [state, dispatch] = React.useReducer(productReducer, initialState);
   const {
@@ -73,7 +70,7 @@ export const ProductDrawer = (props: Props) => {
         type: 'update_state',
         payload: {
           name: product.name,
-          categoryId: menu.getProductCategoryId(menuConfig, id),
+          categoryId: menu.getProductCategoryId(menuConfig, productId),
           description: product.description ?? '',
           price: product.price ?? 0,
           classifications: product.classifications ?? [],
@@ -83,21 +80,21 @@ export const ProductDrawer = (props: Props) => {
         },
       });
     }
-  }, [id, product, menuConfig]);
+  }, [product, menuConfig, productId]);
   // handlers
   const onDropHandler = React.useCallback(
     async (acceptedFiles: File[]) => {
       const [file] = acceptedFiles;
       const url = URL.createObjectURL(file);
-      uploadPhoto(file);
+      api.business().uploadProductPhoto(businessId!, productId, file);
       dispatch({ type: 'update_state', payload: { previewURL: url } });
     },
-    [uploadPhoto]
+    [api, businessId, productId]
   );
 
   const onSaveHandler = () => {
     (async () => {
-      await saveProduct({
+      const id = await api.business().updateProduct(businessId!, productId, {
         name,
         description,
         externalId,
@@ -112,8 +109,8 @@ export const ProductDrawer = (props: Props) => {
   const onDeleteHandler = () => {
     (async () => {
       if (categoryId) {
-        updateMenuConfig(menu.removeProductFromCategory(menuConfig, id, categoryId));
-        await deleteProduct();
+        updateMenuConfig(menu.removeProductFromCategory(menuConfig, productId, categoryId));
+        await api.business().deleteProduct(businessId!, productId);
         props.onClose();
       }
     })();
@@ -128,13 +125,13 @@ export const ProductDrawer = (props: Props) => {
       {...props}
       type="product"
       title={isNew ? t('Adicionar produto') : t('Alterar produto')}
-      isLoading={isLoading}
+      isLoading={!Boolean(product)}
       isEditing={product ? true : false}
       onSave={onSaveHandler}
       onDelete={onDeleteHandler}
       initialFocusRef={inputRef}
-      isError={isError}
-      error={error}
+      isError={false}
+      error={null}
     >
       <Switch>
         <Route exact path={`${path}`}>

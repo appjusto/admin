@@ -223,13 +223,15 @@ export default class MenuApi {
   }
 
   async updateProduct(businessId: string, productId: string, changes: Partial<Product>) {
+    const id = productId === 'new' ? this.refs.getBusinessProductsRef(businessId).doc().id : productId;
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
-    const image_url = await this.getProductImageURL(businessId, productId);
-    await this.refs.getBusinessProductRef(businessId, productId).update({
+    const image_url = await this.getProductImageURL(businessId, id);
+    await this.refs.getBusinessProductRef(businessId, id).set({
       ...changes,
       image_url,
       updatedOn: timestamp,
-    } as Partial<Product>);
+    } as Partial<Product>, { merge: true });
+    return id;
   }
 
   async deleteProduct(businessId: string, productId: string) {
