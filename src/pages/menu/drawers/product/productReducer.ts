@@ -1,4 +1,5 @@
 import React from 'react';
+import { MenuConfig } from 'appjusto-types';
 
 export interface StateProps {
   name: string;
@@ -10,6 +11,7 @@ export interface StateProps {
   previewURL?: string | undefined;
   externalId?: string;
   enabled: boolean;
+  complementsOrder: MenuConfig | undefined;
 }
 
 export type Actions = { type: 'update_state'; payload: Partial<StateProps> };

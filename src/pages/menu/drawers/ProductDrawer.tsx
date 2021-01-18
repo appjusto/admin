@@ -4,11 +4,13 @@ import { useProduct } from 'app/api/business/products/useProduct2';
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusinessId } from 'app/state/business/context';
 import { useContextMenu } from 'app/state/menu/context';
+import { ComplementGroup } from 'appjusto-types';
 import React from 'react';
-import { Route, Switch, useParams, useRouteMatch } from 'react-router-dom';
+import { Route, Switch, useHistory, useParams, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { BaseDrawer } from './BaseDrawer';
-import { ProductComplements } from './product/ProductComplements';
+import { ComplementDrawer } from './product/complements/ComplementDrawer';
+import { GroupDrawer } from './product/complements/GroupDrawer';
 import { ProductDetails } from './product/ProductDetails';
 import { productReducer } from './product/productReducer';
 
@@ -31,12 +33,14 @@ const initialState = {
   previewURL: '',
   externalId: '',
   enabled: true,
+  complementsOrder: undefined,
 };
 
 export const ProductDrawer = (props: Props) => {
   // params
   const { productId } = useParams<Params>();
-  const { path } = useRouteMatch();
+  const { path, url } = useRouteMatch();
+  const { push } = useHistory();
   const isNew = productId === 'new';
   // context
   const api = useContextApi();
@@ -51,17 +55,7 @@ export const ProductDrawer = (props: Props) => {
   const sortedGroups = menu.getOrderedMenu(groups, complements, product?.complementsOrder);
 
   const [state, dispatch] = React.useReducer(productReducer, initialState);
-  const {
-    name,
-    categoryId,
-    description,
-    price,
-    classifications,
-    imageUrl,
-    previewURL,
-    externalId,
-    enabled,
-  } = state;
+  const { name, categoryId, description, price, classifications, externalId, enabled } = state;
 
   // side effects
   React.useEffect(() => {
@@ -77,6 +71,7 @@ export const ProductDrawer = (props: Props) => {
           imageUrl: product.image_url ?? '',
           externalId: product.externalId ?? '',
           enabled: product.enabled ?? true,
+          complementsOrder: product.complementsOrder,
         },
       });
     }
@@ -106,6 +101,32 @@ export const ProductDrawer = (props: Props) => {
       props.onClose();
     })();
   };
+
+  const onSaveComplementsGroup = async (group: ComplementGroup) => {
+    (async () => {
+      const { complementsOrder } = state;
+      const { id: groupId } = await api.business().createComplementsGroup(businessId!, group);
+      let changes = {};
+      if (complementsOrder) {
+        const oldCategoriesOrder = complementsOrder.categoriesOrder ?? [];
+        changes = {
+          complementsOrder: {
+            ...complementsOrder,
+            categoriesOrder: [...oldCategoriesOrder, groupId],
+          },
+        };
+      } else {
+        changes = {
+          complementsOrder: {
+            categoriesOrder: [groupId],
+          },
+        };
+      }
+      await api.business().updateProduct(businessId!, productId, changes);
+      return push(`${url}/complements/${groupId}`);
+    })();
+  };
+
   const onDeleteHandler = () => {
     (async () => {
       if (categoryId) {
@@ -144,13 +165,11 @@ export const ProductDrawer = (props: Props) => {
             onDropHandler={onDropHandler}
           />
         </Route>
-        <Route path={`${path}/complements`}>
-          <ProductComplements
-            state={state}
-            handleStateUpdate={(key, value) =>
-              dispatch({ type: 'update_state', payload: { [key]: value } })
-            }
-          />
+        <Route exact path={`${path}/complements`}>
+          <GroupDrawer onSaveGroup={onSaveComplementsGroup} />
+        </Route>
+        <Route path={`${path}/complements/:groupId`}>
+          <ComplementDrawer onSaveComplement={() => {}} />
         </Route>
       </Switch>
     </BaseDrawer>
