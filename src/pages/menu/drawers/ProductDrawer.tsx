@@ -9,7 +9,7 @@ import React from 'react';
 import { Route, Switch, useParams, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { BaseDrawer } from './BaseDrawer';
-import { GroupDrawer } from './product/complements/GroupDrawer';
+import { ProductComplements } from './product/ProductComplements';
 import { ProductDetails } from './product/ProductDetails';
 import { productReducer } from './product/productReducer';
 
@@ -32,7 +32,7 @@ const initialState = {
   previewURL: '',
   externalId: '',
   enabled: true,
-  complementsOrder: undefined,
+  complementsOrder: menu.empty(),
 };
 
 export const ProductDrawer = (props: Props) => {
@@ -134,8 +134,16 @@ export const ProductDrawer = (props: Props) => {
     })();
   };
 
-  const updateComplementsGroup = async (groupId: string, changes: Partial<ComplementGroup>) => {
+  const onUpdateComplementsGroup = async (groupId: string, changes: Partial<ComplementGroup>) => {
     await api.business().updateComplementsGroup(businessId!, groupId, changes);
+  };
+
+  const onDeleteComplementsGroup = async (groupId: string) => {
+    const productConfig = menu.removeCategory(state.complementsOrder, groupId);
+    await api.business().updateProduct(businessId!, productId, {
+      complementsOrder: productConfig,
+    });
+    await api.business().deleteComplementsGroup(businessId!, groupId);
   };
 
   // refs
@@ -165,9 +173,10 @@ export const ProductDrawer = (props: Props) => {
           />
         </Route>
         <Route exact path={`${path}/complements`}>
-          <GroupDrawer
+          <ProductComplements
             onSaveGroup={onSaveComplementsGroup}
-            onUpdateGroup={updateComplementsGroup}
+            onUpdateGroup={onUpdateComplementsGroup}
+            onDeleteGroup={onDeleteComplementsGroup}
             groups={groups}
             complements={complements}
           />

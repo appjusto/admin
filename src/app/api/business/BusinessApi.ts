@@ -310,4 +310,8 @@ export default class MenuApi {
         updatedOn: timestamp,
       } as Partial<ComplementGroup>);
   }
+
+  async deleteComplementsGroup(businessId: string, groupId: string) {
+    await this.refs.getBusinessComplementsGroupsRef(businessId).doc(groupId).delete();
+  }
 }

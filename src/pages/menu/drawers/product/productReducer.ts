@@ -11,7 +11,7 @@ export interface StateProps {
   previewURL?: string | undefined;
   externalId?: string;
   enabled: boolean;
-  complementsOrder: MenuConfig | undefined;
+  complementsOrder: MenuConfig;
 }
 
 export type Actions = { type: 'update_state'; payload: Partial<StateProps> };

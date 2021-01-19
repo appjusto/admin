@@ -7,7 +7,7 @@ import { t } from 'utils/i18n';
 
 const fallback = '/static/media/product-placeholder.png';
 
-export const NewComplementForm = () => {
+export const ComplementForm = () => {
   return (
     <HStack
       spacing={4}
