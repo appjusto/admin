@@ -1,8 +1,9 @@
 import { Box, Button, ButtonProps, Flex, Radio, RadioGroup, Stack, Text } from '@chakra-ui/react';
-import { ComplementGroup } from 'appjusto-types';
+import { Complement, ComplementGroup, WithId } from 'appjusto-types';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import React from 'react';
 import { t } from 'utils/i18n';
+import { GroupBox } from './GroupBox';
 
 interface ItemsQuantityBoxProps extends ButtonProps {
   label: string;
@@ -42,14 +43,22 @@ const ItemsQuantityBox = ({
 
 interface GroupDrawerProps {
   onSaveGroup(group: ComplementGroup): void;
+  groups: WithId<ComplementGroup>[];
+  complements: WithId<Complement>[];
 }
 
-export const GroupDrawer = ({ onSaveGroup }: GroupDrawerProps) => {
+export const GroupDrawer = ({ groups, complements, onSaveGroup }: GroupDrawerProps) => {
   const [hasComplements, setHasComplements] = React.useState(false);
   const [groupName, setGroupName] = React.useState('');
   const [isRequired, setIsRequired] = React.useState(false);
   const [min, setMin] = React.useState(0);
   const [max, setMax] = React.useState(0);
+
+  React.useEffect(() => {
+    if (groups?.length > 0) {
+      setHasComplements(true);
+    }
+  }, [groups, complements]);
 
   //handlers
   const handleNext = () => {
@@ -83,6 +92,7 @@ export const GroupDrawer = ({ onSaveGroup }: GroupDrawerProps) => {
           </Radio>
         </Flex>
       </RadioGroup>
+      {groups?.length > 0 && groups.map((group) => <GroupBox group={group} />)}
       {hasComplements && (
         <>
           <Stack mt="8" mb="10" spacing={4} direction="row">

@@ -7,13 +7,10 @@ export const empty = (): MenuConfig => ({ categoriesOrder: [], productsOrderByCa
 
 //
 
-const ordered = <T extends Object>(
-  items: WithId<T>[],
-  order: string[]
-): WithId<T>[] => {
-  return items.filter((i) => order.indexOf(i.id) !== -1) // filtering out first
-    .sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id)
-  );
+const ordered = <T extends Object>(items: WithId<T>[], order: string[]): WithId<T>[] => {
+  return items
+    .filter((i) => order.indexOf(i.id) !== -1) // filtering out first
+    .sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
 };
 
 // categories
@@ -147,9 +144,16 @@ export const getOrderedMenu = <T extends object, T2 extends object>(
   products: WithId<T2>[],
   config: MenuConfig | undefined
 ) => {
+  console.log(categories, products, config);
   if (categories.length === 0 || !config) return [];
   const { categoriesOrder, productsOrderByCategoryId } = config;
   return ordered(categories, categoriesOrder).map((category) => {
+    if (!productsOrderByCategoryId) {
+      return {
+        ...category,
+        products: [],
+      };
+    }
     return {
       ...category,
       products: ordered(products, productsOrderByCategoryId[category.id]),

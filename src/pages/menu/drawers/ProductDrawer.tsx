@@ -56,7 +56,7 @@ export const ProductDrawer = (props: Props) => {
 
   const [state, dispatch] = React.useReducer(productReducer, initialState);
   const { name, categoryId, description, price, classifications, externalId, enabled } = state;
-
+  console.log(groups, complements);
   // side effects
   React.useEffect(() => {
     if (product) {
@@ -166,7 +166,11 @@ export const ProductDrawer = (props: Props) => {
           />
         </Route>
         <Route exact path={`${path}/complements`}>
-          <GroupDrawer onSaveGroup={onSaveComplementsGroup} />
+          <GroupDrawer
+            onSaveGroup={onSaveComplementsGroup}
+            groups={groups}
+            complements={complements}
+          />
         </Route>
         <Route path={`${path}/complements/:groupId`}>
           <ComplementDrawer onSaveComplement={() => {}} />
