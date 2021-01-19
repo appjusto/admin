@@ -1,4 +1,3 @@
-import React from 'react';
 import { MenuConfig } from 'appjusto-types';
 
 export interface StateProps {

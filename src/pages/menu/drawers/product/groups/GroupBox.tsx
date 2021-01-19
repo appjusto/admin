@@ -50,6 +50,42 @@ export const GroupBox = ({
     await onDeleteComplement(complementId, group.id);
   };
 
+  if (isDeleting) {
+    return (
+      <Box
+        border="1px solid #F2F6EA"
+        boxShadow="0px 8px 16px -4px rgba(105, 118, 103, 0.1)"
+        borderRadius="lg"
+        p="4"
+        mt="4"
+      >
+        <Flex flexDir="column" p="4" bg="#FFF8F8">
+          <Text textAlign="center">
+            {t(`Tem certeza que deseja apagar o grupo `)}
+            <Text as="span" fontWeight="700">
+              "{group.name}"?
+            </Text>
+          </Text>
+          <HStack mt="4" spacing={4} justifyContent="center">
+            <Button size="sm" w="220px" onClick={() => setIsDeleting(false)}>
+              {t('Manter')}
+            </Button>
+            <Button
+              size="sm"
+              w="220px"
+              variant="danger"
+              onClick={handleDeleteGroup}
+              isLoading={isLoading}
+              loadingText={t('Apagando')}
+            >
+              {t('Apagar')}
+            </Button>
+          </HStack>
+        </Flex>
+      </Box>
+    );
+  }
+
   return (
     <Draggable draggableId={group.id} index={index}>
       {(draggable) => (
@@ -62,74 +98,48 @@ export const GroupBox = ({
           ref={draggable.innerRef}
           {...draggable.draggableProps}
         >
-          {isDeleting ? (
-            <Flex flexDir="column" p="4" bg="#FFF8F8">
-              <Text textAlign="center">
-                {t(`Tem certeza que deseja apagar o grupo `)}
-                <Text as="span" fontWeight="700">
-                  "{group.name}"?
+          <Flex>
+            <Flex
+              alignItems="center"
+              mr="4"
+              {...draggable.dragHandleProps}
+              ref={draggable.innerRef}
+            >
+              <DragHandle />
+            </Flex>
+            <Flex w="100%" flexDir="row" justifyContent="space-between">
+              <Flex flexDir="column">
+                <Text fontSize="xl" color="black">
+                  {group.name}
                 </Text>
-              </Text>
-              <HStack mt="4" spacing={4} justifyContent="center">
-                <Button size="sm" w="220px" onClick={() => setIsDeleting(false)}>
-                  {t('Manter')}
-                </Button>
-                <Button
-                  size="sm"
-                  w="220px"
-                  variant="danger"
-                  onClick={handleDeleteGroup}
-                  isLoading={isLoading}
-                  loadingText={t('Apagando')}
-                >
-                  {t('Apagar')}
-                </Button>
-              </HStack>
-            </Flex>
-          ) : (
-            <Flex>
-              <Flex
-                alignItems="center"
-                mr="4"
-                {...draggable.dragHandleProps}
-                ref={draggable.innerRef}
-              >
-                <DragHandle />
+                <Text fontSize="sm" color="grey.700">
+                  {t(
+                    `${group.required ? 'Obrigatório' : 'Opcional'}, mínimo: (${
+                      group.minimum
+                    }), máximo: (${group.maximum})`
+                  )}
+                </Text>
               </Flex>
-              <Flex w="100%" flexDir="row" justifyContent="space-between">
-                <Flex flexDir="column">
-                  <Text fontSize="xl" color="black">
-                    {group.name}
-                  </Text>
-                  <Text fontSize="sm" color="grey.700">
-                    {t(
-                      `${group.required ? 'Obrigatório' : 'Opcional'}, mínimo: (${
-                        group.minimum
-                      }), máximo: (${group.maximum})`
-                    )}
-                  </Text>
-                </Flex>
-                <Flex flexDir="row" alignItems="center">
-                  <AddButton title={t('Adicionar item')} onClick={() => setIsAdding(!isAdding)} />
-                  <EditButton title={t('Editar')} onClick={() => setIsEditing(!isEditing)} />
-                  <DeleteButton
-                    title={t('Excluir grupo')}
-                    onClick={() => {
-                      if (isEditing) {
-                        setIsEditing(false);
-                      }
-                      setIsDeleting(true);
-                    }}
-                  />
-                  <DropdownButton
-                    title={t('Expandir')}
-                    isExpanded={showComplments}
-                    onClick={() => setShowComplements(!showComplments)}
-                  />
-                </Flex>
+              <Flex flexDir="row" alignItems="center">
+                <AddButton title={t('Adicionar item')} onClick={() => setIsAdding(!isAdding)} />
+                <EditButton title={t('Editar')} onClick={() => setIsEditing(!isEditing)} />
+                <DeleteButton
+                  title={t('Excluir grupo')}
+                  onClick={() => {
+                    if (isEditing) {
+                      setIsEditing(false);
+                    }
+                    setIsDeleting(true);
+                  }}
+                />
+                <DropdownButton
+                  title={t('Expandir')}
+                  isExpanded={showComplments}
+                  onClick={() => setShowComplements(!showComplments)}
+                />
               </Flex>
             </Flex>
-          )}
+          </Flex>
           {isEditing && (
             <GroupForm submitGroup={handleUpdate} groupData={group} isLoading={isLoading} />
           )}
