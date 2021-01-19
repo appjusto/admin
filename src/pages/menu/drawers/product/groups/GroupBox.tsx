@@ -26,6 +26,11 @@ export const GroupBox = ({ group, updateGroup, onDeleteGroup }: GroupBoxProps) =
     setIsLoading(false);
     setIsEditing(false);
   };
+
+  const handleDelete = async () => {
+    setIsLoading(true);
+    await onDeleteGroup(group.id);
+  };
   return (
     <Box
       border="1px solid #F2F6EA"
@@ -46,7 +51,14 @@ export const GroupBox = ({ group, updateGroup, onDeleteGroup }: GroupBoxProps) =
             <Button size="sm" w="220px" onClick={() => setIsDeleting(false)}>
               {t('Manter')}
             </Button>
-            <Button size="sm" w="220px" variant="danger" onClick={() => onDeleteGroup(group.id)}>
+            <Button
+              size="sm"
+              w="220px"
+              variant="danger"
+              onClick={handleDelete}
+              isLoading={isLoading}
+              loadingText={t('Apagando')}
+            >
               {t('Apagar')}
             </Button>
           </HStack>

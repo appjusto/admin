@@ -111,26 +111,11 @@ export const ProductDrawer = (props: Props) => {
 
   const onSaveComplementsGroup = async (group: ComplementGroup) => {
     (async () => {
-      const { complementsOrder } = state;
       const { id: groupId } = await api.business().createComplementsGroup(businessId!, group);
-      let changes = {};
-      if (complementsOrder) {
-        const oldCategoriesOrder = complementsOrder.categoriesOrder ?? [];
-        changes = {
-          complementsOrder: {
-            ...complementsOrder,
-            categoriesOrder: [...oldCategoriesOrder, groupId],
-          },
-        };
-      } else {
-        changes = {
-          complementsOrder: {
-            categoriesOrder: [groupId],
-          },
-        };
-      }
-      await api.business().updateProduct(businessId!, productId, changes);
-      //return push(`${url}/complements/${groupId}`);
+      const productConfi = menu.addCategory(state.complementsOrder, groupId);
+      await api.business().updateProduct(businessId!, productId, {
+        complementsOrder: productConfi,
+      });
     })();
   };
 
@@ -177,8 +162,7 @@ export const ProductDrawer = (props: Props) => {
             onSaveGroup={onSaveComplementsGroup}
             onUpdateGroup={onUpdateComplementsGroup}
             onDeleteGroup={onDeleteComplementsGroup}
-            groups={groups}
-            complements={complements}
+            groups={sortedGroups}
           />
         </Route>
       </Switch>

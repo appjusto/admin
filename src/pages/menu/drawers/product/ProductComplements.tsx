@@ -1,5 +1,5 @@
 import { Button, Flex, Radio, RadioGroup, Stack, Text } from '@chakra-ui/react';
-import { Complement, ComplementGroup, WithId } from 'appjusto-types';
+import { ComplementGroup, WithId } from 'appjusto-types';
 import React from 'react';
 import { t } from 'utils/i18n';
 import { GroupBox } from './groups/GroupBox';
@@ -10,12 +10,10 @@ interface ProductComplementsProps {
   onUpdateGroup(groupId: string, changes: Partial<ComplementGroup>): Promise<void>;
   onDeleteGroup(groupId: string): Promise<void>;
   groups: WithId<ComplementGroup>[];
-  complements: WithId<Complement>[];
 }
 
 export const ProductComplements = ({
   groups,
-  complements,
   onSaveGroup,
   onUpdateGroup,
   onDeleteGroup,
@@ -27,7 +25,7 @@ export const ProductComplements = ({
     if (groups?.length > 0) {
       setHasComplements(true);
     }
-  }, [groups, complements]);
+  }, [groups]);
 
   //handlers
   const saveGroup = (newGroup: NewGroup) => {
