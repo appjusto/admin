@@ -4,7 +4,6 @@ import { useProduct } from 'app/api/business/products/useProduct2';
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusinessId } from 'app/state/business/context';
 import { useContextMenu } from 'app/state/menu/context';
-import { ComplementGroup } from 'appjusto-types';
 import React from 'react';
 import { Route, Switch, useParams, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
@@ -109,28 +108,6 @@ export const ProductDrawer = (props: Props) => {
     })();
   };
 
-  const onSaveComplementsGroup = async (group: ComplementGroup) => {
-    (async () => {
-      const { id: groupId } = await api.business().createComplementsGroup(businessId!, group);
-      const productConfig = menu.addCategory(state.complementsOrder, groupId);
-      await api.business().updateProduct(businessId!, productId, {
-        complementsOrder: productConfig,
-      });
-    })();
-  };
-
-  const onUpdateComplementsGroup = async (groupId: string, changes: Partial<ComplementGroup>) => {
-    await api.business().updateComplementsGroup(businessId!, groupId, changes);
-  };
-
-  const onDeleteComplementsGroup = async (groupId: string) => {
-    const productConfig = menu.removeCategory(state.complementsOrder, groupId);
-    await api.business().updateProduct(businessId!, productId, {
-      complementsOrder: productConfig,
-    });
-    await api.business().deleteComplementsGroup(businessId!, groupId);
-  };
-
   // refs
   const inputRef = React.useRef<HTMLInputElement>(null);
 
@@ -158,13 +135,7 @@ export const ProductDrawer = (props: Props) => {
           />
         </Route>
         <Route exact path={`${path}/complements`}>
-          <ProductComplements
-            onSaveGroup={onSaveComplementsGroup}
-            onUpdateGroup={onUpdateComplementsGroup}
-            onDeleteGroup={onDeleteComplementsGroup}
-            groups={sortedGroups}
-            productConfig={state.complementsOrder}
-          />
+          <ProductComplements groups={sortedGroups} productConfig={state.complementsOrder} />
         </Route>
       </Switch>
     </BaseDrawer>

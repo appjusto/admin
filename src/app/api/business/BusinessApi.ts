@@ -322,4 +322,8 @@ export default class MenuApi {
   async updateComplement(businessId: string, complementId: string, item: Complement) {
     return await this.refs.getBusinessComplementsRef(businessId).doc(complementId).update(item);
   }
+
+  async deleteComplement(businessId: string, complementId: string) {
+    return await this.refs.getBusinessComplementsRef(businessId).doc(complementId).delete();
+  }
 }

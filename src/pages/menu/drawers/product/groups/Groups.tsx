@@ -17,9 +17,16 @@ interface Props {
   productConfig: MenuConfig;
   onUpdateGroup(groupId: string, changes: Partial<ComplementGroup>): Promise<void>;
   onDeleteGroup(groupId: string): Promise<void>;
+  onDeleteComplement(complementId: string, groupId: string): Promise<void>;
 }
 
-export const Groups = ({ groups, productConfig, onUpdateGroup, onDeleteGroup }: Props) => {
+export const Groups = ({
+  groups,
+  productConfig,
+  onUpdateGroup,
+  onDeleteGroup,
+  onDeleteComplement,
+}: Props) => {
   const api = useContextApi();
   const { productId } = useParams<Params>();
   const businessId = useContextBusinessId();
@@ -60,6 +67,7 @@ export const Groups = ({ groups, productConfig, onUpdateGroup, onDeleteGroup }: 
                 group={group}
                 onUpdateGroup={onUpdateGroup}
                 onDeleteGroup={onDeleteGroup}
+                onDeleteComplement={onDeleteComplement}
               />
             ))}
             {droppable.placeholder}

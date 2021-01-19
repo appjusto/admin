@@ -17,9 +17,16 @@ interface GroupBoxProps {
   group: WithId<ComplementGroup>;
   onUpdateGroup(groupId: string, changes: Partial<ComplementGroup>): Promise<void>;
   onDeleteGroup(groupId: string): Promise<void>;
+  onDeleteComplement(complementId: string, groupId: string): Promise<void>;
 }
 
-export const GroupBox = ({ index, group, onUpdateGroup, onDeleteGroup }: GroupBoxProps) => {
+export const GroupBox = ({
+  index,
+  group,
+  onUpdateGroup,
+  onDeleteGroup,
+  onDeleteComplement,
+}: GroupBoxProps) => {
   const [isEditing, setIsEditing] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
   const [isAdding, setIsAdding] = React.useState(false);
@@ -33,11 +40,16 @@ export const GroupBox = ({ index, group, onUpdateGroup, onDeleteGroup }: GroupBo
     setIsEditing(false);
   };
 
-  const handleDelete = async () => {
+  const handleDeleteGroup = async () => {
     setIsLoading(true);
     await onDeleteGroup(group.id);
   };
-  console.log(group);
+
+  const handleDeleteComplement = async (complementId: string) => {
+    setIsLoading(true);
+    await onDeleteComplement(complementId, group.id);
+  };
+
   return (
     <Draggable draggableId={group.id} index={index}>
       {(draggable) => (
@@ -66,7 +78,7 @@ export const GroupBox = ({ index, group, onUpdateGroup, onDeleteGroup }: GroupBo
                   size="sm"
                   w="220px"
                   variant="danger"
-                  onClick={handleDelete}
+                  onClick={handleDeleteGroup}
                   isLoading={isLoading}
                   loadingText={t('Apagando')}
                 >
@@ -140,7 +152,13 @@ export const GroupBox = ({ index, group, onUpdateGroup, onDeleteGroup }: GroupBo
                 >
                   {group.items &&
                     group.items.map((item, index) => (
-                      <ComplementItem key={item.id} item={item} index={index} />
+                      <ComplementItem
+                        key={item.id}
+                        item={item}
+                        index={index}
+                        isLoading={isLoading}
+                        handleDelete={handleDeleteComplement}
+                      />
                     ))}
                   {droppable.placeholder}
                 </Box>
