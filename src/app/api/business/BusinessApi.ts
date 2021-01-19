@@ -314,4 +314,8 @@ export default class MenuApi {
   async deleteComplementsGroup(businessId: string, groupId: string) {
     await this.refs.getBusinessComplementsGroupsRef(businessId).doc(groupId).delete();
   }
+
+  async createComplement(businessId: string, item: Complement) {
+    return await this.refs.getBusinessComplementsRef(businessId).add(item);
+  }
 }

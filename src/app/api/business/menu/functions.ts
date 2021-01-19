@@ -150,12 +150,12 @@ export const getOrderedMenu = <T extends object, T2 extends object>(
     if (!productsOrderByCategoryId) {
       return {
         ...category,
-        products: [],
+        items: [],
       };
     }
     return {
       ...category,
-      products: ordered(products, productsOrderByCategoryId[category.id]),
+      items: ordered(products, productsOrderByCategoryId[category.id]),
     };
   });
 };

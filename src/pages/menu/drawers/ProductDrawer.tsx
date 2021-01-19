@@ -112,9 +112,9 @@ export const ProductDrawer = (props: Props) => {
   const onSaveComplementsGroup = async (group: ComplementGroup) => {
     (async () => {
       const { id: groupId } = await api.business().createComplementsGroup(businessId!, group);
-      const productConfi = menu.addCategory(state.complementsOrder, groupId);
+      const productConfig = menu.addCategory(state.complementsOrder, groupId);
       await api.business().updateProduct(businessId!, productId, {
-        complementsOrder: productConfi,
+        complementsOrder: productConfig,
       });
     })();
   };

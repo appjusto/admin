@@ -8,6 +8,8 @@ import { ReactComponent as DragHandle } from 'common/img/drag-handle.svg';
 import React from 'react';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
 import { t } from 'utils/i18n';
+import { ComplementForm } from '../complements/ComplementForm';
+import { ComplementItem } from '../complements/ComplementItem';
 import { GroupForm, NewGroup } from './GroupForm';
 
 interface GroupBoxProps {
@@ -20,6 +22,7 @@ interface GroupBoxProps {
 export const GroupBox = ({ index, group, onUpdateGroup, onDeleteGroup }: GroupBoxProps) => {
   const [isEditing, setIsEditing] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
+  const [isAdding, setIsAdding] = React.useState(false);
   const [isDeleting, setIsDeleting] = React.useState(false);
   const [showComplments, setShowComplements] = React.useState(false);
   const handleUpdate = async (groupData: NewGroup) => {
@@ -33,6 +36,7 @@ export const GroupBox = ({ index, group, onUpdateGroup, onDeleteGroup }: GroupBo
     setIsLoading(true);
     await onDeleteGroup(group.id);
   };
+  console.log(group);
   return (
     <Draggable draggableId={group.id} index={index}>
       {(draggable) => (
@@ -93,7 +97,7 @@ export const GroupBox = ({ index, group, onUpdateGroup, onDeleteGroup }: GroupBo
                   </Text>
                 </Flex>
                 <Flex flexDir="row" alignItems="center">
-                  <AddButton title={t('Adicionar item')} />
+                  <AddButton title={t('Adicionar item')} onClick={() => setIsAdding(!isAdding)} />
                   <EditButton title={t('Editar')} onClick={() => setIsEditing(!isEditing)} />
                   <DeleteButton
                     title={t('Excluir grupo')}
@@ -116,6 +120,7 @@ export const GroupBox = ({ index, group, onUpdateGroup, onDeleteGroup }: GroupBo
           {isEditing && (
             <GroupForm submitGroup={handleUpdate} groupData={group} isLoading={isLoading} />
           )}
+          {isAdding && <ComplementForm groupId={group.id} onSuccess={() => setIsAdding(false)} />}
           <Droppable droppableId={group.id} type="item">
             {(droppable, snapshot) => (
               <Box
@@ -123,11 +128,12 @@ export const GroupBox = ({ index, group, onUpdateGroup, onDeleteGroup }: GroupBo
                 {...droppable.droppableProps}
                 bg={snapshot.isDraggingOver ? 'gray.50' : 'white'}
                 minH="30px"
+                mt="4"
               >
-                {/*products &&
-                  products.map((product, index) => (
-                    <ProductItem key={product.id} product={product} index={index} />
-                  ))*/}
+                {group.items &&
+                  group.items.map((item, index) => (
+                    <ComplementItem key={item.id} item={item} index={index} />
+                  ))}
                 {droppable.placeholder}
               </Box>
             )}
