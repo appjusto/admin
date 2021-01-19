@@ -1,57 +1,59 @@
 import { Box } from '@chakra-ui/react';
 import * as menu from 'app/api/business/menu/functions';
-import { useContextMenu } from 'app/state/menu/context';
-import { Product, WithId } from 'appjusto-types';
-import { isEmpty } from 'lodash';
+import { useContextApi } from 'app/state/api/context';
+import { useContextBusinessId } from 'app/state/business/context';
+import { ComplementGroup, MenuConfig, WithId } from 'appjusto-types';
 import React from 'react';
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
-import { useRouteMatch } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import { GroupBox } from './GroupBox';
 
-interface Props {
-  productSearch?: string;
+interface Params {
+  productId: string;
 }
 
-export const Categories = ({ productSearch }: Props) => {
-  // state
-  const { categories, menuConfig, updateMenuConfig } = useContextMenu();
-  const filterProductsWithSearch = (products: WithId<Product>[]) => {
-    if (!productSearch || isEmpty(productSearch)) return products;
-    const regexp = new RegExp(productSearch, 'i');
-    return products.filter((product) => regexp.test(product.name));
-  };
-  const { url } = useRouteMatch();
+interface Props {
+  groups: WithId<ComplementGroup>[];
+  productConfig: MenuConfig;
+  onUpdateGroup(groupId: string, changes: Partial<ComplementGroup>): Promise<void>;
+  onDeleteGroup(groupId: string): Promise<void>;
+}
+
+export const Groups = ({ groups, productConfig, onUpdateGroup, onDeleteGroup }: Props) => {
+  const api = useContextApi();
+  const { productId } = useParams<Params>();
+  const businessId = useContextBusinessId();
   // handlers
   const onDragEnd = (result: DropResult) => {
     const { destination, source, draggableId, type } = result;
     if (!destination) return; // dropped outside
-    if (source.droppableId === destination.droppableId && source.index === destination.index)
+    if (source.droppableId === destination.droppableId && source.index === destination.index) {
       return; // same location
-    if (type === 'product') {
-      updateMenuConfig(
-        menu.updateProductIndex(
-          menuConfig,
-          draggableId,
-          source.droppableId,
-          destination.droppableId,
-          source.index,
-          destination.index
-        )
-      );
-    } else if (type === 'category') {
-      updateMenuConfig(menu.updateCategoryIndex(menuConfig, draggableId, destination.index));
     }
+    const newProductConfig = menu.updateCategoryIndex(
+      productConfig,
+      draggableId,
+      destination.index
+    );
+    api.business().updateProduct(businessId!, productId, {
+      complementsOrder: newProductConfig,
+    });
   };
-
   // UI
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <Droppable droppableId="categories" type="category">
+      <Droppable droppableId="groups" type="group">
         {(droppable) => (
           <Box ref={droppable.innerRef} {...droppable.droppableProps}>
-            {categories.map((category, index) => {
-              const products = filterProductsWithSearch(category.products!);
-              return <Box />;
-            })}
+            {groups.map((group, index) => (
+              <GroupBox
+                key={group.name}
+                index={index}
+                group={group}
+                onUpdateGroup={onUpdateGroup}
+                onDeleteGroup={onDeleteGroup}
+              />
+            ))}
             {droppable.placeholder}
           </Box>
         )}

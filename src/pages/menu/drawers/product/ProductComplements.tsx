@@ -1,19 +1,21 @@
 import { Button, Flex, Radio, RadioGroup, Stack, Text } from '@chakra-ui/react';
-import { ComplementGroup, WithId } from 'appjusto-types';
+import { ComplementGroup, MenuConfig, WithId } from 'appjusto-types';
 import React from 'react';
 import { t } from 'utils/i18n';
-import { GroupBox } from './groups/GroupBox';
 import { GroupForm, NewGroup } from './groups/GroupForm';
+import { Groups } from './groups/Groups';
 
 interface ProductComplementsProps {
   onSaveGroup(group: ComplementGroup): void;
   onUpdateGroup(groupId: string, changes: Partial<ComplementGroup>): Promise<void>;
   onDeleteGroup(groupId: string): Promise<void>;
   groups: WithId<ComplementGroup>[];
+  productConfig: MenuConfig;
 }
 
 export const ProductComplements = ({
   groups,
+  productConfig,
   onSaveGroup,
   onUpdateGroup,
   onDeleteGroup,
@@ -54,15 +56,12 @@ export const ProductComplements = ({
           </Radio>
         </Flex>
       </RadioGroup>
-      {groups?.length > 0 &&
-        groups.map((group) => (
-          <GroupBox
-            key={group.name}
-            group={group}
-            updateGroup={onUpdateGroup}
-            onDeleteGroup={onDeleteGroup}
-          />
-        ))}
+      <Groups
+        groups={groups}
+        productConfig={productConfig}
+        onUpdateGroup={onUpdateGroup}
+        onDeleteGroup={onDeleteGroup}
+      />
       {hasComplements && (
         <>
           <Stack mt="8" mb="10" spacing={4} direction="row">

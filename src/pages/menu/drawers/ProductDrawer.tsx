@@ -163,6 +163,7 @@ export const ProductDrawer = (props: Props) => {
             onUpdateGroup={onUpdateComplementsGroup}
             onDeleteGroup={onDeleteComplementsGroup}
             groups={sortedGroups}
+            productConfig={state.complementsOrder}
           />
         </Route>
       </Switch>
