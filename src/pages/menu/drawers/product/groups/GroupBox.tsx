@@ -25,6 +25,7 @@ export const GroupBox = ({ index, group, onUpdateGroup, onDeleteGroup }: GroupBo
   const [isAdding, setIsAdding] = React.useState(false);
   const [isDeleting, setIsDeleting] = React.useState(false);
   const [showComplments, setShowComplements] = React.useState(false);
+
   const handleUpdate = async (groupData: NewGroup) => {
     setIsLoading(true);
     await onUpdateGroup(group.id, groupData);
@@ -120,7 +121,13 @@ export const GroupBox = ({ index, group, onUpdateGroup, onDeleteGroup }: GroupBo
           {isEditing && (
             <GroupForm submitGroup={handleUpdate} groupData={group} isLoading={isLoading} />
           )}
-          {isAdding && <ComplementForm groupId={group.id} onSuccess={() => setIsAdding(false)} />}
+          {isAdding && (
+            <ComplementForm
+              groupId={group.id}
+              onSuccess={() => setIsAdding(false)}
+              onCancel={() => setIsAdding(false)}
+            />
+          )}
           {showComplments && (
             <Droppable droppableId={group.id} type="item">
               {(droppable, snapshot) => (

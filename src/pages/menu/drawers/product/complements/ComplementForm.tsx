@@ -3,6 +3,7 @@ import * as menu from 'app/api/business/menu/functions';
 import { useProduct } from 'app/api/business/products/useProduct2';
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusinessId } from 'app/state/business/context';
+import { Complement, WithId } from 'appjusto-types';
 import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput2';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
@@ -18,11 +19,20 @@ interface Params {
 }
 
 interface ComplementFormProps {
-  groupId: string;
+  groupId?: string;
+  complementId?: string | undefined;
+  item?: WithId<Complement>;
   onSuccess(): void;
+  onCancel(): void;
 }
 
-export const ComplementForm = ({ groupId, onSuccess }: ComplementFormProps) => {
+export const ComplementForm = ({
+  groupId,
+  complementId,
+  item,
+  onSuccess,
+  onCancel,
+}: ComplementFormProps) => {
   const api = useContextApi();
   const { productId } = useParams<Params>();
   const businessId = useContextBusinessId();
@@ -33,6 +43,15 @@ export const ComplementForm = ({ groupId, onSuccess }: ComplementFormProps) => {
   const [price, setPrice] = React.useState(0);
   const [externalId, setExternalId] = React.useState('');
 
+  React.useEffect(() => {
+    if (item) {
+      setName(item.name);
+      setDescription(item.description ?? '');
+      setPrice(item.price);
+      setExternalId(item.externalId ?? '');
+    }
+  }, [item]);
+
   const handleSave = async () => {
     const newItem = {
       name,
@@ -40,18 +59,19 @@ export const ComplementForm = ({ groupId, onSuccess }: ComplementFormProps) => {
       price,
       externalId,
     };
-    const { id: complementId } = await api.business().createComplement(businessId!, newItem);
-    let newProductConfig = menu.empty();
-    if (product?.complementsOrder) {
-      newProductConfig = menu.addProductToCategory(
-        product?.complementsOrder,
-        complementId,
-        groupId
-      );
+
+    if (!complementId) {
+      const { id } = await api.business().createComplement(businessId!, newItem);
+      let newProductConfig = menu.empty();
+      if (product?.complementsOrder && groupId) {
+        newProductConfig = menu.addProductToCategory(product?.complementsOrder, id, groupId);
+      }
+      await api.business().updateProduct(businessId!, productId, {
+        complementsOrder: newProductConfig,
+      });
+    } else {
+      await api.business().updateComplement(businessId!, complementId, newItem);
     }
-    await api.business().updateProduct(businessId!, productId, {
-      complementsOrder: newProductConfig,
-    });
     onSuccess();
   };
 
@@ -114,7 +134,10 @@ export const ComplementForm = ({ groupId, onSuccess }: ComplementFormProps) => {
             />
           </HStack>
           <Flex mt="4" justifyContent="flex-end">
-            <Button type="submit" maxW="220px">
+            <Button variant="dangerLight" w="120px" mr="4" onClick={onCancel}>
+              {t('Cancelar')}
+            </Button>
+            <Button type="submit" w="120px">
               {t('Salvar')}
             </Button>
           </Flex>

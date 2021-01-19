@@ -318,4 +318,8 @@ export default class MenuApi {
   async createComplement(businessId: string, item: Complement) {
     return await this.refs.getBusinessComplementsRef(businessId).add(item);
   }
+
+  async updateComplement(businessId: string, complementId: string, item: Complement) {
+    return await this.refs.getBusinessComplementsRef(businessId).doc(complementId).update(item);
+  }
 }
