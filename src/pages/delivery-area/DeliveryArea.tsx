@@ -112,6 +112,7 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
         city: localidade,
         state: uf,
         additional,
+        latlng: geocodingResult,
       },
       deliveryRange: safeParseInt(deliveryRange, defaultRadius),
     });
