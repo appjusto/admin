@@ -6,10 +6,9 @@ import { useContextBusinessId } from 'app/state/business/context';
 import { useContextMenu } from 'app/state/menu/context';
 import { ComplementGroup } from 'appjusto-types';
 import React from 'react';
-import { Route, Switch, useHistory, useParams, useRouteMatch } from 'react-router-dom';
+import { Route, Switch, useParams, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { BaseDrawer } from './BaseDrawer';
-import { ComplementDrawer } from './product/complements/ComplementDrawer';
 import { GroupDrawer } from './product/complements/GroupDrawer';
 import { ProductDetails } from './product/ProductDetails';
 import { productReducer } from './product/productReducer';
@@ -39,8 +38,7 @@ const initialState = {
 export const ProductDrawer = (props: Props) => {
   // params
   const { productId } = useParams<Params>();
-  const { path, url } = useRouteMatch();
-  const { push } = useHistory();
+  const { path } = useRouteMatch();
   const isNew = productId === 'new';
   // context
   const api = useContextApi();
@@ -56,7 +54,6 @@ export const ProductDrawer = (props: Props) => {
 
   const [state, dispatch] = React.useReducer(productReducer, initialState);
   const { name, categoryId, description, price, classifications, externalId, enabled } = state;
-  console.log(groups, complements);
   // side effects
   React.useEffect(() => {
     if (product) {
@@ -102,6 +99,16 @@ export const ProductDrawer = (props: Props) => {
     })();
   };
 
+  const onDeleteHandler = () => {
+    (async () => {
+      if (categoryId) {
+        updateMenuConfig(menu.removeProductFromCategory(menuConfig, productId, categoryId));
+        await api.business().deleteProduct(businessId!, productId);
+        props.onClose();
+      }
+    })();
+  };
+
   const onSaveComplementsGroup = async (group: ComplementGroup) => {
     (async () => {
       const { complementsOrder } = state;
@@ -123,18 +130,12 @@ export const ProductDrawer = (props: Props) => {
         };
       }
       await api.business().updateProduct(businessId!, productId, changes);
-      return push(`${url}/complements/${groupId}`);
+      //return push(`${url}/complements/${groupId}`);
     })();
   };
 
-  const onDeleteHandler = () => {
-    (async () => {
-      if (categoryId) {
-        updateMenuConfig(menu.removeProductFromCategory(menuConfig, productId, categoryId));
-        await api.business().deleteProduct(businessId!, productId);
-        props.onClose();
-      }
-    })();
+  const updateComplementsGroup = async (groupId: string, changes: Partial<ComplementGroup>) => {
+    await api.business().updateComplementsGroup(businessId!, groupId, changes);
   };
 
   // refs
@@ -146,11 +147,6 @@ export const ProductDrawer = (props: Props) => {
       {...props}
       type="product"
       title={isNew ? t('Adicionar produto') : t('Alterar produto')}
-      isLoading={!Boolean(product)}
-      isEditing={product ? true : false}
-      onSave={onSaveHandler}
-      onDelete={onDeleteHandler}
-      initialFocusRef={inputRef}
       isError={false}
       error={null}
     >
@@ -163,17 +159,18 @@ export const ProductDrawer = (props: Props) => {
             }
             inputRef={inputRef}
             onDropHandler={onDropHandler}
+            isEditing={product ? true : false}
+            onSave={onSaveHandler}
+            onDelete={onDeleteHandler}
           />
         </Route>
         <Route exact path={`${path}/complements`}>
           <GroupDrawer
             onSaveGroup={onSaveComplementsGroup}
+            onUpdateGroup={updateComplementsGroup}
             groups={groups}
             complements={complements}
           />
-        </Route>
-        <Route path={`${path}/complements/:groupId`}>
-          <ComplementDrawer onSaveComplement={() => {}} />
         </Route>
       </Switch>
     </BaseDrawer>

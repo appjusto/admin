@@ -1,6 +1,6 @@
 import { ChevronDownIcon as Down, ChevronUpIcon as Up } from '@chakra-ui/icons';
 import { Box, Button, Flex, Text } from '@chakra-ui/react';
-import { ComplementGroup } from 'appjusto-types';
+import { ComplementGroup, WithId } from 'appjusto-types';
 import { EditButton } from 'common/components/buttons/EditButton';
 import { ReactComponent as DragHandle } from 'common/img/drag-handle.svg';
 import React from 'react';
@@ -8,13 +8,20 @@ import { t } from 'utils/i18n';
 import { GroupForm, NewGroup } from './GroupForm';
 
 interface GroupBoxProps {
-  group: ComplementGroup;
-  updateGroup(newGroup: NewGroup): void;
+  group: WithId<ComplementGroup>;
+  updateGroup(groupId: string, changes: Partial<ComplementGroup>): Promise<void>;
 }
 
 export const GroupBox = ({ group, updateGroup }: GroupBoxProps) => {
   const [isEditing, setIsEditing] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
   const [showComplments, setShowComplements] = React.useState(false);
+  const handleUpdate = async (groupData: NewGroup) => {
+    setIsLoading(true);
+    await updateGroup(group.id, groupData);
+    setIsLoading(false);
+    setIsEditing(false);
+  };
   return (
     <Box
       border="1px solid #F2F6EA"
@@ -70,7 +77,9 @@ export const GroupBox = ({ group, updateGroup }: GroupBoxProps) => {
           </Flex>
         </Flex>
       </Flex>
-      {isEditing && <GroupForm submitGroup={updateGroup} groupData={group} />}
+      {isEditing && (
+        <GroupForm submitGroup={handleUpdate} groupData={group} isLoading={isLoading} />
+      )}
     </Box>
   );
 };

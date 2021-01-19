@@ -7,11 +7,17 @@ import { GroupForm, NewGroup } from './groups/GroupForm';
 
 interface GroupDrawerProps {
   onSaveGroup(group: ComplementGroup): void;
+  onUpdateGroup(groupId: string, changes: Partial<ComplementGroup>): Promise<void>;
   groups: WithId<ComplementGroup>[];
   complements: WithId<Complement>[];
 }
 
-export const GroupDrawer = ({ groups, complements, onSaveGroup }: GroupDrawerProps) => {
+export const GroupDrawer = ({
+  groups,
+  complements,
+  onSaveGroup,
+  onUpdateGroup,
+}: GroupDrawerProps) => {
   const [hasComplements, setHasComplements] = React.useState(false);
   const [newGroupForm, setNewGroupForm] = React.useState(false);
 
@@ -22,7 +28,7 @@ export const GroupDrawer = ({ groups, complements, onSaveGroup }: GroupDrawerPro
   }, [groups, complements]);
 
   //handlers
-  const createNewGroup = (newGroup: NewGroup) => {
+  const saveGroup = (newGroup: NewGroup) => {
     onSaveGroup(newGroup);
     setNewGroupForm(false);
   };
@@ -49,7 +55,7 @@ export const GroupDrawer = ({ groups, complements, onSaveGroup }: GroupDrawerPro
         </Flex>
       </RadioGroup>
       {groups?.length > 0 &&
-        groups.map((group) => <GroupBox group={group} updateGroup={createNewGroup} />)}
+        groups.map((group) => <GroupBox group={group} updateGroup={onUpdateGroup} />)}
       {hasComplements && (
         <>
           <Stack mt="8" mb="10" spacing={4} direction="row">
@@ -65,7 +71,7 @@ export const GroupDrawer = ({ groups, complements, onSaveGroup }: GroupDrawerPro
               {t('Associar com grupo existente')}
             </Button>
           </Stack>
-          {newGroupForm && <GroupForm submitGroup={createNewGroup} isCreate />}
+          {newGroupForm && <GroupForm submitGroup={saveGroup} isCreate />}
         </>
       )}
     </>

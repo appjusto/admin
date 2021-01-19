@@ -14,27 +14,10 @@ import {
   Link,
   Text,
 } from '@chakra-ui/react';
-import { FocusableElement } from '@chakra-ui/utils';
 import { getErrorMessage } from 'core/fb';
-import React, { FormEvent } from 'react';
+import React from 'react';
 import { Link as RouterLink, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
-import { DrawerButtons } from './DrawerButtons';
-
-interface BaseDrawerProps {
-  type: string;
-  title: string;
-  isOpen: boolean;
-  isEditing: boolean;
-  isLoading: boolean;
-  isError: boolean;
-  error: unknown | string | null;
-  onSave(): void;
-  onClose(): void;
-  onDelete(): void;
-  children: React.ReactNode;
-  initialFocusRef?: React.RefObject<FocusableElement>;
-}
 
 interface LinkProps {
   to: string;
@@ -64,24 +47,26 @@ const DrawerLink = ({ to, label }: LinkProps) => {
   );
 };
 
+interface BaseDrawerProps {
+  type: string;
+  title: string;
+  isOpen: boolean;
+  isError: boolean;
+  error: unknown | string | null;
+  onClose(): void;
+  children: React.ReactNode;
+}
+
 export const BaseDrawer = ({
   type,
   title,
-  isEditing,
-  isLoading,
   isError,
   error,
-  onSave,
   onClose,
-  onDelete,
   children,
   ...props
 }: BaseDrawerProps) => {
   const { url } = useRouteMatch();
-  let isComplements = useRouteMatch({
-    path: `${url}/complements`,
-    exact: false,
-  });
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
       <DrawerOverlay>
@@ -103,35 +88,20 @@ export const BaseDrawer = ({
             )}
           </DrawerHeader>
           <DrawerBody pb="28">
-            <form
-              onSubmit={(ev: FormEvent) => {
-                ev.preventDefault();
-                onSave();
-              }}
-            >
-              {children}
-              {!isComplements && (
-                <DrawerButtons
-                  type={type}
-                  isEditing={isEditing}
-                  onDelete={onDelete}
-                  isLoading={isLoading}
-                />
-              )}
-              {isError && (
-                <Box mt="6">
-                  {isError && (
-                    <Alert status="error">
-                      <AlertIcon />
-                      <AlertTitle mr={2}>{t('Erro!')}</AlertTitle>
-                      <AlertDescription>
-                        {getErrorMessage(error) ?? t('Tenta de novo?')}
-                      </AlertDescription>
-                    </Alert>
-                  )}
-                </Box>
-              )}
-            </form>
+            {children}
+            {isError && (
+              <Box mt="6">
+                {isError && (
+                  <Alert status="error">
+                    <AlertIcon />
+                    <AlertTitle mr={2}>{t('Erro!')}</AlertTitle>
+                    <AlertDescription>
+                      {getErrorMessage(error) ?? t('Tenta de novo?')}
+                    </AlertDescription>
+                  </Alert>
+                )}
+              </Box>
+            )}
           </DrawerBody>
         </DrawerContent>
       </DrawerOverlay>

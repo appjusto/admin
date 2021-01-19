@@ -14,10 +14,16 @@ export type NewGroup = {
 interface GroupFormProps {
   submitGroup(group: NewGroup): void;
   isCreate?: boolean;
+  isLoading?: boolean;
   groupData?: NewGroup;
 }
 
-export const GroupForm = ({ submitGroup, isCreate = false, groupData }: GroupFormProps) => {
+export const GroupForm = ({
+  submitGroup,
+  isCreate = false,
+  isLoading = false,
+  groupData,
+}: GroupFormProps) => {
   const [name, setName] = React.useState('');
   const [required, setRequired] = React.useState(false);
   const [minimum, setMin] = React.useState(0);
@@ -102,7 +108,14 @@ export const GroupForm = ({ submitGroup, isCreate = false, groupData }: GroupFor
           />
         </Flex>
         <Box mt="10">
-          <Button type="submit" w="full" maxW="220px" fontSize="sm">
+          <Button
+            type="submit"
+            w="full"
+            maxW="220px"
+            fontSize="sm"
+            isLoading={isLoading}
+            loadingText={t('Salvando')}
+          >
             {t('Criar grupo')}
           </Button>
         </Box>

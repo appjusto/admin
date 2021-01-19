@@ -3,7 +3,9 @@ import { FileDropzone } from 'common/components/FileDropzone';
 import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput2';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
+import React from 'react';
 import { t } from 'utils/i18n';
+import { DrawerButtons } from '../DrawerButtons';
 import { CategorySelect } from './CategorySelect';
 import { StateProps } from './productReducer';
 
@@ -12,6 +14,9 @@ interface ProductDetailsProps {
   handleStateUpdate(key: string, value: string | number | React.ReactText[] | boolean): void;
   inputRef: React.RefObject<HTMLInputElement> | null | undefined;
   onDropHandler: (acceptedFiles: File[]) => Promise<void>;
+  isEditing: boolean;
+  onSave(): void;
+  onDelete(): void;
 }
 
 export const ProductDetails = ({
@@ -19,6 +24,9 @@ export const ProductDetails = ({
   handleStateUpdate,
   onDropHandler,
   inputRef,
+  isEditing,
+  onSave,
+  onDelete,
 }: ProductDetailsProps) => {
   const {
     name,
@@ -31,8 +39,15 @@ export const ProductDetails = ({
     externalId,
     enabled,
   } = state;
+  const [isLoading, setIsLoading] = React.useState(false);
   return (
-    <>
+    <form
+      onSubmit={(ev) => {
+        ev.preventDefault();
+        setIsLoading(true);
+        onSave();
+      }}
+    >
       <Input
         isRequired
         id="product-drawer-name"
@@ -128,6 +143,12 @@ export const ProductDetails = ({
           {t('Ativar produto após a criação')}
         </Text>
       </Flex>
-    </>
+      <DrawerButtons
+        type="product"
+        isEditing={isEditing}
+        isLoading={isLoading}
+        onDelete={onDelete}
+      />
+    </form>
   );
 };
