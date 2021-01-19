@@ -121,23 +121,25 @@ export const GroupBox = ({ index, group, onUpdateGroup, onDeleteGroup }: GroupBo
             <GroupForm submitGroup={handleUpdate} groupData={group} isLoading={isLoading} />
           )}
           {isAdding && <ComplementForm groupId={group.id} onSuccess={() => setIsAdding(false)} />}
-          <Droppable droppableId={group.id} type="item">
-            {(droppable, snapshot) => (
-              <Box
-                ref={droppable.innerRef}
-                {...droppable.droppableProps}
-                bg={snapshot.isDraggingOver ? 'gray.50' : 'white'}
-                minH="30px"
-                mt="4"
-              >
-                {group.items &&
-                  group.items.map((item, index) => (
-                    <ComplementItem key={item.id} item={item} index={index} />
-                  ))}
-                {droppable.placeholder}
-              </Box>
-            )}
-          </Droppable>
+          {showComplments && (
+            <Droppable droppableId={group.id} type="item">
+              {(droppable, snapshot) => (
+                <Box
+                  ref={droppable.innerRef}
+                  {...droppable.droppableProps}
+                  bg={snapshot.isDraggingOver ? 'gray.50' : 'white'}
+                  minH="30px"
+                  mt="4"
+                >
+                  {group.items &&
+                    group.items.map((item, index) => (
+                      <ComplementItem key={item.id} item={item} index={index} />
+                    ))}
+                  {droppable.placeholder}
+                </Box>
+              )}
+            </Droppable>
+          )}
         </Box>
       )}
     </Draggable>

@@ -30,11 +30,19 @@ export const Groups = ({ groups, productConfig, onUpdateGroup, onDeleteGroup }: 
     if (source.droppableId === destination.droppableId && source.index === destination.index) {
       return; // same location
     }
-    const newProductConfig = menu.updateCategoryIndex(
-      productConfig,
-      draggableId,
-      destination.index
-    );
+    let newProductConfig = menu.empty();
+    if (type === 'group') {
+      newProductConfig = menu.updateCategoryIndex(productConfig, draggableId, destination.index);
+    } else if (type === 'item') {
+      newProductConfig = menu.updateProductIndex(
+        productConfig,
+        draggableId,
+        source.droppableId,
+        destination.droppableId,
+        source.index,
+        destination.index
+      );
+    }
     api.business().updateProduct(businessId!, productId, {
       complementsOrder: newProductConfig,
     });
