@@ -4,16 +4,17 @@ import { ComplementGroup } from 'appjusto-types';
 import { EditButton } from 'common/components/buttons/EditButton';
 import { ReactComponent as DragHandle } from 'common/img/drag-handle.svg';
 import React from 'react';
-import { Link, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
+import { GroupForm, NewGroup } from './GroupForm';
 
 interface GroupBoxProps {
   group: ComplementGroup;
+  updateGroup(newGroup: NewGroup): void;
 }
 
-export const GroupBox = ({ group }: GroupBoxProps) => {
+export const GroupBox = ({ group, updateGroup }: GroupBoxProps) => {
+  const [isEditing, setIsEditing] = React.useState(false);
   const [showComplments, setShowComplements] = React.useState(false);
-  const { url } = useRouteMatch();
   return (
     <Box
       border="1px solid #F2F6EA"
@@ -40,10 +41,21 @@ export const GroupBox = ({ group }: GroupBoxProps) => {
             </Text>
           </Flex>
           <Flex flexDir="row" alignItems="center">
-            <Link to={`${url}`}>
-              <EditButton />
-            </Link>
+            <EditButton title="Editar" onClick={() => setIsEditing(true)} />
             <Button
+              title="Adicionar complemento"
+              ml="2"
+              minW="30px"
+              w="32px"
+              h="32px"
+              p="0"
+              borderColor="#F2F6EA"
+              //onClick={() => setShowComplements(!showComplments)}
+            >
+              +
+            </Button>
+            <Button
+              title="Expandir"
               ml="2"
               minW="30px"
               w="32px"
@@ -58,6 +70,7 @@ export const GroupBox = ({ group }: GroupBoxProps) => {
           </Flex>
         </Flex>
       </Flex>
+      {isEditing && <GroupForm submitGroup={updateGroup} groupData={group} />}
     </Box>
   );
 };

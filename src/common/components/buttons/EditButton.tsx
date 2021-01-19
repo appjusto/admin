@@ -2,7 +2,7 @@ import { IconButton } from '@chakra-ui/react';
 import { ReactComponent as EditIcon } from 'common/img/edit-icon.svg';
 import React from 'react';
 
-export const EditButton = () => (
+export const EditButton = ({ ...props }) => (
   <IconButton
     size="sm"
     borderColor="gray.50"
@@ -10,5 +10,6 @@ export const EditButton = () => (
     aria-label="Edit product"
     variant="outline"
     icon={<EditIcon />}
+    {...props}
   />
 );
