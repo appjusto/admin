@@ -222,6 +222,7 @@ export default class MenuApi {
       }
     }
     try {
+      console.log(image_url);
       await this.refs.getBusinessProductRef(businessId, productId).set({
         ...product,
         image_url,
