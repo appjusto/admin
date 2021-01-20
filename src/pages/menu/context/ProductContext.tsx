@@ -52,17 +52,16 @@ export const ProductContextProvider = (props: ProviderProps) => {
         ...productData,
       };
       if (productId === 'new') {
-        console.log('is new');
         const id = await api
           .business()
           .createProduct(businessId!, newProduct as Product, imageFile);
-        console.log(id);
-        updateMenuConfig(menu.updateProductCategory(menuConfig, id, categoryId!));
+        updateMenuConfig(menu.updateProductCategory(menuConfig, id, productData.categoryId!));
         return true;
       } else {
-        console.log('is update');
         await api.business().updateProduct(businessId!, productId, newProduct, imageFile);
-        updateMenuConfig(menu.updateProductCategory(menuConfig, productId, categoryId!));
+        updateMenuConfig(
+          menu.updateProductCategory(menuConfig, productId, productData.categoryId!)
+        );
         return true;
       }
     })();

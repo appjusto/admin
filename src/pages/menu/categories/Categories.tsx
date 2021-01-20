@@ -20,7 +20,6 @@ export const Categories = ({ productSearch }: Props) => {
     const regexp = new RegExp(productSearch, 'i');
     return products.filter((product) => regexp.test(product.name));
   };
-  console.log(categories);
   const { url } = useRouteMatch();
   // handlers
   const onDragEnd = (result: DropResult) => {

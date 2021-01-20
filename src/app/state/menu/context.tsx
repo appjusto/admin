@@ -23,7 +23,6 @@ export const MenuProvider = ({ businessId, children }: Props) => {
   const products = useObserveProducts(businessId);
   const { menuConfig, updateMenuConfig } = useObserveMenuConfig(businessId);
   const categories = menu.getOrderedMenu(unorderedCategories, products, menuConfig);
-  console.log(categories);
   const value: MenuContextValue = { categories, menuConfig, updateMenuConfig };
   return <MenuProviderContext.Provider value={value}>{children}</MenuProviderContext.Provider>;
 };
