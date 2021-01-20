@@ -48,7 +48,7 @@ export const ComplementForm = ({
       price,
       externalId,
     };
-    //onSaveComplement(groupId, complementId, newItem);
+    onSaveComplement(groupId as string, complementId as string, newItem);
     onSuccess();
   };
 

@@ -14,12 +14,12 @@ export const useObserveComplements = (businessId: string | undefined, enabled: b
   // side effects
   React.useEffect(() => {
     if (!businessId) return;
-    if (!enabled) return;
+    //if (!enabled) return;
     return api.business().observeComplementsGroups(businessId, setGroups);
   }, [api, businessId, enabled]);
   React.useEffect(() => {
     if (!businessId) return;
-    if (!enabled) return;
+    //if (!enabled) return;
     return api.business().observeComplements(businessId, setComplements);
   }, [api, businessId, enabled]);
 

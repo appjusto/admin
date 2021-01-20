@@ -36,10 +36,7 @@ export const ProductContextProvider = (props: ProviderProps) => {
   const api = useContextApi();
   const businessId = useContextBusinessId();
   const { menuConfig, updateMenuConfig } = useContextMenu();
-
   const { productId } = useParams<Params>();
-  console.log('productId', productId);
-
   const product = useProduct(businessId, productId);
   const { groups, complements } = useObserveComplements(
     businessId!,
@@ -53,25 +50,20 @@ export const ProductContextProvider = (props: ProviderProps) => {
     (async () => {
       const newProduct = {
         ...productData,
-        complementsEnabled: false,
-        complementsOrder: {
-          categoriesOrder: [],
-          productsOrderByCategoryId: {},
-        },
       };
-      console.log('newProduct', newProduct);
       if (productId === 'new') {
         console.log('is new');
         const id = await api
           .business()
           .createProduct(businessId!, newProduct as Product, imageFile);
-        if (id) {
-          updateMenuConfig(menu.updateProductCategory(menuConfig, id, categoryId!));
-        }
+        console.log(id);
+        updateMenuConfig(menu.updateProductCategory(menuConfig, id, categoryId!));
+        return true;
       } else {
         console.log('is update');
         await api.business().updateProduct(businessId!, productId, newProduct, imageFile);
         updateMenuConfig(menu.updateProductCategory(menuConfig, productId, categoryId!));
+        return true;
       }
     })();
   };

@@ -144,6 +144,7 @@ export const getOrderedMenu = <T extends object, T2 extends object>(
   products: WithId<T2>[],
   config: MenuConfig | undefined
 ) => {
+  console.log(products);
   if (categories.length === 0 || !config) return [];
   const { categoriesOrder, productsOrderByCategoryId } = config;
   return ordered(categories, categoriesOrder).map((category) => {

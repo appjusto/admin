@@ -6,6 +6,7 @@ import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
 import { useProductContext } from 'pages/menu/context/ProductContext';
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { DrawerButtons } from '../DrawerButtons';
 import { CategorySelect } from './CategorySelect';
@@ -22,8 +23,8 @@ const initialState = {
   enabled: true,
   complementsOrder: menu.empty(),
   complementsEnabled: false,
-  //details
   categoryId: '',
+  //details
   previewURL: null,
   imageFile: null,
   isLoading: false,
@@ -32,6 +33,7 @@ const initialState = {
 
 export const ProductDetails = () => {
   //context
+  const { push } = useHistory();
   const { productId, product, onSaveProduct, onDeleteProduct } = useProductContext();
   //state
   const [state, dispatch] = React.useReducer(productReducer, initialState);
@@ -46,8 +48,8 @@ export const ProductDetails = () => {
     enabled,
     complementsOrder,
     complementsEnabled,
-    //details
     categoryId,
+    //details
     previewURL,
     imageFile,
     isLoading,
@@ -69,6 +71,7 @@ export const ProductDetails = () => {
           enabled: product.enabled ?? true,
           complementsOrder: product.complementsOrder,
           complementsEnabled: product.complementsEnabled ?? false,
+          categoryId: product.categoryId ?? '',
           isEditing: productId === 'new' ? false : true,
         },
       });
@@ -89,10 +92,12 @@ export const ProductDetails = () => {
   }, []);
 
   const onSave = () => {
+    (async () => {})();
     handleStateUpdate('isLoading', true);
     onSaveProduct(
       {
         name,
+        categoryId,
         description,
         price,
         classifications,
@@ -104,6 +109,8 @@ export const ProductDetails = () => {
       },
       imageFile
     );
+    handleStateUpdate('isLoading', false);
+    push('/app/menu');
   };
 
   return (

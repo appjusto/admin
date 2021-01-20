@@ -9,6 +9,7 @@ export const useObserveMenuConfig = (businessId: string | undefined) => {
   //state
   const [menuConfig, setMenuConfig] = React.useState<MenuConfig>(menu.empty());
   const updateMenuConfig = (menuConfig: MenuConfig) => {
+    console.log(menuConfig);
     setMenuConfig(menuConfig); // optimistic update to avoid flickering
     api.business().updateMenuConfig(businessId!, menuConfig);
   };

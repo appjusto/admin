@@ -11,8 +11,8 @@ export interface StateProps {
   enabled: boolean;
   complementsOrder: MenuConfig;
   complementsEnabled: boolean;
-  //details
   categoryId: string;
+  //details
   previewURL: string | null;
   imageFile: File | null;
   isLoading: boolean;

@@ -14,7 +14,6 @@ export const useObserveProducts = (businessId: string | undefined) => {
     if (!businessId) return;
     return api.business().observeProducts(businessId, setProducts);
   }, [api, businessId]);
-
   // return
   return products;
 };
