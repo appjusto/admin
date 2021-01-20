@@ -23,20 +23,20 @@ export const useProduct = (id: string) => {
   //const image = useProductImage(productId);
 
   // mutations
-  const [createProduct, createResult] = useMutation(async (product: Product) =>
-    api.business().createProduct(businessId, productId, product)
-  );
-  const [updateProduct, updateResult] = useMutation(async (product: Partial<Product>) =>
-    api.business().updateProduct(businessId, productId, product)
-  );
+  //const [createProduct, createResult] = useMutation(async (product: Product) =>
+  //  api.business().createProduct(businessId, productId, product)
+  //);
+  //const [updateProduct, updateResult] = useMutation(async (product: Partial<Product>) =>
+  //  api.business().updateProduct(businessId, productId, product)
+  //);
   const [deleteProduct] = useMutation(async () => {
     api.business().deleteProduct(businessId, productId);
   });
   const [uploadPhoto, uploadResult] = useMutation((file: File) => {
     return api.business().uploadProductPhoto(businessId, productId, file, setUploadProgress);
   });
-  const result = createResult || updateResult || uploadResult;
-  const saveProduct = isNew ? createProduct : updateProduct;
+  //const result = createResult || updateResult || uploadResult;
+  //const saveProduct = isNew ? createProduct : updateProduct;
 
   // return
   return {
@@ -44,12 +44,12 @@ export const useProduct = (id: string) => {
     id: productId,
     isNew,
     //image,
-    createProduct,
-    updateProduct,
+    //createProduct,
+    //updateProduct,
     deleteProduct,
-    saveProduct,
+    //saveProduct,
     uploadPhoto,
     uploadProgress,
-    result,
+    //result,
   };
 };

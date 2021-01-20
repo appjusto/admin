@@ -1,26 +1,17 @@
 import { Button, Flex, HStack, Text } from '@chakra-ui/react';
-import * as menu from 'app/api/business/menu/functions';
-import { useProduct } from 'app/api/business/products/useProduct2';
-import { useContextApi } from 'app/state/api/context';
-import { useContextBusinessId } from 'app/state/business/context';
 import { Complement, WithId } from 'appjusto-types';
 import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput2';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
 import Image from 'common/components/Image';
+import { useProductContext } from 'pages/menu/context/ProductContext';
 import React from 'react';
-import { useParams } from 'react-router-dom';
 import { t } from 'utils/i18n';
 
 const fallback = '/static/media/product-placeholder.png';
-
-interface Params {
-  productId: string;
-}
-
 interface ComplementFormProps {
   groupId?: string;
-  complementId?: string | undefined;
+  complementId?: string;
   item?: WithId<Complement>;
   onSuccess(): void;
   onCancel(): void;
@@ -33,11 +24,9 @@ export const ComplementForm = ({
   onSuccess,
   onCancel,
 }: ComplementFormProps) => {
-  const api = useContextApi();
-  const { productId } = useParams<Params>();
-  const businessId = useContextBusinessId();
-  const product = useProduct(businessId, productId);
-
+  //context
+  const { onSaveComplement } = useProductContext();
+  //state
   const [name, setName] = React.useState('');
   const [description, setDescription] = React.useState('');
   const [price, setPrice] = React.useState(0);
@@ -59,19 +48,7 @@ export const ComplementForm = ({
       price,
       externalId,
     };
-
-    if (!complementId) {
-      const { id } = await api.business().createComplement(businessId!, newItem);
-      let newProductConfig = menu.empty();
-      if (product?.complementsOrder && groupId) {
-        newProductConfig = menu.addProductToCategory(product?.complementsOrder, id, groupId);
-      }
-      await api.business().updateProduct(businessId!, productId, {
-        complementsOrder: newProductConfig,
-      });
-    } else {
-      await api.business().updateComplement(businessId!, complementId, newItem);
-    }
+    //onSaveComplement(groupId, complementId, newItem);
     onSuccess();
   };
 

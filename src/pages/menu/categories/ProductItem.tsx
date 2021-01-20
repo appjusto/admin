@@ -1,5 +1,6 @@
 import { Box, Flex, Spacer, Switch, Text } from '@chakra-ui/react';
-import { useProductUpdate } from 'app/api/business/products/useProductUpdate';
+import { useContextApi } from 'app/state/api/context';
+import { useContextBusinessId } from 'app/state/business/context';
 import { Product, WithId } from 'appjusto-types';
 import { EditButton } from 'common/components/buttons/EditButton';
 import { ReactComponent as DragHandle } from 'common/img/drag-handle.svg';
@@ -18,16 +19,22 @@ interface Props {
 export const ProductItem = React.memo(({ product, index }: Props) => {
   // context
   const { url } = useRouteMatch();
+  const api = useContextApi();
+  const businessId = useContextBusinessId();
   //state
   const [price, setPrice] = React.useState(0);
-  // queries
-  //const image = useProductImage(product.id);
   const srcImg = product.image_url ? product.image_url : '/static/media/product-placeholder.png';
-  // mutations
-  const { updateProduct } = useProductUpdate(product.id);
+
   //handlres
   const updatePriceState = (value: number | undefined) => {
     if (value || value === 0) setPrice(value);
+  };
+
+  const onUpdateProduct = async (key: string, value: number | boolean) => {
+    const productData = {
+      [key]: value,
+    };
+    await api.business().updateProduct(businessId!, product.id, productData, null);
   };
   //side effects
   React.useEffect(() => {
@@ -74,7 +81,7 @@ export const ProductItem = React.memo(({ product, index }: Props) => {
                 label={t('Preço')}
                 value={price}
                 onChangeValue={updatePriceState}
-                onBlur={() => updateProduct({ price: price })}
+                onBlur={() => onUpdateProduct('price', price)}
               />
             </Box>
           </Flex>
@@ -83,7 +90,7 @@ export const ProductItem = React.memo(({ product, index }: Props) => {
             isChecked={product.enabled}
             onChange={(ev) => {
               ev.stopPropagation();
-              updateProduct({ enabled: ev.target.checked });
+              onUpdateProduct('enabled', ev.target.checked);
             }}
           />
           <Link to={`${url}/product/${product.id}`}>

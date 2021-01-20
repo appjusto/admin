@@ -9,10 +9,10 @@ export const useProductUpdate = (productId: string) => {
   const businessId = useContextBusinessId()!;
 
   // mutations
-  const [updateProduct, result] = useMutation((changes: Partial<Product>) =>
-    api.business().updateProduct(businessId, productId, changes)
-  );
+  //const [updateProduct, result] = useMutation((changes: Partial<Product>) =>
+  //  api.business().updateProduct(businessId, productId, changes)
+  //);
 
-  // return
-  return { updateProduct, result };
+  return;
+  //return { updateProduct, result };
 };
