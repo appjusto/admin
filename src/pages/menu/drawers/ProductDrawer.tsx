@@ -92,6 +92,11 @@ export const ProductDrawer = (props: Props) => {
         price,
         enabled,
         classifications,
+        complementsEnabled: false,
+        complementsOrder: {
+          categoriesOrder: [],
+          productsOrderByCategoryId: {},
+        },
       });
       updateMenuConfig(menu.updateProductCategory(menuConfig, id, categoryId!));
       props.onClose();
