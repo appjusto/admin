@@ -16,6 +16,7 @@ interface GroupFormProps {
   isCreate?: boolean;
   isLoading?: boolean;
   groupData?: NewGroup;
+  onSuccess(): void;
 }
 
 export const GroupForm = ({
@@ -23,6 +24,7 @@ export const GroupForm = ({
   isCreate = false,
   isLoading = false,
   groupData,
+  onSuccess,
 }: GroupFormProps) => {
   const [name, setName] = React.useState('');
   const [required, setRequired] = React.useState(false);
@@ -47,6 +49,7 @@ export const GroupForm = ({
       maximum,
     };
     submitGroup(newGroup);
+    onSuccess();
   };
 
   if (isCreate) {

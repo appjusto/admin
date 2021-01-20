@@ -1,16 +1,22 @@
 import { MenuConfig } from 'appjusto-types';
 
 export interface StateProps {
+  //product
   name: string;
-  categoryId: string | undefined;
-  description?: string;
+  description: string;
   price: number;
   classifications: string[];
-  imageUrl?: string | undefined;
-  previewURL?: string | undefined;
-  externalId?: string;
+  imageUrl: string | null;
+  externalId: string;
   enabled: boolean;
   complementsOrder: MenuConfig;
+  complementsEnabled: boolean;
+  //details
+  categoryId: string;
+  previewURL: string | null;
+  imageFile: File | null;
+  isLoading: boolean;
+  isEditing: boolean;
 }
 
 export type Actions = { type: 'update_state'; payload: Partial<StateProps> };

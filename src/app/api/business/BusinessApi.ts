@@ -210,32 +210,54 @@ export default class MenuApi {
     return documentAs<Product>(doc);
   }
 
-  async createProduct(businessId: string, productId: string, product: Product) {
+  async createProduct(businessId: string, product: Product, imageFile: File | null) {
     // creating product
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
-    const image_url = await this.getProductImageURL(businessId, productId);
-    await this.refs.getBusinessProductRef(businessId, productId).set({
-      ...product,
-      image_url,
-      createdOn: timestamp,
-      updatedOn: timestamp,
-    } as Product);
+    const productId = this.refs.getBusinessProductsRef(businessId).doc().id;
+    let image_url = null;
+    if (imageFile) {
+      const imageUploaded = await this.uploadProductPhoto(businessId, productId, imageFile);
+      if (imageUploaded) {
+        image_url = await this.getProductImageURL(businessId, productId);
+      }
+    }
+    try {
+      await this.refs.getBusinessProductRef(businessId, productId).set({
+        ...product,
+        image_url,
+        createdOn: timestamp,
+        updatedOn: timestamp,
+      } as Product);
+      return productId;
+    } catch (error) {
+      throw new Error(`createProductError: ${error}`);
+    }
   }
 
-  async updateProduct(businessId: string, productId: string, changes: Partial<Product>) {
-    const id =
-      productId === 'new' ? this.refs.getBusinessProductsRef(businessId).doc().id : productId;
+  async updateProduct(
+    businessId: string,
+    productId: string,
+    changes: Partial<Product>,
+    imageFile: File | null
+  ) {
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
-    const image_url = await this.getProductImageURL(businessId, id);
-    await this.refs.getBusinessProductRef(businessId, id).set(
-      {
-        ...changes,
-        image_url,
-        updatedOn: timestamp,
-      } as Partial<Product>,
-      { merge: true }
-    );
-    return id;
+    if (imageFile) {
+      await this.uploadProductPhoto(businessId, productId, imageFile);
+    }
+    let image_url = changes.image_url ?? (await this.getProductImageURL(businessId, productId));
+    try {
+      await this.refs.getBusinessProductRef(businessId, productId).set(
+        {
+          ...changes,
+          image_url,
+          updatedOn: timestamp,
+        } as Partial<Product>,
+        { merge: true }
+      );
+      return true;
+    } catch (error) {
+      throw new Error(`updateProductError: ${error}`);
+    }
   }
 
   async deleteProduct(businessId: string, productId: string) {

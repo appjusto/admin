@@ -5,6 +5,7 @@ import { DeleteButton } from 'common/components/buttons/DeleteButton';
 import { DropdownButton } from 'common/components/buttons/DropdownButton';
 import { EditButton } from 'common/components/buttons/EditButton';
 import { ReactComponent as DragHandle } from 'common/img/drag-handle.svg';
+import { useProductContext } from 'pages/menu/context/ProductContext';
 import React from 'react';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
 import { t } from 'utils/i18n';
@@ -15,39 +16,36 @@ import { GroupForm, NewGroup } from './GroupForm';
 interface GroupBoxProps {
   index: number;
   group: WithId<ComplementGroup>;
-  onUpdateGroup(groupId: string, changes: Partial<ComplementGroup>): Promise<void>;
-  onDeleteGroup(groupId: string): Promise<void>;
-  onDeleteComplement(complementId: string, groupId: string): Promise<void>;
 }
 
-export const GroupBox = ({
-  index,
-  group,
-  onUpdateGroup,
-  onDeleteGroup,
-  onDeleteComplement,
-}: GroupBoxProps) => {
+export const GroupBox = ({ index, group }: GroupBoxProps) => {
+  //context
+  const {
+    onUpdateComplementsGroup,
+    onDeleteComplementsGroup,
+    onDeleteComplement,
+  } = useProductContext();
+  //state
   const [isEditing, setIsEditing] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
   const [isAdding, setIsAdding] = React.useState(false);
   const [isDeleting, setIsDeleting] = React.useState(false);
   const [showComplments, setShowComplements] = React.useState(false);
 
-  const handleUpdate = async (groupData: NewGroup) => {
+  const handleUpdate = (groupData: NewGroup) => {
     setIsLoading(true);
-    await onUpdateGroup(group.id, groupData);
+    onUpdateComplementsGroup(group.id, groupData);
     setIsLoading(false);
-    setIsEditing(false);
   };
 
-  const handleDeleteGroup = async () => {
+  const handleDeleteGroup = () => {
     setIsLoading(true);
-    await onDeleteGroup(group.id);
+    onDeleteComplementsGroup(group.id);
   };
 
-  const handleDeleteComplement = async (complementId: string) => {
+  const handleDeleteComplement = (complementId: string) => {
     setIsLoading(true);
-    await onDeleteComplement(complementId, group.id);
+    onDeleteComplement(complementId, group.id);
   };
 
   if (isDeleting) {
@@ -141,7 +139,12 @@ export const GroupBox = ({
             </Flex>
           </Flex>
           {isEditing && (
-            <GroupForm submitGroup={handleUpdate} groupData={group} isLoading={isLoading} />
+            <GroupForm
+              submitGroup={handleUpdate}
+              groupData={group}
+              isLoading={isLoading}
+              onSuccess={() => setIsEditing(false)}
+            />
           )}
           {isAdding && (
             <ComplementForm

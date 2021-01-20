@@ -1,50 +1,115 @@
 import { Checkbox, CheckboxGroup, Flex, Switch, Text, VStack } from '@chakra-ui/react';
+import * as menu from 'app/api/business/menu/functions';
 import { FileDropzone } from 'common/components/FileDropzone';
 import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput2';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
+import { useProductContext } from 'pages/menu/context/ProductContext';
 import React from 'react';
 import { t } from 'utils/i18n';
 import { DrawerButtons } from '../DrawerButtons';
 import { CategorySelect } from './CategorySelect';
-import { StateProps } from './productReducer';
+import { productReducer } from './productReducer';
 
-interface ProductDetailsProps {
-  state: StateProps;
-  handleStateUpdate(key: string, value: string | number | React.ReactText[] | boolean): void;
-  inputRef: React.RefObject<HTMLInputElement> | null | undefined;
-  onDropHandler: (acceptedFiles: File[]) => Promise<void>;
-  isEditing: boolean;
-  onSave(): void;
-  onDelete(): void;
-}
+const initialState = {
+  //product
+  name: '',
+  description: '',
+  price: 0,
+  classifications: [],
+  imageUrl: null,
+  externalId: '',
+  enabled: true,
+  complementsOrder: menu.empty(),
+  complementsEnabled: false,
+  //details
+  categoryId: '',
+  previewURL: null,
+  imageFile: null,
+  isLoading: false,
+  isEditing: false,
+};
 
-export const ProductDetails = ({
-  state,
-  handleStateUpdate,
-  onDropHandler,
-  inputRef,
-  isEditing,
-  onSave,
-  onDelete,
-}: ProductDetailsProps) => {
+export const ProductDetails = () => {
+  //context
+  const { productId, product, onSaveProduct, onDeleteProduct } = useProductContext();
+  //state
+  const [state, dispatch] = React.useReducer(productReducer, initialState);
   const {
+    //product
     name,
-    categoryId,
     description,
     price,
     classifications,
     imageUrl,
-    previewURL,
     externalId,
     enabled,
+    complementsOrder,
+    complementsEnabled,
+    //details
+    categoryId,
+    previewURL,
+    imageFile,
+    isLoading,
+    isEditing,
   } = state;
-  const [isLoading, setIsLoading] = React.useState(false);
+  const inputRef = React.useRef<HTMLInputElement>(null);
+
+  React.useEffect(() => {
+    if (product) {
+      dispatch({
+        type: 'update_state',
+        payload: {
+          name: product.name,
+          description: product.description ?? '',
+          price: product.price ?? 0,
+          classifications: product.classifications ?? [],
+          imageUrl: product.image_url ?? null,
+          externalId: product.externalId ?? '',
+          enabled: product.enabled ?? true,
+          complementsOrder: product.complementsOrder,
+          complementsEnabled: product.complementsEnabled ?? false,
+          isEditing: productId === 'new' ? false : true,
+        },
+      });
+    }
+  }, [product]);
+
+  const handleStateUpdate = (key: string, value: any) => {
+    dispatch({ type: 'update_state', payload: { [key]: value } });
+  };
+
+  const onDropHandler = React.useCallback(async (acceptedFiles: File[]) => {
+    const [file] = acceptedFiles;
+    const url = URL.createObjectURL(file);
+    //add file to imageFile
+    handleStateUpdate('imageFile', file);
+    //add url to previewURL
+    handleStateUpdate('previewURL', url);
+  }, []);
+
+  const onSave = () => {
+    handleStateUpdate('isLoading', true);
+    onSaveProduct(
+      {
+        name,
+        description,
+        price,
+        classifications,
+        image_url: imageUrl,
+        externalId,
+        enabled,
+        complementsOrder,
+        complementsEnabled,
+      },
+      imageFile
+    );
+  };
+
   return (
     <form
       onSubmit={(ev) => {
         ev.preventDefault();
-        setIsLoading(true);
         onSave();
       }}
     >
@@ -147,7 +212,7 @@ export const ProductDetails = ({
         type="product"
         isEditing={isEditing}
         isLoading={isLoading}
-        onDelete={onDelete}
+        onDelete={onDeleteProduct}
       />
     </form>
   );

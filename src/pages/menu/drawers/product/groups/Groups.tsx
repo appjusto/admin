@@ -1,35 +1,12 @@
 import { Box } from '@chakra-ui/react';
 import * as menu from 'app/api/business/menu/functions';
-import { useContextApi } from 'app/state/api/context';
-import { useContextBusinessId } from 'app/state/business/context';
-import { ComplementGroup, MenuConfig, WithId } from 'appjusto-types';
+import { useProductContext } from 'pages/menu/context/ProductContext';
 import React from 'react';
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
-import { useParams } from 'react-router-dom';
 import { GroupBox } from './GroupBox';
 
-interface Params {
-  productId: string;
-}
-
-interface Props {
-  groups: WithId<ComplementGroup>[];
-  productConfig: MenuConfig;
-  onUpdateGroup(groupId: string, changes: Partial<ComplementGroup>): Promise<void>;
-  onDeleteGroup(groupId: string): Promise<void>;
-  onDeleteComplement(complementId: string, groupId: string): Promise<void>;
-}
-
-export const Groups = ({
-  groups,
-  productConfig,
-  onUpdateGroup,
-  onDeleteGroup,
-  onDeleteComplement,
-}: Props) => {
-  const api = useContextApi();
-  const { productId } = useParams<Params>();
-  const businessId = useContextBusinessId();
+export const Groups = () => {
+  const { productConfig, onSaveProduct, sortedGroups } = useProductContext();
   // handlers
   const onDragEnd = (result: DropResult) => {
     const { destination, source, draggableId, type } = result;
@@ -50,9 +27,7 @@ export const Groups = ({
         destination.index
       );
     }
-    api.business().updateProduct(businessId!, productId, {
-      complementsOrder: newProductConfig,
-    });
+    onSaveProduct({ complementsOrder: newProductConfig }, null);
   };
   // UI
   return (
@@ -60,15 +35,8 @@ export const Groups = ({
       <Droppable droppableId="groups" type="group">
         {(droppable) => (
           <Box ref={droppable.innerRef} {...droppable.droppableProps}>
-            {groups.map((group, index) => (
-              <GroupBox
-                key={group.name}
-                index={index}
-                group={group}
-                onUpdateGroup={onUpdateGroup}
-                onDeleteGroup={onDeleteGroup}
-                onDeleteComplement={onDeleteComplement}
-              />
+            {sortedGroups.map((group, index) => (
+              <GroupBox key={group.name} index={index} group={group} />
             ))}
             {droppable.placeholder}
           </Box>
