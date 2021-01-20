@@ -6,7 +6,6 @@ import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
 import { useProductContext } from 'pages/menu/context/ProductContext';
 import React from 'react';
-import { useHistory } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { DrawerButtons } from '../DrawerButtons';
 import { CategorySelect } from './CategorySelect';
@@ -31,9 +30,12 @@ const initialState = {
   isEditing: false,
 };
 
-export const ProductDetails = () => {
+interface DetailsProps {
+  onClose(): void;
+}
+
+export const ProductDetails = ({ onClose }: DetailsProps) => {
   //context
-  const { push } = useHistory();
   const { productId, product, onSaveProduct, onDeleteProduct } = useProductContext();
   //state
   const [state, dispatch] = React.useReducer(productReducer, initialState);
@@ -110,7 +112,12 @@ export const ProductDetails = () => {
       imageFile
     );
     handleStateUpdate('isLoading', false);
-    push('/app/menu');
+    onClose();
+  };
+
+  const handleDelete = async () => {
+    onDeleteProduct();
+    onClose();
   };
 
   return (
@@ -219,7 +226,7 @@ export const ProductDetails = () => {
         type="product"
         isEditing={isEditing}
         isLoading={isLoading}
-        onDelete={onDeleteProduct}
+        onDelete={handleDelete}
       />
     </form>
   );

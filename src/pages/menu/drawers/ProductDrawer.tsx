@@ -15,6 +15,8 @@ export const ProductDrawer = (props: Props) => {
   // params
   const { productId } = useProductContext();
   const { path } = useRouteMatch();
+  //props
+  const { onClose } = props;
 
   // UI
   return (
@@ -28,7 +30,7 @@ export const ProductDrawer = (props: Props) => {
       >
         <Switch>
           <Route exact path={`${path}`}>
-            <ProductDetails />
+            <ProductDetails onClose={onClose} />
           </Route>
           <Route exact path={`${path}/complements`}>
             <ProductComplements />
