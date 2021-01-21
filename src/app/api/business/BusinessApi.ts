@@ -167,7 +167,6 @@ export default class MenuApi {
         .where('categoryId', '==', categoryId)
         .get();
       const products = query.docs.map((doc) => ({ id: doc.id, image_url: doc.data().image_url }));
-      console.log(products);
       products.forEach((product) => {
         this.deleteProduct(businessId, product.id, typeof product.image_url === 'string');
       });

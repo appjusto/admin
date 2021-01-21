@@ -22,13 +22,21 @@ import { t } from 'utils/i18n';
 interface LinkProps {
   to: string;
   label: string;
+  isDisabled?: boolean;
 }
 
-const DrawerLink = ({ to, label }: LinkProps) => {
+const DrawerLink = ({ to, label, isDisabled }: LinkProps) => {
   let match = useRouteMatch({
     path: to,
     exact: to.includes('complements') ? false : true,
   });
+  if (isDisabled) {
+    return (
+      <Text pb="2" px="4" mr="4" fontSize="lg" fontWeight="500">
+        {label}
+      </Text>
+    );
+  }
   return (
     <Link
       as={RouterLink}
@@ -83,7 +91,11 @@ export const BaseDrawer = ({
             {type === 'product' && (
               <Flex fontSize="sm" mt="4" flexDir="row" alignItems="flex-start" height="38px">
                 <DrawerLink to={`${url}`} label="Detalhes" />
-                <DrawerLink to={`${url}/complements`} label="Complementos" />
+                <DrawerLink
+                  to={`${url}/complements`}
+                  label="Complementos"
+                  isDisabled={url.includes('new')}
+                />
               </Flex>
             )}
           </DrawerHeader>
