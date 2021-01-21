@@ -1,9 +1,9 @@
 import i18n from 'i18n-js';
 
 const i18nValue = i18n.toCurrency(1000);
-const unit = i18nValue.split(' ')[0];
-const delimiter = i18nValue.split('')[4];
-const separator = i18nValue.split('')[8];
+export const unit = i18nValue.split(' ')[0];
+export const delimiter = i18nValue.split('')[4];
+export const separator = i18nValue.split('')[8];
 
 const removeOccurrences = (value: string, toRemove: string) => {
   const NewToRemove = toRemove.replace(/[-[\]/{}()*+?.\\^$|]/g, '\\$&');
