@@ -8,7 +8,7 @@ import { GroupBox } from './GroupBox';
 export const Groups = () => {
   const { productConfig, onSaveProduct, sortedGroups } = useProductContext();
   // handlers
-  const onDragEnd = (result: DropResult) => {
+  const onDragEndComplements = (result: DropResult) => {
     const { destination, source, draggableId, type } = result;
     if (!destination) return; // dropped outside
     if (source.droppableId === destination.droppableId && source.index === destination.index) {
@@ -29,9 +29,10 @@ export const Groups = () => {
     }
     onSaveProduct({ complementsOrder: newProductConfig }, null);
   };
+
   // UI
   return (
-    <DragDropContext onDragEnd={onDragEnd}>
+    <DragDropContext onDragEnd={onDragEndComplements}>
       <Droppable droppableId="groups" type="group">
         {(droppable) => (
           <Box ref={droppable.innerRef} {...droppable.droppableProps}>

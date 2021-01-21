@@ -31,6 +31,7 @@ export const CategoryItem = React.memo(({ category, products, index, hidden, url
           borderWidth="1px"
           borderRadius="lg"
           bg="white"
+          boxShadow="0px 8px 16px -4px rgba(105, 118, 103, 0.1)"
           ref={draggable.innerRef}
           {...draggable.draggableProps}
           p="6"

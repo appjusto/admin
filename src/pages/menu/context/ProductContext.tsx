@@ -64,9 +64,12 @@ export const ProductContextProvider = (props: ProviderProps) => {
         return id;
       } else {
         await api.business().updateProduct(businessId!, productId, newProduct, imageFile);
-        updateMenuConfig(
-          menu.updateProductCategory(menuConfig, productId, productData.categoryId!)
-        );
+        console.log(menuConfig);
+        if (productData.categoryId) {
+          updateMenuConfig(
+            menu.updateProductCategory(menuConfig, productId, productData.categoryId!)
+          );
+        }
         return productId;
       }
     })();
