@@ -101,6 +101,7 @@ export const ComplementForm = ({
               label={t('Preço')}
               value={price}
               onChangeValue={(value) => setPrice(value)}
+              maxLength={4}
             />
             <Input
               id="complements-item-pdv"

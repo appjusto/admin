@@ -7,6 +7,7 @@ interface Props extends InputProps {
   label?: string;
   value: number;
   onChangeValue: (value: number) => void;
+  maxLength?: number;
 }
 
 export const CurrencyInput = ({
@@ -19,6 +20,7 @@ export const CurrencyInput = ({
   value,
   label,
   onChangeValue: onValueChange,
+  maxLength,
   ...props
 }: Props) => {
   //props
@@ -34,6 +36,11 @@ export const CurrencyInput = ({
   }, [value]);
   //handler
   const handleChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
+    if (maxLength) {
+      if (ev.target.value.length > maxLength + 4) {
+        return;
+      }
+    }
     const newValue = getRawValue(ev.target.value);
     const intValue = parseInt(newValue);
     onValueChange(intValue);

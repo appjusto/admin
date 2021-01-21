@@ -209,6 +209,7 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
         label={t('Preço')}
         placeholder={t('0,00')}
         onChangeValue={(value) => handleStateUpdate('price', value)}
+        maxLength={6}
       />
       <Text mt="8" fontSize="sm" color="black">
         {t('Caso possua um sistema de controle de PDV, insira o código abaixo:')}
