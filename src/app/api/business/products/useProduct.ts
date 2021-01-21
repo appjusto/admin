@@ -32,9 +32,9 @@ export const useProduct = (id: string) => {
   const [deleteProduct] = useMutation(async () => {
     api.business().deleteProduct(businessId, productId);
   });
-  const [uploadPhoto, uploadResult] = useMutation((file: File) => {
-    return api.business().uploadProductPhoto(businessId, productId, file, setUploadProgress);
-  });
+  //const [uploadPhoto, uploadResult] = useMutation((file: File) => {
+  //  return api.business().uploadProductPhoto(businessId, productId, file, setUploadProgress);
+  //});
   //const result = createResult || updateResult || uploadResult;
   //const saveProduct = isNew ? createProduct : updateProduct;
 
@@ -48,7 +48,7 @@ export const useProduct = (id: string) => {
     //updateProduct,
     deleteProduct,
     //saveProduct,
-    uploadPhoto,
+    //uploadPhoto,
     uploadProgress,
     //result,
   };

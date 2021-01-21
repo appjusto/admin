@@ -216,10 +216,7 @@ export default class MenuApi {
     const productId = this.refs.getBusinessProductsRef(businessId).doc().id;
     let image_url = null;
     if (imageFile) {
-      const imageUploaded = await this.uploadProductPhoto(businessId, productId, imageFile);
-      if (imageUploaded) {
-        image_url = await this.getProductImageURL(businessId, productId);
-      }
+      image_url = await this.uploadProductPhoto(businessId, productId, imageFile, null);
     }
     try {
       console.log(image_url);
@@ -242,10 +239,15 @@ export default class MenuApi {
     imageFile: File | null
   ) {
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+    let image_url = changes.image_url;
     if (imageFile) {
-      await this.uploadProductPhoto(businessId, productId, imageFile);
+      image_url = await this.uploadProductPhoto(
+        businessId,
+        productId,
+        imageFile,
+        changes.image_url
+      );
     }
-    let image_url = changes.image_url ?? (await this.getProductImageURL(businessId, productId));
     try {
       await this.refs.getBusinessProductRef(businessId, productId).set(
         {
@@ -266,17 +268,33 @@ export default class MenuApi {
     await this.refs.getBusinessProductRef(businessId, productId).delete();
   }
 
-  uploadProductPhoto(
+  sleepFunction(ms: number) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  async uploadProductPhoto(
     businessId: string,
     productId: string,
     file: File,
+    imageUrl: string | null | undefined,
     progressHandler?: (progress: number) => void
   ) {
-    return this.files.upload(
+    const isSuccess = await this.files.upload(
       file,
       this.refs.getProductUploadStoragePath(businessId, productId),
       progressHandler
     );
+    if (isSuccess) {
+      if (imageUrl) {
+        return imageUrl;
+      } else {
+        //await this.sleepFunction(4000);
+        const newImageUrl = (async () => await this.getProductImageURL(businessId, productId))();
+        return newImageUrl;
+      }
+    } else {
+      return null;
+    }
   }
 
   getProductImageURL(businessId: string, productId: string) {
