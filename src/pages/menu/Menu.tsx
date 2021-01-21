@@ -16,7 +16,6 @@ const Menu = () => {
   const businessId = useContextBusinessId();
   const { path, url } = useRouteMatch();
   const history = useHistory();
-
   // state
   const [productSearch, setProductSearch] = React.useState('');
 

@@ -78,7 +78,7 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
         },
       });
     }
-  }, [product]);
+  }, [product, productId]);
 
   const handleStateUpdate = (key: string, value: any) => {
     dispatch({ type: 'update_state', payload: { [key]: value } });
