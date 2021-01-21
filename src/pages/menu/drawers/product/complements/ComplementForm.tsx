@@ -37,6 +37,7 @@ export const ComplementForm = ({
 
   React.useEffect(() => {
     if (item) {
+      setImageUrl(item.image_url ?? null);
       setName(item.name);
       setDescription(item.description ?? '');
       setPrice(item.price);
@@ -56,12 +57,13 @@ export const ComplementForm = ({
 
   const handleSave = async () => {
     const newItem = {
+      image_url: imageUrl,
       name,
       description,
       price,
       externalId,
     };
-    onSaveComplement(groupId as string, complementId as string, newItem);
+    onSaveComplement(groupId as string, complementId as string, newItem, imageFile);
     onSuccess();
   };
 

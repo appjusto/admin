@@ -1,6 +1,5 @@
 import { BankAccount, Business, Category, Product, WithId } from 'appjusto-types';
 import { Complement, ComplementGroup, MenuConfig } from 'appjusto-types/menu';
-import { resolve } from 'dns';
 import firebase from 'firebase/app';
 import { documentAs, documentsAs } from '../../../core/fb';
 import FilesApi from '../FilesApi';
@@ -375,15 +374,77 @@ export default class MenuApi {
     await this.refs.getBusinessComplementsGroupsRef(businessId).doc(groupId).delete();
   }
 
-  async createComplement(businessId: string, item: Complement) {
-    return await this.refs.getBusinessComplementsRef(businessId).add(item);
+  getComplementImageURL(businessId: string, complementId: string) {
+    return this.files.getDownloadURL(
+      this.refs.getComplementImageStoragePath(businessId, complementId)
+    );
   }
 
-  async updateComplement(businessId: string, complementId: string, item: Complement) {
-    return await this.refs.getBusinessComplementsRef(businessId).doc(complementId).update(item);
+  async uploadComplementPhoto(
+    businessId: string,
+    complementId: string,
+    file: File,
+    imageUrl: string | null
+  ) {
+    const isSuccess = await this.files.upload(
+      file,
+      this.refs.getComplementUploadStoragePath(businessId, complementId),
+      () => {}
+    );
+    if (isSuccess) {
+      if (imageUrl) {
+        return imageUrl;
+      } else {
+        //await this.sleepFunction(4000);
+        const newImageUrl = (async () =>
+          await this.getComplementImageURL(businessId, complementId))();
+        return newImageUrl;
+      }
+    } else {
+      return null;
+    }
+  }
+
+  async createComplement(businessId: string, item: Complement, imageFile: File | null) {
+    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+    const complementId = this.refs.getBusinessComplementsRef(businessId).doc().id;
+    let image_url = null;
+    if (imageFile) {
+      image_url = await this.uploadComplementPhoto(businessId, complementId, imageFile, null);
+    }
+    try {
+      console.log(image_url);
+      await this.refs.getBusinessComplementRef(businessId, complementId).set({
+        ...item,
+        image_url,
+        createdOn: timestamp,
+        updatedOn: timestamp,
+      } as Complement);
+      return complementId;
+    } catch (error) {
+      throw new Error(`createProductError: ${error}`);
+    }
+  }
+
+  async updateComplement(
+    businessId: string,
+    complementId: string,
+    item: Complement,
+    imageFile: File | null
+  ) {
+    let newItem = {
+      ...item,
+    };
+    if (imageFile) {
+      const ImageUrl = await this.uploadComplementPhoto(businessId, complementId, imageFile, null);
+      if (!item.image_url) {
+        newItem.image_url = ImageUrl;
+      }
+    }
+    return await this.refs.getBusinessComplementRef(businessId, complementId).update(newItem);
   }
 
   async deleteComplement(businessId: string, complementId: string) {
-    return await this.refs.getBusinessComplementsRef(businessId).doc(complementId).delete();
+    return await this.refs.getBusinessComplementRef(businessId, complementId).delete();
   }
 }

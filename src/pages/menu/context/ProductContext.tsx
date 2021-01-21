@@ -22,7 +22,12 @@ interface ContextProps {
   onSaveComplementsGroup(group: ComplementGroup): void;
   onUpdateComplementsGroup(groupId: string, changes: Partial<ComplementGroup>): void;
   onDeleteComplementsGroup(groupId: string): void;
-  onSaveComplement(groupId: string, complementId: string, newItem: Complement): void;
+  onSaveComplement(
+    groupId: string,
+    complementId: string,
+    newItem: Complement,
+    imageFile: File | null
+  ): void;
   onDeleteComplement(complementId: string, groupId: string): void;
 }
 
@@ -112,13 +117,14 @@ export const ProductContextProvider = (props: ProviderProps) => {
   const onSaveComplement = async (
     groupId: string | undefined,
     complementId: string | undefined,
-    newItem: Complement
+    newItem: Complement,
+    imageFile: File | null
   ) => {
     if (!complementId) {
-      const { id } = await api.business().createComplement(businessId!, newItem);
+      const newId = await api.business().createComplement(businessId!, newItem, imageFile);
       let newProductConfig = menu.empty();
       if (productConfig && groupId) {
-        newProductConfig = menu.addProductToCategory(productConfig, id, groupId);
+        newProductConfig = menu.addProductToCategory(productConfig, newId, groupId);
       }
       await api.business().updateProduct(
         businessId!,
@@ -129,7 +135,7 @@ export const ProductContextProvider = (props: ProviderProps) => {
         null
       );
     } else {
-      await api.business().updateComplement(businessId!, complementId, newItem);
+      await api.business().updateComplement(businessId!, complementId, newItem, imageFile);
     }
   };
 
