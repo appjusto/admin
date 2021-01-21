@@ -23,10 +23,12 @@ export const FileDropzone = ({
 
   return (
     <Flex
+      position="relative"
       bg={!isDragActive ? 'gray.50' : 'gray.300'}
       borderWidth="1px"
       borderColor="gray.500"
       borderRadius="lg"
+      cursor="pointer"
       width={width}
       height={height}
       {...props}
