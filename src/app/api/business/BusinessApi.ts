@@ -246,24 +246,32 @@ export default class MenuApi {
     imageFile: File | null
   ) {
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
-    let image_url = changes.image_url;
-    if (imageFile) {
-      image_url = await this.uploadProductPhoto(
-        businessId,
-        productId,
-        imageFile,
-        changes.image_url
-      );
+    let newProductObject = {};
+    if (changes.image_url) {
+      let image_url = changes.image_url;
+      if (imageFile) {
+        changes.image_url = await this.uploadProductPhoto(
+          businessId,
+          productId,
+          imageFile,
+          changes.image_url
+        );
+      }
+      newProductObject = {
+        ...changes,
+        image_url,
+        updatedOn: timestamp,
+      };
+    } else {
+      newProductObject = {
+        ...changes,
+        updatedOn: timestamp,
+      };
     }
     try {
-      await this.refs.getBusinessProductRef(businessId, productId).set(
-        {
-          ...changes,
-          image_url,
-          updatedOn: timestamp,
-        } as Partial<Product>,
-        { merge: true }
-      );
+      await this.refs
+        .getBusinessProductRef(businessId, productId)
+        .set(newProductObject as Partial<Product>, { merge: true });
       return true;
     } catch (error) {
       throw new Error(`updateProductError: ${error}`);

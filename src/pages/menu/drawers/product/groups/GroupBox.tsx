@@ -32,6 +32,12 @@ export const GroupBox = ({ index, group }: GroupBoxProps) => {
   const [isDeleting, setIsDeleting] = React.useState(false);
   const [showComplments, setShowComplements] = React.useState(false);
 
+  React.useEffect(() => {
+    if (group.items && group.items?.length > 0) {
+      setShowComplements(true);
+    }
+  }, [group]);
+
   const handleUpdate = (groupData: NewGroup) => {
     setIsLoading(true);
     onUpdateComplementsGroup(group.id, groupData);
