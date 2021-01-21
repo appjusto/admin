@@ -17,6 +17,7 @@ export interface StateProps {
   imageFile: File | null;
   isLoading: boolean;
   isEditing: boolean;
+  saveSuccess: boolean;
 }
 
 export type Actions = { type: 'update_state'; payload: Partial<StateProps> };

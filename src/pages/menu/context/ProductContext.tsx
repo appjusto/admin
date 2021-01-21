@@ -18,7 +18,7 @@ interface ContextProps {
   productConfig: MenuConfig;
   sortedGroups: WithId<ComplementGroup>[];
   onSaveProduct(productData: Partial<Product>, imageFile: File | null): void;
-  onDeleteProduct(): void;
+  onDeleteProduct(hasImage: boolean): void;
   onSaveComplementsGroup(group: ComplementGroup): void;
   onUpdateComplementsGroup(groupId: string, changes: Partial<ComplementGroup>): void;
   onDeleteComplementsGroup(groupId: string): void;
@@ -67,11 +67,11 @@ export const ProductContextProvider = (props: ProviderProps) => {
     })();
   };
 
-  const onDeleteProduct = () => {
+  const onDeleteProduct = (hasImage: boolean) => {
     (async () => {
       if (categoryId) {
         updateMenuConfig(menu.removeProductFromCategory(menuConfig, productId, categoryId));
-        await api.business().deleteProduct(businessId!, productId);
+        await api.business().deleteProduct(businessId!, productId, hasImage);
       }
     })();
   };

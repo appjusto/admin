@@ -1,5 +1,6 @@
 import { BankAccount, Business, Category, Product, WithId } from 'appjusto-types';
 import { Complement, ComplementGroup, MenuConfig } from 'appjusto-types/menu';
+import { resolve } from 'dns';
 import firebase from 'firebase/app';
 import { documentAs, documentsAs } from '../../../core/fb';
 import FilesApi from '../FilesApi';
@@ -161,11 +162,18 @@ export default class MenuApi {
 
   async deleteCategory(businessId: string, categoryId: string, categoryProducts: string[]) {
     if (categoryProducts?.length > 0) {
-      categoryProducts.forEach((productId) => {
-        this.deleteProduct(businessId, productId);
+      const query = await this.refs
+        .getBusinessProductsRef(businessId)
+        .where('categoryId', '==', categoryId)
+        .get();
+      const products = query.docs.map((doc) => ({ id: doc.id, image_url: doc.data().image_url }));
+      console.log(products);
+      products.forEach((product) => {
+        this.deleteProduct(businessId, product.id, typeof product.image_url === 'string');
       });
     }
     await this.refs.getBusinessCategoryRef(businessId, categoryId).delete();
+    return;
   }
 
   // products
@@ -263,8 +271,12 @@ export default class MenuApi {
     }
   }
 
-  async deleteProduct(businessId: string, productId: string) {
-    await this.files.deleteStorageFile(this.refs.getProductImageStoragePath(businessId, productId));
+  async deleteProduct(businessId: string, productId: string, hasImage: boolean) {
+    if (hasImage) {
+      await this.files.deleteStorageFile(
+        this.refs.getProductImageStoragePath(businessId, productId)
+      );
+    }
     await this.refs.getBusinessProductRef(businessId, productId).delete();
   }
 

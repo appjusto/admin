@@ -29,9 +29,9 @@ export const useProduct = (id: string) => {
   //const [updateProduct, updateResult] = useMutation(async (product: Partial<Product>) =>
   //  api.business().updateProduct(businessId, productId, product)
   //);
-  const [deleteProduct] = useMutation(async () => {
-    api.business().deleteProduct(businessId, productId);
-  });
+  //const [deleteProduct] = useMutation(async () => {
+  // api.business().deleteProduct(businessId, productId);
+  //});
   //const [uploadPhoto, uploadResult] = useMutation((file: File) => {
   //  return api.business().uploadProductPhoto(businessId, productId, file, setUploadProgress);
   //});
@@ -46,7 +46,7 @@ export const useProduct = (id: string) => {
     //image,
     //createProduct,
     //updateProduct,
-    deleteProduct,
+    //deleteProduct,
     //saveProduct,
     //uploadPhoto,
     uploadProgress,

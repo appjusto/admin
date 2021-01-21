@@ -1,4 +1,13 @@
-import { Checkbox, CheckboxGroup, Flex, Switch, Text, VStack } from '@chakra-ui/react';
+import {
+  Button,
+  Checkbox,
+  CheckboxGroup,
+  Flex,
+  HStack,
+  Switch,
+  Text,
+  VStack,
+} from '@chakra-ui/react';
 import * as menu from 'app/api/business/menu/functions';
 import { FileDropzone } from 'common/components/FileDropzone';
 import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput2';
@@ -6,6 +15,7 @@ import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
 import { useProductContext } from 'pages/menu/context/ProductContext';
 import React from 'react';
+import { Link, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { DrawerButtons } from '../DrawerButtons';
 import { CategorySelect } from './CategorySelect';
@@ -28,6 +38,7 @@ const initialState = {
   imageFile: null,
   isLoading: false,
   isEditing: false,
+  saveSuccess: false,
 };
 
 interface DetailsProps {
@@ -36,6 +47,7 @@ interface DetailsProps {
 
 export const ProductDetails = ({ onClose }: DetailsProps) => {
   //context
+  const { url } = useRouteMatch();
   const { productId, product, onSaveProduct, onDeleteProduct } = useProductContext();
   //state
   const [state, dispatch] = React.useReducer(productReducer, initialState);
@@ -56,6 +68,7 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
     imageFile,
     isLoading,
     isEditing,
+    saveSuccess,
   } = state;
   const inputRef = React.useRef<HTMLInputElement>(null);
 
@@ -82,6 +95,10 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
 
   const handleStateUpdate = (key: string, value: any) => {
     dispatch({ type: 'update_state', payload: { [key]: value } });
+  };
+
+  const clearState = () => {
+    dispatch({ type: 'update_state', payload: initialState });
   };
 
   const onDropHandler = React.useCallback(async (acceptedFiles: File[]) => {
@@ -112,13 +129,33 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
       imageFile
     );
     handleStateUpdate('isLoading', false);
-    onClose();
+    handleStateUpdate('saveSuccess', true);
   };
 
   const handleDelete = async () => {
-    onDeleteProduct();
+    onDeleteProduct(typeof imageUrl === 'string');
     onClose();
   };
+
+  if (saveSuccess) {
+    console.log(url);
+    return (
+      <Flex flexDir="column">
+        <Text fontSize="lg" fontWeight="700">
+          {t('Produto salvo com sucesso!')}
+        </Text>
+        <Text>{t('O que gostaria de fazer agora?')}</Text>
+        <HStack mt="4" spacing="4">
+          <Button onClick={() => clearState()} variant="outline">
+            {t('Salvar um novo produto')}
+          </Button>
+          <Link to={`${url}/complements`}>
+            <Button variant="outline">{t('Adicionar complementos')}</Button>
+          </Link>
+        </HStack>
+      </Flex>
+    );
+  }
 
   return (
     <form
