@@ -138,7 +138,6 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
   };
 
   if (saveSuccess) {
-    console.log(url);
     return (
       <Flex flexDir="column">
         <Text fontSize="lg" fontWeight="700">
