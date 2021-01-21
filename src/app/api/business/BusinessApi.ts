@@ -386,22 +386,26 @@ export default class MenuApi {
     file: File,
     imageUrl: string | null
   ) {
-    const isSuccess = await this.files.upload(
-      file,
-      this.refs.getComplementUploadStoragePath(businessId, complementId),
-      () => {}
-    );
-    if (isSuccess) {
-      if (imageUrl) {
-        return imageUrl;
+    try {
+      const isSuccess = await this.files.upload(
+        file,
+        this.refs.getComplementUploadStoragePath(businessId, complementId),
+        () => {}
+      );
+      if (isSuccess) {
+        if (imageUrl) {
+          return imageUrl;
+        } else {
+          //await this.sleepFunction(4000);
+          const newImageUrl = (async () =>
+            await this.getComplementImageURL(businessId, complementId))();
+          return newImageUrl;
+        }
       } else {
-        //await this.sleepFunction(4000);
-        const newImageUrl = (async () =>
-          await this.getComplementImageURL(businessId, complementId))();
-        return newImageUrl;
+        return null;
       }
-    } else {
-      return null;
+    } catch (error) {
+      throw new Error(`uploadComplementPhotoError: ${error}`);
     }
   }
 
@@ -436,12 +440,21 @@ export default class MenuApi {
       ...item,
     };
     if (imageFile) {
-      const ImageUrl = await this.uploadComplementPhoto(businessId, complementId, imageFile, null);
+      const ImageUrl = await this.uploadComplementPhoto(
+        businessId,
+        complementId,
+        imageFile,
+        item.image_url
+      );
       if (!item.image_url) {
         newItem.image_url = ImageUrl;
       }
     }
-    return await this.refs.getBusinessComplementRef(businessId, complementId).update(newItem);
+    try {
+      return await this.refs.getBusinessComplementRef(businessId, complementId).update(newItem);
+    } catch (error) {
+      throw new Error(`updateComplementError: ${error}`);
+    }
   }
 
   async deleteComplement(businessId: string, complementId: string) {
