@@ -15,7 +15,7 @@ import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
 import { useProductContext } from 'pages/menu/context/ProductContext';
 import React from 'react';
-import { Link, useRouteMatch } from 'react-router-dom';
+import { Link, useHistory, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { DrawerButtons } from '../DrawerButtons';
 import { CategorySelect } from './CategorySelect';
@@ -48,6 +48,7 @@ interface DetailsProps {
 export const ProductDetails = ({ onClose }: DetailsProps) => {
   //context
   const { url } = useRouteMatch();
+  const { push } = useHistory();
   const { productId, product, onSaveProduct, onDeleteProduct } = useProductContext();
   //state
   const [state, dispatch] = React.useReducer(productReducer, initialState);
@@ -73,7 +74,7 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
   const inputRef = React.useRef<HTMLInputElement>(null);
 
   React.useEffect(() => {
-    if (product) {
+    if (product && productId !== 'new') {
       dispatch({
         type: 'update_state',
         payload: {
@@ -111,25 +112,36 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
   }, []);
 
   const onSave = () => {
-    (async () => {})();
     handleStateUpdate('isLoading', true);
-    onSaveProduct(
-      {
-        name,
-        categoryId,
-        description,
-        price,
-        classifications,
-        image_url: imageUrl,
-        externalId,
-        enabled,
-        complementsOrder,
-        complementsEnabled,
-      },
-      imageFile
-    );
-    handleStateUpdate('isLoading', false);
-    handleStateUpdate('saveSuccess', true);
+    (async () => {
+      const newId = await onSaveProduct(
+        {
+          name,
+          categoryId,
+          description,
+          price,
+          classifications,
+          image_url: imageUrl,
+          externalId,
+          enabled,
+          complementsOrder,
+          complementsEnabled,
+        },
+        imageFile
+      );
+      handleStateUpdate('isLoading', false);
+      handleStateUpdate('saveSuccess', true);
+      if (url.includes('new')) {
+        const newUrl = url.replace('new', newId);
+        push(newUrl);
+      }
+    })();
+  };
+
+  const handleSaveOther = () => {
+    clearState();
+    const newUrl = url.replace(productId, 'new');
+    push(newUrl);
   };
 
   const handleDelete = async () => {
@@ -145,7 +157,7 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
         </Text>
         <Text>{t('O que gostaria de fazer agora?')}</Text>
         <HStack mt="4" spacing="4">
-          <Button onClick={() => clearState()} variant="outline">
+          <Button onClick={handleSaveOther} variant="outline">
             {t('Salvar um novo produto')}
           </Button>
           <Link to={`${url}/complements`}>

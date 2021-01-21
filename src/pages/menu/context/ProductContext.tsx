@@ -17,7 +17,7 @@ interface ContextProps {
   product: WithId<Product> | undefined;
   productConfig: MenuConfig;
   sortedGroups: WithId<ComplementGroup>[];
-  onSaveProduct(productData: Partial<Product>, imageFile: File | null): void;
+  onSaveProduct(productData: Partial<Product>, imageFile: File | null): Promise<string>;
   onDeleteProduct(hasImage: boolean): void;
   onSaveComplementsGroup(group: ComplementGroup): void;
   onUpdateComplementsGroup(groupId: string, changes: Partial<ComplementGroup>): void;
@@ -47,7 +47,7 @@ export const ProductContextProvider = (props: ProviderProps) => {
   const productConfig = product?.complementsOrder ?? menu.empty();
 
   const onSaveProduct = (productData: Partial<Product>, imageFile: File | null) => {
-    (async () => {
+    const id = (async () => {
       const newProduct = {
         ...productData,
       };
@@ -56,15 +56,16 @@ export const ProductContextProvider = (props: ProviderProps) => {
           .business()
           .createProduct(businessId!, newProduct as Product, imageFile);
         updateMenuConfig(menu.updateProductCategory(menuConfig, id, productData.categoryId!));
-        return true;
+        return id;
       } else {
         await api.business().updateProduct(businessId!, productId, newProduct, imageFile);
         updateMenuConfig(
           menu.updateProductCategory(menuConfig, productId, productData.categoryId!)
         );
-        return true;
+        return productId;
       }
     })();
+    return id;
   };
 
   const onDeleteProduct = (hasImage: boolean) => {

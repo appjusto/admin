@@ -32,7 +32,7 @@ const DrawerLink = ({ to, label, isDisabled }: LinkProps) => {
   });
   if (isDisabled) {
     return (
-      <Text pb="2" px="4" mr="4" fontSize="lg" fontWeight="500">
+      <Text pb="2" px="4" mr="4" fontSize="lg" fontWeight="500" color="gray.500">
         {label}
       </Text>
     );
