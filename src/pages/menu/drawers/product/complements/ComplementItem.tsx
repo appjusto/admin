@@ -13,7 +13,7 @@ interface Props {
   item: WithId<Complement>;
   index: number;
   isLoading: boolean;
-  handleDelete(complementId: string): void;
+  handleDelete(complementId: string, hasImage: boolean): void;
 }
 
 const itemPriceFormatter = (price: number) => {
@@ -61,7 +61,7 @@ export const ComplementItem = ({ item, index, isLoading, handleDelete }: Props) 
               size="sm"
               w="220px"
               variant="danger"
-              onClick={() => handleDelete(item.id)}
+              onClick={() => handleDelete(item.id, typeof item.image_url === 'string')}
               isLoading={isLoading}
               loadingText={t('Apagando')}
             >

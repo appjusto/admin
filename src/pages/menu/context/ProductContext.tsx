@@ -28,7 +28,7 @@ interface ContextProps {
     newItem: Complement,
     imageFile: File | null
   ): void;
-  onDeleteComplement(complementId: string, groupId: string): void;
+  onDeleteComplement(complementId: string, groupId: string, hasImage: boolean): void;
 }
 
 const ProductContext = React.createContext<ContextProps>({} as ContextProps);
@@ -141,7 +141,7 @@ export const ProductContextProvider = (props: ProviderProps) => {
     }
   };
 
-  const onDeleteComplement = async (complementId: string, groupId: string) => {
+  const onDeleteComplement = async (complementId: string, groupId: string, hasImage: boolean) => {
     const newProductConfig = menu.removeProductFromCategory(productConfig, complementId, groupId);
     await api.business().updateProduct(
       businessId!,
@@ -151,7 +151,7 @@ export const ProductContextProvider = (props: ProviderProps) => {
       },
       null
     );
-    await api.business().deleteComplement(businessId!, complementId);
+    await api.business().deleteComplement(businessId!, complementId, hasImage);
   };
 
   return (

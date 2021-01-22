@@ -49,9 +49,9 @@ export const GroupBox = ({ index, group }: GroupBoxProps) => {
     onDeleteComplementsGroup(group.id);
   };
 
-  const handleDeleteComplement = (complementId: string) => {
+  const handleDeleteComplement = (complementId: string, hasImage: boolean) => {
     setIsLoading(true);
-    onDeleteComplement(complementId, group.id);
+    onDeleteComplement(complementId, group.id, hasImage);
   };
 
   if (isDeleting) {

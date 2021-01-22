@@ -457,7 +457,12 @@ export default class MenuApi {
     }
   }
 
-  async deleteComplement(businessId: string, complementId: string) {
+  async deleteComplement(businessId: string, complementId: string, hasImage: boolean) {
+    if (hasImage) {
+      await this.files.deleteStorageFile(
+        this.refs.getComplementImageStoragePath(businessId, complementId)
+      );
+    }
     return await this.refs.getBusinessComplementRef(businessId, complementId).delete();
   }
 }
