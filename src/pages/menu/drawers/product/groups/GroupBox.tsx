@@ -1,4 +1,4 @@
-import { Box, Button, Flex, HStack, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, HStack, Text, Tooltip } from '@chakra-ui/react';
 import { ComplementGroup, WithId } from 'appjusto-types';
 import { AddButton } from 'common/components/buttons/AddButton';
 import { DeleteButton } from 'common/components/buttons/DeleteButton';
@@ -125,22 +125,34 @@ export const GroupBox = ({ index, group }: GroupBoxProps) => {
                 </Text>
               </Flex>
               <Flex flexDir="row" alignItems="center">
-                <AddButton title={t('Adicionar item')} onClick={() => setIsAdding(!isAdding)} />
-                <EditButton title={t('Editar')} onClick={() => setIsEditing(!isEditing)} />
-                <DeleteButton
-                  title={t('Excluir grupo')}
-                  onClick={() => {
-                    if (isEditing) {
-                      setIsEditing(false);
-                    }
-                    setIsDeleting(true);
-                  }}
-                />
-                <DropdownButton
-                  title={t('Expandir')}
-                  isExpanded={showComplments}
-                  onClick={() => setShowComplements(!showComplments)}
-                />
+                <Tooltip
+                  placement="top"
+                  label={t('Adicionar item')}
+                  aria-label={t('Adicionar item')}
+                >
+                  <AddButton onClick={() => setIsAdding(!isAdding)} />
+                </Tooltip>
+                <Tooltip placement="top" label={t('Editar')} aria-label={t('Editar')}>
+                  <EditButton title={t('Editar')} onClick={() => setIsEditing(!isEditing)} />
+                </Tooltip>
+                <Tooltip placement="top" label={t('Excluir grupo')} aria-label={t('Excluir grupo')}>
+                  <DeleteButton
+                    title={t('Excluir grupo')}
+                    onClick={() => {
+                      if (isEditing) {
+                        setIsEditing(false);
+                      }
+                      setIsDeleting(true);
+                    }}
+                  />
+                </Tooltip>
+                <Tooltip placement="top" label={t('Expandir')} aria-label={t('Expandir')}>
+                  <DropdownButton
+                    title={t('Expandir')}
+                    isExpanded={showComplments}
+                    onClick={() => setShowComplements(!showComplments)}
+                  />
+                </Tooltip>
               </Flex>
             </Flex>
           </Flex>

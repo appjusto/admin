@@ -1,4 +1,5 @@
 import { Button, ButtonProps } from '@chakra-ui/react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 
 interface Props extends ButtonProps {
@@ -6,19 +7,21 @@ interface Props extends ButtonProps {
   link?: string;
 }
 
-export const CustomButton = ({ label, link, ...props }: Props) => {
-  if (link) {
+export const CustomButton = React.forwardRef<HTMLButtonElement, Props>(
+  ({ label, link, ...props }, ref) => {
+    if (link) {
+      return (
+        <Link to={link}>
+          <Button ref={ref} mt="16px" {...props}>
+            {label}
+          </Button>
+        </Link>
+      );
+    }
     return (
-      <Link to={link}>
-        <Button mt="16px" {...props}>
-          {label}
-        </Button>
-      </Link>
+      <Button ref={ref} width="100%" maxW="220px" h="60px" mt="16px" {...props}>
+        {label}
+      </Button>
     );
   }
-  return (
-    <Button width="100%" maxW="220px" h="60px" mt="16px" {...props}>
-      {label}
-    </Button>
-  );
-};
+);

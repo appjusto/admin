@@ -1,9 +1,11 @@
 import { DeleteIcon } from '@chakra-ui/icons';
-import { Button } from '@chakra-ui/react';
+import { Button, ButtonProps } from '@chakra-ui/react';
+import React from 'react';
 
-export const DeleteButton = ({ ...props }) => {
+export const DeleteButton = React.forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
   return (
     <Button
+      ref={ref}
       variant="dangerLight"
       ml="2"
       minW="30px"
@@ -17,4 +19,4 @@ export const DeleteButton = ({ ...props }) => {
       <DeleteIcon />
     </Button>
   );
-};
+});

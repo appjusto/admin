@@ -1,4 +1,4 @@
-import { Box, Flex, Spacer, Switch, Text } from '@chakra-ui/react';
+import { Box, Flex, Spacer, Switch, Text, Tooltip } from '@chakra-ui/react';
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusinessId } from 'app/state/business/context';
 import { Product, WithId } from 'appjusto-types';
@@ -94,7 +94,9 @@ export const ProductItem = React.memo(({ product, index }: Props) => {
             }}
           />
           <Link to={`${url}/product/${product.id}`}>
-            <EditButton />
+            <Tooltip placement="top" label={t('Editar')} aria-label={t('Editar')}>
+              <EditButton />
+            </Tooltip>
           </Link>
         </Flex>
       )}

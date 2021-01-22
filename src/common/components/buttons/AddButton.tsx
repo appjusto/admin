@@ -1,9 +1,11 @@
 import { SmallAddIcon } from '@chakra-ui/icons';
-import { Button } from '@chakra-ui/react';
+import { Button, ButtonProps } from '@chakra-ui/react';
+import React from 'react';
 
-export const AddButton = ({ ...props }) => {
+export const AddButton = React.forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
   return (
     <Button
+      ref={ref}
       ml="2"
       minW="30px"
       w="32px"
@@ -16,4 +18,4 @@ export const AddButton = ({ ...props }) => {
       <SmallAddIcon />
     </Button>
   );
-};
+});

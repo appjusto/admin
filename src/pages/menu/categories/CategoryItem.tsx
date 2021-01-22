@@ -1,4 +1,4 @@
-import { Box, Flex, Heading, Spacer, Switch } from '@chakra-ui/react';
+import { Box, Flex, Heading, Spacer, Switch, Tooltip } from '@chakra-ui/react';
 import { useCategory } from 'app/api/business/categories/useCategory';
 import { Category, Product, WithId } from 'appjusto-types';
 import { EditButton } from 'common/components/buttons/EditButton';
@@ -6,6 +6,7 @@ import { ReactComponent as DragHandle } from 'common/img/drag-handle.svg';
 import React from 'react';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
 import { Link } from 'react-router-dom';
+import { t } from 'utils/i18n';
 import { ProductItem } from './ProductItem';
 
 interface Props {
@@ -54,7 +55,9 @@ export const CategoryItem = React.memo(({ category, products, index, hidden, url
               }}
             />
             <Link to={`${url}/category/${category.id}`}>
-              <EditButton />
+              <Tooltip placement="top" label={t('Editar')} aria-label={t('Editar')}>
+                <EditButton />
+              </Tooltip>
             </Link>
           </Flex>
           <Droppable droppableId={category.id} type="product">

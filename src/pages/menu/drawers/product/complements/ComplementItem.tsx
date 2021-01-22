@@ -1,4 +1,4 @@
-import { Box, Button, Flex, HStack, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, HStack, Text, Tooltip } from '@chakra-ui/react';
 import { Complement, WithId } from 'appjusto-types';
 import { DeleteButton } from 'common/components/buttons/DeleteButton';
 import { EditButton } from 'common/components/buttons/EditButton';
@@ -99,8 +99,12 @@ export const ComplementItem = ({ item, index, isLoading, handleDelete }: Props) 
               <Text fontSize="xs" fontWeight="700">
                 {itemPriceFormatter(item.price)}
               </Text>
-              <EditButton onClick={() => setIsEditing(true)} />
-              <DeleteButton onClick={() => setIsDeleting(true)} />
+              <Tooltip placement="top" label={t('Editar')} aria-label={t('Editar')}>
+                <EditButton onClick={() => setIsEditing(true)} />
+              </Tooltip>
+              <Tooltip placement="top" label={t('Excluir')} aria-label={t('Excluir')}>
+                <DeleteButton onClick={() => setIsDeleting(true)} />
+              </Tooltip>
             </Flex>
           </Flex>
         </Flex>
