@@ -19,13 +19,12 @@ export default class FilesApi {
           resolve(true);
         }
       );
-      //const metaData = await ref.getMetadata();
-      //console.log(metaData);
     });
   }
 
   async getDownloadURL(path: string): Promise<string | null> {
     const ref = this.storage.ref().child(path);
+    console.log('path chegando no getDownloadURL', path);
     try {
       const uri = await ref.getDownloadURL();
       return uri;

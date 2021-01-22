@@ -220,12 +220,11 @@ export default class MenuApi {
     // creating product
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
     const productId = this.refs.getBusinessProductsRef(businessId).doc().id;
-    let image_url = null;
+    let image_url: string | null = null;
     if (imageFile) {
       image_url = await this.uploadProductPhoto(businessId, productId, imageFile, null);
     }
     try {
-      console.log(image_url);
       await this.refs.getBusinessProductRef(businessId, productId).set({
         ...product,
         image_url,
@@ -247,7 +246,7 @@ export default class MenuApi {
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
     let newProductObject = {};
     if (changes.image_url !== undefined) {
-      let image_url = null;
+      let image_url: string | null = null;
       if (imageFile) {
         image_url = await this.uploadProductPhoto(
           businessId,
@@ -306,8 +305,8 @@ export default class MenuApi {
       if (imageUrl) {
         return imageUrl;
       } else {
-        //await this.sleepFunction(4000);
-        const newImageUrl = (async () => await this.getProductImageURL(businessId, productId))();
+        const newImageUrl = await this.getProductImageURL(businessId, productId);
+        console.log('ImageUrl recebida', newImageUrl);
         return newImageUrl;
       }
     } else {
