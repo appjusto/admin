@@ -32,14 +32,13 @@ export default class FilesApi {
       let success = false;
       const getUrl = async () => {
         await this.sleepFunction(delay);
-        let uri = await ref
+        await ref
           .getDownloadURL()
-          .then((res: string) => res)
+          .then((res: string) => {
+            success = true;
+            resolve(res);
+          })
           .catch(() => null);
-        if (typeof uri === 'string') {
-          success = true;
-          resolve(uri);
-        }
       };
       do {
         console.log('Do !');
