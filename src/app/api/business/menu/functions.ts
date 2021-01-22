@@ -1,6 +1,5 @@
 import { arrayMove } from 'app/utils/arrayMove';
-import { Category, MenuConfig, Product, WithId } from 'appjusto-types';
-import { Complement, ComplementGroup } from 'appjusto-types/menu';
+import { MenuConfig, WithId } from 'appjusto-types';
 import { without, omit } from 'lodash';
 
 export const empty = (): MenuConfig => ({ categoriesOrder: [], productsOrderByCategoryId: {} });
