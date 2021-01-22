@@ -19,6 +19,8 @@ export default class FilesApi {
           resolve(true);
         }
       );
+      //const metaData = await ref.getMetadata();
+      //console.log(metaData);
     });
   }
 

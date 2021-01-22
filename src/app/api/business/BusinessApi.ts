@@ -246,10 +246,10 @@ export default class MenuApi {
   ) {
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
     let newProductObject = {};
-    if (changes.image_url) {
-      let image_url = changes.image_url;
+    if (changes.image_url !== undefined) {
+      let image_url = null;
       if (imageFile) {
-        changes.image_url = await this.uploadProductPhoto(
+        image_url = await this.uploadProductPhoto(
           businessId,
           productId,
           imageFile,
