@@ -305,6 +305,7 @@ export default class MenuApi {
       if (imageUrl) {
         return imageUrl;
       } else {
+        //await this.sleepFunction(5000);
         const newImageUrl = await this.getProductImageURL(businessId, productId);
         console.log('ImageUrl recebida', newImageUrl);
         return newImageUrl;
@@ -395,9 +396,8 @@ export default class MenuApi {
         if (imageUrl) {
           return imageUrl;
         } else {
-          //await this.sleepFunction(4000);
-          const newImageUrl = (async () =>
-            await this.getComplementImageURL(businessId, complementId))();
+          await this.sleepFunction(5000);
+          const newImageUrl = await this.getComplementImageURL(businessId, complementId);
           return newImageUrl;
         }
       } else {

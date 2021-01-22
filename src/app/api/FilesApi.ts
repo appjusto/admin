@@ -22,15 +22,47 @@ export default class FilesApi {
     });
   }
 
+  sleepFunction(ms: number) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  getDownloadUrlWithLoop(ref: any, times: number, delay: number) {
+    return new Promise(async (resolve, reject) => {
+      let n = 0;
+      let success = false;
+      const getUrl = async () => {
+        await this.sleepFunction(delay);
+        let uri = await ref
+          .getDownloadURL()
+          .then((res: string) => res)
+          .catch(() => null);
+        if (typeof uri === 'string') {
+          success = true;
+          resolve(uri);
+        }
+      };
+      do {
+        console.log('Do !');
+        await getUrl();
+        n++;
+        if (n === times) {
+          reject(null);
+        }
+      } while (success === false && n < times + 1);
+    });
+  }
+
   async getDownloadURL(path: string): Promise<string | null> {
     const ref = this.storage.ref().child(path);
-    console.log('path chegando no getDownloadURL', path);
+    const uri = await this.getDownloadUrlWithLoop(ref, 5, 2000);
+    return uri as string | null;
+    /*console.log('path chegando no getDownloadURL', path);
     try {
       const uri = await ref.getDownloadURL();
       return uri;
     } catch (error) {
       return null;
-    }
+    }*/
   }
 
   async deleteStorageFile(path: string): Promise<boolean> {
