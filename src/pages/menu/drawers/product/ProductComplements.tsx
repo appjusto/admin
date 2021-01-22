@@ -51,7 +51,7 @@ export const ProductComplements = () => {
             >
               {t('Criar novo grupo de complementos')}
             </Button>
-            <Button width="full" variant="outline" color="black" fontSize="15px">
+            <Button isDisabled width="full" variant="outline" color="black" fontSize="15px">
               {t('Associar com grupo existente')}
             </Button>
           </Stack>

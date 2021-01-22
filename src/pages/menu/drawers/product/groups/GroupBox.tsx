@@ -146,7 +146,11 @@ export const GroupBox = ({ index, group }: GroupBoxProps) => {
                     }}
                   />
                 </Tooltip>
-                <Tooltip placement="top" label={t('Expandir')} aria-label={t('Expandir')}>
+                <Tooltip
+                  placement="top"
+                  label={showComplments ? t('Recolher') : t('Expandir')}
+                  aria-label={showComplments ? t('Recolher') : t('Expandir')}
+                >
                   <DropdownButton
                     title={t('Expandir')}
                     isExpanded={showComplments}
