@@ -285,9 +285,9 @@ export default class MenuApi {
     await this.refs.getBusinessProductRef(businessId, productId).delete();
   }
 
-  sleepFunction(ms: number) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
+  //sleepFunction(ms: number) {
+  //  return new Promise((resolve) => setTimeout(resolve, ms));
+  //}
 
   async uploadProductPhoto(
     businessId: string,
@@ -396,7 +396,7 @@ export default class MenuApi {
         if (imageUrl) {
           return imageUrl;
         } else {
-          await this.sleepFunction(5000);
+          //await this.sleepFunction(5000);
           const newImageUrl = await this.getComplementImageURL(businessId, complementId);
           return newImageUrl;
         }
