@@ -1,7 +1,5 @@
 import { Box } from '@chakra-ui/react';
 import * as menu from 'app/api/business/menu/functions';
-import { useContextApi } from 'app/state/api/context';
-import { useContextBusinessId } from 'app/state/business/context';
 import { useContextMenu } from 'app/state/menu/context';
 import { Product, WithId } from 'appjusto-types';
 import { isEmpty } from 'lodash';
@@ -15,9 +13,6 @@ interface Props {
 }
 
 export const Categories = ({ productSearch }: Props) => {
-  //context
-  const api = useContextApi();
-  const businessId = useContextBusinessId();
   // state
   const { categories, menuConfig, updateMenuConfig } = useContextMenu();
   const filterProductsWithSearch = (products: WithId<Product>[]) => {
@@ -43,12 +38,6 @@ export const Categories = ({ productSearch }: Props) => {
           destination.index
         )
       );
-      if (source.droppableId !== destination.droppableId) {
-        const newProduct = {
-          categoryId: destination.droppableId,
-        };
-        api.business().updateProduct(businessId!, draggableId, newProduct, null);
-      }
     } else if (type === 'category') {
       updateMenuConfig(menu.updateCategoryIndex(menuConfig, draggableId, destination.index));
     }
