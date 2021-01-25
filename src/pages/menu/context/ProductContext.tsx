@@ -13,11 +13,16 @@ interface Params {
 }
 
 interface ContextProps {
+  contextCategoryId: string | undefined;
   productId: string;
   product: WithId<Product> | undefined;
   productConfig: MenuConfig;
   sortedGroups: WithId<ComplementGroup>[];
-  onSaveProduct(productData: Partial<Product>, imageFile: File | null): Promise<string>;
+  onSaveProduct(
+    productData: Partial<Product>,
+    imageFile: File | null,
+    categoryId: string | undefined
+  ): Promise<string>;
   onDeleteProduct(hasImage: boolean): void;
   onSaveComplementsGroup(group: ComplementGroup): void;
   onUpdateComplementsGroup(groupId: string, changes: Partial<ComplementGroup>): void;
@@ -48,10 +53,14 @@ export const ProductContextProvider = (props: ProviderProps) => {
     product?.complementsEnabled === true
   );
   const sortedGroups = menu.getOrderedMenu(groups, complements, product?.complementsOrder);
-  const categoryId = menu.getProductCategoryId(menuConfig, productId);
+  const contextCategoryId = menu.getProductCategoryId(menuConfig, productId);
   const productConfig = product?.complementsOrder ?? menu.empty();
 
-  const onSaveProduct = (productData: Partial<Product>, imageFile: File | null) => {
+  const onSaveProduct = (
+    productData: Partial<Product>,
+    imageFile: File | null,
+    categoryId: string | undefined
+  ) => {
     const id = (async () => {
       const newProduct = {
         ...productData,
@@ -60,14 +69,12 @@ export const ProductContextProvider = (props: ProviderProps) => {
         const id = await api
           .business()
           .createProduct(businessId!, newProduct as Product, imageFile);
-        updateMenuConfig(menu.updateProductCategory(menuConfig, id, productData.categoryId!));
+        updateMenuConfig(menu.updateProductCategory(menuConfig, id, categoryId!));
         return id;
       } else {
         await api.business().updateProduct(businessId!, productId, newProduct, imageFile);
-        if (productData.categoryId) {
-          updateMenuConfig(
-            menu.updateProductCategory(menuConfig, productId, productData.categoryId!)
-          );
+        if (categoryId) {
+          updateMenuConfig(menu.updateProductCategory(menuConfig, productId, categoryId!));
         }
         return productId;
       }
@@ -77,8 +84,8 @@ export const ProductContextProvider = (props: ProviderProps) => {
 
   const onDeleteProduct = (hasImage: boolean) => {
     (async () => {
-      if (categoryId) {
-        updateMenuConfig(menu.removeProductFromCategory(menuConfig, productId, categoryId));
+      if (contextCategoryId) {
+        updateMenuConfig(menu.removeProductFromCategory(menuConfig, productId, contextCategoryId));
         await api.business().deleteProduct(businessId!, productId, hasImage);
       }
     })();
@@ -162,6 +169,7 @@ export const ProductContextProvider = (props: ProviderProps) => {
   return (
     <ProductContext.Provider
       value={{
+        contextCategoryId,
         productId,
         product,
         productConfig,

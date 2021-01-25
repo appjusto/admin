@@ -27,7 +27,7 @@ export const Groups = () => {
         destination.index
       );
     }
-    onSaveProduct({ complementsOrder: newProductConfig }, null);
+    onSaveProduct({ complementsOrder: newProductConfig }, null, undefined);
   };
 
   // UI

@@ -49,7 +49,13 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
   //context
   const { url } = useRouteMatch();
   const { push } = useHistory();
-  const { productId, product, onSaveProduct, onDeleteProduct } = useProductContext();
+  const {
+    contextCategoryId,
+    productId,
+    product,
+    onSaveProduct,
+    onDeleteProduct,
+  } = useProductContext();
   //state
   const [state, dispatch] = React.useReducer(productReducer, initialState);
   const {
@@ -63,8 +69,8 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
     enabled,
     complementsOrder,
     complementsEnabled,
-    categoryId,
     //details
+    categoryId,
     previewURL,
     imageFile,
     isLoading,
@@ -87,7 +93,7 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
           enabled: product.enabled ?? true,
           complementsOrder: product.complementsOrder,
           complementsEnabled: product.complementsEnabled ?? false,
-          categoryId: product.categoryId ?? '',
+          categoryId: contextCategoryId ?? '',
           isEditing: productId === 'new' ? false : true,
         },
       });
@@ -117,7 +123,6 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
       const newId = await onSaveProduct(
         {
           name,
-          categoryId,
           description,
           price,
           classifications,
@@ -127,7 +132,8 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
           complementsOrder,
           complementsEnabled,
         },
-        imageFile
+        imageFile,
+        categoryId
       );
       handleStateUpdate('isLoading', false);
       handleStateUpdate('saveSuccess', true);
