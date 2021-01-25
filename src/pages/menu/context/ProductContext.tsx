@@ -21,7 +21,7 @@ interface ContextProps {
   onDeleteProduct(hasImage: boolean): void;
   onSaveComplementsGroup(group: ComplementGroup): void;
   onUpdateComplementsGroup(groupId: string, changes: Partial<ComplementGroup>): void;
-  onDeleteComplementsGroup(groupId: string): void;
+  onDeleteComplementsGroup(group: WithId<ComplementGroup>): void;
   onSaveComplement(
     groupId: string,
     complementId: string,
@@ -103,8 +103,13 @@ export const ProductContextProvider = (props: ProviderProps) => {
     await api.business().updateComplementsGroup(businessId!, groupId, changes);
   };
 
-  const onDeleteComplementsGroup = async (groupId: string) => {
-    const newProductConfig = menu.removeCategory(productConfig, groupId);
+  const onDeleteComplementsGroup = async (group: WithId<ComplementGroup>) => {
+    if (group.items && group.items?.length > 0) {
+      group.items.map((item) =>
+        api.business().deleteComplement(businessId!, item.id, typeof item.image_url === 'string')
+      );
+    }
+    const newProductConfig = menu.removeCategory(productConfig, group.id);
     await api.business().updateProduct(
       businessId!,
       productId,
@@ -113,7 +118,7 @@ export const ProductContextProvider = (props: ProviderProps) => {
       },
       null
     );
-    await api.business().deleteComplementsGroup(businessId!, groupId);
+    await api.business().deleteComplementsGroup(businessId!, group.id);
   };
 
   const onSaveComplement = async (
