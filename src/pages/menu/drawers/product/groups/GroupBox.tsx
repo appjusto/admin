@@ -182,7 +182,7 @@ export const GroupBox = ({ index, group }: GroupBoxProps) => {
                   ref={droppable.innerRef}
                   {...droppable.droppableProps}
                   bg={snapshot.isDraggingOver ? 'gray.50' : 'white'}
-                  minH="30px"
+                  minH={100}
                   mt="4"
                 >
                   {group.items &&

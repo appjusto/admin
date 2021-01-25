@@ -27,7 +27,7 @@ interface ContextProps {
     complementId: string,
     newItem: Complement,
     imageFile: File | null
-  ): void;
+  ): Promise<void | boolean>;
   onDeleteComplement(complementId: string, groupId: string, hasImage: boolean): void;
 }
 
@@ -128,7 +128,7 @@ export const ProductContextProvider = (props: ProviderProps) => {
       if (productConfig && groupId) {
         newProductConfig = menu.addProductToCategory(productConfig, newId, groupId);
       }
-      await api.business().updateProduct(
+      return api.business().updateProduct(
         businessId!,
         productId,
         {
@@ -137,7 +137,7 @@ export const ProductContextProvider = (props: ProviderProps) => {
         null
       );
     } else {
-      await api.business().updateComplement(businessId!, complementId, newItem, imageFile);
+      return api.business().updateComplement(businessId!, complementId, newItem, imageFile);
     }
   };
 

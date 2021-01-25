@@ -167,7 +167,6 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
       </Flex>
     );
   }
-
   return (
     <form
       onSubmit={(ev) => {

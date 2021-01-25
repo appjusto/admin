@@ -285,10 +285,6 @@ export default class MenuApi {
     await this.refs.getBusinessProductRef(businessId, productId).delete();
   }
 
-  //sleepFunction(ms: number) {
-  //  return new Promise((resolve) => setTimeout(resolve, ms));
-  //}
-
   async uploadProductPhoto(
     businessId: string,
     productId: string,
@@ -305,9 +301,7 @@ export default class MenuApi {
       if (imageUrl) {
         return imageUrl;
       } else {
-        //await this.sleepFunction(5000);
         const newImageUrl = await this.getProductImageURL(businessId, productId);
-        console.log('ImageUrl recebida', newImageUrl);
         return newImageUrl;
       }
     } else {
@@ -396,7 +390,6 @@ export default class MenuApi {
         if (imageUrl) {
           return imageUrl;
         } else {
-          //await this.sleepFunction(5000);
           const newImageUrl = await this.getComplementImageURL(businessId, complementId);
           return newImageUrl;
         }
@@ -416,7 +409,6 @@ export default class MenuApi {
       image_url = await this.uploadComplementPhoto(businessId, complementId, imageFile, null);
     }
     try {
-      console.log(image_url);
       await this.refs.getBusinessComplementRef(businessId, complementId).set({
         ...item,
         image_url,

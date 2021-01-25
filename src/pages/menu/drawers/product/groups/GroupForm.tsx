@@ -30,8 +30,10 @@ export const GroupForm = ({
   const [required, setRequired] = React.useState(false);
   const [minimum, setMin] = React.useState(0);
   const [maximum, setMax] = React.useState(0);
+  const inputRef = React.useRef<HTMLInputElement>(null);
 
   React.useEffect(() => {
+    inputRef?.current?.focus();
     if (!isCreate && groupData) {
       setName(groupData?.name);
       setRequired(groupData?.required);
@@ -64,6 +66,7 @@ export const GroupForm = ({
           {t('Novo grupo de complementos')}
         </Text>
         <Input
+          ref={inputRef}
           isRequired
           id="complements-group-name"
           label="Grupo de complementos"
@@ -134,6 +137,7 @@ export const GroupForm = ({
         }}
       >
         <Input
+          ref={inputRef}
           isRequired
           mt="0"
           id="complements-group-name"

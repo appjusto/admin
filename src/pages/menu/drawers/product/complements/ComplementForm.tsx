@@ -33,8 +33,11 @@ export const ComplementForm = ({
   const [externalId, setExternalId] = React.useState('');
   const [previewURL, setPreviewURL] = React.useState<string | null>(null);
   const [imageFile, setImageFile] = React.useState<File | null>(null);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const inputRef = React.useRef<HTMLInputElement>(null);
 
   React.useEffect(() => {
+    inputRef?.current?.focus();
     if (item) {
       setImageUrl(item.image_url ?? null);
       setName(item.name);
@@ -55,6 +58,7 @@ export const ComplementForm = ({
   }, []);
 
   const handleSave = async () => {
+    setIsLoading(true);
     const newItem = {
       image_url: imageUrl,
       name,
@@ -62,7 +66,8 @@ export const ComplementForm = ({
       price,
       externalId,
     };
-    onSaveComplement(groupId as string, complementId as string, newItem, imageFile);
+    await onSaveComplement(groupId as string, complementId as string, newItem, imageFile);
+    setIsLoading(false);
     onSuccess();
   };
 
@@ -87,6 +92,7 @@ export const ComplementForm = ({
         </Flex>
         <Flex flexDir="column" w="100%">
           <Input
+            ref={inputRef}
             isRequired
             mt="0"
             id="complements-item-name"
@@ -128,7 +134,7 @@ export const ComplementForm = ({
             <Button variant="dangerLight" w="120px" mr="4" onClick={onCancel}>
               {t('Cancelar')}
             </Button>
-            <Button type="submit" w="120px">
+            <Button type="submit" w="120px" isLoading={isLoading} loadingText={t('Salvando')}>
               {t('Salvar')}
             </Button>
           </Flex>
