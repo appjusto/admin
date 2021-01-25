@@ -299,7 +299,10 @@ export default class MenuApi {
     );
     if (isSuccess) {
       if (imageUrl) {
-        return imageUrl;
+        const newUrl = imageUrl.includes('timestamp')
+          ? imageUrl.split('&timestamp=')[0] + `&timestamp=${new Date().getTime()}`
+          : imageUrl + `&timestamp=${new Date().getTime()}`;
+        return newUrl;
       } else {
         const newImageUrl = await this.getProductImageURL(businessId, productId);
         return newImageUrl;
