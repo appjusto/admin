@@ -1,13 +1,15 @@
 import { Button, Flex, Radio, RadioGroup, Stack, Text } from '@chakra-ui/react';
 import { useProductContext } from 'pages/menu/context/ProductContext';
 import React from 'react';
+import { Redirect, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { GroupForm } from './groups/GroupForm';
 import { Groups } from './groups/Groups';
 
 export const ProductComplements = () => {
   //context
-  const { sortedGroups, onSaveComplementsGroup } = useProductContext();
+  const { url } = useRouteMatch();
+  const { productId, sortedGroups, onSaveComplementsGroup } = useProductContext();
   //state
   const [hasComplements, setHasComplements] = React.useState(false);
   const [newGroupForm, setNewGroupForm] = React.useState(false);
@@ -17,6 +19,11 @@ export const ProductComplements = () => {
       setHasComplements(true);
     }
   }, [sortedGroups]);
+
+  if (productId === 'new') {
+    const urlRedirect = url.split('/complements')[0];
+    return <Redirect to={urlRedirect} />;
+  }
 
   return (
     <>

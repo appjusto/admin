@@ -41,7 +41,6 @@ export default class FilesApi {
           .catch(() => null);
       };
       do {
-        console.log('Do !');
         await getUrl();
         n++;
         if (n === times) {
@@ -53,15 +52,8 @@ export default class FilesApi {
 
   async getDownloadURL(path: string): Promise<string | null> {
     const ref = this.storage.ref().child(path);
-    const uri = await this.getDownloadUrlWithLoop(ref, 5, 2000);
+    const uri = await this.getDownloadUrlWithLoop(ref, 5, 1000);
     return uri as string | null;
-    /*console.log('path chegando no getDownloadURL', path);
-    try {
-      const uri = await ref.getDownloadURL();
-      return uri;
-    } catch (error) {
-      return null;
-    }*/
   }
 
   async deleteStorageFile(path: string): Promise<boolean> {
