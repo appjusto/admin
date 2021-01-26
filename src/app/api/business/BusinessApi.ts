@@ -198,7 +198,6 @@ export default class MenuApi {
     const query = this.refs.getBusinessProductRef(businessId, productId);
     const unsubscribe = query.onSnapshot(
       (querySnapshot) => {
-        console.log(querySnapshot);
         resultHandler(documentAs<Product>(querySnapshot));
       },
       (error) => {

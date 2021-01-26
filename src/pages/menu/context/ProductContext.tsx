@@ -16,6 +16,7 @@ interface ContextProps {
   contextCategoryId: string | undefined;
   productId: string;
   product: WithId<Product> | undefined;
+  isValid: boolean;
   productConfig: MenuConfig;
   sortedGroups: WithId<ComplementGroup>[];
   onSaveProduct(
@@ -46,9 +47,8 @@ export const ProductContextProvider = (props: ProviderProps) => {
   const api = useContextApi();
   const businessId = useContextBusinessId();
   const { menuConfig, updateMenuConfig } = useContextMenu();
-  const { productId: paramsId } = useParams<Params>();
-  const product = useProduct(businessId, paramsId);
-  const productId = product?.name ? paramsId : 'new';
+  const { productId } = useParams<Params>();
+  const { product, isValid } = useProduct(businessId, productId);
   const { groups, complements } = useObserveComplements(
     businessId!,
     product?.complementsEnabled === true
@@ -173,6 +173,7 @@ export const ProductContextProvider = (props: ProviderProps) => {
         contextCategoryId,
         productId,
         product,
+        isValid,
         productConfig,
         sortedGroups,
         onSaveProduct,

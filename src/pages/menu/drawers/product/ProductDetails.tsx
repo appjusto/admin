@@ -53,6 +53,7 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
     contextCategoryId,
     productId,
     product,
+    isValid,
     onSaveProduct,
     onDeleteProduct,
   } = useProductContext();
@@ -80,18 +81,18 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
   const inputRef = React.useRef<HTMLInputElement>(null);
 
   React.useEffect(() => {
-    if (productId === 'new' && !url.includes('new')) {
+    if (!isValid) {
       const newPath = path.replace(':productId', 'new');
       push(newPath);
     }
-  }, [productId, path, push, url]);
+  }, [isValid, path, push, url]);
 
   React.useEffect(() => {
     if (product && productId !== 'new') {
       dispatch({
         type: 'update_state',
         payload: {
-          name: product.name,
+          name: product.name ?? '',
           description: product.description ?? '',
           price: product.price ?? 0,
           classifications: product.classifications ?? [],

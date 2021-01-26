@@ -7,11 +7,18 @@ export const useProduct = (businessId: string | undefined, productId: string) =>
   const api = useContextApi();
   // state
   const [product, setProduct] = React.useState<WithId<Product>>();
+  const [isValid, setIsValid] = React.useState(true);
   // side effects
   React.useEffect(() => {
     if (!businessId || productId === 'new') return;
     return api.business().observeProduct(businessId, productId, setProduct);
   }, [api, businessId, productId]);
+
+  React.useEffect(() => {
+    if (product?.id && !product.name) {
+      setIsValid(false);
+    }
+  }, [product]);
   // result
-  return product;
+  return { product, isValid };
 };
