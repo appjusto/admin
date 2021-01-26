@@ -36,23 +36,10 @@ export const ComplementForm = ({
   const [isLoading, setIsLoading] = React.useState(false);
   const inputRef = React.useRef<HTMLInputElement>(null);
 
-  React.useEffect(() => {
-    inputRef?.current?.focus();
-    if (item?.imageExists) {
-      getImageUrl();
-    }
-    if (item) {
-      setName(item.name);
-      setDescription(item.description ?? '');
-      setPrice(item.price);
-      setExternalId(item.externalId ?? '');
-    }
-  }, [item]);
-
-  const getImageUrl = async () => {
+  const getImageUrl = React.useCallback(async () => {
     const url = await getComplementImageUrl(complementId!);
     if (url) return setPreviewURL(url);
-  };
+  }, [complementId, getComplementImageUrl]);
 
   //handlres
   const onDropHandler = React.useCallback(async (acceptedFiles: File[]) => {
@@ -78,6 +65,23 @@ export const ComplementForm = ({
     setIsLoading(false);
     onSuccess();
   };
+
+  //side effects
+  React.useEffect(() => {
+    inputRef?.current?.focus();
+    if (item) {
+      setName(item.name);
+      setDescription(item.description ?? '');
+      setPrice(item.price);
+      setExternalId(item.externalId ?? '');
+    }
+  }, [item]);
+
+  React.useEffect(() => {
+    if (item?.imageExists) {
+      getImageUrl();
+    }
+  }, [item?.imageExists, getImageUrl]);
 
   return (
     <form

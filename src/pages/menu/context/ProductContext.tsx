@@ -17,6 +17,7 @@ interface ContextProps {
   productId: string;
   product: WithId<Product> | undefined;
   isValid: boolean;
+  imageUrl: string | null;
   productConfig: MenuConfig;
   sortedGroups: WithId<ComplementGroup>[];
   onSaveProduct(
@@ -35,7 +36,6 @@ interface ContextProps {
     imageFile: File | null
   ): Promise<void | boolean>;
   onDeleteComplement(complementId: string, groupId: string, hasImage: boolean): void;
-  getProductImageUrl(): Promise<string | null>;
   getComplementImageUrl(complementId: string): Promise<string | null>;
 }
 
@@ -50,7 +50,7 @@ export const ProductContextProvider = (props: ProviderProps) => {
   const businessId = useContextBusinessId();
   const { menuConfig, updateMenuConfig } = useContextMenu();
   const { productId } = useParams<Params>();
-  const { product, isValid } = useProduct(businessId, productId);
+  const { product, isValid, imageUrl } = useProduct(businessId, productId);
   const { groups, complements } = useObserveComplements(
     businessId!,
     product?.complementsEnabled === true
@@ -173,19 +173,13 @@ export const ProductContextProvider = (props: ProviderProps) => {
     await api.business().deleteComplement(businessId!, complementId, imageExists);
   };
 
-  const getProductImageUrl = async () => {
-    if (isValid) {
-      const url = await api.business().getProductImageURL(businessId!, productId);
+  const getComplementImageUrl = React.useCallback(
+    async (complementId: string) => {
+      const url = await api.business().getComplementImageURL(businessId!, complementId);
       return url;
-    } else {
-      return null;
-    }
-  };
-
-  const getComplementImageUrl = async (complementId: string) => {
-    const url = await api.business().getComplementImageURL(businessId!, complementId);
-    return url;
-  };
+    },
+    [api, businessId]
+  );
 
   return (
     <ProductContext.Provider
@@ -194,6 +188,7 @@ export const ProductContextProvider = (props: ProviderProps) => {
         productId,
         product,
         isValid,
+        imageUrl,
         productConfig,
         sortedGroups,
         onSaveProduct,
@@ -203,7 +198,6 @@ export const ProductContextProvider = (props: ProviderProps) => {
         onDeleteComplementsGroup,
         onSaveComplement,
         onDeleteComplement,
-        getProductImageUrl,
         getComplementImageUrl,
       }}
       {...props}

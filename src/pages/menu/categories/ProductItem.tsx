@@ -1,4 +1,5 @@
 import { Box, Flex, Spacer, Switch, Text, Tooltip } from '@chakra-ui/react';
+import { useProduct } from 'app/api/business/products/useProduct2';
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusinessId } from 'app/state/business/context';
 import { Product, WithId } from 'appjusto-types';
@@ -21,6 +22,7 @@ export const ProductItem = React.memo(({ product, index }: Props) => {
   const { url } = useRouteMatch();
   const api = useContextApi();
   const businessId = useContextBusinessId();
+  const { imageUrl: useUrl } = useProduct(businessId!, product.id);
   //state
   const [imageUrl, setImageUrl] = React.useState<string>('/static/media/product-placeholder.png');
   const [price, setPrice] = React.useState(0);
@@ -37,16 +39,13 @@ export const ProductItem = React.memo(({ product, index }: Props) => {
     await api.business().updateProduct(businessId!, product.id, productData, null);
   };
 
-  const getImageUrl = async () => {
-    const url = await api.business().getProductImageURL(businessId!, product.id);
-    if (typeof url === 'string') return setImageUrl(url);
-  };
   //side effects
   React.useEffect(() => {
     if (product.imageExists) {
-      getImageUrl();
+      if (useUrl) return setImageUrl(useUrl);
     }
-  }, []);
+  }, [product.imageExists, useUrl]);
+
   React.useEffect(() => {
     updatePriceState(product.price);
   }, [product.price]);

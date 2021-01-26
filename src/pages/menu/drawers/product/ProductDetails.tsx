@@ -54,9 +54,9 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
     productId,
     product,
     isValid,
+    imageUrl,
     onSaveProduct,
     onDeleteProduct,
-    getProductImageUrl,
   } = useProductContext();
   //state
   const [state, dispatch] = React.useReducer(productReducer, initialState);
@@ -81,45 +81,7 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
   } = state;
   const inputRef = React.useRef<HTMLInputElement>(null);
 
-  React.useEffect(() => {
-    if (!isValid) {
-      const newPath = path.replace(':productId', 'new');
-      push(newPath);
-    }
-  }, [isValid, path, push, url]);
-
-  React.useEffect(() => {
-    if (product?.imageExists) {
-      getImageUrl();
-    }
-  }, [product?.imageExists]);
-
-  React.useEffect(() => {
-    if (product && productId !== 'new') {
-      dispatch({
-        type: 'update_state',
-        payload: {
-          name: product.name ?? '',
-          description: product.description ?? '',
-          price: product.price ?? 0,
-          classifications: product.classifications ?? [],
-          externalId: product.externalId ?? '',
-          enabled: product.enabled ?? true,
-          complementsOrder: product.complementsOrder,
-          complementsEnabled: product.complementsEnabled ?? false,
-          imageExists: product.imageExists ?? false,
-          categoryId: contextCategoryId ?? '',
-          isEditing: productId === 'new' ? false : true,
-        },
-      });
-    }
-  }, [product, productId, contextCategoryId]);
-
-  const getImageUrl = async () => {
-    const url = await getProductImageUrl();
-    handleStateUpdate('previewURL', url);
-  };
-
+  //handlers
   const handleStateUpdate = (key: string, value: any) => {
     dispatch({ type: 'update_state', payload: { [key]: value } });
   };
@@ -176,6 +138,42 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
     onClose();
   };
 
+  //side effects
+  React.useEffect(() => {
+    if (!isValid) {
+      const newPath = path.replace(':productId', 'new');
+      push(newPath);
+    }
+  }, [isValid, path, push, url]);
+
+  React.useEffect(() => {
+    if (product?.imageExists) {
+      handleStateUpdate('previewURL', imageUrl);
+    }
+  }, [product?.imageExists, imageUrl]);
+
+  React.useEffect(() => {
+    if (product && productId !== 'new') {
+      dispatch({
+        type: 'update_state',
+        payload: {
+          name: product.name ?? '',
+          description: product.description ?? '',
+          price: product.price ?? 0,
+          classifications: product.classifications ?? [],
+          externalId: product.externalId ?? '',
+          enabled: product.enabled ?? true,
+          complementsOrder: product.complementsOrder,
+          complementsEnabled: product.complementsEnabled ?? false,
+          imageExists: product.imageExists ?? false,
+          categoryId: contextCategoryId ?? '',
+          isEditing: productId === 'new' ? false : true,
+        },
+      });
+    }
+  }, [product, productId, contextCategoryId]);
+
+  //UI
   if (saveSuccess) {
     return (
       <Flex flexDir="column">

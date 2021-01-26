@@ -8,6 +8,12 @@ export const useProduct = (businessId: string | undefined, productId: string) =>
   // state
   const [product, setProduct] = React.useState<WithId<Product>>();
   const [isValid, setIsValid] = React.useState(true);
+  const [imageUrl, setImageUrl] = React.useState<string | null>(null);
+
+  const getImageUrl = React.useCallback(async () => {
+    const url = await api.business().getProductImageURL(businessId!, productId);
+    setImageUrl(url);
+  }, [api, businessId, productId]);
   // side effects
   React.useEffect(() => {
     if (!businessId || productId === 'new') return;
@@ -19,6 +25,12 @@ export const useProduct = (businessId: string | undefined, productId: string) =>
       setIsValid(false);
     }
   }, [product]);
+
+  React.useEffect(() => {
+    if (product?.imageExists) {
+      getImageUrl();
+    }
+  }, [product, getImageUrl]);
   // result
-  return { product, isValid };
+  return { product, isValid, imageUrl };
 };
