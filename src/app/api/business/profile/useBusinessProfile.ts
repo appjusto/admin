@@ -21,9 +21,10 @@ export const useBusinessProfile = () => {
   const [updateBusinessProfile, updateResult] = useMutation(async (changes: Partial<Business>) =>
     api.business().updateBusinessProfile(businessId, changes)
   );
-  const [uploadLogo, uploadLogoResult] = useMutation((file: File) =>
-    api.business().uploadBusinessLogo(businessId, file)
-  );
+  const [uploadLogo, uploadLogoResult] = useMutation((file: File) => {
+    api.business().updateBusinessProfile(businessId, { logoExists: false });
+    return api.business().uploadBusinessLogo(businessId, file);
+  });
   const [uploadCover, uploadCoverResult] = useMutation((file: File) =>
     api.business().uploadBusinessCover(businessId, file)
   );

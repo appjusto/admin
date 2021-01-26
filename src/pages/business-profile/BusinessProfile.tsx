@@ -70,8 +70,6 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
         id: cuisineId,
         name: '',
       },
-      logoExists: false,
-      coverImageExists: false,
     });
   };
   const onDropLogoHandler = async (acceptedFiles: File[]) => {
