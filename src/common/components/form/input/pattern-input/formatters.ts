@@ -41,3 +41,25 @@ export const phoneFormatter = (value: string | undefined) => {
   }
   return formatedNumber;
 };
+
+export const TimeMask = '00:00';
+export const TimeFormatter = (value: string | undefined) => {
+  console.log(value);
+  let formatedNumber = '';
+  if (value) {
+    let hours = value.slice(0, 2);
+    let minutes = value.slice(2, 4);
+    if (parseInt(hours) > 23) {
+      hours = '00';
+    }
+    if (parseInt(minutes) > 59) {
+      minutes = '00';
+    }
+    if (minutes === '') {
+      formatedNumber = `${hours}`;
+    } else if (minutes !== '') {
+      formatedNumber = `${hours}:${minutes}`;
+    }
+  }
+  return formatedNumber;
+};
