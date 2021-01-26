@@ -81,11 +81,10 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
 
   React.useEffect(() => {
     if (productId === 'new' && !url.includes('new')) {
-      console.log('push', path);
       const newPath = path.replace(':productId', 'new');
       push(newPath);
     }
-  }, [productId]);
+  }, [productId, path, push, url]);
 
   React.useEffect(() => {
     if (product && productId !== 'new') {
