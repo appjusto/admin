@@ -28,18 +28,14 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const [minimumOrder, setMinimumOrder] = React.useState(business?.minimumOrder ?? 0);
   const [logoPreviewURL, setLogoPreviewURL] = React.useState<string | undefined>();
   const [coverPreviewURL, setCoverPreviewURL] = React.useState<string | undefined>();
-  const [logo, setLogo] = React.useState<string | null>(business?.logo_url ?? null);
-  const [cover, setCover] = React.useState<string | null>(business?.cover_url ?? null);
 
   // queries & mutations
   const {
-    //logo,
-    //cover,
     updateBusinessProfile,
+    logo,
+    cover,
     uploadLogo,
     uploadCover,
-    getLogoUrl,
-    getCoverUrl,
     result,
   } = useBusinessProfile();
   const { isLoading, isSuccess } = result;
@@ -58,26 +54,13 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
       if (business.description) setDescription(business.description);
       if (business.minimumOrder) setMinimumOrder(business.minimumOrder);
       if (business.cuisine?.id) setCuisineId(business.cuisine.id);
-      if (business.logo_url) setLogo(business.logo_url);
-      if (business.cover_url) setCover(business.cover_url);
+    }
+    if (business?.logoExists) {
     }
   }, [business]);
 
   // handlers
-  const getImageUrl = async (
-    image: string | null,
-    preview: string | undefined,
-    handler: () => Promise<string | null>
-  ) => {
-    let imageUrl = image ?? null;
-    if (!imageUrl && preview) {
-      imageUrl = await handler();
-    }
-    return imageUrl;
-  };
   const onSubmitHandler = async () => {
-    let logo_url = await getImageUrl(logo, logoPreviewURL, getLogoUrl);
-    let cover_url = await getImageUrl(cover, coverPreviewURL, getCoverUrl);
     await updateBusinessProfile({
       name,
       cnpj,
@@ -87,8 +70,8 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
         id: cuisineId,
         name: '',
       },
-      logo_url,
-      cover_url,
+      logoExists: false,
+      coverImageExists: false,
     });
   };
   const onDropLogoHandler = async (acceptedFiles: File[]) => {
