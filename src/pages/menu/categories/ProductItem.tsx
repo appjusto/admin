@@ -22,8 +22,8 @@ export const ProductItem = React.memo(({ product, index }: Props) => {
   const api = useContextApi();
   const businessId = useContextBusinessId();
   //state
+  const [imageUrl, setImageUrl] = React.useState<string>('/static/media/product-placeholder.png');
   const [price, setPrice] = React.useState(0);
-  const srcImg = product.image_url ? product.image_url : '/static/media/product-placeholder.png';
 
   //handlres
   const updatePriceState = (value: number | undefined) => {
@@ -37,6 +37,15 @@ export const ProductItem = React.memo(({ product, index }: Props) => {
     await api.business().updateProduct(businessId!, product.id, productData, null);
   };
   //side effects
+  React.useEffect(() => {
+    const getImageUrl = async () => {
+      const url = await api.business().getProductImageURL(businessId!, product.id);
+      if (typeof url === 'string') return setImageUrl(url);
+    };
+    if (product.imageExists) {
+      getImageUrl();
+    }
+  }, []);
   React.useEffect(() => {
     updatePriceState(product.price);
   }, [product.price]);
@@ -60,7 +69,7 @@ export const ProductItem = React.memo(({ product, index }: Props) => {
           <Link to={`${url}/product/${product.id}`}>
             <Image
               marginX="4"
-              src={srcImg}
+              src={imageUrl}
               boxSize="24"
               objectFit="contain"
               borderRadius="lg"

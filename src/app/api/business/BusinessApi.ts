@@ -220,14 +220,12 @@ export default class MenuApi {
     // creating product
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
     const productId = this.refs.getBusinessProductsRef(businessId).doc().id;
-    let image_url: string | null = null;
     if (imageFile) {
-      image_url = await this.uploadProductPhoto(businessId, productId, imageFile, null);
+      await this.uploadProductPhoto(businessId, productId, imageFile);
     }
     try {
       await this.refs.getBusinessProductRef(businessId, productId).set({
         ...product,
-        image_url,
         createdOn: timestamp,
         updatedOn: timestamp,
       } as Product);
@@ -245,19 +243,13 @@ export default class MenuApi {
   ) {
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
     let newProductObject = {};
-    if (changes.image_url !== undefined) {
-      let image_url: string | null = null;
+    if (changes.imageExists) {
       if (imageFile) {
-        image_url = await this.uploadProductPhoto(
-          businessId,
-          productId,
-          imageFile,
-          changes.image_url
-        );
+        await this.uploadProductPhoto(businessId, productId, imageFile);
       }
       newProductObject = {
         ...changes,
-        image_url,
+        imageExists: false,
         updatedOn: timestamp,
       };
     } else {
@@ -276,8 +268,8 @@ export default class MenuApi {
     }
   }
 
-  async deleteProduct(businessId: string, productId: string, hasImage: boolean) {
-    if (hasImage) {
+  async deleteProduct(businessId: string, productId: string, imageExists: boolean) {
+    if (imageExists) {
       await this.files.deleteStorageFile(
         this.refs.getProductImageStoragePath(businessId, productId)
       );
@@ -289,7 +281,6 @@ export default class MenuApi {
     businessId: string,
     productId: string,
     file: File,
-    imageUrl: string | null | undefined,
     progressHandler?: (progress: number) => void
   ) {
     const isSuccess = await this.files.upload(
@@ -297,19 +288,7 @@ export default class MenuApi {
       this.refs.getProductUploadStoragePath(businessId, productId),
       progressHandler
     );
-    if (isSuccess) {
-      if (imageUrl) {
-        const newUrl = imageUrl.includes('timestamp')
-          ? imageUrl.split('&timestamp=')[0] + `&timestamp=${new Date().getTime()}`
-          : imageUrl + `&timestamp=${new Date().getTime()}`;
-        return newUrl;
-      } else {
-        const newImageUrl = await this.getProductImageURL(businessId, productId);
-        return newImageUrl;
-      }
-    } else {
-      return null;
-    }
+    return isSuccess;
   }
 
   getProductImageURL(businessId: string, productId: string) {
@@ -377,28 +356,13 @@ export default class MenuApi {
     );
   }
 
-  async uploadComplementPhoto(
-    businessId: string,
-    complementId: string,
-    file: File,
-    imageUrl: string | null
-  ) {
+  async uploadComplementPhoto(businessId: string, complementId: string, file: File) {
     try {
-      const isSuccess = await this.files.upload(
+      return await this.files.upload(
         file,
         this.refs.getComplementUploadStoragePath(businessId, complementId),
         () => {}
       );
-      if (isSuccess) {
-        if (imageUrl) {
-          return imageUrl;
-        } else {
-          const newImageUrl = await this.getComplementImageURL(businessId, complementId);
-          return newImageUrl;
-        }
-      } else {
-        return null;
-      }
     } catch (error) {
       throw new Error(`uploadComplementPhotoError: ${error}`);
     }
@@ -407,14 +371,12 @@ export default class MenuApi {
   async createComplement(businessId: string, item: Complement, imageFile: File | null) {
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
     const complementId = this.refs.getBusinessComplementsRef(businessId).doc().id;
-    let image_url = null;
     if (imageFile) {
-      image_url = await this.uploadComplementPhoto(businessId, complementId, imageFile, null);
+      await this.uploadComplementPhoto(businessId, complementId, imageFile);
     }
     try {
       await this.refs.getBusinessComplementRef(businessId, complementId).set({
         ...item,
-        image_url,
         createdOn: timestamp,
         updatedOn: timestamp,
       } as Complement);
@@ -434,15 +396,7 @@ export default class MenuApi {
       ...item,
     };
     if (imageFile) {
-      const ImageUrl = await this.uploadComplementPhoto(
-        businessId,
-        complementId,
-        imageFile,
-        item.image_url
-      );
-      if (!item.image_url) {
-        newItem.image_url = ImageUrl;
-      }
+      await this.uploadComplementPhoto(businessId, complementId, imageFile);
     }
     try {
       return await this.refs.getBusinessComplementRef(businessId, complementId).update(newItem);

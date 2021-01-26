@@ -24,7 +24,7 @@ interface ContextProps {
     imageFile: File | null,
     categoryId: string | undefined
   ): Promise<string>;
-  onDeleteProduct(hasImage: boolean): void;
+  onDeleteProduct(imageExists: boolean): void;
   onSaveComplementsGroup(group: ComplementGroup): void;
   onUpdateComplementsGroup(groupId: string, changes: Partial<ComplementGroup>): void;
   onDeleteComplementsGroup(group: WithId<ComplementGroup>): void;
@@ -83,11 +83,11 @@ export const ProductContextProvider = (props: ProviderProps) => {
     return id;
   };
 
-  const onDeleteProduct = (hasImage: boolean) => {
+  const onDeleteProduct = (imageExists: boolean) => {
     (async () => {
       if (contextCategoryId) {
         updateMenuConfig(menu.removeProductFromCategory(menuConfig, productId, contextCategoryId));
-        await api.business().deleteProduct(businessId!, productId, hasImage);
+        await api.business().deleteProduct(businessId!, productId, imageExists);
       }
     })();
   };
@@ -114,7 +114,7 @@ export const ProductContextProvider = (props: ProviderProps) => {
   const onDeleteComplementsGroup = async (group: WithId<ComplementGroup>) => {
     if (group.items && group.items?.length > 0) {
       group.items.map((item) =>
-        api.business().deleteComplement(businessId!, item.id, typeof item.image_url === 'string')
+        api.business().deleteComplement(businessId!, item.id, item.imageExists ?? false)
       );
     }
     const newProductConfig = menu.removeCategory(productConfig, group.id);
@@ -154,7 +154,11 @@ export const ProductContextProvider = (props: ProviderProps) => {
     }
   };
 
-  const onDeleteComplement = async (complementId: string, groupId: string, hasImage: boolean) => {
+  const onDeleteComplement = async (
+    complementId: string,
+    groupId: string,
+    imageExists: boolean
+  ) => {
     const newProductConfig = menu.removeProductFromCategory(productConfig, complementId, groupId);
     await api.business().updateProduct(
       businessId!,
@@ -164,7 +168,7 @@ export const ProductContextProvider = (props: ProviderProps) => {
       },
       null
     );
-    await api.business().deleteComplement(businessId!, complementId, hasImage);
+    await api.business().deleteComplement(businessId!, complementId, imageExists);
   };
 
   return (

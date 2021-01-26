@@ -26,20 +26,22 @@ export const ComplementForm = ({
   //context
   const { onSaveComplement } = useProductContext();
   //state
-  const [imageUrl, setImageUrl] = React.useState<string | null>(null);
   const [name, setName] = React.useState('');
   const [description, setDescription] = React.useState('');
   const [price, setPrice] = React.useState(0);
   const [externalId, setExternalId] = React.useState('');
   const [previewURL, setPreviewURL] = React.useState<string | null>(null);
   const [imageFile, setImageFile] = React.useState<File | null>(null);
+  const [imageExists, setImageExists] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
   const inputRef = React.useRef<HTMLInputElement>(null);
 
   React.useEffect(() => {
     inputRef?.current?.focus();
+    if (item?.imageExists) {
+      //get
+    }
     if (item) {
-      setImageUrl(item.image_url ?? null);
       setName(item.name);
       setDescription(item.description ?? '');
       setPrice(item.price);
@@ -55,16 +57,17 @@ export const ComplementForm = ({
     setImageFile(file);
     //add url to previewURL
     setPreviewURL(url);
+    setImageExists(true);
   }, []);
 
   const handleSave = async () => {
     setIsLoading(true);
     const newItem = {
-      image_url: imageUrl,
       name,
       description,
       price,
       externalId,
+      imageExists,
     };
     await onSaveComplement(groupId as string, complementId as string, newItem, imageFile);
     setIsLoading(false);
@@ -84,7 +87,7 @@ export const ComplementForm = ({
             width="96px"
             height="96px"
             onDropFile={onDropHandler}
-            preview={previewURL ?? imageUrl}
+            preview={previewURL}
           />
           <Text mt="2" textAlign="center" fontSize="xs">
             {t('Adicionar imagem')}

@@ -6,12 +6,12 @@ export interface StateProps {
   description: string;
   price: number;
   classifications: string[];
-  imageUrl: string | null;
   externalId: string;
   enabled: boolean;
   complementsOrder: MenuConfig;
   complementsEnabled: boolean;
   categoryId: string;
+  imageExists: boolean;
   //details
   previewURL: string | null;
   imageFile: File | null;

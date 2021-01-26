@@ -27,13 +27,13 @@ const initialState = {
   description: '',
   price: 0,
   classifications: [],
-  imageUrl: null,
   externalId: '',
   enabled: true,
   complementsOrder: menu.empty(),
   complementsEnabled: false,
-  categoryId: '',
+  imageExists: false,
   //details
+  categoryId: '',
   previewURL: null,
   imageFile: null,
   isLoading: false,
@@ -65,11 +65,11 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
     description,
     price,
     classifications,
-    imageUrl,
     externalId,
     enabled,
     complementsOrder,
     complementsEnabled,
+    imageExists,
     //details
     categoryId,
     previewURL,
@@ -96,11 +96,11 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
           description: product.description ?? '',
           price: product.price ?? 0,
           classifications: product.classifications ?? [],
-          imageUrl: product.image_url ?? null,
           externalId: product.externalId ?? '',
           enabled: product.enabled ?? true,
           complementsOrder: product.complementsOrder,
           complementsEnabled: product.complementsEnabled ?? false,
+          imageExists: product.imageExists ?? false,
           categoryId: contextCategoryId ?? '',
           isEditing: productId === 'new' ? false : true,
         },
@@ -119,10 +119,11 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
   const onDropHandler = React.useCallback(async (acceptedFiles: File[]) => {
     const [file] = acceptedFiles;
     const url = URL.createObjectURL(file);
-    //add file to imageFile
-    handleStateUpdate('imageFile', file);
     //add url to previewURL
     handleStateUpdate('previewURL', url);
+    // add image file
+    handleStateUpdate('imageFile', file);
+    handleStateUpdate('imageExists', true);
   }, []);
 
   const onSave = () => {
@@ -134,11 +135,11 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
           description,
           price,
           classifications,
-          image_url: imageUrl,
           externalId,
           enabled,
           complementsOrder,
           complementsEnabled,
+          imageExists,
         },
         imageFile,
         categoryId
@@ -159,7 +160,7 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
   };
 
   const handleDelete = async () => {
-    onDeleteProduct(typeof imageUrl === 'string');
+    onDeleteProduct(imageExists);
     onClose();
   };
 
@@ -242,7 +243,7 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
       <Text>
         {t('Recomendamos imagens na proporção retangular (16:9) com no mínimo 1280px de largura')}
       </Text>
-      <FileDropzone mt="4" onDropFile={onDropHandler} preview={previewURL ?? imageUrl} />
+      <FileDropzone mt="4" onDropFile={onDropHandler} preview={previewURL} />
       <Text mt="8" fontSize="xl" color="black">
         {t('Classificações adicionais:')}
       </Text>
