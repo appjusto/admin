@@ -24,7 +24,7 @@ export const ComplementForm = ({
   onCancel,
 }: ComplementFormProps) => {
   //context
-  const { onSaveComplement } = useProductContext();
+  const { onSaveComplement, getComplementImageUrl } = useProductContext();
   //state
   const [name, setName] = React.useState('');
   const [description, setDescription] = React.useState('');
@@ -39,7 +39,7 @@ export const ComplementForm = ({
   React.useEffect(() => {
     inputRef?.current?.focus();
     if (item?.imageExists) {
-      //get
+      getImageUrl();
     }
     if (item) {
       setName(item.name);
@@ -48,6 +48,11 @@ export const ComplementForm = ({
       setExternalId(item.externalId ?? '');
     }
   }, [item]);
+
+  const getImageUrl = async () => {
+    const url = await getComplementImageUrl(complementId!);
+    if (url) return setPreviewURL(url);
+  };
 
   //handlres
   const onDropHandler = React.useCallback(async (acceptedFiles: File[]) => {

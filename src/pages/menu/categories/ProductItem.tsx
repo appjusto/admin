@@ -36,12 +36,13 @@ export const ProductItem = React.memo(({ product, index }: Props) => {
     };
     await api.business().updateProduct(businessId!, product.id, productData, null);
   };
+
+  const getImageUrl = async () => {
+    const url = await api.business().getProductImageURL(businessId!, product.id);
+    if (typeof url === 'string') return setImageUrl(url);
+  };
   //side effects
   React.useEffect(() => {
-    const getImageUrl = async () => {
-      const url = await api.business().getProductImageURL(businessId!, product.id);
-      if (typeof url === 'string') return setImageUrl(url);
-    };
     if (product.imageExists) {
       getImageUrl();
     }
@@ -49,6 +50,7 @@ export const ProductItem = React.memo(({ product, index }: Props) => {
   React.useEffect(() => {
     updatePriceState(product.price);
   }, [product.price]);
+
   // UI
   return (
     <Draggable draggableId={product.id} index={index}>

@@ -328,7 +328,13 @@ export default class MenuApi {
   }
 
   async createComplementsGroup(businessId: string, group: ComplementGroup) {
-    return await this.refs.getBusinessComplementsGroupsRef(businessId).add(group);
+    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+    const newGroup = {
+      ...group,
+      createdOn: timestamp,
+      updatedOn: timestamp,
+    };
+    return await this.refs.getBusinessComplementsGroupsRef(businessId).add(newGroup);
   }
 
   async updateComplementsGroup(
@@ -350,8 +356,8 @@ export default class MenuApi {
     await this.refs.getBusinessComplementsGroupsRef(businessId).doc(groupId).delete();
   }
 
-  getComplementImageURL(businessId: string, complementId: string) {
-    return this.files.getDownloadURL(
+  async getComplementImageURL(businessId: string, complementId: string) {
+    return await this.files.getDownloadURL(
       this.refs.getComplementImageStoragePath(businessId, complementId)
     );
   }

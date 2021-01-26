@@ -35,6 +35,8 @@ interface ContextProps {
     imageFile: File | null
   ): Promise<void | boolean>;
   onDeleteComplement(complementId: string, groupId: string, hasImage: boolean): void;
+  getProductImageUrl(): Promise<string | null>;
+  getComplementImageUrl(complementId: string): Promise<string | null>;
 }
 
 const ProductContext = React.createContext<ContextProps>({} as ContextProps);
@@ -171,6 +173,20 @@ export const ProductContextProvider = (props: ProviderProps) => {
     await api.business().deleteComplement(businessId!, complementId, imageExists);
   };
 
+  const getProductImageUrl = async () => {
+    if (isValid) {
+      const url = await api.business().getProductImageURL(businessId!, productId);
+      return url;
+    } else {
+      return null;
+    }
+  };
+
+  const getComplementImageUrl = async (complementId: string) => {
+    const url = await api.business().getComplementImageURL(businessId!, complementId);
+    return url;
+  };
+
   return (
     <ProductContext.Provider
       value={{
@@ -187,6 +203,8 @@ export const ProductContextProvider = (props: ProviderProps) => {
         onDeleteComplementsGroup,
         onSaveComplement,
         onDeleteComplement,
+        getProductImageUrl,
+        getComplementImageUrl,
       }}
       {...props}
     />

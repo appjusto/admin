@@ -56,6 +56,7 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
     isValid,
     onSaveProduct,
     onDeleteProduct,
+    getProductImageUrl,
   } = useProductContext();
   //state
   const [state, dispatch] = React.useReducer(productReducer, initialState);
@@ -88,6 +89,12 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
   }, [isValid, path, push, url]);
 
   React.useEffect(() => {
+    if (product?.imageExists) {
+      getImageUrl();
+    }
+  }, [product?.imageExists]);
+
+  React.useEffect(() => {
     if (product && productId !== 'new') {
       dispatch({
         type: 'update_state',
@@ -107,6 +114,11 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
       });
     }
   }, [product, productId, contextCategoryId]);
+
+  const getImageUrl = async () => {
+    const url = await getProductImageUrl();
+    handleStateUpdate('previewURL', url);
+  };
 
   const handleStateUpdate = (key: string, value: any) => {
     dispatch({ type: 'update_state', payload: { [key]: value } });

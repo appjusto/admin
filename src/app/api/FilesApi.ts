@@ -26,7 +26,7 @@ export default class FilesApi {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
-  getDownloadUrlWithLoop(ref: any, times: number, delay: number) {
+  /*getDownloadUrlWithLoop(ref: any, times: number, delay: number) {
     return new Promise(async (resolve, reject) => {
       let n = 0;
       let success = false;
@@ -54,6 +54,12 @@ export default class FilesApi {
     const ref = this.storage.ref().child(path);
     const uri = await this.getDownloadUrlWithLoop(ref, 5, 1000);
     return uri as string | null;
+  }*/
+
+  async getDownloadURL(path: string) {
+    const ref = this.storage.ref().child(path);
+    const uri = await ref.getDownloadURL().then((res: string | null) => res);
+    return uri;
   }
 
   async deleteStorageFile(path: string): Promise<boolean> {
