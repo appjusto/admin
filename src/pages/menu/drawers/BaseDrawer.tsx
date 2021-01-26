@@ -96,11 +96,11 @@ export const BaseDrawer = ({
                   label="Complementos"
                   isDisabled={url.includes('new')}
                 />
-                <DrawerLink
+                {/*<DrawerLink
                   to={`${url}/availability`}
                   label="Disponibilidade"
                   isDisabled={url.includes('new')}
-                />
+                />*/}
               </Flex>
             )}
           </DrawerHeader>

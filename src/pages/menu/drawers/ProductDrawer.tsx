@@ -3,7 +3,6 @@ import { Route, Switch, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { ProductContextProvider, useProductContext } from '../context/ProductContext';
 import { BaseDrawer } from './BaseDrawer';
-import { ProductAvailability } from './product/ProductAvailability';
 import { ProductComplements } from './product/ProductComplements';
 import { ProductDetails } from './product/ProductDetails';
 
@@ -36,9 +35,9 @@ export const ProductDrawer = (props: Props) => {
           <Route exact path={`${path}/complements`}>
             <ProductComplements />
           </Route>
-          <Route exact path={`${path}/availability`}>
+          {/*<Route exact path={`${path}/availability`}>
             <ProductAvailability />
-          </Route>
+            </Route>*/}
         </Switch>
       </BaseDrawer>
     </ProductContextProvider>

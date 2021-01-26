@@ -46,8 +46,9 @@ export const ProductContextProvider = (props: ProviderProps) => {
   const api = useContextApi();
   const businessId = useContextBusinessId();
   const { menuConfig, updateMenuConfig } = useContextMenu();
-  const { productId } = useParams<Params>();
-  const product = useProduct(businessId, productId);
+  const { productId: paramsId } = useParams<Params>();
+  const product = useProduct(businessId, paramsId);
+  const productId = product?.name ? paramsId : 'new';
   const { groups, complements } = useObserveComplements(
     businessId!,
     product?.complementsEnabled === true

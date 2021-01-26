@@ -47,7 +47,7 @@ interface DetailsProps {
 
 export const ProductDetails = ({ onClose }: DetailsProps) => {
   //context
-  const { url } = useRouteMatch();
+  const { url, path } = useRouteMatch();
   const { push } = useHistory();
   const {
     contextCategoryId,
@@ -78,6 +78,14 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
     saveSuccess,
   } = state;
   const inputRef = React.useRef<HTMLInputElement>(null);
+
+  React.useEffect(() => {
+    if (productId === 'new' && !url.includes('new')) {
+      console.log('push', path);
+      const newPath = path.replace(':productId', 'new');
+      push(newPath);
+    }
+  }, [productId]);
 
   React.useEffect(() => {
     if (product && productId !== 'new') {
