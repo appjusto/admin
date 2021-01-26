@@ -25,9 +25,10 @@ export const useBusinessProfile = () => {
     api.business().updateBusinessProfile(businessId, { logoExists: false });
     return api.business().uploadBusinessLogo(businessId, file);
   });
-  const [uploadCover, uploadCoverResult] = useMutation((file: File) =>
-    api.business().uploadBusinessCover(businessId, file)
-  );
+  const [uploadCover, uploadCoverResult] = useMutation((file: File) => {
+    api.business().updateBusinessProfile(businessId, { coverImageExists: false });
+    return api.business().uploadBusinessCover(businessId, file);
+  });
 
   //without mutations
   //const getLogoUrl = async () => await api.business().getBusinessLogoURL(businessId);
