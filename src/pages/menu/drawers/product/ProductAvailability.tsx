@@ -172,15 +172,17 @@ export const ProductAvailability = () => {
           </Radio>
         </Flex>
       </RadioGroup>
-      <Flex flexDir="column" mt="4">
-        <DaySchedule weekDay={t('Segunda')} />
-        <DaySchedule weekDay={t('Terça')} />
-        <DaySchedule weekDay={t('Quarta')} />
-        <DaySchedule weekDay={t('Quinta')} />
-        <DaySchedule weekDay={t('Sexta')} />
-        <DaySchedule weekDay={t('Sábado')} />
-        <DaySchedule weekDay={t('Domingo')} />
-      </Flex>
+      {mainAvailability === '2' && (
+        <Flex flexDir="column" mt="4">
+          <DaySchedule weekDay={t('Segunda')} />
+          <DaySchedule weekDay={t('Terça')} />
+          <DaySchedule weekDay={t('Quarta')} />
+          <DaySchedule weekDay={t('Quinta')} />
+          <DaySchedule weekDay={t('Sexta')} />
+          <DaySchedule weekDay={t('Sábado')} />
+          <DaySchedule weekDay={t('Domingo')} />
+        </Flex>
+      )}
     </>
   );
 };
