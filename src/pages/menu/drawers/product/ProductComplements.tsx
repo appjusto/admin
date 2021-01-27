@@ -9,16 +9,21 @@ import { Groups } from './groups/Groups';
 export const ProductComplements = () => {
   //context
   const { url } = useRouteMatch();
-  const { productId, sortedGroups, onSaveComplementsGroup } = useProductContext();
+  const { productId, product, onSaveProduct, onSaveComplementsGroup } = useProductContext();
   //state
   const [hasComplements, setHasComplements] = React.useState(false);
   const [newGroupForm, setNewGroupForm] = React.useState(false);
 
+  const handleComplementsEnable = (value: string) => {
+    onSaveProduct({ complementsEnabled: value === '1' ? false : true }, null, undefined);
+    setHasComplements(value === '1' ? false : true);
+  };
+
   React.useEffect(() => {
-    if (sortedGroups?.length > 0) {
+    if (product?.complementsEnabled) {
       setHasComplements(true);
     }
-  }, [sortedGroups]);
+  }, [product?.complementsEnabled]);
 
   if (productId === 'new') {
     const urlRedirect = url.split('/complements')[0];
@@ -31,7 +36,7 @@ export const ProductComplements = () => {
         {t('Esse item possui complementos?')}
       </Text>
       <RadioGroup
-        onChange={(value) => setHasComplements(value === '1' ? false : true)}
+        onChange={(value) => handleComplementsEnable(value.toString())}
         value={hasComplements ? '2' : '1'}
         defaultValue="1"
         colorScheme="green"
