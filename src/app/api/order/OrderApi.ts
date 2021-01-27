@@ -24,6 +24,7 @@ export default class OrderApi {
   // firestore
   observeOrders(
     options: ObserveOrdersOptions,
+    businessId: string,
     resultHandler: (orders: WithId<Order>[]) => void
   ): firebase.Unsubscribe {
     const statuses = [
@@ -33,6 +34,7 @@ export default class OrderApi {
     let query = this.refs
       .getOrdersRef()
       .orderBy('createdOn', 'desc')
+      .where('business.id', '==', businessId)
       .where('status', 'in', statuses);
 
     const unsubscribe = query.onSnapshot(

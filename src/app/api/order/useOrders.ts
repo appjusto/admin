@@ -3,15 +3,18 @@ import { Order, WithId } from 'appjusto-types';
 import React from 'react';
 import { ObserveOrdersOptions } from './OrderApi';
 
-export const useOrders = (options: ObserveOrdersOptions = { active: true, inactive: false }) => {
+export const useOrders = (
+  options: ObserveOrdersOptions = { active: true, inactive: false },
+  businessId: string
+) => {
   // context
   const api = useContextApi();
   // state
   const [orders, setOrders] = React.useState<WithId<Order>[]>([]);
   // side effects
   React.useEffect(() => {
-    return api.order().observeOrders(options, setOrders);
-  }, [options, api]);
+    return api.order().observeOrders(options, businessId, setOrders);
+  }, [options, businessId, api]);
   // return
   return orders;
 };

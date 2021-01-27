@@ -12,7 +12,7 @@ export const OrdersKanban = () => {
   const business = useContextBusiness();
   //state
   const { updateBusinessProfile } = useBusinessProfile();
-  const orders = useOrders();
+  const orders = useOrders(undefined, business!.id);
   const ordersByStatus = splitByStatus(orders);
   // UI
   return (
