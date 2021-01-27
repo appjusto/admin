@@ -16,9 +16,9 @@ export const Groups = () => {
     }
     let newProductConfig = menu.empty();
     if (type === 'group') {
-      newProductConfig = menu.updateCategoryIndex(productConfig, draggableId, destination.index);
+      newProductConfig = menu.updateFirstLevelIndex(productConfig, draggableId, destination.index);
     } else if (type === 'item') {
-      newProductConfig = menu.updateProductIndex(
+      newProductConfig = menu.updateSecondLevelIndex(
         productConfig,
         draggableId,
         source.droppableId,

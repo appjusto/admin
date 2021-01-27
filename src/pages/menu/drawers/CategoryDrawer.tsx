@@ -42,14 +42,14 @@ export const CategoryDrawer = (props: Props) => {
         name,
         enabled: true,
       });
-      updateMenuOrdering(menu.addCategory(ordering, id));
+      updateMenuOrdering(menu.addFirstLevel(ordering, id));
       props.onClose();
     })();
   };
   const onDeleteHandler = () => {
     (async () => {
-      updateMenuOrdering(menu.removeCategory(ordering, id));
-      await deleteCategory(menu.getProducts(ordering, id));
+      updateMenuOrdering(menu.removeFirstLevel(ordering, id));
+      await deleteCategory(menu.getSecondLevelIds(ordering, id));
       props.onClose();
     })();
   };

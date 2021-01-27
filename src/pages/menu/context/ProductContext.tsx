@@ -56,8 +56,8 @@ export const ProductContextProvider = (props: ProviderProps) => {
     productId,
     product?.complementsEnabled === true
   );
-  const sortedGroups = menu.getOrderedMenu(groups, complements, product?.complementsOrder);
-  const contextCategoryId = menu.getProductCategoryId(ordering, productId);
+  const sortedGroups = menu.getSorted(groups, complements, product?.complementsOrder);
+  const contextCategoryId = menu.getParentId(ordering, productId);
   const productConfig = product?.complementsOrder ?? menu.empty();
 
   const onSaveProduct = (
@@ -73,12 +73,12 @@ export const ProductContextProvider = (props: ProviderProps) => {
         const id = await api
           .business()
           .createProduct(businessId!, newProduct as Product, imageFile);
-        updateMenuOrdering(menu.updateProductCategory(ordering, id, categoryId!));
+        updateMenuOrdering(menu.updateParent(ordering, id, categoryId!));
         return id;
       } else {
         await api.business().updateProduct(businessId!, productId, newProduct, imageFile);
         if (categoryId) {
-          updateMenuOrdering(menu.updateProductCategory(ordering, productId, categoryId!));
+          updateMenuOrdering(menu.updateParent(ordering, productId, categoryId!));
         }
         return productId;
       }
@@ -89,7 +89,7 @@ export const ProductContextProvider = (props: ProviderProps) => {
   const onDeleteProduct = (imageExists: boolean) => {
     (async () => {
       if (contextCategoryId) {
-        updateMenuOrdering(menu.removeProductFromCategory(ordering, productId, contextCategoryId));
+        updateMenuOrdering(menu.removeSecondLevel(ordering, productId, contextCategoryId));
         await api.business().deleteProduct(businessId!, productId, imageExists);
       }
     })();
@@ -100,7 +100,7 @@ export const ProductContextProvider = (props: ProviderProps) => {
       const { id: groupId } = await api
         .business()
         .createComplementsGroup(businessId!, productId, group);
-      const newProductConfig = menu.addCategory(productConfig, groupId);
+      const newProductConfig = menu.addFirstLevel(productConfig, groupId);
       await api.business().updateProduct(
         businessId!,
         productId,
@@ -122,7 +122,7 @@ export const ProductContextProvider = (props: ProviderProps) => {
         api.business().deleteComplement(businessId!, productId, item.id, item.imageExists ?? false)
       );
     }
-    const newProductConfig = menu.removeCategory(productConfig, group.id);
+    const newProductConfig = menu.removeFirstLevel(productConfig, group.id);
     await api.business().updateProduct(
       businessId!,
       productId,
@@ -146,7 +146,7 @@ export const ProductContextProvider = (props: ProviderProps) => {
         .createComplement(businessId!, productId, newItem, imageFile);
       let newProductConfig = menu.empty();
       if (productConfig && groupId) {
-        newProductConfig = menu.addProductToCategory(productConfig, newId, groupId);
+        newProductConfig = menu.addSecondLevel(productConfig, newId, groupId);
       }
       return api.business().updateProduct(
         businessId!,
@@ -168,7 +168,7 @@ export const ProductContextProvider = (props: ProviderProps) => {
     groupId: string,
     imageExists: boolean
   ) => {
-    const newProductConfig = menu.removeProductFromCategory(productConfig, complementId, groupId);
+    const newProductConfig = menu.removeSecondLevel(productConfig, complementId, groupId);
     await api.business().updateProduct(
       businessId!,
       productId,

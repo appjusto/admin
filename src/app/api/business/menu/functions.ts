@@ -12,144 +12,144 @@ const ordered = <T extends Object>(items: WithId<T>[], order: string[]): WithId<
     .sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
 };
 
-// categories
+// first level
 
-export const addCategory = (ordering: Ordering, categoryId: string) => {
+export const addFirstLevel = (ordering: Ordering, firstLevelId: string) => {
   const { firstLevelIds, secondLevelIdsByFirstLevelId } = ordering;
-  if (firstLevelIds.indexOf(categoryId) !== -1) return ordering;
+  if (firstLevelIds.indexOf(firstLevelId) !== -1) return ordering;
   return {
-    firstLevelIds: [...firstLevelIds, categoryId],
+    firstLevelIds: [...firstLevelIds, firstLevelId],
     secondLevelIdsByFirstLevelId: {
       ...secondLevelIdsByFirstLevelId,
-      [categoryId]: [],
+      [firstLevelId]: [],
     },
   } as Ordering;
 };
 
-export const removeCategory = (ordering: Ordering, categoryId: string) => {
+export const removeFirstLevel = (ordering: Ordering, firstLevelId: string) => {
   const { firstLevelIds, secondLevelIdsByFirstLevelId } = ordering;
-  const categoryIndex = firstLevelIds.indexOf(categoryId);
-  if (categoryIndex === -1) return ordering;
+  const index = firstLevelIds.indexOf(firstLevelId);
+  if (index === -1) return ordering;
   return {
-    firstLevelIds: without(ordering.firstLevelIds, categoryId),
-    secondLevelIdsByFirstLevelId: omit(secondLevelIdsByFirstLevelId, [categoryId]),
+    firstLevelIds: without(ordering.firstLevelIds, firstLevelId),
+    secondLevelIdsByFirstLevelId: omit(secondLevelIdsByFirstLevelId, [firstLevelId]),
   } as Ordering;
 };
 
-export const updateCategoryIndex = (ordering: Ordering, categoryId: string, newIndex: number) => {
+export const updateFirstLevelIndex = (
+  ordering: Ordering,
+  firstLevelId: string,
+  newIndex: number
+) => {
   const { firstLevelIds } = ordering;
-  const previousIndex = firstLevelIds.indexOf(categoryId);
+  const previousIndex = firstLevelIds.indexOf(firstLevelId);
   return {
     ...ordering,
     firstLevelIds: arrayMove<string>(firstLevelIds, previousIndex, newIndex),
   } as Ordering;
 };
 
-// products
+// second levels
 
-export const addProductToCategory = (ordering: Ordering, productId: string, categoryId: string) => {
+export const addSecondLevel = (ordering: Ordering, secondLevelId: string, firstLevelId: string) => {
   const { secondLevelIdsByFirstLevelId } = ordering;
   return {
     ...ordering,
     secondLevelIdsByFirstLevelId: {
       ...secondLevelIdsByFirstLevelId,
-      [categoryId]: (secondLevelIdsByFirstLevelId[categoryId] ?? []).concat(productId),
+      [firstLevelId]: (secondLevelIdsByFirstLevelId[firstLevelId] ?? []).concat(secondLevelId),
     },
   } as Ordering;
 };
 
-export const getProducts = (ordering: Ordering, categoryId: string) =>
-  ordering.secondLevelIdsByFirstLevelId[categoryId];
+export const getSecondLevelIds = (ordering: Ordering, firstLevelId: string) =>
+  ordering.secondLevelIdsByFirstLevelId[firstLevelId];
 
-export const getProductCategoryId = (ordering: Ordering, productId: string) => {
+export const getParentId = (ordering: Ordering, secondLevelId: string) => {
   const { firstLevelIds, secondLevelIdsByFirstLevelId } = ordering;
   return firstLevelIds.find(
-    (id) => (secondLevelIdsByFirstLevelId[id] ?? []).indexOf(productId) !== -1
+    (id) => (secondLevelIdsByFirstLevelId[id] ?? []).indexOf(secondLevelId) !== -1
   );
 };
 
-export const removeProductFromCategory = (
+export const removeSecondLevel = (
   ordering: Ordering,
-  productId: string,
-  categoryId: string
+  secondLevelId: string,
+  firstLevelId: string
 ) => {
   const { secondLevelIdsByFirstLevelId } = ordering;
   return {
     ...ordering,
     secondLevelIdsByFirstLevelId: {
       ...secondLevelIdsByFirstLevelId,
-      [categoryId]: without(secondLevelIdsByFirstLevelId[categoryId], productId),
+      [firstLevelId]: without(secondLevelIdsByFirstLevelId[firstLevelId], secondLevelId),
     },
   } as Ordering;
 };
 
-export const updateProductCategory = (
-  ordering: Ordering,
-  productId: string,
-  categoryId: string
-) => {
-  const currentCategoryId = getProductCategoryId(ordering, productId);
-  // avoid update when category is the same
-  if (currentCategoryId === categoryId) return ordering;
+export const updateParent = (ordering: Ordering, secondLevelId: string, firstLevelId: string) => {
+  const currentParentId = getParentId(ordering, secondLevelId);
+  // avoid update when parent is the same
+  if (currentParentId === firstLevelId) return ordering;
   let nextOrdering: Ordering = ordering;
-  // remove product from its current category
-  if (currentCategoryId) {
-    nextOrdering = removeProductFromCategory(ordering, productId, currentCategoryId);
+  // remove from its current parent
+  if (currentParentId) {
+    nextOrdering = removeSecondLevel(ordering, secondLevelId, currentParentId);
   }
-  // add to the new category
-  return addProductToCategory(nextOrdering, productId, categoryId);
+  // add to the new parent
+  return addSecondLevel(nextOrdering, secondLevelId, firstLevelId);
 };
 
-export const updateProductIndex = (
+export const updateSecondLevelIndex = (
   ordering: Ordering,
-  productId: string,
-  fromCategoryId: string,
-  toCategoryId: string,
+  secondLevelId: string,
+  fromParentId: string,
+  toParentId: string,
   from: number,
   to: number
 ) => {
   const { secondLevelIdsByFirstLevelId } = ordering;
-  const fromCategoryOrder = secondLevelIdsByFirstLevelId[fromCategoryId];
-  const toCategoryOrder = secondLevelIdsByFirstLevelId[toCategoryId] ?? [];
-  let newProductsOrderByCategoryId = {};
-  if (fromCategoryId === toCategoryId) {
-    // moving product inside same category
-    newProductsOrderByCategoryId = {
+  const fromOrder = secondLevelIdsByFirstLevelId[fromParentId];
+  const toOrder = secondLevelIdsByFirstLevelId[toParentId] ?? [];
+  let newOrderByParentId = {};
+  if (fromParentId === toParentId) {
+    // moving inside same parent
+    newOrderByParentId = {
       ...secondLevelIdsByFirstLevelId,
-      [fromCategoryId]: arrayMove<string>(toCategoryOrder, from, to),
+      [fromParentId]: arrayMove<string>(toOrder, from, to),
     };
   } else {
-    // moving product to another category
-    newProductsOrderByCategoryId = {
+    // moving to another parent
+    newOrderByParentId = {
       ...secondLevelIdsByFirstLevelId,
-      [fromCategoryId]: fromCategoryOrder.filter((id) => id !== productId),
-      [toCategoryId]: [...toCategoryOrder.slice(0, to), productId, ...toCategoryOrder.slice(to)],
+      [fromParentId]: fromOrder.filter((id) => id !== secondLevelId),
+      [toParentId]: [...toOrder.slice(0, to), secondLevelId, ...toOrder.slice(to)],
     };
   }
   return {
     ...ordering,
-    secondLevelIdsByFirstLevelId: newProductsOrderByCategoryId,
+    secondLevelIdsByFirstLevelId: newOrderByParentId,
   } as Ordering;
 };
 
 // menu
-export const getOrderedMenu = <T extends object, T2 extends object>(
-  categories: WithId<T>[],
-  products: WithId<T2>[],
+export const getSorted = <T extends object, T2 extends object>(
+  firstLevels: WithId<T>[],
+  secondLevels: WithId<T2>[],
   config: Ordering | undefined
 ) => {
-  if (categories.length === 0 || !config) return [];
+  if (firstLevels.length === 0 || !config) return [];
   const { firstLevelIds, secondLevelIdsByFirstLevelId } = config;
-  return ordered(categories, firstLevelIds).map((category) => {
+  return ordered(firstLevels, firstLevelIds).map((parent) => {
     if (!secondLevelIdsByFirstLevelId) {
       return {
-        ...category,
+        ...parent,
         items: [],
       };
     }
     return {
-      ...category,
-      items: ordered(products, secondLevelIdsByFirstLevelId[category.id]),
+      ...parent,
+      items: ordered(secondLevels, secondLevelIdsByFirstLevelId[parent.id]),
     };
   });
 };

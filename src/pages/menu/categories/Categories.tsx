@@ -29,7 +29,7 @@ export const Categories = ({ productSearch }: Props) => {
       return; // same location
     if (type === 'product') {
       updateMenuOrdering(
-        menu.updateProductIndex(
+        menu.updateSecondLevelIndex(
           ordering,
           draggableId, //product id
           source.droppableId, // category from
@@ -39,7 +39,7 @@ export const Categories = ({ productSearch }: Props) => {
         )
       );
     } else if (type === 'category') {
-      updateMenuOrdering(menu.updateCategoryIndex(ordering, draggableId, destination.index));
+      updateMenuOrdering(menu.updateFirstLevelIndex(ordering, draggableId, destination.index));
     }
   };
 
