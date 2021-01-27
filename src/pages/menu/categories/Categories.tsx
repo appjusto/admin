@@ -14,7 +14,7 @@ interface Props {
 
 export const Categories = ({ productSearch }: Props) => {
   // state
-  const { categories, menuConfig, updateMenuConfig } = useContextMenu();
+  const { categories, ordering, updateMenuOrdering } = useContextMenu();
   const filterProductsWithSearch = (products: WithId<Product>[]) => {
     if (!productSearch || isEmpty(productSearch)) return products;
     const regexp = new RegExp(productSearch, 'i');
@@ -28,9 +28,9 @@ export const Categories = ({ productSearch }: Props) => {
     if (source.droppableId === destination.droppableId && source.index === destination.index)
       return; // same location
     if (type === 'product') {
-      updateMenuConfig(
+      updateMenuOrdering(
         menu.updateProductIndex(
-          menuConfig,
+          ordering,
           draggableId, //product id
           source.droppableId, // category from
           destination.droppableId, // category to
@@ -39,7 +39,7 @@ export const Categories = ({ productSearch }: Props) => {
         )
       );
     } else if (type === 'category') {
-      updateMenuConfig(menu.updateCategoryIndex(menuConfig, draggableId, destination.index));
+      updateMenuOrdering(menu.updateCategoryIndex(ordering, draggableId, destination.index));
     }
   };
 

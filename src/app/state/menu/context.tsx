@@ -1,14 +1,14 @@
 import { useObserveCategories } from 'app/api/business/categories/useObserveCategories';
 import * as menu from 'app/api/business/menu/functions';
-import { useObserveMenuConfig } from 'app/api/business/menu/useObserveMenuConfig';
+import { useObserveMenuOrdering } from 'app/api/business/menu/useObserveMenuOrdering';
 import { useObserveProducts } from 'app/api/business/products/useObserveProducts';
-import { Category, MenuConfig, WithId } from 'appjusto-types';
+import { Category, Ordering, WithId } from 'appjusto-types';
 import React from 'react';
 
 interface MenuContextValue {
   categories: WithId<Category>[];
-  menuConfig: MenuConfig;
-  updateMenuConfig: (menuConfig: MenuConfig) => void;
+  ordering: Ordering;
+  updateMenuOrdering: (ordering: Ordering) => void;
 }
 
 interface Props {
@@ -21,9 +21,9 @@ const MenuProviderContext = React.createContext<MenuContextValue | undefined>(un
 export const MenuProvider = ({ businessId, children }: Props) => {
   const unorderedCategories = useObserveCategories(businessId);
   const products = useObserveProducts(businessId);
-  const { menuConfig, updateMenuConfig } = useObserveMenuConfig(businessId);
-  const categories = menu.getOrderedMenu(unorderedCategories, products, menuConfig);
-  const value: MenuContextValue = { categories, menuConfig, updateMenuConfig };
+  const { ordering, updateMenuOrdering } = useObserveMenuOrdering(businessId);
+  const categories = menu.getOrderedMenu(unorderedCategories, products, ordering);
+  const value: MenuContextValue = { categories, ordering, updateMenuOrdering };
   return <MenuProviderContext.Provider value={value}>{children}</MenuProviderContext.Provider>;
 };
 

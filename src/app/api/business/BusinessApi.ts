@@ -1,5 +1,5 @@
 import { BankAccount, Business, Category, Product, WithId } from 'appjusto-types';
-import { Complement, ComplementGroup, MenuConfig } from 'appjusto-types/menu';
+import { Complement, ComplementGroup, Ordering } from 'appjusto-types/menu';
 import firebase from 'firebase/app';
 import { documentAs, documentsAs } from '../../../core/fb';
 import FilesApi from '../FilesApi';
@@ -98,13 +98,13 @@ export default class MenuApi {
   }
 
   // menu config
-  observeMenuConfig(
+  observeMenuOrdering(
     businessId: string,
-    resultHandler: (result: MenuConfig) => void
+    resultHandler: (result: Ordering) => void
   ): firebase.Unsubscribe {
-    const unsubscribe = this.refs.getBusinessMenuConfigRef(businessId).onSnapshot(
+    const unsubscribe = this.refs.getBusinessMenuOrderingRef(businessId).onSnapshot(
       (doc) => {
-        resultHandler({ ...(doc.data() as MenuConfig) });
+        resultHandler({ ...(doc.data() as Ordering) });
       },
       (error) => {
         console.error(error);
@@ -113,8 +113,8 @@ export default class MenuApi {
     return unsubscribe;
   }
 
-  async updateMenuConfig(businessId: string, menuConfig: MenuConfig) {
-    await this.refs.getBusinessMenuConfigRef(businessId).set(menuConfig, { merge: false });
+  async updateMenuOrdering(businessId: string, ordering: Ordering) {
+    await this.refs.getBusinessMenuOrderingRef(businessId).set(ordering, { merge: false });
   }
 
   // categories

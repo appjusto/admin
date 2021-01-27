@@ -1,4 +1,4 @@
-import { MenuConfig } from 'appjusto-types';
+import { Ordering } from 'appjusto-types';
 
 export interface StateProps {
   //product
@@ -8,7 +8,7 @@ export interface StateProps {
   classifications: string[];
   externalId: string;
   enabled: boolean;
-  complementsOrder: MenuConfig;
+  complementsOrder: Ordering;
   complementsEnabled: boolean;
   categoryId: string;
   imageExists: boolean;

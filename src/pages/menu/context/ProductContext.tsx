@@ -4,7 +4,7 @@ import { useProduct } from 'app/api/business/products/useProduct2';
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusinessId } from 'app/state/business/context';
 import { useContextMenu } from 'app/state/menu/context';
-import { Complement, ComplementGroup, MenuConfig, Product, WithId } from 'appjusto-types';
+import { Complement, ComplementGroup, Ordering, Product, WithId } from 'appjusto-types';
 import React from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -18,7 +18,7 @@ interface ContextProps {
   product: WithId<Product> | undefined;
   isValid: boolean;
   imageUrl: string | null;
-  productConfig: MenuConfig;
+  productConfig: Ordering;
   sortedGroups: WithId<ComplementGroup>[];
   onSaveProduct(
     productData: Partial<Product>,
@@ -48,7 +48,7 @@ interface ProviderProps {
 export const ProductContextProvider = (props: ProviderProps) => {
   const api = useContextApi();
   const businessId = useContextBusinessId();
-  const { menuConfig, updateMenuConfig } = useContextMenu();
+  const { ordering, updateMenuOrdering } = useContextMenu();
   const { productId } = useParams<Params>();
   const { product, isValid, imageUrl } = useProduct(businessId, productId);
   const { groups, complements } = useObserveComplements(
@@ -57,7 +57,7 @@ export const ProductContextProvider = (props: ProviderProps) => {
     product?.complementsEnabled === true
   );
   const sortedGroups = menu.getOrderedMenu(groups, complements, product?.complementsOrder);
-  const contextCategoryId = menu.getProductCategoryId(menuConfig, productId);
+  const contextCategoryId = menu.getProductCategoryId(ordering, productId);
   const productConfig = product?.complementsOrder ?? menu.empty();
 
   const onSaveProduct = (
@@ -73,12 +73,12 @@ export const ProductContextProvider = (props: ProviderProps) => {
         const id = await api
           .business()
           .createProduct(businessId!, newProduct as Product, imageFile);
-        updateMenuConfig(menu.updateProductCategory(menuConfig, id, categoryId!));
+        updateMenuOrdering(menu.updateProductCategory(ordering, id, categoryId!));
         return id;
       } else {
         await api.business().updateProduct(businessId!, productId, newProduct, imageFile);
         if (categoryId) {
-          updateMenuConfig(menu.updateProductCategory(menuConfig, productId, categoryId!));
+          updateMenuOrdering(menu.updateProductCategory(ordering, productId, categoryId!));
         }
         return productId;
       }
@@ -89,7 +89,7 @@ export const ProductContextProvider = (props: ProviderProps) => {
   const onDeleteProduct = (imageExists: boolean) => {
     (async () => {
       if (contextCategoryId) {
-        updateMenuConfig(menu.removeProductFromCategory(menuConfig, productId, contextCategoryId));
+        updateMenuOrdering(menu.removeProductFromCategory(ordering, productId, contextCategoryId));
         await api.business().deleteProduct(businessId!, productId, imageExists);
       }
     })();
