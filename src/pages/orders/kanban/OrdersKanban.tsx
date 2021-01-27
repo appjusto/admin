@@ -1,25 +1,18 @@
 import { Box, Button, HStack, Stack, Switch, Text } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
-import { splitByStatus } from 'app/api/order/selectors';
-import { useOrders } from 'app/api/order/useOrders';
-import { useContextBusiness } from 'app/state/business/context';
 import { ReactComponent as EditIcon } from 'common/img/edit-icon.svg';
 import React from 'react';
 import { t } from 'utils/i18n';
+import { useOrdersContext } from '../context';
 import { OrdersKanbanList } from './OrdersKanbanList';
-
-const fakeOrder = {};
 
 export const OrdersKanban = () => {
   // context
-  const business = useContextBusiness();
+  const { business, ordersByStatus } = useOrdersContext();
   //state
   const { updateBusinessProfile } = useBusinessProfile();
-  const orders = useOrders(undefined, business!.id);
-  const ordersByStatus = splitByStatus(orders);
-  /*const ordersByStatus = {
-    confirmed: [{ code: 'gascaksnc' }, { code: 'gas165216' }, { code: 'ga8ywfiewe' }],
-  };*/
+  //const orders = useOrders(undefined, business!.id);
+
   // UI
   return (
     <Box pb="12">

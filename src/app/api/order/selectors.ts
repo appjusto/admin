@@ -12,3 +12,10 @@ export const splitByStatus = (orders: WithId<Order>[]): OrdersByStatus => {
     return { ...result, [order.status]: [...result[order.status], order] };
   }, result);
 };
+
+export const splitByStatus2 = (orders: any) => {
+  const result = FoodOrdersValues.reduce((r, status) => ({ ...r, [status]: [] }), {});
+  return orders.reduce((result: any, order: any) => {
+    return { ...result, [order.status]: [...result[order.status], order] };
+  }, result);
+};

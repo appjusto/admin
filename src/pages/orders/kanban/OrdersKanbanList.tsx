@@ -54,7 +54,7 @@ export const OrdersKanbanList = ({ title, orders, details }: Props) => {
         {() => (
           <Stack flex={1} p="4" overflow="scroll" overflowX="hidden">
             {orders.map((order) => (
-              <OrdersKanbanListItem order={order} />
+              <OrdersKanbanListItem key={order.code} order={order} />
             ))}
           </Stack>
         )}
