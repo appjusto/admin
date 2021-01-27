@@ -344,8 +344,8 @@ export default class MenuApi {
 
   async updateComplementsGroup(
     businessId: string,
-    groupId: string,
     productId: string,
+    groupId: string,
     changes: Partial<ComplementGroup>
   ) {
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
