@@ -1,4 +1,5 @@
-import { Box, Center } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
+import Container from 'common/components/Container';
 import React from 'react';
 import { OrdersKanban } from './kanban/OrdersKanban';
 import { OrdersHeader } from './OrdersHeader';
@@ -7,9 +8,9 @@ const OrdersPage = () => {
   return (
     <Box>
       <OrdersHeader />
-      <Center w="100%">
+      <Container>
         <OrdersKanban />
-      </Center>
+      </Container>
     </Box>
   );
 };
