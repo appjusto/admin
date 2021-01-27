@@ -226,6 +226,7 @@ export default class MenuApi {
     try {
       await this.refs.getBusinessProductRef(businessId, productId).set({
         ...product,
+        imageExists: false,
         createdOn: timestamp,
         updatedOn: timestamp,
       } as Product);

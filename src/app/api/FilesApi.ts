@@ -58,7 +58,10 @@ export default class FilesApi {
 
   async getDownloadURL(path: string) {
     const ref = this.storage.ref().child(path);
-    const uri = await ref.getDownloadURL().then((res: string | null) => res);
+    const uri = await ref
+      .getDownloadURL()
+      .then((res: string | null) => res)
+      .catch(() => null);
     return uri;
   }
 
