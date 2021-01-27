@@ -298,9 +298,10 @@ export default class MenuApi {
   // complements
   observeComplementsGroups(
     businessId: string,
+    productId: string,
     resultHandler: (result: WithId<ComplementGroup>[]) => void
   ): firebase.Unsubscribe {
-    const query = this.refs.getBusinessComplementsGroupsRef(businessId);
+    const query = this.refs.getBusinessProductComplementsGroupsRef(businessId, productId);
     const unsubscribe = query.onSnapshot(
       (querySnapshot) => {
         resultHandler(documentsAs<ComplementGroup>(querySnapshot.docs));
@@ -313,9 +314,10 @@ export default class MenuApi {
   }
   observeComplements(
     businessId: string,
+    productId: string,
     resultHandler: (result: WithId<Complement>[]) => void
   ): firebase.Unsubscribe {
-    const query = this.refs.getBusinessComplementsRef(businessId);
+    const query = this.refs.getBusinessProductComplementsRef(businessId, productId);
     const unsubscribe = query.onSnapshot(
       (querySnapshot) => {
         resultHandler(documentsAs<Complement>(querySnapshot.docs));
@@ -327,24 +329,27 @@ export default class MenuApi {
     return unsubscribe;
   }
 
-  async createComplementsGroup(businessId: string, group: ComplementGroup) {
+  async createComplementsGroup(businessId: string, productId: string, group: ComplementGroup) {
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
     const newGroup = {
       ...group,
       createdOn: timestamp,
       updatedOn: timestamp,
     };
-    return await this.refs.getBusinessComplementsGroupsRef(businessId).add(newGroup);
+    return await this.refs
+      .getBusinessProductComplementsGroupsRef(businessId, productId)
+      .add(newGroup);
   }
 
   async updateComplementsGroup(
     businessId: string,
     groupId: string,
+    productId: string,
     changes: Partial<ComplementGroup>
   ) {
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
     await this.refs
-      .getBusinessComplementsGroupsRef(businessId)
+      .getBusinessProductComplementsGroupsRef(businessId, productId)
       .doc(groupId)
       .update({
         ...changes,
@@ -352,8 +357,11 @@ export default class MenuApi {
       } as Partial<ComplementGroup>);
   }
 
-  async deleteComplementsGroup(businessId: string, groupId: string) {
-    await this.refs.getBusinessComplementsGroupsRef(businessId).doc(groupId).delete();
+  async deleteComplementsGroup(businessId: string, productId: string, groupId: string) {
+    await this.refs
+      .getBusinessProductComplementsGroupsRef(businessId, productId)
+      .doc(groupId)
+      .delete();
   }
 
   async getComplementImageURL(businessId: string, complementId: string) {
@@ -374,14 +382,19 @@ export default class MenuApi {
     }
   }
 
-  async createComplement(businessId: string, item: Complement, imageFile: File | null) {
+  async createComplement(
+    businessId: string,
+    productId: string,
+    item: Complement,
+    imageFile: File | null
+  ) {
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
-    const complementId = this.refs.getBusinessComplementsRef(businessId).doc().id;
+    const complementId = this.refs.getBusinessProductComplementsRef(businessId, productId).doc().id;
     if (imageFile) {
       await this.uploadComplementPhoto(businessId, complementId, imageFile);
     }
     try {
-      await this.refs.getBusinessComplementRef(businessId, complementId).set({
+      await this.refs.getBusinessProductComplementRef(businessId, productId, complementId).set({
         ...item,
         createdOn: timestamp,
         updatedOn: timestamp,
@@ -394,6 +407,7 @@ export default class MenuApi {
 
   async updateComplement(
     businessId: string,
+    productId: string,
     complementId: string,
     item: Complement,
     imageFile: File | null
@@ -405,18 +419,27 @@ export default class MenuApi {
       await this.uploadComplementPhoto(businessId, complementId, imageFile);
     }
     try {
-      return await this.refs.getBusinessComplementRef(businessId, complementId).update(newItem);
+      return await this.refs
+        .getBusinessProductComplementRef(businessId, productId, complementId)
+        .update(newItem);
     } catch (error) {
       throw new Error(`updateComplementError: ${error}`);
     }
   }
 
-  async deleteComplement(businessId: string, complementId: string, hasImage: boolean) {
+  async deleteComplement(
+    businessId: string,
+    productId: string,
+    complementId: string,
+    hasImage: boolean
+  ) {
     if (hasImage) {
       await this.files.deleteStorageFile(
         this.refs.getComplementImageStoragePath(businessId, complementId)
       );
     }
-    return await this.refs.getBusinessComplementRef(businessId, complementId).delete();
+    return await this.refs
+      .getBusinessProductComplementRef(businessId, productId, complementId)
+      .delete();
   }
 }

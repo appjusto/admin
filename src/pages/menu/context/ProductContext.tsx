@@ -53,6 +53,7 @@ export const ProductContextProvider = (props: ProviderProps) => {
   const { product, isValid, imageUrl } = useProduct(businessId, productId);
   const { groups, complements } = useObserveComplements(
     businessId!,
+    productId,
     product?.complementsEnabled === true
   );
   const sortedGroups = menu.getOrderedMenu(groups, complements, product?.complementsOrder);
@@ -96,7 +97,9 @@ export const ProductContextProvider = (props: ProviderProps) => {
 
   const onSaveComplementsGroup = async (group: ComplementGroup) => {
     (async () => {
-      const { id: groupId } = await api.business().createComplementsGroup(businessId!, group);
+      const { id: groupId } = await api
+        .business()
+        .createComplementsGroup(businessId!, productId, group);
       const newProductConfig = menu.addCategory(productConfig, groupId);
       await api.business().updateProduct(
         businessId!,
@@ -110,13 +113,13 @@ export const ProductContextProvider = (props: ProviderProps) => {
   };
 
   const onUpdateComplementsGroup = async (groupId: string, changes: Partial<ComplementGroup>) => {
-    await api.business().updateComplementsGroup(businessId!, groupId, changes);
+    await api.business().updateComplementsGroup(businessId!, productId, groupId, changes);
   };
 
   const onDeleteComplementsGroup = async (group: WithId<ComplementGroup>) => {
     if (group.items && group.items?.length > 0) {
       group.items.map((item) =>
-        api.business().deleteComplement(businessId!, item.id, item.imageExists ?? false)
+        api.business().deleteComplement(businessId!, productId, item.id, item.imageExists ?? false)
       );
     }
     const newProductConfig = menu.removeCategory(productConfig, group.id);
@@ -128,7 +131,7 @@ export const ProductContextProvider = (props: ProviderProps) => {
       },
       null
     );
-    await api.business().deleteComplementsGroup(businessId!, group.id);
+    await api.business().deleteComplementsGroup(businessId!, productId, group.id);
   };
 
   const onSaveComplement = async (
@@ -138,7 +141,9 @@ export const ProductContextProvider = (props: ProviderProps) => {
     imageFile: File | null
   ) => {
     if (!complementId) {
-      const newId = await api.business().createComplement(businessId!, newItem, imageFile);
+      const newId = await api
+        .business()
+        .createComplement(businessId!, productId, newItem, imageFile);
       let newProductConfig = menu.empty();
       if (productConfig && groupId) {
         newProductConfig = menu.addProductToCategory(productConfig, newId, groupId);
@@ -152,7 +157,9 @@ export const ProductContextProvider = (props: ProviderProps) => {
         null
       );
     } else {
-      return api.business().updateComplement(businessId!, complementId, newItem, imageFile);
+      return api
+        .business()
+        .updateComplement(businessId!, productId, complementId, newItem, imageFile);
     }
   };
 
@@ -170,7 +177,7 @@ export const ProductContextProvider = (props: ProviderProps) => {
       },
       null
     );
-    await api.business().deleteComplement(businessId!, complementId, imageExists);
+    await api.business().deleteComplement(businessId!, productId, complementId, imageExists);
   };
 
   const getComplementImageUrl = React.useCallback(
