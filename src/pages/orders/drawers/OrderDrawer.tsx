@@ -141,7 +141,7 @@ export const OrderDrawer = (props: Props) => {
             </Thead>
             <Tbody>
               {order.items.map((item: OrderItem) => (
-                <Tr color="black" fontSize="xs">
+                <Tr key={item.product.id} color="black" fontSize="xs">
                   <Td>{item.product.name}</Td>
                   <Td isNumeric>{item.quantity}</Td>
                   <Td isNumeric>{itemPriceFormatter(item.quantity * item.product.price)}</Td>

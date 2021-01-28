@@ -12,7 +12,7 @@ interface Props {
 
 export const OrdersKanbanListItem = ({ order }: Props) => {
   const { url } = useRouteMatch();
-  const { confirm, ready, dispatching } = useOrdersContext();
+  const { ready, dispatching } = useOrdersContext();
 
   const hasCurrier = order.code && parseInt(order.code) > 3 ? true : false;
   const wasDelivered = order.code && parseInt(order.code) > 6 ? true : false;
@@ -141,7 +141,6 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
         borderColor="black"
         borderWidth="1px"
         color="black"
-        //onClick={() => confirm(order.code)}
         cursor="pointer"
       >
         <Box>

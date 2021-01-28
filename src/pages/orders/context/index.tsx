@@ -25,7 +25,7 @@ const fakeItem = {
   product: {
     name: 'Item',
     price: 1600, // in cents
-    id: 'jsocnaskcn',
+    id: Math.random().toString(),
     externalId: '',
   },
   quantity: 2,
@@ -44,7 +44,37 @@ const fakeOrder = {
     id: '',
     name: 'Itapuama vegan',
   },
-  items: [fakeItem, fakeItem, fakeItem],
+  items: [
+    {
+      ...fakeItem,
+      product: {
+        name: 'Item',
+        price: 1600, // in cents
+        id: Math.random().toString(),
+        externalId: '',
+      },
+      quantity: 1,
+    },
+    {
+      ...fakeItem,
+      product: {
+        name: 'Item2',
+        price: 1200, // in cents
+        id: Math.random().toString(),
+        externalId: '',
+      },
+    },
+    {
+      ...fakeItem,
+      product: {
+        name: 'Item3',
+        price: 1800, // in cents
+        id: Math.random().toString(),
+        externalId: '',
+      },
+      quantity: 1,
+    },
+  ],
 };
 
 interface ContextProps {
