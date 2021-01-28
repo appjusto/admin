@@ -10,29 +10,35 @@ interface Props {
 }
 
 export const OrdersKanbanListItem = ({ order }: Props) => {
-  const { confirm, ready, dispatching, delivered } = useOrdersContext();
-  const handleStateChange = () => {
-    if (order.status === 'confirming') {
-      confirm(order.code);
-    } else if (order.status === 'preparing') {
-      ready(order.code);
-    } else if (order.status === 'ready') {
-      dispatching(order.code);
-    } else if (order.status === 'dispatching') {
-      delivered(order.code);
-    }
-  };
+  const { confirm, ready, dispatching } = useOrdersContext();
+
+  const hasCurrier = order.code && parseInt(order.code) > 3 ? true : false;
+  const wasDelivered = order.code && parseInt(order.code) > 6 ? true : false;
 
   if (order.status === 'dispatching') {
     return (
-      <Box px="4" py="2" borderRadius="lg" borderColor="black" borderWidth="1px" color="black">
+      <Box
+        px="4"
+        py="2"
+        borderRadius="lg"
+        borderColor={wasDelivered ? 'gray' : 'black'}
+        borderWidth="1px"
+        color={wasDelivered ? 'gray' : 'black'}
+        bgColor={wasDelivered ? 'gray.500' : 'white'}
+      >
         <Flex justifyContent="space-between" alignItems="center">
           <Text fontSize="lg" fontWeight="700">
             #{order.code}
           </Text>
           <Flex flexDir="column" color="gray.700" fontSize="xs" alignItems="flex-end">
-            <Text fontWeight="700">{t('Entregador à caminho')}</Text>
-            <Text fontWeight="500">{t('Aprox. 10 minutos')}</Text>
+            {wasDelivered ? (
+              <Text fontWeight="700">{t('Pedido entregue')}</Text>
+            ) : (
+              <>
+                <Text fontWeight="700">{t('Entregador à caminho')}</Text>
+                <Text fontWeight="500">{t('Aprox. 10 minutos')}</Text>
+              </>
+            )}
           </Flex>
         </Flex>
       </Box>
@@ -45,20 +51,37 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
         <Flex flexDir="column" fontWeight="700">
           <Flex justifyContent="space-between">
             <Text fontSize="lg">#{order.code}</Text>
-            <Flex flexDir="column" color="gray.700" fontSize="xs" alignItems="flex-end">
-              <Text fontWeight="700">{t('Entregador à caminho')}</Text>
-              <Text fontWeight="500">{t('Aprox. 10 minutos')}</Text>
+            <Flex flexDir="column" fontSize="xs" alignItems="flex-end">
+              {hasCurrier ? (
+                <>
+                  <Text color="black" fontWeight="700">
+                    {t('Entregador no local')}
+                  </Text>
+                  <Text color="black" fontWeight="500">
+                    {t('Nome: João')}
+                  </Text>
+                </>
+              ) : (
+                <>
+                  <Text color="gray.700" fontWeight="700">
+                    {t('Entregador à caminho')}
+                  </Text>
+                  <Text color="gray.700" fontWeight="500">
+                    {t('Aprox. 10 minutos')}
+                  </Text>
+                </>
+              )}
             </Flex>
           </Flex>
         </Flex>
         <Button
-          isDisabled
+          isDisabled={!hasCurrier}
           mt="4"
           w="full"
           maxH="34px"
           siz="xs"
           fontSize="xs"
-          onClick={handleStateChange}
+          onClick={() => dispatching(order.code)}
         >
           {t('Entregar pedido')}
         </Button>
@@ -94,7 +117,14 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
             </Flex>
           </Flex>
         </Flex>
-        <Button mt="4" w="full" maxH="34px" siz="xs" fontSize="xs" onClick={handleStateChange}>
+        <Button
+          mt="4"
+          w="full"
+          maxH="34px"
+          siz="xs"
+          fontSize="xs"
+          onClick={() => ready(order.code)}
+        >
           {t('Pedido pronto')}
         </Button>
       </Box>
@@ -108,7 +138,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
       borderColor="black"
       borderWidth="1px"
       color="black"
-      onClick={handleStateChange}
+      onClick={() => confirm(order.code)}
       cursor="pointer"
     >
       <Box>
