@@ -19,7 +19,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
     return (
       <Box
         px="4"
-        py="2"
+        py={wasDelivered ? '3' : '2'}
         borderRadius="lg"
         borderColor={wasDelivered ? 'gray' : 'black'}
         borderWidth="1px"
@@ -76,7 +76,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
         </Flex>
         <Button
           isDisabled={!hasCurrier}
-          mt="4"
+          mt="2"
           w="full"
           maxH="34px"
           siz="xs"
@@ -118,7 +118,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
           </Flex>
         </Flex>
         <Button
-          mt="4"
+          mt="3"
           w="full"
           maxH="34px"
           siz="xs"

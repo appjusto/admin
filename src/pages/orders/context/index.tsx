@@ -42,6 +42,8 @@ interface ContextProps {
   dispatching(code: string | undefined): void;
   delivered(code: string | undefined): void;
   ordersByStatus: any;
+  minutesToAccept: { isEditing: boolean; minutes: number };
+  handleMinutesToAccept(isEditing: boolean, minutes: number): void;
 }
 
 const OrdersContext = React.createContext<ContextProps>({} as ContextProps);
@@ -62,12 +64,20 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   );
   //state
   const [orders, setOrders] = React.useState<FakeOrder[]>([]);
+  const [minutesToAccept, setMinutesToAccept] = React.useState<{
+    isEditing: boolean;
+    minutes: number;
+  }>({ isEditing: false, minutes: 5 });
 
   React.useEffect(() => {
     setOrders(fakeOrders);
   }, []);
 
   const ordersByStatus = splitByStatus2(orders);
+
+  const handleMinutesToAccept = (isEditing: boolean, minutes: number) => {
+    setMinutesToAccept({ isEditing, minutes });
+  };
 
   const changeState = (code: string, status: string) => {
     setOrders((prev) => {
@@ -105,6 +115,8 @@ export const OrdersContextProvider = (props: ProviderProps) => {
         dispatching,
         delivered,
         ordersByStatus,
+        minutesToAccept,
+        handleMinutesToAccept,
       }}
       {...props}
     />

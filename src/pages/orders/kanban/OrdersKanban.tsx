@@ -1,14 +1,14 @@
-import { Box, Button, HStack, Stack, Switch, Text } from '@chakra-ui/react';
+import { Box, Stack, Text } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
-import { ReactComponent as EditIcon } from 'common/img/edit-icon.svg';
 import React from 'react';
 import { t } from 'utils/i18n';
 import { useOrdersContext } from '../context';
+import { OrderAcceptanceBar } from './OrderAcceptanceBar';
 import { OrdersKanbanList } from './OrdersKanbanList';
 
 export const OrdersKanban = () => {
   // context
-  const { business, ordersByStatus } = useOrdersContext();
+  const { business, ordersByStatus, minutesToAccept, handleMinutesToAccept } = useOrdersContext();
   //state
   const { updateBusinessProfile } = useBusinessProfile();
   //const orders = useOrders(undefined, business!.id);
@@ -22,20 +22,7 @@ export const OrdersKanban = () => {
       <Text fontSize="sm" color="grey.700">
         {t('Dados atualizados em 00/00/0000 às 00:00')}
       </Text>
-      <HStack mt="6" spacing={4}>
-        <Switch
-          isChecked={business?.status === 'open'}
-          onChange={(ev) => {
-            ev.stopPropagation();
-            updateBusinessProfile({ status: ev.target.checked ? 'open' : 'closed' });
-          }}
-        />
-        <Text>{t('Aceitar pedidos automaticamente:')}</Text>
-        <Button variant="outline" size="sm" borderColor="#F2F6EA" fontWeight="700" color="black">
-          <EditIcon style={{ borderBottom: '1px solid black' }} />
-          <Text ml="4">05 minutos</Text>
-        </Button>
-      </HStack>
+      <OrderAcceptanceBar />
       <Stack direction={['column', 'column', 'row']} mt="8" spacing="4">
         <OrdersKanbanList
           title={t('Pedidos à confirmar')}
