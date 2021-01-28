@@ -5,6 +5,7 @@ import { Business, WithId } from 'appjusto-types';
 import React from 'react';
 
 interface FakeOrder {
+  id: string;
   type: string;
   status: string;
   consumer: {
@@ -59,6 +60,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   const fakeOrders = ['001', '002', '003', '004', '005', '006', '007', '008', '009', '010'].map(
     (item) => ({
       ...fakeOrder,
+      id: Math.random().toString(),
       code: item,
     })
   );
