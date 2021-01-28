@@ -25,6 +25,8 @@ interface BaseDrawerProps {
   client: string;
   clientOrders: number;
   isOpen: boolean;
+  cancel(): void;
+  isCanceling: boolean;
   isError: boolean;
   error: unknown | string | null;
   onClose(): void;
@@ -36,6 +38,8 @@ export const OrderBaseDrawer = ({
   order,
   client,
   clientOrders,
+  cancel,
+  isCanceling,
   isError,
   error,
   onClose,
@@ -80,16 +84,18 @@ export const OrderBaseDrawer = ({
               </Box>
             )}
           </DrawerBody>
-          <DrawerFooter borderTop="1px solid #F2F6EA">
-            <Flex w="full" flexDir="row" justifyContent="space-between" {...props}>
-              <Button width="full" maxW="200px" variant="dangerLight" onClick={() => {}}>
-                {t('Cancelar pedido')}
-              </Button>
-              <Button type="submit" width="full" maxW="200px">
-                {t('Preparar pedido')}
-              </Button>
-            </Flex>
-          </DrawerFooter>
+          {!isCanceling && (
+            <DrawerFooter borderTop="1px solid #F2F6EA">
+              <Flex w="full" flexDir="row" justifyContent="space-between" {...props}>
+                <Button width="full" maxW="200px" variant="dangerLight" onClick={cancel}>
+                  {t('Cancelar pedido')}
+                </Button>
+                <Button type="submit" width="full" maxW="200px">
+                  {t('Preparar pedido')}
+                </Button>
+              </Flex>
+            </DrawerFooter>
+          )}
         </DrawerContent>
       </DrawerOverlay>
     </Drawer>

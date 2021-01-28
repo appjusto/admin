@@ -1,4 +1,6 @@
 import {
+  Box,
+  Button,
   Flex,
   Radio,
   RadioGroup,
@@ -34,6 +36,7 @@ export const OrderDrawer = (props: Props) => {
   const [hasPreparationTime, setHasPreparationTime] = React.useState(false);
   const [radiosValue, setRadiosValue] = React.useState('15');
   const [preparationTime, setPreparationTime] = React.useState('15');
+  const [isCanceling, setIsCanceling] = React.useState(false);
 
   // const [enabled, setEnabled] = React.useState(category?.enabled ?? true);
 
@@ -58,6 +61,62 @@ export const OrderDrawer = (props: Props) => {
   const inputRef = React.useRef<HTMLInputElement>(null);
 
   // UI
+  if (isCanceling) {
+    return (
+      <OrderBaseDrawer
+        {...props}
+        order={'001'}
+        client={'Renan'}
+        clientOrders={6}
+        type="order"
+        cancel={() => setIsCanceling(true)}
+        isCanceling={isCanceling}
+        isError={isError}
+        error={error}
+      >
+        <Box py="4" px="6" bgColor="#FFF8F8" border="1px solid #DC3545" borderRadius="lg">
+          <Text fontSize="xl" color="#DC3545">
+            {t('Tem certeza que deseja cancelar o pedido?')}
+          </Text>
+          <Text mt="2" fontSize="sm" color="black">
+            {t(
+              'Cancelar pedidos pode prejudicar a experiência do cliente com o seu estabelecimento. Informe o motivo do cancelamento:'
+            )}
+          </Text>
+          <RadioGroup
+            onChange={(value) => handlePreparationTime(value.toString(), 'radio')}
+            value={'1'}
+            defaultValue="1"
+            colorScheme="green"
+          >
+            <Flex flexDir="column" justifyContent="flex-start">
+              <Radio mt="2" value="1" size="lg">
+                {t('Um ou mais itens indisponíveis')}
+              </Radio>
+              <Radio mt="2" value="2" size="lg">
+                {t('Ocorreu um problema no preparo')}
+              </Radio>
+              <Radio mt="2" value="3" size="lg">
+                {t('Restaurante não está funcionando')}
+              </Radio>
+              <Radio mt="2" value="4" size="lg">
+                {t('Sem entregadores disponíveis')}
+              </Radio>
+            </Flex>
+          </RadioGroup>
+          <Flex mt="6" maxW="340px" flexDir="row" justifyContent="space-between" {...props}>
+            <Button maxW="160px" onClick={() => setIsCanceling(false)}>
+              {t('Manter pedido')}
+            </Button>
+            <Button maxW="160px" variant="danger" onClick={() => {}}>
+              {t('Cancelar pedido')}
+            </Button>
+          </Flex>
+        </Box>
+      </OrderBaseDrawer>
+    );
+  }
+
   return (
     <OrderBaseDrawer
       {...props}
@@ -65,6 +124,8 @@ export const OrderDrawer = (props: Props) => {
       client={'Renan'}
       clientOrders={6}
       type="order"
+      cancel={() => setIsCanceling(true)}
+      isCanceling={isCanceling}
       isError={isError}
       error={error}
     >
