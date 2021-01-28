@@ -1,8 +1,8 @@
 import { Box, Flex, FlexProps } from '@chakra-ui/react';
+import Container from 'common/components/Container';
 import { ReactComponent as Logo } from 'common/img/logo.svg';
 import React from 'react';
 import { Checklist } from './checklist/Checklist';
-import OnbContainer from './OnbContainer';
 import OnbFooter from './OnbFooter';
 
 interface Props extends FlexProps {}
@@ -19,7 +19,7 @@ const OnboardingStep = ({ children }: Props) => {
         bg="gray.50"
         zIndex="-1"
       />
-      <OnbContainer py="12">
+      <Container py="12">
         <Flex w="100%" flexDir={{ base: 'column', md: 'row' }}>
           <Box w={{ md: '35%', lg: '45%' }} mt="4" pr={{ md: '2' }}>
             <Logo />
@@ -36,7 +36,7 @@ const OnboardingStep = ({ children }: Props) => {
             </Box>
           </Flex>
         </Flex>
-      </OnbContainer>
+      </Container>
       <OnbFooter />
     </Box>
   );

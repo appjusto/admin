@@ -10,7 +10,7 @@ const OrdersPage = () => {
     <OrdersContextProvider>
       <Box>
         <OrdersHeader />
-        <Container>
+        <Container maxW={{ base: '100%', md: '740px', lg: '1260px' }}>
           <OrdersKanban />
         </Container>
       </Box>

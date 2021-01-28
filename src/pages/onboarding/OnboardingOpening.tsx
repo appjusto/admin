@@ -1,11 +1,11 @@
 import { Box, Button, Text } from '@chakra-ui/react';
+import Container from 'common/components/Container';
 import logo from 'common/img/logo.svg';
 import { Link } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import Image from '../../common/components/Image';
 import { Checklist } from './checklist/Checklist';
 import hands from './img/package-hands.svg';
-import OnbContainer from './OnbContainer';
 import OnbFooter from './OnbFooter';
 
 interface OpeningProps {
@@ -26,7 +26,7 @@ const OnboardingOpening = ({ path }: OpeningProps) => {
       >
         <Image src={hands} />
       </Box>
-      <OnbContainer minH="100vh" zIndex="10">
+      <Container minH="100vh" zIndex="10">
         <Image src={logo} mb="8" />
         <Text fontSize="xl" color="black">
           {t('Olá,boas vindas ao seu cadastro no AppJusto.')}
@@ -55,7 +55,7 @@ const OnboardingOpening = ({ path }: OpeningProps) => {
             {t('Começar')}
           </Button>
         </Link>
-      </OnbContainer>
+      </Container>
       <OnbFooter />
     </Box>
   );

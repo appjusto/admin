@@ -54,10 +54,12 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   // context
   const business = useContextBusiness();
   //const orders = useOrders(undefined, business!.id);
-  const fakeOrders = ['001', '002', '003', '004', '005'].map((item) => ({
-    ...fakeOrder,
-    code: item,
-  }));
+  const fakeOrders = ['001', '002', '003', '004', '005', '006', '007', '008', '009', '010'].map(
+    (item) => ({
+      ...fakeOrder,
+      code: item,
+    })
+  );
   //state
   const [orders, setOrders] = React.useState<FakeOrder[]>([]);
 

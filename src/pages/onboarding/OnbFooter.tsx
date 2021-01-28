@@ -1,11 +1,11 @@
 import { Box, Link, Stack, Text } from '@chakra-ui/react';
+import Container from 'common/components/Container';
 import { Link as RouterLink } from 'react-router-dom';
-import OnbContainer from './OnbContainer';
 
 const OnbFooter = () => {
   return (
     <Box w="100vw" minH="106px" bg="black">
-      <OnbContainer py="10">
+      <Container py="10">
         <Stack
           direction={{ base: 'column', md: 'row' }}
           spacing={4}
@@ -33,7 +33,7 @@ const OnbFooter = () => {
           </Link>
           <Text>© {new Date().getFullYear()} AppJusto. Marca Registrada.</Text>
         </Stack>
-      </OnbContainer>
+      </Container>
     </Box>
   );
 };

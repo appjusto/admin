@@ -13,8 +13,9 @@ interface Props {
 export const OrdersKanbanList = ({ title, orders, details }: Props) => {
   return (
     <Flex
-      w={['272px', '306px', '272px']}
-      h={['452px']}
+      w="100%"
+      maxW="300px"
+      h={['500px']}
       borderRadius="lg"
       borderColor="gray.500"
       borderWidth="1px"
@@ -52,7 +53,7 @@ export const OrdersKanbanList = ({ title, orders, details }: Props) => {
       </ShowIf>
       <ShowIf test={orders.length > 0}>
         {() => (
-          <Stack flex={1} p="4" overflow="scroll" overflowX="hidden">
+          <Stack flex={1} p="4" overflowX="hidden">
             {orders.map((order) => (
               <OrdersKanbanListItem key={order.code} order={order} />
             ))}
