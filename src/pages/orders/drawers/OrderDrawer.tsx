@@ -65,7 +65,10 @@ export const OrderDrawer = (props: Props) => {
     props.onClose();
   };
 
-  const tableTotal = order.items.reduce((n1: number, n2: OrderItem) => n1 + n2.product.price, 0);
+  const tableTotal = order.items.reduce(
+    (n1: number, n2: OrderItem) => n1 + n2.product.price * n2.quantity,
+    0
+  );
 
   // side effects
 
@@ -141,7 +144,7 @@ export const OrderDrawer = (props: Props) => {
                 <Tr color="black" fontSize="xs">
                   <Td>{item.product.name}</Td>
                   <Td isNumeric>{item.quantity}</Td>
-                  <Td isNumeric>{itemPriceFormatter(item.product.price)}</Td>
+                  <Td isNumeric>{itemPriceFormatter(item.quantity * item.product.price)}</Td>
                 </Tr>
               ))}
             </Tbody>

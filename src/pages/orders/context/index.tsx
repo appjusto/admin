@@ -28,7 +28,7 @@ const fakeItem = {
     id: 'jsocnaskcn',
     externalId: '',
   },
-  quantity: 1,
+  quantity: 2,
   notes: '',
 };
 
