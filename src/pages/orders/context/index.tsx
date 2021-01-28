@@ -1,7 +1,7 @@
 import { splitByStatus2 } from 'app/api/order/selectors';
 //import { useOrders } from 'app/api/order/useOrders';
 import { useContextBusiness } from 'app/state/business/context';
-import { Business, WithId } from 'appjusto-types';
+import { Business, OrderItem, WithId } from 'appjusto-types';
 import React from 'react';
 
 interface FakeOrder {
@@ -17,9 +17,20 @@ interface FakeOrder {
     id: string;
     name: string;
   };
-  items: string[];
+  items: OrderItem[];
   code: string;
 }
+
+const fakeItem = {
+  product: {
+    name: 'Item',
+    price: 1600, // in cents
+    id: 'jsocnaskcn',
+    externalId: '',
+  },
+  quantity: 1,
+  notes: '',
+};
 
 const fakeOrder = {
   type: 'food',
@@ -33,11 +44,12 @@ const fakeOrder = {
     id: '',
     name: 'Itapuama vegan',
   },
-  items: [],
+  items: [fakeItem, fakeItem, fakeItem],
 };
 
 interface ContextProps {
   business: WithId<Business> | null | undefined;
+  getOrderById(id: string): any;
   confirm(code: string | undefined): void;
   ready(code: string | undefined): void;
   dispatching(code: string | undefined): void;
@@ -77,6 +89,11 @@ export const OrdersContextProvider = (props: ProviderProps) => {
 
   const ordersByStatus = splitByStatus2(orders);
 
+  const getOrderById = (id: string) => {
+    const order = orders.find((item) => item.id === id);
+    return order;
+  };
+
   const handleMinutesToAccept = (isEditing: boolean, minutes: number) => {
     setMinutesToAccept({ isEditing, minutes });
   };
@@ -112,6 +129,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
     <OrdersContext.Provider
       value={{
         business,
+        getOrderById,
         confirm,
         ready,
         dispatching,

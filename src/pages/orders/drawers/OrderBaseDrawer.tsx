@@ -25,6 +25,7 @@ interface BaseDrawerProps {
   client: string;
   clientOrders: number;
   isOpen: boolean;
+  accept(): void;
   cancel(): void;
   isCanceling: boolean;
   isError: boolean;
@@ -38,6 +39,7 @@ export const OrderBaseDrawer = ({
   order,
   client,
   clientOrders,
+  accept,
   cancel,
   isCanceling,
   isError,
@@ -90,7 +92,7 @@ export const OrderBaseDrawer = ({
                 <Button width="full" maxW="200px" variant="dangerLight" onClick={cancel}>
                   {t('Cancelar pedido')}
                 </Button>
-                <Button type="submit" width="full" maxW="200px">
+                <Button type="submit" width="full" maxW="200px" onClick={accept}>
                   {t('Preparar pedido')}
                 </Button>
               </Flex>
