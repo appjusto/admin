@@ -18,14 +18,14 @@ import {
 import { getErrorMessage } from 'core/fb';
 import React from 'react';
 import { t } from 'utils/i18n';
+import { useOrdersContext } from '../context';
 
 interface BaseDrawerProps {
-  type: string;
-  order: string;
+  orderCode: string;
+  orderStatus: string;
   client: string;
   clientOrders: number;
   isOpen: boolean;
-  accept(): void;
   cancel(): void;
   isCanceling: boolean;
   isError: boolean;
@@ -35,11 +35,10 @@ interface BaseDrawerProps {
 }
 
 export const OrderBaseDrawer = ({
-  type,
-  order,
+  orderCode,
+  orderStatus,
   client,
   clientOrders,
-  accept,
   cancel,
   isCanceling,
   isError,
@@ -48,6 +47,20 @@ export const OrderBaseDrawer = ({
   children,
   ...props
 }: BaseDrawerProps) => {
+  //context
+  const { confirm, ready, dispatching } = useOrdersContext();
+  //handlers
+  let PrimaryButtonLabel = 'Preparar pedido';
+  if (orderStatus === 'preparing') PrimaryButtonLabel = 'Pedido pronto';
+  if (orderStatus === 'ready') PrimaryButtonLabel = 'Entregar pedido';
+
+  const PrimaryButtonFunction = () => {
+    if (orderStatus === 'confirming') confirm(orderCode);
+    if (orderStatus === 'preparing') ready(orderCode);
+    if (orderStatus === 'ready') dispatching(orderCode);
+    onClose();
+  };
+  //UI
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
       <DrawerOverlay>
@@ -55,7 +68,7 @@ export const OrderBaseDrawer = ({
           <DrawerCloseButton />
           <DrawerHeader pb="2">
             <Text color="black" fontSize="2xl" fontWeight="700" lineHeight="28px" mb="2">
-              {t('Pedido Nº')} {order}
+              {t('Pedido Nº')} {orderCode}
             </Text>
             <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
               {t('Nome do cliente:')}{' '}
@@ -93,8 +106,8 @@ export const OrderBaseDrawer = ({
                   <Button width="full" maxW="200px" variant="dangerLight" onClick={cancel}>
                     {t('Cancelar pedido')}
                   </Button>
-                  <Button type="submit" width="full" maxW="200px" onClick={accept}>
-                    {t('Preparar pedido')}
+                  <Button type="submit" width="full" maxW="200px" onClick={PrimaryButtonFunction}>
+                    {t(PrimaryButtonLabel)}
                   </Button>
                 </Flex>
               </Flex>

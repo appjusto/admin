@@ -15,7 +15,7 @@ interface CodeLinkProps {
 const CodeLink = ({ url, orderId, code }: CodeLinkProps) => {
   return (
     <Link to={`${url}/${orderId}`}>
-      <Text fontSize="lg" textDecor="underline" _hover={{ color: 'green' }}>
+      <Text fontSize="lg" textDecor="underline" _hover={{ color: 'green.700' }}>
         #{code}
       </Text>
     </Link>

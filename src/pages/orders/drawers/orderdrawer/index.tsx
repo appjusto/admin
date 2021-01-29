@@ -31,12 +31,6 @@ export const OrderDrawer = (props: Props) => {
   const [isCanceling, setIsCanceling] = React.useState(false);
 
   // handlers
-
-  const handleConfirm = () => {
-    confirm(order.code);
-    props.onClose();
-  };
-
   const tableTotal = order.items.reduce(
     (n1: number, n2: OrderItem) => n1 + n2.product.price * n2.quantity,
     0
@@ -48,11 +42,10 @@ export const OrderDrawer = (props: Props) => {
   return (
     <OrderBaseDrawer
       {...props}
-      order={order.code}
+      orderCode={order.code}
+      orderStatus={order.status}
       client={order.consumer.name}
       clientOrders={6}
-      type="order"
-      accept={handleConfirm}
       cancel={() => setIsCanceling(true)}
       isCanceling={isCanceling}
       isError={isError}

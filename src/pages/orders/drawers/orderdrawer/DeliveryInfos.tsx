@@ -46,7 +46,7 @@ export const DeliveryInfos = () => {
       <Text mt="4" fontSize="xl" color="black">
         {t('Destino do pedido')}
       </Text>
-      <Text fontSize="sm">{t('Rua Augusta, 901, Apto 11 - Bela Vista, São Paulo,São Paulo')}</Text>
+      <Text fontSize="sm">{t('Marco zero - Bairro do Recife, Recife, Pernambuco.')}</Text>
     </Box>
   );
 };
