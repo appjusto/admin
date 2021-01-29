@@ -3,7 +3,7 @@ import Container from 'common/components/Container';
 import React from 'react';
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import { OrdersContextProvider } from './context';
-import { OrderDrawer } from './drawers/OrderDrawer';
+import { OrderDrawer } from './drawers/orderdrawer';
 import { OrdersKanban } from './kanban/OrdersKanban';
 import { OrdersHeader } from './OrdersHeader';
 

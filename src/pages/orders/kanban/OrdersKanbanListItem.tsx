@@ -6,6 +6,22 @@ import { Link, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { useOrdersContext } from '../context';
 
+interface CodeLinkProps {
+  url: string;
+  orderId: string;
+  code?: string;
+}
+
+const CodeLink = ({ url, orderId, code }: CodeLinkProps) => {
+  return (
+    <Link to={`${url}/${orderId}`}>
+      <Text fontSize="lg" textDecor="underline" _hover={{ color: 'green' }}>
+        #{code}
+      </Text>
+    </Link>
+  );
+};
+
 interface Props {
   order: WithId<Order>;
 }
@@ -29,9 +45,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
         bgColor={wasDelivered ? 'gray.500' : 'white'}
       >
         <Flex justifyContent="space-between" alignItems="center">
-          <Text fontSize="lg" fontWeight="700">
-            #{order.code}
-          </Text>
+          <CodeLink url={url} orderId={order.id} code={order.code} />
           <Flex flexDir="column" color="gray.700" fontSize="xs" alignItems="flex-end">
             {wasDelivered ? (
               <Text fontWeight="700">{t('Pedido entregue')}</Text>
@@ -52,7 +66,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
       <Box p="4" borderRadius="lg" borderColor="black" borderWidth="1px" color="black">
         <Flex flexDir="column" fontWeight="700">
           <Flex justifyContent="space-between">
-            <Text fontSize="lg">#{order.code}</Text>
+            <CodeLink url={url} orderId={order.id} code={order.code} />
             <Flex flexDir="column" fontSize="xs" alignItems="flex-end">
               {hasCurrier ? (
                 <>
@@ -96,7 +110,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
       <Box p="4" borderRadius="lg" borderColor="black" borderWidth="1px" color="black">
         <Flex flexDir="column" fontWeight="700">
           <Flex justifyContent="space-between">
-            <Text fontSize="lg">#{order.code}</Text>
+            <CodeLink url={url} orderId={order.id} code={order.code} />
             <Flex flexDir="column">
               <HStack spacing={2}>
                 <HStack spacing={1}>
