@@ -7,6 +7,7 @@ import { t } from 'utils/i18n';
 import { useOrdersContext } from '../../context';
 import { OrderBaseDrawer } from '../OrderBaseDrawer';
 import { Cancelation } from './Cancelation';
+import { DeliveryInfos } from './DeliveryInfos';
 import { PreparationTime } from './PreparationTime';
 
 interface Props {
@@ -61,6 +62,7 @@ export const OrderDrawer = (props: Props) => {
         <Cancelation handleConfirm={() => {}} handleKeep={() => setIsCanceling(false)} />
       ) : (
         <>
+          {(order.status === 'ready' || order.status === 'dispatching') && <DeliveryInfos />}
           <Text mt="6" fontSize="xl" color="black">
             {t('Detalhes do pedido')}
           </Text>
