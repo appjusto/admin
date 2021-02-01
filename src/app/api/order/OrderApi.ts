@@ -81,4 +81,8 @@ export default class OrderApi {
       (await this.refs.getIssuesRef().where('type', '==', type).get()).docs
     );
   }
+
+  async createFakeOrder(order: Order) {
+    await this.refs.getOrdersRef().add(order);
+  }
 }

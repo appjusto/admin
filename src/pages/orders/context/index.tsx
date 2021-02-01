@@ -1,26 +1,21 @@
 import { splitByStatus2 } from 'app/api/order/selectors';
+import { useOrders } from 'app/api/order/useOrders';
+import { useContextApi } from 'app/state/api/context';
 //import { useOrders } from 'app/api/order/useOrders';
 import { useContextBusiness } from 'app/state/business/context';
-import {
-  Business,
-  DispatchingState,
-  LatLng,
-  OrderItem,
-  OrderRoute,
-  Place,
-  WithId,
-} from 'appjusto-types';
+import { Business, DispatchingState, Order, OrderStatus, OrderType, WithId } from 'appjusto-types';
+import { IuguInvoice } from 'appjusto-types/payment/iugu';
 import React from 'react';
 
-interface FakeOrder {
+/*interface FakeOrder {
   id: string;
-  type: string;
+  type: OrderType;
   status: string;
+  comments?: string;
   consumer: {
     id: string;
     name: string;
     cpf?: string;
-    comments?: string;
   };
   courier: {
     id: string;
@@ -41,71 +36,90 @@ interface FakeOrder {
   destination?: Place | null;
   route?: OrderRoute | null;
   dispatchingState?: DispatchingState;
-}
+}*/
 
-const fakeItem = {
-  product: {
-    name: 'Item',
-    price: 1600, // in cents
-    id: Math.random().toString(),
-    externalId: '',
-  },
-  quantity: 2,
-  notes: '',
+const fakeItem = (price: number, qtd: number) => {
+  return {
+    product: {
+      name: 'Item',
+      price: price, // in cents
+      id: Math.random().toString(),
+      externalId: '',
+    },
+    quantity: qtd,
+    notes: '',
+  };
 };
 
 const fakeOrder = {
-  type: 'food',
-  status: 'confirming',
+  type: 'food' as OrderType,
+  code: `${Math.random().toString()}`,
+  status: 'confirming' as OrderStatus,
+  comments: 'cpf',
   consumer: {
-    id: 'sefsese',
-    name: 'Zé',
+    id: '8jnAYorqWL98OPfMypu6',
+    name: 'Renan',
+    cpf: '35214602820',
   },
-  courier: {},
+  courier: {
+    id: 'KfpVLMg9rEURH8BOCMJ8',
+    name: 'Kelly',
+    joined: ('1 de fevereiro de 2021 00:00:00 UTC-3' as unknown) as firebase.firestore.FieldValue,
+    location: {
+      latitude: -8.0591539,
+      longitude: -34.9063069,
+    },
+  },
   business: {
-    id: '',
+    id: 'Ik2Ju9mot8oxIusMci1G',
     name: 'Itapuama vegan',
   },
-  items: [
-    {
-      ...fakeItem,
-      product: {
-        name: 'Item',
-        price: 1600, // in cents
-        id: Math.random().toString(),
-        externalId: '',
-      },
-      quantity: 1,
+  items: [fakeItem(1200, 1), fakeItem(1600, 2)],
+  payment: {
+    paymentMethodId: 'Crédito',
+    invoice: {} as IuguInvoice,
+  },
+  origin: {
+    address: {
+      main: 'Rua bom pastor, 1485',
+      description: '',
     },
-    {
-      ...fakeItem,
-      product: {
-        name: 'Item2',
-        price: 1200, // in cents
-        id: Math.random().toString(),
-        externalId: '',
-      },
+    additionalInfo: '',
+    intructions: '',
+    location: {
+      latitude: -8.0502761,
+      longitude: -34.9413061,
     },
-    {
-      ...fakeItem,
-      product: {
-        name: 'Item3',
-        price: 1800, // in cents
-        id: Math.random().toString(),
-        externalId: '',
-      },
-      quantity: 1,
+  },
+  destination: {
+    address: {
+      main: 'Rua João Ivo da Silva, 453',
+      description: '',
     },
-  ],
+    additionalInfo: '',
+    intructions: '',
+    location: {
+      latitude: -8.0622085,
+      longitude: -34.9115396,
+    },
+  },
+  route: {
+    distance: 4500, // in meters
+    duration: 14 * 60, // in seconds
+    polyline: '',
+    issue: null,
+  },
+  dispatchingState: 'matching' as DispatchingState,
 };
 
 interface ContextProps {
   business: WithId<Business> | null | undefined;
   getOrderById(id: string): any;
-  confirm(code: string | undefined): void;
-  ready(code: string | undefined): void;
-  dispatching(code: string | undefined): void;
-  delivered(code: string | undefined): void;
+  //confirm(code: string | undefined): void;
+  //ready(code: string | undefined): void;
+  //dispatching(code: string | undefined): void;
+  //delivered(code: string | undefined): void;
+  createFakeOrder(): void;
   ordersByStatus: any;
   minutesToAccept: { isEditing: boolean; minutes: number };
   handleMinutesToAccept(isEditing: boolean, minutes: number): void;
@@ -119,30 +133,31 @@ interface ProviderProps {
 
 export const OrdersContextProvider = (props: ProviderProps) => {
   // context
+  const api = useContextApi();
   const business = useContextBusiness();
-  //const orders = useOrders(undefined, business!.id);
-  const fakeOrders = ['001', '002', '003', '004', '005', '006', '007', '008', '009', '010'].map(
+  const orders = useOrders(undefined, business!.id);
+  /*const fakeOrders = ['001', '002', '003', '004', '005', '006', '007', '008', '009', '010'].map(
     (item) => ({
       ...fakeOrder,
       id: Math.random().toString(),
       code: item,
     })
-  );
+  );*/
   //state
-  const [orders, setOrders] = React.useState<FakeOrder[]>([]);
+  //const [orders, setOrders] = React.useState<FakeOrder[]>([]);
   const [minutesToAccept, setMinutesToAccept] = React.useState<{
     isEditing: boolean;
     minutes: number;
   }>({ isEditing: false, minutes: 5 });
 
-  React.useEffect(() => {
+  /*React.useEffect(() => {
     setOrders(fakeOrders);
-  }, []);
+  }, []);*/
 
   const ordersByStatus = splitByStatus2(orders);
 
   const getOrderById = (id: string) => {
-    const order = orders.find((item) => item.id === id);
+    const order = orders.find((order: WithId<Order>) => order.id === id);
     return order;
   };
 
@@ -150,7 +165,12 @@ export const OrdersContextProvider = (props: ProviderProps) => {
     setMinutesToAccept({ isEditing, minutes });
   };
 
-  const changeState = (code: string, status: string) => {
+  //Development
+  const createFakeOrder = async () => {
+    await api.order().createFakeOrder(fakeOrder);
+  };
+
+  /*const changeState = (code: string, status: string) => {
     setOrders((prev) => {
       const newOrder = prev.map((order) => {
         if (order.code === code) {
@@ -176,16 +196,17 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   };
   const delivered = (code: string) => {
     changeState(code, 'delivered');
-  };
+  };*/
   return (
     <OrdersContext.Provider
       value={{
         business,
         getOrderById,
-        confirm,
-        ready,
-        dispatching,
-        delivered,
+        //confirm,
+        //ready,
+        //dispatching,
+        //delivered,
+        createFakeOrder,
         ordersByStatus,
         minutesToAccept,
         handleMinutesToAccept,
