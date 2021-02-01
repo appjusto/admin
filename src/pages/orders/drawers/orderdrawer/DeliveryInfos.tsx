@@ -1,21 +1,25 @@
-import { Box, Circle, Flex, Text } from '@chakra-ui/react';
+import { Box, Button, Circle, Flex, Text } from '@chakra-ui/react';
 import { getConfig } from 'app/api/config';
 import { coordsFromLatLnt, SaoPauloCoords } from 'core/api/thirdparty/maps/utils';
 import GoogleMapReact from 'google-map-react';
 import { t } from 'utils/i18n';
+import { Pendency } from '.';
 
 export const DeliveryInfos = () => {
   const { googleMapsApiKey } = getConfig().api;
   const center = { lat: -8.0623939, lng: -34.8728223 };
   return (
     <Box mt="6">
-      <Flex justifyContent="space-between">
-        <Flex flexDir="column">
-          <Text fontSize="xl" color="black">
-            {t('Entregador à caminho da retirada')}
-          </Text>
-          <Text fontSize="sm">{t('Chega em aproximadamente 10 minutos')}</Text>
-        </Flex>
+      <Flex justifyContent="space-between" alignItems="center">
+        <Text fontSize="xl" color="black">
+          {t('Entregador à caminho da retirada')}
+        </Text>
+        <Text fontSize="sm">
+          {t('Chega em aproximadamente 10 minutos')}
+          <Pendency />
+        </Text>
+      </Flex>
+      <Flex mt="4" justifyContent="space-between" alignItems="flex-end">
         <Flex alignItems="center" justifyContent="flex-end">
           <Box>
             <Circle size="48px" bg="gray.400" />
@@ -24,9 +28,16 @@ export const DeliveryInfos = () => {
             <Text fontSize="xl" color="black">
               {t('João Paulo')}
             </Text>
-            <Text fontSize="sm">{t('No appJusto desde Setembro, 2020')}</Text>
+            <Text fontSize="sm">
+              {t('No appJusto desde Setembro, 2020')}
+              <Pendency />
+            </Text>
           </Flex>
         </Flex>
+        <Button variant="outline" size="sm">
+          {t('Abrir chat com o entregador')}
+          <Pendency />
+        </Button>
       </Flex>
       <Box
         mt="6"

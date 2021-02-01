@@ -1,7 +1,15 @@
 import { splitByStatus2 } from 'app/api/order/selectors';
 //import { useOrders } from 'app/api/order/useOrders';
 import { useContextBusiness } from 'app/state/business/context';
-import { Business, OrderItem, WithId } from 'appjusto-types';
+import {
+  Business,
+  DispatchingState,
+  LatLng,
+  OrderItem,
+  OrderRoute,
+  Place,
+  WithId,
+} from 'appjusto-types';
 import React from 'react';
 
 interface FakeOrder {
@@ -11,14 +19,28 @@ interface FakeOrder {
   consumer: {
     id: string;
     name: string;
+    cpf?: string;
+    comments?: string;
   };
-  courier: {};
+  courier: {
+    id: string;
+    name: string;
+    location: LatLng;
+  };
   business: {
     id: string;
     name: string;
   };
   items: OrderItem[];
   code: string;
+  payment?: {
+    paymentMethodId: string;
+  };
+  // places & route
+  origin?: Place;
+  destination?: Place | null;
+  route?: OrderRoute | null;
+  dispatchingState?: DispatchingState;
 }
 
 const fakeItem = {

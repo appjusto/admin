@@ -19,6 +19,7 @@ import { getErrorMessage } from 'core/fb';
 import React from 'react';
 import { t } from 'utils/i18n';
 import { useOrdersContext } from '../context';
+import { Pendency } from './orderdrawer';
 
 interface BaseDrawerProps {
   orderCode: string;
@@ -81,6 +82,7 @@ export const OrderBaseDrawer = ({
               <Text as="span" color="black" fontWeight="700">
                 {clientOrders}
               </Text>
+              <Pendency />
             </Text>
           </DrawerHeader>
           <DrawerBody pb="28">

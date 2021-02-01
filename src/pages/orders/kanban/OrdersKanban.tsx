@@ -3,6 +3,7 @@ import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile'
 import React from 'react';
 import { t } from 'utils/i18n';
 import { useOrdersContext } from '../context';
+import { Pendency } from '../drawers/orderdrawer';
 import { OrderAcceptanceBar } from './OrderAcceptanceBar';
 import { OrdersKanbanList } from './OrdersKanbanList';
 
@@ -21,6 +22,7 @@ export const OrdersKanban = () => {
       </Text>
       <Text fontSize="sm" color="grey.700">
         {t('Dados atualizados em 00/00/0000 às 00:00')}
+        <Pendency />
       </Text>
       <OrderAcceptanceBar />
       <Stack direction={['column', 'column', 'row']} mt="8" spacing="4">

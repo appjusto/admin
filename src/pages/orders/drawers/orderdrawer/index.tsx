@@ -10,6 +10,14 @@ import { Cancelation } from './Cancelation';
 import { DeliveryInfos } from './DeliveryInfos';
 import { PreparationTime } from './PreparationTime';
 
+export const Pendency = () => {
+  return (
+    <Text as="span" color="red" ml="2" fontSize="lg">
+      *
+    </Text>
+  );
+};
+
 interface Props {
   isOpen: boolean;
   onClose(): void;
@@ -89,6 +97,7 @@ export const OrderDrawer = (props: Props) => {
           </Text>
           <Text mt="1" fontSize="md">
             {t('Incluir CPF na nota, CPF: 000.000.000-00')}
+            <Pendency />
           </Text>
           <Text mt="10" fontSize="xl" color="black">
             {t('Forma de pagamento')}
