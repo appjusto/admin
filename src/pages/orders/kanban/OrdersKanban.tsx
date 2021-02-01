@@ -1,5 +1,4 @@
 import { Box, Stack, Text } from '@chakra-ui/react';
-import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import React from 'react';
 import { t } from 'utils/i18n';
 import { useOrdersContext } from '../context';
@@ -9,11 +8,7 @@ import { OrdersKanbanList } from './OrdersKanbanList';
 
 export const OrdersKanban = () => {
   // context
-  const { business, ordersByStatus, minutesToAccept, handleMinutesToAccept } = useOrdersContext();
-  //state
-  const { updateBusinessProfile } = useBusinessProfile();
-  //const orders = useOrders(undefined, business!.id);
-
+  const { ordersByStatus } = useOrdersContext();
   // UI
   return (
     <Box pb="12">

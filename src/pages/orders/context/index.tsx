@@ -1,42 +1,10 @@
-import { splitByStatus2 } from 'app/api/order/selectors';
+import { splitByStatus } from 'app/api/order/selectors';
 import { useOrders } from 'app/api/order/useOrders';
 import { useContextApi } from 'app/state/api/context';
-//import { useOrders } from 'app/api/order/useOrders';
 import { useContextBusiness } from 'app/state/business/context';
 import { Business, DispatchingState, Order, OrderStatus, OrderType, WithId } from 'appjusto-types';
 import { IuguInvoice } from 'appjusto-types/payment/iugu';
 import React from 'react';
-
-/*interface FakeOrder {
-  id: string;
-  type: OrderType;
-  status: string;
-  comments?: string;
-  consumer: {
-    id: string;
-    name: string;
-    cpf?: string;
-  };
-  courier: {
-    id: string;
-    name: string;
-    location: LatLng;
-  };
-  business: {
-    id: string;
-    name: string;
-  };
-  items: OrderItem[];
-  code: string;
-  payment?: {
-    paymentMethodId: string;
-  };
-  // places & route
-  origin?: Place;
-  destination?: Place | null;
-  route?: OrderRoute | null;
-  dispatchingState?: DispatchingState;
-}*/
 
 const fakeItem = (price: number, qtd: number) => {
   return {
@@ -114,15 +82,10 @@ const fakeOrder = {
 
 interface ContextProps {
   business: WithId<Business> | null | undefined;
-  getOrderById(id: string): any;
-  //confirm(code: string | undefined): void;
-  //ready(code: string | undefined): void;
-  //dispatching(code: string | undefined): void;
-  //delivered(code: string | undefined): void;
-  createFakeOrder(): void;
   ordersByStatus: any;
-  minutesToAccept: { isEditing: boolean; minutes: number };
-  handleMinutesToAccept(isEditing: boolean, minutes: number): void;
+  getOrderById(id: string): any;
+  createFakeOrder(): void;
+  changeOrderStatus(orderId: string, status: OrderStatus): void;
 }
 
 const OrdersContext = React.createContext<ContextProps>({} as ContextProps);
@@ -145,29 +108,26 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   );*/
   //state
   //const [orders, setOrders] = React.useState<FakeOrder[]>([]);
-  const [minutesToAccept, setMinutesToAccept] = React.useState<{
-    isEditing: boolean;
-    minutes: number;
-  }>({ isEditing: false, minutes: 5 });
 
   /*React.useEffect(() => {
     setOrders(fakeOrders);
   }, []);*/
 
-  const ordersByStatus = splitByStatus2(orders);
+  const ordersByStatus = splitByStatus(orders);
 
   const getOrderById = (id: string) => {
     const order = orders.find((order: WithId<Order>) => order.id === id);
     return order;
   };
 
-  const handleMinutesToAccept = (isEditing: boolean, minutes: number) => {
-    setMinutesToAccept({ isEditing, minutes });
-  };
-
   //Development
   const createFakeOrder = async () => {
     await api.order().createFakeOrder(fakeOrder);
+  };
+
+  //handlers
+  const changeOrderStatus = async (orderId: string, status: OrderStatus) => {
+    await api.order().updateOrder(orderId, { status });
   };
 
   /*const changeState = (code: string, status: string) => {
@@ -201,15 +161,10 @@ export const OrdersContextProvider = (props: ProviderProps) => {
     <OrdersContext.Provider
       value={{
         business,
-        getOrderById,
-        //confirm,
-        //ready,
-        //dispatching,
-        //delivered,
-        createFakeOrder,
         ordersByStatus,
-        minutesToAccept,
-        handleMinutesToAccept,
+        getOrderById,
+        createFakeOrder,
+        changeOrderStatus,
       }}
       {...props}
     />

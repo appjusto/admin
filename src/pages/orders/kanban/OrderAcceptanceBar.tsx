@@ -1,4 +1,4 @@
-import { Button, HStack, Switch, Text } from '@chakra-ui/react';
+import { Box, Button, HStack, Switch, Text } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { CustomNumberInput } from 'common/components/form/input/CustomNumberInput';
 import { ReactComponent as EditIcon } from 'common/img/edit-icon.svg';
@@ -10,6 +10,7 @@ export const OrderAcceptanceBar = () => {
   //context
   const { business } = useOrdersContext();
   const { updateBusinessProfile } = useBusinessProfile();
+  const { createFakeOrder } = useOrdersContext();
   //state
   const [minutes, setMinutes] = React.useState('5');
   const [isEditing, setIsEditing] = React.useState(false);
@@ -37,17 +38,20 @@ export const OrderAcceptanceBar = () => {
       />
       <Text minW="260px">{t('Aceitar pedidos automaticamente:')}</Text>
       {isEditing ? (
-        <CustomNumberInput
-          ref={inputRef}
-          maxW="120px"
-          maxH="50px"
-          id="order-minutes"
-          label={t('Editar minutos')}
-          value={minutes}
-          onChange={(ev) => setMinutes(ev.target.value)}
-          onBlur={handleOnBlur}
-          maxLength={2}
-        />
+        <Box maxW="120px">
+          <CustomNumberInput
+            ref={inputRef}
+            mt="0"
+            maxW="120px"
+            maxH="50px"
+            id="order-minutes"
+            label={t('Editar minutos')}
+            value={minutes}
+            onChange={(ev) => setMinutes(ev.target.value)}
+            onBlur={handleOnBlur}
+            maxLength={2}
+          />
+        </Box>
       ) : (
         <Button
           variant="outline"
@@ -63,6 +67,7 @@ export const OrderAcceptanceBar = () => {
           </Text>
         </Button>
       )}
+      <Button onClick={createFakeOrder}>Criar Ordem</Button>
     </HStack>
   );
 };

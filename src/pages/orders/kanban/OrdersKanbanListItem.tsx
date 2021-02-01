@@ -28,10 +28,11 @@ interface Props {
 
 export const OrdersKanbanListItem = ({ order }: Props) => {
   const { url } = useRouteMatch();
-  const { ready, dispatching } = useOrdersContext();
+  const { changeOrderStatus } = useOrdersContext();
 
-  const hasCurrier = order.code && parseInt(order.code) > 3 ? true : false;
-  const wasDelivered = order.code && parseInt(order.code) > 6 ? true : false;
+  const orderCode = order.code?.split('', 6).join('');
+  const hasCurrier = false;
+  const wasDelivered = order.status === 'delivered';
 
   if (order.status === 'dispatching') {
     return (
@@ -45,7 +46,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
         bgColor={wasDelivered ? 'gray.500' : 'white'}
       >
         <Flex justifyContent="space-between" alignItems="center">
-          <CodeLink url={url} orderId={order.id} code={order.code} />
+          <CodeLink url={url} orderId={order.id} code={orderCode} />
           <Flex flexDir="column" color="gray.700" fontSize="xs" alignItems="flex-end">
             {wasDelivered ? (
               <Text fontWeight="700">{t('Pedido entregue')}</Text>
@@ -66,7 +67,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
       <Box p="4" borderRadius="lg" borderColor="black" borderWidth="1px" color="black">
         <Flex flexDir="column" fontWeight="700">
           <Flex justifyContent="space-between">
-            <CodeLink url={url} orderId={order.id} code={order.code} />
+            <CodeLink url={url} orderId={order.id} code={orderCode} />
             <Flex flexDir="column" fontSize="xs" alignItems="flex-end">
               {hasCurrier ? (
                 <>
@@ -97,7 +98,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
           maxH="34px"
           siz="xs"
           fontSize="xs"
-          onClick={() => dispatching(order.code)}
+          onClick={() => changeOrderStatus(order.id, 'dispatching')}
         >
           {t('Entregar pedido')}
         </Button>
@@ -110,7 +111,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
       <Box p="4" borderRadius="lg" borderColor="black" borderWidth="1px" color="black">
         <Flex flexDir="column" fontWeight="700">
           <Flex justifyContent="space-between">
-            <CodeLink url={url} orderId={order.id} code={order.code} />
+            <CodeLink url={url} orderId={order.id} code={orderCode} />
             <Flex flexDir="column">
               <HStack spacing={2}>
                 <HStack spacing={1}>
@@ -139,7 +140,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
           maxH="34px"
           siz="xs"
           fontSize="xs"
-          onClick={() => ready(order.code)}
+          onClick={() => changeOrderStatus(order.id, 'ready')}
         >
           {t('Pedido pronto')}
         </Button>
@@ -159,7 +160,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
       >
         <Box>
           <Flex>
-            <Text fontWeight="700">#{order.code}</Text>
+            <Text fontWeight="700">#{orderCode}</Text>
           </Flex>
         </Box>
       </Box>

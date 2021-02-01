@@ -32,7 +32,7 @@ export const OrderDrawer = (props: Props) => {
   const isError = false;
   const error = '';
   const { orderId } = useParams<Params>();
-  const { getOrderById, confirm } = useOrdersContext();
+  const { getOrderById } = useOrdersContext();
   const order = getOrderById(orderId);
   // state
   const [preparationTime, setPreparationTime] = React.useState<string | undefined>(undefined);
@@ -50,6 +50,7 @@ export const OrderDrawer = (props: Props) => {
   return (
     <OrderBaseDrawer
       {...props}
+      orderId={order.id}
       orderCode={order.code}
       orderStatus={order.status}
       client={order.consumer.name}
@@ -105,7 +106,7 @@ export const OrderDrawer = (props: Props) => {
           <Text mt="1" fontSize="md">
             {t('Total pago:')}{' '}
             <Text as="span" color="black">
-              {'R$ 0,00'}
+              {itemPriceFormatter(tableTotal)}
             </Text>
           </Text>
           <Text mt="1" fontSize="md">

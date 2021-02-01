@@ -22,6 +22,7 @@ import { useOrdersContext } from '../context';
 import { Pendency } from './orderdrawer';
 
 interface BaseDrawerProps {
+  orderId: string;
   orderCode: string;
   orderStatus: string;
   client: string;
@@ -36,6 +37,7 @@ interface BaseDrawerProps {
 }
 
 export const OrderBaseDrawer = ({
+  orderId,
   orderCode,
   orderStatus,
   client,
@@ -49,16 +51,16 @@ export const OrderBaseDrawer = ({
   ...props
 }: BaseDrawerProps) => {
   //context
-  const { confirm, ready, dispatching } = useOrdersContext();
+  const { changeOrderStatus } = useOrdersContext();
   //handlers
   let PrimaryButtonLabel = 'Preparar pedido';
   if (orderStatus === 'preparing') PrimaryButtonLabel = 'Pedido pronto';
   if (orderStatus === 'ready') PrimaryButtonLabel = 'Entregar pedido';
 
   const PrimaryButtonFunction = () => {
-    if (orderStatus === 'confirming') confirm(orderCode);
-    if (orderStatus === 'preparing') ready(orderCode);
-    if (orderStatus === 'ready') dispatching(orderCode);
+    if (orderStatus === 'confirming') changeOrderStatus(orderId, 'preparing');
+    if (orderStatus === 'preparing') changeOrderStatus(orderId, 'ready');
+    if (orderStatus === 'ready') changeOrderStatus(orderId, 'dispatching');
     onClose();
   };
   //UI
