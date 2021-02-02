@@ -22,7 +22,7 @@ export const PreparationTime = ({
     if (hasPreparationTime && radiosValue !== '0') {
       notifyParentWithTime(radiosValue);
     }
-  }, [hasPreparationTime, radiosValue]);
+  }, [notifyParentWithTime, hasPreparationTime, radiosValue]);
 
   //UI
   return (

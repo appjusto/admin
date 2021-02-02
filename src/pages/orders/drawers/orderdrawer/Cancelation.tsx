@@ -15,6 +15,7 @@ export const Cancelation = ({ handleConfirm, handleKeep }: CancelationProps) => 
   // state
   const [options, setOptions] = React.useState<WithId<Issue>[]>([]);
   const [optionId, setOptionId] = React.useState('');
+  const [optionsError, setOptionsError] = React.useState({ status: false, msg: '' });
 
   //handler
   const handleCancel = () => {
@@ -26,9 +27,14 @@ export const Cancelation = ({ handleConfirm, handleKeep }: CancelationProps) => 
   React.useEffect(() => {
     (async () => {
       const optionsList = await fetchCancelOptions();
-      setOptions(optionsList);
+      if (optionsList.length > 0) {
+        setOptions(optionsList);
+        setOptionId(optionsList[0].id);
+      } else {
+        setOptionsError({ status: true, msg: 'Não foi possível carregar as opções.' });
+      }
     })();
-  }, []);
+  }, [fetchCancelOptions]);
   // UI
   return (
     <Box py="4" px="6" bgColor="#FFF8F8" border="1px solid #DC3545" borderRadius="lg">
@@ -51,6 +57,7 @@ export const Cancelation = ({ handleConfirm, handleKeep }: CancelationProps) => 
               {option.title}
             </Radio>
           ))}
+          {optionsError.status && <Text>{optionsError.msg}</Text>}
         </Flex>
       </RadioGroup>
       <Flex mt="6" maxW="340px" flexDir="row" justifyContent="space-between">

@@ -35,15 +35,13 @@ export const OrderDrawer = (props: Props) => {
   const { getOrderById, cancelOrder } = useOrdersContext();
   const order = getOrderById(orderId);
 
-  const isCurrierArrived = order.dispatchingState === 'arrived-pickup';
+  const isCurrierArrived = order?.dispatchingState === 'arrived-pickup';
   // state
   const [preparationTime, setPreparationTime] = React.useState<string | undefined>(undefined);
   const [isCanceling, setIsCanceling] = React.useState(false);
 
-  const tableTotal = order.items.reduce(
-    (n1: number, n2: OrderItem) => n1 + n2.product.price * n2.quantity,
-    0
-  );
+  const tableTotal =
+    order?.items.reduce((n1: number, n2: OrderItem) => n1 + n2.product.price * n2.quantity, 0) || 0;
 
   // handlers
   const handleCancel = (issue: WithId<Issue>) => {
@@ -57,11 +55,11 @@ export const OrderDrawer = (props: Props) => {
   return (
     <OrderBaseDrawer
       {...props}
-      orderId={order.id}
-      orderCode={order.code}
-      orderStatus={order.status}
+      orderId={orderId}
+      orderCode={order?.code}
+      orderStatus={order?.status}
       isCurrierArrived={isCurrierArrived}
-      client={order.consumer.name}
+      client={order?.consumer.name}
       clientOrders={6}
       cancel={() => setIsCanceling(true)}
       isCanceling={isCanceling}
@@ -72,7 +70,7 @@ export const OrderDrawer = (props: Props) => {
         <Cancelation handleConfirm={handleCancel} handleKeep={() => setIsCanceling(false)} />
       ) : (
         <>
-          {(order.status === 'ready' || order.status === 'dispatching') && <DeliveryInfos />}
+          {(order?.status === 'ready' || order?.status === 'dispatching') && <DeliveryInfos />}
           <Text mt="6" fontSize="xl" color="black">
             {t('Detalhes do pedido')}
           </Text>
@@ -85,7 +83,7 @@ export const OrderDrawer = (props: Props) => {
               </Tr>
             </Thead>
             <Tbody>
-              {order.items.map((item: OrderItem) => (
+              {order?.items.map((item: OrderItem) => (
                 <Tr key={item.product.id} color="black" fontSize="xs">
                   <Td>{item.product.name}</Td>
                   <Td isNumeric>{item.quantity}</Td>
@@ -120,10 +118,10 @@ export const OrderDrawer = (props: Props) => {
           <Text mt="1" fontSize="md">
             {t('Método de pagamento:')}{' '}
             <Text as="span" color="black">
-              {order.payment.paymentMethodId}
+              {order?.payment.paymentMethodId}
             </Text>
           </Text>
-          {order.status === 'confirming' && (
+          {order?.status === 'confirming' && (
             <PreparationTime
               preparationTime={preparationTime}
               notifyParentWithTime={(time) => setPreparationTime(time)}

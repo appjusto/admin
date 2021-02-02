@@ -1,7 +1,6 @@
 import { ChatMessage, FoodOrderStatus, Issue, IssueType, Order, WithId } from 'appjusto-types';
 import { documentsAs } from 'core/fb';
 import firebase from 'firebase';
-import Api from '../Api';
 import FirebaseRefs from '../FirebaseRefs';
 
 export const ActiveFoodOrdersValues: FoodOrderStatus[] = [

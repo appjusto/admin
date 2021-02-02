@@ -126,10 +126,10 @@ export const OrdersContextProvider = (props: ProviderProps) => {
     await api.order().updateOrder(orderId, { status });
   };
 
-  const fetchCancelOptions = async () => {
+  const fetchCancelOptions = React.useCallback(async () => {
     const options = await api.order().fetchIssues('restaurant-cancel');
     return options;
-  };
+  }, [api]);
 
   const cancelOrder = async (orderId: string, issue: WithId<Issue>) => {
     await api.order().updateOrder(orderId, {
