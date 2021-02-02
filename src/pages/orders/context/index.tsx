@@ -99,26 +99,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   const api = useContextApi();
   const business = useContextBusiness();
   const orders = useOrders(undefined, business!.id);
-  /*const fakeOrders = ['001', '002', '003', '004', '005', '006', '007', '008', '009', '010'].map(
-    (item) => ({
-      ...fakeOrder,
-      id: Math.random().toString(),
-      code: item,
-    })
-  );*/
-  //state
-  //const [orders, setOrders] = React.useState<FakeOrder[]>([]);
-
-  /*React.useEffect(() => {
-    setOrders(fakeOrders);
-  }, []);*/
-
   const ordersByStatus = splitByStatus(orders);
-
-  const getOrderById = (id: string) => {
-    const order = orders.find((order: WithId<Order>) => order.id === id);
-    return order;
-  };
 
   //Development
   const createFakeOrder = async () => {
@@ -126,37 +107,15 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   };
 
   //handlers
+  const getOrderById = (id: string) => {
+    const order = orders.find((order: WithId<Order>) => order.id === id);
+    return order;
+  };
+
   const changeOrderStatus = async (orderId: string, status: OrderStatus) => {
     await api.order().updateOrder(orderId, { status });
   };
 
-  /*const changeState = (code: string, status: string) => {
-    setOrders((prev) => {
-      const newOrder = prev.map((order) => {
-        if (order.code === code) {
-          return {
-            ...order,
-            status,
-          };
-        } else {
-          return order;
-        }
-      });
-      return newOrder;
-    });
-  };
-  const confirm = (code: string) => {
-    changeState(code, 'preparing');
-  };
-  const ready = (code: string) => {
-    changeState(code, 'ready');
-  };
-  const dispatching = (code: string) => {
-    changeState(code, 'dispatching');
-  };
-  const delivered = (code: string) => {
-    changeState(code, 'delivered');
-  };*/
   return (
     <OrdersContext.Provider
       value={{

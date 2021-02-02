@@ -43,7 +43,6 @@ export const OrderDrawer = (props: Props) => {
     (n1: number, n2: OrderItem) => n1 + n2.product.price * n2.quantity,
     0
   );
-
   // side effects
 
   // UI
@@ -112,7 +111,7 @@ export const OrderDrawer = (props: Props) => {
           <Text mt="1" fontSize="md">
             {t('Método de pagamento:')}{' '}
             <Text as="span" color="black">
-              {'pagamento via app'}
+              {order.payment.paymentMethodId}
             </Text>
           </Text>
           {order.status === 'confirming' && (

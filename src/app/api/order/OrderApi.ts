@@ -34,9 +34,9 @@ export default class OrderApi {
     ];
     let query = this.refs
       .getOrdersRef()
-      //.orderBy('createdOn', 'desc')
-      .where('business.id', '==', businessId);
-    //.where('status', 'in', statuses);
+      .orderBy('createdOn', 'desc')
+      .where('business.id', '==', businessId)
+      .where('status', 'in', statuses);
 
     const unsubscribe = query.onSnapshot(
       (querySnapshot) => {
