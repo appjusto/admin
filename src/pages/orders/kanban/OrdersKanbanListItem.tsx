@@ -30,8 +30,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
   const { url } = useRouteMatch();
   const { changeOrderStatus } = useOrdersContext();
 
-  const orderCode = order.code?.split('', 6).join('');
-  const hasCurrier = false;
+  const isCurrierArrived = order.dispatchingState === 'arrived-pickup';
   const wasDelivered = order.status === 'delivered';
 
   if (order.status === 'dispatching') {
@@ -46,7 +45,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
         bgColor={wasDelivered ? 'gray.500' : 'white'}
       >
         <Flex justifyContent="space-between" alignItems="center">
-          <CodeLink url={url} orderId={order.id} code={orderCode} />
+          <CodeLink url={url} orderId={order.id} code={order.code} />
           <Flex flexDir="column" color="gray.700" fontSize="xs" alignItems="flex-end">
             {wasDelivered ? (
               <Text fontWeight="700">{t('Pedido entregue')}</Text>
@@ -67,9 +66,9 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
       <Box p="4" borderRadius="lg" borderColor="black" borderWidth="1px" color="black">
         <Flex flexDir="column" fontWeight="700">
           <Flex justifyContent="space-between">
-            <CodeLink url={url} orderId={order.id} code={orderCode} />
+            <CodeLink url={url} orderId={order.id} code={order.code} />
             <Flex flexDir="column" fontSize="xs" alignItems="flex-end">
-              {hasCurrier ? (
+              {isCurrierArrived ? (
                 <>
                   <Text color="black" fontWeight="700">
                     {t('Entregador no local')}
@@ -92,7 +91,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
           </Flex>
         </Flex>
         <Button
-          isDisabled={!hasCurrier}
+          isDisabled={!isCurrierArrived}
           mt="2"
           w="full"
           maxH="34px"
@@ -111,7 +110,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
       <Box p="4" borderRadius="lg" borderColor="black" borderWidth="1px" color="black">
         <Flex flexDir="column" fontWeight="700">
           <Flex justifyContent="space-between">
-            <CodeLink url={url} orderId={order.id} code={orderCode} />
+            <CodeLink url={url} orderId={order.id} code={order.code} />
             <Flex flexDir="column">
               <HStack spacing={2}>
                 <HStack spacing={1}>
@@ -160,7 +159,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
       >
         <Box>
           <Flex>
-            <Text fontWeight="700">#{orderCode}</Text>
+            <Text fontWeight="700">#{order.code}</Text>
           </Flex>
         </Box>
       </Box>

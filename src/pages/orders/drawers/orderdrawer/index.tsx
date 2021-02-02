@@ -34,6 +34,8 @@ export const OrderDrawer = (props: Props) => {
   const { orderId } = useParams<Params>();
   const { getOrderById } = useOrdersContext();
   const order = getOrderById(orderId);
+
+  const isCurrierArrived = order.dispatchingState === 'arrived-pickup';
   // state
   const [preparationTime, setPreparationTime] = React.useState<string | undefined>(undefined);
   const [isCanceling, setIsCanceling] = React.useState(false);
@@ -52,6 +54,7 @@ export const OrderDrawer = (props: Props) => {
       orderId={order.id}
       orderCode={order.code}
       orderStatus={order.status}
+      isCurrierArrived={isCurrierArrived}
       client={order.consumer.name}
       clientOrders={6}
       cancel={() => setIsCanceling(true)}

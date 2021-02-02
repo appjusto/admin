@@ -25,6 +25,7 @@ interface BaseDrawerProps {
   orderId: string;
   orderCode: string;
   orderStatus: string;
+  isCurrierArrived: boolean;
   client: string;
   clientOrders: number;
   isOpen: boolean;
@@ -40,6 +41,7 @@ export const OrderBaseDrawer = ({
   orderId,
   orderCode,
   orderStatus,
+  isCurrierArrived,
   client,
   clientOrders,
   cancel,
@@ -52,17 +54,26 @@ export const OrderBaseDrawer = ({
 }: BaseDrawerProps) => {
   //context
   const { changeOrderStatus } = useOrdersContext();
-  //handlers
-  let PrimaryButtonLabel = 'Preparar pedido';
-  if (orderStatus === 'preparing') PrimaryButtonLabel = 'Pedido pronto';
-  if (orderStatus === 'ready') PrimaryButtonLabel = 'Entregar pedido';
 
+  //handlers
   const PrimaryButtonFunction = () => {
     if (orderStatus === 'confirming') changeOrderStatus(orderId, 'preparing');
     if (orderStatus === 'preparing') changeOrderStatus(orderId, 'ready');
     if (orderStatus === 'ready') changeOrderStatus(orderId, 'dispatching');
     onClose();
   };
+
+  //UI conditions
+  let orderDispatched = ['dispatching', 'delivered'].includes(orderStatus);
+
+  let PrimaryButtonShow =
+    ['confirming', 'preparing'].includes(orderStatus) ||
+    (orderStatus === 'ready' && isCurrierArrived);
+
+  let PrimaryButtonLabel = 'Preparar pedido';
+  if (orderStatus === 'preparing') PrimaryButtonLabel = 'Pedido pronto';
+  if (orderStatus === 'ready') PrimaryButtonLabel = 'Entregar pedido';
+
   //UI
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
@@ -103,16 +114,18 @@ export const OrderBaseDrawer = ({
               </Box>
             )}
           </DrawerBody>
-          {!isCanceling && (
+          {!isCanceling && !orderDispatched && (
             <DrawerFooter borderTop="1px solid #F2F6EA">
               <Flex w="full" justifyContent="flex-start">
                 <Flex w="full" maxW="607px" flexDir="row" justifyContent="space-between">
                   <Button width="full" maxW="200px" variant="dangerLight" onClick={cancel}>
                     {t('Cancelar pedido')}
                   </Button>
-                  <Button type="submit" width="full" maxW="200px" onClick={PrimaryButtonFunction}>
-                    {t(PrimaryButtonLabel)}
-                  </Button>
+                  {PrimaryButtonShow && (
+                    <Button type="submit" width="full" maxW="200px" onClick={PrimaryButtonFunction}>
+                      {t(PrimaryButtonLabel)}
+                    </Button>
+                  )}
                 </Flex>
               </Flex>
             </DrawerFooter>

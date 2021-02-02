@@ -21,7 +21,7 @@ const fakeItem = (price: number, qtd: number) => {
 
 const fakeOrder = {
   type: 'food' as OrderType,
-  code: `${Math.random().toString()}`,
+  code: `${Math.random().toString().split('', 6).join('').replace('.', '')}`,
   status: 'confirming' as OrderStatus,
   comments: 'cpf',
   consumer: {
