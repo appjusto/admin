@@ -108,7 +108,10 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   // context
   const api = useContextApi();
   const business = useContextBusiness();
-  const orders = useOrders(undefined, business!.id);
+  //const orders = [] as WithId<Order>[];
+  const hookOrders = useOrders(undefined, business!.id);
+  //state
+  const [orders, setOrders] = React.useState<WithId<Order>[]>([]);
   const ordersByStatus = splitByStatus(orders);
 
   //Development
@@ -123,6 +126,20 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   };
 
   const changeOrderStatus = async (orderId: string, status: OrderStatus) => {
+    // optimistic update to avoid flickering
+    setOrders((prevOrders) => {
+      let newOrders = prevOrders.map((order) => {
+        if (order.id === orderId) {
+          return {
+            ...order,
+            status,
+          };
+        } else {
+          return order;
+        }
+      });
+      return newOrders;
+    });
     await api.order().updateOrder(orderId, { status });
   };
 
@@ -139,6 +156,14 @@ export const OrdersContextProvider = (props: ProviderProps) => {
       },
     });
   };
+
+  //side effects
+  React.useEffect(() => {
+    setOrders((prevOrders) => {
+      if (hookOrders !== prevOrders) return hookOrders;
+      return prevOrders;
+    });
+  }, [hookOrders]);
 
   return (
     <OrdersContext.Provider

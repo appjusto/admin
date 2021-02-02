@@ -66,7 +66,7 @@ export const OrderBaseDrawer = ({
   //UI conditions
   let orderDispatched = ['dispatching', 'delivered'].includes(orderStatus);
 
-  let PrimaryButtonShow =
+  let PrimaryButtonAble =
     ['confirming', 'preparing'].includes(orderStatus) ||
     (orderStatus === 'ready' && isCurrierArrived);
 
@@ -121,11 +121,15 @@ export const OrderBaseDrawer = ({
                   <Button width="full" maxW="200px" variant="dangerLight" onClick={cancel}>
                     {t('Cancelar pedido')}
                   </Button>
-                  {PrimaryButtonShow && (
-                    <Button type="submit" width="full" maxW="200px" onClick={PrimaryButtonFunction}>
-                      {t(PrimaryButtonLabel)}
-                    </Button>
-                  )}
+                  <Button
+                    isDisabled={!PrimaryButtonAble}
+                    type="submit"
+                    width="full"
+                    maxW="200px"
+                    onClick={PrimaryButtonFunction}
+                  >
+                    {t(PrimaryButtonLabel)}
+                  </Button>
                 </Flex>
               </Flex>
             </DrawerFooter>
