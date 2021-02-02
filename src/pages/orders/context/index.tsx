@@ -2,7 +2,15 @@ import { splitByStatus } from 'app/api/order/selectors';
 import { useOrders } from 'app/api/order/useOrders';
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusiness } from 'app/state/business/context';
-import { Business, DispatchingState, Order, OrderStatus, OrderType, WithId } from 'appjusto-types';
+import {
+  Business,
+  DispatchingState,
+  Issue,
+  Order,
+  OrderStatus,
+  OrderType,
+  WithId,
+} from 'appjusto-types';
 import { IuguInvoice } from 'appjusto-types/payment/iugu';
 import React from 'react';
 
@@ -86,6 +94,8 @@ interface ContextProps {
   getOrderById(id: string): any;
   createFakeOrder(): void;
   changeOrderStatus(orderId: string, status: OrderStatus): void;
+  fetchCancelOptions(): Promise<WithId<Issue>[]>;
+  cancelOrder(orderId: string, issue: WithId<Issue>): void;
 }
 
 const OrdersContext = React.createContext<ContextProps>({} as ContextProps);
@@ -116,6 +126,20 @@ export const OrdersContextProvider = (props: ProviderProps) => {
     await api.order().updateOrder(orderId, { status });
   };
 
+  const fetchCancelOptions = async () => {
+    const options = await api.order().fetchIssues('restaurant-cancel');
+    return options;
+  };
+
+  const cancelOrder = async (orderId: string, issue: WithId<Issue>) => {
+    await api.order().updateOrder(orderId, {
+      status: 'canceled',
+      cancellation: {
+        reason: issue,
+      },
+    });
+  };
+
   return (
     <OrdersContext.Provider
       value={{
@@ -124,6 +148,8 @@ export const OrdersContextProvider = (props: ProviderProps) => {
         getOrderById,
         createFakeOrder,
         changeOrderStatus,
+        fetchCancelOptions,
+        cancelOrder,
       }}
       {...props}
     />

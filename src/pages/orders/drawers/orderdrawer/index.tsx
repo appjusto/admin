@@ -1,5 +1,5 @@
 import { Table, Tbody, Td, Text, Tfoot, Th, Thead, Tr } from '@chakra-ui/react';
-import { OrderItem } from 'appjusto-types';
+import { Issue, OrderItem, WithId } from 'appjusto-types';
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { itemPriceFormatter } from 'utils/formatters';
@@ -32,7 +32,7 @@ export const OrderDrawer = (props: Props) => {
   const isError = false;
   const error = '';
   const { orderId } = useParams<Params>();
-  const { getOrderById } = useOrdersContext();
+  const { getOrderById, cancelOrder } = useOrdersContext();
   const order = getOrderById(orderId);
 
   const isCurrierArrived = order.dispatchingState === 'arrived-pickup';
@@ -40,11 +40,17 @@ export const OrderDrawer = (props: Props) => {
   const [preparationTime, setPreparationTime] = React.useState<string | undefined>(undefined);
   const [isCanceling, setIsCanceling] = React.useState(false);
 
-  // handlers
   const tableTotal = order.items.reduce(
     (n1: number, n2: OrderItem) => n1 + n2.product.price * n2.quantity,
     0
   );
+
+  // handlers
+  const handleCancel = (issue: WithId<Issue>) => {
+    cancelOrder(orderId, issue);
+    props.onClose();
+  };
+
   // side effects
 
   // UI
@@ -63,7 +69,7 @@ export const OrderDrawer = (props: Props) => {
       error={error}
     >
       {isCanceling ? (
-        <Cancelation handleConfirm={() => {}} handleKeep={() => setIsCanceling(false)} />
+        <Cancelation handleConfirm={handleCancel} handleKeep={() => setIsCanceling(false)} />
       ) : (
         <>
           {(order.status === 'ready' || order.status === 'dispatching') && <DeliveryInfos />}
