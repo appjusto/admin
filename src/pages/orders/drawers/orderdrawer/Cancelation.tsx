@@ -31,7 +31,7 @@ export const Cancelation = ({ handleConfirm, handleKeep }: CancelationProps) => 
         setOptions(optionsList);
         setOptionId(optionsList[0].id);
       } else {
-        setOptionsError({ status: true, msg: 'Não foi possível carregar as opções.' });
+        setOptionsError({ status: true, msg: 'Desculpe, não foi possível carregar as opções.' });
       }
     })();
   }, [fetchCancelOptions]);
@@ -57,14 +57,23 @@ export const Cancelation = ({ handleConfirm, handleKeep }: CancelationProps) => 
               {option.title}
             </Radio>
           ))}
-          {optionsError.status && <Text>{optionsError.msg}</Text>}
+          {optionsError.status && (
+            <Text mt="4" color="#DC3545" fontWeight="700">
+              {optionsError.msg}
+            </Text>
+          )}
         </Flex>
       </RadioGroup>
       <Flex mt="6" maxW="340px" flexDir="row" justifyContent="space-between">
         <Button maxW="160px" onClick={handleKeep}>
           {t('Manter pedido')}
         </Button>
-        <Button maxW="160px" variant="danger" onClick={handleCancel}>
+        <Button
+          maxW="160px"
+          isDisabled={optionsError.status}
+          variant="danger"
+          onClick={handleCancel}
+        >
           {t('Cancelar pedido')}
         </Button>
       </Flex>
