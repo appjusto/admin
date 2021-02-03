@@ -1,6 +1,8 @@
 import { separator, unit } from 'common/components/form/input/currency-input/utils';
-import { OrderItemComplement, OrderItem } from 'appjusto-types';
+import i18n from 'i18n-js';
+import { round } from 'lodash';
 
+// price and totals
 export const itemPriceFormatter = (price: number) => {
   const pStr = price.toString();
   const len = pStr.length;
@@ -11,26 +13,18 @@ export const itemPriceFormatter = (price: number) => {
   if (len === 1) return `${unit} 0${separator}0${pArr[0]}`;
 };
 
-const getProductTotalPrice = (price: number, complements: OrderItemComplement[] | undefined) => {
-  let complementsPrice = 0;
-  if (complements) {
-    complementsPrice =
-      complements.reduce((n1: number, n2: OrderItemComplement) => n1 + n2.price, 0) || 0;
-  }
-  return price + complementsPrice;
-};
-const getOrderTotalPrice = (items: OrderItem[]) => {
-  let total = 0;
-  items.map((item: OrderItem) => {
-    let priceByquantity = item.quantity * item.product.price;
-    return (total += getProductTotalPrice(priceByquantity, item.complements));
-  });
-  return total;
+// date & time
+export const formatDate = (date: Date, pattern: 'default' | 'monthYear' = 'default') =>
+  i18n.l(`date.formats.${pattern}`, date);
+export const formatTime = (date: Date) => i18n.l('time.formats.default', date);
+export const getMonthName = (month: number) => i18n.strftime(new Date(2020, month, 1), '%B');
+
+export const formatDuration = (duration: number) => {
+  return `${round(duration / 60, 0)} min`;
 };
 
-export const getProdTotalPriceToDisplay = (
-  price: number,
-  complements: OrderItemComplement[] | undefined
-) => itemPriceFormatter(getProductTotalPrice(price, complements));
-export const getOrderTotalPriceToDisplay = (items: OrderItem[]) =>
-  itemPriceFormatter(getOrderTotalPrice(items));
+// distance
+export const formatDistance = (distance: number) => {
+  if (distance < 1000) return `${distance}m`;
+  return `${round(distance / 1000, 2)}km`;
+};
