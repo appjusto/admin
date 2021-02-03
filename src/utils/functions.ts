@@ -1,5 +1,6 @@
 import { OrderItemComplement, OrderItem } from 'appjusto-types';
 import { itemPriceFormatter, formatDate } from './formatters';
+import { round } from 'lodash';
 
 //date
 export const getDateTime = () => {
@@ -7,6 +8,13 @@ export const getDateTime = () => {
   let date = formatDate(fullDate);
   let time = `${fullDate.getHours()}:${fullDate.getMinutes()}`;
   return { date, time };
+};
+
+export const getTimeUntilNow = (created: firebase.firestore.Timestamp) => {
+  const start = created.toDate().getTime();
+  const now = new Date().getTime();
+  const elapsedTime = (now - start) / 1000 / 60;
+  return round(elapsedTime, 0);
 };
 
 // pricing
