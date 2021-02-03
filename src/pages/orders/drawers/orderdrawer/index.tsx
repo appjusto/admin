@@ -2,7 +2,7 @@ import { Table, Tbody, Td, Text, Tfoot, Th, Thead, Tr } from '@chakra-ui/react';
 import { Issue, OrderItem, WithId } from 'appjusto-types';
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { itemPriceFormatter } from 'utils/formatters';
+import { getOrderTotalPriceToDisplay, itemPriceFormatter } from 'utils/formatters';
 import { t } from 'utils/i18n';
 import { useOrdersContext } from '../../context';
 import { OrderBaseDrawer } from '../OrderBaseDrawer';
@@ -39,11 +39,9 @@ export const OrderDrawer = (props: Props) => {
   // state
   const [preparationTime, setPreparationTime] = React.useState<string | undefined>(undefined);
   const [isCanceling, setIsCanceling] = React.useState(false);
-
-  const tableTotal =
-    order?.items.reduce((n1: number, n2: OrderItem) => n1 + n2.product.price * n2.quantity, 0) || 0;
-
+  const orderTotalPrice = getOrderTotalPriceToDisplay(order?.items || []);
   // handlers
+
   const handleCancel = (issue: WithId<Issue>) => {
     cancelOrder(orderId, issue);
     props.onClose();
@@ -84,18 +82,28 @@ export const OrderDrawer = (props: Props) => {
             </Thead>
             <Tbody>
               {order?.items.map((item: OrderItem) => (
-                <Tr key={item.product.id} color="black" fontSize="xs">
-                  <Td>{item.product.name}</Td>
-                  <Td isNumeric>{item.quantity}</Td>
-                  <Td isNumeric>{itemPriceFormatter(item.quantity * item.product.price)}</Td>
-                </Tr>
+                <React.Fragment key={item.product.id}>
+                  <Tr key={item.product.id} color="black" fontSize="xs" fontWeight="700">
+                    <Td>{item.product.name}</Td>
+                    <Td isNumeric>{item.quantity}</Td>
+                    <Td isNumeric>{itemPriceFormatter(item.product.price * item.quantity)}</Td>
+                  </Tr>
+                  {item.complements &&
+                    item.complements.map((complement) => (
+                      <Tr key={complement.complementId} fontSize="xs">
+                        <Td>{complement.complementId}</Td>
+                        <Td isNumeric>1</Td>
+                        <Td isNumeric>{itemPriceFormatter(complement.price)}</Td>
+                      </Tr>
+                    ))}
+                </React.Fragment>
               ))}
             </Tbody>
             <Tfoot bgColor="gray.50">
               <Tr color="black">
                 <Th>{t('Valor total de itens:')}</Th>
                 <Th></Th>
-                <Th isNumeric>{itemPriceFormatter(tableTotal)}</Th>
+                <Th isNumeric>{orderTotalPrice}</Th>
               </Tr>
             </Tfoot>
           </Table>
@@ -112,7 +120,7 @@ export const OrderDrawer = (props: Props) => {
           <Text mt="1" fontSize="md">
             {t('Total pago:')}{' '}
             <Text as="span" color="black">
-              {itemPriceFormatter(tableTotal)}
+              {orderTotalPrice}
             </Text>
           </Text>
           <Text mt="1" fontSize="md">
