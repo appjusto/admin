@@ -100,6 +100,8 @@ interface ContextProps {
 
 const OrdersContext = React.createContext<ContextProps>({} as ContextProps);
 
+const options = { active: true, inactive: false };
+
 interface ProviderProps {
   children: React.ReactNode | React.ReactNode[];
 }
@@ -108,8 +110,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   // context
   const api = useContextApi();
   const business = useContextBusiness();
-  //const orders = [] as WithId<Order>[];
-  const hookOrders = useOrders(undefined, business!.id);
+  const hookOrders = useOrders(options, business!.id);
   //state
   const [orders, setOrders] = React.useState<WithId<Order>[]>([]);
   const ordersByStatus = splitByStatus(orders);
@@ -140,6 +141,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
       });
       return newOrders;
     });
+    // firestore update
     await api.order().updateOrder(orderId, { status });
   };
 
@@ -157,14 +159,12 @@ export const OrdersContextProvider = (props: ProviderProps) => {
     });
   };
 
-  //side effects
+  // side effects
   React.useEffect(() => {
-    setOrders((prevOrders) => {
-      if (hookOrders !== prevOrders) return hookOrders;
-      return prevOrders;
-    });
+    setOrders(hookOrders);
   }, [hookOrders]);
 
+  // provider
   return (
     <OrdersContext.Provider
       value={{

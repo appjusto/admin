@@ -14,7 +14,7 @@ export const useOrders = (
   // side effects
   React.useEffect(() => {
     return api.order().observeOrders(options, businessId, setOrders);
-  }, [businessId, api]); //remove options to avoid infinite renders
+  }, [options, businessId, api]); //attention to 'options' to avoid infinite renders
   // return
   return orders;
 };
