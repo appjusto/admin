@@ -41,3 +41,45 @@ export const getProdTotalPriceToDisplay = (
 ) => itemPriceFormatter(getProductTotalPrice(price, complements));
 export const getOrderTotalPriceToDisplay = (items: OrderItem[]) =>
   itemPriceFormatter(getOrderTotalPrice(items));
+
+// images
+const createImage = (url: string) =>
+  new Promise((resolve, reject) => {
+    const image = new Image();
+    image.addEventListener('load', () => resolve(image));
+    image.addEventListener('error', (error) => reject(error));
+    image.setAttribute('crossOrigin', 'anonymous');
+    image.src = url;
+  });
+
+export const getCroppedImage = async (url: string, imageRatio: number = 9 / 16) => {
+  const image = await createImage(url);
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  const pixelRatio = window.devicePixelRatio;
+  // @ts-ignore: Unreachable code error
+  const drawerWidth = image.naturalWidth * pixelRatio;
+  // @ts-ignore: Unreachable code error
+  const drawerHeight = image.naturalWidth * imageRatio * pixelRatio;
+  canvas.width = drawerWidth;
+  canvas.height = drawerHeight;
+  if (ctx) {
+    ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+    ctx.imageSmoothingQuality = 'high';
+    // @ts-ignore: Unreachable code error
+    ctx.drawImage(image, 0, 0, drawerWidth, drawerHeight, 0, 0, drawerWidth, drawerHeight);
+    // @ts-ignore: Unreachable code error
+    //canvas.toBlob((blob) => console.log(blob));
+    return new Promise((resolve, reject) => {
+      canvas.toBlob(
+        (blob: any) => {
+          blob.name = 'imageName';
+          resolve(blob);
+        },
+        'image/jpeg',
+        1
+      );
+    });
+  }
+  return null;
+};

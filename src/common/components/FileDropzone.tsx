@@ -9,8 +9,8 @@ interface Props extends BoxProps {
 }
 
 export const FileDropzone = ({
-  width = 464,
-  height = 260,
+  width = 607,
+  height = 341,
   onDropFile,
   preview,
   ...props
@@ -20,25 +20,26 @@ export const FileDropzone = ({
     multiple: true,
     accept: 'image/jpeg, image/png',
   });
-
   return (
-    <Flex
-      position="relative"
-      bg={!isDragActive ? 'gray.50' : 'gray.300'}
-      borderWidth="1px"
-      borderColor="gray.500"
-      borderRadius="lg"
-      cursor="pointer"
-      width={width}
-      height={height}
-      {...props}
-      {...getRootProps()}
-    >
-      <input {...getInputProps()} />
-      <Center w="100%">
-        {!preview && <DropImage />}
-        {preview && <Image width={width} height={height} objectFit="contain" src={preview} />}
-      </Center>
-    </Flex>
+    <>
+      <Flex
+        position="relative"
+        bg={!isDragActive ? 'gray.50' : 'gray.300'}
+        borderWidth="1px"
+        borderColor="gray.500"
+        borderRadius="lg"
+        cursor="pointer"
+        width={width}
+        height={height}
+        {...props}
+        {...getRootProps()}
+      >
+        <input {...getInputProps()} />
+        <Center w="100%">
+          {!preview && <DropImage />}
+          {preview && <Image width={width} height={height} objectFit="contain" src={preview} />}
+        </Center>
+      </Flex>
+    </>
   );
 };

@@ -16,6 +16,7 @@ import { CustomTextarea as Textarea } from 'common/components/form/input/CustomT
 import { useProductContext } from 'pages/menu/context/ProductContext';
 import React from 'react';
 import { Link, useHistory, useRouteMatch } from 'react-router-dom';
+import { getCroppedImage } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { DrawerButtons } from '../DrawerButtons';
 import { CategorySelect } from './CategorySelect';
@@ -80,6 +81,7 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
     saveSuccess,
   } = state;
   const inputRef = React.useRef<HTMLInputElement>(null);
+  //const canvasRef = React.useRef<HTMLCanvasElement>(null);
 
   //handlers
   const handleStateUpdate = (key: string, value: any) => {
@@ -93,10 +95,12 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
   const onDropHandler = React.useCallback(async (acceptedFiles: File[]) => {
     const [file] = acceptedFiles;
     const url = URL.createObjectURL(file);
+    // get cropped image blob
+    const croppedBlob = await getCroppedImage(url);
     //add url to previewURL
     handleStateUpdate('previewURL', url);
     // add image file
-    handleStateUpdate('imageFile', file);
+    handleStateUpdate('imageFile', croppedBlob);
     handleStateUpdate('imageExists', true);
   }, []);
 
@@ -254,6 +258,9 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
         {t('Recomendamos imagens na proporção retangular (16:9) com no mínimo 1280px de largura')}
       </Text>
       <FileDropzone mt="4" onDropFile={onDropHandler} preview={previewURL} />
+      {/*<Box mt="4">
+        <canvas ref={canvasRef} />
+      </Box>*/}
       <Text mt="8" fontSize="xl" color="black">
         {t('Classificações adicionais:')}
       </Text>
