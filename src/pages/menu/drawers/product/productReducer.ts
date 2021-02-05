@@ -14,7 +14,7 @@ export interface StateProps {
   imageExists: boolean;
   //details
   previewURL: string | null;
-  imageFile: File | null;
+  imageFile: File[] | null;
   isLoading: boolean;
   isEditing: boolean;
   saveSuccess: boolean;

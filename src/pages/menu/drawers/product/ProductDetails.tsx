@@ -98,11 +98,13 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
     const url = URL.createObjectURL(file);
     // get cropped image blob
     //const croppedBlob = await getCroppedImage(url);
-    const croppedBlob = await getCroppedImage(url, canvasRef.current, 1, 288);
+    const Blob7_5 = await getCroppedImage(url, 5 / 7, 1008);
+    const Blob1_1 = await getCroppedImage(url, 1);
     //add url to previewURL
-    handleStateUpdate('previewURL', url);
+    const previewUrl = URL.createObjectURL(Blob7_5);
+    handleStateUpdate('previewURL', previewUrl);
     // add image file
-    handleStateUpdate('imageFile', croppedBlob);
+    handleStateUpdate('imageFile', [Blob7_5, Blob1_1]);
     handleStateUpdate('imageExists', true);
   }, []);
 
@@ -256,8 +258,11 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
       <Text mt="8" fontSize="xl" color="black">
         {t('Imagem do produto')}
       </Text>
-      <Text>
+      <Text color="gray.100">
         {t('Recomendamos imagens na proporção retangular (16:9) com no mínimo 1280px de largura')}
+      </Text>
+      <Text>
+        {t('Recomendamos imagens na proporção retangular (7:5) com no mínimo 1280px de largura')}
       </Text>
       <FileDropzone mt="4" onDropFile={onDropHandler} preview={previewURL} />
       {

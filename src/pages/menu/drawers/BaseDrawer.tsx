@@ -76,7 +76,7 @@ export const BaseDrawer = ({
 }: BaseDrawerProps) => {
   const { url } = useRouteMatch();
   return (
-    <Drawer placement="right" size="2xl" onClose={onClose} {...props}>
+    <Drawer placement="right" size="lg" onClose={onClose} {...props}>
       <DrawerOverlay>
         <DrawerContent>
           <DrawerCloseButton />

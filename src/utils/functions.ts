@@ -54,13 +54,12 @@ const createImage = (url: string) =>
 
 export const getCroppedImage = async (
   url: string,
-  canvas: any,
   imageRatio: number = 9 / 16,
   imageWidth: number | null = null
 ) => {
   const image = await createImage(url);
   // @ts-ignore: Unreachable code error
-  //const canvas = document.createElement('canvas');
+  const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
   const pixelRatio = window.devicePixelRatio;
   // @ts-ignore: Unreachable code error
@@ -75,6 +74,7 @@ export const getCroppedImage = async (
     ctx.imageSmoothingQuality = 'high';
     // @ts-ignore: Unreachable code error
     ctx.drawImage(
+      // @ts-ignore: Unreachable code error
       image,
       0,
       0,

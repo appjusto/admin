@@ -86,10 +86,13 @@ export default class FirebaseRefs {
     `${this.getBusinessStoragePath(businessId)}/cover_1024x1024.jpg`;
   getProductsStoragePath = (businessId: string) =>
     `${this.getBusinessStoragePath(businessId)}/products`;
-  getProductUploadStoragePath = (businessId: string, productId: string) =>
-    `${this.getProductsStoragePath(businessId)}/${productId}.jpg`;
+  getProductUploadStoragePath = (businessId: string, productId: string, ratio: string) =>
+    `${this.getProductsStoragePath(businessId)}/${productId}_${ratio}.jpg`;
+  // to test new image upload format
+  //getProductImageStoragePath = (businessId: string, productId: string) =>
+  //  `${this.getProductsStoragePath(businessId)}/${productId}_1024x1024.jpg`;
   getProductImageStoragePath = (businessId: string, productId: string) =>
-    `${this.getProductsStoragePath(businessId)}/${productId}_1024x1024.jpg`;
+    `${this.getProductsStoragePath(businessId)}/${productId}_1x1.jpg`;
   getComplementsStoragePath = (businessId: string) =>
     `${this.getBusinessStoragePath(businessId)}/complements`;
   getComplementUploadStoragePath = (businessId: string, complementId: string) =>

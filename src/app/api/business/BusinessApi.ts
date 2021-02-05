@@ -216,7 +216,7 @@ export default class MenuApi {
     return documentAs<Product>(doc);
   }
 
-  async createProduct(businessId: string, product: Product, imageFile: File | null) {
+  async createProduct(businessId: string, product: Product, imageFile: File[] | null) {
     // creating product
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
     const productId = this.refs.getBusinessProductsRef(businessId).doc().id;
@@ -240,7 +240,7 @@ export default class MenuApi {
     businessId: string,
     productId: string,
     changes: Partial<Product>,
-    imageFile: File | null
+    imageFile: File[] | null
   ) {
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
     let newProductObject = {};
@@ -281,15 +281,21 @@ export default class MenuApi {
   async uploadProductPhoto(
     businessId: string,
     productId: string,
-    file: File,
+    files: File[],
     progressHandler?: (progress: number) => void
   ) {
-    const isSuccess = await this.files.upload(
-      file,
-      this.refs.getProductUploadStoragePath(businessId, productId),
-      progressHandler
-    );
-    return isSuccess;
+    try {
+      files.map(async (file, index) => {
+        await this.files.upload(
+          file,
+          this.refs.getProductUploadStoragePath(businessId, productId, index === 0 ? '7x5' : '1x1'),
+          progressHandler
+        );
+      });
+      return true;
+    } catch (error) {
+      return false;
+    }
   }
 
   getProductImageURL(businessId: string, productId: string) {

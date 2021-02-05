@@ -9,8 +9,8 @@ interface Props extends BoxProps {
 }
 
 export const FileDropzone = ({
-  width = 607,
-  height = 341,
+  width = 608,
+  height = 434,
   onDropFile,
   preview,
   ...props
