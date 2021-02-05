@@ -52,22 +52,41 @@ const createImage = (url: string) =>
     image.src = url;
   });
 
-export const getCroppedImage = async (url: string, imageRatio: number = 9 / 16) => {
+export const getCroppedImage = async (
+  url: string,
+  canvas: any,
+  imageRatio: number = 9 / 16,
+  imageWidth: number | null = null
+) => {
   const image = await createImage(url);
-  const canvas = document.createElement('canvas');
+  // @ts-ignore: Unreachable code error
+  //const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
   const pixelRatio = window.devicePixelRatio;
   // @ts-ignore: Unreachable code error
-  const drawerWidth = image.naturalWidth * pixelRatio;
+  const drawerWidth = imageWidth ? imageWidth * pixelRatio : image.naturalWidth * pixelRatio;
+  //const drawerWidth = image.width;
   // @ts-ignore: Unreachable code error
-  const drawerHeight = image.naturalWidth * imageRatio * pixelRatio;
+  const drawerHeight = drawerWidth * imageRatio * pixelRatio;
   canvas.width = drawerWidth;
   canvas.height = drawerHeight;
   if (ctx) {
     ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
     ctx.imageSmoothingQuality = 'high';
     // @ts-ignore: Unreachable code error
-    ctx.drawImage(image, 0, 0, drawerWidth, drawerHeight, 0, 0, drawerWidth, drawerHeight);
+    ctx.drawImage(
+      image,
+      0,
+      0,
+      // @ts-ignore: Unreachable code error
+      image.naturalWidth,
+      // @ts-ignore: Unreachable code error
+      image.naturalHeight,
+      0,
+      0,
+      drawerWidth,
+      drawerHeight
+    );
     // @ts-ignore: Unreachable code error
     //canvas.toBlob((blob) => console.log(blob));
     return new Promise((resolve, reject) => {

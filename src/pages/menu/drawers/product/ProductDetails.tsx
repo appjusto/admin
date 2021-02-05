@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   Checkbox,
   CheckboxGroup,
@@ -81,7 +82,7 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
     saveSuccess,
   } = state;
   const inputRef = React.useRef<HTMLInputElement>(null);
-  //const canvasRef = React.useRef<HTMLCanvasElement>(null);
+  const canvasRef = React.useRef<HTMLCanvasElement>(null);
 
   //handlers
   const handleStateUpdate = (key: string, value: any) => {
@@ -96,7 +97,8 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
     const [file] = acceptedFiles;
     const url = URL.createObjectURL(file);
     // get cropped image blob
-    const croppedBlob = await getCroppedImage(url);
+    //const croppedBlob = await getCroppedImage(url);
+    const croppedBlob = await getCroppedImage(url, canvasRef.current, 1, 288);
     //add url to previewURL
     handleStateUpdate('previewURL', url);
     // add image file
@@ -258,9 +260,11 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
         {t('Recomendamos imagens na proporção retangular (16:9) com no mínimo 1280px de largura')}
       </Text>
       <FileDropzone mt="4" onDropFile={onDropHandler} preview={previewURL} />
-      {/*<Box mt="4">
-        <canvas ref={canvasRef} />
-      </Box>*/}
+      {
+        <Box mt="4">
+          <canvas ref={canvasRef} />
+        </Box>
+      }
       <Text mt="8" fontSize="xl" color="black">
         {t('Classificações adicionais:')}
       </Text>
