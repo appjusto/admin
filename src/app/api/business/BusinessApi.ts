@@ -284,16 +284,10 @@ export default class MenuApi {
     }
   }
 
-  getProductImageURL(businessId: string, productId: string, imageDim: string = '1008x720') {
-    if (imageDim === '1008x720') {
-      return this.files.getDownloadURL(
-        this.refs.getProductImageStoragePath_1008x720(businessId, productId)
-      );
-    } else {
-      return this.files.getDownloadURL(
-        this.refs.getProductImageStoragePath_288x288(businessId, productId)
-      );
-    }
+  getProductImageURL(businessId: string, productId: string, size: string = '1008x720') {
+    return this.files.getDownloadURL(
+      this.refs.getProductImageStoragePath(businessId, productId, size)
+    );
   }
 
   // complements

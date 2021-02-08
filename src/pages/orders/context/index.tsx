@@ -2,20 +2,13 @@ import { splitByStatus } from 'app/api/order/selectors';
 import { useOrders } from 'app/api/order/useOrders';
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusiness } from 'app/state/business/context';
-import {
-  Business,
-  DispatchingState,
-  Issue,
-  Order,
-  OrderStatus,
-  OrderType,
-  WithId,
-} from 'appjusto-types';
+import { Business, Issue, Order, OrderItem, OrderStatus, WithId } from 'appjusto-types';
 import { IuguInvoice } from 'appjusto-types/payment/iugu';
 import React from 'react';
 
-const fakeItem = (price: number, qtd: number) => {
+const fakeItem = (price: number, qtd: number): OrderItem => {
   return {
+    id: Math.random().toString(),
     product: {
       name: 'Item',
       price: price, // in cents
@@ -27,15 +20,15 @@ const fakeItem = (price: number, qtd: number) => {
   };
 };
 
-const fakeOrder = {
-  type: 'food' as OrderType,
+const fakeOrder: Order = {
+  type: 'food',
   code: `${Math.random().toString().split('', 6).join('').replace('.', '')}`,
-  status: 'confirming' as OrderStatus,
-  comments: 'cpf',
+  status: 'confirming',
+  // comments: 'cpf',
   consumer: {
     id: '8jnAYorqWL98OPfMypu6',
     name: 'Renan',
-    cpf: '35214602820',
+    // cpf: '35214602820',
   },
   courier: {
     id: 'KfpVLMg9rEURH8BOCMJ8',
@@ -85,7 +78,7 @@ const fakeOrder = {
     polyline: '',
     issue: null,
   },
-  dispatchingState: 'matching' as DispatchingState,
+  dispatchingState: 'matching',
 };
 
 interface ContextProps {
