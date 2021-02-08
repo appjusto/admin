@@ -19,7 +19,7 @@ export const useProduct = (
     const url = await api.business().getProductImageURL(businessId!, productId, imageDim);
     console.log('getImageUrl', timestamp);
     setImageUrl(`${url}&timestap=${timestamp}`);
-  }, [api, businessId, productId]);
+  }, [api, businessId, imageDim, productId]);
   // side effects
   React.useEffect(() => {
     if (!businessId || productId === 'new') return;

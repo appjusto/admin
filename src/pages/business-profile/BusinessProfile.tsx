@@ -69,6 +69,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
       cuisine: {
         id: cuisineId,
         name: '',
+        imagePath: '',
       },
     });
   };
