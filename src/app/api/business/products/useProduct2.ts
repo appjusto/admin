@@ -17,7 +17,6 @@ export const useProduct = (
   const getImageUrl = React.useCallback(async () => {
     const timestamp = new Date().getTime();
     const url = await api.business().getProductImageURL(businessId!, productId, imageDim);
-    console.log('getImageUrl', timestamp);
     setImageUrl(`${url}&timestap=${timestamp}`);
   }, [api, businessId, productId]);
   // side effects
@@ -33,11 +32,10 @@ export const useProduct = (
   }, [product]);
 
   React.useEffect(() => {
-    /*if (product?.imageExists) {
+    if (product?.imageExists) {
       getImageUrl();
-    }*/
-    getImageUrl();
-  }, [product, getImageUrl]);
+    }
+  }, [product?.imageExists, getImageUrl]);
   // result
   return { product, isValid, imageUrl };
 };

@@ -216,17 +216,16 @@ export default class MenuApi {
     return documentAs<Product>(doc);
   }
 
-  async createProduct(businessId: string, product: Product, imageFile: File[] | null) {
+  async createProduct(businessId: string, product: Product, imageFiles: File[] | null) {
     // creating product
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
     const productId = this.refs.getBusinessProductsRef(businessId).doc().id;
-    if (imageFile) {
-      await this.uploadProductPhoto(businessId, productId, imageFile);
+    if (imageFiles) {
+      await this.uploadProductPhoto(businessId, productId, imageFiles);
     }
     try {
       await this.refs.getBusinessProductRef(businessId, productId).set({
         ...product,
-        imageExists: false,
         createdOn: timestamp,
         updatedOn: timestamp,
       } as Product);
@@ -240,17 +239,16 @@ export default class MenuApi {
     businessId: string,
     productId: string,
     changes: Partial<Product>,
-    imageFile: File[] | null
+    imageFiles: File[] | null
   ) {
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
     let newProductObject = {};
     if (changes.imageExists) {
-      if (imageFile) {
-        await this.uploadProductPhoto(businessId, productId, imageFile);
+      if (imageFiles) {
+        await this.uploadProductPhoto(businessId, productId, imageFiles);
       }
       newProductObject = {
         ...changes,
-        imageExists: false,
         updatedOn: timestamp,
       };
     } else {
