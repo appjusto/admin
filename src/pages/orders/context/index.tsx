@@ -8,7 +8,6 @@ import React from 'react';
 
 const fakeItem = (price: number, qtd: number): OrderItem => {
   return {
-    id: Math.random().toString(),
     product: {
       name: 'Item',
       price: price, // in cents
