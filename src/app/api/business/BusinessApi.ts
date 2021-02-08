@@ -159,19 +159,8 @@ export default class MenuApi {
     } as Partial<Category>);
   }
 
-  async deleteCategory(businessId: string, categoryId: string, categoryProducts: string[]) {
-    if (categoryProducts?.length > 0) {
-      const query = await this.refs
-        .getBusinessProductsRef(businessId)
-        .where('categoryId', '==', categoryId)
-        .get();
-      const products = query.docs.map((doc) => ({ id: doc.id, image_url: doc.data().image_url }));
-      products.forEach((product) => {
-        this.deleteProduct(businessId, product.id, typeof product.image_url === 'string');
-      });
-    }
+  async deleteCategory(businessId: string, categoryId: string) {
     await this.refs.getBusinessCategoryRef(businessId, categoryId).delete();
-    return;
   }
 
   // products
@@ -267,12 +256,7 @@ export default class MenuApi {
     }
   }
 
-  async deleteProduct(businessId: string, productId: string, imageExists: boolean) {
-    if (imageExists) {
-      await this.files.deleteStorageFile(
-        this.refs.getProductImageStoragePath_1008x720(businessId, productId)
-      );
-    }
+  async deleteProduct(businessId: string, productId: string) {
     await this.refs.getBusinessProductRef(businessId, productId).delete();
   }
 
@@ -444,17 +428,7 @@ export default class MenuApi {
     }
   }
 
-  async deleteComplement(
-    businessId: string,
-    productId: string,
-    complementId: string,
-    hasImage: boolean
-  ) {
-    if (hasImage) {
-      await this.files.deleteStorageFile(
-        this.refs.getComplementImageStoragePath(businessId, complementId)
-      );
-    }
+  async deleteComplement(businessId: string, productId: string, complementId: string) {
     return await this.refs
       .getBusinessProductComplementRef(businessId, productId, complementId)
       .delete();

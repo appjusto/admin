@@ -22,11 +22,11 @@ export default class FilesApi {
     });
   }
 
-  sleepFunction(ms: number) {
+  /*sleepFunction(ms: number) {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
-  /*getDownloadUrlWithLoop(ref: any, times: number, delay: number) {
+  getDownloadUrlWithLoop(ref: any, times: number, delay: number) {
     return new Promise(async (resolve, reject) => {
       let n = 0;
       let success = false;
@@ -63,19 +63,5 @@ export default class FilesApi {
       .then((res: string | null) => res)
       .catch(() => null);
     return uri;
-  }
-
-  async deleteStorageFile(path: string): Promise<boolean> {
-    const path_to_288x = path.replace('_1008x720', '_288x288');
-    const ref_to_1008x = this.storage.ref().child(path);
-    const ref_to_288x = this.storage.ref().child(path_to_288x);
-    try {
-      await ref_to_1008x.delete();
-      await ref_to_288x.delete();
-      return true;
-    } catch (error) {
-      console.log('Storage exclusion error:', error);
-      return false;
-    }
   }
 }

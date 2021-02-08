@@ -140,7 +140,7 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
   };
 
   const handleDelete = async () => {
-    onDeleteProduct(imageExists);
+    onDeleteProduct();
     onClose();
   };
 
