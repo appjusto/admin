@@ -66,12 +66,12 @@ export default class FilesApi {
   }
 
   async deleteStorageFile(path: string): Promise<boolean> {
-    const path_to_160x = path.replace('_1024x1024', '_160x160');
-    const ref_to_1024x = this.storage.ref().child(path);
-    const ref_to_160x = this.storage.ref().child(path_to_160x);
+    const path_to_288x = path.replace('_1008x720', '_288x288');
+    const ref_to_1008x = this.storage.ref().child(path);
+    const ref_to_288x = this.storage.ref().child(path_to_288x);
     try {
-      await ref_to_160x.delete();
-      await ref_to_1024x.delete();
+      await ref_to_1008x.delete();
+      await ref_to_288x.delete();
       return true;
     } catch (error) {
       console.log('Storage exclusion error:', error);

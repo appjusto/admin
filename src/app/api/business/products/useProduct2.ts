@@ -2,7 +2,11 @@ import { Product, WithId } from 'appjusto-types';
 import React from 'react';
 import { useContextApi } from '../../../state/api/context';
 
-export const useProduct = (businessId: string | undefined, productId: string) => {
+export const useProduct = (
+  businessId: string | undefined,
+  productId: string,
+  imageWidth: string = '1008'
+) => {
   // context
   const api = useContextApi();
   // state
@@ -11,7 +15,7 @@ export const useProduct = (businessId: string | undefined, productId: string) =>
   const [imageUrl, setImageUrl] = React.useState<string | null>(null);
 
   const getImageUrl = React.useCallback(async () => {
-    const url = await api.business().getProductImageURL(businessId!, productId);
+    const url = await api.business().getProductImageURL(businessId!, productId, imageWidth);
     setImageUrl(url);
   }, [api, businessId, productId]);
   // side effects

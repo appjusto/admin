@@ -22,7 +22,7 @@ export const ProductItem = React.memo(({ product, index }: Props) => {
   const { url } = useRouteMatch();
   const api = useContextApi();
   const businessId = useContextBusinessId();
-  const { imageUrl: useImageUrl } = useProduct(businessId!, product.id);
+  const { imageUrl: hookImageUrl } = useProduct(businessId!, product.id, '288x288');
   //state
   const [imageUrl, setImageUrl] = React.useState<string>('/static/media/product-placeholder.png');
   const [price, setPrice] = React.useState(0);
@@ -41,10 +41,11 @@ export const ProductItem = React.memo(({ product, index }: Props) => {
 
   //side effects
   React.useEffect(() => {
-    if (product.imageExists) {
-      if (useImageUrl) return setImageUrl(useImageUrl);
-    }
-  }, [product.imageExists, useImageUrl]);
+    /*if (product.imageExists) {
+      if (hookImageUrl) return setImageUrl(hookImageUrl);
+    }*/
+    if (hookImageUrl) return setImageUrl(hookImageUrl);
+  }, [product.imageExists, hookImageUrl]);
 
   React.useEffect(() => {
     updatePriceState(product.price);

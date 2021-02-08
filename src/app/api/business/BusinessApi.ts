@@ -272,7 +272,7 @@ export default class MenuApi {
   async deleteProduct(businessId: string, productId: string, imageExists: boolean) {
     if (imageExists) {
       await this.files.deleteStorageFile(
-        this.refs.getProductImageStoragePath(businessId, productId)
+        this.refs.getProductImageStoragePath_1008x720(businessId, productId)
       );
     }
     await this.refs.getBusinessProductRef(businessId, productId).delete();
@@ -302,8 +302,16 @@ export default class MenuApi {
     }
   }
 
-  getProductImageURL(businessId: string, productId: string) {
-    return this.files.getDownloadURL(this.refs.getProductImageStoragePath(businessId, productId));
+  getProductImageURL(businessId: string, productId: string, imageDim: string = '1008x720') {
+    if (imageDim === '1008x720') {
+      return this.files.getDownloadURL(
+        this.refs.getProductImageStoragePath_1008x720(businessId, productId)
+      );
+    } else {
+      return this.files.getDownloadURL(
+        this.refs.getProductImageStoragePath_288x288(businessId, productId)
+      );
+    }
   }
 
   // complements
