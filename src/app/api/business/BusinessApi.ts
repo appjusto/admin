@@ -288,7 +288,11 @@ export default class MenuApi {
       files.map(async (file, index) => {
         await this.files.upload(
           file,
-          this.refs.getProductUploadStoragePath(businessId, productId, index === 0 ? '7x5' : '1x1'),
+          this.refs.getProductUploadStoragePath(
+            businessId,
+            productId,
+            index === 0 ? '1008x720' : '288x288'
+          ),
           progressHandler
         );
       });
