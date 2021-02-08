@@ -1,5 +1,4 @@
 import {
-  Box,
   Button,
   Checkbox,
   CheckboxGroup,
@@ -82,7 +81,7 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
     saveSuccess,
   } = state;
   const inputRef = React.useRef<HTMLInputElement>(null);
-  const canvasRef = React.useRef<HTMLCanvasElement>(null);
+  //const canvasRef = React.useRef<HTMLCanvasElement>(null);
 
   //handlers
   const handleStateUpdate = (key: string, value: any) => {
@@ -154,10 +153,10 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
   }, [isValid, path, push, url]);
 
   React.useEffect(() => {
-    if (product?.imageExists) {
+    if (imageUrl) {
       handleStateUpdate('previewURL', imageUrl);
     }
-  }, [product?.imageExists, imageUrl]);
+  }, [imageUrl]);
 
   React.useEffect(() => {
     if (product && productId !== 'new') {
@@ -264,11 +263,11 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
         {t('Recomendamos imagens na proporção retangular (7:5) com no mínimo 1280px de largura')}
       </Text>
       <FileDropzone mt="4" onDropFile={onDropHandler} preview={previewURL} />
-      {
+      {/*
         <Box mt="4">
           <canvas ref={canvasRef} />
         </Box>
-      }
+      */}
       <Text mt="8" fontSize="xl" color="black">
         {t('Classificações adicionais:')}
       </Text>

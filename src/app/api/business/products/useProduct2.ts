@@ -5,7 +5,7 @@ import { useContextApi } from '../../../state/api/context';
 export const useProduct = (
   businessId: string | undefined,
   productId: string,
-  imageWidth: string = '1008'
+  imageDim: string = '1008x720'
 ) => {
   // context
   const api = useContextApi();
@@ -15,8 +15,10 @@ export const useProduct = (
   const [imageUrl, setImageUrl] = React.useState<string | null>(null);
 
   const getImageUrl = React.useCallback(async () => {
-    const url = await api.business().getProductImageURL(businessId!, productId, imageWidth);
-    setImageUrl(url);
+    const timestamp = new Date().getTime();
+    const url = await api.business().getProductImageURL(businessId!, productId, imageDim);
+    console.log('getImageUrl', timestamp);
+    setImageUrl(`${url}&timestap=${timestamp}`);
   }, [api, businessId, productId]);
   // side effects
   React.useEffect(() => {
@@ -31,9 +33,10 @@ export const useProduct = (
   }, [product]);
 
   React.useEffect(() => {
-    if (product?.imageExists) {
+    /*if (product?.imageExists) {
       getImageUrl();
-    }
+    }*/
+    getImageUrl();
   }, [product, getImageUrl]);
   // result
   return { product, isValid, imageUrl };
