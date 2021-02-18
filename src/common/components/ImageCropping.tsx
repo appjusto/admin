@@ -23,7 +23,7 @@ export const ImageCropping = ({ index, image, ratio, onCropEnd, ...props }: Crop
     (croppedArea, croppedAreaPixels) => {
       onCropEnd(index, croppedAreaPixels);
     },
-    [index, onCropEnd]
+    [index]
   );
   return (
     <Box {...props}>

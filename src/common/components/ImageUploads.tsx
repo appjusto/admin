@@ -47,7 +47,7 @@ export const ImageUploads = ({
       return;
     }
     getImageFiles(state);
-  }, [state, preview, onCropEnd]);
+  }, [state, preview]);
 
   if (preview) {
     return (
