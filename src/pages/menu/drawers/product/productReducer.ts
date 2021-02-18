@@ -10,11 +10,12 @@ export interface StateProps {
   enabled: boolean;
   complementsOrder: Ordering;
   complementsEnabled: boolean;
-  categoryId: string;
   imageExists: boolean;
   //details
+  categoryId: string;
+  isCropping: boolean;
   previewURL: string | null;
-  imageFile: File[] | null;
+  imageFiles: File[] | null;
   isLoading: boolean;
   isEditing: boolean;
   saveSuccess: boolean;

@@ -1,18 +1,20 @@
-import { BoxProps, Center, Flex } from '@chakra-ui/react';
+import { Box, BoxProps, Center, Flex } from '@chakra-ui/react';
 import { ReactComponent as DropImage } from 'common/img/drop-image.svg';
 import React from 'react';
 import { useDropzone } from 'react-dropzone';
 import { ImageCropping } from './ImageCropping';
 interface Props extends BoxProps {
   preview?: string | null;
+  ratios?: number[];
   onDropFile: (acceptedFiles: File[]) => Promise<void>;
 }
 
 export const FileDropzone = ({
-  width = 608,
-  height = 434,
+  width = 464,
+  height = 261,
   onDropFile,
   preview,
+  ratios = [1 / 1],
   ...props
 }: Props) => {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -20,9 +22,11 @@ export const FileDropzone = ({
     multiple: true,
     accept: 'image/jpeg, image/png',
   });
+  const boxHeight = (height as number) * 2 + 4;
   return (
     <>
       <Flex
+        display={preview ? 'none' : 'block'}
         position="relative"
         bg={!isDragActive ? 'gray.50' : 'gray.300'}
         borderWidth="1px"
@@ -35,11 +39,16 @@ export const FileDropzone = ({
         {...getRootProps()}
       >
         <input {...getInputProps()} />
-        <Center w="100%">
+        <Center w="100%" height="100%">
           {!preview && <DropImage />}
-          {preview && <ImageCropping image={preview} />}
         </Center>
       </Flex>
+      {preview &&
+        ratios.map((ratio) => (
+          <Box position="relative" width={width} height={height}>
+            <ImageCropping mt={4} image={preview} ratio={ratio} />
+          </Box>
+        ))}
     </>
   );
 };

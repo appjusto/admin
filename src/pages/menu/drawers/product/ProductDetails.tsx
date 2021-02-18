@@ -6,9 +6,11 @@ import {
   HStack,
   Switch,
   Text,
+  Tooltip,
   VStack,
 } from '@chakra-ui/react';
 import * as menu from 'app/api/business/menu/functions';
+import { UndoButton } from 'common/components/buttons/UndoButton';
 import { FileDropzone } from 'common/components/FileDropzone';
 import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput2';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
@@ -34,8 +36,9 @@ const initialState = {
   imageExists: false,
   //details
   categoryId: '',
+  isCropping: false,
   previewURL: null,
-  imageFile: null,
+  imageFiles: null,
   isLoading: false,
   isEditing: false,
   saveSuccess: false,
@@ -73,8 +76,9 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
     imageExists,
     //details
     categoryId,
+    isCropping,
     previewURL,
-    imageFile,
+    imageFiles,
     isLoading,
     isEditing,
     saveSuccess,
@@ -91,6 +95,18 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
     dispatch({ type: 'update_state', payload: initialState });
   };
 
+  const clearDropImages = () => {
+    dispatch({
+      type: 'update_state',
+      payload: {
+        previewURL: null,
+        imageFiles: null,
+        imageExists: false,
+        isCropping: false,
+      },
+    });
+  };
+
   const onDropHandler = React.useCallback(async (acceptedFiles: File[]) => {
     const [file] = acceptedFiles;
     const url = URL.createObjectURL(file);
@@ -100,6 +116,7 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
     //add url to previewURL
     //const previewUrl = URL.createObjectURL(Blob7_5);
     handleStateUpdate('previewURL', url);
+    handleStateUpdate('isCropping', true);
     // add image file
     //handleStateUpdate('imageFile', [Blob7_5, Blob1_1]);
     handleStateUpdate('imageExists', true);
@@ -120,7 +137,7 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
           complementsEnabled,
           imageExists,
         },
-        imageFile,
+        imageFiles,
         categoryId
       );
       handleStateUpdate('isLoading', false);
@@ -255,18 +272,27 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
       <Text mt="8" fontSize="xl" color="black">
         {t('Imagem do produto')}
       </Text>
-      <Text color="gray.100">
+      <Text>
         {t('Recomendamos imagens na proporção retangular (16:9) com no mínimo 1280px de largura')}
       </Text>
-      <Text>
-        {t('Recomendamos imagens na proporção retangular (7:5) com no mínimo 1280px de largura')}
-      </Text>
-      <FileDropzone mt="4" onDropFile={onDropHandler} preview={previewURL} />
-      {/*
-        <Box mt="4">
-          <canvas ref={canvasRef} />
-        </Box>
-      */}
+      {isCropping && (
+        <Flex flexDir="column" alignItems="flex-end" maxW={464}>
+          <Tooltip placement="top" label={t('Desfazer')} aria-label={t('Desfazer')}>
+            <UndoButton onClick={clearDropImages} />
+          </Tooltip>
+          <Text>
+            {t(
+              'Agora você pode ajustar a imagem - arrastando e aumentando/diminuindo o zoom, para os dois formatos necessários (retangular e quadrado)'
+            )}
+          </Text>
+        </Flex>
+      )}
+      <FileDropzone
+        mt="4"
+        onDropFile={onDropHandler}
+        preview={previewURL}
+        ratios={[7 / 5, 1 / 1]}
+      />
       <Text mt="8" fontSize="xl" color="black">
         {t('Classificações adicionais:')}
       </Text>
