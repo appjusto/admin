@@ -110,10 +110,10 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
     handleStateUpdate('previewURL', url);
   }, []);
 
-  const handleCropImages = (files: File[]) => {
+  const handleCropImages = React.useCallback((files: File[]) => {
     handleStateUpdate('imageFiles', files);
     handleStateUpdate('imageExists', true);
-  };
+  }, []);
 
   const onSave = () => {
     handleStateUpdate('isLoading', true);
