@@ -4,6 +4,7 @@ import {
   CheckboxGroup,
   Flex,
   HStack,
+  Image,
   Switch,
   Text,
   VStack,
@@ -81,7 +82,7 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
   } = state;
   const inputRef = React.useRef<HTMLInputElement>(null);
   //const canvasRef = React.useRef<HTMLCanvasElement>(null);
-
+  const hasImage = React.useRef(false);
   //handlers
   const handleStateUpdate = (key: string, value: any) => {
     dispatch({ type: 'update_state', payload: { [key]: value } });
@@ -92,6 +93,7 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
   };
 
   const clearDropImages = () => {
+    hasImage.current = false;
     dispatch({
       type: 'update_state',
       payload: {
@@ -161,6 +163,7 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
 
   React.useEffect(() => {
     if (imageUrl) {
+      hasImage.current = true;
       handleStateUpdate('previewURL', imageUrl);
     }
   }, [imageUrl]);
@@ -266,20 +269,30 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
       <Text>
         {t('Recomendamos imagens na proporção retangular (16:9) com no mínimo 1280px de largura')}
       </Text>
-      {previewURL && (
+      {!imageUrl && previewURL && (
         <Text>
           {t(
             'Agora você pode ajustar a imagem - arrastando e aumentando/diminuindo o zoom, para os dois formatos necessários (retangular e quadrado)'
           )}
         </Text>
       )}
-      <ImageUploads
-        onDropFile={onDropHandler}
-        preview={previewURL}
-        ratios={[7 / 5, 1 / 1]}
-        onCropEnd={handleCropImages}
-        clearDrop={clearDropImages}
-      />
+      {hasImage.current ? (
+        <Flex flexDir="column" alignItems="flex-end" maxW={464}>
+          <Button variant="outline" size="sm" onClick={clearDropImages}>
+            Alterar imagem
+          </Button>
+          <Image mt={2} src={imageUrl as string} width={464} height={261} />
+        </Flex>
+      ) : (
+        <ImageUploads
+          mt={4}
+          onDropFile={onDropHandler}
+          preview={previewURL}
+          ratios={[7 / 5, 1 / 1]}
+          onCropEnd={handleCropImages}
+          clearDrop={clearDropImages}
+        />
+      )}
       <Text mt="8" fontSize="xl" color="black">
         {t('Classificações adicionais:')}
       </Text>

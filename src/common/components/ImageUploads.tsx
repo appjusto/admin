@@ -34,22 +34,21 @@ export const ImageUploads = ({
     });
   };
 
-  const getImageFiles = async (areas: CroppedAreaProps[]) => {
-    let files = [] as File[];
-    areas.forEach(async (area) => {
-      const file = await getCroppedImg(preview as string, area);
-      files.push(file as File);
-    });
-    return onCropEnd(files);
-  };
-
   React.useEffect(() => {
+    const getImageFiles = async (areas: CroppedAreaProps[]) => {
+      let files = [] as File[];
+      areas.forEach(async (area) => {
+        const file = await getCroppedImg(preview as string, area);
+        files.push(file as File);
+      });
+      return onCropEnd(files);
+    };
     if (state.length < 1) {
       return;
     }
     getImageFiles(state);
-  }, [state]);
-  console.log(state);
+  }, [state, preview, onCropEnd]);
+
   if (preview) {
     return (
       <>

@@ -15,9 +15,10 @@ export const useProduct = (
   const [imageUrl, setImageUrl] = React.useState<string | null>(null);
 
   const getImageUrl = React.useCallback(async () => {
-    const timestamp = new Date().getTime();
+    //const timestamp = new Date().getTime();
     const url = await api.business().getProductImageURL(businessId!, productId, imageDim);
-    setImageUrl(`${url}&timestap=${timestamp}`);
+    //setImageUrl(`${url}&timestap=${timestamp}`);
+    setImageUrl(url);
   }, [api, businessId, imageDim, productId]);
   // side effects
   React.useEffect(() => {
