@@ -8,6 +8,7 @@ import React from 'react';
 
 const fakeItem = (price: number, qtd: number): OrderItem => {
   return {
+    id: Math.random().toString(),
     product: {
       name: 'Item',
       price: price, // in cents
@@ -32,6 +33,7 @@ const fakeOrder: Order = {
   courier: {
     id: 'KfpVLMg9rEURH8BOCMJ8',
     name: 'Kelly',
+    mode: 'motocycle',
     joined: ('1 de fevereiro de 2021 00:00:00 UTC-3' as unknown) as firebase.firestore.FieldValue,
     location: {
       latitude: -8.0591539,
@@ -145,9 +147,6 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   const cancelOrder = async (orderId: string, issue: WithId<Issue>) => {
     await api.order().updateOrder(orderId, {
       status: 'canceled',
-      cancellation: {
-        reason: issue,
-      },
     });
   };
 

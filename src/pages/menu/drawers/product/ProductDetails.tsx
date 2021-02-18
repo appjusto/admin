@@ -16,7 +16,6 @@ import { CustomTextarea as Textarea } from 'common/components/form/input/CustomT
 import { useProductContext } from 'pages/menu/context/ProductContext';
 import React from 'react';
 import { Link, useHistory, useRouteMatch } from 'react-router-dom';
-import { getCroppedImage } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { DrawerButtons } from '../DrawerButtons';
 import { CategorySelect } from './CategorySelect';
@@ -96,13 +95,13 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
     const [file] = acceptedFiles;
     const url = URL.createObjectURL(file);
     // get cropped image blob
-    const Blob7_5 = await getCroppedImage(url, 5 / 7, 1008);
-    const Blob1_1 = await getCroppedImage(url, 1, 288);
+    //const Blob7_5 = await getCroppedImage(url, 5 / 7, 1008);
+    //const Blob1_1 = await getCroppedImage(url, 1, 288);
     //add url to previewURL
-    const previewUrl = URL.createObjectURL(Blob7_5);
-    handleStateUpdate('previewURL', previewUrl);
+    //const previewUrl = URL.createObjectURL(Blob7_5);
+    handleStateUpdate('previewURL', url);
     // add image file
-    handleStateUpdate('imageFile', [Blob7_5, Blob1_1]);
+    //handleStateUpdate('imageFile', [Blob7_5, Blob1_1]);
     handleStateUpdate('imageExists', true);
   }, []);
 
