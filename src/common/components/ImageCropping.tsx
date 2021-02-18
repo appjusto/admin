@@ -2,16 +2,25 @@ import { Box, BoxProps } from '@chakra-ui/react';
 import React from 'react';
 import Cropper from 'react-easy-crop';
 
-interface CroppingProps extends BoxProps {
-  image: string;
-  ratio: number;
+export interface CroppedAreaProps {
+  height: number;
+  width: number;
+  x: number;
+  y: number;
 }
 
-export const ImageCropping = ({ image, ratio, ...props }: CroppingProps) => {
+interface CroppingProps extends BoxProps {
+  index: number;
+  image: string;
+  ratio: number;
+  onCropEnd(index: number, croppedArea: CroppedAreaProps): void;
+}
+
+export const ImageCropping = ({ index, image, ratio, onCropEnd, ...props }: CroppingProps) => {
   const [crop, setCrop] = React.useState({ x: 0, y: 0 });
   const [zoom, setZoom] = React.useState(1);
   const onCropComplete = React.useCallback((croppedArea, croppedAreaPixels) => {
-    console.log(croppedArea, croppedAreaPixels);
+    onCropEnd(index, croppedAreaPixels);
   }, []);
   return (
     <Box {...props}>

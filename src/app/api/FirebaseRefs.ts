@@ -86,8 +86,8 @@ export default class FirebaseRefs {
     `${this.getBusinessStoragePath(businessId)}/cover_1024x1024.jpg`;
   getProductsStoragePath = (businessId: string) =>
     `${this.getBusinessStoragePath(businessId)}/products`;
-  getProductUploadStoragePath = (businessId: string, productId: string, ratio: string) =>
-    `${this.getProductsStoragePath(businessId)}/${productId}_${ratio}.jpg`;
+  getProductUploadStoragePath = (businessId: string, productId: string, size: string) =>
+    `${this.getProductsStoragePath(businessId)}/${productId}_${size}.jpg`;
   getProductImageStoragePath = (businessId: string, productId: string, size: string) =>
     `${this.getProductsStoragePath(businessId)}/${productId}_${size}.jpg`;
   getComplementsStoragePath = (businessId: string) =>

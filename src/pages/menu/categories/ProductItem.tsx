@@ -22,7 +22,7 @@ export const ProductItem = React.memo(({ product, index }: Props) => {
   const { url } = useRouteMatch();
   const api = useContextApi();
   const businessId = useContextBusinessId();
-  const { imageUrl: hookImageUrl } = useProduct(businessId!, product.id, '288x288');
+  const { imageUrl: hookImageUrl } = useProduct(businessId!, product.id, '160x160');
   //state
   const [imageUrl, setImageUrl] = React.useState<string>('/static/media/product-placeholder.png');
   const [price, setPrice] = React.useState(0);

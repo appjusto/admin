@@ -22,7 +22,7 @@ interface ContextProps {
   sortedGroups: WithId<ComplementGroup>[];
   onSaveProduct(
     productData: Partial<Product>,
-    imageFile: File[] | null,
+    imageFiles: File[] | null,
     categoryId: string | undefined
   ): Promise<string>;
   onDeleteProduct(): void;
@@ -62,7 +62,7 @@ export const ProductContextProvider = (props: ProviderProps) => {
 
   const onSaveProduct = (
     productData: Partial<Product>,
-    imageFile: File[] | null,
+    imageFiles: File[] | null,
     categoryId: string | undefined
   ) => {
     const id = (async () => {
@@ -72,11 +72,11 @@ export const ProductContextProvider = (props: ProviderProps) => {
       if (productId === 'new') {
         const id = await api
           .business()
-          .createProduct(businessId!, newProduct as Product, imageFile);
+          .createProduct(businessId!, newProduct as Product, imageFiles);
         updateMenuOrdering(menu.updateParent(ordering, id, categoryId!));
         return id;
       } else {
-        await api.business().updateProduct(businessId!, productId, newProduct, imageFile);
+        await api.business().updateProduct(businessId!, productId, newProduct, imageFiles);
         if (categoryId) {
           updateMenuOrdering(menu.updateParent(ordering, productId, categoryId!));
         }

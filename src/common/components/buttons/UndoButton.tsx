@@ -6,7 +6,7 @@ export const UndoButton = React.forwardRef<HTMLButtonElement, ButtonProps>((prop
   return (
     <Button
       ref={ref}
-      variant="dangerLight"
+      variant="outline"
       ml="2"
       minW="30px"
       w="32px"
