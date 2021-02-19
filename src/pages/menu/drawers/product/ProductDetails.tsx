@@ -132,6 +132,7 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
         imageFiles,
         categoryId
       );
+
       handleStateUpdate('isLoading', false);
       handleStateUpdate('saveSuccess', true);
       if (url.includes('new')) {
