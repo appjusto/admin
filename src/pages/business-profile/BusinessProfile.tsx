@@ -1,13 +1,13 @@
 import { Box, Text, useBreakpoint } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useContextBusiness } from 'app/state/business/context';
-import { FileDropzone } from 'common/components/FileDropzone';
 import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput2';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
 import { CustomPatternInput as PatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';
 import { cnpjFormatter, cnpjMask } from 'common/components/form/input/pattern-input/formatters';
 import { numbersOnlyParser } from 'common/components/form/input/pattern-input/parsers';
+import { ImageUploads } from 'common/components/ImageUploads';
 import { OnboardingProps } from 'pages/onboarding/types';
 import PageFooter from 'pages/PageFooter';
 import PageHeader from 'pages/PageHeader';
@@ -26,9 +26,14 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const [cuisineId, setCuisineId] = React.useState(business?.cuisine?.id ?? '');
   const [description, setDescription] = React.useState(business?.description ?? '');
   const [minimumOrder, setMinimumOrder] = React.useState(business?.minimumOrder ?? 0);
-  const [logoPreviewURL, setLogoPreviewURL] = React.useState<string | undefined>();
-  const [coverPreviewURL, setCoverPreviewURL] = React.useState<string | undefined>();
-
+  const [logoPreviewURL, setLogoPreviewURL] = React.useState<string | null>(null);
+  const [coverPreviewURL, setCoverPreviewURL] = React.useState<string | null>(null);
+  const [logoFile, setLogoFile] = React.useState<File[] | null>(null);
+  const [coverFile, setCoverFile] = React.useState<File[] | null>(null);
+  // refs
+  const nameRef = React.useRef<HTMLInputElement>(null);
+  const hasLogoImage = React.useRef(false);
+  const hasCoverImage = React.useRef(false);
   // queries & mutations
   const {
     updateBusinessProfile,
@@ -39,9 +44,55 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
     result,
   } = useBusinessProfile();
   const { isLoading, isSuccess } = result;
+  // handlers
+  const onSubmitHandler = async () => {
+    if (logoFile) uploadLogo(logoFile[0]);
+    if (coverFile) uploadCover(coverFile[0]);
+    await updateBusinessProfile({
+      name,
+      cnpj,
+      description,
+      minimumOrder,
+      cuisine: {
+        id: cuisineId,
+        name: '',
+        imagePath: '',
+      },
+      logoExists: logoPreviewURL ? true : false,
+      coverImageExists: coverPreviewURL ? true : false,
+    });
+  };
+  const onDropLogoHandler = async (acceptedFiles: File[]) => {
+    const [file] = acceptedFiles;
+    const url = URL.createObjectURL(file);
+    //uploadLogo(file);
+    setLogoPreviewURL(url);
+  };
 
-  // refs
-  const nameRef = React.useRef<HTMLInputElement>(null);
+  const onDropCoverHandler = async (acceptedFiles: File[]) => {
+    const [file] = acceptedFiles;
+    const url = URL.createObjectURL(file);
+    //uploadCover(file);
+    setCoverPreviewURL(url);
+  };
+
+  const clearDropImages = (type: string) => {
+    if (type === 'logo') {
+      hasLogoImage.current = false;
+      setLogoPreviewURL(null);
+    } else {
+      hasCoverImage.current = false;
+      setCoverPreviewURL(null);
+    }
+  };
+
+  const handleLogoCrop = async (files: File[]) => {
+    setLogoFile(files);
+  };
+
+  const handleCoverCrop = async (files: File[]) => {
+    setCoverFile(files);
+  };
 
   // side effects
   React.useEffect(() => {
@@ -54,37 +105,16 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
       if (business.description) setDescription(business.description);
       if (business.minimumOrder) setMinimumOrder(business.minimumOrder);
       if (business.cuisine?.id) setCuisineId(business.cuisine.id);
-    }
-    if (business?.logoExists) {
+      if (business.logoExists && logo) {
+        setLogoPreviewURL(logo);
+        hasLogoImage.current = true;
+      }
+      if (business.coverImageExists && cover) {
+        setCoverPreviewURL(cover);
+        hasCoverImage.current = true;
+      }
     }
   }, [business]);
-
-  // handlers
-  const onSubmitHandler = async () => {
-    await updateBusinessProfile({
-      name,
-      cnpj,
-      description,
-      minimumOrder,
-      cuisine: {
-        id: cuisineId,
-        name: '',
-      },
-    });
-  };
-  const onDropLogoHandler = async (acceptedFiles: File[]) => {
-    const [file] = acceptedFiles;
-    const url = URL.createObjectURL(file);
-    uploadLogo(file);
-    setLogoPreviewURL(url);
-  };
-
-  const onDropCoverHandler = async (acceptedFiles: File[]) => {
-    const [file] = acceptedFiles;
-    const url = URL.createObjectURL(file);
-    uploadCover(file);
-    setCoverPreviewURL(url);
-  };
 
   // UI
   const breakpoint = useBreakpoint();
@@ -153,12 +183,16 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
             'Para o logo do estabelecimento recomendamos imagens no formato quadrado (1:1) com no mínimo 200px de largura'
           )}
         </Text>
-        <FileDropzone
+        <ImageUploads
           mt="4"
           width={200}
           height={200}
           onDropFile={onDropLogoHandler}
-          preview={logoPreviewURL ?? logo}
+          preview={logoPreviewURL}
+          ratios={[1 / 1]}
+          hasImage={hasLogoImage.current}
+          onCropEnd={handleLogoCrop}
+          clearDrop={() => clearDropImages('logo')}
         />
         {/* cover image */}
         <Text mt="8" fontSize="xl" color="black">
@@ -169,12 +203,16 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
             'Você pode ter também uma imagem de capa para o seu restaurante. Pode ser foto do local ou de algum prato específico. Recomendamos imagens na proporção retangular (16:9) com no mínimo 1280px de largura'
           )}
         </Text>
-        <FileDropzone
+        <ImageUploads
           mt="4"
           width={breakpoint === 'base' ? 328 : breakpoint === 'md' ? 420 : 464}
           height={breakpoint === 'base' ? 180 : breakpoint === 'md' ? 235 : 260}
           onDropFile={onDropCoverHandler}
-          preview={coverPreviewURL ?? cover}
+          preview={coverPreviewURL}
+          ratios={[14 / 5]}
+          hasImage={hasCoverImage.current}
+          onCropEnd={handleCoverCrop}
+          clearDrop={() => clearDropImages('cover')}
         />
         {/* submit */}
         <PageFooter

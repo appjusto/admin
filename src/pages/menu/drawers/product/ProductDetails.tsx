@@ -9,10 +9,10 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import * as menu from 'app/api/business/menu/functions';
-import { FileDropzone } from 'common/components/FileDropzone';
 import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput2';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
+import { ImageUploads } from 'common/components/ImageUploads';
 import { useProductContext } from 'pages/menu/context/ProductContext';
 import React from 'react';
 import { Link, useHistory, useRouteMatch } from 'react-router-dom';
@@ -35,7 +35,7 @@ const initialState = {
   //details
   categoryId: '',
   previewURL: null,
-  imageFile: null,
+  imageFiles: null,
   isLoading: false,
   isEditing: false,
   saveSuccess: false,
@@ -74,13 +74,14 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
     //details
     categoryId,
     previewURL,
-    imageFile,
+    imageFiles,
     isLoading,
     isEditing,
     saveSuccess,
   } = state;
   const inputRef = React.useRef<HTMLInputElement>(null);
-
+  //const canvasRef = React.useRef<HTMLCanvasElement>(null);
+  const hasImage = React.useRef(false);
   //handlers
   const handleStateUpdate = (key: string, value: any) => {
     dispatch({ type: 'update_state', payload: { [key]: value } });
@@ -90,15 +91,28 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
     dispatch({ type: 'update_state', payload: initialState });
   };
 
+  const clearDropImages = () => {
+    hasImage.current = false;
+    dispatch({
+      type: 'update_state',
+      payload: {
+        previewURL: null,
+        imageFiles: null,
+        imageExists: false,
+      },
+    });
+  };
+
   const onDropHandler = React.useCallback(async (acceptedFiles: File[]) => {
     const [file] = acceptedFiles;
     const url = URL.createObjectURL(file);
-    //add url to previewURL
     handleStateUpdate('previewURL', url);
-    // add image file
-    handleStateUpdate('imageFile', file);
-    handleStateUpdate('imageExists', true);
   }, []);
+
+  const handleCropImages = (files: File[]) => {
+    handleStateUpdate('imageFiles', files);
+    handleStateUpdate('imageExists', true);
+  };
 
   const onSave = () => {
     handleStateUpdate('isLoading', true);
@@ -115,9 +129,10 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
           complementsEnabled,
           imageExists,
         },
-        imageFile,
+        imageFiles,
         categoryId
       );
+
       handleStateUpdate('isLoading', false);
       handleStateUpdate('saveSuccess', true);
       if (url.includes('new')) {
@@ -134,7 +149,7 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
   };
 
   const handleDelete = async () => {
-    onDeleteProduct(imageExists);
+    onDeleteProduct();
     onClose();
   };
 
@@ -147,10 +162,11 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
   }, [isValid, path, push, url]);
 
   React.useEffect(() => {
-    if (product?.imageExists) {
+    if (imageUrl) {
+      hasImage.current = true;
       handleStateUpdate('previewURL', imageUrl);
     }
-  }, [product?.imageExists, imageUrl]);
+  }, [imageUrl]);
 
   React.useEffect(() => {
     if (product && productId !== 'new') {
@@ -253,7 +269,22 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
       <Text>
         {t('Recomendamos imagens na proporção retangular (16:9) com no mínimo 1280px de largura')}
       </Text>
-      <FileDropzone mt="4" onDropFile={onDropHandler} preview={previewURL} />
+      {!hasImage.current && previewURL && (
+        <Text>
+          {t(
+            'Agora você pode ajustar a imagem - arrastando e aumentando/diminuindo o zoom, para os dois formatos necessários (retangular e quadrado)'
+          )}
+        </Text>
+      )}
+      <ImageUploads
+        mt={4}
+        onDropFile={onDropHandler}
+        preview={previewURL}
+        ratios={[7 / 5, 1 / 1]}
+        hasImage={hasImage.current}
+        onCropEnd={handleCropImages}
+        clearDrop={clearDropImages}
+      />
       <Text mt="8" fontSize="xl" color="black">
         {t('Classificações adicionais:')}
       </Text>
