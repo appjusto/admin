@@ -1,3 +1,4 @@
+import { ArrowBackIcon } from '@chakra-ui/icons';
 import { Flex, HStack, Link, Text } from '@chakra-ui/react';
 import { useContextBusiness } from 'app/state/business/context';
 import { ReactComponent as Logo } from 'common/img/logo.svg';
@@ -14,15 +15,22 @@ export const OrdersHeader = () => {
   }
   return (
     <Flex p="6" h="76px" flex={1} alignItems="center" justifyContent="space-between" bg="gray.50">
-      <HStack spacing={2}>
-        <Text fontSize="md" color="black">
-          {business?.name}
-        </Text>
-        <BusinessStatus ml="2" />
+      <HStack spacing={6}>
+        <RouterLink to="/app">
+          <Text>
+            <ArrowBackIcon /> Voltar
+          </Text>
+        </RouterLink>
+        <HStack spacing={2}>
+          <Text fontSize="md" color="black">
+            {business?.name}
+          </Text>
+          <BusinessStatus />
+        </HStack>
       </HStack>
       <Logo />
       <HStack spacing={6}>
-        <HStack spacing={2}>
+        <HStack spacing={1}>
           <Text fontWeight="700">{t('Administrador')}:</Text>
           <Text>{managerEmail}</Text>
         </HStack>

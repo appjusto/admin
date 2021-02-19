@@ -19,10 +19,13 @@ import { getErrorMessage } from 'core/fb';
 import React from 'react';
 import { t } from 'utils/i18n';
 import { useOrdersContext } from '../context';
+import { Pendency } from './orderdrawer';
 
 interface BaseDrawerProps {
+  orderId: string;
   orderCode: string;
   orderStatus: string;
+  isCurrierArrived: boolean;
   client: string;
   clientOrders: number;
   isOpen: boolean;
@@ -35,8 +38,10 @@ interface BaseDrawerProps {
 }
 
 export const OrderBaseDrawer = ({
+  orderId,
   orderCode,
   orderStatus,
+  isCurrierArrived,
   client,
   clientOrders,
   cancel,
@@ -48,18 +53,27 @@ export const OrderBaseDrawer = ({
   ...props
 }: BaseDrawerProps) => {
   //context
-  const { confirm, ready, dispatching } = useOrdersContext();
+  const { changeOrderStatus } = useOrdersContext();
+
   //handlers
+  const PrimaryButtonFunction = () => {
+    if (orderStatus === 'confirming') changeOrderStatus(orderId, 'preparing');
+    if (orderStatus === 'preparing') changeOrderStatus(orderId, 'ready');
+    if (orderStatus === 'ready') changeOrderStatus(orderId, 'dispatching');
+    onClose();
+  };
+
+  //UI conditions
+  let orderDispatched = ['dispatching', 'delivered'].includes(orderStatus);
+
+  let PrimaryButtonAble =
+    ['confirming', 'preparing'].includes(orderStatus) ||
+    (orderStatus === 'ready' && isCurrierArrived);
+
   let PrimaryButtonLabel = 'Preparar pedido';
   if (orderStatus === 'preparing') PrimaryButtonLabel = 'Pedido pronto';
   if (orderStatus === 'ready') PrimaryButtonLabel = 'Entregar pedido';
 
-  const PrimaryButtonFunction = () => {
-    if (orderStatus === 'confirming') confirm(orderCode);
-    if (orderStatus === 'preparing') ready(orderCode);
-    if (orderStatus === 'ready') dispatching(orderCode);
-    onClose();
-  };
   //UI
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
@@ -81,6 +95,7 @@ export const OrderBaseDrawer = ({
               <Text as="span" color="black" fontWeight="700">
                 {clientOrders}
               </Text>
+              <Pendency />
             </Text>
           </DrawerHeader>
           <DrawerBody pb="28">
@@ -99,14 +114,20 @@ export const OrderBaseDrawer = ({
               </Box>
             )}
           </DrawerBody>
-          {!isCanceling && (
+          {!isCanceling && !orderDispatched && (
             <DrawerFooter borderTop="1px solid #F2F6EA">
               <Flex w="full" justifyContent="flex-start">
                 <Flex w="full" maxW="607px" flexDir="row" justifyContent="space-between">
                   <Button width="full" maxW="200px" variant="dangerLight" onClick={cancel}>
                     {t('Cancelar pedido')}
                   </Button>
-                  <Button type="submit" width="full" maxW="200px" onClick={PrimaryButtonFunction}>
+                  <Button
+                    isDisabled={!PrimaryButtonAble}
+                    type="submit"
+                    width="full"
+                    maxW="200px"
+                    onClick={PrimaryButtonFunction}
+                  >
                     {t(PrimaryButtonLabel)}
                   </Button>
                 </Flex>

@@ -81,4 +81,17 @@ export default class OrderApi {
       (await this.refs.getIssuesRef().where('type', '==', type).get()).docs
     );
   }
+
+  async createFakeOrder(order: Order) {
+    const result = await this.refs.getOrdersRef().add(order);
+    console.log(result);
+  }
+
+  async updateOrder(orderId: string, changes: Partial<Order>) {
+    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+    await this.refs.getOrderRef(orderId).update({
+      ...changes,
+      updatedOn: timestamp,
+    });
+  }
 }

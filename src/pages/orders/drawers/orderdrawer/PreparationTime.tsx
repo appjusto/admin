@@ -2,6 +2,7 @@ import { Flex, Radio, RadioGroup, Switch, Text } from '@chakra-ui/react';
 import { CustomNumberInput } from 'common/components/form/input/CustomNumberInput';
 import React from 'react';
 import { t } from 'utils/i18n';
+import { Pendency } from './index';
 
 interface PreparationTimeProps {
   preparationTime: string | undefined;
@@ -22,7 +23,7 @@ export const PreparationTime = ({
     if (hasPreparationTime && radiosValue !== '0') {
       notifyParentWithTime(radiosValue);
     }
-  }, [hasPreparationTime, radiosValue]);
+  }, [notifyParentWithTime, hasPreparationTime, radiosValue]);
 
   //UI
   return (
@@ -37,6 +38,7 @@ export const PreparationTime = ({
         />
         <Text ml="4" fontSize="xl" color="black">
           {t('Definir tempo de preparo')}
+          <Pendency />
         </Text>
       </Flex>
       <Text mt="1" fontSize="md">

@@ -22,10 +22,10 @@ interface ContextProps {
   sortedGroups: WithId<ComplementGroup>[];
   onSaveProduct(
     productData: Partial<Product>,
-    imageFile: File | null,
+    imageFiles: File[] | null,
     categoryId: string | undefined
   ): Promise<string>;
-  onDeleteProduct(imageExists: boolean): void;
+  onDeleteProduct(): void;
   onSaveComplementsGroup(group: ComplementGroup): void;
   onUpdateComplementsGroup(groupId: string, changes: Partial<ComplementGroup>): void;
   onDeleteComplementsGroup(group: WithId<ComplementGroup>): void;
@@ -35,7 +35,7 @@ interface ContextProps {
     newItem: Complement,
     imageFile: File | null
   ): Promise<void | boolean>;
-  onDeleteComplement(complementId: string, groupId: string, hasImage: boolean): void;
+  onDeleteComplement(complementId: string, groupId: string): void;
   getComplementImageUrl(complementId: string): Promise<string | null>;
 }
 
@@ -62,7 +62,7 @@ export const ProductContextProvider = (props: ProviderProps) => {
 
   const onSaveProduct = (
     productData: Partial<Product>,
-    imageFile: File | null,
+    imageFiles: File[] | null,
     categoryId: string | undefined
   ) => {
     const id = (async () => {
@@ -72,11 +72,11 @@ export const ProductContextProvider = (props: ProviderProps) => {
       if (productId === 'new') {
         const id = await api
           .business()
-          .createProduct(businessId!, newProduct as Product, imageFile);
+          .createProduct(businessId!, newProduct as Product, imageFiles);
         updateMenuOrdering(menu.updateParent(ordering, id, categoryId!));
         return id;
       } else {
-        await api.business().updateProduct(businessId!, productId, newProduct, imageFile);
+        await api.business().updateProduct(businessId!, productId, newProduct, imageFiles);
         if (categoryId) {
           updateMenuOrdering(menu.updateParent(ordering, productId, categoryId!));
         }
@@ -86,11 +86,11 @@ export const ProductContextProvider = (props: ProviderProps) => {
     return id;
   };
 
-  const onDeleteProduct = (imageExists: boolean) => {
+  const onDeleteProduct = () => {
     (async () => {
       if (contextCategoryId) {
         updateMenuOrdering(menu.removeSecondLevel(ordering, productId, contextCategoryId));
-        await api.business().deleteProduct(businessId!, productId, imageExists);
+        await api.business().deleteProduct(businessId!, productId);
       }
     })();
   };
@@ -117,11 +117,6 @@ export const ProductContextProvider = (props: ProviderProps) => {
   };
 
   const onDeleteComplementsGroup = async (group: WithId<ComplementGroup>) => {
-    if (group.items && group.items?.length > 0) {
-      group.items.map((item) =>
-        api.business().deleteComplement(businessId!, productId, item.id, item.imageExists ?? false)
-      );
-    }
     const newProductConfig = menu.removeFirstLevel(productConfig, group.id);
     await api.business().updateProduct(
       businessId!,
@@ -163,11 +158,7 @@ export const ProductContextProvider = (props: ProviderProps) => {
     }
   };
 
-  const onDeleteComplement = async (
-    complementId: string,
-    groupId: string,
-    imageExists: boolean
-  ) => {
+  const onDeleteComplement = async (complementId: string, groupId: string) => {
     const newProductConfig = menu.removeSecondLevel(productConfig, complementId, groupId);
     await api.business().updateProduct(
       businessId!,
@@ -177,7 +168,7 @@ export const ProductContextProvider = (props: ProviderProps) => {
       },
       null
     );
-    await api.business().deleteComplement(businessId!, productId, complementId, imageExists);
+    await api.business().deleteComplement(businessId!, productId, complementId);
   };
 
   const getComplementImageUrl = React.useCallback(

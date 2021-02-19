@@ -2,7 +2,11 @@ import { Product, WithId } from 'appjusto-types';
 import React from 'react';
 import { useContextApi } from '../../../state/api/context';
 
-export const useProduct = (businessId: string | undefined, productId: string) => {
+export const useProduct = (
+  businessId: string | undefined,
+  productId: string,
+  imageDim: string = '1008x720'
+) => {
   // context
   const api = useContextApi();
   // state
@@ -11,9 +15,11 @@ export const useProduct = (businessId: string | undefined, productId: string) =>
   const [imageUrl, setImageUrl] = React.useState<string | null>(null);
 
   const getImageUrl = React.useCallback(async () => {
-    const url = await api.business().getProductImageURL(businessId!, productId);
+    //const timestamp = new Date().getTime();
+    const url = await api.business().getProductImageURL(businessId!, productId, imageDim);
+    //setImageUrl(`${url}&timestap=${timestamp}`);
     setImageUrl(url);
-  }, [api, businessId, productId]);
+  }, [api, businessId, imageDim, productId]);
   // side effects
   React.useEffect(() => {
     if (!businessId || productId === 'new') return;
@@ -30,7 +36,7 @@ export const useProduct = (businessId: string | undefined, productId: string) =>
     if (product?.imageExists) {
       getImageUrl();
     }
-  }, [product, getImageUrl]);
+  }, [product?.imageExists, getImageUrl]);
   // result
   return { product, isValid, imageUrl };
 };

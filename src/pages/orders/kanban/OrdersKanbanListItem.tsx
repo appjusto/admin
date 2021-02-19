@@ -3,6 +3,7 @@ import { Order, WithId } from 'appjusto-types';
 import { ReactComponent as Alarm } from 'common/img/alarm_outlined.svg';
 import React from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
+import { getTimeUntilNow } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { useOrdersContext } from '../context';
 
@@ -27,11 +28,26 @@ interface Props {
 }
 
 export const OrdersKanbanListItem = ({ order }: Props) => {
+  // context
   const { url } = useRouteMatch();
-  const { ready, dispatching } = useOrdersContext();
+  const { changeOrderStatus } = useOrdersContext();
+  // state
+  const [elapsedTime, setElapsedTime] = React.useState(0);
 
-  const hasCurrier = order.code && parseInt(order.code) > 3 ? true : false;
-  const wasDelivered = order.code && parseInt(order.code) > 6 ? true : false;
+  // handlers
+  const isCurrierArrived = order.dispatchingState === 'arrived-pickup';
+  const wasDelivered = order.status === 'delivered';
+
+  React.useEffect(() => {
+    const setNewTime = () => {
+      let time = getTimeUntilNow(order?.createdOn as firebase.firestore.Timestamp);
+      setElapsedTime(time);
+    };
+    setNewTime();
+    const timeInterval = setInterval(setNewTime, 60000);
+    if (order.status !== 'confirming') return clearInterval(timeInterval);
+    return () => clearInterval(timeInterval);
+  }, [order]);
 
   if (order.status === 'dispatching') {
     return (
@@ -68,7 +84,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
           <Flex justifyContent="space-between">
             <CodeLink url={url} orderId={order.id} code={order.code} />
             <Flex flexDir="column" fontSize="xs" alignItems="flex-end">
-              {hasCurrier ? (
+              {isCurrierArrived ? (
                 <>
                   <Text color="black" fontWeight="700">
                     {t('Entregador no local')}
@@ -91,13 +107,13 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
           </Flex>
         </Flex>
         <Button
-          isDisabled={!hasCurrier}
+          isDisabled={!isCurrierArrived}
           mt="2"
           w="full"
           maxH="34px"
           siz="xs"
           fontSize="xs"
-          onClick={() => dispatching(order.code)}
+          onClick={() => changeOrderStatus(order.id, 'dispatching')}
         >
           {t('Entregar pedido')}
         </Button>
@@ -139,7 +155,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
           maxH="34px"
           siz="xs"
           fontSize="xs"
-          onClick={() => ready(order.code)}
+          onClick={() => changeOrderStatus(order.id, 'ready')}
         >
           {t('Pedido pronto')}
         </Button>
@@ -157,11 +173,12 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
         color="black"
         cursor="pointer"
       >
-        <Box>
-          <Flex>
-            <Text fontWeight="700">#{order.code}</Text>
-          </Flex>
-        </Box>
+        <Flex justifyContent="space-between" alignItems="center">
+          <Text fontSize="lg" fontWeight="700">
+            #{order.code}
+          </Text>
+          <Text fontSize="sm">{t(`${elapsedTime} min. atrás`)}</Text>
+        </Flex>
       </Box>
     </Link>
   );

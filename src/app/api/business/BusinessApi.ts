@@ -159,19 +159,8 @@ export default class MenuApi {
     } as Partial<Category>);
   }
 
-  async deleteCategory(businessId: string, categoryId: string, categoryProducts: string[]) {
-    if (categoryProducts?.length > 0) {
-      const query = await this.refs
-        .getBusinessProductsRef(businessId)
-        .where('categoryId', '==', categoryId)
-        .get();
-      const products = query.docs.map((doc) => ({ id: doc.id, image_url: doc.data().image_url }));
-      products.forEach((product) => {
-        this.deleteProduct(businessId, product.id, typeof product.image_url === 'string');
-      });
-    }
+  async deleteCategory(businessId: string, categoryId: string) {
     await this.refs.getBusinessCategoryRef(businessId, categoryId).delete();
-    return;
   }
 
   // products
@@ -216,17 +205,16 @@ export default class MenuApi {
     return documentAs<Product>(doc);
   }
 
-  async createProduct(businessId: string, product: Product, imageFile: File | null) {
+  async createProduct(businessId: string, product: Product, imageFiles: File[] | null) {
     // creating product
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
     const productId = this.refs.getBusinessProductsRef(businessId).doc().id;
-    if (imageFile) {
-      await this.uploadProductPhoto(businessId, productId, imageFile);
+    if (imageFiles) {
+      await this.uploadProductPhoto(businessId, productId, imageFiles);
     }
     try {
       await this.refs.getBusinessProductRef(businessId, productId).set({
         ...product,
-        imageExists: false,
         createdOn: timestamp,
         updatedOn: timestamp,
       } as Product);
@@ -240,17 +228,16 @@ export default class MenuApi {
     businessId: string,
     productId: string,
     changes: Partial<Product>,
-    imageFile: File | null
+    imageFiles: File[] | null
   ) {
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
     let newProductObject = {};
     if (changes.imageExists) {
-      if (imageFile) {
-        await this.uploadProductPhoto(businessId, productId, imageFile);
+      if (imageFiles) {
+        await this.uploadProductPhoto(businessId, productId, imageFiles);
       }
       newProductObject = {
         ...changes,
-        imageExists: false,
         updatedOn: timestamp,
       };
     } else {
@@ -269,31 +256,38 @@ export default class MenuApi {
     }
   }
 
-  async deleteProduct(businessId: string, productId: string, imageExists: boolean) {
-    if (imageExists) {
-      await this.files.deleteStorageFile(
-        this.refs.getProductImageStoragePath(businessId, productId)
-      );
-    }
+  async deleteProduct(businessId: string, productId: string) {
     await this.refs.getBusinessProductRef(businessId, productId).delete();
   }
 
   async uploadProductPhoto(
     businessId: string,
     productId: string,
-    file: File,
+    files: File[],
     progressHandler?: (progress: number) => void
   ) {
-    const isSuccess = await this.files.upload(
-      file,
-      this.refs.getProductUploadStoragePath(businessId, productId),
-      progressHandler
-    );
-    return isSuccess;
+    try {
+      files.map(async (file, index) => {
+        await this.files.upload(
+          file,
+          this.refs.getProductUploadStoragePath(
+            businessId,
+            productId,
+            index === 0 ? '1008x720' : '288x288'
+          ),
+          progressHandler
+        );
+      });
+      return true;
+    } catch (error) {
+      return false;
+    }
   }
 
-  getProductImageURL(businessId: string, productId: string) {
-    return this.files.getDownloadURL(this.refs.getProductImageStoragePath(businessId, productId));
+  getProductImageURL(businessId: string, productId: string, size: string = '1008x720') {
+    return this.files.getDownloadURL(
+      this.refs.getProductImageStoragePath(businessId, productId, size)
+    );
   }
 
   // complements
@@ -428,17 +422,7 @@ export default class MenuApi {
     }
   }
 
-  async deleteComplement(
-    businessId: string,
-    productId: string,
-    complementId: string,
-    hasImage: boolean
-  ) {
-    if (hasImage) {
-      await this.files.deleteStorageFile(
-        this.refs.getComplementImageStoragePath(businessId, complementId)
-      );
-    }
+  async deleteComplement(businessId: string, productId: string, complementId: string) {
     return await this.refs
       .getBusinessProductComplementRef(businessId, productId, complementId)
       .delete();

@@ -1,8 +1,7 @@
-import { BoxProps, Center, Flex, Image } from '@chakra-ui/react';
+import { BoxProps, Center, Flex } from '@chakra-ui/react';
 import { ReactComponent as DropImage } from 'common/img/drop-image.svg';
 import React from 'react';
 import { useDropzone } from 'react-dropzone';
-
 interface Props extends BoxProps {
   preview?: string | null;
   onDropFile: (acceptedFiles: File[]) => Promise<void>;
@@ -10,7 +9,7 @@ interface Props extends BoxProps {
 
 export const FileDropzone = ({
   width = 464,
-  height = 260,
+  height = 261,
   onDropFile,
   preview,
   ...props
@@ -20,7 +19,6 @@ export const FileDropzone = ({
     multiple: true,
     accept: 'image/jpeg, image/png',
   });
-
   return (
     <Flex
       position="relative"
@@ -35,9 +33,8 @@ export const FileDropzone = ({
       {...getRootProps()}
     >
       <input {...getInputProps()} />
-      <Center w="100%">
-        {!preview && <DropImage />}
-        {preview && <Image width={width} height={height} objectFit="contain" src={preview} />}
+      <Center w="100%" height="100%">
+        <DropImage />
       </Center>
     </Flex>
   );
