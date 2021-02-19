@@ -52,11 +52,11 @@ export const ImageUploads = ({
 
   if (hasImage && preview) {
     return (
-      <Flex flexDir="column" alignItems="flex-end">
+      <Flex flexDir="column" alignItems="flex-end" maxW={width}>
         <Tooltip label={t('Escolher outra imagem')}>
           <CloseButton mb={2} size="xs" onClick={clearDrop} />
         </Tooltip>
-        <Image src={preview} width={width} height={height} />
+        <Image src={preview} width={width} height={(width as number) / ratios[0]} />
       </Flex>
     );
   }
