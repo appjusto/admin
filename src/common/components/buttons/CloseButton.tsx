@@ -1,8 +1,8 @@
-import { RepeatClockIcon } from '@chakra-ui/icons';
+import { CloseIcon } from '@chakra-ui/icons';
 import { Button, ButtonProps } from '@chakra-ui/react';
 import React from 'react';
 
-export const UndoButton = React.forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
+export const CloseButton = React.forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
   return (
     <Button
       ref={ref}
@@ -16,7 +16,7 @@ export const UndoButton = React.forwardRef<HTMLButtonElement, ButtonProps>((prop
       aria-label="Undo"
       {...props}
     >
-      <RepeatClockIcon />
+      <CloseIcon />
     </Button>
   );
 });

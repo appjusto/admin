@@ -1,5 +1,5 @@
 import { Box, BoxProps, Flex, Tooltip } from '@chakra-ui/react';
-import { UndoButton } from 'common/components/buttons/UndoButton';
+import { CloseButton } from 'common/components/buttons/CloseButton';
 import { CroppedAreaProps } from 'common/components/ImageCropping';
 import React from 'react';
 import { getCroppedImg } from 'utils/functions';
@@ -35,26 +35,25 @@ export const ImageUploads = ({
   };
 
   React.useEffect(() => {
-    const getImageFiles = async (areas: CroppedAreaProps[]) => {
-      let files = [] as File[];
-      areas.forEach(async (area) => {
-        const file = await getCroppedImg(preview as string, area);
-        files.push(file as File);
-      });
-      return onCropEnd(files);
-    };
-    if (state.length < 1) {
-      return;
+    if (state.length > 0 && preview) {
+      const getImageFiles = async (areas: CroppedAreaProps[]) => {
+        let files = [] as File[];
+        areas.forEach(async (area) => {
+          const file = await getCroppedImg(preview as string, area);
+          files.push(file as File);
+        });
+        return onCropEnd(files);
+      };
+      getImageFiles(state);
     }
-    getImageFiles(state);
   }, [state, preview]);
 
   if (preview) {
     return (
       <>
         <Flex flexDir="column" alignItems="flex-end" maxW={464} {...props}>
-          <Tooltip placement="top" label={t('Desfazer')} aria-label={t('Desfazer')}>
-            <UndoButton onClick={clearDrop} />
+          <Tooltip label={t('Escolher outra imagem')}>
+            <CloseButton mb={2} size="xs" onClick={clearDrop} />
           </Tooltip>
         </Flex>
         {ratios.map((ratio, index) => (

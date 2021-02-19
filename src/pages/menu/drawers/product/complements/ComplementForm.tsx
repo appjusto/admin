@@ -1,9 +1,10 @@
-import { Button, Flex, HStack, Text } from '@chakra-ui/react';
+import { Button, Flex, HStack, Image, Text, Tooltip } from '@chakra-ui/react';
 import { Complement, WithId } from 'appjusto-types';
-import { FileDropzone } from 'common/components/FileDropzone';
+import { CloseButton } from 'common/components/buttons/CloseButton';
 import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput2';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
+import { ImageUploads } from 'common/components/ImageUploads';
 import { useProductContext } from 'pages/menu/context/ProductContext';
 import React from 'react';
 import { t } from 'utils/i18n';
@@ -31,10 +32,11 @@ export const ComplementForm = ({
   const [price, setPrice] = React.useState(0);
   const [externalId, setExternalId] = React.useState('');
   const [previewURL, setPreviewURL] = React.useState<string | null>(null);
-  const [imageFile, setImageFile] = React.useState<File | null>(null);
+  const [imageFile, setImageFile] = React.useState<File[] | null>(null);
   const [imageExists, setImageExists] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
   const inputRef = React.useRef<HTMLInputElement>(null);
+  const hasImage = React.useRef(false);
 
   const getImageUrl = React.useCallback(async () => {
     const url = await getComplementImageUrl(complementId!);
@@ -46,11 +48,23 @@ export const ComplementForm = ({
     const [file] = acceptedFiles;
     const url = URL.createObjectURL(file);
     //add file to imageFile
-    setImageFile(file);
+    //setImageFile(file);
     //add url to previewURL
     setPreviewURL(url);
-    setImageExists(true);
+    //setImageExists(true);
   }, []);
+
+  const clearDropImages = () => {
+    hasImage.current = false;
+    setPreviewURL(null);
+    setImageFile(null);
+    setImageExists(false);
+  };
+
+  const handleCropImages = async (files: File[]) => {
+    setImageFile(files);
+    setImageExists(true);
+  };
 
   const handleSave = async () => {
     setIsLoading(true);
@@ -61,7 +75,13 @@ export const ComplementForm = ({
       externalId,
       imageExists,
     };
-    await onSaveComplement(groupId as string, complementId as string, newItem, imageFile);
+    console.dir(imageFile ? imageFile[0] : null);
+    await onSaveComplement(
+      groupId as string,
+      complementId as string,
+      newItem,
+      imageFile ? imageFile[0] : null
+    );
     setIsLoading(false);
     onSuccess();
   };
@@ -80,6 +100,7 @@ export const ComplementForm = ({
   React.useEffect(() => {
     if (item?.imageExists) {
       getImageUrl();
+      hasImage.current = true;
     }
   }, [item?.imageExists, getImageUrl]);
 
@@ -92,12 +113,24 @@ export const ComplementForm = ({
     >
       <HStack spacing={4} alignItems="flex-start" p="4">
         <Flex flexDir="column" maxW="24">
-          <FileDropzone
-            width="96px"
-            height="96px"
-            onDropFile={onDropHandler}
-            preview={previewURL}
-          />
+          {hasImage.current && previewURL ? (
+            <Flex flexDir="column" alignItems="flex-end">
+              <Tooltip label={t('Escolher outra imagem')}>
+                <CloseButton mb={2} size="xs" onClick={clearDropImages} />
+              </Tooltip>
+              <Image src={previewURL} width="96px" height="96px" />
+            </Flex>
+          ) : (
+            <ImageUploads
+              width="96px"
+              height="96px"
+              onDropFile={onDropHandler}
+              preview={previewURL}
+              ratios={[1 / 1]}
+              onCropEnd={handleCropImages}
+              clearDrop={clearDropImages}
+            />
+          )}
           <Text mt="2" textAlign="center" fontSize="xs">
             {t('Adicionar imagem')}
           </Text>
