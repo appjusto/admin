@@ -1,6 +1,5 @@
-import { Button, Flex, HStack, Image, Text, Tooltip } from '@chakra-ui/react';
+import { Button, Flex, HStack, Text } from '@chakra-ui/react';
 import { Complement, WithId } from 'appjusto-types';
-import { CloseButton } from 'common/components/buttons/CloseButton';
 import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput2';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
@@ -113,24 +112,16 @@ export const ComplementForm = ({
     >
       <HStack spacing={4} alignItems="flex-start" p="4">
         <Flex flexDir="column" maxW="24">
-          {hasImage.current && previewURL ? (
-            <Flex flexDir="column" alignItems="flex-end">
-              <Tooltip label={t('Escolher outra imagem')}>
-                <CloseButton mb={2} size="xs" onClick={clearDropImages} />
-              </Tooltip>
-              <Image src={previewURL} width="96px" height="96px" />
-            </Flex>
-          ) : (
-            <ImageUploads
-              width="96px"
-              height="96px"
-              onDropFile={onDropHandler}
-              preview={previewURL}
-              ratios={[1 / 1]}
-              onCropEnd={handleCropImages}
-              clearDrop={clearDropImages}
-            />
-          )}
+          <ImageUploads
+            width="96px"
+            height="96px"
+            onDropFile={onDropHandler}
+            preview={previewURL}
+            ratios={[1 / 1]}
+            hasImage={hasImage.current}
+            onCropEnd={handleCropImages}
+            clearDrop={clearDropImages}
+          />
           <Text mt="2" textAlign="center" fontSize="xs">
             {t('Adicionar imagem')}
           </Text>

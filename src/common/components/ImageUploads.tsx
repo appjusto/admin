@@ -1,4 +1,4 @@
-import { Box, BoxProps, Flex, Tooltip } from '@chakra-ui/react';
+import { Box, BoxProps, Flex, Image, Tooltip } from '@chakra-ui/react';
 import { CloseButton } from 'common/components/buttons/CloseButton';
 import { CroppedAreaProps } from 'common/components/ImageCropping';
 import React from 'react';
@@ -10,6 +10,7 @@ import { ImageCropping } from './ImageCropping';
 interface Props extends BoxProps {
   preview?: string | null;
   ratios?: number[];
+  hasImage: boolean;
   onDropFile: (acceptedFiles: File[]) => Promise<void>;
   onCropEnd?(files: File[]): void;
   clearDrop?(): void;
@@ -21,6 +22,7 @@ export const ImageUploads = ({
   onDropFile,
   preview,
   ratios = [1 / 1],
+  hasImage = false,
   onCropEnd = () => {},
   clearDrop = () => {},
   ...props
@@ -48,10 +50,21 @@ export const ImageUploads = ({
     }
   }, [state, preview]);
 
+  if (hasImage && preview) {
+    return (
+      <Flex flexDir="column" alignItems="flex-end">
+        <Tooltip label={t('Escolher outra imagem')}>
+          <CloseButton mb={2} size="xs" onClick={clearDrop} />
+        </Tooltip>
+        <Image src={preview} width={width} height={height} />
+      </Flex>
+    );
+  }
+
   if (preview) {
     return (
       <>
-        <Flex flexDir="column" alignItems="flex-end" maxW={464} {...props}>
+        <Flex flexDir="column" alignItems="flex-end" maxW={width} {...props}>
           <Tooltip label={t('Escolher outra imagem')}>
             <CloseButton mb={2} size="xs" onClick={clearDrop} />
           </Tooltip>

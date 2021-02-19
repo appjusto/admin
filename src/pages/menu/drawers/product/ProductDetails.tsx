@@ -4,7 +4,6 @@ import {
   CheckboxGroup,
   Flex,
   HStack,
-  Image,
   Switch,
   Text,
   VStack,
@@ -276,23 +275,15 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
           )}
         </Text>
       )}
-      {hasImage.current ? (
-        <Flex flexDir="column" alignItems="flex-end" maxW={464}>
-          <Button variant="outline" size="sm" onClick={clearDropImages}>
-            Alterar imagem
-          </Button>
-          <Image mt={2} src={imageUrl as string} width={464} height={331} />
-        </Flex>
-      ) : (
-        <ImageUploads
-          mt={4}
-          onDropFile={onDropHandler}
-          preview={previewURL}
-          ratios={[7 / 5, 1 / 1]}
-          onCropEnd={handleCropImages}
-          clearDrop={clearDropImages}
-        />
-      )}
+      <ImageUploads
+        mt={4}
+        onDropFile={onDropHandler}
+        preview={previewURL}
+        ratios={[7 / 5, 1 / 1]}
+        hasImage={hasImage.current}
+        onCropEnd={handleCropImages}
+        clearDrop={clearDropImages}
+      />
       <Text mt="8" fontSize="xl" color="black">
         {t('Classificações adicionais:')}
       </Text>

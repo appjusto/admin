@@ -33,7 +33,7 @@ const cropSettings: Crop = {
   unit: 'px',
 };
 
-export const ImageUploads = ({ getCroppedImage2 }: ImageUploadsProps) => {
+export const CopyImageUploads = ({ getCroppedImage2 }: ImageUploadsProps) => {
   const [upImg, setUpImg] = React.useState<string | null>(null);
   const [wasUploaded, setWasUploaded] = React.useState(0);
   //const [crop, setCrop] = React.useState<Crop>(cropSettings);
