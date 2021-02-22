@@ -114,7 +114,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
         hasCoverImage.current = true;
       }
     }
-  }, [business]);
+  }, [business, cover, logo]);
 
   // UI
   const breakpoint = useBreakpoint();
