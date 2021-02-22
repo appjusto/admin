@@ -26,12 +26,12 @@ const fakeOrder: Order = {
   status: 'confirming',
   // comments: 'cpf',
   consumer: {
-    id: '8jnAYorqWL98OPfMypu6',
+    id: 'kW8M4T19IdP8VCrxOwAHJoTzsK33',
     name: 'Renan',
     // cpf: '35214602820',
   },
   courier: {
-    id: 'KfpVLMg9rEURH8BOCMJ8',
+    id: 'kW8M4T19IdP8VCrxOwAHJoTzsK33',
     name: 'Kelly',
     mode: 'motocycle',
     joined: ('1 de fevereiro de 2021 00:00:00 UTC-3' as unknown) as firebase.firestore.FieldValue,
@@ -41,7 +41,7 @@ const fakeOrder: Order = {
     },
   },
   business: {
-    id: 'Ik2Ju9mot8oxIusMci1G',
+    id: 'KTqDLkMSAq6vigc0ODDr',
     name: 'Itapuama vegan',
   },
   items: [fakeItem(1200, 1), fakeItem(1600, 2)],
@@ -148,6 +148,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
     await api.order().updateOrder(orderId, {
       status: 'canceled',
     });
+    //mandar o motivo pra nova subcollection
   };
 
   // side effects
