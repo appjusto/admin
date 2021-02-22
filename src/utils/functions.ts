@@ -93,6 +93,44 @@ export const getCroppedImg = async (
     // return canvas.toDataURL('image/jpeg');
     // As a blob
     return new Promise((resolve) => {
+      canvas.toBlob(async (file) => {
+        const url = URL.createObjectURL(file);
+        const rsult = await getResizedImage(url);
+        resolve(rsult);
+        //resolve(file);
+      }, 'image/jpeg');
+    });
+  }
+};
+
+export const getResizedImage = async (
+  imageSrc: string,
+  ratio: number = 1 / 1,
+  resizedWidth: number = 288
+) => {
+  const image = (await createImage(imageSrc)) as HTMLImageElement;
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  const pixelRatio = window.devicePixelRatio;
+  // @ts-ignore: Unreachable code error
+  canvas.width = resizedWidth * pixelRatio; //image.naturalWidth * pixelRatio;
+  // @ts-ignore: Unreachable code error
+  canvas.height = (resizedWidth / ratio) * pixelRatio; //(image.naturalWidth / ratio) * pixelRatio;
+  if (ctx) {
+    ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(
+      image,
+      0,
+      0,
+      //image.naturalWidth,
+      //image.naturalHeight,
+      //0,
+      //0,
+      resizedWidth,
+      resizedWidth / ratio
+    );
+    return new Promise((resolve) => {
       canvas.toBlob((file) => {
         resolve(file);
       }, 'image/jpeg');
