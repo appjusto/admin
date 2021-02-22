@@ -60,7 +60,9 @@ const getRadianAngle = (degreeValue: number) => {
 export const getCroppedImg = async (
   imageSrc: string,
   pixelCrop: CroppedAreaProps,
-  rotation = 0
+  //rotation = 0,
+  ratio: number,
+  resizedWidth: number
 ) => {
   const image = (await createImage(imageSrc)) as HTMLImageElement;
   const canvas = document.createElement('canvas');
@@ -75,7 +77,7 @@ export const getCroppedImg = async (
   if (ctx) {
     // translate canvas context to a central location on image to allow rotating around the center.
     ctx.translate(safeArea / 2, safeArea / 2);
-    ctx.rotate(getRadianAngle(rotation));
+    ctx.rotate(getRadianAngle(0));
     ctx.translate(-safeArea / 2, -safeArea / 2);
     // draw rotated image and store data.
     ctx.drawImage(image, safeArea / 2 - image.width * 0.5, safeArea / 2 - image.height * 0.5);
@@ -95,7 +97,7 @@ export const getCroppedImg = async (
     return new Promise((resolve) => {
       canvas.toBlob(async (file) => {
         const url = URL.createObjectURL(file);
-        const rsult = await getResizedImage(url);
+        const rsult = await getResizedImage(url, ratio, resizedWidth);
         resolve(rsult);
         //resolve(file);
       }, 'image/jpeg');
@@ -103,33 +105,17 @@ export const getCroppedImg = async (
   }
 };
 
-export const getResizedImage = async (
-  imageSrc: string,
-  ratio: number = 1 / 1,
-  resizedWidth: number = 288
-) => {
+export const getResizedImage = async (imageSrc: string, ratio: number, resizedWidth: number) => {
   const image = (await createImage(imageSrc)) as HTMLImageElement;
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
   const pixelRatio = window.devicePixelRatio;
-  // @ts-ignore: Unreachable code error
-  canvas.width = resizedWidth * pixelRatio; //image.naturalWidth * pixelRatio;
-  // @ts-ignore: Unreachable code error
-  canvas.height = (resizedWidth / ratio) * pixelRatio; //(image.naturalWidth / ratio) * pixelRatio;
+  canvas.width = resizedWidth * pixelRatio;
+  canvas.height = (resizedWidth / ratio) * pixelRatio;
   if (ctx) {
     ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
     ctx.imageSmoothingQuality = 'high';
-    ctx.drawImage(
-      image,
-      0,
-      0,
-      //image.naturalWidth,
-      //image.naturalHeight,
-      //0,
-      //0,
-      resizedWidth,
-      resizedWidth / ratio
-    );
+    ctx.drawImage(image, 0, 0, resizedWidth, resizedWidth / ratio);
     return new Promise((resolve) => {
       canvas.toBlob((file) => {
         resolve(file);

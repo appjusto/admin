@@ -9,7 +9,8 @@ import { ImageCropping } from './ImageCropping';
 
 interface Props extends BoxProps {
   preview?: string | null;
-  ratios?: number[];
+  ratios: number[];
+  resizedWidth: number[];
   hasImage: boolean;
   onDropFile: (acceptedFiles: File[]) => Promise<void>;
   onCropEnd?(files: File[]): void;
@@ -21,7 +22,8 @@ export const ImageUploads = ({
   height = 261,
   onDropFile,
   preview,
-  ratios = [1 / 1],
+  ratios,
+  resizedWidth,
   hasImage = false,
   onCropEnd = () => {},
   clearDrop = () => {},
@@ -40,8 +42,13 @@ export const ImageUploads = ({
     if (state.length > 0 && preview) {
       const getImageFiles = async (areas: CroppedAreaProps[]) => {
         let files = [] as File[];
-        areas.forEach(async (area) => {
-          const file = await getCroppedImg(preview as string, area);
+        areas.forEach(async (area, index: number) => {
+          const file = await getCroppedImg(
+            preview as string,
+            area,
+            ratios[index],
+            resizedWidth[index]
+          );
           files.push(file as File);
         });
         return onCropEnd(files);

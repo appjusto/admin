@@ -118,6 +118,7 @@ export const ComplementForm = ({
             onDropFile={onDropHandler}
             preview={previewURL}
             ratios={[1 / 1]}
+            resizedWidth={[288]}
             hasImage={hasImage.current}
             onCropEnd={handleCropImages}
             clearDrop={clearDropImages}

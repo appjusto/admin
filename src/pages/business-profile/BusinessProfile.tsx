@@ -190,6 +190,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
           onDropFile={onDropLogoHandler}
           preview={logoPreviewURL}
           ratios={[1 / 1]}
+          resizedWidth={[240]}
           hasImage={hasLogoImage.current}
           onCropEnd={handleLogoCrop}
           clearDrop={() => clearDropImages('logo')}
@@ -210,6 +211,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
           onDropFile={onDropCoverHandler}
           preview={coverPreviewURL}
           ratios={[14 / 5]}
+          resizedWidth={[1008]}
           hasImage={hasCoverImage.current}
           onCropEnd={handleCoverCrop}
           clearDrop={() => clearDropImages('cover')}

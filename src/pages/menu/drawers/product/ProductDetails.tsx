@@ -281,6 +281,7 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
         onDropFile={onDropHandler}
         preview={previewURL}
         ratios={[7 / 5, 1 / 1]}
+        resizedWidth={[1008, 288]}
         hasImage={hasImage.current}
         onCropEnd={handleCropImages}
         clearDrop={clearDropImages}
