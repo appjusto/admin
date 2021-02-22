@@ -9,7 +9,6 @@ export const useBusinessProfile = () => {
   const api = useContextApi();
   const businessId = useContextBusinessId()!;
   const queryCache = useQueryCache();
-
   // queries
   const getBusinessLogoURL = (key: string) => api.business().getBusinessLogoURL(businessId);
   const { data: logo } = useQuery(['business:logo', businessId], getBusinessLogoURL);

@@ -19,7 +19,7 @@ export const useCategory = (id: string) => {
   // mutations
   const [createCategory, createResult] = useMutation(async (category: Category) =>
     api.business().createCategory(businessId, categoryId, category)
-  ).data;
+  );
   const [updateCategory, updateResult] = useMutation(async (category: Partial<Category>) =>
     api.business().updateCategory(businessId, categoryId, category)
   );

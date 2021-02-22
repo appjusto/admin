@@ -74,7 +74,6 @@ export const ComplementForm = ({
       externalId,
       imageExists,
     };
-    console.dir(imageFile ? imageFile[0] : null);
     await onSaveComplement(
       groupId as string,
       complementId as string,

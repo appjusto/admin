@@ -12,6 +12,7 @@ import { OnboardingProps } from 'pages/onboarding/types';
 import PageFooter from 'pages/PageFooter';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
+import { useQueryCache } from 'react-query';
 import { Redirect } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { CuisineSelect } from '../../common/components/form/select/CuisineSelect';
@@ -19,7 +20,7 @@ import { CuisineSelect } from '../../common/components/form/select/CuisineSelect
 const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   // context
   const business = useContextBusiness();
-
+  const queryCache = useQueryCache();
   // state
   const [name, setName] = React.useState(business?.name ?? '');
   const [cnpj, setCNPJ] = React.useState(business?.cnpj ?? '');
@@ -46,8 +47,8 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const { isLoading, isSuccess } = result;
   // handlers
   const onSubmitHandler = async () => {
-    if (logoFile) uploadLogo(logoFile[0]);
-    if (coverFile) uploadCover(coverFile[0]);
+    if (logoFile) await uploadLogo(logoFile[0]);
+    if (coverFile) await uploadCover(coverFile[0]);
     await updateBusinessProfile({
       name,
       cnpj,
@@ -61,7 +62,12 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
       logoExists: logoPreviewURL ? true : false,
       coverImageExists: coverPreviewURL ? true : false,
     });
+    if (logoFile || coverFile) {
+      queryCache.invalidateQueries(['business:logo', business?.id]);
+      queryCache.invalidateQueries(['business:cover', business?.id]);
+    }
   };
+
   const onDropLogoHandler = async (acceptedFiles: File[]) => {
     const [file] = acceptedFiles;
     const url = URL.createObjectURL(file);
