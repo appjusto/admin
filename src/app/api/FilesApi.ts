@@ -3,6 +3,7 @@ export default class FilesApi {
   constructor(private storage: firebase.storage.Storage) {}
 
   async upload(file: File, path: string, progressHandler?: (progress: number) => void) {
+    const externalTimestamp = new Date().getTime();
     return new Promise<boolean>(async (resolve, reject) => {
       const ref = this.storage.ref().child(path);
       const task = ref.put(file);

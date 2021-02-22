@@ -7,7 +7,7 @@ export const useProductImage = (productId: string) => {
   const businessId = useContextBusinessId()!;
 
   const getProductImageURL = (key: string) =>
-    api.business().getProductImageURL(businessId, productId);
+    api.business().getProductImageURL(businessId, productId, '1008x720');
   const { data } = useQuery(['product:image', productId], getProductImageURL, {
     enabled: productId !== 'new',
   });

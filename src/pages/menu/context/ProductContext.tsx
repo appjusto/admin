@@ -50,7 +50,7 @@ export const ProductContextProvider = (props: ProviderProps) => {
   const businessId = useContextBusinessId();
   const { ordering, updateMenuOrdering } = useContextMenu();
   const { productId } = useParams<Params>();
-  const { product, isValid, imageUrl } = useProduct(businessId, productId);
+  const { product, isValid, imageUrl } = useProduct(businessId, productId, '1008x720');
   const { groups, complements } = useObserveComplements(
     businessId!,
     productId,

@@ -4,6 +4,7 @@ import firebase from 'firebase/app';
 import { documentAs, documentsAs } from '../../../core/fb';
 import FilesApi from '../FilesApi';
 import FirebaseRefs from '../FirebaseRefs';
+import fs from 'fs';
 
 export default class MenuApi {
   constructor(private refs: FirebaseRefs, private files: FilesApi) {}
@@ -266,8 +267,9 @@ export default class MenuApi {
     files: File[],
     progressHandler?: (progress: number) => void
   ) {
+    const sortedFiles = files.sort((a, b) => b.size - a.size);
     try {
-      files.map(async (file, index) => {
+      sortedFiles.map(async (file, index) => {
         await this.files.upload(
           file,
           this.refs.getProductUploadStoragePath(
@@ -284,7 +286,7 @@ export default class MenuApi {
     }
   }
 
-  getProductImageURL(businessId: string, productId: string, size: string = '1008x720') {
+  getProductImageURL(businessId: string, productId: string, size: string) {
     return this.files.getDownloadURL(
       this.refs.getProductImageStoragePath(businessId, productId, size)
     );
