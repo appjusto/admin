@@ -13,7 +13,7 @@ export const useProduct = (businessId: string | undefined, productId: string, im
   const getImageUrl = React.useCallback(async () => {
     //const timestamp = new Date().getTime();
     const url = await api.business().getProductImageURL(businessId!, productId, imageDim);
-    //setImageUrl(`${url}&timestap=${timestamp}`);
+    //setImageUrl(`${url}#t=${timestamp}`);
     setImageUrl(url);
   }, [api, businessId, imageDim, productId]);
   // side effects
