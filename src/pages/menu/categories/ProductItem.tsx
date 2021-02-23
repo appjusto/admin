@@ -1,16 +1,16 @@
-import { Box, Flex, Spacer, Switch, Text, Tooltip } from '@chakra-ui/react';
+import { Box, Flex, Image, Link, Spacer, Switch, Text, Tooltip } from '@chakra-ui/react';
 import { useProductImage } from 'app/api/business/products/useProductImage';
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusinessId } from 'app/state/business/context';
 import { Product, WithId } from 'appjusto-types';
 import { EditButton } from 'common/components/buttons/EditButton';
+import { ImageFbLoading } from 'common/components/ImageFbLoading';
 import { ReactComponent as DragHandle } from 'common/img/drag-handle.svg';
 import React from 'react';
 import { Draggable } from 'react-beautiful-dnd';
-import { Link, useRouteMatch } from 'react-router-dom';
+import { Link as RouterLink, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { CurrencyInput } from '../../../common/components/form/input/currency-input/CurrencyInput2';
-import Image from './../../../common/components/Image';
 
 interface Props {
   product: WithId<Product>;
@@ -25,7 +25,7 @@ export const ProductItem = React.memo(({ product, index }: Props) => {
   //const { imageUrl: hookImageUrl } = useProduct(businessId!, product.id, '288x288');
   const hookImageUrl = useProductImage(product.id, '288x288');
   //state
-  const [imageUrl, setImageUrl] = React.useState<string>('/static/media/product-placeholder.png');
+  const [imageUrl, setImageUrl] = React.useState<string>('');
   const [price, setPrice] = React.useState(0);
 
   //handlres
@@ -42,13 +42,15 @@ export const ProductItem = React.memo(({ product, index }: Props) => {
 
   //side effects
   React.useEffect(() => {
+    if (product && !product?.imageExists)
+      return setImageUrl('/static/media/product-placeholder.png');
     if (hookImageUrl) return setImageUrl(hookImageUrl);
-  }, [hookImageUrl]);
+  }, [product?.imageExists, hookImageUrl]);
 
   React.useEffect(() => {
     updatePriceState(product.price);
   }, [product.price]);
-
+  console.log(product);
   // UI
   return (
     <Draggable draggableId={product.id} index={index}>
@@ -63,17 +65,23 @@ export const ProductItem = React.memo(({ product, index }: Props) => {
           ref={draggable.innerRef}
           {...draggable.draggableProps}
         >
-          <Box bg="white" {...draggable.dragHandleProps} ref={draggable.innerRef}>
+          <Box mr="4" bg="white" {...draggable.dragHandleProps} ref={draggable.innerRef}>
             <DragHandle />
           </Box>
-          <Link to={`${url}/product/${product.id}`}>
+          <Link
+            as={RouterLink}
+            to={`${url}/product/${product.id}`}
+            width="96px"
+            minW="96px"
+            height="96px"
+          >
             <Image
-              marginX="4"
               src={imageUrl}
-              boxSize="24"
-              objectFit="contain"
+              width="100%"
+              objectFit="cover"
               borderRadius="lg"
               alt="Product image"
+              fallback={<ImageFbLoading width="96px" height="96px" />}
             />
           </Link>
           <Flex w="100%" justifyContent="space-between" px="8">
@@ -102,7 +110,7 @@ export const ProductItem = React.memo(({ product, index }: Props) => {
               onUpdateProduct('enabled', ev.target.checked);
             }}
           />
-          <Link to={`${url}/product/${product.id}`}>
+          <Link as={RouterLink} to={`${url}/product/${product.id}`}>
             <Tooltip placement="top" label={t('Editar')} aria-label={t('Editar')}>
               <EditButton />
             </Tooltip>

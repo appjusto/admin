@@ -30,6 +30,7 @@ export const FileDropzone = ({
       cursor="pointer"
       width={width}
       height={height}
+      overflow="hidden"
       {...props}
       {...getRootProps()}
     >
