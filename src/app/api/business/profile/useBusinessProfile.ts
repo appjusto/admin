@@ -22,11 +22,11 @@ export const useBusinessProfile = () => {
     api.business().updateBusinessProfile(businessId, changes)
   );
   const [uploadLogo, uploadLogoResult] = useMutation((file: File) => {
-    api.business().updateBusinessProfile(businessId, { logoExists: false });
+    //api.business().updateBusinessProfile(businessId, { logoExists: false });
     return api.business().uploadBusinessLogo(businessId, file);
   });
   const [uploadCover, uploadCoverResult] = useMutation((files: File[]) => {
-    api.business().updateBusinessProfile(businessId, { coverImageExists: false });
+    //api.business().updateBusinessProfile(businessId, { coverImageExists: false });
     return api.business().uploadBusinessCover(businessId, files);
   });
 

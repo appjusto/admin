@@ -135,10 +135,12 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
       );
 
       handleStateUpdate('isLoading', false);
-      handleStateUpdate('saveSuccess', true);
       if (url.includes('new')) {
         const newUrl = url.replace('new', newId);
         push(newUrl);
+        handleStateUpdate('saveSuccess', true);
+      } else {
+        onClose();
       }
     })();
   };
