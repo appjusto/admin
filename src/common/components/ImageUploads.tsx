@@ -43,10 +43,6 @@ export const ImageUploads = ({
       const getImageFiles = async (areas: CroppedAreaProps[]) => {
         let files = [] as File[];
         areas.forEach(async (area, index: number) => {
-          console.log('preview', preview);
-          console.log('area', area);
-          console.log('ratios', ratios[index]);
-          console.log('resizedWidth', resizedWidth[index]);
           const file = await getCroppedImg(
             preview as string,
             area,
@@ -66,8 +62,8 @@ export const ImageUploads = ({
       <FileDropzone
         onDropFile={onDropFile}
         preview={preview}
-        width={width}
-        height={(width as number) / ratios[0]}
+        width={parseInt(width as string)}
+        height={parseInt(width as string) / ratios[0]}
         {...props}
       />
     );

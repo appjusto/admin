@@ -109,8 +109,8 @@ export const ComplementForm = ({
       <HStack spacing={4} alignItems="flex-start" p="4">
         <Flex flexDir="column" maxW="24">
           <ImageUploads
-            width="96px"
-            height="96px"
+            width={86}
+            height={86}
             onDropFile={onDropHandler}
             preview={previewURL}
             ratios={[1 / 1]}
