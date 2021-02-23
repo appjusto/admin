@@ -1,4 +1,4 @@
-import { Box, BoxProps, Flex, Image, Tooltip } from '@chakra-ui/react';
+import { Box, BoxProps, Flex, Tooltip } from '@chakra-ui/react';
 import { CloseButton } from 'common/components/buttons/CloseButton';
 import { CroppedAreaProps } from 'common/components/ImageCropping';
 import React from 'react';
@@ -43,6 +43,10 @@ export const ImageUploads = ({
       const getImageFiles = async (areas: CroppedAreaProps[]) => {
         let files = [] as File[];
         areas.forEach(async (area, index: number) => {
+          console.log('preview', preview);
+          console.log('area', area);
+          console.log('ratios', ratios[index]);
+          console.log('resizedWidth', resizedWidth[index]);
           const file = await getCroppedImg(
             preview as string,
             area,
@@ -59,12 +63,13 @@ export const ImageUploads = ({
 
   if (hasImage && preview) {
     return (
-      <Flex flexDir="column" alignItems="flex-end" maxW={width}>
-        <Tooltip label={t('Escolher outra imagem')}>
-          <CloseButton mb={2} size="xs" onClick={clearDrop} />
-        </Tooltip>
-        <Image src={preview} width={width} height={(width as number) / ratios[0]} />
-      </Flex>
+      <FileDropzone
+        onDropFile={onDropFile}
+        preview={preview}
+        width={width}
+        height={(width as number) / ratios[0]}
+        {...props}
+      />
     );
   }
 
@@ -100,3 +105,12 @@ export const ImageUploads = ({
     />
   );
 };
+
+/*
+<Flex flexDir="column" alignItems="flex-end" maxW={width}>
+  <Tooltip label={t('Escolher outra imagem')}>
+    <CloseButton mb={2} size="xs" onClick={clearDrop} />
+  </Tooltip>
+  <Image src={preview} width={width} height={(width as number) / ratios[0]} />
+</Flex>
+*/

@@ -1,4 +1,4 @@
-import { BoxProps, Center, Flex } from '@chakra-ui/react';
+import { BoxProps, Center, Flex, Image } from '@chakra-ui/react';
 import { ReactComponent as DropImage } from 'common/img/drop-image.svg';
 import React from 'react';
 import { useDropzone } from 'react-dropzone';
@@ -34,7 +34,7 @@ export const FileDropzone = ({
     >
       <input {...getInputProps()} />
       <Center w="100%" height="100%">
-        <DropImage />
+        {preview ? <Image src={preview} width={width} height={height} /> : <DropImage />}
       </Center>
     </Flex>
   );

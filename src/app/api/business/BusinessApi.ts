@@ -4,7 +4,6 @@ import firebase from 'firebase/app';
 import { documentAs, documentsAs } from '../../../core/fb';
 import FilesApi from '../FilesApi';
 import FirebaseRefs from '../FirebaseRefs';
-import fs from 'fs';
 
 export default class MenuApi {
   constructor(private refs: FirebaseRefs, private files: FilesApi) {}
@@ -85,17 +84,31 @@ export default class MenuApi {
   // cover image
   uploadBusinessCover(
     businessId: string,
-    file: File,
+    files: File[],
     progressHandler?: (progress: number) => void
   ) {
-    return this.files.upload(
-      file,
-      this.refs.getBusinessCoverUploadStoragePath(businessId),
-      progressHandler
-    );
+    const sortedFiles = files.sort((a, b) => b.size - a.size);
+    return new Promise<boolean>(async (resolve, reject) => {
+      try {
+        sortedFiles.map(async (file, index) => {
+          await this.files.upload(
+            file,
+            this.refs.getBusinessCoverUploadStoragePath(
+              businessId,
+              index === 0 ? '1008x360' : '912x360'
+            ),
+            progressHandler
+          );
+        });
+        resolve(true);
+      } catch (error) {
+        reject(error);
+      }
+    });
   }
-  getBusinessCoverURL(businessId: string) {
-    return this.files.getDownloadURL(this.refs.getBusinessCoverStoragePath(businessId));
+
+  getBusinessCoverURL(businessId: string, size: string) {
+    return this.files.getDownloadURL(this.refs.getBusinessCoverStoragePath(businessId, size));
   }
 
   // menu config

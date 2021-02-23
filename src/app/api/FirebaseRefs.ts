@@ -77,13 +77,13 @@ export default class FirebaseRefs {
   // storage
   getBusinessStoragePath = (businessId: string) => `businesses/${businessId}`;
   getBusinessLogoUploadStoragePath = (businessId: string) =>
-    `${this.getBusinessStoragePath(businessId)}/logo.jpg`;
+    `${this.getBusinessStoragePath(businessId)}/logo_240x240.jpg`;
   getBusinessLogoStoragePath = (businessId: string) =>
-    `${this.getBusinessStoragePath(businessId)}/logo_1024x1024.jpg`;
-  getBusinessCoverUploadStoragePath = (businessId: string) =>
-    `${this.getBusinessStoragePath(businessId)}/cover.jpg`;
-  getBusinessCoverStoragePath = (businessId: string) =>
-    `${this.getBusinessStoragePath(businessId)}/cover_1024x1024.jpg`;
+    `${this.getBusinessStoragePath(businessId)}/logo_240x240.jpg`;
+  getBusinessCoverUploadStoragePath = (businessId: string, size: string) =>
+    `${this.getBusinessStoragePath(businessId)}/cover_${size}.jpg`;
+  getBusinessCoverStoragePath = (businessId: string, size: string) =>
+    `${this.getBusinessStoragePath(businessId)}/cover_${size}.jpg`;
   getProductsStoragePath = (businessId: string) =>
     `${this.getBusinessStoragePath(businessId)}/products`;
   getProductUploadStoragePath = (businessId: string, productId: string, size: string) =>

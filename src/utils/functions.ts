@@ -101,7 +101,7 @@ export const getCroppedImg = async (
         resolve(rsult);
         //resolve(file);
       }, 'image/jpeg');
-    });
+    }).catch((error) => console.log(error));
   }
 };
 

@@ -48,7 +48,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   // handlers
   const onSubmitHandler = async () => {
     if (logoFile) await uploadLogo(logoFile[0]);
-    if (coverFile) await uploadCover(coverFile[0]);
+    if (coverFile) await uploadCover(coverFile);
     await updateBusinessProfile({
       name,
       cnpj,
@@ -71,14 +71,14 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const onDropLogoHandler = async (acceptedFiles: File[]) => {
     const [file] = acceptedFiles;
     const url = URL.createObjectURL(file);
-    //uploadLogo(file);
+    hasLogoImage.current = false;
     setLogoPreviewURL(url);
   };
 
   const onDropCoverHandler = async (acceptedFiles: File[]) => {
     const [file] = acceptedFiles;
     const url = URL.createObjectURL(file);
-    //uploadCover(file);
+    hasCoverImage.current = false;
     setCoverPreviewURL(url);
   };
 
@@ -216,8 +216,8 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
           height={breakpoint === 'base' ? 180 : breakpoint === 'md' ? 235 : 260}
           onDropFile={onDropCoverHandler}
           preview={coverPreviewURL}
-          ratios={[14 / 5]}
-          resizedWidth={[1008]}
+          ratios={[14 / 5, 38 / 15]}
+          resizedWidth={[1008, 912]}
           hasImage={hasCoverImage.current}
           onCropEnd={handleCoverCrop}
           clearDrop={() => clearDropImages('cover')}
