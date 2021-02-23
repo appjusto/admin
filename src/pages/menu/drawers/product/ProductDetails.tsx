@@ -106,6 +106,7 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
   const onDropHandler = React.useCallback(async (acceptedFiles: File[]) => {
     const [file] = acceptedFiles;
     const url = URL.createObjectURL(file);
+    hasImage.current = false;
     handleStateUpdate('previewURL', url);
   }, []);
 

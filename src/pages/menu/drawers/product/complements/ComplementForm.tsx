@@ -46,11 +46,8 @@ export const ComplementForm = ({
   const onDropHandler = React.useCallback(async (acceptedFiles: File[]) => {
     const [file] = acceptedFiles;
     const url = URL.createObjectURL(file);
-    //add file to imageFile
-    //setImageFile(file);
-    //add url to previewURL
+    hasImage.current = false;
     setPreviewURL(url);
-    //setImageExists(true);
   }, []);
 
   const clearDropImages = () => {
