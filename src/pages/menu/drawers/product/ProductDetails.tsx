@@ -34,7 +34,7 @@ const initialState = {
   imageExists: false,
   //details
   categoryId: '',
-  previewURL: null,
+  previewURL: null, // remover
   imageFiles: null,
   isLoading: false,
   isEditing: false,
@@ -73,7 +73,7 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
     imageExists,
     //details
     categoryId,
-    previewURL,
+    previewURL, // remover
     imageFiles,
     isLoading,
     isEditing,
@@ -81,7 +81,7 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
   } = state;
   const inputRef = React.useRef<HTMLInputElement>(null);
   //const canvasRef = React.useRef<HTMLCanvasElement>(null);
-  const hasImage = React.useRef(false);
+  //const hasImage = React.useRef(false);
   //handlers
   const handleStateUpdate = (key: string, value: any) => {
     dispatch({ type: 'update_state', payload: { [key]: value } });
@@ -92,25 +92,25 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
   };
 
   const clearDropImages = () => {
-    hasImage.current = false;
+    //hasImage.current = false;
     dispatch({
       type: 'update_state',
       payload: {
-        previewURL: null,
+        //previewURL: null,
         imageFiles: null,
         imageExists: false,
       },
     });
   };
 
-  const onDropHandler = React.useCallback(async (acceptedFiles: File[]) => {
+  /*const onDropHandler = React.useCallback(async (acceptedFiles: File[]) => {
     const [file] = acceptedFiles;
     const url = URL.createObjectURL(file);
     hasImage.current = false;
     handleStateUpdate('previewURL', url);
-  }, []);
+  }, []);*/
 
-  const handleCropImages = (files: File[]) => {
+  const handleImageFiles = (files: File[]) => {
     handleStateUpdate('imageFiles', files);
     handleStateUpdate('imageExists', true);
   };
@@ -133,7 +133,6 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
         imageFiles,
         categoryId
       );
-
       handleStateUpdate('isLoading', false);
       if (url.includes('new')) {
         const newUrl = url.replace('new', newId);
@@ -164,12 +163,12 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
     }
   }, [isValid, path, push, url]);
 
-  React.useEffect(() => {
+  /*React.useEffect(() => {
     if (imageUrl) {
       hasImage.current = true;
       handleStateUpdate('previewURL', imageUrl);
     }
-  }, [imageUrl]);
+  }, [imageUrl]);*/
 
   React.useEffect(() => {
     if (product && productId !== 'new') {
@@ -272,21 +271,21 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
       <Text>
         {t('Recomendamos imagens na proporção retangular (16:9) com no mínimo 1280px de largura')}
       </Text>
-      {!hasImage.current && previewURL && (
+      {/*!hasImage.current && previewURL && (
         <Text>
           {t(
             'Agora você pode ajustar a imagem - arrastando e aumentando/diminuindo o zoom, para os dois formatos necessários (retangular e quadrado)'
           )}
         </Text>
-      )}
+          )*/}
       <ImageUploads
         mt={4}
-        onDropFile={onDropHandler}
-        preview={previewURL}
+        //onDropFile={onDropHandler}
+        imageUrl={imageUrl}
         ratios={[7 / 5, 1 / 1]}
         resizedWidth={[1008, 288]}
-        hasImage={hasImage.current}
-        onCropEnd={handleCropImages}
+        //hasImage={hasImage.current}
+        getImages={handleImageFiles}
         clearDrop={clearDropImages}
       />
       <Text mt="8" fontSize="xl" color="black">
@@ -297,7 +296,7 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
         value={classifications}
         onChange={(value) => handleStateUpdate('classifications', value)}
       >
-        <VStack alignItems="flex-start" mt="4" color="Black" spacing={2}>
+        <VStack alignItems="flex-start" mt="4" color="black" spacing={2}>
           <Checkbox iconColor="white" value="vegetarian">
             {t('Vegetariano')}
           </Checkbox>

@@ -30,10 +30,6 @@ export const useBusinessProfile = () => {
     return api.business().uploadBusinessCover(businessId, files);
   });
 
-  //without mutations
-  //const getLogoUrl = async () => await api.business().getBusinessLogoURL(businessId);
-  //const getCoverUrl = async () => await api.business().getBusinessCoverURL(businessId);
-
   const { isSuccess: uploadSuccess } = uploadLogoResult;
   React.useEffect(() => {
     if (uploadSuccess) queryCache.invalidateQueries(['business:logo', businessId]);

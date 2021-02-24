@@ -30,34 +30,34 @@ export const ComplementForm = ({
   const [description, setDescription] = React.useState('');
   const [price, setPrice] = React.useState(0);
   const [externalId, setExternalId] = React.useState('');
-  const [previewURL, setPreviewURL] = React.useState<string | null>(null);
+  const [imageUrl, setImageUrl] = React.useState<string | null>(null);
   const [imageFile, setImageFile] = React.useState<File[] | null>(null);
   const [imageExists, setImageExists] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
   const inputRef = React.useRef<HTMLInputElement>(null);
-  const hasImage = React.useRef(false);
+  //const hasImage = React.useRef(false);
 
   const getImageUrl = React.useCallback(async () => {
     const url = await getComplementImageUrl(complementId!);
-    if (url) return setPreviewURL(url);
+    if (url) return setImageUrl(url);
   }, [complementId, getComplementImageUrl]);
 
   //handlres
-  const onDropHandler = React.useCallback(async (acceptedFiles: File[]) => {
+  /*const onDropHandler = React.useCallback(async (acceptedFiles: File[]) => {
     const [file] = acceptedFiles;
     const url = URL.createObjectURL(file);
     hasImage.current = false;
     setPreviewURL(url);
-  }, []);
+  }, []);*/
 
   const clearDropImages = () => {
-    hasImage.current = false;
-    setPreviewURL(null);
+    //hasImage.current = false;
+    //setPreviewURL(null);
     setImageFile(null);
     setImageExists(false);
   };
 
-  const handleCropImages = async (files: File[]) => {
+  const getImageFiles = async (files: File[]) => {
     setImageFile(files);
     setImageExists(true);
   };
@@ -89,13 +89,13 @@ export const ComplementForm = ({
       setDescription(item.description ?? '');
       setPrice(item.price);
       setExternalId(item.externalId ?? '');
+      setImageExists(item.imageExists ?? false);
     }
   }, [item]);
 
   React.useEffect(() => {
     if (item?.imageExists) {
       getImageUrl();
-      hasImage.current = true;
     }
   }, [item?.imageExists, getImageUrl]);
 
@@ -111,12 +111,12 @@ export const ComplementForm = ({
           <ImageUploads
             width={86}
             height={86}
-            onDropFile={onDropHandler}
-            preview={previewURL}
+            //onDropFile={onDropHandler}
+            imageUrl={imageUrl}
             ratios={[1 / 1]}
             resizedWidth={[288]}
-            hasImage={hasImage.current}
-            onCropEnd={handleCropImages}
+            //hasImage={hasImage.current}
+            getImages={getImageFiles}
             clearDrop={clearDropImages}
           />
           <Text mt="2" textAlign="center" fontSize="xs">

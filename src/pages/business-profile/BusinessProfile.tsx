@@ -27,14 +27,14 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const [cuisineId, setCuisineId] = React.useState(business?.cuisine?.id ?? '');
   const [description, setDescription] = React.useState(business?.description ?? '');
   const [minimumOrder, setMinimumOrder] = React.useState(business?.minimumOrder ?? 0);
-  const [logoPreviewURL, setLogoPreviewURL] = React.useState<string | null>(null);
-  const [coverPreviewURL, setCoverPreviewURL] = React.useState<string | null>(null);
+  const [logoExists, setLogoExists] = React.useState(false);
+  const [coverExists, setCoverExists] = React.useState(false);
   const [logoFile, setLogoFile] = React.useState<File[] | null>(null);
   const [coverFile, setCoverFile] = React.useState<File[] | null>(null);
   // refs
   const nameRef = React.useRef<HTMLInputElement>(null);
-  const hasLogoImage = React.useRef(false);
-  const hasCoverImage = React.useRef(false);
+  //const hasLogoImage = React.useRef(false);
+  //const hasCoverImage = React.useRef(false);
   // queries & mutations
   const {
     updateBusinessProfile,
@@ -59,45 +59,45 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
         name: '',
         imagePath: '',
       },
-      logoExists: logoPreviewURL ? true : false,
-      coverImageExists: coverPreviewURL ? true : false,
+      logoExists: logoExists,
+      coverImageExists: coverExists,
     });
-    if (logoFile || coverFile) {
-      queryCache.invalidateQueries(['business:logo', business?.id]);
-      queryCache.invalidateQueries(['business:cover', business?.id]);
-    }
+    if (logoFile) queryCache.invalidateQueries(['business:logo', business?.id]);
+    if (coverFile) queryCache.invalidateQueries(['business:cover', business?.id]);
   };
 
-  const onDropLogoHandler = async (acceptedFiles: File[]) => {
+  /*const onDropLogoHandler = async (acceptedFiles: File[]) => {
     const [file] = acceptedFiles;
     const url = URL.createObjectURL(file);
     hasLogoImage.current = false;
     setLogoPreviewURL(url);
-  };
+  };*/
 
-  const onDropCoverHandler = async (acceptedFiles: File[]) => {
+  /*const onDropCoverHandler = async (acceptedFiles: File[]) => {
     const [file] = acceptedFiles;
     const url = URL.createObjectURL(file);
     hasCoverImage.current = false;
     setCoverPreviewURL(url);
-  };
+  };*/
 
   const clearDropImages = (type: string) => {
     if (type === 'logo') {
-      hasLogoImage.current = false;
-      setLogoPreviewURL(null);
+      setLogoExists(false);
+      setLogoFile(null);
     } else {
-      hasCoverImage.current = false;
-      setCoverPreviewURL(null);
+      setCoverExists(false);
+      setCoverFile(null);
     }
   };
 
-  const handleLogoCrop = async (files: File[]) => {
+  const getLogoFile = async (files: File[]) => {
+    setLogoExists(true);
     setLogoFile(files);
   };
 
-  const handleCoverCrop = async (files: File[]) => {
+  const getCoverFile = async (files: File[]) => {
     setCoverFile(files);
+    setCoverExists(true);
   };
 
   // side effects
@@ -111,14 +111,8 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
       if (business.description) setDescription(business.description);
       if (business.minimumOrder) setMinimumOrder(business.minimumOrder);
       if (business.cuisine?.id) setCuisineId(business.cuisine.id);
-      if (business.logoExists && logo) {
-        setLogoPreviewURL(logo);
-        hasLogoImage.current = true;
-      }
-      if (business.coverImageExists && cover) {
-        setCoverPreviewURL(cover);
-        hasCoverImage.current = true;
-      }
+      if (business.logoExists && logo) setLogoExists(true);
+      if (business.coverImageExists && cover) setCoverExists(true);
     }
   }, [business, cover, logo]);
 
@@ -193,12 +187,12 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
           mt="4"
           width={200}
           height={200}
-          onDropFile={onDropLogoHandler}
-          preview={logoPreviewURL}
+          //onDropFile={onDropLogoHandler}
+          imageUrl={logo}
           ratios={[1 / 1]}
           resizedWidth={[240]}
-          hasImage={hasLogoImage.current}
-          onCropEnd={handleLogoCrop}
+          //hasImage={hasLogoImage.current}
+          getImages={getLogoFile}
           clearDrop={() => clearDropImages('logo')}
         />
         {/* cover image */}
@@ -214,12 +208,12 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
           mt="4"
           width={breakpoint === 'base' ? 328 : breakpoint === 'md' ? 420 : 464}
           height={breakpoint === 'base' ? 180 : breakpoint === 'md' ? 235 : 260}
-          onDropFile={onDropCoverHandler}
-          preview={coverPreviewURL}
+          //onDropFile={onDropCoverHandler}
+          imageUrl={cover}
           ratios={[14 / 5, 38 / 15]}
           resizedWidth={[1008, 912]}
-          hasImage={hasCoverImage.current}
-          onCropEnd={handleCoverCrop}
+          //hasImage={hasCoverImage.current}
+          getImages={getCoverFile}
           clearDrop={() => clearDropImages('cover')}
         />
         {/* submit */}

@@ -1,4 +1,13 @@
-import { Box, BoxProps, Flex, Tooltip } from '@chakra-ui/react';
+import {
+  Alert,
+  AlertDescription,
+  AlertIcon,
+  AlertTitle,
+  Box,
+  BoxProps,
+  Flex,
+  Tooltip,
+} from '@chakra-ui/react';
 import { CloseButton } from 'common/components/buttons/CloseButton';
 import { CroppedAreaProps } from 'common/components/ImageCropping';
 import React from 'react';
@@ -8,60 +17,89 @@ import { FileDropzone } from './FileDropzone';
 import { ImageCropping } from './ImageCropping';
 
 interface Props extends BoxProps {
-  preview?: string | null;
+  imageUrl?: string | null;
   ratios: number[];
   resizedWidth: number[];
-  hasImage: boolean;
-  onDropFile: (acceptedFiles: File[]) => Promise<void>;
-  onCropEnd?(files: File[]): void;
-  clearDrop?(): void;
+  getImages(files: File[]): void;
+  clearDrop(): void;
 }
+
+const initError = { status: false, message: { title: '', description: '' } };
 
 export const ImageUploads = ({
   width = 464,
   height = 261,
-  onDropFile,
-  preview,
+  imageUrl,
   ratios,
   resizedWidth,
-  hasImage = false,
-  onCropEnd = () => {},
-  clearDrop = () => {},
+  getImages,
+  clearDrop,
   ...props
 }: Props) => {
-  const [state, setState] = React.useState<CroppedAreaProps[]>([]);
+  // state
+  const [croppedAreas, setCroppedAreas] = React.useState<CroppedAreaProps[]>([]);
+  const [previewUrl, setPreviewUrl] = React.useState<string | null>(null);
+  const [error, setError] = React.useState(initError);
+  const imageExists = React.useRef(false);
+  // handlers
   const handleCrop = (index: number, croppedArea: CroppedAreaProps) => {
-    setState((prevState) => {
+    setCroppedAreas((prevState) => {
       const newAreas = [...prevState];
       newAreas[index] = croppedArea;
       return newAreas;
     });
   };
+  const onDropHandler = React.useCallback(async (acceptedFiles: File[]) => {
+    const [file] = acceptedFiles;
+    if (!file)
+      return setError({
+        status: true,
+        message: {
+          title: 'Formato de arquivo inválido.',
+          description: 'As imagens devem estar nos formatos jpeg ou png.',
+        },
+      });
+    const url = URL.createObjectURL(file);
+    imageExists.current = false;
+    setPreviewUrl(url);
+  }, []);
+  const clearDroppedImages = () => {
+    imageExists.current = false;
+    setPreviewUrl(null);
+    clearDrop();
+  };
 
   React.useEffect(() => {
-    if (state.length > 0 && preview) {
+    if (imageUrl) {
+      imageExists.current = true;
+      setPreviewUrl(imageUrl);
+    }
+  }, [imageUrl]);
+
+  React.useEffect(() => {
+    if (croppedAreas.length > 0 && previewUrl) {
       const getImageFiles = async (areas: CroppedAreaProps[]) => {
         let files = [] as File[];
         areas.forEach(async (area, index: number) => {
           const file = await getCroppedImg(
-            preview as string,
+            previewUrl as string,
             area,
             ratios[index],
             resizedWidth[index]
           );
           files.push(file as File);
         });
-        return onCropEnd(files);
+        return getImages(files);
       };
-      getImageFiles(state);
+      getImageFiles(croppedAreas);
     }
-  }, [state, preview]);
+  }, [croppedAreas, previewUrl]);
 
-  if (hasImage && preview) {
+  if (imageExists.current && previewUrl) {
     return (
       <FileDropzone
-        onDropFile={onDropFile}
-        preview={preview}
+        onDropFile={onDropHandler}
+        preview={previewUrl}
         width={parseInt(width as string)}
         height={parseInt(width as string) / ratios[0]}
         {...props}
@@ -69,12 +107,12 @@ export const ImageUploads = ({
     );
   }
 
-  if (preview) {
+  if (previewUrl) {
     return (
       <>
         <Flex flexDir="column" alignItems="flex-end" maxW={width} {...props}>
           <Tooltip label={t('Escolher outra imagem')}>
-            <CloseButton mb={2} size="xs" onClick={clearDrop} />
+            <CloseButton mb={2} size="xs" onClick={clearDroppedImages} />
           </Tooltip>
         </Flex>
         {ratios.map((ratio, index) => (
@@ -82,7 +120,7 @@ export const ImageUploads = ({
             <ImageCropping
               mt={4}
               index={index}
-              image={preview}
+              image={previewUrl}
               ratio={ratio}
               onCropEnd={handleCrop}
             />
@@ -92,21 +130,23 @@ export const ImageUploads = ({
     );
   }
   return (
-    <FileDropzone
-      onDropFile={onDropFile}
-      preview={preview}
-      width={width}
-      height={height}
-      {...props}
-    />
+    <>
+      <FileDropzone
+        onDropFile={onDropHandler}
+        preview={previewUrl}
+        width={width}
+        height={height}
+        {...props}
+      />
+      {error.status && (
+        <Alert mt="4" status="error" color="black" bg="rgb(254, 215, 215)" maxW={width}>
+          <AlertIcon color="red" />
+          <Flex flexDir="column">
+            <AlertTitle mr={2}>{error.message.title}</AlertTitle>
+            <AlertDescription>{error.message.description}</AlertDescription>
+          </Flex>
+        </Alert>
+      )}
+    </>
   );
 };
-
-/*
-<Flex flexDir="column" alignItems="flex-end" maxW={width}>
-  <Tooltip label={t('Escolher outra imagem')}>
-    <CloseButton mb={2} size="xs" onClick={clearDrop} />
-  </Tooltip>
-  <Image src={preview} width={width} height={(width as number) / ratios[0]} />
-</Flex>
-*/
