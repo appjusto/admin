@@ -1,18 +1,10 @@
-import {
-  Alert,
-  AlertDescription,
-  AlertIcon,
-  AlertTitle,
-  Box,
-  BoxProps,
-  Flex,
-  Tooltip,
-} from '@chakra-ui/react';
+import { Box, BoxProps, Flex, Tooltip } from '@chakra-ui/react';
 import { CloseButton } from 'common/components/buttons/CloseButton';
 import { CroppedAreaProps } from 'common/components/ImageCropping';
 import React from 'react';
 import { getCroppedImg } from 'utils/functions';
 import { t } from 'utils/i18n';
+import { AlertError } from './AlertError';
 import { FileDropzone } from './FileDropzone';
 import { ImageCropping } from './ImageCropping';
 
@@ -105,13 +97,22 @@ export const ImageUploads = React.memo(
 
     if (imageExists.current && previewUrl) {
       return (
-        <FileDropzone
-          onDropFile={onDropHandler}
-          preview={previewUrl}
-          width={parseInt(width as string)}
-          height={parseInt(width as string) / ratios[0]}
-          {...props}
-        />
+        <>
+          <FileDropzone
+            onDropFile={onDropHandler}
+            preview={previewUrl}
+            width={parseInt(width as string)}
+            height={parseInt(width as string) / ratios[0]}
+            {...props}
+          />
+          {error.status && (
+            <AlertError
+              title={error.message.title}
+              description={error.message.description}
+              maxW={width}
+            />
+          )}
+        </>
       );
     }
 
@@ -147,13 +148,11 @@ export const ImageUploads = React.memo(
           {...props}
         />
         {error.status && (
-          <Alert mt="4" status="error" color="black" bg="rgb(254, 215, 215)" maxW={width}>
-            <AlertIcon color="red" />
-            <Flex flexDir="column">
-              <AlertTitle mr={2}>{error.message.title}</AlertTitle>
-              <AlertDescription>{error.message.description}</AlertDescription>
-            </Flex>
-          </Alert>
+          <AlertError
+            title={error.message.title}
+            description={error.message.description}
+            maxW={width}
+          />
         )}
       </>
     );

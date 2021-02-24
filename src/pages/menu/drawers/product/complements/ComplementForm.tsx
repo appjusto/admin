@@ -1,4 +1,4 @@
-import { Button, Flex, HStack, Text } from '@chakra-ui/react';
+import { Button, Flex, HStack, Text, VStack } from '@chakra-ui/react';
 import { Complement, WithId } from 'appjusto-types';
 import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput2';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
@@ -43,15 +43,15 @@ export const ComplementForm = ({
     if (url) return setImageUrl(url);
   }, [complementId, getComplementImageUrl]);
 
-  const clearDropImages = () => {
+  const clearDropImages = React.useCallback(() => {
     setImageFile(null);
     setImageExists(false);
-  };
+  }, []);
 
-  const getImageFiles = async (files: File[]) => {
+  const getImageFiles = React.useCallback(async (files: File[]) => {
     setImageFile(files);
     setImageExists(true);
-  };
+  }, []);
 
   const handleSave = async () => {
     setIsLoading(true);
@@ -98,11 +98,11 @@ export const ComplementForm = ({
         handleSave();
       }}
     >
-      <HStack spacing={4} alignItems="flex-start" p="4">
-        <Flex flexDir="column" maxW="24">
+      <VStack spacing={4} alignItems="flex-start" p="4">
+        <Flex flexDir="column">
           <ImageUploads
-            width={86}
-            height={86}
+            width="200px"
+            height="200px"
             imageUrl={imageUrl}
             ratios={complementsRatios}
             resizedWidth={complementsResizedWidth}
@@ -125,6 +125,7 @@ export const ComplementForm = ({
             handleChange={(ev) => setName(ev.target.value)}
           />
           <Textarea
+            mt="4"
             isRequired
             id="complements-item-description"
             label={t('Descrição do item')}
@@ -162,7 +163,7 @@ export const ComplementForm = ({
             </Button>
           </Flex>
         </Flex>
-      </HStack>
+      </VStack>
     </form>
   );
 };
