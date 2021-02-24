@@ -11,7 +11,7 @@ interface Props extends OnboardingProps {
 
 const PageFooter = ({ onboarding, redirect, isLoading, onSubmit }: Props) => {
   return (
-    <Flex mt="4" alignItems="center">
+    <Flex mt="8" alignItems="center">
       <Button
         type="submit"
         size="lg"

@@ -8,6 +8,12 @@ import { CustomPatternInput as PatternInput } from 'common/components/form/input
 import { cnpjFormatter, cnpjMask } from 'common/components/form/input/pattern-input/formatters';
 import { numbersOnlyParser } from 'common/components/form/input/pattern-input/parsers';
 import { ImageUploads } from 'common/components/ImageUploads';
+import {
+  coverRatios,
+  coverResizedWidth,
+  logoRatios,
+  logoResizedWidth,
+} from 'common/imagesDimensions';
 import { OnboardingProps } from 'pages/onboarding/types';
 import PageFooter from 'pages/PageFooter';
 import PageHeader from 'pages/PageHeader';
@@ -29,12 +35,10 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const [minimumOrder, setMinimumOrder] = React.useState(business?.minimumOrder ?? 0);
   const [logoExists, setLogoExists] = React.useState(false);
   const [coverExists, setCoverExists] = React.useState(false);
-  const [logoFile, setLogoFile] = React.useState<File[] | null>(null);
-  const [coverFile, setCoverFile] = React.useState<File[] | null>(null);
+  const [logoFiles, setLogoFiles] = React.useState<File[] | null>(null);
+  const [coverFiles, setCoverFiles] = React.useState<File[] | null>(null);
   // refs
   const nameRef = React.useRef<HTMLInputElement>(null);
-  //const hasLogoImage = React.useRef(false);
-  //const hasCoverImage = React.useRef(false);
   // queries & mutations
   const {
     updateBusinessProfile,
@@ -47,8 +51,8 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const { isLoading, isSuccess } = result;
   // handlers
   const onSubmitHandler = async () => {
-    if (logoFile) await uploadLogo(logoFile[0]);
-    if (coverFile) await uploadCover(coverFile);
+    if (logoFiles) await uploadLogo(logoFiles[0]);
+    if (coverFiles) await uploadCover(coverFiles);
     await updateBusinessProfile({
       name,
       cnpj,
@@ -62,43 +66,29 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
       logoExists: logoExists,
       coverImageExists: coverExists,
     });
-    if (logoFile) queryCache.invalidateQueries(['business:logo', business?.id]);
-    if (coverFile) queryCache.invalidateQueries(['business:cover', business?.id]);
+    if (logoFiles) queryCache.invalidateQueries(['business:logo', business?.id]);
+    if (coverFiles) queryCache.invalidateQueries(['business:cover', business?.id]);
   };
 
-  /*const onDropLogoHandler = async (acceptedFiles: File[]) => {
-    const [file] = acceptedFiles;
-    const url = URL.createObjectURL(file);
-    hasLogoImage.current = false;
-    setLogoPreviewURL(url);
-  };*/
-
-  /*const onDropCoverHandler = async (acceptedFiles: File[]) => {
-    const [file] = acceptedFiles;
-    const url = URL.createObjectURL(file);
-    hasCoverImage.current = false;
-    setCoverPreviewURL(url);
-  };*/
-
-  const clearDropImages = (type: string) => {
+  const clearDropImages = React.useCallback((type: string) => {
     if (type === 'logo') {
       setLogoExists(false);
-      setLogoFile(null);
+      setLogoFiles(null);
     } else {
       setCoverExists(false);
-      setCoverFile(null);
+      setCoverFiles(null);
     }
-  };
+  }, []);
 
-  const getLogoFile = async (files: File[]) => {
+  const getLogoFiles = React.useCallback(async (files: File[]) => {
     setLogoExists(true);
-    setLogoFile(files);
-  };
+    setLogoFiles(files);
+  }, []);
 
-  const getCoverFile = async (files: File[]) => {
-    setCoverFile(files);
+  const getCoverFiles = React.useCallback(async (files: File[]) => {
+    setCoverFiles(files);
     setCoverExists(true);
-  };
+  }, []);
 
   // side effects
   React.useEffect(() => {
@@ -185,14 +175,12 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
         </Text>
         <ImageUploads
           mt="4"
-          width={200}
-          height={200}
-          //onDropFile={onDropLogoHandler}
+          width="200px"
+          height="200px"
           imageUrl={logo}
-          ratios={[1 / 1]}
-          resizedWidth={[240]}
-          //hasImage={hasLogoImage.current}
-          getImages={getLogoFile}
+          ratios={logoRatios}
+          resizedWidth={logoResizedWidth}
+          getImages={getLogoFiles}
           clearDrop={() => clearDropImages('logo')}
         />
         {/* cover image */}
@@ -207,13 +195,10 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
         <ImageUploads
           mt="4"
           width={breakpoint === 'base' ? 328 : breakpoint === 'md' ? 420 : 464}
-          height={breakpoint === 'base' ? 180 : breakpoint === 'md' ? 235 : 260}
-          //onDropFile={onDropCoverHandler}
           imageUrl={cover}
-          ratios={[14 / 5, 38 / 15]}
-          resizedWidth={[1008, 912]}
-          //hasImage={hasCoverImage.current}
-          getImages={getCoverFile}
+          ratios={coverRatios}
+          resizedWidth={coverResizedWidth}
+          getImages={getCoverFiles}
           clearDrop={() => clearDropImages('cover')}
         />
         {/* submit */}

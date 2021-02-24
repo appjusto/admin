@@ -13,6 +13,7 @@ import { CurrencyInput } from 'common/components/form/input/currency-input/Curre
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
 import { ImageUploads } from 'common/components/ImageUploads';
+import { productRatios, productResizedWidth } from 'common/imagesDimensions';
 import { useProductContext } from 'pages/menu/context/ProductContext';
 import React from 'react';
 import { Link, useHistory, useRouteMatch } from 'react-router-dom';
@@ -34,7 +35,6 @@ const initialState = {
   imageExists: false,
   //details
   categoryId: '',
-  previewURL: null, // remover
   imageFiles: null,
   isLoading: false,
   isEditing: false,
@@ -73,15 +73,12 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
     imageExists,
     //details
     categoryId,
-    previewURL, // remover
     imageFiles,
     isLoading,
     isEditing,
     saveSuccess,
   } = state;
   const inputRef = React.useRef<HTMLInputElement>(null);
-  //const canvasRef = React.useRef<HTMLCanvasElement>(null);
-  //const hasImage = React.useRef(false);
   //handlers
   const handleStateUpdate = (key: string, value: any) => {
     dispatch({ type: 'update_state', payload: { [key]: value } });
@@ -91,29 +88,20 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
     dispatch({ type: 'update_state', payload: initialState });
   };
 
-  const clearDropImages = () => {
-    //hasImage.current = false;
+  const clearDropImages = React.useCallback(() => {
     dispatch({
       type: 'update_state',
       payload: {
-        //previewURL: null,
         imageFiles: null,
         imageExists: false,
       },
     });
-  };
+  }, []);
 
-  /*const onDropHandler = React.useCallback(async (acceptedFiles: File[]) => {
-    const [file] = acceptedFiles;
-    const url = URL.createObjectURL(file);
-    hasImage.current = false;
-    handleStateUpdate('previewURL', url);
-  }, []);*/
-
-  const handleImageFiles = (files: File[]) => {
+  const handleImageFiles = React.useCallback((files: File[]) => {
     handleStateUpdate('imageFiles', files);
     handleStateUpdate('imageExists', true);
-  };
+  }, []);
 
   const onSave = () => {
     handleStateUpdate('isLoading', true);
@@ -162,13 +150,6 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
       push(newPath);
     }
   }, [isValid, path, push, url]);
-
-  /*React.useEffect(() => {
-    if (imageUrl) {
-      hasImage.current = true;
-      handleStateUpdate('previewURL', imageUrl);
-    }
-  }, [imageUrl]);*/
 
   React.useEffect(() => {
     if (product && productId !== 'new') {
@@ -271,20 +252,11 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
       <Text>
         {t('Recomendamos imagens na proporção retangular (16:9) com no mínimo 1280px de largura')}
       </Text>
-      {/*!hasImage.current && previewURL && (
-        <Text>
-          {t(
-            'Agora você pode ajustar a imagem - arrastando e aumentando/diminuindo o zoom, para os dois formatos necessários (retangular e quadrado)'
-          )}
-        </Text>
-          )*/}
       <ImageUploads
         mt={4}
-        //onDropFile={onDropHandler}
         imageUrl={imageUrl}
-        ratios={[7 / 5, 1 / 1]}
-        resizedWidth={[1008, 288]}
-        //hasImage={hasImage.current}
+        ratios={productRatios}
+        resizedWidth={productResizedWidth}
         getImages={handleImageFiles}
         clearDrop={clearDropImages}
       />

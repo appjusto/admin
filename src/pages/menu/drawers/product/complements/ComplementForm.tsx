@@ -4,6 +4,7 @@ import { CurrencyInput } from 'common/components/form/input/currency-input/Curre
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
 import { ImageUploads } from 'common/components/ImageUploads';
+import { complementsRatios, complementsResizedWidth } from 'common/imagesDimensions';
 import { useProductContext } from 'pages/menu/context/ProductContext';
 import React from 'react';
 import { t } from 'utils/i18n';
@@ -35,24 +36,14 @@ export const ComplementForm = ({
   const [imageExists, setImageExists] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
   const inputRef = React.useRef<HTMLInputElement>(null);
-  //const hasImage = React.useRef(false);
 
+  //handlers
   const getImageUrl = React.useCallback(async () => {
     const url = await getComplementImageUrl(complementId!);
     if (url) return setImageUrl(url);
   }, [complementId, getComplementImageUrl]);
 
-  //handlres
-  /*const onDropHandler = React.useCallback(async (acceptedFiles: File[]) => {
-    const [file] = acceptedFiles;
-    const url = URL.createObjectURL(file);
-    hasImage.current = false;
-    setPreviewURL(url);
-  }, []);*/
-
   const clearDropImages = () => {
-    //hasImage.current = false;
-    //setPreviewURL(null);
     setImageFile(null);
     setImageExists(false);
   };
@@ -99,6 +90,7 @@ export const ComplementForm = ({
     }
   }, [item?.imageExists, getImageUrl]);
 
+  //UI
   return (
     <form
       onSubmit={(ev) => {
@@ -111,11 +103,9 @@ export const ComplementForm = ({
           <ImageUploads
             width={86}
             height={86}
-            //onDropFile={onDropHandler}
             imageUrl={imageUrl}
-            ratios={[1 / 1]}
-            resizedWidth={[288]}
-            //hasImage={hasImage.current}
+            ratios={complementsRatios}
+            resizedWidth={complementsResizedWidth}
             getImages={getImageFiles}
             clearDrop={clearDropImages}
           />
