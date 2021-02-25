@@ -37,6 +37,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const [coverExists, setCoverExists] = React.useState(false);
   const [logoFiles, setLogoFiles] = React.useState<File[] | null>(null);
   const [coverFiles, setCoverFiles] = React.useState<File[] | null>(null);
+  const [isLoading, setIsLoading] = React.useState(false);
   // refs
   const nameRef = React.useRef<HTMLInputElement>(null);
   // queries & mutations
@@ -48,9 +49,10 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
     uploadCover,
     result,
   } = useBusinessProfile();
-  const { isLoading, isSuccess } = result;
+  const { isSuccess } = result;
   // handlers
   const onSubmitHandler = async () => {
+    setIsLoading(true);
     if (logoFiles) await uploadLogo(logoFiles[0]);
     if (coverFiles) await uploadCover(coverFiles);
     await updateBusinessProfile({
@@ -68,6 +70,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
     });
     if (logoFiles) queryCache.invalidateQueries(['business:logo', business?.id]);
     if (coverFiles) queryCache.invalidateQueries(['business:cover', business?.id]);
+    return setIsLoading(false);
   };
 
   const clearDropImages = React.useCallback((type: string) => {
@@ -174,6 +177,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
           )}
         </Text>
         <ImageUploads
+          key="logo"
           mt="4"
           width="200px"
           height="200px"
@@ -193,6 +197,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
           )}
         </Text>
         <ImageUploads
+          key="cover"
           mt="4"
           width={breakpoint === 'base' ? 328 : breakpoint === 'md' ? 420 : 464}
           imageUrl={cover}

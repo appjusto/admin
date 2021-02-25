@@ -94,14 +94,18 @@ export const getCroppedImg = async (
     // As Base64 string
     // return canvas.toDataURL('image/jpeg');
     // As a blob
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       canvas.toBlob(async (file) => {
-        const url = URL.createObjectURL(file);
-        const rsult = await getResizedImage(url, ratio, resizedWidth);
-        resolve(rsult);
-        //resolve(file);
+        try {
+          const url = URL.createObjectURL(file);
+          const rsult = await getResizedImage(url, ratio, resizedWidth);
+          resolve(rsult);
+        } catch (error) {
+          console.log('getCroppedImg Error', error);
+          reject(null);
+        }
       }, 'image/jpeg');
-    }).catch((error) => console.log(error));
+    });
   }
 };
 

@@ -73,6 +73,7 @@ export const ImageUploads = React.memo(
       if (imageUrl) {
         imageExists.current = true;
         setPreviewUrl(imageUrl);
+        setCroppedAreas([]);
       }
     }, [imageUrl]);
 
@@ -81,13 +82,18 @@ export const ImageUploads = React.memo(
         const getImageFiles = async (areas: CroppedAreaProps[]) => {
           let files = [] as File[];
           areas.forEach(async (area, index: number) => {
-            const file = await getCroppedImg(
-              previewUrl as string,
-              area,
-              ratios[index],
-              resizedWidth[index]
-            );
-            files.push(file as File);
+            try {
+              const file = await getCroppedImg(
+                previewUrl as string,
+                area,
+                ratios[index],
+                resizedWidth[index]
+              );
+              files.push(file as File);
+            } catch (error) {
+              console.log('forEach Error', error);
+              return null;
+            }
           });
           return getImages(files);
         };
