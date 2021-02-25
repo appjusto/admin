@@ -82,6 +82,8 @@ const fakeOrder: Order = {
   dispatchingState: 'matching',
 };
 
+export type localOrderType = { code: string; time: number };
+
 interface ContextProps {
   business: WithId<Business> | null | undefined;
   ordersByStatus: any;
@@ -153,7 +155,17 @@ export const OrdersContextProvider = (props: ProviderProps) => {
 
   // side effects
   React.useEffect(() => {
-    setOrders(hookOrders);
+    if (hookOrders) {
+      setOrders(hookOrders);
+      const storageItem = localStorage.getItem('appjusto-orders');
+      let localOrders: localOrderType[] = storageItem ? JSON.parse(storageItem) : [];
+      const localOrdersIds = localOrders.map((order) => order.code);
+      hookOrders.forEach((order) => {
+        if (!localOrdersIds.includes(order.id))
+          localOrders.push({ code: order.id, time: new Date().getTime() });
+      });
+      localStorage.setItem('appjusto-orders', JSON.stringify(localOrders));
+    }
   }, [hookOrders]);
 
   // provider

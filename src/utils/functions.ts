@@ -2,6 +2,7 @@ import { OrderItemComplement, OrderItem } from 'appjusto-types';
 import { itemPriceFormatter, formatDate } from './formatters';
 import { round } from 'lodash';
 import { CroppedAreaProps } from 'common/components/ImageCropping';
+import { localOrderType } from 'pages/orders/context';
 
 //date
 export const getDateTime = () => {
@@ -11,10 +12,20 @@ export const getDateTime = () => {
   return { date, time };
 };
 
-export const getTimeUntilNow = (created: firebase.firestore.Timestamp) => {
-  const start = created.toDate().getTime();
+export const getLocalStorageOrderTime = (orderId: string) => {
+  const localOrders = localStorage.getItem('appjusto-orders');
+  const localOrdersArray = localOrders ? JSON.parse(localOrders) : null;
+  console.log(localOrdersArray);
+  if (localOrdersArray) {
+    const order = localOrdersArray.find((item: localOrderType) => item.code === orderId);
+    return order ? order.time : null;
+  }
+  return null;
+};
+
+export const getTimeUntilNow = (created: number) => {
   const now = new Date().getTime();
-  const elapsedTime = (now - start) / 1000 / 60;
+  const elapsedTime = (now - created) / 1000 / 60;
   return round(elapsedTime, 0);
 };
 

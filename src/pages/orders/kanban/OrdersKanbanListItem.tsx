@@ -3,7 +3,7 @@ import { Order, WithId } from 'appjusto-types';
 import { ReactComponent as Alarm } from 'common/img/alarm_outlined.svg';
 import React from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
-import { getTimeUntilNow } from 'utils/functions';
+import { getLocalStorageOrderTime, getTimeUntilNow } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { useOrdersContext } from '../context';
 
@@ -32,23 +32,29 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
   const { url } = useRouteMatch();
   const { changeOrderStatus } = useOrdersContext();
   // state
-  const [elapsedTime, setElapsedTime] = React.useState(0);
+  const [elapsedTime, setElapsedTime] = React.useState<number | null>(0);
 
   // handlers
   const isCurrierArrived = order.dispatchingState === 'arrived-pickup';
   const wasDelivered = order.status === 'delivered';
 
   React.useEffect(() => {
+    const localOrderTime = getLocalStorageOrderTime(order.id);
     const setNewTime = () => {
-      let time = getTimeUntilNow(order?.createdOn as firebase.firestore.Timestamp);
-      setElapsedTime(time);
+      if (localOrderTime) {
+        let time = getTimeUntilNow(localOrderTime);
+        console.log(time);
+        setElapsedTime(time);
+      } else {
+        setElapsedTime(null);
+      }
     };
     setNewTime();
     const timeInterval = setInterval(setNewTime, 60000);
     if (order.status !== 'confirming') return clearInterval(timeInterval);
     return () => clearInterval(timeInterval);
-  }, [order.status]);
-
+  }, [order]);
+  console.log(elapsedTime);
   if (order.status === 'dispatching') {
     return (
       <Box
@@ -177,7 +183,15 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
           <Text fontSize="lg" fontWeight="700">
             #{order.code}
           </Text>
-          <Text fontSize="sm">{t(`${elapsedTime} min. atrás`)}</Text>
+          {elapsedTime !== null ? (
+            elapsedTime > 0 ? (
+              <Text fontSize="sm">{t(`${elapsedTime} min. atrás`)}</Text>
+            ) : (
+              <Text fontSize="sm">{t(`Agora`)}</Text>
+            )
+          ) : (
+            <Text fontSize="sm">{t(`Tempo não encontrado`)}</Text>
+          )}
         </Flex>
       </Box>
     </Link>

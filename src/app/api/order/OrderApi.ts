@@ -83,8 +83,7 @@ export default class OrderApi {
   }
 
   async createFakeOrder(order: Order) {
-    const result = await this.refs.getOrdersRef().add(order);
-    console.log(result);
+    return this.refs.getOrdersRef().add(order);
   }
 
   async updateOrder(orderId: string, changes: Partial<Order>) {
