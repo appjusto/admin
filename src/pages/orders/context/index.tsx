@@ -85,7 +85,7 @@ const fakeOrder: Order = {
 interface ContextProps {
   business: WithId<Business> | null | undefined;
   ordersByStatus: any;
-  getOrderById(id: string): any;
+  getOrderById(id: string): WithId<Order> | undefined;
   createFakeOrder(): void;
   changeOrderStatus(orderId: string, status: OrderStatus): void;
   fetchCancelOptions(): Promise<WithId<Issue>[]>;

@@ -55,10 +55,10 @@ export const OrderDrawer = (props: Props) => {
     <OrderBaseDrawer
       {...props}
       orderId={orderId}
-      orderCode={order?.code}
-      orderStatus={order?.status}
+      orderCode={order?.code ?? ''}
+      orderStatus={order?.status!}
       isCurrierArrived={isCurrierArrived}
-      client={order?.consumer.name}
+      client={order?.consumer?.name ?? ''}
       clientOrders={6}
       cancel={() => setIsCanceling(true)}
       isCanceling={isCanceling}
@@ -82,7 +82,7 @@ export const OrderDrawer = (props: Props) => {
               </Tr>
             </Thead>
             <Tbody>
-              {order?.items.map((item: OrderItem) => (
+              {order?.items?.map((item: OrderItem) => (
                 <React.Fragment key={item.product.id}>
                   <Tr key={item.product.id} color="black" fontSize="xs" fontWeight="700">
                     <Td>{item.product.name}</Td>
@@ -127,7 +127,7 @@ export const OrderDrawer = (props: Props) => {
           <Text mt="1" fontSize="md">
             {t('Método de pagamento:')}{' '}
             <Text as="span" color="black">
-              {order?.payment.paymentMethodId}
+              {order?.payment?.paymentMethodId}
             </Text>
           </Text>
           {order?.status === 'confirming' && (
