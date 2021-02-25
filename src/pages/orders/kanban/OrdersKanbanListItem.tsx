@@ -30,7 +30,7 @@ interface Props {
 export const OrdersKanbanListItem = ({ order }: Props) => {
   // context
   const { url } = useRouteMatch();
-  const { changeOrderStatus } = useOrdersContext();
+  const { business, changeOrderStatus } = useOrdersContext();
   // state
   const [elapsedTime, setElapsedTime] = React.useState<number | null>(0);
 
@@ -54,6 +54,16 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
     if (order.status !== 'confirming') return clearInterval(timeInterval);
     return () => clearInterval(timeInterval);
   }, [order]);
+
+  React.useEffect(() => {
+    const orderAcceptanceTime = business?.orderAcceptanceTime ?? null;
+    if (order?.status === 'confirming') {
+      if (elapsedTime && orderAcceptanceTime && orderAcceptanceTime <= elapsedTime) {
+        changeOrderStatus(order.id, 'preparing');
+      }
+    }
+  }, [elapsedTime]);
+
   console.log(elapsedTime);
   if (order.status === 'dispatching') {
     return (

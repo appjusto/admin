@@ -12,12 +12,12 @@ export const OrderAcceptanceBar = () => {
   const { updateBusinessProfile } = useBusinessProfile();
   const { createFakeOrder } = useOrdersContext();
   //state
-  const [minutes, setMinutes] = React.useState('5');
+  const [minutes, setMinutes] = React.useState<string>('5');
   const [isEditing, setIsEditing] = React.useState(false);
   const inputRef = React.useRef<HTMLInputElement>(null);
 
   const handleOnBlur = () => {
-    //save on business
+    updateBusinessProfile({ orderAcceptanceTime: parseInt(minutes) });
     setIsEditing(false);
   };
 
@@ -26,6 +26,10 @@ export const OrderAcceptanceBar = () => {
       inputRef.current?.focus();
     }
   }, [isEditing]);
+
+  React.useEffect(() => {
+    if (business?.orderAcceptanceTime) setMinutes(business?.orderAcceptanceTime.toString());
+  }, [business?.orderAcceptanceTime]);
 
   return (
     <HStack mt="6" spacing={4}>
