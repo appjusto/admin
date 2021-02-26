@@ -2,6 +2,7 @@ import { OrderItemComplement, OrderItem } from 'appjusto-types';
 import { itemPriceFormatter, formatDate } from './formatters';
 import { round } from 'lodash';
 import { CroppedAreaProps } from 'common/components/ImageCropping';
+import { localOrderType } from 'pages/orders/context';
 
 //date
 export const getDateTime = () => {
@@ -11,10 +12,20 @@ export const getDateTime = () => {
   return { date, time };
 };
 
-export const getTimeUntilNow = (created: firebase.firestore.Timestamp) => {
-  const start = created.toDate().getTime();
+export const getLocalStorageOrderTime = (orderId: string) => {
+  const localOrders = localStorage.getItem('appjusto-orders');
+  const localOrdersArray = localOrders ? JSON.parse(localOrders) : null;
+  console.log(localOrdersArray);
+  if (localOrdersArray) {
+    const order = localOrdersArray.find((item: localOrderType) => item.code === orderId);
+    return order ? order.time : null;
+  }
+  return null;
+};
+
+export const getTimeUntilNow = (created: number) => {
   const now = new Date().getTime();
-  const elapsedTime = (now - start) / 1000 / 60;
+  const elapsedTime = (now - created) / 1000 / 60;
   return round(elapsedTime, 0);
 };
 
@@ -60,7 +71,9 @@ const getRadianAngle = (degreeValue: number) => {
 export const getCroppedImg = async (
   imageSrc: string,
   pixelCrop: CroppedAreaProps,
-  rotation = 0
+  //rotation = 0,
+  ratio: number,
+  resizedWidth: number
 ) => {
   const image = (await createImage(imageSrc)) as HTMLImageElement;
   const canvas = document.createElement('canvas');
@@ -75,7 +88,7 @@ export const getCroppedImg = async (
   if (ctx) {
     // translate canvas context to a central location on image to allow rotating around the center.
     ctx.translate(safeArea / 2, safeArea / 2);
-    ctx.rotate(getRadianAngle(rotation));
+    ctx.rotate(getRadianAngle(0));
     ctx.translate(-safeArea / 2, -safeArea / 2);
     // draw rotated image and store data.
     ctx.drawImage(image, safeArea / 2 - image.width * 0.5, safeArea / 2 - image.height * 0.5);
@@ -92,6 +105,32 @@ export const getCroppedImg = async (
     // As Base64 string
     // return canvas.toDataURL('image/jpeg');
     // As a blob
+    return new Promise((resolve, reject) => {
+      canvas.toBlob(async (file) => {
+        try {
+          const url = URL.createObjectURL(file);
+          const rsult = await getResizedImage(url, ratio, resizedWidth);
+          resolve(rsult);
+        } catch (error) {
+          console.log('getCroppedImg Error', error);
+          reject(null);
+        }
+      }, 'image/jpeg');
+    });
+  }
+};
+
+export const getResizedImage = async (imageSrc: string, ratio: number, resizedWidth: number) => {
+  const image = (await createImage(imageSrc)) as HTMLImageElement;
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  const pixelRatio = window.devicePixelRatio;
+  canvas.width = resizedWidth * pixelRatio;
+  canvas.height = (resizedWidth / ratio) * pixelRatio;
+  if (ctx) {
+    ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(image, 0, 0, resizedWidth, resizedWidth / ratio);
     return new Promise((resolve) => {
       canvas.toBlob((file) => {
         resolve(file);

@@ -82,12 +82,15 @@ const fakeOrder: Order = {
   dispatchingState: 'matching',
 };
 
+export type localOrderType = { code: string; time: number };
+
 interface ContextProps {
   business: WithId<Business> | null | undefined;
   ordersByStatus: any;
-  getOrderById(id: string): any;
+  getOrderById(id: string): WithId<Order> | undefined;
   createFakeOrder(): void;
   changeOrderStatus(orderId: string, status: OrderStatus): void;
+  setOrderCookingTime(orderId: string, cookingTime: number | null): void;
   fetchCancelOptions(): Promise<WithId<Issue>[]>;
   cancelOrder(orderId: string, issue: WithId<Issue>): void;
 }
@@ -139,6 +142,10 @@ export const OrdersContextProvider = (props: ProviderProps) => {
     await api.order().updateOrder(orderId, { status });
   };
 
+  const setOrderCookingTime = async (orderId: string, cookingTime: number | null) => {
+    await api.order().updateOrder(orderId, { cookingTime });
+  };
+
   const fetchCancelOptions = React.useCallback(async () => {
     const options = await api.order().fetchIssues('restaurant-cancel');
     return options;
@@ -153,7 +160,17 @@ export const OrdersContextProvider = (props: ProviderProps) => {
 
   // side effects
   React.useEffect(() => {
-    setOrders(hookOrders);
+    if (hookOrders) {
+      setOrders(hookOrders);
+      const storageItem = localStorage.getItem('appjusto-orders');
+      let localOrders: localOrderType[] = storageItem ? JSON.parse(storageItem) : [];
+      const localOrdersIds = localOrders.map((order) => order.code);
+      hookOrders.forEach((order) => {
+        if (!localOrdersIds.includes(order.id))
+          localOrders.push({ code: order.id, time: new Date().getTime() });
+      });
+      localStorage.setItem('appjusto-orders', JSON.stringify(localOrders));
+    }
   }, [hookOrders]);
 
   // provider
@@ -165,6 +182,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
         getOrderById,
         createFakeOrder,
         changeOrderStatus,
+        setOrderCookingTime,
         fetchCancelOptions,
         cancelOrder,
       }}

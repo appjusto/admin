@@ -1,9 +1,10 @@
-import { Button, Flex, HStack, Text } from '@chakra-ui/react';
+import { Button, Flex, HStack, Text, VStack } from '@chakra-ui/react';
 import { Complement, WithId } from 'appjusto-types';
 import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput2';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
 import { ImageUploads } from 'common/components/ImageUploads';
+import { complementsRatios, complementsResizedWidth } from 'common/imagesDimensions';
 import { useProductContext } from 'pages/menu/context/ProductContext';
 import React from 'react';
 import { t } from 'utils/i18n';
@@ -30,40 +31,27 @@ export const ComplementForm = ({
   const [description, setDescription] = React.useState('');
   const [price, setPrice] = React.useState(0);
   const [externalId, setExternalId] = React.useState('');
-  const [previewURL, setPreviewURL] = React.useState<string | null>(null);
+  const [imageUrl, setImageUrl] = React.useState<string | null>(null);
   const [imageFile, setImageFile] = React.useState<File[] | null>(null);
   const [imageExists, setImageExists] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
   const inputRef = React.useRef<HTMLInputElement>(null);
-  const hasImage = React.useRef(false);
 
+  //handlers
   const getImageUrl = React.useCallback(async () => {
     const url = await getComplementImageUrl(complementId!);
-    if (url) return setPreviewURL(url);
+    if (url) return setImageUrl(url);
   }, [complementId, getComplementImageUrl]);
 
-  //handlres
-  const onDropHandler = React.useCallback(async (acceptedFiles: File[]) => {
-    const [file] = acceptedFiles;
-    const url = URL.createObjectURL(file);
-    //add file to imageFile
-    //setImageFile(file);
-    //add url to previewURL
-    setPreviewURL(url);
-    //setImageExists(true);
-  }, []);
-
-  const clearDropImages = () => {
-    hasImage.current = false;
-    setPreviewURL(null);
+  const clearDropImages = React.useCallback(() => {
     setImageFile(null);
     setImageExists(false);
-  };
+  }, []);
 
-  const handleCropImages = async (files: File[]) => {
+  const getImageFiles = React.useCallback(async (files: File[]) => {
     setImageFile(files);
     setImageExists(true);
-  };
+  }, []);
 
   const handleSave = async () => {
     setIsLoading(true);
@@ -74,7 +62,6 @@ export const ComplementForm = ({
       externalId,
       imageExists,
     };
-    console.dir(imageFile ? imageFile[0] : null);
     await onSaveComplement(
       groupId as string,
       complementId as string,
@@ -93,16 +80,17 @@ export const ComplementForm = ({
       setDescription(item.description ?? '');
       setPrice(item.price);
       setExternalId(item.externalId ?? '');
+      setImageExists(item.imageExists ?? false);
     }
   }, [item]);
 
   React.useEffect(() => {
     if (item?.imageExists) {
       getImageUrl();
-      hasImage.current = true;
     }
   }, [item?.imageExists, getImageUrl]);
 
+  //UI
   return (
     <form
       onSubmit={(ev) => {
@@ -110,16 +98,15 @@ export const ComplementForm = ({
         handleSave();
       }}
     >
-      <HStack spacing={4} alignItems="flex-start" p="4">
-        <Flex flexDir="column" maxW="24">
+      <VStack spacing={4} alignItems="flex-start" p="4">
+        <Flex flexDir="column">
           <ImageUploads
-            width="96px"
-            height="96px"
-            onDropFile={onDropHandler}
-            preview={previewURL}
-            ratios={[1 / 1]}
-            hasImage={hasImage.current}
-            onCropEnd={handleCropImages}
+            width="200px"
+            height="200px"
+            imageUrl={imageUrl}
+            ratios={complementsRatios}
+            resizedWidth={complementsResizedWidth}
+            getImages={getImageFiles}
             clearDrop={clearDropImages}
           />
           <Text mt="2" textAlign="center" fontSize="xs">
@@ -138,6 +125,7 @@ export const ComplementForm = ({
             handleChange={(ev) => setName(ev.target.value)}
           />
           <Textarea
+            mt="4"
             isRequired
             id="complements-item-description"
             label={t('Descrição do item')}
@@ -175,7 +163,7 @@ export const ComplementForm = ({
             </Button>
           </Flex>
         </Flex>
-      </HStack>
+      </VStack>
     </form>
   );
 };

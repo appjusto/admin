@@ -1,12 +1,12 @@
 import { Box, Flex, Icon, Input, InputGroup, InputRightElement } from '@chakra-ui/react';
 import { useContextBusinessId } from 'app/state/business/context';
 import { MenuProvider } from 'app/state/menu/context';
+import { CustomButton as Button } from 'common/components/buttons/CustomButton';
+import { ReactComponent as SearchIcon } from 'common/img/searchIcon.svg';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
-import { CustomButton as Button } from '../../common/components/buttons/CustomButton';
-import { ReactComponent as SearchIcon } from '../../common/img/searchIcon.svg';
 import { Categories } from './categories/Categories';
 import { CategoryDrawer } from './drawers/CategoryDrawer';
 import { ProductDrawer } from './drawers/ProductDrawer';

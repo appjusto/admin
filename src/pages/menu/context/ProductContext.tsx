@@ -6,6 +6,7 @@ import { useContextBusinessId } from 'app/state/business/context';
 import { useContextMenu } from 'app/state/menu/context';
 import { Complement, ComplementGroup, Ordering, Product, WithId } from 'appjusto-types';
 import React from 'react';
+import { useQueryCache } from 'react-query';
 import { useParams } from 'react-router-dom';
 
 interface Params {
@@ -50,7 +51,7 @@ export const ProductContextProvider = (props: ProviderProps) => {
   const businessId = useContextBusinessId();
   const { ordering, updateMenuOrdering } = useContextMenu();
   const { productId } = useParams<Params>();
-  const { product, isValid, imageUrl } = useProduct(businessId, productId);
+  const { product, isValid, imageUrl } = useProduct(businessId, productId, '1008x720');
   const { groups, complements } = useObserveComplements(
     businessId!,
     productId,
@@ -59,6 +60,7 @@ export const ProductContextProvider = (props: ProviderProps) => {
   const sortedGroups = menu.getSorted(groups, complements, product?.complementsOrder);
   const contextCategoryId = menu.getParentId(ordering, productId);
   const productConfig = product?.complementsOrder ?? menu.empty();
+  const queryCache = useQueryCache();
 
   const onSaveProduct = (
     productData: Partial<Product>,
@@ -80,6 +82,7 @@ export const ProductContextProvider = (props: ProviderProps) => {
         if (categoryId) {
           updateMenuOrdering(menu.updateParent(ordering, productId, categoryId!));
         }
+        queryCache.invalidateQueries(['product:image', productId]);
         return productId;
       }
     })();

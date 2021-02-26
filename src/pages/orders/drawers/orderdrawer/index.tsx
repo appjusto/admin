@@ -8,8 +8,8 @@ import { t } from 'utils/i18n';
 import { useOrdersContext } from '../../context';
 import { OrderBaseDrawer } from '../OrderBaseDrawer';
 import { Cancelation } from './Cancelation';
+import { CookingTime } from './CookingTime';
 import { DeliveryInfos } from './DeliveryInfos';
-import { PreparationTime } from './PreparationTime';
 
 export const Pendency = () => {
   return (
@@ -38,7 +38,6 @@ export const OrderDrawer = (props: Props) => {
 
   const isCurrierArrived = order?.dispatchingState === 'arrived-pickup';
   // state
-  const [preparationTime, setPreparationTime] = React.useState<string | undefined>(undefined);
   const [isCanceling, setIsCanceling] = React.useState(false);
   const orderTotalPrice = getOrderTotalPriceToDisplay(order?.items || []);
   // handlers
@@ -55,10 +54,10 @@ export const OrderDrawer = (props: Props) => {
     <OrderBaseDrawer
       {...props}
       orderId={orderId}
-      orderCode={order?.code}
-      orderStatus={order?.status}
+      orderCode={order?.code ?? ''}
+      orderStatus={order?.status!}
       isCurrierArrived={isCurrierArrived}
-      client={order?.consumer.name}
+      client={order?.consumer?.name ?? ''}
       clientOrders={6}
       cancel={() => setIsCanceling(true)}
       isCanceling={isCanceling}
@@ -82,7 +81,7 @@ export const OrderDrawer = (props: Props) => {
               </Tr>
             </Thead>
             <Tbody>
-              {order?.items.map((item: OrderItem) => (
+              {order?.items?.map((item: OrderItem) => (
                 <React.Fragment key={item.product.id}>
                   <Tr key={item.product.id} color="black" fontSize="xs" fontWeight="700">
                     <Td>{item.product.name}</Td>
@@ -127,14 +126,11 @@ export const OrderDrawer = (props: Props) => {
           <Text mt="1" fontSize="md">
             {t('Método de pagamento:')}{' '}
             <Text as="span" color="black">
-              {order?.payment.paymentMethodId}
+              {order?.payment?.paymentMethodId}
             </Text>
           </Text>
           {order?.status === 'confirming' && (
-            <PreparationTime
-              preparationTime={preparationTime}
-              notifyParentWithTime={(time) => setPreparationTime(time)}
-            />
+            <CookingTime orderId={order.id} cookingTime={order.cookingTime} />
           )}
         </>
       )}

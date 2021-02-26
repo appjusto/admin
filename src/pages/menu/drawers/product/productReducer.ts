@@ -13,7 +13,6 @@ export interface StateProps {
   imageExists: boolean;
   //details
   categoryId: string;
-  previewURL: string | null;
   imageFiles: File[] | null;
   isLoading: boolean;
   isEditing: boolean;

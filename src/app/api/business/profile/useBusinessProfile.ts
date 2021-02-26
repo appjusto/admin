@@ -9,12 +9,12 @@ export const useBusinessProfile = () => {
   const api = useContextApi();
   const businessId = useContextBusinessId()!;
   const queryCache = useQueryCache();
-
   // queries
   const getBusinessLogoURL = (key: string) => api.business().getBusinessLogoURL(businessId);
   const { data: logo } = useQuery(['business:logo', businessId], getBusinessLogoURL);
 
-  const getBusinessCoverURL = (key: string) => api.business().getBusinessCoverURL(businessId);
+  const getBusinessCoverURL = (key: string) =>
+    api.business().getBusinessCoverURL(businessId, '1008x360');
   const { data: cover } = useQuery(['business:cover', businessId], getBusinessCoverURL);
 
   // mutations
@@ -22,17 +22,13 @@ export const useBusinessProfile = () => {
     api.business().updateBusinessProfile(businessId, changes)
   );
   const [uploadLogo, uploadLogoResult] = useMutation((file: File) => {
-    api.business().updateBusinessProfile(businessId, { logoExists: false });
+    //api.business().updateBusinessProfile(businessId, { logoExists: false });
     return api.business().uploadBusinessLogo(businessId, file);
   });
-  const [uploadCover, uploadCoverResult] = useMutation((file: File) => {
-    api.business().updateBusinessProfile(businessId, { coverImageExists: false });
-    return api.business().uploadBusinessCover(businessId, file);
+  const [uploadCover, uploadCoverResult] = useMutation((files: File[]) => {
+    //api.business().updateBusinessProfile(businessId, { coverImageExists: false });
+    return api.business().uploadBusinessCover(businessId, files);
   });
-
-  //without mutations
-  //const getLogoUrl = async () => await api.business().getBusinessLogoURL(businessId);
-  //const getCoverUrl = async () => await api.business().getBusinessCoverURL(businessId);
 
   const { isSuccess: uploadSuccess } = uploadLogoResult;
   React.useEffect(() => {

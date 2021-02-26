@@ -15,6 +15,7 @@ import {
   Flex,
   Text,
 } from '@chakra-ui/react';
+import { OrderStatus } from 'appjusto-types';
 import { getErrorMessage } from 'core/fb';
 import React from 'react';
 import { t } from 'utils/i18n';
@@ -24,7 +25,7 @@ import { Pendency } from './orderdrawer';
 interface BaseDrawerProps {
   orderId: string;
   orderCode: string;
-  orderStatus: string;
+  orderStatus: OrderStatus;
   isCurrierArrived: boolean;
   client: string;
   clientOrders: number;

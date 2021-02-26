@@ -13,7 +13,7 @@ export const useCategory = (id: string) => {
   const categoryId = idRef.current;
 
   // queries
-  const fetchCategory = (key: string) => api.business().fetchCategory(businessId, categoryId);
+  const fetchCategory = () => api.business().fetchCategory(businessId, categoryId);
   const fetchResult = useQuery(['category', categoryId], fetchCategory, { enabled: !isNew });
 
   // mutations

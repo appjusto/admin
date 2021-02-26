@@ -17,14 +17,17 @@ interface CroppingProps extends BoxProps {
 }
 
 export const ImageCropping = ({ index, image, ratio, onCropEnd, ...props }: CroppingProps) => {
+  // state
   const [crop, setCrop] = React.useState({ x: 0, y: 0 });
   const [zoom, setZoom] = React.useState(1);
+  // handlers
   const onCropComplete = React.useCallback(
     (croppedArea, croppedAreaPixels) => {
       onCropEnd(index, croppedAreaPixels);
     },
-    [index]
+    [index, onCropEnd]
   );
+  // UI
   return (
     <Box {...props}>
       <Box>
