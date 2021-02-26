@@ -3,6 +3,7 @@ import Container from 'common/components/Container';
 import React from 'react';
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import { OrdersContextProvider } from './context';
+import { OrderAcceptanceTimeDrawer } from './drawers/OrderAcceptanceTimeDrawer';
 import { OrderDrawer } from './drawers/orderdrawer';
 import { OrdersKanban } from './kanban/OrdersKanban';
 import { OrdersHeader } from './OrdersHeader';
@@ -20,6 +21,9 @@ const OrdersPage = () => {
         </Container>
       </Box>
       <Switch>
+        <Route exact path={`${path}/acceptance-time`}>
+          <OrderAcceptanceTimeDrawer isOpen onClose={closeDrawerHandler} />
+        </Route>
         <Route path={`${path}/:orderId`}>
           <OrderDrawer isOpen onClose={closeDrawerHandler} />
         </Route>

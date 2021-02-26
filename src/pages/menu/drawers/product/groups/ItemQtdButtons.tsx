@@ -1,7 +1,7 @@
 import { Box, Button, ButtonProps, Flex, Text } from '@chakra-ui/react';
 
 interface ItemsQtdButtonsProps extends ButtonProps {
-  label: string;
+  label?: string;
   value: number;
   increment(): void;
   decrement(): void;
@@ -20,7 +20,7 @@ export const ItemsQtdButtons = ({
   const boxProps = { mt, mb, ml, mr };
   return (
     <Box {...boxProps}>
-      <Text>{label}</Text>
+      {label && <Text>{label}</Text>}
       <Flex flexDir="row" alignItems="center">
         <Button maxW="48px" fontSize="3xl" variant="outline" onClick={decrement}>
           -

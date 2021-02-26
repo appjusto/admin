@@ -1,14 +1,16 @@
-import { Box, Stack, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, Stack, Text } from '@chakra-ui/react';
+import { ReactComponent as EditIcon } from 'common/img/edit-icon.svg';
 import React from 'react';
+import { Link, useRouteMatch } from 'react-router-dom';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { useOrdersContext } from '../context';
-import { OrderAcceptanceBar } from './OrderAcceptanceBar';
 import { OrdersKanbanList } from './OrdersKanbanList';
 
 export const OrdersKanban = () => {
   // context
-  const { ordersByStatus } = useOrdersContext();
+  const { path } = useRouteMatch();
+  const { business, ordersByStatus } = useOrdersContext();
   // state
   const [dateTime, setDateTime] = React.useState('');
   // side effects
@@ -28,7 +30,24 @@ export const OrdersKanban = () => {
           {dateTime}
         </Text>
       </Text>
-      <OrderAcceptanceBar />
+      <Flex mt="4" alignItems="center">
+        <Text mr="4" fontSize="sm" fontWeight="700" color="black">
+          {t('Aceitar pedidos automaticamente:')}
+        </Text>
+        <Link to={`${path}/acceptance-time`}>
+          <Button
+            variant="outline"
+            minW="130px"
+            size="sm"
+            borderColor="#F2F6EA"
+            fontWeight="700"
+            color="black"
+          >
+            <EditIcon style={{ borderBottom: '1px solid black' }} />
+            <Text ml="4">{business?.orderAcceptanceTime + ' minutos' ?? t('Não aceitar')}</Text>
+          </Button>
+        </Link>
+      </Flex>
       <Stack direction={['column', 'column', 'row']} mt="8" spacing="4">
         <OrdersKanbanList
           title={t('Pedidos à confirmar')}
