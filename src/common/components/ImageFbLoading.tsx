@@ -1,6 +1,10 @@
 import { Flex, FlexProps, Spinner } from '@chakra-ui/react';
 
-export const ImageFbLoading = (props: FlexProps) => {
+interface ImageFbProps extends FlexProps {
+  spinnerSize?: string;
+}
+
+export const ImageFbLoading = ({ spinnerSize = 'sm', ...props }: ImageFbProps) => {
   return (
     <Flex
       bg="gray.50"
@@ -11,7 +15,7 @@ export const ImageFbLoading = (props: FlexProps) => {
       alignItems="center"
       {...props}
     >
-      <Spinner />
+      <Spinner size={spinnerSize} />
     </Flex>
   );
 };
