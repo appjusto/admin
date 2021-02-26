@@ -1,6 +1,6 @@
 import { Flex, Radio, RadioGroup, Switch, Text } from '@chakra-ui/react';
 import { CustomNumberInput } from 'common/components/form/input/CustomNumberInput';
-import { useOrdersContext } from 'pages/orders/context';
+//import { useOrdersContext } from 'pages/orders/context';
 import React from 'react';
 import { t } from 'utils/i18n';
 import { Pendency } from './index';
@@ -14,7 +14,7 @@ const radioOptions = ['5', '10', '15', '20', '30', '45'];
 
 export const CookingTime = ({ orderId, cookingTime }: CookingTimeProps) => {
   // context
-  const { setOrderCookingTime } = useOrdersContext();
+  //const { setOrderCookingTime } = useOrdersContext();
   //state
   const [enable, setEnable] = React.useState(false);
   const [inputTime, setInputTime] = React.useState('');
@@ -24,7 +24,25 @@ export const CookingTime = ({ orderId, cookingTime }: CookingTimeProps) => {
     let time = parseInt(inputTime);
     if (!isNaN(time)) {
       time = time * 60;
-      setOrderCookingTime(orderId, time);
+      //setOrderCookingTime(orderId, time);
+    }
+  };
+
+  const handleEnable = (status: boolean) => {
+    if (!status) {
+      //setOrderCookingTime(orderId, null);
+      setRadiosValue('15');
+      setInputTime('');
+    }
+    setEnable(status);
+  };
+
+  const handleRadios = (value: string) => {
+    if (value !== '0') {
+      const time = parseInt(value) * 60;
+      //setOrderCookingTime(orderId, time);
+    } else {
+      setInputTime('');
     }
   };
 
@@ -39,20 +57,8 @@ export const CookingTime = ({ orderId, cookingTime }: CookingTimeProps) => {
         setRadiosValue('0');
         return setInputTime(timeInMinutes);
       }
-    } else {
-      setEnable(false);
     }
   }, [cookingTime]);
-
-  React.useEffect(() => {
-    if (!enable) return setOrderCookingTime(orderId, null);
-    if (radiosValue !== '0') {
-      const time = parseInt(radiosValue) * 60;
-      setOrderCookingTime(orderId, time);
-    } else {
-      setInputTime('');
-    }
-  }, [enable, radiosValue]);
 
   //UI
   return (
@@ -62,7 +68,7 @@ export const CookingTime = ({ orderId, cookingTime }: CookingTimeProps) => {
           isChecked={enable}
           onChange={(ev) => {
             ev.stopPropagation();
-            setEnable(ev.target.checked);
+            handleEnable(ev.target.checked);
           }}
         />
         <Text ml="4" fontSize="xl" color="black">
@@ -77,7 +83,7 @@ export const CookingTime = ({ orderId, cookingTime }: CookingTimeProps) => {
       </Text>
       {enable && (
         <RadioGroup
-          onChange={(value) => setRadiosValue(value.toString())}
+          onChange={(value) => handleRadios(value.toString())}
           value={radiosValue}
           defaultValue="15"
           colorScheme="green"
