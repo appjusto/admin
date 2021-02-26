@@ -1,5 +1,5 @@
 import { BankAccount, Business, Category, Product, WithId } from 'appjusto-types';
-import { Complement, ComplementGroup, Ordering } from 'appjusto-types/menu';
+import { Complement, ComplementGroup, Ordering } from 'appjusto-types';
 import firebase from 'firebase/app';
 import { documentAs, documentsAs } from '../../../core/fb';
 import FilesApi from '../FilesApi';
