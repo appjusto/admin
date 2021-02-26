@@ -43,7 +43,6 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
     const setNewTime = () => {
       if (localOrderTime) {
         let time = getTimeUntilNow(localOrderTime);
-        console.log(time);
         setElapsedTime(time);
       } else {
         setElapsedTime(null);
@@ -53,11 +52,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
     const timeInterval = setInterval(setNewTime, 60000);
     if (order.status !== 'confirming') return clearInterval(timeInterval);
     return () => clearInterval(timeInterval);
-<<<<<<< HEAD
-  }, [order.status, order.createdOn]);
-=======
-  }, [order]);
->>>>>>> e9ae9547c080ef833b15c37dc883ff266b871bc7
+  }, [order.status]);
 
   React.useEffect(() => {
     const orderAcceptanceTime = business?.orderAcceptanceTime;
