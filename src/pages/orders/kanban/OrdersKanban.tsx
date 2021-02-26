@@ -30,7 +30,7 @@ export const OrdersKanban = () => {
   // side effects
   React.useEffect(() => {
     const { date, time } = getDateTime();
-    setDateTime(`${date} ${time}`);
+    setDateTime(`${date} às ${time}`);
   }, [ordersByStatus]);
   // UI
   return (
