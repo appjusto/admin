@@ -47,7 +47,11 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
     const timeInterval = setInterval(setNewTime, 60000);
     if (order.status !== 'confirming') return clearInterval(timeInterval);
     return () => clearInterval(timeInterval);
+<<<<<<< HEAD
   }, [order.status, order.createdOn]);
+=======
+  }, [order]);
+>>>>>>> e9ae9547c080ef833b15c37dc883ff266b871bc7
 
   if (order.status === 'dispatching') {
     return (

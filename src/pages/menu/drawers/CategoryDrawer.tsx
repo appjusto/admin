@@ -49,7 +49,7 @@ export const CategoryDrawer = (props: Props) => {
   const onDeleteHandler = () => {
     (async () => {
       updateMenuOrdering(menu.removeFirstLevel(ordering, id));
-      await deleteCategory(menu.getSecondLevelIds(ordering, id));
+      await deleteCategory();
       props.onClose();
     })();
   };
