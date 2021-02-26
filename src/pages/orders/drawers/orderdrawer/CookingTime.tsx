@@ -1,6 +1,6 @@
 import { Flex, Radio, RadioGroup, Switch, Text } from '@chakra-ui/react';
 import { CustomNumberInput } from 'common/components/form/input/CustomNumberInput';
-//import { useOrdersContext } from 'pages/orders/context';
+import { useOrdersContext } from 'pages/orders/context';
 import React from 'react';
 import { t } from 'utils/i18n';
 import { Pendency } from './index';
@@ -14,33 +14,37 @@ const radioOptions = ['5', '10', '15', '20', '30', '45'];
 
 export const CookingTime = ({ orderId, cookingTime }: CookingTimeProps) => {
   // context
-  //const { setOrderCookingTime } = useOrdersContext();
+  const { setOrderCookingTime } = useOrdersContext();
   //state
   const [enable, setEnable] = React.useState(false);
   const [inputTime, setInputTime] = React.useState('');
-  const [radiosValue, setRadiosValue] = React.useState('15');
+  const [radiosValue, setRadiosValue] = React.useState('20');
   //handlers
   const onInputTimeBlur = () => {
     let time = parseInt(inputTime);
     if (!isNaN(time)) {
       time = time * 60;
-      //setOrderCookingTime(orderId, time);
+      setOrderCookingTime(orderId, time);
     }
   };
 
   const handleEnable = (status: boolean) => {
-    if (!status) {
-      //setOrderCookingTime(orderId, null);
-      setRadiosValue('15');
-      setInputTime('');
-    }
     setEnable(status);
+    if (!status) {
+      setOrderCookingTime(orderId, null);
+      setInputTime('');
+    } else {
+      setRadiosValue('20');
+      setOrderCookingTime(orderId, 1200);
+    }
   };
 
   const handleRadios = (value: string) => {
+    console.log();
+    setRadiosValue(value);
     if (value !== '0') {
       const time = parseInt(value) * 60;
-      //setOrderCookingTime(orderId, time);
+      setOrderCookingTime(orderId, time);
     } else {
       setInputTime('');
     }
