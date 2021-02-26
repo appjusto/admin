@@ -56,7 +56,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
   }, [order]);
 
   React.useEffect(() => {
-    const orderAcceptanceTime = business?.orderAcceptanceTime ?? null;
+    const orderAcceptanceTime = business?.orderAcceptanceTime;
     if (order?.status === 'confirming') {
       if (elapsedTime && orderAcceptanceTime && orderAcceptanceTime <= elapsedTime) {
         changeOrderStatus(order.id, 'preparing');
