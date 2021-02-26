@@ -66,6 +66,22 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
   const cepRef = React.useRef<HTMLInputElement>(null);
   const numberRef = React.useRef<HTMLInputElement>(null);
 
+  // handlers
+  const onSubmitHandler = async () => {
+    await updateBusinessProfile({
+      businessAddress: {
+        cep,
+        address: logradouro,
+        number,
+        city: localidade,
+        state: uf,
+        additional,
+        latlng: geocodingResult,
+      },
+      deliveryRange: safeParseInt(deliveryRange, defaultRadius) * 1000,
+    });
+  };
+
   // side effects
   // initial focus
   React.useEffect(() => {
@@ -77,7 +93,7 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
       if (business.businessAddress?.cep) setCEP(business.businessAddress.cep);
       if (business.businessAddress?.number) setNumber(business.businessAddress.number);
       if (business.businessAddress?.additional) setAdditional(business.businessAddress.additional);
-      if (business.deliveryRange) setDeliveryRange(String(business.deliveryRange));
+      if (business.deliveryRange) setDeliveryRange(String(business.deliveryRange / 1000));
     }
   }, [business]);
   // after postal lookup, change focus to number input
@@ -102,21 +118,6 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
     }
   }, [range, deliveryRange]);
 
-  // handlers
-  const onSubmitHandler = async () => {
-    await updateBusinessProfile({
-      businessAddress: {
-        cep,
-        address: logradouro,
-        number,
-        city: localidade,
-        state: uf,
-        additional,
-        latlng: geocodingResult,
-      },
-      deliveryRange: safeParseInt(deliveryRange, defaultRadius),
-    });
-  };
   // UI
   if (isSuccess && redirect) return <Redirect to={redirect} push />;
   return (

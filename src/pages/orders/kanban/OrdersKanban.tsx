@@ -23,7 +23,7 @@ import { OrdersKanbanList } from './OrdersKanbanList';
 export const OrdersKanban = () => {
   // context
   const { path } = useRouteMatch();
-  const { business, ordersByStatus } = useOrdersContext();
+  const { business, ordersByStatus, createFakeOrder } = useOrdersContext();
   // state
   const [dateTime, setDateTime] = React.useState('');
   const [orderSearch, setOrderSearch] = React.useState('');
@@ -62,6 +62,7 @@ export const OrdersKanban = () => {
             </Link>
           </Flex>
         </Flex>
+        <Button onClick={createFakeOrder}>Criar Ordem</Button>
         <Flex flexDir="column" alignItems="flex-end">
           <HStack spacing={4}>
             <InputGroup maxW="360px">
