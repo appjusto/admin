@@ -64,7 +64,6 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
     }
   }, [elapsedTime]);
 
-  console.log(elapsedTime);
   if (order.status === 'dispatching') {
     return (
       <Box

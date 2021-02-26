@@ -24,6 +24,9 @@ export const OrdersKanban = () => {
       <Text fontSize="3xl" fontWeight="700" color="black">
         {t('Gerenciador de pedidos')}
       </Text>
+      <Text mb="2" fontSize="xl" lineHeight="26px" color="black">
+        {business?.name}
+      </Text>
       <Text fontSize="sm" color="grey.700">
         {t('Dados atualizados em ')}
         <Text as="span" letterSpacing="0.2px">
