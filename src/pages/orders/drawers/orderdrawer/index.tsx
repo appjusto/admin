@@ -8,8 +8,8 @@ import { t } from 'utils/i18n';
 import { useOrdersContext } from '../../context';
 import { OrderBaseDrawer } from '../OrderBaseDrawer';
 import { Cancelation } from './Cancelation';
+import { CookingTime } from './CookingTime';
 import { DeliveryInfos } from './DeliveryInfos';
-import { PreparationTime } from './PreparationTime';
 
 export const Pendency = () => {
   return (
@@ -38,7 +38,6 @@ export const OrderDrawer = (props: Props) => {
 
   const isCurrierArrived = order?.dispatchingState === 'arrived-pickup';
   // state
-  const [preparationTime, setPreparationTime] = React.useState<string | undefined>(undefined);
   const [isCanceling, setIsCanceling] = React.useState(false);
   const orderTotalPrice = getOrderTotalPriceToDisplay(order?.items || []);
   // handlers
@@ -131,10 +130,7 @@ export const OrderDrawer = (props: Props) => {
             </Text>
           </Text>
           {order?.status === 'confirming' && (
-            <PreparationTime
-              preparationTime={preparationTime}
-              notifyParentWithTime={(time) => setPreparationTime(time)}
-            />
+            <CookingTime orderId={order.id} cookingTime={order.cookingTime} />
           )}
         </>
       )}

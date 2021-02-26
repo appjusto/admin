@@ -1,39 +1,68 @@
 import { Flex, Radio, RadioGroup, Switch, Text } from '@chakra-ui/react';
 import { CustomNumberInput } from 'common/components/form/input/CustomNumberInput';
+import { useOrdersContext } from 'pages/orders/context';
 import React from 'react';
 import { t } from 'utils/i18n';
 import { Pendency } from './index';
 
-interface PreparationTimeProps {
-  preparationTime: string | undefined;
-  notifyParentWithTime(time: string): void;
+interface CookingTimeProps {
+  orderId: string;
+  cookingTime?: number | null;
 }
 
-export const PreparationTime = ({
-  preparationTime,
-  notifyParentWithTime,
-}: PreparationTimeProps) => {
+const radioOptions = ['5', '10', '15', '20', '30', '45'];
+
+export const CookingTime = ({ orderId, cookingTime }: CookingTimeProps) => {
+  // context
+  const { setOrderCookingTime } = useOrdersContext();
   //state
-  const [hasPreparationTime, setHasPreparationTime] = React.useState(false);
+  const [enable, setEnable] = React.useState(false);
+  const [inputTime, setInputTime] = React.useState('');
   const [radiosValue, setRadiosValue] = React.useState('15');
   //handlers
+  const onInputTimeBlur = () => {
+    let time = parseInt(inputTime);
+    if (!isNaN(time)) {
+      time = time * 60;
+      setOrderCookingTime(orderId, time);
+    }
+  };
 
   //side effects
   React.useEffect(() => {
-    if (hasPreparationTime && radiosValue !== '0') {
-      notifyParentWithTime(radiosValue);
+    if (cookingTime) {
+      setEnable(true);
+      const timeInMinutes = (cookingTime / 60).toString();
+      if (radioOptions.includes(timeInMinutes)) {
+        return setRadiosValue(timeInMinutes);
+      } else {
+        setRadiosValue('0');
+        return setInputTime(timeInMinutes);
+      }
+    } else {
+      setEnable(false);
     }
-  }, [notifyParentWithTime, hasPreparationTime, radiosValue]);
+  }, [cookingTime]);
+
+  React.useEffect(() => {
+    if (!enable) return setOrderCookingTime(orderId, null);
+    if (radiosValue !== '0') {
+      const time = parseInt(radiosValue) * 60;
+      setOrderCookingTime(orderId, time);
+    } else {
+      setInputTime('');
+    }
+  }, [enable, radiosValue]);
 
   //UI
   return (
     <>
       <Flex mt="10" flexDir="row">
         <Switch
-          isChecked={hasPreparationTime}
+          isChecked={enable}
           onChange={(ev) => {
             ev.stopPropagation();
-            setHasPreparationTime(ev.target.checked);
+            setEnable(ev.target.checked);
           }}
         />
         <Text ml="4" fontSize="xl" color="black">
@@ -46,7 +75,7 @@ export const PreparationTime = ({
           'Ao definir o tempo de preparo, quando finalizado esse tempo, o pedido será automaticamente movido para ”Aguardando retirada”.'
         )}
       </Text>
-      {hasPreparationTime && (
+      {enable && (
         <RadioGroup
           onChange={(value) => setRadiosValue(value.toString())}
           value={radiosValue}
@@ -54,24 +83,11 @@ export const PreparationTime = ({
           colorScheme="green"
         >
           <Flex flexDir="column" justifyContent="flex-start">
-            <Radio mt="4" value="5" size="lg">
-              {t('5 minutos')}
-            </Radio>
-            <Radio mt="4" value="10" size="lg">
-              {t('10 minutos')}
-            </Radio>
-            <Radio mt="4" value="15" size="lg">
-              {t('15 minutos')}
-            </Radio>
-            <Radio mt="4" value="20" size="lg">
-              {t('20 minutos')}
-            </Radio>
-            <Radio mt="4" value="30" size="lg">
-              {t('30 minutos')}
-            </Radio>
-            <Radio mt="4" value="45" size="lg">
-              {t('45 minutos')}
-            </Radio>
+            {radioOptions.map((option) => (
+              <Radio key={option} mt="4" value={option} size="lg">
+                {t(`${option} minutos`)}
+              </Radio>
+            ))}
             <Flex mt="2" flexDir="row" alignItems="center">
               <Radio w="360px" value="0" size="lg">
                 {t('Definir manualmente')}
@@ -83,8 +99,9 @@ export const PreparationTime = ({
                   maxW="200px"
                   id="order-manual-minutes"
                   label={t('Tempo de preparo (minutos)')}
-                  value={preparationTime ?? '0'}
-                  onChange={(ev) => notifyParentWithTime(ev.target.value)}
+                  value={inputTime ?? '0'}
+                  onChange={(ev) => setInputTime(ev.target.value)}
+                  onBlur={onInputTimeBlur}
                 />
               )}
             </Flex>

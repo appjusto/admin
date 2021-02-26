@@ -90,6 +90,7 @@ interface ContextProps {
   getOrderById(id: string): WithId<Order> | undefined;
   createFakeOrder(): void;
   changeOrderStatus(orderId: string, status: OrderStatus): void;
+  setOrderCookingTime(orderId: string, cookingTime: number | null): void;
   fetchCancelOptions(): Promise<WithId<Issue>[]>;
   cancelOrder(orderId: string, issue: WithId<Issue>): void;
 }
@@ -141,6 +142,10 @@ export const OrdersContextProvider = (props: ProviderProps) => {
     await api.order().updateOrder(orderId, { status });
   };
 
+  const setOrderCookingTime = async (orderId: string, cookingTime: number | null) => {
+    await api.order().updateOrder(orderId, { cookingTime });
+  };
+
   const fetchCancelOptions = React.useCallback(async () => {
     const options = await api.order().fetchIssues('restaurant-cancel');
     return options;
@@ -177,6 +182,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
         getOrderById,
         createFakeOrder,
         changeOrderStatus,
+        setOrderCookingTime,
         fetchCancelOptions,
         cancelOrder,
       }}
