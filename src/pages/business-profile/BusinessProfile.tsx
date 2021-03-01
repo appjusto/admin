@@ -30,7 +30,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   // state
   const [name, setName] = React.useState(business?.name ?? '');
   const [cnpj, setCNPJ] = React.useState(business?.cnpj ?? '');
-  const [cuisineId, setCuisineId] = React.useState(business?.cuisine?.id ?? '');
+  const [cuisineName, setCuisineName] = React.useState(business?.cuisine ?? '');
   const [description, setDescription] = React.useState(business?.description ?? '');
   const [minimumOrder, setMinimumOrder] = React.useState(business?.minimumOrder ?? 0);
   const [logoExists, setLogoExists] = React.useState(false);
@@ -60,11 +60,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
       cnpj,
       description,
       minimumOrder,
-      cuisine: {
-        id: cuisineId,
-        name: '',
-        imagePath: '',
-      },
+      cuisine: cuisineName,
       logoExists: logoExists,
       coverImageExists: coverExists,
     });
@@ -103,7 +99,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
       if (business.cnpj) setCNPJ(business.cnpj);
       if (business.description) setDescription(business.description);
       if (business.minimumOrder) setMinimumOrder(business.minimumOrder);
-      if (business.cuisine?.id) setCuisineId(business.cuisine.id);
+      if (business.cuisine) setCuisineName(business.cuisine);
       if (business.logoExists && logo) setLogoExists(true);
       if (business.coverImageExists && cover) setCoverExists(true);
     }
@@ -147,8 +143,8 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
         />
         <CuisineSelect
           isRequired
-          value={cuisineId}
-          onChange={(ev) => setCuisineId(ev.target.value)}
+          value={cuisineName}
+          onChange={(ev) => setCuisineName(ev.target.value)}
         />
         <Textarea
           isRequired
