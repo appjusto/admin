@@ -121,7 +121,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
         p="4"
         borderRadius="lg"
         borderColor={isCurrierArrived ? 'black' : 'gray'}
-        borderWidth="1px"
+        borderWidth={isCurrierArrived ? '2px' : '1px'}
         color="black"
         boxShadow="0px 8px 16px -4px rgba(105,118,103,0.1)"
       >
@@ -172,7 +172,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
         p="4"
         borderRadius="lg"
         borderColor="black"
-        borderWidth="1px"
+        borderWidth="2px"
         color="black"
         boxShadow="0px 8px 16px -4px rgba(105,118,103,0.1)"
       >
@@ -221,7 +221,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
         bg="green.300"
         borderRadius="lg"
         borderColor="black"
-        borderWidth="1px"
+        borderWidth="2px"
         color="black"
         cursor="pointer"
       >
