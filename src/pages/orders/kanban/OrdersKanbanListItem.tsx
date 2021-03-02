@@ -63,16 +63,40 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
     }
   }, [elapsedTime]);
 
+  if (order.status === 'canceled') {
+    console.log(order);
+    return (
+      <Box
+        px="4"
+        py="2"
+        borderRadius="lg"
+        borderColor="gray"
+        borderWidth="1px"
+        color="gray"
+        boxShadow="0px 8px 16px -4px rgba(105,118,103,0.1)"
+      >
+        <Flex justifyContent="space-between" alignItems="center">
+          <CodeLink url={url} orderId={order.id} code={order.code} />
+          <Flex flexDir="column" color="gray.700" fontSize="xs" alignItems="flex-end">
+            <Text fontWeight="500">{t('Cancelado por')}</Text>
+            <Text fontWeight="700">{t('Cliente')}</Text>
+          </Flex>
+        </Flex>
+      </Box>
+    );
+  }
+
   if (order.status === 'dispatching') {
     return (
       <Box
         px="4"
         py={wasDelivered ? '3' : '2'}
         borderRadius="lg"
-        borderColor={wasDelivered ? 'gray' : 'black'}
+        borderColor="gray"
         borderWidth="1px"
         color={wasDelivered ? 'gray' : 'black'}
         bgColor={wasDelivered ? 'gray.500' : 'white'}
+        boxShadow="0px 8px 16px -4px rgba(105,118,103,0.1)"
       >
         <Flex justifyContent="space-between" alignItems="center">
           <CodeLink url={url} orderId={order.id} code={order.code} />
@@ -81,7 +105,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
               <Text fontWeight="700">{t('Pedido entregue')}</Text>
             ) : (
               <>
-                <Text fontWeight="700">{t('Entregador à caminho')}</Text>
+                <Text fontWeight="700">{t('Pedido à caminho')}</Text>
                 <Text fontWeight="500">{t('Aprox. 10 minutos')}</Text>
               </>
             )}
@@ -93,7 +117,14 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
 
   if (order.status === 'ready') {
     return (
-      <Box p="4" borderRadius="lg" borderColor="black" borderWidth="1px" color="black">
+      <Box
+        p="4"
+        borderRadius="lg"
+        borderColor={isCurrierArrived ? 'black' : 'gray'}
+        borderWidth="1px"
+        color="black"
+        boxShadow="0px 8px 16px -4px rgba(105,118,103,0.1)"
+      >
         <Flex flexDir="column" fontWeight="700">
           <Flex justifyContent="space-between">
             <CodeLink url={url} orderId={order.id} code={order.code} />
@@ -104,7 +135,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
                     {t('Entregador no local')}
                   </Text>
                   <Text color="black" fontWeight="500">
-                    {t('Nome: João')}
+                    {t('Nome: ') + order.courier?.name}
                   </Text>
                 </>
               ) : (
@@ -137,7 +168,14 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
 
   if (order.status === 'preparing') {
     return (
-      <Box p="4" borderRadius="lg" borderColor="black" borderWidth="1px" color="black">
+      <Box
+        p="4"
+        borderRadius="lg"
+        borderColor="black"
+        borderWidth="1px"
+        color="black"
+        boxShadow="0px 8px 16px -4px rgba(105,118,103,0.1)"
+      >
         <Flex flexDir="column" fontWeight="700">
           <Flex justifyContent="space-between">
             <CodeLink url={url} orderId={order.id} code={order.code} />

@@ -128,13 +128,13 @@ export const OrdersKanban = () => {
           )}
         />
         <OrdersKanbanList
-          title={t('Aguardando retirada')}
-          orders={ordersByStatus['ready']}
+          title={t('Retirada/entrega')}
+          orders={[...ordersByStatus['ready'], ...ordersByStatus['dispatching']]}
           details={t('Aqui você verá os pedidos aguardando retirada pelo entregador.')}
         />
         <OrdersKanbanList
-          title={t('À caminho')}
-          orders={ordersByStatus['dispatching']}
+          title={t('Pedidos cancelados')}
+          orders={ordersByStatus['canceled']}
           details={t('Aqui você verá os pedidos que estão à caminho da entrega pela entregador.')}
         />
       </Stack>
