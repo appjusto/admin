@@ -1,4 +1,4 @@
-import { OrderItemComplement, OrderItem } from 'appjusto-types';
+import { OrderItemComplement, OrderItem, Order, WithId } from 'appjusto-types';
 import { itemPriceFormatter, formatDate } from './formatters';
 import { round } from 'lodash';
 import { CroppedAreaProps } from 'common/components/ImageCropping';
@@ -12,15 +12,52 @@ export const getDateTime = () => {
   return { date, time };
 };
 
+// Orders times
+export const updateLocalStorageOrders = (orders: WithId<Order>[]) => {
+  const filteredOrders = orders
+    .filter((order) => order.status === 'confirming' || order.status === 'preparing')
+    .map((order) => order.id);
+  const storageItem = localStorage.getItem('appjusto-orders');
+  const localOrders: localOrderType[] = storageItem ? JSON.parse(storageItem) : [];
+
+  const localOrdersIds = localOrders.map((order) => order.code);
+
+  filteredOrders.forEach((orderId) => {
+    if (!localOrdersIds.includes(orderId))
+      localOrders.push({ code: orderId, time: new Date().getTime() });
+  });
+
+  const filteredLocalOrder = localOrders.filter((item) => filteredOrders.includes(item.code));
+  console.log(filteredLocalOrder);
+  localStorage.setItem('appjusto-orders', JSON.stringify(filteredLocalOrder));
+};
+
 export const getLocalStorageOrderTime = (orderId: string) => {
   const localOrders = localStorage.getItem('appjusto-orders');
   const localOrdersArray = localOrders ? JSON.parse(localOrders) : null;
-  console.log(localOrdersArray);
   if (localOrdersArray) {
     const order = localOrdersArray.find((item: localOrderType) => item.code === orderId);
     return order ? order.time : null;
   }
   return null;
+};
+
+export const updateLocalStorageOrderTime = (orderId: string) => {
+  const localOrders = localStorage.getItem('appjusto-orders');
+  const localOrdersArray = localOrders ? JSON.parse(localOrders) : null;
+  console.log(localOrdersArray);
+  if (localOrdersArray) {
+    const newArray = localOrdersArray.map((item: localOrderType) => {
+      if (item.code === orderId)
+        return {
+          ...item,
+          time: new Date().getTime(),
+        };
+    });
+    localStorage.setItem('appjusto-orders', JSON.stringify(newArray));
+    return true;
+  }
+  return false;
 };
 
 export const getTimeUntilNow = (created: number) => {

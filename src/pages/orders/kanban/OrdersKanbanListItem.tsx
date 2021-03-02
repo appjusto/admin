@@ -3,7 +3,11 @@ import { Order, WithId } from 'appjusto-types';
 import { ReactComponent as Alarm } from 'common/img/alarm_outlined.svg';
 import React from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
-import { getLocalStorageOrderTime, getTimeUntilNow } from 'utils/functions';
+import {
+  getLocalStorageOrderTime,
+  getTimeUntilNow,
+  updateLocalStorageOrderTime,
+} from 'utils/functions';
 import { t } from 'utils/i18n';
 import { useOrdersContext } from '../context';
 
@@ -37,6 +41,8 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
   // handlers
   const isCurrierArrived = order.dispatchingState === 'arrived-pickup';
   const wasDelivered = order.status === 'delivered';
+  const cookingTime = order?.cookingTime ? order?.cookingTime / 60 : null;
+  const cookingProgress = cookingTime && elapsedTime ? (elapsedTime / cookingTime) * 100 : 0;
 
   React.useEffect(() => {
     const localOrderTime = getLocalStorageOrderTime(order.id);
@@ -50,7 +56,8 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
     };
     setNewTime();
     const timeInterval = setInterval(setNewTime, 60000);
-    if (order.status !== 'confirming') return clearInterval(timeInterval);
+    if (order.status !== 'confirming' && order.status !== 'preparing')
+      return clearInterval(timeInterval);
     return () => clearInterval(timeInterval);
   }, [order.status]);
 
@@ -59,12 +66,16 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
     if (order?.status === 'confirming') {
       if (elapsedTime && orderAcceptanceTime && orderAcceptanceTime <= elapsedTime) {
         changeOrderStatus(order.id, 'preparing');
+        updateLocalStorageOrderTime(order.id);
+      }
+    } else if (order?.status === 'preparing') {
+      if (elapsedTime && cookingTime && elapsedTime >= cookingTime) {
+        changeOrderStatus(order.id, 'dispatching');
       }
     }
   }, [elapsedTime]);
 
   if (order.status === 'canceled') {
-    console.log(order);
     return (
       <Box
         px="4"
@@ -183,10 +194,10 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
               <HStack spacing={2}>
                 <HStack spacing={1}>
                   <Alarm />
-                  <Text fontSize="xs">10 min</Text>
+                  <Text fontSize="xs">{elapsedTime} min</Text>
                 </HStack>
                 <Text fontSize="xs" color="gray.700">
-                  15 min
+                  {cookingTime} min
                 </Text>
               </HStack>
               <Progress
@@ -194,7 +205,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
                 ml="22px"
                 w="80px"
                 size="sm"
-                value={66}
+                value={cookingProgress}
                 colorScheme="green"
                 borderRadius="lg"
               />

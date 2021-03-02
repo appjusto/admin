@@ -5,6 +5,7 @@ import { useContextBusiness } from 'app/state/business/context';
 import { Business, Issue, Order, OrderItem, OrderStatus, WithId } from 'appjusto-types';
 import { IuguInvoice } from 'appjusto-types/payment/iugu';
 import React from 'react';
+import { updateLocalStorageOrders } from 'utils/functions';
 
 const fakeItem = (price: number, qtd: number): OrderItem => {
   return {
@@ -162,14 +163,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   React.useEffect(() => {
     if (hookOrders) {
       setOrders(hookOrders);
-      const storageItem = localStorage.getItem('appjusto-orders');
-      let localOrders: localOrderType[] = storageItem ? JSON.parse(storageItem) : [];
-      const localOrdersIds = localOrders.map((order) => order.code);
-      hookOrders.forEach((order) => {
-        if (!localOrdersIds.includes(order.id))
-          localOrders.push({ code: order.id, time: new Date().getTime() });
-      });
-      localStorage.setItem('appjusto-orders', JSON.stringify(localOrders));
+      updateLocalStorageOrders(hookOrders);
     }
   }, [hookOrders]);
 
