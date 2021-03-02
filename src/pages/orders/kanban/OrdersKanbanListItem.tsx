@@ -39,6 +39,10 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
   const [elapsedTime, setElapsedTime] = React.useState<number | null>(0);
 
   // handlers
+  const isUnmatched = order.dispatchingState
+    ? ['idle', 'matching', 'unmatched', 'no-match'].includes(order.dispatchingState)
+    : true;
+  console.log(order.dispatchingState, isUnmatched);
   const isCurrierArrived = order.dispatchingState === 'arrived-pickup';
   const wasDelivered = order.status === 'delivered';
   const cookingTime = order?.cookingTime ? order?.cookingTime / 60 : null;
@@ -70,7 +74,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
       }
     } else if (order?.status === 'preparing') {
       if (elapsedTime && cookingTime && elapsedTime >= cookingTime) {
-        changeOrderStatus(order.id, 'dispatching');
+        changeOrderStatus(order.id, 'ready');
       }
     }
   }, [elapsedTime]);
@@ -140,7 +144,11 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
           <Flex justifyContent="space-between">
             <CodeLink url={url} orderId={order.id} code={order.code} />
             <Flex flexDir="column" fontSize="xs" alignItems="flex-end">
-              {isCurrierArrived ? (
+              {isUnmatched ? (
+                <Text color="gray.700" fontWeight="700">
+                  {t('Buscando entregador')}
+                </Text>
+              ) : isCurrierArrived ? (
                 <>
                   <Text color="black" fontWeight="700">
                     {t('Entregador no local')}
