@@ -129,9 +129,10 @@ export const OrderDrawer = (props: Props) => {
               {order?.payment?.paymentMethodId}
             </Text>
           </Text>
-          {order?.status === 'confirming' && (
-            <CookingTime orderId={order.id} cookingTime={order.cookingTime} />
-          )}
+          {order?.status === 'confirming' ||
+            (order?.status === 'preparing' && (
+              <CookingTime orderId={order.id} cookingTime={order.cookingTime} />
+            ))}
         </>
       )}
     </OrderBaseDrawer>

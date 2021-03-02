@@ -191,13 +191,13 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
           <Flex justifyContent="space-between">
             <CodeLink url={url} orderId={order.id} code={order.code} />
             <Flex flexDir="column">
-              <HStack spacing={2}>
+              <HStack spacing={2} justifyContent="space-between">
                 <HStack spacing={1}>
                   <Alarm />
                   <Text fontSize="xs">{elapsedTime} min</Text>
                 </HStack>
                 <Text fontSize="xs" color="gray.700">
-                  {cookingTime} min
+                  {cookingTime ? `${cookingTime} min` : 'N/I'}
                 </Text>
               </HStack>
               <Progress
