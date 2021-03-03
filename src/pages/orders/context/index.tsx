@@ -52,18 +52,6 @@ const fakeOrder: Order = {
   },
   origin: {
     address: {
-      main: 'Rua bom pastor, 1485',
-      description: '',
-    },
-    additionalInfo: '',
-    intructions: '',
-    location: {
-      latitude: -8.0502761,
-      longitude: -34.9413061,
-    },
-  },
-  destination: {
-    address: {
       main: 'Rua João Ivo da Silva, 453',
       description: '',
     },
@@ -74,13 +62,25 @@ const fakeOrder: Order = {
       longitude: -34.9115396,
     },
   },
+  destination: {
+    address: {
+      main: 'Rua bom pastor, 1485',
+      description: '',
+    },
+    additionalInfo: '',
+    intructions: '',
+    location: {
+      latitude: -8.0502801,
+      longitude: -34.9396646,
+    },
+  },
   route: {
     distance: 4500, // in meters
     duration: 14 * 60, // in seconds
     polyline: '',
     issue: null,
   },
-  dispatchingState: 'matching',
+  dispatchingState: 'idle',
 };
 
 export type localOrderType = { code: string; time: number };

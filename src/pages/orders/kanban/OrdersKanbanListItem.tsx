@@ -42,11 +42,17 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
   const isUnmatched = order.dispatchingState
     ? ['idle', 'matching', 'unmatched', 'no-match'].includes(order.dispatchingState)
     : true;
-  console.log(order.dispatchingState, isUnmatched);
   const isCurrierArrived = order.dispatchingState === 'arrived-pickup';
   const wasDelivered = order.status === 'delivered';
   const cookingTime = order?.cookingTime ? order?.cookingTime / 60 : null;
   const cookingProgress = cookingTime && elapsedTime ? (elapsedTime / cookingTime) * 100 : 0;
+
+  const courierArrivalTime = order.origin?.estimatedTimeOfArrival; // + calculos
+  // @ts-ignore
+  console.log(courierArrivalTime);
+  const orderArrivalTime = order.destination?.estimatedTimeOfArrival; // + calculos
+  // @ts-ignore
+  console.log(orderArrivalTime);
 
   React.useEffect(() => {
     const localOrderTime = getLocalStorageOrderTime(order.id);

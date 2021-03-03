@@ -8,7 +8,11 @@ import { localOrderType } from 'pages/orders/context';
 export const getDateTime = () => {
   let fullDate = new Date();
   let date = formatDate(fullDate);
-  let time = `${fullDate.getHours()}:${fullDate.getMinutes()}`;
+  let minutes = fullDate.getMinutes().toString();
+  console.log('antes', minutes);
+  if (minutes.length === 1) minutes = `0${minutes}`;
+  console.log('depois', minutes);
+  let time = `${fullDate.getHours()}:${minutes}`;
   return { date, time };
 };
 
@@ -28,7 +32,6 @@ export const updateLocalStorageOrders = (orders: WithId<Order>[]) => {
   });
 
   const filteredLocalOrder = localOrders.filter((item) => filteredOrders.includes(item.code));
-  console.log(filteredLocalOrder);
   localStorage.setItem('appjusto-orders', JSON.stringify(filteredLocalOrder));
 };
 
