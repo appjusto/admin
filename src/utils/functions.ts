@@ -9,9 +9,7 @@ export const getDateTime = () => {
   let fullDate = new Date();
   let date = formatDate(fullDate);
   let minutes = fullDate.getMinutes().toString();
-  console.log('antes', minutes);
   if (minutes.length === 1) minutes = `0${minutes}`;
-  console.log('depois', minutes);
   let time = `${fullDate.getHours()}:${minutes}`;
   return { date, time };
 };
@@ -63,8 +61,13 @@ export const updateLocalStorageOrderTime = (orderId: string) => {
   return false;
 };
 
-export const getTimeUntilNow = (created: number) => {
+export const getTimeUntilNow = (created: number, reverse: boolean = false) => {
   const now = new Date().getTime();
+  if (reverse) {
+    let elapsedTime = (created - now) / 1000 / 60;
+    if (elapsedTime < 0) elapsedTime = 0;
+    return round(elapsedTime, 0);
+  }
   const elapsedTime = (now - created) / 1000 / 60;
   return round(elapsedTime, 0);
 };
