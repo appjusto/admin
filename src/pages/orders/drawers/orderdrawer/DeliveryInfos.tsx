@@ -22,6 +22,7 @@ export const DeliveryInfos = ({ order }: DeliveryInfosProps) => {
 
   const { googleMapsApiKey } = getConfig().api;
   const center = { lat: -8.0623939, lng: -34.8728223 };
+  const isCurrierArrived = order.dispatchingState === 'arrived-pickup';
 
   // side effects
   React.useEffect(() => {
@@ -39,21 +40,21 @@ export const DeliveryInfos = ({ order }: DeliveryInfosProps) => {
     <Box mt="6">
       <Flex justifyContent="space-between" alignItems="center">
         <Text fontSize="xl" color="black">
-          {t('Entregador à caminho da retirada')}
+          {isCurrierArrived ? t('Entregador no local') : t('Entregador à caminho da retirada')}
         </Text>
-        {!arrivalTime && arrivalTime !== 0 ? (
-          <Text fontSize="sm">{t('Buscando entregador')}</Text>
-        ) : arrivalTime > 0 ? (
-          <Text fontSize="sm">
-            {t(
-              `Chega em aproximadamente ${
-                arrivalTime > 1 ? arrivalTime + ' minutos' : arrivalTime + ' minuto'
-              }`
-            )}
-          </Text>
-        ) : (
-          <Text fontSize="sm">{t(`Chega em menos de 1 minuto`)}</Text>
-        )}
+        {!isCurrierArrived &&
+          arrivalTime &&
+          (arrivalTime > 0 ? (
+            <Text fontSize="sm">
+              {t(
+                `Chega em aproximadamente ${
+                  arrivalTime > 1 ? arrivalTime + ' minutos' : arrivalTime + ' minuto'
+                }`
+              )}
+            </Text>
+          ) : (
+            <Text fontSize="sm">{t(`Chega em menos de 1 minuto`)}</Text>
+          ))}
       </Flex>
       <Flex mt="4" justifyContent="space-between" alignItems="flex-end">
         <Flex alignItems="center" justifyContent="flex-end">
