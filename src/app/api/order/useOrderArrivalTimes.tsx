@@ -13,7 +13,6 @@ export const useOrderArrivalTimes = (order: WithId<Order>) => {
   const handleArrivalTime = React.useCallback((baseTime: firebase.firestore.Timestamp) => {
     if (baseTime) {
       const newTime = getTimeUntilNow(baseTime.toMillis(), true);
-      console.log(newTime);
       setArrivalTime(newTime);
     }
   }, []);

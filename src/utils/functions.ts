@@ -181,3 +181,24 @@ export const getResizedImage = async (imageSrc: string, ratio: number, resizedWi
     });
   }
 };
+
+// geo
+type latLng = {
+  lat: number;
+  lng: number;
+};
+export const getCoordinatesMidpoint = (origin: latLng, destination: latLng) => {
+  try {
+    let midLat =
+      origin.lat > destination.lat
+        ? (origin.lat - destination.lat) / 2 + destination.lat
+        : (destination.lat - origin.lat) / 2 + origin.lat;
+    let midLng =
+      origin.lng > destination.lng
+        ? (origin.lng - destination.lng) / 2 + destination.lng
+        : (destination.lng - origin.lng) / 2 + origin.lng;
+    return { lat: midLat, lng: midLng };
+  } catch {
+    return undefined;
+  }
+};
