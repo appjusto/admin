@@ -1,6 +1,7 @@
 import { Box, Button, Circle, Flex, Image, Text } from '@chakra-ui/react';
 import { getConfig } from 'app/api/config';
 import { useCourierProfilePicture } from 'app/api/courier/useCourierProfilePicture';
+import { useOrderArrivalTimes } from 'app/api/order/useOrderArrivalTimes';
 import { Order, WithId } from 'appjusto-types';
 import { coordsFromLatLnt, SaoPauloCoords } from 'core/api/thirdparty/maps/utils';
 import GoogleMapReact from 'google-map-react';
@@ -15,6 +16,7 @@ interface DeliveryInfosProps {
 export const DeliveryInfos = ({ order }: DeliveryInfosProps) => {
   // context
   const courierPictureUrl = useCourierProfilePicture(order.courier?.id);
+  const arrivalTime = useOrderArrivalTimes(order);
   // state
   const [joined, setJoined] = React.useState<string | null>(null);
 
@@ -39,10 +41,19 @@ export const DeliveryInfos = ({ order }: DeliveryInfosProps) => {
         <Text fontSize="xl" color="black">
           {t('Entregador à caminho da retirada')}
         </Text>
-        <Text fontSize="sm">
-          {t('Chega em aproximadamente 10 minutos')}
-          <Pendency />
-        </Text>
+        {!arrivalTime && arrivalTime !== 0 ? (
+          <Text fontSize="sm">{t('Buscando entregador')}</Text>
+        ) : arrivalTime > 0 ? (
+          <Text fontSize="sm">
+            {t(
+              `Chega em aproximadamente ${
+                arrivalTime > 1 ? arrivalTime + ' minutos' : arrivalTime + ' minuto'
+              }`
+            )}
+          </Text>
+        ) : (
+          <Text fontSize="sm">{t(`Chega em menos de 1 minuto`)}</Text>
+        )}
       </Flex>
       <Flex mt="4" justifyContent="space-between" alignItems="flex-end">
         <Flex alignItems="center" justifyContent="flex-end">

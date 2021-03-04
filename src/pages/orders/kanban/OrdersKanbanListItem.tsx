@@ -1,4 +1,5 @@
 import { Box, Button, Flex, HStack, Progress, Text } from '@chakra-ui/react';
+import { useOrderArrivalTimes } from 'app/api/order/useOrderArrivalTimes';
 import { Order, WithId } from 'appjusto-types';
 import { ReactComponent as Alarm } from 'common/img/alarm_outlined.svg';
 import React from 'react';
@@ -35,9 +36,10 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
   // context
   const { url } = useRouteMatch();
   const { business, changeOrderStatus } = useOrdersContext();
+  const arrivalTime = useOrderArrivalTimes(order);
+
   // state
   const [elapsedTime, setElapsedTime] = React.useState<number | null>(0);
-  const [arrivalTime, setArrivalTime] = React.useState<number | null>(null);
 
   // handlers
   const isUnmatched = order.dispatchingState
@@ -47,18 +49,6 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
   const wasDelivered = order.status === 'delivered';
   const cookingTime = order?.cookingTime ? order?.cookingTime / 60 : null;
   const cookingProgress = cookingTime && elapsedTime ? (elapsedTime / cookingTime) * 100 : 0;
-
-  const courierArrivalTime = order.origin?.estimatedTimeOfArrival as firebase.firestore.Timestamp;
-  const orderArrivalTime = order.destination
-    ?.estimatedTimeOfArrival as firebase.firestore.Timestamp;
-
-  const handleArrivalTime = React.useCallback((baseTime: firebase.firestore.Timestamp) => {
-    if (baseTime) {
-      const newTime = getTimeUntilNow(baseTime.toMillis(), true);
-      console.log(newTime);
-      setArrivalTime(newTime);
-    }
-  }, []);
 
   // side effects
   React.useEffect(() => {
@@ -91,18 +81,6 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
       }
     }
   }, [elapsedTime]);
-
-  React.useEffect(() => {
-    let arrivalInterval: NodeJS.Timeout;
-    if (order.status === 'ready' && order.dispatchingState === 'going-pickup') {
-      arrivalInterval = setInterval(() => handleArrivalTime(courierArrivalTime), 60000);
-      handleArrivalTime(courierArrivalTime);
-    } else if (order.status === 'dispatching') {
-      arrivalInterval = setInterval(() => handleArrivalTime(orderArrivalTime), 60000);
-      handleArrivalTime(orderArrivalTime);
-    }
-    return () => clearInterval(arrivalInterval);
-  }, [order.status, order.dispatchingState, handleArrivalTime]);
 
   // UI
   if (order.status === 'canceled') {
@@ -149,7 +127,11 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
                 <Text fontWeight="700">{t('Pedido à caminho')}</Text>
                 {arrivalTime && arrivalTime > 0 ? (
                   <Text color="gray.700" fontWeight="500">
-                    {t(`Aprox. ${arrivalTime} minutos`)}
+                    {t(
+                      `Aprox. ${
+                        arrivalTime > 1 ? arrivalTime + ' minutos' : arrivalTime + ' minuto'
+                      }`
+                    )}
                   </Text>
                 ) : (
                   <Text color="gray.700" fontWeight="500">
@@ -198,7 +180,11 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
                   </Text>
                   {arrivalTime && arrivalTime > 0 ? (
                     <Text color="gray.700" fontWeight="500">
-                      {t(`Aprox. ${arrivalTime} minutos`)}
+                      {t(
+                        `Aprox. ${
+                          arrivalTime > 1 ? arrivalTime + ' minutos' : arrivalTime + ' minuto'
+                        }`
+                      )}
                     </Text>
                   ) : (
                     <Text color="gray.700" fontWeight="500">
