@@ -109,6 +109,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   const api = useContextApi();
   const business = useContextBusiness();
   const hookOrders = useOrders(options, business!.id);
+
   //state
   const [orders, setOrders] = React.useState<WithId<Order>[]>([]);
   const ordersByStatus = splitByStatus(orders);

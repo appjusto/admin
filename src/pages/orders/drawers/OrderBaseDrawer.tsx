@@ -16,8 +16,10 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { OrderStatus } from 'appjusto-types';
+import { CustomButton } from 'common/components/buttons/CustomButton';
 import { getErrorMessage } from 'core/fb';
 import React from 'react';
+import { useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { useOrdersContext } from '../context';
 import { Pendency } from './orderdrawer';
@@ -54,6 +56,7 @@ export const OrderBaseDrawer = ({
   ...props
 }: BaseDrawerProps) => {
   //context
+  const { path } = useRouteMatch();
   const { changeOrderStatus } = useOrdersContext();
 
   //handlers
@@ -80,24 +83,37 @@ export const OrderBaseDrawer = ({
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
       <DrawerOverlay>
         <DrawerContent>
-          <DrawerCloseButton />
+          <DrawerCloseButton bg="green.500" mr="12px" _focus={{ outline: 'none' }} />
           <DrawerHeader pb="2">
-            <Text color="black" fontSize="2xl" fontWeight="700" lineHeight="28px" mb="2">
-              {t('Pedido Nº')} {orderCode}
-            </Text>
-            <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
-              {t('Nome do cliente:')}{' '}
-              <Text as="span" color="black" fontWeight="700">
-                {client}
-              </Text>
-            </Text>
-            <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
-              {t('Nº de pedidos no restaurante:')}{' '}
-              <Text as="span" color="black" fontWeight="700">
-                {clientOrders}
-              </Text>
-              <Pendency />
-            </Text>
+            <Flex justifyContent="space-between" alignItems="flex-end">
+              <Flex flexDir="column">
+                <Text color="black" fontSize="2xl" fontWeight="700" lineHeight="28px" mb="2">
+                  {t('Pedido Nº')} {orderCode}
+                </Text>
+                <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
+                  {t('Nome do cliente:')}{' '}
+                  <Text as="span" color="black" fontWeight="700">
+                    {client}
+                    <Pendency />
+                  </Text>
+                </Text>
+                <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
+                  {t('Nº de pedidos no restaurante:')}{' '}
+                  <Text as="span" color="black" fontWeight="700">
+                    {clientOrders}
+                  </Text>
+                  <Pendency />
+                </Text>
+              </Flex>
+              <Flex flexDir="column">
+                <CustomButton
+                  label="Abrir chat com o cliente"
+                  link={`/app/orders`}
+                  size="md"
+                  variant="outline"
+                />
+              </Flex>
+            </Flex>
           </DrawerHeader>
           <DrawerBody pb="28">
             {children}

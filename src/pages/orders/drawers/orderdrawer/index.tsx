@@ -68,7 +68,9 @@ export const OrderDrawer = (props: Props) => {
         <Cancelation handleConfirm={handleCancel} handleKeep={() => setIsCanceling(false)} />
       ) : (
         <>
-          {(order?.status === 'ready' || order?.status === 'dispatching') && <DeliveryInfos />}
+          {(order?.status === 'ready' || order?.status === 'dispatching') && (
+            <DeliveryInfos order={order} />
+          )}
           <Text mt="6" fontSize="xl" color="black">
             {t('Detalhes do pedido')}
           </Text>
@@ -91,7 +93,7 @@ export const OrderDrawer = (props: Props) => {
                   {item.complements &&
                     item.complements.map((complement) => (
                       <Tr key={complement.complementId} fontSize="xs">
-                        <Td>{complement.complementId}</Td>
+                        <Td>{complement.name}</Td>
                         <Td isNumeric>1</Td>
                         <Td isNumeric>{itemPriceFormatter(complement.price)}</Td>
                       </Tr>
@@ -127,6 +129,7 @@ export const OrderDrawer = (props: Props) => {
             {t('Método de pagamento:')}{' '}
             <Text as="span" color="black">
               {order?.payment?.paymentMethodId}
+              <Pendency />
             </Text>
           </Text>
           {(order?.status === 'confirming' || order?.status === 'preparing') && (
