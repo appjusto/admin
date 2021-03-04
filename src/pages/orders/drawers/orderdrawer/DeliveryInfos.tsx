@@ -1,8 +1,8 @@
 import { Box, Button, Circle, Flex, Image, Text } from '@chakra-ui/react';
-import polyline from '@mapbox/polyline';
 import { getConfig } from 'app/api/config';
 import { useCourierProfilePicture } from 'app/api/courier/useCourierProfilePicture';
 import { useOrderArrivalTimes } from 'app/api/order/useOrderArrivalTimes';
+import { useOrderDeliveryRoute } from 'app/api/order/useOrderDeliveryRoute';
 import { Order, WithId } from 'appjusto-types';
 import { Marker } from 'common/components/MapsMarker';
 import BlackPackageSvg from 'common/img/map-black-package.svg';
@@ -14,29 +14,12 @@ import { coordsFromLatLnt, SaoPauloCoords } from 'core/api/thirdparty/maps/utils
 import GoogleMapReact from 'google-map-react';
 import I18n from 'i18n-js';
 import React from 'react';
-import { getCoordinatesMidpoint } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { Pendency } from '.';
 
 interface DeliveryInfosProps {
   order: WithId<Order>;
-}
-
-type ShortLatLng = {
-  lat: number;
-  lng: number;
-};
-
-type LatLng = {
-  latitude: number;
-  longitude: number;
-};
-interface Route {
-  center: ShortLatLng;
-  origin: LatLng;
-  destination: LatLng;
-  courier: LatLng;
-  polyline: ShortLatLng[];
+  isCurrierArrived: boolean;
 }
 
 /*interface MarkerProps {
@@ -48,18 +31,16 @@ const UserMarker = ({ lat, lng }: MarkerProps) => {
   return <Marker icon={UserSvg} lat={lat} lng={lng} />;
 };*/
 
-export const DeliveryInfos = ({ order }: DeliveryInfosProps) => {
+export const DeliveryInfos = ({ order, isCurrierArrived }: DeliveryInfosProps) => {
   // context
   const { googleMapsApiKey } = getConfig().api;
   const courierPictureUrl = useCourierProfilePicture(order.courier?.id);
   const arrivalTime = useOrderArrivalTimes(order);
+  const route = useOrderDeliveryRoute(order);
   // state
   const [joined, setJoined] = React.useState<string | null>(null);
-  const [route, setRoute] = React.useState<Route | null>(null);
   const [courierIcon, setCourierIcon] = React.useState<string>(GreenPointSvg);
   const [restaurantIcon, setRestaurantIcon] = React.useState<string>(WhitePackageSvg);
-
-  const isCurrierArrived = order.dispatchingState === 'arrived-pickup';
 
   // side effects
   React.useEffect(() => {
@@ -79,40 +60,6 @@ export const DeliveryInfos = ({ order }: DeliveryInfosProps) => {
     }
   }, [order.courier]);
 
-  React.useEffect(() => {
-    if (order.origin && order.destination && order.route) {
-      const routePolyline = polyline.decode(order.route?.polyline).map((pair: number[]) => {
-        return { lat: pair[0], lng: pair[1] } as ShortLatLng;
-      });
-      const routeCoords = {
-        center: getCoordinatesMidpoint(
-          {
-            lat: order.origin.location?.latitude,
-            lng: order.origin.location?.longitude,
-          } as ShortLatLng,
-          {
-            lat: order.destination.location?.latitude,
-            lng: order.destination.location?.longitude,
-          } as ShortLatLng
-        ),
-        origin: {
-          latitude: order.origin.location?.latitude,
-          longitude: order.origin.location?.longitude,
-        },
-        destination: {
-          latitude: order.destination.location?.latitude,
-          longitude: order.destination.location?.longitude,
-        },
-        courier: {
-          latitude: order.courier?.location.latitude,
-          longitude: order.courier?.location.longitude,
-        },
-        polyline: routePolyline,
-      };
-      setRoute(routeCoords as Route);
-    }
-  }, [order.origin, order.destination, order.route]);
-  console.log(route);
   // UI
   return (
     <Box mt="6">

@@ -69,7 +69,7 @@ export const OrderDrawer = (props: Props) => {
       ) : (
         <>
           {(order?.status === 'ready' || order?.status === 'dispatching') && (
-            <DeliveryInfos order={order} />
+            <DeliveryInfos order={order} isCurrierArrived={isCurrierArrived} />
           )}
           <Text mt="6" fontSize="xl" color="black">
             {t('Detalhes do pedido')}
