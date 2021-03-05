@@ -12,6 +12,7 @@ import FirebaseRefs from './FirebaseRefs';
 import ManagerApi from './manager/ManagerApi';
 import OrderApi from './order/OrderApi';
 import PlatformApi from './platform/PlatformApi';
+import CourierApi from './courier/CourierApi';
 
 export default class Api {
   private static _firebaseInitialized: boolean = false;
@@ -29,6 +30,7 @@ export default class Api {
   private _manager: ManagerApi;
   private _business: BusinessApi;
   private _order: OrderApi;
+  private _courier: CourierApi;
 
   constructor(config: ApiConfig) {
     if (!Api._firebaseInitialized) {
@@ -58,6 +60,7 @@ export default class Api {
     this._manager = new ManagerApi(this._refs);
     this._business = new BusinessApi(this._refs, this._files);
     this._order = new OrderApi(this._refs);
+    this._courier = new CourierApi(this._refs, this._files);
   }
 
   auth() {
@@ -82,5 +85,9 @@ export default class Api {
 
   order() {
     return this._order;
+  }
+
+  courier() {
+    return this._courier;
   }
 }

@@ -1,4 +1,4 @@
-import { OrderItemComplement, OrderItem } from 'appjusto-types';
+import { OrderItemComplement, OrderItem, Order, WithId } from 'appjusto-types';
 import { itemPriceFormatter, formatDate } from './formatters';
 import { round } from 'lodash';
 import { CroppedAreaProps } from 'common/components/ImageCropping';
@@ -8,14 +8,34 @@ import { localOrderType } from 'pages/orders/context';
 export const getDateTime = () => {
   let fullDate = new Date();
   let date = formatDate(fullDate);
-  let time = `${fullDate.getHours()}:${fullDate.getMinutes()}`;
+  let minutes = fullDate.getMinutes().toString();
+  if (minutes.length === 1) minutes = `0${minutes}`;
+  let time = `${fullDate.getHours()}:${minutes}`;
   return { date, time };
+};
+
+// Orders times
+export const updateLocalStorageOrders = (orders: WithId<Order>[]) => {
+  const filteredOrders = orders
+    .filter((order) => order.status === 'confirming' || order.status === 'preparing')
+    .map((order) => order.id);
+  const storageItem = localStorage.getItem('appjusto-orders');
+  const localOrders: localOrderType[] = storageItem ? JSON.parse(storageItem) : [];
+
+  const localOrdersIds = localOrders.map((order) => order.code);
+
+  filteredOrders.forEach((orderId) => {
+    if (!localOrdersIds.includes(orderId))
+      localOrders.push({ code: orderId, time: new Date().getTime() });
+  });
+
+  const filteredLocalOrder = localOrders.filter((item) => filteredOrders.includes(item.code));
+  localStorage.setItem('appjusto-orders', JSON.stringify(filteredLocalOrder));
 };
 
 export const getLocalStorageOrderTime = (orderId: string) => {
   const localOrders = localStorage.getItem('appjusto-orders');
   const localOrdersArray = localOrders ? JSON.parse(localOrders) : null;
-  console.log(localOrdersArray);
   if (localOrdersArray) {
     const order = localOrdersArray.find((item: localOrderType) => item.code === orderId);
     return order ? order.time : null;
@@ -23,8 +43,32 @@ export const getLocalStorageOrderTime = (orderId: string) => {
   return null;
 };
 
-export const getTimeUntilNow = (created: number) => {
+export const updateLocalStorageOrderTime = (orderId: string) => {
+  const localOrders = localStorage.getItem('appjusto-orders');
+  const localOrdersArray = localOrders ? JSON.parse(localOrders) : null;
+  console.log(localOrdersArray);
+  if (localOrdersArray) {
+    const newArray = localOrdersArray.map((item: localOrderType) => {
+      if (item.code === orderId) {
+        console.log(orderId);
+        return { ...item, time: new Date().getTime() };
+      } else {
+        return item;
+      }
+    });
+    localStorage.setItem('appjusto-orders', JSON.stringify(newArray));
+    return true;
+  }
+  return false;
+};
+
+export const getTimeUntilNow = (created: number, reverse: boolean = false) => {
   const now = new Date().getTime();
+  if (reverse) {
+    let elapsedTime = (created - now) / 1000 / 60;
+    if (elapsedTime < 0) elapsedTime = 0;
+    return round(elapsedTime, 0);
+  }
   const elapsedTime = (now - created) / 1000 / 60;
   return round(elapsedTime, 0);
 };
@@ -136,5 +180,26 @@ export const getResizedImage = async (imageSrc: string, ratio: number, resizedWi
         resolve(file);
       }, 'image/jpeg');
     });
+  }
+};
+
+// geo
+type latLng = {
+  lat: number;
+  lng: number;
+};
+export const getCoordinatesMidpoint = (origin: latLng, destination: latLng) => {
+  try {
+    let midLat =
+      origin.lat > destination.lat
+        ? (origin.lat - destination.lat) / 2 + destination.lat
+        : (destination.lat - origin.lat) / 2 + origin.lat;
+    let midLng =
+      origin.lng > destination.lng
+        ? (origin.lng - destination.lng) / 2 + destination.lng
+        : (destination.lng - origin.lng) / 2 + origin.lng;
+    return { lat: midLat, lng: midLng };
+  } catch {
+    return undefined;
   }
 };

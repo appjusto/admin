@@ -3,7 +3,6 @@ import { CustomNumberInput } from 'common/components/form/input/CustomNumberInpu
 import { useOrdersContext } from 'pages/orders/context';
 import React from 'react';
 import { t } from 'utils/i18n';
-import { Pendency } from './index';
 
 interface CookingTimeProps {
   orderId: string;
@@ -77,7 +76,6 @@ export const CookingTime = ({ orderId, cookingTime }: CookingTimeProps) => {
         />
         <Text ml="4" fontSize="xl" color="black">
           {t('Definir tempo de preparo')}
-          <Pendency />
         </Text>
       </Flex>
       <Text mt="1" fontSize="md">

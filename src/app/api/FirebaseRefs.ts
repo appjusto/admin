@@ -96,4 +96,8 @@ export default class FirebaseRefs {
     `${this.getComplementsStoragePath(businessId)}/${complementId}_288x288.jpg`;
   getComplementImageStoragePath = (businessId: string, complementId: string) =>
     `${this.getComplementsStoragePath(businessId)}/${complementId}_288x288.jpg`;
+
+  getCourierStoragePath = (courierId: string) => `couriers/${courierId}`;
+  getCourierProfilePictureStoragePath = (courierId: string) =>
+    `${this.getCourierStoragePath(courierId)}/selfie_160x160.jpg`;
 }

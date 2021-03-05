@@ -1,4 +1,5 @@
 import { Box, Button, Flex, HStack, Progress, Text } from '@chakra-ui/react';
+import { useOrderArrivalTimes } from 'app/api/order/useOrderArrivalTimes';
 import { Order, WithId } from 'appjusto-types';
 import { ReactComponent as Alarm } from 'common/img/alarm_outlined.svg';
 import React from 'react';
@@ -10,14 +11,14 @@ import { useOrdersContext } from '../context';
 interface CodeLinkProps {
   url: string;
   orderId: string;
-  code?: string;
+  seq?: string | null;
 }
 
-const CodeLink = ({ url, orderId, code }: CodeLinkProps) => {
+const CodeLink = ({ url, orderId, seq }: CodeLinkProps) => {
   return (
     <Link to={`${url}/${orderId}`}>
       <Text fontSize="lg" textDecor="underline" _hover={{ color: 'green.700' }}>
-        #{code}
+        #{seq}
       </Text>
     </Link>
   );
@@ -31,13 +32,21 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
   // context
   const { url } = useRouteMatch();
   const { business, changeOrderStatus } = useOrdersContext();
+  const arrivalTime = useOrderArrivalTimes(order);
+
   // state
   const [elapsedTime, setElapsedTime] = React.useState<number | null>(0);
 
   // handlers
+  const isUnmatched = order.dispatchingState
+    ? ['idle', 'matching', 'unmatched', 'no-match'].includes(order.dispatchingState)
+    : true;
   const isCurrierArrived = order.dispatchingState === 'arrived-pickup';
   const wasDelivered = order.status === 'delivered';
+  const cookingTime = order?.cookingTime ? order?.cookingTime / 60 : null;
+  const cookingProgress = cookingTime && elapsedTime ? (elapsedTime / cookingTime) * 100 : 0;
 
+  // side effects
   React.useEffect(() => {
     const localOrderTime = getLocalStorageOrderTime(order.id);
     const setNewTime = () => {
@@ -50,7 +59,8 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
     };
     setNewTime();
     const timeInterval = setInterval(setNewTime, 60000);
-    if (order.status !== 'confirming') return clearInterval(timeInterval);
+    if (order.status !== 'confirming' && order.status !== 'preparing')
+      return clearInterval(timeInterval);
     return () => clearInterval(timeInterval);
   }, [order.status]);
 
@@ -60,8 +70,35 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
       if (elapsedTime && orderAcceptanceTime && orderAcceptanceTime <= elapsedTime) {
         changeOrderStatus(order.id, 'preparing');
       }
+    } else if (order?.status === 'preparing') {
+      if (elapsedTime && cookingTime && elapsedTime >= cookingTime) {
+        changeOrderStatus(order.id, 'ready');
+      }
     }
   }, [elapsedTime]);
+
+  // UI
+  if (order.status === 'canceled') {
+    return (
+      <Box
+        px="4"
+        py="2"
+        borderRadius="lg"
+        borderColor="gray"
+        borderWidth="1px"
+        color="gray"
+        boxShadow="0px 8px 16px -4px rgba(105,118,103,0.1)"
+      >
+        <Flex justifyContent="space-between" alignItems="center">
+          <CodeLink url={url} orderId={order.id} seq={order.seq} />
+          <Flex flexDir="column" color="gray.700" fontSize="xs" alignItems="flex-end">
+            <Text fontWeight="500">{t('Cancelado por')}</Text>
+            <Text fontWeight="700">{t('Cliente')}</Text>
+          </Flex>
+        </Flex>
+      </Box>
+    );
+  }
 
   if (order.status === 'dispatching') {
     return (
@@ -69,20 +106,33 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
         px="4"
         py={wasDelivered ? '3' : '2'}
         borderRadius="lg"
-        borderColor={wasDelivered ? 'gray' : 'black'}
+        borderColor="gray"
         borderWidth="1px"
         color={wasDelivered ? 'gray' : 'black'}
         bgColor={wasDelivered ? 'gray.500' : 'white'}
+        boxShadow="0px 8px 16px -4px rgba(105,118,103,0.1)"
       >
         <Flex justifyContent="space-between" alignItems="center">
-          <CodeLink url={url} orderId={order.id} code={order.code} />
+          <CodeLink url={url} orderId={order.id} seq={order.seq} />
           <Flex flexDir="column" color="gray.700" fontSize="xs" alignItems="flex-end">
             {wasDelivered ? (
               <Text fontWeight="700">{t('Pedido entregue')}</Text>
             ) : (
               <>
-                <Text fontWeight="700">{t('Entregador à caminho')}</Text>
-                <Text fontWeight="500">{t('Aprox. 10 minutos')}</Text>
+                <Text fontWeight="700">{t('Pedido à caminho')}</Text>
+                {arrivalTime && arrivalTime > 0 ? (
+                  <Text color="gray.700" fontWeight="500">
+                    {t(
+                      `Aprox. ${
+                        arrivalTime > 1 ? arrivalTime + ' minutos' : arrivalTime + ' minuto'
+                      }`
+                    )}
+                  </Text>
+                ) : (
+                  <Text color="gray.700" fontWeight="500">
+                    {t(`Menos de 1 minuto`)}
+                  </Text>
+                )}
               </>
             )}
           </Flex>
@@ -93,18 +143,29 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
 
   if (order.status === 'ready') {
     return (
-      <Box p="4" borderRadius="lg" borderColor="black" borderWidth="1px" color="black">
+      <Box
+        p="4"
+        borderRadius="lg"
+        borderColor={isCurrierArrived ? 'black' : 'gray'}
+        borderWidth={isCurrierArrived ? '2px' : '1px'}
+        color="black"
+        boxShadow="0px 8px 16px -4px rgba(105,118,103,0.1)"
+      >
         <Flex flexDir="column" fontWeight="700">
           <Flex justifyContent="space-between">
-            <CodeLink url={url} orderId={order.id} code={order.code} />
+            <CodeLink url={url} orderId={order.id} seq={order.seq} />
             <Flex flexDir="column" fontSize="xs" alignItems="flex-end">
-              {isCurrierArrived ? (
+              {isUnmatched ? (
+                <Text color="gray.700" fontWeight="700">
+                  {t('Buscando entregador')}
+                </Text>
+              ) : isCurrierArrived ? (
                 <>
                   <Text color="black" fontWeight="700">
                     {t('Entregador no local')}
                   </Text>
                   <Text color="black" fontWeight="500">
-                    {t('Nome: João')}
+                    {t('Nome: ') + order.courier?.name}
                   </Text>
                 </>
               ) : (
@@ -112,9 +173,19 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
                   <Text color="gray.700" fontWeight="700">
                     {t('Entregador à caminho')}
                   </Text>
-                  <Text color="gray.700" fontWeight="500">
-                    {t('Aprox. 10 minutos')}
-                  </Text>
+                  {arrivalTime && arrivalTime > 0 ? (
+                    <Text color="gray.700" fontWeight="500">
+                      {t(
+                        `Aprox. ${
+                          arrivalTime > 1 ? arrivalTime + ' minutos' : arrivalTime + ' minuto'
+                        }`
+                      )}
+                    </Text>
+                  ) : (
+                    <Text color="gray.700" fontWeight="500">
+                      {t(`Menos de 1 minuto`)}
+                    </Text>
+                  )}
                 </>
               )}
             </Flex>
@@ -137,18 +208,25 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
 
   if (order.status === 'preparing') {
     return (
-      <Box p="4" borderRadius="lg" borderColor="black" borderWidth="1px" color="black">
+      <Box
+        p="4"
+        borderRadius="lg"
+        borderColor="black"
+        borderWidth="2px"
+        color="black"
+        boxShadow="0px 8px 16px -4px rgba(105,118,103,0.1)"
+      >
         <Flex flexDir="column" fontWeight="700">
           <Flex justifyContent="space-between">
-            <CodeLink url={url} orderId={order.id} code={order.code} />
+            <CodeLink url={url} orderId={order.id} seq={order.seq} />
             <Flex flexDir="column">
-              <HStack spacing={2}>
+              <HStack spacing={2} justifyContent="space-between">
                 <HStack spacing={1}>
                   <Alarm />
-                  <Text fontSize="xs">10 min</Text>
+                  <Text fontSize="xs">{elapsedTime} min</Text>
                 </HStack>
                 <Text fontSize="xs" color="gray.700">
-                  15 min
+                  {cookingTime ? `${cookingTime} min` : 'N/I'}
                 </Text>
               </HStack>
               <Progress
@@ -156,7 +234,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
                 ml="22px"
                 w="80px"
                 size="sm"
-                value={66}
+                value={cookingProgress}
                 colorScheme="green"
                 borderRadius="lg"
               />
@@ -183,13 +261,13 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
         bg="green.300"
         borderRadius="lg"
         borderColor="black"
-        borderWidth="1px"
+        borderWidth="2px"
         color="black"
         cursor="pointer"
       >
         <Flex justifyContent="space-between" alignItems="center">
           <Text fontSize="lg" fontWeight="700">
-            #{order.code}
+            #{order.seq}
           </Text>
           {elapsedTime !== null ? (
             elapsedTime > 0 ? (

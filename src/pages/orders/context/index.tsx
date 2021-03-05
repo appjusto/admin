@@ -5,6 +5,7 @@ import { useContextBusiness } from 'app/state/business/context';
 import { Business, Issue, Order, OrderItem, OrderStatus, WithId } from 'appjusto-types';
 import { IuguInvoice } from 'appjusto-types/payment/iugu';
 import React from 'react';
+import { updateLocalStorageOrders, updateLocalStorageOrderTime } from 'utils/functions';
 
 const fakeItem = (price: number, qtd: number): OrderItem => {
   return {
@@ -23,6 +24,7 @@ const fakeItem = (price: number, qtd: number): OrderItem => {
 const fakeOrder: Order = {
   type: 'food',
   code: `${Math.random().toString().split('', 6).join('').replace('.', '')}`,
+  seq: `${Math.random().toString().split('', 4).join('').replace('.', '')}`,
   status: 'confirming',
   // comments: 'cpf',
   consumer: {
@@ -34,7 +36,7 @@ const fakeOrder: Order = {
     id: 'kW8M4T19IdP8VCrxOwAHJoTzsK33',
     name: 'Kelly',
     mode: 'motocycle',
-    joined: ('1 de fevereiro de 2021 00:00:00 UTC-3' as unknown) as firebase.firestore.FieldValue,
+    joined: ('1 de fevereiro de 2021 00:00:00 UTC-3' as unknown) as firebase.firestore.Timestamp,
     location: {
       latitude: -8.0591539,
       longitude: -34.9063069,
@@ -51,18 +53,6 @@ const fakeOrder: Order = {
   },
   origin: {
     address: {
-      main: 'Rua bom pastor, 1485',
-      description: '',
-    },
-    additionalInfo: '',
-    intructions: '',
-    location: {
-      latitude: -8.0502761,
-      longitude: -34.9413061,
-    },
-  },
-  destination: {
-    address: {
       main: 'Rua João Ivo da Silva, 453',
       description: '',
     },
@@ -73,13 +63,25 @@ const fakeOrder: Order = {
       longitude: -34.9115396,
     },
   },
+  destination: {
+    address: {
+      main: 'Rua bom pastor, 1485',
+      description: '',
+    },
+    additionalInfo: '',
+    intructions: '',
+    location: {
+      latitude: -8.0502801,
+      longitude: -34.9396646,
+    },
+  },
   route: {
     distance: 4500, // in meters
     duration: 14 * 60, // in seconds
     polyline: '',
     issue: null,
   },
-  dispatchingState: 'matching',
+  dispatchingState: 'idle',
 };
 
 export type localOrderType = { code: string; time: number };
@@ -97,7 +99,7 @@ interface ContextProps {
 
 const OrdersContext = React.createContext<ContextProps>({} as ContextProps);
 
-const options = { active: true, inactive: false };
+const options = { active: true, inactive: true };
 
 interface ProviderProps {
   children: React.ReactNode | React.ReactNode[];
@@ -108,6 +110,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   const api = useContextApi();
   const business = useContextBusiness();
   const hookOrders = useOrders(options, business!.id);
+
   //state
   const [orders, setOrders] = React.useState<WithId<Order>[]>([]);
   const ordersByStatus = splitByStatus(orders);
@@ -124,6 +127,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   };
 
   const changeOrderStatus = async (orderId: string, status: OrderStatus) => {
+    if (status === 'preparing') updateLocalStorageOrderTime(orderId);
     // optimistic update to avoid flickering
     setOrders((prevOrders) => {
       let newOrders = prevOrders.map((order) => {
@@ -162,14 +166,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   React.useEffect(() => {
     if (hookOrders) {
       setOrders(hookOrders);
-      const storageItem = localStorage.getItem('appjusto-orders');
-      let localOrders: localOrderType[] = storageItem ? JSON.parse(storageItem) : [];
-      const localOrdersIds = localOrders.map((order) => order.code);
-      hookOrders.forEach((order) => {
-        if (!localOrdersIds.includes(order.id))
-          localOrders.push({ code: order.id, time: new Date().getTime() });
-      });
-      localStorage.setItem('appjusto-orders', JSON.stringify(localOrders));
+      updateLocalStorageOrders(hookOrders);
     }
   }, [hookOrders]);
 
