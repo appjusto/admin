@@ -5,7 +5,7 @@ import { useContextBusiness } from 'app/state/business/context';
 import { Business, Issue, Order, OrderItem, OrderStatus, WithId } from 'appjusto-types';
 import { IuguInvoice } from 'appjusto-types/payment/iugu';
 import React from 'react';
-import { updateLocalStorageOrders } from 'utils/functions';
+import { updateLocalStorageOrders, updateLocalStorageOrderTime } from 'utils/functions';
 
 const fakeItem = (price: number, qtd: number): OrderItem => {
   return {
@@ -24,6 +24,7 @@ const fakeItem = (price: number, qtd: number): OrderItem => {
 const fakeOrder: Order = {
   type: 'food',
   code: `${Math.random().toString().split('', 6).join('').replace('.', '')}`,
+  seq: `${Math.random().toString().split('', 4).join('').replace('.', '')}`,
   status: 'confirming',
   // comments: 'cpf',
   consumer: {
@@ -35,7 +36,7 @@ const fakeOrder: Order = {
     id: 'kW8M4T19IdP8VCrxOwAHJoTzsK33',
     name: 'Kelly',
     mode: 'motocycle',
-    joined: ('1 de fevereiro de 2021 00:00:00 UTC-3' as unknown) as firebase.firestore.FieldValue,
+    joined: ('1 de fevereiro de 2021 00:00:00 UTC-3' as unknown) as firebase.firestore.Timestamp,
     location: {
       latitude: -8.0591539,
       longitude: -34.9063069,
@@ -126,6 +127,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   };
 
   const changeOrderStatus = async (orderId: string, status: OrderStatus) => {
+    if (status === 'preparing') updateLocalStorageOrderTime(orderId);
     // optimistic update to avoid flickering
     setOrders((prevOrders) => {
       let newOrders = prevOrders.map((order) => {

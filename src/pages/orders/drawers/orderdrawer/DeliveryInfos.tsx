@@ -22,15 +22,6 @@ interface DeliveryInfosProps {
   isCurrierArrived: boolean;
 }
 
-/*interface MarkerProps {
-  lat: number;
-  lng: number;
-}
-
-const UserMarker = ({ lat, lng }: MarkerProps) => {
-  return <Marker icon={UserSvg} lat={lat} lng={lng} />;
-};*/
-
 export const DeliveryInfos = ({ order, isCurrierArrived }: DeliveryInfosProps) => {
   // context
   const { googleMapsApiKey } = getConfig().api;
@@ -41,6 +32,10 @@ export const DeliveryInfos = ({ order, isCurrierArrived }: DeliveryInfosProps) =
   const [joined, setJoined] = React.useState<string | null>(null);
   const [courierIcon, setCourierIcon] = React.useState<string>(GreenPointSvg);
   const [restaurantIcon, setRestaurantIcon] = React.useState<string>(WhitePackageSvg);
+
+  const isUnmatched = order.dispatchingState
+    ? ['idle', 'matching', 'unmatched', 'no-match'].includes(order.dispatchingState)
+    : true;
 
   // side effects
   React.useEffect(() => {
@@ -53,10 +48,14 @@ export const DeliveryInfos = ({ order, isCurrierArrived }: DeliveryInfosProps) =
   React.useEffect(() => {
     const date = order.courier?.joined as firebase.firestore.Timestamp;
     if (date) {
-      const month = I18n.strftime(date.toDate(), '%B');
-      const year = date.toDate().toString().split(' ')[3];
-      const joinDate = `${month}, ${year}`;
-      setJoined(joinDate);
+      try {
+        const month = I18n.strftime(date.toDate(), '%B');
+        const year = date.toDate().toString().split(' ')[3];
+        const joinDate = `${month}, ${year}`;
+        setJoined(joinDate);
+      } catch (error) {
+        console.log(error);
+      }
     }
   }, [order.courier]);
 
@@ -65,7 +64,11 @@ export const DeliveryInfos = ({ order, isCurrierArrived }: DeliveryInfosProps) =
     <Box mt="6">
       <Flex justifyContent="space-between" alignItems="center">
         <Text fontSize="xl" color="black">
-          {isCurrierArrived ? t('Entregador no local') : t('Entregador à caminho da retirada')}
+          {isUnmatched
+            ? t('Buscando entregador')
+            : isCurrierArrived
+            ? t('Entregador no local')
+            : t('Entregador à caminho da retirada')}
         </Text>
         {!isCurrierArrived &&
           arrivalTime &&
@@ -122,14 +125,14 @@ export const DeliveryInfos = ({ order, isCurrierArrived }: DeliveryInfosProps) =
             }}
           >
             <Marker
-              key="origin"
-              icon={restaurantIcon} // WhitePackageSvg
+              key={Math.random()}
+              icon={restaurantIcon}
               lat={route.origin.latitude}
               lng={route.origin.longitude}
               mt="-10px"
             />
             <Marker
-              key="destination"
+              key={Math.random()}
               icon={UserSvg}
               lat={route.destination.latitude}
               lng={route.destination.longitude}
@@ -139,8 +142,8 @@ export const DeliveryInfos = ({ order, isCurrierArrived }: DeliveryInfosProps) =
               ml="-16px"
             />
             <Marker
-              key="courier"
-              icon={courierIcon} // GreenPointSvg
+              key={Math.random()}
+              icon={courierIcon}
               lat={route.courier.latitude}
               lng={route.courier.longitude}
               h="36px"

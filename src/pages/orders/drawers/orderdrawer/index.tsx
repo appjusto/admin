@@ -54,7 +54,7 @@ export const OrderDrawer = (props: Props) => {
     <OrderBaseDrawer
       {...props}
       orderId={orderId}
-      orderCode={order?.code ?? ''}
+      orderSeq={order?.seq ?? ''}
       orderStatus={order?.status!}
       isCurrierArrived={isCurrierArrived}
       client={order?.consumer?.name ?? ''}

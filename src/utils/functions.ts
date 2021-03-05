@@ -49,11 +49,12 @@ export const updateLocalStorageOrderTime = (orderId: string) => {
   console.log(localOrdersArray);
   if (localOrdersArray) {
     const newArray = localOrdersArray.map((item: localOrderType) => {
-      if (item.code === orderId)
-        return {
-          ...item,
-          time: new Date().getTime(),
-        };
+      if (item.code === orderId) {
+        console.log(orderId);
+        return { ...item, time: new Date().getTime() };
+      } else {
+        return item;
+      }
     });
     localStorage.setItem('appjusto-orders', JSON.stringify(newArray));
     return true;

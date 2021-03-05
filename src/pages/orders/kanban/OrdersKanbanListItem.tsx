@@ -4,25 +4,21 @@ import { Order, WithId } from 'appjusto-types';
 import { ReactComponent as Alarm } from 'common/img/alarm_outlined.svg';
 import React from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
-import {
-  getLocalStorageOrderTime,
-  getTimeUntilNow,
-  updateLocalStorageOrderTime,
-} from 'utils/functions';
+import { getLocalStorageOrderTime, getTimeUntilNow } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { useOrdersContext } from '../context';
 
 interface CodeLinkProps {
   url: string;
   orderId: string;
-  code?: string;
+  seq?: string | null;
 }
 
-const CodeLink = ({ url, orderId, code }: CodeLinkProps) => {
+const CodeLink = ({ url, orderId, seq }: CodeLinkProps) => {
   return (
     <Link to={`${url}/${orderId}`}>
       <Text fontSize="lg" textDecor="underline" _hover={{ color: 'green.700' }}>
-        #{code}
+        #{seq}
       </Text>
     </Link>
   );
@@ -73,7 +69,6 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
     if (order?.status === 'confirming') {
       if (elapsedTime && orderAcceptanceTime && orderAcceptanceTime <= elapsedTime) {
         changeOrderStatus(order.id, 'preparing');
-        updateLocalStorageOrderTime(order.id);
       }
     } else if (order?.status === 'preparing') {
       if (elapsedTime && cookingTime && elapsedTime >= cookingTime) {
@@ -95,7 +90,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
         boxShadow="0px 8px 16px -4px rgba(105,118,103,0.1)"
       >
         <Flex justifyContent="space-between" alignItems="center">
-          <CodeLink url={url} orderId={order.id} code={order.code} />
+          <CodeLink url={url} orderId={order.id} seq={order.seq} />
           <Flex flexDir="column" color="gray.700" fontSize="xs" alignItems="flex-end">
             <Text fontWeight="500">{t('Cancelado por')}</Text>
             <Text fontWeight="700">{t('Cliente')}</Text>
@@ -118,7 +113,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
         boxShadow="0px 8px 16px -4px rgba(105,118,103,0.1)"
       >
         <Flex justifyContent="space-between" alignItems="center">
-          <CodeLink url={url} orderId={order.id} code={order.code} />
+          <CodeLink url={url} orderId={order.id} seq={order.seq} />
           <Flex flexDir="column" color="gray.700" fontSize="xs" alignItems="flex-end">
             {wasDelivered ? (
               <Text fontWeight="700">{t('Pedido entregue')}</Text>
@@ -158,7 +153,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
       >
         <Flex flexDir="column" fontWeight="700">
           <Flex justifyContent="space-between">
-            <CodeLink url={url} orderId={order.id} code={order.code} />
+            <CodeLink url={url} orderId={order.id} seq={order.seq} />
             <Flex flexDir="column" fontSize="xs" alignItems="flex-end">
               {isUnmatched ? (
                 <Text color="gray.700" fontWeight="700">
@@ -223,7 +218,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
       >
         <Flex flexDir="column" fontWeight="700">
           <Flex justifyContent="space-between">
-            <CodeLink url={url} orderId={order.id} code={order.code} />
+            <CodeLink url={url} orderId={order.id} seq={order.seq} />
             <Flex flexDir="column">
               <HStack spacing={2} justifyContent="space-between">
                 <HStack spacing={1}>
@@ -272,7 +267,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
       >
         <Flex justifyContent="space-between" alignItems="center">
           <Text fontSize="lg" fontWeight="700">
-            #{order.code}
+            #{order.seq}
           </Text>
           {elapsedTime !== null ? (
             elapsedTime > 0 ? (
