@@ -3,7 +3,6 @@ import { useOrders } from 'app/api/order/useOrders';
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { Business, Issue, Order, OrderItem, OrderStatus, WithId } from 'appjusto-types';
-import { IuguInvoice } from 'appjusto-types/payment/iugu';
 import React from 'react';
 import { updateLocalStorageOrders, updateLocalStorageOrderTime } from 'utils/functions';
 
@@ -47,10 +46,6 @@ const fakeOrder: Order = {
     name: 'Itapuama vegan',
   },
   items: [fakeItem(1200, 1), fakeItem(1600, 2)],
-  payment: {
-    paymentMethodId: 'Crédito',
-    invoice: {} as IuguInvoice,
-  },
   origin: {
     address: {
       main: 'Rua João Ivo da Silva, 453',

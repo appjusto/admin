@@ -18,7 +18,6 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
   const [name, setName] = React.useState(bankAccount?.name ?? '');
   const [agency, setAgency] = React.useState(bankAccount?.agency ?? '');
   const [account, setAccount] = React.useState(bankAccount?.account ?? '');
-  const [digit, setDigit] = React.useState(bankAccount?.digit ?? '');
 
   // refs
   const nameRef = React.useRef<HTMLInputElement>(null);
@@ -32,7 +31,6 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
       if (bankAccount.name) setName(bankAccount.name);
       if (bankAccount.agency) setAgency(bankAccount.agency);
       if (bankAccount.account) setAccount(bankAccount.account);
-      if (bankAccount.digit) setDigit(bankAccount.digit);
     }
   }, [bankAccount]);
 
@@ -42,7 +40,6 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
       name,
       agency,
       account,
-      digit,
     });
   };
 
@@ -77,15 +74,6 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
             placeholder={t('0000')}
             value={account}
             onChange={(ev: React.ChangeEvent<HTMLInputElement>) => setAccount(ev.target.value)}
-          />
-          <NumberInput
-            id="banking-digit"
-            flex={1}
-            label={t('Dígito')}
-            placeholder={t('0')}
-            value={digit}
-            onChange={(ev: React.ChangeEvent<HTMLInputElement>) => setDigit(ev.target.value)}
-            maxLength={1}
           />
         </Flex>
         <PageFooter

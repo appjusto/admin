@@ -128,7 +128,6 @@ export const OrderDrawer = (props: Props) => {
           <Text mt="1" fontSize="md">
             {t('Método de pagamento:')}{' '}
             <Text as="span" color="black">
-              {order?.payment?.paymentMethodId}
               <Pendency />
             </Text>
           </Text>
