@@ -1,5 +1,6 @@
 import { Box, Flex } from '@chakra-ui/react';
 import { useBusinessBankAccount } from 'app/api/business/profile/useBusinessBankAccount';
+import { BankAccount } from 'appjusto-types';
 import { CustomNumberInput as NumberInput } from 'common/components/form/input/CustomNumberInput';
 import { BankSelect } from 'common/components/form/select/BankSelect';
 import { OnboardingProps } from 'pages/onboarding/types';
@@ -37,10 +38,11 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
   // handlers
   const onSubmitHandler = async () => {
     await updateBankAccount({
+      type: 'Corrente',
       name,
       agency,
       account,
-    });
+    } as BankAccount);
   };
 
   // UI
