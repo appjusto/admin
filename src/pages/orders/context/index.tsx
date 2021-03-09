@@ -156,10 +156,8 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   }, [api]);
 
   const cancelOrder = async (orderId: string, issue: WithId<Issue>) => {
-    await api.order().updateOrder(orderId, {
-      status: 'canceled',
-    });
-    //mandar o motivo pra nova subcollection
+    await api.order().updateOrder(orderId, { status: 'canceled' });
+    await api.order().setOrderIssue(orderId, issue);
   };
 
   // side effects

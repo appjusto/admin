@@ -93,4 +93,9 @@ export default class OrderApi {
       updatedOn: timestamp,
     });
   }
+
+  async setOrderIssue(orderId: string, issue: WithId<Issue>) {
+    const createdOn = firebase.firestore.FieldValue.serverTimestamp();
+    await this.refs.getOrderIssuesRef(orderId).add({ createdOn, issue });
+  }
 }
