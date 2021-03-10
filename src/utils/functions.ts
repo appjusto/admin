@@ -15,18 +15,24 @@ export const getDateTime = () => {
 };
 
 // Orders times
-export const updateLocalStorageOrders = (orders: WithId<Order>[]) => {
+export const updateLocalStorageOrders = async (orders: WithId<Order>[], soundAlert: any) => {
   const filteredOrders = orders
     .filter((order) => order.status === 'confirming' || order.status === 'preparing')
     .map((order) => order.id);
   const storageItem = localStorage.getItem('appjusto-orders');
+  console.log(storageItem);
   const localOrders: localOrderType[] = storageItem ? JSON.parse(storageItem) : [];
-
+  console.log(localOrders);
   const localOrdersIds = localOrders.map((order) => order.code);
+  console.log(localOrdersIds);
 
   filteredOrders.forEach((orderId) => {
-    if (!localOrdersIds.includes(orderId))
+    const isNew = localOrdersIds.includes(orderId) === false;
+    if (isNew) {
+      console.log('New ORDER!');
+      soundAlert();
       localOrders.push({ code: orderId, time: new Date().getTime() });
+    }
   });
 
   const filteredLocalOrder = localOrders.filter((item) => filteredOrders.includes(item.code));

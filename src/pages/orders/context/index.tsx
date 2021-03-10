@@ -3,7 +3,10 @@ import { useOrders } from 'app/api/order/useOrders';
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { Business, Issue, Order, OrderItem, OrderStatus, WithId } from 'appjusto-types';
+//@ts-ignore
+import bellDing from 'common/sounds/bell-ding.mp3';
 import React from 'react';
+import useSound from 'use-sound';
 import { updateLocalStorageOrders, updateLocalStorageOrderTime } from 'utils/functions';
 
 const fakeItem = (price: number, qtd: number): OrderItem => {
@@ -90,6 +93,7 @@ interface ContextProps {
   setOrderCookingTime(orderId: string, cookingTime: number | null): void;
   fetchCancelOptions(): Promise<WithId<Issue>[]>;
   cancelOrder(orderId: string, issue: WithId<Issue>): void;
+  //getOrderIssue(orderId: string): void;
 }
 
 const OrdersContext = React.createContext<ContextProps>({} as ContextProps);
@@ -109,6 +113,9 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   //state
   const [orders, setOrders] = React.useState<WithId<Order>[]>([]);
   const ordersByStatus = splitByStatus(orders);
+
+  // order sound
+  const [playBell] = useSound(bellDing, { volume: 0.25 });
 
   //Development
   const createFakeOrder = async () => {
@@ -155,11 +162,17 @@ export const OrdersContextProvider = (props: ProviderProps) => {
     await api.order().setOrderIssue(orderId, issue);
   };
 
+  //const getOrderIssue = async (orderId: string) => {
+  // without permission
+  //const issues = await api.order().getOrderIssue(orderId);
+  //console.log(issues);
+  //};
+
   // side effects
   React.useEffect(() => {
     if (hookOrders) {
       setOrders(hookOrders);
-      updateLocalStorageOrders(hookOrders);
+      updateLocalStorageOrders(hookOrders, playBell);
     }
   }, [hookOrders]);
 
@@ -175,6 +188,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
         setOrderCookingTime,
         fetchCancelOptions,
         cancelOrder,
+        //getOrderIssue,
       }}
       {...props}
     />

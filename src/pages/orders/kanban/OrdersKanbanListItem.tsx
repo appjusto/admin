@@ -48,6 +48,9 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
 
   // side effects
   React.useEffect(() => {
+    //if (order.status === 'canceled') {
+    //getOrderIssue(order.id);
+    //}
     const localOrderTime = getLocalStorageOrderTime(order.id);
     const setNewTime = () => {
       if (localOrderTime) {
@@ -59,8 +62,9 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
     };
     setNewTime();
     const timeInterval = setInterval(setNewTime, 60000);
-    if (order.status !== 'confirming' && order.status !== 'preparing')
+    if (order.status !== 'confirming' && order.status !== 'preparing') {
       return clearInterval(timeInterval);
+    }
     return () => clearInterval(timeInterval);
   }, [order.status]);
 
@@ -76,7 +80,6 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
       }
     }
   }, [elapsedTime]);
-
   // UI
   if (order.status === 'canceled') {
     return (
