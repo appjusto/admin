@@ -15,28 +15,26 @@ export const getDateTime = () => {
 };
 
 // Orders times
-export const updateLocalStorageOrders = async (orders: WithId<Order>[], soundAlert: any) => {
-  const filteredOrders = orders
-    .filter((order) => order.status === 'confirming' || order.status === 'preparing')
-    .map((order) => order.id);
-  const storageItem = localStorage.getItem('appjusto-orders');
-  console.log(storageItem);
-  const localOrders: localOrderType[] = storageItem ? JSON.parse(storageItem) : [];
-  console.log(localOrders);
-  const localOrdersIds = localOrders.map((order) => order.code);
-  console.log(localOrdersIds);
+export const updateLocalStorageOrders = (orders: WithId<Order>[], soundAlert: any) => {
+  if (orders.length > 0) {
+    const filteredOrders = orders
+      .filter((order) => order.status === 'confirming' || order.status === 'preparing')
+      .map((order) => order.id);
+    const storageItem = localStorage.getItem('appjusto-orders');
+    const localOrders: localOrderType[] = storageItem ? JSON.parse(storageItem) : [];
+    const localOrdersIds = localOrders.map((order) => order.code);
 
-  filteredOrders.forEach((orderId) => {
-    const isNew = localOrdersIds.includes(orderId) === false;
-    if (isNew) {
-      console.log('New ORDER!');
-      soundAlert();
-      localOrders.push({ code: orderId, time: new Date().getTime() });
-    }
-  });
+    filteredOrders.forEach((orderId) => {
+      const isNew = localOrdersIds.includes(orderId) === false;
+      if (isNew) {
+        soundAlert();
+        localOrders.push({ code: orderId, time: new Date().getTime() });
+      }
+    });
 
-  const filteredLocalOrder = localOrders.filter((item) => filteredOrders.includes(item.code));
-  localStorage.setItem('appjusto-orders', JSON.stringify(filteredLocalOrder));
+    const filteredLocalOrder = localOrders.filter((item) => filteredOrders.includes(item.code));
+    localStorage.setItem('appjusto-orders', JSON.stringify(filteredLocalOrder));
+  }
 };
 
 export const getLocalStorageOrderTime = (orderId: string) => {
