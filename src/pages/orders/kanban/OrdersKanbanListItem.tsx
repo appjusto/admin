@@ -43,7 +43,9 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
     : true;
   const isCurrierArrived = order.dispatchingState === 'arrived-pickup';
   const wasDelivered = order.status === 'delivered';
-  const cookingTime = order?.cookingTime ? order?.cookingTime / 60 : null;
+  const cookingTime = React.useMemo(() => (order?.cookingTime ? order?.cookingTime / 60 : null), [
+    order?.cookingTime,
+  ]);
   const cookingProgress = cookingTime && elapsedTime ? (elapsedTime / cookingTime) * 100 : 0;
 
   // side effects
@@ -66,7 +68,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
       return clearInterval(timeInterval);
     }
     return () => clearInterval(timeInterval);
-  }, [order.status]);
+  }, [order]);
 
   React.useEffect(() => {
     const orderAcceptanceTime = business?.orderAcceptanceTime;
@@ -79,7 +81,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
         changeOrderStatus(order.id, 'ready');
       }
     }
-  }, [elapsedTime]);
+  }, [order, elapsedTime, business?.orderAcceptanceTime, changeOrderStatus, cookingTime]);
   console.log('id', order.id);
   // UI
   if (order.status === 'canceled') {

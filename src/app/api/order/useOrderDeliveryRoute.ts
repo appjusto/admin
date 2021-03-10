@@ -56,7 +56,7 @@ export const useOrderDeliveryRoute = (order: WithId<Order>) => {
       };
       setRoute(routeCoords as Route);
     }
-  }, [order?.origin, order?.destination, order?.route]);
+  }, [order]);
   console.log(route);
   // result
   return route;

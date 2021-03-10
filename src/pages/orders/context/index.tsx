@@ -126,25 +126,28 @@ export const OrdersContextProvider = (props: ProviderProps) => {
     return order;
   };
 
-  const changeOrderStatus = async (orderId: string, status: OrderStatus) => {
-    if (status === 'preparing') updateLocalStorageOrderTime(orderId);
-    // optimistic update to avoid flickering
-    setOrders((prevOrders) => {
-      let newOrders = prevOrders.map((order) => {
-        if (order.id === orderId) {
-          return {
-            ...order,
-            status,
-          };
-        } else {
-          return order;
-        }
+  const changeOrderStatus = React.useCallback(
+    async (orderId: string, status: OrderStatus) => {
+      if (status === 'preparing') updateLocalStorageOrderTime(orderId);
+      // optimistic update to avoid flickering
+      setOrders((prevOrders) => {
+        let newOrders = prevOrders.map((order) => {
+          if (order.id === orderId) {
+            return {
+              ...order,
+              status,
+            };
+          } else {
+            return order;
+          }
+        });
+        return newOrders;
       });
-      return newOrders;
-    });
-    // firestore update
-    await api.order().updateOrder(orderId, { status });
-  };
+      // firestore update
+      await api.order().updateOrder(orderId, { status });
+    },
+    [api]
+  );
 
   const setOrderCookingTime = async (orderId: string, cookingTime: number | null) => {
     await api.order().updateOrder(orderId, { cookingTime });

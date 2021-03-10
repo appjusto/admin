@@ -40,7 +40,7 @@ export const OrderSearchResult = ({ orders }: OrderSearchProps) => {
           {orders && orders.length > 0 ? (
             orders.map((order) => {
               return (
-                <Tr color="black" fontSize="xs">
+                <Tr key={order.code} color="black" fontSize="xs">
                   <Td maxW="120px">{order.code}</Td>
                   <Td>{getDateHour(order.createdOn as firebase.firestore.Timestamp)}</Td>
                   <Td>{getTranslatedOrderStatus(order.status)}</Td>

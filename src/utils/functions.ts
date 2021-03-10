@@ -4,6 +4,19 @@ import { round } from 'lodash';
 import { CroppedAreaProps } from 'common/components/ImageCropping';
 import { localOrderType } from 'pages/orders/context';
 
+/*
+orderStatus: {
+    quote: 'Na fila',
+    confirming: 'Aguardando confirmação',
+    confirmed: 'Confirmado',
+    preparing: 'Em preparo',
+    ready: 'Pedido pronto',
+    dispatching: 'Despachando',
+    delivered: 'Entregue',
+    canceled: 'Cancelado',
+  },
+*/
+
 // translation
 export const getTranslatedOrderStatus = (status: OrderStatus) => {
   const en = [

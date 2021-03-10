@@ -19,7 +19,6 @@ import { OrderStatus } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { getErrorMessage } from 'core/fb';
 import React from 'react';
-import { useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { useOrdersContext } from '../context';
 import { Pendency } from './orderdrawer';
@@ -56,7 +55,6 @@ export const OrderBaseDrawer = ({
   ...props
 }: BaseDrawerProps) => {
   //context
-  const { path } = useRouteMatch();
   const { changeOrderStatus } = useOrdersContext();
 
   //handlers
