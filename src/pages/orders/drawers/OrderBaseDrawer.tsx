@@ -90,11 +90,19 @@ export const OrderBaseDrawer = ({
                 <Text color="black" fontSize="2xl" fontWeight="700" lineHeight="28px" mb="2">
                   {t('Pedido Nº')} {orderCode}
                 </Text>
+                {orderStatus === 'canceled' && (
+                  <Text fontSize="md" color="red" fontWeight="700" lineHeight="22px">
+                    {t('Pedido cancelado por')}{' '}
+                    <Text as="span">
+                      Cliente
+                      <Pendency />
+                    </Text>
+                  </Text>
+                )}
                 <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
                   {t('Nome do cliente:')}{' '}
                   <Text as="span" color="black" fontWeight="700">
                     {client}
-                    <Pendency />
                   </Text>
                 </Text>
                 <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
@@ -131,7 +139,7 @@ export const OrderBaseDrawer = ({
               </Box>
             )}
           </DrawerBody>
-          {!isCanceling && !orderDispatched && (
+          {!isCanceling && !orderDispatched && orderStatus !== 'canceled' && (
             <DrawerFooter borderTop="1px solid #F2F6EA">
               <Flex w="full" justifyContent="flex-start">
                 <Flex w="full" maxW="607px" flexDir="row" justifyContent="space-between">

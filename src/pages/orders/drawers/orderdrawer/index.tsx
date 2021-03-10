@@ -116,21 +116,35 @@ export const OrderDrawer = (props: Props) => {
             {t('Incluir CPF na nota, CPF: 000.000.000-00')}
             <Pendency />
           </Text>
-          <Text mt="10" fontSize="xl" color="black">
-            {t('Forma de pagamento')}
-          </Text>
-          <Text mt="1" fontSize="md">
-            {t('Total pago:')}{' '}
-            <Text as="span" color="black">
-              {orderTotalPrice}
-            </Text>
-          </Text>
-          <Text mt="1" fontSize="md">
-            {t('Método de pagamento:')}{' '}
-            <Text as="span" color="black">
-              <Pendency />
-            </Text>
-          </Text>
+          {order?.status !== 'canceled' ? (
+            <>
+              <Text mt="10" fontSize="xl" color="black">
+                {t('Forma de pagamento')}
+              </Text>
+              <Text mt="1" fontSize="md">
+                {t('Total pago:')}{' '}
+                <Text as="span" color="black">
+                  {orderTotalPrice}
+                </Text>
+              </Text>
+              <Text mt="1" fontSize="md">
+                {t('Método de pagamento:')}{' '}
+                <Text as="span" color="black">
+                  <Pendency />
+                </Text>
+              </Text>
+            </>
+          ) : (
+            <>
+              <Text mt="10" fontSize="xl" color="black">
+                {t('Motivo do cancelamento')}
+              </Text>
+              <Text mt="1" fontSize="md">
+                {t('Cancelado pelo cliente')}
+                <Pendency />
+              </Text>
+            </>
+          )}
           {(order?.status === 'confirming' || order?.status === 'preparing') && (
             <CookingTime orderId={order.id} cookingTime={order.cookingTime} />
           )}
