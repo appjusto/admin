@@ -26,7 +26,7 @@ import { Pendency } from './orderdrawer';
 
 interface BaseDrawerProps {
   orderId: string;
-  orderSeq: string;
+  orderCode: string;
   orderStatus: OrderStatus;
   isCurrierArrived: boolean;
   client: string;
@@ -42,7 +42,7 @@ interface BaseDrawerProps {
 
 export const OrderBaseDrawer = ({
   orderId,
-  orderSeq,
+  orderCode,
   orderStatus,
   isCurrierArrived,
   client,
@@ -88,7 +88,7 @@ export const OrderBaseDrawer = ({
             <Flex justifyContent="space-between" alignItems="flex-end">
               <Flex flexDir="column">
                 <Text color="black" fontSize="2xl" fontWeight="700" lineHeight="28px" mb="2">
-                  {t('Pedido Nº')} {orderSeq}
+                  {t('Pedido Nº')} {orderCode}
                 </Text>
                 <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
                   {t('Nome do cliente:')}{' '}

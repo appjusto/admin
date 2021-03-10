@@ -11,14 +11,14 @@ import { useOrdersContext } from '../context';
 interface CodeLinkProps {
   url: string;
   orderId: string;
-  seq?: string | null;
+  code?: string | null;
 }
 
-const CodeLink = ({ url, orderId, seq }: CodeLinkProps) => {
+const CodeLink = ({ url, orderId, code }: CodeLinkProps) => {
   return (
     <Link to={`${url}/${orderId}`}>
       <Text fontSize="lg" textDecor="underline" _hover={{ color: 'green.700' }}>
-        #{seq}
+        #{code}
       </Text>
     </Link>
   );
@@ -80,6 +80,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
       }
     }
   }, [elapsedTime]);
+  console.log('id', order.id);
   // UI
   if (order.status === 'canceled') {
     return (
@@ -93,7 +94,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
         boxShadow="0px 8px 16px -4px rgba(105,118,103,0.1)"
       >
         <Flex justifyContent="space-between" alignItems="center">
-          <CodeLink url={url} orderId={order.id} seq={order.seq} />
+          <CodeLink url={url} orderId={order.id} code={order.code} />
           <Flex flexDir="column" color="gray.700" fontSize="xs" alignItems="flex-end">
             <Text fontWeight="500">{t('Cancelado por')}</Text>
             <Text fontWeight="700">{t('Cliente')}</Text>
@@ -116,7 +117,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
         boxShadow="0px 8px 16px -4px rgba(105,118,103,0.1)"
       >
         <Flex justifyContent="space-between" alignItems="center">
-          <CodeLink url={url} orderId={order.id} seq={order.seq} />
+          <CodeLink url={url} orderId={order.id} code={order.code} />
           <Flex flexDir="column" color="gray.700" fontSize="xs" alignItems="flex-end">
             {wasDelivered ? (
               <Text fontWeight="700">{t('Pedido entregue')}</Text>
@@ -156,7 +157,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
       >
         <Flex flexDir="column" fontWeight="700">
           <Flex justifyContent="space-between">
-            <CodeLink url={url} orderId={order.id} seq={order.seq} />
+            <CodeLink url={url} orderId={order.id} code={order.code} />
             <Flex flexDir="column" fontSize="xs" alignItems="flex-end">
               {isUnmatched ? (
                 <Text color="gray.700" fontWeight="700">
@@ -221,7 +222,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
       >
         <Flex flexDir="column" fontWeight="700">
           <Flex justifyContent="space-between">
-            <CodeLink url={url} orderId={order.id} seq={order.seq} />
+            <CodeLink url={url} orderId={order.id} code={order.code} />
             <Flex flexDir="column">
               <HStack spacing={2} justifyContent="space-between">
                 <HStack spacing={1}>
@@ -270,7 +271,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
       >
         <Flex justifyContent="space-between" alignItems="center">
           <Text fontSize="lg" fontWeight="700">
-            #{order.seq}
+            #{order.code}
           </Text>
           {elapsedTime !== null ? (
             elapsedTime > 0 ? (

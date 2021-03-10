@@ -10,6 +10,8 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/react';
+import { splitByStatus } from 'app/api/order/selectors';
+import { Order, WithId } from 'appjusto-types';
 import { ReactComponent as ChatIcon } from 'common/img/chat.svg';
 import { ReactComponent as EditIcon } from 'common/img/edit-icon.svg';
 import { ReactComponent as SearchIcon } from 'common/img/searchIcon.svg';
@@ -18,20 +20,31 @@ import { Link, useRouteMatch } from 'react-router-dom';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { useOrdersContext } from '../context';
+import { OrderSearchResult } from './OrderSearchResult';
 import { OrdersKanbanList } from './OrdersKanbanList';
 
 export const OrdersKanban = () => {
   // context
   const { path } = useRouteMatch();
-  const { business, ordersByStatus, createFakeOrder } = useOrdersContext();
+  const { business, orders, createFakeOrder } = useOrdersContext();
   // state
+  const ordersByStatus = splitByStatus(orders);
   const [dateTime, setDateTime] = React.useState('');
   const [orderSearch, setOrderSearch] = React.useState('');
+  const [searchResult, setSearchResult] = React.useState<WithId<Order>[]>([]);
   // side effects
   React.useEffect(() => {
     const { date, time } = getDateTime();
     setDateTime(`${date} às ${time}`);
-  }, [ordersByStatus]);
+  }, [orders]);
+
+  React.useEffect(() => {
+    if (orderSearch) {
+      const regexp = new RegExp(orderSearch, 'i');
+      const result = orders.filter((order) => regexp.test(order.code as string));
+      setSearchResult(result);
+    }
+  }, [orders, orderSearch]);
   // UI
   return (
     <Box pb="12">
@@ -76,7 +89,7 @@ export const OrdersKanban = () => {
                 borderColor="black"
                 _hover={{ borderColor: 'black' }}
                 value={orderSearch}
-                placeholder={t('Pesquisar por pedido')}
+                placeholder={t('Pesquisar por nº do pedido')}
                 onChange={(ev) => setOrderSearch(ev.target.value)}
               />
               <InputRightElement
@@ -107,37 +120,41 @@ export const OrdersKanban = () => {
           </Text>
         </Flex>
       </Flex>
-      <Stack direction={['column', 'column', 'row']} mt="8" spacing="4">
-        <OrdersKanbanList
-          title={t('Pedidos à confirmar')}
-          orders={ordersByStatus['confirming']}
-          details={t('Aqui você verá os novos pedidos. Aceite-os para confirmar o preparo.')}
-        />
-        {/*<OrdersKanbanList
+      {orderSearch.length > 0 ? (
+        <OrderSearchResult orders={searchResult} />
+      ) : (
+        <Stack direction={['column', 'column', 'row']} mt="8" spacing="4">
+          <OrdersKanbanList
+            title={t('Pedidos à confirmar')}
+            orders={ordersByStatus['confirming']}
+            details={t('Aqui você verá os novos pedidos. Aceite-os para confirmar o preparo.')}
+          />
+          {/*<OrdersKanbanList
           title={t('Confirmados')}
           orders={ordersByStatus['confirmed']}
           details={t(
             'Aqui você verá os pedidos confirmados que ainda não começaram a ser preparados.'
           )}
           />*/}
-        <OrdersKanbanList
-          title={t('Em preparação')}
-          orders={ordersByStatus['preparing']}
-          details={t(
-            'Aqui você verá os pedidos que estão sendo preparados por você. Quando clicar em "Pedido pronto” ou o tempo expirar, o entregador estará esperando para buscá-lo.'
-          )}
-        />
-        <OrdersKanbanList
-          title={t('Retirada/entrega')}
-          orders={[...ordersByStatus['ready'], ...ordersByStatus['dispatching']]}
-          details={t('Aqui você verá os pedidos aguardando retirada pelo entregador.')}
-        />
-        <OrdersKanbanList
-          title={t('Pedidos cancelados')}
-          orders={ordersByStatus['canceled']}
-          details={t('Aqui você verá os pedidos que estão à caminho da entrega pela entregador.')}
-        />
-      </Stack>
+          <OrdersKanbanList
+            title={t('Em preparação')}
+            orders={ordersByStatus['preparing']}
+            details={t(
+              'Aqui você verá os pedidos que estão sendo preparados por você. Quando clicar em "Pedido pronto” ou o tempo expirar, o entregador estará esperando para buscá-lo.'
+            )}
+          />
+          <OrdersKanbanList
+            title={t('Retirada/entrega')}
+            orders={[...ordersByStatus['ready'], ...ordersByStatus['dispatching']]}
+            details={t('Aqui você verá os pedidos aguardando retirada pelo entregador.')}
+          />
+          <OrdersKanbanList
+            title={t('Pedidos cancelados')}
+            orders={ordersByStatus['canceled']}
+            details={t('Aqui você verá os pedidos que estão à caminho da entrega pela entregador.')}
+          />
+        </Stack>
+      )}
     </Box>
   );
 };

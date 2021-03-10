@@ -1,8 +1,34 @@
-import { OrderItemComplement, OrderItem, Order, WithId } from 'appjusto-types';
+import { OrderItemComplement, OrderItem, Order, WithId, OrderStatus } from 'appjusto-types';
 import { itemPriceFormatter, formatDate } from './formatters';
 import { round } from 'lodash';
 import { CroppedAreaProps } from 'common/components/ImageCropping';
 import { localOrderType } from 'pages/orders/context';
+
+// translation
+export const getTranslatedOrderStatus = (status: OrderStatus) => {
+  const en = [
+    'quote',
+    'confirming',
+    'confirmed',
+    'preparing',
+    'ready',
+    'dispatching',
+    'delivered',
+    'canceled',
+  ];
+  const pt = [
+    'Na fila',
+    'Aguardando confirmação',
+    'Confirmado',
+    'Em preparo',
+    'Pedido pronto',
+    'Despachando',
+    'Entregue',
+    'Cancelado',
+  ];
+  const index = en.indexOf(status);
+  return pt[index];
+};
 
 //date
 export const getDateTime = () => {

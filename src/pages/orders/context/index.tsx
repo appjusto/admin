@@ -1,4 +1,3 @@
-import { splitByStatus } from 'app/api/order/selectors';
 import { useOrders } from 'app/api/order/useOrders';
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusiness } from 'app/state/business/context';
@@ -36,7 +35,7 @@ const fakeOrder: Order = {
   },
   courier: {
     id: 'kW8M4T19IdP8VCrxOwAHJoTzsK33',
-    name: 'Kelly',
+    name: 'Kelly Slater',
     mode: 'motocycle',
     joined: ('1 de fevereiro de 2021 00:00:00 UTC-3' as unknown) as firebase.firestore.Timestamp,
     location: {
@@ -86,7 +85,7 @@ export type localOrderType = { code: string; time: number };
 
 interface ContextProps {
   business: WithId<Business> | null | undefined;
-  ordersByStatus: any;
+  orders: WithId<Order>[];
   getOrderById(id: string): WithId<Order> | undefined;
   createFakeOrder(): void;
   changeOrderStatus(orderId: string, status: OrderStatus): void;
@@ -112,10 +111,9 @@ export const OrdersContextProvider = (props: ProviderProps) => {
 
   //state
   const [orders, setOrders] = React.useState<WithId<Order>[]>([]);
-  const ordersByStatus = splitByStatus(orders);
 
   // order sound
-  const [playBell] = useSound(bellDing, { volume: 0.25 });
+  const [playBell] = useSound(bellDing, { volume: 1 });
 
   //Development
   const createFakeOrder = async () => {
@@ -181,7 +179,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
     <OrdersContext.Provider
       value={{
         business,
-        ordersByStatus,
+        orders,
         getOrderById,
         createFakeOrder,
         changeOrderStatus,
