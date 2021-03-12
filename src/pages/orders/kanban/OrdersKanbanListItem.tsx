@@ -46,6 +46,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
   const cookingTime = React.useMemo(() => (order?.cookingTime ? order?.cookingTime / 60 : null), [
     order?.cookingTime,
   ]);
+  //const cookingTime = order?.cookingTime ? order?.cookingTime / 60 : null;
   const cookingProgress = cookingTime && elapsedTime ? (elapsedTime / cookingTime) * 100 : 0;
 
   // side effects

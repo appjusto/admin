@@ -44,7 +44,6 @@ export const DeliveryInfos = ({ order, isCurrierArrived }: DeliveryInfosProps) =
       setRestaurantIcon(BlackPointSvg);
     }
   }, [order.status]);
-
   React.useEffect(() => {
     const date = order.courier?.joined as firebase.firestore.Timestamp;
     if (date) {
@@ -58,7 +57,6 @@ export const DeliveryInfos = ({ order, isCurrierArrived }: DeliveryInfosProps) =
       }
     }
   }, [order.courier]);
-
   // UI
   return (
     <Box mt="6">
@@ -84,27 +82,29 @@ export const DeliveryInfos = ({ order, isCurrierArrived }: DeliveryInfosProps) =
             <Text fontSize="sm">{t(`Chega em menos de 1 minuto`)}</Text>
           ))}
       </Flex>
-      <Flex mt="4" justifyContent="space-between" alignItems="flex-end">
-        <Flex alignItems="center" justifyContent="flex-end">
-          <Box>
-            {courierPictureUrl ? (
-              <Image src={courierPictureUrl} width="48px" height="48px" borderRadius="24px" />
-            ) : (
-              <Circle size="48px" bg="gray.400" />
-            )}
-          </Box>
-          <Flex ml="4" flexDir="column">
-            <Text fontSize="xl" color="black">
-              {order.courier?.name}
-            </Text>
-            <Text fontSize="sm">{t(`No appJusto desde ${joined}`)}</Text>
+      {!isUnmatched && (
+        <Flex mt="4" justifyContent="space-between" alignItems="flex-end">
+          <Flex alignItems="center" justifyContent="flex-end">
+            <Box>
+              {courierPictureUrl ? (
+                <Image src={courierPictureUrl} width="48px" height="48px" borderRadius="24px" />
+              ) : (
+                <Circle size="48px" bg="gray.400" />
+              )}
+            </Box>
+            <Flex ml="4" flexDir="column">
+              <Text fontSize="xl" color="black">
+                {order.courier?.name}
+              </Text>
+              <Text fontSize="sm">{t(`No appJusto desde ${joined}`)}</Text>
+            </Flex>
           </Flex>
+          <Button variant="outline" size="sm">
+            {t('Abrir chat com o entregador')}
+            <Pendency />
+          </Button>
         </Flex>
-        <Button variant="outline" size="sm">
-          {t('Abrir chat com o entregador')}
-          <Pendency />
-        </Button>
-      </Flex>
+      )}
       <Box
         mt="6"
         w={{ base: '328px', md: '380px', lg: '607px' }}

@@ -34,7 +34,7 @@ const fakeOrder: Order = {
     // cpf: '35214602820',
   },
   courier: {
-    id: 'kW8M4T19IdP8VCrxOwAHJoTzsK33',
+    id: 'n9IBTFplN1bnjHHfqhNcVJTaXc43',
     name: 'Kelly Slater',
     mode: 'motocycle',
     joined: ('1 de fevereiro de 2021 00:00:00 UTC-3' as unknown) as firebase.firestore.Timestamp,
@@ -175,8 +175,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
       setOrders(hookOrders);
       updateLocalStorageOrders(hookOrders, playBell);
     }
-  }, [hookOrders]);
-
+  }, [hookOrders, playBell]);
   // provider
   return (
     <OrdersContext.Provider
