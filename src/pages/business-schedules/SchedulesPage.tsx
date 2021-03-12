@@ -1,5 +1,6 @@
-import { Flex, Radio, RadioGroup, Text } from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/react';
 import { DaySchedule } from 'common/components/DaySchedule';
+import PageHeader from 'pages/PageHeader';
 import React from 'react';
 import { useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
@@ -8,45 +9,22 @@ const SchedulesPage = () => {
   //context
   const { url } = useRouteMatch();
   //state
-  const [mainAvailability, setMainAvailability] = React.useState<string>('1');
 
   return (
     <>
-      <Text fontSize="xl" color="black">
-        {t('Dias e horários')}
-      </Text>
-      <Text fontSize="sm" mt="2">
-        {t('Defina quais os dias e horários seus clientes poderão comprar esse ítem')}
-      </Text>
-      <RadioGroup
-        mt="2"
-        onChange={(value) => setMainAvailability(value.toString())}
-        value={mainAvailability}
-        defaultValue="1"
-        colorScheme="green"
-        color="black"
-        size="lg"
-      >
-        <Flex flexDir="column" justifyContent="flex-start">
-          <Radio mt="2" value="1">
-            {t('Sempre disponível quando o restaurante estiver aberto')}
-          </Radio>
-          <Radio mt="2" value="2">
-            {t('Disponível em dias e horários específicos')}
-          </Radio>
-        </Flex>
-      </RadioGroup>
-      {mainAvailability === '2' && (
-        <Flex flexDir="column" mt="4">
-          <DaySchedule weekDay={t('Segunda')} />
-          <DaySchedule weekDay={t('Terça')} />
-          <DaySchedule weekDay={t('Quarta')} />
-          <DaySchedule weekDay={t('Quinta')} />
-          <DaySchedule weekDay={t('Sexta')} />
-          <DaySchedule weekDay={t('Sábado')} />
-          <DaySchedule weekDay={t('Domingo')} />
-        </Flex>
-      )}
+      <PageHeader
+        title={t('Horário')}
+        subtitle={t('Defina o horário de funcionamento do restaurante.')}
+      />
+      <Flex flexDir="column" mt="4">
+        <DaySchedule weekDay={t('Segunda')} />
+        <DaySchedule weekDay={t('Terça')} />
+        <DaySchedule weekDay={t('Quarta')} />
+        <DaySchedule weekDay={t('Quinta')} />
+        <DaySchedule weekDay={t('Sexta')} />
+        <DaySchedule weekDay={t('Sábado')} />
+        <DaySchedule weekDay={t('Domingo')} />
+      </Flex>
     </>
   );
 };

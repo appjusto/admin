@@ -1,9 +1,9 @@
 import { Flex, Radio, RadioGroup, Text } from '@chakra-ui/react';
-import { DaySchedule } from 'common/components/DaySchedule';
 import { useProductContext } from 'pages/menu/context/ProductContext';
 import React from 'react';
 import { Redirect, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
+import { DaySchedule } from './availability/DaySchedule';
 
 export const ProductAvailability = () => {
   //context
