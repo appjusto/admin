@@ -5,7 +5,12 @@ import { CurrencyInput } from 'common/components/form/input/currency-input/Curre
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
 import { CustomPatternInput as PatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';
-import { cnpjFormatter, cnpjMask } from 'common/components/form/input/pattern-input/formatters';
+import {
+  cnpjFormatter,
+  cnpjMask,
+  phoneFormatter,
+  phoneMask,
+} from 'common/components/form/input/pattern-input/formatters';
 import { numbersOnlyParser } from 'common/components/form/input/pattern-input/parsers';
 import { ImageUploads } from 'common/components/ImageUploads';
 import {
@@ -29,6 +34,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const queryCache = useQueryCache();
   // state
   const [name, setName] = React.useState(business?.name ?? '');
+  const [phone, setPhone] = React.useState(business?.phone ?? '');
   const [cnpj, setCNPJ] = React.useState(business?.cnpj ?? '');
   const [cuisineName, setCuisineName] = React.useState(business?.cuisine ?? '');
   const [description, setDescription] = React.useState(business?.description ?? '');
@@ -57,6 +63,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
     if (coverFiles) await uploadCover(coverFiles);
     await updateBusinessProfile({
       name,
+      phone,
       cnpj,
       description,
       minimumOrder,
@@ -95,8 +102,9 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   }, []);
   React.useEffect(() => {
     if (business) {
-      if (business.name) setName(business.name);
       if (business.cnpj) setCNPJ(business.cnpj);
+      if (business.name) setName(business.name);
+      if (business.phone) setPhone(business.phone);
       if (business.description) setDescription(business.description);
       if (business.minimumOrder) setMinimumOrder(business.minimumOrder);
       if (business.cuisine) setCuisineName(business.cuisine);
@@ -120,15 +128,6 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
           title={t('Sobre o restaurante')}
           subtitle={t('Essas informações serão vistas por seus visitantes')}
         />
-        <Input
-          isRequired
-          id="business-name"
-          ref={nameRef}
-          label={t('Nome')}
-          placeholder={t('Nome')}
-          value={name}
-          onChange={(ev) => setName(ev.target.value)}
-        />
         <PatternInput
           isRequired
           id="business-cnpj"
@@ -140,6 +139,27 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
           value={cnpj}
           onValueChange={(value) => setCNPJ(value)}
           validationLength={14}
+        />
+        <Input
+          isRequired
+          id="business-name"
+          ref={nameRef}
+          label={t('Nome')}
+          placeholder={t('Nome')}
+          value={name}
+          onChange={(ev) => setName(ev.target.value)}
+        />
+        <PatternInput
+          isRequired
+          id="business-phone"
+          label={t('Telefone/Celular')}
+          placeholder={t('Número do seu telefone ou celular')}
+          mask={phoneMask}
+          parser={numbersOnlyParser}
+          formatter={phoneFormatter}
+          value={phone}
+          onValueChange={(value) => setPhone(value)}
+          validationLength={10}
         />
         <CuisineSelect
           isRequired
