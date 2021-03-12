@@ -3,6 +3,7 @@ import BusinessProfile from 'pages/business-profile/BusinessProfile';
 import DeliveryArea from 'pages/delivery-area/DeliveryArea';
 import { ManagerProfilePage } from 'pages/manager-profile/ManagerProfilePage';
 import Menu from 'pages/menu/Menu';
+import { OrdersHistoryPage } from 'pages/orders/history/OrdersHistoryPage';
 import Orders from 'pages/orders/OrdersPage';
 import PageLayout from 'pages/PageLayout';
 import React from 'react';
@@ -26,6 +27,7 @@ const Home = () => {
         <Route path={`${path}/delivery-area`} component={DeliveryArea} />
         <Route path={`${path}/business-profile`} component={BusinessProfile} />
         <Route path={`${path}/manager-profile`} component={ManagerProfilePage} />
+        <Route path={`${path}/orders-history`} component={OrdersHistoryPage} />
       </PageLayout>
     </Switch>
   );
