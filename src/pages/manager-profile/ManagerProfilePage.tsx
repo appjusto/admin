@@ -2,7 +2,7 @@ import { Box } from '@chakra-ui/react';
 import BankingInformation from 'pages/business-profile/BankingInformation';
 import { ManagerProfile } from './ManagerProfile';
 
-export const ManagerProfilePage = () => {
+const ManagerProfilePage = () => {
   return (
     <Box>
       <ManagerProfile />
@@ -12,3 +12,5 @@ export const ManagerProfilePage = () => {
     </Box>
   );
 };
+
+export default ManagerProfilePage;

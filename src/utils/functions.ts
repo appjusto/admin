@@ -3,6 +3,7 @@ import { itemPriceFormatter, formatDate } from './formatters';
 import { round } from 'lodash';
 import { CroppedAreaProps } from 'common/components/ImageCropping';
 import { localOrderType } from 'pages/orders/context';
+import I18n from 'i18n-js';
 
 // translation
 export const getTranslatedOrderStatus = (status: OrderStatus) => {
@@ -38,6 +39,13 @@ export const getDateTime = () => {
   if (minutes.length === 1) minutes = `0${minutes}`;
   let time = `${fullDate.getHours()}:${minutes}`;
   return { date, time };
+};
+
+export const getDateAndHour = (timestamp: firebase.firestore.Timestamp) => {
+  const timeToDate = timestamp.toDate();
+  const date = I18n.strftime(timeToDate, '%d/%m/%Y');
+  const hour = I18n.strftime(timeToDate, '%H:%M');
+  return `${date} ${hour}`;
 };
 
 // Orders times

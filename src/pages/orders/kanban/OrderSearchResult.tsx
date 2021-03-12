@@ -1,9 +1,12 @@
 import { Box, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
 import { Order, WithId } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
-import I18n from 'i18n-js';
 import { useRouteMatch } from 'react-router-dom';
-import { getOrderTotalPriceToDisplay, getTranslatedOrderStatus } from 'utils/functions';
+import {
+  getDateAndHour,
+  getOrderTotalPriceToDisplay,
+  getTranslatedOrderStatus,
+} from 'utils/functions';
 import { t } from 'utils/i18n';
 
 interface OrderSearchProps {
@@ -11,15 +14,9 @@ interface OrderSearchProps {
 }
 
 export const OrderSearchResult = ({ orders }: OrderSearchProps) => {
+  // context
   const { url } = useRouteMatch();
-  // handlers
-  const getDateHour = (timestamp: firebase.firestore.Timestamp) => {
-    const timeToDate = timestamp.toDate();
-    const date = I18n.strftime(timeToDate, '%d/%m/%Y');
-    const hour = I18n.strftime(timeToDate, '%H:%M');
-    return `${date} ${hour}`;
-  };
-
+  // UI
   return (
     <Box mt="8">
       <Text fontWeight="700" color="black">
@@ -42,7 +39,7 @@ export const OrderSearchResult = ({ orders }: OrderSearchProps) => {
               return (
                 <Tr key={order.code} color="black" fontSize="xs">
                   <Td maxW="120px">{order.code}</Td>
-                  <Td>{getDateHour(order.createdOn as firebase.firestore.Timestamp)}</Td>
+                  <Td>{getDateAndHour(order.createdOn as firebase.firestore.Timestamp)}</Td>
                   <Td>{getTranslatedOrderStatus(order.status)}</Td>
                   <Td>{order.courier?.name ?? t('Sem entregador')}</Td>
                   <Td isNumeric>{getOrderTotalPriceToDisplay(order.items ?? [])}</Td>

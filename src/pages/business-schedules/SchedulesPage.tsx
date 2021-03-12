@@ -1,21 +1,14 @@
 import { Flex, Radio, RadioGroup, Text } from '@chakra-ui/react';
 import { DaySchedule } from 'common/components/DaySchedule';
-import { useProductContext } from 'pages/menu/context/ProductContext';
 import React from 'react';
-import { Redirect, useRouteMatch } from 'react-router-dom';
+import { useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
 
-export const ProductAvailability = () => {
+const SchedulesPage = () => {
   //context
   const { url } = useRouteMatch();
-  const { productId } = useProductContext();
   //state
   const [mainAvailability, setMainAvailability] = React.useState<string>('1');
-
-  if (productId === 'new') {
-    const urlRedirect = url.split('/availability')[0];
-    return <Redirect to={urlRedirect} />;
-  }
 
   return (
     <>
@@ -57,3 +50,5 @@ export const ProductAvailability = () => {
     </>
   );
 };
+
+export default SchedulesPage;

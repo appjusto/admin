@@ -5,7 +5,7 @@ import { OrdersContextProvider } from '../context';
 import { OrderDrawer } from '../drawers/orderdrawer';
 import { OrdersHistory } from './OrdersHistory';
 
-export const OrdersHistoryPage = () => {
+const OrdersHistoryPage = () => {
   const { path } = useRouteMatch();
   const history = useHistory();
   const closeDrawerHandler = () => history.replace(path);
@@ -24,3 +24,5 @@ export const OrdersHistoryPage = () => {
     </OrdersContextProvider>
   );
 };
+
+export default OrdersHistoryPage;
