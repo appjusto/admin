@@ -50,7 +50,7 @@ export const ProductItem = React.memo(({ product, index }: Props) => {
   React.useEffect(() => {
     updatePriceState(product.price);
   }, [product.price]);
-
+  console.log(price);
   // UI
   return (
     <Draggable draggableId={product.id} index={index}>
