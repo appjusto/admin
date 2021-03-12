@@ -48,7 +48,7 @@ export const OrderDrawer = (props: Props) => {
   };
 
   // side effects
-
+  console.log(order);
   // UI
   return (
     <OrderBaseDrawer
