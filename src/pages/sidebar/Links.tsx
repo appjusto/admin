@@ -18,9 +18,10 @@ const LinkItem = ({ to, children }: LinkItemProps) => {
       d="flex"
       alignItems="center"
       bg={match ? 'white' : ''}
+      fontSize="sm"
       fontWeight={match ? '700' : ''}
       pl={match ? '0' : '4'}
-      mt="2"
+      mt="1"
       height="32px"
     >
       {match ? <Box w="4px" height="100%" bg="green.500" borderRadius="8px" mx="2" /> : null}
@@ -50,17 +51,18 @@ export const Links = () => {
       <Box>
         <LinksContainer>
           <Link to={`${url}`}>{t('Início')}</Link>
-          <Link to={`${url}/orders`}>{t('Pedidos')}</Link>
-          <Link to="/">{t('Financeiro')}</Link>
+          <Link to={`${url}/orders`}>{t('Gerenciador de pedidos')}</Link>
         </LinksContainer>
       </Box>
-      <Box mt="10">
+      <Box mt="6">
         <LinksContainer>
           <Link to={`${url}/menu`}>{t('Cardápio')}</Link>
           <Link to="/">{t('Horários')}</Link>
           <Link to={`${url}/delivery-area`}>{t('Área de entrega')}</Link>
+          <Link to={`${url}/orders-history`}>{t('Histórico de pedidos')}</Link>
+          <Link to="/">{t('Financeiro')}</Link>
           <Link to={`${url}/business-profile`}>{t('Perfil do restaurante')}</Link>
-          <Link to={`${url}/banking`}>{t('Informações bancárias')}</Link>
+          <Link to={`${url}/banking`}>{t('Colaboradores')}</Link>
         </LinksContainer>
       </Box>
     </Box>
