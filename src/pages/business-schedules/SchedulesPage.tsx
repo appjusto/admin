@@ -2,14 +2,9 @@ import { Flex } from '@chakra-ui/react';
 import { DaySchedule } from 'common/components/DaySchedule';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
-import { useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
 
 const SchedulesPage = () => {
-  //context
-  const { url } = useRouteMatch();
-  //state
-
   return (
     <>
       <PageHeader
