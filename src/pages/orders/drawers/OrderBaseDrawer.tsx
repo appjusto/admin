@@ -17,11 +17,11 @@ import {
 } from '@chakra-ui/react';
 import { OrderStatus } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
+import { Pendency } from 'common/components/Pendency';
 import { getErrorMessage } from 'core/fb';
 import React from 'react';
 import { t } from 'utils/i18n';
 import { useOrdersContext } from '../context';
-import { Pendency } from './orderdrawer';
 
 interface BaseDrawerProps {
   orderId: string;

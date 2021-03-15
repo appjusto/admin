@@ -1,4 +1,5 @@
 import { Box } from '@chakra-ui/react';
+import { Pendency } from 'common/components/Pendency';
 import React from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
@@ -60,9 +61,15 @@ export const Links = () => {
           <Link to={`${url}/business-schedules`}>{t('Horários')}</Link>
           <Link to={`${url}/delivery-area`}>{t('Área de entrega')}</Link>
           <Link to={`${url}/orders-history`}>{t('Histórico de pedidos')}</Link>
-          <Link to="/">{t('Financeiro')}</Link>
+          <Link to="/">
+            {t('Financeiro')}
+            <Pendency />
+          </Link>
           <Link to={`${url}/business-profile`}>{t('Perfil do restaurante')}</Link>
-          <Link to={`${url}/banking`}>{t('Colaboradores')}</Link>
+          <Link to={`${url}/`}>
+            {t('Colaboradores')}
+            <Pendency />
+          </Link>
         </LinksContainer>
       </Box>
     </Box>

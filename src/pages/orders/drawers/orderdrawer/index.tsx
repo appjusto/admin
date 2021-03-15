@@ -1,5 +1,6 @@
 import { Table, Tbody, Td, Text, Tfoot, Th, Thead, Tr } from '@chakra-ui/react';
 import { Issue, OrderItem, WithId } from 'appjusto-types';
+import { Pendency } from 'common/components/Pendency';
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { itemPriceFormatter } from 'utils/formatters';
@@ -10,14 +11,6 @@ import { OrderBaseDrawer } from '../OrderBaseDrawer';
 import { Cancelation } from './Cancelation';
 import { CookingTime } from './CookingTime';
 import { DeliveryInfos } from './DeliveryInfos';
-
-export const Pendency = () => {
-  return (
-    <Text as="span" color="red" ml="2" fontSize="lg">
-      *
-    </Text>
-  );
-};
 
 interface Props {
   isOpen: boolean;

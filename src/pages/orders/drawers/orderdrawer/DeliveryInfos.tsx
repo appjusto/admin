@@ -5,6 +5,7 @@ import { useOrderArrivalTimes } from 'app/api/order/useOrderArrivalTimes';
 import { useOrderDeliveryRoute } from 'app/api/order/useOrderDeliveryRoute';
 import { Order, WithId } from 'appjusto-types';
 import { Marker } from 'common/components/MapsMarker';
+import { Pendency } from 'common/components/Pendency';
 import BlackPackageSvg from 'common/img/map-black-package.svg';
 import BlackPointSvg from 'common/img/map-black-point.svg';
 import GreenPointSvg from 'common/img/map-green-point.svg';
@@ -15,7 +16,6 @@ import GoogleMapReact from 'google-map-react';
 import I18n from 'i18n-js';
 import React from 'react';
 import { t } from 'utils/i18n';
-import { Pendency } from '.';
 
 interface DeliveryInfosProps {
   order: WithId<Order>;
