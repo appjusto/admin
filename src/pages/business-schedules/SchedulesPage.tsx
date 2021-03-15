@@ -1,4 +1,7 @@
 import { Button, Flex } from '@chakra-ui/react';
+import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
+import { useContextBusiness } from 'app/state/business/context';
+import { BusinessSchedule } from 'appjusto-types/business';
 import { DaySchedule } from 'common/components/DaySchedule';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
@@ -17,12 +20,18 @@ const initialState = [
 const scheduleObj = { from: '', to: '' };
 
 const SchedulesPage = () => {
-  const [schedules, setSchedules] = React.useState(initialState);
+  // context
+  const business = useContextBusiness();
+  const { updateBusinessProfile } = useBusinessProfile();
+  // state
+  const [schedules, setSchedules] = React.useState<BusinessSchedule>(initialState);
+  const [isLoading, setIsLoading] = React.useState(false);
+  // handlers
   const handleCheck = (stateIndex: number, value: boolean) => {
     setSchedules((prevSchedule) => {
       const newState = prevSchedule.map((item, index) => {
         if (index === stateIndex) {
-          return { ...item, checked: value };
+          return { ...item, checked: value, schedule: [scheduleObj] };
         } else {
           return item;
         }
@@ -93,12 +102,19 @@ const SchedulesPage = () => {
       return newState;
     });
   };
-
-  const onSubmitHandler = (event: any) => {
+  const onSubmitHandler = async (event: any) => {
+    setIsLoading(true);
     event.preventDefault();
-    console.log('Submit!');
-    console.dir(schedules);
+    await updateBusinessProfile({ schedules });
+    setIsLoading(false);
   };
+  // side effects
+  React.useEffect(() => {
+    if (business?.schedules) {
+      setSchedules(business?.schedules);
+    }
+  }, [business?.schedules]);
+  // UI
   return (
     <>
       <PageHeader
@@ -122,7 +138,7 @@ const SchedulesPage = () => {
               replicate={() => replicateSchedule(index)}
             />
           ))}
-          <Button mt="8" type="submit">
+          <Button mt="8" type="submit" isLoading={isLoading} loadingText={t('Salvando')}>
             {t('Salvar horários')}
           </Button>
         </form>
@@ -132,6 +148,3 @@ const SchedulesPage = () => {
 };
 
 export default SchedulesPage;
-
-/*
-;*/

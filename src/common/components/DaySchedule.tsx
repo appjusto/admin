@@ -41,6 +41,7 @@ export const DaySchedule = ({
   return (
     <Flex flexDir="column" mt="8">
       <Checkbox
+        width="120px"
         colorScheme="green"
         size="lg"
         spacing="1rem"
