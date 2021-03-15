@@ -4,8 +4,6 @@ import { round } from 'lodash';
 
 // price and totals
 export const itemPriceFormatter = (price: number) => {
-  console.log(price);
-  console.log(unit);
   const pStr = price.toString();
   const len = pStr.length;
   const pArr = pStr.split('');

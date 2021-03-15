@@ -51,7 +51,6 @@ export const phoneFormatter = (value: string | undefined) => {
 
 export const TimeMask = '00:00';
 export const TimeFormatter = (value: string | undefined) => {
-  console.log(value);
   let formatedNumber = '';
   if (value) {
     let hours = value.slice(0, 2);
