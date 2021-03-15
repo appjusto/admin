@@ -65,7 +65,7 @@ export const DaySchedule = ({
               {t('Sem pausa')}
             </Radio>
             <Radio mt="2" value="2">
-              {t('O restaurante faz uma pausa durante o dia?')}
+              {t('O restaurante faz uma pausa durante o dia')}
             </Radio>
           </Flex>
         </RadioGroup>
