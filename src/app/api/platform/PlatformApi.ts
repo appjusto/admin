@@ -11,6 +11,7 @@ export default class PlatformApi {
   }
 
   async fetchBanks() {
-    return documentsAs<Bank>((await this.refs.getBanksRef().get()).docs);
+    const querySnapshot = await this.refs.getBanksRef().orderBy('order', 'asc').get();
+    return documentsAs<Bank>(querySnapshot.docs);
   }
 }
