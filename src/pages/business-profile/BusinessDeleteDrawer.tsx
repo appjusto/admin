@@ -1,8 +1,4 @@
 import {
-  Alert,
-  AlertDescription,
-  AlertIcon,
-  AlertTitle,
   Box,
   Button,
   Drawer,
@@ -16,6 +12,9 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
+import { useContextBusiness } from 'app/state/business/context';
+import { AlertError } from 'common/components/AlertError';
+import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import { getErrorMessage } from 'core/fb';
 import React from 'react';
 import { Redirect } from 'react-router-dom';
@@ -28,14 +27,28 @@ interface BaseDrawerProps {
 
 export const BusinessDeleteDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   //context
+  const business = useContextBusiness();
   const { deleteBusinessProfile, result } = useBusinessProfile();
-  const { isSuccess, isError, error, isLoading } = result;
+  const { status, isSuccess, isError, error, isLoading } = result;
+  console.log(status, isSuccess);
+  // state
+  const [businessName, setBusinessName] = React.useState('');
+  const [drawerError, setDrawerError] = React.useState({ status: false, message: '' });
   //handlers
   const handleDelete = async () => {
-    await deleteBusinessProfile();
-    if (isSuccess) return <Redirect to="/logout" />;
+    if (business?.name && businessName !== business?.name) {
+      return setDrawerError({
+        status: true,
+        message: 'Favor preencher o nome do restaurante corretamente!',
+      });
+    } else {
+      console.log('Vai excluir!');
+      setDrawerError({ status: false, message: '' });
+      await deleteBusinessProfile();
+    }
   };
   //UI
+  if (isSuccess) return <Redirect to="/logout" push />;
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
       <DrawerOverlay>
@@ -53,10 +66,33 @@ export const BusinessDeleteDrawer = ({ onClose, ...props }: BaseDrawerProps) => 
           <DrawerBody pb="28">
             <Box bg="#FFF8F8" border="1px solid red" borderRadius="lg" p="6">
               <Text color="red">
+                {t('Nome do restaurante: ')}
+                <Text as="span" fontWeight="700">
+                  {business?.name ?? t('Não informado')}
+                </Text>
+              </Text>
+              <Text mt="4" color="red">
                 {t(
                   'Ao excluir o restaurante, todo o seu histórico de pedidos, itens adicionados, categorias, informes de transação financeira, serão apagados. Tem certeza que deseja excluir o restaurante?'
                 )}
               </Text>
+              {business?.name && (
+                <>
+                  <Text mt="4" color="red">
+                    {t(`Para confirmar, digite o nome do restaurante no campo abaixo: `)}
+                  </Text>
+                  <Input
+                    mt="2"
+                    bg="white"
+                    id="confirm-name"
+                    label={t('Nome do restaurante')}
+                    value={businessName}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                      setBusinessName(event.target.value)
+                    }
+                  />
+                </>
+              )}
               <Stack mt="8" spacing={4} direction="row">
                 <Button width="full" onClick={onClose}>
                   {t('Manter restaurante')}
@@ -72,16 +108,15 @@ export const BusinessDeleteDrawer = ({ onClose, ...props }: BaseDrawerProps) => 
                 </Button>
               </Stack>
             </Box>
-            {isError && (
-              <Box mt="6">
-                <Alert status="error">
-                  <AlertIcon />
-                  <AlertTitle mr={2}>{t('Erro!')}</AlertTitle>
-                  <AlertDescription>
-                    {getErrorMessage(error) ?? t('Tenta de novo?')}
-                  </AlertDescription>
-                </Alert>
-              </Box>
+            {(isError || drawerError.status) && (
+              <AlertError
+                title={t('Erro!')}
+                description={
+                  drawerError.status
+                    ? drawerError.message
+                    : getErrorMessage(error) || t('Erro genérico')
+                }
+              />
             )}
           </DrawerBody>
         </DrawerContent>

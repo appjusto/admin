@@ -44,8 +44,21 @@ export const useBusinessProfile = () => {
   }, [uploadSuccess, queryCache, businessId]);
 
   // return
-  const result =
-    createResult ?? updateResult ?? deleteResult ?? uploadLogoResult ?? uploadCoverResult;
+  console.dir(updateResult);
+  let result;
+  if (updateResult.status !== 'idle') {
+    console.log('updateResult');
+    result = updateResult;
+  } else if (uploadLogoResult.status !== 'idle') {
+    console.log('uploadLogoResult');
+    result = uploadLogoResult;
+  } else if (uploadCoverResult.status !== 'idle') {
+    console.log('uploadCoverResult');
+    result = uploadCoverResult;
+  } else {
+    console.log('deleteResult');
+    result = deleteResult;
+  }
   return {
     logo,
     cover,

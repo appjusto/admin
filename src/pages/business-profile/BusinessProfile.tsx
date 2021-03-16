@@ -59,7 +59,8 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
     uploadCover,
     result,
   } = useBusinessProfile();
-  const { isSuccess } = result;
+  const { status, isSuccess } = result;
+  console.dir(status, isSuccess);
   // handlers
   const openDrawerHandler = () => history.push(`${path}/delete`);
   const closeDrawerHandler = () => history.replace(path);
@@ -124,7 +125,6 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
 
   // UI
   const breakpoint = useBreakpoint();
-  console.dir(isSuccess, redirect);
   if (isSuccess && redirect) return <Redirect to={redirect} push />;
   return (
     <>
