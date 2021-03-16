@@ -5,7 +5,7 @@ import DeliveryArea from 'pages/delivery-area/DeliveryArea';
 import ManagerProfilePage from 'pages/manager-profile/ManagerProfilePage';
 import Menu from 'pages/menu/Menu';
 import OrdersHistoryPage from 'pages/orders/history/OrdersHistoryPage';
-import Orders from 'pages/orders/OrdersPage';
+import OrdersPage from 'pages/orders/OrdersPage';
 import PageLayout from 'pages/PageLayout';
 import React from 'react';
 import { Redirect, Route, Switch, useRouteMatch } from 'react-router-dom';
@@ -21,7 +21,7 @@ const Home = () => {
   }
   return (
     <Switch>
-      <Route path={`${path}/orders`} component={Orders} />
+      <Route path={`${path}/orders`} component={OrdersPage} />
       <PageLayout>
         <Route exact path={path} component={Dashboard} />
         <Route path={`${path}/menu`} component={Menu} />

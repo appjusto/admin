@@ -33,7 +33,7 @@ export const BusinessDeleteDrawer = ({ onClose, ...props }: BaseDrawerProps) => 
   //handlers
   const handleDelete = async () => {
     await deleteBusinessProfile();
-    if (isSuccess) return <Redirect to="/login" />;
+    if (isSuccess) return <Redirect to="/logout" />;
   };
   //UI
   return (

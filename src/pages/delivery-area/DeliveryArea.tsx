@@ -222,12 +222,7 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
             <Marker lat={center.lat} lng={center.lng} />
           </GoogleMapReact>
         </Box>
-        <PageFooter
-          onboarding={onboarding}
-          redirect={redirect}
-          isLoading={isLoading}
-          onSubmit={onSubmitHandler}
-        />
+        <PageFooter onboarding={onboarding} redirect={redirect} isLoading={isLoading} />
       </form>
     </Box>
   );

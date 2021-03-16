@@ -78,12 +78,7 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
             onChange={(ev: React.ChangeEvent<HTMLInputElement>) => setAccount(ev.target.value)}
           />
         </Flex>
-        <PageFooter
-          onboarding={onboarding}
-          redirect={redirect}
-          isLoading={isLoading}
-          onSubmit={onSubmitHandler}
-        />
+        <PageFooter onboarding={onboarding} redirect={redirect} isLoading={isLoading} />
       </form>
     </Box>
   );

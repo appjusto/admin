@@ -1,4 +1,5 @@
 import { useContextApi } from 'app/state/api/context';
+import { useContextFirebaseUserEmail } from 'app/state/auth/context';
 import { useContextBusinessId } from 'app/state/business/context';
 import { Business } from 'appjusto-types';
 import React from 'react';
@@ -8,6 +9,7 @@ export const useBusinessProfile = () => {
   // context
   const api = useContextApi();
   const businessId = useContextBusinessId()!;
+  const email = useContextFirebaseUserEmail();
   const queryCache = useQueryCache();
   // queries
   const getBusinessLogoURL = (key: string) => api.business().getBusinessLogoURL(businessId);
@@ -18,6 +20,9 @@ export const useBusinessProfile = () => {
   const { data: cover } = useQuery(['business:cover', businessId], getBusinessCoverURL);
 
   // mutations
+  const [createBusinessProfile, createResult] = useMutation(async () => {
+    if (email) return api.business().createBusinessProfile(email);
+  });
   const [updateBusinessProfile, updateResult] = useMutation(async (changes: Partial<Business>) =>
     api.business().updateBusinessProfile(businessId, changes)
   );
@@ -39,10 +44,12 @@ export const useBusinessProfile = () => {
   }, [uploadSuccess, queryCache, businessId]);
 
   // return
-  const result = updateResult ?? deleteResult ?? uploadLogoResult ?? uploadCoverResult;
+  const result =
+    createResult ?? updateResult ?? deleteResult ?? uploadLogoResult ?? uploadCoverResult;
   return {
     logo,
     cover,
+    createBusinessProfile,
     updateBusinessProfile,
     deleteBusinessProfile,
     updateResult,

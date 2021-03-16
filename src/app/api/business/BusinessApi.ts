@@ -26,21 +26,21 @@ export default class MenuApi {
 
   async createBusinessProfile(managerEmail: string) {
     const doc = this.refs.getBusinessesRef().doc();
-    await doc.set({
+    return await doc.set({
       situation: 'pending',
       managers: [managerEmail],
       type: 'restaurant',
       status: 'closed',
     } as Partial<Business>);
-    return doc.id;
+    //return doc.id;
   }
 
   async updateBusinessProfile(businessId: string, changes: Partial<Business>) {
-    await this.refs.getBusinessRef(businessId).set(changes, { merge: true });
+    return await this.refs.getBusinessRef(businessId).set(changes, { merge: true });
   }
 
   async deleteBusinessProfile(businessId: string) {
-    await this.refs.getBusinessRef(businessId).delete();
+    return await this.refs.getBusinessRef(businessId).delete();
   }
 
   // managers

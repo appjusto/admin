@@ -51,6 +51,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const nameRef = React.useRef<HTMLInputElement>(null);
   // queries & mutations
   const {
+    createBusinessProfile,
     updateBusinessProfile,
     logo,
     cover,
@@ -116,11 +117,14 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
       if (business.cuisine) setCuisineName(business.cuisine);
       if (business.logoExists && logo) setLogoExists(true);
       if (business.coverImageExists && cover) setCoverExists(true);
+    } else {
+      createBusinessProfile();
     }
   }, [business, cover, logo]);
 
   // UI
   const breakpoint = useBreakpoint();
+  console.dir(isSuccess, redirect);
   if (isSuccess && redirect) return <Redirect to={redirect} push />;
   return (
     <>
@@ -236,7 +240,6 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
             onboarding={onboarding}
             redirect={redirect}
             isLoading={isLoading}
-            onSubmit={onSubmitHandler}
             deleteLabel={t('Excluir restaurante')}
             onDelete={openDrawerHandler}
           />

@@ -56,7 +56,6 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
       cpf,
     });
   };
-
   // UI
   if (isSuccess && redirect) return <Redirect to={redirect} push />;
   return (
@@ -118,12 +117,7 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
           onValueChange={(value) => setCPF(value)}
           validationLength={11}
         />
-        <PageFooter
-          onboarding={onboarding}
-          redirect={redirect}
-          isLoading={isLoading}
-          onSubmit={onSubmitHandler}
-        />
+        <PageFooter onboarding={onboarding} redirect={redirect} isLoading={isLoading} />
       </form>
     </Box>
   );

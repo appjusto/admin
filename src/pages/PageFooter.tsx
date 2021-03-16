@@ -7,18 +7,10 @@ import { OnboardingProps } from './onboarding/types';
 interface Props extends OnboardingProps {
   isLoading?: boolean;
   deleteLabel?: string;
-  onSubmit?(): Promise<void>;
   onDelete?(): void;
 }
 
-const PageFooter = ({
-  onboarding,
-  redirect,
-  isLoading,
-  deleteLabel,
-  onSubmit,
-  onDelete,
-}: Props) => {
+const PageFooter = ({ onboarding, redirect, isLoading, deleteLabel, onDelete }: Props) => {
   return (
     <Flex mt="8" alignItems="center" justifyContent="space-between">
       <Button
@@ -28,7 +20,6 @@ const PageFooter = ({
         fontSize="sm"
         fontWeight="500"
         fontFamily="Barlow"
-        onClick={!onboarding ? onSubmit : () => {}}
         isLoading={isLoading}
         loadingText={t('Salvando')}
       >
