@@ -60,7 +60,6 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
     result,
   } = useBusinessProfile();
   const { status, isSuccess } = result;
-  console.dir(status, isSuccess);
   // handlers
   const openDrawerHandler = () => history.push(`${path}/delete`);
   const closeDrawerHandler = () => history.replace(path);

@@ -44,19 +44,14 @@ export const useBusinessProfile = () => {
   }, [uploadSuccess, queryCache, businessId]);
 
   // return
-  console.dir(updateResult);
   let result;
   if (updateResult.status !== 'idle') {
-    console.log('updateResult');
     result = updateResult;
   } else if (uploadLogoResult.status !== 'idle') {
-    console.log('uploadLogoResult');
     result = uploadLogoResult;
   } else if (uploadCoverResult.status !== 'idle') {
-    console.log('uploadCoverResult');
     result = uploadCoverResult;
   } else {
-    console.log('deleteResult');
     result = deleteResult;
   }
   return {

@@ -29,8 +29,7 @@ export const BusinessDeleteDrawer = ({ onClose, ...props }: BaseDrawerProps) => 
   //context
   const business = useContextBusiness();
   const { deleteBusinessProfile, result } = useBusinessProfile();
-  const { status, isSuccess, isError, error, isLoading } = result;
-  console.log(status, isSuccess);
+  const { isSuccess, isError, error, isLoading } = result;
   // state
   const [businessName, setBusinessName] = React.useState('');
   const [drawerError, setDrawerError] = React.useState({ status: false, message: '' });
@@ -42,7 +41,6 @@ export const BusinessDeleteDrawer = ({ onClose, ...props }: BaseDrawerProps) => 
         message: 'Favor preencher o nome do restaurante corretamente!',
       });
     } else {
-      console.log('Vai excluir!');
       setDrawerError({ status: false, message: '' });
       await deleteBusinessProfile();
     }
