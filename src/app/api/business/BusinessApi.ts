@@ -39,6 +39,10 @@ export default class MenuApi {
     await this.refs.getBusinessRef(businessId).set(changes, { merge: true });
   }
 
+  async deleteBusinessProfile(businessId: string) {
+    await this.refs.getBusinessRef(businessId).delete();
+  }
+
   // managers
   observeBusinessManagedBy(
     email: string,

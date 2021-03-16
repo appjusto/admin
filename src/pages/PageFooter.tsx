@@ -6,13 +6,23 @@ import { OnboardingProps } from './onboarding/types';
 
 interface Props extends OnboardingProps {
   isLoading?: boolean;
-  onSubmit?: () => Promise<void>;
+  deleteLabel?: string;
+  onSubmit?(): Promise<void>;
+  onDelete?(): void;
 }
 
-const PageFooter = ({ onboarding, redirect, isLoading, onSubmit }: Props) => {
+const PageFooter = ({
+  onboarding,
+  redirect,
+  isLoading,
+  deleteLabel,
+  onSubmit,
+  onDelete,
+}: Props) => {
   return (
-    <Flex mt="8" alignItems="center">
+    <Flex mt="8" alignItems="center" justifyContent="space-between">
       <Button
+        minW="200px"
         type="submit"
         size="lg"
         fontSize="sm"
@@ -24,6 +34,18 @@ const PageFooter = ({ onboarding, redirect, isLoading, onSubmit }: Props) => {
       >
         {onboarding ? t('Salvar e continuar') : t('Salvar')}
       </Button>
+      {!onboarding && deleteLabel && (
+        <Button
+          size="lg"
+          fontSize="sm"
+          variant="dangerLight"
+          onClick={onDelete}
+          isLoading={isLoading}
+          loadingText={t('Excluindo')}
+        >
+          {deleteLabel}
+        </Button>
+      )}
       {onboarding && redirect && (
         <Link ml="8" as={RouterLink} to={redirect}>
           <Text textStyle="link">{t('Pular etapa e preencher depois')}</Text>

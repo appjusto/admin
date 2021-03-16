@@ -24,7 +24,7 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const profile = useContextManagerProfile();
   const { updateProfile, updateResult } = useUpdateManagerProfile();
   const { isLoading, isSuccess } = updateResult;
-
+  console.log(profile);
   // state
   const [name, setName] = React.useState(profile?.name ?? '');
   const [surname, setSurname] = React.useState(profile?.surname ?? '');

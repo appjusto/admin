@@ -21,6 +21,9 @@ export const useBusinessProfile = () => {
   const [updateBusinessProfile, updateResult] = useMutation(async (changes: Partial<Business>) =>
     api.business().updateBusinessProfile(businessId, changes)
   );
+  const [deleteBusinessProfile, deleteResult] = useMutation(async () =>
+    api.business().deleteBusinessProfile(businessId)
+  );
   const [uploadLogo, uploadLogoResult] = useMutation((file: File) => {
     //api.business().updateBusinessProfile(businessId, { logoExists: false });
     return api.business().uploadBusinessLogo(businessId, file);
@@ -36,11 +39,12 @@ export const useBusinessProfile = () => {
   }, [uploadSuccess, queryCache, businessId]);
 
   // return
-  const result = updateResult ?? uploadLogoResult ?? uploadCoverResult;
+  const result = updateResult ?? deleteResult ?? uploadLogoResult ?? uploadCoverResult;
   return {
     logo,
     cover,
     updateBusinessProfile,
+    deleteBusinessProfile,
     updateResult,
     uploadLogo,
     uploadLogoResult,

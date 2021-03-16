@@ -24,14 +24,17 @@ import PageFooter from 'pages/PageFooter';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
 import { useQueryCache } from 'react-query';
-import { Redirect } from 'react-router-dom';
+import { Redirect, Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { CuisineSelect } from '../../common/components/form/select/CuisineSelect';
+import { BusinessDeleteDrawer } from './BusinessDeleteDrawer';
 
 const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   // context
   const business = useContextBusiness();
   const queryCache = useQueryCache();
+  const { path } = useRouteMatch();
+  const history = useHistory();
   // state
   const [name, setName] = React.useState(business?.name ?? '');
   const [phone, setPhone] = React.useState(business?.phone ?? '');
@@ -57,6 +60,9 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   } = useBusinessProfile();
   const { isSuccess } = result;
   // handlers
+  const openDrawerHandler = () => history.push(`${path}/delete`);
+  const closeDrawerHandler = () => history.replace(path);
+
   const onSubmitHandler = async () => {
     setIsLoading(true);
     if (logoFiles) await uploadLogo(logoFiles[0]);
@@ -117,120 +123,131 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const breakpoint = useBreakpoint();
   if (isSuccess && redirect) return <Redirect to={redirect} push />;
   return (
-    <Box maxW="464px">
-      <form
-        onSubmit={(ev) => {
-          ev.preventDefault();
-          onSubmitHandler();
-        }}
-      >
-        <PageHeader
-          title={t('Sobre o restaurante')}
-          subtitle={t('Essas informações serão vistas por seus visitantes')}
-        />
-        <PatternInput
-          isRequired
-          id="business-cnpj"
-          label={t('CNPJ')}
-          placeholder={t('CNPJ do seu estabelecimento')}
-          mask={cnpjMask}
-          parser={numbersOnlyParser}
-          formatter={cnpjFormatter}
-          value={cnpj}
-          onValueChange={(value) => setCNPJ(value)}
-          validationLength={14}
-        />
-        <Input
-          isRequired
-          id="business-name"
-          ref={nameRef}
-          label={t('Nome')}
-          placeholder={t('Nome')}
-          value={name}
-          onChange={(ev) => setName(ev.target.value)}
-        />
-        <PatternInput
-          isRequired
-          id="business-phone"
-          label={t('Telefone/Celular')}
-          placeholder={t('Número do seu telefone ou celular')}
-          mask={phoneMask}
-          parser={numbersOnlyParser}
-          formatter={phoneFormatter}
-          value={phone}
-          onValueChange={(value) => setPhone(value)}
-          validationLength={10}
-        />
-        <CuisineSelect
-          isRequired
-          value={cuisineName}
-          onChange={(ev) => setCuisineName(ev.target.value)}
-        />
-        <Textarea
-          isRequired
-          id="business-description"
-          label={t('Descrição')}
-          placeholder={t('Descreva seu restaurante')}
-          value={description}
-          onChange={(ev) => setDescription(ev.target.value)}
-        />
-        <CurrencyInput
-          isRequired
-          id="business-min-price"
-          label={t('Valor mínimo do pedido')}
-          placeholder={t('R$ 0,00')}
-          value={minimumOrder}
-          onChangeValue={(value) => setMinimumOrder(value)}
-          maxLength={8}
-        />
-        {/* logo */}
-        <Text mt="8" fontSize="xl" color="black">
-          {t('Logo do estabelecimento')}
-        </Text>
-        <Text mt="2" fontSize="md">
-          {t(
-            'Para o logo do estabelecimento recomendamos imagens no formato quadrado (1:1) com no mínimo 200px de largura'
-          )}
-        </Text>
-        <ImageUploads
-          key="logo"
-          mt="4"
-          width="200px"
-          height="200px"
-          imageUrl={logo}
-          ratios={logoRatios}
-          resizedWidth={logoResizedWidth}
-          getImages={getLogoFiles}
-          clearDrop={() => clearDropImages('logo')}
-        />
-        {/* cover image */}
-        <Text mt="8" fontSize="xl" color="black">
-          {t('Imagem de capa')}
-        </Text>
-        <Text mt="2" fontSize="md">
-          {t(
-            'Você pode ter também uma imagem de capa para o seu restaurante. Pode ser foto do local ou de algum prato específico. Recomendamos imagens na proporção retangular (16:9) com no mínimo 1280px de largura'
-          )}
-        </Text>
-        <ImageUploads
-          key="cover"
-          mt="4"
-          width={breakpoint === 'base' ? 328 : breakpoint === 'md' ? 420 : 464}
-          imageUrl={cover}
-          ratios={coverRatios}
-          resizedWidth={coverResizedWidth}
-          getImages={getCoverFiles}
-          clearDrop={() => clearDropImages('cover')}
-        />
-        {/* submit */}
-        <PageFooter
-          onboarding={onboarding}
-          redirect={redirect}
-          isLoading={isLoading}
-          onSubmit={onSubmitHandler}
-        />
-      </form>
-    </Box>
+    <>
+      <Box maxW="833px">
+        <form
+          onSubmit={(ev) => {
+            ev.preventDefault();
+            onSubmitHandler();
+          }}
+        >
+          <PageHeader
+            title={t('Sobre o restaurante')}
+            subtitle={t('Essas informações serão vistas por seus visitantes')}
+          />
+          <Box maxW="400px">
+            <PatternInput
+              isRequired
+              id="business-cnpj"
+              label={t('CNPJ')}
+              placeholder={t('CNPJ do seu estabelecimento')}
+              mask={cnpjMask}
+              parser={numbersOnlyParser}
+              formatter={cnpjFormatter}
+              value={cnpj}
+              onValueChange={(value) => setCNPJ(value)}
+              validationLength={14}
+            />
+            <Input
+              isRequired
+              id="business-name"
+              ref={nameRef}
+              label={t('Nome')}
+              placeholder={t('Nome')}
+              value={name}
+              onChange={(ev) => setName(ev.target.value)}
+            />
+            <PatternInput
+              isRequired
+              id="business-phone"
+              label={t('Telefone/Celular')}
+              placeholder={t('Número do seu telefone ou celular')}
+              mask={phoneMask}
+              parser={numbersOnlyParser}
+              formatter={phoneFormatter}
+              value={phone}
+              onValueChange={(value) => setPhone(value)}
+              validationLength={10}
+            />
+            <CuisineSelect
+              isRequired
+              value={cuisineName}
+              onChange={(ev) => setCuisineName(ev.target.value)}
+            />
+            <Textarea
+              isRequired
+              id="business-description"
+              label={t('Descrição')}
+              placeholder={t('Descreva seu restaurante')}
+              value={description}
+              onChange={(ev) => setDescription(ev.target.value)}
+            />
+            <CurrencyInput
+              isRequired
+              id="business-min-price"
+              label={t('Valor mínimo do pedido')}
+              placeholder={t('R$ 0,00')}
+              value={minimumOrder}
+              onChangeValue={(value) => setMinimumOrder(value)}
+              maxLength={8}
+            />
+          </Box>
+          {/* logo */}
+          <Text mt="8" fontSize="xl" color="black">
+            {t('Logo do estabelecimento')}
+          </Text>
+          <Text mt="2" fontSize="md">
+            {t(
+              'Para o logo do estabelecimento recomendamos imagens no formato quadrado (1:1) com no mínimo 200px de largura'
+            )}
+          </Text>
+          <ImageUploads
+            key="logo"
+            mt="4"
+            width="200px"
+            height="200px"
+            imageUrl={logo}
+            ratios={logoRatios}
+            resizedWidth={logoResizedWidth}
+            getImages={getLogoFiles}
+            clearDrop={() => clearDropImages('logo')}
+          />
+          {/* cover image */}
+          <Text mt="8" fontSize="xl" color="black">
+            {t('Imagem de capa')}
+          </Text>
+          <Text mt="2" fontSize="md">
+            {t(
+              'Você pode ter também uma imagem de capa para o seu restaurante. Pode ser foto do local ou de algum prato específico. Recomendamos imagens na proporção retangular (16:9) com no mínimo 1280px de largura'
+            )}
+          </Text>
+          <ImageUploads
+            key="cover"
+            mt="4"
+            width={breakpoint === 'base' ? 328 : breakpoint === 'md' ? 420 : 464}
+            imageUrl={cover}
+            ratios={coverRatios}
+            resizedWidth={coverResizedWidth}
+            getImages={getCoverFiles}
+            clearDrop={() => clearDropImages('cover')}
+          />
+          {/* submit */}
+          <PageFooter
+            onboarding={onboarding}
+            redirect={redirect}
+            isLoading={isLoading}
+            onSubmit={onSubmitHandler}
+            deleteLabel={t('Excluir restaurante')}
+            onDelete={openDrawerHandler}
+          />
+        </form>
+      </Box>
+      <Switch>
+        <Route exact path={`${path}/delete`}>
+          <BusinessDeleteDrawer isOpen onClose={closeDrawerHandler} />
+        </Route>
+      </Switch>
+    </>
   );
 };
 
