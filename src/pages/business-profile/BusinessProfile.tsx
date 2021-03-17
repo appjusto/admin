@@ -48,7 +48,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const [coverFiles, setCoverFiles] = React.useState<File[] | null>(null);
   const [isLoading, setIsLoading] = React.useState(false);
   // refs
-  const nameRef = React.useRef<HTMLInputElement>(null);
+  const cnpjRef = React.useRef<HTMLInputElement>(null);
   // queries & mutations
   const {
     createBusinessProfile,
@@ -105,7 +105,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
 
   // side effects
   React.useEffect(() => {
-    nameRef?.current?.focus();
+    cnpjRef?.current?.focus();
   }, []);
   React.useEffect(() => {
     if (business) {
@@ -141,6 +141,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
           <Box maxW="400px">
             <PatternInput
               isRequired
+              ref={cnpjRef}
               id="business-cnpj"
               label={t('CNPJ')}
               placeholder={t('CNPJ do seu estabelecimento')}
@@ -154,7 +155,6 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
             <Input
               isRequired
               id="business-name"
-              ref={nameRef}
               label={t('Nome')}
               placeholder={t('Nome')}
               value={name}

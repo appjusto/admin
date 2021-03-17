@@ -3,9 +3,10 @@ import { Alert, AlertDescription, AlertIcon, AlertProps, AlertTitle, Flex } from
 interface Props extends AlertProps {
   title: string;
   description: string;
+  children?: React.ReactNode | React.ReactNode[];
 }
 
-export const AlertWarning = ({ title, description, ...props }: Props) => (
+export const AlertWarning = ({ title, description, children, ...props }: Props) => (
   <Alert
     mt="4"
     status="warning"
@@ -18,6 +19,7 @@ export const AlertWarning = ({ title, description, ...props }: Props) => (
     <Flex flexDir="column">
       <AlertTitle mr={2}>{title}</AlertTitle>
       <AlertDescription>{description}</AlertDescription>
+      {children}
     </Flex>
   </Alert>
 );
