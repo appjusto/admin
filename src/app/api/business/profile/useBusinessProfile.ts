@@ -20,7 +20,7 @@ export const useBusinessProfile = () => {
   const { data: cover } = useQuery(['business:cover', businessId], getBusinessCoverURL);
 
   // mutations
-  const [createBusinessProfile, createResult] = useMutation(async () => {
+  const [createBusinessProfile] = useMutation(async () => {
     if (email) return api.business().createBusinessProfile(email);
   });
   const [updateBusinessProfile, updateResult] = useMutation(async (changes: Partial<Business>) =>

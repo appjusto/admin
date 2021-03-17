@@ -59,7 +59,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
     uploadCover,
     result,
   } = useBusinessProfile();
-  const { status, isSuccess } = result;
+  const { isSuccess } = result;
   // handlers
   const openDrawerHandler = () => history.push(`${path}/delete`);
   const closeDrawerHandler = () => history.replace(path);
@@ -120,7 +120,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
     } else {
       createBusinessProfile();
     }
-  }, [business, cover, logo]);
+  }, [business, cover, logo, createBusinessProfile]);
 
   // UI
   const breakpoint = useBreakpoint();
