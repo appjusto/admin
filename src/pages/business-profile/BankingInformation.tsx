@@ -59,23 +59,24 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
           title={t('Dados bancários')}
           subtitle={t('Informe para onde serão transferidos os repasses')}
         />
-        <BankSelect value={name} onChange={(ev) => setName(ev.target.value)} />
+        <BankSelect value={name} onChange={(ev) => setName(ev.target.value)} isRequired />
         <NumberInput
           id="banking-agency"
           label={t('Agência')}
           placeholder={t('Número da agência')}
           value={agency}
           onChange={(ev: React.ChangeEvent<HTMLInputElement>) => setAgency(ev.target.value)}
+          isRequired
         />
         <Flex>
           <NumberInput
             id="banking-account"
-            mr="4"
             flex={3}
             label={t('Conta')}
             placeholder={t('0000')}
             value={account}
             onChange={(ev: React.ChangeEvent<HTMLInputElement>) => setAccount(ev.target.value)}
+            isRequired
           />
         </Flex>
         <PageFooter onboarding={onboarding} redirect={redirect} isLoading={isLoading} />

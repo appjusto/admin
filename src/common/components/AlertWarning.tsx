@@ -5,9 +5,16 @@ interface Props extends AlertProps {
   description: string;
 }
 
-export const AlertError = ({ title, description, ...props }: Props) => (
-  <Alert mt="4" status="error" color="black" bg="rgb(254, 215, 215)" borderRadius="lg" {...props}>
-    <AlertIcon color="red" />
+export const AlertWarning = ({ title, description, ...props }: Props) => (
+  <Alert
+    mt="4"
+    status="warning"
+    color="black"
+    border="1px solid #FFBE00"
+    borderRadius="lg"
+    {...props}
+  >
+    <AlertIcon />
     <Flex flexDir="column">
       <AlertTitle mr={2}>{title}</AlertTitle>
       <AlertDescription>{description}</AlertDescription>

@@ -1,4 +1,5 @@
-import { Box } from '@chakra-ui/react';
+import { Box, Text } from '@chakra-ui/react';
+import { useContextBusiness } from 'app/state/business/context';
 import { Pendency } from 'common/components/Pendency';
 import React from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
@@ -46,13 +47,22 @@ const LinksContainer = ({ children }: LinksContainerProps) => {
 };
 
 export const Links = () => {
+  // context
+  const business = useContextBusiness();
   const { url } = useRouteMatch();
+
+  const isApproved = business?.situation === 'approved';
+
   return (
     <Box ml="1">
       <Box>
         <LinksContainer>
           <Link to={`${url}`}>{t('Início')}</Link>
-          <Link to={`${url}/orders`}>{t('Gerenciador de pedidos')}</Link>
+          {isApproved ? (
+            <Link to={`${url}/orders`}>{t('Gerenciador de pedidos')}</Link>
+          ) : (
+            <Text color="gray.600">{t('Gerenciador de pedidos')}</Text>
+          )}
         </LinksContainer>
       </Box>
       <Box mt="6">
