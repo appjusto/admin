@@ -23,8 +23,8 @@ const Dashboard = () => {
     <>
       <PageHeader title={t('Início')} subtitle={t(`Dados atualizados em ${dateTime}`)} />
       {business?.situation === 'approved' ? (
-        <Text fontSize="lg" fontWeight="700">
-          Aprovado!!!
+        <Text mt="4" fontSize="lg" fontWeight="700">
+          Dashboard !
         </Text>
       ) : (
         <RegistrationStatus />

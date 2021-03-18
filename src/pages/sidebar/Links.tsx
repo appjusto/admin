@@ -76,7 +76,7 @@ export const Links = () => {
             <Pendency />
           </Link>
           <Link to={`${url}/business-profile`}>{t('Perfil do restaurante')}</Link>
-          <Link to="/">
+          <Link to={`${url}/team`}>
             {t('Colaboradores')}
             <Pendency />
           </Link>

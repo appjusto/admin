@@ -7,6 +7,7 @@ import Menu from 'pages/menu/Menu';
 import OrdersHistoryPage from 'pages/orders/history/OrdersHistoryPage';
 import OrdersPage from 'pages/orders/OrdersPage';
 import PageLayout from 'pages/PageLayout';
+import TeamPage from 'pages/team/TeamPage';
 import React from 'react';
 import { Redirect, Route, Switch, useRouteMatch } from 'react-router-dom';
 import Dashboard from './Dashboard';
@@ -30,6 +31,7 @@ const Home = () => {
         <Route path={`${path}/business-profile`} component={BusinessProfile} />
         <Route path={`${path}/manager-profile`} component={ManagerProfilePage} />
         <Route path={`${path}/orders-history`} component={OrdersHistoryPage} />
+        <Route path={`${path}/team`} component={TeamPage} />
       </PageLayout>
     </Switch>
   );
