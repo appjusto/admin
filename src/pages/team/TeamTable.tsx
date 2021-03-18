@@ -1,4 +1,16 @@
-import { Box, Button, Switch, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  HStack,
+  Switch,
+  Table,
+  Tbody,
+  Td,
+  Text,
+  Th,
+  Thead,
+  Tr,
+} from '@chakra-ui/react';
 import { WithId } from 'appjusto-types';
 import React from 'react';
 import { getDateAndHour } from 'utils/functions';
@@ -14,6 +26,72 @@ interface TeamTableProps {
   members: WithId<TeamMember>[];
 }
 
+interface TeamTableItemProps {
+  member: WithId<TeamMember>;
+  updateMember(memberId: string, isManager: boolean): void;
+  deleteMember(memberId: string): void;
+}
+
+const TeamTableItem = ({ member, updateMember, deleteMember }: TeamTableItemProps) => {
+  // state
+  const [isDeleting, setIsDeleting] = React.useState(false);
+  // handlers
+
+  // UI
+  return (
+    <Tr
+      key={member.email}
+      color="black"
+      fontSize="sm"
+      h="66px"
+      bg={isDeleting ? 'rgba(254, 215, 215, 0.3)' : 'none'}
+    >
+      <Td>{member.email}</Td>
+      {isDeleting ? (
+        <>
+          <Td>{t('Confirmar exclusão?')}</Td>
+          <Td position="relative">
+            <Box position="absolute" top="4">
+              <HStack spacing={4}>
+                <Button w="150px" size="sm" onClick={() => setIsDeleting(false)}>
+                  {t('Manter')}
+                </Button>
+                <Button
+                  w="150px"
+                  size="sm"
+                  variant="danger"
+                  onClick={() => deleteMember(member.id)}
+                >
+                  {t('Excluir')}
+                </Button>
+              </HStack>
+            </Box>
+          </Td>
+          <Td></Td>
+        </>
+      ) : (
+        <>
+          <Td textAlign="center">
+            <Switch
+              isChecked={member.isManager}
+              onChange={(ev) => {
+                ev.stopPropagation();
+                updateMember(member.id, ev.target.checked);
+              }}
+            />
+          </Td>
+          <Td>{getDateAndHour(member.createdOn as firebase.firestore.Timestamp)}</Td>
+          <Td>
+            <Button size="sm" variant="dangerLight" onClick={() => setIsDeleting(true)}>
+              {t('Excluir colaborador')}
+            </Button>
+          </Td>
+        </>
+      )}
+    </Tr>
+  );
+};
+
 export const TeamTable = ({ members }: TeamTableProps) => {
   // context
 
@@ -21,7 +99,11 @@ export const TeamTable = ({ members }: TeamTableProps) => {
 
   // handlers
   const updateMember = (memberId: string, isManager: boolean) => {
-    console.log(memberId, isManager);
+    console.log('update', memberId, isManager);
+  };
+
+  const deleteMember = (memberId: string) => {
+    console.log('delete', memberId);
   };
 
   // side effects
@@ -45,24 +127,11 @@ export const TeamTable = ({ members }: TeamTableProps) => {
           {members && members.length > 0 ? (
             members.map((member) => {
               return (
-                <Tr key={member.email} color="black" fontSize="sm">
-                  <Td>{member.email}</Td>
-                  <Td textAlign="center">
-                    <Switch
-                      isChecked={member.isManager}
-                      onChange={(ev) => {
-                        ev.stopPropagation();
-                        updateMember(member.id, ev.target.checked);
-                      }}
-                    />
-                  </Td>
-                  <Td>{getDateAndHour(member.createdOn as firebase.firestore.Timestamp)}</Td>
-                  <Td>
-                    <Button size="sm" variant="dangerLight">
-                      {t('Excluir colaborador')}
-                    </Button>
-                  </Td>
-                </Tr>
+                <TeamTableItem
+                  member={member}
+                  updateMember={updateMember}
+                  deleteMember={deleteMember}
+                />
               );
             })
           ) : (

@@ -33,7 +33,7 @@ const TeamPage = () => {
         },
         {
           id: 'sjclscn2',
-          email: 'pedro.saulo@gmail.com',
+          email: 'saulo@gmail.com',
           isManager: true,
           createdOn: manager.createdOn,
         },

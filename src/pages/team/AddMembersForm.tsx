@@ -1,4 +1,5 @@
-import { Box, Button, HStack, Switch, Text } from '@chakra-ui/react';
+import { Box, Button, HStack, Switch, Text, Tooltip } from '@chakra-ui/react';
+import { CloseButton } from 'common/components/buttons/CloseButton';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import React from 'react';
 import { t } from 'utils/i18n';
@@ -20,8 +21,14 @@ export const AddMembersForm = () => {
   const [members, setMembers] = React.useState<Member[]>([memberObj]);
 
   // handlers
-  const AddMember = () => {
+  const AddMemberFields = () => {
     setMembers((prevState) => [...prevState, memberObj]);
+  };
+
+  const removeMemberFields = (stateIndex: number) => {
+    setMembers((prevState) => {
+      return prevState.filter((member, index) => index !== stateIndex);
+    });
   };
 
   const updateMember = (stateIndex: number, field: string, value: string | boolean) => {
@@ -43,7 +50,7 @@ export const AddMembersForm = () => {
 
   // UI
   return (
-    <Box mt="8" maxW="600px">
+    <Box mt="8" maxW="700px">
       <form
         onSubmit={(ev) => {
           ev.preventDefault();
@@ -76,9 +83,20 @@ export const AddMembersForm = () => {
                 updateMember(index, 'isManager', ev.target.checked);
               }}
             />
+            <Box w="40px">
+              {index > 0 && (
+                <Tooltip placement="top" label={t('Remover')} aria-label={t('Remover')}>
+                  <CloseButton
+                    size="sm"
+                    variant="dangerLight"
+                    onClick={() => removeMemberFields(index)}
+                  />
+                </Tooltip>
+              )}
+            </Box>
           </HStack>
         ))}
-        <Button mt="4" size="sm" variant="outline" onClick={AddMember}>
+        <Button mt="4" size="sm" variant="outline" onClick={AddMemberFields}>
           {t('Adicionar mais')}
         </Button>
         <Box>
