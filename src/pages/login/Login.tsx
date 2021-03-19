@@ -1,14 +1,7 @@
-import {
-  Alert,
-  AlertDescription,
-  AlertIcon,
-  AlertTitle,
-  Box,
-  Button,
-  Flex,
-  Text,
-} from '@chakra-ui/react';
+import { Box, Button, Flex, Text } from '@chakra-ui/react';
 import { useContextApi } from 'app/state/api/context';
+import { AlertError } from 'common/components/AlertError';
+import { AlertSuccess } from 'common/components/AlertSuccess';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import logo from 'common/img/logo.svg';
 import { getErrorMessage } from 'core/fb';
@@ -83,19 +76,16 @@ const Login = () => {
             handleChange={(ev) => setEmail(ev.target.value)}
           />
           {isError && (
-            <Alert status="error" mt="6">
-              <AlertIcon />
-              <AlertTitle mr={2}>{t('Erro!')}</AlertTitle>
-              <AlertDescription>{getErrorMessage(error) ?? t('Tenta de novo?')}</AlertDescription>
-            </Alert>
+            <AlertError
+              title={t('Erro!')}
+              description={getErrorMessage(error) ?? t('Tenta de novo?')}
+            />
           )}
           {isSuccess && (
-            <Alert status="success" mt="6">
-              <AlertIcon />
-              <AlertDescription>
-                {t('Pronto! O link de acesso foi enviado para seu e-mail.')}
-              </AlertDescription>
-            </Alert>
+            <AlertSuccess
+              title={t('Pronto!')}
+              description={t('O link de acesso foi enviado para seu e-mail.')}
+            />
           )}
           <Button type="submit" width="full" h="60px" mt="6" isLoading={isLoading}>
             {t('Entrar')}
