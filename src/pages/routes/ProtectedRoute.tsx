@@ -34,11 +34,7 @@ export const ProtectedRoute = (props: RouteProps) => {
   if (status === 'unauthenticated') return <Redirect to="/login" />;
   // load route when profile is loaded
   if (status === 'profile-loaded') {
-    if (props.path === '/') {
-      return <Redirect to="/app" />;
-    } else {
-      return <Route {...props} />;
-    }
+    return <Route {...props} />;
   }
   // still loading user's profile
   return <Loading />;

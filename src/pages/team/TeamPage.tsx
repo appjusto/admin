@@ -12,10 +12,6 @@ interface TeamMember {
   createdOn: firebase.firestore.Timestamp;
 }
 
-interface TeamTableProps {
-  members: WithId<TeamMember>[];
-}
-
 const TeamPage = () => {
   // context
   const manager = useManagerProfile();

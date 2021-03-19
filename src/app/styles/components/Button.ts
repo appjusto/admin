@@ -48,6 +48,18 @@ export const Button = {
         borderColor: 'gray.500',
       },
     },
+    white: {
+      'bg': 'white',
+      'color': 'black',
+      'borderColor': 'black',
+      ':hover': {
+        color: 'gray.700',
+      },
+      ':disabled': {
+        color: 'gray.500',
+        borderColor: 'gray.500',
+      },
+    },
     danger: {
       'bg': 'red',
       'color': 'white',
