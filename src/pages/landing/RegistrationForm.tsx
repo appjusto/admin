@@ -1,28 +1,59 @@
 import { Box, Button, Checkbox, Flex, Heading, HStack, Image, Link, Text } from '@chakra-ui/react';
+import { useContextApi } from 'app/state/api/context';
+import { AlertSuccess } from 'common/components/AlertSuccess';
 import { AlertWarning } from 'common/components/AlertWarning';
-//import CustomComboInput from '../../CustomComboInput'
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import delivery from 'common/img/big-delivery.svg';
 import React, { ChangeEvent, FormEvent } from 'react';
+import { useMutation } from 'react-query';
 import { t } from 'utils/i18n';
 
 export const RegistrationForm = () => {
+  // contex
+  const api = useContextApi();
   // state
   const [email, setEmail] = React.useState('');
   const [accept, setAccept] = React.useState(false);
-  const [error, setError] = React.useState({ status: false, message: '' });
+  const [formMsg, setFormMsg] = React.useState({ status: false, type: '', message: '' });
+
+  // mutations
+  const [loginWithEmail, { isLoading, isSuccess, isError, error }] = useMutation((email: string) =>
+    api.auth().sendSignInLinkToEmail(email)
+  );
+
   // handlers
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
+    setFormMsg({ status: false, type: '', message: '' });
     if (!accept) {
-      return setError({
+      return setFormMsg({
         status: true,
+        type: 'error',
         message: 'É preciso aceitar os termos de uso da plataforma.',
       });
     }
-    setError({ status: false, message: '' });
-    console.log('Registrar', email);
+    await loginWithEmail(email);
   };
+
+  // side effects
+  React.useEffect(() => {
+    if (isError) {
+      console.dir(error);
+      setFormMsg({
+        status: true,
+        type: 'error',
+        message: 'Não foi possível acessar o servidor. Você poderia tentar novamente?',
+      });
+    }
+    if (isSuccess) {
+      setFormMsg({
+        status: true,
+        type: 'success',
+        message: 'O link de acesso foi enviado para seu e-mail',
+      });
+    }
+  }, [isError, isSuccess, error]);
+
   // UI
   return (
     <Flex
@@ -79,7 +110,14 @@ export const RegistrationForm = () => {
             {t('Li e aceito os termos de uso')}
           </Link>
         </HStack>
-        <Button mt="4" w="100%" type="submit" variant="registration">
+        <Button
+          mt="4"
+          w="100%"
+          type="submit"
+          variant="registration"
+          isLoading={isLoading}
+          loadingText={t('Enviando')}
+        >
           {t('Começar cadastro')}
         </Button>
         <Text mt="4" fontSize="xs" lineHeight="lg">
@@ -88,7 +126,12 @@ export const RegistrationForm = () => {
           )}
         </Text>
       </form>
-      {error.status && <AlertWarning title={t('Termos de uso')} description={error.message} />}
+      {formMsg.status &&
+        (formMsg.type === 'error' ? (
+          <AlertWarning title={t('Erro de envio')} description={formMsg.message} />
+        ) : (
+          <AlertSuccess title={t('Pronto!')} description={formMsg.message} />
+        ))}
     </Flex>
   );
 };
