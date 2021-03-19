@@ -20,7 +20,7 @@ export const LandingPageFooter = () => {
     >
       <Container pt="0">
         <Flex
-          flexDir={['column', null, null, 'row']}
+          flexDir={{ base: 'column', md: 'row' }}
           justifyContent="space-between"
           textDecoration="underline"
         >
@@ -51,7 +51,6 @@ export const LandingPageFooter = () => {
               alignItems="center"
               color="white"
               mb={['26px', null, null, '0']}
-              display={['none', null, null, 'block']}
             >
               <Link
                 link="https://www.linkedin.com/company/appjusto/"
@@ -116,9 +115,13 @@ export const LandingPageFooter = () => {
             </Text>
           </Flex>
         </Flex>
-        <Flex mt="16" flexDir={['column', null, null, 'row']} alignItems="center">
+        <Flex
+          mt="16"
+          flexDir={{ base: 'column', md: 'row' }}
+          alignItems={{ base: 'flex-start', md: 'center' }}
+        >
           <ShareButton bg="green.500" />
-          <Text ml="4" color="green.500" textDecor="none">
+          <Text display={{ base: 'none', md: 'block' }} ml="4" color="green.500" textDecor="none">
             {t(
               'Espalhe essa notícia e faça mais gente conhecer esse movimento por uma economia mais justa!'
             )}

@@ -19,10 +19,15 @@ const HeroTopic = ({ title, ps, ...props }: HeroTopicProps) => {
     <HStack spacing={4} alignItems="center" {...props}>
       <Image src={check} width="24px" height="48px" eagerLoading />
       <Box color="white">
-        <Heading as="h2" fontSize="2xl" fontWeight="700">
+        <Heading
+          as="h2"
+          fontSize={{ base: 'md', md: '2xl' }}
+          fontWeight="700"
+          lineHeight={{ base: '22px', md: '30px' }}
+        >
           {title}
         </Heading>
-        {ps && <Text fontSize="sm">{ps}</Text>}
+        {ps && <Text fontSize={{ base: 'xs', md: 'sm' }}>{ps}</Text>}
       </Box>
     </HStack>
   );
@@ -30,10 +35,10 @@ const HeroTopic = ({ title, ps, ...props }: HeroTopicProps) => {
 
 export const Hero = () => {
   return (
-    <Section h={['auto', null, null, '560px', '560px', '600px']}>
+    <Section h={{ base: '600px', md: '600px', lg: '600px' }} bg="black" overflow="hidden">
       <Container zIndex="100">
         <Flex justifyContent="space-between" alignItems="flex-start">
-          <Image src={logo} width="168px" eagerLoading />
+          <Image src={logo} width={{ base: '112px', md: '168px' }} eagerLoading />
           <Button mt="0" variant="white" size="lg" link="/app" label={t('Entrar')} />
         </Flex>
         <Flex mt="8" flexDir="column">
@@ -41,9 +46,9 @@ export const Hero = () => {
             as="h1"
             maxW="390px"
             color="white"
-            fontSize="5xl"
+            fontSize={{ base: '32px', md: '5xl' }}
             fontWeight="700"
-            lineHeight="57.6px"
+            lineHeight={{ base: '38.4px', md: '57.6px' }}
           >
             {t('Ganhe mais com seu restaurante no AppJusto')}
           </Heading>
@@ -56,8 +61,8 @@ export const Hero = () => {
           <HeroTopic title={t('Acesso direto ao cliente')} />
         </Flex>
       </Container>
-      <Box position="absolute" top="0" left="0" w="100%" zIndex="0">
-        <Image src={heroBg} srcMob={heroBgMob} eagerLoading />
+      <Box position="absolute" top="0" left="0" w="full" zIndex="0">
+        <Image src={heroBg} srcMob={heroBgMob} w="full" eagerLoading />
       </Box>
     </Section>
   );

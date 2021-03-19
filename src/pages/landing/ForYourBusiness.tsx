@@ -13,12 +13,12 @@ interface TopicProps extends BoxProps {
 const Topic = ({ title, description, ...props }: TopicProps) => {
   return (
     <HStack mt="4" maxW="516px" spacing={4} alignItems="center" {...props}>
-      <Image src={check} width="24px" height="48px" eagerLoading />
+      <Image src={check} width="24px" height="48px" />
       <Box color="black">
         <Heading as="h2" fontSize="2xl" fontWeight="700" lineHeight="3xl">
           {title}
         </Heading>
-        <Text fontSize="lg" lineHeight="26px">
+        <Text fontSize={{ base: 'md', md: 'lg' }} lineHeight={{ base: '22px', md: '26px' }}>
           {description}
         </Text>
       </Box>

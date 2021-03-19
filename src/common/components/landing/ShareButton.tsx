@@ -11,7 +11,7 @@ const ShareButton: React.FC<ButtonProps> = ({ ...props }) => {
   return (
     <Button
       leftIcon={<BiShareAlt />}
-      maxW="220px"
+      maxW="240px"
       onClick={
         /*() => contextDispatch({
           type: "handle_modalConfirmation", payload: modalConfOptions.sharing

@@ -7,6 +7,8 @@ export const Button = {
     color: 'black',
     border: '1px solid',
     borderRadius: 'lg',
+    whiteSpace: 'normal',
+    wordWrap: 'break-word',
   },
   // Variants
   variants: {
@@ -59,6 +61,15 @@ export const Button = {
         color: 'gray.500',
         borderColor: 'gray.500',
       },
+    },
+    registration: {
+      border: '2px solid black',
+      bg: '#FFE493',
+      h: '60px',
+      fontSize: '20px',
+      lineHeight: '26px',
+      fontWeight: '700',
+      _hover: { bg: '#FFC093' },
     },
     danger: {
       'bg': 'red',

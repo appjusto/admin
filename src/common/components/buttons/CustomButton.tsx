@@ -14,7 +14,7 @@ export const CustomButton = React.forwardRef<HTMLButtonElement, Props>(
       if (isExternal) {
         return (
           <Link href={link} isExternal>
-            <Button ref={ref} mt="16px" {...props}>
+            <Button ref={ref} mt="16px" display="block" {...props}>
               {label}
             </Button>
           </Link>
