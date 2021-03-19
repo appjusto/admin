@@ -1,4 +1,5 @@
 import { Loading } from 'common/components/Loading';
+import LandingPage from 'pages/landing/LandingPage';
 import React from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { ProtectedRoute } from './ProtectedRoute';
@@ -16,9 +17,9 @@ export const Router = () => {
     <BrowserRouter>
       <React.Suspense fallback={<Loading />}>
         <Switch>
+          <Route exact path="/" component={LandingPage} />
           <Route path="/login" component={Login} />
           <Route path="/join" component={Join} />
-          <ProtectedRoute exact path="/" />
           <ProtectedRoute path="/app" component={Home} />
           <ProtectedRoute path="/logout" component={Logout} />
           <ProtectedRoute path="/onboarding" component={Onboarding} />

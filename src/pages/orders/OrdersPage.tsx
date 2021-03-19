@@ -1,7 +1,8 @@
 import { Box } from '@chakra-ui/react';
+import { useContextBusiness } from 'app/state/business/context';
 import Container from 'common/components/Container';
 import React from 'react';
-import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
+import { Redirect, Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import { OrdersContextProvider } from './context';
 import { OrderAcceptanceTimeDrawer } from './drawers/OrderAcceptanceTimeDrawer';
 import { OrderDrawer } from './drawers/orderdrawer';
@@ -9,9 +10,15 @@ import { OrdersKanban } from './kanban/OrdersKanban';
 import { OrdersHeader } from './OrdersHeader';
 
 const OrdersPage = () => {
+  // context
+  const business = useContextBusiness();
   const { path } = useRouteMatch();
   const history = useHistory();
+  // handlers
   const closeDrawerHandler = () => history.replace(path);
+  if (business?.situation !== 'approved') {
+    return <Redirect to="/app" push />;
+  }
   return (
     <OrdersContextProvider>
       <Box>

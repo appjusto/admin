@@ -108,7 +108,14 @@ export const DaySchedule = ({
         </HStack>
       )}
       {index > 0 && (
-        <Link mt="2" color="green.600" fontSize="xs" fontWeight="700" onClick={replicate}>
+        <Link
+          mt="2"
+          width="160px"
+          color="green.600"
+          fontSize="xs"
+          fontWeight="700"
+          onClick={replicate}
+        >
           {t('Replicar horário anterior')}
         </Link>
       )}

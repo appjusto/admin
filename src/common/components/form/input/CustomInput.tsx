@@ -19,6 +19,7 @@ export const CustomInput = React.forwardRef<HTMLInputElement, CustomInputProps>(
       value,
       type = 'text',
       handleChange = () => {},
+      maxW,
       mt = '16px',
       mb,
       mr,
@@ -30,7 +31,7 @@ export const CustomInput = React.forwardRef<HTMLInputElement, CustomInputProps>(
   ) => {
     const [isInvalid, setIsInvalid] = useState(false);
     const styles = useMultiStyleConfig('CustomInput', {});
-    const controlProps = { mt, mb, mr, ml, flex };
+    const controlProps = { maxW, mt, mb, mr, ml, flex };
     const handleValidity = (ev: ChangeEvent<HTMLInputElement>) => {
       if (value !== '' && !ev.target.validity.valid) {
         setIsInvalid(true);

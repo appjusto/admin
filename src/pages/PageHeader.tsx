@@ -12,7 +12,7 @@ const PageHeader = ({ title, subtitle }: Props) => {
       <Heading color="black" fontSize="2xl" mt="4">
         {title}
       </Heading>
-      <Text mt="1" fontSize="sm">
+      <Text mt="1" fontSize="sm" maxW="580px">
         {subtitle}
       </Text>
     </>

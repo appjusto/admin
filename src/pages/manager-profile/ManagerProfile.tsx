@@ -24,7 +24,7 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const profile = useContextManagerProfile();
   const { updateProfile, updateResult } = useUpdateManagerProfile();
   const { isLoading, isSuccess } = updateResult;
-
+  console.log(profile);
   // state
   const [name, setName] = React.useState(profile?.name ?? '');
   const [surname, setSurname] = React.useState(profile?.surname ?? '');
@@ -56,7 +56,6 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
       cpf,
     });
   };
-
   // UI
   if (isSuccess && redirect) return <Redirect to={redirect} push />;
   return (
@@ -118,12 +117,7 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
           onValueChange={(value) => setCPF(value)}
           validationLength={11}
         />
-        <PageFooter
-          onboarding={onboarding}
-          redirect={redirect}
-          isLoading={isLoading}
-          onSubmit={onSubmitHandler}
-        />
+        <PageFooter onboarding={onboarding} redirect={redirect} isLoading={isLoading} />
       </form>
     </Box>
   );

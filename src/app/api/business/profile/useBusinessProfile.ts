@@ -1,4 +1,5 @@
 import { useContextApi } from 'app/state/api/context';
+import { useContextFirebaseUserEmail } from 'app/state/auth/context';
 import { useContextBusinessId } from 'app/state/business/context';
 import { Business } from 'appjusto-types';
 import React from 'react';
@@ -8,6 +9,7 @@ export const useBusinessProfile = () => {
   // context
   const api = useContextApi();
   const businessId = useContextBusinessId()!;
+  const email = useContextFirebaseUserEmail();
   const queryCache = useQueryCache();
   // queries
   const getBusinessLogoURL = (key: string) => api.business().getBusinessLogoURL(businessId);
@@ -18,8 +20,14 @@ export const useBusinessProfile = () => {
   const { data: cover } = useQuery(['business:cover', businessId], getBusinessCoverURL);
 
   // mutations
+  const [createBusinessProfile] = useMutation(async () => {
+    if (email) return api.business().createBusinessProfile(email);
+  });
   const [updateBusinessProfile, updateResult] = useMutation(async (changes: Partial<Business>) =>
     api.business().updateBusinessProfile(businessId, changes)
+  );
+  const [deleteBusinessProfile, deleteResult] = useMutation(async () =>
+    api.business().deleteBusinessProfile(businessId)
   );
   const [uploadLogo, uploadLogoResult] = useMutation((file: File) => {
     //api.business().updateBusinessProfile(businessId, { logoExists: false });
@@ -36,11 +44,22 @@ export const useBusinessProfile = () => {
   }, [uploadSuccess, queryCache, businessId]);
 
   // return
-  const result = updateResult ?? uploadLogoResult ?? uploadCoverResult;
+  let result;
+  if (updateResult.status !== 'idle') {
+    result = updateResult;
+  } else if (uploadLogoResult.status !== 'idle') {
+    result = uploadLogoResult;
+  } else if (uploadCoverResult.status !== 'idle') {
+    result = uploadCoverResult;
+  } else {
+    result = deleteResult;
+  }
   return {
     logo,
     cover,
+    createBusinessProfile,
     updateBusinessProfile,
+    deleteBusinessProfile,
     updateResult,
     uploadLogo,
     uploadLogoResult,
