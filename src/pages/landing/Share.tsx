@@ -1,15 +1,16 @@
-import { Box, Text } from '@chakra-ui/react';
+import { Text } from '@chakra-ui/react';
 import Container from 'common/components/Container';
 import { SectionHeading } from 'common/components/landing/SectionHeading';
 import SharingBar from 'common/components/landing/share/SharingBar';
 import { t } from 'utils/i18n';
+import { Content } from './Content';
 import { Section } from './Section';
 
 export const Share = () => {
   return (
     <Section>
       <Container pt="16" pb="24" color="black">
-        <Box maxW="656px">
+        <Content>
           <SectionHeading>{t('Divulgue esse movimento')}</SectionHeading>
           <Text mb="6">
             {t(
@@ -17,7 +18,7 @@ export const Share = () => {
             )}
           </Text>
           <SharingBar />
-        </Box>
+        </Content>
       </Container>
     </Section>
   );

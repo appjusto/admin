@@ -1,122 +1,152 @@
 import { Flex, Icon, Link, Text } from '@chakra-ui/react';
 import Container from 'common/components/Container';
 import ShareButton from 'common/components/landing/ShareButton';
+import React from 'react';
 import { FaFacebookSquare, FaInstagram, FaLinkedin } from 'react-icons/fa';
 import { MdMailOutline } from 'react-icons/md';
 import { t } from 'utils/i18n';
-//import Link from './CustomLink'
 
 export const LandingPageFooter = () => {
+  // state
+  const [pageLimit, setPageLimit] = React.useState(false);
+  // handlers
+  const handleScroll = () => {
+    const width =
+      window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+    if (width > 1000) {
+      if (document.documentElement.scrollTop > 1900) {
+        setPageLimit(true);
+      } else {
+        setPageLimit(false);
+      }
+    }
+  };
+  // side effects
+  React.useEffect(() => {
+    window.addEventListener('scroll', handleScroll, true);
+    return window.removeEventListener('scroll', handleScroll);
+  }, []);
   return (
-    <Flex
-      as="footer"
-      w="100%"
-      pt="16"
-      pb="4"
-      justifyContent="center"
-      alignItems="center"
-      bg="black"
-      fontFamily="Barlow"
-    >
-      <Container pt="0">
-        <Flex
-          flexDir={{ base: 'column', md: 'row' }}
-          justifyContent="space-between"
-          textDecoration="underline"
-        >
+    <>
+      <Flex
+        as="footer"
+        w="100%"
+        py="6"
+        justifyContent="center"
+        alignItems="center"
+        bg="black"
+        fontFamily="Barlow"
+      >
+        <Container pt="0">
           <Flex
-            w="100%"
-            m="0"
-            p="0"
-            flexDir={['column', null, null, 'row']}
-            justifyContent="flex-start"
-            alignItems="flex-start"
+            flexDir={{ base: 'column', md: 'row' }}
+            justifyContent="space-between"
+            textDecoration="underline"
           >
             <Flex
-              flexDir="row"
-              justifyContent="space-between"
-              alignItems="center"
-              color="white"
-              mb={['22px', null, null, '0']}
-              mr={['0', null, null, '26px']}
+              w="100%"
+              m="0"
+              p="0"
+              flexDir={['column', null, null, 'row']}
+              justifyContent="flex-start"
+              alignItems="flex-start"
             >
-              <Icon as={MdMailOutline} color="green.500" mr="12px" w="20px" h="20px" />
-              <Link name="contact_footer" link="mailto:contato@appjusto.com.br" color="white">
-                contato@appjusto.com.br
-              </Link>
+              <Flex
+                flexDir="row"
+                justifyContent="space-between"
+                alignItems="center"
+                color="white"
+                mb={['22px', null, null, '0']}
+                mr={['0', null, null, '26px']}
+              >
+                <Icon as={MdMailOutline} color="green.500" mr="12px" w="20px" h="20px" />
+                <Link name="contact_footer" link="mailto:contato@appjusto.com.br" color="white">
+                  contato@appjusto.com.br
+                </Link>
+              </Flex>
+              <Flex
+                flexDir="row"
+                justifyContent="space-between"
+                alignItems="center"
+                color="white"
+                mb={['26px', null, null, '0']}
+              >
+                <Link
+                  link="https://www.linkedin.com/company/appjusto/"
+                  isExternal
+                  mr="28px"
+                  color="green.500"
+                  aria-label="Link para a página do Linkedin do Appjusto"
+                >
+                  <Icon as={FaLinkedin} w="20px" h="20px" />
+                </Link>
+                <Link
+                  link="https://www.facebook.com/appjusto"
+                  isExternal
+                  mr="28px"
+                  color="green.500"
+                  aria-label="Link para a página do Facebook do Appjusto"
+                >
+                  <Icon as={FaFacebookSquare} w="20px" h="20px" />
+                </Link>
+                <Link
+                  link="https://www.instagram.com/appjusto/"
+                  isExternal
+                  mr="28px"
+                  color="green.500"
+                  aria-label="Link para a página do Instagram do Appjusto"
+                >
+                  <Icon as={FaInstagram} w="20px" h="20px" />
+                </Link>
+              </Flex>
             </Flex>
             <Flex
-              flexDir="row"
-              justifyContent="space-between"
-              alignItems="center"
+              w="100%"
+              m="0"
+              p="0"
+              flexDir={['column', null, null, 'row']}
+              justifyContent={['flex-start', null, null, 'flex-end']}
+              alignItems={['flex-start', null, null, 'flex-end']}
               color="white"
-              mb={['26px', null, null, '0']}
             >
               <Link
-                link="https://www.linkedin.com/company/appjusto/"
+                link="/"
+                color="white"
+                mb={['22px', null, null, '0']}
+                fontSize="15px"
+                mr={['0', null, null, '16px']}
                 isExternal
-                mr="28px"
-                color="green.500"
-                aria-label="Link para a página do Linkedin do Appjusto"
               >
-                <Icon as={FaLinkedin} w="20px" h="20px" />
+                {t('Política de Privacidade')}
               </Link>
               <Link
-                link="https://www.facebook.com/appjusto"
+                link="https://github.com/appjusto/docs/blob/main/legal/termo-tratamento-de-dados.md"
+                color="white"
+                mb={['22px', null, null, '0']}
+                fontSize="15px"
+                mr={['0', null, null, '16px']}
                 isExternal
-                mr="28px"
-                color="green.500"
-                aria-label="Link para a página do Facebook do Appjusto"
               >
-                <Icon as={FaFacebookSquare} w="20px" h="20px" />
+                {t('Termos de uso')}
               </Link>
-              <Link
-                link="https://www.instagram.com/appjusto/"
-                isExternal
-                mr="28px"
-                color="green.500"
-                aria-label="Link para a página do Instagram do Appjusto"
-              >
-                <Icon as={FaInstagram} w="20px" h="20px" />
-              </Link>
+              <Text mb={['22px', null, null, '0']} fontSize="15px">
+                © {new Date().getFullYear()} AppJusto. {t('Marca Registrada')}.
+              </Text>
             </Flex>
           </Flex>
-          <Flex
-            w="100%"
-            m="0"
-            p="0"
-            flexDir={['column', null, null, 'row']}
-            justifyContent={['flex-start', null, null, 'flex-end']}
-            alignItems={['flex-start', null, null, 'flex-end']}
-            color="white"
-          >
-            <Link
-              link="/"
-              color="white"
-              mb={['22px', null, null, '0']}
-              fontSize="15px"
-              mr={['0', null, null, '16px']}
-              isExternal
-            >
-              {t('Política de Privacidade')}
-            </Link>
-            <Link
-              link="https://github.com/appjusto/docs/blob/main/legal/termo-tratamento-de-dados.md"
-              color="white"
-              mb={['22px', null, null, '0']}
-              fontSize="15px"
-              mr={['0', null, null, '16px']}
-              isExternal
-            >
-              {t('Termos de uso')}
-            </Link>
-            <Text mb={['22px', null, null, '0']} fontSize="15px">
-              © {new Date().getFullYear()} AppJusto. {t('Marca Registrada')}.
-            </Text>
-          </Flex>
-        </Flex>
-        <Flex
-          mt="16"
+        </Container>
+      </Flex>
+      <Flex
+        w="100%"
+        display={{ base: 'none', md: `${pageLimit ? 'none' : 'block'}` }}
+        position={{ md: 'fixed' }}
+        bottom={{ md: '0' }}
+        bg="black"
+        py="2"
+      >
+        <Container
+          pt="0"
+          display="flex"
           flexDir={{ base: 'column', md: 'row' }}
           alignItems={{ base: 'flex-start', md: 'center' }}
         >
@@ -126,8 +156,8 @@ export const LandingPageFooter = () => {
               'Espalhe essa notícia e faça mais gente conhecer esse movimento por uma economia mais justa!'
             )}
           </Text>
-        </Flex>
-      </Container>
-    </Flex>
+        </Container>
+      </Flex>
+    </>
   );
 };

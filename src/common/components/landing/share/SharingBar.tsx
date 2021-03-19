@@ -1,26 +1,16 @@
-import { Stack } from '@chakra-ui/react'
-import {
-  FaWhatsappSquare, FaFacebookSquare, FaLinkedin, FaTwitterSquare
-} from 'react-icons/fa'
+import { Stack } from '@chakra-ui/react';
+import { FaFacebookSquare, FaLinkedin, FaTwitterSquare, FaWhatsappSquare } from 'react-icons/fa';
+import ShareLink from './ShareLink';
 
-import ShareLink from './ShareLink'
-import useSharingUrlMsg from './useSharingUrlMsg'
+const mainUrl = 'https://appjusto.com.br/';
+const sharingMsg = encodeURIComponent(
+  `AppJusto. Mais do que um app de entregas. Somo um movimento por relações mais justas e transparentes. Faça parte agora!\n\n${mainUrl}`
+);
 
 const SharingBar: React.FC = () => {
-  const { mainUrl, sharingMsg } = useSharingUrlMsg()
   return (
-    <Stack
-      w="100%"
-      maxW="560px"
-      direction={["column", null, "row"]}
-      spacing={4}
-      mt="6px"
-    >
-      <Stack
-        w="100%"
-        direction="row"
-        spacing={4}
-      >
+    <Stack w="100%" maxW="560px" direction={{ base: 'column', lg: 'row' }} spacing={4} mt="6px">
+      <Stack w="100%" direction="row" spacing={4}>
         <ShareLink
           link={`https://api.whatsapp.com/send?text=${sharingMsg}`}
           label="Whatsapp"
@@ -32,11 +22,7 @@ const SharingBar: React.FC = () => {
           icon={FaFacebookSquare}
         />
       </Stack>
-      <Stack
-        w="100%"
-        direction="row"
-        spacing={4}
-      >
+      <Stack w="100%" direction="row" spacing={4}>
         <ShareLink
           link={`https://twitter.com/intent/tweet?text=${sharingMsg}`}
           label="Twitter"
@@ -50,7 +36,7 @@ const SharingBar: React.FC = () => {
       </Stack>
     </Stack>
   );
-}
+};
 
 export default SharingBar;
 
