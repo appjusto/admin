@@ -8,7 +8,7 @@ import { Section } from './Section';
 
 export const Share = () => {
   return (
-    <Section>
+    <Section id="shareSection">
       <Container pt="16" pb="24" color="black">
         <Content>
           <SectionHeading>{t('Divulgue esse movimento')}</SectionHeading>

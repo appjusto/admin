@@ -58,7 +58,7 @@ export const RegistrationForm = () => {
 
   // UI
   return (
-    <Section position={{ base: 'relative', md: 'fixed' }} top={{ md: '0' }} zIndex="999">
+    <Section position={{ base: 'relative', md: 'fixed' }} top={{ md: '0' }} zIndex="100">
       <Container pt="0" display="flex" justifyContent="flex-end">
         <Flex
           mt={{ base: '-80px', md: '120px' }}

@@ -4,6 +4,7 @@ import ShareButton from 'common/components/landing/ShareButton';
 import React from 'react';
 import { FaFacebookSquare, FaInstagram, FaLinkedin } from 'react-icons/fa';
 import { MdMailOutline } from 'react-icons/md';
+import { Link as ScrollLink } from 'react-scroll';
 import { t } from 'utils/i18n';
 
 export const LandingPageFooter = () => {
@@ -14,7 +15,7 @@ export const LandingPageFooter = () => {
     const width =
       window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
     if (width > 1000) {
-      if (document.documentElement.scrollTop > 1900) {
+      if (document.documentElement.scrollTop > 1700) {
         setPageLimit(true);
       } else {
         setPageLimit(false);
@@ -143,6 +144,7 @@ export const LandingPageFooter = () => {
         bottom={{ md: '0' }}
         bg="black"
         py="2"
+        zIndex="999"
       >
         <Container
           pt="0"
@@ -150,7 +152,16 @@ export const LandingPageFooter = () => {
           flexDir={{ base: 'column', md: 'row' }}
           alignItems={{ base: 'flex-start', md: 'center' }}
         >
-          <ShareButton bg="green.500" />
+          <ScrollLink
+            activeClass="active"
+            to="shareSection"
+            spy={true}
+            smooth={true}
+            offset={-70}
+            duration={500}
+          >
+            <ShareButton bg="green.500" />
+          </ScrollLink>
           <Text display={{ base: 'none', md: 'block' }} ml="4" color="green.500" textDecor="none">
             {t(
               'Espalhe essa notícia e faça mais gente conhecer esse movimento por uma economia mais justa!'

@@ -37,7 +37,7 @@ const HeroTopic = ({ title, ps, ...props }: HeroTopicProps) => {
 export const Hero = () => {
   return (
     <Section h={{ base: '600px', md: '680px', lg: '600px' }} bg="black" overflow="hidden">
-      <Container zIndex="100">
+      <Container zIndex="999">
         <Flex justifyContent="space-between" alignItems="flex-start">
           <Image src={logo} width={{ base: '112px', md: '168px' }} eagerLoading />
           <Button mt="0" variant="white" size="lg" link="/app" label={t('Entrar')} />
