@@ -9,7 +9,7 @@ import { Section } from './Section';
 
 export const Transparency = () => {
   return (
-    <Section mt="24">
+    <Section mt={{ base: '4', md: '24px' }}>
       <Container pt="16" color="black">
         <Content>
           <Box maxW={{ md: '312px', lg: '100%' }}>
@@ -63,7 +63,8 @@ export const Transparency = () => {
               w={{ base: '100%', lg: '312px' }}
               maxW="340px"
               py="2"
-              h="auto"
+              size="lg"
+              fontFamily="barlow"
               label={t('Conhecer mais sobre o AppJusto')}
               link="https://appjusto.com.br/"
               isExternal
