@@ -59,7 +59,7 @@ export const OrderBaseDrawer = ({
 
   //handlers
   const PrimaryButtonFunction = () => {
-    if (orderStatus === 'confirming') changeOrderStatus(orderId, 'preparing');
+    if (orderStatus === 'confirmed') changeOrderStatus(orderId, 'preparing');
     if (orderStatus === 'preparing') changeOrderStatus(orderId, 'ready');
     if (orderStatus === 'ready') changeOrderStatus(orderId, 'dispatching');
     onClose();
@@ -69,7 +69,7 @@ export const OrderBaseDrawer = ({
   let orderDispatched = ['dispatching', 'delivered'].includes(orderStatus);
 
   let PrimaryButtonAble =
-    ['confirming', 'preparing'].includes(orderStatus) ||
+    ['confirmed', 'preparing'].includes(orderStatus) ||
     (orderStatus === 'ready' && isCurrierArrived);
 
   let PrimaryButtonLabel = 'Preparar pedido';
