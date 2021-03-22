@@ -8,7 +8,7 @@ export const Content = (props: FlexProps) => {
       alignItems="flex-start"
       position="relative"
       maxW={{ md: '312px', lg: '480px', xl: '656px' }}
-      zIndex="999"
+      zIndex="100"
       {...props}
     >
       {props.children}
