@@ -65,6 +65,7 @@ export const Transparency = () => {
               py="2"
               size="lg"
               fontFamily="barlow"
+              fontSize="sm"
               label={t('Conhecer mais sobre o AppJusto')}
               link="https://appjusto.com.br/"
               isExternal
