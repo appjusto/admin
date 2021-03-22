@@ -62,7 +62,7 @@ export const RegistrationForm = () => {
       position={{ base: 'relative', md: 'fixed' }}
       top={{ md: '0' }}
       mt={{ base: '-80px', md: '108px' }}
-      zIndex="999"
+      zIndex="800"
     >
       <Container pt="0" display="flex" justifyContent="flex-end">
         <Flex
