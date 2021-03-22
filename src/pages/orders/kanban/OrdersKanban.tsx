@@ -126,7 +126,7 @@ export const OrdersKanban = () => {
         <Stack direction={['column', 'column', 'row']} mt="8" spacing="4">
           <OrdersKanbanList
             title={t('Pedidos à confirmar')}
-            orders={ordersByStatus['confirming']}
+            orders={ordersByStatus['confirmed']}
             details={t('Aqui você verá os novos pedidos. Aceite-os para confirmar o preparo.')}
           />
           {/*<OrdersKanbanList

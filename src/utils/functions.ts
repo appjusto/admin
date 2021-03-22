@@ -18,7 +18,7 @@ export const getTranslatedOrderStatus = (status: OrderStatus) => {
     'canceled',
   ];
   const pt = [
-    'Na fila',
+    'Em cotação',
     'Aguardando confirmação',
     'Confirmado',
     'Em preparo',
@@ -52,7 +52,7 @@ export const getDateAndHour = (timestamp: firebase.firestore.Timestamp) => {
 export const updateLocalStorageOrders = (orders: WithId<Order>[], soundAlert: any) => {
   if (orders.length > 0) {
     const filteredOrders = orders
-      .filter((order) => order.status === 'confirming' || order.status === 'preparing')
+      .filter((order) => order.status === 'confirmed' || order.status === 'preparing')
       .map((order) => order.id);
     const storageItem = localStorage.getItem('appjusto-orders');
     const localOrders: localOrderType[] = storageItem ? JSON.parse(storageItem) : [];

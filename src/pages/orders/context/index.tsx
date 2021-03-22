@@ -10,11 +10,11 @@ import { updateLocalStorageOrders, updateLocalStorageOrderTime } from 'utils/fun
 
 const fakeItem = (price: number, qtd: number): OrderItem => {
   return {
-    id: Math.random().toString(),
+    id: 'GLubXi2MzKYvZQDSrVpq',
     product: {
-      name: 'Item',
+      name: 'Tradicional',
       price: price, // in cents
-      id: Math.random().toString(),
+      id: 'GLubXi2MzKYvZQDSrVpq',
       externalId: '',
     },
     quantity: qtd,
@@ -25,15 +25,14 @@ const fakeItem = (price: number, qtd: number): OrderItem => {
 const fakeOrder: Order = {
   type: 'food',
   code: `${Math.random().toString().split('', 6).join('').replace('.', '')}`,
-  seq: `${Math.random().toString().split('', 4).join('').replace('.', '')}`,
-  status: 'confirming',
+  status: 'quote',
   // comments: 'cpf',
   consumer: {
-    id: 'kW8M4T19IdP8VCrxOwAHJoTzsK33',
+    id: 'n9IBTFplN1bnjHHfqhNcVJTaXc43',
     name: 'Renan',
     // cpf: '35214602820',
   },
-  courier: {
+  /*courier: {
     id: 'n9IBTFplN1bnjHHfqhNcVJTaXc43',
     name: 'Kelly Slater',
     mode: 'motocycle',
@@ -42,7 +41,7 @@ const fakeOrder: Order = {
       latitude: -8.0591539,
       longitude: -34.9063069,
     },
-  },
+  },*/
   business: {
     id: 'KTqDLkMSAq6vigc0ODDr',
     name: 'Itapuama vegan',
@@ -78,7 +77,6 @@ const fakeOrder: Order = {
     polyline: '',
     issue: null,
   },
-  dispatchingState: 'idle',
 };
 
 export type localOrderType = { code: string; time: number };

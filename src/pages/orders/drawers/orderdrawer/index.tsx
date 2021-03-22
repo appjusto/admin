@@ -77,15 +77,15 @@ export const OrderDrawer = (props: Props) => {
             </Thead>
             <Tbody>
               {order?.items?.map((item: OrderItem) => (
-                <React.Fragment key={item.product.id}>
-                  <Tr key={item.product.id} color="black" fontSize="xs" fontWeight="700">
+                <React.Fragment key={Math.random()}>
+                  <Tr color="black" fontSize="xs" fontWeight="700">
                     <Td>{item.product.name}</Td>
                     <Td isNumeric>{item.quantity}</Td>
                     <Td isNumeric>{itemPriceFormatter(item.product.price * item.quantity)}</Td>
                   </Tr>
                   {item.complements &&
                     item.complements.map((complement) => (
-                      <Tr key={complement.complementId} fontSize="xs">
+                      <Tr key={Math.random()} fontSize="xs">
                         <Td>{complement.name}</Td>
                         <Td isNumeric>1</Td>
                         <Td isNumeric>{itemPriceFormatter(complement.price)}</Td>
@@ -138,7 +138,7 @@ export const OrderDrawer = (props: Props) => {
               </Text>
             </>
           )}
-          {(order?.status === 'confirming' || order?.status === 'preparing') && (
+          {(order?.status === 'confirmed' || order?.status === 'preparing') && (
             <CookingTime orderId={order.id} cookingTime={order.cookingTime} />
           )}
         </>

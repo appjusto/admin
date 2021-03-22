@@ -33,8 +33,8 @@ export const DeliveryInfos = ({ order, isCurrierArrived }: DeliveryInfosProps) =
   const [courierIcon, setCourierIcon] = React.useState<string>(GreenPointSvg);
   const [restaurantIcon, setRestaurantIcon] = React.useState<string>(WhitePackageSvg);
 
-  const isUnmatched = order.dispatchingState
-    ? ['idle', 'matching', 'unmatched', 'no-match'].includes(order.dispatchingState)
+  const isUnmatched = order.dispatchingStatus
+    ? ['idle', 'matching', 'unmatched', 'no-match'].includes(order.dispatchingStatus)
     : true;
 
   // side effects

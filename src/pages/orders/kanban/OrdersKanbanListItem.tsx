@@ -38,8 +38,8 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
   const [elapsedTime, setElapsedTime] = React.useState<number | null>(0);
 
   // handlers
-  const isUnmatched = order.dispatchingState
-    ? ['idle', 'matching', 'unmatched', 'no-match'].includes(order.dispatchingState)
+  const isUnmatched = order.dispatchingStatus
+    ? ['idle', 'matching', 'unmatched', 'no-match'].includes(order.dispatchingStatus)
     : true;
   const isCurrierArrived = order.dispatchingState === 'arrived-pickup';
   const wasDelivered = order.status === 'delivered';
@@ -65,7 +65,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
     };
     setNewTime();
     const timeInterval = setInterval(setNewTime, 60000);
-    if (order.status !== 'confirming' && order.status !== 'preparing') {
+    if (order.status !== 'confirmed' && order.status !== 'preparing') {
       return clearInterval(timeInterval);
     }
     return () => clearInterval(timeInterval);
@@ -73,7 +73,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
 
   React.useEffect(() => {
     const orderAcceptanceTime = business?.orderAcceptanceTime;
-    if (order?.status === 'confirming') {
+    if (order?.status === 'confirmed') {
       if (elapsedTime && orderAcceptanceTime && orderAcceptanceTime <= elapsedTime) {
         changeOrderStatus(order.id, 'preparing');
       }
