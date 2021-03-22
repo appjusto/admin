@@ -27,6 +27,7 @@ export const LandingPageFooter = () => {
     window.addEventListener('scroll', handleScroll, true);
     return window.removeEventListener('scroll', handleScroll);
   }, []);
+  // UI
   return (
     <>
       <Flex
@@ -61,7 +62,13 @@ export const LandingPageFooter = () => {
                 mr={['0', null, null, '26px']}
               >
                 <Icon as={MdMailOutline} color="green.500" mr="12px" w="20px" h="20px" />
-                <Link name="contact_footer" link="mailto:contato@appjusto.com.br" color="white">
+                <Link
+                  name="contact_footer"
+                  href="mailto:contato@appjusto.com.br"
+                  color="white"
+                  _hover={{ color: '#055AFF' }}
+                  _focus={{ outline: 'none' }}
+                >
                   contato@appjusto.com.br
                 </Link>
               </Flex>
@@ -73,29 +80,35 @@ export const LandingPageFooter = () => {
                 mb={['26px', null, null, '0']}
               >
                 <Link
-                  link="https://www.linkedin.com/company/appjusto/"
+                  href="https://www.linkedin.com/company/appjusto/"
                   isExternal
                   mr="28px"
                   color="green.500"
                   aria-label="Link para a página do Linkedin do Appjusto"
+                  _hover={{ color: '#055AFF' }}
+                  _focus={{ outline: 'none' }}
                 >
                   <Icon as={FaLinkedin} w="20px" h="20px" />
                 </Link>
                 <Link
-                  link="https://www.facebook.com/appjusto"
+                  href="https://www.facebook.com/appjusto"
                   isExternal
                   mr="28px"
                   color="green.500"
                   aria-label="Link para a página do Facebook do Appjusto"
+                  _hover={{ color: '#055AFF' }}
+                  _focus={{ outline: 'none' }}
                 >
                   <Icon as={FaFacebookSquare} w="20px" h="20px" />
                 </Link>
                 <Link
-                  link="https://www.instagram.com/appjusto/"
+                  href="https://www.instagram.com/appjusto/"
                   isExternal
                   mr="28px"
                   color="green.500"
                   aria-label="Link para a página do Instagram do Appjusto"
+                  _hover={{ color: '#055AFF' }}
+                  _focus={{ outline: 'none' }}
                 >
                   <Icon as={FaInstagram} w="20px" h="20px" />
                 </Link>
@@ -111,22 +124,26 @@ export const LandingPageFooter = () => {
               color="white"
             >
               <Link
-                link="/"
+                //isExternal
+                //href="/"
                 color="white"
                 mb={['22px', null, null, '0']}
                 fontSize="15px"
                 mr={['0', null, null, '16px']}
-                isExternal
+                _hover={{ color: '#055AFF' }}
+                _focus={{ outline: 'none' }}
               >
                 {t('Política de Privacidade')}
               </Link>
               <Link
-                link="https://github.com/appjusto/docs/blob/main/legal/termo-tratamento-de-dados.md"
+                isExternal
+                href="https://github.com/appjusto/docs/blob/main/legal/termo-tratamento-de-dados.md"
                 color="white"
                 mb={['22px', null, null, '0']}
                 fontSize="15px"
                 mr={['0', null, null, '16px']}
-                isExternal
+                _hover={{ color: '#055AFF' }}
+                _focus={{ outline: 'none' }}
               >
                 {t('Termos de uso')}
               </Link>
