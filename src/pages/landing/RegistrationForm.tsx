@@ -61,8 +61,8 @@ export const RegistrationForm = () => {
     <Section
       position={{ base: 'relative', md: 'fixed' }}
       top={{ md: '0' }}
-      mt={{ base: '-80px', md: '120px' }}
-      zIndex="100"
+      mt={{ base: '-80px', md: '108px' }}
+      zIndex="999"
     >
       <Container pt="0" display="flex" justifyContent="flex-end">
         <Flex
@@ -132,9 +132,13 @@ export const RegistrationForm = () => {
           </form>
           {formMsg.status &&
             (formMsg.type === 'error' ? (
-              <AlertWarning title={t('Erro de envio')} description={formMsg.message} />
+              <AlertWarning
+                title={t('Erro de envio')}
+                description={formMsg.message}
+                fontSize="sm"
+              />
             ) : (
-              <AlertSuccess title={t('Pronto!')} description={formMsg.message} />
+              <AlertSuccess title={t('Pronto!')} description={formMsg.message} fontSize="sm" />
             ))}
         </Flex>
       </Container>

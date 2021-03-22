@@ -161,7 +161,7 @@ export const LandingPageFooter = () => {
         bottom={{ md: '0' }}
         bg="black"
         py="2"
-        zIndex="999"
+        zIndex="900"
       >
         <Container
           pt="0"

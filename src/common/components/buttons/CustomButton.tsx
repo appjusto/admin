@@ -21,7 +21,7 @@ export const CustomButton = React.forwardRef<HTMLButtonElement, Props>(
         );
       }
       return (
-        <Link as={RouterLink} to={link}>
+        <Link as={RouterLink} to={link} _hover={{ textDecor: 'none' }}>
           <Button ref={ref} mt="16px" {...props}>
             {label}
           </Button>

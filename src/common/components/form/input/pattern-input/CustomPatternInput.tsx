@@ -7,8 +7,8 @@ interface PatternInputProps extends InputProps {
   mask?: string;
   flex?: number | undefined;
   mr?: string | number | (string & {}) | undefined;
-  validationLength: number;
-  parser: (value: string) => string;
+  validationLength?: number;
+  parser?: (value: string) => string;
   formatter?: (value: string | undefined) => string;
   onValueChange: (value: string) => void;
 }
@@ -46,7 +46,7 @@ export const CustomPatternInput = React.forwardRef<HTMLInputElement, PatternInpu
     // handlers
     const onChangeHandler = (ev: React.ChangeEvent<HTMLInputElement>) => {
       const value = ev.target.value;
-      onValueChange(parser(value));
+      onValueChange(parser ? parser(value) : value);
       if (onChange) onChange(ev);
     };
     const onFocusHandler = (ev: React.FocusEvent<HTMLInputElement>) => {
@@ -59,10 +59,12 @@ export const CustomPatternInput = React.forwardRef<HTMLInputElement, PatternInpu
     };
     // side effects
     React.useEffect(() => {
-      if (value && value.toString().length < validationLength) {
-        setIsInvalid(true);
-      } else {
-        setIsInvalid(false);
+      if (validationLength) {
+        if (value && value.toString().length < validationLength) {
+          setIsInvalid(true);
+        } else {
+          setIsInvalid(false);
+        }
       }
     }, [value, validationLength]);
     // UI
