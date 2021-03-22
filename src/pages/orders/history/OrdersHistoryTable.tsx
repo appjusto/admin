@@ -18,7 +18,7 @@ export const OrdersHistoryTable = ({ orders }: OrderSearchProps) => {
   const { url } = useRouteMatch();
   // UI
   return (
-    <Box mt="8">
+    <Box mt="12">
       <Table mt="4" size="md" variant="simple">
         <Thead>
           <Tr>

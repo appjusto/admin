@@ -22,7 +22,7 @@ export const FAQs = () => {
           <Text mb="2" color="black">
             {t('Tire suas dúvidas sobre o AppJusto e faça parte desse movimento:')}
           </Text>
-          <Accordion defaultIndex={[0]} allowMultiple>
+          <Accordion defaultIndex={[0]} allowMultiple w="100%">
             <AccordionItem>
               <h2>
                 <AccordionButton>
