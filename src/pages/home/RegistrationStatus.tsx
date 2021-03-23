@@ -118,9 +118,9 @@ export const RegistrationStatus = () => {
           <VStack mt="2" spacing={1} alignItems="flex-start">
             {validation.map((data, index) => {
               return (
-                <HStack spacing={2}>
+                <HStack key={data.type} spacing={2}>
                   {data.status ? <CheckmarkChecked /> : <Checkmark />}
-                  <Link key={data.type} as={RouterLink} to={`${path}/${data.link}`}>
+                  <Link as={RouterLink} to={`${path}/${data.link}`}>
                     {data.label}
                     {index + 1 < validation.length ? ';' : '.'}
                   </Link>

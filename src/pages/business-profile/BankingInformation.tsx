@@ -52,6 +52,7 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
   const onSubmitHandler = async () => {
     const agencyFormatted = agencyFormatter!(agency);
     const accountFormatted = accountFormatter!(account);
+    console.log(accountFormatted);
     await updateBankAccount({
       type: 'Corrente',
       name,
@@ -80,7 +81,7 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
       setSelectedBank(bank);
     }
   }, [name]);
-  console.dir(selectedBank);
+
   // UI
   if (isSuccess && redirect) return <Redirect to={redirect} push />;
   return (
