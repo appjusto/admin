@@ -67,7 +67,7 @@ export const RegistrationForm = () => {
       <Container pt="0" display="flex" justifyContent="flex-end">
         <Flex
           flexDir="column"
-          maxW="368px"
+          maxW="370px"
           bg="white"
           border="1px solid #C8D7CB"
           p="24px"
@@ -124,11 +124,13 @@ export const RegistrationForm = () => {
             >
               {t('Começar cadastro')}
             </Button>
-            <Text mt="4" fontSize="xs" lineHeight="lg">
-              {t(
-                'Ao começar o cadastro, você aceita receber nosso contato por telefone, e-mail ou whatsapp quando for necessário'
-              )}
-            </Text>
+            {!formMsg.status && (
+              <Text mt="4" fontSize="xs" lineHeight="lg">
+                {t(
+                  'Ao começar o cadastro, você aceita receber nosso contato por telefone, e-mail ou whatsapp quando for necessário'
+                )}
+              </Text>
+            )}
           </form>
           {formMsg.status &&
             (formMsg.type === 'error' ? (

@@ -71,7 +71,7 @@ export const Links = () => {
           <Link to={`${url}/business-schedules`}>{t('Horários')}</Link>
           <Link to={`${url}/delivery-area`}>{t('Área de entrega')}</Link>
           <Link to={`${url}/orders-history`}>{t('Histórico de pedidos')}</Link>
-          <Link to="/">
+          <Link to={`${url}`}>
             {t('Financeiro')}
             <Pendency />
           </Link>
