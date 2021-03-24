@@ -8,6 +8,7 @@ interface PatternInputProps extends InputProps {
   flex?: number | undefined;
   mr?: string | number | (string & {}) | undefined;
   validationLength?: number;
+  externalValidation?: { active: boolean; status: boolean };
   parser?: (value: string) => string;
   formatter?: (value: string | undefined) => string;
   onValueChange: (value: string) => void;
@@ -27,6 +28,7 @@ export const CustomPatternInput = React.forwardRef<HTMLInputElement, PatternInpu
       ml,
       flex,
       validationLength,
+      externalValidation,
       parser,
       formatter,
       onValueChange,
@@ -66,7 +68,11 @@ export const CustomPatternInput = React.forwardRef<HTMLInputElement, PatternInpu
           setIsInvalid(false);
         }
       }
-    }, [value, validationLength]);
+      if (externalValidation?.active) {
+        setIsInvalid(!externalValidation.status);
+      }
+    }, [value, validationLength, externalValidation]);
+
     // UI
     const styles = useMultiStyleConfig('CustomInput', {});
     return (

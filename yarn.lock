@@ -2027,6 +2027,11 @@
   resolved "https://registry.yarnpkg.com/@firebase/webchannel-wrapper/-/webchannel-wrapper-0.4.1.tgz#600f2275ff54739ad5ac0102f1467b8963cd5f71"
   integrity sha512-0yPjzuzGMkW1GkrC8yWsiN7vt1OzkMIi9HgxRmKREZl2wnNPOKo/yScTjXf/O57HM8dltqxPF6jlNLFVtc2qdw==
 
+"@fnando/cnpj@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@fnando/cnpj/-/cnpj-1.0.2.tgz#456ee8ee8ba2487eee681e97c767394ff4ceb2b3"
+  integrity sha512-U0r8Mu55rvEDfDIzo1j6szZHHcIZVKg9PKCHvewfHrmYDNDuCt2zjp6TMMI0oIg9hh9fJQqAavzLxMSKHW/W7w==
+
 "@googlemaps/js-api-loader@^1.7.0":
   version "1.11.1"
   resolved "https://registry.yarnpkg.com/@googlemaps/js-api-loader/-/js-api-loader-1.11.1.tgz#b7f02c04d8d8602fb4bd873b03685fccefce1c6f"
@@ -3417,7 +3422,7 @@ anymatch@^3.0.3, anymatch@~3.1.1:
     picomatch "^2.0.4"
 
 appjusto-types@../types:
-  version "0.7.0"
+  version "0.8.0"
 
 aproba@^1.1.1:
   version "1.2.0"

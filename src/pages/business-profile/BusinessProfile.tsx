@@ -1,4 +1,5 @@
 import { Box, Text, useBreakpoint } from '@chakra-ui/react';
+import * as cnpjutils from '@fnando/cnpj';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useContextBusiness } from 'app/state/business/context';
 import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput2';
@@ -31,14 +32,15 @@ import { BusinessDeleteDrawer } from './BusinessDeleteDrawer';
 
 const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   // context
+  const isDev = process.env.NODE_ENV === 'development';
   const business = useContextBusiness();
   const queryCache = useQueryCache();
   const { path } = useRouteMatch();
   const history = useHistory();
   // state
+  const [cnpj, setCNPJ] = React.useState(business?.cnpj ?? (isDev ? cnpjutils.generate() : ''));
   const [name, setName] = React.useState(business?.name ?? '');
   const [phone, setPhone] = React.useState(business?.phone ?? '');
-  const [cnpj, setCNPJ] = React.useState(business?.cnpj ?? '');
   const [cuisineName, setCuisineName] = React.useState(business?.cuisine ?? '');
   const [description, setDescription] = React.useState(business?.description ?? '');
   const [minimumOrder, setMinimumOrder] = React.useState(business?.minimumOrder ?? 0);
@@ -61,13 +63,19 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
     result,
   } = useBusinessProfile();
   const { isSuccess } = result;
+
   // handlers
   const openDrawerHandler = () => history.push(`${path}/delete`);
   const closeDrawerHandler = () => history.replace(path);
 
+  const isCNPJValid = () => cnpjutils.isValid(cnpj);
+
   const onSubmitHandler = async () => {
     if (minimumOrder === 0) {
       return minimumOrderRef.current?.focus();
+    }
+    if (!isCNPJValid()) {
+      return cnpjRef?.current?.focus();
     }
     setIsLoading(true);
     if (logoFiles) await uploadLogo(logoFiles[0]);
@@ -111,6 +119,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   React.useEffect(() => {
     cnpjRef?.current?.focus();
   }, []);
+
   React.useEffect(() => {
     if (business) {
       if (business.cnpj) setCNPJ(business.cnpj);
@@ -127,7 +136,6 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   }, [business, cover, logo, createBusinessProfile]);
 
   // UI
-
   const breakpoint = useBreakpoint();
   if (isSuccess && redirect) return <Redirect to={redirect} push />;
   return (
@@ -155,7 +163,8 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
               formatter={cnpjFormatter}
               value={cnpj}
               onValueChange={(value) => setCNPJ(value)}
-              validationLength={14}
+              //validationLength={14}
+              externalValidation={{ active: true, status: isCNPJValid() }}
             />
             <Input
               isRequired
