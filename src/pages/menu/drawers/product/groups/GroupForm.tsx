@@ -35,7 +35,7 @@ export const GroupForm = ({
 
   // helpers
   const minimumValue = required ? 1 : 0;
-  console.log(minimumValue);
+
   //handler
   const handleIsRequired = (value: string) => {
     if (value === '1') {

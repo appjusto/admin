@@ -32,7 +32,7 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
   const [account, setAccount] = React.useState(bankAccount?.account ?? '');
 
   // refs
-  const nameRef = React.useRef<HTMLInputElement>(null);
+  const nameRef = React.useRef<HTMLSelectElement>(null);
 
   // helpers
   const agencyParser = selectedBank?.agencyPattern
@@ -96,7 +96,12 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
           title={t('Dados bancários')}
           subtitle={t('Informe para onde serão transferidos os repasses')}
         />
-        <BankSelect value={name} onChange={(ev) => setName(ev.target.value)} isRequired />
+        <BankSelect
+          ref={nameRef}
+          value={name}
+          onChange={(ev) => setName(ev.target.value)}
+          isRequired
+        />
         <CustomPatternInput
           id="banking-agency"
           label={t('Agência')}
