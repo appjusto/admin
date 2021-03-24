@@ -26,23 +26,44 @@ export const GroupForm = ({
   groupData,
   onSuccess,
 }: GroupFormProps) => {
+  // state
   const [name, setName] = React.useState('');
   const [required, setRequired] = React.useState(false);
   const [minimum, setMin] = React.useState(0);
   const [maximum, setMax] = React.useState(0);
   const inputRef = React.useRef<HTMLInputElement>(null);
 
-  React.useEffect(() => {
-    inputRef?.current?.focus();
-    if (!isCreate && groupData) {
-      setName(groupData?.name);
-      setRequired(groupData?.required);
-      setMax(groupData?.maximum);
-      setMin(groupData?.minimum);
-    }
-  }, [isCreate, groupData]);
-
+  // helpers
+  const minimumValue = required ? 1 : 0;
+  console.log(minimumValue);
   //handler
+  const handleIsRequired = (value: string) => {
+    if (value === '1') {
+      setRequired(false);
+    } else if (value === '2') {
+      setRequired(true);
+      if (minimum === 0) setMin(1);
+      if (maximum === 0) setMax(1);
+    }
+  };
+
+  const handleMaxAndMin = (field: string, action: string) => {
+    if (field === 'min') {
+      if (action === 'inc') {
+        setMin((prev) => {
+          if (maximum < prev + 1) setMax(prev + 1);
+          return prev + 1;
+        });
+      } else if (action === 'dec') {
+        setMin((prev) => (prev > minimumValue ? prev - 1 : prev));
+      }
+    }
+    if (field === 'max') {
+      if (action === 'inc') setMax((prev) => prev + 1);
+      else if (action === 'dec') setMax((prev) => (prev > minimum ? prev - 1 : prev));
+    }
+  };
+
   const handleSubmit = () => {
     const newGroup = {
       name,
@@ -54,6 +75,18 @@ export const GroupForm = ({
     onSuccess();
   };
 
+  // side effects
+  React.useEffect(() => {
+    inputRef?.current?.focus();
+    if (!isCreate && groupData) {
+      setName(groupData?.name);
+      setRequired(groupData?.required);
+      setMax(groupData?.maximum);
+      setMin(groupData?.minimum);
+    }
+  }, [isCreate, groupData]);
+
+  // UI
   if (isCreate) {
     return (
       <form
@@ -79,7 +112,7 @@ export const GroupForm = ({
         </Text>
         <Text fontSize="sm">{t('Esse grupo é necessário para o pedido do prato?')}</Text>
         <RadioGroup
-          onChange={(value) => setRequired(value === '1' ? false : true)}
+          onChange={(value) => handleIsRequired(value as string)}
           value={required ? '2' : '1'}
           defaultValue="1"
           colorScheme="green"
@@ -103,14 +136,14 @@ export const GroupForm = ({
             label={t('Mínimo')}
             mr="14"
             value={minimum}
-            increment={() => setMin((prev) => prev + 1)}
-            decrement={() => setMin((prev) => (prev > 0 ? prev - 1 : 0))}
+            increment={() => handleMaxAndMin('min', 'inc')}
+            decrement={() => handleMaxAndMin('min', 'dec')}
           />
           <ItemsQtdButtons
             label={t('Máximo')}
             value={maximum}
-            increment={() => setMax((prev) => prev + 1)}
-            decrement={() => setMax((prev) => (prev > 0 ? prev - 1 : 0))}
+            increment={() => handleMaxAndMin('max', 'inc')}
+            decrement={() => handleMaxAndMin('max', 'dec')}
           />
         </Flex>
         <Box mt="10">
