@@ -49,6 +49,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const [isLoading, setIsLoading] = React.useState(false);
   // refs
   const cnpjRef = React.useRef<HTMLInputElement>(null);
+  const minimumOrderRef = React.useRef<HTMLInputElement>(null);
   // queries & mutations
   const {
     createBusinessProfile,
@@ -65,6 +66,9 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const closeDrawerHandler = () => history.replace(path);
 
   const onSubmitHandler = async () => {
+    if (minimumOrder === 0) {
+      return minimumOrderRef.current?.focus();
+    }
     setIsLoading(true);
     if (logoFiles) await uploadLogo(logoFiles[0]);
     if (coverFiles) await uploadCover(coverFiles);
@@ -123,6 +127,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   }, [business, cover, logo, createBusinessProfile]);
 
   // UI
+
   const breakpoint = useBreakpoint();
   if (isSuccess && redirect) return <Redirect to={redirect} push />;
   return (
@@ -186,6 +191,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
               onChange={(ev) => setDescription(ev.target.value)}
             />
             <CurrencyInput
+              ref={minimumOrderRef}
               isRequired
               id="business-min-price"
               label={t('Valor mínimo do pedido')}
