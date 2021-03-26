@@ -130,7 +130,7 @@ export const GroupForm = ({
         <Text mt="8" fontSize="xl" color="black">
           {t('Quantidade')}
         </Text>
-        <Text fontSize="sm">{t('Quantos itens podem ser selecionados?')}</Text>
+        <Text fontSize="sm">{t('Quantos itens podem ser selecionados pelos clientes?')}</Text>
         <Flex mt="4" flexDir="row" justifyContent="flex-start">
           <ItemsQtdButtons
             label={t('Mínimo')}

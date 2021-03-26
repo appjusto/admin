@@ -36,7 +36,7 @@ const HeroTopic = ({ title, ps, ...props }: HeroTopicProps) => {
 
 export const Hero = () => {
   return (
-    <Section h={{ base: '600px', md: '680px', lg: '600px' }} bg="black" overflow="hidden">
+    <Section h={{ base: '600px', md: '840px', lg: '720px' }} bg="black" overflow="hidden">
       <Container zIndex="100">
         <Flex justifyContent="space-between" alignItems="flex-start">
           <Image src={logo} width={{ base: '112px', md: '168px' }} eagerLoading />
