@@ -76,3 +76,17 @@ export const hyphenFormatter = (hyphenLocation: number) => (value: string | unde
   if (value.length <= hyphenLocation) return value;
   return [value.slice(0, hyphenLocation), value.slice(hyphenLocation)].join('-');
 };
+
+export const addZerosToBeginning = (account: string, patterLen: number) => {
+  const accountLen = account.length;
+  if (patterLen > accountLen) {
+    const diff = patterLen - accountLen;
+    let zeros = '';
+    for (let i = 0; i < diff; i++) {
+      zeros += '0';
+    }
+    return `${zeros + account}`;
+  } else {
+    return account;
+  }
+};

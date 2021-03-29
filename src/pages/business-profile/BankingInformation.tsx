@@ -1,9 +1,12 @@
 import { Box, Flex } from '@chakra-ui/react';
 import { useBanks } from 'app/api/business/profile/useBanks';
 import { useBusinessBankAccount } from 'app/api/business/profile/useBusinessBankAccount';
-import { Bank, BankAccount } from 'appjusto-types';
+import { Bank, BankAccount, WithId } from 'appjusto-types';
 import { CustomPatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';
-import { hyphenFormatter } from 'common/components/form/input/pattern-input/formatters';
+import {
+  addZerosToBeginning,
+  hyphenFormatter,
+} from 'common/components/form/input/pattern-input/formatters';
 import { numbersAndLettersParser } from 'common/components/form/input/pattern-input/parsers';
 import { BankSelect } from 'common/components/form/select/BankSelect';
 import { isEmpty } from 'lodash';
@@ -49,10 +52,22 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
     : undefined;
 
   // handlers
+  const findSelectedBank = React.useCallback((banks: WithId<Bank>[], bankName: string) => {
+    const bank = banks?.find((b) => b.name === bankName);
+    setSelectedBank(bank);
+  }, []);
+
+  const handleAccount = () => {
+    if (selectedBank?.accountPattern) {
+      const patterLen = selectedBank?.accountPattern.length - 1;
+      const result = addZerosToBeginning(account, patterLen);
+      setAccount(result);
+    }
+  };
+
   const onSubmitHandler = async () => {
     const agencyFormatted = agencyFormatter!(agency);
     const accountFormatted = accountFormatter!(account);
-    console.log(accountFormatted);
     await updateBankAccount({
       type: 'Corrente',
       name,
@@ -76,11 +91,10 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
   }, [bankAccount]);
 
   React.useEffect(() => {
-    if (name) {
-      const bank = banks?.find((b) => b.name === name);
-      setSelectedBank(bank);
+    if (banks && name) {
+      findSelectedBank(banks, name);
     }
-  }, [name]);
+  }, [banks, name, findSelectedBank]);
 
   // UI
   if (isSuccess && redirect) return <Redirect to={redirect} push />;
@@ -106,7 +120,7 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
           id="banking-agency"
           label={t('Agência')}
           placeholder={
-            (selectedBank?.agencyPattern.indexOf('D') ?? -1) > -1
+            (selectedBank?.agencyPattern.indexOf('D') ?? -1) > -1 // think about X
               ? t('Número da agência com o dígito')
               : t('Número da agência')
           }
@@ -119,6 +133,7 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
             selectedBank?.agencyPattern ? selectedBank.agencyPattern.length - 1 : undefined
           }
           isRequired
+          isDisabled={name === ''}
         />
         <Flex>
           <CustomPatternInput
@@ -135,7 +150,9 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
             mask={selectedBank?.accountPattern}
             parser={accountParser}
             formatter={accountFormatter}
+            onBlur={handleAccount}
             isRequired
+            isDisabled={name === ''}
           />
         </Flex>
         <PageFooter onboarding={onboarding} redirect={redirect} isLoading={isLoading} />
