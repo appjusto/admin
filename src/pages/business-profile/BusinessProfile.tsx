@@ -227,6 +227,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
             imageUrl={logo}
             ratios={logoRatios}
             resizedWidth={logoResizedWidth}
+            placeholderText={t('Logo do estabelecimento')}
             getImages={getLogoFiles}
             clearDrop={() => clearDropImages('logo')}
           />
@@ -246,6 +247,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
             imageUrl={cover}
             ratios={coverRatios}
             resizedWidth={coverResizedWidth}
+            placeholderText={t('Imagem de capa')}
             getImages={getCoverFiles}
             clearDrop={() => clearDropImages('cover')}
           />

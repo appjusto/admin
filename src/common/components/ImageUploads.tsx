@@ -14,6 +14,7 @@ interface Props extends BoxProps {
   imageUrl?: string | null;
   ratios: number[];
   resizedWidth: number[];
+  placeholderText?: string;
   getImages(files: File[]): void;
   clearDrop(): void;
 }
@@ -27,6 +28,7 @@ export const ImageUploads = React.memo(
     imageUrl,
     ratios,
     resizedWidth,
+    placeholderText,
     getImages,
     clearDrop,
     ...props
@@ -109,6 +111,7 @@ export const ImageUploads = React.memo(
             preview={previewUrl}
             width={parseInt(width as string)}
             height={parseInt(width as string) / ratios[0]}
+            placeholderText={placeholderText}
             {...props}
           />
           {error.status && (
@@ -151,6 +154,7 @@ export const ImageUploads = React.memo(
           preview={previewUrl}
           width={width}
           height={height}
+          placeholderText={placeholderText}
           {...props}
         />
         {error.status && (
