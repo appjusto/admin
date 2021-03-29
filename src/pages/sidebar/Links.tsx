@@ -1,6 +1,5 @@
 import { Box, Text } from '@chakra-ui/react';
 import { useContextBusiness } from 'app/state/business/context';
-import { Pendency } from 'common/components/Pendency';
 import React from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
@@ -48,6 +47,7 @@ const LinksContainer = ({ children }: LinksContainerProps) => {
 
 export const Links = () => {
   // context
+  const isDev = process.env.NODE_ENV === 'development';
   const business = useContextBusiness();
   const { url } = useRouteMatch();
 
@@ -70,17 +70,22 @@ export const Links = () => {
           <Link to={`${url}/menu`}>{t('Cardápio')}</Link>
           <Link to={`${url}/business-schedules`}>{t('Horários')}</Link>
           <Link to={`${url}/delivery-area`}>{t('Área de entrega')}</Link>
-          <Link to={`${url}/orders-history`}>{t('Histórico de pedidos')}</Link>
-          <Link to={`${url}`}>
-            {t('Financeiro')}
-            <Pendency />
-          </Link>
-          <Link to={`${url}/business-profile`}>{t('Perfil do restaurante')}</Link>
-          <Link to={`${url}/team`}>
-            {t('Colaboradores')}
-            <Pendency />
-          </Link>
         </LinksContainer>
+        {isDev ? (
+          <LinksContainer>
+            <Link to={`${url}/orders-history`}>{t('Histórico de pedidos')}</Link>
+            <Link to={`${url}`}>{t('Financeiro')}</Link>
+            <Link to={`${url}/business-profile`}>{t('Perfil do restaurante')}</Link>
+            <Link to={`${url}/team`}>{t('Colaboradores')}</Link>
+          </LinksContainer>
+        ) : (
+          <LinksContainer>
+            <Text color="gray.600">{t('Histórico de pedidos')}</Text>
+            <Text color="gray.600">{t('Financeiro')}</Text>
+            <Link to={`${url}/business-profile`}>{t('Perfil do restaurante')}</Link>
+            <Text color="gray.600">{t('Colaboradores')}</Text>
+          </LinksContainer>
+        )}
       </Box>
     </Box>
   );

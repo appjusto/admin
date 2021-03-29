@@ -21,7 +21,10 @@ const Dashboard = () => {
   // UI
   return (
     <>
-      <PageHeader title={t('Início')} subtitle={t(`Dados atualizados em ${dateTime}`)} />
+      <PageHeader
+        title={t('Boas-vindas ao AppJusto')}
+        subtitle={t(`Dados atualizados em ${dateTime}`)}
+      />
       {business?.situation === 'approved' ? (
         <Text mt="4" fontSize="lg" fontWeight="700">
           Dashboard !

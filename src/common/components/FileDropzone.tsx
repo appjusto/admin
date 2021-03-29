@@ -54,7 +54,7 @@ export const FileDropzone = ({
                 mb="-8"
                 fontSize="16px"
                 lineHeight="22px"
-                maxW="132px"
+                maxW="138px"
                 textAlign="center"
               >
                 {placeholderText}

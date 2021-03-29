@@ -25,6 +25,7 @@ import { OrdersKanbanList } from './OrdersKanbanList';
 
 export const OrdersKanban = () => {
   // context
+  const isDev = process.env.NODE_ENV === 'development';
   const { path } = useRouteMatch();
   const { business, orders, createFakeOrder } = useOrdersContext();
   // state
@@ -63,7 +64,7 @@ export const OrdersKanban = () => {
             <Link to={`${path}/acceptance-time`}>
               <Button
                 variant="outline"
-                minW="130px"
+                minW="140px"
                 size="sm"
                 borderColor="#F2F6EA"
                 fontWeight="700"
@@ -79,7 +80,7 @@ export const OrdersKanban = () => {
             </Link>
           </Flex>
         </Flex>
-        <Button onClick={createFakeOrder}>Criar Ordem</Button>
+        {isDev && <Button onClick={createFakeOrder}>Criar Ordem</Button>}
         <Flex flexDir="column" alignItems="flex-end">
           <HStack spacing={4}>
             <InputGroup maxW="360px">

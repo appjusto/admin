@@ -257,6 +257,7 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
         imageUrl={imageUrl}
         ratios={productRatios}
         resizedWidth={productResizedWidth}
+        placeholderText={t('Imagem do produto')}
         getImages={handleImageFiles}
         clearDrop={clearDropImages}
       />

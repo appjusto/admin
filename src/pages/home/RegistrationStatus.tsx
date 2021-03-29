@@ -1,15 +1,64 @@
-import { Box, Button, HStack, Link, Spinner, Text, VStack } from '@chakra-ui/react';
+import {
+  AspectRatio,
+  Box,
+  Button,
+  HStack,
+  Icon,
+  Image,
+  Link,
+  Spinner,
+  Text,
+  VStack,
+} from '@chakra-ui/react';
 import { useBusinessBankAccount } from 'app/api/business/profile/useBusinessBankAccount';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextManagerProfile } from 'app/state/manager/context';
 import { AlertError } from 'common/components/AlertError';
 import { AlertWarning } from 'common/components/AlertWarning';
+import { CustomButton } from 'common/components/buttons/CustomButton';
+import SharingBar from 'common/components/landing/share/SharingBar';
 import { ReactComponent as CheckmarkChecked } from 'common/img/checkmark-checked.svg';
 import { ReactComponent as Checkmark } from 'common/img/checkmark.svg';
+import submittedImg from 'common/img/submitted.svg';
 import React from 'react';
-import { Link as RouterLink, useRouteMatch } from 'react-router-dom';
+import { FaFacebookSquare, FaInstagram, FaLinkedin } from 'react-icons/fa';
+import { useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
+
+interface RegistrationItemProps {
+  status: boolean;
+  label: string;
+  link: string;
+}
+
+const RegistrationItem = ({ status, label, link, ...props }: RegistrationItemProps) => {
+  const { path } = useRouteMatch();
+  const test = false;
+  return (
+    <HStack
+      w="100%"
+      spacing={2}
+      border={status ? '1px solid #F6F6F6' : '1px solid #FFBE00'}
+      borderRadius="lg"
+      px="4"
+      py={status ? '4' : '8'}
+      {...props}
+    >
+      <VStack spacing={1} alignItems="flex-start">
+        <HStack spacing={4}>
+          {status ? <CheckmarkChecked /> : <Checkmark />}
+          <Text fontSize="16px" lineHeight="22px" fontWeight="700">
+            {label}
+          </Text>
+        </HStack>
+        {!status && (
+          <CustomButton variant="outline" label={t('Preencher')} link={`${path}/${link}`} />
+        )}
+      </VStack>
+    </HStack>
+  );
+};
 
 const initialState = [
   {
@@ -24,7 +73,6 @@ const initialState = [
 
 export const RegistrationStatus = () => {
   // context
-  const { path } = useRouteMatch();
   const manager = useContextManagerProfile();
   const business = useContextBusiness();
   const { bankAccount } = useBusinessBankAccount();
@@ -36,6 +84,9 @@ export const RegistrationStatus = () => {
   const [error, setError] = React.useState({ status: false, message: '' });
   const [rejection, setRejection] = React.useState<string[]>([]);
   const isValid = validation.filter((data) => data.status === false).length === 0;
+
+  // helpers
+  const pendencies = validation.filter((item) => item.status === false).length;
 
   // handlers
   const handleSubmitRegistration = () => {
@@ -101,51 +152,110 @@ export const RegistrationStatus = () => {
   }
   if (business?.situation === 'pending') {
     return (
-      <>
-        <AlertWarning
-          hasIcon={false}
-          title={isValid ? t('Dados prontos para envio') : t('Dados incompletos')}
-          description={
-            isValid
-              ? t(
-                  'Agora você pode enviar os seus dados para aprovação! Basta clicar no botão abaixo:'
-                )
-              : t(
-                  'Antes de enviar o seu cadastro para aprovação, favor preencher os dados pendentes abaixo:'
-                )
-          }
-        >
-          <VStack mt="2" spacing={1} alignItems="flex-start">
-            {validation.map((data, index) => {
-              return (
-                <HStack key={data.type} spacing={2}>
-                  {data.status ? <CheckmarkChecked /> : <Checkmark />}
-                  <Link as={RouterLink} to={`${path}/${data.link}`}>
-                    {data.label}
-                    {index + 1 < validation.length ? ';' : '.'}
-                  </Link>
-                </HStack>
-              );
-            })}
-          </VStack>
-        </AlertWarning>
+      <Box maxW="708px" color="black">
+        {pendencies > 0 ? (
+          <Text mt="6" fontSize="lg" lineHeight="26px" maxW="530px">
+            {t(
+              `Para continuar, você precisa preencher o restante do seu cadastro. Você possui ${pendencies} itens pendentes:`
+            )}
+          </Text>
+        ) : (
+          <>
+            <Text mt="6" fontSize="lg" lineHeight="26px" maxW="530px">
+              {t('Você preenchou todos os itens.')}
+            </Text>
+            <Text fontSize="lg" lineHeight="26px" maxW="530px">
+              {t('Agora é só enviar o seu cadastro para aprovação:')}
+            </Text>
+          </>
+        )}
+        <VStack mt="4" spacing={4} alignItems="flex-start">
+          {validation.map((data) => {
+            return (
+              <RegistrationItem
+                key={data.type}
+                status={data.status}
+                label={data.label}
+                link={data.link}
+              />
+            );
+          })}
+        </VStack>
         <Button mt="4" onClick={handleSubmitRegistration} isDisabled={!isValid}>
           {t('Enviar cadastro para aprovação')}
         </Button>
         {error.status && (
           <AlertError title={t('Erro de cadastro')} description={t(`${error.message}`)} />
         )}
-      </>
+        <Box>
+          <Text mt="20" fontSize="24px" lineHeight="30px" fontWeight="700">
+            {t('Divulgue esse movimento')}
+          </Text>
+          <Text mt="6" mb="4" fontSize="15px" lineHeight="21px">
+            {t(
+              'Para chegar mais rápido a todas as cidades, o AppJusto precisa da sua ajuda. Divulgue nas suas rede e ajude o movimento a crescer:'
+            )}
+          </Text>
+          <SharingBar />
+        </Box>
+      </Box>
     );
   }
   if (business?.situation === 'submitted') {
     return (
-      <AlertWarning
-        title={t('Restaurante em aprovação')}
-        description={t(
-          'O AppJusto está avaliando o seu cadastro e em breve você poderá aceitar pedidos. Por enquanto seu restaurante ainda não está disponível para clientes. Você será avisado quando estiver liberado. Aproveite para explorar o seu painel.'
-        )}
-      />
+      <Box maxW="708px" color="black">
+        <Box mt="6" w="100%" maxW="406px">
+          <Image src={submittedImg} />
+        </Box>
+        <Text mt="4" fontSize="lg" lineHeight="26px">
+          {t(
+            `Seu cadastro foi enviado com sucesso e está em fase de análise. Em breve você receberá uma confirmação.
+          Enquanto aguarda a confirmação, assista ao vídeo sobre o nosso lançamento:`
+          )}
+        </Text>
+        <AspectRatio mt="6" maxW="708px" ratio={9 / 5}>
+          <iframe
+            title="appjusto"
+            src="https://www.youtube.com/embed/rwhMIEyoFJk"
+            allowFullScreen
+          />
+        </AspectRatio>
+        <HStack mt="16" spacing={2}>
+          <Text fontSize="24px" lineHeight="30px" fontWeight="700">
+            {t('Aproveite para seguir o AppJusto nas redes sociais')}
+          </Text>
+          <Link
+            href="https://www.instagram.com/appjusto/"
+            isExternal
+            aria-label="Link para a página do Instagram do Appjusto"
+            _hover={{ color: 'green.500' }}
+            _focus={{ outline: 'none' }}
+          >
+            <Icon as={FaInstagram} w="30px" h="30px" />
+          </Link>
+          <Link
+            href="https://www.facebook.com/appjusto"
+            isExternal
+            aria-label="Link para a página do Facebook do Appjusto"
+            _hover={{ color: 'green.500' }}
+            _focus={{ outline: 'none' }}
+          >
+            <Icon as={FaFacebookSquare} w="30px" h="30px" />
+          </Link>
+          <Link
+            href="https://www.linkedin.com/company/appjusto/"
+            isExternal
+            aria-label="Link para a página do Linkedin do Appjusto"
+            _hover={{ color: 'green.500' }}
+            _focus={{ outline: 'none' }}
+          >
+            <Icon as={FaLinkedin} w="30px" h="30px" />
+          </Link>
+        </HStack>
+        <Text mt="2" fontSize="lg" lineHeight="26px">
+          {t('E fique por dentro das nossas novidades!')}
+        </Text>
+      </Box>
     );
   }
   if (business?.situation === 'rejected') {
