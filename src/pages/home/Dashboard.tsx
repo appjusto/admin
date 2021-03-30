@@ -26,9 +26,11 @@ const Dashboard = () => {
         subtitle={t(`Dados atualizados em ${dateTime}`)}
       />
       {business?.situation === 'approved' ? (
-        <Text mt="4" fontSize="lg" fontWeight="700">
-          Dashboard !
-        </Text>
+        <>
+          <Text mt="4" fontSize="lg" fontWeight="700">
+            Dashboard !
+          </Text>
+        </>
       ) : (
         <RegistrationStatus />
       )}

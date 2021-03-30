@@ -1,4 +1,4 @@
-import { BoxProps, Flex, Tooltip } from '@chakra-ui/react';
+import { Box, BoxProps, Flex, Tooltip } from '@chakra-ui/react';
 import { CloseButton } from 'common/components/buttons/CloseButton';
 import { CroppedAreaProps } from 'common/components/ImageCropping';
 import React from 'react';
@@ -24,7 +24,7 @@ const initError = { status: false, message: { title: '', description: '' } };
 export const ImageUploads = React.memo(
   ({
     width = 464,
-    height = 261,
+    height,
     imageUrl,
     ratios,
     resizedWidth,
@@ -105,12 +105,12 @@ export const ImageUploads = React.memo(
 
     if (imageExists.current && previewUrl) {
       return (
-        <>
+        <Box w="100%">
           <FileDropzone
             onDropFile={onDropHandler}
             preview={previewUrl}
             width={parseInt(width as string)}
-            height={parseInt(width as string) / ratios[0]}
+            height={height ?? parseInt(width as string) / ratios[0]}
             placeholderText={placeholderText}
             {...props}
           />
@@ -121,35 +121,42 @@ export const ImageUploads = React.memo(
               maxW={width}
             />
           )}
-        </>
+        </Box>
       );
     }
 
     if (previewUrl) {
       return (
-        <>
+        <Box w="100%">
           <Flex flexDir="column" alignItems="flex-end" maxW={width} {...props}>
             <Tooltip label={t('Escolher outra imagem')}>
               <CloseButton mb={2} size="xs" onClick={clearDroppedImages} />
             </Tooltip>
           </Flex>
-          {ratios.map((ratio, index) => (
-            <ImageCropping
-              key={ratio}
-              mt={4}
-              index={index}
-              image={previewUrl}
-              ratio={ratio}
-              width={width}
-              height={height}
-              onCropEnd={handleCrop}
-            />
-          ))}
-        </>
+          <Box w="100%" position="relative">
+            {ratios.map((ratio, index) => (
+              <ImageCropping
+                key={ratio}
+                mt={4}
+                index={index}
+                image={previewUrl}
+                ratio={ratio}
+                width={width}
+                height={height}
+                onCropEnd={handleCrop}
+                position={index > 0 ? 'absolute' : 'relative'}
+                top={index > 0 ? '0' : undefined}
+                left={index > 0 ? '0' : undefined}
+                zIndex={index > 0 ? '100' : '999'}
+                opacity={index > 0 ? '0' : '1'}
+              />
+            ))}
+          </Box>
+        </Box>
       );
     }
     return (
-      <>
+      <Box w="100%">
         <FileDropzone
           onDropFile={onDropHandler}
           preview={previewUrl}
@@ -165,7 +172,7 @@ export const ImageUploads = React.memo(
             maxW={width}
           />
         )}
-      </>
+      </Box>
     );
   }
 );

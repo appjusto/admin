@@ -49,7 +49,7 @@ export const ImageCropping = ({
   );
   // UI
   return (
-    <>
+    <Box w="100%" mb="6" {...props}>
       <Box position="relative" width={width} height={height}>
         <Box>
           <Cropper
@@ -84,6 +84,6 @@ export const ImageCropping = ({
           </SliderThumb>
         </Slider>
       </HStack>
-    </>
+    </Box>
   );
 };

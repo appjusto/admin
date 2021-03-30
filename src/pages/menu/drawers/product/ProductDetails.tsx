@@ -253,7 +253,8 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
         {t('Recomendamos imagens na proporção retangular (16:9) com no mínimo 1280px de largura')}
       </Text>
       <ImageUploads
-        mt={4}
+        mt="4"
+        height={332}
         imageUrl={imageUrl}
         ratios={productRatios}
         resizedWidth={productResizedWidth}
