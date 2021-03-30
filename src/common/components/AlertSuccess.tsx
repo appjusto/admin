@@ -3,11 +3,11 @@ import { Alert, AlertDescription, AlertIcon, AlertProps, AlertTitle, Flex } from
 interface Props extends AlertProps {
   title: string;
   description: string;
-  hasIcon?: boolean;
+  icon?: boolean;
   children?: React.ReactNode | React.ReactNode[];
 }
 
-export const AlertSuccess = ({ title, description, hasIcon = true, children, ...props }: Props) => (
+export const AlertSuccess = ({ title, description, icon = true, children, ...props }: Props) => (
   <Alert
     mt="4"
     status="success"
@@ -16,7 +16,7 @@ export const AlertSuccess = ({ title, description, hasIcon = true, children, ...
     borderRadius="lg"
     {...props}
   >
-    {hasIcon && <AlertIcon />}
+    {icon && <AlertIcon />}
     <Flex flexDir="column">
       <AlertTitle mr={2}>{title}</AlertTitle>
       <AlertDescription>{description}</AlertDescription>

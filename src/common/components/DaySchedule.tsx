@@ -73,7 +73,7 @@ export const DaySchedule = ({
       {isChecked && (
         <HStack spacing={4}>
           {value.map((schedule, index) => (
-            <Flex flexDir="row" maxW="310px">
+            <Flex key={index * 3} flexDir="row" maxW="310px">
               <Input
                 w="100%"
                 maxW="150px"

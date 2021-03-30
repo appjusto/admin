@@ -10,55 +10,18 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
+import { useObserveProducts } from 'app/api/business/products/useObserveProducts';
 import { useBusinessBankAccount } from 'app/api/business/profile/useBusinessBankAccount';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextManagerProfile } from 'app/state/manager/context';
 import { AlertError } from 'common/components/AlertError';
-import { AlertWarning } from 'common/components/AlertWarning';
-import { CustomButton } from 'common/components/buttons/CustomButton';
 import SharingBar from 'common/components/landing/share/SharingBar';
-import { ReactComponent as CheckmarkChecked } from 'common/img/checkmark-checked.svg';
-import { ReactComponent as Checkmark } from 'common/img/checkmark.svg';
 import submittedImg from 'common/img/submitted.svg';
 import React from 'react';
 import { FaFacebookSquare, FaInstagram, FaLinkedin } from 'react-icons/fa';
-import { useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
-
-interface RegistrationItemProps {
-  status: boolean;
-  label: string;
-  link: string;
-}
-
-const RegistrationItem = ({ status, label, link, ...props }: RegistrationItemProps) => {
-  const { path } = useRouteMatch();
-  const test = false;
-  return (
-    <HStack
-      w="100%"
-      spacing={2}
-      border={status ? '1px solid #F6F6F6' : '1px solid #FFBE00'}
-      borderRadius="lg"
-      px="4"
-      py={status ? '4' : '8'}
-      {...props}
-    >
-      <VStack spacing={1} alignItems="flex-start">
-        <HStack spacing={4}>
-          {status ? <CheckmarkChecked /> : <Checkmark />}
-          <Text fontSize="16px" lineHeight="22px" fontWeight="700">
-            {label}
-          </Text>
-        </HStack>
-        {!status && (
-          <CustomButton variant="outline" label={t('Preencher')} link={`${path}/${link}`} />
-        )}
-      </VStack>
-    </HStack>
-  );
-};
+import { RegistrationItem } from './RegistrationItem';
 
 const initialState = [
   {
@@ -66,15 +29,48 @@ const initialState = [
     type: 'manager',
     label: 'Perfil do administrador e dados bancários',
     link: 'manager-profile',
+    helpText: 'Dúvidas sobre o seu perfil e dados bancários',
+    helpLink: 'http://localhost:3000/',
   },
-  { status: false, type: 'business', label: 'Perfil do restaurante', link: 'business-profile' },
-  { status: false, type: 'address', label: 'Endereço e área de entrega', link: 'delivery-area' },
+  {
+    status: false,
+    type: 'business',
+    label: 'Perfil do restaurante',
+    link: 'business-profile',
+    helpText: 'Como melhorar a página do restaurante',
+    helpLink: 'http://localhost:3000/',
+  },
+  {
+    status: false,
+    type: 'address',
+    label: 'Endereço e área de entrega',
+    link: 'delivery-area',
+    helpText: 'Saiba como definir o raio de entrega',
+    helpLink: 'http://localhost:3000/',
+  },
+  {
+    status: false,
+    type: 'menu',
+    label: 'Cardápio',
+    link: 'menu',
+    helpText: 'Dicas para bombar seu cardápio',
+    helpLink: 'http://localhost:3000/',
+  },
+  {
+    status: false,
+    type: 'schedules',
+    label: 'Horário de funcionamento',
+    link: 'business-schedules',
+    helpText: 'Dicas sobre o horário de funcionamento',
+    helpLink: 'http://localhost:3000/',
+  },
 ];
 
 export const RegistrationStatus = () => {
   // context
   const manager = useContextManagerProfile();
   const business = useContextBusiness();
+  const products = useObserveProducts(business?.id);
   const { bankAccount } = useBusinessBankAccount();
   const { updateBusinessProfile } = useBusinessProfile();
 
@@ -108,29 +104,37 @@ export const RegistrationStatus = () => {
   // side effects
   React.useEffect(() => {
     if (business) {
-      const isManagerInfos = manager?.phone && manager.cpf ? true : false;
-      const isBankingInfos =
+      const isManagerInfosOk = manager?.phone && manager.cpf ? true : false;
+      const isBankingInfosOk =
         bankAccount?.type && bankAccount?.name && bankAccount?.account && bankAccount.agency
           ? true
           : false;
-      const isBusinessInfos = business?.name && business?.cnpj && business.phone ? true : false;
-      const isAddressInfos =
+      const isBusinessInfosOk = business?.name && business?.cnpj && business.phone ? true : false;
+      const isAddressInfosOk =
         business?.businessAddress?.address &&
         business?.businessAddress?.cep &&
         business?.businessAddress?.city &&
         business?.businessAddress?.state
           ? true
           : false;
+      const isMenuOk = products?.length > 0;
+      const isSchedulesOk = business?.schedules ? true : false;
       setValidation((prevState) => {
         const newState = prevState.map((data) => {
           if (data.type === 'manager') {
-            const status = isManagerInfos && isBankingInfos;
+            const status = isManagerInfosOk && isBankingInfosOk;
             return { ...data, status };
           } else if (data.type === 'business') {
-            const status = isBusinessInfos;
+            const status = isBusinessInfosOk;
+            return { ...data, status };
+          } else if (data.type === 'address') {
+            const status = isAddressInfosOk;
+            return { ...data, status };
+          } else if (data.type === 'menu') {
+            const status = isMenuOk;
             return { ...data, status };
           } else {
-            const status = isAddressInfos;
+            const status = isSchedulesOk;
             return { ...data, status };
           }
         });
@@ -138,7 +142,7 @@ export const RegistrationStatus = () => {
       });
       setIsFetching(false);
     }
-  }, [manager, business, bankAccount]);
+  }, [manager, business, bankAccount, products]);
 
   React.useEffect(() => {
     if (business?.situation === 'rejected') {
@@ -152,7 +156,7 @@ export const RegistrationStatus = () => {
   }
   if (business?.situation === 'pending') {
     return (
-      <Box maxW="708px" color="black">
+      <Box maxW="800px" color="black">
         {pendencies > 0 ? (
           <Text mt="6" fontSize="lg" lineHeight="26px" maxW="530px">
             {t(
@@ -177,6 +181,8 @@ export const RegistrationStatus = () => {
                 status={data.status}
                 label={data.label}
                 link={data.link}
+                helpText={data.helpText}
+                helpLink={data.helpLink}
               />
             );
           })}
@@ -261,18 +267,20 @@ export const RegistrationStatus = () => {
   if (business?.situation === 'rejected') {
     return (
       <>
-        <AlertWarning
-          title={t('Seus dados não foram aprovados')}
+        <AlertError
+          title={t('Problemas identificados no seu cadastro')}
           description={t(
-            'Ocorreram alguns erros durante a validação dos dados enviados. Favor checar os seguintes pontos abaixo, antes de reenviar os dados.'
+            'Por favor, corrija os itens listados abaixo para seguir com a liberação da plataforma:'
           )}
+          icon={false}
+          border="2px solid #DC3545"
         >
           <VStack mt="2" spacing={1} alignItems="flex-start">
             {rejection.map((issue) => (
               <Text key={issue}>* {t(`${issue}`)}</Text>
             ))}
           </VStack>
-        </AlertWarning>
+        </AlertError>
         <Button mt="4" onClick={handleSubmitRegistration} isDisabled={!isValid}>
           {t('Reenviar cadastro para aprovação')}
         </Button>
