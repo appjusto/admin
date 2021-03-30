@@ -1,4 +1,4 @@
-import { Box, BoxProps, Flex, Tooltip } from '@chakra-ui/react';
+import { BoxProps, Flex, Tooltip } from '@chakra-ui/react';
 import { CloseButton } from 'common/components/buttons/CloseButton';
 import { CroppedAreaProps } from 'common/components/ImageCropping';
 import React from 'react';
@@ -134,15 +134,16 @@ export const ImageUploads = React.memo(
             </Tooltip>
           </Flex>
           {ratios.map((ratio, index) => (
-            <Box key={ratio} position="relative" width={width} height={height}>
-              <ImageCropping
-                mt={4}
-                index={index}
-                image={previewUrl}
-                ratio={ratio}
-                onCropEnd={handleCrop}
-              />
-            </Box>
+            <ImageCropping
+              key={ratio}
+              mt={4}
+              index={index}
+              image={previewUrl}
+              ratio={ratio}
+              width={width}
+              height={height}
+              onCropEnd={handleCrop}
+            />
           ))}
         </>
       );
