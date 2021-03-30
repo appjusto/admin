@@ -254,6 +254,7 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
       </Text>
       <ImageUploads
         mt="4"
+        width={464}
         height={332}
         imageUrl={imageUrl}
         ratios={productRatios}

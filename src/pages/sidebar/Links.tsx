@@ -74,7 +74,7 @@ export const Links = () => {
         {isDev ? (
           <LinksContainer>
             <Link to={`${url}/orders-history`}>{t('Histórico de pedidos')}</Link>
-            <Link to={`${url}`}>{t('Financeiro')}</Link>
+            <Link to={`${url}/finances`}>{t('Financeiro')}</Link>
             <Link to={`${url}/business-profile`}>{t('Perfil do restaurante')}</Link>
             <Link to={`${url}/team`}>{t('Colaboradores')}</Link>
           </LinksContainer>

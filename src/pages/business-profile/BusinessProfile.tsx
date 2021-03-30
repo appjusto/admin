@@ -137,6 +137,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
 
   // UI
   const breakpoint = useBreakpoint();
+  const coverWidth = breakpoint === 'base' ? 328 : breakpoint === 'md' ? 420 : 464;
   if (isSuccess && redirect) return <Redirect to={redirect} push />;
   return (
     <>
@@ -222,8 +223,8 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
           <ImageUploads
             key="logo"
             mt="4"
-            width="200px"
-            height="200px"
+            width={200}
+            height={200}
             imageUrl={logo}
             ratios={logoRatios}
             resizedWidth={logoResizedWidth}
@@ -243,7 +244,8 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
           <ImageUploads
             key="cover"
             mt="4"
-            width={breakpoint === 'base' ? 328 : breakpoint === 'md' ? 420 : 464}
+            width={coverWidth}
+            height={coverWidth / coverRatios[0]}
             imageUrl={cover}
             ratios={coverRatios}
             resizedWidth={coverResizedWidth}

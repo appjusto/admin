@@ -9,8 +9,8 @@ import { FileDropzone } from './FileDropzone';
 import { ImageCropping } from './ImageCropping';
 
 interface Props extends BoxProps {
-  width?: number | string | undefined;
-  height?: number | string | undefined;
+  width: number | string | undefined;
+  height: number | string | undefined;
   imageUrl?: string | null;
   ratios: number[];
   resizedWidth: number[];
@@ -23,7 +23,7 @@ const initError = { status: false, message: { title: '', description: '' } };
 
 export const ImageUploads = React.memo(
   ({
-    width = 464,
+    width,
     height,
     imageUrl,
     ratios,
@@ -109,8 +109,8 @@ export const ImageUploads = React.memo(
           <FileDropzone
             onDropFile={onDropHandler}
             preview={previewUrl}
-            width={parseInt(width as string)}
-            height={height ?? parseInt(width as string) / ratios[0]}
+            width={width}
+            height={height}
             placeholderText={placeholderText}
             {...props}
           />
