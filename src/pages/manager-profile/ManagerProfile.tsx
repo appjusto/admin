@@ -24,7 +24,7 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const profile = useContextManagerProfile();
   const { updateProfile, updateResult } = useUpdateManagerProfile();
   const { isLoading, isSuccess } = updateResult;
-  console.log(profile);
+
   // state
   const [name, setName] = React.useState(profile?.name ?? '');
   const [surname, setSurname] = React.useState(profile?.surname ?? '');
@@ -36,6 +36,7 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
 
   // side effects
   React.useEffect(() => {
+    if (onboarding) window?.scrollTo(0, 0);
     nameRef?.current?.focus();
   }, []);
   React.useEffect(() => {

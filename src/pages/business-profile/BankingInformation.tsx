@@ -80,6 +80,7 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
 
   // side effects
   React.useEffect(() => {
+    if (onboarding) window?.scrollTo(0, 0);
     nameRef?.current?.focus();
   }, []);
   React.useEffect(() => {

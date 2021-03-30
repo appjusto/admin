@@ -117,6 +117,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
 
   // side effects
   React.useEffect(() => {
+    if (onboarding) window?.scrollTo(0, 0);
     cnpjRef?.current?.focus();
   }, []);
 

@@ -85,6 +85,7 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
   // side effects
   // initial focus
   React.useEffect(() => {
+    if (onboarding) window?.scrollTo(0, 0);
     cepRef?.current?.focus();
   }, []);
   // fill fields after initial load

@@ -15,19 +15,16 @@ export const ProtectedRoute = (props: RouteProps) => {
   const [status, setStatus] = React.useState<Status>('initial');
 
   // side effects
-  const delay = 5000; // delay to wait for firebase initialization
+  const delay = 4000; // delay to wait for firebase initialization
   React.useEffect(() => {
-    if (user) setStatus('authenticated');
-    else {
+    if (!user) {
       const uid = setTimeout(() => {
         setStatus(!user ? 'unauthenticated' : 'authenticated');
       }, delay);
       return () => clearTimeout(uid);
     }
-  }, [user]);
-  React.useEffect(() => {
-    if (profile) setStatus('profile-loaded');
-  }, [profile]);
+    if (user && profile) setStatus('profile-loaded');
+  }, [user, profile]);
 
   // UI
   // redirects to / when user is not authenticated
