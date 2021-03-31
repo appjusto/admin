@@ -16,6 +16,7 @@ export const BackOfficeLinks = () => {
       <LinkItem to={`${url}/orders`} label={t('Pedidos')} />
       <LinkItem to={`${url}/couriers`} label={t('Entregadores')} />
       <LinkItem to={`${url}/business`} label={t('Restaurantes')} />
+      <LinkItem to={`${url}/consumers`} label={t('Clientes')} />
     </Box>
   );
 };

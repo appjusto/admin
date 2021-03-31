@@ -1,8 +1,8 @@
-import { Text } from '@chakra-ui/react';
 import React from 'react';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
-import PageHeader from '../PageHeader';
+import PageHeader from '../../PageHeader';
+import { Panel } from './Panel';
 
 const BODashboard = () => {
   // context
@@ -20,9 +20,7 @@ const BODashboard = () => {
   return (
     <>
       <PageHeader title={t('Visão geral')} subtitle={t(`Atualizado ${dateTime}`)} />
-      <Text mt="4" fontSize="sm" fontWeight="700">
-        {t('Aqui você acomanhará os principais indicadores de desempenho do seu restaurante.')}
-      </Text>
+      <Panel />
     </>
   );
 };

@@ -6,6 +6,8 @@ import { Redirect, Route, RouteProps } from 'react-router-dom';
 
 type Status = 'initial' | 'unauthenticated' | 'authenticated' | 'profile-loaded';
 
+type role = 'root' | 'staff' | 'admin' | 'collaborator';
+
 export const BackOfficeRoute = (props: RouteProps) => {
   // context
   const user = useContextFirebaseUser();

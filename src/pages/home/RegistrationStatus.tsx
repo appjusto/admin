@@ -30,7 +30,8 @@ const initialState = [
     label: 'Perfil do administrador e dados bancários',
     link: 'manager-profile',
     helpText: 'Dúvidas sobre o seu perfil e dados bancários',
-    helpLink: 'http://localhost:3000/',
+    helpLink:
+      'https://appjusto.freshdesk.com/support/solutions/articles/67000631086-d%C3%BAvidas-sobre-o-perfil-e-dados-banc%C3%A1rios',
   },
   {
     status: false,
@@ -38,7 +39,8 @@ const initialState = [
     label: 'Perfil do restaurante',
     link: 'business-profile',
     helpText: 'Como melhorar a página do restaurante',
-    helpLink: 'http://localhost:3000/',
+    helpLink:
+      'https://appjusto.freshdesk.com/support/solutions/articles/67000631083-como-melhorar-a-p%C3%A1gina-do-restaurante',
   },
   {
     status: false,
@@ -46,7 +48,8 @@ const initialState = [
     label: 'Endereço e área de entrega',
     link: 'delivery-area',
     helpText: 'Saiba como definir o raio de entrega',
-    helpLink: 'http://localhost:3000/',
+    helpLink:
+      'https://appjusto.freshdesk.com/support/solutions/articles/67000631084-saiba-como-definir-o-raio-de-entrega',
   },
   {
     status: false,
@@ -54,7 +57,8 @@ const initialState = [
     label: 'Cardápio',
     link: 'menu',
     helpText: 'Dicas para bombar seu cardápio',
-    helpLink: 'http://localhost:3000/',
+    helpLink:
+      'https://appjusto.freshdesk.com/support/solutions/articles/67000631085-dicas-para-bombar-seu-card%C3%A1pio',
   },
   {
     status: false,
@@ -62,7 +66,8 @@ const initialState = [
     label: 'Horário de funcionamento',
     link: 'business-schedules',
     helpText: 'Dicas sobre o horário de funcionamento',
-    helpLink: 'http://localhost:3000/',
+    helpLink:
+      'https://appjusto.freshdesk.com/support/solutions/articles/67000631088-dicas-sobre-o-hor%C3%A1rio-de-funcionamento',
   },
 ];
 

@@ -22,7 +22,6 @@ export const useContextFirebaseUser = () => {
 
 export const useContextFirebaseUserId = () => {
   const user = useContextFirebaseUser();
-  console.dir(user);
   return user?.uid;
 };
 
