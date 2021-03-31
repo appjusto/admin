@@ -15,7 +15,7 @@ interface ContextProps {
 
 const BOOrdersContext = React.createContext<ContextProps>({} as ContextProps);
 
-const options = { active: true, inactive: true };
+const options = { active: true, inactive: false };
 
 interface ProviderProps {
   children: React.ReactNode | React.ReactNode[];

@@ -6,6 +6,28 @@ import React from 'react';
 import { Link as RouterLink, useRouteMatch } from 'react-router-dom';
 import { getDateAndHour, getOrderTotalPriceToDisplay } from 'utils/functions';
 
+interface CustomLinkProps {
+  to: string;
+  children: React.ReactNode | React.ReactNode[];
+}
+
+const CustomLink = ({ to, children }: CustomLinkProps) => {
+  return (
+    <Link
+      as={RouterLink}
+      to={to}
+      p="4"
+      w="100%"
+      borderRadius="lg"
+      border="1px solid #C8D7CB"
+      color="black"
+      _hover={{ textDecor: 'none', bg: 'gray.200' }}
+    >
+      {children}
+    </Link>
+  );
+};
+
 interface Props {
   data: WithId<Business> | WithId<Order>;
   listType: string;
@@ -28,16 +50,7 @@ export const BOListItem = ({ data, listType }: Props) => {
   // UI
   if (listType === 'business') {
     return (
-      <Link
-        as={RouterLink}
-        to={`${url}/${business?.id}`}
-        p="4"
-        w="100%"
-        borderRadius="lg"
-        border="1px solid #C8D7CB"
-        color="black"
-        _hover={{ textDecor: 'none' }}
-      >
+      <CustomLink to={`${url}/${business?.id}`}>
         <Flex justifyContent="space-between" alignItems="center">
           <Text fontSize="sm" lineHeight="21px" color="black">
             {business?.name}
@@ -47,21 +60,12 @@ export const BOListItem = ({ data, listType }: Props) => {
               getDateAndHour(business?.createdOn as firebase.firestore.Timestamp)}
           </Text>
         </Flex>
-      </Link>
+      </CustomLink>
     );
   }
   if (listType === 'orders') {
     return (
-      <Link
-        as={RouterLink}
-        to={`${url}/${order?.id}`}
-        p="4"
-        w="100%"
-        borderRadius="lg"
-        border="1px solid #C8D7CB"
-        color="black"
-        _hover={{ textDecor: 'none' }}
-      >
+      <CustomLink to={`${url}/${order?.id}`}>
         <Flex justifyContent="space-between" alignItems="center">
           <Box>
             <Image src={order?.type === 'food' ? foodIcon : p2pIcon} w="24px" h="24px" />
@@ -76,7 +80,7 @@ export const BOListItem = ({ data, listType }: Props) => {
             {order?.createdOn && getDateAndHour(order?.createdOn as firebase.firestore.Timestamp)}
           </Text>
         </Flex>
-      </Link>
+      </CustomLink>
     );
   }
   return <Box />;
