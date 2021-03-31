@@ -7,8 +7,10 @@ import { t } from 'utils/i18n';
 
 export const ManagerBar = () => {
   // context
-  const { url } = useRouteMatch();
+  const { path, url } = useRouteMatch();
+  const isBackOffice = path.includes('backoffice');
   const manager = useContextManagerProfile();
+  const name = manager?.name ? `, ${manager.name}!` : '!';
   return (
     <Flex
       position="fixed"
@@ -24,16 +26,24 @@ export const ManagerBar = () => {
       </Flex>
       <Flex w="100%" justifyContent="space-between" alignItems="center">
         <Box>
-          <Text color="black" fontSize="xs" lineHeight="lg" mb="-6px">
-            {t('Olá, ') + manager?.name}
-          </Text>
+          {isBackOffice ? (
+            <Text color="black" fontSize="xs" lineHeight="lg" mb="-6px">
+              {manager?.email}
+            </Text>
+          ) : (
+            <Text color="black" fontSize="xs" lineHeight="lg" mb="-6px">
+              {t('Olá') + `${name}`}
+            </Text>
+          )}
           <Link as={RouterLink} to="/logout" textDecor="underline">
             {t('Sair')}
           </Link>
         </Box>
-        <RouterLink to={`${url}/manager-profile`}>
-          <EditButton />
-        </RouterLink>
+        {!isBackOffice && (
+          <RouterLink to={`${url}/manager-profile`}>
+            <EditButton />
+          </RouterLink>
+        )}
       </Flex>
     </Flex>
   );

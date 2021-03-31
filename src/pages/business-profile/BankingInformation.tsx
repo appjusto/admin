@@ -80,9 +80,11 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
 
   // side effects
   React.useEffect(() => {
-    if (onboarding) window?.scrollTo(0, 0);
-    nameRef?.current?.focus();
-  }, []);
+    if (onboarding) {
+      window?.scrollTo(0, 0);
+      nameRef?.current?.focus();
+    }
+  }, [onboarding]);
   React.useEffect(() => {
     if (bankAccount && bankAccountSet(bankAccount)) {
       setName(bankAccount.name);

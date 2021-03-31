@@ -87,7 +87,7 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
   React.useEffect(() => {
     if (onboarding) window?.scrollTo(0, 0);
     cepRef?.current?.focus();
-  }, []);
+  }, [onboarding]);
   // fill fields after initial load
   React.useEffect(() => {
     if (business) {

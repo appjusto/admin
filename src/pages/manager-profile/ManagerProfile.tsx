@@ -38,7 +38,7 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
   React.useEffect(() => {
     if (onboarding) window?.scrollTo(0, 0);
     nameRef?.current?.focus();
-  }, []);
+  }, [onboarding]);
   React.useEffect(() => {
     if (profile) {
       if (profile.name) setName(profile.name);
