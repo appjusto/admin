@@ -1,9 +1,9 @@
 import { Box, Text } from '@chakra-ui/react';
 import { useContextBusiness } from 'app/state/business/context';
 import React from 'react';
-import { Link, useRouteMatch } from 'react-router-dom';
+import { useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
-import { LinksContainer } from './LinksContainer';
+import { LinkItem } from './LinkItem';
 
 export const Links = () => {
   // context
@@ -14,37 +14,33 @@ export const Links = () => {
   const isApproved = business?.situation === 'approved';
 
   return (
-    <Box ml="1">
+    <Box>
       <Box>
-        <LinksContainer>
-          <Link to={`${url}`}>{t('Início')}</Link>
-          {isApproved ? (
-            <Link to={`${url}/orders`}>{t('Gerenciador de pedidos')}</Link>
-          ) : (
-            <Text color="gray.600">{t('Gerenciador de pedidos')}</Text>
-          )}
-        </LinksContainer>
-      </Box>
-      <Box mt="6">
-        <LinksContainer>
-          <Link to={`${url}/menu`}>{t('Cardápio')}</Link>
-          <Link to={`${url}/business-schedules`}>{t('Horários')}</Link>
-          <Link to={`${url}/delivery-area`}>{t('Área de entrega')}</Link>
-        </LinksContainer>
-        {isDev ? (
-          <LinksContainer>
-            <Link to={`${url}/orders-history`}>{t('Histórico de pedidos')}</Link>
-            <Link to={`${url}/finances`}>{t('Financeiro')}</Link>
-            <Link to={`${url}/business-profile`}>{t('Perfil do restaurante')}</Link>
-            <Link to={`${url}/team`}>{t('Colaboradores')}</Link>
-          </LinksContainer>
+        <LinkItem to={`${url}`} label={t('Início')} />
+        {isApproved ? (
+          <LinkItem to={`${url}/orders`} label={t('Gerenciador de pedidos')} />
         ) : (
-          <LinksContainer>
+          <Text color="gray.600">{t('Gerenciador de pedidos')}</Text>
+        )}
+      </Box>
+      <Box mt="5">
+        <LinkItem to={`${url}/menu`} label={t('Cardápio')} />
+        <LinkItem to={`${url}/business-schedules`} label={t('Horários')} />
+        <LinkItem to={`${url}/delivery-area`} label={t('Área de entrega')} />
+        {isDev ? (
+          <>
+            <LinkItem to={`${url}/orders-history`} label={t('Histórico de pedidos')} />
+            <LinkItem to={`${url}/finances`} label={t('Financeiro')} />
+            <LinkItem to={`${url}/business-profile`} label={t('Perfil do restaurante')} />
+            <LinkItem to={`${url}/team`} label={t('Colaboradores')} />
+          </>
+        ) : (
+          <>
             <Text color="gray.600">{t('Histórico de pedidos')}</Text>
             <Text color="gray.600">{t('Financeiro')}</Text>
-            <Link to={`${url}/business-profile`}>{t('Perfil do restaurante')}</Link>
+            <LinkItem to={`${url}/business-profile`} label={t('Perfil do restaurante')} />
             <Text color="gray.600">{t('Colaboradores')}</Text>
-          </LinksContainer>
+          </>
         )}
       </Box>
     </Box>

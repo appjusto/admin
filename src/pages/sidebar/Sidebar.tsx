@@ -13,8 +13,14 @@ const Sidebar = () => {
   const { path } = useRouteMatch();
   const isBackOffice = path.includes('backoffice');
   return (
-    <Box position="relative" d={['none', 'block']} w="220px" bg="gray.300" flexShrink={0}>
-      <Box position="fixed" top="4" left="2">
+    <Box
+      position="relative"
+      d={{ base: 'none', md: 'block' }}
+      w="220px"
+      bg="gray.300"
+      flexShrink={0}
+    >
+      <Box position="fixed" top="4" w="220px" flexShrink={0}>
         <Box ml="4" mt="6">
           <Image src={logo} eagerLoading height="40px" />
         </Box>

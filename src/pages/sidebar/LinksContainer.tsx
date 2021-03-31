@@ -1,4 +1,4 @@
-import { Box } from '@chakra-ui/react';
+import { Box, Flex } from '@chakra-ui/react';
 import React from 'react';
 import { useRouteMatch } from 'react-router-dom';
 
@@ -13,19 +13,18 @@ const LinkItem = ({ to, children }: LinkItemProps) => {
     exact: true,
   });
   return (
-    <Box
-      d="flex"
+    <Flex
       alignItems="center"
       bg={match ? 'white' : ''}
       fontSize="sm"
       fontWeight={match ? '700' : ''}
-      pl={match ? '0' : '4'}
-      mt="1"
-      height="32px"
+      pl={match ? '0' : '6'}
+      height="40px"
+      _hover={{ bg: 'gray.200' }}
     >
-      {match ? <Box w="4px" height="100%" bg="green.500" borderRadius="8px" mx="2" /> : null}
+      {match ? <Box w="4px" h="36px" bg="green.500" borderRadius="8px" ml="1" mr="4" /> : null}
       {children}
-    </Box>
+    </Flex>
   );
 };
 
