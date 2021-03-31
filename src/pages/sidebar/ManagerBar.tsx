@@ -11,6 +11,7 @@ export const ManagerBar = () => {
   const isBackOffice = path.includes('backoffice');
   const manager = useContextManagerProfile();
   const name = manager?.name ? `, ${manager.name}!` : '!';
+  const user = manager?.email ? manager?.email.split('@')[0] : '';
   return (
     <Flex
       position="fixed"
@@ -25,10 +26,10 @@ export const ManagerBar = () => {
         <Image src={managerIcon} width="24px" height="24px" />
       </Flex>
       <Flex w="100%" justifyContent="space-between" alignItems="center">
-        <Box>
+        <Box maxW="160px">
           {isBackOffice ? (
             <Text color="black" fontSize="xs" lineHeight="lg" mb="-6px">
-              {manager?.email}
+              {user}
             </Text>
           ) : (
             <Text color="black" fontSize="xs" lineHeight="lg" mb="-6px">

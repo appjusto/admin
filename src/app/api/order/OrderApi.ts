@@ -22,6 +22,31 @@ export default class OrderApi {
   constructor(private refs: FirebaseRefs) {}
 
   // firestore
+  observeBOOrders(
+    options: ObserveOrdersOptions,
+    resultHandler: (orders: WithId<Order>[]) => void
+  ): firebase.Unsubscribe {
+    const statuses = [
+      ...(options.active ? ActiveFoodOrdersValues : []),
+      ...(options.inactive ? InactiveFoodOrdersValues : []),
+    ];
+    let query = this.refs
+      .getOrdersRef()
+      .orderBy('createdOn', 'desc')
+      .where('status', 'in', statuses);
+
+    const unsubscribe = query.onSnapshot(
+      (querySnapshot) => {
+        resultHandler(documentsAs<Order>(querySnapshot.docs));
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+    // returns the unsubscribe function
+    return unsubscribe;
+  }
+
   observeOrders(
     options: ObserveOrdersOptions,
     businessId: string,

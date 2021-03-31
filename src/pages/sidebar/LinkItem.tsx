@@ -19,7 +19,7 @@ export const LinkItem = ({ to, label }: LinkItemProps) => {
       fontSize="sm"
       fontWeight={match ? '700' : ''}
       pl={match ? '0' : '6'}
-      height="40px"
+      height="34px"
       cursor="pointer"
       _hover={match ? {} : { bg: 'gray.100' }}
     >

@@ -1,9 +1,21 @@
-import { Box, Text } from '@chakra-ui/react';
+import { Box, Flex, Text } from '@chakra-ui/react';
 import { useContextBusiness } from 'app/state/business/context';
 import React from 'react';
 import { useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { LinkItem } from './LinkItem';
+
+interface DisabledLinkProps {
+  label: string;
+}
+
+const DisabledLink = ({ label }: DisabledLinkProps) => {
+  return (
+    <Flex pl="6" h="34px" alignItems="center">
+      <Text color="gray.600">{label}</Text>
+    </Flex>
+  );
+};
 
 export const Links = () => {
   // context
@@ -20,7 +32,7 @@ export const Links = () => {
         {isApproved ? (
           <LinkItem to={`${url}/orders`} label={t('Gerenciador de pedidos')} />
         ) : (
-          <Text color="gray.600">{t('Gerenciador de pedidos')}</Text>
+          <DisabledLink label={t('Gerenciador de pedidos')} />
         )}
       </Box>
       <Box mt="5">
@@ -36,10 +48,10 @@ export const Links = () => {
           </>
         ) : (
           <>
-            <Text color="gray.600">{t('Histórico de pedidos')}</Text>
-            <Text color="gray.600">{t('Financeiro')}</Text>
+            <DisabledLink label={t('Histórico de pedidos')} />
+            <DisabledLink label={t('Financeiro')} />
             <LinkItem to={`${url}/business-profile`} label={t('Perfil do restaurante')} />
-            <Text color="gray.600">{t('Colaboradores')}</Text>
+            <DisabledLink label={t('Colaboradores')} />
           </>
         )}
       </Box>

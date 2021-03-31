@@ -1,7 +1,10 @@
-import { Box, Flex, Link, Text } from '@chakra-ui/react';
+import { Box, Flex, Image, Link, Text } from '@chakra-ui/react';
 import { Business, Order, WithId } from 'appjusto-types';
+import foodIcon from 'common/img/bo-food.svg';
+import p2pIcon from 'common/img/bo-p2p.svg';
 import React from 'react';
 import { Link as RouterLink, useRouteMatch } from 'react-router-dom';
+import { getDateAndHour, getOrderTotalPriceToDisplay } from 'utils/functions';
 
 interface Props {
   data: WithId<Business> | WithId<Order>;
@@ -14,7 +17,6 @@ export const BOListItem = ({ data, listType }: Props) => {
   // state
   const [business, setBusiness] = React.useState<WithId<Business> | undefined>(undefined);
   const [order, setOrder] = React.useState<WithId<Order> | undefined>(undefined);
-  const [createdOn, setCreatedOn] = React.useState('');
   // handlers
 
   // side effects
@@ -23,10 +25,6 @@ export const BOListItem = ({ data, listType }: Props) => {
     if (listType === 'orders') setOrder(data as WithId<Order>);
   }, [data, listType]);
 
-  React.useEffect(() => {
-    if (data) {
-    }
-  }, [data]);
   // UI
   if (listType === 'business') {
     return (
@@ -36,35 +34,50 @@ export const BOListItem = ({ data, listType }: Props) => {
         p="4"
         w="100%"
         borderRadius="lg"
-        borderColor="black"
-        borderWidth="2px"
+        border="1px solid #C8D7CB"
         color="black"
         _hover={{ textDecor: 'none' }}
       >
         <Flex justifyContent="space-between" alignItems="center">
-          <Text fontSize="sm" lineHeight="21px">
+          <Text fontSize="sm" lineHeight="21px" color="black">
             {business?.name}
+          </Text>
+          <Text fontSize="sm" lineHeight="21px">
+            {business?.createdOn &&
+              getDateAndHour(business?.createdOn as firebase.firestore.Timestamp)}
           </Text>
         </Flex>
       </Link>
     );
   }
-  return (
-    <Link to={`${url}/${order?.id}`}>
-      <Box
+  if (listType === 'orders') {
+    return (
+      <Link
+        as={RouterLink}
+        to={`${url}/${order?.id}`}
         p="4"
+        w="100%"
         borderRadius="lg"
-        borderColor="black"
-        borderWidth="2px"
+        border="1px solid #C8D7CB"
         color="black"
-        cursor="pointer"
+        _hover={{ textDecor: 'none' }}
       >
         <Flex justifyContent="space-between" alignItems="center">
-          <Text fontSize="lg" fontWeight="700">
-            #{order?.code}
+          <Box>
+            <Image src={order?.type === 'food' ? foodIcon : p2pIcon} w="24px" h="24px" />
+          </Box>
+          <Text fontSize="sm" lineHeight="21px" color="black">
+            {order?.code}
+          </Text>
+          <Text fontSize="sm" lineHeight="21px" color="black">
+            {getOrderTotalPriceToDisplay(order?.items || [])}
+          </Text>
+          <Text fontSize="sm" lineHeight="21px">
+            {order?.createdOn && getDateAndHour(order?.createdOn as firebase.firestore.Timestamp)}
           </Text>
         </Flex>
-      </Box>
-    </Link>
-  );
+      </Link>
+    );
+  }
+  return <Box />;
 };

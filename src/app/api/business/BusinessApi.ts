@@ -5,8 +5,42 @@ import { documentAs, documentsAs } from '../../../core/fb';
 import FilesApi from '../FilesApi';
 import FirebaseRefs from '../FirebaseRefs';
 
+export const ActiveBusinessesValues = ['approved'];
+export const InactiveBusinessesValues = ['submitted', 'rejected', 'blocked'];
+
+export type ObserveBusinessesOptions = {
+  active?: boolean;
+  inactive?: boolean;
+};
+
 export default class MenuApi {
   constructor(private refs: FirebaseRefs, private files: FilesApi) {}
+
+  // businesses
+  observeBusinesses(
+    options: ObserveBusinessesOptions,
+    resultHandler: (result: WithId<Business>[]) => void
+  ): firebase.Unsubscribe {
+    const statuses = [
+      ...(options.active ? ActiveBusinessesValues : []),
+      ...(options.inactive ? InactiveBusinessesValues : []),
+    ];
+    let query = this.refs
+      .getBusinessesRef()
+      .orderBy('createdOn', 'desc')
+      .where('situation', 'in', statuses);
+
+    const unsubscribe = query.onSnapshot(
+      (querySnapshot) => {
+        resultHandler(documentsAs<Business>(querySnapshot.docs));
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+    // returns the unsubscribe function
+    return unsubscribe;
+  }
 
   // business profile
   observeBusinessProfile(
