@@ -50,7 +50,7 @@ export const BOListItem = ({ data, listType }: Props) => {
   // UI
   if (listType === 'business') {
     return (
-      <CustomLink to={`${url}/${business?.id}`}>
+      <CustomLink to={`${url}/business/${business?.id}`}>
         <Flex justifyContent="space-between" alignItems="center">
           <Text fontSize="sm" lineHeight="21px" color="black">
             {business?.name}
