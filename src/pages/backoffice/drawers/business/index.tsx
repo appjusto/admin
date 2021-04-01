@@ -1,9 +1,10 @@
-import { Text } from '@chakra-ui/react';
 import { useBusinessesContext } from 'pages/backoffice/context/BusinessesContext';
 import React from 'react';
-import { useParams } from 'react-router-dom';
-import { getDateAndHour } from 'utils/functions';
+import { Route, Switch, useParams, useRouteMatch } from 'react-router-dom';
 import { BusinessBaseDrawer } from './BusinessBaseDrawer';
+import { BusinessLive } from './Live';
+import { BusinessRegister } from './Register';
+import { BusinessStatus } from './Status';
 
 interface BusinessDrawerProps {
   isOpen: boolean;
@@ -16,6 +17,7 @@ type Params = {
 
 export const BusinessDrawer = ({ onClose, ...props }: BusinessDrawerProps) => {
   //context
+  const { path } = useRouteMatch();
   const { businessId } = useParams<Params>();
   const { getBusinessById } = useBusinessesContext();
   const business = getBusinessById(businessId);
@@ -26,24 +28,23 @@ export const BusinessDrawer = ({ onClose, ...props }: BusinessDrawerProps) => {
   //UI
   return (
     <BusinessBaseDrawer
-      agent={{ id: 'sajkcawhAc', name: 'Agente1' }}
-      businessId={business?.id ?? ''}
-      businessName={business?.name ?? ''}
-      createdOn={
-        business?.createdOn
-          ? getDateAndHour(business?.createdOn as firebase.firestore.Timestamp)
-          : ''
-      }
-      updatedOn={
-        business?.updatedOn
-          ? getDateAndHour(business?.updatedOn as firebase.firestore.Timestamp)
-          : ''
-      }
+      agent={{ id: 'sajkcawhAc', name: 'Nome do agente' }}
+      business={business}
       managerName="Renan Costa"
       onClose={onClose}
       {...props}
     >
-      <Text>ABRIUUUUUUUUU</Text>
+      <Switch>
+        <Route exact path={`${path}`}>
+          <BusinessRegister />
+        </Route>
+        <Route exact path={`${path}/live`}>
+          <BusinessLive status={business?.status} enabled={business?.enabled} />
+        </Route>
+        <Route exact path={`${path}/status`}>
+          <BusinessStatus situation={business?.situation} />
+        </Route>
+      </Switch>
     </BusinessBaseDrawer>
   );
 };

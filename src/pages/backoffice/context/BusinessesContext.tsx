@@ -10,7 +10,7 @@ interface ContextProps {
 
 const BusinessesContext = React.createContext<ContextProps>({} as ContextProps);
 
-const options = { active: false, inactive: true };
+const options = { active: true, inactive: true };
 
 interface ProviderProps {
   children: React.ReactNode | React.ReactNode[];
