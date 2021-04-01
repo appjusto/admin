@@ -6,7 +6,7 @@ interface SectionTitleProps extends TextProps {
 
 export const SectionTitle = ({ children, ...props }: SectionTitleProps) => {
   return (
-    <Text mt="8" fontSize="20px" lineHeight="26px" color="black" {...props}>
+    <Text mt="8" fontSize="20px" fontWeight="500" lineHeight="26px" color="black" {...props}>
       {children}
     </Text>
   );

@@ -70,7 +70,12 @@ export default class MenuApi {
   }
 
   async updateBusinessProfile(businessId: string, changes: Partial<Business>) {
-    return await this.refs.getBusinessRef(businessId).set(changes, { merge: true });
+    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+    const fullChanges = {
+      ...changes,
+      updatedOn: timestamp,
+    };
+    return await this.refs.getBusinessRef(businessId).set(fullChanges, { merge: true });
   }
 
   async deleteBusinessProfile(businessId: string) {

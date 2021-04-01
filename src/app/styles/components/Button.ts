@@ -97,6 +97,19 @@ export const Button = {
         borderColor: 'gray.500',
       },
     },
+    grey: {
+      'bg': '#697667',
+      'color': 'white',
+      'fontSize': '15px',
+      'fontWeight': '500',
+      ':hover': {
+        bg: 'gray.600',
+      },
+      ':disabled': {
+        color: 'gray.500',
+        borderColor: 'gray.500',
+      },
+    },
   },
   // The default size and variant values
   defaultProps: {

@@ -1,5 +1,8 @@
-import { Box } from '@chakra-ui/react';
+import { Text } from '@chakra-ui/react';
+import { useBusinessesContext } from 'pages/backoffice/context/BusinessesContext';
 import React from 'react';
+import { useParams } from 'react-router-dom';
+import { getDateAndHour } from 'utils/functions';
 import { BusinessBaseDrawer } from './BusinessBaseDrawer';
 
 interface BusinessDrawerProps {
@@ -7,9 +10,15 @@ interface BusinessDrawerProps {
   onClose(): void;
 }
 
+type Params = {
+  businessId: string;
+};
+
 export const BusinessDrawer = ({ onClose, ...props }: BusinessDrawerProps) => {
   //context
-
+  const { businessId } = useParams<Params>();
+  const { getBusinessById } = useBusinessesContext();
+  const business = getBusinessById(businessId);
   //handlers
 
   //UI conditions
@@ -18,15 +27,23 @@ export const BusinessDrawer = ({ onClose, ...props }: BusinessDrawerProps) => {
   return (
     <BusinessBaseDrawer
       agent={{ id: 'sajkcawhAc', name: 'Agente1' }}
-      businessId="KTqDLkMSAq6vigc0ODDr"
-      businessName="Itapuama Vegan"
-      createdOn="02/02/2021 15:00"
-      updatedOn="31/03/2021 15:00"
+      businessId={business?.id ?? ''}
+      businessName={business?.name ?? ''}
+      createdOn={
+        business?.createdOn
+          ? getDateAndHour(business?.createdOn as firebase.firestore.Timestamp)
+          : ''
+      }
+      updatedOn={
+        business?.updatedOn
+          ? getDateAndHour(business?.updatedOn as firebase.firestore.Timestamp)
+          : ''
+      }
       managerName="Renan Costa"
       onClose={onClose}
       {...props}
     >
-      <Box />
+      <Text>ABRIUUUUUUUUU</Text>
     </BusinessBaseDrawer>
   );
 };

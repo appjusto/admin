@@ -55,57 +55,63 @@ export const BusinessBaseDrawer = ({
             <Text color="black" fontSize="2xl" fontWeight="700" lineHeight="28px" mb="2">
               {businessName}
             </Text>
-            <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
+            <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
               {t('Data do onboarding:')}{' '}
-              <Text as="span" color="black" fontWeight="700">
+              <Text as="span" fontWeight="500">
                 {createdOn}
               </Text>
             </Text>
-            <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
+            <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
               {t('Atualizado em:')}{' '}
-              <Text as="span" color="black" fontWeight="700">
+              <Text as="span" fontWeight="500">
                 {updatedOn}
               </Text>
             </Text>
-            <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
+            <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
               {t('Agente responsável:')}{' '}
-              <Text as="span" color="black" fontWeight="700">
+              <Text as="span" fontWeight="500">
                 {agent?.name}
               </Text>
             </Text>
-            <SectionTitle>{t('Nome sobrenome')}</SectionTitle>
-            <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
+            <SectionTitle>{t('Geral')}</SectionTitle>
+            <Text mt="4" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
               {t('Nome do administrador:')}{' '}
-              <Text as="span" color="black" fontWeight="700">
+              <Text as="span" fontWeight="500">
                 {managerName}
               </Text>
             </Text>
-            <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
+            <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
               {t('Status:')}{' '}
-              <Text as="span" color="black" fontWeight="700">
+              <Text as="span" fontWeight="500">
                 {'Ativo'}
               </Text>
             </Text>
-            <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
+            <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
               {t('Etapa:')}{' '}
-              <Text as="span" color="black" fontWeight="700">
+              <Text as="span" fontWeight="500">
                 {'Concluído'}
               </Text>
             </Text>
-            <Flex fontSize="sm" mt="4" flexDir="row" alignItems="flex-start" height="38px">
+            <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+              {t('Live:')}{' '}
+              <Text as="span" fontWeight="500">
+                {''}
+              </Text>
+            </Text>
+            <Flex mt="8" fontSize="lg" flexDir="row" alignItems="flex-start" height="38px">
               <DrawerLink to={`${url}`} label={t('Cadastro')} />
-              <DrawerLink to={`${url}`} label={t('Live')} />
-              <DrawerLink to={`${url}`} label={t('Status')} />
+              <DrawerLink to={`${url}/live`} label={t('Live')} />
+              <DrawerLink to={`${url}/status`} label={t('Status')} />
             </Flex>
           </DrawerHeader>
           <DrawerBody pb="28">{children}</DrawerBody>
           <DrawerFooter borderTop="1px solid #F2F6EA">
             <Flex w="full" justifyContent="flex-start">
               <Flex w="full" maxW="607px" flexDir="row" justifyContent="space-between">
-                <Button type="submit" width="full" maxW="200px" onClick={() => {}}>
+                <Button type="submit" width="full" maxW="240px" fontSize="15px" onClick={() => {}}>
                   {t('Salvar alterações')}
                 </Button>
-                <Button width="full" maxW="200px" variant="dangerLight" onClick={() => {}}>
+                <Button width="full" maxW="240px" variant="grey" onClick={() => {}}>
                   {t('Personificar restaurante')}
                 </Button>
               </Flex>
