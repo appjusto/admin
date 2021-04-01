@@ -24,7 +24,7 @@ interface BaseDrawerProps {
   managerName: string;
   isOpen: boolean;
   onClose(): void;
-  children: React.ReactNode;
+  children: React.ReactNode | React.ReactNode[];
 }
 
 export const BusinessBaseDrawer = ({
