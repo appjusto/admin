@@ -45,6 +45,7 @@ const BusinessesPage = () => {
       <HStack mt="8" spacing={4}>
         <CustomInput
           mt="0"
+          maxW="212px"
           id="search-id"
           value={searchId}
           onChange={(event) => setSearchId(event.target.value)}
@@ -67,7 +68,7 @@ const BusinessesPage = () => {
           label={t('Administrador')}
           placeholder={t('Nome do responsável')}
         />
-        <CustomButton label={t('Filtrar resultados')} />
+        <CustomButton maxW="200px" label={t('Filtrar resultados')} />
       </HStack>
       <Flex mt="8" w="100%" justifyContent="space-between" borderBottom="1px solid #C8D7CB">
         <HStack spacing={4}>

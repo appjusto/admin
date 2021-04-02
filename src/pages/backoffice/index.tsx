@@ -16,7 +16,7 @@ const BackOffice = () => {
     <BusinessesContextProvider>
       <BOOrdersContextProvider>
         <Switch>
-          <PageLayout>
+          <PageLayout maxW="1024px">
             <Route exact path={path} component={BODashboard} />
             <Route path={`${path}/businesses`} component={BusinessesPage} />
             {/*<Route path={`${path}/menu`} component={Menu} />*/}
