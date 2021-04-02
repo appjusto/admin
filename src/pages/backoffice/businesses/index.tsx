@@ -1,5 +1,6 @@
 import { DeleteIcon } from '@chakra-ui/icons';
 import { Checkbox, CheckboxGroup, Flex, HStack, Text } from '@chakra-ui/react';
+import { useBusinesses } from 'app/api/business/useBusinesses';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import React from 'react';
@@ -7,16 +8,17 @@ import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import PageHeader from '../../PageHeader';
-import { useBusinessesContext } from '../context/BusinessesContext';
 import { BusinessDrawer } from '../drawers/business';
 import { BusinessesTable } from './BusinessesTable';
 import { FilterText } from './FilterText';
+
+const options = { active: true, inactive: true };
 
 const BusinessesPage = () => {
   // context
   const { path } = useRouteMatch();
   const history = useHistory();
-  const { businesses } = useBusinessesContext();
+  const businesses = useBusinesses(options);
   // state
   const [dateTime, setDateTime] = React.useState('');
   const [searchId, setSearchId] = React.useState('');

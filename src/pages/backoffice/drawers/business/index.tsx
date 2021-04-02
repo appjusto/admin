@@ -1,4 +1,4 @@
-import { useBusinessesContext } from 'pages/backoffice/context/BusinessesContext';
+import { useContextBusiness } from 'app/state/business/context';
 import React from 'react';
 import { Route, Switch, useParams, useRouteMatch } from 'react-router-dom';
 import { BusinessBaseDrawer } from './BusinessBaseDrawer';
@@ -19,9 +19,16 @@ export const BusinessDrawer = ({ onClose, ...props }: BusinessDrawerProps) => {
   //context
   const { path } = useRouteMatch();
   const { businessId } = useParams<Params>();
-  const { getBusinessById } = useBusinessesContext();
-  const business = getBusinessById(businessId);
+  const { setBusinessId, business } = useContextBusiness();
   //handlers
+  const handleSave = () => {
+    console.log('Salvo');
+  };
+
+  // side effects
+  React.useEffect(() => {
+    if (businessId) setBusinessId(businessId);
+  }, [businessId, setBusinessId]);
 
   //UI conditions
 
@@ -32,6 +39,7 @@ export const BusinessDrawer = ({ onClose, ...props }: BusinessDrawerProps) => {
       business={business}
       managerName="Renan Costa"
       onClose={onClose}
+      onSave={handleSave}
       {...props}
     >
       <Switch>

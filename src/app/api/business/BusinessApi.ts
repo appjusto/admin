@@ -6,7 +6,7 @@ import FilesApi from '../FilesApi';
 import FirebaseRefs from '../FirebaseRefs';
 
 export const ActiveBusinessesValues = ['approved'];
-export const InactiveBusinessesValues = ['submitted', 'rejected', 'blocked'];
+export const InactiveBusinessesValues = ['pending', 'submitted', 'rejected', 'blocked'];
 
 export type ObserveBusinessesOptions = {
   active?: boolean;
@@ -27,7 +27,7 @@ export default class MenuApi {
     ];
     let query = this.refs
       .getBusinessesRef()
-      .orderBy('createdOn', 'desc')
+      .orderBy('createdOn', 'asc')
       .where('situation', 'in', statuses);
 
     const unsubscribe = query.onSnapshot(

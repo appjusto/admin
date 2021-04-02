@@ -12,6 +12,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { Business, WithId } from 'appjusto-types';
+import { CustomButton } from 'common/components/buttons/CustomButton';
 import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
 import React from 'react';
 import { useRouteMatch } from 'react-router';
@@ -20,10 +21,11 @@ import { t } from 'utils/i18n';
 
 interface BaseDrawerProps {
   agent: { id: string; name: string };
-  business: WithId<Business> | undefined;
+  business: WithId<Business> | null | undefined;
   managerName: string;
   isOpen: boolean;
   onClose(): void;
+  onSave?(): void;
   children: React.ReactNode | React.ReactNode[];
 }
 
@@ -32,6 +34,7 @@ export const BusinessBaseDrawer = ({
   business,
   managerName,
   onClose,
+  onSave,
   children,
   ...props
 }: BaseDrawerProps) => {
@@ -133,12 +136,18 @@ export const BusinessBaseDrawer = ({
           <DrawerFooter borderTop="1px solid #F2F6EA">
             <Flex w="full" justifyContent="flex-start">
               <Flex w="full" maxW="607px" flexDir="row" justifyContent="space-between">
-                <Button type="submit" width="full" maxW="240px" fontSize="15px" onClick={() => {}}>
+                <Button type="submit" width="full" maxW="240px" fontSize="15px" onClick={onSave}>
                   {t('Salvar alterações')}
                 </Button>
-                <Button width="full" maxW="240px" variant="grey" onClick={() => {}}>
-                  {t('Personificar restaurante')}
-                </Button>
+                <CustomButton
+                  id="personification"
+                  mt="0"
+                  width="full"
+                  maxW="240px"
+                  variant="grey"
+                  label={t('Personificar restaurante')}
+                  link={'/app'}
+                />
               </Flex>
             </Flex>
           </DrawerFooter>

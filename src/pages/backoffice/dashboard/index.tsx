@@ -1,18 +1,19 @@
 import { Stack } from '@chakra-ui/react';
-import { Business, Order, WithId } from 'appjusto-types';
+import { useBusinesses } from 'app/api/business/useBusinesses';
+import { Business, WithId } from 'appjusto-types';
 import React from 'react';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import PageHeader from '../../PageHeader';
-import { useBOOrdersContext } from '../context/BOOrdersContext';
-import { useBusinessesContext } from '../context/BusinessesContext';
 import { BOList } from './BOList';
 import { Panel } from './Panel';
 
+const options = { active: true, inactive: true };
+
 const BODashboard = () => {
   // context
-  const { businesses } = useBusinessesContext();
-  const { orders } = useBOOrdersContext();
+  const businesses = useBusinesses(options);
+  //const { orders } = useBOOrdersContext();
   // state
   const [dateTime, setDateTime] = React.useState('');
 
@@ -33,11 +34,11 @@ const BODashboard = () => {
           data={businesses as WithId<Business>[]}
           listType="business"
         />
-        <BOList
+        {/*<BOList
           title={t('Pedidos em andamento')}
           data={orders ?? ([] as WithId<Order>[])}
           listType="orders"
-        />
+        />*/}
       </Stack>
     </>
   );
