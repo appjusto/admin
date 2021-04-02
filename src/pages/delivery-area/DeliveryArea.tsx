@@ -25,7 +25,7 @@ import { Marker } from '../../common/components/MapsMarker';
 const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
   // context
   const api = useContextApi();
-  const business = useContextBusiness();
+  const { business } = useContextBusiness();
   const { googleMapsApiKey } = getConfig().api;
 
   // state

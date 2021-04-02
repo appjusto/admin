@@ -27,7 +27,7 @@ interface BaseDrawerProps {
 
 export const BusinessDeleteDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   //context
-  const business = useContextBusiness();
+  const { business } = useContextBusiness();
   const { deleteBusinessProfile, result } = useBusinessProfile();
   const { isSuccess, isError, error, isLoading } = result;
   // state

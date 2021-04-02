@@ -6,7 +6,7 @@ import React from 'react';
 import { BusinessStatus } from './BusinessStatus';
 
 const BusinessInfo = () => {
-  const business = useContextBusiness();
+  const { business } = useContextBusiness();
   const { logo } = useBusinessProfile();
   return (
     <Box>

@@ -5,7 +5,7 @@ import { t } from 'utils/i18n';
 
 export const BusinessStatus = (props: SquareProps) => {
   // context
-  const business = useContextBusiness();
+  const { business } = useContextBusiness();
   // UI
   return (
     <Flex alignItems="center">

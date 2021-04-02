@@ -74,7 +74,7 @@ const initialState = [
 export const RegistrationStatus = () => {
   // context
   const manager = useContextManagerProfile();
-  const business = useContextBusiness();
+  const { business } = useContextBusiness();
   const products = useObserveProducts(business?.id);
   const { bankAccount } = useBusinessBankAccount();
   const { updateBusinessProfile } = useBusinessProfile();

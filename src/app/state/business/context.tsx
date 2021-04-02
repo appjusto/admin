@@ -1,11 +1,17 @@
 import { useObserveBusinessManagedBy } from 'app/api/business/profile/useObserveBusinessManagedBy';
+import { useObserveBusinessProfile } from 'app/api/business/profile/useObserveBusinessProfile';
 //import { useManagerProfile } from 'app/api/manager/useManagerProfile';
 import { Business, WithId } from 'appjusto-types';
 import React from 'react';
 import { useContextApi } from '../api/context';
 import { useContextFirebaseUserEmail } from '../auth/context';
 
-const BusinessContext = React.createContext<WithId<Business> | undefined | null>(undefined);
+interface ContextProps {
+  business: WithId<Business> | undefined | null;
+  setBusinessId(id: string): void;
+}
+
+const BusinessContext = React.createContext<ContextProps>({} as ContextProps);
 
 interface Props {
   children: React.ReactNode | React.ReactNode[];
@@ -16,7 +22,8 @@ export const BusinessProvider = ({ children }: Props) => {
   const email = useContextFirebaseUserEmail();
   //const manager = useManagerProfile();
   const businesses = useObserveBusinessManagedBy(email);
-  const [business, setBusiness] = React.useState<WithId<Business> | undefined>();
+  const [businessId, setBusinessId] = React.useState<string>();
+  const business = useObserveBusinessProfile(businessId);
 
   // side effects
   // when manager's data becomes available
@@ -24,12 +31,18 @@ export const BusinessProvider = ({ children }: Props) => {
     if (!email) return;
     if (!businesses) return;
     if (businesses.length === 0) {
-      //api.business().createBusinessProfile(email);
       console.log('Business not found !!!');
-    } else setBusiness(businesses.find(() => true));
+    } else {
+      const id = businesses.find(() => true)?.id;
+      if (id) setBusinessId(id);
+    }
   }, [api, businesses, email]);
 
-  return <BusinessContext.Provider value={business}>{children}</BusinessContext.Provider>;
+  return (
+    <BusinessContext.Provider value={{ business, setBusinessId }}>
+      {children}
+    </BusinessContext.Provider>
+  );
 };
 
 export const useContextBusiness = () => {
@@ -37,5 +50,6 @@ export const useContextBusiness = () => {
 };
 
 export const useContextBusinessId = () => {
-  return useContextBusiness()?.id;
+  const { business } = useContextBusiness();
+  return business?.id;
 };

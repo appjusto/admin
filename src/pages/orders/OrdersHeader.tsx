@@ -8,7 +8,7 @@ import { t } from 'utils/i18n';
 
 export const OrdersHeader = () => {
   // context
-  const business = useContextBusiness();
+  const { business } = useContextBusiness();
   const { updateBusinessProfile } = useBusinessProfile();
   // state
   const [isOpen, setIsOpen] = React.useState(false);

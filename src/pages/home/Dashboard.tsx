@@ -8,7 +8,7 @@ import { RegistrationStatus } from './RegistrationStatus';
 
 const Dashboard = () => {
   // context
-  const business = useContextBusiness();
+  const { business } = useContextBusiness();
   // state
   const [dateTime, setDateTime] = React.useState('');
 

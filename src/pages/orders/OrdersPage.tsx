@@ -11,7 +11,7 @@ import { OrdersHeader } from './OrdersHeader';
 
 const OrdersPage = () => {
   // context
-  const business = useContextBusiness();
+  const { business } = useContextBusiness();
   const { path } = useRouteMatch();
   const history = useHistory();
   // handlers

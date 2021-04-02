@@ -33,7 +33,7 @@ import { BusinessDeleteDrawer } from './BusinessDeleteDrawer';
 const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   // context
   const isDev = process.env.NODE_ENV === 'development';
-  const business = useContextBusiness();
+  const { business } = useContextBusiness();
   const queryCache = useQueryCache();
   const { path } = useRouteMatch();
   const history = useHistory();

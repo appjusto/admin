@@ -15,7 +15,7 @@ import Dashboard from './Dashboard';
 
 const Home = () => {
   // context
-  const business = useContextBusiness();
+  const { business } = useContextBusiness();
   const { path } = useRouteMatch();
   // UI
   if (business?.onboarding !== 'completed') {

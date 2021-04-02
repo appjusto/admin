@@ -20,7 +20,7 @@ const DisabledLink = ({ label }: DisabledLinkProps) => {
 export const Links = () => {
   // context
   const isDev = process.env.NODE_ENV === 'development';
-  const business = useContextBusiness();
+  const { business } = useContextBusiness();
   const { url } = useRouteMatch();
 
   const isApproved = business?.situation === 'approved';

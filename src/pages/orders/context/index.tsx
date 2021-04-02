@@ -104,7 +104,7 @@ interface ProviderProps {
 export const OrdersContextProvider = (props: ProviderProps) => {
   // context
   const api = useContextApi();
-  const business = useContextBusiness();
+  const { business } = useContextBusiness();
   const hookOrders = useOrders(options, business!.id);
 
   //state
