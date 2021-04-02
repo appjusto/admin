@@ -79,6 +79,7 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
     saveSuccess,
   } = state;
   const inputRef = React.useRef<HTMLInputElement>(null);
+  const priceRef = React.useRef<HTMLInputElement>(null);
   //handlers
   const handleStateUpdate = (key: string, value: any) => {
     dispatch({ type: 'update_state', payload: { [key]: value } });
@@ -104,6 +105,10 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
   }, []);
 
   const onSave = () => {
+    if (price === 0) {
+      priceRef.current?.focus();
+      return;
+    }
     handleStateUpdate('isLoading', true);
     (async () => {
       const newId = await onSaveProduct(
@@ -225,6 +230,7 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
         {description?.length}/1000
       </Text>
       <CurrencyInput
+        ref={priceRef}
         isRequired
         maxW="220px"
         id="drawer-price"

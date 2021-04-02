@@ -16,7 +16,6 @@ export const Checklist = ({ disabled, ...props }: Props) => {
   const segments = path.split('/');
   const lastSegment = parseInt(segments.pop()!);
   const currentStepIndex = isNaN(lastSegment) ? 0 : lastSegment;
-  console.log(currentStepIndex);
   // side effects
   React.useEffect(() => {
     if (disabled) return;
@@ -26,7 +25,6 @@ export const Checklist = ({ disabled, ...props }: Props) => {
       });
     }
   }, [disabled, currentStepIndex, updateBusinessProfile]);
-
   // UI
   const items = [
     t('Preencher dados pessoais do administrador'),
@@ -36,7 +34,6 @@ export const Checklist = ({ disabled, ...props }: Props) => {
     // t('Incluir o cardápio'),
     // t('Adicionar colaboradores')
   ];
-
   return (
     <Box {...props}>
       {items.map((item, i) => {
