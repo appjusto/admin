@@ -39,6 +39,7 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
     if (onboarding) window?.scrollTo(0, 0);
     nameRef?.current?.focus();
   }, [onboarding]);
+
   React.useEffect(() => {
     if (profile) {
       if (profile.name) setName(profile.name);
@@ -57,6 +58,7 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
       cpf,
     });
   };
+
   // UI
   if (isSuccess && redirect) return <Redirect to={redirect} push />;
   return (
