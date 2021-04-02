@@ -26,6 +26,7 @@
     "@types/react-scroll": "^1.8.2",
     "appjusto-types": "../types",
     "axios": "^0.21.0",
+    "env-cmd": "^10.1.0",
     "firebase": "^8.0.2",
     "framer-motion": "^2.9.4",
     "google-map-react": "^2.1.9",
@@ -50,6 +51,9 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "build:dev": "env-cmd -f .env.development.local npm run build",
+    "build:staging": "env-cmd -f .env.staging npm run build",
+    "build:live": "env-cmd -f .env.live npm run build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "deploy": "yarn build && firebase deploy"
