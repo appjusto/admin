@@ -9,7 +9,7 @@ cd admin && yarn install
 
 ## 2. Configure enviroment variables
 
-Create a file named `.env.local` filling up these variables:
+Create a file named `.env.development` filling up these variables:
 
 ```bash
 echo "REACT_APP_PUBLIC_URL=
