@@ -55,6 +55,9 @@ export default class FirebaseRefs {
   // managers
   getManagersRef = () => this.firestore.collection('managers');
   getManagerRef = (managerId: string) => this.firestore.collection('managers').doc(managerId);
+  getManagerPrivateRef = (managerId: string) => this.getManagerRef(managerId).collection('private');
+  getManagerPrivatePlatormRef = (managerId: string) =>
+    this.getManagerPrivateRef(managerId).doc('platform');
 
   // orders
   getOrdersRef = () => this.firestore.collection('orders');

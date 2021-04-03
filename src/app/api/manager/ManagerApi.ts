@@ -1,4 +1,4 @@
-import { ManagerProfile, WithId } from 'appjusto-types';
+import { ManagerPrivatePlatform, ManagerProfile, WithId } from 'appjusto-types';
 import firebase from 'firebase/app';
 import FirebaseRefs from '../FirebaseRefs';
 
@@ -14,6 +14,23 @@ export default class ManagerApi {
       async (doc) => {
         if (!doc.exists) resultHandler(null);
         else resultHandler({ ...(doc.data() as ManagerProfile), id });
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+    // returns the unsubscribe function
+    return unsubscribe;
+  }
+
+  observePrivatePlatform(
+    id: string,
+    resultHandler: (profile: ManagerPrivatePlatform | null) => void
+  ): firebase.Unsubscribe {
+    const unsubscribe = this.refs.getManagerPrivatePlatormRef(id).onSnapshot(
+      async (doc) => {
+        if (!doc.exists) resultHandler(null);
+        else resultHandler({ ...(doc.data() as ManagerPrivatePlatform) });
       },
       (error) => {
         console.error(error);
