@@ -1,5 +1,6 @@
 export interface FirebaseConfig {
   apiKey: string;
+  region: string;
   authDomain: string;
   databaseURL: string;
   functionsURL: string;
