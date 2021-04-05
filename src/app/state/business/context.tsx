@@ -31,7 +31,7 @@ export const BusinessProvider = ({ children }: Props) => {
     if (!email) return;
     if (!businesses) return;
     if (businesses.length === 0) {
-      console.log('Business not found !!!');
+      return;
     } else {
       const id = businesses.find(() => true)?.id;
       if (id) setBusinessId(id);

@@ -212,7 +212,7 @@ export const RegistrationStatus = () => {
       </Box>
     );
   }
-  if (business?.situation === 'submitted') {
+  if (business?.situation === 'submitted' || business?.situation === 'verified') {
     return (
       <Box maxW="708px" color="black">
         <Box mt="6" w="100%" maxW="406px">
