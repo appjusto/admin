@@ -201,12 +201,17 @@ export const RegistrationStatus = () => {
       </Box>
     );
   }
-  if (business?.situation === 'submitted') {
+  if (business?.situation === 'submitted' || business?.situation === 'verified') {
     return (
       <Box maxW="708px" color="black">
         <Box mt="6" w="100%" maxW="406px">
           <Image src={submittedImg} />
         </Box>
+        <Text mt="4" fontSize="lg" lineHeight="26px">
+          {t(
+            `Seu cadastro foi enviado com sucesso e está em fase de análise. Em breve você receberá uma confirmação.`
+          )}
+        </Text>
         {/*<Text mt="4" fontSize="lg" lineHeight="26px">
           {t(
             `Seu cadastro foi enviado com sucesso e está em fase de análise. Em breve você receberá uma confirmação.
