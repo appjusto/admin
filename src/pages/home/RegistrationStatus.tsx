@@ -1,15 +1,4 @@
-import {
-  AspectRatio,
-  Box,
-  Button,
-  HStack,
-  Icon,
-  Image,
-  Link,
-  Spinner,
-  Text,
-  VStack,
-} from '@chakra-ui/react';
+import { Box, Button, HStack, Icon, Image, Link, Spinner, Text, VStack } from '@chakra-ui/react';
 import { useObserveProducts } from 'app/api/business/products/useObserveProducts';
 import { useBusinessBankAccount } from 'app/api/business/profile/useBusinessBankAccount';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
@@ -218,7 +207,7 @@ export const RegistrationStatus = () => {
         <Box mt="6" w="100%" maxW="406px">
           <Image src={submittedImg} />
         </Box>
-        <Text mt="4" fontSize="lg" lineHeight="26px">
+        {/*<Text mt="4" fontSize="lg" lineHeight="26px">
           {t(
             `Seu cadastro foi enviado com sucesso e está em fase de análise. Em breve você receberá uma confirmação.
           Enquanto aguarda a confirmação, assista ao vídeo sobre o nosso lançamento:`
@@ -230,7 +219,7 @@ export const RegistrationStatus = () => {
             src="https://www.youtube.com/embed/rwhMIEyoFJk"
             allowFullScreen
           />
-        </AspectRatio>
+          </AspectRatio>*/}
         <HStack mt="16" spacing={2}>
           <Text fontSize="24px" lineHeight="30px" fontWeight="700">
             {t('Aproveite para seguir o AppJusto nas redes sociais')}
