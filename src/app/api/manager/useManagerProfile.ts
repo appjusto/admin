@@ -29,11 +29,13 @@ export const useManagerProfile = () => {
   React.useEffect(() => {
     if (!user) return;
     return api.manager().observePrivatePlatform(user.uid, async () => {
-      setClaims((await user.getIdTokenResult()).claims);
+      setClaims((await user.getIdTokenResult(true)).claims);
     });
   }, [user, api]);
 
   // return
   // TODO: return claims
+  // claims.role === 'owner'
+  // claims.role === 'staff'
   return profile;
 };
