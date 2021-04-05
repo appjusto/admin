@@ -76,6 +76,9 @@ export const ImageUploads = React.memo(
         imageExists.current = true;
         setPreviewUrl(imageUrl);
         setCroppedAreas([]);
+      } else {
+        imageExists.current = false;
+        setPreviewUrl(null);
       }
     }, [imageUrl]);
 
