@@ -2,6 +2,8 @@ import { Button, Flex } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useContextBusiness } from 'app/state/business/context';
 import { BusinessSchedule } from 'appjusto-types/business';
+import { AlertError } from 'common/components/AlertError';
+import { AlertSuccess } from 'common/components/AlertSuccess';
 import { DaySchedule } from 'common/components/DaySchedule';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
@@ -22,7 +24,8 @@ const scheduleObj = { from: '', to: '' };
 const SchedulesPage = () => {
   // context
   const { business } = useContextBusiness();
-  const { updateBusinessProfile } = useBusinessProfile();
+  const { updateBusinessProfile, result } = useBusinessProfile();
+  const { isSuccess, isError } = result;
   // state
   const [schedules, setSchedules] = React.useState<BusinessSchedule>(initialState);
   const [isLoading, setIsLoading] = React.useState(false);
@@ -142,6 +145,20 @@ const SchedulesPage = () => {
             {t('Salvar horários')}
           </Button>
         </form>
+        {isSuccess && (
+          <AlertSuccess
+            maxW="320px"
+            title={t('Informações salvas com sucesso!')}
+            description={''}
+          />
+        )}
+        {isError && (
+          <AlertError
+            maxW="320px"
+            title={t('Erro')}
+            description={'Não foi possível acessar o servidor. Tenta novamente?'}
+          />
+        )}
       </Flex>
     </>
   );

@@ -2,6 +2,8 @@ import { Box } from '@chakra-ui/react';
 import { useUpdateManagerProfile } from 'app/api/manager/useUpdateManagerProfile';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextManagerProfile } from 'app/state/manager/context';
+import { AlertError } from 'common/components/AlertError';
+import { AlertSuccess } from 'common/components/AlertSuccess';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import { CustomPatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';
 import {
@@ -23,7 +25,7 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const user = useContextFirebaseUser();
   const profile = useContextManagerProfile();
   const { updateProfile, updateResult } = useUpdateManagerProfile();
-  const { isLoading, isSuccess } = updateResult;
+  const { isLoading, isSuccess, isError } = updateResult;
 
   // state
   const [name, setName] = React.useState(profile?.name ?? '');
@@ -121,6 +123,20 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
           validationLength={11}
         />
         <PageFooter onboarding={onboarding} redirect={redirect} isLoading={isLoading} />
+        {!onboarding && isSuccess && (
+          <AlertSuccess
+            maxW="320px"
+            title={t('Informações salvas com sucesso!')}
+            description={''}
+          />
+        )}
+        {isError && (
+          <AlertError
+            maxW="320px"
+            title={t('Erro')}
+            description={'Não foi possível acessar o servidor. Tenta novamente?'}
+          />
+        )}
       </form>
     </Box>
   );

@@ -2,6 +2,8 @@ import { Box, Text, useBreakpoint } from '@chakra-ui/react';
 import * as cnpjutils from '@fnando/cnpj';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useContextBusiness } from 'app/state/business/context';
+import { AlertError } from 'common/components/AlertError';
+import { AlertSuccess } from 'common/components/AlertSuccess';
 import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput2';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
@@ -62,7 +64,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
     uploadCover,
     result,
   } = useBusinessProfile();
-  const { isSuccess } = result;
+  const { isSuccess, isError } = result;
 
   // handlers
   const openDrawerHandler = () => history.push(`${path}/delete`);
@@ -262,6 +264,20 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
             deleteLabel={t('Excluir restaurante')}
             onDelete={openDrawerHandler}
           />
+          {!onboarding && isSuccess && (
+            <AlertSuccess
+              maxW="320px"
+              title={t('Informações salvas com sucesso!')}
+              description={''}
+            />
+          )}
+          {isError && (
+            <AlertError
+              maxW="320px"
+              title={t('Erro')}
+              description={'Não foi possível acessar o servidor. Tenta novamente?'}
+            />
+          )}
         </form>
       </Box>
       <Switch>

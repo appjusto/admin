@@ -7,6 +7,7 @@ export const getConfig = (): AppConfig => {
       firebase: {
         config: {
           apiKey: process.env.REACT_APP_FIREBASE_API_KEY!,
+          region: process.env.REACT_APP_FIREBASE_REGION!,
           authDomain: `${process.env.REACT_APP_FIREBASE_PROJECT_ID}.firebaseapp.com`,
           databaseURL: `https://${process.env.REACT_APP_FIREBASE_PROJECT_ID}.firebaseio.com`,
           functionsURL: `https://${process.env.REACT_APP_FIREBASE_REGION}-${process.env.REACT_APP_FIREBASE_PROJECT_ID}.cloudfunctions.net`,

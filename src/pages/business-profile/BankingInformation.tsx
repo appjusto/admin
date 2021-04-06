@@ -2,6 +2,8 @@ import { Box, Flex } from '@chakra-ui/react';
 import { useBanks } from 'app/api/business/profile/useBanks';
 import { useBusinessBankAccount } from 'app/api/business/profile/useBusinessBankAccount';
 import { Bank, BankAccount, WithId } from 'appjusto-types';
+import { AlertError } from 'common/components/AlertError';
+import { AlertSuccess } from 'common/components/AlertSuccess';
 import { CustomPatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';
 import {
   addZerosToBeginning,
@@ -27,7 +29,7 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
   // context
   const banks = useBanks();
   const { bankAccount, updateBankAccount, updateResult } = useBusinessBankAccount();
-  const { isLoading, isSuccess } = updateResult;
+  const { isLoading, isSuccess, isError } = updateResult;
   // state
   const [selectedBank, setSelectedBank] = React.useState<Bank>();
   const [name, setName] = React.useState(bankAccount?.name ?? '');
@@ -159,6 +161,20 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
           />
         </Flex>
         <PageFooter onboarding={onboarding} redirect={redirect} isLoading={isLoading} />
+        {!onboarding && isSuccess && (
+          <AlertSuccess
+            maxW="320px"
+            title={t('Informações salvas com sucesso!')}
+            description={''}
+          />
+        )}
+        {isError && (
+          <AlertError
+            maxW="320px"
+            title={t('Erro')}
+            description={'Não foi possível acessar o servidor. Tenta novamente?'}
+          />
+        )}
       </form>
     </Box>
   );

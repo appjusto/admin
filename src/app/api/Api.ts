@@ -15,7 +15,7 @@ import PlatformApi from './platform/PlatformApi';
 import CourierApi from './courier/CourierApi';
 
 export default class Api {
-  private static _firebaseInitialized: boolean = false;
+  private static app: firebase.app.App;
 
   private _authentication: firebase.auth.Auth;
   private _firestore: firebase.firestore.Firestore;
@@ -33,15 +33,14 @@ export default class Api {
   private _courier: CourierApi;
 
   constructor(config: ApiConfig) {
-    if (!Api._firebaseInitialized) {
-      firebase.initializeApp({ ...config.firebase.config });
-      Api._firebaseInitialized = true;
+    if (!Api.app) {
+      Api.app = firebase.initializeApp({ ...config.firebase.config });
     }
 
-    this._authentication = firebase.auth();
-    this._firestore = firebase.firestore();
-    this._functions = firebase.functions();
-    this._storage = firebase.storage();
+    this._authentication = Api.app.auth();
+    this._firestore = Api.app.firestore();
+    this._functions = Api.app.functions(config.firebase.config.region);
+    this._storage = Api.app.storage();
 
     if (
       config.firebase.options.useEmulator &&
