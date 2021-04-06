@@ -1,5 +1,4 @@
 import { useBusinesses } from 'app/api/business/useBusinesses';
-import { useContextApi } from 'app/state/api/context';
 import { Business, WithId } from 'appjusto-types';
 import React from 'react';
 
@@ -18,7 +17,6 @@ interface ProviderProps {
 
 export const BusinessesContextProvider = (props: ProviderProps) => {
   // context
-  const api = useContextApi();
   const hookBusinesses = useBusinesses(options);
 
   //state
