@@ -1,4 +1,5 @@
 import { Text } from '@chakra-ui/react';
+import firebase from 'firebase/app';
 import { useBusinessesContext } from 'pages/backoffice/context/BusinessesContext';
 import React from 'react';
 import { useParams } from 'react-router-dom';

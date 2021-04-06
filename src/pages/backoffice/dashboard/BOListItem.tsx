@@ -2,6 +2,7 @@ import { Box, Flex, Image, Link, Text } from '@chakra-ui/react';
 import { Business, Order, WithId } from 'appjusto-types';
 import foodIcon from 'common/img/bo-food.svg';
 import p2pIcon from 'common/img/bo-p2p.svg';
+import firebase from 'firebase/app';
 import React from 'react';
 import { Link as RouterLink, useRouteMatch } from 'react-router-dom';
 import { getDateAndHour, getOrderTotalPriceToDisplay } from 'utils/functions';

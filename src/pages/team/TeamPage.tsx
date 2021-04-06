@@ -1,5 +1,6 @@
 import { useManagerProfile } from 'app/api/manager/useManagerProfile';
 import { WithId } from 'appjusto-types';
+import firebase from 'firebase/app';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
 import { t } from 'utils/i18n';

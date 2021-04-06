@@ -12,6 +12,7 @@ import GreenPointSvg from 'common/img/map-green-point.svg';
 import UserSvg from 'common/img/map-user.svg';
 import WhitePackageSvg from 'common/img/map-white-package.svg';
 import { coordsFromLatLnt, SaoPauloCoords } from 'core/api/thirdparty/maps/utils';
+import firebase from 'firebase/app';
 import GoogleMapReact from 'google-map-react';
 import I18n from 'i18n-js';
 import React from 'react';
