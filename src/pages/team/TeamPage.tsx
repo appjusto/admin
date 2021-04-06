@@ -27,18 +27,6 @@ const TeamPage = () => {
           isManager: true,
           createdOn: manager.createdOn,
         },
-        {
-          id: 'sjclscn2',
-          email: 'saulo@gmail.com',
-          isManager: true,
-          createdOn: manager.createdOn,
-        },
-        {
-          id: 'sjclscn3',
-          email: 'rognog@gmail.com',
-          isManager: true,
-          createdOn: manager.createdOn,
-        },
       ];
       setMembers(fakeMembers);
     }

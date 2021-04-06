@@ -61,7 +61,7 @@ export const AddMembersForm = () => {
           {t('Adicionar novos colaboradores')}
         </Text>
         {members.map((member, index) => (
-          <HStack mt="4" spacing={4} alignItems="center">
+          <HStack key={Math.random()} mt="4" spacing={4} alignItems="center">
             <CustomInput
               mt="0"
               maxW="300px"
