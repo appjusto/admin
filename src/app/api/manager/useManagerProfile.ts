@@ -9,8 +9,6 @@ export const useManagerProfile = () => {
   const api = useContextApi();
   const id = useContextFirebaseUserId();
   const email = useContextFirebaseUserEmail();
-  const test = useFirebaseUserRole();
-  console.log(test);
 
   // state
   const [profile, setProfile] = React.useState<WithId<ManagerProfile> | undefined | null>();
