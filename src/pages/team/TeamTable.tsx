@@ -128,6 +128,7 @@ export const TeamTable = ({ members }: TeamTableProps) => {
             members.map((member) => {
               return (
                 <TeamTableItem
+                  key={member.id}
                   member={member}
                   updateMember={updateMember}
                   deleteMember={deleteMember}
