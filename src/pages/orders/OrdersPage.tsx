@@ -1,4 +1,5 @@
 import { Box } from '@chakra-ui/react';
+import { useFirebaseUserRole } from 'app/api/auth/useFirebaseUserRole';
 import { useContextBusiness } from 'app/state/business/context';
 import Container from 'common/components/Container';
 import React from 'react';
@@ -11,6 +12,7 @@ import { OrdersHeader } from './OrdersHeader';
 
 const OrdersPage = () => {
   // context
+  const { isStaff } = useFirebaseUserRole();
   const { business } = useContextBusiness();
   const { path } = useRouteMatch();
   const history = useHistory();
@@ -21,7 +23,7 @@ const OrdersPage = () => {
   }
   return (
     <OrdersContextProvider>
-      <Box>
+      <Box mt={isStaff ? '80px' : '0'}>
         <OrdersHeader />
         <Container maxW={{ base: '100%', md: '740px', lg: '1260px' }}>
           <OrdersKanban />
