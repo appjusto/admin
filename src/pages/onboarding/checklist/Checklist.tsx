@@ -20,9 +20,11 @@ export const Checklist = ({ disabled, ...props }: Props) => {
   // side effects
   React.useEffect(() => {
     if (disabled) return;
-    updateBusinessProfile({
-      onboarding: String(currentStepIndex),
-    });
+    if (currentStepIndex > 2) {
+      updateBusinessProfile({
+        onboarding: String(currentStepIndex),
+      });
+    }
   }, [disabled, currentStepIndex, updateBusinessProfile]);
 
   // UI
