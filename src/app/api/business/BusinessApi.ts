@@ -61,6 +61,7 @@ export default class MenuApi {
   async createBusinessProfile(managerEmail: string) {
     const doc = this.refs.getBusinessesRef().doc();
     return await doc.set({
+      enabled: false,
       situation: 'pending',
       managers: [managerEmail],
       type: 'restaurant',
