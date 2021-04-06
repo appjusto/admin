@@ -14,7 +14,7 @@ jobs:
       - name: Removing local appjusto-types
         run: yarn remove appjusto-types
       - name: Adding appjusto-types
-        run: yarn add git+https://github.com/appjusto/types.git#business
+        run: yarn add git+https://github.com/appjusto/types.git#main
       - name: Install dependencies
         run: yarn install
       - name: Build
