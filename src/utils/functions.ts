@@ -192,8 +192,8 @@ export const getCroppedImg = async (
       canvas.toBlob(async (file) => {
         try {
           const url = URL.createObjectURL(file);
-          const rsult = await getResizedImage(url, ratio, resizedWidth);
-          resolve(rsult);
+          const result = await getResizedImage(url, ratio, resizedWidth);
+          resolve(result);
         } catch (error) {
           console.log('getCroppedImg Error', error);
           reject(null);
