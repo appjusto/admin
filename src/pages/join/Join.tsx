@@ -27,7 +27,7 @@ const Join = () => {
   const savedEmail = api.auth().getSignInEmail();
   const isLinkValid = api.auth().isSignInWithEmailLink(link);
   const isEmailSaved = Boolean(savedEmail);
-  const userRole = useFirebaseUserRole();
+  const { isStaff } = useFirebaseUserRole();
 
   // state
   const [email, setEmail] = React.useState('');
@@ -50,10 +50,8 @@ const Join = () => {
   // UI
   if (!isLinkValid) return <Redirect to="/login" />;
 
-  if (isSuccess && userRole) {
-    console.log(userRole);
-    if (userRole === 'owner' || userRole === 'staff' || userRole === 'viewer')
-      return <Redirect to="/backoffice" />;
+  if (isSuccess && isStaff !== null) {
+    if (isStaff) return <Redirect to="/backoffice" />;
     else return <Redirect to="/app" />;
   }
 

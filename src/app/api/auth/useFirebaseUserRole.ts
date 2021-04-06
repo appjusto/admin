@@ -7,6 +7,7 @@ export const useFirebaseUserRole = () => {
 
   // state
   const [role, setRole] = React.useState<string | undefined | null>(undefined);
+  const [isStaff, setIsStaff] = React.useState<boolean | null>(null);
 
   // side effects
   React.useEffect(() => {
@@ -22,6 +23,13 @@ export const useFirebaseUserRole = () => {
       });
   }, [user]);
 
+  React.useEffect(() => {
+    if (role) {
+      if (role === 'owner' || role === 'staff' || role === 'viewer') setIsStaff(true);
+      else setIsStaff(false);
+    }
+  }, [role]);
+
   // return
-  return role;
+  return { role, isStaff };
 };
