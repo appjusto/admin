@@ -2,20 +2,28 @@
 # https://github.com/firebase/firebase-tools
 
 name: Deploy to Firebase Hosting on PR
-'on': pull_request
+on:
+  pull_request:
+    branches:
+      - dev
 jobs:
   build_and_preview:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Removing local appjusto-types
+        run: yarn remove appjusto-types
+      - name: Adding appjusto-types
+        run: yarn add git+https://github.com/appjusto/types.git#business
       - name: Install dependencies
         run: yarn install
       - name: Build
-        run: yarn build
+        run: yarn build:dev
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_ENDLESS_BOLT_281414 }}'
-          projectId: endless-bolt-281414
+          firebaseServiceAccount: '${{ secrets.FIREBASE_DEV_SERVICE_ACCOUNT_KEY }}'
+          projectId: '${{ secrets.FIREBASE_PROJECT_ID }}'
+          expires: 30d
         env:
           FIREBASE_CLI_PREVIEWS: hostingchannels
