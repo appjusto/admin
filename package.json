@@ -26,6 +26,7 @@
     "@types/react-scroll": "^1.8.2",
     "appjusto-types": "../types",
     "axios": "^0.21.0",
+    "browser-image-compression": "^1.0.14",
     "env-cmd": "^10.1.0",
     "firebase": "^8.0.2",
     "framer-motion": "^2.9.4",

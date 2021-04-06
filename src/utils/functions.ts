@@ -222,24 +222,6 @@ export const getResizedImage = async (imageSrc: string, ratio: number, resizedWi
   }
 };
 
-export const getCompressedImage = async (imageSrc: string) => {
-  const image = (await createImage(imageSrc)) as HTMLImageElement;
-  const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d');
-  const pixelRatio = window.devicePixelRatio;
-  canvas.width = image.width;
-  canvas.height = image.height;
-  if (ctx) {
-    ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
-    ctx.imageSmoothingQuality = 'medium';
-    ctx.drawImage(image, 0, 0, image.width, image.height);
-    return new Promise((resolve) => {
-      const result = canvas.toDataURL('image/jpeg', 0.5);
-      resolve(result);
-    });
-  }
-};
-
 // geo
 type latLng = {
   lat: number;

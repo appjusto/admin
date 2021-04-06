@@ -1,8 +1,9 @@
 import { Box, BoxProps, Flex, Tooltip } from '@chakra-ui/react';
+import imageCompression from 'browser-image-compression';
 import { CloseButton } from 'common/components/buttons/CloseButton';
 import { CroppedAreaProps } from 'common/components/ImageCropping';
 import React from 'react';
-import { getCompressedImage, getCroppedImg } from 'utils/functions';
+import { getCroppedImg } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { AlertError } from './AlertError';
 import { FileDropzone } from './FileDropzone';
@@ -50,6 +51,11 @@ export const ImageUploads = React.memo(
     const onDropHandler = React.useCallback(
       async (acceptedFiles: File[]) => {
         const [file] = acceptedFiles;
+        const options = {
+          maxSizeMB: 2,
+          maxWidthOrHeight: 1920,
+          useWebWorker: true,
+        };
         if (!file)
           return setError({
             status: true,
@@ -59,10 +65,10 @@ export const ImageUploads = React.memo(
             },
           });
         if (error.status) setError(initError);
-        const url = URL.createObjectURL(file);
-        const preview = (await getCompressedImage(url)) as string;
+        const compressedFile = await imageCompression(file, options);
+        const url = URL.createObjectURL(compressedFile);
         imageExists.current = false;
-        setPreviewUrl(preview);
+        setPreviewUrl(url);
       },
       [error.status]
     );
