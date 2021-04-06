@@ -2,7 +2,7 @@ import { Box, BoxProps, Flex, Tooltip } from '@chakra-ui/react';
 import { CloseButton } from 'common/components/buttons/CloseButton';
 import { CroppedAreaProps } from 'common/components/ImageCropping';
 import React from 'react';
-import { getCroppedImg } from 'utils/functions';
+import { getCompressedImage, getCroppedImg } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { AlertError } from './AlertError';
 import { FileDropzone } from './FileDropzone';
@@ -60,8 +60,9 @@ export const ImageUploads = React.memo(
           });
         if (error.status) setError(initError);
         const url = URL.createObjectURL(file);
+        const preview = (await getCompressedImage(url)) as string;
         imageExists.current = false;
-        setPreviewUrl(url);
+        setPreviewUrl(preview);
       },
       [error.status]
     );
