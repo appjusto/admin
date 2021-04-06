@@ -13,6 +13,7 @@ import PageLayout from 'pages/PageLayout';
 import TeamPage from 'pages/team/TeamPage';
 import React from 'react';
 import { Redirect, Route, Switch, useRouteMatch } from 'react-router-dom';
+import { AgentPersonificationBar } from './AgentPersonificationBar';
 import Dashboard from './Dashboard';
 
 const Home = () => {
@@ -20,29 +21,31 @@ const Home = () => {
   const { isStaff } = useFirebaseUserRole();
   const { business } = useContextBusiness();
   const { path } = useRouteMatch();
+
   // UI
-  console.log(isStaff);
-  console.log(business);
   if (isStaff && !business) return <Redirect to="/backoffice" />;
   if (business && business?.onboarding !== 'completed') {
     return <Redirect to={`/onboarding/${!business?.onboarding ? '' : business.onboarding}`} />;
   }
   if (business?.onboarding === 'completed') {
     return (
-      <Switch>
-        <Route path={`${path}/orders`} component={OrdersPage} />
-        <PageLayout>
-          <Route exact path={path} component={Dashboard} />
-          <Route path={`${path}/menu`} component={Menu} />
-          <Route path={`${path}/business-schedules`} component={SchedulesPage} />
-          <Route path={`${path}/delivery-area`} component={DeliveryArea} />
-          <Route path={`${path}/business-profile`} component={BusinessProfile} />
-          <Route path={`${path}/manager-profile`} component={ManagerProfilePage} />
-          <Route path={`${path}/orders-history`} component={OrdersHistoryPage} />
-          <Route path={`${path}/finances`} component={FinancesPage} />
-          <Route path={`${path}/team`} component={TeamPage} />
-        </PageLayout>
-      </Switch>
+      <>
+        {isStaff && <AgentPersonificationBar />}
+        <Switch>
+          <Route path={`${path}/orders`} component={OrdersPage} />
+          <PageLayout mt={isStaff ? '60px' : '0'}>
+            <Route exact path={path} component={Dashboard} />
+            <Route path={`${path}/menu`} component={Menu} />
+            <Route path={`${path}/business-schedules`} component={SchedulesPage} />
+            <Route path={`${path}/delivery-area`} component={DeliveryArea} />
+            <Route path={`${path}/business-profile`} component={BusinessProfile} />
+            <Route path={`${path}/manager-profile`} component={ManagerProfilePage} />
+            <Route path={`${path}/orders-history`} component={OrdersHistoryPage} />
+            <Route path={`${path}/finances`} component={FinancesPage} />
+            <Route path={`${path}/team`} component={TeamPage} />
+          </PageLayout>
+        </Switch>
+      </>
     );
   }
   return <Loading />;
