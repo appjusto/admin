@@ -103,7 +103,8 @@ export const RegistrationStatus = () => {
         bankAccount?.type && bankAccount?.name && bankAccount?.account && bankAccount.agency
           ? true
           : false;
-      const isBusinessInfosOk = business?.name && business?.cnpj && business.phone ? true : false;
+      const isBusinessInfosOk =
+        business?.name && business?.description && business?.cnpj && business.phone ? true : false;
       const isAddressInfosOk =
         business?.businessAddress?.address &&
         business?.businessAddress?.cep &&
