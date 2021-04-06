@@ -3,6 +3,8 @@ import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile'
 import { getConfig } from 'app/api/config';
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusiness } from 'app/state/business/context';
+import { AlertError } from 'common/components/AlertError';
+import { AlertSuccess } from 'common/components/AlertSuccess';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import { CustomNumberInput as NumberInput } from 'common/components/form/input/CustomNumberInput';
 import { CustomPatternInput as PatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';
@@ -43,7 +45,7 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
   // queries & mutations
   // business profile
   const { updateBusinessProfile, result } = useBusinessProfile();
-  const { isLoading, isSuccess } = result;
+  const { isLoading, isSuccess, isError } = result;
   // cep
   const { data: cepResult } = useQuery(['cep', cep], (_: string) => fetchCEPInfo(cep), {
     enabled: cep.length === 8,
@@ -224,6 +226,20 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
           </GoogleMapReact>
         </Box>
         <PageFooter onboarding={onboarding} redirect={redirect} isLoading={isLoading} />
+        {!onboarding && isSuccess && (
+          <AlertSuccess
+            maxW="320px"
+            title={t('Informações salvas com sucesso!')}
+            description={''}
+          />
+        )}
+        {isError && (
+          <AlertError
+            maxW="320px"
+            title={t('Erro')}
+            description={'Não foi possível acessar o servidor. Tenta novamente?'}
+          />
+        )}
       </form>
     </Box>
   );
