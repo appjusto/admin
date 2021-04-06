@@ -10,6 +10,7 @@ import {
   FormControl,
   Text,
 } from '@chakra-ui/react';
+import { useFirebaseUserRole } from 'app/api/auth/useFirebaseUserRole';
 import { useContextApi } from 'app/state/api/context';
 import { Input } from 'common/components/form/input/Input';
 import { Loading } from 'common/components/Loading';
@@ -26,6 +27,7 @@ const Join = () => {
   const savedEmail = api.auth().getSignInEmail();
   const isLinkValid = api.auth().isSignInWithEmailLink(link);
   const isEmailSaved = Boolean(savedEmail);
+  const userRole = useFirebaseUserRole();
 
   // state
   const [email, setEmail] = React.useState('');
@@ -48,7 +50,12 @@ const Join = () => {
   // UI
   if (!isLinkValid) return <Redirect to="/login" />;
 
-  if (isSuccess) return <Redirect to="/app" />;
+  if (isSuccess && userRole) {
+    console.log(userRole);
+    if (userRole === 'owner' || userRole === 'staff' || userRole === 'viewer')
+      return <Redirect to="/backoffice" />;
+    else return <Redirect to="/app" />;
+  }
 
   if (!isEmailSaved)
     return (

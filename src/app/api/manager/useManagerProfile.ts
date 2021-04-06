@@ -2,12 +2,15 @@ import { useContextApi } from 'app/state/api/context';
 import { useContextFirebaseUserEmail, useContextFirebaseUserId } from 'app/state/auth/context';
 import { ManagerProfile, WithId } from 'appjusto-types';
 import React from 'react';
+import { useFirebaseUserRole } from '../auth/useFirebaseUserRole';
 
 export const useManagerProfile = () => {
   // contex
   const api = useContextApi();
   const id = useContextFirebaseUserId();
   const email = useContextFirebaseUserEmail();
+  const test = useFirebaseUserRole();
+  console.log(test);
 
   // state
   const [profile, setProfile] = React.useState<WithId<ManagerProfile> | undefined | null>();

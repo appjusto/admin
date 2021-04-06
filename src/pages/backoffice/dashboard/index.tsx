@@ -1,6 +1,6 @@
 import { Stack } from '@chakra-ui/react';
 import { useBusinesses } from 'app/api/business/useBusinesses';
-import { Business, WithId } from 'appjusto-types';
+import { Business, Order, WithId } from 'appjusto-types';
 import React from 'react';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
@@ -22,7 +22,7 @@ const BODashboard = () => {
     const { date, time } = getDateTime();
     setDateTime(`${date} às ${time}`);
   }, []);
-  console.log('Render');
+
   // UI
   return (
     <>
@@ -34,11 +34,7 @@ const BODashboard = () => {
           data={businesses as WithId<Business>[]}
           listType="business"
         />
-        {/*<BOList
-          title={t('Pedidos em andamento')}
-          data={orders ?? ([] as WithId<Order>[])}
-          listType="orders"
-        />*/}
+        <BOList title={t('Pedidos em andamento')} data={[] as WithId<Order>[]} listType="orders" />
       </Stack>
     </>
   );
