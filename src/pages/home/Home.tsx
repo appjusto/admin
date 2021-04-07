@@ -18,22 +18,22 @@ import Dashboard from './Dashboard';
 
 const Home = () => {
   // context
-  const { isStaff } = useFirebaseUserRole();
+  const { isBackofficeUser } = useFirebaseUserRole();
   const { business } = useContextBusiness();
   const { path } = useRouteMatch();
 
   // UI
-  if (isStaff && !business) return <Redirect to="/backoffice" />;
+  if (isBackofficeUser && !business) return <Redirect to="/backoffice" />;
   if (business && business?.onboarding !== 'completed') {
     return <Redirect to={`/onboarding/${!business?.onboarding ? '' : business.onboarding}`} />;
   }
   if (business?.onboarding === 'completed') {
     return (
       <>
-        {isStaff && <AgentPersonificationBar />}
+        {isBackofficeUser && <AgentPersonificationBar />}
         <Switch>
           <Route path={`${path}/orders`} component={OrdersPage} />
-          <PageLayout mt={isStaff ? '60px' : '0'}>
+          <PageLayout mt={isBackofficeUser ? '60px' : '0'}>
             <Route exact path={path} component={Dashboard} />
             <Route path={`${path}/menu`} component={Menu} />
             <Route path={`${path}/business-schedules`} component={SchedulesPage} />

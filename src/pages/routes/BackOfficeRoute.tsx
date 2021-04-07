@@ -13,7 +13,7 @@ export const BackOfficeRoute = (props: RouteProps) => {
   // context
   const user = useContextFirebaseUser();
   const profile = useContextManagerProfile();
-  const { isStaff } = useFirebaseUserRole();
+  const { isBackofficeUser } = useFirebaseUserRole();
 
   // state
   const [status, setStatus] = React.useState<Status>('initial');
@@ -35,8 +35,8 @@ export const BackOfficeRoute = (props: RouteProps) => {
   if (status === 'unauthenticated') return <Redirect to="/login" />;
   // load route when profile is loaded
   if (status === 'profile-loaded') {
-    if (isStaff !== null) {
-      if (isStaff) return <Route {...props} />;
+    if (isBackofficeUser !== null) {
+      if (isBackofficeUser) return <Route {...props} />;
       else return <Redirect to="/app" />;
     }
   }

@@ -12,7 +12,7 @@ import { OrdersHeader } from './OrdersHeader';
 
 const OrdersPage = () => {
   // context
-  const { isStaff } = useFirebaseUserRole();
+  const { isBackofficeUser } = useFirebaseUserRole();
   const { business } = useContextBusiness();
   const { path } = useRouteMatch();
   const history = useHistory();
@@ -23,7 +23,7 @@ const OrdersPage = () => {
   }
   return (
     <OrdersContextProvider>
-      <Box mt={isStaff ? '80px' : '0'}>
+      <Box mt={isBackofficeUser ? '80px' : '0'}>
         <OrdersHeader />
         <Container maxW={{ base: '100%', md: '740px', lg: '1260px' }}>
           <OrdersKanban />
