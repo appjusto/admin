@@ -1,3 +1,4 @@
+import { useContextAgentProfile } from 'app/state/agent/context';
 import { useContextBusiness } from 'app/state/business/context';
 import React from 'react';
 import { Route, Switch, useParams, useRouteMatch } from 'react-router-dom';
@@ -20,6 +21,7 @@ export const BusinessDrawer = ({ onClose, ...props }: BusinessDrawerProps) => {
   const { path } = useRouteMatch();
   const { businessId } = useParams<Params>();
   const { setBusinessId, business } = useContextBusiness();
+  const { agent, username } = useContextAgentProfile();
 
   //handlers
 
@@ -33,7 +35,7 @@ export const BusinessDrawer = ({ onClose, ...props }: BusinessDrawerProps) => {
   //UI
   return (
     <BusinessBaseDrawer
-      agent={{ id: 'sajkcawhAc', name: 'Nome do agente' }}
+      agent={{ id: agent?.id, name: username }}
       business={business}
       managerName="Renan Costa"
       onClose={onClose}

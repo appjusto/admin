@@ -1,4 +1,4 @@
-import { useAgentProfile } from 'app/api/agent/useAgentProfile';
+import { useContextAgentProfile } from 'app/state/agent/context';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { Loading } from 'common/components/Loading';
 import React from 'react';
@@ -11,7 +11,7 @@ type Status = 'initial' | 'unauthenticated' | 'authenticated' | 'profile-loaded'
 export const BackOfficeRoute = (props: RouteProps) => {
   // context
   const user = useContextFirebaseUser();
-  const agent = useAgentProfile();
+  const { agent } = useContextAgentProfile();
 
   // state
   const [status, setStatus] = React.useState<Status>('initial');

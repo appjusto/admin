@@ -1,4 +1,4 @@
-import { useAgentProfile } from 'app/api/agent/useAgentProfile';
+import { useContextAgentProfile } from 'app/state/agent/context';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextManagerProfile } from 'app/state/manager/context';
 import { Loading } from 'common/components/Loading';
@@ -11,7 +11,7 @@ export const ProtectedRoute = (props: RouteProps) => {
   // context
   const user = useContextFirebaseUser();
   const { manager } = useContextManagerProfile();
-  const agent = useAgentProfile();
+  const { agent } = useContextAgentProfile();
 
   // state
   const [status, setStatus] = React.useState<Status>('initial');

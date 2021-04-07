@@ -1,4 +1,5 @@
 import { Box, Flex, Image, Link, Text } from '@chakra-ui/react';
+import { useContextAgentProfile } from 'app/state/agent/context';
 import { useContextManagerProfile } from 'app/state/manager/context';
 import { EditButton } from 'common/components/buttons/EditButton';
 import managerIcon from 'common/img/manager.svg';
@@ -10,8 +11,8 @@ export const ManagerBar = () => {
   const { path, url } = useRouteMatch();
   const isBackOffice = path.includes('backoffice');
   const { manager } = useContextManagerProfile();
+  const { agent, username } = useContextAgentProfile();
   const name = manager?.name ? `, ${manager.name}!` : '!';
-  const user = manager?.email ? manager?.email.split('@')[0] : '';
   return (
     <Flex
       position="fixed"
@@ -29,7 +30,7 @@ export const ManagerBar = () => {
         <Box maxW="160px">
           {isBackOffice ? (
             <Text color="black" fontSize="xs" lineHeight="lg" mb="-6px">
-              {user}
+              {username}
             </Text>
           ) : (
             <Text color="black" fontSize="xs" lineHeight="lg" mb="-6px">

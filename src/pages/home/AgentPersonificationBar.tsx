@@ -8,7 +8,7 @@ import { t } from 'utils/i18n';
 
 export const AgentPersonificationBar = () => {
   // context
-  const agent = useContextAgentProfile();
+  const { username } = useContextAgentProfile();
   // state
   const [dateTime, setDateTime] = React.useState('');
 
@@ -18,7 +18,6 @@ export const AgentPersonificationBar = () => {
     setDateTime(`${date} às ${time}`);
   }, []);
   // UI
-  const username = agent?.email ? agent?.email.split('@')[0] : '';
   return (
     <Flex
       position="fixed"

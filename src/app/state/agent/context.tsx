@@ -2,15 +2,25 @@ import { useAgentProfile } from 'app/api/agent/useAgentProfile';
 import { ManagerProfile, WithId } from 'appjusto-types';
 import React from 'react';
 
-const AgentProfileContext = React.createContext<WithId<ManagerProfile> | undefined | null>(null);
+interface ContextProps {
+  agent: WithId<ManagerProfile> | undefined | null;
+  username: string;
+}
+
+const AgentProfileContext = React.createContext<ContextProps>({} as ContextProps);
 
 interface Props {
   children: React.ReactNode | React.ReactNode[];
 }
 
 export const AgentProvider = ({ children }: Props) => {
-  const profile = useAgentProfile();
-  return <AgentProfileContext.Provider value={profile}>{children}</AgentProfileContext.Provider>;
+  const agent = useAgentProfile();
+  const username = agent?.name ?? (agent?.email ? agent?.email.split('@')[0] : '');
+  return (
+    <AgentProfileContext.Provider value={{ agent, username }}>
+      {children}
+    </AgentProfileContext.Provider>
+  );
 };
 
 export const useContextAgentProfile = () => {

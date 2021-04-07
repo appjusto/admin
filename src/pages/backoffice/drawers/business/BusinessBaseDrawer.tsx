@@ -19,7 +19,7 @@ import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 
 interface BaseDrawerProps {
-  agent: { id: string; name: string };
+  agent: { id: string | undefined; name: string };
   business: WithId<Business> | null | undefined;
   managerName: string;
   isOpen: boolean;
@@ -79,7 +79,7 @@ export const BusinessBaseDrawer = ({
             </Text>
             <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
               {t('Agente responsável:')}{' '}
-              <Text as="span" fontWeight="500" color="red">
+              <Text as="span" fontWeight="500">
                 {agent?.name}
               </Text>
             </Text>
