@@ -80,7 +80,7 @@ export const BusinessBaseDrawer = ({
             <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
               {t('Agente responsável:')}{' '}
               <Text as="span" fontWeight="500">
-                {agent?.name}
+                {agent?.name} *
               </Text>
             </Text>
             <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">

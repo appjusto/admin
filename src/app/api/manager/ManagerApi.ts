@@ -29,12 +29,10 @@ export default class ManagerApi {
     resultHandler: (profile: WithId<ManagerProfile> | null) => void
   ): firebase.Unsubscribe {
     const query = this.refs.getManagersRef().where('email', '==', email);
-
     const unsubscribe = query.onSnapshot(
       async (querySnapshot) => {
         const data = documentsAs<ManagerProfile>(querySnapshot.docs);
-        console.log(data);
-        resultHandler({ ...data[0], id: 'teste' });
+        resultHandler(data[0]);
       },
       (error) => {
         console.error(error);
