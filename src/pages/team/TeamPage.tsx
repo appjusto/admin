@@ -1,4 +1,4 @@
-import { useManagerProfile } from 'app/api/manager/useManagerProfile';
+import { useContextManagerProfile } from 'app/state/manager/context';
 import { WithId } from 'appjusto-types';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
@@ -14,7 +14,7 @@ interface TeamMember {
 
 const TeamPage = () => {
   // context
-  const manager = useManagerProfile();
+  const { manager } = useContextManagerProfile();
   // state
   const [members, setMembers] = React.useState<WithId<TeamMember>[]>([]);
   // side effects

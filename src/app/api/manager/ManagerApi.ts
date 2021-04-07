@@ -1,4 +1,5 @@
 import { ManagerProfile, WithId } from 'appjusto-types';
+import { documentsAs } from 'core/fb';
 import firebase from 'firebase/app';
 import FirebaseRefs from '../FirebaseRefs';
 
@@ -14,6 +15,26 @@ export default class ManagerApi {
       async (doc) => {
         if (!doc.exists) resultHandler(null);
         else resultHandler({ ...(doc.data() as ManagerProfile), id });
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+    // returns the unsubscribe function
+    return unsubscribe;
+  }
+
+  observeProfileByEmail(
+    email: string,
+    resultHandler: (profile: WithId<ManagerProfile> | null) => void
+  ): firebase.Unsubscribe {
+    const query = this.refs.getManagersRef().where('email', '==', email);
+
+    const unsubscribe = query.onSnapshot(
+      async (querySnapshot) => {
+        const data = documentsAs<ManagerProfile>(querySnapshot.docs);
+        console.log(data);
+        resultHandler({ ...data[0], id: 'teste' });
       },
       (error) => {
         console.error(error);

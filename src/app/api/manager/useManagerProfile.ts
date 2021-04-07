@@ -9,24 +9,34 @@ export const useManagerProfile = () => {
   const api = useContextApi();
   const id = useContextFirebaseUserId();
   const email = useContextFirebaseUserEmail();
+  const { isBackofficeUser } = useFirebaseUserRole();
 
   // state
-  const [profile, setProfile] = React.useState<WithId<ManagerProfile> | undefined | null>();
+  const [managerEmail, setManagerEmail] = React.useState<string | undefined | null>(null);
+  const [manager, setManager] = React.useState<WithId<ManagerProfile> | undefined | null>();
 
   // side effects
+  // observe profile for no backoffice users
+  React.useEffect(() => {
+    if (!isBackofficeUser && id) {
+      return api.manager().observeProfile(id, setManager);
+    }
+  }, [api, id, isBackofficeUser]);
   // observe profile
   React.useEffect(() => {
-    if (!id) return;
-    return api.manager().observeProfile(id, setProfile);
-  }, [id, api]);
-  // create profile if it doesn't exist
+    if (isBackofficeUser && managerEmail) {
+      return api.manager().observeProfileByEmail(managerEmail, setManager);
+    }
+  }, [api, isBackofficeUser, managerEmail]);
+
+  // create profile for regular users if it doesn't exist
   React.useEffect(() => {
     if (!id || !email) return;
-    if (profile === null) {
+    if (!isBackofficeUser && manager === null) {
       api.manager().createProfile(id, email);
     }
-  }, [id, email, profile, api]);
-
+  }, [id, email, isBackofficeUser, manager, api]);
+  console.log(manager);
   // return
-  return profile;
+  return { manager, setManagerEmail };
 };

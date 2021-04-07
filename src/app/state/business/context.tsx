@@ -2,13 +2,13 @@ import { useObserveBusinessManagedBy } from 'app/api/business/profile/useObserve
 import { useObserveBusinessProfile } from 'app/api/business/profile/useObserveBusinessProfile';
 //import { useManagerProfile } from 'app/api/manager/useManagerProfile';
 import { Business, WithId } from 'appjusto-types';
-import React from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import { useContextApi } from '../api/context';
 import { useContextFirebaseUserEmail } from '../auth/context';
 
 interface ContextProps {
   business: WithId<Business> | undefined | null;
-  setBusinessId(id: string): void;
+  setBusinessId: Dispatch<SetStateAction<string | undefined>>;
 }
 
 const BusinessContext = React.createContext<ContextProps>({} as ContextProps);

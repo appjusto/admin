@@ -20,18 +20,18 @@ import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { t } from 'utils/i18n';
 
-export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
+export const ManagerProfile = ({ onboarding, redirect, backoffice }: OnboardingProps) => {
   // context
   const user = useContextFirebaseUser();
-  const profile = useContextManagerProfile();
+  const { manager } = useContextManagerProfile();
   const { updateProfile, updateResult } = useUpdateManagerProfile();
   const { isLoading, isSuccess, isError } = updateResult;
 
   // state
-  const [name, setName] = React.useState(profile?.name ?? '');
-  const [surname, setSurname] = React.useState(profile?.surname ?? '');
-  const [phoneNumber, setPhoneNumber] = React.useState(profile?.phone ?? '');
-  const [cpf, setCPF] = React.useState(profile?.cpf ?? '');
+  const [name, setName] = React.useState(manager?.name ?? '');
+  const [surname, setSurname] = React.useState(manager?.surname ?? '');
+  const [phoneNumber, setPhoneNumber] = React.useState(manager?.phone ?? '');
+  const [cpf, setCPF] = React.useState(manager?.cpf ?? '');
 
   // refs
   const nameRef = React.useRef<HTMLInputElement>(null);
@@ -43,13 +43,13 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
   }, [onboarding]);
 
   React.useEffect(() => {
-    if (profile) {
-      if (profile.name) setName(profile.name);
-      if (profile.surname) setSurname(profile.surname);
-      if (profile.phone) setPhoneNumber(profile.phone);
-      if (profile.cpf) setCPF(profile.cpf);
+    if (manager) {
+      if (manager.name) setName(manager.name);
+      if (manager.surname) setSurname(manager.surname);
+      if (manager.phone) setPhoneNumber(manager.phone);
+      if (manager.cpf) setCPF(manager.cpf);
     }
-  }, [profile]);
+  }, [manager]);
 
   // handlers
   const onSubmitHandler = async () => {
@@ -71,10 +71,12 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
           onSubmitHandler();
         }}
       >
-        <PageHeader
-          title={t('Informe seus dados')}
-          subtitle={t('Informações do administrador da conta')}
-        />
+        {!backoffice && (
+          <PageHeader
+            title={t('Informe seus dados')}
+            subtitle={t('Informações do administrador da conta')}
+          />
+        )}
         <CustomInput
           id="manager-profile-email"
           label={t('E-mail')}

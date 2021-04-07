@@ -9,7 +9,7 @@ export const ManagerBar = () => {
   // context
   const { path, url } = useRouteMatch();
   const isBackOffice = path.includes('backoffice');
-  const manager = useContextManagerProfile();
+  const { manager } = useContextManagerProfile();
   const name = manager?.name ? `, ${manager.name}!` : '!';
   const user = manager?.email ? manager?.email.split('@')[0] : '';
   return (

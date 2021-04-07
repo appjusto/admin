@@ -25,7 +25,7 @@ const bankAccountSet = (bankAccount: BankAccount): boolean => {
   );
 };
 
-const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
+const BankingInformation = ({ onboarding, redirect, backoffice }: OnboardingProps) => {
   // context
   const banks = useBanks();
   const { bankAccount, updateBankAccount, updateResult } = useBusinessBankAccount();
@@ -111,10 +111,12 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
           onSubmitHandler();
         }}
       >
-        <PageHeader
-          title={t('Dados bancários')}
-          subtitle={t('Informe para onde serão transferidos os repasses')}
-        />
+        {!backoffice && (
+          <PageHeader
+            title={t('Dados bancários')}
+            subtitle={t('Informe para onde serão transferidos os repasses')}
+          />
+        )}
         <BankSelect
           ref={nameRef}
           value={name}

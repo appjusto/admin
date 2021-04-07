@@ -6,11 +6,11 @@ import { useMutation } from 'react-query';
 export const useUpdateManagerProfile = () => {
   // context
   const api = useContextApi();
-  const profile = useContextManagerProfile();
+  const { manager } = useContextManagerProfile();
 
   // mutations
   const [updateProfile, updateResult] = useMutation(async (changes: Partial<ManagerProfile>) =>
-    api.manager().updateProfile(profile?.id!, changes)
+    api.manager().updateProfile(manager?.id!, changes)
   );
 
   // return

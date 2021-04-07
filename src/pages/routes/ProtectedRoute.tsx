@@ -1,3 +1,4 @@
+import { useAgentProfile } from 'app/api/agent/useAgentProfile';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextManagerProfile } from 'app/state/manager/context';
 import { Loading } from 'common/components/Loading';
@@ -9,7 +10,8 @@ type Status = 'initial' | 'unauthenticated' | 'authenticated' | 'profile-loaded'
 export const ProtectedRoute = (props: RouteProps) => {
   // context
   const user = useContextFirebaseUser();
-  const profile = useContextManagerProfile();
+  const { manager } = useContextManagerProfile();
+  const agent = useAgentProfile();
 
   // state
   const [status, setStatus] = React.useState<Status>('initial');
@@ -23,8 +25,8 @@ export const ProtectedRoute = (props: RouteProps) => {
       }, delay);
       return () => clearTimeout(uid);
     }
-    if (user && profile) setStatus('profile-loaded');
-  }, [user, profile]);
+    if (user && (manager || agent)) setStatus('profile-loaded');
+  }, [user, manager]);
 
   // UI
   // redirects to / when user is not authenticated

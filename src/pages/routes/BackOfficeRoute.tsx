@@ -1,6 +1,5 @@
-import { useFirebaseUserRole } from 'app/api/auth/useFirebaseUserRole';
+import { useAgentProfile } from 'app/api/agent/useAgentProfile';
 import { useContextFirebaseUser } from 'app/state/auth/context';
-import { useContextManagerProfile } from 'app/state/manager/context';
 import { Loading } from 'common/components/Loading';
 import React from 'react';
 import { Redirect, Route, RouteProps } from 'react-router-dom';
@@ -12,8 +11,7 @@ type Status = 'initial' | 'unauthenticated' | 'authenticated' | 'profile-loaded'
 export const BackOfficeRoute = (props: RouteProps) => {
   // context
   const user = useContextFirebaseUser();
-  const profile = useContextManagerProfile();
-  const { isBackofficeUser } = useFirebaseUserRole();
+  const agent = useAgentProfile();
 
   // state
   const [status, setStatus] = React.useState<Status>('initial');
@@ -27,19 +25,14 @@ export const BackOfficeRoute = (props: RouteProps) => {
       }, delay);
       return () => clearTimeout(uid);
     }
-    if (user && profile) setStatus('profile-loaded');
-  }, [user, profile]);
+    if (user && agent) setStatus('profile-loaded');
+  }, [user, agent]);
 
   // UI
   // redirects to / when user is not authenticated
   if (status === 'unauthenticated') return <Redirect to="/login" />;
   // load route when profile is loaded
-  if (status === 'profile-loaded') {
-    if (isBackofficeUser !== null) {
-      if (isBackofficeUser) return <Route {...props} />;
-      else return <Redirect to="/app" />;
-    }
-  }
+  if (status === 'profile-loaded') return <Route {...props} />;
   // still loading user's profile
   return <Loading />;
 };

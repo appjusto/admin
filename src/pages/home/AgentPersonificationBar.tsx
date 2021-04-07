@@ -1,6 +1,6 @@
 import { ArrowBackIcon } from '@chakra-ui/icons';
 import { Box, Flex, HStack, Link, Text } from '@chakra-ui/react';
-import { useManagerProfile } from 'app/api/manager/useManagerProfile';
+import { useContextAgentProfile } from 'app/state/agent/context';
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { getDateTime } from 'utils/functions';
@@ -8,7 +8,7 @@ import { t } from 'utils/i18n';
 
 export const AgentPersonificationBar = () => {
   // context
-  const agent = useManagerProfile();
+  const agent = useContextAgentProfile();
   // state
   const [dateTime, setDateTime] = React.useState('');
 

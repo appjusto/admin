@@ -22,9 +22,6 @@ export const BusinessDrawer = ({ onClose, ...props }: BusinessDrawerProps) => {
   const { setBusinessId, business } = useContextBusiness();
 
   //handlers
-  const handleSave = () => {
-    console.log('Salvo');
-  };
 
   // side effects
   React.useEffect(() => {
@@ -40,7 +37,6 @@ export const BusinessDrawer = ({ onClose, ...props }: BusinessDrawerProps) => {
       business={business}
       managerName="Renan Costa"
       onClose={onClose}
-      onSave={handleSave}
       {...props}
     >
       <Switch>

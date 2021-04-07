@@ -15,7 +15,6 @@ export const useFirebaseUserRole = () => {
       ?.getIdTokenResult()
       .then((token) => {
         const role = (token.claims.role ?? 'not_staff') as string;
-        console.dir(role);
         setRole(role);
       })
       .catch((error) => {
