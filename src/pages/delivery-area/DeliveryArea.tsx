@@ -135,7 +135,6 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
           title={t('Endereço do restaurante')}
           subtitle={t('O raio de entrega é calculado a partir do endereço do seu restaurante')}
         />
-
         <Flex flexGrow={0}>
           <PatternInput
             isRequired
@@ -235,7 +234,7 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
         )}
         {isError && (
           <AlertError
-            maxW="320px"
+            w="100%"
             title={t('Erro')}
             description={'Não foi possível acessar o servidor. Tenta novamente?'}
           />
