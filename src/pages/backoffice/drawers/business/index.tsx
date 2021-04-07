@@ -1,5 +1,6 @@
 import { useContextAgentProfile } from 'app/state/agent/context';
 import { useContextBusiness } from 'app/state/business/context';
+import { useContextManagerProfile } from 'app/state/manager/context';
 import React from 'react';
 import { Route, Switch, useParams, useRouteMatch } from 'react-router-dom';
 import { BusinessBaseDrawer } from './BusinessBaseDrawer';
@@ -22,6 +23,7 @@ export const BusinessDrawer = ({ onClose, ...props }: BusinessDrawerProps) => {
   const { businessId } = useParams<Params>();
   const { setBusinessId, business } = useContextBusiness();
   const { agent, username } = useContextAgentProfile();
+  const { manager, setManagerEmail } = useContextManagerProfile();
 
   //handlers
 
@@ -30,14 +32,18 @@ export const BusinessDrawer = ({ onClose, ...props }: BusinessDrawerProps) => {
     if (businessId) setBusinessId(businessId);
   }, [businessId, setBusinessId]);
 
-  //UI conditions
+  React.useEffect(() => {
+    if (business && business?.managers) {
+      setManagerEmail(business?.managers[0]);
+    }
+  }, [business]);
 
   //UI
   return (
     <BusinessBaseDrawer
       agent={{ id: agent?.id, name: username }}
       business={business}
-      managerName="Renan Costa"
+      managerName={manager?.name ?? 'Sem nome'}
       onClose={onClose}
       {...props}
     >

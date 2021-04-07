@@ -36,6 +36,7 @@ export const useManagerProfile = () => {
       api.manager().createProfile(id, email);
     }
   }, [id, email, isBackofficeUser, manager, api]);
+  console.log(managerEmail);
   console.log(manager);
   // return
   return { manager, setManagerEmail };

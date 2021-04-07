@@ -172,7 +172,7 @@ const BankingInformation = ({ onboarding, redirect, backoffice }: OnboardingProp
         )}
         {isError && (
           <AlertError
-            maxW="320px"
+            w="100%"
             title={t('Erro')}
             description={'Não foi possível acessar o servidor. Tenta novamente?'}
           />

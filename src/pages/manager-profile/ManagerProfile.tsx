@@ -39,7 +39,7 @@ export const ManagerProfile = ({ onboarding, redirect, backoffice }: OnboardingP
   // side effects
   React.useEffect(() => {
     if (onboarding) window?.scrollTo(0, 0);
-    nameRef?.current?.focus();
+    if (!backoffice) nameRef?.current?.focus();
   }, [onboarding]);
 
   React.useEffect(() => {
@@ -64,7 +64,7 @@ export const ManagerProfile = ({ onboarding, redirect, backoffice }: OnboardingP
   // UI
   if (isSuccess && redirect) return <Redirect to={redirect} push />;
   return (
-    <Box maxW="368px">
+    <Box maxW={backoffice ? '464px' : '368px'}>
       <form
         onSubmit={(ev) => {
           ev.preventDefault();
@@ -80,8 +80,8 @@ export const ManagerProfile = ({ onboarding, redirect, backoffice }: OnboardingP
         <CustomInput
           id="manager-profile-email"
           label={t('E-mail')}
-          value={user?.email ?? ''}
-          isDisabled
+          value={!backoffice ? user?.email ?? '' : manager?.email ?? ''}
+          isDisabled={!backoffice}
         />
         <CustomInput
           isRequired
@@ -134,7 +134,7 @@ export const ManagerProfile = ({ onboarding, redirect, backoffice }: OnboardingP
         )}
         {isError && (
           <AlertError
-            maxW="320px"
+            w="100%"
             title={t('Erro')}
             description={'Não foi possível acessar o servidor. Tenta novamente?'}
           />
