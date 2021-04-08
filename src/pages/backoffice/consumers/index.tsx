@@ -1,6 +1,6 @@
 import { DeleteIcon } from '@chakra-ui/icons';
-import { Checkbox, CheckboxGroup, Flex, HStack, Text } from '@chakra-ui/react';
-import { CourierProfile, WithId } from 'appjusto-types';
+import { Flex, HStack, Text } from '@chakra-ui/react';
+import { ConsumerProfile, WithId } from 'appjusto-types';
 import { FilterText } from 'common/components/backoffice/FilterText';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { CustomInput } from 'common/components/form/input/CustomInput';
@@ -10,7 +10,7 @@ import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import PageHeader from '../../PageHeader';
 import { BusinessDrawer } from '../drawers/business';
-import { CouriersTable } from './CouriersTable';
+import { ConsumersTable } from './ConsumersTable';
 
 const options = { active: true, inactive: true };
 
@@ -18,7 +18,7 @@ const CouriersPage = () => {
   // context
   const { path } = useRouteMatch();
   const history = useHistory();
-  const couriers = [] as WithId<CourierProfile>[];
+  const consumers = [] as WithId<ConsumerProfile>[];
   // state
   const [dateTime, setDateTime] = React.useState('');
   const [searchId, setSearchId] = React.useState('');
@@ -42,7 +42,7 @@ const CouriersPage = () => {
   // UI
   return (
     <>
-      <PageHeader title={t('Entregadores')} subtitle={t(`Atualizado ${dateTime}`)} />
+      <PageHeader title={t('Clientes')} subtitle={t(`Atualizado ${dateTime}`)} />
       <Flex mt="8" justifyContent="space-between">
         <HStack spacing={4}>
           <CustomInput
@@ -75,12 +75,6 @@ const CouriersPage = () => {
             {t('Todos')}
           </FilterText>
           <FilterText
-            isActive={filterText === 'las30days' ? true : false}
-            onClick={() => handleFilterTexts('las30days')}
-          >
-            {t('Ativos nos últimos 30 dias')}
-          </FilterText>
-          <FilterText
             isActive={filterText === 'blocked' ? true : false}
             onClick={() => handleFilterTexts('blocked')}
           >
@@ -96,35 +90,12 @@ const CouriersPage = () => {
       </Flex>
       <HStack mt="6" spacing={8} color="black">
         <Text fontSize="lg" fontWeight="700" lineHeight="26px">
-          {t(`${couriers?.length ?? '0'} itens na lista`)}
+          {t(`${consumers?.length ?? '0'} itens na lista`)}
         </Text>
-        <CheckboxGroup
-          colorScheme="green"
-          value={filters}
-          onChange={(value) => setFilters(value as string[])}
-        >
-          <HStack
-            alignItems="flex-start"
-            color="black"
-            spacing={8}
-            fontSize="16px"
-            lineHeight="22px"
-          >
-            <Checkbox iconColor="white" value="approved">
-              {t('Ativos')}
-            </Checkbox>
-            <Checkbox iconColor="white" value="pending">
-              {t('Pendentes')}
-            </Checkbox>
-            <Checkbox iconColor="white" value="enabled">
-              {t('Live')}
-            </Checkbox>
-          </HStack>
-        </CheckboxGroup>
       </HStack>
-      <CouriersTable couriers={couriers} />
+      <ConsumersTable consumers={consumers} />
       <Switch>
-        <Route path={`${path}/:courierId`}>
+        <Route path={`${path}/:consumerId`}>
           <BusinessDrawer isOpen onClose={closeDrawerHandler} />
         </Route>
       </Switch>
