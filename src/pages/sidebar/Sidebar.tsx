@@ -1,4 +1,5 @@
 import { Box } from '@chakra-ui/react';
+import { useFirebaseUserRole } from 'app/api/auth/useFirebaseUserRole';
 import Image from 'common/components/Image';
 import logo from 'common/img/logo.svg';
 import React from 'react';
@@ -11,6 +12,7 @@ import { ManagerBar } from './ManagerBar';
 const Sidebar = () => {
   // context
   const { path } = useRouteMatch();
+  const { isBackofficeUser } = useFirebaseUserRole();
   const isBackOffice = path.includes('backoffice');
   return (
     <Box
@@ -37,7 +39,9 @@ const Sidebar = () => {
           </Box>
         )}
       </Box>
-      <ManagerBar />
+      {((!isBackOffice && !isBackofficeUser) || (isBackOffice && isBackofficeUser)) && (
+        <ManagerBar />
+      )}
     </Box>
   );
 };

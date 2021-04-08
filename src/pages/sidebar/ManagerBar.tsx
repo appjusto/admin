@@ -9,9 +9,9 @@ import { t } from 'utils/i18n';
 export const ManagerBar = () => {
   // context
   const { path, url } = useRouteMatch();
-  const isBackOffice = path.includes('backoffice');
   const { manager } = useContextManagerProfile();
   const { username } = useContextAgentProfile();
+  const isBackOffice = path.includes('backoffice');
   const name = manager?.name ? `, ${manager.name}!` : '!';
   return (
     <Flex
