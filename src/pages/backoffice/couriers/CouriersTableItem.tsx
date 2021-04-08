@@ -1,12 +1,12 @@
 import { Icon, Td, Tr } from '@chakra-ui/react';
-import { Business, WithId } from 'appjusto-types';
+import { CourierProfile, WithId } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { useRouteMatch } from 'react-router';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 
 interface ItemProps {
-  business: WithId<Business>;
+  courier: WithId<CourierProfile>;
 }
 
 const options = {
@@ -19,25 +19,25 @@ const options = {
   deleted: 'Deletado',
 };
 
-export const BusinessesTableItem = ({ business }: ItemProps) => {
+export const CouriersTableItem = ({ courier }: ItemProps) => {
   // context
   const { path } = useRouteMatch();
   // helpers
-  const status = business.situation;
-  const step = business.onboarding;
+  const status = courier.situation;
   return (
-    <Tr key={business.id} color="black" fontSize="15px" lineHeight="21px">
-      <Td maxW="120px">{business.id}</Td>
+    <Tr key={courier.id} color="black" fontSize="15px" lineHeight="21px">
+      <Td maxW="120px">{courier.id}</Td>
       <Td>
-        {business.createdOn
-          ? getDateAndHour(business.createdOn as firebase.firestore.Timestamp)
-          : ''}
+        {courier.createdOn ? getDateAndHour(courier.createdOn as firebase.firestore.Timestamp) : ''}
       </Td>
-      <Td>{business.name ?? 'N/I'}</Td>
+      <Td>{courier.name ?? 'N/I'}</Td>
       <Td>{options[status]}</Td>
-      <Td>{step ? (step === 'completed' ? 'completo' : step) : 'N/I'}</Td>
       <Td>
-        <Icon mt="-2px" viewBox="0 0 200 200" color={business?.enabled ? 'green.500' : 'red'}>
+        <Icon
+          mt="-2px"
+          viewBox="0 0 200 200"
+          color={courier?.status === 'available' ? 'green.500' : 'red'}
+        >
           <path
             fill="currentColor"
             d="M 100, 100 m -75, 0 a 75,75 0 1,0 150,0 a 75,75 0 1,0 -150,0"
@@ -49,7 +49,7 @@ export const BusinessesTableItem = ({ business }: ItemProps) => {
           mt="0"
           variant="outline"
           label={t('Detalhes')}
-          link={`${path}/${business.id}`}
+          link={`${path}/${courier.id}`}
           size="sm"
         />
       </Td>

@@ -1,24 +1,24 @@
 import { DeleteIcon } from '@chakra-ui/icons';
 import { Checkbox, CheckboxGroup, Flex, HStack, Text } from '@chakra-ui/react';
-import { useBusinesses } from 'app/api/business/useBusinesses';
+import { CourierProfile, WithId } from 'appjusto-types';
+import { FilterText } from 'common/components/backoffice/FilterText';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import React from 'react';
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
-import { FilterText } from '../../../common/components/backoffice/FilterText';
 import PageHeader from '../../PageHeader';
 import { BusinessDrawer } from '../drawers/business';
-import { BusinessesTable } from './BusinessesTable';
+import { CouriersTable } from './CouriersTable';
 
 const options = { active: true, inactive: true };
 
-const BusinessesPage = () => {
+const CouriersPage = () => {
   // context
   const { path } = useRouteMatch();
   const history = useHistory();
-  const businesses = useBusinesses(options);
+  const couriers = [] as WithId<CourierProfile>[];
   // state
   const [dateTime, setDateTime] = React.useState('');
   const [searchId, setSearchId] = React.useState('');
@@ -43,35 +43,29 @@ const BusinessesPage = () => {
   // UI
   return (
     <>
-      <PageHeader title={t('Restaurantes')} subtitle={t(`Atualizado ${dateTime}`)} />
-      <HStack mt="8" spacing={4}>
-        <CustomInput
-          mt="0"
-          maxW="212px"
-          id="search-id"
-          value={searchId}
-          onChange={(event) => setSearchId(event.target.value)}
-          label={t('ID')}
-          placeholder={t('000')}
-        />
-        <CustomInput
-          mt="0"
-          id="search-name"
-          value={searchName}
-          onChange={(event) => setSearchName(event.target.value)}
-          label={t('Nome')}
-          placeholder={t('Nome do restaurante')}
-        />
-        <CustomInput
-          mt="0"
-          id="search-manager"
-          value={searchManager}
-          onChange={(event) => setSearchManager(event.target.value)}
-          label={t('Administrador')}
-          placeholder={t('Nome do responsável')}
-        />
-        <CustomButton maxW="200px" label={t('Filtrar resultados')} />
-      </HStack>
+      <PageHeader title={t('Entregadores')} subtitle={t(`Atualizado ${dateTime}`)} />
+      <Flex mt="8" justifyContent="space-between">
+        <HStack spacing={4}>
+          <CustomInput
+            mt="0"
+            maxW="212px"
+            id="search-id"
+            value={searchId}
+            onChange={(event) => setSearchId(event.target.value)}
+            label={t('ID')}
+            placeholder={t('000')}
+          />
+          <CustomInput
+            mt="0"
+            id="search-name"
+            value={searchName}
+            onChange={(event) => setSearchName(event.target.value)}
+            label={t('Nome')}
+            placeholder={t('Nome do restaurante')}
+          />
+        </HStack>
+        <CustomButton mt="0" maxW="200px" label={t('Filtrar resultados')} />
+      </Flex>
       <Flex mt="8" w="100%" justifyContent="space-between" borderBottom="1px solid #C8D7CB">
         <HStack spacing={4}>
           <FilterText
@@ -102,7 +96,7 @@ const BusinessesPage = () => {
       </Flex>
       <HStack mt="6" spacing={8} color="black">
         <Text fontSize="lg" fontWeight="700" lineHeight="26px">
-          {t(`${businesses?.length ?? '0'} itens na lista`)}
+          {t(`${couriers?.length ?? '0'} itens na lista`)}
         </Text>
         <CheckboxGroup
           colorScheme="green"
@@ -128,9 +122,9 @@ const BusinessesPage = () => {
           </HStack>
         </CheckboxGroup>
       </HStack>
-      <BusinessesTable businesses={businesses} />
+      <CouriersTable couriers={couriers} />
       <Switch>
-        <Route path={`${path}/:businessId`}>
+        <Route path={`${path}/:courierId`}>
           <BusinessDrawer isOpen onClose={closeDrawerHandler} />
         </Route>
       </Switch>
@@ -138,4 +132,4 @@ const BusinessesPage = () => {
   );
 };
 
-export default BusinessesPage;
+export default CouriersPage;
