@@ -36,7 +36,7 @@ export const BusinessDrawer = ({ onClose, ...props }: BusinessDrawerProps) => {
     if (business && business?.managers) {
       setManagerEmail(business?.managers[0]);
     }
-  }, [business]);
+  }, [business, setManagerEmail]);
 
   //UI
   return (

@@ -40,7 +40,7 @@ export const ManagerProfile = ({ onboarding, redirect, backoffice }: OnboardingP
   React.useEffect(() => {
     if (onboarding) window?.scrollTo(0, 0);
     if (!backoffice) nameRef?.current?.focus();
-  }, [onboarding]);
+  }, [onboarding, backoffice]);
 
   React.useEffect(() => {
     if (manager) {

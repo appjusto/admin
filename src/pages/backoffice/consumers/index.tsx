@@ -25,7 +25,6 @@ const CouriersPage = () => {
   const [searchName, setSearchName] = React.useState('');
 
   const [filterText, setFilterText] = React.useState('all');
-  const [filters, setFilters] = React.useState<string[]>([]);
 
   // handlers
   const closeDrawerHandler = () => history.replace(path);
