@@ -24,7 +24,7 @@ export default class SearchApi {
     else if (kind === 'orders') return this.orders;
   }
 
-  private businessesFilters(filters?: BusinessesFilter[]) {
+  private createBusinessesFilters(filters?: BusinessesFilter[]) {
     return filters
       ?.reduce<string[]>((result, filter) => {
         if (filter.type === 'enabled') {
@@ -34,7 +34,7 @@ export default class SearchApi {
         }
         return result;
       }, [])
-      .join(' AND ');
+      .join(' OR ');
   }
 
   businessSearch<T>(
@@ -47,7 +47,7 @@ export default class SearchApi {
     if (!index) throw new Error('Invalid index');
     return index.search<T>(query, {
       page,
-      filters: this.businessesFilters(filters),
+      filters: this.createBusinessesFilters(filters),
     });
   }
 }

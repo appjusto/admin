@@ -1,10 +1,10 @@
 import { Box, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
-import { Business, WithId } from 'appjusto-types';
+import { BusinessAlgolia } from 'appjusto-types';
 import { t } from 'utils/i18n';
 import { BusinessesTableItem } from './BusinessesTableItem';
 
 interface BusinessesTableProps {
-  businesses: WithId<Business>[] | undefined;
+  businesses: BusinessAlgolia[] | undefined;
 }
 
 export const BusinessesTable = ({ businesses }: BusinessesTableProps) => {
@@ -28,7 +28,7 @@ export const BusinessesTable = ({ businesses }: BusinessesTableProps) => {
         <Tbody>
           {businesses && businesses.length > 0 ? (
             businesses.map((business) => {
-              return <BusinessesTableItem key={business.id} business={business} />;
+              return <BusinessesTableItem key={business.objectID} business={business} />;
             })
           ) : (
             <Tr color="black" fontSize="xs" fontWeight="700">

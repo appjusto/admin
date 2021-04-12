@@ -1,7 +1,8 @@
 import { DeleteIcon } from '@chakra-ui/icons';
-import { Checkbox, CheckboxGroup, Flex, HStack, Text } from '@chakra-ui/react';
-import { useBusinesses } from 'app/api/business/useBusinesses';
-import { CustomButton } from 'common/components/buttons/CustomButton';
+import { Flex, HStack, Text } from '@chakra-ui/react';
+import { BusinessesFilter } from 'app/api/search/types';
+import { useBusinessesSearch } from 'app/api/search/useBusinessesSearch';
+import { BusinessAlgolia } from 'appjusto-types';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import React from 'react';
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
@@ -18,28 +19,48 @@ const BusinessesPage = () => {
   // context
   const { path } = useRouteMatch();
   const history = useHistory();
-  const businesses = useBusinesses(options);
+  //const businesses = useBusinesses(options);
   // state
   const [dateTime, setDateTime] = React.useState('');
-  const [searchId, setSearchId] = React.useState('');
-  const [searchName, setSearchName] = React.useState('');
-  const [searchManager, setSearchManager] = React.useState('');
+  const [search, setSearch] = React.useState('');
+  //const [searchName, setSearchName] = React.useState('');
+  //const [searchManager, setSearchManager] = React.useState('');
+  const [filterBar, setFilterBar] = React.useState('all');
+  const [filterCheck, setFilterCheck] = React.useState<string[]>([]);
+  const [filters, setFilters] = React.useState<BusinessesFilter[]>([]);
 
-  const [filterText, setFilterText] = React.useState('all');
-  const [filters, setFilters] = React.useState<string[]>([]);
-
+  const { results: businesses } = useBusinessesSearch<BusinessAlgolia>(
+    true,
+    'businesses',
+    filters,
+    search
+  );
   // handlers
   const closeDrawerHandler = () => history.replace(path);
-
-  const handleFilterTexts = (value: string) => {
-    setFilterText(value);
-  };
 
   // side effects
   React.useEffect(() => {
     const { date, time } = getDateTime();
     setDateTime(`${date} às ${time}`);
   }, []);
+
+  React.useEffect(() => {
+    let barArray = [] as BusinessesFilter[];
+    if (filterBar === 'all') barArray = [] as BusinessesFilter[];
+    else if (filterBar === 'pending')
+      barArray = [
+        { type: 'situation', value: 'pending' },
+        { type: 'situation', value: 'rejected' },
+      ];
+    else barArray = [{ type: 'situation', value: filterBar }];
+
+    /*let checkArray = filterCheck.map((filter) => {
+      if (filter === 'enabled') return { type: 'enabled', value: 'true' };
+      else return { type: 'situation', value: filter };
+    }) as BusinessesFilter[];*/
+
+    setFilters([...barArray]);
+  }, [filterBar, filterCheck]);
   // UI
   return (
     <>
@@ -47,14 +68,14 @@ const BusinessesPage = () => {
       <HStack mt="8" spacing={4}>
         <CustomInput
           mt="0"
-          maxW="212px"
+          w="400px"
           id="search-id"
-          value={searchId}
-          onChange={(event) => setSearchId(event.target.value)}
-          label={t('ID')}
-          placeholder={t('000')}
+          value={search}
+          onChange={(event) => setSearch(event.target.value)}
+          label={t('Buscar')}
+          placeholder={t('Buscar por ID ou nome')}
         />
-        <CustomInput
+        {/*<CustomInput
           mt="0"
           id="search-name"
           value={searchName}
@@ -70,30 +91,36 @@ const BusinessesPage = () => {
           label={t('Administrador')}
           placeholder={t('Nome do responsável')}
         />
-        <CustomButton maxW="200px" label={t('Filtrar resultados')} />
+        <CustomButton maxW="200px" label={t('Filtrar resultados')} />*/}
       </HStack>
       <Flex mt="8" w="100%" justifyContent="space-between" borderBottom="1px solid #C8D7CB">
         <HStack spacing={4}>
           <FilterText
-            isActive={filterText === 'all' ? true : false}
-            onClick={() => handleFilterTexts('all')}
+            isActive={filterBar === 'all' ? true : false}
+            onClick={() => setFilterBar('all')}
           >
             {t('Todos')}
           </FilterText>
           <FilterText
-            isActive={filterText === 'submitted' ? true : false}
-            onClick={() => handleFilterTexts('submitted')}
+            isActive={filterBar === 'submitted' ? true : false}
+            onClick={() => setFilterBar('submitted')}
           >
             {t('Aguardando aprovação')}
           </FilterText>
           <FilterText
-            isActive={filterText === 'blocked' ? true : false}
-            onClick={() => handleFilterTexts('blocked')}
+            isActive={filterBar === 'pending' ? true : false}
+            onClick={() => setFilterBar('pending')}
+          >
+            {t('Pendentes')}
+          </FilterText>
+          <FilterText
+            isActive={filterBar === 'blocked' ? true : false}
+            onClick={() => setFilterBar('blocked')}
           >
             {t('Bloqueados')}
           </FilterText>
         </HStack>
-        <HStack spacing={2} color="#697667" cursor="pointer" onClick={() => {}}>
+        <HStack spacing={2} color="#697667" cursor="pointer" onClick={() => setFilterBar('all')}>
           <DeleteIcon />
           <Text fontSize="15px" lineHeight="21px">
             {t('Limpar filtro')}
@@ -104,10 +131,10 @@ const BusinessesPage = () => {
         <Text fontSize="lg" fontWeight="700" lineHeight="26px">
           {t(`${businesses?.length ?? '0'} itens na lista`)}
         </Text>
-        <CheckboxGroup
+        {/*<CheckboxGroup
           colorScheme="green"
-          value={filters}
-          onChange={(value) => setFilters(value as string[])}
+          value={filterCheck}
+          onChange={(values: string[]) => setFilterCheck(values)}
         >
           <HStack
             alignItems="flex-start"
@@ -126,7 +153,7 @@ const BusinessesPage = () => {
               {t('Live')}
             </Checkbox>
           </HStack>
-        </CheckboxGroup>
+        </CheckboxGroup>*/}
       </HStack>
       <BusinessesTable businesses={businesses} />
       <Switch>

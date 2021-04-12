@@ -42,10 +42,28 @@ export const getDateTime = () => {
 };
 
 export const getDateAndHour = (timestamp: firebase.firestore.Timestamp) => {
-  const timeToDate = timestamp.toDate();
-  const date = I18n.strftime(timeToDate, '%d/%m/%Y');
-  const hour = I18n.strftime(timeToDate, '%H:%M');
-  return `${date} ${hour}`;
+  try {
+    const timeToDate = timestamp.toDate();
+    const date = I18n.strftime(timeToDate, '%d/%m/%Y');
+    const hour = I18n.strftime(timeToDate, '%H:%M');
+    return `${date} ${hour}`;
+  } catch (error) {
+    console.log(error);
+    return 'Erro';
+  }
+};
+
+export const getAlgoliaFieldDateAndHour = (timestamp: firebase.firestore.Timestamp) => {
+  try {
+    //@ts-ignore
+    const date = new Date(timestamp._seconds * 1000).toLocaleDateString();
+    //@ts-ignore
+    const hour = new Date(timestamp._seconds * 1000).toLocaleTimeString();
+    return `${date} - ${hour}`;
+  } catch (error) {
+    console.log(error);
+    return 'Erro';
+  }
 };
 
 // Orders times
@@ -84,11 +102,9 @@ export const getLocalStorageOrderTime = (orderId: string) => {
 export const updateLocalStorageOrderTime = (orderId: string) => {
   const localOrders = localStorage.getItem('appjusto-orders');
   const localOrdersArray = localOrders ? JSON.parse(localOrders) : null;
-  console.log(localOrdersArray);
   if (localOrdersArray) {
     const newArray = localOrdersArray.map((item: localOrderType) => {
       if (item.code === orderId) {
-        console.log(orderId);
         return { ...item, time: new Date().getTime() };
       } else {
         return item;

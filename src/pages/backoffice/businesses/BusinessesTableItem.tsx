@@ -1,12 +1,12 @@
 import { Icon, Td, Tr } from '@chakra-ui/react';
-import { Business, WithId } from 'appjusto-types';
+import { BusinessAlgolia, ProfileSituation } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { useRouteMatch } from 'react-router';
-import { getDateAndHour } from 'utils/functions';
+import { getAlgoliaFieldDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 
 interface ItemProps {
-  business: WithId<Business>;
+  business: BusinessAlgolia;
 }
 
 const options = {
@@ -23,18 +23,18 @@ export const BusinessesTableItem = ({ business }: ItemProps) => {
   // context
   const { path } = useRouteMatch();
   // helpers
-  const status = business.situation;
+  const status = business.situation as ProfileSituation;
   const step = business.onboarding;
   return (
-    <Tr key={business.id} color="black" fontSize="15px" lineHeight="21px">
-      <Td maxW="120px">{business.id}</Td>
+    <Tr key={business.objectID} color="black" fontSize="15px" lineHeight="21px">
+      <Td maxW="120px">{business.code ?? 'N/I'}</Td>
       <Td>
         {business.createdOn
-          ? getDateAndHour(business.createdOn as firebase.firestore.Timestamp)
-          : ''}
+          ? getAlgoliaFieldDateAndHour(business.createdOn as firebase.firestore.Timestamp)
+          : 'N/I'}
       </Td>
       <Td>{business.name ?? 'N/I'}</Td>
-      <Td>{options[status]}</Td>
+      <Td>{options[status] ?? 'N/I'}</Td>
       <Td>{step ? (step === 'completed' ? 'completo' : step) : 'N/I'}</Td>
       <Td>
         <Icon mt="-2px" viewBox="0 0 200 200" color={business?.enabled ? 'green.500' : 'red'}>
@@ -49,7 +49,7 @@ export const BusinessesTableItem = ({ business }: ItemProps) => {
           mt="0"
           variant="outline"
           label={t('Detalhes')}
-          link={`${path}/${business.id}`}
+          link={`${path}/${business.objectID}`}
           size="sm"
         />
       </Td>

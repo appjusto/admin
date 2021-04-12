@@ -8,7 +8,7 @@ export const useBusinessesSearch = <T extends object>(
   enabled: boolean,
   kind: SearchKind,
   filters: BusinessesFilter[],
-  name?: string
+  soughtValue?: string
 ) => {
   // context
   const api = useContextSearchApi();
@@ -36,9 +36,9 @@ export const useBusinessesSearch = <T extends object>(
   // debounce search when search input changes
   React.useEffect(() => {
     if (!enabled) return;
-    if (name === undefined) return;
-    debouncedSearch(name, filters);
-  }, [enabled, name, debouncedSearch, filters]);
+    if (soughtValue === undefined) return;
+    debouncedSearch(soughtValue, filters);
+  }, [enabled, soughtValue, debouncedSearch, filters]);
   // update results when response changes
   React.useEffect(() => {
     if (!response) return;
@@ -49,11 +49,11 @@ export const useBusinessesSearch = <T extends object>(
   }, [response]);
   // result
   const fetchNextPage = React.useCallback(() => {
-    if (name === undefined) return;
+    if (soughtValue === undefined) return;
     if (!response) return;
     const hasNextPage = response.page + 1 < response.nbPages;
-    if (hasNextPage) debouncedSearch(name, filters, response.page + 1);
-  }, [name, response, debouncedSearch, filters]);
+    if (hasNextPage) debouncedSearch(soughtValue, filters, response.page + 1);
+  }, [soughtValue, response, debouncedSearch, filters]);
 
   return { results, isLoading, fetchNextPage };
 };
