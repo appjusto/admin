@@ -13,7 +13,7 @@ export type ObserveBusinessesOptions = {
   inactive?: boolean;
 };
 
-export default class MenuApi {
+export default class BusinessApi {
   constructor(private refs: FirebaseRefs, private files: FilesApi) {}
 
   // businesses
