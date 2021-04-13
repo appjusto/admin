@@ -15,7 +15,7 @@ export const LandingPageFooter = () => {
     const width =
       window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
     if (width > 1000) {
-      if (document.documentElement.scrollTop > 1700) {
+      if (document.documentElement.scrollTop > 1550) {
         setPageLimit(true);
       } else {
         setPageLimit(false);

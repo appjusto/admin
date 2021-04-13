@@ -92,7 +92,7 @@ export const RegistrationForm = () => {
             {t('Cadastre-se agora!')}
           </Heading>
           <Text mt="3" fontSize="16px" fontFamily="Barlow">
-            {t('Ganhe mais e tenha uma experiência mais justa para seus clientes e entregadores!')}
+            {t('Ganhe mais e tenha uma relação mais justa com seus clientes e entregadores!')}
           </Text>
           <form onSubmit={handleSubmit}>
             <CustomInput

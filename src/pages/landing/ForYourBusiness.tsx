@@ -55,7 +55,7 @@ export const ForYourBusiness = () => {
           <Topic
             title={t('Transparência e participação')}
             description={t(
-              'Todas as regras da plataforma serão transparentes e integrantes terão participação nas decisões sobre mudanças.'
+              'Todas as regras da plataforma serão transparentes e haverá canais para que os integrantes participem de decisões sobre mudanças.'
             )}
           />
         </Content>
