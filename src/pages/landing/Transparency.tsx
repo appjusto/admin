@@ -13,7 +13,7 @@ export const Transparency = () => {
       <Container pt="16" color="black">
         <Content>
           <Box maxW={{ md: '312px', lg: '100%' }}>
-            <SectionHeading>{t('Somos transparentes do início ao fim')}</SectionHeading>
+            <SectionHeading>{t('Nosso preço é justo')}</SectionHeading>
             <Text mb="6">
               {t('Compare as taxas cobradas e entenda por que você ganha mais ao usar o AppJusto:')}
             </Text>
@@ -33,7 +33,7 @@ export const Transparency = () => {
                   5%
                 </Text>
                 <Text fontSize="lg" lineHeight="26px">
-                  {t('+ R$ 50 de mensalidade')}
+                  {t('+ 2,21% da operadora financeira')}
                 </Text>
               </Box>
               <Box
@@ -48,13 +48,10 @@ export const Transparency = () => {
                   {t('Outras plataformas')}
                 </Text>
                 <Text mt="6" fontSize="lg" lineHeight="26px">
-                  {t('Esse é o valor médio de quanto você paga para os concorrentes')}
+                  {t('Outras plataformas com logística cobram até')}
                 </Text>
                 <Text fontSize="5xl" fontWeight="700" lineHeight="5xl">
                   27%
-                </Text>
-                <Text fontSize="lg" lineHeight="26px">
-                  {t('+ R$ 100 de mensalidade')}
                 </Text>
               </Box>
             </Flex>

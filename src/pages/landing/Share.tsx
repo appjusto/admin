@@ -11,10 +11,10 @@ export const Share = () => {
     <Section id="shareSection">
       <Container pt="16" pb="24" color="black">
         <Content>
-          <SectionHeading>{t('Divulgue esse movimento')}</SectionHeading>
+          <SectionHeading>{t('Precisamos da força dos restaurantes!')}</SectionHeading>
           <Text mb="6">
             {t(
-              'Para chegar mais rápido a todas as cidades, o AppJusto precisa da sua ajuda. Divulgue nas suas rede e ajude o movimento a crescer:'
+              'Para nos tornarmos uma alternativa viável, precisamos alcançar todas as pessoas interessadas em um delivery mais justo. Nos ajude divulgando nossa proposta nas redes:'
             )}
           </Text>
           <SharingBar />
