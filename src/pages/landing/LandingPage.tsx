@@ -1,5 +1,4 @@
 import { Box } from '@chakra-ui/react';
-import { FAQs } from './FAQs';
 import { ForYourBusiness } from './ForYourBusiness';
 import { Hero } from './Hero';
 import { LandingPageFooter } from './LandingPageFooter';
@@ -14,7 +13,7 @@ const LandingPage = () => {
       <RegistrationForm />
       <Transparency />
       <ForYourBusiness />
-      <FAQs />
+      {/*<FAQs />*/}
       <Share />
       <LandingPageFooter />
     </Box>
