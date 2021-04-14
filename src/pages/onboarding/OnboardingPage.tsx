@@ -35,6 +35,11 @@ const Onboarding = () => {
           <DeliveryArea redirect={`${path}/complete`} onboarding />
         </OnboardingStep>
       </Route>
+      {/*<Route path={`${path}/5`}>
+        <OnboardingStep>
+          <TermsOfUse redirect={`${path}/complete`} />
+        </OnboardingStep>
+      </Route>*/}
       <Route path={`${path}/complete`}>
         <OnboardingComplete />
       </Route>
