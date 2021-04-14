@@ -1,9 +1,10 @@
-import { Box, Flex } from '@chakra-ui/react';
+import { Box, Flex, Text } from '@chakra-ui/react';
 import { useBanks } from 'app/api/business/profile/useBanks';
 import { useBusinessBankAccount } from 'app/api/business/profile/useBusinessBankAccount';
 import { Bank, BankAccount, WithId } from 'appjusto-types';
 import { AlertError } from 'common/components/AlertError';
 import { AlertSuccess } from 'common/components/AlertSuccess';
+import { AlertWarning } from 'common/components/AlertWarning';
 import { CustomPatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';
 import {
   addZerosToBeginning,
@@ -52,6 +53,8 @@ const BankingInformation = ({ onboarding, redirect, backoffice }: OnboardingProp
   const accountFormatter = selectedBank?.accountPattern
     ? hyphenFormatter(selectedBank?.accountPattern.indexOf('-'))
     : undefined;
+
+  const bankWarning = selectedBank?.warning ? selectedBank?.warning.split(/\n/g) : [];
 
   // handlers
   const findSelectedBank = React.useCallback((banks: WithId<Bank>[], bankName: string) => {
@@ -123,11 +126,19 @@ const BankingInformation = ({ onboarding, redirect, backoffice }: OnboardingProp
           onChange={(ev) => setName(ev.target.value)}
           isRequired
         />
+        {selectedBank?.warning && (
+          <AlertWarning icon={false}>
+            {bankWarning.length > 1 &&
+              bankWarning.map((item) => {
+                return <Text>{item}</Text>;
+              })}
+          </AlertWarning>
+        )}
         <CustomPatternInput
           id="banking-agency"
           label={t('Agência')}
           placeholder={
-            (selectedBank?.agencyPattern.indexOf('D') ?? -1) > -1 // think about X
+            (selectedBank?.agencyPattern.indexOf('D') ?? -1) > -1
               ? t('Número da agência com o dígito')
               : t('Número da agência')
           }
