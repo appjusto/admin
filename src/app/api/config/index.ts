@@ -3,7 +3,10 @@ import { AppConfig } from './types';
 export const getConfig = (): AppConfig => {
   return {
     api: {
-      publicURL: process.env.REACT_APP_PUBLIC_URL!,
+      publicURL:
+        process.env.NODE_ENV === 'development'
+          ? 'http://localhost:3000'
+          : process.env.REACT_APP_PUBLIC_URL!,
       firebase: {
         config: {
           apiKey: process.env.REACT_APP_FIREBASE_API_KEY!,
