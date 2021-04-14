@@ -37,6 +37,7 @@ export const ManagerProfile = ({ onboarding, redirect, backoffice }: OnboardingP
   // refs
   const nameRef = React.useRef<HTMLInputElement>(null);
   const cpfRef = React.useRef<HTMLInputElement>(null);
+  const phoneNumberRef = React.useRef<HTMLInputElement>(null);
 
   // helpers
   const isCPFValid = () => cpfutils.isValid(cpf);
@@ -58,9 +59,8 @@ export const ManagerProfile = ({ onboarding, redirect, backoffice }: OnboardingP
 
   // handlers
   const onSubmitHandler = async () => {
-    if (!isCPFValid()) {
-      return cpfRef?.current?.focus();
-    }
+    if (!isCPFValid()) return cpfRef?.current?.focus();
+    if (phoneNumber.length < 11) return phoneNumberRef?.current?.focus();
     await updateProfile({
       name,
       surname,
@@ -110,6 +110,7 @@ export const ManagerProfile = ({ onboarding, redirect, backoffice }: OnboardingP
         />
         <CustomPatternInput
           isRequired
+          ref={phoneNumberRef}
           id="manager-phone"
           label={t('Celular')}
           placeholder={t('Número do seu celular')}

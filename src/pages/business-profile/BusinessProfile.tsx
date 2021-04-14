@@ -53,6 +53,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const [isLoading, setIsLoading] = React.useState(false);
   // refs
   const cnpjRef = React.useRef<HTMLInputElement>(null);
+  const phoneRef = React.useRef<HTMLInputElement>(null);
   const minimumOrderRef = React.useRef<HTMLInputElement>(null);
   // queries & mutations
   const {
@@ -73,12 +74,9 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const isCNPJValid = () => cnpjutils.isValid(cnpj);
 
   const onSubmitHandler = async () => {
-    if (minimumOrder === 0) {
-      return minimumOrderRef.current?.focus();
-    }
-    if (!isCNPJValid()) {
-      return cnpjRef?.current?.focus();
-    }
+    //if (minimumOrder === 0) return minimumOrderRef.current?.focus();
+    if (!isCNPJValid()) return cnpjRef?.current?.focus();
+    if (phone.length < 10) return phoneRef?.current?.focus();
     setIsLoading(true);
     if (logoFiles) await uploadLogo(logoFiles[0]);
     if (coverFiles) await uploadCover(coverFiles);
@@ -180,6 +178,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
             />
             <PatternInput
               isRequired
+              ref={phoneRef}
               id="business-phone"
               label={t('Telefone/Celular')}
               placeholder={t('Número do seu telefone ou celular')}

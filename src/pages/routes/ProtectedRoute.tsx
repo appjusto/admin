@@ -26,7 +26,7 @@ export const ProtectedRoute = (props: RouteProps) => {
       return () => clearTimeout(uid);
     }
     if (user && (manager || agent)) setStatus('profile-loaded');
-  }, [user, manager]);
+  }, [user, agent, manager]);
 
   // UI
   // redirects to / when user is not authenticated
