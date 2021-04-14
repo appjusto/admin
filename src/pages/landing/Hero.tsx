@@ -17,7 +17,7 @@ interface HeroTopicProps extends BoxProps {
 const HeroTopic = ({ title, ps, ...props }: HeroTopicProps) => {
   return (
     <HStack spacing={4} alignItems="center" {...props}>
-      <Image src={check} width="24px" height="48px" eagerLoading />
+      <Image src={check} width="22px" height="44px" eagerLoading />
       <Box color="white">
         <Heading
           as="h2"

@@ -1,4 +1,5 @@
 import { Box } from '@chakra-ui/react';
+import * as cpfutils from '@fnando/cpf';
 import { useUpdateManagerProfile } from 'app/api/manager/useUpdateManagerProfile';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextManagerProfile } from 'app/state/manager/context';
@@ -35,6 +36,10 @@ export const ManagerProfile = ({ onboarding, redirect, backoffice }: OnboardingP
 
   // refs
   const nameRef = React.useRef<HTMLInputElement>(null);
+  const cpfRef = React.useRef<HTMLInputElement>(null);
+
+  // helpers
+  const isCPFValid = () => cpfutils.isValid(cpf);
 
   // side effects
   React.useEffect(() => {
@@ -53,6 +58,9 @@ export const ManagerProfile = ({ onboarding, redirect, backoffice }: OnboardingP
 
   // handlers
   const onSubmitHandler = async () => {
+    if (!isCPFValid()) {
+      return cpfRef?.current?.focus();
+    }
     await updateProfile({
       name,
       surname,
@@ -114,6 +122,7 @@ export const ManagerProfile = ({ onboarding, redirect, backoffice }: OnboardingP
         />
         <CustomPatternInput
           isRequired
+          ref={cpfRef}
           id="manager-cpf"
           label={t('CPF')}
           placeholder={t('Número do seu CPF')}
@@ -122,7 +131,7 @@ export const ManagerProfile = ({ onboarding, redirect, backoffice }: OnboardingP
           formatter={cpfFormatter}
           value={cpf}
           onValueChange={(value) => setCPF(value)}
-          validationLength={11}
+          externalValidation={{ active: true, status: isCPFValid() }}
         />
         <PageFooter onboarding={onboarding} redirect={redirect} isLoading={isLoading} />
         {!onboarding && isSuccess && (

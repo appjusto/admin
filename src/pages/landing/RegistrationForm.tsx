@@ -120,6 +120,7 @@ export const RegistrationForm = () => {
               <Link
                 href="https://github.com/appjusto/docs/blob/main/legal/termo-tratamento-de-dados.md"
                 isExternal
+                textDecor="underline"
               >
                 {t('Li e aceito os termos de uso')}
               </Link>
