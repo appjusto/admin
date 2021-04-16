@@ -9,16 +9,6 @@ interface ItemProps {
   order: WithId<Order>;
 }
 
-const options = {
-  pending: 'Pendente',
-  submitted: 'Submetido',
-  verified: 'Verificado',
-  approved: 'Aprovado',
-  rejected: 'Rejeitado',
-  blocked: 'Bloqueado',
-  deleted: 'Deletado',
-};
-
 export const OrdersTableItem = ({ order }: ItemProps) => {
   // context
   const { path } = useRouteMatch();

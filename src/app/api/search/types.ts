@@ -4,3 +4,8 @@ export type BusinessesFilter = {
   type: 'enabled' | 'situation';
   value: string;
 };
+
+export type CouriersFilter = {
+  type: 'situation';
+  value: string;
+};

@@ -1,37 +1,29 @@
 import { Icon, Td, Tr } from '@chakra-ui/react';
-import { CourierProfile, WithId } from 'appjusto-types';
+import { CourierAlgolia, ProfileSituation } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { useRouteMatch } from 'react-router';
-import { getDateAndHour } from 'utils/functions';
+import { getAlgoliaFieldDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
-
+import { situationPTOptions } from '../utils';
 interface ItemProps {
-  courier: WithId<CourierProfile>;
+  courier: CourierAlgolia;
 }
-
-const options = {
-  pending: 'Pendente',
-  submitted: 'Submetido',
-  verified: 'Verificado',
-  approved: 'Aprovado',
-  rejected: 'Rejeitado',
-  blocked: 'Bloqueado',
-  deleted: 'Deletado',
-};
 
 export const CouriersTableItem = ({ courier }: ItemProps) => {
   // context
   const { path } = useRouteMatch();
   // helpers
-  const status = courier.situation;
+  const status = courier.situation as ProfileSituation;
   return (
-    <Tr key={courier.id} color="black" fontSize="15px" lineHeight="21px">
-      <Td maxW="120px">{courier.id}</Td>
+    <Tr key={courier.objectID} color="black" fontSize="15px" lineHeight="21px">
+      <Td maxW="120px">{courier.code}</Td>
       <Td>
-        {courier.createdOn ? getDateAndHour(courier.createdOn as firebase.firestore.Timestamp) : ''}
+        {courier.createdOn
+          ? getAlgoliaFieldDateAndHour(courier.createdOn as firebase.firestore.Timestamp)
+          : 'N/I'}
       </Td>
       <Td>{courier.name ?? 'N/I'}</Td>
-      <Td>{options[status]}</Td>
+      <Td>{situationPTOptions[status] ?? 'N/I'}</Td>
       <Td>
         <Icon
           mt="-2px"
@@ -49,7 +41,7 @@ export const CouriersTableItem = ({ courier }: ItemProps) => {
           mt="0"
           variant="outline"
           label={t('Detalhes')}
-          link={`${path}/${courier.id}`}
+          link={`${path}/${courier.objectID}`}
           size="sm"
         />
       </Td>

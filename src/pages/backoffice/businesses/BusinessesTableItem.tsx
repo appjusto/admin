@@ -4,20 +4,10 @@ import { CustomButton } from 'common/components/buttons/CustomButton';
 import { useRouteMatch } from 'react-router';
 import { getAlgoliaFieldDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
-
+import { situationPTOptions } from '../utils';
 interface ItemProps {
   business: BusinessAlgolia;
 }
-
-const options = {
-  pending: 'Pendente',
-  submitted: 'Submetido',
-  verified: 'Verificado',
-  approved: 'Aprovado',
-  rejected: 'Rejeitado',
-  blocked: 'Bloqueado',
-  deleted: 'Deletado',
-};
 
 export const BusinessesTableItem = ({ business }: ItemProps) => {
   // context
@@ -34,7 +24,7 @@ export const BusinessesTableItem = ({ business }: ItemProps) => {
           : 'N/I'}
       </Td>
       <Td>{business.name ?? 'N/I'}</Td>
-      <Td>{options[status] ?? 'N/I'}</Td>
+      <Td>{situationPTOptions[status] ?? 'N/I'}</Td>
       <Td>{step ? (step === 'completed' ? 'completo' : step) : 'N/I'}</Td>
       <Td>
         <Icon mt="-2px" viewBox="0 0 200 200" color={business?.enabled ? 'green.500' : 'red'}>

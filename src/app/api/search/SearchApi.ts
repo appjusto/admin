@@ -1,6 +1,6 @@
 import algoliasearch, { SearchClient, SearchIndex } from 'algoliasearch/lite';
 import { AlgoliaConfig, Environment } from 'appjusto-types';
-import { BusinessesFilter, SearchKind } from './types';
+import { BusinessesFilter, CouriersFilter, SearchKind } from './types';
 
 export default class SearchApi {
   private client: SearchClient;
@@ -48,6 +48,31 @@ export default class SearchApi {
     return index.search<T>(query, {
       page,
       filters: this.createBusinessesFilters(filters),
+    });
+  }
+
+  private createCouriersFilters(filters?: CouriersFilter[]) {
+    return filters
+      ?.reduce<string[]>((result, filter) => {
+        if (filter.type === 'situation') {
+          return [...result, `situation: ${filter.value}`];
+        }
+        return result;
+      }, [])
+      .join(' OR ');
+  }
+
+  couriersSearch<T>(
+    kind: SearchKind,
+    filters: CouriersFilter[],
+    query: string = '',
+    page?: number
+  ) {
+    const index = this.getSearchIndex(kind);
+    if (!index) throw new Error('Invalid index');
+    return index.search<T>(query, {
+      page,
+      filters: this.createCouriersFilters(filters),
     });
   }
 }

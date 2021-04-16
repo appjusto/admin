@@ -32,7 +32,7 @@ export const BusinessesTable = ({ businesses }: BusinessesTableProps) => {
             })
           ) : (
             <Tr color="black" fontSize="xs" fontWeight="700">
-              <Td>{t('Sem resultados para o número informado')}</Td>
+              <Td>{t('A busca não encontrou resultados')}</Td>
               <Td></Td>
               <Td></Td>
               <Td></Td>

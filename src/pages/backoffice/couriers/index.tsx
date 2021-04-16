@@ -1,6 +1,8 @@
 import { DeleteIcon } from '@chakra-ui/icons';
-import { Checkbox, CheckboxGroup, Flex, HStack, Text } from '@chakra-ui/react';
-import { CourierProfile, WithId } from 'appjusto-types';
+import { Flex, HStack, Text } from '@chakra-ui/react';
+import { CouriersFilter } from 'app/api/search/types';
+import { useCouriersSearch } from 'app/api/search/useCouriersSearch';
+import { CourierAlgolia } from 'appjusto-types';
 import { FilterText } from 'common/components/backoffice/FilterText';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import React from 'react';
@@ -11,33 +13,45 @@ import PageHeader from '../../PageHeader';
 import { BusinessDrawer } from '../drawers/business';
 import { CouriersTable } from './CouriersTable';
 
-const options = { active: true, inactive: true };
-
 const CouriersPage = () => {
   // context
   const { path } = useRouteMatch();
   const history = useHistory();
-  const couriers = [] as WithId<CourierProfile>[];
   // state
   const [dateTime, setDateTime] = React.useState('');
   const [search, setSearch] = React.useState('');
-  const [searchName, setSearchName] = React.useState('');
 
-  const [filterText, setFilterText] = React.useState('all');
-  const [filters, setFilters] = React.useState<string[]>([]);
+  const [filterBar, setFilterBar] = React.useState('all');
+  const [filters, setFilters] = React.useState<CouriersFilter[]>([]);
+
+  const { results: couriers } = useCouriersSearch<CourierAlgolia>(
+    true,
+    'couriers',
+    filters,
+    search
+  );
 
   // handlers
   const closeDrawerHandler = () => history.replace(path);
-
-  const handleFilterTexts = (value: string) => {
-    setFilterText(value);
-  };
 
   // side effects
   React.useEffect(() => {
     const { date, time } = getDateTime();
     setDateTime(`${date} às ${time}`);
   }, []);
+
+  React.useEffect(() => {
+    let barArray = [] as CouriersFilter[];
+    if (filterBar === 'all') barArray = [] as CouriersFilter[];
+    else if (filterBar === 'pending')
+      barArray = [
+        { type: 'situation', value: 'pending' },
+        { type: 'situation', value: 'rejected' },
+      ];
+    else barArray = [{ type: 'situation', value: filterBar }];
+    setFilters([...barArray]);
+  }, [filterBar]);
+
   // UI
   return (
     <>
@@ -56,25 +70,31 @@ const CouriersPage = () => {
       <Flex mt="8" w="100%" justifyContent="space-between" borderBottom="1px solid #C8D7CB">
         <HStack spacing={4}>
           <FilterText
-            isActive={filterText === 'all' ? true : false}
-            onClick={() => handleFilterTexts('all')}
+            isActive={filterBar === 'all' ? true : false}
+            onClick={() => setFilterBar('all')}
           >
             {t('Todos')}
           </FilterText>
           <FilterText
-            isActive={filterText === 'las30days' ? true : false}
-            onClick={() => handleFilterTexts('las30days')}
+            isActive={filterBar === 'approved' ? true : false}
+            onClick={() => setFilterBar('approved')}
           >
-            {t('Ativos nos últimos 30 dias')}
+            {t('Ativos')}
           </FilterText>
           <FilterText
-            isActive={filterText === 'blocked' ? true : false}
-            onClick={() => handleFilterTexts('blocked')}
+            isActive={filterBar === 'pending' ? true : false}
+            onClick={() => setFilterBar('pending')}
+          >
+            {t('Pendentes')}
+          </FilterText>
+          <FilterText
+            isActive={filterBar === 'blocked' ? true : false}
+            onClick={() => setFilterBar('blocked')}
           >
             {t('Bloqueados')}
           </FilterText>
         </HStack>
-        <HStack spacing={2} color="#697667" cursor="pointer" onClick={() => {}}>
+        <HStack spacing={2} color="#697667" cursor="pointer" onClick={() => setFilterBar('all')}>
           <DeleteIcon />
           <Text fontSize="15px" lineHeight="21px">
             {t('Limpar filtro')}
@@ -85,29 +105,6 @@ const CouriersPage = () => {
         <Text fontSize="lg" fontWeight="700" lineHeight="26px">
           {t(`${couriers?.length ?? '0'} itens na lista`)}
         </Text>
-        <CheckboxGroup
-          colorScheme="green"
-          value={filters}
-          onChange={(value) => setFilters(value as string[])}
-        >
-          <HStack
-            alignItems="flex-start"
-            color="black"
-            spacing={8}
-            fontSize="16px"
-            lineHeight="22px"
-          >
-            <Checkbox iconColor="white" value="approved">
-              {t('Ativos')}
-            </Checkbox>
-            <Checkbox iconColor="white" value="pending">
-              {t('Pendentes')}
-            </Checkbox>
-            <Checkbox iconColor="white" value="enabled">
-              {t('Live')}
-            </Checkbox>
-          </HStack>
-        </CheckboxGroup>
       </HStack>
       <CouriersTable couriers={couriers} />
       <Switch>

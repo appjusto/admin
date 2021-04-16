@@ -12,8 +12,6 @@ import PageHeader from '../../PageHeader';
 import { BusinessDrawer } from '../drawers/business';
 import { OrdersTable } from './OrdersTable';
 
-const options = { active: true, inactive: true };
-
 const OrdersPage = () => {
   // context
   const { path } = useRouteMatch();

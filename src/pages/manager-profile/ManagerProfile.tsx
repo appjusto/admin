@@ -42,6 +42,18 @@ export const ManagerProfile = ({ onboarding, redirect, backoffice }: OnboardingP
   // helpers
   const isCPFValid = () => cpfutils.isValid(cpf);
 
+  // handlers
+  const onSubmitHandler = async () => {
+    if (!isCPFValid()) return cpfRef?.current?.focus();
+    if (phoneNumber.length < 11) return phoneNumberRef?.current?.focus();
+    await updateProfile({
+      name,
+      surname,
+      phone: phoneNumber,
+      cpf,
+    });
+  };
+
   // side effects
   React.useEffect(() => {
     if (onboarding) window?.scrollTo(0, 0);
@@ -56,18 +68,6 @@ export const ManagerProfile = ({ onboarding, redirect, backoffice }: OnboardingP
       if (manager.cpf) setCPF(manager.cpf);
     }
   }, [manager]);
-
-  // handlers
-  const onSubmitHandler = async () => {
-    if (!isCPFValid()) return cpfRef?.current?.focus();
-    if (phoneNumber.length < 11) return phoneNumberRef?.current?.focus();
-    await updateProfile({
-      name,
-      surname,
-      phone: phoneNumber,
-      cpf,
-    });
-  };
 
   // UI
   if (isSuccess && redirect) return <Redirect to={redirect} push />;

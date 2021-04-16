@@ -13,8 +13,6 @@ import PageHeader from '../../PageHeader';
 import { BusinessDrawer } from '../drawers/business';
 import { BusinessesTable } from './BusinessesTable';
 
-const options = { active: true, inactive: true };
-
 const BusinessesPage = () => {
   // context
   const { path } = useRouteMatch();
@@ -26,7 +24,7 @@ const BusinessesPage = () => {
   //const [searchName, setSearchName] = React.useState('');
   //const [searchManager, setSearchManager] = React.useState('');
   const [filterBar, setFilterBar] = React.useState('all');
-  const [filterCheck, setFilterCheck] = React.useState<string[]>([]);
+  //const [filterCheck, setFilterCheck] = React.useState<string[]>([]);
   const [filters, setFilters] = React.useState<BusinessesFilter[]>([]);
 
   const { results: businesses } = useBusinessesSearch<BusinessAlgolia>(
@@ -60,7 +58,7 @@ const BusinessesPage = () => {
     }) as BusinessesFilter[];*/
 
     setFilters([...barArray]);
-  }, [filterBar, filterCheck]);
+  }, [filterBar]);
   // UI
   return (
     <>
