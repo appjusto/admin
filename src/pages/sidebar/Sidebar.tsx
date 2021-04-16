@@ -1,5 +1,5 @@
 import { Box } from '@chakra-ui/react';
-import { useFirebaseUserRole } from 'app/api/auth/useFirebaseUserRole';
+import { useContextAgentProfile } from 'app/state/agent/context';
 import Image from 'common/components/Image';
 import logo from 'common/img/logo.svg';
 import React from 'react';
@@ -12,7 +12,7 @@ import { ManagerBar } from './ManagerBar';
 const Sidebar = () => {
   // context
   const { path } = useRouteMatch();
-  const { isBackofficeUser } = useFirebaseUserRole();
+  const { isBackofficeUser } = useContextAgentProfile();
   const isBackOffice = path.includes('backoffice');
   return (
     <Box
