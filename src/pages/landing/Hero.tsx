@@ -1,5 +1,4 @@
 import { Box, BoxProps, Flex, Heading, HStack, Text } from '@chakra-ui/react';
-import { CustomButton as Button } from 'common/components/buttons/CustomButton';
 import Container from 'common/components/Container';
 import Image from 'common/components/Image';
 import check from 'common/img/green-check.svg';
@@ -18,7 +17,7 @@ interface HeroTopicProps extends BoxProps {
 const HeroTopic = ({ title, ps, ...props }: HeroTopicProps) => {
   return (
     <HStack spacing={4} alignItems="center" {...props}>
-      <Image src={check} width="24px" height="48px" eagerLoading />
+      <Image src={check} width="22px" height="44px" eagerLoading />
       <Box color="white">
         <Heading
           as="h2"
@@ -40,7 +39,6 @@ export const Hero = () => {
       <Container zIndex="100">
         <Flex justifyContent="space-between" alignItems="flex-start">
           <Image src={logo} width={{ base: '112px', md: '168px' }} eagerLoading />
-          <Button mt="0" variant="white" size="lg" link="/app" label={t('Entrar')} />
         </Flex>
         <Content>
           <Flex mt="8" flexDir="column">
@@ -55,12 +53,10 @@ export const Hero = () => {
               {t('Ganhe mais com seu restaurante no AppJusto')}
             </Heading>
             <HeroTopic mt="4" title={t('Menores taxas do mercado')} />
-            <HeroTopic
-              title={t('Inclusão automática do cardápio*')}
-              ps={t('*Sujeito a condições pré-estabelecidas no momento do cadastro')}
-            />
+            <HeroTopic title={t('Exibição igualitária')} />
             <HeroTopic title={t('Logística inclusa')} />
             <HeroTopic title={t('Acesso direto ao cliente')} />
+            <HeroTopic title={t('Transparência e participação')} />
           </Flex>
         </Content>
       </Container>

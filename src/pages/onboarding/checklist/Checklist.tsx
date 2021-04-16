@@ -31,6 +31,7 @@ export const Checklist = ({ disabled, ...props }: Props) => {
     t('Criar perfil do restaurante'),
     t('Cadastrar dados bancários'),
     t('Definir endereço e raio de entrega'),
+    //t('Contrato de serviço e termos de uso'),
     // t('Incluir o cardápio'),
     // t('Adicionar colaboradores')
   ];

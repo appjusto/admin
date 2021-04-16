@@ -33,31 +33,29 @@ export const ForYourBusiness = () => {
       <Container pt="16" color="black">
         <Content>
           <SectionHeading>{t('Uma plataforma completa para o seu negócio')}</SectionHeading>
-          <Text mb="2">
-            {t('Entenda como o AppJusto vai ajudar o seu negócio a ser mais justo:')}
-          </Text>
+          <Text mb="2">{t('Entenda as vantagens que o AppJusto traz para o seu negócio:')}</Text>
           <Topic
-            title={t('Preço de cardápio')}
+            title={t('Exibição igualitária')}
             description={t(
-              'O seu restaurante pode praticar o preço de cardápio, pois não será mais necessário passar um custo extra ao cliente.'
+              'A organização da lista de restaurantes é primariamente por distância, sem que hajam beneficiados ou prejudicados.'
             )}
           />
           <Topic
-            title={t('Plataforma completa')}
+            title={t('Logística inclusa')}
             description={t(
-              'Você terá disponível uma plataforma completa de acompanhamento de pedidos, lucros, recebimentos e mais.'
+              'A operação logística é por nossa conta, e os entregadores são valorizados e bem remunerados.'
             )}
           />
           <Topic
-            title={t('Melhor para entregadores')}
+            title={t('Acesso aos clientes')}
             description={t(
-              'Os entregadores também ganham com o AppJusto, podendo criar frotas próprias e receber mais pelo serviço prestado.'
+              'Pelo AppJusto os restaurantes voltam a ter acesso aos clientes, com dados como nome, endereço e telefone, sendo disponibilizados sempre que permitirem.'
             )}
           />
           <Topic
-            title={t('Clientes satisfeitos')}
+            title={t('Transparência e participação')}
             description={t(
-              'Além de pagar o preço de cardápio, os clientes tem a satisfação de participar de uma sistema mais justo para todos.'
+              'Todas as regras da plataforma serão transparentes e haverá canais para que os integrantes participem de decisões sobre mudanças.'
             )}
           />
         </Content>

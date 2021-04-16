@@ -51,7 +51,7 @@ const Login = () => {
       >
         <Image src={logo} scrollCheck={false} mb="8" />
         <Text fontSize="xl" textAlign="center">
-          {t('Portal do Parceiro')}
+          {t('Portal do Restaurante')}
         </Text>
         <Text fontSize="md" textAlign="center" color="gray.500">
           {t('Gerencie seu estabelecimento')}

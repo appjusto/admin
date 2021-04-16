@@ -2,6 +2,7 @@ import { Box, Button, Checkbox, Flex, Heading, HStack, Image, Link, Text } from 
 import { useContextApi } from 'app/state/api/context';
 import { AlertSuccess } from 'common/components/AlertSuccess';
 import { AlertWarning } from 'common/components/AlertWarning';
+import { CustomButton } from 'common/components/buttons/CustomButton';
 import Container from 'common/components/Container';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import delivery from 'common/img/big-delivery.svg';
@@ -51,7 +52,7 @@ export const RegistrationForm = () => {
       setFormMsg({
         status: true,
         type: 'success',
-        message: 'O link de acesso foi enviado para seu e-mail',
+        message: 'Clique no link para confirmar',
       });
     }
   }, [isError, isSuccess, error]);
@@ -61,7 +62,7 @@ export const RegistrationForm = () => {
     <Section
       position={{ base: 'relative', md: 'fixed' }}
       top={{ md: '0' }}
-      mt={{ base: '-80px', md: '108px' }}
+      mt={{ base: '-80px', md: '100px' }}
       zIndex="800"
     >
       <Container pt="0" display="flex" justifyContent="flex-end">
@@ -73,16 +74,25 @@ export const RegistrationForm = () => {
           p="24px"
           color="black"
         >
-          <Box position="relative" width="84px" mt="-50px">
-            <Image src={delivery} />
-          </Box>
+          <Flex justifyContent="space-between" alignItems="center">
+            <Box position="relative" width="84px">
+              <Image src={delivery} />
+            </Box>
+            <CustomButton
+              mt="0"
+              variant="white"
+              size="lg"
+              link="/app"
+              fontSize="sm"
+              lineHeight="21px"
+              label={t('Já sou cadastrado')}
+            />
+          </Flex>
           <Heading mt="4" as="h2" fontSize="24px">
             {t('Cadastre-se agora!')}
           </Heading>
-          <Text mt="4" fontSize="16px" fontFamily="Barlow">
-            {t(
-              'Ganhe mais no seu restaurante, e tenha uma experiência mais justa para seus clientes e entregadores!'
-            )}
+          <Text mt="3" fontSize="16px" fontFamily="Barlow">
+            {t('Ganhe mais e tenha uma relação mais justa com seus clientes e entregadores!')}
           </Text>
           <form onSubmit={handleSubmit}>
             <CustomInput
@@ -110,38 +120,44 @@ export const RegistrationForm = () => {
               <Link
                 href="https://github.com/appjusto/docs/blob/main/legal/termo-tratamento-de-dados.md"
                 isExternal
+                textDecor="underline"
               >
                 {t('Li e aceito os termos de uso')}
               </Link>
             </HStack>
-            <Button
-              mt="4"
-              w="100%"
-              type="submit"
-              variant="registration"
-              isLoading={isLoading}
-              loadingText={t('Enviando')}
-            >
-              {t('Começar cadastro')}
-            </Button>
-            {!formMsg.status && (
+            {!isSuccess ? (
+              <Button
+                mt="4"
+                w="100%"
+                type="submit"
+                variant="registration"
+                isLoading={isLoading}
+                loadingText={t('Enviando')}
+              >
+                {t('Começar cadastro')}
+              </Button>
+            ) : (
+              <AlertSuccess
+                title={t('Link enviado para o seu e-mail')}
+                description={formMsg.message}
+                fontSize="sm"
+              />
+            )}
+            {formMsg.type !== 'error' && (
               <Text mt="4" fontSize="xs" lineHeight="lg">
                 {t(
-                  'Ao começar o cadastro, você aceita receber nosso contato por telefone, e-mail ou whatsapp quando for necessário'
+                  'Ao cadastrar, você aceita receber contato por telefone, e-mail ou whatsapp quando necessário'
                 )}
               </Text>
             )}
           </form>
-          {formMsg.status &&
-            (formMsg.type === 'error' ? (
-              <AlertWarning
-                title={t('Erro de envio')}
-                description={formMsg.message}
-                fontSize="sm"
-              />
-            ) : (
-              <AlertSuccess title={t('Pronto!')} description={formMsg.message} fontSize="sm" />
-            ))}
+          {formMsg.type === 'error' && (
+            <AlertWarning
+              //title={t('Erro de envio')}
+              description={formMsg.message}
+              fontSize="sm"
+            />
+          )}
         </Flex>
       </Container>
     </Section>

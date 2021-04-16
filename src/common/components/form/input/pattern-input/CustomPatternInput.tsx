@@ -61,16 +61,18 @@ export const CustomPatternInput = React.forwardRef<HTMLInputElement, PatternInpu
     };
     // side effects
     React.useEffect(() => {
-      if (validationLength) {
-        if (value && value.toString().length < validationLength) {
-          setIsInvalid(true);
-        } else {
-          setIsInvalid(false);
+      if (value && value.toString().length > 0) {
+        if (validationLength) {
+          if (value.toString().length < validationLength) {
+            setIsInvalid(true);
+          } else {
+            setIsInvalid(false);
+          }
         }
-      }
-      if (externalValidation?.active) {
-        setIsInvalid(!externalValidation.status);
-      }
+        if (externalValidation?.active) {
+          setIsInvalid(!externalValidation.status);
+        }
+      } else setIsInvalid(false);
     }, [value, validationLength, externalValidation]);
 
     // UI

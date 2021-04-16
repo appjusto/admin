@@ -1,4 +1,4 @@
-import { Box, Text, useBreakpoint } from '@chakra-ui/react';
+import { Box, Flex, Switch as ChakraSwitch, Text, useBreakpoint } from '@chakra-ui/react';
 import * as cnpjutils from '@fnando/cnpj';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useContextBusiness } from 'app/state/business/context';
@@ -46,6 +46,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const [cuisineName, setCuisineName] = React.useState(business?.cuisine ?? '');
   const [description, setDescription] = React.useState(business?.description ?? '');
   const [minimumOrder, setMinimumOrder] = React.useState(business?.minimumOrder ?? 0);
+  const [enabled, setEnabled] = React.useState(business?.enabled ?? false);
   const [logoExists, setLogoExists] = React.useState(false);
   const [coverExists, setCoverExists] = React.useState(false);
   const [logoFiles, setLogoFiles] = React.useState<File[] | null>(null);
@@ -53,6 +54,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const [isLoading, setIsLoading] = React.useState(false);
   // refs
   const cnpjRef = React.useRef<HTMLInputElement>(null);
+  const phoneRef = React.useRef<HTMLInputElement>(null);
   const minimumOrderRef = React.useRef<HTMLInputElement>(null);
   // queries & mutations
   const {
@@ -73,12 +75,9 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const isCNPJValid = () => cnpjutils.isValid(cnpj);
 
   const onSubmitHandler = async () => {
-    if (minimumOrder === 0) {
-      return minimumOrderRef.current?.focus();
-    }
-    if (!isCNPJValid()) {
-      return cnpjRef?.current?.focus();
-    }
+    //if (minimumOrder === 0) return minimumOrderRef.current?.focus();
+    if (!isCNPJValid()) return cnpjRef?.current?.focus();
+    if (phone.length < 10) return phoneRef?.current?.focus();
     setIsLoading(true);
     if (logoFiles) await uploadLogo(logoFiles[0]);
     if (coverFiles) await uploadCover(coverFiles);
@@ -88,6 +87,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
       cnpj,
       description,
       minimumOrder,
+      enabled,
       cuisine: cuisineName,
       logoExists: logoExists,
       coverImageExists: coverExists,
@@ -180,6 +180,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
             />
             <PatternInput
               isRequired
+              ref={phoneRef}
               id="business-phone"
               label={t('Telefone/Celular')}
               placeholder={t('Número do seu telefone ou celular')}
@@ -256,6 +257,30 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
             getImages={getCoverFiles}
             clearDrop={() => clearDropImages('cover')}
           />
+          {!onboarding && business?.situation === 'approved' && (
+            <>
+              <Text mt="8" fontSize="xl" color="black">
+                {t('Desligar restaurante do AppJusto')}
+              </Text>
+              <Text mt="2" fontSize="md">
+                {t('O restaurante não aparecerá no app enquanto estiver desligado')}
+              </Text>
+              <Flex mt="4" pb="8" alignItems="center">
+                <ChakraSwitch
+                  isChecked={enabled}
+                  onChange={(ev) => {
+                    ev.stopPropagation();
+                    setEnabled(ev.target.checked);
+                  }}
+                />
+                <Flex ml="4" flexDir="column" minW="280px">
+                  <Text fontSize="16px" fontWeight="700" lineHeight="22px">
+                    {enabled ? t('Ligado') : t('Desligado')}
+                  </Text>
+                </Flex>
+              </Flex>
+            </>
+          )}
           {/* submit */}
           <PageFooter
             onboarding={onboarding}

@@ -29,7 +29,7 @@ export const Links = () => {
     <Box>
       <Box>
         <LinkItem to={`${url}`} label={t('Início')} />
-        {isApproved ? (
+        {isApproved && isDev ? (
           <LinkItem to={`${url}/orders`} label={t('Gerenciador de pedidos')} />
         ) : (
           <DisabledLink label={t('Gerenciador de pedidos')} />
