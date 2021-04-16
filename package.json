@@ -25,7 +25,7 @@
     "@types/react-image-crop": "^8.1.2",
     "@types/react-router-dom": "^5.1.6",
     "@types/react-scroll": "^1.8.2",
-    "algoliasearch": "^4.8.6",
+    "algoliasearch": "^4.9.0",
     "appjusto-types": "../types",
     "axios": "^0.21.0",
     "browser-image-compression": "^1.0.14",
