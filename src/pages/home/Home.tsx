@@ -21,9 +21,7 @@ const Home = () => {
   const { isBackofficeUser } = useContextAgentProfile();
   const { business } = useContextBusiness();
   const { path } = useRouteMatch();
-  console.log(isBackofficeUser);
-  console.log(business);
-  console.log(business?.onboarding);
+
   // UI
   if (!business) {
     if (isBackofficeUser) return <Redirect to="/backoffice" />;

@@ -3,7 +3,6 @@ import { useContextApi } from 'app/state/api/context';
 import { useContextFirebaseUserEmail, useContextFirebaseUserId } from 'app/state/auth/context';
 import { ManagerProfile, WithId } from 'appjusto-types';
 import React from 'react';
-import { useFirebaseUserRole } from '../auth/useFirebaseUserRole';
 
 export const useManagerProfile = () => {
   // contex
