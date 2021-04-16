@@ -16,17 +16,17 @@ export const useManagerProfile = () => {
   const [manager, setManager] = React.useState<WithId<ManagerProfile> | undefined | null>();
 
   // side effects
-  // observe profile for no backoffice users
+  // observe profile for no regular users
   React.useEffect(() => {
     if (!isBackofficeUser && id) {
       return api.manager().observeProfile(id, setManager);
     }
   }, [api, id, isBackofficeUser]);
-  // observe profile
+
+  // observe profile for backoffice users
   React.useEffect(() => {
-    if (isBackofficeUser && managerEmail) {
+    if (isBackofficeUser && managerEmail)
       return api.manager().observeProfileByEmail(managerEmail, setManager);
-    }
   }, [api, isBackofficeUser, managerEmail]);
 
   // create profile for regular users if it doesn't exist
