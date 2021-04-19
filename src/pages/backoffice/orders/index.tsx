@@ -1,5 +1,5 @@
-import { DeleteIcon } from '@chakra-ui/icons';
-import { Flex, HStack, Radio, RadioGroup, Text } from '@chakra-ui/react';
+import { ArrowDownIcon, DeleteIcon } from '@chakra-ui/icons';
+import { Button, Flex, HStack, Radio, RadioGroup, Text } from '@chakra-ui/react';
 import { useOrdersSearch } from 'app/api/search/useOrdersSearch';
 import { OrderStatus, OrderType } from 'appjusto-types';
 import { OrderAlgolia } from 'appjusto-types/algolia';
@@ -28,7 +28,7 @@ const OrdersPage = () => {
   const [dateFilter, setDateFilter] = React.useState<number[] | undefined>(undefined);
   const [orderStatus, setOrderStatus] = React.useState<OrderStatus>();
 
-  const { results: orders } = useOrdersSearch<OrderAlgolia>(
+  const { results: orders, fetchNextPage } = useOrdersSearch<OrderAlgolia>(
     true,
     'orders',
     orderType,
@@ -165,6 +165,10 @@ const OrdersPage = () => {
         </RadioGroup>
       </HStack>
       <OrdersTable orders={orders} />
+      <Button mt="8" variant="grey" onClick={fetchNextPage}>
+        <ArrowDownIcon mr="2" />
+        {t('Carregar mais')}
+      </Button>
       <Switch>
         <Route path={`${path}/:orderId`}>
           <BusinessDrawer isOpen onClose={closeDrawerHandler} />
