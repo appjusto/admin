@@ -9,3 +9,8 @@ export type SituationFilter = {
   type: 'situation';
   value: string;
 };
+
+export type OrdersFilter = {
+  type: 'type' | 'status' | 'createdOn._seconds';
+  value: string;
+};

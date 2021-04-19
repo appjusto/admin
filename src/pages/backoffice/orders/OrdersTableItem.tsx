@@ -1,12 +1,12 @@
 import { Td, Tr } from '@chakra-ui/react';
-import { Order, WithId } from 'appjusto-types';
+import { OrderAlgolia } from 'appjusto-types/algolia';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { useRouteMatch } from 'react-router';
-import { getDateAndHour } from 'utils/functions';
+import { getAlgoliaFieldDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 
 interface ItemProps {
-  order: WithId<Order>;
+  order: OrderAlgolia;
 }
 
 export const OrdersTableItem = ({ order }: ItemProps) => {
@@ -16,20 +16,22 @@ export const OrdersTableItem = ({ order }: ItemProps) => {
 
   // UI
   return (
-    <Tr key={order.id} color="black" fontSize="15px" lineHeight="21px">
-      <Td maxW="120px">{order.id}</Td>
+    <Tr key={order.objectID} color="black" fontSize="15px" lineHeight="21px">
+      <Td maxW="120px">{order.code ?? 'N/I'}</Td>
       <Td>
-        {order.createdOn ? getDateAndHour(order.createdOn as firebase.firestore.Timestamp) : ''}
+        {order.createdOn
+          ? getAlgoliaFieldDateAndHour(order.createdOn as firebase.firestore.Timestamp)
+          : 'N/I'}
       </Td>
-      <Td>{'Nome do cliente'}</Td>
-      <Td>{'Nome do entregador'}</Td>
+      <Td>{order.consumerName ?? 'N/I'}</Td>
+      <Td>{order.courierName ?? 'N/I'}</Td>
       <Td>{'valor'}</Td>
       <Td>
         <CustomButton
           mt="0"
           variant="outline"
           label={t('Detalhes')}
-          link={`${path}/${order.id}`}
+          link={`${path}/${order.objectID}`}
           size="sm"
         />
       </Td>

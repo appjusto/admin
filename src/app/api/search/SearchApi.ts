@@ -1,6 +1,6 @@
 import algoliasearch, { SearchClient, SearchIndex } from 'algoliasearch/lite';
-import { AlgoliaConfig, Environment } from 'appjusto-types';
-import { BusinessesFilter, SearchKind, SituationFilter } from './types';
+import { AlgoliaConfig, Environment, OrderStatus, OrderType } from 'appjusto-types';
+import { BusinessesFilter, OrdersFilter, SearchKind, SituationFilter } from './types';
 
 export default class SearchApi {
   private client: SearchClient;
@@ -14,7 +14,7 @@ export default class SearchApi {
     this.businesses = this.client.initIndex(`${env}_businesses_backoffice`);
     this.couriers = this.client.initIndex(`${env}_couriers_backoffice`);
     this.consumers = this.client.initIndex(`${env}_consumers`);
-    this.orders = this.client.initIndex(`${env}_orders_backoffice`);
+    this.orders = this.client.initIndex(`${env}_orders`);
   }
 
   private getSearchIndex(kind: SearchKind) {
@@ -46,10 +46,45 @@ export default class SearchApi {
   ) {
     const index = this.getSearchIndex(kind);
     if (!index) throw new Error('Invalid index');
+    console.log(this.createBusinessesFilters(filters));
     return index.search<T>(query, {
       page,
       hitsPerPage,
       filters: this.createBusinessesFilters(filters),
+    });
+  }
+
+  private createOrdersFilters(
+    typeFilter: OrderType,
+    statusFilters?: OrderStatus,
+    dateFilter?: string
+  ) {
+    const status = `status: ${statusFilters}`;
+    const type = typeFilter ? `type: ${typeFilter}` : '';
+    const date = dateFilter ? `date_timestamp: ${dateFilter}` : '';
+
+    let result = `${type}`;
+    if (statusFilters) result += ` AND ${status}`;
+    if (dateFilter) result += ` AND ${date}`;
+    console.log(result);
+    return result;
+  }
+
+  ordersSearch<T>(
+    kind: SearchKind,
+    typeFilter: OrderType,
+    statusFilters?: OrderStatus,
+    dateFilter?: string,
+    query: string = '',
+    page?: number,
+    hitsPerPage?: number
+  ) {
+    const index = this.getSearchIndex(kind);
+    if (!index) throw new Error('Invalid index');
+    return index.search<T>(query, {
+      page,
+      hitsPerPage,
+      filters: this.createOrdersFilters(typeFilter, statusFilters, dateFilter),
     });
   }
 

@@ -1,8 +1,9 @@
 import { DeleteIcon } from '@chakra-ui/icons';
-import { Checkbox, CheckboxGroup, Flex, HStack, Text } from '@chakra-ui/react';
-import { Order, WithId } from 'appjusto-types';
+import { Flex, HStack, Radio, RadioGroup, Text } from '@chakra-ui/react';
+import { useOrdersSearch } from 'app/api/search/useOrdersSearch';
+import { OrderStatus, OrderType } from 'appjusto-types';
+import { OrderAlgolia } from 'appjusto-types/algolia';
 import { FilterText } from 'common/components/backoffice/FilterText';
-import { CustomButton } from 'common/components/buttons/CustomButton';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import React from 'react';
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
@@ -16,21 +17,33 @@ const OrdersPage = () => {
   // context
   const { path } = useRouteMatch();
   const history = useHistory();
-  const orders = [] as WithId<Order>[];
   // state
   const [dateTime, setDateTime] = React.useState('');
   const [searchId, setSearchId] = React.useState('');
   const [searchFrom, setSearchFrom] = React.useState('');
   const [searchTo, setSearchTo] = React.useState('');
 
-  const [filterText, setFilterText] = React.useState('all');
-  const [filters, setFilters] = React.useState<string[]>([]);
+  const [filterBar, setFilterBar] = React.useState('all');
+  const [orderType, setOrderType] = React.useState<OrderType>('food');
+  const [dateFilter, setDateFilter] = React.useState<string | undefined>(undefined);
+  const [orderStatus, setOrderStatus] = React.useState<OrderStatus>();
+
+  const { results: orders } = useOrdersSearch<OrderAlgolia>(
+    true,
+    'orders',
+    orderType,
+    orderStatus,
+    dateFilter,
+    searchId
+  );
 
   // handlers
   const closeDrawerHandler = () => history.replace(path);
 
-  const handleFilterTexts = (value: string) => {
-    setFilterText(value);
+  const cleanFilters = () => {
+    setFilterBar('all');
+    setSearchFrom('');
+    setSearchTo('');
   };
 
   // side effects
@@ -38,11 +51,25 @@ const OrdersPage = () => {
     const { date, time } = getDateTime();
     setDateTime(`${date} às ${time}`);
   }, []);
+
+  React.useEffect(() => {
+    if (filterBar === 'all') setOrderStatus(undefined);
+    else setOrderStatus(filterBar as OrderStatus);
+  }, [filterBar]);
+
+  React.useEffect(() => {
+    if (searchFrom && searchTo) {
+      const from = new Date(searchFrom).getTime();
+      const to = new Date(searchTo).getTime();
+      setDateFilter(`${from} TO ${to}`);
+    } else setDateFilter(undefined);
+  }, [searchFrom, searchTo]);
+
   // UI
   return (
     <>
       <PageHeader title={t('Pedidos')} subtitle={t(`Atualizado ${dateTime}`)} />
-      <Flex mt="8" justifyContent="space-between">
+      <Flex mt="8">
         <HStack spacing={4}>
           <CustomInput
             mt="0"
@@ -56,7 +83,6 @@ const OrdersPage = () => {
           <CustomInput
             mt="0"
             type="date"
-            w="180px"
             id="search-name"
             value={searchFrom}
             onChange={(event) => setSearchFrom(event.target.value)}
@@ -65,49 +91,47 @@ const OrdersPage = () => {
           <CustomInput
             mt="0"
             type="date"
-            w="180px"
             id="search-name"
             value={searchTo}
             onChange={(event) => setSearchTo(event.target.value)}
             label={t('Até')}
           />
         </HStack>
-        <CustomButton mt="0" maxW="200px" label={t('Filtrar resultados')} />
       </Flex>
       <Flex mt="8" w="100%" justifyContent="space-between" borderBottom="1px solid #C8D7CB">
         <HStack spacing={4}>
           <FilterText
-            isActive={filterText === 'all' ? true : false}
-            onClick={() => handleFilterTexts('all')}
+            isActive={filterBar === 'all' ? true : false}
+            onClick={() => setFilterBar('all')}
           >
             {t('Todos')}
           </FilterText>
           <FilterText
-            isActive={filterText === 'preparing' ? true : false}
-            onClick={() => handleFilterTexts('preparing')}
+            isActive={filterBar === 'preparing' ? true : false}
+            onClick={() => setFilterBar('preparing')}
           >
             {t('Em preparação')}
           </FilterText>
           <FilterText
-            isActive={filterText === 'ready' ? true : false}
-            onClick={() => handleFilterTexts('ready')}
+            isActive={filterBar === 'ready' ? true : false}
+            onClick={() => setFilterBar('ready')}
           >
             {t('Aguardando retirada')}
           </FilterText>
           <FilterText
-            isActive={filterText === 'dispatching' ? true : false}
-            onClick={() => handleFilterTexts('dispatching')}
+            isActive={filterBar === 'dispatching' ? true : false}
+            onClick={() => setFilterBar('dispatching')}
           >
             {t('À caminho')}
           </FilterText>
           <FilterText
-            isActive={filterText === 'delivered' ? true : false}
-            onClick={() => handleFilterTexts('delivered')}
+            isActive={filterBar === 'delivered' ? true : false}
+            onClick={() => setFilterBar('delivered')}
           >
             {t('Finalizados')}
           </FilterText>
         </HStack>
-        <HStack spacing={2} color="#697667" cursor="pointer" onClick={() => {}}>
+        <HStack spacing={2} color="#697667" cursor="pointer" onClick={cleanFilters}>
           <DeleteIcon />
           <Text fontSize="15px" lineHeight="21px">
             {t('Limpar filtro')}
@@ -118,10 +142,15 @@ const OrdersPage = () => {
         <Text fontSize="lg" fontWeight="700" lineHeight="26px">
           {t(`${orders?.length ?? '0'} itens na lista`)}
         </Text>
-        <CheckboxGroup
+        <RadioGroup
+          mt="4"
+          onChange={(value) => setOrderType(value as OrderType)}
+          value={orderType}
+          defaultValue="1"
           colorScheme="green"
-          value={filters}
-          onChange={(value) => setFilters(value as string[])}
+          color="black"
+          fontSize="15px"
+          lineHeight="21px"
         >
           <HStack
             alignItems="flex-start"
@@ -130,14 +159,10 @@ const OrdersPage = () => {
             fontSize="16px"
             lineHeight="22px"
           >
-            <Checkbox iconColor="white" value="food">
-              {t('Restaurantes')}
-            </Checkbox>
-            <Checkbox iconColor="white" value="p2p">
-              {t('Encomendas')}
-            </Checkbox>
+            <Radio value="food">{t('Restaurantes')}</Radio>
+            <Radio value="p2p">{t('Encomendas')}</Radio>
           </HStack>
-        </CheckboxGroup>
+        </RadioGroup>
       </HStack>
       <OrdersTable orders={orders} />
       <Switch>

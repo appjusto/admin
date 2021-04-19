@@ -1,10 +1,10 @@
 import { Box, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
-import { Order, WithId } from 'appjusto-types';
+import { OrderAlgolia } from 'appjusto-types/algolia';
 import { t } from 'utils/i18n';
 import { OrdersTableItem } from './OrdersTableItem';
 
 interface OrdersTableProps {
-  orders: WithId<Order>[] | undefined;
+  orders: OrderAlgolia[] | undefined;
 }
 
 export const OrdersTable = ({ orders }: OrdersTableProps) => {
@@ -27,7 +27,7 @@ export const OrdersTable = ({ orders }: OrdersTableProps) => {
         <Tbody>
           {orders && orders.length > 0 ? (
             orders.map((order) => {
-              return <OrdersTableItem key={order.id} order={order} />;
+              return <OrdersTableItem key={order.objectID} order={order} />;
             })
           ) : (
             <Tr color="black" fontSize="xs" fontWeight="700">
