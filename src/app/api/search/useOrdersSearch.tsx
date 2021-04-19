@@ -10,7 +10,7 @@ export const useOrdersSearch = <T extends object>(
   kind: SearchKind,
   typeFilter: OrderType,
   statusFilters?: OrderStatus,
-  dateFilter?: string,
+  dateFilter?: number[],
   soughtValue?: string,
   hitsPerPage: number = 20
 ) => {
@@ -26,7 +26,7 @@ export const useOrdersSearch = <T extends object>(
       input: string,
       typeFilter: OrderType,
       statusFilters?: OrderStatus,
-      dateFilter?: string,
+      dateFilter?: number[],
       page?: number
     ) => {
       (async () => {
@@ -54,7 +54,7 @@ export const useOrdersSearch = <T extends object>(
         input: string,
         typeFilter: OrderType,
         statusFilters?: OrderStatus,
-        dateFilter?: string,
+        dateFilter?: number[],
         page?: number
       ) => void
     >(search, 500),

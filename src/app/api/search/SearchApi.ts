@@ -57,16 +57,18 @@ export default class SearchApi {
   private createOrdersFilters(
     typeFilter: OrderType,
     statusFilters?: OrderStatus,
-    dateFilter?: string
+    dateFilter?: number[]
   ) {
     const status = `status: ${statusFilters}`;
     const type = typeFilter ? `type: ${typeFilter}` : '';
-    const date = dateFilter ? `date_timestamp: ${dateFilter}` : '';
+    const date =
+      dateFilter && dateFilter.length === 2
+        ? `date_timestamp: ${dateFilter[0]} TO ${dateFilter[1] + 86399000}`
+        : '';
 
     let result = `${type}`;
     if (statusFilters) result += ` AND ${status}`;
     if (dateFilter) result += ` AND ${date}`;
-    console.log(result);
     return result;
   }
 
@@ -74,7 +76,7 @@ export default class SearchApi {
     kind: SearchKind,
     typeFilter: OrderType,
     statusFilters?: OrderStatus,
-    dateFilter?: string,
+    dateFilter?: number[],
     query: string = '',
     page?: number,
     hitsPerPage?: number

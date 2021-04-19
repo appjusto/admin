@@ -25,7 +25,7 @@ const OrdersPage = () => {
 
   const [filterBar, setFilterBar] = React.useState('all');
   const [orderType, setOrderType] = React.useState<OrderType>('food');
-  const [dateFilter, setDateFilter] = React.useState<string | undefined>(undefined);
+  const [dateFilter, setDateFilter] = React.useState<number[] | undefined>(undefined);
   const [orderStatus, setOrderStatus] = React.useState<OrderStatus>();
 
   const { results: orders } = useOrdersSearch<OrderAlgolia>(
@@ -61,7 +61,7 @@ const OrdersPage = () => {
     if (searchFrom && searchTo) {
       const from = new Date(searchFrom).getTime();
       const to = new Date(searchTo).getTime();
-      setDateFilter(`${from} TO ${to}`);
+      setDateFilter([from, to]);
     } else setDateFilter(undefined);
   }, [searchFrom, searchTo]);
 
