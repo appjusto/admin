@@ -41,12 +41,14 @@ export default class SearchApi {
     kind: SearchKind,
     filters: BusinessesFilter[],
     query: string = '',
-    page?: number
+    page?: number,
+    hitsPerPage?: number
   ) {
     const index = this.getSearchIndex(kind);
     if (!index) throw new Error('Invalid index');
     return index.search<T>(query, {
       page,
+      hitsPerPage,
       filters: this.createBusinessesFilters(filters),
     });
   }
@@ -66,12 +68,14 @@ export default class SearchApi {
     kind: SearchKind,
     filters: CouriersFilter[],
     query: string = '',
-    page?: number
+    page?: number,
+    hitsPerPage?: number
   ) {
     const index = this.getSearchIndex(kind);
     if (!index) throw new Error('Invalid index');
     return index.search<T>(query, {
       page,
+      hitsPerPage,
       filters: this.createCouriersFilters(filters),
     });
   }

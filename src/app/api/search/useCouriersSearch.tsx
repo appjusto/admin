@@ -8,7 +8,8 @@ export const useCouriersSearch = <T extends object>(
   enabled: boolean,
   kind: SearchKind,
   filters: CouriersFilter[],
-  soughtValue?: string
+  soughtValue?: string,
+  hitsPerPage: number = 20
 ) => {
   // context
   const api = useContextSearchApi();
@@ -21,7 +22,7 @@ export const useCouriersSearch = <T extends object>(
     (input: string, filters: CouriersFilter[], page?: number) => {
       (async () => {
         setLoading(true);
-        setResponse(await api.couriersSearch(kind, filters, input, page));
+        setResponse(await api.couriersSearch(kind, filters, input, page, hitsPerPage));
         setLoading(false);
       })();
     },

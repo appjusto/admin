@@ -1,5 +1,5 @@
-import { DeleteIcon } from '@chakra-ui/icons';
-import { Flex, HStack, Text } from '@chakra-ui/react';
+import { ArrowDownIcon, DeleteIcon } from '@chakra-ui/icons';
+import { Button, Flex, HStack, Text } from '@chakra-ui/react';
 import { CouriersFilter } from 'app/api/search/types';
 import { useCouriersSearch } from 'app/api/search/useCouriersSearch';
 import { CourierAlgolia } from 'appjusto-types';
@@ -24,7 +24,7 @@ const CouriersPage = () => {
   const [filterBar, setFilterBar] = React.useState('all');
   const [filters, setFilters] = React.useState<CouriersFilter[]>([]);
 
-  const { results: couriers } = useCouriersSearch<CourierAlgolia>(
+  const { results: couriers, fetchNextPage } = useCouriersSearch<CourierAlgolia>(
     true,
     'couriers',
     filters,
@@ -107,6 +107,10 @@ const CouriersPage = () => {
         </Text>
       </HStack>
       <CouriersTable couriers={couriers} />
+      <Button mt="8" variant="grey" onClick={fetchNextPage}>
+        <ArrowDownIcon mr="2" />
+        {t('Carregar mais')}
+      </Button>
       <Switch>
         <Route path={`${path}/:courierId`}>
           <BusinessDrawer isOpen onClose={closeDrawerHandler} />

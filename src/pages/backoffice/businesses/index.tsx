@@ -1,5 +1,5 @@
-import { DeleteIcon } from '@chakra-ui/icons';
-import { Flex, HStack, Text } from '@chakra-ui/react';
+import { ArrowDownIcon, DeleteIcon } from '@chakra-ui/icons';
+import { Button, Flex, HStack, Text } from '@chakra-ui/react';
 import { BusinessesFilter } from 'app/api/search/types';
 import { useBusinessesSearch } from 'app/api/search/useBusinessesSearch';
 import { BusinessAlgolia } from 'appjusto-types';
@@ -27,7 +27,7 @@ const BusinessesPage = () => {
   //const [filterCheck, setFilterCheck] = React.useState<string[]>([]);
   const [filters, setFilters] = React.useState<BusinessesFilter[]>([]);
 
-  const { results: businesses } = useBusinessesSearch<BusinessAlgolia>(
+  const { results: businesses, fetchNextPage } = useBusinessesSearch<BusinessAlgolia>(
     true,
     'businesses',
     filters,
@@ -154,6 +154,10 @@ const BusinessesPage = () => {
         </CheckboxGroup>*/}
       </HStack>
       <BusinessesTable businesses={businesses} />
+      <Button mt="8" variant="grey" onClick={fetchNextPage}>
+        <ArrowDownIcon mr="2" />
+        {t('Carregar mais')}
+      </Button>
       <Switch>
         <Route path={`${path}/:businessId`}>
           <BusinessDrawer isOpen onClose={closeDrawerHandler} />

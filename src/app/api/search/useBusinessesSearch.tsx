@@ -8,7 +8,8 @@ export const useBusinessesSearch = <T extends object>(
   enabled: boolean,
   kind: SearchKind,
   filters: BusinessesFilter[],
-  soughtValue?: string
+  soughtValue?: string,
+  hitsPerPage: number = 3
 ) => {
   // context
   const api = useContextSearchApi();
@@ -21,7 +22,7 @@ export const useBusinessesSearch = <T extends object>(
     (input: string, filters: BusinessesFilter[], page?: number) => {
       (async () => {
         setLoading(true);
-        setResponse(await api.businessSearch(kind, filters, input, page));
+        setResponse(await api.businessSearch(kind, filters, input, page, hitsPerPage));
         setLoading(false);
       })();
     },
