@@ -1,46 +1,35 @@
 import { Td, Tr } from '@chakra-ui/react';
-import { ConsumerProfile, WithId } from 'appjusto-types';
+import { ConsumerAlgolia } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { useRouteMatch } from 'react-router';
-import { getDateAndHour } from 'utils/functions';
+import { getAlgoliaFieldDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 
 interface ItemProps {
-  consumer: WithId<ConsumerProfile>;
+  consumer: ConsumerAlgolia;
 }
-
-const options = {
-  pending: 'Pendente',
-  submitted: 'Submetido',
-  verified: 'Verificado',
-  approved: 'Aprovado',
-  rejected: 'Rejeitado',
-  blocked: 'Bloqueado',
-  deleted: 'Deletado',
-};
 
 export const ConsumersTableItem = ({ consumer }: ItemProps) => {
   // context
   const { path } = useRouteMatch();
-  // helpers
-  const status = consumer.situation;
+  //  UI
+  const name = consumer.name ? `${consumer.name} ${consumer.surname ?? ''}` : 'N/I';
   return (
-    <Tr key={consumer.id} color="black" fontSize="15px" lineHeight="21px">
-      <Td maxW="120px">{consumer.id}</Td>
+    <Tr key={consumer.objectID} color="black" fontSize="15px" lineHeight="21px">
+      <Td maxW="120px">{consumer.code ?? 'N/I'}</Td>
       <Td>
         {consumer.createdOn
-          ? getDateAndHour(consumer.createdOn as firebase.firestore.Timestamp)
+          ? getAlgoliaFieldDateAndHour(consumer.createdOn as firebase.firestore.Timestamp)
           : ''}
       </Td>
-      <Td>{consumer.name ?? 'N/I'}</Td>
-      <Td>{options[status]}</Td>
-      <Td color="red">*</Td>
+      <Td>{name}</Td>
+      <Td isNumeric>{consumer.totalOrders ?? 0}</Td>
       <Td>
         <CustomButton
           mt="0"
           variant="outline"
           label={t('Detalhes')}
-          link={`${path}/${consumer.id}`}
+          link={`${path}/${consumer.objectID}`}
           size="sm"
         />
       </Td>

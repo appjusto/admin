@@ -1,7 +1,7 @@
 import { ArrowDownIcon, DeleteIcon } from '@chakra-ui/icons';
 import { Button, Flex, HStack, Text } from '@chakra-ui/react';
-import { CouriersFilter } from 'app/api/search/types';
-import { useCouriersSearch } from 'app/api/search/useCouriersSearch';
+import { SituationFilter } from 'app/api/search/types';
+import { useBasicUsersSearch } from 'app/api/search/useBasicUsersSearch';
 import { CourierAlgolia } from 'appjusto-types';
 import { FilterText } from 'common/components/backoffice/FilterText';
 import { CustomInput } from 'common/components/form/input/CustomInput';
@@ -22,9 +22,9 @@ const CouriersPage = () => {
   const [search, setSearch] = React.useState('');
 
   const [filterBar, setFilterBar] = React.useState('all');
-  const [filters, setFilters] = React.useState<CouriersFilter[]>([]);
+  const [filters, setFilters] = React.useState<SituationFilter[]>([]);
 
-  const { results: couriers, fetchNextPage } = useCouriersSearch<CourierAlgolia>(
+  const { results: couriers, fetchNextPage } = useBasicUsersSearch<CourierAlgolia>(
     true,
     'couriers',
     filters,
@@ -41,8 +41,8 @@ const CouriersPage = () => {
   }, []);
 
   React.useEffect(() => {
-    let barArray = [] as CouriersFilter[];
-    if (filterBar === 'all') barArray = [] as CouriersFilter[];
+    let barArray = [] as SituationFilter[];
+    if (filterBar === 'all') barArray = [] as SituationFilter[];
     else if (filterBar === 'pending')
       barArray = [
         { type: 'situation', value: 'pending' },

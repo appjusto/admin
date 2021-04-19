@@ -1,6 +1,6 @@
 import algoliasearch, { SearchClient, SearchIndex } from 'algoliasearch/lite';
 import { AlgoliaConfig, Environment } from 'appjusto-types';
-import { BusinessesFilter, CouriersFilter, SearchKind } from './types';
+import { BusinessesFilter, SearchKind, SituationFilter } from './types';
 
 export default class SearchApi {
   private client: SearchClient;
@@ -13,7 +13,7 @@ export default class SearchApi {
     this.client = algoliasearch(config.appId, config.apiKey);
     this.businesses = this.client.initIndex(`${env}_businesses_backoffice`);
     this.couriers = this.client.initIndex(`${env}_couriers_backoffice`);
-    this.consumers = this.client.initIndex(`${env}_consumers_backoffice`);
+    this.consumers = this.client.initIndex(`${env}_consumers`);
     this.orders = this.client.initIndex(`${env}_orders_backoffice`);
   }
 
@@ -53,7 +53,7 @@ export default class SearchApi {
     });
   }
 
-  private createCouriersFilters(filters?: CouriersFilter[]) {
+  private createSituationFilters(filters?: SituationFilter[]) {
     return filters
       ?.reduce<string[]>((result, filter) => {
         if (filter.type === 'situation') {
@@ -64,9 +64,9 @@ export default class SearchApi {
       .join(' OR ');
   }
 
-  couriersSearch<T>(
+  basicUserSearch<T>(
     kind: SearchKind,
-    filters: CouriersFilter[],
+    filters: SituationFilter[],
     query: string = '',
     page?: number,
     hitsPerPage?: number
@@ -76,7 +76,7 @@ export default class SearchApi {
     return index.search<T>(query, {
       page,
       hitsPerPage,
-      filters: this.createCouriersFilters(filters),
+      filters: this.createSituationFilters(filters),
     });
   }
 }

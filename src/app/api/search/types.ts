@@ -5,7 +5,7 @@ export type BusinessesFilter = {
   value: string;
 };
 
-export type CouriersFilter = {
+export type SituationFilter = {
   type: 'situation';
   value: string;
 };

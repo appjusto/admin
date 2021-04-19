@@ -2,12 +2,12 @@ import { SearchResponse } from '@algolia/client-search';
 import { useContextSearchApi } from 'app/state/search/context';
 import { debounce } from 'lodash';
 import React from 'react';
-import { CouriersFilter, SearchKind } from './types';
+import { SearchKind, SituationFilter } from './types';
 
-export const useCouriersSearch = <T extends object>(
+export const useBasicUsersSearch = <T extends object>(
   enabled: boolean,
   kind: SearchKind,
-  filters: CouriersFilter[],
+  filters: SituationFilter[],
   soughtValue?: string,
   hitsPerPage: number = 20
 ) => {
@@ -19,10 +19,10 @@ export const useCouriersSearch = <T extends object>(
   const [isLoading, setLoading] = React.useState(false);
   // helpers
   const search = React.useCallback(
-    (input: string, filters: CouriersFilter[], page?: number) => {
+    (input: string, filters: SituationFilter[], page?: number) => {
       (async () => {
         setLoading(true);
-        setResponse(await api.couriersSearch(kind, filters, input, page, hitsPerPage));
+        setResponse(await api.basicUserSearch(kind, filters, input, page, hitsPerPage));
         setLoading(false);
       })();
     },
@@ -30,7 +30,7 @@ export const useCouriersSearch = <T extends object>(
   );
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedSearch = React.useCallback(
-    debounce<(input: string, filters: CouriersFilter[], page?: number) => void>(search, 500),
+    debounce<(input: string, filters: SituationFilter[], page?: number) => void>(search, 500),
     [search]
   );
   // side effects

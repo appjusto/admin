@@ -9,7 +9,7 @@ export const useBusinessesSearch = <T extends object>(
   kind: SearchKind,
   filters: BusinessesFilter[],
   soughtValue?: string,
-  hitsPerPage: number = 3
+  hitsPerPage: number = 20
 ) => {
   // context
   const api = useContextSearchApi();
