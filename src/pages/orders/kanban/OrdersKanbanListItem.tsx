@@ -72,7 +72,9 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
   }, [order]);
 
   React.useEffect(() => {
-    const orderAcceptanceTime = business?.orderAcceptanceTime;
+    const orderAcceptanceTime = business?.orderAcceptanceTime
+      ? business?.orderAcceptanceTime / 60
+      : undefined;
     if (order?.status === 'confirmed') {
       if (elapsedTime && orderAcceptanceTime && orderAcceptanceTime <= elapsedTime) {
         changeOrderStatus(order.id, 'preparing');
@@ -83,7 +85,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
       }
     }
   }, [order, elapsedTime, business?.orderAcceptanceTime, changeOrderStatus, cookingTime]);
-  console.log('id', order.id);
+
   // UI
   if (order.status === 'canceled') {
     return (

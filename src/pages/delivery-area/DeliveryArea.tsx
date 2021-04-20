@@ -43,7 +43,7 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
   const [deliveryRange, setDeliveryRange] = React.useState(
     String(business?.deliveryRange ?? defaultRadius)
   );
-  const [averagePreparationTime, setAveragePreparationTime] = React.useState('30');
+  const [averageCookingTime, setAverageCookingTime] = React.useState('30');
 
   // queries & mutations
   // business profile
@@ -84,6 +84,7 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
         latlng: geocodingResult,
       },
       deliveryRange: safeParseInt(deliveryRange, defaultRadius) * 1000,
+      averageCookingTime: parseInt(averageCookingTime) * 60,
     });
   };
 
@@ -236,8 +237,8 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
           )}
         </Text>
         <RadioGroup
-          onChange={(value) => setAveragePreparationTime(value.toString())}
-          value={averagePreparationTime}
+          onChange={(value) => setAverageCookingTime(value.toString())}
+          value={averageCookingTime}
           defaultValue="15"
           colorScheme="green"
           pb="8"
