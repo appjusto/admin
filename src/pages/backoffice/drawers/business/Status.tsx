@@ -5,6 +5,7 @@ import {
   Flex,
   Radio,
   RadioGroup,
+  Text,
   Textarea,
   VStack,
 } from '@chakra-ui/react';
@@ -17,15 +18,17 @@ import { t } from 'utils/i18n';
 import { SectionTitle } from '../SectionTitle';
 
 interface BusinessStatusProps {
-  situation: ProfileSituation | undefined;
+  situation?: ProfileSituation;
+  profileIssues?: string[];
 }
 
-export const BusinessStatus = ({ situation }: BusinessStatusProps) => {
+export const BusinessStatus = ({ situation, profileIssues }: BusinessStatusProps) => {
   // context
   const { updateBusinessProfile, result } = useBusinessProfile();
   const { isLoading, isSuccess, isError } = result;
   // state
   const [status, setStatus] = React.useState<ProfileSituation>('pending');
+  const [financialIssues, setFinancialIssues] = React.useState<string[]>([]);
   const [issues, setIssues] = React.useState<string[]>([]);
   const [message, setMessage] = React.useState('');
 
@@ -42,6 +45,7 @@ export const BusinessStatus = ({ situation }: BusinessStatusProps) => {
   // side effects
   React.useEffect(() => {
     if (situation) setStatus(situation);
+    if (profileIssues) setFinancialIssues(profileIssues);
   }, [situation]);
 
   // UI
@@ -52,6 +56,20 @@ export const BusinessStatus = ({ situation }: BusinessStatusProps) => {
         onSubmitHandler();
       }}
     >
+      {status === 'rejected' && (
+        <AlertError
+          title={t('Problemas identificados na verificação financeira')}
+          icon={false}
+          border="2px solid #DC3545"
+          mb="6"
+        >
+          <VStack mt="2" spacing={1} alignItems="flex-start">
+            {financialIssues.map((issue) => (
+              <Text key={issue}>* {t(`${issue}`)}</Text>
+            ))}
+          </VStack>
+        </AlertError>
+      )}
       <SectionTitle mt="0">{t('Alterar status do restaurante:')}</SectionTitle>
       <RadioGroup
         mt="2"

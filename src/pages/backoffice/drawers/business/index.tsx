@@ -36,7 +36,7 @@ export const BusinessDrawer = ({ onClose, ...props }: BusinessDrawerProps) => {
     if (business && business?.managers) {
       setManagerEmail(business?.managers[0]);
     }
-  }, [business]);
+  }, [business, setManagerEmail]);
 
   //UI
   return (
@@ -55,7 +55,7 @@ export const BusinessDrawer = ({ onClose, ...props }: BusinessDrawerProps) => {
           <BusinessLive status={business?.status} enabled={business?.enabled} />
         </Route>
         <Route exact path={`${path}/status`}>
-          <BusinessStatus situation={business?.situation} />
+          <BusinessStatus situation={business?.situation} profileIssues={business?.profileIssues} />
         </Route>
       </Switch>
     </BusinessBaseDrawer>

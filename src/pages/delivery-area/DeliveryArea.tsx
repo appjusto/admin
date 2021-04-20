@@ -1,4 +1,4 @@
-import { Box, Flex, Text } from '@chakra-ui/react';
+import { Box, Flex, Radio, RadioGroup, Text } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { getConfig } from 'app/api/config';
 import { useContextApi } from 'app/state/api/context';
@@ -24,6 +24,8 @@ import { Redirect } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { Marker } from '../../common/components/MapsMarker';
 
+const radioOptions = ['10', '20', '25', '30', '40', '50', '60'];
+
 const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
   // context
   const api = useContextApi();
@@ -41,6 +43,7 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
   const [deliveryRange, setDeliveryRange] = React.useState(
     String(business?.deliveryRange ?? defaultRadius)
   );
+  const [averagePreparationTime, setAveragePreparationTime] = React.useState('30');
 
   // queries & mutations
   // business profile
@@ -224,6 +227,29 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
             <Marker lat={center.lat} lng={center.lng} />
           </GoogleMapReact>
         </Box>
+        <Text mt="12" fontSize="xl" lineHeight="26px" color="black">
+          {t('Tempo médio de preparo dos pratos')}
+        </Text>
+        <Text mt="2" fontSize="sm" lineHeight="21px">
+          {t(
+            'Sabemos que isso pode variar por prato ou tipo de preparo, mas o tempo médio vai ajudar na disponibilidade de entregadores por região'
+          )}
+        </Text>
+        <RadioGroup
+          onChange={(value) => setAveragePreparationTime(value.toString())}
+          value={averagePreparationTime}
+          defaultValue="15"
+          colorScheme="green"
+          pb="8"
+        >
+          <Flex flexDir="column" justifyContent="flex-start">
+            {radioOptions.map((option) => (
+              <Radio key={option} mt="4" value={option} size="lg">
+                {t(`${option} minutos`)}
+              </Radio>
+            ))}
+          </Flex>
+        </RadioGroup>
         <PageFooter onboarding={onboarding} redirect={redirect} isLoading={isLoading} />
         {!onboarding && isSuccess && (
           <AlertSuccess

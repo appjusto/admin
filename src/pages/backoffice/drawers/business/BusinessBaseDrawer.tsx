@@ -58,7 +58,7 @@ export const BusinessBaseDrawer = ({
             <Text fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
               {t('ID:')}{' '}
               <Text as="span" fontWeight="500">
-                {business?.id ?? 'Não foi possível carregar o id'}
+                {business?.code ?? 'N/E'}
               </Text>
             </Text>
             <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">

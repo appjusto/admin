@@ -22,7 +22,6 @@ export const ProductItem = React.memo(({ product, index }: Props) => {
   const { url } = useRouteMatch();
   const api = useContextApi();
   const businessId = useContextBusinessId();
-  //const { imageUrl: hookImageUrl } = useProduct(businessId!, product.id, '288x288');
   const hookImageUrl = useProductImage(product.id, '288x288');
   //state
   const [imageUrl, setImageUrl] = React.useState<string>('');

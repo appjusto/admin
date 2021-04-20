@@ -9,9 +9,9 @@ import { t } from 'utils/i18n';
 export const ManagerBar = () => {
   // context
   const { path, url } = useRouteMatch();
-  const isBackOffice = path.includes('backoffice');
   const { manager } = useContextManagerProfile();
-  const { agent, username } = useContextAgentProfile();
+  const { username } = useContextAgentProfile();
+  const isBackOffice = path.includes('backoffice');
   const name = manager?.name ? `, ${manager.name}!` : '!';
   return (
     <Flex
@@ -41,11 +41,9 @@ export const ManagerBar = () => {
             {t('Sair')}
           </Link>
         </Box>
-        {!isBackOffice && (
-          <RouterLink to={`${url}/manager-profile`}>
-            <EditButton />
-          </RouterLink>
-        )}
+        <RouterLink to={isBackOffice ? `${url}/agent-profile` : `${url}/manager-profile`}>
+          <EditButton />
+        </RouterLink>
       </Flex>
     </Flex>
   );

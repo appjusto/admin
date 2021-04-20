@@ -1,4 +1,4 @@
-import { useFirebaseUserRole } from 'app/api/auth/useFirebaseUserRole';
+import { useContextAgentProfile } from 'app/state/agent/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { Loading } from 'common/components/Loading';
 import BusinessProfile from 'pages/business-profile/BusinessProfile';
@@ -18,7 +18,7 @@ import Dashboard from './Dashboard';
 
 const Home = () => {
   // context
-  const { isBackofficeUser } = useFirebaseUserRole();
+  const { isBackofficeUser } = useContextAgentProfile();
   const { business } = useContextBusiness();
   const { path } = useRouteMatch();
 

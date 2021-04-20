@@ -29,3 +29,13 @@ export const getConfig = (): AppConfig => {
     },
   };
 };
+
+export const getSearchConfig = () => {
+  return {
+    config: {
+      appId: process.env.REACT_APP_ALGOLIA_APPID,
+      apiKey: process.env.REACT_APP_ALGOLIA_APIKEY,
+    },
+    env: process.env.REACT_APP_ENVIRONMENT,
+  };
+};

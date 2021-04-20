@@ -1,8 +1,7 @@
 import { Box } from '@chakra-ui/react';
 import * as cpfutils from '@fnando/cpf';
-import { useUpdateManagerProfile } from 'app/api/manager/useUpdateManagerProfile';
-import { useContextFirebaseUser } from 'app/state/auth/context';
-import { useContextManagerProfile } from 'app/state/manager/context';
+import { useUpdateAgentProfile } from 'app/api/agent/useUpdateAgentProfile';
+import { useContextAgentProfile } from 'app/state/agent/context';
 import { AlertError } from 'common/components/AlertError';
 import { AlertSuccess } from 'common/components/AlertSuccess';
 import { CustomInput } from 'common/components/form/input/CustomInput';
@@ -14,25 +13,22 @@ import {
   phoneMask,
 } from 'common/components/form/input/pattern-input/formatters';
 import { numbersOnlyParser } from 'common/components/form/input/pattern-input/parsers';
-import { OnboardingProps } from 'pages/onboarding/types';
 import PageFooter from 'pages/PageFooter';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
-import { Redirect } from 'react-router-dom';
 import { t } from 'utils/i18n';
 
-export const ManagerProfile = ({ onboarding, redirect, backoffice }: OnboardingProps) => {
+export const AgentProfile = () => {
   // context
-  const user = useContextFirebaseUser();
-  const { manager } = useContextManagerProfile();
-  const { updateProfile, updateResult } = useUpdateManagerProfile();
+  const { agent } = useContextAgentProfile();
+  const { updateProfile, updateResult } = useUpdateAgentProfile();
   const { isLoading, isSuccess, isError } = updateResult;
 
   // state
-  const [name, setName] = React.useState(manager?.name ?? '');
-  const [surname, setSurname] = React.useState(manager?.surname ?? '');
-  const [phoneNumber, setPhoneNumber] = React.useState(manager?.phone ?? '');
-  const [cpf, setCPF] = React.useState(manager?.cpf ?? '');
+  const [name, setName] = React.useState(agent?.name ?? '');
+  const [surname, setSurname] = React.useState(agent?.surname ?? '');
+  const [phoneNumber, setPhoneNumber] = React.useState(agent?.phone ?? '');
+  const [cpf, setCPF] = React.useState(agent?.cpf ?? '');
 
   // refs
   const nameRef = React.useRef<HTMLInputElement>(null);
@@ -41,6 +37,17 @@ export const ManagerProfile = ({ onboarding, redirect, backoffice }: OnboardingP
 
   // helpers
   const isCPFValid = () => cpfutils.isValid(cpf);
+
+  // side effects
+
+  React.useEffect(() => {
+    if (agent) {
+      if (agent.name) setName(agent.name);
+      if (agent.surname) setSurname(agent.surname);
+      if (agent.phone) setPhoneNumber(agent.phone);
+      if (agent.cpf) setCPF(agent.cpf);
+    }
+  }, [agent]);
 
   // handlers
   const onSubmitHandler = async () => {
@@ -54,46 +61,28 @@ export const ManagerProfile = ({ onboarding, redirect, backoffice }: OnboardingP
     });
   };
 
-  // side effects
-  React.useEffect(() => {
-    if (onboarding) window?.scrollTo(0, 0);
-    if (!backoffice) nameRef?.current?.focus();
-  }, [onboarding, backoffice]);
-
-  React.useEffect(() => {
-    if (manager) {
-      if (manager.name) setName(manager.name);
-      if (manager.surname) setSurname(manager.surname);
-      if (manager.phone) setPhoneNumber(manager.phone);
-      if (manager.cpf) setCPF(manager.cpf);
-    }
-  }, [manager]);
-
   // UI
-  if (isSuccess && redirect) return <Redirect to={redirect} push />;
   return (
-    <Box maxW={backoffice ? '464px' : '368px'}>
+    <Box maxW="368px">
       <form
         onSubmit={(ev) => {
           ev.preventDefault();
           onSubmitHandler();
         }}
       >
-        {!backoffice && (
-          <PageHeader
-            title={t('Informe seus dados')}
-            subtitle={t('Informações do administrador da conta')}
-          />
-        )}
+        <PageHeader
+          title={t('Informe seus dados')}
+          subtitle={t('Informações do agente appjusto')}
+        />
         <CustomInput
-          id="manager-profile-email"
+          id="agent-profile-email"
           label={t('E-mail')}
-          value={!backoffice ? user?.email ?? '' : manager?.email ?? ''}
-          isDisabled={!backoffice}
+          value={agent?.email ?? ''}
+          isDisabled
         />
         <CustomInput
           isRequired
-          id="manager-profile-name"
+          id="agent-profile-name"
           ref={nameRef}
           label={t('Nome')}
           placeholder={t('Nome')}
@@ -102,7 +91,7 @@ export const ManagerProfile = ({ onboarding, redirect, backoffice }: OnboardingP
         />
         <CustomInput
           isRequired
-          id="manager-profile-lastname"
+          id="agent-profile-lastname"
           label={t('Sobrenome')}
           placeholder={t('Sobrenome')}
           value={surname}
@@ -111,7 +100,7 @@ export const ManagerProfile = ({ onboarding, redirect, backoffice }: OnboardingP
         <CustomPatternInput
           isRequired
           ref={phoneNumberRef}
-          id="manager-phone"
+          id="agent-phone"
           label={t('Celular')}
           placeholder={t('Número do seu celular')}
           mask={phoneMask}
@@ -124,7 +113,7 @@ export const ManagerProfile = ({ onboarding, redirect, backoffice }: OnboardingP
         <CustomPatternInput
           isRequired
           ref={cpfRef}
-          id="manager-cpf"
+          id="agent-cpf"
           label={t('CPF')}
           placeholder={t('Número do seu CPF')}
           mask={cpfMask}
@@ -134,8 +123,8 @@ export const ManagerProfile = ({ onboarding, redirect, backoffice }: OnboardingP
           onValueChange={(value) => setCPF(value)}
           externalValidation={{ active: true, status: isCPFValid() }}
         />
-        <PageFooter onboarding={onboarding} redirect={redirect} isLoading={isLoading} />
-        {!onboarding && isSuccess && (
+        <PageFooter isLoading={isLoading} />
+        {isSuccess && (
           <AlertSuccess
             maxW="320px"
             title={t('Informações salvas com sucesso!')}

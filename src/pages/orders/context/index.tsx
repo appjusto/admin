@@ -43,7 +43,7 @@ const fakeOrder: Order = {
     },
   },*/
   business: {
-    id: 'KTqDLkMSAq6vigc0ODDr',
+    id: '"QZYurHCMsqZxTIQyQqq3"',
     name: 'Itapuama vegan',
   },
   items: [fakeItem(1200, 1), fakeItem(1600, 2)],
@@ -106,7 +106,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   const api = useContextApi();
   const { business } = useContextBusiness();
   const hookOrders = useOrders(options, business!.id);
-
+  console.log(hookOrders);
   //state
   const [orders, setOrders] = React.useState<WithId<Order>[]>([]);
 

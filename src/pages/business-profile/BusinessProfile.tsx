@@ -1,4 +1,4 @@
-import { Box, Text, useBreakpoint } from '@chakra-ui/react';
+import { Box, Flex, Switch as ChakraSwitch, Text, useBreakpoint } from '@chakra-ui/react';
 import * as cnpjutils from '@fnando/cnpj';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useContextBusiness } from 'app/state/business/context';
@@ -46,6 +46,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const [cuisineName, setCuisineName] = React.useState(business?.cuisine ?? '');
   const [description, setDescription] = React.useState(business?.description ?? '');
   const [minimumOrder, setMinimumOrder] = React.useState(business?.minimumOrder ?? 0);
+  const [enabled, setEnabled] = React.useState(business?.enabled ?? false);
   const [logoExists, setLogoExists] = React.useState(false);
   const [coverExists, setCoverExists] = React.useState(false);
   const [logoFiles, setLogoFiles] = React.useState<File[] | null>(null);
@@ -86,6 +87,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
       cnpj,
       description,
       minimumOrder,
+      enabled,
       cuisine: cuisineName,
       logoExists: logoExists,
       coverImageExists: coverExists,
@@ -255,6 +257,30 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
             getImages={getCoverFiles}
             clearDrop={() => clearDropImages('cover')}
           />
+          {!onboarding && business?.situation === 'approved' && (
+            <>
+              <Text mt="8" fontSize="xl" color="black">
+                {t('Desligar restaurante do AppJusto')}
+              </Text>
+              <Text mt="2" fontSize="md">
+                {t('O restaurante não aparecerá no app enquanto estiver desligado')}
+              </Text>
+              <Flex mt="4" pb="8" alignItems="center">
+                <ChakraSwitch
+                  isChecked={enabled}
+                  onChange={(ev) => {
+                    ev.stopPropagation();
+                    setEnabled(ev.target.checked);
+                  }}
+                />
+                <Flex ml="4" flexDir="column" minW="280px">
+                  <Text fontSize="16px" fontWeight="700" lineHeight="22px">
+                    {enabled ? t('Ligado') : t('Desligado')}
+                  </Text>
+                </Flex>
+              </Flex>
+            </>
+          )}
           {/* submit */}
           <PageFooter
             onboarding={onboarding}
