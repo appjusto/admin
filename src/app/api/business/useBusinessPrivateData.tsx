@@ -1,17 +1,12 @@
 import { useContextApi } from 'app/state/api/context';
+import { BusinessPrivatePlatform } from 'appjusto-types';
 import React from 'react';
-
-interface Platform {
-  marketPlace?: {
-    issues?: string[];
-  };
-}
 
 export const useBusinessPrivateData = (businessId: string) => {
   // context
   const api = useContextApi();
   // state
-  const [plaform, setPlatform] = React.useState<Platform>({});
+  const [plaform, setPlatform] = React.useState<BusinessPrivatePlatform>({});
 
   // side effects
   React.useEffect(() => {
