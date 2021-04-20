@@ -1,3 +1,4 @@
+import { useBusinessPrivateData } from 'app/api/business/useBusinessPrivateData';
 import { useContextAgentProfile } from 'app/state/agent/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextManagerProfile } from 'app/state/manager/context';
@@ -24,8 +25,10 @@ export const BusinessDrawer = ({ onClose, ...props }: BusinessDrawerProps) => {
   const { setBusinessId, business } = useContextBusiness();
   const { agent, username } = useContextAgentProfile();
   const { manager, setManagerEmail } = useContextManagerProfile();
+  const platform = useBusinessPrivateData(businessId);
 
   //handlers
+  const marketPlaceIssues = platform?.marketPlace?.issues ?? undefined;
 
   // side effects
   React.useEffect(() => {
@@ -55,7 +58,11 @@ export const BusinessDrawer = ({ onClose, ...props }: BusinessDrawerProps) => {
           <BusinessLive status={business?.status} enabled={business?.enabled} />
         </Route>
         <Route exact path={`${path}/status`}>
-          <BusinessStatus situation={business?.situation} profileIssues={business?.profileIssues} />
+          <BusinessStatus
+            situation={business?.situation}
+            marketPlaceIssues={marketPlaceIssues}
+            profileIssues={business?.profileIssues}
+          />
         </Route>
       </Switch>
     </BusinessBaseDrawer>

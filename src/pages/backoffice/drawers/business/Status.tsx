@@ -19,10 +19,15 @@ import { SectionTitle } from '../SectionTitle';
 
 interface BusinessStatusProps {
   situation?: ProfileSituation;
+  marketPlaceIssues?: string[];
   profileIssues?: string[];
 }
 
-export const BusinessStatus = ({ situation, profileIssues }: BusinessStatusProps) => {
+export const BusinessStatus = ({
+  situation,
+  marketPlaceIssues,
+  profileIssues,
+}: BusinessStatusProps) => {
   // context
   const { updateBusinessProfile, result } = useBusinessProfile();
   const { isLoading, isSuccess, isError } = result;
@@ -45,7 +50,8 @@ export const BusinessStatus = ({ situation, profileIssues }: BusinessStatusProps
   // side effects
   React.useEffect(() => {
     if (situation) setStatus(situation);
-    if (profileIssues) setFinancialIssues(profileIssues);
+    if (marketPlaceIssues) setFinancialIssues(marketPlaceIssues);
+    // if profileIssues, handle it
   }, [situation]);
 
   // UI
@@ -87,6 +93,9 @@ export const BusinessStatus = ({ situation, profileIssues }: BusinessStatusProps
           </Radio>
           <Radio mt="2" value="submitted">
             {t('Aguardando aprovação')}
+          </Radio>
+          <Radio mt="2" value="invalid">
+            {t('Invalidado')}
           </Radio>
           <Radio mt="2" value="rejected">
             {t('Recusado')}

@@ -51,6 +51,7 @@ export default class FirebaseRefs {
   getBusinessPrivateRef = (id: string) => this.getBusinessesRef().doc(id).collection('private');
   getBusinessBankAccountRef = (id: string) => this.getBusinessPrivateRef(id).doc('bank');
   getBusinessStatisticsRef = (id: string) => this.getBusinessPrivateRef(id).doc('statistics');
+  getBusinessPlatformRef = (id: string) => this.getBusinessPrivateRef(id).doc('platform');
 
   // managers
   getManagersRef = () => this.firestore.collection('managers');

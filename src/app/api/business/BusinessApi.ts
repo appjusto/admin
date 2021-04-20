@@ -83,6 +83,11 @@ export default class BusinessApi {
     return await this.refs.getBusinessRef(businessId).delete();
   }
 
+  async getBusinessPlatformData(businessId: string) {
+    const platform = (await this.refs.getBusinessPlatformRef(businessId).get()).data();
+    return platform;
+  }
+
   // managers
   observeBusinessManagedBy(
     email: string,
