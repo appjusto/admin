@@ -36,9 +36,12 @@ const BankingInformation = ({ onboarding, redirect, backoffice }: OnboardingProp
   const [name, setName] = React.useState(bankAccount?.name ?? '');
   const [agency, setAgency] = React.useState(bankAccount?.agency ?? '');
   const [account, setAccount] = React.useState(bankAccount?.account ?? '');
+  const [validation, setValidation] = React.useState({ agency: true, account: true });
 
   // refs
   const nameRef = React.useRef<HTMLSelectElement>(null);
+  const agencyRef = React.useRef<HTMLInputElement>(null);
+  const accountRef = React.useRef<HTMLInputElement>(null);
 
   // helpers
   const agencyParser = selectedBank?.agencyPattern
@@ -71,6 +74,8 @@ const BankingInformation = ({ onboarding, redirect, backoffice }: OnboardingProp
   };
 
   const onSubmitHandler = async () => {
+    if (!validation.agency) return agencyRef?.current?.focus();
+    if (!validation.account) return accountRef?.current?.focus();
     const agencyFormatted = agencyFormatter!(agency);
     const accountFormatted = accountFormatter!(account);
     await updateBankAccount({
@@ -136,6 +141,7 @@ const BankingInformation = ({ onboarding, redirect, backoffice }: OnboardingProp
         )}
         <CustomPatternInput
           id="banking-agency"
+          ref={agencyRef}
           label={t('Agência')}
           placeholder={
             (selectedBank?.agencyPattern.indexOf('D') ?? -1) > -1
@@ -152,10 +158,14 @@ const BankingInformation = ({ onboarding, redirect, backoffice }: OnboardingProp
           }
           isRequired
           isDisabled={name === ''}
+          notifyParentWithValidation={(isInvalid: boolean) => {
+            setValidation((prevState) => ({ ...prevState, agency: !isInvalid }));
+          }}
         />
         <Flex>
           <CustomPatternInput
             id="banking-account"
+            ref={accountRef}
             flex={3}
             label={t('Conta')}
             placeholder={
@@ -171,6 +181,9 @@ const BankingInformation = ({ onboarding, redirect, backoffice }: OnboardingProp
             onBlur={handleAccount}
             isRequired
             isDisabled={name === ''}
+            notifyParentWithValidation={(isInvalid: boolean) => {
+              setValidation((prevState) => ({ ...prevState, account: !isInvalid }));
+            }}
           />
         </Flex>
         <PageFooter onboarding={onboarding} redirect={redirect} isLoading={isLoading} />
