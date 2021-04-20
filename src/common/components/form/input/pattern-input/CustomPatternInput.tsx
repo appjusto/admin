@@ -12,6 +12,7 @@ interface PatternInputProps extends InputProps {
   parser?: (value: string) => string;
   formatter?: (value: string | undefined) => string;
   onValueChange: (value: string) => void;
+  notifyParentWithValidation?: (isInvalid: boolean) => void;
 }
 
 export const CustomPatternInput = React.forwardRef<HTMLInputElement, PatternInputProps>(
@@ -35,6 +36,7 @@ export const CustomPatternInput = React.forwardRef<HTMLInputElement, PatternInpu
       onChange,
       onBlur,
       onFocus,
+      notifyParentWithValidation,
       ...props
     }: PatternInputProps,
     ref
@@ -74,6 +76,10 @@ export const CustomPatternInput = React.forwardRef<HTMLInputElement, PatternInpu
         }
       } else setIsInvalid(false);
     }, [value, validationLength, externalValidation]);
+
+    React.useEffect(() => {
+      if (notifyParentWithValidation) notifyParentWithValidation(isInvalid);
+    }, [isInvalid]);
 
     // UI
     const styles = useMultiStyleConfig('CustomInput', {});
