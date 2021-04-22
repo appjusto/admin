@@ -91,14 +91,17 @@ export const BusinessStatus = ({
           <Radio mt="2" value="approved">
             {t('Publicado')}
           </Radio>
-          <Radio mt="2" value="submitted">
-            {t('Aguardando aprovação')}
+          <Radio mt="2" value="rejected">
+            {t('Recusado')}
+          </Radio>
+          <Radio mt="2" value="verified">
+            {t('Verificado')}
           </Radio>
           <Radio mt="2" value="invalid">
             {t('Invalidado')}
           </Radio>
-          <Radio mt="2" value="rejected">
-            {t('Recusado')}
+          <Radio mt="2" value="submitted">
+            {t('Aguardando aprovação')}
           </Radio>
           <Radio mt="2" value="blocked">
             {t('Bloquear restaurante')}
