@@ -8,3 +8,11 @@ export const situationPTOptions = {
   blocked: 'Bloqueado',
   deleted: 'Deletado',
 };
+
+export const modePTOptions = {
+  motocycle: 'Moto',
+  bicycling: 'Bicicleta',
+  scooter: 'Scooter',
+  car: 'Carro',
+  walking: 'A pé',
+};

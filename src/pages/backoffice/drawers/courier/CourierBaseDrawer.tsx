@@ -10,6 +10,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { CourierProfile, WithId } from 'appjusto-types';
+import { modePTOptions } from 'pages/backoffice/utils';
 import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
 import React from 'react';
 import { useRouteMatch } from 'react-router';
@@ -37,7 +38,7 @@ export const CourierBaseDrawer = ({
   //context
   const { url } = useRouteMatch();
   //handlers
-  let courierName = courier?.name;
+  let courierName = courier?.name ?? 'N/I';
   if (courier?.surname) courierName += ` ${courier.surname}`;
   //UI conditions
 
@@ -85,7 +86,7 @@ export const CourierBaseDrawer = ({
             <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
               {t('Método de entrega principal:')}{' '}
               <Text as="span" fontWeight="500">
-                {courier?.mode ?? 'N/I'}
+                {courier?.mode ? modePTOptions[courier.mode] : 'N/I'}
               </Text>
             </Text>
             <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
