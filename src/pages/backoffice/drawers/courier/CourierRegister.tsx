@@ -19,22 +19,26 @@ interface CourierRegisterProps {
 
 export const CourierRegister = ({ profile, updateProfile, result }: CourierRegisterProps) => {
   // context
-
+  const fleets = profile?.fleet ? [{ ...profile?.fleet }] : [];
   // UI
   return (
     <Box>
       <SectionTitle>{t('Dados pessoais')}</SectionTitle>
-      <PersonalProfile profile={profile} updateProfile={updateProfile} result={result} />
+      <PersonalProfile profile={profile} updateProfile={updateProfile} result={result} isCNPJ />
       <SectionTitle>{t('Endereço')}</SectionTitle>
-      <Address address={profile?.userAddress} updateProfile={updateProfile} result={result} />
+      <Address address={profile?.company} updateProfile={updateProfile} result={result} />
       <SectionTitle>{t('Fotos e documentos')}</SectionTitle>
       <Documents />
       <SectionTitle>{t('Dados bancários')}</SectionTitle>
-      <ProfileBankingInfo bankingInfo={undefined} updateBankAccount={() => {}} result={result} />
+      <ProfileBankingInfo
+        bankingInfo={profile?.bankAccount}
+        updateBankAccount={() => {}}
+        result={result}
+      />
       <SectionTitle>{t('Cidade de atuação')}</SectionTitle>
       <ActingCity />
       <SectionTitle>{t('Frota atual')}</SectionTitle>
-      <Fleets />
+      <Fleets fleets={fleets} />
     </Box>
   );
 };

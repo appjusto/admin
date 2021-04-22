@@ -7,15 +7,7 @@ interface FleetsProps {
   fleets?: Partial<Fleet>[];
 }
 
-const fakeFleets = [
-  {
-    name: 'Appjusto',
-    description: 'Descrição da frota appjusto',
-    participantsOnline: 10,
-  },
-];
-
-export const Fleets = ({ fleets = fakeFleets }: FleetsProps) => {
+export const Fleets = ({ fleets }: FleetsProps) => {
   // state
 
   // UI
