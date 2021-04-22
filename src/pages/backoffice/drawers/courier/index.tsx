@@ -1,41 +1,39 @@
-import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useBusinessPrivateData } from 'app/api/business/useBusinessPrivateData';
 import { useContextAgentProfile } from 'app/state/agent/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextManagerProfile } from 'app/state/manager/context';
+import { UserProfile } from 'appjusto-types';
 import React from 'react';
 import { Route, Switch, useParams, useRouteMatch } from 'react-router-dom';
 import { StatusTab } from '../tabs/StatusTab';
-import { BusinessBaseDrawer } from './BusinessBaseDrawer';
-import { BusinessRegister } from './BusinessRegister';
-import { BusinessLive } from './Live';
+import { CourierBaseDrawer } from './CourierBaseDrawer';
+import { CourierRegister } from './CourierRegister';
 
-interface BusinessDrawerProps {
+interface CourierDrawerProps {
   isOpen: boolean;
   onClose(): void;
 }
 
 type Params = {
-  businessId: string;
+  courierId: string;
 };
 
-export const BusinessDrawer = ({ onClose, ...props }: BusinessDrawerProps) => {
+export const CourierDrawer = ({ onClose, ...props }: CourierDrawerProps) => {
   //context
   const { path } = useRouteMatch();
-  const { businessId } = useParams<Params>();
+  const { courierId } = useParams<Params>();
   const { setBusinessId, business } = useContextBusiness();
   const { agent, username } = useContextAgentProfile();
   const { manager, setManagerEmail } = useContextManagerProfile();
-  const platform = useBusinessPrivateData(businessId);
-  const { updateBusinessProfile, result } = useBusinessProfile();
+  const platform = useBusinessPrivateData(courierId);
 
   //handlers
   const marketPlaceIssues = platform?.marketPlace?.issues ?? undefined;
 
   // side effects
   React.useEffect(() => {
-    if (businessId) setBusinessId(businessId);
-  }, [businessId, setBusinessId]);
+    if (courierId) setBusinessId(courierId);
+  }, [courierId, setBusinessId]);
 
   React.useEffect(() => {
     if (business && business?.managers) {
@@ -45,7 +43,7 @@ export const BusinessDrawer = ({ onClose, ...props }: BusinessDrawerProps) => {
 
   //UI
   return (
-    <BusinessBaseDrawer
+    <CourierBaseDrawer
       agent={{ id: agent?.id, name: username }}
       business={business}
       managerName={manager?.name ?? 'Sem nome'}
@@ -54,21 +52,22 @@ export const BusinessDrawer = ({ onClose, ...props }: BusinessDrawerProps) => {
     >
       <Switch>
         <Route exact path={`${path}`}>
-          <BusinessRegister />
-        </Route>
-        <Route exact path={`${path}/live`}>
-          <BusinessLive status={business?.status} enabled={business?.enabled} />
+          <CourierRegister
+            profile={{} as UserProfile}
+            updateProfile={() => {}}
+            result={{ isError: false, isSuccess: false, isLoading: false }}
+          />
         </Route>
         <Route exact path={`${path}/status`}>
           <StatusTab
             situation={business?.situation}
             marketPlaceIssues={marketPlaceIssues}
             profileIssues={business?.profileIssues}
-            updateProfile={updateBusinessProfile}
-            result={result}
+            updateProfile={() => {}}
+            result={{ isError: false, isSuccess: false, isLoading: false }}
           />
         </Route>
       </Switch>
-    </BusinessBaseDrawer>
+    </CourierBaseDrawer>
   );
 };

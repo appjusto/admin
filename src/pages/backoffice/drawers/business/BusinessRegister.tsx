@@ -3,7 +3,7 @@ import BankingInformation from 'pages/business-profile/BankingInformation';
 import { ManagerProfile } from 'pages/manager-profile/ManagerProfile';
 import React from 'react';
 import { t } from 'utils/i18n';
-import { SectionTitle } from '../SectionTitle';
+import { SectionTitle } from '../generics/SectionTitle';
 
 export const BusinessRegister = () => {
   // context

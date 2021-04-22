@@ -9,27 +9,30 @@ import {
   Textarea,
   VStack,
 } from '@chakra-ui/react';
-import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { ProfileSituation } from 'appjusto-types';
 import { AlertError } from 'common/components/AlertError';
 import { AlertSuccess } from 'common/components/AlertSuccess';
 import React from 'react';
 import { t } from 'utils/i18n';
-import { SectionTitle } from '../SectionTitle';
+import { SectionTitle } from '../generics/SectionTitle';
+import { Result, UpdateProfile } from '../generics/types';
 
-interface BusinessStatusProps {
+interface StatusTabProps {
   situation?: ProfileSituation;
   marketPlaceIssues?: string[];
   profileIssues?: string[];
+  updateProfile: UpdateProfile;
+  result: Result;
 }
 
-export const BusinessStatus = ({
+export const StatusTab = ({
   situation,
   marketPlaceIssues,
   profileIssues,
-}: BusinessStatusProps) => {
+  updateProfile,
+  result,
+}: StatusTabProps) => {
   // context
-  const { updateBusinessProfile, result } = useBusinessProfile();
   const { isLoading, isSuccess, isError } = result;
   // state
   const [status, setStatus] = React.useState<ProfileSituation>('pending');
@@ -39,7 +42,7 @@ export const BusinessStatus = ({
 
   // handlers
   const onSubmitHandler = () => {
-    updateBusinessProfile({
+    updateProfile({
       situation: status,
     });
     if (status === 'rejected') {

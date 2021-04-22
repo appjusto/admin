@@ -18,7 +18,7 @@ import {
 import { BankSelect } from 'common/components/form/select/BankSelect';
 import React from 'react';
 import { t } from 'utils/i18n';
-import { SectionTitle } from '../SectionTitle';
+import { SectionTitle } from '../generics/SectionTitle';
 
 const profile = {
   email: '',

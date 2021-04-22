@@ -5,7 +5,7 @@ import { AlertError } from 'common/components/AlertError';
 import { AlertSuccess } from 'common/components/AlertSuccess';
 import React from 'react';
 import { t } from 'utils/i18n';
-import { SectionTitle } from '../SectionTitle';
+import { SectionTitle } from '../generics/SectionTitle';
 
 interface BusinessLiveProps {
   status: BusinessStatus | undefined;
