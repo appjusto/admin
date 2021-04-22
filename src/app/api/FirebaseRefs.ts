@@ -105,5 +105,5 @@ export default class FirebaseRefs {
   getCourierProfilePictureStoragePath = (courierId: string) =>
     `${this.getCourierStoragePath(courierId)}/selfie_160x160.jpg`;
   getCourierDocumentPictureStoragePath = (courierId: string) =>
-    `${this.getCourierStoragePath(courierId)}/document_160x160.jpg`;
+    `${this.getCourierStoragePath(courierId)}/document.jpg`;
 }
