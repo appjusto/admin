@@ -23,7 +23,7 @@ export const Fleets = ({ fleets = fakeFleets }: FleetsProps) => {
     <Box mt="4">
       {fleets &&
         fleets.map((fleet) => (
-          <Box key={fleet.name} p="4" border="1px solid gray" borderRadius="lg">
+          <Box key={fleet.name} p="4" border="1px solid #C8D7CB" borderRadius="lg">
             <Text color="black" fontSize="lg" lineHeight="26px">
               {fleet.name}
             </Text>

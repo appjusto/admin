@@ -26,7 +26,7 @@ export const useBusinessesSearch = <T extends object>(
         setLoading(false);
       })();
     },
-    [api, kind]
+    [api, kind, hitsPerPage]
   );
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedSearch = React.useCallback(

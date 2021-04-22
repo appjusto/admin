@@ -55,7 +55,7 @@ export const StatusTab = ({
     if (situation) setStatus(situation);
     if (marketPlaceIssues) setFinancialIssues(marketPlaceIssues);
     // if profileIssues, handle it
-  }, [situation]);
+  }, [situation, marketPlaceIssues]);
 
   // UI
   return (

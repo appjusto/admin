@@ -1,6 +1,6 @@
 import algoliasearch, { SearchClient, SearchIndex } from 'algoliasearch/lite';
 import { AlgoliaConfig, Environment, OrderStatus, OrderType } from 'appjusto-types';
-import { BusinessesFilter, OrdersFilter, SearchKind, SituationFilter } from './types';
+import { BusinessesFilter, SearchKind, SituationFilter } from './types';
 
 export default class SearchApi {
   private client: SearchClient;

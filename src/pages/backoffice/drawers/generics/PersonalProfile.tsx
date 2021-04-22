@@ -1,6 +1,6 @@
 import { Box, Button } from '@chakra-ui/react';
 import * as cpfutils from '@fnando/cpf';
-import { UserProfile } from 'appjusto-types';
+import { CourierProfile, WithId } from 'appjusto-types';
 import { AlertError } from 'common/components/AlertError';
 import { AlertSuccess } from 'common/components/AlertSuccess';
 import { CustomInput } from 'common/components/form/input/CustomInput';
@@ -17,7 +17,7 @@ import { t } from 'utils/i18n';
 import { Result, UpdateProfile } from '../generics/types';
 
 interface PersonalProfileProps {
-  profile: UserProfile;
+  profile: WithId<CourierProfile> | null | undefined;
   updateProfile: UpdateProfile;
   result: Result;
 }
