@@ -13,11 +13,17 @@ import { Fleets } from './Fleets';
 
 interface CourierRegisterProps {
   profile: WithId<CourierProfile> | null | undefined;
+  pictures: { selfie: string | null; document: string | null };
   updateProfile: UpdateProfile;
   result: Result;
 }
 
-export const CourierRegister = ({ profile, updateProfile, result }: CourierRegisterProps) => {
+export const CourierRegister = ({
+  profile,
+  pictures,
+  updateProfile,
+  result,
+}: CourierRegisterProps) => {
   // context
   const fleets = profile?.fleet ? [{ ...profile?.fleet }] : [];
   // UI
@@ -28,7 +34,7 @@ export const CourierRegister = ({ profile, updateProfile, result }: CourierRegis
       <SectionTitle>{t('Endereço')}</SectionTitle>
       <Address address={profile?.company} updateProfile={updateProfile} result={result} />
       <SectionTitle>{t('Fotos e documentos')}</SectionTitle>
-      <Documents />
+      <Documents pictures={pictures} />
       <SectionTitle>{t('Dados bancários')}</SectionTitle>
       <ProfileBankingInfo
         bankingInfo={profile?.bankAccount}

@@ -21,9 +21,15 @@ export default class CourierApi {
   }
 
   // courier profile picture
-  async getCourierPictureURL(courierId: string) {
+  async getCourierProfilePictureURL(courierId: string) {
     return await this.files.getDownloadURL(
       this.refs.getCourierProfilePictureStoragePath(courierId)
+    );
+  }
+
+  async getCourierDocumentPictureURL(courierId: string) {
+    return await this.files.getDownloadURL(
+      this.refs.getCourierDocumentPictureStoragePath(courierId)
     );
   }
 

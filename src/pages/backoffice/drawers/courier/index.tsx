@@ -1,5 +1,6 @@
 import { useCourierPrivateData } from 'app/api/courier/useCourierPrivateData';
 import { useCourierProfile } from 'app/api/courier/useCourierProfile';
+import { useCourierProfilePictures } from 'app/api/courier/useCourierProfilePictures';
 import { useContextAgentProfile } from 'app/state/agent/context';
 import React from 'react';
 import { Route, Switch, useParams, useRouteMatch } from 'react-router-dom';
@@ -21,6 +22,7 @@ export const CourierDrawer = ({ onClose, ...props }: CourierDrawerProps) => {
   const { path } = useRouteMatch();
   const { courierId } = useParams<Params>();
   const courier = useCourierProfile(courierId);
+  const pictures = useCourierProfilePictures(courierId);
   const { agent, username } = useContextAgentProfile();
 
   const platform = useCourierPrivateData(courierId);
@@ -43,6 +45,7 @@ export const CourierDrawer = ({ onClose, ...props }: CourierDrawerProps) => {
         <Route exact path={`${path}`}>
           <CourierRegister
             profile={courier}
+            pictures={pictures}
             updateProfile={() => {}}
             result={{ isError: false, isSuccess: false, isLoading: false }}
           />

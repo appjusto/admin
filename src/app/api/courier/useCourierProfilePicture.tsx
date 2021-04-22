@@ -10,7 +10,7 @@ export const useCourierProfilePicture = (courierId: string | undefined) => {
   React.useEffect(() => {
     if (courierId) {
       (async () => {
-        const url = await api.courier().getCourierPictureURL(courierId);
+        const url = await api.courier().getCourierProfilePictureURL(courierId);
         if (url) setPictureUrl(url);
       })();
     }
