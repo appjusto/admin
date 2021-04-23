@@ -37,6 +37,7 @@ export const CourierProvider = ({ children }: Props) => {
   const pictures = useCourierProfilePictures(courierId, '', '');
   const platform = useCourierPrivateData(courierId);
   const marketPlaceIssues = platform?.marketPlace?.issues ?? undefined;
+
   // state
   const [courier, dispatch] = React.useReducer(courierReducer, {} as WithId<CourierProfile>);
   const [contextValidation, setContextValidation] = React.useState({
@@ -45,6 +46,7 @@ export const CourierProvider = ({ children }: Props) => {
     agency: true,
     account: true,
   });
+
   // handlers
   const handleProfileChange = (key: string, value: any) => {
     dispatch({ type: 'update_state', payload: { [key]: value } });
@@ -72,10 +74,6 @@ export const CourierProvider = ({ children }: Props) => {
     });
   }, [courier.cpf, courier.company?.cnpj]);
 
-  /*React.useEffect(() => {
-    if (profile) setCourier(profile);
-  }, [profile]);*/
-  console.log(courier);
   // UI
   return (
     <CourierProfileContext.Provider

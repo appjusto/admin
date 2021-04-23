@@ -1,31 +1,4 @@
-import {
-  //CourierStatus,
-  //CourierMode,
-  WithId,
-  //Fleet,
-  //BankAccount,
-  //CourierCompany,
-  //ProfileSituation,
-  CourierProfile,
-} from 'appjusto-types';
-
-/*export interface StateProps {
-  status: CourierStatus;
-  mode?: CourierMode;
-  fleet?: WithId<Fleet>;
-  bankAccount?: BankAccount;
-  company?: CourierCompany;
-  code?: string;
-  situation: ProfileSituation;
-  profileIssues?: string[];
-  createdOn: firebase.firestore.Timestamp;
-  updatedOn?: firebase.firestore.Timestamp;
-  name?: string;
-  email?: string;
-  surname?: string;
-  cpf?: string;
-  phone?: string;
-}*/
+import { WithId, CourierProfile } from 'appjusto-types';
 
 export type Actions = { type: 'update_state'; payload: Partial<WithId<CourierProfile>> };
 

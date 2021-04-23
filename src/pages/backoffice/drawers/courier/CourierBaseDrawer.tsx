@@ -71,6 +71,7 @@ export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDr
       cpf: courier?.cpf,
       company: courier?.company,
       bankAccount: courier?.bankAccount,
+      situation: courier?.situation,
     });
   };
 
