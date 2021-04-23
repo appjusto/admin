@@ -1,4 +1,5 @@
 import { Box, Center, CenterProps, HStack, Image } from '@chakra-ui/react';
+import { useContextCourierProfile } from 'app/state/courier/context';
 import { CloseButton } from 'common/components/buttons/CloseButton';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import { ImageFbLoading } from 'common/components/ImageFbLoading';
@@ -63,13 +64,9 @@ const ImagePreview = ({ src, onClose, ...props }: ImagePreviewProps) => {
   );
 };
 
-interface DocumentsProps {
-  pictures: { selfie: string | null; document: string | null };
-}
-
-export const Documents = ({ pictures }: DocumentsProps) => {
+export const Documents = () => {
   // context
-
+  const { pictures } = useContextCourierProfile();
   // state
   const [number, setNumber] = React.useState('');
   const [date, setDate] = React.useState('');

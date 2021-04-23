@@ -1,15 +1,18 @@
 import {
+  Button,
   Drawer,
   DrawerBody,
   DrawerCloseButton,
   DrawerContent,
+  DrawerFooter,
   DrawerHeader,
   DrawerOverlay,
   Flex,
   Icon,
   Text,
 } from '@chakra-ui/react';
-import { CourierProfile, WithId } from 'appjusto-types';
+import { useCourierUpdateProfile } from 'app/api/courier/useCourierUpdateProfile';
+import { useContextCourierProfile } from 'app/state/courier/context';
 import { modePTOptions } from 'pages/backoffice/utils';
 import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
 import React from 'react';
@@ -20,27 +23,31 @@ import { SectionTitle } from '../generics/SectionTitle';
 
 interface BaseDrawerProps {
   agent: { id: string | undefined; name: string };
-  courier: WithId<CourierProfile> | null | undefined;
   isOpen: boolean;
   onClose(): void;
-  //onSave?(): void;
   children: React.ReactNode | React.ReactNode[];
 }
 
-export const CourierBaseDrawer = ({
-  agent,
-  courier,
-  onClose,
-  //onSave,
-  children,
-  ...props
-}: BaseDrawerProps) => {
+export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDrawerProps) => {
   //context
   const { url } = useRouteMatch();
+  const { courier } = useContextCourierProfile();
+  const { updateProfile, updateResult } = useCourierUpdateProfile();
+  const { isLoading, isSuccess, isError } = updateResult;
+
   //handlers
   let courierName = courier?.name ?? 'N/I';
   if (courier?.surname) courierName += ` ${courier.surname}`;
-  //UI conditions
+
+  //handlers
+  const handleSave = () => {
+    /*let newProfile = { ...courier };
+    if (Object.entries(newProfile).length > 0) {
+      const deleteStatus = delete newProfile.id;
+      console.log(newProfile);
+      if (deleteStatus) return updateProfile(newProfile);
+    }*/
+  };
 
   //UI
   return (
@@ -113,6 +120,21 @@ export const CourierBaseDrawer = ({
             </Flex>
             {children}
           </DrawerBody>
+          <DrawerFooter borderTop="1px solid #F2F6EA">
+            <Flex w="full" justifyContent="flex-start">
+              <Button
+                type="submit"
+                width="full"
+                maxW="240px"
+                fontSize="15px"
+                onClick={handleSave}
+                isLoading={isLoading}
+                loadingText={t('Salvando')}
+              >
+                {t('Salvar alterações')}
+              </Button>
+            </Flex>
+          </DrawerFooter>
         </DrawerContent>
       </DrawerOverlay>
     </Drawer>

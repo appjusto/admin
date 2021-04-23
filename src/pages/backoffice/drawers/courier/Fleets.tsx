@@ -1,15 +1,12 @@
 import { Box, Text } from '@chakra-ui/react';
-import { Fleet } from 'appjusto-types';
+import { useContextCourierProfile } from 'app/state/courier/context';
 import React from 'react';
 import { t } from 'utils/i18n';
 
-interface FleetsProps {
-  fleets?: Partial<Fleet>[];
-}
-
-export const Fleets = ({ fleets }: FleetsProps) => {
-  // state
-
+export const Fleets = () => {
+  // context
+  const { courier } = useContextCourierProfile();
+  const fleets = courier?.fleet ? [{ ...courier?.fleet }] : [];
   // UI
   return (
     <Box mt="4">

@@ -71,7 +71,7 @@ export default class FirebaseRefs {
   getCouriersRef = () => this.firestore.collection('couriers');
   getCourierRef = (id: string) => this.getCouriersRef().doc(id);
   getCourierPrivateRef = (id: string) => this.getCourierRef(id).collection('private');
-  getCourierPlatformRef = (id: string) => this.getBusinessPrivateRef(id).doc('platform');
+  getCourierPlatformRef = (id: string) => this.getCourierPrivateRef(id).doc('platform');
 
   // fleets
   getFleetsRef = () => this.firestore.collection('fleets');

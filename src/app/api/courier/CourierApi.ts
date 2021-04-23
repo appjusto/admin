@@ -37,4 +37,9 @@ export default class CourierApi {
   async getCourierPlatformData(courierId: string) {
     return (await this.refs.getCourierPlatformRef(courierId).get()).data();
   }
+
+  // update
+  async updateProfile(id: string, changes: Partial<CourierProfile>) {
+    await this.refs.getCourierRef(id).update(changes);
+  }
 }
