@@ -22,7 +22,7 @@ export const CourierDrawer = ({ onClose, ...props }: CourierDrawerProps) => {
   const { path } = useRouteMatch();
   const { courierId } = useParams<Params>();
   const courier = useCourierProfile(courierId);
-  const pictures = useCourierProfilePictures(courierId);
+  const pictures = useCourierProfilePictures(courierId, '', '');
   const { agent, username } = useContextAgentProfile();
 
   const platform = useCourierPrivateData(courierId);

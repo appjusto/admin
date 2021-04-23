@@ -48,7 +48,7 @@ export const CourierBaseDrawer = ({
       <DrawerOverlay>
         <DrawerContent>
           <DrawerCloseButton bg="green.500" mr="12px" _focus={{ outline: 'none' }} />
-          <DrawerHeader pb="0">
+          <DrawerHeader pb="2">
             <Text color="black" fontSize="2xl" fontWeight="700" lineHeight="28px" mb="2">
               {courier?.code ?? 'N/E'}
             </Text>
@@ -75,7 +75,7 @@ export const CourierBaseDrawer = ({
               </Text>
             </Text>
           </DrawerHeader>
-          <DrawerBody pt="2" pb="28">
+          <DrawerBody pb="28">
             <SectionTitle>{courierName}</SectionTitle>
             <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
               {t('Status:')}{' '}
