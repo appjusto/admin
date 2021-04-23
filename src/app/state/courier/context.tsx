@@ -1,16 +1,21 @@
+import * as cnpjutils from '@fnando/cnpj';
+import * as cpfutils from '@fnando/cpf';
 import { useCourierPrivateData } from 'app/api/courier/useCourierPrivateData';
 import { useCourierProfile } from 'app/api/courier/useCourierProfile';
 import { useCourierProfilePictures } from 'app/api/courier/useCourierProfilePictures';
 import { CourierProfile, WithId } from 'appjusto-types';
-import React from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import { useParams } from 'react-router';
 import { courierReducer } from './courierReducer';
 
+type Validation = { cpf: boolean; cnpj: boolean; agency: boolean; account: boolean };
 interface CourierProfileContextProps {
   courier: WithId<CourierProfile> | undefined | null;
   pictures: { selfie: string | null; document: string | null };
   marketPlaceIssues: string[] | undefined;
-  handleProfileUpdate(key: string, value: any): void;
+  contextValidation: Validation;
+  handleProfileChange(key: string, value: any): void;
+  setContextValidation: Dispatch<SetStateAction<Validation>>;
 }
 
 const CourierProfileContext = React.createContext<CourierProfileContextProps>(
@@ -33,11 +38,15 @@ export const CourierProvider = ({ children }: Props) => {
   const platform = useCourierPrivateData(courierId);
   const marketPlaceIssues = platform?.marketPlace?.issues ?? undefined;
   // state
-  //const [courier, setCourier] = React.useState<WithId<CourierProfile> | null | undefined>(null);
   const [courier, dispatch] = React.useReducer(courierReducer, {} as WithId<CourierProfile>);
-
+  const [contextValidation, setContextValidation] = React.useState({
+    cpf: true,
+    cnpj: true,
+    agency: true,
+    account: true,
+  });
   // handlers
-  const handleProfileUpdate = (key: string, value: any) => {
+  const handleProfileChange = (key: string, value: any) => {
     dispatch({ type: 'update_state', payload: { [key]: value } });
   };
 
@@ -53,6 +62,16 @@ export const CourierProvider = ({ children }: Props) => {
     }
   }, [profile]);
 
+  React.useEffect(() => {
+    setContextValidation((prevState) => {
+      return {
+        ...prevState,
+        cpf: cpfutils.isValid(courier?.cpf!),
+        cnpj: cnpjutils.isValid(courier?.company?.cnpj!),
+      };
+    });
+  }, [courier.cpf, courier.company?.cnpj]);
+
   /*React.useEffect(() => {
     if (profile) setCourier(profile);
   }, [profile]);*/
@@ -60,7 +79,14 @@ export const CourierProvider = ({ children }: Props) => {
   // UI
   return (
     <CourierProfileContext.Provider
-      value={{ courier, pictures, marketPlaceIssues, handleProfileUpdate }}
+      value={{
+        courier,
+        pictures,
+        marketPlaceIssues,
+        contextValidation,
+        handleProfileChange,
+        setContextValidation,
+      }}
     >
       {children}
     </CourierProfileContext.Provider>

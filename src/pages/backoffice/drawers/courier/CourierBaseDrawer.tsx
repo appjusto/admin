@@ -8,11 +8,14 @@ import {
   DrawerHeader,
   DrawerOverlay,
   Flex,
+  HStack,
   Icon,
   Text,
 } from '@chakra-ui/react';
 import { useCourierUpdateProfile } from 'app/api/courier/useCourierUpdateProfile';
 import { useContextCourierProfile } from 'app/state/courier/context';
+import { AlertError } from 'common/components/AlertError';
+import { AlertSuccess } from 'common/components/AlertSuccess';
 import { modePTOptions } from 'pages/backoffice/utils';
 import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
 import React from 'react';
@@ -28,12 +31,20 @@ interface BaseDrawerProps {
   children: React.ReactNode | React.ReactNode[];
 }
 
+type Status = 'unsubmited' | 'success' | 'error';
+type SubmitStatus = { status: Status; message: string };
+
+const initialStatus = { status: 'unsubmited', message: '' } as SubmitStatus;
+
 export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDrawerProps) => {
   //context
   const { url } = useRouteMatch();
-  const { courier } = useContextCourierProfile();
+  const { courier, contextValidation } = useContextCourierProfile();
   const { updateProfile, updateResult } = useCourierUpdateProfile();
   const { isLoading, isSuccess, isError } = updateResult;
+
+  // state
+  const [submitStatus, setSubmitStatus] = React.useState<SubmitStatus>(initialStatus);
 
   //handlers
   let courierName = courier?.name ?? 'N/I';
@@ -41,13 +52,34 @@ export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDr
 
   //handlers
   const handleSave = () => {
-    /*let newProfile = { ...courier };
-    if (Object.entries(newProfile).length > 0) {
-      const deleteStatus = delete newProfile.id;
-      console.log(newProfile);
-      if (deleteStatus) return updateProfile(newProfile);
-    }*/
+    setSubmitStatus(initialStatus);
+    if (
+      !contextValidation.cpf ||
+      !contextValidation.cnpj ||
+      !contextValidation.agency ||
+      !contextValidation.account
+    ) {
+      return setSubmitStatus({
+        status: 'error',
+        message: 'Verificar o preenchimento dos campos',
+      });
+    }
+    updateProfile({
+      name: courier?.name,
+      surname: courier?.surname,
+      phone: courier?.phone,
+      cpf: courier?.cpf,
+      company: courier?.company,
+      bankAccount: courier?.bankAccount,
+    });
   };
+
+  // side effects
+  React.useEffect(() => {
+    if (isSuccess) setSubmitStatus({ status: 'success', message: 'Informações salvas!' });
+    if (isError)
+      setSubmitStatus({ status: 'error', message: 'Não foi possível acessar o servidor' });
+  }, [isError, isSuccess]);
 
   //UI
   return (
@@ -121,7 +153,7 @@ export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDr
             {children}
           </DrawerBody>
           <DrawerFooter borderTop="1px solid #F2F6EA">
-            <Flex w="full" justifyContent="flex-start">
+            <HStack w="full" spacing={4}>
               <Button
                 type="submit"
                 width="full"
@@ -133,7 +165,13 @@ export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDr
               >
                 {t('Salvar alterações')}
               </Button>
-            </Flex>
+              {submitStatus.status === 'success' && (
+                <AlertSuccess mt="0" h="48px" description={submitStatus.message} />
+              )}
+              {submitStatus.status === 'error' && (
+                <AlertError mt="0" h="48px" description={submitStatus.message} />
+              )}
+            </HStack>
           </DrawerFooter>
         </DrawerContent>
       </DrawerOverlay>

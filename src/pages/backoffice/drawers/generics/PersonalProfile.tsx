@@ -22,7 +22,7 @@ interface PersonalProfileProps {
 
 export const PersonalProfile = ({ isCNPJ }: PersonalProfileProps) => {
   // context
-  const { courier, handleProfileUpdate } = useContextCourierProfile();
+  const { courier, handleProfileChange } = useContextCourierProfile();
 
   // refs
   const nameRef = React.useRef<HTMLInputElement>(null);
@@ -41,8 +41,8 @@ export const PersonalProfile = ({ isCNPJ }: PersonalProfileProps) => {
         ...courier?.company,
         cnpj: value,
       };
-      handleProfileUpdate('company', newCompany);
-    } else handleProfileUpdate(field, value);
+      handleProfileChange('company', newCompany);
+    } else handleProfileChange(field, value);
   };
   /*const onSubmitHandler = async () => {
     if (!isCPFValid()) return cpfRef?.current?.focus();

@@ -23,7 +23,7 @@ const bankAccountSet = (bankAccount: BankAccount): boolean => {
 export const ProfileBankingInfo = () => {
   // context
   const banks = useBanks();
-  const { courier, handleProfileUpdate } = useContextCourierProfile();
+  const { courier, handleProfileChange, setContextValidation } = useContextCourierProfile();
 
   // state
   const [selectedBank, setSelectedBank] = React.useState<Bank>();
@@ -56,7 +56,9 @@ export const ProfileBankingInfo = () => {
       ...courier?.bankAccount,
       [field]: value,
     };
-    handleProfileUpdate('bankAccount', newBankAccount);
+    if (field === 'agency') newBankAccount.agencyFormatted = agencyFormatter!(value);
+    if (field === 'account') newBankAccount.accountFormatted = accountFormatter!(value);
+    handleProfileChange('bankAccount', newBankAccount);
   };
 
   const findSelectedBank = React.useCallback((banks: WithId<Bank>[], bankName: string) => {
@@ -78,6 +80,16 @@ export const ProfileBankingInfo = () => {
       findSelectedBank(banks, courier?.bankAccount?.name);
     }
   }, [banks, courier?.bankAccount?.name, findSelectedBank]);
+
+  React.useEffect(() => {
+    setContextValidation((prevState) => {
+      return {
+        ...prevState,
+        agency: validation.agency,
+        account: validation.account,
+      };
+    });
+  }, [validation]);
 
   // UI
   return (
@@ -105,7 +117,7 @@ export const ProfileBankingInfo = () => {
             ? t('Número da agência com o dígito')
             : t('Número da agência')
         }
-        value={courier?.bankAccount?.agency}
+        value={courier?.bankAccount?.agency ?? ''}
         onValueChange={(value) => handleInputChange('agency', value)}
         mask={selectedBank?.agencyPattern}
         parser={agencyParser}

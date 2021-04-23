@@ -9,7 +9,7 @@ import { t } from 'utils/i18n';
 
 export const Address = () => {
   // context
-  const { courier, handleProfileUpdate } = useContextCourierProfile();
+  const { courier, handleProfileChange } = useContextCourierProfile();
 
   // state
 
@@ -23,7 +23,7 @@ export const Address = () => {
       ...courier?.company,
       [field]: value,
     };
-    handleProfileUpdate('company', newCompany);
+    handleProfileChange('company', newCompany);
   };
 
   // side effects
