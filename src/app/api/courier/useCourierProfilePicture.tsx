@@ -17,7 +17,7 @@ export const useCourierProfilePicture = (
         if (url) setPictureUrl(url);
       })();
     }
-  }, [api, courierId]);
+  }, [api, courierId, size]);
   // result
   return pictureUrl;
 };

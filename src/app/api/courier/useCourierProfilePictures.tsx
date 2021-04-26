@@ -23,7 +23,7 @@ export const useCourierProfilePictures = (
         if (documentUrl) setDocument(documentUrl);
       })();
     }
-  }, [api, courierId]);
+  }, [api, courierId, selfieSize, documentSize]);
   // result
   return { selfie, document };
 };

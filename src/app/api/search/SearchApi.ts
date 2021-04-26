@@ -46,7 +46,6 @@ export default class SearchApi {
   ) {
     const index = this.getSearchIndex(kind);
     if (!index) throw new Error('Invalid index');
-    console.log(this.createBusinessesFilters(filters));
     return index.search<T>(query, {
       page,
       hitsPerPage,

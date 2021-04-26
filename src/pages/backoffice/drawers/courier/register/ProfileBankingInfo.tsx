@@ -1,7 +1,7 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { useBanks } from 'app/api/business/profile/useBanks';
 import { useContextCourierProfile } from 'app/state/courier/context';
-import { Bank, BankAccount, WithId } from 'appjusto-types';
+import { Bank, WithId } from 'appjusto-types';
 import { AlertWarning } from 'common/components/AlertWarning';
 import { CustomPatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';
 import {
@@ -10,15 +10,8 @@ import {
 } from 'common/components/form/input/pattern-input/formatters';
 import { numbersAndLettersParser } from 'common/components/form/input/pattern-input/parsers';
 import { BankSelect } from 'common/components/form/select/BankSelect';
-import { isEmpty } from 'lodash';
 import React from 'react';
 import { t } from 'utils/i18n';
-
-const bankAccountSet = (bankAccount: BankAccount): boolean => {
-  return (
-    !isEmpty(bankAccount.name) && !isEmpty(bankAccount.agency) && !isEmpty(bankAccount.account)
-  );
-};
 
 export const ProfileBankingInfo = () => {
   // context
@@ -89,7 +82,7 @@ export const ProfileBankingInfo = () => {
         account: validation.account,
       };
     });
-  }, [validation]);
+  }, [validation, setContextValidation]);
 
   // UI
   return (
