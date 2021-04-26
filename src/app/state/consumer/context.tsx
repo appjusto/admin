@@ -1,6 +1,7 @@
 import * as cpfutils from '@fnando/cpf';
+import { useConsumerOrders } from 'app/api/consumer/useConsumerOrders';
 import { useConsumerProfile } from 'app/api/consumer/useConsumerProfile';
-import { ConsumerProfile, WithId } from 'appjusto-types';
+import { ConsumerProfile, Order, WithId } from 'appjusto-types';
 import React, { Dispatch, SetStateAction } from 'react';
 import { useParams } from 'react-router';
 import { consumerReducer } from './consumerReducer';
@@ -9,6 +10,7 @@ type Validation = { cpf: boolean };
 interface ConsumerProfileContextProps {
   consumer: WithId<ConsumerProfile> | undefined | null;
   contextValidation: Validation;
+  orders: WithId<Order>[];
   handleProfileChange(key: string, value: any): void;
   setContextValidation: Dispatch<SetStateAction<Validation>>;
 }
@@ -28,9 +30,8 @@ type Params = {
 export const ConsumerProvider = ({ children }: Props) => {
   // context
   const { consumerId } = useParams<Params>();
-  console.log('consumerId', consumerId);
   const profile = useConsumerProfile(consumerId);
-  console.log('profile', profile);
+  const orders = useConsumerOrders(consumerId);
   // state
   const [consumer, dispatch] = React.useReducer(consumerReducer, {} as WithId<ConsumerProfile>);
   const [contextValidation, setContextValidation] = React.useState({
@@ -68,6 +69,7 @@ export const ConsumerProvider = ({ children }: Props) => {
       value={{
         consumer,
         contextValidation,
+        orders,
         handleProfileChange,
         setContextValidation,
       }}

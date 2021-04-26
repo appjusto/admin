@@ -1,31 +1,34 @@
 import { Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
 import { useContextConsumerProfile } from 'app/state/consumer/context';
+import { Order, WithId } from 'appjusto-types';
+import { getDateAndHour, getOrderTotalPriceToDisplay } from 'utils/functions';
 import { t } from 'utils/i18n';
 
 interface ItemPros {
-  code: string;
-  createdOn: string;
-  business: string;
-  value: string;
+  order: WithId<Order>;
 }
 
-const ConsumerOrdersTableItem = ({ code, createdOn, business, value }: ItemPros) => {
+const ConsumerOrdersTableItem = ({ order }: ItemPros) => {
+  const onboarding = order.createdOn
+    ? getDateAndHour(order.createdOn as firebase.firestore.Timestamp)
+    : 'N/E';
+  const totalValue = getOrderTotalPriceToDisplay(order.items ?? []);
   return (
-    <Tr color="black" fontSize="xs" fontWeight="700">
-      <Td>{code}</Td>
-      <Td>{createdOn}</Td>
-      <Td>{business}</Td>
-      <Td>{value}</Td>
+    <Tr color="black" fontSize="xs">
+      <Td>{order.code ?? 'N/E'}</Td>
+      <Td>{onboarding}</Td>
+      <Td>{order.business?.name ?? 'N/I'}</Td>
+      <Td>{totalValue}</Td>
     </Tr>
   );
 };
 
 export const ConsumerOrders = () => {
   // context
-  const { consumer } = useContextConsumerProfile();
+  const { orders } = useContextConsumerProfile();
 
   // helpers
-  const totalOrders = consumer?.statistics?.totalOrders ?? '0';
+  const totalOrders = orders.length ?? '0';
   return (
     <>
       <Text fontSize="20px" lineHeight="26px" color="black">
@@ -41,12 +44,18 @@ export const ConsumerOrders = () => {
           </Tr>
         </Thead>
         <Tbody>
-          <Tr color="black" fontSize="xs" fontWeight="700">
-            <Td>{t('Não há pedidos no momento.')}</Td>
-            <Td></Td>
-            <Td></Td>
-            <Td></Td>
-          </Tr>
+          {orders && orders.length > 0 ? (
+            orders.map((order) => {
+              return <ConsumerOrdersTableItem key={order.id} order={order} />;
+            })
+          ) : (
+            <Tr color="black" fontSize="xs" fontWeight="700">
+              <Td>{t('Não há pedidos no momento.')}</Td>
+              <Td></Td>
+              <Td></Td>
+              <Td></Td>
+            </Tr>
+          )}
         </Tbody>
       </Table>
     </>

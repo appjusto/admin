@@ -12,7 +12,7 @@ export const useConsumerProfile = (consumerId: string | undefined | null) => {
   React.useEffect(() => {
     if (consumerId === undefined) return; // during initialization
     if (consumerId === null) {
-      // no business
+      // no consumer
       setProfile(null);
       return;
     }

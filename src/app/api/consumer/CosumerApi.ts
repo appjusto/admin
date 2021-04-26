@@ -11,7 +11,6 @@ export default class ConsumerApi {
   ): firebase.Unsubscribe {
     const unsubscribe = this.refs.getConsumerRef(consumerId).onSnapshot(
       (doc) => {
-        console.log(doc.data());
         if (doc.exists) resultHandler({ ...(doc.data() as ConsumerProfile), id: consumerId });
       },
       (error) => {
