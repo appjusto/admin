@@ -10,7 +10,7 @@ import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import PageHeader from '../../PageHeader';
-import { BusinessDrawer } from '../drawers/business';
+import { ConsumerDrawer } from '../drawers/consumers';
 import { ConsumersTable } from './ConsumersTable';
 
 const ConsumersPage = () => {
@@ -95,8 +95,8 @@ const ConsumersPage = () => {
         {t('Carregar mais')}
       </Button>
       <Switch>
-        <Route path={`${path}/:courierId`}>
-          <BusinessDrawer isOpen onClose={closeDrawerHandler} />
+        <Route path={`${path}/:consumerId`}>
+          <ConsumerDrawer isOpen onClose={closeDrawerHandler} />
         </Route>
       </Switch>
     </>
