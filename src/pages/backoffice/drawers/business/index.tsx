@@ -29,6 +29,15 @@ export const BusinessDrawer = ({ onClose, ...props }: BusinessDrawerProps) => {
   const platform = useBusinessPrivateData(businessId);
   const { updateBusinessProfile, result } = useBusinessProfile();
 
+  // state
+  /*const [profile, dispatch] = React.useReducer(businessBOReducer, {} as WithId<Business>);
+  const [validation, setValidation] = React.useState({
+    cpf: true,
+    cnpj: true,
+    agency: true,
+    account: true,
+  });*/
+
   //handlers
   const marketPlaceIssues = platform?.marketPlace?.issues ?? undefined;
 
@@ -42,6 +51,10 @@ export const BusinessDrawer = ({ onClose, ...props }: BusinessDrawerProps) => {
       setManagerEmail(business?.managers[0]);
     }
   }, [business, setManagerEmail]);
+
+  React.useEffect(() => {
+    if (businessId) setBusinessId(businessId);
+  }, [businessId, setBusinessId]);
 
   //UI
   return (
