@@ -8,11 +8,11 @@ import PageHeader from '../../PageHeader';
 import { BOList } from './BOList';
 import { Panel } from './Panel';
 
-const options = { active: true, inactive: true };
+const situations = ['submitted', 'verified'];
 
 const BODashboard = () => {
   // context
-  const businesses = useBusinesses(options);
+  const businesses = useBusinesses(situations);
   //const { orders } = useBOOrdersContext();
   // state
   const [dateTime, setDateTime] = React.useState('');
