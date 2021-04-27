@@ -6,9 +6,10 @@ import { t } from 'utils/i18n';
 import { AddAgentsForm } from './AddAgentsForm';
 import { AgentsTable } from './AgentsTable';
 
+export type AgentRole = 'owner' | 'staff' | 'viewer';
 export interface Agent {
   email: string;
-  role: string;
+  role: AgentRole;
   createdOn: firebase.firestore.Timestamp;
 }
 
@@ -24,7 +25,7 @@ const AgentsPage = () => {
         {
           id: 'sjclscn1',
           email: 'renancostam@gmail.com',
-          role: 'owner',
+          role: 'owner' as AgentRole,
           createdOn: agent.createdOn,
         },
       ];
