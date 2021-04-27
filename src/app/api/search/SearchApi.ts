@@ -1,6 +1,7 @@
 import algoliasearch, { SearchClient, SearchIndex } from 'algoliasearch/lite';
 import { AlgoliaConfig, Environment, OrderStatus, OrderType } from 'appjusto-types';
 import { BusinessesFilter, SearchKind, SituationFilter } from './types';
+import { createNullCache } from '@algolia/cache-common';
 
 export default class SearchApi {
   private client: SearchClient;
@@ -10,7 +11,12 @@ export default class SearchApi {
   private orders: SearchIndex;
 
   constructor(config: AlgoliaConfig, env: Environment) {
-    this.client = algoliasearch(config.appId, config.apiKey);
+    this.client = algoliasearch(config.appId, config.apiKey, {
+      // Caches responses from Algolia
+      responsesCache: createNullCache(),
+      // Caches Promises with the same request payload
+      requestsCache: createNullCache(),
+    });
     this.businesses = this.client.initIndex(`${env}_businesses_backoffice`);
     this.couriers = this.client.initIndex(`${env}_couriers_backoffice`);
     this.consumers = this.client.initIndex(`${env}_consumers`);

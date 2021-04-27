@@ -22,7 +22,8 @@ export const useBusinessesSearch = <T extends object>(
     (input: string, filters: BusinessesFilter[], page?: number) => {
       (async () => {
         setLoading(true);
-        setResponse(await api.businessSearch(kind, filters, input, page, hitsPerPage));
+        const data = await api.businessSearch(kind, filters, input, page, hitsPerPage);
+        setResponse(data as SearchResponse<T>);
         setLoading(false);
       })();
     },
@@ -33,6 +34,10 @@ export const useBusinessesSearch = <T extends object>(
     debounce<(input: string, filters: BusinessesFilter[], page?: number) => void>(search, 500),
     [search]
   );
+
+  const refetch = () => {
+    search(soughtValue!, filters);
+  };
   // side effects
   // debounce search when search input changes
   React.useEffect(() => {
@@ -56,5 +61,5 @@ export const useBusinessesSearch = <T extends object>(
     if (hasNextPage) debouncedSearch(soughtValue, filters, response.page + 1);
   }, [soughtValue, response, debouncedSearch, filters]);
 
-  return { results, isLoading, fetchNextPage };
+  return { results, isLoading, fetchNextPage, refetch };
 };

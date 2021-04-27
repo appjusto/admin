@@ -27,14 +27,17 @@ const BusinessesPage = () => {
   //const [filterCheck, setFilterCheck] = React.useState<string[]>([]);
   const [filters, setFilters] = React.useState<BusinessesFilter[]>([]);
 
-  const { results: businesses, fetchNextPage } = useBusinessesSearch<BusinessAlgolia>(
+  const { results: businesses, fetchNextPage, refetch } = useBusinessesSearch<BusinessAlgolia>(
     true,
     'businesses',
     filters,
     search
   );
   // handlers
-  const closeDrawerHandler = () => history.replace(path);
+  const closeDrawerHandler = () => {
+    refetch();
+    history.replace(path);
+  };
 
   // side effects
   React.useEffect(() => {
@@ -59,6 +62,7 @@ const BusinessesPage = () => {
 
     setFilters([...barArray]);
   }, [filterBar]);
+
   // UI
   return (
     <>
