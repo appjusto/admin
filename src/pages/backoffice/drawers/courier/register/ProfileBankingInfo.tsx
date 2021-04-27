@@ -1,4 +1,4 @@
-import { Box, Flex, Text } from '@chakra-ui/react';
+import { Box, Flex, HStack, Radio, RadioGroup, Text } from '@chakra-ui/react';
 import { useBanks } from 'app/api/business/profile/useBanks';
 import { useContextCourierProfile } from 'app/state/courier/context';
 import { Bank, WithId } from 'appjusto-types';
@@ -87,6 +87,48 @@ export const ProfileBankingInfo = () => {
   // UI
   return (
     <Box>
+      <Text mt="4">
+        <Text as="span" color="red">
+          {t('Aviso:')}
+        </Text>
+        {t(
+          ' a conta precisa estar no nome do entregador ou da sua MEI ou empresa. Se o CNPJ for de MEI, precisará ser conta Pessoa Física. Caso contrário, deverá ser conta corrente no nome da Pessoa Jurídica.'
+        )}
+      </Text>
+      <Text mt="4" mb="2" color="black" fontWeight="700">
+        {t('Personalidade da conta:')}
+      </Text>
+      <RadioGroup
+        onChange={(value) => handleInputChange('personType', value as string)}
+        value={courier?.bankAccount?.personType ?? ''}
+        defaultValue="1"
+        colorScheme="green"
+        color="black"
+        fontSize="15px"
+        lineHeight="21px"
+      >
+        <HStack alignItems="flex-start" color="black" spacing={8} fontSize="16px" lineHeight="22px">
+          <Radio value="Pessoa Física">{t('Pessoa Física')}</Radio>
+          <Radio value="Pessoa Jurídica">{t('Pessoa Jurídica')}</Radio>
+        </HStack>
+      </RadioGroup>
+      <Text mt="4" mb="2" color="black" fontWeight="700">
+        {t('Tipo de conta:')}
+      </Text>
+      <RadioGroup
+        onChange={(value) => handleInputChange('type', value as string)}
+        value={courier?.bankAccount?.type ?? ''}
+        defaultValue="1"
+        colorScheme="green"
+        color="black"
+        fontSize="15px"
+        lineHeight="21px"
+      >
+        <HStack alignItems="flex-start" color="black" spacing={8} fontSize="16px" lineHeight="22px">
+          <Radio value="Corrente">{t('Corrente')}</Radio>
+          <Radio value="Poupança">{t('Poupança')}</Radio>
+        </HStack>
+      </RadioGroup>
       <BankSelect
         ref={nameRef}
         value={courier?.bankAccount?.name ?? ''}
