@@ -1,7 +1,8 @@
-import { Box, Flex, Text } from '@chakra-ui/react';
+import { Box, Flex, HStack, Radio, RadioGroup, Text } from '@chakra-ui/react';
 import { useBanks } from 'app/api/business/profile/useBanks';
 import { useBusinessBankAccount } from 'app/api/business/profile/useBusinessBankAccount';
 import { Bank, BankAccount, WithId } from 'appjusto-types';
+import { BankAccountPersonType, BankAccountType } from 'appjusto-types/banking';
 import { AlertError } from 'common/components/AlertError';
 import { AlertSuccess } from 'common/components/AlertSuccess';
 import { AlertWarning } from 'common/components/AlertWarning';
@@ -33,6 +34,8 @@ const BankingInformation = ({ onboarding, redirect, backoffice }: OnboardingProp
   const { isLoading, isSuccess, isError } = updateResult;
   // state
   const [selectedBank, setSelectedBank] = React.useState<Bank>();
+  const [personType, setPersonType] = React.useState(bankAccount?.personType ?? '');
+  const [type, setType] = React.useState(bankAccount?.type ?? '');
   const [name, setName] = React.useState(bankAccount?.name ?? '');
   const [agency, setAgency] = React.useState(bankAccount?.agency ?? '');
   const [account, setAccount] = React.useState(bankAccount?.account ?? '');
@@ -79,7 +82,8 @@ const BankingInformation = ({ onboarding, redirect, backoffice }: OnboardingProp
     const agencyFormatted = agencyFormatter!(agency);
     const accountFormatted = accountFormatter!(account);
     await updateBankAccount({
-      type: 'Corrente',
+      personType,
+      type,
       name,
       agency,
       agencyFormatted,
@@ -97,6 +101,9 @@ const BankingInformation = ({ onboarding, redirect, backoffice }: OnboardingProp
   }, [onboarding]);
   React.useEffect(() => {
     if (bankAccount && bankAccountSet(bankAccount)) {
+      setPersonType(bankAccount.personType);
+      setType(bankAccount.type);
+      setName(bankAccount.name);
       setName(bankAccount.name);
       setAgency(bankAccount.agency);
       setAccount(bankAccount.account);
@@ -119,12 +126,61 @@ const BankingInformation = ({ onboarding, redirect, backoffice }: OnboardingProp
           onSubmitHandler();
         }}
       >
-        {!backoffice && (
-          <PageHeader
-            title={t('Dados bancários')}
-            subtitle={t('Informe para onde serão transferidos os repasses')}
-          />
-        )}
+        {!backoffice && <PageHeader title={t('Dados bancários')} />}
+        <Text mt="4">
+          <Text as="span" color="red">
+            {t('Aviso:')}
+          </Text>
+          {t(
+            ' a conta precisa estar no seu nome ou da sua MEI ou empresa. Se seu CNPJ for de MEI, você pode cadastrar sua conta Pessoa Física. Caso contrário, você precisará cadastrar uma conta corrente no nome da sua Pessoa Jurídica.'
+          )}
+        </Text>
+        <Text mt="4" mb="2" color="black" fontWeight="700">
+          {t('Personalidade da conta:')}
+        </Text>
+        <RadioGroup
+          onChange={(value) => setPersonType(value as BankAccountPersonType)}
+          value={personType}
+          defaultValue="1"
+          colorScheme="green"
+          color="black"
+          fontSize="15px"
+          lineHeight="21px"
+        >
+          <HStack
+            alignItems="flex-start"
+            color="black"
+            spacing={8}
+            fontSize="16px"
+            lineHeight="22px"
+          >
+            <Radio value="Pessoa Física">{t('Pessoa Física')}</Radio>
+            <Radio value="Pessoa Jurídica">{t('Pessoa Jurídica')}</Radio>
+          </HStack>
+        </RadioGroup>
+        <Text mt="4" mb="2" color="black" fontWeight="700">
+          {t('Tipo de conta:')}
+        </Text>
+        <RadioGroup
+          onChange={(value) => setType(value as BankAccountType)}
+          value={type}
+          defaultValue="1"
+          colorScheme="green"
+          color="black"
+          fontSize="15px"
+          lineHeight="21px"
+        >
+          <HStack
+            alignItems="flex-start"
+            color="black"
+            spacing={8}
+            fontSize="16px"
+            lineHeight="22px"
+          >
+            <Radio value="Corrente">{t('Corrente')}</Radio>
+            <Radio value="Poupança">{t('Poupança')}</Radio>
+          </HStack>
+        </RadioGroup>
         <BankSelect
           ref={nameRef}
           value={name}

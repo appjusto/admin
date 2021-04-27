@@ -3,7 +3,7 @@ import React from 'react';
 
 interface Props extends TextProps {
   title: string;
-  subtitle: string;
+  subtitle?: string;
 }
 
 const PageHeader = ({ title, subtitle, ...props }: Props) => {
@@ -12,9 +12,11 @@ const PageHeader = ({ title, subtitle, ...props }: Props) => {
       <Heading color="black" fontSize="2xl" mt="4" {...props}>
         {title}
       </Heading>
-      <Text mt="1" fontSize="sm" maxW="580px" {...props}>
-        {subtitle}
-      </Text>
+      {subtitle && (
+        <Text mt="1" fontSize="sm" maxW="580px" {...props}>
+          {subtitle}
+        </Text>
+      )}
     </>
   );
 };
