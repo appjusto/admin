@@ -23,8 +23,8 @@ const AgentsPage = () => {
     if (agent) {
       const fakeMembers = [
         {
-          id: 'sjclscn1',
-          email: 'renancostam@gmail.com',
+          id: agent.id,
+          email: agent.email ?? 'não encontrado',
           role: 'owner' as AgentRole,
           createdOn: agent.createdOn,
         },
