@@ -10,7 +10,7 @@ import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import PageHeader from '../../PageHeader';
-import { ConsumerDrawer } from '../drawers/consumers';
+import { ConsumerDrawer } from '../drawers/consumer';
 import { ConsumersTable } from './ConsumersTable';
 
 const ConsumersPage = () => {

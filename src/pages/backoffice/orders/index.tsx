@@ -10,7 +10,7 @@ import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import PageHeader from '../../PageHeader';
-import { BusinessDrawer } from '../drawers/business';
+import { BackofficeOrderDrawer } from '../drawers/order';
 import { OrdersTable } from './OrdersTable';
 
 const OrdersPage = () => {
@@ -171,7 +171,7 @@ const OrdersPage = () => {
       </Button>
       <Switch>
         <Route path={`${path}/:orderId`}>
-          <BusinessDrawer isOpen onClose={closeDrawerHandler} />
+          <BackofficeOrderDrawer isOpen onClose={closeDrawerHandler} />
         </Route>
       </Switch>
     </>
