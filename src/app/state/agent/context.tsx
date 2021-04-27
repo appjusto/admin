@@ -6,6 +6,7 @@ import React from 'react';
 interface ContextProps {
   agent: WithId<ManagerProfile> | undefined | null;
   username: string;
+  role: string | null | undefined;
   isBackofficeUser: boolean | null;
 }
 
@@ -16,11 +17,11 @@ interface Props {
 }
 
 export const AgentProvider = ({ children }: Props) => {
-  const { isBackofficeUser } = useFirebaseUserRole();
+  const { role, isBackofficeUser } = useFirebaseUserRole();
   const agent = useAgentProfile();
   const username = agent?.name ?? (agent?.email ? agent?.email.split('@')[0] : '');
   return (
-    <AgentProfileContext.Provider value={{ agent, username, isBackofficeUser }}>
+    <AgentProfileContext.Provider value={{ agent, username, role, isBackofficeUser }}>
       {children}
     </AgentProfileContext.Provider>
   );

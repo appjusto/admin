@@ -1,7 +1,10 @@
 import { useContextApi } from 'app/state/api/context';
 import React from 'react';
 
-export const useCourierProfilePicture = (courierId: string | undefined) => {
+export const useCourierProfilePicture = (
+  courierId: string | undefined,
+  size: string = '_160x160'
+) => {
   // context
   const api = useContextApi();
   // state
@@ -10,11 +13,11 @@ export const useCourierProfilePicture = (courierId: string | undefined) => {
   React.useEffect(() => {
     if (courierId) {
       (async () => {
-        const url = await api.courier().getCourierPictureURL(courierId);
+        const url = await api.courier().getCourierProfilePictureURL(courierId, size);
         if (url) setPictureUrl(url);
       })();
     }
-  }, [api, courierId]);
+  }, [api, courierId, size]);
   // result
   return pictureUrl;
 };

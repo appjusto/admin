@@ -1,15 +1,21 @@
+import { useContextAgentProfile } from 'app/state/agent/context';
 import BankingInformation from 'pages/business-profile/BankingInformation';
 import BusinessProfile from 'pages/business-profile/BusinessProfile';
 import DeliveryArea from 'pages/delivery-area/DeliveryArea';
 import { ManagerProfile } from 'pages/manager-profile/ManagerProfile';
 import React from 'react';
-import { Route, Switch, useRouteMatch } from 'react-router-dom';
+import { Redirect, Route, Switch, useRouteMatch } from 'react-router-dom';
 import { OnboardingComplete } from './OnboardingComplete';
 import OnboardingOpening from './OnboardingOpening';
 import OnboardingStep from './OnboardingStep';
 
 const Onboarding = () => {
+  // context
   const { path } = useRouteMatch();
+  const { isBackofficeUser } = useContextAgentProfile();
+
+  // UI
+  if (isBackofficeUser) return <Redirect to="/backoffice" />;
   return (
     <Switch>
       <Route exact path={`${path}`}>

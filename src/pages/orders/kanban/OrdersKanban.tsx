@@ -73,7 +73,7 @@ export const OrdersKanban = () => {
                 <EditIcon style={{ borderBottom: '1px solid black' }} />
                 <Text ml="4">
                   {business?.orderAcceptanceTime
-                    ? business.orderAcceptanceTime + ' minutos'
+                    ? business.orderAcceptanceTime / 60 + ' minutos'
                     : t('Não aceitar')}
                 </Text>
               </Button>

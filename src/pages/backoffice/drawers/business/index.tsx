@@ -1,12 +1,14 @@
+import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
+import { useBusinessPrivateData } from 'app/api/business/useBusinessPrivateData';
 import { useContextAgentProfile } from 'app/state/agent/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextManagerProfile } from 'app/state/manager/context';
 import React from 'react';
 import { Route, Switch, useParams, useRouteMatch } from 'react-router-dom';
+import { StatusTab } from '../tabs/StatusTab';
 import { BusinessBaseDrawer } from './BusinessBaseDrawer';
+import { BusinessRegister } from './BusinessRegister';
 import { BusinessLive } from './Live';
-import { BusinessRegister } from './Register';
-import { BusinessStatus } from './Status';
 
 interface BusinessDrawerProps {
   isOpen: boolean;
@@ -24,8 +26,20 @@ export const BusinessDrawer = ({ onClose, ...props }: BusinessDrawerProps) => {
   const { setBusinessId, business } = useContextBusiness();
   const { agent, username } = useContextAgentProfile();
   const { manager, setManagerEmail } = useContextManagerProfile();
+  const platform = useBusinessPrivateData(businessId);
+  const { updateBusinessProfile, result } = useBusinessProfile();
+
+  // state
+  /*const [profile, dispatch] = React.useReducer(businessBOReducer, {} as WithId<Business>);
+  const [validation, setValidation] = React.useState({
+    cpf: true,
+    cnpj: true,
+    agency: true,
+    account: true,
+  });*/
 
   //handlers
+  const marketPlaceIssues = platform?.marketPlace?.issues ?? undefined;
 
   // side effects
   React.useEffect(() => {
@@ -37,6 +51,10 @@ export const BusinessDrawer = ({ onClose, ...props }: BusinessDrawerProps) => {
       setManagerEmail(business?.managers[0]);
     }
   }, [business, setManagerEmail]);
+
+  React.useEffect(() => {
+    if (businessId) setBusinessId(businessId);
+  }, [businessId, setBusinessId]);
 
   //UI
   return (
@@ -55,7 +73,13 @@ export const BusinessDrawer = ({ onClose, ...props }: BusinessDrawerProps) => {
           <BusinessLive status={business?.status} enabled={business?.enabled} />
         </Route>
         <Route exact path={`${path}/status`}>
-          <BusinessStatus situation={business?.situation} profileIssues={business?.profileIssues} />
+          <StatusTab
+            situation={business?.situation}
+            marketPlaceIssues={marketPlaceIssues}
+            profileIssues={business?.profileIssues}
+            updateProfile={updateBusinessProfile}
+            result={result}
+          />
         </Route>
       </Switch>
     </BusinessBaseDrawer>

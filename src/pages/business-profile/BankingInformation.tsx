@@ -108,7 +108,6 @@ const BankingInformation = ({ onboarding, redirect, backoffice }: OnboardingProp
       findSelectedBank(banks, name);
     }
   }, [banks, name, findSelectedBank]);
-  console.log(validation);
 
   // UI
   if (isSuccess && redirect) return <Redirect to={redirect} push />;

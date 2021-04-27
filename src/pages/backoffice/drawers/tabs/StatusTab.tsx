@@ -9,22 +9,30 @@ import {
   Textarea,
   VStack,
 } from '@chakra-ui/react';
-import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { ProfileSituation } from 'appjusto-types';
 import { AlertError } from 'common/components/AlertError';
 import { AlertSuccess } from 'common/components/AlertSuccess';
 import React from 'react';
 import { t } from 'utils/i18n';
-import { SectionTitle } from '../SectionTitle';
+import { SectionTitle } from '../generics/SectionTitle';
+import { Result, UpdateProfile } from '../generics/types';
 
-interface BusinessStatusProps {
+interface StatusTabProps {
   situation?: ProfileSituation;
+  marketPlaceIssues?: string[];
   profileIssues?: string[];
+  updateProfile: UpdateProfile;
+  result: Result;
 }
 
-export const BusinessStatus = ({ situation, profileIssues }: BusinessStatusProps) => {
+export const StatusTab = ({
+  situation,
+  marketPlaceIssues,
+  profileIssues,
+  updateProfile,
+  result,
+}: StatusTabProps) => {
   // context
-  const { updateBusinessProfile, result } = useBusinessProfile();
   const { isLoading, isSuccess, isError } = result;
   // state
   const [status, setStatus] = React.useState<ProfileSituation>('pending');
@@ -34,7 +42,7 @@ export const BusinessStatus = ({ situation, profileIssues }: BusinessStatusProps
 
   // handlers
   const onSubmitHandler = () => {
-    updateBusinessProfile({
+    updateProfile({
       situation: status,
     });
     if (status === 'rejected') {
@@ -45,8 +53,9 @@ export const BusinessStatus = ({ situation, profileIssues }: BusinessStatusProps
   // side effects
   React.useEffect(() => {
     if (situation) setStatus(situation);
-    if (profileIssues) setFinancialIssues(profileIssues);
-  }, [situation]);
+    if (marketPlaceIssues) setFinancialIssues(marketPlaceIssues);
+    // if profileIssues, handle it
+  }, [situation, marketPlaceIssues]);
 
   // UI
   return (
@@ -85,11 +94,17 @@ export const BusinessStatus = ({ situation, profileIssues }: BusinessStatusProps
           <Radio mt="2" value="approved">
             {t('Publicado')}
           </Radio>
-          <Radio mt="2" value="submitted">
-            {t('Aguardando aprovação')}
-          </Radio>
           <Radio mt="2" value="rejected">
             {t('Recusado')}
+          </Radio>
+          <Radio mt="2" value="verified">
+            {t('Verificado')}
+          </Radio>
+          <Radio mt="2" value="invalid">
+            {t('Invalidado')}
+          </Radio>
+          <Radio mt="2" value="submitted">
+            {t('Aguardando aprovação')}
           </Radio>
           <Radio mt="2" value="blocked">
             {t('Bloquear restaurante')}

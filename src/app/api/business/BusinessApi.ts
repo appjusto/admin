@@ -18,17 +18,13 @@ export default class BusinessApi {
 
   // businesses
   observeBusinesses(
-    options: ObserveBusinessesOptions,
+    situations: string[],
     resultHandler: (result: WithId<Business>[]) => void
   ): firebase.Unsubscribe {
-    const statuses = [
-      ...(options.active ? ActiveBusinessesValues : []),
-      ...(options.inactive ? InactiveBusinessesValues : []),
-    ];
     let query = this.refs
       .getBusinessesRef()
       .orderBy('createdOn', 'asc')
-      .where('situation', 'in', statuses);
+      .where('situation', 'in', situations);
 
     const unsubscribe = query.onSnapshot(
       (querySnapshot) => {
@@ -81,6 +77,11 @@ export default class BusinessApi {
 
   async deleteBusinessProfile(businessId: string) {
     return await this.refs.getBusinessRef(businessId).delete();
+  }
+
+  async getBusinessPlatformData(businessId: string) {
+    const platform = (await this.refs.getBusinessPlatformRef(businessId).get()).data();
+    return platform;
   }
 
   // managers

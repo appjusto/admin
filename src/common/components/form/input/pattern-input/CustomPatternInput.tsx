@@ -79,7 +79,7 @@ export const CustomPatternInput = React.forwardRef<HTMLInputElement, PatternInpu
 
     React.useEffect(() => {
       if (notifyParentWithValidation) notifyParentWithValidation(isInvalid);
-    }, [isInvalid]);
+    }, [isInvalid]); // remove notifyParentWithValidation for avoiding infinit renders
 
     // UI
     const styles = useMultiStyleConfig('CustomInput', {});

@@ -51,6 +51,7 @@ export default class FirebaseRefs {
   getBusinessPrivateRef = (id: string) => this.getBusinessesRef().doc(id).collection('private');
   getBusinessBankAccountRef = (id: string) => this.getBusinessPrivateRef(id).doc('bank');
   getBusinessStatisticsRef = (id: string) => this.getBusinessPrivateRef(id).doc('statistics');
+  getBusinessPlatformRef = (id: string) => this.getBusinessPrivateRef(id).doc('platform');
 
   // managers
   getManagersRef = () => this.firestore.collection('managers');
@@ -69,6 +70,8 @@ export default class FirebaseRefs {
   // couriers
   getCouriersRef = () => this.firestore.collection('couriers');
   getCourierRef = (id: string) => this.getCouriersRef().doc(id);
+  getCourierPrivateRef = (id: string) => this.getCourierRef(id).collection('private');
+  getCourierPlatformRef = (id: string) => this.getCourierPrivateRef(id).doc('platform');
 
   // fleets
   getFleetsRef = () => this.firestore.collection('fleets');
@@ -99,6 +102,8 @@ export default class FirebaseRefs {
     `${this.getComplementsStoragePath(businessId)}/${complementId}_288x288.jpg`;
 
   getCourierStoragePath = (courierId: string) => `couriers/${courierId}`;
-  getCourierProfilePictureStoragePath = (courierId: string) =>
-    `${this.getCourierStoragePath(courierId)}/selfie_160x160.jpg`;
+  getCourierProfilePictureStoragePath = (courierId: string, size: string) =>
+    `${this.getCourierStoragePath(courierId)}/selfie${size}.jpg`;
+  getCourierDocumentPictureStoragePath = (courierId: string, size: string) =>
+    `${this.getCourierStoragePath(courierId)}/document${size}.jpg`;
 }

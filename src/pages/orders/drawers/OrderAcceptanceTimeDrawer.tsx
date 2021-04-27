@@ -33,7 +33,7 @@ export const OrderAcceptanceTimeDrawer = ({ onClose, ...props }: BaseDrawerProps
 
   const handleSave = async () => {
     setIsLoading(true);
-    await updateBusinessProfile({ orderAcceptanceTime: acceptanceOn ? minutes : null });
+    await updateBusinessProfile({ orderAcceptanceTime: acceptanceOn ? minutes * 60 : null });
     setIsLoading(false);
     onClose();
   };
@@ -41,7 +41,7 @@ export const OrderAcceptanceTimeDrawer = ({ onClose, ...props }: BaseDrawerProps
   React.useEffect(() => {
     if (business?.orderAcceptanceTime) {
       setAcceptanceOn(true);
-      setMinutes(business?.orderAcceptanceTime);
+      setMinutes(business?.orderAcceptanceTime / 60);
     }
   }, [business?.orderAcceptanceTime]);
 

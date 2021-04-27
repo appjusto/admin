@@ -1,6 +1,6 @@
 import algoliasearch, { SearchClient, SearchIndex } from 'algoliasearch/lite';
 import { AlgoliaConfig, Environment, OrderStatus, OrderType } from 'appjusto-types';
-import { BusinessesFilter, OrdersFilter, SearchKind, SituationFilter } from './types';
+import { BusinessesFilter, SearchKind, SituationFilter } from './types';
 
 export default class SearchApi {
   private client: SearchClient;
@@ -46,7 +46,6 @@ export default class SearchApi {
   ) {
     const index = this.getSearchIndex(kind);
     if (!index) throw new Error('Invalid index');
-    console.log(this.createBusinessesFilters(filters));
     return index.search<T>(query, {
       page,
       hitsPerPage,
