@@ -14,12 +14,9 @@ export const useFirebaseUserRole = () => {
 
   // handlers
   const refreshUserToken = React.useCallback(async () => {
-    console.log('RefreshUserToken');
     if (!user) return;
     try {
-      console.log(user);
-      const token = await user.getIdTokenResult();
-      console.log('token', token);
+      const token = await user.getIdTokenResult(true);
       setRole(token?.claims.role ?? null);
     } catch (error) {
       console.dir('role_error', error);
