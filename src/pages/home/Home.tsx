@@ -23,9 +23,9 @@ const Home = () => {
   const { path } = useRouteMatch();
 
   // UI
-  if (business === null) {
+  if (!business) {
     if (isBackofficeUser) return <Redirect to="/backoffice" />;
-    else return <Redirect to={`/onboarding`} />;
+    else if (business === null) return <Redirect to={`/onboarding`} />;
   }
   if (business && business?.onboarding !== 'completed') {
     return <Redirect to={`/onboarding/${!business?.onboarding ? '' : business.onboarding}`} />;
