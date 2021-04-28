@@ -54,6 +54,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const [logoFiles, setLogoFiles] = React.useState<File[] | null>(null);
   const [coverFiles, setCoverFiles] = React.useState<File[] | null>(null);
   const [isLoading, setIsLoading] = React.useState(false);
+  const [isSuccess, setIsSuccess] = React.useState(false);
   // refs
   const cnpjRef = React.useRef<HTMLInputElement>(null);
   const phoneRef = React.useRef<HTMLInputElement>(null);
@@ -68,7 +69,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
     uploadCover,
     result,
   } = useBusinessProfile();
-  const { isSuccess, isError } = result;
+  const { isError } = result;
 
   // handlers
   const openDrawerHandler = () => history.push(`${path}/delete`);
@@ -81,24 +82,29 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
     if (!isCNPJValid()) return cnpjRef?.current?.focus();
     if (phone.length < 10) return phoneRef?.current?.focus();
     setIsLoading(true);
-    await updateBusinessProfile({
-      name,
-      phone,
-      cnpj,
-      description,
-      minimumOrder,
-      enabled,
-      cuisine: cuisineName,
-      logoExists: logoExists,
-      coverImageExists: coverExists,
-    });
-    // refresh user token
-    await refreshUserToken();
-    // upload imagens and invalidate queries
-    if (logoFiles) await uploadLogo(logoFiles[0]);
-    if (logoFiles) queryCache.invalidateQueries(['business:logo', business?.id]);
-    if (coverFiles) await uploadCover(coverFiles);
-    if (coverFiles) queryCache.invalidateQueries(['business:cover', business?.id]);
+    try {
+      await updateBusinessProfile({
+        name,
+        phone,
+        cnpj,
+        description,
+        minimumOrder,
+        enabled,
+        cuisine: cuisineName,
+        logoExists: logoExists,
+        coverImageExists: coverExists,
+      });
+      // refresh user token
+      await refreshUserToken();
+      // upload imagens and invalidate queries
+      if (logoFiles) await uploadLogo(logoFiles[0]);
+      if (logoFiles) queryCache.invalidateQueries(['business:logo', business?.id]);
+      if (coverFiles) await uploadCover(coverFiles);
+      if (coverFiles) queryCache.invalidateQueries(['business:cover', business?.id]);
+      setIsSuccess(true);
+    } catch (error) {
+      console.log('BusinessProfile submit error', error);
+    }
     return setIsLoading(false);
   };
 
