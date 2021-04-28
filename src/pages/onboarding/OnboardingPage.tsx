@@ -8,6 +8,7 @@ import { Redirect, Route, Switch, useRouteMatch } from 'react-router-dom';
 import { OnboardingComplete } from './OnboardingComplete';
 import OnboardingOpening from './OnboardingOpening';
 import OnboardingStep from './OnboardingStep';
+import { TermsOfUse } from './TermsOfUse';
 
 const Onboarding = () => {
   // context
@@ -38,14 +39,14 @@ const Onboarding = () => {
       </Route>
       <Route path={`${path}/4`}>
         <OnboardingStep>
-          <DeliveryArea redirect={`${path}/complete`} onboarding />
+          <DeliveryArea redirect={`${path}/5`} onboarding />
         </OnboardingStep>
       </Route>
-      {/*<Route path={`${path}/5`}>
+      <Route path={`${path}/5`}>
         <OnboardingStep>
           <TermsOfUse redirect={`${path}/complete`} />
         </OnboardingStep>
-      </Route>*/}
+      </Route>
       <Route path={`${path}/complete`}>
         <OnboardingComplete />
       </Route>
