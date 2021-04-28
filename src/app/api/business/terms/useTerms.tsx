@@ -1,15 +1,15 @@
 import axios from 'axios';
-import marked from 'marked';
+//import marked from 'marked';
 import React from 'react';
 import { useQuery } from 'react-query';
 
 export const useTerms = () => {
   // context
   const url =
-    'https://github.com/appjusto/docs/blob/532a6b057ab8a891db8018b4f4588a66a21ae339/legal/termos-de-uso-restaurantes.md';
+    'https://raw.githubusercontent.com/appjusto/docs/main/legal/termos-de-uso-restaurantes.md';
   // state
   const [unformattedTerms, setUnformattedTerms] = React.useState<string | null>();
-  const [formattedTerms, setFormattedTerms] = React.useState<string | null>();
+  //const [formattedTerms, setFormattedTerms] = React.useState<string | null>();
 
   // side effects
   const query = useQuery(['terms'], () => axios.get<string>(url));
@@ -19,9 +19,10 @@ export const useTerms = () => {
     else if (query.isError) setUnformattedTerms(null);
   }, [query]);
 
-  React.useEffect(() => {
+  /*React.useEffect(() => {
     if (unformattedTerms) setFormattedTerms(marked(unformattedTerms));
-  }, [unformattedTerms]);
+  }, [unformattedTerms]);*/
   // result
-  return formattedTerms;
+  console.log(unformattedTerms);
+  return unformattedTerms;
 };
