@@ -28,15 +28,16 @@ export const BusinessProvider = ({ children }: Props) => {
   // side effects
   // when manager's data becomes available
   React.useEffect(() => {
+    if (businessId) return;
     if (!email) return;
     if (!businesses) return;
     if (businesses.length === 0) {
       return;
     } else {
-      const id = businesses.find(() => true)?.id;
-      if (id) setBusinessId(id);
+      const id = businesses.find(() => true)!.id;
+      setBusinessId(id);
     }
-  }, [api, businesses, email]);
+  }, [api, businessId, businesses, email]);
 
   return (
     <BusinessContext.Provider value={{ business, setBusinessId }}>

@@ -65,7 +65,7 @@ export default class BusinessApi {
     const payload: CreateBusinessProfilePayload = {
       meta: { version: '1' }, // TODO: pass correct version on
     };
-    return (await this.refs.getCreateBusinessProfileCallable()(payload)).data as Business;
+    return (await this.refs.getCreateBusinessProfileCallable()(payload)).data as WithId<Business>;
   }
 
   async updateBusinessProfile(businessId: string, changes: Partial<Business>) {

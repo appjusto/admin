@@ -1,6 +1,5 @@
 import { useContextApi } from 'app/state/api/context';
-import { useContextFirebaseUserEmail } from 'app/state/auth/context';
-import { useContextBusinessId } from 'app/state/business/context';
+import { useContextBusiness } from 'app/state/business/context';
 import { Business } from 'appjusto-types';
 import React from 'react';
 import { useMutation, useQueryCache, useQuery } from 'react-query';
@@ -8,34 +7,35 @@ import { useMutation, useQueryCache, useQuery } from 'react-query';
 export const useBusinessProfile = () => {
   // context
   const api = useContextApi();
-  const businessId = useContextBusinessId()!;
-  const email = useContextFirebaseUserEmail();
+  const { business, setBusinessId } = useContextBusiness();
+  const businessId = business?.id;
   const queryCache = useQueryCache();
   // queries
-  const getBusinessLogoURL = (key: string) => api.business().getBusinessLogoURL(businessId);
+  const getBusinessLogoURL = (key: string) => api.business().getBusinessLogoURL(businessId!);
   const { data: logo } = useQuery(['business:logo', businessId], getBusinessLogoURL);
 
   const getBusinessCoverURL = (key: string) =>
-    api.business().getBusinessCoverURL(businessId, '1008x360');
+    api.business().getBusinessCoverURL(businessId!, '1008x360');
   const { data: cover } = useQuery(['business:cover', businessId], getBusinessCoverURL);
 
   // mutations
   const [createBusinessProfile] = useMutation(async () => {
-    if (email) return api.business().createBusinessProfile();
+    const business = await api.business().createBusinessProfile();
+    setBusinessId(business.id);
   });
   const [updateBusinessProfile, updateResult] = useMutation(async (changes: Partial<Business>) =>
-    api.business().updateBusinessProfile(businessId, changes)
+    api.business().updateBusinessProfile(businessId!, changes)
   );
   const [deleteBusinessProfile, deleteResult] = useMutation(async () =>
-    api.business().deleteBusinessProfile(businessId)
+    api.business().deleteBusinessProfile(businessId!)
   );
   const [uploadLogo, uploadLogoResult] = useMutation((file: File) => {
     //api.business().updateBusinessProfile(businessId, { logoExists: false });
-    return api.business().uploadBusinessLogo(businessId, file);
+    return api.business().uploadBusinessLogo(businessId!, file);
   });
   const [uploadCover, uploadCoverResult] = useMutation((files: File[]) => {
     //api.business().updateBusinessProfile(businessId, { coverImageExists: false });
-    return api.business().uploadBusinessCover(businessId, files);
+    return api.business().uploadBusinessCover(businessId!, files);
   });
 
   const { isSuccess: uploadSuccess } = uploadLogoResult;
