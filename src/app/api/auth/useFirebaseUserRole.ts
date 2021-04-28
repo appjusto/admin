@@ -11,6 +11,7 @@ export const useFirebaseUserRole = () => {
 
   // handlers
   const refreshUserToken = React.useCallback(async () => {
+    console.log('RefreshUserToken');
     return await user
       ?.getIdTokenResult()
       .then((token) => {
