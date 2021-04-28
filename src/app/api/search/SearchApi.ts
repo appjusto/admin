@@ -2,6 +2,7 @@ import algoliasearch, { SearchClient, SearchIndex } from 'algoliasearch/lite';
 import { AlgoliaConfig, Environment, OrderStatus, OrderType } from 'appjusto-types';
 import { BusinessesFilter, SearchKind, SituationFilter } from './types';
 import { createNullCache } from '@algolia/cache-common';
+//import { createInMemoryCache } from '@algolia/cache-in-memory';
 
 export default class SearchApi {
   private client: SearchClient;
@@ -15,6 +16,7 @@ export default class SearchApi {
       // Caches responses from Algolia
       responsesCache: createNullCache(),
       // Caches Promises with the same request payload
+      //requestsCache: createInMemoryCache({ serializable: false }),
       requestsCache: createNullCache(),
     });
     this.businesses = this.client.initIndex(`${env}_businesses_backoffice`);

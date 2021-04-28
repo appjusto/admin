@@ -1,5 +1,6 @@
 import { Box, Flex, Switch as ChakraSwitch, Text, useBreakpoint } from '@chakra-ui/react';
 import * as cnpjutils from '@fnando/cnpj';
+import { useFirebaseUserRole } from 'app/api/auth/useFirebaseUserRole';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useContextBusiness } from 'app/state/business/context';
 import { AlertError } from 'common/components/AlertError';
@@ -39,6 +40,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const queryCache = useQueryCache();
   const { path } = useRouteMatch();
   const history = useHistory();
+  const { refreshUserToken } = useFirebaseUserRole();
   // state
   const [cnpj, setCNPJ] = React.useState(business?.cnpj ?? (isDev ? cnpjutils.generate() : ''));
   const [name, setName] = React.useState(business?.name ?? '');
@@ -79,8 +81,6 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
     if (!isCNPJValid()) return cnpjRef?.current?.focus();
     if (phone.length < 10) return phoneRef?.current?.focus();
     setIsLoading(true);
-    if (logoFiles) await uploadLogo(logoFiles[0]);
-    if (coverFiles) await uploadCover(coverFiles);
     await updateBusinessProfile({
       name,
       phone,
@@ -92,7 +92,12 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
       logoExists: logoExists,
       coverImageExists: coverExists,
     });
+    // refresh user token
+    await refreshUserToken();
+    // upload imagens and invalidate queries
+    if (logoFiles) await uploadLogo(logoFiles[0]);
     if (logoFiles) queryCache.invalidateQueries(['business:logo', business?.id]);
+    if (coverFiles) await uploadCover(coverFiles);
     if (coverFiles) queryCache.invalidateQueries(['business:cover', business?.id]);
     return setIsLoading(false);
   };
