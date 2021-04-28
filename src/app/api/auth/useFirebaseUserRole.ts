@@ -6,27 +6,26 @@ export const useFirebaseUserRole = () => {
   const user = useFirebaseUser();
 
   // state
-  const [role, setRole] = React.useState<string | undefined | null>(undefined);
+  const [role, setRole] = React.useState<string | null>();
   const [isBackofficeUser, setIsBackofficeUser] = React.useState<boolean | null>(null);
 
   // handlers
   const refreshUserToken = React.useCallback(async () => {
     console.log('RefreshUserToken');
-    return await user
-      ?.getIdTokenResult()
-      .then((token) => {
-        const role = (token.claims.role ?? 'not_staff') as string;
-        setRole(role);
-      })
-      .catch((error) => {
-        console.dir('role_error', error);
-      });
+    if (!user) return;
+    try {
+      const token = await user.getIdTokenResult();
+      console.log('token', token);
+      setRole(token?.claims.role ?? null);
+    } catch (error) {
+      console.dir('role_error', error);
+    }
   }, [user]);
 
   // side effects
   React.useEffect(() => {
     refreshUserToken();
-  }, [user]);
+  }, [refreshUserToken, user]);
 
   React.useEffect(() => {
     if (role) {
