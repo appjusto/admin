@@ -29,8 +29,9 @@ const Login = () => {
 
   // side effects
   useEffect(() => {
+    api.auth().signOut();
     emailRef?.current?.focus();
-  }, []);
+  }, [api]);
 
   // handlers
   const loginHandler = () => {
