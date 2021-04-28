@@ -1,12 +1,15 @@
+import { Role } from 'appjusto-types';
 import React from 'react';
 import { useFirebaseUser } from './useFirebaseUser';
+
+const backofficeRoles: Role[] = ['owner', 'staff', 'viewer'];
 
 export const useFirebaseUserRole = () => {
   // contex
   const user = useFirebaseUser();
 
   // state
-  const [role, setRole] = React.useState<string | null>();
+  const [role, setRole] = React.useState<Role | null>();
   const [isBackofficeUser, setIsBackofficeUser] = React.useState<boolean | null>(null);
 
   // handlers
@@ -14,6 +17,7 @@ export const useFirebaseUserRole = () => {
     console.log('RefreshUserToken');
     if (!user) return;
     try {
+      console.log(user);
       const token = await user.getIdTokenResult();
       console.log('token', token);
       setRole(token?.claims.role ?? null);
@@ -28,10 +32,7 @@ export const useFirebaseUserRole = () => {
   }, [refreshUserToken, user]);
 
   React.useEffect(() => {
-    if (role) {
-      if (role === 'owner' || role === 'staff' || role === 'viewer') setIsBackofficeUser(true);
-      else setIsBackofficeUser(false);
-    }
+    setIsBackofficeUser(!!role && backofficeRoles.indexOf(role) !== -1);
   }, [role]);
 
   // return
