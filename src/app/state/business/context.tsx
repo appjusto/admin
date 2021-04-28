@@ -8,7 +8,7 @@ import { useContextFirebaseUserEmail } from '../auth/context';
 
 interface ContextProps {
   business: WithId<Business> | undefined | null;
-  setBusinessId: Dispatch<SetStateAction<string | undefined>>;
+  setBusinessId: Dispatch<SetStateAction<string | undefined | null>>;
 }
 
 const BusinessContext = React.createContext<ContextProps>({} as ContextProps);
@@ -22,7 +22,7 @@ export const BusinessProvider = ({ children }: Props) => {
   const email = useContextFirebaseUserEmail();
   //const manager = useManagerProfile();
   const businesses = useObserveBusinessManagedBy(email);
-  const [businessId, setBusinessId] = React.useState<string>();
+  const [businessId, setBusinessId] = React.useState<string | undefined | null>();
   const business = useObserveBusinessProfile(businessId);
 
   // side effects
@@ -32,7 +32,7 @@ export const BusinessProvider = ({ children }: Props) => {
     if (!email) return;
     if (!businesses) return;
     if (businesses.length === 0) {
-      return;
+      setBusinessId(null);
     } else {
       const id = businesses.find(() => true)!.id;
       setBusinessId(id);
