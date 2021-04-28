@@ -12,8 +12,8 @@ export const useManagerProfile = () => {
   const { isBackofficeUser } = useContextAgentProfile();
 
   // state
-  const [managerEmail, setManagerEmail] = React.useState<string | undefined | null>(null);
-  const [manager, setManager] = React.useState<WithId<ManagerProfile> | undefined | null>(null);
+  const [managerEmail, setManagerEmail] = React.useState<string | undefined | null>();
+  const [manager, setManager] = React.useState<WithId<ManagerProfile> | undefined | null>();
 
   // side effects
   // observe profile for no regular users

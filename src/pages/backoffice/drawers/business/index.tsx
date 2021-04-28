@@ -48,7 +48,7 @@ export const BusinessDrawer = ({ onClose, ...props }: BusinessDrawerProps) => {
 
   React.useEffect(() => {
     if (business && business?.managers) {
-      setManagerEmail(business?.managers[0]);
+      setManagerEmail(business?.managers[0] ?? null);
     }
   }, [business, setManagerEmail]);
 
