@@ -21,7 +21,7 @@ export const useBusinessProfile = () => {
 
   // mutations
   const [createBusinessProfile] = useMutation(async () => {
-    if (email) return api.business().createBusinessProfile(email);
+    if (email) return api.business().createBusinessProfile();
   });
   const [updateBusinessProfile, updateResult] = useMutation(async (changes: Partial<Business>) =>
     api.business().updateBusinessProfile(businessId, changes)

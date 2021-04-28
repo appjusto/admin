@@ -51,6 +51,7 @@ export default class Api {
     ) {
       const { emulatorHost, emulatorPort } = config.firebase.options;
       this._firestore.useEmulator(emulatorHost, emulatorPort);
+      this._functions.useEmulator(emulatorHost, 5001);
     }
 
     this._refs = new FirebaseRefs(this._functions, this._firestore);

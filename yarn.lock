@@ -210,6 +210,9 @@
     "@algolia/logger-common" "4.9.0"
     "@algolia/requester-common" "4.9.0"
 
+"@appjusto/types@../types":
+  version "0.18.3"
+
 "@babel/code-frame@7.10.4":
   version "7.10.4"
   resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.10.4.tgz#168da1a36e90da68ae8d49c0f1b48c7c6249213a"
@@ -3682,7 +3685,7 @@ anymatch@^3.0.3, anymatch@~3.1.1:
     picomatch "^2.0.4"
 
 appjusto-types@../types:
-  version "0.11.0"
+  version "0.18.3"
 
 aproba@^1.1.1:
   version "1.2.0"

@@ -1,4 +1,11 @@
-import { BankAccount, Business, Category, Product, WithId } from 'appjusto-types';
+import {
+  BankAccount,
+  Business,
+  Category,
+  CreateBusinessProfilePayload,
+  Product,
+  WithId,
+} from 'appjusto-types';
 import { Complement, ComplementGroup, Ordering } from 'appjusto-types';
 import firebase from 'firebase/app';
 import { documentAs, documentsAs } from '../../../core/fb';
@@ -54,16 +61,11 @@ export default class BusinessApi {
     return unsubscribe;
   }
 
-  async createBusinessProfile(managerEmail: string) {
-    const doc = this.refs.getBusinessesRef().doc();
-    return await doc.set({
-      enabled: false,
-      situation: 'pending',
-      status: 'closed',
-      managers: [managerEmail],
-      type: 'restaurant',
-    } as Partial<Business>);
-    //return doc.id;
+  async createBusinessProfile() {
+    const payload: CreateBusinessProfilePayload = {
+      meta: { version: '1' }, // TODO: pass correct version on
+    };
+    return (await this.refs.getCreateBusinessProfileCallable()(payload)).data as Business;
   }
 
   async updateBusinessProfile(businessId: string, changes: Partial<Business>) {
