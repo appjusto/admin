@@ -21,6 +21,7 @@
 .env.dev
 .env.staging
 .env.live
+.env.*
 
 npm-debug.log*
 yarn-debug.log*
