@@ -66,10 +66,11 @@
     "build:live": "env-cmd -f .env.live yarn build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "deploy": "git checkout $ENV && yarn build:$ENV && firebase use app-justo-$ENV && firebase deploy",
+    "deploy": "git checkout $ENV && yarn build:$ENV && firebase use app-justo-$ENV && firebase deploy && yarn version ${VERSION:minor}",
     "deploy:dev": "ENV=dev yarn deploy",
     "deploy:staging": "ENV=staging yarn deploy",
-    "deploy:live": "ENV=live yarn deploy"
+    "deploy:live": "ENV=live yarn deploy",
+    "postversion": "git push --tags"
   },
   "eslintConfig": {
     "extends": [
