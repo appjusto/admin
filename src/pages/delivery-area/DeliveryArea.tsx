@@ -47,7 +47,7 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
 
   // queries & mutations
   // business profile
-  const { updateBusinessProfile, result } = useBusinessProfile();
+  const { updateBusinessProfile, updateResult: result } = useBusinessProfile();
   const { isLoading, isSuccess, isError } = result;
   // cep
   const { data: cepResult } = useQuery(['cep', cep], (_: string) => fetchCEPInfo(cep), {

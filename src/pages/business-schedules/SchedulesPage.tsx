@@ -24,7 +24,7 @@ const scheduleObj = { from: '', to: '' };
 const SchedulesPage = () => {
   // context
   const { business } = useContextBusiness();
-  const { updateBusinessProfile, result } = useBusinessProfile();
+  const { updateBusinessProfile, updateResult: result } = useBusinessProfile();
   const { isSuccess, isError } = result;
   // state
   const [schedules, setSchedules] = React.useState<BusinessSchedule>(initialState);

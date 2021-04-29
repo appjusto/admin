@@ -27,7 +27,7 @@ export const BusinessDrawer = ({ onClose, ...props }: BusinessDrawerProps) => {
   const { agent, username } = useContextAgentProfile();
   const { manager, setManagerEmail } = useContextManagerProfile();
   const platform = useBusinessPrivateData(businessId);
-  const { updateBusinessProfile, result } = useBusinessProfile();
+  const { updateBusinessProfile, updateResult: result } = useBusinessProfile();
 
   // state
   /*const [profile, dispatch] = React.useReducer(businessBOReducer, {} as WithId<Business>);

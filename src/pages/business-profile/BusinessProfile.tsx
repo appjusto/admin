@@ -55,6 +55,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const [coverFiles, setCoverFiles] = React.useState<File[] | null>(null);
   const [isLoading, setIsLoading] = React.useState(false);
   const [isSuccess, setIsSuccess] = React.useState(false);
+  const [error, setError] = React.useState({ status: false, message: '' });
   // refs
   const cnpjRef = React.useRef<HTMLInputElement>(null);
   const phoneRef = React.useRef<HTMLInputElement>(null);
@@ -67,9 +68,11 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
     cover,
     uploadLogo,
     uploadCover,
-    result,
+    updateResult,
+    //deleteResult,
+    uploadLogoResult,
+    uploadCoverResult,
   } = useBusinessProfile();
-  const { isError } = result;
 
   // handlers
   const openDrawerHandler = () => history.push(`${path}/delete`);
@@ -101,7 +104,6 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
       if (logoFiles) queryCache.invalidateQueries(['business:logo', business?.id]);
       if (coverFiles) await uploadCover(coverFiles);
       if (coverFiles) queryCache.invalidateQueries(['business:cover', business?.id]);
-      setIsSuccess(true);
     } catch (error) {
       console.log('BusinessProfile submit error', error);
     }
@@ -148,6 +150,31 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
       createBusinessProfile();
     }
   }, [business, cover, logo, createBusinessProfile]);
+
+  React.useEffect(() => {
+    if (updateResult.isSuccess) {
+      setIsSuccess(true);
+    }
+    if (updateResult.isError) {
+      setIsSuccess(false);
+      setError({
+        status: true,
+        message: 'Não foi possível acessar o servidor. Tenta novamente?',
+      });
+    } else if (uploadLogoResult.isError) {
+      setIsSuccess(false);
+      setError({
+        status: true,
+        message: 'Não foi possível salvar a imagem de logo. Tenta novamente?',
+      });
+    } else if (uploadCoverResult.isError) {
+      setIsSuccess(false);
+      setError({
+        status: true,
+        message: 'Não foi possível salvar a imagem de cover. Tenta novamente?',
+      });
+    }
+  }, [updateResult, uploadLogoResult, uploadCoverResult]);
 
   // UI
   const breakpoint = useBreakpoint();
@@ -307,12 +334,8 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
               description={''}
             />
           )}
-          {isError && (
-            <AlertError
-              maxW="320px"
-              title={t('Erro')}
-              description={'Não foi possível acessar o servidor. Tenta novamente?'}
-            />
+          {error.status && (
+            <AlertError maxW="320px" title={t('Erro')} description={error.message} />
           )}
         </form>
       </Box>

@@ -45,16 +45,7 @@ export const useBusinessProfile = () => {
   }, [uploadSuccess, queryCache, businessId]);
 
   // return
-  let result;
-  if (updateResult.status !== 'idle') {
-    result = updateResult;
-  } else if (uploadLogoResult.status !== 'idle') {
-    result = uploadLogoResult;
-  } else if (uploadCoverResult.status !== 'idle') {
-    result = uploadCoverResult;
-  } else {
-    result = deleteResult;
-  }
+
   return {
     logo,
     cover,
@@ -62,10 +53,10 @@ export const useBusinessProfile = () => {
     updateBusinessProfile,
     deleteBusinessProfile,
     updateResult,
+    deleteResult,
     uploadLogo,
     uploadLogoResult,
     uploadCover,
     uploadCoverResult,
-    result,
   };
 };

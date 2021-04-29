@@ -14,7 +14,7 @@ interface BusinessLiveProps {
 
 export const BusinessLive = ({ status, enabled }: BusinessLiveProps) => {
   // context
-  const { updateBusinessProfile, result } = useBusinessProfile();
+  const { updateBusinessProfile, updateResult: result } = useBusinessProfile();
   const { isLoading, isSuccess, isError } = result;
   // state
   const [isOpen, setIsOpen] = React.useState<BusinessStatus>('closed');
