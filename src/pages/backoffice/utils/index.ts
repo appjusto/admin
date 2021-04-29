@@ -2,7 +2,7 @@ export const situationPTOptions = {
   pending: 'Pendente',
   submitted: 'Submetido',
   verified: 'Verificado',
-  invalid: 'inválido',
+  invalid: 'Inválido',
   approved: 'Aprovado',
   rejected: 'Rejeitado',
   blocked: 'Bloqueado',
