@@ -8,7 +8,7 @@ import PageHeader from '../../PageHeader';
 import { BOList } from './BOList';
 import { Panel } from './Panel';
 
-const situations = ['submitted', 'verified'];
+const situations = ['submitted', 'verified', 'invalid'];
 
 const BODashboard = () => {
   // context
