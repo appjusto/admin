@@ -107,6 +107,13 @@ const BankingInformation = ({ onboarding, redirect, backoffice }: OnboardingProp
       setName(bankAccount.name);
       setAgency(bankAccount.agency);
       setAccount(bankAccount.account);
+    } else {
+      setPersonType('');
+      setType('');
+      setName('');
+      setName('');
+      setAgency('');
+      setAccount('');
     }
   }, [bankAccount]);
 

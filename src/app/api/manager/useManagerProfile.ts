@@ -31,6 +31,8 @@ export const useManagerProfile = () => {
   }, [api, isBackofficeUser, managerEmail]);
 
   // create profile for regular and backoffice users
+  // if manager is null for backoffice purposes, the createProfile func
+  // will check the manager existence before create a new one
   React.useEffect(() => {
     if (!id || !email) return;
     if (manager === null) {

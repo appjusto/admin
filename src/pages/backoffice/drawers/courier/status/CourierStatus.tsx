@@ -38,7 +38,7 @@ export const CourierStatus = () => {
   // UI
   return (
     <Box>
-      {courier?.situation === 'rejected' && (
+      {courier?.situation === 'invalid' && (
         <AlertError
           title={t('Problemas identificados na verificação financeira')}
           icon={false}

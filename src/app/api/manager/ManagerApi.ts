@@ -43,10 +43,13 @@ export default class ManagerApi {
   }
 
   public async createProfile(id: string, email: string) {
-    await this.refs.getManagerRef(id).set({
-      situation: 'pending',
-      email,
-    } as Partial<ManagerProfile>);
+    const data = (await this.refs.getManagerRef(id).get()).data();
+    if (!data) {
+      await this.refs.getManagerRef(id).set({
+        situation: 'pending',
+        email,
+      } as Partial<ManagerProfile>);
+    }
   }
 
   async updateProfile(id: string, changes: Partial<ManagerProfile>) {

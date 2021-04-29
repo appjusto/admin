@@ -28,7 +28,7 @@ export const TermsOfUse = ({ redirect }: TermsProps) => {
   if (accept && redirect) return <Redirect to={redirect} push />;
   return (
     <>
-      <Text fontSize="2xl" fontWeight="700">
+      <Text fontSize="2xl" fontWeight="700" mb="4">
         Termos de uso
       </Text>
       {terms ? (
@@ -41,7 +41,7 @@ export const TermsOfUse = ({ redirect }: TermsProps) => {
         </Text>
       )}
       <Button mt="8" onClick={() => setAccept(true)}>
-        Aceitar
+        {t('Confirmar e criar minha conta')}
       </Button>
     </>
   );

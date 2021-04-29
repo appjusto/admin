@@ -23,6 +23,5 @@ export const useTerms = () => {
     if (unformattedTerms) setFormattedTerms(marked(unformattedTerms));
   }, [unformattedTerms]);*/
   // result
-  console.log(unformattedTerms);
   return unformattedTerms;
 };

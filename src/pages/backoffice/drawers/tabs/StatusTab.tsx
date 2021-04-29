@@ -65,7 +65,7 @@ export const StatusTab = ({
         onSubmitHandler();
       }}
     >
-      {status === 'rejected' && (
+      {status === 'invalid' && (
         <AlertError
           title={t('Problemas identificados na verificação financeira')}
           icon={false}
