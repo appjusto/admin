@@ -97,8 +97,6 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
         logoExists: logoExists,
         coverImageExists: coverExists,
       });
-      // refresh user token
-      await refreshUserToken();
       // upload imagens and invalidate queries
       if (logoFiles) await uploadLogo(logoFiles[0]);
       if (logoFiles) queryCache.invalidateQueries(['business:logo', business?.id]);
@@ -137,6 +135,11 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   }, [onboarding]);
 
   React.useEffect(() => {
+    const createProfile = async () => {
+      await createBusinessProfile();
+      // refresh user token
+      await refreshUserToken();
+    };
     if (business) {
       if (business.cnpj) setCNPJ(business.cnpj);
       if (business.name) setName(business.name);
@@ -147,7 +150,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
       if (business.logoExists && logo) setLogoExists(true);
       if (business.coverImageExists && cover) setCoverExists(true);
     } else {
-      createBusinessProfile();
+      createProfile();
     }
   }, [business, cover, logo, createBusinessProfile]);
 
