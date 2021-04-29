@@ -66,6 +66,11 @@ export const ManagerProfile = ({ onboarding, redirect, backoffice }: OnboardingP
       if (manager.surname) setSurname(manager.surname);
       if (manager.phone) setPhoneNumber(manager.phone);
       if (manager.cpf) setCPF(manager.cpf);
+    } else {
+      setName('');
+      setSurname('');
+      setPhoneNumber('');
+      setCPF('');
     }
   }, [manager]);
 
