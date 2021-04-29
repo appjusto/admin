@@ -202,7 +202,11 @@ export const RegistrationStatus = () => {
       </Box>
     );
   }
-  if (business?.situation === 'submitted' || business?.situation === 'verified') {
+  if (
+    business?.situation === 'submitted' ||
+    business?.situation === 'verified' ||
+    business?.situation === 'invalid'
+  ) {
     return (
       <Box maxW="708px" color="black">
         <Box mt="6" w="100%" maxW="406px">
