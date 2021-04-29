@@ -3,6 +3,7 @@ import { useObserveBusinessProfile } from 'app/api/business/profile/useObserveBu
 //import { useManagerProfile } from 'app/api/manager/useManagerProfile';
 import { Business, WithId } from 'appjusto-types';
 import React, { Dispatch, SetStateAction } from 'react';
+import { useContextAgentProfile } from '../agent/context';
 import { useContextApi } from '../api/context';
 import { useContextFirebaseUserEmail } from '../auth/context';
 
@@ -20,6 +21,7 @@ interface Props {
 export const BusinessProvider = ({ children }: Props) => {
   const api = useContextApi();
   const email = useContextFirebaseUserEmail();
+  const { isBackofficeUser } = useContextAgentProfile();
   //const manager = useManagerProfile();
   const businesses = useObserveBusinessManagedBy(email);
   const [businessId, setBusinessId] = React.useState<string | undefined | null>();
@@ -30,8 +32,8 @@ export const BusinessProvider = ({ children }: Props) => {
   React.useEffect(() => {
     if (!email) return;
     if (!businesses) return;
-    if (businesses.length === 0) {
-      return;
+    if (businesses.length === 0 && !isBackofficeUser) {
+      setBusinessId(null);
     } else {
       const id = businesses.find(() => true)?.id;
       if (id) setBusinessId(id);
