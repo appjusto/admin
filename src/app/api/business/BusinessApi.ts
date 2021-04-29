@@ -52,7 +52,6 @@ export default class BusinessApi {
   ): firebase.Unsubscribe {
     const unsubscribe = this.refs.getBusinessRef(businessId).onSnapshot(
       (doc) => {
-        console.log('API:', doc.data());
         if (doc.exists) resultHandler({ ...(doc.data() as Business), id: businessId });
         else resultHandler(null);
       },
