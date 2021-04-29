@@ -25,6 +25,7 @@ export const useManagerProfile = () => {
 
   // observe profile for backoffice users
   React.useEffect(() => {
+    if (managerEmail === null) setManager(null);
     if (isBackofficeUser && managerEmail)
       return api.manager().observeProfileByEmail(managerEmail, setManager);
   }, [api, isBackofficeUser, managerEmail]);

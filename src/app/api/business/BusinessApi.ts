@@ -48,11 +48,13 @@ export default class BusinessApi {
   // business profile
   observeBusinessProfile(
     businessId: string,
-    resultHandler: (result: WithId<Business>) => void
+    resultHandler: (result: WithId<Business> | null) => void
   ): firebase.Unsubscribe {
     const unsubscribe = this.refs.getBusinessRef(businessId).onSnapshot(
       (doc) => {
+        console.log('API:', doc.data());
         if (doc.exists) resultHandler({ ...(doc.data() as Business), id: businessId });
+        else resultHandler(null);
       },
       (error) => {
         console.error(error);

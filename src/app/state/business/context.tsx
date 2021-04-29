@@ -26,18 +26,17 @@ export const BusinessProvider = ({ children }: Props) => {
   const business = useObserveBusinessProfile(businessId);
 
   // side effects
-  // when manager's data becomes available
+  // flow for regular users
   React.useEffect(() => {
-    if (businessId) return;
     if (!email) return;
     if (!businesses) return;
     if (businesses.length === 0) {
-      setBusinessId(null);
+      return;
     } else {
-      const id = businesses.find(() => true)!.id;
-      setBusinessId(id);
+      const id = businesses.find(() => true)?.id;
+      if (id) setBusinessId(id);
     }
-  }, [api, businessId, businesses, email]);
+  }, [api, businesses, email]);
 
   return (
     <BusinessContext.Provider value={{ business, setBusinessId }}>

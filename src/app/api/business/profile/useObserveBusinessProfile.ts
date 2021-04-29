@@ -17,7 +17,7 @@ export const useObserveBusinessProfile = (businessId: string | undefined | null)
       setBusiness(null);
       return;
     }
-    return api.business().observeBusinessProfile(businessId, setBusiness);
+    api.business().observeBusinessProfile(businessId, setBusiness);
   }, [api, businessId]);
 
   // return
