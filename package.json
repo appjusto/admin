@@ -61,12 +61,9 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "build:dev": "env-cmd -f .env.development.local yarn build",
-    "build:staging": "env-cmd -f .env.staging yarn build",
-    "build:live": "env-cmd -f .env.live yarn build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "deploy": "git checkout $ENV && git pull && yarn build:$ENV && firebase use app-justo-$ENV && firebase deploy && yarn version",
+    "deploy": "env-cmd -f .env.$ENV yarn build && git checkout $ENV && git pull && yarn build:$ENV && firebase use app-justo-$ENV && firebase deploy && yarn version",
     "deploy:dev": "ENV=dev yarn deploy",
     "deploy:staging": "ENV=staging yarn deploy",
     "deploy:live": "ENV=live yarn deploy",
