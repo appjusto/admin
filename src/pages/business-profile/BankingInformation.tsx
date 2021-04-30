@@ -34,8 +34,8 @@ const BankingInformation = ({ onboarding, redirect, backoffice }: OnboardingProp
   const { isLoading, isSuccess, isError } = updateResult;
   // state
   const [selectedBank, setSelectedBank] = React.useState<Bank>();
-  const [personType, setPersonType] = React.useState(bankAccount?.personType ?? '');
-  const [type, setType] = React.useState(bankAccount?.type ?? '');
+  const [personType, setPersonType] = React.useState(bankAccount?.personType ?? 'Pessoa Jurídica');
+  const [type, setType] = React.useState(bankAccount?.type ?? 'Corrente');
   const [name, setName] = React.useState(bankAccount?.name ?? '');
   const [agency, setAgency] = React.useState(bankAccount?.agency ?? '');
   const [account, setAccount] = React.useState(bankAccount?.account ?? '');
@@ -108,8 +108,8 @@ const BankingInformation = ({ onboarding, redirect, backoffice }: OnboardingProp
       setAgency(bankAccount.agency);
       setAccount(bankAccount.account);
     } else {
-      setPersonType('');
-      setType('');
+      setPersonType('Pessoa Jurídica');
+      setType('Corrente');
       setName('');
       setName('');
       setAgency('');
@@ -161,8 +161,8 @@ const BankingInformation = ({ onboarding, redirect, backoffice }: OnboardingProp
             fontSize="16px"
             lineHeight="22px"
           >
-            <Radio value="Pessoa Física">{t('Pessoa Física')}</Radio>
             <Radio value="Pessoa Jurídica">{t('Pessoa Jurídica')}</Radio>
+            <Radio value="Pessoa Física">{t('Pessoa Física')}</Radio>
           </HStack>
         </RadioGroup>
         <Text mt="4" mb="2" color="black" fontWeight="700">

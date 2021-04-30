@@ -20,7 +20,6 @@ export const useFirebaseUserRole = () => {
     }
     try {
       const token = await user.getIdTokenResult(true);
-      console.log('refreshUserToken', token);
       setRole(token?.claims.role ?? null);
     } catch (error) {
       console.dir('role_error', error);
