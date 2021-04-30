@@ -1,5 +1,6 @@
 import { Button, Text } from '@chakra-ui/react';
 import { useTerms } from 'app/api/business/terms/useTerms';
+import 'github-markdown-css';
 import React from 'react';
 import Markdown from 'react-markdown';
 import { Redirect } from 'react-router';
@@ -28,11 +29,8 @@ export const TermsOfUse = ({ redirect }: TermsProps) => {
   if (accept && redirect) return <Redirect to={redirect} push />;
   return (
     <>
-      <Text fontSize="2xl" fontWeight="700" mb="4">
-        Termos de uso
-      </Text>
       {terms ? (
-        <Markdown children={terms} />
+        <Markdown className="markdown-body" children={terms} />
       ) : (
         <Text>
           {t(
