@@ -58,6 +58,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const cnpjRef = React.useRef<HTMLInputElement>(null);
   const phoneRef = React.useRef<HTMLInputElement>(null);
   const minimumOrderRef = React.useRef<HTMLInputElement>(null);
+  const isMountedRef = React.useRef(false);
   // queries & mutations
   const {
     createBusinessProfile,
@@ -128,6 +129,14 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
 
   // side effects
   React.useEffect(() => {
+    isMountedRef.current = true;
+    const unmount = () => {
+      isMountedRef.current = false;
+    };
+    return unmount;
+  }, []);
+
+  React.useEffect(() => {
     if (onboarding) window?.scrollTo(0, 0);
     cnpjRef?.current?.focus();
   }, [onboarding]);
@@ -148,6 +157,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   }, [business, cover, logo, createBusinessProfile]);
 
   React.useEffect(() => {
+    if (!isMountedRef.current) return;
     if (updateResult.isSuccess) {
       setIsSuccess(true);
     }

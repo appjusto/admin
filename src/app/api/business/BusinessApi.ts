@@ -76,7 +76,8 @@ export default class BusinessApi {
       ...changes,
       updatedOn: timestamp,
     };
-    return await this.refs.getBusinessRef(businessId).set(fullChanges, { merge: true });
+    const result = await this.refs.getBusinessRef(businessId).set(fullChanges, { merge: true });
+    return result;
   }
 
   async deleteBusinessProfile(businessId: string) {
