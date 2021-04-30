@@ -19,7 +19,7 @@ const DisabledLink = ({ label }: DisabledLinkProps) => {
 
 export const Links = () => {
   // context
-  const isDev = process.env.NODE_ENV === 'development';
+  const isLive = process.env.REACT_APP_ENVIRONMENT === 'live';
   const { business } = useContextBusiness();
   const { url } = useRouteMatch();
 
@@ -29,7 +29,7 @@ export const Links = () => {
     <Box>
       <Box>
         <LinkItem to={`${url}`} label={t('Início')} />
-        {isApproved && isDev ? (
+        {isApproved && !isLive ? (
           <LinkItem to={`${url}/orders`} label={t('Gerenciador de pedidos')} />
         ) : (
           <DisabledLink label={t('Gerenciador de pedidos')} />
@@ -39,7 +39,7 @@ export const Links = () => {
         <LinkItem to={`${url}/menu`} label={t('Cardápio')} />
         <LinkItem to={`${url}/business-schedules`} label={t('Horários')} />
         <LinkItem to={`${url}/delivery-area`} label={t('Área de entrega')} />
-        {isDev ? (
+        {!isLive ? (
           <>
             <LinkItem to={`${url}/orders-history`} label={t('Histórico de pedidos')} />
             <LinkItem to={`${url}/finances`} label={t('Financeiro')} />
