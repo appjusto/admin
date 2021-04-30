@@ -1,3 +1,4 @@
+import { useFirebaseUserRole } from 'app/api/auth/useFirebaseUserRole';
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { Business } from 'appjusto-types';
@@ -10,19 +11,22 @@ export const useBusinessProfile = () => {
   const { business, setBusinessId } = useContextBusiness();
   const businessId = business?.id;
   const queryCache = useQueryCache();
+  const { refreshUserToken } = useFirebaseUserRole();
 
   // queries
-  const getBusinessLogoURL = (key: string) => api.business().getBusinessLogoURL(businessId!);
+  const getBusinessLogoURL = (key: string) =>
+    businessId ? api.business().getBusinessLogoURL(businessId!) : null;
   const { data: logo } = useQuery(['business:logo', businessId], getBusinessLogoURL);
 
   const getBusinessCoverURL = (key: string) =>
-    api.business().getBusinessCoverURL(businessId!, '1008x360');
+    businessId ? api.business().getBusinessCoverURL(businessId!, '1008x360') : null;
   const { data: cover } = useQuery(['business:cover', businessId], getBusinessCoverURL);
 
   // mutations
   const [createBusinessProfile] = useMutation(async () => {
     const business = await api.business().createBusinessProfile();
     setBusinessId(business.id);
+    refreshUserToken();
   });
   const [updateBusinessProfile, updateResult] = useMutation(async (changes: Partial<Business>) =>
     api.business().updateBusinessProfile(businessId!, changes)

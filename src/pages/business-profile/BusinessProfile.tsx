@@ -1,6 +1,5 @@
 import { Box, Flex, Switch as ChakraSwitch, Text, useBreakpoint } from '@chakra-ui/react';
 import * as cnpjutils from '@fnando/cnpj';
-import { useFirebaseUserRole } from 'app/api/auth/useFirebaseUserRole';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useContextBusiness } from 'app/state/business/context';
 import { AlertError } from 'common/components/AlertError';
@@ -40,7 +39,6 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const queryCache = useQueryCache();
   const { path } = useRouteMatch();
   const history = useHistory();
-  const { refreshUserToken } = useFirebaseUserRole();
   // state
   const [cnpj, setCNPJ] = React.useState(business?.cnpj ?? (isDev ? cnpjutils.generate() : ''));
   const [name, setName] = React.useState(business?.name ?? '');
@@ -135,11 +133,6 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   }, [onboarding]);
 
   React.useEffect(() => {
-    const createProfile = async () => {
-      await createBusinessProfile();
-      // refresh user token
-      await refreshUserToken();
-    };
     if (business) {
       if (business.cnpj) setCNPJ(business.cnpj);
       if (business.name) setName(business.name);
@@ -149,8 +142,8 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
       if (business.cuisine) setCuisineName(business.cuisine);
       if (business.logoExists && logo) setLogoExists(true);
       if (business.coverImageExists && cover) setCoverExists(true);
-    } else {
-      createProfile();
+    } else if (business === null) {
+      createBusinessProfile();
     }
   }, [business, cover, logo, createBusinessProfile]);
 

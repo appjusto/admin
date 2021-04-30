@@ -28,17 +28,15 @@ export const BusinessProvider = ({ children }: Props) => {
   const business = useObserveBusinessProfile(businessId);
 
   // side effects
-  // flow for regular users
+  // intended to auto-select a business id for a restaurant manager
   React.useEffect(() => {
+    if (isBackofficeUser) return;
     if (!email) return;
     if (!businesses) return;
-    if (businesses.length === 0 && !isBackofficeUser) {
-      setBusinessId(null);
-    } else {
-      const id = businesses.find(() => true)?.id;
-      if (id) setBusinessId(id);
-    }
-  }, [api, businesses, email]);
+    // select first business or set it to null to indicate that user doesn't
+    // manage any business
+    setBusinessId(businesses.find(() => true)?.id ?? null);
+  }, [api, businesses, email, isBackofficeUser]);
 
   return (
     <BusinessContext.Provider value={{ business, setBusinessId }}>

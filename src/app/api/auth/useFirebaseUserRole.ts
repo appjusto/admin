@@ -14,9 +14,13 @@ export const useFirebaseUserRole = () => {
 
   // handlers
   const refreshUserToken = React.useCallback(async () => {
-    if (!user) return;
+    if (!user) {
+      setRole(null);
+      return;
+    }
     try {
       const token = await user.getIdTokenResult(true);
+      console.log('refreshUserToken', token);
       setRole(token?.claims.role ?? null);
     } catch (error) {
       console.dir('role_error', error);
@@ -26,7 +30,7 @@ export const useFirebaseUserRole = () => {
   // side effects
   React.useEffect(() => {
     refreshUserToken();
-  }, [refreshUserToken, user]);
+  }, [refreshUserToken]);
 
   React.useEffect(() => {
     setIsBackofficeUser(!!role && backofficeRoles.indexOf(role) !== -1);
