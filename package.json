@@ -68,7 +68,7 @@
     "deploy:dev": "ENV=dev yarn deploy",
     "deploy:staging": "ENV=staging yarn deploy",
     "deploy:live": "ENV=live yarn deploy",
-    "postversion": "git push && git push --tags"
+    "postversion": "git push && git push --tags && git fetch"
   },
   "eslintConfig": {
     "extends": [
