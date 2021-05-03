@@ -20,7 +20,7 @@ export default class SearchApi {
       requestsCache: createNullCache(),
     });
     this.businesses = this.client.initIndex(`${env}_businesses_backoffice`);
-    this.couriers = this.client.initIndex(`${env}_couriers_backoffice`);
+    this.couriers = this.client.initIndex(`${env}_couriers`);
     this.consumers = this.client.initIndex(`${env}_consumers`);
     this.orders = this.client.initIndex(`${env}_orders`);
   }
