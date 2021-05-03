@@ -68,9 +68,8 @@ export default class OrderApi {
     return unsubscribe;
   }
 
-  async fetchOrdersById(orderId: string) {
+  async fetchOrderById(orderId: string) {
     const data = await this.refs.getOrderRef(orderId).get();
-    console.log(data);
     return data ? { ...data.data(), id: orderId } : null;
   }
 

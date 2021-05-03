@@ -22,7 +22,6 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
   const { agent, username } = useContextAgentProfile();
   const { orderId } = useParams<Params>();
   const order = useOrder(orderId);
-  console.log(order);
 
   // helpers
 
@@ -33,7 +32,12 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
   //UI
   return (
     <ConsumerProvider>
-      <OrderBaseDrawer agent={{ id: agent?.id, name: username }} onClose={onClose} {...props}>
+      <OrderBaseDrawer
+        agent={{ id: agent?.id, name: username }}
+        order={order}
+        onClose={onClose}
+        {...props}
+      >
         <Switch>
           <Route exact path={`${path}`}>
             <Participants order={order} />

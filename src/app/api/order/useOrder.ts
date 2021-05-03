@@ -11,11 +11,11 @@ export const useOrder = (orderId?: string) => {
   React.useEffect(() => {
     if (!orderId) return;
     const getOrderById = async () => {
-      const data = await api.order().fetchOrdersById(orderId);
+      const data = await api.order().fetchOrderById(orderId);
       setOrder(data as WithId<Order>);
     };
     getOrderById();
-  }, [orderId, api]); //attention to 'options' to avoid infinite renders
+  }, [orderId, api]);
   // return
   return order;
 };

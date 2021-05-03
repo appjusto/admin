@@ -3,19 +3,20 @@ import { Order, WithId } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { DeliveryMap } from 'pages/orders/drawers/orderdrawer/DeliveryMap';
 import React from 'react';
+import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
 
 interface ParticipantProps {
   name: string;
   address?: string;
-  onboarding: string;
+  onboarding?: firebase.firestore.Timestamp;
   buttonLabel?: string;
   buttonLink?: string;
 }
 
 const Participant = ({ name, address, onboarding, buttonLabel, buttonLink }: ParticipantProps) => {
-  const date = onboarding;
+  const date = onboarding ? getDateAndHour(onboarding) : 'N/E';
   return (
     <Box mb="10">
       <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
@@ -32,12 +33,14 @@ const Participant = ({ name, address, onboarding, buttonLabel, buttonLink }: Par
           </Text>
         </Text>
       )}
-      <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
-        {t('Data do onboarding:')}{' '}
-        <Text as="span" fontWeight="500">
-          {date}
+      {onboarding && (
+        <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+          {t('Data do onboarding:')}{' '}
+          <Text as="span" fontWeight="500">
+            {date}
+          </Text>
         </Text>
-      </Text>
+      )}
       {buttonLabel && (
         <CustomButton
           h="34px"
@@ -60,28 +63,36 @@ interface ParticipantsProps {
 export const Participants = ({ order }: ParticipantsProps) => {
   return (
     <>
-      <SectionTitle>{t('Cliente')}</SectionTitle>
-      <Participant name="Nome do cliente" address="Endereço do cliente" onboarding="00/00/0000" />
-      <SectionTitle>{t('Restaurante')}</SectionTitle>
+      <SectionTitle>{order?.type === 'food' ? t('Cliente') : t('Destino')}</SectionTitle>
       <Participant
-        name="Nome do restaurante"
-        address="Endereço do restaurante"
-        onboarding="00/00/0000"
-        buttonLabel="Ver cadastro do restaurante"
-        buttonLink="/"
+        name={order?.consumer.name ?? 'N/E'}
+        address={order?.destination?.address.main ?? 'N/E'}
+        //onboarding={order?.createdOn as firebase.firestore.Timestamp}
+      />
+      <SectionTitle>{order?.type === 'food' ? t('Restaurante') : t('Origem')}</SectionTitle>
+      <Participant
+        name={order?.business?.name ?? 'N/E'}
+        address={order?.origin?.address.main ?? 'N/E'}
+        //onboarding={order?.createdOn as firebase.firestore.Timestamp}
+        buttonLabel={t('Ver cadastro do restaurante')}
+        buttonLink={`/backoffice/businesses/${order?.business?.id}`}
       />
       <SectionTitle>{t('Entregador')}</SectionTitle>
       <Participant
-        name="Nome do entregador"
-        onboarding="00/00/0000"
-        buttonLabel="Ver cadastro do restaurante"
-        buttonLink="/"
+        name={order?.courier?.name ?? 'N/E'}
+        //onboarding={order?.createdOn as firebase.firestore.Timestamp}
+        buttonLabel={t('Ver cadastro do entregador')}
+        buttonLink={`/backoffice/couriers/${order?.courier?.id}`}
       />
       <SectionTitle>{t('Entregador à caminho da retirada')}</SectionTitle>
       <Text mt="1" fontSize="15px" lineHeight="21px">
         {t('Chega em aproximadamente 10 minutos')}
       </Text>
       <DeliveryMap order={order} />
+      <SectionTitle>{t('Destino do pedido')}</SectionTitle>
+      <Text mt="1" fontSize="15px" lineHeight="21px">
+        {`${order?.destination?.address.main}, ${order?.destination?.additionalInfo}, ${order?.destination?.address.secondary}`}
+      </Text>
     </>
   );
 };
