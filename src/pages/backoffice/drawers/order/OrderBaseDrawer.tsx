@@ -75,7 +75,7 @@ export const OrderBaseDrawer = ({ agent, order, onClose, children, ...props }: B
             <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
               {t('Nome do cliente:')}{' '}
               <Text as="span" fontWeight="500">
-                {order?.consumer.name ?? 'N/E'}
+                {order?.consumer?.name ?? 'N/E'}
               </Text>
             </Text>
             <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">

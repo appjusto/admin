@@ -65,14 +65,14 @@ export const Participants = ({ order }: ParticipantsProps) => {
     <>
       <SectionTitle>{order?.type === 'food' ? t('Cliente') : t('Destino')}</SectionTitle>
       <Participant
-        name={order?.consumer.name ?? 'N/E'}
-        address={order?.destination?.address.main ?? 'N/E'}
+        name={order?.consumer?.name ?? 'N/E'}
+        address={order?.destination?.address?.main ?? 'N/E'}
         //onboarding={order?.createdOn as firebase.firestore.Timestamp}
       />
       <SectionTitle>{order?.type === 'food' ? t('Restaurante') : t('Origem')}</SectionTitle>
       <Participant
         name={order?.business?.name ?? 'N/E'}
-        address={order?.origin?.address.main ?? 'N/E'}
+        address={order?.origin?.address?.main ?? 'N/E'}
         //onboarding={order?.createdOn as firebase.firestore.Timestamp}
         buttonLabel={t('Ver cadastro do restaurante')}
         buttonLink={`/backoffice/businesses/${order?.business?.id}`}
@@ -91,7 +91,9 @@ export const Participants = ({ order }: ParticipantsProps) => {
       <DeliveryMap order={order} />
       <SectionTitle>{t('Destino do pedido')}</SectionTitle>
       <Text mt="1" fontSize="15px" lineHeight="21px">
-        {`${order?.destination?.address.main}, ${order?.destination?.additionalInfo}, ${order?.destination?.address.secondary}`}
+        {order?.destination?.address?.main
+          ? `${order?.destination?.address?.main}, ${order?.destination?.additionalInfo}, ${order?.destination?.address?.secondary}`
+          : 'N/E'}
       </Text>
     </>
   );
