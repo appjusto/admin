@@ -1,19 +1,29 @@
 import { Box } from '@chakra-ui/react';
+import { useOrder } from 'app/api/order/useOrder';
 import { useContextAgentProfile } from 'app/state/agent/context';
 import { ConsumerProvider } from 'app/state/consumer/context';
 import React from 'react';
-import { Route, Switch, useRouteMatch } from 'react-router-dom';
+import { Route, Switch, useParams, useRouteMatch } from 'react-router-dom';
 import { OrderBaseDrawer } from './OrderBaseDrawer';
+import { Participants } from './Participants';
 
 interface ConsumerDrawerProps {
   isOpen: boolean;
   onClose(): void;
 }
 
+type Params = {
+  orderId: string;
+};
+
 export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps) => {
   //context
   const { path } = useRouteMatch();
   const { agent, username } = useContextAgentProfile();
+  const { orderId } = useParams<Params>();
+  const order = useOrder(orderId);
+  console.log(order);
+
   // helpers
 
   //handlers
@@ -26,7 +36,7 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
       <OrderBaseDrawer agent={{ id: agent?.id, name: username }} onClose={onClose} {...props}>
         <Switch>
           <Route exact path={`${path}`}>
-            <Box>GERAL</Box>
+            <Participants order={order} />
           </Route>
           <Route exact path={`${path}/order`}>
             <Box>PEDIDO</Box>

@@ -36,7 +36,6 @@ export default class OrderApi {
       .orderBy('createdOn', 'desc')
       .where('business.id', '==', businessId)
       .where('status', 'in', statuses);
-
     const unsubscribe = query.onSnapshot(
       (querySnapshot) => {
         resultHandler(documentsAs<Order>(querySnapshot.docs));
@@ -67,6 +66,12 @@ export default class OrderApi {
       );
     // returns the unsubscribe function
     return unsubscribe;
+  }
+
+  async fetchOrdersById(orderId: string) {
+    const data = await this.refs.getOrderRef(orderId).get();
+    console.log(data);
+    return data ? { ...data.data(), id: orderId } : null;
   }
 
   async fetchOrdersByConsumerId(consumerId: string) {

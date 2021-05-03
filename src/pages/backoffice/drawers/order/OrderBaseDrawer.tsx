@@ -92,7 +92,7 @@ export const OrderBaseDrawer = ({ agent, onClose, children, ...props }: BaseDraw
               height="38px"
               borderBottom="1px solid #C8D7CB"
             >
-              <DrawerLink to={`${url}`} label={t('Cadastro')} />
+              <DrawerLink to={`${url}`} label={t('Participantes')} />
               <DrawerLink to={`${url}/order`} label={t('Pedidos')} />
               <DrawerLink to={`${url}/status`} label={t('Status')} />
             </Flex>

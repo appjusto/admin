@@ -25,7 +25,7 @@ const fakeItem = (price: number, qtd: number): OrderItem => {
 const fakeOrder: Order = {
   type: 'food',
   code: `${Math.random().toString().split('', 6).join('').replace('.', '')}`,
-  status: 'quote',
+  status: 'confirmed',
   // comments: 'cpf',
   consumer: {
     id: 'n9IBTFplN1bnjHHfqhNcVJTaXc43',
@@ -43,7 +43,7 @@ const fakeOrder: Order = {
     },
   },*/
   business: {
-    id: '"QZYurHCMsqZxTIQyQqq3"',
+    id: 'QZYurHCMsqZxTIQyQqq3',
     name: 'Itapuama vegan',
   },
   items: [fakeItem(1200, 1), fakeItem(1600, 2)],
@@ -95,7 +95,7 @@ interface ContextProps {
 
 const OrdersContext = React.createContext<ContextProps>({} as ContextProps);
 
-const options = { active: true, inactive: true };
+const options = { active: true, inactive: false };
 
 interface ProviderProps {
   children: React.ReactNode | React.ReactNode[];
@@ -105,7 +105,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   // context
   const api = useContextApi();
   const { business } = useContextBusiness();
-  const hookOrders = useOrders(options, business!.id);
+  const hookOrders = useOrders(options, business?.id);
   console.log(hookOrders);
   //state
   const [orders, setOrders] = React.useState<WithId<Order>[]>([]);

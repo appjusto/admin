@@ -5,7 +5,7 @@ import { ObserveOrdersOptions } from './OrderApi';
 
 export const useOrders = (
   options: ObserveOrdersOptions = { active: true, inactive: false },
-  businessId: string
+  businessId?: string
 ) => {
   // context
   const api = useContextApi();
@@ -13,7 +13,8 @@ export const useOrders = (
   const [orders, setOrders] = React.useState<WithId<Order>[]>([]);
   // side effects
   React.useEffect(() => {
-    return api.order().observeOrders(options, businessId, setOrders);
+    if (!businessId) return;
+    api.order().observeOrders(options, businessId, setOrders);
   }, [options, businessId, api]); //attention to 'options' to avoid infinite renders
   // return
   return orders;
