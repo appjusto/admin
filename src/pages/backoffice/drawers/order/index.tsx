@@ -4,6 +4,7 @@ import { useContextAgentProfile } from 'app/state/agent/context';
 import { ConsumerProvider } from 'app/state/consumer/context';
 import React from 'react';
 import { Route, Switch, useParams, useRouteMatch } from 'react-router-dom';
+import { Details } from './Details';
 import { OrderBaseDrawer } from './OrderBaseDrawer';
 import { Participants } from './Participants';
 
@@ -43,7 +44,7 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
             <Participants order={order} />
           </Route>
           <Route exact path={`${path}/order`}>
-            <Box>PEDIDO</Box>
+            <Details order={order} />
           </Route>
           <Route exact path={`${path}/status`}>
             <Box>STATUS</Box>
