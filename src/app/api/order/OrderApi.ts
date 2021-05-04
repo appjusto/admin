@@ -4,13 +4,13 @@ import firebase from 'firebase/app';
 import FirebaseRefs from '../FirebaseRefs';
 
 export const ActiveFoodOrdersValues: FoodOrderStatus[] = [
-  'confirming',
   'confirmed',
   'preparing',
   'ready',
   'dispatching',
+  'canceled',
 ];
-export const InactiveFoodOrdersValues: FoodOrderStatus[] = ['quote', 'delivered', 'canceled'];
+export const InactiveFoodOrdersValues: FoodOrderStatus[] = ['quote', 'confirming', 'delivered'];
 export const FoodOrdersValues = [...ActiveFoodOrdersValues, ...InactiveFoodOrdersValues];
 
 export type ObserveOrdersOptions = {
@@ -31,9 +31,14 @@ export default class OrderApi {
       ...(options.active ? ActiveFoodOrdersValues : []),
       ...(options.inactive ? InactiveFoodOrdersValues : []),
     ];
+    const timeLimit = new Date().getTime() - 86400000;
+    const start_time = firebase.firestore.Timestamp.fromDate(new Date(timeLimit));
+
+    console.log(timeLimit);
     let query = this.refs
       .getOrdersRef()
       .orderBy('createdOn', 'desc')
+      .where('createdOn', '>=', start_time)
       .where('business.id', '==', businessId)
       .where('status', 'in', statuses);
     const unsubscribe = query.onSnapshot(

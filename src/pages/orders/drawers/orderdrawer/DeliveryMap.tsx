@@ -20,7 +20,7 @@ export const DeliveryMap = ({ order }: DeliveryMapProps) => {
   // context
   const { googleMapsApiKey } = getConfig().api;
   const route = useOrderDeliveryRoute(order);
-  console.log(route);
+
   // state
   const [courierIcon, setCourierIcon] = React.useState<string>(GreenPointSvg);
   const [restaurantIcon, setRestaurantIcon] = React.useState<string>(WhitePackageSvg);
