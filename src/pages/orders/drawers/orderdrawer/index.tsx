@@ -1,4 +1,5 @@
 import { Table, Tbody, Td, Text, Tfoot, Th, Thead, Tr } from '@chakra-ui/react';
+import { useOrder } from 'app/api/order/useOrder';
 import { Issue, OrderItem, WithId } from 'appjusto-types';
 import { Pendency } from 'common/components/Pendency';
 import React from 'react';
@@ -6,7 +7,6 @@ import { useParams } from 'react-router-dom';
 import { itemPriceFormatter } from 'utils/formatters';
 import { getOrderTotalPriceToDisplay } from 'utils/functions';
 import { t } from 'utils/i18n';
-import { useOrdersContext } from '../../context';
 import { OrderBaseDrawer } from '../OrderBaseDrawer';
 import { Cancelation } from './Cancelation';
 import { CookingTime } from './CookingTime';
@@ -26,8 +26,9 @@ export const OrderDrawer = (props: Props) => {
   const isError = false;
   const error = '';
   const { orderId } = useParams<Params>();
-  const { getOrderById, cancelOrder } = useOrdersContext();
-  const order = getOrderById(orderId);
+  //const { getOrderById, cancelOrder } = useOrdersContext();
+  const { order, updateOrder } = useOrder(orderId);
+  //const order = getOrderById(orderId);
 
   const isCurrierArrived = order?.dispatchingState === 'arrived-pickup';
   // state
@@ -35,13 +36,16 @@ export const OrderDrawer = (props: Props) => {
   const orderTotalPrice = getOrderTotalPriceToDisplay(order?.items || []);
   // handlers
 
-  const handleCancel = (issue: WithId<Issue>) => {
-    cancelOrder(orderId, issue);
+  const handleCancel = async (issue: WithId<Issue>) => {
+    //cancelOrder(orderId, issue);
+    await updateOrder({
+      status: 'canceled',
+    });
     props.onClose();
   };
 
   // side effects
-  console.log(order);
+
   // UI
   return (
     <OrderBaseDrawer

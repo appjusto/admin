@@ -32,6 +32,7 @@ const OrdersPage = () => {
     true,
     'orders',
     orderType,
+    undefined,
     orderStatus,
     dateFilter,
     searchId
