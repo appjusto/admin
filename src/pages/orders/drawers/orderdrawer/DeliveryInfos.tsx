@@ -1,6 +1,6 @@
 import { Box, Button, Circle, Flex, Image, Text } from '@chakra-ui/react';
 import { useCourierProfilePicture } from 'app/api/courier/useCourierProfilePicture';
-import { useOrderArrivalTimes } from 'app/api/order/useOrderArrivalTimes';
+import { useOrderDeliveryInfos } from 'app/api/order/useOrderDeliveryInfos';
 import { Order, WithId } from 'appjusto-types';
 import { Pendency } from 'common/components/Pendency';
 import I18n from 'i18n-js';
@@ -10,19 +10,19 @@ import { DeliveryMap } from './DeliveryMap';
 
 interface DeliveryInfosProps {
   order: WithId<Order>;
-  isCurrierArrived: boolean;
 }
 
-export const DeliveryInfos = ({ order, isCurrierArrived }: DeliveryInfosProps) => {
+export const DeliveryInfos = ({ order }: DeliveryInfosProps) => {
   // context
   const courierPictureUrl = useCourierProfilePicture(order.courier?.id);
-  const arrivalTime = useOrderArrivalTimes(order);
+  const {
+    isCurrierArrived,
+    isOrderActive,
+    orderDispatchingStatusText,
+    arrivalTime,
+  } = useOrderDeliveryInfos(order);
   // state
   const [joined, setJoined] = React.useState<string | null>(null);
-
-  const isUnmatched = order.dispatchingStatus
-    ? ['idle', 'matching', 'unmatched', 'no-match'].includes(order.dispatchingStatus)
-    : true;
 
   // side effects
   React.useEffect(() => {
@@ -44,11 +44,7 @@ export const DeliveryInfos = ({ order, isCurrierArrived }: DeliveryInfosProps) =
     <Box mt="6">
       <Flex justifyContent="space-between" alignItems="center">
         <Text fontSize="xl" color="black">
-          {isUnmatched
-            ? t('Buscando entregador')
-            : isCurrierArrived
-            ? t('Entregador no local')
-            : t('Entregador à caminho da retirada')}
+          {orderDispatchingStatusText}
         </Text>
         {!isCurrierArrived &&
           arrivalTime &&
@@ -64,7 +60,7 @@ export const DeliveryInfos = ({ order, isCurrierArrived }: DeliveryInfosProps) =
             <Text fontSize="sm">{t(`Chega em menos de 1 minuto`)}</Text>
           ))}
       </Flex>
-      {!isUnmatched && (
+      {isOrderActive && (
         <Flex mt="4" justifyContent="space-between" alignItems="flex-end">
           <Flex alignItems="center" justifyContent="flex-end">
             <Box>

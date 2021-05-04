@@ -18,9 +18,9 @@ export const useOrderDeliveryInfos = (order?: WithId<Order> | null) => {
   React.useEffect(() => {
     const getOrderDispatchingStatusText = (status?: string) => {
       let result = 'Buscando entregador';
-      if (status === 'going-pickup') result = 'Entregador a caminho da retirada';
+      if (status === 'going-pickup') result = 'Entregador à caminho da retirada';
       if (status === 'arrived-pickup') result = 'Entregador no local';
-      if (status === 'going-destination') result = 'Entregador a caminho da entrega';
+      if (status === 'going-destination') result = 'Entregador à caminho da entrega';
       if (status === 'arrived-destination') result = 'Entregador no local de entrega';
       setOrderDispatchingStatusText(result);
     };
