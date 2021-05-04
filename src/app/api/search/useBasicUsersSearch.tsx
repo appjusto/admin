@@ -28,6 +28,11 @@ export const useBasicUsersSearch = <T extends object>(
     },
     [api, kind, hitsPerPage]
   );
+
+  const refetch = () => {
+    search(soughtValue!, filters);
+  };
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedSearch = React.useCallback(
     debounce<(input: string, filters: SituationFilter[], page?: number) => void>(search, 500),
@@ -56,5 +61,5 @@ export const useBasicUsersSearch = <T extends object>(
     if (hasNextPage) debouncedSearch(soughtValue, filters, response.page + 1);
   }, [soughtValue, response, debouncedSearch, filters]);
 
-  return { results, isLoading, fetchNextPage };
+  return { results, isLoading, fetchNextPage, refetch };
 };

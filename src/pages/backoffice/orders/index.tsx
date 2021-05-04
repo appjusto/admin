@@ -28,7 +28,7 @@ const OrdersPage = () => {
   const [dateFilter, setDateFilter] = React.useState<number[] | undefined>(undefined);
   const [orderStatus, setOrderStatus] = React.useState<OrderStatus>();
 
-  const { results: orders, fetchNextPage } = useOrdersSearch<OrderAlgolia>(
+  const { results: orders, fetchNextPage, refetch } = useOrdersSearch<OrderAlgolia>(
     true,
     'orders',
     orderType,
@@ -38,7 +38,10 @@ const OrdersPage = () => {
   );
 
   // handlers
-  const closeDrawerHandler = () => history.replace(path);
+  const closeDrawerHandler = () => {
+    refetch();
+    history.replace(path);
+  };
 
   const cleanFilters = () => {
     setFilterBar('all');

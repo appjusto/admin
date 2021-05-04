@@ -52,7 +52,7 @@ export const CourierStatus = () => {
           </VStack>
         </AlertError>
       )}
-      <SectionTitle mt="0">{t('Alterar status do restaurante:')}</SectionTitle>
+      <SectionTitle mt="0">{t('Alterar status do entregador:')}</SectionTitle>
       <RadioGroup
         mt="2"
         onChange={(value: ProfileSituation) => handleProfileChange('situation', value)}
@@ -80,7 +80,7 @@ export const CourierStatus = () => {
             {t('Aguardando aprovação')}
           </Radio>
           <Radio mt="2" value="blocked">
-            {t('Bloquear restaurante')}
+            {t('Bloquear entregador')}
           </Radio>
         </Flex>
       </RadioGroup>

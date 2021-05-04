@@ -60,6 +60,10 @@ export const useOrdersSearch = <T extends object>(
     >(search, 500),
     [search]
   );
+
+  const refetch = () => {
+    search(soughtValue!, typeFilter);
+  };
   // side effects
   // debounce search when search input changes
   React.useEffect(() => {
@@ -84,5 +88,5 @@ export const useOrdersSearch = <T extends object>(
       debouncedSearch(soughtValue, typeFilter, statusFilters, dateFilter, response.page + 1);
   }, [soughtValue, response, debouncedSearch, typeFilter, statusFilters, dateFilter]);
 
-  return { results, isLoading, fetchNextPage };
+  return { results, isLoading, fetchNextPage, refetch };
 };

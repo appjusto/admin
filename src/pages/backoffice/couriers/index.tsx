@@ -24,7 +24,7 @@ const CouriersPage = () => {
   const [filterBar, setFilterBar] = React.useState('all');
   const [filters, setFilters] = React.useState<SituationFilter[]>([]);
 
-  const { results: couriers, fetchNextPage } = useBasicUsersSearch<CourierAlgolia>(
+  const { results: couriers, fetchNextPage, refetch } = useBasicUsersSearch<CourierAlgolia>(
     true,
     'couriers',
     filters,
@@ -32,7 +32,10 @@ const CouriersPage = () => {
   );
 
   // handlers
-  const closeDrawerHandler = () => history.replace(path);
+  const closeDrawerHandler = () => {
+    refetch();
+    history.replace(path);
+  };
 
   // side effects
   React.useEffect(() => {
@@ -46,6 +49,7 @@ const CouriersPage = () => {
     else if (filterBar === 'pending')
       barArray = [
         { type: 'situation', value: 'pending' },
+        { type: 'situation', value: 'invalid' },
         { type: 'situation', value: 'rejected' },
       ];
     else barArray = [{ type: 'situation', value: filterBar }];
