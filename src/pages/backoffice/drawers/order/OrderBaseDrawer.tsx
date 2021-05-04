@@ -16,6 +16,7 @@ import { AlertError } from 'common/components/AlertError';
 import { AlertSuccess } from 'common/components/AlertSuccess';
 import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
 import React from 'react';
+import { MutationResult } from 'react-query';
 import { useRouteMatch } from 'react-router';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
@@ -25,27 +26,24 @@ interface BaseDrawerProps {
   order?: WithId<Order> | null;
   isOpen: boolean;
   onClose(): void;
+  updateOrderStatus(): void;
+  result: MutationResult<void, unknown>;
   children: React.ReactNode | React.ReactNode[];
 }
 
-type Status = 'unsubmited' | 'success' | 'error';
-type SubmitStatus = { status: Status; message: string };
-
-const initialStatus = { status: 'unsubmited', message: '' } as SubmitStatus;
-
-export const OrderBaseDrawer = ({ agent, order, onClose, children, ...props }: BaseDrawerProps) => {
+export const OrderBaseDrawer = ({
+  agent,
+  order,
+  onClose,
+  updateOrderStatus,
+  result,
+  children,
+  ...props
+}: BaseDrawerProps) => {
   //context
   const { url } = useRouteMatch();
-
-  // state
-  const [submitStatus, setSubmitStatus] = React.useState<SubmitStatus>(initialStatus);
-
-  //handlers
-
-  //handlers
-
-  // side effects
-
+  const { isError, isLoading, error, isSuccess } = result;
+  if (error) console.log('updateOrderError', error);
   //UI
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
@@ -103,21 +101,22 @@ export const OrderBaseDrawer = ({ agent, order, onClose, children, ...props }: B
           <DrawerFooter borderTop="1px solid #F2F6EA">
             <HStack w="full" spacing={4}>
               <Button
-                type="submit"
                 width="full"
                 maxW="240px"
                 fontSize="15px"
-                //onClick={handleSave}
-                //isLoading={isLoading}
+                onClick={updateOrderStatus}
+                isLoading={isLoading}
                 loadingText={t('Salvando')}
               >
                 {t('Salvar alterações')}
               </Button>
-              {submitStatus.status === 'success' && (
-                <AlertSuccess mt="0" h="48px" description={submitStatus.message} />
-              )}
-              {submitStatus.status === 'error' && (
-                <AlertError mt="0" h="48px" description={submitStatus.message} />
+              {isSuccess && <AlertSuccess mt="0" h="48px" description={t('Informações salvas!')} />}
+              {isError && (
+                <AlertError
+                  mt="0"
+                  h="48px"
+                  description={t('Não foi possível acessar o servidor.')}
+                />
               )}
             </HStack>
           </DrawerFooter>

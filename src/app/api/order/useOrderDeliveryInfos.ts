@@ -6,7 +6,10 @@ export const useOrderDeliveryInfos = (order?: WithId<Order> | null) => {
   // state
   const arrivalTime = useOrderArrivalTimes(order);
   const [isOrderActive, setIsOrderActive] = React.useState<boolean>();
-  const [isCurrierArrived, setIsCurrierArrived] = React.useState<boolean>();
+  const [isMatched, setIsMatched] = React.useState<boolean>(order?.dispatchingStatus === 'matched');
+  const [isCurrierArrived, setIsCurrierArrived] = React.useState<boolean>(
+    order?.dispatchingState === 'arrived-pickup'
+  );
   const [orderDispatchingStatusText, setOrderDispatchingStatusText] = React.useState<string>();
 
   // side effects
@@ -29,10 +32,14 @@ export const useOrderDeliveryInfos = (order?: WithId<Order> | null) => {
   }, [order?.dispatchingState]);
 
   React.useEffect(() => {
+    setIsMatched(order?.dispatchingStatus === 'matched');
+  }, [order?.dispatchingStatus]);
+
+  React.useEffect(() => {
     if (order?.status)
       setIsOrderActive(['confirmed', 'preparing', 'ready', 'dispatching'].includes(order.status));
   }, [order?.status]);
 
   // result
-  return { isOrderActive, isCurrierArrived, arrivalTime, orderDispatchingStatusText };
+  return { isOrderActive, isMatched, isCurrierArrived, arrivalTime, orderDispatchingStatusText };
 };

@@ -20,6 +20,7 @@ export const DeliveryMap = ({ order }: DeliveryMapProps) => {
   // context
   const { googleMapsApiKey } = getConfig().api;
   const route = useOrderDeliveryRoute(order);
+  console.log(route);
   // state
   const [courierIcon, setCourierIcon] = React.useState<string>(GreenPointSvg);
   const [restaurantIcon, setRestaurantIcon] = React.useState<string>(WhitePackageSvg);
@@ -54,14 +55,14 @@ export const DeliveryMap = ({ order }: DeliveryMapProps) => {
           }}
         >
           <Marker
-            key={Math.random()}
+            key={`${order?.id}-business`}
             icon={restaurantIcon}
             lat={route.origin.latitude}
             lng={route.origin.longitude}
             mt="-10px"
           />
           <Marker
-            key={Math.random()}
+            key={`${order?.id}-consumer`}
             icon={UserSvg}
             lat={route.destination.latitude}
             lng={route.destination.longitude}
@@ -70,16 +71,18 @@ export const DeliveryMap = ({ order }: DeliveryMapProps) => {
             mt="-44px"
             ml="-16px"
           />
-          <Marker
-            key={Math.random()}
-            icon={courierIcon}
-            lat={route.courier.latitude}
-            lng={route.courier.longitude}
-            h="36px"
-            w="30px"
-            mt="-38px"
-            ml="-15px"
-          />
+          {route.courier.latitude && route.courier.longitude && (
+            <Marker
+              key={`${order?.id}-courier`}
+              icon={courierIcon}
+              lat={route.courier.latitude}
+              lng={route.courier.longitude}
+              h="36px"
+              w="30px"
+              mt="-38px"
+              ml="-15px"
+            />
+          )}
         </GoogleMapReact>
       )}
     </Box>
