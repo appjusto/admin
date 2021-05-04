@@ -1,5 +1,5 @@
 import { Box, Text } from '@chakra-ui/react';
-import { useOrderArrivalTimes } from 'app/api/order/useOrderArrivalTimes';
+import { useOrderDeliveryInfos } from 'app/api/order/useOrderDeliveryInfos';
 import { Order, WithId } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { DeliveryMap } from 'pages/orders/drawers/orderdrawer/DeliveryMap';
@@ -64,27 +64,14 @@ interface ParticipantsProps {
   order?: WithId<Order> | null;
 }
 
-const getOrderDispatchingStatusText = (status?: string) => {
-  if (status === 'going-pickup') return 'Entregador a caminho da retirada';
-  if (status === 'arrived-pickup') return 'Entregador no local';
-  if (status === 'going-destination') return 'Entregador a caminho da entrega';
-  if (status === 'arrived-destination') return 'Entregador no local de entrega';
-  return 'Buscando entregador';
-};
-
-const isOrderActive = (status?: string) => {
-  if (!status) return false;
-  return ['confirmed', 'preparing', 'ready', 'dispatching'].includes(status);
-};
-
 export const Participants = ({ order }: ParticipantsProps) => {
-  // context
-  const arrivalTime = useOrderArrivalTimes(order);
   // helpers
-  const isCurrierArrived = order?.dispatchingState === 'arrived-pickup';
-  const isUnmatched = order?.dispatchingStatus
-    ? ['idle', 'matching', 'unmatched', 'no-match'].includes(order.dispatchingStatus)
-    : true;
+  const {
+    isCurrierArrived,
+    isOrderActive,
+    orderDispatchingStatusText,
+    arrivalTime,
+  } = useOrderDeliveryInfos(order);
 
   // UI
   return (
@@ -110,9 +97,9 @@ export const Participants = ({ order }: ParticipantsProps) => {
         buttonLabel={t('Ver cadastro do entregador')}
         buttonLink={`/backoffice/couriers/${order?.courier?.id}`}
       />
-      {isOrderActive(order?.status) && (
+      {isOrderActive && (
         <>
-          <SectionTitle>{getOrderDispatchingStatusText(order?.dispatchingState)}</SectionTitle>
+          <SectionTitle>{orderDispatchingStatusText}</SectionTitle>
           {!isCurrierArrived &&
             arrivalTime &&
             (arrivalTime > 0 ? (
