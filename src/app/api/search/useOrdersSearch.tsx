@@ -9,6 +9,7 @@ export const useOrdersSearch = <T extends object>(
   enabled: boolean,
   kind: SearchKind,
   typeFilter: OrderType,
+  businessId?: string,
   statusFilters?: OrderStatus,
   dateFilter?: number[],
   soughtValue?: string,
@@ -25,6 +26,7 @@ export const useOrdersSearch = <T extends object>(
     (
       input: string,
       typeFilter: OrderType,
+      businessId?: string,
       statusFilters?: OrderStatus,
       dateFilter?: number[],
       page?: number
@@ -35,6 +37,7 @@ export const useOrdersSearch = <T extends object>(
           await api.ordersSearch(
             kind,
             typeFilter,
+            businessId,
             statusFilters,
             dateFilter,
             input,
@@ -45,7 +48,7 @@ export const useOrdersSearch = <T extends object>(
         setLoading(false);
       })();
     },
-    [api, kind, hitsPerPage]
+    [api, kind, hitsPerPage, businessId]
   );
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedSearch = React.useCallback(
@@ -53,6 +56,7 @@ export const useOrdersSearch = <T extends object>(
       (
         input: string,
         typeFilter: OrderType,
+        businessId?: string,
         statusFilters?: OrderStatus,
         dateFilter?: number[],
         page?: number
@@ -60,13 +64,17 @@ export const useOrdersSearch = <T extends object>(
     >(search, 500),
     [search]
   );
+
+  const refetch = () => {
+    search(soughtValue!, typeFilter, businessId);
+  };
   // side effects
   // debounce search when search input changes
   React.useEffect(() => {
     if (!enabled) return;
     if (soughtValue === undefined) return;
-    debouncedSearch(soughtValue, typeFilter, statusFilters, dateFilter);
-  }, [enabled, soughtValue, debouncedSearch, typeFilter, statusFilters, dateFilter]);
+    debouncedSearch(soughtValue, typeFilter, businessId, statusFilters, dateFilter);
+  }, [enabled, soughtValue, debouncedSearch, typeFilter, businessId, statusFilters, dateFilter]);
   // update results when response changes
   React.useEffect(() => {
     if (!response) return;
@@ -81,8 +89,15 @@ export const useOrdersSearch = <T extends object>(
     if (!response) return;
     const hasNextPage = response.page + 1 < response.nbPages;
     if (hasNextPage)
-      debouncedSearch(soughtValue, typeFilter, statusFilters, dateFilter, response.page + 1);
-  }, [soughtValue, response, debouncedSearch, typeFilter, statusFilters, dateFilter]);
+      debouncedSearch(
+        soughtValue,
+        typeFilter,
+        businessId,
+        statusFilters,
+        dateFilter,
+        response.page + 1
+      );
+  }, [soughtValue, response, debouncedSearch, typeFilter, businessId, statusFilters, dateFilter]);
 
-  return { results, isLoading, fetchNextPage };
+  return { results, isLoading, fetchNextPage, refetch };
 };

@@ -51,6 +51,7 @@ const BusinessesPage = () => {
     else if (filterBar === 'pending')
       barArray = [
         { type: 'situation', value: 'pending' },
+        { type: 'situation', value: 'invalid' },
         { type: 'situation', value: 'rejected' },
       ];
     else barArray = [{ type: 'situation', value: filterBar }];

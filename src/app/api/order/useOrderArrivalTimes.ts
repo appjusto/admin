@@ -2,7 +2,7 @@ import { Order, WithId } from 'appjusto-types';
 import React from 'react';
 import { getTimeUntilNow } from 'utils/functions';
 
-export const useOrderArrivalTimes = (order: WithId<Order>) => {
+export const useOrderArrivalTimes = (order?: WithId<Order> | null) => {
   // state
   const [arrivalTime, setArrivalTime] = React.useState<number | null>(null);
 
@@ -16,6 +16,7 @@ export const useOrderArrivalTimes = (order: WithId<Order>) => {
 
   // side effects
   React.useEffect(() => {
+    if (!order) return;
     const courierArrivalTime = order.origin?.estimatedTimeOfArrival as firebase.firestore.Timestamp;
     const orderArrivalTime = order.destination
       ?.estimatedTimeOfArrival as firebase.firestore.Timestamp;

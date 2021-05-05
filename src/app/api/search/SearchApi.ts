@@ -64,7 +64,8 @@ export default class SearchApi {
   private createOrdersFilters(
     typeFilter: OrderType,
     statusFilters?: OrderStatus,
-    dateFilter?: number[]
+    dateFilter?: number[],
+    businessId?: string
   ) {
     const status = `status: ${statusFilters}`;
     const type = typeFilter ? `type: ${typeFilter}` : '';
@@ -74,6 +75,7 @@ export default class SearchApi {
         : '';
 
     let result = `${type}`;
+    if (businessId) result += ` AND businessId: ${businessId}`;
     if (statusFilters) result += ` AND ${status}`;
     if (dateFilter) result += ` AND ${date}`;
     return result;
@@ -82,6 +84,7 @@ export default class SearchApi {
   ordersSearch<T>(
     kind: SearchKind,
     typeFilter: OrderType,
+    businessId?: string,
     statusFilters?: OrderStatus,
     dateFilter?: number[],
     query: string = '',
@@ -93,7 +96,7 @@ export default class SearchApi {
     return index.search<T>(query, {
       page,
       hitsPerPage,
-      filters: this.createOrdersFilters(typeFilter, statusFilters, dateFilter),
+      filters: this.createOrdersFilters(typeFilter, statusFilters, dateFilter, businessId),
     });
   }
 

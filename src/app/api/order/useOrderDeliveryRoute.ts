@@ -20,7 +20,7 @@ export interface Route {
   polyline: ShortLatLng[];
 }
 
-export const useOrderDeliveryRoute = (order: WithId<Order>) => {
+export const useOrderDeliveryRoute = (order?: WithId<Order> | null) => {
   // state
   const [route, setRoute] = React.useState<Route | null>(null);
   // side effects
@@ -57,7 +57,6 @@ export const useOrderDeliveryRoute = (order: WithId<Order>) => {
       setRoute(routeCoords as Route);
     }
   }, [order]);
-  console.log(route);
   // result
   return route;
 };
