@@ -1,6 +1,6 @@
 import { Table, Tbody, Td, Text, Tfoot, Th, Thead, Tr } from '@chakra-ui/react';
 import { useOrder } from 'app/api/order/useOrder';
-import { Issue, OrderItem, WithId } from 'appjusto-types';
+import { Issue, OrderIssue, OrderItem, WithId } from 'appjusto-types';
 import { Pendency } from 'common/components/Pendency';
 import React from 'react';
 import { useParams } from 'react-router-dom';
@@ -27,25 +27,32 @@ export const OrderDrawer = (props: Props) => {
   const error = '';
   const { orderId } = useParams<Params>();
   //const { getOrderById, cancelOrder } = useOrdersContext();
-  const { order, updateOrder } = useOrder(orderId);
+  const { order, updateOrder, cancelOrder, orderIssues } = useOrder(orderId);
   //const order = getOrderById(orderId);
-
+  console.log('orderIssues', orderIssues);
   const isCurrierArrived = order?.dispatchingState === 'arrived-pickup';
   // state
   const [isCanceling, setIsCanceling] = React.useState(false);
+  const [orderIssue, setOrderIssue] = React.useState<WithId<OrderIssue>>();
   const orderTotalPrice = getOrderTotalPriceToDisplay(order?.items || []);
   // handlers
 
   const handleCancel = async (issue: WithId<Issue>) => {
-    //cancelOrder(orderId, issue);
-    await updateOrder({
-      status: 'canceled',
-    });
+    await cancelOrder(issue);
     props.onClose();
   };
 
   // side effects
+  React.useEffect(() => {
+    if (orderIssues) {
+      const issue = orderIssues.find((data) =>
+        ['courier-cancel', 'consumer-cancel', 'restaurant-cancel'].includes(data.issue.type)
+      );
+      setOrderIssue(issue);
+    }
+  }, [orderIssues]);
 
+  console.log(orderIssue);
   // UI
   return (
     <OrderBaseDrawer
@@ -53,9 +60,10 @@ export const OrderDrawer = (props: Props) => {
       orderId={orderId}
       orderCode={order?.code ?? ''}
       orderStatus={order?.status!}
+      orderIssue={orderIssue}
       isCurrierArrived={isCurrierArrived}
       client={order?.consumer?.name ?? ''}
-      clientOrders={6}
+      clientOrders={0}
       cancel={() => setIsCanceling(true)}
       isCanceling={isCanceling}
       isError={isError}
@@ -137,8 +145,7 @@ export const OrderDrawer = (props: Props) => {
                 {t('Motivo do cancelamento')}
               </Text>
               <Text mt="1" fontSize="md">
-                {t('Cancelado pelo cliente')}
-                <Pendency />
+                {orderIssue?.issue.title ?? 'N/E'}
               </Text>
             </>
           )}

@@ -77,6 +77,7 @@ export const BusinessDrawer = ({ onClose, ...props }: BusinessDrawerProps) => {
             situation={business?.situation}
             marketPlaceIssues={marketPlaceIssues}
             profileIssues={business?.profileIssues}
+            profileIssuesOptions={[]}
             updateProfile={updateBusinessProfile}
             result={result}
           />

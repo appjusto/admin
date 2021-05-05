@@ -9,7 +9,7 @@ import {
   Textarea,
   VStack,
 } from '@chakra-ui/react';
-import { ProfileSituation } from 'appjusto-types';
+import { Issue, ProfileSituation } from 'appjusto-types';
 import { AlertError } from 'common/components/AlertError';
 import { AlertSuccess } from 'common/components/AlertSuccess';
 import React from 'react';
@@ -21,6 +21,7 @@ interface StatusTabProps {
   situation?: ProfileSituation;
   marketPlaceIssues?: string[];
   profileIssues?: string[];
+  profileIssuesOptions?: Issue[];
   updateProfile: UpdateProfile;
   result: Result;
 }
@@ -29,6 +30,7 @@ export const StatusTab = ({
   situation,
   marketPlaceIssues,
   profileIssues,
+  profileIssuesOptions,
   updateProfile,
   result,
 }: StatusTabProps) => {
@@ -118,24 +120,11 @@ export const StatusTab = ({
         onChange={(value) => setIssues(value as string[])}
       >
         <VStack alignItems="flex-start" mt="4" color="black" spacing={2}>
-          <Checkbox iconColor="white" value="manager">
-            {t('Dados pessoais')}
-          </Checkbox>
-          <Checkbox iconColor="white" value="business">
-            {t('Informações do restaurante')}
-          </Checkbox>
-          <Checkbox iconColor="white" value="banking">
-            {t('Dados bancários')}
-          </Checkbox>
-          <Checkbox iconColor="white" value="schedules">
-            {t('Horário de funcionamento')}
-          </Checkbox>
-          <Checkbox iconColor="white" value="address">
-            {t('Endereço do estabelecimento')}
-          </Checkbox>
-          <Checkbox iconColor="white" value="menu">
-            {t('Cardápio')}
-          </Checkbox>
+          {profileIssuesOptions?.map((issue) => (
+            <Checkbox iconColor="white" value={issue.title}>
+              {issue.title}
+            </Checkbox>
+          ))}
         </VStack>
       </CheckboxGroup>
       <SectionTitle>{t('Mensagem personalizada:')}</SectionTitle>

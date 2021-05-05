@@ -1,4 +1,12 @@
-import { ChatMessage, FoodOrderStatus, Issue, IssueType, Order, WithId } from 'appjusto-types';
+import {
+  ChatMessage,
+  FoodOrderStatus,
+  Issue,
+  IssueType,
+  Order,
+  OrderIssue,
+  WithId,
+} from 'appjusto-types';
 import { documentsAs } from 'core/fb';
 import firebase from 'firebase/app';
 import FirebaseRefs from '../FirebaseRefs';
@@ -92,12 +100,6 @@ export default class OrderApi {
     });
   }
 
-  async fetchIssues(type: IssueType) {
-    return documentsAs<Issue>(
-      (await this.refs.getIssuesRef().where('type', '==', type).get()).docs
-    );
-  }
-
   async createFakeOrder(order: Order) {
     return this.refs.getOrdersRef().add(order);
   }
@@ -110,12 +112,16 @@ export default class OrderApi {
     });
   }
 
-  async setOrderIssue(orderId: string, issue: WithId<Issue>) {
-    const createdOn = firebase.firestore.FieldValue.serverTimestamp();
-    await this.refs.getOrderIssuesRef(orderId).add({ createdOn, issue });
+  async cancelOrder(orderId: string, issue: WithId<Issue>) {
+    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+    await this.refs.getOrderRef(orderId).update({
+      status: 'canceled',
+      updatedOn: timestamp,
+    });
+    await this.refs.getOrderIssuesRef(orderId).add({ createdOn: timestamp, issue });
   }
 
-  async getOrderIssue(orderId: string) {
-    return (await this.refs.getOrderIssuesRef(orderId).get()).docs;
+  async getOrderIssues(orderId: string) {
+    return documentsAs<OrderIssue>((await this.refs.getOrderIssuesRef(orderId).get()).docs);
   }
 }

@@ -1,5 +1,5 @@
 import { useContextApi } from 'app/state/api/context';
-import { Order, WithId } from 'appjusto-types';
+import { Issue, Order, OrderIssue, WithId } from 'appjusto-types';
 import React from 'react';
 import { useMutation } from 'react-query';
 
@@ -8,10 +8,15 @@ export const useOrder = (orderId?: string) => {
   const api = useContextApi();
   // state
   const [order, setOrder] = React.useState<WithId<Order> | null>();
+  const [orderIssues, setOrderIssues] = React.useState<WithId<OrderIssue>[] | null>();
 
   // handlers
   const [updateOrder, updateResult] = useMutation(async (changes: Partial<Order>) =>
     api.order().updateOrder(orderId!, changes)
+  );
+
+  const [cancelOrder, cancelResult] = useMutation(
+    async (issue: WithId<Issue>) => await api.order().cancelOrder(orderId!, issue)
   );
   // side effects
   React.useEffect(() => {
@@ -20,8 +25,14 @@ export const useOrder = (orderId?: string) => {
       const data = await api.order().fetchOrderById(orderId);
       setOrder(data as WithId<Order>);
     };
+    const getOrderIssues = async () => {
+      const issues = await api.order().getOrderIssues(orderId);
+      setOrderIssues(issues);
+    };
     getOrderById();
-  }, [orderId, api]);
+    getOrderIssues();
+  }, [api, orderId]);
+
   // return
-  return { order, updateOrder, updateResult };
+  return { order, updateOrder, updateResult, cancelOrder, cancelResult, orderIssues };
 };

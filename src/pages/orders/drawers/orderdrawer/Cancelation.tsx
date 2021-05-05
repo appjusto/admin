@@ -1,6 +1,6 @@
 import { Box, Button, Flex, Radio, RadioGroup, Text } from '@chakra-ui/react';
+import { useOrderCancelOpts } from 'app/api/order/useOrderCancelOpts';
 import { Issue, WithId } from 'appjusto-types';
-import { useOrdersContext } from 'pages/orders/context';
 import React from 'react';
 import { t } from 'utils/i18n';
 
@@ -11,11 +11,11 @@ interface CancelationProps {
 
 export const Cancelation = ({ handleConfirm, handleKeep }: CancelationProps) => {
   //context
-  const { fetchCancelOptions } = useOrdersContext();
+  const cancelOptions = useOrderCancelOpts('restaurant-cancel');
   // state
-  const [options, setOptions] = React.useState<WithId<Issue>[]>([]);
+  const [options, setOptions] = React.useState<WithId<Issue>[]>(cancelOptions ?? []);
   const [optionId, setOptionId] = React.useState('');
-  const [optionsError, setOptionsError] = React.useState({ status: false, msg: '' });
+  const [optionsError, setOptionsError] = React.useState({ status: false, message: '' });
 
   //handler
   const handleCancel = () => {
@@ -25,16 +25,16 @@ export const Cancelation = ({ handleConfirm, handleKeep }: CancelationProps) => 
 
   //side effects
   React.useEffect(() => {
-    (async () => {
-      const optionsList = await fetchCancelOptions();
-      if (optionsList.length > 0) {
-        setOptions(optionsList);
-        setOptionId(optionsList[0].id);
-      } else {
-        setOptionsError({ status: true, msg: 'Desculpe, não foi possível carregar as opções.' });
-      }
-    })();
-  }, [fetchCancelOptions]);
+    if (cancelOptions) {
+      setOptions(cancelOptions);
+      setOptionId(cancelOptions[0].id);
+    } else if (cancelOptions === null) {
+      setOptionsError({
+        status: true,
+        message: 'Não foi possível carregar a lista de motivos. Tenta novamente? ',
+      });
+    }
+  }, [cancelOptions]);
   // UI
   return (
     <Box py="4" px="6" bgColor="#FFF8F8" border="1px solid #DC3545" borderRadius="lg">
@@ -59,21 +59,16 @@ export const Cancelation = ({ handleConfirm, handleKeep }: CancelationProps) => 
           ))}
           {optionsError.status && (
             <Text mt="4" color="#DC3545" fontWeight="700">
-              {optionsError.msg}
+              {optionsError.message}
             </Text>
           )}
         </Flex>
       </RadioGroup>
-      <Flex mt="6" maxW="340px" flexDir="row" justifyContent="space-between">
-        <Button maxW="160px" onClick={handleKeep}>
+      <Flex mt="6" flexDir="row" justifyContent="space-between">
+        <Button w="100%" mr="2" onClick={handleKeep}>
           {t('Manter pedido')}
         </Button>
-        <Button
-          maxW="160px"
-          isDisabled={optionsError.status}
-          variant="danger"
-          onClick={handleCancel}
-        >
+        <Button w="100%" isDisabled={optionsError.status} variant="danger" onClick={handleCancel}>
           {t('Cancelar pedido')}
         </Button>
       </Flex>

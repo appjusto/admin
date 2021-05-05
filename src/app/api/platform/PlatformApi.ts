@@ -1,4 +1,4 @@
-import { Bank, Cuisine } from 'appjusto-types';
+import { Bank, Cuisine, IssueType, Issue } from 'appjusto-types';
 import { documentsAs } from '../../../core/fb';
 import FirebaseRefs from '../FirebaseRefs';
 
@@ -11,7 +11,12 @@ export default class PlatformApi {
   }
 
   async fetchBanks() {
-    const querySnapshot = await this.refs.getBanksRef().orderBy('order', 'asc').get();
-    return documentsAs<Bank>(querySnapshot.docs);
+    return documentsAs<Bank>((await this.refs.getBanksRef().orderBy('order', 'asc').get()).docs);
+  }
+
+  async fetchIssues(type: IssueType) {
+    return documentsAs<Issue>(
+      (await this.refs.getIssuesRef().where('type', '==', type).get()).docs
+    );
   }
 }
