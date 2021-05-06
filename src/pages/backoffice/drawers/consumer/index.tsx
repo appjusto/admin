@@ -16,12 +16,6 @@ export const ConsumerDrawer = ({ onClose, ...props }: ConsumerDrawerProps) => {
   //context
   const { path } = useRouteMatch();
   const { agent, username } = useContextAgentProfile();
-  // helpers
-
-  //handlers
-
-  // side effects
-
   //UI
   return (
     <ConsumerProvider>

@@ -71,6 +71,12 @@ const ConsumersPage = () => {
             {t('Todos')}
           </FilterText>
           <FilterText
+            isActive={filterBar === 'approved' ? true : false}
+            onClick={() => setFilterBar('approved')}
+          >
+            {t('Ativos')}
+          </FilterText>
+          <FilterText
             isActive={filterBar === 'blocked' ? true : false}
             onClick={() => setFilterBar('blocked')}
           >

@@ -21,6 +21,7 @@ interface StatusTabProps {
   type: string;
   situation?: ProfileSituation;
   marketPlaceIssues?: string[];
+  profileIssuesMessage?: string;
   profileIssues?: string[];
   profileIssuesOptions?: WithId<Issue>[] | null;
   updateProfile: UpdateProfile;
@@ -32,29 +33,26 @@ export const StatusTab = ({
   situation,
   marketPlaceIssues,
   profileIssues,
+  profileIssuesMessage,
   profileIssuesOptions,
   updateProfile,
   result,
 }: StatusTabProps) => {
   // context
-  //const cancelOptions = useIssuesByType(['restaurant-cancel', 'courier-cancel', 'consumer-cancel']);
   const { isLoading, isSuccess, isError } = result;
   // state
   const [status, setStatus] = React.useState<ProfileSituation>('pending');
   const [financialIssues, setFinancialIssues] = React.useState<string[]>([]);
   const [issues, setIssues] = React.useState<string[]>([]);
   const [message, setMessage] = React.useState('');
-
   // handlers
   const onSubmitHandler = () => {
     updateProfile({
       situation: status,
+      profileIssues: issues,
+      profileIssuesMessage: message,
     });
-    if (status === 'rejected') {
-      // send rejection reason and message
-    }
   };
-
   // side effects
   React.useEffect(() => {
     if (situation) setStatus(situation);
@@ -62,6 +60,17 @@ export const StatusTab = ({
     // if profileIssues, handle it
   }, [situation, marketPlaceIssues]);
 
+  React.useEffect(() => {
+    if (profileIssues) {
+      setIssues(profileIssues);
+    }
+  }, [profileIssues]);
+
+  React.useEffect(() => {
+    if (profileIssuesMessage) {
+      setMessage(profileIssuesMessage);
+    }
+  }, [profileIssuesMessage]);
   // UI
   return (
     <form
@@ -70,7 +79,7 @@ export const StatusTab = ({
         onSubmitHandler();
       }}
     >
-      {status === 'invalid' && (
+      {status === 'invalid' && marketPlaceIssues && (
         <AlertError
           title={t('Problemas identificados na verificação financeira')}
           icon={false}

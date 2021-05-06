@@ -33,7 +33,7 @@ export const BusinessDrawer = ({ onClose, ...props }: BusinessDrawerProps) => {
   const platform = useBusinessPrivateData(businessId);
   const { updateBusinessProfile, updateResult: result } = useBusinessProfile();
   const issueOptions = useIssuesByType(issueOptionsArray);
-  console.log(issueOptions);
+
   // state
   /*const [profile, dispatch] = React.useReducer(businessBOReducer, {} as WithId<Business>);
   const [validation, setValidation] = React.useState({
@@ -83,6 +83,7 @@ export const BusinessDrawer = ({ onClose, ...props }: BusinessDrawerProps) => {
             situation={business?.situation}
             marketPlaceIssues={marketPlaceIssues}
             profileIssues={business?.profileIssues}
+            profileIssuesMessage={business?.profileIssuesMessage}
             profileIssuesOptions={issueOptions}
             updateProfile={updateBusinessProfile}
             result={result}

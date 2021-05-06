@@ -48,19 +48,23 @@ const BusinessesPage = () => {
   React.useEffect(() => {
     let barArray = [] as BusinessesFilter[];
     if (filterBar === 'all') barArray = [] as BusinessesFilter[];
-    else if (filterBar === 'pending')
+    else if (filterBar === 'submitted')
       barArray = [
-        { type: 'situation', value: 'pending' },
         { type: 'situation', value: 'invalid' },
+        { type: 'situation', value: 'verified' },
         { type: 'situation', value: 'rejected' },
       ];
-    else barArray = [{ type: 'situation', value: filterBar }];
-
+    /*else if (filterBar === 'pending')
+      barArray = [
+        { type: 'situation', value: 'invalid' },
+        { type: 'situation', value: 'verified' },
+        { type: 'situation', value: 'rejected' },
+      ];*/ else
+      barArray = [{ type: 'situation', value: filterBar }];
     /*let checkArray = filterCheck.map((filter) => {
       if (filter === 'enabled') return { type: 'enabled', value: 'true' };
       else return { type: 'situation', value: filter };
     }) as BusinessesFilter[];*/
-
     setFilters([...barArray]);
   }, [filterBar]);
 
@@ -103,6 +107,12 @@ const BusinessesPage = () => {
             onClick={() => setFilterBar('all')}
           >
             {t('Todos')}
+          </FilterText>
+          <FilterText
+            isActive={filterBar === 'approved' ? true : false}
+            onClick={() => setFilterBar('approved')}
+          >
+            {t('Ativos')}
           </FilterText>
           <FilterText
             isActive={filterBar === 'submitted' ? true : false}
