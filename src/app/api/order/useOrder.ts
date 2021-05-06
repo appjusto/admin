@@ -16,7 +16,10 @@ export const useOrder = (orderId?: string) => {
   );
 
   const [cancelOrder, cancelResult] = useMutation(
-    async (issue: WithId<Issue>) => await api.order().cancelOrder(orderId!, issue)
+    async (issueData: { issue: WithId<Issue>; comment?: string }) => {
+      const { issue, comment } = issueData;
+      await api.order().cancelOrder(orderId!, issue, comment);
+    }
   );
   // side effects
   React.useEffect(() => {

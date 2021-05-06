@@ -38,7 +38,7 @@ export const OrderDrawer = (props: Props) => {
 
   // handlers
   const handleCancel = async (issue: WithId<Issue>) => {
-    await cancelOrder(issue);
+    await cancelOrder({ issue });
     props.onClose();
   };
 

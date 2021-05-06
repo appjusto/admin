@@ -1,7 +1,8 @@
 import { useOrder } from 'app/api/order/useOrder';
+import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';
 import { useContextAgentProfile } from 'app/state/agent/context';
 import { ConsumerProvider } from 'app/state/consumer/context';
-import { IssueType, OrderStatus } from 'appjusto-types';
+import { Issue, OrderStatus, WithId } from 'appjusto-types';
 import React from 'react';
 import { Route, Switch, useParams, useRouteMatch } from 'react-router-dom';
 import { Details } from './Details';
@@ -23,33 +24,50 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
   const { path } = useRouteMatch();
   const { agent, username } = useContextAgentProfile();
   const { orderId } = useParams<Params>();
-  const { order, updateOrder, updateResult } = useOrder(orderId);
-
+  const { order, updateOrder, updateResult, cancelOrder, orderIssues } = useOrder(orderId);
+  const cancelOptions = useIssuesByType([
+    'consumer-cancel',
+    'courier-delivery-problem',
+    'courier-cancel',
+    'restaurant-cancel',
+  ]);
   // state
   const [status, setStatus] = React.useState<OrderStatus | undefined>(order?.status ?? undefined);
-  const [issue, setIssue] = React.useState<IssueType>();
+  const [issue, setIssue] = React.useState<WithId<Issue> | null>();
   const [message, setMessage] = React.useState('');
 
   // helpers
 
   //handlers
-  const updateState = (type: string, value: OrderStatus | IssueType | string) => {
+  const updateState = (type: string, value: OrderStatus | WithId<Issue> | string) => {
     if (type === 'status') setStatus(value as OrderStatus);
-    else if (type === 'issue') setIssue(value as IssueType);
-    else if (type === 'message') setMessage(value);
+    else if (type === 'issue') setIssue(cancelOptions?.find((item) => item.id === value) ?? null);
+    else if (type === 'message') setMessage(value as string);
   };
 
   const updateOrderStatus = async () => {
-    const changes = {
-      status,
-    };
-    await updateOrder(changes);
+    if (status === 'canceled') {
+      const issueData = {
+        issue,
+        message,
+      } as { issue: WithId<Issue>; comment?: string | undefined };
+      await cancelOrder(issueData);
+    } else {
+      const changes = {
+        status,
+      };
+      await updateOrder(changes);
+    }
   };
 
   // side effects
   React.useEffect(() => {
     if (order?.status) setStatus(order.status);
   }, [order?.status]);
+
+  React.useEffect(() => {
+    if (orderIssues) setIssue(orderIssues[0].issue);
+  }, [orderIssues]);
 
   //UI
   return (
@@ -74,6 +92,7 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
               status={status}
               issue={issue}
               message={message}
+              cancelOptions={cancelOptions}
               updateState={updateState}
             />
           </Route>

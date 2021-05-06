@@ -112,13 +112,13 @@ export default class OrderApi {
     });
   }
 
-  async cancelOrder(orderId: string, issue: WithId<Issue>) {
+  async cancelOrder(orderId: string, issue: WithId<Issue>, comment?: string) {
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
     await this.refs.getOrderRef(orderId).update({
       status: 'canceled',
       updatedOn: timestamp,
     });
-    await this.refs.getOrderIssuesRef(orderId).add({ createdOn: timestamp, issue });
+    await this.refs.getOrderIssuesRef(orderId).add({ createdOn: timestamp, issue, comment });
   }
 
   async getOrderIssues(orderId: string) {
