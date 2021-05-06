@@ -19,12 +19,7 @@ type Params = {
   orderId: string;
 };
 
-const cancelOptionsArray = [
-  'consumer-cancel',
-  'courier-delivery-problem',
-  'courier-cancel',
-  'restaurant-cancel',
-] as IssueType[];
+const cancelOptionsArray = ['agent-order-cancel'] as IssueType[];
 
 export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps) => {
   //context

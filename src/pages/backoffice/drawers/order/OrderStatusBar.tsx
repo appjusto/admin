@@ -1,4 +1,4 @@
-import { Box, Flex, Radio, RadioGroup, Textarea } from '@chakra-ui/react';
+import { Box, Flex, Radio, RadioGroup, Text, Textarea } from '@chakra-ui/react';
 import { Issue, IssueType, OrderStatus, WithId } from 'appjusto-types';
 import React from 'react';
 import { t } from 'utils/i18n';
@@ -70,6 +70,12 @@ export const OrderStatusBar = ({
       {status === 'canceled' && (
         <>
           <SectionTitle>{t('Motivo do cancelamento:')}</SectionTitle>
+          <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+            {t('Informado:')}{' '}
+            <Text as="span" fontWeight="500">
+              {issue?.title}
+            </Text>
+          </Text>
           <RadioGroup
             mt="2"
             onChange={(value: string) => updateState('issue', value)}
@@ -85,7 +91,7 @@ export const OrderStatusBar = ({
                 const type = option.type.split('-')[0] as Cancelator;
                 return (
                   <Radio key={option.id} mt="2" value={option.id}>
-                    {`${cancelator[type]} - ${option.title}`}
+                    {option.title}
                   </Radio>
                 );
               })}
