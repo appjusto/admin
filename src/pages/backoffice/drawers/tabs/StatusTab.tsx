@@ -9,7 +9,7 @@ import {
   Textarea,
   VStack,
 } from '@chakra-ui/react';
-import { Issue, ProfileSituation } from 'appjusto-types';
+import { Issue, ProfileSituation, WithId } from 'appjusto-types';
 import { AlertError } from 'common/components/AlertError';
 import { AlertSuccess } from 'common/components/AlertSuccess';
 import React from 'react';
@@ -18,15 +18,17 @@ import { SectionTitle } from '../generics/SectionTitle';
 import { Result, UpdateProfile } from '../generics/types';
 
 interface StatusTabProps {
+  type: string;
   situation?: ProfileSituation;
   marketPlaceIssues?: string[];
   profileIssues?: string[];
-  profileIssuesOptions?: Issue[];
+  profileIssuesOptions?: WithId<Issue>[] | null;
   updateProfile: UpdateProfile;
   result: Result;
 }
 
 export const StatusTab = ({
+  type,
   situation,
   marketPlaceIssues,
   profileIssues,
@@ -82,7 +84,7 @@ export const StatusTab = ({
           </VStack>
         </AlertError>
       )}
-      <SectionTitle mt="0">{t('Alterar status do restaurante:')}</SectionTitle>
+      <SectionTitle mt="0">{t(`Alterar status do: ${type}`)}</SectionTitle>
       <RadioGroup
         mt="2"
         onChange={(value: ProfileSituation) => setStatus(value)}
@@ -110,7 +112,7 @@ export const StatusTab = ({
             {t('Aguardando aprovação')}
           </Radio>
           <Radio mt="2" value="blocked">
-            {t('Bloquear restaurante')}
+            {t(`Bloquear ${type}`)}
           </Radio>
         </Flex>
       </RadioGroup>

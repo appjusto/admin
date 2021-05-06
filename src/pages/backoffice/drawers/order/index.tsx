@@ -2,7 +2,7 @@ import { useOrder } from 'app/api/order/useOrder';
 import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';
 import { useContextAgentProfile } from 'app/state/agent/context';
 import { ConsumerProvider } from 'app/state/consumer/context';
-import { Issue, OrderStatus, WithId } from 'appjusto-types';
+import { Issue, IssueType, OrderStatus, WithId } from 'appjusto-types';
 import React from 'react';
 import { Route, Switch, useParams, useRouteMatch } from 'react-router-dom';
 import { Details } from './Details';
@@ -19,18 +19,21 @@ type Params = {
   orderId: string;
 };
 
+const cancelOptionsArray = [
+  'consumer-cancel',
+  'courier-delivery-problem',
+  'courier-cancel',
+  'restaurant-cancel',
+] as IssueType[];
+
 export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps) => {
   //context
   const { path } = useRouteMatch();
   const { agent, username } = useContextAgentProfile();
   const { orderId } = useParams<Params>();
   const { order, updateOrder, updateResult, cancelOrder, orderIssues } = useOrder(orderId);
-  const cancelOptions = useIssuesByType([
-    'consumer-cancel',
-    'courier-delivery-problem',
-    'courier-cancel',
-    'restaurant-cancel',
-  ]);
+  const cancelOptions = useIssuesByType(cancelOptionsArray);
+
   // state
   const [status, setStatus] = React.useState<OrderStatus | undefined>(order?.status ?? undefined);
   const [issue, setIssue] = React.useState<WithId<Issue> | null>();
@@ -66,7 +69,7 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
   }, [order?.status]);
 
   React.useEffect(() => {
-    if (orderIssues) setIssue(orderIssues[0].issue);
+    if (orderIssues) setIssue(orderIssues[0]?.issue ?? null);
   }, [orderIssues]);
 
   //UI
