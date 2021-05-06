@@ -26,17 +26,17 @@ export const OrderDrawer = (props: Props) => {
   const isError = false;
   const error = '';
   const { orderId } = useParams<Params>();
-  //const { getOrderById, cancelOrder } = useOrdersContext();
-  const { order, updateOrder, cancelOrder, orderIssues } = useOrder(orderId);
-  //const order = getOrderById(orderId);
-  console.log('orderIssues', orderIssues);
-  const isCurrierArrived = order?.dispatchingState === 'arrived-pickup';
+  const { order, cancelOrder, orderIssues } = useOrder(orderId);
+
   // state
   const [isCanceling, setIsCanceling] = React.useState(false);
   const [orderIssue, setOrderIssue] = React.useState<WithId<OrderIssue>>();
   const orderTotalPrice = getOrderTotalPriceToDisplay(order?.items || []);
-  // handlers
 
+  // helpers
+  const isCurrierArrived = order?.dispatchingState === 'arrived-pickup';
+
+  // handlers
   const handleCancel = async (issue: WithId<Issue>) => {
     await cancelOrder(issue);
     props.onClose();
@@ -52,7 +52,6 @@ export const OrderDrawer = (props: Props) => {
     }
   }, [orderIssues]);
 
-  console.log(orderIssue);
   // UI
   return (
     <OrderBaseDrawer

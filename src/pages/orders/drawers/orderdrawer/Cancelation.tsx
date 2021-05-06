@@ -1,5 +1,5 @@
 import { Box, Button, Flex, Radio, RadioGroup, Text } from '@chakra-ui/react';
-import { useOrderCancelOpts } from 'app/api/order/useOrderCancelOpts';
+import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';
 import { Issue, WithId } from 'appjusto-types';
 import React from 'react';
 import { t } from 'utils/i18n';
@@ -11,7 +11,7 @@ interface CancelationProps {
 
 export const Cancelation = ({ handleConfirm, handleKeep }: CancelationProps) => {
   //context
-  const cancelOptions = useOrderCancelOpts('restaurant-cancel');
+  const cancelOptions = useIssuesByType(['restaurant-cancel']);
   // state
   const [options, setOptions] = React.useState<WithId<Issue>[]>(cancelOptions ?? []);
   const [optionId, setOptionId] = React.useState('');

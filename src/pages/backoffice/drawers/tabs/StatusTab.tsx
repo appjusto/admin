@@ -9,6 +9,7 @@ import {
   Textarea,
   VStack,
 } from '@chakra-ui/react';
+import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';
 import { Issue, ProfileSituation } from 'appjusto-types';
 import { AlertError } from 'common/components/AlertError';
 import { AlertSuccess } from 'common/components/AlertSuccess';
@@ -35,6 +36,7 @@ export const StatusTab = ({
   result,
 }: StatusTabProps) => {
   // context
+  const cancelOptions = useIssuesByType(['restaurant-cancel', 'courier-cancel', 'consumer-cancel']);
   const { isLoading, isSuccess, isError } = result;
   // state
   const [status, setStatus] = React.useState<ProfileSituation>('pending');

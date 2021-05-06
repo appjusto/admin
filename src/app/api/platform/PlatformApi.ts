@@ -14,9 +14,9 @@ export default class PlatformApi {
     return documentsAs<Bank>((await this.refs.getBanksRef().orderBy('order', 'asc').get()).docs);
   }
 
-  async fetchIssues(type: IssueType) {
+  async fetchIssues(types: IssueType[]) {
     return documentsAs<Issue>(
-      (await this.refs.getIssuesRef().where('type', '==', type).get()).docs
+      (await this.refs.getIssuesRef().where('type', 'in', types).get()).docs
     );
   }
 }
