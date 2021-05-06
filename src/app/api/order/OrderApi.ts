@@ -122,6 +122,8 @@ export default class OrderApi {
   }
 
   async getOrderIssues(orderId: string) {
-    return documentsAs<OrderIssue>((await this.refs.getOrderIssuesRef(orderId).get()).docs);
+    return documentsAs<OrderIssue>(
+      (await this.refs.getOrderIssuesRef(orderId).orderBy('createdOn', 'desc').get()).docs
+    );
   }
 }
