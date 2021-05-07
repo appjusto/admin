@@ -80,7 +80,7 @@ const BusinessesPage = () => {
           value={search}
           onChange={(event) => setSearch(event.target.value)}
           label={t('Buscar')}
-          placeholder={t('Buscar por ID ou nome')}
+          placeholder={t('Buscar por ID, nome ou e-mail do administrador')}
         />
         {/*<CustomInput
           mt="0"
