@@ -15,12 +15,6 @@ export const CourierDrawer = ({ onClose, ...props }: CourierDrawerProps) => {
   //context
   const { path } = useRouteMatch();
   const { agent, username } = useContextAgentProfile();
-  // helpers
-
-  //handlers
-
-  // side effects
-
   //UI
   return (
     <CourierProvider>

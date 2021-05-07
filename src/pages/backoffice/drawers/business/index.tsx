@@ -1,8 +1,10 @@
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useBusinessPrivateData } from 'app/api/business/useBusinessPrivateData';
+import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';
 import { useContextAgentProfile } from 'app/state/agent/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextManagerProfile } from 'app/state/manager/context';
+import { IssueType } from 'appjusto-types';
 import React from 'react';
 import { Route, Switch, useParams, useRouteMatch } from 'react-router-dom';
 import { StatusTab } from '../tabs/StatusTab';
@@ -19,6 +21,8 @@ type Params = {
   businessId: string;
 };
 
+const issueOptionsArray = ['business-profile-invalid'] as IssueType[];
+
 export const BusinessDrawer = ({ onClose, ...props }: BusinessDrawerProps) => {
   //context
   const { path } = useRouteMatch();
@@ -28,6 +32,7 @@ export const BusinessDrawer = ({ onClose, ...props }: BusinessDrawerProps) => {
   const { manager, setManagerEmail } = useContextManagerProfile();
   const platform = useBusinessPrivateData(businessId);
   const { updateBusinessProfile, updateResult: result } = useBusinessProfile();
+  const issueOptions = useIssuesByType(issueOptionsArray);
 
   // state
   /*const [profile, dispatch] = React.useReducer(businessBOReducer, {} as WithId<Business>);
@@ -74,9 +79,12 @@ export const BusinessDrawer = ({ onClose, ...props }: BusinessDrawerProps) => {
         </Route>
         <Route exact path={`${path}/status`}>
           <StatusTab
+            type="restaurante"
             situation={business?.situation}
             marketPlaceIssues={marketPlaceIssues}
             profileIssues={business?.profileIssues}
+            profileIssuesMessage={business?.profileIssuesMessage}
+            profileIssuesOptions={issueOptions}
             updateProfile={updateBusinessProfile}
             result={result}
           />

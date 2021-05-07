@@ -8,17 +8,6 @@ import { SectionTitle } from '../generics/SectionTitle';
 export const ConsumerStatus = () => {
   // context
   const { consumer, handleProfileChange } = useContextConsumerProfile();
-
-  // state
-  //const [status, setStatus] = React.useState<ProfileSituation>('pending');
-  //const [financialIssues, setFinancialIssues] = React.useState<string[]>([]);
-  const [issues, setIssues] = React.useState<string[]>([]);
-  const [message, setMessage] = React.useState('');
-
-  // handlers
-
-  // side effects
-
   // UI
   return (
     <Box>
@@ -43,7 +32,11 @@ export const ConsumerStatus = () => {
         </Flex>
       </RadioGroup>
       <SectionTitle>{t('Mensagem personalizada:')}</SectionTitle>
-      <Textarea mt="2" value={message} onChange={(ev) => setMessage(ev.target.value)} />
+      <Textarea
+        mt="2"
+        value={consumer?.profileIssuesMessage ?? ''}
+        onChange={(ev) => handleProfileChange('profileIssuesMessage', ev.target.value)}
+      />
     </Box>
   );
 };

@@ -9,7 +9,7 @@ import {
   Textarea,
   VStack,
 } from '@chakra-ui/react';
-import { ProfileSituation } from 'appjusto-types';
+import { Issue, ProfileSituation, WithId } from 'appjusto-types';
 import { AlertError } from 'common/components/AlertError';
 import { AlertSuccess } from 'common/components/AlertSuccess';
 import React from 'react';
@@ -18,17 +18,23 @@ import { SectionTitle } from '../generics/SectionTitle';
 import { Result, UpdateProfile } from '../generics/types';
 
 interface StatusTabProps {
+  type: string;
   situation?: ProfileSituation;
   marketPlaceIssues?: string[];
+  profileIssuesMessage?: string;
   profileIssues?: string[];
+  profileIssuesOptions?: WithId<Issue>[] | null;
   updateProfile: UpdateProfile;
   result: Result;
 }
 
 export const StatusTab = ({
+  type,
   situation,
   marketPlaceIssues,
   profileIssues,
+  profileIssuesMessage,
+  profileIssuesOptions,
   updateProfile,
   result,
 }: StatusTabProps) => {
@@ -39,17 +45,14 @@ export const StatusTab = ({
   const [financialIssues, setFinancialIssues] = React.useState<string[]>([]);
   const [issues, setIssues] = React.useState<string[]>([]);
   const [message, setMessage] = React.useState('');
-
   // handlers
   const onSubmitHandler = () => {
     updateProfile({
       situation: status,
+      profileIssues: issues,
+      profileIssuesMessage: message,
     });
-    if (status === 'rejected') {
-      // send rejection reason and message
-    }
   };
-
   // side effects
   React.useEffect(() => {
     if (situation) setStatus(situation);
@@ -57,6 +60,17 @@ export const StatusTab = ({
     // if profileIssues, handle it
   }, [situation, marketPlaceIssues]);
 
+  React.useEffect(() => {
+    if (profileIssues) {
+      setIssues(profileIssues);
+    }
+  }, [profileIssues]);
+
+  React.useEffect(() => {
+    if (profileIssuesMessage) {
+      setMessage(profileIssuesMessage);
+    }
+  }, [profileIssuesMessage]);
   // UI
   return (
     <form
@@ -65,7 +79,7 @@ export const StatusTab = ({
         onSubmitHandler();
       }}
     >
-      {status === 'invalid' && (
+      {(status === 'invalid' || status === 'rejected') && marketPlaceIssues && (
         <AlertError
           title={t('Problemas identificados na verificação financeira')}
           icon={false}
@@ -79,7 +93,7 @@ export const StatusTab = ({
           </VStack>
         </AlertError>
       )}
-      <SectionTitle mt="0">{t('Alterar status do restaurante:')}</SectionTitle>
+      <SectionTitle mt="0">{t(`Alterar status do ${type}:`)}</SectionTitle>
       <RadioGroup
         mt="2"
         onChange={(value: ProfileSituation) => setStatus(value)}
@@ -107,39 +121,30 @@ export const StatusTab = ({
             {t('Aguardando aprovação')}
           </Radio>
           <Radio mt="2" value="blocked">
-            {t('Bloquear restaurante')}
+            {t(`Bloquear ${type}`)}
           </Radio>
         </Flex>
       </RadioGroup>
-      <SectionTitle>{t('Motivo da recusa:')}</SectionTitle>
-      <CheckboxGroup
-        colorScheme="green"
-        value={issues}
-        onChange={(value) => setIssues(value as string[])}
-      >
-        <VStack alignItems="flex-start" mt="4" color="black" spacing={2}>
-          <Checkbox iconColor="white" value="manager">
-            {t('Dados pessoais')}
-          </Checkbox>
-          <Checkbox iconColor="white" value="business">
-            {t('Informações do restaurante')}
-          </Checkbox>
-          <Checkbox iconColor="white" value="banking">
-            {t('Dados bancários')}
-          </Checkbox>
-          <Checkbox iconColor="white" value="schedules">
-            {t('Horário de funcionamento')}
-          </Checkbox>
-          <Checkbox iconColor="white" value="address">
-            {t('Endereço do estabelecimento')}
-          </Checkbox>
-          <Checkbox iconColor="white" value="menu">
-            {t('Cardápio')}
-          </Checkbox>
-        </VStack>
-      </CheckboxGroup>
-      <SectionTitle>{t('Mensagem personalizada:')}</SectionTitle>
-      <Textarea mt="2" value={message} onChange={(ev) => setMessage(ev.target.value)} />
+      {status === 'rejected' && (
+        <>
+          <SectionTitle>{t('Motivo da recusa:')}</SectionTitle>
+          <CheckboxGroup
+            colorScheme="green"
+            value={issues}
+            onChange={(value) => setIssues(value as string[])}
+          >
+            <VStack alignItems="flex-start" mt="4" color="black" spacing={2}>
+              {profileIssuesOptions?.map((issue) => (
+                <Checkbox key={issue.id} iconColor="white" value={issue.title}>
+                  {issue.title}
+                </Checkbox>
+              ))}
+            </VStack>
+          </CheckboxGroup>
+          <SectionTitle>{t('Mensagem personalizada:')}</SectionTitle>
+          <Textarea mt="2" value={message} onChange={(ev) => setMessage(ev.target.value)} />
+        </>
+      )}
       <Button
         mt="8"
         minW="200px"

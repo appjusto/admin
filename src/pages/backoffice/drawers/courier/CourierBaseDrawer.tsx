@@ -72,6 +72,8 @@ export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDr
       company: courier?.company,
       bankAccount: courier?.bankAccount,
       situation: courier?.situation,
+      profileIssues: courier?.profileIssues,
+      profileIssuesMessage: courier?.profileIssuesMessage,
     });
   };
 
@@ -132,7 +134,11 @@ export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDr
             <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
               {t('Live:')}{' '}
               <Text as="span" fontWeight="500">
-                <Icon mt="-2px" viewBox="0 0 200 200" color={courier?.status ? 'green.500' : 'red'}>
+                <Icon
+                  mt="-2px"
+                  viewBox="0 0 200 200"
+                  color={courier?.status === 'available' ? 'green.500' : 'red'}
+                >
                   <path
                     fill="currentColor"
                     d="M 100, 100 m -75, 0 a 75,75 0 1,0 150,0 a 75,75 0 1,0 -150,0"

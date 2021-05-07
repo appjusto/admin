@@ -1,17 +1,26 @@
-import { Box, Flex, Radio, RadioGroup, Textarea } from '@chakra-ui/react';
-import { IssueType, OrderStatus } from 'appjusto-types';
+import { Box, Flex, Radio, RadioGroup, Text, Textarea } from '@chakra-ui/react';
+import { Issue, IssueType, OrderStatus, WithId } from 'appjusto-types';
 import React from 'react';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
 
 interface OrderStatusProps {
   status?: OrderStatus;
-  issue?: IssueType;
+  issue?: WithId<Issue> | null;
   message?: string;
+  cancelOptions?: WithId<Issue>[] | null;
   updateState(type: string, value: OrderStatus | IssueType | string): void;
 }
 
-export const OrderStatusBar = ({ status, issue, message, updateState }: OrderStatusProps) => {
+export const OrderStatusBar = ({
+  status,
+  issue,
+  message,
+  cancelOptions,
+  updateState,
+}: OrderStatusProps) => {
+  // state
+
   // UI
   return (
     <Box>
@@ -50,31 +59,41 @@ export const OrderStatusBar = ({ status, issue, message, updateState }: OrderSta
           </Radio>
         </Flex>
       </RadioGroup>
-      <SectionTitle>{t('Motivo do cancelamento:')}</SectionTitle>
-      <RadioGroup
-        mt="2"
-        onChange={(value: IssueType) => updateState('issue', value)}
-        value={issue}
-        defaultValue="1"
-        colorScheme="green"
-        color="black"
-        fontSize="15px"
-        lineHeight="21px"
-      >
-        <Flex flexDir="column" justifyContent="flex-start">
-          <Radio mt="2" value="consumer-cancel">
-            {t('Solicitado por cliente')}
-          </Radio>
-          <Radio mt="2" value="courier-cancel">
-            {t('Solicitado por entregador')}
-          </Radio>
-          <Radio mt="2" value="restaurant-cancel">
-            {t('Solicitado por restaurante')}
-          </Radio>
-        </Flex>
-      </RadioGroup>
-      <SectionTitle>{t('Mensagem personalizada:')}</SectionTitle>
-      <Textarea mt="2" value={message} onChange={(ev) => updateState('message', ev.target.value)} />
+      {status === 'canceled' && (
+        <>
+          <SectionTitle>{t('Motivo do cancelamento:')}</SectionTitle>
+          <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+            {t('Informado:')}{' '}
+            <Text as="span" fontWeight="500">
+              {issue?.title ?? 'N/I'}
+            </Text>
+          </Text>
+          <RadioGroup
+            mt="2"
+            onChange={(value: string) => updateState('issue', value)}
+            value={issue?.id}
+            defaultValue="1"
+            colorScheme="green"
+            color="black"
+            fontSize="15px"
+            lineHeight="21px"
+          >
+            <Flex flexDir="column" justifyContent="flex-start">
+              {cancelOptions?.map((option) => (
+                <Radio key={option.id} mt="2" value={option.id}>
+                  {option.title}
+                </Radio>
+              ))}
+            </Flex>
+          </RadioGroup>
+          <SectionTitle>{t('Mensagem personalizada:')}</SectionTitle>
+          <Textarea
+            mt="2"
+            value={message}
+            onChange={(ev) => updateState('message', ev.target.value)}
+          />
+        </>
+      )}
     </Box>
   );
 };

@@ -59,7 +59,7 @@ const ConsumersPage = () => {
           value={search}
           onChange={(event) => setSearch(event.target.value)}
           label={t('Buscar')}
-          placeholder={t('Buscar por ID ou nome')}
+          placeholder={t('Buscar por ID, nome ou e-mail')}
         />
       </Flex>
       <Flex mt="8" w="100%" justifyContent="space-between" borderBottom="1px solid #C8D7CB">
@@ -69,6 +69,12 @@ const ConsumersPage = () => {
             onClick={() => setFilterBar('all')}
           >
             {t('Todos')}
+          </FilterText>
+          <FilterText
+            isActive={filterBar === 'approved' ? true : false}
+            onClick={() => setFilterBar('approved')}
+          >
+            {t('Ativos')}
           </FilterText>
           <FilterText
             isActive={filterBar === 'blocked' ? true : false}

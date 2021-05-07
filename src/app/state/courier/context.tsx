@@ -3,7 +3,8 @@ import * as cpfutils from '@fnando/cpf';
 import { useCourierPrivateData } from 'app/api/courier/useCourierPrivateData';
 import { useCourierProfile } from 'app/api/courier/useCourierProfile';
 import { useCourierProfilePictures } from 'app/api/courier/useCourierProfilePictures';
-import { CourierProfile, WithId } from 'appjusto-types';
+import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';
+import { CourierProfile, Issue, IssueType, WithId } from 'appjusto-types';
 import React, { Dispatch, SetStateAction } from 'react';
 import { useParams } from 'react-router';
 import { courierReducer } from './courierReducer';
@@ -12,6 +13,7 @@ type Validation = { cpf: boolean; cnpj: boolean; agency: boolean; account: boole
 interface CourierProfileContextProps {
   courier: WithId<CourierProfile> | undefined | null;
   pictures: { selfie: string | null; document: string | null };
+  issueOptions?: WithId<Issue>[] | null;
   marketPlaceIssues: string[] | undefined;
   contextValidation: Validation;
   handleProfileChange(key: string, value: any): void;
@@ -30,6 +32,8 @@ type Params = {
   courierId: string;
 };
 
+const issueOptionsArray = ['courier-profile-invalid'] as IssueType[];
+
 export const CourierProvider = ({ children }: Props) => {
   // context
   const { courierId } = useParams<Params>();
@@ -37,6 +41,7 @@ export const CourierProvider = ({ children }: Props) => {
   const pictures = useCourierProfilePictures(courierId, '', '');
   const platform = useCourierPrivateData(courierId);
   const marketPlaceIssues = platform?.marketPlace?.issues ?? undefined;
+  const issueOptions = useIssuesByType(issueOptionsArray);
 
   // state
   const [courier, dispatch] = React.useReducer(courierReducer, {} as WithId<CourierProfile>);
@@ -80,6 +85,7 @@ export const CourierProvider = ({ children }: Props) => {
       value={{
         courier,
         pictures,
+        issueOptions,
         marketPlaceIssues,
         contextValidation,
         handleProfileChange,

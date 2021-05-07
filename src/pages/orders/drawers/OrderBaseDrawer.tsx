@@ -15,7 +15,7 @@ import {
   Flex,
   Text,
 } from '@chakra-ui/react';
-import { OrderStatus } from 'appjusto-types';
+import { OrderIssue, OrderStatus, WithId } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { Pendency } from 'common/components/Pendency';
 import { getErrorMessage } from 'core/fb';
@@ -27,6 +27,7 @@ interface BaseDrawerProps {
   orderId: string;
   orderCode: string;
   orderStatus: OrderStatus;
+  orderIssue?: WithId<OrderIssue>;
   isCurrierArrived: boolean;
   client: string;
   clientOrders: number;
@@ -43,6 +44,7 @@ export const OrderBaseDrawer = ({
   orderId,
   orderCode,
   orderStatus,
+  orderIssue,
   isCurrierArrived,
   client,
   clientOrders,
@@ -56,6 +58,12 @@ export const OrderBaseDrawer = ({
 }: BaseDrawerProps) => {
   //context
   const { changeOrderStatus } = useOrdersContext();
+
+  // helpers
+  let cancelator = 'N/E';
+  if (orderIssue?.issue.type === 'restaurant-cancel') cancelator = 'restaurante';
+  if (orderIssue?.issue.type === 'consumer-cancel') cancelator = 'cliente';
+  if (orderIssue?.issue.type === 'courier-cancel') cancelator = 'entregador';
 
   //handlers
   const PrimaryButtonFunction = () => {
@@ -90,11 +98,7 @@ export const OrderBaseDrawer = ({
                 </Text>
                 {orderStatus === 'canceled' && (
                   <Text fontSize="md" color="red" fontWeight="700" lineHeight="22px">
-                    {t('Pedido cancelado por')}{' '}
-                    <Text as="span">
-                      Cliente
-                      <Pendency />
-                    </Text>
+                    {t('Pedido cancelado pelo')} <Text as="span">{cancelator}</Text>
                   </Text>
                 )}
                 <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">

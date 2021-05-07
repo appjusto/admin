@@ -63,6 +63,7 @@ export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
       phone: consumer?.phone,
       cpf: consumer?.cpf,
       situation: consumer?.situation,
+      profileIssuesMessage: consumer?.profileIssuesMessage,
     });
   };
 

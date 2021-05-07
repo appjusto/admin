@@ -1,7 +1,7 @@
 import { useOrders } from 'app/api/order/useOrders';
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusiness } from 'app/state/business/context';
-import { Business, Issue, Order, OrderItem, OrderStatus, WithId } from 'appjusto-types';
+import { Business, Order, OrderItem, OrderStatus, WithId } from 'appjusto-types';
 //@ts-ignore
 import bellDing from 'common/sounds/bell-ding.mp3';
 import React from 'react';
@@ -88,8 +88,6 @@ interface ContextProps {
   createFakeOrder(): void;
   changeOrderStatus(orderId: string, status: OrderStatus): void;
   setOrderCookingTime(orderId: string, cookingTime: number | null): void;
-  fetchCancelOptions(): Promise<WithId<Issue>[]>;
-  cancelOrder(orderId: string, issue: WithId<Issue>): void;
   //getOrderIssue(orderId: string): void;
 }
 
@@ -151,16 +149,6 @@ export const OrdersContextProvider = (props: ProviderProps) => {
     await api.order().updateOrder(orderId, { cookingTime });
   };
 
-  const fetchCancelOptions = React.useCallback(async () => {
-    const options = await api.order().fetchIssues('restaurant-cancel');
-    return options;
-  }, [api]);
-
-  const cancelOrder = async (orderId: string, issue: WithId<Issue>) => {
-    await api.order().updateOrder(orderId, { status: 'canceled' });
-    await api.order().setOrderIssue(orderId, issue);
-  };
-
   //const getOrderIssue = async (orderId: string) => {
   // without permission
   //const issues = await api.order().getOrderIssue(orderId);
@@ -174,6 +162,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
       updateLocalStorageOrders(hookOrders, playBell);
     }
   }, [hookOrders, playBell]);
+
   // provider
   return (
     <OrdersContext.Provider
@@ -184,8 +173,6 @@ export const OrdersContextProvider = (props: ProviderProps) => {
         createFakeOrder,
         changeOrderStatus,
         setOrderCookingTime,
-        fetchCancelOptions,
-        cancelOrder,
         //getOrderIssue,
       }}
       {...props}
