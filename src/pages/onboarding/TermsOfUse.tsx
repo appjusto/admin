@@ -17,9 +17,6 @@ export const TermsOfUse = ({ redirect }: TermsProps) => {
   const [accept, setAccept] = React.useState(false);
   const [terms, setTerms] = React.useState<string>();
 
-  // helpers
-  const parser = new DOMParser();
-
   // side effects
   React.useEffect(() => {
     if (formattedTerms) setTerms(formattedTerms);

@@ -48,7 +48,7 @@ export const useOrdersSearch = <T extends object>(
         setLoading(false);
       })();
     },
-    [api, kind, hitsPerPage, businessId]
+    [api, kind, hitsPerPage]
   );
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedSearch = React.useCallback(

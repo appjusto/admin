@@ -1,12 +1,4 @@
-import {
-  ChatMessage,
-  FoodOrderStatus,
-  Issue,
-  IssueType,
-  Order,
-  OrderIssue,
-  WithId,
-} from 'appjusto-types';
+import { ChatMessage, FoodOrderStatus, Issue, Order, OrderIssue, WithId } from 'appjusto-types';
 import { documentsAs } from 'core/fb';
 import firebase from 'firebase/app';
 import FirebaseRefs from '../FirebaseRefs';
