@@ -1,7 +1,6 @@
 import { Box, Text } from '@chakra-ui/react';
 import { useContextCourierProfile } from 'app/state/courier/context';
 import React from 'react';
-import { t } from 'utils/i18n';
 
 export const Fleets = () => {
   // context
@@ -16,9 +15,9 @@ export const Fleets = () => {
             <Text color="black" fontSize="lg" lineHeight="26px">
               {fleet.name}
             </Text>
-            <Text color="#4EA031" fontSize="sm" lineHeight="21px">
+            {/* <Text color="#4EA031" fontSize="sm" lineHeight="21px">
               {fleet.participantsOnline} {t('participantes')}
-            </Text>
+            </Text> */}
             <Text mt="2" fontSize="sm" lineHeight="21px">
               {fleet.description}
             </Text>
