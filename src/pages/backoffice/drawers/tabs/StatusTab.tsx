@@ -93,7 +93,7 @@ export const StatusTab = ({
           </VStack>
         </AlertError>
       )}
-      <SectionTitle mt="0">{t(`Alterar status do: ${type}`)}</SectionTitle>
+      <SectionTitle mt="0">{t(`Alterar status do ${type}:`)}</SectionTitle>
       <RadioGroup
         mt="2"
         onChange={(value: ProfileSituation) => setStatus(value)}
