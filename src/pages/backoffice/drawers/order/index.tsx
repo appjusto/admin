@@ -66,7 +66,7 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
   React.useEffect(() => {
     if (orderIssues) {
       setIssue(orderIssues[0]?.issue ?? null);
-      setMessage(orderIssues[0].comment ?? '');
+      setMessage(orderIssues[0]?.comment ?? '');
     }
   }, [orderIssues]);
 
