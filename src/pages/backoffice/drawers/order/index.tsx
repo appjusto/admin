@@ -47,8 +47,8 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
     if (status === 'canceled') {
       const issueData = {
         issue,
-        message,
-      } as { issue: WithId<Issue>; comment?: string | undefined };
+        comment: message,
+      } as { issue: WithId<Issue>; comment?: string };
       await cancelOrder(issueData);
     } else {
       const changes = {
@@ -64,7 +64,10 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
   }, [order?.status]);
 
   React.useEffect(() => {
-    if (orderIssues) setIssue(orderIssues[0]?.issue ?? null);
+    if (orderIssues) {
+      setIssue(orderIssues[0]?.issue ?? null);
+      setMessage(orderIssues[0].comment ?? '');
+    }
   }, [orderIssues]);
 
   //UI

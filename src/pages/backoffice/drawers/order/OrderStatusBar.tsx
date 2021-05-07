@@ -12,14 +12,6 @@ interface OrderStatusProps {
   updateState(type: string, value: OrderStatus | IssueType | string): void;
 }
 
-type Cancelator = 'restaurant' | 'courier' | 'consumer';
-
-const cancelator = {
-  restaurant: 'Restaurante',
-  courier: 'Entregador',
-  consumer: 'Cliente',
-};
-
 export const OrderStatusBar = ({
   status,
   issue,
@@ -73,7 +65,7 @@ export const OrderStatusBar = ({
           <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
             {t('Informado:')}{' '}
             <Text as="span" fontWeight="500">
-              {issue?.title}
+              {issue?.title ?? 'N/I'}
             </Text>
           </Text>
           <RadioGroup
@@ -87,14 +79,11 @@ export const OrderStatusBar = ({
             lineHeight="21px"
           >
             <Flex flexDir="column" justifyContent="flex-start">
-              {cancelOptions?.map((option) => {
-                const type = option.type.split('-')[0] as Cancelator;
-                return (
-                  <Radio key={option.id} mt="2" value={option.id}>
-                    {option.title}
-                  </Radio>
-                );
-              })}
+              {cancelOptions?.map((option) => (
+                <Radio key={option.id} mt="2" value={option.id}>
+                  {option.title}
+                </Radio>
+              ))}
             </Flex>
           </RadioGroup>
           <SectionTitle>{t('Mensagem personalizada:')}</SectionTitle>
