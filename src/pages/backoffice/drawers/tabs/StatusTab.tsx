@@ -79,7 +79,7 @@ export const StatusTab = ({
         onSubmitHandler();
       }}
     >
-      {status === 'invalid' && marketPlaceIssues && (
+      {(status === 'invalid' || status === 'rejected') && marketPlaceIssues && (
         <AlertError
           title={t('Problemas identificados na verificação financeira')}
           icon={false}
@@ -125,22 +125,26 @@ export const StatusTab = ({
           </Radio>
         </Flex>
       </RadioGroup>
-      <SectionTitle>{t('Motivo da recusa:')}</SectionTitle>
-      <CheckboxGroup
-        colorScheme="green"
-        value={issues}
-        onChange={(value) => setIssues(value as string[])}
-      >
-        <VStack alignItems="flex-start" mt="4" color="black" spacing={2}>
-          {profileIssuesOptions?.map((issue) => (
-            <Checkbox iconColor="white" value={issue.title}>
-              {issue.title}
-            </Checkbox>
-          ))}
-        </VStack>
-      </CheckboxGroup>
-      <SectionTitle>{t('Mensagem personalizada:')}</SectionTitle>
-      <Textarea mt="2" value={message} onChange={(ev) => setMessage(ev.target.value)} />
+      {status === 'rejected' && (
+        <>
+          <SectionTitle>{t('Motivo da recusa:')}</SectionTitle>
+          <CheckboxGroup
+            colorScheme="green"
+            value={issues}
+            onChange={(value) => setIssues(value as string[])}
+          >
+            <VStack alignItems="flex-start" mt="4" color="black" spacing={2}>
+              {profileIssuesOptions?.map((issue) => (
+                <Checkbox key={issue.id} iconColor="white" value={issue.title}>
+                  {issue.title}
+                </Checkbox>
+              ))}
+            </VStack>
+          </CheckboxGroup>
+          <SectionTitle>{t('Mensagem personalizada:')}</SectionTitle>
+          <Textarea mt="2" value={message} onChange={(ev) => setMessage(ev.target.value)} />
+        </>
+      )}
       <Button
         mt="8"
         minW="200px"

@@ -27,20 +27,21 @@ export const CourierStatus = () => {
   // UI
   return (
     <Box>
-      {courier?.situation === 'invalid' && marketPlaceIssues && (
-        <AlertError
-          title={t('Problemas identificados na verificação financeira')}
-          icon={false}
-          border="2px solid #DC3545"
-          mb="6"
-        >
-          <VStack mt="2" spacing={1} alignItems="flex-start">
-            {marketPlaceIssues.map((issue) => (
-              <Text key={issue}>* {t(`${issue}`)}</Text>
-            ))}
-          </VStack>
-        </AlertError>
-      )}
+      {(courier?.situation === 'invalid' || courier?.situation === 'rejected') &&
+        marketPlaceIssues && (
+          <AlertError
+            title={t('Problemas identificados na verificação financeira')}
+            icon={false}
+            border="2px solid #DC3545"
+            mb="6"
+          >
+            <VStack mt="2" spacing={1} alignItems="flex-start">
+              {marketPlaceIssues.map((issue) => (
+                <Text key={issue}>* {t(`${issue}`)}</Text>
+              ))}
+            </VStack>
+          </AlertError>
+        )}
       <SectionTitle mt="0">{t('Alterar status do entregador:')}</SectionTitle>
       <RadioGroup
         mt="2"
@@ -73,26 +74,30 @@ export const CourierStatus = () => {
           </Radio>
         </Flex>
       </RadioGroup>
-      <SectionTitle>{t('Motivo da recusa:')}</SectionTitle>
-      <CheckboxGroup
-        colorScheme="green"
-        value={courier?.profileIssues ?? []}
-        onChange={(value) => handleProfileChange('profileIssues', value)}
-      >
-        <VStack alignItems="flex-start" mt="4" color="black" spacing={2}>
-          {issueOptions?.map((issue) => (
-            <Checkbox key={issue.id} iconColor="white" value={issue.title}>
-              {issue.title}
-            </Checkbox>
-          ))}
-        </VStack>
-      </CheckboxGroup>
-      <SectionTitle>{t('Mensagem personalizada:')}</SectionTitle>
-      <Textarea
-        mt="2"
-        value={courier?.profileIssuesMessage ?? ''}
-        onChange={(ev) => handleProfileChange('profileIssuesMessage', ev.target.value)}
-      />
+      {courier?.situation === 'rejected' && (
+        <>
+          <SectionTitle>{t('Motivo da recusa:')}</SectionTitle>
+          <CheckboxGroup
+            colorScheme="green"
+            value={courier?.profileIssues ?? []}
+            onChange={(value) => handleProfileChange('profileIssues', value)}
+          >
+            <VStack alignItems="flex-start" mt="4" color="black" spacing={2}>
+              {issueOptions?.map((issue) => (
+                <Checkbox key={issue.id} iconColor="white" value={issue.title}>
+                  {issue.title}
+                </Checkbox>
+              ))}
+            </VStack>
+          </CheckboxGroup>
+          <SectionTitle>{t('Mensagem personalizada:')}</SectionTitle>
+          <Textarea
+            mt="2"
+            value={courier?.profileIssuesMessage ?? ''}
+            onChange={(ev) => handleProfileChange('profileIssuesMessage', ev.target.value)}
+          />
+        </>
+      )}
     </Box>
   );
 };
