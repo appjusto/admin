@@ -1,4 +1,5 @@
-import { CourierProfile, WithId } from 'appjusto-types';
+import { CourierProfile, Fleet, WithId } from 'appjusto-types';
+import { documentsAs } from 'core/fb';
 import FilesApi from '../FilesApi';
 import FirebaseRefs from '../FirebaseRefs';
 
@@ -36,6 +37,11 @@ export default class CourierApi {
   // private data
   async getCourierPlatformData(courierId: string) {
     return (await this.refs.getCourierPlatformRef(courierId).get()).data();
+  }
+
+  async getCourierFleet(fleetId: string) {
+    const fleet = await this.refs.getFleetRef(fleetId).get();
+    return fleet.data() as Fleet;
   }
 
   // update

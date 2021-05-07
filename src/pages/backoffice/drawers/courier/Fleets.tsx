@@ -1,11 +1,23 @@
 import { Box, Text } from '@chakra-ui/react';
+import { useCourierFleet } from 'app/api/courier/useCourierFleet';
 import { useContextCourierProfile } from 'app/state/courier/context';
+import { Fleet } from 'appjusto-types';
 import React from 'react';
+import { t } from 'utils/i18n';
 
 export const Fleets = () => {
   // context
   const { courier } = useContextCourierProfile();
-  const fleets = courier?.fleet ? [{ ...courier?.fleet }] : [];
+  const fleet = useCourierFleet(courier?.fleet?.id);
+
+  // state
+  const [fleets, setFleets] = React.useState<Fleet[]>([]);
+
+  // side effects
+  React.useEffect(() => {
+    if (fleet) setFleets([fleet]);
+  }, [fleet]);
+
   // UI
   return (
     <Box mt="4">
@@ -15,9 +27,9 @@ export const Fleets = () => {
             <Text color="black" fontSize="lg" lineHeight="26px">
               {fleet.name}
             </Text>
-            {/* <Text color="#4EA031" fontSize="sm" lineHeight="21px">
+            <Text color="#4EA031" fontSize="sm" lineHeight="21px">
               {fleet.participantsOnline} {t('participantes')}
-            </Text> */}
+            </Text>
             <Text mt="2" fontSize="sm" lineHeight="21px">
               {fleet.description}
             </Text>

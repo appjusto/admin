@@ -16,7 +16,7 @@ export const useCourierProfile = (courierId: string | undefined | null) => {
       setProfile(null);
       return;
     }
-    return api.courier().observeCourierProfile(courierId, setProfile);
+    api.courier().observeCourierProfile(courierId, setProfile);
   }, [api, courierId]);
 
   // return
