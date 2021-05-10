@@ -1,5 +1,5 @@
 import { ChatMessage, FoodOrderStatus, Issue, Order, OrderIssue, WithId } from 'appjusto-types';
-import { documentsAs } from 'core/fb';
+import { documentAs, documentsAs } from 'core/fb';
 import firebase from 'firebase/app';
 import FirebaseRefs from '../FirebaseRefs';
 
@@ -60,6 +60,23 @@ export default class OrderApi {
     return unsubscribe;
   }
 
+  observeOrder(
+    orderId: string,
+    resultHandler: (order: WithId<Order>) => void
+  ): firebase.Unsubscribe {
+    let query = this.refs.getOrderRef(orderId);
+    const unsubscribe = query.onSnapshot(
+      (querySnapshot) => {
+        resultHandler(documentAs<Order>(querySnapshot));
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+    // returns the unsubscribe function
+    return unsubscribe;
+  }
+
   // observe order's chat
   observeOrderChat(
     orderId: string,
@@ -78,6 +95,29 @@ export default class OrderApi {
       );
     // returns the unsubscribe function
     return unsubscribe;
+  }
+
+  observeOrderIssues(
+    orderId: string,
+    resultHandler: (orderIssues: WithId<OrderIssue>[]) => void
+  ): firebase.Unsubscribe {
+    let query = this.refs.getOrderIssuesRef(orderId).orderBy('createdOn', 'desc');
+    const unsubscribe = query.onSnapshot(
+      (querySnapshot) => {
+        resultHandler(documentsAs<OrderIssue>(querySnapshot.docs));
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+    // returns the unsubscribe function
+    return unsubscribe;
+  }
+
+  async getOrderIssues(orderId: string) {
+    return documentsAs<OrderIssue>(
+      (await this.refs.getOrderIssuesRef(orderId).orderBy('createdOn', 'desc').get()).docs
+    );
   }
 
   async fetchOrderById(orderId: string) {
@@ -118,11 +158,5 @@ export default class OrderApi {
       updatedOn: timestamp,
     });
     await this.refs.getOrderIssuesRef(orderId).add({ createdOn: timestamp, issue, comment });
-  }
-
-  async getOrderIssues(orderId: string) {
-    return documentsAs<OrderIssue>(
-      (await this.refs.getOrderIssuesRef(orderId).orderBy('createdOn', 'desc').get()).docs
-    );
   }
 }

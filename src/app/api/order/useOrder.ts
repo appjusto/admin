@@ -23,16 +23,8 @@ export const useOrder = (orderId?: string) => {
   // side effects
   React.useEffect(() => {
     if (!orderId) return;
-    const getOrderById = async () => {
-      const data = await api.order().fetchOrderById(orderId);
-      setOrder(data as WithId<Order>);
-    };
-    const getOrderIssues = async () => {
-      const issues = await api.order().getOrderIssues(orderId);
-      setOrderIssues(issues);
-    };
-    getOrderById();
-    getOrderIssues();
+    api.order().observeOrder(orderId, setOrder);
+    api.order().observeOrderIssues(orderId, setOrderIssues);
   }, [api, orderId]);
 
   // return

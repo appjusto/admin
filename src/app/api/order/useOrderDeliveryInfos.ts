@@ -32,7 +32,8 @@ export const useOrderDeliveryInfos = (order?: WithId<Order> | null) => {
   }, [order?.dispatchingState]);
 
   React.useEffect(() => {
-    setIsMatched(order?.dispatchingStatus === 'matched');
+    if (order?.dispatchingStatus)
+      setIsMatched(['matched', 'confirmed'].includes(order?.dispatchingStatus));
   }, [order?.dispatchingStatus]);
 
   React.useEffect(() => {
