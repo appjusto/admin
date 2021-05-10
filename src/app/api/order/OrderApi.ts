@@ -1,36 +1,40 @@
-import { ChatMessage, FoodOrderStatus, Issue, Order, OrderIssue, WithId } from 'appjusto-types';
+import {
+  ChatMessage,
+  FoodOrderStatus,
+  Issue,
+  Order,
+  OrderIssue,
+  OrderStatus,
+  WithId,
+} from 'appjusto-types';
 import { documentAs, documentsAs } from 'core/fb';
 import firebase from 'firebase/app';
 import FirebaseRefs from '../FirebaseRefs';
 
-export const ActiveFoodOrdersValues: FoodOrderStatus[] = [
-  'confirmed',
-  'preparing',
-  'ready',
-  'dispatching',
-  'canceled',
-];
-export const InactiveFoodOrdersValues: FoodOrderStatus[] = ['quote', 'confirming', 'delivered'];
-export const FoodOrdersValues = [...ActiveFoodOrdersValues, ...InactiveFoodOrdersValues];
+//export const ActiveFoodOrdersValues: FoodOrderStatus[] = [
+//  'confirmed',
+//  'preparing',
+//  'ready',
+//  'dispatching',
+//  'canceled',
+//];
+//export const InactiveFoodOrdersValues: FoodOrderStatus[] = ['quote', 'confirming', 'delivered'];
+//export const FoodOrdersValues = [...ActiveFoodOrdersValues, ...InactiveFoodOrdersValues];
 
-export type ObserveOrdersOptions = {
-  active?: boolean;
-  inactive?: boolean;
-};
+//export type ObserveOrdersOptions = {
+//  active?: boolean;
+//  inactive?: boolean;
+//};
 
 export default class OrderApi {
   constructor(private refs: FirebaseRefs) {}
 
   // firestore
   observeOrders(
-    options: ObserveOrdersOptions,
+    statuses: OrderStatus[],
     resultHandler: (orders: WithId<Order>[]) => void,
     businessId?: string
   ): firebase.Unsubscribe {
-    const statuses = [
-      ...(options.active ? ActiveFoodOrdersValues : []),
-      ...(options.inactive ? InactiveFoodOrdersValues : []),
-    ];
     const timeLimit = new Date().getTime() - 86400000;
     const start_time = firebase.firestore.Timestamp.fromDate(new Date(timeLimit));
 

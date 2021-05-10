@@ -1,6 +1,7 @@
 import { Stack } from '@chakra-ui/react';
 import { useBusinesses } from 'app/api/business/useBusinesses';
 import { useBackofficeOrders } from 'app/api/order/useBackofficeOrders';
+import { OrderStatus } from 'appjusto-types';
 import React from 'react';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
@@ -10,12 +11,12 @@ import { Panel } from './Panel';
 
 const situations = ['submitted', 'verified', 'invalid'];
 
-const options = { active: true, inactive: false };
+const statuses = ['confirmed', 'preparing', 'ready', 'dispatching'] as OrderStatus[];
 
 const BODashboard = () => {
   // context
   const businesses = useBusinesses(situations);
-  const orders = useBackofficeOrders(options);
+  const orders = useBackofficeOrders(statuses);
   // state
   const [dateTime, setDateTime] = React.useState('');
 

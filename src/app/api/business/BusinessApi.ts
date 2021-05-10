@@ -12,13 +12,13 @@ import { documentAs, documentsAs } from '../../../core/fb';
 import FilesApi from '../FilesApi';
 import FirebaseRefs from '../FirebaseRefs';
 
-export const ActiveBusinessesValues = ['approved'];
-export const InactiveBusinessesValues = ['pending', 'submitted', 'rejected', 'blocked'];
+//export const ActiveBusinessesValues = ['approved'];
+//export const InactiveBusinessesValues = ['pending', 'submitted', 'rejected', 'blocked'];
 
-export type ObserveBusinessesOptions = {
-  active?: boolean;
-  inactive?: boolean;
-};
+//export type ObserveBusinessesOptions = {
+//  active?: boolean;
+//  inactive?: boolean;
+//};
 
 export default class BusinessApi {
   constructor(private refs: FirebaseRefs, private files: FilesApi) {}

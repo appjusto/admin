@@ -27,9 +27,9 @@ export const OrdersKanban = () => {
   // context
   const isDev = process.env.NODE_ENV === 'development';
   const { path } = useRouteMatch();
-  const { business, orders, createFakeOrder } = useOrdersContext();
+  const { business, orders, statuses, createFakeOrder } = useOrdersContext();
   // state
-  const ordersByStatus = splitByStatus(orders);
+  const ordersByStatus = splitByStatus(orders, statuses);
   const [dateTime, setDateTime] = React.useState('');
   const [orderSearch, setOrderSearch] = React.useState('');
   const [searchResult, setSearchResult] = React.useState<WithId<Order>[]>([]);
