@@ -4,13 +4,13 @@ import React from 'react';
 import { itemPriceFormatter } from 'utils/formatters';
 import { getOrderTotalPriceToDisplay } from 'utils/functions';
 import { t } from 'utils/i18n';
-import { SectionTitle } from '../generics/SectionTitle';
+import { SectionTitle } from '../../../backoffice/drawers/generics/SectionTitle';
 
 interface DetailsProps {
   order?: WithId<Order> | null;
 }
 
-export const Details = ({ order }: DetailsProps) => {
+export const OrderDetails = ({ order }: DetailsProps) => {
   // state
   const [totalPrice, setTotalPrice] = React.useState<string>();
 
@@ -38,7 +38,12 @@ export const Details = ({ order }: DetailsProps) => {
               {order?.items?.map((item: OrderItem) => (
                 <React.Fragment key={Math.random()}>
                   <Tr color="black" fontSize="xs" fontWeight="700">
-                    <Td>{item.product.name}</Td>
+                    <Td>
+                      {item.product.name} <br />
+                      <Text as="span" color="red" fontWeight="500">
+                        {item.notes}
+                      </Text>
+                    </Td>
                     <Td isNumeric>{item.quantity}</Td>
                     <Td isNumeric>{itemPriceFormatter(item.product.price * item.quantity)}</Td>
                   </Tr>
@@ -67,19 +72,26 @@ export const Details = ({ order }: DetailsProps) => {
       <Text mt="1" fontSize="md">
         {t('Incluir CPF na nota, CPF: 000.000.000-00')}
       </Text>
-      <SectionTitle mt="10">{t('Forma de pagamento')}</SectionTitle>
-      <Text mt="1" fontSize="md">
-        {t('Total pago:')}{' '}
-        <Text as="span" color="black">
-          {totalPrice}
-        </Text>
+      <Text mt="1" fontSize="md" color="red">
+        {order?.additionalInfo}
       </Text>
-      <Text mt="1" fontSize="md">
-        {t('Método de pagamento:')}{' '}
-        <Text as="span" color="black">
-          N/I
-        </Text>
-      </Text>
+      {order?.status !== 'canceled' && (
+        <>
+          <SectionTitle mt="10">{t('Forma de pagamento')}</SectionTitle>
+          <Text mt="1" fontSize="md">
+            {t('Total pago:')}{' '}
+            <Text as="span" color="black">
+              {totalPrice}
+            </Text>
+          </Text>
+          <Text mt="1" fontSize="md">
+            {t('Método de pagamento:')}{' '}
+            <Text as="span" color="black">
+              N/I
+            </Text>
+          </Text>
+        </>
+      )}
     </Box>
   );
 };
