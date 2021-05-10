@@ -20,6 +20,7 @@ import { CustomButton } from 'common/components/buttons/CustomButton';
 import { Pendency } from 'common/components/Pendency';
 import { getErrorMessage } from 'core/fb';
 import React from 'react';
+import { orderCancelator } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { useOrdersContext } from '../context';
 
@@ -60,10 +61,7 @@ export const OrderBaseDrawer = ({
   const { changeOrderStatus } = useOrdersContext();
 
   // helpers
-  let cancelator = 'N/E';
-  if (orderIssue?.issue.type === 'restaurant-cancel') cancelator = 'restaurante';
-  if (orderIssue?.issue.type === 'consumer-cancel') cancelator = 'cliente';
-  if (orderIssue?.issue.type === 'courier-cancel') cancelator = 'entregador';
+  const cancelator = orderCancelator(orderIssue?.issue.type);
 
   //handlers
   const PrimaryButtonFunction = () => {

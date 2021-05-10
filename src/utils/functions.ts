@@ -258,3 +258,11 @@ export const getCoordinatesMidpoint = (origin: latLng, destination: latLng) => {
     return undefined;
   }
 };
+
+export const orderCancelator = (issueIype?: string) => {
+  let cancelator = 'N/E';
+  if (issueIype === 'restaurant-cancel') cancelator = 'restaurante';
+  if (issueIype === 'consumer-cancel') cancelator = 'cliente';
+  if (issueIype === 'courier-cancel') cancelator = 'entregador';
+  return cancelator;
+};
