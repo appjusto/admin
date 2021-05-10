@@ -10,10 +10,12 @@ import { Panel } from './Panel';
 
 const situations = ['submitted', 'verified', 'invalid'];
 
+const options = { active: true, inactive: false };
+
 const BODashboard = () => {
   // context
   const businesses = useBusinesses(situations);
-  const orders = useBackofficeOrders();
+  const orders = useBackofficeOrders(options);
   // state
   const [dateTime, setDateTime] = React.useState('');
 

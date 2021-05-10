@@ -3,10 +3,7 @@ import { Order, WithId } from 'appjusto-types';
 import React from 'react';
 import { ObserveOrdersOptions } from './OrderApi';
 
-export const useOrders = (
-  options: ObserveOrdersOptions = { active: true, inactive: false },
-  businessId?: string
-) => {
+export const useOrders = (options: ObserveOrdersOptions, businessId?: string) => {
   // context
   const api = useContextApi();
   // state
