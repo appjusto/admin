@@ -1,49 +1,77 @@
-import { ChatMessage, FoodOrderStatus, Issue, Order, OrderIssue, WithId } from 'appjusto-types';
-import { documentsAs } from 'core/fb';
+import {
+  ChatMessage,
+  FoodOrderStatus,
+  Issue,
+  Order,
+  OrderIssue,
+  OrderStatus,
+  WithId,
+} from 'appjusto-types';
+import { documentAs, documentsAs } from 'core/fb';
 import firebase from 'firebase/app';
 import FirebaseRefs from '../FirebaseRefs';
 
-export const ActiveFoodOrdersValues: FoodOrderStatus[] = [
-  'confirmed',
-  'preparing',
-  'ready',
-  'dispatching',
-  'canceled',
-];
-export const InactiveFoodOrdersValues: FoodOrderStatus[] = ['quote', 'confirming', 'delivered'];
-export const FoodOrdersValues = [...ActiveFoodOrdersValues, ...InactiveFoodOrdersValues];
+//export const ActiveFoodOrdersValues: FoodOrderStatus[] = [
+//  'confirmed',
+//  'preparing',
+//  'ready',
+//  'dispatching',
+//  'canceled',
+//];
+//export const InactiveFoodOrdersValues: FoodOrderStatus[] = ['quote', 'confirming', 'delivered'];
+//export const FoodOrdersValues = [...ActiveFoodOrdersValues, ...InactiveFoodOrdersValues];
 
-export type ObserveOrdersOptions = {
-  active?: boolean;
-  inactive?: boolean;
-};
+//export type ObserveOrdersOptions = {
+//  active?: boolean;
+//  inactive?: boolean;
+//};
 
 export default class OrderApi {
   constructor(private refs: FirebaseRefs) {}
 
   // firestore
   observeOrders(
-    options: ObserveOrdersOptions,
-    businessId: string,
-    resultHandler: (orders: WithId<Order>[]) => void
+    statuses: OrderStatus[],
+    resultHandler: (orders: WithId<Order>[]) => void,
+    businessId?: string
   ): firebase.Unsubscribe {
-    const statuses = [
-      ...(options.active ? ActiveFoodOrdersValues : []),
-      ...(options.inactive ? InactiveFoodOrdersValues : []),
-    ];
     const timeLimit = new Date().getTime() - 86400000;
     const start_time = firebase.firestore.Timestamp.fromDate(new Date(timeLimit));
 
-    console.log(timeLimit);
     let query = this.refs
       .getOrdersRef()
       .orderBy('createdOn', 'desc')
       .where('createdOn', '>=', start_time)
-      .where('business.id', '==', businessId)
       .where('status', 'in', statuses);
+
+    if (businessId) {
+      query = this.refs
+        .getOrdersRef()
+        .orderBy('createdOn', 'desc')
+        .where('createdOn', '>=', start_time)
+        .where('business.id', '==', businessId)
+        .where('status', 'in', statuses);
+    }
     const unsubscribe = query.onSnapshot(
       (querySnapshot) => {
         resultHandler(documentsAs<Order>(querySnapshot.docs));
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+    // returns the unsubscribe function
+    return unsubscribe;
+  }
+
+  observeOrder(
+    orderId: string,
+    resultHandler: (order: WithId<Order>) => void
+  ): firebase.Unsubscribe {
+    let query = this.refs.getOrderRef(orderId);
+    const unsubscribe = query.onSnapshot(
+      (querySnapshot) => {
+        resultHandler(documentAs<Order>(querySnapshot));
       },
       (error) => {
         console.error(error);
@@ -71,6 +99,29 @@ export default class OrderApi {
       );
     // returns the unsubscribe function
     return unsubscribe;
+  }
+
+  observeOrderIssues(
+    orderId: string,
+    resultHandler: (orderIssues: WithId<OrderIssue>[]) => void
+  ): firebase.Unsubscribe {
+    let query = this.refs.getOrderIssuesRef(orderId).orderBy('createdOn', 'desc');
+    const unsubscribe = query.onSnapshot(
+      (querySnapshot) => {
+        resultHandler(documentsAs<OrderIssue>(querySnapshot.docs));
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+    // returns the unsubscribe function
+    return unsubscribe;
+  }
+
+  async getOrderIssues(orderId: string) {
+    return documentsAs<OrderIssue>(
+      (await this.refs.getOrderIssuesRef(orderId).orderBy('createdOn', 'desc').get()).docs
+    );
   }
 
   async fetchOrderById(orderId: string) {
@@ -111,11 +162,5 @@ export default class OrderApi {
       updatedOn: timestamp,
     });
     await this.refs.getOrderIssuesRef(orderId).add({ createdOn: timestamp, issue, comment });
-  }
-
-  async getOrderIssues(orderId: string) {
-    return documentsAs<OrderIssue>(
-      (await this.refs.getOrderIssuesRef(orderId).orderBy('createdOn', 'desc').get()).docs
-    );
   }
 }

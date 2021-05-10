@@ -9,14 +9,22 @@ import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
 
 interface ParticipantProps {
-  name: string;
+  name?: string;
+  instruction?: string;
   address?: string;
   onboarding?: firebase.firestore.Timestamp;
   buttonLabel?: string;
   buttonLink?: string;
 }
 
-const Participant = ({ name, address, onboarding, buttonLabel, buttonLink }: ParticipantProps) => {
+const Participant = ({
+  name,
+  instruction,
+  address,
+  onboarding,
+  buttonLabel,
+  buttonLink,
+}: ParticipantProps) => {
   // helpers
   const date = onboarding ? getDateAndHour(onboarding) : 'N/E';
 
@@ -24,9 +32,9 @@ const Participant = ({ name, address, onboarding, buttonLabel, buttonLink }: Par
   return (
     <Box mb="10">
       <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
-        {t('Nome:')}{' '}
+        {name ? t('Nome:') : t('Instrução:')}{' '}
         <Text as="span" fontWeight="500">
-          {name}
+          {name ?? instruction}
         </Text>
       </Text>
       {address && (
@@ -76,20 +84,39 @@ export const Participants = ({ order }: ParticipantsProps) => {
   // UI
   return (
     <>
-      <SectionTitle>{order?.type === 'food' ? t('Cliente') : t('Destino')}</SectionTitle>
+      <SectionTitle>{t('Cliente')}</SectionTitle>
       <Participant
         name={order?.consumer?.name ?? 'N/E'}
         address={order?.destination?.address?.main ?? 'N/E'}
         //onboarding={order?.createdOn as firebase.firestore.Timestamp} low-priority
       />
-      <SectionTitle>{order?.type === 'food' ? t('Restaurante') : t('Origem')}</SectionTitle>
-      <Participant
-        name={order?.business?.name ?? 'N/E'}
-        address={order?.origin?.address?.main ?? 'N/E'}
-        //onboarding={order?.createdOn as firebase.firestore.Timestamp} low-priority
-        buttonLabel={t('Ver cadastro do restaurante')}
-        buttonLink={`/backoffice/businesses/${order?.business?.id}`}
-      />
+      {order?.type === 'food' ? (
+        <>
+          <SectionTitle>{t('Restaurante')}</SectionTitle>
+          <Participant
+            name={order?.business?.name ?? 'N/E'}
+            address={order?.origin?.address?.main ?? 'N/E'}
+            //onboarding={order?.createdOn as firebase.firestore.Timestamp} low-priority
+            buttonLabel={t('Ver cadastro do restaurante')}
+            buttonLink={`/backoffice/businesses/${order?.business?.id}`}
+          />
+        </>
+      ) : (
+        <>
+          <SectionTitle>{t('Origem')}</SectionTitle>
+          <Participant
+            instruction={order?.origin?.intructions ?? 'N/E'}
+            address={order?.destination?.address?.main ?? 'N/E'}
+            //onboarding={order?.createdOn as firebase.firestore.Timestamp} low-priority
+          />
+          <SectionTitle>{t('Destino')}</SectionTitle>
+          <Participant
+            instruction={order?.destination?.intructions ?? 'N/E'}
+            address={order?.destination?.address?.main ?? 'N/E'}
+            //onboarding={order?.createdOn as firebase.firestore.Timestamp} low-priority
+          />
+        </>
+      )}
       <SectionTitle>{t('Entregador')}</SectionTitle>
       <Participant
         name={order?.courier?.name ?? 'N/E'}

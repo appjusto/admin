@@ -13,7 +13,7 @@ interface Props extends SelectProps {
 }
 
 export const Select = React.forwardRef<HTMLSelectElement, Props>(
-  ({ label, mt, mb, ml, mr, flex, ...props }: Props, ref) => {
+  ({ label, mt = '4', mb, ml, mr, flex, ...props }: Props, ref) => {
     const boxProps = { mt, mb, ml, mr, flex };
     const styles = useMultiStyleConfig('Select', {});
     return (

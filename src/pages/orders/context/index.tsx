@@ -1,7 +1,7 @@
 import { useOrders } from 'app/api/order/useOrders';
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusiness } from 'app/state/business/context';
-import { Business, Order, OrderItem, OrderStatus, WithId } from 'appjusto-types';
+import { Business, Order, OrderIssue, OrderItem, OrderStatus, WithId } from 'appjusto-types';
 //@ts-ignore
 import bellDing from 'common/sounds/bell-ding.mp3';
 import React from 'react';
@@ -84,16 +84,20 @@ export type localOrderType = { code: string; time: number };
 interface ContextProps {
   business: WithId<Business> | null | undefined;
   orders: WithId<Order>[];
+  statuses: OrderStatus[];
   getOrderById(id: string): WithId<Order> | undefined;
   createFakeOrder(): void;
   changeOrderStatus(orderId: string, status: OrderStatus): void;
   setOrderCookingTime(orderId: string, cookingTime: number | null): void;
-  //getOrderIssue(orderId: string): void;
+  getOrderIssues: (
+    orderId: string,
+    resultHandler: (orderIssues: WithId<OrderIssue>[]) => void
+  ) => void;
 }
 
 const OrdersContext = React.createContext<ContextProps>({} as ContextProps);
 
-const options = { active: true, inactive: false };
+const statuses = ['confirmed', 'preparing', 'ready', 'dispatching', 'canceled'] as OrderStatus[];
 
 interface ProviderProps {
   children: React.ReactNode | React.ReactNode[];
@@ -103,8 +107,8 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   // context
   const api = useContextApi();
   const { business } = useContextBusiness();
-  const hookOrders = useOrders(options, business?.id);
-  console.log(hookOrders);
+  const hookOrders = useOrders(statuses, business?.id);
+
   //state
   const [orders, setOrders] = React.useState<WithId<Order>[]>([]);
 
@@ -149,11 +153,12 @@ export const OrdersContextProvider = (props: ProviderProps) => {
     await api.order().updateOrder(orderId, { cookingTime });
   };
 
-  //const getOrderIssue = async (orderId: string) => {
-  // without permission
-  //const issues = await api.order().getOrderIssue(orderId);
-  //console.log(issues);
-  //};
+  const getOrderIssues = (
+    orderId: string,
+    resultHandler: (orderIssues: WithId<OrderIssue>[]) => void
+  ) => {
+    api.order().observeOrderIssues(orderId, resultHandler);
+  };
 
   // side effects
   React.useEffect(() => {
@@ -169,11 +174,12 @@ export const OrdersContextProvider = (props: ProviderProps) => {
       value={{
         business,
         orders,
+        statuses,
         getOrderById,
         createFakeOrder,
         changeOrderStatus,
         setOrderCookingTime,
-        //getOrderIssue,
+        getOrderIssues,
       }}
       {...props}
     />

@@ -1,10 +1,18 @@
-import { Button, Flex, Radio, RadioGroup, Stack, Text } from '@chakra-ui/react';
+import { Button, Flex, HStack, Radio, RadioGroup, Text } from '@chakra-ui/react';
 import { useProductContext } from 'pages/menu/context/ProductContext';
 import React from 'react';
 import { Redirect, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { GroupForm } from './groups/GroupForm';
 import { Groups } from './groups/Groups';
+
+const options = [
+  {
+    id: 'teste',
+    value: 'teste1',
+    name: 'Grupo teste 1',
+  },
+];
 
 export const ProductComplements = () => {
   //context
@@ -54,19 +62,31 @@ export const ProductComplements = () => {
       <Groups />
       {hasComplements && (
         <>
-          <Stack mt="8" mb="10" spacing={4} direction="row">
-            <Button
-              width="full"
-              color="black"
-              fontSize="15px"
-              onClick={() => setNewGroupForm(true)}
-            >
+          <HStack mt="8" mb="10" spacing={4}>
+            <Button width="50%" color="black" fontSize="15px" onClick={() => setNewGroupForm(true)}>
               {t('Criar novo grupo de complementos')}
             </Button>
-            <Button isDisabled width="full" variant="outline" color="black" fontSize="15px">
+            {/*<Button isDisabled width="full" variant="outline" color="black" fontSize="15px">
               {t('Associar com grupo existente')}
+              </Button>*/}
+          </HStack>
+          {/*<HStack spacing={4}>
+            <Select
+              mt="0"
+              w="100%"
+              label={t('Grupos de complementos')}
+              placeholder={t('Selecione um grupo existente')}
+            >
+              {options.map((group) => (
+                <option key={group.id} value={group.id}>
+                  {group.name}
+                </option>
+              ))}
+            </Select>
+            <Button w={{ base: '100%', lg: '260px' }} h="60px" color="black" fontSize="15px">
+              {t('Associar')}
             </Button>
-          </Stack>
+              </HStack>*/}
           {newGroupForm && (
             <GroupForm
               submitGroup={onSaveComplementsGroup}

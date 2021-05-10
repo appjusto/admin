@@ -1,10 +1,10 @@
 import { Box, Button, Flex, HStack, Progress, Text } from '@chakra-ui/react';
 import { useOrderArrivalTimes } from 'app/api/order/useOrderArrivalTimes';
-import { Order, WithId } from 'appjusto-types';
+import { Order, OrderIssue, WithId } from 'appjusto-types';
 import { ReactComponent as Alarm } from 'common/img/alarm_outlined.svg';
 import React from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
-import { getLocalStorageOrderTime, getTimeUntilNow } from 'utils/functions';
+import { getLocalStorageOrderTime, getTimeUntilNow, orderCancelator } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { useOrdersContext } from '../context';
 
@@ -33,9 +33,11 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
   const { url } = useRouteMatch();
   const { business, changeOrderStatus } = useOrdersContext();
   const arrivalTime = useOrderArrivalTimes(order);
+  const { getOrderIssues } = useOrdersContext();
 
   // state
   const [elapsedTime, setElapsedTime] = React.useState<number | null>(0);
+  const [orderIssues, setOrderIssues] = React.useState<WithId<OrderIssue>[] | null>();
 
   // handlers
   const isUnmatched = order.dispatchingStatus
@@ -48,12 +50,14 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
   ]);
   //const cookingTime = order?.cookingTime ? order?.cookingTime / 60 : null;
   const cookingProgress = cookingTime && elapsedTime ? (elapsedTime / cookingTime) * 100 : 0;
+  const cancelator = orderCancelator(orderIssues ? orderIssues[0]?.issue?.type : undefined);
 
   // side effects
   React.useEffect(() => {
-    //if (order.status === 'canceled') {
-    //getOrderIssue(order.id);
-    //}
+    if (!order.id) return;
+    if (order.status === 'canceled') {
+      getOrderIssues(order.id, setOrderIssues);
+    }
     const localOrderTime = getLocalStorageOrderTime(order.id);
     const setNewTime = () => {
       if (localOrderTime) {
@@ -69,7 +73,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
       return clearInterval(timeInterval);
     }
     return () => clearInterval(timeInterval);
-  }, [order]);
+  }, [order.id, order.status]);
 
   React.useEffect(() => {
     const orderAcceptanceTime = business?.orderAcceptanceTime
@@ -99,10 +103,15 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
         boxShadow="0px 8px 16px -4px rgba(105,118,103,0.1)"
       >
         <Flex justifyContent="space-between" alignItems="center">
-          <CodeLink url={url} orderId={order.id} code={order.code} />
+          <Box>
+            <Text fontSize="xs" lineHeight="lg" fontWeight="500">
+              {`{${order.consumer.name ?? 'N/I'}}`}
+            </Text>
+            <CodeLink url={url} orderId={order.id} code={order.code} />
+          </Box>
           <Flex flexDir="column" color="gray.700" fontSize="xs" alignItems="flex-end">
-            <Text fontWeight="500">{t('Cancelado por')}</Text>
-            <Text fontWeight="700">{t('Cliente')}</Text>
+            <Text fontWeight="700">{t('Cancelado por')}</Text>
+            <Text fontWeight="500">{cancelator}</Text>
           </Flex>
         </Flex>
       </Box>
@@ -122,7 +131,12 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
         boxShadow="0px 8px 16px -4px rgba(105,118,103,0.1)"
       >
         <Flex justifyContent="space-between" alignItems="center">
-          <CodeLink url={url} orderId={order.id} code={order.code} />
+          <Box>
+            <Text fontSize="xs" lineHeight="lg" fontWeight="500">
+              {`{${order.consumer.name ?? 'N/I'}}`}
+            </Text>
+            <CodeLink url={url} orderId={order.id} code={order.code} />
+          </Box>
           <Flex flexDir="column" color="gray.700" fontSize="xs" alignItems="flex-end">
             {wasDelivered ? (
               <Text fontWeight="700">{t('Pedido entregue')}</Text>
@@ -162,7 +176,12 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
       >
         <Flex flexDir="column" fontWeight="700">
           <Flex justifyContent="space-between">
-            <CodeLink url={url} orderId={order.id} code={order.code} />
+            <Box>
+              <Text fontSize="xs" lineHeight="lg" fontWeight="500">
+                {`{${order.consumer.name ?? 'N/I'}}`}
+              </Text>
+              <CodeLink url={url} orderId={order.id} code={order.code} />
+            </Box>
             <Flex flexDir="column" fontSize="xs" alignItems="flex-end">
               {isUnmatched ? (
                 <Text color="gray.700" fontWeight="700">
@@ -170,7 +189,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
                 </Text>
               ) : isCurrierArrived ? (
                 <>
-                  <Text color="black" fontWeight="700">
+                  <Text color="red" fontWeight="700">
                     {t('Entregador no local')}
                   </Text>
                   <Text color="black" fontWeight="500">
@@ -227,7 +246,12 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
       >
         <Flex flexDir="column" fontWeight="700">
           <Flex justifyContent="space-between">
-            <CodeLink url={url} orderId={order.id} code={order.code} />
+            <Box>
+              <Text fontSize="xs" lineHeight="lg" fontWeight="500">
+                {`{${order.consumer.name ?? 'N/I'}}`}
+              </Text>
+              <CodeLink url={url} orderId={order.id} code={order.code} />
+            </Box>
             <Flex flexDir="column">
               <HStack spacing={2} justifyContent="space-between">
                 <HStack spacing={1}>
@@ -275,9 +299,14 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
         cursor="pointer"
       >
         <Flex justifyContent="space-between" alignItems="center">
-          <Text fontSize="lg" fontWeight="700">
-            #{order.code}
-          </Text>
+          <Box>
+            <Text fontSize="xs" lineHeight="lg">
+              {`{${order.consumer.name ?? 'N/I'}}`}
+            </Text>
+            <Text fontSize="lg" fontWeight="700">
+              #{order.code}
+            </Text>
+          </Box>
           {elapsedTime !== null ? (
             elapsedTime > 0 ? (
               <Text fontSize="sm">{t(`${elapsedTime} min. atrás`)}</Text>
