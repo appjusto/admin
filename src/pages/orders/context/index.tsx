@@ -104,7 +104,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   const api = useContextApi();
   const { business } = useContextBusiness();
   const hookOrders = useOrders(options, business?.id);
-  console.log(hookOrders);
+
   //state
   const [orders, setOrders] = React.useState<WithId<Order>[]>([]);
 

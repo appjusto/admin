@@ -1,6 +1,6 @@
 import { Stack } from '@chakra-ui/react';
 import { useBusinesses } from 'app/api/business/useBusinesses';
-import { Business, Order, WithId } from 'appjusto-types';
+import { useBackofficeOrders } from 'app/api/order/useBackofficeOrders';
 import React from 'react';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
@@ -13,7 +13,7 @@ const situations = ['submitted', 'verified', 'invalid'];
 const BODashboard = () => {
   // context
   const businesses = useBusinesses(situations);
-  //const { orders } = useBOOrdersContext();
+  const orders = useBackofficeOrders();
   // state
   const [dateTime, setDateTime] = React.useState('');
 
@@ -31,10 +31,10 @@ const BODashboard = () => {
       <Stack mt="4" w="100%" direction={{ base: 'column', md: 'row' }} spacing={4}>
         <BOList
           title={t('Restaurantes - Aguardando aprovação')}
-          data={businesses as WithId<Business>[]}
+          data={businesses}
           listType="business"
         />
-        <BOList title={t('Pedidos em andamento')} data={[] as WithId<Order>[]} listType="orders" />
+        <BOList title={t('Pedidos em andamento')} data={orders} listType="orders" />
       </Stack>
     </>
   );

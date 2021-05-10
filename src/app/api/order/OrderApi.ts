@@ -24,8 +24,8 @@ export default class OrderApi {
   // firestore
   observeOrders(
     options: ObserveOrdersOptions,
-    businessId: string,
-    resultHandler: (orders: WithId<Order>[]) => void
+    resultHandler: (orders: WithId<Order>[]) => void,
+    businessId?: string
   ): firebase.Unsubscribe {
     const statuses = [
       ...(options.active ? ActiveFoodOrdersValues : []),
@@ -34,13 +34,20 @@ export default class OrderApi {
     const timeLimit = new Date().getTime() - 86400000;
     const start_time = firebase.firestore.Timestamp.fromDate(new Date(timeLimit));
 
-    console.log(timeLimit);
     let query = this.refs
       .getOrdersRef()
       .orderBy('createdOn', 'desc')
       .where('createdOn', '>=', start_time)
-      .where('business.id', '==', businessId)
       .where('status', 'in', statuses);
+
+    if (businessId) {
+      query = this.refs
+        .getOrdersRef()
+        .orderBy('createdOn', 'desc')
+        .where('createdOn', '>=', start_time)
+        .where('business.id', '==', businessId)
+        .where('status', 'in', statuses);
+    }
     const unsubscribe = query.onSnapshot(
       (querySnapshot) => {
         resultHandler(documentsAs<Order>(querySnapshot.docs));

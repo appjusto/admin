@@ -65,7 +65,7 @@ export const BOListItem = ({ data, listType }: Props) => {
   }
   if (listType === 'orders') {
     return (
-      <CustomLink to={`${url}/${order?.id}`}>
+      <CustomLink to={`${url}/orders/${order?.id}`}>
         <Flex justifyContent="space-between" alignItems="center">
           <Box>
             <Image src={order?.type === 'food' ? foodIcon : p2pIcon} w="24px" h="24px" />
