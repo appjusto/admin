@@ -4,7 +4,6 @@ import { Issue, OrderIssue, WithId } from 'appjusto-types';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { getOrderTotalPriceToDisplay } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { OrderBaseDrawer } from '../OrderBaseDrawer';
 import { Cancelation } from './Cancelation';
@@ -31,7 +30,6 @@ export const OrderDrawer = (props: Props) => {
   // state
   const [isCanceling, setIsCanceling] = React.useState(false);
   const [orderIssue, setOrderIssue] = React.useState<WithId<OrderIssue>>();
-  const orderTotalPrice = getOrderTotalPriceToDisplay(order?.items || []);
 
   // helpers
   const isCurrierArrived = order?.dispatchingState === 'arrived-pickup';

@@ -17,8 +17,8 @@ export const OrderDetails = ({ order }: DetailsProps) => {
   // side effects
   React.useEffect(() => {
     if (order?.type === 'food') setTotalPrice(getOrderTotalPriceToDisplay(order?.items || []));
-    else setTotalPrice(itemPriceFormatter(order?.fare?.consumer.total ?? 0));
-  }, [order?.type, order?.items]);
+    else setTotalPrice(itemPriceFormatter(order?.fare?.consumer?.total ?? 0));
+  }, [order?.type, order?.items, order?.fare?.consumer?.total]);
 
   // UI
   return (
