@@ -1,3 +1,4 @@
+import { CancellationData } from 'app/api/order/OrderApi';
 import { useOrder } from 'app/api/order/useOrder';
 import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';
 import { useContextAgentProfile } from 'app/state/agent/context';
@@ -31,7 +32,7 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
 
   // state
   const [status, setStatus] = React.useState<OrderStatus | undefined>(order?.status ?? undefined);
-  const [issue, setIssue] = React.useState<WithId<Issue> | null>();
+  const [issue, setIssue] = React.useState<Issue | null>();
   const [message, setMessage] = React.useState('');
 
   // helpers
@@ -45,11 +46,23 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
 
   const updateOrderStatus = async () => {
     if (status === 'canceled') {
-      const issueData = {
+      if (!agent?.id || !agent?.name) {
+        console.dir({
+          error: 'Order cancellation incomplete',
+          id: agent?.id,
+          name: agent?.name,
+        });
+        return;
+      }
+      const cancellationData = {
         issue,
+        canceledBy: {
+          id: agent?.id,
+          name: agent?.name,
+        },
         comment: message,
-      } as { issue: WithId<Issue>; comment?: string };
-      await cancelOrder(issueData);
+      } as CancellationData;
+      await cancelOrder(cancellationData);
     } else {
       const changes = {
         status,
@@ -64,11 +77,11 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
   }, [order?.status]);
 
   React.useEffect(() => {
-    if (orderIssues) {
-      setIssue(orderIssues[0]?.issue ?? null);
-      setMessage(orderIssues[0]?.comment ?? '');
+    if (order?.cancellation) {
+      setIssue(order.cancellation.issue ?? null);
+      setMessage(order.cancellation?.comment ?? '');
     }
-  }, [orderIssues]);
+  }, [order?.cancellation]);
 
   //UI
   return (
@@ -92,6 +105,7 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
             <OrderStatusBar
               status={status}
               issue={issue}
+              cancelatorName={order?.cancellation?.canceledBy.name}
               message={message}
               cancelOptions={cancelOptions}
               updateState={updateState}

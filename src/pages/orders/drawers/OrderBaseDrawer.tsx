@@ -15,12 +15,11 @@ import {
   Flex,
   Text,
 } from '@chakra-ui/react';
-import { OrderIssue, OrderStatus, WithId } from 'appjusto-types';
+import { OrderStatus } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { Pendency } from 'common/components/Pendency';
 import { getErrorMessage } from 'core/fb';
 import React from 'react';
-import { orderCancelator } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { useOrdersContext } from '../context';
 
@@ -28,7 +27,7 @@ interface BaseDrawerProps {
   orderId: string;
   orderCode: string;
   orderStatus: OrderStatus;
-  orderIssue?: WithId<OrderIssue>;
+  cancelator?: string;
   isCurrierArrived: boolean;
   client: string;
   clientOrders: number;
@@ -45,7 +44,7 @@ export const OrderBaseDrawer = ({
   orderId,
   orderCode,
   orderStatus,
-  orderIssue,
+  cancelator,
   isCurrierArrived,
   client,
   clientOrders,
@@ -59,9 +58,6 @@ export const OrderBaseDrawer = ({
 }: BaseDrawerProps) => {
   //context
   const { changeOrderStatus } = useOrdersContext();
-
-  // helpers
-  const cancelator = orderCancelator(orderIssue?.issue.type);
 
   //handlers
   const PrimaryButtonFunction = () => {

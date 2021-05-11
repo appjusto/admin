@@ -1,9 +1,12 @@
 import { Text } from '@chakra-ui/react';
+import { CancellationData } from 'app/api/order/OrderApi';
 import { useOrder } from 'app/api/order/useOrder';
+import { useContextManagerProfile } from 'app/state/manager/context';
 import { Issue, OrderIssue, WithId } from 'appjusto-types';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import React from 'react';
 import { useParams } from 'react-router-dom';
+import { orderCancelator } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { OrderBaseDrawer } from '../OrderBaseDrawer';
 import { Cancelation } from './Cancelation';
@@ -26,6 +29,7 @@ export const OrderDrawer = (props: Props) => {
   const error = '';
   const { orderId } = useParams<Params>();
   const { order, cancelOrder, orderIssues } = useOrder(orderId);
+  const { manager } = useContextManagerProfile();
 
   // state
   const [isCanceling, setIsCanceling] = React.useState(false);
@@ -33,10 +37,26 @@ export const OrderDrawer = (props: Props) => {
 
   // helpers
   const isCurrierArrived = order?.dispatchingState === 'arrived-pickup';
+  const cancelator = orderCancelator(order?.cancellation?.issue.type);
 
   // handlers
   const handleCancel = async (issue: WithId<Issue>) => {
-    await cancelOrder({ issue });
+    if (!manager?.id || !manager?.name) {
+      console.dir({
+        error: 'Order cancellation incomplete',
+        id: manager?.id,
+        name: manager?.name,
+      });
+      return;
+    }
+    const cancellationData = {
+      canceledBy: {
+        id: manager?.id,
+        name: manager?.name,
+      },
+      issue,
+    } as CancellationData;
+    await cancelOrder(cancellationData);
     props.onClose();
   };
 
@@ -57,7 +77,7 @@ export const OrderDrawer = (props: Props) => {
       orderId={orderId}
       orderCode={order?.code ?? ''}
       orderStatus={order?.status!}
-      orderIssue={orderIssue}
+      cancelator={cancelator}
       isCurrierArrived={isCurrierArrived}
       client={order?.consumer?.name ?? ''}
       clientOrders={0}
@@ -76,9 +96,18 @@ export const OrderDrawer = (props: Props) => {
           <OrderDetails order={order} />
           {order?.status === 'canceled' && (
             <>
-              <SectionTitle>{t('Motivo do cancelamento')}</SectionTitle>
-              <Text mt="1" fontSize="md">
-                {orderIssue?.issue.title ?? 'N/E'}
+              <SectionTitle>{t('Dados do cancelamento')}</SectionTitle>
+              <Text mt="1" fontSize="md" fontWeight="700" color="black">
+                {t('Motivo:')}{' '}
+                <Text as="span" fontWeight="500">
+                  {order.cancellation?.issue.title ?? 'N/E'}
+                </Text>
+              </Text>
+              <Text mt="1" fontSize="md" fontWeight="700" color="black">
+                {t('Comentário:')}{' '}
+                <Text as="span" fontWeight="500">
+                  {order.cancellation?.comment ?? 'N/E'}
+                </Text>
               </Text>
             </>
           )}

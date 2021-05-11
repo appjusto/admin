@@ -11,6 +11,12 @@ import { documentAs, documentsAs } from 'core/fb';
 import firebase from 'firebase/app';
 import FirebaseRefs from '../FirebaseRefs';
 
+export type CancellationData = {
+  issue: WithId<Issue>;
+  canceledBy: { id: string; name: string };
+  comment?: string;
+};
+
 //export const ActiveFoodOrdersValues: FoodOrderStatus[] = [
 //  'confirmed',
 //  'preparing',
@@ -161,12 +167,15 @@ export default class OrderApi {
     });
   }
 
-  async cancelOrder(orderId: string, issue: WithId<Issue>, comment?: string) {
+  async cancelOrder(orderId: string, cancellationData: CancellationData) {
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
     await this.refs.getOrderRef(orderId).update({
       status: 'canceled',
+      cancellation: {
+        ...cancellationData,
+        timestamp,
+      },
       updatedOn: timestamp,
     });
-    await this.refs.getOrderIssuesRef(orderId).add({ createdOn: timestamp, issue, comment });
   }
 }

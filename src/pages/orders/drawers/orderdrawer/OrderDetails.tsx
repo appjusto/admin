@@ -87,7 +87,7 @@ export const OrderDetails = ({ order }: DetailsProps) => {
           <Text mt="1" fontSize="md">
             {t('Método de pagamento:')}{' '}
             <Text as="span" color="black">
-              N/I
+              {t('cartão de crédito')}
             </Text>
           </Text>
         </>
