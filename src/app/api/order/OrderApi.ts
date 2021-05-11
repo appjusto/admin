@@ -131,7 +131,13 @@ export default class OrderApi {
 
   async fetchOrdersByConsumerId(consumerId: string) {
     return documentsAs<Order>(
-      (await this.refs.getOrdersRef().where('consumer.id', '==', consumerId).get()).docs
+      (
+        await this.refs
+          .getOrdersRef()
+          .orderBy('createdOn', 'desc')
+          .where('consumer.id', '==', consumerId)
+          .get()
+      ).docs
     );
   }
 
