@@ -47,6 +47,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const [description, setDescription] = React.useState(business?.description ?? '');
   const [minimumOrder, setMinimumOrder] = React.useState(business?.minimumOrder ?? 0);
   const [enabled, setEnabled] = React.useState(business?.enabled ?? false);
+  const [status, setStatus] = React.useState(business?.status ?? 'closed');
   const [logoExists, setLogoExists] = React.useState(false);
   const [coverExists, setCoverExists] = React.useState(false);
   const [logoFiles, setLogoFiles] = React.useState<File[] | null>(null);
@@ -79,6 +80,14 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
 
   const isCNPJValid = () => cnpjutils.isValid(cnpj);
 
+  const handleEnabled = (enabled: boolean) => {
+    if (enabled) setEnabled(enabled);
+    else {
+      setStatus('closed');
+      setEnabled(false);
+    }
+  };
+
   const onSubmitHandler = async () => {
     //if (minimumOrder === 0) return minimumOrderRef.current?.focus();
     if (!isCNPJValid()) return cnpjRef?.current?.focus();
@@ -92,6 +101,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
         description,
         minimumOrder,
         enabled,
+        status,
         cuisine: cuisineName,
         logoExists: logoExists,
         coverImageExists: coverExists,
@@ -143,6 +153,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
 
   React.useEffect(() => {
     if (business) {
+      setEnabled(business.enabled ?? false);
       if (business.cnpj) setCNPJ(business.cnpj);
       if (business.name) setName(business.name);
       if (business.phone) setPhone(business.phone);
@@ -314,7 +325,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
                   isChecked={enabled}
                   onChange={(ev) => {
                     ev.stopPropagation();
-                    setEnabled(ev.target.checked);
+                    handleEnabled(ev.target.checked);
                   }}
                 />
                 <Flex ml="4" flexDir="column" minW="280px">

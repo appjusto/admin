@@ -13,6 +13,14 @@ export const OrdersHeader = () => {
   // state
   const [isOpen, setIsOpen] = React.useState(false);
 
+  // helpers
+  const isEnabled = business?.enabled ?? false;
+  let statusMessage = 'Para habilitar, é preciso ir até perfil do restaurante e ligá-lo';
+  if (isEnabled) {
+    if (isOpen) statusMessage = 'Aceitando pedidos';
+    else statusMessage = 'Clique para abrir o restaurante e receber pedidos';
+  }
+
   let managerEmail = '';
   if (business?.managers) {
     managerEmail = business?.managers[0];
@@ -28,6 +36,7 @@ export const OrdersHeader = () => {
       <HStack spacing={6}>
         <Flex alignItems="center">
           <Switch
+            isDisabled={!isEnabled}
             isChecked={isOpen}
             onChange={(ev) => {
               ev.stopPropagation();
@@ -38,11 +47,7 @@ export const OrdersHeader = () => {
             <Text fontSize="16px" fontWeight="700" lineHeight="22px">
               {isOpen ? t('Restaurante aberto') : t('Restaurante fechado')}
             </Text>
-            <Text fontSize="xs">
-              {isOpen
-                ? t('Aceitando pedidos')
-                : t('Clique para abrir o restaurante e receber pedidos')}
-            </Text>
+            <Text fontSize="xs">{statusMessage}</Text>
           </Flex>
         </Flex>
       </HStack>
