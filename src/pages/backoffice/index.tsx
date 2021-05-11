@@ -1,6 +1,7 @@
+import { useContextAgentProfile } from 'app/state/agent/context';
 import PageLayout from 'pages/PageLayout';
 import React from 'react';
-import { Route, Switch, useRouteMatch } from 'react-router-dom';
+import { Redirect, Route, Switch, useRouteMatch } from 'react-router-dom';
 import { AgentProfile } from './agent/AgentProfile';
 import AgentsPage from './agents/AgentsPage';
 import BusinessesPage from './businesses';
@@ -12,9 +13,11 @@ import OrdersPage from './orders';
 const BackOffice = () => {
   // context
   const { path } = useRouteMatch();
+  const { role } = useContextAgentProfile();
   // handlers
 
   // UI
+  if (role === 'courier-manager') return <Redirect to="/couriers" push />;
   return (
     <Switch>
       <PageLayout maxW="1024px">
