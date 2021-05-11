@@ -8,8 +8,8 @@ import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
 
 interface BusinessLiveProps {
-  status: BusinessStatus | undefined;
-  enabled: boolean | undefined;
+  status?: BusinessStatus;
+  enabled?: boolean;
 }
 
 export const BusinessLive = ({ status, enabled }: BusinessLiveProps) => {
