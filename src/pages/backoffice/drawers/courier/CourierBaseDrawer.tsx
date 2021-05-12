@@ -73,7 +73,7 @@ export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDr
       bankAccount: courier?.bankAccount,
       situation: courier?.situation,
       profileIssues: courier?.profileIssues,
-      profileIssuesMessage: courier?.profileIssuesMessage,
+      profileIssuesMessage: courier?.profileIssuesMessage ?? '',
     });
   };
 
@@ -162,7 +162,6 @@ export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDr
           <DrawerFooter borderTop="1px solid #F2F6EA">
             <HStack w="full" spacing={4}>
               <Button
-                type="submit"
                 width="full"
                 maxW="240px"
                 fontSize="15px"

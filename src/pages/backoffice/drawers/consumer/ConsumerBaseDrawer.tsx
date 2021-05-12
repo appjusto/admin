@@ -63,7 +63,7 @@ export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
       phone: consumer?.phone,
       cpf: consumer?.cpf,
       situation: consumer?.situation,
-      profileIssuesMessage: consumer?.profileIssuesMessage,
+      profileIssuesMessage: consumer?.profileIssuesMessage ?? '',
     });
   };
 
@@ -132,7 +132,6 @@ export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
           <DrawerFooter borderTop="1px solid #F2F6EA">
             <HStack w="full" spacing={4}>
               <Button
-                type="submit"
                 width="full"
                 maxW="240px"
                 fontSize="15px"
