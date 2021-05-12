@@ -13,6 +13,7 @@ import { Cancelation } from './Cancelation';
 import { CookingTime } from './CookingTime';
 import { DeliveryInfos } from './DeliveryInfos';
 import { OrderDetails } from './OrderDetails';
+import { OrderIssuesTable } from './OrderIssuesTable';
 
 interface Props {
   isOpen: boolean;
@@ -111,6 +112,7 @@ export const OrderDrawer = (props: Props) => {
               </Text>
             </>
           )}
+          {orderIssues && <OrderIssuesTable issues={orderIssues} />}
           {(order?.status === 'confirmed' || order?.status === 'preparing') && (
             <CookingTime orderId={order.id} cookingTime={order.cookingTime} />
           )}

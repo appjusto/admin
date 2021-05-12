@@ -5,6 +5,7 @@ import { useContextAgentProfile } from 'app/state/agent/context';
 import { ConsumerProvider } from 'app/state/consumer/context';
 import { Issue, IssueType, OrderStatus, WithId } from 'appjusto-types';
 import { OrderDetails } from 'pages/orders/drawers/orderdrawer/OrderDetails';
+import { OrderIssuesTable } from 'pages/orders/drawers/orderdrawer/OrderIssuesTable';
 import React from 'react';
 import { Route, Switch, useParams, useRouteMatch } from 'react-router-dom';
 import { OrderBaseDrawer } from './OrderBaseDrawer';
@@ -99,7 +100,10 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
             <Participants order={order} />
           </Route>
           <Route exact path={`${path}/order`}>
-            <OrderDetails order={order} />
+            <>
+              <OrderDetails order={order} />
+              <OrderIssuesTable issues={orderIssues} />
+            </>
           </Route>
           <Route exact path={`${path}/status`}>
             <OrderStatusBar
