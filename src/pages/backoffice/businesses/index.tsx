@@ -39,6 +39,11 @@ const BusinessesPage = () => {
     history.replace(path);
   };
 
+  const clearSearchAndFilter = () => {
+    setSearch('');
+    setFilterBar('all');
+  };
+
   // side effects
   React.useEffect(() => {
     const { date, time } = getDateTime();
@@ -48,11 +53,10 @@ const BusinessesPage = () => {
   React.useEffect(() => {
     let barArray = [] as BusinessesFilter[];
     if (filterBar === 'all') barArray = [] as BusinessesFilter[];
-    else if (filterBar === 'submitted')
+    else if (filterBar === 'pending')
       barArray = [
-        { type: 'situation', value: 'invalid' },
-        { type: 'situation', value: 'verified' },
-        { type: 'situation', value: 'rejected' },
+        { type: 'situation', value: 'submitted' },
+        { type: 'situation', value: 'pending' },
       ];
     /*else if (filterBar === 'pending')
       barArray = [
@@ -82,23 +86,18 @@ const BusinessesPage = () => {
           label={t('Buscar')}
           placeholder={t('Buscar por ID, nome ou e-mail do administrador')}
         />
-        {/*<CustomInput
-          mt="0"
-          id="search-name"
-          value={searchName}
-          onChange={(event) => setSearchName(event.target.value)}
-          label={t('Nome')}
-          placeholder={t('Nome do restaurante')}
-        />
-        <CustomInput
-          mt="0"
-          id="search-manager"
-          value={searchManager}
-          onChange={(event) => setSearchManager(event.target.value)}
-          label={t('Administrador')}
-          placeholder={t('Nome do responsável')}
-        />
-        <CustomButton maxW="200px" label={t('Filtrar resultados')} />*/}
+        <HStack
+          spacing={2}
+          w="300px"
+          color="#697667"
+          cursor="pointer"
+          onClick={clearSearchAndFilter}
+        >
+          <DeleteIcon />
+          <Text fontSize="15px" lineHeight="21px">
+            {t('Limpar busca/filtro')}
+          </Text>
+        </HStack>
       </HStack>
       <Flex mt="8" w="100%" justifyContent="space-between" borderBottom="1px solid #C8D7CB">
         <HStack spacing={4}>
@@ -112,13 +111,25 @@ const BusinessesPage = () => {
             isActive={filterBar === 'approved' ? true : false}
             onClick={() => setFilterBar('approved')}
           >
-            {t('Ativos')}
+            {t('Publicados')}
           </FilterText>
           <FilterText
-            isActive={filterBar === 'submitted' ? true : false}
-            onClick={() => setFilterBar('submitted')}
+            isActive={filterBar === 'verified' ? true : false}
+            onClick={() => setFilterBar('verified')}
           >
-            {t('Aguardando aprovação')}
+            {t('Verificados')}
+          </FilterText>
+          <FilterText
+            isActive={filterBar === 'invalid' ? true : false}
+            onClick={() => setFilterBar('invalid')}
+          >
+            {t('Inválidos')}
+          </FilterText>
+          <FilterText
+            isActive={filterBar === 'rejected' ? true : false}
+            onClick={() => setFilterBar('rejected')}
+          >
+            {t('Rejeitados')}
           </FilterText>
           <FilterText
             isActive={filterBar === 'pending' ? true : false}
@@ -132,12 +143,6 @@ const BusinessesPage = () => {
           >
             {t('Bloqueados')}
           </FilterText>
-        </HStack>
-        <HStack spacing={2} color="#697667" cursor="pointer" onClick={() => setFilterBar('all')}>
-          <DeleteIcon />
-          <Text fontSize="15px" lineHeight="21px">
-            {t('Limpar filtro')}
-          </Text>
         </HStack>
       </Flex>
       <HStack mt="6" spacing={8} color="black">
@@ -156,14 +161,14 @@ const BusinessesPage = () => {
             fontSize="16px"
             lineHeight="22px"
           >
-            <Checkbox iconColor="white" value="approved">
-              {t('Publicados')}
+            <Checkbox iconColor="white" value="verified">
+              {t('Verificados')}
             </Checkbox>
-            <Checkbox iconColor="white" value="pending">
-              {t('Pendentes')}
+            <Checkbox iconColor="white" value="invalid">
+              {t('Inválidos')}
             </Checkbox>
-            <Checkbox iconColor="white" value="enabled">
-              {t('Live')}
+            <Checkbox iconColor="white" value="rejected">
+              {t('Rejeitados')}
             </Checkbox>
           </HStack>
         </CheckboxGroup>*/}
