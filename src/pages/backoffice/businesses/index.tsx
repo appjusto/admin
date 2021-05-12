@@ -11,6 +11,7 @@ import { t } from 'utils/i18n';
 import { FilterText } from '../../../common/components/backoffice/FilterText';
 import PageHeader from '../../PageHeader';
 import { BusinessDrawer } from '../drawers/business';
+import { StateAndCityFilter } from '../StateAndCityFilter';
 import { BusinessesTable } from './BusinessesTable';
 
 const BusinessesPage = () => {
@@ -21,6 +22,8 @@ const BusinessesPage = () => {
   // state
   const [dateTime, setDateTime] = React.useState('');
   const [search, setSearch] = React.useState('');
+  const [state, setState] = React.useState('');
+  const [city, setCity] = React.useState('');
   //const [searchName, setSearchName] = React.useState('');
   //const [searchManager, setSearchManager] = React.useState('');
   const [filterBar, setFilterBar] = React.useState('all');
@@ -41,8 +44,34 @@ const BusinessesPage = () => {
 
   const clearSearchAndFilter = () => {
     setSearch('');
+    setState('');
+    setCity('');
     setFilterBar('all');
   };
+
+  const handleFilters = React.useCallback(() => {
+    // state and city
+    let stateArray = [] as BusinessesFilter[];
+    let cityArray = [] as BusinessesFilter[];
+    if (state !== '') {
+      stateArray = [{ type: 'businessAddress.state', value: state }];
+    }
+    if (city !== '') {
+      cityArray = [{ type: 'businessAddress.city', value: city }];
+    }
+    // situation
+    let situationArray = [] as BusinessesFilter[];
+    if (filterBar === 'all') {
+      situationArray = situationArray.filter((filter) => filter.type !== 'situation');
+    } else if (filterBar === 'pending')
+      situationArray = [
+        { type: 'situation', value: 'submitted' },
+        { type: 'situation', value: 'pending' },
+      ];
+    else situationArray = [{ type: 'situation', value: filterBar }];
+    // create filters
+    setFilters([...stateArray, ...cityArray, ...situationArray]);
+  }, [filterBar, state, city]);
 
   // side effects
   React.useEffect(() => {
@@ -51,26 +80,8 @@ const BusinessesPage = () => {
   }, []);
 
   React.useEffect(() => {
-    let barArray = [] as BusinessesFilter[];
-    if (filterBar === 'all') barArray = [] as BusinessesFilter[];
-    else if (filterBar === 'pending')
-      barArray = [
-        { type: 'situation', value: 'submitted' },
-        { type: 'situation', value: 'pending' },
-      ];
-    /*else if (filterBar === 'pending')
-      barArray = [
-        { type: 'situation', value: 'invalid' },
-        { type: 'situation', value: 'verified' },
-        { type: 'situation', value: 'rejected' },
-      ];*/ else
-      barArray = [{ type: 'situation', value: filterBar }];
-    /*let checkArray = filterCheck.map((filter) => {
-      if (filter === 'enabled') return { type: 'enabled', value: 'true' };
-      else return { type: 'situation', value: filter };
-    }) as BusinessesFilter[];*/
-    setFilters([...barArray]);
-  }, [filterBar]);
+    handleFilters();
+  }, [state, city, filterBar]);
 
   // UI
   return (
@@ -79,12 +90,19 @@ const BusinessesPage = () => {
       <HStack mt="8" spacing={4}>
         <CustomInput
           mt="0"
-          w="400px"
+          mr="0"
+          w="100%"
           id="search-id"
           value={search}
           onChange={(event) => setSearch(event.target.value)}
           label={t('Buscar')}
           placeholder={t('Buscar por ID, nome ou e-mail do administrador')}
+        />
+        <StateAndCityFilter
+          state={state}
+          handleStateChange={setState}
+          city={city}
+          handleCityChange={setCity}
         />
         <HStack
           spacing={2}
