@@ -48,9 +48,8 @@ const CouriersPage = () => {
     if (filterBar === 'all') barArray = [] as SituationFilter[];
     else if (filterBar === 'pending')
       barArray = [
+        { type: 'situation', value: 'submitted' },
         { type: 'situation', value: 'pending' },
-        { type: 'situation', value: 'invalid' },
-        { type: 'situation', value: 'rejected' },
       ];
     else barArray = [{ type: 'situation', value: filterBar }];
     setFilters([...barArray]);
@@ -83,7 +82,19 @@ const CouriersPage = () => {
             isActive={filterBar === 'approved' ? true : false}
             onClick={() => setFilterBar('approved')}
           >
-            {t('Ativos')}
+            {t('Aprovados')}
+          </FilterText>
+          <FilterText
+            isActive={filterBar === 'verified' ? true : false}
+            onClick={() => setFilterBar('verified')}
+          >
+            {t('Verificados')}
+          </FilterText>
+          <FilterText
+            isActive={filterBar === 'invalid' ? true : false}
+            onClick={() => setFilterBar('invalid')}
+          >
+            {t('Inválidos')}
           </FilterText>
           <FilterText
             isActive={filterBar === 'pending' ? true : false}

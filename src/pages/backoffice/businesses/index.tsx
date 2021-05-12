@@ -111,7 +111,7 @@ const BusinessesPage = () => {
             isActive={filterBar === 'approved' ? true : false}
             onClick={() => setFilterBar('approved')}
           >
-            {t('Publicados')}
+            {t('Aprovados')}
           </FilterText>
           <FilterText
             isActive={filterBar === 'verified' ? true : false}
