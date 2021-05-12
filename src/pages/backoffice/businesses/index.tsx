@@ -113,7 +113,7 @@ const BusinessesPage = () => {
         >
           <DeleteIcon />
           <Text fontSize="15px" lineHeight="21px">
-            {t('Limpar busca/filtro')}
+            {t('Limpar busca/filtros')}
           </Text>
         </HStack>
       </HStack>

@@ -33,14 +33,16 @@ export default class SearchApi {
   }
 
   private createBusinessesFilters(filters?: BusinessesFilter[]) {
-    return filters
+    const situationFilter = filters
       ?.reduce<string[]>((result, filter) => {
-        /*if (filter.type === 'enabled') {
-          return [...result, `enabled: ${filter.value}`];
-        } else */
-        if (filter.type === 'situation') {
-          return [...result, `situation: ${filter.value}`];
-        } else if (filter.type === 'businessAddress.state') {
+        if (filter.type === 'situation') return [...result, `situation: ${filter.value}`];
+        return result;
+      }, [])
+      .join(' OR ');
+
+    const placeFilter = filters
+      ?.reduce<string[]>((result, filter) => {
+        if (filter.type === 'businessAddress.state') {
           return [...result, `businessAddress.state: ${filter.value}`];
         } else if (filter.type === 'businessAddress.city') {
           return [...result, `businessAddress.city: ${filter.value}`];
@@ -48,6 +50,14 @@ export default class SearchApi {
         return result;
       }, [])
       .join(' AND ');
+
+    const getResultFilters = () => {
+      let AND = '';
+      if (situationFilter !== '' && placeFilter !== '') AND = ' AND ';
+      return `${situationFilter}${AND}${placeFilter}`;
+    };
+
+    return getResultFilters();
   }
 
   businessSearch<T>(
