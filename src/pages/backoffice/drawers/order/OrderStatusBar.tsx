@@ -1,12 +1,14 @@
 import { Box, Flex, Radio, RadioGroup, Text, Textarea } from '@chakra-ui/react';
 import { Issue, IssueType, OrderStatus, WithId } from 'appjusto-types';
 import React from 'react';
+import { orderCancelator } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
 
 interface OrderStatusProps {
   status?: OrderStatus;
-  issue?: WithId<Issue> | null;
+  issue?: Issue | null;
+  cancelatorName?: string;
   message?: string;
   cancelOptions?: WithId<Issue>[] | null;
   updateState(type: string, value: OrderStatus | IssueType | string): void;
@@ -15,12 +17,13 @@ interface OrderStatusProps {
 export const OrderStatusBar = ({
   status,
   issue,
+  cancelatorName,
   message,
   cancelOptions,
   updateState,
 }: OrderStatusProps) => {
-  // state
-
+  // helpers
+  const cancelator = orderCancelator(issue?.type);
   // UI
   return (
     <Box>
@@ -61,9 +64,21 @@ export const OrderStatusBar = ({
       </RadioGroup>
       {status === 'canceled' && (
         <>
-          <SectionTitle>{t('Motivo do cancelamento:')}</SectionTitle>
+          <SectionTitle>{t('Dados do cancelamento:')}</SectionTitle>
           <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
-            {t('Informado:')}{' '}
+            {t('Cancelado por:')}{' '}
+            <Text as="span" fontWeight="500">
+              {cancelator}
+            </Text>
+          </Text>
+          <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+            {t('Nome:')}{' '}
+            <Text as="span" fontWeight="500">
+              {cancelatorName ?? 'N/I'}
+            </Text>
+          </Text>
+          <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+            {t('Motivo informado:')}{' '}
             <Text as="span" fontWeight="500">
               {issue?.title ?? 'N/I'}
             </Text>

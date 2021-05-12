@@ -1,6 +1,6 @@
 import { Box, Button, Flex, Radio, RadioGroup, Text } from '@chakra-ui/react';
 import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';
-import { Issue, WithId } from 'appjusto-types';
+import { Issue, IssueType, WithId } from 'appjusto-types';
 import React from 'react';
 import { t } from 'utils/i18n';
 
@@ -9,9 +9,11 @@ interface CancelationProps {
   handleKeep(): void;
 }
 
+const issueOptionsArray = ['restaurant-cancel'] as IssueType[];
+
 export const Cancelation = ({ handleConfirm, handleKeep }: CancelationProps) => {
   //context
-  const cancelOptions = useIssuesByType(['restaurant-cancel']);
+  const cancelOptions = useIssuesByType(issueOptionsArray);
   // state
   const [options, setOptions] = React.useState<WithId<Issue>[]>(cancelOptions ?? []);
   const [optionId, setOptionId] = React.useState('');
@@ -35,6 +37,7 @@ export const Cancelation = ({ handleConfirm, handleKeep }: CancelationProps) => 
       });
     }
   }, [cancelOptions]);
+  console.log(optionId);
   // UI
   return (
     <Box py="4" px="6" bgColor="#FFF8F8" border="1px solid #DC3545" borderRadius="lg">

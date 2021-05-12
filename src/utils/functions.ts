@@ -261,8 +261,9 @@ export const getCoordinatesMidpoint = (origin: latLng, destination: latLng) => {
 
 export const orderCancelator = (issueIype?: string) => {
   let cancelator = 'N/E';
-  if (issueIype === 'restaurant-cancel') cancelator = 'restaurante';
-  if (issueIype === 'consumer-cancel') cancelator = 'cliente';
-  if (issueIype === 'courier-cancel') cancelator = 'entregador';
+  if (issueIype === 'restaurant-cancel') cancelator = 'Restaurante';
+  if (issueIype === 'consumer-cancel') cancelator = 'Cliente';
+  if (issueIype === 'courier-cancel') cancelator = 'Entregador';
+  if (issueIype === 'agent-order-cancel') cancelator = 'Agente Appjusto';
   return cancelator;
 };

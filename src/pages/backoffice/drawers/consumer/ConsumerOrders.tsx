@@ -26,9 +26,9 @@ const ConsumerOrdersTableItem = ({ order }: ItemPros) => {
 export const ConsumerOrders = () => {
   // context
   const { orders } = useContextConsumerProfile();
-
   // helpers
   const totalOrders = orders.length ?? '0';
+  // UI
   return (
     <>
       <Text fontSize="20px" lineHeight="26px" color="black">

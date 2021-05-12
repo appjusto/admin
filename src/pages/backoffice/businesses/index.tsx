@@ -11,6 +11,7 @@ import { t } from 'utils/i18n';
 import { FilterText } from '../../../common/components/backoffice/FilterText';
 import PageHeader from '../../PageHeader';
 import { BusinessDrawer } from '../drawers/business';
+import { StateAndCityFilter } from '../StateAndCityFilter';
 import { BusinessesTable } from './BusinessesTable';
 
 const BusinessesPage = () => {
@@ -21,6 +22,8 @@ const BusinessesPage = () => {
   // state
   const [dateTime, setDateTime] = React.useState('');
   const [search, setSearch] = React.useState('');
+  const [state, setState] = React.useState('');
+  const [city, setCity] = React.useState('');
   //const [searchName, setSearchName] = React.useState('');
   //const [searchManager, setSearchManager] = React.useState('');
   const [filterBar, setFilterBar] = React.useState('all');
@@ -39,6 +42,37 @@ const BusinessesPage = () => {
     history.replace(path);
   };
 
+  const clearSearchAndFilter = () => {
+    setSearch('');
+    setState('');
+    setCity('');
+    setFilterBar('all');
+  };
+
+  const handleFilters = React.useCallback(() => {
+    // state and city
+    let stateArray = [] as BusinessesFilter[];
+    let cityArray = [] as BusinessesFilter[];
+    if (state !== '') {
+      stateArray = [{ type: 'businessAddress.state', value: state }];
+    }
+    if (city !== '') {
+      cityArray = [{ type: 'businessAddress.city', value: city }];
+    }
+    // situation
+    let situationArray = [] as BusinessesFilter[];
+    if (filterBar === 'all') {
+      situationArray = situationArray.filter((filter) => filter.type !== 'situation');
+    } else if (filterBar === 'pending')
+      situationArray = [
+        { type: 'situation', value: 'submitted' },
+        { type: 'situation', value: 'pending' },
+      ];
+    else situationArray = [{ type: 'situation', value: filterBar }];
+    // create filters
+    setFilters([...stateArray, ...cityArray, ...situationArray]);
+  }, [filterBar, state, city]);
+
   // side effects
   React.useEffect(() => {
     const { date, time } = getDateTime();
@@ -46,27 +80,8 @@ const BusinessesPage = () => {
   }, []);
 
   React.useEffect(() => {
-    let barArray = [] as BusinessesFilter[];
-    if (filterBar === 'all') barArray = [] as BusinessesFilter[];
-    else if (filterBar === 'submitted')
-      barArray = [
-        { type: 'situation', value: 'invalid' },
-        { type: 'situation', value: 'verified' },
-        { type: 'situation', value: 'rejected' },
-      ];
-    /*else if (filterBar === 'pending')
-      barArray = [
-        { type: 'situation', value: 'invalid' },
-        { type: 'situation', value: 'verified' },
-        { type: 'situation', value: 'rejected' },
-      ];*/ else
-      barArray = [{ type: 'situation', value: filterBar }];
-    /*let checkArray = filterCheck.map((filter) => {
-      if (filter === 'enabled') return { type: 'enabled', value: 'true' };
-      else return { type: 'situation', value: filter };
-    }) as BusinessesFilter[];*/
-    setFilters([...barArray]);
-  }, [filterBar]);
+    handleFilters();
+  }, [state, city, filterBar]);
 
   // UI
   return (
@@ -75,30 +90,32 @@ const BusinessesPage = () => {
       <HStack mt="8" spacing={4}>
         <CustomInput
           mt="0"
-          w="400px"
+          mr="0"
+          w="100%"
           id="search-id"
           value={search}
           onChange={(event) => setSearch(event.target.value)}
           label={t('Buscar')}
           placeholder={t('Buscar por ID, nome ou e-mail do administrador')}
         />
-        {/*<CustomInput
-          mt="0"
-          id="search-name"
-          value={searchName}
-          onChange={(event) => setSearchName(event.target.value)}
-          label={t('Nome')}
-          placeholder={t('Nome do restaurante')}
+        <StateAndCityFilter
+          state={state}
+          handleStateChange={setState}
+          city={city}
+          handleCityChange={setCity}
         />
-        <CustomInput
-          mt="0"
-          id="search-manager"
-          value={searchManager}
-          onChange={(event) => setSearchManager(event.target.value)}
-          label={t('Administrador')}
-          placeholder={t('Nome do responsável')}
-        />
-        <CustomButton maxW="200px" label={t('Filtrar resultados')} />*/}
+        <HStack
+          spacing={2}
+          w="300px"
+          color="#697667"
+          cursor="pointer"
+          onClick={clearSearchAndFilter}
+        >
+          <DeleteIcon />
+          <Text fontSize="15px" lineHeight="21px">
+            {t('Limpar busca/filtros')}
+          </Text>
+        </HStack>
       </HStack>
       <Flex mt="8" w="100%" justifyContent="space-between" borderBottom="1px solid #C8D7CB">
         <HStack spacing={4}>
@@ -112,13 +129,25 @@ const BusinessesPage = () => {
             isActive={filterBar === 'approved' ? true : false}
             onClick={() => setFilterBar('approved')}
           >
-            {t('Ativos')}
+            {t('Aprovados')}
           </FilterText>
           <FilterText
-            isActive={filterBar === 'submitted' ? true : false}
-            onClick={() => setFilterBar('submitted')}
+            isActive={filterBar === 'verified' ? true : false}
+            onClick={() => setFilterBar('verified')}
           >
-            {t('Aguardando aprovação')}
+            {t('Verificados')}
+          </FilterText>
+          <FilterText
+            isActive={filterBar === 'invalid' ? true : false}
+            onClick={() => setFilterBar('invalid')}
+          >
+            {t('Inválidos')}
+          </FilterText>
+          <FilterText
+            isActive={filterBar === 'rejected' ? true : false}
+            onClick={() => setFilterBar('rejected')}
+          >
+            {t('Rejeitados')}
           </FilterText>
           <FilterText
             isActive={filterBar === 'pending' ? true : false}
@@ -132,12 +161,6 @@ const BusinessesPage = () => {
           >
             {t('Bloqueados')}
           </FilterText>
-        </HStack>
-        <HStack spacing={2} color="#697667" cursor="pointer" onClick={() => setFilterBar('all')}>
-          <DeleteIcon />
-          <Text fontSize="15px" lineHeight="21px">
-            {t('Limpar filtro')}
-          </Text>
         </HStack>
       </Flex>
       <HStack mt="6" spacing={8} color="black">
@@ -156,14 +179,14 @@ const BusinessesPage = () => {
             fontSize="16px"
             lineHeight="22px"
           >
-            <Checkbox iconColor="white" value="approved">
-              {t('Publicados')}
+            <Checkbox iconColor="white" value="verified">
+              {t('Verificados')}
             </Checkbox>
-            <Checkbox iconColor="white" value="pending">
-              {t('Pendentes')}
+            <Checkbox iconColor="white" value="invalid">
+              {t('Inválidos')}
             </Checkbox>
-            <Checkbox iconColor="white" value="enabled">
-              {t('Live')}
+            <Checkbox iconColor="white" value="rejected">
+              {t('Rejeitados')}
             </Checkbox>
           </HStack>
         </CheckboxGroup>*/}

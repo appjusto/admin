@@ -28,7 +28,7 @@ export const CouriersTableItem = ({ courier }: ItemProps) => {
         <Icon
           mt="-2px"
           viewBox="0 0 200 200"
-          color={courier?.status === 'available' ? 'green.500' : 'red'}
+          color={courier?.status === 'available' ? 'green.500' : 'gray.50'}
         >
           <path
             fill="currentColor"

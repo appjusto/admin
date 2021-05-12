@@ -73,7 +73,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
       return clearInterval(timeInterval);
     }
     return () => clearInterval(timeInterval);
-  }, [order.id, order.status]);
+  }, [order.id, order.status, getOrderIssues]);
 
   React.useEffect(() => {
     const orderAcceptanceTime = business?.orderAcceptanceTime

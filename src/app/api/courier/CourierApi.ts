@@ -1,5 +1,4 @@
 import { CourierProfile, Fleet, WithId } from 'appjusto-types';
-import { documentsAs } from 'core/fb';
 import FilesApi from '../FilesApi';
 import FirebaseRefs from '../FirebaseRefs';
 

@@ -74,7 +74,7 @@ const ConsumersPage = () => {
             isActive={filterBar === 'approved' ? true : false}
             onClick={() => setFilterBar('approved')}
           >
-            {t('Ativos')}
+            {t('Aprovados')}
           </FilterText>
           <FilterText
             isActive={filterBar === 'blocked' ? true : false}

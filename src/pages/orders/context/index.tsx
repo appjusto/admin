@@ -153,12 +153,12 @@ export const OrdersContextProvider = (props: ProviderProps) => {
     await api.order().updateOrder(orderId, { cookingTime });
   };
 
-  const getOrderIssues = (
-    orderId: string,
-    resultHandler: (orderIssues: WithId<OrderIssue>[]) => void
-  ) => {
-    api.order().observeOrderIssues(orderId, resultHandler);
-  };
+  const getOrderIssues = React.useCallback(
+    (orderId: string, resultHandler: (orderIssues: WithId<OrderIssue>[]) => void) => {
+      api.order().observeOrderIssues(orderId, resultHandler);
+    },
+    [api]
+  );
 
   // side effects
   React.useEffect(() => {
