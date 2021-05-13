@@ -1,7 +1,7 @@
 export type SearchKind = 'businesses' | 'couriers' | 'consumers' | 'orders';
 //export type SearchOrder = 'distance' | 'price' | 'preparation-time' | 'popularity';
 export type BusinessesFilter = {
-  type: 'enabled' | 'situation' | 'businessAddress.state' | 'businessAddress.city';
+  type: 'enabled' | 'situation' | 'businessAddress.state' | 'businessAddress.city' | 'status';
   value: string;
 };
 

@@ -1,8 +1,8 @@
 import { ArrowDownIcon, DeleteIcon } from '@chakra-ui/icons';
-import { Button, Flex, HStack, Text } from '@chakra-ui/react';
+import { Button, Checkbox, CheckboxGroup, Flex, HStack, Text } from '@chakra-ui/react';
 import { BusinessesFilter } from 'app/api/search/types';
 import { useBusinessesSearch } from 'app/api/search/useBusinessesSearch';
-import { BusinessAlgolia } from 'appjusto-types';
+import { BusinessAlgolia, BusinessStatus } from 'appjusto-types';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import React from 'react';
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
@@ -18,16 +18,14 @@ const BusinessesPage = () => {
   // context
   const { path } = useRouteMatch();
   const history = useHistory();
-  //const businesses = useBusinesses(options);
+
   // state
   const [dateTime, setDateTime] = React.useState('');
   const [search, setSearch] = React.useState('');
   const [state, setState] = React.useState('');
   const [city, setCity] = React.useState('');
-  //const [searchName, setSearchName] = React.useState('');
-  //const [searchManager, setSearchManager] = React.useState('');
   const [filterBar, setFilterBar] = React.useState('all');
-  //const [filterCheck, setFilterCheck] = React.useState<string[]>([]);
+  const [filterCheck, setFilterCheck] = React.useState<BusinessStatus[]>(['open', 'closed']);
   const [filters, setFilters] = React.useState<BusinessesFilter[]>([]);
 
   const { results: businesses, fetchNextPage, refetch } = useBusinessesSearch<BusinessAlgolia>(
@@ -69,9 +67,14 @@ const BusinessesPage = () => {
         { type: 'situation', value: 'pending' },
       ];
     else situationArray = [{ type: 'situation', value: filterBar }];
+    // status
+    let statusArray = filterCheck.map((str) => ({
+      type: 'status',
+      value: str,
+    })) as BusinessesFilter[];
     // create filters
-    setFilters([...stateArray, ...cityArray, ...situationArray]);
-  }, [filterBar, state, city]);
+    setFilters([...stateArray, ...cityArray, ...situationArray, ...statusArray]);
+  }, [filterBar, state, city, filterCheck]);
 
   // side effects
   React.useEffect(() => {
@@ -81,7 +84,7 @@ const BusinessesPage = () => {
 
   React.useEffect(() => {
     handleFilters();
-  }, [state, city, filterBar]);
+  }, [state, city, filterBar, filterCheck]);
 
   // UI
   return (
@@ -167,10 +170,10 @@ const BusinessesPage = () => {
         <Text fontSize="lg" fontWeight="700" lineHeight="26px">
           {t(`${businesses?.length ?? '0'} itens na lista`)}
         </Text>
-        {/*<CheckboxGroup
+        <CheckboxGroup
           colorScheme="green"
           value={filterCheck}
-          onChange={(values: string[]) => setFilterCheck(values)}
+          onChange={(values: BusinessStatus[]) => setFilterCheck(values)}
         >
           <HStack
             alignItems="flex-start"
@@ -179,17 +182,14 @@ const BusinessesPage = () => {
             fontSize="16px"
             lineHeight="22px"
           >
-            <Checkbox iconColor="white" value="verified">
-              {t('Verificados')}
+            <Checkbox iconColor="white" value="open">
+              {t('Aberto')}
             </Checkbox>
-            <Checkbox iconColor="white" value="invalid">
-              {t('Inválidos')}
-            </Checkbox>
-            <Checkbox iconColor="white" value="rejected">
-              {t('Rejeitados')}
+            <Checkbox iconColor="white" value="closed">
+              {t('Fechado')}
             </Checkbox>
           </HStack>
-        </CheckboxGroup>*/}
+        </CheckboxGroup>
       </HStack>
       <BusinessesTable businesses={businesses} />
       <Button mt="8" variant="grey" onClick={fetchNextPage}>

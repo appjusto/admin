@@ -51,10 +51,18 @@ export default class SearchApi {
       }, [])
       .join(' AND ');
 
+    const statusFilter = filters
+      ?.reduce<string[]>((result, filter) => {
+        if (filter.type === 'status') return [...result, `status: ${filter.value}`];
+        return result;
+      }, [])
+      .join(' OR ');
+
     const getResultFilters = () => {
-      let AND = '';
-      if (situationFilter !== '' && placeFilter !== '') AND = ' AND ';
-      return `${situationFilter}${AND}${placeFilter}`;
+      const filters = [situationFilter, placeFilter, statusFilter]
+        .filter((str) => str !== '')
+        .join(' AND ');
+      return filters;
     };
 
     return getResultFilters();
