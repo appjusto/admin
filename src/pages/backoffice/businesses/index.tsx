@@ -40,7 +40,7 @@ const BusinessesPage = () => {
     history.replace(path);
   };
 
-  const clearSearchAndFilter = () => {
+  const clearSearchAndFilters = () => {
     setSearch('');
     setState('');
     setCity('');
@@ -59,14 +59,12 @@ const BusinessesPage = () => {
     }
     // situation
     let situationArray = [] as BusinessesFilter[];
-    if (filterBar === 'all') {
-      situationArray = situationArray.filter((filter) => filter.type !== 'situation');
-    } else if (filterBar === 'pending')
+    if (filterBar === 'pending')
       situationArray = [
         { type: 'situation', value: 'submitted' },
         { type: 'situation', value: 'pending' },
       ];
-    else situationArray = [{ type: 'situation', value: filterBar }];
+    else if (filterBar !== 'all') situationArray = [{ type: 'situation', value: filterBar }];
     // status
     let statusArray = filterCheck.map((str) => ({
       type: 'status',
@@ -84,7 +82,7 @@ const BusinessesPage = () => {
 
   React.useEffect(() => {
     handleFilters();
-  }, [state, city, filterBar, filterCheck]);
+  }, [state, city, filterBar, filterCheck, handleFilters]);
 
   // UI
   return (
@@ -107,18 +105,6 @@ const BusinessesPage = () => {
           city={city}
           handleCityChange={setCity}
         />
-        <HStack
-          spacing={2}
-          w="300px"
-          color="#697667"
-          cursor="pointer"
-          onClick={clearSearchAndFilter}
-        >
-          <DeleteIcon />
-          <Text fontSize="15px" lineHeight="21px">
-            {t('Limpar busca/filtros')}
-          </Text>
-        </HStack>
       </HStack>
       <Flex mt="8" w="100%" justifyContent="space-between" borderBottom="1px solid #C8D7CB">
         <HStack spacing={4}>
@@ -164,6 +150,12 @@ const BusinessesPage = () => {
           >
             {t('Bloqueados')}
           </FilterText>
+          <HStack spacing={2} color="#697667" cursor="pointer" onClick={clearSearchAndFilters}>
+            <DeleteIcon />
+            <Text fontSize="15px" lineHeight="21px">
+              {t('Limpar busca/filtros')}
+            </Text>
+          </HStack>
         </HStack>
       </Flex>
       <HStack mt="6" spacing={8} color="black">

@@ -5,8 +5,8 @@ export type BusinessesFilter = {
   value: string;
 };
 
-export type SituationFilter = {
-  type: 'situation';
+export type BasicUserFilter = {
+  type: 'situation' | 'courierAddress.state' | 'courierAddress.city';
   value: string;
 };
 

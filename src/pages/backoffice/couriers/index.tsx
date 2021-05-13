@@ -1,6 +1,6 @@
 import { ArrowDownIcon, DeleteIcon } from '@chakra-ui/icons';
 import { Button, Flex, HStack, Text } from '@chakra-ui/react';
-import { SituationFilter } from 'app/api/search/types';
+import { BasicUserFilter } from 'app/api/search/types';
 import { useBasicUsersSearch } from 'app/api/search/useBasicUsersSearch';
 import { CourierAlgolia } from 'appjusto-types';
 import { FilterText } from 'common/components/backoffice/FilterText';
@@ -11,6 +11,7 @@ import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import PageHeader from '../../PageHeader';
 import { CourierDrawer } from '../drawers/courier';
+import { StateAndCityFilter } from '../StateAndCityFilter';
 import { CouriersTable } from './CouriersTable';
 
 const CouriersPage = () => {
@@ -20,9 +21,10 @@ const CouriersPage = () => {
   // state
   const [dateTime, setDateTime] = React.useState('');
   const [search, setSearch] = React.useState('');
-
+  const [state, setState] = React.useState('');
+  const [city, setCity] = React.useState('');
   const [filterBar, setFilterBar] = React.useState('all');
-  const [filters, setFilters] = React.useState<SituationFilter[]>([]);
+  const [filters, setFilters] = React.useState<BasicUserFilter[]>([]);
 
   const { results: couriers, fetchNextPage, refetch } = useBasicUsersSearch<CourierAlgolia>(
     true,
@@ -37,6 +39,35 @@ const CouriersPage = () => {
     history.replace(path);
   };
 
+  const clearSearchAndFilters = () => {
+    setSearch('');
+    setState('');
+    setCity('');
+    setFilterBar('all');
+  };
+
+  const handleFilters = React.useCallback(() => {
+    // state and city
+    let stateArray = [] as BasicUserFilter[];
+    let cityArray = [] as BasicUserFilter[];
+    if (state !== '') {
+      stateArray = [{ type: 'courierAddress.state', value: state }];
+    }
+    if (city !== '') {
+      cityArray = [{ type: 'courierAddress.city', value: city }];
+    }
+    // situation
+    let situationArray = [] as BasicUserFilter[];
+    if (filterBar === 'pending')
+      situationArray = [
+        { type: 'situation', value: 'submitted' },
+        { type: 'situation', value: 'pending' },
+      ];
+    else if (filterBar !== 'all') situationArray = [{ type: 'situation', value: filterBar }];
+    // create filters
+    setFilters([...stateArray, ...cityArray, ...situationArray]);
+  }, [state, city, filterBar]);
+
   // side effects
   React.useEffect(() => {
     const { date, time } = getDateTime();
@@ -44,32 +75,30 @@ const CouriersPage = () => {
   }, []);
 
   React.useEffect(() => {
-    let barArray = [] as SituationFilter[];
-    if (filterBar === 'all') barArray = [] as SituationFilter[];
-    else if (filterBar === 'pending')
-      barArray = [
-        { type: 'situation', value: 'submitted' },
-        { type: 'situation', value: 'pending' },
-      ];
-    else barArray = [{ type: 'situation', value: filterBar }];
-    setFilters([...barArray]);
-  }, [filterBar]);
+    handleFilters();
+  }, [state, city, filterBar, handleFilters]);
 
   // UI
   return (
     <>
       <PageHeader title={t('Entregadores')} subtitle={t(`Atualizado ${dateTime}`)} />
-      <Flex mt="8" justifyContent="space-between">
+      <HStack mt="8" spacing={4}>
         <CustomInput
           mt="0"
-          w="400px"
+          w="100%"
           id="search-id"
           value={search}
           onChange={(event) => setSearch(event.target.value)}
           label={t('Buscar')}
           placeholder={t('Buscar por ID, nome ou e-mail')}
         />
-      </Flex>
+        <StateAndCityFilter
+          state={state}
+          handleStateChange={setState}
+          city={city}
+          handleCityChange={setCity}
+        />
+      </HStack>
       <Flex mt="8" w="100%" justifyContent="space-between" borderBottom="1px solid #C8D7CB">
         <HStack spacing={4}>
           <FilterText
@@ -109,10 +138,10 @@ const CouriersPage = () => {
             {t('Bloqueados')}
           </FilterText>
         </HStack>
-        <HStack spacing={2} color="#697667" cursor="pointer" onClick={() => setFilterBar('all')}>
+        <HStack spacing={2} color="#697667" cursor="pointer" onClick={clearSearchAndFilters}>
           <DeleteIcon />
           <Text fontSize="15px" lineHeight="21px">
-            {t('Limpar filtro')}
+            {t('Limpar busca/filtros')}
           </Text>
         </HStack>
       </Flex>
