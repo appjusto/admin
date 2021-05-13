@@ -18,6 +18,8 @@ const OrdersPage = () => {
   const history = useHistory();
   // handlers
   const closeDrawerHandler = () => history.replace(path);
+
+  // UI
   if (business?.situation !== 'approved') {
     return <Redirect to="/app" push />;
   }

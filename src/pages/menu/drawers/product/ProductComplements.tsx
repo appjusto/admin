@@ -6,14 +6,6 @@ import { t } from 'utils/i18n';
 import { GroupForm } from './groups/GroupForm';
 import { Groups } from './groups/Groups';
 
-const options = [
-  {
-    id: 'teste',
-    value: 'teste1',
-    name: 'Grupo teste 1',
-  },
-];
-
 export const ProductComplements = () => {
   //context
   const { url } = useRouteMatch();

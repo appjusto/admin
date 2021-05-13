@@ -1,6 +1,6 @@
 import {
   ChatMessage,
-  FoodOrderStatus,
+  //FoodOrderStatus,
   Issue,
   Order,
   OrderIssue,
@@ -10,6 +10,12 @@ import {
 import { documentAs, documentsAs } from 'core/fb';
 import firebase from 'firebase/app';
 import FirebaseRefs from '../FirebaseRefs';
+
+export type CancellationData = {
+  issue: WithId<Issue>;
+  canceledBy: { id: string; name: string };
+  comment?: string;
+};
 
 //export const ActiveFoodOrdersValues: FoodOrderStatus[] = [
 //  'confirmed',
@@ -131,7 +137,13 @@ export default class OrderApi {
 
   async fetchOrdersByConsumerId(consumerId: string) {
     return documentsAs<Order>(
-      (await this.refs.getOrdersRef().where('consumer.id', '==', consumerId).get()).docs
+      (
+        await this.refs
+          .getOrdersRef()
+          .orderBy('createdOn', 'desc')
+          .where('consumer.id', '==', consumerId)
+          .get()
+      ).docs
     );
   }
 
@@ -155,12 +167,15 @@ export default class OrderApi {
     });
   }
 
-  async cancelOrder(orderId: string, issue: WithId<Issue>, comment?: string) {
+  async cancelOrder(orderId: string, cancellationData: CancellationData) {
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
     await this.refs.getOrderRef(orderId).update({
       status: 'canceled',
+      cancellation: {
+        ...cancellationData,
+        timestamp,
+      },
       updatedOn: timestamp,
     });
-    await this.refs.getOrderIssuesRef(orderId).add({ createdOn: timestamp, issue, comment });
   }
 }

@@ -19,9 +19,9 @@ export const BusinessesTable = ({ businesses }: BusinessesTableProps) => {
             <Th>{t('ID')}</Th>
             <Th>{t('Data do onboarding')}</Th>
             <Th>{t('Nome do restaurante')}</Th>
-            <Th>{t('Status')}</Th>
+            <Th>{t('Situação')}</Th>
             <Th>{t('Etapa')}</Th>
-            <Th>{t('Live')}</Th>
+            <Th>{t('Ligado')}</Th>
             <Th></Th>
           </Tr>
         </Thead>

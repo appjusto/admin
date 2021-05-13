@@ -1,12 +1,12 @@
 export type SearchKind = 'businesses' | 'couriers' | 'consumers' | 'orders';
 //export type SearchOrder = 'distance' | 'price' | 'preparation-time' | 'popularity';
 export type BusinessesFilter = {
-  type: 'enabled' | 'situation';
+  type: 'enabled' | 'situation' | 'businessAddress.state' | 'businessAddress.city' | 'status';
   value: string;
 };
 
-export type SituationFilter = {
-  type: 'situation';
+export type BasicUserFilter = {
+  type: 'situation' | 'courierAddress.state' | 'courierAddress.city';
   value: string;
 };
 

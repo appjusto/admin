@@ -1,6 +1,6 @@
 import { ArrowDownIcon, DeleteIcon } from '@chakra-ui/icons';
 import { Button, Flex, HStack, Text } from '@chakra-ui/react';
-import { SituationFilter } from 'app/api/search/types';
+import { BasicUserFilter } from 'app/api/search/types';
 import { useBasicUsersSearch } from 'app/api/search/useBasicUsersSearch';
 import { ConsumerAlgolia } from 'appjusto-types';
 import { FilterText } from 'common/components/backoffice/FilterText';
@@ -22,7 +22,7 @@ const ConsumersPage = () => {
   const [search, setSearch] = React.useState('');
 
   const [filterBar, setFilterBar] = React.useState('all');
-  const [filters, setFilters] = React.useState<SituationFilter[]>([]);
+  const [filters, setFilters] = React.useState<BasicUserFilter[]>([]);
 
   const { results: consumers, fetchNextPage } = useBasicUsersSearch<ConsumerAlgolia>(
     true,
@@ -41,8 +41,8 @@ const ConsumersPage = () => {
   }, []);
 
   React.useEffect(() => {
-    let barArray = [] as SituationFilter[];
-    if (filterBar === 'all') barArray = [] as SituationFilter[];
+    let barArray = [] as BasicUserFilter[];
+    if (filterBar === 'all') barArray = [] as BasicUserFilter[];
     else barArray = [{ type: 'situation', value: filterBar }];
     setFilters([...barArray]);
   }, [filterBar]);
@@ -74,7 +74,7 @@ const ConsumersPage = () => {
             isActive={filterBar === 'approved' ? true : false}
             onClick={() => setFilterBar('approved')}
           >
-            {t('Ativos')}
+            {t('Aprovados')}
           </FilterText>
           <FilterText
             isActive={filterBar === 'blocked' ? true : false}

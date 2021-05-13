@@ -8,8 +8,8 @@ import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
 
 interface BusinessLiveProps {
-  status: BusinessStatus | undefined;
-  enabled: boolean | undefined;
+  status?: BusinessStatus;
+  enabled?: boolean;
 }
 
 export const BusinessLive = ({ status, enabled }: BusinessLiveProps) => {
@@ -17,24 +17,28 @@ export const BusinessLive = ({ status, enabled }: BusinessLiveProps) => {
   const { updateBusinessProfile, updateResult: result } = useBusinessProfile();
   const { isLoading, isSuccess, isError } = result;
   // state
-  const [isOpen, setIsOpen] = React.useState<BusinessStatus>('closed');
-  const [isEnabled, setIsEnabled] = React.useState('false');
-
+  const [isOpen, setIsOpen] = React.useState<BusinessStatus>(status ?? 'closed');
+  const [isEnabled, setIsEnabled] = React.useState(enabled ? 'true' : 'false');
   // handlers
-  // handleSubmit => updateBusinessProfile with id
+  const handleEnabled = (enabled: string) => {
+    if (enabled === 'true') setIsEnabled(enabled);
+    else {
+      setIsOpen('closed');
+      setIsEnabled('false');
+    }
+  };
   const onSubmitHandler = () => {
     updateBusinessProfile({
       status: isOpen,
       enabled: isEnabled === 'true' ? true : false,
     });
   };
-
   // side effects
   React.useEffect(() => {
     if (status) setIsOpen(status);
   }, [status]);
   React.useEffect(() => {
-    if (enabled) setIsEnabled(enabled.toString());
+    if (enabled !== undefined) setIsEnabled(enabled.toString());
   }, [enabled]);
   // UI
   return (
@@ -47,7 +51,9 @@ export const BusinessLive = ({ status, enabled }: BusinessLiveProps) => {
       <SectionTitle mt="0">{t('Restaurante agora:')}</SectionTitle>
       <RadioGroup
         mt="2"
-        onChange={(value) => setIsOpen(value as BusinessStatus)}
+        onChange={(value) => {
+          if (isEnabled === 'true') setIsOpen(value as BusinessStatus);
+        }}
         value={isOpen}
         defaultValue="1"
         colorScheme="green"
@@ -70,7 +76,7 @@ export const BusinessLive = ({ status, enabled }: BusinessLiveProps) => {
       </Text>
       <RadioGroup
         mt="2"
-        onChange={(value) => setIsEnabled(value.toString())}
+        onChange={(value) => handleEnabled(value.toString())}
         value={isEnabled}
         defaultValue="1"
         colorScheme="green"

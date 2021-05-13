@@ -2,7 +2,7 @@ import { Role } from 'appjusto-types';
 import React from 'react';
 import { useFirebaseUser } from './useFirebaseUser';
 
-const backofficeRoles: Role[] = ['owner', 'staff', 'viewer'];
+const backofficeRoles: Role[] = ['owner', 'staff', 'viewer', 'courier-manager'];
 
 export const useFirebaseUserRole = () => {
   // contex

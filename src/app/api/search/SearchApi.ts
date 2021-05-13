@@ -1,6 +1,6 @@
 import algoliasearch, { SearchClient, SearchIndex } from 'algoliasearch/lite';
 import { AlgoliaConfig, Environment, OrderStatus, OrderType } from 'appjusto-types';
-import { BusinessesFilter, SearchKind, SituationFilter } from './types';
+import { BusinessesFilter, SearchKind, BasicUserFilter } from './types';
 import { createNullCache } from '@algolia/cache-common';
 //import { createInMemoryCache } from '@algolia/cache-in-memory';
 
@@ -33,16 +33,39 @@ export default class SearchApi {
   }
 
   private createBusinessesFilters(filters?: BusinessesFilter[]) {
-    return filters
+    const situationFilter = filters
       ?.reduce<string[]>((result, filter) => {
-        if (filter.type === 'enabled') {
-          return [...result, `enabled: ${filter.value}`];
-        } else if (filter.type === 'situation') {
-          return [...result, `situation: ${filter.value}`];
-        }
+        if (filter.type === 'situation') return [...result, `situation: ${filter.value}`];
         return result;
       }, [])
       .join(' OR ');
+
+    const placeFilter = filters
+      ?.reduce<string[]>((result, filter) => {
+        if (filter.type === 'businessAddress.state') {
+          return [...result, `businessAddress.state: ${filter.value}`];
+        } else if (filter.type === 'businessAddress.city') {
+          return [...result, `businessAddress.city: "${filter.value}"`];
+        }
+        return result;
+      }, [])
+      .join(' AND ');
+
+    const statusFilter = filters
+      ?.reduce<string[]>((result, filter) => {
+        if (filter.type === 'status') return [...result, `status: ${filter.value}`];
+        return result;
+      }, [])
+      .join(' OR ');
+
+    const getResultFilters = () => {
+      const filters = [situationFilter, placeFilter, statusFilter]
+        .filter((str) => str !== '')
+        .join(' AND ');
+      return filters;
+    };
+
+    return getResultFilters();
   }
 
   businessSearch<T>(
@@ -100,20 +123,36 @@ export default class SearchApi {
     });
   }
 
-  private createSituationFilters(filters?: SituationFilter[]) {
-    return filters
+  private createBasicUserFilters(filters?: BasicUserFilter[]) {
+    const situationFilter = filters
       ?.reduce<string[]>((result, filter) => {
-        if (filter.type === 'situation') {
-          return [...result, `situation: ${filter.value}`];
-        }
+        if (filter.type === 'situation') return [...result, `situation: ${filter.value}`];
         return result;
       }, [])
       .join(' OR ');
+
+    const placeFilter = filters
+      ?.reduce<string[]>((result, filter) => {
+        if (filter.type === 'courierAddress.state') {
+          return [...result, `courierAddress.state: ${filter.value}`];
+        } else if (filter.type === 'courierAddress.city') {
+          return [...result, `courierAddress.city: "${filter.value}"`];
+        }
+        return result;
+      }, [])
+      .join(' AND ');
+
+    const getResultFilters = () => {
+      const filters = [situationFilter, placeFilter].filter((str) => str !== '').join(' AND ');
+      return filters;
+    };
+
+    return getResultFilters();
   }
 
   basicUserSearch<T>(
     kind: SearchKind,
-    filters: SituationFilter[],
+    filters: BasicUserFilter[],
     query: string = '',
     page?: number,
     hitsPerPage?: number
@@ -123,7 +162,7 @@ export default class SearchApi {
     return index.search<T>(query, {
       page,
       hitsPerPage,
-      filters: this.createSituationFilters(filters),
+      filters: this.createBasicUserFilters(filters),
     });
   }
 }

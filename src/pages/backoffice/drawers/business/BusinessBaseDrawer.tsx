@@ -127,7 +127,9 @@ export const BusinessBaseDrawer = ({
               borderBottom="1px solid #C8D7CB"
             >
               <DrawerLink to={`${url}`} label={t('Cadastro')} />
-              <DrawerLink to={`${url}/live`} label={t('Live')} />
+              {business?.situation === 'approved' && (
+                <DrawerLink to={`${url}/live`} label={t('Live')} />
+              )}
               <DrawerLink to={`${url}/status`} label={t('Status')} />
             </Flex>
             {children}

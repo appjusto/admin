@@ -12,7 +12,6 @@ export const FilterText = ({ isActive, onClick, children, ...props }: FilterProp
     <Text
       pb="2"
       px="4"
-      mr="4"
       fontSize="lg"
       lineHeight="26px"
       fontWeight="500"

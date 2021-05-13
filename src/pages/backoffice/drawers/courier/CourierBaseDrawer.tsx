@@ -14,6 +14,7 @@ import {
 } from '@chakra-ui/react';
 import { useCourierUpdateProfile } from 'app/api/courier/useCourierUpdateProfile';
 import { useContextCourierProfile } from 'app/state/courier/context';
+import { CourierProfile } from 'appjusto-types';
 import { AlertError } from 'common/components/AlertError';
 import { AlertSuccess } from 'common/components/AlertSuccess';
 import { modePTOptions } from 'pages/backoffice/utils';
@@ -64,17 +65,14 @@ export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDr
         message: 'Verificar o preenchimento dos campos',
       });
     }
-    updateProfile({
-      name: courier?.name,
-      surname: courier?.surname,
-      phone: courier?.phone,
-      cpf: courier?.cpf,
-      company: courier?.company,
-      bankAccount: courier?.bankAccount,
-      situation: courier?.situation,
-      profileIssues: courier?.profileIssues,
-      profileIssuesMessage: courier?.profileIssuesMessage,
-    });
+    const newState = {} as CourierProfile;
+    courier &&
+      Object.keys(courier).forEach((key) => {
+        //@ts-ignore
+        if (courier[key]) newState[key] = courier[key];
+      });
+
+    updateProfile(newState);
   };
 
   // side effects
@@ -162,7 +160,6 @@ export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDr
           <DrawerFooter borderTop="1px solid #F2F6EA">
             <HStack w="full" spacing={4}>
               <Button
-                type="submit"
                 width="full"
                 maxW="240px"
                 fontSize="15px"
