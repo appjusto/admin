@@ -1,13 +1,14 @@
 import { ArrowBackIcon } from '@chakra-ui/icons';
-import { Box, Flex, HStack, Link, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, HStack, Text } from '@chakra-ui/react';
 import { useContextAgentProfile } from 'app/state/agent/context';
 import React from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 
 export const AgentPersonificationBar = () => {
   // context
+  const history = useHistory();
   const { username } = useContextAgentProfile();
   // state
   const [dateTime, setDateTime] = React.useState('');
@@ -31,9 +32,7 @@ export const AgentPersonificationBar = () => {
     >
       <Box>
         <HStack spacing={4}>
-          <Link
-            as={RouterLink}
-            to="/backoffice"
+          <Button
             w="48px"
             h="48px"
             bg="white"
@@ -41,9 +40,10 @@ export const AgentPersonificationBar = () => {
             justifyContent="center"
             alignItems="center"
             borderRadius="lg"
+            onClick={() => history.goBack()}
           >
             <ArrowBackIcon color="black" w="34px" h="34px" />
-          </Link>
+          </Button>
           <Box>
             <Text fontSize="20px" lineHeight="26px" fontWeight="700">
               {t('Personificando restaurante')}
