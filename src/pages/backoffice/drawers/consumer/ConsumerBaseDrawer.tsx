@@ -13,6 +13,7 @@ import {
 } from '@chakra-ui/react';
 import { useConsumerUpdateProfile } from 'app/api/consumer/useConsumerUpdateProfile';
 import { useContextConsumerProfile } from 'app/state/consumer/context';
+import { ConsumerProfile } from 'appjusto-types';
 import { AlertError } from 'common/components/AlertError';
 import { AlertSuccess } from 'common/components/AlertSuccess';
 import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
@@ -57,14 +58,15 @@ export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
         message: 'Verificar o preenchimento dos campos',
       });
     }
-    updateProfile({
-      name: consumer?.name,
-      surname: consumer?.surname,
-      phone: consumer?.phone,
-      cpf: consumer?.cpf,
-      situation: consumer?.situation,
-      profileIssuesMessage: consumer?.profileIssuesMessage ?? '',
-    });
+
+    const newState = {} as ConsumerProfile;
+    consumer &&
+      Object.keys(consumer).map((key) => {
+        //@ts-ignore
+        if (consumer[key]) newState[key] = consumer[key];
+      });
+
+    updateProfile(newState);
   };
 
   // side effects
