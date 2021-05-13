@@ -2,7 +2,7 @@ import { Text } from '@chakra-ui/react';
 import { CancellationData } from 'app/api/order/OrderApi';
 import { useOrder } from 'app/api/order/useOrder';
 import { useContextManagerProfile } from 'app/state/manager/context';
-import { Issue, OrderIssue, WithId } from 'appjusto-types';
+import { Issue, WithId } from 'appjusto-types';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import React from 'react';
 import { useParams } from 'react-router-dom';
@@ -34,7 +34,7 @@ export const OrderDrawer = (props: Props) => {
 
   // state
   const [isCanceling, setIsCanceling] = React.useState(false);
-  const [orderIssue, setOrderIssue] = React.useState<WithId<OrderIssue>>();
+  //const [orderIssue, setOrderIssue] = React.useState<WithId<OrderIssue>>();
 
   // helpers
   const isCurrierArrived = order?.dispatchingState === 'arrived-pickup';
@@ -62,14 +62,14 @@ export const OrderDrawer = (props: Props) => {
   };
 
   // side effects
-  React.useEffect(() => {
+  /*React.useEffect(() => {
     if (orderIssues) {
       const issue = orderIssues.find((data) =>
         ['courier-cancel', 'consumer-cancel', 'restaurant-cancel'].includes(data.issue.type)
       );
       setOrderIssue(issue);
-    }
-  }, [orderIssues]);
+    };
+  }, [orderIssues]);*/
 
   // UI
   return (

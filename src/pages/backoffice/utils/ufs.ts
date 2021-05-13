@@ -1,4 +1,4 @@
-export default [
+const ufs = [
   {
     id: 12,
     sigla: 'AC',
@@ -270,3 +270,5 @@ export default [
     },
   },
 ];
+
+export default ufs;

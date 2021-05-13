@@ -146,7 +146,7 @@ export default class SearchApi {
       const filters = [situationFilter, placeFilter].filter((str) => str !== '').join(' AND ');
       return filters;
     };
-    console.log(getResultFilters());
+
     return getResultFilters();
   }
 

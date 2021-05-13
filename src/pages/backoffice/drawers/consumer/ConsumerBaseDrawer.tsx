@@ -61,7 +61,7 @@ export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
 
     const newState = {} as ConsumerProfile;
     consumer &&
-      Object.keys(consumer).map((key) => {
+      Object.keys(consumer).forEach((key) => {
         //@ts-ignore
         if (consumer[key]) newState[key] = consumer[key];
       });

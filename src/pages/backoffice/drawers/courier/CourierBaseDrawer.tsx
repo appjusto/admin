@@ -67,7 +67,7 @@ export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDr
     }
     const newState = {} as CourierProfile;
     courier &&
-      Object.keys(courier).map((key) => {
+      Object.keys(courier).forEach((key) => {
         //@ts-ignore
         if (courier[key]) newState[key] = courier[key];
       });
