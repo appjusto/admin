@@ -1,4 +1,4 @@
-import { Box, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
+import { Box, HStack, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
 import { OrderIssue, WithId } from 'appjusto-types';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import React from 'react';
@@ -39,11 +39,21 @@ export const OrderIssuesTable = ({ issues }: OrderIssuesTableProps) => {
                 <Td>{getDateAndHour(issue.createdOn as firebase.firestore.Timestamp)}</Td>
                 <Td>{getParticipant(issue.issue.type)}</Td>
                 <Td>
-                  <Text>{issue.issue.title}</Text>
+                  <Text lineHeight="6px">
+                    {t('Motivo: ')}
+                    <Text as="span" fontWeight="500">
+                      {issue.issue.title}
+                    </Text>
+                  </Text>
                   {issue.comment && (
                     <>
                       <br />
-                      <Text>{issue.comment}</Text>
+                      <HStack spacing={2}>
+                        <Text>{t('Comentário:')}</Text>
+                        <Text fontWeight="500" lineHeight="16px">
+                          {issue.comment}
+                        </Text>
+                      </HStack>
                     </>
                   )}
                 </Td>
