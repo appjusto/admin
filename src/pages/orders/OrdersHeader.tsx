@@ -6,7 +6,11 @@ import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { t } from 'utils/i18n';
 
-export const OrdersHeader = () => {
+interface OrdersHeaderProps {
+  statusEnabled?: boolean;
+}
+
+export const OrdersHeader = ({ statusEnabled = true }: OrdersHeaderProps) => {
   // context
   const { business } = useContextBusiness();
   const { updateBusinessProfile } = useBusinessProfile();
@@ -35,14 +39,16 @@ export const OrdersHeader = () => {
     <Flex p="6" h="76px" flex={1} alignItems="center" justifyContent="space-between" bg="gray.50">
       <HStack spacing={6}>
         <Flex alignItems="center">
-          <Switch
-            isDisabled={!isEnabled}
-            isChecked={isOpen}
-            onChange={(ev) => {
-              ev.stopPropagation();
-              updateBusinessProfile({ status: ev.target.checked ? 'open' : 'closed' });
-            }}
-          />
+          {statusEnabled && (
+            <Switch
+              isDisabled={!isEnabled}
+              isChecked={isOpen}
+              onChange={(ev) => {
+                ev.stopPropagation();
+                updateBusinessProfile({ status: ev.target.checked ? 'open' : 'closed' });
+              }}
+            />
+          )}
           <Flex ml="4" flexDir="column" minW="280px">
             <Text fontSize="16px" fontWeight="700" lineHeight="22px">
               {isOpen ? t('Restaurante aberto') : t('Restaurante fechado')}
