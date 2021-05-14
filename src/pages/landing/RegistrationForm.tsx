@@ -118,7 +118,7 @@ export const RegistrationForm = () => {
                 onChange={(event) => setAccept(event.target.checked)}
               />
               <Link
-                href="https://github.com/appjusto/docs/blob/main/legal/termo-tratamento-de-dados.md"
+                href="https://github.com/appjusto/docs/blob/main/legal/termos-de-uso-restaurantes.md"
                 isExternal
                 textDecor="underline"
               >
