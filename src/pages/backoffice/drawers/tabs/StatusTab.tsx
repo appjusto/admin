@@ -81,7 +81,9 @@ export const StatusTab = ({
     >
       {(status === 'invalid' || status === 'rejected') && marketPlaceIssues && (
         <AlertError
-          title={t('Problemas identificados na verificação financeira')}
+          title={t(
+            `Problemas identificados na verificação financeira: (${financialIssues?.length ?? 0})`
+          )}
           icon={false}
           border="2px solid #DC3545"
           mb="6"
