@@ -6,7 +6,6 @@ import { Issue, WithId } from 'appjusto-types';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { orderCancelator } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { OrderBaseDrawer } from '../OrderBaseDrawer';
 import { Cancelation } from './Cancelation';
@@ -35,10 +34,6 @@ export const OrderDrawer = (props: Props) => {
   // state
   const [isCanceling, setIsCanceling] = React.useState(false);
   //const [orderIssue, setOrderIssue] = React.useState<WithId<OrderIssue>>();
-
-  // helpers
-  const isCurrierArrived = order?.dispatchingState === 'arrived-pickup';
-  const cancelator = orderCancelator(order?.cancellation?.issue.type);
 
   // handlers
   const handleCancel = async (issue: WithId<Issue>) => {
@@ -75,13 +70,7 @@ export const OrderDrawer = (props: Props) => {
   return (
     <OrderBaseDrawer
       {...props}
-      orderId={orderId}
-      orderCode={order?.code ?? ''}
-      orderStatus={order?.status!}
-      cancelator={cancelator}
-      isCurrierArrived={isCurrierArrived}
-      client={order?.consumer?.name ?? ''}
-      clientOrders={0}
+      order={order}
       cancel={() => setIsCanceling(true)}
       isCanceling={isCanceling}
       isError={isError}
