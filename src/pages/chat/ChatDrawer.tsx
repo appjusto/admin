@@ -14,6 +14,7 @@ import {
   Text,
   Textarea,
 } from '@chakra-ui/react';
+import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useOrderChat } from 'app/api/order/useOrderChat';
 import { Flavor } from 'appjusto-types';
 import managerIcon from 'common/img/manager.svg';
@@ -99,13 +100,14 @@ type Params = {
 
 export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
   //context
+  const { logo } = useBusinessProfile();
   const { orderId, counterpartId } = useParams<Params>();
   const { participants, groupMessages, sendMessage, sendMessageResult } = useOrderChat(
     orderId,
     counterpartId
   );
   const { isLoading, isError } = sendMessageResult;
-  console.log(groupMessages);
+
   // state
   const [inputText, setInputText] = React.useState('');
 
@@ -114,9 +116,10 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
 
   //handlers
   const getImage = (id?: string) => {
+    if (!id) return null;
     //@ts-ignore
-    if (id && id === counterpartId) return participants[counterpartId].image;
-    return null;
+    if (id === counterpartId) return participants[counterpartId].image;
+    else return logo;
   };
 
   const getName = (id?: string) => {
@@ -127,6 +130,7 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
   };
 
   const getTime = (timestamp: firebase.firestore.Timestamp) => {
+    if (!timestamp) return;
     const fullDate = getDateAndHour(timestamp);
     const time = fullDate.split(' ')[1];
     return time;
@@ -163,7 +167,7 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
         target.scroll({ top: target.scrollHeight, behavior: 'smooth' });
       });
     }
-  }, []);
+  }, [messagesBox]);
 
   //UI
   return (

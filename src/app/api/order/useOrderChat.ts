@@ -10,12 +10,11 @@ export const useOrderChat = (orderId: string, counterpartId: string) => {
   const api = useContextApi();
   const businessId = useContextBusinessId();
   const courierProfilePicture = useCourierProfilePicture(counterpartId);
-  console.log(courierProfilePicture);
+
   // state
   const [order, setOrder] = React.useState<WithId<Order> | null>();
   const [chat, setChat] = React.useState<WithId<ChatMessage>[]>();
   const [participants, setParticipants] = React.useState({});
-  //const [counterpartFlavor, setCounterpartFlavor] = React.useState<Flavor>();
   const [groupMessages, setGroupMessages] = React.useState<WithId<ChatMessage>[]>([]);
 
   // handlers;
@@ -58,7 +57,7 @@ export const useOrderChat = (orderId: string, counterpartId: string) => {
       },
     };
     setParticipants(participantsObject);
-  }, [order, counterpartId]);
+  }, [order, counterpartId, courierProfilePicture]);
 
   React.useEffect(() => {
     if (!chat) return;
