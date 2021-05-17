@@ -3,6 +3,7 @@ import { useContextBusiness } from 'app/state/business/context';
 import { Loading } from 'common/components/Loading';
 import BusinessProfile from 'pages/business-profile/BusinessProfile';
 import SchedulesPage from 'pages/business-schedules/SchedulesPage';
+import ChatPage from 'pages/chat';
 import DeliveryArea from 'pages/delivery-area/DeliveryArea';
 import FinancesPage from 'pages/finances/FinancesPage';
 import ManagerProfilePage from 'pages/manager-profile/ManagerProfilePage';
@@ -36,6 +37,7 @@ const Home = () => {
         {isBackofficeUser && <AgentPersonificationBar />}
         <Switch>
           <Route path={`${path}/orders`} component={OrdersPage} />
+          <Route path={`${path}/chat`} component={ChatPage} />
           <PageLayout mt={isBackofficeUser ? '60px' : '0'}>
             <Route exact path={path} component={Dashboard} />
             <Route path={`${path}/menu`} component={Menu} />

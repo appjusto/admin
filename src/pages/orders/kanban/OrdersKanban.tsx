@@ -99,7 +99,7 @@ export const OrdersKanban = () => {
                 children={<Icon w="22px" h="22px" as={SearchIcon} />}
               />
             </InputGroup>
-            <Link to={`${path}/`}>
+            <Link to="/app/chat">
               <Button
                 variant="outline"
                 minW="100px"

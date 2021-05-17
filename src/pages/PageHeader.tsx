@@ -1,4 +1,4 @@
-import { Heading, Text, TextProps } from '@chakra-ui/react';
+import { Box, Heading, Text, TextProps } from '@chakra-ui/react';
 import React from 'react';
 
 interface Props extends TextProps {
@@ -8,7 +8,7 @@ interface Props extends TextProps {
 
 const PageHeader = ({ title, subtitle, ...props }: Props) => {
   return (
-    <>
+    <Box>
       <Heading color="black" fontSize="2xl" mt="4" {...props}>
         {title}
       </Heading>
@@ -17,7 +17,7 @@ const PageHeader = ({ title, subtitle, ...props }: Props) => {
           {subtitle}
         </Text>
       )}
-    </>
+    </Box>
   );
 };
 

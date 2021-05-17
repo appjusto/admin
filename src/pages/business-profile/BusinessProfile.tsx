@@ -42,6 +42,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   // state
   const [cnpj, setCNPJ] = React.useState(business?.cnpj ?? (isDev ? cnpjutils.generate() : ''));
   const [name, setName] = React.useState(business?.name ?? '');
+  const [companyName, setCompanyName] = React.useState(business?.companyName ?? '');
   const [phone, setPhone] = React.useState(business?.phone ?? '');
   const [cuisineName, setCuisineName] = React.useState(business?.cuisine ?? '');
   const [description, setDescription] = React.useState(business?.description ?? '');
@@ -96,6 +97,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
     try {
       await updateBusinessProfile({
         name,
+        companyName,
         phone,
         cnpj,
         description,
@@ -156,6 +158,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
       setEnabled(business.enabled ?? false);
       if (business.cnpj) setCNPJ(business.cnpj);
       if (business.name) setName(business.name);
+      if (business.companyName) setCompanyName(business.companyName);
       if (business.phone) setPhone(business.phone);
       if (business.description) setDescription(business.description);
       if (business.minimumOrder) setMinimumOrder(business.minimumOrder);
@@ -232,6 +235,14 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
               placeholder={t('Nome')}
               value={name}
               onChange={(ev) => setName(ev.target.value)}
+            />
+            <Input
+              isRequired
+              id="business-company-name"
+              label={t('Razão social')}
+              placeholder={t('Digite a razão social')}
+              value={companyName}
+              onChange={(ev) => setCompanyName(ev.target.value)}
             />
             <PatternInput
               isRequired

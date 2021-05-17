@@ -6,7 +6,7 @@ import { useQuery } from 'react-query';
 export const useTerms = () => {
   // context
   const url =
-    'https://raw.githubusercontent.com/appjusto/docs/main/legal/termos-de-uso-restaurantes.md';
+    'https://raw.githubusercontent.com/appjusto/docs/main/legal/compromissos-restaurantes.md';
   // state
   const [unformattedTerms, setUnformattedTerms] = React.useState<string | null>();
   //const [formattedTerms, setFormattedTerms] = React.useState<string | null>();

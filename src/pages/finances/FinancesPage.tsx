@@ -21,7 +21,7 @@ const FinancesPage = () => {
       <PageHeader title={t('Financeiro')} subtitle={t(`Dados atualizados em ${dateTime}`)} />
       <Text mt="4" fontSize="sm" fontWeight="700">
         {t(
-          'Aqui você acomanhará os principais indicadores de desempenho financeiro do seu restaurante.'
+          'Aqui você acompanhará os principais indicadores de desempenho financeiro do seu restaurante.'
         )}
       </Text>
     </>

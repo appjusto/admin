@@ -20,7 +20,7 @@ export const TermsOfUse = ({ redirect }: TermsProps) => {
   // side effects
   React.useEffect(() => {
     window?.scrollTo(0, 0);
-  }, [window]);
+  }, []);
 
   React.useEffect(() => {
     if (formattedTerms) setTerms(formattedTerms);
