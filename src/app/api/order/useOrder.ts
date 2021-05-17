@@ -1,5 +1,5 @@
 import { useContextApi } from 'app/state/api/context';
-import { Order, OrderIssue, WithId } from 'appjusto-types';
+import { ChatMessage, Order, OrderIssue, WithId } from 'appjusto-types';
 import React from 'react';
 import { useMutation } from 'react-query';
 import { CancellationData } from './OrderApi';
@@ -11,6 +11,7 @@ export const useOrder = (orderId?: string) => {
   // state
   const [order, setOrder] = React.useState<WithId<Order> | null>();
   const [orderIssues, setOrderIssues] = React.useState<WithId<OrderIssue>[] | null>();
+  const [chat, setChat] = React.useState<WithId<ChatMessage>[]>();
 
   // handlers
   const [updateOrder, updateResult] = useMutation(async (changes: Partial<Order>) =>
@@ -25,8 +26,9 @@ export const useOrder = (orderId?: string) => {
     if (!orderId) return;
     api.order().observeOrder(orderId, setOrder);
     api.order().observeOrderIssues(orderId, setOrderIssues);
+    api.order().observeOrderChat(orderId, setChat);
   }, [api, orderId]);
 
   // return
-  return { order, updateOrder, updateResult, cancelOrder, cancelResult, orderIssues };
+  return { order, updateOrder, updateResult, cancelOrder, cancelResult, orderIssues, chat };
 };
