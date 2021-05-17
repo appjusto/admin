@@ -28,7 +28,7 @@ const Dashboard = () => {
       {business?.situation === 'approved' ? (
         <>
           <Text mt="4" fontSize="sm" fontWeight="700">
-            {t('Aqui você acomanhará os principais indicadores de desempenho do seu restaurante.')}
+            {t('Aqui você acompanhará os principais indicadores de desempenho do seu restaurante.')}
           </Text>
         </>
       ) : (
