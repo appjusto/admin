@@ -50,7 +50,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
   ]);
   //const cookingTime = order?.cookingTime ? order?.cookingTime / 60 : null;
   const cookingProgress = cookingTime && elapsedTime ? (elapsedTime / cookingTime) * 100 : 0;
-  const cancelator = orderCancelator(orderIssues ? orderIssues[0]?.issue?.type : undefined);
+  const cancelator = orderCancelator(order?.cancellation?.issue?.type);
 
   // side effects
   React.useEffect(() => {
