@@ -100,7 +100,7 @@ type Params = {
 export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
   //context
   const { orderId, counterpartId } = useParams<Params>();
-  const { names, counterpartFlavor, groupMessages, sendMessage, sendMessageResult } = useOrderChat(
+  const { participants, groupMessages, sendMessage, sendMessageResult } = useOrderChat(
     orderId,
     counterpartId
   );
@@ -113,10 +113,17 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
   const messagesBox = React.useRef(null);
 
   //handlers
+  const getImage = (id?: string) => {
+    //@ts-ignore
+    if (id && id === counterpartId) return participants[counterpartId].image;
+    return null;
+  };
+
   const getName = (id?: string) => {
     if (!id) return 'N/E';
     //@ts-ignore
-    return names[id] ?? 'N/E';
+    const name = participants[id]?.name;
+    return name ?? 'N/E';
   };
 
   const getTime = (timestamp: firebase.firestore.Timestamp) => {
@@ -127,9 +134,11 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
 
   const sendMessageHandler = () => {
     if (!inputText) return;
-    if (!counterpartId || !counterpartFlavor) return;
+    if (!counterpartId) return;
+    //@ts-ignore
+    const flavor = participants[counterpartId].flavor;
     const to: { agent: Flavor; id: string } = {
-      agent: counterpartFlavor,
+      agent: flavor,
       id: counterpartId,
     };
     sendMessage({
@@ -189,13 +198,15 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
                 <Box key={message.id} my="4">
                   <HStack>
                     <Flex
-                      p="2"
+                      width="40px"
+                      height="40px"
                       justifyContent="center"
                       alignItems="center"
                       border="1px solid #000"
                       borderRadius="20px"
+                      overflow="hidden"
                     >
-                      <Image src={managerIcon} width="24px" height="24px" />
+                      <Image src={getImage(message.from.id) ?? managerIcon} width="100%" />
                     </Flex>
                     <Box>
                       <Text fontSize="15px" lineHeight="21px" fontWeight="500" color="black">

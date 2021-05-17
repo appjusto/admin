@@ -3,17 +3,19 @@ import { useContextBusinessId } from 'app/state/business/context';
 import { ChatMessage, Flavor, Order, WithId } from 'appjusto-types';
 import React from 'react';
 import { useMutation } from 'react-query';
+import { useCourierProfilePicture } from '../courier/useCourierProfilePicture';
 
 export const useOrderChat = (orderId: string, counterpartId: string) => {
   // context
   const api = useContextApi();
   const businessId = useContextBusinessId();
-
+  const courierProfilePicture = useCourierProfilePicture(counterpartId);
+  console.log(courierProfilePicture);
   // state
   const [order, setOrder] = React.useState<WithId<Order> | null>();
   const [chat, setChat] = React.useState<WithId<ChatMessage>[]>();
-  const [names, setNames] = React.useState({});
-  const [counterpartFlavor, setCounterpartFlavor] = React.useState<Flavor>();
+  const [participants, setParticipants] = React.useState({});
+  //const [counterpartFlavor, setCounterpartFlavor] = React.useState<Flavor>();
   const [groupMessages, setGroupMessages] = React.useState<WithId<ChatMessage>[]>([]);
 
   // handlers;
@@ -35,20 +37,27 @@ export const useOrderChat = (orderId: string, counterpartId: string) => {
 
   React.useEffect(() => {
     if (!order) return;
-    let counterpart = 'N/E';
+    let counterpartName = 'N/E';
+    let flavor = 'courier';
     if (order.consumer?.id === counterpartId) {
-      setCounterpartFlavor('consumer');
-      counterpart = order.consumer?.name ?? 'N/E';
+      flavor = 'consumer';
+      counterpartName = order.consumer?.name ?? 'N/E';
     }
     if (order.courier?.id === counterpartId) {
-      setCounterpartFlavor('courier');
-      counterpart = order.courier?.name ?? 'N/E';
+      counterpartName = order.courier?.name ?? 'N/E';
     }
-    const namesObject = {
-      [businessId!]: order.business?.name ?? 'N/E',
-      [counterpartId]: counterpart,
+    const participantsObject = {
+      [businessId!]: {
+        name: order.business?.name ?? 'N/E',
+        image: null,
+      },
+      [counterpartId]: {
+        name: counterpartName,
+        flavor,
+        image: courierProfilePicture,
+      },
     };
-    setNames(namesObject);
+    setParticipants(participantsObject);
   }, [order, counterpartId]);
 
   React.useEffect(() => {
@@ -66,5 +75,5 @@ export const useOrderChat = (orderId: string, counterpartId: string) => {
   }, [chat, businessId, counterpartId]);
 
   // return
-  return { names, counterpartFlavor, groupMessages, sendMessage, sendMessageResult };
+  return { participants, groupMessages, sendMessage, sendMessageResult };
 };
