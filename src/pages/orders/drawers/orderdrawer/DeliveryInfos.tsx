@@ -2,9 +2,9 @@ import { Box, Button, Circle, Flex, Image, Text } from '@chakra-ui/react';
 import { useCourierProfilePicture } from 'app/api/courier/useCourierProfilePicture';
 import { useOrderDeliveryInfos } from 'app/api/order/useOrderDeliveryInfos';
 import { Order, WithId } from 'appjusto-types';
-import { Pendency } from 'common/components/Pendency';
 import I18n from 'i18n-js';
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { DeliveryMap } from './DeliveryMap';
 
@@ -77,10 +77,11 @@ export const DeliveryInfos = ({ order }: DeliveryInfosProps) => {
               <Text fontSize="sm">{t(`No appJusto desde ${joined}`)}</Text>
             </Flex>
           </Flex>
-          <Button variant="outline" size="sm">
-            {t('Abrir chat com o entregador')}
-            <Pendency />
-          </Button>
+          <Link to={`/app/chat/${order.id}/${order.courier?.id}`}>
+            <Button variant="outline" size="sm">
+              {t('Abrir chat com o entregador')}
+            </Button>
+          </Link>
         </Flex>
       )}
       <DeliveryMap order={order} />

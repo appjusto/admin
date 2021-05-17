@@ -14,9 +14,12 @@ import {
   Text,
   Textarea,
 } from '@chakra-ui/react';
+import { useOrderChat } from 'app/api/order/useOrderChat';
 import { Flavor } from 'appjusto-types';
 import managerIcon from 'common/img/manager.svg';
-import React from 'react';
+import React, { KeyboardEvent } from 'react';
+import { useParams } from 'react-router';
+import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 
 interface ChatMessage {
@@ -85,22 +88,72 @@ const fakeMessages = [
 ];
 
 interface ChatDrawerProps {
-  chatId: string;
   isOpen: boolean;
   onClose(): void;
 }
 
-export const ChatDrawer = ({ chatId, onClose, ...props }: ChatDrawerProps) => {
-  //context
+type Params = {
+  orderId: string;
+  counterpartId: string;
+};
 
+export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
+  //context
+  const { orderId, counterpartId } = useParams<Params>();
+  const { names, counterpartFlavor, groupMessages, sendMessage, sendMessageResult } = useOrderChat(
+    orderId,
+    counterpartId
+  );
+  const { isLoading, isError } = sendMessageResult;
+  console.log(groupMessages);
   // state
-  const [messages, setMessages] = React.useState<ChatMessage[]>([]);
+  const [inputText, setInputText] = React.useState('');
+
+  // refs
+  const messagesBox = React.useRef(null);
 
   //handlers
+  const getName = (id?: string) => {
+    if (!id) return 'N/E';
+    //@ts-ignore
+    return names[id] ?? 'N/E';
+  };
+
+  const getTime = (timestamp: firebase.firestore.Timestamp) => {
+    const fullDate = getDateAndHour(timestamp);
+    const time = fullDate.split(' ')[1];
+    return time;
+  };
+
+  const sendMessageHandler = () => {
+    if (!inputText) return;
+    if (!counterpartId || !counterpartFlavor) return;
+    const to: { agent: Flavor; id: string } = {
+      agent: counterpartFlavor,
+      id: counterpartId,
+    };
+    sendMessage({
+      to,
+      message: inputText.trim(),
+    });
+    setInputText('');
+  };
+
+  const handleUserKeyPress = (event: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      sendMessageHandler();
+    }
+  };
 
   // side effects
   React.useEffect(() => {
-    setMessages(fakeMessages as ChatMessage[]);
+    if (messagesBox?.current) {
+      //@ts-ignore
+      messagesBox.current.addEventListener('DOMNodeInserted', (event) => {
+        const { currentTarget: target } = event;
+        target.scroll({ top: target.scrollHeight, behavior: 'smooth' });
+      });
+    }
   }, []);
 
   //UI
@@ -113,7 +166,7 @@ export const ChatDrawer = ({ chatId, onClose, ...props }: ChatDrawerProps) => {
             <Flex justifyContent="space-between" alignItems="flex-end">
               <Flex flexDir="column">
                 <Text color="black" fontSize="2xl" fontWeight="700" lineHeight="28px" mb="2">
-                  {t('Chat com ')} {'{Participante}'}
+                  {t('Chat com ')} {`{${getName(counterpartId)}}`}
                 </Text>
                 <Text fontSize="md" color="black" fontWeight="700" lineHeight="22px">
                   {t('ID:')}{' '}
@@ -130,9 +183,9 @@ export const ChatDrawer = ({ chatId, onClose, ...props }: ChatDrawerProps) => {
               </Flex>
             </Flex>
           </DrawerHeader>
-          <DrawerBody bg="gray.50">
-            {messages.length > 0 &&
-              messages.map((message, index) => (
+          <DrawerBody bg="gray.50" ref={messagesBox}>
+            {groupMessages.length > 0 &&
+              groupMessages.map((message, index) => (
                 <Box key={message.id} my="4">
                   <HStack>
                     <Flex
@@ -146,10 +199,10 @@ export const ChatDrawer = ({ chatId, onClose, ...props }: ChatDrawerProps) => {
                     </Flex>
                     <Box>
                       <Text fontSize="15px" lineHeight="21px" fontWeight="500" color="black">
-                        {message.from.name}
+                        {getName(message.from.id)}
                       </Text>
                       <Text fontSize="13px" lineHeight="18px" fontWeight="500">
-                        {message.timestamp}
+                        {getTime(message.timestamp)}
                       </Text>
                     </Box>
                   </HStack>
@@ -182,8 +235,20 @@ export const ChatDrawer = ({ chatId, onClose, ...props }: ChatDrawerProps) => {
                 color="#697667"
                 fontFamily="barlow"
                 placeholder={t('Escreva sua mensagem')}
+                value={inputText}
+                onChange={(event) => setInputText(event.target.value)}
+                zIndex="9000"
+                onKeyPress={handleUserKeyPress}
               />
-              <Button position="absolute" top="4" right="4">
+              <Button
+                position="absolute"
+                top="4"
+                right="4"
+                onClick={sendMessageHandler}
+                isLoading={isLoading}
+                loadingText={t('Enviando...')}
+                zIndex="9999"
+              >
                 {t('Enviar')}
               </Button>
             </Box>
