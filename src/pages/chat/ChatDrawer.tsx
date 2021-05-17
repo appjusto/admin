@@ -20,7 +20,7 @@ import { Flavor } from 'appjusto-types';
 import managerIcon from 'common/img/manager.svg';
 import React, { KeyboardEvent } from 'react';
 import { useParams } from 'react-router';
-import { getDateAndHour } from 'utils/functions';
+import { getDateAndHour, getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 
 interface ChatMessage {
@@ -109,6 +109,7 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
   const { isLoading, isError } = sendMessageResult;
 
   // state
+  const [dateTime, setDateTime] = React.useState('');
   const [inputText, setInputText] = React.useState('');
 
   // refs
@@ -160,6 +161,11 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
 
   // side effects
   React.useEffect(() => {
+    const { date, time } = getDateTime();
+    setDateTime(`${date} às ${time}`);
+  }, []);
+
+  React.useEffect(() => {
     if (messagesBox?.current) {
       //@ts-ignore
       messagesBox.current.addEventListener('DOMNodeInserted', (event) => {
@@ -190,7 +196,7 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
                 <Text fontSize="md" color="black" fontWeight="700" lineHeight="22px">
                   {t('Atualizado em:')}{' '}
                   <Text as="span" color="gray.600" fontWeight="500">
-                    {'00/00/0000 - 00:00'}
+                    {dateTime}
                   </Text>
                 </Text>
               </Flex>

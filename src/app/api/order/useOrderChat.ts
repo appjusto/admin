@@ -38,11 +38,13 @@ export const useOrderChat = (orderId: string, counterpartId: string) => {
     if (!order) return;
     let counterpartName = 'N/E';
     let flavor = 'courier';
+    //let code = 'N/E';
     if (order.consumer?.id === counterpartId) {
+      //code = order.consumer.id;
       flavor = 'consumer';
       counterpartName = order.consumer?.name ?? 'N/E';
-    }
-    if (order.courier?.id === counterpartId) {
+    } else if (order.courier?.id === counterpartId) {
+      //code = order.courier.id;
       counterpartName = order.courier?.name ?? 'N/E';
     }
     const participantsObject = {
@@ -51,6 +53,7 @@ export const useOrderChat = (orderId: string, counterpartId: string) => {
         image: null,
       },
       [counterpartId]: {
+        //code,
         name: counterpartName,
         flavor,
         image: courierProfilePicture,
