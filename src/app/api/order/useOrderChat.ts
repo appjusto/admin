@@ -1,9 +1,12 @@
+import { RootProvider } from 'app/RootProvider';
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusinessId } from 'app/state/business/context';
-import { ChatMessage, Flavor, Order, WithId } from 'appjusto-types';
+import { ChatMessage, Flavor, Order, OrderStatus, WithId } from 'appjusto-types';
 import React from 'react';
 import { useMutation } from 'react-query';
 import { useCourierProfilePicture } from '../courier/useCourierProfilePicture';
+
+const orderActivedStatuses = ['confirmed', 'preparing', 'ready', 'dispatching'] as OrderStatus[];
 
 export const useOrderChat = (orderId: string, counterpartId: string) => {
   // context
@@ -14,6 +17,7 @@ export const useOrderChat = (orderId: string, counterpartId: string) => {
   // state
   const [order, setOrder] = React.useState<WithId<Order> | null>();
   const [chat, setChat] = React.useState<WithId<ChatMessage>[]>();
+  const [isActive, setIsActive] = React.useState(false);
   const [participants, setParticipants] = React.useState({});
   const [groupMessages, setGroupMessages] = React.useState<WithId<ChatMessage>[]>([]);
 
@@ -76,6 +80,12 @@ export const useOrderChat = (orderId: string, counterpartId: string) => {
     setGroupMessages(group);
   }, [chat, businessId, counterpartId]);
 
+  React.useEffect(() => {
+    if (order?.status && orderActivedStatuses.includes(order.status)) {
+      setIsActive(true);
+    } else setIsActive(false);
+  }, [order?.status, orderActivedStatuses]);
+
   // return
-  return { participants, groupMessages, sendMessage, sendMessageResult };
+  return { isActive, participants, groupMessages, sendMessage, sendMessageResult };
 };

@@ -13,6 +13,7 @@ import {
   Image,
   Text,
   Textarea,
+  useToast,
 } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useOrderChat } from 'app/api/order/useOrderChat';
@@ -102,11 +103,12 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
   //context
   const { logo } = useBusinessProfile();
   const { orderId, counterpartId } = useParams<Params>();
-  const { participants, groupMessages, sendMessage, sendMessageResult } = useOrderChat(
+  const { isActive, participants, groupMessages, sendMessage, sendMessageResult } = useOrderChat(
     orderId,
     counterpartId
   );
   const { isLoading, isError } = sendMessageResult;
+  const toast = useToast();
 
   // state
   const [dateTime, setDateTime] = React.useState('');
@@ -140,6 +142,15 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
   const sendMessageHandler = () => {
     if (!inputText) return;
     if (!counterpartId) return;
+    if (!isActive) {
+      return toast({
+        title: 'Não é possível enviar a mensagem.',
+        description: 'Este pedido não está mais ativo.',
+        status: 'warning',
+        duration: 9000,
+        isClosable: true,
+      });
+    }
     //@ts-ignore
     const flavor = participants[counterpartId].flavor;
     const to: { agent: Flavor; id: string } = {
@@ -174,6 +185,19 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
       });
     }
   }, [messagesBox]);
+
+  React.useEffect(() => {
+    if (isError) {
+      console.log();
+      toast({
+        title: 'Não foi possível acessar o servidor.',
+        description: 'Tenta novamente?',
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+      });
+    }
+  }, [isError]);
 
   //UI
   return (
