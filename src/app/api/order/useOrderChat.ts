@@ -1,4 +1,3 @@
-import { RootProvider } from 'app/RootProvider';
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusinessId } from 'app/state/business/context';
 import { ChatMessage, Flavor, Order, OrderStatus, WithId } from 'appjusto-types';
@@ -64,7 +63,7 @@ export const useOrderChat = (orderId: string, counterpartId: string) => {
       },
     };
     setParticipants(participantsObject);
-  }, [order, counterpartId, courierProfilePicture]);
+  }, [order, counterpartId, businessId, courierProfilePicture]);
 
   React.useEffect(() => {
     if (!chat) return;
@@ -75,7 +74,7 @@ export const useOrderChat = (orderId: string, counterpartId: string) => {
       ) {
         return msg;
       }
-      return;
+      return false;
     });
     setGroupMessages(group);
   }, [chat, businessId, counterpartId]);
@@ -84,7 +83,7 @@ export const useOrderChat = (orderId: string, counterpartId: string) => {
     if (order?.status && orderActivedStatuses.includes(order.status)) {
       setIsActive(true);
     } else setIsActive(false);
-  }, [order?.status, orderActivedStatuses]);
+  }, [order?.status]);
 
   // return
   return { isActive, participants, groupMessages, sendMessage, sendMessageResult };

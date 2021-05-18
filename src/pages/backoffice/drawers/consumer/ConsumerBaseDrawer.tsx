@@ -14,8 +14,7 @@ import {
 import { useConsumerUpdateProfile } from 'app/api/consumer/useConsumerUpdateProfile';
 import { useContextConsumerProfile } from 'app/state/consumer/context';
 import { ConsumerProfile } from 'appjusto-types';
-import { AlertError } from 'common/components/AlertError';
-import { AlertSuccess } from 'common/components/AlertSuccess';
+import { SuccessAndErrorHandler } from 'common/components/SuccessAndErrorHandler';
 import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
 import React from 'react';
 import { useRouteMatch } from 'react-router';
@@ -40,12 +39,13 @@ export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
   const { url } = useRouteMatch();
   const { consumer, contextValidation } = useContextConsumerProfile();
   const { updateProfile, updateResult } = useConsumerUpdateProfile();
-  const { isLoading, isSuccess, isError } = updateResult;
-
+  const { isLoading, isSuccess, isError, error } = updateResult;
+  console.log('D:', isSuccess);
   // state
   const [submitStatus, setSubmitStatus] = React.useState<SubmitStatus>(initialStatus);
 
-  //handlers
+  //helpers
+  //const toast = useToast();
   let consumerName = consumer?.name ?? 'N/I';
   if (consumer?.surname) consumerName += ` ${consumer.surname}`;
 
@@ -57,6 +57,13 @@ export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
         status: 'error',
         message: 'Verificar o preenchimento dos campos',
       });
+      /*return toast({
+        title: 'Atenção!',
+        description: 'Verificar o preenchimento dos campos',
+        status: error ? 'error' : 'warning',
+        duration: 9000,
+        isClosable: true,
+      });*/
     }
 
     const newState = {} as ConsumerProfile;
@@ -143,12 +150,18 @@ export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
               >
                 {t('Salvar alterações')}
               </Button>
-              {submitStatus.status === 'success' && (
+              {/*submitStatus.status === 'success' && (
                 <AlertSuccess mt="0" h="48px" description={submitStatus.message} />
               )}
               {submitStatus.status === 'error' && (
                 <AlertError mt="0" h="48px" description={submitStatus.message} />
-              )}
+              )*/}
+              <SuccessAndErrorHandler
+                isSuccess={isSuccess}
+                isError={submitStatus.status === 'error'}
+                error={error}
+                errorMessage={{ title: submitStatus.message }}
+              />
             </HStack>
           </DrawerFooter>
         </DrawerContent>
