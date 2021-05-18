@@ -1,5 +1,7 @@
 import * as cpfutils from '@fnando/cpf';
 import { useBusinessBankAccount } from 'app/api/business/profile/useBusinessBankAccount';
+import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
+import { useUpdateManagerProfile } from 'app/api/manager/useUpdateManagerProfile';
 import { BankAccount, Business, ManagerProfile, WithId } from 'appjusto-types';
 import React, { Dispatch, SetStateAction } from 'react';
 import { useParams } from 'react-router';
@@ -11,13 +13,14 @@ type Validation = { cpf: boolean };
 
 interface BusinessBOContextProps {
   manager?: WithId<ManagerProfile> | null;
-  bankingInfo?: WithId<BankAccount> | null;
-  businessProfile?: WithId<Business> | null;
+  bankAccount?: WithId<BankAccount> | null;
+  business?: WithId<Business> | null;
   contextValidation: Validation;
   handleBusinessStatusChange(key: string, value: any): void;
   handleManagerProfileChange(key: string, value: any): void;
   handleBankingInfoChange(key: string, value: any): void;
   setContextValidation: Dispatch<SetStateAction<Validation>>;
+  handleSave(): void;
 }
 
 const BusinessBOContext = React.createContext<BusinessBOContextProps>({} as BusinessBOContextProps);
@@ -35,7 +38,13 @@ export const BusinessBOProvider = ({ children }: Props) => {
   const { businessId } = useParams<Params>();
   const { setBusinessId, business } = useContextBusiness();
   const { manager, setManagerEmail } = useContextManagerProfile();
-  const { bankAccount } = useBusinessBankAccount();
+  const {
+    bankAccount,
+    updateBankAccount,
+    updateResult: BankAccountResult,
+  } = useBusinessBankAccount();
+  const { updateBusinessProfile, updateResult: BusinessProfileResult } = useBusinessProfile();
+  const { updateProfile, updateResult: ManagerProfileResult } = useUpdateManagerProfile();
 
   // state
   const [state, dispatch] = React.useReducer(businessBOReducer, {} as businessBOState);
@@ -54,6 +63,12 @@ export const BusinessBOProvider = ({ children }: Props) => {
 
   const handleBankingInfoChange = (key: string, value: any) => {
     dispatch({ type: 'update_banking', payload: { [key]: value } });
+  };
+
+  const handleSave = () => {
+    updateProfile(state.manager);
+    updateBankAccount(state.bankingInfo);
+    updateBusinessProfile(state.businessProfile);
   };
 
   // side effects
@@ -86,13 +101,14 @@ export const BusinessBOProvider = ({ children }: Props) => {
     <BusinessBOContext.Provider
       value={{
         manager: state.manager,
-        bankingInfo: state.bankingInfo,
-        businessProfile: state.businessProfile,
+        bankAccount: state.bankingInfo,
+        business: state.businessProfile,
         contextValidation,
         handleBusinessStatusChange,
         handleManagerProfileChange,
         handleBankingInfoChange,
         setContextValidation,
+        handleSave,
       }}
     >
       {children}
@@ -100,6 +116,6 @@ export const BusinessBOProvider = ({ children }: Props) => {
   );
 };
 
-export const useContextConsumerProfile = () => {
+export const useContextBusinessBackoffice = () => {
   return React.useContext(BusinessBOContext);
 };

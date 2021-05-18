@@ -1,24 +1,18 @@
-import { Button, Flex, Radio, RadioGroup, Text } from '@chakra-ui/react';
-import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
+import { Box, Flex, Radio, RadioGroup, Text } from '@chakra-ui/react';
+import { useContextBusinessBackoffice } from 'app/state/business/businessBOContext';
 import { BusinessStatus } from 'appjusto-types';
-import { AlertError } from 'common/components/AlertError';
-import { AlertSuccess } from 'common/components/AlertSuccess';
 import React from 'react';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
 
-interface BusinessLiveProps {
-  status?: BusinessStatus;
-  enabled?: boolean;
-}
-
-export const BusinessLive = ({ status, enabled }: BusinessLiveProps) => {
+export const BusinessLive = () => {
   // context
-  const { updateBusinessProfile, updateResult: result } = useBusinessProfile();
-  const { isLoading, isSuccess, isError } = result;
+  const { business, handleBusinessStatusChange } = useContextBusinessBackoffice();
+
   // state
-  const [isOpen, setIsOpen] = React.useState<BusinessStatus>(status ?? 'closed');
-  const [isEnabled, setIsEnabled] = React.useState(enabled ? 'true' : 'false');
+  const [isOpen, setIsOpen] = React.useState<BusinessStatus>(business?.status ?? 'closed');
+  const [isEnabled, setIsEnabled] = React.useState(business?.enabled ? 'true' : 'false');
+
   // handlers
   const handleEnabled = (enabled: string) => {
     if (enabled === 'true') setIsEnabled(enabled);
@@ -27,27 +21,24 @@ export const BusinessLive = ({ status, enabled }: BusinessLiveProps) => {
       setIsEnabled('false');
     }
   };
-  const onSubmitHandler = () => {
-    updateBusinessProfile({
-      status: isOpen,
-      enabled: isEnabled === 'true' ? true : false,
-    });
-  };
+
   // side effects
   React.useEffect(() => {
-    if (status) setIsOpen(status);
-  }, [status]);
+    if (business?.status) setIsOpen(business.status);
+  }, [business?.status]);
+
   React.useEffect(() => {
-    if (enabled !== undefined) setIsEnabled(enabled.toString());
-  }, [enabled]);
+    if (business?.enabled !== undefined) setIsEnabled(business.enabled.toString());
+  }, [business?.enabled]);
+
+  React.useEffect(() => {
+    handleBusinessStatusChange('status', isOpen);
+    handleBusinessStatusChange('enabled', isEnabled === 'true' ? true : false);
+  }, [isOpen, isEnabled]);
+
   // UI
   return (
-    <form
-      onSubmit={(ev) => {
-        ev.preventDefault();
-        onSubmitHandler();
-      }}
-    >
+    <Box>
       <SectionTitle mt="0">{t('Restaurante agora:')}</SectionTitle>
       <RadioGroup
         mt="2"
@@ -93,29 +84,6 @@ export const BusinessLive = ({ status, enabled }: BusinessLiveProps) => {
           </Radio>
         </Flex>
       </RadioGroup>
-      <Button
-        mt="8"
-        minW="200px"
-        type="submit"
-        size="lg"
-        fontSize="sm"
-        fontWeight="500"
-        fontFamily="Barlow"
-        isLoading={isLoading}
-        loadingText={t('Salvando')}
-      >
-        {t('Salvar')}
-      </Button>
-      {isSuccess && (
-        <AlertSuccess maxW="426px" title={t('Informações salvas com sucesso!')} description={''} />
-      )}
-      {isError && (
-        <AlertError
-          maxW="426px"
-          title={t('Erro')}
-          description={'Não foi possível acessar o servidor. Tenta novamente?'}
-        />
-      )}
-    </form>
+    </Box>
   );
 };

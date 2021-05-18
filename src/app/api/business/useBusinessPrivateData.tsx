@@ -2,7 +2,7 @@ import { useContextApi } from 'app/state/api/context';
 import { BusinessPrivatePlatform } from 'appjusto-types';
 import React from 'react';
 
-export const useBusinessPrivateData = (businessId: string) => {
+export const useBusinessPrivateData = (businessId?: string) => {
   // context
   const api = useContextApi();
   // state
@@ -10,6 +10,7 @@ export const useBusinessPrivateData = (businessId: string) => {
 
   // side effects
   React.useEffect(() => {
+    if (!businessId) return;
     const getPlatformData = async () => {
       const data = await api.business().getBusinessPlatformData(businessId);
       if (data) setPlatform(data);
