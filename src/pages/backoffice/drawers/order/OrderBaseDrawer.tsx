@@ -12,11 +12,8 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { Order, WithId } from 'appjusto-types';
-import { AlertError } from 'common/components/AlertError';
-import { AlertSuccess } from 'common/components/AlertSuccess';
 import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
 import React from 'react';
-import { MutationResult } from 'react-query';
 import { useRouteMatch } from 'react-router';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
@@ -27,7 +24,7 @@ interface BaseDrawerProps {
   isOpen: boolean;
   onClose(): void;
   updateOrderStatus(): void;
-  result: MutationResult<void, unknown>;
+  isLoading: boolean;
   children: React.ReactNode | React.ReactNode[];
 }
 
@@ -36,14 +33,12 @@ export const OrderBaseDrawer = ({
   order,
   onClose,
   updateOrderStatus,
-  result,
+  isLoading,
   children,
   ...props
 }: BaseDrawerProps) => {
   //context
   const { url } = useRouteMatch();
-  const { isError, isLoading, error, isSuccess } = result;
-  if (error) console.log('updateOrderError', error);
   //UI
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
@@ -110,14 +105,6 @@ export const OrderBaseDrawer = ({
               >
                 {t('Salvar alterações')}
               </Button>
-              {isSuccess && <AlertSuccess mt="0" h="48px" description={t('Informações salvas!')} />}
-              {isError && (
-                <AlertError
-                  mt="0"
-                  h="48px"
-                  description={t('Não foi possível acessar o servidor.')}
-                />
-              )}
             </HStack>
           </DrawerFooter>
         </DrawerContent>

@@ -77,7 +77,7 @@ export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
     if (isError)
       setSubmitStatus({ status: 'error', message: 'Não foi possível acessar o servidor' });
   }, [isError, isSuccess]);
-  //console.log(submission.current);
+
   //UI
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
