@@ -8,7 +8,7 @@ import { consumerReducer } from './consumerReducer';
 
 type Validation = { cpf: boolean };
 interface ConsumerProfileContextProps {
-  consumer: WithId<ConsumerProfile> | undefined | null;
+  consumer?: WithId<ConsumerProfile> | null;
   contextValidation: Validation;
   orders: WithId<Order>[];
   handleProfileChange(key: string, value: any): void;
