@@ -15,8 +15,7 @@ import {
 import { useCourierUpdateProfile } from 'app/api/courier/useCourierUpdateProfile';
 import { useContextCourierProfile } from 'app/state/courier/context';
 import { CourierProfile } from 'appjusto-types';
-import { AlertError } from 'common/components/AlertError';
-import { AlertSuccess } from 'common/components/AlertSuccess';
+import { SuccessAndErrorHandler } from 'common/components/SuccessAndErrorHandler';
 import { modePTOptions } from 'pages/backoffice/utils';
 import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
 import React from 'react';
@@ -42,10 +41,13 @@ export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDr
   const { url } = useRouteMatch();
   const { courier, contextValidation } = useContextCourierProfile();
   const { updateProfile, updateResult } = useCourierUpdateProfile();
-  const { isLoading, isSuccess, isError } = updateResult;
+  const { isLoading, isSuccess, isError, error } = updateResult;
 
   // state
   const [submitStatus, setSubmitStatus] = React.useState<SubmitStatus>(initialStatus);
+
+  // refs
+  const submission = React.useRef(0);
 
   //handlers
   let courierName = courier?.name ?? 'N/I';
@@ -54,6 +56,7 @@ export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDr
   //handlers
   const handleSave = () => {
     setSubmitStatus(initialStatus);
+    submission.current += 1;
     if (
       !contextValidation.cpf ||
       !contextValidation.cnpj ||
@@ -169,12 +172,13 @@ export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDr
               >
                 {t('Salvar alterações')}
               </Button>
-              {submitStatus.status === 'success' && (
-                <AlertSuccess mt="0" h="48px" description={submitStatus.message} />
-              )}
-              {submitStatus.status === 'error' && (
-                <AlertError mt="0" h="48px" description={submitStatus.message} />
-              )}
+              <SuccessAndErrorHandler
+                submission={submission.current}
+                isSuccess={isSuccess}
+                isError={submitStatus.status === 'error'}
+                error={error}
+                errorMessage={{ title: submitStatus.message }}
+              />
             </HStack>
           </DrawerFooter>
         </DrawerContent>

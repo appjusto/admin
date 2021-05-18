@@ -40,9 +40,12 @@ export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
   const { consumer, contextValidation } = useContextConsumerProfile();
   const { updateProfile, updateResult } = useConsumerUpdateProfile();
   const { isLoading, isSuccess, isError, error } = updateResult;
-  console.log('D:', isSuccess);
+
   // state
   const [submitStatus, setSubmitStatus] = React.useState<SubmitStatus>(initialStatus);
+
+  // refs
+  const submission = React.useRef(0);
 
   //helpers
   //const toast = useToast();
@@ -52,27 +55,19 @@ export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
   //handlers
   const handleSave = () => {
     setSubmitStatus(initialStatus);
+    submission.current += 1;
     if (!contextValidation.cpf) {
       return setSubmitStatus({
         status: 'error',
         message: 'Verificar o preenchimento dos campos',
       });
-      /*return toast({
-        title: 'Atenção!',
-        description: 'Verificar o preenchimento dos campos',
-        status: error ? 'error' : 'warning',
-        duration: 9000,
-        isClosable: true,
-      });*/
     }
-
     const newState = {} as ConsumerProfile;
     consumer &&
       Object.keys(consumer).forEach((key) => {
         //@ts-ignore
         if (consumer[key]) newState[key] = consumer[key];
       });
-
     updateProfile(newState);
   };
 
@@ -82,7 +77,7 @@ export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
     if (isError)
       setSubmitStatus({ status: 'error', message: 'Não foi possível acessar o servidor' });
   }, [isError, isSuccess]);
-
+  //console.log(submission.current);
   //UI
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
@@ -157,6 +152,7 @@ export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
                 <AlertError mt="0" h="48px" description={submitStatus.message} />
               )*/}
               <SuccessAndErrorHandler
+                submission={submission.current}
                 isSuccess={isSuccess}
                 isError={submitStatus.status === 'error'}
                 error={error}
