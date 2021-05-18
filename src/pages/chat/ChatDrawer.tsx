@@ -15,6 +15,7 @@ import {
   Textarea,
   useToast,
 } from '@chakra-ui/react';
+import * as Sentry from '@sentry/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useOrderChat } from 'app/api/order/useOrderChat';
 import { Flavor } from 'appjusto-types';
@@ -107,7 +108,7 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
     orderId,
     counterpartId
   );
-  const { isLoading, isError } = sendMessageResult;
+  const { isLoading, isError, error } = sendMessageResult;
   const toast = useToast();
 
   // state
@@ -188,7 +189,7 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
 
   React.useEffect(() => {
     if (isError) {
-      console.log();
+      Sentry.captureException(error);
       toast({
         title: 'Não foi possível acessar o servidor.',
         description: 'Tenta novamente?',

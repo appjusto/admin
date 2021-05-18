@@ -12,7 +12,7 @@
     "@fnando/cpf": "^1.0.2",
     "@mapbox/polyline": "^1.1.1",
     "@rooks/use-visibility-sensor": "^4.5.0",
-    "@sentry/react": "^6.3.5",
+    "@sentry/react": "^6.4.0",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
