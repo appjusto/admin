@@ -65,6 +65,8 @@ const BOBankingInformation = ({ bankAccount, handleChange }: BOBankingInformatio
       const patterLen = selectedBank?.accountPattern.length - 1;
       const result = addZerosToBeginning(bankAccount.account, patterLen);
       handleChange('account', result);
+      const accountFormatted = accountFormatter!(result);
+      handleChange('accountFormatted', accountFormatted);
     }
   };
 
@@ -174,11 +176,7 @@ const BOBankingInformation = ({ bankAccount, handleChange }: BOBankingInformatio
               : t('Número da conta')
           }
           value={bankAccount?.account ?? ''}
-          onValueChange={(value) => {
-            handleChange('account', value);
-            const accountFormatted = accountFormatter!(value);
-            handleChange('accountFormatted', accountFormatted);
-          }}
+          onValueChange={(value) => handleChange('account', value)}
           mask={selectedBank?.accountPattern}
           parser={accountParser}
           formatter={accountFormatter}

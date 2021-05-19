@@ -3,11 +3,18 @@ import { useBusinessBankAccount } from 'app/api/business/profile/useBusinessBank
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useUpdateManagerProfile } from 'app/api/manager/useUpdateManagerProfile';
 import { BankAccount, Business, ManagerProfile, WithId } from 'appjusto-types';
+import { isEmpty } from 'lodash';
 import React, { Dispatch, SetStateAction } from 'react';
 import { useParams } from 'react-router';
 import { useContextManagerProfile } from '../manager/context';
 import { businessBOReducer, businessBOState } from './businessBOReducer';
 import { useContextBusiness } from './context';
+
+const bankAccountSet = (bankAccount: BankAccount): boolean => {
+  return (
+    !isEmpty(bankAccount.name) && !isEmpty(bankAccount.agency) && !isEmpty(bankAccount.account)
+  );
+};
 
 type Validation = { cpf: boolean };
 
@@ -83,10 +90,17 @@ export const BusinessBOProvider = ({ children }: Props) => {
   }, [business, setManagerEmail]);
 
   React.useEffect(() => {
-    if (business) dispatch({ type: 'update_business', payload: business });
     if (manager) dispatch({ type: 'update_manager', payload: manager });
-    if (bankAccount) dispatch({ type: 'update_banking', payload: bankAccount });
-  }, [business, manager, bankAccount]);
+  }, [manager]);
+
+  React.useEffect(() => {
+    if (bankAccount && bankAccountSet(bankAccount))
+      dispatch({ type: 'update_banking', payload: bankAccount });
+  }, [bankAccount]);
+
+  React.useEffect(() => {
+    if (business) dispatch({ type: 'update_business', payload: business });
+  }, [business]);
 
   React.useEffect(() => {
     setContextValidation(() => {
