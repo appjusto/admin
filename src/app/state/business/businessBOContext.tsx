@@ -73,9 +73,9 @@ export const BusinessBOProvider = ({ children }: Props) => {
   };
 
   const handleSave = () => {
-    updateProfile(state.manager);
-    updateBankAccount(state.bankingInfo);
-    updateBusinessProfile(state.businessProfile);
+    if (state.manager !== manager) updateProfile(state.manager);
+    if (state.bankingInfo !== bankAccount) updateBankAccount(state.bankingInfo);
+    if (state.businessProfile !== business) updateBusinessProfile(state.businessProfile);
   };
 
   // side effects
