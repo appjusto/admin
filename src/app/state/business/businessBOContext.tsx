@@ -128,13 +128,30 @@ export const BusinessBOProvider = ({ children }: Props) => {
   const handleSave = () => {
     submission.current += 1;
     const { cpf, phone, agency, account } = contextValidation;
-    if (!cpf) return setError({ status: true, error: {}, message: 'O CPF informado não é válido' });
+    if (!cpf)
+      return setError({
+        status: true,
+        error: null,
+        message: { title: 'O CPF informado não é válido' },
+      });
     if (!phone)
-      return setError({ status: true, error: {}, message: 'O cecular informado não é válido' });
+      return setError({
+        status: true,
+        error: null,
+        message: { title: 'O cecular informado não é válido' },
+      });
     if (!agency)
-      return setError({ status: true, error: {}, message: 'A agência informada não é válida' });
+      return setError({
+        status: true,
+        error: null,
+        message: { title: 'A agência informada não é válida' },
+      });
     if (!account)
-      return setError({ status: true, error: {}, message: 'A agência informada não é válida' });
+      return setError({
+        status: true,
+        error: null,
+        message: { title: 'A agência informada não é válida' },
+      });
     if (state.manager !== manager) updateProfile(state.manager);
     if (state.bankingInfo !== bankAccount) updateBankAccount(state.bankingInfo);
     if (state.businessProfile !== business) updateBusinessProfile(state.businessProfile);
@@ -197,7 +214,7 @@ export const BusinessBOProvider = ({ children }: Props) => {
         isSuccess={isSuccess}
         isError={error.status}
         error={error.error}
-        errorMessage={error.message ? { title: error.message } : undefined}
+        errorMessage={error.message}
       />
     </BusinessBOContext.Provider>
   );

@@ -1,13 +1,13 @@
 import { SmallCloseIcon, WarningIcon } from '@chakra-ui/icons';
 import { Box, HStack, Text, useToast } from '@chakra-ui/react';
 
+type Message = { title: string; description?: string };
 interface CustomToastProps {
   type: 'success' | 'warning' | 'error';
-  title: string;
-  description?: string;
+  message: Message;
 }
 
-export const CustomToast = ({ type, title, description }: CustomToastProps) => {
+export const CustomToast = ({ type, message }: CustomToastProps) => {
   // contex
   const toast = useToast();
   // helpers
@@ -27,8 +27,8 @@ export const CustomToast = ({ type, title, description }: CustomToastProps) => {
       <HStack spacing={4} pr="6">
         <WarningIcon />
         <Box>
-          <Text>{title}</Text>
-          {description && <Text>{description}</Text>}
+          <Text>{message.title}</Text>
+          {message?.description && <Text>{message.description}</Text>}
         </Box>
       </HStack>
     </Box>

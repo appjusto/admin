@@ -3,9 +3,7 @@ import * as Sentry from '@sentry/react';
 import { isEmpty } from 'lodash';
 import React from 'react';
 import { CustomToast } from '../CustomToast';
-
-type Message = { title: string; description?: string };
-
+import { Message } from './utils';
 interface SuccessAndErrorHandlersProps {
   submission: number;
   isSuccess?: boolean;
@@ -15,52 +13,52 @@ interface SuccessAndErrorHandlersProps {
   errorMessage?: Message;
 }
 
+const initSuccessMsg = { title: 'Informações savlas com sucesso!' };
+const initErrorMsg = {
+  title: 'Não foi possível acessar o servidor',
+  description: 'Tenta novamente?',
+};
+
 export const SuccessAndErrorHandler = React.memo(
   ({
     submission,
     isSuccess,
-    successMessage = { title: 'Informações savlas com sucesso!' },
+    successMessage,
     isError,
     error,
-    errorMessage = {
-      title: 'Não foi possível acessar o servidor',
-      description: 'Tenta novamente?',
-    },
+    errorMessage,
   }: SuccessAndErrorHandlersProps) => {
     // helpers
     const toast = useToast();
-    console.log(submission, isSuccess, isError, error);
+    console.log(successMessage, errorMessage);
     // handlers
     const handleStatus = React.useCallback(() => {
+      const successId = 'success-toast';
+      const errorId = 'error-toast';
+      toast.closeAll();
       if (isSuccess) {
-        toast.closeAll();
-        toast({
-          duration: 4000,
-          render: () => (
-            <CustomToast
-              type="success"
-              title={successMessage.title}
-              description={successMessage.description}
-            />
-          ),
-        });
+        if (!toast.isActive(successId))
+          toast({
+            id: successId,
+            duration: 4000,
+            render: () => <CustomToast type="success" message={successMessage ?? initSuccessMsg} />,
+          });
       }
       if (isError) {
-        toast.closeAll();
-        if (error) Sentry.captureException(error);
-        toast({
-          duration: 8000,
-          render: () => (
-            <CustomToast
-              type={isEmpty(error) ? 'warning' : 'error'}
-              title={errorMessage.title}
-              description={errorMessage.description}
-            />
-          ),
-        });
+        if (error && !toast.isActive(errorId)) Sentry.captureException(error);
+        if (!toast.isActive(errorId))
+          toast({
+            id: errorId,
+            duration: 8000,
+            render: () => (
+              <CustomToast
+                type={isEmpty(error) ? 'warning' : 'error'}
+                message={errorMessage ?? initErrorMsg}
+              />
+            ),
+          });
       }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isSuccess, isError, error, toast]);
+    }, [isSuccess, isError, error, successMessage, errorMessage, toast]);
 
     // side effects
     React.useEffect(() => {

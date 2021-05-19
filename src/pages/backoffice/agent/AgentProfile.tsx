@@ -49,7 +49,7 @@ export const AgentProfile = () => {
       setError({
         status: true,
         error: null,
-        message: 'O CPF informado não é válido.',
+        message: { title: 'O CPF informado não é válido.' },
       });
       return cpfRef?.current?.focus();
     }
@@ -57,7 +57,7 @@ export const AgentProfile = () => {
       setError({
         status: true,
         error: null,
-        message: 'O celular informado não é válido.',
+        message: { title: 'O celular informado não é válido.' },
       });
       return phoneNumberRef?.current?.focus();
     }
@@ -95,7 +95,7 @@ export const AgentProfile = () => {
         isSuccess={isSuccess}
         isError={error.status}
         error={error.error}
-        errorMessage={error.message ? { title: error.message } : undefined}
+        errorMessage={error.message}
       />
       <form
         onSubmit={(ev) => {

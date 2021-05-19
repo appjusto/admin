@@ -10,7 +10,6 @@ import {
   phoneMask,
 } from 'common/components/form/input/pattern-input/formatters';
 import { numbersOnlyParser } from 'common/components/form/input/pattern-input/parsers';
-import PageHeader from 'pages/PageHeader';
 import React from 'react';
 import { t } from 'utils/i18n';
 
@@ -26,10 +25,6 @@ export const BOManagerProfile = () => {
   // UI
   return (
     <Box maxW="464px">
-      <PageHeader
-        title={t('Informe seus dados')}
-        subtitle={t('Informações do administrador da conta')}
-      />
       <CustomInput
         id="manager-profile-email"
         label={t('E-mail')}
