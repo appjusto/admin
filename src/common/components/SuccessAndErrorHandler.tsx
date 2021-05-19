@@ -46,12 +46,13 @@ export const SuccessAndErrorHandler = React.memo(
         toast({
           title: errorMessage.title,
           description: errorMessage.description,
-          status: 'warning', // error ? 'error : 'warning
+          status: error ? 'error' : 'warning',
           duration: 8000,
           isClosable: true,
         });
       }
-    }, [isSuccess, isError, error, successMessage, errorMessage, toast]);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isSuccess, isError, error, toast]);
 
     // side effects
     React.useEffect(() => {
