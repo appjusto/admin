@@ -98,7 +98,7 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
         status: true,
         error: updateError,
       });
-  }, [isError]);
+  }, [isError, updateError]);
 
   // UI
   if (isSuccess && redirect) return <Redirect to={redirect} push />;
@@ -171,6 +171,7 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
         isError={error.status}
         error={error.error}
         errorMessage={error.message}
+        isLoading={isLoading}
       />
     </Box>
   );

@@ -94,6 +94,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
 
   const onSubmitHandler = async () => {
     submission.current += 1;
+    setError(initialError);
     //if (minimumOrder === 0) return minimumOrderRef.current?.focus();
     if (!isCNPJValid()) {
       console.log('CNPJ invalid!');
@@ -236,7 +237,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
         status: true,
         error: updateResult.error,
       });
-  }, [updateResult.isError]);
+  }, [updateResult.isError, updateResult.error]);
 
   // UI
   const breakpoint = useBreakpoint();
@@ -404,6 +405,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
           isError={error.status}
           error={error.error}
           errorMessage={error.message}
+          isLoading={isLoading}
         />
       </Box>
       <Switch>

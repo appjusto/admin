@@ -15,6 +15,7 @@ import { useConsumerUpdateProfile } from 'app/api/consumer/useConsumerUpdateProf
 import { useContextConsumerProfile } from 'app/state/consumer/context';
 import { ConsumerProfile } from 'appjusto-types';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
+import { initialError } from 'common/components/error/utils';
 import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
 import React from 'react';
 import { useRouteMatch } from 'react-router';
@@ -39,10 +40,11 @@ export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
   const { url } = useRouteMatch();
   const { consumer, contextValidation } = useContextConsumerProfile();
   const { updateProfile, updateResult } = useConsumerUpdateProfile();
-  const { isLoading, isSuccess, isError, error } = updateResult;
+  const { isLoading, isSuccess, isError, error: updateError } = updateResult;
 
   // state
-  const [submitStatus, setSubmitStatus] = React.useState<SubmitStatus>(initialStatus);
+  //const [submitStatus, setSubmitStatus] = React.useState<SubmitStatus>(initialStatus);
+  const [error, setError] = React.useState(initialError);
 
   // refs
   const submission = React.useRef(0);
@@ -54,12 +56,13 @@ export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
 
   //handlers
   const handleSave = () => {
-    setSubmitStatus(initialStatus);
+    setError(initialError);
     submission.current += 1;
     if (!contextValidation.cpf) {
-      return setSubmitStatus({
-        status: 'error',
-        message: 'Verificar o preenchimento dos campos',
+      return setError({
+        status: true,
+        error: null,
+        message: { title: 'O CPF informado não é válido.' },
       });
     }
     const newState = {} as ConsumerProfile;
@@ -73,10 +76,12 @@ export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
 
   // side effects
   React.useEffect(() => {
-    if (isSuccess) setSubmitStatus({ status: 'success', message: 'Informações salvas!' });
     if (isError)
-      setSubmitStatus({ status: 'error', message: 'Não foi possível acessar o servidor' });
-  }, [isError, isSuccess]);
+      setError({
+        status: true,
+        error: updateError,
+      });
+  }, [isError, updateError]);
 
   //UI
   return (
@@ -148,9 +153,10 @@ export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
               <SuccessAndErrorHandler
                 submission={submission.current}
                 isSuccess={isSuccess}
-                isError={submitStatus.status === 'error'}
-                error={error}
-                errorMessage={{ title: submitStatus.message }}
+                isError={isError}
+                error={error.error}
+                errorMessage={error.message}
+                isLoading={isLoading}
               />
             </HStack>
           </DrawerFooter>

@@ -85,7 +85,7 @@ export const AgentProfile = () => {
         status: true,
         error: updateError,
       });
-  }, [isError]);
+  }, [isError, updateError]);
 
   // UI
   return (
@@ -96,6 +96,7 @@ export const AgentProfile = () => {
         isError={error.status}
         error={error.error}
         errorMessage={error.message}
+        isLoading={isLoading}
       />
       <form
         onSubmit={(ev) => {

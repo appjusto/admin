@@ -127,6 +127,7 @@ export const BusinessBOProvider = ({ children }: Props) => {
 
   const handleSave = () => {
     submission.current += 1;
+    setError(initialError);
     const { cpf, phone, agency, account } = contextValidation;
     if (!cpf)
       return setError({
@@ -215,6 +216,7 @@ export const BusinessBOProvider = ({ children }: Props) => {
         isError={error.status}
         error={error.error}
         errorMessage={error.message}
+        isLoading={isLoading}
       />
     </BusinessBOContext.Provider>
   );
