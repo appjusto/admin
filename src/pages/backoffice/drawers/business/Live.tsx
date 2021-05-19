@@ -34,7 +34,7 @@ export const BusinessLive = () => {
   React.useEffect(() => {
     handleBusinessStatusChange('status', isOpen);
     handleBusinessStatusChange('enabled', isEnabled === 'true' ? true : false);
-  }, [isOpen, isEnabled]);
+  }, [isOpen, isEnabled, handleBusinessStatusChange]);
 
   // UI
   return (

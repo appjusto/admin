@@ -114,9 +114,9 @@ export const BusinessBOProvider = ({ children }: Props) => {
   }, [ManagerProfileResult, BankAccountResult, BusinessProfileResult]);
 
   // handlers
-  const handleBusinessStatusChange = (key: string, value: any) => {
+  const handleBusinessStatusChange = React.useCallback((key: string, value: any) => {
     dispatch({ type: 'update_business', payload: { [key]: value } });
-  };
+  }, []);
 
   const handleManagerProfileChange = (key: string, value: any) => {
     dispatch({ type: 'update_manager', payload: { [key]: value } });
@@ -144,7 +144,7 @@ export const BusinessBOProvider = ({ children }: Props) => {
   // side effects
   React.useEffect(() => {
     if (businessId) setBusinessId(businessId);
-  }, [businessId]);
+  }, [businessId, setBusinessId]);
 
   React.useEffect(() => {
     if (business && business?.managers) {

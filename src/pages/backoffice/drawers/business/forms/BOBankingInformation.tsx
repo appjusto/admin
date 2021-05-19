@@ -73,7 +73,7 @@ const BOBankingInformation = () => {
 
   React.useEffect(() => {
     setContextValidation((prev) => ({ ...prev, ...validation }));
-  }, [validation]);
+  }, [validation, setContextValidation]);
 
   // UI
   return (

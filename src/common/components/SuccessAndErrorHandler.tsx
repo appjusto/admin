@@ -51,7 +51,7 @@ export const SuccessAndErrorHandler = React.memo(
           isClosable: true,
         });
       }
-    }, [isSuccess, isError, error, toast]);
+    }, [isSuccess, isError, error, successMessage, errorMessage, toast]);
 
     // side effects
     React.useEffect(() => {
