@@ -1,6 +1,8 @@
 import { Box, useToast } from '@chakra-ui/react';
 import * as Sentry from '@sentry/react';
+import { isEmpty } from 'lodash';
 import React from 'react';
+import { CustomToast } from './CustomToast';
 
 type Message = { title: string; description?: string };
 
@@ -27,28 +29,34 @@ export const SuccessAndErrorHandler = React.memo(
   }: SuccessAndErrorHandlersProps) => {
     // helpers
     const toast = useToast();
-
+    console.log(submission, isSuccess, isError, error);
     // handlers
     const handleStatus = React.useCallback(() => {
       if (isSuccess) {
         toast.closeAll();
         toast({
-          title: successMessage.title,
-          description: successMessage.description,
-          status: 'success',
           duration: 4000,
-          isClosable: true,
+          render: () => (
+            <CustomToast
+              type="success"
+              title={successMessage.title}
+              description={successMessage.description}
+            />
+          ),
         });
       }
       if (isError) {
         toast.closeAll();
         if (error) Sentry.captureException(error);
         toast({
-          title: errorMessage.title,
-          description: errorMessage.description,
-          status: error ? 'error' : 'warning',
           duration: 8000,
-          isClosable: true,
+          render: () => (
+            <CustomToast
+              type={isEmpty(error) ? 'warning' : 'error'}
+              title={errorMessage.title}
+              description={errorMessage.description}
+            />
+          ),
         });
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps

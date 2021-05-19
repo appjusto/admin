@@ -47,6 +47,8 @@ type Params = {
   businessId: string;
 };
 
+const initialError = { status: false, error: null as null | unknown, message: '' };
+
 export const BusinessBOProvider = ({ children }: Props) => {
   // context
   const { businessId } = useParams<Params>();
@@ -64,7 +66,7 @@ export const BusinessBOProvider = ({ children }: Props) => {
   const [state, dispatch] = React.useReducer(businessBOReducer, {} as businessBOState);
   const [isLoading, setIsLoading] = React.useState(false);
   const [isSuccess, setIsSuccess] = React.useState(false);
-  const [error, setError] = React.useState({ status: false, error: {} as unknown, message: '' });
+  const [error, setError] = React.useState(initialError);
   const [contextValidation, setContextValidation] = React.useState({
     cpf: true,
     phone: true,
@@ -92,25 +94,26 @@ export const BusinessBOProvider = ({ children }: Props) => {
     )
       setIsSuccess(true);
     else setIsSuccess(false);
-
+    console.log('error', ManagerProfileResult.error);
     if (ManagerProfileResult.error)
       setError({
         status: true,
         error: ManagerProfileResult.error,
         message: 'Não foi possível acessar o servidor',
       });
-    if (BankAccountResult.error)
+    else if (BankAccountResult.error)
       setError({
         status: true,
         error: BankAccountResult.error,
         message: 'Não foi possível acessar o servidor',
       });
-    if (BusinessProfileResult.error)
+    else if (BusinessProfileResult.error)
       setError({
         status: true,
         error: BusinessProfileResult.error,
         message: 'Não foi possível acessar o servidor',
       });
+    else setError(initialError);
   }, [ManagerProfileResult, BankAccountResult, BusinessProfileResult]);
 
   // handlers
