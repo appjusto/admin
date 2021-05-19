@@ -145,12 +145,6 @@ export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
               >
                 {t('Salvar alterações')}
               </Button>
-              {/*submitStatus.status === 'success' && (
-                <AlertSuccess mt="0" h="48px" description={submitStatus.message} />
-              )}
-              {submitStatus.status === 'error' && (
-                <AlertError mt="0" h="48px" description={submitStatus.message} />
-              )*/}
               <SuccessAndErrorHandler
                 submission={submission.current}
                 isSuccess={isSuccess}

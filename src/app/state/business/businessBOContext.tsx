@@ -3,6 +3,7 @@ import { useBusinessBankAccount } from 'app/api/business/profile/useBusinessBank
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useUpdateManagerProfile } from 'app/api/manager/useUpdateManagerProfile';
 import { BankAccount, Business, ManagerProfile, WithId } from 'appjusto-types';
+import { SuccessAndErrorHandler } from 'common/components/SuccessAndErrorHandler';
 import { isEmpty } from 'lodash';
 import React, { Dispatch, SetStateAction } from 'react';
 import { useParams } from 'react-router';
@@ -16,13 +17,19 @@ const bankAccountSet = (bankAccount: BankAccount): boolean => {
   );
 };
 
-type Validation = { cpf: boolean };
+type Validation = {
+  cpf: boolean;
+  phone: boolean;
+  agency: boolean;
+  account: boolean;
+};
 
 interface BusinessBOContextProps {
   manager?: WithId<ManagerProfile> | null;
   bankAccount?: WithId<BankAccount> | null;
   business?: WithId<Business> | null;
   contextValidation: Validation;
+  isLoading: boolean;
   handleBusinessStatusChange(key: string, value: any): void;
   handleManagerProfileChange(key: string, value: any): void;
   handleBankingInfoChange(key: string, value: any): void;
@@ -55,9 +62,56 @@ export const BusinessBOProvider = ({ children }: Props) => {
 
   // state
   const [state, dispatch] = React.useReducer(businessBOReducer, {} as businessBOState);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [isSuccess, setIsSuccess] = React.useState(false);
+  const [error, setError] = React.useState({ status: false, error: {} as unknown, message: '' });
   const [contextValidation, setContextValidation] = React.useState({
     cpf: true,
+    phone: true,
+    agency: true,
+    account: true,
   });
+
+  // refs
+  const submission = React.useRef(0);
+
+  // helpers
+  const getResult = React.useCallback(() => {
+    if (
+      ManagerProfileResult.isLoading ||
+      BankAccountResult.isLoading ||
+      BusinessProfileResult.isLoading
+    )
+      setIsLoading(true);
+    else setIsLoading(false);
+
+    if (
+      ManagerProfileResult.isSuccess &&
+      BankAccountResult.isSuccess &&
+      BusinessProfileResult.isSuccess
+    )
+      setIsSuccess(true);
+    else setIsSuccess(false);
+
+    if (ManagerProfileResult.error)
+      setError({
+        status: true,
+        error: ManagerProfileResult.error,
+        message: 'Não foi possível acessar o servidor',
+      });
+    if (BankAccountResult.error)
+      setError({
+        status: true,
+        error: BankAccountResult.error,
+        message: 'Não foi possível acessar o servidor',
+      });
+    if (BusinessProfileResult.error)
+      setError({
+        status: true,
+        error: BusinessProfileResult.error,
+        message: 'Não foi possível acessar o servidor',
+      });
+  }, [ManagerProfileResult, BankAccountResult, BusinessProfileResult]);
 
   // handlers
   const handleBusinessStatusChange = (key: string, value: any) => {
@@ -73,6 +127,15 @@ export const BusinessBOProvider = ({ children }: Props) => {
   };
 
   const handleSave = () => {
+    submission.current += 1;
+    const { cpf, phone, agency, account } = contextValidation;
+    if (!cpf) return setError({ status: true, error: {}, message: 'O CPF informado não é válido' });
+    if (!phone)
+      return setError({ status: true, error: {}, message: 'O cecular informado não é válido' });
+    if (!agency)
+      return setError({ status: true, error: {}, message: 'A agência informada não é válida' });
+    if (!account)
+      return setError({ status: true, error: {}, message: 'A agência informada não é válida' });
     if (state.manager !== manager) updateProfile(state.manager);
     if (state.bankingInfo !== bankAccount) updateBankAccount(state.bankingInfo);
     if (state.businessProfile !== business) updateBusinessProfile(state.businessProfile);
@@ -103,12 +166,15 @@ export const BusinessBOProvider = ({ children }: Props) => {
   }, [business]);
 
   React.useEffect(() => {
-    setContextValidation(() => {
-      return {
-        cpf: cpfutils.isValid(manager?.cpf!),
-      };
-    });
-  }, [manager?.cpf]);
+    getResult();
+  }, [ManagerProfileResult, BankAccountResult, BusinessProfileResult, getResult]);
+
+  React.useEffect(() => {
+    if (state?.manager?.phone)
+      setContextValidation((prev) => ({ ...prev, phone: state.manager.phone?.length === 11 }));
+    if (state?.manager?.cpf)
+      setContextValidation((prev) => ({ ...prev, cpf: cpfutils.isValid(state.manager.cpf!) }));
+  }, [state?.manager?.phone, state?.manager?.cpf]);
 
   // UI
   return (
@@ -118,6 +184,7 @@ export const BusinessBOProvider = ({ children }: Props) => {
         bankAccount: state.bankingInfo,
         business: state.businessProfile,
         contextValidation,
+        isLoading,
         handleBusinessStatusChange,
         handleManagerProfileChange,
         handleBankingInfoChange,
@@ -126,6 +193,13 @@ export const BusinessBOProvider = ({ children }: Props) => {
       }}
     >
       {children}
+      <SuccessAndErrorHandler
+        submission={submission.current}
+        isSuccess={isSuccess}
+        isError={error.status}
+        error={error.error}
+        errorMessage={{ title: error.message }}
+      />
     </BusinessBOContext.Provider>
   );
 };

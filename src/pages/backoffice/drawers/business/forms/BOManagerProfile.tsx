@@ -1,6 +1,6 @@
 import { Box } from '@chakra-ui/react';
 import * as cpfutils from '@fnando/cpf';
-import { ManagerProfile, WithId } from 'appjusto-types';
+import { useContextBusinessBackoffice } from 'app/state/business/businessBOContext';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import { CustomPatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';
 import {
@@ -14,12 +14,9 @@ import PageHeader from 'pages/PageHeader';
 import React from 'react';
 import { t } from 'utils/i18n';
 
-interface BOManagerProfileProps {
-  manager?: WithId<ManagerProfile> | null;
-  handleChange(key: string, value: any): void;
-}
-
-export const BOManagerProfile = ({ manager, handleChange }: BOManagerProfileProps) => {
+export const BOManagerProfile = () => {
+  // context
+  const { manager, handleManagerProfileChange: handleChange } = useContextBusinessBackoffice();
   // refs
   const nameRef = React.useRef<HTMLInputElement>(null);
   const cpfRef = React.useRef<HTMLInputElement>(null);
