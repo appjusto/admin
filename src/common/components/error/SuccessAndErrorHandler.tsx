@@ -2,7 +2,7 @@ import { Box, useToast } from '@chakra-ui/react';
 import * as Sentry from '@sentry/react';
 import { isEmpty } from 'lodash';
 import React from 'react';
-import { CustomToast } from './CustomToast';
+import { CustomToast } from '../CustomToast';
 
 type Message = { title: string; description?: string };
 

@@ -2,6 +2,8 @@ import { Box } from '@chakra-ui/react';
 import * as cpfutils from '@fnando/cpf';
 import { useUpdateAgentProfile } from 'app/api/agent/useUpdateAgentProfile';
 import { useContextAgentProfile } from 'app/state/agent/context';
+import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
+import { initialError } from 'common/components/error/utils';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import { CustomPatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';
 import {
@@ -11,13 +13,10 @@ import {
   phoneMask,
 } from 'common/components/form/input/pattern-input/formatters';
 import { numbersOnlyParser } from 'common/components/form/input/pattern-input/parsers';
-import { SuccessAndErrorHandler } from 'common/components/SuccessAndErrorHandler';
 import PageFooter from 'pages/PageFooter';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
 import { t } from 'utils/i18n';
-
-const initialError = { status: false, error: null as null | unknown, message: '' };
 
 export const AgentProfile = () => {
   // context
@@ -85,7 +84,6 @@ export const AgentProfile = () => {
       setError({
         status: true,
         error: updateError,
-        message: 'Não foi possível acessar o servidor',
       });
   }, [isError]);
 
@@ -97,7 +95,7 @@ export const AgentProfile = () => {
         isSuccess={isSuccess}
         isError={error.status}
         error={error.error}
-        errorMessage={{ title: error.message }}
+        errorMessage={error.message ? { title: error.message } : undefined}
       />
       <form
         onSubmit={(ev) => {

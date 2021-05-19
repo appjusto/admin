@@ -3,7 +3,8 @@ import { useBusinessBankAccount } from 'app/api/business/profile/useBusinessBank
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useUpdateManagerProfile } from 'app/api/manager/useUpdateManagerProfile';
 import { BankAccount, Business, ManagerProfile, WithId } from 'appjusto-types';
-import { SuccessAndErrorHandler } from 'common/components/SuccessAndErrorHandler';
+import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
+import { initialError } from 'common/components/error/utils';
 import { isEmpty } from 'lodash';
 import React, { Dispatch, SetStateAction } from 'react';
 import { useParams } from 'react-router';
@@ -46,8 +47,6 @@ interface Props {
 type Params = {
   businessId: string;
 };
-
-const initialError = { status: false, error: null as null | unknown, message: '' };
 
 export const BusinessBOProvider = ({ children }: Props) => {
   // context
@@ -99,19 +98,16 @@ export const BusinessBOProvider = ({ children }: Props) => {
       setError({
         status: true,
         error: ManagerProfileResult.error,
-        message: 'Não foi possível acessar o servidor',
       });
     else if (BankAccountResult.error)
       setError({
         status: true,
         error: BankAccountResult.error,
-        message: 'Não foi possível acessar o servidor',
       });
     else if (BusinessProfileResult.error)
       setError({
         status: true,
         error: BusinessProfileResult.error,
-        message: 'Não foi possível acessar o servidor',
       });
     else setError(initialError);
   }, [ManagerProfileResult, BankAccountResult, BusinessProfileResult]);
@@ -201,7 +197,7 @@ export const BusinessBOProvider = ({ children }: Props) => {
         isSuccess={isSuccess}
         isError={error.status}
         error={error.error}
-        errorMessage={{ title: error.message }}
+        errorMessage={error.message ? { title: error.message } : undefined}
       />
     </BusinessBOContext.Provider>
   );

@@ -15,7 +15,7 @@ import {
 import { useCourierUpdateProfile } from 'app/api/courier/useCourierUpdateProfile';
 import { useContextCourierProfile } from 'app/state/courier/context';
 import { CourierProfile } from 'appjusto-types';
-import { SuccessAndErrorHandler } from 'common/components/SuccessAndErrorHandler';
+import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
 import { modePTOptions } from 'pages/backoffice/utils';
 import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
 import React from 'react';
