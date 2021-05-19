@@ -1,4 +1,5 @@
 import {
+  Button,
   Drawer,
   DrawerBody,
   DrawerCloseButton,
@@ -10,7 +11,7 @@ import {
   Icon,
   Text,
 } from '@chakra-ui/react';
-import { Business, WithId } from 'appjusto-types';
+import { useContextBusinessBackoffice } from 'app/state/business/businessBOContext';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
 import React from 'react';
@@ -20,29 +21,15 @@ import { t } from 'utils/i18n';
 
 interface BaseDrawerProps {
   agent: { id: string | undefined; name: string };
-  business: WithId<Business> | null | undefined;
-  managerName: string;
   isOpen: boolean;
   onClose(): void;
-  //onSave?(): void;
   children: React.ReactNode | React.ReactNode[];
 }
 
-export const BusinessBaseDrawer = ({
-  agent,
-  business,
-  managerName,
-  onClose,
-  //onSave,
-  children,
-  ...props
-}: BaseDrawerProps) => {
+export const BusinessBaseDrawer = ({ agent, onClose, children, ...props }: BaseDrawerProps) => {
   //context
   const { url } = useRouteMatch();
-  //handlers
-
-  //UI conditions
-
+  const { business, manager, handleSave } = useContextBusinessBackoffice();
   //UI
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
@@ -86,7 +73,7 @@ export const BusinessBaseDrawer = ({
             <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
               {t('Nome do administrador:')}{' '}
               <Text as="span" fontWeight="500">
-                {managerName}
+                {manager?.name ?? 'N/E'}
               </Text>
             </Text>
             <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
@@ -135,21 +122,19 @@ export const BusinessBaseDrawer = ({
             {children}
           </DrawerBody>
           <DrawerFooter borderTop="1px solid #F2F6EA">
-            <Flex w="full" justifyContent="flex-start">
-              <Flex w="full" maxW="607px" flexDir="row" justifyContent="flex-end">
-                {/*<Button type="submit" width="full" maxW="240px" fontSize="15px" onClick={onSave}>
-                  {t('Salvar alterações')}
-                </Button>*/}
-                <CustomButton
-                  id="personification"
-                  mt="0"
-                  width="full"
-                  maxW="240px"
-                  variant="grey"
-                  label={t('Personificar restaurante')}
-                  link={'/app'}
-                />
-              </Flex>
+            <Flex w="full" flexDir="row" justifyContent="space-between">
+              <Button type="submit" width="full" maxW="240px" fontSize="15px" onClick={handleSave}>
+                {t('Salvar alterações')}
+              </Button>
+              <CustomButton
+                id="personification"
+                mt="0"
+                width="full"
+                maxW="240px"
+                variant="grey"
+                label={t('Personificar restaurante')}
+                link={'/app'}
+              />
             </Flex>
           </DrawerFooter>
         </DrawerContent>
