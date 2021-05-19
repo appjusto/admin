@@ -30,11 +30,6 @@ interface BaseDrawerProps {
   children: React.ReactNode | React.ReactNode[];
 }
 
-type Status = 'unsubmited' | 'success' | 'error';
-type SubmitStatus = { status: Status; message: string };
-
-const initialStatus = { status: 'unsubmited', message: '' } as SubmitStatus;
-
 export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseDrawerProps) => {
   //context
   const { url } = useRouteMatch();
@@ -43,7 +38,6 @@ export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
   const { isLoading, isSuccess, isError, error: updateError } = updateResult;
 
   // state
-  //const [submitStatus, setSubmitStatus] = React.useState<SubmitStatus>(initialStatus);
   const [error, setError] = React.useState(initialError);
 
   // refs

@@ -45,7 +45,6 @@ export const AgentProfile = () => {
     submission.current += 1;
     setError(initialError);
     if (!isCPFValid()) {
-      console.log('Submit');
       setError({
         status: true,
         error: null,
