@@ -22,7 +22,7 @@ export const DeliveryInfos = ({ order }: DeliveryInfosProps) => {
     arrivalTime,
   } = useOrderDeliveryInfos(order);
   // state
-  const [joined, setJoined] = React.useState<string | null>(null);
+  const [joined, setJoined] = React.useState<string | null>();
 
   // side effects
   React.useEffect(() => {
@@ -35,6 +35,7 @@ export const DeliveryInfos = ({ order }: DeliveryInfosProps) => {
         setJoined(joinDate);
       } catch (error) {
         console.log(error);
+        setJoined(null);
       }
     }
   }, [order.courier]);
@@ -74,7 +75,13 @@ export const DeliveryInfos = ({ order }: DeliveryInfosProps) => {
               <Text fontSize="xl" color="black">
                 {order.courier?.name}
               </Text>
-              <Text fontSize="sm">{t(`No appJusto desde ${joined}`)}</Text>
+              {joined ? (
+                <Text fontSize="sm">{t(`No appJusto desde ${joined}`)}</Text>
+              ) : (
+                <Text fontSize="sm" color="red">
+                  {t('Não foi possível acessar data de cadastro.')}
+                </Text>
+              )}
             </Flex>
           </Flex>
           <Link to={`/app/chat/${order.id}/${order.courier?.id}`}>
