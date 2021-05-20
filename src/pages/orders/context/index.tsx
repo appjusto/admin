@@ -1,7 +1,10 @@
+import { useToast } from '@chakra-ui/toast';
+import * as Sentry from '@sentry/react';
 import { useOrders } from 'app/api/order/useOrders';
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusiness } from 'app/state/business/context';
-import { Business, Order, OrderIssue, OrderItem, OrderStatus, WithId } from 'appjusto-types';
+import { Business, Order, OrderItem, OrderStatus, WithId } from 'appjusto-types';
+import { CustomToast } from 'common/components/CustomToast';
 //@ts-ignore
 import bellDing from 'common/sounds/bell-ding.mp3';
 import React from 'react';
@@ -89,10 +92,6 @@ interface ContextProps {
   createFakeOrder(): void;
   changeOrderStatus(orderId: string, status: OrderStatus): void;
   setOrderCookingTime(orderId: string, cookingTime: number | null): void;
-  getOrderIssues: (
-    orderId: string,
-    resultHandler: (orderIssues: WithId<OrderIssue>[]) => void
-  ) => void;
 }
 
 const OrdersContext = React.createContext<ContextProps>({} as ContextProps);
@@ -121,6 +120,8 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   };
 
   //handlers
+  const toast = useToast();
+
   const getOrderById = (id: string) => {
     const order = orders.find((order: WithId<Order>) => order.id === id);
     return order;
@@ -144,21 +145,46 @@ export const OrdersContextProvider = (props: ProviderProps) => {
         return newOrders;
       });
       // firestore update
-      await api.order().updateOrder(orderId, { status });
+      try {
+        await api.order().updateOrder(orderId, { status });
+      } catch (error) {
+        toast({
+          duration: 8000,
+          render: () => (
+            <CustomToast
+              type="error"
+              message={{
+                title: 'O status do pedido não pode ser alterado.',
+                description: 'Verifica a conexão com a internet?',
+              }}
+            />
+          ),
+        });
+        Sentry.captureException(error);
+      }
     },
     [api]
   );
 
   const setOrderCookingTime = async (orderId: string, cookingTime: number | null) => {
-    await api.order().updateOrder(orderId, { cookingTime });
+    try {
+      await api.order().updateOrder(orderId, { cookingTime });
+    } catch (error) {
+      toast({
+        duration: 8000,
+        render: () => (
+          <CustomToast
+            type="error"
+            message={{
+              title: 'O tempo de preparo do pedido não foi alterado.',
+              description: 'Verifica a conexão com a internet?',
+            }}
+          />
+        ),
+      });
+      Sentry.captureException(error);
+    }
   };
-
-  const getOrderIssues = React.useCallback(
-    (orderId: string, resultHandler: (orderIssues: WithId<OrderIssue>[]) => void) => {
-      api.order().observeOrderIssues(orderId, resultHandler);
-    },
-    [api]
-  );
 
   // side effects
   React.useEffect(() => {
@@ -179,7 +205,6 @@ export const OrdersContextProvider = (props: ProviderProps) => {
         createFakeOrder,
         changeOrderStatus,
         setOrderCookingTime,
-        getOrderIssues,
       }}
       {...props}
     />
