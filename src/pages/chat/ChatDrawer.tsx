@@ -9,8 +9,6 @@ import {
   DrawerHeader,
   DrawerOverlay,
   Flex,
-  HStack,
-  Image,
   Text,
   Textarea,
   useToast,
@@ -19,76 +17,11 @@ import * as Sentry from '@sentry/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useOrderChat } from 'app/api/order/useOrderChat';
 import { Flavor } from 'appjusto-types';
-import managerIcon from 'common/img/manager.svg';
 import React, { KeyboardEvent } from 'react';
 import { useParams } from 'react-router';
-import { getDateAndHour, getDateTime } from 'utils/functions';
+import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
-
-interface ChatMessage {
-  id: string;
-  from: {
-    agent: Flavor;
-    name: string;
-    id: string;
-  };
-  to: {
-    agent: Flavor;
-    name: string;
-    id: string;
-  };
-  message: string;
-  //timestamp: firebase.firestore.Timestamp;
-  timestamp: string;
-}
-
-const fakeMessages = [
-  {
-    id: 'skjcaskcna',
-    from: {
-      agent: 'Entregador',
-      name: 'Kelly Slater',
-      id: '001',
-    },
-    to: {
-      agent: 'Restaurante',
-      name: 'Itapuama Vegan',
-      id: '002',
-    },
-    message: 'Já cheguei!',
-    timestamp: '12h45',
-  },
-  {
-    id: 'skjohhtphtplhp',
-    from: {
-      agent: 'Restaurante',
-      name: 'Itapuama Vegan',
-      id: '002',
-    },
-    to: {
-      agent: 'Entregador',
-      name: 'Kelly Slater',
-      id: '001',
-    },
-    message: 'Ok!',
-    timestamp: '12h55',
-  },
-  {
-    id: 'skjc3216898',
-    from: {
-      agent: 'Restaurante',
-      name: 'Itapuama Vegan',
-      id: '002',
-    },
-    to: {
-      agent: 'Entregador',
-      name: 'Kelly Slater',
-      id: '001',
-    },
-    message: 'O pedido está pronto!',
-    timestamp: '12h56',
-  },
-];
+import { ChatMessage } from './ChatMessage';
 
 interface ChatDrawerProps {
   isOpen: boolean;
@@ -131,13 +64,6 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
     //@ts-ignore
     const name = participants[id]?.name;
     return name ?? 'N/E';
-  };
-
-  const getTime = (timestamp: firebase.firestore.Timestamp) => {
-    if (!timestamp) return;
-    const fullDate = getDateAndHour(timestamp);
-    const time = fullDate.split(' ')[1];
-    return time;
   };
 
   const sendMessageHandler = () => {
@@ -230,40 +156,13 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
           <DrawerBody bg="gray.50" ref={messagesBox}>
             {groupMessages.length > 0 &&
               groupMessages.map((message, index) => (
-                <Box key={message.id} my="4">
-                  <HStack>
-                    <Flex
-                      width="40px"
-                      height="40px"
-                      justifyContent="center"
-                      alignItems="center"
-                      border="1px solid #000"
-                      borderRadius="20px"
-                      overflow="hidden"
-                    >
-                      <Image src={getImage(message.from.id) ?? managerIcon} width="100%" />
-                    </Flex>
-                    <Box>
-                      <Text fontSize="15px" lineHeight="21px" fontWeight="500" color="black">
-                        {getName(message.from.id)}
-                      </Text>
-                      <Text fontSize="13px" lineHeight="18px" fontWeight="500">
-                        {getTime(message.timestamp)}
-                      </Text>
-                    </Box>
-                  </HStack>
-                  <Box
-                    mt="2"
-                    w="fit-content"
-                    py="2"
-                    px="4"
-                    bg="white"
-                    border="1px solid #C8D7CB"
-                    borderRadius="lg"
-                  >
-                    <Text>{message.message}</Text>
-                  </Box>
-                </Box>
+                <ChatMessage
+                  key={message.id}
+                  image={getImage(message.from.id)}
+                  name={getName(message.from.id)}
+                  message={message}
+                  isGrouped={index > 0 && groupMessages[index - 1].from.id === message.from.id}
+                />
               ))}
           </DrawerBody>
           <DrawerFooter borderTop="1px solid #C8D7CB">
