@@ -96,7 +96,6 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
         isSuccess={isSuccess}
         isError={isError}
         error={error}
-        isLoading={isLoading}
       />
       <OrderBaseDrawer
         agent={{ id: agent?.id, name: username }}

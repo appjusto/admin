@@ -216,7 +216,6 @@ export const BusinessBOProvider = ({ children }: Props) => {
         isError={error.status}
         error={error.error}
         errorMessage={error.message}
-        isLoading={isLoading}
       />
     </BusinessBOContext.Provider>
   );

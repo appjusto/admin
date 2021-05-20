@@ -189,7 +189,6 @@ export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDr
                 isError={isError}
                 error={error.error}
                 errorMessage={error.message}
-                isLoading={isLoading}
               />
             </HStack>
           </DrawerFooter>

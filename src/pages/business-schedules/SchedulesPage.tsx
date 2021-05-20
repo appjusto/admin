@@ -159,7 +159,6 @@ const SchedulesPage = () => {
           isSuccess={isSuccess}
           isError={isError}
           error={error}
-          isLoading={isLoading}
         />
       </Flex>
     </>

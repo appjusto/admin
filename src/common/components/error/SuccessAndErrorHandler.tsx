@@ -11,7 +11,6 @@ interface SuccessAndErrorHandlersProps {
   isError?: boolean;
   error?: Error | unknown;
   errorMessage?: Message;
-  isLoading: boolean;
 }
 
 const initSuccessMsg = { title: 'Informações savlas com sucesso!' };
@@ -28,7 +27,6 @@ export const SuccessAndErrorHandler = React.memo(
     isError,
     error,
     errorMessage,
-    isLoading,
   }: SuccessAndErrorHandlersProps) => {
     // helpers
     const toast = useToast();
@@ -36,7 +34,7 @@ export const SuccessAndErrorHandler = React.memo(
     const handleStatus = React.useCallback(() => {
       const successId = 'success-toast';
       const errorId = 'error-toast';
-      if (isLoading) return;
+      //if (isLoading) return;
       if (isError) {
         if (error && !toast.isActive(errorId)) Sentry.captureException(error);
         if (!toast.isActive(errorId))
@@ -58,7 +56,7 @@ export const SuccessAndErrorHandler = React.memo(
             render: () => <CustomToast type="success" message={successMessage ?? initSuccessMsg} />,
           });
       }
-    }, [isLoading, isSuccess, isError, error, successMessage, errorMessage, toast]);
+    }, [isSuccess, isError, error, successMessage, errorMessage, toast]);
 
     // side effects
     React.useEffect(() => {

@@ -259,7 +259,6 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
         isSuccess={isSuccess && !onboarding}
         isError={isError}
         error={error}
-        isLoading={isLoading}
       />
     </Box>
   );

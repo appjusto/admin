@@ -282,7 +282,6 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
           isError={error.status}
           error={error.error}
           errorMessage={error.message}
-          isLoading={isLoading}
         />
       </form>
     </Box>

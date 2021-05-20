@@ -171,7 +171,6 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
         isError={error.status}
         error={error.error}
         errorMessage={error.message}
-        isLoading={isLoading}
       />
     </Box>
   );

@@ -95,7 +95,6 @@ export const AgentProfile = () => {
         isError={error.status}
         error={error.error}
         errorMessage={error.message}
-        isLoading={isLoading}
       />
       <form
         onSubmit={(ev) => {

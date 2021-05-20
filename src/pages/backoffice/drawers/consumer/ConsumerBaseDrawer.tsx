@@ -150,7 +150,6 @@ export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
                 isError={isError}
                 error={error.error}
                 errorMessage={error.message}
-                isLoading={isLoading}
               />
             </HStack>
           </DrawerFooter>
