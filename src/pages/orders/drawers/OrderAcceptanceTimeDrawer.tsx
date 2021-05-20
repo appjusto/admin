@@ -55,7 +55,7 @@ export const OrderAcceptanceTimeDrawer = ({ onClose, ...props }: BaseDrawerProps
 
   React.useEffect(() => {
     if (isSuccess) onClose();
-  }, [isSuccess]);
+  }, [isSuccess, onClose]);
 
   React.useEffect(() => {
     if (isError) {

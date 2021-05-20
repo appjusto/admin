@@ -163,7 +163,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
         Sentry.captureException(error);
       }
     },
-    [api]
+    [api, toast]
   );
 
   const setOrderCookingTime = async (orderId: string, cookingTime: number | null) => {

@@ -18,7 +18,7 @@ export const OrdersHeader = ({ statusEnabled = true }: OrdersHeaderProps) => {
   const { isError, error } = updateResult;
 
   // state
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = React.useState(business?.status === 'open' ? true : false);
 
   // refs
   const submission = React.useRef(0);
