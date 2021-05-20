@@ -124,7 +124,7 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
         isClosable: true,
       });
     }
-  }, [isError]);
+  }, [isError, error, toast]);
 
   //UI
   return (

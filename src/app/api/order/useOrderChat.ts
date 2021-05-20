@@ -23,7 +23,7 @@ export const useOrderChat = (orderId: string, counterpartId: string) => {
   // handlers;
   const [sendMessage, sendMessageResult] = useMutation(async (data: Partial<ChatMessage>) => {
     if (!businessId) return;
-    const from = { agent: 'manager' as Flavor, id: businessId };
+    const from = { agent: 'business' as Flavor, id: businessId };
     api.order().sendMessage(orderId, {
       from,
       ...data,
