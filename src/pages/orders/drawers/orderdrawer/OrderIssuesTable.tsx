@@ -19,8 +19,7 @@ export const OrderIssuesTable = ({ issues }: OrderIssuesTableProps) => {
     if (type.includes('consumer')) participant = 'Cliente';
     return participant;
   };
-
-  console.log(issues);
+  // UI
   return (
     <Box>
       <SectionTitle>{t('Problemas')}</SectionTitle>

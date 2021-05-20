@@ -3,9 +3,9 @@ import { useBanks } from 'app/api/business/profile/useBanks';
 import { useBusinessBankAccount } from 'app/api/business/profile/useBusinessBankAccount';
 import { Bank, BankAccount, WithId } from 'appjusto-types';
 import { BankAccountPersonType, BankAccountType } from 'appjusto-types/banking';
-import { AlertError } from 'common/components/AlertError';
-import { AlertSuccess } from 'common/components/AlertSuccess';
 import { AlertWarning } from 'common/components/AlertWarning';
+import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
+import { initialError } from 'common/components/error/utils';
 import { CustomPatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';
 import {
   addZerosToBeginning,
@@ -27,11 +27,11 @@ const bankAccountSet = (bankAccount: BankAccount): boolean => {
   );
 };
 
-const BankingInformation = ({ onboarding, redirect, backoffice }: OnboardingProps) => {
+const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
   // context
   const banks = useBanks();
   const { bankAccount, updateBankAccount, updateResult } = useBusinessBankAccount();
-  const { isLoading, isSuccess, isError } = updateResult;
+  const { isLoading, isSuccess, isError, error: updateError } = updateResult;
   // state
   const [selectedBank, setSelectedBank] = React.useState<Bank>();
   const [personType, setPersonType] = React.useState(bankAccount?.personType ?? 'Pessoa Jurídica');
@@ -40,8 +40,10 @@ const BankingInformation = ({ onboarding, redirect, backoffice }: OnboardingProp
   const [agency, setAgency] = React.useState(bankAccount?.agency ?? '');
   const [account, setAccount] = React.useState(bankAccount?.account ?? '');
   const [validation, setValidation] = React.useState({ agency: true, account: true });
+  const [error, setError] = React.useState(initialError);
 
   // refs
+  const submission = React.useRef(0);
   const nameRef = React.useRef<HTMLSelectElement>(null);
   const agencyRef = React.useRef<HTMLInputElement>(null);
   const accountRef = React.useRef<HTMLInputElement>(null);
@@ -77,8 +79,24 @@ const BankingInformation = ({ onboarding, redirect, backoffice }: OnboardingProp
   };
 
   const onSubmitHandler = async () => {
-    if (!validation.agency) return agencyRef?.current?.focus();
-    if (!validation.account) return accountRef?.current?.focus();
+    submission.current += 1;
+    setError(initialError);
+    if (!validation.agency) {
+      setError({
+        status: true,
+        error: null,
+        message: { title: 'A agência informada não é válida.' },
+      });
+      return agencyRef?.current?.focus();
+    }
+    if (!validation.account) {
+      setError({
+        status: true,
+        error: null,
+        message: { title: 'A conta informada não é válida.' },
+      });
+      return accountRef?.current?.focus();
+    }
     const agencyFormatted = agencyFormatter!(agency);
     const accountFormatted = accountFormatter!(account);
     await updateBankAccount({
@@ -123,6 +141,14 @@ const BankingInformation = ({ onboarding, redirect, backoffice }: OnboardingProp
     }
   }, [banks, name, findSelectedBank]);
 
+  React.useEffect(() => {
+    if (isError)
+      setError({
+        status: true,
+        error: updateError,
+      });
+  }, [isError, updateError]);
+
   // UI
   if (isSuccess && redirect) return <Redirect to={redirect} push />;
   return (
@@ -133,7 +159,7 @@ const BankingInformation = ({ onboarding, redirect, backoffice }: OnboardingProp
           onSubmitHandler();
         }}
       >
-        {!backoffice && <PageHeader title={t('Dados bancários')} />}
+        <PageHeader title={t('Dados bancários')} />
         <Text mt="4">
           <Text as="span" color="red">
             {t('Aviso:')}
@@ -250,20 +276,13 @@ const BankingInformation = ({ onboarding, redirect, backoffice }: OnboardingProp
           />
         </Flex>
         <PageFooter onboarding={onboarding} redirect={redirect} isLoading={isLoading} />
-        {!onboarding && isSuccess && (
-          <AlertSuccess
-            maxW="320px"
-            title={t('Informações salvas com sucesso!')}
-            description={''}
-          />
-        )}
-        {isError && (
-          <AlertError
-            w="100%"
-            title={t('Erro')}
-            description={'Não foi possível acessar o servidor. Tenta novamente?'}
-          />
-        )}
+        <SuccessAndErrorHandler
+          submission={submission.current}
+          isSuccess={isSuccess && !onboarding}
+          isError={error.status}
+          error={error.error}
+          errorMessage={error.message}
+        />
       </form>
     </Box>
   );

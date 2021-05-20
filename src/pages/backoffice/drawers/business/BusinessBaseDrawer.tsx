@@ -29,7 +29,7 @@ interface BaseDrawerProps {
 export const BusinessBaseDrawer = ({ agent, onClose, children, ...props }: BaseDrawerProps) => {
   //context
   const { url } = useRouteMatch();
-  const { business, manager, handleSave } = useContextBusinessBackoffice();
+  const { business, manager, handleSave, isLoading } = useContextBusinessBackoffice();
   //UI
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
@@ -123,7 +123,14 @@ export const BusinessBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
           </DrawerBody>
           <DrawerFooter borderTop="1px solid #F2F6EA">
             <Flex w="full" flexDir="row" justifyContent="space-between">
-              <Button type="submit" width="full" maxW="240px" fontSize="15px" onClick={handleSave}>
+              <Button
+                width="full"
+                maxW="240px"
+                fontSize="15px"
+                onClick={handleSave}
+                isLoading={isLoading}
+                loadingText={t('Salvando')}
+              >
                 {t('Salvar alterações')}
               </Button>
               <CustomButton

@@ -17,7 +17,7 @@ const OrdersPage = () => {
   const { path } = useRouteMatch();
   const history = useHistory();
   // handlers
-  const closeDrawerHandler = () => history.replace(path);
+  const closeDrawerHandler = React.useCallback(() => history.replace(path), [history, path]);
 
   // UI
   if (business?.situation !== 'approved') {

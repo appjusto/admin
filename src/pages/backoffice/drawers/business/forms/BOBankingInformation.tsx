@@ -1,6 +1,7 @@
 import { Box, Flex, HStack, Radio, RadioGroup, Text } from '@chakra-ui/react';
 import { useBanks } from 'app/api/business/profile/useBanks';
-import { Bank, BankAccount, WithId } from 'appjusto-types';
+import { useContextBusinessBackoffice } from 'app/state/business/businessBOContext';
+import { Bank, WithId } from 'appjusto-types';
 import { BankAccountPersonType, BankAccountType } from 'appjusto-types/banking';
 import { AlertWarning } from 'common/components/AlertWarning';
 import { CustomPatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';
@@ -10,25 +11,17 @@ import {
 } from 'common/components/form/input/pattern-input/formatters';
 import { numbersAndLettersParser } from 'common/components/form/input/pattern-input/parsers';
 import { BankSelect } from 'common/components/form/select/BankSelect';
-import PageHeader from 'pages/PageHeader';
 import React from 'react';
 import { t } from 'utils/i18n';
 
-/*const bankAccountSet = (bankAccount: BankAccount): boolean => {
-  return (
-    !isEmpty(bankAccount.name) && !isEmpty(bankAccount.agency) && !isEmpty(bankAccount.account)
-  );
-};*/
-
-interface BOBankingInformationProps {
-  bankAccount?: WithId<BankAccount> | null;
-  handleChange(key: string, value: any): void;
-}
-
-const BOBankingInformation = ({ bankAccount, handleChange }: BOBankingInformationProps) => {
+const BOBankingInformation = () => {
   // context
   const banks = useBanks();
-
+  const {
+    bankAccount,
+    handleBankingInfoChange,
+    setContextValidation,
+  } = useContextBusinessBackoffice();
   // state
   const [selectedBank, setSelectedBank] = React.useState<Bank>();
   const [validation, setValidation] = React.useState({ agency: true, account: true });
@@ -64,9 +57,9 @@ const BOBankingInformation = ({ bankAccount, handleChange }: BOBankingInformatio
     if (selectedBank?.accountPattern && bankAccount?.account) {
       const patterLen = selectedBank?.accountPattern.length - 1;
       const result = addZerosToBeginning(bankAccount.account, patterLen);
-      handleChange('account', result);
+      handleBankingInfoChange('account', result);
       const accountFormatted = accountFormatter!(result);
-      handleChange('accountFormatted', accountFormatted);
+      handleBankingInfoChange('accountFormatted', accountFormatted);
     }
   };
 
@@ -77,10 +70,13 @@ const BOBankingInformation = ({ bankAccount, handleChange }: BOBankingInformatio
     }
   }, [banks, bankAccount?.name, findSelectedBank]);
 
+  React.useEffect(() => {
+    setContextValidation((prev) => ({ ...prev, ...validation }));
+  }, [validation, setContextValidation]);
+
   // UI
   return (
     <Box maxW="464px">
-      <PageHeader title={t('Dados bancários')} />
       <Text mt="4">
         <Text as="span" color="red">
           {t('Aviso:')}
@@ -93,7 +89,7 @@ const BOBankingInformation = ({ bankAccount, handleChange }: BOBankingInformatio
         {t('Personalidade da conta:')}
       </Text>
       <RadioGroup
-        onChange={(value) => handleChange('personType', value as BankAccountPersonType)}
+        onChange={(value) => handleBankingInfoChange('personType', value as BankAccountPersonType)}
         value={bankAccount?.personType ?? 'Pessoa Jurídica'}
         defaultValue="1"
         colorScheme="green"
@@ -110,7 +106,7 @@ const BOBankingInformation = ({ bankAccount, handleChange }: BOBankingInformatio
         {t('Tipo de conta:')}
       </Text>
       <RadioGroup
-        onChange={(value) => handleChange('type', value as BankAccountType)}
+        onChange={(value) => handleBankingInfoChange('type', value as BankAccountType)}
         value={bankAccount?.type ?? 'Corrente'}
         defaultValue="1"
         colorScheme="green"
@@ -126,7 +122,7 @@ const BOBankingInformation = ({ bankAccount, handleChange }: BOBankingInformatio
       <BankSelect
         ref={nameRef}
         value={bankAccount?.name ?? ''}
-        onChange={(ev) => handleChange('name', ev.target.value)}
+        onChange={(ev) => handleBankingInfoChange('name', ev.target.value)}
         isRequired
       />
       {selectedBank?.warning && (
@@ -148,9 +144,9 @@ const BOBankingInformation = ({ bankAccount, handleChange }: BOBankingInformatio
         }
         value={bankAccount?.agency ?? ''}
         onValueChange={(value) => {
-          handleChange('agency', value);
+          handleBankingInfoChange('agency', value);
           const agencyFormatted = agencyFormatter!(value);
-          handleChange('agencyFormatted', agencyFormatted);
+          handleBankingInfoChange('agencyFormatted', agencyFormatted);
         }}
         mask={selectedBank?.agencyPattern}
         parser={agencyParser}
@@ -176,7 +172,7 @@ const BOBankingInformation = ({ bankAccount, handleChange }: BOBankingInformatio
               : t('Número da conta')
           }
           value={bankAccount?.account ?? ''}
-          onValueChange={(value) => handleChange('account', value)}
+          onValueChange={(value) => handleBankingInfoChange('account', value)}
           mask={selectedBank?.accountPattern}
           parser={accountParser}
           formatter={accountFormatter}

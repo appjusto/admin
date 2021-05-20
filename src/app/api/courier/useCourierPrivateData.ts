@@ -7,7 +7,6 @@ export const useCourierPrivateData = (courierId: string) => {
   const api = useContextApi();
   // state
   const [plaform, setPlatform] = React.useState<CourierPrivatePlatform>({});
-
   // side effects
   React.useEffect(() => {
     const getPlatformData = async () => {

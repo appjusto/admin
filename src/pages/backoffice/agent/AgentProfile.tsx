@@ -2,8 +2,8 @@ import { Box } from '@chakra-ui/react';
 import * as cpfutils from '@fnando/cpf';
 import { useUpdateAgentProfile } from 'app/api/agent/useUpdateAgentProfile';
 import { useContextAgentProfile } from 'app/state/agent/context';
-import { AlertError } from 'common/components/AlertError';
-import { AlertSuccess } from 'common/components/AlertSuccess';
+import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
+import { initialError } from 'common/components/error/utils';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import { CustomPatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';
 import {
@@ -22,15 +22,17 @@ export const AgentProfile = () => {
   // context
   const { agent } = useContextAgentProfile();
   const { updateProfile, updateResult } = useUpdateAgentProfile();
-  const { isLoading, isSuccess, isError } = updateResult;
+  const { isLoading, isSuccess, isError, error: updateError } = updateResult;
 
   // state
   const [name, setName] = React.useState(agent?.name ?? '');
   const [surname, setSurname] = React.useState(agent?.surname ?? '');
   const [phoneNumber, setPhoneNumber] = React.useState(agent?.phone ?? '');
   const [cpf, setCPF] = React.useState(agent?.cpf ?? '');
+  const [error, setError] = React.useState(initialError);
 
   // refs
+  const submission = React.useRef(0);
   const nameRef = React.useRef<HTMLInputElement>(null);
   const cpfRef = React.useRef<HTMLInputElement>(null);
   const phoneNumberRef = React.useRef<HTMLInputElement>(null);
@@ -38,8 +40,35 @@ export const AgentProfile = () => {
   // helpers
   const isCPFValid = () => cpfutils.isValid(cpf);
 
-  // side effects
+  // handlers
+  const onSubmitHandler = async () => {
+    submission.current += 1;
+    setError(initialError);
+    if (!isCPFValid()) {
+      setError({
+        status: true,
+        error: null,
+        message: { title: 'O CPF informado não é válido.' },
+      });
+      return cpfRef?.current?.focus();
+    }
+    if (phoneNumber.length < 11) {
+      setError({
+        status: true,
+        error: null,
+        message: { title: 'O celular informado não é válido.' },
+      });
+      return phoneNumberRef?.current?.focus();
+    }
+    await updateProfile({
+      name,
+      surname,
+      phone: phoneNumber,
+      cpf,
+    });
+  };
 
+  // side effects
   React.useEffect(() => {
     if (agent) {
       if (agent.name) setName(agent.name);
@@ -49,21 +78,24 @@ export const AgentProfile = () => {
     }
   }, [agent]);
 
-  // handlers
-  const onSubmitHandler = async () => {
-    if (!isCPFValid()) return cpfRef?.current?.focus();
-    if (phoneNumber.length < 11) return phoneNumberRef?.current?.focus();
-    await updateProfile({
-      name,
-      surname,
-      phone: phoneNumber,
-      cpf,
-    });
-  };
+  React.useEffect(() => {
+    if (isError)
+      setError({
+        status: true,
+        error: updateError,
+      });
+  }, [isError, updateError]);
 
   // UI
   return (
     <Box maxW="368px">
+      <SuccessAndErrorHandler
+        submission={submission.current}
+        isSuccess={isSuccess}
+        isError={error.status}
+        error={error.error}
+        errorMessage={error.message}
+      />
       <form
         onSubmit={(ev) => {
           ev.preventDefault();
@@ -124,20 +156,6 @@ export const AgentProfile = () => {
           externalValidation={{ active: true, status: isCPFValid() }}
         />
         <PageFooter isLoading={isLoading} />
-        {isSuccess && (
-          <AlertSuccess
-            maxW="320px"
-            title={t('Informações salvas com sucesso!')}
-            description={''}
-          />
-        )}
-        {isError && (
-          <AlertError
-            w="100%"
-            title={t('Erro')}
-            description={'Não foi possível acessar o servidor. Tenta novamente?'}
-          />
-        )}
       </form>
     </Box>
   );
