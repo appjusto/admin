@@ -8,7 +8,6 @@ export const useCourierFleet = (fleetId: string | undefined | null) => {
   // state
   const [fleet, setFleet] = React.useState<Fleet | undefined | null>();
   // side effects
-  // side effects
   React.useEffect(() => {
     if (fleetId === undefined) return; // during initialization
     if (fleetId === null) {
@@ -21,7 +20,6 @@ export const useCourierFleet = (fleetId: string | undefined | null) => {
       setFleet(data);
     })();
   }, [api, fleetId]);
-
   // return
   return fleet;
 };
