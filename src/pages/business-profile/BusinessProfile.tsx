@@ -97,7 +97,6 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
     setError(initialError);
     //if (minimumOrder === 0) return minimumOrderRef.current?.focus();
     if (!isCNPJValid()) {
-      console.log('CNPJ invalid!');
       setError({
         status: true,
         error: null,
