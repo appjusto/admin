@@ -1,6 +1,7 @@
 import { ArrowBackIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, Icon, Input, InputGroup, InputRightElement } from '@chakra-ui/react';
-import { useBusinessChats } from 'app/api/business/chat/useBusinessChats';
+import { OrderChatGroup, useBusinessChats } from 'app/api/business/chat/useBusinessChats';
+import { timestampToDate } from 'app/api/chat/utils';
 import Container from 'common/components/Container';
 import { ReactComponent as SearchIcon } from 'common/img/searchIcon.svg';
 import { useOrdersContext } from 'pages/orders/context';
@@ -19,20 +20,68 @@ const ChatPage = () => {
   const history = useHistory();
   const { orders } = useOrdersContext();
   const chats = useBusinessChats(orders);
-  //const chats = [] as OrderChatGroup[];
 
   // state
   const [search, setSearch] = React.useState('');
   const [dateTime, setDateTime] = React.useState('');
+  const [orderedChats, setOrderedChats] = React.useState<OrderChatGroup[]>([]);
+  const [searchResult, setSearchResult] = React.useState<OrderChatGroup[]>([]);
 
   // handlers
   const closeDrawerHandler = () => history.replace(path);
 
   // side effects
   React.useEffect(() => {
+    if (!chats || !orders) return;
+    const fullChats = chats.map((chat) => {
+      const order = orders.find((order) => order.id === chat.orderId);
+      const orderCode = order?.code ?? 'N/E';
+      let lastUpdate = order?.createdOn as firebase.firestore.FieldValue;
+      const counterpartName = (counterpartId: string) => {
+        const isCourier = order?.courier?.id === counterpartId;
+        let name = 'N/E';
+        if (isCourier) name = order?.courier?.name!;
+        else name = order?.consumer.name!;
+        return name;
+      };
+      const newCounterPart = chat.counterParts.map((part) => {
+        if (part.updatedOn > lastUpdate) lastUpdate = part.updatedOn;
+        return { ...part, name: counterpartName(part.id) };
+      });
+      const newChat = {
+        ...chat,
+        counterParts: newCounterPart,
+        orderCode,
+        lastUpdate,
+      } as OrderChatGroup;
+      return newChat;
+    });
+
+    const sortMessages = (a: OrderChatGroup, b: OrderChatGroup) => {
+      if (a.lastUpdate && b.lastUpdate)
+        return timestampToDate(b.lastUpdate).getTime() - timestampToDate(a.lastUpdate).getTime();
+      if (!a.lastUpdate) return -1;
+      else if (b.lastUpdate) return 1;
+      return 0;
+    };
+
+    const ordered = fullChats.sort(sortMessages);
+    setOrderedChats(ordered);
+  }, [orders, chats, setOrderedChats]);
+
+  // side effects
+  React.useEffect(() => {
     const { date, time } = getDateTime();
     setDateTime(`${date} às ${time}`);
   }, []);
+
+  React.useEffect(() => {
+    if (search) {
+      const regexp = new RegExp(search, 'i');
+      const result = orderedChats.filter((chat) => regexp.test(chat.orderCode as string));
+      setSearchResult(result);
+    }
+  }, [orderedChats, search]);
 
   // UI
   return (
@@ -69,7 +118,7 @@ const ChatPage = () => {
             </InputGroup>
           </Flex>
         </Box>
-        <ChatsTable chats={chats} />
+        <ChatsTable chats={search ? searchResult : orderedChats} />
       </Container>
       <Switch>
         <Route path={`${path}/:orderId/:counterpartId`}>
