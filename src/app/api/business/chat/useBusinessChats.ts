@@ -5,10 +5,14 @@ import React from 'react';
 
 export interface OrderChatGroup {
   orderId: string;
+  orderCode?: string;
+  lastUpdate?: firebase.firestore.FieldValue;
   counterParts: [
     {
       id: string;
       flavor: Flavor;
+      updatedOn: firebase.firestore.FieldValue;
+      name?: string;
     }
   ];
 }
@@ -46,6 +50,7 @@ export const useBusinessChats = (orders: WithId<Order>[]) => {
       const counterPartObject = {
         id: counterPartId,
         flavor: counterPartFlavor,
+        updatedOn: message.timestamp,
       };
       if (existingGroup) {
         const existingCounterpart = existingGroup.counterParts.find(

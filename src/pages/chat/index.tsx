@@ -13,10 +13,6 @@ import { t } from 'utils/i18n';
 import { ChatDrawer } from './ChatDrawer';
 import { ChatsTable } from './ChatsTable';
 
-const fakeChats = [{ id: '001' }, { id: '002' }, { id: '003' }];
-
-const ordersIds = ['EAGYgvqHJf13S9B2IYGz'];
-
 const ChatPage = () => {
   // context
   const { path } = useRouteMatch();

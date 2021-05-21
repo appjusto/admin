@@ -1,8 +1,8 @@
 import { Icon, Td, Text, Tr, VStack } from '@chakra-ui/react';
 import { OrderChatGroup } from 'app/api/business/chat/useBusinessChats';
 import { CustomButton } from 'common/components/buttons/CustomButton';
-import { useOrdersContext } from 'pages/orders/context';
 import { useRouteMatch } from 'react-router';
+import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 
 interface ChatsTableItemProps {
@@ -17,26 +17,23 @@ const flavorsPT = {
 export const ChatsTableItem = ({ chat }: ChatsTableItemProps) => {
   // context
   const { path } = useRouteMatch();
-  const { orders } = useOrdersContext();
-  const order = orders ? orders.find((order) => order.id === chat.orderId) : null;
 
   // helpers
   const newMessage = true;
 
-  const orderCode = order?.code ?? 'N/E';
-
-  const counterpartName = (counterpartId: string) => {
-    const isCourier = order?.courier?.id === counterpartId;
-    let name = 'N/E';
-    if (isCourier) name = order?.courier?.name!;
-    else name = order?.consumer.name!;
-    return name;
-  };
-
   //  UI
   return (
     <Tr color="black" fontSize="15px" lineHeight="21px">
-      <Td>#{orderCode}</Td>
+      <Td>#{chat.orderCode}</Td>
+      <Td>
+        <VStack spacing={4} alignItems="flex-start">
+          {chat.counterParts.map((part) => (
+            <Text key={part.id}>
+              {getDateAndHour(part.updatedOn as firebase.firestore.Timestamp)}
+            </Text>
+          ))}
+        </VStack>
+      </Td>
       <Td>
         <VStack spacing={4} alignItems="flex-start">
           {chat.counterParts.map((part) => (
@@ -48,7 +45,7 @@ export const ChatsTableItem = ({ chat }: ChatsTableItemProps) => {
       <Td>
         <VStack spacing={4} alignItems="flex-start">
           {chat.counterParts.map((part) => (
-            <Text key={part.id}>{counterpartName(part.id)}</Text>
+            <Text key={part.id}>{part.name}</Text>
           ))}
         </VStack>
       </Td>
