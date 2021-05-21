@@ -4,6 +4,13 @@ import { ChatMessage, Flavor, Order, OrderStatus, WithId } from 'appjusto-types'
 import React from 'react';
 import { useMutation } from 'react-query';
 import { useCourierProfilePicture } from '../courier/useCourierProfilePicture';
+import { first } from 'lodash';
+
+export interface GroupedChatMessages {
+  id: string;
+  from: string;
+  messages: WithId<ChatMessage>[];
+}
 
 const orderActivedStatuses = ['confirmed', 'preparing', 'ready', 'dispatching'] as OrderStatus[];
 
@@ -15,10 +22,11 @@ export const useOrderChat = (orderId: string, counterpartId: string) => {
 
   // state
   const [order, setOrder] = React.useState<WithId<Order> | null>();
-  const [chat, setChat] = React.useState<WithId<ChatMessage>[]>();
   const [isActive, setIsActive] = React.useState(false);
   const [participants, setParticipants] = React.useState({});
-  const [groupMessages, setGroupMessages] = React.useState<WithId<ChatMessage>[]>([]);
+  const [chatFromBusiness, setChatFromBusiness] = React.useState<WithId<ChatMessage>[]>([]);
+  const [chatFromCounterPart, setChatFromCounterPart] = React.useState<WithId<ChatMessage>[]>([]);
+  const [chat, setChat] = React.useState<GroupedChatMessages[]>([]);
 
   // handlers;
   const [sendMessage, sendMessageResult] = useMutation(async (data: Partial<ChatMessage>) => {
@@ -32,10 +40,20 @@ export const useOrderChat = (orderId: string, counterpartId: string) => {
 
   // side effects
   React.useEffect(() => {
-    if (!orderId) return;
-    api.order().observeOrder(orderId, setOrder);
-    api.order().observeOrderChat(orderId, setChat);
-  }, [api, orderId]);
+    if (!orderId || !businessId || !counterpartId) return;
+    const unsub = api.order().observeOrder(orderId, setOrder);
+    const unsub2 = api
+      .order()
+      .observeOrderChat(orderId, businessId, counterpartId, setChatFromBusiness);
+    const unsub3 = api
+      .order()
+      .observeOrderChat(orderId, counterpartId, businessId, setChatFromCounterPart);
+    return () => {
+      unsub();
+      unsub2();
+      unsub3();
+    };
+  }, [api, orderId, businessId, counterpartId]);
 
   React.useEffect(() => {
     if (!order) return;
@@ -66,25 +84,41 @@ export const useOrderChat = (orderId: string, counterpartId: string) => {
   }, [order, counterpartId, businessId, courierProfilePicture]);
 
   React.useEffect(() => {
-    if (!chat) return;
-    const group = chat.filter((msg) => {
-      if (
-        (msg.from.id === businessId && msg.to.id === counterpartId) ||
-        (msg.to.id === businessId && msg.from.id === counterpartId)
-      ) {
-        return msg;
-      }
-      return false;
-    });
-    setGroupMessages(group);
-  }, [chat, businessId, counterpartId]);
-
-  React.useEffect(() => {
     if (order?.status && orderActivedStatuses.includes(order.status)) {
       setIsActive(true);
     } else setIsActive(false);
   }, [order?.status]);
 
+  React.useEffect(() => {
+    setChat(
+      groupOrderChatMessages(
+        chatFromBusiness.concat(chatFromCounterPart).sort(sortMessages)
+      ).reverse()
+    );
+  }, [chatFromBusiness, chatFromCounterPart]);
+
   // return
-  return { isActive, participants, groupMessages, sendMessage, sendMessageResult };
+  return { isActive, participants, chat, sendMessage, sendMessageResult };
 };
+
+const timestampToDate = (value: firebase.firestore.FieldValue) =>
+  (value as firebase.firestore.Timestamp).toDate();
+
+const sortMessages = (a: ChatMessage, b: ChatMessage) => {
+  if (a.timestamp && b.timestamp)
+    return timestampToDate(a.timestamp).getTime() - timestampToDate(b.timestamp).getTime();
+  if (!a.timestamp) return -1;
+  else if (b.timestamp) return 1;
+  return 0;
+};
+
+const groupOrderChatMessages = (messages: WithId<ChatMessage>[]) =>
+  messages.reduce<GroupedChatMessages[]>((groups, message) => {
+    const currentGroup = first(groups);
+    if (message.from.id === currentGroup?.from) {
+      currentGroup!.messages.push(message);
+      return groups;
+    }
+    // use as id for chat group the id of the first message of the group
+    return [{ id: message.id, from: message.from.id, messages: [message] }, ...groups];
+  }, []);

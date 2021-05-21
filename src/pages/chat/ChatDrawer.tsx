@@ -21,7 +21,7 @@ import React, { KeyboardEvent } from 'react';
 import { useParams } from 'react-router';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
-import { ChatMessage } from './ChatMessage';
+import { ChatMessages } from './ChatMessages';
 
 interface ChatDrawerProps {
   isOpen: boolean;
@@ -37,7 +37,7 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
   //context
   const { logo } = useBusinessProfile();
   const { orderId, counterpartId } = useParams<Params>();
-  const { isActive, participants, groupMessages, sendMessage, sendMessageResult } = useOrderChat(
+  const { isActive, participants, chat, sendMessage, sendMessageResult } = useOrderChat(
     orderId,
     counterpartId
   );
@@ -63,7 +63,8 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
     if (!id) return 'N/E';
     //@ts-ignore
     const name = participants[id]?.name;
-    return name ?? 'N/E';
+    //@ts-ignore
+    return name ?? participants[counterpartId]?.flavor ?? 'N/E';
   };
 
   const sendMessageHandler = () => {
@@ -154,14 +155,13 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
             </Flex>
           </DrawerHeader>
           <DrawerBody bg="gray.50" ref={messagesBox}>
-            {groupMessages.length > 0 &&
-              groupMessages.map((message, index) => (
-                <ChatMessage
-                  key={message.id}
-                  image={getImage(message.from.id)}
-                  name={getName(message.from.id)}
-                  message={message}
-                  isGrouped={index > 0 && groupMessages[index - 1].from.id === message.from.id}
+            {chat.length > 0 &&
+              chat.map((group) => (
+                <ChatMessages
+                  key={group.id}
+                  image={getImage(group.from)}
+                  name={getName(group.from)}
+                  messages={group.messages}
                 />
               ))}
           </DrawerBody>
