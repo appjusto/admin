@@ -93,5 +93,5 @@ export const useOrderChat = (orderId: string, counterpartId: string) => {
   }, [chatFromBusiness, chatFromCounterPart]);
 
   // return
-  return { isActive, participants, chat, sendMessage, sendMessageResult };
+  return { isActive, orderCode: order?.code, participants, chat, sendMessage, sendMessageResult };
 };

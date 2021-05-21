@@ -53,7 +53,6 @@ export const ChatsTable = ({ chats }: ChatTableProps) => {
     };
 
     const ordered = fullChats.sort(sortMessages);
-    console.log(ordered);
     setOrderedChats(ordered);
   }, [orders, chats, setOrderedChats]);
 

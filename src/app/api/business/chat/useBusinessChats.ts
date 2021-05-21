@@ -82,7 +82,6 @@ export const useBusinessChats = (orders: WithId<Order>[]) => {
     createOrderChatGroup();
   }, [createOrderChatGroup]);
 
-  //console.log(orderChatGroup);
   // return
   return orderChatGroup;
 };

@@ -37,7 +37,7 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
   //context
   const { logo } = useBusinessProfile();
   const { orderId, counterpartId } = useParams<Params>();
-  const { isActive, participants, chat, sendMessage, sendMessageResult } = useOrderChat(
+  const { isActive, orderCode, participants, chat, sendMessage, sendMessageResult } = useOrderChat(
     orderId,
     counterpartId
   );
@@ -140,9 +140,9 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
                   {t('Chat com ')} {`{${getName(counterpartId)}}`}
                 </Text>
                 <Text fontSize="md" color="black" fontWeight="700" lineHeight="22px">
-                  {t('ID:')}{' '}
+                  {t('ID do pedido:')}{' '}
                   <Text as="span" color="gray.600" fontWeight="500">
-                    {'000'}
+                    {orderCode ?? 'N/E'}
                   </Text>
                 </Text>
                 <Text fontSize="md" color="black" fontWeight="700" lineHeight="22px">
@@ -184,6 +184,7 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
                 onChange={(event) => setInputText(event.target.value)}
                 zIndex="9000"
                 onKeyPress={handleUserKeyPress}
+                isDisabled={!isActive}
               />
               <Button
                 position="absolute"
@@ -193,6 +194,7 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
                 isLoading={isLoading}
                 loadingText={t('Enviando...')}
                 zIndex="9999"
+                isDisabled={!isActive}
               >
                 {t('Enviar')}
               </Button>
