@@ -15,6 +15,13 @@ export default class AuthApi {
 
   async sendSignInLinkToEmail(email: string): Promise<void> {
     this.auth.languageCode = 'pt'; // i18n
+    try {
+      await this.refs.getPlatformLoginLogsRef().add({
+        email,
+        flavor: 'business',
+        signInAt: firebase.firestore.FieldValue.serverTimestamp(),
+      });
+    } catch (error) {}
     await this.auth.sendSignInLinkToEmail(email, {
       url: `${this.config.publicURL}/join`,
       handleCodeInApp: true,
