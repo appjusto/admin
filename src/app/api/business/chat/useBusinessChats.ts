@@ -5,12 +5,10 @@ import React from 'react';
 
 export interface OrderChatGroup {
   orderId: string;
-  orderCode: string;
   counterParts: [
     {
       id: string;
       flavor: Flavor;
-      name: string;
     }
   ];
 }
@@ -40,19 +38,14 @@ export const useBusinessChats = (orders: WithId<Order>[]) => {
 
   const createOrderChatGroup = React.useCallback(() => {
     const allMessages = [...messagesAsFrom, ...messagesAsTo];
-    console.log(allMessages);
     const result = allMessages.reduce<OrderChatGroup[]>((groups, message) => {
-      const order = orders.find((order) => (order.id = message.orderId));
-      console.log(message.orderId);
       const existingGroup = groups.find((group) => group.orderId === message.orderId);
       const counterPartId = businessId === message.from.id ? message.to.id : message.from.id;
       const counterPartFlavor =
         counterPartId === message.from.id ? message.from.agent : message.to.agent;
-      const counterPartName = order ? order[counterPartFlavor]?.name ?? 'N/E' : 'N/E';
       const counterPartObject = {
         id: counterPartId,
         flavor: counterPartFlavor,
-        name: counterPartName,
       };
       if (existingGroup) {
         const existingCounterpart = existingGroup.counterParts.find(
@@ -66,13 +59,11 @@ export const useBusinessChats = (orders: WithId<Order>[]) => {
       return [
         {
           orderId: message.orderId,
-          orderCode: order?.code ?? 'N/E',
           counterParts: [counterPartObject],
         },
         ...groups,
       ];
     }, []);
-    console.log(result);
     setOrderChatGroup(result);
   }, [messagesAsFrom, messagesAsTo]);
 
