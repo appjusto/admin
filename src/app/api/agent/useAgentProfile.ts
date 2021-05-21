@@ -16,9 +16,9 @@ export const useAgentProfile = () => {
   // side effects
   // observe profile
   React.useEffect(() => {
-    if (isBackofficeUser && id) {
-      return api.manager().observeProfile(id, setProfile);
-    }
+    if (!isBackofficeUser || !id) return;
+    const unsub = api.manager().observeProfile(id, setProfile);
+    return () => unsub();
   }, [id, api, isBackofficeUser]);
 
   // return

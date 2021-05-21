@@ -1,7 +1,9 @@
 import { ArrowBackIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, Icon, Input, InputGroup, InputRightElement } from '@chakra-ui/react';
+import { useBusinessChats } from 'app/api/business/chat/useBusinessChats';
 import Container from 'common/components/Container';
 import { ReactComponent as SearchIcon } from 'common/img/searchIcon.svg';
+import { useOrdersContext } from 'pages/orders/context';
 import { OrdersHeader } from 'pages/orders/OrdersHeader';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
@@ -13,10 +15,15 @@ import { ChatsTable } from './ChatsTable';
 
 const fakeChats = [{ id: '001' }, { id: '002' }, { id: '003' }];
 
+const ordersIds = ['EAGYgvqHJf13S9B2IYGz'];
+
 const ChatPage = () => {
   // context
   const { path } = useRouteMatch();
   const history = useHistory();
+  const { orders } = useOrdersContext();
+  const chats = useBusinessChats(orders);
+  //const chats = [] as OrderChatGroup[];
 
   // state
   const [search, setSearch] = React.useState('');
@@ -66,7 +73,7 @@ const ChatPage = () => {
             </InputGroup>
           </Flex>
         </Box>
-        <ChatsTable chats={fakeChats} />
+        <ChatsTable chats={chats} />
       </Container>
       <Switch>
         <Route path={`${path}/:orderId/:counterpartId`}>
