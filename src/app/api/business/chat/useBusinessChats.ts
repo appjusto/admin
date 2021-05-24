@@ -38,7 +38,7 @@ export const useBusinessChats = (orders: WithId<Order>[]) => {
       api.business().observeBusinessChatMessageAsFrom(order.id, businessId, setMessagesAsFrom);
       api.business().observeBusinessChatMessageAsTo(order.id, businessId, setMessagesAsTo);
     });
-  }, [api, orders]);
+  }, [api, orders, businessId]);
 
   const createOrderChatGroup = React.useCallback(() => {
     const allMessages = [...messagesAsFrom, ...messagesAsTo];
@@ -70,7 +70,7 @@ export const useBusinessChats = (orders: WithId<Order>[]) => {
       ];
     }, []);
     setOrderChatGroup(result);
-  }, [messagesAsFrom, messagesAsTo]);
+  }, [messagesAsFrom, messagesAsTo, businessId]);
 
   // side effects
   React.useEffect(() => {
