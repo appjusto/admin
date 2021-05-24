@@ -8,7 +8,6 @@ export const useCourierProfile = (courierId: string | undefined | null) => {
   // state
   const [profile, setProfile] = React.useState<WithId<CourierProfile> | undefined | null>(null);
   // side effects
-  // side effects
   React.useEffect(() => {
     if (courierId === undefined) return; // during initialization
     if (courierId === null) {
@@ -18,7 +17,6 @@ export const useCourierProfile = (courierId: string | undefined | null) => {
     }
     api.courier().observeCourierProfile(courierId, setProfile);
   }, [api, courierId]);
-
   // return
   return profile;
 };

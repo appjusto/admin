@@ -69,8 +69,8 @@ const ChatPage = () => {
         <ChatsTable chats={fakeChats} />
       </Container>
       <Switch>
-        <Route path={`${path}/:chatId`}>
-          <ChatDrawer isOpen chatId={'000'} onClose={closeDrawerHandler} />
+        <Route path={`${path}/:orderId/:counterpartId`}>
+          <ChatDrawer isOpen onClose={closeDrawerHandler} />
         </Route>
       </Switch>
     </Box>

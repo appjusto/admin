@@ -9,99 +9,123 @@ import {
   DrawerHeader,
   DrawerOverlay,
   Flex,
-  HStack,
-  Image,
   Text,
   Textarea,
+  useToast,
 } from '@chakra-ui/react';
+import * as Sentry from '@sentry/react';
+import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
+import { useOrderChat } from 'app/api/order/useOrderChat';
 import { Flavor } from 'appjusto-types';
-import managerIcon from 'common/img/manager.svg';
-import React from 'react';
+import React, { KeyboardEvent } from 'react';
+import { useParams } from 'react-router';
+import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
-
-interface ChatMessage {
-  id: string;
-  from: {
-    agent: Flavor;
-    name: string;
-    id: string;
-  };
-  to: {
-    agent: Flavor;
-    name: string;
-    id: string;
-  };
-  message: string;
-  //timestamp: firebase.firestore.Timestamp;
-  timestamp: string;
-}
-
-const fakeMessages = [
-  {
-    id: 'skjcaskcna',
-    from: {
-      agent: 'Entregador',
-      name: 'Kelly Slater',
-      id: '001',
-    },
-    to: {
-      agent: 'Restaurante',
-      name: 'Itapuama Vegan',
-      id: '002',
-    },
-    message: 'Já cheguei!',
-    timestamp: '12h45',
-  },
-  {
-    id: 'skjohhtphtplhp',
-    from: {
-      agent: 'Restaurante',
-      name: 'Itapuama Vegan',
-      id: '002',
-    },
-    to: {
-      agent: 'Entregador',
-      name: 'Kelly Slater',
-      id: '001',
-    },
-    message: 'Ok!',
-    timestamp: '12h55',
-  },
-  {
-    id: 'skjc3216898',
-    from: {
-      agent: 'Restaurante',
-      name: 'Itapuama Vegan',
-      id: '002',
-    },
-    to: {
-      agent: 'Entregador',
-      name: 'Kelly Slater',
-      id: '001',
-    },
-    message: 'O pedido está pronto!',
-    timestamp: '12h56',
-  },
-];
+import { ChatMessages } from './ChatMessages';
 
 interface ChatDrawerProps {
-  chatId: string;
   isOpen: boolean;
   onClose(): void;
 }
 
-export const ChatDrawer = ({ chatId, onClose, ...props }: ChatDrawerProps) => {
+type Params = {
+  orderId: string;
+  counterpartId: string;
+};
+
+export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
   //context
+  const { logo } = useBusinessProfile();
+  const { orderId, counterpartId } = useParams<Params>();
+  const { isActive, participants, chat, sendMessage, sendMessageResult } = useOrderChat(
+    orderId,
+    counterpartId
+  );
+  const { isLoading, isError, error } = sendMessageResult;
+  const toast = useToast();
 
   // state
-  const [messages, setMessages] = React.useState<ChatMessage[]>([]);
+  const [dateTime, setDateTime] = React.useState('');
+  const [inputText, setInputText] = React.useState('');
+
+  // refs
+  const messagesBox = React.useRef(null);
 
   //handlers
+  const getImage = (id?: string) => {
+    if (!id) return null;
+    //@ts-ignore
+    if (id === counterpartId) return participants[counterpartId].image;
+    else return logo;
+  };
+
+  const getName = (id?: string) => {
+    if (!id) return 'N/E';
+    //@ts-ignore
+    const name = participants[id]?.name;
+    //@ts-ignore
+    return name ?? participants[counterpartId]?.flavor ?? 'N/E';
+  };
+
+  const sendMessageHandler = () => {
+    if (!inputText) return;
+    if (!counterpartId) return;
+    if (!isActive) {
+      return toast({
+        title: 'Não é possível enviar a mensagem.',
+        description: 'Este pedido não está mais ativo.',
+        status: 'warning',
+        duration: 9000,
+        isClosable: true,
+      });
+    }
+    //@ts-ignore
+    const flavor = participants[counterpartId].flavor;
+    const to: { agent: Flavor; id: string } = {
+      agent: flavor,
+      id: counterpartId,
+    };
+    sendMessage({
+      to,
+      message: inputText.trim(),
+    });
+    setInputText('');
+  };
+
+  const handleUserKeyPress = (event: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      sendMessageHandler();
+    }
+  };
 
   // side effects
   React.useEffect(() => {
-    setMessages(fakeMessages as ChatMessage[]);
+    const { date, time } = getDateTime();
+    setDateTime(`${date} às ${time}`);
   }, []);
+
+  React.useEffect(() => {
+    if (messagesBox?.current) {
+      //@ts-ignore
+      messagesBox.current.addEventListener('DOMNodeInserted', (event) => {
+        const { currentTarget: target } = event;
+        target.scroll({ top: target.scrollHeight, behavior: 'smooth' });
+      });
+    }
+  }, [messagesBox]);
+
+  React.useEffect(() => {
+    if (isError) {
+      Sentry.captureException(error);
+      toast({
+        title: 'Não foi possível acessar o servidor.',
+        description: 'Tenta novamente?',
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+      });
+    }
+  }, [isError, error, toast]);
 
   //UI
   return (
@@ -113,7 +137,7 @@ export const ChatDrawer = ({ chatId, onClose, ...props }: ChatDrawerProps) => {
             <Flex justifyContent="space-between" alignItems="flex-end">
               <Flex flexDir="column">
                 <Text color="black" fontSize="2xl" fontWeight="700" lineHeight="28px" mb="2">
-                  {t('Chat com ')} {'{Participante}'}
+                  {t('Chat com ')} {`{${getName(counterpartId)}}`}
                 </Text>
                 <Text fontSize="md" color="black" fontWeight="700" lineHeight="22px">
                   {t('ID:')}{' '}
@@ -124,47 +148,21 @@ export const ChatDrawer = ({ chatId, onClose, ...props }: ChatDrawerProps) => {
                 <Text fontSize="md" color="black" fontWeight="700" lineHeight="22px">
                   {t('Atualizado em:')}{' '}
                   <Text as="span" color="gray.600" fontWeight="500">
-                    {'00/00/0000 - 00:00'}
+                    {dateTime}
                   </Text>
                 </Text>
               </Flex>
             </Flex>
           </DrawerHeader>
-          <DrawerBody bg="gray.50">
-            {messages.length > 0 &&
-              messages.map((message, index) => (
-                <Box key={message.id} my="4">
-                  <HStack>
-                    <Flex
-                      p="2"
-                      justifyContent="center"
-                      alignItems="center"
-                      border="1px solid #000"
-                      borderRadius="20px"
-                    >
-                      <Image src={managerIcon} width="24px" height="24px" />
-                    </Flex>
-                    <Box>
-                      <Text fontSize="15px" lineHeight="21px" fontWeight="500" color="black">
-                        {message.from.name}
-                      </Text>
-                      <Text fontSize="13px" lineHeight="18px" fontWeight="500">
-                        {message.timestamp}
-                      </Text>
-                    </Box>
-                  </HStack>
-                  <Box
-                    mt="2"
-                    w="fit-content"
-                    py="2"
-                    px="4"
-                    bg="white"
-                    border="1px solid #C8D7CB"
-                    borderRadius="lg"
-                  >
-                    <Text>{message.message}</Text>
-                  </Box>
-                </Box>
+          <DrawerBody bg="gray.50" ref={messagesBox}>
+            {chat.length > 0 &&
+              chat.map((group) => (
+                <ChatMessages
+                  key={group.id}
+                  image={getImage(group.from)}
+                  name={getName(group.from)}
+                  messages={group.messages}
+                />
               ))}
           </DrawerBody>
           <DrawerFooter borderTop="1px solid #C8D7CB">
@@ -182,8 +180,20 @@ export const ChatDrawer = ({ chatId, onClose, ...props }: ChatDrawerProps) => {
                 color="#697667"
                 fontFamily="barlow"
                 placeholder={t('Escreva sua mensagem')}
+                value={inputText}
+                onChange={(event) => setInputText(event.target.value)}
+                zIndex="9000"
+                onKeyPress={handleUserKeyPress}
               />
-              <Button position="absolute" top="4" right="4">
+              <Button
+                position="absolute"
+                top="4"
+                right="4"
+                onClick={sendMessageHandler}
+                isLoading={isLoading}
+                loadingText={t('Enviando...')}
+                zIndex="9999"
+              >
                 {t('Enviar')}
               </Button>
             </Box>

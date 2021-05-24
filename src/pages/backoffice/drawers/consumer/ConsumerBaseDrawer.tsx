@@ -14,8 +14,8 @@ import {
 import { useConsumerUpdateProfile } from 'app/api/consumer/useConsumerUpdateProfile';
 import { useContextConsumerProfile } from 'app/state/consumer/context';
 import { ConsumerProfile } from 'appjusto-types';
-import { AlertError } from 'common/components/AlertError';
-import { AlertSuccess } from 'common/components/AlertSuccess';
+import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
+import { initialError } from 'common/components/error/utils';
 import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
 import React from 'react';
 import { useRouteMatch } from 'react-router';
@@ -30,51 +30,52 @@ interface BaseDrawerProps {
   children: React.ReactNode | React.ReactNode[];
 }
 
-type Status = 'unsubmited' | 'success' | 'error';
-type SubmitStatus = { status: Status; message: string };
-
-const initialStatus = { status: 'unsubmited', message: '' } as SubmitStatus;
-
 export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseDrawerProps) => {
   //context
   const { url } = useRouteMatch();
   const { consumer, contextValidation } = useContextConsumerProfile();
   const { updateProfile, updateResult } = useConsumerUpdateProfile();
-  const { isLoading, isSuccess, isError } = updateResult;
+  const { isLoading, isSuccess, isError, error: updateError } = updateResult;
 
   // state
-  const [submitStatus, setSubmitStatus] = React.useState<SubmitStatus>(initialStatus);
+  const [error, setError] = React.useState(initialError);
 
-  //handlers
+  // refs
+  const submission = React.useRef(0);
+
+  //helpers
+  //const toast = useToast();
   let consumerName = consumer?.name ?? 'N/I';
   if (consumer?.surname) consumerName += ` ${consumer.surname}`;
 
   //handlers
   const handleSave = () => {
-    setSubmitStatus(initialStatus);
+    setError(initialError);
+    submission.current += 1;
     if (!contextValidation.cpf) {
-      return setSubmitStatus({
-        status: 'error',
-        message: 'Verificar o preenchimento dos campos',
+      return setError({
+        status: true,
+        error: null,
+        message: { title: 'O CPF informado não é válido.' },
       });
     }
-
     const newState = {} as ConsumerProfile;
     consumer &&
       Object.keys(consumer).forEach((key) => {
         //@ts-ignore
         if (consumer[key]) newState[key] = consumer[key];
       });
-
     updateProfile(newState);
   };
 
   // side effects
   React.useEffect(() => {
-    if (isSuccess) setSubmitStatus({ status: 'success', message: 'Informações salvas!' });
     if (isError)
-      setSubmitStatus({ status: 'error', message: 'Não foi possível acessar o servidor' });
-  }, [isError, isSuccess]);
+      setError({
+        status: true,
+        error: updateError,
+      });
+  }, [isError, updateError]);
 
   //UI
   return (
@@ -143,12 +144,13 @@ export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
               >
                 {t('Salvar alterações')}
               </Button>
-              {submitStatus.status === 'success' && (
-                <AlertSuccess mt="0" h="48px" description={submitStatus.message} />
-              )}
-              {submitStatus.status === 'error' && (
-                <AlertError mt="0" h="48px" description={submitStatus.message} />
-              )}
+              <SuccessAndErrorHandler
+                submission={submission.current}
+                isSuccess={isSuccess}
+                isError={isError}
+                error={error.error}
+                errorMessage={error.message}
+              />
             </HStack>
           </DrawerFooter>
         </DrawerContent>

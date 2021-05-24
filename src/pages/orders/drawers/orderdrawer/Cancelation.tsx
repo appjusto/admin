@@ -37,7 +37,7 @@ export const Cancelation = ({ handleConfirm, handleKeep }: CancelationProps) => 
       });
     }
   }, [cancelOptions]);
-  console.log(optionId);
+
   // UI
   return (
     <Box py="4" px="6" bgColor="#FFF8F8" border="1px solid #DC3545" borderRadius="lg">

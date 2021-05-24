@@ -1,6 +1,6 @@
 import { Box, Button, Flex, HStack, Progress, Text } from '@chakra-ui/react';
 import { useOrderArrivalTimes } from 'app/api/order/useOrderArrivalTimes';
-import { Order, OrderIssue, WithId } from 'appjusto-types';
+import { Order, WithId } from 'appjusto-types';
 import { ReactComponent as Alarm } from 'common/img/alarm_outlined.svg';
 import React from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
@@ -33,11 +33,9 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
   const { url } = useRouteMatch();
   const { business, changeOrderStatus } = useOrdersContext();
   const arrivalTime = useOrderArrivalTimes(order);
-  const { getOrderIssues } = useOrdersContext();
 
   // state
   const [elapsedTime, setElapsedTime] = React.useState<number | null>(0);
-  const [orderIssues, setOrderIssues] = React.useState<WithId<OrderIssue>[] | null>();
 
   // handlers
   const isUnmatched = order.dispatchingStatus
@@ -50,14 +48,11 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
   ]);
   //const cookingTime = order?.cookingTime ? order?.cookingTime / 60 : null;
   const cookingProgress = cookingTime && elapsedTime ? (elapsedTime / cookingTime) * 100 : 0;
-  const cancelator = orderCancelator(orderIssues ? orderIssues[0]?.issue?.type : undefined);
+  const cancelator = orderCancelator(order?.cancellation?.issue?.type);
 
   // side effects
   React.useEffect(() => {
     if (!order.id) return;
-    if (order.status === 'canceled') {
-      getOrderIssues(order.id, setOrderIssues);
-    }
     const localOrderTime = getLocalStorageOrderTime(order.id);
     const setNewTime = () => {
       if (localOrderTime) {
@@ -73,7 +68,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
       return clearInterval(timeInterval);
     }
     return () => clearInterval(timeInterval);
-  }, [order.id, order.status, getOrderIssues]);
+  }, [order.id, order.status]);
 
   React.useEffect(() => {
     const orderAcceptanceTime = business?.orderAcceptanceTime

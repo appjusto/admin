@@ -3,8 +3,7 @@ import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile'
 import { getConfig } from 'app/api/config';
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusiness } from 'app/state/business/context';
-import { AlertError } from 'common/components/AlertError';
-import { AlertSuccess } from 'common/components/AlertSuccess';
+import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import { CustomNumberInput as NumberInput } from 'common/components/form/input/CustomNumberInput';
 import { CustomPatternInput as PatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';
@@ -48,7 +47,7 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
   // queries & mutations
   // business profile
   const { updateBusinessProfile, updateResult: result } = useBusinessProfile();
-  const { isLoading, isSuccess, isError } = result;
+  const { isLoading, isSuccess, isError, error } = result;
   // cep
   const { data: cepResult } = useQuery(['cep', cep], (_: string) => fetchCEPInfo(cep), {
     enabled: cep.length === 8,
@@ -68,11 +67,13 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
   const center = coordsFromLatLnt(geocodingResult ?? SaoPauloCoords);
 
   // refs
+  const submission = React.useRef(0);
   const cepRef = React.useRef<HTMLInputElement>(null);
   const numberRef = React.useRef<HTMLInputElement>(null);
 
   // handlers
   const onSubmitHandler = async () => {
+    submission.current += 1;
     await updateBusinessProfile({
       businessAddress: {
         cep,
@@ -252,21 +253,13 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
           </Flex>
         </RadioGroup>
         <PageFooter onboarding={onboarding} redirect={redirect} isLoading={isLoading} />
-        {!onboarding && isSuccess && (
-          <AlertSuccess
-            maxW="320px"
-            title={t('Informações salvas com sucesso!')}
-            description={''}
-          />
-        )}
-        {isError && (
-          <AlertError
-            w="100%"
-            title={t('Erro')}
-            description={'Não foi possível acessar o servidor. Tenta novamente?'}
-          />
-        )}
       </form>
+      <SuccessAndErrorHandler
+        submission={submission.current}
+        isSuccess={isSuccess && !onboarding}
+        isError={isError}
+        error={error}
+      />
     </Box>
   );
 };

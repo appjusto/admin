@@ -14,10 +14,12 @@ const radioOptions = ['5', '10', '15', '20', '30', '45'];
 export const CookingTime = ({ orderId, cookingTime }: CookingTimeProps) => {
   // context
   const { setOrderCookingTime } = useOrdersContext();
+
   //state
   const [enable, setEnable] = React.useState(false);
   const [inputTime, setInputTime] = React.useState('');
   const [radiosValue, setRadiosValue] = React.useState('20');
+
   //handlers
   const onInputTimeBlur = () => {
     let time = parseInt(inputTime);

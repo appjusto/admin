@@ -9,15 +9,12 @@ export const Fleets = () => {
   // context
   const { courier } = useContextCourierProfile();
   const fleet = useCourierFleet(courier?.fleet?.id);
-
   // state
   const [fleets, setFleets] = React.useState<Fleet[]>([]);
-
   // side effects
   React.useEffect(() => {
     if (fleet) setFleets([fleet]);
   }, [fleet]);
-
   // UI
   return (
     <Box mt="4">

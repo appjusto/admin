@@ -3,10 +3,11 @@ import { CancellationData } from 'app/api/order/OrderApi';
 import { useOrder } from 'app/api/order/useOrder';
 import { useContextManagerProfile } from 'app/state/manager/context';
 import { Issue, WithId } from 'appjusto-types';
+import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
+import { initialError } from 'common/components/error/utils';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { orderCancelator } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { OrderBaseDrawer } from '../OrderBaseDrawer';
 import { Cancelation } from './Cancelation';
@@ -26,29 +27,33 @@ type Params = {
 
 export const OrderDrawer = (props: Props) => {
   //context
-  const isError = false;
-  const error = '';
   const { orderId } = useParams<Params>();
-  const { order, cancelOrder, orderIssues } = useOrder(orderId);
+  const { order, cancelOrder, result, orderIssues } = useOrder(orderId);
   const { manager } = useContextManagerProfile();
 
   // state
   const [isCanceling, setIsCanceling] = React.useState(false);
-  //const [orderIssue, setOrderIssue] = React.useState<WithId<OrderIssue>>();
+  const [error, setError] = React.useState(initialError);
 
-  // helpers
-  const isCurrierArrived = order?.dispatchingState === 'arrived-pickup';
-  const cancelator = orderCancelator(order?.cancellation?.issue.type);
+  // refs
+  const submission = React.useRef(0);
 
   // handlers
   const handleCancel = async (issue: WithId<Issue>) => {
+    submission.current += 1;
     if (!manager?.id || !manager?.name) {
-      console.dir({
-        error: 'Order cancellation incomplete',
-        id: manager?.id,
-        name: manager?.name,
+      return setError({
+        status: true,
+        error: {
+          error: 'Order cancellation incomplete. There is no manager:',
+          id: manager?.id,
+          name: manager?.name,
+        },
+        message: {
+          title: 'Não foi possível cancelar o pedido.',
+          description: 'Verifica a conexão com a internet?',
+        },
       });
-      return;
     }
     const cancellationData = {
       canceledBy: {
@@ -62,30 +67,24 @@ export const OrderDrawer = (props: Props) => {
   };
 
   // side effects
-  /*React.useEffect(() => {
-    if (orderIssues) {
-      const issue = orderIssues.find((data) =>
-        ['courier-cancel', 'consumer-cancel', 'restaurant-cancel'].includes(data.issue.type)
-      );
-      setOrderIssue(issue);
-    };
-  }, [orderIssues]);*/
+  React.useEffect(() => {
+    if (result.isError) {
+      setError({
+        status: true,
+        error: result.error,
+      });
+    }
+  }, [result.isError, result.error]);
 
   // UI
   return (
     <OrderBaseDrawer
       {...props}
-      orderId={orderId}
-      orderCode={order?.code ?? ''}
-      orderStatus={order?.status!}
-      cancelator={cancelator}
-      isCurrierArrived={isCurrierArrived}
-      client={order?.consumer?.name ?? ''}
-      clientOrders={0}
+      order={order}
       cancel={() => setIsCanceling(true)}
       isCanceling={isCanceling}
-      isError={isError}
-      error={error}
+      isError={error.status}
+      error={error.error}
     >
       {isCanceling ? (
         <Cancelation handleConfirm={handleCancel} handleKeep={() => setIsCanceling(false)} />
@@ -118,6 +117,12 @@ export const OrderDrawer = (props: Props) => {
           )}
         </>
       )}
+      <SuccessAndErrorHandler
+        submission={submission.current}
+        isError={error.status}
+        error={error.error}
+        errorMessage={error.message}
+      />
     </OrderBaseDrawer>
   );
 };

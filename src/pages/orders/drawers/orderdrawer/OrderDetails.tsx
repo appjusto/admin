@@ -1,4 +1,5 @@
 import { Box, Table, Tbody, Td, Text, Tfoot, Th, Thead, Tr } from '@chakra-ui/react';
+import * as Sentry from '@sentry/react';
 import { Order, OrderItem, WithId } from 'appjusto-types';
 import React from 'react';
 import { itemPriceFormatter } from 'utils/formatters';
@@ -16,9 +17,14 @@ export const OrderDetails = ({ order }: DetailsProps) => {
 
   // side effects
   React.useEffect(() => {
-    if (order?.type === 'food') setTotalPrice(getOrderTotalPriceToDisplay(order?.items || []));
-    else setTotalPrice(itemPriceFormatter(order?.fare?.consumer?.total ?? 0));
-  }, [order?.type, order?.items, order?.fare?.consumer?.total]);
+    try {
+      if (order?.type === 'food') setTotalPrice(getOrderTotalPriceToDisplay(order?.items || []));
+      else setTotalPrice(itemPriceFormatter(order?.fare?.business?.value ?? 0));
+    } catch (error) {
+      setTotalPrice('N/E');
+      Sentry.captureException(error);
+    }
+  }, [order?.type, order?.items, order?.fare?.business?.value]);
 
   // UI
   return (

@@ -50,8 +50,6 @@ export const PersonalProfile = ({ isCNPJ }: PersonalProfileProps) => {
     if (phone.length < 11) return phoneNumberRef?.current?.focus();
   };*/
 
-  // side effects
-
   // UI
   return (
     <Box>
