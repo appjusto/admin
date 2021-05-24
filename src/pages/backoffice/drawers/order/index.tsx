@@ -4,6 +4,7 @@ import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';
 import { useContextAgentProfile } from 'app/state/agent/context';
 import { ConsumerProvider } from 'app/state/consumer/context';
 import { Issue, IssueType, OrderStatus, WithId } from 'appjusto-types';
+import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
 import { OrderDetails } from 'pages/orders/drawers/orderdrawer/OrderDetails';
 import { OrderIssuesTable } from 'pages/orders/drawers/orderdrawer/OrderIssuesTable';
 import React from 'react';
@@ -28,8 +29,9 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
   const { path } = useRouteMatch();
   const { agent, username } = useContextAgentProfile();
   const { orderId } = useParams<Params>();
-  const { order, updateOrder, updateResult, cancelOrder, orderIssues } = useOrder(orderId);
+  const { order, updateOrder, result, cancelOrder, orderIssues } = useOrder(orderId);
   const cancelOptions = useIssuesByType(cancelOptionsArray);
+  const { isLoading, isSuccess, isError, error } = result;
 
   // state
   const [status, setStatus] = React.useState<OrderStatus | undefined>(order?.status ?? undefined);
@@ -37,6 +39,7 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
   const [message, setMessage] = React.useState('');
 
   // helpers
+  const submission = React.useRef(0);
 
   //handlers
   const updateState = (type: string, value: OrderStatus | WithId<Issue> | string) => {
@@ -70,6 +73,7 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
       };
       await updateOrder(changes);
     }
+    submission.current += 1;
   };
 
   // side effects
@@ -87,12 +91,18 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
   //UI
   return (
     <ConsumerProvider>
+      <SuccessAndErrorHandler
+        submission={submission.current}
+        isSuccess={isSuccess}
+        isError={isError}
+        error={error}
+      />
       <OrderBaseDrawer
         agent={{ id: agent?.id, name: username }}
         order={order}
         onClose={onClose}
         updateOrderStatus={updateOrderStatus}
-        result={updateResult}
+        isLoading={isLoading}
         {...props}
       >
         <Switch>

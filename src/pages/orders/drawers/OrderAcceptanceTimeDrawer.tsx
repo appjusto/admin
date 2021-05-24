@@ -12,6 +12,8 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
+import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
+import { initialError } from 'common/components/error/utils';
 import { ItemsQtdButtons } from 'pages/menu/drawers/product/groups/ItemQtdButtons';
 import React from 'react';
 import { t } from 'utils/i18n';
@@ -25,19 +27,25 @@ interface BaseDrawerProps {
 export const OrderAcceptanceTimeDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   //context
   const { business } = useOrdersContext();
-  const { updateBusinessProfile } = useBusinessProfile();
+  const { updateBusinessProfile, updateResult } = useBusinessProfile();
+  const { isLoading, isSuccess, isError, error: updateError } = updateResult;
+
   //state
   const [minutes, setMinutes] = React.useState(5);
   const [acceptanceOn, setAcceptanceOn] = React.useState(false);
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [error, setError] = React.useState(initialError);
 
+  // refs
+  const submission = React.useRef(0);
+
+  // handlers
   const handleSave = async () => {
-    setIsLoading(true);
+    submission.current += 1;
+    setError(initialError);
     await updateBusinessProfile({ orderAcceptanceTime: acceptanceOn ? minutes * 60 : null });
-    setIsLoading(false);
-    onClose();
   };
 
+  // side effects
   React.useEffect(() => {
     if (business?.orderAcceptanceTime) {
       setAcceptanceOn(true);
@@ -45,6 +53,20 @@ export const OrderAcceptanceTimeDrawer = ({ onClose, ...props }: BaseDrawerProps
     }
   }, [business?.orderAcceptanceTime]);
 
+  React.useEffect(() => {
+    if (isSuccess) onClose();
+  }, [isSuccess, onClose]);
+
+  React.useEffect(() => {
+    if (isError) {
+      setError({
+        status: true,
+        error: updateError,
+      });
+    }
+  }, [isError, updateError]);
+
+  // UI
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
       <DrawerOverlay>
@@ -96,6 +118,12 @@ export const OrderAcceptanceTimeDrawer = ({ onClose, ...props }: BaseDrawerProps
               </Button>
             </Flex>
           </DrawerFooter>
+          <SuccessAndErrorHandler
+            submission={submission.current}
+            isError={error.status}
+            error={error.error}
+            errorMessage={error.message}
+          />
         </DrawerContent>
       </DrawerOverlay>
     </Drawer>

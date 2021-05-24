@@ -1,6 +1,7 @@
 import { useContextApi } from 'app/state/api/context';
 import { WithId, Issue, IssueType } from 'appjusto-types';
 import React from 'react';
+import * as Sentry from '@sentry/react';
 
 export const useIssuesByType = (types: IssueType[]) => {
   // context
@@ -15,7 +16,7 @@ export const useIssuesByType = (types: IssueType[]) => {
         const data = await api.platform().fetchIssues(types);
         setIssues(data);
       } catch (error) {
-        console.log(`useIssuesByType`, error);
+        Sentry.captureException({ name: 'useIssuesByType', error });
         setIssues(null);
       }
     })();

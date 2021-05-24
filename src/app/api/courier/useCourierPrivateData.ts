@@ -1,21 +1,20 @@
 import { useContextApi } from 'app/state/api/context';
-import { BusinessPrivatePlatform } from 'appjusto-types';
+import { CourierPrivatePlatform } from 'appjusto-types';
 import React from 'react';
 
-export const useBusinessPrivateData = (businessId: string) => {
+export const useCourierPrivateData = (courierId: string) => {
   // context
   const api = useContextApi();
   // state
-  const [plaform, setPlatform] = React.useState<BusinessPrivatePlatform>({});
-
+  const [plaform, setPlatform] = React.useState<CourierPrivatePlatform>({});
   // side effects
   React.useEffect(() => {
     const getPlatformData = async () => {
-      const data = await api.business().getBusinessPlatformData(businessId);
+      const data = await api.courier().getCourierPlatformData(courierId);
       if (data) setPlatform(data);
     };
     getPlatformData();
-  }, [api, businessId]);
+  }, [api, courierId]);
   // return
   return plaform;
 };

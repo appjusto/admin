@@ -11,8 +11,6 @@ export const Address = () => {
   // context
   const { courier, handleProfileChange } = useContextCourierProfile();
 
-  // state
-
   // refs
   const cepRef = React.useRef<HTMLInputElement>(null);
   const numberRef = React.useRef<HTMLInputElement>(null);
@@ -25,8 +23,6 @@ export const Address = () => {
     };
     handleProfileChange('company', newCompany);
   };
-
-  // side effects
 
   // UI
   return (

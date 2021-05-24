@@ -2,9 +2,8 @@ import { Button, Flex } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useContextBusiness } from 'app/state/business/context';
 import { BusinessSchedule } from 'appjusto-types/business';
-import { AlertError } from 'common/components/AlertError';
-import { AlertSuccess } from 'common/components/AlertSuccess';
 import { DaySchedule } from 'common/components/DaySchedule';
+import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
 import { t } from 'utils/i18n';
@@ -24,11 +23,15 @@ const scheduleObj = { from: '', to: '' };
 const SchedulesPage = () => {
   // context
   const { business } = useContextBusiness();
-  const { updateBusinessProfile, updateResult: result } = useBusinessProfile();
-  const { isSuccess, isError } = result;
+  const { updateBusinessProfile, updateResult } = useBusinessProfile();
+  const { isLoading, isSuccess, isError, error } = updateResult;
+
   // state
   const [schedules, setSchedules] = React.useState<BusinessSchedule>(initialState);
-  const [isLoading, setIsLoading] = React.useState(false);
+
+  // refs
+  const submission = React.useRef(0);
+
   // handlers
   const handleCheck = (stateIndex: number, value: boolean) => {
     setSchedules((prevSchedule) => {
@@ -106,10 +109,9 @@ const SchedulesPage = () => {
     });
   };
   const onSubmitHandler = async (event: any) => {
-    setIsLoading(true);
     event.preventDefault();
+    submission.current += 1;
     await updateBusinessProfile({ schedules });
-    setIsLoading(false);
   };
   // side effects
   React.useEffect(() => {
@@ -141,24 +143,23 @@ const SchedulesPage = () => {
               replicate={() => replicateSchedule(index)}
             />
           ))}
-          <Button mt="8" type="submit" isLoading={isLoading} loadingText={t('Salvando')}>
+          <Button
+            mt="8"
+            w="200px"
+            type="submit"
+            fontSize="15px"
+            isLoading={isLoading}
+            loadingText={t('Salvando')}
+          >
             {t('Salvar horários')}
           </Button>
         </form>
-        {isSuccess && (
-          <AlertSuccess
-            maxW="320px"
-            title={t('Informações salvas com sucesso!')}
-            description={''}
-          />
-        )}
-        {isError && (
-          <AlertError
-            maxW="320px"
-            title={t('Erro')}
-            description={'Não foi possível acessar o servidor. Tenta novamente?'}
-          />
-        )}
+        <SuccessAndErrorHandler
+          submission={submission.current}
+          isSuccess={isSuccess}
+          isError={isError}
+          error={error}
+        />
       </Flex>
     </>
   );

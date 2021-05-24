@@ -88,12 +88,35 @@ export default class OrderApi {
   }
 
   // observe order's chat
-  observeOrderChat(
+  /*observeOrderChat(
     orderId: string,
     resultHandler: (orders: WithId<ChatMessage>[]) => void
   ): firebase.Unsubscribe {
     const unsubscribe = this.refs
       .getOrderChatRef(orderId)
+      .orderBy('timestamp', 'asc')
+      .onSnapshot(
+        (querySnapshot) => {
+          resultHandler(documentsAs<ChatMessage>(querySnapshot.docs));
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+    // returns the unsubscribe function
+    return unsubscribe;
+  }*/
+
+  observeOrderChat(
+    orderId: string,
+    partId: string,
+    counterpartId: string,
+    resultHandler: (orders: WithId<ChatMessage>[]) => void
+  ): firebase.Unsubscribe {
+    const unsubscribe = this.refs
+      .getOrderChatRef(orderId)
+      .where('from.id', '==', partId)
+      .where('to.id', '==', counterpartId)
       .orderBy('timestamp', 'asc')
       .onSnapshot(
         (querySnapshot) => {

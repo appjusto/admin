@@ -15,8 +15,8 @@ import {
 import { useCourierUpdateProfile } from 'app/api/courier/useCourierUpdateProfile';
 import { useContextCourierProfile } from 'app/state/courier/context';
 import { CourierProfile } from 'appjusto-types';
-import { AlertError } from 'common/components/AlertError';
-import { AlertSuccess } from 'common/components/AlertSuccess';
+import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
+import { initialError } from 'common/components/error/utils';
 import { modePTOptions } from 'pages/backoffice/utils';
 import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
 import React from 'react';
@@ -32,20 +32,18 @@ interface BaseDrawerProps {
   children: React.ReactNode | React.ReactNode[];
 }
 
-type Status = 'unsubmited' | 'success' | 'error';
-type SubmitStatus = { status: Status; message: string };
-
-const initialStatus = { status: 'unsubmited', message: '' } as SubmitStatus;
-
 export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDrawerProps) => {
   //context
   const { url } = useRouteMatch();
   const { courier, contextValidation } = useContextCourierProfile();
   const { updateProfile, updateResult } = useCourierUpdateProfile();
-  const { isLoading, isSuccess, isError } = updateResult;
+  const { isLoading, isSuccess, isError, error: updateError } = updateResult;
 
   // state
-  const [submitStatus, setSubmitStatus] = React.useState<SubmitStatus>(initialStatus);
+  const [error, setError] = React.useState(initialError);
+
+  // refs
+  const submission = React.useRef(0);
 
   //handlers
   let courierName = courier?.name ?? 'N/I';
@@ -53,18 +51,32 @@ export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDr
 
   //handlers
   const handleSave = () => {
-    setSubmitStatus(initialStatus);
-    if (
-      !contextValidation.cpf ||
-      !contextValidation.cnpj ||
-      !contextValidation.agency ||
-      !contextValidation.account
-    ) {
-      return setSubmitStatus({
-        status: 'error',
-        message: 'Verificar o preenchimento dos campos',
+    setError(initialError);
+    submission.current += 1;
+    if (!contextValidation.cpf)
+      return setError({
+        status: true,
+        error: null,
+        message: { title: 'O CPF informado não é válido.' },
       });
-    }
+    if (!contextValidation.cnpj)
+      return setError({
+        status: true,
+        error: null,
+        message: { title: 'O CNPJ informado não é válido.' },
+      });
+    if (!contextValidation.agency)
+      return setError({
+        status: true,
+        error: null,
+        message: { title: 'A agência informada não é válida.' },
+      });
+    if (!contextValidation.account)
+      return setError({
+        status: true,
+        error: null,
+        message: { title: 'A conta informada não é válida.' },
+      });
     const newState = {} as CourierProfile;
     courier &&
       Object.keys(courier).forEach((key) => {
@@ -77,10 +89,12 @@ export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDr
 
   // side effects
   React.useEffect(() => {
-    if (isSuccess) setSubmitStatus({ status: 'success', message: 'Informações salvas!' });
     if (isError)
-      setSubmitStatus({ status: 'error', message: 'Não foi possível acessar o servidor' });
-  }, [isError, isSuccess]);
+      setError({
+        status: true,
+        error: updateError,
+      });
+  }, [isError, updateError]);
 
   //UI
   return (
@@ -169,12 +183,13 @@ export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDr
               >
                 {t('Salvar alterações')}
               </Button>
-              {submitStatus.status === 'success' && (
-                <AlertSuccess mt="0" h="48px" description={submitStatus.message} />
-              )}
-              {submitStatus.status === 'error' && (
-                <AlertError mt="0" h="48px" description={submitStatus.message} />
-              )}
+              <SuccessAndErrorHandler
+                submission={submission.current}
+                isSuccess={isSuccess}
+                isError={isError}
+                error={error.error}
+                errorMessage={error.message}
+              />
             </HStack>
           </DrawerFooter>
         </DrawerContent>
