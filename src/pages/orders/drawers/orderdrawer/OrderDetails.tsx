@@ -19,12 +19,12 @@ export const OrderDetails = ({ order }: DetailsProps) => {
   React.useEffect(() => {
     try {
       if (order?.type === 'food') setTotalPrice(getOrderTotalPriceToDisplay(order?.items || []));
-      else setTotalPrice(itemPriceFormatter(order?.fare?.consumer?.total ?? 0));
+      else setTotalPrice(itemPriceFormatter(order?.fare?.business?.value ?? 0));
     } catch (error) {
       setTotalPrice('N/E');
       Sentry.captureException(error);
     }
-  }, [order?.type, order?.items, order?.fare?.consumer?.total]);
+  }, [order?.type, order?.items, order?.fare?.business?.value]);
 
   // UI
   return (
