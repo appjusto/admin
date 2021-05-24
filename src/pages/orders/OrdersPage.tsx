@@ -4,6 +4,7 @@ import { useContextBusiness } from 'app/state/business/context';
 import Container from 'common/components/Container';
 import React from 'react';
 import { Redirect, Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
+import { OrdersContextProvider } from './context';
 import { OrderAcceptanceTimeDrawer } from './drawers/OrderAcceptanceTimeDrawer';
 import { OrderDrawer } from './drawers/orderdrawer';
 import { OrdersKanban } from './kanban/OrdersKanban';
@@ -23,7 +24,7 @@ const OrdersPage = () => {
     return <Redirect to="/app" push />;
   }
   return (
-    <>
+    <OrdersContextProvider>
       <Box mt={isBackofficeUser ? '80px' : '0'}>
         <OrdersHeader />
         <Container maxW={{ base: '100%', md: '740px', lg: '1260px' }}>
@@ -38,7 +39,7 @@ const OrdersPage = () => {
           <OrderDrawer isOpen onClose={closeDrawerHandler} />
         </Route>
       </Switch>
-    </>
+    </OrdersContextProvider>
   );
 };
 

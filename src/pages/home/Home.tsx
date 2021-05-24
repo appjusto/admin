@@ -8,7 +8,6 @@ import DeliveryArea from 'pages/delivery-area/DeliveryArea';
 import FinancesPage from 'pages/finances/FinancesPage';
 import ManagerProfilePage from 'pages/manager-profile/ManagerProfilePage';
 import Menu from 'pages/menu/Menu';
-import { OrdersContextProvider } from 'pages/orders/context';
 import OrdersHistoryPage from 'pages/orders/history/OrdersHistoryPage';
 import OrdersPage from 'pages/orders/OrdersPage';
 import PageLayout from 'pages/PageLayout';
@@ -37,10 +36,8 @@ const Home = () => {
       <>
         {isBackofficeUser && <AgentPersonificationBar />}
         <Switch>
-          <OrdersContextProvider>
-            <Route path={`${path}/orders`} component={OrdersPage} />
-            <Route path={`${path}/chat`} component={ChatPage} />
-          </OrdersContextProvider>
+          <Route path={`${path}/orders`} component={OrdersPage} />
+          <Route path={`${path}/chat`} component={ChatPage} />
           <PageLayout mt={isBackofficeUser ? '60px' : '0'}>
             <Route exact path={path} component={Dashboard} />
             <Route path={`${path}/menu`} component={Menu} />
