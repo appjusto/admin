@@ -28,10 +28,10 @@ const Home = () => {
     if (isBackofficeUser) return <Redirect to="/backoffice" />;
     else if (business === null) return <Redirect to={`/onboarding`} />;
   }
-  if (business && business?.onboarding !== 'completed') {
+  if (business && business?.onboarding !== 'completed' && !isBackofficeUser) {
     return <Redirect to={`/onboarding/${!business?.onboarding ? '' : business.onboarding}`} />;
   }
-  if (business?.onboarding === 'completed') {
+  if (business?.onboarding === 'completed' || isBackofficeUser) {
     return (
       <>
         {isBackofficeUser && <AgentPersonificationBar />}
