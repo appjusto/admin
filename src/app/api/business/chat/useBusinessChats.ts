@@ -47,6 +47,7 @@ export const useBusinessChats = (orders: WithId<Order>[]) => {
       const counterPartId = businessId === message.from.id ? message.to.id : message.from.id;
       const counterPartFlavor =
         counterPartId === message.from.id ? message.from.agent : message.to.agent;
+      console.log(message.timestamp);
       const counterPartObject = {
         id: counterPartId,
         flavor: counterPartFlavor,
@@ -60,7 +61,6 @@ export const useBusinessChats = (orders: WithId<Order>[]) => {
         existingGroup.counterParts.push(counterPartObject);
         return groups;
       }
-
       return [
         {
           orderId: message.orderId,

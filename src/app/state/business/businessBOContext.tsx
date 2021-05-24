@@ -93,7 +93,6 @@ export const BusinessBOProvider = ({ children }: Props) => {
     )
       setIsSuccess(true);
     else setIsSuccess(false);
-    console.log('error', ManagerProfileResult.error);
     if (ManagerProfileResult.error)
       setError({
         status: true,

@@ -45,9 +45,11 @@ const ChatPage = () => {
         return name;
       };
       const newCounterPart = chat.counterParts.map((part) => {
+        console.log('part', part);
         if (part.updatedOn > lastUpdate) lastUpdate = part.updatedOn;
         return { ...part, name: counterpartName(part.id) };
       });
+      console.log(newCounterPart);
       const newChat = {
         ...chat,
         counterParts: newCounterPart,
