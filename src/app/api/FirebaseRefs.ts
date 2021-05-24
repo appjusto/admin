@@ -18,11 +18,15 @@ export default class FirebaseRefs {
   getPlatformParamsRef = () => this.getPlatformRef().doc('params');
   getPlatformStatisticsRef = () => this.getPlatformRef().doc('statistics');
   getPlatformDatasRef = () => this.getPlatformRef().doc('data');
+  getPlatformLogsRef = () => this.getPlatformRef().doc('logs');
 
   // platform data subcollections
   getBanksRef = () => this.getPlatformDatasRef().collection('banks');
   getIssuesRef = () => this.getPlatformDatasRef().collection('issues');
   getCuisinesRef = () => this.getPlatformDatasRef().collection('cuisines');
+
+  // platform logs subcollections
+  getPlatformLoginLogsRef = () => this.getPlatformLogsRef().collection('logins');
 
   // businesses
   getBusinessesRef = () => this.firestore.collection('businesses');

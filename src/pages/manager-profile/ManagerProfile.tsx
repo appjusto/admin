@@ -45,6 +45,13 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const isCPFValid = () => cpfutils.isValid(cpf);
 
   // handlers
+  const clearState = React.useCallback(() => {
+    setName('');
+    setSurname('');
+    setPhoneNumber('');
+    setCPF('');
+  }, []);
+
   const onSubmitHandler = async () => {
     submission.current += 1;
     setError(initialError);
@@ -79,18 +86,21 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
   }, [onboarding]);
 
   React.useEffect(() => {
+    clearState();
     if (manager) {
-      if (manager.name) setName(manager.name);
-      if (manager.surname) setSurname(manager.surname);
-      if (manager.phone) setPhoneNumber(manager.phone);
-      if (manager.cpf) setCPF(manager.cpf);
-    } else {
-      setName('');
-      setSurname('');
-      setPhoneNumber('');
-      setCPF('');
+      setName(manager.name ?? '');
+      setSurname(manager.surname ?? '');
+      setPhoneNumber(manager.phone ?? '');
+      setCPF(manager.cpf ?? '');
     }
-  }, [manager]);
+  }, [manager, clearState]);
+
+  console.dir({
+    name,
+    surname,
+    phoneNumber,
+    cpf,
+  });
 
   React.useEffect(() => {
     if (isError)
