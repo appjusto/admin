@@ -1,6 +1,7 @@
 import { Box, Flex, HStack, Radio, RadioGroup, Text } from '@chakra-ui/react';
 import { useBanks } from 'app/api/business/profile/useBanks';
 import { useBusinessBankAccount } from 'app/api/business/profile/useBusinessBankAccount';
+import { useContextBusiness } from 'app/state/business/context';
 import { Bank, BankAccount, WithId } from 'appjusto-types';
 import { BankAccountPersonType, BankAccountType } from 'appjusto-types/banking';
 import { AlertWarning } from 'common/components/AlertWarning';
@@ -30,6 +31,7 @@ const bankAccountSet = (bankAccount: BankAccount): boolean => {
 const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
   // context
   const banks = useBanks();
+  const { business } = useContextBusiness();
   const { bankAccount, updateBankAccount, updateResult } = useBusinessBankAccount();
   const { isLoading, isSuccess, isError, error: updateError } = updateResult;
   // state
@@ -49,6 +51,8 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
   const accountRef = React.useRef<HTMLInputElement>(null);
 
   // helpers
+  const disabled = business?.situation === 'approved';
+
   const agencyParser = selectedBank?.agencyPattern
     ? numbersAndLettersParser(selectedBank?.agencyPattern)
     : undefined;
@@ -187,8 +191,12 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
             fontSize="16px"
             lineHeight="22px"
           >
-            <Radio value="Pessoa Jurídica">{t('Pessoa Jurídica')}</Radio>
-            <Radio value="Pessoa Física">{t('Pessoa Física')}</Radio>
+            <Radio isDisabled={disabled} value="Pessoa Jurídica">
+              {t('Pessoa Jurídica')}
+            </Radio>
+            <Radio isDisabled={disabled} value="Pessoa Física">
+              {t('Pessoa Física')}
+            </Radio>
           </HStack>
         </RadioGroup>
         <Text mt="4" mb="2" color="black" fontWeight="700">
@@ -210,12 +218,17 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
             fontSize="16px"
             lineHeight="22px"
           >
-            <Radio value="Corrente">{t('Corrente')}</Radio>
-            <Radio value="Poupança">{t('Poupança')}</Radio>
+            <Radio isDisabled={disabled} value="Corrente">
+              {t('Corrente')}
+            </Radio>
+            <Radio isDisabled={disabled} value="Poupança">
+              {t('Poupança')}
+            </Radio>
           </HStack>
         </RadioGroup>
         <BankSelect
           ref={nameRef}
+          isDisabled={disabled}
           value={name}
           onChange={(ev) => setName(ev.target.value)}
           isRequired
@@ -231,6 +244,7 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
         <CustomPatternInput
           id="banking-agency"
           ref={agencyRef}
+          isDisabled={disabled || name === ''}
           label={t('Agência')}
           placeholder={
             (selectedBank?.agencyPattern.indexOf('D') ?? -1) > -1
@@ -246,7 +260,6 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
             selectedBank?.agencyPattern ? selectedBank.agencyPattern.length - 1 : undefined
           }
           isRequired
-          isDisabled={name === ''}
           notifyParentWithValidation={(isInvalid: boolean) => {
             setValidation((prevState) => ({ ...prevState, agency: !isInvalid }));
           }}
@@ -255,6 +268,7 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
           <CustomPatternInput
             id="banking-account"
             ref={accountRef}
+            isDisabled={disabled || name === ''}
             flex={3}
             label={t('Conta')}
             placeholder={
@@ -269,7 +283,6 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
             formatter={accountFormatter}
             onBlur={handleAccount}
             isRequired
-            isDisabled={name === ''}
             notifyParentWithValidation={(isInvalid: boolean) => {
               setValidation((prevState) => ({ ...prevState, account: !isInvalid }));
             }}

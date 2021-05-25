@@ -2,6 +2,7 @@ import { Box } from '@chakra-ui/react';
 import * as cpfutils from '@fnando/cpf';
 import { useUpdateManagerProfile } from 'app/api/manager/useUpdateManagerProfile';
 import { useContextFirebaseUser } from 'app/state/auth/context';
+import { useContextBusiness } from 'app/state/business/context';
 import { useContextManagerProfile } from 'app/state/manager/context';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
 import { initialError } from 'common/components/error/utils';
@@ -24,6 +25,7 @@ import { t } from 'utils/i18n';
 export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
   // context
   const user = useContextFirebaseUser();
+  const { business } = useContextBusiness();
   const { manager } = useContextManagerProfile();
   const { updateProfile, updateResult } = useUpdateManagerProfile();
   const { isLoading, isSuccess, isError, error: updateError } = updateResult;
@@ -162,6 +164,7 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
         />
         <CustomPatternInput
           isRequired
+          isDisabled={business?.situation === 'approved'}
           ref={cpfRef}
           id="manager-cpf"
           label={t('CPF')}
