@@ -14,9 +14,11 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import * as Sentry from '@sentry/react';
+import { useUpdateChatMessage } from 'app/api/business/chat/useUpdateChatMessage';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useOrderChat } from 'app/api/order/useOrderChat';
-import { Flavor } from 'appjusto-types';
+import { ChatMessage, Flavor } from 'appjusto-types';
+import { useOrdersContext } from 'pages/orders/context';
 import React, { KeyboardEvent } from 'react';
 import { useParams } from 'react-router';
 import { getDateTime } from 'utils/functions';
@@ -37,6 +39,8 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
   //context
   const { logo } = useBusinessProfile();
   const { orderId, counterpartId } = useParams<Params>();
+  const { getNotReadChatMessages } = useOrdersContext();
+  const { updateChatMessage } = useUpdateChatMessage();
   const { isActive, orderCode, participants, chat, sendMessage, sendMessageResult } = useOrderChat(
     orderId,
     counterpartId
@@ -113,6 +117,22 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
       });
     }
   }, [messagesBox]);
+
+  React.useEffect(() => {
+    if (chat) {
+      console.log('RENDER !!!');
+      const notReadMessages = getNotReadChatMessages(orderId, counterpartId);
+      if (notReadMessages) {
+        notReadMessages.forEach((messageId) => {
+          updateChatMessage({
+            orderId,
+            messageId,
+            changes: { read: true } as Partial<ChatMessage>,
+          });
+        });
+      }
+    }
+  }, [chat, orderId, counterpartId]);
 
   React.useEffect(() => {
     if (isError) {

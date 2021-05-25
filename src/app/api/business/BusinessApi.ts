@@ -118,6 +118,15 @@ export default class BusinessApi {
     return unsubscribe;
   }
 
+  async updateChatMessage(orderId: string, messageId: string, changes: Partial<ChatMessage>) {
+    await this.refs
+      .getOrderChatRef(orderId)
+      .doc(messageId)
+      .update({
+        ...changes,
+      } as Partial<ChatMessage>);
+  }
+
   async createBusinessProfile() {
     const payload: CreateBusinessProfilePayload = {
       meta: { version: '1' }, // TODO: pass correct version on

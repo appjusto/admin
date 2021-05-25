@@ -1,5 +1,6 @@
 import { ChatMessage, WithId } from 'appjusto-types';
 import { first } from 'lodash';
+import { OrderChatGroup } from '../business/chat/useBusinessChats';
 import { GroupedChatMessages } from './types';
 
 export const timestampToDate = (value: firebase.firestore.FieldValue) =>
@@ -23,3 +24,15 @@ export const groupOrderChatMessages = (messages: WithId<ChatMessage>[]) =>
     // use as id for chat group the id of the first message of the group
     return [{ id: message.id, from: message.from.id, messages: [message] }, ...groups];
   }, []);
+
+export const getNotReadChatMessages = (chats: OrderChatGroup[]) => {
+  let notReadMessages = [] as string[];
+  chats.forEach((group) => {
+    group.counterParts.forEach((part) => {
+      if (part.notReadMessages && part.notReadMessages?.length > 0) {
+        notReadMessages = notReadMessages.concat(part.notReadMessages);
+      }
+    });
+  });
+  return notReadMessages;
+};

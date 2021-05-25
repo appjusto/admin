@@ -91,6 +91,7 @@ interface ContextProps {
   statuses: OrderStatus[];
   chats: OrderChatGroup[];
   newChatMessages: string[];
+  getNotReadChatMessages(orderId: string, counterPartId: string): string[];
   getOrderById(id: string): WithId<Order> | undefined;
   //createFakeOrder(): void;
   changeOrderStatus(orderId: string, status: OrderStatus): void;
@@ -197,6 +198,19 @@ export const OrdersContextProvider = (props: ProviderProps) => {
     }
   };
 
+  const getNotReadChatMessages = React.useCallback(
+    (orderId: string, counterPartId: string) => {
+      if (chats) {
+        const group = chats.find((chat) => chat.orderId === orderId);
+        const messages =
+          group?.counterParts.find((part) => part.id === counterPartId)?.notReadMessages ?? [];
+        return messages;
+      }
+      return [];
+    },
+    [chats]
+  );
+
   // side effects
   React.useEffect(() => {
     if (hookOrders) {
@@ -218,8 +232,8 @@ export const OrdersContextProvider = (props: ProviderProps) => {
       setNewChatMessages(notReadMessages);
     }
   }, [chats]);
-  console.log(chats);
-  console.log(newChatMessages);
+  //console.log(chats);
+  //console.log(newChatMessages);
   // provider
   return (
     <OrdersContext.Provider
@@ -229,6 +243,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
         statuses,
         chats,
         newChatMessages,
+        getNotReadChatMessages,
         getOrderById,
         //createFakeOrder,
         changeOrderStatus,
