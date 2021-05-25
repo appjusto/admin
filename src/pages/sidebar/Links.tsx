@@ -29,7 +29,7 @@ export const Links = () => {
     <Box>
       <Box>
         <LinkItem to={`${url}`} label={t('Início')} />
-        {isApproved && !isLive ? (
+        {isApproved ? (
           <LinkItem to={`${url}/orders`} label={t('Gerenciador de pedidos')} />
         ) : (
           <DisabledLink label={t('Gerenciador de pedidos')} />
@@ -48,7 +48,7 @@ export const Links = () => {
           </>
         ) : (
           <>
-            <DisabledLink label={t('Histórico de pedidos')} />
+            <LinkItem to={`${url}/orders-history`} label={t('Histórico de pedidos')} />
             <DisabledLink label={t('Financeiro')} />
             <LinkItem to={`${url}/business-profile`} label={t('Perfil do restaurante')} />
             <DisabledLink label={t('Colaboradores')} />
