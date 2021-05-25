@@ -13,7 +13,7 @@ interface SuccessAndErrorHandlersProps {
   errorMessage?: Message;
 }
 
-const initSuccessMsg = { title: 'Informações savlas com sucesso!' };
+const initSuccessMsg = { title: 'Informações salvas com sucesso!' };
 const initErrorMsg = {
   title: 'Não foi possível acessar o servidor',
   description: 'Tenta novamente?',

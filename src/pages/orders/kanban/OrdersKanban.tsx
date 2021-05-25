@@ -54,9 +54,7 @@ export const OrdersKanban = () => {
       <Flex justifyContent="flex-end" h="19.5px" mt="-19.5px" mb="2">
         {isNewChatMessage && (
           <Text fontSize="xs" fontWeight="700" lineHeight="lg" color="black">
-            {newChatMessages.length > 1
-              ? t(`Você tem ${newChatMessages.length} novas mensagens!`)
-              : t(`Você tem 1 nova mensagens!`)}
+            {t(`Você tem novas mensagens!`)}
           </Text>
         )}
       </Flex>
