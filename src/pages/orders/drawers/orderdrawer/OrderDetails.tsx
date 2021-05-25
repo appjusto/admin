@@ -69,12 +69,18 @@ export const OrderDetails = ({ order }: DetailsProps) => {
         </>
       )}
       <SectionTitle mt="10">{t('Observações')}</SectionTitle>
-      <Text mt="1" fontSize="md">
+      {/*<Text mt="1" fontSize="md">
         {t('Incluir CPF na nota, CPF: 000.000.000-00')}
-      </Text>
-      <Text mt="1" fontSize="md" color="red">
-        {order?.additionalInfo}
-      </Text>
+      </Text>*/}
+      {order?.additionalInfo ? (
+        <Text mt="1" fontSize="md" color="red">
+          {order?.additionalInfo}
+        </Text>
+      ) : (
+        <Text mt="1" fontSize="md">
+          {t('Sem observações.')}
+        </Text>
+      )}
       {order?.status !== 'canceled' && (
         <>
           <SectionTitle mt="10">{t('Forma de pagamento')}</SectionTitle>
