@@ -62,6 +62,10 @@ export const useBusinessChats = (orders: WithId<Order>[]) => {
         );
         if (existingCounterpart) {
           if (isNotRead) existingCounterpart.notReadMessages?.push(message.id);
+          else
+            existingCounterpart.notReadMessages = existingCounterpart.notReadMessages?.filter(
+              (msg) => msg !== message.id
+            );
           return groups;
         }
         existingGroup.counterParts.push(counterPartObject);
