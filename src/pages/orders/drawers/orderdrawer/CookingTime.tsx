@@ -7,11 +7,12 @@ import { t } from 'utils/i18n';
 interface CookingTimeProps {
   orderId: string;
   cookingTime?: number | null;
+  averageCookingTime?: number | null;
 }
 
-const radioOptions = ['5', '10', '15', '20', '30', '45'];
+const radioOptions = ['10', '20', '25', '30', '40', '45', '50', '60'];
 
-export const CookingTime = ({ orderId, cookingTime }: CookingTimeProps) => {
+export const CookingTime = ({ orderId, cookingTime, averageCookingTime }: CookingTimeProps) => {
   // context
   const { setOrderCookingTime } = useOrdersContext();
 
@@ -41,7 +42,6 @@ export const CookingTime = ({ orderId, cookingTime }: CookingTimeProps) => {
   };
 
   const handleRadios = (value: string) => {
-    console.log();
     setRadiosValue(value);
     if (value !== '0') {
       const time = parseInt(value) * 60;
@@ -57,13 +57,18 @@ export const CookingTime = ({ orderId, cookingTime }: CookingTimeProps) => {
       setEnable(true);
       const timeInMinutes = (cookingTime / 60).toString();
       if (radioOptions.includes(timeInMinutes)) {
-        return setRadiosValue(timeInMinutes);
+        setRadiosValue(timeInMinutes);
       } else {
         setRadiosValue('0');
-        return setInputTime(timeInMinutes);
+        setInputTime(timeInMinutes);
       }
+    } else if (averageCookingTime) {
+      setEnable(true);
+      const timeInMinutes = (averageCookingTime / 60).toString();
+      setRadiosValue(timeInMinutes);
+      setOrderCookingTime(orderId, averageCookingTime);
     }
-  }, [cookingTime]);
+  }, [cookingTime, averageCookingTime]);
 
   //UI
   return (

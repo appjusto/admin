@@ -1,5 +1,5 @@
 import { OrderItemComplement, OrderItem, Order, WithId, OrderStatus } from 'appjusto-types';
-import { itemPriceFormatter, formatDate } from './formatters';
+import { formatCurrency, formatDate } from './formatters';
 import { round } from 'lodash';
 import { CroppedAreaProps } from 'common/components/ImageCropping';
 import { localOrderType } from 'pages/orders/context';
@@ -148,10 +148,10 @@ const getOrderTotalPrice = (items: OrderItem[]) => {
 export const getProdTotalPriceToDisplay = (
   price: number,
   complements: OrderItemComplement[] | undefined
-) => itemPriceFormatter(getProductTotalPrice(price, complements));
+) => formatCurrency(getProductTotalPrice(price, complements));
 
 export const getOrderTotalPriceToDisplay = (items: OrderItem[]) =>
-  itemPriceFormatter(getOrderTotalPrice(items));
+  formatCurrency(getOrderTotalPrice(items));
 
 // images
 const createImage = (url: string) =>

@@ -1,18 +1,9 @@
-import { separator, unit } from 'common/components/form/input/currency-input/utils';
-import i18n from 'i18n-js';
+import i18n, { ToCurrencyOptions } from 'i18n-js';
 import { round } from 'lodash';
 
 // price and totals
-export const itemPriceFormatter = (price: number) => {
-  const pStr = price.toString();
-  const len = pStr.length;
-  const pArr = pStr.split('');
-  if (len === 5) return `${unit} ${pArr[0]}${pArr[1]}${pArr[2]}${separator}${pArr[3]}${pArr[4]}`;
-  if (len === 4) return `${unit} ${pArr[0]}${pArr[1]}${separator}${pArr[2]}${pArr[3]}`;
-  if (len === 3) return `${unit} ${pArr[0]}${separator}${pArr[1]}${pArr[2]}`;
-  if (len === 2) return `${unit} 0${separator}${pArr[0]}${pArr[1]}`;
-  if (len === 1) return `${unit} 0${separator}0${pArr[0]}`;
-};
+export const formatCurrency = (value: number, options?: ToCurrencyOptions) =>
+  i18n.toCurrency(value / 100, options);
 
 // date & time
 export const formatDate = (date: Date, pattern: 'default' | 'monthYear' = 'default') =>

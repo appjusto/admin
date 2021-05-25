@@ -1,8 +1,7 @@
 import { Box, Table, Tbody, Td, Text, Tfoot, Th, Thead, Tr } from '@chakra-ui/react';
-import * as Sentry from '@sentry/react';
 import { Order, OrderItem, WithId } from 'appjusto-types';
 import React from 'react';
-import { itemPriceFormatter } from 'utils/formatters';
+import { formatCurrency } from 'utils/formatters';
 import { getOrderTotalPriceToDisplay } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../../../backoffice/drawers/generics/SectionTitle';
@@ -17,13 +16,8 @@ export const OrderDetails = ({ order }: DetailsProps) => {
 
   // side effects
   React.useEffect(() => {
-    try {
-      if (order?.type === 'food') setTotalPrice(getOrderTotalPriceToDisplay(order?.items || []));
-      else setTotalPrice(itemPriceFormatter(order?.fare?.business?.value ?? 0));
-    } catch (error) {
-      setTotalPrice('N/E');
-      Sentry.captureException(error);
-    }
+    if (order?.type === 'food') setTotalPrice(getOrderTotalPriceToDisplay(order?.items || []));
+    else setTotalPrice(formatCurrency(order?.fare?.business?.value ?? 0));
   }, [order?.type, order?.items, order?.fare?.business?.value]);
 
   // UI
@@ -51,14 +45,14 @@ export const OrderDetails = ({ order }: DetailsProps) => {
                       </Text>
                     </Td>
                     <Td isNumeric>{item.quantity}</Td>
-                    <Td isNumeric>{itemPriceFormatter(item.product.price * item.quantity)}</Td>
+                    <Td isNumeric>{formatCurrency(item.product.price * item.quantity)}</Td>
                   </Tr>
                   {item.complements &&
                     item.complements.map((complement) => (
                       <Tr key={Math.random()} fontSize="xs">
                         <Td>{complement.name}</Td>
                         <Td isNumeric>1</Td>
-                        <Td isNumeric>{itemPriceFormatter(complement.price)}</Td>
+                        <Td isNumeric>{formatCurrency(complement.price)}</Td>
                       </Tr>
                     ))}
                 </React.Fragment>
@@ -75,12 +69,18 @@ export const OrderDetails = ({ order }: DetailsProps) => {
         </>
       )}
       <SectionTitle mt="10">{t('Observações')}</SectionTitle>
-      <Text mt="1" fontSize="md">
+      {/*<Text mt="1" fontSize="md">
         {t('Incluir CPF na nota, CPF: 000.000.000-00')}
-      </Text>
-      <Text mt="1" fontSize="md" color="red">
-        {order?.additionalInfo}
-      </Text>
+      </Text>*/}
+      {order?.additionalInfo ? (
+        <Text mt="1" fontSize="md" color="red">
+          {order?.additionalInfo}
+        </Text>
+      ) : (
+        <Text mt="1" fontSize="md">
+          {t('Sem observações.')}
+        </Text>
+      )}
       {order?.status !== 'canceled' && (
         <>
           <SectionTitle mt="10">{t('Forma de pagamento')}</SectionTitle>

@@ -88,15 +88,22 @@ interface ContextProps {
   business: WithId<Business> | null | undefined;
   orders: WithId<Order>[];
   statuses: OrderStatus[];
+  newChatMessages: string[];
   getOrderById(id: string): WithId<Order> | undefined;
-  createFakeOrder(): void;
+  //createFakeOrder(): void;
   changeOrderStatus(orderId: string, status: OrderStatus): void;
   setOrderCookingTime(orderId: string, cookingTime: number | null): void;
 }
 
 const OrdersContext = React.createContext<ContextProps>({} as ContextProps);
 
-const statuses = ['confirmed', 'preparing', 'ready', 'dispatching', 'canceled'] as OrderStatus[];
+export const statuses = [
+  'confirmed',
+  'preparing',
+  'ready',
+  'dispatching',
+  'canceled',
+] as OrderStatus[];
 
 interface ProviderProps {
   children: React.ReactNode | React.ReactNode[];
@@ -110,14 +117,15 @@ export const OrdersContextProvider = (props: ProviderProps) => {
 
   //state
   const [orders, setOrders] = React.useState<WithId<Order>[]>([]);
+  const [newChatMessages, setNewChatMessages] = React.useState(['teste']);
 
   // order sound
   const [playBell] = useSound(bellDing, { volume: 1 });
 
   //Development
-  const createFakeOrder = async () => {
+  /*const createFakeOrder = async () => {
     await api.order().createFakeOrder(fakeOrder);
-  };
+  };*/
 
   //handlers
   const toast = useToast();
@@ -201,8 +209,9 @@ export const OrdersContextProvider = (props: ProviderProps) => {
         business,
         orders,
         statuses,
+        newChatMessages,
         getOrderById,
-        createFakeOrder,
+        //createFakeOrder,
         changeOrderStatus,
         setOrderCookingTime,
       }}

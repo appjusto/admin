@@ -1,6 +1,7 @@
 import { Text } from '@chakra-ui/react';
 import { CancellationData } from 'app/api/order/OrderApi';
 import { useOrder } from 'app/api/order/useOrder';
+import { useContextBusiness } from 'app/state/business/context';
 import { useContextManagerProfile } from 'app/state/manager/context';
 import { Issue, WithId } from 'appjusto-types';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
@@ -28,6 +29,7 @@ type Params = {
 export const OrderDrawer = (props: Props) => {
   //context
   const { orderId } = useParams<Params>();
+  const { business } = useContextBusiness();
   const { order, cancelOrder, result, orderIssues } = useOrder(orderId);
   const { manager } = useContextManagerProfile();
 
@@ -113,7 +115,11 @@ export const OrderDrawer = (props: Props) => {
           )}
           {orderIssues && <OrderIssuesTable issues={orderIssues} />}
           {(order?.status === 'confirmed' || order?.status === 'preparing') && (
-            <CookingTime orderId={order.id} cookingTime={order.cookingTime} />
+            <CookingTime
+              orderId={order.id}
+              cookingTime={order.cookingTime}
+              averageCookingTime={business?.averageCookingTime}
+            />
           )}
         </>
       )}

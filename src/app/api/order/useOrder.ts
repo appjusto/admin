@@ -27,8 +27,12 @@ export const useOrder = (orderId?: string) => {
   // side effects
   React.useEffect(() => {
     if (!orderId) return;
-    api.order().observeOrder(orderId, setOrder);
-    api.order().observeOrderIssues(orderId, setOrderIssues);
+    const unsub = api.order().observeOrder(orderId, setOrder);
+    const unsub2 = api.order().observeOrderIssues(orderId, setOrderIssues);
+    return () => {
+      unsub();
+      unsub2();
+    };
   }, [api, orderId]);
 
   // return

@@ -105,7 +105,7 @@ export const OrderBaseDrawer = ({
               <Flex flexDir="column">
                 <CustomButton
                   label="Abrir chat com o cliente"
-                  link={`/app/chat/${order?.id}/${order?.consumer?.id}`}
+                  link={`/app/orders/chat/${order?.id}/${order?.consumer?.id}`}
                   size="md"
                   variant="outline"
                 />

@@ -258,6 +258,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
           <Box maxW="400px">
             <PatternInput
               isRequired
+              isDisabled={business?.situation === 'approved'}
               ref={cnpjRef}
               id="business-cnpj"
               label={t('CNPJ')}
