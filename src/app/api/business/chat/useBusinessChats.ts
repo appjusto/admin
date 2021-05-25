@@ -49,18 +49,23 @@ export const useBusinessChats = (orders: WithId<Order>[]) => {
       const counterPartFlavor =
         counterPartId === message.from.id ? message.from.agent : message.to.agent;
       //console.log(message.timestamp);
+      const isNotRead = message.from.id !== businessId && !message.read;
       const counterPartObject = {
         id: counterPartId,
         flavor: counterPartFlavor,
         updatedOn: message.timestamp,
-        notReadMessages: message.from.id !== businessId ? [message.id] : [],
+        notReadMessages: isNotRead ? [message.id] : [],
       };
       if (existingGroup) {
         const existingCounterpart = existingGroup.counterParts.find(
           (part) => part.id === counterPartId
         );
         if (existingCounterpart) {
-          if (message.from.id !== businessId) existingCounterpart.notReadMessages?.push(message.id);
+          if (isNotRead) existingCounterpart.notReadMessages?.push(message.id);
+          else
+            existingCounterpart.notReadMessages = existingCounterpart.notReadMessages?.filter(
+              (msg) => msg !== message.id
+            );
           return groups;
         }
         existingGroup.counterParts.push(counterPartObject);
@@ -69,7 +74,7 @@ export const useBusinessChats = (orders: WithId<Order>[]) => {
       return [
         {
           orderId: message.orderId,
-          notReadMessages: message.from.id !== businessId ? [message.id] : [],
+          notReadMessages: isNotRead ? [message.id] : [],
           counterParts: [counterPartObject],
         },
         ...groups,
