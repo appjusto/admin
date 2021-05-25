@@ -93,7 +93,6 @@ export const BusinessBOProvider = ({ children }: Props) => {
     )
       setIsSuccess(true);
     else setIsSuccess(false);
-    console.log('error', ManagerProfileResult.error);
     if (ManagerProfileResult.error)
       setError({
         status: true,
@@ -170,6 +169,7 @@ export const BusinessBOProvider = ({ children }: Props) => {
   }, [business, setManagerEmail]);
 
   React.useEffect(() => {
+    dispatch({ type: 'clear_manager' });
     if (manager) dispatch({ type: 'update_manager', payload: manager });
   }, [manager]);
 

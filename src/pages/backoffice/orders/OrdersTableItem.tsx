@@ -2,7 +2,7 @@ import { Td, Tr } from '@chakra-ui/react';
 import { OrderAlgolia } from 'appjusto-types/algolia';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { useRouteMatch } from 'react-router';
-import { itemPriceFormatter } from 'utils/formatters';
+import { formatCurrency } from 'utils/formatters';
 import { getAlgoliaFieldDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 
@@ -14,7 +14,7 @@ export const OrdersTableItem = ({ order }: ItemProps) => {
   // context
   const { path } = useRouteMatch();
   // helpers
-  const total = itemPriceFormatter(Number(order.totalOrder));
+  const total = formatCurrency(Number(order.totalOrder));
   // UI
   return (
     <Tr key={order.objectID} color="black" fontSize="15px" lineHeight="21px">

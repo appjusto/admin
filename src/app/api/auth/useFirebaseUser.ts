@@ -13,9 +13,10 @@ export const useFirebaseUser = () => {
 
   // side effects
   React.useEffect(() => {
-    return api.auth().observeAuthState((user) => {
+    const unsub = api.auth().observeAuthState((user) => {
       setFirebaseUser(user);
     });
+    return () => unsub();
   }, [api]);
 
   // return

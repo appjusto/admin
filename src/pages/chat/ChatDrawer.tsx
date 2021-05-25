@@ -14,9 +14,11 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import * as Sentry from '@sentry/react';
+import { useUpdateChatMessage } from 'app/api/business/chat/useUpdateChatMessage';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useOrderChat } from 'app/api/order/useOrderChat';
-import { Flavor } from 'appjusto-types';
+import { ChatMessage, Flavor } from 'appjusto-types';
+import { useOrdersContext } from 'pages/orders/context';
 import React, { KeyboardEvent } from 'react';
 import { useParams } from 'react-router';
 import { getDateTime } from 'utils/functions';
@@ -37,7 +39,9 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
   //context
   const { logo } = useBusinessProfile();
   const { orderId, counterpartId } = useParams<Params>();
-  const { isActive, participants, chat, sendMessage, sendMessageResult } = useOrderChat(
+  const { getNotReadChatMessages } = useOrdersContext();
+  const { updateChatMessage } = useUpdateChatMessage();
+  const { isActive, orderCode, participants, chat, sendMessage, sendMessageResult } = useOrderChat(
     orderId,
     counterpartId
   );
@@ -115,6 +119,22 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
   }, [messagesBox]);
 
   React.useEffect(() => {
+    if (chat) {
+      console.log('RENDER !!!');
+      const notReadMessages = getNotReadChatMessages(orderId, counterpartId);
+      if (notReadMessages) {
+        notReadMessages.forEach((messageId) => {
+          updateChatMessage({
+            orderId,
+            messageId,
+            changes: { read: true } as Partial<ChatMessage>,
+          });
+        });
+      }
+    }
+  }, [chat, orderId, counterpartId]);
+
+  React.useEffect(() => {
     if (isError) {
       Sentry.captureException(error);
       toast({
@@ -140,9 +160,9 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
                   {t('Chat com ')} {`{${getName(counterpartId)}}`}
                 </Text>
                 <Text fontSize="md" color="black" fontWeight="700" lineHeight="22px">
-                  {t('ID:')}{' '}
+                  {t('ID do pedido:')}{' '}
                   <Text as="span" color="gray.600" fontWeight="500">
-                    {'000'}
+                    {orderCode ?? 'N/E'}
                   </Text>
                 </Text>
                 <Text fontSize="md" color="black" fontWeight="700" lineHeight="22px">
@@ -184,6 +204,7 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
                 onChange={(event) => setInputText(event.target.value)}
                 zIndex="9000"
                 onKeyPress={handleUserKeyPress}
+                isDisabled={!isActive}
               />
               <Button
                 position="absolute"
@@ -193,6 +214,7 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
                 isLoading={isLoading}
                 loadingText={t('Enviando...')}
                 zIndex="9999"
+                isDisabled={!isActive}
               >
                 {t('Enviar')}
               </Button>

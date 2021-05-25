@@ -8,6 +8,7 @@ export interface businessBOState {
 
 export type Actions =
   | { type: 'update_manager'; payload: Partial<WithId<ManagerProfile>> }
+  | { type: 'clear_manager' }
   | { type: 'update_banking'; payload: Partial<WithId<BankAccount>> }
   | { type: 'update_business'; payload: Partial<WithId<Business>> };
 
@@ -20,6 +21,11 @@ export const businessBOReducer = (state: businessBOState, action: Actions): busi
           ...state.manager,
           ...action.payload,
         },
+      };
+    case 'clear_manager':
+      return {
+        ...state,
+        manager: {} as WithId<ManagerProfile>,
       };
     case 'update_banking':
       return {

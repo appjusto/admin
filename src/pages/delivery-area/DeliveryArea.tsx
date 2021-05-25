@@ -23,7 +23,7 @@ import { Redirect } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { Marker } from '../../common/components/MapsMarker';
 
-const radioOptions = ['10', '20', '25', '30', '40', '50', '60'];
+const radioOptions = ['10', '20', '25', '30', '40', '45', '50', '60'];
 
 const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
   // context

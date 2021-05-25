@@ -4,13 +4,8 @@ import { ChatMessage, Flavor, Order, OrderStatus, WithId } from 'appjusto-types'
 import React from 'react';
 import { useMutation } from 'react-query';
 import { useCourierProfilePicture } from '../courier/useCourierProfilePicture';
-import { first } from 'lodash';
-
-export interface GroupedChatMessages {
-  id: string;
-  from: string;
-  messages: WithId<ChatMessage>[];
-}
+import { GroupedChatMessages } from 'app/api/chat/types';
+import { groupOrderChatMessages, sortMessages } from 'app/api/chat/utils';
 
 const orderActivedStatuses = ['confirmed', 'preparing', 'ready', 'dispatching'] as OrderStatus[];
 
@@ -98,27 +93,5 @@ export const useOrderChat = (orderId: string, counterpartId: string) => {
   }, [chatFromBusiness, chatFromCounterPart]);
 
   // return
-  return { isActive, participants, chat, sendMessage, sendMessageResult };
+  return { isActive, orderCode: order?.code, participants, chat, sendMessage, sendMessageResult };
 };
-
-const timestampToDate = (value: firebase.firestore.FieldValue) =>
-  (value as firebase.firestore.Timestamp).toDate();
-
-const sortMessages = (a: ChatMessage, b: ChatMessage) => {
-  if (a.timestamp && b.timestamp)
-    return timestampToDate(a.timestamp).getTime() - timestampToDate(b.timestamp).getTime();
-  if (!a.timestamp) return -1;
-  else if (b.timestamp) return 1;
-  return 0;
-};
-
-const groupOrderChatMessages = (messages: WithId<ChatMessage>[]) =>
-  messages.reduce<GroupedChatMessages[]>((groups, message) => {
-    const currentGroup = first(groups);
-    if (message.from.id === currentGroup?.from) {
-      currentGroup!.messages.push(message);
-      return groups;
-    }
-    // use as id for chat group the id of the first message of the group
-    return [{ id: message.id, from: message.from.id, messages: [message] }, ...groups];
-  }, []);

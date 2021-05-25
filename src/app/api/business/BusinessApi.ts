@@ -2,6 +2,7 @@ import {
   BankAccount,
   Business,
   Category,
+  ChatMessage,
   CreateBusinessProfilePayload,
   Product,
   WithId,
@@ -11,6 +12,7 @@ import firebase from 'firebase/app';
 import { documentAs, documentsAs } from '../../../core/fb';
 import FilesApi from '../FilesApi';
 import FirebaseRefs from '../FirebaseRefs';
+import { BusinessChatMessage } from './chat/useBusinessChats';
 
 //export const ActiveBusinessesValues = ['approved'];
 //export const InactiveBusinessesValues = ['pending', 'submitted', 'rejected', 'blocked'];
@@ -60,6 +62,69 @@ export default class BusinessApi {
       }
     );
     return unsubscribe;
+  }
+
+  observeBusinessChatMessageAsFrom(
+    orderId: string,
+    businessId: string,
+    resultHandler: (orders: WithId<BusinessChatMessage>[]) => void
+  ): firebase.Unsubscribe {
+    const unsubscribe = this.refs
+      .getOrderChatRef(orderId)
+      .where('from.id', '==', businessId)
+      .orderBy('timestamp', 'asc')
+      .onSnapshot(
+        (querySnapshot) => {
+          //@ts-ignore
+          resultHandler((prev: WithId<BusinessChatMessage>[]) => {
+            const doc = documentsAs<ChatMessage>(querySnapshot.docs);
+            const messages = doc.map((msg) => ({ orderId, ...msg }));
+            const prevDiff = prev.filter((msg) => !messages.includes(msg));
+            return [...prevDiff, ...messages];
+          });
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+    // returns the unsubscribe function
+    return unsubscribe;
+  }
+
+  observeBusinessChatMessageAsTo(
+    orderId: string,
+    businessId: string,
+    resultHandler: (orders: WithId<BusinessChatMessage>[]) => void
+  ): firebase.Unsubscribe {
+    const unsubscribe = this.refs
+      .getOrderChatRef(orderId)
+      .where('to.id', '==', businessId)
+      .orderBy('timestamp', 'asc')
+      .onSnapshot(
+        (querySnapshot) => {
+          //@ts-ignore
+          resultHandler((prev: WithId<BusinessChatMessage>[]) => {
+            const doc = documentsAs<ChatMessage>(querySnapshot.docs);
+            const messages = doc.map((msg) => ({ orderId, ...msg }));
+            const prevDiff = prev.filter((msg) => !messages.includes(msg));
+            return [...prevDiff, ...messages];
+          });
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+    // returns the unsubscribe function
+    return unsubscribe;
+  }
+
+  async updateChatMessage(orderId: string, messageId: string, changes: Partial<ChatMessage>) {
+    await this.refs
+      .getOrderChatRef(orderId)
+      .doc(messageId)
+      .update({
+        ...changes,
+      } as Partial<ChatMessage>);
   }
 
   async createBusinessProfile() {

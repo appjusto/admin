@@ -5,6 +5,8 @@ import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile'
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextManagerProfile } from 'app/state/manager/context';
 import { AlertError } from 'common/components/AlertError';
+import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
+import { initialError } from 'common/components/error/utils';
 import SharingBar from 'common/components/landing/share/SharingBar';
 import submittedImg from 'common/img/submitted.svg';
 import React from 'react';
@@ -66,14 +68,18 @@ export const RegistrationStatus = () => {
   const { business } = useContextBusiness();
   const products = useObserveProducts(business?.id);
   const { bankAccount } = useBusinessBankAccount();
-  const { updateBusinessProfile } = useBusinessProfile();
+  const { updateBusinessProfile, updateResult } = useBusinessProfile();
+  const { isLoading, isError, error: updateError } = updateResult;
 
   // state
   const [isFetching, setIsFetching] = React.useState(true);
   const [validation, setValidation] = React.useState(initialState);
-  const [error, setError] = React.useState({ status: false, message: '' });
+  const [error, setError] = React.useState(initialError);
   const [rejection, setRejection] = React.useState<string[]>([]);
   const isValid = validation.filter((data) => data.status === false).length === 0;
+
+  // refs
+  const submission = React.useRef(0);
 
   // helpers
   const pendencies = validation.filter((item) => item.status === false).length;
@@ -81,17 +87,10 @@ export const RegistrationStatus = () => {
   // handlers
   const handleSubmitRegistration = () => {
     if (isValid) {
-      try {
-        updateBusinessProfile({
-          situation: 'submitted',
-        });
-      } catch (error) {
-        console.dir(error);
-        setError({
-          status: true,
-          message: 'Ocorreu um erro ao enviar o cadastro. Você poderia tentar novamente?',
-        });
-      }
+      submission.current += 1;
+      updateBusinessProfile({
+        situation: 'submitted',
+      });
     }
   };
 
@@ -145,6 +144,14 @@ export const RegistrationStatus = () => {
     }
   }, [business]);
 
+  React.useEffect(() => {
+    if (isError)
+      setError({
+        status: true,
+        error: updateError,
+      });
+  }, [isError, updateError]);
+
   // UI
   if (isFetching) {
     return <Spinner size="sm" />;
@@ -182,12 +189,20 @@ export const RegistrationStatus = () => {
             );
           })}
         </VStack>
-        <Button mt="4" onClick={handleSubmitRegistration} isDisabled={!isValid}>
+        <Button
+          mt="4"
+          onClick={handleSubmitRegistration}
+          isDisabled={!isValid}
+          isLoading={isLoading}
+        >
           {t('Enviar cadastro para aprovação')}
         </Button>
-        {error.status && (
-          <AlertError title={t('Erro de cadastro')} description={t(`${error.message}`)} />
-        )}
+        <SuccessAndErrorHandler
+          submission={submission.current}
+          isError={error.status}
+          error={error.error}
+          errorMessage={error.message}
+        />
         <Box>
           <Text mt="20" fontSize="24px" lineHeight="30px" fontWeight="700">
             {t('Divulgue esse movimento')}
@@ -285,9 +300,20 @@ export const RegistrationStatus = () => {
             ))}
           </VStack>
         </AlertError>
-        <Button mt="4" onClick={handleSubmitRegistration} isDisabled={!isValid}>
+        <Button
+          mt="4"
+          onClick={handleSubmitRegistration}
+          isDisabled={!isValid}
+          isLoading={isLoading}
+        >
           {t('Reenviar cadastro para aprovação')}
         </Button>
+        <SuccessAndErrorHandler
+          submission={submission.current}
+          isError={error.status}
+          error={error.error}
+          errorMessage={error.message}
+        />
       </>
     );
   }

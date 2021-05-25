@@ -126,7 +126,6 @@ export const ComplementForm = ({
           />
           <Textarea
             mt="4"
-            isRequired
             id="complements-item-description"
             label={t('Descrição do item')}
             placeholder={t('Descreva seu item')}
@@ -144,7 +143,7 @@ export const ComplementForm = ({
               label={t('Preço')}
               value={price}
               onChangeValue={(value) => setPrice(value)}
-              maxLength={4}
+              maxLength={5}
             />
             <Input
               id="complements-item-pdv"

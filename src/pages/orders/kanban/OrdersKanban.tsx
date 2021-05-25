@@ -27,12 +27,14 @@ export const OrdersKanban = () => {
   // context
   const isDev = process.env.NODE_ENV === 'development';
   const { path } = useRouteMatch();
-  const { business, orders, statuses, createFakeOrder } = useOrdersContext();
+  const { business, orders, statuses, newChatMessages } = useOrdersContext();
   // state
   const ordersByStatus = splitByStatus(orders, statuses);
   const [dateTime, setDateTime] = React.useState('');
   const [orderSearch, setOrderSearch] = React.useState('');
   const [searchResult, setSearchResult] = React.useState<WithId<Order>[]>([]);
+  // helpers
+  const isNewChatMessage = newChatMessages.length > 0;
   // side effects
   React.useEffect(() => {
     const { date, time } = getDateTime();
@@ -49,6 +51,15 @@ export const OrdersKanban = () => {
   // UI
   return (
     <Box pb="12">
+      <Flex justifyContent="flex-end" h="19.5px" mt="-19.5px" mb="2">
+        {isNewChatMessage && (
+          <Text fontSize="xs" fontWeight="700" lineHeight="lg" color="black">
+            {newChatMessages.length > 1
+              ? t(`Você tem ${newChatMessages.length} novas mensagens!`)
+              : t(`Você tem 1 nova mensagens!`)}
+          </Text>
+        )}
+      </Flex>
       <Flex justifyContent="space-between">
         <Flex flexDir="column">
           <Text fontSize="3xl" fontWeight="700" color="black">
@@ -80,7 +91,6 @@ export const OrdersKanban = () => {
             </Link>
           </Flex>
         </Flex>
-        {isDev && <Button onClick={createFakeOrder}>Criar Ordem</Button>}
         <Flex flexDir="column" alignItems="flex-end">
           <HStack spacing={4}>
             <InputGroup maxW="360px">
@@ -101,10 +111,10 @@ export const OrdersKanban = () => {
             </InputGroup>
             <Link to="/app/chat">
               <Button
-                variant="outline"
+                variant={isNewChatMessage ? 'solid' : 'outline'}
                 minW="100px"
                 height="60px"
-                borderColor="#F2F6EA"
+                borderColor="black"
                 fontWeight="700"
                 color="black"
               >

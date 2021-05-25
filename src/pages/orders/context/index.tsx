@@ -1,5 +1,6 @@
 import { useToast } from '@chakra-ui/toast';
 import * as Sentry from '@sentry/react';
+import { OrderChatGroup, useBusinessChats } from 'app/api/business/chat/useBusinessChats';
 import { useOrders } from 'app/api/order/useOrders';
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusiness } from 'app/state/business/context';
@@ -88,15 +89,24 @@ interface ContextProps {
   business: WithId<Business> | null | undefined;
   orders: WithId<Order>[];
   statuses: OrderStatus[];
+  chats: OrderChatGroup[];
+  newChatMessages: string[];
+  getNotReadChatMessages(orderId: string, counterPartId: string): string[];
   getOrderById(id: string): WithId<Order> | undefined;
-  createFakeOrder(): void;
+  //createFakeOrder(): void;
   changeOrderStatus(orderId: string, status: OrderStatus): void;
   setOrderCookingTime(orderId: string, cookingTime: number | null): void;
 }
 
 const OrdersContext = React.createContext<ContextProps>({} as ContextProps);
 
-const statuses = ['confirmed', 'preparing', 'ready', 'dispatching', 'canceled'] as OrderStatus[];
+export const statuses = [
+  'confirmed',
+  'preparing',
+  'ready',
+  'dispatching',
+  'canceled',
+] as OrderStatus[];
 
 interface ProviderProps {
   children: React.ReactNode | React.ReactNode[];
@@ -107,17 +117,19 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   const api = useContextApi();
   const { business } = useContextBusiness();
   const hookOrders = useOrders(statuses, business?.id);
+  const chats = useBusinessChats(hookOrders);
 
   //state
   const [orders, setOrders] = React.useState<WithId<Order>[]>([]);
+  const [newChatMessages, setNewChatMessages] = React.useState<string[]>([]);
 
   // order sound
   const [playBell] = useSound(bellDing, { volume: 1 });
 
   //Development
-  const createFakeOrder = async () => {
+  /*const createFakeOrder = async () => {
     await api.order().createFakeOrder(fakeOrder);
-  };
+  };*/
 
   //handlers
   const toast = useToast();
@@ -186,6 +198,19 @@ export const OrdersContextProvider = (props: ProviderProps) => {
     }
   };
 
+  const getNotReadChatMessages = React.useCallback(
+    (orderId: string, counterPartId: string) => {
+      if (chats) {
+        const group = chats.find((chat) => chat.orderId === orderId);
+        const messages =
+          group?.counterParts.find((part) => part.id === counterPartId)?.notReadMessages ?? [];
+        return messages;
+      }
+      return [];
+    },
+    [chats]
+  );
+
   // side effects
   React.useEffect(() => {
     if (hookOrders) {
@@ -194,6 +219,21 @@ export const OrdersContextProvider = (props: ProviderProps) => {
     }
   }, [hookOrders, playBell]);
 
+  React.useEffect(() => {
+    if (chats.length > 0) {
+      let notReadMessages = [] as string[];
+      chats.forEach((group) => {
+        group.counterParts.forEach((part) => {
+          if (part.notReadMessages && part.notReadMessages?.length > 0) {
+            notReadMessages = notReadMessages.concat(part.notReadMessages);
+          }
+        });
+      });
+      setNewChatMessages(notReadMessages);
+    }
+  }, [chats]);
+  //console.log(chats);
+  //console.log(newChatMessages);
   // provider
   return (
     <OrdersContext.Provider
@@ -201,8 +241,11 @@ export const OrdersContextProvider = (props: ProviderProps) => {
         business,
         orders,
         statuses,
+        chats,
+        newChatMessages,
+        getNotReadChatMessages,
         getOrderById,
-        createFakeOrder,
+        //createFakeOrder,
         changeOrderStatus,
         setOrderCookingTime,
       }}
