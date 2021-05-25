@@ -84,7 +84,7 @@ export const DeliveryInfos = ({ order }: DeliveryInfosProps) => {
               )}
             </Flex>
           </Flex>
-          <Link to={`/app/chat/${order.id}/${order.courier?.id}`}>
+          <Link to={`/app/orders/chat/${order.id}/${order.courier?.id}`}>
             <Button variant="outline" size="sm">
               {t('Abrir chat com o entregador')}
             </Button>

@@ -97,13 +97,6 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
     }
   }, [manager, clearState]);
 
-  console.dir({
-    name,
-    surname,
-    phoneNumber,
-    cpf,
-  });
-
   React.useEffect(() => {
     if (isError)
       setError({
