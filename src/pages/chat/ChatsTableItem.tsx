@@ -56,7 +56,9 @@ export const ChatsTableItem = ({ chat }: ChatsTableItemProps) => {
               key={part.id}
               mt="-2px"
               viewBox="0 0 200 200"
-              color={newMessage ? 'green.500' : 'gray.50'}
+              color={
+                part.notReadMessages && part.notReadMessages?.length > 0 ? 'green.500' : 'gray.50'
+              }
             >
               <path
                 fill="currentColor"

@@ -51,10 +51,12 @@ export const OrdersKanban = () => {
   // UI
   return (
     <Box pb="12">
-      <Flex justifyContent="flex-end" mb="2">
+      <Flex justifyContent="flex-end" h="19.5px" mt="-19.5px" mb="2">
         {isNewChatMessage && (
           <Text fontSize="xs" fontWeight="700" lineHeight="lg" color="black">
-            {t('Você tem novas mensagens!')}
+            {newChatMessages.length > 1
+              ? t(`Você tem ${newChatMessages.length} novas mensagens!`)
+              : t(`Você tem 1 nova mensagens!`)}
           </Text>
         )}
       </Flex>

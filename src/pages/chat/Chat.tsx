@@ -1,6 +1,6 @@
 import { ArrowBackIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, Icon, Input, InputGroup, InputRightElement } from '@chakra-ui/react';
-import { OrderChatGroup, useBusinessChats } from 'app/api/business/chat/useBusinessChats';
+import { OrderChatGroup } from 'app/api/business/chat/useBusinessChats';
 import { timestampToDate } from 'app/api/chat/utils';
 import Container from 'common/components/Container';
 import { ReactComponent as SearchIcon } from 'common/img/searchIcon.svg';
@@ -18,8 +18,7 @@ export const Chat = () => {
   // context
   const { path } = useRouteMatch();
   const history = useHistory();
-  const { orders } = useOrdersContext();
-  const chats = useBusinessChats(orders);
+  const { orders, chats } = useOrdersContext();
 
   // state
   const [search, setSearch] = React.useState('');
