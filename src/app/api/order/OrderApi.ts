@@ -46,15 +46,15 @@ export default class OrderApi {
 
     let query = this.refs
       .getOrdersRef()
-      .orderBy('createdOn', 'desc')
-      .where('createdOn', '>=', start_time)
+      .orderBy('updatedOn', 'desc')
+      .where('updatedOn', '>=', start_time)
       .where('status', 'in', statuses);
 
     if (businessId) {
       query = this.refs
         .getOrdersRef()
-        .orderBy('createdOn', 'desc')
-        .where('createdOn', '>=', start_time)
+        .orderBy('updatedOn', 'desc')
+        .where('updatedOn', '>=', start_time)
         .where('business.id', '==', businessId)
         .where('status', 'in', statuses);
     }
