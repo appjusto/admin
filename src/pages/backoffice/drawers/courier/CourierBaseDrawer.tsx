@@ -17,7 +17,7 @@ import { useContextCourierProfile } from 'app/state/courier/context';
 import { CourierProfile } from 'appjusto-types';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
 import { initialError } from 'common/components/error/utils';
-import { modePTOptions } from 'pages/backoffice/utils';
+import { modePTOptions, situationPTOptions } from 'pages/backoffice/utils';
 import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
 import React from 'react';
 import { useRouteMatch } from 'react-router';
@@ -44,6 +44,9 @@ export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDr
 
   // refs
   const submission = React.useRef(0);
+
+  // helpers
+  const situationAlert = courier?.situation === 'rejected' || courier?.situation === 'invalid';
 
   //handlers
   let courierName = courier?.name ?? 'N/I';
@@ -133,8 +136,8 @@ export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDr
             <SectionTitle>{courierName}</SectionTitle>
             <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
               {t('Status:')}{' '}
-              <Text as="span" fontWeight="500">
-                {courier?.situation === 'approved' ? t('Ativo') : t('Inativo')}
+              <Text as="span" fontWeight="500" color={situationAlert ? 'red' : 'black'}>
+                {courier?.situation ? situationPTOptions[courier?.situation] : 'N/E'}
               </Text>
             </Text>
             <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">

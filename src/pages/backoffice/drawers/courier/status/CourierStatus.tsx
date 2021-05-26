@@ -61,12 +61,6 @@ export const CourierStatus = () => {
           <Radio mt="2" value="rejected">
             {t('Recusado')}
           </Radio>
-          <Radio mt="2" value="verified">
-            {t('Verificado')}
-          </Radio>
-          <Radio mt="2" value="invalid">
-            {t('Invalidado')}
-          </Radio>
           <Radio mt="2" value="submitted">
             {t('Aguardando aprovação')}
           </Radio>

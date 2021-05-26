@@ -18,6 +18,7 @@ import React from 'react';
 import { useRouteMatch } from 'react-router';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
+import { situationPTOptions } from '../../utils';
 
 interface BaseDrawerProps {
   agent: { id: string | undefined; name: string };
@@ -30,6 +31,8 @@ export const BusinessBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
   //context
   const { url } = useRouteMatch();
   const { business, manager, handleSave, isLoading } = useContextBusinessBackoffice();
+  // helpers
+  const situationAlert = business?.situation === 'rejected' || business?.situation === 'invalid';
   //UI
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
@@ -78,8 +81,8 @@ export const BusinessBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
             </Text>
             <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
               {t('Status:')}{' '}
-              <Text as="span" fontWeight="500">
-                {business?.situation === 'approved' ? t('Ativo') : t('Inativo')}
+              <Text as="span" fontWeight="500" color={situationAlert ? 'red' : 'black'}>
+                {business?.situation ? situationPTOptions[business?.situation] : 'N/E'}
               </Text>
             </Text>
             <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
