@@ -42,10 +42,10 @@ export const StatusTab = () => {
   return (
     <Box>
       {(business?.situation === 'invalid' || business?.situation === 'rejected') &&
-        marketPlaceIssues && (
+        financialIssues.length > 0 && (
           <AlertError
             title={t(
-              `Problemas identificados na verificação financeira: (${financialIssues?.length ?? 0})`
+              `Problemas identificados na verificação financeira: (${financialIssues.length ?? 0})`
             )}
             icon={false}
             border="2px solid #DC3545"
@@ -84,6 +84,9 @@ export const StatusTab = () => {
           </Radio>
           <Radio mt="2" value="submitted">
             {t('Aguardando aprovação')}
+          </Radio>
+          <Radio mt="2" value="pending">
+            {t('Pendente')}
           </Radio>
           <Radio mt="2" value="blocked">
             {t('Bloquear restaurante')}

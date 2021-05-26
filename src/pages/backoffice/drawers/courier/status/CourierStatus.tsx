@@ -28,9 +28,10 @@ export const CourierStatus = () => {
   return (
     <Box>
       {(courier?.situation === 'invalid' || courier?.situation === 'rejected') &&
-        marketPlaceIssues && (
+        marketPlaceIssues &&
+        marketPlaceIssues.length > 0 && (
           <AlertError
-            title={t('Problemas identificados na verificação financeira')}
+            title={t('Problemas identificados na verificação financeira:')}
             icon={false}
             border="2px solid #DC3545"
             mb="6"
