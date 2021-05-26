@@ -42,6 +42,9 @@ export const OrderStatusBar = ({
           <Radio mt="2" value="confirming">
             {t('Aguardando confirmação')}
           </Radio>
+          <Radio mt="2" value="declined">
+            {t('Recusado')}
+          </Radio>
           <Radio mt="2" value="confirmed">
             {t('Confirmado')}
           </Radio>
