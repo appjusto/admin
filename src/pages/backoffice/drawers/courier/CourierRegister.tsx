@@ -10,7 +10,6 @@ import { PersonalProfile } from './register/PersonalProfile';
 import { ProfileBankingInfo } from './register/ProfileBankingInfo';
 
 export const CourierRegister = () => {
-  // context
   // UI
   return (
     <Box>

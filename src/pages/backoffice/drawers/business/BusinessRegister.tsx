@@ -1,20 +1,18 @@
 import { Box } from '@chakra-ui/react';
-import BankingInformation from 'pages/business-profile/BankingInformation';
-import { ManagerProfile } from 'pages/manager-profile/ManagerProfile';
 import React from 'react';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
+import BOBankingInformation from './forms/BOBankingInformation';
+import { BOManagerProfile } from './forms/BOManagerProfile';
 
 export const BusinessRegister = () => {
-  // context
-
   // UI
   return (
     <Box>
       <SectionTitle>{t('Dados pessoais')}</SectionTitle>
-      <ManagerProfile backoffice />
+      <BOManagerProfile />
       <SectionTitle>{t('Dados bancários')}</SectionTitle>
-      <BankingInformation backoffice />
+      <BOBankingInformation />
     </Box>
   );
 };

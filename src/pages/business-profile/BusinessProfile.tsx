@@ -2,8 +2,8 @@ import { Box, Flex, Switch as ChakraSwitch, Text, useBreakpoint } from '@chakra-
 import * as cnpjutils from '@fnando/cnpj';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useContextBusiness } from 'app/state/business/context';
-import { AlertError } from 'common/components/AlertError';
-import { AlertSuccess } from 'common/components/AlertSuccess';
+import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
+import { initialError } from 'common/components/error/utils';
 import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput2';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
@@ -39,6 +39,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const queryCache = useQueryCache();
   const { path } = useRouteMatch();
   const history = useHistory();
+
   // state
   const [cnpj, setCNPJ] = React.useState(business?.cnpj ?? (isDev ? cnpjutils.generate() : ''));
   const [name, setName] = React.useState(business?.name ?? '');
@@ -55,12 +56,15 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const [coverFiles, setCoverFiles] = React.useState<File[] | null>(null);
   const [isLoading, setIsLoading] = React.useState(false);
   const [isSuccess, setIsSuccess] = React.useState(false);
-  const [error, setError] = React.useState({ status: false, message: '' });
+  const [error, setError] = React.useState(initialError);
+
   // refs
+  const submission = React.useRef(0);
   const cnpjRef = React.useRef<HTMLInputElement>(null);
   const phoneRef = React.useRef<HTMLInputElement>(null);
   const minimumOrderRef = React.useRef<HTMLInputElement>(null);
   const isMountedRef = React.useRef(false);
+
   // queries & mutations
   const {
     createBusinessProfile,
@@ -70,7 +74,6 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
     uploadLogo,
     uploadCover,
     updateResult,
-    //deleteResult,
     uploadLogoResult,
     uploadCoverResult,
   } = useBusinessProfile();
@@ -90,9 +93,25 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   };
 
   const onSubmitHandler = async () => {
+    submission.current += 1;
+    setError(initialError);
     //if (minimumOrder === 0) return minimumOrderRef.current?.focus();
-    if (!isCNPJValid()) return cnpjRef?.current?.focus();
-    if (phone.length < 10) return phoneRef?.current?.focus();
+    if (!isCNPJValid()) {
+      setError({
+        status: true,
+        error: null,
+        message: { title: 'O CNPJ informado não é válido.' },
+      });
+      return cnpjRef?.current?.focus();
+    }
+    if (phone.length < 10) {
+      setError({
+        status: true,
+        error: null,
+        message: { title: 'O telefone informado não é válido.' },
+      });
+      return phoneRef?.current?.focus();
+    }
     setIsLoading(true);
     try {
       await updateBusinessProfile({
@@ -114,7 +133,14 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
       if (coverFiles) await uploadCover(coverFiles);
       if (coverFiles) queryCache.invalidateQueries(['business:cover', business?.id]);
     } catch (error) {
-      console.log('BusinessProfile submit error', error);
+      setError({
+        status: true,
+        error,
+        message: {
+          title: 'Erro de conexão com o servidor',
+          description: 'por isso as iformações podem não ser sido salvas.',
+        },
+      });
     }
     return setIsLoading(false);
   };
@@ -179,22 +205,38 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
       setIsSuccess(false);
       setError({
         status: true,
-        message: 'Não foi possível acessar o servidor. Tenta novamente?',
+        error: updateResult.error,
       });
     } else if (uploadLogoResult.isError) {
       setIsSuccess(false);
       setError({
         status: true,
-        message: 'Não foi possível salvar a imagem de logo. Tenta novamente?',
+        error: null,
+        message: {
+          title: 'Não foi possível salvar a imagem de logo.',
+          description: 'Tenta novamente?',
+        },
       });
     } else if (uploadCoverResult.isError) {
       setIsSuccess(false);
       setError({
         status: true,
-        message: 'Não foi possível salvar a imagem de cover. Tenta novamente?',
+        error: null,
+        message: {
+          title: 'Não foi possível salvar a imagem de cover.',
+          description: 'Tenta novamente?',
+        },
       });
     }
   }, [updateResult, uploadLogoResult, uploadCoverResult]);
+
+  React.useEffect(() => {
+    if (updateResult.isError)
+      setError({
+        status: true,
+        error: updateResult.error,
+      });
+  }, [updateResult.isError, updateResult.error]);
 
   // UI
   const breakpoint = useBreakpoint();
@@ -216,6 +258,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
           <Box maxW="400px">
             <PatternInput
               isRequired
+              isDisabled={business?.situation === 'approved'}
               ref={cnpjRef}
               id="business-cnpj"
               label={t('CNPJ')}
@@ -355,17 +398,14 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
             deleteLabel={t('Excluir restaurante')}
             onDelete={openDrawerHandler}
           />
-          {!onboarding && isSuccess && (
-            <AlertSuccess
-              maxW="320px"
-              title={t('Informações salvas com sucesso!')}
-              description={''}
-            />
-          )}
-          {error.status && (
-            <AlertError maxW="320px" title={t('Erro')} description={error.message} />
-          )}
         </form>
+        <SuccessAndErrorHandler
+          submission={submission.current}
+          isSuccess={isSuccess && !onboarding}
+          isError={error.status}
+          error={error.error}
+          errorMessage={error.message}
+        />
       </Box>
       <Switch>
         <Route exact path={`${path}/delete`}>

@@ -5,7 +5,7 @@ import { EditButton } from 'common/components/buttons/EditButton';
 import { ReactComponent as DragHandle } from 'common/img/drag-handle.svg';
 import React from 'react';
 import { Draggable } from 'react-beautiful-dnd';
-import { itemPriceFormatter } from 'utils/formatters';
+import { formatCurrency } from 'utils/formatters';
 import { t } from 'utils/i18n';
 import { ComplementForm } from './ComplementForm';
 
@@ -87,7 +87,7 @@ export const ComplementItem = ({ item, index, isLoading, handleDelete }: Props) 
             </Box>
             <Flex maxW="160px" alignItems="center" justifyContent="flex-end">
               <Text fontSize="xs" fontWeight="700">
-                {itemPriceFormatter(item.price)}
+                {formatCurrency(item.price)}
               </Text>
               <Tooltip placement="top" label={t('Editar')} aria-label={t('Editar')}>
                 <EditButton onClick={() => setIsEditing(true)} />

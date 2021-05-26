@@ -10,7 +10,7 @@ export const useBusinesses = (situations: string[]) => {
   // side effects
   React.useEffect(() => {
     return api.business().observeBusinesses(situations, setBusinesses);
-  }, [situations, api]); //attention to 'options' to avoid infinite renders
+  }, [situations, api]);
   // return
   return businesses;
 };

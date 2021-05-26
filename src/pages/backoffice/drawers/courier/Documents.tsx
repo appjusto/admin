@@ -66,12 +66,9 @@ const ImagePreview = ({ src, onClose, ...props }: ImagePreviewProps) => {
 
 export const Documents = () => {
   // context
-  const { pictures } = useContextCourierProfile();
+  const { courier, pictures, handleProfileChange } = useContextCourierProfile();
   // state
-  const [number, setNumber] = React.useState('');
-  const [date, setDate] = React.useState('');
   const [preview, setPreview] = React.useState<string | null>(null);
-
   // UI
   return (
     <Box mt="4">
@@ -89,16 +86,16 @@ export const Documents = () => {
         id="document-number"
         label={t('Número do documento')}
         placeholder={t('00000000')}
-        value={number}
-        onChange={(ev) => setNumber(ev.target.value)}
+        value={courier?.documentNumber ?? ''}
+        onChange={(ev) => handleProfileChange('documentNumber', ev.target.value)}
       />
       <Input
         id="document-date"
         type="date"
         label={t('Validade do documento')}
         placeholder={t('00000000')}
-        value={date}
-        onChange={(ev) => setDate(ev.target.value)}
+        value={courier?.documentValidity ?? ''}
+        onChange={(ev) => handleProfileChange('documentValidity', ev.target.value)}
       />
     </Box>
   );

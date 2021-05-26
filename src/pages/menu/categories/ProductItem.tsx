@@ -41,10 +41,9 @@ export const ProductItem = React.memo(({ product, index }: Props) => {
 
   //side effects
   React.useEffect(() => {
-    if (product && !product?.imageExists)
-      return setImageUrl('/static/media/product-placeholder.png');
-    if (hookImageUrl) return setImageUrl(hookImageUrl);
-  }, [product, hookImageUrl]);
+    if (!product?.imageExists) setImageUrl('/static/media/product-placeholder.png');
+    else if (hookImageUrl) setImageUrl(hookImageUrl);
+  }, [product?.imageExists, hookImageUrl]);
 
   React.useEffect(() => {
     updatePriceState(product.price);

@@ -15,22 +15,17 @@ import {
   Flex,
   Text,
 } from '@chakra-ui/react';
-import { OrderStatus } from 'appjusto-types';
+import { Order, WithId } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { Pendency } from 'common/components/Pendency';
 import { getErrorMessage } from 'core/fb';
 import React from 'react';
+import { orderCancelator } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { useOrdersContext } from '../context';
 
 interface BaseDrawerProps {
-  orderId: string;
-  orderCode: string;
-  orderStatus: OrderStatus;
-  cancelator?: string;
-  isCurrierArrived: boolean;
-  client: string;
-  clientOrders: number;
+  order?: WithId<Order> | null;
   isOpen: boolean;
   cancel(): void;
   isCanceling: boolean;
@@ -41,13 +36,7 @@ interface BaseDrawerProps {
 }
 
 export const OrderBaseDrawer = ({
-  orderId,
-  orderCode,
-  orderStatus,
-  cancelator,
-  isCurrierArrived,
-  client,
-  clientOrders,
+  order,
   cancel,
   isCanceling,
   isError,
@@ -59,24 +48,28 @@ export const OrderBaseDrawer = ({
   //context
   const { changeOrderStatus } = useOrdersContext();
 
+  // helpers
+  const isCurrierArrived = order?.dispatchingState === 'arrived-pickup';
+  const cancelator = orderCancelator(order?.cancellation?.issue.type);
+
   //handlers
   const PrimaryButtonFunction = () => {
-    if (orderStatus === 'confirmed') changeOrderStatus(orderId, 'preparing');
-    if (orderStatus === 'preparing') changeOrderStatus(orderId, 'ready');
-    if (orderStatus === 'ready') changeOrderStatus(orderId, 'dispatching');
+    if (order?.status === 'confirmed') changeOrderStatus(order.id, 'preparing');
+    if (order?.status === 'preparing') changeOrderStatus(order.id, 'ready');
+    if (order?.status === 'ready') changeOrderStatus(order.id, 'dispatching');
     onClose();
   };
 
   //UI conditions
-  let orderDispatched = ['dispatching', 'delivered'].includes(orderStatus);
+  let orderDispatched = ['dispatching', 'delivered'].includes(order?.status ?? 'not_included');
 
   let PrimaryButtonAble =
-    ['confirmed', 'preparing'].includes(orderStatus) ||
-    (orderStatus === 'ready' && isCurrierArrived);
+    ['confirmed', 'preparing'].includes(order?.status ?? 'not_included') ||
+    (order?.status === 'ready' && isCurrierArrived);
 
   let PrimaryButtonLabel = 'Preparar pedido';
-  if (orderStatus === 'preparing') PrimaryButtonLabel = 'Pedido pronto';
-  if (orderStatus === 'ready') PrimaryButtonLabel = 'Entregar pedido';
+  if (order?.status === 'preparing') PrimaryButtonLabel = 'Pedido pronto';
+  if (order?.status === 'ready') PrimaryButtonLabel = 'Entregar pedido';
 
   //UI
   return (
@@ -88,9 +81,9 @@ export const OrderBaseDrawer = ({
             <Flex justifyContent="space-between" alignItems="flex-end">
               <Flex flexDir="column">
                 <Text color="black" fontSize="2xl" fontWeight="700" lineHeight="28px" mb="2">
-                  {t('Pedido Nº')} {orderCode}
+                  {t('Pedido Nº')} {order?.code}
                 </Text>
-                {orderStatus === 'canceled' && (
+                {order?.status === 'canceled' && (
                   <Text fontSize="md" color="red" fontWeight="700" lineHeight="22px">
                     {t('Pedido cancelado pelo')} <Text as="span">{cancelator}</Text>
                   </Text>
@@ -98,13 +91,13 @@ export const OrderBaseDrawer = ({
                 <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
                   {t('Nome do cliente:')}{' '}
                   <Text as="span" color="black" fontWeight="700">
-                    {client}
+                    {order?.consumer?.name ?? 'N/E'}
                   </Text>
                 </Text>
                 <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
                   {t('Nº de pedidos no restaurante:')}{' '}
                   <Text as="span" color="black" fontWeight="700">
-                    {clientOrders}
+                    {0}
                   </Text>
                   <Pendency />
                 </Text>
@@ -112,7 +105,7 @@ export const OrderBaseDrawer = ({
               <Flex flexDir="column">
                 <CustomButton
                   label="Abrir chat com o cliente"
-                  link={`/app/orders`}
+                  link={`/app/orders/chat/${order?.id}/${order?.consumer?.id}`}
                   size="md"
                   variant="outline"
                 />
@@ -135,7 +128,7 @@ export const OrderBaseDrawer = ({
               </Box>
             )}
           </DrawerBody>
-          {!isCanceling && !orderDispatched && orderStatus !== 'canceled' && (
+          {!isCanceling && !orderDispatched && order?.status !== 'canceled' && (
             <DrawerFooter borderTop="1px solid #F2F6EA">
               <Flex w="full" justifyContent="flex-start">
                 <Flex w="full" maxW="607px" flexDir="row" justifyContent="space-between">

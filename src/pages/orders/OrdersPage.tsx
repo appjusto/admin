@@ -2,6 +2,7 @@ import { Box } from '@chakra-ui/react';
 import { useContextAgentProfile } from 'app/state/agent/context';
 import { useContextBusiness } from 'app/state/business/context';
 import Container from 'common/components/Container';
+import { ChatDrawer } from 'pages/chat/ChatDrawer';
 import React from 'react';
 import { Redirect, Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import { OrdersContextProvider } from './context';
@@ -17,7 +18,7 @@ const OrdersPage = () => {
   const { path } = useRouteMatch();
   const history = useHistory();
   // handlers
-  const closeDrawerHandler = () => history.replace(path);
+  const closeDrawerHandler = React.useCallback(() => history.replace(path), [history, path]);
 
   // UI
   if (business?.situation !== 'approved') {
@@ -34,6 +35,9 @@ const OrdersPage = () => {
       <Switch>
         <Route exact path={`${path}/acceptance-time`}>
           <OrderAcceptanceTimeDrawer isOpen onClose={closeDrawerHandler} />
+        </Route>
+        <Route path={`${path}/chat/:orderId/:counterpartId`}>
+          <ChatDrawer isOpen onClose={closeDrawerHandler} />
         </Route>
         <Route path={`${path}/:orderId`}>
           <OrderDrawer isOpen onClose={closeDrawerHandler} />

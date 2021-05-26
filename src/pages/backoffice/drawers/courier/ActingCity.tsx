@@ -7,7 +7,6 @@ export const ActingCity = () => {
   // state
   const [state, setState] = React.useState('');
   const [city, setCity] = React.useState('');
-
   // UI
   return (
     <Box mt="4">

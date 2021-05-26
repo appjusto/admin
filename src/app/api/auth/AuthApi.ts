@@ -1,6 +1,7 @@
 import { ApiConfig } from 'app/api/config/types';
 import firebase from 'firebase/app';
 import FirebaseRefs from '../FirebaseRefs';
+import * as Sentry from '@sentry/react';
 
 export default class AuthApi {
   constructor(
@@ -26,11 +27,19 @@ export default class AuthApi {
       url: `${this.config.publicURL}/join`,
       handleCodeInApp: true,
     });
-    window.localStorage.setItem('email', email);
+    try {
+      window.localStorage.setItem('email', email);
+    } catch (error) {
+      Sentry.captureException(error);
+    }
   }
 
   getSignInEmail() {
-    return window.localStorage.getItem('email');
+    try {
+      return window.localStorage.getItem('email');
+    } catch (error) {
+      return null;
+    }
   }
 
   isSignInWithEmailLink(link: string): boolean {
@@ -40,7 +49,9 @@ export default class AuthApi {
   async signInWithEmailLink(email: string, link: string) {
     await this.auth.signOut();
     const userCredential = await this.auth.signInWithEmailLink(email, link);
-    window.localStorage.removeItem('email');
+    try {
+      window.localStorage.removeItem('email');
+    } catch (error) {}
     return userCredential.user;
   }
 

@@ -1,6 +1,7 @@
 import { Flex, HStack, Image, Link, Switch, Text } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useContextBusiness } from 'app/state/business/context';
+import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
 import logo from 'common/img/logo.svg';
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
@@ -13,9 +14,14 @@ interface OrdersHeaderProps {
 export const OrdersHeader = ({ statusEnabled = true }: OrdersHeaderProps) => {
   // context
   const { business } = useContextBusiness();
-  const { updateBusinessProfile } = useBusinessProfile();
+  const { updateBusinessProfile, updateResult } = useBusinessProfile();
+  const { isError, error } = updateResult;
+
   // state
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = React.useState(business?.status === 'open' ? true : false);
+
+  // refs
+  const submission = React.useRef(0);
 
   // helpers
   const isEnabled = business?.enabled ?? false;
@@ -45,6 +51,7 @@ export const OrdersHeader = ({ statusEnabled = true }: OrdersHeaderProps) => {
               isChecked={isOpen}
               onChange={(ev) => {
                 ev.stopPropagation();
+                submission.current += 1;
                 updateBusinessProfile({ status: ev.target.checked ? 'open' : 'closed' });
               }}
             />
@@ -76,6 +83,7 @@ export const OrdersHeader = ({ statusEnabled = true }: OrdersHeaderProps) => {
           </Text>
         </Link>
       </HStack>
+      <SuccessAndErrorHandler submission={submission.current} isError={isError} error={error} />
     </Flex>
   );
 };

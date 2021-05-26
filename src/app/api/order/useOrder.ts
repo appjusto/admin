@@ -20,13 +20,21 @@ export const useOrder = (orderId?: string) => {
   const [cancelOrder, cancelResult] = useMutation(async (cancellationData: CancellationData) => {
     await api.order().cancelOrder(orderId!, cancellationData);
   });
+
+  // helpers
+  let result = updateResult;
+  if (cancelResult.status !== 'idle') result = cancelResult;
   // side effects
   React.useEffect(() => {
     if (!orderId) return;
-    api.order().observeOrder(orderId, setOrder);
-    api.order().observeOrderIssues(orderId, setOrderIssues);
+    const unsub = api.order().observeOrder(orderId, setOrder);
+    const unsub2 = api.order().observeOrderIssues(orderId, setOrderIssues);
+    return () => {
+      unsub();
+      unsub2();
+    };
   }, [api, orderId]);
 
   // return
-  return { order, updateOrder, updateResult, cancelOrder, cancelResult, orderIssues };
+  return { order, updateOrder, cancelOrder, result, orderIssues };
 };
