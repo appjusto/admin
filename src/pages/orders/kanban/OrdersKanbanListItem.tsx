@@ -138,17 +138,23 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
             ) : (
               <>
                 <Text fontWeight="700">{t('Pedido à caminho')}</Text>
-                {arrivalTime && arrivalTime > 0 ? (
-                  <Text color="gray.700" fontWeight="500">
-                    {t(
-                      `Aprox. ${
-                        arrivalTime > 1 ? arrivalTime + ' minutos' : arrivalTime + ' minuto'
-                      }`
-                    )}
-                  </Text>
+                {arrivalTime ? (
+                  arrivalTime > 0 ? (
+                    <Text color="gray.700" fontWeight="500">
+                      {t(
+                        `Aprox. ${
+                          arrivalTime > 1 ? arrivalTime + ' minutos' : arrivalTime + ' minuto'
+                        }`
+                      )}
+                    </Text>
+                  ) : (
+                    <Text color="gray.700" fontWeight="500">
+                      {t(`Menos de 1 minuto`)}
+                    </Text>
+                  )
                 ) : (
                   <Text color="gray.700" fontWeight="500">
-                    {t(`Menos de 1 minuto`)}
+                    {t(`Calculando...`)}
                   </Text>
                 )}
               </>
@@ -196,17 +202,23 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
                   <Text color="gray.700" fontWeight="700">
                     {t('Entregador à caminho')}
                   </Text>
-                  {arrivalTime && arrivalTime > 0 ? (
-                    <Text color="gray.700" fontWeight="500">
-                      {t(
-                        `Aprox. ${
-                          arrivalTime > 1 ? arrivalTime + ' minutos' : arrivalTime + ' minuto'
-                        }`
-                      )}
-                    </Text>
+                  {arrivalTime ? (
+                    arrivalTime > 0 ? (
+                      <Text color="gray.700" fontWeight="500">
+                        {t(
+                          `Aprox. ${
+                            arrivalTime > 1 ? arrivalTime + ' minutos' : arrivalTime + ' minuto'
+                          }`
+                        )}
+                      </Text>
+                    ) : (
+                      <Text color="gray.700" fontWeight="500">
+                        {t(`Menos de 1 minuto`)}
+                      </Text>
+                    )
                   ) : (
                     <Text color="gray.700" fontWeight="500">
-                      {t(`Menos de 1 minuto`)}
+                      {t(`Calculando...`)}
                     </Text>
                   )}
                 </>
