@@ -27,7 +27,6 @@ const statuses = ['confirmed', 'preparing', 'ready', 'dispatching', 'canceled'] 
 
 export const OrdersKanban = () => {
   // context
-  const isDev = process.env.NODE_ENV === 'development';
   const { path } = useRouteMatch();
   const { business, orders, newChatMessages } = useOrdersContext();
   // state

@@ -5,7 +5,7 @@ import { useCanceledOrders } from 'app/api/order/useCanceledOrders';
 import { useOrders } from 'app/api/order/useOrders';
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusiness } from 'app/state/business/context';
-import { Business, Order, OrderItem, OrderStatus, WithId } from 'appjusto-types';
+import { Business, Order, OrderStatus, WithId } from 'appjusto-types';
 import { CustomToast } from 'common/components/CustomToast';
 //@ts-ignore
 import bellDing from 'common/sounds/bell-ding.mp3';
@@ -13,7 +13,7 @@ import React from 'react';
 import useSound from 'use-sound';
 import { updateLocalStorageOrders, updateLocalStorageOrderTime } from 'utils/functions';
 
-const fakeItem = (price: number, qtd: number): OrderItem => {
+/*const fakeItem = (price: number, qtd: number): OrderItem => {
   return {
     id: 'GLubXi2MzKYvZQDSrVpq',
     product: {
@@ -37,7 +37,7 @@ const fakeOrder: Order = {
     name: 'Renan',
     // cpf: '35214602820',
   },
-  /*courier: {
+  courier: {
     id: 'n9IBTFplN1bnjHHfqhNcVJTaXc43',
     name: 'Kelly Slater',
     mode: 'motocycle',
@@ -46,7 +46,7 @@ const fakeOrder: Order = {
       latitude: -8.0591539,
       longitude: -34.9063069,
     },
-  },*/
+  },
   business: {
     id: 'QZYurHCMsqZxTIQyQqq3',
     name: 'Itapuama vegan',
@@ -82,7 +82,7 @@ const fakeOrder: Order = {
     polyline: '',
     issue: null,
   },
-};
+};*/
 
 export type localOrderType = { code: string; time: number };
 
@@ -119,7 +119,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   const [newChatMessages, setNewChatMessages] = React.useState<string[]>([]);
 
   // order sound
-  const [playBell] = useSound(bellDing, { volume: 1 });
+  const [playBell] = useSound(bellDing, { volume: 2 });
 
   //Development
   /*const createFakeOrder = async () => {
@@ -173,25 +173,28 @@ export const OrdersContextProvider = (props: ProviderProps) => {
     [api, toast]
   );
 
-  const setOrderCookingTime = async (orderId: string, cookingTime: number | null) => {
-    try {
-      await api.order().updateOrder(orderId, { cookingTime });
-    } catch (error) {
-      toast({
-        duration: 8000,
-        render: () => (
-          <CustomToast
-            type="error"
-            message={{
-              title: 'O tempo de preparo do pedido não foi alterado.',
-              description: 'Verifica a conexão com a internet?',
-            }}
-          />
-        ),
-      });
-      Sentry.captureException(error);
-    }
-  };
+  const setOrderCookingTime = React.useCallback(
+    async (orderId: string, cookingTime: number | null) => {
+      try {
+        await api.order().updateOrder(orderId, { cookingTime });
+      } catch (error) {
+        toast({
+          duration: 8000,
+          render: () => (
+            <CustomToast
+              type="error"
+              message={{
+                title: 'O tempo de preparo do pedido não foi alterado.',
+                description: 'Verifica a conexão com a internet?',
+              }}
+            />
+          ),
+        });
+        Sentry.captureException(error);
+      }
+    },
+    [api, toast]
+  );
 
   const getNotReadChatMessages = React.useCallback(
     (orderId: string, counterPartId: string) => {
