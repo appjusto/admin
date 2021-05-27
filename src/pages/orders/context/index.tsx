@@ -1,6 +1,7 @@
 import { useToast } from '@chakra-ui/toast';
 import * as Sentry from '@sentry/react';
 import { OrderChatGroup, useBusinessChats } from 'app/api/business/chat/useBusinessChats';
+import { useCanceledOrders } from 'app/api/order/useCanceledOrders';
 import { useOrders } from 'app/api/order/useOrders';
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusiness } from 'app/state/business/context';
@@ -88,7 +89,6 @@ export type localOrderType = { code: string; time: number };
 interface ContextProps {
   business: WithId<Business> | null | undefined;
   orders: WithId<Order>[];
-  statuses: OrderStatus[];
   chats: OrderChatGroup[];
   newChatMessages: string[];
   getNotReadChatMessages(orderId: string, counterPartId: string): string[];
@@ -100,13 +100,7 @@ interface ContextProps {
 
 const OrdersContext = React.createContext<ContextProps>({} as ContextProps);
 
-export const statuses = [
-  'confirmed',
-  'preparing',
-  'ready',
-  'dispatching',
-  'canceled',
-] as OrderStatus[];
+const statuses = ['confirmed', 'preparing', 'ready', 'dispatching'] as OrderStatus[];
 
 interface ProviderProps {
   children: React.ReactNode | React.ReactNode[];
@@ -116,8 +110,9 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   // context
   const api = useContextApi();
   const { business } = useContextBusiness();
-  const hookOrders = useOrders(statuses, business?.id);
-  const chats = useBusinessChats(hookOrders);
+  const activeOrders = useOrders(statuses, business?.id);
+  const canceledOrders = useCanceledOrders(business?.id);
+  const chats = useBusinessChats(activeOrders);
 
   //state
   const [orders, setOrders] = React.useState<WithId<Order>[]>([]);
@@ -213,11 +208,9 @@ export const OrdersContextProvider = (props: ProviderProps) => {
 
   // side effects
   React.useEffect(() => {
-    if (hookOrders) {
-      setOrders(hookOrders);
-      updateLocalStorageOrders(hookOrders, playBell);
-    }
-  }, [hookOrders, playBell]);
+    setOrders([...activeOrders, ...canceledOrders]);
+    updateLocalStorageOrders(activeOrders, playBell);
+  }, [activeOrders, canceledOrders, playBell]);
 
   React.useEffect(() => {
     if (chats.length > 0) {
@@ -240,7 +233,6 @@ export const OrdersContextProvider = (props: ProviderProps) => {
       value={{
         business,
         orders,
-        statuses,
         chats,
         newChatMessages,
         getNotReadChatMessages,

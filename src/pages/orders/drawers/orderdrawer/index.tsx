@@ -108,7 +108,7 @@ export const OrderDrawer = (props: Props) => {
               <Text mt="1" fontSize="md" fontWeight="700" color="black">
                 {t('Comentário:')}{' '}
                 <Text as="span" fontWeight="500">
-                  {order.cancellation?.comment ?? 'N/E'}
+                  {order.cancellation?.comment ?? 'N/I'}
                 </Text>
               </Text>
             </>

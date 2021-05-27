@@ -11,7 +11,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { splitByStatus } from 'app/api/order/selectors';
-import { Order, WithId } from 'appjusto-types';
+import { Order, OrderStatus, WithId } from 'appjusto-types';
 import { ReactComponent as ChatIcon } from 'common/img/chat.svg';
 import { ReactComponent as EditIcon } from 'common/img/edit-icon.svg';
 import { ReactComponent as SearchIcon } from 'common/img/searchIcon.svg';
@@ -23,11 +23,13 @@ import { useOrdersContext } from '../context';
 import { OrderSearchResult } from './OrderSearchResult';
 import { OrdersKanbanList } from './OrdersKanbanList';
 
+const statuses = ['confirmed', 'preparing', 'ready', 'dispatching', 'canceled'] as OrderStatus[];
+
 export const OrdersKanban = () => {
   // context
   const isDev = process.env.NODE_ENV === 'development';
   const { path } = useRouteMatch();
-  const { business, orders, statuses, newChatMessages } = useOrdersContext();
+  const { business, orders, newChatMessages } = useOrdersContext();
   // state
   const ordersByStatus = splitByStatus(orders, statuses);
   const [dateTime, setDateTime] = React.useState('');

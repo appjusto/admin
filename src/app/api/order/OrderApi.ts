@@ -41,6 +41,39 @@ export default class OrderApi {
     resultHandler: (orders: WithId<Order>[]) => void,
     businessId?: string
   ): firebase.Unsubscribe {
+    //const timeLimit = new Date().getTime() - 86400000;
+    //const start_time = firebase.firestore.Timestamp.fromDate(new Date(timeLimit));
+
+    let query = this.refs
+      .getOrdersRef()
+      .orderBy('createdOn', 'desc')
+      //.where('createdOn', '>=', start_time)
+      .where('status', 'in', statuses);
+
+    if (businessId) {
+      query = this.refs
+        .getOrdersRef()
+        .orderBy('createdOn', 'desc')
+        //.where('createdOn', '>=', start_time)
+        .where('business.id', '==', businessId)
+        .where('status', 'in', statuses);
+    }
+    const unsubscribe = query.onSnapshot(
+      (querySnapshot) => {
+        resultHandler(documentsAs<Order>(querySnapshot.docs));
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+    // returns the unsubscribe function
+    return unsubscribe;
+  }
+
+  observeBusinessCanceledOrders(
+    resultHandler: (orders: WithId<Order>[]) => void,
+    businessId: string
+  ): firebase.Unsubscribe {
     const timeLimit = new Date().getTime() - 86400000;
     const start_time = firebase.firestore.Timestamp.fromDate(new Date(timeLimit));
 
@@ -48,16 +81,9 @@ export default class OrderApi {
       .getOrdersRef()
       .orderBy('updatedOn', 'desc')
       .where('updatedOn', '>=', start_time)
-      .where('status', 'in', statuses);
+      .where('business.id', '==', businessId)
+      .where('status', '==', 'canceled');
 
-    if (businessId) {
-      query = this.refs
-        .getOrdersRef()
-        .orderBy('updatedOn', 'desc')
-        .where('updatedOn', '>=', start_time)
-        .where('business.id', '==', businessId)
-        .where('status', 'in', statuses);
-    }
     const unsubscribe = query.onSnapshot(
       (querySnapshot) => {
         resultHandler(documentsAs<Order>(querySnapshot.docs));
