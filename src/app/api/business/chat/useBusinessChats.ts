@@ -13,7 +13,7 @@ export interface OrderChatGroup {
       flavor: Flavor;
       updatedOn: firebase.firestore.FieldValue;
       name?: string;
-      notReadMessages?: string[];
+      unreadMessages?: string[];
     }
   ];
 }
@@ -54,16 +54,16 @@ export const useBusinessChats = (orders: WithId<Order>[]) => {
         id: counterPartId,
         flavor: counterPartFlavor,
         updatedOn: message.timestamp,
-        notReadMessages: isNotRead ? [message.id] : [],
+        unreadMessages: isNotRead ? [message.id] : [],
       };
       if (existingGroup) {
         const existingCounterpart = existingGroup.counterParts.find(
           (part) => part.id === counterPartId
         );
         if (existingCounterpart) {
-          if (isNotRead) existingCounterpart.notReadMessages?.push(message.id);
+          if (isNotRead) existingCounterpart.unreadMessages?.push(message.id);
           else
-            existingCounterpart.notReadMessages = existingCounterpart.notReadMessages?.filter(
+            existingCounterpart.unreadMessages = existingCounterpart.unreadMessages?.filter(
               (msg) => msg !== message.id
             );
           return groups;
@@ -74,7 +74,7 @@ export const useBusinessChats = (orders: WithId<Order>[]) => {
       return [
         {
           orderId: message.orderId,
-          notReadMessages: isNotRead ? [message.id] : [],
+          unreadMessages: isNotRead ? [message.id] : [],
           counterParts: [counterPartObject],
         },
         ...groups,

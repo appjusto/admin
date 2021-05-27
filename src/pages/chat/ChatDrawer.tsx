@@ -39,7 +39,7 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
   //context
   const { logo } = useBusinessProfile();
   const { orderId, counterpartId } = useParams<Params>();
-  const { getNotReadChatMessages } = useOrdersContext();
+  const { getUnreadChatMessages } = useOrdersContext();
   const { updateChatMessage } = useUpdateChatMessage();
   const { isActive, orderCode, participants, chat, sendMessage, sendMessageResult } = useOrderChat(
     orderId,
@@ -109,21 +109,20 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
   }, []);
 
   React.useEffect(() => {
-    if (messagesBox?.current) {
-      //@ts-ignore
-      messagesBox.current.addEventListener('DOMNodeInserted', (event) => {
-        const { currentTarget: target } = event;
-        target.scroll({ top: target.scrollHeight, behavior: 'smooth' });
-      });
-    }
+    if (!messagesBox?.current) return;
+    //@ts-ignore
+    const unsub = messagesBox.current.addEventListener('DOMNodeInserted', (event) => {
+      const { currentTarget: target } = event;
+      target.scroll({ top: target.scrollHeight, behavior: 'smooth' });
+    });
+    return () => window.removeEventListener('DOMNodeInserted', unsub);
   }, [messagesBox]);
 
   React.useEffect(() => {
     if (chat) {
-      console.log('RENDER !!!');
-      const notReadMessages = getNotReadChatMessages(orderId, counterpartId);
-      if (notReadMessages) {
-        notReadMessages.forEach((messageId) => {
+      const unreadMessages = getUnreadChatMessages(orderId, counterpartId);
+      if (unreadMessages) {
+        unreadMessages.forEach((messageId) => {
           updateChatMessage({
             orderId,
             messageId,
@@ -132,7 +131,7 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
         });
       }
     }
-  }, [chat, orderId, counterpartId]);
+  }, [chat, orderId, counterpartId, getUnreadChatMessages, updateChatMessage]);
 
   React.useEffect(() => {
     if (isError) {
@@ -183,6 +182,15 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
                   name={getName(group.from)}
                   messages={group.messages}
                 />
+                /*chat.map((message, index) => (
+                <ChatMessages
+                  key={message.id}
+                  image={getImage(message.from.id)}
+                  name={getName(message.from.id)}
+                  message={message.message}
+                  timestamp={message.timestamp}
+                  isGrouped={index > 1 && chat[index - 1].from.id === message.from.id}
+                />*/
               ))}
           </DrawerBody>
           <DrawerFooter borderTop="1px solid #C8D7CB">

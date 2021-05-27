@@ -91,7 +91,7 @@ interface ContextProps {
   orders: WithId<Order>[];
   chats: OrderChatGroup[];
   newChatMessages: string[];
-  getNotReadChatMessages(orderId: string, counterPartId: string): string[];
+  getUnreadChatMessages(orderId: string, counterPartId: string): string[];
   getOrderById(id: string): WithId<Order> | undefined;
   //createFakeOrder(): void;
   changeOrderStatus(orderId: string, status: OrderStatus): void;
@@ -196,12 +196,12 @@ export const OrdersContextProvider = (props: ProviderProps) => {
     [api, toast]
   );
 
-  const getNotReadChatMessages = React.useCallback(
+  const getUnreadChatMessages = React.useCallback(
     (orderId: string, counterPartId: string) => {
       if (chats) {
         const group = chats.find((chat) => chat.orderId === orderId);
         const messages =
-          group?.counterParts.find((part) => part.id === counterPartId)?.notReadMessages ?? [];
+          group?.counterParts.find((part) => part.id === counterPartId)?.unreadMessages ?? [];
         return messages;
       }
       return [];
@@ -217,15 +217,15 @@ export const OrdersContextProvider = (props: ProviderProps) => {
 
   React.useEffect(() => {
     if (chats.length > 0) {
-      let notReadMessages = [] as string[];
+      let unreadMessages = [] as string[];
       chats.forEach((group) => {
         group.counterParts.forEach((part) => {
-          if (part.notReadMessages && part.notReadMessages?.length > 0) {
-            notReadMessages = notReadMessages.concat(part.notReadMessages);
+          if (part.unreadMessages && part.unreadMessages?.length > 0) {
+            unreadMessages = unreadMessages.concat(part.unreadMessages);
           }
         });
       });
-      setNewChatMessages(notReadMessages);
+      setNewChatMessages(unreadMessages);
     }
   }, [chats]);
   //console.log(chats);
@@ -238,7 +238,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
         orders,
         chats,
         newChatMessages,
-        getNotReadChatMessages,
+        getUnreadChatMessages,
         getOrderById,
         //createFakeOrder,
         changeOrderStatus,
