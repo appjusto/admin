@@ -5,6 +5,12 @@ import { useServiceWorkerRegistration } from 'app/utils/notifications/useRegiste
 import { difference, omit } from 'lodash';
 import { use } from 'utils/local';
 import { useOrders } from 'app/api/order/useOrders';
+import useSound from 'use-sound';
+//@ts-ignore
+import newOrderSound from 'common/sounds/bell-ding.mp3';
+
+// maybe TODO: show notification only if page is hidden  https://developer.mozilla.org/en-US/docs/Web/API/Page_Visibility_API
+// maybe TODO: update document title until tab is focused
 
 const { setObject, getObject, removeObject } = use('kanban');
 
@@ -13,6 +19,7 @@ type OrderAcknowledgement = {
   notified: boolean;
   order: {
     id: string;
+    code: string;
     consumer: {
       name: string;
     };
@@ -39,6 +46,7 @@ const addOrderAck = (ack: Acknowledgement, order: WithId<Order>) =>
       notified: false,
       order: {
         id: order.id,
+        code: order.code,
         consumer: {
           name: order.consumer.name,
         },
@@ -55,6 +63,7 @@ const removeOrderAck = (ack: Acknowledgement, orderId: string) =>
 
 const statuses: OrderStatus[] = ['confirmed'];
 export const useObserveConfirmedOrders = (businessId?: string, notify: boolean = true) => {
+  const [playSound] = useSound(newOrderSound, { volume: 2 });
   const permission = useNotificationPermission();
   const registration = useServiceWorkerRegistration();
   const confirmedOrders = useOrders(statuses, businessId);
@@ -81,16 +90,23 @@ export const useObserveConfirmedOrders = (businessId?: string, notify: boolean =
     if (!changed) return;
     if (permission !== 'granted') return;
     if (!notify) return;
-    const ack = getAck();
+    let ack = getAck();
     const ackOrder = getAckOrders(ack);
-    const unotified = ackOrder.find((order) => !order.notified);
-    if (unotified) {
-      const title = 'Novo pedido!';
-      const body = `${unotified.order.consumer.name} acabou de fazer um pedido.`;
+    const unnotifieds = ackOrder.filter((order) => !order.notified);
+    if (unnotifieds.length === 0) return;
+    unnotifieds.forEach((unnotified) => {
+      ack = updateOrderAck(ack, { ...unnotified, notified: true });
+      playSound();
+      const title = `Pedido #${unnotified.order.code} acabou de chegar!`;
+      const options: NotificationOptions = {
+        body: `${unnotified.order.consumer.name} está esperando sua confirmação!`,
+        // icon: '/logo192.png',
+        requireInteraction: true,
+      };
       if (registration) {
         // Actions are only supported for persistent notifications shown using ServiceWorkerRegistration.showNotification().
         registration.showNotification(title, {
-          body,
+          ...options,
           actions: [
             {
               action: 'view',
@@ -105,12 +121,10 @@ export const useObserveConfirmedOrders = (businessId?: string, notify: boolean =
         // .then(() => {
         // });
       } else {
-        new Notification(title, {
-          body,
-        });
+        new Notification(title, options);
       }
-      setAck(updateOrderAck(ack, { ...unotified, notified: true }));
-    }
+    });
+    setAck(ack);
     setChanged(false);
-  }, [changed, notify, permission, registration]);
+  }, [changed, notify, permission, registration, playSound]);
 };
