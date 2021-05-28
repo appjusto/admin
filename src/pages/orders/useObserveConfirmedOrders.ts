@@ -61,7 +61,6 @@ export const useObserveConfirmedOrders = (businessId?: string, notify: boolean =
   const [changed, setChanged] = React.useState(false);
   React.useEffect(() => {
     if (confirmedOrders.length === 0) {
-      // removeAck();
       return;
     }
     let ack = getAck();
@@ -89,31 +88,29 @@ export const useObserveConfirmedOrders = (businessId?: string, notify: boolean =
       const title = 'Novo pedido!';
       const body = `${unotified.order.consumer.name} acabou de fazer um pedido.`;
       if (registration) {
-        console.log(registration);
         // Actions are only supported for persistent notifications shown using ServiceWorkerRegistration.showNotification().
-        registration
-          .showNotification(title, {
-            body,
-            actions: [
-              {
-                action: 'view',
-                title: 'Ver',
-              },
-              {
-                action: 'prepare',
-                title: 'Preparar',
-              },
-            ],
-          })
-          .then(() => {
-            setAck(updateOrderAck(ack, unotified));
-          });
+        registration.showNotification(title, {
+          body,
+          actions: [
+            {
+              action: 'view',
+              title: 'Ver',
+            },
+            {
+              action: 'prepare',
+              title: 'Preparar',
+            },
+          ],
+        });
+        // .then(() => {
+        // });
       } else {
         new Notification(title, {
           body,
         });
-        setAck(updateOrderAck(ack, unotified));
       }
+      setAck(updateOrderAck(ack, { ...unotified, notified: true }));
     }
+    setChanged(false);
   }, [changed, notify, permission, registration]);
 };
