@@ -20,6 +20,7 @@ import { Link, useRouteMatch } from 'react-router-dom';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { useOrdersContext } from '../context';
+import { useObserveConfirmedOrders } from '../useObserveConfirmedOrders';
 import { OrderSearchResult } from './OrderSearchResult';
 import { OrdersKanbanList } from './OrdersKanbanList';
 
@@ -34,6 +35,7 @@ export const OrdersKanban = () => {
   const [dateTime, setDateTime] = React.useState('');
   const [orderSearch, setOrderSearch] = React.useState('');
   const [searchResult, setSearchResult] = React.useState<WithId<Order>[]>([]);
+  useObserveConfirmedOrders(business?.id);
   // helpers
   const isNewChatMessage = newChatMessages.length > 0;
   // side effects
