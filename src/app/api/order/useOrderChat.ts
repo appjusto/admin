@@ -39,7 +39,7 @@ export const useOrderChat = (orderId: string, counterpartId: string) => {
     if (!orderId) return;
     const unsub = api.order().observeOrder(orderId, setOrder);
     return () => unsub();
-  }, [orderId]);
+  }, [api, orderId]);
 
   React.useEffect(() => {
     if (!orderId || !businessId || !counterpartId) return;

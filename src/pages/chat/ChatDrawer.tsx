@@ -54,6 +54,7 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
 
   // refs
   const messagesBox = React.useRef(null);
+  const inputRef = React.useRef<HTMLTextAreaElement>(null);
 
   //handlers
   const getImage = (id?: string) => {
@@ -104,11 +105,6 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
 
   // side effects
   React.useEffect(() => {
-    const { date, time } = getDateTime();
-    setDateTime(`${date} às ${time}`);
-  }, []);
-
-  React.useEffect(() => {
     if (!messagesBox?.current) return;
     //@ts-ignore
     const unsub = messagesBox.current.addEventListener('DOMNodeInserted', (event) => {
@@ -119,6 +115,9 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
   }, [messagesBox]);
 
   React.useEffect(() => {
+    inputRef?.current?.focus();
+    const { date, time } = getDateTime();
+    setDateTime(`${date} às ${time}`);
     if (chat) {
       const unreadMessages = getUnreadChatMessages(orderId, counterpartId);
       if (unreadMessages) {
@@ -196,6 +195,7 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
           <DrawerFooter borderTop="1px solid #C8D7CB">
             <Box w="100%" position="relative">
               <Textarea
+                ref={inputRef}
                 w="100%"
                 h="72px"
                 border="1px solid #C8D7CB"
