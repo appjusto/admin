@@ -13,7 +13,6 @@ import {
 import { splitByStatus } from 'app/api/order/selectors';
 import { Order, OrderStatus, WithId } from 'appjusto-types';
 import { ReactComponent as ChatIcon } from 'common/img/chat.svg';
-import { ReactComponent as EditIcon } from 'common/img/edit-icon.svg';
 import { ReactComponent as SearchIcon } from 'common/img/searchIcon.svg';
 import React from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
@@ -55,21 +54,27 @@ export const OrdersKanban = () => {
   return (
     <Box pb="12">
       <Flex justifyContent="flex-end" h="19.5px" mt="-19.5px" mb="2">
-        {isNewChatMessage && (
-          <Text fontSize="xs" fontWeight="700" lineHeight="lg" color="black">
-            {t(`Você tem novas mensagens!`)}
-          </Text>
-        )}
+        {isNewChatMessage &&
+          (newChatMessages.length > 1 ? (
+            <Text fontSize="xs" fontWeight="700" lineHeight="lg" color="black">
+              {t(`Você tem ${newChatMessages.length} novas mensagens!`)}
+            </Text>
+          ) : (
+            <Text fontSize="xs" fontWeight="700" lineHeight="lg" color="black">
+              {t(`Você tem ${newChatMessages.length} nova mensagen!`)}
+            </Text>
+          ))}
       </Flex>
       <Flex justifyContent="space-between">
         <Flex flexDir="column">
-          <Text fontSize="3xl" fontWeight="700" color="black">
+          <Text mt="-10px" fontSize="3xl" fontWeight="700" color="black">
             {t('Gerenciador de pedidos')}
           </Text>
           <Text fontSize="xl" lineHeight="26px" color="black">
             {business?.name}
           </Text>
           <Flex mt="2" alignItems="center">
+            {/*
             <Text mr="4" fontSize="sm" fontWeight="700" color="black">
               {t('Aceitar pedidos automaticamente:')}
             </Text>
@@ -90,6 +95,7 @@ export const OrdersKanban = () => {
                 </Text>
               </Button>
             </Link>
+          */}
           </Flex>
         </Flex>
         <Flex flexDir="column" alignItems="flex-end">

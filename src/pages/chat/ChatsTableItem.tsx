@@ -17,10 +17,6 @@ const flavorsPT = {
 export const ChatsTableItem = ({ chat }: ChatsTableItemProps) => {
   // context
   const { path } = useRouteMatch();
-
-  // helpers
-  const newMessage = true;
-
   //  UI
   return (
     <Tr color="black" fontSize="15px" lineHeight="21px">
@@ -57,7 +53,7 @@ export const ChatsTableItem = ({ chat }: ChatsTableItemProps) => {
               mt="-2px"
               viewBox="0 0 200 200"
               color={
-                part.notReadMessages && part.notReadMessages?.length > 0 ? 'green.500' : 'gray.50'
+                part.unreadMessages && part.unreadMessages?.length > 0 ? 'green.500' : 'gray.50'
               }
             >
               <path

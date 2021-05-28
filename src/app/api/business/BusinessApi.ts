@@ -76,11 +76,10 @@ export default class BusinessApi {
       .onSnapshot(
         (querySnapshot) => {
           //@ts-ignore
-          resultHandler((prev: WithId<BusinessChatMessage>[]) => {
+          resultHandler(() => {
             const doc = documentsAs<ChatMessage>(querySnapshot.docs);
             const messages = doc.map((msg) => ({ orderId, ...msg }));
-            const prevDiff = prev.filter((msg) => !messages.includes(msg));
-            return [...prevDiff, ...messages];
+            return [...messages];
           });
         },
         (error) => {
@@ -103,11 +102,10 @@ export default class BusinessApi {
       .onSnapshot(
         (querySnapshot) => {
           //@ts-ignore
-          resultHandler((prev: WithId<BusinessChatMessage>[]) => {
+          resultHandler(() => {
             const doc = documentsAs<ChatMessage>(querySnapshot.docs);
             const messages = doc.map((msg) => ({ orderId, ...msg }));
-            const prevDiff = prev.filter((msg) => !messages.includes(msg));
-            return [...prevDiff, ...messages];
+            return [...messages];
           });
         },
         (error) => {

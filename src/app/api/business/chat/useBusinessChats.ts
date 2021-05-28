@@ -13,7 +13,7 @@ export interface OrderChatGroup {
       flavor: Flavor;
       updatedOn: firebase.firestore.FieldValue;
       name?: string;
-      notReadMessages?: string[];
+      unreadMessages?: string[];
     }
   ];
 }
@@ -42,6 +42,7 @@ export const useBusinessChats = (orders: WithId<Order>[]) => {
   }, [api, orders, businessId]);
 
   const createOrderChatGroup = React.useCallback(() => {
+    if (!businessId) return;
     const allMessages = [...messagesAsFrom, ...messagesAsTo];
     const result = allMessages.reduce<OrderChatGroup[]>((groups, message) => {
       const existingGroup = groups.find((group) => group.orderId === message.orderId);
@@ -49,21 +50,22 @@ export const useBusinessChats = (orders: WithId<Order>[]) => {
       const counterPartFlavor =
         counterPartId === message.from.id ? message.from.agent : message.to.agent;
       //console.log(message.timestamp);
-      const isNotRead = message.from.id !== businessId && !message.read;
+      const isUnread = message.from.id !== businessId && !message.read;
       const counterPartObject = {
         id: counterPartId,
         flavor: counterPartFlavor,
         updatedOn: message.timestamp,
-        notReadMessages: isNotRead ? [message.id] : [],
+        unreadMessages: isUnread ? [message.id] : [],
       };
       if (existingGroup) {
         const existingCounterpart = existingGroup.counterParts.find(
           (part) => part.id === counterPartId
         );
         if (existingCounterpart) {
-          if (isNotRead) existingCounterpart.notReadMessages?.push(message.id);
-          else
-            existingCounterpart.notReadMessages = existingCounterpart.notReadMessages?.filter(
+          if (isUnread && !existingCounterpart.unreadMessages?.includes(message.id)) {
+            existingCounterpart.unreadMessages?.push(message.id);
+          } else
+            existingCounterpart.unreadMessages = existingCounterpart.unreadMessages?.filter(
               (msg) => msg !== message.id
             );
           return groups;
@@ -74,7 +76,6 @@ export const useBusinessChats = (orders: WithId<Order>[]) => {
       return [
         {
           orderId: message.orderId,
-          notReadMessages: isNotRead ? [message.id] : [],
           counterParts: [counterPartObject],
         },
         ...groups,

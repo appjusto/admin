@@ -22,6 +22,7 @@ export const useOrderChat = (orderId: string, counterpartId: string) => {
   const [chatFromBusiness, setChatFromBusiness] = React.useState<WithId<ChatMessage>[]>([]);
   const [chatFromCounterPart, setChatFromCounterPart] = React.useState<WithId<ChatMessage>[]>([]);
   const [chat, setChat] = React.useState<GroupedChatMessages[]>([]);
+  //const [chat, setChat] = React.useState<WithId<ChatMessage>[]>([]);
 
   // handlers;
   const [sendMessage, sendMessageResult] = useMutation(async (data: Partial<ChatMessage>) => {
@@ -35,8 +36,13 @@ export const useOrderChat = (orderId: string, counterpartId: string) => {
 
   // side effects
   React.useEffect(() => {
-    if (!orderId || !businessId || !counterpartId) return;
+    if (!orderId) return;
     const unsub = api.order().observeOrder(orderId, setOrder);
+    return () => unsub();
+  }, [api, orderId]);
+
+  React.useEffect(() => {
+    if (!orderId || !businessId || !counterpartId) return;
     const unsub2 = api
       .order()
       .observeOrderChat(orderId, businessId, counterpartId, setChatFromBusiness);
@@ -44,7 +50,6 @@ export const useOrderChat = (orderId: string, counterpartId: string) => {
       .order()
       .observeOrderChat(orderId, counterpartId, businessId, setChatFromCounterPart);
     return () => {
-      unsub();
       unsub2();
       unsub3();
     };
@@ -85,11 +90,10 @@ export const useOrderChat = (orderId: string, counterpartId: string) => {
   }, [order?.status]);
 
   React.useEffect(() => {
-    setChat(
-      groupOrderChatMessages(
-        chatFromBusiness.concat(chatFromCounterPart).sort(sortMessages)
-      ).reverse()
-    );
+    const sorted = chatFromBusiness.concat(chatFromCounterPart).sort(sortMessages);
+    const groups = groupOrderChatMessages(sorted).reverse();
+    setChat(groups);
+    //setChat(sorted);
   }, [chatFromBusiness, chatFromCounterPart]);
 
   // return
