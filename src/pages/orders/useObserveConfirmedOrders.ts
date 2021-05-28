@@ -1,7 +1,6 @@
 import React from 'react';
 import { Order, OrderStatus, WithId } from 'appjusto-types';
 import { useNotificationPermission } from 'app/utils/notifications/useNotificationPermission';
-import { useServiceWorkerRegistration } from 'app/utils/notifications/useRegisterServiceWorker';
 import { difference, omit } from 'lodash';
 import { use } from 'utils/local';
 import { useOrders } from 'app/api/order/useOrders';
@@ -65,7 +64,6 @@ const statuses: OrderStatus[] = ['confirmed'];
 export const useObserveConfirmedOrders = (businessId?: string, notify: boolean = true) => {
   const [playSound] = useSound(newOrderSound, { volume: 2 });
   const permission = useNotificationPermission();
-  const registration = useServiceWorkerRegistration();
   const confirmedOrders = useOrders(statuses, businessId);
   const [changed, setChanged] = React.useState(false);
   React.useEffect(() => {
@@ -103,28 +101,9 @@ export const useObserveConfirmedOrders = (businessId?: string, notify: boolean =
         // icon: '/logo192.png',
         requireInteraction: true,
       };
-      if (registration) {
-        // Actions are only supported for persistent notifications shown using ServiceWorkerRegistration.showNotification().
-        registration.showNotification(title, {
-          ...options,
-          actions: [
-            {
-              action: 'view',
-              title: 'Ver',
-            },
-            {
-              action: 'prepare',
-              title: 'Preparar',
-            },
-          ],
-        });
-        // .then(() => {
-        // });
-      } else {
-        new Notification(title, options);
-      }
+      new Notification(title, options);
     });
     setAck(ack);
     setChanged(false);
-  }, [changed, notify, permission, registration, playSound]);
+  }, [changed, notify, permission, playSound]);
 };
