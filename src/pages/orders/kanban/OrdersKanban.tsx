@@ -115,7 +115,7 @@ export const OrdersKanban = () => {
               />
             </InputGroup>
             <Link to="/app/chat">
-              <ChatButton isNewMessage={isNewChatMessage} />
+              <ChatButton key={Math.random()} isNewMessage={isNewChatMessage} />
             </Link>
           </HStack>
           <Text mt="4" fontSize="sm" color="grey.700">

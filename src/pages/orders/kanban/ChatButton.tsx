@@ -1,6 +1,7 @@
 import { Button, ButtonProps, Text } from '@chakra-ui/react';
 import { ReactComponent as ChatIcon } from 'common/img/chat.svg';
 import { motion, useAnimation } from 'framer-motion';
+import { ControlsAnimationDefinition } from 'framer-motion/types/animation/types';
 import React from 'react';
 import { t } from 'utils/i18n';
 
@@ -10,29 +11,34 @@ interface ChatButtonProps {
   isNewMessage: boolean;
 }
 
-export const ChatButton = ({ isNewMessage }: ChatButtonProps) => {
-  const controls = useAnimation();
+const animation = {
+  scale: [1, 1.06, 1.06, 1, 1],
+  transition: {
+    duration: 1,
+    ease: 'easeInOut',
+    times: [0, 0.2, 0.2, 0.8, 1],
+    repeat: Infinity,
+    repeatType: 'loop',
+    repeatDelay: 0.8,
+  },
+} as ControlsAnimationDefinition;
 
+export const ChatButton = ({ isNewMessage }: ChatButtonProps) => {
+  // context
+  const controls = useAnimation();
+  //side effects
   React.useEffect(() => {
     if (isNewMessage) {
-      controls.start({
-        scale: [1, 1.06, 1.06, 1, 1],
-        transition: {
-          duration: 1,
-          ease: 'easeInOut',
-          times: [0, 0.2, 0.2, 0.8, 1],
-          repeat: Infinity,
-          repeatType: 'loop',
-          repeatDelay: 0.8,
-        },
-      });
+      setTimeout(() => controls.start(animation), 1000);
     } else {
       controls.stop();
     }
+    return controls.stop;
   }, [isNewMessage, controls]);
-
+  // UI
   return (
     <MotionButton
+      layout
       bg={isNewMessage ? '#FFBE00' : 'white'}
       variant="outline"
       minW="100px"
