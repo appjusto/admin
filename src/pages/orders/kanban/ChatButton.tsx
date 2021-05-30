@@ -29,7 +29,7 @@ export const ChatButton = ({ isNewMessage }: ChatButtonProps) => {
     } else {
       controls.stop();
     }
-  }, [isNewMessage]);
+  }, [isNewMessage, controls]);
 
   return (
     <MotionButton

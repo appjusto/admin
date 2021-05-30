@@ -40,7 +40,7 @@ export const useOrderChat = (orderId: string, counterpartId: string) => {
     if (!orderId) return;
     const order = getOrderById(orderId);
     setOrder(order);
-  }, [getOrderById]);
+  }, [orderId, getOrderById]);
 
   React.useEffect(() => {
     if (!orderId || !businessId || !counterpartId) return;

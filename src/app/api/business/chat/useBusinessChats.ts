@@ -1,6 +1,6 @@
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusinessId } from 'app/state/business/context';
-import { ChatMessage, Flavor, Order, WithId } from 'appjusto-types';
+import { ChatMessage, Order, WithId } from 'appjusto-types';
 import React from 'react';
 import { OrderChatGroup } from 'app/api/chat/types';
 
@@ -19,14 +19,6 @@ export const useBusinessChats = (orders: WithId<Order>[]) => {
   const [orderChatGroup, setOrderChatGroup] = React.useState<OrderChatGroup[]>([]);
 
   // handlers;
-  const obserBusinessMessages = React.useCallback(() => {
-    if (!orders || !businessId) return;
-    orders.forEach((order) => {
-      api.business().observeBusinessChatMessageAsFrom(order.id, businessId, setMessagesAsFrom);
-      api.business().observeBusinessChatMessageAsTo(order.id, businessId, setMessagesAsTo);
-    });
-  }, [api, orders, businessId]);
-
   const createOrderChatGroup = React.useCallback(() => {
     if (!businessId) return;
     const allMessages = [...messagesAsFrom, ...messagesAsTo];
@@ -76,9 +68,16 @@ export const useBusinessChats = (orders: WithId<Order>[]) => {
 
   // side effects
   React.useEffect(() => {
-    if (!orders || !businessId) return;
-    obserBusinessMessages();
-  }, [orders, businessId, obserBusinessMessages]);
+    if (!businessId) return;
+    if (orders && orders.length === 0) {
+      setOrderChatGroup([]);
+      return;
+    }
+    orders.forEach((order) => {
+      api.business().observeBusinessChatMessageAsFrom(order.id, businessId, setMessagesAsFrom);
+      api.business().observeBusinessChatMessageAsTo(order.id, businessId, setMessagesAsTo);
+    });
+  }, [api, orders, businessId]);
 
   React.useEffect(() => {
     createOrderChatGroup();

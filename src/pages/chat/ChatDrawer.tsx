@@ -124,7 +124,7 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
       //@ts-ignore
       messagesBox.current.scroll({ top: messagesBox.current.scrollHeight, behavior: 'smooth' });
     }
-  }, [chat, orderId, counterpartId, getUnreadChatMessages, updateChatMessage, messagesBox.current]);
+  }, [chat, orderId, counterpartId, getUnreadChatMessages, updateChatMessage]);
 
   React.useEffect(() => {
     if (isError) {
@@ -139,7 +139,6 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
     }
   }, [isError, error, toast]);
 
-  console.log('RENDER');
   //UI
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
