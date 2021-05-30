@@ -1,6 +1,7 @@
 import { useToast } from '@chakra-ui/toast';
 import * as Sentry from '@sentry/react';
-import { OrderChatGroup, useBusinessChats } from 'app/api/business/chat/useBusinessChats';
+import { useBusinessChats } from 'app/api/business/chat/useBusinessChats';
+import { OrderChatGroup } from 'app/api/chat/types';
 import { useCanceledOrders } from 'app/api/order/useCanceledOrders';
 import { useOrders } from 'app/api/order/useOrders';
 import { useContextApi } from 'app/state/api/context';

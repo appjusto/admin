@@ -2,21 +2,7 @@ import { useContextApi } from 'app/state/api/context';
 import { useContextBusinessId } from 'app/state/business/context';
 import { ChatMessage, Flavor, Order, WithId } from 'appjusto-types';
 import React from 'react';
-
-export interface OrderChatGroup {
-  orderId: string;
-  orderCode?: string;
-  lastUpdate?: firebase.firestore.FieldValue;
-  counterParts: [
-    {
-      id: string;
-      flavor: Flavor;
-      updatedOn: firebase.firestore.FieldValue;
-      name?: string;
-      unreadMessages?: string[];
-    }
-  ];
-}
+import { OrderChatGroup } from 'app/api/chat/types';
 
 export interface BusinessChatMessage extends ChatMessage {
   orderId: string;

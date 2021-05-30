@@ -144,22 +144,24 @@ export const OrderBaseDrawer = ({
                   <Button width="full" maxW="200px" variant="dangerLight" onClick={cancel}>
                     {t('Cancelar pedido')}
                   </Button>
-                  <Box color="black" fontSize="xs">
-                    <Text>{t('Tempo de preparo do pedido:')}</Text>
-                    <Text fontWeight="700">
-                      {t(`${order?.cookingTime ? order?.cookingTime / 60 : 'N/I'} minutos`)}
-                      <Text
-                        ml="2"
-                        as="span"
-                        color="#4EA031"
-                        textDecor="underline"
-                        cursor="pointer"
-                        onClick={scrollBodyToBottom}
-                      >
-                        {t('Alterar')}
+                  {order?.status === 'confirmed' && (
+                    <Box color="black" fontSize="xs">
+                      <Text>{t('Tempo de preparo do pedido:')}</Text>
+                      <Text fontWeight="700">
+                        {t(`${order?.cookingTime ? order?.cookingTime / 60 : 'N/I'} minutos`)}
+                        <Text
+                          ml="2"
+                          as="span"
+                          color="#4EA031"
+                          textDecor="underline"
+                          cursor="pointer"
+                          onClick={scrollBodyToBottom}
+                        >
+                          {t('Alterar')}
+                        </Text>
                       </Text>
-                    </Text>
-                  </Box>
+                    </Box>
+                  )}
                   <Button
                     isDisabled={!PrimaryButtonAble}
                     type="submit"

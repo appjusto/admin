@@ -6,6 +6,7 @@ import { useMutation } from 'react-query';
 import { useCourierProfilePicture } from '../courier/useCourierProfilePicture';
 import { GroupedChatMessages } from 'app/api/chat/types';
 import { groupOrderChatMessages, sortMessages } from 'app/api/chat/utils';
+import { useOrdersContext } from 'pages/orders/context';
 
 const orderActivedStatuses = ['confirmed', 'preparing', 'ready', 'dispatching'] as OrderStatus[];
 
@@ -14,6 +15,7 @@ export const useOrderChat = (orderId: string, counterpartId: string) => {
   const api = useContextApi();
   const businessId = useContextBusinessId();
   const courierProfilePicture = useCourierProfilePicture(counterpartId);
+  const { getOrderById } = useOrdersContext();
 
   // state
   const [order, setOrder] = React.useState<WithId<Order> | null>();
@@ -22,7 +24,6 @@ export const useOrderChat = (orderId: string, counterpartId: string) => {
   const [chatFromBusiness, setChatFromBusiness] = React.useState<WithId<ChatMessage>[]>([]);
   const [chatFromCounterPart, setChatFromCounterPart] = React.useState<WithId<ChatMessage>[]>([]);
   const [chat, setChat] = React.useState<GroupedChatMessages[]>([]);
-  //const [chat, setChat] = React.useState<WithId<ChatMessage>[]>([]);
 
   // handlers;
   const [sendMessage, sendMessageResult] = useMutation(async (data: Partial<ChatMessage>) => {
@@ -37,9 +38,9 @@ export const useOrderChat = (orderId: string, counterpartId: string) => {
   // side effects
   React.useEffect(() => {
     if (!orderId) return;
-    const unsub = api.order().observeOrder(orderId, setOrder);
-    return () => unsub();
-  }, [api, orderId]);
+    const order = getOrderById(orderId);
+    setOrder(order);
+  }, [getOrderById]);
 
   React.useEffect(() => {
     if (!orderId || !businessId || !counterpartId) return;
@@ -59,13 +60,10 @@ export const useOrderChat = (orderId: string, counterpartId: string) => {
     if (!order) return;
     let counterpartName = 'N/E';
     let flavor = 'courier';
-    //let code = 'N/E';
     if (order.consumer?.id === counterpartId) {
-      //code = order.consumer.id;
       flavor = 'consumer';
       counterpartName = order.consumer?.name ?? 'N/E';
     } else if (order.courier?.id === counterpartId) {
-      //code = order.courier.id;
       counterpartName = order.courier?.name ?? 'N/E';
     }
     const participantsObject = {
@@ -74,7 +72,6 @@ export const useOrderChat = (orderId: string, counterpartId: string) => {
         image: null,
       },
       [counterpartId]: {
-        //code,
         name: counterpartName,
         flavor,
         image: courierProfilePicture,
@@ -93,7 +90,6 @@ export const useOrderChat = (orderId: string, counterpartId: string) => {
     const sorted = chatFromBusiness.concat(chatFromCounterPart).sort(sortMessages);
     const groups = groupOrderChatMessages(sorted).reverse();
     setChat(groups);
-    //setChat(sorted);
   }, [chatFromBusiness, chatFromCounterPart]);
 
   // return
