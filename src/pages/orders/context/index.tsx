@@ -228,8 +228,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
       setNewChatMessages(unreadMessages);
     }
   }, [chats]);
-  //console.log(chats);
-  //console.log(newChatMessages);
+
   // provider
   return (
     <OrdersContext.Provider

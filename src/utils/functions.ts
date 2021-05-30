@@ -49,7 +49,7 @@ export const getDateAndHour = (timestamp: firebase.firestore.Timestamp) => {
     return `${date} ${hour}`;
   } catch (error) {
     console.log(error);
-    return 'Erro';
+    return 'N/E';
   }
 };
 

@@ -68,6 +68,9 @@ export const useBusinessChats = (orders: WithId<Order>[]) => {
             existingCounterpart.unreadMessages = existingCounterpart.unreadMessages?.filter(
               (msg) => msg !== message.id
             );
+          if (existingCounterpart.updatedOn < message.timestamp) {
+            existingCounterpart.updatedOn = message.timestamp;
+          }
           return groups;
         }
         existingGroup.counterParts.push(counterPartObject);
@@ -76,6 +79,7 @@ export const useBusinessChats = (orders: WithId<Order>[]) => {
       return [
         {
           orderId: message.orderId,
+          lastUpdate: message.timestamp,
           counterParts: [counterPartObject],
         },
         ...groups,

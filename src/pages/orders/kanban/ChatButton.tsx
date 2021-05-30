@@ -20,7 +20,6 @@ export const ChatButton = ({ isNewMessage }: ChatButtonProps) => {
         transition: {
           duration: 1,
           ease: 'easeInOut',
-          //times: [0, 0.2, 0.5],
           times: [0, 0.2, 0.2, 0.8, 1],
           repeat: Infinity,
           repeatType: 'loop',
