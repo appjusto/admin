@@ -15,7 +15,7 @@ import { Order, OrderStatus, WithId } from 'appjusto-types';
 import { ReactComponent as ChatIcon } from 'common/img/chat.svg';
 import { ReactComponent as SearchIcon } from 'common/img/searchIcon.svg';
 import React from 'react';
-import { Link, useRouteMatch } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { useOrdersContext } from '../context';
@@ -26,7 +26,7 @@ const statuses = ['confirmed', 'preparing', 'ready', 'dispatching', 'canceled'] 
 
 export const OrdersKanban = () => {
   // context
-  const { path } = useRouteMatch();
+  //const { path } = useRouteMatch();
   const { business, orders, newChatMessages } = useOrdersContext();
   // state
   const ordersByStatus = splitByStatus(orders, statuses);
@@ -116,7 +116,8 @@ export const OrdersKanban = () => {
             </InputGroup>
             <Link to="/app/chat">
               <Button
-                variant={isNewChatMessage ? 'solid' : 'outline'}
+                bg={isNewChatMessage ? '#FFBE00' : 'white'}
+                variant="outline"
                 minW="100px"
                 height="60px"
                 borderColor="black"

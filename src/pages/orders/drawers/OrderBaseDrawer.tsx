@@ -48,6 +48,9 @@ export const OrderBaseDrawer = ({
   //context
   const { changeOrderStatus } = useOrdersContext();
 
+  // refs
+  const bodyRef = React.useRef<HTMLDivElement>(null);
+
   // helpers
   const isCurrierArrived = order?.dispatchingState === 'arrived-pickup';
   const cancelator = orderCancelator(order?.cancellation?.issue.type);
@@ -58,6 +61,12 @@ export const OrderBaseDrawer = ({
     if (order?.status === 'preparing') changeOrderStatus(order.id, 'ready');
     if (order?.status === 'ready') changeOrderStatus(order.id, 'dispatching');
     onClose();
+  };
+
+  const scrollBodyToBottom = () => {
+    if (!bodyRef.current) return;
+    const scrollNumber = bodyRef.current.scrollHeight - 610;
+    return (bodyRef.current.scrollTop = scrollNumber);
   };
 
   //UI conditions
@@ -112,7 +121,7 @@ export const OrderBaseDrawer = ({
               </Flex>
             </Flex>
           </DrawerHeader>
-          <DrawerBody pb="28">
+          <DrawerBody pb="28" ref={bodyRef}>
             {children}
             {isError && (
               <Box mt="6">
@@ -135,6 +144,22 @@ export const OrderBaseDrawer = ({
                   <Button width="full" maxW="200px" variant="dangerLight" onClick={cancel}>
                     {t('Cancelar pedido')}
                   </Button>
+                  <Box color="black" fontSize="xs">
+                    <Text>{t('Tempo de preparo do pedido:')}</Text>
+                    <Text fontWeight="700">
+                      {t(`${order?.cookingTime ? order?.cookingTime / 60 : 'N/I'} minutos`)}
+                      <Text
+                        ml="2"
+                        as="span"
+                        color="#4EA031"
+                        textDecor="underline"
+                        cursor="pointer"
+                        onClick={scrollBodyToBottom}
+                      >
+                        {t('Alterar')}
+                      </Text>
+                    </Text>
+                  </Box>
                   <Button
                     isDisabled={!PrimaryButtonAble}
                     type="submit"

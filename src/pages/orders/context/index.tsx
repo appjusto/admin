@@ -216,7 +216,6 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   }, [activeOrders, canceledOrders, playBell]);
 
   React.useEffect(() => {
-    console.log(chats);
     if (chats.length > 0) {
       let unreadMessages = [] as string[];
       chats.forEach((group) => {
