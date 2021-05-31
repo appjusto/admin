@@ -6,25 +6,6 @@ import { MdMailOutline } from 'react-icons/md';
 import { t } from 'utils/i18n';
 
 export const LandingPageFooter = () => {
-  // state
-  const [pageLimit, setPageLimit] = React.useState(false);
-  // handlers
-  const handleScroll = () => {
-    const width =
-      window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
-    if (width > 1000) {
-      if (document.documentElement.scrollTop > 1550) {
-        setPageLimit(true);
-      } else {
-        setPageLimit(false);
-      }
-    }
-  };
-  // side effects
-  React.useEffect(() => {
-    window.addEventListener('scroll', handleScroll, true);
-    return window.removeEventListener('scroll', handleScroll);
-  }, []);
   // UI
   return (
     <Flex
