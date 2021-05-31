@@ -2,7 +2,6 @@ import { Box, Button, Checkbox, Flex, Heading, HStack, Image, Link, Text } from 
 import { useContextApi } from 'app/state/api/context';
 import { AlertSuccess } from 'common/components/AlertSuccess';
 import { AlertWarning } from 'common/components/AlertWarning';
-import { CustomButton } from 'common/components/buttons/CustomButton';
 import Container from 'common/components/Container';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import delivery from 'common/img/big-delivery.svg';
@@ -78,15 +77,6 @@ export const RegistrationForm = () => {
             <Box position="relative" width="84px">
               <Image src={delivery} />
             </Box>
-            <CustomButton
-              mt="0"
-              variant="white"
-              size="lg"
-              link="/app"
-              fontSize="sm"
-              lineHeight="21px"
-              label={t('Já sou cadastrado')}
-            />
           </Flex>
           <Heading mt="4" as="h2" fontSize="24px">
             {t('Cadastre-se agora!')}
