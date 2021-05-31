@@ -3,16 +3,15 @@ import * as Sentry from '@sentry/react';
 import { useBusinessChats } from 'app/api/business/chat/useBusinessChats';
 import { OrderChatGroup } from 'app/api/chat/types';
 import { useCanceledOrders } from 'app/api/order/useCanceledOrders';
+import { useObserveConfirmedOrders } from 'app/api/order/useObserveConfirmedOrders';
+import { useObservePreparingOrders } from 'app/api/order/useObservePreparingOrders';
 import { useOrders } from 'app/api/order/useOrders';
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { Business, Order, OrderStatus, WithId } from 'appjusto-types';
 import { CustomToast } from 'common/components/CustomToast';
-//@ts-ignore
-import bellDing from 'common/sounds/bell-ding.mp3';
 import React from 'react';
-import useSound from 'use-sound';
-import { updateLocalStorageOrders, updateLocalStorageOrderTime } from 'utils/functions';
+import { updateLocalStorageOrderTime } from 'utils/functions';
 
 /*const fakeItem = (price: number, qtd: number): OrderItem => {
   return {
@@ -114,13 +113,12 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   const activeOrders = useOrders(statuses, business?.id);
   const canceledOrders = useCanceledOrders(business?.id);
   const chats = useBusinessChats(activeOrders);
+  useObserveConfirmedOrders(business?.id);
+  useObservePreparingOrders(business?.id);
 
   //state
   const [orders, setOrders] = React.useState<WithId<Order>[]>([]);
   const [newChatMessages, setNewChatMessages] = React.useState<string[]>([]);
-
-  // order sound
-  const [playBell] = useSound(bellDing, { volume: 2 });
 
   //Development
   /*const createFakeOrder = async () => {
@@ -213,8 +211,8 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   // side effects
   React.useEffect(() => {
     setOrders([...activeOrders, ...canceledOrders]);
-    updateLocalStorageOrders(activeOrders, playBell);
-  }, [activeOrders, canceledOrders, playBell]);
+    //updateLocalStorageOrders(activeOrders, playBell);
+  }, [activeOrders, canceledOrders]);
 
   React.useEffect(() => {
     if (chats.length > 0) {

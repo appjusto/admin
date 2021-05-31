@@ -1,10 +1,11 @@
 import { Box, Button, Flex, HStack, Progress, Text } from '@chakra-ui/react';
 import { useOrderArrivalTimes } from 'app/api/order/useOrderArrivalTimes';
+import { getOrderAckTime } from 'app/api/order/utils';
 import { Order, WithId } from 'appjusto-types';
 import { ReactComponent as Alarm } from 'common/img/alarm_outlined.svg';
 import React from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
-import { getLocalStorageOrderTime, getTimeUntilNow, orderCancelator } from 'utils/functions';
+import { getTimeUntilNow, orderCancelator } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { useOrdersContext } from '../context';
 
@@ -23,6 +24,9 @@ const CodeLink = ({ url, orderId, code }: CodeLinkProps) => {
     </Link>
   );
 };
+
+const confirmedKey = 'confirmed';
+const preparingKey = 'preparing';
 
 interface Props {
   order: WithId<Order>;
@@ -53,8 +57,10 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
   // side effects
   React.useEffect(() => {
     if (!order.id) return;
-    const localOrderTime = getLocalStorageOrderTime(order.id);
+    let localOrderTime: number | null = null;
     const setNewTime = () => {
+      if (order.status === 'confirmed') localOrderTime = getOrderAckTime(confirmedKey, order.id);
+      if (order.status === 'preparing') localOrderTime = getOrderAckTime(preparingKey, order.id);
       if (localOrderTime) {
         let time = getTimeUntilNow(localOrderTime);
         setElapsedTime(time);
@@ -263,7 +269,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
               <HStack spacing={2} justifyContent="space-between">
                 <HStack spacing={1}>
                   <Alarm />
-                  <Text fontSize="xs">{elapsedTime} min</Text>
+                  <Text fontSize="xs">{elapsedTime ?? 0} min</Text>
                 </HStack>
                 <Text fontSize="xs" color="gray.700">
                   {cookingTime ? `${cookingTime} min` : 'N/I'}
@@ -314,14 +320,10 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
               #{order.code}
             </Text>
           </Box>
-          {elapsedTime !== null ? (
-            elapsedTime > 0 ? (
-              <Text fontSize="sm">{t(`${elapsedTime} min. atrás`)}</Text>
-            ) : (
-              <Text fontSize="sm">{t(`Agora`)}</Text>
-            )
+          {elapsedTime && elapsedTime > 0 ? (
+            <Text fontSize="sm">{t(`${elapsedTime} min. atrás`)}</Text>
           ) : (
-            <Text fontSize="sm">{t(`Tempo não encontrado`)}</Text>
+            <Text fontSize="sm">{t(`Agora`)}</Text>
           )}
         </Flex>
       </Box>

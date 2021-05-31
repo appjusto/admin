@@ -1,5 +1,5 @@
 export type OrderAcknowledgement = {
-  receivedAt: Date;
+  receivedAt: number;
   notified: boolean;
   order: {
     id: string;
