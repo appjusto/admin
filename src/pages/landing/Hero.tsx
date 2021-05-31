@@ -4,7 +4,6 @@ import Image from 'common/components/Image';
 import check from 'common/img/green-check.svg';
 import heroBgMob from 'common/img/landing-hero-mobile.jpg';
 import heroBg from 'common/img/landing-hero.jpg';
-import logo from 'common/img/logo-white.svg';
 import { t } from 'utils/i18n';
 import { Content } from './Content';
 import { Section } from './Section';
@@ -37,11 +36,8 @@ export const Hero = () => {
   return (
     <Section h={{ base: '600px', md: '840px', lg: '720px' }} bg="black" overflow="hidden">
       <Container zIndex="100">
-        <Flex justifyContent="space-between" alignItems="flex-start">
-          <Image src={logo} width={{ base: '112px', md: '168px' }} eagerLoading />
-        </Flex>
-        <Content>
-          <Flex mt="8" flexDir="column">
+        <Content mt="32">
+          <Flex flexDir="column">
             <Heading
               as="h1"
               maxW="390px"
@@ -55,7 +51,10 @@ export const Hero = () => {
             <HeroTopic mt="4" title={t('Menores taxas do mercado')} />
             <HeroTopic title={t('Exibição igualitária')} />
             <HeroTopic title={t('Logística inclusa')} />
-            <HeroTopic title={t('Acesso direto ao cliente')} />
+            <HeroTopic
+              title={t('Acesso direto ao cliente')}
+              ps={t('Quando seus clientes optarem por isso')}
+            />
             <HeroTopic title={t('Transparência e participação')} />
           </Flex>
         </Content>

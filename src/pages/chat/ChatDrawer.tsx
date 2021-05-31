@@ -60,7 +60,7 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
   const getImage = (id?: string) => {
     if (!id) return null;
     //@ts-ignore
-    if (id === counterpartId) return participants[counterpartId].image;
+    if (id === counterpartId) return participants[counterpartId]?.image;
     else return logo;
   };
 
@@ -105,16 +105,6 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
 
   // side effects
   React.useEffect(() => {
-    if (!messagesBox?.current) return;
-    //@ts-ignore
-    const unsub = messagesBox.current.addEventListener('DOMNodeInserted', (event) => {
-      const { currentTarget: target } = event;
-      target.scroll({ top: target.scrollHeight, behavior: 'smooth' });
-    });
-    return () => window.removeEventListener('DOMNodeInserted', unsub);
-  }, [messagesBox]);
-
-  React.useEffect(() => {
     inputRef?.current?.focus();
     const { date, time } = getDateTime();
     setDateTime(`${date} às ${time}`);
@@ -129,6 +119,10 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
           });
         });
       }
+    }
+    if (messagesBox.current) {
+      //@ts-ignore
+      messagesBox.current.scroll({ top: messagesBox.current.scrollHeight, behavior: 'smooth' });
     }
   }, [chat, orderId, counterpartId, getUnreadChatMessages, updateChatMessage]);
 
