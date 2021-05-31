@@ -7,28 +7,14 @@ import { useOrders } from 'app/api/order/useOrders';
 import useSound from 'use-sound';
 //@ts-ignore
 import newOrderSound from 'common/sounds/bell-ding.mp3';
+import { Acknowledgement, OrderAcknowledgement } from './types';
 
 // maybe TODO: show notification only if page is hidden  https://developer.mozilla.org/en-US/docs/Web/API/Page_Visibility_API
 // maybe TODO: update document title until tab is focused
 
 const { setObject, getObject, removeObject } = use('kanban');
 
-type OrderAcknowledgement = {
-  receivedAt: Date;
-  notified: boolean;
-  order: {
-    id: string;
-    code: string;
-    consumer: {
-      name: string;
-    };
-  };
-};
-type Acknowledgement = {
-  [key: string]: OrderAcknowledgement;
-};
-
-const key = 'acknowledgement';
+const key = 'confirmed';
 const getAck = () => getObject<Acknowledgement>(key) ?? {};
 const setAck = (ack: Acknowledgement) => setObject<Acknowledgement>(key, ack);
 const removeAck = () => removeObject(key);
