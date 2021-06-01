@@ -18,7 +18,6 @@ import {
 import { useOrderStatusTimestamp } from 'app/api/order/useOrderStatusTimestamp';
 import { Order, WithId } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
-import { Pendency } from 'common/components/Pendency';
 import { getErrorMessage } from 'core/fb';
 import React from 'react';
 import { getDateAndHour, orderCancelator } from 'utils/functions';
@@ -107,13 +106,13 @@ export const OrderBaseDrawer = ({
                     {order?.consumer?.name ?? 'N/E'}
                   </Text>
                 </Text>
-                <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
+                {/*<Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
                   {t('Nº de pedidos no restaurante:')}{' '}
                   <Text as="span" color="black" fontWeight="700">
                     {0}
                   </Text>
                   <Pendency />
-                </Text>
+                </Text>*/}
                 <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
                   {t('Horário do pedido:')}{' '}
                   <Text as="span" color="black" fontWeight="700">
