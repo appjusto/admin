@@ -143,6 +143,13 @@ export default class BusinessApi {
     return result;
   }
 
+  async sendBusinessKeepAlive(businessId: string) {
+    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+    return await this.refs
+      .getBusinessRef(businessId)
+      .set({ keepAlive: timestamp }, { merge: true });
+  }
+
   async deleteBusinessProfile(businessId: string) {
     return await this.refs.getBusinessRef(businessId).delete();
   }

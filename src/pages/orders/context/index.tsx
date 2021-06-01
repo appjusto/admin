@@ -1,6 +1,7 @@
 import { useToast } from '@chakra-ui/toast';
 import * as Sentry from '@sentry/react';
 import { useBusinessChats } from 'app/api/business/chat/useBusinessChats';
+import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { OrderChatGroup } from 'app/api/chat/types';
 import { useCanceledOrders } from 'app/api/order/useCanceledOrders';
 import { useObserveConfirmedOrders } from 'app/api/order/useObserveConfirmedOrders';
@@ -110,6 +111,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   // context
   const api = useContextApi();
   const { business } = useContextBusiness();
+  const { sendBusinessKeepAlive } = useBusinessProfile();
   const activeOrders = useOrders(statuses, business?.id);
   const canceledOrders = useCanceledOrders(business?.id);
   const chats = useBusinessChats(activeOrders);
@@ -227,6 +229,14 @@ export const OrdersContextProvider = (props: ProviderProps) => {
       setNewChatMessages(unreadMessages);
     }
   }, [chats]);
+
+  // business keep alive
+  React.useEffect(() => {
+    const keepAliveInterval = setInterval(() => {
+      sendBusinessKeepAlive();
+    }, 300000);
+    return () => clearInterval(keepAliveInterval);
+  }, [sendBusinessKeepAlive]);
 
   // provider
   return (
