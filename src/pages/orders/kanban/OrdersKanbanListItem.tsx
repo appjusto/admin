@@ -1,4 +1,5 @@
 import { Box, Button, Flex, HStack, Progress, Text } from '@chakra-ui/react';
+import { useFirebaseUserRole } from 'app/api/auth/useFirebaseUserRole';
 import { useOrderArrivalTimes } from 'app/api/order/useOrderArrivalTimes';
 import { getOrderAckTime } from 'app/api/order/utils';
 import { Order, WithId } from 'appjusto-types';
@@ -37,6 +38,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
   const { url } = useRouteMatch();
   const { business, changeOrderStatus } = useOrdersContext();
   const arrivalTime = useOrderArrivalTimes(order);
+  const { isBackofficeUser } = useFirebaseUserRole();
 
   // state
   const [elapsedTime, setElapsedTime] = React.useState<number | null>(0);
@@ -77,6 +79,9 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
   }, [order.id, order.status]);
 
   React.useEffect(() => {
+    // disabled for backoffice users
+    if (isBackofficeUser) return;
+    // automatic order status change
     const orderAcceptanceTime = business?.orderAcceptanceTime
       ? business?.orderAcceptanceTime / 60
       : undefined;
@@ -89,7 +94,14 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
         changeOrderStatus(order.id, 'ready');
       }
     }
-  }, [order, elapsedTime, business?.orderAcceptanceTime, changeOrderStatus, cookingTime]);
+  }, [
+    order,
+    elapsedTime,
+    business?.orderAcceptanceTime,
+    changeOrderStatus,
+    cookingTime,
+    isBackofficeUser,
+  ]);
 
   // UI
   if (order.status === 'canceled') {
