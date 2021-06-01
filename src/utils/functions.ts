@@ -136,7 +136,8 @@ const getProductTotalPrice = (price: number, complements: OrderItemComplement[] 
   }
   return price + complementsPrice;
 };
-const getOrderTotalPrice = (items: OrderItem[]) => {
+
+export const getOrderTotalPrice = (items: OrderItem[]) => {
   let total = 0;
   items.map((item: OrderItem) => {
     let priceByquantity = item.quantity * item.product.price;
