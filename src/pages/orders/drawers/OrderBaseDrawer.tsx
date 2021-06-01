@@ -15,12 +15,13 @@ import {
   Flex,
   Text,
 } from '@chakra-ui/react';
+import { useOrderStatusTimestamp } from 'app/api/order/useOrderStatusTimestamp';
 import { Order, WithId } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { Pendency } from 'common/components/Pendency';
 import { getErrorMessage } from 'core/fb';
 import React from 'react';
-import { orderCancelator } from 'utils/functions';
+import { getDateAndHour, orderCancelator } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { useOrdersContext } from '../context';
 
@@ -35,6 +36,8 @@ interface BaseDrawerProps {
   children: React.ReactNode;
 }
 
+const statusConfirmed = 'confirmed';
+
 export const OrderBaseDrawer = ({
   order,
   cancel,
@@ -46,6 +49,7 @@ export const OrderBaseDrawer = ({
   ...props
 }: BaseDrawerProps) => {
   //context
+  const orderConfirmedTimestamp = useOrderStatusTimestamp(order?.id, statusConfirmed);
   const { changeOrderStatus } = useOrdersContext();
 
   // refs
@@ -109,6 +113,12 @@ export const OrderBaseDrawer = ({
                     {0}
                   </Text>
                   <Pendency />
+                </Text>
+                <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
+                  {t('Horário do pedido:')}{' '}
+                  <Text as="span" color="black" fontWeight="700">
+                    {orderConfirmedTimestamp ? getDateAndHour(orderConfirmedTimestamp) : 'N/E'}
+                  </Text>
                 </Text>
               </Flex>
               <Flex flexDir="column">

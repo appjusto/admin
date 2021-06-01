@@ -3,10 +3,12 @@ import {
   //FoodOrderStatus,
   Issue,
   Order,
+  OrderChange,
   OrderIssue,
   OrderStatus,
   WithId,
 } from 'appjusto-types';
+import { time } from 'console';
 import { documentAs, documentsAs } from 'core/fb';
 import firebase from 'firebase/app';
 import FirebaseRefs from '../FirebaseRefs';
@@ -171,6 +173,21 @@ export default class OrderApi {
     );
     // returns the unsubscribe function
     return unsubscribe;
+  }
+
+  async getOrderStatusTimestamp(
+    orderId: string,
+    status: OrderStatus,
+    resultHandler: (timestamp: firebase.firestore.Timestamp | null) => void
+  ) {
+    const query = this.refs
+      .getOrderLogsRef(orderId)
+      .where('after.status', '==', status)
+      .orderBy('timestamp', 'desc')
+      .limit(1);
+    const result = await query.get();
+    const log = documentsAs<OrderChange>(result.docs).find(() => true);
+    return resultHandler((log?.timestamp as firebase.firestore.Timestamp) ?? null);
   }
 
   async getOrderIssues(orderId: string) {
