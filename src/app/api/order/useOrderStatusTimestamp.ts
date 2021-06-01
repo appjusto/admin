@@ -11,7 +11,7 @@ export const useOrderStatusTimestamp = (orderId: string | undefined, status: Ord
   React.useEffect(() => {
     if (!orderId || !status) return;
     api.order().getOrderStatusTimestamp(orderId, status, setTimestamp);
-  }, [orderId, status]);
+  }, [api, orderId, status]);
   // result
   return timestamp;
 };

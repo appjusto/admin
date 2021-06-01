@@ -22,7 +22,6 @@ export const BusinessProvider = ({ children }: Props) => {
   const api = useContextApi();
   const email = useContextFirebaseUserEmail();
   const { isBackofficeUser } = useContextAgentProfile();
-  //const manager = useManagerProfile();
   const businesses = useObserveBusinessManagedBy(email);
   const [businessId, setBusinessId] = React.useState<string | undefined | null>();
   const business = useObserveBusinessProfile(businessId);

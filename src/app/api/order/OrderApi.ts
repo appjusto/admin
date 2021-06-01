@@ -8,7 +8,6 @@ import {
   OrderStatus,
   WithId,
 } from 'appjusto-types';
-import { time } from 'console';
 import { documentAs, documentsAs } from 'core/fb';
 import firebase from 'firebase/app';
 import FirebaseRefs from '../FirebaseRefs';
@@ -19,21 +18,6 @@ export type CancellationData = {
   comment?: string;
 };
 
-//export const ActiveFoodOrdersValues: FoodOrderStatus[] = [
-//  'confirmed',
-//  'preparing',
-//  'ready',
-//  'dispatching',
-//  'canceled',
-//];
-//export const InactiveFoodOrdersValues: FoodOrderStatus[] = ['quote', 'confirming', 'delivered'];
-//export const FoodOrdersValues = [...ActiveFoodOrdersValues, ...InactiveFoodOrdersValues];
-
-//export type ObserveOrdersOptions = {
-//  active?: boolean;
-//  inactive?: boolean;
-//};
-
 export default class OrderApi {
   constructor(private refs: FirebaseRefs) {}
 
@@ -43,20 +27,16 @@ export default class OrderApi {
     resultHandler: (orders: WithId<Order>[]) => void,
     businessId?: string
   ): firebase.Unsubscribe {
-    //const timeLimit = new Date().getTime() - 86400000;
-    //const start_time = firebase.firestore.Timestamp.fromDate(new Date(timeLimit));
-
     let query = this.refs
       .getOrdersRef()
       .orderBy('createdOn', 'desc')
-      //.where('createdOn', '>=', start_time)
       .where('status', 'in', statuses);
 
     if (businessId) {
       query = this.refs
         .getOrdersRef()
         .orderBy('createdOn', 'desc')
-        //.where('createdOn', '>=', start_time)
+
         .where('business.id', '==', businessId)
         .where('status', 'in', statuses);
     }
@@ -114,26 +94,6 @@ export default class OrderApi {
     // returns the unsubscribe function
     return unsubscribe;
   }
-
-  // observe order's chat
-  /*observeOrderChat(
-    orderId: string,
-    resultHandler: (orders: WithId<ChatMessage>[]) => void
-  ): firebase.Unsubscribe {
-    const unsubscribe = this.refs
-      .getOrderChatRef(orderId)
-      .orderBy('timestamp', 'asc')
-      .onSnapshot(
-        (querySnapshot) => {
-          resultHandler(documentsAs<ChatMessage>(querySnapshot.docs));
-        },
-        (error) => {
-          console.error(error);
-        }
-      );
-    // returns the unsubscribe function
-    return unsubscribe;
-  }*/
 
   observeOrderChat(
     orderId: string,
