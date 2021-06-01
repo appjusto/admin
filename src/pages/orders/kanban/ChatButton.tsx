@@ -12,11 +12,11 @@ interface ChatButtonProps {
 }
 
 const animation = {
-  scale: [1, 1.06, 1.06, 1, 1],
+  translateY: [-3, -5, 0, -1, 0],
   transition: {
     duration: 1,
     ease: 'easeInOut',
-    times: [0, 0.2, 0.2, 0.8, 1],
+    times: [0.1, 0.1, 2, 0.2, 2],
     repeat: Infinity,
     repeatType: 'loop',
     repeatDelay: 0.8,
