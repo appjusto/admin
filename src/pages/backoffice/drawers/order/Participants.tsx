@@ -128,8 +128,7 @@ export const Participants = ({ order }: ParticipantsProps) => {
         <>
           <SectionTitle>{orderDispatchingStatusText}</SectionTitle>
           {!isCurrierArrived &&
-            arrivalTime &&
-            (arrivalTime > 0 ? (
+            (arrivalTime && arrivalTime > 0 ? (
               <Text mt="1" fontSize="15px" lineHeight="21px">
                 {t(
                   `Chega em aproximadamente ${
@@ -142,7 +141,7 @@ export const Participants = ({ order }: ParticipantsProps) => {
                 {t(`Chega em menos de 1 minuto`)}
               </Text>
             ))}
-          <DeliveryMap key={order?.id} order={order} />
+          <DeliveryMap key="bo-order-map" order={order!} />
         </>
       )}
       <SectionTitle>{t('Destino do pedido')}</SectionTitle>

@@ -38,8 +38,8 @@ export const useObserveConfirmedOrders = (businessId?: string, notify: boolean =
     if (confirmedOrders.length === 0) return;
     const SoundInterval = setInterval(() => {
       playSound();
-      setVolume((prev) => (prev <= 5 ? prev + 1 : prev));
-    }, 2000);
+      setVolume((prev) => (prev <= 6 ? prev + 1 : prev));
+    }, 4000);
     return () => clearInterval(SoundInterval);
   }, [confirmedOrders, playSound]);
 
