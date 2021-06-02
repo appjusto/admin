@@ -142,7 +142,7 @@ export const Participants = ({ order }: ParticipantsProps) => {
                 {t(`Chega em menos de 1 minuto`)}
               </Text>
             ))}
-          <DeliveryMap order={order} />
+          <DeliveryMap key={order?.id} order={order} />
         </>
       )}
       <SectionTitle>{t('Destino do pedido')}</SectionTitle>

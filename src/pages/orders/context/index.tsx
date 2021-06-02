@@ -234,9 +234,10 @@ export const OrdersContextProvider = (props: ProviderProps) => {
 
   // business keep alive
   React.useEffect(() => {
+    const time = process.env.REACT_APP_ENVIRONMENT === 'live' ? 60000 : 30000;
     const keepAliveInterval = setInterval(() => {
       sendBusinessKeepAlive();
-    }, 300000);
+    }, time);
     return () => clearInterval(keepAliveInterval);
   }, [sendBusinessKeepAlive]);
 
