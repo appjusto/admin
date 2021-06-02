@@ -65,8 +65,6 @@ export const DeliveryMap = ({ order }: DeliveryMapProps) => {
           map.data.add({
             geometry: new maps.Data.LineString(route.polyline),
           });
-          console.log(map);
-          console.log(maps);
         }}
       >
         <Marker
