@@ -50,7 +50,7 @@ export const useBusinessProfile = () => {
     } catch (error) {
       Sentry.captureException('sendBusinessKeepAliveError', error);
     }
-  }, [businessId]);
+  }, [api, businessId]);
 
   const { isSuccess: uploadSuccess } = uploadLogoResult;
   React.useEffect(() => {

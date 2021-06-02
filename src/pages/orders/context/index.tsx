@@ -1,5 +1,6 @@
 import { useToast } from '@chakra-ui/toast';
 import * as Sentry from '@sentry/react';
+import { useFirebaseUserRole } from 'app/api/auth/useFirebaseUserRole';
 import { useBusinessChats } from 'app/api/business/chat/useBusinessChats';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { OrderChatGroup } from 'app/api/chat/types';
@@ -110,8 +111,9 @@ interface ProviderProps {
 export const OrdersContextProvider = (props: ProviderProps) => {
   // context
   const api = useContextApi();
+  const { isBackofficeUser } = useFirebaseUserRole();
   const { business } = useContextBusiness();
-  const { sendBusinessKeepAlive } = useBusinessProfile();
+  const { updateBusinessProfile, sendBusinessKeepAlive } = useBusinessProfile();
   const activeOrders = useOrders(statuses, business?.id);
   const canceledOrders = useCanceledOrders(business?.id);
   const chats = useBusinessChats(activeOrders);
@@ -237,6 +239,51 @@ export const OrdersContextProvider = (props: ProviderProps) => {
     }, 300000);
     return () => clearInterval(keepAliveInterval);
   }, [sendBusinessKeepAlive]);
+
+  React.useEffect(() => {
+    if (isBackofficeUser) return;
+    const onCloseListener = (e: BeforeUnloadEvent) => {
+      // Cancel the event
+      e.preventDefault();
+      console.log('onCloseListener');
+      updateBusinessProfile({ status: 'closed' });
+      toast({
+        duration: 12000,
+        render: () => (
+          <CustomToast
+            type="warning"
+            message={{
+              title: 'Seu restaurante foi fechado.',
+              description:
+                'Ao tentar fechar ou recarregar esta página, seu restaurante é fechado automaticamente. Se deseja continuar recebendo pedidos, basta abri-lo novamente.',
+            }}
+          />
+        ),
+      });
+      // Chrome requires returnValue to be set
+      e.returnValue = '';
+    };
+    window.addEventListener('beforeunload', onCloseListener);
+    return () => window.removeEventListener('beforeunload', onCloseListener);
+  }, [updateBusinessProfile, toast, isBackofficeUser]);
+
+  React.useEffect(() => {
+    if (business?.status === 'closed') {
+      toast({
+        duration: 12000,
+        render: () => (
+          <CustomToast
+            type="warning"
+            message={{
+              title: 'Seu restaurante está fechado.',
+              description:
+                'Para começar a receber pedidos é preciso ir até o "gerenciador de pedidos" e mudar o status do restaurante para "aberto".',
+            }}
+          />
+        ),
+      });
+    }
+  }, [business?.status, toast]);
 
   // provider
   return (
