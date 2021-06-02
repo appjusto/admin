@@ -48,8 +48,7 @@ export const DeliveryInfos = ({ order }: DeliveryInfosProps) => {
           {orderDispatchingStatusText}
         </Text>
         {!isCurrierArrived &&
-          arrivalTime &&
-          (arrivalTime > 0 ? (
+          (arrivalTime && arrivalTime > 0 ? (
             <Text fontSize="sm">
               {t(
                 `Chega em aproximadamente ${
