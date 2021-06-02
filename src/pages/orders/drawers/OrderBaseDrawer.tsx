@@ -20,7 +20,7 @@ import { Order, WithId } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { getErrorMessage } from 'core/fb';
 import React from 'react';
-import { getDateAndHour, orderCancelator } from 'utils/functions';
+import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { useOrdersContext } from '../context';
 
@@ -56,7 +56,7 @@ export const OrderBaseDrawer = ({
 
   // helpers
   const isCurrierArrived = order?.dispatchingState === 'arrived-pickup';
-  const cancelator = orderCancelator(order?.cancellation?.issue.type);
+  // const cancelator = orderCancelator(order?.cancellation?.issue.type);
 
   //handlers
   const PrimaryButtonFunction = () => {
@@ -97,7 +97,7 @@ export const OrderBaseDrawer = ({
                 </Text>
                 {order?.status === 'canceled' && (
                   <Text fontSize="md" color="red" fontWeight="700" lineHeight="22px">
-                    {t('Pedido cancelado pelo')} <Text as="span">{cancelator}</Text>
+                    {/* {t('Pedido cancelado pelo')} <Text as="span">{cancelator}</Text> */}
                   </Text>
                 )}
                 <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">

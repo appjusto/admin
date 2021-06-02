@@ -6,7 +6,7 @@ import { Order, WithId } from 'appjusto-types';
 import { ReactComponent as Alarm } from 'common/img/alarm_outlined.svg';
 import React from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
-import { getTimeUntilNow, orderCancelator } from 'utils/functions';
+import { getTimeUntilNow } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { useOrdersContext } from '../context';
 
@@ -54,7 +54,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
   ]);
   //const cookingTime = order?.cookingTime ? order?.cookingTime / 60 : null;
   const cookingProgress = cookingTime && elapsedTime ? (elapsedTime / cookingTime) * 100 : 0;
-  const cancelator = orderCancelator(order?.cancellation?.issue?.type);
+  // const cancelator = orderCancelator(order?.cancellation?.issue?.type);
 
   // side effects
   React.useEffect(() => {
@@ -124,7 +124,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
           </Box>
           <Flex flexDir="column" color="gray.700" fontSize="xs" alignItems="flex-end">
             <Text fontWeight="700">{t('Cancelado por')}</Text>
-            <Text fontWeight="500">{cancelator}</Text>
+            {/* <Text fontWeight="500">{cancelator}</Text> */}
           </Flex>
         </Flex>
       </Box>

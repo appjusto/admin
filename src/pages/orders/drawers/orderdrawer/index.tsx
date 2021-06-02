@@ -101,15 +101,15 @@ export const OrderDrawer = (props: Props) => {
               <SectionTitle>{t('Dados do cancelamento')}</SectionTitle>
               <Text mt="1" fontSize="md" fontWeight="700" color="black">
                 {t('Motivo:')}{' '}
-                <Text as="span" fontWeight="500">
+                {/* <Text as="span" fontWeight="500">
                   {order.cancellation?.issue.title ?? 'N/E'}
-                </Text>
+                </Text> */}
               </Text>
               <Text mt="1" fontSize="md" fontWeight="700" color="black">
                 {t('Comentário:')}{' '}
-                <Text as="span" fontWeight="500">
+                {/* <Text as="span" fontWeight="500">
                   {order.cancellation?.comment ?? 'N/I'}
-                </Text>
+                </Text> */}
               </Text>
             </>
           )}

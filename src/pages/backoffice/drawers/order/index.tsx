@@ -81,12 +81,12 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
     if (order?.status) setStatus(order.status);
   }, [order?.status]);
 
-  React.useEffect(() => {
-    if (order?.cancellation) {
-      setIssue(order.cancellation.issue ?? null);
-      setMessage(order.cancellation?.comment ?? '');
-    }
-  }, [order?.cancellation]);
+  // React.useEffect(() => {
+  //   if (order?.cancellation) {
+  //     setIssue(order.cancellation.issue ?? null);
+  //     setMessage(order.cancellation?.comment ?? '');
+  //   }
+  // }, [order?.cancellation]);
 
   //UI
   return (
@@ -119,7 +119,7 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
             <OrderStatusBar
               status={status}
               issue={issue}
-              cancelatorName={order?.cancellation?.canceledBy.name}
+              // cancelatorName={order?.cancellation?.canceledBy.name}
               message={message}
               cancelOptions={cancelOptions}
               updateState={updateState}
