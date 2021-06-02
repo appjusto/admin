@@ -26,10 +26,22 @@ const statuses: OrderStatus[] = ['confirmed'];
 
 export const useObserveConfirmedOrders = (businessId?: string, notify: boolean = true) => {
   // context
-  const [playSound] = useSound(newOrderSound, { volume: 2 });
   const permission = useNotificationPermission();
   const confirmedOrders = useOrders(statuses, businessId);
+  // state
   const [changed, setChanged] = React.useState(false);
+  const [volume, setVolume] = React.useState(2);
+  // sound
+  const [playSound] = useSound(newOrderSound, { volume });
+
+  React.useEffect(() => {
+    if (confirmedOrders.length === 0) return;
+    const SoundInterval = setInterval(() => {
+      playSound();
+      setVolume((prev) => (prev <= 5 ? prev + 1 : prev));
+    }, 2000);
+    return () => clearInterval(SoundInterval);
+  }, [confirmedOrders, playSound]);
 
   // side effects
   React.useEffect(() => {
@@ -61,7 +73,7 @@ export const useObserveConfirmedOrders = (businessId?: string, notify: boolean =
     if (unnotifieds.length === 0) return;
     unnotifieds.forEach((unnotified) => {
       ack = updateOrderAck(ack, { ...unnotified, notified: true });
-      playSound();
+      //playSound();
       const title = `Pedido #${unnotified.order.code} acabou de chegar!`;
       const options: NotificationOptions = {
         body: `${unnotified.order.consumer.name} está esperando sua confirmação!`,

@@ -55,14 +55,16 @@ export const DeliveryMap = ({ order }: DeliveryMapProps) => {
           }}
         >
           <Marker
-            key={`${order?.id}-business`}
+            //key={`${order?.id}-business`}
+            key={Math.random()}
             icon={restaurantIcon}
             lat={route.origin.latitude}
             lng={route.origin.longitude}
             mt="-10px"
           />
           <Marker
-            key={`${order?.id}-consumer`}
+            //key={`${order?.id}-consumer`}
+            key={Math.random()}
             icon={UserSvg}
             lat={route.destination.latitude}
             lng={route.destination.longitude}
@@ -73,7 +75,8 @@ export const DeliveryMap = ({ order }: DeliveryMapProps) => {
           />
           {route.courier.latitude && route.courier.longitude && (
             <Marker
-              key={`${order?.id}-courier`}
+              //key={`${order?.id}-courier`}
+              key={Math.random()}
               icon={courierIcon}
               lat={route.courier.latitude}
               lng={route.courier.longitude}
