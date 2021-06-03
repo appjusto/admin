@@ -59,16 +59,12 @@ export const AddMembersForm = () => {
   };
 
   const handleSubmit = () => {
-    console.log('Submit!');
-    console.log(business?.id);
-    console.log(members);
     if (!business?.id)
       return setError({
         status: true,
         error: null,
       });
     members.forEach(async (member) => {
-      console.log('forEach?', member);
       if (!member.email)
         return setError({
           status: true,
@@ -78,19 +74,34 @@ export const AddMembersForm = () => {
             description: 'Tenta novamente?',
           },
         });
+      let managers = business.managers;
+      const userRole: AdminRole = member.isManager ? 'manager' : 'collaborator';
+      submission.current += 1;
+      if (managers?.includes(member.email)) {
+        return setError({
+          status: true,
+          error: null,
+          message: {
+            title: 'Usuário já existe.',
+            description: 'O e-mail informado já foi cadastrado para um usuário.',
+          },
+        });
+      }
       console.log('do creation');
-      const role: AdminRole = member.isManager ? 'manager' : 'collaborator';
-      const created = await createManager({ email: member.email, key: business.id!, role });
+      console.log(member.email, business.id, userRole);
+      const created = await createManager({
+        email: member.email,
+        key: business.id!,
+        role: userRole,
+      });
       console.log('created?', created);
       if (created) {
-        let managers = business.managers;
         console.log('managers', business.managers);
         if (managers && !managers.includes(member.email)) {
           managers.push(member.email);
           updateBusinessProfile({ managers });
         }
       }
-      submission.current += 1;
     });
     setMembers([memberObj]);
   };
@@ -164,7 +175,7 @@ export const AddMembersForm = () => {
       <SuccessAndErrorHandler
         submission={submission.current}
         isSuccess={isSuccess}
-        isError={isError}
+        isError={error.status}
         error={error.error}
         errorMessage={error.message}
       />

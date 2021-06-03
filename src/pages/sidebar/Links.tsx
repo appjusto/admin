@@ -52,7 +52,7 @@ export const Links = () => {
 
   const isApproved = business?.situation === 'approved';
   const isManager = userRole === 'manager';
-
+  console.log(userRole);
   return (
     <Box>
       <Box>

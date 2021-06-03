@@ -28,7 +28,8 @@ export const useFirebaseUserRole = (businessId?: string | null) => {
     }
     try {
       const token = await user.getIdTokenResult(true);
-      if (token?.claims.role) setRole(token?.claims.role);
+      console.log(token.claims);
+      if (Object.keys(token?.claims).includes('role')) setRole(token?.claims.role);
       else if (businessId) setRole(token.claims[businessId]);
     } catch (error) {
       console.dir('role_error', error);
@@ -42,8 +43,7 @@ export const useFirebaseUserRole = (businessId?: string | null) => {
   }, [refreshUserToken]);
 
   React.useEffect(() => {
-    if (!role) return;
-    setIsBackofficeUser(backofficeRoles.includes(role));
+    setIsBackofficeUser(!!role && backofficeRoles.indexOf(role) !== -1);
   }, [role]);
 
   // return
