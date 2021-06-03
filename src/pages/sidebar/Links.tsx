@@ -17,13 +17,41 @@ const DisabledLink = ({ label }: DisabledLinkProps) => {
   );
 };
 
-export const Links = () => {
+const ProtectedLinks = () => {
   // context
   const isLive = process.env.REACT_APP_ENVIRONMENT === 'live';
-  const { business } = useContextBusiness();
+  const { url } = useRouteMatch();
+  // UI
+  return (
+    <>
+      <LinkItem to={`${url}/business-schedules`} label={t('Horários')} />
+      <LinkItem to={`${url}/delivery-area`} label={t('Área de entrega')} />
+      {!isLive ? (
+        <>
+          <LinkItem to={`${url}/orders-history`} label={t('Histórico de pedidos')} />
+          <LinkItem to={`${url}/finances`} label={t('Financeiro')} />
+          <LinkItem to={`${url}/business-profile`} label={t('Perfil do restaurante')} />
+          <LinkItem to={`${url}/team`} label={t('Colaboradores')} />
+        </>
+      ) : (
+        <>
+          <LinkItem to={`${url}/orders-history`} label={t('Histórico de pedidos')} />
+          <DisabledLink label={t('Financeiro')} />
+          <LinkItem to={`${url}/business-profile`} label={t('Perfil do restaurante')} />
+          <DisabledLink label={t('Colaboradores')} />
+        </>
+      )}
+    </>
+  );
+};
+
+export const Links = () => {
+  // context
+  const { business, userRole } = useContextBusiness();
   const { url } = useRouteMatch();
 
   const isApproved = business?.situation === 'approved';
+  const isManager = userRole === 'manager';
 
   return (
     <Box>
@@ -37,23 +65,7 @@ export const Links = () => {
       </Box>
       <Box mt="5">
         <LinkItem to={`${url}/menu`} label={t('Cardápio')} />
-        <LinkItem to={`${url}/business-schedules`} label={t('Horários')} />
-        <LinkItem to={`${url}/delivery-area`} label={t('Área de entrega')} />
-        {!isLive ? (
-          <>
-            <LinkItem to={`${url}/orders-history`} label={t('Histórico de pedidos')} />
-            <LinkItem to={`${url}/finances`} label={t('Financeiro')} />
-            <LinkItem to={`${url}/business-profile`} label={t('Perfil do restaurante')} />
-            <LinkItem to={`${url}/team`} label={t('Colaboradores')} />
-          </>
-        ) : (
-          <>
-            <LinkItem to={`${url}/orders-history`} label={t('Histórico de pedidos')} />
-            <DisabledLink label={t('Financeiro')} />
-            <LinkItem to={`${url}/business-profile`} label={t('Perfil do restaurante')} />
-            <DisabledLink label={t('Colaboradores')} />
-          </>
-        )}
+        {isManager && <ProtectedLinks />}
       </Box>
     </Box>
   );

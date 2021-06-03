@@ -1,4 +1,4 @@
-import { ManagerProfile, WithId } from 'appjusto-types';
+import { AdminRole, CreateManagerPayload, ManagerProfile, Role, WithId } from 'appjusto-types';
 import { documentsAs } from 'core/fb';
 import firebase from 'firebase/app';
 import FirebaseRefs from '../FirebaseRefs';
@@ -54,5 +54,16 @@ export default class ManagerApi {
 
   async updateProfile(id: string, changes: Partial<ManagerProfile>) {
     await this.refs.getManagerRef(id).update(changes);
+  }
+
+  async createManager(email: string, key: string, role: Role | AdminRole) {
+    const payload: CreateManagerPayload = {
+      meta: { version: '1' }, // TODO: pass correct version on
+      email,
+      key,
+      role,
+    };
+    const manager = await this.refs.getCreateManager()(payload);
+    return manager.data as WithId<ManagerProfile>;
   }
 }

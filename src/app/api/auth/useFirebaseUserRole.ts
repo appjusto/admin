@@ -12,7 +12,7 @@ export type GeneralRoles =
 
 const backofficeRoles: GeneralRoles[] = ['owner', 'staff', 'viewer', 'courier-manager'];
 
-export const useFirebaseUserRole = (businessId?: string) => {
+export const useFirebaseUserRole = (businessId?: string | null) => {
   // contex
   const user = useFirebaseUser();
 
