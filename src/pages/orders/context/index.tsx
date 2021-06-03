@@ -1,6 +1,5 @@
 import { useToast } from '@chakra-ui/toast';
 import * as Sentry from '@sentry/react';
-import { useFirebaseUserRole } from 'app/api/auth/useFirebaseUserRole';
 import { useBusinessChats } from 'app/api/business/chat/useBusinessChats';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { OrderChatGroup } from 'app/api/chat/types';
@@ -8,6 +7,7 @@ import { useCanceledOrders } from 'app/api/order/useCanceledOrders';
 import { useObserveConfirmedOrders } from 'app/api/order/useObserveConfirmedOrders';
 import { useObservePreparingOrders } from 'app/api/order/useObservePreparingOrders';
 import { useOrders } from 'app/api/order/useOrders';
+import { useContextAgentProfile } from 'app/state/agent/context';
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { Business, Order, OrderStatus, WithId } from 'appjusto-types';
@@ -111,7 +111,7 @@ interface ProviderProps {
 export const OrdersContextProvider = (props: ProviderProps) => {
   // context
   const api = useContextApi();
-  const { isBackofficeUser } = useFirebaseUserRole();
+  const { isBackofficeUser } = useContextAgentProfile();
   const { business } = useContextBusiness();
   const { updateBusinessProfile, sendBusinessKeepAlive } = useBusinessProfile();
   const activeOrders = useOrders(statuses, business?.id);
@@ -269,6 +269,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   }, [updateBusinessProfile, toast, isBackofficeUser]);
 
   React.useEffect(() => {
+    if (isBackofficeUser) return;
     if (business?.status === 'closed') {
       toast({
         duration: 12000,
@@ -284,7 +285,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
         ),
       });
     }
-  }, [business?.status, toast]);
+  }, [business?.status, isBackofficeUser, toast]);
 
   // provider
   return (
