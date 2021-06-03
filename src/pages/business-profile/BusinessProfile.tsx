@@ -268,25 +268,26 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
               formatter={cnpjFormatter}
               value={cnpj}
               onValueChange={(value) => setCNPJ(value)}
-              //validationLength={14}
               externalValidation={{ active: true, status: isCNPJValid() }}
             />
             <Input
               isRequired
               id="business-name"
-              label={t('Nome')}
-              placeholder={t('Nome')}
+              label={t('Nome do restaurante')}
+              placeholder={t('Digite o nome do restaurante')}
               value={name}
               onChange={(ev) => setName(ev.target.value)}
             />
-            <Input
-              isRequired
-              id="business-company-name"
-              label={t('Razão social')}
-              placeholder={t('Digite a razão social')}
-              value={companyName}
-              onChange={(ev) => setCompanyName(ev.target.value)}
-            />
+            {!onboarding && (
+              <Input
+                isDisabled
+                id="business-company-name"
+                label={t('Razão social')}
+                placeholder={t('Apenas para conferência')}
+                value={companyName}
+                onChange={(ev) => setCompanyName(ev.target.value)}
+              />
+            )}
             <PatternInput
               isRequired
               ref={phoneRef}
