@@ -18,7 +18,6 @@ export const useFirebaseUser = () => {
     });
     return () => unsub();
   }, [api]);
-
   // return
   return firebaseUser;
 };

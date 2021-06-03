@@ -1,15 +1,23 @@
-import { Role } from 'appjusto-types';
 import React from 'react';
 import { useFirebaseUser } from './useFirebaseUser';
+import * as Sentry from '@sentry/react';
 
-const backofficeRoles: Role[] = ['owner', 'staff', 'viewer', 'courier-manager'];
+export type GeneralRoles =
+  | 'owner'
+  | 'staff'
+  | 'viewer'
+  | 'courier-manager'
+  | 'manager'
+  | 'collaborator';
 
-export const useFirebaseUserRole = () => {
+const backofficeRoles: GeneralRoles[] = ['owner', 'staff', 'viewer', 'courier-manager'];
+
+export const useFirebaseUserRole = (businessId?: string) => {
   // contex
   const user = useFirebaseUser();
 
   // state
-  const [role, setRole] = React.useState<Role | null>();
+  const [role, setRole] = React.useState<GeneralRoles | null>();
   const [isBackofficeUser, setIsBackofficeUser] = React.useState<boolean | null>(null);
 
   // handlers
@@ -20,11 +28,13 @@ export const useFirebaseUserRole = () => {
     }
     try {
       const token = await user.getIdTokenResult(true);
-      setRole(token?.claims.role ?? null);
+      if (token?.claims.role) setRole(token?.claims.role);
+      else if (businessId) setRole(token.claims[businessId]);
     } catch (error) {
       console.dir('role_error', error);
+      Sentry.captureException(error);
     }
-  }, [user]);
+  }, [user, businessId]);
 
   // side effects
   React.useEffect(() => {
@@ -32,7 +42,8 @@ export const useFirebaseUserRole = () => {
   }, [refreshUserToken]);
 
   React.useEffect(() => {
-    setIsBackofficeUser(!!role && backofficeRoles.indexOf(role) !== -1);
+    if (!role) return;
+    setIsBackofficeUser(backofficeRoles.includes(role));
   }, [role]);
 
   // return
