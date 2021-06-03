@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/react';
 import { AdminRole, CreateManagerPayload, ManagerProfile, Role, WithId } from 'appjusto-types';
 import { documentsAs } from 'core/fb';
 import firebase from 'firebase/app';
@@ -56,14 +57,20 @@ export default class ManagerApi {
     await this.refs.getManagerRef(id).update(changes);
   }
 
-  async createManager(email: string, key: string, role: Role | AdminRole) {
+  async createManager(data: { email: string; key: string; role: Role | AdminRole }) {
+    const { email, key, role } = data;
     const payload: CreateManagerPayload = {
       meta: { version: '1' }, // TODO: pass correct version on
       email,
       key,
       role,
     };
-    const manager = await this.refs.getCreateManager()(payload);
-    return manager.data as WithId<ManagerProfile>;
+    try {
+      await this.refs.getCreateManager()(payload);
+      return true;
+    } catch (error) {
+      Sentry.captureException('createManagerError', error);
+      return false;
+    }
   }
 }

@@ -1,5 +1,11 @@
 import { Box, Button, HStack, Switch, Text, Tooltip } from '@chakra-ui/react';
+import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
+import { useCreateManager } from 'app/api/manager/useCreateManager';
+import { useContextBusiness } from 'app/state/business/context';
+import { AdminRole } from 'appjusto-types';
 import { CloseButton } from 'common/components/buttons/CloseButton';
+import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
+import { initialError } from 'common/components/error/utils';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import React from 'react';
 import { t } from 'utils/i18n';
@@ -16,9 +22,17 @@ const memberObj = {
 
 export const AddMembersForm = () => {
   //context
+  const { business } = useContextBusiness();
+  const { updateBusinessProfile, updateResult } = useBusinessProfile();
+  const { createManager, result } = useCreateManager();
+  const { isLoading, isSuccess, isError, error: createError } = result;
 
   // state
   const [members, setMembers] = React.useState<Member[]>([memberObj]);
+  const [error, setError] = React.useState(initialError);
+
+  // refs
+  const submission = React.useRef(0);
 
   // handlers
   const AddMemberFields = () => {
@@ -45,8 +59,50 @@ export const AddMembersForm = () => {
   };
 
   const handleSubmit = () => {
+    console.log('Submit!');
+    console.log(business?.id);
     console.log(members);
+    if (!business?.id)
+      return setError({
+        status: true,
+        error: null,
+      });
+    members.forEach(async (member) => {
+      console.log('forEach?', member);
+      if (!member.email)
+        return setError({
+          status: true,
+          error: null,
+          message: {
+            title: 'Ocorreu um erro com um ou mais dos emails informados.',
+            description: 'Tenta novamente?',
+          },
+        });
+      console.log('do creation');
+      const role: AdminRole = member.isManager ? 'manager' : 'collaborator';
+      const created = await createManager({ email: member.email, key: business.id!, role });
+      console.log('created?', created);
+      if (created) {
+        let managers = business.managers;
+        console.log('managers', business.managers);
+        if (managers && !managers.includes(member.email)) {
+          managers.push(member.email);
+          updateBusinessProfile({ managers });
+        }
+      }
+      submission.current += 1;
+    });
+    setMembers([memberObj]);
   };
+
+  // side effects
+  React.useEffect(() => {
+    if (isError)
+      setError({
+        status: true,
+        error: createError,
+      });
+  }, [isError, createError]);
 
   // UI
   return (
@@ -61,7 +117,7 @@ export const AddMembersForm = () => {
           {t('Adicionar novos colaboradores')}
         </Text>
         {members.map((member, index) => (
-          <HStack key={Math.random()} mt="4" spacing={4} alignItems="center">
+          <HStack key={members.length + index} mt="4" spacing={4} alignItems="center">
             <CustomInput
               mt="0"
               maxW="300px"
@@ -100,11 +156,18 @@ export const AddMembersForm = () => {
           {t('Adicionar mais')}
         </Button>
         <Box>
-          <Button type="submit" mt="8" fontSize="sm" fontWeight="500">
+          <Button type="submit" mt="8" fontSize="sm" fontWeight="500" isLoading={isLoading}>
             {t('Salvar alterações')}
           </Button>
         </Box>
       </form>
+      <SuccessAndErrorHandler
+        submission={submission.current}
+        isSuccess={isSuccess}
+        isError={isError}
+        error={error.error}
+        errorMessage={error.message}
+      />
     </Box>
   );
 };
