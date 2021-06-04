@@ -1,37 +1,13 @@
-import { useContextManagerProfile } from 'app/state/manager/context';
-import { WithId } from 'appjusto-types';
+import { useContextBusiness } from 'app/state/business/context';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
 import { t } from 'utils/i18n';
 import { AddMembersForm } from './AddMembersForm';
 import { TeamTable } from './TeamTable';
 
-interface TeamMember {
-  email: string;
-  isManager: boolean;
-  createdOn: firebase.firestore.Timestamp;
-}
-
 const TeamPage = () => {
   // context
-  const { manager } = useContextManagerProfile();
-  // state
-  const [members, setMembers] = React.useState<WithId<TeamMember>[]>([]);
-  // side effects
-  React.useEffect(() => {
-    if (manager) {
-      const fakeMembers = [
-        {
-          id: 'sjclscn1',
-          email: 'renancostam@gmail.com',
-          isManager: true,
-          createdOn: manager.createdOn,
-        },
-      ];
-      setMembers(fakeMembers);
-    }
-  }, [manager]);
-
+  const { managers } = useContextBusiness();
   // UI
   return (
     <>
@@ -41,7 +17,7 @@ const TeamPage = () => {
           'Gerencie as pessoas que terão acesso ao Portal do parceiro e ao Gerenciador de pedidos. Somente os administradores podem incluir novos colaboradores.'
         )}
       />
-      <TeamTable members={members} />
+      <TeamTable managers={managers} />
       <AddMembersForm />
     </>
   );

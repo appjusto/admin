@@ -10,6 +10,7 @@ export default class FirebaseRefs {
   getDeleteAccountCallable = () => this.functions.httpsCallable('deleteAccount');
   getCreateBusinessProfileCallable = () => this.functions.httpsCallable('createBusinessProfile');
   getCreateManager = () => this.functions.httpsCallable('createManager');
+  getGetUsersByIds = () => this.functions.httpsCallable('getUsersByIds');
 
   // firestore
   // platform
@@ -57,7 +58,7 @@ export default class FirebaseRefs {
   getBusinessPrivateRef = (id: string) => this.getBusinessesRef().doc(id).collection('private');
   getBusinessBankAccountRef = (id: string) => this.getBusinessPrivateRef(id).doc('bank');
   getBusinessStatisticsRef = (id: string) => this.getBusinessPrivateRef(id).doc('statistics');
-  getBusinessPlatformRef = (id: string) => this.getBusinessPrivateRef(id).doc('platform');
+  getBusinessMarketPlaceRef = (id: string) => this.getBusinessPrivateRef(id).doc('marketplace');
 
   // managers
   getManagersRef = () => this.firestore.collection('managers');
@@ -78,7 +79,7 @@ export default class FirebaseRefs {
   getCouriersRef = () => this.firestore.collection('couriers');
   getCourierRef = (id: string) => this.getCouriersRef().doc(id);
   getCourierPrivateRef = (id: string) => this.getCourierRef(id).collection('private');
-  getCourierPlatformRef = (id: string) => this.getCourierPrivateRef(id).doc('platform');
+  getCourierMarketPlaceRef = (id: string) => this.getCourierPrivateRef(id).doc('marketplace');
 
   // fleets
   getFleetsRef = () => this.firestore.collection('fleets');

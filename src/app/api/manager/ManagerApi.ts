@@ -1,8 +1,10 @@
 import * as Sentry from '@sentry/react';
 import { AdminRole, CreateManagerPayload, ManagerProfile, Role, WithId } from 'appjusto-types';
+import { GetUsersPayload } from 'appjusto-types/payloads/profile';
 import { documentsAs } from 'core/fb';
 import firebase from 'firebase/app';
 import FirebaseRefs from '../FirebaseRefs';
+import { UserWithRole } from './types';
 
 export default class ManagerApi {
   constructor(private refs: FirebaseRefs) {}
@@ -41,6 +43,46 @@ export default class ManagerApi {
     );
     // returns the unsubscribe function
     return unsubscribe;
+  }
+
+  observeManagers(
+    managers: string[],
+    resultHandler: (result: WithId<ManagerProfile>[]) => void
+  ): firebase.Unsubscribe {
+    let query = this.refs
+      .getManagersRef()
+      .orderBy('createdOn', 'asc')
+      .where('email', 'in', managers);
+
+    const unsubscribe = query.onSnapshot(
+      (querySnapshot) => {
+        resultHandler(documentsAs<ManagerProfile>(querySnapshot.docs));
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+    // returns the unsubscribe function
+    return unsubscribe;
+  }
+
+  async getUsersByIds(
+    businessId: string,
+    uids: string[],
+    resultHandler: (result: UserWithRole[]) => void
+  ) {
+    const payload: GetUsersPayload = {
+      meta: { version: '1' }, // TODO: pass correct version on
+      businessId,
+      uids,
+    };
+    try {
+      const users = await this.refs.getGetUsersByIds()(payload);
+      resultHandler(users.data);
+    } catch (error) {
+      Sentry.captureException('createManagerError', error);
+      return null;
+    }
   }
 
   public async createProfile(id: string, email: string) {

@@ -39,8 +39,8 @@ export const CourierProvider = ({ children }: Props) => {
   const { courierId } = useParams<Params>();
   const profile = useCourierProfile(courierId);
   const pictures = useCourierProfilePictures(courierId, '', '');
-  const platform = useCourierPrivateData(courierId);
-  const marketPlaceIssues = platform?.marketPlace?.issues ?? undefined;
+  const marketPlace = useCourierPrivateData(courierId);
+  const marketPlaceIssues = marketPlace?.issues ?? undefined;
   const issueOptions = useIssuesByType(issueOptionsArray);
 
   // state

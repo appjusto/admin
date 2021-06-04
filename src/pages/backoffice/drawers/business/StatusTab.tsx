@@ -9,7 +9,7 @@ import {
   Textarea,
   VStack,
 } from '@chakra-ui/react';
-import { useBusinessPrivateData } from 'app/api/business/useBusinessPrivateData';
+import { useBusinessMarketPlaceData } from 'app/api/business/useBusinessMarketPlaceData';
 import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';
 import { useContextBusinessBackoffice } from 'app/state/business/businessBOContext';
 import { IssueType, ProfileSituation } from 'appjusto-types';
@@ -23,14 +23,14 @@ const issueOptionsArray = ['business-profile-invalid'] as IssueType[];
 export const StatusTab = () => {
   // context
   const { business, handleBusinessStatusChange } = useContextBusinessBackoffice();
-  const platform = useBusinessPrivateData(business?.id);
+  const marketPlace = useBusinessMarketPlaceData(business?.id);
   const issueOptions = useIssuesByType(issueOptionsArray);
 
   // state
   const [financialIssues, setFinancialIssues] = React.useState<string[]>([]);
 
   //helpers
-  const marketPlaceIssues = platform?.marketPlace?.issues ?? undefined;
+  const marketPlaceIssues = marketPlace?.issues ?? undefined;
 
   // side effects
   React.useEffect(() => {
