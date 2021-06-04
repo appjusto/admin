@@ -49,7 +49,7 @@ const Join = () => {
 
   // UI
   if (!isLinkValid) return <Redirect to="/login" />;
-  console.log(isBackofficeUser);
+
   if (isSuccess && isBackofficeUser !== null) {
     if (isBackofficeUser) return <Redirect to="/backoffice" />;
     else return <Redirect to="/app" />;

@@ -30,7 +30,7 @@ export const BusinessProvider = ({ children }: Props) => {
   const [businessId, setBusinessId] = React.useState<string | undefined | null>();
   const business = useObserveBusinessProfile(businessId);
   const { role: userRole } = useFirebaseUserRole(businessId);
-  const managers = useManagers();
+  const managers = useManagers(business);
 
   // side effects
   // intended to auto-select a business id for a restaurant manager

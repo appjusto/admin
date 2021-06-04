@@ -49,6 +49,7 @@ export default class ManagerApi {
     managers: string[],
     resultHandler: (result: WithId<ManagerProfile>[]) => void
   ): firebase.Unsubscribe {
+    console.log('array', managers);
     let query = this.refs
       .getManagersRef()
       .orderBy('createdOn', 'asc')

@@ -1,13 +1,11 @@
 import { useContextApi } from 'app/state/api/context';
-import { useContextBusiness } from 'app/state/business/context';
-import { ManagerProfile, WithId } from 'appjusto-types';
+import { Business, ManagerProfile, WithId } from 'appjusto-types';
 import React from 'react';
 import { BusinessManager, UserWithRole } from './types';
 
-export const useManagers = () => {
+export const useManagers = (business?: WithId<Business> | null) => {
   // contex
   const api = useContextApi();
-  const { business } = useContextBusiness();
   // state
   const [managers, setManagers] = React.useState<WithId<ManagerProfile>[]>();
   const [users, setUsers] = React.useState<UserWithRole[]>();
@@ -34,6 +32,9 @@ export const useManagers = () => {
     });
     setManagersWithRole(result);
   }, [managers, users]);
+  // pendency: allow observe other managers!
+  console.log('business?.managers', business?.managers);
+  console.log('observed managers', managers);
   // return
   return managersWithRole;
 };

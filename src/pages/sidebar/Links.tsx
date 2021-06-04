@@ -49,10 +49,10 @@ export const Links = () => {
   // context
   const { business, userRole } = useContextBusiness();
   const { url } = useRouteMatch();
-
+  // helpers
   const isApproved = business?.situation === 'approved';
   const isManager = userRole === 'manager';
-  console.log(userRole);
+  // UI
   return (
     <Box>
       <Box>

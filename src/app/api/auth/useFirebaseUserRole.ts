@@ -28,7 +28,6 @@ export const useFirebaseUserRole = (businessId?: string | null) => {
     }
     try {
       const token = await user.getIdTokenResult(true);
-      console.log(token.claims);
       if (Object.keys(token?.claims).includes('role')) setRole(token?.claims.role);
       else if (businessId) setRole(token.claims[businessId]);
     } catch (error) {
