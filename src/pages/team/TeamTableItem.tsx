@@ -53,7 +53,7 @@ export const TeamTableItem = ({
               isChecked={manager.role === 'manager'}
               onChange={(ev) => {
                 ev.stopPropagation();
-                updateMember(manager.uid, ev.target.checked);
+                updateMember(manager.email, ev.target.checked);
               }}
             />
           </Td>

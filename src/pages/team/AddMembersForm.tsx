@@ -87,16 +87,11 @@ export const AddMembersForm = () => {
           },
         });
       }
-      console.log('do creation');
-      console.log(member.email, business.id, userRole);
       const created = await createManager({
         email: member.email,
-        key: business.id!,
         role: userRole,
       });
-      console.log('created?', created);
       if (created) {
-        console.log('managers', business.managers);
         if (managers && !managers.includes(member.email)) {
           managers.push(member.email);
           updateBusinessProfile({ managers });

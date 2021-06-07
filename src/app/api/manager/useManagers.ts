@@ -5,7 +5,7 @@ import { ManagerWithRole } from './types';
 import { useMutation } from 'react-query';
 import { AdminRole, Role } from 'appjusto-types';
 
-type ManagerData = { email: string; key: string; role: Role | AdminRole };
+type ManagerData = { email: string; role: Role | AdminRole };
 
 export const useManagers = () => {
   // contex
@@ -16,9 +16,10 @@ export const useManagers = () => {
   const [managers, setManagers] = React.useState<ManagerWithRole[]>();
 
   // mutations
-  const [createManager, createResult] = useMutation(async (data: ManagerData) =>
-    api.manager().createManager(data)
-  );
+  const [createManager, createResult] = useMutation(async (data: ManagerData) => {
+    const dataWithKey = { ...data, key: business?.id! };
+    return api.manager().createManager(dataWithKey);
+  });
 
   const [removeBusinessManager, removeResult] = useMutation(async (managerEmail: string) =>
     api.business().removeBusinessManager(business!, managerEmail)
@@ -28,7 +29,6 @@ export const useManagers = () => {
   React.useEffect(() => {
     if (!userRole || !['manager', 'owner', 'staff', 'viewer'].includes(userRole)) return;
     if (!business?.id || !business?.managers) return;
-    console.log('CALLABLE');
     api.manager().getBusinessManagers(business.id, setManagers);
   }, [api, business?.managers, userRole]);
 
