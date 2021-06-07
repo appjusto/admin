@@ -1,6 +1,6 @@
 import { Box, Button, HStack, Switch, Text, Tooltip } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
-import { useCreateManager } from 'app/api/manager/useCreateManager';
+import { useManagers } from 'app/api/manager/useManagers';
 import { useContextBusiness } from 'app/state/business/context';
 import { AdminRole } from 'appjusto-types';
 import { CloseButton } from 'common/components/buttons/CloseButton';
@@ -24,8 +24,8 @@ export const AddMembersForm = () => {
   //context
   const { business } = useContextBusiness();
   const { updateBusinessProfile, updateResult } = useBusinessProfile();
-  const { createManager, result } = useCreateManager();
-  const { isLoading, isSuccess, isError, error: createError } = result;
+  const { createManager, createResult } = useManagers();
+  const { isLoading, isSuccess, isError, error: createError } = createResult;
 
   // state
   const [members, setMembers] = React.useState<Member[]>([memberObj]);

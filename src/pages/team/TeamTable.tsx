@@ -1,6 +1,5 @@
 import { Box, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
-import { useRemoveBusinessManager } from 'app/api/business/useRemoveBusinessManager';
-import { useContextBusiness } from 'app/state/business/context';
+import { useManagers } from 'app/api/manager/useManagers';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
 import React from 'react';
 import { t } from 'utils/i18n';
@@ -8,10 +7,8 @@ import { TeamTableItem } from './TeamTableItem';
 
 export const TeamTable = () => {
   // context
-  const { managers } = useContextBusiness();
-  // context
-  const { removeBusinessManager, result } = useRemoveBusinessManager();
-  const { isLoading, isSuccess, isError, error } = result;
+  const { managers, removeBusinessManager, removeResult } = useManagers();
+  const { isLoading, isSuccess, isError, error } = removeResult;
 
   // refs
   const submission = React.useRef(0);

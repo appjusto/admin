@@ -1,14 +1,29 @@
 import { useContextApi } from 'app/state/api/context';
-import { Business, WithId } from 'appjusto-types';
+import { useContextBusiness } from 'app/state/business/context';
 import React from 'react';
-import { GeneralRoles } from '../auth/useFirebaseUserRole';
 import { ManagerWithRole } from './types';
+import { useMutation } from 'react-query';
+import { AdminRole, Role } from 'appjusto-types';
 
-export const useManagers = (business?: WithId<Business> | null, userRole?: GeneralRoles | null) => {
+type ManagerData = { email: string; key: string; role: Role | AdminRole };
+
+export const useManagers = () => {
   // contex
   const api = useContextApi();
+  const { business, userRole } = useContextBusiness();
+
   // state
   const [managers, setManagers] = React.useState<ManagerWithRole[]>();
+
+  // mutations
+  const [createManager, createResult] = useMutation(async (data: ManagerData) =>
+    api.manager().createManager(data)
+  );
+
+  const [removeBusinessManager, removeResult] = useMutation(async (managerEmail: string) =>
+    api.business().removeBusinessManager(business!, managerEmail)
+  );
+
   // side effects
   React.useEffect(() => {
     if (!userRole || !['manager', 'owner', 'staff', 'viewer'].includes(userRole)) return;
@@ -16,6 +31,13 @@ export const useManagers = (business?: WithId<Business> | null, userRole?: Gener
     console.log('CALLABLE');
     api.manager().getBusinessManagers(business.id, setManagers);
   }, [api, business?.managers, userRole]);
+
   // return
-  return managers;
+  return {
+    managers,
+    createManager,
+    createResult,
+    removeBusinessManager,
+    removeResult,
+  };
 };
