@@ -145,6 +145,17 @@ export default class BusinessApi {
     return result;
   }
 
+  async removeBusinessManager(business: WithId<Business>, managerEmail: string) {
+    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+    const managers = business.managers?.filter((email) => email !== managerEmail);
+    const fullChanges = {
+      managers,
+      updatedOn: timestamp,
+    };
+    const result = await this.refs.getBusinessRef(business.id).set(fullChanges, { merge: true });
+    return result;
+  }
+
   async sendBusinessKeepAlive(businessId: string) {
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
     return await this.refs

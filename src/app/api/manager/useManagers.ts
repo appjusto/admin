@@ -1,40 +1,22 @@
 import { useContextApi } from 'app/state/api/context';
-import { Business, ManagerProfile, WithId } from 'appjusto-types';
+import { Business, WithId } from 'appjusto-types';
 import React from 'react';
-import { BusinessManager, UserWithRole } from './types';
+import { GeneralRoles } from '../auth/useFirebaseUserRole';
+import { ManagerWithRole } from './types';
 
-export const useManagers = (business?: WithId<Business> | null) => {
+export const useManagers = (business?: WithId<Business> | null, userRole?: GeneralRoles | null) => {
   // contex
   const api = useContextApi();
   // state
-  const [managers, setManagers] = React.useState<WithId<ManagerProfile>[]>();
-  const [users, setUsers] = React.useState<UserWithRole[]>();
-  const [managersWithRole, setManagersWithRole] = React.useState<WithId<BusinessManager>[]>();
+  const [managers, setManagers] = React.useState<ManagerWithRole[]>();
   // side effects
-  // observe managers profile
   React.useEffect(() => {
-    if (!business?.managers) return;
-    api.manager().observeManagers(business.managers, setManagers);
-  }, [api, business?.managers]);
-  React.useEffect(() => {
-    if (!business?.id || !managers) return;
-    const uids = managers.map((manager) => manager.id);
-    api.manager().getUsersByIds(business?.id, uids, setUsers);
-  }, [managers]);
-  React.useEffect(() => {
-    if (!managers || !users) return;
-    const result = managers.map((manager) => {
-      const user = users.find((user) => user.uid === manager.id);
-      return {
-        ...manager,
-        role: user?.role ?? null,
-      };
-    });
-    setManagersWithRole(result);
-  }, [managers, users]);
-  // pendency: allow observe other managers!
-  console.log('business?.managers', business?.managers);
-  console.log('observed managers', managers);
+    if (!userRole || !['manager', 'owner', 'staff', 'viewer'].includes(userRole)) return;
+    if (!business?.id || !business?.managers) return;
+    console.log('CALLABLE');
+    api.manager().getBusinessManagers(business.id, setManagers);
+  }, [api, business?.managers, userRole]);
+  console.log('managers', managers);
   // return
-  return managersWithRole;
+  return managers;
 };

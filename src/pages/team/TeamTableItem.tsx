@@ -1,30 +1,27 @@
 import { Box, Button, HStack, Switch, Td, Tr } from '@chakra-ui/react';
-import { BusinessManager } from 'app/api/manager/types';
-import { WithId } from 'appjusto-types';
+import { ManagerWithRole } from 'app/api/manager/types';
 import React from 'react';
-import { getDateAndHour } from 'utils/functions';
+import { formatDate, formatTime } from 'utils/formatters';
 import { t } from 'utils/i18n';
 
 interface TeamTableItemProps {
-  manager: WithId<BusinessManager>;
-  updateMember(managerId: string, isManager: boolean): void;
-  deleteMember(managerId: string): void;
+  manager: ManagerWithRole;
+  updateMember(managerEmail: string, isManager: boolean): void;
+  deleteMember(managerEmail: string): void;
+  isLoading: boolean;
 }
 
-export const TeamTableItem = ({ manager, updateMember, deleteMember }: TeamTableItemProps) => {
+export const TeamTableItem = ({
+  manager,
+  updateMember,
+  deleteMember,
+  isLoading,
+}: TeamTableItemProps) => {
   // state
   const [isDeleting, setIsDeleting] = React.useState(false);
-  // handlers
-
   // UI
   return (
-    <Tr
-      key={manager.email}
-      color="black"
-      fontSize="sm"
-      h="66px"
-      bg={isDeleting ? 'rgba(254, 215, 215, 0.3)' : 'none'}
-    >
+    <Tr color="black" fontSize="sm" h="66px" bg={isDeleting ? 'rgba(254, 215, 215, 0.3)' : 'none'}>
       <Td>{manager.email}</Td>
       {isDeleting ? (
         <>
@@ -39,7 +36,8 @@ export const TeamTableItem = ({ manager, updateMember, deleteMember }: TeamTable
                   w="150px"
                   size="sm"
                   variant="danger"
-                  onClick={() => deleteMember(manager.id)}
+                  onClick={() => deleteMember(manager.email)}
+                  isLoading={isLoading}
                 >
                   {t('Excluir')}
                 </Button>
@@ -55,11 +53,15 @@ export const TeamTableItem = ({ manager, updateMember, deleteMember }: TeamTable
               isChecked={manager.role === 'manager'}
               onChange={(ev) => {
                 ev.stopPropagation();
-                updateMember(manager.id, ev.target.checked);
+                updateMember(manager.uid, ev.target.checked);
               }}
             />
           </Td>
-          <Td>{getDateAndHour(manager.createdOn as firebase.firestore.Timestamp)}</Td>
+          <Td>
+            {formatDate((manager.createdOn as unknown) as Date) +
+              ' - ' +
+              formatTime((manager.createdOn as unknown) as Date)}
+          </Td>
           <Td>
             <Button size="sm" variant="dangerLight" onClick={() => setIsDeleting(true)}>
               {t('Excluir colaborador')}

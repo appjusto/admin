@@ -1,26 +1,31 @@
 import { Box, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
-import { BusinessManager } from 'app/api/manager/types';
-import { WithId } from 'appjusto-types';
+import { useRemoveBusinessManager } from 'app/api/business/useRemoveBusinessManager';
+import { useContextBusiness } from 'app/state/business/context';
+import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
 import React from 'react';
 import { t } from 'utils/i18n';
 import { TeamTableItem } from './TeamTableItem';
 
-interface TeamTableProps {
-  managers?: WithId<BusinessManager>[];
-}
-
-export const TeamTable = ({ managers }: TeamTableProps) => {
+export const TeamTable = () => {
   // context
+  const { managers } = useContextBusiness();
+  // context
+  const { removeBusinessManager, result } = useRemoveBusinessManager();
+  const { isLoading, isSuccess, isError, error } = result;
 
-  // state
+  // refs
+  const submission = React.useRef(0);
 
   // handlers
   const updateMember = (memberId: string, isManager: boolean) => {
+    submission.current += 1;
     console.log('update', memberId, isManager);
   };
 
-  const deleteMember = (memberId: string) => {
-    console.log('delete', memberId);
+  const deleteMember = async (managerEmail: string) => {
+    console.log('delete', managerEmail);
+    submission.current += 1;
+    await removeBusinessManager(managerEmail);
   };
 
   // side effects
@@ -42,13 +47,14 @@ export const TeamTable = ({ managers }: TeamTableProps) => {
         </Thead>
         <Tbody>
           {managers && managers.length > 0 ? (
-            managers.map((manager: WithId<BusinessManager>) => {
+            managers.map((manager) => {
               return (
                 <TeamTableItem
-                  key={manager.id}
+                  key={manager.uid}
                   manager={manager}
                   updateMember={updateMember}
                   deleteMember={deleteMember}
+                  isLoading={isLoading}
                 />
               );
             })
@@ -62,6 +68,12 @@ export const TeamTable = ({ managers }: TeamTableProps) => {
           )}
         </Tbody>
       </Table>
+      <SuccessAndErrorHandler
+        submission={submission.current}
+        isSuccess={isSuccess}
+        isError={isError}
+        error={error}
+      />
     </Box>
   );
 };

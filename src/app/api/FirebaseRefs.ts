@@ -10,7 +10,7 @@ export default class FirebaseRefs {
   getDeleteAccountCallable = () => this.functions.httpsCallable('deleteAccount');
   getCreateBusinessProfileCallable = () => this.functions.httpsCallable('createBusinessProfile');
   getCreateManager = () => this.functions.httpsCallable('createManager');
-  getGetUsersByIds = () => this.functions.httpsCallable('getUsersByIds');
+  getGetBusinessManagers = () => this.functions.httpsCallable('getBusinessManagers');
 
   // firestore
   // platform

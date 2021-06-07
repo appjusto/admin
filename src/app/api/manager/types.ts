@@ -8,3 +8,10 @@ export interface UserWithRole {
   uid: string;
   role: string | null;
 }
+
+export interface ManagerWithRole {
+  uid: string;
+  email: string;
+  role: string | null;
+  createdOn: string;
+}
