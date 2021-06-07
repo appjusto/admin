@@ -107,8 +107,15 @@ export const AddMembersForm = () => {
       setError({
         status: true,
         error: createError,
+        message: { title: 'Não foi possível adicionar os colaboradores.' },
       });
-  }, [isError, createError]);
+    else if (updateResult.isError)
+      setError({
+        status: true,
+        error: updateResult.error,
+        message: { title: 'Não foi possível atualizar a lista de colaboradores.' },
+      });
+  }, [isError, createError, updateResult.isError, updateResult.error]);
 
   // UI
   return (

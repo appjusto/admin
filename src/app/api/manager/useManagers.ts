@@ -30,7 +30,7 @@ export const useManagers = () => {
     if (!userRole || !['manager', 'owner', 'staff', 'viewer'].includes(userRole)) return;
     if (!business?.id || !business?.managers) return;
     api.manager().getBusinessManagers(business.id, setManagers);
-  }, [api, business?.managers, userRole]);
+  }, [api, business?.id, business?.managers, userRole]);
 
   // return
   return {
