@@ -85,8 +85,6 @@ export const OrderDrawer = (props: Props) => {
       order={order}
       cancel={() => setIsCanceling(true)}
       isCanceling={isCanceling}
-      isError={error.status}
-      error={error.error}
     >
       {isCanceling ? (
         <Cancelation handleConfirm={handleCancel} handleKeep={() => setIsCanceling(false)} />

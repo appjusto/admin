@@ -1,8 +1,4 @@
 import {
-  Alert,
-  AlertDescription,
-  AlertIcon,
-  AlertTitle,
   Box,
   Button,
   Drawer,
@@ -18,7 +14,6 @@ import {
 import { useOrderStatusTimestamp } from 'app/api/order/useOrderStatusTimestamp';
 import { Order, WithId } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
-import { getErrorMessage } from 'core/fb';
 import React from 'react';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
@@ -29,8 +24,6 @@ interface BaseDrawerProps {
   isOpen: boolean;
   cancel(): void;
   isCanceling: boolean;
-  isError: boolean;
-  error: unknown | string | null;
   onClose(): void;
   children: React.ReactNode;
 }
@@ -41,8 +34,6 @@ export const OrderBaseDrawer = ({
   order,
   cancel,
   isCanceling,
-  isError,
-  error,
   onClose,
   children,
   ...props
@@ -79,7 +70,7 @@ export const OrderBaseDrawer = ({
     ['confirmed', 'preparing'].includes(order?.status ?? 'not_included') ||
     (order?.status === 'ready' && isCurrierArrived);
 
-  let PrimaryButtonLabel = 'Preparar pedido';
+  let PrimaryButtonLabel = 'CONFIRMAR';
   if (order?.status === 'preparing') PrimaryButtonLabel = 'Pedido pronto';
   if (order?.status === 'ready') PrimaryButtonLabel = 'Entregar pedido';
 
@@ -132,19 +123,6 @@ export const OrderBaseDrawer = ({
           </DrawerHeader>
           <DrawerBody pb="28" ref={bodyRef}>
             {children}
-            {isError && (
-              <Box mt="6">
-                {isError && (
-                  <Alert status="error">
-                    <AlertIcon />
-                    <AlertTitle mr={2}>{t('Erro!')}</AlertTitle>
-                    <AlertDescription>
-                      {getErrorMessage(error) ?? t('Tenta de novo?')}
-                    </AlertDescription>
-                  </Alert>
-                )}
-              </Box>
-            )}
           </DrawerBody>
           {!isCanceling && !orderDispatched && order?.status !== 'canceled' && (
             <DrawerFooter borderTop="1px solid #F2F6EA">
@@ -177,6 +155,7 @@ export const OrderBaseDrawer = ({
                     width="full"
                     maxW="200px"
                     onClick={PrimaryButtonFunction}
+                    fontSize={order?.status === 'confirmed' ? '20px' : '15px'}
                   >
                     {t(PrimaryButtonLabel)}
                   </Button>
