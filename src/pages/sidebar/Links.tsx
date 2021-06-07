@@ -18,30 +18,38 @@ const DisabledLink = ({ label }: DisabledLinkProps) => {
   );
 };
 
-const ProtectedLinks = () => {
+interface ProtectedLinksProps {
+  isApproved: boolean;
+}
+
+const ProtectedLinks = ({ isApproved }: ProtectedLinksProps) => {
   // context
   const isLive = process.env.REACT_APP_ENVIRONMENT === 'live';
   const { url } = useRouteMatch();
   // UI
   return (
     <>
-      <LinkItem to={`${url}/business-schedules`} label={t('Horários')} />
-      <LinkItem to={`${url}/delivery-area`} label={t('Área de entrega')} />
-      {!isLive ? (
-        <>
-          <LinkItem to={`${url}/orders-history`} label={t('Histórico de pedidos')} />
-          <LinkItem to={`${url}/finances`} label={t('Financeiro')} />
-          <LinkItem to={`${url}/business-profile`} label={t('Perfil do restaurante')} />
-          <LinkItem to={`${url}/team`} label={t('Colaboradores')} />
-        </>
-      ) : (
-        <>
-          <LinkItem to={`${url}/orders-history`} label={t('Histórico de pedidos')} />
+      <Box>
+        <LinkItem to={`${url}`} label={t('Início')} />
+        {isApproved ? (
+          <LinkItem to={`${url}/orders`} label={t('Gerenciador de pedidos')} />
+        ) : (
+          <DisabledLink label={t('Gerenciador de pedidos')} />
+        )}
+      </Box>
+      <Box mt="5">
+        <LinkItem to={`${url}/menu`} label={t('Cardápio')} />
+        <LinkItem to={`${url}/business-schedules`} label={t('Horários')} />
+        <LinkItem to={`${url}/delivery-area`} label={t('Área de entrega')} />
+        <LinkItem to={`${url}/orders-history`} label={t('Histórico de pedidos')} />
+        {isLive ? (
           <DisabledLink label={t('Financeiro')} />
-          <LinkItem to={`${url}/business-profile`} label={t('Perfil do restaurante')} />
-          <DisabledLink label={t('Colaboradores')} />
-        </>
-      )}
+        ) : (
+          <LinkItem to={`${url}/finances`} label={t('Financeiro')} />
+        )}
+        <LinkItem to={`${url}/business-profile`} label={t('Perfil do restaurante')} />
+        <LinkItem to={`${url}/team`} label={t('Colaboradores')} />
+      </Box>
     </>
   );
 };
@@ -57,18 +65,18 @@ export const Links = () => {
   // UI
   return (
     <Box>
-      <Box>
-        {isManager && <LinkItem to={`${url}`} label={t('Início')} />}
-        {isApproved ? (
-          <LinkItem to={`${url}/orders`} label={t('Gerenciador de pedidos')} />
-        ) : (
-          <DisabledLink label={t('Gerenciador de pedidos')} />
-        )}
-      </Box>
-      <Box mt="5">
-        <LinkItem to={`${url}/menu`} label={t('Cardápio')} />
-        {isManager && <ProtectedLinks />}
-      </Box>
+      {isManager ? (
+        <ProtectedLinks isApproved={isApproved} />
+      ) : (
+        <Box mt="5">
+          {isApproved ? (
+            <LinkItem to={`${url}/orders`} label={t('Gerenciador de pedidos')} />
+          ) : (
+            <DisabledLink label={t('Gerenciador de pedidos')} />
+          )}
+          <LinkItem to={`${url}/menu`} label={t('Cardápio')} />
+        </Box>
+      )}
     </Box>
   );
 };

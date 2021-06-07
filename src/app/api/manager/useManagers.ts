@@ -16,7 +16,6 @@ export const useManagers = (business?: WithId<Business> | null, userRole?: Gener
     console.log('CALLABLE');
     api.manager().getBusinessManagers(business.id, setManagers);
   }, [api, business?.managers, userRole]);
-  console.log('managers', managers);
   // return
   return managers;
 };
