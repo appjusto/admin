@@ -1,4 +1,5 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
+import { useContextAgentProfile } from 'app/state/agent/context';
 import { useContextBusiness } from 'app/state/business/context';
 import React from 'react';
 import { useRouteMatch } from 'react-router-dom';
@@ -47,16 +48,17 @@ const ProtectedLinks = () => {
 
 export const Links = () => {
   // context
+  const { isBackofficeUser } = useContextAgentProfile();
   const { business, userRole } = useContextBusiness();
   const { url } = useRouteMatch();
   // helpers
   const isApproved = business?.situation === 'approved';
-  const isManager = userRole === 'manager';
+  const isManager = userRole === 'manager' || isBackofficeUser;
   // UI
   return (
     <Box>
       <Box>
-        <LinkItem to={`${url}`} label={t('Início')} />
+        {isManager && <LinkItem to={`${url}`} label={t('Início')} />}
         {isApproved ? (
           <LinkItem to={`${url}/orders`} label={t('Gerenciador de pedidos')} />
         ) : (
