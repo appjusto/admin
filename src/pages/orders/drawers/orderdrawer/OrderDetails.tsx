@@ -1,4 +1,5 @@
 import { Box, Table, Tbody, Td, Text, Tfoot, Th, Thead, Tr } from '@chakra-ui/react';
+import * as cpfutils from '@fnando/cpf';
 import { Order, OrderItem, WithId } from 'appjusto-types';
 import React from 'react';
 import { formatCurrency } from 'utils/formatters';
@@ -76,14 +77,17 @@ export const OrderDetails = ({ order }: DetailsProps) => {
         </>
       )}
       <SectionTitle mt="10">{t('Observações')}</SectionTitle>
-      {/*<Text mt="1" fontSize="md">
-        {t('Incluir CPF na nota, CPF: 000.000.000-00')}
-      </Text>*/}
-      {order?.additionalInfo ? (
+      {order?.consumer.cpf && (
+        <Text mt="1" fontSize="md" color="red">
+          {t(`Incluir CPF na nota, CPF: ${cpfutils.format(order.consumer.cpf)}`)}
+        </Text>
+      )}
+      {order?.additionalInfo && (
         <Text mt="1" fontSize="md" color="red">
           {order?.additionalInfo}
         </Text>
-      ) : (
+      )}
+      {!order?.consumer.cpf && !order?.additionalInfo && (
         <Text mt="1" fontSize="md">
           {t('Sem observações.')}
         </Text>
