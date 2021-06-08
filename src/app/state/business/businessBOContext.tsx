@@ -169,17 +169,19 @@ export const BusinessBOProvider = ({ children }: Props) => {
   }, [business, setManagerEmail]);
 
   React.useEffect(() => {
-    dispatch({ type: 'clear_manager' });
-    if (manager) dispatch({ type: 'update_manager', payload: manager });
+    if (manager) dispatch({ type: 'load_manager', payload: manager });
+    else dispatch({ type: 'clear_manager' });
   }, [manager]);
 
   React.useEffect(() => {
     if (bankAccount && bankAccountSet(bankAccount))
-      dispatch({ type: 'update_banking', payload: bankAccount });
+      dispatch({ type: 'load_banking', payload: bankAccount });
+    else dispatch({ type: 'clear_banking' });
   }, [bankAccount]);
 
   React.useEffect(() => {
-    if (business) dispatch({ type: 'update_business', payload: business });
+    if (business) dispatch({ type: 'load_business', payload: business });
+    else dispatch({ type: 'clear_business' });
   }, [business]);
 
   React.useEffect(() => {
