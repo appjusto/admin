@@ -18,7 +18,7 @@ export const TeamTable = () => {
   } = useManagers();
 
   // state
-  const [managers, setManagers] = React.useState<ManagerWithRole[]>([]);
+  const [managers, setManagers] = React.useState<ManagerWithRole[]>();
   const [isLoading, setIsLoading] = React.useState(false);
   const [isSuccess, setIsSuccess] = React.useState(false);
   const [error, setError] = React.useState(initialError);
@@ -36,7 +36,7 @@ export const TeamTable = () => {
     clearStates();
     setIsLoading(true);
     setManagers((prev) =>
-      prev.map((manager) => {
+      prev?.map((manager) => {
         if (manager.email === managerEmail) {
           return { ...manager, role: isManager ? 'manager' : 'collaborator' };
         }
@@ -79,6 +79,15 @@ export const TeamTable = () => {
   }, [removeResult.isError, removeResult.error, createResult.isError, createResult.error]);
 
   // UI
+  if (!managers) {
+    return (
+      <Box mt="8">
+        <Text fontSize="lg" color="black">
+          {t('Carregando colaboradores...')}
+        </Text>
+      </Box>
+    );
+  }
   return (
     <Box mt="8">
       <Text fontSize="lg" color="black">
@@ -94,7 +103,7 @@ export const TeamTable = () => {
           </Tr>
         </Thead>
         <Tbody>
-          {managers && managers.length > 0 ? (
+          {managers.length > 0 ? (
             managers.map((manager) => {
               return (
                 <TeamTableItem
