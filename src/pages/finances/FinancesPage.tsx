@@ -46,8 +46,8 @@ const FinancesPage = () => {
   // context
   // state
   const [dateTime, setDateTime] = React.useState('');
-  const [month, setMonth] = React.useState('');
-  const [periods, setPeriods] = React.useState<Period[]>(fakeState);
+  //const [month, setMonth] = React.useState('');
+  const [periods, setPeriods] = React.useState<Period[]>();
 
   // side effects
   React.useEffect(() => {
@@ -55,12 +55,16 @@ const FinancesPage = () => {
     setDateTime(`${date} às ${time}`);
   }, []);
 
+  React.useEffect(() => {
+    setPeriods(fakeState);
+  }, []);
+
   // UI
   return (
     <>
       <PageHeader title={t('Financeiro')} subtitle={t(`Dados atualizados em ${dateTime}`)} />
       <Box mt="8" maxW="200px">
-        <CustomInput id="month" type="month" value={month} label={t('Mês vigente')} />
+        <CustomInput id="month" type="month" value={'' /*month*/} label={t('Mês vigente')} />
       </Box>
       <Box mt="8">
         <Text fontSize="sm" lineHeight="21px" color="black">

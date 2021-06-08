@@ -29,35 +29,30 @@ export const StatusTab = () => {
   // state
   const [financialIssues, setFinancialIssues] = React.useState<string[]>([]);
 
-  //helpers
-  const marketPlaceIssues = marketPlace?.issues ?? undefined;
-
   // side effects
   React.useEffect(() => {
-    if (marketPlaceIssues) setFinancialIssues(marketPlaceIssues);
-    // if profileIssues, handle it
-  }, [marketPlaceIssues]);
+    if (marketPlace?.issues) setFinancialIssues(marketPlace.issues);
+  }, [marketPlace?.issues]);
 
   // UI
   return (
     <Box>
-      {(business?.situation === 'invalid' || business?.situation === 'rejected') &&
-        financialIssues.length > 0 && (
-          <AlertError
-            title={t(
-              `Problemas identificados na verificação financeira: (${financialIssues.length ?? 0})`
-            )}
-            icon={false}
-            border="2px solid #DC3545"
-            mb="6"
-          >
-            <VStack mt="2" spacing={1} alignItems="flex-start">
-              {financialIssues.map((issue) => (
-                <Text key={issue}>* {t(`${issue}`)}</Text>
-              ))}
-            </VStack>
-          </AlertError>
-        )}
+      {financialIssues.length > 0 && (
+        <AlertError
+          title={t(
+            `Problemas identificados na verificação financeira: (${financialIssues.length ?? 0})`
+          )}
+          icon={false}
+          border="2px solid #DC3545"
+          mb="6"
+        >
+          <VStack mt="2" spacing={1} alignItems="flex-start">
+            {financialIssues.map((issue) => (
+              <Text key={issue}>* {t(`${issue}`)}</Text>
+            ))}
+          </VStack>
+        </AlertError>
+      )}
       <SectionTitle mt="0">{t('Alterar status do restaurante:')}</SectionTitle>
       <RadioGroup
         mt="2"
@@ -70,7 +65,7 @@ export const StatusTab = () => {
         lineHeight="21px"
       >
         <Flex flexDir="column" justifyContent="flex-start">
-          <Radio mt="2" value="approved">
+          <Radio mt="2" value="approved" isDisabled={business?.situation !== 'verified'}>
             {t('Publicado')}
           </Radio>
           <Radio mt="2" value="rejected">

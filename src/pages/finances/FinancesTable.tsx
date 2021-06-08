@@ -6,7 +6,7 @@ import { t } from 'utils/i18n';
 import { Period } from './FinancesPage';
 
 interface FinancesTableProps {
-  periods: Period[];
+  periods?: Period[];
 }
 
 export const FinancesTable = ({ periods }: FinancesTableProps) => {

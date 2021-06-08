@@ -4,7 +4,7 @@ import { useCourierPrivateData } from 'app/api/courier/useCourierPrivateData';
 import { useCourierProfile } from 'app/api/courier/useCourierProfile';
 import { useCourierProfilePictures } from 'app/api/courier/useCourierProfilePictures';
 import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';
-import { CourierProfile, Issue, IssueType, WithId } from 'appjusto-types';
+import { CourierProfile, Issue, IssueType, MarketplaceAccountInfo, WithId } from 'appjusto-types';
 import React, { Dispatch, SetStateAction } from 'react';
 import { useParams } from 'react-router';
 import { courierReducer } from './courierReducer';
@@ -14,7 +14,7 @@ interface CourierProfileContextProps {
   courier: WithId<CourierProfile> | undefined | null;
   pictures: { selfie: string | null; document: string | null };
   issueOptions?: WithId<Issue>[] | null;
-  marketPlaceIssues: string[] | undefined;
+  marketPlace?: MarketplaceAccountInfo;
   contextValidation: Validation;
   handleProfileChange(key: string, value: any): void;
   setContextValidation: Dispatch<SetStateAction<Validation>>;
@@ -40,7 +40,6 @@ export const CourierProvider = ({ children }: Props) => {
   const profile = useCourierProfile(courierId);
   const pictures = useCourierProfilePictures(courierId, '', '');
   const marketPlace = useCourierPrivateData(courierId);
-  const marketPlaceIssues = marketPlace?.issues ?? undefined;
   const issueOptions = useIssuesByType(issueOptionsArray);
 
   // state
@@ -86,7 +85,7 @@ export const CourierProvider = ({ children }: Props) => {
         courier,
         pictures,
         issueOptions,
-        marketPlaceIssues,
+        marketPlace,
         contextValidation,
         handleProfileChange,
         setContextValidation,
