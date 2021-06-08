@@ -170,6 +170,7 @@ export const BusinessBOProvider = ({ children }: Props) => {
 
   React.useEffect(() => {
     if (manager) dispatch({ type: 'load_manager', payload: manager });
+    else dispatch({ type: 'clear_manager' });
   }, [manager]);
 
   React.useEffect(() => {
@@ -180,6 +181,7 @@ export const BusinessBOProvider = ({ children }: Props) => {
 
   React.useEffect(() => {
     if (business) dispatch({ type: 'load_business', payload: business });
+    else dispatch({ type: 'clear_business' });
   }, [business]);
 
   React.useEffect(() => {

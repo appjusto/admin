@@ -9,8 +9,10 @@ export interface businessBOState {
 export type Actions =
   | { type: 'load_business'; payload: WithId<Business> }
   | { type: 'update_business'; payload: Partial<WithId<Business>> }
+  | { type: 'clear_business' }
   | { type: 'load_manager'; payload: WithId<ManagerProfile> }
   | { type: 'update_manager'; payload: Partial<WithId<ManagerProfile>> }
+  | { type: 'clear_manager' }
   | { type: 'load_banking'; payload: WithId<BankAccount> }
   | { type: 'update_banking'; payload: Partial<WithId<BankAccount>> }
   | { type: 'clear_banking' };
@@ -32,6 +34,11 @@ export const businessBOReducer = (state: businessBOState, action: Actions): busi
           ...action.payload,
         },
       };
+    case 'clear_business':
+      return {
+        ...state,
+        businessProfile: {} as WithId<Business>,
+      };
     case 'load_manager':
       return {
         ...state,
@@ -46,6 +53,11 @@ export const businessBOReducer = (state: businessBOState, action: Actions): busi
           ...state.manager,
           ...action.payload,
         },
+      };
+    case 'clear_manager':
+      return {
+        ...state,
+        manager: {} as WithId<ManagerProfile>,
       };
     case 'load_banking':
       return {
