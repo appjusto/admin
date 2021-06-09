@@ -56,7 +56,7 @@ export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
       return setError({
         status: true,
         error: null,
-        message: { title: 'O CPF informado não é válido.' },
+        message: { title: 'O CPF não foi informado ou não é válido.' },
       });
     }
     const newState = {} as ConsumerProfile;
@@ -147,7 +147,7 @@ export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
               <SuccessAndErrorHandler
                 submission={submission.current}
                 isSuccess={isSuccess}
-                isError={isError}
+                isError={error.status}
                 error={error.error}
                 errorMessage={error.message}
               />
