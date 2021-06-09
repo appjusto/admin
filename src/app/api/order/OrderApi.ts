@@ -3,6 +3,7 @@ import {
   //FoodOrderStatus,
   Issue,
   Order,
+  OrderCancellation,
   OrderChange,
   OrderIssue,
   OrderStatus,
@@ -14,7 +15,7 @@ import FirebaseRefs from '../FirebaseRefs';
 
 export type CancellationData = {
   issue: WithId<Issue>;
-  canceledBy: { id: string; name: string };
+  canceledById: string;
   comment?: string;
 };
 
@@ -194,14 +195,8 @@ export default class OrderApi {
   }
 
   async cancelOrder(orderId: string, cancellationData: CancellationData) {
-    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
-    await this.refs.getOrderRef(orderId).update({
-      status: 'canceled',
-      cancellation: {
-        ...cancellationData,
-        timestamp,
-      },
-      updatedOn: timestamp,
-    });
+    //const { canceledById, issue, comment } = cancellationData;
+    // get callable function ref and send data to bakcend
+    console.log('cancellation', orderId, cancellationData);
   }
 }

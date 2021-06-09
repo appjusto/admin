@@ -17,9 +17,6 @@ import {
   removeOrderAck,
 } from './utils';
 
-// maybe TODO: show notification only if page is hidden  https://developer.mozilla.org/en-US/docs/Web/API/Page_Visibility_API
-// maybe TODO: update document title until tab is focused
-
 const key = 'confirmed';
 
 const statuses: OrderStatus[] = ['confirmed'];
@@ -36,6 +33,7 @@ export const useObserveConfirmedOrders = (businessId?: string, notify: boolean =
 
   React.useEffect(() => {
     if (confirmedOrders.length === 0) return;
+    playSound();
     const SoundInterval = setInterval(() => {
       playSound();
       setVolume((prev) => (prev <= 6 ? prev + 1 : prev));

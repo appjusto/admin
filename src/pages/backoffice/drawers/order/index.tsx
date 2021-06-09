@@ -60,10 +60,7 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
       }
       const cancellationData = {
         issue,
-        canceledBy: {
-          id: agent?.id,
-          name: agent?.name,
-        },
+        canceledById: agent?.id,
         comment: message,
       } as CancellationData;
       await cancelOrder(cancellationData);

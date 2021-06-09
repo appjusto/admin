@@ -58,10 +58,7 @@ export const OrderDrawer = (props: Props) => {
       });
     }
     const cancellationData = {
-      canceledBy: {
-        id: manager?.id,
-        name: manager?.name,
-      },
+      canceledById: manager?.id,
       issue,
     } as CancellationData;
     await cancelOrder(cancellationData);

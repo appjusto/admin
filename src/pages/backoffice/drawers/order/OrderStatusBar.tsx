@@ -60,7 +60,7 @@ export const OrderStatusBar = ({
           <Radio mt="2" value="delivered">
             {t('Entregue')}
           </Radio>
-          <Radio mt="2" value="canceled">
+          <Radio mt="2" value="canceled" isDisabled>
             {t('Cancelado')}
           </Radio>
         </Flex>
