@@ -18,6 +18,7 @@ import React from 'react';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { useOrdersContext } from '../context';
+import { OrderAcceptButton } from './OrderAcceptButton';
 
 interface BaseDrawerProps {
   order?: WithId<Order> | null;
@@ -149,16 +150,22 @@ export const OrderBaseDrawer = ({
                       </Text>
                     </Box>
                   )}
-                  <Button
-                    isDisabled={!PrimaryButtonAble}
-                    type="submit"
-                    width="full"
-                    maxW="200px"
-                    onClick={PrimaryButtonFunction}
-                    fontSize={order?.status === 'confirmed' ? '20px' : '15px'}
-                  >
-                    {t(PrimaryButtonLabel)}
-                  </Button>
+                  {order?.status === 'confirmed' ? (
+                    <OrderAcceptButton key={Math.random()} onClick={PrimaryButtonFunction}>
+                      {t('CONFIRMAR')}
+                    </OrderAcceptButton>
+                  ) : (
+                    <Button
+                      isDisabled={!PrimaryButtonAble}
+                      type="submit"
+                      width="full"
+                      maxW="200px"
+                      onClick={PrimaryButtonFunction}
+                      //fontSize={order?.status === 'confirmed' ? '20px' : '15px'}
+                    >
+                      {t(PrimaryButtonLabel)}
+                    </Button>
+                  )}
                 </Flex>
               </Flex>
             </DrawerFooter>
