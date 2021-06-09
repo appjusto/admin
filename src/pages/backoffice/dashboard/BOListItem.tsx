@@ -4,7 +4,8 @@ import foodIcon from 'common/img/bo-food.svg';
 import p2pIcon from 'common/img/bo-p2p.svg';
 import React from 'react';
 import { Link as RouterLink, useRouteMatch } from 'react-router-dom';
-import { getDateAndHour, getOrderTotalPriceToDisplay } from 'utils/functions';
+import { formatCurrency } from 'utils/formatters';
+import { getDateAndHour } from 'utils/functions';
 
 interface CustomLinkProps {
   to: string;
@@ -71,10 +72,10 @@ export const BOListItem = ({ data, listType }: Props) => {
             <Image src={order?.type === 'food' ? foodIcon : p2pIcon} w="24px" h="24px" />
           </Box>
           <Text fontSize="sm" lineHeight="21px" color="black">
-            {order?.code}
+            #{order?.code}
           </Text>
           <Text fontSize="sm" lineHeight="21px" color="black">
-            {getOrderTotalPriceToDisplay(order?.items || [])}
+            {formatCurrency(order?.fare?.total ?? 0)}
           </Text>
           <Text fontSize="sm" lineHeight="21px">
             {order?.createdOn && getDateAndHour(order?.createdOn as firebase.firestore.Timestamp)}
