@@ -123,7 +123,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
             <CodeLink url={url} orderId={order.id} code={order.code} />
           </Box>
           <Flex flexDir="column" color="gray.700" fontSize="xs" alignItems="flex-end">
-            <Text fontWeight="700">{t('Cancelado por')}</Text>
+            <Text fontWeight="700">{t('Cancelado')}</Text>
             {/* <Text fontWeight="500">{cancelator}</Text> */}
           </Flex>
         </Flex>
