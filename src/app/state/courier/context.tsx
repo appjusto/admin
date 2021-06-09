@@ -60,10 +60,8 @@ export const CourierProvider = ({ children }: Props) => {
   React.useEffect(() => {
     if (profile) {
       dispatch({
-        type: 'update_state',
-        payload: {
-          ...profile,
-        },
+        type: 'load_state',
+        payload: profile,
       });
     }
   }, [profile]);

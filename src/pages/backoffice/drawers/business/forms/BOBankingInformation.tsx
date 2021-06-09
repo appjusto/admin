@@ -128,8 +128,8 @@ const BOBankingInformation = () => {
       {selectedBank?.warning && (
         <AlertWarning icon={false}>
           {bankWarning.length > 1 &&
-            bankWarning.map((item) => {
-              return <Text>{item}</Text>;
+            bankWarning.map((item, index) => {
+              return <Text key={`${item}-${index}`}>{item}</Text>;
             })}
         </AlertWarning>
       )}

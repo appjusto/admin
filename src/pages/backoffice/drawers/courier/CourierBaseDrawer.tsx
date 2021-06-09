@@ -60,7 +60,7 @@ export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDr
       return setError({
         status: true,
         error: null,
-        message: { title: 'O CPF informado não é válido.' },
+        message: { title: 'O CPF não foi informado ou não é válido.' },
       });
     if (!contextValidation.cnpj)
       return setError({
@@ -189,7 +189,7 @@ export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDr
               <SuccessAndErrorHandler
                 submission={submission.current}
                 isSuccess={isSuccess}
-                isError={isError}
+                isError={error.status}
                 error={error.error}
                 errorMessage={error.message}
               />
