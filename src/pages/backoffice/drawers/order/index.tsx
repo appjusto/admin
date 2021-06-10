@@ -9,6 +9,7 @@ import { OrderDetails } from 'pages/orders/drawers/orderdrawer/OrderDetails';
 import { OrderIssuesTable } from 'pages/orders/drawers/orderdrawer/OrderIssuesTable';
 import React from 'react';
 import { Route, Switch, useParams, useRouteMatch } from 'react-router-dom';
+import { Matching } from './Matching';
 import { OrderBaseDrawer } from './OrderBaseDrawer';
 import { OrderStatusBar } from './OrderStatusBar';
 import { Participants } from './Participants';
@@ -111,6 +112,9 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
               <OrderDetails order={order} />
               <OrderIssuesTable issues={orderIssues} />
             </>
+          </Route>
+          <Route exact path={`${path}/matching`}>
+            <Matching orderId={orderId} />
           </Route>
           <Route exact path={`${path}/status`}>
             <OrderStatusBar

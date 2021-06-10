@@ -91,6 +91,7 @@ export const OrderBaseDrawer = ({
             >
               <DrawerLink to={`${url}`} label={t('Participantes')} />
               <DrawerLink to={`${url}/order`} label={t('Pedido')} />
+              <DrawerLink to={`${url}/matching`} label={t('Matching')} />
               <DrawerLink to={`${url}/status`} label={t('Status')} />
             </Flex>
             {children}
