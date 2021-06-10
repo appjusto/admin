@@ -1,9 +1,7 @@
 import { Box, Button, HStack, Icon, Image, Link, Spinner, Text, VStack } from '@chakra-ui/react';
-import { useObserveProducts } from 'app/api/business/products/useObserveProducts';
-import { useBusinessBankAccount } from 'app/api/business/profile/useBusinessBankAccount';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
+import { useBusinessProfileValidation } from 'app/api/business/profile/useBusinessProfileValidation';
 import { useContextBusiness } from 'app/state/business/context';
-import { useContextManagerProfile } from 'app/state/manager/context';
 import { AlertError } from 'common/components/AlertError';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
 import { initialError } from 'common/components/error/utils';
@@ -64,12 +62,11 @@ const initialState = [
 
 export const RegistrationStatus = () => {
   // context
-  const { manager } = useContextManagerProfile();
   const { business } = useContextBusiness();
-  const products = useObserveProducts(business?.id);
-  const { bankAccount } = useBusinessBankAccount();
   const { updateBusinessProfile, updateResult } = useBusinessProfile();
   const { isLoading, isError, error: updateError } = updateResult;
+
+  const businessProfileValidation = useBusinessProfileValidation();
 
   // state
   const [isFetching, setIsFetching] = React.useState(true);
@@ -96,47 +93,29 @@ export const RegistrationStatus = () => {
 
   // side effects
   React.useEffect(() => {
-    if (business) {
-      const isManagerInfosOk = manager?.phone && manager.cpf ? true : false;
-      const isBankingInfosOk =
-        bankAccount?.type && bankAccount?.name && bankAccount?.account && bankAccount.agency
-          ? true
-          : false;
-      const isBusinessInfosOk =
-        business?.name && business?.description && business?.cnpj && business.phone ? true : false;
-      const isAddressInfosOk =
-        business?.businessAddress?.address &&
-        business?.businessAddress?.cep &&
-        business?.businessAddress?.city &&
-        business?.businessAddress?.state
-          ? true
-          : false;
-      const isMenuOk = products?.length > 0;
-      const isSchedulesOk = business?.schedules ? true : false;
-      setValidation((prevState) => {
-        const newState = prevState.map((data) => {
-          if (data.type === 'manager') {
-            const status = isManagerInfosOk && isBankingInfosOk;
-            return { ...data, status };
-          } else if (data.type === 'business') {
-            const status = isBusinessInfosOk;
-            return { ...data, status };
-          } else if (data.type === 'address') {
-            const status = isAddressInfosOk;
-            return { ...data, status };
-          } else if (data.type === 'menu') {
-            const status = isMenuOk;
-            return { ...data, status };
-          } else {
-            const status = isSchedulesOk;
-            return { ...data, status };
-          }
-        });
-        return newState;
+    setValidation((prevState) => {
+      const newState = prevState.map((data) => {
+        if (data.type === 'manager') {
+          const status = businessProfileValidation.managerProfile;
+          return { ...data, status };
+        } else if (data.type === 'business') {
+          const status = businessProfileValidation.businessProfile;
+          return { ...data, status };
+        } else if (data.type === 'address') {
+          const status = businessProfileValidation.businessAddress;
+          return { ...data, status };
+        } else if (data.type === 'menu') {
+          const status = businessProfileValidation.businessMenu;
+          return { ...data, status };
+        } else {
+          const status = businessProfileValidation.businessSchedules;
+          return { ...data, status };
+        }
       });
-      setIsFetching(false);
-    }
-  }, [manager, business, bankAccount, products]);
+      return newState;
+    });
+    setIsFetching(false);
+  }, [businessProfileValidation]);
 
   React.useEffect(() => {
     if (business?.situation === 'rejected') {

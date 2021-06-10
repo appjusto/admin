@@ -68,7 +68,7 @@ export const CookingTime = ({ orderId, cookingTime, averageCookingTime }: Cookin
       setRadiosValue(timeInMinutes);
       setOrderCookingTime(orderId, averageCookingTime);
     }
-  }, [cookingTime, averageCookingTime]);
+  }, [cookingTime, averageCookingTime, orderId, setOrderCookingTime]);
 
   //UI
   return (

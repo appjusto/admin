@@ -4,6 +4,7 @@ import { useContextBusiness } from 'app/state/business/context';
 import { Business } from 'appjusto-types';
 import React from 'react';
 import { useMutation, useQueryCache, useQuery } from 'react-query';
+import * as Sentry from '@sentry/react';
 
 export const useBusinessProfile = () => {
   // context
@@ -43,6 +44,14 @@ export const useBusinessProfile = () => {
     return api.business().uploadBusinessCover(businessId!, files);
   });
 
+  const sendBusinessKeepAlive = React.useCallback(() => {
+    try {
+      api.business().sendBusinessKeepAlive(businessId!);
+    } catch (error) {
+      Sentry.captureException('sendBusinessKeepAliveError', error);
+    }
+  }, [api, businessId]);
+
   const { isSuccess: uploadSuccess } = uploadLogoResult;
   React.useEffect(() => {
     if (uploadSuccess) queryCache.invalidateQueries(['business:logo', businessId]);
@@ -62,5 +71,6 @@ export const useBusinessProfile = () => {
     uploadLogoResult,
     uploadCover,
     uploadCoverResult,
+    sendBusinessKeepAlive,
   };
 };

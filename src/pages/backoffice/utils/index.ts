@@ -10,7 +10,7 @@ export const situationPTOptions = {
 };
 
 export const modePTOptions = {
-  motocycle: 'Moto',
+  motorcycle: 'Moto',
   bicycling: 'Bicicleta',
   scooter: 'Scooter',
   car: 'Carro',

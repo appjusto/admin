@@ -49,7 +49,7 @@ export const getDateAndHour = (timestamp: firebase.firestore.Timestamp) => {
     return `${date} ${hour}`;
   } catch (error) {
     console.log(error);
-    return 'Erro';
+    return 'N/E';
   }
 };
 
@@ -136,7 +136,8 @@ const getProductTotalPrice = (price: number, complements: OrderItemComplement[] 
   }
   return price + complementsPrice;
 };
-const getOrderTotalPrice = (items: OrderItem[]) => {
+
+export const getOrderTotalPrice = (items: OrderItem[]) => {
   let total = 0;
   items.map((item: OrderItem) => {
     let priceByquantity = item.quantity * item.product.price;

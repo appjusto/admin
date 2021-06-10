@@ -1,6 +1,5 @@
 import { useContextApi } from 'app/state/api/context';
 import { ChatMessage } from 'appjusto-types';
-import React from 'react';
 import { useMutation } from 'react-query';
 
 export const useUpdateChatMessage = () => {

@@ -4,6 +4,7 @@ import {
   Category,
   ChatMessage,
   CreateBusinessProfilePayload,
+  MarketplaceAccountInfo,
   Product,
   WithId,
 } from 'appjusto-types';
@@ -13,14 +14,6 @@ import { documentAs, documentsAs } from '../../../core/fb';
 import FilesApi from '../FilesApi';
 import FirebaseRefs from '../FirebaseRefs';
 import { BusinessChatMessage } from './chat/useBusinessChats';
-
-//export const ActiveBusinessesValues = ['approved'];
-//export const InactiveBusinessesValues = ['pending', 'submitted', 'rejected', 'blocked'];
-
-//export type ObserveBusinessesOptions = {
-//  active?: boolean;
-//  inactive?: boolean;
-//};
 
 export default class BusinessApi {
   constructor(private refs: FirebaseRefs, private files: FilesApi) {}
@@ -76,11 +69,10 @@ export default class BusinessApi {
       .onSnapshot(
         (querySnapshot) => {
           //@ts-ignore
-          resultHandler((prev: WithId<BusinessChatMessage>[]) => {
+          resultHandler(() => {
             const doc = documentsAs<ChatMessage>(querySnapshot.docs);
             const messages = doc.map((msg) => ({ orderId, ...msg }));
-            const prevDiff = prev.filter((msg) => !messages.includes(msg));
-            return [...prevDiff, ...messages];
+            return [...messages];
           });
         },
         (error) => {
@@ -103,11 +95,10 @@ export default class BusinessApi {
       .onSnapshot(
         (querySnapshot) => {
           //@ts-ignore
-          resultHandler((prev: WithId<BusinessChatMessage>[]) => {
+          resultHandler(() => {
             const doc = documentsAs<ChatMessage>(querySnapshot.docs);
             const messages = doc.map((msg) => ({ orderId, ...msg }));
-            const prevDiff = prev.filter((msg) => !messages.includes(msg));
-            return [...prevDiff, ...messages];
+            return [...messages];
           });
         },
         (error) => {
@@ -145,13 +136,31 @@ export default class BusinessApi {
     return result;
   }
 
+  async removeBusinessManager(business: WithId<Business>, managerEmail: string) {
+    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+    const managers = business.managers?.filter((email) => email !== managerEmail);
+    const fullChanges = {
+      managers,
+      updatedOn: timestamp,
+    };
+    const result = await this.refs.getBusinessRef(business.id).set(fullChanges, { merge: true });
+    return result;
+  }
+
+  async sendBusinessKeepAlive(businessId: string) {
+    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+    return await this.refs
+      .getBusinessRef(businessId)
+      .set({ keepAlive: timestamp }, { merge: true });
+  }
+
   async deleteBusinessProfile(businessId: string) {
     return await this.refs.getBusinessRef(businessId).delete();
   }
 
-  async getBusinessPlatformData(businessId: string) {
-    const platform = (await this.refs.getBusinessPlatformRef(businessId).get()).data();
-    return platform;
+  async getBusinessMarketPlaceData(businessId: string) {
+    const marketplace = (await this.refs.getBusinessMarketPlaceRef(businessId).get()).data();
+    return marketplace as MarketplaceAccountInfo;
   }
 
   // managers

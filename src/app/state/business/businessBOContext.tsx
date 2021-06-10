@@ -113,7 +113,12 @@ export const BusinessBOProvider = ({ children }: Props) => {
 
   // handlers
   const handleBusinessStatusChange = React.useCallback((key: string, value: any) => {
-    dispatch({ type: 'update_business', payload: { [key]: value } });
+    if (key === 'situation' && value === 'blocked') {
+      dispatch({
+        type: 'update_business',
+        payload: { situation: 'blocked', enabled: false, status: 'closed' },
+      });
+    } else dispatch({ type: 'update_business', payload: { [key]: value } });
   }, []);
 
   const handleManagerProfileChange = (key: string, value: any) => {

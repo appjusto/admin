@@ -8,6 +8,7 @@ import DeliveryArea from 'pages/delivery-area/DeliveryArea';
 import FinancesPage from 'pages/finances/FinancesPage';
 import ManagerProfilePage from 'pages/manager-profile/ManagerProfilePage';
 import Menu from 'pages/menu/Menu';
+import { OrdersContextProvider } from 'pages/orders/context';
 import OrdersHistoryPage from 'pages/orders/history/OrdersHistoryPage';
 import OrdersPage from 'pages/orders/OrdersPage';
 import PageLayout from 'pages/PageLayout';
@@ -33,7 +34,7 @@ const Home = () => {
   }
   if (business?.onboarding === 'completed' || isBackofficeUser) {
     return (
-      <>
+      <OrdersContextProvider>
         {isBackofficeUser && <AgentPersonificationBar />}
         <Switch>
           <Route path={`${path}/orders`} component={OrdersPage} />
@@ -50,7 +51,7 @@ const Home = () => {
             <Route path={`${path}/team`} component={TeamPage} />
           </PageLayout>
         </Switch>
-      </>
+      </OrdersContextProvider>
     );
   }
   return <Loading />;

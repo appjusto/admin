@@ -28,7 +28,7 @@ export const CustomToast = ({ type, message }: CustomToastProps) => {
         <WarningIcon />
         <Box>
           <Text>{message.title}</Text>
-          {message?.description && <Text>{message.description}</Text>}
+          {message?.description && <Text fontSize="xs">{message.description}</Text>}
         </Box>
       </HStack>
     </Box>

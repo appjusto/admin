@@ -71,7 +71,12 @@ export const Cancelation = ({ handleConfirm, handleKeep }: CancelationProps) => 
         <Button w="100%" mr="2" onClick={handleKeep}>
           {t('Manter pedido')}
         </Button>
-        <Button w="100%" isDisabled={optionsError.status} variant="danger" onClick={handleCancel}>
+        <Button
+          w="100%"
+          isDisabled={true /*optionsError.status*/}
+          variant="danger"
+          onClick={handleCancel}
+        >
           {t('Cancelar pedido')}
         </Button>
       </Flex>

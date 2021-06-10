@@ -1,114 +1,93 @@
-import {
-  Box,
-  Button,
-  HStack,
-  Switch,
-  Table,
-  Tbody,
-  Td,
-  Text,
-  Th,
-  Thead,
-  Tr,
-} from '@chakra-ui/react';
-import { WithId } from 'appjusto-types';
+import { Box, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
+import { ManagerWithRole } from 'app/api/manager/types';
+import { useManagers } from 'app/api/manager/useManagers';
+import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
+import { initialError } from 'common/components/error/utils';
 import React from 'react';
-import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
+import { TeamTableItem } from './TeamTableItem';
 
-interface TeamMember {
-  email: string;
-  isManager: boolean;
-  createdOn: firebase.firestore.Timestamp;
-}
-
-interface TeamTableProps {
-  members: WithId<TeamMember>[];
-}
-
-interface TeamTableItemProps {
-  member: WithId<TeamMember>;
-  updateMember(memberId: string, isManager: boolean): void;
-  deleteMember(memberId: string): void;
-}
-
-const TeamTableItem = ({ member, updateMember, deleteMember }: TeamTableItemProps) => {
-  // state
-  const [isDeleting, setIsDeleting] = React.useState(false);
-  // handlers
-
-  // UI
-  return (
-    <Tr
-      key={member.email}
-      color="black"
-      fontSize="sm"
-      h="66px"
-      bg={isDeleting ? 'rgba(254, 215, 215, 0.3)' : 'none'}
-    >
-      <Td>{member.email}</Td>
-      {isDeleting ? (
-        <>
-          <Td>{t('Confirmar exclusão?')}</Td>
-          <Td position="relative">
-            <Box position="absolute" top="4">
-              <HStack spacing={4}>
-                <Button w="150px" size="sm" onClick={() => setIsDeleting(false)}>
-                  {t('Manter')}
-                </Button>
-                <Button
-                  w="150px"
-                  size="sm"
-                  variant="danger"
-                  onClick={() => deleteMember(member.id)}
-                >
-                  {t('Excluir')}
-                </Button>
-              </HStack>
-            </Box>
-          </Td>
-          <Td></Td>
-        </>
-      ) : (
-        <>
-          <Td textAlign="center">
-            <Switch
-              isChecked={member.isManager}
-              onChange={(ev) => {
-                ev.stopPropagation();
-                updateMember(member.id, ev.target.checked);
-              }}
-            />
-          </Td>
-          <Td>{getDateAndHour(member.createdOn as firebase.firestore.Timestamp)}</Td>
-          <Td>
-            <Button size="sm" variant="dangerLight" onClick={() => setIsDeleting(true)}>
-              {t('Excluir colaborador')}
-            </Button>
-          </Td>
-        </>
-      )}
-    </Tr>
-  );
-};
-
-export const TeamTable = ({ members }: TeamTableProps) => {
+export const TeamTable = () => {
   // context
+  const {
+    managers: businessManagers,
+    removeBusinessManager,
+    removeResult,
+    createManager,
+    createResult,
+  } = useManagers();
 
   // state
+  const [managers, setManagers] = React.useState<ManagerWithRole[]>();
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [isSuccess, setIsSuccess] = React.useState(false);
+  const [error, setError] = React.useState(initialError);
+
+  // refs
+  const submission = React.useRef(0);
 
   // handlers
-  const updateMember = (memberId: string, isManager: boolean) => {
-    console.log('update', memberId, isManager);
+  const clearStates = () => {
+    setIsSuccess(false);
+    setError(initialError);
+  };
+  const updateMember = async (managerEmail: string, isManager: boolean) => {
+    submission.current += 1;
+    clearStates();
+    setIsLoading(true);
+    setManagers((prev) =>
+      prev?.map((manager) => {
+        if (manager.email === managerEmail) {
+          return { ...manager, role: isManager ? 'manager' : 'collaborator' };
+        }
+        return manager;
+      })
+    );
+    await createManager({ email: managerEmail, role: isManager ? 'manager' : 'collaborator' });
+    setIsLoading(false);
   };
 
-  const deleteMember = (memberId: string) => {
-    console.log('delete', memberId);
+  const deleteMember = async (managerEmail: string) => {
+    submission.current += 1;
+    clearStates();
+    setIsLoading(true);
+    await removeBusinessManager(managerEmail);
+    setIsLoading(false);
   };
 
   // side effects
+  React.useEffect(() => {
+    if (!businessManagers) return;
+    setManagers(businessManagers);
+  }, [businessManagers]);
+
+  React.useEffect(() => {
+    if (removeResult.isSuccess || createResult.isSuccess) setIsSuccess(true);
+  }, [removeResult.isSuccess, createResult.isSuccess]);
+
+  React.useEffect(() => {
+    if (removeResult.isError)
+      setError({
+        status: true,
+        error: removeResult.error,
+      });
+    else if (createResult.isError)
+      setError({
+        status: true,
+        error: createResult.error,
+      });
+  }, [removeResult.isError, removeResult.error, createResult.isError, createResult.error]);
 
   // UI
+  if (!managers) {
+    return (
+      <Box mt="8">
+        <Text fontSize="lg" color="black">
+          {t('Carregando colaboradores...')}
+        </Text>
+      </Box>
+    );
+  }
   return (
     <Box mt="8">
       <Text fontSize="lg" color="black">
@@ -124,14 +103,15 @@ export const TeamTable = ({ members }: TeamTableProps) => {
           </Tr>
         </Thead>
         <Tbody>
-          {members && members.length > 0 ? (
-            members.map((member) => {
+          {managers.length > 0 ? (
+            managers.map((manager) => {
               return (
                 <TeamTableItem
-                  key={member.id}
-                  member={member}
+                  key={manager.uid}
+                  manager={manager}
                   updateMember={updateMember}
                   deleteMember={deleteMember}
+                  isLoading={isLoading}
                 />
               );
             })
@@ -145,6 +125,12 @@ export const TeamTable = ({ members }: TeamTableProps) => {
           )}
         </Tbody>
       </Table>
+      <SuccessAndErrorHandler
+        submission={submission.current}
+        isSuccess={isSuccess}
+        isError={error.status}
+        error={error.error}
+      />
     </Box>
   );
 };

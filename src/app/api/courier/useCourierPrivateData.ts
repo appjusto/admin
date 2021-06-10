@@ -1,20 +1,20 @@
 import { useContextApi } from 'app/state/api/context';
-import { CourierPrivatePlatform } from 'appjusto-types';
+import { MarketplaceAccountInfo } from 'appjusto-types';
 import React from 'react';
 
 export const useCourierPrivateData = (courierId: string) => {
   // context
   const api = useContextApi();
   // state
-  const [plaform, setPlatform] = React.useState<CourierPrivatePlatform>({});
+  const [marketplace, setMarketplace] = React.useState<MarketplaceAccountInfo>();
   // side effects
   React.useEffect(() => {
     const getPlatformData = async () => {
-      const data = await api.courier().getCourierPlatformData(courierId);
-      if (data) setPlatform(data);
+      const data = await api.courier().getCourierMarketPlaceData(courierId);
+      if (data) setMarketplace(data);
     };
     getPlatformData();
   }, [api, courierId]);
   // return
-  return plaform;
+  return marketplace;
 };

@@ -11,7 +11,38 @@ interface Props {
   details?: string;
 }
 
+interface SortedOrder extends Order {
+  confirmedAt?: number;
+}
+
 export const BOList = ({ title, data, listType, details }: Props) => {
+  // state
+  const [sortedOrders, setSortedOrders] = React.useState<WithId<SortedOrder>[]>([]);
+
+  // handlers
+  const updateSortedOrders = React.useCallback((orderId: string, confirmedAt: number) => {
+    setSortedOrders((prev) => {
+      let newState = [...prev];
+      const orderIndex = newState.findIndex((order) => order.id === orderId);
+      newState[orderIndex].confirmedAt = confirmedAt;
+      return newState;
+    });
+  }, []);
+
+  const sortOrders = (orders: WithId<SortedOrder>[]) => {
+    return orders.sort((a, b) => {
+      if (!a.confirmedAt) return -1;
+      if (!b.confirmedAt) return 1;
+      return a.confirmedAt - b.confirmedAt;
+    });
+  };
+
+  // side effects
+  React.useEffect(() => {
+    if (listType === 'orders') setSortedOrders(data as WithId<SortedOrder>[]);
+  }, [data]);
+
+  // UI
   return (
     <Flex
       w="100%"
@@ -58,8 +89,13 @@ export const BOList = ({ title, data, listType, details }: Props) => {
               ? (data as WithId<Business>[]).map((item) => (
                   <BOListItem key={item.id} data={item} listType={listType} />
                 ))
-              : (data as WithId<Order>[]).map((item) => (
-                  <BOListItem key={item.id} data={item} listType={listType} />
+              : sortOrders(sortedOrders).map((item) => (
+                  <BOListItem
+                    key={item.id}
+                    data={item}
+                    listType={listType}
+                    sortHandler={updateSortedOrders}
+                  />
                 ))}
           </VStack>
         )}

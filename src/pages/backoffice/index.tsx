@@ -17,13 +17,13 @@ const BackOffice = () => {
   return (
     <PageLayout maxW="1024px">
       <Switch>
-        <BOAccessRoute exact path={path} component={BODashboard} />
         <BOAccessRoute path={`${path}/orders`} component={OrdersPage} />
         <BOAccessRoute path={`${path}/couriers`} component={CouriersPage} />
         <BOAccessRoute path={`${path}/businesses`} component={BusinessesPage} />
         <BOAccessRoute path={`${path}/consumers`} component={ConsumersPage} />
         <BOAccessRoute path={`${path}/agents`} component={AgentsPage} />
         <BOAccessRoute path={`${path}/agent-profile`} component={AgentProfile} />
+        <BOAccessRoute path={path} component={BODashboard} />
       </Switch>
     </PageLayout>
   );

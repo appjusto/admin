@@ -3,6 +3,8 @@ import {
   //FoodOrderStatus,
   Issue,
   Order,
+  OrderCancellation,
+  OrderChange,
   OrderIssue,
   OrderStatus,
   WithId,
@@ -13,24 +15,9 @@ import FirebaseRefs from '../FirebaseRefs';
 
 export type CancellationData = {
   issue: WithId<Issue>;
-  canceledBy: { id: string; name: string };
+  canceledById: string;
   comment?: string;
 };
-
-//export const ActiveFoodOrdersValues: FoodOrderStatus[] = [
-//  'confirmed',
-//  'preparing',
-//  'ready',
-//  'dispatching',
-//  'canceled',
-//];
-//export const InactiveFoodOrdersValues: FoodOrderStatus[] = ['quote', 'confirming', 'delivered'];
-//export const FoodOrdersValues = [...ActiveFoodOrdersValues, ...InactiveFoodOrdersValues];
-
-//export type ObserveOrdersOptions = {
-//  active?: boolean;
-//  inactive?: boolean;
-//};
 
 export default class OrderApi {
   constructor(private refs: FirebaseRefs) {}
@@ -41,23 +28,45 @@ export default class OrderApi {
     resultHandler: (orders: WithId<Order>[]) => void,
     businessId?: string
   ): firebase.Unsubscribe {
-    const timeLimit = new Date().getTime() - 86400000;
-    const start_time = firebase.firestore.Timestamp.fromDate(new Date(timeLimit));
-
     let query = this.refs
       .getOrdersRef()
       .orderBy('createdOn', 'desc')
-      .where('createdOn', '>=', start_time)
       .where('status', 'in', statuses);
 
     if (businessId) {
       query = this.refs
         .getOrdersRef()
         .orderBy('createdOn', 'desc')
-        .where('createdOn', '>=', start_time)
+
         .where('business.id', '==', businessId)
         .where('status', 'in', statuses);
     }
+    const unsubscribe = query.onSnapshot(
+      (querySnapshot) => {
+        resultHandler(documentsAs<Order>(querySnapshot.docs));
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+    // returns the unsubscribe function
+    return unsubscribe;
+  }
+
+  observeBusinessCanceledOrders(
+    resultHandler: (orders: WithId<Order>[]) => void,
+    businessId: string
+  ): firebase.Unsubscribe {
+    const timeLimit = new Date().getTime() - 86400000;
+    const start_time = firebase.firestore.Timestamp.fromDate(new Date(timeLimit));
+
+    let query = this.refs
+      .getOrdersRef()
+      .orderBy('updatedOn', 'desc')
+      .where('updatedOn', '>=', start_time)
+      .where('business.id', '==', businessId)
+      .where('status', '==', 'canceled');
+
     const unsubscribe = query.onSnapshot(
       (querySnapshot) => {
         resultHandler(documentsAs<Order>(querySnapshot.docs));
@@ -86,26 +95,6 @@ export default class OrderApi {
     // returns the unsubscribe function
     return unsubscribe;
   }
-
-  // observe order's chat
-  /*observeOrderChat(
-    orderId: string,
-    resultHandler: (orders: WithId<ChatMessage>[]) => void
-  ): firebase.Unsubscribe {
-    const unsubscribe = this.refs
-      .getOrderChatRef(orderId)
-      .orderBy('timestamp', 'asc')
-      .onSnapshot(
-        (querySnapshot) => {
-          resultHandler(documentsAs<ChatMessage>(querySnapshot.docs));
-        },
-        (error) => {
-          console.error(error);
-        }
-      );
-    // returns the unsubscribe function
-    return unsubscribe;
-  }*/
 
   observeOrderChat(
     orderId: string,
@@ -145,6 +134,21 @@ export default class OrderApi {
     );
     // returns the unsubscribe function
     return unsubscribe;
+  }
+
+  async getOrderStatusTimestamp(
+    orderId: string,
+    status: OrderStatus,
+    resultHandler: (timestamp: firebase.firestore.Timestamp | null) => void
+  ) {
+    const query = this.refs
+      .getOrderLogsRef(orderId)
+      .where('after.status', '==', status)
+      .orderBy('timestamp', 'desc')
+      .limit(1);
+    const result = await query.get();
+    const log = documentsAs<OrderChange>(result.docs).find(() => true);
+    return resultHandler((log?.timestamp as firebase.firestore.Timestamp) ?? null);
   }
 
   async getOrderIssues(orderId: string) {
@@ -191,14 +195,8 @@ export default class OrderApi {
   }
 
   async cancelOrder(orderId: string, cancellationData: CancellationData) {
-    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
-    await this.refs.getOrderRef(orderId).update({
-      status: 'canceled',
-      cancellation: {
-        ...cancellationData,
-        timestamp,
-      },
-      updatedOn: timestamp,
-    });
+    //const { canceledById, issue, comment } = cancellationData;
+    // get callable function ref and send data to bakcend
+    console.log('cancellation', orderId, cancellationData);
   }
 }

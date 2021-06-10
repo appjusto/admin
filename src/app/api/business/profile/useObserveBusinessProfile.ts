@@ -5,10 +5,8 @@ import React from 'react';
 export const useObserveBusinessProfile = (businessId: string | undefined | null) => {
   // contex
   const api = useContextApi();
-
   // state
   const [business, setBusiness] = React.useState<WithId<Business> | undefined | null>();
-
   // side effects
   React.useEffect(() => {
     if (businessId === undefined) return; // during initialization
@@ -20,7 +18,6 @@ export const useObserveBusinessProfile = (businessId: string | undefined | null)
     const unsub = api.business().observeBusinessProfile(businessId, setBusiness);
     return () => unsub();
   }, [api, businessId]);
-
   // return
   return business;
 };

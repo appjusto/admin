@@ -1,4 +1,4 @@
-import { CourierProfile, Fleet, WithId } from 'appjusto-types';
+import { CourierProfile, Fleet, MarketplaceAccountInfo, WithId } from 'appjusto-types';
 import FilesApi from '../FilesApi';
 import FirebaseRefs from '../FirebaseRefs';
 
@@ -34,8 +34,10 @@ export default class CourierApi {
   }
 
   // private data
-  async getCourierPlatformData(courierId: string) {
-    return (await this.refs.getCourierPlatformRef(courierId).get()).data();
+  async getCourierMarketPlaceData(courierId: string) {
+    return (
+      await this.refs.getCourierMarketPlaceRef(courierId).get()
+    ).data() as MarketplaceAccountInfo;
   }
 
   async getCourierFleet(fleetId: string) {

@@ -1,8 +1,9 @@
 import { Box, Table, Tbody, Td, Text, Tfoot, Th, Thead, Tr } from '@chakra-ui/react';
+import * as cpfutils from '@fnando/cpf';
 import { Order, OrderItem, WithId } from 'appjusto-types';
 import React from 'react';
 import { formatCurrency } from 'utils/formatters';
-import { getOrderTotalPriceToDisplay } from 'utils/functions';
+import { getOrderTotalPrice } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../../../backoffice/drawers/generics/SectionTitle';
 
@@ -12,12 +13,19 @@ interface DetailsProps {
 
 export const OrderDetails = ({ order }: DetailsProps) => {
   // state
-  const [totalPrice, setTotalPrice] = React.useState<string>();
+  const [totalPrice, setTotalPrice] = React.useState<number>();
+
+  // helpers
+  const itemsTotalPrice = totalPrice ? formatCurrency(totalPrice) : 'N/E';
+  const orderTotalPrice =
+    totalPrice && order?.fare?.courier.value
+      ? formatCurrency(totalPrice + order.fare.courier.value)
+      : totalPrice ?? 'N/E';
 
   // side effects
   React.useEffect(() => {
-    if (order?.type === 'food') setTotalPrice(getOrderTotalPriceToDisplay(order?.items || []));
-    else setTotalPrice(formatCurrency(order?.fare?.business?.value ?? 0));
+    if (order?.type === 'food') setTotalPrice(getOrderTotalPrice(order?.items || []));
+    else setTotalPrice(order?.fare?.business?.value ?? 0);
   }, [order?.type, order?.items, order?.fare?.business?.value]);
 
   // UI
@@ -62,21 +70,24 @@ export const OrderDetails = ({ order }: DetailsProps) => {
               <Tr color="black">
                 <Th>{t('Valor total de itens:')}</Th>
                 <Th></Th>
-                <Th isNumeric>{totalPrice}</Th>
+                <Th isNumeric>{itemsTotalPrice}</Th>
               </Tr>
             </Tfoot>
           </Table>
         </>
       )}
       <SectionTitle mt="10">{t('Observações')}</SectionTitle>
-      {/*<Text mt="1" fontSize="md">
-        {t('Incluir CPF na nota, CPF: 000.000.000-00')}
-      </Text>*/}
-      {order?.additionalInfo ? (
+      {order?.consumer.cpf && (
+        <Text mt="1" fontSize="md" color="red">
+          {t(`Incluir CPF na nota, CPF: ${cpfutils.format(order.consumer.cpf)}`)}
+        </Text>
+      )}
+      {order?.additionalInfo && (
         <Text mt="1" fontSize="md" color="red">
           {order?.additionalInfo}
         </Text>
-      ) : (
+      )}
+      {!order?.consumer.cpf && !order?.additionalInfo && (
         <Text mt="1" fontSize="md">
           {t('Sem observações.')}
         </Text>
@@ -85,9 +96,15 @@ export const OrderDetails = ({ order }: DetailsProps) => {
         <>
           <SectionTitle mt="10">{t('Forma de pagamento')}</SectionTitle>
           <Text mt="1" fontSize="md">
+            {t('Valor do frete:')}{' '}
+            <Text as="span" color="black">
+              {order?.fare?.courier.value ? formatCurrency(order.fare.courier.value) : 'N/E'}
+            </Text>
+          </Text>
+          <Text mt="1" fontSize="md">
             {t('Total pago:')}{' '}
             <Text as="span" color="black">
-              {totalPrice}
+              {orderTotalPrice}
             </Text>
           </Text>
           <Text mt="1" fontSize="md">

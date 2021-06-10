@@ -1,5 +1,5 @@
 import { Box, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
-import { OrderChatGroup } from 'app/api/business/chat/useBusinessChats';
+import { OrderChatGroup } from 'app/api/chat/types';
 import React from 'react';
 import { t } from 'utils/i18n';
 import { ChatsTableItem } from './ChatsTableItem';

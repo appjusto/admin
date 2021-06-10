@@ -1,4 +1,5 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
+import { useContextAgentProfile } from 'app/state/agent/context';
 import { useContextBusiness } from 'app/state/business/context';
 import React from 'react';
 import { useRouteMatch } from 'react-router-dom';
@@ -17,16 +18,17 @@ const DisabledLink = ({ label }: DisabledLinkProps) => {
   );
 };
 
-export const Links = () => {
+interface ProtectedLinksProps {
+  isApproved: boolean;
+}
+
+const ProtectedLinks = ({ isApproved }: ProtectedLinksProps) => {
   // context
   const isLive = process.env.REACT_APP_ENVIRONMENT === 'live';
-  const { business } = useContextBusiness();
   const { url } = useRouteMatch();
-
-  const isApproved = business?.situation === 'approved';
-
+  // UI
   return (
-    <Box>
+    <>
       <Box>
         <LinkItem to={`${url}`} label={t('Início')} />
         {isApproved ? (
@@ -39,22 +41,42 @@ export const Links = () => {
         <LinkItem to={`${url}/menu`} label={t('Cardápio')} />
         <LinkItem to={`${url}/business-schedules`} label={t('Horários')} />
         <LinkItem to={`${url}/delivery-area`} label={t('Área de entrega')} />
-        {!isLive ? (
-          <>
-            <LinkItem to={`${url}/orders-history`} label={t('Histórico de pedidos')} />
-            <LinkItem to={`${url}/finances`} label={t('Financeiro')} />
-            <LinkItem to={`${url}/business-profile`} label={t('Perfil do restaurante')} />
-            <LinkItem to={`${url}/team`} label={t('Colaboradores')} />
-          </>
+        <LinkItem to={`${url}/orders-history`} label={t('Histórico de pedidos')} />
+        {isLive ? (
+          <DisabledLink label={t('Financeiro')} />
         ) : (
-          <>
-            <LinkItem to={`${url}/orders-history`} label={t('Histórico de pedidos')} />
-            <DisabledLink label={t('Financeiro')} />
-            <LinkItem to={`${url}/business-profile`} label={t('Perfil do restaurante')} />
-            <DisabledLink label={t('Colaboradores')} />
-          </>
+          <LinkItem to={`${url}/finances`} label={t('Financeiro')} />
         )}
+        <LinkItem to={`${url}/business-profile`} label={t('Perfil do restaurante')} />
+        <LinkItem to={`${url}/team`} label={t('Colaboradores')} />
       </Box>
+    </>
+  );
+};
+
+export const Links = () => {
+  // context
+  const { isBackofficeUser } = useContextAgentProfile();
+  const { business, userRole } = useContextBusiness();
+  const { url } = useRouteMatch();
+  // helpers
+  const isApproved = business?.situation === 'approved';
+  const isManager = userRole === 'manager' || isBackofficeUser;
+  // UI
+  return (
+    <Box>
+      {isManager ? (
+        <ProtectedLinks isApproved={isApproved} />
+      ) : (
+        <Box mt="5">
+          {isApproved ? (
+            <LinkItem to={`${url}/orders`} label={t('Gerenciador de pedidos')} />
+          ) : (
+            <DisabledLink label={t('Gerenciador de pedidos')} />
+          )}
+          <LinkItem to={`${url}/menu`} label={t('Cardápio')} />
+        </Box>
+      )}
     </Box>
   );
 };

@@ -1,6 +1,6 @@
 import { ChatMessage, WithId } from 'appjusto-types';
 import { first } from 'lodash';
-import { OrderChatGroup } from '../business/chat/useBusinessChats';
+import { OrderChatGroup } from 'app/api/chat/types';
 import { GroupedChatMessages } from './types';
 
 export const timestampToDate = (value: firebase.firestore.FieldValue) =>
@@ -9,8 +9,8 @@ export const timestampToDate = (value: firebase.firestore.FieldValue) =>
 export const sortMessages = (a: ChatMessage, b: ChatMessage) => {
   if (a.timestamp && b.timestamp)
     return timestampToDate(a.timestamp).getTime() - timestampToDate(b.timestamp).getTime();
-  if (!a.timestamp) return -1;
-  else if (b.timestamp) return 1;
+  if (!a.timestamp) return 1;
+  else if (!b.timestamp) return -1;
   return 0;
 };
 
@@ -25,14 +25,14 @@ export const groupOrderChatMessages = (messages: WithId<ChatMessage>[]) =>
     return [{ id: message.id, from: message.from.id, messages: [message] }, ...groups];
   }, []);
 
-export const getNotReadChatMessages = (chats: OrderChatGroup[]) => {
-  let notReadMessages = [] as string[];
+export const getUnreadChatMessages = (chats: OrderChatGroup[]) => {
+  let unreadMessages = [] as string[];
   chats.forEach((group) => {
     group.counterParts.forEach((part) => {
-      if (part.notReadMessages && part.notReadMessages?.length > 0) {
-        notReadMessages = notReadMessages.concat(part.notReadMessages);
+      if (part.unreadMessages && part.unreadMessages?.length > 0) {
+        unreadMessages = unreadMessages.concat(part.unreadMessages);
       }
     });
   });
-  return notReadMessages;
+  return unreadMessages;
 };

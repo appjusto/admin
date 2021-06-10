@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   Flex,
   HStack,
   Icon,
@@ -11,30 +10,33 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { splitByStatus } from 'app/api/order/selectors';
-import { Order, WithId } from 'appjusto-types';
-import { ReactComponent as ChatIcon } from 'common/img/chat.svg';
-import { ReactComponent as EditIcon } from 'common/img/edit-icon.svg';
+import { Order, OrderStatus, WithId } from 'appjusto-types';
 import { ReactComponent as SearchIcon } from 'common/img/searchIcon.svg';
 import React from 'react';
-import { Link, useRouteMatch } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { useOrdersContext } from '../context';
+import { ChatButton } from './ChatButton';
 import { OrderSearchResult } from './OrderSearchResult';
 import { OrdersKanbanList } from './OrdersKanbanList';
 
+const statuses = ['confirmed', 'preparing', 'ready', 'dispatching', 'canceled'] as OrderStatus[];
+
 export const OrdersKanban = () => {
   // context
-  const isDev = process.env.NODE_ENV === 'development';
-  const { path } = useRouteMatch();
-  const { business, orders, statuses, newChatMessages } = useOrdersContext();
+  //const { path } = useRouteMatch();
+  const { business, orders, newChatMessages } = useOrdersContext();
+
   // state
   const ordersByStatus = splitByStatus(orders, statuses);
   const [dateTime, setDateTime] = React.useState('');
   const [orderSearch, setOrderSearch] = React.useState('');
   const [searchResult, setSearchResult] = React.useState<WithId<Order>[]>([]);
+
   // helpers
   const isNewChatMessage = newChatMessages.length > 0;
+
   // side effects
   React.useEffect(() => {
     const { date, time } = getDateTime();
@@ -48,25 +50,32 @@ export const OrdersKanban = () => {
       setSearchResult(result);
     }
   }, [orders, orderSearch]);
+
   // UI
   return (
     <Box pb="12">
       <Flex justifyContent="flex-end" h="19.5px" mt="-19.5px" mb="2">
-        {isNewChatMessage && (
-          <Text fontSize="xs" fontWeight="700" lineHeight="lg" color="black">
-            {t(`Você tem novas mensagens!`)}
-          </Text>
-        )}
+        {isNewChatMessage &&
+          (newChatMessages.length > 1 ? (
+            <Text fontSize="xs" fontWeight="700" lineHeight="lg" color="black">
+              {t(`Você tem ${newChatMessages.length} novas mensagens!`)}
+            </Text>
+          ) : (
+            <Text fontSize="xs" fontWeight="700" lineHeight="lg" color="black">
+              {t(`Você tem ${newChatMessages.length} nova mensagen!`)}
+            </Text>
+          ))}
       </Flex>
       <Flex justifyContent="space-between">
         <Flex flexDir="column">
-          <Text fontSize="3xl" fontWeight="700" color="black">
+          <Text mt="-10px" fontSize="3xl" fontWeight="700" color="black">
             {t('Gerenciador de pedidos')}
           </Text>
           <Text fontSize="xl" lineHeight="26px" color="black">
             {business?.name}
           </Text>
           <Flex mt="2" alignItems="center">
+            {/*
             <Text mr="4" fontSize="sm" fontWeight="700" color="black">
               {t('Aceitar pedidos automaticamente:')}
             </Text>
@@ -87,6 +96,7 @@ export const OrdersKanban = () => {
                 </Text>
               </Button>
             </Link>
+          */}
           </Flex>
         </Flex>
         <Flex flexDir="column" alignItems="flex-end">
@@ -108,17 +118,7 @@ export const OrdersKanban = () => {
               />
             </InputGroup>
             <Link to="/app/chat">
-              <Button
-                variant={isNewChatMessage ? 'solid' : 'outline'}
-                minW="100px"
-                height="60px"
-                borderColor="black"
-                fontWeight="700"
-                color="black"
-              >
-                <ChatIcon />
-                <Text ml="4">{t('Chat')}</Text>
-              </Button>
+              <ChatButton key={Math.random()} isNewMessage={isNewChatMessage} />
             </Link>
           </HStack>
           <Text mt="4" fontSize="sm" color="grey.700">
@@ -138,13 +138,6 @@ export const OrdersKanban = () => {
             orders={ordersByStatus['confirmed']}
             details={t('Aqui você verá os novos pedidos. Aceite-os para confirmar o preparo.')}
           />
-          {/*<OrdersKanbanList
-          title={t('Confirmados')}
-          orders={ordersByStatus['confirmed']}
-          details={t(
-            'Aqui você verá os pedidos confirmados que ainda não começaram a ser preparados.'
-          )}
-          />*/}
           <OrdersKanbanList
             title={t('Em preparação')}
             orders={ordersByStatus['preparing']}

@@ -1,6 +1,7 @@
 import { Icon, Td, Tr } from '@chakra-ui/react';
 import { BusinessAlgolia, ProfileSituation } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
+import React from 'react';
 import { useRouteMatch } from 'react-router';
 import { getAlgoliaFieldDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
@@ -15,6 +16,7 @@ export const BusinessesTableItem = ({ business }: ItemProps) => {
   // helpers
   const status = business.situation as ProfileSituation;
   const step = business.onboarding;
+  //UI
   return (
     <Tr key={business.objectID} color="black" fontSize="15px" lineHeight="21px">
       <Td maxW="120px">{business.code ?? 'N/I'}</Td>

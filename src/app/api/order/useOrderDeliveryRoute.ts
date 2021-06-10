@@ -25,8 +25,8 @@ export const useOrderDeliveryRoute = (order?: WithId<Order> | null) => {
   const [route, setRoute] = React.useState<Route | null>(null);
   // side effects
   React.useEffect(() => {
-    if (order && order.origin && order.destination && order.route) {
-      const routePolyline = polyline.decode(order.route?.polyline).map((pair: number[]) => {
+    if (order && order.origin && order.destination && order.route?.polyline) {
+      const routePolyline = polyline.decode(order.route.polyline).map((pair: number[]) => {
         return { lat: pair[0], lng: pair[1] } as ShortLatLng;
       });
       const routeCoords = {

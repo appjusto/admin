@@ -9,6 +9,8 @@ export default class FirebaseRefs {
   // functions
   getDeleteAccountCallable = () => this.functions.httpsCallable('deleteAccount');
   getCreateBusinessProfileCallable = () => this.functions.httpsCallable('createBusinessProfile');
+  getCreateManager = () => this.functions.httpsCallable('createManager');
+  getGetBusinessManagers = () => this.functions.httpsCallable('getBusinessManagers');
 
   // firestore
   // platform
@@ -55,8 +57,7 @@ export default class FirebaseRefs {
   // business private subcollections and docs
   getBusinessPrivateRef = (id: string) => this.getBusinessesRef().doc(id).collection('private');
   getBusinessBankAccountRef = (id: string) => this.getBusinessPrivateRef(id).doc('bank');
-  getBusinessStatisticsRef = (id: string) => this.getBusinessPrivateRef(id).doc('statistics');
-  getBusinessPlatformRef = (id: string) => this.getBusinessPrivateRef(id).doc('platform');
+  getBusinessMarketPlaceRef = (id: string) => this.getBusinessPrivateRef(id).doc('marketplace');
 
   // managers
   getManagersRef = () => this.firestore.collection('managers');
@@ -65,8 +66,14 @@ export default class FirebaseRefs {
   // orders
   getOrdersRef = () => this.firestore.collection('orders');
   getOrderRef = (id: string) => this.getOrdersRef().doc(id);
-  getOrderChatRef = (id: string) => this.getOrdersRef().doc(id).collection('chat');
-  getOrderIssuesRef = (id: string) => this.getOrdersRef().doc(id).collection('issues');
+  getOrderChatRef = (id: string) => this.getOrderRef(id).collection('chat');
+  getOrderIssuesRef = (id: string) => this.getOrderRef(id).collection('issues');
+  getOrderLogsRef = (id: string) => this.getOrderRef(id).collection('logs');
+  getOrderPrivateRef = (id: string) => this.getOrderRef(id).collection('private');
+  getOrderPaymentsRef = (id: string) => this.getOrderPrivateRef(id).doc('payments');
+  getOrderCancellationRef = (id: string) => this.getOrderPrivateRef(id).doc('cancellation');
+  getOrderConfirmationRef = (id: string) => this.getOrderPrivateRef(id).doc('confirmation');
+  getOrderMatchingRef = (id: string) => this.getOrderPrivateRef(id).doc('matching');
 
   // consumers
   getConsumersRef = () => this.firestore.collection('consumers');
@@ -76,7 +83,7 @@ export default class FirebaseRefs {
   getCouriersRef = () => this.firestore.collection('couriers');
   getCourierRef = (id: string) => this.getCouriersRef().doc(id);
   getCourierPrivateRef = (id: string) => this.getCourierRef(id).collection('private');
-  getCourierPlatformRef = (id: string) => this.getCourierPrivateRef(id).doc('platform');
+  getCourierMarketPlaceRef = (id: string) => this.getCourierPrivateRef(id).doc('marketplace');
 
   // fleets
   getFleetsRef = () => this.firestore.collection('fleets');

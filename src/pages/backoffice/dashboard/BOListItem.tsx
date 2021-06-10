@@ -1,17 +1,19 @@
-import { Box, Flex, Image, Link, Text } from '@chakra-ui/react';
+import { Box, Flex, Image, Link, LinkProps, Text } from '@chakra-ui/react';
+import { useOrderStatusTimestamp } from 'app/api/order/useOrderStatusTimestamp';
 import { Business, Order, WithId } from 'appjusto-types';
 import foodIcon from 'common/img/bo-food.svg';
 import p2pIcon from 'common/img/bo-p2p.svg';
 import React from 'react';
 import { Link as RouterLink, useRouteMatch } from 'react-router-dom';
-import { getDateAndHour, getOrderTotalPriceToDisplay } from 'utils/functions';
+import { formatCurrency } from 'utils/formatters';
+import { getDateAndHour, getTimeUntilNow } from 'utils/functions';
 
-interface CustomLinkProps {
+interface CustomLinkProps extends LinkProps {
   to: string;
   children: React.ReactNode | React.ReactNode[];
 }
 
-const CustomLink = ({ to, children }: CustomLinkProps) => {
+const CustomLink = ({ to, children, ...props }: CustomLinkProps) => {
   return (
     <Link
       as={RouterLink}
@@ -22,6 +24,7 @@ const CustomLink = ({ to, children }: CustomLinkProps) => {
       border="1px solid #C8D7CB"
       color="black"
       _hover={{ textDecor: 'none', bg: 'gray.200' }}
+      {...props}
     >
       {children}
     </Link>
@@ -31,26 +34,49 @@ const CustomLink = ({ to, children }: CustomLinkProps) => {
 interface Props {
   data: WithId<Business> | WithId<Order>;
   listType: string;
+  sortHandler?(orderId: string, confirmedAt: number): void;
 }
 
-export const BOListItem = ({ data, listType }: Props) => {
+const statusConfirmed = 'confirmed';
+
+export const BOListItem = ({ data, listType, sortHandler }: Props) => {
   // context
   const { url } = useRouteMatch();
+  const orderConfirmedTimestamp = useOrderStatusTimestamp(
+    listType === 'orders' ? data?.id : undefined,
+    statusConfirmed
+  );
   // state
-  const [business, setBusiness] = React.useState<WithId<Business> | undefined>(undefined);
-  const [order, setOrder] = React.useState<WithId<Order> | undefined>(undefined);
+  const [business, setBusiness] = React.useState<WithId<Business>>();
+  const [order, setOrder] = React.useState<WithId<Order>>();
+  const [orderDT, setOrderDT] = React.useState<number>();
   // handlers
 
   // side effects
   React.useEffect(() => {
-    if (listType === 'business') setBusiness(data as WithId<Business>);
-    if (listType === 'orders') setOrder(data as WithId<Order>);
-  }, [data, listType]);
+    if (listType === 'business') return setBusiness(data as WithId<Business>);
+    setOrder(data as WithId<Order>);
+    const setNewTime = () => {
+      const time = orderConfirmedTimestamp?.seconds
+        ? getTimeUntilNow(orderConfirmedTimestamp?.seconds * 1000)
+        : null;
+      if (time) setOrderDT(time);
+    };
+    setNewTime();
+    const timeInterval = setInterval(setNewTime, 60000);
+    return () => clearInterval(timeInterval);
+  }, [data, listType, orderConfirmedTimestamp]);
+
+  React.useEffect(() => {
+    if (listType === 'business' || !data?.id) return;
+    if (!orderConfirmedTimestamp || !sortHandler) return;
+    sortHandler(data.id, orderConfirmedTimestamp.seconds);
+  }, [orderConfirmedTimestamp, sortHandler]);
 
   // UI
   if (listType === 'business') {
     return (
-      <CustomLink to={`${url}/businesses/${business?.id}`}>
+      <CustomLink to={`${url}/business/${business?.id}`}>
         <Flex justifyContent="space-between" alignItems="center">
           <Text fontSize="sm" lineHeight="21px" color="black">
             {business?.name}
@@ -65,19 +91,25 @@ export const BOListItem = ({ data, listType }: Props) => {
   }
   if (listType === 'orders') {
     return (
-      <CustomLink to={`${url}/orders/${order?.id}`}>
+      <CustomLink
+        to={`${url}/order/${order?.id}`}
+        bg={orderDT && orderDT > 40 ? '#FBD7D7' : 'white'}
+      >
         <Flex justifyContent="space-between" alignItems="center">
           <Box>
             <Image src={order?.type === 'food' ? foodIcon : p2pIcon} w="24px" h="24px" />
           </Box>
           <Text fontSize="sm" lineHeight="21px" color="black">
-            {order?.code}
+            #{order?.code}
           </Text>
           <Text fontSize="sm" lineHeight="21px" color="black">
-            {getOrderTotalPriceToDisplay(order?.items || [])}
+            {formatCurrency(order?.fare?.total ?? 0)}
           </Text>
           <Text fontSize="sm" lineHeight="21px">
             {order?.createdOn && getDateAndHour(order?.createdOn as firebase.firestore.Timestamp)}
+          </Text>
+          <Text fontSize="sm" lineHeight="21px">
+            {orderDT ? `${orderDT}min` : '?'}
           </Text>
         </Flex>
       </CustomLink>

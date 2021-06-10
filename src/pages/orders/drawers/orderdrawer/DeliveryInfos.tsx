@@ -48,8 +48,7 @@ export const DeliveryInfos = ({ order }: DeliveryInfosProps) => {
           {orderDispatchingStatusText}
         </Text>
         {!isCurrierArrived &&
-          arrivalTime &&
-          (arrivalTime > 0 ? (
+          (arrivalTime && arrivalTime > 0 ? (
             <Text fontSize="sm">
               {t(
                 `Chega em aproximadamente ${
@@ -91,7 +90,7 @@ export const DeliveryInfos = ({ order }: DeliveryInfosProps) => {
           </Link>
         </Flex>
       )}
-      <DeliveryMap order={order} />
+      <DeliveryMap key={order.id} order={order} />
       <Text mt="4" fontSize="xl" color="black">
         {t('Destino do pedido')}
       </Text>

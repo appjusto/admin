@@ -39,7 +39,7 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
   //context
   const { logo } = useBusinessProfile();
   const { orderId, counterpartId } = useParams<Params>();
-  const { getNotReadChatMessages } = useOrdersContext();
+  const { getUnreadChatMessages } = useOrdersContext();
   const { updateChatMessage } = useUpdateChatMessage();
   const { isActive, orderCode, participants, chat, sendMessage, sendMessageResult } = useOrderChat(
     orderId,
@@ -54,12 +54,13 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
 
   // refs
   const messagesBox = React.useRef(null);
+  const inputRef = React.useRef<HTMLTextAreaElement>(null);
 
   //handlers
   const getImage = (id?: string) => {
     if (!id) return null;
     //@ts-ignore
-    if (id === counterpartId) return participants[counterpartId].image;
+    if (id === counterpartId) return participants[counterpartId]?.image;
     else return logo;
   };
 
@@ -104,26 +105,13 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
 
   // side effects
   React.useEffect(() => {
+    inputRef?.current?.focus();
     const { date, time } = getDateTime();
     setDateTime(`${date} às ${time}`);
-  }, []);
-
-  React.useEffect(() => {
-    if (messagesBox?.current) {
-      //@ts-ignore
-      messagesBox.current.addEventListener('DOMNodeInserted', (event) => {
-        const { currentTarget: target } = event;
-        target.scroll({ top: target.scrollHeight, behavior: 'smooth' });
-      });
-    }
-  }, [messagesBox]);
-
-  React.useEffect(() => {
     if (chat) {
-      console.log('RENDER !!!');
-      const notReadMessages = getNotReadChatMessages(orderId, counterpartId);
-      if (notReadMessages) {
-        notReadMessages.forEach((messageId) => {
+      const unreadMessages = getUnreadChatMessages(orderId, counterpartId);
+      if (unreadMessages) {
+        unreadMessages.forEach((messageId) => {
           updateChatMessage({
             orderId,
             messageId,
@@ -132,7 +120,11 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
         });
       }
     }
-  }, [chat, orderId, counterpartId]);
+    if (messagesBox.current) {
+      //@ts-ignore
+      messagesBox.current.scroll({ top: messagesBox.current.scrollHeight, behavior: 'smooth' });
+    }
+  }, [chat, orderId, counterpartId, getUnreadChatMessages, updateChatMessage]);
 
   React.useEffect(() => {
     if (isError) {
@@ -183,11 +175,21 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
                   name={getName(group.from)}
                   messages={group.messages}
                 />
+                /*chat.map((message, index) => (
+                <ChatMessages
+                  key={message.id}
+                  image={getImage(message.from.id)}
+                  name={getName(message.from.id)}
+                  message={message.message}
+                  timestamp={message.timestamp}
+                  isGrouped={index > 1 && chat[index - 1].from.id === message.from.id}
+                />*/
               ))}
           </DrawerBody>
           <DrawerFooter borderTop="1px solid #C8D7CB">
             <Box w="100%" position="relative">
               <Textarea
+                ref={inputRef}
                 w="100%"
                 h="72px"
                 border="1px solid #C8D7CB"

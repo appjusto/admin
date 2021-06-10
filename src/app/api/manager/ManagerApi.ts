@@ -1,7 +1,10 @@
-import { ManagerProfile, WithId } from 'appjusto-types';
+import * as Sentry from '@sentry/react';
+import { AdminRole, CreateManagerPayload, ManagerProfile, Role, WithId } from 'appjusto-types';
+import { GetBusinessManagersPayload } from 'appjusto-types/payloads/profile';
 import { documentsAs } from 'core/fb';
 import firebase from 'firebase/app';
 import FirebaseRefs from '../FirebaseRefs';
+import { ManagerWithRole } from './types';
 
 export default class ManagerApi {
   constructor(private refs: FirebaseRefs) {}
@@ -42,6 +45,23 @@ export default class ManagerApi {
     return unsubscribe;
   }
 
+  async getBusinessManagers(
+    businessId: string,
+    resultHandler: (result: ManagerWithRole[]) => void
+  ) {
+    const payload: GetBusinessManagersPayload = {
+      meta: { version: '1' }, // TODO: pass correct version on
+      businessId,
+    };
+    try {
+      const users = await this.refs.getGetBusinessManagers()(payload);
+      resultHandler(users.data);
+    } catch (error) {
+      Sentry.captureException('createManagerError', error);
+      return null;
+    }
+  }
+
   public async createProfile(id: string, email: string) {
     const data = (await this.refs.getManagerRef(id).get()).data();
     if (!data) {
@@ -54,5 +74,22 @@ export default class ManagerApi {
 
   async updateProfile(id: string, changes: Partial<ManagerProfile>) {
     await this.refs.getManagerRef(id).update(changes);
+  }
+
+  async createManager(data: { email: string; key: string; role: Role | AdminRole }) {
+    const { email, key, role } = data;
+    const payload: CreateManagerPayload = {
+      meta: { version: '1' }, // TODO: pass correct version on
+      email,
+      key,
+      role,
+    };
+    try {
+      await this.refs.getCreateManager()(payload);
+      return true;
+    } catch (error) {
+      Sentry.captureException('createManagerError', error);
+      return false;
+    }
   }
 }
