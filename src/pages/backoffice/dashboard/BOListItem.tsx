@@ -51,7 +51,7 @@ export const BOListItem = ({ data, listType }: Props) => {
   // UI
   if (listType === 'business') {
     return (
-      <CustomLink to={`${url}/businesses/${business?.id}`}>
+      <CustomLink to={`${url}/business/${business?.id}`}>
         <Flex justifyContent="space-between" alignItems="center">
           <Text fontSize="sm" lineHeight="21px" color="black">
             {business?.name}
@@ -66,7 +66,7 @@ export const BOListItem = ({ data, listType }: Props) => {
   }
   if (listType === 'orders') {
     return (
-      <CustomLink to={`${url}/orders/${order?.id}`}>
+      <CustomLink to={`${url}/order/${order?.id}`}>
         <Flex justifyContent="space-between" alignItems="center">
           <Box>
             <Image src={order?.type === 'food' ? foodIcon : p2pIcon} w="24px" h="24px" />

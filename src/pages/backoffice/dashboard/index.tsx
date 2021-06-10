@@ -3,9 +3,12 @@ import { useBusinesses } from 'app/api/business/useBusinesses';
 import { useBackofficeOrders } from 'app/api/order/useBackofficeOrders';
 import { OrderStatus } from 'appjusto-types';
 import React from 'react';
+import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import PageHeader from '../../PageHeader';
+import { BusinessDrawer } from '../drawers/business';
+import { BackofficeOrderDrawer } from '../drawers/order';
 import { BOList } from './BOList';
 import { Panel } from './Panel';
 
@@ -15,10 +18,17 @@ const statuses = ['confirmed', 'preparing', 'ready', 'dispatching'] as OrderStat
 
 const BODashboard = () => {
   // context
+  const { path } = useRouteMatch();
+  const history = useHistory();
   const businesses = useBusinesses(situations);
   const orders = useBackofficeOrders(statuses);
   // state
   const [dateTime, setDateTime] = React.useState('');
+
+  // handlers
+  const closeDrawerHandler = () => {
+    history.replace(path);
+  };
 
   // side effects
   React.useEffect(() => {
@@ -39,6 +49,14 @@ const BODashboard = () => {
         />
         <BOList title={t('Pedidos em andamento')} data={orders} listType="orders" />
       </Stack>
+      <Switch>
+        <Route path={`${path}/business/:businessId`}>
+          <BusinessDrawer isOpen onClose={closeDrawerHandler} />
+        </Route>
+        <Route path={`${path}/order/:orderId`}>
+          <BackofficeOrderDrawer isOpen onClose={closeDrawerHandler} />
+        </Route>
+      </Switch>
     </>
   );
 };
