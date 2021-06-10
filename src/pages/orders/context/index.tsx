@@ -215,7 +215,6 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   // side effects
   React.useEffect(() => {
     setOrders([...activeOrders, ...canceledOrders]);
-    //updateLocalStorageOrders(activeOrders, playBell);
   }, [activeOrders, canceledOrders]);
 
   React.useEffect(() => {
@@ -243,6 +242,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
 
   React.useEffect(() => {
     if (isBackofficeUser) return;
+    if (business?.situation !== 'approved') return;
     const onCloseListener = (e: BeforeUnloadEvent) => {
       // Cancel the event
       e.preventDefault();
@@ -266,7 +266,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
     };
     window.addEventListener('beforeunload', onCloseListener);
     return () => window.removeEventListener('beforeunload', onCloseListener);
-  }, [updateBusinessProfile, toast, isBackofficeUser]);
+  }, [updateBusinessProfile, toast, isBackofficeUser, business?.situation]);
 
   React.useEffect(() => {
     if (isBackofficeUser) return;

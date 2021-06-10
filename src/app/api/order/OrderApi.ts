@@ -1,11 +1,11 @@
 import {
   ChatMessage,
-  //FoodOrderStatus,
   Issue,
   Order,
-  OrderCancellation,
+  //OrderCancellation,
   OrderChange,
   OrderIssue,
+  OrderMatching,
   OrderStatus,
   WithId,
 } from 'appjusto-types';
@@ -149,6 +149,29 @@ export default class OrderApi {
     const result = await query.get();
     const log = documentsAs<OrderChange>(result.docs).find(() => true);
     return resultHandler((log?.timestamp as firebase.firestore.Timestamp) ?? null);
+  }
+
+  observeOrderPrivateMatching(
+    orderId: string,
+    resultHandler: (matching: OrderMatching | null) => void
+  ): firebase.Unsubscribe {
+    console.log(orderId);
+    let query = this.refs.getOrderMatchingRef(orderId);
+    const unsubscribe = query.onSnapshot(
+      (querySnapshot) => {
+        if (querySnapshot.exists) resultHandler(querySnapshot.data() as OrderMatching);
+        else resultHandler(null);
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+    // returns the unsubscribe function
+    return unsubscribe;
+  }
+
+  async updateOrderCourierNotified(orderId: string, couriersNotified: string[]) {
+    return this.refs.getOrderMatchingRef(orderId).update({ couriersNotified });
   }
 
   async getOrderIssues(orderId: string) {

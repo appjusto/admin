@@ -40,7 +40,7 @@ export const BOList = ({ title, data, listType, details }: Props) => {
   // side effects
   React.useEffect(() => {
     if (listType === 'orders') setSortedOrders(data as WithId<SortedOrder>[]);
-  }, [data]);
+  }, [data, listType]);
 
   // UI
   return (

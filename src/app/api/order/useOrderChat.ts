@@ -25,7 +25,7 @@ export const useOrderChat = (orderId: string, counterpartId: string) => {
   const [chatFromCounterPart, setChatFromCounterPart] = React.useState<WithId<ChatMessage>[]>([]);
   const [chat, setChat] = React.useState<GroupedChatMessages[]>([]);
 
-  // handlers;
+  // mutations;
   const [sendMessage, sendMessageResult] = useMutation(async (data: Partial<ChatMessage>) => {
     if (!businessId) return;
     const from = { agent: 'business' as Flavor, id: businessId };

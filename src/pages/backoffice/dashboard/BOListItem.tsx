@@ -71,7 +71,7 @@ export const BOListItem = ({ data, listType, sortHandler }: Props) => {
     if (listType === 'business' || !data?.id) return;
     if (!orderConfirmedTimestamp || !sortHandler) return;
     sortHandler(data.id, orderConfirmedTimestamp.seconds);
-  }, [orderConfirmedTimestamp, sortHandler]);
+  }, [orderConfirmedTimestamp, listType, data?.id, sortHandler]);
 
   // UI
   if (listType === 'business') {
