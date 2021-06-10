@@ -4,6 +4,7 @@ import React from 'react';
 import { t } from 'utils/i18n';
 
 interface CourierNotifiedBoxProps {
+  isOrderActive: boolean;
   courierId: string;
   issue?: string;
   removeCourier?(courierId: string): void;
@@ -12,6 +13,7 @@ interface CourierNotifiedBoxProps {
 }
 
 export const CourierNotifiedBox = ({
+  isOrderActive,
   courierId,
   issue,
   removeCourier,
@@ -42,6 +44,7 @@ export const CourierNotifiedBox = ({
             h="36px"
             label={t('Remover')}
             variant="danger"
+            isDisabled={!isOrderActive}
             isLoading={isLoading && courierRemoving === courierId}
             onClick={() => removeCourier && removeCourier(courierId)}
           />

@@ -1,5 +1,6 @@
 import { Box, Text } from '@chakra-ui/react';
 import { useObserveOrderMatching } from 'app/api/order/useObserveOrderMatching';
+import { OrderStatus } from 'appjusto-types';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
 import React from 'react';
 import { t } from 'utils/i18n';
@@ -9,9 +10,10 @@ import { LogsTable } from './matching/LogsTable';
 
 interface MatchingProps {
   orderId?: string;
+  orderStatus?: OrderStatus;
 }
 
-export const Matching = ({ orderId }: MatchingProps) => {
+export const Matching = ({ orderId, orderStatus }: MatchingProps) => {
   // context
   const { matching, updateCourierNotified, updateResult } = useObserveOrderMatching(orderId);
   const { isLoading, isSuccess, isError, error } = updateResult;
@@ -24,6 +26,11 @@ export const Matching = ({ orderId }: MatchingProps) => {
 
   // refs
   const submission = React.useRef(0);
+
+  // helpers
+  const isOrderActive = orderStatus
+    ? ['confirmed', 'preparing', 'ready', 'dispatching'].includes(orderStatus)
+    : false;
 
   // handlers
   const removeCourierNotified = async (courierId: string) => {
@@ -82,6 +89,7 @@ export const Matching = ({ orderId }: MatchingProps) => {
           couriersNotified.map((courierId) => (
             <CourierNotifiedBox
               key={courierId}
+              isOrderActive={isOrderActive}
               courierId={courierId}
               removeCourier={removeCourierNotified}
               courierRemoving={courierRemoving}
