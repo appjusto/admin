@@ -38,7 +38,7 @@ export const OrderIssuesTable = ({ issues }: OrderIssuesTableProps) => {
                 <Td>{getDateAndHour(issue.createdOn as firebase.firestore.Timestamp)}</Td>
                 <Td>{getParticipant(issue.issue.type)}</Td>
                 <Td>
-                  <Text lineHeight="6px">
+                  <Text lineHeight="14px">
                     {t('Motivo: ')}
                     <Text as="span" fontWeight="500">
                       {issue.issue.title}
