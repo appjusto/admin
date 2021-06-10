@@ -1,4 +1,4 @@
-import { Box } from '@chakra-ui/react';
+import { Badge, Box, Flex } from '@chakra-ui/react';
 import { useContextAgentProfile } from 'app/state/agent/context';
 import Image from 'common/components/Image';
 import logo from 'common/img/logo.svg';
@@ -11,6 +11,7 @@ import { ManagerBar } from './ManagerBar';
 
 const Sidebar = () => {
   // context
+  const env = process.env.REACT_APP_ENVIRONMENT;
   const { path } = useRouteMatch();
   const { isBackofficeUser } = useContextAgentProfile();
   const isBackOffice = path.includes('backoffice');
@@ -23,9 +24,26 @@ const Sidebar = () => {
       flexShrink={0}
     >
       <Box position="fixed" top="4" w="220px" flexShrink={0}>
-        <Box ml="4" mt="6">
-          <Image src={logo} eagerLoading height="40px" />
-        </Box>
+        <Flex mt="6" px="4" justifyContent="space-between" alignItems="center">
+          <Box>
+            <Image src={logo} eagerLoading height="40px" />
+          </Box>
+          {env && env !== 'live' && (
+            <Badge
+              mt="1"
+              bg={env === 'staging' ? '#FFBE00' : '#DC3545'}
+              color={env === 'dev' ? 'white' : 'black'}
+              borderRadius="22px"
+              px="3"
+              py="1"
+              fontSize="xs"
+              lineHeight="lg"
+              fontWeight="700"
+            >
+              {env === 'staging' ? 'STAGING' : 'DEV'}
+            </Badge>
+          )}
+        </Flex>
         {isBackOffice ? (
           <BackOfficeLinks />
         ) : (
