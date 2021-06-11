@@ -3,7 +3,6 @@ import * as cpfutils from '@fnando/cpf';
 import { Order, OrderItem, WithId } from 'appjusto-types';
 import React from 'react';
 import { formatCurrency } from 'utils/formatters';
-import { getOrderTotalPrice } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../../../backoffice/drawers/generics/SectionTitle';
 
@@ -24,8 +23,7 @@ export const OrderDetails = ({ order }: DetailsProps) => {
 
   // side effects
   React.useEffect(() => {
-    if (order?.type === 'food') setTotalPrice(getOrderTotalPrice(order?.items || []));
-    else setTotalPrice(order?.fare?.business?.value ?? 0);
+    setTotalPrice(order?.fare?.total ?? 0);
   }, [order?.type, order?.items, order?.fare?.business?.value]);
 
   // UI
@@ -53,13 +51,13 @@ export const OrderDetails = ({ order }: DetailsProps) => {
                       </Text>
                     </Td>
                     <Td isNumeric>{item.quantity}</Td>
-                    <Td isNumeric>{formatCurrency(item.product.price * item.quantity)}</Td>
+                    <Td isNumeric>{formatCurrency(item.product.price)}</Td>
                   </Tr>
                   {item.complements &&
                     item.complements.map((complement) => (
                       <Tr key={Math.random()} fontSize="xs">
                         <Td>{complement.name}</Td>
-                        <Td isNumeric>1</Td>
+                        <Td isNumeric>{item.quantity}</Td>
                         <Td isNumeric>{formatCurrency(complement.price)}</Td>
                       </Tr>
                     ))}
