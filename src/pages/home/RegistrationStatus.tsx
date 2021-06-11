@@ -1,4 +1,15 @@
-import { Box, Button, HStack, Icon, Image, Link, Spinner, Text, VStack } from '@chakra-ui/react';
+import {
+  AspectRatio,
+  Box,
+  Button,
+  HStack,
+  Icon,
+  Image,
+  Link,
+  Spinner,
+  Text,
+  VStack
+} from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useBusinessProfileValidation } from 'app/api/business/profile/useBusinessProfileValidation';
 import { useContextBusiness } from 'app/state/business/context';
@@ -208,22 +219,17 @@ export const RegistrationStatus = () => {
         </Box>
         <Text mt="4" fontSize="lg" lineHeight="26px">
           {t(
-            `Seu cadastro foi enviado com sucesso e está em fase de análise. Em breve você receberá uma confirmação.`
-          )}
-        </Text>
-        {/*<Text mt="4" fontSize="lg" lineHeight="26px">
-          {t(
             `Seu cadastro foi enviado com sucesso e está em fase de análise. Em breve você receberá uma confirmação.
-          Enquanto aguarda a confirmação, assista ao vídeo sobre o nosso lançamento:`
+          Para mais detalhes, assista ao nosso vídeo de boas-vindas:`
           )}
         </Text>
         <AspectRatio mt="6" maxW="708px" ratio={9 / 5}>
           <iframe
             title="appjusto"
-            src="https://www.youtube.com/embed/rwhMIEyoFJk"
+            src="https://www.youtube.com/embed/R_KyvxVk-U0"
             allowFullScreen
           />
-          </AspectRatio>*/}
+        </AspectRatio>
         <HStack mt="16" spacing={2}>
           <Text fontSize="24px" lineHeight="30px" fontWeight="700">
             {t('Aproveite para seguir o AppJusto nas redes sociais')}
