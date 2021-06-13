@@ -11,21 +11,6 @@ interface DetailsProps {
 }
 
 export const OrderDetails = ({ order }: DetailsProps) => {
-  // state
-  const [totalPrice, setTotalPrice] = React.useState<number>();
-
-  // helpers
-  const itemsTotalPrice = totalPrice ? formatCurrency(totalPrice) : 'N/E';
-  const orderTotalPrice =
-    totalPrice && order?.fare?.courier.value
-      ? formatCurrency(totalPrice + order.fare.courier.value)
-      : totalPrice ?? 'N/E';
-
-  // side effects
-  React.useEffect(() => {
-    setTotalPrice(order?.fare?.total ?? 0);
-  }, [order?.type, order?.items, order?.fare?.business?.value]);
-
   // UI
   return (
     <Box>
@@ -68,7 +53,9 @@ export const OrderDetails = ({ order }: DetailsProps) => {
               <Tr color="black">
                 <Th>{t('Valor total de itens:')}</Th>
                 <Th></Th>
-                <Th isNumeric>{itemsTotalPrice}</Th>
+                <Th isNumeric>
+                  {order?.fare?.business?.value ? formatCurrency(order.fare.business.value) : 0}
+                </Th>
               </Tr>
             </Tfoot>
           </Table>
@@ -102,7 +89,7 @@ export const OrderDetails = ({ order }: DetailsProps) => {
           <Text mt="1" fontSize="md">
             {t('Total pago:')}{' '}
             <Text as="span" color="black">
-              {orderTotalPrice}
+              {order?.fare?.total ? formatCurrency(order.fare.total) : 0}
             </Text>
           </Text>
           <Text mt="1" fontSize="md">
