@@ -34,7 +34,7 @@ interface BaseDrawerProps {
 export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseDrawerProps) => {
   //context
   const { url } = useRouteMatch();
-  const { consumer, contextValidation } = useContextConsumerProfile();
+  const { consumer } = useContextConsumerProfile();
   const { updateProfile, updateResult } = useConsumerUpdateProfile();
   const { isLoading, isSuccess, isError, error: updateError } = updateResult;
 

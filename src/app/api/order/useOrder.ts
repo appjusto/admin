@@ -43,7 +43,7 @@ export const useOrder = (orderId?: string) => {
       if (cancellation) setOrderCancellation(cancellation);
       else setOrderCancellation(null);
     })();
-  }, [order?.status, orderId]);
+  }, [api, order?.status, orderId]);
 
   // return
   return { order, updateOrder, cancelOrder, result, orderIssues, orderCancellation };

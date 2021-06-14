@@ -1,4 +1,4 @@
-import { OrderItemComplement, OrderItem, Order, WithId, OrderStatus, Issue } from 'appjusto-types';
+import { OrderItemComplement, OrderItem, Order, WithId, OrderStatus } from 'appjusto-types';
 import { formatCurrency, formatDate } from './formatters';
 import { round } from 'lodash';
 import { CroppedAreaProps } from 'common/components/ImageCropping';

@@ -7,7 +7,7 @@ import { LinkItem } from './LinkItem';
 
 export const BackOfficeLinks = () => {
   // context
-  //const isDev = process.env.NODE_ENV === 'development';
+  const isDev = process.env.REACT_APP_ENVIRONMENT === 'dev';
   const { url } = useRouteMatch();
   const { role } = useContextAgentProfile();
 
@@ -25,7 +25,7 @@ export const BackOfficeLinks = () => {
         <LinkItem to={`${url}/couriers`} label={t('Entregadores')} />
         <LinkItem to={`${url}/businesses`} label={t('Restaurantes')} />
         <LinkItem to={`${url}/consumers`} label={t('Clientes')} />
-        {role === 'owner' && <LinkItem to={`${url}/agents`} label={t('Agentes')} />}
+        {role === 'owner' && isDev && <LinkItem to={`${url}/agents`} label={t('Agentes')} />}
       </Box>
     );
 };
