@@ -16,6 +16,7 @@ import { useContextConsumerProfile } from 'app/state/consumer/context';
 import { ConsumerProfile } from 'appjusto-types';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
 import { initialError } from 'common/components/error/utils';
+import firebase from 'firebase';
 import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
 import React from 'react';
 import { useRouteMatch } from 'react-router';

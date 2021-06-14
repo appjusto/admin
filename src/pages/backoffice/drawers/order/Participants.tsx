@@ -2,6 +2,7 @@ import { Box, Text } from '@chakra-ui/react';
 import { useOrderDeliveryInfos } from 'app/api/order/useOrderDeliveryInfos';
 import { Order, WithId } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
+import firebase from 'firebase';
 import { DeliveryMap } from 'pages/orders/drawers/orderdrawer/DeliveryMap';
 import React from 'react';
 import { getDateAndHour } from 'utils/functions';

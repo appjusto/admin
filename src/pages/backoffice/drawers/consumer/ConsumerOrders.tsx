@@ -1,6 +1,7 @@
 import { Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
 import { useContextConsumerProfile } from 'app/state/consumer/context';
 import { Order, WithId } from 'appjusto-types';
+import firebase from 'firebase';
 import { getDateAndHour, getOrderTotalPriceToDisplay } from 'utils/functions';
 import { t } from 'utils/i18n';
 

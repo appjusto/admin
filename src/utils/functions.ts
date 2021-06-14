@@ -4,6 +4,7 @@ import { round } from 'lodash';
 import { CroppedAreaProps } from 'common/components/ImageCropping';
 import { localOrderType } from 'pages/orders/context';
 import I18n from 'i18n-js';
+import firebase from 'firebase';
 
 // translation
 export const getTranslatedOrderStatus = (status: OrderStatus) => {

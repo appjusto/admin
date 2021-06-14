@@ -1,10 +1,10 @@
 import { Box, HStack, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
 import { OrderIssue, WithId } from 'appjusto-types';
+import firebase from 'firebase';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import React from 'react';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
-
 interface OrderIssuesTableProps {
   issues?: WithId<OrderIssue>[] | null;
 }

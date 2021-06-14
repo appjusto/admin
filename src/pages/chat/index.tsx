@@ -4,6 +4,7 @@ import { OrderChatGroup } from 'app/api/chat/types';
 import { timestampToDate } from 'app/api/chat/utils';
 import Container from 'common/components/Container';
 import { ReactComponent as SearchIcon } from 'common/img/searchIcon.svg';
+import firebase from 'firebase';
 import { useOrdersContext } from 'pages/orders/context';
 import { OrdersHeader } from 'pages/orders/OrdersHeader';
 import PageHeader from 'pages/PageHeader';

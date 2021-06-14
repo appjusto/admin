@@ -13,6 +13,7 @@ import {
   Tr,
 } from '@chakra-ui/react';
 import { WithId } from 'appjusto-types';
+import firebase from 'firebase';
 import React from 'react';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
