@@ -53,13 +53,13 @@ export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
   const handleSave = () => {
     setError(initialError);
     submission.current += 1;
-    if (!contextValidation.cpf) {
+    /*if (!contextValidation.cpf) {
       return setError({
         status: true,
         error: null,
         message: { title: 'O CPF não foi informado ou não é válido.' },
       });
-    }
+    }*/
     const newState = {} as ConsumerProfile;
     consumer &&
       Object.keys(consumer).forEach((key) => {
