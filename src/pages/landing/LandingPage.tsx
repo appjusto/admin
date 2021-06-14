@@ -8,6 +8,7 @@ import { Share } from './Share';
 import { Transparency } from './Transparency';
 
 const LandingPage = () => {
+  // UI
   return (
     <Box>
       <Header />

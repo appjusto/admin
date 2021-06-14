@@ -1,12 +1,10 @@
 import React from 'react';
 
-const browserSupports = 'Notification' in window;
-
 export const useNotificationPermission = () => {
   const [permission, setPermission] = React.useState(Notification?.permission);
   // request permission if necessary
   React.useEffect(() => {
-    if (!browserSupports) {
+    if (!('Notification' in window)) {
       console.warn('Navegador não suporta notificações');
       return;
     }
@@ -15,5 +13,6 @@ export const useNotificationPermission = () => {
       Notification.requestPermission().then(setPermission);
     }
   }, [permission]);
+  // result
   return permission;
 };
