@@ -1,4 +1,4 @@
-import { OrderItemComplement, OrderItem, Order, WithId, OrderStatus } from 'appjusto-types';
+import { OrderItemComplement, OrderItem, Order, WithId, OrderStatus, Issue } from 'appjusto-types';
 import { formatCurrency, formatDate } from './formatters';
 import { round } from 'lodash';
 import { CroppedAreaProps } from 'common/components/ImageCropping';
@@ -261,7 +261,8 @@ export const getCoordinatesMidpoint = (origin: latLng, destination: latLng) => {
   }
 };
 
-export const orderCancelator = (issueIype?: string) => {
+// orders
+export const getOrderCancellator = (issueIype?: string) => {
   let cancelator = 'N/E';
   if (issueIype === 'restaurant-cancel') cancelator = 'Restaurante';
   if (issueIype === 'consumer-cancel') cancelator = 'Cliente';

@@ -1,5 +1,5 @@
 import { useContextApi } from 'app/state/api/context';
-import { Order, OrderIssue, WithId } from 'appjusto-types';
+import { Order, OrderCancellation, OrderIssue, WithId } from 'appjusto-types';
 import React from 'react';
 import { useMutation } from 'react-query';
 import { CancellationData } from './OrderApi';
@@ -11,8 +11,9 @@ export const useOrder = (orderId?: string) => {
   // state
   const [order, setOrder] = React.useState<WithId<Order> | null>();
   const [orderIssues, setOrderIssues] = React.useState<WithId<OrderIssue>[] | null>();
+  const [orderCancellation, setOrderCancellation] = React.useState<OrderCancellation | null>();
 
-  // handlers
+  // mutations
   const [updateOrder, updateResult] = useMutation(async (changes: Partial<Order>) =>
     api.order().updateOrder(orderId!, changes)
   );
@@ -35,6 +36,15 @@ export const useOrder = (orderId?: string) => {
     };
   }, [api, orderId]);
 
+  React.useEffect(() => {
+    if (order?.status !== 'canceled' || !orderId) return;
+    (async () => {
+      const cancellation = await api.order().getOrderPrivateCancellation(orderId);
+      if (cancellation) setOrderCancellation(cancellation);
+      else setOrderCancellation(null);
+    })();
+  }, [order?.status, orderId]);
+
   // return
-  return { order, updateOrder, cancelOrder, result, orderIssues };
+  return { order, updateOrder, cancelOrder, result, orderIssues, orderCancellation };
 };

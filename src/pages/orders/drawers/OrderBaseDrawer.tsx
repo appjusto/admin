@@ -22,6 +22,7 @@ import { OrderAcceptButton } from './OrderAcceptButton';
 
 interface BaseDrawerProps {
   order?: WithId<Order> | null;
+  cancellator: string;
   isOpen: boolean;
   cancel(): void;
   isCanceling: boolean;
@@ -33,6 +34,7 @@ const statusConfirmed = 'confirmed';
 
 export const OrderBaseDrawer = ({
   order,
+  cancellator,
   cancel,
   isCanceling,
   onClose,
@@ -89,7 +91,7 @@ export const OrderBaseDrawer = ({
                 </Text>
                 {order?.status === 'canceled' && (
                   <Text fontSize="md" color="red" fontWeight="700" lineHeight="22px">
-                    {/* {t('Pedido cancelado pelo')} <Text as="span">{cancelator}</Text> */}
+                    {t('Pedido cancelado pelo')} <Text as="span">{cancellator}</Text>
                   </Text>
                 )}
                 <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
