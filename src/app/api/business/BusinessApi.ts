@@ -4,6 +4,7 @@ import {
   Category,
   ChatMessage,
   CreateBusinessProfilePayload,
+  ManagerProfile,
   MarketplaceAccountInfo,
   Product,
   WithId,
@@ -134,6 +135,35 @@ export default class BusinessApi {
     };
     const result = await this.refs.getBusinessRef(businessId).set(fullChanges, { merge: true });
     return result;
+  }
+
+  async updateBusinessManagerAndBankAccountBatch(
+    businessId: string,
+    businessChanges: Partial<Business> | null,
+    managerId: string,
+    managerChanges: Partial<ManagerProfile> | null,
+    bankChanges: Partial<BankAccount> | null
+  ) {
+    let batch = this.refs.getBatchRef();
+    // business
+    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+    const fullBusinessChanges = {
+      ...businessChanges,
+      updatedOn: timestamp,
+    };
+    if (businessChanges) batch.update(this.refs.getBusinessRef(businessId), fullBusinessChanges);
+    // manager
+    if (managerChanges) batch.update(this.refs.getManagerRef(managerId), managerChanges);
+    // bank
+    if (bankChanges) batch.update(this.refs.getBusinessBankAccountRef(businessId), bankChanges);
+    // commit
+    return batch
+      .commit()
+      .then(() => true)
+      .catch((error) => {
+        console.log(error);
+        throw new Error(error);
+      });
   }
 
   async removeBusinessManager(business: WithId<Business>, managerEmail: string) {

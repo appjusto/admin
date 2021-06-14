@@ -13,6 +13,7 @@ import {
 } from '@chakra-ui/react';
 import { useOrderStatusTimestamp } from 'app/api/order/useOrderStatusTimestamp';
 import { Order, WithId } from 'appjusto-types';
+import firebase from 'firebase';
 import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
 import React from 'react';
 import { useRouteMatch } from 'react-router';

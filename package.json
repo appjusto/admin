@@ -35,7 +35,7 @@
     "browser-image-compression": "^1.0.14",
     "chakra-ui-markdown-renderer": "^1.1.0",
     "env-cmd": "^10.1.0",
-    "firebase": "^8.0.2",
+    "firebase": "^8.6.7",
     "framer-motion": "^4.1.17",
     "github-markdown-css": "^4.0.0",
     "google-map-react": "^2.1.9",
