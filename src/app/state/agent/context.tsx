@@ -20,7 +20,6 @@ export const AgentProvider = ({ children }: Props) => {
   const { role, isBackofficeUser } = useFirebaseUserRole();
   const agent = useAgentProfile();
   const username = agent?.name ?? (agent?.email ? agent?.email.split('@')[0] : '');
-  console.log('teste');
   return (
     <AgentProfileContext.Provider value={{ agent, username, role, isBackofficeUser }}>
       {children}
