@@ -7,7 +7,9 @@ export default class PlatformApi {
 
   // firestore
   async fetchCuisines() {
-    return documentsAs<Cuisine>((await this.refs.getCuisinesRef().get()).docs);
+    return documentsAs<Cuisine>(
+      (await this.refs.getCuisinesRef().orderBy('order', 'asc').get()).docs
+    );
   }
 
   async fetchBanks() {
