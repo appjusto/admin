@@ -53,11 +53,6 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   const [orders, setOrders] = React.useState<WithId<Order>[]>([]);
   const [newChatMessages, setNewChatMessages] = React.useState<string[]>([]);
 
-  //Development
-  /*const createFakeOrder = async () => {
-    await api.order().createFakeOrder(fakeOrder);
-  };*/
-
   //handlers
   const toast = useToast();
 
