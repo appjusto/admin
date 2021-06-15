@@ -1,6 +1,7 @@
 import { Icon, Td, Text, Tr, VStack } from '@chakra-ui/react';
 import { OrderChatGroup } from 'app/api/chat/types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
+import firebase from 'firebase';
 import { useRouteMatch } from 'react-router';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';

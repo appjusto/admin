@@ -1,7 +1,6 @@
 import * as cpfutils from '@fnando/cpf';
 import { useBusinessBankAccount } from 'app/api/business/profile/useBusinessBankAccount';
-import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
-import { useUpdateManagerProfile } from 'app/api/manager/useUpdateManagerProfile';
+import { useBusinessManagerAndBankAccountBatch } from 'app/api/business/profile/useBusinessManagerAndBankAccountBatch';
 import { BankAccount, Business, ManagerProfile, WithId } from 'appjusto-types';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
 import { initialError } from 'common/components/error/utils';
@@ -53,18 +52,17 @@ export const BusinessBOProvider = ({ children }: Props) => {
   const { businessId } = useParams<Params>();
   const { setBusinessId, business } = useContextBusiness();
   const { manager, setManagerEmail } = useContextManagerProfile();
-  const {
-    bankAccount,
-    updateBankAccount,
-    updateResult: BankAccountResult,
-  } = useBusinessBankAccount();
-  const { updateBusinessProfile, updateResult: BusinessProfileResult } = useBusinessProfile();
-  const { updateProfile, updateResult: ManagerProfileResult } = useUpdateManagerProfile();
+  const { bankAccount } = useBusinessBankAccount();
 
+  const {
+    updateBusinessManagerAndBankAccount,
+    updateResult,
+  } = useBusinessManagerAndBankAccountBatch();
+  const { isLoading, isSuccess, isError, error: updateError } = updateResult;
   // state
   const [state, dispatch] = React.useReducer(businessBOReducer, {} as businessBOState);
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [isSuccess, setIsSuccess] = React.useState(false);
+  //const [isLoading, setIsLoading] = React.useState(false);
+  //const [isSuccess, setIsSuccess] = React.useState(false);
   const [error, setError] = React.useState(initialError);
   const [contextValidation, setContextValidation] = React.useState({
     cpf: true,
@@ -75,41 +73,6 @@ export const BusinessBOProvider = ({ children }: Props) => {
 
   // refs
   const submission = React.useRef(0);
-
-  // helpers
-  const getResult = React.useCallback(() => {
-    if (
-      ManagerProfileResult.isLoading ||
-      BankAccountResult.isLoading ||
-      BusinessProfileResult.isLoading
-    )
-      setIsLoading(true);
-    else setIsLoading(false);
-
-    if (
-      ManagerProfileResult.isSuccess &&
-      BankAccountResult.isSuccess &&
-      BusinessProfileResult.isSuccess
-    )
-      setIsSuccess(true);
-    else setIsSuccess(false);
-    if (ManagerProfileResult.error)
-      setError({
-        status: true,
-        error: ManagerProfileResult.error,
-      });
-    else if (BankAccountResult.error)
-      setError({
-        status: true,
-        error: BankAccountResult.error,
-      });
-    else if (BusinessProfileResult.error)
-      setError({
-        status: true,
-        error: BusinessProfileResult.error,
-      });
-    else setError(initialError);
-  }, [ManagerProfileResult, BankAccountResult, BusinessProfileResult]);
 
   // handlers
   const handleBusinessStatusChange = React.useCallback((key: string, value: any) => {
@@ -157,9 +120,13 @@ export const BusinessBOProvider = ({ children }: Props) => {
         error: null,
         message: { title: 'A agência informada não é válida' },
       });
-    if (state.manager !== manager) updateProfile(state.manager);
-    if (state.bankingInfo !== bankAccount) updateBankAccount(state.bankingInfo);
-    if (state.businessProfile !== business) updateBusinessProfile(state.businessProfile);
+    let businessChanges = null;
+    let managerChanges = null;
+    let bankingChanges = null;
+    if (state.businessProfile !== business) businessChanges = state.businessProfile;
+    if (state.manager !== manager) managerChanges = state.manager;
+    if (state.bankingInfo !== bankAccount) bankingChanges = state.bankingInfo;
+    updateBusinessManagerAndBankAccount({ businessChanges, managerChanges, bankingChanges });
   };
 
   // side effects
@@ -190,15 +157,27 @@ export const BusinessBOProvider = ({ children }: Props) => {
   }, [business]);
 
   React.useEffect(() => {
-    getResult();
-  }, [ManagerProfileResult, BankAccountResult, BusinessProfileResult, getResult]);
-
-  React.useEffect(() => {
     if (state?.manager?.phone)
       setContextValidation((prev) => ({ ...prev, phone: state.manager.phone?.length === 11 }));
     if (state?.manager?.cpf)
       setContextValidation((prev) => ({ ...prev, cpf: cpfutils.isValid(state.manager.cpf!) }));
   }, [state?.manager?.phone, state?.manager?.cpf]);
+
+  React.useEffect(() => {
+    if (isError) {
+      setError({
+        status: true,
+        error: updateError,
+        message: { title: 'Não foi possível acessar o servidor.' },
+      });
+    } else {
+      setError({
+        status: false,
+        error: null,
+      });
+    }
+  }, [isError, updateError]);
+  console.log('teste');
 
   // UI
   return (

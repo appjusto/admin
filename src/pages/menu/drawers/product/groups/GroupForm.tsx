@@ -40,6 +40,7 @@ export const GroupForm = ({
   const handleIsRequired = (value: string) => {
     if (value === '1') {
       setRequired(false);
+      setMin(0);
     } else if (value === '2') {
       setRequired(true);
       if (minimum === 0) setMin(1);
@@ -60,7 +61,7 @@ export const GroupForm = ({
     }
     if (field === 'max') {
       if (action === 'inc') setMax((prev) => prev + 1);
-      else if (action === 'dec') setMax((prev) => (prev > minimum ? prev - 1 : prev));
+      else if (action === 'dec') setMax((prev) => (prev > 1 && prev > minimum ? prev - 1 : prev));
     }
   };
 
@@ -133,6 +134,7 @@ export const GroupForm = ({
         <Text fontSize="sm">{t('Quantos itens podem ser selecionados pelos clientes?')}</Text>
         <Flex mt="4" flexDir="row" justifyContent="flex-start">
           <ItemsQtdButtons
+            isDisabled={!required}
             label={t('Mínimo')}
             mr="14"
             value={minimum}
@@ -197,16 +199,17 @@ export const GroupForm = ({
             </Flex>
           </RadioGroup>
           <ItemsQtdButtons
+            isDisabled={!required}
             label={t('Mínimo')}
             value={minimum}
-            increment={() => setMin((prev) => prev + 1)}
-            decrement={() => setMin((prev) => (prev > 0 ? prev - 1 : 0))}
+            increment={() => handleMaxAndMin('min', 'inc')}
+            decrement={() => handleMaxAndMin('min', 'dec')}
           />
           <ItemsQtdButtons
             label={t('Máximo')}
             value={maximum}
-            increment={() => setMax((prev) => prev + 1)}
-            decrement={() => setMax((prev) => (prev > 0 ? prev - 1 : 0))}
+            increment={() => handleMaxAndMin('max', 'inc')}
+            decrement={() => handleMaxAndMin('max', 'dec')}
           />
           <Flex mt="4" alignItems="flex-end">
             <Button type="submit" w="full" maxW="100px" fontSize="sm">

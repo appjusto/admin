@@ -1,7 +1,7 @@
 import { Box, Flex, Radio, RadioGroup, Text, Textarea } from '@chakra-ui/react';
 import { Issue, IssueType, OrderStatus, WithId } from 'appjusto-types';
 import React from 'react';
-import { orderCancelator } from 'utils/functions';
+import { getOrderCancellator } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
 
@@ -23,7 +23,7 @@ export const OrderStatusBar = ({
   updateState,
 }: OrderStatusProps) => {
   // helpers
-  const cancelator = orderCancelator(issue?.type);
+  const cancelator = getOrderCancellator(issue?.type);
   // UI
   return (
     <Box>
@@ -75,18 +75,12 @@ export const OrderStatusBar = ({
             </Text>
           </Text>
           <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
-            {t('Nome:')}{' '}
-            <Text as="span" fontWeight="500">
-              {cancelatorName ?? 'N/I'}
-            </Text>
-          </Text>
-          <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
             {t('Motivo informado:')}{' '}
             <Text as="span" fontWeight="500">
               {issue?.title ?? 'N/I'}
             </Text>
           </Text>
-          <RadioGroup
+          {/*<RadioGroup
             mt="2"
             onChange={(value: string) => updateState('issue', value)}
             value={issue?.id}
@@ -103,8 +97,8 @@ export const OrderStatusBar = ({
                 </Radio>
               ))}
             </Flex>
-          </RadioGroup>
-          <SectionTitle>{t('Mensagem personalizada:')}</SectionTitle>
+          </RadioGroup>*/}
+          <SectionTitle>{t('Comentário:')}</SectionTitle>
           <Textarea
             mt="2"
             value={message}

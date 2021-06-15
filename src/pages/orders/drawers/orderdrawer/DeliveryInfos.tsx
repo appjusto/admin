@@ -2,12 +2,12 @@ import { Box, Button, Circle, Flex, Image, Text } from '@chakra-ui/react';
 import { useCourierProfilePicture } from 'app/api/courier/useCourierProfilePicture';
 import { useOrderDeliveryInfos } from 'app/api/order/useOrderDeliveryInfos';
 import { Order, WithId } from 'appjusto-types';
+import firebase from 'firebase';
 import I18n from 'i18n-js';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { DeliveryMap } from './DeliveryMap';
-
 interface DeliveryInfosProps {
   order: WithId<Order>;
 }

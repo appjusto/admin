@@ -13,6 +13,7 @@ import {
 } from '@chakra-ui/react';
 import { useContextBusinessBackoffice } from 'app/state/business/businessBOContext';
 import { CustomButton } from 'common/components/buttons/CustomButton';
+import firebase from 'firebase';
 import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
 import React from 'react';
 import { useRouteMatch } from 'react-router';

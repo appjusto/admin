@@ -1,7 +1,7 @@
 import { CourierProfile, Fleet, MarketplaceAccountInfo, WithId } from 'appjusto-types';
 import FilesApi from '../FilesApi';
 import FirebaseRefs from '../FirebaseRefs';
-
+import firebase from 'firebase';
 export default class CourierApi {
   constructor(private refs: FirebaseRefs, private files: FilesApi) {}
 

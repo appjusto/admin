@@ -16,6 +16,7 @@ import { useContextConsumerProfile } from 'app/state/consumer/context';
 import { ConsumerProfile } from 'appjusto-types';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
 import { initialError } from 'common/components/error/utils';
+import firebase from 'firebase';
 import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
 import React from 'react';
 import { useRouteMatch } from 'react-router';
@@ -33,7 +34,7 @@ interface BaseDrawerProps {
 export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseDrawerProps) => {
   //context
   const { url } = useRouteMatch();
-  const { consumer, contextValidation } = useContextConsumerProfile();
+  const { consumer } = useContextConsumerProfile();
   const { updateProfile, updateResult } = useConsumerUpdateProfile();
   const { isLoading, isSuccess, isError, error: updateError } = updateResult;
 
@@ -52,13 +53,13 @@ export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
   const handleSave = () => {
     setError(initialError);
     submission.current += 1;
-    if (!contextValidation.cpf) {
+    /*if (!contextValidation.cpf) {
       return setError({
         status: true,
         error: null,
         message: { title: 'O CPF não foi informado ou não é válido.' },
       });
-    }
+    }*/
     const newState = {} as ConsumerProfile;
     consumer &&
       Object.keys(consumer).forEach((key) => {

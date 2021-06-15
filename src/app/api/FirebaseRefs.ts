@@ -7,6 +7,7 @@ export default class FirebaseRefs {
   ) {}
 
   // functions
+  getBatchRef = () => this.firestore.batch();
   getDeleteAccountCallable = () => this.functions.httpsCallable('deleteAccount');
   getCreateBusinessProfileCallable = () => this.functions.httpsCallable('createBusinessProfile');
   getCreateManager = () => this.functions.httpsCallable('createManager');

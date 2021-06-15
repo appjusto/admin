@@ -9,6 +9,7 @@ import { initialError } from 'common/components/error/utils';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import React from 'react';
 import { useParams } from 'react-router-dom';
+import { getOrderCancellator } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { OrderBaseDrawer } from '../OrderBaseDrawer';
 import { Cancelation } from './Cancelation';
@@ -30,7 +31,7 @@ export const OrderDrawer = (props: Props) => {
   //context
   const { orderId } = useParams<Params>();
   const { business } = useContextBusiness();
-  const { order, cancelOrder, result, orderIssues } = useOrder(orderId);
+  const { order, cancelOrder, result, orderIssues, orderCancellation } = useOrder(orderId);
   const { manager } = useContextManagerProfile();
 
   // state
@@ -39,6 +40,9 @@ export const OrderDrawer = (props: Props) => {
 
   // refs
   const submission = React.useRef(0);
+
+  // helpers
+  const cancellator = getOrderCancellator(orderCancellation?.issue?.type);
 
   // handlers
   const handleCancel = async (issue: WithId<Issue>) => {
@@ -80,6 +84,7 @@ export const OrderDrawer = (props: Props) => {
     <OrderBaseDrawer
       {...props}
       order={order}
+      cancellator={cancellator}
       cancel={() => setIsCanceling(true)}
       isCanceling={isCanceling}
     >
@@ -96,15 +101,15 @@ export const OrderDrawer = (props: Props) => {
               <SectionTitle>{t('Dados do cancelamento')}</SectionTitle>
               <Text mt="1" fontSize="md" fontWeight="700" color="black">
                 {t('Motivo:')}{' '}
-                {/* <Text as="span" fontWeight="500">
-                  {order.cancellation?.issue.title ?? 'N/E'}
-                </Text> */}
+                <Text as="span" fontWeight="500">
+                  {orderCancellation?.issue?.title ?? 'N/E'}
+                </Text>
               </Text>
               <Text mt="1" fontSize="md" fontWeight="700" color="black">
-                {t('Comentário:')}{' '}
-                {/* <Text as="span" fontWeight="500">
-                  {order.cancellation?.comment ?? 'N/I'}
-                </Text> */}
+                {t('Reembolso:')}{' '}
+                <Text as="span" fontWeight="500">
+                  {orderCancellation?.params.refund.includes('products') ? 'Sim' : 'Não'}
+                </Text>
               </Text>
             </>
           )}

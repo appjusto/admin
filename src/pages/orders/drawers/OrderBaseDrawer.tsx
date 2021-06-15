@@ -22,6 +22,7 @@ import { OrderAcceptButton } from './OrderAcceptButton';
 
 interface BaseDrawerProps {
   order?: WithId<Order> | null;
+  cancellator: string;
   isOpen: boolean;
   cancel(): void;
   isCanceling: boolean;
@@ -33,6 +34,7 @@ const statusConfirmed = 'confirmed';
 
 export const OrderBaseDrawer = ({
   order,
+  cancellator,
   cancel,
   isCanceling,
   onClose,
@@ -89,7 +91,7 @@ export const OrderBaseDrawer = ({
                 </Text>
                 {order?.status === 'canceled' && (
                   <Text fontSize="md" color="red" fontWeight="700" lineHeight="22px">
-                    {/* {t('Pedido cancelado pelo')} <Text as="span">{cancelator}</Text> */}
+                    {t('Pedido cancelado pelo')} <Text as="span">{cancellator}</Text>
                   </Text>
                 )}
                 <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
@@ -128,10 +130,15 @@ export const OrderBaseDrawer = ({
           {!isCanceling && !orderDispatched && order?.status !== 'canceled' && (
             <DrawerFooter borderTop="1px solid #F2F6EA">
               <Flex w="full" justifyContent="flex-start">
-                <Flex w="full" maxW="607px" flexDir="row" justifyContent="space-between">
-                  <Button width="full" maxW="200px" variant="dangerLight" onClick={cancel}>
+                <Flex
+                  w="full"
+                  maxW="607px"
+                  flexDir="row"
+                  justifyContent={order?.status === 'confirmed' ? 'space-between' : 'flex-end'}
+                >
+                  {/*<Button width="full" maxW="200px" variant="dangerLight" onClick={cancel}>
                     {t('Cancelar pedido')}
-                  </Button>
+                    </Button>*/}
                   {order?.status === 'confirmed' && (
                     <Box color="black" fontSize="xs">
                       <Text>{t('Tempo de preparo do pedido:')}</Text>

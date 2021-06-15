@@ -1,6 +1,7 @@
 import { Box, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import { Order, WithId } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
+import firebase from 'firebase';
 import { useRouteMatch } from 'react-router-dom';
 import {
   getDateAndHour,

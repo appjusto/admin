@@ -15,77 +15,6 @@ import { CustomToast } from 'common/components/CustomToast';
 import React from 'react';
 import { updateLocalStorageOrderTime } from 'utils/functions';
 
-/*const fakeItem = (price: number, qtd: number): OrderItem => {
-  return {
-    id: 'GLubXi2MzKYvZQDSrVpq',
-    product: {
-      name: 'Tradicional',
-      price: price, // in cents
-      id: 'GLubXi2MzKYvZQDSrVpq',
-      externalId: '',
-    },
-    quantity: qtd,
-    notes: '',
-  };
-};
-
-const fakeOrder: Order = {
-  type: 'food',
-  code: `${Math.random().toString().split('', 6).join('').replace('.', '')}`,
-  status: 'confirmed',
-  // comments: 'cpf',
-  consumer: {
-    id: 'n9IBTFplN1bnjHHfqhNcVJTaXc43',
-    name: 'Renan',
-    // cpf: '35214602820',
-  },
-  courier: {
-    id: 'n9IBTFplN1bnjHHfqhNcVJTaXc43',
-    name: 'Kelly Slater',
-    mode: 'motocycle',
-    joined: ('1 de fevereiro de 2021 00:00:00 UTC-3' as unknown) as firebase.firestore.Timestamp,
-    location: {
-      latitude: -8.0591539,
-      longitude: -34.9063069,
-    },
-  },
-  business: {
-    id: 'QZYurHCMsqZxTIQyQqq3',
-    name: 'Itapuama vegan',
-  },
-  items: [fakeItem(1200, 1), fakeItem(1600, 2)],
-  origin: {
-    address: {
-      main: 'Rua João Ivo da Silva, 453',
-      description: '',
-    },
-    additionalInfo: '',
-    intructions: '',
-    location: {
-      latitude: -8.0622085,
-      longitude: -34.9115396,
-    },
-  },
-  destination: {
-    address: {
-      main: 'Rua bom pastor, 1485',
-      description: '',
-    },
-    additionalInfo: '',
-    intructions: '',
-    location: {
-      latitude: -8.0502801,
-      longitude: -34.9396646,
-    },
-  },
-  route: {
-    distance: 4500, // in meters
-    duration: 14 * 60, // in seconds
-    polyline: '',
-    issue: null,
-  },
-};*/
-
 export type localOrderType = { code: string; time: number };
 
 interface ContextProps {
@@ -270,6 +199,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
 
   React.useEffect(() => {
     if (isBackofficeUser) return;
+    if (business?.situation !== 'approved') return;
     if (business?.status === 'closed') {
       toast({
         duration: 12000,
@@ -285,7 +215,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
         ),
       });
     }
-  }, [business?.status, isBackofficeUser, toast]);
+  }, [isBackofficeUser, business?.situation, business?.status, toast]);
 
   // provider
   return (

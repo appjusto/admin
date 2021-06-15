@@ -30,7 +30,9 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
   const { path } = useRouteMatch();
   const { agent, username } = useContextAgentProfile();
   const { orderId } = useParams<Params>();
-  const { order, updateOrder, result, cancelOrder, orderIssues } = useOrder(orderId);
+  const { order, updateOrder, result, cancelOrder, orderIssues, orderCancellation } = useOrder(
+    orderId
+  );
   const cancelOptions = useIssuesByType(cancelOptionsArray);
   const { isLoading, isSuccess, isError, error } = result;
 
@@ -79,12 +81,12 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
     if (order?.status) setStatus(order.status);
   }, [order?.status]);
 
-  // React.useEffect(() => {
-  //   if (order?.cancellation) {
-  //     setIssue(order.cancellation.issue ?? null);
-  //     setMessage(order.cancellation?.comment ?? '');
-  //   }
-  // }, [order?.cancellation]);
+  React.useEffect(() => {
+    if (orderCancellation) {
+      setIssue(orderCancellation.issue ?? null);
+      setMessage(orderCancellation.comment ?? '');
+    }
+  }, [orderCancellation]);
 
   //UI
   return (
@@ -120,7 +122,6 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
             <OrderStatusBar
               status={status}
               issue={issue}
-              // cancelatorName={order?.cancellation?.canceledBy.name}
               message={message}
               cancelOptions={cancelOptions}
               updateState={updateState}

@@ -4,6 +4,7 @@ import { round } from 'lodash';
 import { CroppedAreaProps } from 'common/components/ImageCropping';
 import { localOrderType } from 'pages/orders/context';
 import I18n from 'i18n-js';
+import firebase from 'firebase';
 
 // translation
 export const getTranslatedOrderStatus = (status: OrderStatus) => {
@@ -260,7 +261,8 @@ export const getCoordinatesMidpoint = (origin: latLng, destination: latLng) => {
   }
 };
 
-export const orderCancelator = (issueIype?: string) => {
+// orders
+export const getOrderCancellator = (issueIype?: string) => {
   let cancelator = 'N/E';
   if (issueIype === 'restaurant-cancel') cancelator = 'Restaurante';
   if (issueIype === 'consumer-cancel') cancelator = 'Cliente';
