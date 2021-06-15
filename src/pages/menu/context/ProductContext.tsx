@@ -76,6 +76,7 @@ export const ProductContextProvider = (props: ProviderProps) => {
           .business()
           .createProduct(businessId!, newProduct as Product, imageFiles);
         updateMenuOrdering(menu.updateParent(ordering, id, categoryId!));
+        queryCache.invalidateQueries(['product:image', productId]);
         return id;
       } else {
         await api.business().updateProduct(businessId!, productId, newProduct, imageFiles);
