@@ -1,6 +1,7 @@
 import { Box, Flex, Switch as ChakraSwitch, Text, useBreakpoint } from '@chakra-ui/react';
 import * as cnpjutils from '@fnando/cnpj';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
+import { useContextAgentProfile } from 'app/state/agent/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
 import { initialError } from 'common/components/error/utils';
@@ -34,11 +35,12 @@ import { BusinessDeleteDrawer } from './BusinessDeleteDrawer';
 
 const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   // context
-  const isDev = process.env.NODE_ENV === 'development';
+  const isDev = process.env.REACT_APP_ENVIRONMENT === 'dev';
   const { business } = useContextBusiness();
   const queryCache = useQueryCache();
   const { path } = useRouteMatch();
   const history = useHistory();
+  const { isBackofficeUser } = useContextAgentProfile();
 
   // state
   const [cnpj, setCNPJ] = React.useState(business?.cnpj ?? (isDev ? cnpjutils.generate() : ''));
@@ -314,16 +316,18 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
               value={description}
               onChange={(ev) => setDescription(ev.target.value)}
             />
-            <CurrencyInput
-              ref={minimumOrderRef}
-              isRequired
-              id="business-min-price"
-              label={t('Valor mínimo do pedido')}
-              placeholder={t('R$ 0,00')}
-              value={minimumOrder}
-              onChangeValue={(value) => setMinimumOrder(value)}
-              maxLength={8}
-            />
+            {isBackofficeUser && (
+              <CurrencyInput
+                ref={minimumOrderRef}
+                isRequired
+                id="business-min-price"
+                label={t('Valor mínimo do pedido')}
+                placeholder={t('R$ 0,00')}
+                value={minimumOrder}
+                onChangeValue={(value) => setMinimumOrder(value)}
+                maxLength={8}
+              />
+            )}
           </Box>
           {/* logo */}
           <Text mt="8" fontSize="xl" color="black">
