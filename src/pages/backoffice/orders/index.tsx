@@ -134,6 +134,12 @@ const OrdersPage = () => {
           >
             {t('Finalizados')}
           </FilterText>
+          <FilterText
+            isActive={filterBar === 'canceled' ? true : false}
+            onClick={() => setFilterBar('canceled')}
+          >
+            {t('Cancelados')}
+          </FilterText>
         </HStack>
         <HStack spacing={2} color="#697667" cursor="pointer" onClick={cleanFilters}>
           <DeleteIcon />

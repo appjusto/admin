@@ -1,6 +1,7 @@
 import { WithId, ConsumerProfile } from 'appjusto-types';
 import FilesApi from '../FilesApi';
 import FirebaseRefs from '../FirebaseRefs';
+import firebase from 'firebase';
 
 export default class ConsumerApi {
   constructor(private refs: FirebaseRefs, private files: FilesApi) {}

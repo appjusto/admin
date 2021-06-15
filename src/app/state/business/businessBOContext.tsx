@@ -177,7 +177,6 @@ export const BusinessBOProvider = ({ children }: Props) => {
       });
     }
   }, [isError, updateError]);
-  console.log('teste');
 
   // UI
   return (

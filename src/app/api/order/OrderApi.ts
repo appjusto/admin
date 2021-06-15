@@ -2,6 +2,7 @@ import {
   ChatMessage,
   Issue,
   Order,
+  OrderCancellation,
   //OrderCancellation,
   OrderChange,
   OrderIssue,
@@ -168,6 +169,10 @@ export default class OrderApi {
     );
     // returns the unsubscribe function
     return unsubscribe;
+  }
+
+  async getOrderPrivateCancellation(orderId: string) {
+    return documentAs<OrderCancellation>(await this.refs.getOrderCancellationRef(orderId).get());
   }
 
   async updateOrderCourierNotified(orderId: string, couriersNotified: string[]) {

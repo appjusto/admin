@@ -16,19 +16,20 @@ export const ItemsQtdButtons = ({
   mb,
   ml,
   mr,
+  ...props
 }: ItemsQtdButtonsProps) => {
   const boxProps = { mt, mb, ml, mr };
   return (
     <Box {...boxProps}>
       {label && <Text>{label}</Text>}
       <Flex flexDir="row" alignItems="center">
-        <Button maxW="48px" fontSize="3xl" variant="outline" onClick={decrement}>
+        <Button maxW="48px" fontSize="3xl" variant="outline" onClick={decrement} {...props}>
           -
         </Button>
         <Text fontSize="md" mx="2">
           {value}
         </Text>
-        <Button maxW="48px" fontSize="3xl" variant="outline" onClick={increment}>
+        <Button maxW="48px" fontSize="3xl" variant="outline" onClick={increment} {...props}>
           +
         </Button>
       </Flex>

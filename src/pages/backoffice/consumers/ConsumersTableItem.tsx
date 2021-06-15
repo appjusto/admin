@@ -1,6 +1,7 @@
 import { Td, Tr } from '@chakra-ui/react';
 import { ConsumerAlgolia } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
+import firebase from 'firebase';
 import { useRouteMatch } from 'react-router';
 import { getAlgoliaFieldDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
