@@ -76,9 +76,10 @@ interface ParticipantsProps {
 export const Participants = ({ order }: ParticipantsProps) => {
   // helpers
   const {
+    isMatched,
     isCurrierArrived,
     isOrderActive,
-    orderDispatchingStatusText,
+    orderDispatchingText,
     arrivalTime,
   } = useOrderDeliveryInfos(order);
 
@@ -127,8 +128,9 @@ export const Participants = ({ order }: ParticipantsProps) => {
       />
       {isOrderActive && (
         <>
-          <SectionTitle>{orderDispatchingStatusText}</SectionTitle>
-          {!isCurrierArrived &&
+          <SectionTitle>{orderDispatchingText}</SectionTitle>
+          {isMatched &&
+            !isCurrierArrived &&
             (arrivalTime && arrivalTime > 0 ? (
               <Text mt="1" fontSize="15px" lineHeight="21px">
                 {t(

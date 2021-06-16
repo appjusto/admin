@@ -16,9 +16,11 @@ export const DeliveryInfos = ({ order }: DeliveryInfosProps) => {
   // context
   const courierPictureUrl = useCourierProfilePicture(order.courier?.id);
   const {
+    isMatching,
     isMatched,
+    isNoMatch,
     isCurrierArrived,
-    orderDispatchingStatusText,
+    orderDispatchingText,
     arrivalTime,
   } = useOrderDeliveryInfos(order);
   // state
@@ -45,9 +47,10 @@ export const DeliveryInfos = ({ order }: DeliveryInfosProps) => {
     <Box mt="6">
       <Flex justifyContent="space-between" alignItems="center">
         <Text fontSize="xl" color="black">
-          {orderDispatchingStatusText}
+          {orderDispatchingText}
         </Text>
-        {!isCurrierArrived &&
+        {isMatched &&
+          !isCurrierArrived &&
           (arrivalTime && arrivalTime > 0 ? (
             <Text fontSize="sm">
               {t(
