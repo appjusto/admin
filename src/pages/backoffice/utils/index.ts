@@ -16,3 +16,14 @@ export const modePTOptions = {
   car: 'Carro',
   walking: 'A pé',
 };
+
+export const orderStatusPTOptions = {
+  confirming: 'Aguardando confirmação',
+  declined: 'Recusado',
+  confirmed: 'Confirmado',
+  preparing: 'Em preparo',
+  ready: 'Pronto - aguardando entregador',
+  dispatching: 'À caminho da entrega',
+  delivered: 'Entregue',
+  canceled: 'Cancelado',
+};
