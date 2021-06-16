@@ -40,9 +40,13 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
   const { business, changeOrderStatus } = useOrdersContext();
   const arrivalTime = useOrderArrivalTimes(order);
   const { isBackofficeUser } = useFirebaseUserRole();
-  const { isMatching, isMatched, isNoMatch, isCurrierArrived, isDelivered } = useOrderDeliveryInfos(
-    order
-  );
+  const {
+    isMatched,
+    isNoMatch,
+    isCurrierArrived,
+    isDelivered,
+    orderDispatchingText,
+  } = useOrderDeliveryInfos(order);
 
   // state
   const [elapsedTime, setElapsedTime] = React.useState<number | null>(0);
@@ -201,16 +205,9 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
               <CodeLink url={url} orderId={order.id} code={order.code} />
             </Box>
             <Flex flexDir="column" fontSize="xs" alignItems="flex-end">
-              {isMatching && (
-                <Text color="gray.700" fontWeight="700" textAlign="end">
-                  {t('Buscando entregador')}
-                </Text>
-              )}
-              {isNoMatch && (
-                <Text color="red" fontWeight="700" textAlign="end">
-                  {t('Entregador não encontrado')}
-                </Text>
-              )}
+              <Text color={isNoMatch ? 'red' : 'gray.700'} fontWeight="700" textAlign="end">
+                {orderDispatchingText}
+              </Text>
               {isMatched &&
                 (isCurrierArrived ? (
                   <>
