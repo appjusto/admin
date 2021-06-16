@@ -35,6 +35,7 @@ export const Checklist = ({ disabled, ...props }: Props) => {
     // t('Incluir o cardápio'),
     // t('Adicionar colaboradores')
   ];
+  if (currentStepIndex === 2) throw new Error('OnboardingError');
   return (
     <Box {...props}>
       {items.map((item, i) => {

@@ -245,7 +245,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const coverWidth = breakpoint === 'base' ? 328 : breakpoint === 'md' ? 420 : 464;
   if (isSuccess && redirect) return <Redirect to={redirect} push />;
   return (
-    <>
+    <Box>
       <Box maxW="833px">
         <form
           onSubmit={(ev) => {
@@ -412,12 +412,14 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
           errorMessage={error.message}
         />
       </Box>
-      <Switch>
-        <Route exact path={`${path}/delete`}>
-          <BusinessDeleteDrawer isOpen onClose={closeDrawerHandler} />
-        </Route>
-      </Switch>
-    </>
+      {!onboarding && (
+        <Switch>
+          <Route exact path={`${path}/delete`}>
+            <BusinessDeleteDrawer isOpen onClose={closeDrawerHandler} />
+          </Route>
+        </Switch>
+      )}
+    </Box>
   );
 };
 
