@@ -183,7 +183,7 @@ export const GroupForm = ({
         />
         <Flex mt="2" flexDir="row" justifyContent="space-between">
           <RadioGroup
-            onChange={(value) => setRequired(value === '1' ? false : true)}
+            onChange={(value) => handleIsRequired(value as string)}
             value={required ? '2' : '1'}
             defaultValue="1"
             colorScheme="green"
