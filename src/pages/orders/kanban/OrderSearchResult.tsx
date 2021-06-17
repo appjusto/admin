@@ -42,7 +42,13 @@ export const OrderSearchResult = ({ orders }: OrderSearchProps) => {
                   <Td maxW="120px">{order.code}</Td>
                   <Td>{getDateAndHour(order.createdOn as firebase.firestore.Timestamp)}</Td>
                   <Td>{getTranslatedOrderStatus(order.status)}</Td>
-                  <Td>{order.courier?.name ?? t('Sem entregador')}</Td>
+                  <Td>
+                    {order.courier?.name ? (
+                      <Text as="span">{order.courier.name}</Text>
+                    ) : (
+                      <Text as="span">{t('Sem entregador')}</Text>
+                    )}
+                  </Td>
                   <Td isNumeric>{getOrderTotalPriceToDisplay(order.items ?? [])}</Td>
                   <Td>
                     <CustomButton

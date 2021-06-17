@@ -23,7 +23,11 @@ const PageFooter = ({ onboarding, redirect, isLoading, deleteLabel, onDelete }: 
         isLoading={isLoading}
         loadingText={t('Salvando')}
       >
-        {onboarding ? t('Salvar e continuar') : t('Salvar')}
+        {onboarding ? (
+          <Text as="span">{t('Salvar e continuar')}</Text>
+        ) : (
+          <Text as="span">{t('Salvar')}</Text>
+        )}
       </Button>
       {!onboarding && deleteLabel && (
         <Button

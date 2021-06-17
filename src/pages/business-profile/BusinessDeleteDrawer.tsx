@@ -77,7 +77,11 @@ export const BusinessDeleteDrawer = ({ onClose, ...props }: BaseDrawerProps) => 
               <Text color="red">
                 {t('Nome do restaurante: ')}
                 <Text as="span" fontWeight="700">
-                  {business?.name ?? t('Não informado')}
+                  {business?.name ? (
+                    <Text as="span">{business?.name}</Text>
+                  ) : (
+                    <Text as="span">{t('Não informado')}</Text>
+                  )}
                 </Text>
               </Text>
               <Text mt="4" color="red">

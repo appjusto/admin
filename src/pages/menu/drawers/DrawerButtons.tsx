@@ -37,7 +37,11 @@ export const DrawerButtons = ({
             onClick={() => setDeleteConfirm(true)}
             isDisabled={isLoading}
           >
-            {type === 'category' ? t('Apagar categoria') : t('Apagar produto')}
+            {type === 'category' ? (
+              <Text as="span">{t('Apagar categoria')}</Text>
+            ) : (
+              <Text as="span">{t('Apagar produto')}</Text>
+            )}
           </Button>
         )}
       </Stack>

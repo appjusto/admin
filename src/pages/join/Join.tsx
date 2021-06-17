@@ -70,17 +70,15 @@ const Join = () => {
               onChange={(ev) => setEmail(ev.target.value)}
             />
           </FormControl>
-
           <Button width="full" mt="6" onClick={() => signIn(email)} isLoading={isLoading}>
-            {t('Entrar')}
+            <Text as="span">{t('Entrar')}</Text>
           </Button>
-
           <Box mt="6">
             {isError && (
               <Alert status="error">
                 <AlertIcon />
                 <AlertTitle mr={2}>{t('Erro!')}</AlertTitle>
-                <AlertDescription>{getErrorMessage(error) ?? t('Tenta de novo?')}</AlertDescription>
+                <AlertDescription>{getErrorMessage(error)}</AlertDescription>
               </Alert>
             )}
           </Box>

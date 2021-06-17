@@ -335,7 +335,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
             clearDrop={() => clearDropImages('cover')}
           />
           {!onboarding && business?.situation === 'approved' && (
-            <>
+            <Box>
               <Text mt="8" fontSize="xl" color="black">
                 {t('Desligar restaurante do AppJusto')}
               </Text>
@@ -352,11 +352,15 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
                 />
                 <Flex ml="4" flexDir="column" minW="280px">
                   <Text fontSize="16px" fontWeight="700" lineHeight="22px">
-                    {enabled ? t('Ligado') : t('Desligado')}
+                    {enabled ? (
+                      <Text as="span">{t('Ligado')}</Text>
+                    ) : (
+                      <Text as="span">{t('Desligado')}</Text>
+                    )}
                   </Text>
                 </Flex>
               </Flex>
-            </>
+            </Box>
           )}
           {/* submit */}
           <PageFooter

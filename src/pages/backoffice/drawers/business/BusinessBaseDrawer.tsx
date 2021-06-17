@@ -89,9 +89,11 @@ export const BusinessBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
             <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
               {t('Etapa:')}{' '}
               <Text as="span" fontWeight="500">
-                {business?.onboarding === 'completed'
-                  ? t('Concluído')
-                  : t(`onboarding - ${business?.onboarding}`)}
+                {business?.onboarding === 'completed' ? (
+                  <Text as="span">{t('Concluído')}</Text>
+                ) : (
+                  <Text as="span">{t(`onboarding - ${business?.onboarding}`)}</Text>
+                )}
               </Text>
             </Text>
             <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
