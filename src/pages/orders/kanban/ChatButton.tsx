@@ -48,7 +48,9 @@ export const ChatButton = ({ isNewMessage }: ChatButtonProps) => {
       animate={controls}
     >
       <ChatIcon />
-      <Text ml="4">Chat</Text>
+      <Text ml="4" translate="no">
+        Chat
+      </Text>
     </MotionButton>
   );
 };

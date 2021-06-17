@@ -50,8 +50,8 @@ export const ChatMessages = ({ image, name, messages }: ChatMessagesProps) => {
           borderRadius="lg"
         >
           <HStack spacing={4}>
-            <Text>{message.message}</Text>
-            <Text fontSize="13px" lineHeight="18px" fontWeight="500">
+            <Text translate="no">{message.message}</Text>
+            <Text fontSize="13px" lineHeight="18px" fontWeight="500" translate="no">
               {getTime(message.timestamp)}
             </Text>
           </HStack>
