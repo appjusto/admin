@@ -3,7 +3,6 @@ import { ReactComponent as ChatIcon } from 'common/img/chat.svg';
 import { motion, useAnimation } from 'framer-motion';
 import { ControlsAnimationDefinition } from 'framer-motion/types/animation/types';
 import React from 'react';
-import { t } from 'utils/i18n';
 
 const MotionButton = motion<ButtonProps>(Button);
 
@@ -49,7 +48,7 @@ export const ChatButton = ({ isNewMessage }: ChatButtonProps) => {
       animate={controls}
     >
       <ChatIcon />
-      <Text ml="4">{t('Chat')}</Text>
+      <Text ml="4">Chat</Text>
     </MotionButton>
   );
 };

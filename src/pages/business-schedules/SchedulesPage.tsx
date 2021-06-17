@@ -1,4 +1,4 @@
-import { Button, Flex } from '@chakra-ui/react';
+import { Button, Flex, Text } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useContextBusiness } from 'app/state/business/context';
 import { BusinessSchedule } from 'appjusto-types/business';
@@ -149,9 +149,9 @@ const SchedulesPage = () => {
             type="submit"
             fontSize="15px"
             isLoading={isLoading}
-            loadingText={t('Salvando')}
+            //loadingText={t('Salvando')}
           >
-            {t('Salvar horários')}
+            <Text as="span">{t('Salvar horários')}</Text>
           </Button>
         </form>
         <SuccessAndErrorHandler

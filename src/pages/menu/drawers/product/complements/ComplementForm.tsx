@@ -1,4 +1,4 @@
-import { Button, Flex, HStack, Text, VStack } from '@chakra-ui/react';
+import { Box, Button, Flex, HStack, Text, VStack } from '@chakra-ui/react';
 import { Complement, WithId } from 'appjusto-types';
 import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput2';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
@@ -92,77 +92,81 @@ export const ComplementForm = ({
 
   //UI
   return (
-    <form
-      onSubmit={(ev) => {
-        ev.preventDefault();
-        handleSave();
-      }}
-    >
-      <VStack spacing={4} alignItems="flex-start" p="4">
-        <Flex flexDir="column">
-          <ImageUploads
-            width="200px"
-            height="200px"
-            imageUrl={imageUrl}
-            ratios={complementsRatios}
-            resizedWidth={complementsResizedWidth}
-            getImages={getImageFiles}
-            clearDrop={clearDropImages}
-          />
-          <Text mt="2" textAlign="center" fontSize="xs">
-            {t('Adicionar imagem')}
-          </Text>
-        </Flex>
-        <Flex flexDir="column" w="100%">
-          <Input
-            ref={inputRef}
-            isRequired
-            mt="0"
-            id="complements-item-name"
-            label={t('Nome do item')}
-            placeholder={t('Nome do item')}
-            value={name}
-            handleChange={(ev) => setName(ev.target.value)}
-          />
-          <Textarea
-            mt="4"
-            id="complements-item-description"
-            label={t('Descrição do item')}
-            placeholder={t('Descreva seu item')}
-            value={description}
-            onChange={(ev) => setDescription(ev.target.value)}
-            maxH="130px"
-          />
-          <Text fontSize="xs" color="gray.700">
-            0/1000
-          </Text>
-          <HStack spacing={4} mt="4">
-            <CurrencyInput
-              mt="0"
-              id="complements-item-price"
-              label={t('Preço')}
-              value={price}
-              onChangeValue={(value) => setPrice(value)}
-              maxLength={5}
+    <Box>
+      <form
+        onSubmit={(ev) => {
+          ev.preventDefault();
+          handleSave();
+        }}
+      >
+        <VStack spacing={4} alignItems="flex-start" p="4">
+          <Flex flexDir="column">
+            <ImageUploads
+              width="200px"
+              height="200px"
+              imageUrl={imageUrl}
+              ratios={complementsRatios}
+              resizedWidth={complementsResizedWidth}
+              getImages={getImageFiles}
+              clearDrop={clearDropImages}
             />
-            <Input
-              id="complements-item-pdv"
-              label={t('Código PDV')}
-              placeholder={t('000')}
-              value={externalId}
-              handleChange={(ev) => setExternalId(ev.target.value)}
-            />
-          </HStack>
-          <Flex mt="4" justifyContent="flex-end">
-            <Button variant="dangerLight" w="120px" mr="4" onClick={onCancel}>
-              {t('Cancelar')}
-            </Button>
-            <Button type="submit" w="120px" isLoading={isLoading} loadingText={t('Salvando')}>
-              {t('Salvar')}
-            </Button>
+            <Text mt="2" textAlign="center" fontSize="xs">
+              {t('Adicionar imagem')}
+            </Text>
           </Flex>
-        </Flex>
-      </VStack>
-    </form>
+          <Flex flexDir="column" w="100%">
+            <Input
+              ref={inputRef}
+              isRequired
+              mt="0"
+              id="complements-item-name"
+              label={t('Nome do item')}
+              placeholder={t('Nome do item')}
+              value={name}
+              handleChange={(ev) => setName(ev.target.value)}
+            />
+            <Textarea
+              mt="4"
+              id="complements-item-description"
+              label={t('Descrição do item')}
+              placeholder={t('Descreva seu item')}
+              value={description}
+              onChange={(ev) => setDescription(ev.target.value)}
+              maxH="130px"
+            />
+            <Text fontSize="xs" color="gray.700">
+              0/1000
+            </Text>
+            <HStack spacing={4} mt="4">
+              <CurrencyInput
+                mt="0"
+                id="complements-item-price"
+                label={t('Preço')}
+                value={price}
+                onChangeValue={(value) => setPrice(value)}
+                maxLength={5}
+              />
+              <Input
+                id="complements-item-pdv"
+                label={t('Código PDV')}
+                placeholder={t('000')}
+                value={externalId}
+                handleChange={(ev) => setExternalId(ev.target.value)}
+              />
+            </HStack>
+            <Flex mt="4" justifyContent="flex-end">
+              <Button variant="dangerLight" w="120px" mr="4" onClick={onCancel}>
+                {t('Cancelar')}
+              </Button>
+              <Box>
+                <Button type="submit" w="120px" isLoading={isLoading}>
+                  <Text as="span">{t('Salvar')}</Text>
+                </Button>
+              </Box>
+            </Flex>
+          </Flex>
+        </VStack>
+      </form>
+    </Box>
   );
 };
