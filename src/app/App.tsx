@@ -4,8 +4,10 @@ import { RootProvider } from './RootProvider';
 
 export default function App() {
   return (
-    <RootProvider>
-      <Router />
-    </RootProvider>
+    <div className="notranslate">
+      <RootProvider>
+        <Router />
+      </RootProvider>
+    </div>
   );
 }
