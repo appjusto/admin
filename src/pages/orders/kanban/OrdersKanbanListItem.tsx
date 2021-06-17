@@ -158,7 +158,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
               <Text fontWeight="700">{t('Pedido entregue')}</Text>
             ) : (
               <>
-                <Text fontWeight="700">{t('Pedido à caminho')}</Text>
+                <Text fontWeight="700">{t('Pedido a caminho')}</Text>
                 {arrivalTime ? (
                   arrivalTime > 0 ? (
                     <Text color="gray.700" fontWeight="500">
@@ -221,7 +221,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
                 ) : (
                   <>
                     <Text color="gray.700" fontWeight="700">
-                      {t('Entregador à caminho')}
+                      {t('Entregador a caminho')}
                     </Text>
                     {arrivalTime ? (
                       arrivalTime > 0 ? (

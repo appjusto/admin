@@ -34,9 +34,9 @@ export const useOrderDeliveryInfos = (order?: WithId<Order> | null) => {
       let result = 'Buscando informações...';
       if (status === 'matched') {
         result = 'Buscando entregador';
-        if (state === 'going-pickup') result = 'Entregador à caminho da retirada';
+        if (state === 'going-pickup') result = 'Entregador a caminho da retirada';
         if (state === 'arrived-pickup') result = 'Entregador no local';
-        if (state === 'going-destination') result = 'Entregador à caminho da entrega';
+        if (state === 'going-destination') result = 'Entregador a caminho da entrega';
         if (state === 'arrived-destination') result = 'Entregador no local de entrega';
       } else if (status === 'no-match') result = 'Entregador não encontrado';
       setOrderDispatchingText(result);

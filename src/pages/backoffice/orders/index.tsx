@@ -126,7 +126,7 @@ const OrdersPage = () => {
             isActive={filterBar === 'dispatching' ? true : false}
             onClick={() => setFilterBar('dispatching')}
           >
-            {t('À caminho')}
+            {t('A caminho')}
           </FilterText>
           <FilterText
             isActive={filterBar === 'delivered' ? true : false}
