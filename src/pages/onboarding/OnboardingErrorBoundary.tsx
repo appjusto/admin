@@ -21,7 +21,7 @@ const FallbackErrorComponent = () => {
         updateBusinessProfile({ onboarding: 'completed' });
       } else setTimeout(() => setBusinessExists(true), 4000);
     } else setBusinessExists(false);
-  }, [business]);
+  }, [business, updateBusinessProfile]);
   console.log('FBE business', business);
   // UI
   if (businessExists === true) return <Redirect to="/app" />;

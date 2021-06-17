@@ -15,6 +15,7 @@ import { documentAs, documentsAs } from '../../../core/fb';
 import FilesApi from '../FilesApi';
 import FirebaseRefs from '../FirebaseRefs';
 import { BusinessChatMessage } from './chat/useBusinessChats';
+import * as Sentry from '@sentry/react';
 
 export default class BusinessApi {
   constructor(private refs: FirebaseRefs, private files: FilesApi) {}
@@ -164,6 +165,33 @@ export default class BusinessApi {
         console.log(error);
         throw new Error(error);
       });
+  }
+
+  async updateBusinessProfileWithImages(
+    businessId: string,
+    changes: Partial<Business>,
+    logoFile: File | null,
+    coverFiles: File[] | null
+  ) {
+    //business
+    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+    const fullChanges = {
+      ...changes,
+      updatedOn: timestamp,
+    };
+    try {
+      await this.refs.getBusinessRef(businessId).set(fullChanges, { merge: true });
+      // logo
+      if (logoFile) await this.uploadBusinessLogo(businessId, logoFile, () => {});
+      //cover
+      if (coverFiles) await this.uploadBusinessCover(businessId, coverFiles, () => {});
+      // result
+      return true;
+    } catch (error) {
+      console.log(error);
+      Sentry.captureException(error);
+      throw new Error('BusinessUpdateWithImagesError');
+    }
   }
 
   async removeBusinessManager(business: WithId<Business>, managerEmail: string) {
