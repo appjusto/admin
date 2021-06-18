@@ -166,11 +166,11 @@ export const AddMembersForm = () => {
           </HStack>
         ))}
         <Button mt="4" size="sm" variant="outline" onClick={AddMemberFields}>
-          <Text as="span">{t('Adicionar mais')}</Text>
+          {t('Adicionar mais')}
         </Button>
         <Box>
           <Button type="submit" mt="8" fontSize="sm" fontWeight="500" isLoading={isLoading}>
-            <Text as="span">{t('Salvar alterações')}</Text>
+            {t('Salvar alterações')}
           </Button>
         </Box>
       </form>

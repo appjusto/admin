@@ -44,11 +44,14 @@ export const OrderBaseDrawer = ({
   //context
   const orderConfirmedTimestamp = useOrderStatusTimestamp(order?.id, statusConfirmed);
   const { changeOrderStatus } = useOrdersContext();
+
   // refs
   const bodyRef = React.useRef<HTMLDivElement>(null);
+
   // helpers
   const isCurrierArrived = order?.dispatchingState === 'arrived-pickup';
   // const cancelator = orderCancelator(order?.cancellation?.issue.type);
+
   //handlers
   const PrimaryButtonFunction = () => {
     if (order?.status === 'confirmed') changeOrderStatus(order.id, 'preparing');
@@ -56,19 +59,24 @@ export const OrderBaseDrawer = ({
     if (order?.status === 'ready') changeOrderStatus(order.id, 'dispatching');
     onClose();
   };
+
   const scrollBodyToBottom = () => {
     if (!bodyRef.current) return;
     const scrollNumber = bodyRef.current.scrollHeight - 610;
     return (bodyRef.current.scrollTop = scrollNumber);
   };
+
   //UI conditions
   let orderDispatched = ['dispatching', 'delivered'].includes(order?.status ?? 'not_included');
+
   let PrimaryButtonAble =
     ['confirmed', 'preparing'].includes(order?.status ?? 'not_included') ||
     (order?.status === 'ready' && isCurrierArrived);
+
   let PrimaryButtonLabel = 'CONFIRMAR';
   if (order?.status === 'preparing') PrimaryButtonLabel = 'Pedido pronto';
   if (order?.status === 'ready') PrimaryButtonLabel = 'Entregar pedido';
+
   //UI
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
@@ -83,15 +91,12 @@ export const OrderBaseDrawer = ({
                 </Text>
                 {order?.status === 'canceled' && (
                   <Text fontSize="md" color="red" fontWeight="700" lineHeight="22px">
-                    {t('Pedido cancelado pelo')}{' '}
-                    <Text as="span" translate="no">
-                      {cancellator}
-                    </Text>
+                    {t('Pedido cancelado pelo')} <Text as="span">{cancellator}</Text>
                   </Text>
                 )}
                 <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
                   {t('Nome do cliente:')}{' '}
-                  <Text as="span" color="black" fontWeight="700" translate="no">
+                  <Text as="span" color="black" fontWeight="700">
                     {order?.consumer?.name ?? 'N/E'}
                   </Text>
                 </Text>
@@ -104,7 +109,7 @@ export const OrderBaseDrawer = ({
                 </Text>*/}
                 <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
                   {t('Horário do pedido:')}{' '}
-                  <Text as="span" color="black" fontWeight="700" translate="no">
+                  <Text as="span" color="black" fontWeight="700">
                     {orderConfirmedTimestamp ? getDateAndHour(orderConfirmedTimestamp) : 'N/E'}
                   </Text>
                 </Text>
@@ -137,7 +142,7 @@ export const OrderBaseDrawer = ({
                   {order?.status === 'confirmed' && (
                     <Box color="black" fontSize="xs">
                       <Text>{t('Tempo de preparo do pedido:')}</Text>
-                      <Text fontWeight="700" translate="no">
+                      <Text fontWeight="700">
                         {t(`${order?.cookingTime ? order?.cookingTime / 60 : 'N/I'} minutos`)}
                         <Text
                           ml="2"

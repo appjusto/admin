@@ -29,7 +29,7 @@ export const OrderDetails = ({ order }: DetailsProps) => {
               {order?.items?.map((item: OrderItem) => (
                 <React.Fragment key={Math.random()}>
                   <Tr color="black" fontSize="xs" fontWeight="700">
-                    <Td display="flex" flexDir="column">
+                    <Td>
                       {item.product.name} <br />
                       <Text as="span" color="red" fontWeight="500">
                         {item.notes}

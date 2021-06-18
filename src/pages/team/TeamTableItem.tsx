@@ -1,4 +1,4 @@
-import { Box, Button, HStack, Switch, Td, Text, Tr } from '@chakra-ui/react';
+import { Box, Button, HStack, Switch, Td, Tr } from '@chakra-ui/react';
 import { ManagerWithRole } from 'app/api/manager/types';
 import React from 'react';
 import { formatDate, formatTime } from 'utils/formatters';
@@ -39,7 +39,7 @@ export const TeamTableItem = ({
                   onClick={() => deleteMember(manager.email)}
                   isLoading={isLoading}
                 >
-                  <Text as="span">{t('Excluir')}</Text>
+                  {t('Excluir')}
                 </Button>
               </HStack>
             </Box>

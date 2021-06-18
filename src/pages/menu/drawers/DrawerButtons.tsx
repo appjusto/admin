@@ -27,7 +27,7 @@ export const DrawerButtons = ({
           isLoading={isLoading}
           loadingText={t('Salvando')}
         >
-          <Text as="span">{t('Salvar')}</Text>
+          {t('Salvar')}
         </Button>
         {isEditing && (
           <Button
@@ -46,30 +46,18 @@ export const DrawerButtons = ({
   return (
     <Box mt="8" bg="#FFF8F8" border="1px solid red" borderRadius="lg" p="6">
       <Text color="red">
-        {type === 'category' ? (
-          <Text as="span">
-            {t(
-              'Ao apagar a categoria, os itens adicionados a ela também serão excluídos. Tem certeza que deseja excluir essa categoria?'
-            )}
-          </Text>
-        ) : (
-          <Text as="span">{t('Tem certeza que deseja excluir este produto?')}</Text>
+        {t(
+          type === 'category'
+            ? 'Ao apagar a categoria, os itens adicionados a ela também serão excluídos. Tem certeza que deseja excluir essa categoria?'
+            : 'Tem certeza que deseja excluir este produto?'
         )}
       </Text>
       <Stack mt="8" spacing={4} direction="row">
         <Button width="full" onClick={() => setDeleteConfirm(false)}>
-          {type === 'category' ? (
-            <Text as="span">{t('Manter categoria')}</Text>
-          ) : (
-            <Text as="span">{t('Manter produto')}</Text>
-          )}
+          {t(type === 'category' ? 'Manter categoria' : 'Manter produto')}
         </Button>
         <Button width="full" variant="danger" onClick={onDelete}>
-          {type === 'category' ? (
-            <Text as="span">{t('Apagar categoria')}</Text>
-          ) : (
-            <Text as="span">{t('Apagar produto')}</Text>
-          )}
+          {t(type === 'category' ? 'Apagar categoria' : 'Apagar produto')}
         </Button>
       </Stack>
     </Box>

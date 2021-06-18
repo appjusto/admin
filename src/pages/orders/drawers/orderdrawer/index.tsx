@@ -101,13 +101,13 @@ export const OrderDrawer = (props: Props) => {
               <SectionTitle>{t('Dados do cancelamento')}</SectionTitle>
               <Text mt="1" fontSize="md" fontWeight="700" color="black">
                 {t('Motivo:')}{' '}
-                <Text as="span" fontWeight="500" translate="no">
+                <Text as="span" fontWeight="500">
                   {orderCancellation?.issue?.title ?? 'N/E'}
                 </Text>
               </Text>
               <Text mt="1" fontSize="md" fontWeight="700" color="black">
                 {t('Reembolso:')}{' '}
-                <Text as="span" fontWeight="500" translate="no">
+                <Text as="span" fontWeight="500">
                   {orderCancellation?.params.refund.includes('products') ? 'Sim' : 'Não'}
                 </Text>
               </Text>

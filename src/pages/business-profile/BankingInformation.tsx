@@ -288,12 +288,7 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
             }}
           />
         </Flex>
-        <PageFooter
-          onboarding={onboarding}
-          redirect={redirect}
-          isLoading={isLoading}
-          isDisabled={disabled}
-        />
+        <PageFooter onboarding={onboarding} redirect={redirect} isLoading={isLoading} />
         <SuccessAndErrorHandler
           submission={submission.current}
           isSuccess={isSuccess && !onboarding}
