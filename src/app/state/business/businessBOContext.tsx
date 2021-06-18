@@ -125,7 +125,8 @@ export const BusinessBOProvider = ({ children }: Props) => {
     let bankingChanges = null;
     if (state.businessProfile !== business) businessChanges = state.businessProfile;
     if (state.manager !== manager) managerChanges = state.manager;
-    if (state.bankingInfo !== bankAccount) bankingChanges = state.bankingInfo;
+    if (!isEmpty(state.bankingInfo) && state.bankingInfo !== bankAccount)
+      bankingChanges = state.bankingInfo;
     updateBusinessManagerAndBankAccount({ businessChanges, managerChanges, bankingChanges });
   };
 
