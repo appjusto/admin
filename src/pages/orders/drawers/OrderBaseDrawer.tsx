@@ -12,12 +12,12 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { useOrderStatusTimestamp } from 'app/api/order/useOrderStatusTimestamp';
+import { useOrdersContext } from 'app/state/order';
 import { Order, WithId } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import React from 'react';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
-import { useOrdersContext } from '../context';
 import { OrderAcceptButton } from './OrderAcceptButton';
 
 interface BaseDrawerProps {

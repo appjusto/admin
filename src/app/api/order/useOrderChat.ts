@@ -6,7 +6,7 @@ import { useMutation } from 'react-query';
 import { useCourierProfilePicture } from '../courier/useCourierProfilePicture';
 import { GroupedChatMessages } from 'app/api/chat/types';
 import { groupOrderChatMessages, sortMessages } from 'app/api/chat/utils';
-import { useOrdersContext } from 'pages/orders/context';
+import { useOrdersContext } from 'app/state/order';
 
 const orderActivedStatuses = ['confirmed', 'preparing', 'ready', 'dispatching'] as OrderStatus[];
 

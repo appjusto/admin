@@ -42,7 +42,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   const api = useContextApi();
   const { isBackofficeUser } = useContextAgentProfile();
   const { business } = useContextBusiness();
-  const { updateBusinessProfile, sendBusinessKeepAlive } = useBusinessProfile();
+  const { sendBusinessKeepAlive } = useBusinessProfile();
   const activeOrders = useOrders(statuses, business?.id);
   const canceledOrders = useCanceledOrders(business?.id);
   const chats = useBusinessChats(activeOrders);

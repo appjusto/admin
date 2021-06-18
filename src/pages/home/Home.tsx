@@ -1,5 +1,6 @@
 import { useContextAgentProfile } from 'app/state/agent/context';
 import { useContextBusiness } from 'app/state/business/context';
+import { OrdersContextProvider } from 'app/state/order';
 import { Loading } from 'common/components/Loading';
 import BusinessProfile from 'pages/business-profile/BusinessProfile';
 import SchedulesPage from 'pages/business-schedules/SchedulesPage';
@@ -8,7 +9,6 @@ import DeliveryArea from 'pages/delivery-area/DeliveryArea';
 import FinancesPage from 'pages/finances/FinancesPage';
 import ManagerProfilePage from 'pages/manager-profile/ManagerProfilePage';
 import Menu from 'pages/menu/Menu';
-import { OrdersContextProvider } from 'pages/orders/context';
 import OrdersHistoryPage from 'pages/orders/history/OrdersHistoryPage';
 import OrdersPage from 'pages/orders/OrdersPage';
 import PageLayout from 'pages/PageLayout';
