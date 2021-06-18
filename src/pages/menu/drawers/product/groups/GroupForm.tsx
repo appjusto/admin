@@ -30,7 +30,7 @@ export const GroupForm = ({
   const [name, setName] = React.useState('');
   const [required, setRequired] = React.useState(false);
   const [minimum, setMin] = React.useState(0);
-  const [maximum, setMax] = React.useState(0);
+  const [maximum, setMax] = React.useState(1);
   const inputRef = React.useRef<HTMLInputElement>(null);
 
   // helpers
