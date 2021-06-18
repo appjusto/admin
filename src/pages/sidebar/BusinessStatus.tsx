@@ -11,11 +11,7 @@ export const BusinessStatus = (props: SquareProps) => {
     <Flex alignItems="center">
       <Circle size="8px" bg={business?.status === 'open' ? 'green.500' : 'red'} {...props} />
       <Text fontSize="md" ml="2">
-        {business?.status === 'open' ? (
-          <Text as="span">{t('Aberto agora')}</Text>
-        ) : (
-          <Text as="span">{t('Fechado')}</Text>
-        )}
+        {business?.status === 'open' ? t('Aberto agora') : t('Fechado')}
       </Text>
     </Flex>
   );

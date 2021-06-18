@@ -31,11 +31,7 @@ const PageFooter = ({
         isLoading={isLoading}
         isDisabled={isDisabled}
       >
-        {onboarding ? (
-          <Text as="span">{t('Salvar e continuar')}</Text>
-        ) : (
-          <Text as="span">{t('Salvar')}</Text>
-        )}
+        {onboarding ? t('Salvar e continuar') : t('Salvar')}
       </Button>
       <Box>
         {!onboarding && deleteLabel && (

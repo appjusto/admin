@@ -15,21 +15,24 @@ import rightImage from './img/login-right@2x.jpg';
 const Login = () => {
   // context
   const api = useContextApi();
+
   // refs
   const emailRef = React.useRef<HTMLInputElement>(null);
+
   // state
   const [email, setEmail] = useState('');
+
   // mutations
   const [loginWithEmail, { isLoading, isSuccess, isError, error }] = useMutation((email: string) =>
     api.auth().sendSignInLinkToEmail(email)
   );
-  // helpers
-  const errorMessage = getErrorMessage(error);
+
   // side effects
   useEffect(() => {
     api.auth().signOut();
     emailRef?.current?.focus();
   }, [api]);
+
   // handlers
   const loginHandler = () => {
     loginWithEmail(email);
@@ -73,15 +76,20 @@ const Login = () => {
             value={email}
             handleChange={(ev) => setEmail(ev.target.value)}
           />
+          {isError && (
+            <AlertError
+              title={t('Erro!')}
+              description={getErrorMessage(error) ?? t('Tenta de novo?')}
+            />
+          )}
           {isSuccess && (
             <AlertSuccess
               title={t('Pronto!')}
               description={t('O link de acesso foi enviado para seu e-mail.')}
             />
           )}
-          {isError && <AlertError title={t('Erro!')} description={errorMessage} />}
           <Button type="submit" width="full" h="60px" mt="6" isLoading={isLoading}>
-            <Text as="span">{t('Entrar')}</Text>
+            {t('Entrar')}
           </Button>
         </Flex>
       </Flex>

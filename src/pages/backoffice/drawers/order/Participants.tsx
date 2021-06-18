@@ -33,7 +33,7 @@ const Participant = ({
   return (
     <Box mb="10">
       <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
-        {name ? <Text as="span">{t('Nome:')}</Text> : <Text as="span">{t('Instrução:')}</Text>}{' '}
+        {name ? t('Nome:') : t('Instrução:')}{' '}
         <Text as="span" fontWeight="500">
           {name ?? instruction}
         </Text>

@@ -1,15 +1,7 @@
-import {
-  Alert,
-  AlertDescription,
-  AlertIcon,
-  AlertProps,
-  AlertTitle,
-  Flex,
-  Text,
-} from '@chakra-ui/react';
+import { Alert, AlertDescription, AlertIcon, AlertProps, AlertTitle, Flex } from '@chakra-ui/react';
 
 interface Props extends AlertProps {
-  title: string;
+  title?: string;
   description?: string;
   icon?: boolean;
   children?: React.ReactNode | React.ReactNode[];
@@ -26,8 +18,9 @@ export const AlertSuccess = ({ title, description, icon = true, children, ...pro
   >
     {icon && <AlertIcon />}
     <Flex flexDir="column">
-      <AlertTitle mr={2}>{<Text as="span">{title}</Text>}</AlertTitle>
-      {description && <AlertDescription>{<Text as="span">{description}</Text>}</AlertDescription>}
+      {title && <AlertTitle mr={2}>{title}</AlertTitle>}
+      {description && <AlertDescription>{description}</AlertDescription>}
+      {children}
     </Flex>
   </Alert>
 );

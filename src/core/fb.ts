@@ -15,6 +15,6 @@ export const documentsAs = <T extends object>(docs: FirebaseDocument[]): WithId<
   docs.map((doc) => documentAs<T>(doc));
 
 export const getErrorMessage = (error: unknown) => {
-  if (!error) return 'Tenta de novo?';
+  if (!error) return null;
   return (error as FirebaseError).message;
 };

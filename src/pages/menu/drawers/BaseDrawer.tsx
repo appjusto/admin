@@ -76,7 +76,9 @@ export const BaseDrawer = ({
                   <Alert status="error">
                     <AlertIcon />
                     <AlertTitle mr={2}>{t('Erro!')}</AlertTitle>
-                    <AlertDescription>{getErrorMessage(error)}</AlertDescription>
+                    <AlertDescription>
+                      {getErrorMessage(error) ?? t('Tenta de novo?')}
+                    </AlertDescription>
                   </Alert>
                 )}
               </Box>

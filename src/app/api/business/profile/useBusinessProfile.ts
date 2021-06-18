@@ -3,7 +3,7 @@ import { useContextApi } from 'app/state/api/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { Business } from 'appjusto-types';
 import React from 'react';
-import { useMutation, useQuery } from 'react-query';
+import { useMutation, useQueryCache, useQuery } from 'react-query';
 import * as Sentry from '@sentry/react';
 
 export const useBusinessProfile = () => {
@@ -11,6 +11,7 @@ export const useBusinessProfile = () => {
   const api = useContextApi();
   const { business, setBusinessId } = useContextBusiness();
   const businessId = business?.id;
+  const queryCache = useQueryCache();
   const { refreshUserToken } = useFirebaseUserRole();
 
   // queries

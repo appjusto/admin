@@ -58,11 +58,7 @@ export const OrdersHeader = ({ statusEnabled = true }: OrdersHeaderProps) => {
           )}
           <Flex ml="4" flexDir="column" minW="280px">
             <Text fontSize="16px" fontWeight="700" lineHeight="22px">
-              {isOpen ? (
-                <Text as="span">{t('Restaurante aberto')}</Text>
-              ) : (
-                <Text as="span">{t('Restaurante fechado')}</Text>
-              )}
+              {isOpen ? t('Restaurante aberto') : t('Restaurante fechado')}
             </Text>
             <Text fontSize="xs">{statusMessage}</Text>
           </Flex>

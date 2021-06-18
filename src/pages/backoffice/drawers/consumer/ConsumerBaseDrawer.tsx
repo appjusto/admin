@@ -116,11 +116,7 @@ export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
             <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
               {t('Status:')}{' '}
               <Text as="span" fontWeight="500">
-                {consumer?.situation === 'approved' ? (
-                  <Text as="span">{t('Ativo')}</Text>
-                ) : (
-                  <Text as="span">{t('Inativo')}</Text>
-                )}
+                {consumer?.situation === 'approved' ? t('Ativo') : t('Inativo')}
               </Text>
             </Text>
             <Flex
