@@ -15,9 +15,7 @@ interface DeliveryInfosProps {
 export const DeliveryInfos = ({ order }: DeliveryInfosProps) => {
   // context
   const courierPictureUrl = useCourierProfilePicture(order.courier?.id);
-  const { isMatched, isCurrierArrived, orderDispatchingText, arrivalTime } = useOrderDeliveryInfos(
-    order
-  );
+  const { isMatched, orderDispatchingText, arrivalTime } = useOrderDeliveryInfos(order);
   // state
   const [joined, setJoined] = React.useState<string | null>();
 
