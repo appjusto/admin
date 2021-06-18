@@ -136,9 +136,9 @@ export const OrderBaseDrawer = ({
                   flexDir="row"
                   justifyContent={order?.status === 'confirmed' ? 'space-between' : 'flex-end'}
                 >
-                  {/*<Button width="full" maxW="200px" variant="dangerLight" onClick={cancel}>
+                  <Button width="full" maxW="200px" variant="dangerLight" onClick={cancel}>
                     {t('Cancelar pedido')}
-                    </Button>*/}
+                  </Button>
                   {order?.status === 'confirmed' && (
                     <Box color="black" fontSize="xs">
                       <Text>{t('Tempo de preparo do pedido:')}</Text>
