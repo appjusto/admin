@@ -165,7 +165,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
     return () => clearInterval(keepAliveInterval);
   }, [business?.situation, sendBusinessKeepAlive]);
 
-  React.useEffect(() => {
+  /*React.useEffect(() => {
     if (isBackofficeUser) return;
     if (business?.situation !== 'approved') return;
     if (business?.status !== 'open') return;
@@ -192,7 +192,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
     };
     window.addEventListener('beforeunload', onCloseListener);
     return () => window.removeEventListener('beforeunload', onCloseListener);
-  }, [updateBusinessProfile, toast, isBackofficeUser, business?.situation, business?.status]);
+  }, [updateBusinessProfile, toast, isBackofficeUser, business?.situation, business?.status]);*/
 
   React.useEffect(() => {
     if (isBackofficeUser) return;

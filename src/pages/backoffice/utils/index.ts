@@ -23,7 +23,7 @@ export const orderStatusPTOptions = {
   confirmed: 'Confirmado',
   preparing: 'Em preparo',
   ready: 'Pronto - aguardando entregador',
-  dispatching: 'À caminho da entrega',
+  dispatching: 'A caminho da entrega',
   delivered: 'Entregue',
   canceled: 'Cancelado',
 };

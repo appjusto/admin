@@ -49,7 +49,7 @@ export const OrderStatusBar = ({
             {t('Pronto - aguardando entregador')}
           </Radio>
           <Radio mt="2" value="dispatching">
-            {t('À caminho da entrega')}
+            {t('A caminho da entrega')}
           </Radio>
           <Radio mt="2" value="delivered">
             {t('Entregue')}

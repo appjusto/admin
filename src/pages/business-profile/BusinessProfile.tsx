@@ -126,8 +126,6 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
     } as Partial<Business>;
     const logoFileToSave = logoFiles ? logoFiles[0] : null;
     const coverFilesToSave = coverFiles ?? null;
-    console.log('logoFileToSave', logoFileToSave);
-    console.log('coverFilesToSave', coverFilesToSave);
     try {
       await updateBusinessProfileWithImages({ changes, logoFileToSave, coverFilesToSave });
       // invalidate logo query
