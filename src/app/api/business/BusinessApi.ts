@@ -156,7 +156,8 @@ export default class BusinessApi {
     // manager
     if (managerChanges) batch.update(this.refs.getManagerRef(managerId), managerChanges);
     // bank
-    if (bankChanges) batch.update(this.refs.getBusinessBankAccountRef(businessId), bankChanges);
+    if (bankChanges)
+      batch.set(this.refs.getBusinessBankAccountRef(businessId), bankChanges, { merge: true });
     // commit
     return batch
       .commit()
