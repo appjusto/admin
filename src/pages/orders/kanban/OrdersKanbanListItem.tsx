@@ -45,11 +45,19 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
     isNoMatch,
     isCurrierArrived,
     isDelivered,
-    orderDispatchingText,
+    orderDispatchingKanbanItemText,
   } = useOrderDeliveryInfos(order);
 
   // state
   const [elapsedTime, setElapsedTime] = React.useState<number | null>(0);
+
+  // helpers
+  const showArrivalTime =
+    typeof arrivalTime === 'number' &&
+    order.dispatchingState !== 'arrived-pickup' &&
+    order.dispatchingState !== 'arrived-destination';
+  const showArrivalTimeCalc =
+    order.dispatchingState !== 'arrived-pickup' && order.dispatchingState !== 'arrived-destination';
 
   // handlers
   const cookingTime = React.useMemo(() => (order?.cookingTime ? order?.cookingTime / 60 : null), [
@@ -158,13 +166,13 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
               <Text fontWeight="700">{t('Pedido entregue')}</Text>
             ) : (
               <>
-                <Text fontWeight="700">{t('Pedido a caminho')}</Text>
-                {arrivalTime ? (
-                  arrivalTime > 0 ? (
+                <Text fontWeight="700">{orderDispatchingKanbanItemText}</Text>
+                {showArrivalTime ? (
+                  arrivalTime! > 0 ? (
                     <Text color="gray.700" fontWeight="500">
                       {t(
                         `Aprox. ${
-                          arrivalTime > 1 ? arrivalTime + ' minutos' : arrivalTime + ' minuto'
+                          arrivalTime! > 1 ? arrivalTime + ' minutos' : arrivalTime + ' minuto'
                         }`
                       )}
                     </Text>
@@ -174,9 +182,11 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
                     </Text>
                   )
                 ) : (
-                  <Text color="gray.700" fontWeight="500">
-                    {t(`Calculando...`)}
-                  </Text>
+                  showArrivalTimeCalc && (
+                    <Text color="gray.700" fontWeight="500">
+                      {t(`Calculando...`)}
+                    </Text>
+                  )
                 )}
               </>
             )}
@@ -210,7 +220,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
                 fontWeight="700"
                 textAlign="end"
               >
-                {orderDispatchingText}
+                {orderDispatchingKanbanItemText}
               </Text>
               {isMatched &&
                 (isCurrierArrived ? (
