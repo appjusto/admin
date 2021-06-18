@@ -205,24 +205,22 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
               <CodeLink url={url} orderId={order.id} code={order.code} />
             </Box>
             <Flex flexDir="column" fontSize="xs" alignItems="flex-end">
-              <Text color={isNoMatch ? 'red' : 'gray.700'} fontWeight="700" textAlign="end">
+              <Text
+                color={isNoMatch || isCurrierArrived ? 'red' : 'gray.700'}
+                fontWeight="700"
+                textAlign="end"
+              >
                 {orderDispatchingText}
               </Text>
               {isMatched &&
                 (isCurrierArrived ? (
                   <>
-                    <Text color="red" fontWeight="700">
-                      {t('Entregador no local')}
-                    </Text>
                     <Text color="black" fontWeight="500">
                       {t('Nome: ') + order.courier?.name}
                     </Text>
                   </>
                 ) : (
                   <>
-                    <Text color="gray.700" fontWeight="700">
-                      {t('Entregador a caminho')}
-                    </Text>
                     {arrivalTime ? (
                       arrivalTime > 0 ? (
                         <Text color="gray.700" fontWeight="500">
