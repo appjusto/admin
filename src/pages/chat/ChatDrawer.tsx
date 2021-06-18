@@ -148,25 +148,18 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
           <DrawerHeader pb="4">
             <Flex justifyContent="space-between" alignItems="flex-end">
               <Flex flexDir="column">
-                <Text
-                  color="black"
-                  fontSize="2xl"
-                  fontWeight="700"
-                  lineHeight="28px"
-                  mb="2"
-                  translate="no"
-                >
+                <Text color="black" fontSize="2xl" fontWeight="700" lineHeight="28px" mb="2">
                   {t('Chat com ')} {`{${getName(counterpartId)}}`}
                 </Text>
                 <Text fontSize="md" color="black" fontWeight="700" lineHeight="22px">
                   {t('ID do pedido:')}{' '}
-                  <Text as="span" color="gray.600" fontWeight="500" translate="no">
+                  <Text as="span" color="gray.600" fontWeight="500">
                     {orderCode ?? 'N/E'}
                   </Text>
                 </Text>
                 <Text fontSize="md" color="black" fontWeight="700" lineHeight="22px">
                   {t('Atualizado em:')}{' '}
-                  <Text as="span" color="gray.600" fontWeight="500" translate="no">
+                  <Text as="span" color="gray.600" fontWeight="500">
                     {dateTime}
                   </Text>
                 </Text>
@@ -221,10 +214,11 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
                 right="4"
                 onClick={sendMessageHandler}
                 isLoading={isLoading}
+                loadingText={t('Enviando...')}
                 zIndex="9999"
                 isDisabled={!isActive}
               >
-                <Text as="span">{t('Enviar')}</Text>
+                {t('Enviar')}
               </Button>
             </Box>
           </DrawerFooter>
