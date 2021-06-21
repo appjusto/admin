@@ -15,14 +15,16 @@ interface DeliveryInfosProps {
 export const DeliveryInfos = ({ order }: DeliveryInfosProps) => {
   // context
   const courierPictureUrl = useCourierProfilePicture(order.courier?.id);
-  const {
-    isMatched,
-    isCurrierArrived,
-    orderDispatchingStatusText,
-    arrivalTime,
-  } = useOrderDeliveryInfos(order);
+  const { isMatched, orderDispatchingText, arrivalTime } = useOrderDeliveryInfos(order);
   // state
   const [joined, setJoined] = React.useState<string | null>();
+
+  // helpers
+  const showArrivalTime =
+    isMatched &&
+    typeof arrivalTime === 'number' &&
+    order.dispatchingState !== 'arrived-pickup' &&
+    order.dispatchingState !== 'arrived-destination';
 
   // side effects
   React.useEffect(() => {
@@ -45,14 +47,14 @@ export const DeliveryInfos = ({ order }: DeliveryInfosProps) => {
     <Box mt="6">
       <Flex justifyContent="space-between" alignItems="center">
         <Text fontSize="xl" color="black">
-          {orderDispatchingStatusText}
+          {orderDispatchingText}
         </Text>
-        {!isCurrierArrived &&
-          (arrivalTime && arrivalTime > 0 ? (
+        {showArrivalTime &&
+          (arrivalTime! > 0 ? (
             <Text fontSize="sm">
               {t(
                 `Chega em aproximadamente ${
-                  arrivalTime > 1 ? arrivalTime + ' minutos' : arrivalTime + ' minuto'
+                  arrivalTime! > 1 ? arrivalTime + ' minutos' : arrivalTime + ' minuto'
                 }`
               )}
             </Text>

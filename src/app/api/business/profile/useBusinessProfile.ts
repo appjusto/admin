@@ -3,7 +3,7 @@ import { useContextApi } from 'app/state/api/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { Business } from 'appjusto-types';
 import React from 'react';
-import { useMutation, useQueryCache, useQuery } from 'react-query';
+import { useMutation, useQuery } from 'react-query';
 import * as Sentry from '@sentry/react';
 
 export const useBusinessProfile = () => {
@@ -11,7 +11,6 @@ export const useBusinessProfile = () => {
   const api = useContextApi();
   const { business, setBusinessId } = useContextBusiness();
   const businessId = business?.id;
-  const queryCache = useQueryCache();
   const { refreshUserToken } = useFirebaseUserRole();
 
   // queries
@@ -32,17 +31,35 @@ export const useBusinessProfile = () => {
   const [updateBusinessProfile, updateResult] = useMutation(async (changes: Partial<Business>) =>
     api.business().updateBusinessProfile(businessId!, changes)
   );
+  const [
+    updateBusinessProfileWithImages,
+    updateWithImagesResult,
+  ] = useMutation(
+    async (data: {
+      changes: Partial<Business>;
+      logoFileToSave: File | null;
+      coverFilesToSave: File[] | null;
+    }) =>
+      api
+        .business()
+        .updateBusinessProfileWithImages(
+          businessId!,
+          data.changes,
+          data.logoFileToSave,
+          data.coverFilesToSave
+        )
+  );
   const [deleteBusinessProfile, deleteResult] = useMutation(async () =>
     api.business().deleteBusinessProfile(businessId!)
   );
-  const [uploadLogo, uploadLogoResult] = useMutation((file: File) => {
+  /*const [uploadLogo, uploadLogoResult] = useMutation((file: File) => {
     //api.business().updateBusinessProfile(businessId, { logoExists: false });
     return api.business().uploadBusinessLogo(businessId!, file);
   });
   const [uploadCover, uploadCoverResult] = useMutation((files: File[]) => {
     //api.business().updateBusinessProfile(businessId, { coverImageExists: false });
     return api.business().uploadBusinessCover(businessId!, files);
-  });
+  });*/
 
   const sendBusinessKeepAlive = React.useCallback(() => {
     try {
@@ -52,25 +69,17 @@ export const useBusinessProfile = () => {
     }
   }, [api, businessId]);
 
-  const { isSuccess: uploadSuccess } = uploadLogoResult;
-  React.useEffect(() => {
-    if (uploadSuccess) queryCache.invalidateQueries(['business:logo', businessId]);
-  }, [uploadSuccess, queryCache, businessId]);
-
   // return
-
   return {
     logo,
     cover,
     createBusinessProfile,
     updateBusinessProfile,
+    updateBusinessProfileWithImages,
     deleteBusinessProfile,
     updateResult,
+    updateWithImagesResult,
     deleteResult,
-    uploadLogo,
-    uploadLogoResult,
-    uploadCover,
-    uploadCoverResult,
     sendBusinessKeepAlive,
   };
 };

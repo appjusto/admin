@@ -12,13 +12,14 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { useOrderStatusTimestamp } from 'app/api/order/useOrderStatusTimestamp';
-import { Order, WithId } from 'appjusto-types';
+import { Order, OrderStatus, WithId } from 'appjusto-types';
 import firebase from 'firebase';
 import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
 import React from 'react';
 import { useRouteMatch } from 'react-router';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
+import { orderStatusPTOptions } from '../../utils/index';
 
 interface BaseDrawerProps {
   agent: { id: string | undefined; name: string };
@@ -44,6 +45,8 @@ export const OrderBaseDrawer = ({
   //context
   const { url } = useRouteMatch();
   const orderConfirmedTimestamp = useOrderStatusTimestamp(order?.id, statusConfirmed);
+  // helpers
+  const orderStatus = order?.status as OrderStatus;
   //UI
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
@@ -72,6 +75,15 @@ export const OrderBaseDrawer = ({
               {t('Nome do cliente:')}{' '}
               <Text as="span" fontWeight="500">
                 {order?.consumer?.name ?? 'N/E'}
+              </Text>
+            </Text>
+            <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+              {t('Status:')}{' '}
+              <Text as="span" fontWeight="500">
+                {
+                  //@ts-ignore
+                  orderStatus ? orderStatusPTOptions[orderStatus] : 'N/E'
+                }
               </Text>
             </Text>
             <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">

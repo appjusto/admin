@@ -102,6 +102,8 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
       if (business.businessAddress?.number) setNumber(business.businessAddress.number);
       if (business.businessAddress?.additional) setAdditional(business.businessAddress.additional);
       if (business.deliveryRange) setDeliveryRange(String(business.deliveryRange / 1000));
+      if (business.averageCookingTime)
+        setAverageCookingTime(String(business.averageCookingTime / 60));
     }
   }, [business]);
   // after postal lookup, change focus to number input

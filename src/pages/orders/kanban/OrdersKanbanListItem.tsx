@@ -1,6 +1,7 @@
 import { Box, Button, Flex, HStack, Progress, Text } from '@chakra-ui/react';
 import { useFirebaseUserRole } from 'app/api/auth/useFirebaseUserRole';
 import { useOrderArrivalTimes } from 'app/api/order/useOrderArrivalTimes';
+import { useOrderDeliveryInfos } from 'app/api/order/useOrderDeliveryInfos';
 import { getOrderAckTime } from 'app/api/order/utils';
 import { Order, WithId } from 'appjusto-types';
 import { ReactComponent as Alarm } from 'common/img/alarm_outlined.svg';
@@ -39,16 +40,26 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
   const { business, changeOrderStatus } = useOrdersContext();
   const arrivalTime = useOrderArrivalTimes(order);
   const { isBackofficeUser } = useFirebaseUserRole();
+  const {
+    isMatched,
+    isNoMatch,
+    isCurrierArrived,
+    isDelivered,
+    orderDispatchingKanbanItemText,
+  } = useOrderDeliveryInfos(order);
 
   // state
   const [elapsedTime, setElapsedTime] = React.useState<number | null>(0);
 
+  // helpers
+  const showArrivalTime =
+    typeof arrivalTime === 'number' &&
+    order.dispatchingState !== 'arrived-pickup' &&
+    order.dispatchingState !== 'arrived-destination';
+  const showArrivalTimeCalc =
+    order.dispatchingState !== 'arrived-pickup' && order.dispatchingState !== 'arrived-destination';
+
   // handlers
-  const isUnmatched = order.dispatchingStatus
-    ? ['idle', 'matching', 'unmatched', 'no-match'].includes(order.dispatchingStatus)
-    : true;
-  const isCurrierArrived = order.dispatchingState === 'arrived-pickup';
-  const wasDelivered = order.status === 'delivered';
   const cookingTime = React.useMemo(() => (order?.cookingTime ? order?.cookingTime / 60 : null), [
     order?.cookingTime,
   ]);
@@ -135,12 +146,12 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
     return (
       <Box
         px="4"
-        py={wasDelivered ? '3' : '2'}
+        py={isDelivered ? '3' : '2'}
         borderRadius="lg"
         borderColor="gray"
         borderWidth="1px"
-        color={wasDelivered ? 'gray' : 'black'}
-        bgColor={wasDelivered ? 'gray.500' : 'white'}
+        color={isDelivered ? 'gray' : 'black'}
+        bgColor={isDelivered ? 'gray.500' : 'white'}
         boxShadow="0px 8px 16px -4px rgba(105,118,103,0.1)"
       >
         <Flex justifyContent="space-between" alignItems="center">
@@ -151,17 +162,17 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
             <CodeLink url={url} orderId={order.id} code={order.code} />
           </Box>
           <Flex flexDir="column" color="gray.700" fontSize="xs" alignItems="flex-end">
-            {wasDelivered ? (
+            {isDelivered ? (
               <Text fontWeight="700">{t('Pedido entregue')}</Text>
             ) : (
               <>
-                <Text fontWeight="700">{t('Pedido à caminho')}</Text>
-                {arrivalTime ? (
-                  arrivalTime > 0 ? (
+                <Text fontWeight="700">{orderDispatchingKanbanItemText}</Text>
+                {showArrivalTime ? (
+                  arrivalTime! > 0 ? (
                     <Text color="gray.700" fontWeight="500">
                       {t(
                         `Aprox. ${
-                          arrivalTime > 1 ? arrivalTime + ' minutos' : arrivalTime + ' minuto'
+                          arrivalTime! > 1 ? arrivalTime + ' minutos' : arrivalTime + ' minuto'
                         }`
                       )}
                     </Text>
@@ -171,9 +182,11 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
                     </Text>
                   )
                 ) : (
-                  <Text color="gray.700" fontWeight="500">
-                    {t(`Calculando...`)}
-                  </Text>
+                  showArrivalTimeCalc && (
+                    <Text color="gray.700" fontWeight="500">
+                      {t(`Calculando...`)}
+                    </Text>
+                  )
                 )}
               </>
             )}
@@ -202,45 +215,43 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
               <CodeLink url={url} orderId={order.id} code={order.code} />
             </Box>
             <Flex flexDir="column" fontSize="xs" alignItems="flex-end">
-              {isUnmatched ? (
-                <Text color="gray.700" fontWeight="700">
-                  {t('Buscando entregador')}
-                </Text>
-              ) : isCurrierArrived ? (
-                <>
-                  <Text color="red" fontWeight="700">
-                    {t('Entregador no local')}
-                  </Text>
-                  <Text color="black" fontWeight="500">
-                    {t('Nome: ') + order.courier?.name}
-                  </Text>
-                </>
-              ) : (
-                <>
-                  <Text color="gray.700" fontWeight="700">
-                    {t('Entregador à caminho')}
-                  </Text>
-                  {arrivalTime ? (
-                    arrivalTime > 0 ? (
-                      <Text color="gray.700" fontWeight="500">
-                        {t(
-                          `Aprox. ${
-                            arrivalTime > 1 ? arrivalTime + ' minutos' : arrivalTime + ' minuto'
-                          }`
-                        )}
-                      </Text>
+              <Text
+                color={isNoMatch || isCurrierArrived ? 'red' : 'gray.700'}
+                fontWeight="700"
+                textAlign="end"
+              >
+                {orderDispatchingKanbanItemText}
+              </Text>
+              {isMatched &&
+                (isCurrierArrived ? (
+                  <>
+                    <Text color="black" fontWeight="500">
+                      {t('Nome: ') + order.courier?.name}
+                    </Text>
+                  </>
+                ) : (
+                  <>
+                    {arrivalTime ? (
+                      arrivalTime > 0 ? (
+                        <Text color="gray.700" fontWeight="500">
+                          {t(
+                            `Aprox. ${
+                              arrivalTime > 1 ? arrivalTime + ' minutos' : arrivalTime + ' minuto'
+                            }`
+                          )}
+                        </Text>
+                      ) : (
+                        <Text color="gray.700" fontWeight="500">
+                          {t(`Menos de 1 minuto`)}
+                        </Text>
+                      )
                     ) : (
                       <Text color="gray.700" fontWeight="500">
-                        {t(`Menos de 1 minuto`)}
+                        {t(`Calculando...`)}
                       </Text>
-                    )
-                  ) : (
-                    <Text color="gray.700" fontWeight="500">
-                      {t(`Calculando...`)}
-                    </Text>
-                  )}
-                </>
-              )}
+                    )}
+                  </>
+                ))}
             </Flex>
           </Flex>
         </Flex>

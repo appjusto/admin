@@ -3,6 +3,7 @@ import * as cnpjutils from '@fnando/cnpj';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useContextAgentProfile } from 'app/state/agent/context';
 import { useContextBusiness } from 'app/state/business/context';
+import { Business } from 'appjusto-types';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
 import { initialError } from 'common/components/error/utils';
 import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput2';
@@ -56,8 +57,6 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const [coverExists, setCoverExists] = React.useState(false);
   const [logoFiles, setLogoFiles] = React.useState<File[] | null>(null);
   const [coverFiles, setCoverFiles] = React.useState<File[] | null>(null);
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [isSuccess, setIsSuccess] = React.useState(false);
   const [error, setError] = React.useState(initialError);
 
   // refs
@@ -70,15 +69,12 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   // queries & mutations
   const {
     createBusinessProfile,
-    updateBusinessProfile,
+    updateBusinessProfileWithImages,
     logo,
     cover,
-    uploadLogo,
-    uploadCover,
-    updateResult,
-    uploadLogoResult,
-    uploadCoverResult,
+    updateWithImagesResult,
   } = useBusinessProfile();
+  const { isLoading, isSuccess, isError, error: updateError } = updateWithImagesResult;
 
   // handlers
   const openDrawerHandler = () => history.push(`${path}/delete`);
@@ -114,26 +110,26 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
       });
       return phoneRef?.current?.focus();
     }
-    setIsLoading(true);
+    //setIsLoading(true);
+    const changes = {
+      name,
+      companyName,
+      phone,
+      cnpj,
+      description,
+      minimumOrder,
+      enabled,
+      status,
+      cuisine: cuisineName,
+      logoExists: logoExists,
+      coverImageExists: coverExists,
+    } as Partial<Business>;
+    const logoFileToSave = logoFiles ? logoFiles[0] : null;
+    const coverFilesToSave = coverFiles ?? null;
     try {
-      await updateBusinessProfile({
-        name,
-        companyName,
-        phone,
-        cnpj,
-        description,
-        minimumOrder,
-        enabled,
-        status,
-        cuisine: cuisineName,
-        logoExists: logoExists,
-        coverImageExists: coverExists,
-      });
-      // upload imagens and invalidate queries
-      if (logoFiles) await uploadLogo(logoFiles[0]);
+      await updateBusinessProfileWithImages({ changes, logoFileToSave, coverFilesToSave });
+      // invalidate logo query
       if (logoFiles) queryCache.invalidateQueries(['business:logo', business?.id]);
-      if (coverFiles) await uploadCover(coverFiles);
-      if (coverFiles) queryCache.invalidateQueries(['business:cover', business?.id]);
     } catch (error) {
       setError({
         status: true,
@@ -144,7 +140,6 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
         },
       });
     }
-    return setIsLoading(false);
   };
 
   const clearDropImages = React.useCallback((type: string) => {
@@ -199,53 +194,19 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   }, [business, cover, logo, createBusinessProfile]);
 
   React.useEffect(() => {
-    if (!isMountedRef.current) return;
-    if (updateResult.isSuccess) {
-      setIsSuccess(true);
-    }
-    if (updateResult.isError) {
-      setIsSuccess(false);
+    if (isError)
       setError({
         status: true,
-        error: updateResult.error,
+        error: updateError,
       });
-    } else if (uploadLogoResult.isError) {
-      setIsSuccess(false);
-      setError({
-        status: true,
-        error: null,
-        message: {
-          title: 'Não foi possível salvar a imagem de logo.',
-          description: 'Tenta novamente?',
-        },
-      });
-    } else if (uploadCoverResult.isError) {
-      setIsSuccess(false);
-      setError({
-        status: true,
-        error: null,
-        message: {
-          title: 'Não foi possível salvar a imagem de cover.',
-          description: 'Tenta novamente?',
-        },
-      });
-    }
-  }, [updateResult, uploadLogoResult, uploadCoverResult]);
-
-  React.useEffect(() => {
-    if (updateResult.isError)
-      setError({
-        status: true,
-        error: updateResult.error,
-      });
-  }, [updateResult.isError, updateResult.error]);
+  }, [isError, updateError]);
 
   // UI
   const breakpoint = useBreakpoint();
   const coverWidth = breakpoint === 'base' ? 328 : breakpoint === 'md' ? 420 : 464;
   if (isSuccess && redirect) return <Redirect to={redirect} push />;
   return (
-    <>
+    <Box>
       <Box maxW="833px">
         <form
           onSubmit={(ev) => {
@@ -412,12 +373,14 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
           errorMessage={error.message}
         />
       </Box>
-      <Switch>
-        <Route exact path={`${path}/delete`}>
-          <BusinessDeleteDrawer isOpen onClose={closeDrawerHandler} />
-        </Route>
-      </Switch>
-    </>
+      {!onboarding && (
+        <Switch>
+          <Route exact path={`${path}/delete`}>
+            <BusinessDeleteDrawer isOpen onClose={closeDrawerHandler} />
+          </Route>
+        </Switch>
+      )}
+    </Box>
   );
 };
 

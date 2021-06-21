@@ -13,9 +13,9 @@ import {
 } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useContextBusiness } from 'app/state/business/context';
-import { AlertError } from 'common/components/AlertError';
+import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
+import { initialError } from 'common/components/error/utils';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
-import { getErrorMessage } from 'core/fb';
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { t } from 'utils/i18n';
@@ -28,23 +28,34 @@ interface BaseDrawerProps {
 export const BusinessDeleteDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   //context
   const { business } = useContextBusiness();
-  const { deleteBusinessProfile, updateResult: result } = useBusinessProfile();
-  const { isSuccess, isError, error, isLoading } = result;
+  const { deleteBusinessProfile, deleteResult } = useBusinessProfile();
+  const { isSuccess, isError, error: deleteError, isLoading } = deleteResult;
   // state
   const [businessName, setBusinessName] = React.useState('');
-  const [drawerError, setDrawerError] = React.useState({ status: false, message: '' });
+  const [error, setError] = React.useState(initialError);
+  // refs
+  const submission = React.useRef(0);
   //handlers
   const handleDelete = async () => {
+    submission.current += 1;
     if (business?.name && businessName !== business?.name) {
-      return setDrawerError({
+      return setError({
         status: true,
-        message: 'Favor preencher o nome do restaurante corretamente!',
+        error: null,
+        message: { title: 'Favor preencher o nome do restaurante corretamente!' },
       });
     } else {
-      setDrawerError({ status: false, message: '' });
       await deleteBusinessProfile();
     }
   };
+  // side effects
+  React.useEffect(() => {
+    if (isError)
+      setError({
+        status: true,
+        error: deleteError,
+      });
+  }, [isError, deleteError]);
   //UI
   if (isSuccess) return <Redirect to="/logout" push />;
   return (
@@ -106,16 +117,13 @@ export const BusinessDeleteDrawer = ({ onClose, ...props }: BaseDrawerProps) => 
                 </Button>
               </Stack>
             </Box>
-            {(isError || drawerError.status) && (
-              <AlertError
-                title={t('Erro!')}
-                description={
-                  drawerError.status
-                    ? drawerError.message
-                    : getErrorMessage(error) || t('Erro genérico')
-                }
-              />
-            )}
+            <SuccessAndErrorHandler
+              submission={submission.current}
+              isSuccess={isSuccess}
+              isError={error.status}
+              error={error.error}
+              errorMessage={error.message}
+            />
           </DrawerBody>
         </DrawerContent>
       </DrawerOverlay>

@@ -153,7 +153,7 @@ export const OrdersKanban = () => {
           <OrdersKanbanList
             title={t('Pedidos cancelados')}
             orders={ordersByStatus['canceled']}
-            details={t('Aqui você verá os pedidos que estão à caminho da entrega pela entregador.')}
+            details={t('Aqui você verá os pedidos que estão a caminho da entrega pela entregador.')}
           />
         </Stack>
       )}
