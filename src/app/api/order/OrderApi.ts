@@ -202,6 +202,31 @@ export default class OrderApi {
     );
   }
 
+  observeOrdersByCourierId(
+    courierId: string,
+    resultHandler: (orders: WithId<Order>[]) => void,
+    start: Date,
+    end: Date
+  ): firebase.Unsubscribe {
+    let query = this.refs
+      .getOrdersRef()
+      .orderBy('createdOn', 'desc')
+      .where('courier.id', '==', courierId)
+      .where('createdOn', '>=', start)
+      .where('createdOn', '<=', end);
+
+    const unsubscribe = query.onSnapshot(
+      (querySnapshot) => {
+        resultHandler(documentsAs<Order>(querySnapshot.docs));
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+    // returns the unsubscribe function
+    return unsubscribe;
+  }
+
   async sendMessage(orderId: string, message: Partial<ChatMessage>) {
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
     return this.refs.getOrderChatRef(orderId).add({

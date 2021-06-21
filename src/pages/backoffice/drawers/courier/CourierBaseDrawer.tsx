@@ -175,6 +175,9 @@ export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDr
               {courier?.situation === 'approved' && (
                 <DrawerLink to={`${url}/location`} label={t('Localização')} />
               )}
+              {(courier?.situation === 'approved' || courier?.situation === 'blocked') && (
+                <DrawerLink to={`${url}/orders`} label={t('Pedidos')} />
+              )}
             </Flex>
             {children}
           </DrawerBody>
