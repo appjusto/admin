@@ -231,12 +231,12 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
                   </>
                 ) : (
                   <>
-                    {arrivalTime ? (
-                      arrivalTime > 0 ? (
+                    {showArrivalTime ? (
+                      arrivalTime! > 0 ? (
                         <Text color="gray.700" fontWeight="500">
                           {t(
                             `Aprox. ${
-                              arrivalTime > 1 ? arrivalTime + ' minutos' : arrivalTime + ' minuto'
+                              arrivalTime! > 1 ? arrivalTime + ' minutos' : arrivalTime + ' minuto'
                             }`
                           )}
                         </Text>

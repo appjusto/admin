@@ -31,6 +31,7 @@ const CourierLocationMap = ({ coordinates }: CourierLocationMapProps) => {
     });
     return marker;
   };
+  // UI
   return (
     <Box
       mt="6"

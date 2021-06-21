@@ -130,12 +130,7 @@ export const OrderBaseDrawer = ({
           {!isCanceling && !orderDispatched && order?.status !== 'canceled' && (
             <DrawerFooter borderTop="1px solid #F2F6EA">
               <Flex w="full" justifyContent="flex-start">
-                <Flex
-                  w="full"
-                  maxW="607px"
-                  flexDir="row"
-                  justifyContent={order?.status === 'confirmed' ? 'space-between' : 'flex-end'}
-                >
+                <Flex w="full" maxW="607px" flexDir="row" justifyContent="space-between">
                   <Button width="full" maxW="200px" variant="dangerLight" onClick={cancel}>
                     {t('Cancelar pedido')}
                   </Button>
