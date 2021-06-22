@@ -2,7 +2,7 @@ import { OrderItemComplement, OrderItem, Order, WithId, OrderStatus } from 'appj
 import { formatCurrency, formatDate } from './formatters';
 import { round } from 'lodash';
 import { CroppedAreaProps } from 'common/components/ImageCropping';
-import { localOrderType } from 'pages/orders/context';
+import { localOrderType } from 'app/state/order';
 import I18n from 'i18n-js';
 import firebase from 'firebase';
 

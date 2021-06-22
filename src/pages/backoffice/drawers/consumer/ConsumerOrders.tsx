@@ -2,7 +2,8 @@ import { Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
 import { useContextConsumerProfile } from 'app/state/consumer/context';
 import { Order, WithId } from 'appjusto-types';
 import firebase from 'firebase';
-import { getDateAndHour, getOrderTotalPriceToDisplay } from 'utils/functions';
+import { formatCurrency } from 'utils/formatters';
+import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 
 interface ItemPros {
@@ -10,16 +11,15 @@ interface ItemPros {
 }
 
 const ConsumerOrdersTableItem = ({ order }: ItemPros) => {
-  const onboarding = order.createdOn
+  const date = order.createdOn
     ? getDateAndHour(order.createdOn as firebase.firestore.Timestamp)
     : 'N/E';
-  const totalValue = getOrderTotalPriceToDisplay(order.items ?? []);
   return (
     <Tr color="black" fontSize="xs">
       <Td>{order.code ?? 'N/E'}</Td>
-      <Td>{onboarding}</Td>
+      <Td>{date}</Td>
       <Td>{order.business?.name ?? 'N/I'}</Td>
-      <Td>{totalValue}</Td>
+      <Td>{order.fare?.total ? formatCurrency(order.fare.total) : 'N/E'}</Td>
     </Tr>
   );
 };
@@ -39,7 +39,7 @@ export const ConsumerOrders = () => {
         <Thead>
           <Tr>
             <Th>{t('ID')}</Th>
-            <Th>{t('Data do onboarding')}</Th>
+            <Th>{t('Data')}</Th>
             <Th>{t('Restaurante')}</Th>
             <Th>{t('Valor')}</Th>
           </Tr>

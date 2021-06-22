@@ -50,7 +50,7 @@ const ConsumersPage = () => {
   // UI
   return (
     <>
-      <PageHeader title={t('Entregadores')} subtitle={t(`Atualizado ${dateTime}`)} />
+      <PageHeader title={t('Clientes')} subtitle={t(`Atualizado ${dateTime}`)} />
       <Flex mt="8" justifyContent="space-between">
         <CustomInput
           mt="0"

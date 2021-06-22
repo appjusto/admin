@@ -156,7 +156,6 @@ export default class OrderApi {
     orderId: string,
     resultHandler: (matching: OrderMatching | null) => void
   ): firebase.Unsubscribe {
-    console.log(orderId);
     let query = this.refs.getOrderMatchingRef(orderId);
     const unsubscribe = query.onSnapshot(
       (querySnapshot) => {
@@ -200,6 +199,31 @@ export default class OrderApi {
           .get()
       ).docs
     );
+  }
+
+  observeOrdersByCourierId(
+    courierId: string,
+    resultHandler: (orders: WithId<Order>[]) => void,
+    start: Date,
+    end: Date
+  ): firebase.Unsubscribe {
+    let query = this.refs
+      .getOrdersRef()
+      .orderBy('createdOn', 'desc')
+      .where('courier.id', '==', courierId)
+      .where('createdOn', '>=', start)
+      .where('createdOn', '<=', end);
+
+    const unsubscribe = query.onSnapshot(
+      (querySnapshot) => {
+        resultHandler(documentsAs<Order>(querySnapshot.docs));
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+    // returns the unsubscribe function
+    return unsubscribe;
   }
 
   async sendMessage(orderId: string, message: Partial<ChatMessage>) {

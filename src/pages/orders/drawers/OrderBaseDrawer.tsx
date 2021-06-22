@@ -12,12 +12,13 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { useOrderStatusTimestamp } from 'app/api/order/useOrderStatusTimestamp';
+import { useOrdersContext } from 'app/state/order';
 import { Order, WithId } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import React from 'react';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
-import { useOrdersContext } from '../context';
+import { orderStatusPTOptions } from '../../backoffice/utils/index';
 import { OrderAcceptButton } from './OrderAcceptButton';
 
 interface BaseDrawerProps {
@@ -111,6 +112,15 @@ export const OrderBaseDrawer = ({
                   {t('Horário do pedido:')}{' '}
                   <Text as="span" color="black" fontWeight="700">
                     {orderConfirmedTimestamp ? getDateAndHour(orderConfirmedTimestamp) : 'N/E'}
+                  </Text>
+                </Text>
+                <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
+                  {t('Status:')}{' '}
+                  <Text as="span" color="black" fontWeight="700">
+                    {
+                      //@ts-ignore
+                      order?.status ? orderStatusPTOptions[order?.status] : 'N/E'
+                    }
                   </Text>
                 </Text>
               </Flex>
