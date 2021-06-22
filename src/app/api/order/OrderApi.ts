@@ -210,10 +210,10 @@ export default class OrderApi {
   ): firebase.Unsubscribe {
     let query = this.refs
       .getOrdersRef()
-      .orderBy('createdOn', 'desc')
+      .orderBy('confirmedOn', 'desc')
       .where('courier.id', '==', courierId)
-      .where('createdOn', '>=', start)
-      .where('createdOn', '<=', end);
+      .where('confirmedOn', '>=', start)
+      .where('confirmedOn', '<=', end);
 
     const unsubscribe = query.onSnapshot(
       (querySnapshot) => {
