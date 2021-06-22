@@ -156,7 +156,6 @@ export default class OrderApi {
     orderId: string,
     resultHandler: (matching: OrderMatching | null) => void
   ): firebase.Unsubscribe {
-    console.log(orderId);
     let query = this.refs.getOrderMatchingRef(orderId);
     const unsubscribe = query.onSnapshot(
       (querySnapshot) => {

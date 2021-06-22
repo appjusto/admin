@@ -93,6 +93,7 @@ export const DeliveryInfos = ({ order }: DeliveryInfosProps) => {
         </Flex>
       )}
       <DeliveryMap
+        key={order.id}
         orderStatus={order.status}
         origin={order.origin?.location}
         destination={order.destination?.location}

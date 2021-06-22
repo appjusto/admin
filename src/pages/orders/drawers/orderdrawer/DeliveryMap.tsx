@@ -2,6 +2,7 @@ import { Box, Flex, Spinner } from '@chakra-ui/react';
 import { getConfig } from 'app/api/config';
 import { useOrderDeliveryRoute } from 'app/api/order/useOrderDeliveryRoute';
 import { LatLng, OrderStatus } from 'appjusto-types';
+import { Marker } from 'common/components/MapsMarker';
 import BlackPackageSvg from 'common/img/map-black-package.svg';
 import BlackPointSvg from 'common/img/map-black-point.svg';
 import GreenPointSvg from 'common/img/map-green-point.svg';
@@ -19,7 +20,7 @@ interface DeliveryMapProps {
   orderPolyline?: string;
 }
 
-const initialKey = 1;
+//const initialKey = 1;
 
 export const DeliveryMap = React.memo(
   ({ orderStatus, origin, destination, courier, orderPolyline }: DeliveryMapProps) => {
@@ -27,7 +28,7 @@ export const DeliveryMap = React.memo(
     const { googleMapsApiKey } = getConfig().api;
     const route = useOrderDeliveryRoute(origin, destination, courier, orderPolyline);
     // state
-    const [mapKey, setMapKey] = React.useState(initialKey);
+    //const [mapKey, setMapKey] = React.useState(initialKey);
     const [courierIcon, setCourierIcon] = React.useState<string>(GreenPointSvg);
     const [restaurantIcon, setRestaurantIcon] = React.useState<string>(WhitePackageSvg);
     // handlers
@@ -46,7 +47,7 @@ export const DeliveryMap = React.memo(
         title: 'Cliente',
         icon: UserSvg,
       });
-      let courier = null;
+      /*let courier = null;
       if (route.courier.latitude) {
         courier = new maps.Marker({
           position: { lat: route.courier.latitude, lng: route.courier.longitude },
@@ -55,7 +56,7 @@ export const DeliveryMap = React.memo(
           icon: courierIcon,
         });
       }
-      if (courier) return { business, consumer, courier };
+      if (courier) return { business, consumer, courier };*/
       return { business, consumer };
     };
     // side effects
@@ -65,10 +66,10 @@ export const DeliveryMap = React.memo(
         setRestaurantIcon(BlackPointSvg);
       }
     }, [orderStatus]);
-    React.useEffect(() => {
+    /*React.useEffect(() => {
       if (!route?.courier.latitude) return;
       setMapKey((prev) => prev + 1);
-    }, [route?.courier]);
+    }, [route?.courier]);*/
     // UI
     if (!route) {
       return (
@@ -92,7 +93,7 @@ export const DeliveryMap = React.memo(
         bg="gray.500"
       >
         <GoogleMapReact
-          key={mapKey}
+          //key={mapKey}
           bootstrapURLKeys={{ key: googleMapsApiKey }}
           defaultCenter={coordsFromLatLnt(SaoPauloCoords)}
           center={route.center}
@@ -104,7 +105,20 @@ export const DeliveryMap = React.memo(
             });
             renderMarkers(map, maps);
           }}
-        ></GoogleMapReact>
+        >
+          {route?.courier?.latitude && route?.courier?.longitude && (
+            <Marker
+              key={route.courier.latitude}
+              icon={courierIcon}
+              lat={route.courier.latitude}
+              lng={route.courier.longitude}
+              h="36px"
+              w="30px"
+              mt="-38px"
+              ml="-15px"
+            />
+          )}
+        </GoogleMapReact>
       </Box>
     );
   }

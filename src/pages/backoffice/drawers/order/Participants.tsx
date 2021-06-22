@@ -13,18 +13,22 @@ interface ParticipantProps {
   name?: string;
   instruction?: string;
   address?: string;
+  additionalInfo?: string;
   onboarding?: firebase.firestore.Timestamp;
   buttonLabel?: string;
   buttonLink?: string;
+  isBtnDisabled?: boolean;
 }
 
 const Participant = ({
   name,
   instruction,
   address,
+  additionalInfo,
   onboarding,
   buttonLabel,
   buttonLink,
+  isBtnDisabled = false,
 }: ParticipantProps) => {
   // helpers
   const date = onboarding ? getDateAndHour(onboarding) : 'N/E';
@@ -46,6 +50,14 @@ const Participant = ({
           </Text>
         </Text>
       )}
+      {additionalInfo && (
+        <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+          {t('Complemento:')}{' '}
+          <Text as="span" fontWeight="500">
+            {additionalInfo}
+          </Text>
+        </Text>
+      )}
       {onboarding && (
         <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
           {t('Data do onboarding:')}{' '}
@@ -63,6 +75,7 @@ const Participant = ({
           link={buttonLink}
           fontSize="xs"
           lineHeight="lg"
+          isDisabled={isBtnDisabled}
         />
       )}
     </Box>
@@ -85,39 +98,48 @@ export const Participants = ({ order }: ParticipantsProps) => {
 
   // UI
   return (
-    <>
-      <SectionTitle>{t('Cliente')}</SectionTitle>
-      <Participant
-        name={order?.consumer?.name ?? 'N/E'}
-        address={order?.destination?.address?.main ?? 'N/E'}
-        //onboarding={order?.createdOn as firebase.firestore.Timestamp} low-priority
-      />
+    <Box>
       {order?.type === 'food' ? (
-        <>
+        <Box>
+          <SectionTitle>{t('Cliente')}</SectionTitle>
+          <Participant
+            name={order?.consumer?.name ?? 'N/E'}
+            address={order?.destination?.address?.main ?? 'N/E'}
+            additionalInfo={order?.destination?.additionalInfo}
+            //onboarding={order?.createdOn as firebase.firestore.Timestamp} low-priority
+          />
           <SectionTitle>{t('Restaurante')}</SectionTitle>
           <Participant
             name={order?.business?.name ?? 'N/E'}
             address={order?.origin?.address?.main ?? 'N/E'}
+            additionalInfo={order?.origin?.additionalInfo}
             //onboarding={order?.createdOn as firebase.firestore.Timestamp} low-priority
             buttonLabel={t('Ver cadastro do restaurante')}
             buttonLink={`/backoffice/businesses/${order?.business?.id}`}
           />
-        </>
+        </Box>
       ) : (
-        <>
+        <Box>
+          <SectionTitle>{t('Cliente')}</SectionTitle>
+          <Participant
+            name={order?.consumer?.name ?? 'N/E'}
+            //onboarding={order?.createdOn as firebase.firestore.Timestamp} low-priority
+          />
           <SectionTitle>{t('Origem')}</SectionTitle>
           <Participant
             instruction={order?.origin?.intructions ?? 'N/E'}
-            address={order?.destination?.address?.main ?? 'N/E'}
+            address={order?.origin?.address?.main ?? 'N/E'}
+            additionalInfo={order?.origin?.additionalInfo}
             //onboarding={order?.createdOn as firebase.firestore.Timestamp} low-priority
           />
           <SectionTitle>{t('Destino')}</SectionTitle>
           <Participant
             instruction={order?.destination?.intructions ?? 'N/E'}
             address={order?.destination?.address?.main ?? 'N/E'}
+            additionalInfo={order?.destination?.additionalInfo}
             //onboarding={order?.createdOn as firebase.firestore.Timestamp} low-priority
           />
-        </>
+        </Box>
       )}
       <SectionTitle>{t('Entregador')}</SectionTitle>
       <Participant
@@ -125,6 +147,7 @@ export const Participants = ({ order }: ParticipantsProps) => {
         //onboarding={order?.createdOn as firebase.firestore.Timestamp} low-priority
         buttonLabel={t('Ver cadastro do entregador')}
         buttonLink={`/backoffice/couriers/${order?.courier?.id}`}
+        isBtnDisabled={!order?.courier}
       />
       {isOrderActive && (
         <>
@@ -157,6 +180,6 @@ export const Participants = ({ order }: ParticipantsProps) => {
       <Text mt="1" fontSize="15px" lineHeight="21px">
         {order?.destination?.address.description ?? 'N/E'}
       </Text>
-    </>
+    </Box>
   );
 };
