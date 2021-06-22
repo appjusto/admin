@@ -17,6 +17,12 @@ export const modePTOptions = {
   walking: 'A pé',
 };
 
+export const courierLocationStatusPTOptions = {
+  unavailable: 'Indisponível',
+  available: 'Disponível',
+  dispatching: 'Realizando entrega',
+};
+
 export const orderStatusPTOptions = {
   confirming: 'Aguardando confirmação',
   declined: 'Recusado',

@@ -144,7 +144,13 @@ export const Participants = ({ order }: ParticipantsProps) => {
                 {t(`Chega em menos de 1 minuto`)}
               </Text>
             ))}
-          <DeliveryMap key="bo-order-map" order={order!} />
+          <DeliveryMap
+            orderStatus={order?.status}
+            origin={order?.origin?.location}
+            destination={order?.destination?.location}
+            courier={order?.courier?.location}
+            orderPolyline={order?.route?.polyline}
+          />
         </>
       )}
       <SectionTitle>{t('Destino do pedido')}</SectionTitle>

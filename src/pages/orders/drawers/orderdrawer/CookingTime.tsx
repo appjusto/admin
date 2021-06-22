@@ -1,6 +1,6 @@
 import { Flex, Radio, RadioGroup, Switch, Text } from '@chakra-ui/react';
+import { useOrdersContext } from 'app/state/order';
 import { CustomNumberInput } from 'common/components/form/input/CustomNumberInput';
-import { useOrdersContext } from 'pages/orders/context';
 import React from 'react';
 import { t } from 'utils/i18n';
 

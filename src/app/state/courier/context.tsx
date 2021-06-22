@@ -1,13 +1,23 @@
 import * as cnpjutils from '@fnando/cnpj';
 import * as cpfutils from '@fnando/cpf';
+import { useCourierOrders } from 'app/api/courier/useCourierOrders';
 import { useCourierPrivateData } from 'app/api/courier/useCourierPrivateData';
 import { useCourierProfile } from 'app/api/courier/useCourierProfile';
 import { useCourierProfilePictures } from 'app/api/courier/useCourierProfilePictures';
 import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';
-import { CourierProfile, Issue, IssueType, MarketplaceAccountInfo, WithId } from 'appjusto-types';
+import {
+  CourierProfile,
+  Issue,
+  IssueType,
+  MarketplaceAccountInfo,
+  Order,
+  WithId,
+} from 'appjusto-types';
 import React, { Dispatch, SetStateAction } from 'react';
 import { useParams } from 'react-router';
 import { courierReducer } from './courierReducer';
+
+export type Dates = { start?: string; end?: string };
 
 type Validation = { cpf: boolean; cnpj: boolean; agency: boolean; account: boolean };
 interface CourierProfileContextProps {
@@ -16,8 +26,11 @@ interface CourierProfileContextProps {
   issueOptions?: WithId<Issue>[] | null;
   marketPlace?: MarketplaceAccountInfo;
   contextValidation: Validation;
+  orders?: WithId<Order>[] | null;
+  dates?: Dates;
   handleProfileChange(key: string, value: any): void;
   setContextValidation: Dispatch<SetStateAction<Validation>>;
+  setDates(dates: Dates): void;
 }
 
 const CourierProfileContext = React.createContext<CourierProfileContextProps>(
@@ -50,6 +63,8 @@ export const CourierProvider = ({ children }: Props) => {
     agency: true,
     account: true,
   });
+  const [dates, setDates] = React.useState<Dates>();
+  const orders = useCourierOrders(courierId, dates?.start, dates?.end);
 
   // handlers
   const handleProfileChange = (key: string, value: any) => {
@@ -85,8 +100,11 @@ export const CourierProvider = ({ children }: Props) => {
         issueOptions,
         marketPlace,
         contextValidation,
+        orders,
+        dates,
         handleProfileChange,
         setContextValidation,
+        setDates,
       }}
     >
       {children}

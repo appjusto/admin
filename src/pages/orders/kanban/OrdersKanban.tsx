@@ -10,13 +10,13 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { splitByStatus } from 'app/api/order/selectors';
+import { useOrdersContext } from 'app/state/order';
 import { Order, OrderStatus, WithId } from 'appjusto-types';
 import { ReactComponent as SearchIcon } from 'common/img/searchIcon.svg';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
-import { useOrdersContext } from '../context';
 import { ChatButton } from './ChatButton';
 import { OrderSearchResult } from './OrderSearchResult';
 import { OrdersKanbanList } from './OrdersKanbanList';

@@ -92,7 +92,13 @@ export const DeliveryInfos = ({ order }: DeliveryInfosProps) => {
           </Link>
         </Flex>
       )}
-      <DeliveryMap key={order.id} order={order} />
+      <DeliveryMap
+        orderStatus={order.status}
+        origin={order.origin?.location}
+        destination={order.destination?.location}
+        courier={order.courier?.location}
+        orderPolyline={order.route?.polyline}
+      />
       <Text mt="4" fontSize="xl" color="black">
         {t('Destino do pedido')}
       </Text>

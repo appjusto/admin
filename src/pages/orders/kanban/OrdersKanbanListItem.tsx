@@ -3,13 +3,13 @@ import { useFirebaseUserRole } from 'app/api/auth/useFirebaseUserRole';
 import { useOrderArrivalTimes } from 'app/api/order/useOrderArrivalTimes';
 import { useOrderDeliveryInfos } from 'app/api/order/useOrderDeliveryInfos';
 import { getOrderAckTime } from 'app/api/order/utils';
+import { useOrdersContext } from 'app/state/order';
 import { Order, WithId } from 'appjusto-types';
 import { ReactComponent as Alarm } from 'common/img/alarm_outlined.svg';
 import React from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
 import { getTimeUntilNow } from 'utils/functions';
 import { t } from 'utils/i18n';
-import { useOrdersContext } from '../context';
 
 interface CodeLinkProps {
   url: string;
@@ -231,12 +231,12 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
                   </>
                 ) : (
                   <>
-                    {arrivalTime ? (
-                      arrivalTime > 0 ? (
+                    {showArrivalTime ? (
+                      arrivalTime! > 0 ? (
                         <Text color="gray.700" fontWeight="500">
                           {t(
                             `Aprox. ${
-                              arrivalTime > 1 ? arrivalTime + ' minutos' : arrivalTime + ' minuto'
+                              arrivalTime! > 1 ? arrivalTime + ' minutos' : arrivalTime + ' minuto'
                             }`
                           )}
                         </Text>

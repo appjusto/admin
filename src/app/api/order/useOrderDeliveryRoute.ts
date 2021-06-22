@@ -1,16 +1,11 @@
-import { Order, WithId } from 'appjusto-types';
 import React from 'react';
 import polyline from '@mapbox/polyline';
 import { getCoordinatesMidpoint } from 'utils/functions';
+import { LatLng } from 'appjusto-types';
 
 type ShortLatLng = {
   lat: number;
   lng: number;
-};
-
-type LatLng = {
-  latitude: number;
-  longitude: number;
 };
 export interface Route {
   center: ShortLatLng;
@@ -20,43 +15,48 @@ export interface Route {
   polyline: ShortLatLng[];
 }
 
-export const useOrderDeliveryRoute = (order?: WithId<Order> | null) => {
+export const useOrderDeliveryRoute = (
+  origin?: LatLng,
+  destination?: LatLng,
+  courier?: LatLng,
+  orderPolyline?: string
+) => {
   // state
   const [route, setRoute] = React.useState<Route | null>(null);
   // side effects
   React.useEffect(() => {
-    if (order && order.origin && order.destination && order.route?.polyline) {
-      const routePolyline = polyline.decode(order.route.polyline).map((pair: number[]) => {
+    if (origin && destination && orderPolyline) {
+      const routePolyline = polyline.decode(orderPolyline).map((pair: number[]) => {
         return { lat: pair[0], lng: pair[1] } as ShortLatLng;
       });
       const routeCoords = {
         center: getCoordinatesMidpoint(
           {
-            lat: order.origin.location?.latitude,
-            lng: order.origin.location?.longitude,
+            lat: origin?.latitude,
+            lng: origin?.longitude,
           } as ShortLatLng,
           {
-            lat: order.destination.location?.latitude,
-            lng: order.destination.location?.longitude,
+            lat: destination?.latitude,
+            lng: destination?.longitude,
           } as ShortLatLng
         ),
         origin: {
-          latitude: order.origin.location?.latitude,
-          longitude: order.origin.location?.longitude,
+          latitude: origin?.latitude,
+          longitude: origin?.longitude,
         },
         destination: {
-          latitude: order.destination.location?.latitude,
-          longitude: order.destination.location?.longitude,
+          latitude: destination?.latitude,
+          longitude: destination?.longitude,
         },
         courier: {
-          latitude: order.courier?.location.latitude,
-          longitude: order.courier?.location.longitude,
+          latitude: courier?.latitude,
+          longitude: courier?.longitude,
         },
         polyline: routePolyline,
       };
       setRoute(routeCoords as Route);
     }
-  }, [order]);
+  }, [origin, destination, courier, orderPolyline]);
   // result
   return route;
 };

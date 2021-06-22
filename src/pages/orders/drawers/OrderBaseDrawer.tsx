@@ -12,12 +12,12 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { useOrderStatusTimestamp } from 'app/api/order/useOrderStatusTimestamp';
+import { useOrdersContext } from 'app/state/order';
 import { Order, WithId } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import React from 'react';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
-import { useOrdersContext } from '../context';
 import { OrderAcceptButton } from './OrderAcceptButton';
 
 interface BaseDrawerProps {
@@ -130,15 +130,10 @@ export const OrderBaseDrawer = ({
           {!isCanceling && !orderDispatched && order?.status !== 'canceled' && (
             <DrawerFooter borderTop="1px solid #F2F6EA">
               <Flex w="full" justifyContent="flex-start">
-                <Flex
-                  w="full"
-                  maxW="607px"
-                  flexDir="row"
-                  justifyContent={order?.status === 'confirmed' ? 'space-between' : 'flex-end'}
-                >
-                  {/*<Button width="full" maxW="200px" variant="dangerLight" onClick={cancel}>
+                <Flex w="full" maxW="607px" flexDir="row" justifyContent="space-between">
+                  <Button width="full" maxW="200px" variant="dangerLight" onClick={cancel}>
                     {t('Cancelar pedido')}
-                    </Button>*/}
+                  </Button>
                   {order?.status === 'confirmed' && (
                     <Box color="black" fontSize="xs">
                       <Text>{t('Tempo de preparo do pedido:')}</Text>

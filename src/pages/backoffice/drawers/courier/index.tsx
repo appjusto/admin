@@ -3,7 +3,9 @@ import { CourierProvider } from 'app/state/courier/context';
 import React from 'react';
 import { Route, Switch, useRouteMatch } from 'react-router-dom';
 import { CourierBaseDrawer } from './CourierBaseDrawer';
+import { CourierOrders } from './CourierOrders';
 import { CourierRegister } from './CourierRegister';
+import { Location } from './Location';
 import { CourierStatus } from './status/CourierStatus';
 
 interface CourierDrawerProps {
@@ -25,6 +27,12 @@ export const CourierDrawer = ({ onClose, ...props }: CourierDrawerProps) => {
           </Route>
           <Route exact path={`${path}/status`}>
             <CourierStatus />
+          </Route>
+          <Route exact path={`${path}/location`}>
+            <Location />
+          </Route>
+          <Route exact path={`${path}/orders`}>
+            <CourierOrders />
           </Route>
         </Switch>
       </CourierBaseDrawer>
