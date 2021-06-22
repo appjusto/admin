@@ -2,6 +2,7 @@ import { Box, Flex, Text } from '@chakra-ui/react';
 import { getConfig } from 'app/api/config';
 import { useContextCourierProfile } from 'app/state/courier/context';
 import { CustomButton } from 'common/components/buttons/CustomButton';
+import { Marker } from 'common/components/MapsMarker';
 import GreenPointSvg from 'common/img/map-green-point.svg';
 import { coordsFromLatLnt, SaoPauloCoords } from 'core/api/thirdparty/maps/utils';
 import firebase from 'firebase';
@@ -22,7 +23,7 @@ const CourierLocationMap = ({ coordinates }: CourierLocationMapProps) => {
   const center = { lat: coordinates.latitude, lng: coordinates.longitude };
   // handlers
   //@ts-ignore
-  const renderMarkers = (map, maps) => {
+  /*const renderMarkers = (map, maps) => {
     let marker = new maps.Marker({
       position: { lat: coordinates.latitude, lng: coordinates.longitude },
       map,
@@ -30,7 +31,7 @@ const CourierLocationMap = ({ coordinates }: CourierLocationMapProps) => {
       icon: GreenPointSvg,
     });
     return marker;
-  };
+  };*/
   // UI
   return (
     <Box
@@ -45,15 +46,15 @@ const CourierLocationMap = ({ coordinates }: CourierLocationMapProps) => {
         center={center}
         defaultZoom={14}
         yesIWantToUseGoogleMapApiInternals
-        onGoogleApiLoaded={({ map, maps }) => renderMarkers(map, maps)}
+        //onGoogleApiLoaded={({ map, maps }) => renderMarkers(map, maps)}
       >
-        {/*<Marker
-          key={Math.random()}
+        <Marker
+          key={coordinates.latitude}
           icon={GreenPointSvg}
           lat={coordinates.latitude}
           lng={coordinates.longitude}
           mt="-10px"
-        />*/}
+        />
       </GoogleMapReact>
     </Box>
   );
@@ -94,7 +95,7 @@ export const Location = () => {
         />
       </Flex>
       {courier?.status !== 'unavailable' && courier?.coordinates && (
-        <CourierLocationMap coordinates={courier.coordinates} />
+        <CourierLocationMap key={courier?.id} coordinates={courier.coordinates} />
       )}
     </Box>
   );
