@@ -17,7 +17,6 @@ import { CookingTime } from './CookingTime';
 import { DeliveryInfos } from './DeliveryInfos';
 import { OrderDetails } from './OrderDetails';
 import { OrderIssuesTable } from './OrderIssuesTable';
-import { PrintSwitch } from './PrintSwitch';
 
 interface Props {
   isOpen: boolean;
@@ -114,7 +113,7 @@ export const OrderDrawer = (props: Props) => {
               </Text>
             </>
           )}
-          {orderIssues && orderIssues.length > 0 && <OrderIssuesTable issues={orderIssues} />}
+          {orderIssues && <OrderIssuesTable issues={orderIssues} />}
           {(order?.status === 'confirmed' || order?.status === 'preparing') && (
             <CookingTime
               orderId={order.id}
@@ -122,7 +121,6 @@ export const OrderDrawer = (props: Props) => {
               averageCookingTime={business?.averageCookingTime}
             />
           )}
-          {order?.status === 'confirmed' && <PrintSwitch />}
         </>
       )}
       <SuccessAndErrorHandler
