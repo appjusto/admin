@@ -12,6 +12,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { useOrderStatusTimestamp } from 'app/api/order/useOrderStatusTimestamp';
+import { useContextBusiness } from 'app/state/business/context';
 import { useOrdersContext } from 'app/state/order';
 import { Order, WithId } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
@@ -43,6 +44,7 @@ export const OrderBaseDrawer = ({
   ...props
 }: BaseDrawerProps) => {
   //context
+  const { business } = useContextBusiness();
   const orderConfirmedTimestamp = useOrderStatusTimestamp(order?.id, statusConfirmed);
   const { changeOrderStatus } = useOrdersContext();
 
@@ -55,7 +57,10 @@ export const OrderBaseDrawer = ({
 
   //handlers
   const PrimaryButtonFunction = () => {
-    if (order?.status === 'confirmed') changeOrderStatus(order.id, 'preparing');
+    if (order?.status === 'confirmed') {
+      if (business?.orderPrinting) console.log('PRINT !!!');
+      changeOrderStatus(order.id, 'preparing');
+    }
     if (order?.status === 'preparing') changeOrderStatus(order.id, 'ready');
     if (order?.status === 'ready') changeOrderStatus(order.id, 'dispatching');
     onClose();
@@ -63,7 +68,7 @@ export const OrderBaseDrawer = ({
 
   const scrollBodyToBottom = () => {
     if (!bodyRef.current) return;
-    const scrollNumber = bodyRef.current.scrollHeight - 610;
+    const scrollNumber = bodyRef.current.scrollHeight - 660;
     return (bodyRef.current.scrollTop = scrollNumber);
   };
 

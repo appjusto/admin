@@ -14,6 +14,7 @@ interface ContextProps {
   userRole?: GeneralRoles | null;
   //managers?: ManagerWithRole[];
   setBusinessId: Dispatch<SetStateAction<string | undefined | null>>;
+  updateContextBusinessOrderPrint(status: boolean): void;
 }
 
 const BusinessContext = React.createContext<ContextProps>({} as ContextProps);
@@ -23,16 +24,34 @@ interface Props {
 }
 
 export const BusinessProvider = ({ children }: Props) => {
+  // context
   const api = useContextApi();
   const email = useContextFirebaseUserEmail();
   const { isBackofficeUser } = useContextAgentProfile();
   const businesses = useObserveBusinessManagedBy(email);
   const [businessId, setBusinessId] = React.useState<string | undefined | null>();
-  const business = useObserveBusinessProfile(businessId);
+  const hookBusiness = useObserveBusinessProfile(businessId);
   const { role: userRole } = useFirebaseUserRole(businessId);
   //const managers = useManagers(business, userRole);
+  // state
+  const [business, setBusiness] = React.useState<WithId<Business> | null>();
+
+  // handlers
+  const updateContextBusinessOrderPrint = (status: boolean) => {
+    setBusiness((prev) => {
+      if (!prev) return;
+      return {
+        ...prev,
+        orderPrinting: status,
+      };
+    });
+  };
 
   // side effects
+  React.useEffect(() => {
+    if (!hookBusiness) return;
+    setBusiness(hookBusiness);
+  }, [hookBusiness]);
   // intended to auto-select a business id for a restaurant manager
   React.useEffect(() => {
     if (isBackofficeUser) return;
@@ -44,7 +63,9 @@ export const BusinessProvider = ({ children }: Props) => {
   }, [api, businesses, email, isBackofficeUser]);
 
   return (
-    <BusinessContext.Provider value={{ business, userRole, setBusinessId }}>
+    <BusinessContext.Provider
+      value={{ business, userRole, setBusinessId, updateContextBusinessOrderPrint }}
+    >
       {children}
     </BusinessContext.Provider>
   );
