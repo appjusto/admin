@@ -11,22 +11,6 @@ import { Link, useRouteMatch } from 'react-router-dom';
 import { getTimeUntilNow } from 'utils/functions';
 import { t } from 'utils/i18n';
 
-interface CodeLinkProps {
-  url: string;
-  orderId: string;
-  code?: string | null;
-}
-
-const CodeLink = ({ url, orderId, code }: CodeLinkProps) => {
-  return (
-    <Link to={`${url}/${orderId}`}>
-      <Text fontSize="lg" textDecor="underline" _hover={{ color: 'green.700' }}>
-        #{code}
-      </Text>
-    </Link>
-  );
-};
-
 const confirmedKey = 'confirmed';
 const preparingKey = 'preparing';
 
