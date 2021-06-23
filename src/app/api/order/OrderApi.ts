@@ -20,6 +20,8 @@ export type CancellationData = {
   comment?: string;
 };
 
+type Ordering = 'asc' | 'desc';
+
 export default class OrderApi {
   constructor(private refs: FirebaseRefs) {}
 
@@ -27,17 +29,18 @@ export default class OrderApi {
   observeOrders(
     statuses: OrderStatus[],
     resultHandler: (orders: WithId<Order>[]) => void,
-    businessId?: string
+    businessId?: string,
+    ordering: Ordering = 'desc'
   ): firebase.Unsubscribe {
     let query = this.refs
       .getOrdersRef()
-      .orderBy('createdOn', 'desc')
+      .orderBy('confirmedOn', ordering)
       .where('status', 'in', statuses);
 
     if (businessId) {
       query = this.refs
         .getOrdersRef()
-        .orderBy('createdOn', 'desc')
+        .orderBy('confirmedOn', ordering)
 
         .where('business.id', '==', businessId)
         .where('status', 'in', statuses);
