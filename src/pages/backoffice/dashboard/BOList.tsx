@@ -2,46 +2,19 @@ import { Box, Circle, Flex, Text, VStack } from '@chakra-ui/react';
 import { Business, Order, WithId } from 'appjusto-types';
 import { ShowIf } from 'core/components/ShowIf';
 import React from 'react';
-import { BOListItem } from './BOListItem';
+import { BOBusinessListItem } from './BOBusinessListItem';
+import { BOOrderListItem } from './BOOrderListItem';
+
+type ListType = 'orders' | 'businesses';
 
 interface Props {
   title: string;
   data: WithId<Business>[] | WithId<Order>[];
-  listType: string;
+  listType: ListType;
   details?: string;
 }
 
-interface SortedOrder extends Order {
-  confirmedAt?: number;
-}
-
 export const BOList = ({ title, data, listType, details }: Props) => {
-  // state
-  const [sortedOrders, setSortedOrders] = React.useState<WithId<SortedOrder>[]>([]);
-
-  // handlers
-  const updateSortedOrders = React.useCallback((orderId: string, confirmedAt: number) => {
-    setSortedOrders((prev) => {
-      let newState = [...prev];
-      const orderIndex = newState.findIndex((order) => order.id === orderId);
-      newState[orderIndex].confirmedAt = confirmedAt;
-      return newState;
-    });
-  }, []);
-
-  const sortOrders = (orders: WithId<SortedOrder>[]) => {
-    return orders.sort((a, b) => {
-      if (!a.confirmedAt) return -1;
-      if (!b.confirmedAt) return 1;
-      return a.confirmedAt - b.confirmedAt;
-    });
-  };
-
-  // side effects
-  React.useEffect(() => {
-    if (listType === 'orders') setSortedOrders(data as WithId<SortedOrder>[]);
-  }, [data, listType]);
-
   // UI
   return (
     <Flex
@@ -85,17 +58,12 @@ export const BOList = ({ title, data, listType, details }: Props) => {
       <ShowIf test={data.length > 0}>
         {() => (
           <VStack flex={1} p="4" overflowX="hidden">
-            {listType === 'business'
+            {listType === 'businesses'
               ? (data as WithId<Business>[]).map((item) => (
-                  <BOListItem key={item.id} data={item} listType={listType} />
+                  <BOBusinessListItem key={item.id} business={item} />
                 ))
-              : sortOrders(sortedOrders).map((item) => (
-                  <BOListItem
-                    key={item.id}
-                    data={item}
-                    listType={listType}
-                    sortHandler={updateSortedOrders}
-                  />
+              : (data as WithId<Order>[]).map((item) => (
+                  <BOOrderListItem key={item.id} order={item} />
                 ))}
           </VStack>
         )}

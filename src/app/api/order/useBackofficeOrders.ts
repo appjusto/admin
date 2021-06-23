@@ -9,7 +9,7 @@ export const useBackofficeOrders = (statuses: OrderStatus[]) => {
   const [orders, setOrders] = React.useState<WithId<Order>[]>([]);
   // side effects
   React.useEffect(() => {
-    api.order().observeOrders(statuses, setOrders);
+    api.order().observeOrders(statuses, setOrders, undefined, 'asc');
   }, [statuses, api]); //attention to 'statuses' to avoid infinite renders
   // return
   return orders;
