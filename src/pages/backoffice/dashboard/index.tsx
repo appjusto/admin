@@ -45,9 +45,17 @@ const BODashboard = () => {
         <BOList
           title={t('Restaurantes - Aguardando aprovação')}
           data={businesses}
-          listType="business"
+          listType="businesses"
+          details={t(
+            'Aqui ficarão listados todos os novos cadastros de restaurantes aguardando aprovação.'
+          )}
         />
-        <BOList title={t('Pedidos em andamento')} data={orders} listType="orders" />
+        <BOList
+          title={t('Pedidos em andamento')}
+          data={orders}
+          listType="orders"
+          details={t('Aqui ficarão listados todos os pedidos em andamento nesse momento.')}
+        />
       </Stack>
       <Switch>
         <Route path={`${path}/business/:businessId`}>

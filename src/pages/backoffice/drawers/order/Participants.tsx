@@ -3,7 +3,7 @@ import { useOrderDeliveryInfos } from 'app/api/order/useOrderDeliveryInfos';
 import { Order, WithId } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import firebase from 'firebase';
-import { DeliveryMap } from 'pages/orders/drawers/orderdrawer/DeliveryMap';
+import { DeliveryInfos } from 'pages/orders/drawers/orderdrawer/DeliveryInfos';
 import React from 'react';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
@@ -89,11 +89,11 @@ interface ParticipantsProps {
 export const Participants = ({ order }: ParticipantsProps) => {
   // helpers
   const {
-    isMatched,
-    isCurrierArrived,
+    //isMatched,
+    //isCurrierArrived,
     isOrderActive,
-    orderDispatchingText,
-    arrivalTime,
+    //orderDispatchingText,
+    //arrivalTime,
   } = useOrderDeliveryInfos(order);
 
   // UI
@@ -149,7 +149,17 @@ export const Participants = ({ order }: ParticipantsProps) => {
         buttonLink={`/backoffice/couriers/${order?.courier?.id}`}
         isBtnDisabled={!order?.courier}
       />
-      {isOrderActive && (
+      {isOrderActive ? (
+        <DeliveryInfos order={order!} />
+      ) : (
+        <>
+          <SectionTitle>{t('Destino do pedido')}</SectionTitle>
+          <Text mt="1" fontSize="15px" lineHeight="21px">
+            {order?.destination?.address.description ?? 'N/E'}
+          </Text>
+        </>
+      )}
+      {/*isOrderActive && (
         <>
           <SectionTitle>{orderDispatchingText}</SectionTitle>
           {isMatched &&
@@ -176,10 +186,11 @@ export const Participants = ({ order }: ParticipantsProps) => {
           />
         </>
       )}
+      
       <SectionTitle>{t('Destino do pedido')}</SectionTitle>
       <Text mt="1" fontSize="15px" lineHeight="21px">
         {order?.destination?.address.description ?? 'N/E'}
-      </Text>
+            </Text>*/}
     </Box>
   );
 };

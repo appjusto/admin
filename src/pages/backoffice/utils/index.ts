@@ -33,3 +33,12 @@ export const orderStatusPTOptions = {
   delivered: 'Entregue',
   canceled: 'Cancelado',
 };
+
+export const orderDispatchingStatusPTOptions = {
+  'idle': 'Ocioso',
+  'matching': 'Buscando',
+  'no-match': 'Não encontrado',
+  'matched': 'Encontrado',
+  'declined': 'Recusado',
+  'confirmed': 'Confirmado',
+};

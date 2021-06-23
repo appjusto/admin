@@ -21,7 +21,7 @@ export const CourierNotifiedBox = ({
   isLoading = false,
 }: CourierNotifiedBoxProps) => {
   return (
-    <Box p="3" border="1px solid #ECF0E3" borderRadius="lg">
+    <Box p="3" border="1px solid #ECF0E3" borderRadius="lg" bg="white">
       <Flex justifyContent="space-between" alignItems="center">
         <Box>
           <Text>{courierId}</Text>
