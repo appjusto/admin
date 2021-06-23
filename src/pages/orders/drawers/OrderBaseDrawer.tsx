@@ -29,6 +29,7 @@ interface BaseDrawerProps {
   isCanceling: boolean;
   onClose(): void;
   children: React.ReactNode;
+  handlePrint?(): void;
 }
 
 export const OrderBaseDrawer = ({
@@ -37,6 +38,7 @@ export const OrderBaseDrawer = ({
   cancel,
   isCanceling,
   onClose,
+  handlePrint,
   children,
   ...props
 }: BaseDrawerProps) => {
@@ -54,8 +56,8 @@ export const OrderBaseDrawer = ({
   //handlers
   const PrimaryButtonFunction = () => {
     if (order?.status === 'confirmed') {
-      if (business?.orderPrinting) console.log('PRINT !!!');
-      changeOrderStatus(order.id, 'preparing');
+      if (business?.orderPrinting && handlePrint) handlePrint();
+      //changeOrderStatus(order.id, 'preparing');
     }
     if (order?.status === 'preparing') changeOrderStatus(order.id, 'ready');
     if (order?.status === 'ready') changeOrderStatus(order.id, 'dispatching');
