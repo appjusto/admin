@@ -3,7 +3,6 @@ import { Dates, useContextCourierProfile } from 'app/state/courier/context';
 import { Order, WithId } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { CustomInput } from 'common/components/form/input/CustomInput';
-import firebase from 'firebase';
 import { formatCurrency } from 'utils/formatters';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
@@ -14,13 +13,11 @@ interface ItemPros {
 }
 
 const CourierOrdersTableItem = ({ order }: ItemPros) => {
-  const date = order.createdOn
-    ? getDateAndHour(order.createdOn as firebase.firestore.Timestamp)
-    : 'N/E';
+  // UI
   return (
     <Tr color="black" fontSize="xs">
       <Td>{order.code ?? 'N/E'}</Td>
-      <Td>{date}</Td>
+      <Td>{getDateAndHour(order.createdOn)}</Td>
       <Td>{order.business?.name ?? 'N/I'}</Td>
       <Td>{order.fare?.courier.value ? formatCurrency(order.fare?.courier.value) : 'N/E'}</Td>
       <Td>

@@ -11,9 +11,7 @@ import {
   HStack,
   Text,
 } from '@chakra-ui/react';
-import { useOrderStatusTimestamp } from 'app/api/order/useOrderStatusTimestamp';
 import { Order, OrderStatus, WithId } from 'appjusto-types';
-import firebase from 'firebase';
 import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
 import React from 'react';
 import { useRouteMatch } from 'react-router';
@@ -31,8 +29,6 @@ interface BaseDrawerProps {
   children: React.ReactNode | React.ReactNode[];
 }
 
-const statusConfirmed = 'confirmed';
-
 export const OrderBaseDrawer = ({
   agent,
   order,
@@ -44,7 +40,6 @@ export const OrderBaseDrawer = ({
 }: BaseDrawerProps) => {
   //context
   const { url } = useRouteMatch();
-  const orderConfirmedTimestamp = useOrderStatusTimestamp(order?.id, statusConfirmed);
   // helpers
   const orderStatus = order?.status as OrderStatus;
   //UI
@@ -60,15 +55,13 @@ export const OrderBaseDrawer = ({
             <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
               {t('Pedido confirmado em:')}{' '}
               <Text as="span" fontWeight="500">
-                {orderConfirmedTimestamp ? getDateAndHour(orderConfirmedTimestamp) : 'N/E'}
+                {getDateAndHour(order?.confirmedOn)}
               </Text>
             </Text>
             <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
               {t('Atualizado em:')}{' '}
               <Text as="span" fontWeight="500">
-                {order?.updatedOn
-                  ? getDateAndHour(order.updatedOn as firebase.firestore.Timestamp)
-                  : 'N/E'}
+                {getDateAndHour(order?.updatedOn)}
               </Text>
             </Text>
             <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">

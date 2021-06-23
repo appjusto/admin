@@ -18,6 +18,7 @@ import { DeliveryInfos } from './DeliveryInfos';
 import { OrderDetails } from './OrderDetails';
 import { OrderIssuesTable } from './OrderIssuesTable';
 import { PrintSwitch } from './PrintSwitch';
+//import { useReactToPrint } from 'react-to-print';
 
 interface Props {
   isOpen: boolean;
@@ -41,6 +42,7 @@ export const OrderDrawer = (props: Props) => {
 
   // refs
   const submission = React.useRef(0);
+  const printComponent = React.useRef();
 
   // helpers
   const cancellator = getOrderCancellator(orderCancellation?.issue?.type);

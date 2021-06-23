@@ -16,7 +16,6 @@ import { useContextConsumerProfile } from 'app/state/consumer/context';
 import { ConsumerProfile } from 'appjusto-types';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
 import { initialError } from 'common/components/error/utils';
-import firebase from 'firebase';
 import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
 import React from 'react';
 import { useRouteMatch } from 'react-router';
@@ -91,17 +90,13 @@ export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
             <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
               {t('Data do onboarding:')}{' '}
               <Text as="span" fontWeight="500">
-                {consumer?.createdOn
-                  ? getDateAndHour(consumer.createdOn as firebase.firestore.Timestamp)
-                  : ''}
+                {getDateAndHour(consumer?.createdOn)}
               </Text>
             </Text>
             <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
               {t('Atualizado em:')}{' '}
               <Text as="span" fontWeight="500">
-                {consumer?.updatedOn
-                  ? getDateAndHour(consumer.updatedOn as firebase.firestore.Timestamp)
-                  : ''}
+                {getDateAndHour(consumer?.updatedOn)}
               </Text>
             </Text>
             <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">

@@ -7,13 +7,13 @@ interface ChatMessagesProps {
   image: string;
   name: string;
   message: string;
-  timestamp: firebase.firestore.Timestamp;
+  timestamp: firebase.firestore.FieldValue;
   isGrouped: boolean;
 }
 
 export const ChatMessages = ({ image, name, message, timestamp, isGrouped }: ChatMessagesProps) => {
   // helpers
-  const getTime = (timestamp: firebase.firestore.Timestamp) => {
+  const getTime = (timestamp: firebase.firestore.FieldValue) => {
     if (!timestamp) return;
     const fullDate = getDateAndHour(timestamp);
     const time = fullDate.split(' ')[1];

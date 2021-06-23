@@ -11,7 +11,6 @@ import {
   Flex,
   Text,
 } from '@chakra-ui/react';
-import { useOrderStatusTimestamp } from 'app/api/order/useOrderStatusTimestamp';
 import { useContextBusiness } from 'app/state/business/context';
 import { useOrdersContext } from 'app/state/order';
 import { Order, WithId } from 'appjusto-types';
@@ -32,8 +31,6 @@ interface BaseDrawerProps {
   children: React.ReactNode;
 }
 
-const statusConfirmed = 'confirmed';
-
 export const OrderBaseDrawer = ({
   order,
   cancellator,
@@ -45,7 +42,6 @@ export const OrderBaseDrawer = ({
 }: BaseDrawerProps) => {
   //context
   const { business } = useContextBusiness();
-  const orderConfirmedTimestamp = useOrderStatusTimestamp(order?.id, statusConfirmed);
   const { changeOrderStatus } = useOrdersContext();
 
   // refs
@@ -116,7 +112,7 @@ export const OrderBaseDrawer = ({
                 <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
                   {t('Horário do pedido:')}{' '}
                   <Text as="span" color="black" fontWeight="700">
-                    {orderConfirmedTimestamp ? getDateAndHour(orderConfirmedTimestamp) : 'N/E'}
+                    {getDateAndHour(order?.confirmedOn)}
                   </Text>
                 </Text>
                 <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
