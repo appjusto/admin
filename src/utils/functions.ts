@@ -5,6 +5,7 @@ import { CroppedAreaProps } from 'common/components/ImageCropping';
 import { localOrderType } from 'app/state/order';
 import I18n from 'i18n-js';
 import firebase from 'firebase';
+import { AlgoliaCreatedOn } from 'app/api/types';
 
 // translation
 export const getTranslatedOrderStatus = (status: OrderStatus) => {
@@ -54,12 +55,14 @@ export const getDateAndHour = (timestamp: firebase.firestore.Timestamp) => {
   }
 };
 
-export const getAlgoliaFieldDateAndHour = (timestamp: firebase.firestore.Timestamp) => {
+export const getAlgoliaFieldDateAndHour = (timestamp: firebase.firestore.FieldValue) => {
   try {
-    //@ts-ignore
-    const date = new Date(timestamp._seconds * 1000).toLocaleDateString();
-    //@ts-ignore
-    const hour = new Date(timestamp._seconds * 1000).toLocaleTimeString();
+    const date = new Date(
+      ((timestamp as unknown) as AlgoliaCreatedOn)._seconds * 1000
+    ).toLocaleDateString();
+    const hour = new Date(
+      ((timestamp as unknown) as AlgoliaCreatedOn)._seconds * 1000
+    ).toLocaleTimeString();
     return `${date} - ${hour}`;
   } catch (error) {
     console.log(error);

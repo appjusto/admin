@@ -1,7 +1,6 @@
 import { Icon, Td, Tr } from '@chakra-ui/react';
 import { BusinessAlgolia, ProfileSituation } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
-import firebase from 'firebase';
 import React from 'react';
 import { useRouteMatch } from 'react-router';
 import { getAlgoliaFieldDateAndHour } from 'utils/functions';
@@ -21,11 +20,7 @@ export const BusinessesTableItem = ({ business }: ItemProps) => {
   return (
     <Tr key={business.objectID} color="black" fontSize="15px" lineHeight="21px">
       <Td maxW="120px">{business.code ?? 'N/I'}</Td>
-      <Td>
-        {business.createdOn
-          ? getAlgoliaFieldDateAndHour(business.createdOn as firebase.firestore.Timestamp)
-          : 'N/I'}
-      </Td>
+      <Td>{business.createdOn ? getAlgoliaFieldDateAndHour(business.createdOn) : 'N/I'}</Td>
       <Td>{business.name ?? 'N/I'}</Td>
       <Td>{situationPTOptions[status] ?? 'N/I'}</Td>
       <Td>{step ? (step === 'completed' ? 'completo' : step) : 'N/I'}</Td>
