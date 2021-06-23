@@ -57,7 +57,7 @@ export const OrderBaseDrawer = ({
   const PrimaryButtonFunction = () => {
     if (order?.status === 'confirmed') {
       if (business?.orderPrinting && handlePrint) handlePrint();
-      //changeOrderStatus(order.id, 'preparing');
+      changeOrderStatus(order.id, 'preparing');
     }
     if (order?.status === 'preparing') changeOrderStatus(order.id, 'ready');
     if (order?.status === 'ready') changeOrderStatus(order.id, 'dispatching');

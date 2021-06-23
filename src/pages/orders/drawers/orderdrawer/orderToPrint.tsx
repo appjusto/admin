@@ -15,7 +15,6 @@ interface OrderToPrintProps {
 
 export const OrderToPrint = React.forwardRef<HTMLDivElement, OrderToPrintProps>(
   ({ businessName, order }, ref) => {
-    console.log(order);
     // context
     const { logo } = useBusinessProfile();
     // UI
