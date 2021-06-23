@@ -12,6 +12,9 @@ export const useObserveOrderMatching = (orderId?: string) => {
   const [updateCourierNotified, updateResult] = useMutation(async (data: string[]) =>
     api.order().updateOrderCourierNotified(orderId!, data)
   );
+  const [restartMatching, restartResult] = useMutation(async () =>
+    api.order().updateOrder(orderId!, { dispatchingStatus: 'matching' })
+  );
   // side effects
   React.useEffect(() => {
     if (!orderId) return;
@@ -19,5 +22,5 @@ export const useObserveOrderMatching = (orderId?: string) => {
     return () => unsub();
   }, [orderId, api]);
   // return
-  return { matching, updateCourierNotified, updateResult };
+  return { matching, updateCourierNotified, updateResult, restartMatching, restartResult };
 };

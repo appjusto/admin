@@ -116,7 +116,11 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
             </>
           </Route>
           <Route exact path={`${path}/matching`}>
-            <Matching orderId={orderId} orderStatus={order?.status} />
+            <Matching
+              orderId={orderId}
+              orderStatus={order?.status}
+              orderDispatchingStatus={order?.dispatchingStatus}
+            />
           </Route>
           <Route exact path={`${path}/status`}>
             <OrderStatusBar
