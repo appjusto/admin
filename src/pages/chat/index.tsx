@@ -98,11 +98,17 @@ export const ChatPage = () => {
               </Button>
             </Link>
           </Box>
-          <Flex mt="8" justifyContent="space-between" alignItems="flex-end">
+          <Flex
+            mt="8"
+            flexDir={{ base: 'column', lg: 'row' }}
+            justifyContent="space-between"
+            alignItems={{ lg: 'flex-end' }}
+          >
             <PageHeader title={t('Chat')} subtitle={t(`Dados atualizados em ${dateTime}`)} />
             <InputGroup maxW="360px">
               <Input
-                minW="340px"
+                mt={{ base: '4', lg: '0' }}
+                minW={{ lg: '340px' }}
                 height="60px"
                 borderColor="black"
                 _hover={{ borderColor: 'black' }}
@@ -111,7 +117,7 @@ export const ChatPage = () => {
                 onChange={(ev) => setSearch(ev.target.value)}
               />
               <InputRightElement
-                mt="10px"
+                mt={{ base: '26px', lg: '10px' }}
                 mr="8px"
                 children={<Icon w="22px" h="22px" as={SearchIcon} />}
               />

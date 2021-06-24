@@ -36,7 +36,7 @@ export const MenuMobile = () => {
       top="0"
       left="0"
       zIndex="9999"
-      display={{ base: 'block', lg: 'none' }}
+      display={{ base: 'flex', md: 'none' }}
     >
       <Container py="2">
         <Flex flexDir="row" w="100%" maxH="64px" justifyContent="space-between" alignItems="center">

@@ -72,7 +72,7 @@ export const OrdersKanban = () => {
             </Text>
           ))}
       </Flex>
-      <Flex flexDir={{ base: 'column', lg: 'row' }} justifyContent="space-between">
+      <Flex flexDir={{ base: 'column', md: 'row' }} justifyContent="space-between">
         <Flex flexDir="column">
           <Text mt="-10px" fontSize="3xl" fontWeight="700" color="black">
             {t('Gerenciador de pedidos')}
@@ -105,11 +105,12 @@ export const OrdersKanban = () => {
           */}
           </Flex>
         </Flex>
-        <Flex mt={{ base: '4', lg: '0' }} flexDir="column" alignItems="flex-end">
-          <Stack direction={{ base: 'column', lg: 'row' }} spacing={4}>
-            <InputGroup maxW="360px">
+        <Flex mt={{ base: '4', md: '0' }} flexDir="column" alignItems="flex-end">
+          <Stack w="100%" direction={{ base: 'column', lg: 'row' }} spacing={4}>
+            <InputGroup w="100%" maxW={{ md: '320px', lg: '360px' }}>
               <Input
-                minW="340px"
+                w="100%"
+                minW={{ lg: '340px' }}
                 height="60px"
                 borderColor="black"
                 _hover={{ borderColor: 'black' }}
@@ -138,29 +139,35 @@ export const OrdersKanban = () => {
       {orderSearch.length > 0 ? (
         <OrderSearchResult orders={searchResult} />
       ) : (
-        <Stack direction={['column', 'column', 'row']} mt="8" spacing="4">
-          <OrdersKanbanList
-            title={t('Pedidos à confirmar')}
-            orders={ordersByStatus['confirmed']}
-            details={t('Aqui você verá os novos pedidos. Aceite-os para confirmar o preparo.')}
-          />
-          <OrdersKanbanList
-            title={t('Em preparação')}
-            orders={ordersByStatus['preparing']}
-            details={t(
-              'Aqui você verá os pedidos que estão sendo preparados por você. Quando clicar em "Pedido pronto” ou o tempo expirar, o entregador estará esperando para buscá-lo.'
-            )}
-          />
-          <OrdersKanbanList
-            title={t('Retirada/entrega')}
-            orders={[...ordersByStatus['ready'], ...ordersByStatus['dispatching']]}
-            details={t('Aqui você verá os pedidos aguardando retirada pelo entregador.')}
-          />
-          <OrdersKanbanList
-            title={t('Pedidos cancelados')}
-            orders={ordersByStatus['canceled']}
-            details={t('Aqui você verá os pedidos que estão a caminho da entrega pela entregador.')}
-          />
+        <Stack direction={{ base: 'column', lg: 'row' }} mt="8" spacing="4">
+          <Stack direction={{ base: 'column', md: 'row' }} spacing="4">
+            <OrdersKanbanList
+              title={t('Pedidos à confirmar')}
+              orders={ordersByStatus['confirmed']}
+              details={t('Aqui você verá os novos pedidos. Aceite-os para confirmar o preparo.')}
+            />
+            <OrdersKanbanList
+              title={t('Em preparação')}
+              orders={ordersByStatus['preparing']}
+              details={t(
+                'Aqui você verá os pedidos que estão sendo preparados por você. Quando clicar em "Pedido pronto” ou o tempo expirar, o entregador estará esperando para buscá-lo.'
+              )}
+            />
+          </Stack>
+          <Stack direction={{ base: 'column', md: 'row' }} spacing="4">
+            <OrdersKanbanList
+              title={t('Retirada/entrega')}
+              orders={[...ordersByStatus['ready'], ...ordersByStatus['dispatching']]}
+              details={t('Aqui você verá os pedidos aguardando retirada pelo entregador.')}
+            />
+            <OrdersKanbanList
+              title={t('Pedidos cancelados')}
+              orders={ordersByStatus['canceled']}
+              details={t(
+                'Aqui você verá os pedidos que estão a caminho da entrega pela entregador.'
+              )}
+            />
+          </Stack>
         </Stack>
       )}
     </Box>

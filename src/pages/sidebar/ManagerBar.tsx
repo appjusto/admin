@@ -16,9 +16,9 @@ export const ManagerBar = () => {
   return (
     <Flex
       mt={{ base: '4', lg: '0' }}
-      position={{ base: 'relative', lg: 'fixed' }}
-      bottom={{ lg: '0' }}
-      left={{ lg: '0' }}
+      position={{ base: 'relative', md: 'fixed' }}
+      bottom={{ md: '0' }}
+      left={{ md: '0' }}
       w="220px"
       borderTop={{ lg: '1px solid #C8D7CB' }}
       px="4"
