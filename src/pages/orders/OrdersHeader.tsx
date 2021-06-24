@@ -56,16 +56,16 @@ export const OrdersHeader = ({ statusEnabled = true }: OrdersHeaderProps) => {
               }}
             />
           )}
-          <Flex ml="4" flexDir="column" minW="280px">
-            <Text fontSize="16px" fontWeight="700" lineHeight="22px">
+          <Flex ml="4" flexDir="column" minW={{ lg: '280px' }}>
+            <Text fontSize={{ base: '13px', lg: '16px' }} fontWeight="700" lineHeight="22px">
               {isOpen ? t('Restaurante aberto') : t('Restaurante fechado')}
             </Text>
             <Text fontSize="xs">{statusMessage}</Text>
           </Flex>
         </Flex>
       </HStack>
-      <Image src={logo} maxW="94px" />
-      <HStack spacing={6}>
+      <Image src={logo} maxW="94px" display={{ base: 'none', lg: 'block' }} />
+      <HStack spacing={6} display={{ base: 'none', lg: 'block' }}>
         <HStack spacing={1}>
           <Text fontSize="16px" fontWeight="700">
             {t('Administrador')}:
@@ -83,6 +83,11 @@ export const OrdersHeader = ({ statusEnabled = true }: OrdersHeaderProps) => {
           </Text>
         </Link>
       </HStack>
+      <Link as={RouterLink} to="/app" display={{ base: 'block', lg: 'none' }}>
+        <Text fontWeight="700" textStyle="link">
+          {t('Voltar')}
+        </Text>
+      </Link>
       <SuccessAndErrorHandler submission={submission.current} isError={isError} error={error} />
     </Flex>
   );

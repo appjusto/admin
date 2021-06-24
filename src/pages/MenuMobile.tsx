@@ -8,14 +8,23 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
+import { useContextAgentProfile } from 'app/state/agent/context';
 import Container from 'common/components/Container';
 import Image from 'common/components/Image';
 import logo from 'common/img/logo.svg';
+import { BackOfficeLinks } from 'pages/sidebar/BackOfficeLinks';
+import BusinessInfo from 'pages/sidebar/BusinessInfo';
 import { Links } from 'pages/sidebar/Links';
 import { ManagerBar } from 'pages/sidebar/ManagerBar';
+import { useRouteMatch } from 'react-router';
 
 export const MenuMobile = () => {
+  // context
+  const { path } = useRouteMatch();
   const { isOpen, onToggle } = useDisclosure();
+  const { isBackofficeUser } = useContextAgentProfile();
+  const isBackOffice = path.includes('backoffice');
+  //UI
   return (
     <Flex
       as="header"
@@ -54,8 +63,21 @@ export const MenuMobile = () => {
         </Flex>
       </Container>
       <Collapse in={isOpen} animateOpacity>
-        <Links />
-        <ManagerBar />
+        {isBackOffice ? (
+          <BackOfficeLinks />
+        ) : (
+          <Box>
+            <Box ml="4" mt="6">
+              <BusinessInfo />
+            </Box>
+            <Box mt="6">
+              <Links />
+            </Box>
+          </Box>
+        )}
+        {((!isBackOffice && !isBackofficeUser) || (isBackOffice && isBackofficeUser)) && (
+          <ManagerBar />
+        )}
       </Collapse>
     </Flex>
   );

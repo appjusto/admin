@@ -1,11 +1,11 @@
 import {
   Box,
   Flex,
-  HStack,
   Icon,
   Input,
   InputGroup,
   InputRightElement,
+  Link,
   Stack,
   Text,
 } from '@chakra-ui/react';
@@ -14,7 +14,7 @@ import { useOrdersContext } from 'app/state/order';
 import { Order, OrderStatus, WithId } from 'appjusto-types';
 import { ReactComponent as SearchIcon } from 'common/img/searchIcon.svg';
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { ChatButton } from './ChatButton';
@@ -54,7 +54,13 @@ export const OrdersKanban = () => {
   // UI
   return (
     <Box pb="12">
-      <Flex justifyContent="flex-end" h="19.5px" mt="-19.5px" mb="2">
+      <Flex
+        justifyContent="flex-end"
+        h="19.5px"
+        mt="-19.5px"
+        mb="2"
+        display={{ base: 'none', lg: 'block' }}
+      >
         {isNewChatMessage &&
           (newChatMessages.length > 1 ? (
             <Text fontSize="xs" fontWeight="700" lineHeight="lg" color="black">
@@ -66,7 +72,7 @@ export const OrdersKanban = () => {
             </Text>
           ))}
       </Flex>
-      <Flex justifyContent="space-between">
+      <Flex flexDir={{ base: 'column', lg: 'row' }} justifyContent="space-between">
         <Flex flexDir="column">
           <Text mt="-10px" fontSize="3xl" fontWeight="700" color="black">
             {t('Gerenciador de pedidos')}
@@ -99,8 +105,8 @@ export const OrdersKanban = () => {
           */}
           </Flex>
         </Flex>
-        <Flex flexDir="column" alignItems="flex-end">
-          <HStack spacing={4}>
+        <Flex mt={{ base: '4', lg: '0' }} flexDir="column" alignItems="flex-end">
+          <Stack direction={{ base: 'column', lg: 'row' }} spacing={4}>
             <InputGroup maxW="360px">
               <Input
                 minW="340px"
@@ -117,10 +123,10 @@ export const OrdersKanban = () => {
                 children={<Icon w="22px" h="22px" as={SearchIcon} />}
               />
             </InputGroup>
-            <Link to="/app/chat">
+            <Link as={RouterLink} to="/app/chat" textAlign={{ base: 'end', lg: 'start' }}>
               <ChatButton key={Math.random()} isNewMessage={isNewChatMessage} />
             </Link>
-          </HStack>
+          </Stack>
           <Text mt="4" fontSize="sm" color="grey.700">
             {t('Dados atualizados em ')}
             <Text as="span" letterSpacing="0.2px">
