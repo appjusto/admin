@@ -25,7 +25,7 @@ interface OrderToPrintProps {
   order?: WithId<Order> | null;
 }
 
-export const OrderToPrint = React.forwardRef<HTMLDivElement, OrderToPrintProps>(
+export const OrderToPrinting = React.forwardRef<HTMLDivElement, OrderToPrintProps>(
   ({ businessName, order }, ref) => {
     // context
     const { logo } = useBusinessProfile();
