@@ -15,11 +15,12 @@ export const ManagerBar = () => {
   const name = manager?.name ? `, ${manager.name}!` : '!';
   return (
     <Flex
-      position="fixed"
-      bottom="0"
-      left="0"
+      mt={{ base: '4', lg: '0' }}
+      position={{ base: 'relative', lg: 'fixed' }}
+      bottom={{ lg: '0' }}
+      left={{ lg: '0' }}
       w="220px"
-      borderTop="1px solid #C8D7CB"
+      borderTop={{ lg: '1px solid #C8D7CB' }}
       px="4"
       py="2"
     >
