@@ -29,7 +29,7 @@ export const OrderToPrint = React.forwardRef<HTMLDivElement, OrderToPrintProps>(
   ({ businessName, order }, ref) => {
     // context
     const { logo } = useBusinessProfile();
-    // UI
+    // UI - Hidden
     return (
       <Box ref={ref} maxW="300px" p="4" position="absolute" top="0" left="0" zIndex="-999">
         <Flex flexDir="column" alignItems="center">

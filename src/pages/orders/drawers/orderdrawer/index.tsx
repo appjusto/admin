@@ -18,7 +18,7 @@ import { CookingTime } from './CookingTime';
 import { DeliveryInfos } from './DeliveryInfos';
 import { OrderDetails } from './OrderDetails';
 import { OrderIssuesTable } from './OrderIssuesTable';
-import { OrderToPrint } from './OrderToPrint';
+import { OrderToPrinting } from './OrderToPrinting';
 import { PrintSwitch } from './PrintSwitch';
 
 interface Props {
@@ -136,7 +136,7 @@ export const OrderDrawer = (props: Props) => {
             </>
           )}
         </Box>
-        <OrderToPrint businessName={business?.name} order={order} ref={printComponent} />
+        <OrderToPrinting businessName={business?.name} order={order} ref={printComponent} />
       </Box>
       <SuccessAndErrorHandler
         submission={submission.current}
