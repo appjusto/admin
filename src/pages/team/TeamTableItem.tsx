@@ -21,7 +21,13 @@ export const TeamTableItem = ({
   const [isDeleting, setIsDeleting] = React.useState(false);
   // UI
   return (
-    <Tr color="black" fontSize="sm" h="66px" bg={isDeleting ? 'rgba(254, 215, 215, 0.3)' : 'none'}>
+    <Tr
+      color="black"
+      fontSize="sm"
+      h="66px"
+      bg={isDeleting ? 'rgba(254, 215, 215, 0.3)' : 'none'}
+      pos="relative"
+    >
       <Td>{manager.email}</Td>
       {isDeleting ? (
         <>

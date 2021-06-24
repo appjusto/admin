@@ -27,7 +27,7 @@ const Menu = () => {
     <MenuProvider businessId={businessId}>
       <Box pb="10">
         <PageHeader title={t('Cardápio')} subtitle={t('Defina o cardápio do seu restaurante.')} />
-        <Flex flexDir={{ base: 'column', md: 'row' }} justifyContent="space-between" mt="2" mb="8">
+        <Flex flexDir={{ base: 'column', lg: 'row' }} justifyContent="space-between" mt="2" mb="8">
           <Stack mt="4" direction={{ base: 'column', md: 'row' }} spacing={4}>
             <Button
               mt="0"
