@@ -12,6 +12,7 @@ import {
   HStack,
   Icon,
   Text,
+  Tooltip,
 } from '@chakra-ui/react';
 import { useContextBusiness } from 'app/state/business/context';
 import { useOrdersContext } from 'app/state/order';
@@ -108,17 +109,23 @@ export const OrderBaseDrawer = ({
                   >
                     {t('Pedido Nº')} {order?.code}
                   </Text>
-                  <Button
-                    mt="4px !important"
-                    size="sm"
-                    variant="outline"
-                    px="2"
-                    h="25px"
-                    _focus={{ outline: 'none' }}
-                    onClick={() => handlePrint()}
+                  <Tooltip
+                    placement="right"
+                    label={t('Imprimir pedido')}
+                    aria-label={t('Imprimir pedido')}
                   >
-                    <Icon as={MdPrint} w="20px" h="20px" />
-                  </Button>
+                    <Button
+                      mt="4px !important"
+                      size="sm"
+                      variant="outline"
+                      px="2"
+                      h="25px"
+                      _focus={{ outline: 'none' }}
+                      onClick={() => handlePrint()}
+                    >
+                      <Icon as={MdPrint} w="20px" h="20px" />
+                    </Button>
+                  </Tooltip>
                 </HStack>
                 {order?.status === 'canceled' && (
                   <Text fontSize="md" color="red" fontWeight="700" lineHeight="22px">
