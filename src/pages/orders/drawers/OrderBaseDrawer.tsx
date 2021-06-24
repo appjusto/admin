@@ -9,6 +9,8 @@ import {
   DrawerHeader,
   DrawerOverlay,
   Flex,
+  HStack,
+  Icon,
   Text,
 } from '@chakra-ui/react';
 import { useContextBusiness } from 'app/state/business/context';
@@ -16,6 +18,7 @@ import { useOrdersContext } from 'app/state/order';
 import { Order, WithId } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import React from 'react';
+import { MdPrint } from 'react-icons/md';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { orderStatusPTOptions } from '../../backoffice/utils/index';
@@ -29,7 +32,7 @@ interface BaseDrawerProps {
   isCanceling: boolean;
   onClose(): void;
   children: React.ReactNode;
-  handlePrint?(): void;
+  printOrder?(): void;
 }
 
 export const OrderBaseDrawer = ({
@@ -38,7 +41,7 @@ export const OrderBaseDrawer = ({
   cancel,
   isCanceling,
   onClose,
-  handlePrint,
+  printOrder,
   children,
   ...props
 }: BaseDrawerProps) => {
@@ -54,9 +57,13 @@ export const OrderBaseDrawer = ({
   // const cancelator = orderCancelator(order?.cancellation?.issue.type);
 
   //handlers
+  const handlePrint = () => {
+    if (printOrder) return printOrder();
+    return null;
+  };
   const PrimaryButtonFunction = () => {
     if (order?.status === 'confirmed') {
-      if (business?.orderPrinting && handlePrint) handlePrint();
+      if (business?.orderPrinting) handlePrint();
       changeOrderStatus(order.id, 'preparing');
     }
     if (order?.status === 'preparing') changeOrderStatus(order.id, 'ready');
@@ -90,9 +97,29 @@ export const OrderBaseDrawer = ({
           <DrawerHeader pb="2">
             <Flex justifyContent="space-between" alignItems="flex-end">
               <Flex flexDir="column">
-                <Text color="black" fontSize="2xl" fontWeight="700" lineHeight="28px" mb="2">
-                  {t('Pedido Nº')} {order?.code}
-                </Text>
+                <HStack spacing={4}>
+                  <Text
+                    mt="4"
+                    color="black"
+                    fontSize="2xl"
+                    fontWeight="700"
+                    lineHeight="28px"
+                    mb="2"
+                  >
+                    {t('Pedido Nº')} {order?.code}
+                  </Text>
+                  <Button
+                    mt="4px !important"
+                    size="sm"
+                    variant="outline"
+                    px="2"
+                    h="25px"
+                    _focus={{ outline: 'none' }}
+                    onClick={() => handlePrint()}
+                  >
+                    <Icon as={MdPrint} w="20px" h="20px" />
+                  </Button>
+                </HStack>
                 {order?.status === 'canceled' && (
                   <Text fontSize="md" color="red" fontWeight="700" lineHeight="22px">
                     {t('Pedido cancelado pelo')} <Text as="span">{cancellator}</Text>

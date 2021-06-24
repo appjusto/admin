@@ -73,7 +73,7 @@ export const OrderDrawer = (props: Props) => {
     props.onClose();
   };
 
-  const handlePrint = useReactToPrint({
+  const printOrder = useReactToPrint({
     content: () => printComponent.current,
   });
 
@@ -95,7 +95,7 @@ export const OrderDrawer = (props: Props) => {
       cancellator={cancellator}
       cancel={() => setIsCanceling(true)}
       isCanceling={isCanceling}
-      handlePrint={handlePrint}
+      printOrder={printOrder}
     >
       <Box position="relative">
         <Box bg="white" w="100%">

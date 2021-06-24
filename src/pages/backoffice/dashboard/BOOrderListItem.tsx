@@ -50,7 +50,7 @@ export const BOOrderListItem = ({ order }: Props) => {
           {getDateAndHour(order?.createdOn)}
         </Text>
         <Text fontSize="sm" lineHeight="21px">
-          {orderDT ? `${orderDT}min` : '?'}
+          {orderDT ? `${orderDT}min` : 'Agora'}
         </Text>
       </Flex>
     </CustomLink>
