@@ -55,7 +55,12 @@ export const ProductComplements = () => {
       {hasComplements && (
         <>
           <HStack mt="8" mb="10" spacing={4}>
-            <Button width="50%" color="black" fontSize="15px" onClick={() => setNewGroupForm(true)}>
+            <Button
+              width={{ base: '100%', lg: '50%' }}
+              color="black"
+              fontSize="15px"
+              onClick={() => setNewGroupForm(true)}
+            >
               {t('Criar novo grupo de complementos')}
             </Button>
             {/*<Button isDisabled width="full" variant="outline" color="black" fontSize="15px">

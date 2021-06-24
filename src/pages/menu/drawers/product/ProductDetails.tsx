@@ -3,7 +3,8 @@ import {
   Checkbox,
   CheckboxGroup,
   Flex,
-  HStack,
+  Link,
+  Stack,
   Switch,
   Text,
   VStack,
@@ -16,7 +17,7 @@ import { ImageUploads } from 'common/components/ImageUploads';
 import { productRatios, productResizedWidth } from 'common/imagesDimensions';
 import { useProductContext } from 'pages/menu/context/ProductContext';
 import React from 'react';
-import { Link, useHistory, useRouteMatch } from 'react-router-dom';
+import { Link as RouterLink, useHistory, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { DrawerButtons } from '../DrawerButtons';
 import { CategorySelect } from './CategorySelect';
@@ -185,14 +186,16 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
           {t('Produto salvo com sucesso!')}
         </Text>
         <Text>{t('O que gostaria de fazer agora?')}</Text>
-        <HStack mt="4" spacing="4">
-          <Button onClick={handleSaveOther} variant="outline">
+        <Stack mt="4" w="100%" direction={{ base: 'column', md: 'row' }} spacing="4">
+          <Button onClick={handleSaveOther} variant="outline" w="100%">
             {t('Salvar um novo produto')}
           </Button>
-          <Link to={`${url}/complements`}>
-            <Button variant="outline">{t('Adicionar complementos')}</Button>
+          <Link as={RouterLink} to={`${url}/complements`} w="100%">
+            <Button variant="outline" w="100%">
+              {t('Adicionar complementos')}
+            </Button>
           </Link>
-        </HStack>
+        </Stack>
       </Flex>
     );
   }

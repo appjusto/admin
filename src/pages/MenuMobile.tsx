@@ -64,19 +64,19 @@ export const MenuMobile = () => {
       </Container>
       <Collapse in={isOpen} animateOpacity>
         {isBackOffice ? (
-          <BackOfficeLinks />
+          <BackOfficeLinks onClick={onToggle} />
         ) : (
           <Box>
             <Box ml="4" mt="6">
               <BusinessInfo />
             </Box>
             <Box mt="6">
-              <Links />
+              <Links onClick={onToggle} />
             </Box>
           </Box>
         )}
         {((!isBackOffice && !isBackofficeUser) || (isBackOffice && isBackofficeUser)) && (
-          <ManagerBar />
+          <ManagerBar onClick={onToggle} />
         )}
       </Collapse>
     </Flex>

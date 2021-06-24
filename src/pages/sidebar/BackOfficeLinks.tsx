@@ -1,11 +1,11 @@
-import { Box } from '@chakra-ui/react';
+import { Box, BoxProps } from '@chakra-ui/react';
 import { useContextAgentProfile } from 'app/state/agent/context';
 import React from 'react';
 import { useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { LinkItem } from './LinkItem';
 
-export const BackOfficeLinks = () => {
+export const BackOfficeLinks = (props: BoxProps) => {
   // context
   const isDev = process.env.REACT_APP_ENVIRONMENT === 'dev';
   const { url } = useRouteMatch();
@@ -13,13 +13,13 @@ export const BackOfficeLinks = () => {
 
   if (role === 'courier-manager') {
     return (
-      <Box mt="10">
+      <Box mt="10" {...props}>
         <LinkItem to={`${url}/couriers`} label={t('Entregadores')} />
       </Box>
     );
   } else
     return (
-      <Box mt="10">
+      <Box mt="10" {...props}>
         <LinkItem to={`${url}`} label={t('Visão geral')} />
         <LinkItem to={`${url}/orders`} label={t('Pedidos')} />
         <LinkItem to={`${url}/couriers`} label={t('Entregadores')} />

@@ -101,6 +101,7 @@ export const GroupBox = ({ index, group }: GroupBoxProps) => {
           borderRadius="lg"
           p="4"
           mt="4"
+          minW="500px"
           ref={draggable.innerRef}
           {...draggable.draggableProps}
         >

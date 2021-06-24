@@ -1,4 +1,4 @@
-import { Box, Flex, Icon, Input, InputGroup, InputRightElement } from '@chakra-ui/react';
+import { Box, Flex, Icon, Input, InputGroup, InputRightElement, Stack } from '@chakra-ui/react';
 import { useContextBusinessId } from 'app/state/business/context';
 import { MenuProvider } from 'app/state/menu/context';
 import { CustomButton as Button } from 'common/components/buttons/CustomButton';
@@ -27,16 +27,23 @@ const Menu = () => {
     <MenuProvider businessId={businessId}>
       <Box pb="10">
         <PageHeader title={t('Cardápio')} subtitle={t('Defina o cardápio do seu restaurante.')} />
-        <Flex justifyContent="space-between" mt="2" mb="8">
-          <Flex>
-            <Button link={`${url}/category/new`} label={t('Adicionar categoria')} variant="solid" />
+        <Flex flexDir={{ base: 'column', md: 'row' }} justifyContent="space-between" mt="2" mb="8">
+          <Stack mt="4" direction={{ base: 'column', md: 'row' }} spacing={4}>
             <Button
+              mt="0"
+              w={{ base: '100%', md: 'auto' }}
+              link={`${url}/category/new`}
+              label={t('Adicionar categoria')}
+              variant="solid"
+            />
+            <Button
+              mt="0"
+              w={{ base: '100%', md: 'auto' }}
               link={`${url}/product/new`}
               label={t('Adicionar produto')}
               variant="outline"
-              ml="2"
             />
-          </Flex>
+          </Stack>
           <InputGroup maxW="360px">
             <Input
               size="lg"

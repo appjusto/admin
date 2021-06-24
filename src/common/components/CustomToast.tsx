@@ -16,7 +16,15 @@ export const CustomToast = ({ type, message }: CustomToastProps) => {
   if (type === 'error') bg = '#E53E3E';
   // UI
   return (
-    <Box pos="relative" color="white" p="4" bg={bg} borderRadius="lg">
+    <Box
+      pos="relative"
+      color="white"
+      p="4"
+      bg={bg}
+      borderRadius="lg"
+      w={{ base: '100%', md: 'auto' }}
+      maxW={{ base: '100vw', md: 'auto' }}
+    >
       <SmallCloseIcon
         pos="absolute"
         top="2"

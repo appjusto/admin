@@ -12,7 +12,7 @@ const PageLayout = ({ maxW = '960px', mt = '0', children }: PageLayoutProps) => 
   // context
   // UI
   return (
-    <Flex w="100vw" minH="100vh" mt={mt}>
+    <Flex w="100vw" minH="100vh" maxW="100vw" mt={mt}>
       <MenuMobile />
       <Sidebar />
       <Flex w="100%" justifyContent="center">

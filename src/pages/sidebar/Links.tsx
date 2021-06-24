@@ -1,4 +1,4 @@
-import { Box, Flex, Text } from '@chakra-ui/react';
+import { Box, BoxProps, Flex, Text } from '@chakra-ui/react';
 import { useContextAgentProfile } from 'app/state/agent/context';
 import { useContextBusiness } from 'app/state/business/context';
 import React from 'react';
@@ -54,7 +54,7 @@ const ProtectedLinks = ({ isApproved }: ProtectedLinksProps) => {
   );
 };
 
-export const Links = () => {
+export const Links = (props: BoxProps) => {
   // context
   const { isBackofficeUser } = useContextAgentProfile();
   const { business, userRole } = useContextBusiness();
@@ -64,7 +64,7 @@ export const Links = () => {
   const isManager = userRole === 'manager' || isBackofficeUser;
   // UI
   return (
-    <Box>
+    <Box {...props}>
       {isManager ? (
         <ProtectedLinks isApproved={isApproved} />
       ) : (

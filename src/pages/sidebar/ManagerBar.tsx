@@ -1,4 +1,4 @@
-import { Box, Flex, Image, Link, Text } from '@chakra-ui/react';
+import { Box, Flex, FlexProps, Image, Link, Text } from '@chakra-ui/react';
 import { useContextAgentProfile } from 'app/state/agent/context';
 import { useContextManagerProfile } from 'app/state/manager/context';
 import { EditButton } from 'common/components/buttons/EditButton';
@@ -6,7 +6,7 @@ import managerIcon from 'common/img/manager.svg';
 import { Link as RouterLink, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
 
-export const ManagerBar = () => {
+export const ManagerBar = (props: FlexProps) => {
   // context
   const { path, url } = useRouteMatch();
   const { manager } = useContextManagerProfile();
@@ -23,6 +23,7 @@ export const ManagerBar = () => {
       borderTop={{ lg: '1px solid #C8D7CB' }}
       px="4"
       py="2"
+      {...props}
     >
       <Flex mr="2" justifyContent="center" alignItems="center">
         <Image src={managerIcon} width="24px" height="24px" />
