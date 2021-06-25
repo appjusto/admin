@@ -83,7 +83,6 @@ export const useObserveConfirmedOrders = (businessId?: string, notify: boolean =
           navigator.serviceWorker
             .getRegistration()
             .then((reg) => {
-              console.log('REG', reg);
               if (reg) return reg.showNotification(title, options);
             })
             .catch((error) => {
@@ -101,5 +100,4 @@ export const useObserveConfirmedOrders = (businessId?: string, notify: boolean =
     setAck(key, ack);
     setChanged(false);
   }, [changed, notify, permission]);
-  console.log('navigator.serviceWorker', navigator.serviceWorker);
 };
