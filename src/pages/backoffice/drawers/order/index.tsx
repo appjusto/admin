@@ -1,10 +1,10 @@
-import { CancellationData } from 'app/api/order/OrderApi';
 import { useOrder } from 'app/api/order/useOrder';
 import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';
 import { useContextAgentProfile } from 'app/state/agent/context';
 import { ConsumerProvider } from 'app/state/consumer/context';
 import { Issue, IssueType, OrderStatus, WithId } from 'appjusto-types';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
+import { initialError } from 'common/components/error/utils';
 import { OrderDetails } from 'pages/orders/drawers/orderdrawer/OrderDetails';
 import { OrderIssuesTable } from 'pages/orders/drawers/orderdrawer/OrderIssuesTable';
 import React from 'react';
@@ -30,16 +30,22 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
   const { path } = useRouteMatch();
   const { agent, username } = useContextAgentProfile();
   const { orderId } = useParams<Params>();
-  const { order, updateOrder, result, cancelOrder, orderIssues, orderCancellation } = useOrder(
-    orderId
-  );
+  const {
+    order,
+    updateOrder,
+    updateResult,
+    cancelOrder,
+    cancelResult,
+    orderIssues,
+    orderCancellation,
+  } = useOrder(orderId);
   const cancelOptions = useIssuesByType(cancelOptionsArray);
-  const { isLoading, isSuccess, isError, error } = result;
 
   // state
   const [status, setStatus] = React.useState<OrderStatus | undefined>(order?.status ?? undefined);
   const [issue, setIssue] = React.useState<Issue | null>();
   const [message, setMessage] = React.useState('');
+  const [error, setError] = React.useState(initialError);
 
   // helpers
   const submission = React.useRef(0);
@@ -61,12 +67,13 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
         });
         return;
       }
-      const cancellationData = {
+      /*const cancellationData = {
         issue,
         canceledById: agent?.id,
         comment: message,
-      } as CancellationData;
-      await cancelOrder(cancellationData);
+      } as CancellationData;*/
+      //await cancelOrder(cancellationData);
+      // Fix handle errors
     } else {
       const changes = {
         status,
@@ -88,21 +95,35 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
     }
   }, [orderCancellation]);
 
+  React.useEffect(() => {
+    if (updateResult.isError) {
+      setError({
+        status: true,
+        error: updateResult.error,
+      });
+    } else if (cancelResult.isError) {
+      setError({
+        status: true,
+        error: cancelResult.error,
+      });
+    }
+  }, [updateResult.isError, updateResult.error, cancelResult.isError, cancelResult.error]);
+
   //UI
   return (
     <ConsumerProvider>
       <SuccessAndErrorHandler
         submission={submission.current}
-        isSuccess={isSuccess}
-        isError={isError}
-        error={error}
+        isSuccess={updateResult.isSuccess}
+        isError={error.status}
+        error={error.error}
       />
       <OrderBaseDrawer
         agent={{ id: agent?.id, name: username }}
         order={order}
         onClose={onClose}
         updateOrderStatus={updateOrderStatus}
-        isLoading={isLoading}
+        isLoading={updateResult.isLoading}
         {...props}
       >
         <Switch>

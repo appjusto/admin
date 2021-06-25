@@ -89,6 +89,10 @@ export const OrderBaseDrawer = ({
   if (order?.status === 'preparing') PrimaryButtonLabel = 'Pedido pronto';
   if (order?.status === 'ready') PrimaryButtonLabel = 'Entregar pedido';
 
+  React.useEffect(() => {
+    if (isCanceling && bodyRef.current) bodyRef.current.scrollTop = 0;
+  }, [isCanceling, bodyRef.current]);
+
   //UI
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
@@ -181,15 +185,10 @@ export const OrderBaseDrawer = ({
           {!isCanceling && !orderDispatched && order?.status !== 'canceled' && (
             <DrawerFooter borderTop="1px solid #F2F6EA">
               <Flex w="full" justifyContent="flex-start">
-                <Flex
-                  w="full"
-                  maxW="607px"
-                  flexDir="row"
-                  justifyContent={order?.status === 'confirmed' ? 'space-between' : 'flex-end'}
-                >
-                  {/*<Button width="full" maxW="200px" variant="dangerLight" onClick={cancel}>
+                <Flex w="full" maxW="607px" flexDir="row" justifyContent="space-between">
+                  <Button width="full" maxW="200px" variant="dangerLight" onClick={cancel}>
                     {t('Cancelar pedido')}
-                    </Button>*/}
+                  </Button>
                   {order?.status === 'confirmed' && (
                     <Box color="black" fontSize="xs">
                       <Text>{t('Tempo de preparo do pedido:')}</Text>

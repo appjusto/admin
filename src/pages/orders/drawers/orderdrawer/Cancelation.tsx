@@ -1,23 +1,34 @@
-import { Box, Button, Flex, Radio, RadioGroup, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, Image, Radio, RadioGroup, Text } from '@chakra-ui/react';
 import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';
 import { Issue, IssueType, WithId } from 'appjusto-types';
+import iconTraffic from 'common/img/icon-traffic.svg';
 import React from 'react';
+import { formatCurrency } from 'utils/formatters';
 import { t } from 'utils/i18n';
-
 interface CancelationProps {
   handleConfirm(issue: WithId<Issue>): void;
   handleKeep(): void;
+  isLoading: boolean;
+  orderCancellationCosts?: number;
 }
 
 const issueOptionsArray = ['restaurant-cancel'] as IssueType[];
 
-export const Cancelation = ({ handleConfirm, handleKeep }: CancelationProps) => {
+export const Cancelation = ({
+  handleConfirm,
+  handleKeep,
+  isLoading,
+  orderCancellationCosts,
+}: CancelationProps) => {
   //context
   const cancelOptions = useIssuesByType(issueOptionsArray);
   // state
   const [options, setOptions] = React.useState<WithId<Issue>[]>(cancelOptions ?? []);
   const [optionId, setOptionId] = React.useState('');
   const [optionsError, setOptionsError] = React.useState({ status: false, message: '' });
+
+  // helpers
+  const isCosts = typeof orderCancellationCosts === 'number' && orderCancellationCosts > 0;
 
   //handler
   const handleCancel = () => {
@@ -41,10 +52,27 @@ export const Cancelation = ({ handleConfirm, handleKeep }: CancelationProps) => 
   // UI
   return (
     <Box py="4" px="6" bgColor="#FFF8F8" border="1px solid #DC3545" borderRadius="lg">
-      <Text fontSize="xl" color="#DC3545">
-        {t('Tem certeza que deseja cancelar o pedido?')}
+      {isCosts && (
+        <Flex flexDir="column" alignItems="center">
+          <Box w="60px">
+            <Image src={iconTraffic} />
+          </Box>
+          <Text fontSize="xl" color="black">
+            {t('Aviso importante:')}
+          </Text>
+          <Text fontSize="xl" color="#DC3545" maxW="320px" textAlign="center">
+            {t(
+              `Com este cancelamento será gerado um débito no valor de ${formatCurrency(
+                orderCancellationCosts!
+              )}`
+            )}
+          </Text>
+        </Flex>
+      )}
+      <Text mt="6" fontSize={isCosts ? 'lg' : 'xl'} color={isCosts ? 'black' : '#DC3545'}>
+        {t('Deseja realmente cancelar o pedido?')}
       </Text>
-      <Text mt="2" fontSize="sm" color="black">
+      <Text mt="1" fontSize="sm">
         {t(
           'Cancelar pedidos pode prejudicar a experiência do cliente com o seu estabelecimento. Informe o motivo do cancelamento:'
         )}
@@ -56,12 +84,12 @@ export const Cancelation = ({ handleConfirm, handleKeep }: CancelationProps) => 
       >
         <Flex flexDir="column" justifyContent="flex-start">
           {options.map((option) => (
-            <Radio mt="2" key={option.id} value={option.id} size="lg">
+            <Radio mt="1" key={option.id} value={option.id} size="lg">
               {option.title}
             </Radio>
           ))}
           {optionsError.status && (
-            <Text mt="4" color="#DC3545" fontWeight="700">
+            <Text mt="2" color="#DC3545" fontWeight="700">
               {optionsError.message}
             </Text>
           )}
@@ -73,9 +101,10 @@ export const Cancelation = ({ handleConfirm, handleKeep }: CancelationProps) => 
         </Button>
         <Button
           w="100%"
-          isDisabled={true /*optionsError.status*/}
+          isDisabled={optionsError.status}
           variant="danger"
           onClick={handleCancel}
+          isLoading={isLoading}
         >
           {t('Cancelar pedido')}
         </Button>

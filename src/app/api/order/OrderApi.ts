@@ -1,4 +1,5 @@
 import {
+  CancelOrderPayload,
   ChatMessage,
   Issue,
   Order,
@@ -13,6 +14,7 @@ import {
 import { documentAs, documentsAs } from 'core/fb';
 import firebase from 'firebase/app';
 import FirebaseRefs from '../FirebaseRefs';
+import * as Sentry from '@sentry/react';
 
 export type CancellationData = {
   issue: WithId<Issue>;
@@ -249,9 +251,20 @@ export default class OrderApi {
     });
   }
 
-  async cancelOrder(orderId: string, cancellationData: CancellationData) {
-    //const { canceledById, issue, comment } = cancellationData;
+  async cancelOrder(data: CancelOrderPayload) {
+    const { orderId, acknowledgedCosts, cancellation } = data;
     // get callable function ref and send data to bakcend
-    console.log('cancellation', orderId, cancellationData);
+    const payload: CancelOrderPayload = {
+      meta: { version: '1' }, // TODO: pass correct version on
+      orderId,
+      acknowledgedCosts,
+      params: { refund: ['products', 'delivery', 'platform'] },
+      cancellation,
+    };
+    try {
+      await this.refs.getCancelOrder()(payload);
+    } catch (error) {
+      Sentry.captureException('createManagerError', error);
+    }
   }
 }
