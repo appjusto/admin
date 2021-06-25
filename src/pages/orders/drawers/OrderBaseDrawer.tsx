@@ -96,7 +96,11 @@ export const OrderBaseDrawer = ({
         <DrawerContent>
           <DrawerCloseButton bg="green.500" mr="12px" _focus={{ outline: 'none' }} />
           <DrawerHeader pb="2">
-            <Flex justifyContent="space-between" alignItems="flex-end">
+            <Flex
+              flexDir={{ base: 'column', md: 'row' }}
+              justifyContent="space-between"
+              alignItems={{ base: 'flex-start', md: 'flex-end' }}
+            >
               <Flex flexDir="column">
                 <HStack spacing={4}>
                   <Text
@@ -165,7 +169,7 @@ export const OrderBaseDrawer = ({
                 <CustomButton
                   label="Abrir chat com o cliente"
                   link={`/app/orders/chat/${order?.id}/${order?.consumer?.id}`}
-                  size="md"
+                  size="sm"
                   variant="outline"
                 />
               </Flex>
