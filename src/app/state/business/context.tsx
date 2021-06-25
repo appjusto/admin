@@ -49,7 +49,8 @@ export const BusinessProvider = ({ children }: Props) => {
 
   // side effects
   React.useEffect(() => {
-    if (!hookBusiness) return;
+    if (hookBusiness === undefined) return;
+    if (hookBusiness === null) setBusiness(null);
     setBusiness(hookBusiness);
   }, [hookBusiness]);
   // intended to auto-select a business id for a restaurant manager
