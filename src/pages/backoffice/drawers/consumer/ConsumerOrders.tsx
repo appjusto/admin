@@ -1,7 +1,6 @@
 import { Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
 import { useContextConsumerProfile } from 'app/state/consumer/context';
 import { Order, WithId } from 'appjusto-types';
-import firebase from 'firebase';
 import { formatCurrency } from 'utils/formatters';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
@@ -11,9 +10,7 @@ interface ItemPros {
 }
 
 const ConsumerOrdersTableItem = ({ order }: ItemPros) => {
-  const date = order.createdOn
-    ? getDateAndHour(order.createdOn as firebase.firestore.Timestamp)
-    : 'N/E';
+  const date = getDateAndHour(order.createdOn);
   return (
     <Tr color="black" fontSize="xs">
       <Td>{order.code ?? 'N/E'}</Td>

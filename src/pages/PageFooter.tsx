@@ -20,8 +20,14 @@ const PageFooter = ({
   onDelete,
 }: Props) => {
   return (
-    <Flex mt="8" alignItems="center" justifyContent="space-between">
+    <Flex
+      mt="8"
+      flexDir={{ base: 'column', md: 'row' }}
+      alignItems="center"
+      justifyContent="space-between"
+    >
       <Button
+        w={{ base: '100%', md: 'auto' }}
         minW="200px"
         type="submit"
         size="lg"
@@ -36,6 +42,8 @@ const PageFooter = ({
       </Button>
       {!onboarding && deleteLabel && (
         <Button
+          w={{ base: '100%', md: 'auto' }}
+          mt={{ base: '8', md: '0' }}
           size="lg"
           fontSize="sm"
           variant="dangerLight"

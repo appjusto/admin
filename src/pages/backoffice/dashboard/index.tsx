@@ -54,7 +54,7 @@ const BODashboard = () => {
           title={t('Pedidos em andamento')}
           data={orders}
           listType="orders"
-          details={t('Aqui ficarão listados todos os pedidos em andamento nesse momento.')}
+          details={t('Aqui ficarão listados todos os pedidos em andamento no momento.')}
         />
       </Stack>
       <Switch>

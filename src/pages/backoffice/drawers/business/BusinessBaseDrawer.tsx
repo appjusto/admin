@@ -13,7 +13,6 @@ import {
 } from '@chakra-ui/react';
 import { useContextBusinessBackoffice } from 'app/state/business/businessBOContext';
 import { CustomButton } from 'common/components/buttons/CustomButton';
-import firebase from 'firebase';
 import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
 import React from 'react';
 import { useRouteMatch } from 'react-router';
@@ -55,17 +54,13 @@ export const BusinessBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
             <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
               {t('Data do onboarding:')}{' '}
               <Text as="span" fontWeight="500">
-                {business?.createdOn
-                  ? getDateAndHour(business.createdOn as firebase.firestore.Timestamp)
-                  : ''}
+                {getDateAndHour(business?.createdOn)}
               </Text>
             </Text>
             <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
               {t('Atualizado em:')}{' '}
               <Text as="span" fontWeight="500">
-                {business?.updatedOn
-                  ? getDateAndHour(business.updatedOn as firebase.firestore.Timestamp)
-                  : ''}
+                {getDateAndHour(business?.updatedOn)}
               </Text>
             </Text>
             <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">

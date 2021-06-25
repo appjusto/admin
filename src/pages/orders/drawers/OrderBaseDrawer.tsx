@@ -9,13 +9,17 @@ import {
   DrawerHeader,
   DrawerOverlay,
   Flex,
+  HStack,
+  Icon,
   Text,
+  Tooltip,
 } from '@chakra-ui/react';
-import { useOrderStatusTimestamp } from 'app/api/order/useOrderStatusTimestamp';
+import { useContextBusiness } from 'app/state/business/context';
 import { useOrdersContext } from 'app/state/order';
 import { Order, WithId } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import React from 'react';
+import { MdPrint } from 'react-icons/md';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { orderStatusPTOptions } from '../../backoffice/utils/index';
@@ -29,9 +33,8 @@ interface BaseDrawerProps {
   isCanceling: boolean;
   onClose(): void;
   children: React.ReactNode;
+  printOrder?(): void;
 }
-
-const statusConfirmed = 'confirmed';
 
 export const OrderBaseDrawer = ({
   order,
@@ -39,11 +42,12 @@ export const OrderBaseDrawer = ({
   cancel,
   isCanceling,
   onClose,
+  printOrder,
   children,
   ...props
 }: BaseDrawerProps) => {
   //context
-  const orderConfirmedTimestamp = useOrderStatusTimestamp(order?.id, statusConfirmed);
+  const { business } = useContextBusiness();
   const { changeOrderStatus } = useOrdersContext();
 
   // refs
@@ -54,8 +58,15 @@ export const OrderBaseDrawer = ({
   // const cancelator = orderCancelator(order?.cancellation?.issue.type);
 
   //handlers
+  const handlePrint = () => {
+    if (printOrder) return printOrder();
+    return null;
+  };
   const PrimaryButtonFunction = () => {
-    if (order?.status === 'confirmed') changeOrderStatus(order.id, 'preparing');
+    if (order?.status === 'confirmed') {
+      if (business?.orderPrinting) handlePrint();
+      changeOrderStatus(order.id, 'preparing');
+    }
     if (order?.status === 'preparing') changeOrderStatus(order.id, 'ready');
     if (order?.status === 'ready') changeOrderStatus(order.id, 'dispatching');
     onClose();
@@ -87,9 +98,35 @@ export const OrderBaseDrawer = ({
           <DrawerHeader pb="2">
             <Flex justifyContent="space-between" alignItems="flex-end">
               <Flex flexDir="column">
-                <Text color="black" fontSize="2xl" fontWeight="700" lineHeight="28px" mb="2">
-                  {t('Pedido Nº')} {order?.code}
-                </Text>
+                <HStack spacing={4}>
+                  <Text
+                    mt="4"
+                    color="black"
+                    fontSize="2xl"
+                    fontWeight="700"
+                    lineHeight="28px"
+                    mb="2"
+                  >
+                    {t('Pedido Nº')} {order?.code}
+                  </Text>
+                  <Tooltip
+                    placement="right"
+                    label={t('Imprimir pedido')}
+                    aria-label={t('Imprimir pedido')}
+                  >
+                    <Button
+                      mt="4px !important"
+                      size="sm"
+                      variant="outline"
+                      px="2"
+                      h="25px"
+                      _focus={{ outline: 'none' }}
+                      onClick={() => handlePrint()}
+                    >
+                      <Icon as={MdPrint} w="20px" h="20px" />
+                    </Button>
+                  </Tooltip>
+                </HStack>
                 {order?.status === 'canceled' && (
                   <Text fontSize="md" color="red" fontWeight="700" lineHeight="22px">
                     {t('Pedido cancelado pelo')} <Text as="span">{cancellator}</Text>
@@ -111,7 +148,7 @@ export const OrderBaseDrawer = ({
                 <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
                   {t('Horário do pedido:')}{' '}
                   <Text as="span" color="black" fontWeight="700">
-                    {orderConfirmedTimestamp ? getDateAndHour(orderConfirmedTimestamp) : 'N/E'}
+                    {getDateAndHour(order?.confirmedOn)}
                   </Text>
                 </Text>
                 <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">

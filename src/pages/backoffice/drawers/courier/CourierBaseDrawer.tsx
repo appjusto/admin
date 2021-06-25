@@ -17,7 +17,6 @@ import { useContextCourierProfile } from 'app/state/courier/context';
 import { CourierProfile } from 'appjusto-types';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
 import { initialError } from 'common/components/error/utils';
-import firebase from 'firebase';
 import { modePTOptions, situationPTOptions } from 'pages/backoffice/utils';
 import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
 import React from 'react';
@@ -113,17 +112,13 @@ export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDr
             <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
               {t('Data do onboarding:')}{' '}
               <Text as="span" fontWeight="500">
-                {courier?.createdOn
-                  ? getDateAndHour(courier.createdOn as firebase.firestore.Timestamp)
-                  : ''}
+                {getDateAndHour(courier?.createdOn)}
               </Text>
             </Text>
             <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
               {t('Atualizado em:')}{' '}
               <Text as="span" fontWeight="500">
-                {courier?.updatedOn
-                  ? getDateAndHour(courier.updatedOn as firebase.firestore.Timestamp)
-                  : ''}
+                {getDateAndHour(courier?.updatedOn)}
               </Text>
             </Text>
             <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">

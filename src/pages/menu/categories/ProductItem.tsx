@@ -62,6 +62,8 @@ export const ProductItem = React.memo(({ product, index }: Props) => {
           p="2"
           ref={draggable.innerRef}
           {...draggable.draggableProps}
+          pos="relative"
+          minW="700px"
         >
           <Box mr="4" bg="white" {...draggable.dragHandleProps} ref={draggable.innerRef}>
             <DragHandle />

@@ -12,8 +12,8 @@ export const OrdersTable = ({ orders }: OrdersTableProps) => {
 
   // UI
   return (
-    <Box mt="12">
-      <Table mt="4" size="md" variant="simple">
+    <Box mt="12" maxW="100vw" overflowX="auto">
+      <Table mt="4" size="md" variant="simple" pos="relative">
         <Thead>
           <Tr>
             <Th>{t('ID')}</Th>

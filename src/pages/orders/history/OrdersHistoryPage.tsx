@@ -1,5 +1,5 @@
 import { ArrowDownIcon } from '@chakra-ui/icons';
-import { Button, Flex, HStack, Text } from '@chakra-ui/react';
+import { Button, Flex, HStack, Stack, Text } from '@chakra-ui/react';
 import { useOrdersSearch } from 'app/api/search/useOrdersSearch';
 import { useContextBusinessId } from 'app/state/business/context';
 import { OrderAlgolia } from 'appjusto-types/algolia';
@@ -62,7 +62,7 @@ const OrdersHistoryPage = () => {
         maxW="700px"
       />
       <Flex mt="8">
-        <HStack spacing={4}>
+        <Stack direction={{ base: 'column', md: 'row' }} spacing={4}>
           <CustomInput
             mt="0"
             maxW="212px"
@@ -88,7 +88,7 @@ const OrdersHistoryPage = () => {
             onChange={(event) => setSearchTo(event.target.value)}
             label={t('Até')}
           />
-        </HStack>
+        </Stack>
       </Flex>
       <HStack mt="6" spacing={8} color="black">
         <Text fontSize="lg" fontWeight="700" lineHeight="26px">

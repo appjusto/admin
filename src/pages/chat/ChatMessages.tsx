@@ -14,7 +14,7 @@ export const ChatMessages = ({ image, name, messages }: ChatMessagesProps) => {
   // helpers
   const getTime = (timestamp: firebase.firestore.FieldValue) => {
     if (!timestamp) return;
-    const fullDate = getDateAndHour(timestamp as firebase.firestore.Timestamp);
+    const fullDate = getDateAndHour(timestamp);
     const time = fullDate.split(' ')[1];
     return time;
   };

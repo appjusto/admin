@@ -47,10 +47,10 @@ export const BOOrderListItem = ({ order }: Props) => {
           {formatCurrency(order?.fare?.total ?? 0)}
         </Text>
         <Text fontSize="sm" lineHeight="21px">
-          {order?.createdOn && getDateAndHour(order?.createdOn as firebase.firestore.Timestamp)}
+          {getDateAndHour(order?.createdOn)}
         </Text>
         <Text fontSize="sm" lineHeight="21px">
-          {orderDT ? `${orderDT}min` : '?'}
+          {orderDT ? `${orderDT}min` : 'Agora'}
         </Text>
       </Flex>
     </CustomLink>

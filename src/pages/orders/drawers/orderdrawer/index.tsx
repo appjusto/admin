@@ -1,4 +1,4 @@
-import { Text } from '@chakra-ui/react';
+import { Box, Text } from '@chakra-ui/react';
 import { CancellationData } from 'app/api/order/OrderApi';
 import { useOrder } from 'app/api/order/useOrder';
 import { useContextBusiness } from 'app/state/business/context';
@@ -9,6 +9,7 @@ import { initialError } from 'common/components/error/utils';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import React from 'react';
 import { useParams } from 'react-router-dom';
+import { useReactToPrint } from 'react-to-print';
 import { getOrderCancellator } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { OrderBaseDrawer } from '../OrderBaseDrawer';
@@ -17,6 +18,8 @@ import { CookingTime } from './CookingTime';
 import { DeliveryInfos } from './DeliveryInfos';
 import { OrderDetails } from './OrderDetails';
 import { OrderIssuesTable } from './OrderIssuesTable';
+import { OrderToPrinting } from './OrderToPrinting';
+import { PrintSwitch } from './PrintSwitch';
 
 interface Props {
   isOpen: boolean;
@@ -40,6 +43,7 @@ export const OrderDrawer = (props: Props) => {
 
   // refs
   const submission = React.useRef(0);
+  const printComponent = React.useRef<HTMLDivElement>(null);
 
   // helpers
   const cancellator = getOrderCancellator(orderCancellation?.issue?.type);
@@ -69,6 +73,10 @@ export const OrderDrawer = (props: Props) => {
     props.onClose();
   };
 
+  const printOrder = useReactToPrint({
+    content: () => printComponent.current,
+  });
+
   // side effects
   React.useEffect(() => {
     if (result.isError) {
@@ -87,42 +95,49 @@ export const OrderDrawer = (props: Props) => {
       cancellator={cancellator}
       cancel={() => setIsCanceling(true)}
       isCanceling={isCanceling}
+      printOrder={printOrder}
     >
-      {isCanceling ? (
-        <Cancelation handleConfirm={handleCancel} handleKeep={() => setIsCanceling(false)} />
-      ) : (
-        <>
-          {(order?.status === 'ready' || order?.status === 'dispatching') && (
-            <DeliveryInfos order={order} />
-          )}
-          <OrderDetails order={order} />
-          {order?.status === 'canceled' && (
+      <Box position="relative">
+        <Box bg="white" w="100%">
+          {isCanceling ? (
+            <Cancelation handleConfirm={handleCancel} handleKeep={() => setIsCanceling(false)} />
+          ) : (
             <>
-              <SectionTitle>{t('Dados do cancelamento')}</SectionTitle>
-              <Text mt="1" fontSize="md" fontWeight="700" color="black">
-                {t('Motivo:')}{' '}
-                <Text as="span" fontWeight="500">
-                  {orderCancellation?.issue?.title ?? 'N/E'}
-                </Text>
-              </Text>
-              <Text mt="1" fontSize="md" fontWeight="700" color="black">
-                {t('Reembolso:')}{' '}
-                <Text as="span" fontWeight="500">
-                  {orderCancellation?.params.refund.includes('products') ? 'Sim' : 'Não'}
-                </Text>
-              </Text>
+              {(order?.status === 'ready' || order?.status === 'dispatching') && (
+                <DeliveryInfos order={order} />
+              )}
+              <OrderDetails order={order} />
+              {order?.status === 'canceled' && (
+                <>
+                  <SectionTitle>{t('Dados do cancelamento')}</SectionTitle>
+                  <Text mt="1" fontSize="md" fontWeight="700" color="black">
+                    {t('Motivo:')}{' '}
+                    <Text as="span" fontWeight="500">
+                      {orderCancellation?.issue?.title ?? 'N/E'}
+                    </Text>
+                  </Text>
+                  <Text mt="1" fontSize="md" fontWeight="700" color="black">
+                    {t('Reembolso:')}{' '}
+                    <Text as="span" fontWeight="500">
+                      {orderCancellation?.params.refund.includes('products') ? 'Sim' : 'Não'}
+                    </Text>
+                  </Text>
+                </>
+              )}
+              {orderIssues && orderIssues.length > 0 && <OrderIssuesTable issues={orderIssues} />}
+              {(order?.status === 'confirmed' || order?.status === 'preparing') && (
+                <CookingTime
+                  orderId={order.id}
+                  cookingTime={order.cookingTime}
+                  averageCookingTime={business?.averageCookingTime}
+                />
+              )}
+              {order?.status === 'confirmed' && <PrintSwitch />}
             </>
           )}
-          {orderIssues && <OrderIssuesTable issues={orderIssues} />}
-          {(order?.status === 'confirmed' || order?.status === 'preparing') && (
-            <CookingTime
-              orderId={order.id}
-              cookingTime={order.cookingTime}
-              averageCookingTime={business?.averageCookingTime}
-            />
-          )}
-        </>
-      )}
+        </Box>
+        <OrderToPrinting businessName={business?.name} order={order} ref={printComponent} />
+      </Box>
       <SuccessAndErrorHandler
         submission={submission.current}
         isError={error.status}

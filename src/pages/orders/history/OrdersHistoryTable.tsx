@@ -1,7 +1,6 @@
 import { Box, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import { Order, WithId } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
-import firebase from 'firebase';
 import { useRouteMatch } from 'react-router-dom';
 import {
   getDateAndHour,
@@ -18,9 +17,10 @@ export const OrdersHistoryTable = ({ orders }: OrderSearchProps) => {
   // context
   const { url } = useRouteMatch();
   // UI
+  // NOT IN USE !!!!!
   return (
     <Box mt="12">
-      <Table mt="4" size="md" variant="simple">
+      <Table mt="4" size="md" variant="simple" pos="relative">
         <Thead>
           <Tr>
             <Th>{t('Nº')}</Th>
@@ -35,9 +35,9 @@ export const OrdersHistoryTable = ({ orders }: OrderSearchProps) => {
           {orders && orders.length > 0 ? (
             orders.map((order) => {
               return (
-                <Tr key={order.code ?? Math.random()} color="black" fontSize="xs">
+                <Tr key={order.code ?? Math.random()} color="black" fontSize="xs" pos="relative">
                   <Td maxW="120px">{order.code}</Td>
-                  <Td>{getDateAndHour(order.createdOn as firebase.firestore.Timestamp)}</Td>
+                  <Td>{getDateAndHour(order.createdOn)}</Td>
                   <Td>{getTranslatedOrderStatus(order.status)}</Td>
                   <Td>{order.courier?.name ?? t('Sem entregador')}</Td>
                   <Td isNumeric>{getOrderTotalPriceToDisplay(order.items ?? [])}</Td>
@@ -53,7 +53,7 @@ export const OrdersHistoryTable = ({ orders }: OrderSearchProps) => {
               );
             })
           ) : (
-            <Tr color="black" fontSize="xs" fontWeight="700">
+            <Tr color="black" fontSize="xs" fontWeight="700" pos="relative">
               <Td>{t('Sem resultados para o número informado')}</Td>
               <Td></Td>
               <Td></Td>
