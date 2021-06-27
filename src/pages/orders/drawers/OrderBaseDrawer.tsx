@@ -74,7 +74,7 @@ export const OrderBaseDrawer = ({
 
   const scrollBodyToBottom = () => {
     if (!bodyRef.current) return;
-    const scrollNumber = bodyRef.current.scrollHeight - 660;
+    const scrollNumber = bodyRef.current.scrollHeight - 610;
     return (bodyRef.current.scrollTop = scrollNumber);
   };
 
