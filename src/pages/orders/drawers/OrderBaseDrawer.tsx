@@ -13,7 +13,6 @@ import {
   Text,
   Tooltip,
 } from '@chakra-ui/react';
-import { useContextBusiness } from 'app/state/business/context';
 import { useOrdersContext } from 'app/state/order';
 import { Order, WithId } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
@@ -49,7 +48,6 @@ export const OrderBaseDrawer = ({
   ...props
 }: BaseDrawerProps) => {
   //context
-  const { business } = useContextBusiness();
   const { changeOrderStatus } = useOrdersContext();
 
   // refs
