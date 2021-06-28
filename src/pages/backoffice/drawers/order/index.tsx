@@ -70,6 +70,13 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
 
   // helpers
   const submission = React.useRef(0);
+  let refundValue = 0;
+  if (refund.includes('platform') && order?.fare?.platform?.value)
+    refundValue += order.fare.platform.value;
+  if (refund.includes('products') && order?.fare?.business?.value)
+    refundValue += order.fare.business.value;
+  if (refund.includes('delivery') && order?.fare?.courier?.value)
+    refundValue += order.fare.courier.value;
 
   //handlers
   const updateState = (type: string, value: OrderStatus | WithId<Issue> | string) => {
@@ -132,6 +139,7 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
     if (orderCancellation) {
       setIssue(orderCancellation.issue ?? null);
       setMessage(orderCancellation.comment ?? '');
+      setRefund(orderCancellation.params.refund);
     }
   }, [orderCancellation]);
 
@@ -196,11 +204,13 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
           </Route>
           <Route exact path={`${path}/status`}>
             <OrderStatusBar
+              orderStatus={order?.status}
               status={status}
               issue={issue}
               message={message}
               cancelOptions={cancelOptions}
               refund={refund}
+              refundValue={refundValue}
               onRefundingChange={onRefundingChange}
               updateState={updateState}
             />

@@ -1,26 +1,31 @@
 import { Box, Checkbox, Flex, HStack, Radio, RadioGroup, Text, Textarea } from '@chakra-ui/react';
 import { Issue, IssueType, OrderPaymentType, OrderStatus, WithId } from 'appjusto-types';
 import React from 'react';
+import { formatCurrency } from 'utils/formatters';
 import { getOrderCancellator } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
 
 interface OrderStatusProps {
+  orderStatus?: OrderStatus;
   status?: OrderStatus;
   issue?: Issue | null;
   message?: string;
   cancelOptions?: WithId<Issue>[] | null;
   refund: OrderPaymentType[];
+  refundValue: number;
   onRefundingChange(type: OrderPaymentType, value: boolean): void;
   updateState(type: string, value: OrderStatus | IssueType | string): void;
 }
 
 export const OrderStatusBar = ({
+  orderStatus,
   status,
   issue,
   message,
   cancelOptions,
   refund,
+  refundValue,
   onRefundingChange,
   updateState,
 }: OrderStatusProps) => {
@@ -64,37 +69,50 @@ export const OrderStatusBar = ({
       {status === 'canceled' && (
         <>
           <SectionTitle>{t('Dados do cancelamento:')}</SectionTitle>
-          <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
-            {t('Cancelado por:')}{' '}
-            <Text as="span" fontWeight="500">
-              {cancelator}
-            </Text>
-          </Text>
-          <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
-            {t('Motivo informado:')}{' '}
-            <Text as="span" fontWeight="500">
-              {issue?.title ?? 'N/I'}
-            </Text>
-          </Text>
-          <RadioGroup
-            mt="2"
-            onChange={(value: string) => updateState('issue', value)}
-            value={issue?.id}
-            defaultValue="1"
-            colorScheme="green"
-            color="black"
-            fontSize="15px"
-            lineHeight="21px"
-          >
-            <Flex flexDir="column" justifyContent="flex-start">
-              {cancelOptions?.map((option) => (
-                <Radio key={option.id} mt="2" value={option.id}>
-                  {option.title}
-                </Radio>
-              ))}
-            </Flex>
-          </RadioGroup>
+          {orderStatus === 'canceled' ? (
+            <>
+              <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+                {t('Cancelado por:')}{' '}
+                <Text as="span" fontWeight="500">
+                  {cancelator}
+                </Text>
+              </Text>
+              <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+                {t('Motivo informado:')}{' '}
+                <Text as="span" fontWeight="500">
+                  {issue?.title ?? 'N/I'}
+                </Text>
+              </Text>
+            </>
+          ) : (
+            <>
+              <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+                {t('Informe quem está solicitando este cancelamento:')}
+              </Text>
+              <RadioGroup
+                mt="2"
+                onChange={(value: string) => updateState('issue', value)}
+                value={issue?.id}
+                defaultValue="1"
+                colorScheme="green"
+                color="black"
+                fontSize="15px"
+                lineHeight="21px"
+              >
+                <Flex flexDir="column" justifyContent="flex-start">
+                  {cancelOptions?.map((option) => (
+                    <Radio key={option.id} mt="2" value={option.id}>
+                      {option.title}
+                    </Radio>
+                  ))}
+                </Flex>
+              </RadioGroup>
+            </>
+          )}
           <SectionTitle>{t('Reembolso:')}</SectionTitle>
+          <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+            {t(`Valor do reembolso: ${formatCurrency(refundValue)}`)}
+          </Text>
           <HStack mt="4" spacing={4}>
             <Checkbox
               width="120px"
