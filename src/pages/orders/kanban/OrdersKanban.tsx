@@ -139,8 +139,8 @@ export const OrdersKanban = () => {
       {orderSearch.length > 0 ? (
         <OrderSearchResult orders={searchResult} />
       ) : (
-        <Stack direction={{ base: 'column', lg: 'row' }} mt="8" spacing="4">
-          <Stack direction={{ base: 'column', md: 'row' }} spacing="4">
+        <Stack w="100%" direction={{ base: 'column', lg: 'row' }} mt="8" spacing={4}>
+          <Stack w="100%" direction={{ base: 'column', md: 'row' }} spacing={4}>
             <OrdersKanbanList
               title={t('Pedidos à confirmar')}
               orders={ordersByStatus['confirmed']}
@@ -154,7 +154,7 @@ export const OrdersKanban = () => {
               )}
             />
           </Stack>
-          <Stack direction={{ base: 'column', md: 'row' }} spacing="4">
+          <Stack w="100%" direction={{ base: 'column', md: 'row' }} spacing={4}>
             <OrdersKanbanList
               title={t('Retirada/entrega')}
               orders={[...ordersByStatus['ready'], ...ordersByStatus['dispatching']]}

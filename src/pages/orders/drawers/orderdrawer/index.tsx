@@ -1,9 +1,8 @@
 import { Box, Text } from '@chakra-ui/react';
-import { CancellationData } from 'app/api/order/OrderApi';
 import { useOrder } from 'app/api/order/useOrder';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextManagerProfile } from 'app/state/manager/context';
-import { Issue, WithId } from 'appjusto-types';
+import { CancelOrderPayload, Issue, WithId } from 'appjusto-types';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
 import { initialError } from 'common/components/error/utils';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
@@ -34,7 +33,15 @@ export const OrderDrawer = (props: Props) => {
   //context
   const { orderId } = useParams<Params>();
   const { business } = useContextBusiness();
-  const { order, cancelOrder, result, orderIssues, orderCancellation } = useOrder(orderId);
+  const {
+    order,
+    cancelOrder,
+    updateResult,
+    cancelResult,
+    orderIssues,
+    orderCancellation,
+    orderCancellationCosts,
+  } = useOrder(orderId);
   const { manager } = useContextManagerProfile();
 
   // state
@@ -66,9 +73,10 @@ export const OrderDrawer = (props: Props) => {
       });
     }
     const cancellationData = {
-      canceledById: manager?.id,
-      issue,
-    } as CancellationData;
+      orderId,
+      acknowledgedCosts: orderCancellationCosts,
+      cancellation: issue,
+    } as CancelOrderPayload;
     await cancelOrder(cancellationData);
     props.onClose();
   };
@@ -79,13 +87,18 @@ export const OrderDrawer = (props: Props) => {
 
   // side effects
   React.useEffect(() => {
-    if (result.isError) {
+    if (updateResult.isError) {
       setError({
         status: true,
-        error: result.error,
+        error: updateResult.error,
+      });
+    } else if (cancelResult.isError) {
+      setError({
+        status: true,
+        error: cancelResult.error,
       });
     }
-  }, [result.isError, result.error]);
+  }, [updateResult.isError, updateResult.error, cancelResult.isError, cancelResult.error]);
 
   // UI
   return (
@@ -98,9 +111,15 @@ export const OrderDrawer = (props: Props) => {
       printOrder={printOrder}
     >
       <Box position="relative">
-        <Box bg="white" w="100%">
+        <Box pos="absolute" top="0" left="0" w="100%" h="100vh" bg="white" zIndex="-100" />
+        <Box w="100%">
           {isCanceling ? (
-            <Cancelation handleConfirm={handleCancel} handleKeep={() => setIsCanceling(false)} />
+            <Cancelation
+              handleConfirm={handleCancel}
+              handleKeep={() => setIsCanceling(false)}
+              isLoading={cancelResult.isLoading}
+              orderCancellationCosts={orderCancellationCosts}
+            />
           ) : (
             <>
               {(order?.status === 'ready' || order?.status === 'dispatching') && (
@@ -125,6 +144,14 @@ export const OrderDrawer = (props: Props) => {
                 </>
               )}
               {orderIssues && orderIssues.length > 0 && <OrderIssuesTable issues={orderIssues} />}
+              {order?.status !== 'ready' && order?.status !== 'dispatching' && (
+                <>
+                  <Text mt="8" fontSize="xl" color="black">
+                    {t('Destino do pedido')}
+                  </Text>
+                  <Text fontSize="sm">{order?.destination?.address.description}</Text>
+                </>
+              )}
               {(order?.status === 'confirmed' || order?.status === 'preparing') && (
                 <CookingTime
                   orderId={order.id}

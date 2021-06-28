@@ -16,6 +16,7 @@ import {
   updateOrderAck,
   removeOrderAck,
 } from './utils';
+import * as Sentry from '@sentry/react';
 
 const key = 'confirmed';
 
@@ -71,16 +72,32 @@ export const useObserveConfirmedOrders = (businessId?: string, notify: boolean =
     if (unnotifieds.length === 0) return;
     unnotifieds.forEach((unnotified) => {
       ack = updateOrderAck(ack, { ...unnotified, notified: true });
-      //playSound();
       const title = `Pedido #${unnotified.order.code} acabou de chegar!`;
       const options: NotificationOptions = {
         body: `${unnotified.order.consumer.name} está esperando sua confirmação!`,
         icon: '/logo192.png',
         requireInteraction: true,
       };
-      new Notification(title, options);
+      if (process.env.NODE_ENV === 'production') {
+        try {
+          navigator.serviceWorker
+            .getRegistration()
+            .then((reg) => {
+              if (reg) return reg.showNotification(title, options);
+            })
+            .catch((error) => {
+              console.log('navigator.serviceWorker.getRegistration error', error);
+              Sentry.captureException(error);
+            });
+        } catch (error) {
+          console.log('Notification API error: ' + error);
+          Sentry.captureException(error);
+        }
+      } else {
+        new Notification(title, options);
+      }
     });
     setAck(key, ack);
     setChanged(false);
-  }, [changed, notify, permission, playSound]);
+  }, [changed, notify, permission]);
 };

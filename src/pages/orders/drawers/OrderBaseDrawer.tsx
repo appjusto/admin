@@ -89,6 +89,10 @@ export const OrderBaseDrawer = ({
   if (order?.status === 'preparing') PrimaryButtonLabel = 'Pedido pronto';
   if (order?.status === 'ready') PrimaryButtonLabel = 'Entregar pedido';
 
+  React.useEffect(() => {
+    if (isCanceling && bodyRef.current) bodyRef.current.scrollTop = 0;
+  }, [isCanceling]);
+
   //UI
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
@@ -96,7 +100,11 @@ export const OrderBaseDrawer = ({
         <DrawerContent>
           <DrawerCloseButton bg="green.500" mr="12px" _focus={{ outline: 'none' }} />
           <DrawerHeader pb="2">
-            <Flex justifyContent="space-between" alignItems="flex-end">
+            <Flex
+              flexDir={{ base: 'column', md: 'row' }}
+              justifyContent="space-between"
+              alignItems={{ base: 'flex-start', md: 'flex-end' }}
+            >
               <Flex flexDir="column">
                 <HStack spacing={4}>
                   <Text
@@ -138,6 +146,14 @@ export const OrderBaseDrawer = ({
                     {order?.consumer?.name ?? 'N/E'}
                   </Text>
                 </Text>
+                {order?.consumer.email && (
+                  <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
+                    {t('E-mail do cliente:')}{' '}
+                    <Text as="span" color="black" fontWeight="700">
+                      {order?.consumer.email}
+                    </Text>
+                  </Text>
+                )}
                 {/*<Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
                   {t('Nº de pedidos no restaurante:')}{' '}
                   <Text as="span" color="black" fontWeight="700">
@@ -165,7 +181,7 @@ export const OrderBaseDrawer = ({
                 <CustomButton
                   label="Abrir chat com o cliente"
                   link={`/app/orders/chat/${order?.id}/${order?.consumer?.id}`}
-                  size="md"
+                  size="sm"
                   variant="outline"
                 />
               </Flex>
@@ -177,15 +193,10 @@ export const OrderBaseDrawer = ({
           {!isCanceling && !orderDispatched && order?.status !== 'canceled' && (
             <DrawerFooter borderTop="1px solid #F2F6EA">
               <Flex w="full" justifyContent="flex-start">
-                <Flex
-                  w="full"
-                  maxW="607px"
-                  flexDir="row"
-                  justifyContent={order?.status === 'confirmed' ? 'space-between' : 'flex-end'}
-                >
-                  {/*<Button width="full" maxW="200px" variant="dangerLight" onClick={cancel}>
+                <Flex w="full" maxW="607px" flexDir="row" justifyContent="space-between">
+                  <Button width="full" maxW="200px" variant="dangerLight" onClick={cancel}>
                     {t('Cancelar pedido')}
-                    </Button>*/}
+                  </Button>
                   {order?.status === 'confirmed' && (
                     <Box color="black" fontSize="xs">
                       <Text>{t('Tempo de preparo do pedido:')}</Text>

@@ -1,4 +1,4 @@
-import { Order, WithId } from 'appjusto-types';
+import { Order, OrderCancellationParams, WithId } from 'appjusto-types';
 import { omit } from 'lodash';
 import { use } from 'utils/local';
 import { Acknowledgement, OrderAcknowledgement } from './types';
@@ -52,4 +52,15 @@ export const getOrderAckTime = (key: string, orderId: string) => {
   } catch (error) {
     return null;
   }
+};
+
+export const calculateCancellationCosts = (order: Order, params: OrderCancellationParams) => {
+  let costs = 0;
+  if (order.fare?.business && params.refund.indexOf('products') !== -1)
+    costs += order.fare.business.value;
+  if (order.fare?.courier && params.refund.indexOf('delivery') !== -1)
+    costs += order.fare.courier.value;
+  if (order.fare?.platform && params.refund.indexOf('platform') !== -1)
+    costs += order.fare.platform.value;
+  return costs;
 };
