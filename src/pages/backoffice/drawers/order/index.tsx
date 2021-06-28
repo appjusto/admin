@@ -2,7 +2,14 @@ import { useOrder } from 'app/api/order/useOrder';
 import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';
 import { useContextAgentProfile } from 'app/state/agent/context';
 import { ConsumerProvider } from 'app/state/consumer/context';
-import { Issue, IssueType, OrderStatus, WithId } from 'appjusto-types';
+import {
+  CancelOrderPayload,
+  Issue,
+  IssueType,
+  OrderPaymentType,
+  OrderStatus,
+  WithId,
+} from 'appjusto-types';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
 import { initialError } from 'common/components/error/utils';
 import { OrderDetails } from 'pages/orders/drawers/orderdrawer/OrderDetails';
@@ -25,6 +32,12 @@ type Params = {
 
 const cancelOptionsArray = ['agent-order-cancel'] as IssueType[];
 
+export interface RefundParams {
+  platform: boolean;
+  products: boolean;
+  delivery: boolean;
+}
+
 export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps) => {
   //context
   const { path } = useRouteMatch();
@@ -38,13 +51,21 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
     cancelResult,
     orderIssues,
     orderCancellation,
+    orderCancellationCosts,
   } = useOrder(orderId);
   const cancelOptions = useIssuesByType(cancelOptionsArray);
 
   // state
   const [status, setStatus] = React.useState<OrderStatus | undefined>(order?.status ?? undefined);
   const [issue, setIssue] = React.useState<Issue | null>();
-  const [message, setMessage] = React.useState('');
+  const [message, setMessage] = React.useState<string>();
+  const [refund, setRefund] = React.useState<OrderPaymentType[]>([
+    'platform',
+    'products',
+    'delivery',
+  ]);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [isSuccess, setIsSuccess] = React.useState(false);
   const [error, setError] = React.useState(initialError);
 
   // helpers
@@ -57,30 +78,49 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
     else if (type === 'message') setMessage(value as string);
   };
 
-  const updateOrderStatus = async () => {
-    if (status === 'canceled') {
-      if (!agent?.id || !agent?.name) {
-        console.dir({
-          error: 'Order cancellation incomplete',
-          id: agent?.id,
-          name: agent?.name,
-        });
-        return;
+  const onRefundingChange = (type: OrderPaymentType, value: boolean) => {
+    setRefund((prev: OrderPaymentType[]) => {
+      let newState = [...prev];
+      if (value) {
+        newState.push(type);
+        return newState;
+      } else {
+        return newState.filter((item) => item !== type);
       }
-      /*const cancellationData = {
-        issue,
-        canceledById: agent?.id,
-        comment: message,
-      } as CancellationData;*/
-      //await cancelOrder(cancellationData);
-      // Fix handle errors
+    });
+  };
+
+  const cancellation = () => {
+    if (!issue) {
+      return setError({
+        status: true,
+        error: null,
+        message: {
+          title: 'Não foi possível cancelar o pedido.',
+          description: 'Favor informar quem solicitou o cancelamento.',
+        },
+      });
+    }
+    const cancellationData = {
+      orderId,
+      params: { refund },
+      acknowledgedCosts: orderCancellationCosts,
+      cancellation: issue,
+    } as CancelOrderPayload;
+    if (message) cancellationData.comment = message;
+    return cancelOrder(cancellationData);
+  };
+
+  const updateOrderStatus = async () => {
+    submission.current += 1;
+    if (status === 'canceled') {
+      cancellation();
     } else {
       const changes = {
         status,
       };
-      await updateOrder(changes);
+      return updateOrder(changes);
     }
-    submission.current += 1;
   };
 
   // side effects
@@ -94,6 +134,16 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
       setMessage(orderCancellation.comment ?? '');
     }
   }, [orderCancellation]);
+
+  React.useEffect(() => {
+    if (updateResult.isLoading || cancelResult.isLoading) setIsLoading(true);
+    else setIsLoading(false);
+  }, [updateResult.isLoading, cancelResult.isLoading]);
+
+  React.useEffect(() => {
+    if (updateResult.isSuccess || cancelResult.isSuccess) setIsSuccess(true);
+    else setIsSuccess(false);
+  }, [updateResult.isSuccess, cancelResult.isSuccess]);
 
   React.useEffect(() => {
     if (updateResult.isError) {
@@ -114,16 +164,17 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
     <ConsumerProvider>
       <SuccessAndErrorHandler
         submission={submission.current}
-        isSuccess={updateResult.isSuccess}
+        isSuccess={isSuccess}
         isError={error.status}
         error={error.error}
+        errorMessage={error.message}
       />
       <OrderBaseDrawer
         agent={{ id: agent?.id, name: username }}
         order={order}
         onClose={onClose}
         updateOrderStatus={updateOrderStatus}
-        isLoading={updateResult.isLoading}
+        isLoading={isLoading}
         {...props}
       >
         <Switch>
@@ -149,6 +200,8 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
               issue={issue}
               message={message}
               cancelOptions={cancelOptions}
+              refund={refund}
+              onRefundingChange={onRefundingChange}
               updateState={updateState}
             />
           </Route>

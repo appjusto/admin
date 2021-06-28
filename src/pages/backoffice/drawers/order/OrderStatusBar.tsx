@@ -1,5 +1,5 @@
-import { Box, Flex, Radio, RadioGroup, Text, Textarea } from '@chakra-ui/react';
-import { Issue, IssueType, OrderStatus, WithId } from 'appjusto-types';
+import { Box, Checkbox, Flex, HStack, Radio, RadioGroup, Text, Textarea } from '@chakra-ui/react';
+import { Issue, IssueType, OrderPaymentType, OrderStatus, WithId } from 'appjusto-types';
 import React from 'react';
 import { getOrderCancellator } from 'utils/functions';
 import { t } from 'utils/i18n';
@@ -8,18 +8,20 @@ import { SectionTitle } from '../generics/SectionTitle';
 interface OrderStatusProps {
   status?: OrderStatus;
   issue?: Issue | null;
-  cancelatorName?: string;
   message?: string;
   cancelOptions?: WithId<Issue>[] | null;
+  refund: OrderPaymentType[];
+  onRefundingChange(type: OrderPaymentType, value: boolean): void;
   updateState(type: string, value: OrderStatus | IssueType | string): void;
 }
 
 export const OrderStatusBar = ({
   status,
   issue,
-  cancelatorName,
   message,
   cancelOptions,
+  refund,
+  onRefundingChange,
   updateState,
 }: OrderStatusProps) => {
   // helpers
@@ -54,7 +56,7 @@ export const OrderStatusBar = ({
           <Radio mt="2" value="delivered">
             {t('Entregue')}
           </Radio>
-          <Radio mt="2" value="canceled" isDisabled>
+          <Radio mt="2" value="canceled">
             {t('Cancelado')}
           </Radio>
         </Flex>
@@ -74,7 +76,7 @@ export const OrderStatusBar = ({
               {issue?.title ?? 'N/I'}
             </Text>
           </Text>
-          {/*<RadioGroup
+          <RadioGroup
             mt="2"
             onChange={(value: string) => updateState('issue', value)}
             value={issue?.id}
@@ -91,7 +93,43 @@ export const OrderStatusBar = ({
                 </Radio>
               ))}
             </Flex>
-          </RadioGroup>*/}
+          </RadioGroup>
+          <SectionTitle>{t('Reembolso:')}</SectionTitle>
+          <HStack mt="4" spacing={4}>
+            <Checkbox
+              width="120px"
+              colorScheme="green"
+              size="lg"
+              spacing="1rem"
+              iconSize="1rem"
+              isChecked={refund.includes('platform')}
+              onChange={(e) => onRefundingChange('platform', e.target.checked)}
+            >
+              {t('Plataforma')}
+            </Checkbox>
+            <Checkbox
+              width="120px"
+              colorScheme="green"
+              size="lg"
+              spacing="1rem"
+              iconSize="1rem"
+              isChecked={refund.includes('products')}
+              onChange={(e) => onRefundingChange('products', e.target.checked)}
+            >
+              {t('Produtos')}
+            </Checkbox>
+            <Checkbox
+              width="120px"
+              colorScheme="green"
+              size="lg"
+              spacing="1rem"
+              iconSize="1rem"
+              isChecked={refund.includes('delivery')}
+              onChange={(e) => onRefundingChange('delivery', e.target.checked)}
+            >
+              {t('Entrega')}
+            </Checkbox>
+          </HStack>
           <SectionTitle>{t('Comentário:')}</SectionTitle>
           <Textarea
             mt="2"

@@ -252,14 +252,13 @@ export default class OrderApi {
   }
 
   async cancelOrder(data: CancelOrderPayload) {
-    const { orderId, acknowledgedCosts, cancellation } = data;
+    const { params } = data;
+    const paramsData = params ?? { refund: ['products', 'delivery', 'platform'] };
     // get callable function ref and send data to bakcend
     const payload: CancelOrderPayload = {
+      ...data,
       meta: { version: '1' }, // TODO: pass correct version on
-      orderId,
-      acknowledgedCosts,
-      params: { refund: ['products', 'delivery', 'platform'] },
-      cancellation,
+      params: paramsData,
     };
     try {
       await this.refs.getCancelOrder()(payload);
