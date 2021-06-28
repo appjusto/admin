@@ -146,6 +146,14 @@ export const OrderBaseDrawer = ({
                     {order?.consumer?.name ?? 'N/E'}
                   </Text>
                 </Text>
+                {order?.consumer.email && (
+                  <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
+                    {t('E-mail do cliente:')}{' '}
+                    <Text as="span" color="black" fontWeight="700">
+                      {order?.consumer.email}
+                    </Text>
+                  </Text>
+                )}
                 {/*<Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
                   {t('Nº de pedidos no restaurante:')}{' '}
                   <Text as="span" color="black" fontWeight="700">

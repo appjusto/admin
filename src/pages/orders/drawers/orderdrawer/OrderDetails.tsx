@@ -28,7 +28,7 @@ export const OrderDetails = ({ order }: DetailsProps) => {
             <Tbody>
               {order?.items?.map((item: OrderItem) => (
                 <React.Fragment key={Math.random()}>
-                  <Tr color="black" fontSize="xs" fontWeight="700">
+                  <Tr color="black" fontSize="sm" fontWeight="700">
                     <Td>
                       {item.product.name} <br />
                       <Text as="span" color="red" fontWeight="500">
@@ -40,7 +40,7 @@ export const OrderDetails = ({ order }: DetailsProps) => {
                   </Tr>
                   {item.complements &&
                     item.complements.map((complement) => (
-                      <Tr key={Math.random()} fontSize="xs">
+                      <Tr key={Math.random()} fontSize="sm">
                         <Td>{complement.name}</Td>
                         <Td isNumeric>{item.quantity}</Td>
                         <Td isNumeric>{formatCurrency(complement.price)}</Td>

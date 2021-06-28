@@ -144,6 +144,14 @@ export const OrderDrawer = (props: Props) => {
                 </>
               )}
               {orderIssues && orderIssues.length > 0 && <OrderIssuesTable issues={orderIssues} />}
+              {order?.status !== 'ready' && order?.status !== 'dispatching' && (
+                <>
+                  <Text mt="8" fontSize="xl" color="black">
+                    {t('Destino do pedido')}
+                  </Text>
+                  <Text fontSize="sm">{order?.destination?.address.description}</Text>
+                </>
+              )}
               {(order?.status === 'confirmed' || order?.status === 'preparing') && (
                 <CookingTime
                   orderId={order.id}
