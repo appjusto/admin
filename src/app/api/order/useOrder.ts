@@ -47,8 +47,8 @@ export const useOrder = (orderId?: string) => {
   React.useEffect(() => {
     if (!order) return;
     let debt = [] as OrderPaymentType[];
-    if (['preparing', 'ready'].includes(order.status)) debt.push('products');
-    if (order.dispatchingState === 'arrived-pickup') debt.push('delivery');
+    //if (['preparing', 'ready'].includes(order.status)) debt.push('platform');
+    //if (order.dispatchingState === 'arrived-pickup') debt.push('delivery');
     const cancellationCosts = calculateCancellationCosts(order, { refund: debt });
     setOrderCancellationCosts(cancellationCosts);
   }, [order]);

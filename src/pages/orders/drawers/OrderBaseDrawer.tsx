@@ -91,7 +91,7 @@ export const OrderBaseDrawer = ({
 
   React.useEffect(() => {
     if (isCanceling && bodyRef.current) bodyRef.current.scrollTop = 0;
-  }, [isCanceling, bodyRef.current]);
+  }, [isCanceling]);
 
   //UI
   return (

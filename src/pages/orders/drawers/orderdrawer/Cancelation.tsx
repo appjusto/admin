@@ -52,23 +52,25 @@ export const Cancelation = ({
   // UI
   return (
     <Box py="4" px="6" bgColor="#FFF8F8" border="1px solid #DC3545" borderRadius="lg">
-      {isCosts && (
-        <Flex flexDir="column" alignItems="center">
-          <Box w="60px">
-            <Image src={iconTraffic} />
-          </Box>
-          <Text fontSize="xl" color="black">
-            {t('Aviso importante:')}
-          </Text>
-          <Text fontSize="xl" color="#DC3545" maxW="320px" textAlign="center">
-            {t(
-              `Com este cancelamento será gerado um débito no valor de ${formatCurrency(
-                orderCancellationCosts!
-              )}`
-            )}
-          </Text>
-        </Flex>
-      )}
+      <Flex flexDir="column" alignItems="center">
+        <Box w="60px">
+          <Image src={iconTraffic} />
+        </Box>
+        {isCosts && (
+          <>
+            <Text fontSize="xl" color="black">
+              {t('Aviso importante:')}
+            </Text>
+            <Text fontSize="xl" color="#DC3545" maxW="320px" textAlign="center">
+              {t(
+                `Com este cancelamento será gerado um débito no valor de ${formatCurrency(
+                  orderCancellationCosts!
+                )}`
+              )}
+            </Text>
+          </>
+        )}
+      </Flex>
       <Text mt="6" fontSize={isCosts ? 'lg' : 'xl'} color={isCosts ? 'black' : '#DC3545'}>
         {t('Deseja realmente cancelar o pedido?')}
       </Text>
