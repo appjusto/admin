@@ -20,6 +20,7 @@ import { t } from 'utils/i18n';
 import { ChatButton } from './ChatButton';
 import { OrderSearchResult } from './OrderSearchResult';
 import { OrdersKanbanList } from './OrdersKanbanList';
+import { PrintSwitch } from './PrintSwitch';
 
 const statuses = ['confirmed', 'preparing', 'ready', 'dispatching', 'canceled'] as OrderStatus[];
 
@@ -80,8 +81,8 @@ export const OrdersKanban = () => {
           <Text fontSize="xl" lineHeight="26px" color="black">
             {business?.name}
           </Text>
+          {/*
           <Flex mt="2" alignItems="center">
-            {/*
             <Text mr="4" fontSize="sm" fontWeight="700" color="black">
               {t('Aceitar pedidos automaticamente:')}
             </Text>
@@ -102,8 +103,9 @@ export const OrdersKanban = () => {
                 </Text>
               </Button>
             </Link>
-          */}
           </Flex>
+          */}
+          <PrintSwitch />
         </Flex>
         <Flex mt={{ base: '4', md: '0' }} flexDir="column" alignItems="flex-end">
           <Stack w="100%" direction={{ base: 'column', lg: 'row' }} spacing={4}>

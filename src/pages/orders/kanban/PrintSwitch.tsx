@@ -44,7 +44,7 @@ export const PrintSwitch = () => {
   //UI
   return (
     <Box>
-      <Flex mt="10" flexDir="row">
+      <Flex mt="4" flexDir="row" alignItems="center">
         <Switch
           isChecked={enable}
           onChange={(ev) => {
@@ -52,8 +52,8 @@ export const PrintSwitch = () => {
             handleEnable(ev.target.checked);
           }}
         />
-        <Text ml="4" fontSize="xl" color="black">
-          {t('Imprimir ao confirmar')}
+        <Text ml="2" fontSize="md" color="black">
+          {t('Imprimir pedidos ao confirmar')}
         </Text>
       </Flex>
       <SuccessAndErrorHandler

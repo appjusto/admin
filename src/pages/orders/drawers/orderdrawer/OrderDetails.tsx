@@ -1,5 +1,6 @@
-import { Box, Table, Tbody, Td, Text, Tfoot, Th, Thead, Tr } from '@chakra-ui/react';
+import { Box, Button, Flex, Table, Tbody, Td, Text, Tfoot, Th, Thead, Tr } from '@chakra-ui/react';
 import * as cpfutils from '@fnando/cpf';
+import { useOrdersContext } from 'app/state/order';
 import { Order, OrderItem, WithId } from 'appjusto-types';
 import React from 'react';
 import { formatCurrency } from 'utils/formatters';
@@ -8,15 +9,75 @@ import { SectionTitle } from '../../../backoffice/drawers/generics/SectionTitle'
 
 interface DetailsProps {
   order?: WithId<Order> | null;
+  orderPrinting?: boolean;
+  printOrder?(): void;
+  setScroll?(value: boolean): void;
+  closeDrawer?(): void;
 }
 
-export const OrderDetails = ({ order }: DetailsProps) => {
+export const OrderDetails = ({
+  order,
+  orderPrinting,
+  printOrder,
+  setScroll,
+  closeDrawer,
+}: DetailsProps) => {
+  // context
+  const { changeOrderStatus } = useOrdersContext();
+  // handlers
+  const orderConfirmation = () => {
+    if (orderPrinting && printOrder) printOrder();
+    if (order) changeOrderStatus(order.id, 'preparing');
+    if (closeDrawer) closeDrawer();
+  };
   // UI
   return (
     <Box>
       {order?.type === 'food' && (
         <>
-          <SectionTitle mt="10">{t('Detalhes do pedido')}</SectionTitle>
+          {order?.status === 'confirmed' ? (
+            <Flex
+              flexDir={{ base: 'column', md: 'row' }}
+              justifyContent="space-between"
+              mt="10"
+              mb="4"
+            >
+              <Box>
+                <SectionTitle mt="0">{t('Detalhes do pedido')}</SectionTitle>
+                <Flex color="black" fontSize="xs">
+                  <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
+                    {t('Tempo de preparo:')}
+                  </Text>
+                  <Text ml="1" fontSize="md" fontWeight="700">
+                    {t(`${order?.cookingTime ? order?.cookingTime / 60 : 'N/I'} min`)}
+                    <Text
+                      ml="2"
+                      as="span"
+                      color="#4EA031"
+                      textDecor="underline"
+                      cursor="pointer"
+                      onClick={() => setScroll && setScroll(true)}
+                    >
+                      {t('Alterar')}
+                    </Text>
+                  </Text>
+                </Flex>
+              </Box>
+              <Button
+                mt={{ base: '4', md: '0' }}
+                width="full"
+                maxW="260px"
+                fontSize="xl"
+                fontWeight="700"
+                letterSpacing="1px"
+                onClick={orderConfirmation}
+              >
+                {t('CONFIRMAR PEDIDO')}
+              </Button>
+            </Flex>
+          ) : (
+            <SectionTitle mt="10">{t('Detalhes do pedido')}</SectionTitle>
+          )}
           <Table size="md" variant="simple">
             <Thead>
               <Tr>
