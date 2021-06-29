@@ -177,7 +177,9 @@ export default class OrderApi {
   }
 
   async getOrderPrivateCancellation(orderId: string) {
-    return documentAs<OrderCancellation>(await this.refs.getOrderCancellationRef(orderId).get());
+    const data = await this.refs.getOrderCancellationRef(orderId).get();
+    if (!data.exists) return null;
+    return documentAs<OrderCancellation>(data);
   }
 
   async updateOrderCourierNotified(orderId: string, couriersNotified: string[]) {
