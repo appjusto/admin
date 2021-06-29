@@ -204,6 +204,7 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
           </Route>
           <Route exact path={`${path}/status`}>
             <OrderStatusBar
+              orderType={order?.type}
               orderStatus={order?.status}
               status={status}
               issue={issue}

@@ -1,5 +1,5 @@
 import { Box, Checkbox, Flex, HStack, Radio, RadioGroup, Text, Textarea } from '@chakra-ui/react';
-import { Issue, IssueType, OrderPaymentType, OrderStatus, WithId } from 'appjusto-types';
+import { Issue, IssueType, OrderPaymentType, OrderStatus, OrderType, WithId } from 'appjusto-types';
 import React from 'react';
 import { formatCurrency } from 'utils/formatters';
 import { getOrderCancellator } from 'utils/functions';
@@ -7,6 +7,7 @@ import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
 
 interface OrderStatusProps {
+  orderType?: OrderType;
   orderStatus?: OrderStatus;
   status?: OrderStatus;
   issue?: Issue | null;
@@ -19,6 +20,7 @@ interface OrderStatusProps {
 }
 
 export const OrderStatusBar = ({
+  orderType,
   orderStatus,
   status,
   issue,
@@ -49,12 +51,16 @@ export const OrderStatusBar = ({
           <Radio mt="2" value="confirming">
             {t('Aguardando confirmação')}
           </Radio>
-          <Radio mt="2" value="preparing">
-            {t('Em preparo')}
-          </Radio>
-          <Radio mt="2" value="ready">
-            {t('Pronto - aguardando entregador')}
-          </Radio>
+          {orderType === 'food' && (
+            <>
+              <Radio mt="2" value="preparing">
+                {t('Em preparo')}
+              </Radio>
+              <Radio mt="2" value="ready">
+                {t('Pronto - aguardando entregador')}
+              </Radio>
+            </>
+          )}
           <Radio mt="2" value="dispatching">
             {t('A caminho da entrega')}
           </Radio>
