@@ -4,7 +4,7 @@ import {
   Order,
   OrderCancellation,
   OrderIssue,
-  OrderPaymentType,
+  InvoiceType,
   WithId,
 } from 'appjusto-types';
 import React from 'react';
@@ -46,7 +46,7 @@ export const useOrder = (orderId?: string) => {
   }, [api, order?.status, orderId]);
   React.useEffect(() => {
     if (!order) return;
-    let debt = [] as OrderPaymentType[];
+    let debt = [] as InvoiceType[];
     //if (['preparing', 'ready'].includes(order.status)) debt.push('platform');
     //if (order.dispatchingState === 'arrived-pickup') debt.push('delivery');
     const cancellationCosts = calculateCancellationCosts(order, { refund: debt });
