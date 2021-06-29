@@ -52,14 +52,6 @@ export const useBusinessProfile = () => {
   const [deleteBusinessProfile, deleteResult] = useMutation(async () =>
     api.business().deleteBusinessProfile(businessId!)
   );
-  /*const [uploadLogo, uploadLogoResult] = useMutation((file: File) => {
-    //api.business().updateBusinessProfile(businessId, { logoExists: false });
-    return api.business().uploadBusinessLogo(businessId!, file);
-  });
-  const [uploadCover, uploadCoverResult] = useMutation((files: File[]) => {
-    //api.business().updateBusinessProfile(businessId, { coverImageExists: false });
-    return api.business().uploadBusinessCover(businessId!, files);
-  });*/
 
   const sendBusinessKeepAlive = React.useCallback(() => {
     try {

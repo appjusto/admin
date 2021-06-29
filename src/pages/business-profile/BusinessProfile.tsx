@@ -130,7 +130,6 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
       await updateBusinessProfileWithImages({ changes, logoFileToSave, coverFilesToSave });
       // invalidate logo query
       if (logoFiles) queryCache.invalidateQueries(['business:logo', business?.id]);
-      if (coverFiles) queryCache.invalidateQueries(['business:cover', business?.id]);
     } catch (error) {
       setError({
         status: true,
