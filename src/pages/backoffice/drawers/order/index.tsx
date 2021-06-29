@@ -16,6 +16,7 @@ import { OrderDetails } from 'pages/orders/drawers/orderdrawer/OrderDetails';
 import { OrderIssuesTable } from 'pages/orders/drawers/orderdrawer/OrderIssuesTable';
 import React from 'react';
 import { Route, Switch, useParams, useRouteMatch } from 'react-router-dom';
+import { Invoices } from './Invoices';
 import { Matching } from './Matching';
 import { OrderBaseDrawer } from './OrderBaseDrawer';
 import { OrderStatusBar } from './OrderStatusBar';
@@ -45,6 +46,7 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
   const { orderId } = useParams<Params>();
   const {
     order,
+    invoices,
     updateOrder,
     updateResult,
     cancelOrder,
@@ -190,6 +192,9 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
               <OrderDetails order={order} />
               <OrderIssuesTable issues={orderIssues} />
             </>
+          </Route>
+          <Route exact path={`${path}/invoices`}>
+            <Invoices invoices={invoices} />
           </Route>
           <Route exact path={`${path}/matching`}>
             <Matching

@@ -77,6 +77,9 @@ export default class FirebaseRefs {
   getOrderConfirmationRef = (id: string) => this.getOrderPrivateRef(id).doc('confirmation');
   getOrderMatchingRef = (id: string) => this.getOrderPrivateRef(id).doc('matching');
 
+  // invoices
+  getInvoicesRef = () => this.firestore.collection('invoices');
+
   // consumers
   getConsumersRef = () => this.firestore.collection('consumers');
   getConsumerRef = (id: string) => this.getConsumersRef().doc(id);

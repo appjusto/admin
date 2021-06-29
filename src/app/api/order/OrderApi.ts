@@ -1,6 +1,7 @@
 import {
   CancelOrderPayload,
   ChatMessage,
+  Invoice,
   Issue,
   Order,
   OrderCancellation,
@@ -222,6 +223,27 @@ export default class OrderApi {
     const unsubscribe = query.onSnapshot(
       (querySnapshot) => {
         resultHandler(documentsAs<Order>(querySnapshot.docs));
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+    // returns the unsubscribe function
+    return unsubscribe;
+  }
+
+  observeOrderInvoices(
+    orderId: string,
+    resultHandler: (invoices: WithId<Invoice>[]) => void
+  ): firebase.Unsubscribe {
+    let query = this.refs
+      .getInvoicesRef()
+      .orderBy('createdOn', 'asc')
+      .where('orderId', '==', orderId);
+
+    const unsubscribe = query.onSnapshot(
+      (querySnapshot) => {
+        resultHandler(documentsAs<Invoice>(querySnapshot.docs));
       },
       (error) => {
         console.error(error);
