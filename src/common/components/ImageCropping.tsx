@@ -50,18 +50,18 @@ export const ImageCropping = ({
   // UI
   return (
     <Box w="100%" mb="6" {...props}>
-      <Box position="relative" width={width} height={height}>
-        <Box>
-          <Cropper
-            image={image}
-            crop={crop}
-            zoom={zoom}
-            aspect={ratio}
-            onCropChange={setCrop}
-            onCropComplete={onCropComplete}
-            onZoomChange={setZoom}
-          />
-        </Box>
+      <Box position="relative" width={width} height={height} backgroundColor="#ffff">
+        <Cropper
+          image={image}
+          crop={crop}
+          zoom={zoom}
+          aspect={ratio}
+          onCropChange={setCrop}
+          onCropComplete={onCropComplete}
+          onZoomChange={setZoom}
+          minZoom={0}
+          restrictPosition={false}
+        />
       </Box>
       <HStack mt="4" spacing={4} width={width} alignItems="center">
         <Text fontSize="15px" fontWeight="700">
@@ -71,7 +71,7 @@ export const ImageCropping = ({
           mb="-1"
           aria-label="slider-zoom"
           value={zoom}
-          min={1}
+          min={0}
           max={3}
           step={0.1}
           onChange={(val) => setZoom(val)}

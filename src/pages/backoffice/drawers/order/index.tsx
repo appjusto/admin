@@ -4,9 +4,9 @@ import { useContextAgentProfile } from 'app/state/agent/context';
 import { ConsumerProvider } from 'app/state/consumer/context';
 import {
   CancelOrderPayload,
+  InvoiceType,
   Issue,
   IssueType,
-  OrderPaymentType,
   OrderStatus,
   WithId,
 } from 'appjusto-types';
@@ -59,11 +59,7 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
   const [status, setStatus] = React.useState<OrderStatus | undefined>(order?.status ?? undefined);
   const [issue, setIssue] = React.useState<Issue | null>();
   const [message, setMessage] = React.useState<string>();
-  const [refund, setRefund] = React.useState<OrderPaymentType[]>([
-    'platform',
-    'products',
-    'delivery',
-  ]);
+  const [refund, setRefund] = React.useState<InvoiceType[]>(['platform', 'products', 'delivery']);
   const [isLoading, setIsLoading] = React.useState(false);
   const [isSuccess, setIsSuccess] = React.useState(false);
   const [error, setError] = React.useState(initialError);
@@ -85,8 +81,8 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
     else if (type === 'message') setMessage(value as string);
   };
 
-  const onRefundingChange = (type: OrderPaymentType, value: boolean) => {
-    setRefund((prev: OrderPaymentType[]) => {
+  const onRefundingChange = (type: InvoiceType, value: boolean) => {
+    setRefund((prev: InvoiceType[]) => {
       let newState = [...prev];
       if (value) {
         newState.push(type);

@@ -1,5 +1,5 @@
 import { Box, Checkbox, Flex, HStack, Radio, RadioGroup, Text, Textarea } from '@chakra-ui/react';
-import { Issue, IssueType, OrderPaymentType, OrderStatus, OrderType, WithId } from 'appjusto-types';
+import { InvoiceType, Issue, IssueType, OrderStatus, OrderType, WithId } from 'appjusto-types';
 import React from 'react';
 import { formatCurrency } from 'utils/formatters';
 import { getOrderCancellator } from 'utils/functions';
@@ -13,9 +13,9 @@ interface OrderStatusProps {
   issue?: Issue | null;
   message?: string;
   cancelOptions?: WithId<Issue>[] | null;
-  refund: OrderPaymentType[];
+  refund: InvoiceType[];
   refundValue: number;
-  onRefundingChange(type: OrderPaymentType, value: boolean): void;
+  onRefundingChange(type: InvoiceType, value: boolean): void;
   updateState(type: string, value: OrderStatus | IssueType | string): void;
 }
 

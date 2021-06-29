@@ -130,6 +130,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
       await updateBusinessProfileWithImages({ changes, logoFileToSave, coverFilesToSave });
       // invalidate logo query
       if (logoFiles) queryCache.invalidateQueries(['business:logo', business?.id]);
+      if (coverFiles) queryCache.invalidateQueries(['business:cover', business?.id]);
     } catch (error) {
       setError({
         status: true,
@@ -158,8 +159,8 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   }, []);
 
   const getCoverFiles = React.useCallback(async (files: File[]) => {
-    setCoverFiles(files);
     setCoverExists(true);
+    setCoverFiles(files);
   }, []);
 
   // side effects
@@ -300,7 +301,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
             )}
           </Text>
           <ImageUploads
-            key="logo"
+            key={logo}
             mt="4"
             width={200}
             height={200}
@@ -310,6 +311,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
             placeholderText={t('Logo do estabelecimento')}
             getImages={getLogoFiles}
             clearDrop={() => clearDropImages('logo')}
+            doubleSizeCropping
           />
           {/* cover image */}
           <Text mt="8" fontSize="xl" color="black">
@@ -321,7 +323,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
             )}
           </Text>
           <ImageUploads
-            key="cover"
+            key={cover}
             mt="4"
             width={coverWidth}
             height={coverWidth / coverRatios[0]}
@@ -331,6 +333,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
             placeholderText={t('Imagem de capa')}
             getImages={getCoverFiles}
             clearDrop={() => clearDropImages('cover')}
+            doubleSizeCropping
           />
           {!onboarding && business?.situation === 'approved' && (
             <>
