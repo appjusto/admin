@@ -50,7 +50,15 @@ export const ImageCropping = ({
   // UI
   return (
     <Box w="100%" mb="6" {...props}>
-      <Box position="relative" width={width} height={height} backgroundColor="#ffff">
+      <Box
+        position="relative"
+        width={width}
+        height={height}
+        backgroundColor="#ffff"
+        border="1px solid #9AA49C"
+        borderRadius="lg"
+        overflow="hidden"
+      >
         <Cropper
           image={image}
           crop={crop}
