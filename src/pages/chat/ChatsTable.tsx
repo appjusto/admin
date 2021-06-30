@@ -11,7 +11,7 @@ interface ChatTableProps {
 export const ChatsTable = ({ chats }: ChatTableProps) => {
   // UI
   return (
-    <Box mt="12" overflow="scroll">
+    <Box mt="12" overflow="auto">
       <Table mt="4" size="md" variant="simple">
         <Thead>
           <Tr>
