@@ -16,11 +16,14 @@ interface Props extends BoxProps {
   ratios: number[];
   resizedWidth: number[];
   placeholderText?: string;
+  doubleSizeCropping?: boolean;
   getImages(files: File[]): void;
   clearDrop(): void;
 }
 
 const initError = { status: false, message: { title: '', description: '' } };
+
+export type ImageType = 'image/jpeg' | 'image/png';
 
 export const ImageUploads = React.memo(
   ({
@@ -30,6 +33,7 @@ export const ImageUploads = React.memo(
     ratios,
     resizedWidth,
     placeholderText,
+    doubleSizeCropping = false,
     getImages,
     clearDrop,
     ...props
@@ -37,8 +41,15 @@ export const ImageUploads = React.memo(
     // state
     const [croppedAreas, setCroppedAreas] = React.useState<CroppedAreaProps[]>([]);
     const [previewUrl, setPreviewUrl] = React.useState<string | null>(null);
+    //const [imageType, setImageType] = React.useState<ImageType>('image/jpeg');
     const [error, setError] = React.useState(initError);
+    // refs
     const imageExists = React.useRef(false);
+    // helpers
+    const w = (width ?? 200) as number;
+    const doubleW = w * 2;
+    const croppingW = doubleSizeCropping ? (doubleW <= 833 ? doubleW : 833) : w;
+    const croppingH = croppingW / ratios[0];
     // handlers
     const handleCrop = React.useCallback((index: number, croppedArea: CroppedAreaProps) => {
       setCroppedAreas((prevState) => {
@@ -51,6 +62,7 @@ export const ImageUploads = React.memo(
     const onDropHandler = React.useCallback(
       async (acceptedFiles: File[]) => {
         const [file] = acceptedFiles;
+        //if (file.type === 'image/png') setImageType('image/png');
         const options = {
           maxSizeMB: 2,
           maxWidthOrHeight: 1920,
@@ -78,6 +90,7 @@ export const ImageUploads = React.memo(
       setPreviewUrl(null);
       clearDrop();
     };
+
     React.useEffect(() => {
       if (imageUrl) {
         imageExists.current = true;
@@ -100,6 +113,7 @@ export const ImageUploads = React.memo(
                 area,
                 ratios[index],
                 resizedWidth[index]
+                //imageType
               );
               files.push(file as File);
             } catch (error) {
@@ -138,7 +152,12 @@ export const ImageUploads = React.memo(
     if (previewUrl) {
       return (
         <Box w="100%">
-          <Flex flexDir="column" alignItems="flex-end" maxW={width} {...props}>
+          <Flex
+            flexDir="column"
+            alignItems="flex-end"
+            maxW={width && (width as number) * 2}
+            {...props}
+          >
             <Tooltip label={t('Escolher outra imagem')}>
               <CloseButton mb={2} size="xs" onClick={clearDroppedImages} />
             </Tooltip>
@@ -151,8 +170,8 @@ export const ImageUploads = React.memo(
                 index={index}
                 image={previewUrl}
                 ratio={ratio}
-                width={width}
-                height={height}
+                width={croppingW}
+                height={croppingH}
                 onCropEnd={handleCrop}
                 position={index > 0 ? 'absolute' : 'relative'}
                 top={index > 0 ? '0' : undefined}

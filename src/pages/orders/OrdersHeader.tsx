@@ -42,48 +42,55 @@ export const OrdersHeader = ({ statusEnabled = true }: OrdersHeaderProps) => {
   }, [business?.status]);
 
   return (
-    <Flex p="6" h="76px" flex={1} alignItems="center" justifyContent="space-between" bg="gray.50">
-      <HStack spacing={6}>
-        <Flex alignItems="center">
-          {statusEnabled && (
-            <Switch
-              isDisabled={!isEnabled}
-              isChecked={isOpen}
-              onChange={(ev) => {
-                ev.stopPropagation();
-                submission.current += 1;
-                updateBusinessProfile({ status: ev.target.checked ? 'open' : 'closed' });
-              }}
-            />
-          )}
-          <Flex ml="4" flexDir="column" minW="280px">
-            <Text fontSize="16px" fontWeight="700" lineHeight="22px">
-              {isOpen ? t('Restaurante aberto') : t('Restaurante fechado')}
-            </Text>
-            <Text fontSize="xs">{statusMessage}</Text>
+    <>
+      <Flex p="6" h="76px" flex={1} alignItems="center" justifyContent="space-between" bg="gray.50">
+        <HStack spacing={6}>
+          <Flex alignItems="center">
+            {statusEnabled && (
+              <Switch
+                isDisabled={!isEnabled}
+                isChecked={isOpen}
+                onChange={(ev) => {
+                  ev.stopPropagation();
+                  submission.current += 1;
+                  updateBusinessProfile({ status: ev.target.checked ? 'open' : 'closed' });
+                }}
+              />
+            )}
+            <Flex ml="4" flexDir="column" minW={{ lg: '280px' }}>
+              <Text fontSize={{ base: '13px', lg: '16px' }} fontWeight="700" lineHeight="22px">
+                {isOpen ? t('Restaurante aberto') : t('Restaurante fechado')}
+              </Text>
+              <Text fontSize="xs">{statusMessage}</Text>
+            </Flex>
           </Flex>
-        </Flex>
-      </HStack>
-      <Image src={logo} maxW="94px" />
-      <HStack spacing={6}>
-        <HStack spacing={1}>
-          <Text fontSize="16px" fontWeight="700">
-            {t('Administrador')}:
-          </Text>
-          <Text fontSize="16px">{managerEmail}</Text>
         </HStack>
-        <Link as={RouterLink} to="/app">
+        <Image src={logo} maxW="94px" display={{ base: 'none', lg: 'block' }} />
+        <HStack spacing={6} display={{ base: 'none', lg: 'flex' }}>
+          <HStack spacing={1}>
+            <Text fontSize="16px" fontWeight="700">
+              {t('Administrador')}:
+            </Text>
+            <Text fontSize="16px">{managerEmail}</Text>
+          </HStack>
+          <Link as={RouterLink} to="/app">
+            <Text fontWeight="700" textStyle="link">
+              {t('Portal do parceiro')}
+            </Text>
+          </Link>
+          <Link ml="8" as={RouterLink} to="/logout">
+            <Text fontWeight="700" textStyle="link">
+              {t('Sair')}
+            </Text>
+          </Link>
+        </HStack>
+        <Link as={RouterLink} to="/app" display={{ base: 'block', lg: 'none' }}>
           <Text fontWeight="700" textStyle="link">
-            {t('Portal do parceiro')}
+            {t('Voltar')}
           </Text>
         </Link>
-        <Link ml="8" as={RouterLink} to="/logout">
-          <Text fontWeight="700" textStyle="link">
-            {t('Sair')}
-          </Text>
-        </Link>
-      </HStack>
+      </Flex>
       <SuccessAndErrorHandler submission={submission.current} isError={isError} error={error} />
-    </Flex>
+    </>
   );
 };

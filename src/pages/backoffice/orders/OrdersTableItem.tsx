@@ -1,7 +1,6 @@
 import { Td, Tr } from '@chakra-ui/react';
 import { OrderAlgolia } from 'appjusto-types/algolia';
 import { CustomButton } from 'common/components/buttons/CustomButton';
-import firebase from 'firebase';
 import { useRouteMatch } from 'react-router';
 import { formatCurrency } from 'utils/formatters';
 import { getAlgoliaFieldDateAndHour } from 'utils/functions';
@@ -20,11 +19,7 @@ export const OrdersTableItem = ({ order }: ItemProps) => {
   return (
     <Tr key={order.objectID} color="black" fontSize="15px" lineHeight="21px">
       <Td maxW="120px">{order.code ?? 'N/I'}</Td>
-      <Td>
-        {order.createdOn
-          ? getAlgoliaFieldDateAndHour(order.createdOn as firebase.firestore.Timestamp)
-          : 'N/I'}
-      </Td>
+      <Td>{order.createdOn ? getAlgoliaFieldDateAndHour(order.createdOn) : 'N/I'}</Td>
       <Td>{order.consumerName ?? 'N/I'}</Td>
       <Td>{order.courierName ?? 'N/I'}</Td>
       <Td>{total}</Td>

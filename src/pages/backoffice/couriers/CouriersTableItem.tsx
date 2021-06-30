@@ -1,7 +1,6 @@
 import { Icon, Td, Tr } from '@chakra-ui/react';
 import { CourierAlgolia, ProfileSituation } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
-import firebase from 'firebase';
 import { useRouteMatch } from 'react-router';
 import { getAlgoliaFieldDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
@@ -18,11 +17,7 @@ export const CouriersTableItem = ({ courier }: ItemProps) => {
   return (
     <Tr key={courier.objectID} color="black" fontSize="15px" lineHeight="21px">
       <Td maxW="120px">{courier.code}</Td>
-      <Td>
-        {courier.createdOn
-          ? getAlgoliaFieldDateAndHour(courier.createdOn as firebase.firestore.Timestamp)
-          : 'N/I'}
-      </Td>
+      <Td>{courier.createdOn ? getAlgoliaFieldDateAndHour(courier.createdOn) : 'N/I'}</Td>
       <Td>{courier.name ?? 'N/I'}</Td>
       <Td>{situationPTOptions[status] ?? 'N/I'}</Td>
       <Td>

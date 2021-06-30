@@ -101,8 +101,8 @@ export const ComplementForm = ({
       <VStack spacing={4} alignItems="flex-start" p="4">
         <Flex flexDir="column">
           <ImageUploads
-            width="200px"
-            height="200px"
+            width={200} //"200px"
+            height={200} //"200px"
             imageUrl={imageUrl}
             ratios={complementsRatios}
             resizedWidth={complementsResizedWidth}

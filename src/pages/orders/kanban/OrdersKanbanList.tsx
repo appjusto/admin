@@ -14,7 +14,7 @@ export const OrdersKanbanList = ({ title, orders, details }: Props) => {
   return (
     <Flex
       w="100%"
-      maxW="300px"
+      maxW={{ lg: '300px' }}
       h={['500px']}
       borderRadius="lg"
       borderColor="gray.500"

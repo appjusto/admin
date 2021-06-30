@@ -35,7 +35,7 @@ export const Groups = () => {
     <DragDropContext onDragEnd={onDragEndComplements}>
       <Droppable droppableId="groups" type="group">
         {(droppable) => (
-          <Box ref={droppable.innerRef} {...droppable.droppableProps}>
+          <Box ref={droppable.innerRef} {...droppable.droppableProps} maxW="100%" overflowX="auto">
             {sortedGroups.map((group, index) => (
               <GroupBox key={group.name} index={index} group={group} />
             ))}

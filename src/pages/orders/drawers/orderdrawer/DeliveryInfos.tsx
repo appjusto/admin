@@ -63,9 +63,14 @@ export const DeliveryInfos = ({ order }: DeliveryInfosProps) => {
           ))}
       </Flex>
       {isMatched && (
-        <Flex mt="4" justifyContent="space-between" alignItems="flex-end">
+        <Flex
+          mt="4"
+          flexDir={{ base: 'column', md: 'row' }}
+          justifyContent="space-between"
+          alignItems={{ base: 'flex-start', md: 'flex-end' }}
+        >
           <Flex alignItems="center" justifyContent="flex-end">
-            <Box>
+            <Box minW="48px">
               {courierPictureUrl ? (
                 <Image src={courierPictureUrl} width="48px" height="48px" borderRadius="24px" />
               ) : (
@@ -86,7 +91,7 @@ export const DeliveryInfos = ({ order }: DeliveryInfosProps) => {
             </Flex>
           </Flex>
           <Link to={`/app/orders/chat/${order.id}/${order.courier?.id}`}>
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" mt={{ base: '4', md: '0' }}>
               {t('Abrir chat com o entregador')}
             </Button>
           </Link>

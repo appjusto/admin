@@ -12,6 +12,7 @@ export default class FirebaseRefs {
   getCreateBusinessProfileCallable = () => this.functions.httpsCallable('createBusinessProfile');
   getCreateManager = () => this.functions.httpsCallable('createManager');
   getGetBusinessManagers = () => this.functions.httpsCallable('getBusinessManagers');
+  getCancelOrder = () => this.functions.httpsCallable('cancelOrder');
 
   // firestore
   // platform
@@ -75,6 +76,9 @@ export default class FirebaseRefs {
   getOrderCancellationRef = (id: string) => this.getOrderPrivateRef(id).doc('cancellation');
   getOrderConfirmationRef = (id: string) => this.getOrderPrivateRef(id).doc('confirmation');
   getOrderMatchingRef = (id: string) => this.getOrderPrivateRef(id).doc('matching');
+
+  // invoices
+  getInvoicesRef = () => this.firestore.collection('invoices');
 
   // consumers
   getConsumersRef = () => this.firestore.collection('consumers');

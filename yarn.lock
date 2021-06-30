@@ -211,7 +211,7 @@
     "@algolia/requester-common" "4.9.0"
 
 "@appjusto/types@../types":
-  version "2.26.1"
+  version "3.0.6"
 
 "@babel/code-frame@7.10.4":
   version "7.10.4"
@@ -3801,7 +3801,7 @@ anymatch@^3.0.3, anymatch@~3.1.1:
     picomatch "^2.0.4"
 
 appjusto-types@../types:
-  version "2.26.1"
+  version "3.0.6"
 
 aproba@^1.1.1:
   version "1.2.0"
@@ -11165,10 +11165,10 @@ react-dropzone@^11.2.4:
     file-selector "^0.2.2"
     prop-types "^15.7.2"
 
-react-easy-crop@^3.3.1:
-  version "3.3.1"
-  resolved "https://registry.yarnpkg.com/react-easy-crop/-/react-easy-crop-3.3.1.tgz#c9c9cf4f8255e6fdfc2a8ee00205bbd5ea94cdcf"
-  integrity sha512-fM249ldk9OBONAgkskWVU3sLLP/hkjqmjY0Ah8V9CNlK2aiasNuHJw6vYCtaESR7CrEP3+XvfG1oO3y5hP6CuQ==
+react-easy-crop@^3.5.1:
+  version "3.5.1"
+  resolved "https://registry.yarnpkg.com/react-easy-crop/-/react-easy-crop-3.5.1.tgz#d32113de9c87f9009d4ae0b223922ad60433ea69"
+  integrity sha512-VWTYAwRcapguZcYHTSKOcaO2QoNPA57KlS6J0DUrl6dPMV/KrmnPl++LSe/fjN/5vak2PJFKFA4js6Lkwwuy2g==
   dependencies:
     normalize-wheel "^1.0.1"
     tslib "2.0.1"
@@ -11395,6 +11395,13 @@ react-style-singleton@^2.1.0:
     get-nonce "^1.0.0"
     invariant "^2.2.4"
     tslib "^1.0.0"
+
+react-to-print@^2.12.6:
+  version "2.12.6"
+  resolved "https://registry.yarnpkg.com/react-to-print/-/react-to-print-2.12.6.tgz#ac4537e12528ce865a1a652dcdfb19c5b20c9cce"
+  integrity sha512-O4hpQZX8pOd3W910n+WkT9Jvpd3tFcEWqTFHrm69bCGI/Nh5g2CoLrzaXObQW9BA9mK1K4+3qG88Q6DAJs+oWg==
+  dependencies:
+    prop-types "^15.7.2"
 
 react@^17.0.1:
   version "17.0.1"

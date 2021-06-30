@@ -36,6 +36,7 @@ export const CategoryItem = React.memo(({ category, products, index, hidden, url
           p="6"
           mb="6"
           d={hidden ? 'none' : 'block'}
+          w="100%"
         >
           <Flex alignItems="center" mb="6">
             <Box bg="white" {...draggable.dragHandleProps} ref={draggable.innerRef}>
@@ -65,6 +66,8 @@ export const CategoryItem = React.memo(({ category, products, index, hidden, url
                 {...droppable.droppableProps}
                 bg={snapshot.isDraggingOver ? 'gray.50' : 'white'}
                 minH={100}
+                w="100%"
+                overflow="auto"
               >
                 {products &&
                   products.map((product, index) => (

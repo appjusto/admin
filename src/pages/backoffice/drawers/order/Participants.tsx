@@ -14,7 +14,7 @@ interface ParticipantProps {
   instruction?: string;
   address?: string;
   additionalInfo?: string;
-  onboarding?: firebase.firestore.Timestamp;
+  onboarding?: firebase.firestore.FieldValue;
   buttonLabel?: string;
   buttonLink?: string;
   isBtnDisabled?: boolean;
@@ -30,9 +30,6 @@ const Participant = ({
   buttonLink,
   isBtnDisabled = false,
 }: ParticipantProps) => {
-  // helpers
-  const date = onboarding ? getDateAndHour(onboarding) : 'N/E';
-
   // UI
   return (
     <Box mb="10">
@@ -62,7 +59,7 @@ const Participant = ({
         <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
           {t('Data do onboarding:')}{' '}
           <Text as="span" fontWeight="500">
-            {date}
+            {getDateAndHour(onboarding)}
           </Text>
         </Text>
       )}

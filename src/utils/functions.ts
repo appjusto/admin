@@ -5,6 +5,8 @@ import { CroppedAreaProps } from 'common/components/ImageCropping';
 import { localOrderType } from 'app/state/order';
 import I18n from 'i18n-js';
 import firebase from 'firebase';
+import { AlgoliaCreatedOn } from 'app/api/types';
+import { ImageType } from 'common/components/ImageUploads';
 
 // translation
 export const getTranslatedOrderStatus = (status: OrderStatus) => {
@@ -42,9 +44,10 @@ export const getDateTime = () => {
   return { date, time };
 };
 
-export const getDateAndHour = (timestamp: firebase.firestore.Timestamp) => {
+export const getDateAndHour = (timestamp?: firebase.firestore.FieldValue) => {
+  if (!timestamp) return 'N/E';
   try {
-    const timeToDate = timestamp.toDate();
+    const timeToDate = (timestamp as firebase.firestore.Timestamp).toDate();
     const date = I18n.strftime(timeToDate, '%d/%m/%Y');
     const hour = I18n.strftime(timeToDate, '%H:%M');
     return `${date} ${hour}`;
@@ -54,12 +57,14 @@ export const getDateAndHour = (timestamp: firebase.firestore.Timestamp) => {
   }
 };
 
-export const getAlgoliaFieldDateAndHour = (timestamp: firebase.firestore.Timestamp) => {
+export const getAlgoliaFieldDateAndHour = (timestamp: firebase.firestore.FieldValue) => {
   try {
-    //@ts-ignore
-    const date = new Date(timestamp._seconds * 1000).toLocaleDateString();
-    //@ts-ignore
-    const hour = new Date(timestamp._seconds * 1000).toLocaleTimeString();
+    const date = new Date(
+      ((timestamp as unknown) as AlgoliaCreatedOn)._seconds * 1000
+    ).toLocaleDateString();
+    const hour = new Date(
+      ((timestamp as unknown) as AlgoliaCreatedOn)._seconds * 1000
+    ).toLocaleTimeString();
     return `${date} - ${hour}`;
   } catch (error) {
     console.log(error);
@@ -174,12 +179,12 @@ export const getCroppedImg = async (
   pixelCrop: CroppedAreaProps,
   //rotation = 0,
   ratio: number,
-  resizedWidth: number
+  resizedWidth: number,
+  imageType: ImageType = 'image/jpeg'
 ) => {
   const image = (await createImage(imageSrc)) as HTMLImageElement;
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
-
   const maxSize = Math.max(image.width, image.height);
   const safeArea = 2 * ((maxSize / 2) * Math.sqrt(2));
   // set each dimensions to double largest dimension to allow for a safe area for the
@@ -187,6 +192,8 @@ export const getCroppedImg = async (
   canvas.width = safeArea;
   canvas.height = safeArea;
   if (ctx) {
+    ctx.fillStyle = 'white';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
     // translate canvas context to a central location on image to allow rotating around the center.
     ctx.translate(safeArea / 2, safeArea / 2);
     ctx.rotate(getRadianAngle(0));
@@ -210,18 +217,23 @@ export const getCroppedImg = async (
       canvas.toBlob(async (file) => {
         try {
           const url = URL.createObjectURL(file);
-          const result = await getResizedImage(url, ratio, resizedWidth);
+          const result = await getResizedImage(url, ratio, resizedWidth, imageType);
           resolve(result);
         } catch (error) {
           console.log('getCroppedImg Error', error);
           reject(null);
         }
-      }, 'image/jpeg');
+      }, imageType);
     });
   }
 };
 
-export const getResizedImage = async (imageSrc: string, ratio: number, resizedWidth: number) => {
+export const getResizedImage = async (
+  imageSrc: string,
+  ratio: number,
+  resizedWidth: number,
+  imageType: ImageType = 'image/jpeg'
+) => {
   const image = (await createImage(imageSrc)) as HTMLImageElement;
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
@@ -232,10 +244,12 @@ export const getResizedImage = async (imageSrc: string, ratio: number, resizedWi
     ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
     ctx.imageSmoothingQuality = 'high';
     ctx.drawImage(image, 0, 0, resizedWidth, resizedWidth / ratio);
+    //ctx.fillStyle = 'white';
+    //ctx.fillRect(0, 0, canvas.width, canvas.height);
     return new Promise((resolve) => {
       canvas.toBlob((file) => {
         resolve(file);
-      }, 'image/jpeg');
+      }, imageType);
     });
   }
 };

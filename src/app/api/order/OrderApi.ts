@@ -1,5 +1,7 @@
 import {
+  CancelOrderPayload,
   ChatMessage,
+  Invoice,
   Issue,
   Order,
   OrderCancellation,
@@ -13,6 +15,7 @@ import {
 import { documentAs, documentsAs } from 'core/fb';
 import firebase from 'firebase/app';
 import FirebaseRefs from '../FirebaseRefs';
+import * as Sentry from '@sentry/react';
 
 export type CancellationData = {
   issue: WithId<Issue>;
@@ -174,7 +177,9 @@ export default class OrderApi {
   }
 
   async getOrderPrivateCancellation(orderId: string) {
-    return documentAs<OrderCancellation>(await this.refs.getOrderCancellationRef(orderId).get());
+    const data = await this.refs.getOrderCancellationRef(orderId).get();
+    if (!data.exists) return null;
+    return documentAs<OrderCancellation>(data);
   }
 
   async updateOrderCourierNotified(orderId: string, couriersNotified: string[]) {
@@ -229,6 +234,27 @@ export default class OrderApi {
     return unsubscribe;
   }
 
+  observeOrderInvoices(
+    orderId: string,
+    resultHandler: (invoices: WithId<Invoice>[]) => void
+  ): firebase.Unsubscribe {
+    let query = this.refs
+      .getInvoicesRef()
+      .orderBy('createdOn', 'asc')
+      .where('orderId', '==', orderId);
+
+    const unsubscribe = query.onSnapshot(
+      (querySnapshot) => {
+        resultHandler(documentsAs<Invoice>(querySnapshot.docs));
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+    // returns the unsubscribe function
+    return unsubscribe;
+  }
+
   async sendMessage(orderId: string, message: Partial<ChatMessage>) {
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
     return this.refs.getOrderChatRef(orderId).add({
@@ -249,9 +275,19 @@ export default class OrderApi {
     });
   }
 
-  async cancelOrder(orderId: string, cancellationData: CancellationData) {
-    //const { canceledById, issue, comment } = cancellationData;
+  async cancelOrder(data: CancelOrderPayload) {
+    const { params } = data;
+    const paramsData = params ?? { refund: ['products', 'delivery', 'platform'] };
     // get callable function ref and send data to bakcend
-    console.log('cancellation', orderId, cancellationData);
+    const payload: CancelOrderPayload = {
+      ...data,
+      meta: { version: '1' }, // TODO: pass correct version on
+      params: paramsData,
+    };
+    try {
+      await this.refs.getCancelOrder()(payload);
+    } catch (error) {
+      Sentry.captureException('createManagerError', error);
+    }
   }
 }

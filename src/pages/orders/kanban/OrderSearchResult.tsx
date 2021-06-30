@@ -1,7 +1,6 @@
 import { Box, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
 import { Order, WithId } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
-import firebase from 'firebase';
 import { useRouteMatch } from 'react-router-dom';
 import {
   getDateAndHour,
@@ -40,7 +39,7 @@ export const OrderSearchResult = ({ orders }: OrderSearchProps) => {
               return (
                 <Tr key={order.code} color="black" fontSize="xs">
                   <Td maxW="120px">{order.code}</Td>
-                  <Td>{getDateAndHour(order.createdOn as firebase.firestore.Timestamp)}</Td>
+                  <Td>{getDateAndHour(order.createdOn)}</Td>
                   <Td>{getTranslatedOrderStatus(order.status)}</Td>
                   <Td>{order.courier?.name ?? t('Sem entregador')}</Td>
                   <Td isNumeric>{getOrderTotalPriceToDisplay(order.items ?? [])}</Td>

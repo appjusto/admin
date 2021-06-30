@@ -42,3 +42,22 @@ export const orderDispatchingStatusPTOptions = {
   'declined': 'Recusado',
   'confirmed': 'Confirmado',
 };
+
+export const invoiceTypePTOptions = {
+  products: 'Produtos',
+  delivery: 'Entrega',
+  platform: 'Plataforma',
+  tip: 'Gorjeta',
+};
+export const invoiceStatusPTOptions = {
+  in_analysis: 'Em análise',
+  pending: 'Pendente',
+  paid: 'Paga',
+  partially_paid: 'Parcialmente paga',
+  refunded: 'Reembolsada',
+  expired: 'Expirada',
+  authorized: 'Autorizada',
+  canceled: 'Cancelada',
+  in_protest: 'Em protesto',
+  chargeback: 'Estornada',
+};

@@ -1,6 +1,5 @@
 import { Box, HStack, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
 import { OrderIssue, WithId } from 'appjusto-types';
-import firebase from 'firebase';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import React from 'react';
 import { getDateAndHour } from 'utils/functions';
@@ -35,7 +34,7 @@ export const OrderIssuesTable = ({ issues }: OrderIssuesTableProps) => {
           {issues && issues.length > 0 ? (
             issues?.map((issue: WithId<OrderIssue>) => (
               <Tr key={issue.id} color="black" fontSize="xs" fontWeight="700">
-                <Td>{getDateAndHour(issue.createdOn as firebase.firestore.Timestamp)}</Td>
+                <Td>{getDateAndHour(issue.createdOn)}</Td>
                 <Td>{getParticipant(issue.issue.type)}</Td>
                 <Td>
                   <Text lineHeight="14px">
