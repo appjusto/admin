@@ -15,22 +15,18 @@ export const OrdersTableItem = ({ order }: ItemProps) => {
   const { path } = useRouteMatch();
   const isBackoffice = path.includes('backoffice');
   // helpers
-  const getFoodOrderTotal = (type: string) => {
+  const getFoodOrderTotal = () => {
     let total = 0;
-    if (type === 'food') {
-      if (!isBackoffice) total = order.businessValue;
-      else {
-        if (!order.courierValue || !order.businessValue) return 'N/E';
-        total = order.courierValue + order.businessValue;
-      }
+    if (!isBackoffice) {
+      if (order.businessValue) total = order.businessValue;
+      else return 'N/E';
     } else {
-      return 'N/E';
-      //if(!order.courierValue || !order.platformValue) return 'N/E';
-      //total = order.courierValue + order.platformValue;
+      if (order.totalOrder) total = order.totalOrder;
+      else return 'N/E';
     }
     return formatCurrency(total);
   };
-  const total = getFoodOrderTotal(order.type);
+  const total = getFoodOrderTotal();
   // UI
   return (
     <Tr key={order.objectID} color="black" fontSize="15px" lineHeight="21px">
