@@ -95,31 +95,33 @@ export const BusinessBOProvider = ({ children }: Props) => {
   const handleSave = () => {
     submission.current += 1;
     setError(initialError);
-    const { cpf, phone, agency, account } = contextValidation;
-    if (!cpf)
-      return setError({
-        status: true,
-        error: null,
-        message: { title: 'O CPF informado não é válido' },
-      });
-    if (!phone)
-      return setError({
-        status: true,
-        error: null,
-        message: { title: 'O cecular informado não é válido' },
-      });
-    if (!agency)
-      return setError({
-        status: true,
-        error: null,
-        message: { title: 'A agência informada não é válida' },
-      });
-    if (!account)
-      return setError({
-        status: true,
-        error: null,
-        message: { title: 'A agência informada não é válida' },
-      });
+    if (business?.situation === 'approved') {
+      const { cpf, phone, agency, account } = contextValidation;
+      if (!cpf)
+        return setError({
+          status: true,
+          error: null,
+          message: { title: 'O CPF informado não é válido' },
+        });
+      if (!phone)
+        return setError({
+          status: true,
+          error: null,
+          message: { title: 'O cecular informado não é válido' },
+        });
+      if (!agency)
+        return setError({
+          status: true,
+          error: null,
+          message: { title: 'A agência informada não é válida' },
+        });
+      if (!account)
+        return setError({
+          status: true,
+          error: null,
+          message: { title: 'A agência informada não é válida' },
+        });
+    }
     let businessChanges = null;
     let managerChanges = null;
     let bankingChanges = null;
