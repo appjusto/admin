@@ -15,7 +15,8 @@ export const useConsumerProfile = (consumerId: string | undefined | null) => {
       setProfile(null);
       return;
     }
-    return api.consumer().observeConsumerProfile(consumerId, setProfile);
+    const unsub = api.consumer().observeConsumerProfile(consumerId, setProfile);
+    return () => unsub();
   }, [api, consumerId]);
   // return
   return profile;
