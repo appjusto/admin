@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   Drawer,
   DrawerBody,
@@ -16,6 +17,7 @@ import {
 import { useOrdersContext } from 'app/state/order';
 import { Order, WithId } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
+import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import React from 'react';
 import { MdPrint } from 'react-icons/md';
 import { getDateAndHour } from 'utils/functions';
@@ -31,8 +33,7 @@ interface BaseDrawerProps {
   onClose(): void;
   children: React.ReactNode;
   printOrder?(): void;
-  scroll: boolean;
-  setScroll(value: boolean): void;
+  orderPrinting?: boolean;
 }
 
 export const OrderBaseDrawer = ({
@@ -42,57 +43,48 @@ export const OrderBaseDrawer = ({
   isCanceling,
   onClose,
   printOrder,
-  scroll,
-  setScroll,
+  orderPrinting,
   children,
   ...props
 }: BaseDrawerProps) => {
   //context
   const { changeOrderStatus } = useOrdersContext();
-
   // refs
   const bodyRef = React.useRef<HTMLDivElement>(null);
-
   // helpers
   const isCurrierArrived = order?.dispatchingState === 'arrived-pickup';
-  // const cancelator = orderCancelator(order?.cancellation?.issue.type);
-
   //handlers
   const handlePrint = () => {
     if (printOrder) return printOrder();
     return null;
+  };
+  const orderConfirmation = () => {
+    if (!order) return;
+    if (orderPrinting) handlePrint();
+    changeOrderStatus(order.id, 'preparing');
+    onClose();
   };
   const PrimaryButtonFunction = () => {
     if (order?.status === 'preparing') changeOrderStatus(order.id, 'ready');
     if (order?.status === 'ready') changeOrderStatus(order.id, 'dispatching');
     onClose();
   };
-
-  //UI conditions
-  let orderDispatched = ['dispatching', 'delivered'].includes(order?.status ?? 'not_included');
-
-  let PrimaryButtonAble =
-    ['confirmed', 'preparing'].includes(order?.status ?? 'not_included') ||
-    (order?.status === 'ready' && isCurrierArrived);
-
-  let PrimaryButtonLabel = 'CONFIRMAR';
-  if (order?.status === 'preparing') PrimaryButtonLabel = 'Pedido pronto';
-  if (order?.status === 'ready') PrimaryButtonLabel = 'Entregar pedido';
-
-  // side effects
-  React.useEffect(() => {
+  const updateCookingTimeScroll = () => {
     if (!bodyRef.current) return;
-    if (scroll) {
-      const scrollNumber = bodyRef.current.scrollHeight - 610;
-      bodyRef.current.scrollTop = scrollNumber;
-      setScroll(false);
-    }
-  }, [scroll, setScroll]);
-
+    const scrollNumber = bodyRef.current.scrollHeight - 610;
+    bodyRef.current.scrollTop = scrollNumber;
+  };
+  // side effects
   React.useEffect(() => {
     if (isCanceling && bodyRef.current) bodyRef.current.scrollTop = 0;
   }, [isCanceling]);
-
+  //UI conditions
+  let orderDispatched = ['dispatching', 'delivered'].includes(order?.status ?? 'not_included');
+  let PrimaryButtonAble =
+    ['confirmed', 'preparing'].includes(order?.status ?? 'not_included') ||
+    (order?.status === 'ready' && isCurrierArrived);
+  let PrimaryButtonLabel = 'Pedido pronto';
+  if (order?.status === 'ready') PrimaryButtonLabel = 'Entregar pedido';
   //UI
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
@@ -188,6 +180,47 @@ export const OrderBaseDrawer = ({
                 />
               </Flex>
             </Flex>
+            {order?.status === 'confirmed' && (
+              <Flex
+                flexDir={{ base: 'column', md: 'row' }}
+                justifyContent="space-between"
+                mt="6"
+                mb="2"
+              >
+                <Box>
+                  <SectionTitle mt="0">{t('Detalhes do pedido')}</SectionTitle>
+                  <Flex color="black" fontSize="xs">
+                    <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
+                      {t('Tempo de preparo:')}
+                    </Text>
+                    <Text ml="1" fontSize="md" fontWeight="700">
+                      {t(`${order?.cookingTime ? order?.cookingTime / 60 : 'N/I'} min`)}
+                      <Text
+                        ml="2"
+                        as="span"
+                        color="#4EA031"
+                        textDecor="underline"
+                        cursor="pointer"
+                        onClick={updateCookingTimeScroll}
+                      >
+                        {t('Alterar')}
+                      </Text>
+                    </Text>
+                  </Flex>
+                </Box>
+                <Button
+                  mt={{ base: '4', md: '0' }}
+                  width="full"
+                  maxW="260px"
+                  fontSize="xl"
+                  fontWeight="700"
+                  letterSpacing="1px"
+                  onClick={orderConfirmation}
+                >
+                  {t('CONFIRMAR PEDIDO')}
+                </Button>
+              </Flex>
+            )}
           </DrawerHeader>
           <DrawerBody pb="28" ref={bodyRef}>
             {children}

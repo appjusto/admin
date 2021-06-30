@@ -46,7 +46,6 @@ export const OrderDrawer = (props: Props) => {
   // state
   const [isCanceling, setIsCanceling] = React.useState(false);
   const [error, setError] = React.useState(initialError);
-  const [scroll, setScroll] = React.useState(false);
 
   // refs
   const submission = React.useRef(0);
@@ -109,8 +108,7 @@ export const OrderDrawer = (props: Props) => {
       cancel={() => setIsCanceling(true)}
       isCanceling={isCanceling}
       printOrder={printOrder}
-      scroll={scroll}
-      setScroll={setScroll}
+      orderPrinting={business?.orderPrinting}
     >
       <Box position="relative">
         <Box pos="absolute" top="0" left="0" w="100%" h="100vh" bg="white" zIndex="-100" />
@@ -127,13 +125,7 @@ export const OrderDrawer = (props: Props) => {
               {(order?.status === 'ready' || order?.status === 'dispatching') && (
                 <DeliveryInfos order={order} />
               )}
-              <OrderDetails
-                order={order}
-                setScroll={setScroll}
-                orderPrinting={business?.orderPrinting}
-                printOrder={printOrder}
-                closeDrawer={props.onClose}
-              />
+              <OrderDetails order={order} />
               {order?.status === 'canceled' && (
                 <>
                   <SectionTitle>{t('Dados do cancelamento')}</SectionTitle>
