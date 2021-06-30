@@ -56,30 +56,32 @@ export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDr
   const handleSave = () => {
     setError(initialError);
     submission.current += 1;
-    if (!contextValidation.cpf)
-      return setError({
-        status: true,
-        error: null,
-        message: { title: 'O CPF não foi informado ou não é válido.' },
-      });
-    if (!contextValidation.cnpj)
-      return setError({
-        status: true,
-        error: null,
-        message: { title: 'O CNPJ informado não é válido.' },
-      });
-    if (!contextValidation.agency)
-      return setError({
-        status: true,
-        error: null,
-        message: { title: 'A agência informada não é válida.' },
-      });
-    if (!contextValidation.account)
-      return setError({
-        status: true,
-        error: null,
-        message: { title: 'A conta informada não é válida.' },
-      });
+    if (courier?.situation === 'approved') {
+      if (!contextValidation.cpf)
+        return setError({
+          status: true,
+          error: null,
+          message: { title: 'O CPF não foi informado ou não é válido.' },
+        });
+      if (!contextValidation.cnpj)
+        return setError({
+          status: true,
+          error: null,
+          message: { title: 'O CNPJ informado não é válido.' },
+        });
+      if (!contextValidation.agency)
+        return setError({
+          status: true,
+          error: null,
+          message: { title: 'A agência informada não é válida.' },
+        });
+      if (!contextValidation.account)
+        return setError({
+          status: true,
+          error: null,
+          message: { title: 'A conta informada não é válida.' },
+        });
+    }
     const newState = {} as CourierProfile;
     courier &&
       Object.keys(courier).forEach((key) => {
