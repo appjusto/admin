@@ -24,6 +24,7 @@ export const courierLocationStatusPTOptions = {
 };
 
 export const orderStatusPTOptions = {
+  quote: 'Cotação',
   confirming: 'Aguardando confirmação',
   declined: 'Recusado',
   confirmed: 'Confirmado',
@@ -35,6 +36,7 @@ export const orderStatusPTOptions = {
 };
 
 export const orderStatusPTOptionsForTableItem = {
+  quote: 'Cotação',
   confirming: 'Confirmando',
   declined: 'Recusado',
   confirmed: 'Confirmado',
@@ -60,6 +62,7 @@ export const invoiceTypePTOptions = {
   platform: 'Plataforma',
   tip: 'Gorjeta',
 };
+
 export const invoiceStatusPTOptions = {
   in_analysis: 'Em análise',
   pending: 'Pendente',

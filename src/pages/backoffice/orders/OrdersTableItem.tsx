@@ -1,4 +1,5 @@
 import { Td, Tr } from '@chakra-ui/react';
+import { OrderStatus } from 'appjusto-types';
 import { OrderAlgolia } from 'appjusto-types/algolia';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { useRouteMatch } from 'react-router';
@@ -33,8 +34,9 @@ export const OrdersTableItem = ({ order }: ItemProps) => {
     <Tr key={order.objectID} color="black" fontSize="15px" lineHeight="21px">
       <Td maxW="120px">{order.code ?? 'N/I'}</Td>
       <Td>{order.createdOn ? getAlgoliaFieldDateAndHour(order.createdOn) : 'N/I'}</Td>
-      {/*@ts-ignore*/}
-      <Td>{order.status ? orderStatusPTOptionsForTableItem[order.status] : 'N/I'}</Td>
+      <Td>
+        {order.status ? orderStatusPTOptionsForTableItem[order.status as OrderStatus] : 'N/I'}
+      </Td>
       <Td>{order.consumerName ?? 'N/I'}</Td>
       <Td>{order.courierName ?? 'N/I'}</Td>
       <Td>{total}</Td>
