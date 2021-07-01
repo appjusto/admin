@@ -49,8 +49,6 @@ export const useOrderDeliveryInfos = (order?: WithId<Order> | null) => {
       setOrderDispatchingKanbanItemText(result);
     };
     const getOrderDispatchingText = (status: DispatchingStatus, state?: DispatchingState) => {
-      console.log('status', status);
-      console.log('state', state);
       let result = 'Buscando entregador...';
       if (status === 'matched' || status === 'confirmed') {
         result = 'Buscando localização';
