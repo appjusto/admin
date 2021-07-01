@@ -6,14 +6,16 @@ import {
   Icon,
   Image,
   Link,
+  ListItem,
   Spinner,
   Text,
-  VStack
+  UnorderedList,
+  VStack,
 } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useBusinessProfileValidation } from 'app/api/business/profile/useBusinessProfileValidation';
 import { useContextBusiness } from 'app/state/business/context';
-import { AlertError } from 'common/components/AlertError';
+import { AlertWarning } from 'common/components/AlertWarning';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
 import { initialError } from 'common/components/error/utils';
 import SharingBar from 'common/components/landing/share/SharingBar';
@@ -271,20 +273,32 @@ export const RegistrationStatus = () => {
   if (business?.situation === 'rejected') {
     return (
       <>
-        <AlertError
-          title={t('Problemas identificados no seu cadastro')}
+        <AlertWarning
+          title={t(
+            'Olá! Avaliamos o seu cadastro, mas ele ainda precisa de ajustes para ser aprovado'
+          )}
           description={t(
-            'Por favor, corrija os itens listados abaixo para seguir com a liberação da plataforma:'
+            'Corrija os itens listados abaixo para seguir com a liberação da plataforma:'
           )}
           icon={false}
-          border="2px solid #DC3545"
         >
-          <VStack mt="2" spacing={1} alignItems="flex-start">
+          <UnorderedList mt="1">
             {rejection.map((issue) => (
-              <Text key={issue}>* {t(`${issue}`)}</Text>
+              <ListItem key={issue}>{t(`${issue}`)}</ListItem>
             ))}
-          </VStack>
-        </AlertError>
+          </UnorderedList>
+          {business.profileIssuesMessage && (
+            <Box mt="6">
+              <Text fontWeight="700">
+                {t('Dica:')}{' '}
+                <Text as="span" fontWeight="500">
+                  {business.profileIssuesMessage}
+                </Text>
+              </Text>
+            </Box>
+          )}
+          <Text mt="4">{t('Após a correção, basta reenviar o cadastro.')}</Text>
+        </AlertWarning>
         <Button
           mt="4"
           onClick={handleSubmitRegistration}
@@ -299,6 +313,35 @@ export const RegistrationStatus = () => {
           error={error.error}
           errorMessage={error.message}
         />
+      </>
+    );
+  }
+  if (business?.situation === 'blocked') {
+    return (
+      <>
+        <AlertWarning
+          title={t('Infelizmente o seu cadastro foi bloqueado no AppJusto')}
+          icon={false}
+        >
+          <Box mt="4">
+            <Text fontWeight="700">
+              {t('Motivo:')}{' '}
+              <Text as="span" fontWeight="500">
+                {business.profileIssuesMessage}
+              </Text>
+            </Text>
+          </Box>
+          <Text mt="4" fontWeight="500">
+            {t('Para mais informações, mande uma mensagem para ')}
+            <Link
+              href="mailto:suporte@appjusto.com.br"
+              color="blue.500"
+              _focus={{ outline: 'none' }}
+            >
+              suporte@appjusto.com.br
+            </Link>
+          </Text>
+        </AlertWarning>
       </>
     );
   }

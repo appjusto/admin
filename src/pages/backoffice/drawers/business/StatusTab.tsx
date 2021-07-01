@@ -98,7 +98,15 @@ export const StatusTab = () => {
               ))}
             </VStack>
           </CheckboxGroup>
-          <SectionTitle>{t('Mensagem personalizada:')}</SectionTitle>
+        </>
+      )}
+      {(business?.situation === 'rejected' || business?.situation === 'blocked') && (
+        <>
+          <SectionTitle>
+            {business?.situation === 'rejected'
+              ? t('Mensagem personalizada:')
+              : t('Informe o motivo do bloqueio:')}
+          </SectionTitle>
           <Textarea
             mt="2"
             value={business?.profileIssuesMessage ?? ''}
