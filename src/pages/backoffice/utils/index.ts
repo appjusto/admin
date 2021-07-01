@@ -24,12 +24,25 @@ export const courierLocationStatusPTOptions = {
 };
 
 export const orderStatusPTOptions = {
+  quote: 'Cotação',
   confirming: 'Aguardando confirmação',
   declined: 'Recusado',
   confirmed: 'Confirmado',
   preparing: 'Em preparo',
   ready: 'Pronto - aguardando entregador',
   dispatching: 'A caminho da entrega',
+  delivered: 'Entregue',
+  canceled: 'Cancelado',
+};
+
+export const orderStatusPTOptionsForTableItem = {
+  quote: 'Cotação',
+  confirming: 'Confirmando',
+  declined: 'Recusado',
+  confirmed: 'Confirmado',
+  preparing: 'Em preparo',
+  ready: 'Pronto',
+  dispatching: 'Despachando',
   delivered: 'Entregue',
   canceled: 'Cancelado',
 };
@@ -49,6 +62,7 @@ export const invoiceTypePTOptions = {
   platform: 'Plataforma',
   tip: 'Gorjeta',
 };
+
 export const invoiceStatusPTOptions = {
   in_analysis: 'Em análise',
   pending: 'Pendente',

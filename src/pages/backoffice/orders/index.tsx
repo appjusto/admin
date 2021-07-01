@@ -120,7 +120,7 @@ const OrdersPage = () => {
             isActive={filterBar === 'ready' ? true : false}
             onClick={() => setFilterBar('ready')}
           >
-            {t('Aguardando retirada')}
+            {t('Pronto')}
           </FilterText>
           <FilterText
             isActive={filterBar === 'dispatching' ? true : false}
@@ -132,7 +132,13 @@ const OrdersPage = () => {
             isActive={filterBar === 'delivered' ? true : false}
             onClick={() => setFilterBar('delivered')}
           >
-            {t('Finalizados')}
+            {t('Entregue')}
+          </FilterText>
+          <FilterText
+            isActive={filterBar === 'declined' ? true : false}
+            onClick={() => setFilterBar('declined')}
+          >
+            {t('Recusado')}
           </FilterText>
           <FilterText
             isActive={filterBar === 'canceled' ? true : false}

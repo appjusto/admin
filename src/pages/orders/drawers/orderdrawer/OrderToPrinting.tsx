@@ -50,11 +50,9 @@ export const OrderToPrinting = React.forwardRef<HTMLDivElement, OrderToPrintProp
               <Image src={logoAppjusto} />
             </Box>
           </HStack>
-          <Text mt="1" fontSize="xs" fontWeight="700" lineHeight="14px">
+          <Text fontSize="11px">{t('Por um delivery mais justo e transparente!')}</Text>
+          <Text mt="4" fontSize="xs" fontWeight="700" lineHeight="14px">
             {businessName}
-          </Text>
-          <Text mt="0" fontSize="11px">
-            {t('Por um delivery mais justo e transparente!')}
           </Text>
         </Flex>
         <Text mt="4" fontSize="2xl" fontWeight="700" lineHeight="28px" mb="2">
@@ -127,7 +125,6 @@ export const OrderToPrinting = React.forwardRef<HTMLDivElement, OrderToPrintProp
                   item.complements.map((complement, index) => (
                     <Tr
                       key={Math.random()}
-                      mt="-20px"
                       pl="0"
                       borderBottom={
                         item.complements?.length === index + 1 ? '1px solid black' : 'none'
@@ -171,6 +168,11 @@ export const OrderToPrinting = React.forwardRef<HTMLDivElement, OrderToPrintProp
             {t('Sem observações.')}
           </Text>
         )}
+        <Box mt="4" bg="black" textAlign="center">
+          <Text fontSize="12px" fontWeight="700" color="white">
+            {t('Este pedido já está pago')}
+          </Text>
+        </Box>
       </Box>
     );
   }

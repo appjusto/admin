@@ -73,10 +73,7 @@ export const OrderBaseDrawer = ({
             <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
               {t('Status:')}{' '}
               <Text as="span" fontWeight="500">
-                {
-                  //@ts-ignore
-                  orderStatus ? orderStatusPTOptions[orderStatus] : 'N/E'
-                }
+                {orderStatus ? orderStatusPTOptions[orderStatus] : 'N/E'}
               </Text>
             </Text>
             <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">

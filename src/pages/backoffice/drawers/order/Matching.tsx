@@ -44,6 +44,14 @@ export const Matching = ({ orderId, orderStatus, orderDispatchingStatus }: Match
     ? ['confirmed', 'preparing', 'ready', 'dispatching'].includes(orderStatus)
     : false;
   const isNoMatch = orderDispatchingStatus === 'no-match';
+  const getDispacthingStatus = () => {
+    if (!orderDispatchingStatus) return 'N/E';
+    if (orderDispatchingStatus === 'matching') {
+      if (logs && logs.length > 0) return 'Buscando';
+      else return 'Ocioso';
+    }
+    return orderDispatchingStatusPTOptions[orderDispatchingStatus];
+  };
 
   // handlers
   const removeCourierNotified = async (courierId: string) => {
@@ -106,9 +114,7 @@ export const Matching = ({ orderId, orderStatus, orderDispatchingStatus }: Match
         <SectionTitle mt="2">
           {t('Status:')}{' '}
           <Text as="span" color={isNoMatch ? 'red' : 'black'}>
-            {orderDispatchingStatus
-              ? orderDispatchingStatusPTOptions[orderDispatchingStatus]
-              : 'N/E'}
+            {getDispacthingStatus()}
           </Text>
         </SectionTitle>
         {orderDispatchingStatus === 'no-match' &&

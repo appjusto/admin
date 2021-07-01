@@ -1,10 +1,12 @@
 import { Td, Tr } from '@chakra-ui/react';
+import { OrderStatus } from 'appjusto-types';
 import { OrderAlgolia } from 'appjusto-types/algolia';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { useRouteMatch } from 'react-router';
 import { formatCurrency } from 'utils/formatters';
 import { getAlgoliaFieldDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
+import { orderStatusPTOptionsForTableItem } from '../utils';
 
 interface ItemProps {
   order: OrderAlgolia;
@@ -13,13 +15,28 @@ interface ItemProps {
 export const OrdersTableItem = ({ order }: ItemProps) => {
   // context
   const { path } = useRouteMatch();
+  const isBackoffice = path.includes('backoffice');
   // helpers
-  const total = formatCurrency(Number(order.totalOrder));
+  const getFoodOrderTotal = () => {
+    let total = 0;
+    if (!isBackoffice) {
+      if (order.businessValue) total = order.businessValue;
+      else return 'N/E';
+    } else {
+      if (order.totalOrder) total = order.totalOrder;
+      else return 'N/E';
+    }
+    return formatCurrency(total);
+  };
+  const total = getFoodOrderTotal();
   // UI
   return (
     <Tr key={order.objectID} color="black" fontSize="15px" lineHeight="21px">
       <Td maxW="120px">{order.code ?? 'N/I'}</Td>
       <Td>{order.createdOn ? getAlgoliaFieldDateAndHour(order.createdOn) : 'N/I'}</Td>
+      <Td>
+        {order.status ? orderStatusPTOptionsForTableItem[order.status as OrderStatus] : 'N/I'}
+      </Td>
       <Td>{order.consumerName ?? 'N/I'}</Td>
       <Td>{order.courierName ?? 'N/I'}</Td>
       <Td>{total}</Td>

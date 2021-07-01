@@ -1,5 +1,6 @@
 import { Box, Table, Tbody, Td, Tfoot, Th, Thead, Tr } from '@chakra-ui/react';
 import { Invoice, WithId } from 'appjusto-types';
+import { IuguInvoiceStatus } from 'appjusto-types/payment/iugu';
 import { invoiceStatusPTOptions, invoiceTypePTOptions } from 'pages/backoffice/utils';
 import React from 'react';
 import { formatCurrency } from 'utils/formatters';
@@ -30,8 +31,7 @@ export const Invoices = ({ invoices }: InvoicesProps) => {
             invoices?.map((invoice: WithId<Invoice>) => (
               <Tr key={invoice.id} color="black" fontSize="sm">
                 <Td>{getDateAndHour(invoice.createdOn)}</Td>
-                {/*@ts-ignore*/}
-                <Td>{invoiceStatusPTOptions[invoice.status]}</Td>
+                <Td>{invoiceStatusPTOptions[invoice.status as IuguInvoiceStatus]}</Td>
                 <Td>{invoiceTypePTOptions[invoice.invoiceType]}</Td>
                 <Td isNumeric>{formatCurrency(invoice.value)}</Td>
               </Tr>

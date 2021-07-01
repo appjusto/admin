@@ -203,7 +203,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
 
   // UI
   const breakpoint = useBreakpoint();
-  const coverWidth = breakpoint === 'base' ? 328 : breakpoint === 'md' ? 420 : 464;
+  const coverWidth = breakpoint === 'base' ? 328 : breakpoint === 'md' ? 420 : 536;
   if (isSuccess && redirect) return <Redirect to={redirect} push />;
   return (
     <Box>
@@ -300,7 +300,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
             )}
           </Text>
           <ImageUploads
-            key={logo}
+            key={logo ?? 'logo'}
             mt="4"
             width={200}
             height={200}
@@ -310,7 +310,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
             placeholderText={t('Logo do estabelecimento')}
             getImages={getLogoFiles}
             clearDrop={() => clearDropImages('logo')}
-            doubleSizeCropping
+            doubleSizeCropping={!onboarding}
           />
           {/* cover image */}
           <Text mt="8" fontSize="xl" color="black">
@@ -322,7 +322,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
             )}
           </Text>
           <ImageUploads
-            key={cover}
+            key={cover ?? 'cover'}
             mt="4"
             width={coverWidth}
             height={coverWidth / coverRatios[0]}
@@ -332,7 +332,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
             placeholderText={t('Imagem de capa')}
             getImages={getCoverFiles}
             clearDrop={() => clearDropImages('cover')}
-            doubleSizeCropping
+            doubleSizeCropping={!onboarding}
           />
           {!onboarding && business?.situation === 'approved' && (
             <>

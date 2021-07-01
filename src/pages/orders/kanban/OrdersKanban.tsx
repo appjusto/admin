@@ -64,11 +64,11 @@ export const OrdersKanban = () => {
       >
         {isNewChatMessage &&
           (newChatMessages.length > 1 ? (
-            <Text fontSize="xs" fontWeight="700" lineHeight="lg" color="black">
+            <Text fontSize="xs" fontWeight="700" lineHeight="lg" color="black" textAlign="end">
               {t(`Você tem ${newChatMessages.length} novas mensagens!`)}
             </Text>
           ) : (
-            <Text fontSize="xs" fontWeight="700" lineHeight="lg" color="black">
+            <Text fontSize="xs" fontWeight="700" lineHeight="lg" color="black" textAlign="end">
               {t(`Você tem ${newChatMessages.length} nova mensagen!`)}
             </Text>
           ))}
