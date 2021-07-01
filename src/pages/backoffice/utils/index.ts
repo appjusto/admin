@@ -34,6 +34,17 @@ export const orderStatusPTOptions = {
   canceled: 'Cancelado',
 };
 
+export const orderStatusPTOptionsForTableItem = {
+  confirming: 'Confirmando',
+  declined: 'Recusado',
+  confirmed: 'Confirmado',
+  preparing: 'Em preparo',
+  ready: 'Pronto',
+  dispatching: 'Despachando',
+  delivered: 'Entregue',
+  canceled: 'Cancelado',
+};
+
 export const orderDispatchingStatusPTOptions = {
   'idle': 'Ocioso',
   'matching': 'Buscando',

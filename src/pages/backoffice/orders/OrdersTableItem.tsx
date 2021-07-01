@@ -5,6 +5,7 @@ import { useRouteMatch } from 'react-router';
 import { formatCurrency } from 'utils/formatters';
 import { getAlgoliaFieldDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
+import { orderStatusPTOptionsForTableItem } from '../utils';
 
 interface ItemProps {
   order: OrderAlgolia;
@@ -32,6 +33,8 @@ export const OrdersTableItem = ({ order }: ItemProps) => {
     <Tr key={order.objectID} color="black" fontSize="15px" lineHeight="21px">
       <Td maxW="120px">{order.code ?? 'N/I'}</Td>
       <Td>{order.createdOn ? getAlgoliaFieldDateAndHour(order.createdOn) : 'N/I'}</Td>
+      {/*@ts-ignore*/}
+      <Td>{order.status ? orderStatusPTOptionsForTableItem[order.status] : 'N/I'}</Td>
       <Td>{order.consumerName ?? 'N/I'}</Td>
       <Td>{order.courierName ?? 'N/I'}</Td>
       <Td>{total}</Td>
