@@ -137,6 +137,10 @@ export default class SearchApi {
           return [...result, `courierAddress.state: ${filter.value}`];
         } else if (filter.type === 'courierAddress.city') {
           return [...result, `courierAddress.city: "${filter.value}"`];
+        } else if (filter.type === 'state') {
+          return [...result, `state: "${filter.value}"`];
+        } else if (filter.type === 'city') {
+          return [...result, `city: "${filter.value}"`];
         }
         return result;
       }, [])
