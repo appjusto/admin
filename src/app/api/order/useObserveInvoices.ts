@@ -2,17 +2,18 @@ import { useContextApi } from 'app/state/api/context';
 import { WithId, Invoice } from 'appjusto-types';
 import React from 'react';
 
-export const useObserveInvoices = () => {
+export const useObserveInvoices = (orderId?: string | null, start?: string, end?: string) => {
   // context
   const api = useContextApi();
   // state
   const [invoices, setInvoices] = React.useState<WithId<Invoice>[] | null>();
   // side effects
   React.useEffect(() => {
-    const unsub = api.order().observeInvoices(setInvoices);
+    let startDate = start ? new Date(start) : null;
+    let endDate = end ? new Date(`${end} 23:59:59`) : null;
+    const unsub = api.order().observeInvoices(setInvoices, orderId, startDate, endDate);
     return () => unsub();
-  }, [api]);
-  console.log('invoices', invoices);
+  }, [api, orderId, start, end]);
   // return
   return invoices;
 };

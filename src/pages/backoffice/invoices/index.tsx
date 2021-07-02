@@ -10,13 +10,13 @@ import PageHeader from '../../PageHeader';
 import { InvoicesTable } from './InvoicesTable';
 
 const InvoicesPage = () => {
-  // context
-  const invoices = useObserveInvoices();
   // state
   const [dateTime, setDateTime] = React.useState('');
   const [searchId, setSearchId] = React.useState('');
   const [searchFrom, setSearchFrom] = React.useState('');
   const [searchTo, setSearchTo] = React.useState('');
+  // context
+  const invoices = useObserveInvoices(searchId, searchFrom, searchTo);
 
   // handlers
 
@@ -34,7 +34,7 @@ const InvoicesPage = () => {
         <HStack spacing={4}>
           <CustomInput
             mt="0"
-            maxW="212px"
+            minW="230px"
             id="search-id"
             value={searchId}
             onChange={(event) => setSearchId(event.target.value)}
