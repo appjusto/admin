@@ -111,27 +111,33 @@ export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDr
             <Text color="black" fontSize="2xl" fontWeight="700" lineHeight="28px" mb="2">
               {courier?.code ?? 'N/E'}
             </Text>
-            <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
               {t('Data do onboarding:')}{' '}
               <Text as="span" fontWeight="500">
                 {getDateAndHour(courier?.createdOn)}
               </Text>
             </Text>
-            <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
               {t('Atualizado em:')}{' '}
               <Text as="span" fontWeight="500">
                 {getDateAndHour(courier?.updatedOn)}
               </Text>
             </Text>
-            <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+            {/*<Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
               {t('Agente responsável:')}{' '}
               <Text as="span" fontWeight="500">
                 *
               </Text>
-            </Text>
+            </Text>*/}
           </DrawerHeader>
           <DrawerBody pb="28">
-            <SectionTitle>{courierName}</SectionTitle>
+            <SectionTitle mt="0">{courierName}</SectionTitle>
+            <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+              {t('Cidade:')}{' '}
+              <Text as="span" fontWeight="500" color={situationAlert ? 'red' : 'black'}>
+                {`${courier?.company?.city ?? 'N/I'} - ${courier?.company?.state ?? 'N/I'}`}
+              </Text>
+            </Text>
             <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
               {t('Status:')}{' '}
               <Text as="span" fontWeight="500" color={situationAlert ? 'red' : 'black'}>
