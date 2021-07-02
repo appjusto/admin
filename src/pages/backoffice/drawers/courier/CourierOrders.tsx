@@ -18,6 +18,7 @@ const CourierOrdersTableItem = ({ order }: ItemPros) => {
     <Tr color="black" fontSize="xs">
       <Td>{order.code ?? 'N/E'}</Td>
       <Td>{getDateAndHour(order.createdOn)}</Td>
+      <Td>{order.type === 'food' ? 'Comida' : 'p2p'}</Td>
       <Td>{order.business?.name ?? 'N/I'}</Td>
       <Td>{order.fare?.courier.value ? formatCurrency(order.fare?.courier.value) : 'N/E'}</Td>
       <Td>
@@ -89,6 +90,7 @@ export const CourierOrders = () => {
               <Tr>
                 <Th>{t('ID')}</Th>
                 <Th>{t('Data')}</Th>
+                <Th>{t('tipo')}</Th>
                 <Th>{t('Restaurante')}</Th>
                 <Th>{t('Valor')}</Th>
                 <Th></Th>
