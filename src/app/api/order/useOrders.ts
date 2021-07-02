@@ -10,7 +10,8 @@ export const useOrders = (statuses: OrderStatus[], businessId?: string) => {
   // side effects
   React.useEffect(() => {
     if (!businessId) return;
-    api.order().observeOrders(statuses, setOrders, businessId);
+    const unsub = api.order().observeOrders(statuses, setOrders, businessId);
+    return () => unsub();
   }, [statuses, businessId, api]); //attention to 'options' to avoid infinite renders
   // return
   return orders;

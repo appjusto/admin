@@ -12,7 +12,8 @@ export const useObserveCategories = (businessId: string | undefined) => {
   // side effects
   React.useEffect(() => {
     if (!businessId) return;
-    return api.business().observeCategories(businessId, setCategories);
+    const unsub = api.business().observeCategories(businessId, setCategories);
+    return () => unsub();
   }, [api, businessId]);
 
   // return

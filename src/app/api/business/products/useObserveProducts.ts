@@ -12,7 +12,8 @@ export const useObserveProducts = (businessId: string | undefined) => {
   // side effects
   React.useEffect(() => {
     if (!businessId) return;
-    return api.business().observeProducts(businessId, setProducts);
+    const unsub = api.business().observeProducts(businessId, setProducts);
+    return () => unsub();
   }, [api, businessId]);
   // return
   return products;

@@ -15,9 +15,10 @@ export const useObserveMenuOrdering = (businessId: string | undefined) => {
   // side effects
   React.useEffect(() => {
     if (!businessId) return;
-    return api.business().observeMenuOrdering(businessId, (config) => {
+    const unsub = api.business().observeMenuOrdering(businessId, (config) => {
       setOrdering(!isEmpty(config) ? config : menu.empty());
     });
+    return () => unsub();
   }, [api, businessId]);
   return { ordering, updateMenuOrdering };
 };

@@ -44,15 +44,15 @@ export const useOrderChat = (orderId: string, counterpartId: string) => {
 
   React.useEffect(() => {
     if (!orderId || !businessId || !counterpartId) return;
-    const unsub2 = api
+    const unsub = api
       .order()
       .observeOrderChat(orderId, businessId, counterpartId, setChatFromBusiness);
-    const unsub3 = api
+    const unsub2 = api
       .order()
       .observeOrderChat(orderId, counterpartId, businessId, setChatFromCounterPart);
     return () => {
+      unsub();
       unsub2();
-      unsub3();
     };
   }, [api, orderId, businessId, counterpartId]);
 
