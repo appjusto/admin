@@ -47,7 +47,7 @@ export const BOOrderListItem = ({ order }: Props) => {
           {formatCurrency(order?.fare?.total ?? 0)}
         </Text>
         <Text fontSize="sm" lineHeight="21px">
-          {getDateAndHour(order?.createdOn)}
+          {getDateAndHour(order?.confirmedOn)}
         </Text>
         <Text fontSize="sm" lineHeight="21px">
           {orderDT ? `${orderDT}min` : 'Agora'}

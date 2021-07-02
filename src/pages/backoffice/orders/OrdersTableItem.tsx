@@ -33,7 +33,11 @@ export const OrdersTableItem = ({ order }: ItemProps) => {
   return (
     <Tr key={order.objectID} color="black" fontSize="15px" lineHeight="21px">
       <Td maxW="120px">{order.code ?? 'N/I'}</Td>
-      <Td>{order.createdOn ? getAlgoliaFieldDateAndHour(order.createdOn) : 'N/I'}</Td>
+      <Td>
+        {order.confirmedOn
+          ? getAlgoliaFieldDateAndHour(order.confirmedOn)
+          : getAlgoliaFieldDateAndHour(order.createdOn)}
+      </Td>
       <Td>
         {order.status ? orderStatusPTOptionsForTableItem[order.status as OrderStatus] : 'N/I'}
       </Td>
