@@ -96,6 +96,10 @@ export default class SearchApi {
       dateFilter && dateFilter.length === 2
         ? `date_timestamp: ${dateFilter[0]} TO ${dateFilter[1] + 86399000}`
         : '';
+    //const date =
+    //  dateFilter && dateFilter.length === 2
+    //    ? `confirmedOn: ${dateFilter[0]} TO ${dateFilter[1] + 86399000}` check this calculation
+    //    : '';
 
     let result = `${type}`;
     if (businessId) result += ` AND businessId: ${businessId}`;

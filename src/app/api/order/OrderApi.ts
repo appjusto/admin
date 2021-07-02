@@ -255,6 +255,20 @@ export default class OrderApi {
     return unsubscribe;
   }
 
+  observeInvoices(resultHandler: (invoices: WithId<Invoice>[]) => void): firebase.Unsubscribe {
+    let query = this.refs.getInvoicesRef().orderBy('createdOn', 'desc').limit(20);
+    const unsubscribe = query.onSnapshot(
+      (querySnapshot) => {
+        resultHandler(documentsAs<Invoice>(querySnapshot.docs));
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+    // returns the unsubscribe function
+    return unsubscribe;
+  }
+
   async sendMessage(orderId: string, message: Partial<ChatMessage>) {
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
     return this.refs.getOrderChatRef(orderId).add({
