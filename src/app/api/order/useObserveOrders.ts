@@ -1,8 +1,13 @@
 import { useContextApi } from 'app/state/api/context';
 import { Order, OrderStatus, WithId } from 'appjusto-types';
 import React from 'react';
+import { Ordering } from './OrderApi';
 
-export const useOrders = (statuses: OrderStatus[], businessId?: string) => {
+export const useObserveOrders = (
+  statuses: OrderStatus[],
+  businessId?: string,
+  ordering?: Ordering
+) => {
   // context
   const api = useContextApi();
   // state
@@ -10,9 +15,9 @@ export const useOrders = (statuses: OrderStatus[], businessId?: string) => {
   // side effects
   React.useEffect(() => {
     if (!businessId) return;
-    const unsub = api.order().observeOrders(statuses, setOrders, businessId);
+    const unsub = api.order().observeOrders(statuses, setOrders, businessId, ordering);
     return () => unsub();
-  }, [statuses, businessId, api]); //attention to 'options' to avoid infinite renders
+  }, [api, statuses, businessId, ordering]);
   // return
   return orders;
 };

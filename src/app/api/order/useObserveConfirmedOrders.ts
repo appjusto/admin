@@ -2,7 +2,7 @@ import React from 'react';
 import { OrderStatus } from 'appjusto-types';
 import { useNotificationPermission } from 'app/utils/notifications/useNotificationPermission';
 import { difference } from 'lodash';
-import { useOrders } from 'app/api/order/useOrders';
+import { useObserveOrders } from 'app/api/order/useObserveOrders';
 import useSound from 'use-sound';
 //@ts-ignore
 import newOrderSound from 'common/sounds/bell-ding.mp3';
@@ -25,7 +25,7 @@ const statuses: OrderStatus[] = ['confirmed'];
 export const useObserveConfirmedOrders = (businessId?: string, notify: boolean = true) => {
   // context
   const permission = useNotificationPermission();
-  const confirmedOrders = useOrders(statuses, businessId);
+  const confirmedOrders = useObserveOrders(statuses, businessId);
   // state
   const [changed, setChanged] = React.useState(false);
   const [volume, setVolume] = React.useState(2);

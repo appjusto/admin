@@ -23,7 +23,7 @@ export type CancellationData = {
   comment?: string;
 };
 
-type Ordering = 'asc' | 'desc';
+export type Ordering = 'asc' | 'desc';
 
 export default class OrderApi {
   constructor(private refs: FirebaseRefs) {}
@@ -41,12 +41,7 @@ export default class OrderApi {
       .where('status', 'in', statuses);
 
     if (businessId) {
-      query = this.refs
-        .getOrdersRef()
-        .orderBy('confirmedOn', ordering)
-
-        .where('business.id', '==', businessId)
-        .where('status', 'in', statuses);
+      query = query.where('business.id', '==', businessId);
     }
     const unsubscribe = query.onSnapshot(
       (querySnapshot) => {

@@ -5,8 +5,8 @@ import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile'
 import { OrderChatGroup } from 'app/api/chat/types';
 import { useCanceledOrders } from 'app/api/order/useCanceledOrders';
 import { useObserveConfirmedOrders } from 'app/api/order/useObserveConfirmedOrders';
+import { useObserveOrders } from 'app/api/order/useObserveOrders';
 import { useObservePreparingOrders } from 'app/api/order/useObservePreparingOrders';
-import { useOrders } from 'app/api/order/useOrders';
 import { useContextAgentProfile } from 'app/state/agent/context';
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusiness } from 'app/state/business/context';
@@ -43,7 +43,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   const { isBackofficeUser } = useContextAgentProfile();
   const { business } = useContextBusiness();
   const { sendBusinessKeepAlive } = useBusinessProfile();
-  const activeOrders = useOrders(statuses, business?.id);
+  const activeOrders = useObserveOrders(statuses, business?.id);
   const canceledOrders = useCanceledOrders(business?.id);
   const chats = useBusinessChats(activeOrders);
   useObserveConfirmedOrders(business?.id);
