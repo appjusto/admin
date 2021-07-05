@@ -12,7 +12,7 @@ import {
   OrderStatus,
   WithId,
 } from 'appjusto-types';
-import { documentAs, documentsAs } from 'core/fb';
+import { documentAs, documentsAs, FirebaseDocument } from 'core/fb';
 import firebase from 'firebase/app';
 import FirebaseRefs from '../FirebaseRefs';
 import * as Sentry from '@sentry/react';
@@ -256,21 +256,28 @@ export default class OrderApi {
   }
 
   observeInvoices(
-    queryLimit: number,
-    resultHandler: (invoices: WithId<Invoice>[]) => void,
+    resultHandler: (
+      invoices: WithId<Invoice>[],
+      last?: firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
+    ) => void,
     orderId?: string | null,
     start?: Date | null,
-    end?: Date | null
+    end?: Date | null,
+    startAfter?: FirebaseDocument
   ): firebase.Unsubscribe {
-    let query = this.refs.getInvoicesRef().orderBy('createdOn', 'desc').limit(queryLimit);
+    let query = this.refs.getInvoicesRef().orderBy('createdOn', 'desc').limit(20);
+    if (startAfter) query = query.startAfter(startAfter);
     if (orderId) query = query.where('orderId', '==', orderId);
     if (start && end) query = query.where('createdOn', '>=', start).where('createdOn', '<=', end);
     const unsubscribe = query.onSnapshot(
       (querySnapshot) => {
-        resultHandler(documentsAs<Invoice>(querySnapshot.docs));
+        const last =
+          querySnapshot.docs.length > 0 ? querySnapshot.docs[querySnapshot.size - 1] : undefined;
+        resultHandler(documentsAs<Invoice>(querySnapshot.docs), last);
       },
       (error) => {
         console.error(error);
+        Sentry.captureException(error);
       }
     );
     // returns the unsubscribe function

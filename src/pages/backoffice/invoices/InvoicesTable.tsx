@@ -23,7 +23,16 @@ export const InvoicesTable = ({ invoices }: InvoicesTableProps) => {
           </Tr>
         </Thead>
         <Tbody>
-          {invoices && invoices.length > 0 ? (
+          {!invoices ? (
+            <Tr color="black" fontSize="xs" fontWeight="700">
+              <Td>{t('Carregando faturas...')}</Td>
+              <Td></Td>
+              <Td></Td>
+              <Td></Td>
+              <Td></Td>
+              <Td></Td>
+            </Tr>
+          ) : invoices.length > 0 ? (
             invoices.map((invoice) => {
               return <InvoicesTableItem key={invoice.id} invoice={invoice} />;
             })
