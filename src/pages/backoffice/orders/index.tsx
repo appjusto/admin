@@ -28,6 +28,7 @@ const OrdersPage = () => {
 
   const { orders, fetchNextPage } = useObserveOrdersHistory(
     null,
+    null,
     searchId,
     searchFrom,
     searchTo,

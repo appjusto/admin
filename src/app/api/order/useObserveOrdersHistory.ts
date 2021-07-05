@@ -5,6 +5,7 @@ import firebase from 'firebase';
 
 export const useObserveOrdersHistory = (
   businessId?: string | null,
+  statuses?: OrderStatus[] | null,
   orderCode?: string,
   start?: string,
   end?: string,
@@ -39,6 +40,7 @@ export const useObserveOrdersHistory = (
         setLastFleet(last);
       },
       businessId,
+      statuses,
       orderCode,
       startDate,
       endDate,
@@ -47,7 +49,7 @@ export const useObserveOrdersHistory = (
       startAfter
     );
     return () => unsub();
-  }, [api, startAfter, businessId, orderCode, start, end, orderStatus, orderType]);
+  }, [api, startAfter, businessId, statuses, orderCode, start, end, orderStatus, orderType]);
   // return
   return { orders, fetchNextPage };
 };

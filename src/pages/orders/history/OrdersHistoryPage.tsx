@@ -2,6 +2,7 @@ import { ArrowDownIcon } from '@chakra-ui/icons';
 import { Button, Flex, HStack, Stack, Text } from '@chakra-ui/react';
 import { useObserveOrdersHistory } from 'app/api/order/useObserveOrdersHistory';
 import { useContextBusinessId } from 'app/state/business/context';
+import { OrderStatus } from 'appjusto-types';
 import Container from 'common/components/Container';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import { OrdersTable } from 'pages/backoffice/orders/OrdersTable';
@@ -10,6 +11,15 @@ import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import PageHeader from '../../PageHeader';
 import { OrderDrawer } from '../drawers/orderdrawer';
+
+const statuses = [
+  'confirmed',
+  'preparing',
+  'ready',
+  'dispatching',
+  'delivered',
+  'canceled',
+] as OrderStatus[];
 
 const OrdersHistoryPage = () => {
   // context
@@ -24,6 +34,7 @@ const OrdersHistoryPage = () => {
 
   const { orders, fetchNextPage } = useObserveOrdersHistory(
     businessId,
+    statuses,
     searchId,
     searchFrom,
     searchTo

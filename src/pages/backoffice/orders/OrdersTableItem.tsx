@@ -32,9 +32,7 @@ export const OrdersTableItem = ({ order }: ItemProps) => {
   return (
     <Tr key={order.id} color="black" fontSize="15px" lineHeight="21px">
       <Td maxW="120px">{order.code ?? 'N/I'}</Td>
-      <Td>
-        {order.confirmedOn ? getDateAndHour(order.confirmedOn) : getDateAndHour(order.createdOn!)}
-      </Td>
+      <Td>{getDateAndHour(order.updatedOn!)}</Td>
       <Td>
         {order.status ? orderStatusPTOptionsForTableItem[order.status as OrderStatus] : 'N/I'}
       </Td>
