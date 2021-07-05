@@ -4,9 +4,14 @@ import { useObserveInvoices } from 'app/api/order/useObserveInvoices';
 import { FilterText } from 'common/components/backoffice/FilterText';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import React from 'react';
+import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import PageHeader from '../../PageHeader';
+import { BusinessDrawer } from '../drawers/business';
+import { CourierDrawer } from '../drawers/courier';
+import { InvoiceBaseDrawer } from '../drawers/invoice';
+import { BackofficeOrderDrawer } from '../drawers/order';
 import { InvoicesTable } from './InvoicesTable';
 
 const InvoicesPage = () => {
@@ -16,7 +21,13 @@ const InvoicesPage = () => {
   const [searchFrom, setSearchFrom] = React.useState('');
   const [searchTo, setSearchTo] = React.useState('');
   // context
+  const { path } = useRouteMatch();
+  const history = useHistory();
   const { invoices, fetchNextPage } = useObserveInvoices(searchId, searchFrom, searchTo);
+  // handlers
+  const closeDrawerHandler = () => {
+    history.replace(path);
+  };
 
   // side effects
   React.useEffect(() => {
@@ -74,6 +85,20 @@ const InvoicesPage = () => {
         <ArrowDownIcon mr="2" />
         {t('Carregar mais')}
       </Button>
+      <Switch>
+        <Route exact path={`${path}/:invoiceId`}>
+          <InvoiceBaseDrawer isOpen onClose={closeDrawerHandler} />
+        </Route>
+        <Route path={`${path}/order/:orderId`}>
+          <BackofficeOrderDrawer isOpen onClose={closeDrawerHandler} />
+        </Route>
+        <Route path={`${path}/courier/:courierId`}>
+          <CourierDrawer isOpen onClose={closeDrawerHandler} />
+        </Route>
+        <Route path={`${path}/business/:businessId`}>
+          <BusinessDrawer isOpen onClose={closeDrawerHandler} />
+        </Route>
+      </Switch>
     </Box>
   );
 };

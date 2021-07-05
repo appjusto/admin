@@ -14,12 +14,12 @@ export const InvoicesTable = ({ invoices }: InvoicesTableProps) => {
       <Table mt="4" size="md" variant="simple" pos="relative">
         <Thead>
           <Tr>
-            <Th>{t('ID')}</Th>
+            <Th>{t('ID do pedido')}</Th>
             <Th>{t('Data')}</Th>
-            <Th>{t('Status')}</Th>
             <Th>{t('Tipo')}</Th>
-            <Th>{t('ID do Pedido')}</Th>
+            <Th>{t('Status')}</Th>
             <Th>{t('Valor')}</Th>
+            <Th></Th>
           </Tr>
         </Thead>
         <Tbody>

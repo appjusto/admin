@@ -284,6 +284,25 @@ export default class OrderApi {
     return unsubscribe;
   }
 
+  observeInvoice(
+    invoiceId: string,
+    resultHandler: (invoice: WithId<Invoice>) => void
+  ): firebase.Unsubscribe {
+    let query = this.refs.getInvoicesRef().doc(invoiceId);
+    const unsubscribe = query.onSnapshot(
+      (querySnapshot) => {
+        const data = querySnapshot;
+        if (data.exists) resultHandler(documentAs<Invoice>(data));
+      },
+      (error) => {
+        console.error(error);
+        Sentry.captureException(error);
+      }
+    );
+    // returns the unsubscribe function
+    return unsubscribe;
+  }
+
   async sendMessage(orderId: string, message: Partial<ChatMessage>) {
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
     return this.refs.getOrderChatRef(orderId).add({
