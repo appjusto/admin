@@ -19,7 +19,7 @@ export const InvoicesTableItem = ({ invoice }: ItemProps) => {
   return (
     <Tr color="black" fontSize="15px" lineHeight="21px">
       <Td>
-        <Link as={RouterLink} to={`${path}/order/${invoice.orderId}`}>
+        <Link as={RouterLink} to={`/backoffice/orders/${invoice.orderId}`}>
           {invoice.orderId ?? 'N/I'}
         </Link>
       </Td>

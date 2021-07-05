@@ -1,8 +1,7 @@
 import { ArrowDownIcon, DeleteIcon } from '@chakra-ui/icons';
 import { Button, Flex, HStack, Radio, RadioGroup, Text } from '@chakra-ui/react';
-import { useOrdersSearch } from 'app/api/search/useOrdersSearch';
+import { useObserveOrdersHistory } from 'app/api/order/useObserveOrdersHistory';
 import { OrderStatus, OrderType } from 'appjusto-types';
-import { OrderAlgolia } from 'appjusto-types/algolia';
 import { FilterText } from 'common/components/backoffice/FilterText';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import React from 'react';
@@ -25,22 +24,19 @@ const OrdersPage = () => {
 
   const [filterBar, setFilterBar] = React.useState('all');
   const [orderType, setOrderType] = React.useState<OrderType>('food');
-  const [dateFilter, setDateFilter] = React.useState<number[] | undefined>(undefined);
   const [orderStatus, setOrderStatus] = React.useState<OrderStatus>();
 
-  const { results: orders, fetchNextPage, refetch } = useOrdersSearch<OrderAlgolia>(
-    true,
-    'orders',
-    orderType,
-    undefined,
+  const { orders, fetchNextPage } = useObserveOrdersHistory(
+    null,
+    searchId,
+    searchFrom,
+    searchTo,
     orderStatus,
-    dateFilter,
-    searchId
+    orderType
   );
 
   // handlers
   const closeDrawerHandler = () => {
-    refetch();
     history.replace(path);
   };
 
@@ -60,14 +56,6 @@ const OrdersPage = () => {
     if (filterBar === 'all') setOrderStatus(undefined);
     else setOrderStatus(filterBar as OrderStatus);
   }, [filterBar]);
-
-  React.useEffect(() => {
-    if (searchFrom && searchTo) {
-      const from = new Date(searchFrom).getTime();
-      const to = new Date(searchTo).getTime();
-      setDateFilter([from, to]);
-    } else setDateFilter(undefined);
-  }, [searchFrom, searchTo]);
 
   // UI
   return (

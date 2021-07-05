@@ -14,7 +14,6 @@ export const useObserveOrders = (
   const [orders, setOrders] = React.useState<WithId<Order>[]>([]);
   // side effects
   React.useEffect(() => {
-    if (!businessId) return;
     const unsub = api.order().observeOrders(statuses, setOrders, businessId, ordering);
     return () => unsub();
   }, [api, statuses, businessId, ordering]);

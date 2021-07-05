@@ -1,8 +1,7 @@
 import { ArrowDownIcon } from '@chakra-ui/icons';
 import { Button, Flex, HStack, Stack, Text } from '@chakra-ui/react';
-import { useOrdersSearch } from 'app/api/search/useOrdersSearch';
+import { useObserveOrdersHistory } from 'app/api/order/useObserveOrdersHistory';
 import { useContextBusinessId } from 'app/state/business/context';
-import { OrderAlgolia } from 'appjusto-types/algolia';
 import Container from 'common/components/Container';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import { OrdersTable } from 'pages/backoffice/orders/OrdersTable';
@@ -23,32 +22,17 @@ const OrdersHistoryPage = () => {
   const [searchFrom, setSearchFrom] = React.useState('');
   const [searchTo, setSearchTo] = React.useState('');
 
-  const [dateFilter, setDateFilter] = React.useState<number[] | undefined>(undefined);
-
-  const { results: orders, fetchNextPage, refetch } = useOrdersSearch<OrderAlgolia>(
-    true,
-    'orders',
-    'food',
+  const { orders, fetchNextPage } = useObserveOrdersHistory(
     businessId,
-    undefined,
-    dateFilter,
-    searchId
+    searchId,
+    searchFrom,
+    searchTo
   );
 
   // handlers
   const closeDrawerHandler = () => {
-    refetch();
     history.replace(path);
   };
-
-  // side effects
-  React.useEffect(() => {
-    if (searchFrom && searchTo) {
-      const from = new Date(searchFrom).getTime();
-      const to = new Date(searchTo).getTime();
-      setDateFilter([from, to]);
-    } else setDateFilter(undefined);
-  }, [searchFrom, searchTo]);
 
   // UI
   return (

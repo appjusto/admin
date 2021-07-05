@@ -1,13 +1,20 @@
 import { useContextApi } from 'app/state/api/context';
-import { WithId, Invoice } from 'appjusto-types';
+import { WithId, OrderStatus, OrderType, Order } from 'appjusto-types';
 import React from 'react';
 import firebase from 'firebase';
 
-export const useObserveInvoices = (orderId?: string | null, start?: string, end?: string) => {
+export const useObserveOrdersHistory = (
+  businessId?: string | null,
+  orderCode?: string,
+  start?: string,
+  end?: string,
+  orderStatus?: OrderStatus,
+  orderType?: OrderType
+) => {
   // context
   const api = useContextApi();
   // state
-  const [invoices, setInvoices] = React.useState<WithId<Invoice>[] | null>();
+  const [orders, setOrders] = React.useState<WithId<Order>[] | null>();
   const [startAfter, setStartAfter] = React.useState<
     firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
   >();
@@ -21,23 +28,26 @@ export const useObserveInvoices = (orderId?: string | null, start?: string, end?
   // side effects
   React.useEffect(() => {
     setStartAfter(undefined);
-  }, [orderId, start, end]);
+  }, [orderCode, start, end, orderStatus, orderType]);
   React.useEffect(() => {
     let startDate = start ? new Date(start) : null;
     let endDate = end ? new Date(`${end} 23:59:59`) : null;
-    const unsub = api.order().observeInvoices(
+    const unsub = api.order().observeOrdersHistory(
       (results, last) => {
-        if (!startAfter) setInvoices(results);
-        else setInvoices((prev) => (prev ? [...prev, ...results] : results));
+        if (!startAfter) setOrders(results);
+        else setOrders((prev) => (prev ? [...prev, ...results] : results));
         setLastFleet(last);
       },
-      orderId,
+      businessId,
+      orderCode,
       startDate,
       endDate,
+      orderStatus,
+      orderType,
       startAfter
     );
     return () => unsub();
-  }, [api, startAfter, orderId, start, end]);
+  }, [api, startAfter, businessId, orderCode, start, end, orderStatus, orderType]);
   // return
-  return { invoices, fetchNextPage };
+  return { orders, fetchNextPage };
 };
