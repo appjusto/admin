@@ -43,7 +43,7 @@ const InvoicesPage = () => {
             value={searchId}
             onChange={(event) => setSearchId(event.target.value)}
             label={t('ID')}
-            placeholder={t('000')}
+            placeholder={t('ID do pedido')}
           />
           <CustomInput
             mt="0"

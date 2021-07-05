@@ -57,18 +57,29 @@ export const getDateAndHour = (timestamp?: firebase.firestore.FieldValue) => {
   }
 };
 
-export const getAlgoliaFieldDateAndHour = (timestamp: firebase.firestore.FieldValue) => {
-  try {
-    const date = new Date(
-      ((timestamp as unknown) as AlgoliaCreatedOn)._seconds * 1000
-    ).toLocaleDateString();
-    const hour = new Date(
-      ((timestamp as unknown) as AlgoliaCreatedOn)._seconds * 1000
-    ).toLocaleTimeString();
-    return `${date} - ${hour}`;
-  } catch (error) {
-    console.log(error);
-    return 'Erro';
+export const getAlgoliaFieldDateAndHour = (timestamp: firebase.firestore.FieldValue | number) => {
+  if (typeof timestamp === 'number') {
+    try {
+      const date = new Date(timestamp).toLocaleDateString();
+      const hour = new Date(timestamp).toLocaleTimeString();
+      return `${date} - ${hour}`;
+    } catch (error) {
+      console.log(error);
+      return 'Erro';
+    }
+  } else {
+    try {
+      const date = new Date(
+        ((timestamp as unknown) as AlgoliaCreatedOn)._seconds * 1000
+      ).toLocaleDateString();
+      const hour = new Date(
+        ((timestamp as unknown) as AlgoliaCreatedOn)._seconds * 1000
+      ).toLocaleTimeString();
+      return `${date} - ${hour}`;
+    } catch (error) {
+      console.log(error);
+      return 'Erro';
+    }
   }
 };
 
