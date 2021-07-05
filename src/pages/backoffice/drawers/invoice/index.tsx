@@ -27,7 +27,7 @@ type Params = {
   invoiceId: string;
 };
 
-export const InvoiceBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
+export const InvoiceDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   //context
   const { invoiceId } = useParams<Params>();
   const invoice = useObserveInvoice(invoiceId);
@@ -43,37 +43,8 @@ export const InvoiceBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
             </Text>
           </DrawerHeader>
           <DrawerBody pb="28">
-            <SectionTitle>{t('Subconta')}</SectionTitle>
-            <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
-              {t('Nome:')}{' '}
-              <Text as="span" fontWeight="500">
-                Entregador ou restaurante
-              </Text>
-            </Text>
-            <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
-              {t('ID:')}{' '}
-              <Text as="span" fontWeight="500">
-                {invoice?.accountExternalId ?? 'N/E'}
-              </Text>
-            </Text>
-            <Box mt="4">
-              <CustomButton
-                mt="0"
-                minW="220px"
-                color="black"
-                variant="outline"
-                label={t(
-                  `Ver ${invoice?.invoiceType === 'delivery' ? 'entregador' : 'restaurante'}`
-                )}
-                link={`${invoice?.invoiceType === 'delivery' ? 'courier' : 'business'}/${
-                  invoice?.accountId
-                }`}
-                size="sm"
-              />
-            </Box>
-            <SectionTitle>{t('Geral')}</SectionTitle>
-            <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
-              {t('ID (iugu):')}{' '}
+            <Text fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+              {t('ID da fatura:')}{' '}
               <Text as="span" fontWeight="500">
                 {invoice?.externalId ?? 'N/E'}
               </Text>
@@ -115,10 +86,48 @@ export const InvoiceBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 variant="outline"
                 color="black"
                 label={t('Ver pedido')}
-                link={`order/${invoice?.orderId}`}
+                link={`/backoffice/orders/${invoice?.orderId}`}
                 size="sm"
               />
             </Box>
+            {invoice?.invoiceType !== 'platform' && (
+              <>
+                <SectionTitle>{t('Subconta')}</SectionTitle>
+                <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+                  {t('Nome:')}{' '}
+                  <Text as="span" fontWeight="500">
+                    Entregador ou restaurante
+                  </Text>
+                </Text>
+                <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+                  {t('ID:')}{' '}
+                  <Text as="span" fontWeight="500">
+                    {invoice?.accountExternalId ?? 'N/E'}
+                  </Text>
+                </Text>
+                <Box mt="4">
+                  <CustomButton
+                    mt="0"
+                    minW="220px"
+                    color="black"
+                    variant="outline"
+                    label={t(
+                      `Ver ${
+                        invoice?.invoiceType === 'delivery' || invoice?.invoiceType === 'tip'
+                          ? 'entregador'
+                          : 'restaurante'
+                      }`
+                    )}
+                    link={`/backoffice/${
+                      invoice?.invoiceType === 'delivery' || invoice?.invoiceType === 'tip'
+                        ? 'couriers'
+                        : 'businesses'
+                    }/${invoice?.accountId}`}
+                    size="sm"
+                  />
+                </Box>
+              </>
+            )}
           </DrawerBody>
         </DrawerContent>
       </DrawerOverlay>

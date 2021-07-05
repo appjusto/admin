@@ -1,8 +1,10 @@
 import { Box, Table, Tbody, Td, Tfoot, Th, Thead, Tr } from '@chakra-ui/react';
 import { Invoice, WithId } from 'appjusto-types';
 import { IuguInvoiceStatus } from 'appjusto-types/payment/iugu';
+import { CustomButton } from 'common/components/buttons/CustomButton';
 import { invoiceStatusPTOptions, invoiceTypePTOptions } from 'pages/backoffice/utils';
 import React from 'react';
+import { useRouteMatch } from 'react-router-dom';
 import { formatCurrency } from 'utils/formatters';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
@@ -13,6 +15,8 @@ interface InvoicesProps {
 }
 
 export const Invoices = ({ invoices }: InvoicesProps) => {
+  // context
+  const { path } = useRouteMatch();
   // UI
   return (
     <Box>
@@ -24,6 +28,7 @@ export const Invoices = ({ invoices }: InvoicesProps) => {
             <Th>{t('Status')}</Th>
             <Th>{t('Tipo')}</Th>
             <Th isNumeric>{t('Valor')}</Th>
+            <Th></Th>
           </Tr>
         </Thead>
         <Tbody>
@@ -34,6 +39,15 @@ export const Invoices = ({ invoices }: InvoicesProps) => {
                 <Td>{invoiceStatusPTOptions[invoice.status as IuguInvoiceStatus]}</Td>
                 <Td>{invoiceTypePTOptions[invoice.invoiceType]}</Td>
                 <Td isNumeric>{formatCurrency(invoice.value)}</Td>
+                <Td>
+                  <CustomButton
+                    mt="0"
+                    variant="outline"
+                    label={t('Detalhes')}
+                    link={`/backoffice/invoices/${invoice.id}`}
+                    size="sm"
+                  />
+                </Td>
               </Tr>
             ))
           ) : (
