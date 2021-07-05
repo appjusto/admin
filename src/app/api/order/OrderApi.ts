@@ -256,12 +256,13 @@ export default class OrderApi {
   }
 
   observeInvoices(
+    queryLimit: number,
     resultHandler: (invoices: WithId<Invoice>[]) => void,
     orderId?: string | null,
     start?: Date | null,
     end?: Date | null
   ): firebase.Unsubscribe {
-    let query = this.refs.getInvoicesRef().orderBy('createdOn', 'desc').limit(20);
+    let query = this.refs.getInvoicesRef().orderBy('createdOn', 'desc').limit(queryLimit);
     if (orderId) query = query.where('orderId', '==', orderId);
     if (start && end) query = query.where('createdOn', '>=', start).where('createdOn', '<=', end);
     const unsubscribe = query.onSnapshot(

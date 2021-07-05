@@ -12,13 +12,17 @@ import { InvoicesTable } from './InvoicesTable';
 const InvoicesPage = () => {
   // state
   const [dateTime, setDateTime] = React.useState('');
+  const [queryLimit, setQueryLimit] = React.useState(20);
   const [searchId, setSearchId] = React.useState('');
   const [searchFrom, setSearchFrom] = React.useState('');
   const [searchTo, setSearchTo] = React.useState('');
   // context
-  const invoices = useObserveInvoices(searchId, searchFrom, searchTo);
+  const invoices = useObserveInvoices(queryLimit, searchId, searchFrom, searchTo);
 
   // handlers
+  const increaseInvoicesQueryLimit = () => {
+    return setQueryLimit((prev) => prev + 20);
+  };
 
   // side effects
   React.useEffect(() => {
@@ -72,7 +76,7 @@ const InvoicesPage = () => {
         </Text>
       </HStack>
       <InvoicesTable invoices={invoices} />
-      <Button mt="8" variant="grey" onClick={() => {}}>
+      <Button mt="8" variant="grey" onClick={increaseInvoicesQueryLimit}>
         <ArrowDownIcon mr="2" />
         {t('Carregar mais')}
       </Button>
