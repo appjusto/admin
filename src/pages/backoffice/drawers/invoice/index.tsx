@@ -52,7 +52,7 @@ export const InvoiceDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
             <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
               {t('ID do pedido:')}{' '}
               <Text as="span" fontWeight="500">
-                {invoice?.orderId ?? 'N/E'}
+                {invoice?.orderCode ?? 'N/E'}
               </Text>
             </Text>
             <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
@@ -96,7 +96,7 @@ export const InvoiceDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
                   {t('Nome:')}{' '}
                   <Text as="span" fontWeight="500">
-                    Entregador ou restaurante
+                    {invoice?.accountName ?? 'N/E'}
                   </Text>
                 </Text>
                 <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">

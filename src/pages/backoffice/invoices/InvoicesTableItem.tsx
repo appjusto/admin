@@ -20,7 +20,7 @@ export const InvoicesTableItem = ({ invoice }: ItemProps) => {
     <Tr color="black" fontSize="15px" lineHeight="21px">
       <Td>
         <Link as={RouterLink} to={`/backoffice/orders/${invoice.orderId}`}>
-          {invoice.orderId ?? 'N/I'}
+          {invoice.orderCode ?? 'N/E'}
         </Link>
       </Td>
       <Td>{getDateAndHour(invoice.createdOn)}</Td>
