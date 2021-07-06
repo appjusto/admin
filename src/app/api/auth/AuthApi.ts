@@ -55,6 +55,34 @@ export default class AuthApi {
     return userCredential.user;
   }
 
+  async createUserWithEmailAndPassword(email: string, password: string) {
+    await this.auth.signOut();
+    const userCredential = await this.auth.createUserWithEmailAndPassword(email, password);
+    try {
+      window.localStorage.removeItem('email');
+    } catch (error) {}
+    return userCredential.user;
+  }
+
+  async updateUsersPassword(password: string) {
+    const user = this.auth.currentUser;
+    if (!user) throw new Error('User not found!');
+    try {
+      await user.updatePassword(password);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async signInWithEmailAndPassword(email: string, password: string) {
+    await this.auth.signOut();
+    const userCredential = await this.auth.signInWithEmailAndPassword(email, password);
+    try {
+      window.localStorage.removeItem('email');
+    } catch (error) {}
+    return userCredential.user;
+  }
+
   getUser() {
     return this.auth.currentUser;
   }

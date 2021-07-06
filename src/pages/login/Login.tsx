@@ -1,16 +1,26 @@
-import { Box, Button, Flex, Text } from '@chakra-ui/react';
+import { Box, Button, Checkbox, Flex, Text } from '@chakra-ui/react';
+import { EmailAndPassword } from 'app/api/auth/useCreateAndUpdateFirebaseUsers';
 import { useContextApi } from 'app/state/api/context';
 import { AlertError } from 'common/components/AlertError';
 import { AlertSuccess } from 'common/components/AlertSuccess';
 import { CustomInput } from 'common/components/form/input/CustomInput';
+import { CustomPasswordInput } from 'common/components/form/input/CustomPasswordInput';
 import logo from 'common/img/logo.svg';
 import { getErrorMessage } from 'core/fb';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useMutation } from 'react-query';
+import { Redirect } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import Image from '../../common/components/Image';
 import leftImage from './img/login-left@2x.jpg';
 import rightImage from './img/login-right@2x.jpg';
+
+interface InitialError {
+  status: boolean;
+  error: unknown | null;
+}
+
+const initialError = { status: false, error: null };
 
 const Login = () => {
   // context
@@ -18,26 +28,59 @@ const Login = () => {
 
   // refs
   const emailRef = React.useRef<HTMLInputElement>(null);
+  const passwdRef = React.useRef<HTMLInputElement>(null);
 
   // state
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = React.useState('');
+  const [passwd, setPasswd] = React.useState('');
+  const [isPassword, setIsPassword] = React.useState(false);
+  const [isLoading, setIsloading] = React.useState(false);
+  const [error, setError] = React.useState<InitialError>(initialError);
 
   // mutations
-  const [loginWithEmail, { isLoading, isSuccess, isError, error }] = useMutation((email: string) =>
+  const [loginWithEmail, loginWithLinkResult] = useMutation((email: string) =>
     api.auth().sendSignInLinkToEmail(email)
   );
 
+  const [loginWithPasswd, loginWithPasswdResult] = useMutation((data: EmailAndPassword) =>
+    api.auth().signInWithEmailAndPassword(data.email, data.password)
+  );
+
+  // handlers
+  const loginHandler = () => {
+    if (isPassword) return loginWithPasswd({ email, password: passwd });
+    else return loginWithEmail(email);
+  };
+
   // side effects
-  useEffect(() => {
+  React.useEffect(() => {
     api.auth().signOut();
     emailRef?.current?.focus();
   }, [api]);
 
-  // handlers
-  const loginHandler = () => {
-    loginWithEmail(email);
-  };
+  React.useEffect(() => {
+    if (isPassword) setIsloading(loginWithPasswdResult.isLoading);
+    else setIsloading(loginWithLinkResult.isLoading);
+  }, [isPassword, loginWithLinkResult.isLoading, loginWithPasswdResult.isLoading]);
+
+  React.useEffect(() => {
+    if (isPassword)
+      setError({ status: loginWithPasswdResult.isError, error: loginWithPasswdResult.error });
+    else setError({ status: loginWithLinkResult.isError, error: loginWithLinkResult.error });
+  }, [
+    isPassword,
+    loginWithLinkResult.isError,
+    loginWithLinkResult.error,
+    loginWithPasswdResult.isError,
+    loginWithPasswdResult.error,
+  ]);
+
+  React.useEffect(() => {
+    if (loginWithLinkResult.isSuccess) setError(initialError);
+  }, [loginWithLinkResult.isSuccess]);
+
   // UI
+  if (loginWithPasswdResult.isSuccess) return <Redirect to="/app" />;
   return (
     <Flex w="100wh" h="100vh" justifyContent={{ sm: 'center' }}>
       <Box w={{ lg: 1 / 3 }} display={{ base: 'none', lg: 'block' }}>
@@ -76,13 +119,38 @@ const Login = () => {
             value={email}
             handleChange={(ev) => setEmail(ev.target.value)}
           />
-          {isError && (
-            <AlertError
-              title={t('Erro!')}
-              description={getErrorMessage(error) ?? t('Tenta de novo?')}
+          <Checkbox
+            mt="4"
+            colorScheme="green"
+            iconColor="white"
+            value="available"
+            color="black"
+            isChecked={isPassword}
+            onChange={(e) => setIsPassword(e.target.checked)}
+          >
+            {t('Usar senha de acesso')}
+          </Checkbox>
+          <Text mt="2" fontSize="xs">
+            {t('Ao entrar sem senha, enviaremos um link de acesso para o e-mail cadastrado.')}
+          </Text>
+          {isPassword && (
+            <CustomPasswordInput
+              ref={passwdRef}
+              isRequired={isPassword}
+              id="login-password"
+              label={t('Senha')}
+              placeholder={t('Senha de acesso')}
+              value={passwd}
+              handleChange={(ev) => setPasswd(ev.target.value)}
             />
           )}
-          {isSuccess && (
+          {error.status && (
+            <AlertError
+              title={t('Erro!')}
+              description={getErrorMessage(error.error) ?? t('Tenta de novo?')}
+            />
+          )}
+          {loginWithLinkResult.isSuccess && (
             <AlertSuccess
               title={t('Pronto!')}
               description={t('O link de acesso foi enviado para seu e-mail.')}

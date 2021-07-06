@@ -1,5 +1,6 @@
-import { Box } from '@chakra-ui/react';
+import { Box, Heading, Text } from '@chakra-ui/react';
 import * as cpfutils from '@fnando/cpf';
+import { useCreateAndUpdateFirebaseUsers } from 'app/api/auth/useCreateAndUpdateFirebaseUsers';
 import { useUpdateManagerProfile } from 'app/api/manager/useUpdateManagerProfile';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
@@ -7,6 +8,7 @@ import { useContextManagerProfile } from 'app/state/manager/context';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
 import { initialError } from 'common/components/error/utils';
 import { CustomInput } from 'common/components/form/input/CustomInput';
+import { CustomPasswordInput } from 'common/components/form/input/CustomPasswordInput';
 import { CustomPatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';
 import {
   cpfFormatter,
@@ -25,6 +27,7 @@ import { t } from 'utils/i18n';
 export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
   // context
   const user = useContextFirebaseUser();
+  const { updateUsersPassword, updateUsersPasswordResult } = useCreateAndUpdateFirebaseUsers();
   const { business } = useContextBusiness();
   const { manager } = useContextManagerProfile();
   const { updateProfile, updateResult } = useUpdateManagerProfile();
@@ -36,12 +39,17 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const [phoneNumber, setPhoneNumber] = React.useState(manager?.phone ?? '');
   const [cpf, setCPF] = React.useState(manager?.cpf ?? '');
   const [error, setError] = React.useState(initialError);
+  const [isEditingPasswd, setIsEditingPasswd] = React.useState(true);
+  const [passwd, setPasswd] = React.useState('');
+  const [passwdConfirm, setPasswdConfirm] = React.useState('');
 
   // refs
   const submission = React.useRef(0);
   const nameRef = React.useRef<HTMLInputElement>(null);
   const cpfRef = React.useRef<HTMLInputElement>(null);
   const phoneNumberRef = React.useRef<HTMLInputElement>(null);
+  const passwdRef = React.useRef<HTMLInputElement>(null);
+  const passwdConfirmRef = React.useRef<HTMLInputElement>(null);
 
   // helpers
   const isCPFValid = () => cpfutils.isValid(cpf);
@@ -73,6 +81,34 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
       });
       return phoneNumberRef?.current?.focus();
     }
+    if (passwd) {
+      if (passwd !== passwdConfirm) {
+        setError({
+          status: true,
+          error: null,
+          message: { title: 'As senhas informadas não são iguais.' },
+        });
+        return passwdRef?.current?.focus();
+      }
+      try {
+        await updateUsersPassword(passwd);
+        return await updateProfile({
+          name,
+          surname,
+          phone: phoneNumber,
+          cpf,
+          isPasswordActive: true,
+        });
+      } catch (error) {
+        console.log(error);
+        setError({
+          status: true,
+          error: error,
+          message: { title: 'Não foi possível salvar a senha.' },
+        });
+        return;
+      }
+    }
     await updateProfile({
       name,
       surname,
@@ -94,6 +130,7 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
       setSurname(manager.surname ?? '');
       setPhoneNumber(manager.phone ?? '');
       setCPF(manager.cpf ?? '');
+      if (manager.isPasswordActive) setIsEditingPasswd(false);
     }
   }, [manager, clearState]);
 
@@ -103,8 +140,13 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
         status: true,
         error: updateError,
       });
-  }, [isError, updateError]);
-
+    if (updateUsersPasswordResult.isError) {
+      setError({
+        status: true,
+        error: updateUsersPasswordResult.error,
+      });
+    }
+  }, [isError, updateError, updateUsersPasswordResult.isError, updateUsersPasswordResult.error]);
   // UI
   if (isSuccess && redirect) return <Redirect to={redirect} push />;
   return (
@@ -169,6 +211,53 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
           onValueChange={(value) => setCPF(value)}
           externalValidation={{ active: true, status: isCPFValid() }}
         />
+        {isEditingPasswd ? (
+          <>
+            <Heading mt="8" color="black" fontSize="xl">
+              {manager?.isPasswordActive ? t('Alterar senha') : t('Senha de acesso')}
+            </Heading>
+            <Text mt="1" fontSize="sm" maxW="580px">
+              {t(
+                'Se preferir, você pode definir uma senha de acesso a plataforma. Quem estiver com o login e senha não precisará do link de confirmação enviado por e-mail.'
+              )}
+            </Text>
+            <Text mt="4" fontSize="xs" maxW="580px">
+              {t(
+                'A senha precisará ter no mínimo 8 caracteres, com pelo menos uma letra maíuscula e um número.'
+              )}
+            </Text>
+            <CustomPasswordInput
+              ref={passwdRef}
+              mt="2"
+              id="manager-password"
+              label={t('Senha de acesso')}
+              placeholder={t('Digite uma senha')}
+              value={passwd}
+              handleChange={(ev) => setPasswd(ev.target.value)}
+            />
+            <CustomPasswordInput
+              ref={passwdConfirmRef}
+              isRequired={passwd ? true : false}
+              id="manager-password-confirmation"
+              label={t('Confirmar senha')}
+              placeholder={t('Digite a senha novamente')}
+              value={passwdConfirm}
+              handleChange={(ev) => setPasswdConfirm(ev.target.value)}
+            />
+          </>
+        ) : (
+          <Text mt="6" color="black">
+            <Text
+              w="auto"
+              as="span"
+              textDecor="underline"
+              cursor="pointer"
+              onClick={() => setIsEditingPasswd(true)}
+            >
+              {t('Editar senha de acesso')}
+            </Text>
+          </Text>
+        )}
         <PageFooter onboarding={onboarding} redirect={redirect} isLoading={isLoading} />
       </form>
       <SuccessAndErrorHandler
