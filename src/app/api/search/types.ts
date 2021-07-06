@@ -6,7 +6,7 @@ export type BusinessesFilter = {
 };
 
 export type BasicUserFilter = {
-  type: 'situation' | 'courierAddress.state' | 'courierAddress.city' | 'state' | 'city';
+  type: 'situation' | 'courierAddress.state' | 'courierAddress.city' | 'state' | 'city' | 'status';
   value: string;
 };
 

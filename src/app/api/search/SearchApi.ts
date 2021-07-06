@@ -150,8 +150,17 @@ export default class SearchApi {
       }, [])
       .join(' AND ');
 
+    const statusFilter = filters
+      ?.reduce<string[]>((result, filter) => {
+        if (filter.type === 'status') return [...result, `status: ${filter.value}`];
+        return result;
+      }, [])
+      .join(' OR ');
+
     const getResultFilters = () => {
-      const filters = [situationFilter, placeFilter].filter((str) => str !== '').join(' AND ');
+      const filters = [situationFilter, placeFilter, statusFilter]
+        .filter((str) => str !== '')
+        .join(' AND ');
       return filters;
     };
 

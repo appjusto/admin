@@ -1,8 +1,8 @@
 import { ArrowDownIcon, DeleteIcon } from '@chakra-ui/icons';
-import { Button, Flex, HStack, Text } from '@chakra-ui/react';
+import { Button, Checkbox, CheckboxGroup, Flex, HStack, Text } from '@chakra-ui/react';
 import { BasicUserFilter } from 'app/api/search/types';
 import { useBasicUsersSearch } from 'app/api/search/useBasicUsersSearch';
-import { CourierAlgolia } from 'appjusto-types';
+import { CourierAlgolia, CourierStatus } from 'appjusto-types';
 import { FilterText } from 'common/components/backoffice/FilterText';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import React from 'react';
@@ -24,6 +24,10 @@ const CouriersPage = () => {
   const [state, setState] = React.useState('');
   const [city, setCity] = React.useState('');
   const [filterBar, setFilterBar] = React.useState('all');
+  const [filterCheck, setFilterCheck] = React.useState<CourierStatus[]>([
+    'available',
+    'unavailable',
+  ]);
   const [filters, setFilters] = React.useState<BasicUserFilter[]>([]);
 
   const { results: couriers, fetchNextPage, refetch } = useBasicUsersSearch<CourierAlgolia>(
@@ -44,6 +48,7 @@ const CouriersPage = () => {
     setState('');
     setCity('');
     setFilterBar('all');
+    setFilterCheck(['available', 'unavailable']);
   };
 
   const handleFilters = React.useCallback(() => {
@@ -64,9 +69,14 @@ const CouriersPage = () => {
         { type: 'situation', value: 'pending' },
       ];
     else if (filterBar !== 'all') situationArray = [{ type: 'situation', value: filterBar }];
+    // status
+    let statusArray = filterCheck.map((str) => ({
+      type: 'status',
+      value: str,
+    })) as BasicUserFilter[];
     // create filters
-    setFilters([...stateArray, ...cityArray, ...situationArray]);
-  }, [state, city, filterBar]);
+    setFilters([...stateArray, ...cityArray, ...situationArray, ...statusArray]);
+  }, [state, city, filterBar, filterCheck]);
 
   // side effects
   React.useEffect(() => {
@@ -76,7 +86,7 @@ const CouriersPage = () => {
 
   React.useEffect(() => {
     handleFilters();
-  }, [state, city, filterBar, handleFilters]);
+  }, [state, city, filterBar, filterCheck, handleFilters]);
 
   // UI
   return (
@@ -149,6 +159,26 @@ const CouriersPage = () => {
         <Text fontSize="lg" fontWeight="700" lineHeight="26px">
           {t(`${couriers?.length ?? '0'} itens na lista`)}
         </Text>
+        <CheckboxGroup
+          colorScheme="green"
+          value={filterCheck}
+          onChange={(values: CourierStatus[]) => setFilterCheck(values)}
+        >
+          <HStack
+            alignItems="flex-start"
+            color="black"
+            spacing={8}
+            fontSize="16px"
+            lineHeight="22px"
+          >
+            <Checkbox iconColor="white" value="available">
+              {t('Disponível')}
+            </Checkbox>
+            <Checkbox iconColor="white" value="unavailable">
+              {t('Indisponível')}
+            </Checkbox>
+          </HStack>
+        </CheckboxGroup>
       </HStack>
       <CouriersTable couriers={couriers} />
       <Button mt="8" variant="grey" onClick={fetchNextPage}>
