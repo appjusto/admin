@@ -1,4 +1,4 @@
-import { ArrowDownIcon } from '@chakra-ui/icons';
+import { ArrowDownIcon, DeleteIcon } from '@chakra-ui/icons';
 import { Button, Flex, HStack, Stack, Text } from '@chakra-ui/react';
 import { useObserveOrdersHistory } from 'app/api/order/useObserveOrdersHistory';
 import { useContextBusinessId } from 'app/state/business/context';
@@ -45,6 +45,12 @@ const OrdersHistoryPage = () => {
     history.replace(path);
   };
 
+  const clearFilters = () => {
+    setSearchId('');
+    setSearchFrom('');
+    setSearchTo('');
+  };
+
   // UI
   return (
     <>
@@ -57,7 +63,7 @@ const OrdersHistoryPage = () => {
         maxW="700px"
       />
       <Flex mt="8">
-        <Stack direction={{ base: 'column', md: 'row' }} spacing={4}>
+        <Stack alignItems={{ md: 'end' }} direction={{ base: 'column', md: 'row' }} spacing={4}>
           <CustomInput
             mt="0"
             maxW="212px"
@@ -83,6 +89,12 @@ const OrdersHistoryPage = () => {
             onChange={(event) => setSearchTo(event.target.value)}
             label={t('Até')}
           />
+          <HStack spacing={2} color="#697667" cursor="pointer" onClick={clearFilters}>
+            <DeleteIcon />
+            <Text w="120px" fontSize="15px" lineHeight="21px">
+              {t('Limpar filtros')}
+            </Text>
+          </HStack>
         </Stack>
       </Flex>
       <HStack mt="6" spacing={8} color="black">

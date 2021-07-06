@@ -41,7 +41,7 @@ const OrdersPage = () => {
     history.replace(path);
   };
 
-  const cleanFilters = () => {
+  const clearFilters = () => {
     setFilterBar('all');
     setSearchFrom('');
     setSearchTo('');
@@ -136,7 +136,7 @@ const OrdersPage = () => {
             {t('Cancelados')}
           </FilterText>
         </HStack>
-        <HStack spacing={2} color="#697667" cursor="pointer" onClick={cleanFilters}>
+        <HStack spacing={2} color="#697667" cursor="pointer" onClick={clearFilters}>
           <DeleteIcon />
           <Text fontSize="15px" lineHeight="21px">
             {t('Limpar filtro')}
