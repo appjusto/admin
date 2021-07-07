@@ -1,6 +1,5 @@
 import { Box, Heading, Text } from '@chakra-ui/react';
 import * as cpfutils from '@fnando/cpf';
-import { useCreateAndUpdateFirebaseUsers } from 'app/api/auth/useCreateAndUpdateFirebaseUsers';
 import { useUpdateManagerProfile } from 'app/api/manager/useUpdateManagerProfile';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
@@ -27,7 +26,7 @@ import { t } from 'utils/i18n';
 export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
   // context
   const user = useContextFirebaseUser();
-  const { updateUsersPassword, updateUsersPasswordResult } = useCreateAndUpdateFirebaseUsers();
+  //const { updateUsersPassword, updateUsersPasswordResult } = useCreateAndUpdateFirebaseUsers();
   const { business } = useContextBusiness();
   const { manager } = useContextManagerProfile();
   const { updateProfile, updateResult } = useUpdateManagerProfile();
@@ -63,43 +62,6 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
     setCPF('');
   }, []);
 
-  const updateProfileWithPassword = async () => {
-    if (passwd !== passwdConfirm) {
-      setError({
-        status: true,
-        error: null,
-        message: { title: 'As senhas informadas não são iguais.' },
-      });
-      return passwdRef?.current?.focus();
-    }
-    if (!passwdIsValid) {
-      setError({
-        status: true,
-        error: null,
-        message: { title: 'A senha informada não é válida.' },
-      });
-      return passwdRef?.current?.focus();
-    }
-    try {
-      await updateUsersPassword(passwd);
-      return await updateProfile({
-        name,
-        surname,
-        phone: phoneNumber,
-        cpf,
-        isPasswordActive: true,
-      });
-    } catch (error) {
-      console.log(error);
-      setError({
-        status: true,
-        error: error,
-        message: { title: 'Não foi possível salvar a senha.' },
-      });
-      return;
-    }
-  };
-
   const onSubmitHandler = async () => {
     submission.current += 1;
     setError(initialError);
@@ -120,14 +82,44 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
       return phoneNumberRef?.current?.focus();
     }
     if (passwd) {
-      updateProfileWithPassword();
+      if (passwd !== passwdConfirm) {
+        setError({
+          status: true,
+          error: null,
+          message: { title: 'As senhas informadas não são iguais.' },
+        });
+        return passwdRef?.current?.focus();
+      }
+      if (!passwdIsValid) {
+        setError({
+          status: true,
+          error: null,
+          message: { title: 'A senha informada não é válida.' },
+        });
+        return passwdRef?.current?.focus();
+      }
+      const data = {
+        changes: {
+          name,
+          surname,
+          phone: phoneNumber,
+          cpf,
+          isPasswordActive: true,
+        },
+        password: passwd,
+      };
+      await updateProfile(data);
     } else {
-      await updateProfile({
-        name,
-        surname,
-        phone: phoneNumber,
-        cpf,
-      });
+      const data = {
+        changes: {
+          name,
+          surname,
+          phone: phoneNumber,
+          cpf,
+          isPasswordActive: true,
+        },
+      };
+      await updateProfile(data);
     }
   };
 
@@ -154,13 +146,8 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
         status: true,
         error: updateError,
       });
-    if (updateUsersPasswordResult.isError) {
-      setError({
-        status: true,
-        error: updateUsersPasswordResult.error,
-      });
-    }
-  }, [isError, updateError, updateUsersPasswordResult.isError, updateUsersPasswordResult.error]);
+  }, [isError, updateError]);
+
   // UI
   if (isSuccess && redirect) return <Redirect to={redirect} push />;
   return (
@@ -253,6 +240,7 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
             <CustomPasswordInput
               ref={passwdConfirmRef}
               isRequired={passwd ? true : false}
+              isDisabled={!passwd ? true : false}
               id="manager-password-confirmation"
               label={t('Confirmar senha')}
               placeholder={t('Digite a senha novamente')}

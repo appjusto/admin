@@ -44,19 +44,13 @@ export const CustomPasswordInput = React.forwardRef<HTMLInputElement, CustomPass
     // handlers
     const handleValidity = () => {
       const isValid = /^(?=.*\d)(?=.*[A-Z]).{8,}$/.test(value);
-      setIsInvalid(!isValid);
+      if (value !== '') setIsInvalid(!isValid);
+      else setIsInvalid(false);
       if (getValidity) getValidity(isValid);
     };
     // UI
     const styles = useMultiStyleConfig('CustomInput', {});
     const controlProps = { maxW, mt, mb, mr, ml, flex };
-    /*const handleValidity = (ev: ChangeEvent<HTMLInputElement>) => {
-      if (value !== '' && !ev.target.validity.valid) {
-        setIsInvalid(true);
-      } else {
-        setIsInvalid(false);
-      }
-    };*/
     return (
       <FormControl id={id} sx={styles.control} {...controlProps}>
         {label && <FormLabel sx={styles.label}>{label}</FormLabel>}
