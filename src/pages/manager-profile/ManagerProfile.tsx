@@ -42,6 +42,7 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const [passwd, setPasswd] = React.useState('');
   const [passwdConfirm, setPasswdConfirm] = React.useState('');
   const [passwdIsValid, setPasswdIsValid] = React.useState(false);
+  const [currentPasswd, setCurrentPasswd] = React.useState('');
 
   // refs
   const submission = React.useRef(0);
@@ -50,9 +51,14 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const phoneNumberRef = React.useRef<HTMLInputElement>(null);
   const passwdRef = React.useRef<HTMLInputElement>(null);
   const passwdConfirmRef = React.useRef<HTMLInputElement>(null);
+  const currentPasswdRef = React.useRef<HTMLInputElement>(null);
 
   // helpers
   const isCPFValid = () => cpfutils.isValid(cpf);
+  const isReauthenticationRequired = React.useCallback(() => {
+    if (updateError && JSON.stringify(updateError).includes('recent authentication')) return true;
+    else return false;
+  }, [updateError]);
 
   // handlers
   const clearState = React.useCallback(() => {
@@ -107,6 +113,7 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
           isPasswordActive: true,
         },
         password: passwd,
+        currentPassword: currentPasswd,
       };
       await updateProfile(data);
     } else {
@@ -141,13 +148,18 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
   }, [manager, clearState]);
 
   React.useEffect(() => {
-    if (isError)
-      setError({
-        status: true,
-        error: updateError,
-      });
-  }, [isError, updateError]);
-
+    if (isError) {
+      if (isReauthenticationRequired()) {
+        console.warn('User reauthentication required');
+        currentPasswdRef.current?.focus();
+      } else {
+        setError({
+          status: true,
+          error: updateError,
+        });
+      }
+    }
+  }, [isError, updateError, isReauthenticationRequired]);
   // UI
   if (isSuccess && redirect) return <Redirect to={redirect} push />;
   return (
@@ -222,6 +234,33 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
                 'Se preferir, você pode definir uma senha de acesso a plataforma. Quem estiver com o login e senha não precisará do link de confirmação enviado por e-mail.'
               )}
             </Text>
+            {isReauthenticationRequired() && (
+              <>
+                <Text
+                  mt="4"
+                  p="2"
+                  fontSize="sm"
+                  maxW="580px"
+                  bg="#FFFFCC"
+                  border="1px solid #FFBE00"
+                  borderRadius="lg"
+                >
+                  {t(
+                    'Como já faz algum tempo desde o seu último login, é preciso informar a sua senha atual, para prosseguir.'
+                  )}
+                </Text>
+                <CustomPasswordInput
+                  ref={currentPasswdRef}
+                  mt="2"
+                  id="manager-current-password"
+                  label={t('Senha atual')}
+                  placeholder={t('Digite a sua senha atual')}
+                  value={currentPasswd}
+                  handleChange={(ev) => setCurrentPasswd(ev.target.value)}
+                  getValidity={setPasswdIsValid}
+                />
+              </>
+            )}
             <Text mt="4" fontSize="xs" maxW="580px">
               {t(
                 'A senha precisará ter no mínimo 8 caracteres, com pelo menos uma letra maíuscula e um número.'
