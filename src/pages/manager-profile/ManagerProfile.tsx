@@ -42,6 +42,7 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const [isEditingPasswd, setIsEditingPasswd] = React.useState(true);
   const [passwd, setPasswd] = React.useState('');
   const [passwdConfirm, setPasswdConfirm] = React.useState('');
+  const [passwdIsValid, setPasswdIsValid] = React.useState(false);
 
   // refs
   const submission = React.useRef(0);
@@ -61,6 +62,43 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
     setPhoneNumber('');
     setCPF('');
   }, []);
+
+  const updateProfileWithPassword = async () => {
+    if (passwd !== passwdConfirm) {
+      setError({
+        status: true,
+        error: null,
+        message: { title: 'As senhas informadas não são iguais.' },
+      });
+      return passwdRef?.current?.focus();
+    }
+    if (!passwdIsValid) {
+      setError({
+        status: true,
+        error: null,
+        message: { title: 'A senha informada não é válida.' },
+      });
+      return passwdRef?.current?.focus();
+    }
+    try {
+      await updateUsersPassword(passwd);
+      return await updateProfile({
+        name,
+        surname,
+        phone: phoneNumber,
+        cpf,
+        isPasswordActive: true,
+      });
+    } catch (error) {
+      console.log(error);
+      setError({
+        status: true,
+        error: error,
+        message: { title: 'Não foi possível salvar a senha.' },
+      });
+      return;
+    }
+  };
 
   const onSubmitHandler = async () => {
     submission.current += 1;
@@ -82,39 +120,15 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
       return phoneNumberRef?.current?.focus();
     }
     if (passwd) {
-      if (passwd !== passwdConfirm) {
-        setError({
-          status: true,
-          error: null,
-          message: { title: 'As senhas informadas não são iguais.' },
-        });
-        return passwdRef?.current?.focus();
-      }
-      try {
-        await updateUsersPassword(passwd);
-        return await updateProfile({
-          name,
-          surname,
-          phone: phoneNumber,
-          cpf,
-          isPasswordActive: true,
-        });
-      } catch (error) {
-        console.log(error);
-        setError({
-          status: true,
-          error: error,
-          message: { title: 'Não foi possível salvar a senha.' },
-        });
-        return;
-      }
+      updateProfileWithPassword();
+    } else {
+      await updateProfile({
+        name,
+        surname,
+        phone: phoneNumber,
+        cpf,
+      });
     }
-    await updateProfile({
-      name,
-      surname,
-      phone: phoneNumber,
-      cpf,
-    });
   };
 
   // side effects
@@ -234,6 +248,7 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
               placeholder={t('Digite uma senha')}
               value={passwd}
               handleChange={(ev) => setPasswd(ev.target.value)}
+              getValidity={setPasswdIsValid}
             />
             <CustomPasswordInput
               ref={passwdConfirmRef}
