@@ -1,9 +1,11 @@
-import { Box, Heading, Text } from '@chakra-ui/react';
+import { Box, Button, Heading, Text } from '@chakra-ui/react';
 import * as cpfutils from '@fnando/cpf';
+import { useAuthentication } from 'app/api/auth/useAuthentication';
 import { useUpdateManagerProfile } from 'app/api/manager/useUpdateManagerProfile';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextManagerProfile } from 'app/state/manager/context';
+import { AlertSuccess } from 'common/components/AlertSuccess';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
 import { initialError } from 'common/components/error/utils';
 import { CustomInput } from 'common/components/form/input/CustomInput';
@@ -26,6 +28,7 @@ import { t } from 'utils/i18n';
 export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
   // context
   const user = useContextFirebaseUser();
+  const { sendSignInLinkToEmail, sendingLinkResult } = useAuthentication();
   //const { updateUsersPassword, updateUsersPasswordResult } = useCreateAndUpdateFirebaseUsers();
   const { business } = useContextBusiness();
   const { manager } = useContextManagerProfile();
@@ -234,58 +237,118 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
                 'Se preferir, você pode definir uma senha de acesso a plataforma. Quem estiver com o login e senha não precisará do link de confirmação enviado por e-mail.'
               )}
             </Text>
-            {isReauthenticationRequired() && (
+            {isReauthenticationRequired() ? (
+              manager?.isPasswordActive ? (
+                <>
+                  <Text
+                    mt="4"
+                    p="2"
+                    fontSize="sm"
+                    maxW="580px"
+                    bg="#FFFFCC"
+                    border="1px solid #FFBE00"
+                    borderRadius="lg"
+                  >
+                    {t(
+                      'Como já faz algum tempo desde o seu último login, é preciso informar a sua senha atual, para prosseguir.'
+                    )}
+                  </Text>
+                  <CustomPasswordInput
+                    ref={currentPasswdRef}
+                    mt="2"
+                    id="manager-current-password"
+                    label={t('Senha atual')}
+                    placeholder={t('Digite a sua senha atual')}
+                    value={currentPasswd}
+                    handleChange={(ev) => setCurrentPasswd(ev.target.value)}
+                    getValidity={setPasswdIsValid}
+                  />
+                  <Text mt="4" fontSize="xs" maxW="580px">
+                    {t(
+                      'A senha precisará ter no mínimo 8 caracteres, com pelo menos uma letra maíuscula e um número.'
+                    )}
+                  </Text>
+                  <CustomPasswordInput
+                    ref={passwdRef}
+                    mt="2"
+                    id="manager-password"
+                    label={t('Senha de acesso')}
+                    placeholder={t('Digite uma senha')}
+                    value={passwd}
+                    handleChange={(ev) => setPasswd(ev.target.value)}
+                    getValidity={setPasswdIsValid}
+                  />
+                  <CustomPasswordInput
+                    ref={passwdConfirmRef}
+                    isRequired={passwd ? true : false}
+                    isDisabled={!passwd ? true : false}
+                    id="manager-password-confirmation"
+                    label={t('Confirmar senha')}
+                    placeholder={t('Digite a senha novamente')}
+                    value={passwdConfirm}
+                    handleChange={(ev) => setPasswdConfirm(ev.target.value)}
+                  />
+                </>
+              ) : (
+                <>
+                  <Text
+                    mt="4"
+                    p="2"
+                    fontSize="sm"
+                    maxW="580px"
+                    bg="#FFFFCC"
+                    border="1px solid #FFBE00"
+                    borderRadius="lg"
+                  >
+                    {t(
+                      'Como já faz algum tempo desde o seu último login, e ainda não há senha cadastrada, é preciso realizar um novo login (por meio do link de acesso que é enviado ao seu e-mail) antes de cadastrar sua senha. Deseja enviar o link de acesso?'
+                    )}
+                  </Text>
+                  <Button
+                    mt="4"
+                    w="100%"
+                    onClick={() => sendSignInLinkToEmail(manager?.email)}
+                    isLoading={sendingLinkResult.isLoading}
+                  >
+                    {t('Enviar link de acesso')}
+                  </Button>
+                  {sendingLinkResult.isSuccess && (
+                    <AlertSuccess
+                      title={t('Pronto!')}
+                      description={t('O link de acesso foi enviado para seu e-mail.')}
+                    />
+                  )}
+                </>
+              )
+            ) : (
               <>
-                <Text
-                  mt="4"
-                  p="2"
-                  fontSize="sm"
-                  maxW="580px"
-                  bg="#FFFFCC"
-                  border="1px solid #FFBE00"
-                  borderRadius="lg"
-                >
+                <Text mt="4" fontSize="xs" maxW="580px">
                   {t(
-                    'Como já faz algum tempo desde o seu último login, é preciso informar a sua senha atual, para prosseguir.'
+                    'A senha precisará ter no mínimo 8 caracteres, com pelo menos uma letra maíuscula e um número.'
                   )}
                 </Text>
                 <CustomPasswordInput
-                  ref={currentPasswdRef}
+                  ref={passwdRef}
                   mt="2"
-                  id="manager-current-password"
-                  label={t('Senha atual')}
-                  placeholder={t('Digite a sua senha atual')}
-                  value={currentPasswd}
-                  handleChange={(ev) => setCurrentPasswd(ev.target.value)}
+                  id="manager-password"
+                  label={t('Senha de acesso')}
+                  placeholder={t('Digite uma senha')}
+                  value={passwd}
+                  handleChange={(ev) => setPasswd(ev.target.value)}
                   getValidity={setPasswdIsValid}
+                />
+                <CustomPasswordInput
+                  ref={passwdConfirmRef}
+                  isRequired={passwd ? true : false}
+                  isDisabled={!passwd ? true : false}
+                  id="manager-password-confirmation"
+                  label={t('Confirmar senha')}
+                  placeholder={t('Digite a senha novamente')}
+                  value={passwdConfirm}
+                  handleChange={(ev) => setPasswdConfirm(ev.target.value)}
                 />
               </>
             )}
-            <Text mt="4" fontSize="xs" maxW="580px">
-              {t(
-                'A senha precisará ter no mínimo 8 caracteres, com pelo menos uma letra maíuscula e um número.'
-              )}
-            </Text>
-            <CustomPasswordInput
-              ref={passwdRef}
-              mt="2"
-              id="manager-password"
-              label={t('Senha de acesso')}
-              placeholder={t('Digite uma senha')}
-              value={passwd}
-              handleChange={(ev) => setPasswd(ev.target.value)}
-              getValidity={setPasswdIsValid}
-            />
-            <CustomPasswordInput
-              ref={passwdConfirmRef}
-              isRequired={passwd ? true : false}
-              isDisabled={!passwd ? true : false}
-              id="manager-password-confirmation"
-              label={t('Confirmar senha')}
-              placeholder={t('Digite a senha novamente')}
-              value={passwdConfirm}
-              handleChange={(ev) => setPasswdConfirm(ev.target.value)}
-            />
           </>
         ) : (
           <Text mt="6" color="black">

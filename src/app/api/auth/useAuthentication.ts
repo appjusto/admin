@@ -20,6 +20,9 @@ export const useAuthentication = () => {
     if (data.password) return api.auth().signInWithEmailAndPassword(data.email, data.password);
     else return api.auth().sendSignInLinkToEmail(data.email);
   });
+  const [sendSignInLinkToEmail, sendingLinkResult] = useMutation(async (email: string) =>
+    api.auth().sendSignInLinkToEmail(email)
+  );
   const [signInWithEmailLink, signInResult] = useMutation(async (data: SignInData) =>
     api.auth().signInWithEmailLink(data.email, data.link)
   );
@@ -33,6 +36,8 @@ export const useAuthentication = () => {
     signInWithEmailLink,
     signInResult,
     updateUsersPassword,
+    sendSignInLinkToEmail,
+    sendingLinkResult,
     signOut,
   };
 };
