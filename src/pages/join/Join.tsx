@@ -69,7 +69,6 @@ const Join = () => {
               onChange={(ev) => setEmail(ev.target.value)}
             />
           </FormControl>
-
           <Button
             width="full"
             mt="6"
@@ -78,7 +77,6 @@ const Join = () => {
           >
             {t('Entrar')}
           </Button>
-
           <Box mt="6">
             {isError && (
               <Alert status="error">

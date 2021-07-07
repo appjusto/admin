@@ -24,28 +24,19 @@ const Login = () => {
   // context
   const { login, loginResult, signOut } = useAuthentication();
   const { isLoading, isSuccess, isError, error: loginError } = loginResult;
-
   // refs
   const emailRef = React.useRef<HTMLInputElement>(null);
   const passwdRef = React.useRef<HTMLInputElement>(null);
-
   // state
   const [email, setEmail] = React.useState('');
   const [passwd, setPasswd] = React.useState('');
   const [isPassword, setIsPassword] = React.useState(false);
   const [error, setError] = React.useState<InitialError>(initialError);
-
-  // handlers
-  const loginHandler = () => {
-    return login({ email, password: passwd });
-  };
-
   // side effects
   React.useEffect(() => {
     signOut();
     emailRef?.current?.focus();
   }, [signOut]);
-
   React.useEffect(() => {
     if (isError)
       setError({
@@ -53,7 +44,6 @@ const Login = () => {
         error: loginError,
       });
   }, [isError, loginError]);
-
   // UI
   if (isPassword && isSuccess) return <Redirect to="/app" />;
   return (
@@ -81,7 +71,7 @@ const Login = () => {
           flexDir="column"
           onSubmit={(ev) => {
             ev.preventDefault();
-            loginHandler();
+            login({ email, password: passwd });
           }}
         >
           <CustomInput

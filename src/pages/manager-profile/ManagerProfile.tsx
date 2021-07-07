@@ -29,7 +29,6 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
   // context
   const user = useContextFirebaseUser();
   const { sendSignInLinkToEmail, sendingLinkResult } = useAuthentication();
-  //const { updateUsersPassword, updateUsersPasswordResult } = useCreateAndUpdateFirebaseUsers();
   const { business } = useContextBusiness();
   const { manager } = useContextManagerProfile();
   const { updateProfile, updateResult } = useUpdateManagerProfile();
