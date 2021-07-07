@@ -1,6 +1,7 @@
 import { Box, Button, Heading, Text } from '@chakra-ui/react';
 import * as cpfutils from '@fnando/cpf';
 import { useAuthentication } from 'app/api/auth/useAuthentication';
+import { useFirebaseUserRole } from 'app/api/auth/useFirebaseUserRole';
 import { useUpdateManagerProfile } from 'app/api/manager/useUpdateManagerProfile';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
@@ -28,6 +29,7 @@ import { t } from 'utils/i18n';
 export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
   // context
   const user = useContextFirebaseUser();
+  const { role } = useFirebaseUserRole();
   const { sendSignInLinkToEmail, sendingLinkResult } = useAuthentication();
   const { business } = useContextBusiness();
   const { manager } = useContextManagerProfile();
@@ -214,7 +216,7 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
         />
         <CustomPatternInput
           isRequired
-          isDisabled={business?.situation === 'approved'}
+          isDisabled={role === 'manager' && business?.situation === 'approved'}
           ref={cpfRef}
           id="manager-cpf"
           label={t('CPF')}
@@ -289,7 +291,7 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
                   />
                 </>
               ) : (
-                <>
+                <Box mb="8">
                   <Text
                     mt="4"
                     p="2"
@@ -317,7 +319,7 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
                       description={t('O link de acesso foi enviado para seu e-mail.')}
                     />
                   )}
-                </>
+                </Box>
               )
             ) : (
               <>
