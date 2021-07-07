@@ -14,7 +14,13 @@ export const useUpdateManagerProfile = () => {
   const { manager } = useContextManagerProfile();
   // mutations
   const [updateProfile, updateResult] = useMutation(async (data: UpdateManagerData) => {
-    if (data.password) await api.auth().updateUsersPassword(data.password);
+    if (data.password) {
+      try {
+        await api.auth().updateUsersPassword(data.password);
+      } catch (error) {
+        throw new Error(error);
+      }
+    }
     return api.manager().updateProfile(manager?.id!, data.changes);
   });
   // return
