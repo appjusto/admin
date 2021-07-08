@@ -1,9 +1,10 @@
 import { Button, Flex } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useContextBusiness } from 'app/state/business/context';
-import { BusinessSchedule } from 'appjusto-types/business';
+import { BusinessSchedule, ScheduleObject } from 'appjusto-types/business';
 import { DaySchedule } from 'common/components/DaySchedule';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
+import { initialError } from 'common/components/error/utils';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
 import { t } from 'utils/i18n';
@@ -24,8 +25,8 @@ const SchedulesPage = () => {
   // context
   const { business } = useContextBusiness();
   const { updateBusinessProfile, updateResult } = useBusinessProfile();
-  const { isLoading, isSuccess, isError, error } = updateResult;
-
+  const { isLoading, isSuccess, isError, error: updateError } = updateResult;
+  const [error, setError] = React.useState(initialError);
   // state
   const [schedules, setSchedules] = React.useState<BusinessSchedule>(initialState);
 
@@ -81,7 +82,9 @@ const SchedulesPage = () => {
         if (index1 === stateIndex) {
           const newDaySchedule = day.schedule.map((schedule, index2) => {
             if (index2 === scheduleIndex) {
-              const newSchedule = { ...schedule, [field]: value };
+              let newValue = value;
+              if (value.length === 1 && Number(value) > 2) newValue = '0' + value;
+              const newSchedule = { ...schedule, [field]: newValue };
               return newSchedule;
             } else {
               return schedule;
@@ -102,7 +105,9 @@ const SchedulesPage = () => {
     value: string
   ) => {
     let newValue = value;
-    if (value.length < 4) newValue = value + '0'.repeat(4 - value.length);
+    if (value.length < 4) {
+      newValue = value + '0'.repeat(4 - value.length);
+    }
     setSchedules((prevSchedule) => {
       const newState = prevSchedule.map((day, index1) => {
         if (index1 === stateIndex) {
@@ -135,8 +140,28 @@ const SchedulesPage = () => {
       return newState;
     });
   };
+  const schedulesValidation = (schedules: ScheduleObject[]) => {
+    let result = true;
+    schedules.forEach((scheduleObject) => {
+      scheduleObject.schedule.forEach((item, index) => {
+        if (Number(item.from) > Number(item.to)) result = false;
+        if (index > 0 && Number(item.from) < Number(scheduleObject.schedule[index - 1].to))
+          result = false;
+      });
+    });
+    return result;
+  };
   const onSubmitHandler = async (event: any) => {
     event.preventDefault();
+    const isValid = schedulesValidation(schedules);
+    console.log(isValid);
+    if (!isValid)
+      return setError({
+        status: true,
+        error: null,
+        message: { title: 'Alguns horários não estão corretos.' },
+      });
+    else setError(initialError);
     submission.current += 1;
     await updateBusinessProfile({ schedules });
   };
@@ -146,6 +171,14 @@ const SchedulesPage = () => {
       setSchedules(business?.schedules);
     }
   }, [business?.schedules]);
+  React.useEffect(() => {
+    if (isError) {
+      setError({
+        status: true,
+        error: updateError,
+      });
+    }
+  }, [isError, updateError]);
   // UI
   return (
     <>
@@ -187,8 +220,9 @@ const SchedulesPage = () => {
         <SuccessAndErrorHandler
           submission={submission.current}
           isSuccess={isSuccess}
-          isError={isError}
-          error={error}
+          isError={error.status}
+          error={error.error}
+          errorMessage={error.message}
         />
       </Flex>
     </>
