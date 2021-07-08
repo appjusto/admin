@@ -17,8 +17,6 @@ import React, { Dispatch, SetStateAction } from 'react';
 import { useParams } from 'react-router';
 import { courierReducer } from './courierReducer';
 
-export type Dates = { start?: string; end?: string };
-
 type Validation = { cpf: boolean; cnpj: boolean; agency: boolean; account: boolean };
 interface CourierProfileContextProps {
   courier: WithId<CourierProfile> | undefined | null;
@@ -27,10 +25,12 @@ interface CourierProfileContextProps {
   marketPlace?: MarketplaceAccountInfo;
   contextValidation: Validation;
   orders?: WithId<Order>[] | null;
-  dates?: Dates;
+  dateStart?: string;
+  dateEnd?: string;
   handleProfileChange(key: string, value: any): void;
   setContextValidation: Dispatch<SetStateAction<Validation>>;
-  setDates(dates: Dates): void;
+  setDateStart(start: string): void;
+  setDateEnd(end: string): void;
 }
 
 const CourierProfileContext = React.createContext<CourierProfileContextProps>(
@@ -63,8 +63,9 @@ export const CourierProvider = ({ children }: Props) => {
     agency: true,
     account: true,
   });
-  const [dates, setDates] = React.useState<Dates>();
-  const orders = useCourierOrders(courierId, dates?.start, dates?.end);
+  const [dateStart, setDateStart] = React.useState<string>();
+  const [dateEnd, setDateEnd] = React.useState<string>();
+  const orders = useCourierOrders(courierId, dateStart, dateEnd);
 
   // handlers
   const handleProfileChange = (key: string, value: any) => {
@@ -101,10 +102,12 @@ export const CourierProvider = ({ children }: Props) => {
         marketPlace,
         contextValidation,
         orders,
-        dates,
+        dateStart,
+        dateEnd,
         handleProfileChange,
         setContextValidation,
-        setDates,
+        setDateStart,
+        setDateEnd,
       }}
     >
       {children}
