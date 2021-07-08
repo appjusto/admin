@@ -51,7 +51,7 @@ export const BOOrderListItem = ({ order }: Props) => {
           h="24px"
           justifyContent="center"
           alignItems="center"
-          bg={issuesFound ? 'red' : 'white'}
+          bg={issuesFound ? 'red' : 'none'}
           borderRadius="lg"
         >
           <MdInfoOutline color={issuesFound ? 'white' : '#C8D7CB'} />

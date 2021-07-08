@@ -15,6 +15,7 @@ interface DayScheduleProps {
   handleCheck(value: boolean): void;
   handleBreak(value: string): void;
   onChangeValue(index: number, field: string, value: string): void;
+  autoCompleteSchedules(index: number, field: string, value: string): void;
   replicate(): void;
 }
 
@@ -26,6 +27,7 @@ export const DaySchedule = ({
   handleCheck,
   handleBreak,
   onChangeValue,
+  autoCompleteSchedules,
   replicate,
 }: DayScheduleProps) => {
   // state
@@ -86,6 +88,7 @@ export const DaySchedule = ({
                 mask={TimeMask}
                 formatter={TimeFormatter}
                 parser={numbersOnlyParser}
+                onBlur={() => autoCompleteSchedules(index, 'from', schedule.from)}
                 isRequired
               />
               <Input
@@ -101,6 +104,7 @@ export const DaySchedule = ({
                 mask={TimeMask}
                 formatter={TimeFormatter}
                 parser={numbersOnlyParser}
+                onBlur={() => autoCompleteSchedules(index, 'to', schedule.to)}
                 isRequired
               />
             </Flex>

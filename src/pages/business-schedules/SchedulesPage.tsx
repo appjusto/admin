@@ -95,6 +95,33 @@ const SchedulesPage = () => {
       return newState;
     });
   };
+  const autoCompleteSchedules = (
+    stateIndex: number,
+    scheduleIndex: number,
+    field: string,
+    value: string
+  ) => {
+    let newValue = value;
+    if (value.length < 4) newValue = value + '0'.repeat(4 - value.length);
+    setSchedules((prevSchedule) => {
+      const newState = prevSchedule.map((day, index1) => {
+        if (index1 === stateIndex) {
+          const newDaySchedule = day.schedule.map((schedule, index2) => {
+            if (index2 === scheduleIndex) {
+              const newSchedule = { ...schedule, [field]: newValue };
+              return newSchedule;
+            } else {
+              return schedule;
+            }
+          });
+          return { ...day, schedule: newDaySchedule };
+        } else {
+          return day;
+        }
+      });
+      return newState;
+    });
+  };
   const replicateSchedule = (stateIndex: number) => {
     setSchedules((prevSchedule) => {
       const prevDay = prevSchedule[stateIndex - 1];
@@ -139,6 +166,9 @@ const SchedulesPage = () => {
               handleBreak={(value: string) => handleBreak(index, value)}
               onChangeValue={(scheduleIndex: number, field: string, value: string) =>
                 handleChengeValue(index, scheduleIndex, field, value)
+              }
+              autoCompleteSchedules={(scheduleIndex: number, field: string, value: string) =>
+                autoCompleteSchedules(index, scheduleIndex, field, value)
               }
               replicate={() => replicateSchedule(index)}
             />
