@@ -5,7 +5,7 @@ import { difference } from 'lodash';
 import { useObserveOrders } from 'app/api/order/useObserveOrders';
 import useSound from 'use-sound';
 //@ts-ignore
-import newOrderSound from 'common/sounds/bell-ding.mp3';
+import newOrderSound from 'common/sounds/bell-ding-v3.mp3';
 
 import {
   getAck,
@@ -28,16 +28,14 @@ export const useObserveConfirmedOrders = (businessId?: string, notify: boolean =
   const confirmedOrders = useObserveOrders(statuses, businessId);
   // state
   const [changed, setChanged] = React.useState(false);
-  const [volume, setVolume] = React.useState(2);
   // sound
-  const [playSound] = useSound(newOrderSound, { volume });
+  const [playSound] = useSound(newOrderSound, { volume: 1 });
 
   React.useEffect(() => {
     if (confirmedOrders.length === 0) return;
     playSound();
     const SoundInterval = setInterval(() => {
       playSound();
-      setVolume((prev) => (prev <= 6 ? prev + 1 : prev));
     }, 4000);
     return () => clearInterval(SoundInterval);
   }, [confirmedOrders, playSound]);
