@@ -1,7 +1,8 @@
-import { ArrowDownIcon } from '@chakra-ui/icons';
+import { ArrowDownIcon, DeleteIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, HStack, Text } from '@chakra-ui/react';
 import { useObserveInvoices } from 'app/api/order/useObserveInvoices';
 import { FilterText } from 'common/components/backoffice/FilterText';
+import { CustomDateFilter } from 'common/components/form/input/CustomDateFilter';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import React from 'react';
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
@@ -17,6 +18,7 @@ const InvoicesPage = () => {
   const [searchId, setSearchId] = React.useState('');
   const [searchFrom, setSearchFrom] = React.useState('');
   const [searchTo, setSearchTo] = React.useState('');
+  const [clearDateNumber, setClearDateNumber] = React.useState(0);
   // context
   const { path } = useRouteMatch();
   const history = useHistory();
@@ -25,7 +27,12 @@ const InvoicesPage = () => {
   const closeDrawerHandler = () => {
     history.replace(path);
   };
-
+  const clearFilters = () => {
+    setClearDateNumber((prev) => prev + 1);
+    setSearchId('');
+    setSearchFrom('');
+    setSearchTo('');
+  };
   // side effects
   React.useEffect(() => {
     const { date, time } = getDateTime();
@@ -47,21 +54,10 @@ const InvoicesPage = () => {
             label={t('ID')}
             placeholder={t('ID do pedido')}
           />
-          <CustomInput
-            mt="0"
-            type="date"
-            id="search-name"
-            value={searchFrom}
-            onChange={(event) => setSearchFrom(event.target.value)}
-            label={t('De')}
-          />
-          <CustomInput
-            mt="0"
-            type="date"
-            id="search-name"
-            value={searchTo}
-            onChange={(event) => setSearchTo(event.target.value)}
-            label={t('Até')}
+          <CustomDateFilter
+            getStart={setSearchFrom}
+            getEnd={setSearchTo}
+            clearNumber={clearDateNumber}
           />
         </HStack>
       </Flex>
@@ -70,6 +66,12 @@ const InvoicesPage = () => {
           <FilterText isActive onClick={() => {}}>
             {t('Todas')}
           </FilterText>
+        </HStack>
+        <HStack spacing={2} color="#697667" cursor="pointer" onClick={clearFilters}>
+          <DeleteIcon />
+          <Text fontSize="15px" lineHeight="21px">
+            {t('Limpar filtro')}
+          </Text>
         </HStack>
       </Flex>
       <HStack mt="6" spacing={8} color="black">

@@ -1,17 +1,25 @@
-import { Box, HStack } from '@chakra-ui/react';
+import { Box, BoxProps, HStack } from '@chakra-ui/react';
 import { AlertWarning } from 'common/components/AlertWarning';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import React from 'react';
 import { t } from 'utils/i18n';
 
-interface DateFilterPros {
+interface DateFilterPros extends BoxProps {
   getStart(start: string): void;
   getEnd(end: string): void;
+  clearNumber?: number; // parent state that changes when clear date is required
+  showWarning?: boolean;
 }
 
 const currentYear = new Date().getFullYear();
 
-export const CustomDateFilter = ({ getStart, getEnd }: DateFilterPros) => {
+export const CustomDateFilter = ({
+  getStart,
+  getEnd,
+  clearNumber,
+  showWarning = false,
+  ...props
+}: DateFilterPros) => {
   // state
   const [start, setStart] = React.useState('');
   const [end, setEnd] = React.useState('');
@@ -25,10 +33,15 @@ export const CustomDateFilter = ({ getStart, getEnd }: DateFilterPros) => {
     if (dateValidation(start)) getStart(start);
     if (dateValidation(end)) getEnd(end);
   }, [start, end, getStart, getEnd, dateValidation]);
+  React.useEffect(() => {
+    if (clearNumber === undefined) return;
+    setStart('');
+    setEnd('');
+  }, [clearNumber]);
   // UI
   return (
-    <Box>
-      <HStack mt="4" spacing={4}>
+    <Box {...props}>
+      <HStack spacing={4}>
         <CustomInput
           mt="0"
           type="date"
@@ -48,7 +61,7 @@ export const CustomDateFilter = ({ getStart, getEnd }: DateFilterPros) => {
           isInvalid={!dateValidation(end)}
         />
       </HStack>
-      {(!dateValidation(start) || !dateValidation(end)) && (
+      {showWarning && (!dateValidation(start) || !dateValidation(end)) && (
         <AlertWarning
           description={t(
             'As datas devem partir de 2021 e não podem possuir ano maior que o ano atual.'

@@ -3,6 +3,7 @@ import { Button, Flex, HStack, Radio, RadioGroup, Text } from '@chakra-ui/react'
 import { useObserveOrdersHistory } from 'app/api/order/useObserveOrdersHistory';
 import { OrderStatus, OrderType } from 'appjusto-types';
 import { FilterText } from 'common/components/backoffice/FilterText';
+import { CustomDateFilter } from 'common/components/form/input/CustomDateFilter';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import React from 'react';
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
@@ -26,6 +27,8 @@ const OrdersPage = () => {
   const [orderType, setOrderType] = React.useState<OrderType>('food');
   const [orderStatus, setOrderStatus] = React.useState<OrderStatus>();
 
+  const [clearDateNumber, setClearDateNumber] = React.useState(0);
+
   const { orders, fetchNextPage } = useObserveOrdersHistory(
     null,
     null,
@@ -42,6 +45,8 @@ const OrdersPage = () => {
   };
 
   const clearFilters = () => {
+    setClearDateNumber((prev) => prev + 1);
+    setSearchId('');
     setFilterBar('all');
     setSearchFrom('');
     setSearchTo('');
@@ -73,21 +78,11 @@ const OrdersPage = () => {
             label={t('ID')}
             placeholder={t('ID do pedido')}
           />
-          <CustomInput
-            mt="0"
-            type="date"
-            id="search-name"
-            value={searchFrom}
-            onChange={(event) => setSearchFrom(event.target.value)}
-            label={t('De')}
-          />
-          <CustomInput
-            mt="0"
-            type="date"
-            id="search-name"
-            value={searchTo}
-            onChange={(event) => setSearchTo(event.target.value)}
-            label={t('Até')}
+          <CustomDateFilter
+            //key={clearDateFilterRef.current}
+            getStart={setSearchFrom}
+            getEnd={setSearchTo}
+            clearNumber={clearDateNumber}
           />
         </HStack>
       </Flex>
