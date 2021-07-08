@@ -4,6 +4,7 @@ import { useObserveOrdersHistory } from 'app/api/order/useObserveOrdersHistory';
 import { useContextBusinessId } from 'app/state/business/context';
 import { OrderStatus } from 'appjusto-types';
 import Container from 'common/components/Container';
+import { CustomDateFilter } from 'common/components/form/input/CustomDateFilter';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import { OrdersTable } from 'pages/backoffice/orders/OrdersTable';
 import React from 'react';
@@ -31,6 +32,7 @@ const OrdersHistoryPage = () => {
   const [searchId, setSearchId] = React.useState('');
   const [searchFrom, setSearchFrom] = React.useState('');
   const [searchTo, setSearchTo] = React.useState('');
+  const [clearDateNumber, setClearDateNumber] = React.useState(0);
 
   const { orders, fetchNextPage } = useObserveOrdersHistory(
     businessId,
@@ -46,6 +48,7 @@ const OrdersHistoryPage = () => {
   };
 
   const clearFilters = () => {
+    setClearDateNumber((prev) => prev + 1);
     setSearchId('');
     setSearchFrom('');
     setSearchTo('');
@@ -73,21 +76,10 @@ const OrdersHistoryPage = () => {
             label={t('ID')}
             placeholder={t('000')}
           />
-          <CustomInput
-            mt="0"
-            type="date"
-            id="search-name"
-            value={searchFrom}
-            onChange={(event) => setSearchFrom(event.target.value)}
-            label={t('De')}
-          />
-          <CustomInput
-            mt="0"
-            type="date"
-            id="search-name"
-            value={searchTo}
-            onChange={(event) => setSearchTo(event.target.value)}
-            label={t('Até')}
+          <CustomDateFilter
+            getStart={setSearchFrom}
+            getEnd={setSearchTo}
+            clearNumber={clearDateNumber}
           />
           <HStack spacing={2} color="#697667" cursor="pointer" onClick={clearFilters}>
             <DeleteIcon />
