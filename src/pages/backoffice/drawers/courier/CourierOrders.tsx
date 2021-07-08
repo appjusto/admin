@@ -1,9 +1,8 @@
-import { Box, HStack, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
+import { Box, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
 import { useContextCourierProfile } from 'app/state/courier/context';
 import { Order, WithId } from 'appjusto-types';
-import { AlertWarning } from 'common/components/AlertWarning';
 import { CustomButton } from 'common/components/buttons/CustomButton';
-import { CustomInput } from 'common/components/form/input/CustomInput';
+import { CustomDateFilter } from 'common/components/form/input/CustomDateFilter';
 import React from 'react';
 import { formatCurrency } from 'utils/formatters';
 import { getDateAndHour } from 'utils/functions';
@@ -35,57 +34,16 @@ const CourierOrdersTableItem = ({ order }: ItemPros) => {
   );
 };
 
-const currentYear = new Date().getFullYear();
-
 export const CourierOrders = () => {
   // context
   const { orders, dateStart, dateEnd, setDateStart, setDateEnd } = useContextCourierProfile();
-  // state
-  const [start, setStart] = React.useState('');
-  const [end, setEnd] = React.useState('');
   // helpers
   const totalOrders = orders?.length ?? '0';
-  // handlers
-  const dateValidation = React.useCallback((date: string) => {
-    if (date === '') return true;
-    return Number(date.split('-')[0]) >= 2021 && Number(date.split('-')[0]) <= currentYear;
-  }, []);
-  // side effects
-  React.useEffect(() => {
-    if (dateValidation(start)) setDateStart(start);
-    if (dateValidation(end)) setDateEnd(end);
-  }, [start, end, setDateStart, setDateEnd, dateValidation]);
   // UI
   return (
     <Box>
       <SectionTitle>{t('Filtrar por período')}</SectionTitle>
-      <HStack mt="4" spacing={4}>
-        <CustomInput
-          mt="0"
-          type="date"
-          id="search-name"
-          value={start ?? ''}
-          onChange={(event) => setStart(event.target.value)}
-          label={t('De')}
-          isInvalid={!dateValidation(start)}
-        />
-        <CustomInput
-          mt="0"
-          type="date"
-          id="search-name"
-          value={end ?? ''}
-          onChange={(event) => setEnd(event.target.value)}
-          label={t('Até')}
-          isInvalid={!dateValidation(end)}
-        />
-      </HStack>
-      {(!dateValidation(start) || !dateValidation(end)) && (
-        <AlertWarning
-          description={t(
-            'As datas devem partir de 2021 e não podem possuir ano maior que o ano atual.'
-          )}
-        />
-      )}
+      <CustomDateFilter getStart={setDateStart} getEnd={setDateEnd} />
       {!dateStart || !dateEnd ? (
         <Text mt="4">{t('Selecione as datas que deseja buscar')}</Text>
       ) : !orders ? (
