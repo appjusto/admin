@@ -79,7 +79,6 @@ const OrdersPage = () => {
             placeholder={t('ID do pedido')}
           />
           <CustomDateFilter
-            //key={clearDateFilterRef.current}
             getStart={setSearchFrom}
             getEnd={setSearchTo}
             clearNumber={clearDateNumber}
