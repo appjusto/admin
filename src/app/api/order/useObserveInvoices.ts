@@ -1,7 +1,7 @@
 import { useContextApi } from 'app/state/api/context';
 import { WithId, Invoice } from 'appjusto-types';
 import React from 'react';
-import firebase from 'firebase';
+import firebase from 'firebase/app';
 
 export const useObserveInvoices = (orderId?: string | null, start?: string, end?: string) => {
   // context

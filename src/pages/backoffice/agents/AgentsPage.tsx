@@ -1,6 +1,6 @@
 import { useContextAgentProfile } from 'app/state/agent/context';
 import { WithId } from 'appjusto-types';
-import firebase from 'firebase';
+import firebase from 'firebase/app';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
 import { t } from 'utils/i18n';

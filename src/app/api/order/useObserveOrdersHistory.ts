@@ -1,7 +1,7 @@
 import { useContextApi } from 'app/state/api/context';
 import { WithId, OrderStatus, OrderType, Order } from 'appjusto-types';
 import React from 'react';
-import firebase from 'firebase';
+import firebase from 'firebase/app';
 
 export const useObserveOrdersHistory = (
   businessId?: string | null,

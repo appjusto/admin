@@ -7,7 +7,7 @@ import {
 } from 'appjusto-types';
 import FilesApi from '../FilesApi';
 import FirebaseRefs from '../FirebaseRefs';
-import firebase from 'firebase';
+import firebase from 'firebase/app';
 import { documentAs, documentsAs } from 'core/fb';
 import * as Sentry from '@sentry/react';
 export default class CourierApi {

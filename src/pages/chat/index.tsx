@@ -5,7 +5,7 @@ import { timestampToDate } from 'app/api/chat/utils';
 import { useOrdersContext } from 'app/state/order';
 import Container from 'common/components/Container';
 import { ReactComponent as SearchIcon } from 'common/img/searchIcon.svg';
-import firebase from 'firebase';
+import firebase from 'firebase/app';
 import { OrdersHeader } from 'pages/orders/OrdersHeader';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';

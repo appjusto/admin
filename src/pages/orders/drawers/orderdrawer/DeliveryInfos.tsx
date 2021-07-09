@@ -2,7 +2,7 @@ import { Box, Button, Circle, Flex, Image, Text } from '@chakra-ui/react';
 import { useCourierProfilePicture } from 'app/api/courier/useCourierProfilePicture';
 import { useOrderDeliveryInfos } from 'app/api/order/useOrderDeliveryInfos';
 import { Order, WithId } from 'appjusto-types';
-import firebase from 'firebase';
+import firebase from 'firebase/app';
 import I18n from 'i18n-js';
 import React from 'react';
 import { Link } from 'react-router-dom';
