@@ -1,13 +1,21 @@
 import { Button, Icon, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import { CourierProfile, WithId } from 'appjusto-types';
 import React from 'react';
+import { MutateFunction } from 'react-query';
 import { t } from 'utils/i18n';
 
 interface ManualAllocationTableProps {
   couriers?: WithId<CourierProfile>[] | null;
+  allocationFn: MutateFunction<void, unknown, string, unknown>;
+  isLoading: boolean;
 }
 
-export const ManualAllocationTable = ({ couriers }: ManualAllocationTableProps) => {
+export const ManualAllocationTable = ({
+  couriers,
+  allocationFn,
+  isLoading,
+}: ManualAllocationTableProps) => {
+  // UI
   return (
     <Table mt="4" size="md" variant="simple">
       <Thead>
@@ -37,7 +45,14 @@ export const ManualAllocationTable = ({ couriers }: ManualAllocationTableProps) 
                 </Icon>
               </Td>
               <Td maxW="145px">
-                <Button size="sm">{t('Alocar entregador')}</Button>
+                <Button
+                  size="sm"
+                  onClick={() => allocationFn(courier.id)}
+                  isLoading={isLoading}
+                  isDisabled={courier?.status !== 'available'}
+                >
+                  {t('Alocar entregador')}
+                </Button>
               </Td>
             </Tr>
           ))

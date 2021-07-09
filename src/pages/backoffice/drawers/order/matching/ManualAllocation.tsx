@@ -1,18 +1,39 @@
 import { Box, HStack, Text } from '@chakra-ui/react';
 import { useCourierSearch } from 'app/api/courier/useCourierSearch';
+import { DispatchingStatus } from 'appjusto-types/order/dispatching';
+import { AlertSuccess } from 'common/components/AlertSuccess';
+import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import React from 'react';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../../generics/SectionTitle';
 import { ManualAllocationTable } from './ManualAllocationTable';
 
-export const ManualAllocation = () => {
+interface ManualAllocationProps {
+  orderId?: string;
+  dispatchingStatus?: DispatchingStatus;
+}
+
+export const ManualAllocation = ({ orderId, dispatchingStatus }: ManualAllocationProps) => {
   // states
   const [searchId, setSearchId] = React.useState('');
   const [searchName, setSearchName] = React.useState('');
   // search
-  const couriers = useCourierSearch(searchId, searchName);
+  const { couriers, courierManualAllocation, allocationResult } = useCourierSearch(
+    orderId,
+    searchId,
+    searchName
+  );
+  const { isLoading, isSuccess, isError, error } = allocationResult;
   // UI
+  if (dispatchingStatus === 'matched' || dispatchingStatus === 'confirmed') {
+    return (
+      <Box>
+        <SectionTitle>{t('Alocar entregador manualmente')}</SectionTitle>
+        <AlertSuccess title={t('Entregador alocado.')} />
+      </Box>
+    );
+  }
   return (
     <Box>
       <SectionTitle>{t('Alocar entregador manualmente')}</SectionTitle>
@@ -44,7 +65,19 @@ export const ManualAllocation = () => {
           placeholder={t('Nome do entregador')}
         />
       </HStack>
-      {couriers && <ManualAllocationTable couriers={couriers} />}
+      {couriers && (
+        <ManualAllocationTable
+          couriers={couriers}
+          allocationFn={courierManualAllocation}
+          isLoading={isLoading}
+        />
+      )}
+      <SuccessAndErrorHandler
+        submission={0}
+        isSuccess={isSuccess}
+        isError={isError}
+        error={error}
+      />
     </Box>
   );
 };

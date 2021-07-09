@@ -54,7 +54,7 @@ export default class ManagerApi {
       businessId,
     };
     try {
-      const users = await this.refs.getGetBusinessManagers()(payload);
+      const users = await this.refs.getGetBusinessManagersCallable()(payload);
       resultHandler(users.data);
     } catch (error) {
       Sentry.captureException('createManagerError', error);
@@ -85,7 +85,7 @@ export default class ManagerApi {
       role,
     };
     try {
-      await this.refs.getCreateManager()(payload);
+      await this.refs.getCreateManagerCallable()(payload);
       return true;
     } catch (error) {
       Sentry.captureException('createManagerError', error);

@@ -366,7 +366,7 @@ export default class OrderApi {
       params: paramsData,
     };
     try {
-      await this.refs.getCancelOrder()(payload);
+      await this.refs.getCancelOrderCallable()(payload);
     } catch (error) {
       Sentry.captureException('createManagerError', error);
     }

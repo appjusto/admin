@@ -1,8 +1,15 @@
-import { CourierProfile, Fleet, MarketplaceAccountInfo, WithId } from 'appjusto-types';
+import {
+  CourierProfile,
+  Fleet,
+  MarketplaceAccountInfo,
+  MatchOrderPayload,
+  WithId,
+} from 'appjusto-types';
 import FilesApi from '../FilesApi';
 import FirebaseRefs from '../FirebaseRefs';
 import firebase from 'firebase';
 import { documentAs, documentsAs } from 'core/fb';
+import * as Sentry from '@sentry/react';
 export default class CourierApi {
   constructor(private refs: FirebaseRefs, private files: FilesApi) {}
 
@@ -88,5 +95,20 @@ export default class CourierApi {
   // update
   async updateProfile(id: string, changes: Partial<CourierProfile>) {
     await this.refs.getCourierRef(id).update(changes);
+  }
+
+  // manual allocation
+  async courierManualAllocation(orderId: string, courierId: string) {
+    const payload: MatchOrderPayload = {
+      meta: { version: '1' }, // TODO: pass correct version on
+      orderId,
+      courierId,
+    };
+    try {
+      this.refs.getMatchOrderCallable()(payload);
+    } catch (error) {
+      console.log(error);
+      Sentry.captureException('createManagerError', error);
+    }
   }
 }

@@ -46,7 +46,7 @@ export const Matching = ({ orderId, orderStatus, orderDispatchingStatus }: Match
     ? ['confirmed', 'preparing', 'ready', 'dispatching'].includes(orderStatus)
     : false;
   const isNoMatch = orderDispatchingStatus === 'no-match';
-  const getDispacthingStatus = () => {
+  const getDispatchingStatus = () => {
     if (!orderDispatchingStatus) return 'N/E';
     if (orderDispatchingStatus === 'matching') {
       if (logs && logs.length > 0) return 'Buscando';
@@ -116,7 +116,7 @@ export const Matching = ({ orderId, orderStatus, orderDispatchingStatus }: Match
         <SectionTitle mt="2">
           {t('Status:')}{' '}
           <Text as="span" color={isNoMatch ? 'red' : 'black'}>
-            {getDispacthingStatus()}
+            {getDispatchingStatus()}
           </Text>
         </SectionTitle>
         {orderDispatchingStatus === 'no-match' &&
@@ -234,7 +234,7 @@ export const Matching = ({ orderId, orderStatus, orderDispatchingStatus }: Match
           </Box>
         </Box>
       ) : (
-        <ManualAllocation />
+        <ManualAllocation orderId={orderId} dispatchingStatus={orderDispatchingStatus} />
       )}
       <SuccessAndErrorHandler
         submission={submission.current}
