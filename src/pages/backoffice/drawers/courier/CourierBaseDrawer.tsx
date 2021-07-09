@@ -20,6 +20,7 @@ import { initialError } from 'common/components/error/utils';
 import { modePTOptions, situationPTOptions } from 'pages/backoffice/utils';
 import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
 import React from 'react';
+import { queryCache } from 'react-query';
 import { useRouteMatch } from 'react-router';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
@@ -35,7 +36,14 @@ interface BaseDrawerProps {
 export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDrawerProps) => {
   //context
   const { url } = useRouteMatch();
-  const { courier, contextValidation } = useContextCourierProfile();
+  const {
+    courier,
+    contextValidation,
+    selfieFiles,
+    setSelfieFiles,
+    documentFiles,
+    setDocumentFiles,
+  } = useContextCourierProfile();
   const { updateProfile, updateResult } = useCourierUpdateProfile();
   const { isLoading, isSuccess, isError, error: updateError } = updateResult;
 
@@ -88,8 +96,13 @@ export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDr
         //@ts-ignore
         if (courier[key]) newState[key] = courier[key];
       });
-
-    updateProfile(newState);
+    const selfieFileToSave = selfieFiles ? selfieFiles[0] : null;
+    const documentFileToSave = documentFiles ? documentFiles[0] : null;
+    updateProfile({ changes: newState, selfieFileToSave, documentFileToSave });
+    if (selfieFileToSave) queryCache.invalidateQueries(['courier:selfie', courier?.id]);
+    if (documentFileToSave) queryCache.invalidateQueries(['courier:document', courier?.id]);
+    setSelfieFiles(null);
+    setDocumentFiles(null);
   };
 
   // side effects

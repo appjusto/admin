@@ -9,6 +9,7 @@ import FilesApi from '../FilesApi';
 import FirebaseRefs from '../FirebaseRefs';
 import firebase from 'firebase';
 import { documentAs, documentsAs } from 'core/fb';
+import * as Sentry from '@sentry/react';
 export default class CourierApi {
   constructor(private refs: FirebaseRefs, private files: FilesApi) {}
 
@@ -68,14 +69,12 @@ export default class CourierApi {
 
   // courier profile picture
   async getCourierProfilePictureURL(courierId: string, size: string) {
-    return await this.files.getDownloadURL(
-      this.refs.getCourierProfilePictureStoragePath(courierId, size)
-    );
+    return await this.files.getDownloadURL(this.refs.getCourierSelfieStoragePath(courierId, size));
   }
 
   async getCourierDocumentPictureURL(courierId: string, size: string) {
     return await this.files.getDownloadURL(
-      this.refs.getCourierDocumentPictureStoragePath(courierId, size)
+      this.refs.getCourierDocumentStoragePath(courierId, size)
     );
   }
 
@@ -91,9 +90,46 @@ export default class CourierApi {
     return fleet.data() as Fleet;
   }
 
+  // selfie
+  selfieUpload(courierId: string, file: File, progressHandler?: (progress: number) => void) {
+    return this.files.upload(
+      file,
+      this.refs.getCourierSelfieStoragePath(courierId),
+      progressHandler
+    );
+  }
+
+  // document
+  documentUpload(courierId: string, file: File, progressHandler?: (progress: number) => void) {
+    return this.files.upload(
+      file,
+      this.refs.getCourierDocumentStoragePath(courierId),
+      progressHandler
+    );
+  }
+
   // update
-  async updateProfile(id: string, changes: Partial<CourierProfile>) {
-    await this.refs.getCourierRef(id).update(changes);
+  async updateProfile(
+    courierId: string,
+    changes: Partial<CourierProfile>,
+    selfieFile: File | null,
+    documentFile: File | null
+  ) {
+    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+    const fullChanges = {
+      ...changes,
+      updatedOn: timestamp,
+    };
+    try {
+      await this.refs.getCourierRef(courierId).update(fullChanges);
+      // logo
+      if (selfieFile) await this.selfieUpload(courierId, selfieFile, () => {});
+      //cover
+      if (documentFile) await this.documentUpload(courierId, documentFile, () => {});
+    } catch (error) {
+      Sentry.captureException(error);
+      throw error;
+    }
   }
 
   // manual allocation

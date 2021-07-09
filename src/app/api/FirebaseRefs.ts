@@ -97,6 +97,7 @@ export default class FirebaseRefs {
   getAppJustoFleetRef = () => this.getFleetRef('appjusto');
 
   // storage
+  // business
   getBusinessStoragePath = (businessId: string) => `businesses/${businessId}`;
   getBusinessLogoUploadStoragePath = (businessId: string) =>
     `${this.getBusinessStoragePath(businessId)}/logo_240x240.jpg`;
@@ -118,10 +119,10 @@ export default class FirebaseRefs {
     `${this.getComplementsStoragePath(businessId)}/${complementId}_288x288.jpg`;
   getComplementImageStoragePath = (businessId: string, complementId: string) =>
     `${this.getComplementsStoragePath(businessId)}/${complementId}_288x288.jpg`;
-
+  // courier
   getCourierStoragePath = (courierId: string) => `couriers/${courierId}`;
-  getCourierProfilePictureStoragePath = (courierId: string, size: string) =>
-    `${this.getCourierStoragePath(courierId)}/selfie${size}.jpg`;
-  getCourierDocumentPictureStoragePath = (courierId: string, size: string) =>
-    `${this.getCourierStoragePath(courierId)}/document${size}.jpg`;
+  getCourierSelfieStoragePath = (courierId: string, size?: string) =>
+    `${this.getCourierStoragePath(courierId)}/selfie${size ? `_${size}` : ''}.jpg`;
+  getCourierDocumentStoragePath = (courierId: string, size?: string) =>
+    `${this.getCourierStoragePath(courierId)}/document${size ? `_${size}` : ''}.jpg`;
 }
