@@ -3,6 +3,7 @@ import { useCourierSearch } from 'app/api/courier/useCourierSearch';
 import { DispatchingStatus } from 'appjusto-types/order/dispatching';
 import { AlertSuccess } from 'common/components/AlertSuccess';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
+import { initialError } from 'common/components/error/utils';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import React from 'react';
 import { t } from 'utils/i18n';
@@ -14,24 +15,41 @@ interface ManualAllocationProps {
   dispatchingStatus?: DispatchingStatus;
 }
 
+const initialSub = 0;
+
 export const ManualAllocation = ({ orderId, dispatchingStatus }: ManualAllocationProps) => {
   // states
   const [searchId, setSearchId] = React.useState('');
   const [searchName, setSearchName] = React.useState('');
+  const [error, setError] = React.useState(initialError);
   // search
   const { couriers, courierManualAllocation, allocationResult } = useCourierSearch(
     orderId,
     searchId,
     searchName
   );
-  const { isLoading, isSuccess, isError, error } = allocationResult;
+  const { isLoading, isError, error: allocationError } = allocationResult;
   // refs
-  const submission = React.useRef(0);
+  const submission = React.useRef(initialSub);
   // handlers
   const handleAllocation = (courierId: string) => {
     submission.current += 1;
+    setError({
+      status: false,
+      error: null,
+    });
     courierManualAllocation(courierId);
   };
+  // side effects
+  React.useEffect(() => {
+    if (isError) {
+      setError({
+        status: true,
+        error: allocationError,
+        message: { title: 'Operação negada!', description: `${allocationError}` },
+      });
+    }
+  }, [isError, allocationError]);
   // UI
   if (dispatchingStatus === 'matched' || dispatchingStatus === 'confirmed') {
     return (
@@ -81,10 +99,8 @@ export const ManualAllocation = ({ orderId, dispatchingStatus }: ManualAllocatio
       )}
       <SuccessAndErrorHandler
         submission={submission.current}
-        isSuccess={isSuccess}
-        isError={isError}
-        error={error}
-        errorMessage={{ title: 'Operação negada', description: `${error}` }}
+        isError={error.status}
+        errorMessage={error.message}
       />
     </Box>
   );

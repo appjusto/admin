@@ -48,7 +48,7 @@ export const ManualAllocationTable = ({
                   size="sm"
                   onClick={() => allocationFn(courier.id)}
                   isLoading={isLoading}
-                  isDisabled={courier?.status !== 'available'}
+                  //isDisabled={courier?.status !== 'available'}
                 >
                   {t('Alocar entregador')}
                 </Button>
