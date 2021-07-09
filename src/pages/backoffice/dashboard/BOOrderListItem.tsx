@@ -3,7 +3,7 @@ import { useObserveOrderIssues } from 'app/api/order/useObserveOrderIssues';
 import { Order, WithId } from 'appjusto-types';
 import foodIcon from 'common/img/bo-food.svg';
 import p2pIcon from 'common/img/bo-p2p.svg';
-import firebase from 'firebase';
+import firebase from 'firebase/app';
 import React from 'react';
 import { MdInfoOutline } from 'react-icons/md';
 import { useRouteMatch } from 'react-router-dom';

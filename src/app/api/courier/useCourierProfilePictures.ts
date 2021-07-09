@@ -1,29 +1,24 @@
 import { useContextApi } from 'app/state/api/context';
-import React from 'react';
+import { useQuery } from 'react-query';
 
 export const useCourierProfilePictures = (
-  courierId: string | undefined,
+  courierId?: string,
   selfieSize: string = '_160x160',
   documentSize: string = '_160x160'
 ) => {
   // context
   const api = useContextApi();
-  // state
-  const [selfie, setSelfie] = React.useState<string | null>(null);
-  const [document, setDocument] = React.useState<string | null>(null);
-  // side effects
-  React.useEffect(() => {
-    if (courierId) {
-      (async () => {
-        const selfieUrl = await api.courier().getCourierProfilePictureURL(courierId, selfieSize);
-        if (selfieUrl) setSelfie(selfieUrl);
-        const documentUrl = await api
-          .courier()
-          .getCourierDocumentPictureURL(courierId, documentSize);
-        if (documentUrl) setDocument(documentUrl);
-      })();
-    }
-  }, [api, courierId, selfieSize, documentSize]);
+  // mutations
+  const getSelfieImageURL = () => {
+    if (!courierId) return;
+    return api.courier().getCourierProfilePictureURL(courierId, selfieSize);
+  };
+  const { data: selfie } = useQuery(['courier:selfie', courierId], getSelfieImageURL);
+  const getDocImageURL = () => {
+    if (!courierId) return;
+    return api.courier().getCourierDocumentPictureURL(courierId, documentSize);
+  };
+  const { data: document } = useQuery(['courier:document', courierId], getDocImageURL);
   // result
   return { selfie, document };
 };

@@ -1,5 +1,5 @@
 import { ChatMessage, WithId, Flavor } from 'appjusto-types';
-import firebase from 'firebase';
+import firebase from 'firebase/app';
 
 export interface GroupedChatMessages {
   id: string;

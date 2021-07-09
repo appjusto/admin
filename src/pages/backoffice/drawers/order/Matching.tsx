@@ -11,6 +11,7 @@ import { orderDispatchingStatusPTOptions } from '../../utils/index';
 import { SectionTitle } from '../generics/SectionTitle';
 import { CourierNotifiedBox } from './matching/CourierNotifiedBox';
 import { LogsTable } from './matching/LogsTable';
+import { ManualAllocation } from './matching/ManualAllocation';
 
 interface MatchingProps {
   orderId?: string;
@@ -28,6 +29,7 @@ export const Matching = ({ orderId, orderStatus, orderDispatchingStatus }: Match
     restartResult,
   } = useObserveOrderMatching(orderId);
   // state
+  const [isAuto, setIsAuto] = React.useState(true);
   const [logs, setLogs] = React.useState<string[]>();
   const [attemps, setAttemps] = React.useState<number>(0);
   const [couriersNotified, setCouriersNotified] = React.useState<string[]>();
@@ -44,7 +46,7 @@ export const Matching = ({ orderId, orderStatus, orderDispatchingStatus }: Match
     ? ['confirmed', 'preparing', 'ready', 'dispatching'].includes(orderStatus)
     : false;
   const isNoMatch = orderDispatchingStatus === 'no-match';
-  const getDispacthingStatus = () => {
+  const getDispatchingStatus = () => {
     if (!orderDispatchingStatus) return 'N/E';
     if (orderDispatchingStatus === 'matching') {
       if (logs && logs.length > 0) return 'Buscando';
@@ -114,7 +116,7 @@ export const Matching = ({ orderId, orderStatus, orderDispatchingStatus }: Match
         <SectionTitle mt="2">
           {t('Status:')}{' '}
           <Text as="span" color={isNoMatch ? 'red' : 'black'}>
-            {getDispacthingStatus()}
+            {getDispatchingStatus()}
           </Text>
         </SectionTitle>
         {orderDispatchingStatus === 'no-match' &&
@@ -161,36 +163,79 @@ export const Matching = ({ orderId, orderStatus, orderDispatchingStatus }: Match
             />
           ))}
       </Flex>
-      <SectionTitle mt={isNoMatch ? '2' : '8'}>{t('Tentativas: ') + attemps}</SectionTitle>
-      <SectionTitle>{t('Entregadores notificados')}</SectionTitle>
-      <Box
-        mt="4"
-        p="2"
-        minH="200px"
-        maxH="300px"
-        overflowY="scroll"
-        border="1px solid #ECF0E3"
-        borderRadius="lg"
+      <SectionTitle mt={isNoMatch ? '2' : '4'}>{t('Tentativas: ') + attemps}</SectionTitle>
+      <Flex
+        my="8"
+        fontSize="lg"
+        flexDir="row"
+        alignItems="flex-start"
+        height="38px"
+        borderBottom="1px solid #C8D7CB"
       >
-        {!couriersNotified ? (
-          <Text>{t('Carregando dados...')}</Text>
-        ) : (
-          couriersNotified.map((courierId) => (
-            <CourierNotifiedBox
-              key={courierId}
-              isOrderActive={isOrderActive}
-              courierId={courierId}
-              removeCourier={removeCourierNotified}
-              courierRemoving={courierRemoving}
-              isLoading={updateResult.isLoading}
-            />
-          ))
-        )}
-      </Box>
-      <SectionTitle>{t('Logs do pedido')}</SectionTitle>
-      <Box mt="4" maxH="300px" overflowY="scroll" border="1px solid #ECF0E3" borderRadius="lg">
-        <LogsTable logs={logs} />
-      </Box>
+        <Text
+          pb="2"
+          px="4"
+          mr="4"
+          fontSize="lg"
+          fontWeight="500"
+          cursor="pointer"
+          _hover={{ textDecor: 'none' }}
+          _focus={{ boxShadow: 'none' }}
+          borderBottom={isAuto ? '4px solid #78E08F' : 'none'}
+          onClick={() => setIsAuto(true)}
+        >
+          {t('Automático')}
+        </Text>
+        <Text
+          pb="2"
+          px="4"
+          mr="4"
+          fontSize="lg"
+          fontWeight="500"
+          cursor="pointer"
+          _hover={{ textDecor: 'none' }}
+          _focus={{ boxShadow: 'none' }}
+          borderBottom={!isAuto ? '4px solid #78E08F' : 'none'}
+          onClick={() => setIsAuto(false)}
+        >
+          {t('Manual')}
+        </Text>
+      </Flex>
+      {isAuto ? (
+        <Box>
+          <SectionTitle mt="8">{t('Entregadores notificados')}</SectionTitle>
+          <Box
+            mt="4"
+            p="2"
+            minH="200px"
+            maxH="300px"
+            overflowY="scroll"
+            border="1px solid #ECF0E3"
+            borderRadius="lg"
+          >
+            {!couriersNotified ? (
+              <Text>{t('Carregando dados...')}</Text>
+            ) : (
+              couriersNotified.map((courierId) => (
+                <CourierNotifiedBox
+                  key={courierId}
+                  isOrderActive={isOrderActive}
+                  courierId={courierId}
+                  removeCourier={removeCourierNotified}
+                  courierRemoving={courierRemoving}
+                  isLoading={updateResult.isLoading}
+                />
+              ))
+            )}
+          </Box>
+          <SectionTitle>{t('Logs do pedido')}</SectionTitle>
+          <Box mt="4" maxH="300px" overflowY="scroll" border="1px solid #ECF0E3" borderRadius="lg">
+            <LogsTable logs={logs} />
+          </Box>
+        </Box>
+      ) : (
+        <ManualAllocation orderId={orderId} dispatchingStatus={orderDispatchingStatus} />
+      )}
       <SuccessAndErrorHandler
         submission={submission.current}
         isSuccess={updateResult.isSuccess || restartResult.isSuccess}

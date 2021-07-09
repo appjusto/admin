@@ -1,35 +1,18 @@
-import { Box, Center, CenterProps, HStack, Image } from '@chakra-ui/react';
+import { Box, Button, CenterProps, HStack, Image } from '@chakra-ui/react';
 import { useContextCourierProfile } from 'app/state/courier/context';
 import { CloseButton } from 'common/components/buttons/CloseButton';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import { ImageFbLoading } from 'common/components/ImageFbLoading';
+import { ImageUploads } from 'common/components/ImageUploads';
+import {
+  courierDocRatios,
+  courierDocResizedWidth,
+  courierSelfieRatios,
+  courierSelfieResizedWidth,
+} from 'common/imagesDimensions';
 import { ReactComponent as DropImage } from 'common/img/drop-image.svg';
 import React from 'react';
 import { t } from 'utils/i18n';
-
-interface ImageCircleProps extends CenterProps {
-  src?: string | null;
-}
-
-const ImageCircle = ({ src, ...props }: ImageCircleProps) => {
-  return (
-    <Center
-      bg="gray.400"
-      w="161px"
-      h="161px"
-      borderRadius="80.5px"
-      overflow="hidden"
-      cursor="pointer"
-      {...props}
-    >
-      {src ? (
-        <Image src={src} objectFit="cover" fallback={<ImageFbLoading w="161px" h="161px" />} />
-      ) : (
-        <DropImage />
-      )}
-    </Center>
-  );
-};
 
 interface ImagePreviewProps extends CenterProps {
   src?: string | null;
@@ -66,15 +49,73 @@ const ImagePreview = ({ src, onClose, ...props }: ImagePreviewProps) => {
 
 export const Documents = () => {
   // context
-  const { courier, pictures, handleProfileChange } = useContextCourierProfile();
+  const {
+    courier,
+    pictures,
+    setSelfieFiles,
+    setDocumentFiles,
+    handleProfileChange,
+  } = useContextCourierProfile();
   // state
   const [preview, setPreview] = React.useState<string | null>(null);
+  // handlers
+  const getSelfieFiles = React.useCallback(
+    async (files: File[]) => {
+      setSelfieFiles(files);
+    },
+    [setSelfieFiles]
+  );
+  const getDocumentFiles = React.useCallback(
+    async (files: File[]) => {
+      setDocumentFiles(files);
+    },
+    [setDocumentFiles]
+  );
+  const clearDropImages = React.useCallback(
+    (type: string) => {
+      if (type === 'selfie') setSelfieFiles(null);
+      else setDocumentFiles(null);
+    },
+    [setSelfieFiles, setDocumentFiles]
+  );
   // UI
   return (
     <Box mt="4">
       <HStack spacing={4}>
-        <ImageCircle src={pictures?.selfie} onClick={() => setPreview('selfie')} />
-        <ImageCircle src={pictures?.document} onClick={() => setPreview('document')} />
+        <Box textAlign="center">
+          <ImageUploads
+            key={pictures?.selfie ?? 'selfie'}
+            width={162}
+            height={162}
+            imageUrl={pictures?.selfie}
+            ratios={courierSelfieRatios}
+            resizedWidth={courierSelfieResizedWidth}
+            placeholderText={t('Selfie')}
+            getImages={getSelfieFiles}
+            clearDrop={() => clearDropImages('selfie')}
+            doubleSizeCropping
+          />
+          <Button mt="4" size="sm" variant="outline" onClick={() => setPreview('selfie')}>
+            {t('Ampliar')}
+          </Button>
+        </Box>
+        <Box textAlign="center">
+          <ImageUploads
+            key={pictures?.document ?? 'document'}
+            width={162}
+            height={162}
+            imageUrl={pictures?.document}
+            ratios={courierDocRatios}
+            resizedWidth={courierDocResizedWidth}
+            placeholderText={t('Documento')}
+            getImages={getDocumentFiles}
+            clearDrop={() => clearDropImages('document')}
+            doubleSizeCropping
+          />
+          <Button mt="4" size="sm" variant="outline" onClick={() => setPreview('document')}>
+            {t('Ampliar')}
+          </Button>
+        </Box>
       </HStack>
       {preview &&
         (preview === 'selfie' ? (

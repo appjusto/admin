@@ -4,7 +4,7 @@ import { round } from 'lodash';
 import { CroppedAreaProps } from 'common/components/ImageCropping';
 import { localOrderType } from 'app/state/order';
 import I18n from 'i18n-js';
-import firebase from 'firebase';
+import firebase from 'firebase/app';
 import { AlgoliaCreatedOn } from 'app/api/types';
 import { ImageType } from 'common/components/ImageUploads';
 

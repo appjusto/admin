@@ -20,7 +20,11 @@ import { courierReducer } from './courierReducer';
 type Validation = { cpf: boolean; cnpj: boolean; agency: boolean; account: boolean };
 interface CourierProfileContextProps {
   courier: WithId<CourierProfile> | undefined | null;
-  pictures: { selfie: string | null; document: string | null };
+  pictures: { selfie?: string | null; document?: string | null };
+  selfieFiles?: File[] | null;
+  setSelfieFiles(files: File[] | null): void;
+  documentFiles?: File[] | null;
+  setDocumentFiles(files: File[] | null): void;
   issueOptions?: WithId<Issue>[] | null;
   marketPlace?: MarketplaceAccountInfo;
   contextValidation: Validation;
@@ -63,6 +67,8 @@ export const CourierProvider = ({ children }: Props) => {
     agency: true,
     account: true,
   });
+  const [selfieFiles, setSelfieFiles] = React.useState<File[] | null>(null);
+  const [documentFiles, setDocumentFiles] = React.useState<File[] | null>(null);
   const [dateStart, setDateStart] = React.useState<string>();
   const [dateEnd, setDateEnd] = React.useState<string>();
   const orders = useCourierOrders(courierId, dateStart, dateEnd);
@@ -98,6 +104,10 @@ export const CourierProvider = ({ children }: Props) => {
       value={{
         courier,
         pictures,
+        selfieFiles,
+        setSelfieFiles,
+        documentFiles,
+        setDocumentFiles,
         issueOptions,
         marketPlace,
         contextValidation,
