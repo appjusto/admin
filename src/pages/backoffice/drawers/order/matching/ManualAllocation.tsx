@@ -25,6 +25,13 @@ export const ManualAllocation = ({ orderId, dispatchingStatus }: ManualAllocatio
     searchName
   );
   const { isLoading, isSuccess, isError, error } = allocationResult;
+  // refs
+  const submission = React.useRef(0);
+  // handlers
+  const handleAllocation = (courierId: string) => {
+    submission.current += 1;
+    courierManualAllocation(courierId);
+  };
   // UI
   if (dispatchingStatus === 'matched' || dispatchingStatus === 'confirmed') {
     return (
@@ -68,15 +75,16 @@ export const ManualAllocation = ({ orderId, dispatchingStatus }: ManualAllocatio
       {couriers && (
         <ManualAllocationTable
           couriers={couriers}
-          allocationFn={courierManualAllocation}
+          allocationFn={handleAllocation}
           isLoading={isLoading}
         />
       )}
       <SuccessAndErrorHandler
-        submission={0}
+        submission={submission.current}
         isSuccess={isSuccess}
         isError={isError}
         error={error}
+        errorMessage={{ title: 'Operação negada', description: `${error}` }}
       />
     </Box>
   );

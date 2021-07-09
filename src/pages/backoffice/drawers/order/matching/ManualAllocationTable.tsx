@@ -1,12 +1,11 @@
 import { Button, Icon, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import { CourierProfile, WithId } from 'appjusto-types';
 import React from 'react';
-import { MutateFunction } from 'react-query';
 import { t } from 'utils/i18n';
 
 interface ManualAllocationTableProps {
   couriers?: WithId<CourierProfile>[] | null;
-  allocationFn: MutateFunction<void, unknown, string, unknown>;
+  allocationFn(courierId: string): void;
   isLoading: boolean;
 }
 

@@ -9,7 +9,6 @@ import FilesApi from '../FilesApi';
 import FirebaseRefs from '../FirebaseRefs';
 import firebase from 'firebase';
 import { documentAs, documentsAs } from 'core/fb';
-import * as Sentry from '@sentry/react';
 export default class CourierApi {
   constructor(private refs: FirebaseRefs, private files: FilesApi) {}
 
@@ -105,10 +104,9 @@ export default class CourierApi {
       courierId,
     };
     try {
-      this.refs.getMatchOrderCallable()(payload);
+      await this.refs.getMatchOrderCallable()(payload);
     } catch (error) {
-      console.log(error);
-      Sentry.captureException('createManagerError', error);
+      throw error;
     }
   }
 }
