@@ -168,7 +168,10 @@ const SchedulesPage = () => {
   // side effects
   React.useEffect(() => {
     if (business?.schedules) {
-      setSchedules(business?.schedules);
+      setSchedules((prev) => {
+        if (prev === initialState) return business?.schedules;
+        else return prev;
+      });
     }
   }, [business?.schedules]);
   React.useEffect(() => {
