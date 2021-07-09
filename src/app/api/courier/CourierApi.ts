@@ -2,21 +2,61 @@ import { CourierProfile, Fleet, MarketplaceAccountInfo, WithId } from 'appjusto-
 import FilesApi from '../FilesApi';
 import FirebaseRefs from '../FirebaseRefs';
 import firebase from 'firebase';
+import { documentAs, documentsAs } from 'core/fb';
 export default class CourierApi {
   constructor(private refs: FirebaseRefs, private files: FilesApi) {}
 
   observeCourierProfile(
     courierId: string,
-    resultHandler: (result: WithId<CourierProfile>) => void
+    resultHandler: (result: WithId<CourierProfile> | null) => void
   ): firebase.Unsubscribe {
     const unsubscribe = this.refs.getCourierRef(courierId).onSnapshot(
       (doc) => {
-        if (doc.exists) resultHandler({ ...(doc.data() as CourierProfile), id: courierId });
+        if (doc.exists) resultHandler(documentAs<CourierProfile>(doc));
+        else resultHandler(null);
       },
       (error) => {
         console.error(error);
       }
     );
+    return unsubscribe;
+  }
+
+  observeCourierProfileByCode(
+    courierCode: string,
+    resultHandler: (result: WithId<CourierProfile>[] | null) => void
+  ): firebase.Unsubscribe {
+    const unsubscribe = this.refs
+      .getCouriersRef()
+      .where('code', '==', courierCode)
+      .onSnapshot(
+        (snaptShot) => {
+          if (!snaptShot.empty) resultHandler(documentsAs<CourierProfile>(snaptShot.docs));
+          else resultHandler(null);
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+    return unsubscribe;
+  }
+
+  observeCourierProfileByName(
+    courierName: string,
+    resultHandler: (result: WithId<CourierProfile>[] | null) => void
+  ): firebase.Unsubscribe {
+    const unsubscribe = this.refs
+      .getCouriersRef()
+      .where('name', '==', courierName)
+      .onSnapshot(
+        (snaptShot) => {
+          if (!snaptShot.empty) resultHandler(documentsAs<CourierProfile>(snaptShot.docs));
+          else resultHandler(null);
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
     return unsubscribe;
   }
 
