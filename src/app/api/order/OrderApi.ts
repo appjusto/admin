@@ -392,14 +392,14 @@ export default class OrderApi {
   // courier manual removal
   async courierManualRemoval(
     orderId: string,
-    courierId: string,
+    //courierId: string,
     issue: WithId<Issue>,
     comment?: string
   ) {
     const payload: DropOrderPayload = {
       meta: { version: '1' }, // TODO: pass correct version on
       orderId,
-      courierId,
+      //courierId,
       issue,
       comment,
     };

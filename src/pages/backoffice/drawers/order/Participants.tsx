@@ -216,7 +216,7 @@ export const Participants = ({ order }: ParticipantsProps) => {
           description: 'É preciso irformar o motivo da remoção.',
         },
       });
-    courierManualRemoval({ orderId: order.id, courierId: order.courier.id, issue, comment });
+    courierManualRemoval({ orderId: order.id, issue, comment });
   };
   // side effects
   React.useEffect(() => {
