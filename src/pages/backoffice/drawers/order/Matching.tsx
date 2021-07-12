@@ -1,4 +1,5 @@
 import { Box, Flex, HStack, Text } from '@chakra-ui/react';
+import { useCourierManualAllocation } from 'app/api/courier/useCourierManualAllocation';
 import { useObserveOrderMatching } from 'app/api/order/useObserveOrderMatching';
 import { OrderStatus } from 'appjusto-types';
 import { DispatchingStatus } from 'appjusto-types/order/dispatching';
@@ -11,10 +12,9 @@ import { orderDispatchingStatusPTOptions } from '../../utils/index';
 import { SectionTitle } from '../generics/SectionTitle';
 import { CourierNotifiedBox } from './matching/CourierNotifiedBox';
 import { LogsTable } from './matching/LogsTable';
-import { ManualAllocation } from './matching/ManualAllocation';
 
 interface MatchingProps {
-  orderId?: string;
+  orderId: string;
   orderStatus?: OrderStatus;
   orderDispatchingStatus?: DispatchingStatus;
 }
@@ -28,8 +28,9 @@ export const Matching = ({ orderId, orderStatus, orderDispatchingStatus }: Match
     restartMatching,
     restartResult,
   } = useObserveOrderMatching(orderId);
+  const { courierManualAllocation, allocationResult } = useCourierManualAllocation();
   // state
-  const [isAuto, setIsAuto] = React.useState(true);
+  //const [isAuto, setIsAuto] = React.useState(true);
   const [logs, setLogs] = React.useState<string[]>();
   const [attemps, setAttemps] = React.useState<number>(0);
   const [couriersNotified, setCouriersNotified] = React.useState<string[]>();
@@ -62,6 +63,11 @@ export const Matching = ({ orderId, orderStatus, orderDispatchingStatus }: Match
     const newArray = couriersNotified?.filter((id) => id !== courierId);
     await updateCourierNotified(newArray);
     setCourierRemoving(null);
+  };
+
+  const allocateCourier = (courierId: string) => {
+    submission.current += 1;
+    return courierManualAllocation({ orderId, courierId });
   };
 
   // side effects
@@ -107,7 +113,20 @@ export const Matching = ({ orderId, orderStatus, orderDispatchingStatus }: Match
         status: true,
         error: restartResult.error,
       });
-  }, [updateResult.isError, updateResult.error, restartResult.isError, restartResult.error]);
+    if (allocationResult.isError)
+      setError({
+        status: true,
+        error: null,
+        message: { title: 'Operação negada!', description: `${allocationResult.error}` },
+      });
+  }, [
+    updateResult.isError,
+    updateResult.error,
+    restartResult.isError,
+    restartResult.error,
+    allocationResult.isError,
+    allocationResult.error,
+  ]);
 
   // UI
   return (
@@ -164,7 +183,7 @@ export const Matching = ({ orderId, orderStatus, orderDispatchingStatus }: Match
           ))}
       </Flex>
       <SectionTitle mt={isNoMatch ? '2' : '4'}>{t('Tentativas: ') + attemps}</SectionTitle>
-      <Flex
+      {/*<Flex
         my="8"
         fontSize="lg"
         flexDir="row"
@@ -200,47 +219,47 @@ export const Matching = ({ orderId, orderStatus, orderDispatchingStatus }: Match
         >
           {t('Manual')}
         </Text>
-      </Flex>
-      {isAuto ? (
-        <Box>
-          <SectionTitle mt="8">{t('Entregadores notificados')}</SectionTitle>
-          <Box
-            mt="4"
-            p="2"
-            minH="200px"
-            maxH="300px"
-            overflowY="scroll"
-            border="1px solid #ECF0E3"
-            borderRadius="lg"
-          >
-            {!couriersNotified ? (
-              <Text>{t('Carregando dados...')}</Text>
-            ) : (
-              couriersNotified.map((courierId) => (
-                <CourierNotifiedBox
-                  key={courierId}
-                  isOrderActive={isOrderActive}
-                  courierId={courierId}
-                  removeCourier={removeCourierNotified}
-                  courierRemoving={courierRemoving}
-                  isLoading={updateResult.isLoading}
-                />
-              ))
-            )}
-          </Box>
-          <SectionTitle>{t('Logs do pedido')}</SectionTitle>
-          <Box mt="4" maxH="300px" overflowY="scroll" border="1px solid #ECF0E3" borderRadius="lg">
-            <LogsTable logs={logs} />
-          </Box>
+      </Flex>*/}
+      <Box>
+        <SectionTitle mt="4">{t('Entregadores notificados')}</SectionTitle>
+        <Box
+          mt="4"
+          p="2"
+          minH="200px"
+          maxH="300px"
+          overflowY="scroll"
+          border="1px solid #ECF0E3"
+          borderRadius="lg"
+        >
+          {!couriersNotified ? (
+            <Text>{t('Carregando dados...')}</Text>
+          ) : (
+            couriersNotified.map((courierId) => (
+              <CourierNotifiedBox
+                key={courierId}
+                orderId={orderId}
+                isOrderActive={isOrderActive}
+                courierId={courierId}
+                dispatchingStatus={orderDispatchingStatus}
+                removeCourier={removeCourierNotified}
+                allocateCourier={allocateCourier}
+                courierRemoving={courierRemoving}
+                isLoading={updateResult.isLoading || allocationResult.isLoading}
+              />
+            ))
+          )}
         </Box>
-      ) : (
-        <ManualAllocation orderId={orderId} dispatchingStatus={orderDispatchingStatus} />
-      )}
+        <SectionTitle>{t('Logs do pedido')}</SectionTitle>
+        <Box mt="4" maxH="300px" overflowY="scroll" border="1px solid #ECF0E3" borderRadius="lg">
+          <LogsTable logs={logs} />
+        </Box>
+      </Box>
       <SuccessAndErrorHandler
         submission={submission.current}
-        isSuccess={updateResult.isSuccess || restartResult.isSuccess}
+        isSuccess={updateResult.isSuccess || restartResult.isSuccess || allocationResult.isSuccess}
         isError={error.status}
         error={error.error}
+        errorMessage={error.message}
       />
     </>
   );
