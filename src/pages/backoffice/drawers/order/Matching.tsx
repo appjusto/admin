@@ -1,6 +1,6 @@
 import { Box, Flex, HStack, Text } from '@chakra-ui/react';
-import { useCourierManualAllocation } from 'app/api/courier/useCourierManualAllocation';
 import { useObserveOrderMatching } from 'app/api/order/useObserveOrderMatching';
+import { useOrderCourierManualAllocation } from 'app/api/order/useOrderCourierManualAllocation';
 import { OrderStatus } from 'appjusto-types';
 import { DispatchingStatus } from 'appjusto-types/order/dispatching';
 import { CustomButton } from 'common/components/buttons/CustomButton';
@@ -28,7 +28,7 @@ export const Matching = ({ orderId, orderStatus, orderDispatchingStatus }: Match
     restartMatching,
     restartResult,
   } = useObserveOrderMatching(orderId);
-  const { courierManualAllocation, allocationResult } = useCourierManualAllocation();
+  const { courierManualAllocation, allocationResult } = useOrderCourierManualAllocation();
   // state
   //const [isAuto, setIsAuto] = React.useState(true);
   const [logs, setLogs] = React.useState<string[]>();
@@ -65,9 +65,9 @@ export const Matching = ({ orderId, orderStatus, orderDispatchingStatus }: Match
     setCourierRemoving(null);
   };
 
-  const allocateCourier = (courierId: string) => {
+  const allocateCourier = (courierId: string, comment: string) => {
     submission.current += 1;
-    return courierManualAllocation({ orderId, courierId });
+    return courierManualAllocation({ orderId, courierId, comment });
   };
 
   // side effects

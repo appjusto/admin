@@ -1,10 +1,4 @@
-import {
-  CourierProfile,
-  Fleet,
-  MarketplaceAccountInfo,
-  MatchOrderPayload,
-  WithId,
-} from 'appjusto-types';
+import { CourierProfile, Fleet, MarketplaceAccountInfo, WithId } from 'appjusto-types';
 import FilesApi from '../FilesApi';
 import FirebaseRefs from '../FirebaseRefs';
 import firebase from 'firebase/app';
@@ -128,20 +122,6 @@ export default class CourierApi {
       if (documentFile) await this.documentUpload(courierId, documentFile, () => {});
     } catch (error) {
       Sentry.captureException(error);
-      throw error;
-    }
-  }
-
-  // manual allocation
-  async courierManualAllocation(orderId: string, courierId: string) {
-    const payload: MatchOrderPayload = {
-      meta: { version: '1' }, // TODO: pass correct version on
-      orderId,
-      courierId,
-    };
-    try {
-      await this.refs.getMatchOrderCallable()(payload);
-    } catch (error) {
       throw error;
     }
   }

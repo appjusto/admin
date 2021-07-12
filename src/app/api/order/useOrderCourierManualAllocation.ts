@@ -4,14 +4,15 @@ import { useMutation } from 'react-query';
 interface AllocationData {
   orderId: string;
   courierId: string;
+  comment: string;
 }
 
-export const useCourierManualAllocation = () => {
+export const useOrderCourierManualAllocation = () => {
   // context
   const api = useContextApi();
   // mutations
   const [courierManualAllocation, allocationResult] = useMutation(async (data: AllocationData) =>
-    api.courier().courierManualAllocation(data.orderId, data.courierId)
+    api.order().courierManualAllocation(data.orderId, data.courierId, data.comment)
   );
   // return
   return { courierManualAllocation, allocationResult };

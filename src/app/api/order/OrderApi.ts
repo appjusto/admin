@@ -1,8 +1,10 @@
 import {
   CancelOrderPayload,
   ChatMessage,
+  DropOrderPayload,
   Invoice,
   Issue,
+  MatchOrderPayload,
   Order,
   OrderCancellation,
   //OrderCancellation,
@@ -369,6 +371,36 @@ export default class OrderApi {
       await this.refs.getCancelOrderCallable()(payload);
     } catch (error) {
       Sentry.captureException('createManagerError', error);
+    }
+  }
+
+  // courier manual allocation
+  async courierManualAllocation(orderId: string, courierId: string, comment: string) {
+    const payload: MatchOrderPayload = {
+      meta: { version: '1' }, // TODO: pass correct version on
+      orderId,
+      courierId,
+      comment,
+    };
+    try {
+      await this.refs.getMatchOrderCallable()(payload);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // courier manual removal
+  async courierManualRemoval(orderId: string, issue: WithId<Issue>, comment?: string) {
+    const payload: DropOrderPayload = {
+      meta: { version: '1' }, // TODO: pass correct version on
+      orderId,
+      issue,
+      comment,
+    };
+    try {
+      await this.refs.getDropOrderCallable()(payload);
+    } catch (error) {
+      throw error;
     }
   }
 }

@@ -6,8 +6,8 @@ interface Props extends TextareaProps {
 }
 
 export const Textarea = React.forwardRef<HTMLTextAreaElement, Props>(
-  ({ label, mt, mb, ml, mr, flex, ...props }: Props, ref) => {
-    const boxProps = { mt, mb, ml, mr, flex };
+  ({ label, bg, mt, mb, ml, mr, flex, ...props }: Props, ref) => {
+    const boxProps = { bg, mt, mb, ml, mr, flex };
     return (
       <Box borderWidth="1px" borderRadius="md" pl="2" pt="1" {...boxProps}>
         {label && (

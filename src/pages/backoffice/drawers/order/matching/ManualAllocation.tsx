@@ -23,12 +23,7 @@ export const ManualAllocation = ({ orderId, dispatchingStatus }: ManualAllocatio
   const [searchName, setSearchName] = React.useState('');
   const [error, setError] = React.useState(initialError);
   // search
-  const { couriers, courierManualAllocation, allocationResult } = useCourierSearch(
-    orderId,
-    searchId,
-    searchName
-  );
-  const { isLoading, isError, error: allocationError } = allocationResult;
+  const couriers = useCourierSearch(searchId, searchName);
   // refs
   const submission = React.useRef(initialSub);
   // handlers
@@ -38,10 +33,10 @@ export const ManualAllocation = ({ orderId, dispatchingStatus }: ManualAllocatio
       status: false,
       error: null,
     });
-    courierManualAllocation(courierId);
+    //courierManualAllocation(courierId);
   };
   // side effects
-  React.useEffect(() => {
+  /*React.useEffect(() => {
     if (isError) {
       setError({
         status: true,
@@ -49,7 +44,7 @@ export const ManualAllocation = ({ orderId, dispatchingStatus }: ManualAllocatio
         message: { title: 'Operação negada!', description: `${allocationError}` },
       });
     }
-  }, [isError, allocationError]);
+  }, [isError, allocationError]);*/
   // UI
   if (dispatchingStatus === 'matched' || dispatchingStatus === 'confirmed') {
     return (
@@ -94,7 +89,7 @@ export const ManualAllocation = ({ orderId, dispatchingStatus }: ManualAllocatio
         <ManualAllocationTable
           couriers={couriers}
           allocationFn={handleAllocation}
-          isLoading={isLoading}
+          isLoading={false}
         />
       )}
       <SuccessAndErrorHandler

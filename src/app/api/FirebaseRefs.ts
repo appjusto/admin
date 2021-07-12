@@ -14,6 +14,7 @@ export default class FirebaseRefs {
   getGetBusinessManagersCallable = () => this.functions.httpsCallable('getBusinessManagers');
   getCancelOrderCallable = () => this.functions.httpsCallable('cancelOrder');
   getMatchOrderCallable = () => this.functions.httpsCallable('matchOrder');
+  getDropOrderCallable = () => this.functions.httpsCallable('dropOrder');
 
   // firestore
   // platform

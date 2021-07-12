@@ -1,7 +1,10 @@
-import { Box, Flex, HStack, Text } from '@chakra-ui/react';
+import { Box, Flex, HStack, Radio, RadioGroup, Text } from '@chakra-ui/react';
+import { useOrderCourierRemoval } from 'app/api/order/useOrderCourierRemoval';
 import { useOrderDeliveryInfos } from 'app/api/order/useOrderDeliveryInfos';
-import { Order, WithId } from 'appjusto-types';
+import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';
+import { Issue, IssueType, Order, WithId } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
+import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
 import { Textarea } from 'common/components/form/input/Textarea';
 import firebase from 'firebase/app';
 import { DeliveryInfos } from 'pages/orders/drawers/orderdrawer/DeliveryInfos';
@@ -19,7 +22,9 @@ interface ParticipantProps {
   buttonLabel?: string;
   buttonLink?: string;
   isBtnDisabled?: boolean;
-  removeCourier?(): void;
+  dropIssues?: WithId<Issue>[] | null;
+  removeCourier?(issue: WithId<Issue>, comment: string): void;
+  isLoading?: boolean;
 }
 
 const Participant = ({
@@ -31,11 +36,23 @@ const Participant = ({
   buttonLabel,
   buttonLink,
   isBtnDisabled = false,
+  dropIssues,
   removeCourier,
+  isLoading,
 }: ParticipantProps) => {
   // state
   const [isRemoving, setIsRemoving] = React.useState(false);
+  const [issueId, setIssueId] = React.useState((dropIssues && dropIssues[0].id) ?? '');
   const [comment, setComment] = React.useState('');
+  // handlers
+  const handleRemoving = () => {
+    const issue = dropIssues?.find((issue) => issue.id === issueId);
+    if (issue) removeCourier!(issue, comment);
+  };
+  // side effects
+  React.useEffect(() => {
+    if (dropIssues) setIssueId(dropIssues[0].id);
+  }, [dropIssues]);
   // UI
   return (
     <Box mb="10">
@@ -80,8 +97,30 @@ const Participant = ({
               p="4"
               borderRadius="lg"
             >
-              <Text>{'Informe o motivo da remoção:'}</Text>
-              <Textarea mt="2" value={comment} onChange={(e) => setComment(e.target.value)} />
+              <Text fontSize="lg">{'Informe o motivo da remoção:'}</Text>
+              <RadioGroup
+                onChange={(value) => setIssueId(value as string)}
+                value={issueId}
+                colorScheme="green"
+              >
+                <Flex flexDir="column" justifyContent="flex-start">
+                  {dropIssues &&
+                    dropIssues.map((issue) => (
+                      <Radio mt="1" key={issue.id} value={issue.id} size="md" bg="white">
+                        {issue.title}
+                      </Radio>
+                    ))}
+                </Flex>
+              </RadioGroup>
+              <Text mt="4" fontSize="lg">
+                {'Comentário:'}
+              </Text>
+              <Textarea
+                mt="2"
+                bg="white"
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+              />
               <Flex mt="4" w="100%" justifyContent="space-between">
                 <CustomButton
                   mt="0"
@@ -100,8 +139,8 @@ const Participant = ({
                   label={t('Remover')}
                   fontSize="xs"
                   lineHeight="lg"
-                  isDisabled={!comment}
-                  onClick={removeCourier}
+                  onClick={handleRemoving}
+                  isLoading={isLoading}
                 />
               </Flex>
             </Flex>
@@ -142,18 +181,21 @@ interface ParticipantsProps {
   order?: WithId<Order> | null;
 }
 
+const dropsFoodIssues = ['courier-drops-food-delivery'] as IssueType[];
+const dropsP2pIssues = ['courier-drops-p2p-delivery'] as IssueType[];
+
 export const Participants = ({ order }: ParticipantsProps) => {
-  // helpers
-  const {
-    //isMatched,
-    //isCurrierArrived,
-    isOrderActive,
-    //orderDispatchingText,
-    //arrivalTime,
-  } = useOrderDeliveryInfos(order);
+  // context
+  const { isOrderActive } = useOrderDeliveryInfos(order);
+  const issues = useIssuesByType(order?.type === 'food' ? dropsFoodIssues : dropsP2pIssues);
+  const { courierManualRemoval, removalResult } = useOrderCourierRemoval();
+  const { isLoading, isSuccess, isError, error } = removalResult;
+  //refs
+  const submission = React.useRef(0);
   // handlers
-  const removeCourierFromOrder = () => {
-    return console.log('remove');
+  const removeCourierFromOrder = (issue: WithId<Issue>, comment: string) => {
+    submission.current += 1;
+    courierManualRemoval({ orderId: order?.id!, issue, comment });
   };
 
   // UI
@@ -200,7 +242,9 @@ export const Participants = ({ order }: ParticipantsProps) => {
         buttonLabel={t('Ver cadastro do entregador')}
         buttonLink={`/backoffice/couriers/${order?.courier?.id}`}
         isBtnDisabled={!order?.courier}
+        dropIssues={issues}
         removeCourier={removeCourierFromOrder}
+        isLoading={isLoading}
       />
       {isOrderActive ? (
         <DeliveryInfos order={order!} />
@@ -244,6 +288,13 @@ export const Participants = ({ order }: ParticipantsProps) => {
       <Text mt="1" fontSize="15px" lineHeight="21px">
         {order?.destination?.address.description ?? 'N/E'}
             </Text>*/}
+      <SuccessAndErrorHandler
+        submission={submission.current}
+        isSuccess={isSuccess}
+        isError={isError}
+        error={error}
+        errorMessage={{ title: t('Operação negada!'), description: `${error}` }}
+      />
     </Box>
   );
 };

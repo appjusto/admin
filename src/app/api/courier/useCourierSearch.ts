@@ -1,17 +1,12 @@
 import { useContextApi } from 'app/state/api/context';
 import { CourierProfile, WithId } from 'appjusto-types';
 import React from 'react';
-import { useMutation } from 'react-query';
 
-export const useCourierSearch = (orderId?: string, courierCode?: string, courierName?: string) => {
+export const useCourierSearch = (courierCode?: string, courierName?: string) => {
   // context
   const api = useContextApi();
   // state
   const [couriers, setCouriers] = React.useState<WithId<CourierProfile>[] | null>();
-  // mutations
-  const [courierManualAllocation, allocationResult] = useMutation(async (courierId: string) =>
-    api.courier().courierManualAllocation(orderId!, courierId)
-  );
   // side effects
   React.useEffect(() => {
     if (!courierCode && !courierName) {
@@ -24,5 +19,5 @@ export const useCourierSearch = (orderId?: string, courierCode?: string, courier
     return () => unsub();
   }, [api, courierCode, courierName]);
   // return
-  return { couriers, courierManualAllocation, allocationResult };
+  return couriers;
 };

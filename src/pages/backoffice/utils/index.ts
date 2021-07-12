@@ -54,6 +54,7 @@ export const orderDispatchingStatusPTOptions = {
   'matched': 'Encontrado',
   'declined': 'Recusado',
   'confirmed': 'Confirmado',
+  'outsourced': 'Terceirizado',
 };
 
 export const invoiceTypePTOptions = {
