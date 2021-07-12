@@ -4,6 +4,7 @@ import { useMutation } from 'react-query';
 
 interface RemovalData {
   orderId: string;
+  courierId: string;
   issue: WithId<Issue>;
   comment?: string;
 }
@@ -13,7 +14,7 @@ export const useOrderCourierRemoval = () => {
   const api = useContextApi();
   // mutations
   const [courierManualRemoval, removalResult] = useMutation(async (data: RemovalData) =>
-    api.order().courierManualRemoval(data.orderId, data.issue, data.comment)
+    api.order().courierManualRemoval(data.orderId, data.courierId, data.issue, data.comment)
   );
   // return
   return { courierManualRemoval, removalResult };

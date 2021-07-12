@@ -5,6 +5,7 @@ import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';
 import { Issue, IssueType, Order, WithId } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
+import { initialError } from 'common/components/error/utils';
 import { Textarea } from 'common/components/form/input/Textarea';
 import firebase from 'firebase/app';
 import { DeliveryInfos } from 'pages/orders/drawers/orderdrawer/DeliveryInfos';
@@ -14,6 +15,7 @@ import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
 
 interface ParticipantProps {
+  id?: string;
   name?: string;
   instruction?: string;
   address?: string;
@@ -23,11 +25,12 @@ interface ParticipantProps {
   buttonLink?: string;
   isBtnDisabled?: boolean;
   dropIssues?: WithId<Issue>[] | null;
-  removeCourier?(issue: WithId<Issue>, comment: string): void;
+  removeCourier?(issue?: WithId<Issue>, comment?: string): void;
   isLoading?: boolean;
 }
 
 const Participant = ({
+  id,
   name,
   instruction,
   address,
@@ -47,12 +50,15 @@ const Participant = ({
   // handlers
   const handleRemoving = () => {
     const issue = dropIssues?.find((issue) => issue.id === issueId);
-    if (issue) removeCourier!(issue, comment);
+    removeCourier!(issue, comment);
   };
   // side effects
   React.useEffect(() => {
     if (dropIssues) setIssueId(dropIssues[0].id);
   }, [dropIssues]);
+  React.useEffect(() => {
+    if (!id) setIsRemoving(false);
+  }, [id]);
   // UI
   return (
     <Box mb="10">
@@ -189,15 +195,39 @@ export const Participants = ({ order }: ParticipantsProps) => {
   const { isOrderActive } = useOrderDeliveryInfos(order);
   const issues = useIssuesByType(order?.type === 'food' ? dropsFoodIssues : dropsP2pIssues);
   const { courierManualRemoval, removalResult } = useOrderCourierRemoval();
-  const { isLoading, isSuccess, isError, error } = removalResult;
+  // state
+  const [error, setError] = React.useState(initialError);
   //refs
   const submission = React.useRef(0);
   // handlers
-  const removeCourierFromOrder = (issue: WithId<Issue>, comment: string) => {
+  const removeCourierFromOrder = (issue?: WithId<Issue>, comment?: string) => {
     submission.current += 1;
-    courierManualRemoval({ orderId: order?.id!, issue, comment });
+    if (!order?.id || !order?.courier?.id)
+      return setError({
+        status: true,
+        error: null,
+      });
+    if (!issue)
+      return setError({
+        status: true,
+        error: null,
+        message: {
+          title: 'Informações incompletas',
+          description: 'É preciso irformar o motivo da remoção.',
+        },
+      });
+    courierManualRemoval({ orderId: order.id, courierId: order.courier.id, issue, comment });
   };
-
+  // side effects
+  React.useEffect(() => {
+    if (removalResult.isError) {
+      setError({
+        status: true,
+        error: removalResult.error,
+        message: { title: 'Operação negada!', description: `${removalResult.error}` },
+      });
+    }
+  }, [removalResult.isError, removalResult.error]);
   // UI
   return (
     <Box>
@@ -238,13 +268,14 @@ export const Participants = ({ order }: ParticipantsProps) => {
       )}
       <SectionTitle>{t('Entregador')}</SectionTitle>
       <Participant
+        id={order?.courier?.id}
         name={order?.courier?.name ?? 'N/E'}
         buttonLabel={t('Ver cadastro do entregador')}
         buttonLink={`/backoffice/couriers/${order?.courier?.id}`}
         isBtnDisabled={!order?.courier}
         dropIssues={issues}
         removeCourier={removeCourierFromOrder}
-        isLoading={isLoading}
+        isLoading={removalResult.isLoading}
       />
       {isOrderActive ? (
         <DeliveryInfos order={order!} />
@@ -256,44 +287,12 @@ export const Participants = ({ order }: ParticipantsProps) => {
           </Text>
         </>
       )}
-      {/*isOrderActive && (
-        <>
-          <SectionTitle>{orderDispatchingText}</SectionTitle>
-          {isMatched &&
-            !isCurrierArrived &&
-            (arrivalTime && arrivalTime > 0 ? (
-              <Text mt="1" fontSize="15px" lineHeight="21px">
-                {t(
-                  `Chega em aproximadamente ${
-                    arrivalTime > 1 ? arrivalTime + ' minutos' : arrivalTime + ' minuto'
-                  }`
-                )}
-              </Text>
-            ) : (
-              <Text mt="1" fontSize="15px" lineHeight="21px">
-                {t(`Chega em menos de 1 minuto`)}
-              </Text>
-            ))}
-          <DeliveryMap
-            orderStatus={order?.status}
-            origin={order?.origin?.location}
-            destination={order?.destination?.location}
-            courier={order?.courier?.location}
-            orderPolyline={order?.route?.polyline}
-          />
-        </>
-      )}
-      
-      <SectionTitle>{t('Destino do pedido')}</SectionTitle>
-      <Text mt="1" fontSize="15px" lineHeight="21px">
-        {order?.destination?.address.description ?? 'N/E'}
-            </Text>*/}
       <SuccessAndErrorHandler
         submission={submission.current}
-        isSuccess={isSuccess}
-        isError={isError}
-        error={error}
-        errorMessage={{ title: t('Operação negada!'), description: `${error}` }}
+        isSuccess={removalResult.isSuccess}
+        isError={error.status}
+        error={error.error}
+        errorMessage={error.message}
       />
     </Box>
   );

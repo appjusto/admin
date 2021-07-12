@@ -58,6 +58,7 @@ export const Matching = ({ orderId, orderStatus, orderDispatchingStatus }: Match
 
   // handlers
   const removeCourierNotified = async (courierId: string) => {
+    setError(initialError);
     submission.current += 1;
     setCourierRemoving(courierId);
     const newArray = couriersNotified?.filter((id) => id !== courierId);
@@ -66,6 +67,7 @@ export const Matching = ({ orderId, orderStatus, orderDispatchingStatus }: Match
   };
 
   const allocateCourier = (courierId: string, comment: string) => {
+    setError(initialError);
     submission.current += 1;
     return courierManualAllocation({ orderId, courierId, comment });
   };
