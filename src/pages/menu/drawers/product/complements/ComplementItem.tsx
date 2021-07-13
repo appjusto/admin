@@ -11,14 +11,13 @@ import { t } from 'utils/i18n';
 import { ComplementForm } from './ComplementForm';
 
 interface Props {
-  groupId: string;
   item: WithId<Complement>;
   index: number;
   isLoading: boolean;
   handleDelete(complementId: string, imageExists: boolean): void;
 }
 
-export const ComplementItem = ({ groupId, item, index, isLoading, handleDelete }: Props) => {
+export const ComplementItem = ({ item, index, isLoading, handleDelete }: Props) => {
   // context
   const { onUpdateComplement } = useProductContext();
   // state
@@ -97,8 +96,8 @@ export const ComplementItem = ({ groupId, item, index, isLoading, handleDelete }
               <Tooltip
                 key="available"
                 placement="top"
-                label={t('Disponibilidade')}
-                aria-label={t('Disponibilidade')}
+                label={t('Disponibilidade do item')}
+                aria-label={t('Disponibilidade do item')}
               >
                 <Box>
                   <Switch

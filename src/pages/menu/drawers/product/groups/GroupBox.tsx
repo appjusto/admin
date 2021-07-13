@@ -91,7 +91,8 @@ export const GroupBox = ({ index, group }: GroupBoxProps) => {
       </Box>
     );
   }
-
+  // UI
+  console.log('render!');
   return (
     <Draggable draggableId={group.id} index={index}>
       {(draggable) => (
@@ -131,12 +132,12 @@ export const GroupBox = ({ index, group }: GroupBoxProps) => {
                 <Tooltip
                   key="available"
                   placement="top"
-                  label={t('Disponibilidade')}
-                  aria-label={t('Disponibilidade')}
+                  label={t('Disponibilidade do grupo')}
+                  aria-label={t('Disponibilidade do grupo')}
                 >
                   <Box>
                     <Switch
-                      size="lg"
+                      size="md"
                       isChecked={group.enabled}
                       onChange={(ev) => {
                         ev.stopPropagation();
@@ -210,7 +211,6 @@ export const GroupBox = ({ index, group }: GroupBoxProps) => {
                     group.items.map((item, index) => (
                       <ComplementItem
                         key={item.id}
-                        groupId={group.id}
                         item={item}
                         index={index}
                         isLoading={isLoading}
