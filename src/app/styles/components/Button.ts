@@ -29,6 +29,8 @@ export const Button = {
       'bg': 'gray.700',
       'borderColor': 'gray.700',
       'color': 'white',
+      'fontSize': '15px',
+      'fontWeight': '500',
       ':hover': {
         bg: 'gray.500',
         borderColor: 'gray.500',
@@ -97,13 +99,14 @@ export const Button = {
         borderColor: 'gray.500',
       },
     },
-    grey: {
-      'bg': '#697667',
-      'color': 'white',
+    yellowDark: {
+      'bg': '#FFBE00',
+      'border': 'none',
+      'color': 'black',
       'fontSize': '15px',
       'fontWeight': '500',
       ':hover': {
-        bg: 'gray.600',
+        bg: '#FFE493',
       },
       ':disabled': {
         color: 'gray.500',

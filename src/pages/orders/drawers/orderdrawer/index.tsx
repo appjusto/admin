@@ -1,4 +1,4 @@
-import { Box, Text } from '@chakra-ui/react';
+import { Box, Button, HStack, Text } from '@chakra-ui/react';
 import { useOrder } from 'app/api/order/useOrder';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextManagerProfile } from 'app/state/manager/context';
@@ -7,8 +7,9 @@ import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorH
 import { initialError } from 'common/components/error/utils';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { useReactToPrint } from 'react-to-print';
+import { formatCurrency } from 'utils/formatters';
 import { getOrderCancellator } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { OrderBaseDrawer } from '../OrderBaseDrawer';
@@ -18,6 +19,10 @@ import { DeliveryInfos } from './DeliveryInfos';
 import { OrderDetails } from './OrderDetails';
 import { OrderIssuesTable } from './OrderIssuesTable';
 import { OrderToPrinting } from './OrderToPrinting';
+
+function useQuery() {
+  return new URLSearchParams(useLocation().search);
+}
 
 interface Props {
   isOpen: boolean;
@@ -42,9 +47,11 @@ export const OrderDrawer = (props: Props) => {
     orderCancellationCosts,
   } = useOrder(orderId);
   const { manager } = useContextManagerProfile();
+  const query = useQuery();
 
   // state
   const [isCanceling, setIsCanceling] = React.useState(false);
+  const [isOutsourceDelivery, setIsOutsourceDelivery] = React.useState<boolean>();
   const [error, setError] = React.useState(initialError);
 
   // refs
@@ -53,6 +60,9 @@ export const OrderDrawer = (props: Props) => {
 
   // helpers
   const cancellator = getOrderCancellator(orderCancellation?.issue?.type);
+  const deliveryFare = order?.fare?.courier.value
+    ? formatCurrency(order.fare.courier.value)
+    : 'N/E';
 
   // handlers
   const handleCancel = async (issue: WithId<Issue>) => {
@@ -85,6 +95,11 @@ export const OrderDrawer = (props: Props) => {
   });
 
   // side effects
+  React.useEffect(() => {
+    if (!query) return;
+    if (query.get('outsource') && isOutsourceDelivery === undefined) setIsOutsourceDelivery(true);
+  }, [query]);
+
   React.useEffect(() => {
     if (updateResult.isError) {
       setError({
@@ -122,9 +137,29 @@ export const OrderDrawer = (props: Props) => {
             />
           ) : (
             <>
-              {(order?.status === 'ready' || order?.status === 'dispatching') && (
-                <DeliveryInfos order={order} />
-              )}
+              {(order?.status === 'ready' || order?.status === 'dispatching') &&
+                (isOutsourceDelivery ? (
+                  <Box mt="4" border="2px solid #FFBE00" borderRadius="lg" bg="" p="4">
+                    <SectionTitle mt="0">{t('Assumir logística')}</SectionTitle>
+                    <Text mt="2">
+                      {t(
+                        `Ao assumir a logística de entrega, iremos repassar o valor de ${deliveryFare} pelo custo da entrega, além do valor do pedido que já foi cobrado do cliente. O AppJusto não terá como monitorar o pedido a partir daqui.`
+                      )}
+                    </Text>
+                    <HStack mt="4">
+                      <Button
+                        mt="0"
+                        variant="dangerLight"
+                        onClick={() => setIsOutsourceDelivery(false)}
+                      >
+                        {t('Cancelar')}
+                      </Button>
+                      <Button mt="0">{t('Confirmar')}</Button>
+                    </HStack>
+                  </Box>
+                ) : (
+                  <DeliveryInfos order={order} setOutsource={setIsOutsourceDelivery} />
+                ))}
               <OrderDetails order={order} />
               {order?.status === 'canceled' && (
                 <>

@@ -10,12 +10,13 @@ import { t } from 'utils/i18n';
 import { DeliveryMap } from './DeliveryMap';
 interface DeliveryInfosProps {
   order: WithId<Order>;
+  setOutsource?(value: boolean): void;
 }
 
-export const DeliveryInfos = ({ order }: DeliveryInfosProps) => {
+export const DeliveryInfos = ({ order, setOutsource }: DeliveryInfosProps) => {
   // context
   const courierPictureUrl = useCourierProfilePicture(order.courier?.id);
-  const { isMatched, orderDispatchingText, arrivalTime } = useOrderDeliveryInfos(order);
+  const { isMatched, orderDispatchingText, arrivalTime, isNoMatch } = useOrderDeliveryInfos(order);
   // state
   const [joined, setJoined] = React.useState<string | null>();
 
@@ -61,6 +62,11 @@ export const DeliveryInfos = ({ order }: DeliveryInfosProps) => {
           ) : (
             <Text fontSize="sm">{t(`Chega em menos de 1 minuto`)}</Text>
           ))}
+        {isNoMatch && (
+          <Button variant="yellowDark" onClick={() => setOutsource && setOutsource(true)}>
+            {t('Assumir logística')}
+          </Button>
+        )}
       </Flex>
       {isMatched && (
         <Flex

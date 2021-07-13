@@ -5,6 +5,7 @@ import { useOrderDeliveryInfos } from 'app/api/order/useOrderDeliveryInfos';
 import { getOrderAckTime } from 'app/api/order/utils';
 import { useOrdersContext } from 'app/state/order';
 import { Order, WithId } from 'appjusto-types';
+import { CustomButton } from 'common/components/buttons/CustomButton';
 import { ReactComponent as Alarm } from 'common/img/alarm_outlined.svg';
 import React from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
@@ -189,6 +190,58 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
     );
   }
 
+  if (isNoMatch) {
+    return (
+      <Box
+        position="relative"
+        borderRadius="lg"
+        borderColor="#FFBE00"
+        borderWidth="2px"
+        color="black"
+        boxShadow="0px 8px 16px -4px rgba(105,118,103,0.1)"
+        zIndex="100"
+      >
+        <Link to={`${url}/${order.id}`}>
+          <Box w="100%" h="100%" px="4" pt="4" pb="100px">
+            <Flex flexDir="column" fontWeight="700">
+              <Text fontSize="lg" fontWeight="700">
+                #{order.code}
+              </Text>
+              <Text fontSize="xs" lineHeight="lg" fontWeight="500">
+                {`{${conrumerName}}`}
+              </Text>
+              <Text fontSize="xs" fontWeight="700">
+                {t('Estamos com dificuldades para encontrar entregador')}
+              </Text>
+              <Text fontSize="xs" color="gray.700">
+                {t('Continuamos procurando...')}
+              </Text>
+            </Flex>
+          </Box>
+        </Link>
+        <Box position="absolute" w="100%" bottom="0" px="4" mb="4" zIndex="999">
+          <CustomButton
+            w="full"
+            maxH="34px"
+            fontSize="xs"
+            variant="yellowDark"
+            label={t('Assumir logística')}
+            link={`${url}/${order.id}?outsource=true`}
+          />
+          <Button
+            isDisabled={!isCurrierArrived}
+            mt="2"
+            w="full"
+            maxH="34px"
+            fontSize="xs"
+            onClick={() => changeOrderStatus(order.id, 'dispatching')}
+          >
+            {t('Entregar pedido')}
+          </Button>
+        </Box>
+      </Box>
+    );
+  }
   if (order.status === 'ready') {
     return (
       <Box

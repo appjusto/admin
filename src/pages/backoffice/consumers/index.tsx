@@ -126,7 +126,7 @@ const ConsumersPage = () => {
         </Text>
       </HStack>
       <ConsumersTable consumers={consumers} />
-      <Button mt="8" variant="grey" onClick={fetchNextPage}>
+      <Button mt="8" variant="secondary" onClick={fetchNextPage}>
         <ArrowDownIcon mr="2" />
         {t('Carregar mais')}
       </Button>
