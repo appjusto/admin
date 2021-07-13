@@ -192,6 +192,7 @@ export const GroupBox = ({ index, group }: GroupBoxProps) => {
                     group.items.map((item, index) => (
                       <ComplementItem
                         key={item.id}
+                        groupId={group.id}
                         item={item}
                         index={index}
                         isLoading={isLoading}

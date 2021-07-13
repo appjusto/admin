@@ -32,8 +32,12 @@ interface ContextProps {
   onDeleteComplementsGroup(group: WithId<ComplementGroup>): void;
   onSaveComplement(
     groupId: string,
-    complementId: string,
     newItem: Complement,
+    imageFile: File | null
+  ): Promise<void | boolean>;
+  onUpdateComplement(
+    complementId: string,
+    newItem: Partial<Complement>,
     imageFile: File | null
   ): Promise<void | boolean>;
   onDeleteComplement(complementId: string, groupId: string): void;
@@ -134,32 +138,30 @@ export const ProductContextProvider = (props: ProviderProps) => {
   };
 
   const onSaveComplement = async (
-    groupId: string | undefined,
-    complementId: string | undefined,
+    groupId: string,
     newItem: Complement,
-    imageFile: File | null
+    imageFile?: File | null
   ) => {
-    if (!complementId) {
-      const newId = await api
-        .business()
-        .createComplement(businessId!, productId, newItem, imageFile);
-      let newProductConfig = menu.empty();
-      if (productConfig && groupId) {
-        newProductConfig = menu.addSecondLevel(productConfig, newId, groupId);
-      }
-      return api.business().updateProduct(
-        businessId!,
-        productId,
-        {
-          complementsOrder: newProductConfig,
-        },
-        null
-      );
-    } else {
-      return api
-        .business()
-        .updateComplement(businessId!, productId, complementId, newItem, imageFile);
+    const newId = await api
+      .business()
+      .createComplement(businessId!, productId, { ...newItem, enabled: false }, imageFile);
+    let newProductConfig = menu.empty();
+    if (productConfig && groupId) {
+      newProductConfig = menu.addSecondLevel(productConfig, newId, groupId);
     }
+    return api.business().updateProduct(businessId!, productId, {
+      complementsOrder: newProductConfig,
+    });
+  };
+
+  const onUpdateComplement = async (
+    complementId: string,
+    newItem: Partial<Complement>,
+    imageFile?: File | null
+  ) => {
+    return api
+      .business()
+      .updateComplement(businessId!, productId, complementId, newItem, imageFile);
   };
 
   const onDeleteComplement = async (complementId: string, groupId: string) => {
@@ -199,6 +201,7 @@ export const ProductContextProvider = (props: ProviderProps) => {
         onUpdateComplementsGroup,
         onDeleteComplementsGroup,
         onSaveComplement,
+        onUpdateComplement,
         onDeleteComplement,
         getComplementImageUrl,
       }}
