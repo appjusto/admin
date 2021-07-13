@@ -47,7 +47,13 @@ export const OrderDetails = ({ order }: DetailsProps) => {
                   {item.complements &&
                     item.complements.map((complement) => (
                       <Tr key={Math.random()} fontSize="sm">
-                        <Td pl="10">{complement.name}</Td>
+                        <Td pl="10" fontWeight="700">
+                          {complement.groupName ?? 'N/E'}
+                          <br />
+                          <Text as="span" fontWeight="500">
+                            {complement.name}
+                          </Text>
+                        </Td>
                         <Td isNumeric>{item.quantity}</Td>
                         <Td isNumeric>{formatCurrency(complement.price)}</Td>
                       </Tr>
