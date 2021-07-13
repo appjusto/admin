@@ -88,11 +88,11 @@ export const OrderToPrinting = React.forwardRef<HTMLDivElement, OrderToPrintProp
         <Table mt="2" size="sm" variant="unstyled" color="black">
           <Thead borderBottom="1px solid black">
             <Tr>
+              <Th isNumeric fontSize="12px" px="0" maxW="20px">
+                {t('Qtd.')}
+              </Th>
               <Th fontSize="12px" pl="0">
                 {t('Item')}
-              </Th>
-              <Th isNumeric fontSize="12px" px="0">
-                {t('Qtd.')}
               </Th>
               <Th isNumeric fontSize="12px" pr="0">
                 {t('Valor')}
@@ -108,14 +108,18 @@ export const OrderToPrinting = React.forwardRef<HTMLDivElement, OrderToPrintProp
                     item.complements && item.complements?.length > 0 ? 'none' : '1px solid black'
                   }
                 >
+                  <Td isNumeric fontSize="11px" px="0">
+                    {item.quantity}
+                  </Td>
                   <Td fontSize="11px" pl="0">
-                    {item.product.name} <br />
+                    {item.product.categoryName ?? 'N/E'} <br />
+                    <Text as="span" fontSize="10px" fontWeight="700">
+                      {item.product.name}
+                    </Text>
+                    <br />
                     <Text as="span" fontSize="10px" fontWeight="500">
                       {item.notes}
                     </Text>
-                  </Td>
-                  <Td isNumeric fontSize="11px" px="0">
-                    {item.quantity}
                   </Td>
                   <Td isNumeric fontSize="11px" pr="0">
                     {formatCurrency(item.product.price)}
@@ -130,11 +134,11 @@ export const OrderToPrinting = React.forwardRef<HTMLDivElement, OrderToPrintProp
                         item.complements?.length === index + 1 ? '1px solid black' : 'none'
                       }
                     >
-                      <Td fontSize="11px" fontWeight="500">
-                        {complement.name}
-                      </Td>
                       <Td isNumeric fontSize="11px" fontWeight="500" px="0">
                         {item.quantity}
+                      </Td>
+                      <Td fontSize="11px" fontWeight="500">
+                        {complement.name}
                       </Td>
                       <Td isNumeric fontSize="11px" fontWeight="500" pr="0">
                         {formatCurrency(complement.price)}

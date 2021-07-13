@@ -1,4 +1,4 @@
-import { Box, Button, Circle, Flex, Image, Text } from '@chakra-ui/react';
+import { Box, Button, Circle, Flex, HStack, Image, Text } from '@chakra-ui/react';
 import { useCourierProfilePicture } from 'app/api/courier/useCourierProfilePicture';
 import { useOrderDeliveryInfos } from 'app/api/order/useOrderDeliveryInfos';
 import { Order, WithId } from 'appjusto-types';
@@ -10,12 +10,13 @@ import { t } from 'utils/i18n';
 import { DeliveryMap } from './DeliveryMap';
 interface DeliveryInfosProps {
   order: WithId<Order>;
+  setOutsource?(value: boolean): void;
 }
 
-export const DeliveryInfos = ({ order }: DeliveryInfosProps) => {
+export const DeliveryInfos = ({ order, setOutsource }: DeliveryInfosProps) => {
   // context
   const courierPictureUrl = useCourierProfilePicture(order.courier?.id);
-  const { isMatched, orderDispatchingText, arrivalTime } = useOrderDeliveryInfos(order);
+  const { isMatched, orderDispatchingText, arrivalTime, isNoMatch } = useOrderDeliveryInfos(order);
   // state
   const [joined, setJoined] = React.useState<string | null>();
 
@@ -61,6 +62,20 @@ export const DeliveryInfos = ({ order }: DeliveryInfosProps) => {
           ) : (
             <Text fontSize="sm">{t(`Chega em menos de 1 minuto`)}</Text>
           ))}
+        {isNoMatch && (
+          <HStack spacing={2}>
+            {/*<Button size="md" onClick={() => {}}>
+              {t('Tentar novamente')}
+              </Button>*/}
+            <Button
+              size="md"
+              variant="yellowDark"
+              onClick={() => setOutsource && setOutsource(true)}
+            >
+              {t('Assumir logística')}
+            </Button>
+          </HStack>
+        )}
       </Flex>
       {isMatched && (
         <Flex

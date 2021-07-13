@@ -19,7 +19,8 @@ export const OrdersTableItem = ({ order }: ItemProps) => {
   const getFoodOrderTotal = () => {
     let total = 0;
     if (!isBackoffice) {
-      if (order.fare?.business?.value) total = order.fare.business.value;
+      if (order.dispatchingStatus === 'outsourced' && order.fare?.total) total = order.fare.total;
+      else if (order.fare?.business?.value) total = order.fare.business.value;
       else return 'N/E';
     } else {
       if (order.fare?.total) total = order.fare.total;
@@ -37,7 +38,11 @@ export const OrdersTableItem = ({ order }: ItemProps) => {
         {order.status ? orderStatusPTOptionsForTableItem[order.status as OrderStatus] : 'N/I'}
       </Td>
       <Td>{order.consumer.name ?? 'N/I'}</Td>
-      <Td>{order.courier?.name ?? 'N/E'}</Td>
+      <Td>
+        {order.dispatchingStatus === 'outsourced'
+          ? 'Logística assumida'
+          : order.courier?.name ?? 'N/E'}
+      </Td>
       <Td>{total}</Td>
       <Td>
         <CustomButton

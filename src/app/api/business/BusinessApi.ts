@@ -425,7 +425,7 @@ export default class BusinessApi {
     businessId: string,
     productId: string,
     changes: Partial<Product>,
-    imageFiles: File[] | null
+    imageFiles?: File[] | null
   ) {
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
     let newProductObject = {};
@@ -579,7 +579,7 @@ export default class BusinessApi {
     businessId: string,
     productId: string,
     item: Complement,
-    imageFile: File | null
+    imageFile?: File | null
   ) {
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
     const complementId = this.refs.getBusinessProductComplementsRef(businessId, productId).doc().id;
@@ -602,8 +602,8 @@ export default class BusinessApi {
     businessId: string,
     productId: string,
     complementId: string,
-    item: Complement,
-    imageFile: File | null
+    item: Partial<Complement>,
+    imageFile?: File | null
   ) {
     let newItem = {
       ...item,

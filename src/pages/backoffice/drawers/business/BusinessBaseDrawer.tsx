@@ -137,7 +137,7 @@ export const BusinessBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
                 mt="0"
                 width="full"
                 maxW="240px"
-                variant="grey"
+                variant="secondary"
                 label={t('Personificar restaurante')}
                 link={'/app'}
               />

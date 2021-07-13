@@ -1,4 +1,4 @@
-import { Box, Button, Flex, HStack, Text, Tooltip } from '@chakra-ui/react';
+import { Box, Button, Flex, HStack, Switch, Text, Tooltip } from '@chakra-ui/react';
 import { ComplementGroup, WithId } from 'appjusto-types';
 import { AddButton } from 'common/components/buttons/AddButton';
 import { DeleteButton } from 'common/components/buttons/DeleteButton';
@@ -91,7 +91,8 @@ export const GroupBox = ({ index, group }: GroupBoxProps) => {
       </Box>
     );
   }
-
+  // UI
+  console.log('render!');
   return (
     <Draggable draggableId={group.id} index={index}>
       {(draggable) => (
@@ -129,6 +130,24 @@ export const GroupBox = ({ index, group }: GroupBoxProps) => {
               </Flex>
               <Flex flexDir="row" alignItems="center">
                 <Tooltip
+                  key="available"
+                  placement="top"
+                  label={t('Disponibilidade do grupo')}
+                  aria-label={t('Disponibilidade do grupo')}
+                >
+                  <Box>
+                    <Switch
+                      size="md"
+                      isChecked={group.enabled}
+                      onChange={(ev) => {
+                        ev.stopPropagation();
+                        // update
+                        onUpdateComplementsGroup(group.id, { enabled: ev.target.checked });
+                      }}
+                    />
+                  </Box>
+                </Tooltip>
+                <Tooltip
                   placement="top"
                   label={t('Adicionar item')}
                   aria-label={t('Adicionar item')}
@@ -136,7 +155,7 @@ export const GroupBox = ({ index, group }: GroupBoxProps) => {
                   <AddButton onClick={() => setIsAdding(!isAdding)} />
                 </Tooltip>
                 <Tooltip placement="top" label={t('Editar')} aria-label={t('Editar')}>
-                  <EditButton title={t('Editar')} onClick={() => setIsEditing(!isEditing)} />
+                  <EditButton ml="2" title={t('Editar')} onClick={() => setIsEditing(!isEditing)} />
                 </Tooltip>
                 <Tooltip placement="top" label={t('Excluir grupo')} aria-label={t('Excluir grupo')}>
                   <DeleteButton
