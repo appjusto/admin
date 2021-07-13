@@ -42,6 +42,7 @@ export const OrderDrawer = (props: Props) => {
   const {
     order,
     cancelOrder,
+    updateOrder,
     updateResult,
     cancelResult,
     orderIssues,
@@ -92,9 +93,10 @@ export const OrderDrawer = (props: Props) => {
   });
   // side effects
   React.useEffect(() => {
-    if (!query) return;
-    if (query.get('outsource') && isOutsourceDelivery === undefined) setIsOutsourceDelivery(true);
-  }, [query, isOutsourceDelivery]);
+    if (!query || isOutsourceDelivery !== undefined) return;
+    if (order?.dispatchingStatus === 'outsourced') setIsOutsourceDelivery(true);
+    if (query.get('outsource')) setIsOutsourceDelivery(true);
+  }, [query, isOutsourceDelivery, order]);
   React.useEffect(() => {
     if (updateResult.isError) {
       setError({
@@ -141,6 +143,16 @@ export const OrderDrawer = (props: Props) => {
                           `O AppJusto não terá como monitorar o pedido a partir daqui. Entre em contato com o cliente para mantê-lo informado sobre sua entrega.`
                         )}
                       </Text>
+                      <Text mt="4">
+                        {t(`Após a realização da entrega, confirme com o botão abaixo:`)}
+                      </Text>
+                      <Button
+                        mt="2"
+                        onClick={() => updateOrder({ status: 'delivered' })}
+                        isLoading={updateResult.isLoading}
+                      >
+                        {t('Confirmar que o pedido foi entregue ao cliente')}
+                      </Button>
                     </Box>
                   ) : (
                     <Box mt="4" border="2px solid #FFBE00" borderRadius="lg" bg="" p="4">
