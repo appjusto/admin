@@ -111,7 +111,7 @@ export const OrderDrawer = (props: Props) => {
       orderPrinting={business?.orderPrinting}
     >
       <Box position="relative">
-        <Box pos="absolute" top="0" left="0" w="100%" h="100vh" bg="white" zIndex="-100" />
+        <Box pos="absolute" top="0" left="0" w="100%" h="100%" bg="white" zIndex="-100" />
         <Box w="100%">
           {isCanceling ? (
             <Cancelation
