@@ -16,6 +16,7 @@ import { SectionTitle } from '../generics/SectionTitle';
 
 interface ParticipantProps {
   id?: string;
+  outsourceDelivery?: boolean;
   name?: string;
   instruction?: string;
   address?: string;
@@ -31,6 +32,7 @@ interface ParticipantProps {
 
 const Participant = ({
   id,
+  outsourceDelivery,
   name,
   instruction,
   address,
@@ -62,12 +64,18 @@ const Participant = ({
   // UI
   return (
     <Box mb="10">
-      <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
-        {name ? t('Nome:') : t('Instrução:')}{' '}
-        <Text as="span" fontWeight="500">
-          {name ?? instruction}
+      {outsourceDelivery ? (
+        <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+          {t('Logística assumida pelo restaurante:')}
         </Text>
-      </Text>
+      ) : (
+        <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+          {name ? t('Nome:') : t('Instrução:')}{' '}
+          <Text as="span" fontWeight="500">
+            {name ?? instruction}
+          </Text>
+        </Text>
+      )}
       {address && (
         <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
           {t('Endereço principal:')}{' '}
@@ -269,6 +277,7 @@ export const Participants = ({ order }: ParticipantsProps) => {
       <SectionTitle>{t('Entregador')}</SectionTitle>
       <Participant
         id={order?.courier?.id}
+        outsourceDelivery={order?.dispatchingStatus === 'outsourced'}
         name={order?.courier?.name ?? 'N/E'}
         buttonLabel={t('Ver cadastro do entregador')}
         buttonLink={`/backoffice/couriers/${order?.courier?.id}`}
