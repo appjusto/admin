@@ -1,4 +1,4 @@
-import { Box, Button, Circle, Flex, Image, Text } from '@chakra-ui/react';
+import { Box, Button, Circle, Flex, HStack, Image, Text } from '@chakra-ui/react';
 import { useCourierProfilePicture } from 'app/api/courier/useCourierProfilePicture';
 import { useOrderDeliveryInfos } from 'app/api/order/useOrderDeliveryInfos';
 import { Order, WithId } from 'appjusto-types';
@@ -63,9 +63,18 @@ export const DeliveryInfos = ({ order, setOutsource }: DeliveryInfosProps) => {
             <Text fontSize="sm">{t(`Chega em menos de 1 minuto`)}</Text>
           ))}
         {isNoMatch && (
-          <Button variant="yellowDark" onClick={() => setOutsource && setOutsource(true)}>
-            {t('Assumir logística')}
-          </Button>
+          <HStack spacing={2}>
+            {/*<Button size="md" onClick={() => {}}>
+              {t('Tentar novamente')}
+              </Button>*/}
+            <Button
+              size="md"
+              variant="yellowDark"
+              onClick={() => setOutsource && setOutsource(true)}
+            >
+              {t('Assumir logística')}
+            </Button>
+          </HStack>
         )}
       </Flex>
       {isMatched && (

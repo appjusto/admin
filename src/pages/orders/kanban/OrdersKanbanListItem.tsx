@@ -32,6 +32,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
     isDelivered,
     orderDispatchingKanbanItemText,
   } = useOrderDeliveryInfos(order);
+  //const { restartMatching, restartResult } = useObserveOrderMatching(order.id);
 
   // state
   const [elapsedTime, setElapsedTime] = React.useState<number | null>(0);
@@ -202,7 +203,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
         zIndex="100"
       >
         <Link to={`${url}/${order.id}`}>
-          <Box w="100%" h="100%" px="4" pt="4" pb="100px">
+          <Box w="100%" h="100%" px="4" pt="4" pb="58px">
             <Flex flexDir="column" fontWeight="700">
               <Text fontSize="lg" fontWeight="700">
                 #{order.code}
@@ -211,16 +212,23 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
                 {`{${conrumerName}}`}
               </Text>
               <Text fontSize="xs" fontWeight="700">
-                {t('Estamos com dificuldades para encontrar entregador')}
-              </Text>
-              <Text fontSize="xs" color="gray.700">
-                {t('Continuamos procurando...')}
+                {t('Não foi possível encontrar o entregador')}
               </Text>
             </Flex>
           </Box>
         </Link>
         <Box position="absolute" w="100%" bottom="0" px="4" mb="4" zIndex="999">
+          {/*<Button
+            w="full"
+            maxH="34px"
+            fontSize="xs"
+            onClick={() => restartMatching()}
+            isLoading={restartResult.isLoading}
+          >
+            {t('Tentar novamente')}
+          </Button>*/}
           <CustomButton
+            mt="2"
             w="full"
             maxH="34px"
             fontSize="xs"
@@ -228,16 +236,6 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
             label={t('Assumir logística')}
             link={`${url}/${order.id}?outsource=true`}
           />
-          <Button
-            isDisabled={!isCurrierArrived}
-            mt="2"
-            w="full"
-            maxH="34px"
-            fontSize="xs"
-            onClick={() => changeOrderStatus(order.id, 'dispatching')}
-          >
-            {t('Entregar pedido')}
-          </Button>
         </Box>
       </Box>
     );

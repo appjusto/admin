@@ -13,6 +13,7 @@ import {
   OrderMatching,
   OrderStatus,
   OrderType,
+  OutsourceDeliveryPayload,
   WithId,
 } from 'appjusto-types';
 import { documentAs, documentsAs, FirebaseDocument } from 'core/fb';
@@ -374,7 +375,6 @@ export default class OrderApi {
     }
   }
 
-  // courier manual allocation
   async courierManualAllocation(orderId: string, courierId: string, comment: string) {
     const payload: MatchOrderPayload = {
       meta: { version: '1' }, // TODO: pass correct version on
@@ -389,7 +389,6 @@ export default class OrderApi {
     }
   }
 
-  // courier manual removal
   async courierManualRemoval(
     orderId: string,
     //courierId: string,
@@ -405,6 +404,18 @@ export default class OrderApi {
     };
     try {
       await this.refs.getDropOrderCallable()(payload);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getOutsourceDelivery(orderId: string) {
+    const payload: OutsourceDeliveryPayload = {
+      meta: { version: '1' }, // TODO: pass correct version on
+      orderId,
+    };
+    try {
+      await this.refs.getOutsourceDeliveryCallable()(payload);
     } catch (error) {
       throw error;
     }
