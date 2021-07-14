@@ -20,7 +20,6 @@ interface ParticipantProps {
   outsourceDelivery?: boolean;
   name?: string;
   mode?: CourierMode;
-  fleet?: string;
   instruction?: string;
   address?: string;
   additionalInfo?: string;
@@ -38,7 +37,6 @@ const Participant = ({
   outsourceDelivery,
   name,
   mode,
-  fleet,
   instruction,
   address,
   additionalInfo,
@@ -86,14 +84,6 @@ const Participant = ({
               {t('Modalidade da entrega:')}{' '}
               <Text as="span" fontWeight="500">
                 {modePTOptions[mode] ?? 'N/E'}
-              </Text>
-            </Text>
-          )}
-          {fleet && (
-            <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
-              {t('Frota:')}{' '}
-              <Text as="span" fontWeight="500">
-                {fleet}
               </Text>
             </Text>
           )}
@@ -302,7 +292,6 @@ export const Participants = ({ order }: ParticipantsProps) => {
         id={order?.courier?.id}
         outsourceDelivery={order?.dispatchingStatus === 'outsourced'}
         name={order?.courier?.name ?? 'N/E'}
-        fleet={order?.fare?.fleet.name ?? 'N/E'}
         mode={order?.courier?.mode}
         buttonLabel={t('Ver cadastro do entregador')}
         buttonLink={`/backoffice/couriers/${order?.courier?.id}`}
@@ -311,6 +300,13 @@ export const Participants = ({ order }: ParticipantsProps) => {
         removeCourier={removeCourierFromOrder}
         isLoading={removalResult.isLoading}
       />
+      <SectionTitle>{t('Frota')}</SectionTitle>
+      <Text mt="2" mb="10" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+        {t('Nome:')}{' '}
+        <Text as="span" fontWeight="500">
+          {order?.fare?.fleet.name ?? 'N/E'}
+        </Text>
+      </Text>
       {isOrderActive ? (
         <DeliveryInfos order={order!} />
       ) : (
