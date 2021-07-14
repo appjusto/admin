@@ -7,8 +7,16 @@ interface Props extends AlertProps {
   children?: React.ReactNode | React.ReactNode[];
 }
 
-export const AlertError = ({ title, description, icon = true, children, ...props }: Props) => (
-  <Alert mt="4" status="error" color="black" bg="rgb(254, 215, 215)" borderRadius="lg" {...props}>
+export const AlertError = ({ title, description, icon = false, children, ...props }: Props) => (
+  <Alert
+    mt="4"
+    status="error"
+    color="black"
+    bg="rgb(254, 215, 215)"
+    border="2px solid red"
+    borderRadius="lg"
+    {...props}
+  >
     {icon && <AlertIcon color="red" />}
     <Flex flexDir="column">
       {title && <AlertTitle mr={2}>{title}</AlertTitle>}

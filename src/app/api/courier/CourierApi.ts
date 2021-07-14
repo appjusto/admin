@@ -61,6 +61,22 @@ export default class CourierApi {
     return unsubscribe;
   }
 
+  observeCourierMarketPlace(
+    courierId: string,
+    resultHandler: (result: MarketplaceAccountInfo | null) => void
+  ): firebase.Unsubscribe {
+    const unsubscribe = this.refs.getCourierMarketPlaceRef(courierId).onSnapshot(
+      (doc) => {
+        if (doc.exists) resultHandler(documentAs<MarketplaceAccountInfo>(doc));
+        else resultHandler(null);
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+    return unsubscribe;
+  }
+
   // courier profile picture
   async getCourierProfilePictureURL(courierId: string, size: string) {
     return await this.files.getDownloadURL(this.refs.getCourierSelfieStoragePath(courierId, size));
@@ -70,13 +86,6 @@ export default class CourierApi {
     return await this.files.getDownloadURL(
       this.refs.getCourierDocumentStoragePath(courierId, size)
     );
-  }
-
-  // private data
-  async getCourierMarketPlaceData(courierId: string) {
-    return (
-      await this.refs.getCourierMarketPlaceRef(courierId).get()
-    ).data() as MarketplaceAccountInfo;
   }
 
   async getCourierFleet(fleetId: string) {
@@ -124,5 +133,9 @@ export default class CourierApi {
       Sentry.captureException(error);
       throw error;
     }
+  }
+
+  async deletePrivateMarketPlace(courierId: string) {
+    return await this.refs.getCourierMarketPlaceRef(courierId).delete();
   }
 }

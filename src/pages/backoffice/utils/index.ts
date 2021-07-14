@@ -76,3 +76,12 @@ export const invoiceStatusPTOptions = {
   in_protest: 'Em protesto',
   chargeback: 'Estornada',
 };
+
+export const iuguSituationPTOptions = {
+  'pending': 'Pendente',
+  'created': 'Criada',
+  'configured': 'Configurada',
+  'waiting-verification': 'Aguardando verificação',
+  'verified': 'Verificada',
+  'invalid': 'Inválida',
+};

@@ -1,20 +1,22 @@
 import { useContextApi } from 'app/state/api/context';
 import { MarketplaceAccountInfo } from 'appjusto-types';
 import React from 'react';
+import { useMutation } from 'react-query';
 
 export const useCourierPrivateData = (courierId: string) => {
   // context
   const api = useContextApi();
   // state
-  const [marketplace, setMarketplace] = React.useState<MarketplaceAccountInfo>();
+  const [marketPlace, setMarketPlace] = React.useState<MarketplaceAccountInfo | null>();
+  // mutations
+  const [deleteMarketPlace, deleteMarketPlaceResult] = useMutation(async () =>
+    api.courier().deletePrivateMarketPlace(courierId)
+  );
   // side effects
   React.useEffect(() => {
-    const getPlatformData = async () => {
-      const data = await api.courier().getCourierMarketPlaceData(courierId);
-      if (data) setMarketplace(data);
-    };
-    getPlatformData();
+    if (!courierId) return;
+    return api.courier().observeCourierMarketPlace(courierId, setMarketPlace);
   }, [api, courierId]);
   // return
-  return marketplace;
+  return { marketPlace, deleteMarketPlace, deleteMarketPlaceResult };
 };
