@@ -2,12 +2,13 @@ import { Box, Flex, HStack, Radio, RadioGroup, Text } from '@chakra-ui/react';
 import { useOrderCourierRemoval } from 'app/api/order/useOrderCourierRemoval';
 import { useOrderDeliveryInfos } from 'app/api/order/useOrderDeliveryInfos';
 import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';
-import { Issue, IssueType, Order, WithId } from 'appjusto-types';
+import { CourierMode, Issue, IssueType, Order, WithId } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
 import { initialError } from 'common/components/error/utils';
 import { Textarea } from 'common/components/form/input/Textarea';
 import firebase from 'firebase/app';
+import { modePTOptions } from 'pages/backoffice/utils';
 import { DeliveryInfos } from 'pages/orders/drawers/orderdrawer/DeliveryInfos';
 import React from 'react';
 import { getDateAndHour } from 'utils/functions';
@@ -18,6 +19,8 @@ interface ParticipantProps {
   id?: string;
   outsourceDelivery?: boolean;
   name?: string;
+  mode?: CourierMode;
+  fleet?: string;
   instruction?: string;
   address?: string;
   additionalInfo?: string;
@@ -34,6 +37,8 @@ const Participant = ({
   id,
   outsourceDelivery,
   name,
+  mode,
+  fleet,
   instruction,
   address,
   additionalInfo,
@@ -69,12 +74,30 @@ const Participant = ({
           {t('Logística assumida pelo restaurante:')}
         </Text>
       ) : (
-        <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
-          {name ? t('Nome:') : t('Instrução:')}{' '}
-          <Text as="span" fontWeight="500">
-            {name ?? instruction}
+        <>
+          <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+            {name ? t('Nome:') : t('Instrução:')}{' '}
+            <Text as="span" fontWeight="500">
+              {name ?? instruction}
+            </Text>
           </Text>
-        </Text>
+          {mode && (
+            <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+              {t('Modalidade da entrega:')}{' '}
+              <Text as="span" fontWeight="500">
+                {modePTOptions[mode] ?? 'N/E'}
+              </Text>
+            </Text>
+          )}
+          {fleet && (
+            <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+              {t('Frota:')}{' '}
+              <Text as="span" fontWeight="500">
+                {fleet}
+              </Text>
+            </Text>
+          )}
+        </>
       )}
       {address && (
         <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
@@ -279,6 +302,8 @@ export const Participants = ({ order }: ParticipantsProps) => {
         id={order?.courier?.id}
         outsourceDelivery={order?.dispatchingStatus === 'outsourced'}
         name={order?.courier?.name ?? 'N/E'}
+        fleet={order?.fare?.fleet.name ?? 'N/E'}
+        mode={order?.courier?.mode}
         buttonLabel={t('Ver cadastro do entregador')}
         buttonLink={`/backoffice/couriers/${order?.courier?.id}`}
         isBtnDisabled={!order?.courier}
