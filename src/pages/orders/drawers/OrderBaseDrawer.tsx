@@ -229,6 +229,7 @@ export const OrderBaseDrawer = ({
                 <Flex
                   w="full"
                   maxW="607px"
+                  pr="12"
                   flexDir="row"
                   justifyContent={order?.status === 'confirmed' ? 'flex-start' : 'space-between'}
                 >
