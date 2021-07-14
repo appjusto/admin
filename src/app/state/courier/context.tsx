@@ -1,7 +1,7 @@
 import * as cnpjutils from '@fnando/cnpj';
 import * as cpfutils from '@fnando/cpf';
+import { useCourierMarketPlace } from 'app/api/courier/useCourierMarketPlace';
 import { useCourierOrders } from 'app/api/courier/useCourierOrders';
-import { useCourierPrivateData } from 'app/api/courier/useCourierPrivateData';
 import { useCourierProfile } from 'app/api/courier/useCourierProfile';
 import { useCourierProfilePictures } from 'app/api/courier/useCourierProfilePictures';
 import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';
@@ -59,7 +59,7 @@ export const CourierProvider = ({ children }: Props) => {
   const { courierId } = useParams<Params>();
   const profile = useCourierProfile(courierId);
   const pictures = useCourierProfilePictures(courierId, '', '');
-  const { marketPlace, deleteMarketPlace, deleteMarketPlaceResult } = useCourierPrivateData(
+  const { marketPlace, deleteMarketPlace, deleteMarketPlaceResult } = useCourierMarketPlace(
     courierId
   );
   const issueOptions = useIssuesByType(issueOptionsArray);

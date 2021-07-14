@@ -30,6 +30,9 @@ export const IuguInfos = ({ account, deleteAccount, result }: IuguInfosProps) =>
   };
   // side effects
   React.useEffect(() => {
+    if (isSuccess) setIsDeleting(false);
+  }, [isSuccess]);
+  React.useEffect(() => {
     if (isError) {
       setError({
         status: true,
@@ -41,6 +44,13 @@ export const IuguInfos = ({ account, deleteAccount, result }: IuguInfosProps) =>
   return (
     <Box>
       <SectionTitle>{t('Subconta')}</SectionTitle>
+      {account && !account?.account && (
+        <AlertError
+          mt="2"
+          title={t('Erro na criação da subconta')}
+          description={t('O objeto "account" não foi criado.')}
+        />
+      )}
       <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
         {t('ID:')}{' '}
         <Text as="span" fontWeight="500">
@@ -96,7 +106,13 @@ export const IuguInfos = ({ account, deleteAccount, result }: IuguInfosProps) =>
           </HStack>
         </AlertError>
       ) : (
-        <Button mt="4" size="md" variant="dangerLight" onClick={() => setIsDeleting(true)}>
+        <Button
+          mt="4"
+          size="md"
+          variant="dangerLight"
+          onClick={() => setIsDeleting(true)}
+          isDisabled={!account}
+        >
           {t('Deletar subconta')}
         </Button>
       )}

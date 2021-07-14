@@ -111,6 +111,26 @@ export default class BusinessApi {
     return unsubscribe;
   }
 
+  observeBusinessMarketPlace(
+    businessId: string,
+    resultHandler: (result: MarketplaceAccountInfo | null) => void
+  ): firebase.Unsubscribe {
+    const unsubscribe = this.refs.getBusinessMarketPlaceRef(businessId).onSnapshot(
+      (doc) => {
+        if (doc.exists) resultHandler(documentAs<MarketplaceAccountInfo>(doc));
+        else resultHandler(null);
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+    return unsubscribe;
+  }
+
+  async deletePrivateMarketPlace(businessId: string) {
+    return await this.refs.getBusinessMarketPlaceRef(businessId).delete();
+  }
+
   async updateChatMessage(orderId: string, messageId: string, changes: Partial<ChatMessage>) {
     await this.refs
       .getOrderChatRef(orderId)
@@ -215,11 +235,6 @@ export default class BusinessApi {
 
   async deleteBusinessProfile(businessId: string) {
     return await this.refs.getBusinessRef(businessId).delete();
-  }
-
-  async getBusinessMarketPlaceData(businessId: string) {
-    const marketplace = (await this.refs.getBusinessMarketPlaceRef(businessId).get()).data();
-    return marketplace as MarketplaceAccountInfo;
   }
 
   // managers
