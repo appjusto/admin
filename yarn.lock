@@ -211,7 +211,7 @@
     "@algolia/requester-common" "4.9.0"
 
 "@appjusto/types@../types":
-  version "3.0.6"
+  version "3.6.0"
 
 "@babel/code-frame@7.10.4":
   version "7.10.4"
@@ -3801,7 +3801,7 @@ anymatch@^3.0.3, anymatch@~3.1.1:
     picomatch "^2.0.4"
 
 appjusto-types@../types:
-  version "3.0.6"
+  version "3.6.0"
 
 aproba@^1.1.1:
   version "1.2.0"

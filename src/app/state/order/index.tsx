@@ -2,6 +2,7 @@ import { useToast } from '@chakra-ui/toast';
 import * as Sentry from '@sentry/react';
 import { useBusinessChats } from 'app/api/business/chat/useBusinessChats';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
+import { useFreshDesk } from 'app/api/business/useFresdesk';
 import { OrderChatGroup } from 'app/api/chat/types';
 import { useCanceledOrders } from 'app/api/order/useCanceledOrders';
 import { useObserveConfirmedOrders } from 'app/api/order/useObserveConfirmedOrders';
@@ -48,6 +49,9 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   const chats = useBusinessChats(activeOrders);
   useObserveConfirmedOrders(business?.id);
   useObservePreparingOrders(business?.id);
+
+  // freshdesk
+  useFreshDesk(business?.id, business?.name, business?.phone);
 
   //state
   const [orders, setOrders] = React.useState<WithId<Order>[]>([]);

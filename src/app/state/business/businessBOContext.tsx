@@ -1,11 +1,19 @@
 import * as cpfutils from '@fnando/cpf';
 import { useBusinessBankAccount } from 'app/api/business/profile/useBusinessBankAccount';
 import { useBusinessManagerAndBankAccountBatch } from 'app/api/business/profile/useBusinessManagerAndBankAccountBatch';
-import { BankAccount, Business, ManagerProfile, WithId } from 'appjusto-types';
+import { useBusinessMarketPlace } from 'app/api/business/useBusinessMarketPlace';
+import {
+  BankAccount,
+  Business,
+  ManagerProfile,
+  MarketplaceAccountInfo,
+  WithId,
+} from 'appjusto-types';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
 import { initialError } from 'common/components/error/utils';
 import { isEmpty } from 'lodash';
 import React, { Dispatch, SetStateAction } from 'react';
+import { MutateFunction, MutationResult } from 'react-query';
 import { useParams } from 'react-router';
 import { useContextManagerProfile } from '../manager/context';
 import { businessBOReducer, businessBOState } from './businessBOReducer';
@@ -35,6 +43,9 @@ interface BusinessBOContextProps {
   handleBankingInfoChange(key: string, value: any): void;
   setContextValidation: Dispatch<SetStateAction<Validation>>;
   handleSave(): void;
+  marketPlace?: MarketplaceAccountInfo | null;
+  deleteMarketPlace: MutateFunction<void, unknown, undefined, unknown>;
+  deleteMarketPlaceResult: MutationResult<void, unknown>;
 }
 
 const BusinessBOContext = React.createContext<BusinessBOContextProps>({} as BusinessBOContextProps);
@@ -53,6 +64,9 @@ export const BusinessBOProvider = ({ children }: Props) => {
   const { setBusinessId, business } = useContextBusiness();
   const { manager, setManagerEmail } = useContextManagerProfile();
   const { bankAccount } = useBusinessBankAccount();
+  const { marketPlace, deleteMarketPlace, deleteMarketPlaceResult } = useBusinessMarketPlace(
+    businessId
+  );
 
   const {
     updateBusinessManagerAndBankAccount,
@@ -195,6 +209,9 @@ export const BusinessBOProvider = ({ children }: Props) => {
         handleBankingInfoChange,
         setContextValidation,
         handleSave,
+        marketPlace,
+        deleteMarketPlace,
+        deleteMarketPlaceResult,
       }}
     >
       {children}

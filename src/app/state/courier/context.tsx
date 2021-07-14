@@ -1,7 +1,7 @@
 import * as cnpjutils from '@fnando/cnpj';
 import * as cpfutils from '@fnando/cpf';
+import { useCourierMarketPlace } from 'app/api/courier/useCourierMarketPlace';
 import { useCourierOrders } from 'app/api/courier/useCourierOrders';
-import { useCourierPrivateData } from 'app/api/courier/useCourierPrivateData';
 import { useCourierProfile } from 'app/api/courier/useCourierProfile';
 import { useCourierProfilePictures } from 'app/api/courier/useCourierProfilePictures';
 import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';
@@ -14,6 +14,7 @@ import {
   WithId,
 } from 'appjusto-types';
 import React, { Dispatch, SetStateAction } from 'react';
+import { MutateFunction, MutationResult } from 'react-query';
 import { useParams } from 'react-router';
 import { courierReducer } from './courierReducer';
 
@@ -26,7 +27,9 @@ interface CourierProfileContextProps {
   documentFiles?: File[] | null;
   setDocumentFiles(files: File[] | null): void;
   issueOptions?: WithId<Issue>[] | null;
-  marketPlace?: MarketplaceAccountInfo;
+  marketPlace?: MarketplaceAccountInfo | null;
+  deleteMarketPlace: MutateFunction<void, unknown, undefined, unknown>;
+  deleteMarketPlaceResult: MutationResult<void, unknown>;
   contextValidation: Validation;
   orders?: WithId<Order>[] | null;
   dateStart?: string;
@@ -56,7 +59,9 @@ export const CourierProvider = ({ children }: Props) => {
   const { courierId } = useParams<Params>();
   const profile = useCourierProfile(courierId);
   const pictures = useCourierProfilePictures(courierId, '', '');
-  const marketPlace = useCourierPrivateData(courierId);
+  const { marketPlace, deleteMarketPlace, deleteMarketPlaceResult } = useCourierMarketPlace(
+    courierId
+  );
   const issueOptions = useIssuesByType(issueOptionsArray);
 
   // state
@@ -110,6 +115,8 @@ export const CourierProvider = ({ children }: Props) => {
         setDocumentFiles,
         issueOptions,
         marketPlace,
+        deleteMarketPlace,
+        deleteMarketPlaceResult,
         contextValidation,
         orders,
         dateStart,

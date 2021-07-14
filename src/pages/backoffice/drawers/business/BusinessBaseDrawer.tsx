@@ -117,6 +117,9 @@ export const BusinessBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
                 <DrawerLink to={`${url}/live`} label={t('Live')} />
               )}
               <DrawerLink to={`${url}/status`} label={t('Status')} />
+              {business?.situation === 'approved' && (
+                <DrawerLink to={`${url}/iugu`} label={t('Iugu')} />
+              )}
             </Flex>
             {children}
           </DrawerBody>

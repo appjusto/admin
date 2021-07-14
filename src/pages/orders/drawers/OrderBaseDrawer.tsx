@@ -220,6 +220,7 @@ export const OrderBaseDrawer = ({
             )}
           </DrawerHeader>
           <DrawerBody pb="28" ref={bodyRef}>
+            <Box pos="absolute" top="0" left="0" w="100%" h="100%" bg="white" zIndex="-100" />
             {children}
           </DrawerBody>
           {!isCanceling && !orderDispatched && order?.status !== 'canceled' && (
@@ -228,6 +229,7 @@ export const OrderBaseDrawer = ({
                 <Flex
                   w="full"
                   maxW="607px"
+                  pr="12"
                   flexDir="row"
                   justifyContent={order?.status === 'confirmed' ? 'flex-start' : 'space-between'}
                 >

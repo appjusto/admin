@@ -3,6 +3,7 @@ import { BusinessBOProvider } from 'app/state/business/businessBOContext';
 import React from 'react';
 import { Route, Switch, useRouteMatch } from 'react-router-dom';
 import { BusinessBaseDrawer } from './BusinessBaseDrawer';
+import { BusinessIugu } from './BusinessIugu';
 import { BusinessRegister } from './BusinessRegister';
 import { BusinessLive } from './Live';
 import { StatusTab } from './StatusTab';
@@ -29,6 +30,9 @@ export const BusinessDrawer = ({ onClose, ...props }: BusinessDrawerProps) => {
           </Route>
           <Route exact path={`${path}/status`}>
             <StatusTab />
+          </Route>
+          <Route exact path={`${path}/iugu`}>
+            <BusinessIugu />
           </Route>
         </Switch>
       </BusinessBaseDrawer>
