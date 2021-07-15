@@ -220,7 +220,15 @@ export const OrderBaseDrawer = ({
             )}
           </DrawerHeader>
           <DrawerBody pb="28" ref={bodyRef}>
-            <Box pos="absolute" top="0" left="0" w="100%" h="100%" bg="white" zIndex="-100" />
+            <Box
+              pos="absolute"
+              top="0"
+              left="0"
+              w="100%"
+              h="100%"
+              backgroundColor="#ffff"
+              zIndex="-100"
+            />
             {children}
           </DrawerBody>
           {!isCanceling && !orderDispatched && order?.status !== 'canceled' && (
