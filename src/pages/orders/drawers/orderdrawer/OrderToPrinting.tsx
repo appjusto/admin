@@ -138,7 +138,9 @@ export const OrderToPrinting = React.forwardRef<HTMLDivElement, OrderToPrintProp
                         {item.quantity}
                       </Td>
                       <Td fontSize="11px" fontWeight="500">
-                        {complement.name}
+                        {complement.groupName ?? 'N/E'}
+                        {' - '}
+                        <Text as="span">{complement.name}</Text>
                       </Td>
                       <Td isNumeric fontSize="11px" fontWeight="500" pr="0">
                         {formatCurrency(complement.price)}

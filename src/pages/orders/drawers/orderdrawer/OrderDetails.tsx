@@ -49,7 +49,7 @@ export const OrderDetails = ({ order }: DetailsProps) => {
                       <Tr key={Math.random()} fontSize="sm">
                         <Td pl="10" fontWeight="700">
                           {complement.groupName ?? 'N/E'}
-                          <br />
+                          {' - '}
                           <Text as="span" fontWeight="500">
                             {complement.name}
                           </Text>
