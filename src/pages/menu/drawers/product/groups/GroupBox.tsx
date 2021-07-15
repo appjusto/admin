@@ -92,7 +92,6 @@ export const GroupBox = ({ index, group }: GroupBoxProps) => {
     );
   }
   // UI
-  console.log('render!');
   return (
     <Draggable draggableId={group.id} index={index}>
       {(draggable) => (
