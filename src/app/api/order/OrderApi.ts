@@ -1,8 +1,10 @@
 import {
   CancelOrderPayload,
   ChatMessage,
+  DropOrderPayload,
   Invoice,
   Issue,
+  MatchOrderPayload,
   Order,
   OrderCancellation,
   //OrderCancellation,
@@ -10,9 +12,11 @@ import {
   OrderIssue,
   OrderMatching,
   OrderStatus,
+  OrderType,
+  OutsourceDeliveryPayload,
   WithId,
 } from 'appjusto-types';
-import { documentAs, documentsAs } from 'core/fb';
+import { documentAs, documentsAs, FirebaseDocument } from 'core/fb';
 import firebase from 'firebase/app';
 import FirebaseRefs from '../FirebaseRefs';
 import * as Sentry from '@sentry/react';
@@ -23,7 +27,7 @@ export type CancellationData = {
   comment?: string;
 };
 
-type Ordering = 'asc' | 'desc';
+export type Ordering = 'asc' | 'desc';
 
 export default class OrderApi {
   constructor(private refs: FirebaseRefs) {}
@@ -41,12 +45,7 @@ export default class OrderApi {
       .where('status', 'in', statuses);
 
     if (businessId) {
-      query = this.refs
-        .getOrdersRef()
-        .orderBy('confirmedOn', ordering)
-
-        .where('business.id', '==', businessId)
-        .where('status', 'in', statuses);
+      query = query.where('business.id', '==', businessId);
     }
     const unsubscribe = query.onSnapshot(
       (querySnapshot) => {
@@ -54,6 +53,43 @@ export default class OrderApi {
       },
       (error) => {
         console.error(error);
+      }
+    );
+    // returns the unsubscribe function
+    return unsubscribe;
+  }
+
+  observeOrdersHistory(
+    resultHandler: (
+      orders: WithId<Order>[],
+      last?: firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
+    ) => void,
+    businessId?: string | null,
+    statuses?: OrderStatus[] | null,
+    orderCode?: string | null,
+    start?: Date | null,
+    end?: Date | null,
+    orderStatus?: OrderStatus,
+    orderType?: OrderType,
+    startAfter?: FirebaseDocument
+  ): firebase.Unsubscribe {
+    let query = this.refs.getOrdersRef().orderBy('updatedOn', 'desc').limit(20);
+    if (statuses) query = query.where('status', 'in', statuses);
+    if (startAfter) query = query.startAfter(startAfter);
+    if (businessId) query = query.where('business.id', '==', businessId);
+    if (orderCode) query = query.where('code', '==', orderCode);
+    if (start && end) query = query.where('updatedOn', '>=', start).where('updatedOn', '<=', end);
+    if (orderStatus) query = query.where('status', '==', orderStatus);
+    if (orderType) query = query.where('type', '==', orderType);
+    const unsubscribe = query.onSnapshot(
+      (querySnapshot) => {
+        const last =
+          querySnapshot.docs.length > 0 ? querySnapshot.docs[querySnapshot.size - 1] : undefined;
+        resultHandler(documentsAs<Order>(querySnapshot.docs), last);
+      },
+      (error) => {
+        console.error(error);
+        Sentry.captureException(error);
       }
     );
     // returns the unsubscribe function
@@ -255,6 +291,54 @@ export default class OrderApi {
     return unsubscribe;
   }
 
+  observeInvoices(
+    resultHandler: (
+      invoices: WithId<Invoice>[],
+      last?: firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
+    ) => void,
+    orderId?: string | null,
+    start?: Date | null,
+    end?: Date | null,
+    startAfter?: FirebaseDocument
+  ): firebase.Unsubscribe {
+    let query = this.refs.getInvoicesRef().orderBy('createdOn', 'desc').limit(20);
+    if (startAfter) query = query.startAfter(startAfter);
+    if (orderId) query = query.where('orderId', '==', orderId);
+    if (start && end) query = query.where('createdOn', '>=', start).where('createdOn', '<=', end);
+    const unsubscribe = query.onSnapshot(
+      (querySnapshot) => {
+        const last =
+          querySnapshot.docs.length > 0 ? querySnapshot.docs[querySnapshot.size - 1] : undefined;
+        resultHandler(documentsAs<Invoice>(querySnapshot.docs), last);
+      },
+      (error) => {
+        console.error(error);
+        Sentry.captureException(error);
+      }
+    );
+    // returns the unsubscribe function
+    return unsubscribe;
+  }
+
+  observeInvoice(
+    invoiceId: string,
+    resultHandler: (invoice: WithId<Invoice>) => void
+  ): firebase.Unsubscribe {
+    let query = this.refs.getInvoicesRef().doc(invoiceId);
+    const unsubscribe = query.onSnapshot(
+      (querySnapshot) => {
+        const data = querySnapshot;
+        if (data.exists) resultHandler(documentAs<Invoice>(data));
+      },
+      (error) => {
+        console.error(error);
+        Sentry.captureException(error);
+      }
+    );
+    // returns the unsubscribe function
+    return unsubscribe;
+  }
+
   async sendMessage(orderId: string, message: Partial<ChatMessage>) {
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
     return this.refs.getOrderChatRef(orderId).add({
@@ -285,9 +369,55 @@ export default class OrderApi {
       params: paramsData,
     };
     try {
-      await this.refs.getCancelOrder()(payload);
+      await this.refs.getCancelOrderCallable()(payload);
     } catch (error) {
       Sentry.captureException('createManagerError', error);
+    }
+  }
+
+  async courierManualAllocation(orderId: string, courierId: string, comment: string) {
+    const payload: MatchOrderPayload = {
+      meta: { version: '1' }, // TODO: pass correct version on
+      orderId,
+      courierId,
+      comment,
+    };
+    try {
+      await this.refs.getMatchOrderCallable()(payload);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async courierManualRemoval(
+    orderId: string,
+    //courierId: string,
+    issue: WithId<Issue>,
+    comment?: string
+  ) {
+    const payload: DropOrderPayload = {
+      meta: { version: '1' }, // TODO: pass correct version on
+      orderId,
+      //courierId,
+      issue,
+      comment,
+    };
+    try {
+      await this.refs.getDropOrderCallable()(payload);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getOutsourceDelivery(orderId: string) {
+    const payload: OutsourceDeliveryPayload = {
+      meta: { version: '1' }, // TODO: pass correct version on
+      orderId,
+    };
+    try {
+      await this.refs.getOutsourceDeliveryCallable()(payload);
+    } catch (error) {
+      throw error;
     }
   }
 }

@@ -1,4 +1,5 @@
-import { Box, Text } from '@chakra-ui/react';
+import { Box, Button, HStack, Text } from '@chakra-ui/react';
+import { useGetOutsourceDelivery } from 'app/api/order/useGetOutsourceDelivery';
 import { useOrder } from 'app/api/order/useOrder';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextManagerProfile } from 'app/state/manager/context';
@@ -7,8 +8,9 @@ import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorH
 import { initialError } from 'common/components/error/utils';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { useReactToPrint } from 'react-to-print';
+import { formatCurrency } from 'utils/formatters';
 import { getOrderCancellator } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { OrderBaseDrawer } from '../OrderBaseDrawer';
@@ -18,6 +20,10 @@ import { DeliveryInfos } from './DeliveryInfos';
 import { OrderDetails } from './OrderDetails';
 import { OrderIssuesTable } from './OrderIssuesTable';
 import { OrderToPrinting } from './OrderToPrinting';
+
+function useQuery() {
+  return new URLSearchParams(useLocation().search);
+}
 
 interface Props {
   isOpen: boolean;
@@ -30,11 +36,13 @@ type Params = {
 
 export const OrderDrawer = (props: Props) => {
   //context
+  const query = useQuery();
   const { orderId } = useParams<Params>();
   const { business } = useContextBusiness();
   const {
     order,
     cancelOrder,
+    updateOrder,
     updateResult,
     cancelResult,
     orderIssues,
@@ -42,18 +50,19 @@ export const OrderDrawer = (props: Props) => {
     orderCancellationCosts,
   } = useOrder(orderId);
   const { manager } = useContextManagerProfile();
-
+  const { getOutsourceDelivery, outsourceDeliveryResult } = useGetOutsourceDelivery();
   // state
   const [isCanceling, setIsCanceling] = React.useState(false);
+  const [isOutsourceDelivery, setIsOutsourceDelivery] = React.useState<boolean>();
   const [error, setError] = React.useState(initialError);
-
   // refs
   const submission = React.useRef(0);
   const printComponent = React.useRef<HTMLDivElement>(null);
-
   // helpers
   const cancellator = getOrderCancellator(orderCancellation?.issue?.type);
-
+  const deliveryFare = order?.fare?.courier.value
+    ? formatCurrency(order.fare.courier.value)
+    : 'N/E';
   // handlers
   const handleCancel = async (issue: WithId<Issue>) => {
     submission.current += 1;
@@ -79,12 +88,15 @@ export const OrderDrawer = (props: Props) => {
     await cancelOrder(cancellationData);
     props.onClose();
   };
-
   const printOrder = useReactToPrint({
     content: () => printComponent.current,
   });
-
   // side effects
+  React.useEffect(() => {
+    if (!query || isOutsourceDelivery !== undefined) return;
+    if (order?.dispatchingStatus === 'outsourced') setIsOutsourceDelivery(true);
+    if (query.get('outsource')) setIsOutsourceDelivery(true);
+  }, [query, isOutsourceDelivery, order]);
   React.useEffect(() => {
     if (updateResult.isError) {
       setError({
@@ -98,7 +110,6 @@ export const OrderDrawer = (props: Props) => {
       });
     }
   }, [updateResult.isError, updateResult.error, cancelResult.isError, cancelResult.error]);
-
   // UI
   return (
     <OrderBaseDrawer
@@ -111,7 +122,6 @@ export const OrderDrawer = (props: Props) => {
       orderPrinting={business?.orderPrinting}
     >
       <Box position="relative">
-        <Box pos="absolute" top="0" left="0" w="100%" h="100vh" bg="white" zIndex="-100" />
         <Box w="100%">
           {isCanceling ? (
             <Cancelation
@@ -122,9 +132,56 @@ export const OrderDrawer = (props: Props) => {
             />
           ) : (
             <>
-              {(order?.status === 'ready' || order?.status === 'dispatching') && (
-                <DeliveryInfos order={order} />
-              )}
+              {(order?.status === 'ready' || order?.status === 'dispatching') &&
+                (isOutsourceDelivery ? (
+                  order.dispatchingStatus === 'outsourced' ? (
+                    <Box mt="4" border="2px solid #FFBE00" borderRadius="lg" bg="" p="4">
+                      <SectionTitle mt="0">{t('Logística assumida')}</SectionTitle>
+                      <Text mt="2">
+                        {t(
+                          `O AppJusto não terá como monitorar o pedido a partir daqui. Entre em contato com o cliente para mantê-lo informado sobre sua entrega.`
+                        )}
+                      </Text>
+                      <Text mt="4">
+                        {t(`Após a realização da entrega, confirme com o botão abaixo:`)}
+                      </Text>
+                      <Button
+                        mt="2"
+                        onClick={() => updateOrder({ status: 'delivered' })}
+                        isLoading={updateResult.isLoading}
+                      >
+                        {t('Confirmar que o pedido foi entregue ao cliente')}
+                      </Button>
+                    </Box>
+                  ) : (
+                    <Box mt="4" border="2px solid #FFBE00" borderRadius="lg" bg="" p="4">
+                      <SectionTitle mt="0">{t('Assumir logística')}</SectionTitle>
+                      <Text mt="2">
+                        {t(
+                          `Ao assumir a logística de entrega, iremos repassar o valor de ${deliveryFare} pelo custo da entrega, além do valor do pedido que já foi cobrado do cliente. O AppJusto não terá como monitorar o pedido a partir daqui.`
+                        )}
+                      </Text>
+                      <HStack mt="4">
+                        <Button
+                          mt="0"
+                          variant="dangerLight"
+                          onClick={() => setIsOutsourceDelivery(false)}
+                        >
+                          {t('Cancelar')}
+                        </Button>
+                        <Button
+                          mt="0"
+                          onClick={() => getOutsourceDelivery(order.id)}
+                          isLoading={outsourceDeliveryResult.isLoading}
+                        >
+                          {t('Confirmar')}
+                        </Button>
+                      </HStack>
+                    </Box>
+                  )
+                ) : (
+                  <DeliveryInfos order={order} setOutsource={setIsOutsourceDelivery} />
+                ))}
               <OrderDetails order={order} />
               {order?.status === 'canceled' && (
                 <>

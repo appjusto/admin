@@ -49,7 +49,7 @@ export default class BusinessApi {
   ): firebase.Unsubscribe {
     const unsubscribe = this.refs.getBusinessRef(businessId).onSnapshot(
       (doc) => {
-        if (doc.exists) resultHandler({ ...(doc.data() as Business), id: businessId });
+        if (doc.exists) resultHandler(documentAs<Business>(doc));
         else resultHandler(null);
       },
       (error) => {
@@ -109,6 +109,26 @@ export default class BusinessApi {
       );
     // returns the unsubscribe function
     return unsubscribe;
+  }
+
+  observeBusinessMarketPlace(
+    businessId: string,
+    resultHandler: (result: MarketplaceAccountInfo | null) => void
+  ): firebase.Unsubscribe {
+    const unsubscribe = this.refs.getBusinessMarketPlaceRef(businessId).onSnapshot(
+      (doc) => {
+        if (doc.exists) resultHandler(documentAs<MarketplaceAccountInfo>(doc));
+        else resultHandler(null);
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+    return unsubscribe;
+  }
+
+  async deletePrivateMarketPlace(businessId: string) {
+    return await this.refs.getBusinessMarketPlaceRef(businessId).delete();
   }
 
   async updateChatMessage(orderId: string, messageId: string, changes: Partial<ChatMessage>) {
@@ -215,11 +235,6 @@ export default class BusinessApi {
 
   async deleteBusinessProfile(businessId: string) {
     return await this.refs.getBusinessRef(businessId).delete();
-  }
-
-  async getBusinessMarketPlaceData(businessId: string) {
-    const marketplace = (await this.refs.getBusinessMarketPlaceRef(businessId).get()).data();
-    return marketplace as MarketplaceAccountInfo;
   }
 
   // managers
@@ -425,7 +440,7 @@ export default class BusinessApi {
     businessId: string,
     productId: string,
     changes: Partial<Product>,
-    imageFiles: File[] | null
+    imageFiles?: File[] | null
   ) {
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
     let newProductObject = {};
@@ -579,7 +594,7 @@ export default class BusinessApi {
     businessId: string,
     productId: string,
     item: Complement,
-    imageFile: File | null
+    imageFile?: File | null
   ) {
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
     const complementId = this.refs.getBusinessProductComplementsRef(businessId, productId).doc().id;
@@ -602,8 +617,8 @@ export default class BusinessApi {
     businessId: string,
     productId: string,
     complementId: string,
-    item: Complement,
-    imageFile: File | null
+    item: Partial<Complement>,
+    imageFile?: File | null
   ) {
     let newItem = {
       ...item,

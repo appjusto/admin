@@ -12,7 +12,8 @@ export const useObserveBusinessManagedBy = (email: string | undefined | null) =>
   // side effects
   React.useEffect(() => {
     if (!email) return; // during initialization
-    return api.business().observeBusinessManagedBy(email, setBusinesses);
+    const unsub = api.business().observeBusinessManagedBy(email, setBusinesses);
+    return () => unsub();
   }, [email, api]);
 
   // return

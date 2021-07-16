@@ -19,12 +19,14 @@ export const useObserveComplements = (
   React.useEffect(() => {
     if (!businessId) return;
     //if (!enabled) return;
-    return api.business().observeComplementsGroups(businessId, productId, setGroups);
+    const unsub = api.business().observeComplementsGroups(businessId, productId, setGroups);
+    return () => unsub();
   }, [api, businessId, productId, enabled]);
   React.useEffect(() => {
     if (!businessId) return;
     //if (!enabled) return;
-    return api.business().observeComplements(businessId, productId, setComplements);
+    const unsub = api.business().observeComplements(businessId, productId, setComplements);
+    return () => unsub();
   }, [api, businessId, productId, enabled]);
 
   // return

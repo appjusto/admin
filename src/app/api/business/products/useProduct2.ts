@@ -21,7 +21,8 @@ export const useProduct = (businessId: string | undefined, productId: string, im
       return;
     }
     if (!businessId) return;
-    return api.business().observeProduct(businessId, productId, setProduct);
+    const unsub = api.business().observeProduct(businessId, productId, setProduct);
+    return () => unsub();
   }, [api, businessId, productId]);
   React.useEffect(() => {
     if (product?.id && !product.name) {

@@ -10,9 +10,12 @@ export default class FirebaseRefs {
   getBatchRef = () => this.firestore.batch();
   getDeleteAccountCallable = () => this.functions.httpsCallable('deleteAccount');
   getCreateBusinessProfileCallable = () => this.functions.httpsCallable('createBusinessProfile');
-  getCreateManager = () => this.functions.httpsCallable('createManager');
-  getGetBusinessManagers = () => this.functions.httpsCallable('getBusinessManagers');
-  getCancelOrder = () => this.functions.httpsCallable('cancelOrder');
+  getCreateManagerCallable = () => this.functions.httpsCallable('createManager');
+  getGetBusinessManagersCallable = () => this.functions.httpsCallable('getBusinessManagers');
+  getCancelOrderCallable = () => this.functions.httpsCallable('cancelOrder');
+  getMatchOrderCallable = () => this.functions.httpsCallable('matchOrder');
+  getDropOrderCallable = () => this.functions.httpsCallable('dropOrder');
+  getOutsourceDeliveryCallable = () => this.functions.httpsCallable('outsourceDelivery');
 
   // firestore
   // platform
@@ -96,6 +99,7 @@ export default class FirebaseRefs {
   getAppJustoFleetRef = () => this.getFleetRef('appjusto');
 
   // storage
+  // business
   getBusinessStoragePath = (businessId: string) => `businesses/${businessId}`;
   getBusinessLogoUploadStoragePath = (businessId: string) =>
     `${this.getBusinessStoragePath(businessId)}/logo_240x240.jpg`;
@@ -117,10 +121,10 @@ export default class FirebaseRefs {
     `${this.getComplementsStoragePath(businessId)}/${complementId}_288x288.jpg`;
   getComplementImageStoragePath = (businessId: string, complementId: string) =>
     `${this.getComplementsStoragePath(businessId)}/${complementId}_288x288.jpg`;
-
+  // courier
   getCourierStoragePath = (courierId: string) => `couriers/${courierId}`;
-  getCourierProfilePictureStoragePath = (courierId: string, size: string) =>
-    `${this.getCourierStoragePath(courierId)}/selfie${size}.jpg`;
-  getCourierDocumentPictureStoragePath = (courierId: string, size: string) =>
-    `${this.getCourierStoragePath(courierId)}/document${size}.jpg`;
+  getCourierSelfieStoragePath = (courierId: string, size?: string) =>
+    `${this.getCourierStoragePath(courierId)}/selfie${size ? `${size}` : ''}.jpg`;
+  getCourierDocumentStoragePath = (courierId: string, size?: string) =>
+    `${this.getCourierStoragePath(courierId)}/document${size ? `${size}` : ''}.jpg`;
 }

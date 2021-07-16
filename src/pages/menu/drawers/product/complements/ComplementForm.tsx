@@ -25,7 +25,7 @@ export const ComplementForm = ({
   onCancel,
 }: ComplementFormProps) => {
   //context
-  const { onSaveComplement, getComplementImageUrl } = useProductContext();
+  const { onSaveComplement, onUpdateComplement, getComplementImageUrl } = useProductContext();
   //state
   const [name, setName] = React.useState('');
   const [description, setDescription] = React.useState('');
@@ -62,12 +62,11 @@ export const ComplementForm = ({
       externalId,
       imageExists,
     };
-    await onSaveComplement(
-      groupId as string,
-      complementId as string,
-      newItem,
-      imageFile ? imageFile[0] : null
-    );
+    if (complementId) {
+      await onUpdateComplement(complementId, newItem, imageFile ? imageFile[0] : null);
+    } else {
+      await onSaveComplement(groupId!, newItem, imageFile ? imageFile[0] : null);
+    }
     setIsLoading(false);
     onSuccess();
   };

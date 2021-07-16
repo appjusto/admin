@@ -32,7 +32,11 @@ export const OrderDetails = ({ order }: DetailsProps) => {
                 <React.Fragment key={Math.random()}>
                   <Tr color="black" fontSize="sm" fontWeight="700">
                     <Td>
-                      {item.product.name} <br />
+                      {item.product.categoryName ?? 'N/E'} <br />
+                      <Text as="span" fontWeight="500">
+                        {item.product.name}
+                      </Text>
+                      <br />
                       <Text as="span" color="red" fontWeight="500">
                         {item.notes}
                       </Text>
@@ -43,7 +47,13 @@ export const OrderDetails = ({ order }: DetailsProps) => {
                   {item.complements &&
                     item.complements.map((complement) => (
                       <Tr key={Math.random()} fontSize="sm">
-                        <Td>{complement.name}</Td>
+                        <Td pl="10" fontWeight="700">
+                          {complement.groupName ?? 'N/E'}
+                          {' - '}
+                          <Text as="span" fontWeight="500">
+                            {complement.name}
+                          </Text>
+                        </Td>
                         <Td isNumeric>{item.quantity}</Td>
                         <Td isNumeric>{formatCurrency(complement.price)}</Td>
                       </Tr>
@@ -86,6 +96,7 @@ export const OrderDetails = ({ order }: DetailsProps) => {
             {t('Valor do frete:')}{' '}
             <Text as="span" color="black">
               {order?.fare?.courier.value ? formatCurrency(order.fare.courier.value) : 'N/E'}
+              {order?.dispatchingStatus === 'outsourced' && ` (${t('Logística assumida')})`}
             </Text>
           </Text>
           <Text mt="1" fontSize="md">

@@ -9,7 +9,6 @@ import {
   Textarea,
   VStack,
 } from '@chakra-ui/react';
-import { useBusinessMarketPlaceData } from 'app/api/business/useBusinessMarketPlaceData';
 import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';
 import { useContextBusinessBackoffice } from 'app/state/business/businessBOContext';
 import { IssueType, ProfileSituation } from 'appjusto-types';
@@ -22,18 +21,14 @@ const issueOptionsArray = ['business-profile-invalid'] as IssueType[];
 
 export const StatusTab = () => {
   // context
-  const { business, handleBusinessStatusChange } = useContextBusinessBackoffice();
-  const marketPlace = useBusinessMarketPlaceData(business?.id);
+  const { business, handleBusinessStatusChange, marketPlace } = useContextBusinessBackoffice();
   const issueOptions = useIssuesByType(issueOptionsArray);
-
   // state
   const [financialIssues, setFinancialIssues] = React.useState<string[]>([]);
-
   // side effects
   React.useEffect(() => {
     if (marketPlace?.issues) setFinancialIssues(marketPlace.issues);
   }, [marketPlace?.issues]);
-
   // UI
   return (
     <Box>
@@ -98,7 +93,15 @@ export const StatusTab = () => {
               ))}
             </VStack>
           </CheckboxGroup>
-          <SectionTitle>{t('Mensagem personalizada:')}</SectionTitle>
+        </>
+      )}
+      {(business?.situation === 'rejected' || business?.situation === 'blocked') && (
+        <>
+          <SectionTitle>
+            {business?.situation === 'rejected'
+              ? t('Mensagem personalizada:')
+              : t('Informe o motivo do bloqueio:')}
+          </SectionTitle>
           <Textarea
             mt="2"
             value={business?.profileIssuesMessage ?? ''}

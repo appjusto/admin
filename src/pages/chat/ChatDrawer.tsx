@@ -195,7 +195,7 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
                 border="1px solid #C8D7CB"
                 borderRadius="md"
                 pl="2"
-                pr="8rem"
+                pr="11rem"
                 pt="1"
                 pb="1"
                 size="sm"
@@ -211,7 +211,7 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
               <Button
                 position="absolute"
                 top="4"
-                right="4"
+                right="16"
                 onClick={sendMessageHandler}
                 isLoading={isLoading}
                 loadingText={t('Enviando...')}

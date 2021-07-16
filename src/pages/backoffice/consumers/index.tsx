@@ -11,6 +11,7 @@ import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import PageHeader from '../../PageHeader';
 import { ConsumerDrawer } from '../drawers/consumer';
+import { StateAndCityFilter } from '../StateAndCityFilter';
 import { ConsumersTable } from './ConsumersTable';
 
 const ConsumersPage = () => {
@@ -20,7 +21,8 @@ const ConsumersPage = () => {
   // state
   const [dateTime, setDateTime] = React.useState('');
   const [search, setSearch] = React.useState('');
-
+  const [state, setState] = React.useState('');
+  const [city, setCity] = React.useState('');
   const [filterBar, setFilterBar] = React.useState('all');
   const [filters, setFilters] = React.useState<BasicUserFilter[]>([]);
 
@@ -34,6 +36,31 @@ const ConsumersPage = () => {
   // handlers
   const closeDrawerHandler = () => history.replace(path);
 
+  const clearSearchAndFilters = () => {
+    setSearch('');
+    setState('');
+    setCity('');
+    setFilterBar('all');
+  };
+
+  const handleFilters = React.useCallback(() => {
+    // state and city
+    let stateArray = [] as BasicUserFilter[];
+    let cityArray = [] as BasicUserFilter[];
+    if (state !== '') {
+      stateArray = [{ type: 'state', value: state }];
+    }
+    if (city !== '') {
+      cityArray = [{ type: 'city', value: city }];
+    }
+    // situation
+    let situationArray = [] as BasicUserFilter[];
+    if (filterBar === 'all') situationArray = [] as BasicUserFilter[];
+    else situationArray = [{ type: 'situation', value: filterBar }];
+    // create filters
+    setFilters([...stateArray, ...cityArray, ...situationArray]);
+  }, [state, city, filterBar]);
+
   // side effects
   React.useEffect(() => {
     const { date, time } = getDateTime();
@@ -41,27 +68,30 @@ const ConsumersPage = () => {
   }, []);
 
   React.useEffect(() => {
-    let barArray = [] as BasicUserFilter[];
-    if (filterBar === 'all') barArray = [] as BasicUserFilter[];
-    else barArray = [{ type: 'situation', value: filterBar }];
-    setFilters([...barArray]);
-  }, [filterBar]);
+    handleFilters();
+  }, [state, city, filterBar, handleFilters]);
 
   // UI
   return (
     <>
       <PageHeader title={t('Clientes')} subtitle={t(`Atualizado ${dateTime}`)} />
-      <Flex mt="8" justifyContent="space-between">
+      <HStack mt="8" spacing={4}>
         <CustomInput
           mt="0"
-          w="400px"
+          w="100%"
           id="search-id"
           value={search}
           onChange={(event) => setSearch(event.target.value)}
           label={t('Buscar')}
           placeholder={t('Buscar por ID, nome ou e-mail')}
         />
-      </Flex>
+        <StateAndCityFilter
+          state={state}
+          handleStateChange={setState}
+          city={city}
+          handleCityChange={setCity}
+        />
+      </HStack>
       <Flex mt="8" w="100%" justifyContent="space-between" borderBottom="1px solid #C8D7CB">
         <HStack spacing={4}>
           <FilterText
@@ -83,7 +113,7 @@ const ConsumersPage = () => {
             {t('Bloqueados')}
           </FilterText>
         </HStack>
-        <HStack spacing={2} color="#697667" cursor="pointer" onClick={() => setFilterBar('all')}>
+        <HStack spacing={2} color="#697667" cursor="pointer" onClick={clearSearchAndFilters}>
           <DeleteIcon />
           <Text fontSize="15px" lineHeight="21px">
             {t('Limpar filtro')}
@@ -96,7 +126,7 @@ const ConsumersPage = () => {
         </Text>
       </HStack>
       <ConsumersTable consumers={consumers} />
-      <Button mt="8" variant="grey" onClick={fetchNextPage}>
+      <Button mt="8" variant="secondary" onClick={fetchNextPage}>
         <ArrowDownIcon mr="2" />
         {t('Carregar mais')}
       </Button>

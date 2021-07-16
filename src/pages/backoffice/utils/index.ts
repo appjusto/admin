@@ -24,12 +24,25 @@ export const courierLocationStatusPTOptions = {
 };
 
 export const orderStatusPTOptions = {
+  quote: 'Cotação',
   confirming: 'Aguardando confirmação',
   declined: 'Recusado',
   confirmed: 'Confirmado',
   preparing: 'Em preparo',
   ready: 'Pronto - aguardando entregador',
   dispatching: 'A caminho da entrega',
+  delivered: 'Entregue',
+  canceled: 'Cancelado',
+};
+
+export const orderStatusPTOptionsForTableItem = {
+  quote: 'Cotação',
+  confirming: 'Confirmando',
+  declined: 'Recusado',
+  confirmed: 'Confirmado',
+  preparing: 'Em preparo',
+  ready: 'Pronto',
+  dispatching: 'Despachando',
   delivered: 'Entregue',
   canceled: 'Cancelado',
 };
@@ -41,6 +54,7 @@ export const orderDispatchingStatusPTOptions = {
   'matched': 'Encontrado',
   'declined': 'Recusado',
   'confirmed': 'Confirmado',
+  'outsourced': 'Terceirizado',
 };
 
 export const invoiceTypePTOptions = {
@@ -49,6 +63,7 @@ export const invoiceTypePTOptions = {
   platform: 'Plataforma',
   tip: 'Gorjeta',
 };
+
 export const invoiceStatusPTOptions = {
   in_analysis: 'Em análise',
   pending: 'Pendente',
@@ -60,4 +75,13 @@ export const invoiceStatusPTOptions = {
   canceled: 'Cancelada',
   in_protest: 'Em protesto',
   chargeback: 'Estornada',
+};
+
+export const iuguSituationPTOptions = {
+  'pending': 'Pendente',
+  'created': 'Criada',
+  'configured': 'Configurada',
+  'waiting-verification': 'Aguardando verificação',
+  'verified': 'Verificada',
+  'invalid': 'Inválida',
 };

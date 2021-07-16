@@ -9,7 +9,8 @@ export const useBusinesses = (situations: string[]) => {
   const [businesses, setBusinesses] = React.useState<WithId<Business>[]>([]);
   // side effects
   React.useEffect(() => {
-    return api.business().observeBusinesses(situations, setBusinesses);
+    const unsub = api.business().observeBusinesses(situations, setBusinesses);
+    return () => unsub();
   }, [situations, api]);
   // return
   return businesses;

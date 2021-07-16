@@ -51,37 +51,37 @@ export const BusinessBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
                 {business?.code ?? 'N/E'}
               </Text>
             </Text>
-            <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
               {t('Data do onboarding:')}{' '}
               <Text as="span" fontWeight="500">
                 {getDateAndHour(business?.createdOn)}
               </Text>
             </Text>
-            <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
               {t('Atualizado em:')}{' '}
               <Text as="span" fontWeight="500">
                 {getDateAndHour(business?.updatedOn)}
               </Text>
             </Text>
-            <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+            {/*<Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
               {t('Agente responsável:')}{' '}
               <Text as="span" fontWeight="500">
                 *
               </Text>
-            </Text>
-            <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+              </Text>*/}
+            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
               {t('Nome do administrador:')}{' '}
               <Text as="span" fontWeight="500">
                 {manager?.name ?? 'N/E'}
               </Text>
             </Text>
-            <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
               {t('Status:')}{' '}
               <Text as="span" fontWeight="500" color={situationAlert ? 'red' : 'black'}>
                 {business?.situation ? situationPTOptions[business?.situation] : 'N/E'}
               </Text>
             </Text>
-            <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
               {t('Etapa:')}{' '}
               <Text as="span" fontWeight="500">
                 {business?.onboarding === 'completed'
@@ -89,7 +89,7 @@ export const BusinessBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
                   : t(`onboarding - ${business?.onboarding}`)}
               </Text>
             </Text>
-            <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
               {t('Live:')}{' '}
               <Text as="span" fontWeight="500">
                 <Icon
@@ -117,6 +117,9 @@ export const BusinessBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
                 <DrawerLink to={`${url}/live`} label={t('Live')} />
               )}
               <DrawerLink to={`${url}/status`} label={t('Status')} />
+              {business?.situation === 'approved' && (
+                <DrawerLink to={`${url}/iugu`} label={t('Iugu')} />
+              )}
             </Flex>
             {children}
           </DrawerBody>
@@ -137,7 +140,7 @@ export const BusinessBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
                 mt="0"
                 width="full"
                 maxW="240px"
-                variant="grey"
+                variant="secondary"
                 label={t('Personificar restaurante')}
                 link={'/app'}
               />

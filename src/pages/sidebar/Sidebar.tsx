@@ -20,7 +20,8 @@ const Sidebar = () => {
       position="relative"
       d={{ base: 'none', md: 'block' }}
       w="220px"
-      bg="gray.300"
+      minW="220px"
+      backgroundColor="gray.300"
       flexShrink={0}
     >
       <Box position="fixed" top="4" w="220px" flexShrink={0}>

@@ -7,6 +7,7 @@ import BusinessesPage from './businesses';
 import ConsumersPage from './consumers';
 import CouriersPage from './couriers';
 import BODashboard from './dashboard';
+import InvoicesPage from './invoices';
 import OrdersPage from './orders';
 import { BOAccessRoute } from './routes/BOAccessRoute';
 
@@ -21,6 +22,7 @@ const BackOffice = () => {
         <BOAccessRoute path={`${path}/couriers`} component={CouriersPage} />
         <BOAccessRoute path={`${path}/businesses`} component={BusinessesPage} />
         <BOAccessRoute path={`${path}/consumers`} component={ConsumersPage} />
+        <BOAccessRoute path={`${path}/invoices`} component={InvoicesPage} />
         <BOAccessRoute path={`${path}/agents`} component={AgentsPage} />
         <BOAccessRoute path={`${path}/agent-profile`} component={AgentProfile} />
         <BOAccessRoute path={path} component={BODashboard} />

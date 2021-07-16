@@ -1,6 +1,6 @@
 import { Stack } from '@chakra-ui/react';
 import { useBusinesses } from 'app/api/business/useBusinesses';
-import { useBackofficeOrders } from 'app/api/order/useBackofficeOrders';
+import { useObserveOrders } from 'app/api/order/useObserveOrders';
 import { OrderStatus } from 'appjusto-types';
 import React from 'react';
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
@@ -21,7 +21,7 @@ const BODashboard = () => {
   const { path } = useRouteMatch();
   const history = useHistory();
   const businesses = useBusinesses(situations);
-  const orders = useBackofficeOrders(statuses);
+  const orders = useObserveOrders(statuses);
   // state
   const [dateTime, setDateTime] = React.useState('');
 

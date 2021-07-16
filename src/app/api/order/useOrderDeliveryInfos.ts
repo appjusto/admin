@@ -40,6 +40,7 @@ export const useOrderDeliveryInfos = (order?: WithId<Order> | null) => {
     ) => {
       let result = 'Buscando entregador...';
       if (status === 'matched' || status === 'confirmed') {
+        result = 'Buscando localização';
         if (state === 'going-pickup') result = 'Entreg. a caminho';
         if (state === 'arrived-pickup') result = 'Entreg. no local';
         if (state === 'going-destination') result = 'Pedido a caminho';
@@ -50,6 +51,7 @@ export const useOrderDeliveryInfos = (order?: WithId<Order> | null) => {
     const getOrderDispatchingText = (status: DispatchingStatus, state?: DispatchingState) => {
       let result = 'Buscando entregador...';
       if (status === 'matched' || status === 'confirmed') {
+        result = 'Buscando localização';
         if (state === 'going-pickup') result = 'Entregador a caminho da retirada';
         if (state === 'arrived-pickup') result = 'Entregador no local';
         if (state === 'going-destination') result = 'Entregador a caminho da entrega';

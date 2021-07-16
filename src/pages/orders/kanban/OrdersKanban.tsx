@@ -64,11 +64,11 @@ export const OrdersKanban = () => {
       >
         {isNewChatMessage &&
           (newChatMessages.length > 1 ? (
-            <Text fontSize="xs" fontWeight="700" lineHeight="lg" color="black">
+            <Text fontSize="xs" fontWeight="700" lineHeight="lg" color="black" textAlign="end">
               {t(`Você tem ${newChatMessages.length} novas mensagens!`)}
             </Text>
           ) : (
-            <Text fontSize="xs" fontWeight="700" lineHeight="lg" color="black">
+            <Text fontSize="xs" fontWeight="700" lineHeight="lg" color="black" textAlign="end">
               {t(`Você tem ${newChatMessages.length} nova mensagen!`)}
             </Text>
           ))}
@@ -165,9 +165,7 @@ export const OrdersKanban = () => {
             <OrdersKanbanList
               title={t('Pedidos cancelados')}
               orders={ordersByStatus['canceled']}
-              details={t(
-                'Aqui você verá os pedidos que estão a caminho da entrega pela entregador.'
-              )}
+              details={t('Aqui você verá os pedidos cancelados.')}
             />
           </Stack>
         </Stack>

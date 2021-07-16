@@ -5,6 +5,7 @@ import { useOrderDeliveryInfos } from 'app/api/order/useOrderDeliveryInfos';
 import { getOrderAckTime } from 'app/api/order/utils';
 import { useOrdersContext } from 'app/state/order';
 import { Order, WithId } from 'appjusto-types';
+import { CustomButton } from 'common/components/buttons/CustomButton';
 import { ReactComponent as Alarm } from 'common/img/alarm_outlined.svg';
 import React from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
@@ -31,6 +32,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
     isDelivered,
     orderDispatchingKanbanItemText,
   } = useOrderDeliveryInfos(order);
+  //const { restartMatching, restartResult } = useObserveOrderMatching(order.id);
 
   // state
   const [elapsedTime, setElapsedTime] = React.useState<number | null>(0);
@@ -138,8 +140,8 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
           px="4"
           py={isDelivered ? '3' : '2'}
           borderRadius="lg"
-          borderColor="gray"
-          borderWidth="1px"
+          borderColor={order?.dispatchingStatus === 'outsourced' ? '#FFBE00' : 'gray'}
+          borderWidth={order?.dispatchingStatus === 'outsourced' ? '2px' : '1px'}
           color={isDelivered ? 'gray' : 'black'}
           bgColor={isDelivered ? 'gray.500' : 'white'}
           boxShadow="0px 8px 16px -4px rgba(105,118,103,0.1)"
@@ -153,42 +155,98 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
                 {`{${conrumerName}}`}
               </Text>
             </Box>
-            <Flex flexDir="column" color="gray.700" fontSize="xs" alignItems="flex-end">
-              {isDelivered ? (
-                <Text fontWeight="700">{t('Pedido entregue')}</Text>
-              ) : (
-                <>
-                  <Text fontWeight="700">{orderDispatchingKanbanItemText}</Text>
-                  {showArrivalTime ? (
-                    arrivalTime! > 0 ? (
-                      <Text color="gray.700" fontWeight="500">
-                        {t(
-                          `Aprox. ${
-                            arrivalTime! > 1 ? arrivalTime + ' minutos' : arrivalTime + ' minuto'
-                          }`
-                        )}
-                      </Text>
+            {order.dispatchingStatus === 'outsourced' ? (
+              <Flex flexDir="column" color="gray.700" fontSize="xs" alignItems="flex-end">
+                <Text fontWeight="700">{t('A caminho da entrega')}</Text>
+                <Text fontWeight="500">{t('Logística assumida')}</Text>
+              </Flex>
+            ) : (
+              <Flex flexDir="column" color="gray.700" fontSize="xs" alignItems="flex-end">
+                {isDelivered ? (
+                  <Text fontWeight="700">{t('Pedido entregue')}</Text>
+                ) : (
+                  <>
+                    <Text fontWeight="700">{orderDispatchingKanbanItemText}</Text>
+                    {showArrivalTime ? (
+                      arrivalTime! > 0 ? (
+                        <Text color="gray.700" fontWeight="500">
+                          {t(
+                            `Aprox. ${
+                              arrivalTime! > 1 ? arrivalTime + ' minutos' : arrivalTime + ' minuto'
+                            }`
+                          )}
+                        </Text>
+                      ) : (
+                        <Text color="gray.700" fontWeight="500">
+                          {t(`Menos de 1 minuto`)}
+                        </Text>
+                      )
                     ) : (
-                      <Text color="gray.700" fontWeight="500">
-                        {t(`Menos de 1 minuto`)}
-                      </Text>
-                    )
-                  ) : (
-                    showArrivalTimeCalc && (
-                      <Text color="gray.700" fontWeight="500">
-                        {t(`Calculando...`)}
-                      </Text>
-                    )
-                  )}
-                </>
-              )}
-            </Flex>
+                      showArrivalTimeCalc && (
+                        <Text color="gray.700" fontWeight="500">
+                          {t(`Calculando...`)}
+                        </Text>
+                      )
+                    )}
+                  </>
+                )}
+              </Flex>
+            )}
           </Flex>
         </Box>
       </Link>
     );
   }
 
+  if (isNoMatch) {
+    return (
+      <Box
+        position="relative"
+        borderRadius="lg"
+        borderColor="#FFBE00"
+        borderWidth="2px"
+        color="black"
+        boxShadow="0px 8px 16px -4px rgba(105,118,103,0.1)"
+        zIndex="100"
+      >
+        <Link to={`${url}/${order.id}`}>
+          <Box w="100%" h="100%" px="4" pt="4" pb="58px">
+            <Flex flexDir="column" fontWeight="700">
+              <Text fontSize="lg" fontWeight="700">
+                #{order.code}
+              </Text>
+              <Text fontSize="xs" lineHeight="lg" fontWeight="500">
+                {`{${conrumerName}}`}
+              </Text>
+              <Text fontSize="xs" fontWeight="700">
+                {t('Não foi possível encontrar o entregador')}
+              </Text>
+            </Flex>
+          </Box>
+        </Link>
+        <Box position="absolute" w="100%" bottom="0" px="4" mb="4" zIndex="999">
+          {/*<Button
+            w="full"
+            maxH="34px"
+            fontSize="xs"
+            onClick={() => restartMatching()}
+            isLoading={restartResult.isLoading}
+          >
+            {t('Tentar novamente')}
+          </Button>*/}
+          <CustomButton
+            mt="2"
+            w="full"
+            maxH="34px"
+            fontSize="xs"
+            variant="yellowDark"
+            label={t('Assumir logística')}
+            link={`${url}/${order.id}?outsource=true`}
+          />
+        </Box>
+      </Box>
+    );
+  }
   if (order.status === 'ready') {
     return (
       <Box

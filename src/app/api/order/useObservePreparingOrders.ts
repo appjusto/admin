@@ -1,7 +1,7 @@
 import React from 'react';
 import { OrderStatus } from 'appjusto-types';
 import { difference } from 'lodash';
-import { useOrders } from 'app/api/order/useOrders';
+import { useObserveOrders } from 'app/api/order/useObserveOrders';
 
 import { getAck, setAck, getAckOrderIds, addOrderAck, removeOrderAck } from './utils';
 
@@ -11,7 +11,7 @@ const statuses: OrderStatus[] = ['preparing'];
 
 export const useObservePreparingOrders = (businessId?: string) => {
   // context
-  const preparingOrders = useOrders(statuses, businessId);
+  const preparingOrders = useObserveOrders(statuses, businessId);
 
   // side effects
   React.useEffect(() => {

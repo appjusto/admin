@@ -1,4 +1,4 @@
-import firebase from 'firebase';
+import firebase from 'firebase/app';
 import { useContextApi } from 'app/state/api/context';
 import { OrderStatus } from 'appjusto-types';
 import React from 'react';

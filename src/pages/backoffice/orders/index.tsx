@@ -1,9 +1,9 @@
 import { ArrowDownIcon, DeleteIcon } from '@chakra-ui/icons';
 import { Button, Flex, HStack, Radio, RadioGroup, Text } from '@chakra-ui/react';
-import { useOrdersSearch } from 'app/api/search/useOrdersSearch';
+import { useObserveOrdersHistory } from 'app/api/order/useObserveOrdersHistory';
 import { OrderStatus, OrderType } from 'appjusto-types';
-import { OrderAlgolia } from 'appjusto-types/algolia';
 import { FilterText } from 'common/components/backoffice/FilterText';
+import { CustomDateFilter } from 'common/components/form/input/CustomDateFilter';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import React from 'react';
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
@@ -25,26 +25,28 @@ const OrdersPage = () => {
 
   const [filterBar, setFilterBar] = React.useState('all');
   const [orderType, setOrderType] = React.useState<OrderType>('food');
-  const [dateFilter, setDateFilter] = React.useState<number[] | undefined>(undefined);
   const [orderStatus, setOrderStatus] = React.useState<OrderStatus>();
 
-  const { results: orders, fetchNextPage, refetch } = useOrdersSearch<OrderAlgolia>(
-    true,
-    'orders',
-    orderType,
-    undefined,
+  const [clearDateNumber, setClearDateNumber] = React.useState(0);
+
+  const { orders, fetchNextPage } = useObserveOrdersHistory(
+    null,
+    null,
+    searchId,
+    searchFrom,
+    searchTo,
     orderStatus,
-    dateFilter,
-    searchId
+    orderType
   );
 
   // handlers
   const closeDrawerHandler = () => {
-    refetch();
     history.replace(path);
   };
 
-  const cleanFilters = () => {
+  const clearFilters = () => {
+    setClearDateNumber((prev) => prev + 1);
+    setSearchId('');
     setFilterBar('all');
     setSearchFrom('');
     setSearchTo('');
@@ -61,14 +63,6 @@ const OrdersPage = () => {
     else setOrderStatus(filterBar as OrderStatus);
   }, [filterBar]);
 
-  React.useEffect(() => {
-    if (searchFrom && searchTo) {
-      const from = new Date(searchFrom).getTime();
-      const to = new Date(searchTo).getTime();
-      setDateFilter([from, to]);
-    } else setDateFilter(undefined);
-  }, [searchFrom, searchTo]);
-
   // UI
   return (
     <>
@@ -82,23 +76,12 @@ const OrdersPage = () => {
             value={searchId}
             onChange={(event) => setSearchId(event.target.value)}
             label={t('ID')}
-            placeholder={t('000')}
+            placeholder={t('ID do pedido')}
           />
-          <CustomInput
-            mt="0"
-            type="date"
-            id="search-name"
-            value={searchFrom}
-            onChange={(event) => setSearchFrom(event.target.value)}
-            label={t('De')}
-          />
-          <CustomInput
-            mt="0"
-            type="date"
-            id="search-name"
-            value={searchTo}
-            onChange={(event) => setSearchTo(event.target.value)}
-            label={t('Até')}
+          <CustomDateFilter
+            getStart={setSearchFrom}
+            getEnd={setSearchTo}
+            clearNumber={clearDateNumber}
           />
         </HStack>
       </Flex>
@@ -120,7 +103,7 @@ const OrdersPage = () => {
             isActive={filterBar === 'ready' ? true : false}
             onClick={() => setFilterBar('ready')}
           >
-            {t('Aguardando retirada')}
+            {t('Prontos')}
           </FilterText>
           <FilterText
             isActive={filterBar === 'dispatching' ? true : false}
@@ -132,7 +115,13 @@ const OrdersPage = () => {
             isActive={filterBar === 'delivered' ? true : false}
             onClick={() => setFilterBar('delivered')}
           >
-            {t('Finalizados')}
+            {t('Entregues')}
+          </FilterText>
+          <FilterText
+            isActive={filterBar === 'declined' ? true : false}
+            onClick={() => setFilterBar('declined')}
+          >
+            {t('Recusados')}
           </FilterText>
           <FilterText
             isActive={filterBar === 'canceled' ? true : false}
@@ -141,7 +130,7 @@ const OrdersPage = () => {
             {t('Cancelados')}
           </FilterText>
         </HStack>
-        <HStack spacing={2} color="#697667" cursor="pointer" onClick={cleanFilters}>
+        <HStack spacing={2} color="#697667" cursor="pointer" onClick={clearFilters}>
           <DeleteIcon />
           <Text fontSize="15px" lineHeight="21px">
             {t('Limpar filtro')}
@@ -175,7 +164,7 @@ const OrdersPage = () => {
         </RadioGroup>
       </HStack>
       <OrdersTable orders={orders} />
-      <Button mt="8" variant="grey" onClick={fetchNextPage}>
+      <Button mt="8" variant="secondary" onClick={fetchNextPage}>
         <ArrowDownIcon mr="2" />
         {t('Carregar mais')}
       </Button>

@@ -1,43 +1,51 @@
-import { Box, Button, Flex, Text } from '@chakra-ui/react';
-import { useContextApi } from 'app/state/api/context';
+import { Box, Button, Checkbox, Flex, Text } from '@chakra-ui/react';
+import { useAuthentication } from 'app/api/auth/useAuthentication';
 import { AlertError } from 'common/components/AlertError';
 import { AlertSuccess } from 'common/components/AlertSuccess';
 import { CustomInput } from 'common/components/form/input/CustomInput';
+import { CustomPasswordInput } from 'common/components/form/input/CustomPasswordInput';
 import logo from 'common/img/logo.svg';
 import { getErrorMessage } from 'core/fb';
-import React, { useEffect, useState } from 'react';
-import { useMutation } from 'react-query';
+import React from 'react';
+import { Redirect } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import Image from '../../common/components/Image';
 import leftImage from './img/login-left@2x.jpg';
 import rightImage from './img/login-right@2x.jpg';
 
+interface InitialError {
+  status: boolean;
+  error: unknown | null;
+}
+
+const initialError = { status: false, error: null };
+
 const Login = () => {
   // context
-  const api = useContextApi();
-
+  const { login, loginResult, signOut } = useAuthentication();
+  const { isLoading, isSuccess, isError, error: loginError } = loginResult;
   // refs
   const emailRef = React.useRef<HTMLInputElement>(null);
-
+  const passwdRef = React.useRef<HTMLInputElement>(null);
   // state
-  const [email, setEmail] = useState('');
-
-  // mutations
-  const [loginWithEmail, { isLoading, isSuccess, isError, error }] = useMutation((email: string) =>
-    api.auth().sendSignInLinkToEmail(email)
-  );
-
+  const [email, setEmail] = React.useState('');
+  const [passwd, setPasswd] = React.useState('');
+  const [isPassword, setIsPassword] = React.useState(false);
+  const [error, setError] = React.useState<InitialError>(initialError);
   // side effects
-  useEffect(() => {
-    api.auth().signOut();
+  React.useEffect(() => {
+    signOut();
     emailRef?.current?.focus();
-  }, [api]);
-
-  // handlers
-  const loginHandler = () => {
-    loginWithEmail(email);
-  };
+  }, [signOut]);
+  React.useEffect(() => {
+    if (isError)
+      setError({
+        status: true,
+        error: loginError,
+      });
+  }, [isError, loginError]);
   // UI
+  if (isPassword && isSuccess) return <Redirect to="/app" />;
   return (
     <Flex w="100wh" h="100vh" justifyContent={{ sm: 'center' }}>
       <Box w={{ lg: 1 / 3 }} display={{ base: 'none', lg: 'block' }}>
@@ -63,7 +71,7 @@ const Login = () => {
           flexDir="column"
           onSubmit={(ev) => {
             ev.preventDefault();
-            loginHandler();
+            login({ email, password: passwd });
           }}
         >
           <CustomInput
@@ -76,13 +84,38 @@ const Login = () => {
             value={email}
             handleChange={(ev) => setEmail(ev.target.value)}
           />
-          {isError && (
-            <AlertError
-              title={t('Erro!')}
-              description={getErrorMessage(error) ?? t('Tenta de novo?')}
+          <Checkbox
+            mt="4"
+            colorScheme="green"
+            iconColor="white"
+            value="available"
+            color="black"
+            isChecked={isPassword}
+            onChange={(e) => setIsPassword(e.target.checked)}
+          >
+            {t('Usar senha de acesso')}
+          </Checkbox>
+          <Text mt="2" fontSize="xs">
+            {t('Ao entrar sem senha, enviaremos um link de acesso para o e-mail cadastrado.')}
+          </Text>
+          {isPassword && (
+            <CustomPasswordInput
+              ref={passwdRef}
+              isRequired={isPassword}
+              id="login-password"
+              label={t('Senha')}
+              placeholder={t('Senha de acesso')}
+              value={passwd}
+              handleChange={(ev) => setPasswd(ev.target.value)}
             />
           )}
-          {isSuccess && (
+          {error.status && (
+            <AlertError
+              title={t('Erro!')}
+              description={getErrorMessage(error.error) ?? t('Tenta de novo?')}
+            />
+          )}
+          {!isPassword && isSuccess && (
             <AlertSuccess
               title={t('Pronto!')}
               description={t('O link de acesso foi enviado para seu e-mail.')}

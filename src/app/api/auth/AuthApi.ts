@@ -55,6 +55,39 @@ export default class AuthApi {
     return userCredential.user;
   }
 
+  async signInWithEmailAndPassword(email: string, password: string) {
+    await this.auth.signOut();
+    const userCredential = await this.auth.signInWithEmailAndPassword(email, password);
+    try {
+      window.localStorage.removeItem('email');
+    } catch (error) {}
+    return userCredential.user;
+  }
+
+  async createUserWithEmailAndPassword(email: string, password: string) {
+    await this.auth.signOut();
+    const userCredential = await this.auth.createUserWithEmailAndPassword(email, password);
+    try {
+      window.localStorage.removeItem('email');
+    } catch (error) {}
+    return userCredential.user;
+  }
+
+  async updateUsersPassword(password: string, currentPassword?: string) {
+    const user = this.auth.currentUser;
+    if (!user) throw new Error('User not found!');
+    if (currentPassword && user.email)
+      await user.reauthenticateWithCredential(
+        firebase.auth.EmailAuthProvider.credential(user.email, currentPassword)
+      );
+    try {
+      await user.updatePassword(password);
+    } catch (error) {
+      Sentry.captureException('updateUsersPassword', error);
+      throw error;
+    }
+  }
+
   getUser() {
     return this.auth.currentUser;
   }

@@ -1,8 +1,9 @@
-import { Box, HStack, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
-import { Dates, useContextCourierProfile } from 'app/state/courier/context';
+import { Box, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
+import { useContextCourierProfile } from 'app/state/courier/context';
 import { Order, WithId } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
-import { CustomInput } from 'common/components/form/input/CustomInput';
+import { CustomDateFilter } from 'common/components/form/input/CustomDateFilter';
+import React from 'react';
 import { formatCurrency } from 'utils/formatters';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
@@ -18,6 +19,7 @@ const CourierOrdersTableItem = ({ order }: ItemPros) => {
     <Tr color="black" fontSize="xs">
       <Td>{order.code ?? 'N/E'}</Td>
       <Td>{getDateAndHour(order.createdOn)}</Td>
+      <Td>{order.type === 'food' ? 'Comida' : 'p2p'}</Td>
       <Td>{order.business?.name ?? 'N/I'}</Td>
       <Td>{order.fare?.courier.value ? formatCurrency(order.fare?.courier.value) : 'N/E'}</Td>
       <Td>
@@ -34,48 +36,15 @@ const CourierOrdersTableItem = ({ order }: ItemPros) => {
 
 export const CourierOrders = () => {
   // context
-  const { orders, dates, setDates } = useContextCourierProfile();
+  const { orders, dateStart, dateEnd, setDateStart, setDateEnd } = useContextCourierProfile();
   // helpers
   const totalOrders = orders?.length ?? '0';
   // UI
   return (
     <Box>
       <SectionTitle>{t('Filtrar por período')}</SectionTitle>
-      <HStack mt="4" spacing={4}>
-        <CustomInput
-          mt="0"
-          type="date"
-          id="search-name"
-          value={dates?.start ?? ''}
-          onChange={(event) =>
-            //@ts-ignore
-            setDates((prev: Dates) => {
-              return {
-                ...prev,
-                start: event.target.value,
-              };
-            })
-          }
-          label={t('De')}
-        />
-        <CustomInput
-          mt="0"
-          type="date"
-          id="search-name"
-          value={dates?.end ?? ''}
-          onChange={(event) =>
-            //@ts-ignore
-            setDates((prev: Dates) => {
-              return {
-                ...prev,
-                end: event.target.value,
-              };
-            })
-          }
-          label={t('Até')}
-        />
-      </HStack>
-      {!dates ? (
+      <CustomDateFilter mt="4" getStart={setDateStart} getEnd={setDateEnd} showWarning />
+      {!dateStart || !dateEnd ? (
         <Text mt="4">{t('Selecione as datas que deseja buscar')}</Text>
       ) : !orders ? (
         <Text mt="4">{t('Carregando...')}</Text>
@@ -89,6 +58,7 @@ export const CourierOrders = () => {
               <Tr>
                 <Th>{t('ID')}</Th>
                 <Th>{t('Data')}</Th>
+                <Th>{t('tipo')}</Th>
                 <Th>{t('Restaurante')}</Th>
                 <Th>{t('Valor')}</Th>
                 <Th></Th>

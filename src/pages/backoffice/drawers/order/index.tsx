@@ -66,8 +66,10 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
   const [isSuccess, setIsSuccess] = React.useState(false);
   const [error, setError] = React.useState(initialError);
 
-  // helpers
+  // refs
   const submission = React.useRef(0);
+
+  // helpers
   let refundValue = 0;
   if (refund.includes('platform') && order?.fare?.platform?.value)
     refundValue += order.fare.platform.value;

@@ -10,7 +10,8 @@ export const useCanceledOrders = (businessId?: string) => {
   // side effects
   React.useEffect(() => {
     if (!businessId) return;
-    api.order().observeBusinessCanceledOrders(setOrders, businessId);
+    const unsub = api.order().observeBusinessCanceledOrders(setOrders, businessId);
+    return () => unsub();
   }, [businessId, api]); //attention to 'options' to avoid infinite renders
   // return
   return orders;

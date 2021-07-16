@@ -96,6 +96,10 @@ export default class SearchApi {
       dateFilter && dateFilter.length === 2
         ? `date_timestamp: ${dateFilter[0]} TO ${dateFilter[1] + 86399000}`
         : '';
+    //const date =
+    //  dateFilter && dateFilter.length === 2
+    //    ? `confirmedOn: ${dateFilter[0]} TO ${dateFilter[1] + 86399000}` check this calculation
+    //    : '';
 
     let result = `${type}`;
     if (businessId) result += ` AND businessId: ${businessId}`;
@@ -137,13 +141,26 @@ export default class SearchApi {
           return [...result, `courierAddress.state: ${filter.value}`];
         } else if (filter.type === 'courierAddress.city') {
           return [...result, `courierAddress.city: "${filter.value}"`];
+        } else if (filter.type === 'state') {
+          return [...result, `state: "${filter.value}"`];
+        } else if (filter.type === 'city') {
+          return [...result, `city: "${filter.value}"`];
         }
         return result;
       }, [])
       .join(' AND ');
 
+    const statusFilter = filters
+      ?.reduce<string[]>((result, filter) => {
+        if (filter.type === 'status') return [...result, `status: ${filter.value}`];
+        return result;
+      }, [])
+      .join(' OR ');
+
     const getResultFilters = () => {
-      const filters = [situationFilter, placeFilter].filter((str) => str !== '').join(' AND ');
+      const filters = [situationFilter, placeFilter, statusFilter]
+        .filter((str) => str !== '')
+        .join(' AND ');
       return filters;
     };
 

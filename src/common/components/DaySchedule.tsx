@@ -15,6 +15,7 @@ interface DayScheduleProps {
   handleCheck(value: boolean): void;
   handleBreak(value: string): void;
   onChangeValue(index: number, field: string, value: string): void;
+  autoCompleteSchedules(index: number, field: string, value: string): void;
   replicate(): void;
 }
 
@@ -26,10 +27,18 @@ export const DaySchedule = ({
   handleCheck,
   handleBreak,
   onChangeValue,
+  autoCompleteSchedules,
   replicate,
 }: DayScheduleProps) => {
   // state
   const [breakValue, setBreakValue] = React.useState('1');
+  // handlers
+  const inputValidation = (from: string, to: string, beforeTo?: string) => {
+    if (from === '' || to === '') return true;
+    if (from.length < 4 || to.length < 4) return true;
+    if (beforeTo && beforeTo > from) return false;
+    return Number(from) < Number(to);
+  };
   // side effects
   React.useEffect(() => {
     if (value.length > 1) {
@@ -72,39 +81,47 @@ export const DaySchedule = ({
       )}
       {isChecked && (
         <HStack spacing={4}>
-          {value.map((schedule, index) => (
-            <Flex key={index * 3} flexDir="row" maxW="310px">
-              <Input
-                w="100%"
-                maxW="150px"
-                id={`${weekDay}-from-1`}
-                label={t('Início')}
-                value={schedule.from}
-                validationLength={4}
-                onValueChange={(value) => onChangeValue(index, 'from', value)}
-                placeholder="00:00"
-                mask={TimeMask}
-                formatter={TimeFormatter}
-                parser={numbersOnlyParser}
-                isRequired
-              />
-              <Input
-                w="100%"
-                ml="2"
-                maxW="200px"
-                id={`${weekDay}-to-1`}
-                label={t('Término')}
-                value={schedule.to}
-                validationLength={4}
-                onValueChange={(value) => onChangeValue(index, 'to', value)}
-                placeholder="00:00"
-                mask={TimeMask}
-                formatter={TimeFormatter}
-                parser={numbersOnlyParser}
-                isRequired
-              />
-            </Flex>
-          ))}
+          {value.map((schedule, index) => {
+            let beforeTo = undefined;
+            if (index === 1) beforeTo = value[0].to;
+            return (
+              <Flex key={index * 3} flexDir="row" maxW="310px">
+                <Input
+                  w="100%"
+                  maxW="150px"
+                  id={`${weekDay}-from-1`}
+                  label={t('Início')}
+                  value={schedule.from}
+                  validationLength={4}
+                  onValueChange={(value) => onChangeValue(index, 'from', value)}
+                  placeholder="00:00"
+                  mask={TimeMask}
+                  formatter={TimeFormatter}
+                  parser={numbersOnlyParser}
+                  onBlur={() => autoCompleteSchedules(index, 'from', schedule.from)}
+                  isInvalid={!inputValidation(schedule.from, schedule.to, beforeTo)}
+                  isRequired
+                />
+                <Input
+                  w="100%"
+                  ml="2"
+                  maxW="200px"
+                  id={`${weekDay}-to-1`}
+                  label={t('Término')}
+                  value={schedule.to}
+                  validationLength={4}
+                  onValueChange={(value) => onChangeValue(index, 'to', value)}
+                  placeholder="00:00"
+                  mask={TimeMask}
+                  formatter={TimeFormatter}
+                  parser={numbersOnlyParser}
+                  onBlur={() => autoCompleteSchedules(index, 'to', schedule.to)}
+                  isInvalid={!inputValidation(schedule.from, schedule.to, beforeTo)}
+                  isRequired
+                />
+              </Flex>
+            );
+          })}
         </HStack>
       )}
       {index > 0 && (

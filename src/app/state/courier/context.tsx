@@ -1,7 +1,7 @@
 import * as cnpjutils from '@fnando/cnpj';
 import * as cpfutils from '@fnando/cpf';
+import { useCourierMarketPlace } from 'app/api/courier/useCourierMarketPlace';
 import { useCourierOrders } from 'app/api/courier/useCourierOrders';
-import { useCourierPrivateData } from 'app/api/courier/useCourierPrivateData';
 import { useCourierProfile } from 'app/api/courier/useCourierProfile';
 import { useCourierProfilePictures } from 'app/api/courier/useCourierProfilePictures';
 import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';
@@ -14,23 +14,30 @@ import {
   WithId,
 } from 'appjusto-types';
 import React, { Dispatch, SetStateAction } from 'react';
+import { MutateFunction, MutationResult } from 'react-query';
 import { useParams } from 'react-router';
 import { courierReducer } from './courierReducer';
-
-export type Dates = { start?: string; end?: string };
 
 type Validation = { cpf: boolean; cnpj: boolean; agency: boolean; account: boolean };
 interface CourierProfileContextProps {
   courier: WithId<CourierProfile> | undefined | null;
-  pictures: { selfie: string | null; document: string | null };
+  pictures: { selfie?: string | null; document?: string | null };
+  selfieFiles?: File[] | null;
+  setSelfieFiles(files: File[] | null): void;
+  documentFiles?: File[] | null;
+  setDocumentFiles(files: File[] | null): void;
   issueOptions?: WithId<Issue>[] | null;
-  marketPlace?: MarketplaceAccountInfo;
+  marketPlace?: MarketplaceAccountInfo | null;
+  deleteMarketPlace: MutateFunction<void, unknown, undefined, unknown>;
+  deleteMarketPlaceResult: MutationResult<void, unknown>;
   contextValidation: Validation;
   orders?: WithId<Order>[] | null;
-  dates?: Dates;
+  dateStart?: string;
+  dateEnd?: string;
   handleProfileChange(key: string, value: any): void;
   setContextValidation: Dispatch<SetStateAction<Validation>>;
-  setDates(dates: Dates): void;
+  setDateStart(start: string): void;
+  setDateEnd(end: string): void;
 }
 
 const CourierProfileContext = React.createContext<CourierProfileContextProps>(
@@ -52,7 +59,9 @@ export const CourierProvider = ({ children }: Props) => {
   const { courierId } = useParams<Params>();
   const profile = useCourierProfile(courierId);
   const pictures = useCourierProfilePictures(courierId, '', '');
-  const marketPlace = useCourierPrivateData(courierId);
+  const { marketPlace, deleteMarketPlace, deleteMarketPlaceResult } = useCourierMarketPlace(
+    courierId
+  );
   const issueOptions = useIssuesByType(issueOptionsArray);
 
   // state
@@ -63,8 +72,11 @@ export const CourierProvider = ({ children }: Props) => {
     agency: true,
     account: true,
   });
-  const [dates, setDates] = React.useState<Dates>();
-  const orders = useCourierOrders(courierId, dates?.start, dates?.end);
+  const [selfieFiles, setSelfieFiles] = React.useState<File[] | null>(null);
+  const [documentFiles, setDocumentFiles] = React.useState<File[] | null>(null);
+  const [dateStart, setDateStart] = React.useState<string>();
+  const [dateEnd, setDateEnd] = React.useState<string>();
+  const orders = useCourierOrders(courierId, dateStart, dateEnd);
 
   // handlers
   const handleProfileChange = (key: string, value: any) => {
@@ -97,14 +109,22 @@ export const CourierProvider = ({ children }: Props) => {
       value={{
         courier,
         pictures,
+        selfieFiles,
+        setSelfieFiles,
+        documentFiles,
+        setDocumentFiles,
         issueOptions,
         marketPlace,
+        deleteMarketPlace,
+        deleteMarketPlaceResult,
         contextValidation,
         orders,
-        dates,
+        dateStart,
+        dateEnd,
         handleProfileChange,
         setContextValidation,
-        setDates,
+        setDateStart,
+        setDateEnd,
       }}
     >
       {children}
