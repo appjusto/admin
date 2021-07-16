@@ -44,6 +44,15 @@ const Login = () => {
         error: loginError,
       });
   }, [isError, loginError]);
+  React.useEffect(() => {
+    if (isSuccess) setError(initialError);
+  }, [isSuccess]);
+  React.useEffect(() => {
+    if (!isPassword) {
+      setPasswd('');
+      setError(initialError);
+    }
+  }, [isPassword]);
   // UI
   if (isPassword && isSuccess) return <Redirect to="/app" />;
   return (
@@ -111,7 +120,7 @@ const Login = () => {
           )}
           {error.status && (
             <AlertError
-              title={t('Erro!')}
+              title={t('A autenticação falhou!')}
               description={getErrorMessage(error.error) ?? t('Tenta de novo?')}
             />
           )}
