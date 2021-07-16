@@ -1,16 +1,13 @@
-import { GeneralRoles, useFirebaseUserRole } from 'app/api/auth/useFirebaseUserRole';
 import { useObserveBusinessManagedBy } from 'app/api/business/profile/useObserveBusinessManagedBy';
 import { useObserveBusinessProfile } from 'app/api/business/profile/useObserveBusinessProfile';
 import { Business, WithId } from 'appjusto-types';
-import React, { Dispatch, SetStateAction } from 'react';
-import { useContextAgentProfile } from '../agent/context';
+import React from 'react';
 import { useContextApi } from '../api/context';
-import { useContextFirebaseUserEmail } from '../auth/context';
+import { useContextFirebaseUser } from '../auth/context';
 
 interface ContextProps {
-  business: WithId<Business> | undefined | null;
-  userRole?: GeneralRoles | null;
-  setBusinessId: Dispatch<SetStateAction<string | undefined | null>>;
+  business?: WithId<Business> | null;
+  setBusinessId(businessId?: string | null): void;
   updateContextBusinessOrderPrint(status: boolean): void;
 }
 
@@ -23,13 +20,10 @@ interface Props {
 export const BusinessProvider = ({ children }: Props) => {
   // context
   const api = useContextApi();
-  const email = useContextFirebaseUserEmail();
-  const { isBackofficeUser } = useContextAgentProfile();
-  const businesses = useObserveBusinessManagedBy(email);
+  const { user, isBackofficeUser, refreshUserToken } = useContextFirebaseUser();
+  const businesses = useObserveBusinessManagedBy(user?.email);
   const [businessId, setBusinessId] = React.useState<string | undefined | null>();
   const hookBusiness = useObserveBusinessProfile(businessId);
-  const { role: userRole } = useFirebaseUserRole(businessId);
-  //const managers = useManagers(business, userRole);
   // state
   const [business, setBusiness] = React.useState<WithId<Business> | null>();
 
@@ -46,6 +40,9 @@ export const BusinessProvider = ({ children }: Props) => {
 
   // side effects
   React.useEffect(() => {
+    if (businessId && refreshUserToken) refreshUserToken(businessId);
+  }, [businessId, refreshUserToken]);
+  React.useEffect(() => {
     if (hookBusiness === undefined) return;
     if (hookBusiness === null) setBusiness(null);
     setBusiness(hookBusiness);
@@ -53,17 +50,15 @@ export const BusinessProvider = ({ children }: Props) => {
   // intended to auto-select a business id for a restaurant manager
   React.useEffect(() => {
     if (isBackofficeUser) return;
-    if (!email) return;
+    if (!user?.email) return;
     if (!businesses) return;
     // select first business or set it to null to indicate that user doesn't
     // manage any business
     setBusinessId(businesses.find(() => true)?.id ?? null);
-  }, [api, businesses, email, isBackofficeUser]);
+  }, [api, businesses, user?.email, isBackofficeUser]);
 
   return (
-    <BusinessContext.Provider
-      value={{ business, userRole, setBusinessId, updateContextBusinessOrderPrint }}
-    >
+    <BusinessContext.Provider value={{ business, setBusinessId, updateContextBusinessOrderPrint }}>
       {children}
     </BusinessContext.Provider>
   );

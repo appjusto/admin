@@ -8,13 +8,13 @@ import { useCanceledOrders } from 'app/api/order/useCanceledOrders';
 import { useObserveConfirmedOrders } from 'app/api/order/useObserveConfirmedOrders';
 import { useObserveOrders } from 'app/api/order/useObserveOrders';
 import { useObservePreparingOrders } from 'app/api/order/useObservePreparingOrders';
-import { useContextAgentProfile } from 'app/state/agent/context';
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { Business, Order, OrderStatus, WithId } from 'appjusto-types';
 import { CustomToast } from 'common/components/CustomToast';
 import React from 'react';
 import { updateLocalStorageOrderTime } from 'utils/functions';
+import { useContextFirebaseUser } from '../auth/context';
 
 export type localOrderType = { code: string; time: number };
 
@@ -41,7 +41,7 @@ interface ProviderProps {
 export const OrdersContextProvider = (props: ProviderProps) => {
   // context
   const api = useContextApi();
-  const { isBackofficeUser } = useContextAgentProfile();
+  const { isBackofficeUser } = useContextFirebaseUser();
   const { business } = useContextBusiness();
   const { sendBusinessKeepAlive } = useBusinessProfile();
   const activeOrders = useObserveOrders(statuses, business?.id);

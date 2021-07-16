@@ -1,11 +1,11 @@
-import { useContextAgentProfile } from 'app/state/agent/context';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import { Loading } from 'common/components/Loading';
 import React from 'react';
 import { Redirect, Route, RouteProps } from 'react-router-dom';
 
 export const BOAccessRoute = (props: RouteProps) => {
   // context
-  const { role } = useContextAgentProfile();
+  const { role } = useContextFirebaseUser();
   // redirects
   if (role) {
     if (role === 'courier-manager' && props.path !== '/backoffice/couriers')

@@ -1,6 +1,9 @@
-import { useContextAgentProfile } from 'app/state/agent/context';
 import { useContextApi } from 'app/state/api/context';
-import { useContextFirebaseUserEmail, useContextFirebaseUserId } from 'app/state/auth/context';
+import {
+  useContextFirebaseUser,
+  useContextFirebaseUserEmail,
+  useContextFirebaseUserId,
+} from 'app/state/auth/context';
 import { ManagerProfile, WithId } from 'appjusto-types';
 import React from 'react';
 
@@ -9,7 +12,7 @@ export const useManagerProfile = () => {
   const api = useContextApi();
   const id = useContextFirebaseUserId();
   const email = useContextFirebaseUserEmail();
-  const { isBackofficeUser } = useContextAgentProfile();
+  const { isBackofficeUser } = useContextFirebaseUser();
 
   // state
   const [managerEmail, setManagerEmail] = React.useState<string | undefined | null>();

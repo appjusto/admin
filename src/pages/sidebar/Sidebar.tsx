@@ -1,5 +1,5 @@
 import { Badge, Box, Flex } from '@chakra-ui/react';
-import { useContextAgentProfile } from 'app/state/agent/context';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import Image from 'common/components/Image';
 import logo from 'common/img/logo.svg';
 import React from 'react';
@@ -13,7 +13,7 @@ const Sidebar = () => {
   // context
   const env = process.env.REACT_APP_ENVIRONMENT;
   const { path } = useRouteMatch();
-  const { isBackofficeUser } = useContextAgentProfile();
+  const { isBackofficeUser } = useContextFirebaseUser();
   const isBackOffice = path.includes('backoffice');
   return (
     <Box

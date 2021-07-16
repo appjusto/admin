@@ -1,8 +1,8 @@
 import { Box, Button, Flex, HStack, Progress, Text } from '@chakra-ui/react';
-import { useFirebaseUserRole } from 'app/api/auth/useFirebaseUserRole';
 import { useOrderArrivalTimes } from 'app/api/order/useOrderArrivalTimes';
 import { useOrderDeliveryInfos } from 'app/api/order/useOrderDeliveryInfos';
 import { getOrderAckTime } from 'app/api/order/utils';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useOrdersContext } from 'app/state/order';
 import { Order, WithId } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
@@ -24,7 +24,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
   const { url } = useRouteMatch();
   const { business, changeOrderStatus } = useOrdersContext();
   const arrivalTime = useOrderArrivalTimes(order);
-  const { isBackofficeUser } = useFirebaseUserRole();
+  const { isBackofficeUser } = useContextFirebaseUser();
   const {
     isMatched,
     isNoMatch,

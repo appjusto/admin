@@ -1,13 +1,12 @@
-import { useContextAgentProfile } from 'app/state/agent/context';
 import React from 'react';
 import { useRouteMatch } from 'react-router-dom';
-import { useFirebaseUser } from '../auth/useFirebaseUser';
 import * as Sentry from '@sentry/react';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 
 export const useFreshDesk = (businessId?: string, businessName?: string, phone?: string) => {
   // context
-  const user = useFirebaseUser();
-  const { isBackofficeUser } = useContextAgentProfile();
+  const { user } = useContextFirebaseUser();
+  const { isBackofficeUser } = useContextFirebaseUser();
   const { path } = useRouteMatch();
   // handlers
   const initFreshChat = React.useCallback(() => {

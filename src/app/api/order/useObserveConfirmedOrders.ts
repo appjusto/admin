@@ -17,7 +17,7 @@ import {
   removeOrderAck,
 } from './utils';
 import * as Sentry from '@sentry/react';
-import { useContextAgentProfile } from 'app/state/agent/context';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 
 const key = 'confirmed';
 
@@ -25,7 +25,7 @@ const statuses: OrderStatus[] = ['confirmed'];
 
 export const useObserveConfirmedOrders = (businessId?: string, notify: boolean = true) => {
   // context
-  const { isBackofficeUser } = useContextAgentProfile();
+  const { isBackofficeUser } = useContextFirebaseUser();
   const permission = useNotificationPermission();
   const confirmedOrders = useObserveOrders(statuses, businessId);
   // state

@@ -1,4 +1,4 @@
-import { useContextAgentProfile } from 'app/state/agent/context';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { OrdersContextProvider } from 'app/state/order';
 import { Loading } from 'common/components/Loading';
@@ -20,7 +20,7 @@ import Dashboard from './Dashboard';
 
 const Home = () => {
   // context
-  const { isBackofficeUser } = useContextAgentProfile();
+  const { isBackofficeUser } = useContextFirebaseUser();
   const { business } = useContextBusiness();
   const { path } = useRouteMatch();
 

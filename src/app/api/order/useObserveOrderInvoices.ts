@@ -1,12 +1,12 @@
 import { useContextApi } from 'app/state/api/context';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import { WithId, Invoice } from 'appjusto-types';
 import React from 'react';
-import { useFirebaseUserRole } from '../auth/useFirebaseUserRole';
 
 export const useObserveOrderInvoices = (orderId?: string) => {
   // context
   const api = useContextApi();
-  const { isBackofficeUser } = useFirebaseUserRole();
+  const { isBackofficeUser } = useContextFirebaseUser();
   // state
   const [invoices, setInvoices] = React.useState<WithId<Invoice>[] | null>();
   // side effects

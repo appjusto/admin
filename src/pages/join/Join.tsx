@@ -11,8 +11,8 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { useAuthentication } from 'app/api/auth/useAuthentication';
-import { useContextAgentProfile } from 'app/state/agent/context';
 import { useContextApi } from 'app/state/api/context';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import { Input } from 'common/components/form/input/Input';
 import { Loading } from 'common/components/Loading';
 import { getErrorMessage } from 'core/fb';
@@ -29,7 +29,7 @@ const Join = () => {
   const savedEmail = api.auth().getSignInEmail();
   const isLinkValid = api.auth().isSignInWithEmailLink(link);
   const isEmailSaved = Boolean(savedEmail);
-  const { isBackofficeUser } = useContextAgentProfile();
+  const { isBackofficeUser } = useContextFirebaseUser();
 
   // state
   const [email, setEmail] = React.useState('');

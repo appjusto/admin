@@ -1,11 +1,11 @@
 import { Box } from '@chakra-ui/react';
-import { useFirebaseUserRole } from 'app/api/auth/useFirebaseUserRole';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import BankingInformation from 'pages/business-profile/BankingInformation';
 import { ManagerProfile } from './ManagerProfile';
 
 const ManagerProfilePage = () => {
   // context
-  const { role } = useFirebaseUserRole();
+  const { role } = useContextFirebaseUser();
   // UI
   return (
     <Box>

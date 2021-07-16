@@ -1,7 +1,6 @@
 import { Box, Button, Heading, Text } from '@chakra-ui/react';
 import * as cpfutils from '@fnando/cpf';
 import { useAuthentication } from 'app/api/auth/useAuthentication';
-import { useFirebaseUserRole } from 'app/api/auth/useFirebaseUserRole';
 import { useUpdateManagerProfile } from 'app/api/manager/useUpdateManagerProfile';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
@@ -28,8 +27,7 @@ import { t } from 'utils/i18n';
 
 export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
   // context
-  const user = useContextFirebaseUser();
-  const { role } = useFirebaseUserRole();
+  const { user, role } = useContextFirebaseUser();
   const { sendSignInLinkToEmail, sendingLinkResult } = useAuthentication();
   const { business } = useContextBusiness();
   const { manager } = useContextManagerProfile();
