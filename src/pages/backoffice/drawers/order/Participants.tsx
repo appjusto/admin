@@ -17,7 +17,7 @@ import { SectionTitle } from '../generics/SectionTitle';
 
 interface ParticipantProps {
   id?: string;
-  outsourceDelivery?: boolean;
+  outsourceLabel?: string | null;
   name?: string;
   mode?: CourierMode;
   instruction?: string;
@@ -34,7 +34,7 @@ interface ParticipantProps {
 
 const Participant = ({
   id,
-  outsourceDelivery,
+  outsourceLabel,
   name,
   mode,
   instruction,
@@ -67,9 +67,9 @@ const Participant = ({
   // UI
   return (
     <Box mb="10">
-      {outsourceDelivery ? (
+      {outsourceLabel ? (
         <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
-          {t('Logística assumida pelo restaurante:')}
+          {outsourceLabel}
         </Text>
       ) : (
         <>
@@ -290,7 +290,7 @@ export const Participants = ({ order }: ParticipantsProps) => {
       <SectionTitle>{t('Entregador')}</SectionTitle>
       <Participant
         id={order?.courier?.id}
-        outsourceDelivery={order?.dispatchingStatus === 'outsourced'}
+        outsourceLabel={t('Logística assumida pelo restaurante')}
         name={order?.courier?.name ?? 'N/E'}
         mode={order?.courier?.mode}
         buttonLabel={t('Ver cadastro do entregador')}

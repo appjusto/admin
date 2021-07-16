@@ -50,7 +50,7 @@ export const OrderDrawer = (props: Props) => {
     orderCancellationCosts,
   } = useOrder(orderId);
   const { manager } = useContextManagerProfile();
-  const { getOutsourceDelivery, outsourceDeliveryResult } = useGetOutsourceDelivery();
+  const { getOutsourceDelivery, outsourceDeliveryResult } = useGetOutsourceDelivery(orderId);
   // state
   const [isCanceling, setIsCanceling] = React.useState(false);
   const [isOutsourceDelivery, setIsOutsourceDelivery] = React.useState<boolean>();
@@ -171,7 +171,7 @@ export const OrderDrawer = (props: Props) => {
                         </Button>
                         <Button
                           mt="0"
-                          onClick={() => getOutsourceDelivery(order.id)}
+                          onClick={() => getOutsourceDelivery()}
                           isLoading={outsourceDeliveryResult.isLoading}
                         >
                           {t('Confirmar')}

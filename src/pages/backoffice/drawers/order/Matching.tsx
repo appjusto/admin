@@ -30,7 +30,7 @@ export const Matching = ({ orderId, orderStatus, orderDispatchingStatus }: Match
     restartResult,
   } = useObserveOrderMatching(orderId);
   const { courierManualAllocation, allocationResult } = useOrderCourierManualAllocation();
-  const { getOutsourceDelivery, outsourceDeliveryResult } = useGetOutsourceDelivery();
+  const { getOutsourceDelivery, outsourceDeliveryResult } = useGetOutsourceDelivery(orderId);
   // state
   //const [isAuto, setIsAuto] = React.useState(true);
   const [logs, setLogs] = React.useState<string[]>();
@@ -90,6 +90,10 @@ export const Matching = ({ orderId, orderStatus, orderDispatchingStatus }: Match
   }, [matching]);
 
   React.useEffect(() => {
+    if (orderDispatchingStatus === 'outsourced') setIsOutsourcing(true);
+  }, [orderDispatchingStatus]);
+
+  React.useEffect(() => {
     if (!logs) return;
     const hashNumber = logs.map((log) => log.split(' ')[0]);
     const AttempsCounter = (array: string[]) => {
@@ -143,17 +147,13 @@ export const Matching = ({ orderId, orderStatus, orderDispatchingStatus }: Match
           size="sm"
           variant="yellowDark"
           onClick={() => setIsOutsourcing(true)}
+          isDisabled
         >
           {t('Terceirizar logística')}
         </Button>
       ) : orderDispatchingStatus === 'outsourced' ? (
         <Box mt="4" border="2px solid #FFBE00" borderRadius="lg" bg="" p="4">
-          <SectionTitle mt="0">{t('Logística terceirizada')}</SectionTitle>
-          <Text mt="2">
-            {t(
-              `Caso necessário, entre em contato com restaurante e cliente para mantê-los informados sobre a entrega.`
-            )}
-          </Text>
+          <SectionTitle mt="0">{t('Logística assumida pelo restaurante')}</SectionTitle>
         </Box>
       ) : (
         <Box mt="4" border="2px solid #FFBE00" borderRadius="lg" bg="" p="4">
@@ -169,7 +169,7 @@ export const Matching = ({ orderId, orderStatus, orderDispatchingStatus }: Match
             </Button>
             <Button
               mt="0"
-              onClick={() => getOutsourceDelivery(orderId)}
+              onClick={() => getOutsourceDelivery()}
               isLoading={outsourceDeliveryResult.isLoading}
             >
               {t('Confirmar')}
