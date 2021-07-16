@@ -1,5 +1,5 @@
 import { ArrowDownIcon, DeleteIcon } from '@chakra-ui/icons';
-import { Button, Flex, HStack, Radio, RadioGroup, Text } from '@chakra-ui/react';
+import { Button, Checkbox, CheckboxGroup, Flex, HStack, Text } from '@chakra-ui/react';
 import { useObserveOrdersHistory } from 'app/api/order/useObserveOrdersHistory';
 import { OrderStatus, OrderType } from 'appjusto-types';
 import { FilterText } from 'common/components/backoffice/FilterText';
@@ -24,7 +24,7 @@ const OrdersPage = () => {
   const [searchTo, setSearchTo] = React.useState('');
 
   const [filterBar, setFilterBar] = React.useState('all');
-  const [orderType, setOrderType] = React.useState<OrderType>('food');
+  const [orderType, setOrderType] = React.useState<OrderType[]>(['food', 'p2p']);
   const [orderStatus, setOrderStatus] = React.useState<OrderStatus>();
 
   const [clearDateNumber, setClearDateNumber] = React.useState(0);
@@ -141,15 +141,10 @@ const OrdersPage = () => {
         <Text fontSize="lg" fontWeight="700" lineHeight="26px">
           {t(`${orders?.length ?? '0'} itens na lista`)}
         </Text>
-        <RadioGroup
-          mt="4"
-          onChange={(value) => setOrderType(value as OrderType)}
-          value={orderType}
-          defaultValue="1"
+        <CheckboxGroup
           colorScheme="green"
-          color="black"
-          fontSize="15px"
-          lineHeight="21px"
+          value={orderType}
+          onChange={(values: OrderType[]) => setOrderType(values)}
         >
           <HStack
             alignItems="flex-start"
@@ -158,10 +153,14 @@ const OrdersPage = () => {
             fontSize="16px"
             lineHeight="22px"
           >
-            <Radio value="food">{t('Restaurantes')}</Radio>
-            <Radio value="p2p">{t('Encomendas')}</Radio>
+            <Checkbox iconColor="white" value="food">
+              {t('Restaurantes')}
+            </Checkbox>
+            <Checkbox iconColor="white" value="p2p">
+              {t('Encomendas')}
+            </Checkbox>
           </HStack>
-        </RadioGroup>
+        </CheckboxGroup>
       </HStack>
       <OrdersTable orders={orders} />
       <Button mt="8" variant="secondary" onClick={fetchNextPage}>

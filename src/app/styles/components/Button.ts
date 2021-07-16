@@ -101,16 +101,16 @@ export const Button = {
     },
     yellowDark: {
       'bg': '#FFBE00',
-      'border': 'none',
       'color': 'black',
       'fontSize': '15px',
       'fontWeight': '500',
       ':hover': {
-        bg: '#FFE493',
+        backgroundColor: '#FFE493',
       },
       ':disabled': {
-        color: 'gray.500',
+        color: 'gray.700',
         borderColor: 'gray.500',
+        backgroundColor: 'gray.200',
       },
     },
   },

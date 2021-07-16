@@ -70,7 +70,7 @@ export default class OrderApi {
     start?: Date | null,
     end?: Date | null,
     orderStatus?: OrderStatus,
-    orderType?: OrderType,
+    orderType?: OrderType[],
     startAfter?: FirebaseDocument
   ): firebase.Unsubscribe {
     let query = this.refs.getOrdersRef().orderBy('updatedOn', 'desc').limit(20);
@@ -80,7 +80,7 @@ export default class OrderApi {
     if (orderCode) query = query.where('code', '==', orderCode);
     if (start && end) query = query.where('updatedOn', '>=', start).where('updatedOn', '<=', end);
     if (orderStatus) query = query.where('status', '==', orderStatus);
-    if (orderType) query = query.where('type', '==', orderType);
+    if (orderType) query = query.where('type', 'in', orderType);
     const unsubscribe = query.onSnapshot(
       (querySnapshot) => {
         const last =

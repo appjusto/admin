@@ -10,7 +10,7 @@ export const useObserveOrdersHistory = (
   start?: string,
   end?: string,
   orderStatus?: OrderStatus,
-  orderType?: OrderType
+  orderType?: OrderType[]
 ) => {
   // context
   const api = useContextApi();
