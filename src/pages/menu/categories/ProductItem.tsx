@@ -92,7 +92,7 @@ export const ProductItem = React.memo(({ product, index }: Props) => {
               </Text>
               <Text fontSize="sm">{product.description}</Text>
             </Box>
-            <Box maxW="120px">
+            <Flex w="120px" minW="120px" alignItems="center">
               <CurrencyInput
                 mt="0"
                 id={`prod-${product.id}-price`}
@@ -102,7 +102,7 @@ export const ProductItem = React.memo(({ product, index }: Props) => {
                 onBlur={() => onUpdateProduct('price', price)}
                 maxLength={6}
               />
-            </Box>
+            </Flex>
           </Flex>
           <Spacer />
           <Switch
