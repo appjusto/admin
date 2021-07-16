@@ -139,7 +139,7 @@ export const OrderDrawer = (props: Props) => {
                       <SectionTitle mt="0">{t('Logística assumida')}</SectionTitle>
                       <Text mt="2">
                         {t(
-                          `O AppJusto não terá como monitorar o pedido a partir daqui. Entre em contato com o cliente para mantê-lo informado sobre sua entrega.`
+                          `O AppJusto não terá como monitorar o pedido a partir daqui. Caso seja necessário, entre em contato com o cliente para mantê-lo informado sobre sua entrega.`
                         )}
                       </Text>
                       <Text mt="4">

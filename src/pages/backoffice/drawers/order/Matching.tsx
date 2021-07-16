@@ -1,4 +1,5 @@
-import { Box, Flex, HStack, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, HStack, Text } from '@chakra-ui/react';
+import { useGetOutsourceDelivery } from 'app/api/order/useGetOutsourceDelivery';
 import { useObserveOrderMatching } from 'app/api/order/useObserveOrderMatching';
 import { useOrderCourierManualAllocation } from 'app/api/order/useOrderCourierManualAllocation';
 import { OrderStatus } from 'appjusto-types';
@@ -29,6 +30,7 @@ export const Matching = ({ orderId, orderStatus, orderDispatchingStatus }: Match
     restartResult,
   } = useObserveOrderMatching(orderId);
   const { courierManualAllocation, allocationResult } = useOrderCourierManualAllocation();
+  const { getOutsourceDelivery, outsourceDeliveryResult } = useGetOutsourceDelivery();
   // state
   //const [isAuto, setIsAuto] = React.useState(true);
   const [logs, setLogs] = React.useState<string[]>();
@@ -36,6 +38,7 @@ export const Matching = ({ orderId, orderStatus, orderDispatchingStatus }: Match
   const [couriersNotified, setCouriersNotified] = React.useState<string[]>();
   const [courierRemoving, setCourierRemoving] = React.useState<string | null>(null);
   const [isRestarting, setIsRestarting] = React.useState<boolean>(false);
+  const [isOutsourcing, setIsOutsourcing] = React.useState<boolean>(false);
   const [error, setError] = React.useState(initialError);
   //const [couriersRejections, setCouriersRejections] = React.useState<OrderMatchingRejection[]>();
 
@@ -133,8 +136,49 @@ export const Matching = ({ orderId, orderStatus, orderDispatchingStatus }: Match
   // UI
   return (
     <>
-      <Flex justifyContent="space-between">
-        <SectionTitle mt="2">
+      {!isOutsourcing ? (
+        <Button
+          h="38px"
+          w="220px"
+          size="sm"
+          variant="yellowDark"
+          onClick={() => setIsOutsourcing(true)}
+        >
+          {t('Terceirizar logística')}
+        </Button>
+      ) : orderDispatchingStatus === 'outsourced' ? (
+        <Box mt="4" border="2px solid #FFBE00" borderRadius="lg" bg="" p="4">
+          <SectionTitle mt="0">{t('Logística terceirizada')}</SectionTitle>
+          <Text mt="2">
+            {t(
+              `Caso necessário, entre em contato com restaurante e cliente para mantê-los informados sobre a entrega.`
+            )}
+          </Text>
+        </Box>
+      ) : (
+        <Box mt="4" border="2px solid #FFBE00" borderRadius="lg" bg="" p="4">
+          <SectionTitle mt="0">{t('Terceirizar logística')}</SectionTitle>
+          <Text mt="2">
+            {t(
+              `Ao terceirizar a logística de entrega, restaurante e consumidor não serão informados, pelo Admin/App, sobre a localização do entregador.`
+            )}
+          </Text>
+          <HStack mt="4">
+            <Button mt="0" variant="dangerLight" onClick={() => setIsOutsourcing(false)}>
+              {t('Cancelar')}
+            </Button>
+            <Button
+              mt="0"
+              onClick={() => getOutsourceDelivery(orderId)}
+              isLoading={outsourceDeliveryResult.isLoading}
+            >
+              {t('Confirmar')}
+            </Button>
+          </HStack>
+        </Box>
+      )}
+      <Flex mt="5" justifyContent="space-between">
+        <SectionTitle mt="0">
           {t('Status:')}{' '}
           <Text as="span" color={isNoMatch ? 'red' : 'black'}>
             {getDispatchingStatus()}
@@ -176,7 +220,7 @@ export const Matching = ({ orderId, orderStatus, orderDispatchingStatus }: Match
           ) : (
             <CustomButton
               mt="2"
-              h="48px"
+              h="38px"
               size="sm"
               variant="dangerLight"
               label="Reiniciar matching"
