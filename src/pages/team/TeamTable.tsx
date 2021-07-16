@@ -1,6 +1,7 @@
 import { Box, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
 import { ManagerWithRole } from 'app/api/manager/types';
 import { useManagers } from 'app/api/manager/useManagers';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
 import { initialError } from 'common/components/error/utils';
 import React from 'react';
@@ -9,13 +10,14 @@ import { TeamTableItem } from './TeamTableItem';
 
 export const TeamTable = () => {
   // context
+  const { role } = useContextFirebaseUser();
   const {
     managers: businessManagers,
     removeBusinessManager,
     removeResult,
     createManager,
     createResult,
-  } = useManagers();
+  } = useManagers(role);
 
   // state
   const [managers, setManagers] = React.useState<ManagerWithRole[]>();

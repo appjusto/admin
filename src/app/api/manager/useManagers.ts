@@ -8,7 +8,7 @@ import { GeneralRoles } from 'app/state/auth/context';
 
 type ManagerData = { email: string; role: Role | AdminRole };
 
-export const useManagers = (role?: GeneralRoles) => {
+export const useManagers = (role?: GeneralRoles | null) => {
   // contex
   const api = useContextApi();
   const { business } = useContextBusiness();
