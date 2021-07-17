@@ -243,7 +243,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
             />
             {!onboarding && (
               <Input
-                isDisabled
+                isDisabled={!isBackofficeUser}
                 id="business-company-name"
                 label={t('Razão social')}
                 placeholder={t('Apenas para conferência')}
