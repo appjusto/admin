@@ -49,16 +49,13 @@ export const FirebaseUserProvider = ({ children }: Props) => {
     },
     [user]
   );
-
   // side effects
   React.useEffect(() => {
     refreshUserToken();
   }, [refreshUserToken]);
-
   React.useEffect(() => {
     setIsBackofficeUser(!!role && backofficeRoles.indexOf(role) !== -1);
   }, [role]);
-  console.log('role', role);
   // provider
   return (
     <FirebaseUserContext.Provider value={{ user, role, isBackofficeUser, refreshUserToken }}>
