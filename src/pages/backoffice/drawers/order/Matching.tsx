@@ -152,7 +152,8 @@ export const Matching = ({ orderId, orderStatus, orderDispatchingStatus }: Match
         </Button>
       ) : orderDispatchingStatus === 'outsourced' ? (
         <Box mt="4" border="2px solid #FFBE00" borderRadius="lg" bg="" p="4">
-          <SectionTitle mt="0">{t('Logística fora da rede')}</SectionTitle>
+          <SectionTitle mt="0">{t('Logística fora da rede ativada')}</SectionTitle>
+          <Text mt="2">{t(`Será necessário concluir o pedido após a entrega finalizada`)}</Text>
         </Box>
       ) : (
         <Box mt="4" border="2px solid #FFBE00" borderRadius="lg" bg="" p="4">
