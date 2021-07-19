@@ -147,13 +147,12 @@ export const Matching = ({ orderId, orderStatus, orderDispatchingStatus }: Match
           size="sm"
           variant="yellowDark"
           onClick={() => setIsOutsourcing(true)}
-          isDisabled
         >
           {t('Terceirizar logística')}
         </Button>
       ) : orderDispatchingStatus === 'outsourced' ? (
         <Box mt="4" border="2px solid #FFBE00" borderRadius="lg" bg="" p="4">
-          <SectionTitle mt="0">{t('Logística assumida pelo restaurante')}</SectionTitle>
+          <SectionTitle mt="0">{t('Logística terceirizada')}</SectionTitle>
         </Box>
       ) : (
         <Box mt="4" border="2px solid #FFBE00" borderRadius="lg" bg="" p="4">
