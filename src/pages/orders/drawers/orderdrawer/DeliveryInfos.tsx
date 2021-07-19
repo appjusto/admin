@@ -3,6 +3,7 @@ import { useCourierProfilePicture } from 'app/api/courier/useCourierProfilePictu
 import { useOrderDeliveryInfos } from 'app/api/order/useOrderDeliveryInfos';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { Order, WithId } from 'appjusto-types';
+import { AlertWarning } from 'common/components/AlertWarning';
 import firebase from 'firebase/app';
 import I18n from 'i18n-js';
 import React from 'react';
@@ -66,16 +67,21 @@ export const DeliveryInfos = ({ order, setOutsource }: DeliveryInfosProps) => {
           ))}
         {isNoMatch && !isBackofficeUser && (
           <HStack spacing={2}>
-            {/*<Button size="md" onClick={() => {}}>
-              {t('Tentar novamente')}
-              </Button>*/}
-            <Button
+            {/*<Button
               size="md"
               variant="yellowDark"
               onClick={() => setOutsource && setOutsource(true)}
             >
               {t('Assumir logística')}
-            </Button>
+            </Button>*/}
+            <AlertWarning
+              maxW="320px"
+              fontSize="xs"
+              description={t(
+                'Não há entregadores disponíveis em nossa rede. Appjusto enviará um entregador de outra rede.'
+              )}
+              icon={false}
+            />
           </HStack>
         )}
       </Flex>

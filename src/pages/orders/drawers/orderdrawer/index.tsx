@@ -136,8 +136,13 @@ export const OrderDrawer = (props: Props) => {
                 (isOutsourceDelivery ? (
                   order.dispatchingStatus === 'outsourced' ? (
                     <Box mt="4" border="2px solid #FFBE00" borderRadius="lg" bg="" p="4">
-                      <SectionTitle mt="0">{t('Logística assumida')}</SectionTitle>
+                      <SectionTitle mt="0">{t('Logística fora da rede AppJusto')}</SectionTitle>
                       <Text mt="2">
+                        {t(
+                          `Não foi possível encontrar entregadores disponíveis na nossa rede. Um entregador de outra rede já está a caminho para retirar o pedido. A equipe AppJusto está monitorando o pedido e concluirá o mesmo após a realização da entrega.`
+                        )}
+                      </Text>
+                      {/*<Text mt="2">
                         {t(
                           `O AppJusto não terá como monitorar o pedido a partir daqui. Caso seja necessário, entre em contato com o cliente para mantê-lo informado sobre sua entrega.`
                         )}
@@ -151,7 +156,7 @@ export const OrderDrawer = (props: Props) => {
                         isLoading={updateResult.isLoading}
                       >
                         {t('Confirmar que o pedido foi entregue ao cliente')}
-                      </Button>
+                        </Button>*/}
                     </Box>
                   ) : (
                     <Box mt="4" border="2px solid #FFBE00" borderRadius="lg" bg="" p="4">

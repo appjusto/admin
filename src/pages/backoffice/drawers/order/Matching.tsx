@@ -148,18 +148,18 @@ export const Matching = ({ orderId, orderStatus, orderDispatchingStatus }: Match
           variant="yellowDark"
           onClick={() => setIsOutsourcing(true)}
         >
-          {t('Terceirizar logística')}
+          {t('Logística fora da rede')}
         </Button>
       ) : orderDispatchingStatus === 'outsourced' ? (
         <Box mt="4" border="2px solid #FFBE00" borderRadius="lg" bg="" p="4">
-          <SectionTitle mt="0">{t('Logística terceirizada')}</SectionTitle>
+          <SectionTitle mt="0">{t('Logística fora da rede')}</SectionTitle>
         </Box>
       ) : (
         <Box mt="4" border="2px solid #FFBE00" borderRadius="lg" bg="" p="4">
-          <SectionTitle mt="0">{t('Terceirizar logística')}</SectionTitle>
+          <SectionTitle mt="0">{t('Logística fora da rede')}</SectionTitle>
           <Text mt="2">
             {t(
-              `Ao terceirizar a logística de entrega, restaurante e consumidor não serão informados, pelo Admin/App, sobre a localização do entregador.`
+              `Ao realizar a logística de entrega fora da rede, restaurante e consumidor não serão informados, pelo Admin/App, sobre a localização do entregador.`
             )}
           </Text>
           <HStack mt="4">
