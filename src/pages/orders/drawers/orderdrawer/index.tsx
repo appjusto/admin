@@ -42,7 +42,7 @@ export const OrderDrawer = (props: Props) => {
   const {
     order,
     cancelOrder,
-    updateOrder,
+    //updateOrder,
     updateResult,
     cancelResult,
     orderIssues,
@@ -152,7 +152,7 @@ export const OrderDrawer = (props: Props) => {
                       </Text>
                       <Button
                         mt="2"
-                        onClick={() => updateOrder({ status: 'delivered' })}
+                        onClick={() => //({ status: 'delivered' })}
                         isLoading={updateResult.isLoading}
                       >
                         {t('Confirmar que o pedido foi entregue ao cliente')}
