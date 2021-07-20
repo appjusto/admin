@@ -16,6 +16,7 @@ export const useObserveDashboardOrders = (businessId?: string | null) => {
   const [currentWeekOrders, setCurrentWeekOrders] = React.useState<number>();
   const [currentWeekValue, setCurrentWeekValue] = React.useState<number>();
   const [currentWeekAverage, setCurrentWeekAverage] = React.useState<number>();
+  const [currentWeekProduct, setCurrentWeekProduct] = React.useState<string>();
   // handlers
   const dateFilter = React.useCallback(
     (timestamp: firebase.firestore.Timestamp, start: Date, end?: Date) => {
@@ -28,6 +29,27 @@ export const useObserveDashboardOrders = (businessId?: string | null) => {
     },
     []
   );
+  const findMostFrequent = React.useCallback((products: string[]) => {
+    let compare = '';
+    let mostFreq = '';
+    products.reduce((acc, val) => {
+      if (val in acc) {
+        //@ts-ignore
+        acc[val]++;
+      } else {
+        //@ts-ignore
+        acc[val] = 1;
+      }
+      //@ts-ignore
+      if (acc[val] > compare) {
+        //@ts-ignore
+        compare = acc[val];
+        mostFreq = val;
+      }
+      return acc;
+    }, {});
+    return mostFreq;
+  }, []);
   // side effects
   // total orders current month + 7 days of las month
   React.useEffect(() => {
@@ -53,7 +75,7 @@ export const useObserveDashboardOrders = (businessId?: string | null) => {
     );
     setTodayOrders(todayOrders.length);
     setTodayValue(todayOrders.reduce((result, order) => result + order.fare?.business?.value!, 0));
-  }, [orders]);
+  }, [orders, dateFilter]);
   // today average
   React.useEffect(() => {
     if (!todayOrders || !todayValue) return;
@@ -95,7 +117,12 @@ export const useObserveDashboardOrders = (businessId?: string | null) => {
     setCurrentWeekValue(
       currentWeekOrders.reduce((result, order) => result + order.fare?.business?.value!, 0)
     );
-  }, [orders, dateFilter]);
+    let currentWeekProducts = [] as string[];
+    currentWeekOrders.forEach((order) =>
+      order.items?.forEach((item) => currentWeekProducts.push(item.product.name))
+    );
+    setCurrentWeekProduct(findMostFrequent(currentWeekProducts));
+  }, [orders, dateFilter, findMostFrequent]);
   // current week average
   React.useEffect(() => {
     if (!currentWeekOrders || !currentWeekValue) return;
@@ -112,5 +139,6 @@ export const useObserveDashboardOrders = (businessId?: string | null) => {
     currentWeekOrders,
     currentWeekValue,
     currentWeekAverage,
+    currentWeekProduct,
   };
 };

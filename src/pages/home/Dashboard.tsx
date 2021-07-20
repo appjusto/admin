@@ -1,6 +1,7 @@
-import { Box, HStack, Stack, Text } from '@chakra-ui/react';
+import { Box, Circle, HStack, Stack, Text } from '@chakra-ui/react';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextBusinessDashboard } from 'app/state/dashboards/business';
+import I18n from 'i18n-js';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import React from 'react';
 import { formatCurrency } from 'utils/formatters';
@@ -22,13 +23,16 @@ const Dashboard = () => {
     currentWeekOrders,
     currentWeekValue,
     currentWeekAverage,
+    currentWeekProduct,
   } = useContextBusinessDashboard();
   // state
   const [dateTime, setDateTime] = React.useState('');
+  const [currentMonth, setCurrentMonth] = React.useState('');
   // side effects
   React.useEffect(() => {
     const { date, time } = getDateTime();
     setDateTime(`${date} às ${time}`);
+    setCurrentMonth(I18n.strftime(new Date(), '%B'));
   }, []);
   // UI
   return (
@@ -46,14 +50,15 @@ const Dashboard = () => {
             <Text mt="1" fontSize="xs">
               {t('Tempo real')}
             </Text>
-            <Stack mt="3" direction={{ base: 'column', md: 'row' }} spacing={2}>
-              <HStack
-                h="132px"
+            <Stack mt="3" direction={{ base: 'column', lg: 'row' }} spacing={2}>
+              <Stack
+                h={{ base: 'auto', md: '132px' }}
                 py="4"
                 px="6"
                 border="1px solid #6CE787"
                 borderRadius="lg"
                 alignItems="flex-start"
+                direction={{ base: 'column', md: 'row' }}
               >
                 <Box>
                   <Text color="green.600" fontSize="15px" lineHeight="21px">
@@ -74,42 +79,44 @@ const Dashboard = () => {
                     {todayAverage ? formatCurrency(todayAverage) : 'N/E'}
                   </Text>
                 </Box>
-              </HStack>
-              <Box
-                minW="190px"
-                h="132px"
-                py="4"
-                px="6"
-                border="1px solid #E5E5E5"
-                borderRadius="lg"
-                alignItems="flex-start"
-              >
-                <Text fontSize="15px" lineHeight="21px">
-                  {t('Pedidos/ Julho')}
-                </Text>
-                <Text mt="1" color="black" minW="140px" fontSize="2xl" lineHeight="30px">
-                  {`${monthOrders ?? 'N/E'} pedidos`}
-                </Text>
-                <Text mt="1" fontSize="md" lineHeight="22px">
-                  {monthValue ? formatCurrency(monthValue) : 'N/E'}
-                </Text>
-              </Box>
-              <Box
-                minW="190px"
-                h="132px"
-                py="4"
-                px="6"
-                border="1px solid #E5E5E5"
-                borderRadius="lg"
-                alignItems="flex-start"
-              >
-                <Text fontSize="15px" lineHeight="21px">
-                  {t('Ticket médio/ Julho')}
-                </Text>
-                <Text mt="1" color="black" fontSize="2xl" lineHeight="30px">
-                  {monthAverage ? formatCurrency(monthAverage) : 'N/E'}
-                </Text>
-              </Box>
+              </Stack>
+              <Stack direction={{ base: 'column', md: 'row' }}>
+                <Box
+                  w={{ base: '100%', lg: '190px' }}
+                  h="132px"
+                  py="4"
+                  px="6"
+                  border="1px solid #E5E5E5"
+                  borderRadius="lg"
+                  alignItems="flex-start"
+                >
+                  <Text fontSize="15px" lineHeight="21px">
+                    {t(`Pedidos/ ${currentMonth}`)}
+                  </Text>
+                  <Text mt="1" color="black" minW="140px" fontSize="2xl" lineHeight="30px">
+                    {`${monthOrders ?? 'N/E'} pedidos`}
+                  </Text>
+                  <Text mt="1" fontSize="md" lineHeight="22px">
+                    {monthValue ? formatCurrency(monthValue) : 'N/E'}
+                  </Text>
+                </Box>
+                <Box
+                  w={{ base: '100%', lg: '190px' }}
+                  h="132px"
+                  py="4"
+                  px="6"
+                  border="1px solid #E5E5E5"
+                  borderRadius="lg"
+                  alignItems="flex-start"
+                >
+                  <Text fontSize="15px" lineHeight="21px">
+                    {t(`Ticket médio/ ${currentMonth}`)}
+                  </Text>
+                  <Text mt="1" color="black" fontSize="2xl" lineHeight="30px">
+                    {monthAverage ? formatCurrency(monthAverage) : 'N/E'}
+                  </Text>
+                </Box>
+              </Stack>
             </Stack>
           </Box>
           <Box mt="4" border="1px solid #E5E5E5" borderRadius="lg" p="4">
@@ -119,83 +126,93 @@ const Dashboard = () => {
             <Text mt="1" fontSize="xs">
               {t('Período 19/07 a 25/07')}
             </Text>
-            <Stack mt="3" direction={{ base: 'column', md: 'row' }} spacing={2}>
-              <Box
-                minW="190px"
-                h="132px"
-                py="4"
-                px="6"
-                border="1px solid #E5E5E5"
-                borderRadius="lg"
-                alignItems="flex-start"
-              >
-                <Text fontSize="15px" lineHeight="21px">
-                  {t('Total de pedidos')}
-                </Text>
-                <Text mt="1" color="black" minW="140px" fontSize="2xl" lineHeight="30px">
-                  {`${currentWeekOrders ?? 'N/E'} pedidos`}
-                </Text>
-                <Text mt="1" fontSize="md" lineHeight="22px">
-                  {currentWeekValue ? formatCurrency(currentWeekValue) : 'N/E'}
-                </Text>
-              </Box>
-              <Box
-                minW="190px"
-                h="132px"
-                py="4"
-                px="6"
-                border="1px solid #E5E5E5"
-                borderRadius="lg"
-                alignItems="flex-start"
-              >
-                <Text fontSize="15px" lineHeight="21px">
-                  {t('Ticket médio')}
-                </Text>
-                <Text mt="1" color="black" fontSize="2xl" lineHeight="30px">
-                  {currentWeekAverage ? formatCurrency(currentWeekAverage) : 'N/E'}
-                </Text>
-              </Box>
-              <Box
-                minW="190px"
-                h="132px"
-                py="4"
-                px="6"
-                border="1px solid #E5E5E5"
-                borderRadius="lg"
-                alignItems="flex-start"
-              >
-                <Text fontSize="15px" lineHeight="21px">
-                  {t('Prato mais vendido')}
-                </Text>
-                <Text mt="1" color="black" fontSize="md" lineHeight="22px">
-                  Nome do prato
-                </Text>
-              </Box>
-              <Box
-                minW="190px"
-                h="132px"
-                py="4"
-                px="6"
-                border="1px solid #E5E5E5"
-                borderRadius="lg"
-                alignItems="flex-start"
-              >
-                <Text fontSize="15px" lineHeight="21px">
-                  {t('Semana anterior')}
-                </Text>
-                <Text fontSize="15px" lineHeight="21px">
-                  {t('(12/07 a 18/07)')}
-                </Text>
-                <Text mt="1" color="black" minW="140px" fontSize="2xl" lineHeight="30px">
-                  100 pedidos
-                </Text>
-                <Text mt="1" color="black" fontSize="sm" lineHeight="22px">
-                  +R$ 0,00
-                  <Text pl="2" as="span" color="gray.700">
-                    {'(+0%)'}
+            <Stack mt="3" direction={{ base: 'column', lg: 'row' }} spacing={2}>
+              <Stack direction={{ base: 'column', md: 'row' }}>
+                <Box
+                  w="100%"
+                  h="132px"
+                  py="4"
+                  px="6"
+                  border="1px solid #E5E5E5"
+                  borderRadius="lg"
+                  alignItems="flex-start"
+                >
+                  <HStack ml="-16px">
+                    <Circle size="8px" bg="green.600" />
+                    <Text fontSize="15px" lineHeight="21px">
+                      {t('Total de pedidos')}
+                    </Text>
+                  </HStack>
+                  <Text mt="1" color="black" minW="140px" fontSize="2xl" lineHeight="30px">
+                    {`${currentWeekOrders ?? 'N/E'} pedidos`}
                   </Text>
-                </Text>
-              </Box>
+                  <Text mt="1" fontSize="md" lineHeight="22px">
+                    {currentWeekValue ? formatCurrency(currentWeekValue) : 'N/E'}
+                  </Text>
+                </Box>
+                <Box
+                  w="100%"
+                  h="132px"
+                  py="4"
+                  px="6"
+                  border="1px solid #E5E5E5"
+                  borderRadius="lg"
+                  alignItems="flex-start"
+                >
+                  <Text fontSize="15px" lineHeight="21px">
+                    {t('Ticket médio')}
+                  </Text>
+                  <Text mt="1" color="black" fontSize="2xl" lineHeight="30px">
+                    {currentWeekAverage ? formatCurrency(currentWeekAverage) : 'N/E'}
+                  </Text>
+                </Box>
+              </Stack>
+              <Stack direction={{ base: 'column', md: 'row' }}>
+                <Box
+                  w="100%"
+                  h="132px"
+                  py="4"
+                  px="6"
+                  border="1px solid #E5E5E5"
+                  borderRadius="lg"
+                  alignItems="flex-start"
+                >
+                  <Text fontSize="15px" lineHeight="21px">
+                    {t('Prato mais vendido')}
+                  </Text>
+                  <Text mt="1" color="black" fontSize="md" lineHeight="22px">
+                    {currentWeekProduct ?? 'N/E'}
+                  </Text>
+                </Box>
+                <Box
+                  w="100%"
+                  h="132px"
+                  py="4"
+                  px="6"
+                  border="1px solid #E5E5E5"
+                  borderRadius="lg"
+                  alignItems="flex-start"
+                >
+                  <HStack ml="-16px">
+                    <Circle size="8px" bg="gray.500" />
+                    <Text fontSize="15px" lineHeight="21px">
+                      {t('Semana anterior')}
+                    </Text>
+                  </HStack>
+                  <Text fontSize="15px" lineHeight="21px">
+                    {t('(12/07 a 18/07)')}
+                  </Text>
+                  <Text mt="1" color="black" minW="140px" fontSize="2xl" lineHeight="30px">
+                    100 pedidos
+                  </Text>
+                  <Text mt="1" color="black" fontSize="sm" lineHeight="22px">
+                    +R$ 0,00
+                    <Text pl="2" as="span" color="gray.700">
+                      {'(+0%)'}
+                    </Text>
+                  </Text>
+                </Box>
+              </Stack>
             </Stack>
           </Box>
         </Box>

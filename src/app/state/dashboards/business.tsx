@@ -12,6 +12,7 @@ interface ContextProps {
   currentWeekOrders?: number;
   currentWeekValue?: number;
   currentWeekAverage?: number;
+  currentWeekProduct?: string;
 }
 
 const BusinessDashboardContext = React.createContext<ContextProps>({} as ContextProps);
@@ -33,6 +34,7 @@ export const BusinessDashboardProvider = ({ children }: Props) => {
     currentWeekOrders,
     currentWeekValue,
     currentWeekAverage,
+    currentWeekProduct,
   } = useObserveDashboardOrders(businessId);
   // state
   // provider
@@ -48,6 +50,7 @@ export const BusinessDashboardProvider = ({ children }: Props) => {
         currentWeekOrders,
         currentWeekValue,
         currentWeekAverage,
+        currentWeekProduct,
       }}
     >
       {children}
