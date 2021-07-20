@@ -4,7 +4,7 @@ import { useContextBusinessDashboard } from 'app/state/dashboards/business';
 import I18n from 'i18n-js';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import React from 'react';
-import { formatCurrency } from 'utils/formatters';
+import { formatCurrency, formatPct } from 'utils/formatters';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import PageHeader from '../PageHeader';
@@ -24,10 +24,23 @@ const Dashboard = () => {
     currentWeekValue,
     currentWeekAverage,
     currentWeekProduct,
+    lastWeekOrders,
+    lastWeekValue,
   } = useContextBusinessDashboard();
   // state
   const [dateTime, setDateTime] = React.useState('');
   const [currentMonth, setCurrentMonth] = React.useState('');
+  // helpers
+  const revenueDifference =
+    currentWeekValue && lastWeekValue
+      ? (currentWeekValue > lastWeekValue ? '+ ' : '') +
+        formatCurrency(currentWeekValue - lastWeekValue)
+      : 'N/E';
+  const differencePercentage =
+    currentWeekValue && lastWeekValue
+      ? (currentWeekValue > lastWeekValue ? '+' : '-') +
+        ` (${formatPct(Math.abs(currentWeekValue - lastWeekValue) / lastWeekValue)})`
+      : 'N/E';
   // side effects
   React.useEffect(() => {
     const { date, time } = getDateTime();
@@ -127,7 +140,7 @@ const Dashboard = () => {
               {t('Período 19/07 a 25/07')}
             </Text>
             <Stack mt="3" direction={{ base: 'column', lg: 'row' }} spacing={2}>
-              <Stack direction={{ base: 'column', md: 'row' }}>
+              <Stack w="100%" direction={{ base: 'column', md: 'row' }}>
                 <Box
                   w="100%"
                   h="132px"
@@ -167,7 +180,7 @@ const Dashboard = () => {
                   </Text>
                 </Box>
               </Stack>
-              <Stack direction={{ base: 'column', md: 'row' }}>
+              <Stack w="100%" direction={{ base: 'column', md: 'row' }}>
                 <Box
                   w="100%"
                   h="132px"
@@ -203,12 +216,12 @@ const Dashboard = () => {
                     {t('(12/07 a 18/07)')}
                   </Text>
                   <Text mt="1" color="black" minW="140px" fontSize="2xl" lineHeight="30px">
-                    100 pedidos
+                    {lastWeekOrders ? `${lastWeekOrders} pedidos` : 'N/E'}
                   </Text>
                   <Text mt="1" color="black" fontSize="sm" lineHeight="22px">
-                    +R$ 0,00
+                    {revenueDifference}
                     <Text pl="2" as="span" color="gray.700">
-                      {'(+0%)'}
+                      {differencePercentage}
                     </Text>
                   </Text>
                 </Box>

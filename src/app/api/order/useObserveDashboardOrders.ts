@@ -17,6 +17,8 @@ export const useObserveDashboardOrders = (businessId?: string | null) => {
   const [currentWeekValue, setCurrentWeekValue] = React.useState<number>();
   const [currentWeekAverage, setCurrentWeekAverage] = React.useState<number>();
   const [currentWeekProduct, setCurrentWeekProduct] = React.useState<string>();
+  const [lastWeekOrders, setLastWeekOrders] = React.useState<number>();
+  const [lastWeekValue, setLastWeekValue] = React.useState<number>();
   // handlers
   const dateFilter = React.useCallback(
     (timestamp: firebase.firestore.Timestamp, start: Date, end?: Date) => {
@@ -128,6 +130,33 @@ export const useObserveDashboardOrders = (businessId?: string | null) => {
     if (!currentWeekOrders || !currentWeekValue) return;
     setCurrentWeekAverage(currentWeekValue / currentWeekOrders);
   }, [currentWeekOrders, currentWeekValue]);
+  // last week
+  React.useEffect(() => {
+    if (!orders) return;
+    let today = new Date();
+    let startDay = today.getDate() - 14;
+    let endDay = today.getDate() - 7;
+    let month = today.getMonth();
+    let year = today.getFullYear();
+    if (startDay < 0) {
+      month = month - 1;
+      let lastDay = new Date(year, month, 0).getDate();
+      startDay = lastDay + startDay;
+    }
+    if (endDay < 0) {
+      let lastDay = new Date(year, month, 0).getDate();
+      endDay = lastDay + endDay;
+    }
+    let start = new Date(year, month, startDay);
+    let end = new Date(year, month, endDay);
+    const lastWeekOrders = orders.filter((order) =>
+      dateFilter(order.updatedOn as firebase.firestore.Timestamp, start, end)
+    );
+    setLastWeekOrders(lastWeekOrders.length);
+    setLastWeekValue(
+      lastWeekOrders.reduce((result, order) => result + order.fare?.business?.value!, 0)
+    );
+  }, [orders, dateFilter]);
   // return
   return {
     todayOrders,
@@ -140,5 +169,7 @@ export const useObserveDashboardOrders = (businessId?: string | null) => {
     currentWeekValue,
     currentWeekAverage,
     currentWeekProduct,
+    lastWeekOrders,
+    lastWeekValue,
   };
 };
