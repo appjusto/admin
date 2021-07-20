@@ -4,6 +4,7 @@ import { useContextBusinessDashboard } from 'app/state/dashboards/business';
 import I18n from 'i18n-js';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import React from 'react';
+import { defaults, Line } from 'react-chartjs-2';
 import { formatCurrency, formatPct } from 'utils/formatters';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
@@ -30,6 +31,7 @@ const Dashboard = () => {
   // state
   const [dateTime, setDateTime] = React.useState('');
   const [currentMonth, setCurrentMonth] = React.useState('');
+  const [chartLabels, setChartLabels] = React.useState<string[]>();
   // helpers
   const revenueDifference =
     currentWeekValue && lastWeekValue
@@ -41,11 +43,54 @@ const Dashboard = () => {
       ? (currentWeekValue > lastWeekValue ? '+' : '-') +
         ` (${formatPct(Math.abs(currentWeekValue - lastWeekValue) / lastWeekValue)})`
       : 'N/E';
+  // chart
+  defaults.animation = false;
+  const data = {
+    labels: chartLabels,
+    datasets: [
+      {
+        label: 'Semana atual',
+        data: [12, 19, 3, 5, 2, 3, 4],
+        fill: false,
+        backgroundColor: '#4EA031',
+        borderColor: '#4EA031',
+      },
+      {
+        label: 'Semana passada',
+        data: [8, 14, 8, 4, 2, 1, 2],
+        fill: false,
+        backgroundColor: '#C8D7CB',
+        borderColor: '#C8D7CB',
+      },
+    ],
+  };
+
+  const options = {
+    scales: {
+      yAxes: [
+        {
+          ticks: {
+            beginAtZero: true,
+          },
+        },
+      ],
+    },
+    maintainAspectRatio: false,
+  };
   // side effects
   React.useEffect(() => {
     const { date, time } = getDateTime();
     setDateTime(`${date} às ${time}`);
     setCurrentMonth(I18n.strftime(new Date(), '%B'));
+  }, []);
+  React.useEffect(() => {
+    let today = new Date();
+    let labels = [];
+    for (let i = 0; i < 7; i++) {
+      let pastDay = new Date(today.getFullYear(), today.getMonth(), today.getDate() - i);
+      labels.push(I18n.strftime(pastDay, '%a'));
+    }
+    setChartLabels(labels.reverse());
   }, []);
   // UI
   return (
@@ -60,10 +105,7 @@ const Dashboard = () => {
             <SectionTitle mt="0" fontWeight="700">
               {t('Acompanhamento diário')}
             </SectionTitle>
-            <Text mt="1" fontSize="xs">
-              {t('Tempo real')}
-            </Text>
-            <Stack mt="3" direction={{ base: 'column', lg: 'row' }} spacing={2}>
+            <Stack mt="4" direction={{ base: 'column', lg: 'row' }} spacing={2}>
               <Stack
                 h={{ base: 'auto', md: '132px' }}
                 py="4"
@@ -136,10 +178,7 @@ const Dashboard = () => {
             <SectionTitle mt="0" fontWeight="700">
               {t('Desempenho na última semana')}
             </SectionTitle>
-            <Text mt="1" fontSize="xs">
-              {t('Período 19/07 a 25/07')}
-            </Text>
-            <Stack mt="3" direction={{ base: 'column', lg: 'row' }} spacing={2}>
+            <Stack mt="4" direction={{ base: 'column', lg: 'row' }} spacing={2}>
               <Stack w="100%" direction={{ base: 'column', md: 'row' }}>
                 <Box
                   w="100%"
@@ -212,9 +251,6 @@ const Dashboard = () => {
                       {t('Semana anterior')}
                     </Text>
                   </HStack>
-                  <Text fontSize="15px" lineHeight="21px">
-                    {t('(12/07 a 18/07)')}
-                  </Text>
                   <Text mt="1" color="black" minW="140px" fontSize="2xl" lineHeight="30px">
                     {lastWeekOrders ? `${lastWeekOrders} pedidos` : 'N/E'}
                   </Text>
@@ -227,6 +263,9 @@ const Dashboard = () => {
                 </Box>
               </Stack>
             </Stack>
+            <Box mt="4" position="relative" h="260px">
+              <Line data={data} options={options} />
+            </Box>
           </Box>
         </Box>
       ) : (
