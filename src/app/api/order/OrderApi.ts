@@ -59,6 +59,35 @@ export default class OrderApi {
     return unsubscribe;
   }
 
+  observeDashboardOrders(
+    resultHandler: (orders: WithId<Order>[]) => void,
+    businessId?: string | null,
+    start?: Date | null,
+    end?: Date | null,
+    orderStatus?: OrderStatus
+  ): firebase.Unsubscribe {
+    let query = this.refs
+      .getOrdersRef()
+      .orderBy('updatedOn', 'desc')
+      .where('business.id', '==', businessId)
+      .where('status', '==', orderStatus)
+      .where('updatedOn', '>=', start)
+      .where('updatedOn', '<=', end);
+    const unsubscribe = query.onSnapshot(
+      (querySnapshot) => {
+        const last =
+          querySnapshot.docs.length > 0 ? querySnapshot.docs[querySnapshot.size - 1] : undefined;
+        resultHandler(documentsAs<Order>(querySnapshot.docs));
+      },
+      (error) => {
+        console.error(error);
+        Sentry.captureException(error);
+      }
+    );
+    // returns the unsubscribe function
+    return unsubscribe;
+  }
+
   observeOrdersHistory(
     resultHandler: (
       orders: WithId<Order>[],

@@ -1,7 +1,9 @@
 import { Box, HStack, Stack, Text } from '@chakra-ui/react';
 import { useContextBusiness } from 'app/state/business/context';
+import { useContextBusinessDashboard } from 'app/state/dashboards/business';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import React from 'react';
+import { formatCurrency } from 'utils/formatters';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import PageHeader from '../PageHeader';
@@ -10,15 +12,24 @@ import { RegistrationStatus } from './RegistrationStatus';
 const Dashboard = () => {
   // context
   const { business } = useContextBusiness();
+  const {
+    todayOrders,
+    todayValue,
+    todayAverage,
+    monthOrders,
+    monthValue,
+    monthAverage,
+    currentWeekOrders,
+    currentWeekValue,
+    currentWeekAverage,
+  } = useContextBusinessDashboard();
   // state
   const [dateTime, setDateTime] = React.useState('');
-
   // side effects
   React.useEffect(() => {
     const { date, time } = getDateTime();
     setDateTime(`${date} às ${time}`);
   }, []);
-
   // UI
   return (
     <>
@@ -49,10 +60,10 @@ const Dashboard = () => {
                     {t('Pedidos/ Hoje')}
                   </Text>
                   <Text mt="1" color="black" minW="140px" fontSize="2xl" lineHeight="30px">
-                    100 pedidos
+                    {`${todayOrders ?? 'N/E'} pedidos`}
                   </Text>
                   <Text mt="1" fontSize="md" lineHeight="22px">
-                    R$ 0,00
+                    {todayValue ? formatCurrency(todayValue) : 'N/E'}
                   </Text>
                 </Box>
                 <Box>
@@ -60,11 +71,12 @@ const Dashboard = () => {
                     {t('Ticket médio/ Hoje')}
                   </Text>
                   <Text mt="1" color="black" fontSize="2xl" lineHeight="30px">
-                    R$ 0,00
+                    {todayAverage ? formatCurrency(todayAverage) : 'N/E'}
                   </Text>
                 </Box>
               </HStack>
               <Box
+                minW="190px"
                 h="132px"
                 py="4"
                 px="6"
@@ -76,13 +88,14 @@ const Dashboard = () => {
                   {t('Pedidos/ Julho')}
                 </Text>
                 <Text mt="1" color="black" minW="140px" fontSize="2xl" lineHeight="30px">
-                  100 pedidos
+                  {`${monthOrders ?? 'N/E'} pedidos`}
                 </Text>
                 <Text mt="1" fontSize="md" lineHeight="22px">
-                  R$ 0,00
+                  {monthValue ? formatCurrency(monthValue) : 'N/E'}
                 </Text>
               </Box>
               <Box
+                minW="190px"
                 h="132px"
                 py="4"
                 px="6"
@@ -94,7 +107,7 @@ const Dashboard = () => {
                   {t('Ticket médio/ Julho')}
                 </Text>
                 <Text mt="1" color="black" fontSize="2xl" lineHeight="30px">
-                  R$ 0,00
+                  {monthAverage ? formatCurrency(monthAverage) : 'N/E'}
                 </Text>
               </Box>
             </Stack>
@@ -108,6 +121,7 @@ const Dashboard = () => {
             </Text>
             <Stack mt="3" direction={{ base: 'column', md: 'row' }} spacing={2}>
               <Box
+                minW="190px"
                 h="132px"
                 py="4"
                 px="6"
@@ -119,13 +133,30 @@ const Dashboard = () => {
                   {t('Total de pedidos')}
                 </Text>
                 <Text mt="1" color="black" minW="140px" fontSize="2xl" lineHeight="30px">
-                  100 pedidos
+                  {`${currentWeekOrders ?? 'N/E'} pedidos`}
                 </Text>
                 <Text mt="1" fontSize="md" lineHeight="22px">
-                  R$ 0,00
+                  {currentWeekValue ? formatCurrency(currentWeekValue) : 'N/E'}
                 </Text>
               </Box>
               <Box
+                minW="190px"
+                h="132px"
+                py="4"
+                px="6"
+                border="1px solid #E5E5E5"
+                borderRadius="lg"
+                alignItems="flex-start"
+              >
+                <Text fontSize="15px" lineHeight="21px">
+                  {t('Ticket médio')}
+                </Text>
+                <Text mt="1" color="black" fontSize="2xl" lineHeight="30px">
+                  {currentWeekAverage ? formatCurrency(currentWeekAverage) : 'N/E'}
+                </Text>
+              </Box>
+              <Box
+                minW="190px"
                 h="132px"
                 py="4"
                 px="6"
@@ -141,6 +172,7 @@ const Dashboard = () => {
                 </Text>
               </Box>
               <Box
+                minW="190px"
                 h="132px"
                 py="4"
                 px="6"
