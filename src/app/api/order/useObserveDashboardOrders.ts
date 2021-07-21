@@ -73,7 +73,7 @@ export const useObserveDashboardOrders = (businessId?: string | null) => {
   React.useEffect(() => {
     if (!orders) return;
     let today = new Date();
-    let day = today.getDate() - 7;
+    let day = today.getDate() - 6;
     let month = today.getMonth();
     let year = today.getFullYear();
     if (day < 0) {
@@ -108,7 +108,7 @@ export const useObserveDashboardOrders = (businessId?: string | null) => {
   React.useEffect(() => {
     if (!orders) return;
     let today = new Date();
-    let startDay = today.getDate() - 14;
+    let startDay = today.getDate() - 13;
     let endDay = today.getDate() - 7;
     let month = today.getMonth();
     let year = today.getFullYear();

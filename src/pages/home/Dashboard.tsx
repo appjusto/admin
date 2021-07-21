@@ -180,7 +180,7 @@ const Dashboard = () => {
           </Box>
           <Box mt="4" border="1px solid #E5E5E5" borderRadius="lg" p="4">
             <SectionTitle mt="0" fontWeight="700">
-              {t('Desempenho na última semana')}
+              {t('Desempenho esta semana')}
             </SectionTitle>
             <Stack mt="4" direction={{ base: 'column', lg: 'row' }} spacing={2}>
               <Stack w="100%" direction={{ base: 'column', md: 'row' }}>
