@@ -1,4 +1,10 @@
-import { CourierProfile, Fleet, MarketplaceAccountInfo, WithId } from 'appjusto-types';
+import {
+  CourierProfile,
+  CourierStatus,
+  Fleet,
+  MarketplaceAccountInfo,
+  WithId,
+} from 'appjusto-types';
 import FilesApi from '../FilesApi';
 import FirebaseRefs from '../FirebaseRefs';
 import firebase from 'firebase/app';
@@ -6,6 +12,23 @@ import { documentAs, documentsAs } from 'core/fb';
 import * as Sentry from '@sentry/react';
 export default class CourierApi {
   constructor(private refs: FirebaseRefs, private files: FilesApi) {}
+
+  observeCouriersByStatus(
+    statuses: CourierStatus[],
+    resultHandler: (result: WithId<CourierProfile>[]) => void
+  ): firebase.Unsubscribe {
+    const query = this.refs.getCouriersRef().where('status', 'in', statuses);
+    const unsubscribe = query.onSnapshot(
+      (querySnapshot) => {
+        if (!querySnapshot.empty) resultHandler(documentsAs<CourierProfile>(querySnapshot.docs));
+        else resultHandler([]);
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+    return unsubscribe;
+  }
 
   observeCourierProfile(
     courierId: string,
