@@ -29,7 +29,7 @@ const BOInfoBox = ({ title, value, isCurrency }: BOInfoBoxProps) => {
           {isCurrency ? formatCurrency(value) : formatValue(value)}
         </Text>
       ) : (
-        <Skeleton mt="1" height="30px" colorScheme="#9AA49C" fadeDuration={0.2} />
+        <Skeleton mt="1" height="30px" colorScheme="#9AA49C" />
       )}
     </Box>
   );

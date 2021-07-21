@@ -39,8 +39,8 @@ const InfoBox = ({
           children
         ) : (
           <Box>
-            <Skeleton mt="1" height="30px" colorScheme="#9AA49C" fadeDuration={0.2} />
-            <Skeleton mt="2" height="20px" mr="4" colorScheme="#9AA49C" fadeDuration={0.2} />
+            <Skeleton mt="1" height="30px" colorScheme="#9AA49C" />
+            <Skeleton mt="2" height="20px" mr="4" colorScheme="#9AA49C" />
           </Box>
         )}
       </Box>
@@ -153,7 +153,7 @@ const Dashboard = () => {
                 <InfoBox
                   isJoined
                   data={todayAverage}
-                  title={t('Pedidos/ Hoje')}
+                  title={t('Ticket médio/ Hoje')}
                   titleColor="green.600"
                 >
                   <Text mt="1" color="black" fontSize="2xl" lineHeight="30px">
