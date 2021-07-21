@@ -1,14 +1,61 @@
-import { Box, Flex, HStack, Text } from '@chakra-ui/react';
+import { Box, Flex, HStack, Skeleton, Text } from '@chakra-ui/react';
+import { useContextBackofficeDashboard } from 'app/state/dashboards/backoffice';
+import I18n from 'i18n-js';
 import React from 'react';
+import { formatCurrency } from 'utils/formatters';
 import { t } from 'utils/i18n';
+
+interface BOInfoBoxProps {
+  title: string;
+  value?: number;
+  isCurrency?: boolean;
+}
+
+const BOInfoBox = ({ title, value, isCurrency }: BOInfoBoxProps) => {
+  // handlers
+  const formatValue = (value: number) => {
+    const zeros = 4 - value.toString().length;
+    if (zeros > 0) return `${'0'.repeat(zeros)}${value}`;
+    return value.toString();
+  };
+  //UI
+  return (
+    <Box w="142px">
+      <Text fontSize="sm" lineHeight="21px" color="gray.700">
+        {title}
+      </Text>
+      {value !== undefined ? (
+        <Text mt="2" fontSize="2xl" lineHeight="28.8px">
+          {isCurrency ? formatCurrency(value) : formatValue(value)}
+        </Text>
+      ) : (
+        <Skeleton mt="1" height="30px" colorScheme="#9AA49C" fadeDuration={0.2} />
+      )}
+    </Box>
+  );
+};
 
 export const Panel = () => {
   // context
-
+  const {
+    todayOrders,
+    todayAverage,
+    couriers,
+    businesses,
+    consumers,
+  } = useContextBackofficeDashboard();
   // state
-
+  const [weekDay, setWeekDay] = React.useState<string>();
+  const [date, setDate] = React.useState<string>();
   // side effects
-
+  React.useEffect(() => {
+    const today = new Date();
+    const day = I18n.strftime(today, '%A').toLowerCase();
+    const dayName = ['sábado', 'domingo'].includes(day) ? day : `${day}-feira`;
+    const month = I18n.strftime(today, '%B').toLowerCase();
+    setWeekDay(dayName);
+    setDate(`${today.getDate()} de ${month} de ${today.getFullYear()}`);
+  }, []);
   // UI
   return (
     <Flex
@@ -22,64 +69,21 @@ export const Panel = () => {
     >
       <Box>
         <Text fontSize="2xl" fontWeight="700" lineHeight="28.8px">
-          {t('Hoje, quarta-feira')}
+          {t(`Hoje, ${weekDay}!`)}
         </Text>
         <Text mt="2" fontSize="sm" fontWeight="500" lineHeight="21px" color="green.600">
-          {t('10 de janeiro de 2020')}
+          {date}
         </Text>
         <HStack mt="4" spacing={6}>
-          <Box w="142px">
-            <Text fontSize="sm" lineHeight="21px" color="gray.700">
-              {t('Pedidos')}
-            </Text>
-            <Text mt="2" fontSize="2xl" lineHeight="28.8px">
-              {t('000')}
-            </Text>
-          </Box>
-          <Box w="142px">
-            <Text fontSize="sm" lineHeight="21px" color="gray.700">
-              {t('Ticket médio')}
-            </Text>
-            <Text mt="2" fontSize="2xl" lineHeight="28.8px">
-              {'R$ 00,00'}
-            </Text>
-          </Box>
+          <BOInfoBox title={t('Pedidos')} value={todayOrders} />
+          <BOInfoBox title={t('Ticket médio')} value={todayAverage} isCurrency />
         </HStack>
         <HStack mt="4" spacing={6}>
-          <Box w="142px">
-            <Text fontSize="sm" lineHeight="21px" color="gray.700">
-              {t('Entregadores ativos')}
-            </Text>
-            <Text mt="2" fontSize="2xl" lineHeight="28.8px">
-              {t('000')}
-            </Text>
-          </Box>
-          <Box w="142px">
-            <Text fontSize="sm" lineHeight="21px" color="gray.700">
-              {t('Restaurantes abertos')}
-            </Text>
-            <Text mt="2" fontSize="2xl" lineHeight="28.8px">
-              {t('000')}
-            </Text>
-          </Box>
+          <BOInfoBox title={t('Entregadores ativos')} value={couriers} />
+          <BOInfoBox title={t('Restaurantes abertos')} value={businesses} />
         </HStack>
         <HStack mt="4" spacing={6}>
-          <Box w="142px">
-            <Text fontSize="sm" lineHeight="21px" color="gray.700">
-              {t('Clientes novos')}
-            </Text>
-            <Text mt="2" fontSize="2xl" lineHeight="28.8px">
-              {t('000')}
-            </Text>
-          </Box>
-          <Box w="142px">
-            <Text fontSize="sm" lineHeight="21px" color="gray.700">
-              {t('Chamados abertos')}
-            </Text>
-            <Text mt="2" fontSize="2xl" lineHeight="28.8px">
-              {t('000')}
-            </Text>
-          </Box>
+          <BOInfoBox title={t('Clientes novos')} value={consumers} />
         </HStack>
       </Box>
     </Flex>
