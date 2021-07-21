@@ -27,7 +27,8 @@ export const useObserveBODashboardOrders = () => {
   }, [orders]);
   // orders average
   React.useEffect(() => {
-    if (!todayOrders || !todayValue) return;
+    if (todayOrders === undefined || todayValue === undefined) return;
+    if (todayOrders === 0 || todayValue === 0) return setTodayAverage(0);
     setTodayAverage(todayValue / todayOrders);
   }, [todayOrders, todayValue]);
   // return
