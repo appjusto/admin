@@ -1,4 +1,4 @@
-import { Box, Circle, HStack, Stack, Text } from '@chakra-ui/react';
+import { Box, BoxProps, Circle, HStack, Skeleton, Stack, Text } from '@chakra-ui/react';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextBusinessDashboard } from 'app/state/dashboards/business';
 import I18n from 'i18n-js';
@@ -10,6 +10,69 @@ import { t } from 'utils/i18n';
 import PageHeader from '../PageHeader';
 import { LineChart } from './LineChart';
 import { RegistrationStatus } from './RegistrationStatus';
+
+interface InfoBoxProps extends BoxProps {
+  isJoined?: boolean;
+  data?: any;
+  title: string;
+  titleColor?: string;
+  circleBg?: string;
+  children: React.ReactNode | React.ReactNode[];
+}
+
+const InfoBox = ({
+  isJoined,
+  data,
+  title,
+  titleColor = '#505A4F',
+  circleBg,
+  children,
+  ...props
+}: InfoBoxProps) => {
+  if (isJoined)
+    return (
+      <Box {...props}>
+        <Text color={titleColor} fontSize="15px" lineHeight="21px">
+          {title}
+        </Text>
+        {data !== undefined ? (
+          children
+        ) : (
+          <Box>
+            <Skeleton mt="1" height="30px" colorScheme="#9AA49C" fadeDuration={0.2} />
+            <Skeleton mt="2" height="20px" mr="4" colorScheme="#9AA49C" fadeDuration={0.2} />
+          </Box>
+        )}
+      </Box>
+    );
+  return (
+    <Box
+      w={{ base: '100%', lg: '190px' }}
+      h="132px"
+      py="4"
+      px="6"
+      border="1px solid #E5E5E5"
+      borderRadius="lg"
+      alignItems="flex-start"
+      {...props}
+    >
+      <HStack ml={circleBg ? '-16px' : '0'}>
+        {circleBg && <Circle size="8px" bg={circleBg} />}
+        <Text color={titleColor} fontSize="15px" lineHeight="21px">
+          {title}
+        </Text>
+      </HStack>
+      {data !== undefined ? (
+        children
+      ) : (
+        <Box>
+          <Skeleton mt="1" height="30px" colorScheme="#9AA49C" fadeDuration={0.2} />
+          <Skeleton mt="2" height="20px" mr="4" colorScheme="#9AA49C" fadeDuration={0.2} />
+        </Box>
+      )}
+    </Box>
+  );
+};
 
 const Dashboard = () => {
   // context
@@ -73,62 +136,45 @@ const Dashboard = () => {
                 alignItems="flex-start"
                 direction={{ base: 'column', md: 'row' }}
               >
-                <Box>
-                  <Text color="green.600" fontSize="15px" lineHeight="21px">
-                    {t('Pedidos/ Hoje')}
-                  </Text>
+                <InfoBox
+                  minW="140px"
+                  isJoined
+                  data={todayOrders}
+                  title={t('Pedidos/ Hoje')}
+                  titleColor="green.600"
+                >
                   <Text mt="1" color="black" minW="140px" fontSize="2xl" lineHeight="30px">
                     {`${todayOrders ?? 'N/E'} pedidos`}
                   </Text>
                   <Text mt="1" fontSize="md" lineHeight="22px">
                     {todayValue !== undefined ? formatCurrency(todayValue) : 'N/E'}
                   </Text>
-                </Box>
-                <Box>
-                  <Text color="green.600" fontSize="15px" lineHeight="21px">
-                    {t('Ticket médio/ Hoje')}
-                  </Text>
+                </InfoBox>
+                <InfoBox
+                  isJoined
+                  data={todayAverage}
+                  title={t('Pedidos/ Hoje')}
+                  titleColor="green.600"
+                >
                   <Text mt="1" color="black" fontSize="2xl" lineHeight="30px">
                     {todayAverage ? formatCurrency(todayAverage) : 'R$ 0,00'}
                   </Text>
-                </Box>
+                </InfoBox>
               </Stack>
               <Stack direction={{ base: 'column', md: 'row' }}>
-                <Box
-                  w={{ base: '100%', lg: '190px' }}
-                  h="132px"
-                  py="4"
-                  px="6"
-                  border="1px solid #E5E5E5"
-                  borderRadius="lg"
-                  alignItems="flex-start"
-                >
-                  <Text fontSize="15px" lineHeight="21px">
-                    {t(`Pedidos/ ${currentMonth}`)}
-                  </Text>
+                <InfoBox data={monthOrders} title={t(`Pedidos/ ${currentMonth}`)}>
                   <Text mt="1" color="black" minW="140px" fontSize="2xl" lineHeight="30px">
                     {`${monthOrders ?? 'N/E'} pedidos`}
                   </Text>
                   <Text mt="1" fontSize="md" lineHeight="22px">
                     {monthValue ? formatCurrency(monthValue) : 'R$ 0,00'}
                   </Text>
-                </Box>
-                <Box
-                  w={{ base: '100%', lg: '190px' }}
-                  h="132px"
-                  py="4"
-                  px="6"
-                  border="1px solid #E5E5E5"
-                  borderRadius="lg"
-                  alignItems="flex-start"
-                >
-                  <Text fontSize="15px" lineHeight="21px">
-                    {t(`Ticket médio/ ${currentMonth}`)}
-                  </Text>
+                </InfoBox>
+                <InfoBox data={monthAverage} title={t(`Ticket médio/ ${currentMonth}`)}>
                   <Text mt="1" color="black" fontSize="2xl" lineHeight="30px">
                     {monthAverage ? formatCurrency(monthAverage) : 'R$ 0,00'}
                   </Text>
-                </Box>
+                </InfoBox>
               </Stack>
             </Stack>
           </Box>
@@ -138,77 +184,38 @@ const Dashboard = () => {
             </SectionTitle>
             <Stack mt="4" direction={{ base: 'column', lg: 'row' }} spacing={2}>
               <Stack w="100%" direction={{ base: 'column', md: 'row' }}>
-                <Box
+                <InfoBox
                   w="100%"
-                  h="132px"
-                  py="4"
-                  px="6"
-                  border="1px solid #E5E5E5"
-                  borderRadius="lg"
-                  alignItems="flex-start"
+                  data={currentWeekOrders}
+                  title={t('Total de pedidos')}
+                  circleBg="green.600"
                 >
-                  <HStack ml="-16px">
-                    <Circle size="8px" bg="green.600" />
-                    <Text fontSize="15px" lineHeight="21px">
-                      {t('Total de pedidos')}
-                    </Text>
-                  </HStack>
                   <Text mt="1" color="black" minW="140px" fontSize="2xl" lineHeight="30px">
                     {`${currentWeekOrders ?? 'N/E'} pedidos`}
                   </Text>
                   <Text mt="1" fontSize="md" lineHeight="22px">
                     {currentWeekValue ? formatCurrency(currentWeekValue) : 'R$ 0,00'}
                   </Text>
-                </Box>
-                <Box
-                  w="100%"
-                  h="132px"
-                  py="4"
-                  px="6"
-                  border="1px solid #E5E5E5"
-                  borderRadius="lg"
-                  alignItems="flex-start"
-                >
-                  <Text fontSize="15px" lineHeight="21px">
-                    {t('Ticket médio')}
-                  </Text>
+                </InfoBox>
+                <InfoBox w="100%" data={currentWeekAverage} title={t('Ticket médio')}>
                   <Text mt="1" color="black" fontSize="2xl" lineHeight="30px">
                     {currentWeekAverage ? formatCurrency(currentWeekAverage) : 'R$ 0,00'}
                   </Text>
-                </Box>
+                </InfoBox>
               </Stack>
               <Stack w="100%" direction={{ base: 'column', md: 'row' }}>
-                <Box
-                  w="100%"
-                  h="132px"
-                  py="4"
-                  px="6"
-                  border="1px solid #E5E5E5"
-                  borderRadius="lg"
-                  alignItems="flex-start"
-                >
-                  <Text fontSize="15px" lineHeight="21px">
-                    {t('Prato mais vendido')}
-                  </Text>
+                <InfoBox w="100%" data={currentWeekProduct} title={t('Prato mais vendido')}>
                   <Text mt="1" color="black" fontSize="md" lineHeight="22px">
                     {currentWeekProduct ?? 'N/E'}
                   </Text>
-                </Box>
-                <Box
+                </InfoBox>
+
+                <InfoBox
                   w="100%"
-                  h="132px"
-                  py="4"
-                  px="6"
-                  border="1px solid #E5E5E5"
-                  borderRadius="lg"
-                  alignItems="flex-start"
+                  data={lastWeekOrders}
+                  title={t('Semana anterior')}
+                  circleBg="gray.500"
                 >
-                  <HStack ml="-16px">
-                    <Circle size="8px" bg="gray.500" />
-                    <Text fontSize="15px" lineHeight="21px">
-                      {t('Semana anterior')}
-                    </Text>
-                  </HStack>
                   <Text mt="1" color="black" minW="140px" fontSize="2xl" lineHeight="30px">
                     {lastWeekOrders ? `${lastWeekOrders} pedidos` : 'N/E'}
                   </Text>
@@ -218,7 +225,7 @@ const Dashboard = () => {
                       {differencePercentage}
                     </Text>
                   </Text>
-                </Box>
+                </InfoBox>
               </Stack>
             </Stack>
             <LineChart currentWeekData={currentWeekByDay} lastWeekData={lastWeekByDay} />
