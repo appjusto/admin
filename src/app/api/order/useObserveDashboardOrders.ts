@@ -50,7 +50,8 @@ export const useObserveDashboardOrders = (businessId?: string | null) => {
   }, [orders]);
   // today average
   React.useEffect(() => {
-    if (!todayOrders || !todayValue) return;
+    if (todayOrders === undefined || todayValue === undefined) return;
+    if (todayOrders === 0 || todayValue === 0) return setTodayAverage(0);
     setTodayAverage(todayValue / todayOrders);
   }, [todayOrders, todayValue]);
   // month orders
@@ -66,7 +67,8 @@ export const useObserveDashboardOrders = (businessId?: string | null) => {
   }, [orders]);
   // month average
   React.useEffect(() => {
-    if (!monthOrders || !monthValue) return;
+    if (monthOrders === undefined || monthValue === undefined) return;
+    if (monthOrders === 0 || monthValue === 0) return setMonthAverage(0);
     setMonthAverage(monthValue / monthOrders);
   }, [monthOrders, monthValue]);
   // current week
@@ -101,7 +103,8 @@ export const useObserveDashboardOrders = (businessId?: string | null) => {
   }, [orders]);
   // current week average
   React.useEffect(() => {
-    if (!currentWeekOrders || !currentWeekValue) return;
+    if (currentWeekOrders === undefined || currentWeekValue === undefined) return;
+    if (currentWeekOrders === 0 || currentWeekValue === 0) return setCurrentWeekAverage(0);
     setCurrentWeekAverage(currentWeekValue / currentWeekOrders);
   }, [currentWeekOrders, currentWeekValue]);
   // last week

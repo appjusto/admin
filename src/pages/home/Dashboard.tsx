@@ -98,15 +98,21 @@ const Dashboard = () => {
   const [currentMonth, setCurrentMonth] = React.useState('');
   // helpers
   const revenueDifference =
-    currentWeekValue && lastWeekValue
+    currentWeekValue !== undefined && lastWeekValue !== undefined
       ? (currentWeekValue > lastWeekValue ? '+ ' : '') +
         formatCurrency(currentWeekValue - lastWeekValue)
-      : 'N/E';
+      : 'R$ 0,00';
   const differencePercentage =
-    currentWeekValue && lastWeekValue
+    currentWeekValue !== undefined && lastWeekValue !== undefined
       ? (currentWeekValue > lastWeekValue ? '+' : '-') +
-        ` (${formatPct(Math.abs(currentWeekValue - lastWeekValue) / lastWeekValue)})`
-      : 'N/E';
+        ` (${formatPct(
+          Math.abs(
+            (currentWeekValue - lastWeekValue) /
+              (lastWeekValue > 0 ? lastWeekValue : currentWeekValue)
+          )
+        )})`
+      : '0%';
+  const showChart = currentWeekOrders! > 0 || lastWeekOrders! > 0;
   // side effects
   React.useEffect(() => {
     const { date, time } = getDateTime();
@@ -206,7 +212,7 @@ const Dashboard = () => {
               <Stack w="100%" direction={{ base: 'column', md: 'row' }}>
                 <InfoBox w="100%" data={currentWeekProduct} title={t('Prato mais vendido')}>
                   <Text mt="1" color="black" fontSize="md" lineHeight="22px">
-                    {currentWeekProduct ?? 'N/E'}
+                    {currentWeekProduct}
                   </Text>
                 </InfoBox>
 
@@ -217,7 +223,7 @@ const Dashboard = () => {
                   circleBg="gray.500"
                 >
                   <Text mt="1" color="black" minW="140px" fontSize="2xl" lineHeight="30px">
-                    {lastWeekOrders ? `${lastWeekOrders} pedidos` : 'N/E'}
+                    {`${lastWeekOrders ?? 'N/E'} pedidos`}
                   </Text>
                   <Text mt="1" color="black" fontSize="sm" lineHeight="22px">
                     {revenueDifference}
@@ -228,7 +234,9 @@ const Dashboard = () => {
                 </InfoBox>
               </Stack>
             </Stack>
-            <LineChart currentWeekData={currentWeekByDay} lastWeekData={lastWeekByDay} />
+            {showChart && (
+              <LineChart currentWeekData={currentWeekByDay!} lastWeekData={lastWeekByDay!} />
+            )}
           </Box>
         </Box>
       ) : (

@@ -80,6 +80,7 @@ export const orderPeriodFilter = (
 };
 
 export const findMostFrequentProduct = (products: string[]) => {
+  if (products.length === 0) return 'N/E';
   let compare = '';
   let mostFreq = '';
   products.reduce((acc, val) => {

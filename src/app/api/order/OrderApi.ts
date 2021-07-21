@@ -75,7 +75,8 @@ export default class OrderApi {
       .where('updatedOn', '<=', end);
     const unsubscribe = query.onSnapshot(
       (querySnapshot) => {
-        resultHandler(documentsAs<Order>(querySnapshot.docs));
+        if (!querySnapshot.empty) resultHandler(documentsAs<Order>(querySnapshot.docs));
+        else resultHandler(documentsAs<Order>([]));
       },
       (error) => {
         console.error(error);

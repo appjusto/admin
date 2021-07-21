@@ -4,8 +4,8 @@ import React from 'react';
 import { defaults, Line } from 'react-chartjs-2';
 
 interface LineChartProps extends BoxProps {
-  currentWeekData?: number[];
-  lastWeekData?: number[];
+  currentWeekData: number[];
+  lastWeekData: number[];
 }
 
 export const LineChart = ({ currentWeekData, lastWeekData, ...props }: LineChartProps) => {
@@ -18,27 +18,27 @@ export const LineChart = ({ currentWeekData, lastWeekData, ...props }: LineChart
     datasets: [
       {
         label: 'Semana atual',
-        data: currentWeekData ?? [12, 19, 3, 5, 2, 3, 4],
+        data: currentWeekData,
         fill: false,
         backgroundColor: '#4EA031',
         borderColor: '#4EA031',
       },
       {
         label: 'Semana anterior',
-        data: lastWeekData ?? [8, 14, 8, 4, 2, 1, 2],
+        data: lastWeekData,
         fill: false,
         backgroundColor: '#C8D7CB',
         borderColor: '#C8D7CB',
       },
     ],
   };
-
   const options = {
     scales: {
       yAxes: [
         {
           ticks: {
             beginAtZero: true,
+            stepSize: 1,
           },
         },
       ],
