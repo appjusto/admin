@@ -4,11 +4,11 @@ import { useContextBusinessDashboard } from 'app/state/dashboards/business';
 import I18n from 'i18n-js';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import React from 'react';
-import { defaults, Line } from 'react-chartjs-2';
 import { formatCurrency, formatPct } from 'utils/formatters';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import PageHeader from '../PageHeader';
+import { LineChart } from './LineChart';
 import { RegistrationStatus } from './RegistrationStatus';
 
 const Dashboard = () => {
@@ -25,13 +25,14 @@ const Dashboard = () => {
     currentWeekValue,
     currentWeekAverage,
     currentWeekProduct,
+    currentWeekByDay,
     lastWeekOrders,
     lastWeekValue,
+    lastWeekByDay,
   } = useContextBusinessDashboard();
   // state
   const [dateTime, setDateTime] = React.useState('');
   const [currentMonth, setCurrentMonth] = React.useState('');
-  const [chartLabels, setChartLabels] = React.useState<string[]>();
   // helpers
   const revenueDifference =
     currentWeekValue && lastWeekValue
@@ -43,54 +44,11 @@ const Dashboard = () => {
       ? (currentWeekValue > lastWeekValue ? '+' : '-') +
         ` (${formatPct(Math.abs(currentWeekValue - lastWeekValue) / lastWeekValue)})`
       : 'N/E';
-  // chart
-  defaults.animation = false;
-  const data = {
-    labels: chartLabels,
-    datasets: [
-      {
-        label: 'Semana atual',
-        data: [12, 19, 3, 5, 2, 3, 4],
-        fill: false,
-        backgroundColor: '#4EA031',
-        borderColor: '#4EA031',
-      },
-      {
-        label: 'Semana passada',
-        data: [8, 14, 8, 4, 2, 1, 2],
-        fill: false,
-        backgroundColor: '#C8D7CB',
-        borderColor: '#C8D7CB',
-      },
-    ],
-  };
-
-  const options = {
-    scales: {
-      yAxes: [
-        {
-          ticks: {
-            beginAtZero: true,
-          },
-        },
-      ],
-    },
-    maintainAspectRatio: false,
-  };
   // side effects
   React.useEffect(() => {
     const { date, time } = getDateTime();
     setDateTime(`${date} às ${time}`);
     setCurrentMonth(I18n.strftime(new Date(), '%B'));
-  }, []);
-  React.useEffect(() => {
-    let today = new Date();
-    let labels = [];
-    for (let i = 0; i < 7; i++) {
-      let pastDay = new Date(today.getFullYear(), today.getMonth(), today.getDate() - i);
-      labels.push(I18n.strftime(pastDay, '%a'));
-    }
-    setChartLabels(labels.reverse());
   }, []);
   // UI
   return (
@@ -123,7 +81,7 @@ const Dashboard = () => {
                     {`${todayOrders ?? 'N/E'} pedidos`}
                   </Text>
                   <Text mt="1" fontSize="md" lineHeight="22px">
-                    {todayValue ? formatCurrency(todayValue) : 'N/E'}
+                    {todayValue !== undefined ? formatCurrency(todayValue) : 'N/E'}
                   </Text>
                 </Box>
                 <Box>
@@ -131,7 +89,7 @@ const Dashboard = () => {
                     {t('Ticket médio/ Hoje')}
                   </Text>
                   <Text mt="1" color="black" fontSize="2xl" lineHeight="30px">
-                    {todayAverage ? formatCurrency(todayAverage) : 'N/E'}
+                    {todayAverage ? formatCurrency(todayAverage) : 'R$ 0,00'}
                   </Text>
                 </Box>
               </Stack>
@@ -152,7 +110,7 @@ const Dashboard = () => {
                     {`${monthOrders ?? 'N/E'} pedidos`}
                   </Text>
                   <Text mt="1" fontSize="md" lineHeight="22px">
-                    {monthValue ? formatCurrency(monthValue) : 'N/E'}
+                    {monthValue ? formatCurrency(monthValue) : 'R$ 0,00'}
                   </Text>
                 </Box>
                 <Box
@@ -168,7 +126,7 @@ const Dashboard = () => {
                     {t(`Ticket médio/ ${currentMonth}`)}
                   </Text>
                   <Text mt="1" color="black" fontSize="2xl" lineHeight="30px">
-                    {monthAverage ? formatCurrency(monthAverage) : 'N/E'}
+                    {monthAverage ? formatCurrency(monthAverage) : 'R$ 0,00'}
                   </Text>
                 </Box>
               </Stack>
@@ -199,7 +157,7 @@ const Dashboard = () => {
                     {`${currentWeekOrders ?? 'N/E'} pedidos`}
                   </Text>
                   <Text mt="1" fontSize="md" lineHeight="22px">
-                    {currentWeekValue ? formatCurrency(currentWeekValue) : 'N/E'}
+                    {currentWeekValue ? formatCurrency(currentWeekValue) : 'R$ 0,00'}
                   </Text>
                 </Box>
                 <Box
@@ -215,7 +173,7 @@ const Dashboard = () => {
                     {t('Ticket médio')}
                   </Text>
                   <Text mt="1" color="black" fontSize="2xl" lineHeight="30px">
-                    {currentWeekAverage ? formatCurrency(currentWeekAverage) : 'N/E'}
+                    {currentWeekAverage ? formatCurrency(currentWeekAverage) : 'R$ 0,00'}
                   </Text>
                 </Box>
               </Stack>
@@ -263,9 +221,7 @@ const Dashboard = () => {
                 </Box>
               </Stack>
             </Stack>
-            <Box mt="4" position="relative" h="260px">
-              <Line data={data} options={options} />
-            </Box>
+            <LineChart currentWeekData={currentWeekByDay} lastWeekData={lastWeekByDay} />
           </Box>
         </Box>
       ) : (
