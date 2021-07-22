@@ -97,21 +97,30 @@ const Dashboard = () => {
   const [dateTime, setDateTime] = React.useState('');
   const [currentMonth, setCurrentMonth] = React.useState('');
   // helpers
-  const revenueDifference =
-    currentWeekValue !== undefined && lastWeekValue !== undefined
-      ? (currentWeekValue > lastWeekValue ? '+ ' : '') +
-        formatCurrency(currentWeekValue - lastWeekValue)
-      : 'R$ 0,00';
-  const differencePercentage =
-    currentWeekValue !== undefined && lastWeekValue !== undefined
-      ? (currentWeekValue > lastWeekValue ? '+' : '-') +
-        ` (${formatPct(
-          Math.abs(
-            (currentWeekValue - lastWeekValue) /
-              (lastWeekValue > 0 ? lastWeekValue : currentWeekValue)
-          )
-        )})`
-      : '0%';
+  const getRevenueDifference = () => {
+    let sign = '';
+    if (currentWeekValue === undefined || lastWeekValue === undefined) return 'R$ 0,00';
+    if (currentWeekValue > lastWeekValue) sign = '+';
+    let result = formatCurrency(currentWeekValue - lastWeekValue);
+    return `${sign} ${result}`;
+  };
+  const getDifferencePercentage = () => {
+    let sign = '';
+    if (
+      currentWeekValue === undefined ||
+      lastWeekValue === undefined ||
+      (lastWeekValue === 0 && currentWeekValue === 0)
+    )
+      return '(0%)';
+    if (currentWeekValue > lastWeekValue) sign = '+';
+    else sign = '-';
+    let result = formatPct(
+      Math.abs(
+        (currentWeekValue - lastWeekValue) / (lastWeekValue > 0 ? lastWeekValue : currentWeekValue)
+      )
+    );
+    return `${sign} (${result})`;
+  };
   const showChart = currentWeekOrders! > 0 || lastWeekOrders! > 0;
   // side effects
   React.useEffect(() => {
@@ -226,9 +235,9 @@ const Dashboard = () => {
                     {`${lastWeekOrders ?? 'N/E'} pedidos`}
                   </Text>
                   <Text mt="1" color="black" fontSize="sm" lineHeight="22px">
-                    {revenueDifference}
+                    {getRevenueDifference()}
                     <Text pl="2" as="span" color="gray.700">
-                      {differencePercentage}
+                      {getDifferencePercentage()}
                     </Text>
                   </Text>
                 </InfoBox>
