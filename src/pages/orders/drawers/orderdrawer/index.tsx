@@ -224,16 +224,15 @@ export const OrderDrawer = (props: Props) => {
                   averageCookingTime={business?.averageCookingTime}
                 />
               )}
-              {(order?.status === 'delivered' || order?.status === 'canceled') && (
+              {(order?.status === 'delivered' || order?.status === 'canceled') && invoices && (
                 <Box mt="10">
                   <CustomButton
                     size="md"
                     minW="220px"
                     variant="outline"
                     label={t('Ver fatura no Iugu')}
-                    link={`https://alia.iugu.com/receive/invoices/${invoices![0].externalId}`}
+                    link={`https://alia.iugu.com/receive/invoices/${invoices[0]?.externalId}`}
                     isExternal
-                    isDisabled={!invoices}
                   />
                 </Box>
               )}
