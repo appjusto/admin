@@ -259,6 +259,8 @@ export const Participants = ({ order }: ParticipantsProps) => {
             name={order?.consumer?.name ?? 'N/E'}
             address={order?.destination?.address?.main ?? 'N/E'}
             additionalInfo={order?.destination?.additionalInfo}
+            buttonLabel={t('Ver cadastro do cliente')}
+            buttonLink={`/backoffice/consumers/${order?.consumer.id}`}
           />
           <SectionTitle>{t('Restaurante')}</SectionTitle>
           <Participant
@@ -272,7 +274,11 @@ export const Participants = ({ order }: ParticipantsProps) => {
       ) : (
         <Box>
           <SectionTitle>{t('Cliente')}</SectionTitle>
-          <Participant name={order?.consumer?.name ?? 'N/E'} />
+          <Participant
+            name={order?.consumer?.name ?? 'N/E'}
+            buttonLabel={t('Ver cadastro do cliente')}
+            buttonLink={`/backoffice/consumers/${order?.consumer.id}`}
+          />
           <SectionTitle>{t('Origem')}</SectionTitle>
           <Participant
             instruction={order?.origin?.intructions ?? 'N/E'}
