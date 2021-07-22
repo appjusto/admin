@@ -147,6 +147,11 @@ export const Matching = ({ orderId, orderStatus, orderDispatchingStatus }: Match
           size="sm"
           variant="yellowDark"
           onClick={() => setIsOutsourcing(true)}
+          isDisabled={
+            orderDispatchingStatus
+              ? ['matched', 'confirmed'].includes(orderDispatchingStatus)
+              : true
+          }
         >
           {t('Logística fora da rede')}
         </Button>
