@@ -319,13 +319,14 @@ export default class OrderApi {
 
   observeOrderInvoices(
     orderId: string,
-    resultHandler: (invoices: WithId<Invoice>[]) => void
+    resultHandler: (invoices: WithId<Invoice>[]) => void,
+    businessId?: string
   ): firebase.Unsubscribe {
     let query = this.refs
       .getInvoicesRef()
       .orderBy('createdOn', 'asc')
       .where('orderId', '==', orderId);
-
+    if (businessId) query = query.where('accountId', '==', businessId);
     const unsubscribe = query.onSnapshot(
       (querySnapshot) => {
         resultHandler(documentsAs<Invoice>(querySnapshot.docs));
