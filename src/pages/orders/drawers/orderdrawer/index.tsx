@@ -4,6 +4,7 @@ import { useOrder } from 'app/api/order/useOrder';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextManagerProfile } from 'app/state/manager/context';
 import { CancelOrderPayload, Issue, WithId } from 'appjusto-types';
+import { CustomButton } from 'common/components/buttons/CustomButton';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
 import { initialError } from 'common/components/error/utils';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
@@ -48,7 +49,9 @@ export const OrderDrawer = (props: Props) => {
     orderIssues,
     orderCancellation,
     orderCancellationCosts,
+    invoices,
   } = useOrder(orderId);
+  console.log(invoices);
   const { manager } = useContextManagerProfile();
   const { getOutsourceDelivery, outsourceDeliveryResult } = useGetOutsourceDelivery(orderId);
   // state
@@ -220,6 +223,19 @@ export const OrderDrawer = (props: Props) => {
                   cookingTime={order.cookingTime}
                   averageCookingTime={business?.averageCookingTime}
                 />
+              )}
+              {(order?.status === 'delivered' || order?.status === 'canceled') && (
+                <Box mt="10">
+                  <CustomButton
+                    size="md"
+                    minW="220px"
+                    variant="outline"
+                    label={t('Ver fatura no Iugu')}
+                    link={`https://alia.iugu.com/receive/invoices/${invoices![0].externalId}`}
+                    isExternal
+                    isDisabled={!invoices}
+                  />
+                </Box>
               )}
             </>
           )}
