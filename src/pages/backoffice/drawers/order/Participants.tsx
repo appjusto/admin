@@ -296,7 +296,9 @@ export const Participants = ({ order }: ParticipantsProps) => {
       <SectionTitle>{t('Entregador')}</SectionTitle>
       <Participant
         id={order?.courier?.id}
-        outsourceLabel={t('Logística fora da rede')}
+        outsourceLabel={
+          order?.dispatchingStatus === 'outsourced' ? t('Logística fora da rede') : undefined
+        }
         name={order?.courier?.name ?? 'N/E'}
         mode={order?.courier?.mode}
         buttonLabel={t('Ver cadastro do entregador')}

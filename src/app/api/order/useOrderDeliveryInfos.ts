@@ -46,6 +46,7 @@ export const useOrderDeliveryInfos = (order?: WithId<Order> | null) => {
         if (state === 'going-destination') result = 'Pedido a caminho';
         if (state === 'arrived-destination') result = 'Entreg. no local de entrega';
       } else if (status === 'no-match') result = 'Entreg. não encontrado';
+      else if (status === 'outsourced') result = 'Logística fora da rede';
       setOrderDispatchingKanbanItemText(result);
     };
     const getOrderDispatchingText = (status: DispatchingStatus, state?: DispatchingState) => {
@@ -57,6 +58,7 @@ export const useOrderDeliveryInfos = (order?: WithId<Order> | null) => {
         if (state === 'going-destination') result = 'Entregador a caminho da entrega';
         if (state === 'arrived-destination') result = 'Entregador no local de entrega';
       } else if (status === 'no-match') result = 'Entregador não encontrado';
+      else if (status === 'outsourced') result = 'Logística fora da rede';
       setOrderDispatchingText(result);
     };
     getOrderDispatchingKanbanItemText(order.dispatchingStatus, order?.dispatchingState);
