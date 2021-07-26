@@ -34,7 +34,7 @@
     "axios": "^0.21.0",
     "browser-image-compression": "^1.0.14",
     "chakra-ui-markdown-renderer": "^1.1.0",
-    "chart.js": "^3.4.1",
+    "chart.js": "^3.5.0",
     "env-cmd": "^10.1.0",
     "firebase": "^8.6.7",
     "framer-motion": "^4.1.17",
