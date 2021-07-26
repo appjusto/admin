@@ -10,7 +10,7 @@ interface LineChartProps extends BoxProps {
   lastWeekData: number[];
 }
 
-export const LineChart2 = ({ currentWeekData, lastWeekData, ...props }: LineChartProps) => {
+export const LineChart = ({ currentWeekData, lastWeekData, ...props }: LineChartProps) => {
   // state
   const [chartLabels, setChartLabels] = React.useState<string[]>();
   const [isError, setIsError] = React.useState(false);
@@ -83,7 +83,7 @@ export const LineChart2 = ({ currentWeekData, lastWeekData, ...props }: LineChar
 
   // UI
   return (
-    <Box mt="4" position="relative" h="260px" {...props}>
+    <Box mt="6" position="relative" h="260px" {...props}>
       {isError ? (
         <Center w="100%" h="260px">
           <Text>{t('Ocorreu um erro ao construir o gráfico =/')}</Text>

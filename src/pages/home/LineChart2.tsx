@@ -8,7 +8,7 @@ interface LineChartProps extends BoxProps {
   lastWeekData: number[];
 }
 
-export const LineChart = ({ currentWeekData, lastWeekData, ...props }: LineChartProps) => {
+export const LineChart2 = ({ currentWeekData, lastWeekData, ...props }: LineChartProps) => {
   // state
   const [chartLabels, setChartLabels] = React.useState<string[]>();
   // chart
