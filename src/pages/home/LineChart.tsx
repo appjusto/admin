@@ -32,6 +32,7 @@ export const LineChart = ({ currentWeekData, lastWeekData, ...props }: LineChart
     if (!chartCanvas.current) return;
     if (!currentWeekData || !lastWeekData) return;
     if (!chartLabels) return;
+    const maxValue = Math.max(...currentWeekData, ...lastWeekData);
     try {
       setIsError(false);
       let ctx = chartCanvas.current.getContext('2d');
@@ -62,6 +63,8 @@ export const LineChart = ({ currentWeekData, lastWeekData, ...props }: LineChart
           scales: {
             y: {
               beginAtZero: true,
+              suggestedMin: 0, //min
+              suggestedMax: maxValue + 10, //max
               ticks: {
                 precision: 0,
               },
