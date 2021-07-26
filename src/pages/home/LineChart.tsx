@@ -1,14 +1,16 @@
 import { Box, BoxProps, Center, Text } from '@chakra-ui/react';
+import * as Sentry from '@sentry/react';
 import { Chart, registerables } from 'chart.js';
-import I18n, { t } from 'i18n-js';
+import I18n from 'i18n-js';
 import React from 'react';
+import { t } from 'utils/i18n';
 
 interface LineChartProps extends BoxProps {
   currentWeekData: number[];
   lastWeekData: number[];
 }
 
-export const LineChart = ({ currentWeekData, lastWeekData, ...props }: LineChartProps) => {
+export const LineChart2 = ({ currentWeekData, lastWeekData, ...props }: LineChartProps) => {
   // state
   const [chartLabels, setChartLabels] = React.useState<string[]>();
   const [isError, setIsError] = React.useState(false);
@@ -74,7 +76,7 @@ export const LineChart = ({ currentWeekData, lastWeekData, ...props }: LineChart
       });
       return () => myChart.destroy();
     } catch (error) {
-      // sentry
+      Sentry.captureException('Admin dashboard LineChart error', error);
       setIsError(true);
     }
   }, [chartLabels, currentWeekData, lastWeekData]);
@@ -83,7 +85,7 @@ export const LineChart = ({ currentWeekData, lastWeekData, ...props }: LineChart
   return (
     <Box mt="4" position="relative" h="260px" {...props}>
       {isError ? (
-        <Center>
+        <Center w="100%" h="260px">
           <Text>{t('Ocorreu um erro ao construir o gráfico =/')}</Text>
         </Center>
       ) : (
