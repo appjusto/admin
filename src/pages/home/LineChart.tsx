@@ -32,9 +32,9 @@ export const LineChart = ({ currentWeekData, lastWeekData, ...props }: LineChart
     if (!chartCanvas.current) return;
     if (!currentWeekData || !lastWeekData) return;
     if (!chartLabels) return;
-    const maxValue = Math.max(...currentWeekData, ...lastWeekData);
     try {
       setIsError(false);
+      const maxValue = Math.max(...currentWeekData, ...lastWeekData);
       let ctx = chartCanvas.current.getContext('2d');
       const myChart = new Chart(ctx!, {
         type: 'line',
