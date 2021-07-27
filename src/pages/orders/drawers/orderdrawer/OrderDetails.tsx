@@ -54,7 +54,7 @@ export const OrderDetails = ({ order }: DetailsProps) => {
                             {complement.name}
                           </Text>
                         </Td>
-                        <Td isNumeric>{item.quantity}</Td>
+                        <Td isNumeric>{complement.quantity ?? 1}</Td>
                         <Td isNumeric>{formatCurrency(complement.price)}</Td>
                       </Tr>
                     ))}
