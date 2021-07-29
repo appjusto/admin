@@ -219,14 +219,14 @@ export const OrderBaseDrawer = ({
               </Flex>
             )}
           </DrawerHeader>
-          <DrawerBody pb="28" ref={bodyRef}>
+          <DrawerBody pos="relative" pb="28" ref={bodyRef}>
             <Box
               pos="absolute"
               top="0"
               left="0"
               w="100%"
-              h="100%"
-              backgroundColor="#ffff"
+              h={bodyRef.current?.scrollHeight}
+              backgroundColor="#6836f1"
               zIndex="-100"
             />
             {children}
