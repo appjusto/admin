@@ -226,7 +226,7 @@ export const OrderBaseDrawer = ({
               left="0"
               w="100%"
               h={bodyRef.current?.scrollHeight}
-              backgroundColor="#6836f1"
+              backgroundColor="white"
               zIndex="-100"
             />
             {children}
