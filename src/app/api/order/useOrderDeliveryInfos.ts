@@ -1,10 +1,12 @@
 import { DispatchingState, Order, WithId } from 'appjusto-types';
 import { DispatchingStatus } from 'appjusto-types/order/dispatching';
 import React from 'react';
+import { useObserveOrderMatching } from './useObserveOrderMatching';
 import { useOrderArrivalTimes } from './useOrderArrivalTimes';
 
 export const useOrderDeliveryInfos = (order?: WithId<Order> | null) => {
   // context
+  const { matching } = useObserveOrderMatching(order?.id);
   const arrivalTime = useOrderArrivalTimes(order);
   // state
   const [isOrderActive, setIsOrderActive] = React.useState<boolean>();
@@ -50,7 +52,9 @@ export const useOrderDeliveryInfos = (order?: WithId<Order> | null) => {
       setOrderDispatchingKanbanItemText(result);
     };
     const getOrderDispatchingText = (status: DispatchingStatus, state?: DispatchingState) => {
-      let result = 'Buscando entregador...';
+      let result = 'Informações da entrega';
+      if (status === 'matching' && matching?.attempt && matching?.attempt > 0)
+        result = 'Buscando entregador...';
       if (status === 'matched' || status === 'confirmed') {
         result = 'Buscando localização';
         if (state === 'going-pickup') result = 'Entregador a caminho da retirada';
@@ -64,7 +68,7 @@ export const useOrderDeliveryInfos = (order?: WithId<Order> | null) => {
     getOrderDispatchingKanbanItemText(order.dispatchingStatus, order?.dispatchingState);
     getOrderDispatchingText(order.dispatchingStatus, order?.dispatchingState);
     setIsCurrierArrived(order.dispatchingState === 'arrived-pickup');
-  }, [order?.dispatchingState, order?.dispatchingStatus]);
+  }, [order?.dispatchingState, order?.dispatchingStatus, matching]);
 
   React.useEffect(() => {
     if (!order?.dispatchingStatus) return;
