@@ -1,12 +1,11 @@
 import { WithId, ConsumerProfile } from 'appjusto-types';
-import FilesApi from '../FilesApi';
 import FirebaseRefs from '../FirebaseRefs';
 import firebase from 'firebase/app';
 import { documentsAs } from 'core/fb';
 import * as Sentry from '@sentry/react';
 
 export default class ConsumerApi {
-  constructor(private refs: FirebaseRefs, private files: FilesApi) {}
+  constructor(private refs: FirebaseRefs) {}
 
   observeNewConsumers(
     resultHandler: (consumers: WithId<ConsumerProfile>[]) => void,
