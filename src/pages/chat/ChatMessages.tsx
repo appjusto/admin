@@ -5,12 +5,12 @@ import firebase from 'firebase/app';
 import { getDateAndHour } from 'utils/functions';
 
 interface ChatMessagesProps {
-  image: string;
   name: string;
   messages: WithId<ChatMessage>[];
+  image?: string | null;
 }
 
-export const ChatMessages = ({ image, name, messages }: ChatMessagesProps) => {
+export const ChatMessages = ({ name, messages, image }: ChatMessagesProps) => {
   // helpers
   const getTime = (timestamp: firebase.firestore.FieldValue) => {
     if (!timestamp) return;
