@@ -114,16 +114,16 @@ export const splitOrdersValuesByPeriod = (
   lastDayLastMonth: number
 ) => {
   let period = [] as OrdersByDay[];
-  let currentMonthreducer = 0;
-  let lastMonthreducer = 0;
+  let currentMonthReducer = 0;
+  let lastMonthReducer = 0;
   for (let i = 0; i < periodNumber; i++) {
     let date;
-    if (endDate - currentMonthreducer > 0) {
-      date = endDate - currentMonthreducer;
-      currentMonthreducer += 1;
+    if (endDate - currentMonthReducer > 0) {
+      date = endDate - currentMonthReducer;
+      currentMonthReducer += 1;
     } else {
-      date = lastDayLastMonth - lastMonthreducer;
-      lastMonthreducer += 1;
+      date = lastDayLastMonth - lastMonthReducer;
+      lastMonthReducer += 1;
     }
     period.push({ date, value: 0 });
   }
@@ -132,6 +132,5 @@ export const splitOrdersValuesByPeriod = (
     let item = period.find((item) => item.date === date);
     if (item) item.value += 1;
   });
-  console.log(period);
   return period.reverse();
 };
