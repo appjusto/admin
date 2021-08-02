@@ -10,7 +10,7 @@ export const useCourierOrders = (courierId?: string | null, start?: string, end?
   // side effects
   React.useEffect(() => {
     if (!courierId || !start || !end) return; // during initialization
-    let startDate = new Date(start);
+    let startDate = new Date(`${start} 00:00:00`);
     let endDate = new Date(`${end} 23:59:59`);
     const unsub = api.order().observeOrdersByCourierId(courierId!, setOrders, startDate, endDate);
     return () => unsub();

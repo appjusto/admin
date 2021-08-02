@@ -31,7 +31,7 @@ export const useObserveOrdersHistory = (
     setStartAfter(undefined);
   }, [orderCode, start, end, orderStatus, orderType]);
   React.useEffect(() => {
-    let startDate = start ? new Date(start) : null;
+    let startDate = start ? new Date(`${start} 00:00:00`) : null;
     let endDate = end ? new Date(`${end} 23:59:59`) : null;
     const unsub = api.order().observeOrdersHistory(
       (results, last) => {
