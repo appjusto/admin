@@ -249,8 +249,16 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
       <Box
         position="relative"
         borderRadius="lg"
-        borderColor={isCurrierArrived ? 'black' : 'gray'}
-        borderWidth={isCurrierArrived ? '2px' : '1px'}
+        borderColor={
+          order?.dispatchingStatus === 'outsourced'
+            ? '#FFBE00'
+            : isCurrierArrived
+            ? 'black'
+            : 'gray'
+        }
+        borderWidth={
+          order?.dispatchingStatus === 'outsourced' ? '2px' : isCurrierArrived ? '2px' : '1px'
+        }
         color="black"
         boxShadow="0px 8px 16px -4px rgba(105,118,103,0.1)"
         zIndex="100"
@@ -269,12 +277,17 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
                 </Box>
                 <Box>
                   <Text
-                    color={isNoMatch || isCurrierArrived ? 'red' : 'gray.700'}
+                    color={isCurrierArrived ? 'red' : 'gray.700'}
                     fontWeight="700"
                     textAlign="end"
                   >
                     {orderDispatchingKanbanItemText}
                   </Text>
+                  {order?.dispatchingStatus === 'outsourced' && (
+                    <Text mt="1" fontSize="xs" textAlign="end">
+                      {t('Enviamos um entregador de outra rede para retirar este pedido.')}
+                    </Text>
+                  )}
                   {isMatched &&
                     (isCurrierArrived ? (
                       <Text color="black" fontSize="xs" fontWeight="500">
@@ -312,7 +325,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
         </Link>
         <Box position="absolute" w="100%" bottom="0" px="4" mb="4" zIndex="999">
           <Button
-            isDisabled={!isCurrierArrived}
+            isDisabled={!isCurrierArrived && order?.dispatchingStatus !== 'outsourced'}
             w="full"
             maxH="34px"
             siz="xs"
