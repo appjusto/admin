@@ -108,15 +108,22 @@ const Login = () => {
             {t('Ao entrar sem senha, enviaremos um link de acesso para o e-mail cadastrado.')}
           </Text>
           {isPassword && (
-            <CustomPasswordInput
-              ref={passwdRef}
-              isRequired={isPassword}
-              id="login-password"
-              label={t('Senha')}
-              placeholder={t('Senha de acesso')}
-              value={passwd}
-              handleChange={(ev) => setPasswd(ev.target.value)}
-            />
+            <>
+              <CustomPasswordInput
+                ref={passwdRef}
+                isRequired={isPassword}
+                id="login-password"
+                label={t('Senha')}
+                placeholder={t('Senha de acesso')}
+                value={passwd}
+                handleChange={(ev) => setPasswd(ev.target.value)}
+              />
+              <Text mt="4" fontSize="sm" fontWeight="700">
+                {t(
+                  'Esqueceu a senha? Então desative essa opção e faça o login somente com o e-mail cadastrado. Você poderá criar uma nova senha na sua página de Perfil.'
+                )}
+              </Text>
+            </>
           )}
           {error.status && (
             <AlertError
