@@ -27,10 +27,10 @@ export const useObserveDashboardOrders = (businessId?: string | null) => {
   React.useEffect(() => {
     if (!businessId) return;
     let day = new Date().getDate();
-    let lastMonth = new Date().getMonth();
+    let month = new Date().getMonth();
     let year = new Date().getFullYear();
-    let startDate = new Date(`${year}-${lastMonth}-22 00:00:00`);
-    let endDate = new Date(`${year}-${lastMonth + 1}-${day} 23:59:59`);
+    let startDate = new Date(year, month - 1, 14);
+    let endDate = new Date(year, month, day, 23, 59, 59);
     let orderStatus = 'delivered' as OrderStatus;
     const unsub = api
       .order()
@@ -78,9 +78,10 @@ export const useObserveDashboardOrders = (businessId?: string | null) => {
     let day = today.getDate() - 6;
     let month = today.getMonth();
     let year = today.getFullYear();
+    let lastDay = 0;
     if (day < 0) {
+      lastDay = new Date(year, month, 0).getDate();
       month = month - 1;
-      let lastDay = new Date(year, month, 0).getDate();
       day = lastDay + day;
     }
     let start = new Date(year, month, day);
@@ -91,9 +92,12 @@ export const useObserveDashboardOrders = (businessId?: string | null) => {
     setCurrentWeekValue(
       currentWeekOrders.reduce((result, order) => result + order.fare?.business?.value!, 0)
     );
-    const weekValuesByDay = splitOrdersValuesByPeriod(currentWeekOrders, 7, today.getDate()).map(
-      (item) => item.value
-    );
+    const weekValuesByDay = splitOrdersValuesByPeriod(
+      currentWeekOrders,
+      7,
+      today.getDate(),
+      lastDay
+    ).map((item) => item.value);
     setCurrentWeekByDay(weekValuesByDay);
     let currentWeekProducts = [] as string[];
     currentWeekOrders.forEach((order) =>
@@ -115,17 +119,17 @@ export const useObserveDashboardOrders = (businessId?: string | null) => {
     let endDay = today.getDate() - 7;
     let month = today.getMonth();
     let year = today.getFullYear();
+    let lastDay = 0;
     if (startDay < 0) {
+      lastDay = new Date(year, month, 0).getDate();
       month = month - 1;
-      let lastDay = new Date(year, month, 0).getDate();
       startDay = lastDay + startDay;
     }
     if (endDay < 0) {
-      let lastDay = new Date(year, month, 0).getDate();
       endDay = lastDay + endDay;
     }
     let start = new Date(year, month, startDay);
-    let end = new Date(year, month, endDay);
+    let end = new Date(year, month, endDay, 23, 59, 59);
     const lastWeekOrders = orders.filter((order) =>
       orderPeriodFilter(order.updatedOn as firebase.firestore.Timestamp, start, end)
     );
@@ -133,7 +137,7 @@ export const useObserveDashboardOrders = (businessId?: string | null) => {
     setLastWeekValue(
       lastWeekOrders.reduce((result, order) => result + order.fare?.business?.value!, 0)
     );
-    const weekValuesByDay = splitOrdersValuesByPeriod(lastWeekOrders, 7, endDay).map(
+    const weekValuesByDay = splitOrdersValuesByPeriod(lastWeekOrders, 7, endDay, lastDay).map(
       (item) => item.value
     );
     setLastWeekByDay(weekValuesByDay);

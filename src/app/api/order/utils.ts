@@ -110,16 +110,28 @@ export interface OrdersByDay {
 export const splitOrdersValuesByPeriod = (
   orders: WithId<Order>[],
   periodNumber: number,
-  endDate: number
+  endDate: number,
+  lastDayLastMonth: number
 ) => {
   let period = [] as OrdersByDay[];
+  let currentMonthreducer = 0;
+  let lastMonthreducer = 0;
   for (let i = 0; i < periodNumber; i++) {
-    period.push({ date: endDate - i, value: 0 });
+    let date;
+    if (endDate - currentMonthreducer > 0) {
+      date = endDate - currentMonthreducer;
+      currentMonthreducer += 1;
+    } else {
+      date = lastDayLastMonth - lastMonthreducer;
+      lastMonthreducer += 1;
+    }
+    period.push({ date, value: 0 });
   }
   orders.forEach((order) => {
     const date = (order.updatedOn as firebase.firestore.Timestamp).toDate().getDate();
     let item = period.find((item) => item.date === date);
     if (item) item.value += 1;
   });
+  console.log(period);
   return period.reverse();
 };
