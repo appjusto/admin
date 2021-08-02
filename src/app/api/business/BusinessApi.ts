@@ -1,6 +1,7 @@
 import {
   BankAccount,
   Business,
+  BusinessStatus,
   Category,
   ChatMessage,
   CreateBusinessProfilePayload,
@@ -39,6 +40,23 @@ export default class BusinessApi {
       }
     );
     // returns the unsubscribe function
+    return unsubscribe;
+  }
+
+  observeBusinessesByStatus(
+    status: BusinessStatus,
+    resultHandler: (result: WithId<Business>[]) => void
+  ): firebase.Unsubscribe {
+    const query = this.refs.getBusinessesRef().where('status', '==', status);
+    const unsubscribe = query.onSnapshot(
+      (querySnapshot) => {
+        if (!querySnapshot.empty) resultHandler(documentsAs<Business>(querySnapshot.docs));
+        else resultHandler([]);
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
     return unsubscribe;
   }
 

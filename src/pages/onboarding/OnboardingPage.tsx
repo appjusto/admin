@@ -1,4 +1,4 @@
-import { useContextAgentProfile } from 'app/state/agent/context';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import BankingInformation from 'pages/business-profile/BankingInformation';
 import BusinessProfile from 'pages/business-profile/BusinessProfile';
 import DeliveryArea from 'pages/delivery-area/DeliveryArea';
@@ -14,7 +14,7 @@ import { TermsOfUse } from './TermsOfUse';
 const Onboarding = () => {
   // context
   const { path } = useRouteMatch();
-  const { isBackofficeUser } = useContextAgentProfile();
+  const { isBackofficeUser } = useContextFirebaseUser();
   // UI
   if (isBackofficeUser) return <Redirect to="/backoffice" />;
   return (

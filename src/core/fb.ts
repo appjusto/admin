@@ -16,5 +16,9 @@ export const documentsAs = <T extends object>(docs: FirebaseDocument[]): WithId<
 
 export const getErrorMessage = (error: unknown) => {
   if (!error) return null;
-  return (error as FirebaseError).message;
+  if ((error as FirebaseError).code === 'auth/wrong-password')
+    return 'A senha não é válida ou o usuário não possui senha';
+  else if ((error as FirebaseError).code === 'auth/too-many-requests')
+    return 'O acesso a esta conta, via senha, foi temporariamente desativado devido a muitas tentativas de login. Você pode realizar o login via link imediatamente, ou pode tentar novamente mais tarde.';
+  else return (error as FirebaseError).message;
 };

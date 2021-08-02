@@ -59,6 +59,53 @@ export default class OrderApi {
     return unsubscribe;
   }
 
+  observeDashboardOrders(
+    resultHandler: (orders: WithId<Order>[]) => void,
+    businessId?: string | null,
+    start?: Date | null,
+    end?: Date | null,
+    orderStatus?: OrderStatus
+  ): firebase.Unsubscribe {
+    let query = this.refs
+      .getOrdersRef()
+      .orderBy('updatedOn', 'desc')
+      .where('business.id', '==', businessId)
+      .where('status', '==', orderStatus)
+      .where('updatedOn', '>=', start)
+      .where('updatedOn', '<=', end);
+    const unsubscribe = query.onSnapshot(
+      (querySnapshot) => {
+        if (!querySnapshot.empty) resultHandler(documentsAs<Order>(querySnapshot.docs));
+        else resultHandler(documentsAs<Order>([]));
+      },
+      (error) => {
+        console.error(error);
+        Sentry.captureException(error);
+      }
+    );
+    // returns the unsubscribe function
+    return unsubscribe;
+  }
+
+  observeBODashboardOrders(
+    resultHandler: (orders: WithId<Order>[]) => void,
+    start?: Date | null
+  ): firebase.Unsubscribe {
+    let query = this.refs.getOrdersRef().where('updatedOn', '>', start);
+    const unsubscribe = query.onSnapshot(
+      (querySnapshot) => {
+        if (!querySnapshot.empty) resultHandler(documentsAs<Order>(querySnapshot.docs));
+        else resultHandler(documentsAs<Order>([]));
+      },
+      (error) => {
+        console.error(error);
+        Sentry.captureException(error);
+      }
+    );
+    // returns the unsubscribe function
+    return unsubscribe;
+  }
+
   observeOrdersHistory(
     resultHandler: (
       orders: WithId<Order>[],
@@ -70,7 +117,7 @@ export default class OrderApi {
     start?: Date | null,
     end?: Date | null,
     orderStatus?: OrderStatus,
-    orderType?: OrderType,
+    orderType?: OrderType[],
     startAfter?: FirebaseDocument
   ): firebase.Unsubscribe {
     let query = this.refs.getOrdersRef().orderBy('updatedOn', 'desc').limit(20);
@@ -80,7 +127,7 @@ export default class OrderApi {
     if (orderCode) query = query.where('code', '==', orderCode);
     if (start && end) query = query.where('updatedOn', '>=', start).where('updatedOn', '<=', end);
     if (orderStatus) query = query.where('status', '==', orderStatus);
-    if (orderType) query = query.where('type', '==', orderType);
+    if (orderType) query = query.where('type', 'in', orderType);
     const unsubscribe = query.onSnapshot(
       (querySnapshot) => {
         const last =
@@ -272,13 +319,14 @@ export default class OrderApi {
 
   observeOrderInvoices(
     orderId: string,
-    resultHandler: (invoices: WithId<Invoice>[]) => void
+    resultHandler: (invoices: WithId<Invoice>[]) => void,
+    businessId?: string
   ): firebase.Unsubscribe {
     let query = this.refs
       .getInvoicesRef()
       .orderBy('createdOn', 'asc')
       .where('orderId', '==', orderId);
-
+    if (businessId) query = query.where('accountId', '==', businessId);
     const unsubscribe = query.onSnapshot(
       (querySnapshot) => {
         resultHandler(documentsAs<Invoice>(querySnapshot.docs));

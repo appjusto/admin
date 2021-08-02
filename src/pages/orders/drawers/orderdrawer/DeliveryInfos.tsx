@@ -1,7 +1,9 @@
 import { Box, Button, Circle, Flex, HStack, Image, Text } from '@chakra-ui/react';
 import { useCourierProfilePicture } from 'app/api/courier/useCourierProfilePicture';
 import { useOrderDeliveryInfos } from 'app/api/order/useOrderDeliveryInfos';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import { Order, WithId } from 'appjusto-types';
+import { AlertWarning } from 'common/components/AlertWarning';
 import firebase from 'firebase/app';
 import I18n from 'i18n-js';
 import React from 'react';
@@ -15,6 +17,7 @@ interface DeliveryInfosProps {
 
 export const DeliveryInfos = ({ order, setOutsource }: DeliveryInfosProps) => {
   // context
+  const { isBackofficeUser } = useContextFirebaseUser();
   const courierPictureUrl = useCourierProfilePicture(order.courier?.id);
   const { isMatched, orderDispatchingText, arrivalTime, isNoMatch } = useOrderDeliveryInfos(order);
   // state
@@ -62,18 +65,23 @@ export const DeliveryInfos = ({ order, setOutsource }: DeliveryInfosProps) => {
           ) : (
             <Text fontSize="sm">{t(`Chega em menos de 1 minuto`)}</Text>
           ))}
-        {isNoMatch && (
+        {isNoMatch && !isBackofficeUser && (
           <HStack spacing={2}>
-            {/*<Button size="md" onClick={() => {}}>
-              {t('Tentar novamente')}
-              </Button>*/}
-            <Button
+            {/*<Button
               size="md"
               variant="yellowDark"
               onClick={() => setOutsource && setOutsource(true)}
             >
               {t('Assumir logística')}
-            </Button>
+            </Button>*/}
+            <AlertWarning
+              maxW="320px"
+              fontSize="xs"
+              description={t(
+                'Não há entregadores disponíveis em nossa rede. Appjusto enviará um entregador de outra rede.'
+              )}
+              icon={false}
+            />
           </HStack>
         )}
       </Flex>

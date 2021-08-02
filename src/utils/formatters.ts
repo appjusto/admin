@@ -5,6 +5,9 @@ import { round } from 'lodash';
 export const formatCurrency = (value: number, options?: ToCurrencyOptions) =>
   i18n.toCurrency(value / 100, options);
 
+// percentage
+export const formatPct = (value: number) => `${parseFloat((value * 100).toFixed(2))}%`;
+
 // date & time
 export const formatDate = (date: Date, pattern: 'default' | 'monthYear' = 'default') =>
   i18n.l(`date.formats.${pattern}`, date);

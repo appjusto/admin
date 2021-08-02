@@ -147,7 +147,7 @@ export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDr
             <SectionTitle mt="0">{courierName}</SectionTitle>
             <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
               {t('Cidade:')}{' '}
-              <Text as="span" fontWeight="500" color={situationAlert ? 'red' : 'black'}>
+              <Text as="span" fontWeight="500">
                 {`${courier?.company?.city ?? 'N/I'} - ${courier?.company?.state ?? 'N/I'}`}
               </Text>
             </Text>

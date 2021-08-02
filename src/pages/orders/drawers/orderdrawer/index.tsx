@@ -4,6 +4,7 @@ import { useOrder } from 'app/api/order/useOrder';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextManagerProfile } from 'app/state/manager/context';
 import { CancelOrderPayload, Issue, WithId } from 'appjusto-types';
+import { CustomButton } from 'common/components/buttons/CustomButton';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
 import { initialError } from 'common/components/error/utils';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
@@ -42,15 +43,16 @@ export const OrderDrawer = (props: Props) => {
   const {
     order,
     cancelOrder,
-    updateOrder,
+    //updateOrder,
     updateResult,
     cancelResult,
     orderIssues,
     orderCancellation,
     orderCancellationCosts,
+    invoices,
   } = useOrder(orderId);
   const { manager } = useContextManagerProfile();
-  const { getOutsourceDelivery, outsourceDeliveryResult } = useGetOutsourceDelivery();
+  const { getOutsourceDelivery, outsourceDeliveryResult } = useGetOutsourceDelivery(orderId);
   // state
   const [isCanceling, setIsCanceling] = React.useState(false);
   const [isOutsourceDelivery, setIsOutsourceDelivery] = React.useState<boolean>();
@@ -136,10 +138,15 @@ export const OrderDrawer = (props: Props) => {
                 (isOutsourceDelivery ? (
                   order.dispatchingStatus === 'outsourced' ? (
                     <Box mt="4" border="2px solid #FFBE00" borderRadius="lg" bg="" p="4">
-                      <SectionTitle mt="0">{t('Logística assumida')}</SectionTitle>
+                      <SectionTitle mt="0">{t('Logística fora da rede AppJusto')}</SectionTitle>
                       <Text mt="2">
                         {t(
-                          `O AppJusto não terá como monitorar o pedido a partir daqui. Entre em contato com o cliente para mantê-lo informado sobre sua entrega.`
+                          `Não foi possível encontrar entregadores disponíveis na nossa rede. Um entregador de outra rede já está a caminho para retirar o pedido. A equipe AppJusto está monitorando o pedido e concluirá o mesmo após a realização da entrega.`
+                        )}
+                      </Text>
+                      {/*<Text mt="2">
+                        {t(
+                          `O AppJusto não terá como monitorar o pedido a partir daqui. Caso seja necessário, entre em contato com o cliente para mantê-lo informado sobre sua entrega.`
                         )}
                       </Text>
                       <Text mt="4">
@@ -147,11 +154,11 @@ export const OrderDrawer = (props: Props) => {
                       </Text>
                       <Button
                         mt="2"
-                        onClick={() => updateOrder({ status: 'delivered' })}
+                        onClick={() => //({ status: 'delivered' })}
                         isLoading={updateResult.isLoading}
                       >
                         {t('Confirmar que o pedido foi entregue ao cliente')}
-                      </Button>
+                        </Button>*/}
                     </Box>
                   ) : (
                     <Box mt="4" border="2px solid #FFBE00" borderRadius="lg" bg="" p="4">
@@ -171,7 +178,7 @@ export const OrderDrawer = (props: Props) => {
                         </Button>
                         <Button
                           mt="0"
-                          onClick={() => getOutsourceDelivery(order.id)}
+                          onClick={() => getOutsourceDelivery()}
                           isLoading={outsourceDeliveryResult.isLoading}
                         >
                           {t('Confirmar')}
@@ -215,6 +222,18 @@ export const OrderDrawer = (props: Props) => {
                   cookingTime={order.cookingTime}
                   averageCookingTime={business?.averageCookingTime}
                 />
+              )}
+              {(order?.status === 'delivered' || order?.status === 'canceled') && invoices && (
+                <Box mt="10">
+                  <CustomButton
+                    size="md"
+                    minW="220px"
+                    variant="outline"
+                    label={t('Ver fatura no Iugu')}
+                    link={`https://alia.iugu.com/receive/invoices/${invoices[0]?.externalId}`}
+                    isExternal
+                  />
+                </Box>
               )}
             </>
           )}

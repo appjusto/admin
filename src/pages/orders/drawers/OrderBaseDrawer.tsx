@@ -80,9 +80,10 @@ export const OrderBaseDrawer = ({
   }, [isCanceling]);
   //UI conditions
   let orderDispatched = ['dispatching', 'delivered'].includes(order?.status ?? 'not_included');
-  let PrimaryButtonAble =
+  let PrimaryButtonIsAble =
     ['confirmed', 'preparing'].includes(order?.status ?? 'not_included') ||
-    (order?.status === 'ready' && isCurrierArrived);
+    (order?.status === 'ready' && isCurrierArrived) ||
+    order?.dispatchingStatus === 'outsourced';
   let PrimaryButtonLabel = 'Pedido pronto';
   if (order?.status === 'ready') PrimaryButtonLabel = 'Entregar pedido';
   //UI
@@ -219,14 +220,14 @@ export const OrderBaseDrawer = ({
               </Flex>
             )}
           </DrawerHeader>
-          <DrawerBody pb="28" ref={bodyRef}>
+          <DrawerBody pos="relative" pb="28" ref={bodyRef}>
             <Box
               pos="absolute"
               top="0"
               left="0"
               w="100%"
-              h="100%"
-              backgroundColor="#ffff"
+              h={bodyRef.current?.scrollHeight}
+              backgroundColor="white"
               zIndex="-100"
             />
             {children}
@@ -246,7 +247,7 @@ export const OrderBaseDrawer = ({
                   </Button>
                   {order?.status !== 'confirmed' && (
                     <Button
-                      isDisabled={!PrimaryButtonAble}
+                      isDisabled={!PrimaryButtonIsAble}
                       width="full"
                       maxW="200px"
                       onClick={PrimaryButtonFunction}

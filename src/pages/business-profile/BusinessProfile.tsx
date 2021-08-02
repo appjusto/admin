@@ -1,7 +1,7 @@
 import { Box, Flex, Switch as ChakraSwitch, Text, useBreakpoint } from '@chakra-ui/react';
 import * as cnpjutils from '@fnando/cnpj';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
-import { useContextAgentProfile } from 'app/state/agent/context';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { Business } from 'appjusto-types';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
@@ -41,7 +41,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const queryCache = useQueryCache();
   const { path } = useRouteMatch();
   const history = useHistory();
-  const { isBackofficeUser } = useContextAgentProfile();
+  const { isBackofficeUser } = useContextFirebaseUser();
 
   // state
   const [cnpj, setCNPJ] = React.useState(business?.cnpj ?? (isDev ? cnpjutils.generate() : ''));
@@ -255,8 +255,8 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
               isRequired
               ref={phoneRef}
               id="business-phone"
-              label={t('Telefone/Celular')}
-              placeholder={t('Número do seu telefone ou celular')}
+              label={t('Telefone para atendimento sobre pedidos')}
+              placeholder={t('Número de telefone ou celular')}
               mask={phoneMask}
               parser={numbersOnlyParser}
               formatter={phoneFormatter}

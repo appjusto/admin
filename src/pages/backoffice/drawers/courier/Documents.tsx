@@ -96,7 +96,7 @@ export const Documents = () => {
             doubleSizeCropping
           />
           <Button mt="4" size="sm" variant="outline" onClick={() => setPreview('selfie')}>
-            {t('Ampliar')}
+            {t('Ampliar selfie')}
           </Button>
         </Box>
         <Box textAlign="center">
@@ -113,7 +113,7 @@ export const Documents = () => {
             doubleSizeCropping
           />
           <Button mt="4" size="sm" variant="outline" onClick={() => setPreview('document')}>
-            {t('Ampliar')}
+            {t('Ampliar documento')}
           </Button>
         </Box>
       </HStack>

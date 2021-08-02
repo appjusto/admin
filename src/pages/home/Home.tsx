@@ -1,5 +1,6 @@
-import { useContextAgentProfile } from 'app/state/agent/context';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
+import { BusinessDashboardProvider } from 'app/state/dashboards/business';
 import { OrdersContextProvider } from 'app/state/order';
 import { Loading } from 'common/components/Loading';
 import BusinessProfile from 'pages/business-profile/BusinessProfile';
@@ -20,7 +21,7 @@ import Dashboard from './Dashboard';
 
 const Home = () => {
   // context
-  const { isBackofficeUser } = useContextAgentProfile();
+  const { isBackofficeUser } = useContextFirebaseUser();
   const { business } = useContextBusiness();
   const { path } = useRouteMatch();
 
@@ -34,24 +35,26 @@ const Home = () => {
   }
   if (business?.onboarding === 'completed' || isBackofficeUser) {
     return (
-      <OrdersContextProvider>
-        {isBackofficeUser && <AgentPersonificationBar />}
-        <Switch>
-          <Route path={`${path}/orders`} component={OrdersPage} />
-          <Route path={`${path}/chat`} component={ChatPage} />
-          <PageLayout mt={isBackofficeUser ? '60px' : '0'}>
-            <Route exact path={path} component={Dashboard} />
-            <Route path={`${path}/menu`} component={Menu} />
-            <Route path={`${path}/business-schedules`} component={SchedulesPage} />
-            <Route path={`${path}/delivery-area`} component={DeliveryArea} />
-            <Route path={`${path}/business-profile`} component={BusinessProfile} />
-            <Route path={`${path}/manager-profile`} component={ManagerProfilePage} />
-            <Route path={`${path}/orders-history`} component={OrdersHistoryPage} />
-            <Route path={`${path}/finances`} component={FinancesPage} />
-            <Route path={`${path}/team`} component={TeamPage} />
-          </PageLayout>
-        </Switch>
-      </OrdersContextProvider>
+      <BusinessDashboardProvider>
+        <OrdersContextProvider>
+          {isBackofficeUser && <AgentPersonificationBar />}
+          <Switch>
+            <Route path={`${path}/orders`} component={OrdersPage} />
+            <Route path={`${path}/chat`} component={ChatPage} />
+            <PageLayout mt={isBackofficeUser ? '60px' : '0'}>
+              <Route exact path={path} component={Dashboard} />
+              <Route path={`${path}/menu`} component={Menu} />
+              <Route path={`${path}/business-schedules`} component={SchedulesPage} />
+              <Route path={`${path}/delivery-area`} component={DeliveryArea} />
+              <Route path={`${path}/business-profile`} component={BusinessProfile} />
+              <Route path={`${path}/manager-profile`} component={ManagerProfilePage} />
+              <Route path={`${path}/orders-history`} component={OrdersHistoryPage} />
+              <Route path={`${path}/finances`} component={FinancesPage} />
+              <Route path={`${path}/team`} component={TeamPage} />
+            </PageLayout>
+          </Switch>
+        </OrdersContextProvider>
+      </BusinessDashboardProvider>
     );
   }
   return <Loading />;

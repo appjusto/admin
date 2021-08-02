@@ -192,6 +192,7 @@ export const GroupBox = ({ index, group }: GroupBoxProps) => {
           {isAdding && (
             <ComplementForm
               groupId={group.id}
+              groupMaximum={group.maximum}
               onSuccess={() => setIsAdding(false)}
               onCancel={() => setIsAdding(false)}
             />
@@ -210,6 +211,7 @@ export const GroupBox = ({ index, group }: GroupBoxProps) => {
                     group.items.map((item, index) => (
                       <ComplementItem
                         key={item.id}
+                        groupMaximum={group.maximum}
                         item={item}
                         index={index}
                         isLoading={isLoading}

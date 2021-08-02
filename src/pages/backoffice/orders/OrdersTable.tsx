@@ -18,6 +18,7 @@ export const OrdersTable = ({ orders }: OrdersTableProps) => {
           <Tr>
             <Th>{t('ID')}</Th>
             <Th>{t('Atualizado em')}</Th>
+            <Th>{t('Tipo')}</Th>
             <Th>{t('Status')}</Th>
             <Th>{t('Cliente')}</Th>
             <Th>{t('Entregador')}</Th>

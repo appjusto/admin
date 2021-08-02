@@ -9,7 +9,7 @@ type Status = 'initial' | 'unauthenticated' | 'authenticated' | 'profile-loaded'
 
 export const ProtectedRoute = (props: RouteProps) => {
   // context
-  const user = useContextFirebaseUser();
+  const { user } = useContextFirebaseUser();
   const { manager } = useContextManagerProfile();
   const { agent } = useContextAgentProfile();
 

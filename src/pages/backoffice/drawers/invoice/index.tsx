@@ -93,39 +93,50 @@ export const InvoiceDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
             {invoice?.invoiceType !== 'platform' && (
               <>
                 <SectionTitle>{t('Subconta')}</SectionTitle>
-                <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
-                  {t('Nome:')}{' '}
-                  <Text as="span" fontWeight="500">
-                    {invoice?.accountName ?? 'N/E'}
+                {invoice?.accountType === 'platform' ? (
+                  <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+                    {t('Nome:')}{' '}
+                    <Text as="span" fontWeight="500">
+                      {'Appjusto (Logística fora da rede)'}
+                    </Text>
                   </Text>
-                </Text>
-                <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
-                  {t('ID:')}{' '}
-                  <Text as="span" fontWeight="500">
-                    {invoice?.accountExternalId ?? 'N/E'}
-                  </Text>
-                </Text>
-                <Box mt="4">
-                  <CustomButton
-                    mt="0"
-                    minW="220px"
-                    color="black"
-                    variant="outline"
-                    label={t(
-                      `Ver ${
-                        invoice?.invoiceType === 'delivery' || invoice?.invoiceType === 'tip'
-                          ? 'entregador'
-                          : 'restaurante'
-                      }`
-                    )}
-                    link={`/backoffice/${
-                      invoice?.invoiceType === 'delivery' || invoice?.invoiceType === 'tip'
-                        ? 'couriers'
-                        : 'businesses'
-                    }/${invoice?.accountId}`}
-                    size="sm"
-                  />
-                </Box>
+                ) : (
+                  <>
+                    <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+                      {t('Nome:')}{' '}
+                      <Text as="span" fontWeight="500">
+                        {invoice?.accountName ?? 'N/E'}
+                      </Text>
+                    </Text>
+                    <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+                      {t('ID:')}{' '}
+                      <Text as="span" fontWeight="500">
+                        {invoice?.accountExternalId ?? 'N/E'}
+                      </Text>
+                    </Text>
+                    <Box mt="4">
+                      <CustomButton
+                        mt="0"
+                        minW="220px"
+                        color="black"
+                        variant="outline"
+                        label={t(
+                          `Ver ${
+                            invoice?.invoiceType === 'delivery' || invoice?.invoiceType === 'tip'
+                              ? 'entregador'
+                              : 'restaurante'
+                          }`
+                        )}
+                        link={`/backoffice/${
+                          invoice?.invoiceType === 'delivery' || invoice?.invoiceType === 'tip'
+                            ? 'couriers'
+                            : 'businesses'
+                        }/${invoice?.accountId}`}
+                        size="sm"
+                      />
+                    </Box>
+                  </>
+                )}
               </>
             )}
           </DrawerBody>

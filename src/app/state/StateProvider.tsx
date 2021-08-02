@@ -12,9 +12,9 @@ export const StateProvider = ({ children }: Props) => {
   return (
     <FirebaseUserProvider>
       <AgentProvider>
-        <ManagerProvider>
-          <BusinessProvider>{children}</BusinessProvider>
-        </ManagerProvider>
+        <BusinessProvider>
+          <ManagerProvider>{children}</ManagerProvider>
+        </BusinessProvider>
       </AgentProvider>
     </FirebaseUserProvider>
   );

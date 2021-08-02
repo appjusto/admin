@@ -4,13 +4,14 @@ import React from 'react';
 import { ManagerWithRole } from './types';
 import { useMutation } from 'react-query';
 import { AdminRole, Role } from 'appjusto-types';
+import { GeneralRoles } from 'app/state/auth/context';
 
 type ManagerData = { email: string; role: Role | AdminRole };
 
-export const useManagers = () => {
+export const useManagers = (role?: GeneralRoles | null) => {
   // contex
   const api = useContextApi();
-  const { business, userRole } = useContextBusiness();
+  const { business } = useContextBusiness();
 
   // state
   const [managers, setManagers] = React.useState<ManagerWithRole[]>();
@@ -27,10 +28,10 @@ export const useManagers = () => {
 
   // side effects
   React.useEffect(() => {
-    if (!userRole || !['manager', 'owner', 'staff', 'viewer'].includes(userRole)) return;
+    if (!role || !['manager', 'owner', 'staff', 'viewer'].includes(role)) return;
     if (!business?.id || !business?.managers) return;
     api.manager().getBusinessManagers(business.id, setManagers);
-  }, [api, business?.id, business?.managers, userRole]);
+  }, [api, business?.id, business?.managers, role]);
 
   // return
   return {

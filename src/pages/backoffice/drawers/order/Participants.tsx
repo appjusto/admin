@@ -17,7 +17,7 @@ import { SectionTitle } from '../generics/SectionTitle';
 
 interface ParticipantProps {
   id?: string;
-  outsourceDelivery?: boolean;
+  outsourceLabel?: string | null;
   name?: string;
   mode?: CourierMode;
   instruction?: string;
@@ -34,7 +34,7 @@ interface ParticipantProps {
 
 const Participant = ({
   id,
-  outsourceDelivery,
+  outsourceLabel,
   name,
   mode,
   instruction,
@@ -67,9 +67,9 @@ const Participant = ({
   // UI
   return (
     <Box mb="10">
-      {outsourceDelivery ? (
+      {outsourceLabel ? (
         <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
-          {t('Logística assumida pelo restaurante:')}
+          {outsourceLabel}
         </Text>
       ) : (
         <>
@@ -259,6 +259,8 @@ export const Participants = ({ order }: ParticipantsProps) => {
             name={order?.consumer?.name ?? 'N/E'}
             address={order?.destination?.address?.main ?? 'N/E'}
             additionalInfo={order?.destination?.additionalInfo}
+            buttonLabel={t('Ver cadastro do cliente')}
+            buttonLink={`/backoffice/consumers/${order?.consumer.id}`}
           />
           <SectionTitle>{t('Restaurante')}</SectionTitle>
           <Participant
@@ -272,7 +274,11 @@ export const Participants = ({ order }: ParticipantsProps) => {
       ) : (
         <Box>
           <SectionTitle>{t('Cliente')}</SectionTitle>
-          <Participant name={order?.consumer?.name ?? 'N/E'} />
+          <Participant
+            name={order?.consumer?.name ?? 'N/E'}
+            buttonLabel={t('Ver cadastro do cliente')}
+            buttonLink={`/backoffice/consumers/${order?.consumer.id}`}
+          />
           <SectionTitle>{t('Origem')}</SectionTitle>
           <Participant
             instruction={order?.origin?.intructions ?? 'N/E'}
@@ -290,7 +296,9 @@ export const Participants = ({ order }: ParticipantsProps) => {
       <SectionTitle>{t('Entregador')}</SectionTitle>
       <Participant
         id={order?.courier?.id}
-        outsourceDelivery={order?.dispatchingStatus === 'outsourced'}
+        outsourceLabel={
+          order?.dispatchingStatus === 'outsourced' ? t('Logística fora da rede') : undefined
+        }
         name={order?.courier?.name ?? 'N/E'}
         mode={order?.courier?.mode}
         buttonLabel={t('Ver cadastro do entregador')}

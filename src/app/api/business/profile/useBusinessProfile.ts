@@ -1,17 +1,17 @@
-import { useFirebaseUserRole } from 'app/api/auth/useFirebaseUserRole';
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { Business } from 'appjusto-types';
 import React from 'react';
 import { useMutation, useQuery } from 'react-query';
 import * as Sentry from '@sentry/react';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 
 export const useBusinessProfile = () => {
   // context
   const api = useContextApi();
   const { business, setBusinessId } = useContextBusiness();
   const businessId = business?.id;
-  const { refreshUserToken } = useFirebaseUserRole();
+  const { refreshUserToken } = useContextFirebaseUser();
 
   // queries
   const getBusinessLogoURL = (key: string) =>
@@ -26,7 +26,7 @@ export const useBusinessProfile = () => {
   const [createBusinessProfile] = useMutation(async () => {
     const business = await api.business().createBusinessProfile();
     setBusinessId(business.id);
-    refreshUserToken();
+    if (refreshUserToken) refreshUserToken();
   });
   const [updateBusinessProfile, updateResult] = useMutation(async (changes: Partial<Business>) =>
     api.business().updateBusinessProfile(businessId!, changes)

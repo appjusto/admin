@@ -1,5 +1,5 @@
 import { Box, BoxProps } from '@chakra-ui/react';
-import { useContextAgentProfile } from 'app/state/agent/context';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import React from 'react';
 import { useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
@@ -9,7 +9,7 @@ export const BackOfficeLinks = (props: BoxProps) => {
   // context
   const isDev = process.env.REACT_APP_ENVIRONMENT === 'dev';
   const { url } = useRouteMatch();
-  const { role } = useContextAgentProfile();
+  const { role } = useContextFirebaseUser();
 
   if (role === 'courier-manager') {
     return (

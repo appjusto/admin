@@ -11,13 +11,14 @@ import { t } from 'utils/i18n';
 import { ComplementForm } from './ComplementForm';
 
 interface Props {
+  groupMaximum?: number;
   item: WithId<Complement>;
   index: number;
   isLoading: boolean;
   handleDelete(complementId: string, imageExists: boolean): void;
 }
 
-export const ComplementItem = ({ item, index, isLoading, handleDelete }: Props) => {
+export const ComplementItem = ({ groupMaximum, item, index, isLoading, handleDelete }: Props) => {
   // context
   const { onUpdateComplement } = useProductContext();
   // state
@@ -28,6 +29,7 @@ export const ComplementItem = ({ item, index, isLoading, handleDelete }: Props) 
     return (
       <Flex bg="white" mb="4" borderWidth="1px" borderRadius="lg" alignItems="center" p="2">
         <ComplementForm
+          groupMaximum={groupMaximum}
           complementId={item.id}
           item={item}
           onSuccess={() => setIsEditing(false)}

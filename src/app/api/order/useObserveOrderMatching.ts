@@ -1,4 +1,5 @@
 import { useContextApi } from 'app/state/api/context';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import { OrderMatching } from 'appjusto-types';
 import React from 'react';
 import { useMutation } from 'react-query';
@@ -6,6 +7,7 @@ import { useMutation } from 'react-query';
 export const useObserveOrderMatching = (orderId?: string) => {
   // context
   const api = useContextApi();
+  const { isBackofficeUser } = useContextFirebaseUser();
   // state
   const [matching, setMatching] = React.useState<OrderMatching | null>();
   // mutations
@@ -18,9 +20,10 @@ export const useObserveOrderMatching = (orderId?: string) => {
   // side effects
   React.useEffect(() => {
     if (!orderId) return;
+    if (!isBackofficeUser) return;
     const unsub = api.order().observeOrderPrivateMatching(orderId, setMatching);
     return () => unsub();
-  }, [orderId, api]);
+  }, [api, orderId, isBackofficeUser]);
   // return
   return { matching, updateCourierNotified, updateResult, restartMatching, restartResult };
 };

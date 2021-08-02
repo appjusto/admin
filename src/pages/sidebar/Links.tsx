@@ -1,5 +1,5 @@
 import { Box, BoxProps, Flex, Text } from '@chakra-ui/react';
-import { useContextAgentProfile } from 'app/state/agent/context';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
 import React from 'react';
 import { useRouteMatch } from 'react-router-dom';
@@ -56,12 +56,12 @@ const ProtectedLinks = ({ isApproved }: ProtectedLinksProps) => {
 
 export const Links = (props: BoxProps) => {
   // context
-  const { isBackofficeUser } = useContextAgentProfile();
-  const { business, userRole } = useContextBusiness();
+  const { role, isBackofficeUser } = useContextFirebaseUser();
+  const { business } = useContextBusiness();
   const { url } = useRouteMatch();
   // helpers
   const isApproved = business?.situation === 'approved';
-  const isManager = userRole === 'manager' || isBackofficeUser;
+  const isManager = role === 'manager' || isBackofficeUser;
   // UI
   return (
     <Box {...props}>

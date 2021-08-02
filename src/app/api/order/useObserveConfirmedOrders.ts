@@ -17,6 +17,7 @@ import {
   removeOrderAck,
 } from './utils';
 import * as Sentry from '@sentry/react';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 
 const key = 'confirmed';
 
@@ -24,6 +25,7 @@ const statuses: OrderStatus[] = ['confirmed'];
 
 export const useObserveConfirmedOrders = (businessId?: string, notify: boolean = true) => {
   // context
+  const { isBackofficeUser } = useContextFirebaseUser();
   const permission = useNotificationPermission();
   const confirmedOrders = useObserveOrders(statuses, businessId);
   // state
@@ -32,13 +34,14 @@ export const useObserveConfirmedOrders = (businessId?: string, notify: boolean =
   const [playSound] = useSound(newOrderSound, { volume: 1 });
 
   React.useEffect(() => {
+    if (isBackofficeUser) return;
     if (confirmedOrders.length === 0) return;
     playSound();
     const SoundInterval = setInterval(() => {
       playSound();
     }, 4000);
     return () => clearInterval(SoundInterval);
-  }, [confirmedOrders, playSound]);
+  }, [isBackofficeUser, confirmedOrders, playSound]);
 
   // side effects
   React.useEffect(() => {

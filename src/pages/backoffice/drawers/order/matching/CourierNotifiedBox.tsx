@@ -80,7 +80,8 @@ export const CourierNotifiedBox = ({
                 isDisabled={
                   !isOrderActive ||
                   dispatchingStatus === 'matched' ||
-                  dispatchingStatus === 'confirmed'
+                  dispatchingStatus === 'confirmed' ||
+                  dispatchingStatus === 'outsourced'
                 }
                 isLoading={isLoading && !courierRemoving}
                 onClick={() => setIsAllocating(true)}

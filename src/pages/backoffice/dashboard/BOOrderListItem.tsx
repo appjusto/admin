@@ -8,6 +8,7 @@ import React from 'react';
 import { MdInfoOutline } from 'react-icons/md';
 import { useRouteMatch } from 'react-router-dom';
 import { getTimeUntilNow } from 'utils/functions';
+import { orderStatusPTOptions } from '../utils';
 import { CustomLink } from './CustomLink';
 
 interface Props {
@@ -22,6 +23,14 @@ export const BOOrderListItem = ({ order }: Props) => {
   const [orderDT, setOrderDT] = React.useState<number>();
   // helpers
   const issuesFound = issues && issues.length > 0 ? true : false;
+  const getOrderStatus = () => {
+    if (!order.status) return 'N/E';
+    if (order.dispatchingState === 'arrived-destination') return 'Entreg. no local de entrega';
+    if (orderStatusPTOptions[order.status].includes('-')) {
+      return orderStatusPTOptions[order.status].split('-')[0];
+    }
+    return orderStatusPTOptions[order.status];
+  };
   // side effects
   React.useEffect(() => {
     const setNewTime = () => {
@@ -42,6 +51,9 @@ export const BOOrderListItem = ({ order }: Props) => {
         </Box>
         <Text fontSize="sm" lineHeight="21px" color="black">
           #{order?.code}
+        </Text>
+        <Text fontSize="sm" lineHeight="21px" color="black">
+          {getOrderStatus()}
         </Text>
         <Text fontSize="sm" lineHeight="21px">
           {orderDT ? `${orderDT}min` : 'Agora'}

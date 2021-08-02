@@ -67,7 +67,7 @@ export const AgentPersonificationBar = () => {
       </Box>
       <Box textAlign="end">
         <Text fontSize="20px" lineHeight="26px" fontWeight="700">
-          {t('Atenção as modificações')}
+          {t('Atenção às modificações')}
         </Text>
         <Text fontSize="15px" lineHeight="21px">
           {t('Os dados alterados podem impactar no funcionamento do restaurante')}

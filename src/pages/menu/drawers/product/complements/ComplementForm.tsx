@@ -8,9 +8,11 @@ import { complementsRatios, complementsResizedWidth } from 'common/imagesDimensi
 import { useProductContext } from 'pages/menu/context/ProductContext';
 import React from 'react';
 import { t } from 'utils/i18n';
+import { ItemsQtdButtons } from '../groups/ItemQtdButtons';
 
 interface ComplementFormProps {
   groupId?: string;
+  groupMaximum?: number;
   complementId?: string;
   item?: WithId<Complement>;
   onSuccess(): void;
@@ -19,6 +21,7 @@ interface ComplementFormProps {
 
 export const ComplementForm = ({
   groupId,
+  groupMaximum,
   complementId,
   item,
   onSuccess,
@@ -35,6 +38,9 @@ export const ComplementForm = ({
   const [imageFile, setImageFile] = React.useState<File[] | null>(null);
   const [imageExists, setImageExists] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
+  const [maximum, setMaximum] = React.useState(1);
+
+  // refs
   const inputRef = React.useRef<HTMLInputElement>(null);
 
   //handlers
@@ -59,6 +65,7 @@ export const ComplementForm = ({
       name,
       description,
       price,
+      maximum,
       externalId,
       imageExists,
     };
@@ -80,6 +87,7 @@ export const ComplementForm = ({
       setPrice(item.price);
       setExternalId(item.externalId ?? '');
       setImageExists(item.imageExists ?? false);
+      setMaximum(item.maximum ?? 1);
     }
   }, [item]);
 
@@ -98,20 +106,25 @@ export const ComplementForm = ({
       }}
     >
       <VStack spacing={4} alignItems="flex-start" p="4">
-        <Flex flexDir="column">
-          <ImageUploads
-            width={200} //"200px"
-            height={200} //"200px"
-            imageUrl={imageUrl}
-            ratios={complementsRatios}
-            resizedWidth={complementsResizedWidth}
-            getImages={getImageFiles}
-            clearDrop={clearDropImages}
-          />
-          <Text mt="2" textAlign="center" fontSize="xs">
-            {t('Adicionar imagem')}
-          </Text>
-        </Flex>
+        <Text fontSize="lg" fontWeight="700" color="black">
+          {t('Complemento:')}
+        </Text>
+        <HStack w="100%" spacing={4} alignItems="flex-end">
+          <Flex flexDir="column">
+            <ImageUploads
+              width={200} //"200px"
+              height={200} //"200px"
+              imageUrl={imageUrl}
+              ratios={complementsRatios}
+              resizedWidth={complementsResizedWidth}
+              getImages={getImageFiles}
+              clearDrop={clearDropImages}
+            />
+            <Text mt="2" textAlign="center" fontSize="xs">
+              {t('Adicionar imagem')}
+            </Text>
+          </Flex>
+        </HStack>
         <Flex flexDir="column" w="100%">
           <Input
             ref={inputRef}
@@ -150,6 +163,25 @@ export const ComplementForm = ({
               placeholder={t('000')}
               value={externalId}
               handleChange={(ev) => setExternalId(ev.target.value)}
+            />
+          </HStack>
+          <HStack mt="3" w="100%" spacing={4} alignItems="center" justifyContent="flex-end">
+            <Text>{t('Qtd. máxima deste complemento por pedido:')}</Text>
+            <ItemsQtdButtons
+              size="sm"
+              value={maximum}
+              increment={() =>
+                setMaximum((prev) => {
+                  if (groupMaximum && prev < groupMaximum) return prev + 1;
+                  else return prev;
+                })
+              }
+              decrement={() =>
+                setMaximum((prev) => {
+                  if (prev > 1) return prev - 1;
+                  else return prev;
+                })
+              }
             />
           </HStack>
           <Flex mt="4" justifyContent="flex-end">

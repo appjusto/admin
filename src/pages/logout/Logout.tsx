@@ -1,8 +1,8 @@
 import { useToast } from '@chakra-ui/toast';
 import * as Sentry from '@sentry/react';
-import { useFirebaseUser } from 'app/api/auth/useFirebaseUser';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useContextApi } from 'app/state/api/context';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { CustomToast } from 'common/components/CustomToast';
 import { Loading } from 'common/components/Loading';
@@ -12,7 +12,7 @@ import { Redirect } from 'react-router-dom';
 const Logout = () => {
   // context
   const api = useContextApi();
-  const user = useFirebaseUser();
+  const user = useContextFirebaseUser();
   const { business } = useContextBusiness();
   const { updateBusinessProfile, updateResult } = useBusinessProfile();
   // state

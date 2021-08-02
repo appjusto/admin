@@ -54,7 +54,7 @@ export const OrderDetails = ({ order }: DetailsProps) => {
                             {complement.name}
                           </Text>
                         </Td>
-                        <Td isNumeric>{item.quantity}</Td>
+                        <Td isNumeric>{complement.quantity ?? 1}</Td>
                         <Td isNumeric>{formatCurrency(complement.price)}</Td>
                       </Tr>
                     ))}
@@ -96,7 +96,7 @@ export const OrderDetails = ({ order }: DetailsProps) => {
             {t('Valor do frete:')}{' '}
             <Text as="span" color="black">
               {order?.fare?.courier.value ? formatCurrency(order.fare.courier.value) : 'N/E'}
-              {order?.dispatchingStatus === 'outsourced' && ` (${t('Logística assumida')})`}
+              {/*order?.dispatchingStatus === 'outsourced' && ` (${t('Logística assumida')})`*/}
             </Text>
           </Text>
           <Text mt="1" fontSize="md">
