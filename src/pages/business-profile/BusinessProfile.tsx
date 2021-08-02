@@ -255,8 +255,8 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
               isRequired
               ref={phoneRef}
               id="business-phone"
-              label={t('Telefone/Celular')}
-              placeholder={t('Número do seu telefone ou celular')}
+              label={t('Telefone para atendimento sobre pedidos')}
+              placeholder={t('Número de telefone ou celular')}
               mask={phoneMask}
               parser={numbersOnlyParser}
               formatter={phoneFormatter}
