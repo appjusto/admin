@@ -12,11 +12,9 @@ export const useObserveBODashboardOrders = () => {
   const [todayAverage, setTodayAverage] = React.useState<number>();
   // side effects
   React.useEffect(() => {
-    let today = new Date().getDate();
-    let month = new Date().getMonth() + 1;
-    let year = new Date().getFullYear();
-    let startDate = new Date(`${year}-${month}-${today} 00:00:00`);
-    const unsub = api.order().observeBODashboardOrders(setOrders, startDate);
+    let today = new Date();
+    today.setHours(0, 0, 0);
+    const unsub = api.order().observeBODashboardOrders(setOrders, today);
     return () => unsub();
   }, [api]);
   // orders's number and total value
