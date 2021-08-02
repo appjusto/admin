@@ -1,3 +1,4 @@
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import { DispatchingState, Order, WithId } from 'appjusto-types';
 import { DispatchingStatus } from 'appjusto-types/order/dispatching';
 import React from 'react';
@@ -6,6 +7,7 @@ import { useOrderArrivalTimes } from './useOrderArrivalTimes';
 
 export const useOrderDeliveryInfos = (order?: WithId<Order> | null) => {
   // context
+  const { isBackofficeUser } = useContextFirebaseUser();
   const { matching } = useObserveOrderMatching(order?.id);
   const arrivalTime = useOrderArrivalTimes(order);
   // state
@@ -53,7 +55,10 @@ export const useOrderDeliveryInfos = (order?: WithId<Order> | null) => {
     };
     const getOrderDispatchingText = (status: DispatchingStatus, state?: DispatchingState) => {
       let result = 'Informações da entrega';
-      if (status === 'matching' && matching?.attempt && matching?.attempt > 0)
+      if (
+        status === 'matching' &&
+        ((matching?.attempt && matching?.attempt > 0) || !isBackofficeUser)
+      )
         result = 'Buscando entregador...';
       if (status === 'matched' || status === 'confirmed') {
         result = 'Buscando localização';
@@ -68,7 +73,7 @@ export const useOrderDeliveryInfos = (order?: WithId<Order> | null) => {
     getOrderDispatchingKanbanItemText(order.dispatchingStatus, order?.dispatchingState);
     getOrderDispatchingText(order.dispatchingStatus, order?.dispatchingState);
     setIsCurrierArrived(order.dispatchingState === 'arrived-pickup');
-  }, [order?.dispatchingState, order?.dispatchingStatus, matching]);
+  }, [order?.dispatchingState, order?.dispatchingStatus, matching, isBackofficeUser]);
 
   React.useEffect(() => {
     if (!order?.dispatchingStatus) return;
