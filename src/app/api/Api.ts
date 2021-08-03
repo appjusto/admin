@@ -50,6 +50,7 @@ export default class Api {
       config.firebase.options.emulatorPort
     ) {
       const { emulatorHost, emulatorPort } = config.firebase.options;
+      this._authentication.useEmulator('http://localhost:9099');
       this._firestore.useEmulator(emulatorHost, emulatorPort);
       this._functions.useEmulator(emulatorHost, 5001);
     }
