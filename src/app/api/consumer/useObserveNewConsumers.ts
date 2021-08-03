@@ -8,10 +8,8 @@ export const useObserveNewConsumers = () => {
   const [consumers, setConsumers] = React.useState<number>();
   // side effects
   React.useEffect(() => {
-    let today = new Date().getDate();
-    let month = new Date().getMonth() + 1;
-    let year = new Date().getFullYear();
-    let startDate = new Date(`${year}-${month}-${today} 00:00:00`);
+    const now = new Date();
+    const startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const unsub = api.consumer().observeNewConsumers((consumers) => {
       setConsumers(consumers.length);
     }, startDate);
