@@ -13,6 +13,7 @@ import {
 } from '@chakra-ui/react';
 import { useContextBusinessBackoffice } from 'app/state/business/businessBOContext';
 import { CustomButton } from 'common/components/buttons/CustomButton';
+import { isObject } from 'lodash';
 import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
 import React from 'react';
 import { useRouteMatch } from 'react-router';
@@ -32,6 +33,7 @@ export const BusinessBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
   const { url } = useRouteMatch();
   const { business, manager, handleSave, isLoading, marketPlace } = useContextBusinessBackoffice();
   // helpers
+  const isMarketplace = isObject(marketPlace);
   const situationAlert = business?.situation === 'rejected' || business?.situation === 'invalid';
   //UI
   return (
@@ -117,7 +119,7 @@ export const BusinessBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
                 <DrawerLink to={`${url}/live`} label={t('Live')} />
               )}
               <DrawerLink to={`${url}/status`} label={t('Status')} />
-              {marketPlace && <DrawerLink to={`${url}/iugu`} label={t('Iugu')} />}
+              {isMarketplace && <DrawerLink to={`${url}/iugu`} label={t('Iugu')} />}
             </Flex>
             {children}
           </DrawerBody>

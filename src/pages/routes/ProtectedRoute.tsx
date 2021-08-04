@@ -12,10 +12,8 @@ export const ProtectedRoute = (props: RouteProps) => {
   const { user } = useContextFirebaseUser();
   const { manager } = useContextManagerProfile();
   const { agent } = useContextAgentProfile();
-
   // state
   const [status, setStatus] = React.useState<Status>('initial');
-
   // side effects
   const delay = 4000; // delay to wait for firebase initialization
   React.useEffect(() => {
@@ -27,7 +25,6 @@ export const ProtectedRoute = (props: RouteProps) => {
     }
     if (user && (manager || agent)) setStatus('profile-loaded');
   }, [user, agent, manager]);
-
   // UI
   // redirects to / when user is not authenticated
   if (status === 'unauthenticated') return <Redirect to="/login" />;
