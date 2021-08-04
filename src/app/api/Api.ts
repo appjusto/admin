@@ -42,17 +42,16 @@ export default class Api {
     this._authentication = Api.app.auth();
     this._firestore = Api.app.firestore();
     this._functions = Api.app.functions(config.firebase.config.region);
-    this._storage = Api.app.storage();
 
-    if (
-      config.firebase.options.useEmulator &&
-      config.firebase.options.emulatorHost &&
-      config.firebase.options.emulatorPort
-    ) {
-      const { emulatorHost, emulatorPort } = config.firebase.options;
-      this._authentication.useEmulator('http://localhost:9099');
-      this._firestore.useEmulator(emulatorHost, emulatorPort);
+    if (config.firebase.options.useEmulator && config.firebase.options.emulatorHost) {
+      const { emulatorHost } = config.firebase.options;
+      this._authentication.useEmulator(`http://${emulatorHost}:9099`);
+      this._firestore.useEmulator(emulatorHost, 8080);
       this._functions.useEmulator(emulatorHost, 5001);
+      this._storage = Api.app.storage('gs://default-bucket');
+      this._storage.useEmulator(emulatorHost, 9199);
+    } else {
+      this._storage = Api.app.storage();
     }
 
     this._refs = new FirebaseRefs(this._functions, this._firestore);
