@@ -1,5 +1,7 @@
 import { InfoOutlineIcon } from '@chakra-ui/icons';
 import { HStack, Link, Text, VStack } from '@chakra-ui/react';
+import { useContextFirebaseUser } from 'app/state/auth/context';
+import { useContextBusinessId } from 'app/state/business/context';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { ReactComponent as CheckmarkChecked } from 'common/img/checkmark-checked.svg';
 import { ReactComponent as Checkmark } from 'common/img/checkmark.svg';
@@ -8,6 +10,7 @@ import { useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
 
 interface RegistrationItemProps {
+  type: string;
   status: boolean;
   label: string;
   link: string;
@@ -16,6 +19,7 @@ interface RegistrationItemProps {
 }
 
 export const RegistrationItem = ({
+  type,
   status,
   label,
   link,
@@ -23,6 +27,9 @@ export const RegistrationItem = ({
   helpLink,
   ...props
 }: RegistrationItemProps) => {
+  // context
+  const businessId = useContextBusinessId();
+  const { isBackofficeUser } = useContextFirebaseUser();
   const { path } = useRouteMatch();
   return (
     <HStack
@@ -43,7 +50,15 @@ export const RegistrationItem = ({
           </Text>
         </HStack>
         {!status && (
-          <CustomButton variant="outline" label={t('Preencher')} link={`${path}/${link}`} />
+          <CustomButton
+            variant="outline"
+            label={t('Preencher')}
+            link={
+              type === 'manager' && isBackofficeUser
+                ? `/backoffice/businesses/${businessId}`
+                : `${path}/${link}`
+            }
+          />
         )}
       </VStack>
       <HStack spacing={2}>

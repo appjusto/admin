@@ -172,6 +172,7 @@ export const RegistrationStatus = () => {
             return (
               <RegistrationItem
                 key={data.type}
+                type={data.type}
                 status={data.status}
                 label={data.label}
                 link={data.link}
