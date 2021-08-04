@@ -30,7 +30,7 @@ interface BaseDrawerProps {
 export const BusinessBaseDrawer = ({ agent, onClose, children, ...props }: BaseDrawerProps) => {
   //context
   const { url } = useRouteMatch();
-  const { business, manager, handleSave, isLoading } = useContextBusinessBackoffice();
+  const { business, manager, handleSave, isLoading, marketPlace } = useContextBusinessBackoffice();
   // helpers
   const situationAlert = business?.situation === 'rejected' || business?.situation === 'invalid';
   //UI
@@ -117,9 +117,7 @@ export const BusinessBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
                 <DrawerLink to={`${url}/live`} label={t('Live')} />
               )}
               <DrawerLink to={`${url}/status`} label={t('Status')} />
-              {business?.situation === 'approved' && (
-                <DrawerLink to={`${url}/iugu`} label={t('Iugu')} />
-              )}
+              {marketPlace && <DrawerLink to={`${url}/iugu`} label={t('Iugu')} />}
             </Flex>
             {children}
           </DrawerBody>
