@@ -4,6 +4,7 @@ import { Business, WithId } from 'appjusto-types';
 import React from 'react';
 import { useContextApi } from '../api/context';
 import { useContextFirebaseUser } from '../auth/context';
+import { getBusinessChangedKeys } from './utils';
 
 interface ContextProps {
   business?: WithId<Business> | null;
@@ -28,6 +29,18 @@ export const BusinessProvider = ({ children }: Props) => {
   const [business, setBusiness] = React.useState<WithId<Business> | null>();
 
   // handlers
+  const updateContextBusiness = React.useCallback(
+    (newState: WithId<Business> | null) => {
+      if (business && newState) {
+        const changedKeys = getBusinessChangedKeys(business, newState);
+        console.log('changedKeys', changedKeys);
+        if (changedKeys.length === 0) return;
+        else setBusiness(newState);
+      } else setBusiness(newState);
+    },
+    [business]
+  );
+
   const updateContextBusinessOrderPrint = (status: boolean) => {
     setBusiness((prev) => {
       if (!prev) return;
@@ -45,8 +58,8 @@ export const BusinessProvider = ({ children }: Props) => {
   React.useEffect(() => {
     if (hookBusiness === undefined) return;
     if (hookBusiness === null) setBusiness(null);
-    setBusiness(hookBusiness);
-  }, [hookBusiness]);
+    updateContextBusiness(hookBusiness);
+  }, [hookBusiness, updateContextBusiness]);
   // intended to auto-select a business id for a restaurant manager
   React.useEffect(() => {
     if (isBackofficeUser) return;
