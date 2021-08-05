@@ -12,8 +12,6 @@ export const getConfig = (): AppConfig => {
           apiKey: process.env.REACT_APP_FIREBASE_API_KEY!,
           region: process.env.REACT_APP_FIREBASE_REGION!,
           authDomain: `${process.env.REACT_APP_FIREBASE_PROJECT_ID}.firebaseapp.com`,
-          databaseURL: `https://${process.env.REACT_APP_FIREBASE_PROJECT_ID}.firebaseio.com`,
-          functionsURL: `https://${process.env.REACT_APP_FIREBASE_REGION}-${process.env.REACT_APP_FIREBASE_PROJECT_ID}.cloudfunctions.net`,
           projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID!,
           storageBucket: `${process.env.REACT_APP_FIREBASE_PROJECT_ID}.appspot.com`,
           messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID!,
@@ -22,7 +20,6 @@ export const getConfig = (): AppConfig => {
         options: {
           useEmulator: process.env.REACT_APP_FIREBASE_EMULATOR === 'true',
           emulatorHost: process.env.REACT_APP_FIREBASE_EMULATOR_HOST,
-          emulatorPort: parseInt(process.env.REACT_APP_FIREBASE_EMULATOR_PORT ?? '8080'),
         },
       },
       googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY!,
