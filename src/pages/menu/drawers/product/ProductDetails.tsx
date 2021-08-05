@@ -185,7 +185,7 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
     if (categoryId) return;
     const paramsId = query.get('categoryId');
     if (paramsId) dispatch({ type: 'update_state', payload: { categoryId: paramsId } });
-  }, [query]);
+  }, [query, categoryId]);
 
   //UI
   if (saveSuccess) {
