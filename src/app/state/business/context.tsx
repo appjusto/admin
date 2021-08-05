@@ -33,7 +33,6 @@ export const BusinessProvider = ({ children }: Props) => {
     (newState: WithId<Business> | null) => {
       if (business && newState) {
         const changedKeys = getBusinessChangedKeys(business, newState);
-        console.log('changedKeys', changedKeys);
         if (changedKeys.length === 0) return;
         else setBusiness(newState);
       } else setBusiness(newState);
