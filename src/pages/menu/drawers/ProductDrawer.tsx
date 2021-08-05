@@ -1,7 +1,7 @@
 import React from 'react';
 import { Route, Switch, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
-import { ProductContextProvider, useProductContext } from '../context/ProductContext';
+import { useProductContext } from '../context/ProductContext';
 import { BaseDrawer } from './BaseDrawer';
 import { ProductComplements } from './product/ProductComplements';
 import { ProductDetails } from './product/ProductDetails';
@@ -17,29 +17,26 @@ export const ProductDrawer = (props: Props) => {
   const { path } = useRouteMatch();
   //props
   const { onClose } = props;
-
   // UI
   return (
-    <ProductContextProvider>
-      <BaseDrawer
-        {...props}
-        type="product"
-        title={productId === 'new' ? t('Adicionar produto') : t('Alterar produto')}
-        isError={false}
-        error={null}
-      >
-        <Switch>
-          <Route exact path={`${path}`}>
-            <ProductDetails onClose={onClose} />
-          </Route>
-          <Route exact path={`${path}/complements`}>
-            <ProductComplements />
-          </Route>
-          {/*<Route exact path={`${path}/availability`}>
+    <BaseDrawer
+      {...props}
+      type="product"
+      title={productId === 'new' ? t('Adicionar produto') : t('Alterar produto')}
+      isError={false}
+      error={null}
+    >
+      <Switch>
+        <Route exact path={`${path}`}>
+          <ProductDetails onClose={onClose} />
+        </Route>
+        <Route exact path={`${path}/complements`}>
+          <ProductComplements />
+        </Route>
+        {/*<Route exact path={`${path}/availability`}>
             <ProductAvailability />
             </Route>*/}
-        </Switch>
-      </BaseDrawer>
-    </ProductContextProvider>
+      </Switch>
+    </BaseDrawer>
   );
 };

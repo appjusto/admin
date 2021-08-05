@@ -38,7 +38,9 @@ export const BaseDrawer = ({
   children,
   ...props
 }: BaseDrawerProps) => {
+  // context
   const { url } = useRouteMatch();
+  // UI
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
       <DrawerOverlay>

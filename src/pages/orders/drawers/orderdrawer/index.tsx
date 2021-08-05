@@ -9,10 +9,10 @@ import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorH
 import { initialError } from 'common/components/error/utils';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import React from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useReactToPrint } from 'react-to-print';
 import { formatCurrency } from 'utils/formatters';
-import { getOrderCancellator } from 'utils/functions';
+import { getOrderCancellator, useQuery } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { OrderBaseDrawer } from '../OrderBaseDrawer';
 import { Cancelation } from './Cancelation';
@@ -21,10 +21,6 @@ import { DeliveryInfos } from './DeliveryInfos';
 import { OrderDetails } from './OrderDetails';
 import { OrderIssuesTable } from './OrderIssuesTable';
 import { OrderToPrinting } from './OrderToPrinting';
-
-function useQuery() {
-  return new URLSearchParams(useLocation().search);
-}
 
 interface Props {
   isOpen: boolean;

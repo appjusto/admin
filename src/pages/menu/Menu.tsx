@@ -8,6 +8,7 @@ import React from 'react';
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { Categories } from './categories/Categories';
+import { ProductContextProvider } from './context/ProductContext';
 import { CategoryDrawer } from './drawers/CategoryDrawer';
 import { ProductDrawer } from './drawers/ProductDrawer';
 
@@ -65,7 +66,9 @@ const Menu = () => {
       </Box>
       <Switch>
         <Route path={`${path}/product/:productId`}>
-          <ProductDrawer isOpen onClose={closeDrawerHandler} />
+          <ProductContextProvider>
+            <ProductDrawer isOpen onClose={closeDrawerHandler} />
+          </ProductContextProvider>
         </Route>
         <Route path={`${path}/category/:categoryId`}>
           <CategoryDrawer isOpen onClose={closeDrawerHandler} />

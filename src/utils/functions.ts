@@ -7,6 +7,7 @@ import I18n from 'i18n-js';
 import firebase from 'firebase/app';
 import { AlgoliaCreatedOn } from 'app/api/types';
 import { ImageType } from 'common/components/ImageUploads';
+import { useLocation } from 'react-router-dom';
 
 // translation
 export const getTranslatedOrderStatus = (status: OrderStatus) => {
@@ -294,4 +295,9 @@ export const getOrderCancellator = (issueIype?: string) => {
   if (issueIype === 'courier-cancel') cancelator = 'Entregador';
   if (issueIype === 'agent-order-cancel') cancelator = 'Agente Appjusto';
   return cancelator;
+};
+
+// url
+export const useQuery = () => {
+  return new URLSearchParams(useLocation().search);
 };

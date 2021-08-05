@@ -18,6 +18,7 @@ import { productRatios, productResizedWidth } from 'common/imagesDimensions';
 import { useProductContext } from 'pages/menu/context/ProductContext';
 import React from 'react';
 import { Link as RouterLink, useHistory, useRouteMatch } from 'react-router-dom';
+import { useQuery } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { DrawerButtons } from '../DrawerButtons';
 import { CategorySelect } from './CategorySelect';
@@ -48,6 +49,7 @@ interface DetailsProps {
 
 export const ProductDetails = ({ onClose }: DetailsProps) => {
   //context
+  const query = useQuery();
   const { url, path } = useRouteMatch();
   const { push } = useHistory();
   const {
@@ -177,6 +179,13 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
       });
     }
   }, [product, productId, contextCategoryId]);
+
+  React.useEffect(() => {
+    if (!query) return;
+    if (categoryId) return;
+    const paramsId = query.get('categoryId');
+    if (paramsId) dispatch({ type: 'update_state', payload: { categoryId: paramsId } });
+  }, [query]);
 
   //UI
   if (saveSuccess) {

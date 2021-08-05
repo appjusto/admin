@@ -1,6 +1,7 @@
 import { Box, Flex, Heading, Spacer, Switch, Tooltip } from '@chakra-ui/react';
 import { useCategory } from 'app/api/business/categories/useCategory';
 import { Category, Product, WithId } from 'appjusto-types';
+import { CustomButton as Button } from 'common/components/buttons/CustomButton';
 import { EditButton } from 'common/components/buttons/EditButton';
 import { ReactComponent as DragHandle } from 'common/img/drag-handle.svg';
 import React from 'react';
@@ -77,6 +78,13 @@ export const CategoryItem = React.memo(({ category, products, index, hidden, url
               </Box>
             )}
           </Droppable>
+          <Button
+            mt="0"
+            w={{ base: '100%', md: '220px' }}
+            link={`${url}/product/new?categoryId=${category.id}`}
+            label={t('Adicionar produto')}
+            variant="outline"
+          />
         </Box>
       )}
     </Draggable>

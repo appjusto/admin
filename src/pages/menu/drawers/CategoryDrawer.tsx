@@ -18,23 +18,16 @@ type Params = {
 };
 
 export const CategoryDrawer = (props: Props) => {
+  //context
   const { categoryId } = useParams<Params>();
-
   // state
   const { ordering, updateMenuOrdering } = useContextMenu();
   const { category, id, saveCategory, deleteCategory, result } = useCategory(categoryId);
   const { isLoading, isError, error } = result;
   const [name, setName] = React.useState(category?.name ?? '');
   // const [enabled, setEnabled] = React.useState(category?.enabled ?? true);
-
-  // side effects
-  React.useEffect(() => {
-    if (category) {
-      setName(category.name);
-      // setEnabled(category.enabled ?? true);
-    }
-  }, [category]);
-
+  // refs
+  const inputRef = React.useRef<HTMLInputElement>(null);
   // handlers
   const onSaveHandler = () => {
     (async () => {
@@ -53,10 +46,13 @@ export const CategoryDrawer = (props: Props) => {
       props.onClose();
     })();
   };
-
-  // refs
-  const inputRef = React.useRef<HTMLInputElement>(null);
-
+  // side effects
+  React.useEffect(() => {
+    if (category) {
+      setName(category.name);
+      // setEnabled(category.enabled ?? true);
+    }
+  }, [category]);
   // UI
   return (
     <BaseDrawer

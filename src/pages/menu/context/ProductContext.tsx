@@ -51,10 +51,12 @@ interface ProviderProps {
 }
 
 export const ProductContextProvider = (props: ProviderProps) => {
+  // context
   const api = useContextApi();
   const businessId = useContextBusinessId();
   const { ordering, updateMenuOrdering } = useContextMenu();
-  const { productId } = useParams<Params>();
+  const { productId: productIdParam } = useParams<Params>();
+  const productId = productIdParam.split('?')[0];
   const { product, isValid, imageUrl } = useProduct(businessId, productId, '1008x720');
   const { groups, complements } = useObserveComplements(
     businessId!,
