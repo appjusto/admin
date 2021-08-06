@@ -11,7 +11,7 @@ import {
 } from 'appjusto-types';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
 import { initialError } from 'common/components/error/utils';
-import { isEmpty } from 'lodash';
+import { isEmpty, isEqual } from 'lodash';
 import React, { Dispatch, SetStateAction } from 'react';
 import { MutateFunction, MutationResult } from 'react-query';
 import { useParams } from 'react-router';
@@ -139,9 +139,9 @@ export const BusinessBOProvider = ({ children }: Props) => {
     let businessChanges = null;
     let managerChanges = null;
     let bankingChanges = null;
-    if (state.businessProfile !== business) businessChanges = state.businessProfile;
-    if (state.manager !== manager) managerChanges = state.manager;
-    if (!isEmpty(state.bankingInfo) && state.bankingInfo !== bankAccount)
+    if (!isEqual(state.businessProfile, business)) businessChanges = state.businessProfile;
+    if (!isEqual(state.manager, manager)) managerChanges = state.manager;
+    if (!isEmpty(state.bankingInfo) && !isEqual(state.bankingInfo, bankAccount))
       bankingChanges = state.bankingInfo;
     updateBusinessManagerAndBankAccount({ businessChanges, managerChanges, bankingChanges });
   };
