@@ -24,6 +24,8 @@ import {
   logoRatios,
   logoResizedWidth,
 } from 'common/imagesDimensions';
+import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
+import { Deeplink } from 'pages/deeplink';
 import { OnboardingProps } from 'pages/onboarding/types';
 import PageFooter from 'pages/PageFooter';
 import PageHeader from 'pages/PageHeader';
@@ -207,6 +209,12 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   if (isSuccess && redirect) return <Redirect to={redirect} push />;
   return (
     <Box>
+      {!onboarding && (
+        <PageHeader
+          title={t('Perfil do restaurante')}
+          subtitle={t('Inclua os dados do seu restaurante')}
+        />
+      )}
       <Box maxW="833px">
         <form
           onSubmit={(ev) => {
@@ -214,10 +222,18 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
             onSubmitHandler();
           }}
         >
-          <PageHeader
-            title={t('Sobre o restaurante')}
-            subtitle={t('Essas informações serão vistas por seus visitantes')}
-          />
+          {!onboarding && <Deeplink isEditable />}
+          {onboarding ? (
+            <PageHeader
+              title={t('Sobre o restaurante')}
+              subtitle={t('Essas informações serão vistas por seus visitantes')}
+            />
+          ) : (
+            <Box>
+              <SectionTitle>{t('Sobre o restaurante')}</SectionTitle>
+              <Text>{t('Essas informações serão vistas por seus visitantes')}</Text>
+            </Box>
+          )}
           <Box maxW="400px">
             <PatternInput
               isRequired
