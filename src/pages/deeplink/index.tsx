@@ -17,6 +17,7 @@ interface DeeplinkProps {
 export const Deeplink = ({ isEditable }: DeeplinkProps) => {
   // context
   const { business } = useContextBusiness();
+  console.log(business?.slug);
   const { updateBusinessSlug, updateSlugResult } = useBusinessProfile();
   const { isLoading, isSuccess, isError, error: updateError } = updateSlugResult;
   // state
@@ -40,16 +41,23 @@ export const Deeplink = ({ isEditable }: DeeplinkProps) => {
   };
   // side effects
   React.useEffect(() => {
-    if (!business?.slug) return;
-    const deeplink = `https://l.deeplink.appjusto.com.br/consumer/r?slug=${business.slug}`;
-    setDeeplink(deeplink);
-  }, [business?.slug]);
+    if (!business?.slug) {
+      if (business?.name) setSlug(slugify(business?.name));
+    } else {
+      const deeplink = `https://l.deeplink.appjusto.com.br/consumer/r?slug=${business.slug}`;
+      setSlug(business.slug);
+      setDeeplink(deeplink);
+    }
+  }, [business?.slug, business?.name]);
   React.useEffect(() => {
     if (isError) {
+      const error = (updateError as unknown) as Error;
       setError({
         status: true,
         error: updateError,
-        message: { title: 'O indentificador já está em uso.' },
+        message: {
+          title: error?.message ? error.message : 'Não foi possível salvar o identificador',
+        },
       });
     }
   }, [isError, updateError]);
@@ -82,7 +90,8 @@ export const Deeplink = ({ isEditable }: DeeplinkProps) => {
             mt="0"
             maxW="320px"
             id="custom-slug"
-            label={t('Digite um slug')}
+            label={t('Identificador do restaurante')}
+            placeholder={t('Digite um identificador')}
             value={slug}
             onChange={(e) => setSlug(slugify(e.target.value))}
             onBlur={(e) => setSlug(slugify(e.target.value, true))}

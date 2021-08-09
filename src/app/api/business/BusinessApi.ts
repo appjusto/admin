@@ -174,7 +174,7 @@ export default class BusinessApi {
       businessId,
       slug,
     };
-    const result = await this.refs.getupdateBusinessSlugCallable()(payload);
+    const result = await this.refs.getUpdateBusinessSlugCallable()(payload);
     return result;
   }
 

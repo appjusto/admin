@@ -52,7 +52,6 @@ export const useBusinessProfile = () => {
   const [deleteBusinessProfile, deleteResult] = useMutation(async () =>
     api.business().deleteBusinessProfile(businessId!)
   );
-
   const sendBusinessKeepAlive = React.useCallback(() => {
     try {
       api.business().sendBusinessKeepAlive(businessId!);
