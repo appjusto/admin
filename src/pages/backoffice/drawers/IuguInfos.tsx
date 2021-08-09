@@ -5,6 +5,7 @@ import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorH
 import { initialError } from 'common/components/error/utils';
 import React from 'react';
 import { MutationResult } from 'react-query';
+import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { iuguSituationPTOptions } from '../utils';
 import { SectionTitle } from './generics/SectionTitle';
@@ -23,6 +24,10 @@ export const IuguInfos = ({ account, deleteAccount, result }: IuguInfosProps) =>
   const [error, setError] = React.useState(initialError);
   // refs
   const submission = React.useRef(0);
+  // helpers
+  const createdOn = account?.info?.created_at
+    ? getDateAndHour(new Date(account?.info?.created_at))
+    : 'N/E';
   // handlers
   const handleDeleteAccount = () => {
     submission.current += 1;
@@ -60,7 +65,7 @@ export const IuguInfos = ({ account, deleteAccount, result }: IuguInfosProps) =>
       <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
         {t('Criada em:')}{' '}
         <Text as="span" fontWeight="500">
-          {account?.info?.created_at ?? 'N/E'}
+          {createdOn}
         </Text>
       </Text>
       <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">

@@ -80,7 +80,7 @@ export const Deeplink = ({ isEditable }: DeeplinkProps) => {
             mt="0"
             fontSize="sm"
             variant="secondary"
-            label={t('Enviar para o WhatsApp')}
+            label={t('Enviar pelo WhatsApp')}
             link={`https://api.whatsapp.com/send?text=${deeplink}`}
             isExternal
           />
