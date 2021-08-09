@@ -5,6 +5,7 @@ import {
   Category,
   ChatMessage,
   CreateBusinessProfilePayload,
+  UpdateBusinessSlugPayload,
   ManagerProfile,
   MarketplaceAccountInfo,
   Product,
@@ -164,6 +165,17 @@ export default class BusinessApi {
     };
     const business = await this.refs.getCreateBusinessProfileCallable()(payload);
     return business.data as WithId<Business>;
+  }
+
+  async updateBusinessSlug(data: { businessId: string; slug: string }) {
+    const { businessId, slug } = data;
+    const payload: UpdateBusinessSlugPayload = {
+      meta: { version: '1' }, // TODO: pass correct version on
+      businessId,
+      slug,
+    };
+    const result = await this.refs.getupdateBusinessSlugCallable()(payload);
+    return result;
   }
 
   async updateBusinessProfile(businessId: string, changes: Partial<Business>) {

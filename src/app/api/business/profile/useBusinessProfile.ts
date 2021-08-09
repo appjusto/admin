@@ -60,6 +60,10 @@ export const useBusinessProfile = () => {
       Sentry.captureException('sendBusinessKeepAliveError', error);
     }
   }, [api, businessId]);
+  const [updateBusinessSlug, updateSlugResult] = useMutation(
+    async (data: { businessId: string; slug: string }) =>
+      await api.business().updateBusinessSlug(data)
+  );
 
   // return
   return {
@@ -68,9 +72,11 @@ export const useBusinessProfile = () => {
     createBusinessProfile,
     updateBusinessProfile,
     updateBusinessProfileWithImages,
+    updateBusinessSlug,
     deleteBusinessProfile,
     updateResult,
     updateWithImagesResult,
+    updateSlugResult,
     deleteResult,
     sendBusinessKeepAlive,
   };
