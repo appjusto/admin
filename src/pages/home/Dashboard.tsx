@@ -138,7 +138,7 @@ const Dashboard = () => {
       />
       {business?.situation === 'approved' ? (
         <Box>
-          <Deeplink />
+          {business?.slug && <Deeplink />}
           <Box mt="8" border="1px solid #E5E5E5" borderRadius="lg" p="4">
             <SectionTitle mt="0" fontWeight="700">
               {t('Acompanhamento diário')}

@@ -34,6 +34,8 @@ export const Deeplink = ({ isEditable }: DeeplinkProps) => {
   };
   const handleUpdate = () => {
     if (!business?.id || !slug) return;
+    setError(initialError);
+    submission.current += 1;
     updateBusinessSlug({ businessId: business.id, slug });
   };
   // side effects
@@ -44,7 +46,6 @@ export const Deeplink = ({ isEditable }: DeeplinkProps) => {
   }, [business?.slug]);
   React.useEffect(() => {
     if (isError) {
-      console.log(updateError);
       setError({
         status: true,
         error: updateError,
