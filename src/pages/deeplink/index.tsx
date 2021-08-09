@@ -1,4 +1,5 @@
 import { Badge, Box, Button, HStack, Input, Text } from '@chakra-ui/react';
+import { CustomButton } from 'common/components/buttons/CustomButton';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import React from 'react';
@@ -12,6 +13,20 @@ interface DeeplinkProps {
 export const Deeplink = ({ isEditable }: DeeplinkProps) => {
   // state
   const [slug, setSlug] = React.useState('');
+  const [deeplink, setDeeplink] = React.useState('');
+  const [isCopied, setIsCopied] = React.useState(false);
+  // handlers
+  const copyToClipboard = () => {
+    setIsCopied(true);
+    setTimeout(() => setIsCopied(false), 2000);
+    return navigator.clipboard.writeText(deeplink);
+  };
+  // side effects
+  React.useEffect(() => {
+    const businessSlug = 'nome-do-restaurante';
+    const deeplink = `https://l.deeplink.appjusto.com.br/consumer/r?slug=${businessSlug}`;
+    setDeeplink(deeplink);
+  }, []);
   // UI
   return (
     <Box>
@@ -49,17 +64,26 @@ export const Deeplink = ({ isEditable }: DeeplinkProps) => {
         <Input
           w="100%"
           h="100%"
+          pr="350px"
           bg="gray.50"
           border="1px solid #C8D7CB"
           color="gray.700"
-          value={t('https://l.deeplink.appjusto.com.br/consumer/r?slug=nome-do-restaurante')}
+          value={deeplink}
           onChange={() => {}}
+          zIndex="100"
         />
-        <HStack position="absolute" top="6px" right="2">
-          <Button fontSize="sm">{t('Copiar link')}</Button>
-          <Button variant="secondary" fontSize="sm">
-            {t('Enviar para o WhatsApp')}
+        <HStack position="absolute" top="6px" right="2" zIndex="999">
+          <Button fontSize="sm" onClick={copyToClipboard}>
+            {isCopied ? t('Copiado!') : t('Copiar link')}
           </Button>
+          <CustomButton
+            mt="0"
+            fontSize="sm"
+            variant="secondary"
+            label={t('Enviar para o WhatsApp')}
+            link={`https://api.whatsapp.com/send?text=${deeplink}`}
+            isExternal
+          />
         </HStack>
       </Box>
       <Text mt="4" fontSize="xs">

@@ -57,7 +57,9 @@ export const slugify = (text: string, onBlur?: boolean) => {
   });
   slug = slug
     .replace(' ', '-') // Replace spaces with -
+    //eslint-disable-next-line
     .replace(/\--+/g, '-') // Replace multiple - with single -
+    //eslint-disable-next-line
     .replace(/[^\w\-]+/g, ''); // Remove all non-word chars
 
   if (onBlur) slug = slug.replace(/^-+/, '').replace(/-+$/, '');
