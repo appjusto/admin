@@ -78,6 +78,8 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   } = useBusinessProfile();
   const { isLoading, isSuccess, isError, error: updateError } = updateWithImagesResult;
 
+  // helpers
+  const showDeeplink = !onboarding && business?.situation === 'approved';
   // handlers
   const openDrawerHandler = () => history.push(`${path}/delete`);
   const closeDrawerHandler = () => history.replace(path);
@@ -222,7 +224,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
             onSubmitHandler();
           }}
         >
-          {!onboarding && <Deeplink isEditable />}
+          {showDeeplink && <Deeplink isEditable />}
           {onboarding ? (
             <PageHeader
               title={t('Sobre o restaurante')}
