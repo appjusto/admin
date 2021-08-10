@@ -17,7 +17,6 @@ interface DeeplinkProps {
 export const Deeplink = ({ isEditable }: DeeplinkProps) => {
   // context
   const { business } = useContextBusiness();
-  console.log(business?.slug);
   const { updateBusinessSlug, updateSlugResult } = useBusinessProfile();
   const { isLoading, isSuccess, isError, error: updateError } = updateSlugResult;
   // state
@@ -79,11 +78,19 @@ export const Deeplink = ({ isEditable }: DeeplinkProps) => {
           {t('NOVIDADE')}
         </Badge>
       </HStack>
-      <Text mt="4">
-        {t(
-          'Você pode compartilhar o acesso direto ao seu restaurante no AppJusto. Copie o link abaixo e divulgue nas suas redes!'
-        )}
-      </Text>
+      {isEditable ? (
+        <Text mt="4">
+          {t(
+            'Você pode compartilhar o acesso direto ao seu restaurante no AppJusto. Crie um identificador, copie o link abaixo e divulgue nas suas redes!'
+          )}
+        </Text>
+      ) : (
+        <Text mt="4">
+          {t(
+            'Você pode compartilhar o acesso direto ao seu restaurante no AppJusto. Copie o link abaixo e divulgue nas suas redes!'
+          )}
+        </Text>
+      )}
       {isEditable && (
         <HStack mt="4" spacing={2}>
           <CustomInput
