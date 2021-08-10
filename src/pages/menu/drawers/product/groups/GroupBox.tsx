@@ -30,7 +30,7 @@ export const GroupBox = ({ index, group }: GroupBoxProps) => {
   const [isLoading, setIsLoading] = React.useState(false);
   const [isAdding, setIsAdding] = React.useState(false);
   const [isDeleting, setIsDeleting] = React.useState(false);
-  const [showComplments, setShowComplements] = React.useState(false);
+  const [showComplements, setShowComplements] = React.useState(false);
 
   React.useEffect(() => {
     if (group.items && group.items?.length > 0) {
@@ -169,13 +169,13 @@ export const GroupBox = ({ index, group }: GroupBoxProps) => {
                 </Tooltip>
                 <Tooltip
                   placement="top"
-                  label={showComplments ? t('Recolher') : t('Expandir')}
-                  aria-label={showComplments ? t('Recolher') : t('Expandir')}
+                  label={showComplements ? t('Recolher') : t('Expandir')}
+                  aria-label={showComplements ? t('Recolher') : t('Expandir')}
                 >
                   <DropdownButton
                     title={t('Expandir')}
-                    isExpanded={showComplments}
-                    onClick={() => setShowComplements(!showComplments)}
+                    isExpanded={showComplements}
+                    onClick={() => setShowComplements(!showComplements)}
                   />
                 </Tooltip>
               </Flex>
@@ -197,7 +197,7 @@ export const GroupBox = ({ index, group }: GroupBoxProps) => {
               onCancel={() => setIsAdding(false)}
             />
           )}
-          {showComplments && (
+          {showComplements && (
             <Droppable droppableId={group.id} type="item">
               {(droppable, snapshot) => (
                 <Box
