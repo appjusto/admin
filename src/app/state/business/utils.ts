@@ -28,6 +28,7 @@ export const getBusinessChangedKeys = (
     'logoExists',
     'coverImageExists',
     'orderPrinting',
+    'slug',
     // object types
     'managers',
     'profileIssues',
