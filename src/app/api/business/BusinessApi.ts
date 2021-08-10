@@ -566,6 +566,38 @@ export default class BusinessApi {
     );
     return unsubscribe;
   }
+  /////// NEW COMPLEMENTS LOGIC START
+  observeComplementsGroups2(
+    businessId: string,
+    resultHandler: (result: WithId<ComplementGroup>[]) => void
+  ): firebase.Unsubscribe {
+    const query = this.refs.getBusinessComplementsGroupsRef(businessId);
+    const unsubscribe = query.onSnapshot(
+      (querySnapshot) => {
+        resultHandler(documentsAs<ComplementGroup>(querySnapshot.docs));
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+    return unsubscribe;
+  }
+  observeComplements2(
+    businessId: string,
+    resultHandler: (result: WithId<Complement>[]) => void
+  ): firebase.Unsubscribe {
+    const query = this.refs.getBusinessComplementsRef(businessId);
+    const unsubscribe = query.onSnapshot(
+      (querySnapshot) => {
+        resultHandler(documentsAs<Complement>(querySnapshot.docs));
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+    return unsubscribe;
+  }
+  /////// NEW COMPLEMENTS LOGIC END
 
   async createComplementsGroup(businessId: string, productId: string, group: ComplementGroup) {
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
