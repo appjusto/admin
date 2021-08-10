@@ -69,6 +69,15 @@ interface ContextProps {
   >;
   deleteComplementResult: MutationResult<void, unknown>;
   getComplementImageUrl(complementId: string): Promise<string | null>;
+  connectComplmentsGroupToProduct: MutateFunction<
+    void,
+    unknown,
+    {
+      groupsIds: string[];
+    },
+    unknown
+  >;
+  connectionResult: MutationResult<void, unknown>;
 }
 
 const ProductContext = React.createContext<ContextProps>({} as ContextProps);
@@ -126,8 +135,8 @@ export const ProductContextProvider = (props: ProviderProps) => {
       if (data.groupId) {
         await api.business().updateComplementsGroup2(businessId!, data.groupId, data.changes);
       } else {
-        const complement = await api.business().createComplementsGroup2(businessId!, data.changes);
-        const newProductConfig = menu.addFirstLevel(productConfig, complement.id);
+        const group = await api.business().createComplementsGroup2(businessId!, data.changes);
+        const newProductConfig = menu.addFirstLevel(productConfig, group.id);
         await api
           .business()
           .updateProduct(businessId!, productId, { complementsOrder: newProductConfig });
@@ -157,6 +166,15 @@ export const ProductContextProvider = (props: ProviderProps) => {
         const complementId = await api
           .business()
           .createComplement2(businessId!, data.changes, data.imageFile);
+        const currentGroup = complementsGroups.find((group) => group.id === data.groupId);
+        console.log(currentGroup);
+        console.log(data.complementId);
+        if (currentGroup) {
+          const complements = currentGroup.complements
+            ? [...currentGroup.complements, complementId]
+            : [complementId];
+          await api.business().updateComplementsGroup2(businessId!, data.groupId!, { complements });
+        }
         let newProductConfig = menu.empty();
         if (productConfig && data.groupId) {
           newProductConfig = menu.addSecondLevel(productConfig, complementId, data.groupId);
@@ -189,6 +207,38 @@ export const ProductContextProvider = (props: ProviderProps) => {
     [api, businessId]
   );
 
+  const [connectComplmentsGroupToProduct, connectionResult] = useMutation(
+    async (data: { groupsIds: string[] }) => {
+      const currentGroups = complementsGroups.filter((group) => data.groupsIds.includes(group.id));
+      if (!data.groupsIds || currentGroups.length === 0) {
+        throw new Error(`Argumentos inválidos: groupId: ${data.groupsIds}; groupsIds: empty.`);
+      }
+      let newProductConfig = { ...productConfig };
+      currentGroups.forEach((group) => {
+        if (group.complements) {
+          //newProductConfig = menu.getConnectedProductConfig(
+          //  productConfig,
+          //  group.id,
+          //  group.complements
+          //);
+          newProductConfig = {
+            firstLevelIds: [...newProductConfig.firstLevelIds, group.id],
+            secondLevelIdsByFirstLevelId: {
+              ...newProductConfig.secondLevelIdsByFirstLevelId,
+              [group.id]: (newProductConfig.secondLevelIdsByFirstLevelId[group.id] ?? []).concat(
+                group.complements
+              ),
+            },
+          };
+        }
+      });
+      console.log(newProductConfig);
+      await api
+        .business()
+        .updateProduct(businessId!, productId, { complementsOrder: newProductConfig });
+    }
+  );
+
   return (
     <ProductContext.Provider
       value={{
@@ -212,6 +262,8 @@ export const ProductContextProvider = (props: ProviderProps) => {
         deleteComplement,
         deleteComplementResult,
         getComplementImageUrl,
+        connectComplmentsGroupToProduct,
+        connectionResult,
       }}
       {...props}
     />

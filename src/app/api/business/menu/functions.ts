@@ -50,6 +50,20 @@ export const updateFirstLevelIndex = (
 };
 
 // second levels
+export const getConnectedProductConfig = (
+  ordering: Ordering,
+  firstLevelId: string,
+  secondLevelIds: string[]
+) => {
+  const { firstLevelIds, secondLevelIdsByFirstLevelId } = ordering;
+  return {
+    firstLevelIds: [...firstLevelIds, firstLevelId],
+    secondLevelIdsByFirstLevelId: {
+      ...secondLevelIdsByFirstLevelId,
+      [firstLevelId]: (secondLevelIdsByFirstLevelId[firstLevelId] ?? []).concat(secondLevelIds),
+    },
+  } as Ordering;
+};
 
 export const addSecondLevel = (ordering: Ordering, secondLevelId: string, firstLevelId: string) => {
   const { secondLevelIdsByFirstLevelId } = ordering;

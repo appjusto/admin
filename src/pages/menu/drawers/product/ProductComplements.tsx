@@ -20,13 +20,20 @@ import { Groups } from './groups/Groups';
 export const ProductComplements = () => {
   //context
   const { url } = useRouteMatch();
-  const { productId, product, updateProduct } = useProductContext();
+  const {
+    productId,
+    product,
+    updateProduct,
+    connectComplmentsGroupToProduct,
+    connectionResult,
+  } = useProductContext();
   const { complementsGroups } = useContextMenu();
+  const { isLoading, isSuccess } = connectionResult;
   //state
   const [hasComplements, setHasComplements] = React.useState(false);
   const [newGroupForm, setNewGroupForm] = React.useState(false);
   const [isConnecting, setIsConnecting] = React.useState(false);
-  const [connectedGroups, setConnectedGroups] = React.useState<string[]>();
+  const [connectedGroups, setConnectedGroups] = React.useState<string[]>([]);
   // handlers
   const handleComplementsEnable = (value: string) => {
     updateProduct({ changes: { complementsEnabled: value === '1' ? false : true } });
@@ -41,12 +48,20 @@ export const ProductComplements = () => {
       setIsConnecting(true);
     }
   };
+  const handleComplementsGroupsConnection = () => {
+    connectComplmentsGroupToProduct({ groupsIds: connectedGroups });
+  };
   // side effects
   React.useEffect(() => {
     if (product?.complementsEnabled) {
       setHasComplements(true);
     }
   }, [product?.complementsEnabled]);
+  React.useEffect(() => {
+    if (isSuccess) {
+      setNewGroupForm(false);
+    }
+  }, [isSuccess]);
 
   // UI
   if (productId === 'new') {
@@ -127,7 +142,8 @@ export const ProductComplements = () => {
                 width={{ base: '100%', lg: '50%' }}
                 color="black"
                 fontSize="15px"
-                onClick={() => {}}
+                onClick={handleComplementsGroupsConnection}
+                isLoading={isLoading}
               >
                 {t('Associar grupos')}
               </Button>
