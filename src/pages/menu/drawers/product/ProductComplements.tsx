@@ -9,13 +9,13 @@ import { Groups } from './groups/Groups';
 export const ProductComplements = () => {
   //context
   const { url } = useRouteMatch();
-  const { productId, product, onSaveProduct, onSaveComplementsGroup } = useProductContext();
+  const { productId, product, updateProduct } = useProductContext();
   //state
   const [hasComplements, setHasComplements] = React.useState(false);
   const [newGroupForm, setNewGroupForm] = React.useState(false);
 
   const handleComplementsEnable = (value: string) => {
-    onSaveProduct({ complementsEnabled: value === '1' ? false : true }, null, undefined);
+    updateProduct({ changes: { complementsEnabled: value === '1' ? false : true } });
     setHasComplements(value === '1' ? false : true);
   };
 
@@ -84,13 +84,7 @@ export const ProductComplements = () => {
               {t('Associar')}
             </Button>
               </HStack>*/}
-          {newGroupForm && (
-            <GroupForm
-              submitGroup={onSaveComplementsGroup}
-              isCreate
-              onSuccess={() => setNewGroupForm(false)}
-            />
-          )}
+          {newGroupForm && <GroupForm isCreate onSuccess={() => setNewGroupForm(false)} />}
         </>
       )}
     </>

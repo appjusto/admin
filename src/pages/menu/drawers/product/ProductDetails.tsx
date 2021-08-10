@@ -58,8 +58,8 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
     product,
     isValid,
     imageUrl,
-    onSaveProduct,
-    onDeleteProduct,
+    updateProduct,
+    deleteProduct,
   } = useProductContext();
   //state
   const [state, dispatch] = React.useReducer(productReducer, initialState);
@@ -114,8 +114,8 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
     }
     handleStateUpdate('isLoading', true);
     (async () => {
-      const newId = await onSaveProduct(
-        {
+      const newId = await updateProduct({
+        changes: {
           name,
           description,
           price,
@@ -127,10 +127,9 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
           imageExists,
         },
         imageFiles,
-        categoryId
-      );
+      });
       handleStateUpdate('isLoading', false);
-      if (url.includes('new')) {
+      if (url.includes('new') && newId) {
         const newUrl = url.replace('new', newId);
         push(newUrl);
         handleStateUpdate('saveSuccess', true);
@@ -147,7 +146,7 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
   };
 
   const handleDelete = async () => {
-    onDeleteProduct();
+    deleteProduct();
     onClose();
   };
 

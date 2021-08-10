@@ -6,7 +6,7 @@ import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
 import { GroupBox } from './GroupBox';
 
 export const Groups = () => {
-  const { productConfig, onSaveProduct, sortedGroups } = useProductContext();
+  const { productConfig, updateProduct, sortedGroups } = useProductContext();
   // handlers
   const onDragEndComplements = (result: DropResult) => {
     const { destination, source, draggableId, type } = result;
@@ -27,7 +27,7 @@ export const Groups = () => {
         destination.index
       );
     }
-    onSaveProduct({ complementsOrder: newProductConfig }, null, undefined);
+    updateProduct({ changes: { complementsOrder: newProductConfig } });
   };
 
   // UI

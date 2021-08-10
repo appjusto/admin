@@ -1,31 +1,21 @@
 import { Box, Button, Flex, Radio, RadioGroup, Text } from '@chakra-ui/react';
+import { ComplementGroup, WithId } from 'appjusto-types';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
+import { useProductContext } from 'pages/menu/context/ProductContext';
 import React from 'react';
 import { t } from 'utils/i18n';
 import { ItemsQtdButtons } from './ItemQtdButtons';
 
-export type NewGroup = {
-  name: string;
-  required: boolean;
-  maximum: number;
-  minimum: number;
-};
-
 interface GroupFormProps {
-  submitGroup(group: NewGroup): void;
   isCreate?: boolean;
-  isLoading?: boolean;
-  groupData?: NewGroup;
+  groupData?: WithId<ComplementGroup>;
   onSuccess(): void;
 }
 
-export const GroupForm = ({
-  submitGroup,
-  isCreate = false,
-  isLoading = false,
-  groupData,
-  onSuccess,
-}: GroupFormProps) => {
+export const GroupForm = ({ isCreate = false, groupData, onSuccess }: GroupFormProps) => {
+  // context
+  const { updateComplementsGroup, updateGroupResult } = useProductContext();
+  const { isLoading } = updateGroupResult;
   // state
   const [name, setName] = React.useState('');
   const [required, setRequired] = React.useState(false);
@@ -72,7 +62,7 @@ export const GroupForm = ({
       minimum,
       maximum,
     };
-    submitGroup(newGroup);
+    updateComplementsGroup({ groupId: groupData?.id, changes: newGroup });
     onSuccess();
   };
 

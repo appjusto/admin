@@ -447,7 +447,7 @@ export default class BusinessApi {
     return documentAs<Product>(doc);
   }
 
-  async createProduct(businessId: string, product: Product, imageFiles: File[] | null) {
+  async createProduct(businessId: string, product: Product, imageFiles?: File[] | null) {
     // creating product
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
     const productId = this.refs.getBusinessProductsRef(businessId).doc().id;
@@ -582,6 +582,7 @@ export default class BusinessApi {
     );
     return unsubscribe;
   }
+
   observeComplements2(
     businessId: string,
     resultHandler: (result: WithId<Complement>[]) => void
@@ -597,6 +598,77 @@ export default class BusinessApi {
     );
     return unsubscribe;
   }
+
+  async createComplementsGroup2(businessId: string, group: ComplementGroup) {
+    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+    const newGroup = {
+      ...group,
+      createdOn: timestamp,
+      updatedOn: timestamp,
+    };
+    return await this.refs.getBusinessComplementsGroupsRef(businessId).add(newGroup);
+  }
+
+  async updateComplementsGroup2(
+    businessId: string,
+    groupId: string,
+    changes: Partial<ComplementGroup>
+  ) {
+    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+    await this.refs
+      .getBusinessComplementsGroupsRef(businessId)
+      .doc(groupId)
+      .update({
+        ...changes,
+        updatedOn: timestamp,
+      } as Partial<ComplementGroup>);
+  }
+
+  async deleteComplementsGroup2(businessId: string, groupId: string) {
+    await this.refs.getBusinessComplementsGroupsRef(businessId).doc(groupId).delete();
+  }
+
+  async createComplement2(businessId: string, item: Complement, imageFile?: File | null) {
+    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+    const complementId = this.refs.getBusinessComplementsRef(businessId).doc().id;
+    if (imageFile) {
+      await this.uploadComplementPhoto(businessId, complementId, imageFile);
+    }
+    try {
+      await this.refs.getBusinessComplementRef(businessId, complementId).set({
+        ...item,
+        createdOn: timestamp,
+        updatedOn: timestamp,
+      } as Complement);
+      return complementId;
+    } catch (error) {
+      throw new Error(`createProductError: ${error}`);
+    }
+  }
+
+  async updateComplement2(
+    businessId: string,
+    complementId: string,
+    item: Partial<Complement>,
+    imageFile?: File | null
+  ) {
+    let newItem = {
+      ...item,
+    };
+    if (imageFile) {
+      await this.uploadComplementPhoto(businessId, complementId, imageFile);
+    }
+    try {
+      return await this.refs.getBusinessComplementRef(businessId, complementId).update(newItem);
+    } catch (error) {
+      throw new Error(`updateComplementError: ${error}`);
+    }
+  }
+
+  async deleteComplement2(businessId: string, complementId: string) {
+    return await this.refs.getBusinessComplementRef(businessId, complementId).delete();
+  }
+
   /////// NEW COMPLEMENTS LOGIC END
 
   async createComplementsGroup(businessId: string, productId: string, group: ComplementGroup) {

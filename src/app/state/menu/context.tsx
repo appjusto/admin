@@ -1,30 +1,44 @@
 import { useObserveCategories } from 'app/api/business/categories/useObserveCategories';
+import { useObserveComplements2 } from 'app/api/business/complements/useObserveComplements2';
 import * as menu from 'app/api/business/menu/functions';
 import { useObserveMenuOrdering } from 'app/api/business/menu/useObserveMenuOrdering';
 import { useObserveProducts } from 'app/api/business/products/useObserveProducts';
-import { Category, Ordering, WithId } from 'appjusto-types';
+import { Category, Complement, ComplementGroup, Ordering, WithId } from 'appjusto-types';
 import React from 'react';
+import { useContextBusinessId } from '../business/context';
 
-interface MenuContextValue {
+interface ContextProps {
   categories: WithId<Category>[];
   ordering: Ordering;
+  complementsGroups: WithId<ComplementGroup>[];
+  complements: WithId<Complement>[];
   updateMenuOrdering: (ordering: Ordering) => void;
 }
 
-interface Props {
-  businessId: string | undefined;
+interface ProviderProps {
   children: React.ReactNode | React.ReactNode[];
 }
+const MenuProviderContext = React.createContext<ContextProps>({} as ContextProps);
 
-const MenuProviderContext = React.createContext<MenuContextValue | undefined>(undefined);
-
-export const MenuProvider = ({ businessId, children }: Props) => {
+export const MenuProvider = (props: ProviderProps) => {
+  const businessId = useContextBusinessId();
   const unorderedCategories = useObserveCategories(businessId);
   const products = useObserveProducts(businessId);
   const { ordering, updateMenuOrdering } = useObserveMenuOrdering(businessId);
   const categories = menu.getSorted(unorderedCategories, products, ordering);
-  const value: MenuContextValue = { categories, ordering, updateMenuOrdering };
-  return <MenuProviderContext.Provider value={value}>{children}</MenuProviderContext.Provider>;
+  const { complementsGroups, complements } = useObserveComplements2(businessId!);
+  return (
+    <MenuProviderContext.Provider
+      value={{
+        categories,
+        ordering,
+        complementsGroups,
+        complements,
+        updateMenuOrdering,
+      }}
+      {...props}
+    />
+  );
 };
 
 export const useContextMenu = () => {

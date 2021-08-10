@@ -28,7 +28,8 @@ export const ComplementForm = ({
   onCancel,
 }: ComplementFormProps) => {
   //context
-  const { onSaveComplement, onUpdateComplement, getComplementImageUrl } = useProductContext();
+  const { updateComplement, updateComplementResult, getComplementImageUrl } = useProductContext();
+  const { isLoading } = updateComplementResult;
   //state
   const [name, setName] = React.useState('');
   const [description, setDescription] = React.useState('');
@@ -37,7 +38,6 @@ export const ComplementForm = ({
   const [imageUrl, setImageUrl] = React.useState<string | null>(null);
   const [imageFile, setImageFile] = React.useState<File[] | null>(null);
   const [imageExists, setImageExists] = React.useState(false);
-  const [isLoading, setIsLoading] = React.useState(false);
   const [maximum, setMaximum] = React.useState(1);
 
   // refs
@@ -60,7 +60,6 @@ export const ComplementForm = ({
   }, []);
 
   const handleSave = async () => {
-    setIsLoading(true);
     const newItem = {
       name,
       description,
@@ -69,12 +68,12 @@ export const ComplementForm = ({
       externalId,
       imageExists,
     };
-    if (complementId) {
-      await onUpdateComplement(complementId, newItem, imageFile ? imageFile[0] : null);
-    } else {
-      await onSaveComplement(groupId!, newItem, imageFile ? imageFile[0] : null);
-    }
-    setIsLoading(false);
+    await updateComplement({
+      groupId,
+      complementId,
+      changes: newItem,
+      imageFile: imageFile ? imageFile[0] : null,
+    });
     onSuccess();
   };
 

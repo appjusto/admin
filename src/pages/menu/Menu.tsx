@@ -1,5 +1,4 @@
 import { Box, Flex, Icon, Input, InputGroup, InputRightElement, Stack } from '@chakra-ui/react';
-import { useContextBusinessId } from 'app/state/business/context';
 import { MenuProvider } from 'app/state/menu/context';
 import { CustomButton as Button } from 'common/components/buttons/CustomButton';
 import { ReactComponent as SearchIcon } from 'common/img/searchIcon.svg';
@@ -14,18 +13,15 @@ import { ProductDrawer } from './drawers/ProductDrawer';
 
 const Menu = () => {
   // context
-  const businessId = useContextBusinessId();
   const { path, url } = useRouteMatch();
   const history = useHistory();
   // state
   const [productSearch, setProductSearch] = React.useState('');
-
   // handler
   const closeDrawerHandler = () => history.replace(path);
-
   // UI
   return (
-    <MenuProvider businessId={businessId}>
+    <MenuProvider>
       <Box pb="10">
         <PageHeader title={t('Cardápio')} subtitle={t('Defina o cardápio do seu restaurante.')} />
         <Flex flexDir={{ base: 'column', lg: 'row' }} justifyContent="space-between" mt="2" mb="8">

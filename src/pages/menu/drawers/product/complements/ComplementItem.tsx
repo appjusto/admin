@@ -11,19 +11,32 @@ import { t } from 'utils/i18n';
 import { ComplementForm } from './ComplementForm';
 
 interface Props {
+  groupId: string;
   groupMaximum?: number;
   item: WithId<Complement>;
   index: number;
-  isLoading: boolean;
-  handleDelete(complementId: string, imageExists: boolean): void;
 }
 
-export const ComplementItem = ({ groupMaximum, item, index, isLoading, handleDelete }: Props) => {
+export const ComplementItem = ({ groupId, groupMaximum, item, index }: Props) => {
   // context
-  const { onUpdateComplement } = useProductContext();
+  const { updateComplement, updateComplementResult, deleteComplement } = useProductContext();
+  const { isLoading } = updateComplementResult;
   // state
   const [isEditing, setIsEditing] = React.useState(false);
   const [isDeleting, setIsDeleting] = React.useState(false);
+  const handleUpdate = <K extends keyof WithId<Complement>>(value: boolean) => {
+    let newItem = {} as Complement;
+    const keys = Object.keys(item) as K[];
+    keys.forEach((key) => {
+      //@ts-ignore
+      if (key !== 'id') newItem[key] = item[key];
+    });
+    updateComplement({
+      groupId,
+      complementId: item.id,
+      changes: { ...newItem, enabled: value },
+    });
+  };
   // UI
   if (isEditing) {
     return (
@@ -57,7 +70,13 @@ export const ComplementItem = ({ groupMaximum, item, index, isLoading, handleDel
               size="sm"
               w="220px"
               variant="danger"
-              onClick={() => handleDelete(item.id, item.imageExists ?? false)}
+              onClick={() =>
+                deleteComplement({
+                  complementId: item.id,
+                  groupId,
+                  imageExists: item.imageExists ?? false,
+                })
+              }
               isLoading={isLoading}
               loadingText={t('Apagando')}
             >
@@ -108,7 +127,7 @@ export const ComplementItem = ({ groupMaximum, item, index, isLoading, handleDel
                     onChange={(ev) => {
                       ev.stopPropagation();
                       // update
-                      onUpdateComplement(item.id, { enabled: ev.target.checked }, null);
+                      handleUpdate(ev.target.checked);
                     }}
                   />
                 </Box>
