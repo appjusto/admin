@@ -213,29 +213,10 @@ export const ProductContextProvider = (props: ProviderProps) => {
       if (!data.groupsIds || currentGroups.length === 0) {
         throw new Error(`Argumentos inválidos: groupId: ${data.groupsIds}; groupsIds: empty.`);
       }
-      let newProductConfig = { ...productConfig };
-      currentGroups.forEach((group) => {
-        if (group.complements) {
-          //newProductConfig = menu.getConnectedProductConfig(
-          //  productConfig,
-          //  group.id,
-          //  group.complements
-          //);
-          newProductConfig = {
-            firstLevelIds: [...newProductConfig.firstLevelIds, group.id],
-            secondLevelIdsByFirstLevelId: {
-              ...newProductConfig.secondLevelIdsByFirstLevelId,
-              [group.id]: (newProductConfig.secondLevelIdsByFirstLevelId[group.id] ?? []).concat(
-                group.complements
-              ),
-            },
-          };
-        }
-      });
-      console.log(newProductConfig);
+      const connectedProductConfig = menu.getConnectedProductConfig(productConfig, currentGroups);
       await api
         .business()
-        .updateProduct(businessId!, productId, { complementsOrder: newProductConfig });
+        .updateProduct(businessId!, productId, { complementsOrder: connectedProductConfig });
     }
   );
 

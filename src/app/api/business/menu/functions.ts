@@ -1,5 +1,5 @@
 import { arrayMove } from 'app/utils/arrayMove';
-import { Ordering, WithId } from 'appjusto-types';
+import { ComplementGroup, Ordering, WithId } from 'appjusto-types';
 import { without, omit } from 'lodash';
 
 export const empty = (): Ordering => ({ firstLevelIds: [], secondLevelIdsByFirstLevelId: {} });
@@ -51,18 +51,24 @@ export const updateFirstLevelIndex = (
 
 // second levels
 export const getConnectedProductConfig = (
-  ordering: Ordering,
-  firstLevelId: string,
-  secondLevelIds: string[]
+  productConfig: Ordering,
+  groups: WithId<ComplementGroup>[]
 ) => {
-  const { firstLevelIds, secondLevelIdsByFirstLevelId } = ordering;
-  return {
-    firstLevelIds: [...firstLevelIds, firstLevelId],
-    secondLevelIdsByFirstLevelId: {
-      ...secondLevelIdsByFirstLevelId,
-      [firstLevelId]: (secondLevelIdsByFirstLevelId[firstLevelId] ?? []).concat(secondLevelIds),
-    },
-  } as Ordering;
+  let newProductConfig = { ...productConfig };
+  groups.forEach((group) => {
+    if (group.complements) {
+      newProductConfig = {
+        firstLevelIds: [...newProductConfig.firstLevelIds, group.id],
+        secondLevelIdsByFirstLevelId: {
+          ...newProductConfig.secondLevelIdsByFirstLevelId,
+          [group.id]: (newProductConfig.secondLevelIdsByFirstLevelId[group.id] ?? []).concat(
+            group.complements
+          ),
+        },
+      };
+    }
+  });
+  return newProductConfig;
 };
 
 export const addSecondLevel = (ordering: Ordering, secondLevelId: string, firstLevelId: string) => {
