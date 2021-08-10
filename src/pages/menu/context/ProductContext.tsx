@@ -25,6 +25,7 @@ interface ContextProps {
     unknown,
     {
       changes: Partial<Product>;
+      categoryId?: string;
       imageFiles?: File[] | null | undefined;
     },
     unknown
@@ -83,16 +84,18 @@ export const ProductContextProvider = (props: ProviderProps) => {
   const { ordering, updateMenuOrdering, complementsGroups, complements } = useContextMenu();
   const { productId: productIdParam } = useParams<Params>();
   const productId = productIdParam.split('?')[0];
-  //const { updateProduct, deleteProduct } = useProduct(businessId, productId);
   const { product, isValid, imageUrl } = useObserveProduct(businessId, productId, '1008x720');
   const sortedGroups = menu.getSorted(complementsGroups, complements, product?.complementsOrder);
   const contextCategoryId = menu.getParentId(ordering, productId);
   const productConfig = product?.complementsOrder ?? menu.empty();
   const queryCache = useQueryCache();
-
   // mutations
   const [updateProduct, updateProductResult] = useMutation(
-    async (data: { changes: Partial<Product>; imageFiles?: File[] | null }) => {
+    async (data: {
+      changes: Partial<Product>;
+      categoryId?: string;
+      imageFiles?: File[] | null;
+    }) => {
       const newProduct = {
         ...data.changes,
       } as Product;
@@ -102,8 +105,8 @@ export const ProductContextProvider = (props: ProviderProps) => {
       } else {
         await api.business().updateProduct(businessId!, productId, newProduct, data.imageFiles);
       }
-      if (contextCategoryId) {
-        updateMenuOrdering(menu.updateParent(ordering, id, contextCategoryId!));
+      if (data.categoryId) {
+        updateMenuOrdering(menu.updateParent(ordering, id, data.categoryId));
       }
       queryCache.invalidateQueries(['product:image', productId]);
       return id;

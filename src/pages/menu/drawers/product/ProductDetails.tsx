@@ -126,6 +126,7 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
           complementsEnabled,
           imageExists,
         },
+        categoryId,
         imageFiles,
       });
       handleStateUpdate('isLoading', false);

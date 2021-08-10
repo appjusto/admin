@@ -574,7 +574,9 @@ export default class BusinessApi {
     const query = this.refs.getBusinessComplementsGroupsRef(businessId);
     const unsubscribe = query.onSnapshot(
       (querySnapshot) => {
-        resultHandler(documentsAs<ComplementGroup>(querySnapshot.docs));
+        if (!querySnapshot.empty) {
+          resultHandler(documentsAs<ComplementGroup>(querySnapshot.docs));
+        }
       },
       (error) => {
         console.error(error);
@@ -590,7 +592,9 @@ export default class BusinessApi {
     const query = this.refs.getBusinessComplementsRef(businessId);
     const unsubscribe = query.onSnapshot(
       (querySnapshot) => {
-        resultHandler(documentsAs<Complement>(querySnapshot.docs));
+        if (!querySnapshot.empty) {
+          resultHandler(documentsAs<Complement>(querySnapshot.docs));
+        }
       },
       (error) => {
         console.error(error);
