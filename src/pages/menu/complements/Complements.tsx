@@ -4,7 +4,6 @@ import { useContextMenu } from 'app/state/menu/context';
 import { isEmpty } from 'lodash';
 import React from 'react';
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
-import { useRouteMatch } from 'react-router-dom';
 import { GroupItem } from './GroupItem';
 
 interface Props {
@@ -13,8 +12,7 @@ interface Props {
 
 export const Complements = ({ search }: Props) => {
   // state
-  const { complementsGroupsWithItems } = useContextMenu();
-  const { url } = useRouteMatch();
+  const { sortedComplementsGroups } = useContextMenu();
   // handlers
   const onDragEnd = (result: DropResult) => {
     /*const { destination, source, draggableId, type } = result;
@@ -44,7 +42,7 @@ export const Complements = ({ search }: Props) => {
       <Droppable droppableId="categories" type="category">
         {(droppable) => (
           <Box ref={droppable.innerRef} {...droppable.droppableProps}>
-            {complementsGroupsWithItems.map((group, index) => {
+            {sortedComplementsGroups.map((group, index) => {
               if (search) {
                 const complements = menu.filterItemBySearch(group.items!, search);
                 return (

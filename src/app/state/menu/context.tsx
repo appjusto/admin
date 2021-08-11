@@ -12,10 +12,12 @@ import { useContextBusinessId } from '../business/context';
 interface ContextProps {
   categories: WithId<Category>[];
   productsOrdering: Ordering;
+  complementsGroups: WithId<ComplementGroup>[];
   complementsGroupsWithItems: WithId<ComplementGroup>[];
   complements: WithId<Complement>[];
+  sortedComplementsGroups: WithId<ComplementGroup>[];
   updateProductsOrdering: (ordering: Ordering) => void;
-  getComplementsGroupById: (groupId: string) => WithId<ComplementGroup> | undefined;
+  getComplementsGroupById: (groupId?: string) => WithId<ComplementGroup> | undefined;
   updateComplementsGroup: MutateFunction<
     void,
     unknown,
@@ -29,7 +31,6 @@ interface ContextProps {
   deleteComplementsGroup: MutateFunction<void, unknown, string, unknown>;
   deleteGroupResult: MutationResult<void, unknown>;
   getComplementById: (complementId: string) => WithId<Complement> | undefined;
-  getComplementsGroupByComplementId: (complementId: string) => WithId<ComplementGroup> | undefined;
   updateComplement: MutateFunction<
     void,
     unknown,
@@ -72,10 +73,17 @@ export const MenuProvider = (props: ProviderProps) => {
     updateComplementsOrdering,
   } = useObserveMenuOrdering(businessId);
   const categories = menu.getSorted(unorderedCategories, products, productsOrdering);
-  const { complementsGroupsWithItems, complements } = useObserveComplements2(businessId!);
+  const { complementsGroups, complementsGroupsWithItems, complements } = useObserveComplements2(
+    businessId!
+  );
+  const sortedComplementsGroups = menu.getSorted(
+    complementsGroups,
+    complements,
+    complementsOrdering
+  );
   // complements groups
-  const getComplementsGroupById = (groupId: string) =>
-    complementsGroupsWithItems.find((group) => group.id === groupId);
+  const getComplementsGroupById = (groupId?: string) =>
+    complementsGroups.find((group) => group.id === groupId);
 
   const [updateComplementsGroup, updateGroupResult] = useMutation(
     async (data: { groupId: string | undefined; changes: ComplementGroup }) => {
@@ -95,12 +103,6 @@ export const MenuProvider = (props: ProviderProps) => {
   const getComplementById = (complementId: string) =>
     complements.find((complement) => complement.id === complementId);
 
-  const getComplementsGroupByComplementId = (complementId: string) => {
-    const parentId = menu.getParentId(complementsOrdering, complementId);
-    if (!parentId) return;
-    return complementsGroupsWithItems.find((group) => group.id === parentId);
-  };
-
   const [updateComplement, updateComplementResult] = useMutation(
     async (data: {
       groupId: string | undefined;
@@ -109,7 +111,7 @@ export const MenuProvider = (props: ProviderProps) => {
       imageFile?: File | null;
     }) => {
       let currentId = data.complementId;
-      if (data.complementId) {
+      if (data.complementId && data.complementId !== 'new') {
         await api
           .business()
           .updateComplement2(businessId!, data.complementId, data.changes, data.imageFile);
@@ -134,8 +136,10 @@ export const MenuProvider = (props: ProviderProps) => {
       value={{
         categories,
         productsOrdering,
+        complementsGroups,
         complementsGroupsWithItems,
         complements,
+        sortedComplementsGroups,
         updateProductsOrdering,
         getComplementsGroupById,
         updateComplementsGroup,
@@ -143,7 +147,6 @@ export const MenuProvider = (props: ProviderProps) => {
         deleteComplementsGroup,
         deleteGroupResult,
         getComplementById,
-        getComplementsGroupByComplementId,
         updateComplement,
         updateComplementResult,
         deleteComplement,

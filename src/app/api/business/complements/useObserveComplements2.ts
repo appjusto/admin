@@ -23,7 +23,7 @@ export const useObserveComplements2 = (businessId?: string) => {
     const unsub = api.business().observeComplements2(businessId, setComplements);
     return () => unsub();
   }, [api, businessId]);
-  React.useEffect(() => {
+  /*React.useEffect(() => {
     if (complementsGroups.length === 0 || complements.length === 0) return;
     const groupsWithItems = complementsGroups.reduce<WithId<ComplementGroup>[]>((result, group) => {
       let groupWithItems = { ...group, items: [] as WithId<Complement>[] };
@@ -38,7 +38,7 @@ export const useObserveComplements2 = (businessId?: string) => {
       return [...result, group];
     }, []);
     setComplementsGroupsWithItems(groupsWithItems);
-  }, [complementsGroups, complements]);
-  // return
-  return { complementsGroupsWithItems, complements };
+  }, [complementsGroups, complements]);*/
+  // result
+  return { complementsGroups, complementsGroupsWithItems, complements };
 };

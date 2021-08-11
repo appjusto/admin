@@ -101,8 +101,7 @@ export const ComplementForm = ({
       setMaximum(item.maximum ?? 1);
     }
     if (groupId) setParentId(groupId);
-  }, [item]);
-  console.log(groupId);
+  }, [item, groupId]);
 
   React.useEffect(() => {
     if (hookImageUrl) {

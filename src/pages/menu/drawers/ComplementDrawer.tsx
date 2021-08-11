@@ -1,6 +1,7 @@
 import { useContextMenu } from 'app/state/menu/context';
 import React from 'react';
 import { useParams } from 'react-router-dom';
+import { useQuery } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { ComplementForm } from '../complements/ComplementForm';
 import { BaseDrawer } from './BaseDrawer';
@@ -16,15 +17,25 @@ type Params = {
 
 export const ComplementDrawer = (props: Props) => {
   //context
+  const query = useQuery();
   const { complementId } = useParams<Params>();
   const {
     getComplementById,
-    getComplementsGroupByComplementId,
+    getComplementsGroupById,
     updateComplement,
     updateComplementResult,
   } = useContextMenu();
+  // state
+  const [groupId, setGroupId] = React.useState<string>();
   const complement = getComplementById(complementId);
-  const group = getComplementsGroupByComplementId(complementId);
+  const group = getComplementsGroupById(groupId);
+  // side effects
+  React.useEffect(() => {
+    if (!query) return;
+    if (groupId) return;
+    const paramsId = query.get('groupId');
+    if (paramsId) setGroupId(paramsId);
+  }, [query, groupId]);
   // UI
   return (
     <BaseDrawer
@@ -36,6 +47,7 @@ export const ComplementDrawer = (props: Props) => {
       error={updateComplementResult.error}
     >
       <ComplementForm
+        groupId={group?.id}
         groupMaximum={group?.maximum}
         complementId={complementId}
         item={complement}

@@ -66,14 +66,16 @@ const Menu = () => {
               label={isProducts ? t('Adicionar categoria') : t('Adicionar grupo')}
               variant="solid"
             />
-            <Button
-              mt="0"
-              minW="220px"
-              w={{ base: '100%', md: 'auto' }}
-              link={isProducts ? `${url}/product/new` : `${url}/complement/new`}
-              label={isProducts ? t('Adicionar produto') : t('Adicionar complemento')}
-              variant="outline"
-            />
+            {isProducts && (
+              <Button
+                mt="0"
+                minW="220px"
+                w={{ base: '100%', md: 'auto' }}
+                link={`${url}/product/new`}
+                label={t('Adicionar produto')}
+                variant="outline"
+              />
+            )}
           </Stack>
           <InputGroup maxW="360px">
             <Input

@@ -132,7 +132,7 @@ export const GroupItem = React.memo(({ group, complements, index, hidden }: Prop
           <Button
             mt="0"
             w={{ base: '100%', md: '260px' }}
-            link={`${url}/product/new?categoryId=${group.id}`}
+            link={`${url}/complement/new?groupId=${group.id}`}
             label={t('Adicionar complemento')}
             variant="outline"
           />
