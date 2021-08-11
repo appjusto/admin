@@ -1,7 +1,6 @@
 import { Box } from '@chakra-ui/react';
 import * as menu from 'app/api/business/menu/functions';
 import { useContextMenu } from 'app/state/menu/context';
-import { Product, WithId } from 'appjusto-types';
 import { isEmpty } from 'lodash';
 import React from 'react';
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
@@ -15,11 +14,6 @@ interface Props {
 export const Categories = ({ productSearch }: Props) => {
   // state
   const { categories, ordering, updateMenuOrdering } = useContextMenu();
-  const filterProductsWithSearch = (products: WithId<Product>[]) => {
-    if (!productSearch || isEmpty(productSearch)) return products;
-    const regexp = new RegExp(productSearch, 'i');
-    return products.filter((product) => regexp.test(product.name));
-  };
   const { url } = useRouteMatch();
   // handlers
   const onDragEnd = (result: DropResult) => {
@@ -50,7 +44,7 @@ export const Categories = ({ productSearch }: Props) => {
         {(droppable) => (
           <Box ref={droppable.innerRef} {...droppable.droppableProps}>
             {categories.map((category, index) => {
-              const products = filterProductsWithSearch(category.items!);
+              const products = menu.filterItemBySearch(category.items!, productSearch);
               return (
                 <CategoryItem
                   url={url}
