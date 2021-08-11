@@ -229,7 +229,7 @@ export const ProductContextProvider = (props: ProviderProps) => {
       if (!data.groupsIds || currentGroups.length === 0) {
         throw new Error(`Argumentos inválidos: groupId: ${data.groupsIds}; groupsIds: empty.`);
       }
-      const connectedProductConfig = menu.getConnectedProductConfig(productConfig, currentGroups);
+      const connectedProductConfig = menu.getConnectedProductConfig(currentGroups);
       await api
         .business()
         .updateProduct(businessId!, productId, { complementsOrder: connectedProductConfig });

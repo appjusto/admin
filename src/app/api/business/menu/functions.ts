@@ -50,11 +50,8 @@ export const updateFirstLevelIndex = (
 };
 
 // second levels
-export const getConnectedProductConfig = (
-  productConfig: Ordering,
-  groups: WithId<ComplementGroup>[]
-) => {
-  let newProductConfig = { ...productConfig };
+export const getConnectedProductConfig = (groups: WithId<ComplementGroup>[]) => {
+  let newProductConfig = empty();
   groups.forEach((group) => {
     if (group.complements) {
       newProductConfig = {

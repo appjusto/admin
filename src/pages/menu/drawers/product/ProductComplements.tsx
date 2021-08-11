@@ -66,6 +66,7 @@ export const ProductComplements = () => {
   React.useEffect(() => {
     if (isSuccess) {
       setNewGroupForm(false);
+      setIsConnecting(false);
     }
   }, [isSuccess]);
 
