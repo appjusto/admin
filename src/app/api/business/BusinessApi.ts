@@ -607,6 +607,7 @@ export default class BusinessApi {
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
     const newGroup = {
       ...group,
+      enabled: true,
       createdOn: timestamp,
       updatedOn: timestamp,
     };
@@ -641,6 +642,7 @@ export default class BusinessApi {
     try {
       await this.refs.getBusinessComplementRef(businessId, complementId).set({
         ...item,
+        enabled: true,
         createdOn: timestamp,
         updatedOn: timestamp,
       } as Complement);
