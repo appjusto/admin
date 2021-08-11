@@ -1,0 +1,124 @@
+import { Box, Flex, Image, Link, Spacer, Switch, Text, Tooltip } from '@chakra-ui/react';
+import { useComplementImage } from 'app/api/business/complements/useComplementImage';
+import { useContextApi } from 'app/state/api/context';
+import { useContextBusinessId } from 'app/state/business/context';
+import { Complement, WithId } from 'appjusto-types';
+import { EditButton } from 'common/components/buttons/EditButton';
+import { ImageFbLoading } from 'common/components/ImageFbLoading';
+import { ReactComponent as DragHandle } from 'common/img/drag-handle.svg';
+import React from 'react';
+import { Draggable } from 'react-beautiful-dnd';
+import { Link as RouterLink, useRouteMatch } from 'react-router-dom';
+import { t } from 'utils/i18n';
+import { CurrencyInput } from '../../../common/components/form/input/currency-input/CurrencyInput2';
+
+interface Props {
+  complement: WithId<Complement>;
+  index: number;
+}
+
+export const ComplementItem = React.memo(({ complement, index }: Props) => {
+  // context
+  const { url } = useRouteMatch();
+  const api = useContextApi();
+  const businessId = useContextBusinessId();
+  const hookImageUrl = useComplementImage(complement.id);
+  //state
+  const [imageUrl, setImageUrl] = React.useState<string>('');
+  const [price, setPrice] = React.useState(0);
+
+  //handlres
+  const updatePriceState = (value: number | undefined) => {
+    if (value || value === 0) setPrice(value);
+  };
+
+  const onUpdateProduct = async (key: string, value: number | boolean) => {
+    const productData = {
+      [key]: value,
+    };
+    await api.business().updateProduct(businessId!, complement.id, productData, null);
+  };
+
+  //side effects
+  React.useEffect(() => {
+    if (!complement?.imageExists) setImageUrl('/static/media/product-placeholder.png');
+    else if (hookImageUrl) setImageUrl(hookImageUrl);
+  }, [complement?.imageExists, hookImageUrl]);
+
+  React.useEffect(() => {
+    updatePriceState(complement.price);
+  }, [complement.price]);
+
+  // UI
+  return (
+    <Draggable draggableId={complement.id} index={index}>
+      {(draggable, snapshot) => (
+        <Flex
+          bg="white"
+          mb="4"
+          borderWidth="1px"
+          borderRadius="lg"
+          alignItems="center"
+          p="2"
+          ref={draggable.innerRef}
+          {...draggable.draggableProps}
+          pos="relative"
+          minW="700px"
+        >
+          <Box mr="4" bg="white" {...draggable.dragHandleProps} ref={draggable.innerRef}>
+            <DragHandle />
+          </Box>
+          <Link
+            as={RouterLink}
+            to={`${url}/product/${complement.id}`}
+            width="96px"
+            minW="96px"
+            height="96px"
+            _focus={{ outline: 'none' }}
+          >
+            <Image
+              src={imageUrl}
+              width="100%"
+              objectFit="cover"
+              borderRadius="lg"
+              alt="Product image"
+              fallback={<ImageFbLoading width="96px" height="96px" />}
+            />
+          </Link>
+          <Flex w="100%" justifyContent="space-between" px="8">
+            <Box bg="white" mr="2">
+              <Text fontSize="lg" fontWeight="bold">
+                {complement.name}
+              </Text>
+              <Text fontSize="sm">{complement.description}</Text>
+            </Box>
+            <Flex w="120px" minW="120px" alignItems="center">
+              <CurrencyInput
+                mt="0"
+                id={`prod-${complement.id}-price`}
+                label={t('Preço')}
+                value={price}
+                onChangeValue={updatePriceState}
+                onBlur={() => onUpdateProduct('price', price)}
+                maxLength={6}
+              />
+            </Flex>
+          </Flex>
+          <Spacer />
+          <Switch
+            isChecked={complement.enabled}
+            onChange={(ev) => {
+              ev.stopPropagation();
+              onUpdateProduct('enabled', ev.target.checked);
+            }}
+          />
+          <Link as={RouterLink} to={`${url}/product/${complement.id}`}>
+            <Tooltip placement="top" label={t('Editar')} aria-label={t('Editar')}>
+              <EditButton />
+            </Tooltip>
+          </Link>
+        </Flex>
+      )}
+    </Draggable>
+  );
+});

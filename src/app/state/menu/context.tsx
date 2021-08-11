@@ -21,12 +21,14 @@ interface ProviderProps {
 const MenuProviderContext = React.createContext<ContextProps>({} as ContextProps);
 
 export const MenuProvider = (props: ProviderProps) => {
+  // context
   const businessId = useContextBusinessId();
   const unorderedCategories = useObserveCategories(businessId);
   const products = useObserveProducts(businessId);
   const { ordering, updateMenuOrdering } = useObserveMenuOrdering(businessId);
   const categories = menu.getSorted(unorderedCategories, products, ordering);
   const { complementsGroupsWithItems, complements } = useObserveComplements2(businessId!);
+  // provider
   return (
     <MenuProviderContext.Provider
       value={{
