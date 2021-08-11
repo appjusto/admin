@@ -27,7 +27,7 @@ export const ProductComplements = () => {
     connectComplmentsGroupToProduct,
     connectionResult,
   } = useProductContext();
-  const { complementsGroups } = useContextMenu();
+  const { complementsGroupsWithItems } = useContextMenu();
   const { isLoading, isSuccess } = connectionResult;
   //state
   const [hasComplements, setHasComplements] = React.useState(false);
@@ -57,6 +57,12 @@ export const ProductComplements = () => {
       setHasComplements(true);
     }
   }, [product?.complementsEnabled]);
+
+  React.useEffect(() => {
+    if (product?.complementsOrder?.firstLevelIds) {
+      setConnectedGroups(product?.complementsOrder?.firstLevelIds);
+    }
+  }, [product?.complementsOrder?.firstLevelIds]);
   React.useEffect(() => {
     if (isSuccess) {
       setNewGroupForm(false);
@@ -130,10 +136,26 @@ export const ProductComplements = () => {
                   fontSize="16px"
                   lineHeight="22px"
                 >
-                  {complementsGroups.map((group) => (
-                    <Checkbox key={group.id} iconColor="white" value={group.id}>
-                      {group.name}
-                    </Checkbox>
+                  {complementsGroupsWithItems.map((group) => (
+                    <Box key={group.id} w="100%" p="4" border="1px solid #D7E7DA" borderRadius="lg">
+                      <Checkbox
+                        w="100%"
+                        iconColor="white"
+                        size="lg"
+                        borderColor="gray.700"
+                        value={group.id}
+                      >
+                        <Box ml="2">
+                          <Text>{group.name}</Text>
+                          <Text fontSize="sm" color="gray.700">{`${
+                            group.required ? 'Obrigatório' : 'Opcional'
+                          }. Mín: ${group.minimum}. Máx: ${group.maximum}`}</Text>
+                          <Text fontSize="sm" color="gray.700">{`Itens: ${group.items
+                            ?.map((item) => item.name)
+                            .join(', ')}`}</Text>
+                        </Box>
+                      </Checkbox>
+                    </Box>
                   ))}
                 </Stack>
               </CheckboxGroup>

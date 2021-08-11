@@ -9,6 +9,9 @@ export const useObserveComplements2 = (businessId?: string) => {
   // state
   const [complementsGroups, setComplementsGroups] = React.useState<WithId<ComplementGroup>[]>([]);
   const [complements, setComplements] = React.useState<WithId<Complement>[]>([]);
+  const [complementsGroupsWithItems, setComplementsGroupsWithItems] = React.useState<
+    WithId<ComplementGroup>[]
+  >([]);
   // side effects
   React.useEffect(() => {
     if (!businessId) return;
@@ -20,6 +23,22 @@ export const useObserveComplements2 = (businessId?: string) => {
     const unsub = api.business().observeComplements2(businessId, setComplements);
     return () => unsub();
   }, [api, businessId]);
+  React.useEffect(() => {
+    if (complementsGroups.length === 0 || complements.length === 0) return;
+    const groupsWithItems = complementsGroups.reduce<WithId<ComplementGroup>[]>((result, group) => {
+      let groupWithItems = { ...group, items: [] as WithId<Complement>[] };
+      if (groupWithItems.complements) {
+        groupWithItems.complements.forEach((complementId) => {
+          const complement = complements.find((complement) => complement.id === complementId);
+          if (complement) groupWithItems.items.push(complement);
+        });
+        result.push(groupWithItems);
+        return result;
+      }
+      return [...result, group];
+    }, []);
+    setComplementsGroupsWithItems(groupsWithItems);
+  }, [complementsGroups, complements]);
   // return
-  return { complementsGroups, complements };
+  return { complementsGroupsWithItems, complements };
 };

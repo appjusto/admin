@@ -10,7 +10,7 @@ import { useContextBusinessId } from '../business/context';
 interface ContextProps {
   categories: WithId<Category>[];
   ordering: Ordering;
-  complementsGroups: WithId<ComplementGroup>[];
+  complementsGroupsWithItems: WithId<ComplementGroup>[];
   complements: WithId<Complement>[];
   updateMenuOrdering: (ordering: Ordering) => void;
 }
@@ -26,13 +26,13 @@ export const MenuProvider = (props: ProviderProps) => {
   const products = useObserveProducts(businessId);
   const { ordering, updateMenuOrdering } = useObserveMenuOrdering(businessId);
   const categories = menu.getSorted(unorderedCategories, products, ordering);
-  const { complementsGroups, complements } = useObserveComplements2(businessId!);
+  const { complementsGroupsWithItems, complements } = useObserveComplements2(businessId!);
   return (
     <MenuProviderContext.Provider
       value={{
         categories,
         ordering,
-        complementsGroups,
+        complementsGroupsWithItems,
         complements,
         updateMenuOrdering,
       }}

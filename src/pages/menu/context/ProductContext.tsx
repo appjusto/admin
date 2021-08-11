@@ -90,11 +90,25 @@ export const ProductContextProvider = (props: ProviderProps) => {
   // context
   const api = useContextApi();
   const businessId = useContextBusinessId();
-  const { ordering, updateMenuOrdering, complementsGroups, complements } = useContextMenu();
+  const {
+    ordering,
+    updateMenuOrdering,
+    complementsGroupsWithItems,
+    //complements,
+  } = useContextMenu();
   const { productId: productIdParam } = useParams<Params>();
   const productId = productIdParam.split('?')[0];
   const { product, isValid, imageUrl } = useObserveProduct(businessId, productId, '1008x720');
-  const sortedGroups = menu.getSorted(complementsGroups, complements, product?.complementsOrder);
+  /*const sortedGroups = menu.getSorted(
+    complementsGroupsWithItems,
+    complements,
+    product?.complementsOrder
+  );*/
+  const sortedGroups = complementsGroupsWithItems.filter((group) => {
+    if (product?.complementsOrder) {
+      return product?.complementsOrder.firstLevelIds.includes(group.id);
+    } else return false;
+  });
   const contextCategoryId = menu.getParentId(ordering, productId);
   const productConfig = product?.complementsOrder ?? menu.empty();
   const queryCache = useQueryCache();
@@ -166,7 +180,7 @@ export const ProductContextProvider = (props: ProviderProps) => {
         const complementId = await api
           .business()
           .createComplement2(businessId!, data.changes, data.imageFile);
-        const currentGroup = complementsGroups.find((group) => group.id === data.groupId);
+        const currentGroup = complementsGroupsWithItems.find((group) => group.id === data.groupId);
         console.log(currentGroup);
         console.log(data.complementId);
         if (currentGroup) {
@@ -209,7 +223,9 @@ export const ProductContextProvider = (props: ProviderProps) => {
 
   const [connectComplmentsGroupToProduct, connectionResult] = useMutation(
     async (data: { groupsIds: string[] }) => {
-      const currentGroups = complementsGroups.filter((group) => data.groupsIds.includes(group.id));
+      const currentGroups = complementsGroupsWithItems.filter((group) =>
+        data.groupsIds.includes(group.id)
+      );
       if (!data.groupsIds || currentGroups.length === 0) {
         throw new Error(`Argumentos inválidos: groupId: ${data.groupsIds}; groupsIds: empty.`);
       }
