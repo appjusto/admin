@@ -36,42 +36,10 @@ const Menu = () => {
     <MenuProvider>
       <Box pb="10">
         <PageHeader title={t('Cardápio')} subtitle={t('Defina o cardápio do seu restaurante.')} />
-        <Flex flexDir={{ base: 'column', lg: 'row' }} justifyContent="space-between" mt="2" mb="8">
-          <Stack mt="4" direction={{ base: 'column', md: 'row' }} spacing={4}>
-            <Button
-              mt="0"
-              w={{ base: '100%', md: 'auto' }}
-              link={`${url}/category/new`}
-              label={t('Adicionar categoria')}
-              variant="solid"
-            />
-            <Button
-              mt="0"
-              w={{ base: '100%', md: 'auto' }}
-              link={`${url}/product/new`}
-              label={t('Adicionar produto')}
-              variant="outline"
-            />
-          </Stack>
-          <InputGroup maxW="360px">
-            <Input
-              size="lg"
-              mt="16px"
-              value={productSearch}
-              placeholder={t('Encontre um produto adicionado')}
-              onChange={(ev) => setProductSearch(ev.target.value)}
-            />
-            <InputRightElement
-              mt="20px"
-              mr="8px"
-              children={<Icon w="22px" h="22px" as={SearchIcon} />}
-            />
-          </InputGroup>
-        </Flex>
         <Box mt="2">
           <Flex
             mt="8"
-            mb="8"
+            mb="4"
             w="100%"
             justifyContent="space-between"
             borderBottom="1px solid #C8D7CB"
@@ -85,12 +53,46 @@ const Menu = () => {
               </FilterText>
             </HStack>
           </Flex>
-          {isProducts ? (
-            <Categories productSearch={productSearch} />
-          ) : (
-            <Complements search={productSearch} />
-          )}
         </Box>
+        <Flex flexDir={{ base: 'column', lg: 'row' }} justifyContent="space-between" mt="2" mb="8">
+          <Stack mt="4" direction={{ base: 'column', md: 'row' }} spacing={4}>
+            <Button
+              mt="0"
+              minW="220px"
+              w={{ base: '100%', md: 'auto' }}
+              link={`${url}/category/new`}
+              label={isProducts ? t('Adicionar categoria') : t('Adicionar grupo')}
+              variant="solid"
+            />
+            <Button
+              mt="0"
+              minW="220px"
+              w={{ base: '100%', md: 'auto' }}
+              link={`${url}/product/new`}
+              label={isProducts ? t('Adicionar produto') : t('Adicionar complemento')}
+              variant="outline"
+            />
+          </Stack>
+          <InputGroup maxW="360px">
+            <Input
+              size="lg"
+              mt="16px"
+              value={productSearch}
+              placeholder={isProducts ? t('Encontre um produto') : t('Encontre um complemento')}
+              onChange={(ev) => setProductSearch(ev.target.value)}
+            />
+            <InputRightElement
+              mt="20px"
+              mr="8px"
+              children={<Icon w="22px" h="22px" as={SearchIcon} />}
+            />
+          </InputGroup>
+        </Flex>
+        {isProducts ? (
+          <Categories productSearch={productSearch} />
+        ) : (
+          <Complements search={productSearch} />
+        )}
       </Box>
       <Switch>
         <Route path={`${path}/product/:productId`}>
