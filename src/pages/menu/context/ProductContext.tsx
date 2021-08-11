@@ -90,8 +90,8 @@ export const ProductContextProvider = (props: ProviderProps) => {
   const api = useContextApi();
   const businessId = useContextBusinessId();
   const {
-    ordering,
-    updateMenuOrdering,
+    productsOrdering,
+    updateProductsOrdering,
     complementsGroupsWithItems,
     //complements,
   } = useContextMenu();
@@ -108,7 +108,7 @@ export const ProductContextProvider = (props: ProviderProps) => {
       return product?.complementsOrder.firstLevelIds.includes(group.id);
     } else return false;
   });
-  const contextCategoryId = menu.getParentId(ordering, productId);
+  const contextCategoryId = menu.getParentId(productsOrdering, productId);
   const productConfig = product?.complementsOrder ?? menu.empty();
   const queryCache = useQueryCache();
   // mutations
@@ -128,7 +128,7 @@ export const ProductContextProvider = (props: ProviderProps) => {
         await api.business().updateProduct(businessId!, productId, newProduct, data.imageFiles);
       }
       if (data.categoryId) {
-        updateMenuOrdering(menu.updateParent(ordering, id, data.categoryId));
+        updateProductsOrdering(menu.updateParent(productsOrdering, id, data.categoryId));
       }
       queryCache.invalidateQueries(['product:image', productId]);
       return id;
@@ -137,7 +137,9 @@ export const ProductContextProvider = (props: ProviderProps) => {
 
   const [deleteProduct, deleteProductResult] = useMutation(async () => {
     if (contextCategoryId) {
-      updateMenuOrdering(menu.removeSecondLevel(ordering, productId, contextCategoryId));
+      updateProductsOrdering(
+        menu.removeSecondLevel(productsOrdering, productId, contextCategoryId)
+      );
     }
     await api.business().deleteProduct(businessId!, productId);
   });

@@ -7,18 +7,39 @@ import React from 'react';
 export const useObserveMenuOrdering = (businessId: string | undefined) => {
   const api = useContextApi();
   //state
-  const [ordering, setOrdering] = React.useState<Ordering>(menu.empty());
-  const updateMenuOrdering = (ordering: Ordering) => {
-    setOrdering(ordering); // optimistic update to avoid flickering
+  const [productsOrdering, setProductsOrdering] = React.useState<Ordering>(menu.empty());
+  const [complementsOrdering, setComplementsOrdering] = React.useState<Ordering>(menu.empty());
+  const updateProductsOrdering = (ordering: Ordering) => {
+    setProductsOrdering(ordering); // optimistic update to avoid flickering
     api.business().updateMenuOrdering(businessId!, ordering);
+  };
+  const updateComplementsOrdering = (ordering: Ordering) => {
+    setComplementsOrdering(ordering); // optimistic update to avoid flickering
+    api.business().updateMenuOrdering(businessId!, ordering, 'complements');
   };
   // side effects
   React.useEffect(() => {
     if (!businessId) return;
     const unsub = api.business().observeMenuOrdering(businessId, (config) => {
-      setOrdering(!isEmpty(config) ? config : menu.empty());
+      setProductsOrdering(!isEmpty(config) ? config : menu.empty());
     });
-    return () => unsub();
+    const unsub2 = api.business().observeMenuOrdering(
+      businessId,
+      (config) => {
+        setComplementsOrdering(!isEmpty(config) ? config : menu.empty());
+      },
+      'complements'
+    );
+    return () => {
+      unsub();
+      unsub2();
+    };
   }, [api, businessId]);
-  return { ordering, updateMenuOrdering };
+  // result
+  return {
+    productsOrdering,
+    updateProductsOrdering,
+    complementsOrdering,
+    updateComplementsOrdering,
+  };
 };

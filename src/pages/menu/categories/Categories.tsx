@@ -13,7 +13,7 @@ interface Props {
 
 export const Categories = ({ productSearch }: Props) => {
   // state
-  const { categories, ordering, updateMenuOrdering } = useContextMenu();
+  const { categories, productsOrdering, updateProductsOrdering } = useContextMenu();
   const { url } = useRouteMatch();
   // handlers
   const onDragEnd = (result: DropResult) => {
@@ -22,9 +22,9 @@ export const Categories = ({ productSearch }: Props) => {
     if (source.droppableId === destination.droppableId && source.index === destination.index)
       return; // same location
     if (type === 'product') {
-      updateMenuOrdering(
+      updateProductsOrdering(
         menu.updateSecondLevelIndex(
-          ordering,
+          productsOrdering,
           draggableId, //product id
           source.droppableId, // category from
           destination.droppableId, // category to
@@ -33,7 +33,9 @@ export const Categories = ({ productSearch }: Props) => {
         )
       );
     } else if (type === 'category') {
-      updateMenuOrdering(menu.updateFirstLevelIndex(ordering, draggableId, destination.index));
+      updateProductsOrdering(
+        menu.updateFirstLevelIndex(productsOrdering, draggableId, destination.index)
+      );
     }
   };
 

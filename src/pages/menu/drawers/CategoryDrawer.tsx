@@ -21,7 +21,7 @@ export const CategoryDrawer = (props: Props) => {
   //context
   const { categoryId } = useParams<Params>();
   // state
-  const { ordering, updateMenuOrdering } = useContextMenu();
+  const { productsOrdering, updateProductsOrdering } = useContextMenu();
   const { category, id, saveCategory, deleteCategory, result } = useCategory(categoryId);
   const { isLoading, isError, error } = result;
   const [name, setName] = React.useState(category?.name ?? '');
@@ -35,13 +35,13 @@ export const CategoryDrawer = (props: Props) => {
         name,
         enabled: true,
       });
-      updateMenuOrdering(menu.addFirstLevel(ordering, id));
+      updateProductsOrdering(menu.addFirstLevel(productsOrdering, id));
       props.onClose();
     })();
   };
   const onDeleteHandler = () => {
     (async () => {
-      updateMenuOrdering(menu.removeFirstLevel(ordering, id));
+      updateProductsOrdering(menu.removeFirstLevel(productsOrdering, id));
       await deleteCategory();
       props.onClose();
     })();

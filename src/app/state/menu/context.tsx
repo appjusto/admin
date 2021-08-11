@@ -11,10 +11,10 @@ import { useContextBusinessId } from '../business/context';
 
 interface ContextProps {
   categories: WithId<Category>[];
-  ordering: Ordering;
+  productsOrdering: Ordering;
   complementsGroupsWithItems: WithId<ComplementGroup>[];
   complements: WithId<Complement>[];
-  updateMenuOrdering: (ordering: Ordering) => void;
+  updateProductsOrdering: (ordering: Ordering) => void;
   updateComplementsGroup: MutateFunction<
     void,
     unknown,
@@ -61,8 +61,8 @@ export const MenuProvider = (props: ProviderProps) => {
   const businessId = useContextBusinessId();
   const unorderedCategories = useObserveCategories(businessId);
   const products = useObserveProducts(businessId);
-  const { ordering, updateMenuOrdering } = useObserveMenuOrdering(businessId);
-  const categories = menu.getSorted(unorderedCategories, products, ordering);
+  const { productsOrdering, updateProductsOrdering } = useObserveMenuOrdering(businessId);
+  const categories = menu.getSorted(unorderedCategories, products, productsOrdering);
   const { complementsGroupsWithItems, complements } = useObserveComplements2(businessId!);
   // groups
   const [updateComplementsGroup, updateGroupResult] = useMutation(
@@ -103,10 +103,10 @@ export const MenuProvider = (props: ProviderProps) => {
     <MenuProviderContext.Provider
       value={{
         categories,
-        ordering,
+        productsOrdering,
         complementsGroupsWithItems,
         complements,
-        updateMenuOrdering,
+        updateProductsOrdering,
         updateComplementsGroup,
         updateGroupResult,
         deleteComplementsGroup,

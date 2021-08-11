@@ -342,9 +342,10 @@ export default class BusinessApi {
   // menu config
   observeMenuOrdering(
     businessId: string,
-    resultHandler: (result: Ordering) => void
+    resultHandler: (result: Ordering) => void,
+    menuId?: string
   ): firebase.Unsubscribe {
-    const unsubscribe = this.refs.getBusinessMenuOrderingRef(businessId).onSnapshot(
+    const unsubscribe = this.refs.getBusinessMenuOrderingRef(businessId, menuId).onSnapshot(
       (doc) => {
         resultHandler({ ...(doc.data() as Ordering) });
       },
@@ -355,8 +356,8 @@ export default class BusinessApi {
     return unsubscribe;
   }
 
-  async updateMenuOrdering(businessId: string, ordering: Ordering) {
-    await this.refs.getBusinessMenuOrderingRef(businessId).set(ordering, { merge: false });
+  async updateMenuOrdering(businessId: string, ordering: Ordering, menuId?: string) {
+    await this.refs.getBusinessMenuOrderingRef(businessId, menuId).set(ordering, { merge: false });
   }
 
   // categories
