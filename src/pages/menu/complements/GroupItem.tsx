@@ -23,11 +23,12 @@ export const GroupItem = React.memo(({ group, complements, index, hidden, url }:
   // context
   //const { url } = useRouteMatch();
   // state
-  const [showComplements, setShowComplements] = React.useState(false);
+  const [showComplements, setShowComplements] = React.useState(true);
   // helpers
   const itemsQtd = group.complements?.length ?? 0;
   // mutations
   const { updateCategory } = useCategory(group.id);
+  // side effects
   // UI
   return (
     <Draggable draggableId={group.id} index={index}>

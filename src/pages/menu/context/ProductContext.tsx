@@ -68,7 +68,6 @@ interface ContextProps {
     unknown
   >;
   deleteComplementResult: MutationResult<void, unknown>;
-  getComplementImageUrl(complementId: string): Promise<string | null>;
   connectComplmentsGroupToProduct: MutateFunction<
     void,
     unknown,
@@ -181,8 +180,6 @@ export const ProductContextProvider = (props: ProviderProps) => {
           .business()
           .createComplement2(businessId!, data.changes, data.imageFile);
         const currentGroup = complementsGroupsWithItems.find((group) => group.id === data.groupId);
-        console.log(currentGroup);
-        console.log(data.complementId);
         if (currentGroup) {
           const complements = currentGroup.complements
             ? [...currentGroup.complements, complementId]
@@ -211,14 +208,6 @@ export const ProductContextProvider = (props: ProviderProps) => {
         .updateProduct(businessId!, productId, { complementsOrder: newProductConfig });
       await api.business().deleteComplement2(businessId!, data.complementId);
     }
-  );
-
-  const getComplementImageUrl = React.useCallback(
-    async (complementId: string) => {
-      const url = await api.business().getComplementImageURL(businessId!, complementId);
-      return url;
-    },
-    [api, businessId]
   );
 
   const [connectComplmentsGroupToProduct, connectionResult] = useMutation(
@@ -258,7 +247,6 @@ export const ProductContextProvider = (props: ProviderProps) => {
         updateComplementResult,
         deleteComplement,
         deleteComplementResult,
-        getComplementImageUrl,
         connectComplmentsGroupToProduct,
         connectionResult,
       }}

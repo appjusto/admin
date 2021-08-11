@@ -1,4 +1,5 @@
 import { Button, Flex, HStack, Text, VStack } from '@chakra-ui/react';
+import { useComplementImage } from 'app/api/business/complements/useComplementImage';
 import { Complement, WithId } from 'appjusto-types';
 import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput2';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
@@ -28,7 +29,8 @@ export const ComplementForm = ({
   onCancel,
 }: ComplementFormProps) => {
   //context
-  const { updateComplement, updateComplementResult, getComplementImageUrl } = useProductContext();
+  const hookImageUrl = useComplementImage(complementId);
+  const { updateComplement, updateComplementResult } = useProductContext();
   const { isLoading } = updateComplementResult;
   //state
   const [name, setName] = React.useState('');
@@ -44,11 +46,6 @@ export const ComplementForm = ({
   const inputRef = React.useRef<HTMLInputElement>(null);
 
   //handlers
-  const getImageUrl = React.useCallback(async () => {
-    const url = await getComplementImageUrl(complementId!);
-    if (url) return setImageUrl(url);
-  }, [complementId, getComplementImageUrl]);
-
   const clearDropImages = React.useCallback(() => {
     setImageFile(null);
     setImageExists(false);
@@ -91,10 +88,10 @@ export const ComplementForm = ({
   }, [item]);
 
   React.useEffect(() => {
-    if (item?.imageExists) {
-      getImageUrl();
+    if (hookImageUrl) {
+      setImageUrl(hookImageUrl);
     }
-  }, [item?.imageExists, getImageUrl]);
+  }, [hookImageUrl]);
 
   //UI
   return (
