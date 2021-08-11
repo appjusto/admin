@@ -100,14 +100,17 @@ export const getParentId = (ordering: Ordering, secondLevelId: string) => {
 export const removeSecondLevel = (
   ordering: Ordering,
   secondLevelId: string,
-  firstLevelId: string
+  firstLevelId?: string
 ) => {
+  let currentParentId = firstLevelId;
+  if (!currentParentId) currentParentId = getParentId(ordering, secondLevelId);
+  if (!currentParentId) return ordering;
   const { secondLevelIdsByFirstLevelId } = ordering;
   return {
     ...ordering,
     secondLevelIdsByFirstLevelId: {
       ...secondLevelIdsByFirstLevelId,
-      [firstLevelId]: without(secondLevelIdsByFirstLevelId[firstLevelId], secondLevelId),
+      [currentParentId]: without(secondLevelIdsByFirstLevelId[currentParentId], secondLevelId),
     },
   } as Ordering;
 };

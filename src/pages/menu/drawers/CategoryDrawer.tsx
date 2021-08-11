@@ -29,22 +29,18 @@ export const CategoryDrawer = (props: Props) => {
   // refs
   const inputRef = React.useRef<HTMLInputElement>(null);
   // handlers
-  const onSaveHandler = () => {
-    (async () => {
-      await saveCategory({
-        name,
-        enabled: true,
-      });
-      updateProductsOrdering(menu.addFirstLevel(productsOrdering, id));
-      props.onClose();
-    })();
+  const onSaveHandler = async () => {
+    await saveCategory({
+      name,
+      enabled: true,
+    });
+    updateProductsOrdering(menu.addFirstLevel(productsOrdering, id));
+    props.onClose();
   };
-  const onDeleteHandler = () => {
-    (async () => {
-      updateProductsOrdering(menu.removeFirstLevel(productsOrdering, id));
-      await deleteCategory();
-      props.onClose();
-    })();
+  const onDeleteHandler = async () => {
+    updateProductsOrdering(menu.removeFirstLevel(productsOrdering, id));
+    await deleteCategory();
+    props.onClose();
   };
   // side effects
   React.useEffect(() => {

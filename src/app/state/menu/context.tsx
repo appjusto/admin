@@ -31,6 +31,7 @@ interface ContextProps {
     void,
     unknown,
     {
+      groupId: string | undefined;
       complementId: string | undefined;
       changes: Complement;
       imageFile?: File | null | undefined;
@@ -61,40 +62,54 @@ export const MenuProvider = (props: ProviderProps) => {
   const businessId = useContextBusinessId();
   const unorderedCategories = useObserveCategories(businessId);
   const products = useObserveProducts(businessId);
-  const { productsOrdering, updateProductsOrdering } = useObserveMenuOrdering(businessId);
+  const {
+    productsOrdering,
+    updateProductsOrdering,
+    complementsOrdering,
+    updateComplementsOrdering,
+  } = useObserveMenuOrdering(businessId);
   const categories = menu.getSorted(unorderedCategories, products, productsOrdering);
   const { complementsGroupsWithItems, complements } = useObserveComplements2(businessId!);
-  // groups
+  // complements groups
   const [updateComplementsGroup, updateGroupResult] = useMutation(
     async (data: { groupId: string | undefined; changes: ComplementGroup }) => {
       if (data.groupId) {
         await api.business().updateComplementsGroup2(businessId!, data.groupId, data.changes);
       } else {
-        await api.business().createComplementsGroup2(businessId!, data.changes);
+        const newGroup = await api.business().createComplementsGroup2(businessId!, data.changes);
+        updateComplementsOrdering(menu.addFirstLevel(complementsOrdering, newGroup.id));
       }
     }
   );
   const [deleteComplementsGroup, deleteGroupResult] = useMutation(async (groupId: string) => {
+    updateComplementsOrdering(menu.removeFirstLevel(complementsOrdering, groupId));
     await api.business().deleteComplementsGroup2(businessId!, groupId);
   });
   // complements
   const [updateComplement, updateComplementResult] = useMutation(
     async (data: {
+      groupId: string | undefined;
       complementId: string | undefined;
       changes: Complement;
       imageFile?: File | null;
     }) => {
+      let currentId = data.complementId;
       if (data.complementId) {
         await api
           .business()
           .updateComplement2(businessId!, data.complementId, data.changes, data.imageFile);
       } else {
-        await api.business().createComplement2(businessId!, data.changes, data.imageFile);
+        currentId = await api
+          .business()
+          .createComplement2(businessId!, data.changes, data.imageFile);
       }
+      if (data.groupId)
+        updateComplementsOrdering(menu.updateParent(complementsOrdering, currentId!, data.groupId));
     }
   );
   const [deleteComplement, deleteComplementResult] = useMutation(
     async (data: { complementId: string; imageExists: boolean }) => {
+      updateComplementsOrdering(menu.removeSecondLevel(complementsOrdering, data.complementId));
       await api.business().deleteComplement2(businessId!, data.complementId);
     }
   );
