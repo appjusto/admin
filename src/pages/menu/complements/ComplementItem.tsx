@@ -70,7 +70,7 @@ export const ComplementItem = React.memo(({ complement, index }: Props) => {
           </Box>
           <Link
             as={RouterLink}
-            to={`${url}/product/${complement.id}`}
+            to={`${url}/complement/${complement.id}`}
             width="96px"
             minW="96px"
             height="96px"
@@ -112,7 +112,7 @@ export const ComplementItem = React.memo(({ complement, index }: Props) => {
               onUpdateProduct('enabled', ev.target.checked);
             }}
           />
-          <Link as={RouterLink} to={`${url}/product/${complement.id}`}>
+          <Link as={RouterLink} to={`${url}/complement/${complement.id}`}>
             <Tooltip placement="top" label={t('Editar')} aria-label={t('Editar')}>
               <EditButton />
             </Tooltip>

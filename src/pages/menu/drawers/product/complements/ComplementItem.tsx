@@ -8,7 +8,7 @@ import React from 'react';
 import { Draggable } from 'react-beautiful-dnd';
 import { formatCurrency } from 'utils/formatters';
 import { t } from 'utils/i18n';
-import { ComplementForm } from './ComplementForm';
+import { ComplementForm } from '../../../complements/ComplementForm';
 
 interface Props {
   groupId: string;
@@ -52,6 +52,8 @@ export const ComplementItem = ({
           groupMaximum={groupMaximum}
           complementId={item.id}
           item={item}
+          updateComplement={updateComplement}
+          updateComplementResult={updateComplementResult}
           onSuccess={() => setIsEditing(false)}
           onCancel={() => setIsEditing(false)}
         />

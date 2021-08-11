@@ -6,10 +6,11 @@ import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
 import { ImageUploads } from 'common/components/ImageUploads';
 import { complementsRatios, complementsResizedWidth } from 'common/imagesDimensions';
-import { useProductContext } from 'pages/menu/context/ProductContext';
 import React from 'react';
+import { MutateFunction, MutationResult } from 'react-query';
 import { t } from 'utils/i18n';
-import { ItemsQtdButtons } from '../groups/ItemQtdButtons';
+import { GroupSelect } from './GroupSelect';
+import { ItemsQtdButtons } from './ItemQtdButtons';
 
 interface ComplementFormProps {
   groupId?: string;
@@ -18,6 +19,18 @@ interface ComplementFormProps {
   item?: WithId<Complement>;
   onSuccess(): void;
   onCancel(): void;
+  updateComplement: MutateFunction<
+    void,
+    unknown,
+    {
+      groupId: string | undefined;
+      complementId: string | undefined;
+      changes: Complement;
+      imageFile?: File | null | undefined;
+    },
+    unknown
+  >;
+  updateComplementResult: MutationResult<void, unknown>;
 }
 
 export const ComplementForm = ({
@@ -25,15 +38,17 @@ export const ComplementForm = ({
   groupMaximum,
   complementId,
   item,
+  updateComplement,
+  updateComplementResult,
   onSuccess,
   onCancel,
 }: ComplementFormProps) => {
   //context
   const hookImageUrl = useComplementImage(complementId);
-  const { updateComplement, updateComplementResult } = useProductContext();
   const { isLoading } = updateComplementResult;
   //state
   const [name, setName] = React.useState('');
+  const [parentId, setParentId] = React.useState('');
   const [description, setDescription] = React.useState('');
   const [price, setPrice] = React.useState(0);
   const [externalId, setExternalId] = React.useState('');
@@ -85,7 +100,9 @@ export const ComplementForm = ({
       setImageExists(item.imageExists ?? false);
       setMaximum(item.maximum ?? 1);
     }
+    if (groupId) setParentId(groupId);
   }, [item]);
+  console.log(groupId);
 
   React.useEffect(() => {
     if (hookImageUrl) {
@@ -131,6 +148,11 @@ export const ComplementForm = ({
             placeholder={t('Nome do item')}
             value={name}
             handleChange={(ev) => setName(ev.target.value)}
+          />
+          <GroupSelect
+            isRequired
+            value={parentId}
+            onChange={(ev) => setParentId(ev.target.value)}
           />
           <Textarea
             mt="4"

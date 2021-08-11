@@ -14,7 +14,7 @@ import { useProductContext } from 'pages/menu/context/ProductContext';
 import React from 'react';
 import { Redirect, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
-import { GroupForm } from './groups/GroupForm';
+import { GroupForm } from '../../complements/GroupForm';
 import { Groups } from './groups/Groups';
 
 export const ProductComplements = () => {

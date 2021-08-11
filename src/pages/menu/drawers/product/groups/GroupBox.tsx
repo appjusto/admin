@@ -11,9 +11,9 @@ import { useProductContext } from 'pages/menu/context/ProductContext';
 import React from 'react';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
 import { t } from 'utils/i18n';
-import { ComplementForm } from '../complements/ComplementForm';
+import { ComplementForm } from '../../../complements/ComplementForm';
+import { GroupForm } from '../../../complements/GroupForm';
 import { ComplementItem } from '../complements/ComplementItem';
-import { GroupForm } from './GroupForm';
 
 interface GroupBoxProps {
   index: number;
@@ -27,6 +27,8 @@ export const GroupBox = ({ index, group }: GroupBoxProps) => {
     updateGroupResult,
     deleteComplementsGroup,
     deleteGroupResult,
+    updateComplement,
+    updateComplementResult,
   } = useProductContext();
   const { isLoading, isError, error: deleteError } = deleteGroupResult;
   //state
@@ -209,6 +211,8 @@ export const GroupBox = ({ index, group }: GroupBoxProps) => {
                 <ComplementForm
                   groupId={group.id}
                   groupMaximum={group.maximum}
+                  updateComplement={updateComplement}
+                  updateComplementResult={updateComplementResult}
                   onSuccess={() => setIsAdding(false)}
                   onCancel={() => setIsAdding(false)}
                 />

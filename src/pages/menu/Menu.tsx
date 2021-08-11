@@ -20,6 +20,7 @@ import { Categories } from './categories/Categories';
 import { Complements } from './complements/Complements';
 import { ProductContextProvider } from './context/ProductContext';
 import { CategoryDrawer } from './drawers/CategoryDrawer';
+import { ComplementDrawer } from './drawers/ComplementDrawer';
 import { GroupDrawer } from './drawers/GroupDrawer';
 import { ProductDrawer } from './drawers/ProductDrawer';
 
@@ -106,6 +107,9 @@ const Menu = () => {
         </Route>
         <Route path={`${path}/complementsgroup/:groupId`}>
           <GroupDrawer isOpen onClose={closeDrawerHandler} />
+        </Route>
+        <Route path={`${path}/complement/:complementId`}>
+          <ComplementDrawer isOpen onClose={closeDrawerHandler} />
         </Route>
       </Switch>
     </MenuProvider>

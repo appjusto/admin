@@ -2,8 +2,8 @@ import { useContextMenu } from 'app/state/menu/context';
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { t } from 'utils/i18n';
+import { GroupForm } from '../complements/GroupForm';
 import { BaseDrawer } from './BaseDrawer';
-import { GroupForm } from './product/groups/GroupForm';
 
 interface Props {
   isOpen: boolean;
@@ -33,7 +33,7 @@ export const GroupDrawer = (props: Props) => {
         isCreate
         atDrawer
         groupData={group}
-        onSuccess={() => props.onClose()}
+        onSuccess={props.onClose}
         updateComplementsGroup={updateComplementsGroup}
         updateGroupResult={updateGroupResult}
       />
