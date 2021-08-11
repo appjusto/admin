@@ -25,6 +25,7 @@ interface BaseDrawerProps {
   isOpen: boolean;
   isError: boolean;
   error: unknown | string | null;
+  headerMd?: string;
   onClose(): void;
   children: React.ReactNode;
 }
@@ -34,6 +35,7 @@ export const BaseDrawer = ({
   title,
   isError,
   error,
+  headerMd,
   onClose,
   children,
   ...props
@@ -49,7 +51,7 @@ export const BaseDrawer = ({
           <DrawerHeader
             borderBottom={type === 'product' ? '1px solid #C8D7CB' : 'none'}
             pb="0"
-            mb="8"
+            mb={headerMd ? headerMd : '8'}
           >
             <Text fontSize="2xl" fontWeight="700">
               {title}

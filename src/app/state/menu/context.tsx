@@ -15,6 +15,7 @@ interface ContextProps {
   complementsGroupsWithItems: WithId<ComplementGroup>[];
   complements: WithId<Complement>[];
   updateProductsOrdering: (ordering: Ordering) => void;
+  getComplementsGroupById: (groupId: string) => WithId<ComplementGroup> | undefined;
   updateComplementsGroup: MutateFunction<
     void,
     unknown,
@@ -71,6 +72,9 @@ export const MenuProvider = (props: ProviderProps) => {
   const categories = menu.getSorted(unorderedCategories, products, productsOrdering);
   const { complementsGroupsWithItems, complements } = useObserveComplements2(businessId!);
   // complements groups
+  const getComplementsGroupById = (groupId: string) =>
+    complementsGroupsWithItems.find((group) => group.id === groupId);
+
   const [updateComplementsGroup, updateGroupResult] = useMutation(
     async (data: { groupId: string | undefined; changes: ComplementGroup }) => {
       if (data.groupId) {
@@ -122,6 +126,7 @@ export const MenuProvider = (props: ProviderProps) => {
         complementsGroupsWithItems,
         complements,
         updateProductsOrdering,
+        getComplementsGroupById,
         updateComplementsGroup,
         updateGroupResult,
         deleteComplementsGroup,

@@ -8,6 +8,7 @@ import { EditButton } from 'common/components/buttons/EditButton';
 import { ReactComponent as DragHandle } from 'common/img/drag-handle.svg';
 import React from 'react';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
+import { Link, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { ComplementItem } from './ComplementItem';
 
@@ -16,12 +17,11 @@ interface Props {
   complements?: WithId<Complement>[];
   index: number;
   hidden?: boolean;
-  url: string;
 }
 
-export const GroupItem = React.memo(({ group, complements, index, hidden, url }: Props) => {
+export const GroupItem = React.memo(({ group, complements, index, hidden }: Props) => {
   // context
-  //const { url } = useRouteMatch();
+  const { url } = useRouteMatch();
   // state
   const [showComplements, setShowComplements] = React.useState(true);
   // helpers
@@ -90,7 +90,9 @@ export const GroupItem = React.memo(({ group, complements, index, hidden, url }:
                   </Box>
                 </Tooltip>
                 <Tooltip placement="top" label={t('Editar')} aria-label={t('Editar')}>
-                  <EditButton ml="2" title={t('Editar')} onClick={() => {}} />
+                  <Link to={`${url}/complementsgroup/${group.id}`}>
+                    <EditButton ml="2" title={t('Editar')} />
+                  </Link>
                 </Tooltip>
                 <Tooltip placement="top" label={t('Excluir grupo')} aria-label={t('Excluir grupo')}>
                   <DeleteButton title={t('Excluir grupo')} onClick={() => {}} />

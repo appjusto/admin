@@ -1,20 +1,37 @@
-import { Box, Button, Flex, Radio, RadioGroup, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, Radio, RadioGroup, Stack, Text } from '@chakra-ui/react';
 import { ComplementGroup, WithId } from 'appjusto-types';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
-import { useProductContext } from 'pages/menu/context/ProductContext';
 import React from 'react';
+import { MutateFunction, MutationResult } from 'react-query';
 import { t } from 'utils/i18n';
 import { ItemsQtdButtons } from './ItemQtdButtons';
 
 interface GroupFormProps {
   isCreate?: boolean;
+  atDrawer?: boolean;
   groupData?: WithId<ComplementGroup>;
+  updateComplementsGroup: MutateFunction<
+    void,
+    unknown,
+    {
+      groupId: string | undefined;
+      changes: ComplementGroup;
+    },
+    unknown
+  >;
+  updateGroupResult: MutationResult<void, unknown>;
   onSuccess(): void;
 }
 
-export const GroupForm = ({ isCreate = false, groupData, onSuccess }: GroupFormProps) => {
+export const GroupForm = ({
+  isCreate = false,
+  atDrawer = false,
+  groupData,
+  updateComplementsGroup,
+  updateGroupResult,
+  onSuccess,
+}: GroupFormProps) => {
   // context
-  const { updateComplementsGroup, updateGroupResult } = useProductContext();
   const { isLoading } = updateGroupResult;
   // state
   const [name, setName] = React.useState('');
@@ -69,7 +86,7 @@ export const GroupForm = ({ isCreate = false, groupData, onSuccess }: GroupFormP
   // side effects
   React.useEffect(() => {
     inputRef?.current?.focus();
-    if (!isCreate && groupData) {
+    if (groupData) {
       setName(groupData?.name);
       setRequired(groupData?.required);
       setMax(groupData?.maximum);
@@ -86,9 +103,11 @@ export const GroupForm = ({ isCreate = false, groupData, onSuccess }: GroupFormP
           handleSubmit();
         }}
       >
-        <Text fontSize="xl" fontWeight="700" color="black">
-          {t('Novo grupo de complementos')}
-        </Text>
+        {!atDrawer && (
+          <Text fontSize="xl" fontWeight="700" color="black">
+            {t('Novo grupo de complementos')}
+          </Text>
+        )}
         <Input
           ref={inputRef}
           isRequired
@@ -138,18 +157,28 @@ export const GroupForm = ({ isCreate = false, groupData, onSuccess }: GroupFormP
             decrement={() => handleMaxAndMin('max', 'dec')}
           />
         </Flex>
-        <Box mt="10">
+        <Stack w="100%" direction={{ base: 'column', lg: 'row' }} mt="10">
           <Button
             type="submit"
-            w="full"
-            maxW="220px"
+            w={{ base: '100%', lg: '50%' }}
             fontSize="sm"
             isLoading={isLoading}
             loadingText={t('Salvando')}
           >
             {t('Criar grupo')}
           </Button>
-        </Box>
+          {atDrawer && groupData && (
+            <Button
+              w={{ base: '100%', lg: '50%' }}
+              variant="dangerLight"
+              fontSize="sm"
+              isLoading={isLoading}
+              loadingText={t('Excluindo')}
+            >
+              {t('Excluir grupo')}
+            </Button>
+          )}
+        </Stack>
       </form>
     );
   }

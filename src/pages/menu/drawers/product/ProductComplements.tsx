@@ -24,6 +24,8 @@ export const ProductComplements = () => {
     productId,
     product,
     updateProduct,
+    updateComplementsGroup,
+    updateGroupResult,
     connectComplmentsGroupToProduct,
     connectionResult,
   } = useProductContext();
@@ -172,7 +174,14 @@ export const ProductComplements = () => {
               </Button>
             </Box>
           )}
-          {newGroupForm && <GroupForm isCreate onSuccess={() => setNewGroupForm(false)} />}
+          {newGroupForm && (
+            <GroupForm
+              isCreate
+              onSuccess={() => setNewGroupForm(false)}
+              updateComplementsGroup={updateComplementsGroup}
+              updateGroupResult={updateGroupResult}
+            />
+          )}
         </>
       )}
     </>

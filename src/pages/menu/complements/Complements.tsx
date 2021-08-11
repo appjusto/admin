@@ -50,7 +50,6 @@ export const Complements = ({ search }: Props) => {
                 return (
                   <GroupItem
                     key={group.id}
-                    url={url}
                     group={group}
                     complements={complements}
                     index={index}
@@ -61,7 +60,6 @@ export const Complements = ({ search }: Props) => {
                 return (
                   <GroupItem
                     key={group.id}
-                    url={url}
                     group={group}
                     complements={group.items}
                     index={index}

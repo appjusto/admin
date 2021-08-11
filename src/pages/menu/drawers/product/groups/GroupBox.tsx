@@ -197,7 +197,14 @@ export const GroupBox = ({ index, group }: GroupBoxProps) => {
                   </Flex>
                 </Flex>
               </Flex>
-              {isEditing && <GroupForm groupData={group} onSuccess={() => setIsEditing(false)} />}
+              {isEditing && (
+                <GroupForm
+                  groupData={group}
+                  onSuccess={() => setIsEditing(false)}
+                  updateComplementsGroup={updateComplementsGroup}
+                  updateGroupResult={updateGroupResult}
+                />
+              )}
               {isAdding && (
                 <ComplementForm
                   groupId={group.id}

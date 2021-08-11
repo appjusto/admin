@@ -20,6 +20,7 @@ import { Categories } from './categories/Categories';
 import { Complements } from './complements/Complements';
 import { ProductContextProvider } from './context/ProductContext';
 import { CategoryDrawer } from './drawers/CategoryDrawer';
+import { GroupDrawer } from './drawers/GroupDrawer';
 import { ProductDrawer } from './drawers/ProductDrawer';
 
 const Menu = () => {
@@ -60,7 +61,7 @@ const Menu = () => {
               mt="0"
               minW="220px"
               w={{ base: '100%', md: 'auto' }}
-              link={`${url}/category/new`}
+              link={isProducts ? `${url}/category/new` : `${url}/complementsgroup/new`}
               label={isProducts ? t('Adicionar categoria') : t('Adicionar grupo')}
               variant="solid"
             />
@@ -68,7 +69,7 @@ const Menu = () => {
               mt="0"
               minW="220px"
               w={{ base: '100%', md: 'auto' }}
-              link={`${url}/product/new`}
+              link={isProducts ? `${url}/product/new` : `${url}/complement/new`}
               label={isProducts ? t('Adicionar produto') : t('Adicionar complemento')}
               variant="outline"
             />
@@ -102,6 +103,9 @@ const Menu = () => {
         </Route>
         <Route path={`${path}/category/:categoryId`}>
           <CategoryDrawer isOpen onClose={closeDrawerHandler} />
+        </Route>
+        <Route path={`${path}/complementsgroup/:groupId`}>
+          <GroupDrawer isOpen onClose={closeDrawerHandler} />
         </Route>
       </Switch>
     </MenuProvider>
