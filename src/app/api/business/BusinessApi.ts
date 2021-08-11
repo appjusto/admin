@@ -620,11 +620,13 @@ export default class BusinessApi {
     changes: Partial<ComplementGroup>
   ) {
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+    let changesToSave = changes;
+    if (changesToSave.items) delete changesToSave.items;
     await this.refs
       .getBusinessComplementsGroupsRef(businessId)
       .doc(groupId)
       .update({
-        ...changes,
+        ...changesToSave,
         updatedOn: timestamp,
       } as Partial<ComplementGroup>);
   }

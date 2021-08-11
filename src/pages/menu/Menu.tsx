@@ -1,5 +1,15 @@
-import { Box, Flex, Icon, Input, InputGroup, InputRightElement, Stack } from '@chakra-ui/react';
+import {
+  Box,
+  Flex,
+  HStack,
+  Icon,
+  Input,
+  InputGroup,
+  InputRightElement,
+  Stack,
+} from '@chakra-ui/react';
 import { MenuProvider } from 'app/state/menu/context';
+import { FilterText } from 'common/components/backoffice/FilterText';
 import { CustomButton as Button } from 'common/components/buttons/CustomButton';
 import { ReactComponent as SearchIcon } from 'common/img/searchIcon.svg';
 import PageHeader from 'pages/PageHeader';
@@ -16,6 +26,7 @@ const Menu = () => {
   const { path, url } = useRouteMatch();
   const history = useHistory();
   // state
+  const [isProducts, setIsProduct] = React.useState(true);
   const [productSearch, setProductSearch] = React.useState('');
   // handler
   const closeDrawerHandler = () => history.replace(path);
@@ -57,7 +68,23 @@ const Menu = () => {
           </InputGroup>
         </Flex>
         <Box mt="2">
-          <Categories productSearch={productSearch} />
+          <Flex
+            mt="8"
+            mb="8"
+            w="100%"
+            justifyContent="space-between"
+            borderBottom="1px solid #C8D7CB"
+          >
+            <HStack spacing={4}>
+              <FilterText isActive={isProducts} onClick={() => setIsProduct(true)}>
+                {t('Produtos')}
+              </FilterText>
+              <FilterText isActive={!isProducts} onClick={() => setIsProduct(false)}>
+                {t('Complementos')}
+              </FilterText>
+            </HStack>
+          </Flex>
+          {isProducts ? <Categories productSearch={productSearch} /> : <Box>Complementos</Box>}
         </Box>
       </Box>
       <Switch>

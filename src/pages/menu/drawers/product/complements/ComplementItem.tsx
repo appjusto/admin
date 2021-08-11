@@ -15,9 +15,16 @@ interface Props {
   groupMaximum?: number;
   item: WithId<Complement>;
   index: number;
+  description?: boolean;
 }
 
-export const ComplementItem = ({ groupId, groupMaximum, item, index }: Props) => {
+export const ComplementItem = ({
+  groupId,
+  groupMaximum,
+  item,
+  index,
+  description = false,
+}: Props) => {
   // context
   const { updateComplement, updateComplementResult, deleteComplement } = useProductContext();
   const { isLoading } = updateComplementResult;
@@ -108,7 +115,11 @@ export const ComplementItem = ({ groupId, groupMaximum, item, index }: Props) =>
               <Text fontSize="sm" fontWeight="bold">
                 {item.name}
               </Text>
-              <Text fontSize="xs">{item.description}</Text>
+              {description && (
+                <Text ml="4" fontSize="xs">
+                  {item.description}
+                </Text>
+              )}
             </Flex>
             <Flex maxW="220px" alignItems="center" justifyContent="flex-end">
               <Text fontSize="xs" fontWeight="700" mr="4">
