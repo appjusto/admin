@@ -55,7 +55,6 @@ export const ComplementItem = ({
           updateComplement={updateComplement}
           updateComplementResult={updateComplementResult}
           onSuccess={() => setIsEditing(false)}
-          onCancel={() => setIsEditing(false)}
         />
       </Flex>
     );

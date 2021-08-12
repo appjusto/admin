@@ -74,7 +74,7 @@ export const CategoryDrawer = (props: Props) => {
           onChange={(ev) => setName(ev.target.value)}
         />
         <DrawerButtons
-          type="category"
+          type="categoria"
           isEditing={categoryId !== 'new'}
           onDelete={onDeleteHandler}
           isLoading={isLoading}

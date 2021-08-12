@@ -61,6 +61,7 @@ export const SuccessAndErrorHandler = React.memo(
     // side effects
     React.useEffect(() => {
       toast.closeAll();
+      if (!submission || submission === 0) return;
       handleStatus();
     }, [submission, toast, handleStatus]);
 

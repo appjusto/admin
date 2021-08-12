@@ -17,7 +17,7 @@ type Params = {
 export const GroupDrawer = (props: Props) => {
   //context
   const { groupId } = useParams<Params>();
-  const { getComplementsGroupById, updateComplementsGroup, updateGroupResult } = useContextMenu();
+  const { getComplementsGroupById } = useContextMenu();
   const group = getComplementsGroupById(groupId);
   // UI
   return (
@@ -26,17 +26,8 @@ export const GroupDrawer = (props: Props) => {
       title={groupId === 'new' ? t('Adicionar grupo') : t('Editar grupo')}
       type="group"
       headerMd="0"
-      isError={updateGroupResult.isError}
-      error={updateGroupResult.error}
     >
-      <GroupForm
-        isCreate
-        atDrawer
-        groupData={group}
-        onSuccess={props.onClose}
-        updateComplementsGroup={updateComplementsGroup}
-        updateGroupResult={updateGroupResult}
-      />
+      <GroupForm atDrawer groupId={groupId} groupData={group} onSuccess={props.onClose} />
     </BaseDrawer>
   );
 };

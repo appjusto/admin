@@ -11,8 +11,6 @@ import { useProductContext } from 'pages/menu/context/ProductContext';
 import React from 'react';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
 import { t } from 'utils/i18n';
-import { ComplementForm } from '../../../complements/ComplementForm';
-import { GroupForm } from '../../../complements/GroupForm';
 import { ComplementItem } from '../complements/ComplementItem';
 
 interface GroupBoxProps {
@@ -22,15 +20,7 @@ interface GroupBoxProps {
 
 export const GroupBox = ({ index, group }: GroupBoxProps) => {
   //context
-  const {
-    updateComplementsGroup,
-    updateGroupResult,
-    deleteComplementsGroup,
-    deleteGroupResult,
-    updateComplement,
-    updateComplementResult,
-  } = useProductContext();
-  const { isLoading, isError, error: deleteError } = deleteGroupResult;
+  const { updateComplementsGroup } = useProductContext();
   //state
   const [isEditing, setIsEditing] = React.useState(false);
   const [isAdding, setIsAdding] = React.useState(false);
@@ -40,30 +30,13 @@ export const GroupBox = ({ index, group }: GroupBoxProps) => {
   // refs
   const submission = React.useRef(0);
   // handlers
-  const handleDeleteGroup = () => {
-    setError(initialError);
-    submission.current += 1;
-    deleteComplementsGroup(group.id);
-  };
   // side effects
   React.useEffect(() => {
     if (group.items && group.items?.length > 0) {
       setShowComplements(true);
     }
   }, [group]);
-  React.useEffect(() => {
-    if (isError) {
-      setError({
-        status: true,
-        error: deleteError,
-      });
-    } else if (updateGroupResult.isError) {
-      setError({
-        status: true,
-        error: updateGroupResult.error,
-      });
-    }
-  }, [isError, deleteError, updateGroupResult.isError, updateGroupResult.error]);
+
   // UI
   return (
     <Box>
@@ -90,8 +63,7 @@ export const GroupBox = ({ index, group }: GroupBoxProps) => {
                 size="sm"
                 w="220px"
                 variant="danger"
-                onClick={handleDeleteGroup}
-                isLoading={isLoading}
+                onClick={() => {}}
                 loadingText={t('Apagando')}
               >
                 {t('Apagar')}
@@ -199,24 +171,6 @@ export const GroupBox = ({ index, group }: GroupBoxProps) => {
                   </Flex>
                 </Flex>
               </Flex>
-              {isEditing && (
-                <GroupForm
-                  groupData={group}
-                  onSuccess={() => setIsEditing(false)}
-                  updateComplementsGroup={updateComplementsGroup}
-                  updateGroupResult={updateGroupResult}
-                />
-              )}
-              {isAdding && (
-                <ComplementForm
-                  groupId={group.id}
-                  groupMaximum={group.maximum}
-                  updateComplement={updateComplement}
-                  updateComplementResult={updateComplementResult}
-                  onSuccess={() => setIsAdding(false)}
-                  onCancel={() => setIsAdding(false)}
-                />
-              )}
               {showComplements && (
                 <Droppable droppableId={group.id} type="item">
                   {(droppable, snapshot) => (
@@ -248,7 +202,6 @@ export const GroupBox = ({ index, group }: GroupBoxProps) => {
       )}
       <SuccessAndErrorHandler
         submission={submission.current}
-        //isSuccess={isSuccess}
         isError={error.status}
         error={error.error}
         errorMessage={error.message}

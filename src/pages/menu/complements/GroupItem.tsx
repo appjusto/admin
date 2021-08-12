@@ -2,7 +2,6 @@ import { Box, Flex, Switch, Text, Tooltip } from '@chakra-ui/react';
 import { useCategory } from 'app/api/business/categories/useCategory';
 import { Complement, ComplementGroup, WithId } from 'appjusto-types';
 import { CustomButton as Button } from 'common/components/buttons/CustomButton';
-import { DeleteButton } from 'common/components/buttons/DeleteButton';
 import { DropdownButton } from 'common/components/buttons/DropdownButton';
 import { EditButton } from 'common/components/buttons/EditButton';
 import { ReactComponent as DragHandle } from 'common/img/drag-handle.svg';
@@ -93,9 +92,6 @@ export const GroupItem = React.memo(({ group, complements, index, hidden }: Prop
                   <Link to={`${url}/complementsgroup/${group.id}`}>
                     <EditButton ml="2" title={t('Editar')} />
                   </Link>
-                </Tooltip>
-                <Tooltip placement="top" label={t('Excluir grupo')} aria-label={t('Excluir grupo')}>
-                  <DeleteButton title={t('Excluir grupo')} onClick={() => {}} />
                 </Tooltip>
                 <Tooltip
                   placement="top"

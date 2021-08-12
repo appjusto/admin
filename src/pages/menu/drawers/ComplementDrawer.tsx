@@ -24,6 +24,8 @@ export const ComplementDrawer = (props: Props) => {
     getComplementsGroupById,
     updateComplement,
     updateComplementResult,
+    deleteComplement,
+    deleteComplementResult,
   } = useContextMenu();
   // state
   const [groupId, setGroupId] = React.useState<string>();
@@ -54,7 +56,7 @@ export const ComplementDrawer = (props: Props) => {
         updateComplement={updateComplement}
         updateComplementResult={updateComplementResult}
         onSuccess={props.onClose}
-        onCancel={props.onClose}
+        deleteComplement={deleteComplement}
       />
     </BaseDrawer>
   );

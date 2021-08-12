@@ -23,8 +23,8 @@ interface BaseDrawerProps {
   type: string;
   title: string;
   isOpen: boolean;
-  isError: boolean;
-  error: unknown | string | null;
+  isError?: boolean;
+  error?: unknown | string | null;
   headerMd?: string;
   onClose(): void;
   children: React.ReactNode;

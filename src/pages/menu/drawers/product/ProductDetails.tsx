@@ -323,7 +323,7 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
         </Text>
       </Flex>
       <DrawerButtons
-        type="product"
+        type="produto"
         isEditing={isEditing}
         isLoading={isLoading}
         onDelete={handleDelete}
