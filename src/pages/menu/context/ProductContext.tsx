@@ -3,7 +3,7 @@ import { useObserveProduct } from 'app/api/business/products/useObserveProduct';
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusinessId } from 'app/state/business/context';
 import { useContextMenu } from 'app/state/menu/context';
-import { Complement, ComplementGroup, Ordering, Product, WithId } from 'appjusto-types';
+import { ComplementGroup, Product, WithId } from 'appjusto-types';
 import React from 'react';
 import { MutateFunction, MutationResult, useMutation, useQueryCache } from 'react-query';
 import { useParams } from 'react-router-dom';
@@ -18,7 +18,6 @@ interface ContextProps {
   product: WithId<Product> | undefined;
   isValid: boolean;
   imageUrl: string | null;
-  productConfig: Ordering;
   sortedGroups: WithId<ComplementGroup>[];
   updateProduct: MutateFunction<
     string,
@@ -33,41 +32,6 @@ interface ContextProps {
   updateProductResult: MutationResult<string, unknown>;
   deleteProduct: MutateFunction<void, unknown, undefined, unknown>;
   deleteProductResult: MutationResult<void, unknown>;
-  updateComplementsGroup: MutateFunction<
-    void,
-    unknown,
-    {
-      groupId: string | undefined;
-      changes: ComplementGroup;
-    },
-    unknown
-  >;
-  updateGroupResult: MutationResult<void, unknown>;
-  deleteComplementsGroup: MutateFunction<void, unknown, string, unknown>;
-  deleteGroupResult: MutationResult<void, unknown>;
-  updateComplement: MutateFunction<
-    void,
-    unknown,
-    {
-      groupId: string | undefined;
-      complementId: string | undefined;
-      changes: Complement;
-      imageFile?: File | null | undefined;
-    },
-    unknown
-  >;
-  updateComplementResult: MutationResult<void, unknown>;
-  deleteComplement: MutateFunction<
-    void,
-    unknown,
-    {
-      complementId: string;
-      groupId: string;
-      imageExists: boolean;
-    },
-    unknown
-  >;
-  deleteComplementResult: MutationResult<void, unknown>;
   connectComplmentsGroupToProduct: MutateFunction<
     void,
     unknown,
@@ -89,28 +53,13 @@ export const ProductContextProvider = (props: ProviderProps) => {
   // context
   const api = useContextApi();
   const businessId = useContextBusinessId();
-  const {
-    productsOrdering,
-    updateProductsOrdering,
-    complementsGroupsWithItems,
-    //complements,
-  } = useContextMenu();
+  const { productsOrdering, updateProductsOrdering, complementsGroupsWithItems } = useContextMenu();
   const { productId: productIdParam } = useParams<Params>();
   const productId = productIdParam.split('?')[0];
   const { product, isValid, imageUrl } = useObserveProduct(businessId, productId, '1008x720');
-  /*const sortedGroups = menu.getSorted(
-    complementsGroupsWithItems,
-    complements,
-    product?.complementsOrder
-  );*/
-  const sortedGroups = complementsGroupsWithItems.filter((group) => {
-    if (product?.complementsOrder) {
-      return product?.complementsOrder.firstLevelIds.includes(group.id);
-    } else return false;
-  });
   const contextCategoryId = menu.getParentId(productsOrdering, productId);
-  const productConfig = product?.complementsOrder ?? menu.empty();
   const queryCache = useQueryCache();
+  const sortedGroups = complementsGroupsWithItems.filter((group) => false); // product config complements array
   // mutations
   const [updateProduct, updateProductResult] = useMutation(
     async (data: {
@@ -144,86 +93,15 @@ export const ProductContextProvider = (props: ProviderProps) => {
     await api.business().deleteProduct(businessId!, productId);
   });
 
-  // groups
-  const [updateComplementsGroup, updateGroupResult] = useMutation(
-    async (data: { groupId: string | undefined; changes: ComplementGroup }) => {
-      if (data.groupId) {
-        await api.business().updateComplementsGroup2(businessId!, data.groupId, data.changes);
-      } else {
-        const group = await api.business().createComplementsGroup2(businessId!, data.changes);
-        const newProductConfig = menu.addFirstLevel(productConfig, group.id);
-        await api
-          .business()
-          .updateProduct(businessId!, productId, { complementsOrder: newProductConfig });
-      }
-    }
-  );
-  const [deleteComplementsGroup, deleteGroupResult] = useMutation(async (groupId: string) => {
-    const newProductConfig = menu.removeFirstLevel(productConfig, groupId);
-    await api
-      .business()
-      .updateProduct(businessId!, productId, { complementsOrder: newProductConfig });
-    await api.business().deleteComplementsGroup2(businessId!, groupId);
-  });
-  // complements
-  const [updateComplement, updateComplementResult] = useMutation(
-    async (data: {
-      groupId: string | undefined;
-      complementId: string | undefined;
-      changes: Complement;
-      imageFile?: File | null;
-    }) => {
-      if (data.complementId) {
-        await api
-          .business()
-          .updateComplement2(businessId!, data.complementId, data.changes, data.imageFile);
-      } else {
-        const complementId = await api
-          .business()
-          .createComplement2(businessId!, data.changes, data.imageFile);
-        const currentGroup = complementsGroupsWithItems.find((group) => group.id === data.groupId);
-        if (currentGroup) {
-          const complements = currentGroup.complements
-            ? [...currentGroup.complements, complementId]
-            : [complementId];
-          await api.business().updateComplementsGroup2(businessId!, data.groupId!, { complements });
-        }
-        let newProductConfig = menu.empty();
-        if (productConfig && data.groupId) {
-          newProductConfig = menu.addSecondLevel(productConfig, complementId, data.groupId);
-        }
-        await api
-          .business()
-          .updateProduct(businessId!, productId, { complementsOrder: newProductConfig });
-      }
-    }
-  );
-  const [deleteComplement, deleteComplementResult] = useMutation(
-    async (data: { complementId: string; groupId: string; imageExists: boolean }) => {
-      const newProductConfig = menu.removeSecondLevel(
-        productConfig,
-        data.complementId,
-        data.groupId
-      );
-      await api
-        .business()
-        .updateProduct(businessId!, productId, { complementsOrder: newProductConfig });
-      await api.business().deleteComplement2(businessId!, data.complementId);
-    }
-  );
-
+  // complements groups
   const [connectComplmentsGroupToProduct, connectionResult] = useMutation(
     async (data: { groupsIds: string[] }) => {
-      const currentGroups = complementsGroupsWithItems.filter((group) =>
-        data.groupsIds.includes(group.id)
-      );
-      if (!data.groupsIds || currentGroups.length === 0) {
-        throw new Error(`Argumentos inválidos: groupId: ${data.groupsIds}; groupsIds: empty.`);
+      if (!data.groupsIds) {
+        throw new Error(`Argumentos inválidos: groupId: ${data.groupsIds}.`);
       }
-      const connectedProductConfig = menu.getConnectedProductConfig(currentGroups);
       await api
         .business()
-        .updateProduct(businessId!, productId, { complementsOrder: connectedProductConfig });
+        .updateProduct(businessId!, productId, { complementsGroupsIds: data.groupsIds });
     }
   );
 
@@ -235,20 +113,11 @@ export const ProductContextProvider = (props: ProviderProps) => {
         product,
         isValid,
         imageUrl,
-        productConfig,
         sortedGroups,
         updateProduct,
         updateProductResult,
         deleteProduct,
         deleteProductResult,
-        updateComplementsGroup,
-        updateGroupResult,
-        deleteComplementsGroup,
-        deleteGroupResult,
-        updateComplement,
-        updateComplementResult,
-        deleteComplement,
-        deleteComplementResult,
         connectComplmentsGroupToProduct,
         connectionResult,
       }}

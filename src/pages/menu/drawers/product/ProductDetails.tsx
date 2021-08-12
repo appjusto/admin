@@ -9,7 +9,6 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import * as menu from 'app/api/business/menu/functions';
 import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput2';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
@@ -32,7 +31,6 @@ const initialState = {
   classifications: [],
   externalId: '',
   enabled: true,
-  complementsOrder: menu.empty(),
   complementsEnabled: false,
   imageExists: false,
   //details
@@ -71,7 +69,6 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
     classifications,
     externalId,
     enabled,
-    complementsOrder,
     complementsEnabled,
     imageExists,
     //details
@@ -122,7 +119,6 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
           classifications,
           externalId,
           enabled,
-          complementsOrder,
           complementsEnabled,
           imageExists,
         },
@@ -170,7 +166,6 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
           classifications: product.classifications ?? [],
           externalId: product.externalId ?? '',
           enabled: product.enabled ?? true,
-          complementsOrder: product.complementsOrder,
           complementsEnabled: product.complementsEnabled ?? false,
           imageExists: product.imageExists ?? false,
           categoryId: contextCategoryId ?? '',

@@ -8,7 +8,6 @@ export interface StateProps {
   classifications: string[];
   externalId: string;
   enabled: boolean;
-  complementsOrder: Ordering;
   complementsEnabled: boolean;
   imageExists: boolean;
   //details

@@ -75,8 +75,11 @@ export const MenuProvider = (props: ProviderProps) => {
     updateComplementsOrdering,
   } = useObserveMenuOrdering(businessId);
   const categories = menu.getSorted(unorderedCategories, products, productsOrdering);
-  const { complementsGroups, complementsGroupsWithItems, complements } = useObserveComplements2(
-    businessId!
+  const { complementsGroups, complements } = useObserveComplements2(businessId!);
+  const complementsGroupsWithItems = menu.getSorted(
+    complementsGroups,
+    complements,
+    complementsOrdering
   );
   const sortedComplementsGroups = menu.getSorted(
     complementsGroups,
