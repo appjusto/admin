@@ -46,7 +46,7 @@ export const ComplementDrawer = (props: Props) => {
       error={updateComplementResult.error}
     >
       <ComplementForm
-        groupId={group?.id}
+        groupId={groupId ?? group?.id}
         groupMaximum={group?.maximum}
         complementId={complementId}
         item={complement}
