@@ -19,8 +19,6 @@ interface Props {
 }
 
 export const CategoryItem = React.memo(({ category, products, index, hidden, url }: Props) => {
-  // context
-  //const { url } = useRouteMatch();
   // mutations
   const { updateCategory } = useCategory(category.id);
   // UI

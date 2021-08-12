@@ -1,7 +1,6 @@
 import { Box, Flex, Image, Link, Spacer, Switch, Text, Tooltip } from '@chakra-ui/react';
 import { useComplementImage } from 'app/api/business/complements/useComplementImage';
-import { useContextApi } from 'app/state/api/context';
-import { useContextBusinessId } from 'app/state/business/context';
+import { useContextMenu } from 'app/state/menu/context';
 import { Complement, WithId } from 'appjusto-types';
 import { EditButton } from 'common/components/buttons/EditButton';
 import { ImageFbLoading } from 'common/components/ImageFbLoading';
@@ -20,8 +19,7 @@ interface Props {
 export const ComplementItem = React.memo(({ complement, index }: Props) => {
   // context
   const { url } = useRouteMatch();
-  const api = useContextApi();
-  const businessId = useContextBusinessId();
+  const { updateComplement } = useContextMenu();
   const hookImageUrl = useComplementImage(complement.id);
   //state
   const [imageUrl, setImageUrl] = React.useState<string>('');
@@ -32,11 +30,22 @@ export const ComplementItem = React.memo(({ complement, index }: Props) => {
     if (value || value === 0) setPrice(value);
   };
 
-  const onUpdateProduct = async (key: string, value: number | boolean) => {
-    const productData = {
-      [key]: value,
-    };
-    await api.business().updateProduct(businessId!, complement.id, productData, null);
+  const onUpdateComplement = async (updateEnabled?: boolean, value?: boolean) => {
+    let dataToUpdate = { ...complement };
+    //@ts-ignore
+    delete dataToUpdate.id;
+    if (updateEnabled) {
+      await updateComplement({
+        groupId: undefined,
+        complementId: complement.id,
+        changes: { ...dataToUpdate, price, enabled: value },
+      });
+    } else
+      await updateComplement({
+        groupId: undefined,
+        complementId: complement.id,
+        changes: { ...dataToUpdate, price },
+      });
   };
 
   //side effects
@@ -99,7 +108,7 @@ export const ComplementItem = React.memo(({ complement, index }: Props) => {
                 label={t('Preço')}
                 value={price}
                 onChangeValue={updatePriceState}
-                onBlur={() => onUpdateProduct('price', price)}
+                onBlur={() => onUpdateComplement()}
                 maxLength={6}
               />
             </Flex>
@@ -109,7 +118,7 @@ export const ComplementItem = React.memo(({ complement, index }: Props) => {
             isChecked={complement.enabled}
             onChange={(ev) => {
               ev.stopPropagation();
-              onUpdateProduct('enabled', ev.target.checked);
+              onUpdateComplement(true, ev.target.checked);
             }}
           />
           <Link as={RouterLink} to={`${url}/complement/${complement.id}`}>

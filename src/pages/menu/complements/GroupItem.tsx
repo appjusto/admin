@@ -15,9 +15,10 @@ interface Props {
   group: WithId<ComplementGroup>;
   complements?: WithId<Complement>[];
   index: number;
+  hidden?: boolean;
 }
 
-export const GroupItem = React.memo(({ group, complements, index }: Props) => {
+export const GroupItem = React.memo(({ group, complements, index, hidden }: Props) => {
   // context
   const { url } = useRouteMatch();
   const { updateComplementsGroup } = useContextMenu();
@@ -39,6 +40,7 @@ export const GroupItem = React.memo(({ group, complements, index }: Props) => {
           {...draggable.draggableProps}
           p="6"
           mb="6"
+          d={hidden ? 'none' : 'block'}
           w="100%"
         >
           <Flex alignItems="center" mb="6">

@@ -1,6 +1,7 @@
 import { Box } from '@chakra-ui/react';
 import * as menu from 'app/api/business/menu/functions';
 import { useContextMenu } from 'app/state/menu/context';
+import { isEmpty } from 'lodash';
 import React from 'react';
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
 import { GroupItem } from './GroupItem';
@@ -50,11 +51,23 @@ export const Complements = ({ search }: Props) => {
               if (search) {
                 const complements = menu.filterItemBySearch(group.items!, search);
                 return (
-                  <GroupItem key={group.id} group={group} complements={complements} index={index} />
+                  <GroupItem
+                    key={group.id}
+                    group={group}
+                    complements={complements}
+                    index={index}
+                    hidden={complements.length === 0 && !isEmpty(search)}
+                  />
                 );
               } else {
                 return (
-                  <GroupItem key={group.id} group={group} complements={group.items} index={index} />
+                  <GroupItem
+                    key={group.id}
+                    group={group}
+                    complements={group.items}
+                    index={index}
+                    hidden={group.items?.length === 0 && !isEmpty(search)}
+                  />
                 );
               }
             })}
