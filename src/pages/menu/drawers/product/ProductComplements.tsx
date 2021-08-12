@@ -10,6 +10,8 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { useContextMenu } from 'app/state/menu/context';
+import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
+import { initialError } from 'common/components/error/utils';
 import { useProductContext } from 'pages/menu/context/ProductContext';
 import React from 'react';
 import { Redirect, useRouteMatch } from 'react-router-dom';
@@ -30,12 +32,16 @@ export const ProductComplements = () => {
   //state
   const [hasComplements, setHasComplements] = React.useState(false);
   const [connectedGroups, setConnectedGroups] = React.useState<string[]>([]);
+  const [error, setError] = React.useState(initialError);
+  // refs
+  const submission = React.useRef(0);
   // handlers
   const handleComplementsEnable = (value: string) => {
     updateProduct({ changes: { complementsEnabled: value === '1' ? false : true } });
     setHasComplements(value === '1' ? false : true);
   };
   const handleComplementsGroupsConnection = () => {
+    submission.current += 1;
     connectComplmentsGroupToProduct({ groupsIds: connectedGroups });
   };
   // side effects
@@ -50,6 +56,15 @@ export const ProductComplements = () => {
       setConnectedGroups(product?.complementsGroupsIds);
     }
   }, [product?.complementsGroupsIds]);
+
+  React.useEffect(() => {
+    if (connectionResult.isError) {
+      setError({
+        status: true,
+        error: connectionResult.error,
+      });
+    }
+  }, [connectionResult.isError, connectionResult.error]);
 
   // UI
   if (productId === 'new') {
@@ -131,6 +146,12 @@ export const ProductComplements = () => {
           </Button>
         </Box>
       )}
+      <SuccessAndErrorHandler
+        submission={submission.current}
+        isSuccess={connectionResult.isSuccess}
+        isError={error.status}
+        error={error.error}
+      />
     </Box>
   );
 };
