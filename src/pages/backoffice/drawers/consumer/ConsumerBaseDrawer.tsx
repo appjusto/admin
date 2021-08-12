@@ -47,6 +47,7 @@ export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
   //const toast = useToast();
   let consumerName = consumer?.name ?? 'N/I';
   if (consumer?.surname) consumerName += ` ${consumer.surname}`;
+  const city = consumer?.city && consumer?.state ? `${consumer?.city} - ${consumer?.state}` : 'N/I';
 
   //handlers
   const handleSave = () => {
@@ -104,7 +105,7 @@ export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
             <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
               {t('Cidade:')}{' '}
               <Text as="span" fontWeight="500">
-                {`${consumer?.city} - ${consumer?.state}`}
+                {city}
               </Text>
             </Text>
             {/*<Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
