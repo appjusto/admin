@@ -1,5 +1,5 @@
 import { Box, Flex, Switch, Text, Tooltip } from '@chakra-ui/react';
-import { useCategory } from 'app/api/business/categories/useCategory';
+import { useContextMenu } from 'app/state/menu/context';
 import { Complement, ComplementGroup, WithId } from 'appjusto-types';
 import { CustomButton as Button } from 'common/components/buttons/CustomButton';
 import { DropdownButton } from 'common/components/buttons/DropdownButton';
@@ -15,18 +15,16 @@ interface Props {
   group: WithId<ComplementGroup>;
   complements?: WithId<Complement>[];
   index: number;
-  hidden?: boolean;
 }
 
-export const GroupItem = React.memo(({ group, complements, index, hidden }: Props) => {
+export const GroupItem = React.memo(({ group, complements, index }: Props) => {
   // context
   const { url } = useRouteMatch();
+  const { updateComplementsGroup } = useContextMenu();
   // state
   const [showComplements, setShowComplements] = React.useState(true);
   // helpers
-  const itemsQtd = group.complements?.length ?? 0;
-  // mutations
-  const { updateCategory } = useCategory(group.id);
+  const itemsQtd = group.items?.length ?? 0;
   // side effects
   // UI
   return (
@@ -41,7 +39,6 @@ export const GroupItem = React.memo(({ group, complements, index, hidden }: Prop
           {...draggable.draggableProps}
           p="6"
           mb="6"
-          d={hidden ? 'none' : 'block'}
           w="100%"
         >
           <Flex alignItems="center" mb="6">
@@ -80,10 +77,10 @@ export const GroupItem = React.memo(({ group, complements, index, hidden }: Prop
                       onChange={(ev) => {
                         ev.stopPropagation();
                         // update
-                        /*updateComplementsGroup({
-                        groupId: group.id,
-                        changes: { ...group, enabled: ev.target.checked },
-                      });*/
+                        updateComplementsGroup({
+                          groupId: group.id,
+                          changes: { ...group, enabled: ev.target.checked },
+                        });
                       }}
                     />
                   </Box>
@@ -115,6 +112,7 @@ export const GroupItem = React.memo(({ group, complements, index, hidden }: Prop
                 bg={snapshot.isDraggingOver ? 'gray.50' : 'white'}
                 w="100%"
                 overflow="auto"
+                minH="15px"
               >
                 {showComplements &&
                   complements &&
