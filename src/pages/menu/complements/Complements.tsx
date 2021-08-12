@@ -12,17 +12,21 @@ interface Props {
 
 export const Complements = ({ search }: Props) => {
   // state
-  const { sortedComplementsGroups } = useContextMenu();
+  const {
+    sortedComplementsGroups,
+    complementsOrdering,
+    updateComplementsOrdering,
+  } = useContextMenu();
   // handlers
   const onDragEnd = (result: DropResult) => {
-    /*const { destination, source, draggableId, type } = result;
+    const { destination, source, draggableId, type } = result;
     if (!destination) return; // dropped outside
     if (source.droppableId === destination.droppableId && source.index === destination.index)
       return; // same location
-    if (type === 'product') {
-      updateMenuOrdering(
+    if (type === 'coplement') {
+      updateComplementsOrdering(
         menu.updateSecondLevelIndex(
-          ordering,
+          complementsOrdering,
           draggableId, //product id
           source.droppableId, // category from
           destination.droppableId, // category to
@@ -30,16 +34,17 @@ export const Complements = ({ search }: Props) => {
           destination.index
         )
       );
-    } else if (type === 'category') {
-      updateMenuOrdering(menu.updateFirstLevelIndex(ordering, draggableId, destination.index));
-    }*/
-    console.log('DragEnd!');
+    } else if (type === 'group') {
+      updateComplementsOrdering(
+        menu.updateFirstLevelIndex(complementsOrdering, draggableId, destination.index)
+      );
+    }
   };
 
   // UI
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <Droppable droppableId="categories" type="category">
+      <Droppable droppableId="categories" type="group">
         {(droppable) => (
           <Box ref={droppable.innerRef} {...droppable.droppableProps}>
             {sortedComplementsGroups.map((group, index) => {

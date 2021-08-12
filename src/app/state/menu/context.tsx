@@ -12,11 +12,13 @@ import { useContextBusinessId } from '../business/context';
 interface ContextProps {
   categories: WithId<Category>[];
   productsOrdering: Ordering;
+  updateProductsOrdering: (ordering: Ordering) => void;
+  complementsOrdering: Ordering;
+  updateComplementsOrdering: (ordering: Ordering) => void;
   complementsGroups: WithId<ComplementGroup>[];
   complementsGroupsWithItems: WithId<ComplementGroup>[];
   complements: WithId<Complement>[];
   sortedComplementsGroups: WithId<ComplementGroup>[];
-  updateProductsOrdering: (ordering: Ordering) => void;
   getComplementsGroupById: (groupId?: string) => WithId<ComplementGroup> | undefined;
   updateComplementsGroup: MutateFunction<
     void,
@@ -136,11 +138,13 @@ export const MenuProvider = (props: ProviderProps) => {
       value={{
         categories,
         productsOrdering,
+        updateProductsOrdering,
+        complementsOrdering,
+        updateComplementsOrdering,
         complementsGroups,
         complementsGroupsWithItems,
         complements,
         sortedComplementsGroups,
-        updateProductsOrdering,
         getComplementsGroupById,
         updateComplementsGroup,
         updateGroupResult,

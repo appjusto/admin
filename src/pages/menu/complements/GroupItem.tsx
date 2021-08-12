@@ -107,7 +107,7 @@ export const GroupItem = React.memo(({ group, complements, index, hidden }: Prop
               </Flex>
             </Flex>
           </Flex>
-          <Droppable droppableId={group.id} type="product">
+          <Droppable droppableId={group.id} type="coplement">
             {(droppable, snapshot) => (
               <Box
                 ref={droppable.innerRef}
