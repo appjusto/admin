@@ -1,5 +1,5 @@
 import { useObserveCategories } from 'app/api/business/categories/useObserveCategories';
-import { useObserveComplements2 } from 'app/api/business/complements/useObserveComplements2';
+import { useObserveComplements } from 'app/api/business/complements/useObserveComplements';
 import * as menu from 'app/api/business/menu/functions';
 import { useObserveMenuOrdering } from 'app/api/business/menu/useObserveMenuOrdering';
 import { useObserveProducts } from 'app/api/business/products/useObserveProducts';
@@ -80,7 +80,7 @@ export const MenuProvider = (props: ProviderProps) => {
     updateComplementsOrdering,
   } = useObserveMenuOrdering(businessId);
   const categories = menu.getSorted(unorderedCategories, products, productsOrdering);
-  const { complementsGroups, complements } = useObserveComplements2(businessId!);
+  const { complementsGroups, complements } = useObserveComplements(businessId!);
   const complementsGroupsWithItems = menu.getSorted(
     complementsGroups,
     complements,
@@ -98,16 +98,16 @@ export const MenuProvider = (props: ProviderProps) => {
   const [updateComplementsGroup, updateGroupResult] = useMutation(
     async (data: { groupId: string | undefined; changes: ComplementGroup }) => {
       if (data.groupId) {
-        await api.business().updateComplementsGroup2(businessId!, data.groupId, data.changes);
+        await api.business().updateComplementsGroup(businessId!, data.groupId, data.changes);
       } else {
-        const newGroup = await api.business().createComplementsGroup2(businessId!, data.changes);
+        const newGroup = await api.business().createComplementsGroup(businessId!, data.changes);
         updateComplementsOrdering(menu.addFirstLevel(complementsOrdering, newGroup.id));
       }
     }
   );
   const [deleteComplementsGroup, deleteGroupResult] = useMutation(async (groupId: string) => {
     updateComplementsOrdering(menu.removeFirstLevel(complementsOrdering, groupId));
-    await api.business().deleteComplementsGroup2(businessId!, groupId);
+    await api.business().deleteComplementsGroup(businessId!, groupId);
   });
   // complements
   const getComplementData = (complementId: string) => {
@@ -128,11 +128,11 @@ export const MenuProvider = (props: ProviderProps) => {
       if (data.complementId && data.complementId !== 'new') {
         await api
           .business()
-          .updateComplement2(businessId!, data.complementId, data.changes, data.imageFile);
+          .updateComplement(businessId!, data.complementId, data.changes, data.imageFile);
       } else {
         currentId = await api
           .business()
-          .createComplement2(businessId!, data.changes, data.imageFile);
+          .createComplement(businessId!, data.changes, data.imageFile);
       }
       if (data.groupId)
         updateComplementsOrdering(menu.updateParent(complementsOrdering, currentId!, data.groupId));
@@ -141,7 +141,7 @@ export const MenuProvider = (props: ProviderProps) => {
   const [deleteComplement, deleteComplementResult] = useMutation(
     async (data: { complementId: string; imageExists: boolean }) => {
       updateComplementsOrdering(menu.removeSecondLevel(complementsOrdering, data.complementId));
-      await api.business().deleteComplement2(businessId!, data.complementId);
+      await api.business().deleteComplement(businessId!, data.complementId);
     }
   );
   // provider
