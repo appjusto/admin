@@ -20,17 +20,14 @@ export const ComplementDrawer = (props: Props) => {
   const query = useQuery();
   const { complementId } = useParams<Params>();
   const {
-    getComplementById,
-    getComplementsGroupById,
+    getComplementData,
     updateComplement,
     updateComplementResult,
     deleteComplement,
-    deleteComplementResult,
   } = useContextMenu();
   // state
   const [groupId, setGroupId] = React.useState<string>();
-  const complement = getComplementById(complementId);
-  const group = getComplementsGroupById(groupId);
+  const { group, complement } = getComplementData(complementId);
   // side effects
   React.useEffect(() => {
     if (!query) return;

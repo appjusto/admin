@@ -1,5 +1,3 @@
-import { Ordering } from 'appjusto-types';
-
 export interface StateProps {
   //product
   name: string;

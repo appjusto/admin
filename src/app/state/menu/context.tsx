@@ -32,7 +32,12 @@ interface ContextProps {
   updateGroupResult: MutationResult<void, unknown>;
   deleteComplementsGroup: MutateFunction<void, unknown, string, unknown>;
   deleteGroupResult: MutationResult<void, unknown>;
-  getComplementById: (complementId: string) => WithId<Complement> | undefined;
+  getComplementData: (
+    complementId: string
+  ) => {
+    group: WithId<ComplementGroup> | undefined;
+    complement: WithId<Complement> | undefined;
+  };
   updateComplement: MutateFunction<
     void,
     unknown,
@@ -105,8 +110,12 @@ export const MenuProvider = (props: ProviderProps) => {
     await api.business().deleteComplementsGroup2(businessId!, groupId);
   });
   // complements
-  const getComplementById = (complementId: string) =>
-    complements.find((complement) => complement.id === complementId);
+  const getComplementData = (complementId: string) => {
+    const complement = complements.find((complement) => complement.id === complementId);
+    const parentId = menu.getParentId(complementsOrdering, complementId);
+    const group = complementsGroups.find((group) => group.id === parentId);
+    return { group, complement };
+  };
 
   const [updateComplement, updateComplementResult] = useMutation(
     async (data: {
@@ -153,7 +162,7 @@ export const MenuProvider = (props: ProviderProps) => {
         updateGroupResult,
         deleteComplementsGroup,
         deleteGroupResult,
-        getComplementById,
+        getComplementData,
         updateComplement,
         updateComplementResult,
         deleteComplement,
