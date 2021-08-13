@@ -102,8 +102,8 @@ export const LandingPageFooter = () => {
             color="white"
           >
             <Link
-              //isExternal
-              //href="/"
+              isExternal
+              href="https://github.com/appjusto/docs/blob/main/legal/politica-de-privacidade.md"
               color="white"
               mb={['22px', null, null, '0']}
               fontSize="15px"
@@ -115,7 +115,7 @@ export const LandingPageFooter = () => {
             </Link>
             <Link
               isExternal
-              href="https://github.com/appjusto/docs/blob/main/legal/termo-tratamento-de-dados.md"
+              href="https://github.com/appjusto/docs/blob/main/legal/termos-de-uso-restaurantes.md"
               color="white"
               mb={['22px', null, null, '0']}
               fontSize="15px"
