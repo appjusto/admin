@@ -1,10 +1,18 @@
 import { arrayMove } from 'app/utils/arrayMove';
 import { Ordering, WithId } from 'appjusto-types';
-import { without, omit } from 'lodash';
+import { without, omit, isEmpty } from 'lodash';
 
 export const empty = (): Ordering => ({ firstLevelIds: [], secondLevelIdsByFirstLevelId: {} });
 
-//
+interface GenericWithName {
+  name: string;
+}
+
+export const filterItemBySearch = <T extends GenericWithName>(items: T[], search?: string) => {
+  if (!search || isEmpty(search)) return items;
+  const regexp = new RegExp(search, 'i');
+  return items.filter((item) => regexp.test(item.name));
+};
 
 const ordered = <T extends object>(items: WithId<T>[], order: string[]): WithId<T>[] => {
   return items
@@ -50,7 +58,6 @@ export const updateFirstLevelIndex = (
 };
 
 // second levels
-
 export const addSecondLevel = (ordering: Ordering, secondLevelId: string, firstLevelId: string) => {
   const { secondLevelIdsByFirstLevelId } = ordering;
   return {
@@ -75,14 +82,17 @@ export const getParentId = (ordering: Ordering, secondLevelId: string) => {
 export const removeSecondLevel = (
   ordering: Ordering,
   secondLevelId: string,
-  firstLevelId: string
+  firstLevelId?: string
 ) => {
+  let currentParentId = firstLevelId;
+  if (!currentParentId) currentParentId = getParentId(ordering, secondLevelId);
+  if (!currentParentId) return ordering;
   const { secondLevelIdsByFirstLevelId } = ordering;
   return {
     ...ordering,
     secondLevelIdsByFirstLevelId: {
       ...secondLevelIdsByFirstLevelId,
-      [firstLevelId]: without(secondLevelIdsByFirstLevelId[firstLevelId], secondLevelId),
+      [currentParentId]: without(secondLevelIdsByFirstLevelId[currentParentId], secondLevelId),
     },
   } as Ordering;
 };

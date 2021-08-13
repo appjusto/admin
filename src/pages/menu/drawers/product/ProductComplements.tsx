@@ -1,37 +1,78 @@
-import { Button, Flex, HStack, Radio, RadioGroup, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Checkbox,
+  CheckboxGroup,
+  Flex,
+  Radio,
+  RadioGroup,
+  Stack,
+  Text,
+} from '@chakra-ui/react';
+import { useContextMenu } from 'app/state/menu/context';
+import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
+import { initialError } from 'common/components/error/utils';
 import { useProductContext } from 'pages/menu/context/ProductContext';
 import React from 'react';
 import { Redirect, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
-import { GroupForm } from './groups/GroupForm';
-import { Groups } from './groups/Groups';
 
 export const ProductComplements = () => {
   //context
   const { url } = useRouteMatch();
-  const { productId, product, onSaveProduct, onSaveComplementsGroup } = useProductContext();
+  const {
+    productId,
+    product,
+    updateProduct,
+    connectComplmentsGroupToProduct,
+    connectionResult,
+  } = useProductContext();
+  const { complementsGroupsWithItems } = useContextMenu();
+  const { isLoading } = connectionResult;
   //state
   const [hasComplements, setHasComplements] = React.useState(false);
-  const [newGroupForm, setNewGroupForm] = React.useState(false);
-
+  const [connectedGroups, setConnectedGroups] = React.useState<string[]>([]);
+  const [error, setError] = React.useState(initialError);
+  // refs
+  const submission = React.useRef(0);
+  // handlers
   const handleComplementsEnable = (value: string) => {
-    onSaveProduct({ complementsEnabled: value === '1' ? false : true }, null, undefined);
+    updateProduct({ changes: { complementsEnabled: value === '1' ? false : true } });
     setHasComplements(value === '1' ? false : true);
   };
-
+  const handleComplementsGroupsConnection = () => {
+    submission.current += 1;
+    connectComplmentsGroupToProduct({ groupsIds: connectedGroups });
+  };
+  // side effects
   React.useEffect(() => {
     if (product?.complementsEnabled) {
       setHasComplements(true);
     }
   }, [product?.complementsEnabled]);
 
+  React.useEffect(() => {
+    if (product?.complementsGroupsIds) {
+      setConnectedGroups(product?.complementsGroupsIds);
+    }
+  }, [product?.complementsGroupsIds]);
+
+  React.useEffect(() => {
+    if (connectionResult.isError) {
+      setError({
+        status: true,
+        error: connectionResult.error,
+      });
+    }
+  }, [connectionResult.isError, connectionResult.error]);
+
+  // UI
   if (productId === 'new') {
     const urlRedirect = url.split('/complements')[0];
     return <Redirect to={urlRedirect} />;
   }
-
   return (
-    <>
+    <Box>
       <Text fontSize="xl" color="black">
         {t('Esse item possui complementos?')}
       </Text>
@@ -51,48 +92,66 @@ export const ProductComplements = () => {
           </Radio>
         </Flex>
       </RadioGroup>
-      <Groups />
       {hasComplements && (
-        <>
-          <HStack mt="8" mb="10" spacing={4}>
-            <Button
-              width={{ base: '100%', lg: '50%' }}
+        <Box mt="6">
+          <Text fontSize="xl" color="black" fontWeight="700">
+            {t('Selecione os grupos que deseja associar a este produto:')}
+          </Text>
+          <CheckboxGroup
+            colorScheme="green"
+            value={connectedGroups}
+            onChange={(values: string[]) => setConnectedGroups(values)}
+          >
+            <Stack
+              mt="4"
+              direction="column"
+              alignItems="flex-start"
               color="black"
-              fontSize="15px"
-              onClick={() => setNewGroupForm(true)}
+              spacing={2}
+              fontSize="16px"
+              lineHeight="22px"
             >
-              {t('Criar novo grupo de complementos')}
-            </Button>
-            {/*<Button isDisabled width="full" variant="outline" color="black" fontSize="15px">
-              {t('Associar com grupo existente')}
-              </Button>*/}
-          </HStack>
-          {/*<HStack spacing={4}>
-            <Select
-              mt="0"
-              w="100%"
-              label={t('Grupos de complementos')}
-              placeholder={t('Selecione um grupo existente')}
-            >
-              {options.map((group) => (
-                <option key={group.id} value={group.id}>
-                  {group.name}
-                </option>
+              {complementsGroupsWithItems.map((group) => (
+                <Box key={group.id} w="100%" p="4" border="1px solid #D7E7DA" borderRadius="lg">
+                  <Checkbox
+                    w="100%"
+                    iconColor="white"
+                    size="lg"
+                    borderColor="gray.700"
+                    value={group.id}
+                  >
+                    <Box ml="2">
+                      <Text>{group.name}</Text>
+                      <Text fontSize="sm" color="gray.700">{`${
+                        group.required ? 'Obrigatório' : 'Opcional'
+                      }. Mín: ${group.minimum}. Máx: ${group.maximum}`}</Text>
+                      <Text fontSize="sm" color="gray.700">{`Itens: ${group.items
+                        ?.map((item) => item.name)
+                        .join(', ')}`}</Text>
+                    </Box>
+                  </Checkbox>
+                </Box>
               ))}
-            </Select>
-            <Button w={{ base: '100%', lg: '260px' }} h="60px" color="black" fontSize="15px">
-              {t('Associar')}
-            </Button>
-              </HStack>*/}
-          {newGroupForm && (
-            <GroupForm
-              submitGroup={onSaveComplementsGroup}
-              isCreate
-              onSuccess={() => setNewGroupForm(false)}
-            />
-          )}
-        </>
+            </Stack>
+          </CheckboxGroup>
+          <Button
+            mt="6"
+            width={{ base: '100%', lg: '50%' }}
+            color="black"
+            fontSize="15px"
+            onClick={handleComplementsGroupsConnection}
+            isLoading={isLoading}
+          >
+            {t('Salvar grupos associados')}
+          </Button>
+        </Box>
       )}
-    </>
+      <SuccessAndErrorHandler
+        submission={submission.current}
+        isSuccess={connectionResult.isSuccess}
+        isError={error.status}
+        error={error.error}
+      />
+    </Box>
   );
 };

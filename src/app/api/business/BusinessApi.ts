@@ -342,9 +342,10 @@ export default class BusinessApi {
   // menu config
   observeMenuOrdering(
     businessId: string,
-    resultHandler: (result: Ordering) => void
+    resultHandler: (result: Ordering) => void,
+    menuId?: string
   ): firebase.Unsubscribe {
-    const unsubscribe = this.refs.getBusinessMenuOrderingRef(businessId).onSnapshot(
+    const unsubscribe = this.refs.getBusinessMenuOrderingRef(businessId, menuId).onSnapshot(
       (doc) => {
         resultHandler({ ...(doc.data() as Ordering) });
       },
@@ -355,8 +356,8 @@ export default class BusinessApi {
     return unsubscribe;
   }
 
-  async updateMenuOrdering(businessId: string, ordering: Ordering) {
-    await this.refs.getBusinessMenuOrderingRef(businessId).set(ordering, { merge: false });
+  async updateMenuOrdering(businessId: string, ordering: Ordering, menuId?: string) {
+    await this.refs.getBusinessMenuOrderingRef(businessId, menuId).set(ordering, { merge: false });
   }
 
   // categories
@@ -447,7 +448,7 @@ export default class BusinessApi {
     return documentAs<Product>(doc);
   }
 
-  async createProduct(businessId: string, product: Product, imageFiles: File[] | null) {
+  async createProduct(businessId: string, product: Product, imageFiles?: File[] | null) {
     // creating product
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
     const productId = this.refs.getBusinessProductsRef(businessId).doc().id;
@@ -533,32 +534,17 @@ export default class BusinessApi {
     );
   }
 
-  // complements
+  /////// NEW COMPLEMENTS LOGIC START
   observeComplementsGroups(
     businessId: string,
-    productId: string,
     resultHandler: (result: WithId<ComplementGroup>[]) => void
   ): firebase.Unsubscribe {
-    const query = this.refs.getBusinessProductComplementsGroupsRef(businessId, productId);
+    const query = this.refs.getBusinessComplementsGroupsRef(businessId);
     const unsubscribe = query.onSnapshot(
       (querySnapshot) => {
-        resultHandler(documentsAs<ComplementGroup>(querySnapshot.docs));
-      },
-      (error) => {
-        console.error(error);
-      }
-    );
-    return unsubscribe;
-  }
-  observeComplements(
-    businessId: string,
-    productId: string,
-    resultHandler: (result: WithId<Complement>[]) => void
-  ): firebase.Unsubscribe {
-    const query = this.refs.getBusinessProductComplementsRef(businessId, productId);
-    const unsubscribe = query.onSnapshot(
-      (querySnapshot) => {
-        resultHandler(documentsAs<Complement>(querySnapshot.docs));
+        if (!querySnapshot.empty) {
+          resultHandler(documentsAs<ComplementGroup>(querySnapshot.docs));
+        }
       },
       (error) => {
         console.error(error);
@@ -567,41 +553,99 @@ export default class BusinessApi {
     return unsubscribe;
   }
 
-  async createComplementsGroup(businessId: string, productId: string, group: ComplementGroup) {
+  observeComplements(
+    businessId: string,
+    resultHandler: (result: WithId<Complement>[]) => void
+  ): firebase.Unsubscribe {
+    const query = this.refs.getBusinessComplementsRef(businessId);
+    const unsubscribe = query.onSnapshot(
+      (querySnapshot) => {
+        if (!querySnapshot.empty) {
+          resultHandler(documentsAs<Complement>(querySnapshot.docs));
+        }
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+    return unsubscribe;
+  }
+
+  async createComplementsGroup(businessId: string, group: ComplementGroup) {
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
     const newGroup = {
       ...group,
+      enabled: false,
       createdOn: timestamp,
       updatedOn: timestamp,
     };
-    return await this.refs
-      .getBusinessProductComplementsGroupsRef(businessId, productId)
-      .add(newGroup);
+    return await this.refs.getBusinessComplementsGroupsRef(businessId).add(newGroup);
   }
 
   async updateComplementsGroup(
     businessId: string,
-    productId: string,
     groupId: string,
     changes: Partial<ComplementGroup>
   ) {
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+    let changesToSave = changes;
+    if (changesToSave.items) delete changesToSave.items;
     await this.refs
-      .getBusinessProductComplementsGroupsRef(businessId, productId)
+      .getBusinessComplementsGroupsRef(businessId)
       .doc(groupId)
       .update({
-        ...changes,
+        ...changesToSave,
         updatedOn: timestamp,
       } as Partial<ComplementGroup>);
   }
 
-  async deleteComplementsGroup(businessId: string, productId: string, groupId: string) {
-    await this.refs
-      .getBusinessProductComplementsGroupsRef(businessId, productId)
-      .doc(groupId)
-      .delete();
+  async deleteComplementsGroup(businessId: string, groupId: string) {
+    await this.refs.getBusinessComplementsGroupsRef(businessId).doc(groupId).delete();
   }
 
+  async createComplement(businessId: string, item: Complement, imageFile?: File | null) {
+    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+    const complementId = this.refs.getBusinessComplementsRef(businessId).doc().id;
+    if (imageFile) {
+      await this.uploadComplementPhoto(businessId, complementId, imageFile);
+    }
+    try {
+      await this.refs.getBusinessComplementRef(businessId, complementId).set({
+        ...item,
+        enabled: true,
+        createdOn: timestamp,
+        updatedOn: timestamp,
+      } as Complement);
+      return complementId;
+    } catch (error) {
+      throw new Error(`createProductError: ${error}`);
+    }
+  }
+
+  async updateComplement(
+    businessId: string,
+    complementId: string,
+    item: Partial<Complement>,
+    imageFile?: File | null
+  ) {
+    let newItem = {
+      ...item,
+    };
+    if (imageFile) {
+      await this.uploadComplementPhoto(businessId, complementId, imageFile);
+    }
+    try {
+      return await this.refs.getBusinessComplementRef(businessId, complementId).update(newItem);
+    } catch (error) {
+      throw new Error(`updateComplementError: ${error}`);
+    }
+  }
+
+  async deleteComplement(businessId: string, complementId: string) {
+    return await this.refs.getBusinessComplementRef(businessId, complementId).delete();
+  }
+
+  /////// NEW COMPLEMENTS LOGIC END
   async getComplementImageURL(businessId: string, complementId: string) {
     return await this.files.getDownloadURL(
       this.refs.getComplementImageStoragePath(businessId, complementId)
@@ -618,56 +662,5 @@ export default class BusinessApi {
     } catch (error) {
       throw new Error(`uploadComplementPhotoError: ${error}`);
     }
-  }
-
-  async createComplement(
-    businessId: string,
-    productId: string,
-    item: Complement,
-    imageFile?: File | null
-  ) {
-    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
-    const complementId = this.refs.getBusinessProductComplementsRef(businessId, productId).doc().id;
-    if (imageFile) {
-      await this.uploadComplementPhoto(businessId, complementId, imageFile);
-    }
-    try {
-      await this.refs.getBusinessProductComplementRef(businessId, productId, complementId).set({
-        ...item,
-        createdOn: timestamp,
-        updatedOn: timestamp,
-      } as Complement);
-      return complementId;
-    } catch (error) {
-      throw new Error(`createProductError: ${error}`);
-    }
-  }
-
-  async updateComplement(
-    businessId: string,
-    productId: string,
-    complementId: string,
-    item: Partial<Complement>,
-    imageFile?: File | null
-  ) {
-    let newItem = {
-      ...item,
-    };
-    if (imageFile) {
-      await this.uploadComplementPhoto(businessId, complementId, imageFile);
-    }
-    try {
-      return await this.refs
-        .getBusinessProductComplementRef(businessId, productId, complementId)
-        .update(newItem);
-    } catch (error) {
-      throw new Error(`updateComplementError: ${error}`);
-    }
-  }
-
-  async deleteComplement(businessId: string, productId: string, complementId: string) {
-    return await this.refs
-      .getBusinessProductComplementRef(businessId, productId, complementId)
-      .delete();
   }
 }

@@ -15,7 +15,7 @@ import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile'
 import { useOrdersContext } from 'app/state/order';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
 import { initialError } from 'common/components/error/utils';
-import { ItemsQtdButtons } from 'pages/menu/drawers/product/groups/ItemQtdButtons';
+import { ItemsQtdButtons } from 'pages/menu/complements/ItemQtdButtons';
 import React from 'react';
 import { t } from 'utils/i18n';
 

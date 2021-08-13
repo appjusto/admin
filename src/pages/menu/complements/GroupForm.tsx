@@ -1,37 +1,40 @@
-import { Box, Button, Flex, Radio, RadioGroup, Text } from '@chakra-ui/react';
+import { Box, Flex, Radio, RadioGroup, Text } from '@chakra-ui/react';
+import { useContextMenu } from 'app/state/menu/context';
+import { ComplementGroup, WithId } from 'appjusto-types';
+import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
+import { initialError } from 'common/components/error/utils';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import React from 'react';
 import { t } from 'utils/i18n';
+import { DrawerButtons } from '../drawers/DrawerButtons';
 import { ItemsQtdButtons } from './ItemQtdButtons';
 
-export type NewGroup = {
-  name: string;
-  required: boolean;
-  maximum: number;
-  minimum: number;
-};
-
 interface GroupFormProps {
-  submitGroup(group: NewGroup): void;
-  isCreate?: boolean;
-  isLoading?: boolean;
-  groupData?: NewGroup;
+  atDrawer?: boolean;
+  groupId: string;
+  groupData?: WithId<ComplementGroup>;
   onSuccess(): void;
 }
 
-export const GroupForm = ({
-  submitGroup,
-  isCreate = false,
-  isLoading = false,
-  groupData,
-  onSuccess,
-}: GroupFormProps) => {
+export const GroupForm = ({ atDrawer = false, groupId, groupData, onSuccess }: GroupFormProps) => {
+  // context
+  const {
+    updateComplementsGroup,
+    updateGroupResult,
+    deleteComplementsGroup,
+    deleteGroupResult,
+  } = useContextMenu();
+  const { isLoading } = updateGroupResult;
   // state
   const [name, setName] = React.useState('');
   const [required, setRequired] = React.useState(false);
   const [minimum, setMin] = React.useState(0);
   const [maximum, setMax] = React.useState(1);
+  const [error, setError] = React.useState(initialError);
+
+  // refs
   const inputRef = React.useRef<HTMLInputElement>(null);
+  const submission = React.useRef(0);
 
   // helpers
   const minimumValue = required ? 1 : 0;
@@ -65,40 +68,69 @@ export const GroupForm = ({
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    submission.current += 1;
     const newGroup = {
       name,
       required,
       minimum,
       maximum,
     };
-    submitGroup(newGroup);
+    await updateComplementsGroup({ groupId: groupData?.id, changes: newGroup });
+    onSuccess();
+  };
+
+  const handleDelete = async () => {
+    submission.current += 1;
+    if (groupId === 'new') return;
+    await deleteComplementsGroup(groupId);
     onSuccess();
   };
 
   // side effects
   React.useEffect(() => {
     inputRef?.current?.focus();
-    if (!isCreate && groupData) {
+    if (groupData) {
       setName(groupData?.name);
       setRequired(groupData?.required);
       setMax(groupData?.maximum);
       setMin(groupData?.minimum);
     }
-  }, [isCreate, groupData]);
+  }, [groupData]);
+
+  React.useEffect(() => {
+    if (updateGroupResult.isError) {
+      setError({
+        status: true,
+        error: updateGroupResult.error,
+      });
+    } else if (deleteGroupResult?.isError) {
+      setError({
+        status: true,
+        error: deleteGroupResult?.error,
+      });
+    }
+  }, [
+    updateGroupResult.isError,
+    updateGroupResult.error,
+    deleteGroupResult?.isError,
+    deleteGroupResult?.error,
+  ]);
 
   // UI
-  if (isCreate) {
-    return (
+  return (
+    <Box>
       <form
         onSubmit={(ev) => {
           ev.preventDefault();
           handleSubmit();
         }}
       >
-        <Text fontSize="xl" fontWeight="700" color="black">
-          {t('Novo grupo de complementos')}
-        </Text>
+        {!atDrawer && (
+          <Text fontSize="xl" fontWeight="700" color="black">
+            {t('Novo grupo de complementos')}
+          </Text>
+        )}
         <Input
           ref={inputRef}
           isRequired
@@ -148,76 +180,18 @@ export const GroupForm = ({
             decrement={() => handleMaxAndMin('max', 'dec')}
           />
         </Flex>
-        <Box mt="10">
-          <Button
-            type="submit"
-            w="full"
-            maxW="220px"
-            fontSize="sm"
-            isLoading={isLoading}
-            loadingText={t('Salvando')}
-          >
-            {t('Criar grupo')}
-          </Button>
-        </Box>
-      </form>
-    );
-  }
-  return (
-    <Box p="2" bg="gray.50">
-      <form
-        onSubmit={(ev) => {
-          ev.preventDefault();
-          handleSubmit();
-        }}
-      >
-        <Input
-          ref={inputRef}
-          isRequired
-          mt="0"
-          id="complements-group-name"
-          label="Grupo de complementos"
-          placeholder="Nome da grupo"
-          value={name}
-          handleChange={(ev) => setName(ev.target.value)}
+        <DrawerButtons
+          type="grupo"
+          isEditing={groupId !== 'new'}
+          onDelete={handleDelete}
+          isLoading={isLoading}
         />
-        <Flex mt="2" flexDir="row" justifyContent="space-between">
-          <RadioGroup
-            onChange={(value) => handleIsRequired(value as string)}
-            value={required ? '2' : '1'}
-            defaultValue="1"
-            colorScheme="green"
-            color="black"
-          >
-            <Flex mt="2" flexDir="column" justifyContent="flex-start">
-              <Radio mt="2" value="1">
-                {t('Opcional')}
-              </Radio>
-              <Radio mt="2" value="2">
-                {t('Obrigatório')}
-              </Radio>
-            </Flex>
-          </RadioGroup>
-          <ItemsQtdButtons
-            isDisabled={!required}
-            label={t('Mínimo')}
-            value={minimum}
-            increment={() => handleMaxAndMin('min', 'inc')}
-            decrement={() => handleMaxAndMin('min', 'dec')}
-          />
-          <ItemsQtdButtons
-            label={t('Máximo')}
-            value={maximum}
-            increment={() => handleMaxAndMin('max', 'inc')}
-            decrement={() => handleMaxAndMin('max', 'dec')}
-          />
-          <Flex mt="4" alignItems="flex-end">
-            <Button type="submit" w="full" maxW="100px" fontSize="sm">
-              {t('Salvar')}
-            </Button>
-          </Flex>
-        </Flex>
       </form>
+      <SuccessAndErrorHandler
+        submission={submission.current}
+        isError={error.status}
+        error={error.error}
+      />
     </Box>
   );
 };

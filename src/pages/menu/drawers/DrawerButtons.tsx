@@ -3,7 +3,7 @@ import React from 'react';
 import { t } from 'utils/i18n';
 
 interface DrawerButtonsProps {
-  type: string;
+  type: 'categoria' | 'produto' | 'grupo' | 'complemento';
   isLoading: boolean;
   isEditing: boolean;
   onDelete(): void;
@@ -37,7 +37,7 @@ export const DrawerButtons = ({
             onClick={() => setDeleteConfirm(true)}
             isDisabled={isLoading}
           >
-            {type === 'category' ? t('Apagar categoria') : t('Apagar produto')}
+            {t(`Apagar ${type}`)}
           </Button>
         )}
       </Stack>
@@ -47,17 +47,17 @@ export const DrawerButtons = ({
     <Box mt="8" bg="#FFF8F8" border="1px solid red" borderRadius="lg" p="6">
       <Text color="red">
         {t(
-          type === 'category'
+          type === 'categoria'
             ? 'Ao apagar a categoria, os itens adicionados a ela também serão excluídos. Tem certeza que deseja excluir essa categoria?'
-            : 'Tem certeza que deseja excluir este produto?'
+            : `Tem certeza que deseja excluir este ${type}?`
         )}
       </Text>
       <Stack mt="8" spacing={4} direction="row">
         <Button width="full" onClick={() => setDeleteConfirm(false)}>
-          {t(type === 'category' ? 'Manter categoria' : 'Manter produto')}
+          {t(`Manter ${type}`)}
         </Button>
         <Button width="full" variant="danger" onClick={onDelete}>
-          {t(type === 'category' ? 'Apagar categoria' : 'Apagar produto')}
+          {t(`Apagar ${type}`)}
         </Button>
       </Stack>
     </Box>

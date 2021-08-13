@@ -1,5 +1,3 @@
-import { Ordering } from 'appjusto-types';
-
 export interface StateProps {
   //product
   name: string;
@@ -8,7 +6,6 @@ export interface StateProps {
   classifications: string[];
   externalId: string;
   enabled: boolean;
-  complementsOrder: Ordering;
   complementsEnabled: boolean;
   imageExists: boolean;
   //details

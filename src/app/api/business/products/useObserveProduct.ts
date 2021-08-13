@@ -2,7 +2,11 @@ import { Product, WithId } from 'appjusto-types';
 import React from 'react';
 import { useContextApi } from '../../../state/api/context';
 
-export const useProduct = (businessId: string | undefined, productId: string, imageDim: string) => {
+export const useObserveProduct = (
+  businessId: string | undefined,
+  productId: string,
+  imageDim: string
+) => {
   // context
   const api = useContextApi();
   // state

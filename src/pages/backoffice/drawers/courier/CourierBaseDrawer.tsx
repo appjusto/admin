@@ -55,7 +55,7 @@ export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDr
 
   // helpers
   const situationAlert = courier?.situation === 'rejected' || courier?.situation === 'invalid';
-
+  const city = courier?.city && courier?.state ? `${courier?.city} - ${courier?.state}` : 'N/I';
   //handlers
   let courierName = courier?.name ?? 'N/I';
   if (courier?.surname) courierName += ` ${courier.surname}`;
@@ -148,7 +148,7 @@ export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDr
             <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
               {t('Cidade:')}{' '}
               <Text as="span" fontWeight="500">
-                {`${courier?.company?.city ?? 'N/I'} - ${courier?.company?.state ?? 'N/I'}`}
+                {city}
               </Text>
             </Text>
             <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">

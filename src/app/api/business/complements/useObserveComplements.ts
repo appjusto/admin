@@ -3,32 +3,23 @@ import { Complement, ComplementGroup } from 'appjusto-types';
 import React from 'react';
 import { useContextApi } from '../../../state/api/context';
 
-export const useObserveComplements = (
-  businessId: string | undefined,
-  productId: string,
-  enabled: boolean
-) => {
+export const useObserveComplements = (businessId?: string) => {
   // context
   const api = useContextApi();
-
   // state
-  const [groups, setGroups] = React.useState<WithId<ComplementGroup>[]>([]);
+  const [complementsGroups, setComplementsGroups] = React.useState<WithId<ComplementGroup>[]>([]);
   const [complements, setComplements] = React.useState<WithId<Complement>[]>([]);
-
   // side effects
   React.useEffect(() => {
     if (!businessId) return;
-    //if (!enabled) return;
-    const unsub = api.business().observeComplementsGroups(businessId, productId, setGroups);
+    const unsub = api.business().observeComplementsGroups(businessId, setComplementsGroups);
     return () => unsub();
-  }, [api, businessId, productId, enabled]);
+  }, [api, businessId]);
   React.useEffect(() => {
     if (!businessId) return;
-    //if (!enabled) return;
-    const unsub = api.business().observeComplements(businessId, productId, setComplements);
+    const unsub = api.business().observeComplements(businessId, setComplements);
     return () => unsub();
-  }, [api, businessId, productId, enabled]);
-
-  // return
-  return { groups, complements };
+  }, [api, businessId]);
+  // result
+  return { complementsGroups, complements };
 };

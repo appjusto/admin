@@ -9,7 +9,6 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import * as menu from 'app/api/business/menu/functions';
 import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput2';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
@@ -32,7 +31,6 @@ const initialState = {
   classifications: [],
   externalId: '',
   enabled: true,
-  complementsOrder: menu.empty(),
   complementsEnabled: false,
   imageExists: false,
   //details
@@ -58,8 +56,8 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
     product,
     isValid,
     imageUrl,
-    onSaveProduct,
-    onDeleteProduct,
+    updateProduct,
+    deleteProduct,
   } = useProductContext();
   //state
   const [state, dispatch] = React.useReducer(productReducer, initialState);
@@ -71,7 +69,6 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
     classifications,
     externalId,
     enabled,
-    complementsOrder,
     complementsEnabled,
     imageExists,
     //details
@@ -114,23 +111,22 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
     }
     handleStateUpdate('isLoading', true);
     (async () => {
-      const newId = await onSaveProduct(
-        {
+      const newId = await updateProduct({
+        changes: {
           name,
           description,
           price,
           classifications,
           externalId,
           enabled,
-          complementsOrder,
           complementsEnabled,
           imageExists,
         },
+        categoryId,
         imageFiles,
-        categoryId
-      );
+      });
       handleStateUpdate('isLoading', false);
-      if (url.includes('new')) {
+      if (url.includes('new') && newId) {
         const newUrl = url.replace('new', newId);
         push(newUrl);
         handleStateUpdate('saveSuccess', true);
@@ -147,7 +143,7 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
   };
 
   const handleDelete = async () => {
-    onDeleteProduct();
+    deleteProduct();
     onClose();
   };
 
@@ -170,7 +166,6 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
           classifications: product.classifications ?? [],
           externalId: product.externalId ?? '',
           enabled: product.enabled ?? true,
-          complementsOrder: product.complementsOrder,
           complementsEnabled: product.complementsEnabled ?? false,
           imageExists: product.imageExists ?? false,
           categoryId: contextCategoryId ?? '',
@@ -323,7 +318,7 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
         </Text>
       </Flex>
       <DrawerButtons
-        type="product"
+        type="produto"
         isEditing={isEditing}
         isLoading={isLoading}
         onDelete={handleDelete}

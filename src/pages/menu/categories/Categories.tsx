@@ -1,7 +1,6 @@
 import { Box } from '@chakra-ui/react';
 import * as menu from 'app/api/business/menu/functions';
 import { useContextMenu } from 'app/state/menu/context';
-import { Product, WithId } from 'appjusto-types';
 import { isEmpty } from 'lodash';
 import React from 'react';
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
@@ -14,12 +13,7 @@ interface Props {
 
 export const Categories = ({ productSearch }: Props) => {
   // state
-  const { categories, ordering, updateMenuOrdering } = useContextMenu();
-  const filterProductsWithSearch = (products: WithId<Product>[]) => {
-    if (!productSearch || isEmpty(productSearch)) return products;
-    const regexp = new RegExp(productSearch, 'i');
-    return products.filter((product) => regexp.test(product.name));
-  };
+  const { categories, productsOrdering, updateProductsOrdering } = useContextMenu();
   const { url } = useRouteMatch();
   // handlers
   const onDragEnd = (result: DropResult) => {
@@ -28,9 +22,9 @@ export const Categories = ({ productSearch }: Props) => {
     if (source.droppableId === destination.droppableId && source.index === destination.index)
       return; // same location
     if (type === 'product') {
-      updateMenuOrdering(
+      updateProductsOrdering(
         menu.updateSecondLevelIndex(
-          ordering,
+          productsOrdering,
           draggableId, //product id
           source.droppableId, // category from
           destination.droppableId, // category to
@@ -39,7 +33,9 @@ export const Categories = ({ productSearch }: Props) => {
         )
       );
     } else if (type === 'category') {
-      updateMenuOrdering(menu.updateFirstLevelIndex(ordering, draggableId, destination.index));
+      updateProductsOrdering(
+        menu.updateFirstLevelIndex(productsOrdering, draggableId, destination.index)
+      );
     }
   };
 
@@ -50,7 +46,7 @@ export const Categories = ({ productSearch }: Props) => {
         {(droppable) => (
           <Box ref={droppable.innerRef} {...droppable.droppableProps}>
             {categories.map((category, index) => {
-              const products = filterProductsWithSearch(category.items!);
+              const products = menu.filterItemBySearch(category.items!, productSearch);
               return (
                 <CategoryItem
                   url={url}
