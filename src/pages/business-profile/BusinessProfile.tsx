@@ -286,9 +286,9 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
               onChange={(ev) => setCuisineName(ev.target.value)}
             />
             <Textarea
-              //isRequired
+              isRequired={!onboarding}
               id="business-description"
-              label={t('Descrição')}
+              label={t(`Descrição ${!onboarding && '*'}`)}
               placeholder={t('Descreva seu restaurante')}
               value={description}
               onChange={(ev) => setDescription(ev.target.value)}
