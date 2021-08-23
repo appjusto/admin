@@ -26,7 +26,7 @@ export const useBusinessProfile = () => {
   const [createBusinessProfile] = useMutation(async () => {
     const business = await api.business().createBusinessProfile();
     setBusinessId(business.id);
-    if (refreshUserToken) refreshUserToken();
+    if (refreshUserToken) refreshUserToken(business.id);
   });
   const [updateBusinessProfile, updateResult] = useMutation(async (changes: Partial<Business>) =>
     api.business().updateBusinessProfile(businessId!, changes)
