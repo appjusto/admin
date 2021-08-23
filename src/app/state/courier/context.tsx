@@ -58,7 +58,7 @@ export const CourierProvider = ({ children }: Props) => {
   // context
   const { courierId } = useParams<Params>();
   const profile = useCourierProfile(courierId);
-  const pictures = useCourierProfilePictures(courierId, '', '');
+  const pictures = useCourierProfilePictures(courierId, '_1024x1024', '_1024x1024');
   const { marketPlace, deleteMarketPlace, deleteMarketPlaceResult } = useCourierMarketPlace(
     courierId
   );
