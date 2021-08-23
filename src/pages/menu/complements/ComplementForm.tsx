@@ -70,22 +70,18 @@ export const ComplementForm = ({
   const [imageExists, setImageExists] = React.useState(false);
   const [maximum, setMaximum] = React.useState(1);
   const [error, setError] = React.useState(initialError);
-
   // refs
   const inputRef = React.useRef<HTMLInputElement>(null);
   const submission = React.useRef(0);
-
   //handlers
   const clearDropImages = React.useCallback(() => {
     setImageFile(null);
     setImageExists(false);
   }, []);
-
   const getImageFiles = React.useCallback(async (files: File[]) => {
     setImageFile(files);
     setImageExists(true);
   }, []);
-
   const handleSave = async () => {
     submission.current += 1;
     const newItem = {
@@ -104,14 +100,12 @@ export const ComplementForm = ({
     });
     onSuccess();
   };
-
   const handleDelete = async () => {
     if (!complementId || !deleteComplement) return;
     submission.current += 1;
     await deleteComplement({ complementId, imageExists });
     onSuccess();
   };
-
   //side effects
   React.useEffect(() => {
     inputRef?.current?.focus();
@@ -125,13 +119,11 @@ export const ComplementForm = ({
     }
     if (groupId) setParentId(groupId);
   }, [item, groupId]);
-
   React.useEffect(() => {
     if (hookImageUrl) {
       setImageUrl(hookImageUrl);
     }
   }, [hookImageUrl]);
-
   React.useEffect(() => {
     if (updateComplementResult.isError) {
       setError({
@@ -150,7 +142,6 @@ export const ComplementForm = ({
     deleteComplementResult?.isError,
     deleteComplementResult?.error,
   ]);
-
   //UI
   return (
     <Box>

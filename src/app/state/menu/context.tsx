@@ -33,7 +33,8 @@ interface ContextProps {
   deleteComplementsGroup: MutateFunction<void, unknown, string, unknown>;
   deleteGroupResult: MutationResult<void, unknown>;
   getComplementData: (
-    complementId: string
+    complementId: string,
+    groupId?: string
   ) => {
     group: WithId<ComplementGroup> | undefined;
     complement: WithId<Complement> | undefined;
@@ -110,9 +111,9 @@ export const MenuProvider = (props: ProviderProps) => {
     await api.business().deleteComplementsGroup(businessId!, groupId);
   });
   // complements
-  const getComplementData = (complementId: string) => {
+  const getComplementData = (complementId: string, groupId?: string) => {
     const complement = complements.find((complement) => complement.id === complementId);
-    const parentId = menu.getParentId(complementsOrdering, complementId);
+    const parentId = groupId ?? menu.getParentId(complementsOrdering, complementId);
     const group = complementsGroups.find((group) => group.id === parentId);
     return { group, complement };
   };
