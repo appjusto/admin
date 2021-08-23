@@ -1,6 +1,6 @@
 {
   "name": "appjusto-admin",
-  "version": "5.0.1",
+  "version": "5.1.0",
   "private": true,
   "dependencies": {
     "@appjusto/types": "../types",
