@@ -1,9 +1,11 @@
 import {
+  Badge,
   Box,
   Button,
   Checkbox,
   CheckboxGroup,
   Flex,
+  HStack,
   Radio,
   RadioGroup,
   Stack,
@@ -121,7 +123,14 @@ export const ProductComplements = () => {
                     value={group.id}
                   >
                     <Box ml="2">
-                      <Text>{group.name}</Text>
+                      <HStack spacing={2}>
+                        <Text>{group.name}</Text>
+                        {!group.enabled && (
+                          <Badge px="2" borderRadius="lg">
+                            {t('Indisponível')}
+                          </Badge>
+                        )}
+                      </HStack>
                       <Text fontSize="sm" color="gray.700">{`${
                         group.required ? 'Obrigatório' : 'Opcional'
                       }. Mín: ${group.minimum}. Máx: ${group.maximum}`}</Text>
