@@ -259,16 +259,14 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
               value={name}
               onChange={(ev) => setName(ev.target.value)}
             />
-            {!onboarding && (
-              <Input
-                isDisabled={!isBackofficeUser}
-                id="business-company-name"
-                label={t('Razão social')}
-                placeholder={t('Apenas para conferência')}
-                value={companyName}
-                onChange={(ev) => setCompanyName(ev.target.value)}
-              />
-            )}
+            <Input
+              isRequired
+              id="business-company-name"
+              label={t('Razão social *')}
+              placeholder={t('Apenas para conferência')}
+              value={companyName}
+              onChange={(ev) => setCompanyName(ev.target.value)}
+            />
             <PatternInput
               isRequired
               ref={phoneRef}
