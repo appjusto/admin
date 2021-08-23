@@ -242,7 +242,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
               isDisabled={business?.situation === 'approved'}
               ref={cnpjRef}
               id="business-cnpj"
-              label={t('CNPJ')}
+              label={t('CNPJ *')}
               placeholder={t('CNPJ do seu estabelecimento')}
               mask={cnpjMask}
               parser={numbersOnlyParser}
@@ -254,7 +254,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
             <Input
               isRequired
               id="business-name"
-              label={t('Nome do restaurante')}
+              label={t('Nome do restaurante *')}
               placeholder={t('Digite o nome do restaurante')}
               value={name}
               onChange={(ev) => setName(ev.target.value)}
@@ -273,7 +273,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
               isRequired
               ref={phoneRef}
               id="business-phone"
-              label={t('Telefone para atendimento sobre pedidos')}
+              label={t('Telefone para atendimento sobre pedidos *')}
               placeholder={t('Número de telefone ou celular')}
               mask={phoneMask}
               parser={numbersOnlyParser}

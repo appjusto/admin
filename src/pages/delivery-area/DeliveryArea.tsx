@@ -147,7 +147,7 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
             isRequired
             ref={cepRef}
             id="delivery-postalcode"
-            label={t('CEP')}
+            label={t('CEP *')}
             placeholder={t('CEP')}
             mask={cepMask}
             formatter={cepFormatter}
@@ -162,7 +162,7 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
             isRequired
             id="delivery-address"
             flex={{ base: 1, md: 4 }}
-            label={t('Endereço')}
+            label={t('Endereço *')}
             placeholder={t('Preenchimento automático')}
             value={logradouro}
             isReadOnly
@@ -172,7 +172,7 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
             id="delivery-address-number"
             flex={1}
             ml={{ base: '0', md: '4' }}
-            label={t('Número')}
+            label={t('Número *')}
             ref={numberRef}
             placeholder={t('000')}
             value={number}
@@ -197,7 +197,7 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
             isRequired
             id="delivery-ray"
             maxW="100px"
-            label={t('Raio/ km')}
+            label={t('Raio/ km *')}
             value={deliveryRange}
             onChange={(ev: React.ChangeEvent<HTMLInputElement>) =>
               setDeliveryRange(ev.target.value)

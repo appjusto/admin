@@ -8,7 +8,7 @@ export const CuisineSelect = (props: SelectProps) => {
   const cuisines = useCuisines();
   return (
     <Select
-      label={t('Tipo de cozinha')}
+      label={t('Tipo de cozinha *')}
       placeholder={t('Selecione o tipo de cozinha oferecido')}
       {...props}
     >

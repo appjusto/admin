@@ -186,7 +186,7 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
           isRequired
           id="manager-profile-name"
           ref={nameRef}
-          label={t('Nome')}
+          label={t('Nome *')}
           placeholder={t('Nome')}
           value={name}
           onChange={(ev) => setName(ev.target.value)}
@@ -194,7 +194,7 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
         <CustomInput
           isRequired
           id="manager-profile-lastname"
-          label={t('Sobrenome')}
+          label={t('Sobrenome *')}
           placeholder={t('Sobrenome')}
           value={surname}
           onChange={(ev) => setSurname(ev.target.value)}
@@ -203,7 +203,7 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
           isRequired
           ref={phoneNumberRef}
           id="manager-phone"
-          label={t('Celular')}
+          label={t('Celular *')}
           placeholder={t('Número do seu celular')}
           mask={phoneMask}
           parser={numbersOnlyParser}
@@ -217,7 +217,7 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
           isDisabled={role === 'manager' && business?.situation === 'approved'}
           ref={cpfRef}
           id="manager-cpf"
-          label={t('CPF')}
+          label={t('CPF *')}
           placeholder={t('Número do seu CPF')}
           mask={cpfMask}
           parser={numbersOnlyParser}
