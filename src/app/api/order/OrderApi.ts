@@ -20,6 +20,7 @@ import { documentAs, documentsAs, FirebaseDocument } from 'core/fb';
 import firebase from 'firebase/app';
 import FirebaseRefs from '../FirebaseRefs';
 import * as Sentry from '@sentry/react';
+import { IuguInvoiceStatus } from 'appjusto-types/payment/iugu';
 
 export type CancellationData = {
   issue: WithId<Issue>;
@@ -347,9 +348,11 @@ export default class OrderApi {
     orderId?: string | null,
     start?: Date | null,
     end?: Date | null,
-    startAfter?: FirebaseDocument
+    startAfter?: FirebaseDocument,
+    status?: IuguInvoiceStatus
   ): firebase.Unsubscribe {
     let query = this.refs.getInvoicesRef().orderBy('createdOn', 'desc').limit(20);
+    if (status) query = query.where('status', '==', status);
     if (startAfter) query = query.startAfter(startAfter);
     if (orderId) query = query.where('orderId', '==', orderId);
     if (start && end) query = query.where('createdOn', '>=', start).where('createdOn', '<=', end);

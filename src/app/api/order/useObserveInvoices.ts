@@ -2,8 +2,14 @@ import { useContextApi } from 'app/state/api/context';
 import { WithId, Invoice } from 'appjusto-types';
 import React from 'react';
 import firebase from 'firebase/app';
+import { IuguInvoiceStatus } from 'appjusto-types/payment/iugu';
 
-export const useObserveInvoices = (orderId?: string | null, start?: string, end?: string) => {
+export const useObserveInvoices = (
+  orderId?: string | null,
+  start?: string,
+  end?: string,
+  status?: IuguInvoiceStatus
+) => {
   // context
   const api = useContextApi();
   // state
@@ -11,13 +17,13 @@ export const useObserveInvoices = (orderId?: string | null, start?: string, end?
   const [startAfter, setStartAfter] = React.useState<
     firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
   >();
-  const [lastFleet, setLastFleet] = React.useState<
+  const [lastInvoice, setLastInvoice] = React.useState<
     firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
   >();
   // handlers
   const fetchNextPage = React.useCallback(() => {
-    setStartAfter(lastFleet);
-  }, [lastFleet]);
+    setStartAfter(lastInvoice);
+  }, [lastInvoice]);
   // side effects
   React.useEffect(() => {
     setStartAfter(undefined);
@@ -29,15 +35,16 @@ export const useObserveInvoices = (orderId?: string | null, start?: string, end?
       (results, last) => {
         if (!startAfter) setInvoices(results);
         else setInvoices((prev) => (prev ? [...prev, ...results] : results));
-        setLastFleet(last);
+        setLastInvoice(last);
       },
       orderId,
       startDate,
       endDate,
-      startAfter
+      startAfter,
+      status
     );
     return () => unsub();
-  }, [api, startAfter, orderId, start, end]);
+  }, [api, startAfter, orderId, start, end, status]);
   // return
   return { invoices, fetchNextPage };
 };
