@@ -69,6 +69,12 @@ const InvoicesPage = () => {
           <FilterText isActive={!filterBar} onClick={() => setFilterBar(undefined)}>
             {t('Todas')}
           </FilterText>
+          <FilterText
+            isActive={filterBar === 'in_analysis'}
+            onClick={() => setFilterBar('in_analysis')}
+          >
+            {t('Análise')}
+          </FilterText>
           <FilterText isActive={filterBar === 'pending'} onClick={() => setFilterBar('pending')}>
             {t('Pendente')}
           </FilterText>
@@ -76,7 +82,7 @@ const InvoicesPage = () => {
             {t('Paga')}
           </FilterText>
           <FilterText isActive={filterBar === 'refunded'} onClick={() => setFilterBar('refunded')}>
-            {t('Reembolsada')}
+            {t('Reembol.')}
           </FilterText>
           <FilterText isActive={filterBar === 'canceled'} onClick={() => setFilterBar('canceled')}>
             {t('Cancelada')}
