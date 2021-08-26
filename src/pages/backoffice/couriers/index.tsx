@@ -27,6 +27,7 @@ const CouriersPage = () => {
   const [filterCheck, setFilterCheck] = React.useState<CourierStatus[]>([
     'available',
     'unavailable',
+    'dispatching',
   ]);
   const [filters, setFilters] = React.useState<BasicUserFilter[]>([]);
 
@@ -176,6 +177,9 @@ const CouriersPage = () => {
             </Checkbox>
             <Checkbox iconColor="white" value="unavailable">
               {t('Indisponível')}
+            </Checkbox>
+            <Checkbox iconColor="white" value="dispatching">
+              {t('Realizando entrega')}
             </Checkbox>
           </HStack>
         </CheckboxGroup>
