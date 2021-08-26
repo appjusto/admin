@@ -91,7 +91,6 @@ export default class AuthApi {
 
   async updateEmail(data: { accountId: string; email: string }) {
     const { accountId, email } = data;
-    console.log('updateEmail', accountId, email);
     const payload: UpdateEmailPayload = {
       meta: { version: '1' }, // TODO: pass correct version on
       accountId,

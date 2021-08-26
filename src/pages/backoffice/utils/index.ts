@@ -89,7 +89,16 @@ export const iuguSituationPTOptions = {
 };
 
 export const getEditableProfile = (profile: any, isEditingEmail: boolean) => {
-  let imitedKeys = ['id', 'code', 'createdOn', 'updatedOn', 'statistics', 'onboarded', 'email'];
+  let imitedKeys = [
+    'id',
+    'code',
+    'createdOn',
+    'updatedOn',
+    'statistics',
+    'onboarded',
+    'notificationToken',
+    'email',
+  ];
   if (isEditingEmail) imitedKeys.pop();
   let result = omit(profile, imitedKeys);
   result = omitBy(result, (value) => !value);

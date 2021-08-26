@@ -64,7 +64,6 @@ export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
       }
     }*/
     const changes = getEditableProfile(consumer, isEditingEmail) as Partial<ConsumerProfile>;
-    console.log(changes);
     updateProfile(changes);
   };
 
