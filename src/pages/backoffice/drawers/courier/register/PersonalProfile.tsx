@@ -1,4 +1,4 @@
-import { Box } from '@chakra-ui/react';
+import { Box, Text } from '@chakra-ui/react';
 import * as cnpjutils from '@fnando/cnpj';
 import * as cpfutils from '@fnando/cpf';
 import { useContextCourierProfile } from 'app/state/courier/context';
@@ -22,18 +22,20 @@ interface PersonalProfileProps {
 
 export const PersonalProfile = ({ isCNPJ }: PersonalProfileProps) => {
   // context
-  const { courier, handleProfileChange } = useContextCourierProfile();
-
+  const {
+    courier,
+    handleProfileChange,
+    isEditingEmail,
+    setIsEditingEmail,
+  } = useContextCourierProfile();
   // refs
   const nameRef = React.useRef<HTMLInputElement>(null);
   const cpfRef = React.useRef<HTMLInputElement>(null);
   const cnpjRef = React.useRef<HTMLInputElement>(null);
   const phoneNumberRef = React.useRef<HTMLInputElement>(null);
-
   // helpers
   const isCPFValid = () => cpfutils.isValid(courier?.cpf!);
   const isCPNJValid = () => cnpjutils.isValid(courier?.company?.cnpj!);
-
   // handlers
   const handleInputChange = (field: string, value: string) => {
     if (field === 'cnpj') {
@@ -44,21 +46,48 @@ export const PersonalProfile = ({ isCNPJ }: PersonalProfileProps) => {
       handleProfileChange('company', newCompany);
     } else handleProfileChange(field, value);
   };
-  /*const onSubmitHandler = async () => {
-    if (!isCPFValid()) return cpfRef?.current?.focus();
-    if (!isCPNJValid()) return cnpjRef?.current?.focus();
-    if (phone.length < 11) return phoneNumberRef?.current?.focus();
-  };*/
-
   // UI
   return (
     <Box>
-      <CustomInput
-        id="user-profile-email"
-        label={t('E-mail')}
-        value={courier?.email ?? ''}
-        isDisabled
-      />
+      {isEditingEmail ? (
+        <Box>
+          <Text
+            textAlign="end"
+            color="red"
+            textDecor="underline"
+            cursor="pointer"
+            onClick={() => setIsEditingEmail(false)}
+          >
+            {t('Desativar edição')}
+          </Text>
+          <CustomInput
+            mt="2"
+            id="user-profile-email"
+            label={t('E-mail')}
+            value={courier?.email ?? ''}
+            onChange={(ev) => handleInputChange('email', ev.target.value)}
+          />
+        </Box>
+      ) : (
+        <Box>
+          <Text
+            textAlign="end"
+            color="green.600"
+            textDecor="underline"
+            cursor="pointer"
+            onClick={() => setIsEditingEmail(true)}
+          >
+            {t('Editar email')}
+          </Text>
+          <CustomInput
+            mt="2"
+            id="user-profile-email"
+            label={t('E-mail')}
+            value={courier?.email ?? ''}
+            isDisabled
+          />
+        </Box>
+      )}
       <CustomInput
         isRequired
         id="user-profile-name"

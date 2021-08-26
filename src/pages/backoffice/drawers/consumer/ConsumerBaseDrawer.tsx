@@ -16,6 +16,7 @@ import { useContextConsumerProfile } from 'app/state/consumer/context';
 import { ConsumerProfile } from 'appjusto-types';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
 import { initialError } from 'common/components/error/utils';
+import { getEditableProfile } from 'pages/backoffice/utils';
 import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
 import React from 'react';
 import { useRouteMatch } from 'react-router';
@@ -33,8 +34,8 @@ interface BaseDrawerProps {
 export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseDrawerProps) => {
   //context
   const { url } = useRouteMatch();
-  const { consumer } = useContextConsumerProfile();
-  const { updateProfile, updateResult } = useConsumerUpdateProfile();
+  const { consumer, isEditingEmail } = useContextConsumerProfile();
+  const { updateProfile, updateResult } = useConsumerUpdateProfile(consumer?.id);
   const { isLoading, isSuccess, isError, error: updateError } = updateResult;
 
   // state
@@ -62,13 +63,9 @@ export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
         });
       }
     }*/
-    const newState = {} as ConsumerProfile;
-    consumer &&
-      Object.keys(consumer).forEach((key) => {
-        //@ts-ignore
-        if (consumer[key]) newState[key] = consumer[key];
-      });
-    updateProfile(newState);
+    const changes = getEditableProfile(consumer, isEditingEmail) as Partial<ConsumerProfile>;
+    console.log(changes);
+    updateProfile(changes);
   };
 
   // side effects

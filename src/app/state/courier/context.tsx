@@ -22,6 +22,8 @@ type Validation = { cpf: boolean; cnpj: boolean; agency: boolean; account: boole
 interface CourierProfileContextProps {
   courier: WithId<CourierProfile> | undefined | null;
   pictures: { selfie?: string | null; document?: string | null };
+  isEditingEmail: boolean;
+  setIsEditingEmail: Dispatch<SetStateAction<boolean>>;
   selfieFiles?: File[] | null;
   setSelfieFiles(files: File[] | null): void;
   documentFiles?: File[] | null;
@@ -63,9 +65,9 @@ export const CourierProvider = ({ children }: Props) => {
     courierId
   );
   const issueOptions = useIssuesByType(issueOptionsArray);
-
   // state
   const [courier, dispatch] = React.useReducer(courierReducer, {} as WithId<CourierProfile>);
+  const [isEditingEmail, setIsEditingEmail] = React.useState(false);
   const [contextValidation, setContextValidation] = React.useState({
     cpf: true,
     cnpj: true,
@@ -77,12 +79,10 @@ export const CourierProvider = ({ children }: Props) => {
   const [dateStart, setDateStart] = React.useState<string>();
   const [dateEnd, setDateEnd] = React.useState<string>();
   const orders = useCourierOrders(courierId, dateStart, dateEnd);
-
   // handlers
   const handleProfileChange = (key: string, value: any) => {
     dispatch({ type: 'update_state', payload: { [key]: value } });
   };
-
   // side effects
   React.useEffect(() => {
     if (profile) {
@@ -92,7 +92,6 @@ export const CourierProvider = ({ children }: Props) => {
       });
     }
   }, [profile]);
-
   React.useEffect(() => {
     setContextValidation((prevState) => {
       return {
@@ -102,13 +101,14 @@ export const CourierProvider = ({ children }: Props) => {
       };
     });
   }, [courier.cpf, courier.company?.cnpj]);
-
   // UI
   return (
     <CourierProfileContext.Provider
       value={{
         courier,
         pictures,
+        isEditingEmail,
+        setIsEditingEmail,
         selfieFiles,
         setSelfieFiles,
         documentFiles,

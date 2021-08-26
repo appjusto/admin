@@ -1,4 +1,4 @@
-import { Box } from '@chakra-ui/react';
+import { Box, Text } from '@chakra-ui/react';
 import * as cpfutils from '@fnando/cpf';
 import { useContextConsumerProfile } from 'app/state/consumer/context';
 import { CustomInput } from 'common/components/form/input/CustomInput';
@@ -16,7 +16,12 @@ import { SectionTitle } from '../generics/SectionTitle';
 
 export const PersonalProfile = () => {
   // context
-  const { consumer, handleProfileChange } = useContextConsumerProfile();
+  const {
+    consumer,
+    handleProfileChange,
+    isEditingEmail,
+    setIsEditingEmail,
+  } = useContextConsumerProfile();
 
   // refs
   const nameRef = React.useRef<HTMLInputElement>(null);
@@ -37,12 +42,45 @@ export const PersonalProfile = () => {
   return (
     <Box>
       <SectionTitle>{t('Dados pessoais')}</SectionTitle>
-      <CustomInput
-        id="user-profile-email"
-        label={t('E-mail')}
-        value={consumer?.email ?? ''}
-        isDisabled
-      />
+      {isEditingEmail ? (
+        <Box>
+          <Text
+            textAlign="end"
+            color="red"
+            textDecor="underline"
+            cursor="pointer"
+            onClick={() => setIsEditingEmail(false)}
+          >
+            {t('Desativar edição')}
+          </Text>
+          <CustomInput
+            mt="2"
+            id="user-profile-email"
+            label={t('E-mail')}
+            value={consumer?.email ?? ''}
+            onChange={(ev) => handleInputChange('email', ev.target.value)}
+          />
+        </Box>
+      ) : (
+        <Box>
+          <Text
+            textAlign="end"
+            color="green.600"
+            textDecor="underline"
+            cursor="pointer"
+            onClick={() => setIsEditingEmail(true)}
+          >
+            {t('Editar email')}
+          </Text>
+          <CustomInput
+            mt="2"
+            id="user-profile-email"
+            label={t('E-mail')}
+            value={consumer?.email ?? ''}
+            isDisabled
+          />
+        </Box>
+      )}
       <CustomInput
         isRequired
         id="user-profile-name"

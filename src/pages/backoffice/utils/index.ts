@@ -1,3 +1,5 @@
+import { omit, omitBy } from 'lodash';
+
 export const situationPTOptions = {
   pending: 'Pendente',
   submitted: 'Submetido',
@@ -84,4 +86,12 @@ export const iuguSituationPTOptions = {
   'waiting-verification': 'Aguardando verificação',
   'verified': 'Verificada',
   'invalid': 'Inválida',
+};
+
+export const getEditableProfile = (profile: any, isEditingEmail: boolean) => {
+  let imitedKeys = ['id', 'code', 'createdOn', 'updatedOn', 'statistics', 'onboarded', 'email'];
+  if (isEditingEmail) imitedKeys.pop();
+  let result = omit(profile, imitedKeys);
+  result = omitBy(result, (value) => !value);
+  return result;
 };

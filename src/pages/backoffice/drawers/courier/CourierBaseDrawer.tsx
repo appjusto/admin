@@ -17,7 +17,7 @@ import { useContextCourierProfile } from 'app/state/courier/context';
 import { CourierProfile } from 'appjusto-types';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
 import { initialError } from 'common/components/error/utils';
-import { modePTOptions, situationPTOptions } from 'pages/backoffice/utils';
+import { getEditableProfile, modePTOptions, situationPTOptions } from 'pages/backoffice/utils';
 import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
 import React from 'react';
 import { queryCache } from 'react-query';
@@ -38,13 +38,14 @@ export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDr
   const { url } = useRouteMatch();
   const {
     courier,
+    isEditingEmail,
     contextValidation,
     selfieFiles,
     setSelfieFiles,
     documentFiles,
     setDocumentFiles,
   } = useContextCourierProfile();
-  const { updateProfile, updateResult } = useCourierUpdateProfile();
+  const { updateProfile, updateResult } = useCourierUpdateProfile(courier?.id);
   const { isLoading, isSuccess, isError, error: updateError } = updateResult;
 
   // state
@@ -90,15 +91,10 @@ export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDr
           message: { title: 'A conta informada não é válida.' },
         });
     }
-    const newState = {} as CourierProfile;
-    courier &&
-      Object.keys(courier).forEach((key) => {
-        //@ts-ignore
-        if (courier[key]) newState[key] = courier[key];
-      });
+    const changes = getEditableProfile(courier, isEditingEmail) as Partial<CourierProfile>;
     const selfieFileToSave = selfieFiles ? selfieFiles[0] : null;
     const documentFileToSave = documentFiles ? documentFiles[0] : null;
-    updateProfile({ changes: newState, selfieFileToSave, documentFileToSave });
+    updateProfile({ changes, selfieFileToSave, documentFileToSave });
     if (selfieFileToSave) queryCache.invalidateQueries(['courier:selfie', courier?.id]);
     if (documentFileToSave) queryCache.invalidateQueries(['courier:document', courier?.id]);
     setSelfieFiles(null);

@@ -1,17 +1,14 @@
 import { useContextApi } from 'app/state/api/context';
 import React from 'react';
 import { useMutation } from 'react-query';
-
 interface LoginData {
   email: string;
   password?: string;
 }
-
 interface SignInData {
   email: string;
   link: string;
 }
-
 export const useAuthentication = () => {
   // contex
   const api = useContextApi();

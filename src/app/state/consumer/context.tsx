@@ -11,6 +11,8 @@ interface ConsumerProfileContextProps {
   consumer?: WithId<ConsumerProfile> | null;
   contextValidation: Validation;
   orders: WithId<Order>[];
+  isEditingEmail: boolean;
+  setIsEditingEmail: Dispatch<SetStateAction<boolean>>;
   handleProfileChange(key: string, value: any): void;
   setContextValidation: Dispatch<SetStateAction<Validation>>;
 }
@@ -37,6 +39,7 @@ export const ConsumerProvider = ({ children }: Props) => {
   const [contextValidation, setContextValidation] = React.useState({
     cpf: true,
   });
+  const [isEditingEmail, setIsEditingEmail] = React.useState(false);
 
   // handlers
   const handleProfileChange = (key: string, value: any) => {
@@ -68,6 +71,8 @@ export const ConsumerProvider = ({ children }: Props) => {
         consumer,
         contextValidation,
         orders,
+        isEditingEmail,
+        setIsEditingEmail,
         handleProfileChange,
         setContextValidation,
       }}

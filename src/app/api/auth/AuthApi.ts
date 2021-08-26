@@ -2,6 +2,7 @@ import { ApiConfig } from 'app/api/config/types';
 import firebase from 'firebase/app';
 import FirebaseRefs from '../FirebaseRefs';
 import * as Sentry from '@sentry/react';
+import { UpdateEmailPayload } from 'appjusto-types';
 
 export default class AuthApi {
   constructor(
@@ -86,6 +87,17 @@ export default class AuthApi {
       Sentry.captureException('updateUsersPassword', error);
       throw error;
     }
+  }
+
+  async updateEmail(data: { accountId: string; email: string }) {
+    const { accountId, email } = data;
+    console.log('updateEmail', accountId, email);
+    const payload: UpdateEmailPayload = {
+      meta: { version: '1' }, // TODO: pass correct version on
+      accountId,
+      email,
+    };
+    return await this.refs.getUpdateEmailCallable()(payload);
   }
 
   getUser() {
