@@ -60,6 +60,33 @@ export default class OrderApi {
     return unsubscribe;
   }
 
+  observeBusinessOrdersCompletedInTheLastHour(
+    resultHandler: (orders: WithId<Order>[]) => void,
+    businessId?: string,
+    ordering: Ordering = 'desc'
+  ): firebase.Unsubscribe {
+    const statuses = ['delivered', 'canceled'] as OrderStatus[];
+    const baseTim = new Date();
+    baseTim.setHours(baseTim.getHours() - 1);
+    let query = this.refs
+      .getOrdersRef()
+      .orderBy('updatedOn', ordering)
+      .where('business.id', '==', businessId)
+      .where('status', 'in', statuses)
+      .where('updatedOn', '>', baseTim);
+
+    const unsubscribe = query.onSnapshot(
+      (querySnapshot) => {
+        resultHandler(documentsAs<Order>(querySnapshot.docs));
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+    // returns the unsubscribe function
+    return unsubscribe;
+  }
+
   observeDashboardOrders(
     resultHandler: (orders: WithId<Order>[]) => void,
     businessId?: string | null,

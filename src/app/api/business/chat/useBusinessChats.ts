@@ -8,7 +8,10 @@ export interface BusinessChatMessage extends ChatMessage {
   orderId: string;
 }
 
-export const useBusinessChats = (orders: WithId<Order>[]) => {
+export const useBusinessChats = (
+  activeOrders: WithId<Order>[],
+  completedAndActiveOrders: WithId<Order>[]
+) => {
   // context
   const api = useContextApi();
   const businessId = useContextBusinessId();
@@ -69,15 +72,17 @@ export const useBusinessChats = (orders: WithId<Order>[]) => {
   // side effects
   React.useEffect(() => {
     if (!businessId) return;
-    if (orders && orders.length === 0) {
+    const totalActiveOrders = [...activeOrders, ...completedAndActiveOrders];
+    console.log('totalActiveOrders', totalActiveOrders);
+    if (totalActiveOrders.length === 0) {
       setOrderChatGroup([]);
       return;
     }
-    orders.forEach((order) => {
+    totalActiveOrders.forEach((order) => {
       api.business().observeBusinessChatMessageAsFrom(order.id, businessId, setMessagesAsFrom);
       api.business().observeBusinessChatMessageAsTo(order.id, businessId, setMessagesAsTo);
     });
-  }, [api, orders, businessId]);
+  }, [api, businessId, activeOrders, completedAndActiveOrders]);
 
   React.useEffect(() => {
     createOrderChatGroup();

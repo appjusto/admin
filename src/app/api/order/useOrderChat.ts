@@ -95,14 +95,14 @@ export const useOrderChat = (orderId: string, counterpartId: string) => {
       if (elapsedTime < 60) setIsActive(true);
       else setIsActive(false);
     } else setIsActive(false);
-  }, [order?.status]);
+  }, [order?.status, order?.deliveredOn, order?.updatedOn]);
 
   React.useEffect(() => {
     const sorted = chatFromBusiness.concat(chatFromCounterPart).sort(sortMessages);
     const groups = groupOrderChatMessages(sorted).reverse();
     setChat(groups);
   }, [chatFromBusiness, chatFromCounterPart]);
-
+  console.log(order?.updatedOn);
   // return
   return { isActive, orderCode: order?.code, participants, chat, sendMessage, sendMessageResult };
 };

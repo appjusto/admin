@@ -7,6 +7,7 @@ import { OrderChatGroup } from 'app/api/chat/types';
 import { useCanceledOrders } from 'app/api/order/useCanceledOrders';
 import { useObserveConfirmedOrders } from 'app/api/order/useObserveConfirmedOrders';
 import { useObserveOrders } from 'app/api/order/useObserveOrders';
+import { useObserveOrdersCompletedInTheLastHour } from 'app/api/order/useObserveOrdersCompletedInTheLastHour';
 import { useObservePreparingOrders } from 'app/api/order/useObservePreparingOrders';
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusiness } from 'app/state/business/context';
@@ -45,8 +46,9 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   const { business } = useContextBusiness();
   const { sendBusinessKeepAlive } = useBusinessProfile();
   const activeOrders = useObserveOrders(statuses, business?.id);
+  const completedAndActiveOrders = useObserveOrdersCompletedInTheLastHour(business?.id);
   const canceledOrders = useCanceledOrders(business?.id);
-  const chats = useBusinessChats(activeOrders);
+  const chats = useBusinessChats(activeOrders, completedAndActiveOrders);
   useObserveConfirmedOrders(business?.id);
   useObservePreparingOrders(business?.id);
 
