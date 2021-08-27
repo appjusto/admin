@@ -105,7 +105,7 @@ export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
 
   React.useEffect(() => {
     if (deleteAccountResult.isSuccess) onClose();
-  }, [deleteAccountResult.isSuccess]);
+  }, [deleteAccountResult.isSuccess, onClose]);
 
   //UI
   return (

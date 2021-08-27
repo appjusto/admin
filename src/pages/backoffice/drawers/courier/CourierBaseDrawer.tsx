@@ -140,7 +140,7 @@ export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDr
 
   React.useEffect(() => {
     if (deleteAccountResult.isSuccess) onClose();
-  }, [deleteAccountResult.isSuccess]);
+  }, [deleteAccountResult.isSuccess, onClose]);
 
   //UI
   return (
