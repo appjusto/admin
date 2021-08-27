@@ -575,7 +575,7 @@ export default class BusinessApi {
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
     const newGroup = {
       ...group,
-      enabled: false,
+      enabled: true,
       createdOn: timestamp,
       updatedOn: timestamp,
     };
