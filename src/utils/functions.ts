@@ -137,14 +137,14 @@ export const updateLocalStorageOrderTime = (orderId: string) => {
   return false;
 };
 
-export const getTimeUntilNow = (created: number, reverse: boolean = false) => {
+export const getTimeUntilNow = (baseTime: number, reverse: boolean = false) => {
   const now = new Date().getTime();
   if (reverse) {
-    let elapsedTime = (created - now) / 1000 / 60;
+    let elapsedTime = (baseTime - now) / 1000 / 60;
     if (elapsedTime < 0) elapsedTime = 0;
     return round(elapsedTime, 0);
   }
-  const elapsedTime = (now - created) / 1000 / 60;
+  const elapsedTime = (now - baseTime) / 1000 / 60;
   return round(elapsedTime, 0);
 };
 

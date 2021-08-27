@@ -7,8 +7,10 @@ import { useCourierProfilePicture } from '../courier/useCourierProfilePicture';
 import { GroupedChatMessages } from 'app/api/chat/types';
 import { groupOrderChatMessages, sortMessages } from 'app/api/chat/utils';
 import { useOrdersContext } from 'app/state/order';
+import { getTimeUntilNow } from 'utils/functions';
 
 const orderActivedStatuses = ['confirmed', 'preparing', 'ready', 'dispatching'] as OrderStatus[];
+const orderCompleteStatuses = ['delivered', 'canceled'] as OrderStatus[];
 
 export const useOrderChat = (orderId: string, counterpartId: string) => {
   // context
@@ -81,8 +83,17 @@ export const useOrderChat = (orderId: string, counterpartId: string) => {
   }, [order, counterpartId, businessId, courierProfilePicture]);
 
   React.useEffect(() => {
-    if (order?.status && orderActivedStatuses.includes(order.status)) {
-      setIsActive(true);
+    if (!order?.status) return;
+    if (orderActivedStatuses.includes(order.status)) setIsActive(true);
+    else if (orderCompleteStatuses.includes(order.status)) {
+      const baseTime =
+        order.status === 'delivered' && order.deliveredOn
+          ? (order.deliveredOn as firebase.firestore.Timestamp).toMillis()
+          : (order.updatedOn as firebase.firestore.Timestamp).toMillis();
+      const elapsedTime = getTimeUntilNow(baseTime, false);
+      console.log('elapsedTime', elapsedTime);
+      if (elapsedTime < 60) setIsActive(true);
+      else setIsActive(false);
     } else setIsActive(false);
   }, [order?.status]);
 
