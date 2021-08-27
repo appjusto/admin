@@ -15,6 +15,7 @@ import {
 } from '@chakra-ui/react';
 import { useAuthentication } from 'app/api/auth/useAuthentication';
 import { useCourierUpdateProfile } from 'app/api/courier/useCourierUpdateProfile';
+import { FirebaseError } from 'app/api/types';
 import { useContextCourierProfile } from 'app/state/courier/context';
 import { CourierProfile } from 'appjusto-types';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
@@ -42,6 +43,7 @@ export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDr
   const {
     courier,
     isEditingEmail,
+    setIsEditingEmail,
     contextValidation,
     selfieFiles,
     setSelfieFiles,
@@ -95,6 +97,7 @@ export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDr
           message: { title: 'A conta informada não é válida.' },
         });
     }
+    setIsEditingEmail(false);
     const changes = getEditableProfile(courier, isEditingEmail) as Partial<CourierProfile>;
     const selfieFileToSave = selfieFiles ? selfieFiles[0] : null;
     const documentFileToSave = documentFiles ? documentFiles[0] : null;
@@ -112,17 +115,32 @@ export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDr
         error: null,
         message: { title: 'Não foi possível encontrar o id deste usuário.' },
       });
-    } else deleteAccount({ accountId: courier.id });
+    } else {
+      submission.current += 1;
+      deleteAccount({ accountId: courier.id });
+    }
   };
 
   // side effects
   React.useEffect(() => {
-    if (isError)
+    if (isError) {
       setError({
         status: true,
         error: updateError,
       });
-  }, [isError, updateError]);
+    } else if (deleteAccountResult.isError) {
+      const errorMessage = (deleteAccountResult.error as FirebaseError).message;
+      setError({
+        status: true,
+        error: deleteAccountResult.error,
+        message: { title: errorMessage ?? 'Não foi possível acessar o servidor' },
+      });
+    }
+  }, [isError, updateError, deleteAccountResult.isError, deleteAccountResult.error]);
+
+  React.useEffect(() => {
+    if (deleteAccountResult.isSuccess) onClose();
+  }, [deleteAccountResult.isSuccess]);
 
   //UI
   return (

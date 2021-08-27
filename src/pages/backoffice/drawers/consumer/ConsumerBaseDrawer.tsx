@@ -14,6 +14,7 @@ import {
 } from '@chakra-ui/react';
 import { useAuthentication } from 'app/api/auth/useAuthentication';
 import { useConsumerUpdateProfile } from 'app/api/consumer/useConsumerUpdateProfile';
+import { FirebaseError } from 'app/api/types';
 import { useContextConsumerProfile } from 'app/state/consumer/context';
 import { ConsumerProfile } from 'appjusto-types';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
@@ -37,7 +38,7 @@ export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
   //context
   const { url } = useRouteMatch();
   const { deleteAccount, deleteAccountResult } = useAuthentication();
-  const { consumer, isEditingEmail } = useContextConsumerProfile();
+  const { consumer, isEditingEmail, setIsEditingEmail } = useContextConsumerProfile();
   const { updateProfile, updateResult } = useConsumerUpdateProfile(consumer?.id);
   const { isLoading, isSuccess, isError, error: updateError } = updateResult;
 
@@ -67,6 +68,7 @@ export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
         });
       }
     }*/
+    setIsEditingEmail(false);
     const changes = getEditableProfile(consumer, isEditingEmail) as Partial<ConsumerProfile>;
     updateProfile(changes);
   };
@@ -78,17 +80,32 @@ export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
         error: null,
         message: { title: 'Não foi possível encontrar o id deste usuário.' },
       });
-    } else deleteAccount({ accountId: consumer.id });
+    } else {
+      submission.current += 1;
+      deleteAccount({ accountId: consumer.id });
+    }
   };
 
   // side effects
   React.useEffect(() => {
-    if (isError)
+    if (isError) {
       setError({
         status: true,
         error: updateError,
       });
-  }, [isError, updateError]);
+    } else if (deleteAccountResult.isError) {
+      const errorMessage = (deleteAccountResult.error as FirebaseError).message;
+      setError({
+        status: true,
+        error: deleteAccountResult.error,
+        message: { title: errorMessage ?? 'Não foi possível acessar o servidor' },
+      });
+    }
+  }, [isError, updateError, deleteAccountResult.isError, deleteAccountResult.error]);
+
+  React.useEffect(() => {
+    if (deleteAccountResult.isSuccess) onClose();
+  }, [deleteAccountResult.isSuccess]);
 
   //UI
   return (

@@ -109,15 +109,10 @@ export default class AuthApi {
 
   async deleteAccount(data: { accountId: string }) {
     const { accountId } = data;
+    console.log('accountId', accountId);
     const payload: DeleteAccountPayload = {
       meta: { version: '1' }, // TODO: pass correct version on
       accountId,
-      notWorkingOnMyRegion: false,
-      didntFindWhatINeeded: false,
-      pricesHigherThanAlternatives: false,
-      didntLikeApp: false,
-      didntFeelSafe: false,
-      ratherUseAnotherApp: false,
     };
     return this.refs.getDeleteAccountCallable()(payload);
   }
