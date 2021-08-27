@@ -2,7 +2,7 @@ import { ApiConfig } from 'app/api/config/types';
 import firebase from 'firebase/app';
 import FirebaseRefs from '../FirebaseRefs';
 import * as Sentry from '@sentry/react';
-import { UpdateEmailPayload } from 'appjusto-types';
+import { DeleteAccountPayload, UpdateEmailPayload } from 'appjusto-types';
 
 export default class AuthApi {
   constructor(
@@ -13,6 +13,26 @@ export default class AuthApi {
 
   observeAuthState(handler: (a: firebase.User | null) => any): firebase.Unsubscribe {
     return this.auth.onAuthStateChanged(handler);
+  }
+
+  getSignInEmail() {
+    try {
+      return window.localStorage.getItem('email');
+    } catch (error) {
+      return null;
+    }
+  }
+
+  isSignInWithEmailLink(link: string): boolean {
+    return this.auth.isSignInWithEmailLink(link);
+  }
+
+  getUser() {
+    return this.auth.currentUser;
+  }
+
+  signOut() {
+    return this.auth.signOut();
   }
 
   async sendSignInLinkToEmail(email: string): Promise<void> {
@@ -33,18 +53,6 @@ export default class AuthApi {
     } catch (error) {
       Sentry.captureException(error);
     }
-  }
-
-  getSignInEmail() {
-    try {
-      return window.localStorage.getItem('email');
-    } catch (error) {
-      return null;
-    }
-  }
-
-  isSignInWithEmailLink(link: string): boolean {
-    return this.auth.isSignInWithEmailLink(link);
   }
 
   async signInWithEmailLink(email: string, link: string) {
@@ -99,15 +107,18 @@ export default class AuthApi {
     return await this.refs.getUpdateEmailCallable()(payload);
   }
 
-  getUser() {
-    return this.auth.currentUser;
-  }
-
-  signOut() {
-    return this.auth.signOut();
-  }
-
-  deleteAccount() {
-    return this.refs.getDeleteAccountCallable()();
+  async deleteAccount(data: { accountId: string }) {
+    const { accountId } = data;
+    const payload: DeleteAccountPayload = {
+      meta: { version: '1' }, // TODO: pass correct version on
+      accountId,
+      notWorkingOnMyRegion: false,
+      didntFindWhatINeeded: false,
+      pricesHigherThanAlternatives: false,
+      didntLikeApp: false,
+      didntFeelSafe: false,
+      ratherUseAnotherApp: false,
+    };
+    return this.refs.getDeleteAccountCallable()(payload);
   }
 }

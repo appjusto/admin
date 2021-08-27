@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   Drawer,
   DrawerBody,
@@ -12,6 +13,7 @@ import {
   Icon,
   Text,
 } from '@chakra-ui/react';
+import { useAuthentication } from 'app/api/auth/useAuthentication';
 import { useCourierUpdateProfile } from 'app/api/courier/useCourierUpdateProfile';
 import { useContextCourierProfile } from 'app/state/courier/context';
 import { CourierProfile } from 'appjusto-types';
@@ -36,6 +38,7 @@ interface BaseDrawerProps {
 export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDrawerProps) => {
   //context
   const { url } = useRouteMatch();
+  const { deleteAccount, deleteAccountResult } = useAuthentication();
   const {
     courier,
     isEditingEmail,
@@ -49,6 +52,7 @@ export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDr
   const { isLoading, isSuccess, isError, error: updateError } = updateResult;
 
   // state
+  const [isDeleting, setIsDeleting] = React.useState(false);
   const [error, setError] = React.useState(initialError);
 
   // refs
@@ -99,6 +103,16 @@ export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDr
     if (documentFileToSave) queryCache.invalidateQueries(['courier:document', courier?.id]);
     setSelfieFiles(null);
     setDocumentFiles(null);
+  };
+
+  const handleDeleteAccount = () => {
+    if (!courier?.id) {
+      setError({
+        status: true,
+        error: null,
+        message: { title: 'Não foi possível encontrar o id deste usuário.' },
+      });
+    } else deleteAccount({ accountId: courier.id });
   };
 
   // side effects
@@ -197,25 +211,51 @@ export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDr
             {children}
           </DrawerBody>
           <DrawerFooter borderTop="1px solid #F2F6EA">
-            <HStack w="full" spacing={4}>
-              <Button
-                width="full"
-                maxW="240px"
-                fontSize="15px"
-                onClick={handleSave}
-                isLoading={isLoading}
-                loadingText={t('Salvando')}
-              >
-                {t('Salvar alterações')}
-              </Button>
-              <SuccessAndErrorHandler
-                submission={submission.current}
-                isSuccess={isSuccess}
-                isError={error.status}
-                error={error.error}
-                errorMessage={error.message}
-              />
-            </HStack>
+            {isDeleting ? (
+              <Box mt="8" w="100%" bg="#FFF8F8" border="1px solid red" borderRadius="lg" p="6">
+                <Text color="red">{t(`Tem certeza que deseja excluir esta conta?`)}</Text>
+                <HStack mt="4" spacing={4}>
+                  <Button width="full" onClick={() => setIsDeleting(false)}>
+                    {t(`Manter conta`)}
+                  </Button>
+                  <Button
+                    width="full"
+                    variant="danger"
+                    onClick={handleDeleteAccount}
+                    isLoading={deleteAccountResult.isLoading}
+                  >
+                    {t(`Excluir`)}
+                  </Button>
+                </HStack>
+              </Box>
+            ) : (
+              <HStack w="100%" spacing={4}>
+                <Button
+                  width="full"
+                  fontSize="15px"
+                  onClick={handleSave}
+                  isLoading={isLoading}
+                  loadingText={t('Salvando')}
+                >
+                  {t('Salvar alterações')}
+                </Button>
+                <Button
+                  width="full"
+                  fontSize="15px"
+                  variant="dangerLight"
+                  onClick={() => setIsDeleting(true)}
+                >
+                  {t('Excluir conta')}
+                </Button>
+              </HStack>
+            )}
+            <SuccessAndErrorHandler
+              submission={submission.current}
+              isSuccess={isSuccess}
+              isError={error.status}
+              error={error.error}
+              errorMessage={error.message}
+            />
           </DrawerFooter>
         </DrawerContent>
       </DrawerOverlay>

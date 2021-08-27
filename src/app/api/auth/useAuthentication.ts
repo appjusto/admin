@@ -9,6 +9,9 @@ interface SignInData {
   email: string;
   link: string;
 }
+interface DeleteAccountData {
+  accountId: string;
+}
 export const useAuthentication = () => {
   // contex
   const api = useContextApi();
@@ -26,6 +29,9 @@ export const useAuthentication = () => {
   const updateUsersPassword = (password: string, currentPassword?: string) =>
     api.auth().updateUsersPassword(password, currentPassword);
   const signOut = React.useCallback(() => api.auth().signOut(), [api]);
+  const [deleteAccount, deleteAccountResult] = useMutation(async (data: DeleteAccountData) =>
+    api.auth().deleteAccount(data)
+  );
   // return
   return {
     login,
@@ -36,5 +42,7 @@ export const useAuthentication = () => {
     sendSignInLinkToEmail,
     sendingLinkResult,
     signOut,
+    deleteAccount,
+    deleteAccountResult,
   };
 };
