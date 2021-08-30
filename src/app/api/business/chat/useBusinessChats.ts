@@ -15,12 +15,10 @@ export const useBusinessChats = (
   // context
   const api = useContextApi();
   const businessId = useContextBusinessId();
-
   // state
   const [messagesAsFrom, setMessagesAsFrom] = React.useState<WithId<BusinessChatMessage>[]>([]);
   const [messagesAsTo, setMessagesAsTo] = React.useState<WithId<BusinessChatMessage>[]>([]);
   const [orderChatGroup, setOrderChatGroup] = React.useState<OrderChatGroup[]>([]);
-
   // side effects
   React.useEffect(() => {
     if (!businessId) return;
@@ -34,7 +32,6 @@ export const useBusinessChats = (
       api.business().observeBusinessChatMessageAsTo(order.id, businessId, setMessagesAsTo);
     });
   }, [api, businessId, activeOrders, completedAndActiveOrders]);
-
   React.useEffect(() => {
     if (!businessId) return;
     const allMessages = messagesAsFrom.concat(messagesAsTo);
@@ -43,7 +40,6 @@ export const useBusinessChats = (
       const counterPartId = businessId === message.from.id ? message.to.id : message.from.id;
       const counterPartFlavor =
         counterPartId === message.from.id ? message.from.agent : message.to.agent;
-      //console.log(message.timestamp);
       const isUnread = message.from.id !== businessId && !message.read;
       const counterPartObject = {
         id: counterPartId,
@@ -56,12 +52,19 @@ export const useBusinessChats = (
           (part) => part.id === counterPartId
         );
         if (existingCounterpart) {
-          if (isUnread && !existingCounterpart.unreadMessages?.includes(message.id)) {
-            existingCounterpart.unreadMessages?.push(message.id);
-          } else
+          if (
+            isUnread &&
+            (!existingCounterpart.unreadMessages ||
+              !existingCounterpart.unreadMessages?.includes(message.id))
+          ) {
+            existingCounterpart.unreadMessages
+              ? existingCounterpart.unreadMessages.push(message.id)
+              : (existingCounterpart.unreadMessages = [message.id]);
+          } else {
             existingCounterpart.unreadMessages = existingCounterpart.unreadMessages?.filter(
               (msg) => msg !== message.id
             );
+          }
           if (existingCounterpart.updatedOn < message.timestamp) {
             existingCounterpart.updatedOn = message.timestamp;
           }

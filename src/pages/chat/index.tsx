@@ -20,16 +20,13 @@ export const ChatPage = () => {
   const { path } = useRouteMatch();
   const history = useHistory();
   const { orders, chats } = useOrdersContext();
-
   // state
   const [search, setSearch] = React.useState('');
   const [dateTime, setDateTime] = React.useState('');
   const [orderedChats, setOrderedChats] = React.useState<OrderChatGroup[]>([]);
   const [searchResult, setSearchResult] = React.useState<OrderChatGroup[]>([]);
-
   // handlers
   const closeDrawerHandler = () => history.replace(path);
-
   // side effects
   React.useEffect(() => {
     if (!chats || !orders) return;
@@ -56,7 +53,6 @@ export const ChatPage = () => {
       } as OrderChatGroup;
       return newChat;
     });
-
     const sortMessages = (a: OrderChatGroup, b: OrderChatGroup) => {
       if (a.lastUpdate && b.lastUpdate)
         return timestampToDate(b.lastUpdate).getTime() - timestampToDate(a.lastUpdate).getTime();
@@ -64,17 +60,13 @@ export const ChatPage = () => {
       else if (!b.lastUpdate) return -1;
       return 0;
     };
-
     const ordered = fullChats.sort(sortMessages);
     setOrderedChats(ordered);
   }, [orders, chats, setOrderedChats]);
-
-  // side effects
   React.useEffect(() => {
     const { date, time } = getDateTime();
     setDateTime(`${date} às ${time}`);
   }, []);
-
   React.useEffect(() => {
     if (search) {
       const regexp = new RegExp(search, 'i');
@@ -82,7 +74,6 @@ export const ChatPage = () => {
       setSearchResult(result);
     }
   }, [orderedChats, search]);
-
   // UI
   return (
     // ChatContext
