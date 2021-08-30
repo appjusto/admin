@@ -16,7 +16,7 @@ import {
 import * as Sentry from '@sentry/react';
 import { useUpdateChatMessage } from 'app/api/business/chat/useUpdateChatMessage';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
-import { useOrderChat } from 'app/api/order/useOrderChat';
+import { Participants, useOrderChat } from 'app/api/order/useOrderChat';
 import { useOrdersContext } from 'app/state/order';
 import { ChatMessage, Flavor } from 'appjusto-types';
 import React, { KeyboardEvent } from 'react';
@@ -50,27 +50,20 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
   // state
   const [dateTime, setDateTime] = React.useState('');
   const [inputText, setInputText] = React.useState('');
-
   // refs
-  const messagesBox = React.useRef(null);
+  const messagesBox = React.useRef<HTMLDivElement>(null);
   const inputRef = React.useRef<HTMLTextAreaElement>(null);
-
   //handlers
-  const getImage = (id?: string) => {
+  const getImage = <K extends keyof Participants>(id?: K) => {
     if (!id) return null;
-    //@ts-ignore
     if (id === counterpartId) return participants[counterpartId]?.image;
     else return logo;
   };
-
-  const getName = (id?: string) => {
+  const getName = <K extends keyof Participants>(id?: K) => {
     if (!id) return 'N/E';
-    //@ts-ignore
     const name = participants[id]?.name;
-    //@ts-ignore
     return name ?? participants[counterpartId]?.flavor ?? 'N/E';
   };
-
   const sendMessageHandler = () => {
     if (!inputText) return;
     if (!counterpartId) return;
@@ -83,8 +76,7 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
         isClosable: true,
       });
     }
-    //@ts-ignore
-    const flavor = participants[counterpartId].flavor;
+    const flavor = participants[counterpartId].flavor as Flavor;
     const to: { agent: Flavor; id: string } = {
       agent: flavor,
       id: counterpartId,
@@ -95,14 +87,12 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
     });
     setInputText('');
   };
-
   const handleUserKeyPress = (event: KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
       sendMessageHandler();
     }
   };
-
   // side effects
   React.useEffect(() => {
     inputRef?.current?.focus();
@@ -121,11 +111,9 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
       }
     }
     if (messagesBox.current) {
-      //@ts-ignore
       messagesBox.current.scroll({ top: messagesBox.current.scrollHeight, behavior: 'smooth' });
     }
   }, [chat, orderId, counterpartId, getUnreadChatMessages, updateChatMessage]);
-
   React.useEffect(() => {
     if (isError) {
       Sentry.captureException(error);
@@ -138,7 +126,6 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
       });
     }
   }, [isError, error, toast]);
-
   //UI
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>

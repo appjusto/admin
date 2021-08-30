@@ -9,6 +9,20 @@ import { groupOrderChatMessages, sortMessages } from 'app/api/chat/utils';
 import { useOrdersContext } from 'app/state/order';
 import { getTimeUntilNow } from 'utils/functions';
 
+export interface Participants {
+  [x: string]:
+    | {
+        name: string;
+        image: null;
+        flavor?: string;
+      }
+    | {
+        name: string;
+        flavor: string;
+        image: string | null | undefined;
+      };
+}
+
 const orderActivedStatuses = ['confirmed', 'preparing', 'ready', 'dispatching'] as OrderStatus[];
 const orderCompleteStatuses = ['delivered', 'canceled'] as OrderStatus[];
 
@@ -21,7 +35,7 @@ export const useOrderChat = (orderId: string, counterpartId: string) => {
   // state
   const [order, setOrder] = React.useState<WithId<Order> | null>();
   const [isActive, setIsActive] = React.useState(false);
-  const [participants, setParticipants] = React.useState({});
+  const [participants, setParticipants] = React.useState<Participants>({});
   const [chatFromBusiness, setChatFromBusiness] = React.useState<WithId<ChatMessage>[]>([]);
   const [chatFromCounterPart, setChatFromCounterPart] = React.useState<WithId<ChatMessage>[]>([]);
   const [chat, setChat] = React.useState<GroupedChatMessages[]>([]);
