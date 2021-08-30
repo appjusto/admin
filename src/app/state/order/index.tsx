@@ -63,7 +63,8 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   const toast = useToast();
 
   const getOrderById = (id: string) => {
-    const order = orders.find((order: WithId<Order>) => order.id === id);
+    const totalActiveOrders = activeOrders.concat(completedAndActiveOrders);
+    const order = totalActiveOrders.find((order: WithId<Order>) => order.id === id);
     return order;
   };
 
