@@ -98,6 +98,7 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
 
   const handleUserKeyPress = (event: KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
       sendMessageHandler();
     }
   };
