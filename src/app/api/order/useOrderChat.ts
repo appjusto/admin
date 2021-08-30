@@ -18,7 +18,6 @@ export const useOrderChat = (orderId: string, counterpartId: string) => {
   const businessId = useContextBusinessId();
   const courierProfilePicture = useCourierProfilePicture(counterpartId);
   const { getOrderById } = useOrdersContext();
-
   // state
   const [order, setOrder] = React.useState<WithId<Order> | null>();
   const [isActive, setIsActive] = React.useState(false);
@@ -26,7 +25,6 @@ export const useOrderChat = (orderId: string, counterpartId: string) => {
   const [chatFromBusiness, setChatFromBusiness] = React.useState<WithId<ChatMessage>[]>([]);
   const [chatFromCounterPart, setChatFromCounterPart] = React.useState<WithId<ChatMessage>[]>([]);
   const [chat, setChat] = React.useState<GroupedChatMessages[]>([]);
-
   // mutations;
   const [sendMessage, sendMessageResult] = useMutation(async (data: Partial<ChatMessage>) => {
     if (!businessId) return;
@@ -36,14 +34,12 @@ export const useOrderChat = (orderId: string, counterpartId: string) => {
       ...data,
     });
   });
-
   // side effects
   React.useEffect(() => {
     if (!orderId) return;
     const order = getOrderById(orderId);
     setOrder(order);
   }, [orderId, getOrderById]);
-
   React.useEffect(() => {
     if (!orderId || !businessId || !counterpartId) return;
     const unsub = api
@@ -57,7 +53,6 @@ export const useOrderChat = (orderId: string, counterpartId: string) => {
       unsub2();
     };
   }, [api, orderId, businessId, counterpartId]);
-
   React.useEffect(() => {
     if (!order) return;
     let counterpartName = 'N/E';
@@ -81,7 +76,6 @@ export const useOrderChat = (orderId: string, counterpartId: string) => {
     };
     setParticipants(participantsObject);
   }, [order, counterpartId, businessId, courierProfilePicture]);
-
   React.useEffect(() => {
     if (!order?.status) return;
     if (orderActivedStatuses.includes(order.status)) setIsActive(true);
@@ -96,13 +90,11 @@ export const useOrderChat = (orderId: string, counterpartId: string) => {
       else setIsActive(false);
     } else setIsActive(false);
   }, [order?.status, order?.deliveredOn, order?.updatedOn]);
-
   React.useEffect(() => {
     const sorted = chatFromBusiness.concat(chatFromCounterPart).sort(sortMessages);
     const groups = groupOrderChatMessages(sorted).reverse();
     setChat(groups);
   }, [chatFromBusiness, chatFromCounterPart]);
-  console.log(order?.updatedOn);
   // return
   return { isActive, orderCode: order?.code, participants, chat, sendMessage, sendMessageResult };
 };

@@ -21,10 +21,23 @@ export const useBusinessChats = (
   const [messagesAsTo, setMessagesAsTo] = React.useState<WithId<BusinessChatMessage>[]>([]);
   const [orderChatGroup, setOrderChatGroup] = React.useState<OrderChatGroup[]>([]);
 
-  // handlers;
-  const createOrderChatGroup = React.useCallback(() => {
+  // side effects
+  React.useEffect(() => {
     if (!businessId) return;
-    const allMessages = [...messagesAsFrom, ...messagesAsTo];
+    const totalActiveOrders = activeOrders.concat(completedAndActiveOrders);
+    if (totalActiveOrders.length === 0) {
+      setOrderChatGroup([]);
+      return;
+    }
+    totalActiveOrders.forEach((order) => {
+      api.business().observeBusinessChatMessageAsFrom(order.id, businessId, setMessagesAsFrom);
+      api.business().observeBusinessChatMessageAsTo(order.id, businessId, setMessagesAsTo);
+    });
+  }, [api, businessId, activeOrders, completedAndActiveOrders]);
+
+  React.useEffect(() => {
+    if (!businessId) return;
+    const allMessages = messagesAsFrom.concat(messagesAsTo);
     const result = allMessages.reduce<OrderChatGroup[]>((groups, message) => {
       const existingGroup = groups.find((group) => group.orderId === message.orderId);
       const counterPartId = businessId === message.from.id ? message.to.id : message.from.id;
@@ -68,26 +81,6 @@ export const useBusinessChats = (
     }, []);
     setOrderChatGroup(result);
   }, [messagesAsFrom, messagesAsTo, businessId]);
-
-  // side effects
-  React.useEffect(() => {
-    if (!businessId) return;
-    const totalActiveOrders = [...activeOrders, ...completedAndActiveOrders];
-    console.log('totalActiveOrders', totalActiveOrders);
-    if (totalActiveOrders.length === 0) {
-      setOrderChatGroup([]);
-      return;
-    }
-    totalActiveOrders.forEach((order) => {
-      api.business().observeBusinessChatMessageAsFrom(order.id, businessId, setMessagesAsFrom);
-      api.business().observeBusinessChatMessageAsTo(order.id, businessId, setMessagesAsTo);
-    });
-  }, [api, businessId, activeOrders, completedAndActiveOrders]);
-
-  React.useEffect(() => {
-    createOrderChatGroup();
-  }, [createOrderChatGroup]);
-
   // return
   return orderChatGroup;
 };

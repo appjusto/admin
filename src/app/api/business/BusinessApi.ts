@@ -90,10 +90,10 @@ export default class BusinessApi {
       .onSnapshot(
         (querySnapshot) => {
           //@ts-ignore
-          resultHandler(() => {
+          resultHandler((prev) => {
             const doc = documentsAs<ChatMessage>(querySnapshot.docs);
             const messages = doc.map((msg) => ({ orderId, ...msg }));
-            return [...messages];
+            return [...prev, ...messages];
           });
         },
         (error) => {
@@ -116,10 +116,10 @@ export default class BusinessApi {
       .onSnapshot(
         (querySnapshot) => {
           //@ts-ignore
-          resultHandler(() => {
+          resultHandler((prev) => {
             const doc = documentsAs<ChatMessage>(querySnapshot.docs);
             const messages = doc.map((msg) => ({ orderId, ...msg }));
-            return [...messages];
+            return [...prev, ...messages];
           });
         },
         (error) => {

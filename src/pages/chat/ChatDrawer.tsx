@@ -47,7 +47,6 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
   );
   const { isLoading, isError, error } = sendMessageResult;
   const toast = useToast();
-
   // state
   const [dateTime, setDateTime] = React.useState('');
   const [inputText, setInputText] = React.useState('');

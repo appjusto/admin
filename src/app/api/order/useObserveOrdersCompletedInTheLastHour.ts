@@ -5,7 +5,7 @@ import { Ordering } from './OrderApi';
 
 export const useObserveOrdersCompletedInTheLastHour = (
   businessId?: string,
-  ordering: Ordering = 'asc'
+  ordering?: Ordering
 ) => {
   // context
   const api = useContextApi();
@@ -18,7 +18,6 @@ export const useObserveOrdersCompletedInTheLastHour = (
       .observeBusinessOrdersCompletedInTheLastHour(setOrders, businessId, ordering);
     return () => unsub();
   }, [api, businessId, ordering]);
-  console.log(orders);
   // return
   return orders;
 };
