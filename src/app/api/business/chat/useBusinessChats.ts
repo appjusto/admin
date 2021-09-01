@@ -23,24 +23,42 @@ export const useBusinessChats = (
   React.useEffect(() => {
     if (!businessId) return;
     const totalActiveOrders = activeOrders.concat(completedAndActiveOrders);
+    const totalActiveOrdersIds = totalActiveOrders.map((order) => order.id);
+    console.log('AcOrIds', totalActiveOrdersIds);
     if (totalActiveOrders.length === 0) {
       setOrderChatGroup([]);
       return;
     }
     totalActiveOrders.forEach((order) => {
-      api.business().observeBusinessChatMessageAsFrom(order.id, businessId, setMessagesAsFrom);
-      api.business().observeBusinessChatMessageAsTo(order.id, businessId, setMessagesAsTo);
+      api
+        .business()
+        .observeBusinessChatMessageAsFrom(
+          totalActiveOrdersIds,
+          order.id,
+          businessId,
+          setMessagesAsFrom
+        );
+      api
+        .business()
+        .observeBusinessChatMessageAsTo(
+          totalActiveOrdersIds,
+          order.id,
+          businessId,
+          setMessagesAsTo
+        );
     });
   }, [api, businessId, activeOrders, completedAndActiveOrders]);
   React.useEffect(() => {
     if (!businessId) return;
     const allMessages = messagesAsFrom.concat(messagesAsTo);
+    console.log('allMessages', allMessages.length);
     const result = allMessages.reduce<OrderChatGroup[]>((groups, message) => {
       const existingGroup = groups.find((group) => group.orderId === message.orderId);
       const counterPartId = businessId === message.from.id ? message.to.id : message.from.id;
       const counterPartFlavor =
         counterPartId === message.from.id ? message.from.agent : message.to.agent;
       const isUnread = message.from.id !== businessId && !message.read;
+      //console.log('isUnread', isUnread);
       const counterPartObject = {
         id: counterPartId,
         flavor: counterPartFlavor,
@@ -68,6 +86,16 @@ export const useBusinessChats = (
           if (existingCounterpart.updatedOn < message.timestamp) {
             existingCounterpart.updatedOn = message.timestamp;
           }
+          /*let unreadeList = groups
+            .map((group) => {
+              let list = group.counterParts.reduce<string[]>((list, part) => {
+                if (part.unreadMessages) return list.concat(part.unreadMessages);
+                else return list;
+              }, []);
+              return list;
+            })
+            .join(',');
+          console.log('G_unreadMessages', unreadeList);*/
           return groups;
         }
         existingGroup.counterParts.push(counterPartObject);

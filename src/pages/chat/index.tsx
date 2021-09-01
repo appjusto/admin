@@ -29,6 +29,10 @@ export const ChatPage = () => {
   const closeDrawerHandler = () => history.replace(path);
   // side effects
   React.useEffect(() => {
+    const { date, time } = getDateTime();
+    setDateTime(`${date} às ${time}`);
+  }, []);
+  React.useEffect(() => {
     if (!chats || !orders) return;
     const fullChats = chats.map((chat) => {
       const order = orders.find((order) => order.id === chat.orderId);
@@ -63,10 +67,6 @@ export const ChatPage = () => {
     const ordered = fullChats.sort(sortMessages);
     setOrderedChats(ordered);
   }, [orders, chats, setOrderedChats]);
-  React.useEffect(() => {
-    const { date, time } = getDateTime();
-    setDateTime(`${date} às ${time}`);
-  }, []);
   React.useEffect(() => {
     if (search) {
       const regexp = new RegExp(search, 'i');

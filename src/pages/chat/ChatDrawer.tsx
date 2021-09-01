@@ -16,8 +16,8 @@ import {
 import * as Sentry from '@sentry/react';
 import { useUpdateChatMessage } from 'app/api/business/chat/useUpdateChatMessage';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
+import { getUnreadChatMessages } from 'app/api/chat/utils';
 import { Participants, useOrderChat } from 'app/api/order/useOrderChat';
-import { useOrdersContext } from 'app/state/order';
 import { ChatMessage, Flavor } from 'appjusto-types';
 import React, { KeyboardEvent } from 'react';
 import { useParams } from 'react-router';
@@ -39,7 +39,6 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
   //context
   const { logo } = useBusinessProfile();
   const { orderId, counterpartId } = useParams<Params>();
-  const { getUnreadChatMessages } = useOrdersContext();
   const { updateChatMessage } = useUpdateChatMessage();
   const { isActive, orderCode, participants, chat, sendMessage, sendMessageResult } = useOrderChat(
     orderId,
@@ -99,9 +98,9 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
     const { date, time } = getDateTime();
     setDateTime(`${date} às ${time}`);
     if (chat) {
-      const unreadMessages = getUnreadChatMessages(orderId, counterpartId);
-      if (unreadMessages) {
-        unreadMessages.forEach((messageId) => {
+      const unreadMessagesIds = getUnreadChatMessages(chat);
+      if (unreadMessagesIds) {
+        unreadMessagesIds.forEach((messageId) => {
           updateChatMessage({
             orderId,
             messageId,
@@ -113,7 +112,7 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
     if (messagesBox.current) {
       messagesBox.current.scroll({ top: messagesBox.current.scrollHeight, behavior: 'smooth' });
     }
-  }, [chat, orderId, counterpartId, getUnreadChatMessages, updateChatMessage]);
+  }, [chat, orderId, counterpartId, updateChatMessage]);
   React.useEffect(() => {
     if (isError) {
       Sentry.captureException(error);

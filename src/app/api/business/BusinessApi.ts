@@ -79,6 +79,7 @@ export default class BusinessApi {
   }
 
   observeBusinessChatMessageAsFrom(
+    totalActiveOrdersIds: string[],
     orderId: string,
     businessId: string,
     resultHandler: (orders: WithId<BusinessChatMessage>[]) => void
@@ -91,9 +92,13 @@ export default class BusinessApi {
         (querySnapshot) => {
           //@ts-ignore
           resultHandler((prev) => {
-            const doc = documentsAs<ChatMessage>(querySnapshot.docs);
-            const messages = doc.map((msg) => ({ orderId, ...msg }));
-            return [...prev, ...messages];
+            const prevFiltered = prev.filter(
+              (msg: WithId<BusinessChatMessage>) =>
+                totalActiveOrdersIds.includes(msg.orderId) && msg.orderId !== orderId
+            );
+            const docs = documentsAs<ChatMessage>(querySnapshot.docs);
+            const messages = docs.map((msg) => ({ orderId, ...msg }));
+            return [...prevFiltered, ...messages];
           });
         },
         (error) => {
@@ -105,6 +110,7 @@ export default class BusinessApi {
   }
 
   observeBusinessChatMessageAsTo(
+    totalActiveOrdersIds: string[],
     orderId: string,
     businessId: string,
     resultHandler: (orders: WithId<BusinessChatMessage>[]) => void
@@ -117,9 +123,13 @@ export default class BusinessApi {
         (querySnapshot) => {
           //@ts-ignore
           resultHandler((prev) => {
-            const doc = documentsAs<ChatMessage>(querySnapshot.docs);
-            const messages = doc.map((msg) => ({ orderId, ...msg }));
-            return [...prev, ...messages];
+            const prevFiltered = prev.filter(
+              (msg: WithId<BusinessChatMessage>) =>
+                totalActiveOrdersIds.includes(msg.orderId) && msg.orderId !== orderId
+            );
+            const docs = documentsAs<ChatMessage>(querySnapshot.docs);
+            const messages = docs.map((msg) => ({ orderId, ...msg }));
+            return [...prevFiltered, ...messages];
           });
         },
         (error) => {

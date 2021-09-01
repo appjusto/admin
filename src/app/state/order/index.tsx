@@ -23,7 +23,6 @@ interface ContextProps {
   orders: WithId<Order>[];
   chats: OrderChatGroup[];
   newChatMessages: string[];
-  getUnreadChatMessages(orderId: string, counterPartId: string): string[];
   getOrderById(id: string): WithId<Order> | undefined;
   changeOrderStatus(orderId: string, status: OrderStatus): void;
   setOrderCookingTime(orderId: string, cookingTime: number | null): void;
@@ -120,18 +119,6 @@ export const OrdersContextProvider = (props: ProviderProps) => {
     },
     [api, toast]
   );
-  const getUnreadChatMessages = React.useCallback(
-    (orderId: string, counterPartId: string) => {
-      if (chats) {
-        const group = chats.find((chat) => chat.orderId === orderId);
-        const messages =
-          group?.counterParts.find((part) => part.id === counterPartId)?.unreadMessages ?? [];
-        return messages;
-      }
-      return [];
-    },
-    [chats]
-  );
   // side effects
   React.useEffect(() => {
     setOrders([...activeOrders, ...completedAndActiveOrders]);
@@ -213,7 +200,6 @@ export const OrdersContextProvider = (props: ProviderProps) => {
         orders,
         chats,
         newChatMessages,
-        getUnreadChatMessages,
         getOrderById,
         changeOrderStatus,
         setOrderCookingTime,
