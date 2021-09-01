@@ -10,10 +10,11 @@ export const useCourierProfilePicture = (
   const api = useContextApi();
   // mutations
   const getSelfieImageURL = () => {
-    if (active) return api.courier().getCourierProfilePictureURL(courierId!, size);
-    else return null;
+    console.log('active:', active);
+    if (!active) return null;
+    return api.courier().getCourierProfilePictureURL(courierId!, size);
   };
-  const { data: selfie } = useQuery(['courier:selfie', courierId], getSelfieImageURL);
+  const { data: selfie } = useQuery(['courier:selfie', courierId, active], getSelfieImageURL);
   // result
   return selfie;
 };
