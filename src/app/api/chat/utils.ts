@@ -25,9 +25,11 @@ export const groupOrderChatMessages = (messages: WithId<ChatMessage>[]) =>
     return [{ id: message.id, from: message.from.id, messages: [message] }, ...groups];
   }, []);
 
-export const getUnreadChatMessages = (chats: GroupedChatMessages[]) => {
+export const getUnreadChatMessages = (chats: GroupedChatMessages[], counterpartId: string) => {
   const unreadMessagesIds = chats.reduce<string[]>((list, chat) => {
-    const unread = chat.messages.filter((msg) => !msg.read).map((msg) => msg.id);
+    const unread = chat.messages
+      .filter((msg) => msg.from.id === counterpartId && !msg.read)
+      .map((msg) => msg.id);
     return list.concat([...unread]);
   }, []);
   return unreadMessagesIds;
