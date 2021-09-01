@@ -1,6 +1,5 @@
 import { ChatMessage, WithId } from 'appjusto-types';
 import { first } from 'lodash';
-import { OrderChatGroup } from 'app/api/chat/types';
 import { GroupedChatMessages } from './types';
 import firebase from 'firebase/app';
 

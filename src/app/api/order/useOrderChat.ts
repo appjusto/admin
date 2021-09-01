@@ -6,7 +6,6 @@ import { useMutation } from 'react-query';
 import { useCourierProfilePicture } from '../courier/useCourierProfilePicture';
 import { GroupedChatMessages } from 'app/api/chat/types';
 import { groupOrderChatMessages, sortMessages } from 'app/api/chat/utils';
-import { useOrdersContext } from 'app/state/order';
 import { getTimeUntilNow } from 'utils/functions';
 
 export interface Participants {
@@ -31,7 +30,6 @@ export const useOrderChat = (orderId: string, counterpartId: string) => {
   const api = useContextApi();
   const businessId = useContextBusinessId();
   const courierProfilePicture = useCourierProfilePicture(counterpartId);
-  const { getOrderById } = useOrdersContext();
   // state
   const [order, setOrder] = React.useState<WithId<Order> | null>();
   const [isActive, setIsActive] = React.useState(false);
@@ -51,9 +49,11 @@ export const useOrderChat = (orderId: string, counterpartId: string) => {
   // side effects
   React.useEffect(() => {
     if (!orderId) return;
-    const order = getOrderById(orderId);
-    setOrder(order);
-  }, [orderId, getOrderById]);
+    const unsub = api.order().observeOrder(orderId, setOrder);
+    return () => {
+      unsub();
+    };
+  }, [api, orderId]);
   React.useEffect(() => {
     if (!orderId || !businessId || !counterpartId) return;
     const unsub = api

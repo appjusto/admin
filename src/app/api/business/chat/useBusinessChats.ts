@@ -16,41 +16,36 @@ export const useBusinessChats = (
   const api = useContextApi();
   const businessId = useContextBusinessId();
   // state
+  const [totalActiveOrders, setTotalActiveOrders] = React.useState<WithId<Order>[]>([]);
   const [messagesAsFrom, setMessagesAsFrom] = React.useState<WithId<BusinessChatMessage>[]>([]);
   const [messagesAsTo, setMessagesAsTo] = React.useState<WithId<BusinessChatMessage>[]>([]);
   const [orderChatGroup, setOrderChatGroup] = React.useState<OrderChatGroup[]>([]);
   // side effects
   React.useEffect(() => {
+    setTotalActiveOrders([...activeOrders, ...completedAndActiveOrders]);
+  }, [activeOrders, completedAndActiveOrders]);
+  React.useEffect(() => {
     if (!businessId) return;
-    const totalActiveOrders = activeOrders.concat(completedAndActiveOrders);
-    const totalActiveOrdersIds = totalActiveOrders.map((order) => order.id);
-    console.log('AcOrIds', totalActiveOrdersIds);
     if (totalActiveOrders.length === 0) {
       setOrderChatGroup([]);
       return;
     }
     totalActiveOrders.forEach((order) => {
-      api
-        .business()
-        .observeBusinessChatMessageAsFrom(
-          totalActiveOrdersIds,
-          order.id,
-          businessId,
-          setMessagesAsFrom
-        );
-      api
-        .business()
-        .observeBusinessChatMessageAsTo(
-          totalActiveOrdersIds,
-          order.id,
-          businessId,
-          setMessagesAsTo
-        );
+      api.business().observeBusinessChatMessageAsFrom(order.id, businessId, setMessagesAsFrom);
+      api.business().observeBusinessChatMessageAsTo(order.id, businessId, setMessagesAsTo);
     });
-  }, [api, businessId, activeOrders, completedAndActiveOrders]);
+  }, [api, businessId, totalActiveOrders]);
+  React.useEffect(() => {
+    const totalActiveOrdersIds = totalActiveOrders.map((order) => order.id);
+    console.log('AcOrIds', totalActiveOrdersIds);
+    setMessagesAsFrom((prev) => prev.filter((msg) => totalActiveOrdersIds.includes(msg.orderId)));
+    setMessagesAsTo((prev) => prev.filter((msg) => totalActiveOrdersIds.includes(msg.orderId)));
+  }, [totalActiveOrders]);
   React.useEffect(() => {
     if (!businessId) return;
     const allMessages = messagesAsFrom.concat(messagesAsTo);
+    console.log('messagesAsFrom', messagesAsFrom.length);
+    console.log('messagesAsTo', messagesAsTo.length);
     console.log('allMessages', allMessages.length);
     const result = allMessages.reduce<OrderChatGroup[]>((groups, message) => {
       const existingGroup = groups.find((group) => group.orderId === message.orderId);

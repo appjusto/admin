@@ -79,7 +79,6 @@ export default class BusinessApi {
   }
 
   observeBusinessChatMessageAsFrom(
-    totalActiveOrdersIds: string[],
     orderId: string,
     businessId: string,
     resultHandler: (orders: WithId<BusinessChatMessage>[]) => void
@@ -93,8 +92,7 @@ export default class BusinessApi {
           //@ts-ignore
           resultHandler((prev) => {
             const prevFiltered = prev.filter(
-              (msg: WithId<BusinessChatMessage>) =>
-                totalActiveOrdersIds.includes(msg.orderId) && msg.orderId !== orderId
+              (msg: WithId<BusinessChatMessage>) => msg.orderId !== orderId
             );
             const docs = documentsAs<ChatMessage>(querySnapshot.docs);
             const messages = docs.map((msg) => ({ orderId, ...msg }));
@@ -110,7 +108,6 @@ export default class BusinessApi {
   }
 
   observeBusinessChatMessageAsTo(
-    totalActiveOrdersIds: string[],
     orderId: string,
     businessId: string,
     resultHandler: (orders: WithId<BusinessChatMessage>[]) => void
@@ -124,8 +121,7 @@ export default class BusinessApi {
           //@ts-ignore
           resultHandler((prev) => {
             const prevFiltered = prev.filter(
-              (msg: WithId<BusinessChatMessage>) =>
-                totalActiveOrdersIds.includes(msg.orderId) && msg.orderId !== orderId
+              (msg: WithId<BusinessChatMessage>) => msg.orderId !== orderId
             );
             const docs = documentsAs<ChatMessage>(querySnapshot.docs);
             const messages = docs.map((msg) => ({ orderId, ...msg }));

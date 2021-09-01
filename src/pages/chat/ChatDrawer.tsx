@@ -99,7 +99,7 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
     setDateTime(`${date} às ${time}`);
     if (chat) {
       const unreadMessagesIds = getUnreadChatMessages(chat);
-      if (unreadMessagesIds) {
+      if (unreadMessagesIds.length > 0) {
         unreadMessagesIds.forEach((messageId) => {
           updateChatMessage({
             orderId,

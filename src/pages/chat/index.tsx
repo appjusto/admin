@@ -79,7 +79,7 @@ export const ChatPage = () => {
     // ChatContext
     <Box>
       <OrdersHeader statusEnabled={false} />
-      <Container maxW={{ base: '100%', md: '740px', lg: '1260px' }}>
+      <Container maxW={{ base: '100%', md: '740px', lg: '1260px' }} pb="32">
         <Box>
           <Box>
             <Link to="/app/orders">
