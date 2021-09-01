@@ -53,7 +53,6 @@ export const useBusinessChats = (
       const counterPartFlavor =
         counterPartId === message.from.id ? message.from.agent : message.to.agent;
       const isUnread = message.from.id !== businessId && !message.read;
-      //console.log('isUnread', isUnread);
       const counterPartObject = {
         id: counterPartId,
         flavor: counterPartFlavor,
@@ -81,16 +80,6 @@ export const useBusinessChats = (
           if (existingCounterpart.updatedOn < message.timestamp) {
             existingCounterpart.updatedOn = message.timestamp;
           }
-          /*let unreadeList = groups
-            .map((group) => {
-              let list = group.counterParts.reduce<string[]>((list, part) => {
-                if (part.unreadMessages) return list.concat(part.unreadMessages);
-                else return list;
-              }, []);
-              return list;
-            })
-            .join(',');
-          console.log('G_unreadMessages', unreadeList);*/
           return groups;
         }
         existingGroup.counterParts.push(counterPartObject);

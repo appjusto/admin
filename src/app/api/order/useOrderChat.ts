@@ -29,14 +29,19 @@ export const useOrderChat = (orderId: string, counterpartId: string) => {
   // context
   const api = useContextApi();
   const businessId = useContextBusinessId();
-  const courierProfilePicture = useCourierProfilePicture(counterpartId);
   // state
   const [order, setOrder] = React.useState<WithId<Order> | null>();
   const [isActive, setIsActive] = React.useState(false);
   const [participants, setParticipants] = React.useState<Participants>({});
+  const [counterPartFlavor, setCounterPartFlavor] = React.useState<Flavor>();
   const [chatFromBusiness, setChatFromBusiness] = React.useState<WithId<ChatMessage>[]>([]);
   const [chatFromCounterPart, setChatFromCounterPart] = React.useState<WithId<ChatMessage>[]>([]);
   const [chat, setChat] = React.useState<GroupedChatMessages[]>([]);
+  const courierProfilePicture = useCourierProfilePicture(
+    counterpartId,
+    undefined,
+    counterPartFlavor === 'courier'
+  );
   // mutations;
   const [sendMessage, sendMessageResult] = useMutation(async (data: Partial<ChatMessage>) => {
     if (!businessId) return;
@@ -70,13 +75,14 @@ export const useOrderChat = (orderId: string, counterpartId: string) => {
   React.useEffect(() => {
     if (!order) return;
     let counterpartName = 'N/E';
-    let flavor = 'courier';
+    let flavor = 'courier' as Flavor;
     if (order.consumer?.id === counterpartId) {
       flavor = 'consumer';
       counterpartName = order.consumer?.name ?? 'N/E';
     } else if (order.courier?.id === counterpartId) {
       counterpartName = order.courier?.name ?? 'N/E';
     }
+    setCounterPartFlavor(flavor);
     const participantsObject = {
       [businessId!]: {
         name: order.business?.name ?? 'N/E',
