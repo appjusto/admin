@@ -81,7 +81,7 @@ export const Deeplink = ({ isEditable }: DeeplinkProps) => {
       {isEditable ? (
         <Text mt="4">
           {t(
-            'Você pode compartilhar o acesso direto ao seu restaurante no AppJusto. Crie um identificador, copie o link abaixo e divulgue nas suas redes!'
+            'Você pode compartilhar o acesso direto ao seu restaurante no AppJusto. Crie um identificador, com a sugestão abaixo ou digitando à sua escolha e clicando em salvar, depois copie o link gerado e divulgue nas suas redes!'
           )}
         </Text>
       ) : (
