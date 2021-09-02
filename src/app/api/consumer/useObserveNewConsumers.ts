@@ -14,7 +14,7 @@ export const useObserveNewConsumers = () => {
       setConsumers(consumers.length);
     }, dayjs(date).startOf('day').toDate());
     return () => unsub();
-  }, [api]);
+  }, [date, api]);
   // update date reference
   React.useEffect(() => {
     const diff = dayjs(date).add(1, 'day').diff(date);
