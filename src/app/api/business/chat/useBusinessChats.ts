@@ -37,16 +37,14 @@ export const useBusinessChats = (
   }, [api, businessId, totalActiveOrders]);
   React.useEffect(() => {
     const totalActiveOrdersIds = totalActiveOrders.map((order) => order.id);
-    console.log('AcOrIds', totalActiveOrdersIds);
+    //console.log('AcOrIds', totalActiveOrdersIds);
     setMessagesAsFrom((prev) => prev.filter((msg) => totalActiveOrdersIds.includes(msg.orderId)));
     setMessagesAsTo((prev) => prev.filter((msg) => totalActiveOrdersIds.includes(msg.orderId)));
   }, [totalActiveOrders]);
   React.useEffect(() => {
     if (!businessId) return;
     const allMessages = messagesAsFrom.concat(messagesAsTo);
-    console.log('messagesAsFrom', messagesAsFrom.length);
-    console.log('messagesAsTo', messagesAsTo.length);
-    console.log('allMessages', allMessages.length);
+    //console.log('allMessages', allMessages.length);
     const result = allMessages.reduce<OrderChatGroup[]>((groups, message) => {
       const existingGroup = groups.find((group) => group.orderId === message.orderId);
       const counterPartId = businessId === message.from.id ? message.to.id : message.from.id;

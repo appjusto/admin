@@ -10,7 +10,6 @@ export const useCourierProfilePicture = (
   const api = useContextApi();
   // mutations
   const getSelfieImageURL = () => {
-    console.log('active:', active);
     if (!active) return null;
     return api.courier().getCourierProfilePictureURL(courierId!, size);
   };
