@@ -35,6 +35,7 @@ export const orderStatusPTOptions = {
   dispatching: 'A caminho da entrega',
   delivered: 'Entregue',
   canceled: 'Cancelado',
+  expired: 'Expirado',
 };
 
 export const orderStatusPTOptionsForTableItem = {
@@ -47,6 +48,7 @@ export const orderStatusPTOptionsForTableItem = {
   dispatching: 'Despachando',
   delivered: 'Entregue',
   canceled: 'Cancelado',
+  expired: 'Expirado',
 };
 
 export const orderDispatchingStatusPTOptions = {
