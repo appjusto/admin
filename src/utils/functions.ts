@@ -293,10 +293,10 @@ export const getCoordinatesMidpoint = (origin: latLng, destination: latLng) => {
 // orders
 export const getOrderCancellator = (issueIype?: string) => {
   let cancelator = 'N/E';
-  if (issueIype === 'restaurant-cancel') cancelator = 'Restaurante';
-  if (issueIype === 'consumer-cancel') cancelator = 'Cliente';
-  if (issueIype === 'courier-cancel') cancelator = 'Entregador';
-  if (issueIype === 'agent-order-cancel') cancelator = 'Agente Appjusto';
+  if (issueIype?.includes('restaurant')) cancelator = 'Restaurante';
+  if (issueIype?.includes('consumer')) cancelator = 'Cliente';
+  if (issueIype?.includes('courier')) cancelator = 'Entregador';
+  if (issueIype?.includes('agent')) cancelator = 'Agente Appjusto';
   return cancelator;
 };
 
