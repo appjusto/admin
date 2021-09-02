@@ -19,7 +19,7 @@ export const useObserveNewConsumers = () => {
   React.useEffect(() => {
     const diff = dayjs(date).add(1, 'day').diff(date);
     const interval = setTimeout(() => setDate(new Date()), diff);
-    () => clearInterval(interval);
+    return () => clearInterval(interval);
   }, [date]);
   // return
   return consumers;
