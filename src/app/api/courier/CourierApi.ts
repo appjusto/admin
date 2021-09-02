@@ -4,6 +4,7 @@ import {
   Fleet,
   MarketplaceAccountInfo,
   WithId,
+  ReleaseCourierPayload,
 } from 'appjusto-types';
 import FilesApi from '../FilesApi';
 import FirebaseRefs from '../FirebaseRefs';
@@ -160,5 +161,15 @@ export default class CourierApi {
 
   async deletePrivateMarketPlace(courierId: string) {
     return await this.refs.getCourierMarketPlaceRef(courierId).delete();
+  }
+
+  async releaseCourier(data: { courierId: string; comment: string }) {
+    const { courierId, comment } = data;
+    const payload: ReleaseCourierPayload = {
+      meta: { version: '1' }, // TODO: pass correct version on
+      courierId,
+      comment,
+    };
+    return await this.refs.getReleaseCourierCallable()(payload);
   }
 }

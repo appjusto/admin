@@ -18,6 +18,7 @@ export default class FirebaseRefs {
   getMatchOrderCallable = () => this.functions.httpsCallable('matchOrder');
   getDropOrderCallable = () => this.functions.httpsCallable('dropOrder');
   getOutsourceDeliveryCallable = () => this.functions.httpsCallable('outsourceDelivery');
+  getReleaseCourierCallable = () => this.functions.httpsCallable('releaseCourier');
 
   // firestore
   // platform

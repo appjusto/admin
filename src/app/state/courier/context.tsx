@@ -16,6 +16,7 @@ import {
 import React, { Dispatch, SetStateAction } from 'react';
 import { MutateFunction, MutationResult } from 'react-query';
 import { useParams } from 'react-router';
+import { useContextApi } from '../api/context';
 import { courierReducer } from './courierReducer';
 
 type Validation = { cpf: boolean; cnpj: boolean; agency: boolean; account: boolean };
@@ -33,6 +34,7 @@ interface CourierProfileContextProps {
   deleteMarketPlace: MutateFunction<void, unknown, undefined, unknown>;
   deleteMarketPlaceResult: MutationResult<void, unknown>;
   contextValidation: Validation;
+  currentOrder: WithId<Order> | null;
   orders?: WithId<Order>[] | null;
   dateStart?: string;
   dateEnd?: string;
@@ -58,6 +60,7 @@ const issueOptionsArray = ['courier-profile-invalid'] as IssueType[];
 
 export const CourierProvider = ({ children }: Props) => {
   // context
+  const api = useContextApi();
   const { courierId } = useParams<Params>();
   const profile = useCourierProfile(courierId);
   const pictures = useCourierProfilePictures(courierId, '_1024x1024', '_1024x1024');
@@ -78,6 +81,7 @@ export const CourierProvider = ({ children }: Props) => {
   const [documentFiles, setDocumentFiles] = React.useState<File[] | null>(null);
   const [dateStart, setDateStart] = React.useState<string>();
   const [dateEnd, setDateEnd] = React.useState<string>();
+  const [currentOrder, setCurrentOrder] = React.useState<WithId<Order> | null>(null);
   const orders = useCourierOrders(courierId, dateStart, dateEnd);
   // handlers
   const handleProfileChange = (key: string, value: any) => {
@@ -92,6 +96,11 @@ export const CourierProvider = ({ children }: Props) => {
       });
     }
   }, [profile]);
+  React.useEffect(() => {
+    if (!courier?.ongoingOrderId) return setCurrentOrder(null);
+    const unsub = api.order().observeOrder(courier.ongoingOrderId, setCurrentOrder);
+    return () => unsub();
+  }, [api, courier?.ongoingOrderId]);
   React.useEffect(() => {
     setContextValidation((prevState) => {
       return {
@@ -118,6 +127,7 @@ export const CourierProvider = ({ children }: Props) => {
         deleteMarketPlace,
         deleteMarketPlaceResult,
         contextValidation,
+        currentOrder,
         orders,
         dateStart,
         dateEnd,
