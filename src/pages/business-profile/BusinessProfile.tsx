@@ -45,7 +45,6 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const { path } = useRouteMatch();
   const history = useHistory();
   const { isBackofficeUser } = useContextFirebaseUser();
-
   // state
   const [cnpj, setCNPJ] = React.useState(business?.cnpj ?? (isDev ? cnpjutils.generate() : ''));
   const [name, setName] = React.useState(business?.name ?? '');
@@ -61,14 +60,12 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const [logoFiles, setLogoFiles] = React.useState<File[] | null>(null);
   const [coverFiles, setCoverFiles] = React.useState<File[] | null>(null);
   const [error, setError] = React.useState(initialError);
-
   // refs
   const submission = React.useRef(0);
   const cnpjRef = React.useRef<HTMLInputElement>(null);
   const phoneRef = React.useRef<HTMLInputElement>(null);
   const minimumOrderRef = React.useRef<HTMLInputElement>(null);
   const isMountedRef = React.useRef(false);
-
   // queries & mutations
   const {
     createBusinessProfile,
@@ -194,13 +191,13 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   React.useEffect(() => {
     if (business) {
       setEnabled(business.enabled ?? false);
-      if (business.cnpj) setCNPJ(business.cnpj);
-      if (business.name) setName(business.name);
-      if (business.companyName) setCompanyName(business.companyName);
-      if (business.phone) setPhone(business.phone);
-      if (business.description) setDescription(business.description);
-      if (business.minimumOrder) setMinimumOrder(business.minimumOrder);
-      if (business.cuisine) setCuisineName(business.cuisine);
+      setCNPJ(business.cnpj ?? '');
+      setName(business.name ?? '');
+      setCompanyName(business.companyName ?? '');
+      setPhone(business.phone ?? '');
+      setDescription(business.description ?? '');
+      setMinimumOrder(business.minimumOrder ?? 0);
+      setCuisineName(business.cuisine ?? '');
       if (business.logoExists && logo) setLogoExists(true);
       if (business.coverImageExists && cover) setCoverExists(true);
     } else if (business === null) {
