@@ -1,6 +1,7 @@
 import { Box, Button, Flex, Switch as ChakraSwitch, Text, useBreakpoint } from '@chakra-ui/react';
 import * as cnpjutils from '@fnando/cnpj';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
+import { FirebaseError } from 'app/api/types';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { Business } from 'appjusto-types';
@@ -76,6 +77,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
     logo,
     cover,
     updateWithImagesResult,
+    cloneResult,
   } = useBusinessProfile();
   const { isLoading, isSuccess, isError, error: updateError } = updateWithImagesResult;
 
@@ -115,7 +117,6 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
       });
       return phoneRef?.current?.focus();
     }
-    //setIsLoading(true);
     const changes = {
       name,
       companyName,
@@ -209,7 +210,15 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
         status: true,
         error: updateError,
       });
-  }, [isError, updateError]);
+    else if (cloneResult.isError) {
+      const errorMessage = (cloneResult.error as FirebaseError).message;
+      setError({
+        status: true,
+        error: cloneResult.error,
+        message: { title: errorMessage ?? 'Não foi possível acessar o servidor' },
+      });
+    }
+  }, [isError, updateError, cloneResult.isError, cloneResult.error]);
 
   // UI
   const breakpoint = useBreakpoint();
@@ -380,28 +389,30 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
               </Flex>
             </>
           )}
-          <>
-            <Text mt="8" fontSize="xl" color="black">
-              {t('Clonar restaurante')}
-            </Text>
-            <Text mt="2" fontSize="md">
-              {t('As informações básicas e o cardápio serão copiados.')}
-            </Text>
-            <Flex mt="4" pb="8" alignItems="center">
-              <Button
-                w={{ base: '100%', md: 'auto' }}
-                mt={{ base: '8', md: '0' }}
-                size="lg"
-                fontSize="sm"
-                variant="dangerLight"
-                onClick={cloneBusinessHandler}
-                isLoading={isLoading}
-                loadingText={t('Excluindo')}
-              >
-                {t('Duplicar')}
-              </Button>
-            </Flex>
-          </>
+          {!onboarding && (
+            <>
+              <Text mt="8" fontSize="xl" color="black">
+                {t('Clonar restaurante')}
+              </Text>
+              <Text mt="2" fontSize="md">
+                {t('As informações básicas e o cardápio serão copiados.')}
+              </Text>
+              <Flex mt="4" pb="8" alignItems="center">
+                <Button
+                  w={{ base: '100%', md: 'auto' }}
+                  mt={{ base: '8', md: '0' }}
+                  size="lg"
+                  fontSize="sm"
+                  variant="dangerLight"
+                  onClick={cloneBusinessHandler}
+                  isLoading={cloneResult.isLoading}
+                  loadingText={t('Excluindo')}
+                >
+                  {t('Duplicar')}
+                </Button>
+              </Flex>
+            </>
+          )}
           {/* submit */}
           <PageFooter
             onboarding={onboarding}
