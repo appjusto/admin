@@ -10,6 +10,7 @@ import {
   MarketplaceAccountInfo,
   Product,
   WithId,
+  CloneBusinessPayload,
 } from 'appjusto-types';
 import { Complement, ComplementGroup, Ordering } from 'appjusto-types';
 import firebase from 'firebase/app';
@@ -170,6 +171,15 @@ export default class BusinessApi {
       meta: { version: '1' }, // TODO: pass correct version on
     };
     const business = await this.refs.getCreateBusinessProfileCallable()(payload);
+    return business.data as WithId<Business>;
+  }
+
+  async cloneBusiness(businessId: string) {
+    const payload: CloneBusinessPayload = {
+      businessId,
+      meta: { version: '1' }, // TODO: pass correct version on
+    };
+    const business = await this.refs.getCloneBusinessCallable()(payload);
     return business.data as WithId<Business>;
   }
 

@@ -1,4 +1,4 @@
-import { Box, Flex, Switch as ChakraSwitch, Text, useBreakpoint } from '@chakra-ui/react';
+import { Box, Button, Flex, Switch as ChakraSwitch, Text, useBreakpoint } from '@chakra-ui/react';
 import * as cnpjutils from '@fnando/cnpj';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useContextFirebaseUser } from 'app/state/auth/context';
@@ -71,6 +71,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   // queries & mutations
   const {
     createBusinessProfile,
+    cloneBusiness,
     updateBusinessProfileWithImages,
     logo,
     cover,
@@ -144,6 +145,11 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
         },
       });
     }
+  };
+
+  const cloneBusinessHandler = async () => {
+    const business = await cloneBusiness();
+    console.log(business);
   };
 
   const clearDropImages = React.useCallback((type: string) => {
@@ -374,6 +380,28 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
               </Flex>
             </>
           )}
+          <>
+            <Text mt="8" fontSize="xl" color="black">
+              {t('Clonar restaurante')}
+            </Text>
+            <Text mt="2" fontSize="md">
+              {t('As informações básicas e o cardápio serão copiados.')}
+            </Text>
+            <Flex mt="4" pb="8" alignItems="center">
+              <Button
+                w={{ base: '100%', md: 'auto' }}
+                mt={{ base: '8', md: '0' }}
+                size="lg"
+                fontSize="sm"
+                variant="dangerLight"
+                onClick={cloneBusinessHandler}
+                isLoading={isLoading}
+                loadingText={t('Excluindo')}
+              >
+                {t('Duplicar')}
+              </Button>
+            </Flex>
+          </>
           {/* submit */}
           <PageFooter
             onboarding={onboarding}

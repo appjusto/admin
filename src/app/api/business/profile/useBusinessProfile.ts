@@ -52,6 +52,9 @@ export const useBusinessProfile = () => {
   const [deleteBusinessProfile, deleteResult] = useMutation(async () =>
     api.business().deleteBusinessProfile(businessId!)
   );
+  const [cloneBusiness, cloneResult] = useMutation(async () =>
+    api.business().cloneBusiness(businessId!)
+  );
   const sendBusinessKeepAlive = React.useCallback(() => {
     try {
       api.business().sendBusinessKeepAlive(businessId!);
@@ -73,10 +76,12 @@ export const useBusinessProfile = () => {
     updateBusinessProfileWithImages,
     updateBusinessSlug,
     deleteBusinessProfile,
+    cloneBusiness,
     updateResult,
     updateWithImagesResult,
     updateSlugResult,
     deleteResult,
+    cloneResult,
     sendBusinessKeepAlive,
   };
 };
