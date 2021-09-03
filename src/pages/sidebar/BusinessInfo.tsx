@@ -51,7 +51,7 @@ const BusinessInfo = () => {
       ) : (
         <Circle size="40px" bg="gray.400" />
       )}
-      {managerBusinesses ? (
+      {managerBusinesses && managerBusinesses.length > 1 ? (
         <Box mt="2" pr="4">
           <Select
             cursor="pointer"

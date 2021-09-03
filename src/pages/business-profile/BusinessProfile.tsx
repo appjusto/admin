@@ -40,7 +40,7 @@ import { BusinessDeleteDrawer } from './BusinessDeleteDrawer';
 const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   // context
   const isDev = process.env.REACT_APP_ENVIRONMENT === 'dev';
-  const { business } = useContextBusiness();
+  const { business, setBusinessId } = useContextBusiness();
   const queryCache = useQueryCache();
   const { path } = useRouteMatch();
   const history = useHistory();
@@ -149,8 +149,9 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   };
 
   const cloneBusinessHandler = async () => {
-    const business = await cloneBusiness();
-    console.log(business);
+    submission.current += 1;
+    const newBusiness = await cloneBusiness();
+    if (newBusiness) setBusinessId(newBusiness.id);
   };
 
   const clearDropImages = React.useCallback((type: string) => {
@@ -406,7 +407,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
                   variant="dangerLight"
                   onClick={cloneBusinessHandler}
                   isLoading={cloneResult.isLoading}
-                  loadingText={t('Excluindo')}
+                  loadingText={t('Clonando...')}
                 >
                   {t('Duplicar')}
                 </Button>
