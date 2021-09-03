@@ -52,9 +52,11 @@ export const useBusinessProfile = () => {
   const [deleteBusinessProfile, deleteResult] = useMutation(async () =>
     api.business().deleteBusinessProfile(businessId!)
   );
-  const [cloneBusiness, cloneResult] = useMutation(async () =>
-    api.business().cloneBusiness(businessId!)
-  );
+  const [cloneBusiness, cloneResult] = useMutation(async () => {
+    const newBusiness = await api.business().cloneBusiness(businessId!);
+    if (refreshUserToken && newBusiness?.id) refreshUserToken(newBusiness.id);
+    return newBusiness;
+  });
   const sendBusinessKeepAlive = React.useCallback(() => {
     try {
       api.business().sendBusinessKeepAlive(businessId!);

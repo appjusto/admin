@@ -151,7 +151,10 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const cloneBusinessHandler = async () => {
     submission.current += 1;
     const newBusiness = await cloneBusiness();
-    if (newBusiness) setBusinessId(newBusiness.id);
+    if (newBusiness) {
+      setBusinessId(newBusiness.id);
+      history.push('/app');
+    }
   };
 
   const clearDropImages = React.useCallback((type: string) => {
