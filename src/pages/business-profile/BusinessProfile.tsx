@@ -396,7 +396,9 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
                 {t('Clonar restaurante')}
               </Text>
               <Text mt="2" fontSize="md">
-                {t('As informações básicas e o cardápio serão copiados.')}
+                {t(
+                  'Criar um novo restaurante com as informações básicas e o cardápio do restaurante atual.'
+                )}
               </Text>
               <Flex mt="4" pb="8" alignItems="center">
                 <Button
@@ -409,7 +411,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
                   isLoading={cloneResult.isLoading}
                   loadingText={t('Clonando...')}
                 >
-                  {t('Duplicar')}
+                  {t('Criar cópia deste restaurante')}
                 </Button>
               </Flex>
             </>
