@@ -24,7 +24,7 @@ const Sidebar = () => {
       backgroundColor="gray.300"
       flexShrink={0}
     >
-      <Box position="fixed" top="4" w="220px" flexShrink={0}>
+      <Box position="fixed" top="4" w="220px" h="100vh" pb="24" overflowY="auto">
         <Flex mt="6" px="4" justifyContent="space-between" alignItems="center">
           <Box>
             <Image src={logo} eagerLoading height="40px" />
@@ -48,7 +48,7 @@ const Sidebar = () => {
         {isBackOffice ? (
           <BackOfficeLinks />
         ) : (
-          <Box>
+          <Box position="relative">
             <Box ml="4" mt="6">
               <BusinessInfo />
             </Box>

@@ -1,5 +1,12 @@
 import * as Sentry from '@sentry/react';
-import { AdminRole, CreateManagerPayload, ManagerProfile, Role, WithId } from 'appjusto-types';
+import {
+  AdminRole,
+  Business,
+  CreateManagerPayload,
+  ManagerProfile,
+  Role,
+  WithId,
+} from 'appjusto-types';
 import { GetBusinessManagersPayload } from 'appjusto-types/payloads/profile';
 import { documentsAs } from 'core/fb';
 import firebase from 'firebase/app';
@@ -45,6 +52,23 @@ export default class ManagerApi {
     return unsubscribe;
   }
 
+  observeManagerBusinesses(
+    email: string,
+    resultHandler: (businesses: WithId<Business>[] | null) => void
+  ): firebase.Unsubscribe {
+    const query = this.refs.getBusinessesRef().where('managers', 'array-contains', email);
+    const unsubscribe = query.onSnapshot(
+      async (querySnapshot) => {
+        resultHandler(documentsAs<Business>(querySnapshot.docs));
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+    // returns the unsubscribe function
+    return unsubscribe;
+  }
+
   async getBusinessManagers(
     businessId: string,
     resultHandler: (result: ManagerWithRole[]) => void
@@ -57,6 +81,7 @@ export default class ManagerApi {
       const users = await this.refs.getGetBusinessManagersCallable()(payload);
       resultHandler(users.data);
     } catch (error) {
+      //@ts-ignore
       Sentry.captureException('createManagerError', error);
       return null;
     }

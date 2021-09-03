@@ -1,13 +1,43 @@
-import { Box, Circle, Image, Text } from '@chakra-ui/react';
+import { Box, Circle, Image, Select, Text } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useContextBusiness } from 'app/state/business/context';
+import { useContextManagerProfile } from 'app/state/manager/context';
 import { ImageFbLoading } from 'common/components/ImageFbLoading';
 import React from 'react';
 import { BusinessStatus } from './BusinessStatus';
 
+interface Businesses {
+  id: string;
+  name?: string;
+}
+
 const BusinessInfo = () => {
-  const { business } = useContextBusiness();
+  // context
+  const { managerBusinesses } = useContextManagerProfile();
+  const { business, setBusinessId } = useContextBusiness();
   const { logo } = useBusinessProfile();
+  // state
+  const [businesses, setBusinesses] = React.useState<Businesses[]>([]);
+  const [selectedBusiness, setSelectedBusiness] = React.useState<string>();
+  // handlers
+  const handleSwitchBussines = (value: string) => {
+    setSelectedBusiness(value);
+    setBusinessId(value);
+  };
+  // side effects
+  React.useEffect(() => {
+    if (!business) return;
+    setSelectedBusiness(business.id);
+  }, [business]);
+  React.useEffect(() => {
+    if (!managerBusinesses) return;
+    const businessesList = managerBusinesses.map((business) => ({
+      id: business.id,
+      name: business.name,
+    }));
+    setBusinesses(businessesList);
+  }, [managerBusinesses]);
+  // UI
   return (
     <Box>
       {business?.logoExists && logo ? (
@@ -21,9 +51,25 @@ const BusinessInfo = () => {
       ) : (
         <Circle size="40px" bg="gray.400" />
       )}
-      <Text fontSize="md" mt="2">
-        {business?.name}
-      </Text>
+      {managerBusinesses ? (
+        <Box mt="2" pr="4">
+          <Select
+            cursor="pointer"
+            value={selectedBusiness}
+            onChange={(e) => handleSwitchBussines(e.target.value)}
+          >
+            {businesses.map((business) => (
+              <option key={business.id} value={business.id}>
+                {business.name}
+              </option>
+            ))}
+          </Select>
+        </Box>
+      ) : (
+        <Text fontSize="md" mt="2">
+          {business?.name}
+        </Text>
+      )}
       <BusinessStatus />
     </Box>
   );
