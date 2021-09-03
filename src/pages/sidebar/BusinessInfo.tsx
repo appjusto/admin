@@ -1,16 +1,14 @@
-import { Box, Circle, Image, Select, Text } from '@chakra-ui/react';
+import { Box, Circle, Image, Text } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextManagerProfile } from 'app/state/manager/context';
+import {
+  BusinessSelect,
+  BusinessSelectOptions,
+} from 'common/components/form/select/BusinessSelect';
 import { ImageFbLoading } from 'common/components/ImageFbLoading';
 import React from 'react';
 import { BusinessStatus } from './BusinessStatus';
-
-interface Businesses {
-  id: string;
-  name?: string;
-  address?: string;
-}
 
 const BusinessInfo = () => {
   // context
@@ -18,24 +16,26 @@ const BusinessInfo = () => {
   const { business, setBusinessId } = useContextBusiness();
   const { logo } = useBusinessProfile();
   // state
-  const [businesses, setBusinesses] = React.useState<Businesses[]>([]);
-  const [selectedBusiness, setSelectedBusiness] = React.useState<string>();
+  const [businesses, setBusinesses] = React.useState<BusinessSelectOptions[]>([]);
+  const [selectedBusiness, setSelectedBusiness] = React.useState<BusinessSelectOptions>();
   // handlers
-  const handleSwitchBussines = (value: string) => {
-    setSelectedBusiness(value);
-    setBusinessId(value);
+  const handleSwitchBussines = (selected: BusinessSelectOptions) => {
+    setSelectedBusiness(selected);
+    setBusinessId(selected.value);
   };
   // side effects
   React.useEffect(() => {
     if (!business) return;
-    setSelectedBusiness(business.id);
+    setSelectedBusiness({
+      value: business.id,
+      label: `${business.name}: ${business.businessAddress?.address ?? 'Não informado'}`,
+    });
   }, [business]);
   React.useEffect(() => {
     if (!managerBusinesses) return;
     const businessesList = managerBusinesses.map((business) => ({
-      id: business.id,
-      name: business.name,
-      address: business.businessAddress?.address,
+      value: business.id,
+      label: `${business.name}: ${business.businessAddress?.address ?? 'Não informado'}`,
     }));
     setBusinesses(businessesList);
   }, [managerBusinesses]);
@@ -55,17 +55,11 @@ const BusinessInfo = () => {
       )}
       {managerBusinesses && managerBusinesses.length > 1 ? (
         <Box mt="2" pr="4">
-          <Select
-            cursor="pointer"
-            value={selectedBusiness}
-            onChange={(e) => handleSwitchBussines(e.target.value)}
-          >
-            {businesses.map((business) => (
-              <option key={business.id} value={business.id}>
-                {`${business.name} / ${business.address}`}
-              </option>
-            ))}
-          </Select>
+          <BusinessSelect
+            options={businesses}
+            selected={selectedBusiness}
+            onChange={handleSwitchBussines}
+          />
         </Box>
       ) : (
         <Text fontSize="md" mt="2">

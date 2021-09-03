@@ -58,6 +58,7 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.1",
     "react-scroll": "^1.8.2",
+    "react-select": "^4.3.1",
     "react-to-print": "^2.12.6",
     "remark-gfm": "^1.0.0",
     "types": "^0.1.1",
@@ -96,6 +97,7 @@
   },
   "devDependencies": {
     "@types/mapbox__polyline": "^1.0.2",
+    "@types/react-select": "^4.0.17",
     "prettier": "^2.2.1"
   }
 }
