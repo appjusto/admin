@@ -64,10 +64,11 @@ export const BusinessProvider = ({ children }: Props) => {
     if (isBackofficeUser) return;
     if (!user?.email) return;
     if (!businesses) return;
+    if (businessId) return;
     // select first business or set it to null to indicate that user doesn't
     // manage any business
     setBusinessId(businesses.find(() => true)?.id ?? null);
-  }, [api, businesses, user?.email, isBackofficeUser]);
+  }, [api, businesses, user?.email, isBackofficeUser, businessId]);
 
   return (
     <BusinessContext.Provider value={{ business, setBusinessId, updateContextBusinessOrderPrint }}>

@@ -9,6 +9,7 @@ import { BusinessStatus } from './BusinessStatus';
 interface Businesses {
   id: string;
   name?: string;
+  address?: string;
 }
 
 const BusinessInfo = () => {
@@ -34,6 +35,7 @@ const BusinessInfo = () => {
     const businessesList = managerBusinesses.map((business) => ({
       id: business.id,
       name: business.name,
+      address: business.businessAddress?.address,
     }));
     setBusinesses(businessesList);
   }, [managerBusinesses]);
@@ -60,7 +62,7 @@ const BusinessInfo = () => {
           >
             {businesses.map((business) => (
               <option key={business.id} value={business.id}>
-                {business.name}
+                {`${business.name} / ${business.address}`}
               </option>
             ))}
           </Select>
