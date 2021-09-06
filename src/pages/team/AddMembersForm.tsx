@@ -1,5 +1,4 @@
 import { Box, Button, HStack, Switch, Text, Tooltip } from '@chakra-ui/react';
-import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useManagers } from 'app/api/manager/useManagers';
 import { useContextBusiness } from 'app/state/business/context';
 import { AdminRole } from 'appjusto-types';
@@ -23,7 +22,6 @@ const memberObj = {
 export const AddMembersForm = () => {
   //context
   const { business } = useContextBusiness();
-  const { updateBusinessProfile, updateResult } = useBusinessProfile();
   const { createManager, createResult } = useManagers();
   const { isLoading, isSuccess, isError, error: createError } = createResult;
 
@@ -87,16 +85,10 @@ export const AddMembersForm = () => {
           },
         });
       }
-      const created = await createManager({
+      await createManager({
         email: member.email,
         role: userRole,
       });
-      if (created) {
-        if (managers && !managers.includes(member.email)) {
-          managers.push(member.email);
-          updateBusinessProfile({ managers });
-        }
-      }
     });
     setMembers([memberObj]);
   };
@@ -109,13 +101,7 @@ export const AddMembersForm = () => {
         error: createError,
         message: { title: 'Não foi possível adicionar os colaboradores.' },
       });
-    else if (updateResult.isError)
-      setError({
-        status: true,
-        error: updateResult.error,
-        message: { title: 'Não foi possível atualizar a lista de colaboradores.' },
-      });
-  }, [isError, createError, updateResult.isError, updateResult.error]);
+  }, [isError, createError]);
 
   // UI
   return (
