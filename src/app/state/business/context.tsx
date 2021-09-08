@@ -56,10 +56,12 @@ export const BusinessProvider = ({ children }: Props) => {
   React.useEffect(() => {
     if (hookBusiness === undefined) return;
     if (hookBusiness === null) return setBusiness(null);
-    localStorage.setItem('business', hookBusiness.id);
+    if (isBackofficeUser === false) {
+      localStorage.setItem('business', hookBusiness.id);
+    }
     updateContextBusiness(hookBusiness);
     queryCache.invalidateQueries();
-  }, [hookBusiness, queryCache, updateContextBusiness]);
+  }, [hookBusiness, isBackofficeUser, queryCache, updateContextBusiness]);
   React.useEffect(() => {
     if (isBackofficeUser) return;
     if (!user?.email) return;
