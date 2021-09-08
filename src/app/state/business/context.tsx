@@ -57,7 +57,7 @@ export const BusinessProvider = ({ children }: Props) => {
     if (hookBusiness === undefined) return;
     if (hookBusiness === null) return setBusiness(null);
     if (isBackofficeUser === false) {
-      localStorage.setItem('business', hookBusiness.id);
+      localStorage.setItem(`business-${process.env.REACT_APP_ENVIRONMENT}`, hookBusiness.id);
     }
     updateContextBusiness(hookBusiness);
     queryCache.invalidateQueries();
@@ -67,7 +67,7 @@ export const BusinessProvider = ({ children }: Props) => {
     if (!user?.email) return;
     if (!businesses) return;
     if (businessId) return;
-    const localBusinessId = localStorage.getItem('business');
+    const localBusinessId = localStorage.getItem(`business-${process.env.REACT_APP_ENVIRONMENT}`);
     if (localBusinessId) return setBusinessId(localBusinessId);
     // select first business or set it to null to indicate that user doesn't
     // manage any business
