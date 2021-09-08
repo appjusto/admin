@@ -27,7 +27,6 @@ export const BusinessProvider = ({ children }: Props) => {
   const hookBusiness = useObserveBusinessProfile(businessId);
   // state
   const [business, setBusiness] = React.useState<WithId<Business> | null>();
-
   // handlers
   const updateContextBusiness = React.useCallback(
     (newState: WithId<Business> | null) => {
@@ -39,7 +38,6 @@ export const BusinessProvider = ({ children }: Props) => {
     },
     [business]
   );
-
   const updateContextBusinessOrderPrint = (status: boolean) => {
     setBusiness((prev) => {
       if (!prev) return;
@@ -49,27 +47,28 @@ export const BusinessProvider = ({ children }: Props) => {
       };
     });
   };
-
   // side effects
   React.useEffect(() => {
     if (businessId && refreshUserToken) refreshUserToken(businessId);
   }, [businessId, refreshUserToken]);
   React.useEffect(() => {
     if (hookBusiness === undefined) return;
-    if (hookBusiness === null) setBusiness(null);
+    if (hookBusiness === null) return setBusiness(null);
+    localStorage.setItem('business', hookBusiness.id);
     updateContextBusiness(hookBusiness);
   }, [hookBusiness, updateContextBusiness]);
-  // intended to auto-select a business id for a restaurant manager
   React.useEffect(() => {
     if (isBackofficeUser) return;
     if (!user?.email) return;
     if (!businesses) return;
     if (businessId) return;
+    const localBusinessId = localStorage.getItem('business');
+    if (localBusinessId) return setBusinessId(localBusinessId);
     // select first business or set it to null to indicate that user doesn't
     // manage any business
     setBusinessId(businesses.find(() => true)?.id ?? null);
   }, [api, businesses, user?.email, isBackofficeUser, businessId]);
-
+  // provider
   return (
     <BusinessContext.Provider value={{ business, setBusinessId, updateContextBusinessOrderPrint }}>
       {children}
