@@ -28,7 +28,12 @@ export const useObserveBODashboardOrders = () => {
   React.useEffect(() => {
     if (!orders) return;
     setTodayOrders(orders.length);
-    setTodayValue(orders.reduce((result, order) => result + order.fare?.total!, 0));
+    setTodayValue(
+      orders.reduce((result, order) => {
+        if (order.fare?.total) return result + order.fare.total;
+        else return result;
+      }, 0)
+    );
   }, [orders]);
   // orders average
   React.useEffect(() => {
