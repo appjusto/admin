@@ -12,16 +12,13 @@ export const useBusinessProfile = () => {
   const { business, setBusinessId } = useContextBusiness();
   const businessId = business?.id;
   const { refreshUserToken } = useContextFirebaseUser();
-
   // queries
   const getBusinessLogoURL = (key: string) =>
     businessId ? api.business().getBusinessLogoURL(businessId!) : null;
   const { data: logo } = useQuery(['business:logo', businessId], getBusinessLogoURL);
-
   const getBusinessCoverURL = (key: string) =>
     businessId ? api.business().getBusinessCoverURL(businessId!, '1008x360') : null;
   const { data: cover } = useQuery(['business:cover', businessId], getBusinessCoverURL);
-
   // mutations
   const [createBusinessProfile] = useMutation(async () => {
     const business = await api.business().createBusinessProfile();
@@ -68,7 +65,6 @@ export const useBusinessProfile = () => {
     async (data: { businessId: string; slug: string }) =>
       await api.business().updateBusinessSlug(data)
   );
-
   // return
   return {
     logo,

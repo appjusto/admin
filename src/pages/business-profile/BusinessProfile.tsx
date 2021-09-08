@@ -77,15 +77,12 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
     cloneResult,
   } = useBusinessProfile();
   const { isLoading, isSuccess, isError, error: updateError } = updateWithImagesResult;
-
   // helpers
   const showDeeplink = !onboarding && business?.situation === 'approved';
   // handlers
   const openDrawerHandler = () => history.push(`${path}/delete`);
   const closeDrawerHandler = () => history.replace(path);
-
   const isCNPJValid = () => cnpjutils.isValid(cnpj);
-
   const handleEnabled = (enabled: boolean) => {
     if (enabled) setEnabled(enabled);
     else {
@@ -93,7 +90,6 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
       setEnabled(false);
     }
   };
-
   const onSubmitHandler = async () => {
     submission.current += 1;
     setError(initialError);
@@ -144,7 +140,6 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
       });
     }
   };
-
   const cloneBusinessHandler = async () => {
     submission.current += 1;
     const newBusiness = await cloneBusiness();
@@ -153,7 +148,6 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
       history.push('/app');
     }
   };
-
   const clearDropImages = React.useCallback((type: string) => {
     if (type === 'logo') {
       setLogoExists(false);
@@ -163,17 +157,14 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
       setCoverFiles(null);
     }
   }, []);
-
   const getLogoFiles = React.useCallback(async (files: File[]) => {
     setLogoExists(true);
     setLogoFiles(files);
   }, []);
-
   const getCoverFiles = React.useCallback(async (files: File[]) => {
     setCoverExists(true);
     setCoverFiles(files);
   }, []);
-
   // side effects
   React.useEffect(() => {
     isMountedRef.current = true;
@@ -182,12 +173,10 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
     };
     return unmount;
   }, []);
-
   React.useEffect(() => {
     if (onboarding) window?.scrollTo(0, 0);
     cnpjRef?.current?.focus();
   }, [onboarding]);
-
   React.useEffect(() => {
     if (business) {
       setEnabled(business.enabled ?? false);
@@ -204,7 +193,6 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
       createBusinessProfile();
     }
   }, [business, cover, logo, createBusinessProfile]);
-
   React.useEffect(() => {
     if (isError)
       setError({
@@ -220,7 +208,6 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
       });
     }
   }, [isError, updateError, cloneResult.isError, cloneResult.error]);
-
   // UI
   const breakpoint = useBreakpoint();
   const coverWidth = breakpoint === 'base' ? 328 : breakpoint === 'md' ? 420 : 536;

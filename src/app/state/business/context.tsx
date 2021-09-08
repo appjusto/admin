@@ -2,6 +2,7 @@ import { useObserveBusinessManagedBy } from 'app/api/business/profile/useObserve
 import { useObserveBusinessProfile } from 'app/api/business/profile/useObserveBusinessProfile';
 import { Business, WithId } from 'appjusto-types';
 import React from 'react';
+import { useQueryCache } from 'react-query';
 import { useContextApi } from '../api/context';
 import { useContextFirebaseUser } from '../auth/context';
 import { getBusinessChangedKeys } from './utils';
@@ -20,6 +21,7 @@ interface Props {
 
 export const BusinessProvider = ({ children }: Props) => {
   // context
+  const queryCache = useQueryCache();
   const api = useContextApi();
   const { user, isBackofficeUser, refreshUserToken } = useContextFirebaseUser();
   const businesses = useObserveBusinessManagedBy(user?.email);
@@ -56,7 +58,8 @@ export const BusinessProvider = ({ children }: Props) => {
     if (hookBusiness === null) return setBusiness(null);
     localStorage.setItem('business', hookBusiness.id);
     updateContextBusiness(hookBusiness);
-  }, [hookBusiness, updateContextBusiness]);
+    queryCache.invalidateQueries();
+  }, [hookBusiness, queryCache, updateContextBusiness]);
   React.useEffect(() => {
     if (isBackofficeUser) return;
     if (!user?.email) return;
