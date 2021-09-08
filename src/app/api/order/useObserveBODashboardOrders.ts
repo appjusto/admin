@@ -1,22 +1,29 @@
 import { useContextApi } from 'app/state/api/context';
 import { WithId, Order } from 'appjusto-types';
 import React from 'react';
+import dayjs from 'dayjs';
 
 export const useObserveBODashboardOrders = () => {
   // context
   const api = useContextApi();
   // state
+  const [date, setDate] = React.useState(new Date());
   const [orders, setOrders] = React.useState<WithId<Order>[] | null>();
   const [todayOrders, setTodayOrders] = React.useState<number>();
   const [todayValue, setTodayValue] = React.useState<number>();
   const [todayAverage, setTodayAverage] = React.useState<number>();
   // side effects
   React.useEffect(() => {
-    let today = new Date();
-    today.setHours(0, 0, 0);
-    const unsub = api.order().observeBODashboardOrders(setOrders, today);
+    const unsub = api
+      .order()
+      .observeBODashboardOrders(setOrders, dayjs(date).startOf('day').toDate());
     return () => unsub();
-  }, [api]);
+  }, [api, date]);
+  React.useEffect(() => {
+    const diff = dayjs(date).add(1, 'day').diff(date);
+    const interval = setTimeout(() => setDate(new Date()), diff);
+    return () => clearInterval(interval);
+  }, [date]);
   // orders's number and total value
   React.useEffect(() => {
     if (!orders) return;
