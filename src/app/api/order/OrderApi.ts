@@ -116,10 +116,14 @@ export default class OrderApi {
   }
 
   observeBODashboardOrders(
+    statuses: OrderStatus[],
     resultHandler: (orders: WithId<Order>[]) => void,
     start?: Date | null
   ): firebase.Unsubscribe {
-    let query = this.refs.getOrdersRef().where('updatedOn', '>', start);
+    let query = this.refs
+      .getOrdersRef()
+      .where('updatedOn', '>', start)
+      .where('status', 'in', statuses);
     const unsubscribe = query.onSnapshot(
       (querySnapshot) => {
         if (!querySnapshot.empty) resultHandler(documentsAs<Order>(querySnapshot.docs));

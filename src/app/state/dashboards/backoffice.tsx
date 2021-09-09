@@ -7,6 +7,7 @@ import React from 'react';
 
 interface ContextProps {
   todayOrders?: number;
+  todayDeliveredOrders?: number;
   todayValue?: number;
   todayAverage?: number;
   couriers?: number;
@@ -25,7 +26,7 @@ const businessesStatus = 'open' as BusinessStatus;
 
 export const BackofficeDashboardProvider = ({ children }: Props) => {
   // context
-  const { todayOrders, todayAverage } = useObserveBODashboardOrders();
+  const { todayOrders, todayDeliveredOrders, todayAverage } = useObserveBODashboardOrders();
   const couriers = useObserveCouriersByStatus(courierStatuses);
   const businesses = useObserveBusinessesByStatus(businessesStatus);
   const consumers = useObserveNewConsumers();
@@ -35,6 +36,7 @@ export const BackofficeDashboardProvider = ({ children }: Props) => {
     <BackofficeDashboardContext.Provider
       value={{
         todayOrders,
+        todayDeliveredOrders,
         todayAverage,
         couriers,
         businesses,
