@@ -139,23 +139,23 @@ export default class OrderApi {
       orders: WithId<Order>[],
       last?: firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
     ) => void,
-    businessId?: string | null,
-    statuses?: OrderStatus[] | null,
-    orderCode?: string | null,
-    start?: Date | null,
-    end?: Date | null,
-    orderStatus?: OrderStatus,
-    orderType?: OrderType[],
-    startAfter?: FirebaseDocument
+    businessId: string | null | undefined,
+    statuses: OrderStatus[] | null,
+    orderCode: string | null | undefined,
+    start: Date | null | undefined,
+    end: Date | null | undefined,
+    orderStatus: OrderStatus | undefined,
+    orderType: OrderType | null,
+    startAfter: FirebaseDocument | undefined
   ): firebase.Unsubscribe {
     let query = this.refs.getOrdersRef().orderBy('updatedOn', 'desc').limit(20);
-    if (statuses) query = query.where('status', 'in', statuses);
+    if (orderStatus) query = query.where('status', '==', orderStatus);
+    else query = query.where('status', 'in', statuses);
     if (startAfter) query = query.startAfter(startAfter);
     if (businessId) query = query.where('business.id', '==', businessId);
     if (orderCode) query = query.where('code', '==', orderCode);
     if (start && end) query = query.where('updatedOn', '>=', start).where('updatedOn', '<=', end);
-    if (orderStatus) query = query.where('status', '==', orderStatus);
-    if (orderType) query = query.where('type', 'in', orderType);
+    if (orderType) query = query.where('type', '==', orderType);
     const unsubscribe = query.onSnapshot(
       (querySnapshot) => {
         const last =
