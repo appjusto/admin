@@ -1,10 +1,13 @@
 import { Box, Checkbox, CheckboxGroup, Flex, Icon, Text } from '@chakra-ui/react';
+import { useReceivables } from 'app/api/business/useReceivables';
+import { useContextBusinessId } from 'app/state/business/context';
+import { IuguMarketplaceAccountReceivableItem } from 'appjusto-types/payment/iugu';
 import { ReactComponent as Checked } from 'common/img/icon-checked.svg';
 import React from 'react';
 import { t } from 'utils/i18n';
 import { FinancesBaseDrawer } from './FinancesBaseDrawer';
 
-const fakeInvoices = [
+/*const fakeInvoices = [
   {
     id: '1',
     value: 'R$ 48,00',
@@ -25,7 +28,7 @@ const fakeInvoices = [
     value: 'R$ 62,80',
     date: '09/09/2021',
   },
-];
+];*/
 
 interface WithdrawalsDrawerProps {
   isOpen: boolean;
@@ -33,10 +36,19 @@ interface WithdrawalsDrawerProps {
 }
 
 export const WithdrawalsDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps) => {
+  // context
+  const businessId = useContextBusinessId();
+  const { receivables } = useReceivables(businessId);
   // state
+  const [items, setItems] = React.useState<IuguMarketplaceAccountReceivableItem[]>([]);
   const [selected, setSelected] = React.useState<string[]>([]);
   const [isReviewing, setIsReviewing] = React.useState(false);
   const [isSuccess, setIsSuccess] = React.useState(false);
+  // side effects
+  React.useEffect(() => {
+    if (receivables?.items) setItems(receivables.items);
+    else setItems([]);
+  }, [receivables]);
   // UI
   if (isSuccess) {
     return (
@@ -108,6 +120,11 @@ export const WithdrawalsDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps)
               R$ 000,00
             </Text>
           </Box>
+          <Checkbox mt="6" size="lg" borderColor="black" borderRadius="lg" colorScheme="green">
+            <Text fontSize="15px" fontWeight="500" lineHeight="21px">
+              {t('Estou de acordo com as taxas cobradas para o adiantamento do valor')}
+            </Text>
+          </Checkbox>
         </>
       ) : (
         <>
@@ -126,15 +143,15 @@ export const WithdrawalsDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps)
               value={selected}
               onChange={(values: string[]) => setSelected(values)}
             >
-              {fakeInvoices.map((invoice) => (
-                <Box key={invoice.id} w="100%" py="4" borderBottom="1px solid #C8D7CB">
-                  <Checkbox size="lg" borderColor="black" borderRadius="lg" value={invoice.id}>
+              {items.map((item) => (
+                <Box key={item.id} w="100%" py="4" borderBottom="1px solid #C8D7CB">
+                  <Checkbox size="lg" borderColor="black" borderRadius="lg" value={item.id}>
                     <Box ml="4">
                       <Text fontSize="15px" fontWeight="500" lineHeight="21px" color="black">
-                        {invoice.value}
+                        {item.total}
                       </Text>
                       <Text mt="2" fontSize="15px" fontWeight="500" lineHeight="21px">
-                        {invoice.date}
+                        {item.scheduled_date}
                       </Text>
                     </Box>
                   </Checkbox>

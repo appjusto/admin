@@ -21,6 +21,11 @@ export default class FirebaseRefs {
   getOutsourceDeliveryCallable = () => this.functions.httpsCallable('outsourceDelivery');
   getReleaseCourierCallable = () => this.functions.httpsCallable('releaseCourier');
 
+  getFetchReceivablesCallable = () => this.functions.httpsCallable('fetchReceivables');
+  getFetchAdvanceSimulationCallable = () => this.functions.httpsCallable('fetchAdvanceSimulation');
+  getRequestWithdrawCallable = () => this.functions.httpsCallable('requestWithdraw');
+  getAdvanceReceivablesCallable = () => this.functions.httpsCallable('advanceReceivables');
+
   // firestore
   // platform
   getPlatformRef = () => this.firestore.collection('platform');
