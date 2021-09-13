@@ -4,6 +4,7 @@ import { useContextBusinessId } from 'app/state/business/context';
 import { IuguMarketplaceAccountReceivableItem } from 'appjusto-types/payment/iugu';
 import { ReactComponent as Checked } from 'common/img/icon-checked.svg';
 import React from 'react';
+import { formatCurrency } from 'utils/formatters';
 import { t } from 'utils/i18n';
 import { FinancesBaseDrawer } from './FinancesBaseDrawer';
 
@@ -44,6 +45,14 @@ export const WithdrawalsDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps)
   const [selected, setSelected] = React.useState<string[]>([]);
   const [isReviewing, setIsReviewing] = React.useState(false);
   const [isSuccess, setIsSuccess] = React.useState(false);
+  // helpers
+  const totalAvailable = items.reduce<number>((result, item) => {
+    let value = 0;
+    if (item.total.includes('R$'))
+      value = parseFloat(item.total.split(' ')[1].replace(',', '.')) * 100;
+    else value = parseFloat(item.total.split(' ')[0].replace(',', '.')) * 100;
+    return (result += value);
+  }, 0);
   // side effects
   React.useEffect(() => {
     if (receivables?.items) setItems(receivables.items);
@@ -117,7 +126,7 @@ export const WithdrawalsDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps)
               {t('Total a receber no adiantamento')}
             </Text>
             <Text mt="2" fontSize="36px" fontWeight="500" lineHeight="30px">
-              R$ 000,00
+              {formatCurrency(totalAvailable)}
             </Text>
           </Box>
           <Checkbox mt="6" size="lg" borderColor="black" borderRadius="lg" colorScheme="green">
@@ -134,7 +143,7 @@ export const WithdrawalsDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps)
               {t('Disponível para adiantamento')}
             </Text>
             <Text mt="2" fontSize="36px" fontWeight="500" lineHeight="30px">
-              R$ 000,00
+              {formatCurrency(totalAvailable)}
             </Text>
           </Box>
           <Box mt="4">
@@ -159,7 +168,7 @@ export const WithdrawalsDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps)
               ))}
             </CheckboxGroup>
             <Text mt="4" fontSize="15px" fontWeight="700" lineHeight="21px">
-              {t(`Total selecionado: R$ 0,00`)}
+              {t(`Total selecionado: ${formatCurrency(totalAvailable)}`)}
             </Text>
           </Box>
         </>
