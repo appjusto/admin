@@ -6,6 +6,7 @@ import { ReactComponent as Checked } from 'common/img/icon-checked.svg';
 import React from 'react';
 import { formatCurrency } from 'utils/formatters';
 import { t } from 'utils/i18n';
+import { BasicInfoBox } from './BasicInfoBox';
 import { FinancesBaseDrawer } from './FinancesBaseDrawer';
 
 /*const fakeInvoices = [
@@ -45,19 +46,34 @@ export const WithdrawalsDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps)
   const [selected, setSelected] = React.useState<string[]>([]);
   const [isReviewing, setIsReviewing] = React.useState(false);
   const [isSuccess, setIsSuccess] = React.useState(false);
-  // helpers
-  const totalAvailable = items.reduce<number>((result, item) => {
-    let value = 0;
-    if (item.total.includes('R$'))
-      value = parseFloat(item.total.split(' ')[1].replace(',', '.')) * 100;
-    else value = parseFloat(item.total.split(' ')[0].replace(',', '.')) * 100;
-    return (result += value);
-  }, 0);
+  const [totalAvailable, setTotalAvailable] = React.useState<string>();
+  const [totalSelected, setTotalSelected] = React.useState<string>();
   // side effects
   React.useEffect(() => {
-    if (receivables?.items) setItems(receivables.items);
-    else setItems([]);
+    if (receivables?.items) {
+      setItems(receivables.items);
+      const total = receivables.items.reduce<number>((result, item) => {
+        let value = 0;
+        if (item.total.includes('R$'))
+          value = parseFloat(item.total.split(' ')[1].replace(',', '.')) * 100;
+        else value = parseFloat(item.total.split(' ')[0].replace(',', '.')) * 100;
+        return (result += value);
+      }, 0);
+      setTotalAvailable(formatCurrency(total));
+    } else setItems([]);
   }, [receivables]);
+  React.useEffect(() => {
+    if (!items) return;
+    const itemsSelected = items.filter((item) => selected.includes(item.id.toString()));
+    const total = itemsSelected.reduce<number>((result, item) => {
+      let value = 0;
+      if (item.total.includes('R$'))
+        value = parseFloat(item.total.split(' ')[1].replace(',', '.')) * 100;
+      else value = parseFloat(item.total.split(' ')[0].replace(',', '.')) * 100;
+      return (result += value);
+    }, 0);
+    setTotalSelected(formatCurrency(total));
+  }, [items, selected]);
   // UI
   if (isSuccess) {
     return (
@@ -87,7 +103,7 @@ export const WithdrawalsDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps)
       onClose={onClose}
       title={t('Antecipação dos valores')}
       description={t(
-        'Você pode escolher individualmente os valores das pedidos que deseja antecipar. Para realizar a antecipação, será cobrada uma taxa de 0.0% + R$ 0.00 pela operação financeira. Nada desse dinheiro não ficará com o AppJusto.'
+        'Você pode escolher individualmente os valores dos pedidos que deseja antecipar. Para realizar a antecipação, será cobrada uma taxa de 0.0% + R$ 0.00 pela operação financeira. Nada desse dinheiro ficará com o AppJusto.'
       )}
       isReviewing={isReviewing}
       setIsReviewing={setIsReviewing}
@@ -120,15 +136,11 @@ export const WithdrawalsDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps)
               - R$ 000,00
             </Text>
           </Box>
-          <Box mt="6" w={{ lg: '328px' }} border="1px solid #F6F6F6" borderRadius="lg" p="4">
-            <Text fontSize="15px" fontWeight="500" lineHeight="21px">
-              <Icon as={Checked} mr="2" />
-              {t('Total a receber no adiantamento')}
-            </Text>
-            <Text mt="2" fontSize="36px" fontWeight="500" lineHeight="30px">
-              {formatCurrency(totalAvailable)}
-            </Text>
-          </Box>
+          <BasicInfoBox
+            label={t('Total a receber no adiantamento')}
+            icon={Checked}
+            value={totalSelected}
+          />
           <Checkbox mt="6" size="lg" borderColor="black" borderRadius="lg" colorScheme="green">
             <Text fontSize="15px" fontWeight="500" lineHeight="21px">
               {t('Estou de acordo com as taxas cobradas para o adiantamento do valor')}
@@ -137,15 +149,11 @@ export const WithdrawalsDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps)
         </>
       ) : (
         <>
-          <Box w={{ lg: '328px' }} border="1px solid #F6F6F6" borderRadius="lg" p="4">
-            <Text fontSize="15px" fontWeight="500" lineHeight="21px">
-              <Icon as={Checked} mr="2" />
-              {t('Disponível para adiantamento')}
-            </Text>
-            <Text mt="2" fontSize="36px" fontWeight="500" lineHeight="30px">
-              {formatCurrency(totalAvailable)}
-            </Text>
-          </Box>
+          <BasicInfoBox
+            label={t('Disponível para adiantamento')}
+            icon={Checked}
+            value={totalAvailable}
+          />
           <Box mt="4">
             <CheckboxGroup
               colorScheme="green"
@@ -154,7 +162,7 @@ export const WithdrawalsDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps)
             >
               {items.map((item) => (
                 <Box key={item.id} w="100%" py="4" borderBottom="1px solid #C8D7CB">
-                  <Checkbox size="lg" borderColor="black" borderRadius="lg" value={item.id}>
+                  <Checkbox size="lg" value={item.id.toString()}>
                     <Box ml="4">
                       <Text fontSize="15px" fontWeight="500" lineHeight="21px" color="black">
                         {item.total}
@@ -168,7 +176,7 @@ export const WithdrawalsDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps)
               ))}
             </CheckboxGroup>
             <Text mt="4" fontSize="15px" fontWeight="700" lineHeight="21px">
-              {t(`Total selecionado: ${formatCurrency(totalAvailable)}`)}
+              {t(`Total selecionado: ${totalSelected ?? 'R$ 0,00'}`)}
             </Text>
           </Box>
         </>

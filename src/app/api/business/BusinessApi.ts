@@ -15,6 +15,8 @@ import {
   FetchReceivablesPayload,
   FetchAdvanceSimulationPayload,
   AdvanceReceivablesPayload,
+  FetchAccountInformationResponse,
+  FetchAccountInformationPayload,
 } from 'appjusto-types';
 import { Complement, ComplementGroup, Ordering } from 'appjusto-types';
 import firebase from 'firebase/app';
@@ -687,7 +689,15 @@ export default class BusinessApi {
       throw new Error(`uploadComplementPhotoError: ${error}`);
     }
   }
-
+  // Advances and withdrawls
+  async fetchAccountInformation(accountId: string): Promise<FetchAccountInformationResponse> {
+    const payload: FetchAccountInformationPayload = {
+      accountType: 'business',
+      accountId,
+      meta: { version: '1' }, // TODO: pass correct version on
+    };
+    return (await this.refs.getFetchAccountInformationCallable()(payload)).data;
+  }
   async requestWithdraw(accountId: string, amount: number): Promise<any> {
     const payload: RequestWithdrawPayload = {
       accountType: 'business',
