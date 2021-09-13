@@ -21,6 +21,7 @@ interface BaseDrawerProps {
   isReviewing: boolean;
   setIsReviewing(value: boolean): void;
   pimaryFunc?(): void;
+  isLoading?: boolean;
   children: React.ReactNode;
 }
 
@@ -31,19 +32,12 @@ export const FinancesBaseDrawer = ({
   isReviewing,
   setIsReviewing,
   pimaryFunc,
+  isLoading,
   children,
   ...props
 }: BaseDrawerProps) => {
   // refs
   const bodyRef = React.useRef<HTMLDivElement>(null);
-  // handlers
-  const handleSubmit = () => {
-    if (!isReviewing) return setIsReviewing(true);
-    if (pimaryFunc) {
-      console.log('pimaryFunc');
-      return pimaryFunc();
-    }
-  };
   // side effects
   React.useEffect(() => {
     if (!bodyRef.current) return;
@@ -74,8 +68,8 @@ export const FinancesBaseDrawer = ({
                 <Button
                   minW="220px"
                   fontSize="15px"
-                  onClick={handleSubmit}
-                  isLoading={false}
+                  onClick={pimaryFunc}
+                  isLoading={isLoading}
                   loadingText={t('Confirmando')}
                 >
                   {isReviewing ? t('Confirmar adiantamento') : t('Revisar adiantamento')}

@@ -5,6 +5,9 @@ import { round } from 'lodash';
 export const formatCurrency = (value: number, options?: ToCurrencyOptions) =>
   i18n.toCurrency(value / 100, options);
 
+export const convertBalance = (value: string) =>
+  parseFloat(value.replace(',', '.').replace(/[^0-9.]/g, ''));
+
 // percentage
 export const formatPct = (value: number) => `${parseFloat((value * 100).toFixed(2))}%`;
 

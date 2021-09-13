@@ -1,37 +1,18 @@
 import { Box, Checkbox, CheckboxGroup, Flex, Icon, Skeleton, Text } from '@chakra-ui/react';
 import { useReceivables } from 'app/api/business/useReceivables';
 import { useReceivablesSimulation } from 'app/api/business/useReceivablesSimulation';
+import { useRequestWithdraw } from 'app/api/business/useRequestWithdraw';
+import { FirebaseError } from 'app/api/types';
 import { useContextBusinessId } from 'app/state/business/context';
 import { IuguMarketplaceAccountReceivableItem } from 'appjusto-types/payment/iugu';
+import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
+import { initialError } from 'common/components/error/utils';
 import { ReactComponent as Checked } from 'common/img/icon-checked.svg';
 import React from 'react';
-import { formatCurrency } from 'utils/formatters';
+import { convertBalance, formatCurrency } from 'utils/formatters';
 import { t } from 'utils/i18n';
 import { BasicInfoBox } from './BasicInfoBox';
 import { FinancesBaseDrawer } from './FinancesBaseDrawer';
-
-/*const fakeInvoices = [
-  {
-    id: '1',
-    value: 'R$ 48,00',
-    date: '10/09/2021',
-  },
-  {
-    id: '2',
-    value: 'R$ 58,00',
-    date: '10/09/2021',
-  },
-  {
-    id: '3',
-    value: 'R$ 34,50',
-    date: '09/09/2021',
-  },
-  {
-    id: '4',
-    value: 'R$ 62,80',
-    date: '09/09/2021',
-  },
-];*/
 
 interface WithdrawalsDrawerProps {
   isOpen: boolean;
@@ -42,17 +23,55 @@ export const WithdrawalsDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps)
   // context
   const businessId = useContextBusinessId();
   const { receivables } = useReceivables(businessId);
+  const { requestWithdraw, requestWithdrawResult } = useRequestWithdraw(businessId);
+  const { isLoading, isSuccess, isError, error: withdrawError } = requestWithdrawResult;
   // state
   const [items, setItems] = React.useState<IuguMarketplaceAccountReceivableItem[]>([]);
+  const [selectedAll, setSelectedAll] = React.useState(false);
   const [selected, setSelected] = React.useState<string[]>([]);
   const [isReviewing, setIsReviewing] = React.useState(false);
-  const [isSuccess, setIsSuccess] = React.useState(false);
   const [totalAvailable, setTotalAvailable] = React.useState<string>();
   const [totalSelected, setTotalSelected] = React.useState<string>();
+  const [isFeesAccepted, setIsFeesAccepted] = React.useState(false);
   const { advancedValue, advanceFee, receivedValue } = useReceivablesSimulation(
     businessId,
     selected
   );
+  const [error, setError] = React.useState(initialError);
+  // refs
+  const submission = React.useRef(0);
+  const acceptCheckBoxRef = React.useRef<HTMLInputElement>(null);
+  // handlers
+  // handlers
+  const handleWithdrawRequest = async () => {
+    setError(initialError);
+    submission.current += 1;
+    if (selected.length === 0)
+      return setError({
+        status: true,
+        error: null,
+        message: { title: 'Nenhum valor foi selecionado para antecipação' },
+      });
+    if (!isReviewing) return setIsReviewing(true);
+    if (!isFeesAccepted) {
+      acceptCheckBoxRef.current?.focus();
+      return setError({
+        status: true,
+        error: null,
+        message: { title: 'É preciso aceitar os valores informados na simulação.' },
+      });
+    }
+    if (!receivedValue) {
+      return setError({
+        status: true,
+        error: null,
+        message: { title: 'Nenhum valor de antecipação foi selecionado.' },
+      });
+    }
+    let amount = convertBalance(receivedValue);
+    console.log('amount', amount);
+    await requestWithdraw(amount);
+  };
   // side effects
   React.useEffect(() => {
     if (receivables?.items) {
@@ -79,6 +98,20 @@ export const WithdrawalsDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps)
     }, 0);
     setTotalSelected(formatCurrency(total));
   }, [items, selected]);
+  React.useEffect(() => {
+    if (selectedAll) setSelected(items.map((item) => item.id.toString()));
+    else setSelected([]);
+  }, [items, selectedAll]);
+  React.useEffect(() => {
+    if (isError) {
+      const errorMessage = (withdrawError as FirebaseError).message;
+      setError({
+        status: true,
+        error: withdrawError,
+        message: { title: errorMessage },
+      });
+    }
+  }, [isError, withdrawError]);
   // UI
   if (isSuccess) {
     return (
@@ -108,16 +141,17 @@ export const WithdrawalsDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps)
       onClose={onClose}
       title={t('Antecipação dos valores')}
       description={t(
-        'Você pode escolher individualmente os valores dos pedidos que deseja antecipar. Para realizar a antecipação, será cobrada uma taxa de 0.0% + R$ 0.00 pela operação financeira. Nada desse dinheiro ficará com o AppJusto.'
+        'O prazo padrão para faturar os pagamentos é de 30 dias. Se quiser, você pode selecionar os valores disponíveis abaixo e realizar a antecipação, pagando uma taxa de até 2.5% por operação (taxa proporcional ao tempo que falta para completar 30 dias). Nada desse dinheiro ficará com o AppJusto.'
       )}
       isReviewing={isReviewing}
       setIsReviewing={setIsReviewing}
-      pimaryFunc={() => setIsSuccess(true)}
+      pimaryFunc={handleWithdrawRequest}
+      isLoading={isLoading}
       {...props}
     >
       {isReviewing ? (
         <>
-          <Box mt="6">
+          <Box mt="2">
             <Text fontSize="15px" fontWeight="500" lineHeight="21px">
               {t('Você selecionou')}
             </Text>
@@ -154,11 +188,21 @@ export const WithdrawalsDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps)
             )}
           </Box>
           <BasicInfoBox
+            mt="6"
             label={t('Total a receber no adiantamento')}
             icon={Checked}
             value={receivedValue}
           />
-          <Checkbox mt="6" size="lg" borderColor="black" borderRadius="lg" colorScheme="green">
+          <Checkbox
+            ref={acceptCheckBoxRef}
+            mt="6"
+            size="lg"
+            borderColor="black"
+            borderRadius="lg"
+            colorScheme="green"
+            isChecked={isFeesAccepted}
+            onChange={(e) => setIsFeesAccepted(e.target.checked)}
+          >
             <Text fontSize="15px" fontWeight="500" lineHeight="21px">
               {t('Estou de acordo com as taxas cobradas para o adiantamento do valor')}
             </Text>
@@ -171,6 +215,19 @@ export const WithdrawalsDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps)
             icon={Checked}
             value={totalAvailable}
           />
+          <Box mt="6" w="100%" py="2" borderBottom="1px solid #C8D7CB">
+            <Checkbox
+              size="lg"
+              colorScheme="green"
+              borderColor="black"
+              isChecked={selectedAll}
+              onChange={(e) => setSelectedAll(e.target.checked)}
+            >
+              <Text color="black" fontSize="15px" lineHeight="21px" fontWeight="700">
+                {t('Selecionar todos')}
+              </Text>
+            </Checkbox>
+          </Box>
           <Box mt="4">
             <CheckboxGroup
               colorScheme="green"
@@ -179,7 +236,7 @@ export const WithdrawalsDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps)
             >
               {items.map((item) => (
                 <Box key={item.id} w="100%" py="4" borderBottom="1px solid #C8D7CB">
-                  <Checkbox size="lg" value={item.id.toString()}>
+                  <Checkbox size="lg" value={item.id.toString()} borderColor="black">
                     <Box ml="4">
                       <Text fontSize="15px" fontWeight="500" lineHeight="21px" color="black">
                         {item.total}
@@ -198,6 +255,13 @@ export const WithdrawalsDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps)
           </Box>
         </>
       )}
+      <SuccessAndErrorHandler
+        submission={submission.current}
+        //isSuccess={isSuccess}
+        isError={error.status}
+        error={error.error}
+        errorMessage={error.message}
+      />
     </FinancesBaseDrawer>
   );
 };

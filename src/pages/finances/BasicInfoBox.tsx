@@ -1,7 +1,7 @@
-import { As, Box, Icon, Skeleton, Text } from '@chakra-ui/react';
+import { As, Box, BoxProps, Icon, Skeleton, Text } from '@chakra-ui/react';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 
-interface BasicInfoBoxProps {
+interface BasicInfoBoxProps extends BoxProps {
   label: string;
   icon: As<any> | undefined;
   value?: string | null;
@@ -19,9 +19,17 @@ export const BasicInfoBox = ({
   btnVariant,
   btnLink,
   btnWarning,
+  ...props
 }: BasicInfoBoxProps) => {
   return (
-    <Box w={{ lg: '328px' }} border="1px solid #F6F6F6" borderRadius="lg" p="4">
+    <Box
+      w={{ lg: '328px' }}
+      minH={{ lg: '99px' }}
+      border="1px solid #F6F6F6"
+      borderRadius="lg"
+      p="4"
+      {...props}
+    >
       <Text fontSize="15px" fontWeight="500" lineHeight="21px">
         <Icon as={icon} mr="2" />
         {label}
