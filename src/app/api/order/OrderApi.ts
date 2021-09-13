@@ -376,7 +376,7 @@ export default class OrderApi {
       invoices: WithId<Invoice>[],
       last?: firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
     ) => void,
-    orderId?: string | null,
+    orderCode?: string | null,
     start?: Date | null,
     end?: Date | null,
     startAfter?: FirebaseDocument,
@@ -385,7 +385,7 @@ export default class OrderApi {
     let query = this.refs.getInvoicesRef().orderBy('createdOn', 'desc').limit(20);
     if (status) query = query.where('status', '==', status);
     if (startAfter) query = query.startAfter(startAfter);
-    if (orderId) query = query.where('orderId', '==', orderId);
+    if (orderCode) query = query.where('orderCode', '==', orderCode);
     if (start && end) query = query.where('createdOn', '>=', start).where('createdOn', '<=', end);
     const unsubscribe = query.onSnapshot(
       (querySnapshot) => {

@@ -5,7 +5,7 @@ import firebase from 'firebase/app';
 import { IuguInvoiceStatus } from 'appjusto-types/payment/iugu';
 
 export const useObserveInvoices = (
-  orderId?: string | null,
+  orderCode?: string | null,
   start?: string,
   end?: string,
   status?: IuguInvoiceStatus
@@ -27,7 +27,7 @@ export const useObserveInvoices = (
   // side effects
   React.useEffect(() => {
     setStartAfter(undefined);
-  }, [orderId, start, end]);
+  }, [orderCode, start, end]);
   React.useEffect(() => {
     let startDate = start ? new Date(`${start} 00:00:00`) : null;
     let endDate = end ? new Date(`${end} 23:59:59`) : null;
@@ -37,14 +37,14 @@ export const useObserveInvoices = (
         else setInvoices((prev) => (prev ? [...prev, ...results] : results));
         setLastInvoice(last);
       },
-      orderId,
+      orderCode,
       startDate,
       endDate,
       startAfter,
       status
     );
     return () => unsub();
-  }, [api, startAfter, orderId, start, end, status]);
+  }, [api, startAfter, orderCode, start, end, status]);
   // return
   return { invoices, fetchNextPage };
 };
