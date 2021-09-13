@@ -1,5 +1,6 @@
-import { Box, Checkbox, CheckboxGroup, Flex, Icon, Text } from '@chakra-ui/react';
+import { Box, Checkbox, CheckboxGroup, Flex, Icon, Skeleton, Text } from '@chakra-ui/react';
 import { useReceivables } from 'app/api/business/useReceivables';
+import { useReceivablesSimulation } from 'app/api/business/useReceivablesSimulation';
 import { useContextBusinessId } from 'app/state/business/context';
 import { IuguMarketplaceAccountReceivableItem } from 'appjusto-types/payment/iugu';
 import { ReactComponent as Checked } from 'common/img/icon-checked.svg';
@@ -48,6 +49,10 @@ export const WithdrawalsDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps)
   const [isSuccess, setIsSuccess] = React.useState(false);
   const [totalAvailable, setTotalAvailable] = React.useState<string>();
   const [totalSelected, setTotalSelected] = React.useState<string>();
+  const { advancedValue, advanceFee, receivedValue } = useReceivablesSimulation(
+    businessId,
+    selected
+  );
   // side effects
   React.useEffect(() => {
     if (receivables?.items) {
@@ -117,29 +122,41 @@ export const WithdrawalsDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps)
               {t('Você selecionou')}
             </Text>
             <Text fontSize="24px" fontWeight="500" lineHeight="30px">
-              00 pedidos
+              {selected.length} pedidos
             </Text>
           </Box>
           <Box mt="6">
             <Text fontSize="15px" fontWeight="500" lineHeight="21px">
               {t('Total a adiantar')}
             </Text>
-            <Text fontSize="24px" fontWeight="500" lineHeight="30px" color="green.700">
-              + R$ 000,00
-            </Text>
+            {advancedValue === undefined ? (
+              <Skeleton mt="1" height="30px" colorScheme="#9AA49C" />
+            ) : advancedValue === null ? (
+              'N/E'
+            ) : (
+              <Text fontSize="24px" fontWeight="500" lineHeight="30px" color="green.700">
+                + {advancedValue}
+              </Text>
+            )}
           </Box>
           <Box mt="6">
             <Text fontSize="15px" fontWeight="500" lineHeight="21px">
               {t('Total de taxas de adiantamento')}
             </Text>
-            <Text fontSize="24px" fontWeight="500" lineHeight="30px" color="red">
-              - R$ 000,00
-            </Text>
+            {advanceFee === undefined ? (
+              <Skeleton mt="1" height="30px" colorScheme="#9AA49C" />
+            ) : advanceFee === null ? (
+              'N/E'
+            ) : (
+              <Text fontSize="24px" fontWeight="500" lineHeight="30px" color="red">
+                - {advanceFee}
+              </Text>
+            )}
           </Box>
           <BasicInfoBox
             label={t('Total a receber no adiantamento')}
             icon={Checked}
-            value={totalSelected}
+            value={receivedValue}
           />
           <Checkbox mt="6" size="lg" borderColor="black" borderRadius="lg" colorScheme="green">
             <Text fontSize="15px" fontWeight="500" lineHeight="21px">

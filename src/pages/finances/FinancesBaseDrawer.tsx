@@ -34,6 +34,8 @@ export const FinancesBaseDrawer = ({
   children,
   ...props
 }: BaseDrawerProps) => {
+  // refs
+  const bodyRef = React.useRef<HTMLDivElement>(null);
   // handlers
   const handleSubmit = () => {
     if (!isReviewing) return setIsReviewing(true);
@@ -42,6 +44,11 @@ export const FinancesBaseDrawer = ({
       return pimaryFunc();
     }
   };
+  // side effects
+  React.useEffect(() => {
+    if (!bodyRef.current) return;
+    if (isReviewing) bodyRef.current.scroll({ top: 0, behavior: 'smooth' });
+  }, [isReviewing]);
   // UI
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
@@ -58,7 +65,9 @@ export const FinancesBaseDrawer = ({
               </Text>
             )}
           </DrawerHeader>
-          <DrawerBody pb="28">{children}</DrawerBody>
+          <DrawerBody ref={bodyRef} pb="28">
+            {children}
+          </DrawerBody>
           {pimaryFunc && (
             <DrawerFooter borderTop="1px solid #F2F6EA">
               <Flex w="100%" justifyContent="space-between">
