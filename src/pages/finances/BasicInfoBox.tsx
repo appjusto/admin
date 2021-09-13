@@ -1,4 +1,4 @@
-import { As, Box, BoxProps, Icon, Skeleton, Text } from '@chakra-ui/react';
+import { As, Box, BoxProps, Button, Icon, Skeleton, Text } from '@chakra-ui/react';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 
 interface BasicInfoBoxProps extends BoxProps {
@@ -8,6 +8,8 @@ interface BasicInfoBoxProps extends BoxProps {
   btnLabel?: string;
   btnVariant?: string;
   btnLink?: string;
+  btnFunction?(): void;
+  isLoading?: boolean;
   btnWarning?: string;
 }
 
@@ -18,6 +20,8 @@ export const BasicInfoBox = ({
   btnLabel,
   btnVariant,
   btnLink,
+  btnFunction,
+  isLoading,
   btnWarning,
   ...props
 }: BasicInfoBoxProps) => {
@@ -45,7 +49,7 @@ export const BasicInfoBox = ({
           {value}
         </Text>
       )}
-      {btnLabel && (
+      {btnLabel && btnLink && (
         <CustomButton
           mt="4"
           w="100%"
@@ -56,6 +60,19 @@ export const BasicInfoBox = ({
           variant={btnVariant}
           //onClick={btnFunction}
         />
+      )}
+      {btnLabel && btnFunction && (
+        <Button
+          mt="4"
+          w="100%"
+          fontSize="15px"
+          lineHeight="21px"
+          onClick={btnFunction}
+          isLoading={isLoading}
+          loadingText={btnLabel}
+        >
+          {btnLabel}
+        </Button>
       )}
       {btnWarning && (
         <Text mt="2" fontSize="13px" fontWeight="500" lineHeight="18px" textAlign="center">

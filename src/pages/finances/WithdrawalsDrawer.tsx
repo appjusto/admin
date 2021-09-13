@@ -1,7 +1,7 @@
 import { Box, Checkbox, CheckboxGroup, Flex, Icon, Skeleton, Text } from '@chakra-ui/react';
+import { useAdvanceReceivables } from 'app/api/business/useAdvanceReceivables';
 import { useReceivables } from 'app/api/business/useReceivables';
 import { useReceivablesSimulation } from 'app/api/business/useReceivablesSimulation';
-import { useRequestWithdraw } from 'app/api/business/useRequestWithdraw';
 import { FirebaseError } from 'app/api/types';
 import { useContextBusinessId } from 'app/state/business/context';
 import { IuguMarketplaceAccountReceivableItem } from 'appjusto-types/payment/iugu';
@@ -9,7 +9,7 @@ import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorH
 import { initialError } from 'common/components/error/utils';
 import { ReactComponent as Checked } from 'common/img/icon-checked.svg';
 import React from 'react';
-import { convertBalance, formatCurrency } from 'utils/formatters';
+import { formatCurrency } from 'utils/formatters';
 import { t } from 'utils/i18n';
 import { BasicInfoBox } from './BasicInfoBox';
 import { FinancesBaseDrawer } from './FinancesBaseDrawer';
@@ -23,8 +23,8 @@ export const WithdrawalsDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps)
   // context
   const businessId = useContextBusinessId();
   const { receivables } = useReceivables(businessId);
-  const { requestWithdraw, requestWithdrawResult } = useRequestWithdraw(businessId);
-  const { isLoading, isSuccess, isError, error: withdrawError } = requestWithdrawResult;
+  const { advanceReceivables, advanceReceivablesResult } = useAdvanceReceivables(businessId);
+  const { isLoading, isSuccess, isError, error: receivalbesError } = advanceReceivablesResult;
   // state
   const [items, setItems] = React.useState<IuguMarketplaceAccountReceivableItem[]>([]);
   const [selectedAll, setSelectedAll] = React.useState(false);
@@ -43,7 +43,7 @@ export const WithdrawalsDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps)
   const acceptCheckBoxRef = React.useRef<HTMLInputElement>(null);
   // handlers
   // handlers
-  const handleWithdrawRequest = async () => {
+  const handleReceivablesRequest = async () => {
     setError(initialError);
     submission.current += 1;
     if (selected.length === 0)
@@ -61,16 +61,11 @@ export const WithdrawalsDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps)
         message: { title: 'É preciso aceitar os valores informados na simulação.' },
       });
     }
-    if (!receivedValue) {
-      return setError({
-        status: true,
-        error: null,
-        message: { title: 'Nenhum valor de antecipação foi selecionado.' },
-      });
-    }
-    let amount = convertBalance(receivedValue);
-    console.log('amount', amount);
-    await requestWithdraw(amount);
+    // for withdraws
+    //let amount = convertBalance(receivedValue);
+    const ids = selected.map((id) => parseInt(id));
+    console.log('ids', ids);
+    await advanceReceivables(ids);
   };
   // side effects
   React.useEffect(() => {
@@ -104,14 +99,14 @@ export const WithdrawalsDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps)
   }, [items, selectedAll]);
   React.useEffect(() => {
     if (isError) {
-      const errorMessage = (withdrawError as FirebaseError).message;
+      const errorMessage = (receivalbesError as FirebaseError).message;
       setError({
         status: true,
-        error: withdrawError,
+        error: receivalbesError,
         message: { title: errorMessage },
       });
     }
-  }, [isError, withdrawError]);
+  }, [isError, receivalbesError]);
   // UI
   if (isSuccess) {
     return (
@@ -145,7 +140,7 @@ export const WithdrawalsDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps)
       )}
       isReviewing={isReviewing}
       setIsReviewing={setIsReviewing}
-      pimaryFunc={handleWithdrawRequest}
+      pimaryFunc={handleReceivablesRequest}
       isLoading={isLoading}
       {...props}
     >
@@ -164,7 +159,7 @@ export const WithdrawalsDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps)
               {t('Total a adiantar')}
             </Text>
             {advancedValue === undefined ? (
-              <Skeleton mt="1" height="30px" colorScheme="#9AA49C" />
+              <Skeleton mt="1" maxW="294px" height="30px" colorScheme="#9AA49C" />
             ) : advancedValue === null ? (
               'N/E'
             ) : (
@@ -178,7 +173,7 @@ export const WithdrawalsDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps)
               {t('Total de taxas de adiantamento')}
             </Text>
             {advanceFee === undefined ? (
-              <Skeleton mt="1" height="30px" colorScheme="#9AA49C" />
+              <Skeleton mt="1" maxW="294px" height="30px" colorScheme="#9AA49C" />
             ) : advanceFee === null ? (
               'N/E'
             ) : (

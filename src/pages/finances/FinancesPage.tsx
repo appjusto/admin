@@ -1,12 +1,17 @@
 import { Box, Flex, Stack, Text } from '@chakra-ui/react';
 import { useAccountInformation } from 'app/api/business/useAccountInformation';
+import { useRequestWithdraw } from 'app/api/business/useRequestWithdraw';
+import { FirebaseError } from 'app/api/types';
 import { useContextBusinessId } from 'app/state/business/context';
+import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
+import { initialError } from 'common/components/error/utils';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import { ReactComponent as Checked } from 'common/img/icon-checked.svg';
 import { ReactComponent as Watch } from 'common/img/icon-stopwatch.svg';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router';
+import { convertBalance } from 'utils/formatters';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { BasicInfoBox } from './BasicInfoBox';
@@ -54,15 +59,36 @@ const FinancesPage = () => {
   const { path, url } = useRouteMatch();
   const history = useHistory();
   const businessId = useContextBusinessId();
-  const accountInformation = useAccountInformation(businessId);
+  const { accountInformation, refreshAccountInformation } = useAccountInformation(businessId);
+  const { requestWithdraw, requestWithdrawResult } = useRequestWithdraw(businessId);
+  const { isLoading, isSuccess, isError, error: withdrawError } = requestWithdrawResult;
   // state
   const [dateTime, setDateTime] = React.useState('');
   //const [month, setMonth] = React.useState('');
   const [availableReceivable, setAvailableReceivable] = React.useState<string | null>();
   const [availableWithdraw, setAvailableWithdraw] = React.useState<string | null>();
   const [periods, setPeriods] = React.useState<Period[]>();
+  const [error, setError] = React.useState(initialError);
+  // refs
+  const submission = React.useRef(0);
   // handlers
-  const closeDrawerHandler = () => history.replace(path);
+  const closeDrawerHandler = () => {
+    refreshAccountInformation();
+    history.replace(path);
+  };
+  const handleWithdrawRequest = async () => {
+    setError(initialError);
+    submission.current += 1;
+    if (!availableWithdraw)
+      return setError({
+        status: true,
+        error: null,
+        message: { title: 'Não existe valor disponível para transferência.' },
+      });
+    const amount = convertBalance(availableWithdraw);
+    await requestWithdraw(amount);
+    refreshAccountInformation();
+  };
   // side effects
   React.useEffect(() => {
     const { date, time } = getDateTime();
@@ -76,6 +102,16 @@ const FinancesPage = () => {
   React.useEffect(() => {
     setPeriods(fakeState);
   }, []);
+  React.useEffect(() => {
+    if (isError) {
+      const errorMessage = (withdrawError as FirebaseError).message;
+      setError({
+        status: true,
+        error: withdrawError,
+        message: { title: errorMessage },
+      });
+    }
+  }, [isError, withdrawError]);
   // UI
   return (
     <>
@@ -86,9 +122,9 @@ const FinancesPage = () => {
           icon={Checked}
           value={availableWithdraw}
           btnLabel={t('Transferir para conta pessoal')}
-          btnVariant="solid"
+          btnFunction={handleWithdrawRequest}
           btnWarning={t('Valor mínimo de R$ 5,00 para transferência')}
-          btnLink={`${url}/withdrawals`}
+          isLoading={isLoading}
         />
         <BasicInfoBox
           label={t('Em faturamento')}
@@ -139,6 +175,13 @@ const FinancesPage = () => {
         </Box>
       </Flex>
       <FinancesTable periods={periods} />
+      <SuccessAndErrorHandler
+        submission={submission.current}
+        isSuccess={isSuccess}
+        isError={error.status}
+        error={error.error}
+        errorMessage={error.message}
+      />
       <Switch>
         <Route path={`${path}/withdrawals`}>
           <WithdrawalsDrawer isOpen onClose={closeDrawerHandler} />

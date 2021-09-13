@@ -10,14 +10,18 @@ export const useAccountInformation = (businessId?: string) => {
     accountInformation,
     setAccountInformation,
   ] = React.useState<FetchAccountInformationResponse>();
-  // side effects
-  React.useEffect(() => {
+  // handlers
+  const refreshAccountInformation = React.useCallback(() => {
     if (!businessId) return;
     (async () => {
       const result = await api.business().fetchAccountInformation(businessId);
       if (result) setAccountInformation(result);
     })();
   }, [api, businessId]);
+  // side effects
+  React.useEffect(() => {
+    refreshAccountInformation();
+  }, [refreshAccountInformation]);
   // return
-  return accountInformation;
+  return { accountInformation, refreshAccountInformation };
 };
