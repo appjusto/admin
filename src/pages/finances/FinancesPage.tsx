@@ -1,5 +1,7 @@
 import { Box, Flex, Stack, Text } from '@chakra-ui/react';
 import { useAccountInformation } from 'app/api/business/useAccountInformation';
+import { useObserveBusinessAdvances } from 'app/api/business/useObserveBusinessAdvances';
+import { useObserveBusinessWithdraws } from 'app/api/business/useObserveBusinessWithdraws';
 import { useRequestWithdraw } from 'app/api/business/useRequestWithdraw';
 import { FirebaseError } from 'app/api/types';
 import { useContextBusinessId } from 'app/state/business/context';
@@ -8,51 +10,18 @@ import { initialError } from 'common/components/error/utils';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import { ReactComponent as Checked } from 'common/img/icon-checked.svg';
 import { ReactComponent as Watch } from 'common/img/icon-stopwatch.svg';
+import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router';
 import { convertBalance } from 'utils/formatters';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
+import { AdvanceDetailsDrawer } from './AdvanceDetailsDrawer';
+import { AdvancesTable } from './AdvancesTable';
 import { BasicInfoBox } from './BasicInfoBox';
-import { FinancesTable } from './FinancesTable';
 import { WithdrawalsDrawer } from './WithdrawalsDrawer';
-
-const fakeState = [
-  {
-    id: '1',
-    period: '00/00 - 00/00',
-    received: 40000,
-    fees: 2000,
-    transfers: 38000,
-    status: 'Em aberto',
-  },
-  {
-    id: '2',
-    period: '00/00 - 00/00',
-    received: 40000,
-    fees: 2000,
-    transfers: 38000,
-    status: 'Agendado para 00/00',
-  },
-  {
-    id: '3',
-    period: '00/00 - 00/00',
-    received: 40000,
-    fees: 2000,
-    transfers: 38000,
-    status: 'Agendado para 00/00',
-  },
-] as Period[];
-
-export interface Period {
-  id: string;
-  period: string;
-  received: number;
-  fees: number;
-  transfers: number;
-  status: string;
-}
+import { WithdrawsTable } from './WithdrawsTable';
 
 const FinancesPage = () => {
   // context
@@ -67,8 +36,10 @@ const FinancesPage = () => {
   //const [month, setMonth] = React.useState('');
   const [availableReceivable, setAvailableReceivable] = React.useState<string | null>();
   const [availableWithdraw, setAvailableWithdraw] = React.useState<string | null>();
-  const [periods, setPeriods] = React.useState<Period[]>();
   const [error, setError] = React.useState(initialError);
+  // page data with filters
+  const advances = useObserveBusinessAdvances(businessId);
+  const withdraws = useObserveBusinessWithdraws(businessId);
   // refs
   const submission = React.useRef(0);
   // handlers
@@ -99,9 +70,6 @@ const FinancesPage = () => {
     setAvailableReceivable(accountInformation.receivable_balance ?? null);
     setAvailableWithdraw(accountInformation.balance_available_for_withdraw ?? null);
   }, [accountInformation]);
-  React.useEffect(() => {
-    setPeriods(fakeState);
-  }, []);
   React.useEffect(() => {
     if (isError) {
       const errorMessage = (withdrawError as FirebaseError).message;
@@ -174,7 +142,10 @@ const FinancesPage = () => {
           </Stack>
         </Box>
       </Flex>
-      <FinancesTable periods={periods} />
+      <SectionTitle>{t('Antecipações')}</SectionTitle>
+      <AdvancesTable advances={advances} />
+      <SectionTitle>{t('Transferências')}</SectionTitle>
+      <WithdrawsTable withdraws={withdraws} />
       <SuccessAndErrorHandler
         submission={submission.current}
         isSuccess={isSuccess}
@@ -185,6 +156,9 @@ const FinancesPage = () => {
       <Switch>
         <Route path={`${path}/withdrawals`}>
           <WithdrawalsDrawer isOpen onClose={closeDrawerHandler} />
+        </Route>
+        <Route path={`${path}/:advanceId`}>
+          <AdvanceDetailsDrawer isOpen onClose={closeDrawerHandler} />
         </Route>
       </Switch>
     </>

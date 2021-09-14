@@ -17,6 +17,8 @@ import {
   AdvanceReceivablesPayload,
   FetchAccountInformationResponse,
   FetchAccountInformationPayload,
+  AccountAdvance,
+  AccountWithdraw,
 } from 'appjusto-types';
 import { Complement, ComplementGroup, Ordering } from 'appjusto-types';
 import firebase from 'firebase/app';
@@ -80,6 +82,54 @@ export default class BusinessApi {
     const unsubscribe = this.refs.getBusinessRef(businessId).onSnapshot(
       (doc) => {
         if (doc.exists) resultHandler(documentAs<Business>(doc));
+        else resultHandler(null);
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+    return unsubscribe;
+  }
+
+  observeBusinessAdvances(
+    businessId: string,
+    start: Date,
+    end: Date,
+    resultHandler: (result: WithId<AccountAdvance>[] | null) => void
+  ): firebase.Unsubscribe {
+    const query = this.refs
+      .getAdvancesRef()
+      .orderBy('createdOn', 'desc')
+      .where('accountId', '==', businessId)
+      .where('createdOn', '>=', start)
+      .where('createdOn', '<=', end);
+    const unsubscribe = query.onSnapshot(
+      (data) => {
+        if (!data.empty) resultHandler(documentsAs<AccountAdvance>(data.docs));
+        else resultHandler(null);
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+    return unsubscribe;
+  }
+
+  observeBusinessWithdraws(
+    businessId: string,
+    start: Date,
+    end: Date,
+    resultHandler: (result: WithId<AccountWithdraw>[] | null) => void
+  ): firebase.Unsubscribe {
+    const query = this.refs
+      .getWithdrawsRef()
+      .orderBy('createdOn', 'desc')
+      .where('accountId', '==', businessId)
+      .where('createdOn', '>=', start)
+      .where('createdOn', '<=', end);
+    const unsubscribe = query.onSnapshot(
+      (data) => {
+        if (!data.empty) resultHandler(documentsAs<AccountWithdraw>(data.docs));
         else resultHandler(null);
       },
       (error) => {
