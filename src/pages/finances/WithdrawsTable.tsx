@@ -1,6 +1,5 @@
 import { Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import { AccountWithdraw, WithId } from 'appjusto-types';
-import { useRouteMatch } from 'react-router-dom';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 
@@ -16,8 +15,6 @@ interface WithdrawsTableItemProps {
 }
 
 const WithdrawsTableItem = ({ withdraw }: WithdrawsTableItemProps) => {
-  // context
-  const { url } = useRouteMatch();
   // UI
   return (
     <Tr color="black" fontSize="15px" lineHeight="21px" fontWeight="500">

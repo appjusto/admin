@@ -3,7 +3,10 @@ import { AccountAdvance, WithId } from 'appjusto-types';
 import React from 'react';
 import dayjs from 'dayjs';
 
-export const useObserveBusinessAdvances = (businessId?: string) => {
+export const useObserveBusinessAdvances = (
+  businessId: string | undefined,
+  month: Date | null | undefined
+) => {
   // context
   const api = useContextApi();
   // state
@@ -11,14 +14,12 @@ export const useObserveBusinessAdvances = (businessId?: string) => {
   // side effects
   React.useEffect(() => {
     if (!businessId) return;
-    const today = new Date();
-    const start = dayjs(today).startOf('month').toDate();
-    const end = dayjs(today).endOf('month').toDate();
-    console.log('start', start);
-    console.log('end', end);
+    if (!month) return;
+    const start = dayjs(month).startOf('month').toDate();
+    const end = dayjs(month).endOf('month').toDate();
     const unsub = api.business().observeBusinessAdvances(businessId, start, end, setAdvances);
     return () => unsub();
-  }, [api, businessId]);
+  }, [api, businessId, month]);
   // return
   return advances;
 };

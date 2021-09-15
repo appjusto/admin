@@ -3,7 +3,10 @@ import { AccountWithdraw, WithId } from 'appjusto-types';
 import React from 'react';
 import dayjs from 'dayjs';
 
-export const useObserveBusinessWithdraws = (businessId?: string) => {
+export const useObserveBusinessWithdraws = (
+  businessId: string | undefined,
+  month: Date | null | undefined
+) => {
   // context
   const api = useContextApi();
   // state
@@ -11,14 +14,12 @@ export const useObserveBusinessWithdraws = (businessId?: string) => {
   // side effects
   React.useEffect(() => {
     if (!businessId) return;
-    const today = new Date();
-    const start = dayjs(today).startOf('month').toDate();
-    const end = dayjs(today).endOf('month').toDate();
-    console.log('start', start);
-    console.log('end', end);
+    if (!month) return;
+    const start = dayjs(month).startOf('month').toDate();
+    const end = dayjs(month).endOf('month').toDate();
     const unsub = api.business().observeBusinessWithdraws(businessId, start, end, setWithdraws);
     return () => unsub();
-  }, [api, businessId]);
+  }, [api, businessId, month]);
   // return
   return withdraws;
 };

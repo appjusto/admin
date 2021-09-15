@@ -7,7 +7,7 @@ import { FirebaseError } from 'app/api/types';
 import { useContextBusinessId } from 'app/state/business/context';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
 import { initialError } from 'common/components/error/utils';
-import { CustomInput } from 'common/components/form/input/CustomInput';
+import { CustomMonthInput } from 'common/components/form/input/CustomMonthInput';
 import { ReactComponent as Checked } from 'common/img/icon-checked.svg';
 import { ReactComponent as Watch } from 'common/img/icon-stopwatch.svg';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
@@ -33,13 +33,13 @@ const FinancesPage = () => {
   const { isLoading, isSuccess, isError, error: withdrawError } = requestWithdrawResult;
   // state
   const [dateTime, setDateTime] = React.useState('');
-  //const [month, setMonth] = React.useState('');
+  const [month, setMonth] = React.useState<Date | null>(new Date());
   const [availableReceivable, setAvailableReceivable] = React.useState<string | null>();
   const [availableWithdraw, setAvailableWithdraw] = React.useState<string | null>();
   const [error, setError] = React.useState(initialError);
   // page data with filters
-  const advances = useObserveBusinessAdvances(businessId);
-  const withdraws = useObserveBusinessWithdraws(businessId);
+  const advances = useObserveBusinessAdvances(businessId, month);
+  const withdraws = useObserveBusinessWithdraws(businessId, month);
   // refs
   const submission = React.useRef(0);
   // handlers
@@ -110,11 +110,16 @@ const FinancesPage = () => {
         />
       </Stack>
       <Flex flexDir={{ base: 'column', md: 'row' }} justifyContent="space-between">
-        <Box mt="8" maxW="200px">
+        <Box mt="8" w={{ base: '100%', md: '200px' }}>
           <Text fontSize="sm" lineHeight="21px" color="black">
             {t('Mês vigente:')}
           </Text>
-          <CustomInput id="month" type="month" value={'' /*month*/} label={t('Mês vigente')} />
+          <CustomMonthInput
+            id="month"
+            label={t('Mês vigente')}
+            dateValue={month}
+            handleChange={setMonth}
+          />
         </Box>
         <Box mt="8">
           <Text fontSize="sm" lineHeight="21px" color="black">
