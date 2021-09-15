@@ -14,7 +14,7 @@ import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router';
-import { convertBalance } from 'utils/formatters';
+import { convertBalance, getMonthName } from 'utils/formatters';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { AdvanceDetailsDrawer } from './AdvanceDetailsDrawer';
@@ -42,6 +42,9 @@ const FinancesPage = () => {
   const withdraws = useObserveBusinessWithdraws(businessId, month);
   // refs
   const submission = React.useRef(0);
+  // helpers
+  const monthName = month ? getMonthName(month.getMonth()) : 'N/E';
+  const year = month ? month.getFullYear() : 'N/E';
   // handlers
   const closeDrawerHandler = () => {
     refreshAccountInformation();
@@ -109,34 +112,26 @@ const FinancesPage = () => {
           btnLink={`${url}/withdrawals`}
         />
       </Stack>
+      <Box mt="8" w={{ base: '100%', md: '200px' }}>
+        <Text fontSize="sm" lineHeight="21px" color="black">
+          {t('Mês vigente:')}
+        </Text>
+        <CustomMonthInput
+          id="month"
+          label={t('Mês selecionado')}
+          dateValue={month}
+          handleChange={setMonth}
+        />
+      </Box>
       <Flex flexDir={{ base: 'column', md: 'row' }} justifyContent="space-between">
-        <Box mt="8" w={{ base: '100%', md: '200px' }}>
-          <Text fontSize="sm" lineHeight="21px" color="black">
-            {t('Mês vigente:')}
-          </Text>
-          <CustomMonthInput
-            id="month"
-            label={t('Mês vigente')}
-            dateValue={month}
-            handleChange={setMonth}
-          />
-        </Box>
         <Box mt="8">
           <Text fontSize="sm" lineHeight="21px" color="black">
-            {t('Veja os valores e taxa aplicadas em Julho 2020:')}
+            {t(`Veja os valores e taxa aplicadas em ${monthName} de ${year}:`)}
           </Text>
-          <Stack mt="4" direction={{ base: 'column', md: 'row' }} spacing={1}>
-            <Box w="220px" h="132px" py="4" px="6" border="1px solid #6CE787" borderRadius="lg">
-              <Text fontSize="sm" lineHeight="21px">
-                {t('Repasses')}
-              </Text>
-              <Text mt="1" fontSize="2xl" lineHeight="30px">
-                R$ 0,00
-              </Text>
-            </Box>
+          <Stack mt="4" direction={{ base: 'column', md: 'row' }} spacing={3}>
             <Box w="220px" h="132px" py="4" px="6" border="1px solid #F6F6F6" borderRadius="lg">
               <Text fontSize="sm" lineHeight="21px">
-                {t('Recebido')}
+                {t('Faturado')}
               </Text>
               <Text mt="1" fontSize="2xl" lineHeight="30px">
                 R$ 0,00
@@ -148,6 +143,14 @@ const FinancesPage = () => {
               </Text>
               <Text mt="1" fontSize="2xl" lineHeight="30px">
                 -R$ 0,00
+              </Text>
+            </Box>
+            <Box w="220px" h="132px" py="4" px="6" border="1px solid #6CE787" borderRadius="lg">
+              <Text fontSize="sm" lineHeight="21px">
+                {t('Resultado')}
+              </Text>
+              <Text mt="1" fontSize="2xl" lineHeight="30px">
+                R$ 0,00
               </Text>
             </Box>
           </Stack>

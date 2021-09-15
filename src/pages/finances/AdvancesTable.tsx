@@ -1,7 +1,8 @@
-import { Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
+import { Table, Tbody, Td, Tfoot, Th, Thead, Tr } from '@chakra-ui/react';
 import { AccountAdvance, WithId } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { useRouteMatch } from 'react-router-dom';
+import { formatCurrency } from 'utils/formatters';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 
@@ -35,6 +36,31 @@ interface AdvancesTableProps {
 }
 
 export const AdvancesTable = ({ advances }: AdvancesTableProps) => {
+  // helpers
+  const formatCents = (value: string) => {
+    let result = 0;
+    if (value.includes('R$')) {
+      result = parseFloat(value.split(' ')[1].replace(',', '.')) * 100;
+    } else {
+      result = parseFloat(value.split(' ')[0].replace(',', '.')) * 100;
+    }
+    return result;
+  };
+  const totalRequested =
+    advances?.reduce<number>((result, item) => {
+      const value = formatCents(item.data.total.advanced_value);
+      return (result += value);
+    }, 0) ?? 0;
+  const totalFees =
+    advances?.reduce<number>((result, item) => {
+      const value = formatCents(item.data.total.advance_fee);
+      return (result += value);
+    }, 0) ?? 0;
+  const totalAdvanced =
+    advances?.reduce<number>((result, item) => {
+      const value = formatCents(item.data.total.received_value);
+      return (result += value);
+    }, 0) ?? 0;
   // UI
   return (
     <Table mt="4" size="md" variant="simple">
@@ -70,6 +96,21 @@ export const AdvancesTable = ({ advances }: AdvancesTableProps) => {
           </Tr>
         )}
       </Tbody>
+      <Tfoot bgColor="gray.50">
+        <Tr>
+          <Th>{t('Total')}</Th>
+          <Th color="black" isNumeric>
+            {formatCurrency(totalRequested)}
+          </Th>
+          <Th color="red" isNumeric>
+            - {formatCurrency(totalFees)}
+          </Th>
+          <Th color="green.700" isNumeric>
+            {formatCurrency(totalAdvanced)}
+          </Th>
+          <Th></Th>
+        </Tr>
+      </Tfoot>
     </Table>
   );
 };

@@ -112,7 +112,7 @@ export const CustomMonthInput = React.forwardRef<HTMLInputElement, CustomMonthIn
             />
           </FormControl>
         </PopoverTrigger>
-        <PopoverContent borderColor="blue.800" _focus={{ outline: 'none' }}>
+        <PopoverContent borderColor="gray.200" _focus={{ outline: 'none' }}>
           <PopoverHeader
             pt={4}
             fontWeight="bold"

@@ -1,5 +1,6 @@
-import { Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
+import { Table, Tbody, Td, Tfoot, Th, Thead, Tr } from '@chakra-ui/react';
 import { AccountWithdraw, WithId } from 'appjusto-types';
+import { formatCurrency } from 'utils/formatters';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 
@@ -30,6 +31,21 @@ interface WithdrawsTableProps {
 }
 
 export const WithdrawsTable = ({ withdraws }: WithdrawsTableProps) => {
+  // helpers
+  const formatCents = (value: string) => {
+    let result = 0;
+    if (value.includes('R$')) {
+      result = parseFloat(value.split(' ')[1].replace(',', '.')) * 100;
+    } else {
+      result = parseFloat(value.split(' ')[0].replace(',', '.')) * 100;
+    }
+    return result;
+  };
+  const total =
+    withdraws?.reduce<number>((result, item) => {
+      const value = formatCents(item.amount);
+      return (result += value);
+    }, 0) ?? 0;
   // UI
   return (
     <Table mt="4" size="md" variant="simple">
@@ -61,6 +77,15 @@ export const WithdrawsTable = ({ withdraws }: WithdrawsTableProps) => {
           </Tr>
         )}
       </Tbody>
+      <Tfoot bgColor="gray.50">
+        <Tr>
+          <Th>{t('Total')}</Th>
+          <Th color="green.700" isNumeric>
+            {formatCurrency(total)}
+          </Th>
+          <Th></Th>
+        </Tr>
+      </Tfoot>
     </Table>
   );
 };
