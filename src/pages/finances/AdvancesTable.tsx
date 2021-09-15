@@ -1,4 +1,4 @@
-import { Box, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
+import { Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import { AccountAdvance, WithId } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { useRouteMatch } from 'react-router-dom';
@@ -37,41 +37,39 @@ interface AdvancesTableProps {
 export const AdvancesTable = ({ advances }: AdvancesTableProps) => {
   // UI
   return (
-    <Box mt="12">
-      <Table mt="4" size="md" variant="simple">
-        <Thead>
-          <Tr>
-            <Th>{t('Data')}</Th>
-            <Th isNumeric>{t('Valor solicitado')}</Th>
-            <Th isNumeric>{t('Taxa de antecipação')}</Th>
-            <Th isNumeric>{t('Valor antecipado')}</Th>
-            <Th></Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {advances !== undefined ? (
-            advances !== null ? (
-              advances.map((advance) => <AdvancesTableItem key={advance.id} advance={advance} />)
-            ) : (
-              <Tr color="black" fontSize="xs" fontWeight="700">
-                <Td>{t('Sem resultados para o número informado')}</Td>
-                <Td isNumeric></Td>
-                <Td isNumeric></Td>
-                <Td isNumeric></Td>
-                <Td></Td>
-              </Tr>
-            )
+    <Table mt="4" size="md" variant="simple">
+      <Thead>
+        <Tr>
+          <Th>{t('Data')}</Th>
+          <Th isNumeric>{t('Valor solicitado')}</Th>
+          <Th isNumeric>{t('Taxa de antecipação')}</Th>
+          <Th isNumeric>{t('Valor antecipado')}</Th>
+          <Th></Th>
+        </Tr>
+      </Thead>
+      <Tbody>
+        {advances !== undefined ? (
+          advances !== null ? (
+            advances.map((advance) => <AdvancesTableItem key={advance.id} advance={advance} />)
           ) : (
             <Tr color="black" fontSize="xs" fontWeight="700">
-              <Td>{t('Carregando...')}</Td>
-              <Td></Td>
-              <Td></Td>
-              <Td></Td>
+              <Td>{t('Sem resultados para o número informado')}</Td>
+              <Td isNumeric></Td>
+              <Td isNumeric></Td>
+              <Td isNumeric></Td>
               <Td></Td>
             </Tr>
-          )}
-        </Tbody>
-      </Table>
-    </Box>
+          )
+        ) : (
+          <Tr color="black" fontSize="xs" fontWeight="700">
+            <Td>{t('Carregando...')}</Td>
+            <Td></Td>
+            <Td></Td>
+            <Td></Td>
+            <Td></Td>
+          </Tr>
+        )}
+      </Tbody>
+    </Table>
   );
 };

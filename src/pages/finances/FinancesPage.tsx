@@ -60,6 +60,12 @@ const FinancesPage = () => {
     await requestWithdraw(amount);
     refreshAccountInformation();
   };
+  const getAdvanceById = React.useCallback(
+    (advanceId: string) => {
+      return advances?.find((advance) => advance.id === advanceId) ?? null;
+    },
+    [advances]
+  );
   // side effects
   React.useEffect(() => {
     const { date, time } = getDateTime();
@@ -158,7 +164,11 @@ const FinancesPage = () => {
           <WithdrawalsDrawer isOpen onClose={closeDrawerHandler} />
         </Route>
         <Route path={`${path}/:advanceId`}>
-          <AdvanceDetailsDrawer isOpen onClose={closeDrawerHandler} />
+          <AdvanceDetailsDrawer
+            isOpen
+            onClose={closeDrawerHandler}
+            getAdvanceById={getAdvanceById}
+          />
         </Route>
       </Switch>
     </>
