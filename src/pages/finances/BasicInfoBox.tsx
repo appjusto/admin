@@ -35,7 +35,7 @@ export const BasicInfoBox = ({
       {...props}
     >
       <Text fontSize="15px" fontWeight="500" lineHeight="21px">
-        <Icon as={icon} mr="2" />
+        <Icon as={icon} mb="1" mr="2" />
         {label}
       </Text>
       {value === undefined ? (

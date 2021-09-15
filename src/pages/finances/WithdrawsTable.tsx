@@ -4,6 +4,13 @@ import { useRouteMatch } from 'react-router-dom';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 
+const withdrawStatusPTOptions = {
+  pending: 'Pendente',
+  processing: 'Processando',
+  accepted: 'Aceito',
+  rejected: 'Rejeitado',
+};
+
 interface WithdrawsTableItemProps {
   withdraw: WithId<AccountWithdraw>;
 }
@@ -16,7 +23,7 @@ const WithdrawsTableItem = ({ withdraw }: WithdrawsTableItemProps) => {
     <Tr color="black" fontSize="15px" lineHeight="21px" fontWeight="500">
       <Td>{getDateAndHour(withdraw.createdOn)}</Td>
       <Td isNumeric>{withdraw.amount}</Td>
-      <Td>{withdraw.status}</Td>
+      <Td>{withdrawStatusPTOptions[withdraw.status]}</Td>
     </Tr>
   );
 };
