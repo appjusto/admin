@@ -188,6 +188,7 @@ export const ProductAvailability = () => {
   // side effects
   React.useEffect(() => {
     if (!product?.availability) return;
+    if (product.availability.find((item) => item.checked) === undefined) return;
     setMainAvailability('defined');
     setSchedules(product?.availability);
   }, [product?.availability]);
