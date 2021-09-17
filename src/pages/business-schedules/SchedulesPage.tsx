@@ -2,7 +2,7 @@ import { Button, Flex } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useContextBusiness } from 'app/state/business/context';
 import { BusinessSchedule, ScheduleObject } from 'appjusto-types/business';
-import { DaySchedule } from 'common/components/DaySchedule';
+import { Break, DaySchedule } from 'common/components/DaySchedule';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
 import { initialError } from 'common/components/error/utils';
 import PageHeader from 'pages/PageHeader';
@@ -46,10 +46,10 @@ const SchedulesPage = () => {
       return newState;
     });
   };
-  const handleBreak = (stateIndex: number, value: string) => {
+  const handleBreak = (stateIndex: number, value: Break) => {
     setSchedules((prevSchedule) => {
       let newState = prevSchedule;
-      if (value === '2') {
+      if (value === 'break') {
         newState = prevSchedule.map((item, index) => {
           if (index === stateIndex) {
             const newSchedule = [...item.schedule, scheduleObj];
@@ -195,11 +195,9 @@ const SchedulesPage = () => {
             <DaySchedule
               key={day.day}
               index={index}
-              weekDay={t(`${day.day}`)}
-              isChecked={day.checked}
-              value={day.schedule}
+              day={day}
               handleCheck={(value: boolean) => handleCheck(index, value)}
-              handleBreak={(value: string) => handleBreak(index, value)}
+              handleBreak={(value: Break) => handleBreak(index, value)}
               onChangeValue={(scheduleIndex: number, field: string, value: string) =>
                 handleChengeValue(index, scheduleIndex, field, value)
               }

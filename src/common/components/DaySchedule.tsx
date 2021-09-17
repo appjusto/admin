@@ -1,19 +1,18 @@
 import { Checkbox, Flex, HStack, Link, Radio, RadioGroup } from '@chakra-ui/react';
+import { ScheduleObject } from 'appjusto-types/business';
 import { CustomPatternInput as Input } from 'common/components/form/input/pattern-input/CustomPatternInput';
 import { TimeFormatter, TimeMask } from 'common/components/form/input/pattern-input/formatters';
 import { numbersOnlyParser } from 'common/components/form/input/pattern-input/parsers';
 import React from 'react';
 import { t } from 'utils/i18n';
 
-type Value = { from: string; to: string }[];
+export type Break = 'break' | 'no-break';
 
 interface DayScheduleProps {
   index: number;
-  weekDay: string;
-  isChecked: boolean;
-  value: Value;
+  day: ScheduleObject;
   handleCheck(value: boolean): void;
-  handleBreak(value: string): void;
+  handleBreak(value: Break): void;
   onChangeValue(index: number, field: string, value: string): void;
   autoCompleteSchedules(index: number, field: string, value: string): void;
   replicate(): void;
@@ -21,17 +20,17 @@ interface DayScheduleProps {
 
 export const DaySchedule = ({
   index,
-  weekDay,
-  isChecked,
-  value,
+  day,
   handleCheck,
   handleBreak,
   onChangeValue,
   autoCompleteSchedules,
   replicate,
 }: DayScheduleProps) => {
+  // props
+  const { day: weekDay, checked, schedule } = day;
   // state
-  const [breakValue, setBreakValue] = React.useState('1');
+  const [breakValue, setBreakValue] = React.useState<Break>('no-break');
   // handlers
   const inputValidation = (from: string, to: string, beforeTo?: string) => {
     if (from === '' || to === '') return true;
@@ -41,12 +40,12 @@ export const DaySchedule = ({
   };
   // side effects
   React.useEffect(() => {
-    if (value.length > 1) {
-      setBreakValue('2');
+    if (schedule.length > 1) {
+      setBreakValue('break');
     } else {
-      setBreakValue('1');
+      setBreakValue('no-break');
     }
-  }, [value]);
+  }, [schedule]);
   return (
     <Flex flexDir="column" mt="8">
       <Checkbox
@@ -55,35 +54,35 @@ export const DaySchedule = ({
         size="lg"
         spacing="1rem"
         iconSize="1rem"
-        isChecked={isChecked}
+        isChecked={checked}
         onChange={(e) => handleCheck(e.target.checked)}
       >
         {t(`${weekDay}`)}
       </Checkbox>
-      {isChecked && (
+      {checked && (
         <RadioGroup
           mt="2"
-          onChange={(value) => handleBreak(value.toString())}
+          onChange={(value: Break) => handleBreak(value)}
           value={breakValue}
           defaultValue="1"
           colorScheme="green"
           color="black"
         >
           <Flex flexDir="column" justifyContent="flex-start">
-            <Radio mt="2" value="1">
+            <Radio mt="2" value="no-break">
               {t('Sem pausa')}
             </Radio>
-            <Radio mt="2" value="2">
+            <Radio mt="2" value="break">
               {t('O restaurante faz uma pausa durante o dia')}
             </Radio>
           </Flex>
         </RadioGroup>
       )}
-      {isChecked && (
+      {checked && (
         <HStack spacing={4}>
-          {value.map((schedule, index) => {
+          {schedule.map((item, index) => {
             let beforeTo = undefined;
-            if (index === 1) beforeTo = value[0].to;
+            if (index === 1) beforeTo = schedule[0].to;
             return (
               <Flex key={index * 3} flexDir="row" maxW="310px">
                 <Input
@@ -91,15 +90,15 @@ export const DaySchedule = ({
                   maxW="150px"
                   id={`${weekDay}-from-1`}
                   label={t('Início')}
-                  value={schedule.from}
+                  value={item.from}
                   validationLength={4}
                   onValueChange={(value) => onChangeValue(index, 'from', value)}
                   placeholder="00:00"
                   mask={TimeMask}
                   formatter={TimeFormatter}
                   parser={numbersOnlyParser}
-                  onBlur={() => autoCompleteSchedules(index, 'from', schedule.from)}
-                  isInvalid={!inputValidation(schedule.from, schedule.to, beforeTo)}
+                  onBlur={() => autoCompleteSchedules(index, 'from', item.from)}
+                  isInvalid={!inputValidation(item.from, item.to, beforeTo)}
                   isRequired
                 />
                 <Input
@@ -108,15 +107,15 @@ export const DaySchedule = ({
                   maxW="200px"
                   id={`${weekDay}-to-1`}
                   label={t('Término')}
-                  value={schedule.to}
+                  value={item.to}
                   validationLength={4}
                   onValueChange={(value) => onChangeValue(index, 'to', value)}
                   placeholder="00:00"
                   mask={TimeMask}
                   formatter={TimeFormatter}
                   parser={numbersOnlyParser}
-                  onBlur={() => autoCompleteSchedules(index, 'to', schedule.to)}
-                  isInvalid={!inputValidation(schedule.from, schedule.to, beforeTo)}
+                  onBlur={() => autoCompleteSchedules(index, 'to', item.to)}
+                  isInvalid={!inputValidation(item.from, item.to, beforeTo)}
                   isRequired
                 />
               </Flex>
@@ -139,24 +138,3 @@ export const DaySchedule = ({
     </Flex>
   );
 };
-
-// const [schedule, setSchedule] = React.useState(scheduleObj);
-// const [schedule2, setSchedule2] = React.useState(scheduleObj);
-
-/*const handleSchedule = (scheduleNumber: number, field: string, value: string) => {
-    if (scheduleNumber === 1) {
-      setSchedule((prevSchedule) => ({ ...prevSchedule, [field]: value }));
-    } else {
-      setSchedule2((prevSchedule) => ({ ...prevSchedule, [field]: value }));
-    }
-  };
-
-  React.useEffect(() => {
-    if (!checkedDay) {
-      setSchedule(scheduleObj);
-      setSchedule2(scheduleObj);
-    }
-    if (hasStop === '1') {
-      setSchedule2(scheduleObj);
-    }
-  }, [checkedDay, hasStop]);*/
