@@ -101,6 +101,36 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
   ]);
 
   // UI
+  if (order.status === 'canceled') {
+    return (
+      <Link to={`${url}/${order.id}`}>
+        <Box
+          px="4"
+          py="2"
+          borderRadius="lg"
+          borderColor="gray"
+          borderWidth="1px"
+          color="gray"
+          boxShadow="0px 8px 16px -4px rgba(105,118,103,0.1)"
+        >
+          <Flex justifyContent="space-between" alignItems="center">
+            <Box>
+              <Text fontSize="lg" fontWeight="700">
+                #{order.code}
+              </Text>
+              <Text fontSize="xs" lineHeight="lg" fontWeight="500">
+                {`{${conrumerName}}`}
+              </Text>
+            </Box>
+            <Flex flexDir="column" color="gray.700" fontSize="xs" alignItems="flex-end">
+              <Text fontWeight="700">{t('Cancelado')}</Text>
+              {/* <Text fontWeight="500">{cancelator}</Text> */}
+            </Flex>
+          </Flex>
+        </Box>
+      </Link>
+    );
+  }
   if (order.status === 'confirmed') {
     return (
       <Link to={`${url}/${order.id}`}>
@@ -336,36 +366,6 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
           </Button>
         </Box>
       </Box>
-    );
-  }
-  if (order.status === 'canceled') {
-    return (
-      <Link to={`${url}/${order.id}`}>
-        <Box
-          px="4"
-          py="2"
-          borderRadius="lg"
-          borderColor="gray"
-          borderWidth="1px"
-          color="gray"
-          boxShadow="0px 8px 16px -4px rgba(105,118,103,0.1)"
-        >
-          <Flex justifyContent="space-between" alignItems="center">
-            <Box>
-              <Text fontSize="lg" fontWeight="700">
-                #{order.code}
-              </Text>
-              <Text fontSize="xs" lineHeight="lg" fontWeight="500">
-                {`{${conrumerName}}`}
-              </Text>
-            </Box>
-            <Flex flexDir="column" color="gray.700" fontSize="xs" alignItems="flex-end">
-              <Text fontWeight="700">{t('Cancelado')}</Text>
-              {/* <Text fontWeight="500">{cancelator}</Text> */}
-            </Flex>
-          </Flex>
-        </Box>
-      </Link>
     );
   }
   return (

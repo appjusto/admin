@@ -39,6 +39,7 @@ export const Panel = () => {
   // context
   const {
     todayOrders,
+    todayDeliveredOrders,
     todayAverage,
     couriers,
     businesses,
@@ -75,14 +76,15 @@ export const Panel = () => {
           {date}
         </Text>
         <HStack mt="4" spacing={6}>
-          <BOInfoBox title={t('Pedidos')} value={todayOrders} />
+          <BOInfoBox title={t('Pedidos criados')} value={todayOrders} />
+          <BOInfoBox title={t('Pedidos entregues')} value={todayDeliveredOrders} />
+        </HStack>
+        <HStack mt="4" spacing={6}>
           <BOInfoBox title={t('Ticket médio')} value={todayAverage} isCurrency />
-        </HStack>
-        <HStack mt="4" spacing={6}>
           <BOInfoBox title={t('Entregadores ativos')} value={couriers} />
-          <BOInfoBox title={t('Restaurantes abertos')} value={businesses} />
         </HStack>
         <HStack mt="4" spacing={6}>
+          <BOInfoBox title={t('Restaurantes abertos')} value={businesses} />
           <BOInfoBox title={t('Clientes novos')} value={consumers} />
         </HStack>
       </Box>

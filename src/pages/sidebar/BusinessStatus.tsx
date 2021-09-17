@@ -8,7 +8,7 @@ export const BusinessStatus = (props: SquareProps) => {
   const { business } = useContextBusiness();
   // UI
   return (
-    <Flex alignItems="center">
+    <Flex mt="1" alignItems="center">
       <Circle size="8px" bg={business?.status === 'open' ? 'green.500' : 'red'} {...props} />
       <Text fontSize="md" ml="2">
         {business?.status === 'open' ? t('Aberto agora') : t('Fechado')}

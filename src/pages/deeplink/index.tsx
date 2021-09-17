@@ -43,7 +43,10 @@ export const Deeplink = ({ isEditable }: DeeplinkProps) => {
     if (!business?.slug) {
       if (business?.name) setSlug(slugify(business?.name));
     } else {
-      const deeplink = `https://l.deeplink.appjusto.com.br/consumer/r?slug=${business.slug}`;
+      const deeplink =
+        process.env.REACT_APP_ENVIRONMENT === 'live'
+          ? `https://appjusto.com.br/r/${business.slug}`
+          : `https://${process.env.REACT_APP_ENVIRONMENT}.appjusto.com.br/r/${business.slug}`;
       setSlug(business.slug);
       setDeeplink(deeplink);
     }
@@ -81,7 +84,7 @@ export const Deeplink = ({ isEditable }: DeeplinkProps) => {
       {isEditable ? (
         <Text mt="4">
           {t(
-            'Você pode compartilhar o acesso direto ao seu restaurante no AppJusto. Crie um identificador, copie o link abaixo e divulgue nas suas redes!'
+            'Você pode compartilhar o acesso direto ao seu restaurante no AppJusto. Crie um identificador, com a sugestão abaixo ou digitando à sua escolha e clicando em salvar, depois copie o link gerado e divulgue nas suas redes!'
           )}
         </Text>
       ) : (

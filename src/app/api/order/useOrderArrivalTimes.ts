@@ -18,9 +18,8 @@ export const useOrderArrivalTimes = (order?: WithId<Order> | null) => {
   // side effects
   React.useEffect(() => {
     if (!order) return;
-    const courierArrivalTime = order.origin?.estimatedTimeOfArrival as firebase.firestore.Timestamp;
-    const orderArrivalTime = order.destination
-      ?.estimatedTimeOfArrival as firebase.firestore.Timestamp;
+    const courierArrivalTime = order.arrivals?.origin?.estimate as firebase.firestore.Timestamp;
+    const orderArrivalTime = order.arrivals?.destination?.estimate as firebase.firestore.Timestamp;
     let arrivalInterval: NodeJS.Timeout;
     if (order.status === 'ready' && order.dispatchingState === 'going-pickup') {
       arrivalInterval = setInterval(() => handleArrivalTime(courierArrivalTime), 60000);

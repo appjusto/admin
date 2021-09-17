@@ -1,25 +1,23 @@
 import { useContextApi } from 'app/state/api/context';
-import { useContextCourierProfile } from 'app/state/courier/context';
 import { CourierProfile } from 'appjusto-types';
 import { useMutation } from 'react-query';
 
-export const useCourierUpdateProfile = () => {
+export const useCourierUpdateProfile = (courierId?: string) => {
   // context
   const api = useContextApi();
-  const { courier } = useContextCourierProfile();
   // mutations
-  const [
-    updateProfile,
-    updateResult,
-  ] = useMutation(
+  const [updateProfile, updateResult] = useMutation(
     async (data: {
       changes: Partial<CourierProfile>;
       selfieFileToSave: File | null;
       documentFileToSave: File | null;
-    }) =>
-      api
+    }) => {
+      await api
         .courier()
-        .updateProfile(courier?.id!, data.changes, data.selfieFileToSave, data.documentFileToSave)
+        .updateProfile(courierId!, data.changes, data.selfieFileToSave, data.documentFileToSave);
+      if (data.changes.email)
+        await api.auth().updateEmail({ accountId: courierId!, email: data.changes.email });
+    }
   );
   // return
   return { updateProfile, updateResult };

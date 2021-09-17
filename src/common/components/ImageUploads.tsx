@@ -58,7 +58,6 @@ export const ImageUploads = React.memo(
         return newAreas;
       });
     }, []);
-
     const onDropHandler = React.useCallback(
       async (acceptedFiles: File[]) => {
         const [file] = acceptedFiles;
@@ -84,13 +83,12 @@ export const ImageUploads = React.memo(
       },
       [error.status]
     );
-
     const clearDroppedImages = () => {
       imageExists.current = false;
       setPreviewUrl(null);
       clearDrop();
     };
-
+    // side effects
     React.useEffect(() => {
       if (imageUrl) {
         imageExists.current = true;
@@ -101,7 +99,6 @@ export const ImageUploads = React.memo(
         setPreviewUrl(null);
       }
     }, [imageUrl]);
-
     React.useEffect(() => {
       if (croppedAreas.length > 0 && previewUrl) {
         const getImageFiles = async (areas: CroppedAreaProps[]) => {
@@ -126,7 +123,7 @@ export const ImageUploads = React.memo(
         getImageFiles(croppedAreas);
       }
     }, [croppedAreas, previewUrl, getImages, ratios, resizedWidth]);
-
+    // UI
     if (imageExists.current && previewUrl) {
       return (
         <Box w="100%">
@@ -148,7 +145,6 @@ export const ImageUploads = React.memo(
         </Box>
       );
     }
-
     if (previewUrl) {
       return (
         <Box w="100%">

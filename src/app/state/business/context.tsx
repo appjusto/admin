@@ -2,6 +2,7 @@ import { useObserveBusinessManagedBy } from 'app/api/business/profile/useObserve
 import { useObserveBusinessProfile } from 'app/api/business/profile/useObserveBusinessProfile';
 import { Business, WithId } from 'appjusto-types';
 import React from 'react';
+import { useQueryCache } from 'react-query';
 import { useContextApi } from '../api/context';
 import { useContextFirebaseUser } from '../auth/context';
 import { getBusinessChangedKeys } from './utils';
@@ -20,6 +21,7 @@ interface Props {
 
 export const BusinessProvider = ({ children }: Props) => {
   // context
+  const queryCache = useQueryCache();
   const api = useContextApi();
   const { user, isBackofficeUser, refreshUserToken } = useContextFirebaseUser();
   const businesses = useObserveBusinessManagedBy(user?.email);
@@ -27,7 +29,6 @@ export const BusinessProvider = ({ children }: Props) => {
   const hookBusiness = useObserveBusinessProfile(businessId);
   // state
   const [business, setBusiness] = React.useState<WithId<Business> | null>();
-
   // handlers
   const updateContextBusiness = React.useCallback(
     (newState: WithId<Business> | null) => {
@@ -39,7 +40,6 @@ export const BusinessProvider = ({ children }: Props) => {
     },
     [business]
   );
-
   const updateContextBusinessOrderPrint = (status: boolean) => {
     setBusiness((prev) => {
       if (!prev) return;
@@ -49,26 +49,31 @@ export const BusinessProvider = ({ children }: Props) => {
       };
     });
   };
-
   // side effects
   React.useEffect(() => {
     if (businessId && refreshUserToken) refreshUserToken(businessId);
   }, [businessId, refreshUserToken]);
   React.useEffect(() => {
     if (hookBusiness === undefined) return;
-    if (hookBusiness === null) setBusiness(null);
+    if (hookBusiness === null) return setBusiness(null);
+    if (isBackofficeUser === false) {
+      localStorage.setItem(`business-${process.env.REACT_APP_ENVIRONMENT}`, hookBusiness.id);
+    }
     updateContextBusiness(hookBusiness);
-  }, [hookBusiness, updateContextBusiness]);
-  // intended to auto-select a business id for a restaurant manager
+    queryCache.invalidateQueries();
+  }, [hookBusiness, isBackofficeUser, queryCache, updateContextBusiness]);
   React.useEffect(() => {
     if (isBackofficeUser) return;
     if (!user?.email) return;
     if (!businesses) return;
+    if (businessId) return;
+    const localBusinessId = localStorage.getItem(`business-${process.env.REACT_APP_ENVIRONMENT}`);
+    if (localBusinessId) return setBusinessId(localBusinessId);
     // select first business or set it to null to indicate that user doesn't
     // manage any business
     setBusinessId(businesses.find(() => true)?.id ?? null);
-  }, [api, businesses, user?.email, isBackofficeUser]);
-
+  }, [api, businesses, user?.email, isBackofficeUser, businessId]);
+  // provider
   return (
     <BusinessContext.Provider value={{ business, setBusinessId, updateContextBusinessOrderPrint }}>
       {children}

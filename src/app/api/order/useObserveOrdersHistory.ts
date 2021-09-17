@@ -4,8 +4,8 @@ import React from 'react';
 import firebase from 'firebase/app';
 
 export const useObserveOrdersHistory = (
-  businessId?: string | null,
-  statuses?: OrderStatus[] | null,
+  businessId: string | null | undefined,
+  statuses: OrderStatus[] | null,
   orderCode?: string,
   start?: string,
   end?: string,
@@ -31,6 +31,7 @@ export const useObserveOrdersHistory = (
     setStartAfter(undefined);
   }, [orderCode, start, end, orderStatus, orderType]);
   React.useEffect(() => {
+    let type = orderType?.length === 1 ? orderType[0] : null;
     let startDate = start ? new Date(`${start} 00:00:00`) : null;
     let endDate = end ? new Date(`${end} 23:59:59`) : null;
     const unsub = api.order().observeOrdersHistory(
@@ -45,7 +46,7 @@ export const useObserveOrdersHistory = (
       startDate,
       endDate,
       orderStatus,
-      orderType,
+      type,
       startAfter
     );
     return () => unsub();

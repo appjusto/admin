@@ -10,6 +10,7 @@ import {
   MarketplaceAccountInfo,
   Product,
   WithId,
+  CloneBusinessPayload,
 } from 'appjusto-types';
 import { Complement, ComplementGroup, Ordering } from 'appjusto-types';
 import firebase from 'firebase/app';
@@ -90,10 +91,13 @@ export default class BusinessApi {
       .onSnapshot(
         (querySnapshot) => {
           //@ts-ignore
-          resultHandler(() => {
-            const doc = documentsAs<ChatMessage>(querySnapshot.docs);
-            const messages = doc.map((msg) => ({ orderId, ...msg }));
-            return [...messages];
+          resultHandler((prev) => {
+            const prevFiltered = prev.filter(
+              (msg: WithId<BusinessChatMessage>) => msg.orderId !== orderId
+            );
+            const docs = documentsAs<ChatMessage>(querySnapshot.docs);
+            const messages = docs.map((msg) => ({ orderId, ...msg }));
+            return [...prevFiltered, ...messages];
           });
         },
         (error) => {
@@ -116,10 +120,13 @@ export default class BusinessApi {
       .onSnapshot(
         (querySnapshot) => {
           //@ts-ignore
-          resultHandler(() => {
-            const doc = documentsAs<ChatMessage>(querySnapshot.docs);
-            const messages = doc.map((msg) => ({ orderId, ...msg }));
-            return [...messages];
+          resultHandler((prev) => {
+            const prevFiltered = prev.filter(
+              (msg: WithId<BusinessChatMessage>) => msg.orderId !== orderId
+            );
+            const docs = documentsAs<ChatMessage>(querySnapshot.docs);
+            const messages = docs.map((msg) => ({ orderId, ...msg }));
+            return [...prevFiltered, ...messages];
           });
         },
         (error) => {
@@ -164,6 +171,15 @@ export default class BusinessApi {
       meta: { version: '1' }, // TODO: pass correct version on
     };
     const business = await this.refs.getCreateBusinessProfileCallable()(payload);
+    return business.data as WithId<Business>;
+  }
+
+  async cloneBusiness(businessId: string) {
+    const payload: CloneBusinessPayload = {
+      businessId,
+      meta: { version: '1' }, // TODO: pass correct version on
+    };
+    const business = await this.refs.getCloneBusinessCallable()(payload);
     return business.data as WithId<Business>;
   }
 
@@ -575,7 +591,7 @@ export default class BusinessApi {
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
     const newGroup = {
       ...group,
-      enabled: false,
+      enabled: true,
       createdOn: timestamp,
       updatedOn: timestamp,
     };

@@ -4,9 +4,9 @@ import { useBusinessChats } from 'app/api/business/chat/useBusinessChats';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useFreshDesk } from 'app/api/business/useFresdesk';
 import { OrderChatGroup } from 'app/api/chat/types';
-import { useCanceledOrders } from 'app/api/order/useCanceledOrders';
 import { useObserveConfirmedOrders } from 'app/api/order/useObserveConfirmedOrders';
 import { useObserveOrders } from 'app/api/order/useObserveOrders';
+import { useObserveOrdersCompletedInTheLastHour } from 'app/api/order/useObserveOrdersCompletedInTheLastHour';
 import { useObservePreparingOrders } from 'app/api/order/useObservePreparingOrders';
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusiness } from 'app/state/business/context';
@@ -23,9 +23,7 @@ interface ContextProps {
   orders: WithId<Order>[];
   chats: OrderChatGroup[];
   newChatMessages: string[];
-  getUnreadChatMessages(orderId: string, counterPartId: string): string[];
   getOrderById(id: string): WithId<Order> | undefined;
-  //createFakeOrder(): void;
   changeOrderStatus(orderId: string, status: OrderStatus): void;
   setOrderCookingTime(orderId: string, cookingTime: number | null): void;
 }
@@ -45,26 +43,22 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   const { business } = useContextBusiness();
   const { sendBusinessKeepAlive } = useBusinessProfile();
   const activeOrders = useObserveOrders(statuses, business?.id);
-  const canceledOrders = useCanceledOrders(business?.id);
-  const chats = useBusinessChats(activeOrders);
+  const completedAndActiveOrders = useObserveOrdersCompletedInTheLastHour(business?.id);
+  //const canceledOrders = useCanceledOrders(business?.id);
+  const chats = useBusinessChats(activeOrders, completedAndActiveOrders);
   useObserveConfirmedOrders(business?.id);
   useObservePreparingOrders(business?.id);
-
   // freshdesk
   useFreshDesk(business?.id, business?.name, business?.phone);
-
   //state
   const [orders, setOrders] = React.useState<WithId<Order>[]>([]);
   const [newChatMessages, setNewChatMessages] = React.useState<string[]>([]);
-
   //handlers
   const toast = useToast();
-
   const getOrderById = (id: string) => {
     const order = orders.find((order: WithId<Order>) => order.id === id);
     return order;
   };
-
   const changeOrderStatus = React.useCallback(
     async (orderId: string, status: OrderStatus) => {
       if (status === 'preparing') updateLocalStorageOrderTime(orderId);
@@ -103,7 +97,6 @@ export const OrdersContextProvider = (props: ProviderProps) => {
     },
     [api, toast]
   );
-
   const setOrderCookingTime = React.useCallback(
     async (orderId: string, cookingTime: number | null) => {
       try {
@@ -126,25 +119,10 @@ export const OrdersContextProvider = (props: ProviderProps) => {
     },
     [api, toast]
   );
-
-  const getUnreadChatMessages = React.useCallback(
-    (orderId: string, counterPartId: string) => {
-      if (chats) {
-        const group = chats.find((chat) => chat.orderId === orderId);
-        const messages =
-          group?.counterParts.find((part) => part.id === counterPartId)?.unreadMessages ?? [];
-        return messages;
-      }
-      return [];
-    },
-    [chats]
-  );
-
   // side effects
   React.useEffect(() => {
-    setOrders([...activeOrders, ...canceledOrders]);
-  }, [activeOrders, canceledOrders]);
-
+    setOrders([...activeOrders, ...completedAndActiveOrders]);
+  }, [activeOrders, completedAndActiveOrders]);
   React.useEffect(() => {
     if (chats.length > 0) {
       let unreadMessages = [] as string[];
@@ -158,7 +136,6 @@ export const OrdersContextProvider = (props: ProviderProps) => {
       setNewChatMessages(unreadMessages);
     }
   }, [chats]);
-
   // business keep alive
   React.useEffect(() => {
     if (business?.situation !== 'approved') return;
@@ -168,7 +145,6 @@ export const OrdersContextProvider = (props: ProviderProps) => {
     }, time);
     return () => clearInterval(keepAliveInterval);
   }, [business?.situation, sendBusinessKeepAlive]);
-
   /*React.useEffect(() => {
     if (isBackofficeUser) return;
     if (business?.situation !== 'approved') return;
@@ -197,7 +173,6 @@ export const OrdersContextProvider = (props: ProviderProps) => {
     window.addEventListener('beforeunload', onCloseListener);
     return () => window.removeEventListener('beforeunload', onCloseListener);
   }, [updateBusinessProfile, toast, isBackofficeUser, business?.situation, business?.status]);*/
-
   React.useEffect(() => {
     if (isBackofficeUser) return;
     if (business?.situation !== 'approved') return;
@@ -217,7 +192,6 @@ export const OrdersContextProvider = (props: ProviderProps) => {
       });
     }
   }, [isBackofficeUser, business?.situation, business?.status, toast]);
-
   // provider
   return (
     <OrdersContext.Provider
@@ -226,9 +200,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
         orders,
         chats,
         newChatMessages,
-        getUnreadChatMessages,
         getOrderById,
-        //createFakeOrder,
         changeOrderStatus,
         setOrderCookingTime,
       }}

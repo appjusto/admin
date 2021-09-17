@@ -137,14 +137,14 @@ export const updateLocalStorageOrderTime = (orderId: string) => {
   return false;
 };
 
-export const getTimeUntilNow = (created: number, reverse: boolean = false) => {
+export const getTimeUntilNow = (baseTime: number, reverse: boolean = false) => {
   const now = new Date().getTime();
   if (reverse) {
-    let elapsedTime = (created - now) / 1000 / 60;
+    let elapsedTime = (baseTime - now) / 1000 / 60;
     if (elapsedTime < 0) elapsedTime = 0;
     return round(elapsedTime, 0);
   }
-  const elapsedTime = (now - created) / 1000 / 60;
+  const elapsedTime = (now - baseTime) / 1000 / 60;
   return round(elapsedTime, 0);
 };
 
@@ -293,10 +293,10 @@ export const getCoordinatesMidpoint = (origin: latLng, destination: latLng) => {
 // orders
 export const getOrderCancellator = (issueIype?: string) => {
   let cancelator = 'N/E';
-  if (issueIype === 'restaurant-cancel') cancelator = 'Restaurante';
-  if (issueIype === 'consumer-cancel') cancelator = 'Cliente';
-  if (issueIype === 'courier-cancel') cancelator = 'Entregador';
-  if (issueIype === 'agent-order-cancel') cancelator = 'Agente Appjusto';
+  if (issueIype?.includes('restaurant')) cancelator = 'Restaurante';
+  if (issueIype?.includes('consumer')) cancelator = 'Cliente';
+  if (issueIype?.includes('courier')) cancelator = 'Entregador';
+  if (issueIype?.includes('agent')) cancelator = 'Agente Appjusto';
   return cancelator;
 };
 

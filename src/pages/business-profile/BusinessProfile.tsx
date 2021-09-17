@@ -1,6 +1,7 @@
-import { Box, Flex, Switch as ChakraSwitch, Text, useBreakpoint } from '@chakra-ui/react';
+import { Box, Button, Flex, Switch as ChakraSwitch, Text, useBreakpoint } from '@chakra-ui/react';
 import * as cnpjutils from '@fnando/cnpj';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
+import { FirebaseError } from 'app/api/types';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { Business } from 'appjusto-types';
@@ -39,12 +40,11 @@ import { BusinessDeleteDrawer } from './BusinessDeleteDrawer';
 const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   // context
   const isDev = process.env.REACT_APP_ENVIRONMENT === 'dev';
-  const { business } = useContextBusiness();
+  const { business, setBusinessId } = useContextBusiness();
   const queryCache = useQueryCache();
   const { path } = useRouteMatch();
   const history = useHistory();
   const { isBackofficeUser } = useContextFirebaseUser();
-
   // state
   const [cnpj, setCNPJ] = React.useState(business?.cnpj ?? (isDev ? cnpjutils.generate() : ''));
   const [name, setName] = React.useState(business?.name ?? '');
@@ -60,32 +60,29 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const [logoFiles, setLogoFiles] = React.useState<File[] | null>(null);
   const [coverFiles, setCoverFiles] = React.useState<File[] | null>(null);
   const [error, setError] = React.useState(initialError);
-
   // refs
   const submission = React.useRef(0);
   const cnpjRef = React.useRef<HTMLInputElement>(null);
   const phoneRef = React.useRef<HTMLInputElement>(null);
   const minimumOrderRef = React.useRef<HTMLInputElement>(null);
   const isMountedRef = React.useRef(false);
-
   // queries & mutations
   const {
     createBusinessProfile,
+    cloneBusiness,
     updateBusinessProfileWithImages,
     logo,
     cover,
     updateWithImagesResult,
+    cloneResult,
   } = useBusinessProfile();
   const { isLoading, isSuccess, isError, error: updateError } = updateWithImagesResult;
-
   // helpers
   const showDeeplink = !onboarding && business?.situation === 'approved';
   // handlers
   const openDrawerHandler = () => history.push(`${path}/delete`);
   const closeDrawerHandler = () => history.replace(path);
-
   const isCNPJValid = () => cnpjutils.isValid(cnpj);
-
   const handleEnabled = (enabled: boolean) => {
     if (enabled) setEnabled(enabled);
     else {
@@ -93,7 +90,6 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
       setEnabled(false);
     }
   };
-
   const onSubmitHandler = async () => {
     submission.current += 1;
     setError(initialError);
@@ -114,7 +110,6 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
       });
       return phoneRef?.current?.focus();
     }
-    //setIsLoading(true);
     const changes = {
       name,
       companyName,
@@ -145,7 +140,14 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
       });
     }
   };
-
+  const cloneBusinessHandler = async () => {
+    submission.current += 1;
+    const newBusiness = await cloneBusiness();
+    if (newBusiness) {
+      setBusinessId(newBusiness.id);
+      history.push('/app');
+    }
+  };
   const clearDropImages = React.useCallback((type: string) => {
     if (type === 'logo') {
       setLogoExists(false);
@@ -155,17 +157,14 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
       setCoverFiles(null);
     }
   }, []);
-
   const getLogoFiles = React.useCallback(async (files: File[]) => {
     setLogoExists(true);
     setLogoFiles(files);
   }, []);
-
   const getCoverFiles = React.useCallback(async (files: File[]) => {
     setCoverExists(true);
     setCoverFiles(files);
   }, []);
-
   // side effects
   React.useEffect(() => {
     isMountedRef.current = true;
@@ -174,37 +173,41 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
     };
     return unmount;
   }, []);
-
   React.useEffect(() => {
     if (onboarding) window?.scrollTo(0, 0);
     cnpjRef?.current?.focus();
   }, [onboarding]);
-
   React.useEffect(() => {
     if (business) {
       setEnabled(business.enabled ?? false);
-      if (business.cnpj) setCNPJ(business.cnpj);
-      if (business.name) setName(business.name);
-      if (business.companyName) setCompanyName(business.companyName);
-      if (business.phone) setPhone(business.phone);
-      if (business.description) setDescription(business.description);
-      if (business.minimumOrder) setMinimumOrder(business.minimumOrder);
-      if (business.cuisine) setCuisineName(business.cuisine);
+      setCNPJ(business.cnpj ?? '');
+      setName(business.name ?? '');
+      setCompanyName(business.companyName ?? '');
+      setPhone(business.phone ?? '');
+      setDescription(business.description ?? '');
+      setMinimumOrder(business.minimumOrder ?? 0);
+      setCuisineName(business.cuisine ?? '');
       if (business.logoExists && logo) setLogoExists(true);
       if (business.coverImageExists && cover) setCoverExists(true);
     } else if (business === null) {
       createBusinessProfile();
     }
   }, [business, cover, logo, createBusinessProfile]);
-
   React.useEffect(() => {
     if (isError)
       setError({
         status: true,
         error: updateError,
       });
-  }, [isError, updateError]);
-
+    else if (cloneResult.isError) {
+      const errorMessage = (cloneResult.error as FirebaseError).message;
+      setError({
+        status: true,
+        error: cloneResult.error,
+        message: { title: errorMessage ?? 'Não foi possível acessar o servidor' },
+      });
+    }
+  }, [isError, updateError, cloneResult.isError, cloneResult.error]);
   // UI
   const breakpoint = useBreakpoint();
   const coverWidth = breakpoint === 'base' ? 328 : breakpoint === 'md' ? 420 : 536;
@@ -288,7 +291,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
             <Textarea
               isRequired={!onboarding}
               id="business-description"
-              label={t(`Descrição ${!onboarding && '*'}`)}
+              label={t(`Descrição ${!onboarding ? '*' : ''}`)}
               placeholder={t('Descreva seu restaurante')}
               value={description}
               onChange={(ev) => setDescription(ev.target.value)}
@@ -371,6 +374,32 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
                     {enabled ? t('Ligado') : t('Desligado')}
                   </Text>
                 </Flex>
+              </Flex>
+            </>
+          )}
+          {!onboarding && (
+            <>
+              <Text mt="8" fontSize="xl" color="black">
+                {t('Clonar restaurante')}
+              </Text>
+              <Text mt="2" fontSize="md">
+                {t(
+                  'Criar um novo restaurante com as informações básicas e o cardápio do restaurante atual.'
+                )}
+              </Text>
+              <Flex mt="4" pb="8" alignItems="center">
+                <Button
+                  w={{ base: '100%', md: 'auto' }}
+                  mt={{ base: '8', md: '0' }}
+                  size="lg"
+                  fontSize="sm"
+                  variant="dangerLight"
+                  onClick={cloneBusinessHandler}
+                  isLoading={cloneResult.isLoading}
+                  loadingText={t('Clonando...')}
+                >
+                  {t('Criar cópia deste restaurante')}
+                </Button>
               </Flex>
             </>
           )}

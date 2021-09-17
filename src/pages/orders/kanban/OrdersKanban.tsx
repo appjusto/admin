@@ -28,22 +28,18 @@ export const OrdersKanban = () => {
   // context
   //const { path } = useRouteMatch();
   const { business, orders, newChatMessages } = useOrdersContext();
-
   // state
   const ordersByStatus = splitByStatus(orders, statuses);
   const [dateTime, setDateTime] = React.useState('');
   const [orderSearch, setOrderSearch] = React.useState('');
   const [searchResult, setSearchResult] = React.useState<WithId<Order>[]>([]);
-
   // helpers
   const isNewChatMessage = newChatMessages.length > 0;
-
   // side effects
   React.useEffect(() => {
     const { date, time } = getDateTime();
     setDateTime(`${date} às ${time}`);
   }, [orders]);
-
   React.useEffect(() => {
     if (orderSearch) {
       const regexp = new RegExp(orderSearch, 'i');
@@ -51,7 +47,6 @@ export const OrdersKanban = () => {
       setSearchResult(result);
     }
   }, [orders, orderSearch]);
-
   // UI
   return (
     <Box pb="12">

@@ -13,6 +13,16 @@ import PageHeader from '../../PageHeader';
 import { BackofficeOrderDrawer } from '../drawers/order';
 import { OrdersTable } from './OrdersTable';
 
+const statuses = [
+  'declined',
+  'confirmed',
+  'preparing',
+  'ready',
+  'dispatching',
+  'delivered',
+  'canceled',
+] as OrderStatus[];
+
 const OrdersPage = () => {
   // context
   const { path } = useRouteMatch();
@@ -31,7 +41,7 @@ const OrdersPage = () => {
 
   const { orders, fetchNextPage } = useObserveOrdersHistory(
     null,
-    null,
+    statuses,
     searchId,
     searchFrom,
     searchTo,

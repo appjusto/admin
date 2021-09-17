@@ -1,6 +1,5 @@
 import { ChatMessage, WithId } from 'appjusto-types';
 import { first } from 'lodash';
-import { OrderChatGroup } from 'app/api/chat/types';
 import { GroupedChatMessages } from './types';
 import firebase from 'firebase/app';
 
@@ -26,14 +25,12 @@ export const groupOrderChatMessages = (messages: WithId<ChatMessage>[]) =>
     return [{ id: message.id, from: message.from.id, messages: [message] }, ...groups];
   }, []);
 
-export const getUnreadChatMessages = (chats: OrderChatGroup[]) => {
-  let unreadMessages = [] as string[];
-  chats.forEach((group) => {
-    group.counterParts.forEach((part) => {
-      if (part.unreadMessages && part.unreadMessages?.length > 0) {
-        unreadMessages = unreadMessages.concat(part.unreadMessages);
-      }
-    });
-  });
-  return unreadMessages;
+export const getUnreadChatMessages = (chats: GroupedChatMessages[], counterpartId: string) => {
+  const unreadMessagesIds = chats.reduce<string[]>((list, chat) => {
+    const unread = chat.messages
+      .filter((msg) => msg.from.id === counterpartId && !msg.read)
+      .map((msg) => msg.id);
+    return list.concat([...unread]);
+  }, []);
+  return unreadMessagesIds;
 };

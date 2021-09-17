@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   Drawer,
   DrawerBody,
@@ -11,11 +12,14 @@ import {
   HStack,
   Text,
 } from '@chakra-ui/react';
+import { useAuthentication } from 'app/api/auth/useAuthentication';
 import { useConsumerUpdateProfile } from 'app/api/consumer/useConsumerUpdateProfile';
+import { FirebaseError } from 'app/api/types';
 import { useContextConsumerProfile } from 'app/state/consumer/context';
 import { ConsumerProfile } from 'appjusto-types';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
 import { initialError } from 'common/components/error/utils';
+import { getEditableProfile } from 'pages/backoffice/utils';
 import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
 import React from 'react';
 import { useRouteMatch } from 'react-router';
@@ -33,11 +37,13 @@ interface BaseDrawerProps {
 export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseDrawerProps) => {
   //context
   const { url } = useRouteMatch();
-  const { consumer } = useContextConsumerProfile();
-  const { updateProfile, updateResult } = useConsumerUpdateProfile();
+  const { deleteAccount, deleteAccountResult } = useAuthentication();
+  const { consumer, isEditingEmail, setIsEditingEmail } = useContextConsumerProfile();
+  const { updateProfile, updateResult } = useConsumerUpdateProfile(consumer?.id);
   const { isLoading, isSuccess, isError, error: updateError } = updateResult;
 
   // state
+  const [isDeleting, setIsDeleting] = React.useState(false);
   const [error, setError] = React.useState(initialError);
 
   // refs
@@ -62,23 +68,44 @@ export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
         });
       }
     }*/
-    const newState = {} as ConsumerProfile;
-    consumer &&
-      Object.keys(consumer).forEach((key) => {
-        //@ts-ignore
-        if (consumer[key]) newState[key] = consumer[key];
+    setIsEditingEmail(false);
+    const changes = getEditableProfile(consumer, isEditingEmail) as Partial<ConsumerProfile>;
+    updateProfile(changes);
+  };
+
+  const handleDeleteAccount = () => {
+    if (!consumer?.id) {
+      setError({
+        status: true,
+        error: null,
+        message: { title: 'Não foi possível encontrar o id deste usuário.' },
       });
-    updateProfile(newState);
+    } else {
+      submission.current += 1;
+      deleteAccount({ accountId: consumer.id });
+    }
   };
 
   // side effects
   React.useEffect(() => {
-    if (isError)
+    if (isError) {
       setError({
         status: true,
         error: updateError,
       });
-  }, [isError, updateError]);
+    } else if (deleteAccountResult.isError) {
+      const errorMessage = (deleteAccountResult.error as FirebaseError).message;
+      setError({
+        status: true,
+        error: deleteAccountResult.error,
+        message: { title: errorMessage ?? 'Não foi possível acessar o servidor' },
+      });
+    }
+  }, [isError, updateError, deleteAccountResult.isError, deleteAccountResult.error]);
+
+  React.useEffect(() => {
+    if (deleteAccountResult.isSuccess) onClose();
+  }, [deleteAccountResult.isSuccess, onClose]);
 
   //UI
   return (
@@ -138,25 +165,51 @@ export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
             {children}
           </DrawerBody>
           <DrawerFooter borderTop="1px solid #F2F6EA">
-            <HStack w="full" spacing={4}>
-              <Button
-                width="full"
-                maxW="240px"
-                fontSize="15px"
-                onClick={handleSave}
-                isLoading={isLoading}
-                loadingText={t('Salvando')}
-              >
-                {t('Salvar alterações')}
-              </Button>
-              <SuccessAndErrorHandler
-                submission={submission.current}
-                isSuccess={isSuccess}
-                isError={error.status}
-                error={error.error}
-                errorMessage={error.message}
-              />
-            </HStack>
+            {isDeleting ? (
+              <Box mt="8" w="100%" bg="#FFF8F8" border="1px solid red" borderRadius="lg" p="6">
+                <Text color="red">{t(`Tem certeza que deseja excluir esta conta?`)}</Text>
+                <HStack mt="4" spacing={4}>
+                  <Button width="full" onClick={() => setIsDeleting(false)}>
+                    {t(`Manter conta`)}
+                  </Button>
+                  <Button
+                    width="full"
+                    variant="danger"
+                    onClick={handleDeleteAccount}
+                    isLoading={deleteAccountResult.isLoading}
+                  >
+                    {t(`Excluir`)}
+                  </Button>
+                </HStack>
+              </Box>
+            ) : (
+              <HStack w="100%" spacing={4}>
+                <Button
+                  width="full"
+                  fontSize="15px"
+                  onClick={handleSave}
+                  isLoading={isLoading}
+                  loadingText={t('Salvando')}
+                >
+                  {t('Salvar alterações')}
+                </Button>
+                <Button
+                  width="full"
+                  fontSize="15px"
+                  variant="dangerLight"
+                  onClick={() => setIsDeleting(true)}
+                >
+                  {t('Excluir conta')}
+                </Button>
+              </HStack>
+            )}
+            <SuccessAndErrorHandler
+              submission={submission.current}
+              isSuccess={isSuccess}
+              isError={error.status}
+              error={error.error}
+              errorMessage={error.message}
+            />
           </DrawerFooter>
         </DrawerContent>
       </DrawerOverlay>

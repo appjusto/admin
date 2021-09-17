@@ -1,3 +1,5 @@
+import { omit, omitBy } from 'lodash';
+
 export const situationPTOptions = {
   pending: 'Pendente',
   submitted: 'Submetido',
@@ -33,6 +35,7 @@ export const orderStatusPTOptions = {
   dispatching: 'A caminho da entrega',
   delivered: 'Entregue',
   canceled: 'Cancelado',
+  expired: 'Expirado',
 };
 
 export const orderStatusPTOptionsForTableItem = {
@@ -45,6 +48,7 @@ export const orderStatusPTOptionsForTableItem = {
   dispatching: 'Despachando',
   delivered: 'Entregue',
   canceled: 'Cancelado',
+  expired: 'Expirado',
 };
 
 export const orderDispatchingStatusPTOptions = {
@@ -84,4 +88,21 @@ export const iuguSituationPTOptions = {
   'waiting-verification': 'Aguardando verificação',
   'verified': 'Verificada',
   'invalid': 'Inválida',
+};
+
+export const getEditableProfile = (profile: any, isEditingEmail: boolean) => {
+  let imitedKeys = [
+    'id',
+    'code',
+    'createdOn',
+    'updatedOn',
+    'statistics',
+    'onboarded',
+    'notificationToken',
+    'email',
+  ];
+  if (isEditingEmail) imitedKeys.pop();
+  let result = omit(profile, imitedKeys);
+  result = omitBy(result, (value) => !value);
+  return result;
 };

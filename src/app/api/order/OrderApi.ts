@@ -20,6 +20,7 @@ import { documentAs, documentsAs, FirebaseDocument } from 'core/fb';
 import firebase from 'firebase/app';
 import FirebaseRefs from '../FirebaseRefs';
 import * as Sentry from '@sentry/react';
+import { IuguInvoiceStatus } from 'appjusto-types/payment/iugu';
 
 export type CancellationData = {
   issue: WithId<Issue>;
@@ -47,6 +48,33 @@ export default class OrderApi {
     if (businessId) {
       query = query.where('business.id', '==', businessId);
     }
+    const unsubscribe = query.onSnapshot(
+      (querySnapshot) => {
+        resultHandler(documentsAs<Order>(querySnapshot.docs));
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+    // returns the unsubscribe function
+    return unsubscribe;
+  }
+
+  observeBusinessOrdersCompletedInTheLastHour(
+    resultHandler: (orders: WithId<Order>[]) => void,
+    businessId?: string,
+    ordering: Ordering = 'desc'
+  ): firebase.Unsubscribe {
+    const statuses = ['delivered', 'canceled'] as OrderStatus[];
+    const baseTim = new Date();
+    baseTim.setHours(baseTim.getHours() - 1);
+    let query = this.refs
+      .getOrdersRef()
+      .orderBy('updatedOn', ordering)
+      .where('business.id', '==', businessId)
+      .where('status', 'in', statuses)
+      .where('updatedOn', '>', baseTim);
+
     const unsubscribe = query.onSnapshot(
       (querySnapshot) => {
         resultHandler(documentsAs<Order>(querySnapshot.docs));
@@ -88,10 +116,14 @@ export default class OrderApi {
   }
 
   observeBODashboardOrders(
+    statuses: OrderStatus[],
     resultHandler: (orders: WithId<Order>[]) => void,
     start?: Date | null
   ): firebase.Unsubscribe {
-    let query = this.refs.getOrdersRef().where('updatedOn', '>', start);
+    let query = this.refs
+      .getOrdersRef()
+      .where('updatedOn', '>', start)
+      .where('status', 'in', statuses);
     const unsubscribe = query.onSnapshot(
       (querySnapshot) => {
         if (!querySnapshot.empty) resultHandler(documentsAs<Order>(querySnapshot.docs));
@@ -111,23 +143,23 @@ export default class OrderApi {
       orders: WithId<Order>[],
       last?: firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
     ) => void,
-    businessId?: string | null,
-    statuses?: OrderStatus[] | null,
-    orderCode?: string | null,
-    start?: Date | null,
-    end?: Date | null,
-    orderStatus?: OrderStatus,
-    orderType?: OrderType[],
-    startAfter?: FirebaseDocument
+    businessId: string | null | undefined,
+    statuses: OrderStatus[] | null,
+    orderCode: string | null | undefined,
+    start: Date | null | undefined,
+    end: Date | null | undefined,
+    orderStatus: OrderStatus | undefined,
+    orderType: OrderType | null,
+    startAfter: FirebaseDocument | undefined
   ): firebase.Unsubscribe {
     let query = this.refs.getOrdersRef().orderBy('updatedOn', 'desc').limit(20);
-    if (statuses) query = query.where('status', 'in', statuses);
+    if (orderStatus) query = query.where('status', '==', orderStatus);
+    else query = query.where('status', 'in', statuses);
     if (startAfter) query = query.startAfter(startAfter);
     if (businessId) query = query.where('business.id', '==', businessId);
     if (orderCode) query = query.where('code', '==', orderCode);
     if (start && end) query = query.where('updatedOn', '>=', start).where('updatedOn', '<=', end);
-    if (orderStatus) query = query.where('status', '==', orderStatus);
-    if (orderType) query = query.where('type', 'in', orderType);
+    if (orderType) query = query.where('type', '==', orderType);
     const unsubscribe = query.onSnapshot(
       (querySnapshot) => {
         const last =
@@ -344,14 +376,16 @@ export default class OrderApi {
       invoices: WithId<Invoice>[],
       last?: firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
     ) => void,
-    orderId?: string | null,
+    orderCode?: string | null,
     start?: Date | null,
     end?: Date | null,
-    startAfter?: FirebaseDocument
+    startAfter?: FirebaseDocument,
+    status?: IuguInvoiceStatus
   ): firebase.Unsubscribe {
     let query = this.refs.getInvoicesRef().orderBy('createdOn', 'desc').limit(20);
+    if (status) query = query.where('status', '==', status);
     if (startAfter) query = query.startAfter(startAfter);
-    if (orderId) query = query.where('orderId', '==', orderId);
+    if (orderCode) query = query.where('orderCode', '==', orderCode);
     if (start && end) query = query.where('createdOn', '>=', start).where('createdOn', '<=', end);
     const unsubscribe = query.onSnapshot(
       (querySnapshot) => {

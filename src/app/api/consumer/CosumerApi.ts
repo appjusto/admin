@@ -9,9 +9,9 @@ export default class ConsumerApi {
 
   observeNewConsumers(
     resultHandler: (consumers: WithId<ConsumerProfile>[]) => void,
-    start?: Date | null
+    start: Date
   ): firebase.Unsubscribe {
-    let query = this.refs.getConsumersRef().where('createdOn', '>', start);
+    let query = this.refs.getConsumersRef().where('createdOn', '>=', start);
     const unsubscribe = query.onSnapshot(
       (querySnapshot) => {
         resultHandler(documentsAs<ConsumerProfile>(querySnapshot.docs));

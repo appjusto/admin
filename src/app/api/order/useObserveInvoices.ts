@@ -2,8 +2,14 @@ import { useContextApi } from 'app/state/api/context';
 import { WithId, Invoice } from 'appjusto-types';
 import React from 'react';
 import firebase from 'firebase/app';
+import { IuguInvoiceStatus } from 'appjusto-types/payment/iugu';
 
-export const useObserveInvoices = (orderId?: string | null, start?: string, end?: string) => {
+export const useObserveInvoices = (
+  orderCode?: string | null,
+  start?: string,
+  end?: string,
+  status?: IuguInvoiceStatus
+) => {
   // context
   const api = useContextApi();
   // state
@@ -11,17 +17,17 @@ export const useObserveInvoices = (orderId?: string | null, start?: string, end?
   const [startAfter, setStartAfter] = React.useState<
     firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
   >();
-  const [lastFleet, setLastFleet] = React.useState<
+  const [lastInvoice, setLastInvoice] = React.useState<
     firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
   >();
   // handlers
   const fetchNextPage = React.useCallback(() => {
-    setStartAfter(lastFleet);
-  }, [lastFleet]);
+    setStartAfter(lastInvoice);
+  }, [lastInvoice]);
   // side effects
   React.useEffect(() => {
     setStartAfter(undefined);
-  }, [orderId, start, end]);
+  }, [orderCode, start, end]);
   React.useEffect(() => {
     let startDate = start ? new Date(`${start} 00:00:00`) : null;
     let endDate = end ? new Date(`${end} 23:59:59`) : null;
@@ -29,15 +35,16 @@ export const useObserveInvoices = (orderId?: string | null, start?: string, end?
       (results, last) => {
         if (!startAfter) setInvoices(results);
         else setInvoices((prev) => (prev ? [...prev, ...results] : results));
-        setLastFleet(last);
+        setLastInvoice(last);
       },
-      orderId,
+      orderCode,
       startDate,
       endDate,
-      startAfter
+      startAfter,
+      status
     );
     return () => unsub();
-  }, [api, startAfter, orderId, start, end]);
+  }, [api, startAfter, orderCode, start, end, status]);
   // return
   return { invoices, fetchNextPage };
 };

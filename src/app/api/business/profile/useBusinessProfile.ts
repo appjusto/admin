@@ -12,21 +12,18 @@ export const useBusinessProfile = () => {
   const { business, setBusinessId } = useContextBusiness();
   const businessId = business?.id;
   const { refreshUserToken } = useContextFirebaseUser();
-
   // queries
   const getBusinessLogoURL = (key: string) =>
     businessId ? api.business().getBusinessLogoURL(businessId!) : null;
   const { data: logo } = useQuery(['business:logo', businessId], getBusinessLogoURL);
-
   const getBusinessCoverURL = (key: string) =>
     businessId ? api.business().getBusinessCoverURL(businessId!, '1008x360') : null;
   const { data: cover } = useQuery(['business:cover', businessId], getBusinessCoverURL);
-
   // mutations
   const [createBusinessProfile] = useMutation(async () => {
     const business = await api.business().createBusinessProfile();
     setBusinessId(business.id);
-    if (refreshUserToken) refreshUserToken();
+    if (refreshUserToken) refreshUserToken(business.id);
   });
   const [updateBusinessProfile, updateResult] = useMutation(async (changes: Partial<Business>) =>
     api.business().updateBusinessProfile(businessId!, changes)
@@ -52,6 +49,11 @@ export const useBusinessProfile = () => {
   const [deleteBusinessProfile, deleteResult] = useMutation(async () =>
     api.business().deleteBusinessProfile(businessId!)
   );
+  const [cloneBusiness, cloneResult] = useMutation(async () => {
+    const newBusiness = await api.business().cloneBusiness(businessId!);
+    if (refreshUserToken && newBusiness?.id) refreshUserToken(newBusiness.id);
+    return newBusiness;
+  });
   const sendBusinessKeepAlive = React.useCallback(() => {
     try {
       api.business().sendBusinessKeepAlive(businessId!);
@@ -63,7 +65,6 @@ export const useBusinessProfile = () => {
     async (data: { businessId: string; slug: string }) =>
       await api.business().updateBusinessSlug(data)
   );
-
   // return
   return {
     logo,
@@ -73,10 +74,12 @@ export const useBusinessProfile = () => {
     updateBusinessProfileWithImages,
     updateBusinessSlug,
     deleteBusinessProfile,
+    cloneBusiness,
     updateResult,
     updateWithImagesResult,
     updateSlugResult,
     deleteResult,
+    cloneResult,
     sendBusinessKeepAlive,
   };
 };
