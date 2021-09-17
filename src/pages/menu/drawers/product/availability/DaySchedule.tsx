@@ -8,6 +8,7 @@ import React from 'react';
 import { t } from 'utils/i18n';
 
 interface DayScheduleProps {
+  index: number;
   day: ScheduleObject;
   handleCheck(value: boolean): void;
   clearDaySchedule(): void;
@@ -21,6 +22,7 @@ interface DayScheduleProps {
 type MainAvailability = 'when-is-open' | 'defined';
 
 export const DaySchedule = ({
+  index,
   day,
   handleCheck,
   clearDaySchedule,
@@ -152,17 +154,19 @@ export const DaySchedule = ({
           )}
         </>
       )}
-      <Text
-        mt="4"
-        fontSize="xs"
-        fontWeight="700"
-        color="green.600"
-        cursor="pointer"
-        onClick={replicate}
-        _hover={{ textDecor: 'underline' }}
-      >
-        {t('Replicar horário anterior')}
-      </Text>
+      {index > 0 && (
+        <Text
+          mt="4"
+          fontSize="xs"
+          fontWeight="700"
+          color="green.600"
+          cursor="pointer"
+          onClick={replicate}
+          _hover={{ textDecor: 'underline' }}
+        >
+          {t('Replicar horário anterior')}
+        </Text>
+      )}
     </Flex>
   );
 };

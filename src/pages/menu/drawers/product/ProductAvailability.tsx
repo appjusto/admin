@@ -235,6 +235,7 @@ export const ProductAvailability = () => {
           {schedules.map((day, index) => {
             return (
               <DaySchedule
+                index={index}
                 key={day.day}
                 day={day}
                 handleCheck={(value: boolean) => handleCheck(index, value)}
