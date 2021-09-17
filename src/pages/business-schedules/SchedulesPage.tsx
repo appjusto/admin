@@ -153,15 +153,14 @@ const SchedulesPage = () => {
   };
   const onSubmitHandler = async (event: any) => {
     event.preventDefault();
+    setError(initialError);
     const isValid = schedulesValidation(schedules);
-    console.log(isValid);
     if (!isValid)
       return setError({
         status: true,
         error: null,
         message: { title: 'Alguns horários não estão corretos.' },
       });
-    else setError(initialError);
     submission.current += 1;
     await updateBusinessProfile({ schedules });
   };

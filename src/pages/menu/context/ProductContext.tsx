@@ -76,10 +76,9 @@ export const ProductContextProvider = (props: ProviderProps) => {
       } else {
         await api.business().updateProduct(businessId!, productId, newProduct, data.imageFiles);
       }
-      if (data.categoryId) {
+      if (data.categoryId)
         updateProductsOrdering(menu.updateParent(productsOrdering, id, data.categoryId));
-      }
-      queryCache.invalidateQueries(['product:image', productId]);
+      if (data.imageFiles) queryCache.invalidateQueries(['product:image', productId]);
       return id;
     }
   );

@@ -10,30 +10,30 @@ import { t } from 'utils/i18n';
 interface DayScheduleProps {
   day: ScheduleObject;
   handleCheck(value: boolean): void;
+  clearDaySchedule(): void;
   onChangeValue(index: number, field: string, value: string): void;
   autoCompleteSchedules(index: number, field: string, value: string): void;
   addScheduleItem(): void;
   removeScheduleItem(itemIndex: number): void;
+  replicate(): void;
 }
 
 type MainAvailability = 'when-is-open' | 'defined';
 
-const scheduleObj = { from: '', to: '' };
-
 export const DaySchedule = ({
   day,
   handleCheck,
+  clearDaySchedule,
   onChangeValue,
   autoCompleteSchedules,
   addScheduleItem,
   removeScheduleItem,
+  replicate,
 }: DayScheduleProps) => {
   // props
   const { day: weekDay, checked, schedule } = day;
   // state
-  //const [checkedDay, setCheckedDay] = React.useState(false);
   const [availability, setAvailability] = React.useState<MainAvailability>('when-is-open');
-
   // handlers
   const inputValidation = (from: string, to: string, beforeTo?: string) => {
     if (from === '' || to === '') return true;
@@ -41,13 +41,11 @@ export const DaySchedule = ({
     if (beforeTo && beforeTo > from) return false;
     return Number(from) < Number(to);
   };
-
   // side effects
   React.useEffect(() => {
-    if (schedule[0].from !== '') setAvailability('defined');
+    if (schedule.length > 0 && schedule[0].from !== '') setAvailability('defined');
     else setAvailability('when-is-open');
-  }, []);
-
+  }, [schedule]);
   // UI
   return (
     <Flex flexDir="column" mt="8">
@@ -64,7 +62,10 @@ export const DaySchedule = ({
       {checked && (
         <RadioGroup
           mt="2"
-          onChange={(value: MainAvailability) => setAvailability(value)}
+          onChange={(value: MainAvailability) => {
+            if (value === 'when-is-open') clearDaySchedule();
+            setAvailability(value);
+          }}
           value={availability}
           defaultValue="1"
           colorScheme="green"
@@ -84,7 +85,7 @@ export const DaySchedule = ({
         <>
           {schedule.map((item, index) => {
             let beforeTo = undefined;
-            if (index === 1) beforeTo = schedule[0].to;
+            if (index > 0) beforeTo = schedule[index - 1].to;
             return (
               <Flex key={index} flexDir="row" maxW="310px">
                 <Input
@@ -136,7 +137,7 @@ export const DaySchedule = ({
               </Flex>
             );
           })}
-          {schedule.length < 2 && (
+          {schedule.length < 4 && (
             <Text
               mt="4"
               fontSize="xs"
@@ -144,12 +145,24 @@ export const DaySchedule = ({
               color="green.600"
               cursor="pointer"
               onClick={addScheduleItem}
+              _hover={{ textDecor: 'underline' }}
             >
-              {t('Adicionar horário')}
+              {t('Adicionar turno')}
             </Text>
           )}
         </>
       )}
+      <Text
+        mt="4"
+        fontSize="xs"
+        fontWeight="700"
+        color="green.600"
+        cursor="pointer"
+        onClick={replicate}
+        _hover={{ textDecor: 'underline' }}
+      >
+        {t('Replicar horário anterior')}
+      </Text>
     </Flex>
   );
 };
