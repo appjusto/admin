@@ -1,6 +1,7 @@
 import { useToast } from '@chakra-ui/toast';
 import * as Sentry from '@sentry/react';
 import { useBusinessChats } from 'app/api/business/chat/useBusinessChats';
+import { useBusinessOpenClose } from 'app/api/business/profile/useBusinessOpenClose';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useFreshDesk } from 'app/api/business/useFresdesk';
 import { OrderChatGroup } from 'app/api/chat/types';
@@ -50,6 +51,8 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   useObservePreparingOrders(business?.id);
   // freshdesk
   useFreshDesk(business?.id, business?.name, business?.phone);
+  // automatic opening and closing of the business
+  useBusinessOpenClose(business);
   //state
   const [orders, setOrders] = React.useState<WithId<Order>[]>([]);
   const [newChatMessages, setNewChatMessages] = React.useState<string[]>([]);
