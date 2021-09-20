@@ -33,6 +33,8 @@ export const useObserveInvoicesStatusByPeriod = (
     if (invoices === undefined) return;
     if (invoices === null) {
       setPeriodAmount(null);
+      setAppjustoFee(null);
+      setIuguFee(null);
       return;
     }
     const amount = invoices.reduce((total, invoice) => {
@@ -45,7 +47,6 @@ export const useObserveInvoicesStatusByPeriod = (
     setPeriodAmount(amount);
     setAppjustoFee(appjusto);
     setIuguFee(iugu);
-    console.log(invoices);
   }, [invoices]);
   // return
   return { invoices, periodAmount, appjustoFee, iuguFee };
