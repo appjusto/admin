@@ -402,6 +402,34 @@ export default class OrderApi {
     return unsubscribe;
   }
 
+  observeInvoicesStatusByPeriod(
+    businessId: string,
+    start: Date,
+    end: Date,
+    status: IuguInvoiceStatus,
+    resultHandler: (invoices: WithId<Invoice>[] | null) => void
+  ): firebase.Unsubscribe {
+    let query = this.refs
+      .getInvoicesRef()
+      .orderBy('createdOn', 'desc')
+      .where('accountId', '==', businessId)
+      .where('status', '==', status)
+      .where('createdOn', '>=', start)
+      .where('createdOn', '<=', end);
+    const unsubscribe = query.onSnapshot(
+      (querySnapshot) => {
+        if (!querySnapshot.empty) resultHandler(documentsAs<Invoice>(querySnapshot.docs));
+        else resultHandler(null);
+      },
+      (error) => {
+        console.error(error);
+        Sentry.captureException(error);
+      }
+    );
+    // returns the unsubscribe function
+    return unsubscribe;
+  }
+
   observeInvoice(
     invoiceId: string,
     resultHandler: (invoice: WithId<Invoice>) => void

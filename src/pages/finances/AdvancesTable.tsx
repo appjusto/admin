@@ -1,4 +1,4 @@
-import { Table, Tbody, Td, Tfoot, Th, Thead, Tr } from '@chakra-ui/react';
+import { Table, Tbody, Td, Tfoot, Th, Tr } from '@chakra-ui/react';
 import { AccountAdvance, WithId } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { useRouteMatch } from 'react-router-dom';
@@ -64,16 +64,14 @@ export const AdvancesTable = ({ advances }: AdvancesTableProps) => {
   // UI
   return (
     <Table mt="4" size="md" variant="simple">
-      <Thead>
-        <Tr>
-          <Th>{t('Data')}</Th>
-          <Th isNumeric>{t('Valor solicitado')}</Th>
-          <Th isNumeric>{t('Taxa de antecipação')}</Th>
-          <Th isNumeric>{t('Valor antecipado')}</Th>
-          <Th></Th>
-        </Tr>
-      </Thead>
       <Tbody>
+        <Tr fontSize="15px" lineHeight="21px" fontWeight="500">
+          <Td>{t('Data')}</Td>
+          <Td isNumeric>{t('Valor solicitado')}</Td>
+          <Td isNumeric>{t('Taxa de antecipação')}</Td>
+          <Td isNumeric>{t('Valor antecipado')}</Td>
+          <Td></Td>
+        </Tr>
         {advances !== undefined ? (
           advances !== null ? (
             advances.map((advance) => <AdvancesTableItem key={advance.id} advance={advance} />)

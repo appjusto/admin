@@ -113,7 +113,11 @@ export const CustomMonthInput = React.forwardRef<HTMLInputElement, CustomMonthIn
                 readOnly
                 {...props}
               />
-              <InputRightElement children={<CalendarIcon mt="10" />} />
+              <InputRightElement
+                onClick={open}
+                cursor="pointer"
+                children={<CalendarIcon mt="10" />}
+              />
             </InputGroup>
           </FormControl>
         </PopoverTrigger>

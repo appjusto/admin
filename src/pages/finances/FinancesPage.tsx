@@ -3,8 +3,10 @@ import { useAccountInformation } from 'app/api/business/useAccountInformation';
 import { useObserveBusinessAdvances } from 'app/api/business/useObserveBusinessAdvances';
 import { useObserveBusinessWithdraws } from 'app/api/business/useObserveBusinessWithdraws';
 import { useRequestWithdraw } from 'app/api/business/useRequestWithdraw';
+import { useObserveInvoicesStatusByPeriod } from 'app/api/order/useObserveInvoicesStatusByPeriod';
 import { FirebaseError } from 'app/api/types';
 import { useContextBusinessId } from 'app/state/business/context';
+import { IuguInvoiceStatus } from 'appjusto-types/payment/iugu';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
 import { initialError } from 'common/components/error/utils';
 import { CustomMonthInput } from 'common/components/form/input/CustomMonthInput';
@@ -24,6 +26,8 @@ import { PeriodTable } from './PeriodTable';
 import { WithdrawalsDrawer } from './WithdrawalsDrawer';
 import { WithdrawsTable } from './WithdrawsTable';
 
+const periodStatus = 'paid' as IuguInvoiceStatus;
+
 const FinancesPage = () => {
   // context
   const { path, url } = useRouteMatch();
@@ -39,6 +43,11 @@ const FinancesPage = () => {
   const [availableWithdraw, setAvailableWithdraw] = React.useState<string | null>();
   const [error, setError] = React.useState(initialError);
   // page data with filters
+  const { periodAmount, appjustoFee, iuguFee } = useObserveInvoicesStatusByPeriod(
+    businessId,
+    month,
+    periodStatus
+  );
   const advances = useObserveBusinessAdvances(businessId, month);
   const withdraws = useObserveBusinessWithdraws(businessId, month);
   // refs
@@ -122,7 +131,12 @@ const FinancesPage = () => {
           handleChange={setMonth}
         />
       </Box>
-      <PeriodTable period={`${monthName} de ${year}`} amount={15000} />
+      <PeriodTable
+        period={`${monthName} de ${year}`}
+        amount={periodAmount}
+        appjustoFee={appjustoFee}
+        iuguFee={iuguFee}
+      />
       <SectionTitle>{t('Antecipações')}</SectionTitle>
       <AdvancesTable advances={advances} />
       <SectionTitle>{t('Transferências')}</SectionTitle>

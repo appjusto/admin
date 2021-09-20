@@ -4,14 +4,17 @@ import { t } from 'utils/i18n';
 
 interface PeriodTableProps {
   period: string;
-  amount?: number;
+  amount?: number | null;
+  appjustoFee?: number | null;
+  iuguFee?: number | null;
 }
 
-export const PeriodTable = ({ period, amount }: PeriodTableProps) => {
+export const PeriodTable = ({ period, amount, appjustoFee, iuguFee }: PeriodTableProps) => {
   // helpers
-  const appjustoFee = amount ? amount * 0.05 : 0;
-  const iuguFee = amount ? amount * 0.025 : 0;
-  const total = amount ? amount - (appjustoFee + iuguFee) : 0;
+  const getResult = () => {
+    if (!amount || !appjustoFee || !iuguFee) return 0;
+    return amount - appjustoFee - iuguFee;
+  };
   // UI
   return (
     <Table mt="6" size="md" variant="simple">
@@ -22,15 +25,24 @@ export const PeriodTable = ({ period, amount }: PeriodTableProps) => {
               <Td>{t('Faturado no período')}</Td>
               <Td isNumeric>{formatCurrency(amount)}</Td>
             </Tr>
-            <Tr fontSize="xs" fontWeight="500" color="red">
-              <Td>{t('Taxas - AppJusto (5%)')}</Td>
-              <Td isNumeric>- {formatCurrency(appjustoFee)}</Td>
+            <Tr fontSize="xs" fontWeight="500">
+              <Td color="black">{t('Taxas - AppJusto (5%)')}</Td>
+              <Td color="red" isNumeric>
+                {appjustoFee ? `- ${formatCurrency(appjustoFee)}` : 'N/E'}
+              </Td>
             </Tr>
-            <Tr fontSize="xs" fontWeight="500" color="red">
-              <Td>{t('Taxas - Iugu (X%)')}</Td>
-              <Td isNumeric>- {formatCurrency(iuguFee)}</Td>
+            <Tr fontSize="xs" fontWeight="500">
+              <Td color="black">{t('Taxas - Iugu (2,21% + R$0,09)')}</Td>
+              <Td color="red" isNumeric>
+                {iuguFee ? `- ${formatCurrency(iuguFee)}` : 'N/E'}
+              </Td>
             </Tr>
           </>
+        ) : amount === null ? (
+          <Tr color="black" fontSize="xs" fontWeight="700">
+            <Td>{t('Não há dados para o período informado')}</Td>
+            <Td></Td>
+          </Tr>
         ) : (
           <Tr color="black" fontSize="xs" fontWeight="700">
             <Td>{t('Carregando...')}</Td>
@@ -42,7 +54,7 @@ export const PeriodTable = ({ period, amount }: PeriodTableProps) => {
         <Tr>
           <Th>{t(`Resultado para ${period}`)}</Th>
           <Th color="green.700" isNumeric>
-            {formatCurrency(total)}
+            {formatCurrency(getResult())}
           </Th>
         </Tr>
       </Tfoot>

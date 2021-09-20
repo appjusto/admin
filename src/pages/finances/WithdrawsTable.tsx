@@ -1,4 +1,4 @@
-import { Table, Tbody, Td, Tfoot, Th, Thead, Tr } from '@chakra-ui/react';
+import { Table, Tbody, Td, Tfoot, Th, Tr } from '@chakra-ui/react';
 import { AccountWithdraw, WithId } from 'appjusto-types';
 import { formatCurrency } from 'utils/formatters';
 import { getDateAndHour } from 'utils/functions';
@@ -41,14 +41,14 @@ export const WithdrawsTable = ({ withdraws }: WithdrawsTableProps) => {
   // UI
   return (
     <Table mt="4" size="md" variant="simple">
-      <Thead>
-        <Tr>
-          <Th>{t('Data')}</Th>
-          <Th isNumeric>{t('Valor da transferência')}</Th>
-          <Th>{t('Status')}</Th>
-        </Tr>
-      </Thead>
       <Tbody>
+        <Tr fontSize="15px" lineHeight="21px" fontWeight="500">
+          <Td w="160px">{t('Data')}</Td>
+          <Td w="200px" isNumeric>
+            {t('Valor da transferência')}
+          </Td>
+          <Td>{t('Status')}</Td>
+        </Tr>
         {withdraws !== undefined ? (
           withdraws !== null ? (
             withdraws.map((withdraw) => (
