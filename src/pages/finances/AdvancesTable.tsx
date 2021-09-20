@@ -77,7 +77,7 @@ export const AdvancesTable = ({ advances }: AdvancesTableProps) => {
             advances.map((advance) => <AdvancesTableItem key={advance.id} advance={advance} />)
           ) : (
             <Tr color="black" fontSize="xs" fontWeight="700">
-              <Td>{t('Sem resultados para o mês informado')}</Td>
+              <Td>{t('Sem resultados para o período informado')}</Td>
               <Td isNumeric></Td>
               <Td isNumeric></Td>
               <Td isNumeric></Td>

@@ -56,7 +56,7 @@ export const WithdrawsTable = ({ withdraws }: WithdrawsTableProps) => {
             ))
           ) : (
             <Tr color="black" fontSize="xs" fontWeight="700">
-              <Td>{t('Sem resultados para o mês informado')}</Td>
+              <Td w="300px">{t('Sem resultados para o período informado')}</Td>
               <Td isNumeric></Td>
               <Td></Td>
             </Tr>
