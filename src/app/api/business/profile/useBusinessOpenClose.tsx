@@ -39,7 +39,7 @@ export const useBusinessOpenClose = (business?: WithId<Business> | null) => {
       } else if (!shouldBeOpen && business?.status === 'open') {
         updateBusinessProfile({ status: 'closed' });
       }
-    }, 15000);
+    }, 5000);
     return () => clearInterval(openCloseInterval);
   }, [
     isBackofficeUser,
