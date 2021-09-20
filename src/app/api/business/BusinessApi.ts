@@ -11,6 +11,14 @@ import {
   Product,
   WithId,
   CloneBusinessPayload,
+  RequestWithdrawPayload,
+  FetchReceivablesPayload,
+  FetchAdvanceSimulationPayload,
+  AdvanceReceivablesPayload,
+  FetchAccountInformationResponse,
+  FetchAccountInformationPayload,
+  AccountAdvance,
+  AccountWithdraw,
 } from 'appjusto-types';
 import { Complement, ComplementGroup, Ordering } from 'appjusto-types';
 import firebase from 'firebase/app';
@@ -19,6 +27,10 @@ import FilesApi from '../FilesApi';
 import FirebaseRefs from '../FirebaseRefs';
 import { BusinessChatMessage } from './chat/useBusinessChats';
 import * as Sentry from '@sentry/react';
+import {
+  IuguMarketplaceAccountAdvanceSimulation,
+  IuguMarketplaceAccountReceivables,
+} from 'appjusto-types/payment/iugu';
 
 export default class BusinessApi {
   constructor(private refs: FirebaseRefs, private files: FilesApi) {}
@@ -70,6 +82,54 @@ export default class BusinessApi {
     const unsubscribe = this.refs.getBusinessRef(businessId).onSnapshot(
       (doc) => {
         if (doc.exists) resultHandler(documentAs<Business>(doc));
+        else resultHandler(null);
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+    return unsubscribe;
+  }
+
+  observeBusinessAdvances(
+    businessId: string,
+    start: Date,
+    end: Date,
+    resultHandler: (result: WithId<AccountAdvance>[] | null) => void
+  ): firebase.Unsubscribe {
+    const query = this.refs
+      .getAdvancesRef()
+      .orderBy('createdOn', 'desc')
+      .where('accountId', '==', businessId)
+      .where('createdOn', '>=', start)
+      .where('createdOn', '<=', end);
+    const unsubscribe = query.onSnapshot(
+      (data) => {
+        if (!data.empty) resultHandler(documentsAs<AccountAdvance>(data.docs));
+        else resultHandler(null);
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+    return unsubscribe;
+  }
+
+  observeBusinessWithdraws(
+    businessId: string,
+    start: Date,
+    end: Date,
+    resultHandler: (result: WithId<AccountWithdraw>[] | null) => void
+  ): firebase.Unsubscribe {
+    const query = this.refs
+      .getWithdrawsRef()
+      .orderBy('createdOn', 'desc')
+      .where('accountId', '==', businessId)
+      .where('createdOn', '>=', start)
+      .where('createdOn', '<=', end);
+    const unsubscribe = query.onSnapshot(
+      (data) => {
+        if (!data.empty) resultHandler(documentsAs<AccountWithdraw>(data.docs));
         else resultHandler(null);
       },
       (error) => {
@@ -678,5 +738,52 @@ export default class BusinessApi {
     } catch (error) {
       throw new Error(`uploadComplementPhotoError: ${error}`);
     }
+  }
+  // Advances and withdrawls
+  async fetchAccountInformation(accountId: string): Promise<FetchAccountInformationResponse> {
+    const payload: FetchAccountInformationPayload = {
+      accountType: 'business',
+      accountId,
+      meta: { version: '1' }, // TODO: pass correct version on
+    };
+    return (await this.refs.getFetchAccountInformationCallable()(payload)).data;
+  }
+  async requestWithdraw(accountId: string, amount: number): Promise<any> {
+    const payload: RequestWithdrawPayload = {
+      accountType: 'business',
+      accountId,
+      amount,
+      meta: { version: '1' }, // TODO: pass correct version on
+    };
+    return (await this.refs.getRequestWithdrawCallable()(payload)).data;
+  }
+  async fetchReceivables(accountId: string): Promise<IuguMarketplaceAccountReceivables> {
+    const payload: FetchReceivablesPayload = {
+      accountType: 'business',
+      accountId,
+      meta: { version: '1' }, // TODO: pass correct version on
+    };
+    return (await this.refs.getFetchReceivablesCallable()(payload)).data;
+  }
+  async fetchAdvanceSimulation(
+    accountId: string,
+    ids: number[]
+  ): Promise<IuguMarketplaceAccountAdvanceSimulation> {
+    const payload: FetchAdvanceSimulationPayload = {
+      accountType: 'business',
+      accountId,
+      ids,
+      meta: { version: '1' }, // TODO: pass correct version on
+    };
+    return (await this.refs.getFetchAdvanceSimulationCallable()(payload)).data;
+  }
+  async advanceReceivables(accountId: string, ids: number[]): Promise<any> {
+    const payload: AdvanceReceivablesPayload = {
+      accountType: 'business',
+      accountId,
+      ids,
+      meta: { version: '1' }, // TODO: pass correct version on
+    };
+    return (await this.refs.getAdvanceReceivablesCallable()(payload)).data;
   }
 }
