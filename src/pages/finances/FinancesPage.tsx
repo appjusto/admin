@@ -1,4 +1,4 @@
-import { Box, Flex, Stack, Text } from '@chakra-ui/react';
+import { Box, Stack } from '@chakra-ui/react';
 import { useAccountInformation } from 'app/api/business/useAccountInformation';
 import { useObserveBusinessAdvances } from 'app/api/business/useObserveBusinessAdvances';
 import { useObserveBusinessWithdraws } from 'app/api/business/useObserveBusinessWithdraws';
@@ -20,6 +20,7 @@ import { t } from 'utils/i18n';
 import { AdvanceDetailsDrawer } from './AdvanceDetailsDrawer';
 import { AdvancesTable } from './AdvancesTable';
 import { BasicInfoBox } from './BasicInfoBox';
+import { PeriodTable } from './PeriodTable';
 import { WithdrawalsDrawer } from './WithdrawalsDrawer';
 import { WithdrawsTable } from './WithdrawsTable';
 
@@ -112,10 +113,8 @@ const FinancesPage = () => {
           btnLink={`${url}/withdrawals`}
         />
       </Stack>
-      <Box mt="8" w={{ base: '100%', md: '200px' }}>
-        <Text fontSize="sm" lineHeight="21px" color="black">
-          {t('Mês vigente:')}
-        </Text>
+      <SectionTitle>{t('Período')}</SectionTitle>
+      <Box w={{ base: '100%', md: '200px' }}>
         <CustomMonthInput
           id="month"
           label={t('Mês selecionado')}
@@ -123,39 +122,7 @@ const FinancesPage = () => {
           handleChange={setMonth}
         />
       </Box>
-      <Flex flexDir={{ base: 'column', md: 'row' }} justifyContent="space-between">
-        <Box mt="8">
-          <Text fontSize="sm" lineHeight="21px" color="black">
-            {t(`Veja os valores e taxa aplicadas em ${monthName} de ${year}:`)}
-          </Text>
-          <Stack mt="4" direction={{ base: 'column', md: 'row' }} spacing={3}>
-            <Box w="220px" h="132px" py="4" px="6" border="1px solid #F6F6F6" borderRadius="lg">
-              <Text fontSize="sm" lineHeight="21px">
-                {t('Faturado')}
-              </Text>
-              <Text mt="1" fontSize="2xl" lineHeight="30px">
-                R$ 0,00
-              </Text>
-            </Box>
-            <Box w="220px" h="132px" py="4" px="6" border="1px solid #F6F6F6" borderRadius="lg">
-              <Text fontSize="sm" lineHeight="21px">
-                {t('Taxas')}
-              </Text>
-              <Text mt="1" fontSize="2xl" lineHeight="30px">
-                -R$ 0,00
-              </Text>
-            </Box>
-            <Box w="220px" h="132px" py="4" px="6" border="1px solid #6CE787" borderRadius="lg">
-              <Text fontSize="sm" lineHeight="21px">
-                {t('Resultado')}
-              </Text>
-              <Text mt="1" fontSize="2xl" lineHeight="30px">
-                R$ 0,00
-              </Text>
-            </Box>
-          </Stack>
-        </Box>
-      </Flex>
+      <PeriodTable period={`${monthName} de ${year}`} amount={15000} />
       <SectionTitle>{t('Antecipações')}</SectionTitle>
       <AdvancesTable advances={advances} />
       <SectionTitle>{t('Transferências')}</SectionTitle>

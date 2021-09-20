@@ -1,11 +1,13 @@
-import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
+import { CalendarIcon, ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import {
   Box,
   FormControl,
   FormLabel,
   HStack,
   Input,
+  InputGroup,
   InputProps,
+  InputRightElement,
   Popover,
   PopoverArrow,
   PopoverBody,
@@ -102,14 +104,17 @@ export const CustomMonthInput = React.forwardRef<HTMLInputElement, CustomMonthIn
         <PopoverTrigger>
           <FormControl id={id} sx={styles.control} {...controlProps}>
             {label && <FormLabel sx={styles.label}>{label}</FormLabel>}
-            <Input
-              ref={ref}
-              value={valueStr}
-              sx={styles.input}
-              onClick={open}
-              readOnly
-              {...props}
-            />
+            <InputGroup>
+              <Input
+                ref={ref}
+                value={valueStr}
+                sx={styles.input}
+                onClick={open}
+                readOnly
+                {...props}
+              />
+              <InputRightElement children={<CalendarIcon mt="10" />} />
+            </InputGroup>
           </FormControl>
         </PopoverTrigger>
         <PopoverContent borderColor="gray.200" _focus={{ outline: 'none' }}>

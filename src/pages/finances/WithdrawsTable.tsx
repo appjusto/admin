@@ -3,6 +3,7 @@ import { AccountWithdraw, WithId } from 'appjusto-types';
 import { formatCurrency } from 'utils/formatters';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
+import { formatCents } from './utils';
 
 const withdrawStatusPTOptions = {
   pending: 'Pendente',
@@ -32,15 +33,6 @@ interface WithdrawsTableProps {
 
 export const WithdrawsTable = ({ withdraws }: WithdrawsTableProps) => {
   // helpers
-  const formatCents = (value: string) => {
-    let result = 0;
-    if (value.includes('R$')) {
-      result = parseFloat(value.split(' ')[1].replace(',', '.')) * 100;
-    } else {
-      result = parseFloat(value.split(' ')[0].replace(',', '.')) * 100;
-    }
-    return result;
-  };
   const total =
     withdraws?.reduce<number>((result, item) => {
       const value = formatCents(item.amount);
