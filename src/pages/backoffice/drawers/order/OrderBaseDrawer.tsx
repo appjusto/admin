@@ -82,6 +82,14 @@ export const OrderBaseDrawer = ({
                 {orderStatus ? orderStatusPTOptions[orderStatus] : 'N/E'}
               </Text>
             </Text>
+            {order?.issue && (
+              <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+                {t('Motivo da recusa:')}{' '}
+                <Text as="span" fontWeight="500">
+                  {order.issue}
+                </Text>
+              </Text>
+            )}
             {/*<Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
               {t('Agente responsável:')}{' '}
               <Text as="span" fontWeight="500">
