@@ -172,7 +172,7 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
             ' a conta precisa estar no seu nome ou da sua MEI ou empresa. Se seu CNPJ for de MEI, você pode cadastrar sua conta Pessoa Física. Caso contrário, você precisará cadastrar uma conta corrente no nome da sua Pessoa Jurídica.'
           )}
         </Text>
-        <Text mt="4" mb="2" color="black" fontWeight="700">
+        <Text mt="6" mb="2" color="black" fontWeight="700">
           {t('Personalidade da conta:')}
         </Text>
         <RadioGroup
@@ -199,34 +199,17 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
             </Radio>
           </HStack>
         </RadioGroup>
-        <Text mt="4" mb="2" color="black" fontWeight="700">
-          {t('Tipo de conta:')}
-        </Text>
-        <RadioGroup
-          onChange={(value) => setType(value as BankAccountType)}
-          value={type}
-          defaultValue="1"
-          colorScheme="green"
-          color="black"
-          fontSize="15px"
-          lineHeight="21px"
-        >
-          <HStack
-            alignItems="flex-start"
-            color="black"
-            spacing={8}
-            fontSize="16px"
-            lineHeight="22px"
-          >
-            <Radio isDisabled={disabled} value="Corrente">
-              {t('Corrente')}
-            </Radio>
-            <Radio isDisabled={disabled} value="Poupança">
-              {t('Poupança')}
-            </Radio>
-          </HStack>
-        </RadioGroup>
+        {business?.situation !== 'approved' && personType === 'Pessoa Física' && (
+          <AlertWarning
+            title={t('Tem certeza que a sua conta bancária é de Pessoa Física?')}
+            description={t(
+              'Essa informação é muito importante para que as transferências sejam feitas corretamente. Só escolha Pessoa Física caso tenha certeza que sua conta bancária está configurada dessa forma.'
+            )}
+            icon={false}
+          />
+        )}
         <BankSelect
+          mt="6"
           ref={nameRef}
           isDisabled={disabled}
           value={name}
@@ -288,6 +271,33 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
             }}
           />
         </Flex>
+        <Text mt="6" mb="2" color="black" fontWeight="700">
+          {t('Tipo de conta:')}
+        </Text>
+        <RadioGroup
+          onChange={(value) => setType(value as BankAccountType)}
+          value={type}
+          defaultValue="1"
+          colorScheme="green"
+          color="black"
+          fontSize="15px"
+          lineHeight="21px"
+        >
+          <HStack
+            alignItems="flex-start"
+            color="black"
+            spacing={8}
+            fontSize="16px"
+            lineHeight="22px"
+          >
+            <Radio isDisabled={disabled} value="Corrente">
+              {t('Corrente')}
+            </Radio>
+            <Radio isDisabled={disabled} value="Poupança">
+              {t('Poupança')}
+            </Radio>
+          </HStack>
+        </RadioGroup>
         <PageFooter
           onboarding={onboarding}
           redirect={redirect}
