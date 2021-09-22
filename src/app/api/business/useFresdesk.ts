@@ -36,14 +36,14 @@ export const useFreshDesk = (businessId?: string, businessName?: string, phone?:
           phone: phone,
         });
       } catch (error) {
-        Sentry.captureException('Freshdesk widget initial error', error);
+        Sentry.captureException(error);
       }
     } else {
       try {
         //@ts-ignore
         window.fcWidget.destroy();
       } catch (error) {
-        Sentry.captureException('Freshdesk widget destroy error', error);
+        Sentry.captureException(error);
       }
     }
   }, [path, isBackofficeUser, businessId, businessName, user?.email, phone]);

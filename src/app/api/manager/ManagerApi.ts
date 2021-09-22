@@ -82,7 +82,7 @@ export default class ManagerApi {
       resultHandler(users.data);
     } catch (error) {
       //@ts-ignore
-      Sentry.captureException('createManagerError', error);
+      Sentry.captureException(error);
       return null;
     }
   }
@@ -113,7 +113,7 @@ export default class ManagerApi {
       await this.refs.getCreateManagerCallable()(payload);
       return true;
     } catch (error) {
-      Sentry.captureException('createManagerError', error);
+      Sentry.captureException(error);
       return false;
     }
   }

@@ -92,7 +92,7 @@ export default class AuthApi {
     try {
       await user.updatePassword(password);
     } catch (error) {
-      Sentry.captureException('updateUsersPassword', error);
+      Sentry.captureException(error);
       throw error;
     }
   }

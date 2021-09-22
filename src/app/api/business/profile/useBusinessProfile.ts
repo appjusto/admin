@@ -58,7 +58,7 @@ export const useBusinessProfile = () => {
     try {
       api.business().sendBusinessKeepAlive(businessId!);
     } catch (error) {
-      Sentry.captureException('sendBusinessKeepAliveError', error);
+      Sentry.captureException(error);
     }
   }, [api, businessId]);
   const [updateBusinessSlug, updateSlugResult] = useMutation(

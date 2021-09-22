@@ -85,9 +85,9 @@ const FinancesPage = () => {
     setDateTime(`${date} às ${time}`);
   }, []);
   React.useEffect(() => {
-    if (!accountInformation) return;
-    setAvailableReceivable(accountInformation.receivable_balance ?? null);
-    setAvailableWithdraw(accountInformation.balance_available_for_withdraw ?? null);
+    if (accountInformation === undefined) return;
+    setAvailableReceivable(accountInformation?.receivable_balance ?? null);
+    setAvailableWithdraw(accountInformation?.balance_available_for_withdraw ?? null);
   }, [accountInformation]);
   React.useEffect(() => {
     if (isError) {

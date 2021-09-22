@@ -79,7 +79,7 @@ export const LineChart = ({ currentWeekData, lastWeekData, ...props }: LineChart
       });
       return () => myChart.destroy();
     } catch (error) {
-      Sentry.captureException('Admin dashboard LineChart error', error);
+      Sentry.captureException({ name: 'Admin dashboard LineChart error', error });
       setIsError(true);
     }
   }, [chartLabels, currentWeekData, lastWeekData]);

@@ -79,7 +79,6 @@ export class OnboardingErrorBoundary extends React.Component {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    // Você também pode registrar o erro em um serviço de relatórios de erro
     Sentry.captureException({ error, errorInfo });
   }
 

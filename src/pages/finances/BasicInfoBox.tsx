@@ -42,7 +42,7 @@ export const BasicInfoBox = ({
         <Skeleton mt="1" height="30px" colorScheme="#9AA49C" />
       ) : value === null ? (
         <Text mt="2" fontSize="36px" fontWeight="500" lineHeight="30px">
-          'N/E'
+          R$ 0,00
         </Text>
       ) : (
         <Text mt="2" fontSize="36px" fontWeight="500" lineHeight="30px">
@@ -58,6 +58,7 @@ export const BasicInfoBox = ({
           link={btnLink}
           label={btnLabel}
           variant={btnVariant}
+          isDisabled={!value}
           //onClick={btnFunction}
         />
       )}
@@ -70,6 +71,7 @@ export const BasicInfoBox = ({
           onClick={btnFunction}
           isLoading={isLoading}
           loadingText={btnLabel}
+          isDisabled={!value}
         >
           {btnLabel}
         </Button>

@@ -481,7 +481,7 @@ export default class OrderApi {
     try {
       await this.refs.getCancelOrderCallable()(payload);
     } catch (error) {
-      Sentry.captureException('createManagerError', error);
+      Sentry.captureException(error);
     }
   }
 
