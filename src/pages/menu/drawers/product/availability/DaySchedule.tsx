@@ -40,8 +40,12 @@ export const DaySchedule = ({
   const inputValidation = (from: string, to: string, beforeTo?: string) => {
     if (from === '' || to === '') return true;
     if (from.length < 4 || to.length < 4) return true;
-    if (beforeTo && beforeTo > from) return false;
+    if (beforeTo && beforeTo >= from) return false;
     return Number(from) < Number(to);
+  };
+  const handleAvailability = (value: MainAvailability) => {
+    setAvailability(value);
+    if (value === 'when-is-open') clearDaySchedule();
   };
   // side effects
   React.useEffect(() => {
@@ -64,12 +68,9 @@ export const DaySchedule = ({
       {checked && (
         <RadioGroup
           mt="2"
-          onChange={(value: MainAvailability) => {
-            if (value === 'when-is-open') clearDaySchedule();
-            setAvailability(value);
-          }}
+          onChange={handleAvailability}
           value={availability}
-          defaultValue="1"
+          defaultValue="when-is-open"
           colorScheme="green"
           color="black"
         >

@@ -13,13 +13,23 @@ type Availability = 'always' | 'defined';
 const scheduleObj = { from: '', to: '' };
 
 const initialState = [
-  { day: 'Segunda', checked: false, schedule: [] },
-  { day: 'Terça', checked: false, schedule: [] },
-  { day: 'Quarta', checked: false, schedule: [] },
-  { day: 'Quinta', checked: false, schedule: [] },
-  { day: 'Sexta', checked: false, schedule: [] },
-  { day: 'Sábado', checked: false, schedule: [] },
-  { day: 'Domingo', checked: false, schedule: [] },
+  { day: 'Segunda', checked: true, schedule: [{ from: '', to: '' }] },
+  { day: 'Terça', checked: true, schedule: [{ from: '', to: '' }] },
+  { day: 'Quarta', checked: true, schedule: [{ from: '', to: '' }] },
+  { day: 'Quinta', checked: true, schedule: [{ from: '', to: '' }] },
+  { day: 'Sexta', checked: true, schedule: [{ from: '', to: '' }] },
+  { day: 'Sábado', checked: true, schedule: [{ from: '', to: '' }] },
+  { day: 'Domingo', checked: true, schedule: [{ from: '', to: '' }] },
+] as BusinessSchedule;
+
+const alwaysState = [
+  { day: 'Segunda', checked: true, schedule: [] },
+  { day: 'Terça', checked: true, schedule: [] },
+  { day: 'Quarta', checked: true, schedule: [] },
+  { day: 'Quinta', checked: true, schedule: [] },
+  { day: 'Sexta', checked: true, schedule: [] },
+  { day: 'Sábado', checked: true, schedule: [] },
+  { day: 'Domingo', checked: true, schedule: [] },
 ] as BusinessSchedule;
 
 export const ProductAvailability = () => {
@@ -38,7 +48,7 @@ export const ProductAvailability = () => {
     setSchedules((prevSchedule) => {
       const newState = prevSchedule.map((item, index) => {
         if (index === stateIndex) {
-          return { ...item, checked: value, schedule: [scheduleObj] };
+          return { ...item, checked: value };
         } else {
           return item;
         }
@@ -50,7 +60,7 @@ export const ProductAvailability = () => {
     setSchedules((prevSchedule) => {
       const newState = prevSchedule.map((item, index) => {
         if (index === stateIndex) {
-          return { ...item, schedule: [] };
+          return { ...item, schedule: [scheduleObj] };
         } else {
           return item;
         }
@@ -158,8 +168,8 @@ export const ProductAvailability = () => {
     schedules.forEach((scheduleObject) => {
       scheduleObject.schedule.forEach((item, index) => {
         if (item.from !== '' && item.to !== '') {
-          if (Number(item.from) > Number(item.to)) result = false;
-          if (index > 0 && Number(item.from) < Number(scheduleObject.schedule[index - 1].to))
+          if (Number(item.from) >= Number(item.to)) result = false;
+          if (index > 0 && Number(item.from) <= Number(scheduleObject.schedule[index - 1].to))
             result = false;
         }
       });
@@ -170,7 +180,8 @@ export const ProductAvailability = () => {
     submission.current += 1;
     setError(initialError);
     if (mainAvailability === 'always') {
-      return updateProduct({ changes: { availability: initialState } });
+      setSchedules(initialState);
+      return updateProduct({ changes: { availability: alwaysState } });
     }
     const isValid = schedulesValidation(schedules);
     if (!isValid)
@@ -188,9 +199,19 @@ export const ProductAvailability = () => {
   // side effects
   React.useEffect(() => {
     if (!product?.availability) return;
-    if (product.availability.find((item) => item.checked) === undefined) return;
+    if (
+      product.availability.find((item) => !item.checked) === undefined &&
+      product.availability.find((item) => item.schedule.length > 0) === undefined
+    ) {
+      setMainAvailability('always');
+      return;
+    }
+    const initialAvailability = product.availability.map((item) => {
+      if (item.schedule.length === 0) return { ...item, schedule: [scheduleObj] };
+      else return item;
+    });
     setMainAvailability('defined');
-    setSchedules(product?.availability);
+    setSchedules(initialAvailability);
   }, [product?.availability]);
   React.useEffect(() => {
     if (isError) {
