@@ -108,6 +108,7 @@ const FinancesPage = () => {
           label={t('Disponível para saque')}
           icon={Checked}
           value={availableWithdraw}
+          valueLimit={500}
           btnLabel={t('Transferir para conta pessoal')}
           btnFunction={handleWithdrawRequest}
           btnWarning={t('Valor mínimo de R$ 5,00 para transferência')}

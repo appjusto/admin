@@ -1,10 +1,12 @@
 import { As, Box, BoxProps, Button, Icon, Skeleton, Text } from '@chakra-ui/react';
 import { CustomButton } from 'common/components/buttons/CustomButton';
+import { formatCents } from './utils';
 
 interface BasicInfoBoxProps extends BoxProps {
   label: string;
   icon: As<any> | undefined;
   value?: string | null;
+  valueLimit?: number;
   btnLabel?: string;
   btnVariant?: string;
   btnLink?: string;
@@ -17,6 +19,7 @@ export const BasicInfoBox = ({
   label,
   icon,
   value,
+  valueLimit = 0,
   btnLabel,
   btnVariant,
   btnLink,
@@ -25,6 +28,9 @@ export const BasicInfoBox = ({
   btnWarning,
   ...props
 }: BasicInfoBoxProps) => {
+  // helpers
+  const btnIsAvailable = value && formatCents(value) > valueLimit ? true : false;
+  // UI
   return (
     <Box
       w={{ lg: '328px' }}
@@ -58,7 +64,7 @@ export const BasicInfoBox = ({
           link={btnLink}
           label={btnLabel}
           variant={btnVariant}
-          isDisabled={!value}
+          isDisabled={!btnIsAvailable}
           //onClick={btnFunction}
         />
       )}
@@ -71,7 +77,7 @@ export const BasicInfoBox = ({
           onClick={btnFunction}
           isLoading={isLoading}
           loadingText={btnLabel}
-          isDisabled={!value}
+          isDisabled={!btnIsAvailable}
         >
           {btnLabel}
         </Button>
