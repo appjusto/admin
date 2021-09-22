@@ -20,10 +20,10 @@ import { convertBalance, getMonthName } from 'utils/formatters';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { AdvanceDetailsDrawer } from './AdvanceDetailsDrawer';
+import { AdvancesDrawer } from './AdvancesDrawer';
 import { AdvancesTable } from './AdvancesTable';
 import { BasicInfoBox } from './BasicInfoBox';
 import { PeriodTable } from './PeriodTable';
-import { WithdrawalsDrawer } from './WithdrawalsDrawer';
 import { WithdrawsTable } from './WithdrawsTable';
 
 const periodStatus = 'paid' as IuguInvoiceStatus;
@@ -151,7 +151,7 @@ const FinancesPage = () => {
       />
       <Switch>
         <Route path={`${path}/withdrawals`}>
-          <WithdrawalsDrawer isOpen onClose={closeDrawerHandler} />
+          <AdvancesDrawer isOpen onClose={closeDrawerHandler} />
         </Route>
         <Route path={`${path}/:advanceId`}>
           <AdvanceDetailsDrawer

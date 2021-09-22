@@ -1,6 +1,6 @@
 import { As, Box, BoxProps, Button, Icon, Skeleton, Text } from '@chakra-ui/react';
 import { CustomButton } from 'common/components/buttons/CustomButton';
-import { formatCents } from './utils';
+import { formatCents, formatIuguValueToDisplay } from './utils';
 
 interface BasicInfoBoxProps extends BoxProps {
   label: string;
@@ -52,7 +52,7 @@ export const BasicInfoBox = ({
         </Text>
       ) : (
         <Text mt="2" fontSize="36px" fontWeight="500" lineHeight="30px">
-          {value}
+          {formatIuguValueToDisplay(value)}
         </Text>
       )}
       {btnLabel && btnLink && (

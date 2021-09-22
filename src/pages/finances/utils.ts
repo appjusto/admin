@@ -7,3 +7,11 @@ export const formatCents = (value: string) => {
   }
   return result;
 };
+
+export const formatIuguValueToDisplay = (value: string) => {
+  if (value.includes('R$')) return value;
+  else {
+    let result = value.split(' ')[0].replace('.', ',');
+    return `R$ ${result}`;
+  }
+};

@@ -13,13 +13,14 @@ import { formatCurrency } from 'utils/formatters';
 import { t } from 'utils/i18n';
 import { BasicInfoBox } from './BasicInfoBox';
 import { FinancesBaseDrawer } from './FinancesBaseDrawer';
+import { formatIuguValueToDisplay } from './utils';
 
 interface WithdrawalsDrawerProps {
   isOpen: boolean;
   onClose(): void;
 }
 
-export const WithdrawalsDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps) => {
+export const AdvancesDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps) => {
   // context
   const businessId = useContextBusinessId();
   const { receivables } = useReceivables(businessId);
@@ -42,7 +43,6 @@ export const WithdrawalsDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps)
   const submission = React.useRef(0);
   const acceptCheckBoxRef = React.useRef<HTMLInputElement>(null);
   // handlers
-  // handlers
   const handleReceivablesRequest = async () => {
     setError(initialError);
     submission.current += 1;
@@ -64,7 +64,6 @@ export const WithdrawalsDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps)
     // for withdraws
     //let amount = convertBalance(receivedValue);
     const ids = selected.map((id) => parseInt(id));
-    console.log('ids', ids);
     await advanceReceivables(ids);
   };
   // side effects
@@ -124,7 +123,11 @@ export const WithdrawalsDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps)
               {t('Antecipação realizada com sucesso!')}
             </Text>
             <Text mt="1" fontSize="18px" fontWeight="500" lineHeight="26px">
-              {t('Em até 1 dia útil o valor de R$ 000,00 estará disponível para saque.')}
+              {t(
+                `Em até 1 dia útil o valor de ${formatIuguValueToDisplay(
+                  receivedValue!
+                )} estará disponível para saque.`
+              )}
             </Text>
           </Box>
         </Flex>
@@ -164,7 +167,7 @@ export const WithdrawalsDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps)
               'N/E'
             ) : (
               <Text fontSize="24px" fontWeight="500" lineHeight="30px" color="green.700">
-                + {advancedValue}
+                + {formatIuguValueToDisplay(advancedValue)}
               </Text>
             )}
           </Box>
@@ -178,7 +181,7 @@ export const WithdrawalsDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps)
               'N/E'
             ) : (
               <Text fontSize="24px" fontWeight="500" lineHeight="30px" color="red">
-                - {advanceFee}
+                - {formatIuguValueToDisplay(advanceFee)}
               </Text>
             )}
           </Box>
@@ -234,7 +237,7 @@ export const WithdrawalsDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps)
                   <Checkbox size="lg" value={item.id.toString()} borderColor="black">
                     <Box ml="4">
                       <Text fontSize="15px" fontWeight="500" lineHeight="21px" color="black">
-                        {item.total}
+                        {formatIuguValueToDisplay(item.total)}
                       </Text>
                       <Text mt="2" fontSize="15px" fontWeight="500" lineHeight="21px">
                         {item.scheduled_date}
