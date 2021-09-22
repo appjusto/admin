@@ -188,7 +188,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
             message={{
               title: 'Seu restaurante está fechado.',
               description:
-                'Para começar a receber pedidos é preciso ir até o "gerenciador de pedidos" e mudar o status do restaurante para "aberto".',
+                'Seu restaurante foi fechado de acordo com o horário de funcionamento definido. Para começar a receber pedidos ajuste estas configuração na tela de "Horários".',
             }}
           />
         ),
