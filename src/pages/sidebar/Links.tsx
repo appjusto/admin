@@ -24,7 +24,6 @@ interface ProtectedLinksProps {
 
 const ProtectedLinks = ({ isApproved }: ProtectedLinksProps) => {
   // context
-  const isDev = process.env.REACT_APP_ENVIRONMENT === 'dev';
   const { url } = useRouteMatch();
   // UI
   return (
@@ -42,11 +41,7 @@ const ProtectedLinks = ({ isApproved }: ProtectedLinksProps) => {
         <LinkItem to={`${url}/business-schedules`} label={t('Horários')} />
         <LinkItem to={`${url}/delivery-area`} label={t('Área de entrega')} />
         <LinkItem to={`${url}/orders-history`} label={t('Histórico de pedidos')} />
-        {isDev ? (
-          <LinkItem to={`${url}/finances`} label={t('Financeiro')} />
-        ) : (
-          <DisabledLink label={t('Financeiro')} />
-        )}
+        <LinkItem to={`${url}/finances`} label={t('Financeiro')} />
         <LinkItem to={`${url}/business-profile`} label={t('Perfil do restaurante')} />
         <LinkItem to={`${url}/team`} label={t('Colaboradores')} />
       </Box>
