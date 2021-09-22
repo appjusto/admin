@@ -13,6 +13,8 @@ export const useBusinessOpenClose = (business?: WithId<Business> | null) => {
   const { isBackofficeUser } = useContextFirebaseUser();
   const { updateBusinessProfile } = useBusinessProfile();
   const checkBusinessStatus = React.useCallback(() => {
+    if (business?.situation !== 'approved') return;
+    if (!business?.enabled) return;
     if (!business?.schedules) return;
     const today = new Date();
     const dayIndex = today.getDay() - 1;
@@ -35,16 +37,29 @@ export const useBusinessOpenClose = (business?: WithId<Business> | null) => {
     } else if (!shouldBeOpen && business?.status === 'open') {
       updateBusinessProfile({ status: 'closed' });
     }
-  }, [business?.schedules, business?.status, updateBusinessProfile]);
+  }, [
+    business?.situation,
+    business?.enabled,
+    business?.schedules,
+    business?.status,
+    updateBusinessProfile,
+  ]);
   // side effects
   React.useEffect(() => {
     if (isBackofficeUser) return;
     if (business?.situation !== 'approved') return;
+    if (!business?.enabled) return;
     if (!business?.schedules) return;
     checkBusinessStatus();
     const openCloseInterval = setInterval(() => {
       checkBusinessStatus();
     }, 5000);
     return () => clearInterval(openCloseInterval);
-  }, [isBackofficeUser, business?.situation, business?.schedules, checkBusinessStatus]);
+  }, [
+    isBackofficeUser,
+    business?.situation,
+    business?.enabled,
+    business?.schedules,
+    checkBusinessStatus,
+  ]);
 };

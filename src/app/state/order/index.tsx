@@ -179,6 +179,22 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   React.useEffect(() => {
     if (isBackofficeUser) return;
     if (business?.situation !== 'approved') return;
+    if (!business?.enabled) {
+      toast({
+        duration: 12000,
+        render: () => (
+          <CustomToast
+            type="warning"
+            message={{
+              title: 'Seu restaurante está desligado.',
+              description:
+                'Desligado, seu restaurante não aparecerá para seus clientes. Para ligá-lo, vá até o perfil do restaurante.',
+            }}
+          />
+        ),
+      });
+      return;
+    }
     if (business?.status === 'closed') {
       toast({
         duration: 12000,
@@ -194,7 +210,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
         ),
       });
     }
-  }, [isBackofficeUser, business?.situation, business?.status, toast]);
+  }, [isBackofficeUser, business?.situation, business?.enabled, business?.status, toast]);
   // provider
   return (
     <OrdersContext.Provider
