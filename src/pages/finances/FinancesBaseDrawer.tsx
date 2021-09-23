@@ -17,7 +17,7 @@ interface BaseDrawerProps {
   onClose(): void;
   isReviewing?: boolean;
   children: React.ReactNode | React.ReactNode[];
-  footer?: React.ReactNode | React.ReactNode[];
+  footer?(): React.ReactNode | React.ReactNode[];
 }
 
 export const FinancesBaseDrawer = ({
@@ -55,7 +55,7 @@ export const FinancesBaseDrawer = ({
           <DrawerBody ref={bodyRef} pb="28">
             {children}
           </DrawerBody>
-          {footer && <DrawerFooter borderTop="1px solid #F2F6EA">{footer}</DrawerFooter>}
+          {footer && <DrawerFooter borderTop="1px solid #F2F6EA">{footer()}</DrawerFooter>}
         </DrawerContent>
       </DrawerOverlay>
     </Drawer>

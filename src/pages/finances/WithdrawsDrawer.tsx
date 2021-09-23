@@ -54,7 +54,7 @@ export const WithdrawsDrawer = ({
     <FinancesBaseDrawer
       onClose={onClose}
       title={t('Confirmação de Transferência')}
-      footer={
+      footer={() => (
         <Flex w="100%" justifyContent="flex-start">
           <Button
             minW="220px"
@@ -66,7 +66,7 @@ export const WithdrawsDrawer = ({
             {t('Confirmar transferência')}
           </Button>
         </Flex>
-      }
+      )}
       {...props}
     >
       <Text fontSize="18px" fontWeight="500" lineHeight="28px">

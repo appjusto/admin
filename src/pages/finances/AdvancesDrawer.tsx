@@ -146,7 +146,7 @@ export const AdvancesDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps) =>
         'O prazo padrão para faturar os pagamentos é de 30 dias. Se quiser, você pode selecionar os valores disponíveis abaixo e realizar a antecipação, pagando uma taxa de até 2.5% por operação (taxa proporcional ao tempo que falta para completar 30 dias). Nada desse dinheiro ficará com o AppJusto.'
       )}
       isReviewing={isReviewing}
-      footer={
+      footer={() => (
         <Flex w="100%" justifyContent="space-between">
           <Button
             minW="220px"
@@ -163,7 +163,7 @@ export const AdvancesDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps) =>
             </Button>
           )}
         </Flex>
-      }
+      )}
       {...props}
     >
       {isReviewing ? (
