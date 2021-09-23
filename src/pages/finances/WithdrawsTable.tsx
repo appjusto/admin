@@ -3,7 +3,7 @@ import { AccountWithdraw, WithId } from 'appjusto-types';
 import { formatCurrency } from 'utils/formatters';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
-import { formatCents } from './utils';
+import { formatCents, formatIuguValueToDisplay } from './utils';
 
 const withdrawStatusPTOptions = {
   pending: 'Pendente',
@@ -21,7 +21,7 @@ const WithdrawsTableItem = ({ withdraw }: WithdrawsTableItemProps) => {
   return (
     <Tr color="black" fontSize="15px" lineHeight="21px" fontWeight="500">
       <Td>{getDateAndHour(withdraw.createdOn)}</Td>
-      <Td isNumeric>{withdraw.amount}</Td>
+      <Td isNumeric>{formatIuguValueToDisplay(withdraw.amount)}</Td>
       <Td>{withdrawStatusPTOptions[withdraw.status]}</Td>
     </Tr>
   );

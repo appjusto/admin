@@ -5,6 +5,7 @@ import { useRouteMatch } from 'react-router-dom';
 import { formatCurrency } from 'utils/formatters';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
+import { formatIuguValueToDisplay } from './utils';
 
 interface AdvancesTableItemProps {
   advance: WithId<AccountAdvance>;
@@ -17,12 +18,12 @@ const AdvancesTableItem = ({ advance }: AdvancesTableItemProps) => {
   return (
     <Tr color="black" fontSize="15px" lineHeight="21px" fontWeight="500">
       <Td>{getDateAndHour(advance.createdOn)}</Td>
-      <Td isNumeric>{advance.data.total.advanced_value}</Td>
+      <Td isNumeric>{formatIuguValueToDisplay(advance.data.total.advanced_value)}</Td>
       <Td color="red" isNumeric>
-        {'-' + advance.data.total.advance_fee}
+        {'-' + formatIuguValueToDisplay(advance.data.total.advance_fee)}
       </Td>
       <Td color="green.700" isNumeric>
-        {advance.data.total.received_value}
+        {formatIuguValueToDisplay(advance.data.total.received_value)}
       </Td>
       <Td>
         <CustomButton mt="0" label={t('Detalhes')} link={`${url}/${advance.id}`} size="sm" />
