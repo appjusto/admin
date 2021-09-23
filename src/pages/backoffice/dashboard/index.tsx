@@ -39,7 +39,7 @@ const BODashboard = () => {
   // UI
   return (
     <>
-      <PageHeader title={t('Visão geral')} subtitle={t(`Atualizado ${dateTime}`)} />
+      <PageHeader title={t('Visão geral')} subtitle={t(`Atualizado ${dateTime}`)} showVersion />
       <Panel />
       <Stack mt="4" w="100%" direction={{ base: 'column', md: 'row' }} spacing={4}>
         <BOList

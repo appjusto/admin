@@ -133,8 +133,9 @@ const Dashboard = () => {
   return (
     <>
       <PageHeader
-        title={t('Boas-vindas ao AppJusto')}
+        title={t('Início')}
         subtitle={t(`Dados atualizados em ${dateTime}`)}
+        showVersion
       />
       {business?.situation === 'approved' ? (
         <Box>
