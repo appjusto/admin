@@ -4,7 +4,7 @@ import React from 'react';
 import { t } from 'utils/i18n';
 import { BasicInfoBox } from './BasicInfoBox';
 import { FinancesBaseDrawer } from './FinancesBaseDrawer';
-import { formatIuguValueToDisplay } from './utils';
+import { formatCents, formatIuguValueToDisplay } from './utils';
 
 interface WithdrawsDrawerProps {
   isOpen: boolean;
@@ -25,9 +25,16 @@ export const WithdrawsDrawer = ({
   isSuccess,
   ...props
 }: WithdrawsDrawerProps) => {
+  // state
+  const [requestedValue, setRequestedValue] = React.useState<string | null>();
   // helpers
   const withdrawsLeft = totalWithdraws ? 4 - totalWithdraws : 'N/E';
   // side effects
+  React.useEffect(() => {
+    if (!withdrawValue) return;
+    const value = formatCents(withdrawValue);
+    if (value > 0) setRequestedValue(withdrawValue);
+  }, [withdrawValue]);
   // UI
   if (isSuccess) {
     return (
@@ -40,9 +47,9 @@ export const WithdrawsDrawer = ({
             </Text>
             <Text mt="1" fontSize="18px" fontWeight="500" lineHeight="26px">
               {t(
-                `Em até 2 dias úteis o valor de ${formatIuguValueToDisplay(
-                  withdrawValue!
-                )} estará disponível em sua conta.`
+                `Em até 2 dias úteis o valor de ${
+                  requestedValue ? formatIuguValueToDisplay(requestedValue) : 'N/E'
+                } estará disponível em sua conta.`
               )}
             </Text>
           </Box>

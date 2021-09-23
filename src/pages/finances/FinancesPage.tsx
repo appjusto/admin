@@ -144,7 +144,6 @@ const FinancesPage = () => {
       <WithdrawsTable withdraws={withdraws} />
       <SuccessAndErrorHandler
         submission={submission.current}
-        isSuccess={isSuccess}
         isError={error.status}
         error={error.error}
         errorMessage={error.message}
