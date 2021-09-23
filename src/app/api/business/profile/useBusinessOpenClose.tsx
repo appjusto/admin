@@ -17,7 +17,8 @@ export const useBusinessOpenClose = (business?: WithId<Business> | null) => {
     if (!business?.enabled) return;
     if (!business?.schedules) return;
     const today = new Date();
-    const dayIndex = today.getDay() - 1;
+    const day = today.getDay();
+    const dayIndex = day === 0 ? 6 : day - 1;
     const daySchedule = business.schedules[dayIndex];
     let n = 0;
     let shouldBeOpen = false;
