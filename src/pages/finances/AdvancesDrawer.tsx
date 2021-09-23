@@ -13,7 +13,7 @@ import { formatCurrency } from 'utils/formatters';
 import { t } from 'utils/i18n';
 import { BasicInfoBox } from './BasicInfoBox';
 import { FinancesBaseDrawer } from './FinancesBaseDrawer';
-import { formatIuguValueToDisplay } from './utils';
+import { formatIuguDateToDisplay, formatIuguValueToDisplay } from './utils';
 
 interface WithdrawalsDrawerProps {
   isOpen: boolean;
@@ -81,7 +81,7 @@ export const AdvancesDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps) =>
     } else setItems([]);
   }, [receivables]);
   React.useEffect(() => {
-    if (!items) return;
+    if (items.length === 0) return;
     const itemsSelected = items.filter((item) => selected.includes(item.id.toString()));
     const total = itemsSelected.reduce<number>((result, item) => {
       let value = 0;
@@ -94,8 +94,13 @@ export const AdvancesDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps) =>
   }, [items, selected]);
   React.useEffect(() => {
     if (selectedAll) setSelected(items.map((item) => item.id.toString()));
-    else setSelected([]);
+    //else setSelected([]);
   }, [items, selectedAll]);
+  React.useEffect(() => {
+    if (items.length === 0) return;
+    if (selected.length !== items.length) setSelectedAll(false);
+    else setSelectedAll(true);
+  }, [items, selected]);
   React.useEffect(() => {
     if (isError) {
       const errorMessage = (receivalbesError as FirebaseError).message;
@@ -240,7 +245,7 @@ export const AdvancesDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps) =>
                         {formatIuguValueToDisplay(item.total)}
                       </Text>
                       <Text mt="2" fontSize="15px" fontWeight="500" lineHeight="21px">
-                        {item.scheduled_date}
+                        {t('Será faturado em: ') + formatIuguDateToDisplay(item.scheduled_date)}
                       </Text>
                     </Box>
                   </Checkbox>

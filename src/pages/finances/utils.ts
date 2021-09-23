@@ -15,3 +15,8 @@ export const formatIuguValueToDisplay = (value: string) => {
     return `R$ ${result}`;
   }
 };
+
+export const formatIuguDateToDisplay = (date: string) => {
+  const dateArr = date.split('-');
+  return `${dateArr[2]}/${dateArr[1]}/${dateArr[0]}`;
+};
