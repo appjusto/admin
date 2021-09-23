@@ -1,9 +1,10 @@
-import { Button, Flex, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, Icon, Text } from '@chakra-ui/react';
 import { ReactComponent as Checked } from 'common/img/icon-checked.svg';
 import React from 'react';
 import { t } from 'utils/i18n';
 import { BasicInfoBox } from './BasicInfoBox';
 import { FinancesBaseDrawer } from './FinancesBaseDrawer';
+import { formatIuguValueToDisplay } from './utils';
 
 interface WithdrawsDrawerProps {
   isOpen: boolean;
@@ -11,6 +12,7 @@ interface WithdrawsDrawerProps {
   withdrawValue?: string | null;
   requestWithdraw(): void;
   isLoading: boolean;
+  isSuccess?: boolean;
   onClose(): void;
 }
 
@@ -20,14 +22,34 @@ export const WithdrawsDrawer = ({
   withdrawValue,
   requestWithdraw,
   isLoading,
+  isSuccess,
   ...props
 }: WithdrawsDrawerProps) => {
-  // context
-  // state
   // helpers
   const withdrawsLeft = totalWithdraws ? 4 - totalWithdraws : 'N/E';
   // side effects
   // UI
+  if (isSuccess) {
+    return (
+      <FinancesBaseDrawer onClose={onClose} title={t('Confirmação de Transferência')} {...props}>
+        <Flex w="100%" h="100%" flexDir="column" justifyContent="center">
+          <Box>
+            <Icon as={Checked} w="36px" h="36px" />
+            <Text mt="2" fontSize="24px" fontWeight="500" lineHeight="30px" color="black">
+              {t('Transferência realizada com sucesso!')}
+            </Text>
+            <Text mt="1" fontSize="18px" fontWeight="500" lineHeight="26px">
+              {t(
+                `Em até 2 dias úteis o valor de ${formatIuguValueToDisplay(
+                  withdrawValue!
+                )} estará disponível em sua conta.`
+              )}
+            </Text>
+          </Box>
+        </Flex>
+      </FinancesBaseDrawer>
+    );
+  }
   return (
     <FinancesBaseDrawer
       onClose={onClose}

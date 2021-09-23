@@ -160,6 +160,7 @@ const FinancesPage = () => {
             withdrawValue={availableWithdraw}
             requestWithdraw={handleWithdrawRequest}
             isLoading={isLoading}
+            isSuccess={isSuccess}
             onClose={closeDrawerHandler}
           />
         </Route>
