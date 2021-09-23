@@ -188,7 +188,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
             message={{
               title: 'Seu restaurante está desligado.',
               description:
-                'Desligado, seu restaurante não aparecerá para seus clientes. Para ligá-lo, vá até o perfil do restaurante.',
+                'Desligado, seu restaurante não aparecerá para seus clientes. Para ligá-lo, vá até o perfil do restaurante ou contate o administrador desta unidade.',
             }}
           />
         ),
@@ -204,7 +204,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
             message={{
               title: 'Seu restaurante está fechado.',
               description:
-                'Seu restaurante foi fechado de acordo com o horário de funcionamento definido. Para começar a receber pedidos ajuste estas configuração na tela de "Horários".',
+                'Seu restaurante foi fechado de acordo com o horário de funcionamento definido. Para começar a receber pedidos ajuste estas configuração na tela de "Horários" ou contate o administrador desta unidade.',
             }}
           />
         ),

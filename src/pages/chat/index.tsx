@@ -78,7 +78,7 @@ export const ChatPage = () => {
   return (
     // ChatContext
     <Box>
-      <OrdersHeader statusEnabled={false} />
+      <OrdersHeader />
       <Container maxW={{ base: '100%', md: '740px', lg: '1260px' }} pb="32">
         <Box>
           <Box>
