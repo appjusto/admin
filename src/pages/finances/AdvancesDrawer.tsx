@@ -1,4 +1,4 @@
-import { Box, Checkbox, CheckboxGroup, Flex, Icon, Skeleton, Text } from '@chakra-ui/react';
+import { Box, Button, Checkbox, CheckboxGroup, Flex, Icon, Skeleton, Text } from '@chakra-ui/react';
 import { useAdvanceReceivables } from 'app/api/business/useAdvanceReceivables';
 import { useReceivables } from 'app/api/business/useReceivables';
 import { useReceivablesSimulation } from 'app/api/business/useReceivablesSimulation';
@@ -118,7 +118,6 @@ export const AdvancesDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps) =>
         onClose={onClose}
         title={t('Antecipação dos valores')}
         isReviewing={isReviewing}
-        setIsReviewing={setIsReviewing}
         {...props}
       >
         <Flex w="100%" h="100%" flexDir="column" justifyContent="center">
@@ -147,9 +146,24 @@ export const AdvancesDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps) =>
         'O prazo padrão para faturar os pagamentos é de 30 dias. Se quiser, você pode selecionar os valores disponíveis abaixo e realizar a antecipação, pagando uma taxa de até 2.5% por operação (taxa proporcional ao tempo que falta para completar 30 dias). Nada desse dinheiro ficará com o AppJusto.'
       )}
       isReviewing={isReviewing}
-      setIsReviewing={setIsReviewing}
-      pimaryFunc={handleReceivablesRequest}
-      isLoading={isLoading}
+      footer={
+        <Flex w="100%" justifyContent="space-between">
+          <Button
+            minW="220px"
+            fontSize="15px"
+            onClick={handleReceivablesRequest}
+            isLoading={isLoading}
+            loadingText={t('Confirmando')}
+          >
+            {isReviewing ? t('Confirmar adiantamento') : t('Revisar adiantamento')}
+          </Button>
+          {isReviewing && (
+            <Button mr="16" fontSize="15px" variant="outline" onClick={() => setIsReviewing(false)}>
+              {t('Voltar')}
+            </Button>
+          )}
+        </Flex>
+      }
       {...props}
     >
       {isReviewing ? (

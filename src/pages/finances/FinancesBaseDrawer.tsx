@@ -1,5 +1,4 @@
 import {
-  Button,
   Drawer,
   DrawerBody,
   DrawerCloseButton,
@@ -7,22 +6,18 @@ import {
   DrawerFooter,
   DrawerHeader,
   DrawerOverlay,
-  Flex,
   Text,
 } from '@chakra-ui/react';
 import React from 'react';
-import { t } from 'utils/i18n';
 
 interface BaseDrawerProps {
   title: string;
   description?: string;
   isOpen: boolean;
   onClose(): void;
-  isReviewing: boolean;
-  setIsReviewing(value: boolean): void;
-  pimaryFunc?(): void;
-  isLoading?: boolean;
-  children: React.ReactNode;
+  isReviewing?: boolean;
+  children: React.ReactNode | React.ReactNode[];
+  footer?: React.ReactNode | React.ReactNode[];
 }
 
 export const FinancesBaseDrawer = ({
@@ -30,10 +25,8 @@ export const FinancesBaseDrawer = ({
   description,
   onClose,
   isReviewing,
-  setIsReviewing,
-  pimaryFunc,
-  isLoading,
   children,
+  footer,
   ...props
 }: BaseDrawerProps) => {
   // refs
@@ -62,31 +55,7 @@ export const FinancesBaseDrawer = ({
           <DrawerBody ref={bodyRef} pb="28">
             {children}
           </DrawerBody>
-          {pimaryFunc && (
-            <DrawerFooter borderTop="1px solid #F2F6EA">
-              <Flex w="100%" justifyContent="space-between">
-                <Button
-                  minW="220px"
-                  fontSize="15px"
-                  onClick={pimaryFunc}
-                  isLoading={isLoading}
-                  loadingText={t('Confirmando')}
-                >
-                  {isReviewing ? t('Confirmar adiantamento') : t('Revisar adiantamento')}
-                </Button>
-                {isReviewing && (
-                  <Button
-                    mr="16"
-                    fontSize="15px"
-                    variant="outline"
-                    onClick={() => setIsReviewing(false)}
-                  >
-                    {t('Voltar')}
-                  </Button>
-                )}
-              </Flex>
-            </DrawerFooter>
-          )}
+          {footer && <DrawerFooter borderTop="1px solid #F2F6EA">{footer}</DrawerFooter>}
         </DrawerContent>
       </DrawerOverlay>
     </Drawer>

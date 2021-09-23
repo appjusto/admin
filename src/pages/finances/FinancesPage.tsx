@@ -24,6 +24,7 @@ import { AdvancesDrawer } from './AdvancesDrawer';
 import { AdvancesTable } from './AdvancesTable';
 import { BasicInfoBox } from './BasicInfoBox';
 import { PeriodTable } from './PeriodTable';
+import { WithdrawsDrawer } from './WithdrawsDrawer';
 import { WithdrawsTable } from './WithdrawsTable';
 
 const periodStatus = 'paid' as IuguInvoiceStatus;
@@ -110,9 +111,8 @@ const FinancesPage = () => {
           value={availableWithdraw}
           valueLimit={500}
           btnLabel={t('Transferir para conta pessoal')}
-          btnFunction={handleWithdrawRequest}
+          btnLink={`${url}/withdraw`}
           btnWarning={t('Valor mínimo de R$ 5,00 para transferência')}
-          isLoading={isLoading}
         />
         <BasicInfoBox
           label={t('Em faturamento')}
@@ -120,7 +120,7 @@ const FinancesPage = () => {
           value={availableReceivable}
           btnLabel={t('Pedir antecipação de valores')}
           btnVariant="outline"
-          btnLink={`${url}/withdrawals`}
+          btnLink={`${url}/advances`}
         />
       </Stack>
       <SectionTitle>{t('Período')}</SectionTitle>
@@ -150,8 +150,18 @@ const FinancesPage = () => {
         errorMessage={error.message}
       />
       <Switch>
-        <Route path={`${path}/withdrawals`}>
+        <Route path={`${path}/advances`}>
           <AdvancesDrawer isOpen onClose={closeDrawerHandler} />
+        </Route>
+        <Route path={`${path}/withdraw`}>
+          <WithdrawsDrawer
+            isOpen
+            totalWithdraws={withdraws?.length}
+            withdrawValue={availableWithdraw}
+            requestWithdraw={handleWithdrawRequest}
+            isLoading={isLoading}
+            onClose={closeDrawerHandler}
+          />
         </Route>
         <Route path={`${path}/:advanceId`}>
           <AdvanceDetailsDrawer

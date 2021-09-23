@@ -32,13 +32,7 @@ export const AdvanceDetailsDrawer = ({
   }, [advanceId, getAdvanceById]);
   // UI
   return (
-    <FinancesBaseDrawer
-      onClose={onClose}
-      title={t('Detalhes da antecipação')}
-      isReviewing={false}
-      setIsReviewing={() => {}}
-      {...props}
-    >
+    <FinancesBaseDrawer onClose={onClose} title={t('Detalhes da antecipação')} {...props}>
       <Text fontSize="md" fontWeight="700" color="black">
         {t('Criada em:')}{' '}
         <Text as="span" fontWeight="500">
