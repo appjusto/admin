@@ -71,7 +71,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "deploy": "git checkout $ENV && git pull && env-cmd -f .env.$ENV yarn build && firebase use app-justo-$ENV && firebase deploy && yarn version",
+    "deploy": "git checkout $ENV && git pull && yarn version && env-cmd -f .env.$ENV yarn build && firebase use app-justo-$ENV && firebase deploy",
     "deploy:dev": "ENV=dev yarn deploy",
     "deploy:staging": "ENV=staging yarn deploy",
     "deploy:live": "ENV=live yarn deploy",
