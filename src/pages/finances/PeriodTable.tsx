@@ -22,7 +22,7 @@ export const PeriodTable = ({ period, amount, appjustoFee, iuguFee }: PeriodTabl
         {amount ? (
           <>
             <Tr color="black" fontSize="xs" fontWeight="500">
-              <Td>{t('Faturado no período')}</Td>
+              <Td>{t('Total de vendas')}</Td>
               <Td isNumeric>{formatCurrency(amount)}</Td>
             </Tr>
             <Tr fontSize="xs" fontWeight="500">

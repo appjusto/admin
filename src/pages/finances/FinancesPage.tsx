@@ -115,7 +115,7 @@ const FinancesPage = () => {
           btnWarning={t('Valor mínimo de R$ 5,00 para transferência')}
         />
         <BasicInfoBox
-          label={t('Em faturamento')}
+          label={t('Vendas em processamento')}
           icon={Watch}
           value={availableReceivable}
           btnLabel={t('Pedir antecipação de valores')}
