@@ -41,10 +41,8 @@ export const Matching = ({ orderId, orderStatus, orderDispatchingStatus }: Match
   const [isOutsourcing, setIsOutsourcing] = React.useState<boolean>(false);
   const [error, setError] = React.useState(initialError);
   //const [couriersRejections, setCouriersRejections] = React.useState<OrderMatchingRejection[]>();
-
   // refs
   const submission = React.useRef(0);
-
   // helpers
   const isOrderActive = orderStatus
     ? ['confirmed', 'preparing', 'ready', 'dispatching'].includes(orderStatus)
@@ -58,7 +56,6 @@ export const Matching = ({ orderId, orderStatus, orderDispatchingStatus }: Match
     }
     return orderDispatchingStatusPTOptions[orderDispatchingStatus];
   };
-
   // handlers
   const removeCourierNotified = async (courierId: string) => {
     setError(initialError);
@@ -68,13 +65,11 @@ export const Matching = ({ orderId, orderStatus, orderDispatchingStatus }: Match
     await updateCourierNotified(newArray);
     setCourierRemoving(null);
   };
-
   const allocateCourier = (courierId: string, comment: string) => {
     setError(initialError);
     submission.current += 1;
     return courierManualAllocation({ orderId, courierId, comment });
   };
-
   // side effects
   React.useEffect(() => {
     if (matching === undefined) return;
@@ -87,30 +82,14 @@ export const Matching = ({ orderId, orderStatus, orderDispatchingStatus }: Match
     setCouriersNotified(matching.couriersNotified);
     //setCouriersRejections(matching.rejections);
     setLogs(matching.logs);
+    setAttemps(matching.attempt);
   }, [matching]);
-
   React.useEffect(() => {
     if (orderDispatchingStatus === 'outsourced') setIsOutsourcing(true);
   }, [orderDispatchingStatus]);
-
-  React.useEffect(() => {
-    if (!logs) return;
-    const hashNumber = logs.map((log) => log.split(' ')[0]);
-    const AttempsCounter = (array: string[]) => {
-      let total = 0;
-      array.forEach((item, index) => {
-        if (item !== array[index - 1]) return (total += 1);
-      });
-      return total;
-    };
-    const result = AttempsCounter(hashNumber);
-    setAttemps(result);
-  }, [logs]);
-
   React.useEffect(() => {
     if (restartResult.isSuccess) setIsRestarting(false);
   }, [restartResult]);
-
   React.useEffect(() => {
     if (updateResult.isError)
       setError({
@@ -136,7 +115,6 @@ export const Matching = ({ orderId, orderStatus, orderDispatchingStatus }: Match
     allocationResult.isError,
     allocationResult.error,
   ]);
-
   // UI
   return (
     <>
