@@ -3,7 +3,6 @@ import { useContextBusiness } from 'app/state/business/context';
 import { useContextBusinessDashboard } from 'app/state/dashboards/business';
 import I18n from 'i18n-js';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
-import { Deeplink } from 'pages/deeplink';
 import React from 'react';
 import { formatCurrency, formatPct } from 'utils/formatters';
 import { getDateTime } from 'utils/functions';
@@ -139,7 +138,6 @@ const Dashboard = () => {
       />
       {business?.situation === 'approved' ? (
         <Box>
-          {business?.slug && <Deeplink />}
           <Box mt="8" border="1px solid #E5E5E5" borderRadius="lg" p="4">
             <SectionTitle mt="0" fontWeight="700">
               {t('Acompanhamento diário')}

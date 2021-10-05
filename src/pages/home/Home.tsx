@@ -13,6 +13,7 @@ import Menu from 'pages/menu/Menu';
 import OrdersHistoryPage from 'pages/orders/history/OrdersHistoryPage';
 import OrdersPage from 'pages/orders/OrdersPage';
 import PageLayout from 'pages/PageLayout';
+import SharingPage from 'pages/sharing';
 import TeamPage from 'pages/team/TeamPage';
 import React from 'react';
 import { Redirect, Route, Switch, useRouteMatch } from 'react-router-dom';
@@ -43,6 +44,7 @@ const Home = () => {
             <Route path={`${path}/chat`} component={ChatPage} />
             <PageLayout mt={isBackofficeUser ? '60px' : '0'}>
               <Route exact path={path} component={Dashboard} />
+              <Route path={`${path}/sharing`} component={SharingPage} />
               <Route path={`${path}/menu`} component={Menu} />
               <Route path={`${path}/business-schedules`} component={SchedulesPage} />
               <Route path={`${path}/delivery-area`} component={DeliveryArea} />
