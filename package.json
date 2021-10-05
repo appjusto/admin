@@ -74,6 +74,7 @@
     "deploy": "git checkout $ENV && git pull && yarn version && env-cmd -f .env.$ENV yarn build && firebase use app-justo-$ENV && firebase deploy",
     "deploy:dev": "ENV=dev yarn deploy",
     "deploy:staging": "ENV=staging yarn deploy",
+    "deploy:community": "ENV=community yarn deploy",
     "deploy:live": "ENV=live yarn deploy",
     "postversion": "git push && git push --tags && git fetch"
   },
