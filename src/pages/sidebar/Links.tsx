@@ -31,9 +31,15 @@ const ProtectedLinks = ({ isApproved }: ProtectedLinksProps) => {
       <Box>
         <LinkItem to={`${url}`} label={t('Início')} />
         {isApproved ? (
-          <LinkItem to={`${url}/orders`} label={t('Gerenciador de pedidos')} />
+          <>
+            <LinkItem to={`${url}/orders`} label={t('Gerenciador de pedidos')} />
+            <LinkItem to={`${url}/sharing`} label={t('Compartilhamento')} />
+          </>
         ) : (
-          <DisabledLink label={t('Gerenciador de pedidos')} />
+          <>
+            <DisabledLink label={t('Gerenciador de pedidos')} />
+            <DisabledLink label={t('Compartilhamento')} />
+          </>
         )}
       </Box>
       <Box mt="5">

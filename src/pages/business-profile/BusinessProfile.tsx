@@ -26,7 +26,6 @@ import {
   logoResizedWidth,
 } from 'common/imagesDimensions';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
-import { Deeplink } from 'pages/deeplink';
 import { OnboardingProps } from 'pages/onboarding/types';
 import PageFooter from 'pages/PageFooter';
 import PageHeader from 'pages/PageHeader';
@@ -77,8 +76,6 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
     cloneResult,
   } = useBusinessProfile();
   const { isLoading, isSuccess, isError, error: updateError } = updateWithImagesResult;
-  // helpers
-  const showDeeplink = !onboarding && business?.situation === 'approved';
   // handlers
   const openDrawerHandler = () => history.push(`${path}/delete`);
   const closeDrawerHandler = () => history.replace(path);
@@ -227,7 +224,6 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
             onSubmitHandler();
           }}
         >
-          {showDeeplink && <Deeplink isEditable />}
           {onboarding ? (
             <PageHeader
               title={t('Sobre o restaurante')}
