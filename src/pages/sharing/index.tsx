@@ -1,7 +1,6 @@
-import { Box, Button, HStack, Input, Text } from '@chakra-ui/react';
+import { Box, Button, HStack, Text } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useContextBusiness } from 'app/state/business/context';
-import { CustomButton } from 'common/components/buttons/CustomButton';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
 import { initialError } from 'common/components/error/utils';
 import { CustomInput } from 'common/components/form/input/CustomInput';
@@ -10,6 +9,26 @@ import PageHeader from 'pages/PageHeader';
 import React from 'react';
 import { slugify } from 'utils/formatters';
 import { t } from 'utils/i18n';
+import { LinkBox } from './LinkBox';
+
+export type Mode = 'whatsapp' | 'in-store';
+
+export type Copied = {
+  status: boolean;
+  mode?: Mode;
+};
+
+type SharingLink = {
+  key: string;
+  title: string;
+  mode?: Mode;
+};
+
+const linksArr = [
+  { key: '1', title: 'Link com botão para pedir no AppJusto' },
+  { key: '2', title: 'Link com botão para pedir no Whatsapp', mode: 'whatsapp' },
+  { key: '3', title: 'Link sem botão (para uso interno na loja)', mode: 'in-store' },
+] as SharingLink[];
 
 const SharingPage = () => {
   // context
@@ -19,15 +38,26 @@ const SharingPage = () => {
   // state
   const [slug, setSlug] = React.useState('');
   const [deeplink, setDeeplink] = React.useState('');
-  const [isCopied, setIsCopied] = React.useState(false);
+  const [isCopied, setIsCopied] = React.useState<Copied>({ status: false });
   const [error, setError] = React.useState(initialError);
   // refs
   const submission = React.useRef(0);
   // handlers
+  const getBusinessLinkByMode = (mode?: Mode) => `${deeplink}${mode ? `?mode=${mode}` : ''}`;
   const copyToClipboard = (mode?: 'whatsapp' | 'in-store') => {
-    setIsCopied(true);
-    setTimeout(() => setIsCopied(false), 2000);
-    return navigator.clipboard.writeText(`${deeplink}${mode ? `?mode=${mode}` : ''}`);
+    const copied = { status: true, mode };
+    setIsCopied(copied);
+    setTimeout(() => setIsCopied({ status: false }), 2000);
+    return navigator.clipboard.writeText(getBusinessLinkByMode(mode));
+  };
+  const getWhatsappSharingMessage = (mode?: Mode) => {
+    return encodeURIComponent(
+      `Olá, queria indicar o ${
+        business?.name
+      }! No AppJusto, os preços dos pratos são menores, e você valoriza mais ainda o restaurante e o entregador. Um delivery mais justo de verdade ;)\n\n${getBusinessLinkByMode(
+        mode
+      )}`
+    );
   };
   const handleUpdate = () => {
     if (!business?.id || !slug) return;
@@ -88,97 +118,18 @@ const SharingPage = () => {
           {t('Salvar')}
         </Button>
       </HStack>
-      {business?.slug && (
-        <Box>
-          <Text mt="8" fontSize="18px" fontWeight="500" lineHeight="22px" color="black">
-            {t('Link com botão para pedir no AppJusto')}
-          </Text>
-          <Box mt="4" position="relative" h="60px">
-            <Input
-              w="100%"
-              h="100%"
-              pr="350px"
-              bg="gray.50"
-              border="1px solid #C8D7CB"
-              color="gray.700"
-              value={deeplink}
-              onChange={() => {}}
-              zIndex="100"
-            />
-            <HStack position="absolute" top="6px" right="2" zIndex="999">
-              <Button fontSize="sm" onClick={() => copyToClipboard()}>
-                {isCopied ? t('Copiado!') : t('Copiar link')}
-              </Button>
-              <CustomButton
-                mt="0"
-                fontSize="sm"
-                variant="secondary"
-                label={t('Enviar pelo WhatsApp')}
-                link={`https://api.whatsapp.com/send?text=${deeplink}`}
-                isExternal
-              />
-            </HStack>
-          </Box>
-          <Text mt="8" fontSize="18px" fontWeight="500" lineHeight="22px" color="black">
-            {t('Link com botão para pedir no Whatsapp')}
-          </Text>
-          <Box mt="4" position="relative" h="60px">
-            <Input
-              w="100%"
-              h="100%"
-              pr="350px"
-              bg="gray.50"
-              border="1px solid #C8D7CB"
-              color="gray.700"
-              value={`${deeplink}?mode=whatsapp`}
-              onChange={() => {}}
-              zIndex="100"
-            />
-            <HStack position="absolute" top="6px" right="2" zIndex="999">
-              <Button fontSize="sm" onClick={() => copyToClipboard('whatsapp')}>
-                {isCopied ? t('Copiado!') : t('Copiar link')}
-              </Button>
-              <CustomButton
-                mt="0"
-                fontSize="sm"
-                variant="secondary"
-                label={t('Enviar pelo WhatsApp')}
-                link={`https://api.whatsapp.com/send?text=${deeplink}?mode=whatsapp`}
-                isExternal
-              />
-            </HStack>
-          </Box>
-          <Text mt="8" fontSize="18px" fontWeight="500" lineHeight="22px" color="black">
-            {t('Link sem botão - para uso interno na loja')}
-          </Text>
-          <Box mt="4" position="relative" h="60px">
-            <Input
-              w="100%"
-              h="100%"
-              pr="350px"
-              bg="gray.50"
-              border="1px solid #C8D7CB"
-              color="gray.700"
-              value={`${deeplink}?mode=in-store`}
-              onChange={() => {}}
-              zIndex="100"
-            />
-            <HStack position="absolute" top="6px" right="2" zIndex="999">
-              <Button fontSize="sm" onClick={() => copyToClipboard('in-store')}>
-                {isCopied ? t('Copiado!') : t('Copiar link')}
-              </Button>
-              <CustomButton
-                mt="0"
-                fontSize="sm"
-                variant="secondary"
-                label={t('Enviar pelo WhatsApp')}
-                link={`https://api.whatsapp.com/send?text=${deeplink}?mode=in-store`}
-                isExternal
-              />
-            </HStack>
-          </Box>
-        </Box>
-      )}
+      {business?.slug &&
+        linksArr.map((link) => (
+          <LinkBox
+            key={link.key}
+            title={link.title}
+            mode={link.mode}
+            copied={isCopied}
+            getLink={() => getBusinessLinkByMode(link.mode)}
+            getSharingMessage={() => getWhatsappSharingMessage(link.mode)}
+            copy={() => copyToClipboard(link.mode)}
+          />
+        ))}
       <SuccessAndErrorHandler
         submission={submission.current}
         isSuccess={isSuccess}
