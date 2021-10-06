@@ -155,7 +155,7 @@ const SharingPage = () => {
           <Icon as={MdInfoOutline} w="24px" h="24px" />
           <Text textAlign="justify" pr="1">
             {t(
-              'Caso o cliente tenha o aplicativo do AppJusto instalado, ao acessar qualquer um dos links, pelo smartphone ou tablet, o cliente poderá escolher entre abri-los diretamente no App, ou com o seu navegador padrão. Optando por abri-los no navegador, ou clicando nos links por meio do computador, o cliente terá acesso à página web com o seu cardápio digital e, nesse caso, cada link oferece uma possibilidade diferente de visualização e realização do pedido.'
+              'Caso o cliente tenha o aplicativo do AppJusto instalado, poderá abrir os links abaixo diretamente no app ou no navegador padrão. Se abrir pelo navegador, ele verá o cardápio digital com a opção de visualização oferecida pelo link selecionado.'
             )}
           </Text>
         </Stack>
