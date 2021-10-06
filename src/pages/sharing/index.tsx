@@ -1,4 +1,4 @@
-import { Box, Button, Stack, Text } from '@chakra-ui/react';
+import { Box, Button, Icon, Stack, Text } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useContextBusiness } from 'app/state/business/context';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
@@ -7,6 +7,7 @@ import { CustomInput } from 'common/components/form/input/CustomInput';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
+import { MdInfoOutline } from 'react-icons/md';
 import { slugify } from 'utils/formatters';
 import { t } from 'utils/i18n';
 import { LinkBox } from './LinkBox';
@@ -28,23 +29,20 @@ type SharingLink = {
 const linksArr = [
   {
     id: 'QR1',
-    title: 'Link com botão para pedir no AppJusto',
-    description:
-      'Ao clicar, o seu cliente será levado para a tela do restaurante no app, e poderá realizar seus pedidos',
+    title: 'Link para pedir no AppJusto',
+    description: 'No cardápio digital, seu cliente verá um botão para "Pedir no AppJusto"',
   },
   {
     id: 'QR2',
-    title: 'Link com botão para pedir via Whatsapp (fora do app)',
+    title: 'Link para pedir via WhatsApp',
     mode: 'whatsapp',
-    description:
-      'Ao clicar, o seu cliente abrirá o cardápio e poderá enviar pedidos no WhatsApp cadastrado',
+    description: 'No cardápio digital, seu cliente verá um botão para "Pedir no Whatsapp"',
   },
   {
     id: 'QR3',
-    title: 'Link sem botão (para uso interno na loja)',
+    title: 'Link para visualização na loja',
     mode: 'in-store',
-    description:
-      'Ao clicar, seu cliente abrirá a página do cardápio para visualização na loja, sem a opção de pedir',
+    description: 'No cardápio digital, não haverá botão para realizar o pedido',
   },
 ] as SharingLink[];
 
@@ -115,7 +113,7 @@ const SharingPage = () => {
         title={t('Compartilhamento')}
         subtitle={t('Crie e gerencie os seus links de compartilhamento.')}
       />
-      <SectionTitle mt="8">{t('Divulgue diretamente o seu restaurante')}</SectionTitle>
+      <SectionTitle mt="8">{t('Configure o nome do seu link de compartilhamento')}</SectionTitle>
       <Text mt="4">
         {t(
           'Você pode compartilhar o acesso direto ao seu restaurante no AppJusto. Crie um identificador, com a sugestão abaixo ou digitando à sua escolha e clicando em salvar, depois copie o link gerado e divulgue nas suas redes!'
@@ -131,11 +129,37 @@ const SharingPage = () => {
           value={slug}
           onChange={(e) => setSlug(slugify(e.target.value))}
           onBlur={(e) => setSlug(slugify(e.target.value, true))}
+          //isDisabled={deeplink !== undefined}
         />
-        <Button h="60px" minW="120px" onClick={handleUpdate} isLoading={isLoading}>
+        <Button
+          h="60px"
+          minW="120px"
+          onClick={handleUpdate}
+          isLoading={isLoading}
+          //isDisabled={deeplink !== undefined}
+        >
           {t('Salvar')}
         </Button>
       </Stack>
+      {business?.slug && (
+        <Stack
+          mt="8"
+          direction="row"
+          spacing={4}
+          alignItems="center"
+          p="4"
+          border="1px solid #000"
+          borderRadius="lg"
+          color="black"
+        >
+          <Icon as={MdInfoOutline} w="24px" h="24px" />
+          <Text textAlign="justify" pr="1">
+            {t(
+              'Caso o cliente tenha o aplicativo do AppJusto instalado, ao acessar qualquer um dos links, pelo smartphone ou tablet, o cliente poderá escolher entre abri-los diretamente no App, ou com o seu navegador padrão. Optando por abri-los no navegador, ou clicando nos links por meio do computador, o cliente terá acesso à página web com o seu cardápio digital e, nesse caso, cada link oferece uma possibilidade diferente de visualização e realização do pedido.'
+            )}
+          </Text>
+        </Stack>
+      )}
       {business?.slug &&
         linksArr.map((link) => (
           <LinkBox

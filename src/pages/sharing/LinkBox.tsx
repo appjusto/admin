@@ -89,7 +89,7 @@ export const LinkBox = ({
             link={`https://api.whatsapp.com/send?text=${sharingMessage}`}
             isExternal
           />
-          <Button fontSize="sm" variant="outline" onClick={downloadQRCode}>
+          <Button fontSize="sm" variant="outline" color="black" onClick={downloadQRCode}>
             {t('Salvar QR Code')}
           </Button>
         </Stack>
