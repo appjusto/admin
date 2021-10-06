@@ -16,7 +16,7 @@ import { CustomButton } from 'common/components/buttons/CustomButton';
 import I18n from 'i18n-js';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import React from 'react';
-import { MdShare } from 'react-icons/md';
+import { BsShare } from 'react-icons/bs';
 import { useRouteMatch } from 'react-router';
 import { formatCurrency, formatPct } from 'utils/formatters';
 import { getDateTime } from 'utils/functions';
@@ -166,7 +166,7 @@ const Dashboard = () => {
           >
             <HStack w="100%" spacing={4} alignItems="center">
               <Center w="48px" h="48px" bgColor="#fff" borderRadius="24px" overflow="hidden">
-                <Icon as={MdShare} w="24px" h="24px" />
+                <Icon as={BsShare} w="24px" h="24px" />
               </Center>
               <Box maxW="612px">
                 <HStack spacing={4}>
