@@ -1,56 +1,81 @@
-import { Box, Button, HStack, Input, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, Input, Stack, Text } from '@chakra-ui/react';
 import { CustomButton } from 'common/components/buttons/CustomButton';
+import QRCode from 'react-qr-code';
 import { t } from 'utils/i18n';
 import { Copied, Mode } from '.';
 
 interface LinkBoxProps {
   title: string;
+  description?: string;
   mode?: Mode;
   copied: Copied;
-  getLink(): string;
+  link: string;
+  sharingMessage: string;
   copy(): void;
-  getSharingMessage(): string;
 }
 
 export const LinkBox = ({
   title,
+  description,
   mode,
   copied,
-  getLink,
+  link,
+  sharingMessage,
   copy,
-  getSharingMessage,
 }: LinkBoxProps) => {
   return (
-    <Box>
-      <Text mt="8" fontSize="18px" fontWeight="500" lineHeight="22px" color="black">
-        {title}
-      </Text>
-      <Box mt="4" position="relative" h="60px">
+    <Flex
+      mt="8"
+      w="100%"
+      p="6"
+      flexDir={{ base: 'column', lg: 'row' }}
+      border="1px solid #F6F6F6"
+      borderRadius="lg"
+    >
+      <Box w="100%">
+        <Text fontSize="24px" fontWeight="700" lineHeight="28.8px" color="black">
+          {title}
+        </Text>
+        <Text mt="1" fontSize="15px" fontWeight="500" lineHeight="21px">
+          {description}
+        </Text>
         <Input
+          mt="6"
           w="100%"
-          h="100%"
-          pr="350px"
+          h="60px"
           bg="gray.50"
           border="1px solid #C8D7CB"
           color="gray.700"
-          value={getLink()}
+          value={link}
           onChange={() => {}}
-          zIndex="100"
+          overflow="scroll"
         />
-        <HStack position="absolute" top="6px" right="2" zIndex="999">
+        <Stack mt="6" spacing={4} direction={{ base: 'column', md: 'row' }}>
           <Button fontSize="sm" onClick={() => copy()}>
             {copied.status && copied.mode === mode ? t('Copiado!') : t('Copiar link')}
           </Button>
           <CustomButton
             mt="0"
+            w={{ base: '100%', lg: 'auto' }}
             fontSize="sm"
             variant="secondary"
             label={t('Enviar pelo WhatsApp')}
-            link={`https://api.whatsapp.com/send?text=${getSharingMessage()}`}
+            link={`https://api.whatsapp.com/send?text=${sharingMessage}`}
             isExternal
           />
-        </HStack>
+          <Button fontSize="sm" variant="outline" onClick={() => {}}>
+            {t('Salvar QR Code')}
+          </Button>
+        </Stack>
       </Box>
-    </Box>
+      <Flex
+        ml={{ base: '0', lg: '6' }}
+        mt={{ base: '4', lg: '0' }}
+        w={{ base: '100%', lg: '210px' }}
+        justifyContent="center"
+      >
+        <QRCode value={link} size={210} />
+      </Flex>
+    </Flex>
   );
 };

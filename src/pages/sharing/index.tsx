@@ -1,4 +1,4 @@
-import { Box, Button, HStack, Text } from '@chakra-ui/react';
+import { Box, Button, Stack, Text } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useContextBusiness } from 'app/state/business/context';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
@@ -21,13 +21,31 @@ export type Copied = {
 type SharingLink = {
   key: string;
   title: string;
+  description: string;
   mode?: Mode;
 };
 
 const linksArr = [
-  { key: '1', title: 'Link com botão para pedir no AppJusto' },
-  { key: '2', title: 'Link com botão para pedir no Whatsapp', mode: 'whatsapp' },
-  { key: '3', title: 'Link sem botão (para uso interno na loja)', mode: 'in-store' },
+  {
+    key: '1',
+    title: 'Link com botão para pedir no AppJusto',
+    description:
+      'Ao clicar, o seu cliente será levado para a tela do restaurante no app, e poderá realizar seus pedidos',
+  },
+  {
+    key: '2',
+    title: 'Link com botão para pedir via Whatsapp (fora do app)',
+    mode: 'whatsapp',
+    description:
+      'Ao clicar, o seu cliente abrirá o cardápio e poderá enviar pedidos no WhatsApp cadastrado',
+  },
+  {
+    key: '3',
+    title: 'Link sem botão (para uso interno na loja)',
+    mode: 'in-store',
+    description:
+      'Ao clicar, seu cliente abrirá a página do cardápio para visualização na loja, sem a opção de pedir',
+  },
 ] as SharingLink[];
 
 const SharingPage = () => {
@@ -103,7 +121,7 @@ const SharingPage = () => {
           'Você pode compartilhar o acesso direto ao seu restaurante no AppJusto. Crie um identificador, com a sugestão abaixo ou digitando à sua escolha e clicando em salvar, depois copie o link gerado e divulgue nas suas redes!'
         )}
       </Text>
-      <HStack mt="4" spacing={2}>
+      <Stack mt="4" spacing={2} direction={{ base: 'column', md: 'row' }}>
         <CustomInput
           mt="0"
           maxW="320px"
@@ -117,16 +135,17 @@ const SharingPage = () => {
         <Button h="60px" minW="120px" onClick={handleUpdate} isLoading={isLoading}>
           {t('Salvar')}
         </Button>
-      </HStack>
+      </Stack>
       {business?.slug &&
         linksArr.map((link) => (
           <LinkBox
             key={link.key}
             title={link.title}
+            description={link.description}
             mode={link.mode}
             copied={isCopied}
-            getLink={() => getBusinessLinkByMode(link.mode)}
-            getSharingMessage={() => getWhatsappSharingMessage(link.mode)}
+            link={getBusinessLinkByMode(link.mode)}
+            sharingMessage={getWhatsappSharingMessage(link.mode)}
             copy={() => copyToClipboard(link.mode)}
           />
         ))}
