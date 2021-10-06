@@ -1,15 +1,21 @@
 # Setup
 
-## 1. Clone repo and install dependecies
+## 1. Install system dependencies
+
+```bash
+npm install --global yarn
+```
+
+## 2. Clone repo and install dependecies
 
 ```bash
 git clone git@github.com:appjusto/admin.git
 cd admin && yarn install
 ```
 
-## 2. Configure enviroment variables
+## 3. Configure enviroment variables
 
-Create a file named `.env.development` filling up these variables:
+Create a file named `.env.development.local` filling up these variables:
 
 ```bash
 echo "REACT_APP_PUBLIC_URL=
@@ -23,7 +29,7 @@ REACT_APP_FIREBASE_MEASUREMENT_ID=
 REACT_APP_FIREBASE_EMULATOR=
 REACT_APP_FIREBASE_EMULATOR_HOST=
 REACT_APP_FIREBASE_EMULATOR_PORT=
-" > .env.local
+" > .env.development.local
 ```
 
 ## Available Scripts
