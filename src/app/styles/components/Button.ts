@@ -113,6 +113,21 @@ export const Button = {
         backgroundColor: 'gray.200',
       },
     },
+    black: {
+      'bg': '#000',
+      'color': 'white',
+      'fontSize': '15px',
+      'lineHeight': '21px',
+      'fontWeight': '700',
+      ':hover': {
+        backgroundColor: 'gray.700',
+      },
+      ':disabled': {
+        color: 'gray.700',
+        borderColor: 'gray.500',
+        backgroundColor: 'gray.200',
+      },
+    },
   },
   // The default size and variant values
   defaultProps: {

@@ -1,9 +1,23 @@
-import { Box, BoxProps, Circle, HStack, Skeleton, Stack, Text } from '@chakra-ui/react';
+import {
+  Badge,
+  Box,
+  BoxProps,
+  Center,
+  Circle,
+  HStack,
+  Icon,
+  Skeleton,
+  Stack,
+  Text,
+} from '@chakra-ui/react';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextBusinessDashboard } from 'app/state/dashboards/business';
+import { CustomButton } from 'common/components/buttons/CustomButton';
 import I18n from 'i18n-js';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import React from 'react';
+import { MdShare } from 'react-icons/md';
+import { useRouteMatch } from 'react-router';
 import { formatCurrency, formatPct } from 'utils/formatters';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
@@ -76,6 +90,7 @@ const InfoBox = ({
 
 const Dashboard = () => {
   // context
+  const { path } = useRouteMatch();
   const { business } = useContextBusiness();
   const {
     todayOrders,
@@ -138,6 +153,60 @@ const Dashboard = () => {
       />
       {business?.situation === 'approved' ? (
         <Box>
+          <Stack
+            mt="8"
+            p="6"
+            w="100%"
+            direction={{ base: 'column', md: 'row' }}
+            alignItems="center"
+            border="1px solid black"
+            borderRadius="lg"
+            bgColor="#F6F6F6"
+            spacing={4}
+          >
+            <HStack w="100%" spacing={4} alignItems="center">
+              <Center w="48px" h="48px" bgColor="#fff" borderRadius="24px" overflow="hidden">
+                <Icon as={MdShare} w="24px" h="24px" />
+              </Center>
+              <Box maxW="612px">
+                <HStack spacing={4}>
+                  <Text mt="1" color="black" fontSize="18px" lineHeight="26px" fontWeight="700">
+                    {t('Compartilhe seu restaurante como quiser!')}
+                  </Text>
+                  <Badge
+                    px="8px"
+                    py="2px"
+                    bgColor="#FFBE00"
+                    color="black"
+                    borderRadius="16px"
+                    fontSize="11px"
+                    lineHeight="18px"
+                    fontWeight="700"
+                  >
+                    {t('NOVIDADE')}
+                  </Badge>
+                </HStack>
+                <Text
+                  mt="2"
+                  color="black"
+                  minW="140px"
+                  fontSize="16px"
+                  lineHeight="22px"
+                  fontWeight="500"
+                >
+                  {t(
+                    'Agora no AppJusto, você pode criar links diferentes para os seus clientes realizarem os pedidos: direto no app, pelo WhatsApp, ou apenas visualizar o cardápio na loja!'
+                  )}
+                </Text>
+              </Box>
+            </HStack>
+            <CustomButton
+              minW="180px"
+              label={t('Visualizar links')}
+              link={`${path}/sharing`}
+              variant="black"
+            />
+          </Stack>
           <Box mt="8" border="1px solid #E5E5E5" borderRadius="lg" p="4">
             <SectionTitle mt="0" fontWeight="700">
               {t('Acompanhamento diário')}
