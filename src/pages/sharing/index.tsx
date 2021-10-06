@@ -19,7 +19,7 @@ export type Copied = {
 };
 
 type SharingLink = {
-  key: string;
+  id: string;
   title: string;
   description: string;
   mode?: Mode;
@@ -27,20 +27,20 @@ type SharingLink = {
 
 const linksArr = [
   {
-    key: '1',
+    id: 'QR1',
     title: 'Link com botão para pedir no AppJusto',
     description:
       'Ao clicar, o seu cliente será levado para a tela do restaurante no app, e poderá realizar seus pedidos',
   },
   {
-    key: '2',
+    id: 'QR2',
     title: 'Link com botão para pedir via Whatsapp (fora do app)',
     mode: 'whatsapp',
     description:
       'Ao clicar, o seu cliente abrirá o cardápio e poderá enviar pedidos no WhatsApp cadastrado',
   },
   {
-    key: '3',
+    id: 'QR3',
     title: 'Link sem botão (para uso interno na loja)',
     mode: 'in-store',
     description:
@@ -139,7 +139,8 @@ const SharingPage = () => {
       {business?.slug &&
         linksArr.map((link) => (
           <LinkBox
-            key={link.key}
+            key={link.id}
+            id={link.id}
             title={link.title}
             description={link.description}
             mode={link.mode}

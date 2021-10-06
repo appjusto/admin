@@ -5,6 +5,7 @@ import { t } from 'utils/i18n';
 import { Copied, Mode } from '.';
 
 interface LinkBoxProps {
+  id: string;
   title: string;
   description?: string;
   mode?: Mode;
@@ -15,6 +16,7 @@ interface LinkBoxProps {
 }
 
 export const LinkBox = ({
+  id,
   title,
   description,
   mode,
@@ -23,6 +25,30 @@ export const LinkBox = ({
   sharingMessage,
   copy,
 }: LinkBoxProps) => {
+  // handlers
+  const downloadQRCode = () => {
+    try {
+      const svg = document.getElementById(id);
+      const svgData = new XMLSerializer().serializeToString(svg!);
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
+      img.onload = () => {
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx!.drawImage(img, 0, 0);
+        const pngFile = canvas.toDataURL('image/png');
+        const downloadLink = document.createElement('a');
+        downloadLink.download = id;
+        downloadLink.href = `${pngFile}`;
+        downloadLink.click();
+      };
+      img.src = `data:image/svg+xml;base64,${btoa(svgData)}`;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  // UI
   return (
     <Flex
       mt="8"
@@ -63,7 +89,7 @@ export const LinkBox = ({
             link={`https://api.whatsapp.com/send?text=${sharingMessage}`}
             isExternal
           />
-          <Button fontSize="sm" variant="outline" onClick={() => {}}>
+          <Button fontSize="sm" variant="outline" onClick={downloadQRCode}>
             {t('Salvar QR Code')}
           </Button>
         </Stack>
@@ -74,7 +100,7 @@ export const LinkBox = ({
         w={{ base: '100%', lg: '210px' }}
         justifyContent="center"
       >
-        <QRCode value={link} size={210} />
+        <QRCode id={id} value={link} size={210} />
       </Flex>
     </Flex>
   );
