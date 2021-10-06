@@ -18,7 +18,7 @@ export const RegistrationForm = () => {
   const [email, setEmail] = React.useState('');
   const [accept, setAccept] = React.useState(false);
   const [formMsg, setFormMsg] = React.useState({ status: false, type: '', message: '' });
-  const isEmailInvalid = React.useMemo(() => isEmailValid(email), [email]);
+  const isEmailInvalid = React.useMemo(() => !isEmailValid(email), [email]);
 
   // mutations
   const [loginWithEmail, { isLoading, isSuccess, isError, error }] = useMutation((email: string) =>
