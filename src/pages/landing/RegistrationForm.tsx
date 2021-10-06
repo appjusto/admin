@@ -7,6 +7,7 @@ import { CustomInput } from 'common/components/form/input/CustomInput';
 import delivery from 'common/img/big-delivery.svg';
 import React, { ChangeEvent, FormEvent } from 'react';
 import { useMutation } from 'react-query';
+import { isEmailValid } from 'utils/email';
 import { t } from 'utils/i18n';
 import { Section } from './Section';
 
@@ -17,6 +18,7 @@ export const RegistrationForm = () => {
   const [email, setEmail] = React.useState('');
   const [accept, setAccept] = React.useState(false);
   const [formMsg, setFormMsg] = React.useState({ status: false, type: '', message: '' });
+  const isEmailInvalid = React.useMemo(() => isEmailValid(email), [email]);
 
   // mutations
   const [loginWithEmail, { isLoading, isSuccess, isError, error }] = useMutation((email: string) =>
@@ -32,6 +34,13 @@ export const RegistrationForm = () => {
         status: true,
         type: 'error',
         message: 'É preciso aceitar os termos de uso da plataforma.',
+      });
+    }
+    if (isEmailInvalid) {
+      return setFormMsg({
+        status: true,
+        type: 'error',
+        message: 'O e-mail não é válido. Corriga e envie novamente',
       });
     }
     await loginWithEmail(email);
@@ -95,6 +104,7 @@ export const RegistrationForm = () => {
               handleChange={(event: ChangeEvent<HTMLInputElement>) => {
                 setEmail(event.target.value);
               }}
+              isInvalid={isEmailInvalid}
               minW={[null, null, '300px']}
               mb={['16px', null, '0']}
             />
