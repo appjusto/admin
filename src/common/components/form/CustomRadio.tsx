@@ -3,6 +3,7 @@ import { Center, Radio, RadioProps } from '@chakra-ui/react';
 const CustomRadio = (props: RadioProps) => {
   return (
     <Center
+      mt="1"
       border="2px solid black"
       position="relative"
       w="24px"
