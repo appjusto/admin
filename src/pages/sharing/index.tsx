@@ -1,4 +1,4 @@
-import { Box, Button, Icon, Stack, Text } from '@chakra-ui/react';
+import { Box, Button, Center, Icon, Stack, Text } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useContextBusiness } from 'app/state/business/context';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
@@ -147,33 +147,31 @@ const SharingPage = () => {
           direction="row"
           spacing={4}
           alignItems="center"
-          p="4"
-          border="1px solid #000"
+          p="6"
+          bgColor="#F6F6F6"
           borderRadius="lg"
           color="black"
         >
-          <Icon as={MdInfoOutline} w="24px" h="24px" />
-          <Text textAlign="justify" pr="1">
+          <Center p="2" bgColor="#fff" borderRadius="18px">
+            <Icon as={MdInfoOutline} w="24px" h="24px" />
+          </Center>
+          <Text maxW="847px" fontSize="16px" lineHeight="22px" fontWeight="500">
             {t(
-              'Caso o cliente tenha o aplicativo do AppJusto instalado, poderá abrir os links abaixo diretamente no app ou no navegador padrão. Se abrir pelo navegador, ele verá o cardápio digital com a opção de visualização oferecida pelo link selecionado.'
+              'Caso o cliente tenha o aplicativo do AppJusto instalado, poderá abrir os links abaixo diretamente no app ou no navegador padrão. Se abrir pelo navegador, ele verá o cardápio digital com a opção do link selecionado.'
             )}
           </Text>
         </Stack>
       )}
-      {business?.slug &&
-        linksArr.map((link) => (
-          <LinkBox
-            key={link.id}
-            id={link.id}
-            title={link.title}
-            description={link.description}
-            mode={link.mode}
-            copied={isCopied}
-            link={getBusinessLinkByMode(link.mode)}
-            sharingMessage={getWhatsappSharingMessage(link.mode)}
-            copy={() => copyToClipboard(link.mode)}
-          />
-        ))}
+      <LinkBox
+        id="QRCode2"
+        title="Cardápio sem botão: somente visualização"
+        description="Ao clicar, seu cliente abrirá a página do cardápio para visualização na loja, sem a opção de pedir"
+        mode="in-store"
+        copied={isCopied}
+        link={getBusinessLinkByMode('in-store')}
+        sharingMessage={getWhatsappSharingMessage('in-store')}
+        copy={() => copyToClipboard('in-store')}
+      />
       <SuccessAndErrorHandler
         submission={submission.current}
         isSuccess={isSuccess}
