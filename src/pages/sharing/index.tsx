@@ -11,6 +11,7 @@ import { MdInfoOutline } from 'react-icons/md';
 import { slugify } from 'utils/formatters';
 import { t } from 'utils/i18n';
 import { LinkBox } from './LinkBox';
+import { LinkBoxWithOption } from './LinkBoxWithOption';
 
 export type Mode = 'whatsapp' | 'in-store';
 
@@ -162,6 +163,16 @@ const SharingPage = () => {
           </Text>
         </Stack>
       )}
+      <LinkBoxWithOption
+        id="QRCode1"
+        title="Cardápio com botão: fazer pedidos"
+        description="Ao clicar, seu cliente abrirá o cardápio com um botão de ação. Escolha a ação abaixo:"
+        mode="whatsapp"
+        copied={isCopied}
+        copy={(mode) => copyToClipboard(mode)}
+        getLink={(mode) => getBusinessLinkByMode(mode)}
+        getSharingMessage={(mode) => getWhatsappSharingMessage(mode)}
+      />
       <LinkBox
         id="QRCode2"
         title="Cardápio sem botão: somente visualização"
