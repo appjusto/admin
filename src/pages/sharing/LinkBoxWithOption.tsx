@@ -122,7 +122,7 @@ export const LinkBoxWithOption = ({
         />
         <Stack mt="6" spacing={4} direction={{ base: 'column', md: 'row' }}>
           <Button fontSize="sm" onClick={() => copy(ModeStatus)}>
-            {copied.status && copied.mode === mode ? t('Copiado!') : t('Copiar link')}
+            {copied.status && copied.mode === ModeStatus ? t('Copiado!') : t('Copiar link')}
           </Button>
           <CustomButton
             mt="0"

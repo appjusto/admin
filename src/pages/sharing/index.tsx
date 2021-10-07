@@ -20,33 +20,6 @@ export type Copied = {
   mode?: Mode;
 };
 
-type SharingLink = {
-  id: string;
-  title: string;
-  description: string;
-  mode?: Mode;
-};
-
-const linksArr = [
-  {
-    id: 'QR1',
-    title: 'Link para pedir no AppJusto',
-    description: 'No cardápio digital, seu cliente verá um botão para "Pedir no AppJusto"',
-  },
-  {
-    id: 'QR2',
-    title: 'Link para pedir via WhatsApp',
-    mode: 'whatsapp',
-    description: 'No cardápio digital, seu cliente verá um botão para "Pedir no Whatsapp"',
-  },
-  {
-    id: 'QR3',
-    title: 'Link para visualização na loja',
-    mode: 'in-store',
-    description: 'No cardápio digital, não haverá botão para realizar o pedido',
-  },
-] as SharingLink[];
-
 const SharingPage = () => {
   // context
   const { business } = useContextBusiness();
