@@ -40,7 +40,7 @@ export const RegistrationForm = () => {
       return setFormMsg({
         status: true,
         type: 'error',
-        message: 'O e-mail não é válido. Corriga e envie novamente',
+        message: 'O e-mail informado não é válido. Corrija e tente novamente.',
       });
     }
     await loginWithEmail(email);
@@ -104,7 +104,7 @@ export const RegistrationForm = () => {
               handleChange={(event: ChangeEvent<HTMLInputElement>) => {
                 setEmail(event.target.value);
               }}
-              isInvalid={isEmailInvalid}
+              isInvalid={email !== '' && isEmailInvalid}
               minW={[null, null, '300px']}
               mb={['16px', null, '0']}
             />
