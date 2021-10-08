@@ -1,6 +1,6 @@
-import { Center, Flex, HStack, Radio, RadioProps } from '@chakra-ui/react';
+import { Center, Checkbox, CheckboxProps, Flex, HStack } from '@chakra-ui/react';
 
-const CustomRadio = ({ children, w, h, mt, mb, ...props }: RadioProps) => {
+const CustomCheckbox = ({ children, w, h, mt, mb, ...props }: CheckboxProps) => {
   const containerProps = { w, h, mt, mb };
   return (
     <HStack {...containerProps}>
@@ -9,16 +9,17 @@ const CustomRadio = ({ children, w, h, mt, mb, ...props }: RadioProps) => {
         position="relative"
         w="24px"
         h="24px"
-        borderRadius="12px"
+        borderRadius="4px"
         boxShadow="none"
         overflow="hidden"
+        _before={{ border: 'none' }}
+        _after={{ border: 'none' }}
       >
-        <Radio
-          cursor="pointer"
-          size="lg"
-          boxShadow="none"
-          bgColor="white"
-          borderColor="white"
+        <Checkbox
+          size="md"
+          iconColor="green.500"
+          border="none"
+          _focus={{ outline: 'none' }}
           _checked={{ bgColor: 'green.500', outline: 'none' }}
           {...props}
         />
@@ -30,4 +31,4 @@ const CustomRadio = ({ children, w, h, mt, mb, ...props }: RadioProps) => {
   );
 };
 
-export default CustomRadio;
+export default CustomCheckbox;
