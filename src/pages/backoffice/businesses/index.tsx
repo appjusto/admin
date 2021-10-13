@@ -1,8 +1,9 @@
 import { ArrowDownIcon, DeleteIcon } from '@chakra-ui/icons';
-import { Button, Checkbox, CheckboxGroup, Flex, HStack, Text } from '@chakra-ui/react';
+import { Button, CheckboxGroup, Flex, HStack, Text } from '@chakra-ui/react';
 import { BusinessesFilter } from 'app/api/search/types';
 import { useBusinessesSearch } from 'app/api/search/useBusinessesSearch';
 import { BusinessAlgolia, BusinessStatus } from 'appjusto-types';
+import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import React from 'react';
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
@@ -174,12 +175,8 @@ const BusinessesPage = () => {
             fontSize="16px"
             lineHeight="22px"
           >
-            <Checkbox iconColor="white" value="open">
-              {t('Aberto')}
-            </Checkbox>
-            <Checkbox iconColor="white" value="closed">
-              {t('Fechado')}
-            </Checkbox>
+            <CustomCheckbox value="open">{t('Aberto')}</CustomCheckbox>
+            <CustomCheckbox value="closed">{t('Fechado')}</CustomCheckbox>
           </HStack>
         </CheckboxGroup>
       </HStack>

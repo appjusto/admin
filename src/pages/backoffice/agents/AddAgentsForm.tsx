@@ -1,5 +1,6 @@
-import { Box, Button, HStack, Radio, RadioGroup, Text, Tooltip } from '@chakra-ui/react';
+import { Box, Button, HStack, RadioGroup, Text, Tooltip } from '@chakra-ui/react';
 import { CloseButton } from 'common/components/buttons/CloseButton';
+import CustomRadio from 'common/components/form/CustomRadio';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import React from 'react';
 import { t } from 'utils/i18n';
@@ -93,9 +94,9 @@ export const AddAgentsForm = () => {
                 <Text w="120px" mr="-4">
                   {t('Papel do agente:')}
                 </Text>
-                <Radio value="owner">{t('Owner')}</Radio>
-                <Radio value="staff">{t('Staff')}</Radio>
-                <Radio value="viewer">{t('Viewer')}</Radio>
+                <CustomRadio value="owner">{t('Owner')}</CustomRadio>
+                <CustomRadio value="staff">{t('Staff')}</CustomRadio>
+                <CustomRadio value="viewer">{t('Viewer')}</CustomRadio>
               </HStack>
             </RadioGroup>
             <Box w="40px">

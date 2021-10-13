@@ -3,7 +3,6 @@ import {
   Checkbox,
   CheckboxGroup,
   Flex,
-  Radio,
   RadioGroup,
   Text,
   Textarea,
@@ -13,6 +12,7 @@ import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';
 import { useContextBusinessBackoffice } from 'app/state/business/businessBOContext';
 import { IssueType, ProfileSituation } from 'appjusto-types';
 import { AlertError } from 'common/components/AlertError';
+import CustomRadio from 'common/components/form/CustomRadio';
 import React from 'react';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
@@ -60,21 +60,21 @@ export const StatusTab = () => {
         lineHeight="21px"
       >
         <Flex flexDir="column" justifyContent="flex-start">
-          <Radio mt="2" value="approved" isDisabled={business?.situation !== 'verified'}>
+          <CustomRadio mt="2" value="approved" isDisabled={business?.situation !== 'verified'}>
             {t('Publicado')}
-          </Radio>
-          <Radio mt="2" value="rejected">
+          </CustomRadio>
+          <CustomRadio mt="2" value="rejected">
             {t('Recusado')}
-          </Radio>
-          <Radio mt="2" value="submitted">
+          </CustomRadio>
+          <CustomRadio mt="2" value="submitted">
             {t('Aguardando aprovação')}
-          </Radio>
-          <Radio mt="2" value="pending">
+          </CustomRadio>
+          <CustomRadio mt="2" value="pending">
             {t('Pendente')}
-          </Radio>
-          <Radio mt="2" value="blocked">
+          </CustomRadio>
+          <CustomRadio mt="2" value="blocked">
             {t('Bloquear restaurante')}
-          </Radio>
+          </CustomRadio>
         </Flex>
       </RadioGroup>
       {business?.situation === 'rejected' && (

@@ -1,9 +1,10 @@
 import { ArrowDownIcon, DeleteIcon } from '@chakra-ui/icons';
-import { Button, Checkbox, CheckboxGroup, Flex, HStack, Text } from '@chakra-ui/react';
+import { Button, CheckboxGroup, Flex, HStack, Text } from '@chakra-ui/react';
 import { BasicUserFilter } from 'app/api/search/types';
 import { useBasicUsersSearch } from 'app/api/search/useBasicUsersSearch';
 import { CourierAlgolia, CourierStatus } from 'appjusto-types';
 import { FilterText } from 'common/components/backoffice/FilterText';
+import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import React from 'react';
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
@@ -172,15 +173,9 @@ const CouriersPage = () => {
             fontSize="16px"
             lineHeight="22px"
           >
-            <Checkbox iconColor="white" value="available">
-              {t('Disponível')}
-            </Checkbox>
-            <Checkbox iconColor="white" value="unavailable">
-              {t('Indisponível')}
-            </Checkbox>
-            <Checkbox iconColor="white" value="dispatching">
-              {t('Realizando entrega')}
-            </Checkbox>
+            <CustomCheckbox value="available">{t('Disponível')}</CustomCheckbox>
+            <CustomCheckbox value="unavailable">{t('Indisponível')}</CustomCheckbox>
+            <CustomCheckbox value="dispatching">{t('Realizando entrega')}</CustomCheckbox>
           </HStack>
         </CheckboxGroup>
       </HStack>

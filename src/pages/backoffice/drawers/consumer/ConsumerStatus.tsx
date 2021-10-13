@@ -1,6 +1,7 @@
-import { Box, Flex, Radio, RadioGroup, Textarea } from '@chakra-ui/react';
+import { Box, Flex, RadioGroup, Textarea } from '@chakra-ui/react';
 import { useContextConsumerProfile } from 'app/state/consumer/context';
 import { ProfileSituation } from 'appjusto-types';
+import CustomRadio from 'common/components/form/CustomRadio';
 import React from 'react';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
@@ -23,12 +24,12 @@ export const ConsumerStatus = () => {
         lineHeight="21px"
       >
         <Flex flexDir="column" justifyContent="flex-start">
-          <Radio mt="2" value="approved">
+          <CustomRadio mt="2" value="approved">
             {t('Ativo')}
-          </Radio>
-          <Radio mt="2" value="blocked">
+          </CustomRadio>
+          <CustomRadio mt="2" value="blocked">
             {t('Bloquear cliente')}
-          </Radio>
+          </CustomRadio>
         </Flex>
       </RadioGroup>
       <SectionTitle>{t('Mensagem personalizada:')}</SectionTitle>

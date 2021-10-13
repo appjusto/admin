@@ -1,6 +1,7 @@
-import { Box, Flex, Radio, RadioGroup, Text } from '@chakra-ui/react';
+import { Box, Flex, RadioGroup, Text } from '@chakra-ui/react';
 import { useContextBusinessBackoffice } from 'app/state/business/businessBOContext';
 import { BusinessStatus } from 'appjusto-types';
+import CustomRadio from 'common/components/form/CustomRadio';
 import React from 'react';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
@@ -53,12 +54,12 @@ export const BusinessLive = () => {
         lineHeight="21px"
       >
         <Flex flexDir="column" justifyContent="flex-start">
-          <Radio mt="2" value="open">
+          <CustomRadio mt="2" value="open">
             {t('Aberto')}
-          </Radio>
-          <Radio mt="2" value="closed">
+          </CustomRadio>
+          <CustomRadio mt="2" value="closed">
             {t('Fechado')}
-          </Radio>
+          </CustomRadio>
         </Flex>
       </RadioGroup>
       <SectionTitle>{t('Desligar restaurante do AppJusto:')}</SectionTitle>
@@ -76,12 +77,12 @@ export const BusinessLive = () => {
         lineHeight="21px"
       >
         <Flex flexDir="column" justifyContent="flex-start">
-          <Radio mt="2" value="true">
+          <CustomRadio mt="2" value="true">
             {t('Ligado')}
-          </Radio>
-          <Radio mt="2" value="false">
+          </CustomRadio>
+          <CustomRadio mt="2" value="false">
             {t('Desligado')}
-          </Radio>
+          </CustomRadio>
         </Flex>
       </RadioGroup>
     </Box>

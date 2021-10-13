@@ -2,7 +2,6 @@ import {
   Box,
   Button,
   HStack,
-  Radio,
   RadioGroup,
   Table,
   Tbody,
@@ -13,6 +12,7 @@ import {
   Tr,
 } from '@chakra-ui/react';
 import { WithId } from 'appjusto-types';
+import CustomRadio from 'common/components/form/CustomRadio';
 import React from 'react';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
@@ -79,9 +79,9 @@ const AgentTableItem = ({ agent, updateAgent, deleteAgent }: AgentTableItemProps
                 fontSize="16px"
                 lineHeight="22px"
               >
-                <Radio value="owner">{t('Owner')}</Radio>
-                <Radio value="staff">{t('Staff')}</Radio>
-                <Radio value="viewer">{t('Viewer')}</Radio>
+                <CustomRadio value="owner">{t('Owner')}</CustomRadio>
+                <CustomRadio value="staff">{t('Staff')}</CustomRadio>
+                <CustomRadio value="viewer">{t('Viewer')}</CustomRadio>
               </HStack>
             </RadioGroup>
           </Td>
