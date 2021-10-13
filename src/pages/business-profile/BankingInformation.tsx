@@ -1,4 +1,4 @@
-import { Box, Flex, HStack, Radio, RadioGroup, Text } from '@chakra-ui/react';
+import { Box, Flex, HStack, RadioGroup, Text } from '@chakra-ui/react';
 import { useBanks } from 'app/api/business/profile/useBanks';
 import { useBusinessBankAccount } from 'app/api/business/profile/useBusinessBankAccount';
 import { useContextBusiness } from 'app/state/business/context';
@@ -7,6 +7,7 @@ import { BankAccountPersonType, BankAccountType } from 'appjusto-types/banking';
 import { AlertWarning } from 'common/components/AlertWarning';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
 import { initialError } from 'common/components/error/utils';
+import CustomRadio from 'common/components/form/CustomRadio';
 import { CustomPatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';
 import {
   addZerosToBeginning,
@@ -191,12 +192,12 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
             fontSize="16px"
             lineHeight="22px"
           >
-            <Radio isDisabled={disabled} value="Pessoa Jurídica">
+            <CustomRadio isDisabled={disabled} value="Pessoa Jurídica">
               {t('Pessoa Jurídica')}
-            </Radio>
-            <Radio isDisabled={disabled} value="Pessoa Física">
+            </CustomRadio>
+            <CustomRadio isDisabled={disabled} value="Pessoa Física">
               {t('Pessoa Física')}
-            </Radio>
+            </CustomRadio>
           </HStack>
         </RadioGroup>
         {business?.situation !== 'approved' && personType === 'Pessoa Física' && (
@@ -290,12 +291,12 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
             fontSize="16px"
             lineHeight="22px"
           >
-            <Radio isDisabled={disabled} value="Corrente">
+            <CustomRadio isDisabled={disabled} value="Corrente">
               {t('Corrente')}
-            </Radio>
-            <Radio isDisabled={disabled} value="Poupança">
+            </CustomRadio>
+            <CustomRadio isDisabled={disabled} value="Poupança">
               {t('Poupança')}
-            </Radio>
+            </CustomRadio>
           </HStack>
         </RadioGroup>
         <PageFooter
