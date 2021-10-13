@@ -10,6 +10,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { useContextMenu } from 'app/state/menu/context';
+import { AlertWarning } from 'common/components/AlertWarning';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
 import { initialError } from 'common/components/error/utils';
 import CustomCheckbox from 'common/components/form/CustomCheckbox';
@@ -37,6 +38,8 @@ export const ProductComplements = () => {
   const [error, setError] = React.useState(initialError);
   // refs
   const submission = React.useRef(0);
+  // helpers
+  const complementsExists = complementsGroupsWithItems.length > 0;
   // handlers
   const handleComplementsEnable = (value: string) => {
     updateProduct({ changes: { complementsEnabled: value === '1' ? false : true } });
@@ -89,11 +92,14 @@ export const ProductComplements = () => {
           <CustomRadio mt="2" value="1">
             {t('Não possui')}
           </CustomRadio>
-          <CustomRadio mt="2" value="2">
+          <CustomRadio mt="2" value="2" isDisabled={!complementsExists}>
             {t('Sim, possui complementos')}
           </CustomRadio>
         </Flex>
       </RadioGroup>
+      {!complementsExists && (
+        <AlertWarning mt="8" title={t('Você ainda não cadastrou complementos')} />
+      )}
       {hasComplements && (
         <Box mt="6">
           <Text fontSize="xl" color="black" fontWeight="700">
