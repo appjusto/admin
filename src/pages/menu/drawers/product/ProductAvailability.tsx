@@ -1,7 +1,8 @@
-import { Button, Flex, Radio, RadioGroup, Text } from '@chakra-ui/react';
+import { Button, Flex, RadioGroup, Text } from '@chakra-ui/react';
 import { BusinessSchedule, ScheduleObject } from 'appjusto-types/business';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
 import { initialError } from 'common/components/error/utils';
+import CustomRadio from 'common/components/form/CustomRadio';
 import { useProductContext } from 'pages/menu/context/ProductContext';
 import React from 'react';
 import { Redirect, useRouteMatch } from 'react-router-dom';
@@ -244,12 +245,12 @@ export const ProductAvailability = () => {
         size="lg"
       >
         <Flex flexDir="column" justifyContent="flex-start">
-          <Radio mt="2" value="always">
+          <CustomRadio mt="2" value="always">
             {t('Sempre disponível quando o restaurante estiver aberto')}
-          </Radio>
-          <Radio mt="2" value="defined">
+          </CustomRadio>
+          <CustomRadio mt="2" value="defined">
             {t('Disponível em dias e horários específicos')}
-          </Radio>
+          </CustomRadio>
         </Flex>
       </RadioGroup>
       {mainAvailability === 'defined' && (

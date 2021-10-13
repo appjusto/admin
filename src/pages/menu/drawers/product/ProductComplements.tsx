@@ -2,11 +2,9 @@ import {
   Badge,
   Box,
   Button,
-  Checkbox,
   CheckboxGroup,
   Flex,
   HStack,
-  Radio,
   RadioGroup,
   Stack,
   Text,
@@ -14,6 +12,8 @@ import {
 import { useContextMenu } from 'app/state/menu/context';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
 import { initialError } from 'common/components/error/utils';
+import CustomCheckbox from 'common/components/form/CustomCheckbox';
+import CustomRadio from 'common/components/form/CustomRadio';
 import { useProductContext } from 'pages/menu/context/ProductContext';
 import React from 'react';
 import { Redirect, useRouteMatch } from 'react-router-dom';
@@ -86,12 +86,12 @@ export const ProductComplements = () => {
         color="black"
       >
         <Flex flexDir="column" justifyContent="flex-start">
-          <Radio mt="2" value="1">
+          <CustomRadio mt="2" value="1">
             {t('Não possui')}
-          </Radio>
-          <Radio mt="2" value="2">
+          </CustomRadio>
+          <CustomRadio mt="2" value="2">
             {t('Sim, possui complementos')}
-          </Radio>
+          </CustomRadio>
         </Flex>
       </RadioGroup>
       {hasComplements && (
@@ -115,13 +115,7 @@ export const ProductComplements = () => {
             >
               {complementsGroupsWithItems.map((group) => (
                 <Box key={group.id} w="100%" p="4" border="1px solid #D7E7DA" borderRadius="lg">
-                  <Checkbox
-                    w="100%"
-                    iconColor="white"
-                    size="lg"
-                    borderColor="gray.700"
-                    value={group.id}
-                  >
+                  <CustomCheckbox w="100%" value={group.id}>
                     <Box ml="2">
                       <HStack spacing={2}>
                         <Text>{group.name}</Text>
@@ -138,7 +132,7 @@ export const ProductComplements = () => {
                         ?.map((item) => item.name)
                         .join(', ')}`}</Text>
                     </Box>
-                  </Checkbox>
+                  </CustomCheckbox>
                 </Box>
               ))}
             </Stack>
