@@ -55,14 +55,11 @@ export const useObserveOrdersHistory = (
       endDate,
       orderStatus,
       type,
-      startAfter
+      startAfter,
+      true
     );
     return () => unsub();
   }, [api, startAfter, businessId, statuses, orderCode, start, end, orderStatus, orderType]);
   // return
-  console.log(
-    'orders',
-    orders?.map((o) => o.code)
-  );
   return { orders, fetchNextPage };
 };
