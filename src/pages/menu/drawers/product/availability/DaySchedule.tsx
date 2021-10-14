@@ -1,4 +1,4 @@
-import { CloseIcon } from '@chakra-ui/icons';
+import { CloseIcon, InfoOutlineIcon } from '@chakra-ui/icons';
 import { Button, Checkbox, Flex, Radio, RadioGroup, Text } from '@chakra-ui/react';
 import { ScheduleObject } from 'appjusto-types/business';
 import { CustomPatternInput as Input } from 'common/components/form/input/pattern-input/CustomPatternInput';
@@ -36,6 +36,7 @@ export const DaySchedule = ({
   const { day: weekDay, checked, schedule } = day;
   // state
   const [availability, setAvailability] = React.useState<MainAvailability>('when-is-open');
+  const [warning, setWarning] = React.useState<string>();
   // handlers
   const inputValidation = (from: string, to: string, beforeTo?: string) => {
     if (from === '' || to === '') return true;
@@ -47,8 +48,16 @@ export const DaySchedule = ({
     setAvailability(value);
     if (value === 'when-is-open') clearDaySchedule();
   };
+  const handleChangeItemsNumber = (type: 'add' | 'remove', itemIndex?: number) => {
+    if (type === 'add') {
+      if (schedule[0].from === '')
+        return setWarning('Favor preencher os horários do primeiro turno');
+      addScheduleItem();
+    } else if (itemIndex) removeScheduleItem(itemIndex);
+  };
   // side effects
   React.useEffect(() => {
+    setWarning(undefined);
     if (schedule.length > 0 && schedule[0].from !== '') setAvailability('defined');
     else setAvailability('when-is-open');
   }, [schedule]);
@@ -131,7 +140,7 @@ export const DaySchedule = ({
                       size="sm"
                       maxW="30px"
                       borderColor="#F2F6EA"
-                      onClick={() => removeScheduleItem(index)}
+                      onClick={() => handleChangeItemsNumber('remove', index)}
                     >
                       <CloseIcon fontSize="0.6rem" />
                     </Button>
@@ -140,6 +149,12 @@ export const DaySchedule = ({
               </Flex>
             );
           })}
+          {warning !== undefined && (
+            <Text mt="2" fontSize="xs" fontWeight="700" color="red">
+              <InfoOutlineIcon mt="-2px" mr="2" />
+              {warning}
+            </Text>
+          )}
           {schedule.length < 4 && (
             <Text
               mt="4"
@@ -147,7 +162,7 @@ export const DaySchedule = ({
               fontWeight="700"
               color="green.600"
               cursor="pointer"
-              onClick={addScheduleItem}
+              onClick={() => handleChangeItemsNumber('add')}
               _hover={{ textDecor: 'underline' }}
             >
               {t('Adicionar turno')}
