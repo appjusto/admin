@@ -2,6 +2,7 @@ import { useContextApi } from 'app/state/api/context';
 import { WithId, OrderStatus, OrderType, Order } from 'appjusto-types';
 import React from 'react';
 import firebase from 'firebase/app';
+import { uniqWith, isEqual } from 'lodash';
 
 export const useObserveOrdersHistory = (
   businessId: string | null | undefined,
@@ -12,6 +13,8 @@ export const useObserveOrdersHistory = (
   orderStatus?: OrderStatus,
   orderType?: OrderType[]
 ) => {
+  console.log('start', start);
+  console.log('end', end);
   // context
   const api = useContextApi();
   // state
@@ -19,13 +22,13 @@ export const useObserveOrdersHistory = (
   const [startAfter, setStartAfter] = React.useState<
     firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
   >();
-  const [lastFleet, setLastFleet] = React.useState<
+  const [lastOrder, setLastOrder] = React.useState<
     firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
   >();
   // handlers
   const fetchNextPage = React.useCallback(() => {
-    setStartAfter(lastFleet);
-  }, [lastFleet]);
+    setStartAfter(lastOrder);
+  }, [lastOrder]);
   // side effects
   React.useEffect(() => {
     setStartAfter(undefined);
@@ -37,8 +40,15 @@ export const useObserveOrdersHistory = (
     const unsub = api.order().observeOrdersHistory(
       (results, last) => {
         if (!startAfter) setOrders(results);
-        else setOrders((prev) => (prev ? [...prev, ...results] : results));
-        setLastFleet(last);
+        else
+          setOrders((prev) => {
+            if (prev) {
+              const union = [...prev, ...results];
+              return uniqWith(union, isEqual);
+            }
+            return results;
+          });
+        setLastOrder(last);
       },
       businessId,
       statuses,
@@ -47,7 +57,8 @@ export const useObserveOrdersHistory = (
       endDate,
       orderStatus,
       type,
-      startAfter
+      startAfter,
+      true
     );
     return () => unsub();
   }, [api, startAfter, businessId, statuses, orderCode, start, end, orderStatus, orderType]);
