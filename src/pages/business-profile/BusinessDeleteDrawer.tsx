@@ -12,6 +12,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
 import { initialError } from 'common/components/error/utils';
@@ -27,6 +28,7 @@ interface BaseDrawerProps {
 
 export const BusinessDeleteDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   //context
+  const { isBackofficeUser } = useContextFirebaseUser();
   const { business } = useContextBusiness();
   const { deleteBusinessProfile, deleteResult } = useBusinessProfile();
   const { isSuccess, isError, error: deleteError, isLoading } = deleteResult;
@@ -57,7 +59,10 @@ export const BusinessDeleteDrawer = ({ onClose, ...props }: BaseDrawerProps) => 
       });
   }, [isError, deleteError]);
   //UI
-  if (isSuccess) return <Redirect to="/logout" push />;
+  if (isSuccess) {
+    if (!isBackofficeUser) return <Redirect to="/logout" push />;
+    else return <Redirect to="/backoffice" push />;
+  }
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
       <DrawerOverlay>
@@ -112,6 +117,7 @@ export const BusinessDeleteDrawer = ({ onClose, ...props }: BaseDrawerProps) => 
                   onClick={handleDelete}
                   isLoading={isLoading}
                   loadingText={t('Excluindo')}
+                  isDisabled={businessName !== business?.name}
                 >
                   {t('Excluir restaurante')}
                 </Button>
