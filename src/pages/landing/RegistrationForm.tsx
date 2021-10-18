@@ -1,8 +1,9 @@
-import { Box, Button, Checkbox, Flex, Heading, HStack, Image, Link, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, Heading, HStack, Image, Link, Text } from '@chakra-ui/react';
 import { useContextApi } from 'app/state/api/context';
 import { AlertSuccess } from 'common/components/AlertSuccess';
 import { AlertWarning } from 'common/components/AlertWarning';
 import Container from 'common/components/Container';
+import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import delivery from 'common/img/big-delivery.svg';
 import React, { ChangeEvent, FormEvent } from 'react';
@@ -109,11 +110,8 @@ export const RegistrationForm = () => {
               mb={['16px', null, '0']}
             />
             <HStack mt="4" spacing={2} alignItems="center">
-              <Checkbox
-                size="lg"
+              <CustomCheckbox
                 colorScheme="green"
-                borderColor="black"
-                borderRadius="lg"
                 isChecked={accept}
                 onChange={(event) => setAccept(event.target.checked)}
               />

@@ -1,8 +1,9 @@
-import { Box, Button, Checkbox, Flex, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, Text } from '@chakra-ui/react';
 import { useAuthentication } from 'app/api/auth/useAuthentication';
 import { AlertError } from 'common/components/AlertError';
 import { AlertSuccess } from 'common/components/AlertSuccess';
 import { initialError } from 'common/components/error/utils';
+import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import { CustomPasswordInput } from 'common/components/form/input/CustomPasswordInput';
 import logo from 'common/img/logo.svg';
@@ -95,17 +96,15 @@ const Login = () => {
             handleChange={(ev) => setEmail(ev.target.value)}
             isInvalid={email !== '' && isEmailInvalid}
           />
-          <Checkbox
+          <CustomCheckbox
             mt="4"
             colorScheme="green"
-            iconColor="white"
             value="available"
-            color="black"
             isChecked={isPassword}
             onChange={(e) => setIsPassword(e.target.checked)}
           >
             {t('Usar senha de acesso')}
-          </Checkbox>
+          </CustomCheckbox>
           <Text mt="2" fontSize="xs">
             {t('Ao entrar sem senha, enviaremos um link de acesso para o e-mail cadastrado.')}
           </Text>
