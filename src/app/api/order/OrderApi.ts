@@ -179,6 +179,46 @@ export default class OrderApi {
     return unsubscribe;
   }
 
+  observeBusinessOrdersHistory(
+    resultHandler: (
+      orders: WithId<Order>[],
+      last?: firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
+    ) => void,
+    businessId: string | undefined,
+    statuses: OrderStatus[] | null,
+    orderCode: string | null | undefined,
+    start: Date | null | undefined,
+    end: Date | null | undefined,
+    startAfter: FirebaseDocument | undefined,
+    ignoreCache: boolean | undefined = false
+  ): firebase.Unsubscribe {
+    let query = this.refs
+      .getOrdersRef()
+      .orderBy('updatedOn', 'desc')
+      .limit(20)
+      .where('status', 'in', statuses)
+      .where('business.id', '==', businessId);
+    if (startAfter) query = query.startAfter(startAfter);
+    if (orderCode) query = query.where('code', '==', orderCode);
+    if (start && end) query = query.where('updatedOn', '>=', start).where('updatedOn', '<=', end);
+    const unsubscribe = query.onSnapshot(
+      (querySnapshot) => {
+        const last =
+          querySnapshot.docs.length > 0 ? querySnapshot.docs[querySnapshot.size - 1] : undefined;
+        if (ignoreCache) {
+          if (!querySnapshot.metadata.fromCache)
+            resultHandler(documentsAs<Order>(querySnapshot.docs), last);
+        } else resultHandler(documentsAs<Order>(querySnapshot.docs), last);
+      },
+      (error) => {
+        console.error(error);
+        Sentry.captureException(error);
+      }
+    );
+    // returns the unsubscribe function
+    return unsubscribe;
+  }
+
   observeBusinessCanceledOrders(
     resultHandler: (orders: WithId<Order>[]) => void,
     businessId: string
