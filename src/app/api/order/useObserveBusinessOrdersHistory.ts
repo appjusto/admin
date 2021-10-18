@@ -1,18 +1,16 @@
 import { useContextApi } from 'app/state/api/context';
-import { WithId, OrderStatus, OrderType, Order } from 'appjusto-types';
+import { WithId, OrderStatus, Order } from 'appjusto-types';
 import React from 'react';
 import firebase from 'firebase/app';
 import { uniqWith, isEqual } from 'lodash';
 import dayjs from 'dayjs';
 
-export const useObserveOrdersHistory = (
-  businessId: string | null | undefined,
+export const useObserveBusinessOrdersHistory = (
+  businessId: string | undefined,
   statuses: OrderStatus[] | null,
   orderCode?: string,
   start?: string,
-  end?: string,
-  orderStatus?: OrderStatus,
-  orderType?: OrderType[]
+  end?: string
 ) => {
   // context
   const api = useContextApi();
@@ -31,12 +29,11 @@ export const useObserveOrdersHistory = (
   // side effects
   React.useEffect(() => {
     setStartAfter(undefined);
-  }, [orderCode, start, end, orderStatus, orderType]);
+  }, [orderCode, start, end]);
   React.useEffect(() => {
-    let type = orderType?.length === 1 ? orderType[0] : null;
     let startDate = start ? dayjs(start).startOf('day').toDate() : null;
     let endDate = end ? dayjs(end).endOf('day').toDate() : null;
-    const unsub = api.order().observeOrdersHistory(
+    const unsub = api.order().observeBusinessOrdersHistory(
       (results, last) => {
         if (!startAfter) setOrders(results);
         else
@@ -54,12 +51,10 @@ export const useObserveOrdersHistory = (
       orderCode,
       startDate,
       endDate,
-      orderStatus,
-      type,
       startAfter
     );
     return () => unsub();
-  }, [api, startAfter, businessId, statuses, orderCode, start, end, orderStatus, orderType]);
+  }, [api, startAfter, businessId, statuses, orderCode, start, end]);
   // return
   return { orders, fetchNextPage };
 };
