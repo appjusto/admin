@@ -150,8 +150,8 @@ export default class OrderApi {
     end: Date | null | undefined,
     orderStatus: OrderStatus | undefined,
     orderType: OrderType | null,
-    startAfter: FirebaseDocument | undefined,
-    ignoreCache: boolean | undefined = false
+    startAfter: FirebaseDocument | undefined
+    //ignoreCache: boolean | undefined = false
   ): firebase.Unsubscribe {
     let query = this.refs.getOrdersRef().orderBy('updatedOn', 'desc').limit(20);
     if (orderStatus) query = query.where('status', '==', orderStatus);
@@ -165,10 +165,11 @@ export default class OrderApi {
       (querySnapshot) => {
         const last =
           querySnapshot.docs.length > 0 ? querySnapshot.docs[querySnapshot.size - 1] : undefined;
-        if (ignoreCache) {
-          if (!querySnapshot.metadata.fromCache)
-            resultHandler(documentsAs<Order>(querySnapshot.docs), last);
-        } else resultHandler(documentsAs<Order>(querySnapshot.docs), last);
+        //if (ignoreCache) {
+        //  if (!querySnapshot.metadata.fromCache)
+        //    resultHandler(documentsAs<Order>(querySnapshot.docs), last);
+        //} else resultHandler(documentsAs<Order>(querySnapshot.docs), last);
+        resultHandler(documentsAs<Order>(querySnapshot.docs), last);
       },
       (error) => {
         console.error(error);
@@ -189,15 +190,15 @@ export default class OrderApi {
     orderCode: string | null | undefined,
     start: Date | null | undefined,
     end: Date | null | undefined,
-    startAfter: FirebaseDocument | undefined,
-    ignoreCache: boolean | undefined = false
+    startAfter: FirebaseDocument | undefined
+    //ignoreCache: boolean | undefined = false
   ): firebase.Unsubscribe {
     let query = this.refs
       .getOrdersRef()
       .orderBy('updatedOn', 'desc')
       .limit(20)
-      .where('status', 'in', statuses)
-      .where('business.id', '==', businessId);
+      .where('business.id', '==', businessId)
+      .where('status', 'in', statuses);
     if (startAfter) query = query.startAfter(startAfter);
     if (orderCode) query = query.where('code', '==', orderCode);
     if (start && end) query = query.where('updatedOn', '>=', start).where('updatedOn', '<=', end);
@@ -205,10 +206,7 @@ export default class OrderApi {
       (querySnapshot) => {
         const last =
           querySnapshot.docs.length > 0 ? querySnapshot.docs[querySnapshot.size - 1] : undefined;
-        if (ignoreCache) {
-          if (!querySnapshot.metadata.fromCache)
-            resultHandler(documentsAs<Order>(querySnapshot.docs), last);
-        } else resultHandler(documentsAs<Order>(querySnapshot.docs), last);
+        resultHandler(documentsAs<Order>(querySnapshot.docs), last);
       },
       (error) => {
         console.error(error);

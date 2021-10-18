@@ -14,8 +14,6 @@ export const useObserveOrdersHistory = (
   orderStatus?: OrderStatus,
   orderType?: OrderType[]
 ) => {
-  console.log('start', start);
-  console.log('end', end);
   // context
   const api = useContextApi();
   // state
@@ -58,8 +56,7 @@ export const useObserveOrdersHistory = (
       endDate,
       orderStatus,
       type,
-      startAfter,
-      true
+      startAfter
     );
     return () => unsub();
   }, [api, startAfter, businessId, statuses, orderCode, start, end, orderStatus, orderType]);

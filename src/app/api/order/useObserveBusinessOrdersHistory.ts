@@ -33,8 +33,6 @@ export const useObserveBusinessOrdersHistory = (
   React.useEffect(() => {
     let startDate = start ? dayjs(start).startOf('day').toDate() : null;
     let endDate = end ? dayjs(end).endOf('day').toDate() : null;
-    console.log('startDate', startDate);
-    console.log('endDate', endDate);
     const unsub = api.order().observeBusinessOrdersHistory(
       (results, last) => {
         if (!startAfter) setOrders(results);
@@ -53,8 +51,7 @@ export const useObserveBusinessOrdersHistory = (
       orderCode,
       startDate,
       endDate,
-      startAfter,
-      true
+      startAfter
     );
     return () => unsub();
   }, [api, startAfter, businessId, statuses, orderCode, start, end]);
