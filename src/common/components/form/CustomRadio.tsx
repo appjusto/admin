@@ -1,28 +1,38 @@
-import { Center, Radio, RadioProps } from '@chakra-ui/react';
+import { Center, Flex, HStack, Radio, RadioProps } from '@chakra-ui/react';
 
-const CustomRadio = (props: RadioProps) => {
+const CustomRadio = ({ children, w, h, mt, mb, isDisabled, ...props }: RadioProps) => {
+  // props
+  const containerProps = { w, h, mt, mb };
+  const mainColor = isDisabled ? 'gray.500' : 'green.500';
+  // UI
   return (
-    <Center
-      mt="1"
-      border="2px solid black"
-      position="relative"
-      w="24px"
-      h="24px"
-      borderRadius="12px"
-      boxShadow="none"
-      overflow="hidden"
-      _before={{ border: 'none' }}
-      _after={{ border: 'none' }}
-    >
-      <Radio
-        cursor="pointer"
-        size="lg"
+    <HStack {...containerProps}>
+      <Center
+        border="2px solid"
+        borderColor={isDisabled ? 'gray.400' : 'black'}
+        position="relative"
+        w="24px"
+        h="24px"
+        borderRadius="12px"
         boxShadow="none"
-        bgColor="white"
-        _checked={{ bgColor: 'green.500', outline: 'none' }}
-        {...props}
-      />
-    </Center>
+        overflow="hidden"
+      >
+        <Radio
+          cursor={!isDisabled ? 'pointer' : 'not-allowed'}
+          size="lg"
+          boxShadow="none"
+          bgColor="white"
+          borderColor="white"
+          isDisabled={isDisabled}
+          _checked={{ bgColor: mainColor, outline: 'none' }}
+          _disabled={{}}
+          {...props}
+        />
+      </Center>
+      <Flex h="100%" alignItems="center">
+        {children}
+      </Flex>
+    </HStack>
   );
 };
 

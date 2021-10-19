@@ -63,7 +63,7 @@ export default class Api {
     this._business = new BusinessApi(this._refs, this._files);
     this._order = new OrderApi(this._refs);
     this._courier = new CourierApi(this._refs, this._files);
-    this._consumer = new ConsumerApi(this._refs);
+    this._consumer = new ConsumerApi(this._refs, this._files);
   }
 
   auth() {

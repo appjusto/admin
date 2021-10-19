@@ -1,14 +1,5 @@
-import {
-  Button,
-  Checkbox,
-  CheckboxGroup,
-  Flex,
-  Link,
-  Stack,
-  Switch,
-  Text,
-  VStack,
-} from '@chakra-ui/react';
+import { Button, CheckboxGroup, Flex, Link, Stack, Switch, Text, VStack } from '@chakra-ui/react';
+import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput2';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
@@ -285,24 +276,12 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
         onChange={(value) => handleStateUpdate('classifications', value)}
       >
         <VStack alignItems="flex-start" mt="4" color="black" spacing={2}>
-          <Checkbox iconColor="white" value="vegetarian">
-            {t('Vegetariano')}
-          </Checkbox>
-          <Checkbox iconColor="white" value="vegan">
-            {t('Vegano')}
-          </Checkbox>
-          <Checkbox iconColor="white" value="organic">
-            {t('Orgânico')}
-          </Checkbox>
-          <Checkbox iconColor="white" value="gluten_free">
-            {t('Sem glúten')}
-          </Checkbox>
-          <Checkbox iconColor="white" value="no_sugar">
-            {t('Sem açúcar')}
-          </Checkbox>
-          <Checkbox iconColor="white" value="zero_lactose">
-            {t('Zero lactose')}
-          </Checkbox>
+          <CustomCheckbox value="vegetarian">{t('Vegetariano')}</CustomCheckbox>
+          <CustomCheckbox value="vegan">{t('Vegano')}</CustomCheckbox>
+          <CustomCheckbox value="organic">{t('Orgânico')}</CustomCheckbox>
+          <CustomCheckbox value="gluten_free">{t('Sem glúten')}</CustomCheckbox>
+          <CustomCheckbox value="no_sugar">{t('Sem açúcar')}</CustomCheckbox>
+          <CustomCheckbox value="zero_lactose">{t('Zero lactose')}</CustomCheckbox>
         </VStack>
       </CheckboxGroup>{' '}
       <Flex mt="8" flexDir="row" alignItems="center" spacing={2}>

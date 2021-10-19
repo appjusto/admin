@@ -22,6 +22,7 @@ import { initialError } from 'common/components/error/utils';
 import { getEditableProfile } from 'pages/backoffice/utils';
 import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
 import React from 'react';
+import { queryCache } from 'react-query';
 import { useRouteMatch } from 'react-router';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
@@ -38,7 +39,15 @@ export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
   //context
   const { url } = useRouteMatch();
   const { deleteAccount, deleteAccountResult } = useAuthentication();
-  const { consumer, isEditingEmail, setIsEditingEmail } = useContextConsumerProfile();
+  const {
+    consumer,
+    selfieFiles,
+    setSelfieFiles,
+    documentFiles,
+    setDocumentFiles,
+    isEditingEmail,
+    setIsEditingEmail,
+  } = useContextConsumerProfile();
   const { updateProfile, updateResult } = useConsumerUpdateProfile(consumer?.id);
   const { isLoading, isSuccess, isError, error: updateError } = updateResult;
 
@@ -70,7 +79,13 @@ export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
     }*/
     setIsEditingEmail(false);
     const changes = getEditableProfile(consumer, isEditingEmail) as Partial<ConsumerProfile>;
-    updateProfile(changes);
+    const selfieFileToSave = selfieFiles ? selfieFiles[0] : null;
+    const documentFileToSave = documentFiles ? documentFiles[0] : null;
+    updateProfile({ changes, selfieFileToSave, documentFileToSave });
+    if (selfieFileToSave) queryCache.invalidateQueries(['consumer:selfie', consumer?.id]);
+    if (documentFileToSave) queryCache.invalidateQueries(['consumer:document', consumer?.id]);
+    setSelfieFiles(null);
+    setDocumentFiles(null);
   };
 
   const handleDeleteAccount = () => {

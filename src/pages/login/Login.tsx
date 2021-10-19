@@ -1,24 +1,20 @@
-import { Box, Button, Checkbox, Flex, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, Text } from '@chakra-ui/react';
 import { useAuthentication } from 'app/api/auth/useAuthentication';
 import { AlertError } from 'common/components/AlertError';
 import { AlertSuccess } from 'common/components/AlertSuccess';
+import { initialError } from 'common/components/error/utils';
+import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import { CustomPasswordInput } from 'common/components/form/input/CustomPasswordInput';
 import logo from 'common/img/logo.svg';
 import { getErrorMessage } from 'core/fb';
 import React from 'react';
 import { Redirect } from 'react-router-dom';
+import { isEmailValid } from 'utils/email';
 import { t } from 'utils/i18n';
 import Image from '../../common/components/Image';
 import leftImage from './img/login-left@2x.jpg';
 import rightImage from './img/login-right@2x.jpg';
-
-interface InitialError {
-  status: boolean;
-  error: unknown | null;
-}
-
-const initialError = { status: false, error: null };
 
 const Login = () => {
   // context
@@ -31,7 +27,20 @@ const Login = () => {
   const [email, setEmail] = React.useState('');
   const [passwd, setPasswd] = React.useState('');
   const [isPassword, setIsPassword] = React.useState(false);
-  const [error, setError] = React.useState<InitialError>(initialError);
+  const [error, setError] = React.useState(initialError);
+  const isEmailInvalid = React.useMemo(() => !isEmailValid(email), [email]);
+  // handlers
+  const handleSubmit = (event: React.FormEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    if (isEmailInvalid) {
+      return setError({
+        status: true,
+        error: null,
+        message: { title: 'O e-mail informado não é válido. Corrija e tente novamente.' },
+      });
+    }
+    login({ email, password: passwd });
+  };
   // side effects
   React.useEffect(() => {
     signOut();
@@ -42,6 +51,7 @@ const Login = () => {
       setError({
         status: true,
         error: loginError,
+        message: { title: getErrorMessage(loginError) ?? 'Tenta de novo?' },
       });
   }, [isError, loginError]);
   React.useEffect(() => {
@@ -74,15 +84,7 @@ const Login = () => {
         <Text fontSize="md" textAlign="center" color="gray.500">
           {t('Gerencie seu estabelecimento')}
         </Text>
-        <Flex
-          as="form"
-          w="100%"
-          flexDir="column"
-          onSubmit={(ev) => {
-            ev.preventDefault();
-            login({ email, password: passwd });
-          }}
-        >
+        <Flex as="form" w="100%" flexDir="column" onSubmit={handleSubmit}>
           <CustomInput
             ref={emailRef}
             isRequired
@@ -92,18 +94,17 @@ const Login = () => {
             placeholder={t('Endereço de e-mail')}
             value={email}
             handleChange={(ev) => setEmail(ev.target.value)}
+            isInvalid={email !== '' && isEmailInvalid}
           />
-          <Checkbox
+          <CustomCheckbox
             mt="4"
             colorScheme="green"
-            iconColor="white"
             value="available"
-            color="black"
             isChecked={isPassword}
             onChange={(e) => setIsPassword(e.target.checked)}
           >
             {t('Usar senha de acesso')}
-          </Checkbox>
+          </CustomCheckbox>
           <Text mt="2" fontSize="xs">
             {t('Ao entrar sem senha, enviaremos um link de acesso para o e-mail cadastrado.')}
           </Text>
@@ -128,7 +129,7 @@ const Login = () => {
           {error.status && (
             <AlertError
               title={t('A autenticação falhou!')}
-              description={getErrorMessage(error.error) ?? t('Tenta de novo?')}
+              description={error?.message?.title ?? t('Tenta de novo?')}
             />
           )}
           {!isPassword && isSuccess && (

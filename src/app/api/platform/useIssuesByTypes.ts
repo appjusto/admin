@@ -14,7 +14,13 @@ export const useIssuesByType = (types: IssueType[]) => {
     (async () => {
       try {
         const data = await api.platform().fetchIssues(types);
-        setIssues(data);
+        setIssues(
+          data.sort((a, b) => {
+            if (!a.order || !b.order) return 1;
+            if (a.order < b.order) return -1;
+            else return 1;
+          })
+        );
       } catch (error) {
         Sentry.captureException({ name: 'useIssuesByType', error });
         setIssues(null);

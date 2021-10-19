@@ -13,6 +13,7 @@ import { numbersOnlyParser } from 'common/components/form/input/pattern-input/pa
 import React from 'react';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
+import { Documents } from './Documents';
 
 export const PersonalProfile = () => {
   // context
@@ -124,6 +125,7 @@ export const PersonalProfile = () => {
         onValueChange={(value) => handleInputChange('cpf', value)}
         externalValidation={{ active: true, status: isCPFValid() }}
       />
+      <Documents />
     </Box>
   );
 };

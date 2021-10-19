@@ -101,10 +101,22 @@ const ConsumersPage = () => {
             {t('Todos')}
           </FilterText>
           <FilterText
+            isActive={filterBar === 'submitted' ? true : false}
+            onClick={() => setFilterBar('submitted')}
+          >
+            {t('Submetidos')}
+          </FilterText>
+          <FilterText
             isActive={filterBar === 'approved' ? true : false}
             onClick={() => setFilterBar('approved')}
           >
             {t('Aprovados')}
+          </FilterText>
+          <FilterText
+            isActive={filterBar === 'rejected' ? true : false}
+            onClick={() => setFilterBar('rejected')}
+          >
+            {t('Rejeitados')}
           </FilterText>
           <FilterText
             isActive={filterBar === 'blocked' ? true : false}

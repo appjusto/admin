@@ -152,4 +152,10 @@ export default class FirebaseRefs {
     `${this.getCourierStoragePath(courierId)}/selfie${size ? `${size}` : ''}.jpg`;
   getCourierDocumentStoragePath = (courierId: string, size?: string) =>
     `${this.getCourierStoragePath(courierId)}/document${size ? `${size}` : ''}.jpg`;
+  // consumer
+  getConsumerStoragePath = (consumerId: string) => `consumers/${consumerId}`;
+  getConsumerSelfieStoragePath = (consumerId: string, size?: string) =>
+    `${this.getConsumerStoragePath(consumerId)}/selfie${size ? `${size}` : ''}.jpg`;
+  getConsumerDocumentStoragePath = (consumerId: string, size?: string) =>
+    `${this.getConsumerStoragePath(consumerId)}/document${size ? `${size}` : ''}.jpg`;
 }

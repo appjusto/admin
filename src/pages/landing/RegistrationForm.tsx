@@ -1,12 +1,14 @@
-import { Box, Button, Checkbox, Flex, Heading, HStack, Image, Link, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, Heading, HStack, Image, Link, Text } from '@chakra-ui/react';
 import { useContextApi } from 'app/state/api/context';
 import { AlertSuccess } from 'common/components/AlertSuccess';
 import { AlertWarning } from 'common/components/AlertWarning';
 import Container from 'common/components/Container';
+import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import delivery from 'common/img/big-delivery.svg';
 import React, { ChangeEvent, FormEvent } from 'react';
 import { useMutation } from 'react-query';
+import { isEmailValid } from 'utils/email';
 import { t } from 'utils/i18n';
 import { Section } from './Section';
 
@@ -17,6 +19,7 @@ export const RegistrationForm = () => {
   const [email, setEmail] = React.useState('');
   const [accept, setAccept] = React.useState(false);
   const [formMsg, setFormMsg] = React.useState({ status: false, type: '', message: '' });
+  const isEmailInvalid = React.useMemo(() => !isEmailValid(email), [email]);
 
   // mutations
   const [loginWithEmail, { isLoading, isSuccess, isError, error }] = useMutation((email: string) =>
@@ -32,6 +35,13 @@ export const RegistrationForm = () => {
         status: true,
         type: 'error',
         message: 'É preciso aceitar os termos de uso da plataforma.',
+      });
+    }
+    if (isEmailInvalid) {
+      return setFormMsg({
+        status: true,
+        type: 'error',
+        message: 'O e-mail informado não é válido. Corrija e tente novamente.',
       });
     }
     await loginWithEmail(email);
@@ -95,15 +105,13 @@ export const RegistrationForm = () => {
               handleChange={(event: ChangeEvent<HTMLInputElement>) => {
                 setEmail(event.target.value);
               }}
+              isInvalid={email !== '' && isEmailInvalid}
               minW={[null, null, '300px']}
               mb={['16px', null, '0']}
             />
             <HStack mt="4" spacing={2} alignItems="center">
-              <Checkbox
-                size="lg"
+              <CustomCheckbox
                 colorScheme="green"
-                borderColor="black"
-                borderRadius="lg"
                 isChecked={accept}
                 onChange={(event) => setAccept(event.target.checked)}
               />

@@ -1,5 +1,6 @@
 import { Box, Checkbox, Flex, HStack, Radio, RadioGroup, Text, Textarea } from '@chakra-ui/react';
 import { InvoiceType, Issue, IssueType, OrderStatus, OrderType, WithId } from 'appjusto-types';
+import CustomRadio from 'common/components/form/CustomRadio';
 import React from 'react';
 import { formatCurrency } from 'utils/formatters';
 import { getOrderCancellator } from 'utils/functions';
@@ -48,28 +49,28 @@ export const OrderStatusBar = ({
         lineHeight="21px"
       >
         <Flex flexDir="column" justifyContent="flex-start">
-          <Radio mt="2" value="confirming">
+          <CustomRadio mt="2" value="confirming">
             {t('Aguardando confirmação')}
-          </Radio>
+          </CustomRadio>
           {orderType === 'food' && (
             <>
-              <Radio mt="2" value="preparing">
+              <CustomRadio mt="2" value="preparing">
                 {t('Em preparo')}
-              </Radio>
-              <Radio mt="2" value="ready">
+              </CustomRadio>
+              <CustomRadio mt="2" value="ready">
                 {t('Pronto - aguardando entregador')}
-              </Radio>
+              </CustomRadio>
             </>
           )}
-          <Radio mt="2" value="dispatching">
+          <CustomRadio mt="2" value="dispatching">
             {t('A caminho da entrega')}
-          </Radio>
-          <Radio mt="2" value="delivered">
+          </CustomRadio>
+          <CustomRadio mt="2" value="delivered">
             {t('Entregue')}
-          </Radio>
-          <Radio mt="2" value="canceled">
+          </CustomRadio>
+          <CustomRadio mt="2" value="canceled">
             {t('Cancelado')}
-          </Radio>
+          </CustomRadio>
         </Flex>
       </RadioGroup>
       {status === 'canceled' && (

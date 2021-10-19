@@ -2,18 +2,19 @@ import {
   Badge,
   Box,
   Button,
-  Checkbox,
   CheckboxGroup,
   Flex,
   HStack,
-  Radio,
   RadioGroup,
   Stack,
   Text,
 } from '@chakra-ui/react';
 import { useContextMenu } from 'app/state/menu/context';
+import { AlertWarning } from 'common/components/AlertWarning';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
 import { initialError } from 'common/components/error/utils';
+import CustomCheckbox from 'common/components/form/CustomCheckbox';
+import CustomRadio from 'common/components/form/CustomRadio';
 import { useProductContext } from 'pages/menu/context/ProductContext';
 import React from 'react';
 import { Redirect, useRouteMatch } from 'react-router-dom';
@@ -37,6 +38,8 @@ export const ProductComplements = () => {
   const [error, setError] = React.useState(initialError);
   // refs
   const submission = React.useRef(0);
+  // helpers
+  const complementsExists = complementsGroupsWithItems.length > 0;
   // handlers
   const handleComplementsEnable = (value: string) => {
     updateProduct({ changes: { complementsEnabled: value === '1' ? false : true } });
@@ -86,14 +89,17 @@ export const ProductComplements = () => {
         color="black"
       >
         <Flex flexDir="column" justifyContent="flex-start">
-          <Radio mt="2" value="1">
+          <CustomRadio mt="2" value="1">
             {t('Não possui')}
-          </Radio>
-          <Radio mt="2" value="2">
+          </CustomRadio>
+          <CustomRadio mt="2" value="2" isDisabled={!complementsExists}>
             {t('Sim, possui complementos')}
-          </Radio>
+          </CustomRadio>
         </Flex>
       </RadioGroup>
+      {!complementsExists && (
+        <AlertWarning mt="8" title={t('Você ainda não cadastrou complementos')} />
+      )}
       {hasComplements && (
         <Box mt="6">
           <Text fontSize="xl" color="black" fontWeight="700">
@@ -115,13 +121,7 @@ export const ProductComplements = () => {
             >
               {complementsGroupsWithItems.map((group) => (
                 <Box key={group.id} w="100%" p="4" border="1px solid #D7E7DA" borderRadius="lg">
-                  <Checkbox
-                    w="100%"
-                    iconColor="white"
-                    size="lg"
-                    borderColor="gray.700"
-                    value={group.id}
-                  >
+                  <CustomCheckbox w="100%" value={group.id}>
                     <Box ml="2">
                       <HStack spacing={2}>
                         <Text>{group.name}</Text>
@@ -138,7 +138,7 @@ export const ProductComplements = () => {
                         ?.map((item) => item.name)
                         .join(', ')}`}</Text>
                     </Box>
-                  </Checkbox>
+                  </CustomCheckbox>
                 </Box>
               ))}
             </Stack>
