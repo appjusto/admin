@@ -1,17 +1,9 @@
-import {
-  Box,
-  Checkbox,
-  CheckboxGroup,
-  Flex,
-  RadioGroup,
-  Text,
-  Textarea,
-  VStack,
-} from '@chakra-ui/react';
+import { Box, CheckboxGroup, Flex, RadioGroup, Text, Textarea, VStack } from '@chakra-ui/react';
 import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';
 import { useContextBusinessBackoffice } from 'app/state/business/businessBOContext';
 import { IssueType, ProfileSituation } from 'appjusto-types';
 import { AlertError } from 'common/components/AlertError';
+import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import CustomRadio from 'common/components/form/CustomRadio';
 import React from 'react';
 import { t } from 'utils/i18n';
@@ -87,9 +79,9 @@ export const StatusTab = () => {
           >
             <VStack alignItems="flex-start" mt="4" color="black" spacing={2}>
               {issueOptions?.map((issue) => (
-                <Checkbox key={issue.id} iconColor="white" value={issue.title}>
+                <CustomCheckbox key={issue.id} value={issue.title}>
                   {issue.title}
-                </Checkbox>
+                </CustomCheckbox>
               ))}
             </VStack>
           </CheckboxGroup>
