@@ -24,8 +24,14 @@ export const ConsumerStatus = () => {
         lineHeight="21px"
       >
         <Flex flexDir="column" justifyContent="flex-start">
+          <CustomRadio mt="2" value="submitted">
+            {t('Submetido')}
+          </CustomRadio>
           <CustomRadio mt="2" value="approved">
-            {t('Ativo')}
+            {t('Aprovado')}
+          </CustomRadio>
+          <CustomRadio mt="2" value="rejected">
+            {t('Rejeitado')}
           </CustomRadio>
           <CustomRadio mt="2" value="blocked">
             {t('Bloquear cliente')}
