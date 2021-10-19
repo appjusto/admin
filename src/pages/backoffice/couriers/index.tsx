@@ -24,7 +24,7 @@ const CouriersPage = () => {
   const [search, setSearch] = React.useState('');
   const [state, setState] = React.useState('');
   const [city, setCity] = React.useState('');
-  const [filterBar, setFilterBar] = React.useState('all');
+  const [filterBar, setFilterBar] = React.useState('invalid');
   const [filterCheck, setFilterCheck] = React.useState<CourierStatus[]>([
     'available',
     'unavailable',
