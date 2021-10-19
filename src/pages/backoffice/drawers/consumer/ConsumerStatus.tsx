@@ -1,6 +1,7 @@
-import { Box, Flex, RadioGroup, Textarea } from '@chakra-ui/react';
+import { Box, CheckboxGroup, Flex, RadioGroup, Textarea, VStack } from '@chakra-ui/react';
 import { useContextConsumerProfile } from 'app/state/consumer/context';
 import { ProfileSituation } from 'appjusto-types';
+import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import CustomRadio from 'common/components/form/CustomRadio';
 import React from 'react';
 import { t } from 'utils/i18n';
@@ -8,7 +9,7 @@ import { SectionTitle } from '../generics/SectionTitle';
 
 export const ConsumerStatus = () => {
   // context
-  const { consumer, handleProfileChange } = useContextConsumerProfile();
+  const { consumer, handleProfileChange, issueOptions } = useContextConsumerProfile();
   // UI
   return (
     <Box>
@@ -38,12 +39,30 @@ export const ConsumerStatus = () => {
           </CustomRadio>
         </Flex>
       </RadioGroup>
-      <SectionTitle>{t('Mensagem personalizada:')}</SectionTitle>
-      <Textarea
-        mt="2"
-        value={consumer?.profileIssuesMessage ?? ''}
-        onChange={(ev) => handleProfileChange('profileIssuesMessage', ev.target.value)}
-      />
+      {consumer?.situation === 'rejected' && (
+        <>
+          <SectionTitle>{t('Motivo da recusa:')}</SectionTitle>
+          <CheckboxGroup
+            colorScheme="green"
+            value={consumer?.profileIssues ?? []}
+            onChange={(value) => handleProfileChange('profileIssues', value)}
+          >
+            <VStack alignItems="flex-start" mt="4" color="black" spacing={2}>
+              {issueOptions?.map((issue) => (
+                <CustomCheckbox key={issue.id} value={issue.title}>
+                  {issue.title}
+                </CustomCheckbox>
+              ))}
+            </VStack>
+          </CheckboxGroup>
+          <SectionTitle>{t('Mensagem personalizada:')}</SectionTitle>
+          <Textarea
+            mt="2"
+            value={consumer?.profileIssuesMessage ?? ''}
+            onChange={(ev) => handleProfileChange('profileIssuesMessage', ev.target.value)}
+          />
+        </>
+      )}
     </Box>
   );
 };

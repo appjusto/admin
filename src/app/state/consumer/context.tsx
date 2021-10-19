@@ -31,7 +31,7 @@ type Params = {
   consumerId: string;
 };
 
-const issueOptionsArray = ['courier-profile-invalid'] as IssueType[];
+const issueOptionsArray = ['consumer-profile-invalid'] as IssueType[];
 
 export const ConsumerProvider = ({ children }: Props) => {
   // context
