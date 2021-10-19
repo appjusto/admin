@@ -1,7 +1,7 @@
 import * as cpfutils from '@fnando/cpf';
 import { useConsumerOrders } from 'app/api/consumer/useConsumerOrders';
 import { useConsumerProfile } from 'app/api/consumer/useConsumerProfile';
-import { useCourierProfilePictures } from 'app/api/courier/useCourierProfilePictures';
+import { useConsumerProfilePictures } from 'app/api/consumer/useConsumerProfilePictures';
 import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';
 import { ConsumerProfile, Issue, IssueType, Order, WithId } from 'appjusto-types';
 import React, { Dispatch, SetStateAction } from 'react';
@@ -44,7 +44,7 @@ export const ConsumerProvider = ({ children }: Props) => {
   const { consumerId } = useParams<Params>();
   const profile = useConsumerProfile(consumerId);
   // change to useConsumerProfilePictures
-  const pictures = useCourierProfilePictures(consumerId, '_1024x1024', '_1024x1024');
+  const pictures = useConsumerProfilePictures(consumerId, '_1024x1024', '_1024x1024');
   const orders = useConsumerOrders(consumerId);
   const issueOptions = useIssuesByType(issueOptionsArray);
   // state

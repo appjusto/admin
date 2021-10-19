@@ -41,6 +41,19 @@ export default class ConsumerApi {
     return unsubscribe;
   }
 
+  // consumer profile picture
+  async getConsumerProfilePictureURL(consumerId: string, size: string) {
+    return await this.files.getDownloadURL(
+      this.refs.getConsumerSelfieStoragePath(consumerId, size)
+    );
+  }
+
+  async getConsumerDocumentPictureURL(consumerId: string, size: string) {
+    return await this.files.getDownloadURL(
+      this.refs.getConsumerDocumentStoragePath(consumerId, size)
+    );
+  }
+
   // selfie
   selfieUpload(consumerId: string, file: File, progressHandler?: (progress: number) => void) {
     return this.files.upload(
