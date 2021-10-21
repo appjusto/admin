@@ -14,6 +14,7 @@ import { BackofficeOrderDrawer } from '../drawers/order';
 import { OrdersTable } from './OrdersTable';
 
 const statuses = [
+  'confirming',
   'declined',
   'confirmed',
   'preparing',
@@ -102,6 +103,12 @@ const OrdersPage = () => {
             onClick={() => setFilterBar('all')}
           >
             {t('Todos')}
+          </FilterText>
+          <FilterText
+            isActive={filterBar === 'confirming' ? true : false}
+            onClick={() => setFilterBar('confirming')}
+          >
+            {t('Aguardando confirmação')}
           </FilterText>
           <FilterText
             isActive={filterBar === 'preparing' ? true : false}
