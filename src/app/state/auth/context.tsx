@@ -36,8 +36,10 @@ export const FirebaseUserProvider = ({ children }: Props) => {
   // handlers
   const refreshUserToken = React.useCallback(
     async (businessId?: string) => {
-      if (!user) {
+      if (user === undefined) return;
+      if (user === null) {
         setRole(null);
+        setIsBackofficeUser(null);
         return;
       }
       try {
@@ -56,21 +58,12 @@ export const FirebaseUserProvider = ({ children }: Props) => {
   );
   // side effects
   React.useEffect(() => {
-    if (!user) setRole(null);
-  }, [user]);
-  React.useEffect(() => {
     refreshUserToken();
   }, [refreshUserToken]);
   React.useEffect(() => {
-    if (role === undefined) return;
-    if (role === null) {
-      setIsBackofficeUser(null);
-      return;
-    }
+    if (!role) return;
     setIsBackofficeUser(backofficeRoles.indexOf(role) !== -1);
   }, [role]);
-  console.log('role', role);
-  console.log('isBackofficeUser', isBackofficeUser);
   // provider
   return (
     <FirebaseUserContext.Provider value={{ user, role, isBackofficeUser, refreshUserToken }}>
