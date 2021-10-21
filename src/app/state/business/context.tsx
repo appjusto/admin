@@ -69,10 +69,15 @@ export const BusinessProvider = ({ children }: Props) => {
     if (!businesses) return;
     if (businessId) return;
     const localBusinessId = localStorage.getItem(`business-${process.env.REACT_APP_ENVIRONMENT}`);
-    if (localBusinessId) return setBusinessId(localBusinessId);
-    // select first business or set it to null to indicate that user doesn't
+    if (localBusinessId) {
+      setBusinessId(localBusinessId);
+      return;
+    }
+    // select first business, or first business approved, or set it to null to indicate that user doesn't
     // manage any business
-    setBusinessId(businesses.find(() => true)?.id ?? null);
+    if (businesses.length > 1) {
+      setBusinessId(businesses.find((business) => business.situation === 'approved')?.id ?? null);
+    } else setBusinessId(businesses.find(() => true)?.id ?? null);
   }, [businesses, user?.email, isBackofficeUser, businessId]);
   // provider
   return (

@@ -1,4 +1,5 @@
 import { useContextFirebaseUser } from 'app/state/auth/context';
+import { useContextBusiness } from 'app/state/business/context';
 import BankingInformation from 'pages/business-profile/BankingInformation';
 import BusinessProfile from 'pages/business-profile/BusinessProfile';
 import DeliveryArea from 'pages/delivery-area/DeliveryArea';
@@ -15,8 +16,10 @@ const Onboarding = () => {
   // context
   const { path } = useRouteMatch();
   const { isBackofficeUser } = useContextFirebaseUser();
+  const { business } = useContextBusiness();
   // UI
   if (isBackofficeUser) return <Redirect to="/backoffice" />;
+  if (business) return <Redirect to="/app" />;
   return (
     <OnboardingErrorBoundary>
       <Switch>
