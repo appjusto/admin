@@ -1,4 +1,5 @@
 import { Loading } from 'common/components/Loading';
+import PageNotFound from 'pages/404';
 import LandingPage from 'pages/landing/LandingPage';
 import React from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
@@ -26,6 +27,7 @@ export const Router = () => {
           <ProtectedRoute path="/logout" component={Logout} />
           <ProtectedRoute path="/onboarding" component={Onboarding} />
           <BackOfficeRoute path="/backoffice" component={BackOffice} />
+          <Route path="*" component={PageNotFound} />
         </Switch>
       </React.Suspense>
     </BrowserRouter>
