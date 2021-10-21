@@ -1,5 +1,4 @@
 import { Loading } from 'common/components/Loading';
-import PageNotFound from 'pages/404';
 import LandingPage from 'pages/landing/LandingPage';
 import React from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
@@ -8,12 +7,13 @@ import { ProtectedRoute } from './ProtectedRoute';
 
 const Login = React.lazy(() => import(/* webpackPrefetch: true */ 'pages/login/Login'));
 const Join = React.lazy(() => import(/* webpackPrefetch: true */ 'pages/join/Join'));
-const Logout = React.lazy(() => import(/* webpackPrefetch: true */ 'pages/logout/Logout'));
 const Onboarding = React.lazy(
   () => import(/* webpackPrefetch: true */ 'pages/onboarding/OnboardingPage')
 );
+const Logout = React.lazy(() => import(/* webpackPrefetch: true */ 'pages/logout/Logout'));
 const Home = React.lazy(() => import(/* webpackPrefetch: true */ 'pages/home/Home'));
 const BackOffice = React.lazy(() => import(/* webpackPrefetch: true */ 'pages/backoffice'));
+const PageNotFound = React.lazy(() => import(/* webpackPrefetch: true */ 'pages/404'));
 
 export const Router = () => {
   return (
@@ -24,9 +24,9 @@ export const Router = () => {
           <Route path="/login" component={Login} />
           <Route path="/join" component={Join} />
           <ProtectedRoute path="/app" component={Home} />
-          <ProtectedRoute path="/logout" component={Logout} />
           <ProtectedRoute path="/onboarding" component={Onboarding} />
           <BackOfficeRoute path="/backoffice" component={BackOffice} />
+          <ProtectedRoute path="/logout" component={Logout} />
           <Route path="*" component={PageNotFound} />
         </Switch>
       </React.Suspense>

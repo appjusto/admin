@@ -56,6 +56,9 @@ export const FirebaseUserProvider = ({ children }: Props) => {
   );
   // side effects
   React.useEffect(() => {
+    if (!user) setRole(null);
+  }, [user]);
+  React.useEffect(() => {
     refreshUserToken();
   }, [refreshUserToken]);
   React.useEffect(() => {
