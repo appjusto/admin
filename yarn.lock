@@ -210,8 +210,10 @@
     "@algolia/logger-common" "4.9.0"
     "@algolia/requester-common" "4.9.0"
 
-"@appjusto/types@../types":
-  version "3.17.0"
+"@appjusto/types@3.20.0":
+  version "3.20.0"
+  resolved "https://registry.yarnpkg.com/@appjusto/types/-/types-3.20.0.tgz#fbd6e4fbc2fdff2add2566b115a72bf61147e944"
+  integrity sha512-JIH2PKu7MmoTqqU4RIRRk7jRZzVzGT6MCUmMIJwnBtlbP2yTNlaT5/9dF8PHicoq8ab9POnABjA32s1CR9m3JA==
 
 "@babel/code-frame@7.10.4":
   version "7.10.4"
@@ -3876,7 +3878,7 @@ anymatch@^3.0.3, anymatch@~3.1.1:
     picomatch "^2.0.4"
 
 appjusto-types@../types:
-  version "3.17.0"
+  version "3.21.1"
 
 aproba@^1.1.1:
   version "1.2.0"
