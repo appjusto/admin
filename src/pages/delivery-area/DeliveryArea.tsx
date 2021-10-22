@@ -1,4 +1,4 @@
-import { Box, Flex, RadioGroup, Text } from '@chakra-ui/react';
+import { Box, Flex, RadioGroup, Stack, Text } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { getConfig } from 'app/api/config';
 import { useContextApi } from 'app/state/api/context';
@@ -10,6 +10,7 @@ import { CustomNumberInput as NumberInput } from 'common/components/form/input/C
 import { CustomPatternInput as PatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';
 import { cepFormatter, cepMask } from 'common/components/form/input/pattern-input/formatters';
 import { numbersOnlyParser } from 'common/components/form/input/pattern-input/parsers';
+import { Select } from 'common/components/form/select/Select';
 import { coordsFromLatLnt, SaoPauloCoords } from 'core/api/thirdparty/maps/utils';
 import { fetchCEPInfo } from 'core/api/thirdparty/viacep';
 import { safeParseInt } from 'core/numbers';
@@ -23,6 +24,8 @@ import { useQuery } from 'react-query';
 import { Redirect } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { Marker } from '../../common/components/MapsMarker';
+import { getCitiesByState, IBGEResult, UF } from './ApiIBGE';
+import Ufs from './ufs';
 
 const radioOptions = ['10', '20', '25', '30', '40', '45', '50', '60'];
 
@@ -38,12 +41,17 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
   const [map, setMap] = React.useState<google.maps.Map>();
   const [range, setRange] = React.useState<google.maps.Circle>();
   const [cep, setCEP] = React.useState(business?.businessAddress?.cep ?? '');
+  const [cepNotFound, setCEPNotFound] = React.useState(false);
+  const [address, setAddress] = React.useState(business?.businessAddress?.address ?? '');
   const [number, setNumber] = React.useState(business?.businessAddress?.number ?? '');
+  const [city, setCity] = React.useState(business?.businessAddress?.city ?? '');
+  const [state, setState] = React.useState(business?.businessAddress?.state ?? '');
   const [additional, setAdditional] = React.useState(business?.businessAddress?.additional ?? '');
   const [deliveryRange, setDeliveryRange] = React.useState(
     String(business?.deliveryRange ?? defaultRadius)
   );
   const [averageCookingTime, setAverageCookingTime] = React.useState('30');
+  const [cities, setCities] = React.useState<string[]>([]);
 
   // queries & mutations
   // business profile
@@ -53,18 +61,12 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
   const { data: cepResult } = useQuery(['cep', cep], (_: string) => fetchCEPInfo(cep), {
     enabled: cep.length === 8,
   });
-  const { logradouro, localidade, uf } =
-    !cepResult || cepResult.error ? { logradouro: '', localidade: '', uf: '' } : cepResult;
   // geocoding
   const geocode = (_: string, street: string, number: string, city: string, state: string) =>
     api.maps().googleGeocode(`${street}, ${number} - ${city} - ${state}`, autocompleteSession);
-  const { data: geocodingResult } = useQuery(
-    ['geocoding', logradouro, number, localidade, uf],
-    geocode,
-    {
-      enabled: logradouro?.length > 0 && number.length > 0,
-    }
-  );
+  const { data: geocodingResult } = useQuery(['geocoding', address, number, city, state], geocode, {
+    enabled: address?.length > 0 && number.length > 0,
+  });
   const center = coordsFromLatLnt(geocodingResult ?? SaoPauloCoords);
 
   // refs
@@ -78,10 +80,10 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
     await updateBusinessProfile({
       businessAddress: {
         cep,
-        address: logradouro,
+        address,
         number,
-        city: localidade,
-        state: uf,
+        city,
+        state,
         additional,
         latlng: geocodingResult,
       },
@@ -100,7 +102,10 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
   React.useEffect(() => {
     if (business) {
       if (business.businessAddress?.cep) setCEP(business.businessAddress.cep);
+      if (business.businessAddress?.address) setAddress(business.businessAddress.address);
       if (business.businessAddress?.number) setNumber(business.businessAddress.number);
+      if (business.businessAddress?.city) setCity(business.businessAddress.city);
+      if (business.businessAddress?.state) setState(business.businessAddress.state);
       if (business.businessAddress?.additional) setAdditional(business.businessAddress.additional);
       if (business.deliveryRange) setDeliveryRange(String(business.deliveryRange / 1000));
       if (business.averageCookingTime)
@@ -109,8 +114,27 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
   }, [business]);
   // after postal lookup, change focus to number input
   React.useEffect(() => {
-    if (cepResult) numberRef?.current?.focus();
+    if (cepResult?.erro) {
+      setCEPNotFound(true);
+      return;
+    }
+    setCEPNotFound(false);
+    const { logradouro, localidade, uf } =
+      !cepResult || cepResult.erro ? { logradouro: '', localidade: '', uf: '' } : cepResult;
+    setAddress(logradouro);
+    setCity(localidade);
+    setState(uf);
+    if (logradouro && localidade && uf) numberRef?.current?.focus();
   }, [cepResult]);
+  React.useEffect(() => {
+    setCities([]);
+    if (!cepResult?.erro) return;
+    if (!state) return;
+    (async () => {
+      const citiesList = await getCitiesByState(state as UF);
+      setCities(citiesList?.map((cityInfo: IBGEResult) => cityInfo?.nome));
+    })();
+  }, [cepResult, state, getCitiesByState]);
   // updating range
   React.useEffect(() => {
     if (map && range) {
@@ -128,7 +152,6 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
       range.setRadius(radius);
     }
   }, [range, deliveryRange]);
-
   // UI
   if (isSuccess && redirect) return <Redirect to={redirect} push />;
   return (
@@ -164,9 +187,9 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
             id="delivery-address"
             flex={{ base: 1, md: 4 }}
             label={t('Endereço *')}
-            placeholder={t('Preenchimento automático')}
-            value={logradouro}
-            isReadOnly
+            placeholder={t('Sua rua')}
+            value={address}
+            onChange={(ev) => setAddress(ev.target.value)}
           />
           <Input
             isRequired
@@ -187,6 +210,35 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
           value={additional}
           onChange={(ev) => setAdditional(ev.target.value)}
         />
+        {cepNotFound && (
+          <Stack mt="4" spacing={4} direction="row">
+            <Select
+              mt="0"
+              id="delivery-state"
+              label="UF *"
+              placeholder="UF"
+              value={state}
+              onChange={(ev) => setState(ev.target.value)}
+            >
+              {Ufs.map((uf) => (
+                <option value={uf.sigla}>{uf.sigla}</option>
+              ))}
+            </Select>
+            <Select
+              mt="0"
+              id="delivery-city"
+              label={t('Cidade *')}
+              placeholder={t('Sua cidade')}
+              value={city}
+              onChange={(ev) => setCity(ev.target.value)}
+              isDisabled={cities.length === 0}
+            >
+              {cities.map((city) => (
+                <option value={city}>{city}</option>
+              ))}
+            </Select>
+          </Stack>
+        )}
         <Text mt="8" fontSize="xl" color="black">
           {t('Raio de entrega')}
         </Text>
