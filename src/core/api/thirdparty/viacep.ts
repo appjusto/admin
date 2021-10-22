@@ -1,7 +1,7 @@
 import axios, { CancelToken } from 'axios';
 
 type ViaCEPResultError = {
-  error: true;
+  erro: true;
 };
 
 type ViaCEPResultSuccess = {
@@ -15,7 +15,7 @@ type ViaCEPResultSuccess = {
   gia: string;
   ddd: string;
   siafi: string;
-  error: undefined;
+  erro: undefined;
 };
 
 type ViaCEPResult = ViaCEPResultError | ViaCEPResultSuccess;
