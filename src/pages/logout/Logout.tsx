@@ -10,7 +10,6 @@ const Logout = () => {
   const [isLogout, setIsLogout] = React.useState<boolean>();
   // side effects
   React.useEffect(() => {
-    localStorage.removeItem(`business-${process.env.REACT_APP_ENVIRONMENT}`);
     signOut();
     setIsLogout(true);
   }, [signOut]);
