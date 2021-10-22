@@ -13,7 +13,7 @@ export const Loading = ({ timeout = 3 }: LoadingProps) => {
   React.useEffect(() => {
     const timer = setInterval(() => setTimer((prev) => prev + 100 / timeout), 1000);
     return () => clearInterval(timer);
-  }, []);
+  }, [timeout]);
   // UI
   return (
     <Center h="100vh" flexDirection="column">
