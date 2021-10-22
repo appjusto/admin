@@ -8,7 +8,7 @@ import {
   InputRightElement,
   Stack,
 } from '@chakra-ui/react';
-import { MenuProvider } from 'app/state/menu/context';
+import { MenuProvider, useContextMenu } from 'app/state/menu/context';
 import { FilterText } from 'common/components/backoffice/FilterText';
 import { CustomButton as Button } from 'common/components/buttons/CustomButton';
 import { ReactComponent as SearchIcon } from 'common/img/searchIcon.svg';
@@ -28,6 +28,7 @@ const Menu = () => {
   // context
   const { path, url } = useRouteMatch();
   const history = useHistory();
+  const { categories } = useContextMenu();
   // state
   const [isProducts, setIsProduct] = React.useState(true);
   const [productSearch, setProductSearch] = React.useState('');
@@ -74,6 +75,7 @@ const Menu = () => {
                 link={`${url}/product/new`}
                 label={t('Adicionar produto')}
                 variant="outline"
+                isDisabled={categories?.length === 0}
               />
             )}
           </Stack>
