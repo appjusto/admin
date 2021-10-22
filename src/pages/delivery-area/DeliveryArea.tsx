@@ -25,7 +25,7 @@ import { Redirect } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { Marker } from '../../common/components/MapsMarker';
 import { getCitiesByState, IBGEResult, UF } from './ApiIBGE';
-import Ufs from './ufs';
+import { ufs } from './ufs';
 
 const radioOptions = ['10', '20', '25', '30', '40', '45', '50', '60'];
 
@@ -134,7 +134,7 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
       const citiesList = await getCitiesByState(state as UF);
       setCities(citiesList?.map((cityInfo: IBGEResult) => cityInfo?.nome));
     })();
-  }, [cepResult, state, getCitiesByState]);
+  }, [cepResult, state]);
   // updating range
   React.useEffect(() => {
     if (map && range) {
@@ -220,8 +220,10 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
               value={state}
               onChange={(ev) => setState(ev.target.value)}
             >
-              {Ufs.map((uf) => (
-                <option value={uf.sigla}>{uf.sigla}</option>
+              {ufs.map((uf) => (
+                <option key={uf.id} value={uf.sigla}>
+                  {uf.sigla}
+                </option>
               ))}
             </Select>
             <Select
@@ -234,7 +236,9 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
               isDisabled={cities.length === 0}
             >
               {cities.map((city) => (
-                <option value={city}>{city}</option>
+                <option key={city} value={city}>
+                  {city}
+                </option>
               ))}
             </Select>
           </Stack>

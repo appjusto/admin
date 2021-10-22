@@ -1,4 +1,4 @@
-export default [
+export const ufs = [
   {
     id: 12,
     sigla: 'AC',
