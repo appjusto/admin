@@ -1,4 +1,4 @@
-import { Bank, Cuisine, IssueType, Issue } from 'appjusto-types';
+import { Bank, Cuisine, IssueType, Issue, PlatformStatistics } from 'appjusto-types';
 import { documentsAs } from '../../../core/fb';
 import FirebaseRefs from '../FirebaseRefs';
 
@@ -20,5 +20,21 @@ export default class PlatformApi {
     return documentsAs<Issue>(
       (await this.refs.getIssuesRef().where('type', 'in', types).get()).docs
     );
+  }
+
+  observeStatistics(resultHandler: (result: PlatformStatistics) => void): firebase.Unsubscribe {
+    let query = this.refs.getPlatformStatisticsRef();
+
+    const unsubscribe = query.onSnapshot(
+      (querySnapshot) => {
+        const data = querySnapshot.data();
+        if (data) resultHandler(data as PlatformStatistics);
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+    // returns the unsubscribe function
+    return unsubscribe;
   }
 }

@@ -1,4 +1,5 @@
 import { Box, Flex, HStack, Skeleton, Text } from '@chakra-ui/react';
+import { usePlatformStatistics } from 'app/api/platform/usePlatformStatistics';
 import { useContextBackofficeDashboard } from 'app/state/dashboards/backoffice';
 import I18n from 'i18n-js';
 import React from 'react';
@@ -37,6 +38,7 @@ const BOInfoBox = ({ title, value, isCurrency }: BOInfoBoxProps) => {
 
 export const Panel = () => {
   // context
+  const statistics = usePlatformStatistics();
   const {
     todayOrders,
     todayDeliveredOrders,
@@ -86,6 +88,30 @@ export const Panel = () => {
         <HStack mt="4" spacing={6}>
           <BOInfoBox title={t('Restaurantes abertos')} value={businesses} />
           <BOInfoBox title={t('Clientes novos')} value={consumers} />
+        </HStack>
+      </Box>
+      <Box>
+        <Text fontSize="2xl" fontWeight="700" lineHeight="28.8px">
+          {t('Geral')}
+        </Text>
+        <Text mt="2" fontSize="sm" fontWeight="500" lineHeight="21px" color="green.600">
+          {t('Números totais do Appjusto')}
+        </Text>
+        <HStack mt="4" spacing={6}>
+          <BOInfoBox title={t('Rest. aprovados')} value={businesses} />
+          <BOInfoBox title={t('Entreg. aprovados')} value={statistics?.couriers.totalApproved} />
+        </HStack>
+        <HStack mt="4" spacing={6}>
+          <BOInfoBox title={t('Clientes ativos')} value={consumers} />
+          <BOInfoBox title={t('Comida entregues')} value={statistics?.food.totalDeliveries} />
+        </HStack>
+        <HStack mt="4" spacing={6}>
+          <BOInfoBox title={t('P2P entregues')} value={statistics?.p2p.totalDeliveries} />
+          <BOInfoBox
+            title={t('Ticket médio')}
+            value={statistics?.food.averageTicketPrice}
+            isCurrency
+          />
         </HStack>
       </Box>
     </Flex>
