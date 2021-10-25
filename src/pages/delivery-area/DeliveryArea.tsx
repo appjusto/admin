@@ -121,11 +121,11 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
     setCEPNotFound(false);
     const { logradouro, localidade, uf } =
       !cepResult || cepResult.erro ? { logradouro: '', localidade: '', uf: '' } : cepResult;
-    setAddress(logradouro);
-    setCity(localidade);
-    setState(uf);
+    if (!address) setAddress(logradouro);
+    if (!city) setCity(localidade);
+    if (!state) setState(uf);
     if (logradouro && localidade && uf) numberRef?.current?.focus();
-  }, [cepResult]);
+  }, [cepResult, address, city, state]);
   React.useEffect(() => {
     setCities([]);
     if (!cepResult?.erro) return;
@@ -187,7 +187,7 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
             id="delivery-address"
             flex={{ base: 1, md: 4 }}
             label={t('Endereço *')}
-            placeholder={t('Sua rua')}
+            placeholder={t('Seu endereço')}
             value={address}
             onChange={(ev) => setAddress(ev.target.value)}
           />
@@ -206,7 +206,7 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
         <Input
           id="delivery-complement"
           label={t('Complemento')}
-          placeholder={t('Sem complemento')}
+          placeholder={t('Seu complemento')}
           value={additional}
           onChange={(ev) => setAdditional(ev.target.value)}
         />
