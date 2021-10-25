@@ -1,16 +1,6 @@
-import {
-  Box,
-  Flex,
-  HStack,
-  Icon,
-  Input,
-  InputGroup,
-  InputRightElement,
-  Stack,
-} from '@chakra-ui/react';
-import { MenuProvider, useContextMenu } from 'app/state/menu/context';
+import { Box, Flex, HStack, Icon, Input, InputGroup, InputRightElement } from '@chakra-ui/react';
+import { MenuProvider } from 'app/state/menu/context';
 import { FilterText } from 'common/components/backoffice/FilterText';
-import { CustomButton as Button } from 'common/components/buttons/CustomButton';
 import { ReactComponent as SearchIcon } from 'common/img/searchIcon.svg';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
@@ -23,12 +13,12 @@ import { CategoryDrawer } from './drawers/CategoryDrawer';
 import { ComplementDrawer } from './drawers/ComplementDrawer';
 import { GroupDrawer } from './drawers/GroupDrawer';
 import { ProductDrawer } from './drawers/ProductDrawer';
+import { MainButtons } from './MainButtons';
 
 const Menu = () => {
   // context
-  const { path, url } = useRouteMatch();
+  const { path } = useRouteMatch();
   const history = useHistory();
-  const { categories } = useContextMenu();
   // state
   const [isProducts, setIsProduct] = React.useState(true);
   const [productSearch, setProductSearch] = React.useState('');
@@ -58,27 +48,7 @@ const Menu = () => {
           </Flex>
         </Box>
         <Flex flexDir={{ base: 'column', lg: 'row' }} justifyContent="space-between" mt="2" mb="8">
-          <Stack mt="4" direction={{ base: 'column', md: 'row' }} spacing={4}>
-            <Button
-              mt="0"
-              minW="220px"
-              w={{ base: '100%', md: 'auto' }}
-              link={isProducts ? `${url}/category/new` : `${url}/complementsgroup/new`}
-              label={isProducts ? t('Adicionar categoria') : t('Adicionar grupo')}
-              variant="solid"
-            />
-            {isProducts && (
-              <Button
-                mt="0"
-                minW="220px"
-                w={{ base: '100%', md: 'auto' }}
-                link={`${url}/product/new`}
-                label={t('Adicionar produto')}
-                variant="outline"
-                isDisabled={categories?.length === 0}
-              />
-            )}
-          </Stack>
+          <MainButtons isProducts={isProducts} />
           <InputGroup maxW="360px">
             <Input
               size="lg"
