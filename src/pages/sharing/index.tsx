@@ -1,5 +1,6 @@
 import { Box, Button, Center, Icon, Stack, Text } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
 import { initialError } from 'common/components/error/utils';
@@ -22,6 +23,7 @@ export type Copied = {
 
 const SharingPage = () => {
   // context
+  const { role, isBackofficeUser } = useContextFirebaseUser();
   const { business } = useContextBusiness();
   const { updateBusinessSlug, updateSlugResult } = useBusinessProfile();
   const { isLoading, isSuccess, isError, error: updateError } = updateSlugResult;
@@ -32,6 +34,8 @@ const SharingPage = () => {
   const [error, setError] = React.useState(initialError);
   // refs
   const submission = React.useRef(0);
+  // helpers
+  const isManager = role === 'manager' || isBackofficeUser;
   // handlers
   const getBusinessLinkByMode = (mode?: Mode) => `${deeplink}${mode ? `?mode=${mode}` : ''}`;
   const copyToClipboard = (mode?: 'whatsapp' | 'in-store') => {
@@ -104,6 +108,7 @@ const SharingPage = () => {
           onChange={(e) => setSlug(slugify(e.target.value))}
           onBlur={(e) => setSlug(slugify(e.target.value, true))}
           //isDisabled={deeplink !== undefined}
+          isDisabled={!isManager}
         />
         <Button
           h="60px"
@@ -111,6 +116,7 @@ const SharingPage = () => {
           onClick={handleUpdate}
           isLoading={isLoading}
           //isDisabled={deeplink !== undefined}
+          isDisabled={!isManager}
         >
           {t('Salvar')}
         </Button>

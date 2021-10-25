@@ -70,10 +70,17 @@ export const Links = (props: BoxProps) => {
         <ProtectedLinks isApproved={isApproved} />
       ) : (
         <Box mt="5">
+          <LinkItem to={`${url}`} label={t('Início')} />
           {isApproved ? (
-            <LinkItem to={`${url}/orders`} label={t('Gerenciador de pedidos')} />
+            <>
+              <LinkItem to={`${url}/orders`} label={t('Gerenciador de pedidos')} />
+              <LinkItem to={`${url}/sharing`} label={t('Compartilhamento')} />
+            </>
           ) : (
-            <DisabledLink label={t('Gerenciador de pedidos')} />
+            <>
+              <DisabledLink label={t('Gerenciador de pedidos')} />
+              <DisabledLink label={t('Compartilhamento')} />
+            </>
           )}
           <LinkItem to={`${url}/menu`} label={t('Cardápio')} />
         </Box>
