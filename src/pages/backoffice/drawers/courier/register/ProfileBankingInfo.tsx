@@ -138,7 +138,7 @@ export const ProfileBankingInfo = () => {
         <AlertWarning icon={false}>
           {bankWarning.length > 1 &&
             bankWarning.map((item) => {
-              return <Text>{item}</Text>;
+              return <Text key={item}>{item}</Text>;
             })}
         </AlertWarning>
       )}
