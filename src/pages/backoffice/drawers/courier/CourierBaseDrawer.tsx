@@ -76,25 +76,27 @@ export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDr
         return setError({
           status: true,
           error: null,
-          message: { title: 'O CPF não foi informado ou não é válido.' },
+          message: {
+            title: contextValidation.message ?? 'O CPF não foi informado ou não é válido.',
+          },
         });
       if (!contextValidation.cnpj)
         return setError({
           status: true,
           error: null,
-          message: { title: 'O CNPJ informado não é válido.' },
+          message: { title: contextValidation.message ?? 'O CNPJ informado não é válido.' },
         });
       if (!contextValidation.agency)
         return setError({
           status: true,
           error: null,
-          message: { title: 'A agência informada não é válida.' },
+          message: { title: contextValidation.message ?? 'A agência informada não é válida.' },
         });
       if (!contextValidation.account)
         return setError({
           status: true,
           error: null,
-          message: { title: 'A conta informada não é válida.' },
+          message: { title: contextValidation.message ?? 'A conta informada não é válida.' },
         });
     }
     setIsEditingEmail(false);

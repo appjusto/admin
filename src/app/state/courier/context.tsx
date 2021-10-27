@@ -19,7 +19,13 @@ import { useParams } from 'react-router';
 import { useContextApi } from '../api/context';
 import { courierReducer } from './courierReducer';
 
-type Validation = { cpf: boolean; cnpj: boolean; agency: boolean; account: boolean };
+type Validation = {
+  cpf: boolean;
+  cnpj: boolean;
+  agency: boolean;
+  account: boolean;
+  message?: string;
+};
 interface CourierProfileContextProps {
   courier: WithId<CourierProfile> | undefined | null;
   pictures: { selfie?: string | null; document?: string | null };

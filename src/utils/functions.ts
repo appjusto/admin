@@ -1,4 +1,11 @@
-import { OrderItemComplement, OrderItem, Order, WithId, OrderStatus } from 'appjusto-types';
+import {
+  OrderItemComplement,
+  OrderItem,
+  Order,
+  WithId,
+  OrderStatus,
+  BankAccountType,
+} from 'appjusto-types';
 import { formatCurrency, formatDate } from './formatters';
 import { round } from 'lodash';
 import { CroppedAreaProps } from 'common/components/ImageCropping';
@@ -303,4 +310,32 @@ export const getOrderCancellator = (issueIype?: string) => {
 // url
 export const useQuery = () => {
   return new URLSearchParams(useLocation().search);
+};
+
+// Banking > CEF
+export const getCEFAccountCode = (
+  bankingCode: string,
+  personType: 'Pessoa Jurídica' | 'Pessoa Física',
+  type: BankAccountType
+) => {
+  let operation = '';
+  if (bankingCode !== '104') return operation;
+  if (personType === 'Pessoa Jurídica') {
+    if (type === 'Corrente') {
+      operation = '003';
+    } else if (type === 'Poupança') {
+      operation = '022';
+    }
+  } else if (personType === 'Pessoa Física') {
+    if (type === 'Corrente') {
+      operation = '001';
+    } else if (type === 'Simples') {
+      operation = '002';
+    } else if (type === 'Poupança') {
+      operation = '013';
+    } else if (type === 'Nova Poupança') {
+      operation = '1288';
+    }
+  }
+  return operation;
 };
