@@ -119,11 +119,12 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
       return;
     }
     setCEPNotFound(false);
-    const { logradouro, localidade, uf } =
-      !cepResult || cepResult.erro ? { logradouro: '', localidade: '', uf: '' } : cepResult;
-    if (!address) setAddress(logradouro);
-    if (!city) setCity(localidade);
-    if (!state) setState(uf);
+    const { logradouro, localidade, uf } = !cepResult
+      ? { logradouro: null, localidade: null, uf: null }
+      : cepResult;
+    if (logradouro) setAddress(logradouro);
+    if (localidade) setCity(localidade);
+    if (uf) setState(uf);
     if (logradouro && localidade && uf) numberRef?.current?.focus();
   }, [cepResult, address, city, state]);
   React.useEffect(() => {
