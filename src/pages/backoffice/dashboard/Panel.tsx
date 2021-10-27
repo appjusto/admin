@@ -98,13 +98,13 @@ export const Panel = () => {
           {t('Números totais do Appjusto')}
         </Text>
         <HStack mt="4" spacing={6}>
-          <BOInfoBox title={t('Rest. aprovados')} value={businesses} />
+          {/*<BOInfoBox title={t('Rest. aprovados')} value={businesses} />*/}
           <BOInfoBox title={t('Entreg. aprovados')} value={statistics?.couriers.totalApproved} />
-        </HStack>
-        <HStack mt="4" spacing={6}>
-          <BOInfoBox title={t('Clientes ativos')} value={consumers} />
           <BOInfoBox title={t('Comida entregues')} value={statistics?.food.totalDeliveries} />
         </HStack>
+        {/*<HStack mt="4" spacing={6}>
+          <BOInfoBox title={t('Clientes ativos')} value={consumers} />
+  </HStack>*/}
         <HStack mt="4" spacing={6}>
           <BOInfoBox title={t('P2P entregues')} value={statistics?.p2p.totalDeliveries} />
           <BOInfoBox
