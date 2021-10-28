@@ -1,4 +1,5 @@
 import { Box, Button, Center, Container, Flex, FormControl, Link, Text } from '@chakra-ui/react';
+import * as Sentry from '@sentry/react';
 import { useAuthentication } from 'app/api/auth/useAuthentication';
 import { useContextApi } from 'app/state/api/context';
 import { useContextFirebaseUser } from 'app/state/auth/context';
@@ -28,6 +29,32 @@ const Join = () => {
   // state
   const [email, setEmail] = React.useState('');
   const [isTimeout, setIsTimeout] = React.useState(false);
+
+  // logs
+  console.log(`<<<< START RENDER >>>>`);
+  console.log('savedEmail', savedEmail);
+  console.log('isLinkValid', isLinkValid);
+  console.log('isEmailSaved', isEmailSaved);
+  console.log('isBackofficeUser', isBackofficeUser);
+  console.log('isSuccess', isSuccess);
+  console.log('isError', isError);
+  console.log('error', error);
+  console.log(`<<<< END RENDER >>>>`);
+
+  if (isTimeout) {
+    Sentry.captureException(
+      `${JSON.stringify({
+        '<<< AUTH TEST TIMEOUT REACHED >>>': '',
+        'savedEmail': savedEmail,
+        'isLinkValid': isLinkValid,
+        'isEmailSaved': isEmailSaved,
+        'isBackofficeUser': isBackofficeUser,
+        'isSuccess': isSuccess,
+        'isError': isError,
+        'error': error,
+      })}`
+    );
+  }
 
   // refs
   const emailRef = React.useRef<HTMLInputElement>(null);
