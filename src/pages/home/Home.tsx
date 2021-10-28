@@ -20,16 +20,24 @@ import { Redirect, Route, Switch, useRouteMatch } from 'react-router-dom';
 import { AgentPersonificationBar } from './AgentPersonificationBar';
 import Dashboard from './Dashboard';
 
+const timeoutLimit = 4; // in seconds
+
 const Home = () => {
   // context
   const { isBackofficeUser } = useContextFirebaseUser();
   const { business } = useContextBusiness();
   const { path } = useRouteMatch();
-
+  // states
+  const [isTimeout, setIsTimeout] = React.useState(false);
+  // side effects
+  React.useEffect(() => {
+    const timer = setTimeout(() => setIsTimeout(true), timeoutLimit * 1000);
+    return () => clearTimeout(timer);
+  }, []);
   // UI
   if (!business) {
     if (isBackofficeUser) return <Redirect to="/backoffice" />;
-    else if (business === null) return <Redirect to={`/onboarding`} />;
+    else if (isTimeout && business === null) return <Redirect to={`/onboarding`} />;
   }
   if (business && business?.onboarding !== 'completed' && !isBackofficeUser) {
     return <Redirect to={`/onboarding/${!business?.onboarding ? '' : business.onboarding}`} />;
@@ -59,7 +67,7 @@ const Home = () => {
       </BusinessDashboardProvider>
     );
   }
-  return <Loading />;
+  return <Loading timeout={timeoutLimit} />;
 };
 
 export default Home;

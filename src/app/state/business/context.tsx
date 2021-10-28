@@ -3,7 +3,6 @@ import { useObserveBusinessProfile } from 'app/api/business/profile/useObserveBu
 import { Business, WithId } from 'appjusto-types';
 import React from 'react';
 import { useQueryCache } from 'react-query';
-import { useContextApi } from '../api/context';
 import { useContextFirebaseUser } from '../auth/context';
 import { getBusinessChangedKeys } from './utils';
 
@@ -22,7 +21,6 @@ interface Props {
 export const BusinessProvider = ({ children }: Props) => {
   // context
   const queryCache = useQueryCache();
-  const api = useContextApi();
   const { user, isBackofficeUser, refreshUserToken } = useContextFirebaseUser();
   const businesses = useObserveBusinessManagedBy(user?.email);
   const [businessId, setBusinessId] = React.useState<string | undefined | null>();
@@ -51,6 +49,9 @@ export const BusinessProvider = ({ children }: Props) => {
   };
   // side effects
   React.useEffect(() => {
+    if (!user) setBusinessId(null);
+  }, [user]);
+  React.useEffect(() => {
     if (businessId && refreshUserToken) refreshUserToken(businessId);
   }, [businessId, refreshUserToken]);
   React.useEffect(() => {
@@ -68,11 +69,16 @@ export const BusinessProvider = ({ children }: Props) => {
     if (!businesses) return;
     if (businessId) return;
     const localBusinessId = localStorage.getItem(`business-${process.env.REACT_APP_ENVIRONMENT}`);
-    if (localBusinessId) return setBusinessId(localBusinessId);
-    // select first business or set it to null to indicate that user doesn't
+    if (localBusinessId) {
+      setBusinessId(localBusinessId);
+      return;
+    }
+    // select first business, or first business approved, or set it to null to indicate that user doesn't
     // manage any business
-    setBusinessId(businesses.find(() => true)?.id ?? null);
-  }, [api, businesses, user?.email, isBackofficeUser, businessId]);
+    if (businesses.length > 1) {
+      setBusinessId(businesses.find((business) => business.situation === 'approved')?.id ?? null);
+    } else setBusinessId(businesses.find(() => true)?.id ?? null);
+  }, [businesses, user?.email, isBackofficeUser, businessId]);
   // provider
   return (
     <BusinessContext.Provider value={{ business, setBusinessId, updateContextBusinessOrderPrint }}>

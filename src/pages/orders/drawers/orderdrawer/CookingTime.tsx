@@ -1,5 +1,6 @@
-import { Flex, Radio, RadioGroup, Switch, Text } from '@chakra-ui/react';
+import { Flex, RadioGroup, Switch, Text } from '@chakra-ui/react';
 import { useOrdersContext } from 'app/state/order';
+import CustomRadio from 'common/components/form/CustomRadio';
 import { CustomNumberInput } from 'common/components/form/input/CustomNumberInput';
 import React from 'react';
 import { t } from 'utils/i18n';
@@ -99,14 +100,14 @@ export const CookingTime = ({ orderId, cookingTime, averageCookingTime }: Cookin
         >
           <Flex flexDir="column" justifyContent="flex-start">
             {radioOptions.map((option) => (
-              <Radio key={option} mt="4" value={option} size="lg">
+              <CustomRadio key={option} mt="4" value={option} size="lg">
                 {t(`${option} minutos`)}
-              </Radio>
+              </CustomRadio>
             ))}
-            <Flex mt="2" flexDir="row" alignItems="center">
-              <Radio w="360px" value="0" size="lg">
+            <Flex mt="4" flexDir="row" alignItems="center">
+              <CustomRadio w="360px" value="0" size="lg">
                 {t('Definir manualmente')}
-              </Radio>
+              </CustomRadio>
               {radiosValue === '0' && (
                 <CustomNumberInput
                   ml="2"

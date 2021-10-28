@@ -1,28 +1,25 @@
-import { Box, Button, Checkbox, Flex, Heading, HStack, Image, Link, Text } from '@chakra-ui/react';
-import { useContextApi } from 'app/state/api/context';
+import { Box, Button, Flex, Heading, HStack, Image, Link, Text } from '@chakra-ui/react';
+import { useAuthentication } from 'app/api/auth/useAuthentication';
 import { AlertSuccess } from 'common/components/AlertSuccess';
 import { AlertWarning } from 'common/components/AlertWarning';
 import Container from 'common/components/Container';
+import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import delivery from 'common/img/big-delivery.svg';
 import React, { ChangeEvent, FormEvent } from 'react';
-import { useMutation } from 'react-query';
+import { isEmailValid } from 'utils/email';
 import { t } from 'utils/i18n';
 import { Section } from './Section';
 
 export const RegistrationForm = () => {
   // contex
-  const api = useContextApi();
+  const { sendSignInLinkToEmail, sendingLinkResult } = useAuthentication();
+  const { isLoading, isSuccess, isError, error } = sendingLinkResult;
   // state
   const [email, setEmail] = React.useState('');
   const [accept, setAccept] = React.useState(false);
   const [formMsg, setFormMsg] = React.useState({ status: false, type: '', message: '' });
-
-  // mutations
-  const [loginWithEmail, { isLoading, isSuccess, isError, error }] = useMutation((email: string) =>
-    api.auth().sendSignInLinkToEmail(email)
-  );
-
+  const isEmailInvalid = React.useMemo(() => !isEmailValid(email), [email]);
   // handlers
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
@@ -34,9 +31,15 @@ export const RegistrationForm = () => {
         message: 'É preciso aceitar os termos de uso da plataforma.',
       });
     }
-    await loginWithEmail(email);
+    if (isEmailInvalid) {
+      return setFormMsg({
+        status: true,
+        type: 'error',
+        message: 'O e-mail informado não é válido. Corrija e tente novamente.',
+      });
+    }
+    await sendSignInLinkToEmail(email);
   };
-
   // side effects
   React.useEffect(() => {
     if (isError) {
@@ -55,7 +58,6 @@ export const RegistrationForm = () => {
       });
     }
   }, [isError, isSuccess, error]);
-
   // UI
   return (
     <Section
@@ -95,15 +97,13 @@ export const RegistrationForm = () => {
               handleChange={(event: ChangeEvent<HTMLInputElement>) => {
                 setEmail(event.target.value);
               }}
+              isInvalid={email !== '' && isEmailInvalid}
               minW={[null, null, '300px']}
               mb={['16px', null, '0']}
             />
             <HStack mt="4" spacing={2} alignItems="center">
-              <Checkbox
-                size="lg"
+              <CustomCheckbox
                 colorScheme="green"
-                borderColor="black"
-                borderRadius="lg"
                 isChecked={accept}
                 onChange={(event) => setAccept(event.target.checked)}
               />

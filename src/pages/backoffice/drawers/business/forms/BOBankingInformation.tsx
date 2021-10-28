@@ -1,9 +1,10 @@
-import { Box, Flex, HStack, Radio, RadioGroup, Text } from '@chakra-ui/react';
+import { Box, Flex, HStack, RadioGroup, Text } from '@chakra-ui/react';
 import { useBanks } from 'app/api/business/profile/useBanks';
 import { useContextBusinessBackoffice } from 'app/state/business/businessBOContext';
 import { Bank, WithId } from 'appjusto-types';
 import { BankAccountPersonType, BankAccountType } from 'appjusto-types/banking';
 import { AlertWarning } from 'common/components/AlertWarning';
+import CustomRadio from 'common/components/form/CustomRadio';
 import { CustomPatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';
 import {
   addZerosToBeginning,
@@ -91,15 +92,14 @@ const BOBankingInformation = () => {
       <RadioGroup
         onChange={(value) => handleBankingInfoChange('personType', value as BankAccountPersonType)}
         value={bankAccount?.personType ?? 'Pessoa Jurídica'}
-        defaultValue="1"
         colorScheme="green"
         color="black"
         fontSize="15px"
         lineHeight="21px"
       >
         <HStack alignItems="flex-start" color="black" spacing={8} fontSize="16px" lineHeight="22px">
-          <Radio value="Pessoa Jurídica">{t('Pessoa Jurídica')}</Radio>
-          <Radio value="Pessoa Física">{t('Pessoa Física')}</Radio>
+          <CustomRadio value="Pessoa Jurídica">{t('Pessoa Jurídica')}</CustomRadio>
+          <CustomRadio value="Pessoa Física">{t('Pessoa Física')}</CustomRadio>
         </HStack>
       </RadioGroup>
       <Text mt="4" mb="2" color="black" fontWeight="700">
@@ -108,15 +108,14 @@ const BOBankingInformation = () => {
       <RadioGroup
         onChange={(value) => handleBankingInfoChange('type', value as BankAccountType)}
         value={bankAccount?.type ?? 'Corrente'}
-        defaultValue="1"
         colorScheme="green"
         color="black"
         fontSize="15px"
         lineHeight="21px"
       >
         <HStack alignItems="flex-start" color="black" spacing={8} fontSize="16px" lineHeight="22px">
-          <Radio value="Corrente">{t('Corrente')}</Radio>
-          <Radio value="Poupança">{t('Poupança')}</Radio>
+          <CustomRadio value="Corrente">{t('Corrente')}</CustomRadio>
+          <CustomRadio value="Poupança">{t('Poupança')}</CustomRadio>
         </HStack>
       </RadioGroup>
       <BankSelect

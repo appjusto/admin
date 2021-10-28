@@ -11,6 +11,8 @@ export type GeneralRoles =
   | 'manager'
   | 'collaborator';
 
+type AdminRole = 'manager' | 'collaborator';
+
 export const backofficeRoles: GeneralRoles[] = ['owner', 'staff', 'viewer', 'courier-manager'];
 
 interface FirebaseUserContextProps {
@@ -30,18 +32,23 @@ export const FirebaseUserProvider = ({ children }: Props) => {
   const user = useFirebaseUser();
   // states
   const [role, setRole] = React.useState<GeneralRoles | null>();
-  const [isBackofficeUser, setIsBackofficeUser] = React.useState<boolean | null>(null);
+  const [isBackofficeUser, setIsBackofficeUser] = React.useState<boolean | null>();
   // handlers
   const refreshUserToken = React.useCallback(
     async (businessId?: string) => {
-      if (!user) {
+      if (user === undefined) return;
+      if (user === null) {
         setRole(null);
+        setIsBackofficeUser(null);
         return;
       }
       try {
         const token = await user.getIdTokenResult(true);
         if (Object.keys(token?.claims).includes('role')) setRole(token?.claims.role);
-        else if (businessId) setRole(token.claims[businessId]);
+        else if (businessId) {
+          const userRole = token.claims[businessId] as AdminRole | undefined;
+          setRole(userRole ?? null);
+        }
       } catch (error) {
         console.dir('role_error', error);
         Sentry.captureException(error);
@@ -54,7 +61,8 @@ export const FirebaseUserProvider = ({ children }: Props) => {
     refreshUserToken();
   }, [refreshUserToken]);
   React.useEffect(() => {
-    setIsBackofficeUser(!!role && backofficeRoles.indexOf(role) !== -1);
+    if (!role) return;
+    setIsBackofficeUser(backofficeRoles.indexOf(role) !== -1);
   }, [role]);
   // provider
   return (

@@ -195,21 +195,6 @@ export const OrdersContextProvider = (props: ProviderProps) => {
       });
       return;
     }
-    if (business?.status === 'closed') {
-      toast({
-        duration: 12000,
-        render: () => (
-          <CustomToast
-            type="warning"
-            message={{
-              title: 'Seu restaurante está fechado.',
-              description:
-                'Seu restaurante foi fechado de acordo com o horário de funcionamento definido. Para começar a receber pedidos ajuste estas configuração na tela de "Horários" ou contate o administrador desta unidade.',
-            }}
-          />
-        ),
-      });
-    }
   }, [isBackofficeUser, business?.situation, business?.enabled, business?.status, toast]);
   // provider
   return (

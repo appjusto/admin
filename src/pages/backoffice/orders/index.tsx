@@ -1,8 +1,9 @@
 import { ArrowDownIcon, DeleteIcon } from '@chakra-ui/icons';
-import { Button, Checkbox, CheckboxGroup, Flex, HStack, Text } from '@chakra-ui/react';
+import { Button, CheckboxGroup, Flex, HStack, Text } from '@chakra-ui/react';
 import { useObserveOrdersHistory } from 'app/api/order/useObserveOrdersHistory';
 import { OrderStatus, OrderType } from 'appjusto-types';
 import { FilterText } from 'common/components/backoffice/FilterText';
+import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import { CustomDateFilter } from 'common/components/form/input/CustomDateFilter';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import React from 'react';
@@ -170,12 +171,8 @@ const OrdersPage = () => {
             fontSize="16px"
             lineHeight="22px"
           >
-            <Checkbox iconColor="white" value="food">
-              {t('Restaurantes')}
-            </Checkbox>
-            <Checkbox iconColor="white" value="p2p">
-              {t('Encomendas')}
-            </Checkbox>
+            <CustomCheckbox value="food">{t('Restaurantes')}</CustomCheckbox>
+            <CustomCheckbox value="p2p">{t('Encomendas')}</CustomCheckbox>
           </HStack>
         </CheckboxGroup>
       </HStack>

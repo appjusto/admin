@@ -1,10 +1,12 @@
-import { Checkbox, Flex, HStack, Link, Radio, RadioGroup } from '@chakra-ui/react';
+import { Flex, HStack, Link, RadioGroup } from '@chakra-ui/react';
 import { ScheduleObject } from 'appjusto-types/business';
 import { CustomPatternInput as Input } from 'common/components/form/input/pattern-input/CustomPatternInput';
 import { TimeFormatter, TimeMask } from 'common/components/form/input/pattern-input/formatters';
 import { numbersOnlyParser } from 'common/components/form/input/pattern-input/parsers';
 import React from 'react';
 import { t } from 'utils/i18n';
+import CustomCheckbox from './form/CustomCheckbox';
+import CustomRadio from './form/CustomRadio';
 
 export type Break = 'break' | 'no-break';
 
@@ -48,7 +50,7 @@ export const DaySchedule = ({
   }, [schedule]);
   return (
     <Flex flexDir="column" mt="8">
-      <Checkbox
+      <CustomCheckbox
         width="120px"
         colorScheme="green"
         size="lg"
@@ -58,7 +60,7 @@ export const DaySchedule = ({
         onChange={(e) => handleCheck(e.target.checked)}
       >
         {t(`${weekDay}`)}
-      </Checkbox>
+      </CustomCheckbox>
       {checked && (
         <RadioGroup
           mt="2"
@@ -69,12 +71,12 @@ export const DaySchedule = ({
           color="black"
         >
           <Flex flexDir="column" justifyContent="flex-start">
-            <Radio mt="2" value="no-break">
+            <CustomRadio mt="2" value="no-break">
               {t('Sem pausa')}
-            </Radio>
-            <Radio mt="2" value="break">
+            </CustomRadio>
+            <CustomRadio mt="2" value="break">
               {t('O restaurante faz uma pausa durante o dia')}
-            </Radio>
+            </CustomRadio>
           </Flex>
         </RadioGroup>
       )}

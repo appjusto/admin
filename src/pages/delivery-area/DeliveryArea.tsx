@@ -1,9 +1,10 @@
-import { Box, Flex, Radio, RadioGroup, Text } from '@chakra-ui/react';
+import { Box, Flex, RadioGroup, Text } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { getConfig } from 'app/api/config';
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
+import CustomRadio from 'common/components/form/CustomRadio';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import { CustomNumberInput as NumberInput } from 'common/components/form/input/CustomNumberInput';
 import { CustomPatternInput as PatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';
@@ -248,9 +249,9 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
         >
           <Flex flexDir="column" justifyContent="flex-start">
             {radioOptions.map((option) => (
-              <Radio key={option} mt="4" value={option} size="lg">
+              <CustomRadio key={option} mt="4" value={option} size="lg">
                 {t(`${option} minutos`)}
-              </Radio>
+              </CustomRadio>
             ))}
           </Flex>
         </RadioGroup>

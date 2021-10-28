@@ -1,6 +1,6 @@
 import { ArrowDownIcon, DeleteIcon } from '@chakra-ui/icons';
 import { Button, Flex, HStack, Stack, Text } from '@chakra-ui/react';
-import { useObserveOrdersHistory } from 'app/api/order/useObserveOrdersHistory';
+import { useObserveBusinessOrdersHistory } from 'app/api/order/useObserveBusinessOrdersHistory';
 import { useContextBusinessId } from 'app/state/business/context';
 import { OrderStatus } from 'appjusto-types';
 import Container from 'common/components/Container';
@@ -34,7 +34,7 @@ const OrdersHistoryPage = () => {
   const [searchTo, setSearchTo] = React.useState('');
   const [clearDateNumber, setClearDateNumber] = React.useState(0);
 
-  const { orders, fetchNextPage } = useObserveOrdersHistory(
+  const { orders, fetchNextPage } = useObserveBusinessOrdersHistory(
     businessId,
     statuses,
     searchId,

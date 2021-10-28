@@ -28,7 +28,10 @@ export const useAuthentication = () => {
   );
   const updateUsersPassword = (password: string, currentPassword?: string) =>
     api.auth().updateUsersPassword(password, currentPassword);
-  const signOut = React.useCallback(() => api.auth().signOut(), [api]);
+  const signOut = React.useCallback(() => {
+    localStorage.removeItem(`business-${process.env.REACT_APP_ENVIRONMENT}`);
+    api.auth().signOut();
+  }, [api]);
   const [deleteAccount, deleteAccountResult] = useMutation(async (data: DeleteAccountData) =>
     api.auth().deleteAccount(data)
   );

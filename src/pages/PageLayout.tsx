@@ -18,7 +18,7 @@ const PageLayout = ({ maxW = '960px', mt = '0', children }: PageLayoutProps) => 
       <Flex w="100%" justifyContent="center">
         <Container
           w={{ base: '90%', lg: '100%' }}
-          maxW={{ lg: maxW }}
+          maxW={{ lg: maxW, xl: '1044px' }}
           pt={{ base: '16', md: '10' }}
           pb={{ base: '8', md: '14' }}
         >

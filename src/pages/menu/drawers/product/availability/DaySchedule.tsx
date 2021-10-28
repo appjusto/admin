@@ -1,6 +1,8 @@
-import { CloseIcon } from '@chakra-ui/icons';
-import { Button, Checkbox, Flex, Radio, RadioGroup, Text } from '@chakra-ui/react';
+import { CloseIcon, InfoOutlineIcon } from '@chakra-ui/icons';
+import { Button, Flex, RadioGroup, Text } from '@chakra-ui/react';
 import { ScheduleObject } from 'appjusto-types/business';
+import CustomCheckbox from 'common/components/form/CustomCheckbox';
+import CustomRadio from 'common/components/form/CustomRadio';
 import { CustomPatternInput as Input } from 'common/components/form/input/pattern-input/CustomPatternInput';
 import { TimeFormatter, TimeMask } from 'common/components/form/input/pattern-input/formatters';
 import { numbersOnlyParser } from 'common/components/form/input/pattern-input/parsers';
@@ -36,6 +38,7 @@ export const DaySchedule = ({
   const { day: weekDay, checked, schedule } = day;
   // state
   const [availability, setAvailability] = React.useState<MainAvailability>('when-is-open');
+  const [warning, setWarning] = React.useState<string>();
   // handlers
   const inputValidation = (from: string, to: string, beforeTo?: string) => {
     if (from === '' || to === '') return true;
@@ -47,15 +50,23 @@ export const DaySchedule = ({
     setAvailability(value);
     if (value === 'when-is-open') clearDaySchedule();
   };
+  const handleChangeItemsNumber = (type: 'add' | 'remove', itemIndex?: number) => {
+    if (type === 'add') {
+      if (schedule[0].from === '')
+        return setWarning('Favor preencher os horários do primeiro turno');
+      addScheduleItem();
+    } else if (itemIndex) removeScheduleItem(itemIndex);
+  };
   // side effects
   React.useEffect(() => {
+    setWarning(undefined);
     if (schedule.length > 0 && schedule[0].from !== '') setAvailability('defined');
     else setAvailability('when-is-open');
   }, [schedule]);
   // UI
   return (
     <Flex flexDir="column" mt="8">
-      <Checkbox
+      <CustomCheckbox
         colorScheme="green"
         size="lg"
         spacing="1rem"
@@ -64,7 +75,7 @@ export const DaySchedule = ({
         onChange={(e) => handleCheck(e.target.checked)}
       >
         {weekDay}
-      </Checkbox>
+      </CustomCheckbox>
       {checked && (
         <RadioGroup
           mt="2"
@@ -75,12 +86,12 @@ export const DaySchedule = ({
           color="black"
         >
           <Flex flexDir="column" justifyContent="flex-start">
-            <Radio mt="2" value="when-is-open">
+            <CustomRadio mt="2" value="when-is-open">
               {t('Enquanto estiver aberto')}
-            </Radio>
-            <Radio mt="2" value="defined">
+            </CustomRadio>
+            <CustomRadio mt="2" value="defined">
               {t('Definir horário específico')}
-            </Radio>
+            </CustomRadio>
           </Flex>
         </RadioGroup>
       )}
@@ -131,7 +142,7 @@ export const DaySchedule = ({
                       size="sm"
                       maxW="30px"
                       borderColor="#F2F6EA"
-                      onClick={() => removeScheduleItem(index)}
+                      onClick={() => handleChangeItemsNumber('remove', index)}
                     >
                       <CloseIcon fontSize="0.6rem" />
                     </Button>
@@ -140,6 +151,12 @@ export const DaySchedule = ({
               </Flex>
             );
           })}
+          {warning !== undefined && (
+            <Text mt="2" fontSize="xs" fontWeight="700" color="red">
+              <InfoOutlineIcon mt="-2px" mr="2" />
+              {warning}
+            </Text>
+          )}
           {schedule.length < 4 && (
             <Text
               mt="4"
@@ -147,7 +164,7 @@ export const DaySchedule = ({
               fontWeight="700"
               color="green.600"
               cursor="pointer"
-              onClick={addScheduleItem}
+              onClick={() => handleChangeItemsNumber('add')}
               _hover={{ textDecor: 'underline' }}
             >
               {t('Adicionar turno')}
