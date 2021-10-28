@@ -24,7 +24,7 @@ export const BusinessesTableItem = ({ business }: ItemProps) => {
       <Td>{business.name ?? 'N/I'}</Td>
       <Td>{situationPTOptions[status] ?? 'N/I'}</Td>
       <Td>{step ? (step === 'completed' ? 'completo' : step) : 'N/I'}</Td>
-      <Td>
+      <Td textAlign="center">
         <Icon mt="-2px" viewBox="0 0 200 200" color={business?.enabled ? 'green.500' : 'gray.50'}>
           <path
             fill="currentColor"

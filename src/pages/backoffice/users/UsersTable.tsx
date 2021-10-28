@@ -17,6 +17,11 @@ export const UsersTable = ({ users }: UsersTableProps) => {
         <Thead>
           <Tr>
             <Th>{t('Email')}</Th>
+            <Th>{t('Última requisição')}</Th>
+            <Th>{t('Manager')}</Th>
+            <Th>{t('Entreg.')}</Th>
+            <Th>{t('Consum.')}</Th>
+            <Th>{t('Bloqueado')}</Th>
             <Th></Th>
           </Tr>
         </Thead>
@@ -28,6 +33,11 @@ export const UsersTable = ({ users }: UsersTableProps) => {
           ) : (
             <Tr color="black" fontSize="xs" fontWeight="700">
               <Td>{t('Sem resultados para o número informado')}</Td>
+              <Td></Td>
+              <Td></Td>
+              <Td></Td>
+              <Td></Td>
+              <Td></Td>
               <Td></Td>
             </Tr>
           )}

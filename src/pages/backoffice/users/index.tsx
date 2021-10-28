@@ -1,9 +1,10 @@
 import { ArrowDownIcon, DeleteIcon } from '@chakra-ui/icons';
-import { Button, CheckboxGroup, Flex, HStack, Text } from '@chakra-ui/react';
+import { Box, Button, CheckboxGroup, Flex, HStack, RadioGroup, Text } from '@chakra-ui/react';
 import { useObserveUsers } from 'app/api/users/useObserveUsers';
 import { UsersSearchType, UserType } from 'app/api/users/UsersApi';
 import { FilterText } from 'common/components/backoffice/FilterText';
 import CustomCheckbox from 'common/components/form/CustomCheckbox';
+import CustomRadio from 'common/components/form/CustomRadio';
 import { CustomDateFilter } from 'common/components/form/input/CustomDateFilter';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import React from 'react';
@@ -21,7 +22,6 @@ const UsersPage = () => {
   // state
   const [dateTime, setDateTime] = React.useState('');
   const [loggedAt, setLoggedAt] = React.useState<UserType[]>([]);
-  //const [filterBar, setFilterBar] = React.useState('all');
   const [isBlocked, setIsBlocked] = React.useState(false);
   const [searchType, setSearchType] = React.useState<UsersSearchType>('email');
   const [search, setSearch] = React.useState('');
@@ -64,16 +64,42 @@ const UsersPage = () => {
   return (
     <>
       <PageHeader title={t('Usuários')} subtitle={t(`Atualizado ${dateTime}`)} />
-      <Flex mt="8">
+      <Box mt="6">
+        <Text mb="1" color="black" fontWeight="500">
+          {t('Buscar por:')}
+        </Text>
+        <RadioGroup
+          onChange={(value) => setSearchType(value as UsersSearchType)}
+          value={searchType}
+          colorScheme="green"
+          color="black"
+          fontSize="15px"
+          lineHeight="21px"
+        >
+          <HStack
+            direction="row"
+            alignItems="flex-start"
+            color="black"
+            spacing={4}
+            fontSize="16px"
+            lineHeight="22px"
+          >
+            <CustomRadio value="email">{t('E-mail')}</CustomRadio>
+            <CustomRadio value="phone">{t('Fone')}</CustomRadio>
+            <CustomRadio value="cpf">{t('CPF')}</CustomRadio>
+          </HStack>
+        </RadioGroup>
+      </Box>
+      <Flex mt="2">
         <HStack spacing={4}>
           <CustomInput
             mt="0"
-            maxW="212px"
+            minW={{ lg: '260px' }}
             id="search-id"
             value={search}
             onChange={(event) => setSearch(event.target.value)}
-            label={t('ID')}
-            placeholder={t('ID do pedido')}
+            label={t('Busca')}
+            placeholder={t('Digite email, fone ou CPF')}
           />
           <CustomDateFilter
             getStart={setSearchFrom}

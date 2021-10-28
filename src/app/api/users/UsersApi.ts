@@ -23,15 +23,17 @@ export default class UsersApi {
     start?: Date | null,
     end?: Date | null
   ): firebase.Unsubscribe {
+    console.log(searchType);
+    console.log(search);
     let query = this.refs.getUsersRef().orderBy('lastSignInRequest', 'desc').limit(20);
     // search
     if (searchType === 'email' && search) query.where('email', '==', search);
     if (searchType === 'cpf' && search) query.where('cpf', '==', search);
     if (searchType === 'phone' && search) query.where('phone', '==', search);
     // filters
-    if (loggedAt.includes('consumer')) query.where('createdAt', 'in', 'consumer');
-    if (loggedAt.includes('courier')) query.where('createdAt', 'in', 'courier');
-    if (loggedAt.includes('manager')) query.where('createdAt', 'in', 'manager');
+    if (loggedAt.includes('consumer')) query.where('consumer', '!=', '');
+    if (loggedAt.includes('courier')) query.where('courier', '>', '');
+    if (loggedAt.includes('manager')) query.where('manager', '>', '');
     if (isBlocked) query.where('blocked', '==', 'true');
     if (start && end)
       query = query.where('lastSignInRequest', '>=', start).where('lastSignInRequest', '<=', end);
