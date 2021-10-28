@@ -32,9 +32,9 @@ const UsersPage = () => {
 
   const { users, fetchNextPage } = useObserveUsers(
     loggedAt,
+    isBlocked,
     searchType,
     search,
-    isBlocked,
     searchFrom,
     searchTo
   );

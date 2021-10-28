@@ -17,24 +17,29 @@ export default class UsersApi {
       last?: firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
     ) => void,
     loggedAt: UserType[],
+    isBlocked: boolean,
     searchType?: UsersSearchType,
     search?: string,
-    isBlocked?: boolean,
     start?: Date | null,
     end?: Date | null
   ): firebase.Unsubscribe {
-    console.log(searchType);
-    console.log(search);
+    console.log({
+      searchType: searchType,
+      search: search,
+      isBlocked: isBlocked,
+      start: start,
+      end: end,
+    });
     let query = this.refs.getUsersRef().orderBy('lastSignInRequest', 'desc').limit(20);
     // search
-    if (searchType === 'email' && search) query.where('email', '==', search);
-    if (searchType === 'cpf' && search) query.where('cpf', '==', search);
-    if (searchType === 'phone' && search) query.where('phone', '==', search);
+    if (searchType === 'email' && search) query = query.where('email', '==', search);
+    if (searchType === 'cpf' && search) query = query.where('cpf', '==', search);
+    if (searchType === 'phone' && search) query = query.where('phone', '==', search);
     // filters
-    if (loggedAt.includes('consumer')) query.where('consumer', '!=', '');
-    if (loggedAt.includes('courier')) query.where('courier', '>', '');
-    if (loggedAt.includes('manager')) query.where('manager', '>', '');
-    if (isBlocked) query.where('blocked', '==', 'true');
+    if (loggedAt.includes('consumer')) query = query.where('consumer', '!=', '');
+    if (loggedAt.includes('courier')) query = query.where('courier', '>', '');
+    if (loggedAt.includes('manager')) query = query.where('manager', '>', '');
+    if (isBlocked) query = query.where('blocked', '==', true);
     if (start && end)
       query = query.where('lastSignInRequest', '>=', start).where('lastSignInRequest', '<=', end);
     // observer

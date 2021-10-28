@@ -8,9 +8,9 @@ import firebase from 'firebase/app';
 
 export const useObserveUsers = (
   loggedAt: UserType[],
+  isBlocked: boolean,
   searchType?: UsersSearchType,
   search?: string,
-  isBlocked?: boolean,
   start?: string,
   end?: string
 ) => {
@@ -49,9 +49,9 @@ export const useObserveUsers = (
         setLastUser(last);
       },
       loggedAt,
+      isBlocked,
       searchType,
       search,
-      isBlocked,
       startDate,
       endDate
     );
