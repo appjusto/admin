@@ -60,6 +60,13 @@ export const BankingForm = ({
     } as Partial<BankAccount>;
     if (field === 'agency') newBankAccount.agencyFormatted = agencyFormatter!(value);
     if (field === 'account') newBankAccount.accountFormatted = accountFormatter!(value);
+    if (
+      newBankAccount.personType === 'Pessoa Jurídica' &&
+      newBankAccount.type &&
+      !['Corrente', 'Poupança'].includes(newBankAccount.type)
+    ) {
+      newBankAccount.type = 'Corrente';
+    }
     handleBankAccountChange(newBankAccount);
   };
   const findSelectedBank = React.useCallback((banks: WithId<Bank>[], bankName: string) => {
@@ -77,11 +84,12 @@ export const BankingForm = ({
   React.useEffect(() => {
     if (banks && bankAccount?.name) {
       findSelectedBank(banks, bankAccount?.name);
-      handleBankAccountChange({
+      const newBankAccount = {
         ...bankAccount,
-        personType: 'Pessoa Física',
-        type: 'Corrente',
-      });
+      };
+      if (!bankAccount.personType) newBankAccount.personType = 'Pessoa Física';
+      if (!bankAccount.type) newBankAccount.type = 'Corrente';
+      handleBankAccountChange(newBankAccount);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [banks, bankAccount?.name, findSelectedBank]);
@@ -93,7 +101,6 @@ export const BankingForm = ({
     const code = getCEFAccountCode(selectedBank.code, bankAccount.personType, bankAccount.type);
     const newBankAccount = {
       ...bankAccount,
-      //account: code + bankAccount?.account,
       accountFormatted: code + accountFormatter!(bankAccount.account),
     };
     handleBankAccountChange(newBankAccount);

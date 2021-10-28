@@ -1,4 +1,4 @@
-import { Box, Flex, HStack, RadioGroup, Text } from '@chakra-ui/react';
+import { Box, Flex, RadioGroup, Stack, Text } from '@chakra-ui/react';
 import { useBanks } from 'app/api/business/profile/useBanks';
 import { useBusinessBankAccount } from 'app/api/business/profile/useBusinessBankAccount';
 import { useContextBusiness } from 'app/state/business/context';
@@ -21,6 +21,7 @@ import PageFooter from 'pages/PageFooter';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
 import { Redirect } from 'react-router-dom';
+import { getCEFAccountCode } from 'utils/functions';
 import { t } from 'utils/i18n';
 
 const bankAccountSet = (bankAccount: BankAccount): boolean => {
@@ -86,6 +87,7 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
   const onSubmitHandler = async () => {
     submission.current += 1;
     setError(initialError);
+    let code = '';
     if (!validation.agency) {
       setError({
         status: true,
@@ -102,8 +104,20 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
       });
       return accountRef?.current?.focus();
     }
+    if (selectedBank?.code === '341' && agency === '0500') {
+      setError({
+        status: true,
+        error: null,
+        message: { title: 'A iugu ainda não aceita contas Itaú - iti. Escolha outra, por favor.' },
+      });
+      return agencyRef?.current?.focus();
+    }
+    if (selectedBank?.code === '104') {
+      code = getCEFAccountCode(selectedBank.code, personType, type);
+    }
     const agencyFormatted = agencyFormatter!(agency);
-    const accountFormatted = accountFormatter!(account);
+    const accountFormatted =
+      selectedBank?.code === '104' ? code + accountFormatter!(account) : accountFormatter!(account);
     await updateBankAccount({
       personType,
       type,
@@ -177,7 +191,10 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
           {t('Personalidade da conta:')}
         </Text>
         <RadioGroup
-          onChange={(value) => setPersonType(value as BankAccountPersonType)}
+          onChange={(value) => {
+            setPersonType(value as BankAccountPersonType);
+            setType('Corrente');
+          }}
           value={personType}
           defaultValue="1"
           colorScheme="green"
@@ -185,7 +202,8 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
           fontSize="15px"
           lineHeight="21px"
         >
-          <HStack
+          <Stack
+            direction="row"
             alignItems="flex-start"
             color="black"
             spacing={8}
@@ -198,7 +216,7 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
             <CustomRadio isDisabled={disabled} value="Pessoa Física">
               {t('Pessoa Física')}
             </CustomRadio>
-          </HStack>
+          </Stack>
         </RadioGroup>
         {business?.situation !== 'approved' && personType === 'Pessoa Física' && (
           <AlertWarning
@@ -278,26 +296,55 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
         <RadioGroup
           onChange={(value) => setType(value as BankAccountType)}
           value={type}
-          defaultValue="1"
           colorScheme="green"
           color="black"
           fontSize="15px"
           lineHeight="21px"
         >
-          <HStack
-            alignItems="flex-start"
-            color="black"
-            spacing={8}
-            fontSize="16px"
-            lineHeight="22px"
-          >
-            <CustomRadio isDisabled={disabled} value="Corrente">
-              {t('Corrente')}
-            </CustomRadio>
-            <CustomRadio isDisabled={disabled} value="Poupança">
-              {t('Poupança')}
-            </CustomRadio>
-          </HStack>
+          {selectedBank?.code === '104' ? (
+            personType === 'Pessoa Jurídica' ? (
+              <Stack
+                direction="row"
+                alignItems="flex-start"
+                color="black"
+                spacing={8}
+                fontSize="16px"
+                lineHeight="22px"
+              >
+                <CustomRadio value="Corrente">{t('003 – Conta Corrente')}</CustomRadio>
+                <CustomRadio value="Poupança">{t('022 – Conta Poupança')}</CustomRadio>
+              </Stack>
+            ) : (
+              <Stack
+                mt="2"
+                direction="column"
+                alignItems="flex-start"
+                color="black"
+                spacing={4}
+                fontSize="16px"
+                lineHeight="22px"
+              >
+                <CustomRadio value="Corrente">{t('001 – Conta Corrente')}</CustomRadio>
+                <CustomRadio value="Simples">{t('002 – Conta Simples')}</CustomRadio>
+                <CustomRadio value="Poupança">{t('013 – Conta Poupança')}</CustomRadio>
+                <CustomRadio value="Nova Poupança">
+                  {t('1288 – Conta Poupança (novo formato)')}
+                </CustomRadio>
+              </Stack>
+            )
+          ) : (
+            <Stack
+              direction="row"
+              alignItems="flex-start"
+              color="black"
+              spacing={8}
+              fontSize="16px"
+              lineHeight="22px"
+            >
+              <CustomRadio value="Corrente">{t('Corrente')}</CustomRadio>
+              <CustomRadio value="Poupança">{t('Poupança')}</CustomRadio>
+            </Stack>
+          )}
         </RadioGroup>
         <PageFooter
           onboarding={onboarding}
