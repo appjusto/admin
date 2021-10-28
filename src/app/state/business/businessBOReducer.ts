@@ -2,7 +2,7 @@ import { WithId, Business, ManagerProfile, BankAccount } from 'appjusto-types';
 
 export interface businessBOState {
   manager: WithId<ManagerProfile>;
-  bankingInfo: WithId<BankAccount>;
+  bankingInfo: Partial<BankAccount>;
   businessProfile: WithId<Business>;
 }
 
@@ -13,8 +13,7 @@ export type Actions =
   | { type: 'load_manager'; payload: WithId<ManagerProfile> }
   | { type: 'update_manager'; payload: Partial<WithId<ManagerProfile>> }
   | { type: 'clear_manager' }
-  | { type: 'load_banking'; payload: WithId<BankAccount> }
-  | { type: 'update_banking'; payload: Partial<WithId<BankAccount>> }
+  | { type: 'update_banking'; payload: Partial<BankAccount> }
   | { type: 'clear_banking' };
 
 export const businessBOReducer = (state: businessBOState, action: Actions): businessBOState => {
@@ -59,18 +58,10 @@ export const businessBOReducer = (state: businessBOState, action: Actions): busi
         ...state,
         manager: {} as WithId<ManagerProfile>,
       };
-    case 'load_banking':
-      return {
-        ...state,
-        bankingInfo: {
-          ...action.payload,
-        },
-      };
     case 'update_banking':
       return {
         ...state,
         bankingInfo: {
-          ...state.bankingInfo,
           ...action.payload,
         },
       };

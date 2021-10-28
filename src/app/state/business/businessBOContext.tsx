@@ -11,6 +11,7 @@ import {
 } from 'appjusto-types';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
 import { initialError } from 'common/components/error/utils';
+import { BackofficeProfileValidation } from 'common/types';
 import { isEmpty, isEqual } from 'lodash';
 import React, { Dispatch, SetStateAction } from 'react';
 import { MutateFunction, MutationResult } from 'react-query';
@@ -25,23 +26,16 @@ const bankAccountSet = (bankAccount: BankAccount): boolean => {
   );
 };
 
-type Validation = {
-  cpf: boolean;
-  phone: boolean;
-  agency: boolean;
-  account: boolean;
-};
-
 interface BusinessBOContextProps {
   manager?: WithId<ManagerProfile> | null;
-  bankAccount?: WithId<BankAccount> | null;
+  bankAccount?: Partial<BankAccount> | null;
   business?: WithId<Business> | null;
-  contextValidation: Validation;
+  contextValidation: BackofficeProfileValidation;
   isLoading: boolean;
   handleBusinessStatusChange(key: string, value: any): void;
   handleManagerProfileChange(key: string, value: any): void;
-  handleBankingInfoChange(key: string, value: any): void;
-  setContextValidation: Dispatch<SetStateAction<Validation>>;
+  handleBankingInfoChange(newBankAccount: Partial<BankAccount>): void;
+  setContextValidation: Dispatch<SetStateAction<BackofficeProfileValidation>>;
   handleSave(): void;
   marketPlace?: MarketplaceAccountInfo | null;
   deleteMarketPlace: MutateFunction<void, unknown, undefined, unknown>;
@@ -78,7 +72,7 @@ export const BusinessBOProvider = ({ children }: Props) => {
   //const [isLoading, setIsLoading] = React.useState(false);
   //const [isSuccess, setIsSuccess] = React.useState(false);
   const [error, setError] = React.useState(initialError);
-  const [contextValidation, setContextValidation] = React.useState({
+  const [contextValidation, setContextValidation] = React.useState<BackofficeProfileValidation>({
     cpf: true,
     phone: true,
     agency: true,
@@ -102,8 +96,8 @@ export const BusinessBOProvider = ({ children }: Props) => {
     dispatch({ type: 'update_manager', payload: { [key]: value } });
   };
 
-  const handleBankingInfoChange = (key: string, value: any) => {
-    dispatch({ type: 'update_banking', payload: { [key]: value } });
+  const handleBankingInfoChange = (newBankAccount: Partial<BankAccount>) => {
+    dispatch({ type: 'update_banking', payload: newBankAccount });
   };
 
   const handleSave = () => {
@@ -164,7 +158,7 @@ export const BusinessBOProvider = ({ children }: Props) => {
 
   React.useEffect(() => {
     if (bankAccount && bankAccountSet(bankAccount))
-      dispatch({ type: 'load_banking', payload: bankAccount });
+      dispatch({ type: 'update_banking', payload: bankAccount });
     else dispatch({ type: 'clear_banking' });
   }, [bankAccount]);
 

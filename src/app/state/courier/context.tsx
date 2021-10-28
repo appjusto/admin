@@ -13,19 +13,13 @@ import {
   Order,
   WithId,
 } from 'appjusto-types';
+import { BackofficeProfileValidation } from 'common/types';
 import React, { Dispatch, SetStateAction } from 'react';
 import { MutateFunction, MutationResult } from 'react-query';
 import { useParams } from 'react-router';
 import { useContextApi } from '../api/context';
 import { courierReducer } from './courierReducer';
 
-type Validation = {
-  cpf: boolean;
-  cnpj: boolean;
-  agency: boolean;
-  account: boolean;
-  message?: string;
-};
 interface CourierProfileContextProps {
   courier: WithId<CourierProfile> | undefined | null;
   pictures: { selfie?: string | null; document?: string | null };
@@ -39,13 +33,13 @@ interface CourierProfileContextProps {
   marketPlace?: MarketplaceAccountInfo | null;
   deleteMarketPlace: MutateFunction<void, unknown, undefined, unknown>;
   deleteMarketPlaceResult: MutationResult<void, unknown>;
-  contextValidation: Validation;
+  contextValidation: BackofficeProfileValidation;
   currentOrder: WithId<Order> | null;
   orders?: WithId<Order>[] | null;
   dateStart?: string;
   dateEnd?: string;
   handleProfileChange(key: string, value: any): void;
-  setContextValidation: Dispatch<SetStateAction<Validation>>;
+  setContextValidation: Dispatch<SetStateAction<BackofficeProfileValidation>>;
   setDateStart(start: string): void;
   setDateEnd(end: string): void;
 }
@@ -82,7 +76,7 @@ export const CourierProvider = ({ children }: Props) => {
     cnpj: true,
     agency: true,
     account: true,
-  });
+  } as BackofficeProfileValidation);
   const [selfieFiles, setSelfieFiles] = React.useState<File[] | null>(null);
   const [documentFiles, setDocumentFiles] = React.useState<File[] | null>(null);
   const [dateStart, setDateStart] = React.useState<string>();
