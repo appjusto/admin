@@ -14,6 +14,7 @@ import OrderApi from './order/OrderApi';
 import PlatformApi from './platform/PlatformApi';
 import CourierApi from './courier/CourierApi';
 import ConsumerApi from './consumer/CosumerApi';
+import UsersApi from './users/UsersApi';
 
 export default class Api {
   private static app: firebase.app.App;
@@ -33,6 +34,7 @@ export default class Api {
   private _order: OrderApi;
   private _courier: CourierApi;
   private _consumer: ConsumerApi;
+  private _users: UsersApi;
 
   constructor(config: ApiConfig) {
     if (!Api.app) {
@@ -64,6 +66,7 @@ export default class Api {
     this._order = new OrderApi(this._refs);
     this._courier = new CourierApi(this._refs, this._files);
     this._consumer = new ConsumerApi(this._refs, this._files);
+    this._users = new UsersApi(this._refs);
   }
 
   auth() {
@@ -96,5 +99,9 @@ export default class Api {
 
   consumer() {
     return this._consumer;
+  }
+
+  users() {
+    return this._users;
   }
 }

@@ -28,6 +28,9 @@ export default class FirebaseRefs {
   getAdvanceReceivablesCallable = () => this.functions.httpsCallable('advanceReceivables');
 
   // firestore
+  // users
+  getUsersRef = () => this.firestore.collection('users');
+
   // advances
   getAdvancesRef = () => this.firestore.collection('advances');
 
