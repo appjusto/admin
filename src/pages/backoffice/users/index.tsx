@@ -12,7 +12,7 @@ import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import PageHeader from '../../PageHeader';
-import { BackofficeOrderDrawer } from '../drawers/order';
+import { UserBaseDrawer } from '../drawers/user/UserBaseDrawer';
 import { UsersTable } from './UsersTable';
 
 const UsersPage = () => {
@@ -152,8 +152,8 @@ const UsersPage = () => {
         {t('Carregar mais')}
       </Button>
       <Switch>
-        <Route path={`${path}/:orderId`}>
-          <BackofficeOrderDrawer isOpen onClose={closeDrawerHandler} />
+        <Route path={`${path}/:userId`}>
+          <UserBaseDrawer isOpen onClose={closeDrawerHandler} />
         </Route>
       </Switch>
     </>

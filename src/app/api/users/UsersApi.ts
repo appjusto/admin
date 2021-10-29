@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/react';
 import { WithId, User } from 'appjusto-types';
-import { documentsAs } from '../../../core/fb';
+import { documentAs, documentsAs } from '../../../core/fb';
 import FirebaseRefs from '../FirebaseRefs';
 import firebase from 'firebase/app';
 
@@ -13,7 +13,7 @@ export default class UsersApi {
   // firestore
   observeUsers(
     resultHandler: (
-      orders: WithId<User>[],
+      users: WithId<User>[],
       last?: firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
     ) => void,
     loggedAt: UserType[],
@@ -30,6 +30,7 @@ export default class UsersApi {
       start: start,
       end: end,
     });
+    // query
     let query = this.refs.getUsersRef().orderBy('lastSignInRequest', 'desc').limit(20);
     // search
     if (searchType === 'email' && search) query = query.where('email', '==', search);
@@ -48,6 +49,27 @@ export default class UsersApi {
         const last =
           querySnapshot.docs.length > 0 ? querySnapshot.docs[querySnapshot.size - 1] : undefined;
         resultHandler(documentsAs<User>(querySnapshot.docs), last);
+      },
+      (error) => {
+        console.error(error);
+        Sentry.captureException(error);
+      }
+    );
+    // returns the unsubscribe function
+    return unsubscribe;
+  }
+
+  observeUser(
+    userId: string,
+    resultHandler: (user: WithId<User> | null) => void
+  ): firebase.Unsubscribe {
+    // query
+    let query = this.refs.getUsersRef().doc(userId);
+    // observer
+    const unsubscribe = query.onSnapshot(
+      (querySnapshot) => {
+        if (querySnapshot.exists) resultHandler(documentAs<User>(querySnapshot));
+        else resultHandler(null);
       },
       (error) => {
         console.error(error);
