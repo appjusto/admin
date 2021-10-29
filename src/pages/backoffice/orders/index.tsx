@@ -176,7 +176,7 @@ const OrdersPage = () => {
           </HStack>
         </CheckboxGroup>
       </HStack>
-      <OrdersTable orders={orders} />
+      <OrdersTable orders={orders} isBackoffice />
       <Button mt="8" variant="secondary" onClick={fetchNextPage}>
         <ArrowDownIcon mr="2" />
         {t('Carregar mais')}

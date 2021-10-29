@@ -9,12 +9,12 @@ import { orderStatusPTOptionsForTableItem } from '../utils';
 
 interface ItemProps {
   order: WithId<Order>;
+  isBackoffice?: boolean;
 }
 
-export const OrdersTableItem = ({ order }: ItemProps) => {
+export const OrdersTableItem = ({ order, isBackoffice }: ItemProps) => {
   // context
   const { path } = useRouteMatch();
-  const isBackoffice = path.includes('backoffice');
   // helpers
   const getFoodOrderTotal = () => {
     let total = 0;
@@ -34,10 +34,13 @@ export const OrdersTableItem = ({ order }: ItemProps) => {
     <Tr key={order.id} color="black" fontSize="15px" lineHeight="21px">
       <Td maxW="120px">{order.code ?? 'N/I'}</Td>
       <Td>{getDateAndHour(order.updatedOn!)}</Td>
-      <Td>{order.type ? (order.type === 'food' ? 'Comida' : 'Entrega') : 'N/E'}</Td>
+      {isBackoffice && (
+        <Td>{order.type ? (order.type === 'food' ? 'Comida' : 'Entrega') : 'N/E'}</Td>
+      )}
       <Td>
         {order.status ? orderStatusPTOptionsForTableItem[order.status as OrderStatus] : 'N/I'}
       </Td>
+      {isBackoffice && <Td>{order.business?.name ?? 'N/I'}</Td>}
       <Td>{order.consumer.name ?? 'N/I'}</Td>
       <Td>
         {order.dispatchingStatus === 'outsourced' ? 'Fora da rede' : order.courier?.name ?? 'N/E'}

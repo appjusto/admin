@@ -5,11 +5,10 @@ import { OrdersTableItem } from './OrdersTableItem';
 
 interface OrdersTableProps {
   orders?: WithId<Order>[] | null;
+  isBackoffice?: boolean;
 }
 
-export const OrdersTable = ({ orders }: OrdersTableProps) => {
-  // context
-
+export const OrdersTable = ({ orders, isBackoffice }: OrdersTableProps) => {
   // UI
   return (
     <Box mt="12" maxW="100vw" overflowX="auto">
@@ -18,8 +17,9 @@ export const OrdersTable = ({ orders }: OrdersTableProps) => {
           <Tr>
             <Th>{t('ID')}</Th>
             <Th>{t('Atualizado em')}</Th>
-            <Th>{t('Tipo')}</Th>
+            {isBackoffice && <Th>{t('Tipo')}</Th>}
             <Th>{t('Status')}</Th>
+            {isBackoffice && <Th>{t('Restaurante')}</Th>}
             <Th>{t('Cliente')}</Th>
             <Th>{t('Entregador')}</Th>
             <Th>{t('Valor')}</Th>
@@ -29,11 +29,12 @@ export const OrdersTable = ({ orders }: OrdersTableProps) => {
         <Tbody>
           {orders && orders.length > 0 ? (
             orders.map((order) => {
-              return <OrdersTableItem key={order.id} order={order} />;
+              return <OrdersTableItem key={order.id} order={order} isBackoffice={isBackoffice} />;
             })
           ) : (
             <Tr color="black" fontSize="xs" fontWeight="700">
               <Td>{t('Sem resultados para o número informado')}</Td>
+              <Td></Td>
               <Td></Td>
               <Td></Td>
               <Td></Td>
