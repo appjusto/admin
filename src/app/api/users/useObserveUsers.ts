@@ -55,7 +55,8 @@ export const useObserveUsers = (
       searchType,
       textSearch,
       startDate,
-      endDate
+      endDate,
+      startAfter
     );
     return () => unsub();
   }, [api, startAfter, loggedAt, searchType, search, isBlocked, start, end]);

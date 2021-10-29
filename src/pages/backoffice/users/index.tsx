@@ -1,9 +1,9 @@
 import { ArrowDownIcon, DeleteIcon } from '@chakra-ui/icons';
-import { Box, Button, CheckboxGroup, Flex, HStack, RadioGroup, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, HStack, RadioGroup, Text } from '@chakra-ui/react';
 import { useObserveUsers } from 'app/api/users/useObserveUsers';
 import { UsersSearchType, UserType } from 'app/api/users/UsersApi';
 import { FilterText } from 'common/components/backoffice/FilterText';
-import CustomCheckbox from 'common/components/form/CustomCheckbox';
+//import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import CustomRadio from 'common/components/form/CustomRadio';
 import { CustomDateFilter } from 'common/components/form/input/CustomDateFilter';
 import { CustomInput } from 'common/components/form/input/CustomInput';
@@ -46,7 +46,7 @@ const UsersPage = () => {
 
   const clearFilters = () => {
     setClearDateNumber((prev) => prev + 1);
-    setLoggedAt([]);
+    setLoggedAt(['manager', 'courier', 'consumer']);
     setIsBlocked(false);
     setSearchType('email');
     setSearch('');
@@ -128,7 +128,7 @@ const UsersPage = () => {
         <Text fontSize="lg" fontWeight="700" lineHeight="26px">
           {t(`${users?.length ?? '0'} usuários na lista`)}
         </Text>
-        <CheckboxGroup
+        {/*<CheckboxGroup
           colorScheme="green"
           value={loggedAt}
           onChange={(values: UserType[]) => setLoggedAt(values)}
@@ -144,7 +144,7 @@ const UsersPage = () => {
             <CustomCheckbox value="courier">{t('Entregador')}</CustomCheckbox>
             <CustomCheckbox value="consumer">{t('Consumidor')}</CustomCheckbox>
           </HStack>
-        </CheckboxGroup>
+        </CheckboxGroup>*/}
       </HStack>
       <UsersTable users={users} />
       <Button mt="8" variant="secondary" onClick={fetchNextPage}>

@@ -157,7 +157,11 @@ export const UserBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
             </Text>
           </DrawerHeader>
           <DrawerBody pb="28">
-            <SectionTitle>{t('Logado como:')}</SectionTitle>
+            <SectionTitle>
+              {!user?.manager && !user?.courier && !user?.consumer
+                ? t('Ainda não houve tentativa de login')
+                : t('Logado como:')}
+            </SectionTitle>
             {user?.manager && (
               <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
                 {t('Manager, em:')}{' '}

@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/react';
 import { WithId, User } from 'appjusto-types';
-import { documentAs, documentsAs } from '../../../core/fb';
+import { documentAs, documentsAs, FirebaseDocument } from '../../../core/fb';
 import FirebaseRefs from '../FirebaseRefs';
 import firebase from 'firebase/app';
 
@@ -21,7 +21,8 @@ export default class UsersApi {
     searchType?: UsersSearchType,
     search?: string | null,
     start?: Date | null,
-    end?: Date | null
+    end?: Date | null,
+    startAfter?: FirebaseDocument
   ): firebase.Unsubscribe {
     //console.log({
     //  searchType: searchType,
@@ -31,15 +32,32 @@ export default class UsersApi {
     //  end: end,
     //});
     // query
+    if (searchType === 'email' && search) {
+      const unsubscribe = this.refs
+        .getUsersRef()
+        .doc(search)
+        .onSnapshot(
+          (querySnapshot) => {
+            if (querySnapshot.exists) resultHandler([documentAs<User>(querySnapshot)]);
+            else resultHandler([]);
+          },
+          (error) => {
+            console.error(error);
+            Sentry.captureException(error);
+          }
+        );
+      // returns the unsubscribe function
+      return unsubscribe;
+    }
     let query = this.refs.getUsersRef().orderBy('lastSignInRequest', 'desc').limit(20);
     // search
-    if (searchType === 'email' && search) query = query.where('email', '==', search);
+    if (startAfter) query = query.startAfter(startAfter);
     if (searchType === 'cpf' && search) query = query.where('cpf', '==', search);
     if (searchType === 'phone' && search) query = query.where('phone', '==', search);
     // filters
-    //if (loggedAt.includes('consumer')) query = query.where('consumer', '!=', '');
-    //if (loggedAt.includes('courier')) query = query.where('courier', '>', '');
-    //if (loggedAt.includes('manager')) query = query.where('manager', '>', '');
+    //if (loggedAt?.includes('consumer')) query = query.where('consumer', '!=', false);
+    //if (loggedAt?.includes('courier')) query = query.where('courier', '!=', false);
+    //if (loggedAt?.includes('manager')) query = query.where('manager', '!=', false);
     if (isBlocked) query = query.where('blocked', '==', true);
     if (start && end)
       query = query.where('lastSignInRequest', '>=', start).where('lastSignInRequest', '<=', end);
