@@ -21,6 +21,7 @@ export const ManagerBar = (props: FlexProps) => {
       left={{ md: '0' }}
       w="220px"
       borderTop={{ lg: '1px solid #C8D7CB' }}
+      bgColor="gray.300"
       px="4"
       py="2"
       {...props}
