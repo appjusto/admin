@@ -21,7 +21,7 @@ const UsersPage = () => {
   const history = useHistory();
   // state
   const [dateTime, setDateTime] = React.useState('');
-  const [loggedAt, setLoggedAt] = React.useState<UserType[]>([]);
+  const [loggedAt, setLoggedAt] = React.useState<UserType[]>(['manager', 'courier', 'consumer']);
   const [isBlocked, setIsBlocked] = React.useState(false);
   const [searchType, setSearchType] = React.useState<UsersSearchType>('email');
   const [search, setSearch] = React.useState('');

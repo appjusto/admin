@@ -1,14 +1,20 @@
 import {
+  Box,
+  Button,
   Drawer,
   DrawerBody,
   DrawerCloseButton,
   DrawerContent,
+  DrawerFooter,
   DrawerHeader,
   DrawerOverlay,
+  HStack,
   Skeleton,
   Text,
 } from '@chakra-ui/react';
 import { useObserveUser } from 'app/api/users/useObserveUser';
+import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
+import { initialError } from 'common/components/error/utils';
 import React from 'react';
 import { useParams } from 'react-router';
 import { getDateAndHour } from 'utils/functions';
@@ -27,9 +33,30 @@ type Params = {
 export const UserBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   //context
   const { userId } = useParams<Params>();
-  const user = useObserveUser(userId);
+  const { user, updateUser, updateResult } = useObserveUser(userId);
+  const { isLoading, isSuccess, isError, error: updateError } = updateResult;
+  // state
+  const [isBlocking, setIsBlocking] = React.useState(false);
+  const [error, setError] = React.useState(initialError);
+  // refs
+  const submission = React.useRef(0);
+  // handlers
+  const handleBlock = () => {
+    submission.current += 1;
+    console.log(`blocked: ${!user?.blocked}`);
+    //updateUser({ blocked: !user?.blocked });
+  };
+  // side effects
+  React.useEffect(() => {
+    if (isError) {
+      setError({
+        status: true,
+        error: updateError,
+      });
+    }
+  }, [isError, updateError]);
   //UI
-  if (!user)
+  if (user === undefined)
     return (
       <Drawer placement="right" size="lg" onClose={onClose} {...props}>
         <DrawerOverlay>
@@ -38,16 +65,16 @@ export const UserBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
             <DrawerHeader pb="2">
               <Skeleton maxW="200px" />
               <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
-                {t('Última requisição:')} <Skeleton maxW="100px" />
+                {t('Última requisição:')} <Skeleton as="span" maxW="100px" />
               </Text>
               <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
-                {t('CPF:')} <Skeleton maxW="100px" />
+                {t('CPF:')} <Skeleton as="span" maxW="100px" />
               </Text>
               <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
-                {t('Fone:')} <Skeleton maxW="100px" />
+                {t('Fone:')} <Skeleton as="span" maxW="100px" />
               </Text>
               <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
-                {t('Bloqueado:')} <Skeleton maxW="100px" />
+                {t('Bloqueado:')} <Skeleton as="span" maxW="100px" />
               </Text>
             </DrawerHeader>
             <DrawerBody pb="28"></DrawerBody>
@@ -164,6 +191,43 @@ export const UserBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
               </>
             )}
           </DrawerBody>
+          <DrawerFooter borderTop="1px solid #F2F6EA">
+            {isBlocking ? (
+              <Box mt="8" w="100%" bg="#FFF8F8" border="1px solid red" borderRadius="lg" p="6">
+                <Text color="red">
+                  {user.blocked
+                    ? t(`Tem certeza que deseja desbloquear este usuário?`)
+                    : t(`Tem certeza que deseja bloquear este usuário?`)}
+                </Text>
+                <HStack mt="4" spacing={4}>
+                  <Button width="full" onClick={() => setIsBlocking(false)}>
+                    {t(`Cancelar`)}
+                  </Button>
+                  <Button width="full" variant="danger" onClick={handleBlock} isLoading={isLoading}>
+                    {user.blocked ? t(`Desbloquear`) : t(`Bloquear`)}
+                  </Button>
+                </HStack>
+              </Box>
+            ) : (
+              <HStack w="100%" spacing={4}>
+                <Button
+                  minW={{ base: '100%', md: '220px' }}
+                  fontSize="15px"
+                  variant="dangerLight"
+                  onClick={() => setIsBlocking(true)}
+                >
+                  {user.blocked ? t(`Desbloquear usuário`) : t(`Bloquear usuário`)}
+                </Button>
+              </HStack>
+            )}
+            <SuccessAndErrorHandler
+              submission={submission.current}
+              isSuccess={isSuccess}
+              isError={error.status}
+              error={error.error}
+              errorMessage={error.message}
+            />
+          </DrawerFooter>
         </DrawerContent>
       </DrawerOverlay>
     </Drawer>

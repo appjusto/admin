@@ -16,20 +16,20 @@ export default class UsersApi {
       users: WithId<User>[],
       last?: firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
     ) => void,
-    loggedAt: UserType[],
+    loggedAt: UserType[] | null,
     isBlocked: boolean,
     searchType?: UsersSearchType,
-    search?: string,
+    search?: string | null,
     start?: Date | null,
     end?: Date | null
   ): firebase.Unsubscribe {
-    console.log({
-      searchType: searchType,
-      search: search,
-      isBlocked: isBlocked,
-      start: start,
-      end: end,
-    });
+    //console.log({
+    //  searchType: searchType,
+    //  search: search,
+    //  isBlocked: isBlocked,
+    //  start: start,
+    //  end: end,
+    //});
     // query
     let query = this.refs.getUsersRef().orderBy('lastSignInRequest', 'desc').limit(20);
     // search
@@ -37,9 +37,9 @@ export default class UsersApi {
     if (searchType === 'cpf' && search) query = query.where('cpf', '==', search);
     if (searchType === 'phone' && search) query = query.where('phone', '==', search);
     // filters
-    if (loggedAt.includes('consumer')) query = query.where('consumer', '!=', '');
-    if (loggedAt.includes('courier')) query = query.where('courier', '>', '');
-    if (loggedAt.includes('manager')) query = query.where('manager', '>', '');
+    //if (loggedAt.includes('consumer')) query = query.where('consumer', '!=', '');
+    //if (loggedAt.includes('courier')) query = query.where('courier', '>', '');
+    //if (loggedAt.includes('manager')) query = query.where('manager', '>', '');
     if (isBlocked) query = query.where('blocked', '==', true);
     if (start && end)
       query = query.where('lastSignInRequest', '>=', start).where('lastSignInRequest', '<=', end);
@@ -78,5 +78,19 @@ export default class UsersApi {
     );
     // returns the unsubscribe function
     return unsubscribe;
+  }
+
+  async updateUser(userId: string, changes: Partial<User>) {
+    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+    const fullChanges = {
+      ...changes,
+      updatedOn: timestamp,
+    };
+    try {
+      await this.refs.getUsersRef().doc(userId).update(fullChanges);
+    } catch (error) {
+      Sentry.captureException(error);
+      throw error;
+    }
   }
 }

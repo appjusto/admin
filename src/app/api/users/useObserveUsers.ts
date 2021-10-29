@@ -33,6 +33,8 @@ export const useObserveUsers = (
     setStartAfter(undefined);
   }, [loggedAt, searchType, search, isBlocked, start, end]);
   React.useEffect(() => {
+    let loggedFilter = loggedAt.length === 3 ? null : loggedAt;
+    let textSearch = search && search.length > 8 ? search : null;
     let startDate = start ? dayjs(start).startOf('day').toDate() : null;
     let endDate = end ? dayjs(end).endOf('day').toDate() : null;
     const unsub = api.users().observeUsers(
@@ -48,10 +50,10 @@ export const useObserveUsers = (
           });
         setLastUser(last);
       },
-      loggedAt,
+      loggedFilter,
       isBlocked,
       searchType,
-      search,
+      textSearch,
       startDate,
       endDate
     );
