@@ -1,0 +1,235 @@
+import {
+  Button,
+  Drawer,
+  DrawerBody,
+  DrawerCloseButton,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerOverlay,
+  HStack,
+  Skeleton,
+  Text,
+} from '@chakra-ui/react';
+import * as cpfutils from '@fnando/cpf';
+import { useObserveUserChanges } from 'app/api/users/useObserveUserChanges';
+import { UserProfile, WithId } from 'appjusto-types';
+import { phoneFormatter } from 'common/components/form/input/pattern-input/formatters';
+import { situationPTOptions } from 'pages/backoffice/utils';
+import React from 'react';
+import { useParams } from 'react-router';
+import { getDateAndHour } from 'utils/functions';
+import { t } from 'utils/i18n';
+import { SectionTitle } from '../generics/SectionTitle';
+
+interface BaseDrawerProps {
+  isOpen: boolean;
+  onClose(): void;
+}
+
+type Params = {
+  changesId: string;
+};
+
+export const UserChangeDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
+  //context
+  const { changesId } = useParams<Params>();
+  const changes = useObserveUserChanges(changesId);
+  const user = {} as WithId<UserProfile>;
+  //UI
+  if (changes === undefined)
+    return (
+      <Drawer placement="right" size="lg" onClose={onClose} {...props}>
+        <DrawerOverlay>
+          <DrawerContent>
+            <DrawerCloseButton bg="green.500" mr="12px" _focus={{ outline: 'none' }} />
+            <DrawerHeader pb="2">
+              <SectionTitle>{t('Dados do usuário')}</SectionTitle>
+              <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+                {t('AccountId:')} <Skeleton as="span" maxW="100px" />
+              </Text>
+              <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+                {t('Nome:')} <Skeleton as="span" maxW="100px" />
+              </Text>
+              <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+                {t('Sobrenome:')} <Skeleton as="span" maxW="100px" />
+              </Text>
+              <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+                {t('CPF:')} <Skeleton as="span" maxW="100px" />
+              </Text>
+              <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+                {t('Fone:')} <Skeleton as="span" maxW="100px" />
+              </Text>
+              <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+                {t('Logado como:')} <Skeleton as="span" maxW="100px" />
+              </Text>
+              <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+                {t('Status:')} <Skeleton as="span" maxW="100px" />
+              </Text>
+              <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+                {t('Criado em:')} <Skeleton as="span" maxW="100px" />
+              </Text>
+              <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+                {t('Atualizado em:')} <Skeleton as="span" maxW="100px" />
+              </Text>
+            </DrawerHeader>
+            <DrawerBody pb="28"></DrawerBody>
+          </DrawerContent>
+        </DrawerOverlay>
+      </Drawer>
+    );
+  if (changes === null)
+    return (
+      <Drawer placement="right" size="lg" onClose={onClose} {...props}>
+        <DrawerOverlay>
+          <DrawerContent>
+            <DrawerCloseButton bg="green.500" mr="12px" _focus={{ outline: 'none' }} />
+            <DrawerHeader pb="2">
+              <Text color="black" fontSize="2xl" fontWeight="700" lineHeight="28px" mb="2">
+                {changesId ?? 'N/E'}
+              </Text>
+            </DrawerHeader>
+            <DrawerBody pb="28">
+              <SectionTitle>{t('Solicitação de alteração não encontrada! =/')}</SectionTitle>
+            </DrawerBody>
+          </DrawerContent>
+        </DrawerOverlay>
+      </Drawer>
+    );
+  return (
+    <Drawer placement="right" size="lg" onClose={onClose} {...props}>
+      <DrawerOverlay>
+        <DrawerContent>
+          <DrawerCloseButton bg="green.500" mr="12px" _focus={{ outline: 'none' }} />
+          <DrawerHeader pb="2">
+            <SectionTitle mt="0">{t('Dados do usuário')}</SectionTitle>
+            <Text mt="6" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+              {t('AccountId:')}{' '}
+              <Text as="span" fontWeight="500">
+                {user?.id ?? 'N/E'}
+              </Text>
+            </Text>
+            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+              {t('Nome:')}{' '}
+              <Text as="span" fontWeight="500">
+                {user?.name ?? 'N/E'}
+              </Text>
+            </Text>
+            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+              {t('Sobrenome:')}{' '}
+              <Text as="span" fontWeight="500">
+                {user?.surname ?? 'N/E'}
+              </Text>
+            </Text>
+            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+              {t('CPF:')}{' '}
+              <Text as="span" fontWeight="500">
+                {user?.cpf ? cpfutils.format(user.cpf) : 'N/I'}
+              </Text>
+            </Text>
+            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+              {t('Fone:')}{' '}
+              <Text as="span" fontWeight="500">
+                {user?.phone ? phoneFormatter(user.phone) : 'N/I'}
+              </Text>
+            </Text>
+            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+              {t('Logado como:')}{' '}
+              <Text as="span" fontWeight="500">
+                {'N/E'}
+              </Text>
+            </Text>
+            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+              {t('Status:')}{' '}
+              <Text as="span" fontWeight="500">
+                {user?.situation ? situationPTOptions[user?.situation] : 'N/E'}
+              </Text>
+            </Text>
+            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+              {t('Criado em:')}{' '}
+              <Text as="span" fontWeight="500">
+                {getDateAndHour(user?.createdOn)}
+              </Text>
+            </Text>
+            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+              {t('Atualizado em:')}{' '}
+              <Text as="span" fontWeight="500">
+                {getDateAndHour(user?.updatedOn)}
+              </Text>
+            </Text>
+          </DrawerHeader>
+          <DrawerBody pb="28">
+            <SectionTitle mb="5">{t('Solicitando alteração dos seguintes dados:')}</SectionTitle>
+            {changes?.name && (
+              <Text mt="1" fontSize="15px" color="red" fontWeight="700" lineHeight="22px">
+                {t('Nome:')}{' '}
+                <Text as="span" fontWeight="500">
+                  {changes.name}
+                </Text>
+              </Text>
+            )}
+            {changes?.surname && (
+              <Text mt="1" fontSize="15px" color="red" fontWeight="700" lineHeight="22px">
+                {t('Sobrenome:')}{' '}
+                <Text as="span" fontWeight="500">
+                  {changes.surname}
+                </Text>
+              </Text>
+            )}
+            {changes?.cpf && (
+              <Text mt="1" fontSize="15px" color="red" fontWeight="700" lineHeight="22px">
+                {t('CPF:')}{' '}
+                <Text as="span" fontWeight="500">
+                  {cpfutils.format(changes.cpf)}
+                </Text>
+              </Text>
+            )}
+            {changes?.phone && (
+              <Text mt="1" fontSize="15px" color="red" fontWeight="700" lineHeight="22px">
+                {t('Fone:')}{' '}
+                <Text as="span" fontWeight="500">
+                  {changes?.phone ? phoneFormatter(changes.phone) : 'N/I'}
+                </Text>
+              </Text>
+            )}
+            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+              {t('Criada em:')}{' '}
+              <Text as="span" fontWeight="500">
+                {getDateAndHour(changes?.createdOn)}
+              </Text>
+            </Text>
+            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+              {t('Status:')}{' '}
+              <Text as="span" fontWeight="500">
+                {changes?.situation ? situationPTOptions[changes?.situation] : 'N/E'}
+              </Text>
+            </Text>
+          </DrawerBody>
+          <DrawerFooter borderTop="1px solid #F2F6EA">
+            <HStack w="full" spacing={4}>
+              <Button
+                width="full"
+                fontSize="15px"
+                onClick={() => {}}
+                isLoading={false}
+                loadingText={t('Aprovando')}
+              >
+                {t('Aprovar')}
+              </Button>
+              <Button
+                width="full"
+                fontSize="15px"
+                variant="dangerLight"
+                onClick={() => {}}
+                isLoading={false}
+                loadingText={t('Rejeitando')}
+              >
+                {t('Rejeitar')}
+              </Button>
+            </HStack>
+          </DrawerFooter>
+        </DrawerContent>
+      </DrawerOverlay>
+    </Drawer>
+  );
+};

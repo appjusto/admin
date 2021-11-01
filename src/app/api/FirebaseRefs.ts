@@ -30,6 +30,7 @@ export default class FirebaseRefs {
   // firestore
   // users
   getUsersRef = () => this.firestore.collection('users');
+  getUsersChangesRef = () => this.getUsersRef().doc('subcollections').collection('changes');
 
   // advances
   getAdvancesRef = () => this.firestore.collection('advances');

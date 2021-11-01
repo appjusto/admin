@@ -1,15 +1,16 @@
 import { Box, Circle, Flex, Text, VStack } from '@chakra-ui/react';
-import { Business, Order, WithId } from 'appjusto-types';
+import { Business, Order, ProfileChange, WithId } from 'appjusto-types';
 import { ShowIf } from 'core/components/ShowIf';
 import React from 'react';
 import { BOBusinessListItem } from './BOBusinessListItem';
 import { BOOrderListItem } from './BOOrderListItem';
+import { BOProfileChangesListItem } from './BOProfileChangesListItem';
 
-type ListType = 'orders' | 'businesses';
+type ListType = 'orders' | 'businesses' | 'profile-changes';
 
 interface Props {
   title: string;
-  data: WithId<Business>[] | WithId<Order>[];
+  data: WithId<Business>[] | WithId<Order>[] | WithId<ProfileChange>[];
   listType: ListType;
   details?: string;
 }
@@ -48,7 +49,7 @@ export const BOList = ({ title, data, listType, details }: Props) => {
       </Box>
       <ShowIf test={data.length === 0 && Boolean(details)}>
         {() => (
-          <Flex flex={1} p="6" alignItems="center">
+          <Flex flex={1} p="6" alignItems="center" justifyContent="center">
             <Text fontSize="sm" textColor="gray.700" align="center">
               {details}
             </Text>
@@ -62,8 +63,12 @@ export const BOList = ({ title, data, listType, details }: Props) => {
               ? (data as WithId<Business>[]).map((item) => (
                   <BOBusinessListItem key={item.id} business={item} />
                 ))
-              : (data as WithId<Order>[]).map((item) => (
+              : listType === 'orders'
+              ? (data as WithId<Order>[]).map((item) => (
                   <BOOrderListItem key={item.id} order={item} />
+                ))
+              : (data as WithId<ProfileChange>[]).map((item) => (
+                  <BOProfileChangesListItem key={item.id} changes={item} />
                 ))}
           </VStack>
         )}

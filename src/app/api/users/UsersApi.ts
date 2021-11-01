@@ -1,8 +1,9 @@
 import * as Sentry from '@sentry/react';
-import { WithId, User } from 'appjusto-types';
+import { WithId, User, ProfileChange } from 'appjusto-types';
 import { documentAs, documentsAs, FirebaseDocument } from '../../../core/fb';
 import FirebaseRefs from '../FirebaseRefs';
 import firebase from 'firebase/app';
+import { ProfileChangesSituations } from './useObserveUsersChanges';
 
 export type UsersSearchType = 'email' | 'cpf' | 'phone';
 
@@ -87,6 +88,48 @@ export default class UsersApi {
     const unsubscribe = query.onSnapshot(
       (querySnapshot) => {
         if (querySnapshot.exists) resultHandler(documentAs<User>(querySnapshot));
+        else resultHandler(null);
+      },
+      (error) => {
+        console.error(error);
+        Sentry.captureException(error);
+      }
+    );
+    // returns the unsubscribe function
+    return unsubscribe;
+  }
+
+  observeUsersChanges(
+    situations: ProfileChangesSituations[],
+    resultHandler: (changes: WithId<ProfileChange>[]) => void
+  ): firebase.Unsubscribe {
+    // query
+    let query = this.refs
+      .getUsersChangesRef()
+      .orderBy('createdOn', 'asc')
+      .where('situation', 'in', situations);
+    // observer
+    const unsubscribe = query.onSnapshot(
+      (querySnapshot) => resultHandler(documentsAs<ProfileChange>(querySnapshot.docs)),
+      (error) => {
+        console.error(error);
+        Sentry.captureException(error);
+      }
+    );
+    // returns the unsubscribe function
+    return unsubscribe;
+  }
+
+  observeUserChange(
+    changeId: string,
+    resultHandler: (change: WithId<ProfileChange> | null) => void
+  ): firebase.Unsubscribe {
+    // query
+    let query = this.refs.getUsersChangesRef().doc(changeId);
+    // observer
+    const unsubscribe = query.onSnapshot(
+      (querySnapshot) => {
+        if (querySnapshot.exists) resultHandler(documentAs<ProfileChange>(querySnapshot));
         else resultHandler(null);
       },
       (error) => {
