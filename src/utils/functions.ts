@@ -68,6 +68,21 @@ export const getDateAndHour = (timestamp?: firebase.firestore.FieldValue | Date)
   }
 };
 
+export const getHourAndMinute = (timestamp?: firebase.firestore.FieldValue | Date) => {
+  if (!timestamp) return 'N/E';
+  try {
+    let timeToDate = timestamp;
+    if (!(timeToDate instanceof Date)) {
+      timeToDate = (timestamp as firebase.firestore.Timestamp).toDate();
+    }
+    const hour = I18n.strftime(timeToDate, '%H:%M');
+    return hour;
+  } catch (error) {
+    console.log(error);
+    return 'N/E';
+  }
+};
+
 export const getAlgoliaFieldDateAndHour = (timestamp: firebase.firestore.FieldValue | number) => {
   if (typeof timestamp === 'number') {
     try {

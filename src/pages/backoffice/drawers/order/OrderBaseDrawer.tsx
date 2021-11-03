@@ -12,12 +12,14 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { Order, OrderStatus, WithId } from 'appjusto-types';
+import { OrderTracking } from 'pages/backoffice/dashboard/OrderTracking';
 import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
 import React from 'react';
 import { useRouteMatch } from 'react-router';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { orderStatusPTOptions } from '../../utils/index';
+import { SectionTitle } from '../generics/SectionTitle';
 
 interface BaseDrawerProps {
   agent: { id: string | undefined; name: string };
@@ -48,7 +50,7 @@ export const OrderBaseDrawer = ({
       <DrawerOverlay>
         <DrawerContent>
           <DrawerCloseButton bg="green.500" mr="12px" _focus={{ outline: 'none' }} />
-          <DrawerHeader pb="2">
+          <DrawerHeader pb="0">
             <Text color="black" fontSize="2xl" fontWeight="700" lineHeight="28px" mb="2">
               {order?.code ? `#${order.code}` : 'N/E'}
             </Text>
@@ -98,6 +100,8 @@ export const OrderBaseDrawer = ({
             </Text>*/}
           </DrawerHeader>
           <DrawerBody pb="28">
+            <SectionTitle mb="4">{t('Andamento do pedido')}</SectionTitle>
+            <OrderTracking orderId={order?.id} />
             <Flex
               my="8"
               fontSize="lg"

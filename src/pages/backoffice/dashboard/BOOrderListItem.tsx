@@ -1,15 +1,16 @@
-import { Box, Flex, Image, Text } from '@chakra-ui/react';
+import { Box, Flex, Image, Stack, Text } from '@chakra-ui/react';
 import { useObserveOrderIssues } from 'app/api/order/useObserveOrderIssues';
 import { Order, WithId } from 'appjusto-types';
 import foodIcon from 'common/img/bo-food.svg';
 import p2pIcon from 'common/img/bo-p2p.svg';
 import firebase from 'firebase/app';
 import React from 'react';
-import { MdInfoOutline } from 'react-icons/md';
+import { MdErrorOutline } from 'react-icons/md';
 import { useRouteMatch } from 'react-router-dom';
 import { getTimeUntilNow } from 'utils/functions';
 import { orderStatusPTOptions } from '../utils';
 import { CustomLink } from './CustomLink';
+import { OrderTracking } from './OrderTracking';
 
 interface Props {
   order: WithId<Order>;
@@ -45,30 +46,33 @@ export const BOOrderListItem = ({ order }: Props) => {
   // UI
   return (
     <CustomLink to={`${url}/order/${order?.id}`} bg={orderDT && orderDT > 40 ? '#FBD7D7' : 'white'}>
-      <Flex justifyContent="space-between" alignItems="center">
-        <Box>
-          <Image src={order?.type === 'food' ? foodIcon : p2pIcon} w="24px" h="24px" />
-        </Box>
-        <Text fontSize="sm" lineHeight="21px" color="black">
-          #{order?.code}
-        </Text>
-        <Text fontSize="sm" lineHeight="21px" color="black">
-          {getOrderStatus()}
-        </Text>
-        <Text fontSize="sm" lineHeight="21px">
-          {orderDT ? `${orderDT}min` : 'Agora'}
-        </Text>
-        <Flex
-          w="24px"
-          h="24px"
-          justifyContent="center"
-          alignItems="center"
-          bg={issuesFound ? 'red' : 'none'}
-          borderRadius="lg"
-        >
-          <MdInfoOutline color={issuesFound ? 'white' : '#C8D7CB'} />
+      <Stack w="100%" spacing={{ base: 4, lg: 10 }} direction={{ base: 'column', lg: 'row' }}>
+        <Flex w="100%" justifyContent="space-between" alignItems="center">
+          <Box>
+            <Image src={order?.type === 'food' ? foodIcon : p2pIcon} w="24px" h="24px" />
+          </Box>
+          <Text fontSize="sm" lineHeight="21px" color="black">
+            #{order?.code}
+          </Text>
+          <Text fontSize="sm" lineHeight="21px" color="black">
+            {getOrderStatus()}
+          </Text>
+          <Text fontSize="sm" lineHeight="21px">
+            {orderDT ? `${orderDT}min` : 'Agora'}
+          </Text>
+          <Flex
+            w="24px"
+            h="24px"
+            justifyContent="center"
+            alignItems="center"
+            bg={issuesFound ? 'red' : 'none'}
+            borderRadius="lg"
+          >
+            <MdErrorOutline color={issuesFound ? 'white' : '#C8D7CB'} />
+          </Flex>
         </Flex>
-      </Flex>
+        <OrderTracking orderId={order.id} type="compact" />
+      </Stack>
     </CustomLink>
   );
 };

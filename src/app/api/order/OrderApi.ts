@@ -30,6 +30,12 @@ export type CancellationData = {
 
 export type Ordering = 'asc' | 'desc';
 
+export interface OrderLog {
+  before: Partial<Order>;
+  after: Partial<Order>;
+  timestamp: firebase.firestore.FieldValue;
+}
+
 export default class OrderApi {
   constructor(private refs: FirebaseRefs) {}
 
@@ -251,6 +257,24 @@ export default class OrderApi {
     const unsubscribe = query.onSnapshot(
       (querySnapshot) => {
         resultHandler(documentAs<Order>(querySnapshot));
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+    // returns the unsubscribe function
+    return unsubscribe;
+  }
+
+  observeOrderLogs(
+    orderId: string,
+    resultHandler: (order: WithId<OrderLog>[] | null) => void
+  ): firebase.Unsubscribe {
+    let query = this.refs.getOrderLogsRef(orderId).orderBy('timestamp', 'asc');
+    const unsubscribe = query.onSnapshot(
+      (querySnapshot) => {
+        if (!querySnapshot.empty) resultHandler(documentsAs<OrderLog>(querySnapshot.docs));
+        else resultHandler(null);
       },
       (error) => {
         console.error(error);
