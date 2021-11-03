@@ -12,8 +12,8 @@ import {
   Text,
 } from '@chakra-ui/react';
 import * as cpfutils from '@fnando/cpf';
+import { useFetchUserData } from 'app/api/users/useFetchUserData';
 import { useObserveUserChanges } from 'app/api/users/useObserveUserChanges';
-import { UserProfile, WithId } from 'appjusto-types';
 import { phoneFormatter } from 'common/components/form/input/pattern-input/formatters';
 import { situationPTOptions } from 'pages/backoffice/utils';
 import React from 'react';
@@ -35,7 +35,7 @@ export const UserChangeDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   //context
   const { changesId } = useParams<Params>();
   const changes = useObserveUserChanges(changesId);
-  const user = {} as WithId<UserProfile>;
+  const { userData: user, userType } = useFetchUserData(changes?.accountId);
   //UI
   if (changes === undefined)
     return (
@@ -49,6 +49,9 @@ export const UserChangeDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 {t('AccountId:')} <Skeleton as="span" maxW="100px" />
               </Text>
               <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+                {t('Primeira correspondência como:')} <Skeleton as="span" maxW="100px" />
+              </Text>
+              <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
                 {t('Nome:')} <Skeleton as="span" maxW="100px" />
               </Text>
               <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
@@ -59,9 +62,6 @@ export const UserChangeDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
               </Text>
               <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
                 {t('Fone:')} <Skeleton as="span" maxW="100px" />
-              </Text>
-              <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
-                {t('Logado como:')} <Skeleton as="span" maxW="100px" />
               </Text>
               <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
                 {t('Status:')} <Skeleton as="span" maxW="100px" />
@@ -110,6 +110,12 @@ export const UserChangeDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
               </Text>
             </Text>
             <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+              {t('Primeira correspondência como:')}{' '}
+              <Text as="span" fontWeight="500">
+                {userType ?? 'N/E'}
+              </Text>
+            </Text>
+            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
               {t('Nome:')}{' '}
               <Text as="span" fontWeight="500">
                 {user?.name ?? 'N/E'}
@@ -131,12 +137,6 @@ export const UserChangeDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
               {t('Fone:')}{' '}
               <Text as="span" fontWeight="500">
                 {user?.phone ? phoneFormatter(user.phone) : 'N/I'}
-              </Text>
-            </Text>
-            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
-              {t('Logado como:')}{' '}
-              <Text as="span" fontWeight="500">
-                {'N/E'}
               </Text>
             </Text>
             <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
