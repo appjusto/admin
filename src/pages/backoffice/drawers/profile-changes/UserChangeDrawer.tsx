@@ -14,6 +14,8 @@ import {
 import * as cpfutils from '@fnando/cpf';
 import { useFetchUserData } from 'app/api/users/useFetchUserData';
 import { useObserveUserChanges } from 'app/api/users/useObserveUserChanges';
+import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
+import { initialError } from 'common/components/error/utils';
 import { phoneFormatter } from 'common/components/form/input/pattern-input/formatters';
 import { situationPTOptions } from 'pages/backoffice/utils';
 import React from 'react';
@@ -34,8 +36,29 @@ type Params = {
 export const UserChangeDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   //context
   const { changesId } = useParams<Params>();
-  const changes = useObserveUserChanges(changesId);
+  const { changes, updateChange, updateChangeResult } = useObserveUserChanges(changesId);
+  const { isLoading, isSuccess, isError, error: updateError } = updateChangeResult;
   const { userData: user, userType } = useFetchUserData(changes?.accountId);
+  // state
+  const [error, setError] = React.useState(initialError);
+  // refs
+  const submission = React.useRef(0);
+  const actionType = React.useRef<'approved' | 'rejected'>();
+  // handlers
+  const updateChangesSituation = (situation: 'approved' | 'rejected') => {
+    submission.current += 1;
+    actionType.current = situation;
+    return updateChange({ situation });
+  };
+  // side effects
+  React.useEffect(() => {
+    if (isError) {
+      setError({
+        status: true,
+        error: updateError,
+      });
+    }
+  }, [isError, updateError]);
   //UI
   if (changes === undefined)
     return (
@@ -210,8 +233,8 @@ export const UserChangeDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
               <Button
                 width="full"
                 fontSize="15px"
-                onClick={() => {}}
-                isLoading={false}
+                onClick={() => updateChangesSituation('approved')}
+                isLoading={isLoading && actionType.current === 'approved'}
                 loadingText={t('Aprovando')}
               >
                 {t('Aprovar')}
@@ -220,13 +243,20 @@ export const UserChangeDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 width="full"
                 fontSize="15px"
                 variant="dangerLight"
-                onClick={() => {}}
-                isLoading={false}
+                onClick={() => updateChangesSituation('rejected')}
+                isLoading={isLoading && actionType.current === 'rejected'}
                 loadingText={t('Rejeitando')}
               >
                 {t('Rejeitar')}
               </Button>
             </HStack>
+            <SuccessAndErrorHandler
+              submission={submission.current}
+              isSuccess={isSuccess}
+              isError={error.status}
+              error={error.error}
+              errorMessage={error.message}
+            />
           </DrawerFooter>
         </DrawerContent>
       </DrawerOverlay>

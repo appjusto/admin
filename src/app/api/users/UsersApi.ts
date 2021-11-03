@@ -173,4 +173,13 @@ export default class UsersApi {
       throw error;
     }
   }
+
+  async updateChanges(changesId: string, changes: Partial<ProfileChange>) {
+    try {
+      await this.refs.getUsersChangesRef().doc(changesId).update(changes);
+    } catch (error) {
+      Sentry.captureException(error);
+      throw error;
+    }
+  }
 }
