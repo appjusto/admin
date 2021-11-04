@@ -8,7 +8,6 @@ import React from 'react';
 import { MdErrorOutline } from 'react-icons/md';
 import { useRouteMatch } from 'react-router-dom';
 import { getTimeUntilNow } from 'utils/functions';
-import { orderStatusPTOptions } from '../utils';
 import { CustomLink } from './CustomLink';
 import { OrderTracking } from './OrderTracking';
 
@@ -24,14 +23,6 @@ export const BOOrderListItem = ({ order }: Props) => {
   const [orderDT, setOrderDT] = React.useState<number>();
   // helpers
   const issuesFound = issues && issues.length > 0 ? true : false;
-  const getOrderStatus = () => {
-    if (!order.status) return 'N/E';
-    if (order.dispatchingState === 'arrived-destination') return 'Entreg. no local de entrega';
-    if (orderStatusPTOptions[order.status].includes('-')) {
-      return orderStatusPTOptions[order.status].split('-')[0];
-    }
-    return orderStatusPTOptions[order.status];
-  };
   // side effects
   React.useEffect(() => {
     const setNewTime = () => {
@@ -47,15 +38,12 @@ export const BOOrderListItem = ({ order }: Props) => {
   return (
     <CustomLink to={`${url}/order/${order?.id}`} bg={orderDT && orderDT > 40 ? '#FBD7D7' : 'white'}>
       <Stack w="100%" spacing={{ base: 4, lg: 10 }} direction={{ base: 'column', lg: 'row' }}>
-        <Flex w="100%" justifyContent="space-between" alignItems="center">
+        <Flex w={{ base: '100%', lg: '70%' }} justifyContent="space-between" alignItems="center">
           <Box>
             <Image src={order?.type === 'food' ? foodIcon : p2pIcon} w="24px" h="24px" />
           </Box>
           <Text fontSize="sm" lineHeight="21px" color="black">
             #{order?.code}
-          </Text>
-          <Text fontSize="sm" lineHeight="21px" color="black">
-            {getOrderStatus()}
           </Text>
           <Text fontSize="sm" lineHeight="21px">
             {orderDT ? `${orderDT}min` : 'Agora'}
