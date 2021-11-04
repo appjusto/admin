@@ -1,7 +1,7 @@
 import { Box, Button, Flex, HStack, Progress, Text } from '@chakra-ui/react';
+import { useObserveOrderLogs } from 'app/api/order/useObserveOrderLogs';
 import { useOrderArrivalTimes } from 'app/api/order/useOrderArrivalTimes';
 import { useOrderDeliveryInfos } from 'app/api/order/useOrderDeliveryInfos';
-import { getOrderAckTime } from 'app/api/order/utils';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useOrdersContext } from 'app/state/order';
 import { useContextServerTime } from 'app/state/server-time';
@@ -9,11 +9,11 @@ import { Order, WithId } from 'appjusto-types';
 import { ReactComponent as Alarm } from 'common/img/alarm_outlined.svg';
 import React from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
-import { getTimeUntilNow } from 'utils/functions';
+import { getTimestampMilliseconds, getTimeUntilNow } from 'utils/functions';
 import { t } from 'utils/i18n';
 
-const confirmedKey = 'confirmed';
-const preparingKey = 'preparing';
+// const confirmedKey = 'confirmed';
+// const preparingKey = 'preparing';
 
 interface Props {
   order: WithId<Order>;
@@ -33,6 +33,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
     isDelivered,
     orderDispatchingKanbanItemText,
   } = useOrderDeliveryInfos(getServerTime, order);
+  const logs = useObserveOrderLogs(order.id);
   //const { restartMatching, restartResult } = useObserveOrderMatching(order.id);
 
   // state
@@ -58,13 +59,25 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
   // side effects
   React.useEffect(() => {
     if (!order.id) return;
-    let localOrderTime: number | null = null;
+    let serverOrderTime: number | null = null;
     const setNewTime = () => {
-      if (order.status === 'confirmed') localOrderTime = getOrderAckTime(confirmedKey, order.id);
-      if (order.status === 'preparing') localOrderTime = getOrderAckTime(preparingKey, order.id);
-      if (localOrderTime) {
+      if (order.status === 'confirmed') {
+        const confirmedLog = logs?.find((log) => log.after.status === 'confirmed');
+        const confirmedTime = getTimestampMilliseconds(
+          confirmedLog?.timestamp as firebase.firestore.Timestamp
+        );
+        serverOrderTime = confirmedTime;
+      }
+      if (order.status === 'preparing') {
+        const preparingLog = logs?.find((log) => log.after.status === 'preparing');
+        const preparingTime = getTimestampMilliseconds(
+          preparingLog?.timestamp as firebase.firestore.Timestamp
+        );
+        serverOrderTime = preparingTime;
+      }
+      if (serverOrderTime) {
         const now = getServerTime().getTime();
-        let time = getTimeUntilNow(now, localOrderTime);
+        let time = getTimeUntilNow(now, serverOrderTime);
         setElapsedTime(time);
       } else {
         setElapsedTime(null);
@@ -76,7 +89,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
       return clearInterval(timeInterval);
     }
     return () => clearInterval(timeInterval);
-  }, [getServerTime, order.id, order.status]);
+  }, [getServerTime, order.id, order.status, logs]);
 
   React.useEffect(() => {
     // disabled for backoffice users

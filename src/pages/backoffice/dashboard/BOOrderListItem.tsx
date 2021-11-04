@@ -8,7 +8,7 @@ import firebase from 'firebase/app';
 import React from 'react';
 import { MdErrorOutline } from 'react-icons/md';
 import { useRouteMatch } from 'react-router-dom';
-import { getTimeUntilNow } from 'utils/functions';
+import { getTimestampMilliseconds, getTimeUntilNow } from 'utils/functions';
 import { CustomLink } from './CustomLink';
 import { OrderTracking } from './OrderTracking';
 
@@ -29,8 +29,10 @@ export const BOOrderListItem = ({ order }: Props) => {
   React.useEffect(() => {
     const setNewTime = () => {
       const now = getServerTime().getTime();
-      const confirmedOn = (order.confirmedOn as firebase.firestore.Timestamp) ?? undefined;
-      const time = confirmedOn ? getTimeUntilNow(now, confirmedOn.seconds * 1000) : null;
+      const confirmedOn = getTimestampMilliseconds(
+        order.confirmedOn as firebase.firestore.Timestamp
+      );
+      const time = confirmedOn ? getTimeUntilNow(now, confirmedOn) : null;
       if (time) setOrderDT(time);
     };
     setNewTime();

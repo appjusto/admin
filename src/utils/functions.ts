@@ -159,6 +159,11 @@ export const updateLocalStorageOrderTime = (orderId: string) => {
   return false;
 };
 
+export const getTimestampMilliseconds = (timestamp?: firebase.firestore.Timestamp) => {
+  if (!timestamp) return null;
+  return timestamp.seconds * 1000;
+};
+
 export const getTimeUntilNow = (serverTime: number, baseTime: number, reverse: boolean = false) => {
   //const now = new Date().getTime();
   if (reverse) {

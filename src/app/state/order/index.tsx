@@ -14,7 +14,6 @@ import { useContextBusiness } from 'app/state/business/context';
 import { Business, Order, OrderStatus, WithId } from 'appjusto-types';
 import { CustomToast } from 'common/components/CustomToast';
 import React from 'react';
-import { updateLocalStorageOrderTime } from 'utils/functions';
 import { useContextFirebaseUser } from '../auth/context';
 
 export type localOrderType = { code: string; time: number };
@@ -64,7 +63,6 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   };
   const changeOrderStatus = React.useCallback(
     async (orderId: string, status: OrderStatus) => {
-      if (status === 'preparing') updateLocalStorageOrderTime(orderId);
       // optimistic update to avoid flickering
       setOrders((prevOrders) => {
         let newOrders = prevOrders.map((order) => {
