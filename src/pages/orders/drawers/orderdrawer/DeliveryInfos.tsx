@@ -2,6 +2,7 @@ import { Box, Button, Circle, Flex, HStack, Image, Text } from '@chakra-ui/react
 import { useCourierProfilePicture } from 'app/api/courier/useCourierProfilePicture';
 import { useOrderDeliveryInfos } from 'app/api/order/useOrderDeliveryInfos';
 import { useContextFirebaseUser } from 'app/state/auth/context';
+import { useContextServerTime } from 'app/state/server-time';
 import { Order, WithId } from 'appjusto-types';
 import { AlertWarning } from 'common/components/AlertWarning';
 import firebase from 'firebase/app';
@@ -17,9 +18,13 @@ interface DeliveryInfosProps {
 
 export const DeliveryInfos = ({ order, setOutsource }: DeliveryInfosProps) => {
   // context
+  const { getServerTime } = useContextServerTime();
   const { isBackofficeUser } = useContextFirebaseUser();
   const courierPictureUrl = useCourierProfilePicture(order.courier?.id);
-  const { isMatched, orderDispatchingText, arrivalTime, isNoMatch } = useOrderDeliveryInfos(order);
+  const { isMatched, orderDispatchingText, arrivalTime, isNoMatch } = useOrderDeliveryInfos(
+    getServerTime,
+    order
+  );
   // state
   const [joined, setJoined] = React.useState<string | null>();
 

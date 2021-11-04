@@ -3,17 +3,20 @@ import { Order, WithId } from 'appjusto-types';
 import React from 'react';
 import { getTimeUntilNow } from 'utils/functions';
 
-export const useOrderArrivalTimes = (order?: WithId<Order> | null) => {
+export const useOrderArrivalTimes = (getServerTime: () => Date, order?: WithId<Order> | null) => {
   // state
   const [arrivalTime, setArrivalTime] = React.useState<number | null>(null);
 
   // handlers
-  const handleArrivalTime = React.useCallback((baseTime: firebase.firestore.Timestamp) => {
-    if (baseTime) {
-      const newTime = getTimeUntilNow(baseTime.toMillis(), true);
+  const handleArrivalTime = React.useCallback(
+    (baseTime: firebase.firestore.Timestamp) => {
+      if (!baseTime) return;
+      const now = getServerTime().getTime();
+      const newTime = getTimeUntilNow(now, baseTime.toMillis(), true);
       setArrivalTime(newTime);
-    }
-  }, []);
+    },
+    [getServerTime]
+  );
 
   // side effects
   React.useEffect(() => {

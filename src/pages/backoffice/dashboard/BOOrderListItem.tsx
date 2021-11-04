@@ -1,5 +1,6 @@
 import { Box, Flex, Image, Stack, Text } from '@chakra-ui/react';
 import { useObserveOrderIssues } from 'app/api/order/useObserveOrderIssues';
+import { useContextServerTime } from 'app/state/server-time';
 import { Order, WithId } from 'appjusto-types';
 import foodIcon from 'common/img/bo-food.svg';
 import p2pIcon from 'common/img/bo-p2p.svg';
@@ -18,6 +19,7 @@ interface Props {
 export const BOOrderListItem = ({ order }: Props) => {
   // context
   const { url } = useRouteMatch();
+  const { getServerTime } = useContextServerTime();
   const issues = useObserveOrderIssues(order.id);
   // state
   const [orderDT, setOrderDT] = React.useState<number>();
@@ -26,14 +28,15 @@ export const BOOrderListItem = ({ order }: Props) => {
   // side effects
   React.useEffect(() => {
     const setNewTime = () => {
+      const now = getServerTime().getTime();
       const confirmedOn = (order.confirmedOn as firebase.firestore.Timestamp) ?? undefined;
-      const time = confirmedOn ? getTimeUntilNow(confirmedOn.seconds * 1000) : null;
+      const time = confirmedOn ? getTimeUntilNow(now, confirmedOn.seconds * 1000) : null;
       if (time) setOrderDT(time);
     };
     setNewTime();
     const timeInterval = setInterval(setNewTime, 60000);
     return () => clearInterval(timeInterval);
-  }, [order]);
+  }, [getServerTime, order]);
   // UI
   return (
     <CustomLink to={`${url}/order/${order?.id}`} bg={orderDT && orderDT > 40 ? '#FBD7D7' : 'white'}>

@@ -25,7 +25,7 @@ export interface Participants {
 const orderActivedStatuses = ['confirmed', 'preparing', 'ready', 'dispatching'] as OrderStatus[];
 const orderCompleteStatuses = ['delivered', 'canceled'] as OrderStatus[];
 
-export const useOrderChat = (orderId: string, counterpartId: string) => {
+export const useOrderChat = (getServerTime: () => Date, orderId: string, counterpartId: string) => {
   // context
   const api = useContextApi();
   const businessId = useContextBusinessId();
@@ -104,12 +104,13 @@ export const useOrderChat = (orderId: string, counterpartId: string) => {
         order.status === 'delivered' && order.deliveredOn
           ? (order.deliveredOn as firebase.firestore.Timestamp).toMillis()
           : (order.updatedOn as firebase.firestore.Timestamp).toMillis();
-      const elapsedTime = getTimeUntilNow(baseTime, false);
+      const now = getServerTime().getTime();
+      const elapsedTime = getTimeUntilNow(now, baseTime, false);
       console.log('elapsedTime', elapsedTime);
       if (elapsedTime < 60) setIsActive(true);
       else setIsActive(false);
     } else setIsActive(false);
-  }, [order?.status, order?.deliveredOn, order?.updatedOn]);
+  }, [getServerTime, order?.status, order?.deliveredOn, order?.updatedOn]);
   React.useEffect(() => {
     const sorted = chatFromBusiness.concat(chatFromCounterPart).sort(sortMessages);
     const groups = groupOrderChatMessages(sorted).reverse();

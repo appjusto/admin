@@ -18,6 +18,7 @@ import { useUpdateChatMessage } from 'app/api/business/chat/useUpdateChatMessage
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { getUnreadChatMessages } from 'app/api/chat/utils';
 import { Participants, useOrderChat } from 'app/api/order/useOrderChat';
+import { useContextServerTime } from 'app/state/server-time';
 import { ChatMessage, Flavor } from 'appjusto-types';
 import React, { KeyboardEvent } from 'react';
 import { useParams } from 'react-router';
@@ -37,10 +38,12 @@ type Params = {
 
 export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
   //context
+  const { getServerTime } = useContextServerTime();
   const { logo } = useBusinessProfile();
   const { orderId, counterpartId } = useParams<Params>();
   const { updateChatMessage } = useUpdateChatMessage();
   const { isActive, orderCode, participants, chat, sendMessage, sendMessageResult } = useOrderChat(
+    getServerTime,
     orderId,
     counterpartId
   );

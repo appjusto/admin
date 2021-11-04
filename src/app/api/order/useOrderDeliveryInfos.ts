@@ -5,11 +5,11 @@ import React from 'react';
 import { useObserveOrderMatching } from './useObserveOrderMatching';
 import { useOrderArrivalTimes } from './useOrderArrivalTimes';
 
-export const useOrderDeliveryInfos = (order?: WithId<Order> | null) => {
+export const useOrderDeliveryInfos = (getServerTime: () => Date, order?: WithId<Order> | null) => {
   // context
   const { isBackofficeUser } = useContextFirebaseUser();
   const { matching } = useObserveOrderMatching(order?.id);
-  const arrivalTime = useOrderArrivalTimes(order);
+  const arrivalTime = useOrderArrivalTimes(getServerTime, order);
   // state
   const [isOrderActive, setIsOrderActive] = React.useState<boolean>();
   const [isMatching, setIsMatching] = React.useState<boolean>(

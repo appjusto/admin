@@ -4,6 +4,7 @@ import { useOrderDeliveryInfos } from 'app/api/order/useOrderDeliveryInfos';
 import { getOrderAckTime } from 'app/api/order/utils';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useOrdersContext } from 'app/state/order';
+import { useContextServerTime } from 'app/state/server-time';
 import { Order, WithId } from 'appjusto-types';
 import { ReactComponent as Alarm } from 'common/img/alarm_outlined.svg';
 import React from 'react';
@@ -21,8 +22,9 @@ interface Props {
 export const OrdersKanbanListItem = ({ order }: Props) => {
   // context
   const { url } = useRouteMatch();
+  const { getServerTime } = useContextServerTime();
   const { business, changeOrderStatus } = useOrdersContext();
-  const arrivalTime = useOrderArrivalTimes(order);
+  const arrivalTime = useOrderArrivalTimes(getServerTime, order);
   const { isBackofficeUser } = useContextFirebaseUser();
   const {
     isMatched,
@@ -30,7 +32,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
     isCurrierArrived,
     isDelivered,
     orderDispatchingKanbanItemText,
-  } = useOrderDeliveryInfos(order);
+  } = useOrderDeliveryInfos(getServerTime, order);
   //const { restartMatching, restartResult } = useObserveOrderMatching(order.id);
 
   // state
@@ -61,7 +63,8 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
       if (order.status === 'confirmed') localOrderTime = getOrderAckTime(confirmedKey, order.id);
       if (order.status === 'preparing') localOrderTime = getOrderAckTime(preparingKey, order.id);
       if (localOrderTime) {
-        let time = getTimeUntilNow(localOrderTime);
+        const now = getServerTime().getTime();
+        let time = getTimeUntilNow(now, localOrderTime);
         setElapsedTime(time);
       } else {
         setElapsedTime(null);
@@ -73,7 +76,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
       return clearInterval(timeInterval);
     }
     return () => clearInterval(timeInterval);
-  }, [order.id, order.status]);
+  }, [getServerTime, order.id, order.status]);
 
   React.useEffect(() => {
     // disabled for backoffice users

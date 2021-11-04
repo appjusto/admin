@@ -2,6 +2,7 @@ import { Box, Flex, HStack, Radio, RadioGroup, Text } from '@chakra-ui/react';
 import { useOrderCourierRemoval } from 'app/api/order/useOrderCourierRemoval';
 import { useOrderDeliveryInfos } from 'app/api/order/useOrderDeliveryInfos';
 import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';
+import { useContextServerTime } from 'app/state/server-time';
 import { CourierMode, Issue, IssueType, Order, WithId } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
@@ -213,7 +214,8 @@ const dropsP2pIssues = ['courier-drops-p2p-delivery'] as IssueType[];
 
 export const Participants = ({ order }: ParticipantsProps) => {
   // context
-  const { isOrderActive } = useOrderDeliveryInfos(order);
+  const { getServerTime } = useContextServerTime();
+  const { isOrderActive } = useOrderDeliveryInfos(getServerTime, order);
   const issues = useIssuesByType(order?.type === 'food' ? dropsFoodIssues : dropsP2pIssues);
   const { courierManualRemoval, removalResult } = useOrderCourierRemoval();
   // state

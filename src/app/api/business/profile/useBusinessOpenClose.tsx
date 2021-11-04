@@ -40,10 +40,8 @@ export const useBusinessOpenClose = (business?: WithId<Business> | null) => {
       n++;
     }
     if (shouldBeOpen && business?.status === 'closed') {
-      console.log('Open at', today);
       updateBusinessProfile({ status: 'open' });
     } else if (!shouldBeOpen && business?.status === 'open') {
-      console.log('Closed at', today);
       updateBusinessProfile({ status: 'closed' });
       toast({
         duration: 12000,
