@@ -1,18 +1,11 @@
 import * as Sentry from '@sentry/react';
-import { WithId, User, ProfileChange, UserProfile } from 'appjusto-types';
+import { WithId, User, ProfileChange, UserProfile, UserType } from 'appjusto-types';
 import { documentAs, documentsAs, FirebaseDocument } from '../../../core/fb';
 import FirebaseRefs from '../FirebaseRefs';
 import firebase from 'firebase/app';
 import { ProfileChangesSituations } from './useObserveUsersChanges';
 
 export type UsersSearchType = 'email' | 'cpf' | 'phone';
-
-export type UserType = 'consumer' | 'manager' | 'courier';
-
-interface fetchUserDataResult {
-  data: WithId<UserProfile> | null;
-  type: UserType | null;
-}
 export default class UsersApi {
   constructor(private refs: FirebaseRefs) {}
   // firestore
@@ -159,15 +152,19 @@ export default class UsersApi {
     }
   }
 
-  async fetchUserData(accountId: string): Promise<fetchUserDataResult> {
+  async fetchUserData(accountId: string, userType: UserType): Promise<WithId<UserProfile> | null> {
     try {
-      const courier = await this.refs.getCourierRef(accountId).get();
-      if (courier) return { data: documentAs<UserProfile>(courier), type: 'courier' };
-      const consumer = await this.refs.getConsumerRef(accountId).get();
-      if (consumer) return { data: documentAs<UserProfile>(consumer), type: 'consumer' };
-      const manager = await this.refs.getManagerRef(accountId).get();
-      if (manager) return { data: documentAs<UserProfile>(manager), type: 'manager' };
-      return { data: null, type: null };
+      if (userType === 'courier') {
+        const courier = await this.refs.getCourierRef(accountId).get();
+        if (courier) return documentAs<UserProfile>(courier);
+      } else if (userType === 'consumer') {
+        const consumer = await this.refs.getConsumerRef(accountId).get();
+        if (consumer) return documentAs<UserProfile>(consumer);
+      } else if (userType === 'manager') {
+        const manager = await this.refs.getManagerRef(accountId).get();
+        if (manager) return documentAs<UserProfile>(manager);
+      }
+      return null;
     } catch (error) {
       Sentry.captureException(error);
       throw error;

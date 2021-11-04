@@ -1,7 +1,8 @@
 import { ArrowDownIcon, DeleteIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, HStack, RadioGroup, Text } from '@chakra-ui/react';
 import { useObserveUsers } from 'app/api/users/useObserveUsers';
-import { UsersSearchType, UserType } from 'app/api/users/UsersApi';
+import { UsersSearchType } from 'app/api/users/UsersApi';
+import { UserType } from 'appjusto-types';
 import { FilterText } from 'common/components/backoffice/FilterText';
 //import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import CustomRadio from 'common/components/form/CustomRadio';

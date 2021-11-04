@@ -33,12 +33,18 @@ type Params = {
   changesId: string;
 };
 
+const userTypePTOption = {
+  courier: 'Entregador',
+  consumer: 'Consumidor',
+  manager: 'Manager',
+};
+
 export const UserChangeDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   //context
   const { changesId } = useParams<Params>();
   const { changes, updateChange, updateChangeResult } = useObserveUserChanges(changesId);
   const { isLoading, isSuccess, isError, error: updateError } = updateChangeResult;
-  const { userData: user, userType } = useFetchUserData(changes?.accountId);
+  const user = useFetchUserData(changes?.accountId, changes?.userType);
   // state
   const [error, setError] = React.useState(initialError);
   // refs
@@ -133,9 +139,9 @@ export const UserChangeDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
               </Text>
             </Text>
             <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
-              {t('Primeira correspondência como:')}{' '}
+              {t('Tipo de perfil:')}{' '}
               <Text as="span" fontWeight="500">
-                {userType ?? 'N/E'}
+                {changes?.userType ? userTypePTOption[changes?.userType] : 'N/E'}
               </Text>
             </Text>
             <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
@@ -224,7 +230,7 @@ export const UserChangeDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
             <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
               {t('Status:')}{' '}
               <Text as="span" fontWeight="500">
-                {changes?.situation ? situationPTOptions[changes?.situation] : 'N/E'}
+                {changes?.situation ? situationPTOptions[changes.situation] : 'N/E'}
               </Text>
             </Text>
           </DrawerBody>

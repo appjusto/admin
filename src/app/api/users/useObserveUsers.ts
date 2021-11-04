@@ -1,7 +1,7 @@
 import { useContextApi } from 'app/state/api/context';
-import { User, WithId } from 'appjusto-types';
+import { User, UserType, WithId } from 'appjusto-types';
 import React from 'react';
-import { UserType, UsersSearchType } from './UsersApi';
+import { UsersSearchType } from './UsersApi';
 import { uniqWith, isEqual } from 'lodash';
 import dayjs from 'dayjs';
 import firebase from 'firebase/app';
