@@ -16,8 +16,6 @@ import { CustomToast } from 'common/components/CustomToast';
 import React from 'react';
 import { useContextFirebaseUser } from '../auth/context';
 
-export type localOrderType = { code: string; time: number };
-
 interface ContextProps {
   business: WithId<Business> | null | undefined;
   orders: WithId<Order>[];

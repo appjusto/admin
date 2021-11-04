@@ -1,15 +1,7 @@
-import {
-  OrderItemComplement,
-  OrderItem,
-  Order,
-  WithId,
-  OrderStatus,
-  BankAccountType,
-} from 'appjusto-types';
+import { OrderItemComplement, OrderItem, OrderStatus, BankAccountType } from 'appjusto-types';
 import { formatCurrency, formatDate } from './formatters';
 import { round } from 'lodash';
 import { CroppedAreaProps } from 'common/components/ImageCropping';
-import { localOrderType } from 'app/state/order';
 import I18n from 'i18n-js';
 import firebase from 'firebase/app';
 import { AlgoliaCreatedOn } from 'app/api/types';
@@ -107,56 +99,6 @@ export const getAlgoliaFieldDateAndHour = (timestamp: firebase.firestore.FieldVa
       return 'Erro';
     }
   }
-};
-
-// Orders times
-export const updateLocalStorageOrders = (orders: WithId<Order>[], soundAlert: any) => {
-  if (orders.length > 0) {
-    const filteredOrders = orders
-      .filter((order) => order.status === 'confirmed' || order.status === 'preparing')
-      .map((order) => order.id);
-    const storageItem = localStorage.getItem('appjusto-orders');
-    const localOrders: localOrderType[] = storageItem ? JSON.parse(storageItem) : [];
-    const localOrdersIds = localOrders.map((order) => order.code);
-
-    filteredOrders.forEach((orderId) => {
-      const isNew = localOrdersIds.includes(orderId) === false;
-      if (isNew) {
-        soundAlert();
-        localOrders.push({ code: orderId, time: new Date().getTime() });
-      }
-    });
-
-    const filteredLocalOrder = localOrders.filter((item) => filteredOrders.includes(item.code));
-    localStorage.setItem('appjusto-orders', JSON.stringify(filteredLocalOrder));
-  }
-};
-
-export const getLocalStorageOrderTime = (orderId: string) => {
-  const localOrders = localStorage.getItem('appjusto-orders');
-  const localOrdersArray = localOrders ? JSON.parse(localOrders) : null;
-  if (localOrdersArray) {
-    const order = localOrdersArray.find((item: localOrderType) => item.code === orderId);
-    return order ? order.time : null;
-  }
-  return null;
-};
-
-export const updateLocalStorageOrderTime = (orderId: string) => {
-  const localOrders = localStorage.getItem('appjusto-orders');
-  const localOrdersArray = localOrders ? JSON.parse(localOrders) : null;
-  if (localOrdersArray) {
-    const newArray = localOrdersArray.map((item: localOrderType) => {
-      if (item.code === orderId) {
-        return { ...item, time: new Date().getTime() };
-      } else {
-        return item;
-      }
-    });
-    localStorage.setItem('appjusto-orders', JSON.stringify(newArray));
-    return true;
-  }
-  return false;
 };
 
 export const getTimestampMilliseconds = (timestamp?: firebase.firestore.Timestamp) => {
