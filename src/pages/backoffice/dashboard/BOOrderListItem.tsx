@@ -71,7 +71,7 @@ export const BOOrderListItem = ({ order }: Props) => {
             <MdErrorOutline color={issuesFound ? 'white' : '#C8D7CB'} />
           </Flex>
         </Flex>
-        <OrderTracking orderId={order.id} type="compact" />
+        <OrderTracking orderId={order.id} isCompact />
       </Stack>
     </CustomLink>
   );

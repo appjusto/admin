@@ -1,19 +1,19 @@
-import { Box, HStack, Icon, Skeleton, Text } from '@chakra-ui/react';
+import { Box, Circle, HStack, Icon, Skeleton, Text } from '@chakra-ui/react';
 import { useObserveOrderLogs } from 'app/api/order/useObserveOrderLogs';
-import { DispatchingStatus, OrderStatus } from 'appjusto-types';
+import { DispatchingState, DispatchingStatus, OrderStatus } from 'appjusto-types';
 import { last } from 'lodash';
 import React from 'react';
 import { MdInfoOutline } from 'react-icons/md';
 import { getHourAndMinute } from 'utils/functions';
 import { t } from 'utils/i18n';
-import { orderStatusPTOptions } from '../utils';
+import { orderDispatchingStatusPTOptions, orderStatusPTOptions } from '../utils';
 
 interface OrderTrackingProps {
   orderId?: string;
-  type?: 'full' | 'compact' | 'mini';
+  isCompact?: boolean;
 }
 
-export const OrderTracking = ({ orderId, type = 'full' }: OrderTrackingProps) => {
+export const OrderTracking = ({ orderId, isCompact }: OrderTrackingProps) => {
   // state
   const logs = useObserveOrderLogs(orderId);
   const [currentStatus, setCurrentStatus] = React.useState<OrderStatus>();
@@ -21,12 +21,9 @@ export const OrderTracking = ({ orderId, type = 'full' }: OrderTrackingProps) =>
     currentDispatchingStatus,
     setCurrentDispatchingStatus,
   ] = React.useState<DispatchingStatus>();
+  const [currentDispatchingState, setCurrentDispatchingState] = React.useState<DispatchingState>();
   const [currentTime, setCurrentTime] = React.useState<string>();
   // helpers
-  const matchingLabel =
-    currentDispatchingStatus && (currentStatus === 'ready' || currentStatus === 'preparing')
-      ? `${currentDispatchingStatus?.toUpperCase()} ` ?? ''
-      : '';
   const matchingLabelColor =
     currentDispatchingStatus === 'no-match'
       ? '#DC3545'
@@ -34,6 +31,17 @@ export const OrderTracking = ({ orderId, type = 'full' }: OrderTrackingProps) =>
       ? '#FFBE00'
       : '#055AFF';
   // handlers
+  const getMatchingLabel = () => {
+    if (currentDispatchingStatus && !currentDispatchingState) {
+      if (currentStatus === 'ready' || currentStatus === 'preparing')
+        return `${orderDispatchingStatusPTOptions[currentDispatchingStatus].toUpperCase()} `;
+    }
+    if (currentDispatchingState === 'going-pickup') return 'ENTREG. A CAMINHO DA RETIRADA ';
+    if (currentDispatchingState === 'arrived-pickup') return 'ENTREG. NO LOCAL DA RETIRADA ';
+    if (currentDispatchingState === 'going-destination') return 'ENTREG. A CAMINHO DA ENTREGA ';
+    if (currentDispatchingState === 'arrived-destination') return 'ENTREG. NO LOCAL DA ENTREGA ';
+    return '';
+  };
   const getLogsLastStatus = (index: number) => {
     if (!logs) return 'N/E';
     const logsUsed = logs.slice(undefined, index);
@@ -42,6 +50,15 @@ export const OrderTracking = ({ orderId, type = 'full' }: OrderTrackingProps) =>
       ? orderStatusPTOptions[lastLogWithStatus.after.status]
       : 'N/E';
     return lastStatus;
+  };
+  const getLogMatchingLabel = (status?: DispatchingStatus, state?: DispatchingState) => {
+    if (status) return orderDispatchingStatusPTOptions[status];
+    else if (state) {
+      if (state === 'arrived-pickup') return 'Entreg. no local da retirada ';
+      if (state === 'going-destination') return 'Entreg. a caminho da entrega ';
+      if (state === 'arrived-destination') return 'Entreg. no local da entrega ';
+    }
+    return '';
   };
   // side effects
   React.useEffect(() => {
@@ -52,6 +69,7 @@ export const OrderTracking = ({ orderId, type = 'full' }: OrderTrackingProps) =>
     if (lastLogWithStatus) setCurrentStatus(lastLogWithStatus.after.status);
     if (lastLog?.after.dispatchingStatus)
       setCurrentDispatchingStatus(lastLog.after.dispatchingStatus);
+    if (lastLog?.after.dispatchingState) setCurrentDispatchingState(lastLog.after.dispatchingState);
   }, [logs]);
   // UI
   if (logs === undefined) {
@@ -69,60 +87,6 @@ export const OrderTracking = ({ orderId, type = 'full' }: OrderTrackingProps) =>
       </Box>
     );
   }
-  if (type === 'mini') {
-    return (
-      <HStack mt="2" spacing={2}>
-        <Box
-          w="full"
-          h="4px"
-          borderRadius="lg"
-          bgColor={
-            currentStatus &&
-            ['confirmed', 'preparing', 'ready', 'dispatching', 'delivered'].includes(currentStatus)
-              ? '#2F422C'
-              : '#C8D7CB'
-          }
-        />
-        <Box
-          w="full"
-          h="4px"
-          borderRadius="lg"
-          bgColor={
-            currentStatus &&
-            ['preparing', 'ready', 'dispatching', 'delivered'].includes(currentStatus)
-              ? '#2F422C'
-              : '#C8D7CB'
-          }
-        />
-        <Box
-          w="full"
-          h="4px"
-          borderRadius="lg"
-          bgColor={
-            currentStatus && ['ready', 'dispatching', 'delivered'].includes(currentStatus)
-              ? '#2F422C'
-              : '#C8D7CB'
-          }
-        />
-        {currentStatus && !['preparing', 'ready', 'dispatching'].includes(currentStatus) ? (
-          <Box
-            w="full"
-            h="4px"
-            borderRadius="lg"
-            bgColor={currentStatus === 'delivered' ? '#2F422C' : '#C8D7CB'}
-          />
-        ) : (
-          <Box w="full" h="4px" borderRadius="lg" bgColor={matchingLabelColor} />
-        )}
-        <Box
-          w="full"
-          h="4px"
-          borderRadius="lg"
-          bgColor={currentStatus === 'delivered' ? '#2F422C' : '#C8D7CB'}
-        />
-      </HStack>
-    );
-  }
   return (
     <Box w="100%">
       <Box>
@@ -131,7 +95,7 @@ export const OrderTracking = ({ orderId, type = 'full' }: OrderTrackingProps) =>
             {currentStatus ? orderStatusPTOptions[currentStatus].toUpperCase() : 'N/E'}
             {': '}
             <Text as="span" color={matchingLabelColor}>
-              {matchingLabel}
+              {getMatchingLabel()}
             </Text>
             <Text as="span" fontWeight="500">
               {t('às ') + currentTime}
@@ -192,37 +156,57 @@ export const OrderTracking = ({ orderId, type = 'full' }: OrderTrackingProps) =>
           />
         </HStack>
       </Box>
-      {type === 'full' && (
-        <Box mt="4" maxH="198px" overflowY="scroll" p="4" bgColor="#F6F6F6" borderRadius="16px">
-          {logs?.map((log, index) => (
-            <Text
-              key={log.id}
-              mt="2"
-              fontSize="15px"
-              lineHeight="21px"
-              fontWeight="700"
-              color="black"
-            >
-              {log.after.status ? orderStatusPTOptions[log.after.status] : getLogsLastStatus(index)}
-              {': '}
+      {!isCompact && (
+        <>
+          <Box mt="4" maxH="198px" overflowY="scroll" p="4" bgColor="#F6F6F6" borderRadius="16px">
+            {logs?.map((log, index) => (
               <Text
-                as="span"
-                color={
-                  log.after.dispatchingStatus === 'no-match'
-                    ? '#DC3545'
-                    : log.after.dispatchingStatus === 'outsourced'
-                    ? '#FFBE00'
-                    : '#055AFF'
-                }
+                key={log.id}
+                mt="2"
+                fontSize="15px"
+                lineHeight="21px"
+                fontWeight="700"
+                color="black"
               >
-                {log.after.dispatchingStatus ?? ''}
+                {log.after.status
+                  ? orderStatusPTOptions[log.after.status]
+                  : getLogsLastStatus(index)}
+                {': '}
+                <Text
+                  as="span"
+                  color={
+                    log.after.dispatchingStatus === 'no-match'
+                      ? '#DC3545'
+                      : log.after.dispatchingStatus === 'outsourced'
+                      ? '#FFBE00'
+                      : '#055AFF'
+                  }
+                >
+                  {getLogMatchingLabel(log.after.dispatchingStatus, log.after.dispatchingState)}
+                </Text>
+                <Text as="span" fontWeight="500">
+                  {t(' às ') + getHourAndMinute(log.timestamp)}
+                </Text>
               </Text>
-              <Text as="span" fontWeight="500">
-                {t(' às ') + getHourAndMinute(log.timestamp)}
-              </Text>
-            </Text>
-          ))}
-        </Box>
+            ))}
+          </Box>
+          <Box mt="2" py="1" px="4" bgColor="#F6F6F6" borderRadius="16px">
+            <HStack spacing={6}>
+              <HStack>
+                <Circle size="8px" bgColor="black" />
+                <Text fontSize="15px" lineHeight="21px" fontWeight="700" color="black">
+                  {t('Status')}
+                </Text>
+              </HStack>
+              <HStack>
+                <Circle size="8px" bgColor="#055AFF" />
+                <Text fontSize="15px" lineHeight="21px" fontWeight="700" color="#055AFF">
+                  {t('Matching')}
+                </Text>
+              </HStack>
+            </HStack>
+          </Box>
+        </>
       )}
     </Box>
   );

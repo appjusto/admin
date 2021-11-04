@@ -31,7 +31,7 @@ export const orderStatusPTOptions = {
   declined: 'Recusado',
   confirmed: 'Confirmado',
   preparing: 'Em preparo',
-  ready: 'Pronto - aguardando entregador',
+  ready: 'Pronto',
   dispatching: 'A caminho da entrega',
   delivered: 'Entregue',
   canceled: 'Cancelado',
