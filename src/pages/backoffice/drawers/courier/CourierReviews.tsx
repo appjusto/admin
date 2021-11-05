@@ -1,8 +1,9 @@
-import { Box, HStack, Icon, Text } from '@chakra-ui/react';
+import { Box, CheckboxGroup, Flex, HStack, Icon, Text } from '@chakra-ui/react';
 import { CourierReview, CourierReviewType } from 'app/api/courier/CourierApi';
 import { useObserveCourierReviews } from 'app/api/courier/useObserveCourierReviews';
 import { useContextCourierProfile } from 'app/state/courier/context';
 import { WithId } from 'appjusto-types';
+import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import { CustomDateFilter } from 'common/components/form/input/CustomDateFilter';
 import React from 'react';
 import { MdThumbDownOffAlt, MdThumbUpOffAlt } from 'react-icons/md';
@@ -17,16 +18,31 @@ interface ItemPros {
 const CourierReviewsItem = ({ review }: ItemPros) => {
   // UI
   return (
-    <Box>
-      <HStack>
-        <Icon
-          as={review.type === 'positive' ? MdThumbUpOffAlt : MdThumbDownOffAlt}
-          color={review.type === 'positive' ? 'green.600' : 'red'}
-        />
-        <Text>{t(`Id do pedido: ${review.orderId ?? 'N/E'}`)}</Text>
-        <Text>{review.createdOn ? getDateAndHour(review.createdOn) : 'N/E'}</Text>
-      </HStack>
-      {review.comment && <Text>"{review.comment}"</Text>}
+    <Box mt="4" p="4" bgColor="#F6F6F6" borderRadius="16px">
+      <Flex justifyContent="space-between">
+        <HStack spacing={4}>
+          <Icon
+            as={review.type === 'positive' ? MdThumbUpOffAlt : MdThumbDownOffAlt}
+            color={review.type === 'positive' ? 'green.600' : 'red'}
+            w="24px"
+            h="24px"
+          />
+          <Text fontSize="15px" lineHeight="21px" fontWeight="700">
+            {t('Pedido:')}{' '}
+            <Text as="span" fontWeight="500">
+              {review.orderId ?? 'N/E'}
+            </Text>
+          </Text>
+        </HStack>
+        <Text fontSize="13px" lineHeight="21px" fontWeight="500">
+          {review.createdOn ? getDateAndHour(review.createdOn) : 'N/E'}
+        </Text>
+      </Flex>
+      {review.comment && (
+        <Text p="4" fontSize="15px" lineHeight="21px" fontWeight="500">
+          " {review.comment} "
+        </Text>
+      )}
     </Box>
   );
 };
@@ -51,9 +67,26 @@ export const CourierReviews = () => {
   return (
     <Box>
       <SectionTitle>{t('Tipo e período')}</SectionTitle>
+      <CheckboxGroup
+        colorScheme="green"
+        value={types}
+        onChange={(values: CourierReviewType[]) => setTypes(values)}
+      >
+        <HStack
+          mt="4"
+          alignItems="flex-start"
+          color="black"
+          spacing={8}
+          fontSize="16px"
+          lineHeight="22px"
+        >
+          <CustomCheckbox value="positive">{t('Positivas')}</CustomCheckbox>
+          <CustomCheckbox value="negative">{t('Negativas')}</CustomCheckbox>
+        </HStack>
+      </CheckboxGroup>
       <CustomDateFilter mt="4" getStart={setDateStart} getEnd={setDateEnd} showWarning />
       {!dateStart || !dateEnd ? (
-        <Text mt="4">{t('Selecione as datas que deseja buscar')}</Text>
+        <Text mt="4">{t('Selecione tipos e datas que deseja buscar')}</Text>
       ) : reviwes === undefined ? (
         <Text mt="4">{t('Carregando...')}</Text>
       ) : reviwes === null ? (

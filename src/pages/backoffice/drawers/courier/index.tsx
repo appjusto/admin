@@ -6,6 +6,7 @@ import { CourierBaseDrawer } from './CourierBaseDrawer';
 import { CourierIugu } from './CourierIugu';
 import { CourierOrders } from './CourierOrders';
 import { CourierRegister } from './CourierRegister';
+import { CourierReviews } from './CourierReviews';
 import { Location } from './Location';
 import { CourierStatus } from './status/CourierStatus';
 
@@ -37,6 +38,9 @@ export const CourierDrawer = ({ onClose, ...props }: CourierDrawerProps) => {
           </Route>
           <Route exact path={`${path}/iugu`}>
             <CourierIugu />
+          </Route>
+          <Route exact path={`${path}/reviews`}>
+            <CourierReviews />
           </Route>
         </Switch>
       </CourierBaseDrawer>
