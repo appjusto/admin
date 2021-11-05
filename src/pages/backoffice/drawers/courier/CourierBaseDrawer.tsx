@@ -23,6 +23,7 @@ import { initialError } from 'common/components/error/utils';
 import { getEditableProfile, modePTOptions, situationPTOptions } from 'pages/backoffice/utils';
 import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
 import React from 'react';
+import { MdThumbDownOffAlt, MdThumbUpOffAlt } from 'react-icons/md';
 import { queryCache } from 'react-query';
 import { useRouteMatch } from 'react-router';
 import { getDateAndHour } from 'utils/functions';
@@ -208,6 +209,17 @@ export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDr
                 </Icon>
               </Text>
             </Text>
+            <Flex mt="1" alignItems="flex-end">
+              <Text fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+                {t('Avaliações:')}
+              </Text>
+              <Text ml="3" as="span" fontWeight="500" color="green.600">
+                <Icon mr="1" as={MdThumbUpOffAlt} />({courier?.statistics?.positiveReviews ?? 0})
+              </Text>
+              <Text ml="4" as="span" fontWeight="500" color="red">
+                <Icon mr="1" as={MdThumbDownOffAlt} />({courier?.statistics?.negativeReviews ?? 0})
+              </Text>
+            </Flex>
             <Flex
               my="8"
               fontSize="lg"
@@ -216,16 +228,19 @@ export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDr
               height="38px"
               borderBottom="1px solid #C8D7CB"
             >
-              <DrawerLink to={`${url}`} label={t('Cadastro')} />
-              <DrawerLink to={`${url}/status`} label={t('Status')} />
+              <DrawerLink px="2" to={`${url}`} label={t('Cadastro')} />
+              <DrawerLink px="2" to={`${url}/status`} label={t('Status')} />
               {courier?.situation === 'approved' && (
-                <DrawerLink to={`${url}/location`} label={t('Localização')} />
+                <DrawerLink px="2" to={`${url}/location`} label={t('Localização')} />
               )}
               {(courier?.situation === 'approved' || courier?.situation === 'blocked') && (
-                <DrawerLink to={`${url}/orders`} label={t('Pedidos')} />
+                <DrawerLink px="2" to={`${url}/orders`} label={t('Pedidos')} />
               )}
               {(courier?.situation === 'approved' || courier?.situation === 'blocked') && (
-                <DrawerLink to={`${url}/iugu`} label={t('Iugu')} />
+                <DrawerLink px="2" to={`${url}/iugu`} label={t('Iugu')} />
+              )}
+              {(courier?.situation === 'approved' || courier?.situation === 'blocked') && (
+                <DrawerLink px="2" to={`${url}/reviews`} label={t('Avaliações')} />
               )}
             </Flex>
             {children}

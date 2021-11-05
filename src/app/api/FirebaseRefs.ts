@@ -120,6 +120,7 @@ export default class FirebaseRefs {
   // couriers
   getCouriersRef = () => this.firestore.collection('couriers');
   getCourierRef = (id: string) => this.getCouriersRef().doc(id);
+  getCourierReviewsRef = (id: string) => this.getCourierRef(id).collection('reviews');
   getCourierPrivateRef = (id: string) => this.getCourierRef(id).collection('private');
   getCourierMarketPlaceRef = (id: string) => this.getCourierPrivateRef(id).doc('marketplace');
 

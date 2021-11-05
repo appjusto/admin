@@ -11,6 +11,15 @@ import FirebaseRefs from '../FirebaseRefs';
 import firebase from 'firebase/app';
 import { documentAs, documentsAs } from 'core/fb';
 import * as Sentry from '@sentry/react';
+
+export type CourierReviewType = 'positive' | 'negative';
+
+export interface CourierReview {
+  orderId: string;
+  type: CourierReviewType;
+  createdOn: firebase.firestore.FieldValue;
+  comment?: string;
+}
 export default class CourierApi {
   constructor(private refs: FirebaseRefs, private files: FilesApi) {}
 
@@ -82,6 +91,31 @@ export default class CourierApi {
           console.error(error);
         }
       );
+    return unsubscribe;
+  }
+
+  observeCourierReviews(
+    courierId: string,
+    types: CourierReviewType[],
+    start: Date,
+    end: Date,
+    resultHandler: (result: WithId<CourierReview>[] | null) => void
+  ): firebase.Unsubscribe {
+    const query = this.refs
+      .getCourierReviewsRef(courierId)
+      .orderBy('createdOn', 'desc')
+      .where('type', 'in', types)
+      .where('createdOn', '>=', start)
+      .where('createdOn', '<=', end);
+    const unsubscribe = query.onSnapshot(
+      (querySnapshot) => {
+        if (!querySnapshot.empty) resultHandler(documentsAs<CourierReview>(querySnapshot.docs));
+        else resultHandler(null);
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
     return unsubscribe;
   }
 
