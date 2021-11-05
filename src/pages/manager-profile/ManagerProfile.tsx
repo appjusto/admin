@@ -27,7 +27,7 @@ import { t } from 'utils/i18n';
 
 export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
   // context
-  const { user, role } = useContextFirebaseUser();
+  const { user } = useContextFirebaseUser();
   const { sendSignInLinkToEmail, sendingLinkResult } = useAuthentication();
   const { business } = useContextBusiness();
   const { manager } = useContextManagerProfile();
@@ -214,7 +214,7 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
         />
         <CustomPatternInput
           isRequired
-          isDisabled={role === 'manager' && business?.situation === 'approved'}
+          isDisabled={cpf !== '' && business?.situation === 'approved'}
           ref={cpfRef}
           id="manager-cpf"
           label={t('CPF *')}
