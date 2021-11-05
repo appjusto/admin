@@ -11,14 +11,14 @@ interface Props {
 
 export const StateProvider = ({ children }: Props) => {
   return (
-    <ServerTimeProvider>
-      <FirebaseUserProvider>
+    <FirebaseUserProvider>
+      <ServerTimeProvider>
         <AgentProvider>
           <BusinessProvider>
             <ManagerProvider>{children}</ManagerProvider>
           </BusinessProvider>
         </AgentProvider>
-      </FirebaseUserProvider>
-    </ServerTimeProvider>
+      </ServerTimeProvider>
+    </FirebaseUserProvider>
   );
 };
