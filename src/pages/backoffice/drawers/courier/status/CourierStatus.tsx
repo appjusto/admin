@@ -77,14 +77,19 @@ export const CourierStatus = () => {
               ))}
             </VStack>
           </CheckboxGroup>
-          <SectionTitle>{t('Mensagem personalizada:')}</SectionTitle>
-          <Textarea
-            mt="2"
-            value={courier?.profileIssuesMessage ?? ''}
-            onChange={(ev) => handleProfileChange('profileIssuesMessage', ev.target.value)}
-          />
         </>
       )}
+      {courier?.situation === 'rejected' ||
+        (courier?.situation === 'blocked' && (
+          <>
+            <SectionTitle>{t('Mensagem personalizada:')}</SectionTitle>
+            <Textarea
+              mt="2"
+              value={courier?.profileIssuesMessage ?? ''}
+              onChange={(ev) => handleProfileChange('profileIssuesMessage', ev.target.value)}
+            />
+          </>
+        ))}
     </Box>
   );
 };
