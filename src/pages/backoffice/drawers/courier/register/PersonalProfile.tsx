@@ -2,6 +2,7 @@ import { Box, Text } from '@chakra-ui/react';
 import * as cnpjutils from '@fnando/cnpj';
 import * as cpfutils from '@fnando/cpf';
 import { useContextCourierProfile } from 'app/state/courier/context';
+import { WhatsappButton } from 'common/components/buttons/WhatsappButton';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import { CustomPatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';
 import {
@@ -105,19 +106,31 @@ export const PersonalProfile = ({ isCNPJ }: PersonalProfileProps) => {
         value={courier?.surname ?? ''}
         onChange={(ev) => handleInputChange('surname', ev.target.value)}
       />
-      <CustomPatternInput
-        isRequired
-        ref={phoneNumberRef}
-        id="user-phone"
-        label={t('Celular')}
-        placeholder={t('Número do celular')}
-        mask={phoneMask}
-        parser={numbersOnlyParser}
-        formatter={phoneFormatter}
-        value={courier?.phone ?? ''}
-        onValueChange={(value) => handleInputChange('phone', value)}
-        validationLength={11}
-      />
+      <Box position="relative">
+        <CustomPatternInput
+          isRequired
+          ref={phoneNumberRef}
+          id="user-phone"
+          label={t('Celular')}
+          placeholder={t('Número do celular')}
+          mask={phoneMask}
+          parser={numbersOnlyParser}
+          formatter={phoneFormatter}
+          value={courier?.phone ?? ''}
+          onValueChange={(value) => handleInputChange('phone', value)}
+          validationLength={11}
+        />
+        {courier?.phone && (
+          <WhatsappButton
+            phone={courier.phone}
+            label={t('Iniciar')}
+            position="absolute"
+            top="6px"
+            right="4px"
+            zIndex="9999"
+          />
+        )}
+      </Box>
       <CustomPatternInput
         isRequired
         ref={cpfRef}

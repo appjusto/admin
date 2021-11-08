@@ -52,6 +52,19 @@ export const Button = {
         borderColor: 'gray.500',
       },
     },
+    outgreen: {
+      'bg': 'white',
+      'borderColor': 'green.600',
+      'color': 'green.600',
+      ':hover': {
+        color: 'gray.700',
+        borderColor: 'gray.700',
+      },
+      ':disabled': {
+        color: 'gray.500',
+        borderColor: 'gray.500',
+      },
+    },
     white: {
       'bg': 'white',
       'color': 'black',
