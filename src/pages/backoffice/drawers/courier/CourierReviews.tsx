@@ -1,4 +1,4 @@
-import { Box, CheckboxGroup, Flex, HStack, Icon, Text } from '@chakra-ui/react';
+import { Box, CheckboxGroup, Flex, HStack, Icon, Link, Text } from '@chakra-ui/react';
 import { CourierReview, CourierReviewType } from 'app/api/courier/CourierApi';
 import { useObserveCourierReviews } from 'app/api/courier/useObserveCourierReviews';
 import { useContextCourierProfile } from 'app/state/courier/context';
@@ -7,6 +7,7 @@ import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import { CustomDateFilter } from 'common/components/form/input/CustomDateFilter';
 import React from 'react';
 import { MdThumbDownOffAlt, MdThumbUpOffAlt } from 'react-icons/md';
+import { Link as RouterLink } from 'react-router-dom';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
@@ -29,9 +30,9 @@ const CourierReviewsItem = ({ review }: ItemPros) => {
           />
           <Text fontSize="15px" lineHeight="21px" fontWeight="700">
             {t('Pedido:')}{' '}
-            <Text as="span" fontWeight="500">
+            <Link as={RouterLink} to={`/backoffice/orders/${review.orderId}`} fontWeight="500">
               {review.orderId ?? 'N/E'}
-            </Text>
+            </Link>
           </Text>
         </HStack>
         <Text fontSize="13px" lineHeight="21px" fontWeight="500">
