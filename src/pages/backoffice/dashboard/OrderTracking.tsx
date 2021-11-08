@@ -23,6 +23,8 @@ export const OrderTracking = ({ orderId, isCompact }: OrderTrackingProps) => {
   ] = React.useState<DispatchingStatus>();
   const [currentDispatchingState, setCurrentDispatchingState] = React.useState<DispatchingState>();
   const [currentTime, setCurrentTime] = React.useState<string>();
+  // refs
+  const trackingBoxRef = React.useRef<HTMLDivElement>(null);
   // helpers
   const matchingLabelColor =
     currentDispatchingStatus === 'no-match'
@@ -70,6 +72,12 @@ export const OrderTracking = ({ orderId, isCompact }: OrderTrackingProps) => {
     if (lastLog?.after.dispatchingStatus)
       setCurrentDispatchingStatus(lastLog.after.dispatchingStatus);
     if (lastLog?.after.dispatchingState) setCurrentDispatchingState(lastLog.after.dispatchingState);
+    if (trackingBoxRef.current) {
+      trackingBoxRef.current.scroll({
+        top: trackingBoxRef.current.scrollHeight,
+        behavior: 'smooth',
+      });
+    }
   }, [logs]);
   // UI
   if (logs === undefined) {
@@ -158,7 +166,15 @@ export const OrderTracking = ({ orderId, isCompact }: OrderTrackingProps) => {
       </Box>
       {!isCompact && (
         <>
-          <Box mt="4" maxH="198px" overflowY="scroll" p="4" bgColor="#F6F6F6" borderRadius="16px">
+          <Box
+            ref={trackingBoxRef}
+            mt="4"
+            maxH="198px"
+            overflowY="scroll"
+            p="4"
+            bgColor="#F6F6F6"
+            borderRadius="16px"
+          >
             {logs?.map((log, index) => (
               <Text
                 key={log.id}
