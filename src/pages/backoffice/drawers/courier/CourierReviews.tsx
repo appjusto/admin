@@ -55,15 +55,8 @@ export const CourierReviews = () => {
   const [types, setTypes] = React.useState<CourierReviewType[]>(['positive', 'negative']);
   const [dateStart, setDateStart] = React.useState<string>();
   const [dateEnd, setDateEnd] = React.useState<string>();
-
   // hook
   const reviwes = useObserveCourierReviews(courier?.id, types, dateStart, dateEnd);
-  // helpers
-
-  // handlers
-
-  // side effects
-
   // UI
   return (
     <Box>
