@@ -98,7 +98,7 @@ const BusinessesPage = () => {
           value={search}
           onChange={(event) => setSearch(event.target.value)}
           label={t('Buscar')}
-          placeholder={t('Buscar por ID, nome ou e-mail do administrador')}
+          placeholder={t('Buscar por ID, nome, CNPJ ou e-mail do administrador')}
         />
         <StateAndCityFilter
           state={state}
