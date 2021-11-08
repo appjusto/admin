@@ -284,17 +284,17 @@ export const getCEFAccountCode = (
   if (bankingCode !== '104') return operation;
   if (personType === 'Pessoa Jurídica') {
     if (type === 'Corrente') {
-      operation = '003';
+      operation = '0030';
     } else if (type === 'Poupança') {
-      operation = '022';
+      operation = '0220';
     }
   } else if (personType === 'Pessoa Física') {
     if (type === 'Corrente') {
-      operation = '001';
+      operation = '0010';
     } else if (type === 'Simples') {
-      operation = '002';
+      operation = '0020';
     } else if (type === 'Poupança') {
-      operation = '013';
+      operation = '0130';
     } else if (type === 'Nova Poupança') {
       operation = '1288';
     }
