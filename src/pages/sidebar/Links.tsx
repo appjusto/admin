@@ -82,7 +82,10 @@ export const Links = (props: BoxProps) => {
               <DisabledLink label={t('Compartilhamento')} />
             </>
           )}
-          <LinkItem to={`${url}/menu`} label={t('Cardápio')} />
+          <Box mt="5">
+            <LinkItem to={`${url}/menu`} label={t('Cardápio')} />
+            <LinkItem to={`${url}/orders-history`} label={t('Histórico de pedidos')} />
+          </Box>
         </Box>
       )}
     </Box>

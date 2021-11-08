@@ -214,7 +214,7 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
         />
         <CustomPatternInput
           isRequired
-          isDisabled={cpf !== '' && business?.situation === 'approved'}
+          isDisabled={manager?.cpf !== undefined && business?.situation === 'approved'}
           ref={cpfRef}
           id="manager-cpf"
           label={t('CPF *')}
