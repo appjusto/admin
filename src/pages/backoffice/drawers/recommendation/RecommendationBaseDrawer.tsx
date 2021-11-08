@@ -5,6 +5,7 @@ import {
   DrawerContent,
   DrawerHeader,
   DrawerOverlay,
+  Link,
   Skeleton,
   Text,
 } from '@chakra-ui/react';
@@ -12,6 +13,7 @@ import { useRecommendation } from 'app/api/consumer/useRecommendation';
 import { phoneFormatter } from 'common/components/form/input/pattern-input/formatters';
 import React from 'react';
 import { useParams } from 'react-router';
+import { Link as RouterLink } from 'react-router-dom';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
@@ -42,6 +44,9 @@ export const RecommendationBaseDrawer = ({ onClose, ...props }: BaseDrawerProps)
             <DrawerBody pb="28">
               <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
                 {t('Criada em:')} <Skeleton as="span" maxW="100px" />
+              </Text>
+              <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+                {t('Consumidor:')} <Skeleton as="span" maxW="100px" />
               </Text>
               <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
                 {t('Restaurante:')} <Skeleton as="span" maxW="100px" />
@@ -93,6 +98,22 @@ export const RecommendationBaseDrawer = ({ onClose, ...props }: BaseDrawerProps)
               <Text as="span" fontWeight="500">
                 {getDateAndHour(recommendation?.createdOn)}
               </Text>
+            </Text>
+            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+              {t('Consumidor:')}{' '}
+              {recommendation.consumerId ? (
+                <Link
+                  as={RouterLink}
+                  to={`/backoffice/consumers/${recommendation.consumerId}`}
+                  fontWeight="500"
+                >
+                  {recommendation.consumerId}
+                </Link>
+              ) : (
+                <Text as="span" fontWeight="500">
+                  {'N/E'}
+                </Text>
+              )}
             </Text>
             <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
               {t('Restaurante:')}{' '}
