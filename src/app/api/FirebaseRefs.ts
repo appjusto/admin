@@ -131,6 +131,7 @@ export default class FirebaseRefs {
 
   // invoices
   getRecommendationsRef = () => this.firestore.collection('recommendations');
+  getRecommendationRef = (id: string) => this.getRecommendationsRef().doc(id);
 
   // storage
   // business

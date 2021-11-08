@@ -16,8 +16,8 @@ export const RecommendationsTable = ({ recommendations }: RecommendationsTablePr
       <Table mt="4" size="md" variant="simple" pos="relative">
         <Thead>
           <Tr>
-            <Th>{t('Data')}</Th>
-            <Th>{t('Nome')}</Th>
+            <Th minW="180px">{t('Data')}</Th>
+            <Th minW="200px">{t('Nome')}</Th>
             <Th minW="160px">{t('Telefone')}</Th>
             <Th>{t('Instagram')}</Th>
             <Th></Th>

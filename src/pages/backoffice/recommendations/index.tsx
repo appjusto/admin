@@ -8,8 +8,8 @@ import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import PageHeader from '../../PageHeader';
-import { UserBaseDrawer } from '../drawers/user/UserBaseDrawer';
-import { RecommendationsTable } from './UsersTable';
+import { RecommendationBaseDrawer } from '../drawers/recommendation/RecommendationBaseDrawer';
+import { RecommendationsTable } from './RecommendationsTable';
 
 const RecommendationsPage = () => {
   // context
@@ -89,7 +89,7 @@ const RecommendationsPage = () => {
       </Button>
       <Switch>
         <Route path={`${path}/:recommendationId`}>
-          <UserBaseDrawer isOpen onClose={closeDrawerHandler} />
+          <RecommendationBaseDrawer isOpen onClose={closeDrawerHandler} />
         </Route>
       </Switch>
     </>

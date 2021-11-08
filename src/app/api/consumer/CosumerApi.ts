@@ -81,6 +81,10 @@ export default class ConsumerApi {
     return unsubscribe;
   }
 
+  async fecthRecommendation(recommendationId: string) {
+    return await this.refs.getRecommendationRef(recommendationId).get();
+  }
+
   // consumer profile picture
   async getConsumerProfilePictureURL(consumerId: string, size: string) {
     return await this.files.getDownloadURL(
