@@ -129,6 +129,9 @@ export default class FirebaseRefs {
   getFleetRef = (id: string) => this.getFleetsRef().doc(id);
   getAppJustoFleetRef = () => this.getFleetRef('appjusto');
 
+  // invoices
+  getRecommendationsRef = () => this.firestore.collection('recommendations');
+
   // storage
   // business
   getBusinessStoragePath = (businessId: string) => `businesses/${businessId}`;

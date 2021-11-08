@@ -1,8 +1,8 @@
-import { WithId, ConsumerProfile } from 'appjusto-types';
+import { WithId, ConsumerProfile, BusinessRecommendation } from 'appjusto-types';
 import FilesApi from '../FilesApi';
 import FirebaseRefs from '../FirebaseRefs';
 import firebase from 'firebase/app';
-import { documentsAs } from 'core/fb';
+import { documentsAs, FirebaseDocument } from 'core/fb';
 import * as Sentry from '@sentry/react';
 
 export default class ConsumerApi {
@@ -38,6 +38,46 @@ export default class ConsumerApi {
         console.error(error);
       }
     );
+    return unsubscribe;
+  }
+
+  observeRecommendations(
+    resultHandler: (
+      recommendatios: WithId<BusinessRecommendation>[],
+      last?: firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
+    ) => void,
+    search?: string | null,
+    start?: Date | null,
+    end?: Date | null,
+    startAfter?: FirebaseDocument
+  ): firebase.Unsubscribe {
+    //console.log({
+    //  searchType: searchType,
+    //  search: search,
+    //  isBlocked: isBlocked,
+    //  start: start,
+    //  end: end,
+    //});
+    // query
+    let query = this.refs.getRecommendationsRef().orderBy('createdOn', 'desc').limit(20);
+    // search
+    if (startAfter) query = query.startAfter(startAfter);
+    if (search) query = query.where('recommendedBusiness.address.main', '==', search);
+    // filters
+    if (start && end) query = query.where('createdOn', '>=', start).where('createdOn', '<=', end);
+    // observer
+    const unsubscribe = query.onSnapshot(
+      (querySnapshot) => {
+        const last =
+          querySnapshot.docs.length > 0 ? querySnapshot.docs[querySnapshot.size - 1] : undefined;
+        resultHandler(documentsAs<BusinessRecommendation>(querySnapshot.docs), last);
+      },
+      (error) => {
+        console.error(error);
+        Sentry.captureException(error);
+      }
+    );
+    // returns the unsubscribe function
     return unsubscribe;
   }
 
