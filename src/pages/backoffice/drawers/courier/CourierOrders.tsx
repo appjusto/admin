@@ -178,7 +178,13 @@ export const CourierOrders = () => {
         </Box>
       )}
       <SectionTitle>{t('Filtrar por período')}</SectionTitle>
-      <CustomDateFilter mt="4" getStart={setDateStart} getEnd={setDateEnd} showWarning />
+      <CustomDateFilter
+        mt="4"
+        getStart={setDateStart}
+        getEnd={setDateEnd}
+        showWarning
+        defaultStart
+      />
       {!dateStart || !dateEnd ? (
         <Text mt="4">{t('Selecione as datas que deseja buscar')}</Text>
       ) : !orders ? (

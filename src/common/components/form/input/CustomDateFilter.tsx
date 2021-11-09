@@ -9,6 +9,7 @@ interface DateFilterPros extends BoxProps {
   getEnd(end: string): void;
   clearNumber?: number; // parent state that changes when clear date is required
   showWarning?: boolean;
+  defaultStart?: boolean;
 }
 
 const currentYear = new Date().getFullYear();
@@ -18,10 +19,11 @@ export const CustomDateFilter = ({
   getEnd,
   clearNumber,
   showWarning = false,
+  defaultStart = false,
   ...props
 }: DateFilterPros) => {
   // state
-  const [start, setStart] = React.useState('');
+  const [start, setStart] = React.useState(defaultStart ? '2021-06-01' : '');
   const [end, setEnd] = React.useState('');
   // handlers
   const dateValidation = React.useCallback((date: string) => {
