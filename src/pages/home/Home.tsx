@@ -8,6 +8,7 @@ import SchedulesPage from 'pages/business-schedules/SchedulesPage';
 import ChatPage from 'pages/chat';
 import DeliveryArea from 'pages/delivery-area/DeliveryArea';
 import FinancesPage from 'pages/finances/FinancesPage';
+import { UserNotFound } from 'pages/join/UserNotFound';
 import ManagerProfilePage from 'pages/manager-profile/ManagerProfilePage';
 import Menu from 'pages/menu/Menu';
 import OrdersHistoryPage from 'pages/orders/history/OrdersHistoryPage';
@@ -20,15 +21,17 @@ import { Redirect, Route, Switch, useRouteMatch } from 'react-router-dom';
 import { AgentPersonificationBar } from './AgentPersonificationBar';
 import Dashboard from './Dashboard';
 
-const timeoutLimit = 4; // in seconds
+const timeoutLimit = 6; // in seconds
 
 const Home = () => {
   // context
-  const { isBackofficeUser } = useContextFirebaseUser();
+  const { isBackofficeUser, role } = useContextFirebaseUser();
   const { business } = useContextBusiness();
   const { path } = useRouteMatch();
   // states
   const [isTimeout, setIsTimeout] = React.useState(false);
+  // helpers
+  const userWithGrantedRole = role != null;
   // side effects
   React.useEffect(() => {
     const timer = setTimeout(() => setIsTimeout(true), timeoutLimit * 1000);
@@ -42,7 +45,10 @@ const Home = () => {
   if (business && business?.onboarding !== 'completed' && !isBackofficeUser) {
     return <Redirect to={`/onboarding/${!business?.onboarding ? '' : business.onboarding}`} />;
   }
-  if (business?.onboarding === 'completed' || isBackofficeUser) {
+  if (business?.onboarding === 'completed' && !userWithGrantedRole && isTimeout) {
+    return <UserNotFound />;
+  }
+  if (business?.onboarding === 'completed' && userWithGrantedRole) {
     return (
       <BusinessDashboardProvider>
         <OrdersContextProvider>
