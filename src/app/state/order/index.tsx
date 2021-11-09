@@ -138,12 +138,14 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   // business keep alive
   React.useEffect(() => {
     if (business?.situation !== 'approved') return;
-    const time = process.env.REACT_APP_ENVIRONMENT === 'live' ? 60000 : 30000;
+    if (business?.status !== 'open') return;
+    sendBusinessKeepAlive();
+    const time = process.env.REACT_APP_ENVIRONMENT === 'live' ? 300_000 : 30_000;
     const keepAliveInterval = setInterval(() => {
       sendBusinessKeepAlive();
     }, time);
     return () => clearInterval(keepAliveInterval);
-  }, [business?.situation, sendBusinessKeepAlive]);
+  }, [business?.situation, business?.status, sendBusinessKeepAlive]);
   /*React.useEffect(() => {
     if (isBackofficeUser) return;
     if (business?.situation !== 'approved') return;

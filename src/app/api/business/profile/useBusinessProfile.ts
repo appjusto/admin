@@ -55,12 +55,13 @@ export const useBusinessProfile = () => {
     return newBusiness;
   });
   const sendBusinessKeepAlive = React.useCallback(() => {
+    if (!business?.id || business.status !== 'open') return;
     try {
-      api.business().sendBusinessKeepAlive(businessId!);
+      api.business().sendBusinessKeepAlive(business.id);
     } catch (error) {
       Sentry.captureException(error);
     }
-  }, [api, businessId]);
+  }, [api, business]);
   const [updateBusinessSlug, updateSlugResult] = useMutation(
     async (data: { businessId: string; slug: string }) =>
       await api.business().updateBusinessSlug(data)
