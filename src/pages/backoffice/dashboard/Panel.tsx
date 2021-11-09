@@ -100,13 +100,13 @@ export const Panel = () => {
         <HStack mt="4" spacing={6}>
           {/*<BOInfoBox title={t('Rest. aprovados')} value={businesses} />*/}
           <BOInfoBox title={t('Entreg. aprovados')} value={statistics?.couriers.totalApproved} />
-          <BOInfoBox title={t('Comida entregues')} value={statistics?.food.totalDeliveries} />
+          <BOInfoBox title={t('Comida entregues')} value={statistics?.food.totalOrders} />
         </HStack>
         {/*<HStack mt="4" spacing={6}>
           <BOInfoBox title={t('Clientes ativos')} value={consumers} />
   </HStack>*/}
         <HStack mt="4" spacing={6}>
-          <BOInfoBox title={t('P2P entregues')} value={statistics?.p2p.totalDeliveries} />
+          <BOInfoBox title={t('P2P entregues')} value={statistics?.p2p.totalOrders} />
           <BOInfoBox
             title={t('Ticket médio')}
             value={statistics?.food.averageTicketPrice}
