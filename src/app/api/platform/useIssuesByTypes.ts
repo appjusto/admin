@@ -8,7 +8,6 @@ export const useIssuesByType = (types: IssueType[]) => {
   const api = useContextApi();
   // state
   const [issues, setIssues] = React.useState<WithId<Issue>[] | null>();
-
   // side effects
   React.useEffect(() => {
     (async () => {
@@ -26,7 +25,7 @@ export const useIssuesByType = (types: IssueType[]) => {
         setIssues(null);
       }
     })();
-  }, [types, api]);
+  }, [api, types]);
   // return
   return issues;
 };

@@ -55,12 +55,10 @@ export const ConsumerProvider = ({ children }: Props) => {
   const [isEditingEmail, setIsEditingEmail] = React.useState(false);
   const [selfieFiles, setSelfieFiles] = React.useState<File[] | null>(null);
   const [documentFiles, setDocumentFiles] = React.useState<File[] | null>(null);
-
   // handlers
   const handleProfileChange = (key: string, value: any) => {
     dispatch({ type: 'update_state', payload: { [key]: value } });
   };
-
   // side effects
   React.useEffect(() => {
     if (profile) {
@@ -70,7 +68,6 @@ export const ConsumerProvider = ({ children }: Props) => {
       });
     }
   }, [profile]);
-
   React.useEffect(() => {
     setContextValidation(() => {
       return {
@@ -78,7 +75,6 @@ export const ConsumerProvider = ({ children }: Props) => {
       };
     });
   }, [consumer.cpf]);
-
   // UI
   return (
     <ConsumerProfileContext.Provider

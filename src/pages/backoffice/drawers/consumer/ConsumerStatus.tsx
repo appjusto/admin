@@ -57,17 +57,16 @@ export const ConsumerStatus = () => {
           </CheckboxGroup>
         </>
       )}
-      {consumer?.situation === 'rejected' ||
-        (consumer?.situation === 'blocked' && (
-          <>
-            <SectionTitle>{t('Mensagem personalizada:')}</SectionTitle>
-            <Textarea
-              mt="2"
-              value={consumer?.profileIssuesMessage ?? ''}
-              onChange={(ev) => handleProfileChange('profileIssuesMessage', ev.target.value)}
-            />
-          </>
-        ))}
+      {(consumer?.situation === 'rejected' || consumer?.situation === 'blocked') && (
+        <>
+          <SectionTitle>{t('Mensagem personalizada:')}</SectionTitle>
+          <Textarea
+            mt="2"
+            value={consumer?.profileIssuesMessage ?? ''}
+            onChange={(ev) => handleProfileChange('profileIssuesMessage', ev.target.value)}
+          />
+        </>
+      )}
     </Box>
   );
 };
