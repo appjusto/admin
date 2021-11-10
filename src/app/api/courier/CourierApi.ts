@@ -5,6 +5,7 @@ import {
   MarketplaceAccountInfo,
   WithId,
   ReleaseCourierPayload,
+  ProfileNote,
 } from 'appjusto-types';
 import FilesApi from '../FilesApi';
 import FirebaseRefs from '../FirebaseRefs';
@@ -133,6 +134,46 @@ export default class CourierApi {
       }
     );
     return unsubscribe;
+  }
+
+  // profile notes
+  observeCourierProfileNotes(
+    courierId: string,
+    resultHandler: (result: WithId<ProfileNote>[]) => void
+  ): firebase.Unsubscribe {
+    const unsubscribe = this.refs
+      .getCourierProfileNotesRef(courierId)
+      .orderBy('createdOn', 'desc')
+      .onSnapshot(
+        (querySnapshot) => {
+          resultHandler(documentsAs<ProfileNote>(querySnapshot.docs));
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+    return unsubscribe;
+  }
+
+  async createProfileNote(courierId: string, data: Partial<ProfileNote>) {
+    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+    await this.refs.getCourierProfileNotesRef(courierId).add({
+      ...data,
+      createdOn: timestamp,
+      updatedOn: timestamp,
+    } as ProfileNote);
+  }
+
+  async updateProfileNote(courierId: string, profileNoteId: string, changes: Partial<ProfileNote>) {
+    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+    await this.refs.getCourierProfileNoteRef(courierId, profileNoteId).update({
+      ...changes,
+      updatedOn: timestamp,
+    } as Partial<ProfileNote>);
+  }
+
+  async deleteProfileNote(courierId: string, profileNoteId: string) {
+    await this.refs.getCourierProfileNoteRef(courierId, profileNoteId).delete();
   }
 
   // courier profile picture

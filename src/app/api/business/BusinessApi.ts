@@ -400,7 +400,7 @@ export default class BusinessApi {
     await this.refs.getBusinessProfileNoteRef(businessId, profileNoteId).update({
       ...changes,
       updatedOn: timestamp,
-    } as Partial<Category>);
+    } as Partial<ProfileNote>);
   }
 
   async deleteProfileNote(businessId: string, profileNoteId: string) {
