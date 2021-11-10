@@ -1,8 +1,7 @@
 import { Box, Button, Flex, HStack, Text } from '@chakra-ui/react';
-import { ProfileNote } from 'app/api/business/BusinessApi';
 import { FirebaseError } from 'app/api/types';
 import { useContextAgentProfile } from 'app/state/agent/context';
-import { WithId } from 'appjusto-types';
+import { ProfileNote, WithId } from 'appjusto-types';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
 import { initialError } from 'common/components/error/utils';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';

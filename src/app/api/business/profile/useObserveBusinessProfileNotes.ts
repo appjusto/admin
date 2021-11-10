@@ -1,8 +1,7 @@
 import { useContextApi } from 'app/state/api/context';
-import { WithId } from 'appjusto-types';
+import { WithId, ProfileNote } from 'appjusto-types';
 import React from 'react';
 import { useMutation } from 'react-query';
-import { ProfileNote } from '../BusinessApi';
 
 export const useObserveBusinessProfileNotes = (businessId?: string) => {
   // contex

@@ -20,7 +20,7 @@ import {
   AccountAdvance,
   AccountWithdraw,
 } from 'appjusto-types';
-import { Complement, ComplementGroup, Ordering } from 'appjusto-types';
+import { Complement, ComplementGroup, Ordering, ProfileNote } from 'appjusto-types';
 import firebase from 'firebase/app';
 import { documentAs, documentsAs } from '../../../core/fb';
 import FilesApi from '../FilesApi';
@@ -31,15 +31,6 @@ import {
   IuguMarketplaceAccountAdvanceSimulation,
   IuguMarketplaceAccountReceivables,
 } from 'appjusto-types/payment/iugu';
-
-export interface ProfileNote {
-  note: string;
-  agentId: string;
-  agentEmail: string;
-  agentName?: string;
-  createdOn: firebase.firestore.FieldValue;
-  updatedOn: firebase.firestore.FieldValue;
-}
 
 export default class BusinessApi {
   constructor(private refs: FirebaseRefs, private files: FilesApi) {}
