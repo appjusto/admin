@@ -59,6 +59,9 @@ export default class FirebaseRefs {
   // businesses
   getBusinessesRef = () => this.firestore.collection('businesses');
   getBusinessRef = (id: string) => this.getBusinessesRef().doc(id);
+  getBusinessProfileNotesRef = (id: string) => this.getBusinessRef(id).collection('profilenotes');
+  getBusinessProfileNoteRef = (businessId: string, profileNoteId: string) =>
+    this.getBusinessProfileNotesRef(businessId).doc(profileNoteId);
 
   // business menu
   getBusinessCategoriesRef = (businessId: string) =>

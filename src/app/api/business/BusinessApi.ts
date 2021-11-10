@@ -32,6 +32,15 @@ import {
   IuguMarketplaceAccountReceivables,
 } from 'appjusto-types/payment/iugu';
 
+export interface ProfileNote {
+  note: string;
+  agentId: string;
+  agentEmail: string;
+  agentName?: string;
+  createdOn: firebase.firestore.FieldValue;
+  updatedOn: firebase.firestore.FieldValue;
+}
+
 export default class BusinessApi {
   constructor(private refs: FirebaseRefs, private files: FilesApi) {}
 
@@ -361,6 +370,50 @@ export default class BusinessApi {
         }
       );
     return unsubscribe;
+  }
+
+  // profile notes
+  observeBusinessProfileNotes(
+    businessId: string,
+    resultHandler: (result: WithId<ProfileNote>[]) => void
+  ): firebase.Unsubscribe {
+    const unsubscribe = this.refs
+      .getBusinessProfileNotesRef(businessId)
+      .orderBy('createdOn', 'desc')
+      .onSnapshot(
+        (querySnapshot) => {
+          resultHandler(documentsAs<ProfileNote>(querySnapshot.docs));
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+    return unsubscribe;
+  }
+
+  async createProfileNote(businessId: string, data: Partial<ProfileNote>) {
+    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+    await this.refs.getBusinessProfileNotesRef(businessId).add({
+      ...data,
+      createdOn: timestamp,
+      updatedOn: timestamp,
+    } as ProfileNote);
+  }
+
+  async updateProfileNote(
+    businessId: string,
+    profileNoteId: string,
+    changes: Partial<ProfileNote>
+  ) {
+    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+    await this.refs.getBusinessProfileNoteRef(businessId, profileNoteId).update({
+      ...changes,
+      updatedOn: timestamp,
+    } as Partial<Category>);
+  }
+
+  async deleteProfileNote(businessId: string, profileNoteId: string) {
+    await this.refs.getBusinessProfileNoteRef(businessId, profileNoteId).delete();
   }
 
   // bank account
