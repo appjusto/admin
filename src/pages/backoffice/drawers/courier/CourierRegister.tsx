@@ -1,5 +1,5 @@
 import { Box } from '@chakra-ui/react';
-import { useObserveCourierProfileNotes } from 'app/api/courier/useObserveCourierProfileNotes copy';
+import { useObserveCourierProfileNotes } from 'app/api/courier/useObserveCourierProfileNotes';
 import { useContextCourierProfile } from 'app/state/courier/context';
 import { ProfileNotes } from 'common/components/backoffice/ProfileNotes';
 import React from 'react';

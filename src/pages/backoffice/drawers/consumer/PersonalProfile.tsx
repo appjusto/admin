@@ -1,6 +1,8 @@
 import { Box, Text } from '@chakra-ui/react';
 import * as cpfutils from '@fnando/cpf';
+import { useObserveConsumerProfileNotes } from 'app/api/consumer/useObserveConsumerProfileNotes';
 import { useContextConsumerProfile } from 'app/state/consumer/context';
+import { ProfileNotes } from 'common/components/backoffice/ProfileNotes';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import { CustomPatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';
 import {
@@ -23,6 +25,13 @@ export const PersonalProfile = () => {
     isEditingEmail,
     setIsEditingEmail,
   } = useContextConsumerProfile();
+  const {
+    profileNotes,
+    updateNote,
+    deleteNote,
+    updateResult,
+    deleteResult,
+  } = useObserveConsumerProfileNotes(consumer?.id);
 
   // refs
   const nameRef = React.useRef<HTMLInputElement>(null);
@@ -126,6 +135,14 @@ export const PersonalProfile = () => {
         externalValidation={{ active: true, status: isCPFValid() }}
       />
       <Documents />
+      <SectionTitle>{t('Anotações')}</SectionTitle>
+      <ProfileNotes
+        profileNotes={profileNotes}
+        updateNote={updateNote}
+        deleteNote={deleteNote}
+        updateResult={updateResult}
+        deleteResult={deleteResult}
+      />
     </Box>
   );
 };

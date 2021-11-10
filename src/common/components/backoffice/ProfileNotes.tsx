@@ -53,8 +53,6 @@ export const ProfileNotes = ({
       note: newNote,
     } as ProfileNote;
     updateNote({ changes });
-    setIsAdding(false);
-    setNewNote('');
   };
   const handleUpdateNote = (id: string, note: string) => {
     if (!id) return;
@@ -73,6 +71,12 @@ export const ProfileNotes = ({
     deleteNote(id);
   };
   // side effects
+  React.useEffect(() => {
+    if (isSuccess) {
+      setIsAdding(false);
+      setNewNote('');
+    }
+  }, [isSuccess]);
   React.useEffect(() => {
     if (isError) {
       setError({

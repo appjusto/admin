@@ -1,4 +1,4 @@
-import { WithId, ConsumerProfile, BusinessRecommendation } from 'appjusto-types';
+import { WithId, ConsumerProfile, BusinessRecommendation, ProfileNote } from 'appjusto-types';
 import FilesApi from '../FilesApi';
 import FirebaseRefs from '../FirebaseRefs';
 import firebase from 'firebase/app';
@@ -83,6 +83,50 @@ export default class ConsumerApi {
 
   async fecthRecommendation(recommendationId: string) {
     return await this.refs.getRecommendationRef(recommendationId).get();
+  }
+
+  // profile notes
+  observeConsumerProfileNotes(
+    consumerId: string,
+    resultHandler: (result: WithId<ProfileNote>[]) => void
+  ): firebase.Unsubscribe {
+    const unsubscribe = this.refs
+      .getConsumerProfileNotesRef(consumerId)
+      .orderBy('createdOn', 'desc')
+      .onSnapshot(
+        (querySnapshot) => {
+          resultHandler(documentsAs<ProfileNote>(querySnapshot.docs));
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+    return unsubscribe;
+  }
+
+  async createProfileNote(consumerId: string, data: Partial<ProfileNote>) {
+    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+    await this.refs.getConsumerProfileNotesRef(consumerId).add({
+      ...data,
+      createdOn: timestamp,
+      updatedOn: timestamp,
+    } as ProfileNote);
+  }
+
+  async updateProfileNote(
+    consumerId: string,
+    profileNoteId: string,
+    changes: Partial<ProfileNote>
+  ) {
+    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+    await this.refs.getConsumerProfileNoteRef(consumerId, profileNoteId).update({
+      ...changes,
+      updatedOn: timestamp,
+    } as Partial<ProfileNote>);
+  }
+
+  async deleteProfileNote(consumerId: string, profileNoteId: string) {
+    await this.refs.getConsumerProfileNoteRef(consumerId, profileNoteId).delete();
   }
 
   // consumer profile picture

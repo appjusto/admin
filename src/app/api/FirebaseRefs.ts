@@ -119,6 +119,9 @@ export default class FirebaseRefs {
   // consumers
   getConsumersRef = () => this.firestore.collection('consumers');
   getConsumerRef = (id: string) => this.getConsumersRef().doc(id);
+  getConsumerProfileNotesRef = (id: string) => this.getConsumerRef(id).collection('profilenotes');
+  getConsumerProfileNoteRef = (id: string, profileNoteId: string) =>
+    this.getConsumerProfileNotesRef(id).doc(profileNoteId);
 
   // couriers
   getCouriersRef = () => this.firestore.collection('couriers');
