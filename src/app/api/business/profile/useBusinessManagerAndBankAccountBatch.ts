@@ -1,8 +1,8 @@
+import { useCustomMutation } from 'app/api/mutation/useCustomMutation';
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusinessId } from 'app/state/business/context';
 import { useContextManagerProfile } from 'app/state/manager/context';
 import { BankAccount, Business, ManagerProfile } from 'appjusto-types';
-import { useMutation } from 'react-query';
 
 export const useBusinessManagerAndBankAccountBatch = () => {
   // context
@@ -11,10 +11,10 @@ export const useBusinessManagerAndBankAccountBatch = () => {
   const { manager } = useContextManagerProfile();
 
   // mutations
-  const [
-    updateBusinessManagerAndBankAccount,
-    updateResult,
-  ] = useMutation(
+  const {
+    mutateAsync: updateBusinessManagerAndBankAccount,
+    mutationResult: updateResult,
+  } = useCustomMutation(
     async (changes: {
       businessChanges: Partial<Business> | null;
       managerChanges: Partial<ManagerProfile> | null;

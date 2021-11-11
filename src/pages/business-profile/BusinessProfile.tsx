@@ -30,7 +30,7 @@ import { OnboardingProps } from 'pages/onboarding/types';
 import PageFooter from 'pages/PageFooter';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
-import { useQueryCache } from 'react-query';
+import { useQueryClient } from 'react-query';
 import { Redirect, Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { CuisineSelect } from '../../common/components/form/select/CuisineSelect';
@@ -40,7 +40,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   // context
   const isDev = process.env.REACT_APP_ENVIRONMENT === 'dev';
   const { business, setBusinessId } = useContextBusiness();
-  const queryCache = useQueryCache();
+  const queryClient = useQueryClient();
   const { path } = useRouteMatch();
   const history = useHistory();
   const { isBackofficeUser } = useContextFirebaseUser();
@@ -125,7 +125,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
     try {
       await updateBusinessProfileWithImages({ changes, logoFileToSave, coverFilesToSave });
       // invalidate logo query
-      if (logoFiles) queryCache.invalidateQueries(['business:logo', business?.id]);
+      if (logoFiles) queryClient.invalidateQueries(['business:logo', business?.id]);
     } catch (error) {
       setError({
         status: true,

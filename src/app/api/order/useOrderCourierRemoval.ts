@@ -1,6 +1,6 @@
 import { useContextApi } from 'app/state/api/context';
 import { Issue, WithId } from 'appjusto-types';
-import { useMutation } from 'react-query';
+import { useCustomMutation } from '../mutation/useCustomMutation';
 
 interface RemovalData {
   orderId: string;
@@ -13,7 +13,10 @@ export const useOrderCourierRemoval = () => {
   // context
   const api = useContextApi();
   // mutations
-  const [courierManualRemoval, removalResult] = useMutation(async (data: RemovalData) =>
+  const {
+    mutateAsync: courierManualRemoval,
+    mutationResult: removalResult,
+  } = useCustomMutation(async (data: RemovalData) =>
     api.order().courierManualRemoval(data.orderId, data.issue, data.comment)
   );
   // return

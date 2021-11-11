@@ -1,11 +1,14 @@
 import { useContextApi } from 'app/state/api/context';
-import { useMutation } from 'react-query';
+import { useCustomMutation } from '../mutation/useCustomMutation';
 
 export const useAdvanceReceivables = (businessId?: string) => {
   // context
   const api = useContextApi();
   // mutations
-  const [advanceReceivables, advanceReceivablesResult] = useMutation(async (ids: number[]) =>
+  const {
+    mutateAsync: advanceReceivables,
+    mutationResult: advanceReceivablesResult,
+  } = useCustomMutation(async (ids: number[]) =>
     api.business().advanceReceivables(businessId!, ids)
   );
   // return

@@ -1,5 +1,5 @@
 import { useContextApi } from 'app/state/api/context';
-import { useMutation } from 'react-query';
+import { useCustomMutation } from '../mutation/useCustomMutation';
 
 interface AllocationData {
   orderId: string;
@@ -11,7 +11,10 @@ export const useOrderCourierManualAllocation = () => {
   // context
   const api = useContextApi();
   // mutations
-  const [courierManualAllocation, allocationResult] = useMutation(async (data: AllocationData) =>
+  const {
+    mutateAsync: courierManualAllocation,
+    mutationResult: allocationResult,
+  } = useCustomMutation(async (data: AllocationData) =>
     api.order().courierManualAllocation(data.orderId, data.courierId, data.comment)
   );
   // return

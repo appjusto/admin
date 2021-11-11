@@ -1,7 +1,8 @@
+import { useCustomMutation } from 'app/api/mutation/useCustomMutation';
 import { useContextBusinessId } from 'app/state/business/context';
 import { Category } from 'appjusto-types';
 import React from 'react';
-import { useMutation, useQuery } from 'react-query';
+import { useQuery } from 'react-query';
 import { useContextApi } from '../../../state/api/context';
 
 export const useCategory = (id: string) => {
@@ -17,13 +18,19 @@ export const useCategory = (id: string) => {
   const fetchResult = useQuery(['category', categoryId], fetchCategory, { enabled: !isNew });
 
   // mutations
-  const [createCategory, createResult] = useMutation(async (category: Category) =>
+  const {
+    mutateAsync: createCategory,
+    mutationResult: createResult,
+  } = useCustomMutation(async (category: Category) =>
     api.business().createCategory(businessId, categoryId, category)
   );
-  const [updateCategory, updateResult] = useMutation(async (category: Partial<Category>) =>
+  const {
+    mutateAsync: updateCategory,
+    mutationResult: updateResult,
+  } = useCustomMutation(async (category: Partial<Category>) =>
     api.business().updateCategory(businessId, categoryId, category)
   );
-  const [deleteCategory] = useMutation(async () =>
+  const { mutateAsync: deleteCategory } = useCustomMutation(async () =>
     api.business().deleteCategory(businessId, categoryId)
   );
   const saveCategory = isNew ? createCategory : updateCategory;

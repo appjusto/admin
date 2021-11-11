@@ -2,9 +2,9 @@ import { useContextApi } from 'app/state/api/context';
 import { useContextBusiness } from 'app/state/business/context';
 import React from 'react';
 import { ManagerWithRole } from './types';
-import { useMutation } from 'react-query';
 import { AdminRole, Role } from 'appjusto-types';
 import { GeneralRoles } from 'app/state/auth/context';
+import { useCustomMutation } from '../mutation/useCustomMutation';
 
 type ManagerData = { email: string; role: Role | AdminRole };
 
@@ -17,12 +17,17 @@ export const useManagers = (role?: GeneralRoles | null) => {
   const [managers, setManagers] = React.useState<ManagerWithRole[]>();
 
   // mutations
-  const [createManager, createResult] = useMutation(async (data: ManagerData) => {
-    const dataWithKey = { ...data, key: business?.id! };
-    return api.manager().createManager(dataWithKey);
-  });
+  const { mutateAsync: createManager, mutationResult: createResult } = useCustomMutation(
+    async (data: ManagerData) => {
+      const dataWithKey = { ...data, key: business?.id! };
+      return api.manager().createManager(dataWithKey);
+    }
+  );
 
-  const [removeBusinessManager, removeResult] = useMutation(async (managerEmail: string) =>
+  const {
+    mutateAsync: removeBusinessManager,
+    mutationResult: removeResult,
+  } = useCustomMutation(async (managerEmail: string) =>
     api.business().removeBusinessManager(business!, managerEmail)
   );
 

@@ -1,8 +1,8 @@
 import { useContextAgentProfile } from 'app/state/agent/context';
 import { useContextApi } from 'app/state/api/context';
 import { ManagerProfile } from 'appjusto-types';
-import { useMutation } from 'react-query';
 import { useAuthentication } from '../auth/useAuthentication';
+import { useCustomMutation } from '../mutation/useCustomMutation';
 
 interface UpdateAgentData {
   changes: Partial<ManagerProfile>;
@@ -16,7 +16,7 @@ export const useUpdateAgentProfile = () => {
   const { updateUsersPassword } = useAuthentication();
   const { agent } = useContextAgentProfile();
   // mutations
-  const { mutate: updateProfile, isLoading, isSuccess, isError, error } = useMutation(
+  const { mutateAsync: updateProfile, mutationResult: updateResult } = useCustomMutation(
     async (data: UpdateAgentData) => {
       if (data.password) {
         await updateUsersPassword(data.password, data.currentPassword);
@@ -25,5 +25,5 @@ export const useUpdateAgentProfile = () => {
     }
   );
   // return
-  return { updateProfile, updateResult: { isLoading, isSuccess, isError, error } };
+  return { updateProfile, updateResult };
 };

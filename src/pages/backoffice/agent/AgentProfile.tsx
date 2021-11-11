@@ -3,9 +3,8 @@ import * as cpfutils from '@fnando/cpf';
 import { useUpdateAgentProfile } from 'app/api/agent/useUpdateAgentProfile';
 import { useAuthentication } from 'app/api/auth/useAuthentication';
 import { useContextAgentProfile } from 'app/state/agent/context';
+import { useContextAppRequests } from 'app/state/requests/context';
 import { AlertSuccess } from 'common/components/AlertSuccess';
-import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
-import { initialError } from 'common/components/error/utils';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import { CustomPasswordInput } from 'common/components/form/input/CustomPasswordInput';
 import { CustomPatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';
@@ -23,17 +22,17 @@ import { t } from 'utils/i18n';
 
 export const AgentProfile = () => {
   // context
+  const { dispatchAppRequestResult } = useContextAppRequests();
   const { agent } = useContextAgentProfile();
   const { sendSignInLinkToEmail, sendingLinkResult } = useAuthentication();
   const { updateProfile, updateResult } = useUpdateAgentProfile();
-  const { isLoading, isSuccess, isError, error: updateError } = updateResult;
+  const { isLoading, isError, error: updateError } = updateResult;
 
   // state
   const [name, setName] = React.useState(agent?.name ?? '');
   const [surname, setSurname] = React.useState(agent?.surname ?? '');
   const [phoneNumber, setPhoneNumber] = React.useState(agent?.phone ?? '');
   const [cpf, setCPF] = React.useState(agent?.cpf ?? '');
-  const [error, setError] = React.useState(initialError);
   const [isEditingPasswd, setIsEditingPasswd] = React.useState(true);
   const [passwd, setPasswd] = React.useState('');
   const [passwdConfirm, setPasswdConfirm] = React.useState('');
@@ -41,7 +40,6 @@ export const AgentProfile = () => {
   const [currentPasswd, setCurrentPasswd] = React.useState('');
 
   // refs
-  const submission = React.useRef(0);
   const nameRef = React.useRef<HTMLInputElement>(null);
   const cpfRef = React.useRef<HTMLInputElement>(null);
   const phoneNumberRef = React.useRef<HTMLInputElement>(null);
@@ -65,37 +63,35 @@ export const AgentProfile = () => {
   }, []);
 
   const onSubmitHandler = async () => {
-    submission.current += 1;
-    setError(initialError);
     if (!isCPFValid()) {
-      setError({
-        status: true,
-        error: null,
+      dispatchAppRequestResult({
+        status: 'error',
+        requestId: Math.random(),
         message: { title: 'O CPF informado não é válido.' },
       });
       return cpfRef?.current?.focus();
     }
     if (phoneNumber.length < 11) {
-      setError({
-        status: true,
-        error: null,
+      dispatchAppRequestResult({
+        status: 'error',
+        requestId: Math.random(),
         message: { title: 'O celular informado não é válido.' },
       });
       return phoneNumberRef?.current?.focus();
     }
     if (passwd) {
       if (passwd !== passwdConfirm) {
-        setError({
-          status: true,
-          error: null,
+        dispatchAppRequestResult({
+          status: 'error',
+          requestId: Math.random(),
           message: { title: 'As senhas informadas não são iguais.' },
         });
         return passwdRef?.current?.focus();
       }
       if (!passwdIsValid) {
-        setError({
-          status: true,
-          error: null,
+        dispatchAppRequestResult({
+          status: 'error',
+          requestId: Math.random(),
           message: { title: 'A senha informada não é válida.' },
         });
         return passwdRef?.current?.focus();
@@ -143,25 +139,13 @@ export const AgentProfile = () => {
       if (isReauthenticationRequired()) {
         console.warn('User reauthentication required');
         currentPasswdRef.current?.focus();
-      } else {
-        setError({
-          status: true,
-          error: updateError,
-        });
       }
     }
-  }, [isError, updateError, isReauthenticationRequired]);
+  }, [isError, isReauthenticationRequired]);
 
   // UI
   return (
     <Box maxW="368px">
-      <SuccessAndErrorHandler
-        submission={submission.current}
-        isSuccess={isSuccess}
-        isError={error.status}
-        error={error.error}
-        errorMessage={error.message}
-      />
       <form
         onSubmit={(ev) => {
           ev.preventDefault();
@@ -301,7 +285,7 @@ export const AgentProfile = () => {
                   <Button
                     mt="4"
                     w="100%"
-                    onClick={() => sendSignInLinkToEmail(agent?.email)}
+                    onClick={() => sendSignInLinkToEmail(agent?.email!)}
                     isLoading={sendingLinkResult.isLoading}
                   >
                     {t('Enviar link de acesso')}

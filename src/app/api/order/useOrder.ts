@@ -8,7 +8,7 @@ import {
   WithId,
 } from 'appjusto-types';
 import React from 'react';
-import { useMutation } from 'react-query';
+import { useCustomMutation } from '../mutation/useCustomMutation';
 import { useObserveOrderInvoices } from './useObserveOrderInvoices';
 import { calculateCancellationCosts } from './utils';
 
@@ -22,12 +22,17 @@ export const useOrder = (orderId?: string) => {
   const [orderCancellationCosts, setOrderCancellationCosts] = React.useState<number>();
   const invoices = useObserveOrderInvoices(orderId);
   // mutations
-  const [updateOrder, updateResult] = useMutation(async (changes: Partial<Order>) =>
+  const {
+    mutateAsync: updateOrder,
+    mutationResult: updateResult,
+  } = useCustomMutation(async (changes: Partial<Order>) =>
     api.order().updateOrder(orderId!, changes)
   );
-  const [cancelOrder, cancelResult] = useMutation(async (cancellationData: CancelOrderPayload) => {
-    await api.order().cancelOrder(cancellationData);
-  });
+  const { mutateAsync: cancelOrder, mutationResult: cancelResult } = useCustomMutation(
+    async (cancellationData: CancelOrderPayload) => {
+      await api.order().cancelOrder(cancellationData);
+    }
+  );
   // side effects
   React.useEffect(() => {
     if (!orderId) return;

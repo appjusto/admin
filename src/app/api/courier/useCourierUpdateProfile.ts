@@ -1,12 +1,12 @@
 import { useContextApi } from 'app/state/api/context';
 import { CourierProfile } from 'appjusto-types';
-import { useMutation } from 'react-query';
+import { useCustomMutation } from '../mutation/useCustomMutation';
 
 export const useCourierUpdateProfile = (courierId?: string) => {
   // context
   const api = useContextApi();
   // mutations
-  const [updateProfile, updateResult] = useMutation(
+  const { mutateAsync: updateProfile, mutationResult: updateResult } = useCustomMutation(
     async (data: {
       changes: Partial<CourierProfile>;
       selfieFileToSave: File | null;

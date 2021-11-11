@@ -2,11 +2,11 @@ import { useContextApi } from 'app/state/api/context';
 import { useContextBusinessId } from 'app/state/business/context';
 import { ChatMessage, Flavor, Order, OrderStatus, WithId } from 'appjusto-types';
 import React from 'react';
-import { useMutation } from 'react-query';
 import { useCourierProfilePicture } from '../courier/useCourierProfilePicture';
 import { GroupedChatMessages } from 'app/api/chat/types';
 import { groupOrderChatMessages, sortMessages } from 'app/api/chat/utils';
 import { getTimeUntilNow } from 'utils/functions';
+import { useCustomMutation } from '../mutation/useCustomMutation';
 
 export interface Participants {
   [x: string]:
@@ -43,14 +43,16 @@ export const useOrderChat = (getServerTime: () => Date, orderId: string, counter
     counterPartFlavor === 'courier'
   );
   // mutations;
-  const [sendMessage, sendMessageResult] = useMutation(async (data: Partial<ChatMessage>) => {
-    if (!businessId) return;
-    const from = { agent: 'business' as Flavor, id: businessId };
-    api.order().sendMessage(orderId, {
-      from,
-      ...data,
-    });
-  });
+  const { mutateAsync: sendMessage, mutationResult: sendMessageResult } = useCustomMutation(
+    async (data: Partial<ChatMessage>) => {
+      if (!businessId) return;
+      const from = { agent: 'business' as Flavor, id: businessId };
+      api.order().sendMessage(orderId, {
+        from,
+        ...data,
+      });
+    }
+  );
   // side effects
   React.useEffect(() => {
     if (!orderId) return;

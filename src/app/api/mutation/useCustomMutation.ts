@@ -1,9 +1,24 @@
 import { useContextAppRequests } from 'app/state/requests/context';
-import { useMutation } from 'react-query';
+import { useMutation, MutationFunction, UseMutationOptions } from 'react-query';
 
-export const useCustomMutation = (data: any, func: Function) => {
+export interface MutationResult {
+  isLoading: boolean;
+  isSuccess: boolean;
+  isError: boolean;
+  error?: unknown;
+}
+
+export const useCustomMutation = <
+  TData = unknown,
+  TError = unknown,
+  TVariables = void,
+  TContext = unknown
+>(
+  mutationFn: MutationFunction<TData, TVariables>,
+  options?: Omit<UseMutationOptions<TData, TError, TVariables, TContext>, 'mutationFn'>
+) => {
   const { dispatchAppRequestResult } = useContextAppRequests();
-  const { mutate } = useMutation(() => func(...data), {
+  const { mutate, mutateAsync, isLoading, isSuccess, isError, error } = useMutation(mutationFn, {
     onSuccess: () => {
       dispatchAppRequestResult({ status: 'success', requestId: Math.random() });
     },
@@ -11,5 +26,5 @@ export const useCustomMutation = (data: any, func: Function) => {
       dispatchAppRequestResult({ status: 'error', requestId: Math.random(), error });
     },
   });
-  return mutate;
+  return { mutate, mutateAsync, mutationResult: { isLoading, isSuccess, isError, error } };
 };
