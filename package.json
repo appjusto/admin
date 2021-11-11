@@ -55,7 +55,7 @@
     "react-image-crop": "^8.6.6",
     "react-markdown": "^6.0.1",
     "react-qr-code": "^2.0.2",
-    "react-query": "2.26.2",
+    "react-query": "^3.32.1",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.1",
     "react-scroll": "^1.8.2",

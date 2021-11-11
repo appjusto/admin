@@ -16,12 +16,14 @@ export const useUpdateAgentProfile = () => {
   const { updateUsersPassword } = useAuthentication();
   const { agent } = useContextAgentProfile();
   // mutations
-  const [updateProfile, updateResult] = useMutation(async (data: UpdateAgentData) => {
-    if (data.password) {
-      await updateUsersPassword(data.password, data.currentPassword);
+  const { mutate: updateProfile, isLoading, isSuccess, isError, error } = useMutation(
+    async (data: UpdateAgentData) => {
+      if (data.password) {
+        await updateUsersPassword(data.password, data.currentPassword);
+      }
+      return api.manager().updateProfile(agent?.id!, data.changes);
     }
-    return api.manager().updateProfile(agent?.id!, data.changes);
-  });
+  );
   // return
-  return { updateProfile, updateResult };
+  return { updateProfile, updateResult: { isLoading, isSuccess, isError, error } };
 };

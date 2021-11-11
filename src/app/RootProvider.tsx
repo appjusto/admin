@@ -1,6 +1,6 @@
 import { StateProvider } from 'app/state/StateProvider';
 import React from 'react';
-import { QueryCache, ReactQueryCacheProvider } from 'react-query';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { ApiProvider } from './state/api/context';
 import { SearchApiProvider } from './state/search/context';
 import { ChakraUIProvider } from './styles/ChakraUIProvider';
@@ -9,8 +9,8 @@ interface Props {
   children: React.ReactNode | React.ReactNode[];
 }
 
-const queryCache = new QueryCache({
-  defaultConfig: {
+const queryClient = new QueryClient({
+  defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
     },
@@ -20,13 +20,13 @@ const queryCache = new QueryCache({
 export const RootProvider = ({ children }: Props) => {
   return (
     <ApiProvider>
-      <ReactQueryCacheProvider queryCache={queryCache}>
+      <QueryClientProvider client={queryClient}>
         <StateProvider>
           <ChakraUIProvider>
             <SearchApiProvider>{children}</SearchApiProvider>
           </ChakraUIProvider>
         </StateProvider>
-      </ReactQueryCacheProvider>
+      </QueryClientProvider>
     </ApiProvider>
   );
 };
