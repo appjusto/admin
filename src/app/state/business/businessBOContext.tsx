@@ -67,11 +67,8 @@ export const BusinessBOProvider = ({ children }: Props) => {
     updateBusinessManagerAndBankAccount,
     updateResult,
   } = useBusinessManagerAndBankAccountBatch();
-  const { isLoading } = updateResult;
   // state
   const [state, dispatch] = React.useReducer(businessBOReducer, {} as businessBOState);
-  //const [isLoading, setIsLoading] = React.useState(false);
-  //const [isSuccess, setIsSuccess] = React.useState(false);
   const [contextValidation, setContextValidation] = React.useState<BackofficeProfileValidation>({
     cpf: true,
     phone: true,
@@ -177,7 +174,7 @@ export const BusinessBOProvider = ({ children }: Props) => {
         bankAccount: state.bankingInfo,
         business: state.businessProfile,
         contextValidation,
-        isLoading,
+        isLoading: updateResult.isLoading,
         handleBusinessStatusChange,
         handleManagerProfileChange,
         handleBankingInfoChange,

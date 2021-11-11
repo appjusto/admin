@@ -49,7 +49,6 @@ export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
     setIsEditingEmail,
   } = useContextConsumerProfile();
   const { updateProfile, updateResult } = useConsumerUpdateProfile(consumer?.id);
-  const { isLoading } = updateResult;
   // state
   const [isDeleting, setIsDeleting] = React.useState(false);
   //helpers
@@ -174,7 +173,7 @@ export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
                   width="full"
                   fontSize="15px"
                   onClick={handleSave}
-                  isLoading={isLoading}
+                  isLoading={updateResult.isLoading}
                   loadingText={t('Salvando')}
                 >
                   {t('Salvar alterações')}

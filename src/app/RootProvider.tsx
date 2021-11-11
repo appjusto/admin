@@ -21,11 +21,11 @@ export const RootProvider = ({ children }: Props) => {
   return (
     <ApiProvider>
       <QueryClientProvider client={queryClient}>
-        <StateProvider>
-          <ChakraUIProvider>
+        <ChakraUIProvider>
+          <StateProvider>
             <SearchApiProvider>{children}</SearchApiProvider>
-          </ChakraUIProvider>
-        </StateProvider>
+          </StateProvider>
+        </ChakraUIProvider>
       </QueryClientProvider>
     </ApiProvider>
   );

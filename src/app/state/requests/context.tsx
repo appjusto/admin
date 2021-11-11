@@ -45,7 +45,6 @@ const getErrorMessage = (errorMessage?: ErrorMessage, message?: string): ErrorMe
 
 export const AppRequestsProvider = ({ children }: Props) => {
   // state
-  //const [state, dispatch] = React.useReducer(appRequestsReducer, initialState);
   const [requestId, setRequestId] = React.useState<number>();
   // handlers
   const toast = useToast();
