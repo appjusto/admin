@@ -67,7 +67,7 @@ export const BusinessBOProvider = ({ children }: Props) => {
     updateBusinessManagerAndBankAccount,
     updateResult,
   } = useBusinessManagerAndBankAccountBatch();
-  const { isLoading, isSuccess, isError, error: updateError } = updateResult;
+  const { isLoading } = updateResult;
   // state
   const [state, dispatch] = React.useReducer(businessBOReducer, {} as businessBOState);
   //const [isLoading, setIsLoading] = React.useState(false);

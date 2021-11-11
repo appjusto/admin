@@ -2,8 +2,6 @@ import { Box, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
 import { ManagerWithRole } from 'app/api/manager/types';
 import { useManagers } from 'app/api/manager/useManagers';
 import { useContextFirebaseUser } from 'app/state/auth/context';
-import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
-import { initialError } from 'common/components/error/utils';
 import React from 'react';
 import { t } from 'utils/i18n';
 import { TeamTableItem } from './TeamTableItem';
@@ -11,31 +9,12 @@ import { TeamTableItem } from './TeamTableItem';
 export const TeamTable = () => {
   // context
   const { role } = useContextFirebaseUser();
-  const {
-    managers: businessManagers,
-    removeBusinessManager,
-    removeResult,
-    createManager,
-    createResult,
-  } = useManagers(role);
-
+  const { managers: businessManagers, removeBusinessManager, createManager } = useManagers(role);
   // state
   const [managers, setManagers] = React.useState<ManagerWithRole[]>();
   const [isLoading, setIsLoading] = React.useState(false);
-  const [isSuccess, setIsSuccess] = React.useState(false);
-  const [error, setError] = React.useState(initialError);
-
-  // refs
-  const submission = React.useRef(0);
-
   // handlers
-  const clearStates = () => {
-    setIsSuccess(false);
-    setError(initialError);
-  };
   const updateMember = async (managerEmail: string, isManager: boolean) => {
-    submission.current += 1;
-    clearStates();
     setIsLoading(true);
     setManagers((prev) =>
       prev?.map((manager) => {
@@ -48,38 +27,16 @@ export const TeamTable = () => {
     await createManager({ email: managerEmail, role: isManager ? 'manager' : 'collaborator' });
     setIsLoading(false);
   };
-
   const deleteMember = async (managerEmail: string) => {
-    submission.current += 1;
-    clearStates();
     setIsLoading(true);
     await removeBusinessManager(managerEmail);
     setIsLoading(false);
   };
-
   // side effects
   React.useEffect(() => {
     if (!businessManagers) return;
     setManagers(businessManagers);
   }, [businessManagers]);
-
-  React.useEffect(() => {
-    if (removeResult.isSuccess || createResult.isSuccess) setIsSuccess(true);
-  }, [removeResult.isSuccess, createResult.isSuccess]);
-
-  React.useEffect(() => {
-    if (removeResult.isError)
-      setError({
-        status: true,
-        error: removeResult.error,
-      });
-    else if (createResult.isError)
-      setError({
-        status: true,
-        error: createResult.error,
-      });
-  }, [removeResult.isError, removeResult.error, createResult.isError, createResult.error]);
-
   // UI
   if (!managers) {
     return (
@@ -129,12 +86,6 @@ export const TeamTable = () => {
           </Tbody>
         </Table>
       </Box>
-      <SuccessAndErrorHandler
-        submission={submission.current}
-        isSuccess={isSuccess}
-        isError={error.status}
-        error={error.error}
-      />
     </Box>
   );
 };

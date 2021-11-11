@@ -50,19 +50,13 @@ export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
   } = useContextConsumerProfile();
   const { updateProfile, updateResult } = useConsumerUpdateProfile(consumer?.id);
   const { isLoading } = updateResult;
-
   // state
   const [isDeleting, setIsDeleting] = React.useState(false);
-
-  // refs
-  const submission = React.useRef(0);
-
   //helpers
   //const toast = useToast();
   let consumerName = consumer?.name ?? 'N/I';
   if (consumer?.surname) consumerName += ` ${consumer.surname}`;
   const city = consumer?.city && consumer?.state ? `${consumer?.city} - ${consumer?.state}` : 'N/I';
-
   //handlers
   const handleSave = () => {
     /*if (consumer?.situation === 'approved') {
@@ -84,7 +78,6 @@ export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
     setSelfieFiles(null);
     setDocumentFiles(null);
   };
-
   const handleDeleteAccount = () => {
     if (!consumer?.id) {
       dispatchAppRequestResult({
@@ -93,16 +86,13 @@ export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
         message: { title: 'Não foi possível encontrar o id deste usuário.' },
       });
     } else {
-      submission.current += 1;
       deleteAccount({ accountId: consumer.id });
     }
   };
-
   // side effects
   React.useEffect(() => {
     if (deleteAccountResult.isSuccess) onClose();
   }, [deleteAccountResult.isSuccess, onClose]);
-
   //UI
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>

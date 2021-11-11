@@ -11,7 +11,7 @@ import {
   Flex,
   HStack,
   Icon,
-  Text
+  Text,
 } from '@chakra-ui/react';
 import { useAuthentication } from 'app/api/auth/useAuthentication';
 import { useCourierUpdateProfile } from 'app/api/courier/useCourierUpdateProfile';
@@ -109,7 +109,7 @@ export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDr
     if (!courier?.id) {
       dispatchAppRequestResult({
         status: 'error',
-        requestId: Math.random();
+        requestId: Math.random(),
         message: { title: 'Não foi possível encontrar o id deste usuário.' },
       });
     } else {
