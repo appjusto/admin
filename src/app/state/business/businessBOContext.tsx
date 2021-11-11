@@ -2,6 +2,7 @@ import * as cpfutils from '@fnando/cpf';
 import { useBusinessBankAccount } from 'app/api/business/profile/useBusinessBankAccount';
 import { useBusinessManagerAndBankAccountBatch } from 'app/api/business/profile/useBusinessManagerAndBankAccountBatch';
 import { useBusinessMarketPlace } from 'app/api/business/useBusinessMarketPlace';
+import { MutationResult } from 'app/api/mutation/useCustomMutation';
 import {
   BankAccount,
   Business,
@@ -14,7 +15,7 @@ import { initialError } from 'common/components/error/utils';
 import { BackofficeProfileValidation } from 'common/types';
 import { isEmpty, isEqual } from 'lodash';
 import React, { Dispatch, SetStateAction } from 'react';
-import { MutateFunction, MutationResult } from 'react-query';
+import { UseMutateAsyncFunction } from 'react-query';
 import { useParams } from 'react-router';
 import { useContextManagerProfile } from '../manager/context';
 import { businessBOReducer, businessBOState } from './businessBOReducer';
@@ -38,8 +39,8 @@ interface BusinessBOContextProps {
   setContextValidation: Dispatch<SetStateAction<BackofficeProfileValidation>>;
   handleSave(): void;
   marketPlace?: MarketplaceAccountInfo | null;
-  deleteMarketPlace: MutateFunction<void, unknown, undefined, unknown>;
-  deleteMarketPlaceResult: MutationResult<void, unknown>;
+  deleteMarketPlace: UseMutateAsyncFunction<void, unknown, void, unknown>;
+  deleteMarketPlaceResult: MutationResult;
 }
 
 const BusinessBOContext = React.createContext<BusinessBOContextProps>({} as BusinessBOContextProps);

@@ -306,7 +306,7 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
                   <Button
                     mt="4"
                     w="100%"
-                    onClick={() => sendSignInLinkToEmail(manager?.email)}
+                    onClick={() => sendSignInLinkToEmail(manager?.email!)}
                     isLoading={sendingLinkResult.isLoading}
                   >
                     {t('Enviar link de acesso')}

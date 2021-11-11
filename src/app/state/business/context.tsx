@@ -20,7 +20,7 @@ interface Props {
 
 export const BusinessProvider = ({ children }: Props) => {
   // context
-  const queryCache = useQueryClient();
+  const queryClient = useQueryClient();
   const { user, isBackofficeUser, refreshUserToken } = useContextFirebaseUser();
   const businesses = useObserveBusinessManagedBy(user?.email);
   const [businessId, setBusinessId] = React.useState<string | undefined | null>();
@@ -61,8 +61,8 @@ export const BusinessProvider = ({ children }: Props) => {
       localStorage.setItem(`business-${process.env.REACT_APP_ENVIRONMENT}`, hookBusiness.id);
     }
     updateContextBusiness(hookBusiness);
-    queryCache.invalidateQueries();
-  }, [hookBusiness, isBackofficeUser, queryCache, updateContextBusiness]);
+    queryClient.invalidateQueries();
+  }, [hookBusiness, isBackofficeUser, queryClient, updateContextBusiness]);
   React.useEffect(() => {
     if (isBackofficeUser) return;
     if (!user?.email) return;

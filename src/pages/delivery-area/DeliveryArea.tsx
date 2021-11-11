@@ -58,12 +58,12 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
   const { updateBusinessProfile, updateResult: result } = useBusinessProfile();
   const { isLoading, isSuccess, isError, error } = result;
   // cep
-  const { data: cepResult } = useQuery(['cep', cep], (_: string) => fetchCEPInfo(cep), {
+  const { data: cepResult } = useQuery(['cep', cep], () => fetchCEPInfo(cep), {
     enabled: cep.length === 8,
   });
   // geocoding
-  const geocode = (_: string, street: string, number: string, city: string, state: string) =>
-    api.maps().googleGeocode(`${street}, ${number} - ${city} - ${state}`, autocompleteSession);
+  const geocode = () =>
+    api.maps().googleGeocode(`${address}, ${number} - ${city} - ${state}`, autocompleteSession);
   const { data: geocodingResult } = useQuery(['geocoding', address, number, city, state], geocode, {
     enabled: address?.length > 0 && number.length > 0,
   });

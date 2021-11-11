@@ -22,7 +22,7 @@ import { initialError } from 'common/components/error/utils';
 import { getEditableProfile } from 'pages/backoffice/utils';
 import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
 import React from 'react';
-import { queryCache } from 'react-query';
+import { useQueryClient } from 'react-query';
 import { useRouteMatch } from 'react-router';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
@@ -37,6 +37,7 @@ interface BaseDrawerProps {
 
 export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseDrawerProps) => {
   //context
+  const queryClient = useQueryClient();
   const { url } = useRouteMatch();
   const { deleteAccount, deleteAccountResult } = useAuthentication();
   const {
@@ -82,8 +83,8 @@ export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
     const selfieFileToSave = selfieFiles ? selfieFiles[0] : null;
     const documentFileToSave = documentFiles ? documentFiles[0] : null;
     updateProfile({ changes, selfieFileToSave, documentFileToSave });
-    if (selfieFileToSave) queryCache.invalidateQueries(['consumer:selfie', consumer?.id]);
-    if (documentFileToSave) queryCache.invalidateQueries(['consumer:document', consumer?.id]);
+    if (selfieFileToSave) queryClient.invalidateQueries(['consumer:selfie', consumer?.id]);
+    if (documentFileToSave) queryClient.invalidateQueries(['consumer:document', consumer?.id]);
     setSelfieFiles(null);
     setDocumentFiles(null);
   };

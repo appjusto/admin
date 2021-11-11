@@ -4,6 +4,7 @@ import { useCourierMarketPlace } from 'app/api/courier/useCourierMarketPlace';
 import { useCourierOrders } from 'app/api/courier/useCourierOrders';
 import { useCourierProfile } from 'app/api/courier/useCourierProfile';
 import { useCourierProfilePictures } from 'app/api/courier/useCourierProfilePictures';
+import { MutationResult } from 'app/api/mutation/useCustomMutation';
 import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';
 import {
   CourierProfile,
@@ -15,7 +16,7 @@ import {
 } from 'appjusto-types';
 import { BackofficeProfileValidation } from 'common/types';
 import React, { Dispatch, SetStateAction } from 'react';
-import { MutateFunction, MutationResult } from 'react-query';
+import { UseMutateAsyncFunction } from 'react-query';
 import { useParams } from 'react-router';
 import { useContextApi } from '../api/context';
 import { courierReducer } from './courierReducer';
@@ -31,8 +32,8 @@ interface CourierProfileContextProps {
   setDocumentFiles(files: File[] | null): void;
   issueOptions?: WithId<Issue>[] | null;
   marketPlace?: MarketplaceAccountInfo | null;
-  deleteMarketPlace: MutateFunction<void, unknown, undefined, unknown>;
-  deleteMarketPlaceResult: MutationResult<void, unknown>;
+  deleteMarketPlace: UseMutateAsyncFunction<void, unknown, void, unknown>;
+  deleteMarketPlaceResult: MutationResult;
   contextValidation: BackofficeProfileValidation;
   currentOrder: WithId<Order> | null;
   orders?: WithId<Order>[] | null;

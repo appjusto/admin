@@ -1,5 +1,6 @@
 import { Box, Flex, HStack, Text, VStack } from '@chakra-ui/react';
 import { useComplementImage } from 'app/api/business/complements/useComplementImage';
+import { MutationResult } from 'app/api/mutation/useCustomMutation';
 import { Complement, WithId } from 'appjusto-types';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
 import { initialError } from 'common/components/error/utils';
@@ -9,7 +10,7 @@ import { CustomTextarea as Textarea } from 'common/components/form/input/CustomT
 import { ImageUploads } from 'common/components/ImageUploads';
 import { complementsRatios, complementsResizedWidth } from 'common/imagesDimensions';
 import React from 'react';
-import { MutateFunction, MutationResult } from 'react-query';
+import { MutateFunction } from 'react-query';
 import { t } from 'utils/i18n';
 import { DrawerButtons } from '../drawers/DrawerButtons';
 import { GroupSelect } from './GroupSelect';
@@ -32,7 +33,7 @@ interface ComplementFormProps {
     },
     unknown
   >;
-  updateComplementResult: MutationResult<void, unknown>;
+  updateComplementResult: MutationResult;
   deleteComplement?: MutateFunction<
     void,
     unknown,
@@ -42,7 +43,7 @@ interface ComplementFormProps {
     },
     unknown
   >;
-  deleteComplementResult?: MutationResult<void, unknown>;
+  deleteComplementResult?: MutationResult;
 }
 
 export const ComplementForm = ({

@@ -1,10 +1,10 @@
 import { Box, Button, HStack, Text } from '@chakra-ui/react';
+import { MutationResult } from 'app/api/mutation/useCustomMutation';
 import { MarketplaceAccountInfo } from 'appjusto-types';
 import { AlertError } from 'common/components/AlertError';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
 import { initialError } from 'common/components/error/utils';
 import React from 'react';
-import { MutationResult } from 'react-query';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { iuguSituationPTOptions } from '../utils';
@@ -13,7 +13,7 @@ import { SectionTitle } from './generics/SectionTitle';
 interface IuguInfosProps {
   account?: MarketplaceAccountInfo | null;
   deleteAccount(): void;
-  result: MutationResult<void, unknown>;
+  result: MutationResult;
 }
 
 export const IuguInfos = ({ account, deleteAccount, result }: IuguInfosProps) => {

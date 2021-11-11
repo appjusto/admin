@@ -35,7 +35,7 @@ export const Matching = ({ orderId, orderStatus, orderDispatchingStatus }: Match
   //const [isAuto, setIsAuto] = React.useState(true);
   const [logs, setLogs] = React.useState<string[]>();
   const [attemps, setAttemps] = React.useState<number>(0);
-  const [couriersNotified, setCouriersNotified] = React.useState<string[]>();
+  const [couriersNotified, setCouriersNotified] = React.useState<string[]>([]);
   const [courierRemoving, setCourierRemoving] = React.useState<string | null>(null);
   const [isRestarting, setIsRestarting] = React.useState<boolean>(false);
   const [isOutsourcing, setIsOutsourcing] = React.useState<boolean>(false);
@@ -61,7 +61,7 @@ export const Matching = ({ orderId, orderStatus, orderDispatchingStatus }: Match
     setError(initialError);
     submission.current += 1;
     setCourierRemoving(courierId);
-    const newArray = couriersNotified?.filter((id) => id !== courierId);
+    const newArray = couriersNotified.filter((id) => id !== courierId);
     await updateCourierNotified(newArray);
     setCourierRemoving(null);
   };

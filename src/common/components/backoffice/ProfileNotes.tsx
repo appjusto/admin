@@ -1,4 +1,5 @@
 import { Box, Button, Flex, HStack, Text } from '@chakra-ui/react';
+import { MutationResult } from 'app/api/mutation/useCustomMutation';
 import { FirebaseError } from 'app/api/types';
 import { useContextAgentProfile } from 'app/state/agent/context';
 import { ProfileNote, WithId } from 'appjusto-types';
@@ -6,7 +7,7 @@ import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorH
 import { initialError } from 'common/components/error/utils';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
 import React from 'react';
-import { MutateFunction, MutationResult } from 'react-query';
+import { MutateFunction } from 'react-query';
 import { t } from 'utils/i18n';
 import { ProfileNoteItem } from './ProfileNoteItem';
 
@@ -19,8 +20,8 @@ interface ProfileNotesProps {
     unknown
   >;
   deleteNote(profileNoteId: string): void;
-  updateResult: MutationResult<void, unknown>;
-  deleteResult: MutationResult<void, unknown>;
+  updateResult: MutationResult;
+  deleteResult: MutationResult;
 }
 
 export const ProfileNotes = ({
