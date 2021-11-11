@@ -15,16 +15,18 @@ export const useCustomMutation = <
   TContext = unknown
 >(
   mutationFn: MutationFunction<TData, TVariables>,
+  noDispatch: boolean = false,
   options?: Omit<UseMutationOptions<TData, TError, TVariables, TContext>, 'mutationFn'>
 ) => {
   const { dispatchAppRequestResult } = useContextAppRequests();
   const { mutate, mutateAsync, isLoading, isSuccess, isError, error } = useMutation(mutationFn, {
     onSuccess: () => {
-      dispatchAppRequestResult({ status: 'success', requestId: Math.random() });
+      if (!noDispatch) dispatchAppRequestResult({ status: 'success', requestId: Math.random() });
     },
     onError: (error) => {
       dispatchAppRequestResult({ status: 'error', requestId: Math.random(), error });
     },
+    ...options,
   });
   return { mutate, mutateAsync, mutationResult: { isLoading, isSuccess, isError, error } };
 };

@@ -51,7 +51,8 @@ export const useOrderChat = (getServerTime: () => Date, orderId: string, counter
         from,
         ...data,
       });
-    }
+    },
+    true
   );
   // side effects
   React.useEffect(() => {

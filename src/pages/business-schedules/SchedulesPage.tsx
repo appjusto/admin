@@ -151,6 +151,7 @@ const SchedulesPage = () => {
     return result;
   };
   const onSubmitHandler = async (event: any) => {
+    event.preventDefault();
     const isValid = schedulesValidation(schedules);
     if (!isValid)
       return dispatchAppRequestResult({
