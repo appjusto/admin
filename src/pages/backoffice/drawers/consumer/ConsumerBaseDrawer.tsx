@@ -14,11 +14,9 @@ import {
 } from '@chakra-ui/react';
 import { useAuthentication } from 'app/api/auth/useAuthentication';
 import { useConsumerUpdateProfile } from 'app/api/consumer/useConsumerUpdateProfile';
-import { FirebaseError } from 'app/api/types';
 import { useContextConsumerProfile } from 'app/state/consumer/context';
+import { useContextAppRequests } from 'app/state/requests/context';
 import { ConsumerProfile } from 'appjusto-types';
-import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
-import { initialError } from 'common/components/error/utils';
 import { getEditableProfile } from 'pages/backoffice/utils';
 import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
 import React from 'react';
@@ -37,6 +35,7 @@ interface BaseDrawerProps {
 
 export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseDrawerProps) => {
   //context
+  const { dispatchAppRequestResult } = useContextAppRequests();
   const queryClient = useQueryClient();
   const { url } = useRouteMatch();
   const { deleteAccount, deleteAccountResult } = useAuthentication();
@@ -50,11 +49,10 @@ export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
     setIsEditingEmail,
   } = useContextConsumerProfile();
   const { updateProfile, updateResult } = useConsumerUpdateProfile(consumer?.id);
-  const { isLoading, isSuccess, isError, error: updateError } = updateResult;
+  const { isLoading } = updateResult;
 
   // state
   const [isDeleting, setIsDeleting] = React.useState(false);
-  const [error, setError] = React.useState(initialError);
 
   // refs
   const submission = React.useRef(0);
@@ -67,8 +65,6 @@ export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
 
   //handlers
   const handleSave = () => {
-    setError(initialError);
-    submission.current += 1;
     /*if (consumer?.situation === 'approved') {
       if (!contextValidation.cpf) {
         return setError({
@@ -91,9 +87,9 @@ export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
 
   const handleDeleteAccount = () => {
     if (!consumer?.id) {
-      setError({
-        status: true,
-        error: null,
+      dispatchAppRequestResult({
+        status: 'error',
+        requestId: Math.random(),
         message: { title: 'Não foi possível encontrar o id deste usuário.' },
       });
     } else {
@@ -103,22 +99,6 @@ export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
   };
 
   // side effects
-  React.useEffect(() => {
-    if (isError) {
-      setError({
-        status: true,
-        error: updateError,
-      });
-    } else if (deleteAccountResult.isError) {
-      const errorMessage = (deleteAccountResult.error as FirebaseError).message;
-      setError({
-        status: true,
-        error: deleteAccountResult.error,
-        message: { title: errorMessage ?? 'Não foi possível acessar o servidor' },
-      });
-    }
-  }, [isError, updateError, deleteAccountResult.isError, deleteAccountResult.error]);
-
   React.useEffect(() => {
     if (deleteAccountResult.isSuccess) onClose();
   }, [deleteAccountResult.isSuccess, onClose]);
@@ -219,13 +199,6 @@ export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
                 </Button>
               </HStack>
             )}
-            <SuccessAndErrorHandler
-              submission={submission.current}
-              isSuccess={isSuccess}
-              isError={error.status}
-              error={error.error}
-              errorMessage={error.message}
-            />
           </DrawerFooter>
         </DrawerContent>
       </DrawerOverlay>

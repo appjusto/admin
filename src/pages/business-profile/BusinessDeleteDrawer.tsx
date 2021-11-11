@@ -14,8 +14,7 @@ import {
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
-import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
-import { initialError } from 'common/components/error/utils';
+import { useContextAppRequests } from 'app/state/requests/context';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import React from 'react';
 import { Redirect } from 'react-router-dom';
@@ -28,36 +27,25 @@ interface BaseDrawerProps {
 
 export const BusinessDeleteDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   //context
+  const { dispatchAppRequestResult } = useContextAppRequests();
   const { isBackofficeUser } = useContextFirebaseUser();
   const { business } = useContextBusiness();
   const { deleteBusinessProfile, deleteResult } = useBusinessProfile();
-  const { isSuccess, isError, error: deleteError, isLoading } = deleteResult;
+  const { isSuccess, isLoading } = deleteResult;
   // state
   const [businessName, setBusinessName] = React.useState('');
-  const [error, setError] = React.useState(initialError);
-  // refs
-  const submission = React.useRef(0);
   //handlers
   const handleDelete = async () => {
-    submission.current += 1;
     if (business?.name && businessName !== business?.name) {
-      return setError({
-        status: true,
-        error: null,
+      return dispatchAppRequestResult({
+        status: 'error',
+        requestId: Math.random(),
         message: { title: 'Favor preencher o nome do restaurante corretamente!' },
       });
     } else {
       await deleteBusinessProfile();
     }
   };
-  // side effects
-  React.useEffect(() => {
-    if (isError)
-      setError({
-        status: true,
-        error: deleteError,
-      });
-  }, [isError, deleteError]);
   //UI
   if (isSuccess) {
     if (!isBackofficeUser) return <Redirect to="/logout" push />;
@@ -123,13 +111,6 @@ export const BusinessDeleteDrawer = ({ onClose, ...props }: BaseDrawerProps) => 
                 </Button>
               </Stack>
             </Box>
-            <SuccessAndErrorHandler
-              submission={submission.current}
-              isSuccess={isSuccess}
-              isError={error.status}
-              error={error.error}
-              errorMessage={error.message}
-            />
           </DrawerBody>
         </DrawerContent>
       </DrawerOverlay>

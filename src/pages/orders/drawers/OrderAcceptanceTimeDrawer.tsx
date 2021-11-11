@@ -13,8 +13,6 @@ import {
 } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useOrdersContext } from 'app/state/order';
-import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
-import { initialError } from 'common/components/error/utils';
 import { ItemsQtdButtons } from 'pages/menu/complements/ItemQtdButtons';
 import React from 'react';
 import { t } from 'utils/i18n';
@@ -28,23 +26,14 @@ export const OrderAcceptanceTimeDrawer = ({ onClose, ...props }: BaseDrawerProps
   //context
   const { business } = useOrdersContext();
   const { updateBusinessProfile, updateResult } = useBusinessProfile();
-  const { isLoading, isSuccess, isError, error: updateError } = updateResult;
-
+  const { isLoading, isSuccess } = updateResult;
   //state
   const [minutes, setMinutes] = React.useState(5);
   const [acceptanceOn, setAcceptanceOn] = React.useState(false);
-  const [error, setError] = React.useState(initialError);
-
-  // refs
-  const submission = React.useRef(0);
-
   // handlers
   const handleSave = async () => {
-    submission.current += 1;
-    setError(initialError);
     await updateBusinessProfile({ orderAcceptanceTime: acceptanceOn ? minutes * 60 : null });
   };
-
   // side effects
   React.useEffect(() => {
     if (business?.orderAcceptanceTime) {
@@ -52,20 +41,9 @@ export const OrderAcceptanceTimeDrawer = ({ onClose, ...props }: BaseDrawerProps
       setMinutes(business?.orderAcceptanceTime / 60);
     }
   }, [business?.orderAcceptanceTime]);
-
   React.useEffect(() => {
     if (isSuccess) onClose();
   }, [isSuccess, onClose]);
-
-  React.useEffect(() => {
-    if (isError) {
-      setError({
-        status: true,
-        error: updateError,
-      });
-    }
-  }, [isError, updateError]);
-
   // UI
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
@@ -118,12 +96,6 @@ export const OrderAcceptanceTimeDrawer = ({ onClose, ...props }: BaseDrawerProps
               </Button>
             </Flex>
           </DrawerFooter>
-          <SuccessAndErrorHandler
-            submission={submission.current}
-            isError={error.status}
-            error={error.error}
-            errorMessage={error.message}
-          />
         </DrawerContent>
       </DrawerOverlay>
     </Drawer>

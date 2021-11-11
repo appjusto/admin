@@ -1,10 +1,9 @@
 import { Box, Button, HStack, Switch, Text, Tooltip } from '@chakra-ui/react';
 import { useManagers } from 'app/api/manager/useManagers';
 import { useContextBusiness } from 'app/state/business/context';
+import { useContextAppRequests } from 'app/state/requests/context';
 import { AdminRole } from 'appjusto-types';
 import { CloseButton } from 'common/components/buttons/CloseButton';
-import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
-import { initialError } from 'common/components/error/utils';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import React from 'react';
 import { t } from 'utils/i18n';
@@ -21,28 +20,21 @@ const memberObj = {
 
 export const AddMembersForm = () => {
   //context
+  const { dispatchAppRequestResult } = useContextAppRequests();
   const { business } = useContextBusiness();
   const { createManager, createResult } = useManagers();
-  const { isLoading, isSuccess, isError, error: createError } = createResult;
-
+  const { isLoading } = createResult;
   // state
   const [members, setMembers] = React.useState<Member[]>([memberObj]);
-  const [error, setError] = React.useState(initialError);
-
-  // refs
-  const submission = React.useRef(0);
-
   // handlers
   const AddMemberFields = () => {
     setMembers((prevState) => [...prevState, memberObj]);
   };
-
   const removeMemberFields = (stateIndex: number) => {
     setMembers((prevState) => {
       return prevState.filter((member, index) => index !== stateIndex);
     });
   };
-
   const updateMember = (stateIndex: number, field: string, value: string | boolean) => {
     setMembers((prevState) => {
       const newState = prevState.map((member, index) => {
@@ -55,18 +47,17 @@ export const AddMembersForm = () => {
       return newState;
     });
   };
-
   const handleSubmit = () => {
     if (!business?.id)
-      return setError({
-        status: true,
-        error: null,
+      return dispatchAppRequestResult({
+        status: 'error',
+        requestId: Math.random(),
       });
     members.forEach(async (member) => {
       if (!member.email)
-        return setError({
-          status: true,
-          error: null,
+        return dispatchAppRequestResult({
+          status: 'error',
+          requestId: Math.random(),
           message: {
             title: 'Ocorreu um erro com um ou mais dos emails informados.',
             description: 'Tenta novamente?',
@@ -74,11 +65,10 @@ export const AddMembersForm = () => {
         });
       let managers = business.managers;
       const userRole: AdminRole = member.isManager ? 'manager' : 'collaborator';
-      submission.current += 1;
       if (managers?.includes(member.email)) {
-        return setError({
-          status: true,
-          error: null,
+        return dispatchAppRequestResult({
+          status: 'error',
+          requestId: Math.random(),
           message: {
             title: 'Usuário já existe.',
             description: 'O e-mail informado já foi cadastrado para um usuário.',
@@ -92,17 +82,6 @@ export const AddMembersForm = () => {
     });
     setMembers([memberObj]);
   };
-
-  // side effects
-  React.useEffect(() => {
-    if (isError)
-      setError({
-        status: true,
-        error: createError,
-        message: { title: 'Não foi possível adicionar os colaboradores.' },
-      });
-  }, [isError, createError]);
-
   // UI
   return (
     <Box mt="8" maxW={{ base: '100vw', lg: '700px' }}>
@@ -169,13 +148,6 @@ export const AddMembersForm = () => {
           </Button>
         </Box>
       </form>
-      <SuccessAndErrorHandler
-        submission={submission.current}
-        isSuccess={isSuccess}
-        isError={error.status}
-        error={error.error}
-        errorMessage={error.message}
-      />
     </Box>
   );
 };

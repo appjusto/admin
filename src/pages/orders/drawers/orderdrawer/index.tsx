@@ -3,10 +3,9 @@ import { useGetOutsourceDelivery } from 'app/api/order/useGetOutsourceDelivery';
 import { useOrder } from 'app/api/order/useOrder';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextManagerProfile } from 'app/state/manager/context';
+import { useContextAppRequests } from 'app/state/requests/context';
 import { CancelOrderPayload, Issue, WithId } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
-import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
-import { initialError } from 'common/components/error/utils';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import React from 'react';
 import { useParams } from 'react-router-dom';
@@ -33,14 +32,13 @@ type Params = {
 
 export const OrderDrawer = (props: Props) => {
   //context
+  const { dispatchAppRequestResult } = useContextAppRequests();
   const query = useQuery();
   const { orderId } = useParams<Params>();
   const { business } = useContextBusiness();
   const {
     order,
     cancelOrder,
-    //updateOrder,
-    updateResult,
     cancelResult,
     orderIssues,
     orderCancellation,
@@ -52,7 +50,6 @@ export const OrderDrawer = (props: Props) => {
   // state
   const [isCanceling, setIsCanceling] = React.useState(false);
   const [isOutsourceDelivery, setIsOutsourceDelivery] = React.useState<boolean>();
-  const [error, setError] = React.useState(initialError);
   // refs
   const submission = React.useRef(0);
   const printComponent = React.useRef<HTMLDivElement>(null);
@@ -65,16 +62,17 @@ export const OrderDrawer = (props: Props) => {
   const handleCancel = async (issue: WithId<Issue>) => {
     submission.current += 1;
     if (!manager?.id || !manager?.name) {
-      return setError({
-        status: true,
+      return dispatchAppRequestResult({
+        status: 'error',
+        requestId: Math.random(),
         error: {
-          error: 'Order cancellation incomplete. There is no manager:',
-          id: manager?.id,
-          name: manager?.name,
+          code: 'order-cancellation-incomplete',
+          message: `manager - id:${manager?.id}, name: ${manager?.name}`,
         },
         message: {
           title: 'Não foi possível cancelar o pedido.',
-          description: 'Verifica a conexão com a internet?',
+          description:
+            'As permissões do seu usuário não foram encontradas. Verifica a conexão com a internet?',
         },
       });
     }
@@ -95,19 +93,6 @@ export const OrderDrawer = (props: Props) => {
     if (order?.dispatchingStatus === 'outsourced') setIsOutsourceDelivery(true);
     if (query.get('outsource')) setIsOutsourceDelivery(true);
   }, [query, isOutsourceDelivery, order]);
-  React.useEffect(() => {
-    if (updateResult.isError) {
-      setError({
-        status: true,
-        error: updateResult.error,
-      });
-    } else if (cancelResult.isError) {
-      setError({
-        status: true,
-        error: cancelResult.error,
-      });
-    }
-  }, [updateResult.isError, updateResult.error, cancelResult.isError, cancelResult.error]);
   // UI
   return (
     <OrderBaseDrawer
@@ -236,12 +221,6 @@ export const OrderDrawer = (props: Props) => {
         </Box>
         <OrderToPrinting businessName={business?.name} order={order} ref={printComponent} />
       </Box>
-      <SuccessAndErrorHandler
-        submission={submission.current}
-        isError={error.status}
-        error={error.error}
-        errorMessage={error.message}
-      />
     </OrderBaseDrawer>
   );
 };

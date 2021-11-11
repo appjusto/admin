@@ -16,8 +16,6 @@ import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile'
 import { useBusinessProfileValidation } from 'app/api/business/profile/useBusinessProfileValidation';
 import { useContextBusiness } from 'app/state/business/context';
 import { AlertWarning } from 'common/components/AlertWarning';
-import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
-import { initialError } from 'common/components/error/utils';
 import SharingBar from 'common/components/landing/share/SharingBar';
 import submittedImg from 'common/img/submitted.svg';
 import React from 'react';
@@ -77,33 +75,23 @@ export const RegistrationStatus = () => {
   // context
   const { business } = useContextBusiness();
   const { updateBusinessProfile, updateResult } = useBusinessProfile();
-  const { isLoading, isError, error: updateError } = updateResult;
-
+  const { isLoading } = updateResult;
   const businessProfileValidation = useBusinessProfileValidation();
-
   // state
   const [isFetching, setIsFetching] = React.useState(true);
   const [validation, setValidation] = React.useState(initialState);
-  const [error, setError] = React.useState(initialError);
   const [rejection, setRejection] = React.useState<string[]>([]);
   const isValid = validation.filter((data) => data.status === false).length === 0;
-
-  // refs
-  const submission = React.useRef(0);
-
   // helpers
   const pendencies = validation.filter((item) => item.status === false).length;
-
   // handlers
   const handleSubmitRegistration = () => {
     if (isValid) {
-      submission.current += 1;
       updateBusinessProfile({
         situation: 'submitted',
       });
     }
   };
-
   // side effects
   React.useEffect(() => {
     setValidation((prevState) => {
@@ -129,21 +117,11 @@ export const RegistrationStatus = () => {
     });
     setIsFetching(false);
   }, [businessProfileValidation]);
-
   React.useEffect(() => {
     if (business?.situation === 'rejected') {
       setRejection(business?.profileIssues ?? []);
     }
   }, [business]);
-
-  React.useEffect(() => {
-    if (isError)
-      setError({
-        status: true,
-        error: updateError,
-      });
-  }, [isError, updateError]);
-
   // UI
   if (isFetching) {
     return <Spinner size="sm" />;
@@ -190,12 +168,6 @@ export const RegistrationStatus = () => {
         >
           {t('Enviar cadastro para aprovação')}
         </Button>
-        <SuccessAndErrorHandler
-          submission={submission.current}
-          isError={error.status}
-          error={error.error}
-          errorMessage={error.message}
-        />
         <Box>
           <Text mt="20" fontSize="24px" lineHeight="30px" fontWeight="700">
             {t('Divulgue esse movimento')}
@@ -308,12 +280,6 @@ export const RegistrationStatus = () => {
         >
           {t('Reenviar cadastro para aprovação')}
         </Button>
-        <SuccessAndErrorHandler
-          submission={submission.current}
-          isError={error.status}
-          error={error.error}
-          errorMessage={error.message}
-        />
       </>
     );
   }

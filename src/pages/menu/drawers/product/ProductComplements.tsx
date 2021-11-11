@@ -11,8 +11,6 @@ import {
 } from '@chakra-ui/react';
 import { useContextMenu } from 'app/state/menu/context';
 import { AlertWarning } from 'common/components/AlertWarning';
-import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
-import { initialError } from 'common/components/error/utils';
 import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import CustomRadio from 'common/components/form/CustomRadio';
 import { useProductContext } from 'pages/menu/context/ProductContext';
@@ -35,9 +33,6 @@ export const ProductComplements = () => {
   //state
   const [hasComplements, setHasComplements] = React.useState(false);
   const [connectedGroups, setConnectedGroups] = React.useState<string[]>([]);
-  const [error, setError] = React.useState(initialError);
-  // refs
-  const submission = React.useRef(0);
   // helpers
   const complementsExists = complementsGroupsWithItems.length > 0;
   // handlers
@@ -46,7 +41,6 @@ export const ProductComplements = () => {
     setHasComplements(value === '1' ? false : true);
   };
   const handleComplementsGroupsConnection = () => {
-    submission.current += 1;
     connectComplmentsGroupToProduct({ groupsIds: connectedGroups });
   };
   // side effects
@@ -55,22 +49,11 @@ export const ProductComplements = () => {
       setHasComplements(true);
     }
   }, [product?.complementsEnabled]);
-
   React.useEffect(() => {
     if (product?.complementsGroupsIds) {
       setConnectedGroups(product?.complementsGroupsIds);
     }
   }, [product?.complementsGroupsIds]);
-
-  React.useEffect(() => {
-    if (connectionResult.isError) {
-      setError({
-        status: true,
-        error: connectionResult.error,
-      });
-    }
-  }, [connectionResult.isError, connectionResult.error]);
-
   // UI
   if (productId === 'new') {
     const urlRedirect = url.split('/complements')[0];
@@ -155,12 +138,6 @@ export const ProductComplements = () => {
           </Button>
         </Box>
       )}
-      <SuccessAndErrorHandler
-        submission={submission.current}
-        isSuccess={connectionResult.isSuccess}
-        isError={error.status}
-        error={error.error}
-      />
     </Box>
   );
 };

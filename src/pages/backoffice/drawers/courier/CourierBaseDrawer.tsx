@@ -11,15 +11,13 @@ import {
   Flex,
   HStack,
   Icon,
-  Text,
+  Text
 } from '@chakra-ui/react';
 import { useAuthentication } from 'app/api/auth/useAuthentication';
 import { useCourierUpdateProfile } from 'app/api/courier/useCourierUpdateProfile';
-import { FirebaseError } from 'app/api/types';
 import { useContextCourierProfile } from 'app/state/courier/context';
+import { useContextAppRequests } from 'app/state/requests/context';
 import { CourierProfile } from 'appjusto-types';
-import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
-import { initialError } from 'common/components/error/utils';
 import { getEditableProfile, modePTOptions, situationPTOptions } from 'pages/backoffice/utils';
 import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
 import React from 'react';
@@ -39,6 +37,7 @@ interface BaseDrawerProps {
 
 export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDrawerProps) => {
   //context
+  const { dispatchAppRequestResult } = useContextAppRequests();
   const queryClient = useQueryClient();
   const { url } = useRouteMatch();
   const { deleteAccount, deleteAccountResult } = useAuthentication();
@@ -53,14 +52,10 @@ export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDr
     setDocumentFiles,
   } = useContextCourierProfile();
   const { updateProfile, updateResult } = useCourierUpdateProfile(courier?.id);
-  const { isLoading, isSuccess, isError, error: updateError } = updateResult;
+  const { isLoading } = updateResult;
 
   // state
   const [isDeleting, setIsDeleting] = React.useState(false);
-  const [error, setError] = React.useState(initialError);
-
-  // refs
-  const submission = React.useRef(0);
 
   // helpers
   const situationAlert = courier?.situation === 'rejected' || courier?.situation === 'invalid';
@@ -71,33 +66,31 @@ export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDr
 
   //handlers
   const handleSave = () => {
-    setError(initialError);
-    submission.current += 1;
     if (courier?.situation === 'approved') {
       if (!contextValidation.cpf)
-        return setError({
-          status: true,
-          error: null,
+        return dispatchAppRequestResult({
+          status: 'error',
+          requestId: Math.random(),
           message: {
             title: contextValidation.message ?? 'O CPF não foi informado ou não é válido.',
           },
         });
       if (!contextValidation.cnpj)
-        return setError({
-          status: true,
-          error: null,
+        return dispatchAppRequestResult({
+          status: 'error',
+          requestId: Math.random(),
           message: { title: contextValidation.message ?? 'O CNPJ informado não é válido.' },
         });
       if (!contextValidation.agency)
-        return setError({
-          status: true,
-          error: null,
+        return dispatchAppRequestResult({
+          status: 'error',
+          requestId: Math.random(),
           message: { title: contextValidation.message ?? 'A agência informada não é válida.' },
         });
       if (!contextValidation.account)
-        return setError({
-          status: true,
-          error: null,
+        return dispatchAppRequestResult({
+          status: 'error',
+          requestId: Math.random(),
           message: { title: contextValidation.message ?? 'A conta informada não é válida.' },
         });
     }
@@ -114,34 +107,17 @@ export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDr
 
   const handleDeleteAccount = () => {
     if (!courier?.id) {
-      setError({
-        status: true,
-        error: null,
+      dispatchAppRequestResult({
+        status: 'error',
+        requestId: Math.random();
         message: { title: 'Não foi possível encontrar o id deste usuário.' },
       });
     } else {
-      submission.current += 1;
       deleteAccount({ accountId: courier.id });
     }
   };
 
   // side effects
-  React.useEffect(() => {
-    if (isError) {
-      setError({
-        status: true,
-        error: updateError,
-      });
-    } else if (deleteAccountResult.isError) {
-      const errorMessage = (deleteAccountResult.error as FirebaseError).message;
-      setError({
-        status: true,
-        error: deleteAccountResult.error,
-        message: { title: errorMessage ?? 'Não foi possível acessar o servidor' },
-      });
-    }
-  }, [isError, updateError, deleteAccountResult.isError, deleteAccountResult.error]);
-
   React.useEffect(() => {
     if (deleteAccountResult.isSuccess) onClose();
   }, [deleteAccountResult.isSuccess, onClose]);
@@ -285,13 +261,6 @@ export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDr
                 </Button>
               </HStack>
             )}
-            <SuccessAndErrorHandler
-              submission={submission.current}
-              isSuccess={isSuccess}
-              isError={error.status}
-              error={error.error}
-              errorMessage={error.message}
-            />
           </DrawerFooter>
         </DrawerContent>
       </DrawerOverlay>

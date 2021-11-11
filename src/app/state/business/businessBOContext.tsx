@@ -10,14 +10,13 @@ import {
   MarketplaceAccountInfo,
   WithId,
 } from 'appjusto-types';
-import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
-import { initialError } from 'common/components/error/utils';
 import { BackofficeProfileValidation } from 'common/types';
 import { isEmpty, isEqual } from 'lodash';
 import React, { Dispatch, SetStateAction } from 'react';
 import { UseMutateAsyncFunction } from 'react-query';
 import { useParams } from 'react-router';
 import { useContextManagerProfile } from '../manager/context';
+import { useContextAppRequests } from '../requests/context';
 import { businessBOReducer, businessBOState } from './businessBOReducer';
 import { useContextBusiness } from './context';
 
@@ -55,6 +54,7 @@ type Params = {
 
 export const BusinessBOProvider = ({ children }: Props) => {
   // context
+  const { dispatchAppRequestResult } = useContextAppRequests();
   const { businessId } = useParams<Params>();
   const { setBusinessId, business } = useContextBusiness();
   const { manager, setManagerEmail } = useContextManagerProfile();
@@ -72,16 +72,12 @@ export const BusinessBOProvider = ({ children }: Props) => {
   const [state, dispatch] = React.useReducer(businessBOReducer, {} as businessBOState);
   //const [isLoading, setIsLoading] = React.useState(false);
   //const [isSuccess, setIsSuccess] = React.useState(false);
-  const [error, setError] = React.useState(initialError);
   const [contextValidation, setContextValidation] = React.useState<BackofficeProfileValidation>({
     cpf: true,
     phone: true,
     agency: true,
     account: true,
   });
-
-  // refs
-  const submission = React.useRef(0);
 
   // handlers
   const handleBusinessStatusChange = React.useCallback((key: string, value: any) => {
@@ -102,33 +98,31 @@ export const BusinessBOProvider = ({ children }: Props) => {
   };
 
   const handleSave = () => {
-    submission.current += 1;
-    setError(initialError);
     if (business?.situation === 'approved') {
       const { cpf, phone, agency, account } = contextValidation;
       if (!cpf)
-        return setError({
-          status: true,
-          error: null,
+        return dispatchAppRequestResult({
+          status: 'error',
+          requestId: Math.random(),
           message: { title: 'O CPF informado não é válido' },
         });
       if (!phone)
-        return setError({
-          status: true,
-          error: null,
+        return dispatchAppRequestResult({
+          status: 'error',
+          requestId: Math.random(),
           message: { title: 'O cecular informado não é válido' },
         });
       if (!agency)
-        return setError({
-          status: true,
-          error: null,
+        return dispatchAppRequestResult({
+          status: 'error',
+          requestId: Math.random(),
           message: { title: 'A agência informada não é válida' },
         });
       if (!account)
-        return setError({
-          status: true,
-          error: null,
-          message: { title: 'A agência informada não é válida' },
+        return dispatchAppRequestResult({
+          status: 'error',
+          requestId: Math.random(),
+          message: { title: 'A conta informada não é válida' },
         });
     }
     let businessChanges = null;
@@ -175,21 +169,6 @@ export const BusinessBOProvider = ({ children }: Props) => {
       setContextValidation((prev) => ({ ...prev, cpf: cpfutils.isValid(state.manager.cpf!) }));
   }, [state?.manager?.phone, state?.manager?.cpf]);
 
-  React.useEffect(() => {
-    if (isError) {
-      setError({
-        status: true,
-        error: updateError,
-        message: { title: 'Não foi possível acessar o servidor.' },
-      });
-    } else {
-      setError({
-        status: false,
-        error: null,
-      });
-    }
-  }, [isError, updateError]);
-
   // UI
   return (
     <BusinessBOContext.Provider
@@ -210,13 +189,6 @@ export const BusinessBOProvider = ({ children }: Props) => {
       }}
     >
       {children}
-      <SuccessAndErrorHandler
-        submission={submission.current}
-        isSuccess={isSuccess}
-        isError={error.status}
-        error={error.error}
-        errorMessage={error.message}
-      />
     </BusinessBOContext.Provider>
   );
 };

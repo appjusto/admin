@@ -13,12 +13,10 @@ import {
   Tr,
 } from '@chakra-ui/react';
 import { useReleaseCourier } from 'app/api/courier/useReleaseCourier';
-import { FirebaseError } from 'app/api/types';
 import { useContextCourierProfile } from 'app/state/courier/context';
+import { useContextAppRequests } from 'app/state/requests/context';
 import { Order, WithId } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
-import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
-import { initialError } from 'common/components/error/utils';
 import { CustomDateFilter } from 'common/components/form/input/CustomDateFilter';
 import React from 'react';
 import { formatCurrency } from 'utils/formatters';
@@ -55,6 +53,7 @@ const CourierOrdersTableItem = ({ order }: ItemPros) => {
 
 export const CourierOrders = () => {
   // context
+  const { dispatchAppRequestResult } = useContextAppRequests();
   const { releaseCourier, releaseCourierResult } = useReleaseCourier();
   const {
     courier,
@@ -68,9 +67,6 @@ export const CourierOrders = () => {
   // state
   const [release, setRelease] = React.useState(false);
   const [releaseComment, setReleaseComment] = React.useState('');
-  const [error, setError] = React.useState(initialError);
-  // refs
-  const submission = React.useRef(0);
   // helpers
   const totalOrders = orders?.length ?? '0';
   const orderType = currentOrder?.type
@@ -81,11 +77,10 @@ export const CourierOrders = () => {
   // handlers
   const handleReleaseCourier = () => {
     if (!courier?.id) return;
-    submission.current += 1;
     if (!releaseComment) {
-      return setError({
-        status: true,
-        error: null,
+      return dispatchAppRequestResult({
+        status: 'error',
+        requestId: Math.random(),
         message: { title: 'Informe o motivo da liberação' },
       });
     }
@@ -95,16 +90,6 @@ export const CourierOrders = () => {
   React.useEffect(() => {
     setReleaseComment('');
   }, [release]);
-  React.useEffect(() => {
-    if (releaseCourierResult.isError) {
-      const errorMessage = (releaseCourierResult.error as FirebaseError).message;
-      setError({
-        status: true,
-        error: releaseCourierResult.error,
-        message: { title: errorMessage ?? 'Não foi possível acessar o servidor' },
-      });
-    }
-  }, [releaseCourierResult.isError, releaseCourierResult.error]);
   // UI
   return (
     <Box>
@@ -223,13 +208,6 @@ export const CourierOrders = () => {
           </Table>
         </Box>
       )}
-      <SuccessAndErrorHandler
-        submission={submission.current}
-        isSuccess={releaseCourierResult.isSuccess}
-        isError={error.status}
-        error={error.error}
-        errorMessage={error.message}
-      />
     </Box>
   );
 };

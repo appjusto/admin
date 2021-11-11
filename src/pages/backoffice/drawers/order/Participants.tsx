@@ -2,11 +2,10 @@ import { Box, Flex, HStack, Radio, RadioGroup, Text } from '@chakra-ui/react';
 import { useOrderCourierRemoval } from 'app/api/order/useOrderCourierRemoval';
 import { useOrderDeliveryInfos } from 'app/api/order/useOrderDeliveryInfos';
 import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';
+import { useContextAppRequests } from 'app/state/requests/context';
 import { useContextServerTime } from 'app/state/server-time';
 import { CourierMode, Issue, IssueType, Order, WithId } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
-import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
-import { initialError } from 'common/components/error/utils';
 import { Textarea } from 'common/components/form/input/Textarea';
 import firebase from 'firebase/app';
 import { modePTOptions } from 'pages/backoffice/utils';
@@ -214,26 +213,22 @@ const dropsP2pIssues = ['courier-drops-p2p-delivery'] as IssueType[];
 
 export const Participants = ({ order }: ParticipantsProps) => {
   // context
+  const { dispatchAppRequestResult } = useContextAppRequests();
   const { getServerTime } = useContextServerTime();
   const { isOrderActive } = useOrderDeliveryInfos(getServerTime, order);
   const issues = useIssuesByType(order?.type === 'food' ? dropsFoodIssues : dropsP2pIssues);
   const { courierManualRemoval, removalResult } = useOrderCourierRemoval();
-  // state
-  const [error, setError] = React.useState(initialError);
-  //refs
-  const submission = React.useRef(0);
   // handlers
   const removeCourierFromOrder = (issue?: WithId<Issue>, comment?: string) => {
-    submission.current += 1;
     if (!order?.id || !order?.courier?.id)
-      return setError({
-        status: true,
-        error: null,
+      return dispatchAppRequestResult({
+        status: 'error',
+        requestId: Math.random(),
       });
     if (!issue)
-      return setError({
-        status: true,
-        error: null,
+      return dispatchAppRequestResult({
+        status: 'error',
+        requestId: Math.random(),
         message: {
           title: 'Informações incompletas',
           description: 'É preciso irformar o motivo da remoção.',
@@ -241,16 +236,6 @@ export const Participants = ({ order }: ParticipantsProps) => {
       });
     courierManualRemoval({ orderId: order.id, issue, comment });
   };
-  // side effects
-  React.useEffect(() => {
-    if (removalResult.isError) {
-      setError({
-        status: true,
-        error: removalResult.error,
-        message: { title: 'Operação negada!', description: `${removalResult.error}` },
-      });
-    }
-  }, [removalResult.isError, removalResult.error]);
   // UI
   return (
     <Box>
@@ -327,13 +312,6 @@ export const Participants = ({ order }: ParticipantsProps) => {
           </Text>
         </>
       )}
-      <SuccessAndErrorHandler
-        submission={submission.current}
-        isSuccess={removalResult.isSuccess}
-        isError={error.status}
-        error={error.error}
-        errorMessage={error.message}
-      />
     </Box>
   );
 };

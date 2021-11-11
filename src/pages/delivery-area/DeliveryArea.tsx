@@ -3,7 +3,6 @@ import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile'
 import { getConfig } from 'app/api/config';
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusiness } from 'app/state/business/context';
-import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
 import CustomRadio from 'common/components/form/CustomRadio';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import { CustomNumberInput as NumberInput } from 'common/components/form/input/CustomNumberInput';
@@ -56,7 +55,7 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
   // queries & mutations
   // business profile
   const { updateBusinessProfile, updateResult: result } = useBusinessProfile();
-  const { isLoading, isSuccess, isError, error } = result;
+  const { isLoading, isSuccess } = result;
   // cep
   const { data: cepResult } = useQuery(['cep', cep], () => fetchCEPInfo(cep), {
     enabled: cep.length === 8,
@@ -70,13 +69,11 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
   const center = coordsFromLatLnt(geocodingResult ?? SaoPauloCoords);
 
   // refs
-  const submission = React.useRef(0);
   const cepRef = React.useRef<HTMLInputElement>(null);
   const numberRef = React.useRef<HTMLInputElement>(null);
 
   // handlers
   const onSubmitHandler = async () => {
-    submission.current += 1;
     await updateBusinessProfile({
       businessAddress: {
         cep,
@@ -314,12 +311,6 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
         </RadioGroup>
         <PageFooter onboarding={onboarding} redirect={redirect} isLoading={isLoading} />
       </form>
-      <SuccessAndErrorHandler
-        submission={submission.current}
-        isSuccess={isSuccess && !onboarding}
-        isError={isError}
-        error={error}
-      />
     </Box>
   );
 };

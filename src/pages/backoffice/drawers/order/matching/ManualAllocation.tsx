@@ -2,8 +2,6 @@ import { Box, HStack, Text } from '@chakra-ui/react';
 import { useCourierSearch } from 'app/api/courier/useCourierSearch';
 import { DispatchingStatus } from 'appjusto-types/order/dispatching';
 import { AlertSuccess } from 'common/components/AlertSuccess';
-import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
-import { initialError } from 'common/components/error/utils';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import React from 'react';
 import { t } from 'utils/i18n';
@@ -15,24 +13,14 @@ interface ManualAllocationProps {
   dispatchingStatus?: DispatchingStatus;
 }
 
-const initialSub = 0;
-
 export const ManualAllocation = ({ orderId, dispatchingStatus }: ManualAllocationProps) => {
   // states
   const [searchId, setSearchId] = React.useState('');
   const [searchName, setSearchName] = React.useState('');
-  const [error, setError] = React.useState(initialError);
   // search
   const couriers = useCourierSearch(searchId, searchName);
-  // refs
-  const submission = React.useRef(initialSub);
   // handlers
   const handleAllocation = (courierId: string) => {
-    submission.current += 1;
-    setError({
-      status: false,
-      error: null,
-    });
     //courierManualAllocation(courierId);
   };
   // side effects
@@ -92,11 +80,6 @@ export const ManualAllocation = ({ orderId, dispatchingStatus }: ManualAllocatio
           isLoading={false}
         />
       )}
-      <SuccessAndErrorHandler
-        submission={submission.current}
-        isError={error.status}
-        errorMessage={error.message}
-      />
     </Box>
   );
 };

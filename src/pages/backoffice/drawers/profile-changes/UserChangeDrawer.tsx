@@ -14,8 +14,6 @@ import {
 import * as cpfutils from '@fnando/cpf';
 import { useFetchUserData } from 'app/api/users/useFetchUserData';
 import { useObserveUserChanges } from 'app/api/users/useObserveUserChanges';
-import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
-import { initialError } from 'common/components/error/utils';
 import { phoneFormatter } from 'common/components/form/input/pattern-input/formatters';
 import { situationPTOptions } from 'pages/backoffice/utils';
 import React from 'react';
@@ -43,28 +41,15 @@ export const UserChangeDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   //context
   const { changesId } = useParams<Params>();
   const { changes, updateChange, updateChangeResult } = useObserveUserChanges(changesId);
-  const { isLoading, isSuccess, isError, error: updateError } = updateChangeResult;
+  const { isLoading } = updateChangeResult;
   const user = useFetchUserData(changes?.accountId, changes?.userType);
-  // state
-  const [error, setError] = React.useState(initialError);
   // refs
-  const submission = React.useRef(0);
   const actionType = React.useRef<'approved' | 'rejected'>();
   // handlers
   const updateChangesSituation = (situation: 'approved' | 'rejected') => {
-    submission.current += 1;
     actionType.current = situation;
     return updateChange({ situation });
   };
-  // side effects
-  React.useEffect(() => {
-    if (isError) {
-      setError({
-        status: true,
-        error: updateError,
-      });
-    }
-  }, [isError, updateError]);
   //UI
   if (changes === undefined)
     return (
@@ -256,13 +241,6 @@ export const UserChangeDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 {t('Rejeitar')}
               </Button>
             </HStack>
-            <SuccessAndErrorHandler
-              submission={submission.current}
-              isSuccess={isSuccess}
-              isError={error.status}
-              error={error.error}
-              errorMessage={error.message}
-            />
           </DrawerFooter>
         </DrawerContent>
       </DrawerOverlay>
