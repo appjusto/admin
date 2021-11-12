@@ -13,7 +13,6 @@ import {
   Textarea,
   useToast,
 } from '@chakra-ui/react';
-import * as Sentry from '@sentry/react';
 import { useUpdateChatMessage } from 'app/api/business/chat/useUpdateChatMessage';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { getUnreadChatMessages } from 'app/api/chat/utils';
@@ -47,7 +46,6 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
     orderId,
     counterpartId
   );
-  const { isLoading, isError, error } = sendMessageResult;
   const toast = useToast();
   // state
   const [dateTime, setDateTime] = React.useState('');
@@ -116,18 +114,6 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
       messagesBox.current.scroll({ top: messagesBox.current.scrollHeight, behavior: 'smooth' });
     }
   }, [chat, orderId, counterpartId, updateChatMessage]);
-  React.useEffect(() => {
-    if (isError) {
-      Sentry.captureException(error);
-      toast({
-        title: 'Não foi possível acessar o servidor.',
-        description: 'Tenta novamente?',
-        status: 'error',
-        duration: 9000,
-        isClosable: true,
-      });
-    }
-  }, [isError, error, toast]);
   //UI
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
@@ -202,7 +188,7 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
                 top="4"
                 right="16"
                 onClick={sendMessageHandler}
-                isLoading={isLoading}
+                isLoading={sendMessageResult.isLoading}
                 loadingText={t('Enviando...')}
                 zIndex="9999"
                 isDisabled={!isActive}

@@ -52,7 +52,7 @@ export const useOrderChat = (getServerTime: () => Date, orderId: string, counter
         ...data,
       });
     },
-    true
+    false
   );
   // side effects
   React.useEffect(() => {
@@ -109,7 +109,6 @@ export const useOrderChat = (getServerTime: () => Date, orderId: string, counter
           : (order.updatedOn as firebase.firestore.Timestamp).toMillis();
       const now = getServerTime().getTime();
       const elapsedTime = getTimeUntilNow(now, baseTime, false);
-      console.log('elapsedTime', elapsedTime);
       if (elapsedTime < 60) setIsActive(true);
       else setIsActive(false);
     } else setIsActive(false);

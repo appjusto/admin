@@ -20,17 +20,16 @@ export const useAuthentication = () => {
     async (data: LoginData) => {
       if (data.password) return api.auth().signInWithEmailAndPassword(data.email, data.password);
       else return api.auth().sendSignInLinkToEmail(data.email);
-    }
+    },
+    false
   );
   const {
     mutateAsync: sendSignInLinkToEmail,
     mutationResult: sendingLinkResult,
-  } = useCustomMutation(async (email: string) => api.auth().sendSignInLinkToEmail(email));
-  const {
-    mutateAsync: signInWithEmailLink,
-    mutationResult: signInResult,
-  } = useCustomMutation(async (data: SignInData) =>
-    api.auth().signInWithEmailLink(data.email, data.link)
+  } = useCustomMutation(async (email: string) => api.auth().sendSignInLinkToEmail(email), false);
+  const { mutateAsync: signInWithEmailLink, mutationResult: signInResult } = useCustomMutation(
+    async (data: SignInData) => api.auth().signInWithEmailLink(data.email, data.link),
+    false
   );
   const updateUsersPassword = (password: string, currentPassword?: string) =>
     api.auth().updateUsersPassword(password, currentPassword);
