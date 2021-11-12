@@ -156,7 +156,7 @@ const SchedulesPage = () => {
     if (!isValid)
       return dispatchAppRequestResult({
         status: 'error',
-        requestId: Math.random(),
+        requestId: 'SchedulesPage-valid',
         message: { title: 'Alguns horários não estão corretos.' },
       });
     submission.current += 1;

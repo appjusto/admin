@@ -66,7 +66,7 @@ export const AgentProfile = () => {
     if (!isCPFValid()) {
       dispatchAppRequestResult({
         status: 'error',
-        requestId: Math.random(),
+        requestId: 'agent-valid-cpf',
         message: { title: 'O CPF informado não é válido.' },
       });
       return cpfRef?.current?.focus();
@@ -74,7 +74,7 @@ export const AgentProfile = () => {
     if (phoneNumber.length < 11) {
       dispatchAppRequestResult({
         status: 'error',
-        requestId: Math.random(),
+        requestId: 'agent-valid-phone',
         message: { title: 'O celular informado não é válido.' },
       });
       return phoneNumberRef?.current?.focus();
@@ -83,7 +83,7 @@ export const AgentProfile = () => {
       if (passwd !== passwdConfirm) {
         dispatchAppRequestResult({
           status: 'error',
-          requestId: Math.random(),
+          requestId: 'agent-valid-pass',
           message: { title: 'As senhas informadas não são iguais.' },
         });
         return passwdRef?.current?.focus();
@@ -91,7 +91,7 @@ export const AgentProfile = () => {
       if (!passwdIsValid) {
         dispatchAppRequestResult({
           status: 'error',
-          requestId: Math.random(),
+          requestId: 'agent-valid-password',
           message: { title: 'A senha informada não é válida.' },
         });
         return passwdRef?.current?.focus();

@@ -39,7 +39,7 @@ export const BusinessDeleteDrawer = ({ onClose, ...props }: BaseDrawerProps) => 
     if (business?.name && businessName !== business?.name) {
       return dispatchAppRequestResult({
         status: 'error',
-        requestId: Math.random(),
+        requestId: 'BusinessDeleteDrawer-valid',
         message: { title: 'Favor preencher o nome do restaurante corretamente!' },
       });
     } else {

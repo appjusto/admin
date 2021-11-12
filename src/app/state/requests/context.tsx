@@ -9,7 +9,7 @@ type ErrorMessage = { title: string; description?: string };
 
 export interface AppRequestResult {
   status: 'success' | 'error';
-  requestId: number;
+  requestId: string;
   error?: unknown;
   message?: ErrorMessage;
 }
@@ -45,22 +45,22 @@ const getErrorMessage = (errorMessage?: ErrorMessage, message?: string): ErrorMe
 
 export const AppRequestsProvider = ({ children }: Props) => {
   // state
-  const [requestId, setRequestId] = React.useState<number>();
+  const [requestId, setRequestId] = React.useState<string>();
   // handlers
   const toast = useToast();
   const dispatchAppRequestResult = React.useCallback(
     (result: AppRequestResult) => {
       if (result.requestId === requestId) return;
-      const idString = result.requestId.toString();
       if (result.status === 'error') {
-        if (result.error && !toast.isActive(idString)) Sentry.captureException(result.error);
+        if (result.error && !toast.isActive(result.requestId))
+          Sentry.captureException(result.error);
         const errorMessage = getErrorMessage(
           result.message,
           result.error ? (result.error as FirebaseError).message : undefined
         );
-        if (!toast.isActive(idString))
+        if (!toast.isActive(result.requestId))
           toast({
-            id: idString,
+            id: result.requestId,
             duration: 8000,
             render: () => (
               <CustomToast
@@ -70,9 +70,9 @@ export const AppRequestsProvider = ({ children }: Props) => {
             ),
           });
       } else if (result.status === 'success') {
-        if (!toast.isActive(idString))
+        if (!toast.isActive(result.requestId))
           toast({
-            id: idString,
+            id: result.requestId,
             duration: 4000,
             render: () => <CustomToast type="success" message={result.message ?? initSuccessMsg} />,
           });
@@ -81,6 +81,12 @@ export const AppRequestsProvider = ({ children }: Props) => {
     },
     [toast, requestId]
   );
+  // side effects
+  React.useEffect(() => {
+    if (!requestId) return;
+    const timeOut = setTimeout(() => setRequestId(undefined), 4000);
+    return () => clearTimeout(timeOut);
+  }, [requestId]);
   // provider
   return (
     <AppRequestsContext.Provider value={{ dispatchAppRequestResult }}>

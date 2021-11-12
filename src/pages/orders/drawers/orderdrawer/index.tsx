@@ -64,7 +64,7 @@ export const OrderDrawer = (props: Props) => {
     if (!manager?.id || !manager?.name) {
       return dispatchAppRequestResult({
         status: 'error',
-        requestId: Math.random(),
+        requestId: 'OrderDrawer-valid',
         error: {
           code: 'order-cancellation-incomplete',
           message: `manager - id:${manager?.id}, name: ${manager?.name}`,

@@ -25,10 +25,10 @@ export const useCustomMutation = <
     mutationFn,
     {
       onSuccess: () => {
-        if (dispatching) dispatchAppRequestResult({ status: 'success', requestId: Math.random() });
+        if (dispatching) dispatchAppRequestResult({ status: 'success', requestId: fnName });
       },
       onError: (error) => {
-        dispatchAppRequestResult({ status: 'error', requestId: Math.random(), error });
+        dispatchAppRequestResult({ status: 'error', requestId: fnName, error });
       },
       ...options,
     }

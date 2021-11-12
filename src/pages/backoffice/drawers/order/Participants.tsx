@@ -223,12 +223,12 @@ export const Participants = ({ order }: ParticipantsProps) => {
     if (!order?.id || !order?.courier?.id)
       return dispatchAppRequestResult({
         status: 'error',
-        requestId: Math.random(),
+        requestId: 'Participants-valid',
       });
     if (!issue)
       return dispatchAppRequestResult({
         status: 'error',
-        requestId: Math.random(),
+        requestId: 'Participants-valid-no-issue',
         message: {
           title: 'Informações incompletas',
           description: 'É preciso irformar o motivo da remoção.',

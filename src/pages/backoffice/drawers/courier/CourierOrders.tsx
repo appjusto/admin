@@ -80,7 +80,7 @@ export const CourierOrders = () => {
     if (!releaseComment) {
       return dispatchAppRequestResult({
         status: 'error',
-        requestId: Math.random(),
+        requestId: 'courier-orders-handleReleaseCourier-valid',
         message: { title: 'Informe o motivo da liberação' },
       });
     }

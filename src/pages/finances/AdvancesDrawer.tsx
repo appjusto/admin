@@ -44,7 +44,7 @@ export const AdvancesDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps) =>
     if (selected.length === 0)
       return dispatchAppRequestResult({
         status: 'error',
-        requestId: Math.random(),
+        requestId: 'AdvancesDrawer-valid-no-value',
         message: { title: 'Nenhum valor foi selecionado para antecipação' },
       });
     if (!isReviewing) return setIsReviewing(true);
@@ -52,7 +52,7 @@ export const AdvancesDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps) =>
       acceptCheckBoxRef.current?.focus();
       return dispatchAppRequestResult({
         status: 'error',
-        requestId: Math.random(),
+        requestId: 'AdvancesDrawer-valid-agreement',
         message: { title: 'É preciso aceitar os valores informados na simulação.' },
       });
     }

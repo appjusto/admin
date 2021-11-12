@@ -91,7 +91,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
     if (!isCNPJValid()) {
       dispatchAppRequestResult({
         status: 'error',
-        requestId: Math.random(),
+        requestId: 'BusinessProfile-valid-cnpj',
         message: { title: 'O CNPJ informado não é válido.' },
       });
       return cnpjRef?.current?.focus();
@@ -99,7 +99,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
     if (phone.length < 10) {
       dispatchAppRequestResult({
         status: 'error',
-        requestId: Math.random(),
+        requestId: 'BusinessProfile-valid-phone',
         message: { title: 'O telefone informado não é válido.' },
       });
       return phoneRef?.current?.focus();
@@ -126,7 +126,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
     } catch (error) {
       dispatchAppRequestResult({
         status: 'error',
-        requestId: Math.random(),
+        requestId: 'BusinessProfile-submit-error',
         message: {
           title: 'Erro de conexão com o servidor',
           description: 'As iformações podem não ter sido salvas.',

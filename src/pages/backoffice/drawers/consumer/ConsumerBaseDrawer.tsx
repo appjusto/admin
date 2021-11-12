@@ -81,7 +81,7 @@ export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
     if (!consumer?.id) {
       dispatchAppRequestResult({
         status: 'error',
-        requestId: Math.random(),
+        requestId: 'consumer-base-drawer-valid',
         message: { title: 'Não foi possível encontrar o id deste usuário.' },
       });
     } else {

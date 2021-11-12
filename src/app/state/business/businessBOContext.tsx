@@ -100,25 +100,25 @@ export const BusinessBOProvider = ({ children }: Props) => {
       if (!cpf)
         return dispatchAppRequestResult({
           status: 'error',
-          requestId: Math.random(),
+          requestId: 'bo-business-context-valid-cpf',
           message: { title: 'O CPF informado não é válido' },
         });
       if (!phone)
         return dispatchAppRequestResult({
           status: 'error',
-          requestId: Math.random(),
+          requestId: 'bo-business-context-valid-phone',
           message: { title: 'O cecular informado não é válido' },
         });
       if (!agency)
         return dispatchAppRequestResult({
           status: 'error',
-          requestId: Math.random(),
+          requestId: 'bo-business-context-valid-agency',
           message: { title: 'A agência informada não é válida' },
         });
       if (!account)
         return dispatchAppRequestResult({
           status: 'error',
-          requestId: Math.random(),
+          requestId: 'bo-business-context-valid-account',
           message: { title: 'A conta informada não é válida' },
         });
     }

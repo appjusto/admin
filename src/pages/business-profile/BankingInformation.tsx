@@ -87,7 +87,7 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
     if (!validation.agency) {
       dispatchAppRequestResult({
         status: 'error',
-        requestId: Math.random(),
+        requestId: 'BankingInformation-valid-agency',
         message: { title: 'A agência informada não é válida.' },
       });
       return agencyRef?.current?.focus();
@@ -95,7 +95,7 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
     if (!validation.account) {
       dispatchAppRequestResult({
         status: 'error',
-        requestId: Math.random(),
+        requestId: 'BankingInformation-valid-account',
         message: { title: 'A conta informada não é válida.' },
       });
       return accountRef?.current?.focus();
@@ -103,7 +103,7 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
     if (selectedBank?.code === '341' && agency === '0500') {
       dispatchAppRequestResult({
         status: 'error',
-        requestId: Math.random(),
+        requestId: 'BankingInformation-valid-bank',
         message: { title: 'A iugu ainda não aceita contas Itaú - iti. Escolha outra, por favor.' },
       });
       return agencyRef?.current?.focus();

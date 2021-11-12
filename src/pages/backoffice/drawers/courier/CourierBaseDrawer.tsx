@@ -70,7 +70,7 @@ export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDr
       if (!contextValidation.cpf)
         return dispatchAppRequestResult({
           status: 'error',
-          requestId: Math.random(),
+          requestId: 'courier-base-drawer-valid-cpf',
           message: {
             title: contextValidation.message ?? 'O CPF não foi informado ou não é válido.',
           },
@@ -78,19 +78,19 @@ export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDr
       if (!contextValidation.cnpj)
         return dispatchAppRequestResult({
           status: 'error',
-          requestId: Math.random(),
+          requestId: 'courier-base-drawer-valid-cnpj',
           message: { title: contextValidation.message ?? 'O CNPJ informado não é válido.' },
         });
       if (!contextValidation.agency)
         return dispatchAppRequestResult({
           status: 'error',
-          requestId: Math.random(),
+          requestId: 'courier-base-drawer-valid-agency',
           message: { title: contextValidation.message ?? 'A agência informada não é válida.' },
         });
       if (!contextValidation.account)
         return dispatchAppRequestResult({
           status: 'error',
-          requestId: Math.random(),
+          requestId: 'courier-base-drawer-valid-account',
           message: { title: contextValidation.message ?? 'A conta informada não é válida.' },
         });
     }
@@ -109,7 +109,7 @@ export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDr
     if (!courier?.id) {
       dispatchAppRequestResult({
         status: 'error',
-        requestId: Math.random(),
+        requestId: 'courier-base-drawer-valid-no-user-id',
         message: { title: 'Não foi possível encontrar o id deste usuário.' },
       });
     } else {

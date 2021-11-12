@@ -72,7 +72,7 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
     if (!isCPFValid()) {
       dispatchAppRequestResult({
         status: 'error',
-        requestId: Math.random(),
+        requestId: 'ManagerProfile-valid-cpf',
         message: { title: 'O CPF informado não é válido.' },
       });
       return cpfRef?.current?.focus();
@@ -80,7 +80,7 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
     if (phoneNumber.length < 11) {
       dispatchAppRequestResult({
         status: 'error',
-        requestId: Math.random(),
+        requestId: 'ManagerProfile-valid-phone',
         message: { title: 'O celular informado não é válido.' },
       });
       return phoneNumberRef?.current?.focus();
@@ -89,7 +89,7 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
       if (passwd !== passwdConfirm) {
         dispatchAppRequestResult({
           status: 'error',
-          requestId: Math.random(),
+          requestId: 'ManagerProfile-valid-pass',
           message: { title: 'As senhas informadas não são iguais.' },
         });
         return passwdRef?.current?.focus();
@@ -97,7 +97,7 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
       if (!passwdIsValid) {
         dispatchAppRequestResult({
           status: 'error',
-          requestId: Math.random(),
+          requestId: 'ManagerProfile-valid-password',
           message: { title: 'A senha informada não é válida.' },
         });
         return passwdRef?.current?.focus();

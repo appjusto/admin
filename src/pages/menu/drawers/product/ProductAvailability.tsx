@@ -183,7 +183,7 @@ export const ProductAvailability = () => {
     if (!isValid)
       return dispatchAppRequestResult({
         status: 'error',
-        requestId: Math.random(),
+        requestId: 'ProductAvailability-valid',
         message: { title: 'Alguns horários não estão corretos.' },
       });
     const serializedSchedules = schedules.map((day) => {

@@ -51,13 +51,13 @@ export const AddMembersForm = () => {
     if (!business?.id)
       return dispatchAppRequestResult({
         status: 'error',
-        requestId: Math.random(),
+        requestId: 'AddMembersForm-valid-no-business',
       });
     members.forEach(async (member) => {
       if (!member.email)
         return dispatchAppRequestResult({
           status: 'error',
-          requestId: Math.random(),
+          requestId: 'AddMembersForm-valid-no-email',
           message: {
             title: 'Ocorreu um erro com um ou mais dos emails informados.',
             description: 'Tenta novamente?',
@@ -68,7 +68,7 @@ export const AddMembersForm = () => {
       if (managers?.includes(member.email)) {
         return dispatchAppRequestResult({
           status: 'error',
-          requestId: Math.random(),
+          requestId: 'AddMembersForm-valid-email-in-use',
           message: {
             title: 'Usuário já existe.',
             description: 'O e-mail informado já foi cadastrado para um usuário.',

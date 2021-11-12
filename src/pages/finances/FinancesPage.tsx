@@ -61,7 +61,7 @@ const FinancesPage = () => {
     if (!availableWithdraw)
       return dispatchAppRequestResult({
         status: 'error',
-        requestId: Math.random(),
+        requestId: 'FinancesPage-valid',
         message: { title: 'Não existe valor disponível para transferência.' },
       });
     const amount = convertBalance(availableWithdraw);

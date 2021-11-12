@@ -96,7 +96,7 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
     if (!issue) {
       return dispatchAppRequestResult({
         status: 'error',
-        requestId: Math.random(),
+        requestId: 'BackofficeOrderDrawer-cancellation-valid',
         message: {
           title: 'Não foi possível cancelar o pedido.',
           description: 'Favor informar quem solicitou o cancelamento.',
