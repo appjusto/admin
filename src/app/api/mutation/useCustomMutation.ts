@@ -18,6 +18,7 @@ export const useCustomMutation = <
   mutationFn: MutationFunction<TData, TVariables>,
   fnName: string,
   dispatching: boolean = true,
+  resetting: boolean = true,
   options?: Omit<UseMutationOptions<TData, TError, TVariables, TContext>, 'mutationFn'>
 ) => {
   const { dispatchAppRequestResult } = useContextAppRequests();
@@ -34,10 +35,11 @@ export const useCustomMutation = <
     }
   );
   React.useEffect(() => {
+    if (!resetting) return;
     if (!isSuccess && !isError) return;
     console.log('Call reset!');
     reset();
-  }, [isSuccess, isError, reset]);
+  }, [resetting, isSuccess, isError, reset]);
   if (isLoading) console.log(`${fnName} - isLoading:`, isLoading);
   if (isSuccess) console.log(`${fnName} - isSuccess:`, isSuccess);
   if (isError) console.log(`${fnName} - isError:`, isError);

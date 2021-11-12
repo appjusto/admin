@@ -22,6 +22,7 @@ export const useAuthentication = () => {
       else return api.auth().sendSignInLinkToEmail(data.email);
     },
     'login',
+    false,
     false
   );
   const {
@@ -30,11 +31,13 @@ export const useAuthentication = () => {
   } = useCustomMutation(
     async (email: string) => api.auth().sendSignInLinkToEmail(email),
     'sendSignInLinkToEmail',
+    false,
     false
   );
   const { mutateAsync: signInWithEmailLink, mutationResult: signInResult } = useCustomMutation(
     async (data: SignInData) => api.auth().signInWithEmailLink(data.email, data.link),
     'signInWithEmailLink',
+    false,
     false
   );
   const updateUsersPassword = (password: string, currentPassword?: string) =>
