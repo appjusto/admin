@@ -38,8 +38,8 @@ export const useCustomMutation = <
     console.log('Call reset!');
     reset();
   }, [isSuccess, isError, reset]);
-  if (isLoading) console.log('isLoading', isLoading);
-  if (isSuccess) console.log('isSuccess', isSuccess);
-  if (isError) console.log('isError', isError);
+  if (isLoading) console.log(`${fnName} - isLoading:`, isLoading);
+  if (isSuccess) console.log(`${fnName} - isSuccess:`, isSuccess);
+  if (isError) console.log(`${fnName} - isError:`, isError);
   return { mutate, mutateAsync, mutationResult: { isLoading, isSuccess, isError, error } };
 };
