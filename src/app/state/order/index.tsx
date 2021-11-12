@@ -88,7 +88,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
         });
       }
     },
-    [api]
+    [api, dispatchAppRequestResult]
   );
   const setOrderCookingTime = React.useCallback(
     async (orderId: string, cookingTime: number | null) => {
@@ -106,7 +106,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
         });
       }
     },
-    [api]
+    [api, dispatchAppRequestResult]
   );
   // side effects
   React.useEffect(() => {
@@ -180,7 +180,13 @@ export const OrdersContextProvider = (props: ProviderProps) => {
       });
       return;
     }
-  }, [isBackofficeUser, business?.situation, business?.enabled, business?.status]);
+  }, [
+    isBackofficeUser,
+    business?.situation,
+    business?.enabled,
+    business?.status,
+    dispatchAppRequestResult,
+  ]);
   // provider
   return (
     <OrdersContext.Provider
