@@ -12,6 +12,7 @@ export interface AppRequestResult {
   requestId: string;
   error?: unknown;
   message?: ErrorMessage;
+  duration?: number;
 }
 
 interface AppRequestsContextProps {
@@ -61,7 +62,7 @@ export const AppRequestsProvider = ({ children }: Props) => {
         if (!toast.isActive(result.requestId))
           toast({
             id: result.requestId,
-            duration: 8000,
+            duration: result.duration ?? 8000,
             render: () => (
               <CustomToast
                 type={isEmpty(result.error) ? 'warning' : 'error'}
@@ -73,7 +74,7 @@ export const AppRequestsProvider = ({ children }: Props) => {
         if (!toast.isActive(result.requestId))
           toast({
             id: result.requestId,
-            duration: 4000,
+            duration: result.duration ?? 4000,
             render: () => <CustomToast type="success" message={result.message ?? initSuccessMsg} />,
           });
       }
