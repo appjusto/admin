@@ -3,6 +3,7 @@ import { MutationResult } from 'app/api/mutation/useCustomMutation';
 import { useContextAgentProfile } from 'app/state/agent/context';
 import { ProfileNote, WithId } from 'appjusto-types';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
+import { omitBy } from 'lodash';
 import React from 'react';
 import { MutateFunction } from 'react-query';
 import { t } from 'utils/i18n';
@@ -40,12 +41,13 @@ export const ProfileNotes = ({
     if (!newNote) return;
     if (!agent?.id) return;
     if (!agent?.email) return;
-    const changes = {
+    let changes = {
       agentId: agent.id,
       agentEmail: agent.email,
       agentName: agent?.name,
       note: newNote,
-    } as ProfileNote;
+    } as Partial<ProfileNote>;
+    changes = omitBy(changes, (value) => !value);
     updateNote({ changes });
   };
   const handleUpdateNote = (id: string, note: string) => {
@@ -53,10 +55,11 @@ export const ProfileNotes = ({
     if (!note) return;
     if (!agent?.id) return;
     if (!agent?.email) return;
-    const changes = {
+    let changes = {
       agentName: agent?.name,
       note,
-    } as ProfileNote;
+    } as Partial<ProfileNote>;
+    changes = omitBy(changes, (value) => !value);
     updateNote({ changes, id });
   };
   const handleDeleteNote = (id: string) => {
