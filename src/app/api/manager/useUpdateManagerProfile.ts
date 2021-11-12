@@ -23,6 +23,7 @@ export const useUpdateManagerProfile = (isOnboarding: boolean = false) => {
       }
       return api.manager().updateProfile(manager?.id!, data.changes);
     },
+    'updateManagerProfile',
     !isOnboarding
   );
   // return

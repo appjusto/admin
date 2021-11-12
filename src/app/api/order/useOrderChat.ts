@@ -52,6 +52,7 @@ export const useOrderChat = (getServerTime: () => Date, orderId: string, counter
         ...data,
       });
     },
+    'sendChatMessage',
     false
   );
   // side effects

@@ -5,11 +5,9 @@ export const useRequestWithdraw = (businessId?: string) => {
   // context
   const api = useContextApi();
   // mutations
-  const {
-    mutateAsync: requestWithdraw,
-    mutationResult: requestWithdrawResult,
-  } = useCustomMutation(async (amount: number) =>
-    api.business().requestWithdraw(businessId!, amount)
+  const { mutateAsync: requestWithdraw, mutationResult: requestWithdrawResult } = useCustomMutation(
+    async (amount: number) => api.business().requestWithdraw(businessId!, amount),
+    'requestWithdraw'
   );
   // return
   return { requestWithdraw, requestWithdrawResult };

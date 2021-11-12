@@ -10,7 +10,10 @@ export const useGetOutsourceDelivery = (orderId?: string) => {
   const {
     mutateAsync: getOutsourceDelivery,
     mutationResult: outsourceDeliveryResult,
-  } = useCustomMutation(async () => (orderId ? api.order().getOutsourceDelivery(orderId) : null));
+  } = useCustomMutation(
+    async () => (orderId ? api.order().getOutsourceDelivery(orderId) : null),
+    'getOutsourceDelivery'
+  );
   // side effets
   /*React.useEffect(() => {
     if (!orderId) return;

@@ -16,6 +16,7 @@ export const useCustomMutation = <
   TContext = unknown
 >(
   mutationFn: MutationFunction<TData, TVariables>,
+  fnName: string,
   dispatching: boolean = true,
   options?: Omit<UseMutationOptions<TData, TError, TVariables, TContext>, 'mutationFn'>
 ) => {

@@ -11,17 +11,14 @@ export const useObserveOrderMatching = (orderId?: string) => {
   // state
   const [matching, setMatching] = React.useState<OrderMatching | null>();
   // mutations
-  const {
-    mutateAsync: updateCourierNotified,
-    mutationResult: updateResult,
-  } = useCustomMutation(async (data: string[]) =>
-    api.order().updateOrderCourierNotified(orderId!, data)
+  const { mutateAsync: updateCourierNotified, mutationResult: updateResult } = useCustomMutation(
+    async (data: string[]) => api.order().updateOrderCourierNotified(orderId!, data),
+    'updateCourierNotified'
   );
-  const {
-    mutateAsync: restartMatching,
-    mutationResult: restartResult,
-  } = useCustomMutation(async () =>
-    api.order().updateOrder(orderId!, { dispatchingStatus: 'matching' })
+  const { mutateAsync: restartMatching, mutationResult: restartResult } = useCustomMutation(
+    async () => api.order().updateOrder(orderId!, { dispatchingStatus: 'matching' }),
+    'restartMatching',
+    false
   );
   // side effects
   React.useEffect(() => {

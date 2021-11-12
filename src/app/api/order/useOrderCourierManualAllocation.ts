@@ -14,8 +14,10 @@ export const useOrderCourierManualAllocation = () => {
   const {
     mutateAsync: courierManualAllocation,
     mutationResult: allocationResult,
-  } = useCustomMutation(async (data: AllocationData) =>
-    api.order().courierManualAllocation(data.orderId, data.courierId, data.comment)
+  } = useCustomMutation(
+    async (data: AllocationData) =>
+      api.order().courierManualAllocation(data.orderId, data.courierId, data.comment),
+    'courierManualAllocation'
   );
   // return
   return { courierManualAllocation, allocationResult };

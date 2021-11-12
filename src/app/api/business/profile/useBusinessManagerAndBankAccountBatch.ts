@@ -28,7 +28,8 @@ export const useBusinessManagerAndBankAccountBatch = () => {
           manager?.id!,
           changes.managerChanges,
           changes.bankingChanges
-        )
+        ),
+    'updateBusinessManagerAndBankAccount'
   );
   return { updateBusinessManagerAndBankAccount, updateResult };
 };

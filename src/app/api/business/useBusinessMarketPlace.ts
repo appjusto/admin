@@ -12,7 +12,10 @@ export const useBusinessMarketPlace = (businessId: string) => {
   const {
     mutateAsync: deleteMarketPlace,
     mutationResult: deleteMarketPlaceResult,
-  } = useCustomMutation(async () => api.business().deletePrivateMarketPlace(businessId));
+  } = useCustomMutation(
+    async () => api.business().deletePrivateMarketPlace(businessId),
+    'deleteMarketPlace'
+  );
   // side effects
   React.useEffect(() => {
     if (!businessId) return;

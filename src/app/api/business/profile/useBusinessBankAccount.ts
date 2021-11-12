@@ -16,6 +16,7 @@ export const useBusinessBankAccount = (isOnboarding: boolean = false) => {
   // mutations
   const { mutateAsync: updateBankAccount, mutationResult: updateResult } = useCustomMutation(
     async (changes: Partial<BankAccount>) => api.business().updateBankAccount(businessId, changes),
+    'updateBankAccount',
     !isOnboarding
   );
   return { bankAccount, updateBankAccount, updateResult };

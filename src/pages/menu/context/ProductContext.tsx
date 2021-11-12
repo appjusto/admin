@@ -81,7 +81,8 @@ export const ProductContextProvider = (props: ProviderProps) => {
         updateProductsOrdering(menu.updateParent(productsOrdering, id, data.categoryId));
       if (data.imageFiles) queryClient.invalidateQueries(['product:image', productId]);
       return id;
-    }
+    },
+    'updateProduct'
   );
 
   const { mutateAsync: deleteProduct, mutationResult: deleteProductResult } = useCustomMutation(
@@ -92,7 +93,8 @@ export const ProductContextProvider = (props: ProviderProps) => {
         );
       }
       await api.business().deleteProduct(businessId!, productId);
-    }
+    },
+    'deleteProduct'
   );
 
   // complements groups
@@ -106,7 +108,7 @@ export const ProductContextProvider = (props: ProviderProps) => {
     await api
       .business()
       .updateProduct(businessId!, productId, { complementsGroupsIds: data.groupsIds });
-  });
+  }, 'connectComplmentsGroupToProduct');
 
   return (
     <ProductContext.Provider

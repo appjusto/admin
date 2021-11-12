@@ -22,7 +22,8 @@ export const useUpdateAgentProfile = () => {
         await updateUsersPassword(data.password, data.currentPassword);
       }
       return api.manager().updateProfile(agent?.id!, data.changes);
-    }
+    },
+    'updateAgentProfile'
   );
   // return
   return { updateProfile, updateResult };

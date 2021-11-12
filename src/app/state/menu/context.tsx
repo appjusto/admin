@@ -107,14 +107,14 @@ export const MenuProvider = (props: ProviderProps) => {
       const newGroup = await api.business().createComplementsGroup(businessId!, data.changes);
       updateComplementsOrdering(menu.addFirstLevel(complementsOrdering, newGroup.id));
     }
-  });
+  }, 'updateComplementsGroup');
   const {
     mutateAsync: deleteComplementsGroup,
     mutationResult: deleteGroupResult,
   } = useCustomMutation(async (groupId: string) => {
     updateComplementsOrdering(menu.removeFirstLevel(complementsOrdering, groupId));
     await api.business().deleteComplementsGroup(businessId!, groupId);
-  });
+  }, 'deleteComplementsGroup');
   // complements
   const getComplementData = (complementId: string, groupId?: string) => {
     const complement = complements.find((complement) => complement.id === complementId);
@@ -145,7 +145,8 @@ export const MenuProvider = (props: ProviderProps) => {
       }
       if (data.groupId)
         updateComplementsOrdering(menu.updateParent(complementsOrdering, currentId!, data.groupId));
-    }
+    },
+    'updateComplement'
   );
   const {
     mutateAsync: deleteComplement,
@@ -153,7 +154,7 @@ export const MenuProvider = (props: ProviderProps) => {
   } = useCustomMutation(async (data: { complementId: string; imageExists: boolean }) => {
     updateComplementsOrdering(menu.removeSecondLevel(complementsOrdering, data.complementId));
     await api.business().deleteComplement(businessId!, data.complementId);
-  });
+  }, 'deleteComplement');
   // provider
   return (
     <MenuProviderContext.Provider

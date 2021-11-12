@@ -13,11 +13,13 @@ export const useObserveBusinessProfileNotes = (businessId?: string) => {
     async (data: { changes: Partial<ProfileNote>; id?: string }) => {
       if (!data.id) return await api.business().createProfileNote(businessId!, data.changes);
       else return await api.business().updateProfileNote(businessId!, data.id, data.changes);
-    }
+    },
+    'updateNote'
   );
   const { mutateAsync: deleteNote, mutationResult: deleteResult } = useCustomMutation(
     async (profileNoteId: string) =>
-      await api.business().deleteProfileNote(businessId!, profileNoteId)
+      await api.business().deleteProfileNote(businessId!, profileNoteId),
+    'deleteNote'
   );
   // side effects
   React.useEffect(() => {

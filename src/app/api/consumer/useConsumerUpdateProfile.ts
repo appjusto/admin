@@ -17,7 +17,8 @@ export const useConsumerUpdateProfile = (consumerId?: string) => {
         .updateProfile(consumerId!, data.changes, data.selfieFileToSave, data.documentFileToSave);
       if (data.changes.email)
         await api.auth().updateEmail({ accountId: consumerId!, email: data.changes.email });
-    }
+    },
+    'updateConsumerProfile'
   );
   // return
   return { updateProfile, updateResult };

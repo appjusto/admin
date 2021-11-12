@@ -17,7 +17,8 @@ export const useCourierUpdateProfile = (courierId?: string) => {
         .updateProfile(courierId!, data.changes, data.selfieFileToSave, data.documentFileToSave);
       if (data.changes.email)
         await api.auth().updateEmail({ accountId: courierId!, email: data.changes.email });
-    }
+    },
+    'updateCourierProfile'
   );
   // return
   return { updateProfile, updateResult };

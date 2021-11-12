@@ -12,7 +12,10 @@ export const useCourierMarketPlace = (courierId: string) => {
   const {
     mutateAsync: deleteMarketPlace,
     mutationResult: deleteMarketPlaceResult,
-  } = useCustomMutation(async () => api.courier().deletePrivateMarketPlace(courierId));
+  } = useCustomMutation(
+    async () => api.courier().deletePrivateMarketPlace(courierId),
+    'deleteMarketPlace'
+  );
   // side effects
   React.useEffect(() => {
     if (!courierId) return;

@@ -22,16 +22,15 @@ export const useOrder = (orderId?: string) => {
   const [orderCancellationCosts, setOrderCancellationCosts] = React.useState<number>();
   const invoices = useObserveOrderInvoices(orderId);
   // mutations
-  const {
-    mutateAsync: updateOrder,
-    mutationResult: updateResult,
-  } = useCustomMutation(async (changes: Partial<Order>) =>
-    api.order().updateOrder(orderId!, changes)
+  const { mutateAsync: updateOrder, mutationResult: updateResult } = useCustomMutation(
+    async (changes: Partial<Order>) => api.order().updateOrder(orderId!, changes),
+    'updateOrder'
   );
   const { mutateAsync: cancelOrder, mutationResult: cancelResult } = useCustomMutation(
     async (cancellationData: CancelOrderPayload) => {
       await api.order().cancelOrder(cancellationData);
-    }
+    },
+    'cancelOrder'
   );
   // side effects
   React.useEffect(() => {

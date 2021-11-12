@@ -12,7 +12,8 @@ export const useObserveUserChanges = (changesId: string) => {
   const { mutateAsync: updateChange, mutationResult: updateChangeResult } = useCustomMutation(
     async (changes: Partial<ProfileChange>) => {
       await api.users().updateChanges(changesId!, changes);
-    }
+    },
+    'updateUserChange'
   );
   // side effects
   React.useEffect(() => {

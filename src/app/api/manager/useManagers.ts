@@ -21,14 +21,13 @@ export const useManagers = (role?: GeneralRoles | null) => {
     async (data: ManagerData) => {
       const dataWithKey = { ...data, key: business?.id! };
       return api.manager().createManager(dataWithKey);
-    }
+    },
+    'createManager'
   );
 
-  const {
-    mutateAsync: removeBusinessManager,
-    mutationResult: removeResult,
-  } = useCustomMutation(async (managerEmail: string) =>
-    api.business().removeBusinessManager(business!, managerEmail)
+  const { mutateAsync: removeBusinessManager, mutationResult: removeResult } = useCustomMutation(
+    async (managerEmail: string) => api.business().removeBusinessManager(business!, managerEmail),
+    'removeBusinessManager'
   );
 
   // side effects

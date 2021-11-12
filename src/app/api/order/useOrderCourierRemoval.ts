@@ -13,11 +13,10 @@ export const useOrderCourierRemoval = () => {
   // context
   const api = useContextApi();
   // mutations
-  const {
-    mutateAsync: courierManualRemoval,
-    mutationResult: removalResult,
-  } = useCustomMutation(async (data: RemovalData) =>
-    api.order().courierManualRemoval(data.orderId, data.issue, data.comment)
+  const { mutateAsync: courierManualRemoval, mutationResult: removalResult } = useCustomMutation(
+    async (data: RemovalData) =>
+      api.order().courierManualRemoval(data.orderId, data.issue, data.comment),
+    'courierManualRemoval'
   );
   // return
   return { courierManualRemoval, removalResult };

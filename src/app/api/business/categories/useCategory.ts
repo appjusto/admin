@@ -18,20 +18,18 @@ export const useCategory = (id: string) => {
   const fetchResult = useQuery(['category', categoryId], fetchCategory, { enabled: !isNew });
 
   // mutations
-  const {
-    mutateAsync: createCategory,
-    mutationResult: createResult,
-  } = useCustomMutation(async (category: Category) =>
-    api.business().createCategory(businessId, categoryId, category)
+  const { mutateAsync: createCategory, mutationResult: createResult } = useCustomMutation(
+    async (category: Category) => api.business().createCategory(businessId, categoryId, category),
+    'createCategory'
   );
-  const {
-    mutateAsync: updateCategory,
-    mutationResult: updateResult,
-  } = useCustomMutation(async (category: Partial<Category>) =>
-    api.business().updateCategory(businessId, categoryId, category)
+  const { mutateAsync: updateCategory, mutationResult: updateResult } = useCustomMutation(
+    async (category: Partial<Category>) =>
+      api.business().updateCategory(businessId, categoryId, category),
+    'updateCategory'
   );
-  const { mutateAsync: deleteCategory } = useCustomMutation(async () =>
-    api.business().deleteCategory(businessId, categoryId)
+  const { mutateAsync: deleteCategory } = useCustomMutation(
+    async () => api.business().deleteCategory(businessId, categoryId),
+    'deleteCategory'
   );
   const saveCategory = isNew ? createCategory : updateCategory;
   const result = createResult || updateResult;

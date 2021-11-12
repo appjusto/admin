@@ -21,14 +21,20 @@ export const useAuthentication = () => {
       if (data.password) return api.auth().signInWithEmailAndPassword(data.email, data.password);
       else return api.auth().sendSignInLinkToEmail(data.email);
     },
+    'login',
     false
   );
   const {
     mutateAsync: sendSignInLinkToEmail,
     mutationResult: sendingLinkResult,
-  } = useCustomMutation(async (email: string) => api.auth().sendSignInLinkToEmail(email), false);
+  } = useCustomMutation(
+    async (email: string) => api.auth().sendSignInLinkToEmail(email),
+    'sendSignInLinkToEmail',
+    false
+  );
   const { mutateAsync: signInWithEmailLink, mutationResult: signInResult } = useCustomMutation(
     async (data: SignInData) => api.auth().signInWithEmailLink(data.email, data.link),
+    'signInWithEmailLink',
     false
   );
   const updateUsersPassword = (password: string, currentPassword?: string) =>
@@ -37,10 +43,10 @@ export const useAuthentication = () => {
     localStorage.removeItem(`business-${process.env.REACT_APP_ENVIRONMENT}`);
     api.auth().signOut();
   }, [api]);
-  const {
-    mutateAsync: deleteAccount,
-    mutationResult: deleteAccountResult,
-  } = useCustomMutation(async (data: DeleteAccountData) => api.auth().deleteAccount(data));
+  const { mutateAsync: deleteAccount, mutationResult: deleteAccountResult } = useCustomMutation(
+    async (data: DeleteAccountData) => api.auth().deleteAccount(data),
+    'deleteUserAccount'
+  );
   // return
   return {
     login,

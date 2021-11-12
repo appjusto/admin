@@ -13,11 +13,13 @@ export const useObserveCourierProfileNotes = (courierId?: string) => {
     async (data: { changes: Partial<ProfileNote>; id?: string }) => {
       if (!data.id) return await api.courier().createProfileNote(courierId!, data.changes);
       else return await api.courier().updateProfileNote(courierId!, data.id, data.changes);
-    }
+    },
+    'updateNote'
   );
   const { mutateAsync: deleteNote, mutationResult: deleteResult } = useCustomMutation(
     async (profileNoteId: string) =>
-      await api.courier().deleteProfileNote(courierId!, profileNoteId)
+      await api.courier().deleteProfileNote(courierId!, profileNoteId),
+    'deleteNote'
   );
   // side effects
   React.useEffect(() => {
