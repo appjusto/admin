@@ -5,6 +5,7 @@ import { ProfileNote, WithId } from 'appjusto-types';
 import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
 import { initialError } from 'common/components/error/utils';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
+import { omitBy } from 'lodash';
 import React from 'react';
 import { MutateFunction, MutationResult } from 'react-query';
 import { t } from 'utils/i18n';
@@ -42,28 +43,49 @@ export const ProfileNotes = ({
   const submission = React.useRef(0);
   // handlers
   const handleAddNote = () => {
-    if (!newNote) return;
-    if (!agent?.id) return;
-    if (!agent?.email) return;
+    setError(initialError);
+    if (!newNote)
+      return setError({
+        status: true,
+        error: deleteResult.error,
+        message: { title: 'É preciso escrever alguma anotação.' },
+      });
+    if (!agent?.id || !agent?.email)
+      return setError({
+        status: true,
+        error: deleteResult.error,
+        message: { title: 'Não foi possível acessar as informações do seu usuário.' },
+      });
     submission.current += 1;
-    const changes = {
+    let changes = {
       agentId: agent.id,
       agentEmail: agent.email,
       agentName: agent?.name,
       note: newNote,
-    } as ProfileNote;
+    } as Partial<ProfileNote>;
+    changes = omitBy(changes, (value) => !value);
     updateNote({ changes });
   };
   const handleUpdateNote = (id: string, note: string) => {
-    if (!id) return;
-    if (!note) return;
-    if (!agent?.id) return;
-    if (!agent?.email) return;
+    setError(initialError);
+    if (!id || !note)
+      return setError({
+        status: true,
+        error: deleteResult.error,
+        message: { title: 'Anotação não encontrada.' },
+      });
+    if (!agent?.id || !agent?.email)
+      return setError({
+        status: true,
+        error: deleteResult.error,
+        message: { title: 'Não foi possível acessar as informações do seu usuário.' },
+      });
     submission.current += 1;
-    const changes = {
+    let changes = {
       agentName: agent?.name,
       note,
-    } as ProfileNote;
+    } as Partial<ProfileNote>;
+    changes = omitBy(changes, (value) => !value);
     updateNote({ changes, id });
   };
   const handleDeleteNote = (id: string) => {
