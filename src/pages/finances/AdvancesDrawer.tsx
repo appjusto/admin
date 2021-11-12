@@ -24,7 +24,7 @@ export const AdvancesDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps) =>
   const businessId = useContextBusinessId();
   const { receivables } = useReceivables(businessId);
   const { advanceReceivables, advanceReceivablesResult } = useAdvanceReceivables(businessId);
-  const { isLoading, isSuccess, isError, error: receivalbesError } = advanceReceivablesResult;
+  const { isLoading, isSuccess } = advanceReceivablesResult;
   // state
   const [items, setItems] = React.useState<IuguMarketplaceAccountReceivableItem[]>([]);
   const [selectedAll, setSelectedAll] = React.useState(false);

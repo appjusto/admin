@@ -16,12 +16,7 @@ interface GroupFormProps {
 
 export const GroupForm = ({ atDrawer = false, groupId, groupData, onSuccess }: GroupFormProps) => {
   // context
-  const {
-    updateComplementsGroup,
-    updateGroupResult,
-    deleteComplementsGroup,
-    deleteGroupResult,
-  } = useContextMenu();
+  const { updateComplementsGroup, updateGroupResult, deleteComplementsGroup } = useContextMenu();
   const { isLoading } = updateGroupResult;
   // state
   const [name, setName] = React.useState('');
