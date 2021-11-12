@@ -4,7 +4,7 @@ import { useContextBusinessId } from 'app/state/business/context';
 import { BankAccount } from 'appjusto-types';
 import { useQuery } from 'react-query';
 
-export const useBusinessBankAccount = () => {
+export const useBusinessBankAccount = (isOnboarding: boolean = false) => {
   // context
   const api = useContextApi();
   const businessId = useContextBusinessId()!;
@@ -14,11 +14,9 @@ export const useBusinessBankAccount = () => {
   const { data: bankAccount } = useQuery(['business:bank', businessId], fetchBankAccount);
 
   // mutations
-  const {
-    mutateAsync: updateBankAccount,
-    mutationResult: updateResult,
-  } = useCustomMutation(async (changes: Partial<BankAccount>) =>
-    api.business().updateBankAccount(businessId, changes)
+  const { mutateAsync: updateBankAccount, mutationResult: updateResult } = useCustomMutation(
+    async (changes: Partial<BankAccount>) => api.business().updateBankAccount(businessId, changes),
+    !isOnboarding
   );
   return { bankAccount, updateBankAccount, updateResult };
 };

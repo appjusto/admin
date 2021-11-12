@@ -34,7 +34,9 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
   const banks = useBanks();
   const { dispatchAppRequestResult } = useContextAppRequests();
   const { business } = useContextBusiness();
-  const { bankAccount, updateBankAccount, updateResult } = useBusinessBankAccount();
+  const { bankAccount, updateBankAccount, updateResult } = useBusinessBankAccount(
+    typeof onboarding === 'string'
+  );
   const { isLoading, isSuccess } = updateResult;
   // state
   const [selectedBank, setSelectedBank] = React.useState<Bank>();
@@ -110,8 +112,7 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
       code = getCEFAccountCode(selectedBank.code, personType, type);
     }
     const agencyFormatted = agencyFormatter!(agency);
-    const accountFormatted =
-      selectedBank?.code === '104' ? code + accountFormatter!(account) : accountFormatter!(account);
+    const accountFormatted = code + accountFormatter!(account);
     await updateBankAccount({
       personType,
       type,

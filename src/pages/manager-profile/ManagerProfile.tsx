@@ -31,7 +31,7 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const { sendSignInLinkToEmail, sendingLinkResult } = useAuthentication();
   const { business } = useContextBusiness();
   const { manager } = useContextManagerProfile();
-  const { updateProfile, updateResult } = useUpdateManagerProfile();
+  const { updateProfile, updateResult } = useUpdateManagerProfile(typeof onboarding === 'string');
   const { isLoading, isSuccess, isError, error: updateError } = updateResult;
 
   // state

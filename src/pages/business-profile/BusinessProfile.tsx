@@ -36,7 +36,6 @@ import { BusinessDeleteDrawer } from './BusinessDeleteDrawer';
 
 const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   // context
-  const isDev = process.env.REACT_APP_ENVIRONMENT === 'dev';
   const { dispatchAppRequestResult } = useContextAppRequests();
   const { business, setBusinessId } = useContextBusiness();
   const queryClient = useQueryClient();
@@ -44,7 +43,10 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const history = useHistory();
   const { isBackofficeUser } = useContextFirebaseUser();
   // state
-  const [cnpj, setCNPJ] = React.useState(business?.cnpj ?? (isDev ? cnpjutils.generate() : ''));
+  const devCNPJ = ['dev', 'staging'].includes(process.env.REACT_APP_ENVIRONMENT ?? '')
+    ? cnpjutils.generate()
+    : '';
+  const [cnpj, setCNPJ] = React.useState(business?.cnpj ?? devCNPJ);
   const [name, setName] = React.useState(business?.name ?? '');
   const [companyName, setCompanyName] = React.useState(business?.companyName ?? '');
   const [phone, setPhone] = React.useState(business?.phone ?? '');
@@ -71,7 +73,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
     cover,
     updateWithImagesResult,
     cloneResult,
-  } = useBusinessProfile();
+  } = useBusinessProfile(typeof onboarding === 'string');
   const { isLoading, isSuccess } = updateWithImagesResult;
   // handlers
   const openDrawerHandler = () => history.push(`${path}/delete`);
@@ -127,7 +129,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
         requestId: Math.random(),
         message: {
           title: 'Erro de conexão com o servidor',
-          description: 'por isso as iformações podem não ser sido salvas.',
+          description: 'As iformações podem não ter sido salvas.',
         },
       });
     }
@@ -171,7 +173,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   React.useEffect(() => {
     if (business) {
       setEnabled(business.enabled ?? false);
-      setCNPJ(business.cnpj ?? '');
+      if (business.cnpj) setCNPJ(business.cnpj);
       setName(business.name ?? '');
       setCompanyName(business.companyName ?? '');
       setPhone(business.phone ?? '');

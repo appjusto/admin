@@ -7,7 +7,7 @@ import * as Sentry from '@sentry/react';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useCustomMutation } from 'app/api/mutation/useCustomMutation';
 
-export const useBusinessProfile = () => {
+export const useBusinessProfile = (isOnboarding: boolean = false) => {
   // context
   const api = useContextApi();
   const { business, setBusinessId } = useContextBusiness();
@@ -25,12 +25,11 @@ export const useBusinessProfile = () => {
     const business = await api.business().createBusinessProfile();
     setBusinessId(business.id);
     if (refreshUserToken) refreshUserToken(business.id);
-  });
-  const {
-    mutateAsync: updateBusinessProfile,
-    mutationResult: updateResult,
-  } = useCustomMutation(async (changes: Partial<Business>) =>
-    api.business().updateBusinessProfile(businessId!, changes)
+  }, false);
+  const { mutateAsync: updateBusinessProfile, mutationResult: updateResult } = useCustomMutation(
+    async (changes: Partial<Business>) =>
+      api.business().updateBusinessProfile(businessId!, changes),
+    !isOnboarding
   );
   const {
     mutateAsync: updateBusinessProfileWithImages,
@@ -48,12 +47,13 @@ export const useBusinessProfile = () => {
           data.changes,
           data.logoFileToSave,
           data.coverFilesToSave
-        )
+        ),
+    !isOnboarding
   );
-  const {
-    mutateAsync: deleteBusinessProfile,
-    mutationResult: deleteResult,
-  } = useCustomMutation(async () => api.business().deleteBusinessProfile(businessId!));
+  const { mutateAsync: deleteBusinessProfile, mutationResult: deleteResult } = useCustomMutation(
+    async () => api.business().deleteBusinessProfile(businessId!),
+    false
+  );
   const { mutateAsync: cloneBusiness, mutationResult: cloneResult } = useCustomMutation(
     async () => {
       const newBusiness = await api.business().cloneBusiness(businessId!);

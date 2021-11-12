@@ -33,7 +33,6 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
   const api = useContextApi();
   const { business } = useContextBusiness();
   const { googleMapsApiKey } = getConfig().api;
-
   // state
   const defaultRadius = 10; // 10km
   const [autocompleteSession] = React.useState(nanoid());
@@ -51,10 +50,11 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
   );
   const [averageCookingTime, setAverageCookingTime] = React.useState('30');
   const [cities, setCities] = React.useState<string[]>([]);
-
   // queries & mutations
   // business profile
-  const { updateBusinessProfile, updateResult: result } = useBusinessProfile();
+  const { updateBusinessProfile, updateResult: result } = useBusinessProfile(
+    typeof onboarding === 'string'
+  );
   const { isLoading, isSuccess } = result;
   // cep
   const { data: cepResult } = useQuery(['cep', cep], () => fetchCEPInfo(cep), {
@@ -67,11 +67,9 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
     enabled: address?.length > 0 && number.length > 0,
   });
   const center = coordsFromLatLnt(geocodingResult ?? SaoPauloCoords);
-
   // refs
   const cepRef = React.useRef<HTMLInputElement>(null);
   const numberRef = React.useRef<HTMLInputElement>(null);
-
   // handlers
   const onSubmitHandler = async () => {
     await updateBusinessProfile({
@@ -88,7 +86,6 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
       averageCookingTime: parseInt(averageCookingTime) * 60,
     });
   };
-
   // side effects
   // initial focus
   React.useEffect(() => {

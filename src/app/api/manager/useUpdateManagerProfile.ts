@@ -10,7 +10,7 @@ interface UpdateManagerData {
   currentPassword?: string;
 }
 
-export const useUpdateManagerProfile = () => {
+export const useUpdateManagerProfile = (isOnboarding: boolean = false) => {
   // context
   const api = useContextApi();
   const { updateUsersPassword } = useAuthentication();
@@ -22,7 +22,8 @@ export const useUpdateManagerProfile = () => {
         await updateUsersPassword(data.password, data.currentPassword);
       }
       return api.manager().updateProfile(manager?.id!, data.changes);
-    }
+    },
+    !isOnboarding
   );
   // return
   return { updateProfile, updateResult };
