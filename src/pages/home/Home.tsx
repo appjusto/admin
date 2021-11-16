@@ -48,7 +48,10 @@ const Home = () => {
   if (business?.onboarding === 'completed' && !userWithGrantedRole && isTimeout) {
     return <UserNotFound />;
   }
-  if (business?.onboarding === 'completed' && userWithGrantedRole) {
+  if (
+    (business && isBackofficeUser) ||
+    (business?.onboarding === 'completed' && userWithGrantedRole)
+  ) {
     return (
       <BusinessDashboardProvider>
         <OrdersContextProvider>
