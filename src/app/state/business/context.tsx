@@ -10,6 +10,8 @@ interface ContextProps {
   business?: WithId<Business> | null;
   setBusinessId(businessId?: string | null): void;
   updateContextBusinessOrderPrint(status: boolean): void;
+  isDeleted: boolean;
+  setIsDeleted(value: boolean): void;
 }
 
 const BusinessContext = React.createContext<ContextProps>({} as ContextProps);
@@ -24,10 +26,17 @@ export const BusinessProvider = ({ children }: Props) => {
   const { user, isBackofficeUser, refreshUserToken } = useContextFirebaseUser();
   const businesses = useObserveBusinessManagedBy(user?.email);
   const [businessId, setBusinessId] = React.useState<string | undefined | null>();
+  const [isDeleted, setIsDeleted] = React.useState(false);
   const hookBusiness = useObserveBusinessProfile(businessId);
   // state
   const [business, setBusiness] = React.useState<WithId<Business> | null>();
   // handlers
+  const setBusinessIdByBusinesses = React.useCallback(() => {
+    if (!businesses) return;
+    if (businesses.length > 1) {
+      setBusinessId(businesses.find((business) => business.situation === 'approved')?.id ?? null);
+    } else setBusinessId(businesses.find(() => true)?.id ?? null);
+  }, [businesses]);
   const updateContextBusiness = React.useCallback(
     (newState: WithId<Business> | null) => {
       if (business && newState) {
@@ -57,7 +66,10 @@ export const BusinessProvider = ({ children }: Props) => {
   React.useEffect(() => {
     if (!user?.email) return;
     if (hookBusiness === undefined) return;
-    if (hookBusiness === null) return setBusiness(null);
+    if (hookBusiness === null) {
+      setBusinessIdByBusinesses();
+      return;
+    }
     if (isBackofficeUser === false) {
       localStorage.setItem(
         `business-${process.env.REACT_APP_ENVIRONMENT}-${user.email}`,
@@ -66,11 +78,17 @@ export const BusinessProvider = ({ children }: Props) => {
     }
     updateContextBusiness(hookBusiness);
     queryClient.invalidateQueries();
-  }, [user, hookBusiness, isBackofficeUser, queryClient, updateContextBusiness]);
+  }, [
+    user,
+    hookBusiness,
+    isBackofficeUser,
+    queryClient,
+    setBusinessIdByBusinesses,
+    updateContextBusiness,
+  ]);
   React.useEffect(() => {
     if (isBackofficeUser) return;
     if (!user?.email) return;
-    if (!businesses) return;
     if (businessId) return;
     const localBusinessId = localStorage.getItem(
       `business-${process.env.REACT_APP_ENVIRONMENT}-${user.email}`
@@ -81,13 +99,13 @@ export const BusinessProvider = ({ children }: Props) => {
     }
     // select first business, or first business approved, or set it to null to indicate that user doesn't
     // manage any business
-    if (businesses.length > 1) {
-      setBusinessId(businesses.find((business) => business.situation === 'approved')?.id ?? null);
-    } else setBusinessId(businesses.find(() => true)?.id ?? null);
-  }, [businesses, user?.email, isBackofficeUser, businessId]);
+    setBusinessIdByBusinesses();
+  }, [user?.email, isBackofficeUser, businessId, setBusinessIdByBusinesses]);
   // provider
   return (
-    <BusinessContext.Provider value={{ business, setBusinessId, updateContextBusinessOrderPrint }}>
+    <BusinessContext.Provider
+      value={{ business, setBusinessId, updateContextBusinessOrderPrint, isDeleted, setIsDeleted }}
+    >
       {children}
     </BusinessContext.Provider>
   );
