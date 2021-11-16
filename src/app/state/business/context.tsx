@@ -10,6 +10,8 @@ interface ContextProps {
   business?: WithId<Business> | null;
   setBusinessId(businessId?: string | null): void;
   updateContextBusinessOrderPrint(status: boolean): void;
+  businessesIsEmpty: boolean;
+  setBusinessIdByBusinesses(): void;
   isDeleted: boolean;
   setIsDeleted(value: boolean): void;
 }
@@ -30,6 +32,8 @@ export const BusinessProvider = ({ children }: Props) => {
   const hookBusiness = useObserveBusinessProfile(businessId);
   // state
   const [business, setBusiness] = React.useState<WithId<Business> | null>();
+  // helpers
+  const businessesIsEmpty = businesses?.length === 0;
   // handlers
   const setBusinessIdByBusinesses = React.useCallback(() => {
     if (!businesses) return;
@@ -67,7 +71,8 @@ export const BusinessProvider = ({ children }: Props) => {
     if (!user?.email) return;
     if (hookBusiness === undefined) return;
     if (hookBusiness === null) {
-      setBusinessIdByBusinesses();
+      localStorage.removeItem(`business-${process.env.REACT_APP_ENVIRONMENT}-${user.email}`);
+      setBusiness(null);
       return;
     }
     if (isBackofficeUser === false) {
@@ -104,7 +109,15 @@ export const BusinessProvider = ({ children }: Props) => {
   // provider
   return (
     <BusinessContext.Provider
-      value={{ business, setBusinessId, updateContextBusinessOrderPrint, isDeleted, setIsDeleted }}
+      value={{
+        business,
+        setBusinessId,
+        updateContextBusinessOrderPrint,
+        isDeleted,
+        setIsDeleted,
+        businessesIsEmpty,
+        setBusinessIdByBusinesses,
+      }}
     >
       {children}
     </BusinessContext.Provider>

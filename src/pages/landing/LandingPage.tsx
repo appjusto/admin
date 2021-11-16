@@ -17,7 +17,7 @@ const LandingPage = () => {
     if (isDeleted) {
       setIsDeleted(false);
     }
-  }, [isDeleted]);
+  }, [isDeleted, setIsDeleted]);
   // UI
   return (
     <Box>

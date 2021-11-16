@@ -13,6 +13,9 @@ const Onboarding = React.lazy(
 const Logout = React.lazy(() => import(/* webpackPrefetch: true */ 'pages/logout/Logout'));
 const Home = React.lazy(() => import(/* webpackPrefetch: true */ 'pages/home/Home'));
 const BackOffice = React.lazy(() => import(/* webpackPrefetch: true */ 'pages/backoffice'));
+const DeletedPage = React.lazy(
+  () => import(/* webpackPrefetch: true */ 'pages/deleted/DeletedPage')
+);
 const PageNotFound = React.lazy(() => import(/* webpackPrefetch: true */ 'pages/404'));
 
 export const Router = () => {
@@ -23,6 +26,7 @@ export const Router = () => {
           <Route exact path="/" component={LandingPage} />
           <Route path="/login" component={Login} />
           <Route path="/join" component={Join} />
+          <Route path="/deleted" component={DeletedPage} />
           <ProtectedRoute path="/app" component={Home} />
           <ProtectedRoute path="/onboarding" component={Onboarding} />
           <BackOfficeRoute path="/backoffice" component={BackOffice} />

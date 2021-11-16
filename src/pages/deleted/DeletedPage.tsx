@@ -3,11 +3,19 @@ import { useContextBusiness } from 'app/state/business/context';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { ReactComponent as Logo } from 'common/img/logo.svg';
 import React from 'react';
+import { useHistory } from 'react-router';
 import { t } from 'utils/i18n';
 
-export const DeletedPage = () => {
+const DeletedPage = () => {
   // context
-  const { business, setIsDeleted } = useContextBusiness();
+  const history = useHistory();
+  const { businessesIsEmpty, setBusinessIdByBusinesses, setIsDeleted } = useContextBusiness();
+  // handlers
+  const handleRedirect = (path: '/onboarding' | '/app') => {
+    setIsDeleted(false);
+    if (path === '/app') setBusinessIdByBusinesses();
+    return history.push(path);
+  };
   // UI
   return (
     <Center height="100vh">
@@ -23,28 +31,29 @@ export const DeletedPage = () => {
             'Lamentamos que você tenha optado por deletar o seu restaurante. Estamos nos esforçando para oferecer uma alternativa às plataformas atuais de delivery, que seja realmente boa para todos!'
           )}
         </Text>
-        {!business && (
+        {businessesIsEmpty && (
           <Text mt="4" fontSize="15px" lineHeight="21px" fontWeight="500" textAlign="center">
             {t(
-              'Desejamos sorte e estamos na torcida para que você se junta a nós, nesse movimento, em breve!'
+              'Desejamos sorte e estamos na torcida para que você se junte a nós, nesse movimento, em breve!'
             )}
           </Text>
         )}
         <Text mt="4" fontSize="15px" lineHeight="21px" fontWeight="500" textAlign="center">
           {t('O que deseja fazer a seguir?')}
         </Text>
-        {!business ? (
+        {businessesIsEmpty ? (
           <Stack
-            mt="2"
+            mt="8"
             w="100%"
             direction={{ base: 'column', md: 'row' }}
             spacing={4}
             justifyContent="center"
           >
-            <Button w={{ base: '100%', md: '260px' }} onClick={() => setIsDeleted(false)}>
+            <Button w={{ base: '100%', md: '260px' }} onClick={() => handleRedirect('/onboarding')}>
               {t('Criar um novo restaurante')}
             </Button>
             <CustomButton
+              mt="0"
               w={{ base: '100%', md: '260px' }}
               label={t('Sair da plataforma')}
               link="/logout"
@@ -53,18 +62,17 @@ export const DeletedPage = () => {
           </Stack>
         ) : (
           <Stack
-            mt="2"
+            mt="8"
             w="100%"
             direction={{ base: 'column', md: 'row' }}
             spacing={4}
             justifyContent="center"
           >
+            <Button w={{ base: '100%', md: '260px' }} onClick={() => handleRedirect('/app')}>
+              {t('Ir para a página incial')}
+            </Button>
             <CustomButton
-              w={{ base: '100%', md: '260px' }}
-              label={t('Ir para a página incial')}
-              link="/app"
-            />
-            <CustomButton
+              mt="0"
               w={{ base: '100%', md: '260px' }}
               label={t('Sair da plataforma')}
               link="/logout"
@@ -99,3 +107,5 @@ export const DeletedPage = () => {
     </Center>
   );
 };
+
+export default DeletedPage;

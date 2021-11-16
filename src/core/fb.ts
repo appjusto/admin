@@ -22,5 +22,7 @@ export const getFirebaseErrorMessage = (error: unknown) => {
     return 'O link de acesso não é válido. Isso pode acontecer caso o link esteja mal formatado, expirado ou já tenha sido utilizado uma vez. Volte para a tela de login e solicite um novo link.';
   else if ((error as FirebaseError).code === 'auth/too-many-requests')
     return 'O acesso a esta conta, via senha, foi temporariamente desativado devido a muitas tentativas de login. Você pode realizar o login via link imediatamente, ou pode tentar novamente mais tarde.';
+  else if ((error as FirebaseError).code === 'auth/requires-recent-login')
+    return 'Esta operação é sensível e requer autenticação recente. Refaça o login e tente novamente.';
   else return (error as FirebaseError).message;
 };

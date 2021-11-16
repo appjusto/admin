@@ -6,7 +6,6 @@ import { Loading } from 'common/components/Loading';
 import BusinessProfile from 'pages/business-profile/BusinessProfile';
 import SchedulesPage from 'pages/business-schedules/SchedulesPage';
 import ChatPage from 'pages/chat';
-import { DeletedPage } from 'pages/deleted/DeletedPage';
 import DeliveryArea from 'pages/delivery-area/DeliveryArea';
 import FinancesPage from 'pages/finances/FinancesPage';
 import { UserNotFound } from 'pages/join/UserNotFound';
@@ -42,7 +41,7 @@ const Home = () => {
   if (!business) {
     if (isDeleted) {
       if (isBackofficeUser) return <Redirect to="/backoffice/businesses" />;
-      else return <Redirect to={`/app/deleted`} />;
+      else return <Redirect to={`/deleted`} />;
     }
     if (isBackofficeUser) return <Redirect to="/backoffice" />;
     else if (isTimeout && business === null) return <Redirect to={`/onboarding`} />;
@@ -64,7 +63,6 @@ const Home = () => {
           <Switch>
             <Route path={`${path}/orders`} component={OrdersPage} />
             <Route path={`${path}/chat`} component={ChatPage} />
-            <Route path={`${path}/deleted`} component={DeletedPage} />
             <PageLayout mt={isBackofficeUser ? '60px' : '0'}>
               <Route exact path={path} component={Dashboard} />
               <Route path={`${path}/sharing`} component={SharingPage} />
