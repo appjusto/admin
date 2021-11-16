@@ -27,7 +27,8 @@ export const useManagers = (role?: GeneralRoles | null) => {
 
   const { mutateAsync: removeBusinessManager, mutationResult: removeResult } = useCustomMutation(
     async (managerEmail: string) => api.business().removeBusinessManager(business!, managerEmail),
-    'removeBusinessManager'
+    'removeBusinessManager',
+    false
   );
 
   // side effects

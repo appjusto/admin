@@ -23,7 +23,7 @@ export const AddMembersForm = () => {
   const { dispatchAppRequestResult } = useContextAppRequests();
   const { business } = useContextBusiness();
   const { createManager, createResult } = useManagers();
-  const { isLoading } = createResult;
+  const { isLoading, isSuccess } = createResult;
   // state
   const [members, setMembers] = React.useState<Member[]>([memberObj]);
   // handlers
@@ -80,8 +80,12 @@ export const AddMembersForm = () => {
         role: userRole,
       });
     });
-    setMembers([memberObj]);
   };
+  console.log('members', members);
+  // side effects
+  React.useEffect(() => {
+    if (isSuccess) setMembers([memberObj]);
+  }, [isSuccess]);
   // UI
   return (
     <Box mt="8" maxW={{ base: '100vw', lg: '700px' }}>
