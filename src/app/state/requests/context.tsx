@@ -1,7 +1,7 @@
 import { useToast } from '@chakra-ui/react';
 import * as Sentry from '@sentry/react';
-import { FirebaseError } from 'app/api/types';
 import { CustomToast } from 'common/components/CustomToast';
+import { getFirebaseErrorMessage } from 'core/fb';
 import { isEmpty } from 'lodash';
 import React from 'react';
 
@@ -33,9 +33,10 @@ const initErrorMsg = {
   description: 'Tenta novamente?',
 };
 
-const getErrorMessage = (errorMessage?: ErrorMessage, message?: string): ErrorMessage => {
+const getErrorMessage = (errorMessage?: ErrorMessage, error?: unknown): ErrorMessage => {
   if (errorMessage) return errorMessage;
-  else if (message) {
+  else if (error) {
+    const message = getFirebaseErrorMessage(error);
     return {
       title: 'Erro:',
       description: message,
@@ -57,7 +58,7 @@ export const AppRequestsProvider = ({ children }: Props) => {
           Sentry.captureException(result.error);
         const errorMessage = getErrorMessage(
           result.message,
-          result.error ? (result.error as FirebaseError).message : undefined
+          result.error ? result.error : undefined
         );
         if (!toast.isActive(result.requestId))
           toast({

@@ -14,8 +14,8 @@ export const documentAs = <T extends object>(doc: FirebaseDocument): WithId<T> =
 export const documentsAs = <T extends object>(docs: FirebaseDocument[]): WithId<T>[] =>
   docs.map((doc) => documentAs<T>(doc));
 
-export const getErrorMessage = (error: unknown) => {
-  if (!error) return null;
+export const getFirebaseErrorMessage = (error: unknown) => {
+  if (!error) return 'Não foi possível acessar o servidor. Tenta novamente?';
   if ((error as FirebaseError).code === 'auth/wrong-password')
     return 'A senha não é válida ou o usuário não possui senha';
   else if ((error as FirebaseError).code === 'auth/invalid-action-code')

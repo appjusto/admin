@@ -1,13 +1,11 @@
-import { Box, Button, Center, Container, Flex, FormControl, Text } from '@chakra-ui/react';
+import { Button, Center, Container, Flex, FormControl, Text } from '@chakra-ui/react';
 import { useAuthentication } from 'app/api/auth/useAuthentication';
 import { useContextApi } from 'app/state/api/context';
 import { useContextFirebaseUser } from 'app/state/auth/context';
-import { AlertWarning } from 'common/components/AlertWarning';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import { Loading } from 'common/components/Loading';
 import { ReactComponent as Logo } from 'common/img/logo.svg';
-import { getErrorMessage } from 'core/fb';
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { t } from 'utils/i18n';
@@ -19,7 +17,7 @@ const Join = () => {
   // context
   const api = useContextApi()!;
   const { signInWithEmailLink, signInResult } = useAuthentication();
-  const { isLoading, isSuccess, isError, error } = signInResult;
+  const { isLoading, isSuccess } = signInResult;
   const link = window.location.href;
   const savedEmail = api.auth().getSignInEmail();
   const isLinkValid = api.auth().isSignInWithEmailLink(link);
@@ -48,7 +46,7 @@ const Join = () => {
   }, [isLinkValid, isEmailSaved, signInWithEmailLink, savedEmail, link]);
 
   // UI
-  if (isTimeout && !isBackofficeUser) return <UserNotFound />;
+  if (isTimeout && !isBackofficeUser && isEmailSaved) return <UserNotFound />;
 
   if (isSuccess) {
     if (isBackofficeUser) return <Redirect to="/backoffice" />;
@@ -103,14 +101,6 @@ const Join = () => {
           >
             {t('Entrar')}
           </Button>
-          <Box mt="6">
-            {isError && (
-              <AlertWarning
-                title={t('Ocorreu um erro de autenticação!')}
-                description={getErrorMessage(error) ?? t('Tenta de novo?')}
-              />
-            )}
-          </Box>
         </Container>
       </Center>
     );
