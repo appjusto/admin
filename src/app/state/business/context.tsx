@@ -55,20 +55,26 @@ export const BusinessProvider = ({ children }: Props) => {
     if (businessId && refreshUserToken) refreshUserToken(businessId);
   }, [businessId, refreshUserToken]);
   React.useEffect(() => {
+    if (!user?.email) return;
     if (hookBusiness === undefined) return;
     if (hookBusiness === null) return setBusiness(null);
     if (isBackofficeUser === false) {
-      localStorage.setItem(`business-${process.env.REACT_APP_ENVIRONMENT}`, hookBusiness.id);
+      localStorage.setItem(
+        `business-${process.env.REACT_APP_ENVIRONMENT}-${user.email}`,
+        hookBusiness.id
+      );
     }
     updateContextBusiness(hookBusiness);
     queryClient.invalidateQueries();
-  }, [hookBusiness, isBackofficeUser, queryClient, updateContextBusiness]);
+  }, [user, hookBusiness, isBackofficeUser, queryClient, updateContextBusiness]);
   React.useEffect(() => {
     if (isBackofficeUser) return;
     if (!user?.email) return;
     if (!businesses) return;
     if (businessId) return;
-    const localBusinessId = localStorage.getItem(`business-${process.env.REACT_APP_ENVIRONMENT}`);
+    const localBusinessId = localStorage.getItem(
+      `business-${process.env.REACT_APP_ENVIRONMENT}-${user.email}`
+    );
     if (localBusinessId) {
       setBusinessId(localBusinessId);
       return;
