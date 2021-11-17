@@ -24,7 +24,7 @@ export const TeamTable = () => {
         return manager;
       })
     );
-    await createManager({ email: managerEmail, role: isManager ? 'manager' : 'collaborator' });
+    await createManager([{ email: managerEmail, role: isManager ? 'manager' : 'collaborator' }]);
     setIsLoading(false);
   };
   const deleteMember = async (managerEmail: string) => {

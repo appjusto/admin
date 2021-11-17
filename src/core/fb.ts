@@ -24,5 +24,7 @@ export const getFirebaseErrorMessage = (error: unknown) => {
     return 'O acesso a esta conta, via senha, foi temporariamente desativado devido a muitas tentativas de login. Você pode realizar o login via link imediatamente, ou pode tentar novamente mais tarde.';
   else if ((error as FirebaseError).code === 'auth/requires-recent-login')
     return 'Esta operação é sensível e requer autenticação recente. Refaça o login e tente novamente.';
+  else if ((error as FirebaseError).code === 'auth/network-request-failed')
+    return 'Ocorreu um erro de rede (como tempo limite, conexão interrompida ou host inacessível). Tenta novamente?';
   else return (error as FirebaseError).message;
 };

@@ -1,10 +1,9 @@
 import * as Sentry from '@sentry/react';
 import {
-  AdminRole,
   Business,
-  CreateManagerPayload,
+  CreateManagersPayload,
   ManagerProfile,
-  Role,
+  NewManagerData,
   WithId,
 } from 'appjusto-types';
 import { GetBusinessManagersPayload } from 'appjusto-types/payloads/profile';
@@ -101,13 +100,12 @@ export default class ManagerApi {
     await this.refs.getManagerRef(id).update(changes);
   }
 
-  async createManager(data: { email: string; key: string; role: Role | AdminRole }) {
-    const { email, key, role } = data;
-    const payload: CreateManagerPayload = {
+  async createManager(data: { key: string; managers: NewManagerData[] }) {
+    const { key, managers } = data;
+    const payload: CreateManagersPayload = {
       meta: { version: '1' }, // TODO: pass correct version on
-      email,
       key,
-      role,
+      managers,
     };
     try {
       await this.refs.getCreateManagerCallable()(payload);

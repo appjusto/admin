@@ -211,7 +211,7 @@
     "@algolia/requester-common" "4.9.0"
 
 "@appjusto/types@../types":
-  version "3.24.6"
+  version "3.24.7"
 
 "@babel/code-frame@7.10.4":
   version "7.10.4"
@@ -3888,7 +3888,7 @@ anymatch@^3.0.3, anymatch@~3.1.1:
     picomatch "^2.0.4"
 
 appjusto-types@../types:
-  version "3.24.6"
+  version "3.24.7"
 
 aproba@^1.1.1:
   version "1.2.0"
@@ -11442,10 +11442,10 @@ react-qr-code@^2.0.2:
     prop-types "^15.7.2"
     qr.js "0.0.0"
 
-react-query@3.32.1:
-  version "3.32.1"
-  resolved "https://registry.yarnpkg.com/react-query/-/react-query-3.32.1.tgz#829a87d039ece85660d8911ac59b1c92d1879064"
-  integrity sha512-7UN8BYBaZb911iJUyJ/T+CjlBGBf5W8rcm3jRQ5wW4f+mt/onvRxJlB0U2r2fsT204poJt6VO0jPlm5dwu3PrQ==
+react-query@^3.32.1:
+  version "3.33.0"
+  resolved "https://registry.yarnpkg.com/react-query/-/react-query-3.33.0.tgz#4f36bb24a15bf22e39094484b9dd041e995a7823"
+  integrity sha512-lazqEf+kHFfV89PdDZnZsbZ+WPJsAKLJk0fLrev41lFqAzChZp317x/AmCBIe7NPysgIVeUL+jEOBZ4d26+E2g==
   dependencies:
     "@babel/runtime" "^7.5.5"
     broadcast-channel "^3.4.1"
@@ -13338,11 +13338,6 @@ typedarray@^0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
-
-types@^0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/types/-/types-0.1.1.tgz#860c6859d11366293f835d8c95aebcf95029838e"
-  integrity sha1-hgxoWdETZik/g12Mla68+VApg44=
 
 typescript@^4.1.2:
   version "4.1.3"

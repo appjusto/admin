@@ -5,6 +5,7 @@ import { useContextAppRequests } from 'app/state/requests/context';
 import { AdminRole } from 'appjusto-types';
 import { CloseButton } from 'common/components/buttons/CloseButton';
 import { CustomInput } from 'common/components/form/input/CustomInput';
+import { intersectionBy } from 'lodash';
 import React from 'react';
 import { t } from 'utils/i18n';
 
@@ -47,41 +48,43 @@ export const AddMembersForm = () => {
       return newState;
     });
   };
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!business?.id)
       return dispatchAppRequestResult({
         status: 'error',
         requestId: 'AddMembersForm-valid-no-business',
       });
-    members.forEach(async (member) => {
-      if (!member.email)
-        return dispatchAppRequestResult({
-          status: 'error',
-          requestId: 'AddMembersForm-valid-no-email',
-          message: {
-            title: 'Ocorreu um erro com um ou mais dos emails informados.',
-            description: 'Tenta novamente?',
-          },
-        });
-      let managers = business.managers;
+    const managers = members.map((member) => {
       const userRole: AdminRole = member.isManager ? 'manager' : 'collaborator';
-      if (managers?.includes(member.email)) {
-        return dispatchAppRequestResult({
-          status: 'error',
-          requestId: 'AddMembersForm-valid-email-in-use',
-          message: {
-            title: 'Usuário já existe.',
-            description: 'O e-mail informado já foi cadastrado para um usuário.',
-          },
-        });
-      }
-      await createManager({
+      return {
         email: member.email,
         role: userRole,
-      });
+      };
     });
+    if (managers.find((manager) => !manager.email)) {
+      return dispatchAppRequestResult({
+        status: 'error',
+        requestId: 'AddMembersForm-valid-no-email',
+        message: {
+          title: 'Ocorreu um erro com um ou mais dos emails informados.',
+          description: 'Verifica as informações preenchidas e tenta novamente?',
+        },
+      });
+    }
+    const totalManagers = [...(business.managers ?? []), ...members];
+    const intersection = intersectionBy(totalManagers, 'email');
+    if (intersection.length > 0) {
+      return dispatchAppRequestResult({
+        status: 'error',
+        requestId: 'AddMembersForm-valid-email-in-use',
+        message: {
+          title: 'Um ou mais usuários já existem.',
+          description: 'Alguns e-mails informados já foram cadastrados para outros usuários.',
+        },
+      });
+    }
+    await createManager(managers);
   };
-  console.log('members', members);
   // side effects
   React.useEffect(() => {
     if (isSuccess) setMembers([memberObj]);

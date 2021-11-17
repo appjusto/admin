@@ -2,11 +2,9 @@ import { useContextApi } from 'app/state/api/context';
 import { useContextBusiness } from 'app/state/business/context';
 import React from 'react';
 import { ManagerWithRole } from './types';
-import { AdminRole, Role } from 'appjusto-types';
+import { NewManagerData } from 'appjusto-types';
 import { GeneralRoles } from 'app/state/auth/context';
 import { useCustomMutation } from '../mutation/useCustomMutation';
-
-type ManagerData = { email: string; role: Role | AdminRole };
 
 export const useManagers = (role?: GeneralRoles | null) => {
   // contex
@@ -18,8 +16,8 @@ export const useManagers = (role?: GeneralRoles | null) => {
 
   // mutations
   const { mutateAsync: createManager, mutationResult: createResult } = useCustomMutation(
-    async (data: ManagerData) => {
-      const dataWithKey = { ...data, key: business?.id! };
+    async (managers: NewManagerData[]) => {
+      const dataWithKey = { key: business?.id!, managers };
       return api.manager().createManager(dataWithKey);
     },
     'createManager'
