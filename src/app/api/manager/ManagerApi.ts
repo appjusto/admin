@@ -108,7 +108,7 @@ export default class ManagerApi {
       managers,
     };
     try {
-      await this.refs.getCreateManagerCallable()(payload);
+      await this.refs.getCreateManagersCallable()(payload);
       return true;
     } catch (error) {
       Sentry.captureException(error);
