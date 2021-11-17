@@ -5,7 +5,7 @@ import { useContextAppRequests } from 'app/state/requests/context';
 import { AdminRole } from 'appjusto-types';
 import { CloseButton } from 'common/components/buttons/CloseButton';
 import { CustomInput } from 'common/components/form/input/CustomInput';
-import { intersectionBy } from 'lodash';
+import { intersection } from 'lodash';
 import React from 'react';
 import { t } from 'utils/i18n';
 
@@ -71,9 +71,9 @@ export const AddMembersForm = () => {
         },
       });
     }
-    const totalManagers = [...(business.managers ?? []), ...members];
-    const intersection = intersectionBy(totalManagers, 'email');
-    if (intersection.length > 0) {
+    const membersEmails = members.map((member) => member.email);
+    const isIntersection = intersection(business.managers, membersEmails).length > 0;
+    if (isIntersection) {
       return dispatchAppRequestResult({
         status: 'error',
         requestId: 'AddMembersForm-valid-email-in-use',
