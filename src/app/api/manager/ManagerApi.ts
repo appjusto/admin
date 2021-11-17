@@ -107,12 +107,7 @@ export default class ManagerApi {
       key,
       managers,
     };
-    try {
-      await this.refs.getCreateManagersCallable()(payload);
-      return true;
-    } catch (error) {
-      Sentry.captureException(error);
-      return false;
-    }
+    const result = await this.refs.getCreateManagersCallable()(payload);
+    return result;
   }
 }
