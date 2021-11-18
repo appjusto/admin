@@ -50,6 +50,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   // automatic opening and closing of the business
   useBusinessOpenClose(business);
   //state
+  const [businessAlertDisplayed, setBusinessAlertDisplayed] = React.useState(false);
   const [orders, setOrders] = React.useState<WithId<Order>[]>([]);
   const [newChatMessages, setNewChatMessages] = React.useState<string[]>([]);
   //handlers
@@ -167,6 +168,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   React.useEffect(() => {
     if (isBackofficeUser) return;
     if (business?.situation !== 'approved') return;
+    if (businessAlertDisplayed) return;
     if (!business?.enabled) {
       dispatchAppRequestResult({
         status: 'error',
@@ -178,13 +180,15 @@ export const OrdersContextProvider = (props: ProviderProps) => {
         },
         duration: 12000,
       });
+      setBusinessAlertDisplayed(true);
       return;
     }
   }, [
     isBackofficeUser,
     business?.situation,
     business?.enabled,
-    business?.status,
+    businessAlertDisplayed,
+    setBusinessAlertDisplayed,
     dispatchAppRequestResult,
   ]);
   // provider
