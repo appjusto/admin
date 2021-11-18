@@ -10,7 +10,8 @@ export const useAdvanceReceivables = (businessId?: string) => {
     mutationResult: advanceReceivablesResult,
   } = useCustomMutation(
     async (ids: number[]) => api.business().advanceReceivables(businessId!, ids),
-    'advanceReceivables'
+    'advanceReceivables',
+    false
   );
   // return
   return { advanceReceivables, advanceReceivablesResult };
