@@ -1,5 +1,5 @@
 import { Box, Flex, HStack, Icon, Input, InputGroup, InputRightElement } from '@chakra-ui/react';
-import { MenuProvider } from 'app/state/menu/context';
+import { useContextMenu } from 'app/state/menu/context';
 import { FilterText } from 'common/components/backoffice/FilterText';
 import { ReactComponent as SearchIcon } from 'common/img/searchIcon.svg';
 import PageHeader from 'pages/PageHeader';
@@ -19,14 +19,14 @@ const Menu = () => {
   // context
   const { path } = useRouteMatch();
   const history = useHistory();
+  const { isProductsPage, setIsProductPage } = useContextMenu();
   // state
-  const [isProducts, setIsProduct] = React.useState(true);
   const [productSearch, setProductSearch] = React.useState('');
   // handler
   const closeDrawerHandler = () => history.replace(path);
   // UI
   return (
-    <MenuProvider>
+    <Box>
       <Box pb="10">
         <PageHeader title={t('Cardápio')} subtitle={t('Defina o cardápio do seu restaurante.')} />
         <Box mt="2">
@@ -38,23 +38,23 @@ const Menu = () => {
             borderBottom="1px solid #C8D7CB"
           >
             <HStack spacing={4}>
-              <FilterText isActive={isProducts} onClick={() => setIsProduct(true)}>
+              <FilterText isActive={isProductsPage} onClick={() => setIsProductPage(true)}>
                 {t('Produtos')}
               </FilterText>
-              <FilterText isActive={!isProducts} onClick={() => setIsProduct(false)}>
+              <FilterText isActive={!isProductsPage} onClick={() => setIsProductPage(false)}>
                 {t('Complementos')}
               </FilterText>
             </HStack>
           </Flex>
         </Box>
         <Flex flexDir={{ base: 'column', lg: 'row' }} justifyContent="space-between" mt="2" mb="8">
-          <MainButtons isProducts={isProducts} />
+          <MainButtons isProducts={isProductsPage} />
           <InputGroup maxW="360px">
             <Input
               size="lg"
               mt="16px"
               value={productSearch}
-              placeholder={isProducts ? t('Encontre um produto') : t('Encontre um complemento')}
+              placeholder={isProductsPage ? t('Encontre um produto') : t('Encontre um complemento')}
               onChange={(ev) => setProductSearch(ev.target.value)}
             />
             <InputRightElement
@@ -64,7 +64,7 @@ const Menu = () => {
             />
           </InputGroup>
         </Flex>
-        {isProducts ? (
+        {isProductsPage ? (
           <Categories productSearch={productSearch} />
         ) : (
           <Complements search={productSearch} />
@@ -86,7 +86,7 @@ const Menu = () => {
           <ComplementDrawer isOpen onClose={closeDrawerHandler} />
         </Route>
       </Switch>
-    </MenuProvider>
+    </Box>
   );
 };
 

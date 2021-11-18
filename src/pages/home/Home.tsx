@@ -1,6 +1,7 @@
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { BusinessDashboardProvider } from 'app/state/dashboards/business';
+import { MenuProvider } from 'app/state/menu/context';
 import { OrdersContextProvider } from 'app/state/order';
 import { Loading } from 'common/components/Loading';
 import BusinessProfile from 'pages/business-profile/BusinessProfile';
@@ -66,7 +67,9 @@ const Home = () => {
             <PageLayout mt={isBackofficeUser ? '60px' : '0'}>
               <Route exact path={path} component={Dashboard} />
               <Route path={`${path}/sharing`} component={SharingPage} />
-              <Route path={`${path}/menu`} component={Menu} />
+              <MenuProvider>
+                <Route path={`${path}/menu`} component={Menu} />
+              </MenuProvider>
               <Route path={`${path}/business-schedules`} component={SchedulesPage} />
               <Route path={`${path}/delivery-area`} component={DeliveryArea} />
               <Route path={`${path}/business-profile`} component={BusinessProfile} />

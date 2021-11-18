@@ -1,11 +1,12 @@
 import { Center, Checkbox, CheckboxProps, Flex, HStack } from '@chakra-ui/react';
 
-const CustomCheckbox = ({ children, w, h, mt, mb, ...props }: CheckboxProps) => {
+const CustomCheckbox = ({ children, w, h, mt, mb, isDisabled, ...props }: CheckboxProps) => {
   const containerProps = { w, h, mt, mb };
   return (
     <HStack {...containerProps}>
       <Center
-        border="2px solid black"
+        border="2px solid"
+        borderColor={isDisabled ? 'gray.200' : 'black'}
         position="relative"
         w="24px"
         h="24px"
@@ -21,6 +22,7 @@ const CustomCheckbox = ({ children, w, h, mt, mb, ...props }: CheckboxProps) => 
           border="none"
           _focus={{ outline: 'none' }}
           _checked={{ bgColor: 'green.500', outline: 'none' }}
+          isDisabled={isDisabled}
           {...props}
         />
       </Center>

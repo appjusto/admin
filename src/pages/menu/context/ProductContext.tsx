@@ -103,7 +103,7 @@ export const ProductContextProvider = (props: ProviderProps) => {
     mutationResult: connectionResult,
   } = useCustomMutation(async (data: { groupsIds: string[] }) => {
     if (!data.groupsIds) {
-      throw new Error(`Argumentos inválidos: groupId: ${data.groupsIds}.`);
+      throw new Error(`Argumentos inválidos: groupsIds: ${data.groupsIds}.`);
     }
     await api
       .business()

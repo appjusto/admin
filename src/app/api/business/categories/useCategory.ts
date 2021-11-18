@@ -20,16 +20,19 @@ export const useCategory = (id: string) => {
   // mutations
   const { mutateAsync: createCategory, mutationResult: createResult } = useCustomMutation(
     async (category: Category) => api.business().createCategory(businessId, categoryId, category),
-    'createCategory'
+    'createCategory',
+    false
   );
   const { mutateAsync: updateCategory, mutationResult: updateResult } = useCustomMutation(
     async (category: Partial<Category>) =>
       api.business().updateCategory(businessId, categoryId, category),
-    'updateCategory'
+    'updateCategory',
+    false
   );
   const { mutateAsync: deleteCategory } = useCustomMutation(
     async () => api.business().deleteCategory(businessId, categoryId),
-    'deleteCategory'
+    'deleteCategory',
+    false
   );
   const saveCategory = isNew ? createCategory : updateCategory;
   const result = createResult || updateResult;

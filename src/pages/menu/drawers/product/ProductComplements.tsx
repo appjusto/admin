@@ -1,21 +1,24 @@
 import {
+  Alert,
+  AlertDescription,
+  AlertIcon,
   Badge,
   Box,
   Button,
   CheckboxGroup,
   Flex,
   HStack,
+  Link,
   RadioGroup,
   Stack,
   Text,
 } from '@chakra-ui/react';
 import { useContextMenu } from 'app/state/menu/context';
-import { AlertWarning } from 'common/components/AlertWarning';
 import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import CustomRadio from 'common/components/form/CustomRadio';
 import { useProductContext } from 'pages/menu/context/ProductContext';
 import React from 'react';
-import { Redirect, useRouteMatch } from 'react-router-dom';
+import { Link as RouterLink, Redirect, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
 
 export const ProductComplements = () => {
@@ -25,7 +28,7 @@ export const ProductComplements = () => {
     productId,
     product,
     updateProduct,
-    connectComplmentsGroupToProduct,
+    //connectComplmentsGroupToProduct,
     connectionResult,
   } = useProductContext();
   const { complementsGroupsWithItems } = useContextMenu();
@@ -37,11 +40,15 @@ export const ProductComplements = () => {
   const complementsExists = complementsGroupsWithItems.length > 0;
   // handlers
   const handleComplementsEnable = (value: string) => {
-    updateProduct({ changes: { complementsEnabled: value === '1' ? false : true } });
     setHasComplements(value === '1' ? false : true);
   };
   const handleComplementsGroupsConnection = () => {
-    connectComplmentsGroupToProduct({ groupsIds: connectedGroups });
+    if (!hasComplements || connectedGroups.length === 0) {
+      setHasComplements(false);
+      updateProduct({ changes: { complementsEnabled: false, complementsGroupsIds: [] } });
+      return;
+    }
+    updateProduct({ changes: { complementsEnabled: true, complementsGroupsIds: connectedGroups } });
   };
   // side effects
   React.useEffect(() => {
@@ -81,7 +88,17 @@ export const ProductComplements = () => {
         </Flex>
       </RadioGroup>
       {!complementsExists && (
-        <AlertWarning mt="8" title={t('Você ainda não cadastrou complementos')} />
+        <Alert mt="4" status="warning" color="black" border="1px solid #FFBE00" borderRadius="lg">
+          <AlertIcon />
+          <Flex flexDir="column">
+            <AlertDescription>
+              {t('Antes de associar um grupo de complementos a um produto, você precisa ')}
+              <Link as={RouterLink} to="/app/menu/complementsgroup/new" textDecor="underline">
+                {t('cadastrar um grupo de complementos')}.
+              </Link>
+            </AlertDescription>
+          </Flex>
+        </Alert>
       )}
       {hasComplements && (
         <Box mt="6">
@@ -104,7 +121,7 @@ export const ProductComplements = () => {
             >
               {complementsGroupsWithItems.map((group) => (
                 <Box key={group.id} w="100%" p="4" border="1px solid #D7E7DA" borderRadius="lg">
-                  <CustomCheckbox w="100%" value={group.id}>
+                  <CustomCheckbox w="100%" value={group.id} isDisabled={group.items?.length === 0}>
                     <Box ml="2">
                       <HStack spacing={2}>
                         <Text>{group.name}</Text>
@@ -117,27 +134,29 @@ export const ProductComplements = () => {
                       <Text fontSize="sm" color="gray.700">{`${
                         group.required ? 'Obrigatório' : 'Opcional'
                       }. Mín: ${group.minimum}. Máx: ${group.maximum}`}</Text>
-                      <Text fontSize="sm" color="gray.700">{`Itens: ${group.items
-                        ?.map((item) => item.name)
-                        .join(', ')}`}</Text>
+                      <Text fontSize="sm" color={group.items?.length === 0 ? 'red' : 'gray.700'}>
+                        {group.items && group.items.length > 0
+                          ? `Itens: ${group.items.map((item) => item.name).join(', ')}`
+                          : 'Nenhum item cadastrado'}
+                      </Text>
                     </Box>
                   </CustomCheckbox>
                 </Box>
               ))}
             </Stack>
           </CheckboxGroup>
-          <Button
-            mt="6"
-            width={{ base: '100%', lg: '50%' }}
-            color="black"
-            fontSize="15px"
-            onClick={handleComplementsGroupsConnection}
-            isLoading={isLoading}
-          >
-            {t('Salvar grupos associados')}
-          </Button>
         </Box>
       )}
+      <Button
+        mt="6"
+        width={{ base: '100%', lg: '50%' }}
+        color="black"
+        fontSize="15px"
+        onClick={handleComplementsGroupsConnection}
+        isLoading={isLoading}
+      >
+        {t('Salvar alterações')}
+      </Button>
     </Box>
   );
 };
