@@ -48,7 +48,7 @@ export default class OrderApi {
   ): firebase.Unsubscribe {
     let query = this.refs
       .getOrdersRef()
-      .orderBy('confirmedOn', ordering)
+      .orderBy('chargedOn', ordering)
       .where('status', 'in', statuses);
 
     if (businessId) {
