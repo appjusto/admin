@@ -19,7 +19,8 @@ export const useObserveBusinessProfileNotes = (businessId?: string) => {
   const { mutateAsync: deleteNote, mutationResult: deleteResult } = useCustomMutation(
     async (profileNoteId: string) =>
       await api.business().deleteProfileNote(businessId!, profileNoteId),
-    'deleteNote'
+    'deleteNote',
+    false
   );
   // side effects
   React.useEffect(() => {

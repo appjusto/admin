@@ -32,18 +32,15 @@ const BODashboard = () => {
   const changes = useObserveUsersChanges(usersChangesSituations);
   // state
   const [dateTime, setDateTime] = React.useState('');
-
   // handlers
   const closeDrawerHandler = () => {
     history.replace(path);
   };
-
   // side effects
   React.useEffect(() => {
     const { date, time } = getDateTime();
     setDateTime(`${date} às ${time}`);
   }, []);
-
   // UI
   return (
     <>

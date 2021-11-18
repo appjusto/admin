@@ -19,7 +19,8 @@ export const useObserveConsumerProfileNotes = (consumerId?: string) => {
   const { mutateAsync: deleteNote, mutationResult: deleteResult } = useCustomMutation(
     async (profileNoteId: string) =>
       await api.consumer().deleteProfileNote(consumerId!, profileNoteId),
-    'deleteNote'
+    'deleteNote',
+    false
   );
   // side effects
   React.useEffect(() => {

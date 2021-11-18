@@ -19,7 +19,8 @@ export const useObserveCourierProfileNotes = (courierId?: string) => {
   const { mutateAsync: deleteNote, mutationResult: deleteResult } = useCustomMutation(
     async (profileNoteId: string) =>
       await api.courier().deleteProfileNote(courierId!, profileNoteId),
-    'deleteNote'
+    'deleteNote',
+    false
   );
   // side effects
   React.useEffect(() => {
