@@ -21,7 +21,7 @@ const businessSituations = ['submitted', 'verified', 'invalid'];
 
 const usersChangesSituations = ['pending'] as ProfileChangesSituations[];
 
-const statuses = ['confirmed', 'preparing', 'ready', 'dispatching'] as OrderStatus[];
+const statuses = ['charged', 'confirmed', 'preparing', 'ready', 'dispatching'] as OrderStatus[];
 
 const BODashboard = () => {
   // context
