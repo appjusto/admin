@@ -1,7 +1,7 @@
 import { useContextApi } from 'app/state/api/context';
 import { MarketplaceAccountInfo } from 'appjusto-types';
 import React from 'react';
-import { useMutation } from 'react-query';
+import { useCustomMutation } from '../mutation/useCustomMutation';
 
 export const useBusinessMarketPlace = (businessId: string) => {
   // context
@@ -9,8 +9,12 @@ export const useBusinessMarketPlace = (businessId: string) => {
   // state
   const [marketPlace, setMarketPlace] = React.useState<MarketplaceAccountInfo | null>();
   // mutations
-  const [deleteMarketPlace, deleteMarketPlaceResult] = useMutation(async () =>
-    api.business().deletePrivateMarketPlace(businessId)
+  const {
+    mutateAsync: deleteMarketPlace,
+    mutationResult: deleteMarketPlaceResult,
+  } = useCustomMutation(
+    async () => api.business().deletePrivateMarketPlace(businessId),
+    'deleteMarketPlace'
   );
   // side effects
   React.useEffect(() => {

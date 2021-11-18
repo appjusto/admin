@@ -17,8 +17,12 @@ type Params = {
 export const GroupDrawer = (props: Props) => {
   //context
   const { groupId } = useParams<Params>();
-  const { getComplementsGroupById } = useContextMenu();
+  const { getComplementsGroupById, isProductsPage, setIsProductPage } = useContextMenu();
   const group = getComplementsGroupById(groupId);
+  // side effects
+  React.useEffect(() => {
+    if (isProductsPage) setIsProductPage(false);
+  }, [isProductsPage, setIsProductPage]);
   // UI
   return (
     <BaseDrawer

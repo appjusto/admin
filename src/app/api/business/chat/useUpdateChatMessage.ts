@@ -1,17 +1,16 @@
+import { useCustomMutation } from 'app/api/mutation/useCustomMutation';
 import { useContextApi } from 'app/state/api/context';
 import { ChatMessage } from 'appjusto-types';
-import { useMutation } from 'react-query';
 
 export const useUpdateChatMessage = () => {
   // context
   const api = useContextApi();
   // mutations
-  const [
-    updateChatMessage,
-    updateResult,
-  ] = useMutation(
+  const { mutateAsync: updateChatMessage, mutationResult: updateResult } = useCustomMutation(
     async (data: { orderId: string; messageId: string; changes: Partial<ChatMessage> }) =>
-      api.business().updateChatMessage(data.orderId, data.messageId, data.changes)
+      api.business().updateChatMessage(data.orderId, data.messageId, data.changes),
+    'updateChatMessage',
+    false
   );
   // result
   return {

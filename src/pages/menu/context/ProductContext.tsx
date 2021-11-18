@@ -1,11 +1,12 @@
 import * as menu from 'app/api/business/menu/functions';
 import { useObserveProduct } from 'app/api/business/products/useObserveProduct';
+import { MutationResult, useCustomMutation } from 'app/api/mutation/useCustomMutation';
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusinessId } from 'app/state/business/context';
 import { useContextMenu } from 'app/state/menu/context';
 import { ComplementGroup, Product, WithId } from 'appjusto-types';
 import React from 'react';
-import { MutateFunction, MutationResult, useMutation, useQueryCache } from 'react-query';
+import { MutateFunction, UseMutateAsyncFunction, useQueryClient } from 'react-query';
 import { useParams } from 'react-router-dom';
 
 interface Params {
@@ -29,9 +30,9 @@ interface ContextProps {
     },
     unknown
   >;
-  updateProductResult: MutationResult<string, unknown>;
-  deleteProduct: MutateFunction<void, unknown, undefined, unknown>;
-  deleteProductResult: MutationResult<void, unknown>;
+  updateProductResult: MutationResult;
+  deleteProduct: UseMutateAsyncFunction<void, unknown, void, unknown>;
+  deleteProductResult: MutationResult;
   connectComplmentsGroupToProduct: MutateFunction<
     void,
     unknown,
@@ -40,7 +41,7 @@ interface ContextProps {
     },
     unknown
   >;
-  connectionResult: MutationResult<void, unknown>;
+  connectionResult: MutationResult;
 }
 
 const ProductContext = React.createContext<ContextProps>({} as ContextProps);
@@ -58,10 +59,10 @@ export const ProductContextProvider = (props: ProviderProps) => {
   const productId = productIdParam.split('?')[0];
   const { product, isValid, imageUrl } = useObserveProduct(businessId, productId, '1008x720');
   const contextCategoryId = menu.getParentId(productsOrdering, productId);
-  const queryCache = useQueryCache();
+  const queryClient = useQueryClient();
   const sortedGroups = complementsGroupsWithItems.filter((group) => false); // product config complements array
   // mutations
-  const [updateProduct, updateProductResult] = useMutation(
+  const { mutateAsync: updateProduct, mutationResult: updateProductResult } = useCustomMutation(
     async (data: {
       changes: Partial<Product>;
       categoryId?: string;
@@ -78,31 +79,36 @@ export const ProductContextProvider = (props: ProviderProps) => {
       }
       if (data.categoryId)
         updateProductsOrdering(menu.updateParent(productsOrdering, id, data.categoryId));
-      if (data.imageFiles) queryCache.invalidateQueries(['product:image', productId]);
+      if (data.imageFiles) queryClient.invalidateQueries(['product:image', productId]);
       return id;
-    }
+    },
+    'updateProduct'
   );
 
-  const [deleteProduct, deleteProductResult] = useMutation(async () => {
-    if (contextCategoryId) {
-      updateProductsOrdering(
-        menu.removeSecondLevel(productsOrdering, productId, contextCategoryId)
-      );
-    }
-    await api.business().deleteProduct(businessId!, productId);
-  });
+  const { mutateAsync: deleteProduct, mutationResult: deleteProductResult } = useCustomMutation(
+    async () => {
+      if (contextCategoryId) {
+        updateProductsOrdering(
+          menu.removeSecondLevel(productsOrdering, productId, contextCategoryId)
+        );
+      }
+      await api.business().deleteProduct(businessId!, productId);
+    },
+    'deleteProduct'
+  );
 
   // complements groups
-  const [connectComplmentsGroupToProduct, connectionResult] = useMutation(
-    async (data: { groupsIds: string[] }) => {
-      if (!data.groupsIds) {
-        throw new Error(`Argumentos inválidos: groupId: ${data.groupsIds}.`);
-      }
-      await api
-        .business()
-        .updateProduct(businessId!, productId, { complementsGroupsIds: data.groupsIds });
+  const {
+    mutateAsync: connectComplmentsGroupToProduct,
+    mutationResult: connectionResult,
+  } = useCustomMutation(async (data: { groupsIds: string[] }) => {
+    if (!data.groupsIds) {
+      throw new Error(`Argumentos inválidos: groupsIds: ${data.groupsIds}.`);
     }
-  );
+    await api
+      .business()
+      .updateProduct(businessId!, productId, { complementsGroupsIds: data.groupsIds });
+  }, 'connectComplmentsGroupToProduct');
 
   return (
     <ProductContext.Provider

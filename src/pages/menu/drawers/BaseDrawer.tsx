@@ -13,7 +13,7 @@ import {
   Flex,
   Text,
 } from '@chakra-ui/react';
-import { getErrorMessage } from 'core/fb';
+import { getFirebaseErrorMessage } from 'core/fb';
 import React from 'react';
 import { useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
@@ -81,7 +81,7 @@ export const BaseDrawer = ({
                     <AlertIcon />
                     <AlertTitle mr={2}>{t('Erro!')}</AlertTitle>
                     <AlertDescription>
-                      {getErrorMessage(error) ?? t('Tenta de novo?')}
+                      {getFirebaseErrorMessage(error) ?? t('Tenta de novo?')}
                     </AlertDescription>
                   </Alert>
                 )}

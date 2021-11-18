@@ -1,6 +1,7 @@
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { BusinessDashboardProvider } from 'app/state/dashboards/business';
+import { MenuProvider } from 'app/state/menu/context';
 import { OrdersContextProvider } from 'app/state/order';
 import { Loading } from 'common/components/Loading';
 import BusinessProfile from 'pages/business-profile/BusinessProfile';
@@ -26,7 +27,7 @@ const timeoutLimit = 6; // in seconds
 const Home = () => {
   // context
   const { isBackofficeUser, role } = useContextFirebaseUser();
-  const { business } = useContextBusiness();
+  const { business, isDeleted } = useContextBusiness();
   const { path } = useRouteMatch();
   // states
   const [isTimeout, setIsTimeout] = React.useState(false);
@@ -39,6 +40,10 @@ const Home = () => {
   }, []);
   // UI
   if (!business) {
+    if (isDeleted) {
+      if (isBackofficeUser) return <Redirect to="/backoffice/businesses" />;
+      else return <Redirect to={`/deleted`} />;
+    }
     if (isBackofficeUser) return <Redirect to="/backoffice" />;
     else if (isTimeout && business === null) return <Redirect to={`/onboarding`} />;
   }
@@ -48,7 +53,10 @@ const Home = () => {
   if (business?.onboarding === 'completed' && !userWithGrantedRole && isTimeout) {
     return <UserNotFound />;
   }
-  if (business?.onboarding === 'completed' && userWithGrantedRole) {
+  if (
+    (business && isBackofficeUser) ||
+    (business?.onboarding === 'completed' && userWithGrantedRole)
+  ) {
     return (
       <BusinessDashboardProvider>
         <OrdersContextProvider>
@@ -59,7 +67,9 @@ const Home = () => {
             <PageLayout mt={isBackofficeUser ? '60px' : '0'}>
               <Route exact path={path} component={Dashboard} />
               <Route path={`${path}/sharing`} component={SharingPage} />
-              <Route path={`${path}/menu`} component={Menu} />
+              <MenuProvider>
+                <Route path={`${path}/menu`} component={Menu} />
+              </MenuProvider>
               <Route path={`${path}/business-schedules`} component={SchedulesPage} />
               <Route path={`${path}/delivery-area`} component={DeliveryArea} />
               <Route path={`${path}/business-profile`} component={BusinessProfile} />

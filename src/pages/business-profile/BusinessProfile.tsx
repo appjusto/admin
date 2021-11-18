@@ -1,12 +1,10 @@
 import { Box, Button, Flex, Switch as ChakraSwitch, Text, useBreakpoint } from '@chakra-ui/react';
 import * as cnpjutils from '@fnando/cnpj';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
-import { FirebaseError } from 'app/api/types';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
+import { useContextAppRequests } from 'app/state/requests/context';
 import { Business } from 'appjusto-types';
-import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
-import { initialError } from 'common/components/error/utils';
 import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput2';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
@@ -30,7 +28,7 @@ import { OnboardingProps } from 'pages/onboarding/types';
 import PageFooter from 'pages/PageFooter';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
-import { useQueryCache } from 'react-query';
+import { useQueryClient } from 'react-query';
 import { Redirect, Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { CuisineSelect } from '../../common/components/form/select/CuisineSelect';
@@ -38,14 +36,17 @@ import { BusinessDeleteDrawer } from './BusinessDeleteDrawer';
 
 const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   // context
-  const isDev = process.env.REACT_APP_ENVIRONMENT === 'dev';
+  const { dispatchAppRequestResult } = useContextAppRequests();
   const { business, setBusinessId } = useContextBusiness();
-  const queryCache = useQueryCache();
+  const queryClient = useQueryClient();
   const { path } = useRouteMatch();
   const history = useHistory();
   const { isBackofficeUser } = useContextFirebaseUser();
   // state
-  const [cnpj, setCNPJ] = React.useState(business?.cnpj ?? (isDev ? cnpjutils.generate() : ''));
+  const devCNPJ = ['dev', 'staging'].includes(process.env.REACT_APP_ENVIRONMENT ?? '')
+    ? cnpjutils.generate()
+    : '';
+  const [cnpj, setCNPJ] = React.useState(business?.cnpj ?? devCNPJ);
   const [name, setName] = React.useState(business?.name ?? '');
   const [companyName, setCompanyName] = React.useState(business?.companyName ?? '');
   const [phone, setPhone] = React.useState(business?.phone ?? '');
@@ -58,9 +59,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const [coverExists, setCoverExists] = React.useState(false);
   const [logoFiles, setLogoFiles] = React.useState<File[] | null>(null);
   const [coverFiles, setCoverFiles] = React.useState<File[] | null>(null);
-  const [error, setError] = React.useState(initialError);
   // refs
-  const submission = React.useRef(0);
   const cnpjRef = React.useRef<HTMLInputElement>(null);
   const phoneRef = React.useRef<HTMLInputElement>(null);
   const minimumOrderRef = React.useRef<HTMLInputElement>(null);
@@ -74,8 +73,8 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
     cover,
     updateWithImagesResult,
     cloneResult,
-  } = useBusinessProfile();
-  const { isLoading, isSuccess, isError, error: updateError } = updateWithImagesResult;
+  } = useBusinessProfile(typeof onboarding === 'string');
+  const { isLoading, isSuccess } = updateWithImagesResult;
   // handlers
   const openDrawerHandler = () => history.push(`${path}/delete`);
   const closeDrawerHandler = () => history.replace(path);
@@ -88,21 +87,19 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
     }
   };
   const onSubmitHandler = async () => {
-    submission.current += 1;
-    setError(initialError);
     //if (minimumOrder === 0) return minimumOrderRef.current?.focus();
     if (!isCNPJValid()) {
-      setError({
-        status: true,
-        error: null,
+      dispatchAppRequestResult({
+        status: 'error',
+        requestId: 'BusinessProfile-valid-cnpj',
         message: { title: 'O CNPJ informado não é válido.' },
       });
       return cnpjRef?.current?.focus();
     }
     if (phone.length < 10) {
-      setError({
-        status: true,
-        error: null,
+      dispatchAppRequestResult({
+        status: 'error',
+        requestId: 'BusinessProfile-valid-phone',
         message: { title: 'O telefone informado não é válido.' },
       });
       return phoneRef?.current?.focus();
@@ -125,20 +122,19 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
     try {
       await updateBusinessProfileWithImages({ changes, logoFileToSave, coverFilesToSave });
       // invalidate logo query
-      if (logoFiles) queryCache.invalidateQueries(['business:logo', business?.id]);
+      if (logoFiles) queryClient.invalidateQueries(['business:logo', business?.id]);
     } catch (error) {
-      setError({
-        status: true,
-        error,
+      dispatchAppRequestResult({
+        status: 'error',
+        requestId: 'BusinessProfile-submit-error',
         message: {
           title: 'Erro de conexão com o servidor',
-          description: 'por isso as iformações podem não ser sido salvas.',
+          description: 'As iformações podem não ter sido salvas.',
         },
       });
     }
   };
   const cloneBusinessHandler = async () => {
-    submission.current += 1;
     const newBusiness = await cloneBusiness();
     if (newBusiness) {
       setBusinessId(newBusiness.id);
@@ -177,7 +173,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   React.useEffect(() => {
     if (business) {
       setEnabled(business.enabled ?? false);
-      setCNPJ(business.cnpj ?? '');
+      if (business.cnpj) setCNPJ(business.cnpj);
       setName(business.name ?? '');
       setCompanyName(business.companyName ?? '');
       setPhone(business.phone ?? '');
@@ -190,21 +186,6 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
       createBusinessProfile();
     }
   }, [business, cover, logo, createBusinessProfile]);
-  React.useEffect(() => {
-    if (isError)
-      setError({
-        status: true,
-        error: updateError,
-      });
-    else if (cloneResult.isError) {
-      const errorMessage = (cloneResult.error as FirebaseError).message;
-      setError({
-        status: true,
-        error: cloneResult.error,
-        message: { title: errorMessage ?? 'Não foi possível acessar o servidor' },
-      });
-    }
-  }, [isError, updateError, cloneResult.isError, cloneResult.error]);
   // UI
   const breakpoint = useBreakpoint();
   const coverWidth = breakpoint === 'base' ? 328 : breakpoint === 'md' ? 420 : 536;
@@ -408,13 +389,6 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
             onDelete={openDrawerHandler}
           />
         </form>
-        <SuccessAndErrorHandler
-          submission={submission.current}
-          isSuccess={isSuccess && !onboarding}
-          isError={error.status}
-          error={error.error}
-          errorMessage={error.message}
-        />
       </Box>
       {!onboarding && (
         <Switch>

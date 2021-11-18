@@ -2,11 +2,9 @@ import { Box, Button, Checkbox, CheckboxGroup, Flex, Icon, Skeleton, Text } from
 import { useAdvanceReceivables } from 'app/api/business/useAdvanceReceivables';
 import { useReceivables } from 'app/api/business/useReceivables';
 import { useReceivablesSimulation } from 'app/api/business/useReceivablesSimulation';
-import { FirebaseError } from 'app/api/types';
 import { useContextBusinessId } from 'app/state/business/context';
+import { useContextAppRequests } from 'app/state/requests/context';
 import { IuguMarketplaceAccountReceivableItem } from 'appjusto-types/payment/iugu';
-import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
-import { initialError } from 'common/components/error/utils';
 import { ReactComponent as Checked } from 'common/img/icon-checked.svg';
 import React from 'react';
 import { formatCurrency } from 'utils/formatters';
@@ -22,10 +20,11 @@ interface WithdrawalsDrawerProps {
 
 export const AdvancesDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps) => {
   // context
+  const { dispatchAppRequestResult } = useContextAppRequests();
   const businessId = useContextBusinessId();
   const { receivables } = useReceivables(businessId);
   const { advanceReceivables, advanceReceivablesResult } = useAdvanceReceivables(businessId);
-  const { isLoading, isSuccess, isError, error: receivalbesError } = advanceReceivablesResult;
+  const { isLoading, isSuccess } = advanceReceivablesResult;
   // state
   const [items, setItems] = React.useState<IuguMarketplaceAccountReceivableItem[]>([]);
   const [selectedAll, setSelectedAll] = React.useState(false);
@@ -38,26 +37,22 @@ export const AdvancesDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps) =>
     businessId,
     selected
   );
-  const [error, setError] = React.useState(initialError);
   // refs
-  const submission = React.useRef(0);
   const acceptCheckBoxRef = React.useRef<HTMLInputElement>(null);
   // handlers
   const handleReceivablesRequest = async () => {
-    setError(initialError);
-    submission.current += 1;
     if (selected.length === 0)
-      return setError({
-        status: true,
-        error: null,
+      return dispatchAppRequestResult({
+        status: 'error',
+        requestId: 'AdvancesDrawer-valid-no-value',
         message: { title: 'Nenhum valor foi selecionado para antecipação' },
       });
     if (!isReviewing) return setIsReviewing(true);
     if (!isFeesAccepted) {
       acceptCheckBoxRef.current?.focus();
-      return setError({
-        status: true,
-        error: null,
+      return dispatchAppRequestResult({
+        status: 'error',
+        requestId: 'AdvancesDrawer-valid-agreement',
         message: { title: 'É preciso aceitar os valores informados na simulação.' },
       });
     }
@@ -101,16 +96,6 @@ export const AdvancesDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps) =>
     if (selected.length !== items.length) setSelectedAll(false);
     else setSelectedAll(true);
   }, [items, selected]);
-  React.useEffect(() => {
-    if (isError) {
-      const errorMessage = (receivalbesError as FirebaseError).message;
-      setError({
-        status: true,
-        error: receivalbesError,
-        message: { title: errorMessage },
-      });
-    }
-  }, [isError, receivalbesError]);
   // UI
   if (isSuccess) {
     return (
@@ -272,13 +257,6 @@ export const AdvancesDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps) =>
           </Box>
         </>
       )}
-      <SuccessAndErrorHandler
-        submission={submission.current}
-        //isSuccess={isSuccess}
-        isError={error.status}
-        error={error.error}
-        errorMessage={error.message}
-      />
     </FinancesBaseDrawer>
   );
 };

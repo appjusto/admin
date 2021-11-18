@@ -1,13 +1,11 @@
 import { Box, Button, Flex, Text } from '@chakra-ui/react';
 import { useAuthentication } from 'app/api/auth/useAuthentication';
-import { AlertError } from 'common/components/AlertError';
+import { useContextAppRequests } from 'app/state/requests/context';
 import { AlertSuccess } from 'common/components/AlertSuccess';
-import { initialError } from 'common/components/error/utils';
 import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import { CustomPasswordInput } from 'common/components/form/input/CustomPasswordInput';
 import logo from 'common/img/logo.svg';
-import { getErrorMessage } from 'core/fb';
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { isEmailValid } from 'utils/email';
@@ -18,8 +16,9 @@ import rightImage from './img/login-right@2x.jpg';
 
 const Login = () => {
   // context
+  const { dispatchAppRequestResult } = useContextAppRequests();
   const { login, loginResult, signOut } = useAuthentication();
-  const { isLoading, isSuccess, isError, error: loginError } = loginResult;
+  const { isLoading, isSuccess } = loginResult;
   // refs
   const emailRef = React.useRef<HTMLInputElement>(null);
   const passwdRef = React.useRef<HTMLInputElement>(null);
@@ -27,15 +26,14 @@ const Login = () => {
   const [email, setEmail] = React.useState('');
   const [passwd, setPasswd] = React.useState('');
   const [isPassword, setIsPassword] = React.useState(false);
-  const [error, setError] = React.useState(initialError);
   const isEmailInvalid = React.useMemo(() => !isEmailValid(email), [email]);
   // handlers
   const handleSubmit = (event: React.FormEvent<HTMLDivElement>) => {
     event.preventDefault();
     if (isEmailInvalid) {
-      return setError({
-        status: true,
-        error: null,
+      return dispatchAppRequestResult({
+        status: 'error',
+        requestId: 'handleSubmit-email-invalid',
         message: { title: 'O e-mail informado não é válido. Corrija e tente novamente.' },
       });
     }
@@ -47,20 +45,8 @@ const Login = () => {
     emailRef?.current?.focus();
   }, [signOut]);
   React.useEffect(() => {
-    if (isError)
-      setError({
-        status: true,
-        error: loginError,
-        message: { title: getErrorMessage(loginError) ?? 'Tenta de novo?' },
-      });
-  }, [isError, loginError]);
-  React.useEffect(() => {
-    if (isSuccess) setError(initialError);
-  }, [isSuccess]);
-  React.useEffect(() => {
     if (!isPassword) {
       setPasswd('');
-      setError(initialError);
     }
   }, [isPassword]);
   // UI
@@ -125,12 +111,6 @@ const Login = () => {
                 )}
               </Text>
             </>
-          )}
-          {error.status && (
-            <AlertError
-              title={t('A autenticação falhou!')}
-              description={error?.message?.title ?? t('Tenta de novo?')}
-            />
           )}
           {!isPassword && isSuccess && (
             <AlertSuccess

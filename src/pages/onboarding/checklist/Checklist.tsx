@@ -13,7 +13,7 @@ interface ChecklistProps extends BoxProps {
 export const Checklist = ({ disabled, ...props }: ChecklistProps) => {
   // context
   const { business } = useContextBusiness();
-  const { updateBusinessProfile } = useBusinessProfile();
+  const { updateBusinessProfile } = useBusinessProfile(true);
   const { path } = useRouteMatch();
   const segments = path.split('/');
   const lastSegment = parseInt(segments.pop()!);

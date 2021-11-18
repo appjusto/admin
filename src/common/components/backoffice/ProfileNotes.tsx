@@ -1,13 +1,11 @@
 import { Box, Button, Flex, HStack, Text } from '@chakra-ui/react';
-import { FirebaseError } from 'app/api/types';
+import { MutationResult } from 'app/api/mutation/useCustomMutation';
 import { useContextAgentProfile } from 'app/state/agent/context';
 import { ProfileNote, WithId } from 'appjusto-types';
-import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
-import { initialError } from 'common/components/error/utils';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
 import { omitBy } from 'lodash';
 import React from 'react';
-import { MutateFunction, MutationResult } from 'react-query';
+import { MutateFunction } from 'react-query';
 import { t } from 'utils/i18n';
 import { ProfileNoteItem } from './ProfileNoteItem';
 
@@ -20,8 +18,8 @@ interface ProfileNotesProps {
     unknown
   >;
   deleteNote(profileNoteId: string): void;
-  updateResult: MutationResult<void, unknown>;
-  deleteResult: MutationResult<void, unknown>;
+  updateResult: MutationResult;
+  deleteResult: MutationResult;
 }
 
 export const ProfileNotes = ({
@@ -32,31 +30,17 @@ export const ProfileNotes = ({
   deleteResult,
 }: ProfileNotesProps) => {
   // props
-  const { isLoading, isSuccess, isError, error: updateError } = updateResult;
+  const { isLoading, isSuccess } = updateResult;
   // context
   const { agent } = useContextAgentProfile();
   // state
   const [isAdding, setIsAdding] = React.useState(false);
   const [newNote, setNewNote] = React.useState('');
-  const [error, setError] = React.useState(initialError);
-  // refs
-  const submission = React.useRef(0);
   // handlers
   const handleAddNote = () => {
-    setError(initialError);
-    if (!newNote)
-      return setError({
-        status: true,
-        error: deleteResult.error,
-        message: { title: 'É preciso escrever alguma anotação.' },
-      });
-    if (!agent?.id || !agent?.email)
-      return setError({
-        status: true,
-        error: deleteResult.error,
-        message: { title: 'Não foi possível acessar as informações do seu usuário.' },
-      });
-    submission.current += 1;
+    if (!newNote) return;
+    if (!agent?.id) return;
+    if (!agent?.email) return;
     let changes = {
       agentId: agent.id,
       agentEmail: agent.email,
@@ -67,20 +51,10 @@ export const ProfileNotes = ({
     updateNote({ changes });
   };
   const handleUpdateNote = (id: string, note: string) => {
-    setError(initialError);
-    if (!id || !note)
-      return setError({
-        status: true,
-        error: deleteResult.error,
-        message: { title: 'Anotação não encontrada.' },
-      });
-    if (!agent?.id || !agent?.email)
-      return setError({
-        status: true,
-        error: deleteResult.error,
-        message: { title: 'Não foi possível acessar as informações do seu usuário.' },
-      });
-    submission.current += 1;
+    if (!id) return;
+    if (!note) return;
+    if (!agent?.id) return;
+    if (!agent?.email) return;
     let changes = {
       agentName: agent?.name,
       note,
@@ -99,21 +73,6 @@ export const ProfileNotes = ({
       setNewNote('');
     }
   }, [isSuccess]);
-  React.useEffect(() => {
-    if (isError) {
-      setError({
-        status: true,
-        error: updateError,
-      });
-    } else if (deleteResult.isError) {
-      const errorMessage = (deleteResult.error as FirebaseError).message;
-      setError({
-        status: true,
-        error: deleteResult.error,
-        message: { title: errorMessage ?? 'Não foi possível acessar o servidor' },
-      });
-    }
-  }, [isError, updateError, deleteResult.isError, deleteResult.error]);
   // UI
   return (
     <Box mt="6" bgColor="#F6F6F6" borderRadius="16px" p="4" maxH="400px" overflowY="auto">
@@ -168,13 +127,6 @@ export const ProfileNotes = ({
       ) : (
         <Text mt="6">{t('Ainda não há anotações para este perfil.')}</Text>
       )}
-      <SuccessAndErrorHandler
-        submission={submission.current}
-        isSuccess={isSuccess}
-        isError={error.status}
-        error={error.error}
-        errorMessage={error.message}
-      />
     </Box>
   );
 };

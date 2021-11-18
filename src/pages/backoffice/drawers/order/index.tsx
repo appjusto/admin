@@ -2,6 +2,7 @@ import { useOrder } from 'app/api/order/useOrder';
 import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';
 import { useContextAgentProfile } from 'app/state/agent/context';
 import { ConsumerProvider } from 'app/state/consumer/context';
+import { useContextAppRequests } from 'app/state/requests/context';
 import {
   CancelOrderPayload,
   InvoiceType,
@@ -10,8 +11,6 @@ import {
   OrderStatus,
   WithId,
 } from 'appjusto-types';
-import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
-import { initialError } from 'common/components/error/utils';
 import { OrderDetails } from 'pages/orders/drawers/orderdrawer/OrderDetails';
 import { OrderIssuesTable } from 'pages/orders/drawers/orderdrawer/OrderIssuesTable';
 import React from 'react';
@@ -41,6 +40,7 @@ export interface RefundParams {
 
 export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps) => {
   //context
+  const { dispatchAppRequestResult } = useContextAppRequests();
   const { path } = useRouteMatch();
   const { agent, username } = useContextAgentProfile();
   const { orderId } = useParams<Params>();
@@ -63,11 +63,6 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
   const [message, setMessage] = React.useState<string>();
   const [refund, setRefund] = React.useState<InvoiceType[]>(['platform', 'products', 'delivery']);
   const [isLoading, setIsLoading] = React.useState(false);
-  const [isSuccess, setIsSuccess] = React.useState(false);
-  const [error, setError] = React.useState(initialError);
-
-  // refs
-  const submission = React.useRef(0);
 
   // helpers
   let refundValue = 0;
@@ -99,9 +94,9 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
 
   const cancellation = () => {
     if (!issue) {
-      return setError({
-        status: true,
-        error: null,
+      return dispatchAppRequestResult({
+        status: 'error',
+        requestId: 'BackofficeOrderDrawer-cancellation-valid',
         message: {
           title: 'Não foi possível cancelar o pedido.',
           description: 'Favor informar quem solicitou o cancelamento.',
@@ -119,7 +114,6 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
   };
 
   const updateOrderStatus = async () => {
-    submission.current += 1;
     if (status === 'canceled') {
       cancellation();
     } else {
@@ -148,35 +142,9 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
     else setIsLoading(false);
   }, [updateResult.isLoading, cancelResult.isLoading]);
 
-  React.useEffect(() => {
-    if (updateResult.isSuccess || cancelResult.isSuccess) setIsSuccess(true);
-    else setIsSuccess(false);
-  }, [updateResult.isSuccess, cancelResult.isSuccess]);
-
-  React.useEffect(() => {
-    if (updateResult.isError) {
-      setError({
-        status: true,
-        error: updateResult.error,
-      });
-    } else if (cancelResult.isError) {
-      setError({
-        status: true,
-        error: cancelResult.error,
-      });
-    }
-  }, [updateResult.isError, updateResult.error, cancelResult.isError, cancelResult.error]);
-
   //UI
   return (
     <ConsumerProvider>
-      <SuccessAndErrorHandler
-        submission={submission.current}
-        isSuccess={isSuccess}
-        isError={error.status}
-        error={error.error}
-        errorMessage={error.message}
-      />
       <OrderBaseDrawer
         agent={{ id: agent?.id, name: username }}
         order={order}

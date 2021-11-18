@@ -12,13 +12,11 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
-import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
-import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
-import { initialError } from 'common/components/error/utils';
+import { useContextAppRequests } from 'app/state/requests/context';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import React from 'react';
-import { Redirect } from 'react-router-dom';
+import { Redirect } from 'react-router';
 import { t } from 'utils/i18n';
 
 interface BaseDrawerProps {
@@ -28,41 +26,27 @@ interface BaseDrawerProps {
 
 export const BusinessDeleteDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   //context
-  const { isBackofficeUser } = useContextFirebaseUser();
-  const { business } = useContextBusiness();
+  const { dispatchAppRequestResult } = useContextAppRequests();
+  const { business, setIsDeleted } = useContextBusiness();
   const { deleteBusinessProfile, deleteResult } = useBusinessProfile();
-  const { isSuccess, isError, error: deleteError, isLoading } = deleteResult;
+  const { isLoading, isSuccess } = deleteResult;
   // state
   const [businessName, setBusinessName] = React.useState('');
-  const [error, setError] = React.useState(initialError);
-  // refs
-  const submission = React.useRef(0);
   //handlers
   const handleDelete = async () => {
-    submission.current += 1;
     if (business?.name && businessName !== business?.name) {
-      return setError({
-        status: true,
-        error: null,
+      return dispatchAppRequestResult({
+        status: 'error',
+        requestId: 'BusinessDeleteDrawer-valid',
         message: { title: 'Favor preencher o nome do restaurante corretamente!' },
       });
     } else {
+      setIsDeleted(true);
       await deleteBusinessProfile();
     }
   };
-  // side effects
-  React.useEffect(() => {
-    if (isError)
-      setError({
-        status: true,
-        error: deleteError,
-      });
-  }, [isError, deleteError]);
   //UI
-  if (isSuccess) {
-    if (!isBackofficeUser) return <Redirect to="/logout" push />;
-    else return <Redirect to="/backoffice" push />;
-  }
+  if (isSuccess) return <Redirect to="/app/deleted" />;
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
       <DrawerOverlay>
@@ -123,13 +107,6 @@ export const BusinessDeleteDrawer = ({ onClose, ...props }: BaseDrawerProps) => 
                 </Button>
               </Stack>
             </Box>
-            <SuccessAndErrorHandler
-              submission={submission.current}
-              isSuccess={isSuccess}
-              isError={error.status}
-              error={error.error}
-              errorMessage={error.message}
-            />
           </DrawerBody>
         </DrawerContent>
       </DrawerOverlay>

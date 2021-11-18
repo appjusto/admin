@@ -1,15 +1,14 @@
 import { Box, Flex, HStack, Text, VStack } from '@chakra-ui/react';
 import { useComplementImage } from 'app/api/business/complements/useComplementImage';
+import { MutationResult } from 'app/api/mutation/useCustomMutation';
 import { Complement, WithId } from 'appjusto-types';
-import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
-import { initialError } from 'common/components/error/utils';
 import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput2';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
 import { ImageUploads } from 'common/components/ImageUploads';
 import { complementsRatios, complementsResizedWidth } from 'common/imagesDimensions';
 import React from 'react';
-import { MutateFunction, MutationResult } from 'react-query';
+import { MutateFunction } from 'react-query';
 import { t } from 'utils/i18n';
 import { DrawerButtons } from '../drawers/DrawerButtons';
 import { GroupSelect } from './GroupSelect';
@@ -32,7 +31,7 @@ interface ComplementFormProps {
     },
     unknown
   >;
-  updateComplementResult: MutationResult<void, unknown>;
+  updateComplementResult: MutationResult;
   deleteComplement?: MutateFunction<
     void,
     unknown,
@@ -42,7 +41,7 @@ interface ComplementFormProps {
     },
     unknown
   >;
-  deleteComplementResult?: MutationResult<void, unknown>;
+  deleteComplementResult?: MutationResult;
 }
 
 export const ComplementForm = ({
@@ -69,10 +68,8 @@ export const ComplementForm = ({
   const [imageFile, setImageFile] = React.useState<File[] | null>(null);
   const [imageExists, setImageExists] = React.useState(false);
   const [maximum, setMaximum] = React.useState(1);
-  const [error, setError] = React.useState(initialError);
   // refs
   const inputRef = React.useRef<HTMLInputElement>(null);
-  const submission = React.useRef(0);
   //handlers
   const clearDropImages = React.useCallback(() => {
     setImageFile(null);
@@ -83,7 +80,6 @@ export const ComplementForm = ({
     setImageExists(true);
   }, []);
   const handleSave = async () => {
-    submission.current += 1;
     const newItem = {
       name,
       description,
@@ -102,7 +98,6 @@ export const ComplementForm = ({
   };
   const handleDelete = async () => {
     if (!complementId || !deleteComplement) return;
-    submission.current += 1;
     await deleteComplement({ complementId, imageExists });
     onSuccess();
   };
@@ -124,24 +119,6 @@ export const ComplementForm = ({
       setImageUrl(hookImageUrl);
     }
   }, [hookImageUrl]);
-  React.useEffect(() => {
-    if (updateComplementResult.isError) {
-      setError({
-        status: true,
-        error: updateComplementResult.error,
-      });
-    } else if (deleteComplementResult?.isError) {
-      setError({
-        status: true,
-        error: deleteComplementResult?.error,
-      });
-    }
-  }, [
-    updateComplementResult.isError,
-    updateComplementResult.error,
-    deleteComplementResult?.isError,
-    deleteComplementResult?.error,
-  ]);
   //UI
   return (
     <Box>
@@ -244,11 +221,6 @@ export const ComplementForm = ({
           </Flex>
         </VStack>
       </form>
-      <SuccessAndErrorHandler
-        submission={submission.current}
-        isError={error.status}
-        error={error.error}
-      />
     </Box>
   );
 };

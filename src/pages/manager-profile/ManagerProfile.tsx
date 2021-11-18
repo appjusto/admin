@@ -5,9 +5,8 @@ import { useUpdateManagerProfile } from 'app/api/manager/useUpdateManagerProfile
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextManagerProfile } from 'app/state/manager/context';
+import { useContextAppRequests } from 'app/state/requests/context';
 import { AlertSuccess } from 'common/components/AlertSuccess';
-import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
-import { initialError } from 'common/components/error/utils';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import { CustomPasswordInput } from 'common/components/form/input/CustomPasswordInput';
 import { CustomPatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';
@@ -27,11 +26,12 @@ import { t } from 'utils/i18n';
 
 export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
   // context
+  const { dispatchAppRequestResult } = useContextAppRequests();
   const { user } = useContextFirebaseUser();
   const { sendSignInLinkToEmail, sendingLinkResult } = useAuthentication();
   const { business } = useContextBusiness();
   const { manager } = useContextManagerProfile();
-  const { updateProfile, updateResult } = useUpdateManagerProfile();
+  const { updateProfile, updateResult } = useUpdateManagerProfile(typeof onboarding === 'string');
   const { isLoading, isSuccess, isError, error: updateError } = updateResult;
 
   // state
@@ -39,7 +39,6 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const [surname, setSurname] = React.useState(manager?.surname ?? '');
   const [phoneNumber, setPhoneNumber] = React.useState(manager?.phone ?? '');
   const [cpf, setCPF] = React.useState(manager?.cpf ?? '');
-  const [error, setError] = React.useState(initialError);
   const [isEditingPasswd, setIsEditingPasswd] = React.useState(true);
   const [passwd, setPasswd] = React.useState('');
   const [passwdConfirm, setPasswdConfirm] = React.useState('');
@@ -47,7 +46,6 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const [currentPasswd, setCurrentPasswd] = React.useState('');
 
   // refs
-  const submission = React.useRef(0);
   const nameRef = React.useRef<HTMLInputElement>(null);
   const cpfRef = React.useRef<HTMLInputElement>(null);
   const phoneNumberRef = React.useRef<HTMLInputElement>(null);
@@ -71,37 +69,35 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
   }, []);
 
   const onSubmitHandler = async () => {
-    submission.current += 1;
-    setError(initialError);
     if (!isCPFValid()) {
-      setError({
-        status: true,
-        error: null,
+      dispatchAppRequestResult({
+        status: 'error',
+        requestId: 'ManagerProfile-valid-cpf',
         message: { title: 'O CPF informado não é válido.' },
       });
       return cpfRef?.current?.focus();
     }
     if (phoneNumber.length < 11) {
-      setError({
-        status: true,
-        error: null,
+      dispatchAppRequestResult({
+        status: 'error',
+        requestId: 'ManagerProfile-valid-phone',
         message: { title: 'O celular informado não é válido.' },
       });
       return phoneNumberRef?.current?.focus();
     }
     if (passwd) {
       if (passwd !== passwdConfirm) {
-        setError({
-          status: true,
-          error: null,
+        dispatchAppRequestResult({
+          status: 'error',
+          requestId: 'ManagerProfile-valid-pass',
           message: { title: 'As senhas informadas não são iguais.' },
         });
         return passwdRef?.current?.focus();
       }
       if (!passwdIsValid) {
-        setError({
-          status: true,
-          error: null,
+        dispatchAppRequestResult({
+          status: 'error',
+          requestId: 'ManagerProfile-valid-password',
           message: { title: 'A senha informada não é válida.' },
         });
         return passwdRef?.current?.focus();
@@ -154,14 +150,9 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
       if (isReauthenticationRequired()) {
         console.warn('User reauthentication required');
         currentPasswdRef.current?.focus();
-      } else {
-        setError({
-          status: true,
-          error: updateError,
-        });
       }
     }
-  }, [isError, updateError, isReauthenticationRequired]);
+  }, [isError, isReauthenticationRequired]);
   // UI
   if (isSuccess && redirect) return <Redirect to={redirect} push />;
   return (
@@ -306,7 +297,7 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
                   <Button
                     mt="4"
                     w="100%"
-                    onClick={() => sendSignInLinkToEmail(manager?.email)}
+                    onClick={() => sendSignInLinkToEmail(manager?.email!)}
                     isLoading={sendingLinkResult.isLoading}
                   >
                     {t('Enviar link de acesso')}
@@ -364,13 +355,6 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
         )}
         <PageFooter onboarding={onboarding} redirect={redirect} isLoading={isLoading} />
       </form>
-      <SuccessAndErrorHandler
-        submission={submission.current}
-        isSuccess={isSuccess && !onboarding}
-        isError={error.status}
-        error={error.error}
-        errorMessage={error.message}
-      />
     </Box>
   );
 };

@@ -3,13 +3,16 @@ import { useObserveComplements } from 'app/api/business/complements/useObserveCo
 import * as menu from 'app/api/business/menu/functions';
 import { useObserveMenuOrdering } from 'app/api/business/menu/useObserveMenuOrdering';
 import { useObserveProducts } from 'app/api/business/products/useObserveProducts';
+import { MutationResult, useCustomMutation } from 'app/api/mutation/useCustomMutation';
 import { Category, Complement, ComplementGroup, Ordering, WithId } from 'appjusto-types';
 import React from 'react';
-import { MutateFunction, MutationResult, useMutation } from 'react-query';
+import { MutateFunction } from 'react-query';
 import { useContextApi } from '../api/context';
 import { useContextBusinessId } from '../business/context';
 
 interface ContextProps {
+  isProductsPage: boolean;
+  setIsProductPage(value: boolean): void;
   categories: WithId<Category>[];
   productsOrdering: Ordering;
   updateProductsOrdering: (ordering: Ordering) => void;
@@ -29,9 +32,9 @@ interface ContextProps {
     },
     unknown
   >;
-  updateGroupResult: MutationResult<void, unknown>;
+  updateGroupResult: MutationResult;
   deleteComplementsGroup: MutateFunction<void, unknown, string, unknown>;
-  deleteGroupResult: MutationResult<void, unknown>;
+  deleteGroupResult: MutationResult;
   getComplementData: (
     complementId: string,
     groupId?: string
@@ -50,7 +53,7 @@ interface ContextProps {
     },
     unknown
   >;
-  updateComplementResult: MutationResult<void, unknown>;
+  updateComplementResult: MutationResult;
   deleteComplement: MutateFunction<
     void,
     unknown,
@@ -60,7 +63,7 @@ interface ContextProps {
     },
     unknown
   >;
-  deleteComplementResult: MutationResult<void, unknown>;
+  deleteComplementResult: MutationResult;
 }
 
 interface ProviderProps {
@@ -92,11 +95,16 @@ export const MenuProvider = (props: ProviderProps) => {
     complements,
     complementsOrdering
   );
+  // state
+  const [isProductsPage, setIsProductPage] = React.useState(true);
   // complements groups
   const getComplementsGroupById = (groupId?: string) =>
     complementsGroups.find((group) => group.id === groupId);
 
-  const [updateComplementsGroup, updateGroupResult] = useMutation(
+  const {
+    mutateAsync: updateComplementsGroup,
+    mutationResult: updateGroupResult,
+  } = useCustomMutation(
     async (data: { groupId: string | undefined; changes: ComplementGroup }) => {
       if (data.groupId) {
         await api.business().updateComplementsGroup(businessId!, data.groupId, data.changes);
@@ -104,12 +112,21 @@ export const MenuProvider = (props: ProviderProps) => {
         const newGroup = await api.business().createComplementsGroup(businessId!, data.changes);
         updateComplementsOrdering(menu.addFirstLevel(complementsOrdering, newGroup.id));
       }
-    }
+    },
+    'updateComplementsGroup',
+    false
   );
-  const [deleteComplementsGroup, deleteGroupResult] = useMutation(async (groupId: string) => {
-    updateComplementsOrdering(menu.removeFirstLevel(complementsOrdering, groupId));
-    await api.business().deleteComplementsGroup(businessId!, groupId);
-  });
+  const {
+    mutateAsync: deleteComplementsGroup,
+    mutationResult: deleteGroupResult,
+  } = useCustomMutation(
+    async (groupId: string) => {
+      updateComplementsOrdering(menu.removeFirstLevel(complementsOrdering, groupId));
+      await api.business().deleteComplementsGroup(businessId!, groupId);
+    },
+    'deleteComplementsGroup',
+    false
+  );
   // complements
   const getComplementData = (complementId: string, groupId?: string) => {
     const complement = complements.find((complement) => complement.id === complementId);
@@ -118,7 +135,10 @@ export const MenuProvider = (props: ProviderProps) => {
     return { group, complement };
   };
 
-  const [updateComplement, updateComplementResult] = useMutation(
+  const {
+    mutateAsync: updateComplement,
+    mutationResult: updateComplementResult,
+  } = useCustomMutation(
     async (data: {
       groupId: string | undefined;
       complementId: string | undefined;
@@ -137,18 +157,23 @@ export const MenuProvider = (props: ProviderProps) => {
       }
       if (data.groupId)
         updateComplementsOrdering(menu.updateParent(complementsOrdering, currentId!, data.groupId));
-    }
+    },
+    'updateComplement',
+    false
   );
-  const [deleteComplement, deleteComplementResult] = useMutation(
-    async (data: { complementId: string; imageExists: boolean }) => {
-      updateComplementsOrdering(menu.removeSecondLevel(complementsOrdering, data.complementId));
-      await api.business().deleteComplement(businessId!, data.complementId);
-    }
-  );
+  const {
+    mutateAsync: deleteComplement,
+    mutationResult: deleteComplementResult,
+  } = useCustomMutation(async (data: { complementId: string; imageExists: boolean }) => {
+    updateComplementsOrdering(menu.removeSecondLevel(complementsOrdering, data.complementId));
+    await api.business().deleteComplement(businessId!, data.complementId);
+  }, 'deleteComplement');
   // provider
   return (
     <MenuProviderContext.Provider
       value={{
+        isProductsPage,
+        setIsProductPage,
         categories,
         productsOrdering,
         updateProductsOrdering,

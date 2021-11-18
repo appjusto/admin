@@ -21,17 +21,6 @@ const CourierLocationMap = ({ coordinates }: CourierLocationMapProps) => {
   const { googleMapsApiKey } = getConfig().api;
   // helpers
   const center = { lat: coordinates.latitude, lng: coordinates.longitude };
-  // handlers
-  //@ts-ignore
-  /*const renderMarkers = (map, maps) => {
-    let marker = new maps.Marker({
-      position: { lat: coordinates.latitude, lng: coordinates.longitude },
-      map,
-      title: 'Entregador!',
-      icon: GreenPointSvg,
-    });
-    return marker;
-  };*/
   // UI
   return (
     <Box
@@ -46,7 +35,6 @@ const CourierLocationMap = ({ coordinates }: CourierLocationMapProps) => {
         center={center}
         defaultZoom={14}
         yesIWantToUseGoogleMapApiInternals
-        //onGoogleApiLoaded={({ map, maps }) => renderMarkers(map, maps)}
       >
         <Marker
           key={coordinates.latitude}

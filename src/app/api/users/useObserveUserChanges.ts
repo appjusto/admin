@@ -1,7 +1,7 @@
 import { useContextApi } from 'app/state/api/context';
 import { ProfileChange, WithId } from 'appjusto-types';
 import React from 'react';
-import { useMutation } from 'react-query';
+import { useCustomMutation } from '../mutation/useCustomMutation';
 
 export const useObserveUserChanges = (changesId: string) => {
   // context
@@ -9,10 +9,11 @@ export const useObserveUserChanges = (changesId: string) => {
   // state
   const [changes, setChanges] = React.useState<WithId<ProfileChange> | null>();
   // mutations
-  const [updateChange, updateChangeResult] = useMutation(
+  const { mutateAsync: updateChange, mutationResult: updateChangeResult } = useCustomMutation(
     async (changes: Partial<ProfileChange>) => {
       await api.users().updateChanges(changesId!, changes);
-    }
+    },
+    'updateUserChange'
   );
   // side effects
   React.useEffect(() => {

@@ -1,7 +1,6 @@
 import { Button, Flex, RadioGroup, Text } from '@chakra-ui/react';
+import { useContextAppRequests } from 'app/state/requests/context';
 import { BusinessSchedule, ScheduleObject } from 'appjusto-types/business';
-import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
-import { initialError } from 'common/components/error/utils';
 import CustomRadio from 'common/components/form/CustomRadio';
 import { useProductContext } from 'pages/menu/context/ProductContext';
 import React from 'react';
@@ -35,15 +34,13 @@ const alwaysState = [
 
 export const ProductAvailability = () => {
   //context
+  const { dispatchAppRequestResult } = useContextAppRequests();
   const { url } = useRouteMatch();
   const { product, updateProduct, updateProductResult } = useProductContext();
-  const { isLoading, isSuccess, isError, error: updateError } = updateProductResult;
+  const { isLoading } = updateProductResult;
   //state
   const [schedules, setSchedules] = React.useState<BusinessSchedule>(initialState);
   const [mainAvailability, setMainAvailability] = React.useState<Availability>('always');
-  const [error, setError] = React.useState(initialError);
-  // refs
-  const submission = React.useRef(0);
   // handlers
   const handleCheck = (stateIndex: number, value: boolean) => {
     setSchedules((prevSchedule) => {
@@ -178,17 +175,15 @@ export const ProductAvailability = () => {
     return result;
   };
   const handleUpdate = () => {
-    submission.current += 1;
-    setError(initialError);
     if (mainAvailability === 'always') {
       setSchedules(initialState);
       return updateProduct({ changes: { availability: alwaysState } });
     }
     const isValid = schedulesValidation(schedules);
     if (!isValid)
-      return setError({
-        status: true,
-        error: null,
+      return dispatchAppRequestResult({
+        status: 'error',
+        requestId: 'ProductAvailability-valid',
         message: { title: 'Alguns horários não estão corretos.' },
       });
     const serializedSchedules = schedules.map((day) => {
@@ -214,14 +209,6 @@ export const ProductAvailability = () => {
     setMainAvailability('defined');
     setSchedules(initialAvailability);
   }, [product?.availability]);
-  React.useEffect(() => {
-    if (isError) {
-      setError({
-        status: true,
-        error: updateError,
-      });
-    }
-  }, [isError, updateError]);
   // UI
   if (product?.id === 'new') {
     const urlRedirect = url.split('/availability')[0];
@@ -280,13 +267,6 @@ export const ProductAvailability = () => {
       <Button mt="8" onClick={handleUpdate} isLoading={isLoading} loadingText={t('Salvando')}>
         {t('Salvar disponibilidade')}
       </Button>
-      <SuccessAndErrorHandler
-        submission={submission.current}
-        isSuccess={isSuccess}
-        isError={error.status}
-        error={error.error}
-        errorMessage={error.message}
-      />
     </>
   );
 };

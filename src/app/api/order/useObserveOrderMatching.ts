@@ -2,7 +2,7 @@ import { useContextApi } from 'app/state/api/context';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { OrderMatching } from 'appjusto-types';
 import React from 'react';
-import { useMutation } from 'react-query';
+import { useCustomMutation } from '../mutation/useCustomMutation';
 
 export const useObserveOrderMatching = (orderId?: string) => {
   // context
@@ -11,11 +11,14 @@ export const useObserveOrderMatching = (orderId?: string) => {
   // state
   const [matching, setMatching] = React.useState<OrderMatching | null>();
   // mutations
-  const [updateCourierNotified, updateResult] = useMutation(async (data: string[]) =>
-    api.order().updateOrderCourierNotified(orderId!, data)
+  const { mutateAsync: updateCourierNotified, mutationResult: updateResult } = useCustomMutation(
+    async (data: string[]) => api.order().updateOrderCourierNotified(orderId!, data),
+    'updateCourierNotified'
   );
-  const [restartMatching, restartResult] = useMutation(async () =>
-    api.order().updateOrder(orderId!, { dispatchingStatus: 'matching' })
+  const { mutateAsync: restartMatching, mutationResult: restartResult } = useCustomMutation(
+    async () => api.order().updateOrder(orderId!, { dispatchingStatus: 'matching' }),
+    'restartMatching',
+    false
   );
   // side effects
   React.useEffect(() => {

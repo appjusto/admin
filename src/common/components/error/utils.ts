@@ -1,9 +1,7 @@
-export type Message = { title: string; description?: string };
-
 export type BasicError = {
   status: boolean;
-  error: null | unknown;
-  message?: Message;
+  error?: unknown | null;
+  message: { title: string; description?: string };
 };
 
 export const initialError = { status: false, error: null } as BasicError;

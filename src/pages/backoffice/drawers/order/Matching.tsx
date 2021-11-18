@@ -5,8 +5,6 @@ import { useOrderCourierManualAllocation } from 'app/api/order/useOrderCourierMa
 import { OrderStatus } from 'appjusto-types';
 import { DispatchingStatus } from 'appjusto-types/order/dispatching';
 import { CustomButton } from 'common/components/buttons/CustomButton';
-import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
-import { initialError } from 'common/components/error/utils';
 import React from 'react';
 import { t } from 'utils/i18n';
 import { orderDispatchingStatusPTOptions } from '../../utils/index';
@@ -35,14 +33,11 @@ export const Matching = ({ orderId, orderStatus, orderDispatchingStatus }: Match
   //const [isAuto, setIsAuto] = React.useState(true);
   const [logs, setLogs] = React.useState<string[]>();
   const [attemps, setAttemps] = React.useState<number>(0);
-  const [couriersNotified, setCouriersNotified] = React.useState<string[]>();
+  const [couriersNotified, setCouriersNotified] = React.useState<string[]>([]);
   const [courierRemoving, setCourierRemoving] = React.useState<string | null>(null);
   const [isRestarting, setIsRestarting] = React.useState<boolean>(false);
   const [isOutsourcing, setIsOutsourcing] = React.useState<boolean>(false);
-  const [error, setError] = React.useState(initialError);
   //const [couriersRejections, setCouriersRejections] = React.useState<OrderMatchingRejection[]>();
-  // refs
-  const submission = React.useRef(0);
   // helpers
   const isOrderActive = orderStatus
     ? ['confirmed', 'preparing', 'ready', 'dispatching'].includes(orderStatus)
@@ -58,16 +53,12 @@ export const Matching = ({ orderId, orderStatus, orderDispatchingStatus }: Match
   };
   // handlers
   const removeCourierNotified = async (courierId: string) => {
-    setError(initialError);
-    submission.current += 1;
     setCourierRemoving(courierId);
-    const newArray = couriersNotified?.filter((id) => id !== courierId);
+    const newArray = couriersNotified.filter((id) => id !== courierId);
     await updateCourierNotified(newArray);
     setCourierRemoving(null);
   };
   const allocateCourier = (courierId: string, comment: string) => {
-    setError(initialError);
-    submission.current += 1;
     return courierManualAllocation({ orderId, courierId, comment });
   };
   // side effects
@@ -90,31 +81,6 @@ export const Matching = ({ orderId, orderStatus, orderDispatchingStatus }: Match
   React.useEffect(() => {
     if (restartResult.isSuccess) setIsRestarting(false);
   }, [restartResult]);
-  React.useEffect(() => {
-    if (updateResult.isError)
-      setError({
-        status: true,
-        error: updateResult.error,
-      });
-    if (restartResult.isError)
-      setError({
-        status: true,
-        error: restartResult.error,
-      });
-    if (allocationResult.isError)
-      setError({
-        status: true,
-        error: null,
-        message: { title: 'Operação negada!', description: `${allocationResult.error}` },
-      });
-  }, [
-    updateResult.isError,
-    updateResult.error,
-    restartResult.isError,
-    restartResult.error,
-    allocationResult.isError,
-    allocationResult.error,
-  ]);
   // UI
   return (
     <>
@@ -193,7 +159,6 @@ export const Matching = ({ orderId, orderStatus, orderDispatchingStatus }: Match
                   size="sm"
                   label="Confirmar"
                   onClick={() => {
-                    submission.current += 1;
                     restartMatching();
                   }}
                   isLoading={restartResult.isLoading}
@@ -283,13 +248,6 @@ export const Matching = ({ orderId, orderStatus, orderDispatchingStatus }: Match
           <LogsTable logs={logs} />
         </Box>
       </Box>
-      <SuccessAndErrorHandler
-        submission={submission.current}
-        isSuccess={updateResult.isSuccess || restartResult.isSuccess || allocationResult.isSuccess}
-        isError={error.status}
-        error={error.error}
-        errorMessage={error.message}
-      />
     </>
   );
 };

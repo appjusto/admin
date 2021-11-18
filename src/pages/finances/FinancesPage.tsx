@@ -4,11 +4,9 @@ import { useObserveBusinessAdvances } from 'app/api/business/useObserveBusinessA
 import { useObserveBusinessWithdraws } from 'app/api/business/useObserveBusinessWithdraws';
 import { useRequestWithdraw } from 'app/api/business/useRequestWithdraw';
 import { useObserveInvoicesStatusByPeriod } from 'app/api/order/useObserveInvoicesStatusByPeriod';
-import { FirebaseError } from 'app/api/types';
 import { useContextBusinessId } from 'app/state/business/context';
+import { useContextAppRequests } from 'app/state/requests/context';
 import { IuguInvoiceStatus } from 'appjusto-types/payment/iugu';
-import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
-import { initialError } from 'common/components/error/utils';
 import { CustomMonthInput } from 'common/components/form/input/CustomMonthInput';
 import { ReactComponent as Checked } from 'common/img/icon-checked.svg';
 import { ReactComponent as Watch } from 'common/img/icon-stopwatch.svg';
@@ -31,18 +29,18 @@ const periodStatus = 'paid' as IuguInvoiceStatus;
 
 const FinancesPage = () => {
   // context
+  const { dispatchAppRequestResult } = useContextAppRequests();
   const { path, url } = useRouteMatch();
   const history = useHistory();
   const businessId = useContextBusinessId();
   const { accountInformation, refreshAccountInformation } = useAccountInformation(businessId);
   const { requestWithdraw, requestWithdrawResult } = useRequestWithdraw(businessId);
-  const { isLoading, isSuccess, isError, error: withdrawError } = requestWithdrawResult;
+  const { isLoading, isSuccess } = requestWithdrawResult;
   // state
   const [dateTime, setDateTime] = React.useState('');
   const [month, setMonth] = React.useState<Date | null>(new Date());
   const [availableReceivable, setAvailableReceivable] = React.useState<string | null>();
   const [availableWithdraw, setAvailableWithdraw] = React.useState<string | null>();
-  const [error, setError] = React.useState(initialError);
   // page data with filters
   const { periodAmount, appjustoFee, iuguFee } = useObserveInvoicesStatusByPeriod(
     businessId,
@@ -51,8 +49,6 @@ const FinancesPage = () => {
   );
   const advances = useObserveBusinessAdvances(businessId, month);
   const withdraws = useObserveBusinessWithdraws(businessId, month);
-  // refs
-  const submission = React.useRef(0);
   // helpers
   const monthName = month ? getMonthName(month.getMonth()) : 'N/E';
   const year = month ? month.getFullYear() : 'N/E';
@@ -62,12 +58,10 @@ const FinancesPage = () => {
     history.replace(path);
   };
   const handleWithdrawRequest = async () => {
-    setError(initialError);
-    submission.current += 1;
     if (!availableWithdraw)
-      return setError({
-        status: true,
-        error: null,
+      return dispatchAppRequestResult({
+        status: 'error',
+        requestId: 'FinancesPage-valid',
         message: { title: 'Não existe valor disponível para transferência.' },
       });
     const amount = convertBalance(availableWithdraw);
@@ -90,16 +84,6 @@ const FinancesPage = () => {
     setAvailableReceivable(accountInformation?.receivable_balance ?? null);
     setAvailableWithdraw(accountInformation?.balance_available_for_withdraw ?? null);
   }, [accountInformation]);
-  React.useEffect(() => {
-    if (isError) {
-      const errorMessage = (withdrawError as FirebaseError).message;
-      setError({
-        status: true,
-        error: withdrawError,
-        message: { title: errorMessage },
-      });
-    }
-  }, [isError, withdrawError]);
   // UI
   return (
     <>
@@ -142,12 +126,6 @@ const FinancesPage = () => {
       <AdvancesTable advances={advances} />
       <SectionTitle>{t('Transferências')}</SectionTitle>
       <WithdrawsTable withdraws={withdraws} />
-      <SuccessAndErrorHandler
-        submission={submission.current}
-        isError={error.status}
-        error={error.error}
-        errorMessage={error.message}
-      />
       <Switch>
         <Route path={`${path}/advances`}>
           <AdvancesDrawer isOpen onClose={closeDrawerHandler} />

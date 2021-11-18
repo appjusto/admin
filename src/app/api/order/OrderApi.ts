@@ -48,7 +48,7 @@ export default class OrderApi {
   ): firebase.Unsubscribe {
     let query = this.refs
       .getOrdersRef()
-      .orderBy('confirmedOn', ordering)
+      .orderBy('chargedOn', ordering)
       .where('status', 'in', statuses);
 
     if (businessId) {
@@ -544,11 +544,7 @@ export default class OrderApi {
       meta: { version: '1' }, // TODO: pass correct version on
       params: paramsData,
     };
-    try {
-      await this.refs.getCancelOrderCallable()(payload);
-    } catch (error) {
-      Sentry.captureException(error);
-    }
+    return await this.refs.getCancelOrderCallable()(payload);
   }
 
   async courierManualAllocation(orderId: string, courierId: string, comment: string) {
@@ -558,11 +554,7 @@ export default class OrderApi {
       courierId,
       comment,
     };
-    try {
-      await this.refs.getMatchOrderCallable()(payload);
-    } catch (error) {
-      throw error;
-    }
+    return await this.refs.getMatchOrderCallable()(payload);
   }
 
   async courierManualRemoval(
@@ -578,11 +570,7 @@ export default class OrderApi {
       issue,
       comment,
     };
-    try {
-      await this.refs.getDropOrderCallable()(payload);
-    } catch (error) {
-      throw error;
-    }
+    return await this.refs.getDropOrderCallable()(payload);
   }
 
   async getOutsourceDelivery(orderId: string) {
@@ -590,10 +578,6 @@ export default class OrderApi {
       meta: { version: '1' }, // TODO: pass correct version on
       orderId,
     };
-    try {
-      await this.refs.getOutsourceDeliveryCallable()(payload);
-    } catch (error) {
-      throw error;
-    }
+    return await this.refs.getOutsourceDeliveryCallable()(payload);
   }
 }

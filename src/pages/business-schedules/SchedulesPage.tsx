@@ -1,10 +1,9 @@
 import { Button, Flex } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useContextBusiness } from 'app/state/business/context';
+import { useContextAppRequests } from 'app/state/requests/context';
 import { BusinessSchedule, ScheduleObject } from 'appjusto-types/business';
 import { Break, DaySchedule } from 'common/components/DaySchedule';
-import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
-import { initialError } from 'common/components/error/utils';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
 import { t } from 'utils/i18n';
@@ -23,10 +22,10 @@ const scheduleObj = { from: '', to: '' };
 
 const SchedulesPage = () => {
   // context
+  const { dispatchAppRequestResult } = useContextAppRequests();
   const { business } = useContextBusiness();
   const { updateBusinessProfile, updateResult } = useBusinessProfile();
-  const { isLoading, isSuccess, isError, error: updateError } = updateResult;
-  const [error, setError] = React.useState(initialError);
+  const { isLoading } = updateResult;
   // state
   const [schedules, setSchedules] = React.useState<BusinessSchedule>(initialState);
 
@@ -153,12 +152,11 @@ const SchedulesPage = () => {
   };
   const onSubmitHandler = async (event: any) => {
     event.preventDefault();
-    setError(initialError);
     const isValid = schedulesValidation(schedules);
     if (!isValid)
-      return setError({
-        status: true,
-        error: null,
+      return dispatchAppRequestResult({
+        status: 'error',
+        requestId: 'SchedulesPage-valid',
         message: { title: 'Alguns horários não estão corretos.' },
       });
     submission.current += 1;
@@ -173,14 +171,6 @@ const SchedulesPage = () => {
       });
     }
   }, [business?.schedules]);
-  React.useEffect(() => {
-    if (isError) {
-      setError({
-        status: true,
-        error: updateError,
-      });
-    }
-  }, [isError, updateError]);
   // UI
   return (
     <>
@@ -217,13 +207,6 @@ const SchedulesPage = () => {
             {t('Salvar horários')}
           </Button>
         </form>
-        <SuccessAndErrorHandler
-          submission={submission.current}
-          isSuccess={isSuccess}
-          isError={error.status}
-          error={error.error}
-          errorMessage={error.message}
-        />
       </Flex>
     </>
   );

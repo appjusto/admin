@@ -28,6 +28,7 @@ export const courierLocationStatusPTOptions = {
 export const orderStatusPTOptions = {
   quote: 'Cotação',
   confirming: 'Aguardando confirmação',
+  charged: 'Cobrado',
   declined: 'Recusado',
   confirmed: 'Confirmado',
   preparing: 'Em preparo',
@@ -41,6 +42,7 @@ export const orderStatusPTOptions = {
 export const orderStatusPTOptionsForTableItem = {
   quote: 'Cotação',
   confirming: 'Confirmando',
+  charged: 'Cobrado',
   declined: 'Recusado',
   confirmed: 'Confirmado',
   preparing: 'Em preparo',
@@ -91,7 +93,7 @@ export const iuguSituationPTOptions = {
 };
 
 export const getEditableProfile = (profile: any, isEditingEmail: boolean) => {
-  let imitedKeys = [
+  let omittedKeys = [
     'id',
     'code',
     'createdOn',
@@ -101,8 +103,8 @@ export const getEditableProfile = (profile: any, isEditingEmail: boolean) => {
     'notificationToken',
     'email',
   ];
-  if (isEditingEmail) imitedKeys.pop();
-  let result = omit(profile, imitedKeys);
-  result = omitBy(result, (value) => !value);
-  return result;
+  if (isEditingEmail) omittedKeys.pop();
+  let editable = omit(profile, omittedKeys);
+  let serialized = omitBy(editable, (value) => !value);
+  return serialized;
 };

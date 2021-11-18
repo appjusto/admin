@@ -1,10 +1,8 @@
 import { Box, Button, HStack, Text } from '@chakra-ui/react';
+import { MutationResult } from 'app/api/mutation/useCustomMutation';
 import { MarketplaceAccountInfo } from 'appjusto-types';
 import { AlertError } from 'common/components/AlertError';
-import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
-import { initialError } from 'common/components/error/utils';
 import React from 'react';
-import { MutationResult } from 'react-query';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { iuguSituationPTOptions } from '../utils';
@@ -13,38 +11,26 @@ import { SectionTitle } from './generics/SectionTitle';
 interface IuguInfosProps {
   account?: MarketplaceAccountInfo | null;
   deleteAccount(): void;
-  result: MutationResult<void, unknown>;
+  result: MutationResult;
 }
 
 export const IuguInfos = ({ account, deleteAccount, result }: IuguInfosProps) => {
   // context
-  const { isLoading, isSuccess, isError, error: deleteError } = result;
+  const { isLoading, isSuccess } = result;
   // state
   const [isDeleting, setIsDeleting] = React.useState(false);
-  const [error, setError] = React.useState(initialError);
-  // refs
-  const submission = React.useRef(0);
   // helpers
   const createdOn = account?.info?.created_at
     ? getDateAndHour(new Date(account?.info?.created_at))
     : 'N/E';
   // handlers
   const handleDeleteAccount = () => {
-    submission.current += 1;
     return deleteAccount();
   };
   // side effects
   React.useEffect(() => {
     if (isSuccess) setIsDeleting(false);
   }, [isSuccess]);
-  React.useEffect(() => {
-    if (isError) {
-      setError({
-        status: true,
-        error: deleteError,
-      });
-    }
-  }, [isError, deleteError]);
   // UI
   return (
     <Box>
@@ -121,12 +107,6 @@ export const IuguInfos = ({ account, deleteAccount, result }: IuguInfosProps) =>
           {t('Deletar subconta')}
         </Button>
       )}
-      <SuccessAndErrorHandler
-        submission={submission.current}
-        isSuccess={isSuccess}
-        isError={error.status}
-        error={error.error}
-      />
     </Box>
   );
 };

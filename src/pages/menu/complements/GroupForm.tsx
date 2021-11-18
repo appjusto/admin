@@ -1,8 +1,6 @@
 import { Box, Flex, Radio, RadioGroup, Text } from '@chakra-ui/react';
 import { useContextMenu } from 'app/state/menu/context';
 import { ComplementGroup, WithId } from 'appjusto-types';
-import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
-import { initialError } from 'common/components/error/utils';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import React from 'react';
 import { t } from 'utils/i18n';
@@ -18,27 +16,17 @@ interface GroupFormProps {
 
 export const GroupForm = ({ atDrawer = false, groupId, groupData, onSuccess }: GroupFormProps) => {
   // context
-  const {
-    updateComplementsGroup,
-    updateGroupResult,
-    deleteComplementsGroup,
-    deleteGroupResult,
-  } = useContextMenu();
+  const { updateComplementsGroup, updateGroupResult, deleteComplementsGroup } = useContextMenu();
   const { isLoading } = updateGroupResult;
   // state
   const [name, setName] = React.useState('');
   const [required, setRequired] = React.useState(false);
   const [minimum, setMin] = React.useState(0);
   const [maximum, setMax] = React.useState(1);
-  const [error, setError] = React.useState(initialError);
-
   // refs
   const inputRef = React.useRef<HTMLInputElement>(null);
-  const submission = React.useRef(0);
-
   // helpers
   const minimumValue = required ? 1 : 0;
-
   //handler
   const handleIsRequired = (value: string) => {
     if (value === '1') {
@@ -50,7 +38,6 @@ export const GroupForm = ({ atDrawer = false, groupId, groupData, onSuccess }: G
       if (maximum === 0) setMax(1);
     }
   };
-
   const handleMaxAndMin = (field: string, action: string) => {
     if (field === 'min') {
       if (action === 'inc') {
@@ -67,9 +54,7 @@ export const GroupForm = ({ atDrawer = false, groupId, groupData, onSuccess }: G
       else if (action === 'dec') setMax((prev) => (prev > 1 && prev > minimum ? prev - 1 : prev));
     }
   };
-
   const handleSubmit = async () => {
-    submission.current += 1;
     const newGroup = {
       name,
       required,
@@ -79,14 +64,11 @@ export const GroupForm = ({ atDrawer = false, groupId, groupData, onSuccess }: G
     await updateComplementsGroup({ groupId: groupData?.id, changes: newGroup });
     onSuccess();
   };
-
   const handleDelete = async () => {
-    submission.current += 1;
     if (groupId === 'new') return;
     await deleteComplementsGroup(groupId);
     onSuccess();
   };
-
   // side effects
   React.useEffect(() => {
     inputRef?.current?.focus();
@@ -97,26 +79,6 @@ export const GroupForm = ({ atDrawer = false, groupId, groupData, onSuccess }: G
       setMin(groupData?.minimum);
     }
   }, [groupData]);
-
-  React.useEffect(() => {
-    if (updateGroupResult.isError) {
-      setError({
-        status: true,
-        error: updateGroupResult.error,
-      });
-    } else if (deleteGroupResult?.isError) {
-      setError({
-        status: true,
-        error: deleteGroupResult?.error,
-      });
-    }
-  }, [
-    updateGroupResult.isError,
-    updateGroupResult.error,
-    deleteGroupResult?.isError,
-    deleteGroupResult?.error,
-  ]);
-
   // UI
   return (
     <Box>
@@ -187,11 +149,6 @@ export const GroupForm = ({ atDrawer = false, groupId, groupData, onSuccess }: G
           isLoading={isLoading}
         />
       </form>
-      <SuccessAndErrorHandler
-        submission={submission.current}
-        isError={error.status}
-        error={error.error}
-      />
     </Box>
   );
 };

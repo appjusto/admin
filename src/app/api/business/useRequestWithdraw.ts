@@ -1,12 +1,14 @@
 import { useContextApi } from 'app/state/api/context';
-import { useMutation } from 'react-query';
+import { useCustomMutation } from '../mutation/useCustomMutation';
 
 export const useRequestWithdraw = (businessId?: string) => {
   // context
   const api = useContextApi();
   // mutations
-  const [requestWithdraw, requestWithdrawResult] = useMutation(async (amount: number) =>
-    api.business().requestWithdraw(businessId!, amount)
+  const { mutateAsync: requestWithdraw, mutationResult: requestWithdrawResult } = useCustomMutation(
+    async (amount: number) => api.business().requestWithdraw(businessId!, amount),
+    'requestWithdraw',
+    false
   );
   // return
   return { requestWithdraw, requestWithdrawResult };

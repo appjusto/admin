@@ -2,36 +2,44 @@ import { useContextApi } from 'app/state/api/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { Business } from 'appjusto-types';
 import React from 'react';
-import { useMutation, useQuery } from 'react-query';
+import { useQuery } from 'react-query';
 import * as Sentry from '@sentry/react';
 import { useContextFirebaseUser } from 'app/state/auth/context';
+import { useCustomMutation } from 'app/api/mutation/useCustomMutation';
 
-export const useBusinessProfile = () => {
+export const useBusinessProfile = (isOnboarding: boolean = false) => {
   // context
   const api = useContextApi();
   const { business, setBusinessId } = useContextBusiness();
   const businessId = business?.id;
   const { refreshUserToken } = useContextFirebaseUser();
   // queries
-  const getBusinessLogoURL = (key: string) =>
+  const getBusinessLogoURL = () =>
     businessId ? api.business().getBusinessLogoURL(businessId!) : null;
   const { data: logo } = useQuery(['business:logo', businessId], getBusinessLogoURL);
-  const getBusinessCoverURL = (key: string) =>
+  const getBusinessCoverURL = () =>
     businessId ? api.business().getBusinessCoverURL(businessId!, '1008x360') : null;
   const { data: cover } = useQuery(['business:cover', businessId], getBusinessCoverURL);
   // mutations
-  const [createBusinessProfile] = useMutation(async () => {
-    const business = await api.business().createBusinessProfile();
-    setBusinessId(business.id);
-    if (refreshUserToken) refreshUserToken(business.id);
-  });
-  const [updateBusinessProfile, updateResult] = useMutation(async (changes: Partial<Business>) =>
-    api.business().updateBusinessProfile(businessId!, changes)
+  const { mutateAsync: createBusinessProfile } = useCustomMutation(
+    async () => {
+      const business = await api.business().createBusinessProfile();
+      setBusinessId(business.id);
+      if (refreshUserToken) refreshUserToken(business.id);
+    },
+    'createBusinessProfile',
+    false
   );
-  const [
-    updateBusinessProfileWithImages,
-    updateWithImagesResult,
-  ] = useMutation(
+  const { mutateAsync: updateBusinessProfile, mutationResult: updateResult } = useCustomMutation(
+    async (changes: Partial<Business>) =>
+      api.business().updateBusinessProfile(businessId!, changes),
+    'updateBusinessProfile',
+    !isOnboarding
+  );
+  const {
+    mutateAsync: updateBusinessProfileWithImages,
+    mutationResult: updateWithImagesResult,
+  } = useCustomMutation(
     async (data: {
       changes: Partial<Business>;
       logoFileToSave: File | null;
@@ -44,16 +52,23 @@ export const useBusinessProfile = () => {
           data.changes,
           data.logoFileToSave,
           data.coverFilesToSave
-        )
+        ),
+    'updateBusinessProfileWithImages',
+    !isOnboarding
   );
-  const [deleteBusinessProfile, deleteResult] = useMutation(async () =>
-    api.business().deleteBusinessProfile(businessId!)
+  const { mutateAsync: deleteBusinessProfile, mutationResult: deleteResult } = useCustomMutation(
+    async () => api.business().deleteBusinessProfile(businessId!),
+    'deleteBusinessProfile',
+    false
   );
-  const [cloneBusiness, cloneResult] = useMutation(async () => {
-    const newBusiness = await api.business().cloneBusiness(businessId!);
-    if (refreshUserToken && newBusiness?.id) refreshUserToken(newBusiness.id);
-    return newBusiness;
-  });
+  const { mutateAsync: cloneBusiness, mutationResult: cloneResult } = useCustomMutation(
+    async () => {
+      const newBusiness = await api.business().cloneBusiness(businessId!);
+      if (refreshUserToken && newBusiness?.id) refreshUserToken(newBusiness.id);
+      return newBusiness;
+    },
+    'cloneBusiness'
+  );
   const sendBusinessKeepAlive = React.useCallback(() => {
     if (!business?.id || business.status !== 'open') return;
     try {
@@ -62,9 +77,10 @@ export const useBusinessProfile = () => {
       Sentry.captureException(error);
     }
   }, [api, business]);
-  const [updateBusinessSlug, updateSlugResult] = useMutation(
+  const { mutateAsync: updateBusinessSlug, mutationResult: updateSlugResult } = useCustomMutation(
     async (data: { businessId: string; slug: string }) =>
-      await api.business().updateBusinessSlug(data)
+      await api.business().updateBusinessSlug(data),
+    'updateBusinessSlug'
   );
   // return
   return {

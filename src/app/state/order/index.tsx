@@ -1,5 +1,3 @@
-import { useToast } from '@chakra-ui/toast';
-import * as Sentry from '@sentry/react';
 import { useBusinessChats } from 'app/api/business/chat/useBusinessChats';
 import { useBusinessOpenClose } from 'app/api/business/profile/useBusinessOpenClose';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
@@ -12,9 +10,9 @@ import { useObservePreparingOrders } from 'app/api/order/useObservePreparingOrde
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { Business, Order, OrderStatus, WithId } from 'appjusto-types';
-import { CustomToast } from 'common/components/CustomToast';
 import React from 'react';
 import { useContextFirebaseUser } from '../auth/context';
+import { useContextAppRequests } from '../requests/context';
 
 interface ContextProps {
   business: WithId<Business> | null | undefined;
@@ -37,6 +35,7 @@ interface ProviderProps {
 export const OrdersContextProvider = (props: ProviderProps) => {
   // context
   const api = useContextApi();
+  const { dispatchAppRequestResult } = useContextAppRequests();
   const { isBackofficeUser } = useContextFirebaseUser();
   const { business } = useContextBusiness();
   const { sendBusinessKeepAlive } = useBusinessProfile();
@@ -51,10 +50,10 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   // automatic opening and closing of the business
   useBusinessOpenClose(business);
   //state
+  const [businessAlertDisplayed, setBusinessAlertDisplayed] = React.useState(false);
   const [orders, setOrders] = React.useState<WithId<Order>[]>([]);
   const [newChatMessages, setNewChatMessages] = React.useState<string[]>([]);
   //handlers
-  const toast = useToast();
   const getOrderById = (id: string) => {
     const order = orders.find((order: WithId<Order>) => order.id === id);
     return order;
@@ -79,44 +78,36 @@ export const OrdersContextProvider = (props: ProviderProps) => {
       try {
         await api.order().updateOrder(orderId, { status });
       } catch (error) {
-        toast({
-          duration: 8000,
-          render: () => (
-            <CustomToast
-              type="error"
-              message={{
-                title: 'O status do pedido não pode ser alterado.',
-                description: 'Verifica a conexão com a internet?',
-              }}
-            />
-          ),
+        dispatchAppRequestResult({
+          status: 'error',
+          requestId: 'changeOrderStatus-valid',
+          error,
+          message: {
+            title: 'O status do pedido não pode ser alterado.',
+            description: 'Verifica a conexão com a internet?',
+          },
         });
-        Sentry.captureException(error);
       }
     },
-    [api, toast]
+    [api, dispatchAppRequestResult]
   );
   const setOrderCookingTime = React.useCallback(
     async (orderId: string, cookingTime: number | null) => {
       try {
         await api.order().updateOrder(orderId, { cookingTime });
       } catch (error) {
-        toast({
-          duration: 8000,
-          render: () => (
-            <CustomToast
-              type="error"
-              message={{
-                title: 'O tempo de preparo do pedido não foi alterado.',
-                description: 'Verifica a conexão com a internet?',
-              }}
-            />
-          ),
+        dispatchAppRequestResult({
+          status: 'error',
+          requestId: 'setOrderCookingTime-valid',
+          error,
+          message: {
+            title: 'O tempo de preparo do pedido não foi alterado.',
+            description: 'Verifica a conexão com a internet?',
+          },
         });
-        Sentry.captureException(error);
       }
     },
-    [api, toast]
+    [api, dispatchAppRequestResult]
   );
   // side effects
   React.useEffect(() => {
@@ -177,23 +168,29 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   React.useEffect(() => {
     if (isBackofficeUser) return;
     if (business?.situation !== 'approved') return;
+    if (businessAlertDisplayed) return;
     if (!business?.enabled) {
-      toast({
+      dispatchAppRequestResult({
+        status: 'error',
+        requestId: 'disabled-business-alert',
+        message: {
+          title: 'Seu restaurante está desligado.',
+          description:
+            'Desligado, seu restaurante não aparecerá para seus clientes. Para ligá-lo, vá até o perfil do restaurante ou contate o administrador desta unidade.',
+        },
         duration: 12000,
-        render: () => (
-          <CustomToast
-            type="warning"
-            message={{
-              title: 'Seu restaurante está desligado.',
-              description:
-                'Desligado, seu restaurante não aparecerá para seus clientes. Para ligá-lo, vá até o perfil do restaurante ou contate o administrador desta unidade.',
-            }}
-          />
-        ),
       });
+      setBusinessAlertDisplayed(true);
       return;
     }
-  }, [isBackofficeUser, business?.situation, business?.enabled, business?.status, toast]);
+  }, [
+    isBackofficeUser,
+    business?.situation,
+    business?.enabled,
+    businessAlertDisplayed,
+    setBusinessAlertDisplayed,
+    dispatchAppRequestResult,
+  ]);
   // provider
   return (
     <OrdersContext.Provider

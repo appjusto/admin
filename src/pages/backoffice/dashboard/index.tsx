@@ -21,7 +21,7 @@ const businessSituations = ['submitted', 'verified', 'invalid'];
 
 const usersChangesSituations = ['pending'] as ProfileChangesSituations[];
 
-const statuses = ['confirmed', 'preparing', 'ready', 'dispatching'] as OrderStatus[];
+const statuses = ['charged', 'confirmed', 'preparing', 'ready', 'dispatching'] as OrderStatus[];
 
 const BODashboard = () => {
   // context
@@ -32,18 +32,15 @@ const BODashboard = () => {
   const changes = useObserveUsersChanges(usersChangesSituations);
   // state
   const [dateTime, setDateTime] = React.useState('');
-
   // handlers
   const closeDrawerHandler = () => {
     history.replace(path);
   };
-
   // side effects
   React.useEffect(() => {
     const { date, time } = getDateTime();
     setDateTime(`${date} às ${time}`);
   }, []);
-
   // UI
   return (
     <>

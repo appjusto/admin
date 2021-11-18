@@ -2,6 +2,7 @@ import { ArrowDownIcon, DeleteIcon } from '@chakra-ui/icons';
 import { Button, CheckboxGroup, Flex, HStack, Text } from '@chakra-ui/react';
 import { BusinessesFilter } from 'app/api/search/types';
 import { useBusinessesSearch } from 'app/api/search/useBusinessesSearch';
+import { useContextBusiness } from 'app/state/business/context';
 import { BusinessAlgolia, BusinessStatus } from 'appjusto-types';
 import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import { CustomInput } from 'common/components/form/input/CustomInput';
@@ -19,7 +20,7 @@ const BusinessesPage = () => {
   // context
   const { path } = useRouteMatch();
   const history = useHistory();
-
+  const { isDeleted, setIsDeleted } = useContextBusiness();
   // state
   const [dateTime, setDateTime] = React.useState('');
   const [search, setSearch] = React.useState('');
@@ -84,6 +85,12 @@ const BusinessesPage = () => {
   React.useEffect(() => {
     handleFilters();
   }, [state, city, filterBar, filterCheck, handleFilters]);
+
+  React.useEffect(() => {
+    if (isDeleted) {
+      setIsDeleted(false);
+    }
+  }, [isDeleted, setIsDeleted]);
 
   // UI
   return (

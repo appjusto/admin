@@ -1,7 +1,5 @@
 import { useContextApi } from 'app/state/api/context';
-import { useMutation } from 'react-query';
-//import React from 'react';
-//import { AccountType, Invoice, WithId } from 'appjusto-types';
+import { useCustomMutation } from '../mutation/useCustomMutation';
 
 export const useGetOutsourceDelivery = (orderId?: string) => {
   // context
@@ -9,8 +7,12 @@ export const useGetOutsourceDelivery = (orderId?: string) => {
   // status
   //const [deliveryAccountType, setDeliveryAccountType] = React.useState<AccountType>();
   // mutations
-  const [getOutsourceDelivery, outsourceDeliveryResult] = useMutation(async () =>
-    orderId ? api.order().getOutsourceDelivery(orderId) : null
+  const {
+    mutateAsync: getOutsourceDelivery,
+    mutationResult: outsourceDeliveryResult,
+  } = useCustomMutation(
+    async () => (orderId ? api.order().getOutsourceDelivery(orderId) : null),
+    'getOutsourceDelivery'
   );
   // side effets
   /*React.useEffect(() => {

@@ -2,11 +2,10 @@ import { Box, Flex, RadioGroup, Stack, Text } from '@chakra-ui/react';
 import { useBanks } from 'app/api/business/profile/useBanks';
 import { useBusinessBankAccount } from 'app/api/business/profile/useBusinessBankAccount';
 import { useContextBusiness } from 'app/state/business/context';
+import { useContextAppRequests } from 'app/state/requests/context';
 import { Bank, BankAccount, WithId } from 'appjusto-types';
 import { BankAccountPersonType, BankAccountType } from 'appjusto-types/banking';
 import { AlertWarning } from 'common/components/AlertWarning';
-import { SuccessAndErrorHandler } from 'common/components/error/SuccessAndErrorHandler';
-import { initialError } from 'common/components/error/utils';
 import CustomRadio from 'common/components/form/CustomRadio';
 import { CustomPatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';
 import {
@@ -33,9 +32,12 @@ const bankAccountSet = (bankAccount: BankAccount): boolean => {
 const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
   // context
   const banks = useBanks();
+  const { dispatchAppRequestResult } = useContextAppRequests();
   const { business } = useContextBusiness();
-  const { bankAccount, updateBankAccount, updateResult } = useBusinessBankAccount();
-  const { isLoading, isSuccess, isError, error: updateError } = updateResult;
+  const { bankAccount, updateBankAccount, updateResult } = useBusinessBankAccount(
+    typeof onboarding === 'string'
+  );
+  const { isLoading, isSuccess } = updateResult;
   // state
   const [selectedBank, setSelectedBank] = React.useState<Bank>();
   const [personType, setPersonType] = React.useState(bankAccount?.personType ?? 'Pessoa Jurídica');
@@ -44,14 +46,10 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
   const [agency, setAgency] = React.useState(bankAccount?.agency ?? '');
   const [account, setAccount] = React.useState(bankAccount?.account ?? '');
   const [validation, setValidation] = React.useState({ agency: true, account: true });
-  const [error, setError] = React.useState(initialError);
-
   // refs
-  const submission = React.useRef(0);
   const nameRef = React.useRef<HTMLSelectElement>(null);
   const agencyRef = React.useRef<HTMLInputElement>(null);
   const accountRef = React.useRef<HTMLInputElement>(null);
-
   // helpers
   const disabled = business?.situation === 'approved';
 
@@ -85,29 +83,27 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
   };
 
   const onSubmitHandler = async () => {
-    submission.current += 1;
-    setError(initialError);
     let code = '';
     if (!validation.agency) {
-      setError({
-        status: true,
-        error: null,
+      dispatchAppRequestResult({
+        status: 'error',
+        requestId: 'BankingInformation-valid-agency',
         message: { title: 'A agência informada não é válida.' },
       });
       return agencyRef?.current?.focus();
     }
     if (!validation.account) {
-      setError({
-        status: true,
-        error: null,
+      dispatchAppRequestResult({
+        status: 'error',
+        requestId: 'BankingInformation-valid-account',
         message: { title: 'A conta informada não é válida.' },
       });
       return accountRef?.current?.focus();
     }
     if (selectedBank?.code === '341' && agency === '0500') {
-      setError({
-        status: true,
-        error: null,
+      dispatchAppRequestResult({
+        status: 'error',
+        requestId: 'BankingInformation-valid-bank',
         message: { title: 'A iugu ainda não aceita contas Itaú - iti. Escolha outra, por favor.' },
       });
       return agencyRef?.current?.focus();
@@ -116,8 +112,7 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
       code = getCEFAccountCode(selectedBank.code, personType, type);
     }
     const agencyFormatted = agencyFormatter!(agency);
-    const accountFormatted =
-      selectedBank?.code === '104' ? code + accountFormatter!(account) : accountFormatter!(account);
+    const accountFormatted = code + accountFormatter!(account);
     await updateBankAccount({
       personType,
       type,
@@ -159,15 +154,6 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
       findSelectedBank(banks, name);
     }
   }, [banks, name, findSelectedBank]);
-
-  React.useEffect(() => {
-    if (isError)
-      setError({
-        status: true,
-        error: updateError,
-      });
-  }, [isError, updateError]);
-
   // UI
   if (isSuccess && redirect) return <Redirect to={redirect} push />;
   return (
@@ -351,13 +337,6 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
           redirect={redirect}
           isLoading={isLoading}
           isDisabled={disabled}
-        />
-        <SuccessAndErrorHandler
-          submission={submission.current}
-          isSuccess={isSuccess && !onboarding}
-          isError={error.status}
-          error={error.error}
-          errorMessage={error.message}
         />
       </form>
     </Box>

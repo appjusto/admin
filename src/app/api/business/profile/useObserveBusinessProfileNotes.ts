@@ -1,7 +1,7 @@
+import { useCustomMutation } from 'app/api/mutation/useCustomMutation';
 import { useContextApi } from 'app/state/api/context';
 import { WithId, ProfileNote } from 'appjusto-types';
 import React from 'react';
-import { useMutation } from 'react-query';
 
 export const useObserveBusinessProfileNotes = (businessId?: string) => {
   // contex
@@ -9,15 +9,18 @@ export const useObserveBusinessProfileNotes = (businessId?: string) => {
   // state
   const [profileNotes, setProfileNotes] = React.useState<WithId<ProfileNote>[]>([]);
   // mutations
-  const [updateNote, updateResult] = useMutation(
+  const { mutateAsync: updateNote, mutationResult: updateResult } = useCustomMutation(
     async (data: { changes: Partial<ProfileNote>; id?: string }) => {
       if (!data.id) return await api.business().createProfileNote(businessId!, data.changes);
       else return await api.business().updateProfileNote(businessId!, data.id, data.changes);
-    }
+    },
+    'updateNote'
   );
-  const [deleteNote, deleteResult] = useMutation(
+  const { mutateAsync: deleteNote, mutationResult: deleteResult } = useCustomMutation(
     async (profileNoteId: string) =>
-      await api.business().deleteProfileNote(businessId!, profileNoteId)
+      await api.business().deleteProfileNote(businessId!, profileNoteId),
+    'deleteNote',
+    false
   );
   // side effects
   React.useEffect(() => {
