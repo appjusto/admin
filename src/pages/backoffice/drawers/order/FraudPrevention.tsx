@@ -2,15 +2,22 @@ import { Box, Button, Flex, Icon, Stack, Text } from '@chakra-ui/react';
 import { useObserveOrderFraudPrevention } from 'app/api/order/useObserveOrderFraudPrevention';
 import { MdPolicy, MdWarningAmber } from 'react-icons/md';
 import { t } from 'utils/i18n';
+import { OrderDrawerLoadingState } from '.';
 import { SectionTitle } from '../generics/SectionTitle';
 
 interface FraudPreventionProps {
   orderId: string;
   handleConfirm(): void;
   handleCancel(): void;
+  loadingState: OrderDrawerLoadingState;
 }
 
-export const FraudPrevention = ({ orderId, handleConfirm, handleCancel }: FraudPreventionProps) => {
+export const FraudPrevention = ({
+  orderId,
+  handleConfirm,
+  handleCancel,
+  loadingState,
+}: FraudPreventionProps) => {
   // context
   const flags = useObserveOrderFraudPrevention(orderId);
   // UI
@@ -49,10 +56,21 @@ export const FraudPrevention = ({ orderId, handleConfirm, handleCancel }: FraudP
         {t('Se nenhuma ação for tomada, o pedido será confirmado dentro de instantes:')}
       </Text>
       <Stack mt="4" direction={{ base: 'column', md: 'row' }} spacing={4}>
-        <Button w="100%" size="md" variant="danger" onClick={handleCancel}>
+        <Button
+          w="100%"
+          size="md"
+          variant="danger"
+          onClick={handleCancel}
+          isLoading={loadingState === 'preventCancel'}
+        >
           {t('Cancelar pedido')}
         </Button>
-        <Button w="100%" size="md" onClick={handleConfirm}>
+        <Button
+          w="100%"
+          size="md"
+          onClick={handleConfirm}
+          isLoading={loadingState === 'preventConfirm'}
+        >
           {t('Confirmar pedido')}
         </Button>
       </Stack>

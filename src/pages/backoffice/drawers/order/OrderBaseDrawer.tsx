@@ -18,6 +18,7 @@ import React from 'react';
 import { useRouteMatch } from 'react-router';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
+import { OrderDrawerLoadingState } from '.';
 import { orderStatusPTOptions } from '../../utils/index';
 import { SectionTitle } from '../generics/SectionTitle';
 import { FraudPrevention } from './FraudPrevention';
@@ -29,7 +30,7 @@ interface BaseDrawerProps {
   onClose(): void;
   updateOrderStatus(value?: OrderStatus): void;
   cancellation(type?: 'prevention'): void;
-  isLoading: boolean;
+  loadingState: OrderDrawerLoadingState;
   children: React.ReactNode | React.ReactNode[];
 }
 
@@ -39,7 +40,7 @@ export const OrderBaseDrawer = ({
   onClose,
   updateOrderStatus,
   cancellation,
-  isLoading,
+  loadingState,
   children,
   ...props
 }: BaseDrawerProps) => {
@@ -109,6 +110,7 @@ export const OrderBaseDrawer = ({
                 orderId={order?.id!}
                 handleConfirm={() => updateOrderStatus('confirmed')}
                 handleCancel={() => cancellation('prevention')}
+                loadingState={loadingState}
               />
             )}
             <SectionTitle mb="4">{t('Andamento do pedido')}</SectionTitle>
@@ -136,7 +138,7 @@ export const OrderBaseDrawer = ({
                 maxW="240px"
                 fontSize="15px"
                 onClick={() => updateOrderStatus()}
-                isLoading={isLoading}
+                isLoading={loadingState === 'general'}
                 loadingText={t('Salvando')}
               >
                 {t('Salvar alterações')}

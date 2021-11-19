@@ -23,6 +23,8 @@ import { OrderBaseDrawer } from './OrderBaseDrawer';
 import { OrderStatusBar } from './OrderStatusBar';
 import { Participants } from './Participants';
 
+export type OrderDrawerLoadingState = 'idle' | 'preventCancel' | 'preventConfirm' | 'general';
+
 interface ConsumerDrawerProps {
   isOpen: boolean;
   onClose(): void;
@@ -64,7 +66,7 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
   const [issue, setIssue] = React.useState<Issue | null>();
   const [message, setMessage] = React.useState<string>();
   const [refund, setRefund] = React.useState<InvoiceType[]>(['platform', 'products', 'delivery']);
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [loadingState, setLoadingState] = React.useState<OrderDrawerLoadingState>('idle');
   // helpers
   let refundValue = 0;
   if (refund.includes('platform') && order?.fare?.platform?.value)
@@ -130,6 +132,7 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
           },
         });
       }
+      if (type === 'prevention') setLoadingState('preventCancel');
       addFlaggedLocation({
         coordinates,
         address,
@@ -173,8 +176,13 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
     } else if (orderCancellation === null) setRefund([]);
   }, [orderCancellation]);
   React.useEffect(() => {
-    if (updateResult.isLoading || cancelResult.isLoading) setIsLoading(true);
-    else setIsLoading(false);
+    if (updateResult.isLoading) setLoadingState('general');
+    if (cancelResult.isLoading)
+      setLoadingState((prev) => {
+        if (prev === 'idle') return 'general';
+        return prev;
+      });
+    else setLoadingState('idle');
   }, [updateResult.isLoading, cancelResult.isLoading]);
   //UI
   return (
@@ -185,7 +193,7 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
         onClose={onClose}
         updateOrderStatus={updateOrderStatus}
         cancellation={cancellation}
-        isLoading={isLoading}
+        loadingState={loadingState}
         {...props}
       >
         <Switch>
