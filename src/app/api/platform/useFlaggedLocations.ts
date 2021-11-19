@@ -15,7 +15,7 @@ export const useFlaggedLocations = (observe: boolean = true) => {
     mutateAsync: addFlaggedLocation,
     mutationResult: addFlaggedLocationResult,
   } = useCustomMutation(
-    async (location: FlaggedLocation) => api.platform().addFlaggedLocation(location),
+    async (location: Partial<FlaggedLocation>) => api.platform().addFlaggedLocation(location),
     'addFlaggedLocation',
     false
   );

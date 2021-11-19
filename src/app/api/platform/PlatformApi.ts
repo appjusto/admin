@@ -9,6 +9,7 @@ import {
 } from 'appjusto-types';
 import { documentsAs } from '../../../core/fb';
 import FirebaseRefs from '../FirebaseRefs';
+import firebase from 'firebase/app';
 
 export default class PlatformApi {
   constructor(private refs: FirebaseRefs) {}
@@ -45,8 +46,13 @@ export default class PlatformApi {
     return unsubscribe;
   }
 
-  async addFlaggedLocation(location: FlaggedLocation) {
-    return await this.refs.getFlaggedLocationsWithGeoRef().add(location);
+  async addFlaggedLocation(location: Partial<FlaggedLocation>) {
+    const createdOn = firebase.firestore.FieldValue.serverTimestamp();
+    const newLocation = {
+      ...location,
+      createdOn,
+    };
+    return await this.refs.getFlaggedLocationsWithGeoRef().add(newLocation);
   }
 
   async fetchCuisines() {

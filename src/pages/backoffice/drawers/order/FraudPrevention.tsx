@@ -62,6 +62,7 @@ export const FraudPrevention = ({
           variant="danger"
           onClick={handleCancel}
           isLoading={loadingState === 'preventCancel'}
+          loadingText={t('Cancelando')}
         >
           {t('Cancelar pedido')}
         </Button>
@@ -70,6 +71,7 @@ export const FraudPrevention = ({
           size="md"
           onClick={handleConfirm}
           isLoading={loadingState === 'preventConfirm'}
+          loadingText={t('Salvando')}
         >
           {t('Confirmar pedido')}
         </Button>
