@@ -46,7 +46,7 @@ export default class PlatformApi {
   }
 
   async addFlaggedLocation(location: FlaggedLocation) {
-    return await this.refs.getFlaggedLocationsRef().add(location);
+    return await this.refs.getFlaggedLocationsWithGeoRef().add(location);
   }
 
   async fetchCuisines() {

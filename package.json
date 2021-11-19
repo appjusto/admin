@@ -39,6 +39,7 @@
     "env-cmd": "^10.1.0",
     "firebase": "^8.8.1",
     "framer-motion": "^4.1.17",
+    "geofirestore": "^4.4.2",
     "github-markdown-css": "^4.0.0",
     "google-map-react": "^2.1.9",
     "i18n-js": "^3.8.0",

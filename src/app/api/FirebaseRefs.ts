@@ -1,10 +1,14 @@
 import firebase from 'firebase/app';
+import * as geofirestore from 'geofirestore';
 
 export default class FirebaseRefs {
+  private firestoreWithGeo: geofirestore.GeoFirestore;
   constructor(
     private functions: firebase.functions.Functions,
     private firestore: firebase.firestore.Firestore
-  ) {}
+  ) {
+    this.firestoreWithGeo = geofirestore.initializeApp(this.firestore);
+  }
 
   // functions
   getBatchRef = () => this.firestore.batch();
@@ -52,6 +56,9 @@ export default class FirebaseRefs {
   getFraudPreventionSubdocsRef = () => this.getFraudPreventionRef().collection('subdocs');
   getFraudPreventionParamsRef = () => this.getFraudPreventionSubdocsRef().doc('params');
   getFlaggedLocationsRef = () => this.getFraudPreventionRef().collection('flaggedlocations');
+  // platform / fraud / flaggedlocations with geo
+  getFlaggedLocationsWithGeoRef = () =>
+    this.firestoreWithGeo.collection('platform').doc('fraud').collection('flaggedlocations');
 
   // platform data subcollections
   getBanksRef = () => this.getPlatformDatasRef().collection('banks');
