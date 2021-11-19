@@ -113,15 +113,10 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
     return cancelOrder(cancellationData);
   };
 
-  const updateOrderStatus = async () => {
-    if (status === 'canceled') {
-      cancellation();
-    } else {
-      const changes = {
-        status,
-      };
-      return updateOrder(changes);
-    }
+  const updateOrderStatus = async (value?: OrderStatus) => {
+    if (value) updateOrder({ status: value });
+    else if (status === 'canceled') cancellation();
+    else updateOrder({ status });
   };
 
   // side effects

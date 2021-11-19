@@ -6,7 +6,7 @@ import foodIcon from 'common/img/bo-food.svg';
 import p2pIcon from 'common/img/bo-p2p.svg';
 import firebase from 'firebase/app';
 import React from 'react';
-import { MdErrorOutline } from 'react-icons/md';
+import { MdErrorOutline, MdPolicy } from 'react-icons/md';
 import { useRouteMatch } from 'react-router-dom';
 import { getTimestampMilliseconds, getTimeUntilNow } from 'utils/functions';
 import { CustomLink } from './CustomLink';
@@ -25,14 +25,13 @@ export const BOOrderListItem = ({ order }: Props) => {
   const [orderDT, setOrderDT] = React.useState<number>();
   // helpers
   const issuesFound = issues && issues.length > 0 ? true : false;
+  const isFlagged = order.status === 'charged' && order.flagged;
   // side effects
   React.useEffect(() => {
     const setNewTime = () => {
       const now = getServerTime().getTime();
-      const confirmedOn = getTimestampMilliseconds(
-        order.confirmedOn as firebase.firestore.Timestamp
-      );
-      const time = confirmedOn ? getTimeUntilNow(now, confirmedOn) : null;
+      const chargedOn = getTimestampMilliseconds(order.chargedOn as firebase.firestore.Timestamp);
+      const time = chargedOn ? getTimeUntilNow(now, chargedOn) : null;
       if (time) setOrderDT(time);
     };
     setNewTime();
@@ -62,6 +61,17 @@ export const BOOrderListItem = ({ order }: Props) => {
             borderRadius="lg"
           >
             <MdErrorOutline color={issuesFound ? 'white' : '#C8D7CB'} />
+          </Flex>
+          <Flex
+            w="24px"
+            h="24px"
+            justifyContent="center"
+            alignItems="center"
+            borderRadius="12px"
+            border="2px solid"
+            borderColor={isFlagged ? 'red' : 'transparent'}
+          >
+            <MdPolicy color={isFlagged ? 'red' : '#C8D7CB'} />
           </Flex>
         </Flex>
         <OrderTracking orderId={order.id} isCompact />

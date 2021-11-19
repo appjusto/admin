@@ -20,13 +20,14 @@ import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { orderStatusPTOptions } from '../../utils/index';
 import { SectionTitle } from '../generics/SectionTitle';
+import { FraudPrevention } from './FraudPrevention';
 
 interface BaseDrawerProps {
   agent: { id: string | undefined; name: string };
   order?: WithId<Order> | null;
   isOpen: boolean;
   onClose(): void;
-  updateOrderStatus(): void;
+  updateOrderStatus(value?: OrderStatus): void;
   isLoading: boolean;
   children: React.ReactNode | React.ReactNode[];
 }
@@ -44,6 +45,7 @@ export const OrderBaseDrawer = ({
   const { url } = useRouteMatch();
   // helpers
   const orderStatus = order?.status as OrderStatus;
+  const isFlagged = order?.status === 'charged' && order?.flagged;
   //UI
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
@@ -100,6 +102,13 @@ export const OrderBaseDrawer = ({
             </Text>*/}
           </DrawerHeader>
           <DrawerBody pb="28">
+            {isFlagged && (
+              <FraudPrevention
+                orderId={order?.id!}
+                handleConfirm={() => updateOrderStatus('confirmed')}
+                handleReject={() => {}}
+              />
+            )}
             <SectionTitle mb="4">{t('Andamento do pedido')}</SectionTitle>
             <OrderTracking orderId={order?.id} />
             <Flex
@@ -124,7 +133,7 @@ export const OrderBaseDrawer = ({
                 width="full"
                 maxW="240px"
                 fontSize="15px"
-                onClick={updateOrderStatus}
+                onClick={() => updateOrderStatus()}
                 isLoading={isLoading}
                 loadingText={t('Salvando')}
               >

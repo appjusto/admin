@@ -9,6 +9,7 @@ import {
   OrderCancellation,
   //OrderCancellation,
   OrderChange,
+  OrderFraudPreventionFlags,
   OrderIssue,
   OrderMatching,
   OrderStatus,
@@ -315,6 +316,24 @@ export default class OrderApi {
     const unsubscribe = query.onSnapshot(
       (querySnapshot) => {
         resultHandler(documentsAs<OrderIssue>(querySnapshot.docs));
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+    // returns the unsubscribe function
+    return unsubscribe;
+  }
+
+  observeOrderFraudPrevention(
+    orderId: string,
+    resultHandler: (flags: OrderFraudPreventionFlags | null) => void
+  ): firebase.Unsubscribe {
+    let query = this.refs.getOrderFraudPreventionRef(orderId);
+    const unsubscribe = query.onSnapshot(
+      (querySnapshot) => {
+        if (querySnapshot.exists) resultHandler(querySnapshot.data() as OrderFraudPreventionFlags);
+        else resultHandler(null);
       },
       (error) => {
         console.error(error);
