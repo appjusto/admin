@@ -22,7 +22,7 @@ interface ConsumerProfileContextProps {
   setIsEditingEmail: Dispatch<SetStateAction<boolean>>;
   handleProfileChange(key: string, value: any): void;
   setContextValidation: Dispatch<SetStateAction<Validation>>;
-  issueOptions?: WithId<Issue>[] | null;
+  issueOptions?: Issue[] | null;
 }
 
 const ConsumerProfileContext = React.createContext<ConsumerProfileContextProps>(

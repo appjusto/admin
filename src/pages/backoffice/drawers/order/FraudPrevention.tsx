@@ -7,10 +7,10 @@ import { SectionTitle } from '../generics/SectionTitle';
 interface FraudPreventionProps {
   orderId: string;
   handleConfirm(): void;
-  handleReject(): void;
+  handleCancel(): void;
 }
 
-export const FraudPrevention = ({ orderId, handleConfirm, handleReject }: FraudPreventionProps) => {
+export const FraudPrevention = ({ orderId, handleConfirm, handleCancel }: FraudPreventionProps) => {
   // context
   const flags = useObserveOrderFraudPrevention(orderId);
   // UI
@@ -49,8 +49,8 @@ export const FraudPrevention = ({ orderId, handleConfirm, handleReject }: FraudP
         {t('Se nenhuma ação for tomada, o pedido será confirmado dentro de instantes:')}
       </Text>
       <Stack mt="4" direction={{ base: 'column', md: 'row' }} spacing={4}>
-        <Button w="100%" size="md" variant="danger" onClick={handleReject}>
-          {t('Rejeitar pedido')}
+        <Button w="100%" size="md" variant="danger" onClick={handleCancel}>
+          {t('Cancelar pedido')}
         </Button>
         <Button w="100%" size="md" onClick={handleConfirm}>
           {t('Confirmar pedido')}

@@ -28,6 +28,7 @@ interface BaseDrawerProps {
   isOpen: boolean;
   onClose(): void;
   updateOrderStatus(value?: OrderStatus): void;
+  cancellation(type?: 'prevention'): void;
   isLoading: boolean;
   children: React.ReactNode | React.ReactNode[];
 }
@@ -37,6 +38,7 @@ export const OrderBaseDrawer = ({
   order,
   onClose,
   updateOrderStatus,
+  cancellation,
   isLoading,
   children,
   ...props
@@ -106,7 +108,7 @@ export const OrderBaseDrawer = ({
               <FraudPrevention
                 orderId={order?.id!}
                 handleConfirm={() => updateOrderStatus('confirmed')}
-                handleReject={() => {}}
+                handleCancel={() => cancellation('prevention')}
               />
             )}
             <SectionTitle mb="4">{t('Andamento do pedido')}</SectionTitle>

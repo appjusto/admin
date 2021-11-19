@@ -1,4 +1,5 @@
 import { useOrder } from 'app/api/order/useOrder';
+import { useFlaggedLocations } from 'app/api/platform/useFlaggedLocations';
 import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';
 import { useContextAgentProfile } from 'app/state/agent/context';
 import { ConsumerProvider } from 'app/state/consumer/context';
@@ -11,6 +12,7 @@ import {
   OrderStatus,
   WithId,
 } from 'appjusto-types';
+import firebase from 'firebase/app';
 import { OrderDetails } from 'pages/orders/drawers/orderdrawer/OrderDetails';
 import { OrderIssuesTable } from 'pages/orders/drawers/orderdrawer/OrderIssuesTable';
 import React from 'react';
@@ -56,14 +58,13 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
     orderCancellationCosts,
   } = useOrder(orderId);
   const cancelOptions = useIssuesByType(cancelOptionsArray);
-
+  const { addFlaggedLocation } = useFlaggedLocations();
   // state
   const [status, setStatus] = React.useState<OrderStatus | undefined>(order?.status ?? undefined);
   const [issue, setIssue] = React.useState<Issue | null>();
   const [message, setMessage] = React.useState<string>();
   const [refund, setRefund] = React.useState<InvoiceType[]>(['platform', 'products', 'delivery']);
   const [isLoading, setIsLoading] = React.useState(false);
-
   // helpers
   let refundValue = 0;
   if (refund.includes('platform') && order?.fare?.platform?.value)
@@ -72,14 +73,15 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
     refundValue += order.fare.business.value;
   if (refund.includes('delivery') && order?.fare?.courier?.value)
     refundValue += order.fare.courier.value;
-
   //handlers
-  const updateState = (type: string, value: OrderStatus | WithId<Issue> | string) => {
+  const updateState = (
+    type: 'status' | 'issue' | 'message',
+    value: OrderStatus | WithId<Issue> | string
+  ) => {
     if (type === 'status') setStatus(value as OrderStatus);
     else if (type === 'issue') setIssue(cancelOptions?.find((item) => item.id === value) ?? null);
     else if (type === 'message') setMessage(value as string);
   };
-
   const onRefundingChange = (type: InvoiceType, value: boolean) => {
     setRefund((prev: InvoiceType[]) => {
       let newState = [...prev];
@@ -91,8 +93,47 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
       }
     });
   };
-
-  const cancellation = () => {
+  const cancellation = (type?: 'prevention') => {
+    if (type === 'prevention') {
+      const preventionIssue = cancelOptions?.find(
+        (issue) => issue.id === 'agent-order-cancel-fraud-prevention'
+      );
+      if (!preventionIssue) {
+        return dispatchAppRequestResult({
+          status: 'error',
+          requestId: 'BackofficeOrderDrawer-cancellation-valid',
+          message: {
+            title: 'Não foi possível cancelar o pedido.',
+            description: 'O motivo do cancelamento não foi encontrado.',
+          },
+        });
+      }
+      const cancellationData = {
+        orderId,
+        params: { refund: ['platform', 'products', 'delivery'] },
+        acknowledgedCosts: 0,
+        cancellation: preventionIssue,
+      } as CancelOrderPayload;
+      // add flagged location
+      const coordinates = order?.destination?.location as firebase.firestore.GeoPoint;
+      const address = order?.destination?.address;
+      if (!coordinates || !address) {
+        return dispatchAppRequestResult({
+          status: 'error',
+          requestId: 'BackofficeOrderDrawer-cancellation-valid',
+          message: {
+            title: 'Não foi possível cancelar o pedido.',
+            description: 'Endereço de destino não encontrado.',
+          },
+        });
+      }
+      addFlaggedLocation({
+        coordinates,
+        address,
+      });
+      // cancel order
+      return cancelOrder(cancellationData);
+    }
     if (!issue) {
       return dispatchAppRequestResult({
         status: 'error',
@@ -112,18 +153,15 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
     if (message) cancellationData.comment = message;
     return cancelOrder(cancellationData);
   };
-
   const updateOrderStatus = async (value?: OrderStatus) => {
     if (value) updateOrder({ status: value });
     else if (status === 'canceled') cancellation();
     else updateOrder({ status });
   };
-
   // side effects
   React.useEffect(() => {
     if (order?.status) setStatus(order.status);
   }, [order?.status]);
-
   React.useEffect(() => {
     if (orderCancellation) {
       setIssue(orderCancellation.issue ?? null);
@@ -131,12 +169,10 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
       setRefund(orderCancellation.params.refund);
     } else if (orderCancellation === null) setRefund([]);
   }, [orderCancellation]);
-
   React.useEffect(() => {
     if (updateResult.isLoading || cancelResult.isLoading) setIsLoading(true);
     else setIsLoading(false);
   }, [updateResult.isLoading, cancelResult.isLoading]);
-
   //UI
   return (
     <ConsumerProvider>
@@ -145,6 +181,7 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
         order={order}
         onClose={onClose}
         updateOrderStatus={updateOrderStatus}
+        cancellation={cancellation}
         isLoading={isLoading}
         {...props}
       >

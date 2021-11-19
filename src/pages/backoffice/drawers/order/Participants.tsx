@@ -27,8 +27,8 @@ interface ParticipantProps {
   buttonLabel?: string;
   buttonLink?: string;
   isBtnDisabled?: boolean;
-  dropIssues?: WithId<Issue>[] | null;
-  removeCourier?(issue?: WithId<Issue>, comment?: string): void;
+  dropIssues?: Issue[] | null;
+  removeCourier?(issue?: Issue, comment?: string): void;
   isLoading?: boolean;
 }
 
@@ -59,7 +59,7 @@ const Participant = ({
   };
   // side effects
   React.useEffect(() => {
-    if (dropIssues) setIssueId(dropIssues[0].id);
+    if (dropIssues && dropIssues[0].id) setIssueId(dropIssues[0].id);
   }, [dropIssues]);
   React.useEffect(() => {
     if (!id) setIsRemoving(false);

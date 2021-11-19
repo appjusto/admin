@@ -1,5 +1,6 @@
-import { Box, Checkbox, Flex, HStack, Radio, RadioGroup, Text, Textarea } from '@chakra-ui/react';
-import { InvoiceType, Issue, IssueType, OrderStatus, OrderType, WithId } from 'appjusto-types';
+import { Box, Flex, HStack, RadioGroup, Text, Textarea } from '@chakra-ui/react';
+import { InvoiceType, Issue, IssueType, OrderStatus, OrderType } from 'appjusto-types';
+import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import CustomRadio from 'common/components/form/CustomRadio';
 import React from 'react';
 import { formatCurrency } from 'utils/formatters';
@@ -13,7 +14,7 @@ interface OrderStatusProps {
   status?: OrderStatus;
   issue?: Issue | null;
   message?: string;
-  cancelOptions?: WithId<Issue>[] | null;
+  cancelOptions?: Issue[] | null;
   refund: InvoiceType[];
   refundValue: number;
   onRefundingChange(type: InvoiceType, value: boolean): void;
@@ -108,9 +109,9 @@ export const OrderStatusBar = ({
               >
                 <Flex flexDir="column" justifyContent="flex-start">
                   {cancelOptions?.map((option) => (
-                    <Radio key={option.id} mt="2" value={option.id}>
+                    <CustomRadio key={option.id} mt="2" value={option.id}>
                       {option.title}
-                    </Radio>
+                    </CustomRadio>
                   ))}
                 </Flex>
               </RadioGroup>
@@ -121,7 +122,7 @@ export const OrderStatusBar = ({
             {t(`Valor do reembolso: ${formatCurrency(refundValue)}`)}
           </Text>
           <HStack mt="4" spacing={4}>
-            <Checkbox
+            <CustomCheckbox
               width="120px"
               colorScheme="green"
               size="lg"
@@ -131,8 +132,8 @@ export const OrderStatusBar = ({
               onChange={(e) => onRefundingChange('platform', e.target.checked)}
             >
               {t('Plataforma')}
-            </Checkbox>
-            <Checkbox
+            </CustomCheckbox>
+            <CustomCheckbox
               width="120px"
               colorScheme="green"
               size="lg"
@@ -142,8 +143,8 @@ export const OrderStatusBar = ({
               onChange={(e) => onRefundingChange('products', e.target.checked)}
             >
               {t('Produtos')}
-            </Checkbox>
-            <Checkbox
+            </CustomCheckbox>
+            <CustomCheckbox
               width="120px"
               colorScheme="green"
               size="lg"
@@ -153,7 +154,7 @@ export const OrderStatusBar = ({
               onChange={(e) => onRefundingChange('delivery', e.target.checked)}
             >
               {t('Entrega')}
-            </Checkbox>
+            </CustomCheckbox>
           </HStack>
           <SectionTitle>{t('Comentário:')}</SectionTitle>
           <Textarea

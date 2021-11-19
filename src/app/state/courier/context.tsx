@@ -30,7 +30,7 @@ interface CourierProfileContextProps {
   setSelfieFiles(files: File[] | null): void;
   documentFiles?: File[] | null;
   setDocumentFiles(files: File[] | null): void;
-  issueOptions?: WithId<Issue>[] | null;
+  issueOptions?: Issue[] | null;
   marketPlace?: MarketplaceAccountInfo | null;
   deleteMarketPlace: UseMutateAsyncFunction<void, unknown, void, unknown>;
   deleteMarketPlaceResult: MutationResult;

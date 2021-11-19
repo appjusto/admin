@@ -1,12 +1,12 @@
 import { Box, Button, Flex, Image, Radio, RadioGroup, Text } from '@chakra-ui/react';
 import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';
-import { Issue, IssueType, WithId } from 'appjusto-types';
+import { Issue, IssueType } from 'appjusto-types';
 import iconTraffic from 'common/img/icon-traffic.svg';
 import React from 'react';
 import { formatCurrency } from 'utils/formatters';
 import { t } from 'utils/i18n';
 interface CancelationProps {
-  handleConfirm(issue: WithId<Issue>): void;
+  handleConfirm(issue: Issue): void;
   handleKeep(): void;
   isLoading: boolean;
   orderCancellationCosts?: number;
@@ -23,7 +23,7 @@ export const Cancelation = ({
   //context
   const cancelOptions = useIssuesByType(issueOptionsArray);
   // state
-  const [options, setOptions] = React.useState<WithId<Issue>[]>(cancelOptions ?? []);
+  const [options, setOptions] = React.useState<Issue[]>(cancelOptions ?? []);
   const [optionId, setOptionId] = React.useState('');
   const [optionsError, setOptionsError] = React.useState({ status: false, message: '' });
 
@@ -40,7 +40,7 @@ export const Cancelation = ({
   React.useEffect(() => {
     if (cancelOptions) {
       setOptions(cancelOptions);
-      setOptionId(cancelOptions[0].id);
+      if (cancelOptions[0].id) setOptionId(cancelOptions[0].id);
     } else if (cancelOptions === null) {
       setOptionsError({
         status: true,

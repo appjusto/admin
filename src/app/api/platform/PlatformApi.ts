@@ -1,4 +1,12 @@
-import { Bank, Cuisine, IssueType, Issue, PlatformStatistics } from 'appjusto-types';
+import {
+  Bank,
+  Cuisine,
+  IssueType,
+  Issue,
+  PlatformStatistics,
+  FlaggedLocation,
+  WithId,
+} from 'appjusto-types';
 import { documentsAs } from '../../../core/fb';
 import FirebaseRefs from '../FirebaseRefs';
 
@@ -21,6 +29,26 @@ export default class PlatformApi {
     return unsubscribe;
   }
 
+  observeFlaggedLocations(
+    resultHandler: (locations: WithId<FlaggedLocation>[] | null) => void
+  ): firebase.Unsubscribe {
+    const unsubscribe = this.refs.getFlaggedLocationsRef().onSnapshot(
+      (querySnapShot) => {
+        if (!querySnapShot.empty) resultHandler(documentsAs<FlaggedLocation>(querySnapShot.docs));
+        else resultHandler(null);
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+    // returns the unsubscribe function
+    return unsubscribe;
+  }
+
+  async addFlaggedLocation(location: FlaggedLocation) {
+    return await this.refs.getFlaggedLocationsRef().add(location);
+  }
+
   async fetchCuisines() {
     return documentsAs<Cuisine>(
       (await this.refs.getCuisinesRef().orderBy('order', 'asc').get()).docs
@@ -32,9 +60,9 @@ export default class PlatformApi {
   }
 
   async fetchIssues(types: IssueType[]) {
-    return documentsAs<Issue>(
-      (await this.refs.getIssuesRef().where('type', 'in', types).get()).docs
-    );
+    const docs = (await this.refs.getIssuesRef().where('type', 'in', types).get()).docs;
+    const issues = docs.map<Issue>((doc) => doc.data() as Issue);
+    return issues;
   }
 
   async getServerTime(): Promise<number> {
