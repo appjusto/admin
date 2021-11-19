@@ -16,7 +16,8 @@ export const useFlaggedLocations = (observe: boolean = true) => {
     mutationResult: addFlaggedLocationResult,
   } = useCustomMutation(
     async (location: FlaggedLocation) => api.platform().addFlaggedLocation(location),
-    'addFlaggedLocation'
+    'addFlaggedLocation',
+    false
   );
   // side effects
   React.useEffect(() => {

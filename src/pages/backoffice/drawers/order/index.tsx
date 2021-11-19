@@ -58,7 +58,7 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
     orderCancellationCosts,
   } = useOrder(orderId);
   const cancelOptions = useIssuesByType(cancelOptionsArray);
-  const { addFlaggedLocation } = useFlaggedLocations();
+  const { addFlaggedLocation } = useFlaggedLocations(false);
   // state
   const [status, setStatus] = React.useState<OrderStatus | undefined>(order?.status ?? undefined);
   const [issue, setIssue] = React.useState<Issue | null>();
@@ -94,7 +94,7 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
     });
   };
   const cancellation = (type?: 'prevention') => {
-    if (type === 'prevention') {
+    if (type === 'prevention' || issue?.id === 'agent-order-cancel-fraud-prevention') {
       const preventionIssue = cancelOptions?.find(
         (issue) => issue.id === 'agent-order-cancel-fraud-prevention'
       );
