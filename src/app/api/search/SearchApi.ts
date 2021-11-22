@@ -67,7 +67,6 @@ export default class SearchApi {
         .join(' AND ');
       return filters;
     };
-
     return getResultFilters();
   }
 

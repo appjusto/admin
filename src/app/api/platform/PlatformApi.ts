@@ -6,6 +6,7 @@ import {
   PlatformStatistics,
   FlaggedLocation,
   WithId,
+  Classification,
 } from 'appjusto-types';
 import { documentsAs } from '../../../core/fb';
 import FirebaseRefs from '../FirebaseRefs';
@@ -69,6 +70,12 @@ export default class PlatformApi {
   async fetchCuisines() {
     return documentsAs<Cuisine>(
       (await this.refs.getCuisinesRef().orderBy('order', 'asc').get()).docs
+    );
+  }
+
+  async fetchClassifications() {
+    return documentsAs<Classification>(
+      (await this.refs.getClassificationsRef().orderBy('order', 'asc').get()).docs
     );
   }
 

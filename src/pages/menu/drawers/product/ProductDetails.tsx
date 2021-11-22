@@ -1,4 +1,5 @@
 import { Button, CheckboxGroup, Flex, Link, Stack, Switch, Text, VStack } from '@chakra-ui/react';
+import { useClassifications } from 'app/api/platform/useClassifications';
 import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput2';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
@@ -50,6 +51,7 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
     updateProduct,
     deleteProduct,
   } = useProductContext();
+  const platformClassifications = useClassifications();
   //state
   const [state, dispatch] = React.useReducer(productReducer, initialState);
   const {
@@ -276,12 +278,11 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
         onChange={(value) => handleStateUpdate('classifications', value)}
       >
         <VStack alignItems="flex-start" mt="4" color="black" spacing={2}>
-          <CustomCheckbox value="vegetarian">{t('Vegetariano')}</CustomCheckbox>
-          <CustomCheckbox value="vegan">{t('Vegano')}</CustomCheckbox>
-          <CustomCheckbox value="organic">{t('Orgânico')}</CustomCheckbox>
-          <CustomCheckbox value="gluten_free">{t('Sem glúten')}</CustomCheckbox>
-          <CustomCheckbox value="no_sugar">{t('Sem açúcar')}</CustomCheckbox>
-          <CustomCheckbox value="zero_lactose">{t('Zero lactose')}</CustomCheckbox>
+          {platformClassifications.map((item) => (
+            <CustomCheckbox key={item.id} value={item.name}>
+              {item.name}
+            </CustomCheckbox>
+          ))}
         </VStack>
       </CheckboxGroup>{' '}
       <Flex mt="8" flexDir="row" alignItems="center" spacing={2}>
