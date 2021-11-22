@@ -10,6 +10,7 @@ export default class SearchApi {
   private couriers: SearchIndex;
   private consumers: SearchIndex;
   private orders: SearchIndex;
+  private flaggedlocations: SearchIndex;
 
   constructor(config: AlgoliaConfig, env: Environment) {
     this.client = algoliasearch(config.appId, config.apiKey, {
@@ -23,6 +24,7 @@ export default class SearchApi {
     this.couriers = this.client.initIndex(`${env}_couriers`);
     this.consumers = this.client.initIndex(`${env}_consumers`);
     this.orders = this.client.initIndex(`${env}_orders`);
+    this.flaggedlocations = this.client.initIndex(`${env}_fraud_flaggedlocations`);
   }
 
   private getSearchIndex(kind: SearchKind) {
@@ -30,6 +32,7 @@ export default class SearchApi {
     else if (kind === 'couriers') return this.couriers;
     else if (kind === 'consumers') return this.consumers;
     else if (kind === 'orders') return this.orders;
+    else if (kind === 'flaggedlocations') return this.flaggedlocations;
   }
 
   private createBusinessesFilters(filters?: BusinessesFilter[]) {
@@ -124,6 +127,34 @@ export default class SearchApi {
       page,
       hitsPerPage,
       filters: this.createOrdersFilters(typeFilter, statusFilters, dateFilter, businessId),
+    });
+  }
+
+  private createFlaggedlocationsFilters(dateFilter?: number[]) {
+    const date =
+      dateFilter && dateFilter.length === 2
+        ? `date_timestamp: ${dateFilter[0]} TO ${dateFilter[1] + 86399000}`
+        : '';
+    //const date =
+    //  dateFilter && dateFilter.length === 2
+    //    ? `confirmedOn: ${dateFilter[0]} TO ${dateFilter[1] + 86399000}` check this calculation
+    //    : '';
+    return date;
+  }
+
+  flaggedlocationsSearch<T>(
+    kind: SearchKind,
+    dateFilter?: number[],
+    query: string = '',
+    page?: number,
+    hitsPerPage?: number
+  ) {
+    const index = this.getSearchIndex(kind);
+    if (!index) throw new Error('Invalid index');
+    return index.search<T>(query, {
+      page,
+      hitsPerPage,
+      filters: this.createFlaggedlocationsFilters(dateFilter),
     });
   }
 

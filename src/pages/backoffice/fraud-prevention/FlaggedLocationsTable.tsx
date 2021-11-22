@@ -1,15 +1,16 @@
 import { Box, Button, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
-import { FlaggedLocation, WithId } from 'appjusto-types';
-import { getDateAndHour } from 'utils/functions';
+//import { FlaggedLocation, WithId } from 'appjusto-types';
+import { getAlgoliaFieldDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
+import { FlaggedLocationsAlgolia } from '.';
 
 interface FlaggedLocationsTableProps {
-  locations?: WithId<FlaggedLocation>[] | null;
+  //locations?: WithId<FlaggedLocation>[] | null;
+  locations?: FlaggedLocationsAlgolia[] | null;
 }
 
 export const FlaggedLocationsTable = ({ locations }: FlaggedLocationsTableProps) => {
   // context
-
   // UI
   return (
     <Box mt="6" maxW="100vw" overflowX="auto">
@@ -25,9 +26,9 @@ export const FlaggedLocationsTable = ({ locations }: FlaggedLocationsTableProps)
           {locations && locations.length > 0 ? (
             locations.map((location) => {
               return (
-                <Tr key={location.id} color="black" fontSize="15px" lineHeight="21px">
-                  <Td>{getDateAndHour(location.createdOn)}</Td>
-                  <Td>{location.address.description}</Td>
+                <Tr key={location.objectID} color="black" fontSize="15px" lineHeight="21px">
+                  <Td>{getAlgoliaFieldDateAndHour(location.date_timestamp)}</Td>
+                  <Td>{location.description}</Td>
                   <Td>
                     <Button mt="0" variant="dangerLight" size="sm">
                       {t('Remover')}
