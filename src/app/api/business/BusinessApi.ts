@@ -19,6 +19,7 @@ import {
   FetchAccountInformationPayload,
   AccountAdvance,
   AccountWithdraw,
+  BusinessMenuMessage,
 } from 'appjusto-types';
 import { Complement, ComplementGroup, Ordering, ProfileNote } from 'appjusto-types';
 import firebase from 'firebase/app';
@@ -478,6 +479,20 @@ export default class BusinessApi {
 
   async updateMenuOrdering(businessId: string, ordering: Ordering, menuId?: string) {
     await this.refs.getBusinessMenuOrderingRef(businessId, menuId).set(ordering, { merge: false });
+  }
+
+  async addMenuMessage(businessId: string, message: BusinessMenuMessage) {
+    return await this.refs.getBusinessMenuMessageRef(businessId).set(message);
+  }
+
+  async deleteMenuMessage(businessId: string) {
+    return await this.refs.getBusinessMenuMessageRef(businessId).delete();
+  }
+
+  async fetchMenuMessage(businessId: string) {
+    return (
+      await this.refs.getBusinessMenuMessageRef(businessId).get()
+    ).data() as BusinessMenuMessage;
   }
 
   // categories
