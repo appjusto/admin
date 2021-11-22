@@ -2,6 +2,7 @@ import { ArrowDownIcon, DeleteIcon } from '@chakra-ui/icons';
 import { Button, Flex, HStack, Text } from '@chakra-ui/react';
 //import { useFlaggedLocations } from 'app/api/platform/useFlaggedLocations';
 import { useFlaggedlocationsSearch } from 'app/api/search/useFlaggedlocationsSearch';
+import { FlaggedLocationsAlgolia } from 'appjusto-types';
 import { CustomDateFilter } from 'common/components/form/input/CustomDateFilter';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import dayjs from 'dayjs';
@@ -12,14 +13,6 @@ import PageHeader from '../../PageHeader';
 import { SectionTitle } from '../drawers/generics/SectionTitle';
 import { FlaggedLocationsTable } from './FlaggedLocationsTable';
 
-export interface FlaggedLocationsAlgolia {
-  objectID: string;
-  description: string;
-  date_timestamp: number;
-}
-
-type DateFilter = number[];
-
 const FraudPreventionPage = () => {
   // state
   const [dateTime, setDateTime] = React.useState('');
@@ -27,7 +20,7 @@ const FraudPreventionPage = () => {
   const [searchFrom, setSearchFrom] = React.useState('');
   const [searchTo, setSearchTo] = React.useState('');
 
-  const [filters, setFilters] = React.useState<DateFilter>();
+  const [filters, setFilters] = React.useState<number[]>();
 
   const [clearDateNumber, setClearDateNumber] = React.useState(0);
 

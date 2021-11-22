@@ -1,8 +1,7 @@
 import { Box, Button, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
-//import { FlaggedLocation, WithId } from 'appjusto-types';
+import { FlaggedLocationsAlgolia } from 'appjusto-types';
 import { getAlgoliaFieldDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
-import { FlaggedLocationsAlgolia } from '.';
 
 interface FlaggedLocationsTableProps {
   //locations?: WithId<FlaggedLocation>[] | null;
