@@ -47,12 +47,23 @@ export default class PlatformApi {
   }
 
   async addFlaggedLocation(location: Partial<FlaggedLocation>) {
+    const isNewLocation = (
+      await this.refs
+        .getFlaggedLocationsRef()
+        .where('address.description', '==', location.address?.description)
+        .get()
+    ).empty;
+    if (!isNewLocation) return;
     const createdOn = firebase.firestore.FieldValue.serverTimestamp();
     const newLocation = {
       ...location,
       createdOn,
     };
     return await this.refs.getFlaggedLocationsWithGeoRef().add(newLocation);
+  }
+
+  async deleteFlaggedLocation(locationId: string) {
+    return await this.refs.getFlaggedLocationRef(locationId).delete();
   }
 
   async fetchCuisines() {

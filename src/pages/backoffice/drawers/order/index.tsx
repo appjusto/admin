@@ -60,7 +60,7 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
     orderCancellationCosts,
   } = useOrder(orderId);
   const cancelOptions = useIssuesByType(cancelOptionsArray);
-  const { addFlaggedLocation } = useFlaggedLocations(false);
+  const { addFlaggedLocation } = useFlaggedLocations();
   // state
   const [status, setStatus] = React.useState<OrderStatus | undefined>(order?.status ?? undefined);
   const [issue, setIssue] = React.useState<Issue | null>();

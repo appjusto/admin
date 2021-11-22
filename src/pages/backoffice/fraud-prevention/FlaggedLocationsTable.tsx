@@ -1,14 +1,14 @@
-import { Box, Button, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
+import { Box, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import { FlaggedLocationsAlgolia } from 'appjusto-types';
-import { getAlgoliaFieldDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
+import { FlaggedLocationsTableItem } from './FlaggedLocationsTableItem';
 
 interface FlaggedLocationsTableProps {
-  //locations?: WithId<FlaggedLocation>[] | null;
   locations?: FlaggedLocationsAlgolia[] | null;
+  refetch(): void;
 }
 
-export const FlaggedLocationsTable = ({ locations }: FlaggedLocationsTableProps) => {
+export const FlaggedLocationsTable = ({ locations, refetch }: FlaggedLocationsTableProps) => {
   // context
   // UI
   return (
@@ -23,19 +23,13 @@ export const FlaggedLocationsTable = ({ locations }: FlaggedLocationsTableProps)
         </Thead>
         <Tbody>
           {locations && locations.length > 0 ? (
-            locations.map((location) => {
-              return (
-                <Tr key={location.objectID} color="black" fontSize="15px" lineHeight="21px">
-                  <Td>{getAlgoliaFieldDateAndHour(location.date_timestamp)}</Td>
-                  <Td>{location.description}</Td>
-                  <Td>
-                    <Button mt="0" variant="dangerLight" size="sm">
-                      {t('Remover')}
-                    </Button>
-                  </Td>
-                </Tr>
-              );
-            })
+            locations.map((location) => (
+              <FlaggedLocationsTableItem
+                key={location.objectID}
+                location={location}
+                refetch={refetch}
+              />
+            ))
           ) : (
             <Tr color="black" fontSize="xs" fontWeight="700">
               <Td>{t('Sem resultados para os dados informados')}</Td>

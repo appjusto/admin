@@ -94,7 +94,7 @@ const FraudPreventionPage = () => {
           {t(`${flaggedLocations?.length ?? '0'} endereços encontrados`)}
         </Text>
       </HStack>
-      <FlaggedLocationsTable locations={flaggedLocations} />
+      <FlaggedLocationsTable locations={flaggedLocations} refetch={refetch} />
       <Button mt="8" variant="secondary" onClick={fetchNextPage}>
         <ArrowDownIcon mr="2" />
         {t('Carregar mais')}

@@ -24,7 +24,7 @@ export default class SearchApi {
     this.couriers = this.client.initIndex(`${env}_couriers`);
     this.consumers = this.client.initIndex(`${env}_consumers`);
     this.orders = this.client.initIndex(`${env}_orders`);
-    this.flaggedlocations = this.client.initIndex(`${env}_fraud_flaggedlocations`);
+    this.flaggedlocations = this.client.initIndex(`${env}_flaggedlocations`);
   }
 
   private getSearchIndex(kind: SearchKind) {
@@ -133,12 +133,8 @@ export default class SearchApi {
   private createFlaggedlocationsFilters(dateFilter?: number[]) {
     const date =
       dateFilter && dateFilter.length === 2
-        ? `date_timestamp: ${dateFilter[0]} TO ${dateFilter[1] + 86399000}`
+        ? `date_timestamp: ${dateFilter[0]} TO ${dateFilter[1]}`
         : '';
-    //const date =
-    //  dateFilter && dateFilter.length === 2
-    //    ? `confirmedOn: ${dateFilter[0]} TO ${dateFilter[1] + 86399000}` check this calculation
-    //    : '';
     return date;
   }
 

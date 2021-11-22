@@ -56,6 +56,8 @@ export default class FirebaseRefs {
   getFraudPreventionSubdocsRef = () => this.getFraudPreventionRef().collection('subdocs');
   getFraudPreventionParamsRef = () => this.getFraudPreventionSubdocsRef().doc('params');
   getFlaggedLocationsRef = () => this.getFraudPreventionRef().collection('flaggedlocations');
+  getFlaggedLocationRef = (locationId: string) =>
+    this.getFraudPreventionRef().collection('flaggedlocations').doc(locationId);
   // platform / fraud / flaggedlocations with geo
   getFlaggedLocationsWithGeoRef = () =>
     this.firestoreWithGeo.collection('platform').doc('fraud').collection('flaggedlocations');
