@@ -116,6 +116,7 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
         acknowledgedCosts: 0,
         cancellation: preventionIssue,
       } as CancelOrderPayload;
+      if (message) cancellationData.comment = message;
       // add flagged location
       const coordinates = new firebase.firestore.GeoPoint(
         order?.destination?.location?.latitude!,
