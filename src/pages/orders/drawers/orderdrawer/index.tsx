@@ -42,7 +42,6 @@ export const OrderDrawer = (props: Props) => {
     orderIssues,
     orderCancellation,
     orderCancellationCosts,
-    invoices,
   } = useOrder(orderId);
   const { manager } = useContextManagerProfile();
   const { getOutsourceDelivery, outsourceDeliveryResult } = useGetOutsourceDelivery(orderId);
