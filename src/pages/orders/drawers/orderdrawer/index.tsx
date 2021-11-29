@@ -5,7 +5,6 @@ import { useContextBusiness } from 'app/state/business/context';
 import { useContextManagerProfile } from 'app/state/manager/context';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { CancelOrderPayload, Issue, WithId } from 'appjusto-types';
-import { CustomButton } from 'common/components/buttons/CustomButton';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import React from 'react';
 import { useParams } from 'react-router-dom';
@@ -203,18 +202,6 @@ export const OrderDrawer = (props: Props) => {
                   cookingTime={order.cookingTime}
                   averageCookingTime={business?.averageCookingTime}
                 />
-              )}
-              {(order?.status === 'delivered' || order?.status === 'canceled') && invoices && (
-                <Box mt="10">
-                  <CustomButton
-                    size="md"
-                    minW="220px"
-                    variant="outline"
-                    label={t('Ver fatura no Iugu')}
-                    link={`https://alia.iugu.com/receive/invoices/${invoices[0]?.externalId}`}
-                    isExternal
-                  />
-                </Box>
               )}
             </>
           )}
