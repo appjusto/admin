@@ -548,10 +548,12 @@ export default class OrderApi {
 
   async updateOrder(orderId: string, changes: Partial<Order>) {
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
-    await this.refs.getOrderRef(orderId).update({
+    const orderChanges = {
       ...changes,
       updatedOn: timestamp,
-    });
+    };
+    if (changes.status === 'confirmed') orderChanges.confirmedOn = timestamp;
+    await this.refs.getOrderRef(orderId).update(orderChanges);
   }
 
   async cancelOrder(data: CancelOrderPayload) {
