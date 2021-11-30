@@ -37,6 +37,12 @@ export const FraudPrevention = ({
       <Text mt="4">
         {t('Este pedido apresenta algumas características que podem indicar tentativa de fraude:')}
       </Text>
+      {flags?.consumerHasConfirmedPhoneNumber === false && (
+        <Text mt="1" fontWeight="700">
+          <Icon as={MdWarningAmber} mr="2" />{' '}
+          {t('Consumidor ainda não confirmou o número do telefone;')}
+        </Text>
+      )}
       {flags?.newUser && (
         <Text mt="1" fontWeight="700">
           <Icon as={MdWarningAmber} mr="2" /> {t('Primeiro pedido do consumidor;')}
