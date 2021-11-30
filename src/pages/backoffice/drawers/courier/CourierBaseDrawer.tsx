@@ -144,6 +144,12 @@ export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDr
                 {getDateAndHour(courier?.updatedOn)}
               </Text>
             </Text>
+            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+              {t('Versão do app:')}{' '}
+              <Text as="span" fontWeight="500">
+                {courier?.appVersion ?? 'N/E'}
+              </Text>
+            </Text>
             {/*<Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
               {t('Agente responsável:')}{' '}
               <Text as="span" fontWeight="500">
