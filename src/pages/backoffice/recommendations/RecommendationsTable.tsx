@@ -16,10 +16,11 @@ export const RecommendationsTable = ({ recommendations }: RecommendationsTablePr
       <Table mt="4" size="md" variant="simple" pos="relative">
         <Thead>
           <Tr>
-            <Th minW="180px">{t('Data')}</Th>
+            <Th maxW="130px">{t('Data')}</Th>
             <Th minW="200px">{t('Nome')}</Th>
+            <Th minW="200px">{t('Responsável')}</Th>
             <Th minW="160px">{t('Telefone')}</Th>
-            <Th>{t('Instagram')}</Th>
+            <Th maxW="120px">{t('Instagram')}</Th>
             <Th></Th>
           </Tr>
         </Thead>
@@ -33,6 +34,7 @@ export const RecommendationsTable = ({ recommendations }: RecommendationsTablePr
           ) : (
             <Tr color="black" fontSize="xs" fontWeight="700">
               <Td>{t('Sem resultados para o período informado')}</Td>
+              <Td></Td>
               <Td></Td>
               <Td></Td>
               <Td></Td>

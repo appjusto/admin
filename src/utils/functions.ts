@@ -44,7 +44,10 @@ export const getDateTime = () => {
   return { date, time };
 };
 
-export const getDateAndHour = (timestamp?: firebase.firestore.FieldValue | Date) => {
+export const getDateAndHour = (
+  timestamp?: firebase.firestore.FieldValue | Date,
+  onlyDate?: boolean
+) => {
   if (!timestamp) return 'N/E';
   try {
     let timeToDate = timestamp;
@@ -53,6 +56,7 @@ export const getDateAndHour = (timestamp?: firebase.firestore.FieldValue | Date)
     }
     const date = I18n.strftime(timeToDate, '%d/%m/%Y');
     const hour = I18n.strftime(timeToDate, '%H:%M');
+    if (onlyDate) return date;
     return `${date} ${hour}`;
   } catch (error) {
     console.log(error);

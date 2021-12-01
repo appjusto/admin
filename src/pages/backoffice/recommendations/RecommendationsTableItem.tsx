@@ -17,10 +17,13 @@ export const RecommendationsTableItem = ({ recommendation }: ItemProps) => {
   // UI
   return (
     <Tr key={recommendation.id} color="black" fontSize="15px" lineHeight="21px">
-      <Td>{recommendation.createdOn ? getDateAndHour(recommendation.createdOn) : 'N/E'}</Td>
+      <Td maxW="130px">
+        {recommendation.createdOn ? getDateAndHour(recommendation.createdOn, true) : 'N/E'}
+      </Td>
       <Td>{recommendation.recommendedBusiness.address.main ?? 'N/E'}</Td>
+      <Td>{recommendation.owner ?? 'N/I'}</Td>
       <Td>{recommendation.phone ? phoneFormatter(recommendation.phone) : 'N/I'}</Td>
-      <Td>{recommendation.instagram ?? 'N/I'}</Td>
+      <Td maxW="120px">{recommendation.instagram ?? 'N/I'}</Td>
       <Td>
         <CustomButton
           mt="0"

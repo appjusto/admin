@@ -50,7 +50,7 @@ const RecommendationsPage = () => {
   // UI
   return (
     <>
-      <PageHeader title={t('Recomendações')} subtitle={t(`Atualizado ${dateTime}`)} />
+      <PageHeader title={t('Indicações')} subtitle={t(`Atualizado ${dateTime}`)} />
       <Flex mt="8">
         <HStack spacing={4}>
           <CustomInput

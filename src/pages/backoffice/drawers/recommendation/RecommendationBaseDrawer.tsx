@@ -39,7 +39,7 @@ export const RecommendationBaseDrawer = ({ onClose, ...props }: BaseDrawerProps)
           <DrawerContent>
             <DrawerCloseButton bg="green.500" mr="12px" _focus={{ outline: 'none' }} />
             <DrawerHeader pb="6">
-              <SectionTitle mt="0">{t('Recomendação')}</SectionTitle>
+              <SectionTitle mt="0">{t('Indicação...')}</SectionTitle>
             </DrawerHeader>
             <DrawerBody pb="28">
               <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
@@ -47,9 +47,6 @@ export const RecommendationBaseDrawer = ({ onClose, ...props }: BaseDrawerProps)
               </Text>
               <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
                 {t('Consumidor:')} <Skeleton as="span" maxW="100px" />
-              </Text>
-              <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
-                {t('Restaurante:')} <Skeleton as="span" maxW="100px" />
               </Text>
               <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
                 {t('Telefone:')} <Skeleton as="span" maxW="100px" />
@@ -72,7 +69,7 @@ export const RecommendationBaseDrawer = ({ onClose, ...props }: BaseDrawerProps)
           <DrawerContent>
             <DrawerCloseButton bg="green.500" mr="12px" _focus={{ outline: 'none' }} />
             <DrawerHeader pb="6">
-              <SectionTitle mt="0">{t('Recomendação')}</SectionTitle>
+              <SectionTitle mt="0">{t('Indicação')}</SectionTitle>
             </DrawerHeader>
             <DrawerHeader pb="2">
               <Text color="black" fontSize="2xl" fontWeight="700" lineHeight="28px" mb="2">
@@ -90,7 +87,9 @@ export const RecommendationBaseDrawer = ({ onClose, ...props }: BaseDrawerProps)
         <DrawerContent>
           <DrawerCloseButton bg="green.500" mr="12px" _focus={{ outline: 'none' }} />
           <DrawerHeader pb="6">
-            <SectionTitle mt="0">{t('Recomendação')}</SectionTitle>
+            <SectionTitle mt="0">
+              {recommendation.recommendedBusiness.address.main ?? 'Nome não encontrado'}
+            </SectionTitle>
           </DrawerHeader>
           <DrawerBody pb="28">
             <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
@@ -116,9 +115,9 @@ export const RecommendationBaseDrawer = ({ onClose, ...props }: BaseDrawerProps)
               )}
             </Text>
             <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
-              {t('Restaurante:')}{' '}
+              {t('Dono ou gerente:')}{' '}
               <Text as="span" fontWeight="500">
-                {recommendation.recommendedBusiness.address.main ?? 'N/E'}
+                {recommendation?.owner ?? 'N/I'}
               </Text>
             </Text>
             <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
