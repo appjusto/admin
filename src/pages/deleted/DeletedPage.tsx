@@ -1,9 +1,12 @@
-import { Button, Center, Container, Flex, Link, Stack, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, Image, Link, Text } from '@chakra-ui/react';
 import { useContextBusiness } from 'app/state/business/context';
-import { CustomButton } from 'common/components/buttons/CustomButton';
-import { ReactComponent as Logo } from 'common/img/logo.svg';
+import iconErase from 'common/img/icon-erase-rest.png';
+import leftImage from 'common/img/login-left@2x.jpg';
+import rightImage from 'common/img/login-right@2x.jpg';
+import logo from 'common/img/logo.svg';
 import React from 'react';
 import { useHistory } from 'react-router';
+import { Link as RouterLink } from 'react-router-dom';
 import { t } from 'utils/i18n';
 
 const DeletedPage = () => {
@@ -18,93 +21,101 @@ const DeletedPage = () => {
   };
   // UI
   return (
-    <Center height="100vh">
-      <Container mt="4" maxW="800px">
-        <Flex w="100%" justifyContent="center" alignItems="center">
-          <Logo />
+    <Flex w="100wh" h="100vh" justifyContent="center">
+      <Box w={{ lg: 1 / 3 }} display={{ base: 'none', lg: 'block' }}>
+        <Image src={leftImage} scrollCheck={false} w="100%" h="100vh" />
+      </Box>
+      <Flex
+        flexDir="column"
+        justifyContent="center"
+        alignItems="center"
+        w={{ base: '100%', md: '80%', lg: 1 / 3 }}
+        px={{ base: '8' }}
+      >
+        <Flex
+          maxW="352px"
+          h="100%"
+          maxH="702px"
+          flexDir="column"
+          justifyContent="space-between"
+          alignItems="center"
+          py={{ base: '8' }}
+        >
+          <Flex w="100%" justifyContent="center" alignItems="center">
+            <Image src={iconErase} w="114px" h="114px" />
+          </Flex>
+          <Box mt="4">
+            <Text
+              fontSize="20px"
+              lineHeight="26px"
+              fontWeight="500"
+              textAlign="center"
+              color="black"
+            >
+              {t('O seu restaurante foi excluido')}
+            </Text>
+            <Text mt="4" fontSize="16px" lineHeight="22px" fontWeight="500" textAlign="center">
+              {t(
+                'Lamentamos que você tenha excluido o seu restaurante do AppJusto. Nosso objetivo é ser uma alternativa de delivery mais justa para todos.'
+              )}{' '}
+              {businessesIsEmpty && (
+                <Text as="span">
+                  {t('Desejamos sorte e esperamos que junte-se a nós em breve!')}
+                </Text>
+              )}
+            </Text>
+            <Box mt="6">
+              {businessesIsEmpty ? (
+                <Button w="100%" h="60px" onClick={() => handleRedirect('/onboarding')}>
+                  {t('Criar um novo restaurante')}
+                </Button>
+              ) : (
+                <Button w="100%" h="60px" onClick={() => handleRedirect('/app')}>
+                  {t('Gerenciar seu outro restaurante')}
+                </Button>
+              )}
+            </Box>
+          </Box>
+          <Box mt="8" textAlign="center">
+            <Flex mb="4" w="100%" justifyContent="center" alignItems="center">
+              <Image src={logo} w="96px" />
+            </Flex>
+            <Link as={RouterLink} to="/logout" textDecor="underline">
+              {t('Ir para a página inicial do AppJusto')}
+            </Link>
+          </Box>
+          <Box mt="6">
+            <Text
+              fontSize="16px"
+              lineHeight="22px"
+              fontWeight="700"
+              textAlign="center"
+              color="#4EA031"
+            >
+              {t('Vamos manter contato')}
+            </Text>
+            <Text mt="4" fontSize="16px" lineHeight="22px" fontWeight="500" textAlign="center">
+              {t('Para falar com o AppJusto, mande um e-mail para')}{' '}
+              <Link fontWeight="700" textDecor="underline" href="mailto:contato@appjusto.com.br">
+                contato@appjusto.com.br
+              </Link>{' '}
+              {t('ou fale direto conosco no WhatsApp em')}{' '}
+              <Link
+                fontWeight="700"
+                textDecor="underline"
+                href="https://wa.me/+5511978210274?text=Olá, preciso de ajuda para acessar o admin do meu restaurante!"
+                isExternal
+              >
+                +55 11 97821-0274
+              </Link>
+            </Text>
+          </Box>
         </Flex>
-        <Text mt="8" fontSize="18px" lineHeight="22px" fontWeight="700" textAlign="center">
-          {t('O seu restaurante foi deletado =/')}
-        </Text>
-        <Text mt="8" fontSize="15px" lineHeight="21px" fontWeight="500" textAlign="center">
-          {t(
-            'Lamentamos que você tenha optado por deletar o seu restaurante. Estamos nos esforçando para oferecer uma alternativa às plataformas atuais de delivery, que seja realmente boa para todos!'
-          )}
-        </Text>
-        {businessesIsEmpty && (
-          <Text mt="4" fontSize="15px" lineHeight="21px" fontWeight="500" textAlign="center">
-            {t(
-              'Desejamos sorte e estamos na torcida para que você se junte a nós, nesse movimento, em breve!'
-            )}
-          </Text>
-        )}
-        <Text mt="4" fontSize="15px" lineHeight="21px" fontWeight="500" textAlign="center">
-          {t('O que deseja fazer a seguir?')}
-        </Text>
-        {businessesIsEmpty ? (
-          <Stack
-            mt="8"
-            w="100%"
-            direction={{ base: 'column', md: 'row' }}
-            spacing={4}
-            justifyContent="center"
-          >
-            <Button w={{ base: '100%', md: '260px' }} onClick={() => handleRedirect('/onboarding')}>
-              {t('Criar um novo restaurante')}
-            </Button>
-            <CustomButton
-              mt="0"
-              w={{ base: '100%', md: '260px' }}
-              label={t('Sair da plataforma')}
-              link="/logout"
-              variant="dangerLight"
-            />
-          </Stack>
-        ) : (
-          <Stack
-            mt="8"
-            w="100%"
-            direction={{ base: 'column', md: 'row' }}
-            spacing={4}
-            justifyContent="center"
-          >
-            <Button w={{ base: '100%', md: '260px' }} onClick={() => handleRedirect('/app')}>
-              {t('Ir para a página incial')}
-            </Button>
-            <CustomButton
-              mt="0"
-              w={{ base: '100%', md: '260px' }}
-              label={t('Sair da plataforma')}
-              link="/logout"
-              variant="dangerLight"
-            />
-          </Stack>
-        )}
-        <Text mt="8" fontSize="15px" lineHeight="21px" fontWeight="500" textAlign="center">
-          {t('Fique a vontade para enviar dúvidas ou reclamações.')}
-        </Text>
-        <Text fontSize="15px" lineHeight="21px" fontWeight="500" textAlign="center">
-          {t('Movimentos como este são construídos com a participação de todos!')}
-        </Text>
-        <Text mt="2" fontSize="15px" lineHeight="21px" fontWeight="700" textAlign="center">
-          {t('e-mail: ')}
-          <Link color="blue.500" textDecor="underline" href="mailto:contato@appjusto.com.br">
-            contato@appjusto.com.br
-          </Link>
-        </Text>
-        <Text mt="2" fontSize="15px" lineHeight="21px" fontWeight="700" textAlign="center">
-          {t('Whatsapp: ')}
-          <Link
-            color="blue.500"
-            textDecor="underline"
-            href="https://wa.me/+5511978210274?text=Olá, preciso de ajuda para acessar o admin do meu restaurante!"
-            isExternal
-          >
-            +55 11 97821-0274
-          </Link>
-        </Text>
-      </Container>
-    </Center>
+      </Flex>
+      <Box w={{ lg: 1 / 3 }} display={{ base: 'none', lg: 'block' }}>
+        <Image src={rightImage} scrollCheck={false} w="100%" h="100vh" />
+      </Box>
+    </Flex>
   );
 };
 

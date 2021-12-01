@@ -5,14 +5,14 @@ import { AlertSuccess } from 'common/components/AlertSuccess';
 import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import { CustomPasswordInput } from 'common/components/form/input/CustomPasswordInput';
+import leftImage from 'common/img/login-left@2x.jpg';
+import rightImage from 'common/img/login-right@2x.jpg';
 import logo from 'common/img/logo.svg';
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { isEmailValid } from 'utils/email';
 import { t } from 'utils/i18n';
 import Image from '../../common/components/Image';
-import leftImage from './img/login-left@2x.jpg';
-import rightImage from './img/login-right@2x.jpg';
 
 const Login = () => {
   // context
