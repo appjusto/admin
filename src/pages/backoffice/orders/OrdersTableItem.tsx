@@ -33,7 +33,7 @@ export const OrdersTableItem = ({ order, isBackoffice }: ItemProps) => {
   return (
     <Tr key={order.id} color="black" fontSize="15px" lineHeight="21px">
       <Td maxW="120px">{order.code ?? 'N/I'}</Td>
-      <Td>{getDateAndHour(order.updatedOn!)}</Td>
+      <Td>{getDateAndHour(order.timestamps.confirming ?? order.timestamps.confirmed)}</Td>
       {isBackoffice && (
         <Td>{order.type ? (order.type === 'food' ? 'Comida' : 'Entrega') : 'N/E'}</Td>
       )}

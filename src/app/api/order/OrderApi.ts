@@ -49,7 +49,7 @@ export default class OrderApi {
   ): firebase.Unsubscribe {
     let query = this.refs
       .getOrdersRef()
-      .orderBy('chargedOn', ordering)
+      .orderBy('timestamps.confirming', ordering)
       .where('status', 'in', statuses);
 
     if (businessId) {
@@ -202,13 +202,16 @@ export default class OrderApi {
   ): firebase.Unsubscribe {
     let query = this.refs
       .getOrdersRef()
-      .orderBy('updatedOn', 'desc')
+      .orderBy('timestamps.confirming', 'desc')
       .limit(20)
       .where('business.id', '==', businessId)
       .where('status', 'in', statuses);
     if (startAfter) query = query.startAfter(startAfter);
     if (orderCode) query = query.where('code', '==', orderCode);
-    if (start && end) query = query.where('updatedOn', '>=', start).where('updatedOn', '<=', end);
+    if (start && end)
+      query = query
+        .where('timestamps.confirming', '>=', start)
+        .where('timestamps.confirming', '<=', end);
     const unsubscribe = query.onSnapshot(
       (querySnapshot) => {
         const last =
