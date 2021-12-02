@@ -100,7 +100,13 @@ export const DeliveryInfos = ({ order, setOutsource }: DeliveryInfosProps) => {
           <Flex alignItems="center" justifyContent="flex-end">
             <Box minW="48px">
               {courierPictureUrl ? (
-                <Image src={courierPictureUrl} width="48px" height="48px" borderRadius="24px" />
+                <Image
+                  src={courierPictureUrl}
+                  width="48px"
+                  height="48px"
+                  borderRadius="24px"
+                  ignoreFallback
+                />
               ) : (
                 <Circle size="48px" bg="gray.400" />
               )}
