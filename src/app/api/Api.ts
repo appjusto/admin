@@ -5,6 +5,7 @@ import 'firebase/auth';
 import 'firebase/firestore';
 import 'firebase/functions';
 import 'firebase/storage';
+import 'firebase/analytics';
 import AuthApi from './auth/AuthApi';
 import BusinessApi from './business/BusinessApi';
 import FilesApi from './FilesApi';
@@ -23,6 +24,7 @@ export default class Api {
   private _firestore: firebase.firestore.Firestore;
   private _functions: firebase.functions.Functions;
   private _storage: firebase.storage.Storage;
+  private _analytics: firebase.analytics.Analytics;
 
   private _refs: FirebaseRefs;
   private _auth: AuthApi;
@@ -44,6 +46,7 @@ export default class Api {
     this._authentication = Api.app.auth();
     this._firestore = Api.app.firestore();
     this._functions = Api.app.functions(config.firebase.config.region);
+    this._analytics = Api.app.analytics();
 
     if (config.firebase.options.useEmulator && config.firebase.options.emulatorHost) {
       const { emulatorHost } = config.firebase.options;
