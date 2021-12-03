@@ -1,5 +1,6 @@
 import { Box } from '@chakra-ui/react';
 import { useContextBusiness } from 'app/state/business/context';
+import { CookiesBar } from 'common/components/CookiesBar';
 import React from 'react';
 import { ForYourBusiness } from './ForYourBusiness';
 import { Header } from './Header';
@@ -11,6 +12,7 @@ import { Transparency } from './Transparency';
 
 const LandingPage = () => {
   // context
+  //const { getAnalytics } = useMeasurement();
   const { isDeleted, setIsDeleted } = useContextBusiness();
   // side effects
   React.useEffect(() => {
@@ -18,6 +20,9 @@ const LandingPage = () => {
       setIsDeleted(false);
     }
   }, [isDeleted, setIsDeleted]);
+  //React.useEffect(() => {
+  //  async () => {};
+  //}, []);
   // UI
   return (
     <Box>
@@ -28,6 +33,7 @@ const LandingPage = () => {
       <ForYourBusiness />
       {/*<FAQs />*/}
       <Share />
+      <CookiesBar />
       <LandingPageFooter />
     </Box>
   );
