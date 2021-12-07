@@ -7,7 +7,8 @@ export const useMeasurement = () => {
   // mutations
   const { mutateAsync: setAnalyticsConsent, mutationResult: consentResult } = useCustomMutation(
     async () => api.measurement().setAnalyticsCollectionEnabled(),
-    'setAnalyticsConsent'
+    'setAnalyticsConsent',
+    false
   );
   // result
   return { setAnalyticsConsent, consentResult };

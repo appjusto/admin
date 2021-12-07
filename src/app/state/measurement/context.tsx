@@ -1,11 +1,12 @@
 import { useMeasurement } from 'app/api/measurement/useMeasurement';
 import React from 'react';
+import ReactPixel from 'react-facebook-pixel';
 
-type Consent = 'accept' | 'refuse';
+type ConsentResponse = 'accept' | 'refuse';
 
 interface ContextProps {
   userConsent: undefined | boolean;
-  handleConsent(value: Consent): void;
+  handleUserConsent(value: ConsentResponse): void;
 }
 
 const MeasurementContext = React.createContext<ContextProps>({} as ContextProps);
@@ -20,28 +21,31 @@ export const MeasurementProvider = ({ children }: Props) => {
   // state
   const [userConsent, setUserConsent] = React.useState<boolean>();
   // handlers
-  const handleConsent = React.useCallback(
-    (value: Consent) => {
-      if (userConsent) return;
-      if (value === 'refuse') return;
-      // save local
-      localStorage.setItem('appjusto-consent', 'accept');
-      // analytics
-      setAnalyticsConsent();
-      // state
-      setUserConsent(true);
-    },
-    [userConsent, setAnalyticsConsent]
-  );
+  const handleUserConsent = React.useCallback((response: ConsentResponse) => {
+    if (response === 'refuse') {
+      localStorage.setItem('appjusto-consent', 'false');
+      setUserConsent(false);
+      return;
+    }
+    localStorage.setItem('appjusto-consent', 'true');
+    setUserConsent(true);
+  }, []);
   // side effects
   React.useEffect(() => {
     const consent = localStorage.getItem('appjusto-consent');
-    if (consent) setUserConsent(true);
-    else setUserConsent(false);
+    if (consent === 'true') setUserConsent(true);
+    else if (consent === 'false') setUserConsent(false);
   }, []);
+  React.useEffect(() => {
+    //if(!analytics) return;
+    if (!userConsent) return;
+    const PixelId = process.env.REACT_APP_FACEBOOK_PIXEL_ID;
+    setAnalyticsConsent();
+    ReactPixel.init(PixelId!);
+  }, [userConsent, setAnalyticsConsent]);
   // provider
   return (
-    <MeasurementContext.Provider value={{ userConsent, handleConsent }}>
+    <MeasurementContext.Provider value={{ userConsent, handleUserConsent }}>
       {children}
     </MeasurementContext.Provider>
   );
