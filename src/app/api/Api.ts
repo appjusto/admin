@@ -16,6 +16,7 @@ import PlatformApi from './platform/PlatformApi';
 import CourierApi from './courier/CourierApi';
 import ConsumerApi from './consumer/CosumerApi';
 import UsersApi from './users/UsersApi';
+import MeasurementApi from './measurement/MeasurementApi';
 
 export default class Api {
   private static app: firebase.app.App;
@@ -37,6 +38,7 @@ export default class Api {
   private _courier: CourierApi;
   private _consumer: ConsumerApi;
   private _users: UsersApi;
+  private _measurement: MeasurementApi;
 
   constructor(config: ApiConfig) {
     if (!Api.app) {
@@ -47,6 +49,7 @@ export default class Api {
     this._firestore = Api.app.firestore();
     this._functions = Api.app.functions(config.firebase.config.region);
     this._analytics = Api.app.analytics();
+    this._analytics.setAnalyticsCollectionEnabled(false);
 
     if (config.firebase.options.useEmulator && config.firebase.options.emulatorHost) {
       const { emulatorHost } = config.firebase.options;
@@ -70,6 +73,11 @@ export default class Api {
     this._courier = new CourierApi(this._refs, this._files);
     this._consumer = new ConsumerApi(this._refs, this._files);
     this._users = new UsersApi(this._refs);
+    this._measurement = new MeasurementApi(this._analytics);
+  }
+
+  measurement() {
+    return this._measurement;
   }
 
   auth() {
