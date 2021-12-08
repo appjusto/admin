@@ -41,7 +41,7 @@ export const MeasurementProvider = ({ children }: Props) => {
     if (!userConsent) return;
     const PixelId = process.env.REACT_APP_FACEBOOK_PIXEL_ID;
     setAnalyticsConsent();
-    ReactPixel.init(PixelId!);
+    if (PixelId) ReactPixel.init(PixelId);
   }, [userConsent, setAnalyticsConsent]);
   // provider
   return (

@@ -9,12 +9,40 @@ import BusinessInfo from './BusinessInfo';
 import { Links } from './Links';
 import { ManagerBar } from './ManagerBar';
 
+type Envs = 'community' | 'dev' | 'staging' | 'live';
+
+const envColors = {
+  community: {
+    label: 'COMMUNITY',
+    color: 'white',
+    bg: '#78E08F',
+  },
+  dev: {
+    label: 'DEV',
+    color: 'white',
+    bg: '#DC3545',
+  },
+  staging: {
+    label: 'STAGING',
+    color: 'black',
+    bg: '#FFBE00',
+  },
+  live: {
+    label: 'LIVE',
+    color: '',
+    bg: '',
+  },
+};
+
 const Sidebar = () => {
   // context
-  const env = process.env.REACT_APP_ENVIRONMENT;
+  const env = process.env.REACT_APP_ENVIRONMENT as Envs;
   const { path } = useRouteMatch();
   const { isBackofficeUser } = useContextFirebaseUser();
+  // helpers
   const isBackOffice = path.includes('backoffice');
+  const { label, color, bg } = env ? envColors[env] : envColors['live'];
+  // UI
   return (
     <Box
       position="relative"
@@ -32,8 +60,9 @@ const Sidebar = () => {
           {env && env !== 'live' && (
             <Badge
               mt="1"
-              bg={env === 'staging' ? '#FFBE00' : '#DC3545'}
-              color={env === 'dev' ? 'white' : 'black'}
+              ml="1"
+              bg={bg}
+              color={color}
               borderRadius="22px"
               px="3"
               py="1"
@@ -41,7 +70,7 @@ const Sidebar = () => {
               lineHeight="lg"
               fontWeight="700"
             >
-              {env === 'staging' ? 'STAGING' : 'DEV'}
+              {label}
             </Badge>
           )}
         </Flex>
