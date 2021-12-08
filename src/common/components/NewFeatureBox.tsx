@@ -9,9 +9,17 @@ interface NewFeatureBoxProps {
   description: string;
   link: string;
   btnLabel: string;
+  isNew?: boolean;
 }
 
-export const NewFeatureBox = ({ icon, title, description, link, btnLabel }: NewFeatureBoxProps) => {
+export const NewFeatureBox = ({
+  icon,
+  title,
+  description,
+  link,
+  btnLabel,
+  isNew = true,
+}: NewFeatureBoxProps) => {
   return (
     <Stack
       mt="8"
@@ -24,7 +32,7 @@ export const NewFeatureBox = ({ icon, title, description, link, btnLabel }: NewF
       bgColor="#F6F6F6"
       spacing={4}
     >
-      <HStack w="100%" spacing={4} alignItems="center">
+      <Stack w="100%" direction={{ base: 'column', md: 'row' }} spacing={4} alignItems="center">
         <Center w="48px" h="48px" bgColor="#fff" borderRadius="24px" overflow="hidden">
           <Icon as={icon} w="24px" h="24px" />
         </Center>
@@ -33,18 +41,20 @@ export const NewFeatureBox = ({ icon, title, description, link, btnLabel }: NewF
             <Text mt="1" color="black" fontSize="18px" lineHeight="26px" fontWeight="700">
               {title}
             </Text>
-            <Badge
-              px="8px"
-              py="2px"
-              bgColor="#FFBE00"
-              color="black"
-              borderRadius="16px"
-              fontSize="11px"
-              lineHeight="18px"
-              fontWeight="700"
-            >
-              {t('NOVIDADE')}
-            </Badge>
+            {isNew && (
+              <Badge
+                px="8px"
+                py="2px"
+                bgColor="#FFBE00"
+                color="black"
+                borderRadius="16px"
+                fontSize="11px"
+                lineHeight="18px"
+                fontWeight="700"
+              >
+                {t('NOVIDADE')}
+              </Badge>
+            )}
           </HStack>
           <Text
             mt="2"
@@ -57,7 +67,7 @@ export const NewFeatureBox = ({ icon, title, description, link, btnLabel }: NewF
             {description}
           </Text>
         </Box>
-      </HStack>
+      </Stack>
       <CustomButton minW="220px" label={btnLabel} link={link} variant="black" />
     </Stack>
   );

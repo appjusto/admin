@@ -38,7 +38,14 @@ export const Header = () => {
               {isOpen ? (
                 <CloseButton onClick={onToggle} />
               ) : (
-                <Button border="none" px="1" bg="#F6F6F6" onClick={onToggle}>
+                <Button
+                  border="none"
+                  px="1"
+                  bg="#F6F6F6"
+                  onClick={onToggle}
+                  variant="unstyled"
+                  _focus={{ outline: 'none' }}
+                >
                   <VStack spacing={1}>
                     <Box bg="black" h="2px" w="20px" />
                     <Box bg="black" h="2px" w="20px" />

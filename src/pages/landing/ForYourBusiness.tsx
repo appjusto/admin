@@ -1,6 +1,5 @@
-import { Box, BoxProps, Heading, HStack, Image, Text } from '@chakra-ui/react';
+import { Box, BoxProps, Heading, Image, Stack, Text } from '@chakra-ui/react';
 import Container from 'common/components/Container';
-import { SectionHeading } from 'common/components/landing/SectionHeading';
 import check from 'common/img/green-check.svg';
 import { t } from 'utils/i18n';
 import { Content } from './Content';
@@ -13,8 +12,10 @@ interface TopicProps extends BoxProps {
 
 const Topic = ({ title, description, ...props }: TopicProps) => {
   return (
-    <HStack mt="4" spacing={4} alignItems="center" {...props}>
-      <Image src={check} width="24px" height="48px" />
+    <Stack mt="4" direction={{ base: 'column', md: 'row' }} spacing={4} {...props}>
+      <Box minW="24px" textAlign="start">
+        <Image src={check} width="24px" height="48px" />
+      </Box>
       <Box color="black">
         <Heading as="h2" fontSize="2xl" fontWeight="700" lineHeight="3xl">
           {title}
@@ -23,7 +24,7 @@ const Topic = ({ title, description, ...props }: TopicProps) => {
           {description}
         </Text>
       </Box>
-    </HStack>
+    </Stack>
   );
 };
 
@@ -32,8 +33,6 @@ export const ForYourBusiness = () => {
     <Section>
       <Container pt="16" color="black">
         <Content>
-          <SectionHeading>{t('Uma plataforma completa para o seu negócio')}</SectionHeading>
-          <Text mb="2">{t('Entenda as vantagens que o AppJusto traz para o seu negócio:')}</Text>
           <Topic
             title={t('Exibição igualitária')}
             description={t(

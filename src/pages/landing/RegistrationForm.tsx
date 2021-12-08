@@ -72,6 +72,7 @@ export const RegistrationForm = () => {
           maxW="370px"
           bg="white"
           border="1px solid #C8D7CB"
+          borderRadius="16px"
           p="24px"
           color="black"
         >
