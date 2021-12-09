@@ -16,7 +16,7 @@ export const OrdersTable = ({ orders, isBackoffice }: OrdersTableProps) => {
         <Thead>
           <Tr>
             <Th>{t('ID')}</Th>
-            <Th>{t('Data')}</Th>
+            <Th>{t('Atualizado em')}</Th>
             {isBackoffice && <Th>{t('Tipo')}</Th>}
             <Th>{t('Status')}</Th>
             {isBackoffice && <Th>{t('Restaurante')}</Th>}

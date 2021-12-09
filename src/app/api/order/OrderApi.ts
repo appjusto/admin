@@ -49,7 +49,7 @@ export default class OrderApi {
   ): firebase.Unsubscribe {
     let query = this.refs
       .getOrdersRef()
-      .orderBy('timestamps.confirming', ordering)
+      .orderBy('chargedOn', ordering)
       .where('status', 'in', statuses);
 
     if (businessId) {
@@ -160,16 +160,13 @@ export default class OrderApi {
     startAfter: FirebaseDocument | undefined
     //ignoreCache: boolean | undefined = false
   ): firebase.Unsubscribe {
-    let query = this.refs.getOrdersRef().orderBy('timestamps.confirming', 'desc').limit(20);
+    let query = this.refs.getOrdersRef().orderBy('updatedOn', 'desc').limit(20);
     if (orderStatus) query = query.where('status', '==', orderStatus);
     else query = query.where('status', 'in', statuses);
     if (startAfter) query = query.startAfter(startAfter);
     if (businessId) query = query.where('business.id', '==', businessId);
     if (orderCode) query = query.where('code', '==', orderCode);
-    if (start && end)
-      query = query
-        .where('timestamps.confirming', '>=', start)
-        .where('timestamps.confirming', '<=', end);
+    if (start && end) query = query.where('updatedOn', '>=', start).where('updatedOn', '<=', end);
     if (orderType) query = query.where('type', '==', orderType);
     const unsubscribe = query.onSnapshot(
       (querySnapshot) => {
@@ -205,16 +202,13 @@ export default class OrderApi {
   ): firebase.Unsubscribe {
     let query = this.refs
       .getOrdersRef()
-      .orderBy('timestamps.confirming', 'desc')
+      .orderBy('updatedOn', 'desc')
       .limit(20)
       .where('business.id', '==', businessId)
       .where('status', 'in', statuses);
     if (startAfter) query = query.startAfter(startAfter);
     if (orderCode) query = query.where('code', '==', orderCode);
-    if (start && end)
-      query = query
-        .where('timestamps.confirming', '>=', start)
-        .where('timestamps.confirming', '<=', end);
+    if (start && end) query = query.where('updatedOn', '>=', start).where('updatedOn', '<=', end);
     const unsubscribe = query.onSnapshot(
       (querySnapshot) => {
         const last =
