@@ -73,6 +73,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "test-env": "yarn env-cmd -f .env.$ENV yarn test",
+    "test:community": "ENV=community yarn test-env",
     "eject": "react-scripts eject",
     "deploy": "git checkout $ENV && git pull && yarn version && env-cmd -f .env.$ENV yarn build && firebase use app-justo-$ENV && firebase deploy",
     "deploy:dev": "ENV=dev yarn deploy",
