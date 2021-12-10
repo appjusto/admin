@@ -84,6 +84,7 @@ const Login = () => {
           />
           <CustomCheckbox
             mt="4"
+            aria-label="login-password-checkbox"
             colorScheme="green"
             value="available"
             isChecked={isPassword}
