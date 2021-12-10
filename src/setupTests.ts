@@ -4,7 +4,7 @@
 // learn more: https://github.com/testing-library/jest-dom
 import '@testing-library/jest-dom';
 
-import { setupServer } from 'msw/node';
+/*import { setupServer } from 'msw/node';
 import { handlers } from './tests/utils';
 import { setLogger } from 'react-query';
 
@@ -23,4 +23,4 @@ setLogger({
   log: console.log,
   warn: console.warn,
   error: () => {},
-});
+});*/

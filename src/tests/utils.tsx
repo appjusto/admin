@@ -3,8 +3,14 @@ import { rest } from 'msw';
 //import { QueryClient, QueryClientProvider } from 'react-query';
 
 export const handlers = [
-  rest.get('*/managers/*', (req, res, ctx) => {
-    return res(ctx.status(400));
+  rest.get('*managers', (req, res, ctx) => {
+    return res(
+      ctx.status(400),
+      ctx.json({
+        id: '1',
+        email: 'testing@test.com',
+      })
+    );
   }),
   rest.post('*/managers/*', (req, res, ctx) => {
     console.log(req.body);

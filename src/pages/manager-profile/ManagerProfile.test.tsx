@@ -1,5 +1,6 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { RootProvider } from 'app/RootProvider';
+import React from 'react';
 import { ManagerProfile } from './ManagerProfile';
 
 const renderManagerProfile = () => (
@@ -9,7 +10,11 @@ const renderManagerProfile = () => (
 );
 
 describe('ManagerProfile testing', () => {
-  test('is email input disabled and user typing ok', async () => {
+  test('is email input disabled', async () => {
+    render(renderManagerProfile());
+    expect(await screen.findByRole('textbox', { name: /e\-mail/i })).toBeDisabled();
+  });
+  test('user typing is formatted', async () => {
     render(renderManagerProfile());
     act(() => {
       fireEvent.change(screen.getByRole('textbox', { name: 'Nome *' }), {
@@ -26,7 +31,6 @@ describe('ManagerProfile testing', () => {
       });
       //fireEvent.click(screen.getByRole('button', { name: /salvar/i }));
     });
-    expect(await screen.findByRole('textbox', { name: /e\-mail/i })).toBeDisabled();
     expect(await screen.findByRole('textbox', { name: 'Nome *' })).toHaveValue('karl');
     expect(await screen.findByRole('textbox', { name: 'Sobrenome *' })).toHaveValue('Marx');
     expect(await screen.findByRole('textbox', { name: /celular/i })).toHaveValue('(81) 99654-6114');
