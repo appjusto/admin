@@ -16,9 +16,10 @@ export const useServerTime = () => {
   React.useEffect(() => {
     const unsub = api.auth().observeAuthState((user) => {
       if (user) setIsUser(true);
+      else setIsUser(false);
     });
     return () => unsub();
-  }, []);
+  }, [api]);
   React.useEffect(() => {
     if (!isUser) return;
     (async () => {
