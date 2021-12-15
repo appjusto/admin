@@ -65,29 +65,25 @@ Deploy on firebase.
 
 ## Cypress setup
 
-### In project root directory create `cypress.env.json` with:
+In project root directory create `cypress.env.json` with:
 
 ```bash
 {
-	"firebase": {
-		"apiKey": "",
-		"region": "",
-		"authDomain": "",
-		"projectId": "",
-		"storageBucket": "",
-		"messagingSenderId": "",
-		"appId": ""
-	}
+ "firebase": {
+  "apiKey": "",
+  "region": "",
+  "authDomain": "",
+  "projectId": "",
+  "storageBucket": "",
+  "messagingSenderId": "",
+  "appId": ""
+ }
 }
 ```
 
-### Write tests in `cypress/integrations/` with `your_test_name_spec.js` file format
+Write tests in `cypress/integrations/` with `your_test_name_spec.js` file format
 
-### Run tests with
-
-```bash
-yarn cypress
-```
+Run tests with `yarn cypress`
 
 ## Learn More
 
