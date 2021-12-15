@@ -63,6 +63,32 @@ See the section about [deployment](https://facebook.github.io/create-react-app/d
 
 Deploy on firebase.
 
+## Cypress setup
+
+### In project root directory create `cypress.env.json` with:
+
+```bash
+{
+	"firebase": {
+		"apiKey": "",
+		"region": "",
+		"authDomain": "",
+		"projectId": "",
+		"storageBucket": "",
+		"messagingSenderId": "",
+		"appId": ""
+	}
+}
+```
+
+### Write tests in `cypress/integrations/` with `your_test_name_spec.js` file format
+
+### Run tests with
+
+```bash
+yarn cypress
+```
+
 ## Learn More
 
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
