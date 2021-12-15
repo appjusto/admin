@@ -17,12 +17,19 @@ const getFirebaseClient = async (config) => {
   });
   auth.useEmulator('http://localhost:9099');
 
-  const createTestingUser = async () => {
-    const email = `${nanoid(5)}@test.com`;
-    const password = `${nanoid(8)}`;
-    await auth.createUserWithEmailAndPassword(email, password);
+  const createTestingUser = async (userEmail, userPassword) => {
+    const email = userEmail ?? `${nanoid(5)}@test.com`;
+    const password = userPassword ?? `${nanoid(8)}`;
+    try {
+      await auth.createUserWithEmailAndPassword(email, password);
+    } catch (error) {
+      console.log('createUserError', error);
+    }
     return { email, password };
   };
+  // const deleteUser = () => {
+  //   return auth.currentUser.delete();
+  // };
   return { createTestingUser };
 };
 
