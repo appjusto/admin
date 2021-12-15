@@ -24,7 +24,8 @@ export const useServerTime = () => {
     if (!isUser) return;
     (async () => {
       const serverTime = await api.platform().getServerTime();
-      setDelta(serverTime - new Date().getTime());
+      if (serverTime === 0) setDelta(serverTime);
+      else setDelta(serverTime - new Date().getTime());
     })();
   }, [api, isUser]);
   // result

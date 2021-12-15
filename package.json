@@ -82,7 +82,7 @@
     "deploy:community": "ENV=community yarn deploy",
     "deploy:live": "ENV=live yarn deploy",
     "postversion": "git push && git push --tags && git fetch",
-    "cypress:open": "cypress open",
+    "cypress": "cypress open",
     "cypress:run": "cypress run"
   },
   "eslintConfig": {
