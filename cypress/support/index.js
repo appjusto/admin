@@ -14,7 +14,9 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
-import './commands'
+import './commands';
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
+Cypress.env('main_user_email', 'mainuser@test.com');
+Cypress.env('main_user_password', 'Testing1234');

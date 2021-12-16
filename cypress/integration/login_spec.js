@@ -1,13 +1,14 @@
 import getFirebaseClient from '../firebase';
 
-const userEmail = 'testlogin@test.com';
-const userPassword = 'Testing1234';
-
 describe('Login', () => {
   let config;
+  let userEmail;
+  let userPassword;
 
   before(() => {
     config = Cypress.env('firebase');
+    userEmail = Cypress.env('main_user_email');
+    userPassword = Cypress.env('main_user_password');
   });
 
   it('User can login', async () => {
