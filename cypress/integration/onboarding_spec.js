@@ -1,4 +1,3 @@
-import getFirebaseClient from '../firebase';
 import * as cpfutils from '@fnando/cpf';
 import * as cnpjutils from '@fnando/cnpj';
 
@@ -12,29 +11,21 @@ const fakeAddress = {
 };
 
 describe('Onboarding', () => {
-  let config;
   let cpf;
   let cnpj;
+  let email;
+  let password;
 
   before(() => {
-    config = Cypress.env('firebase');
     cpf = cpfutils.generate();
     cnpj = cnpjutils.generate();
+    email = Cypress.env('onboarding_user_email');
+    password = Cypress.env('onboarding_user_password');
   });
 
-  it('User can finish the onboarding', async () => {
-    // create user
-    const { createTestingUser } = await getFirebaseClient(config);
-    const { email, password } = await createTestingUser();
-
-    // visit
-    cy.visit('/login');
-
-    // filling login form
-    cy.findByRole('textbox', { name: /e\-mail/i }).type(email);
-    cy.findByRole('checkbox', { name: /login-password-checkbox/i }).check({ force: true });
-    cy.findByLabelText(/senha/i).type(password);
-    cy.findByRole('button', { name: /entrar/i }).click();
+  it('User can finish the onboarding', () => {
+    // login
+    cy.login(email, password);
     cy.wait(10000);
 
     // start onboarding
@@ -45,7 +36,7 @@ describe('Onboarding', () => {
     cy.findByRole('textbox', { name: 'Nome *' }).type('Severino');
     cy.findByRole('textbox', { name: 'Sobrenome *' }).type('Bill');
     cy.findByRole('textbox', { name: /celular/i }).type(testingPhone);
-    cy.findByRole('textbox', { name: /cpf/i }).type(cpf);
+    cy.findByRole('textbox', { name: /cpf \*/i }).type(cpf);
     cy.findByRole('button', { name: /salvar e continuar/i }).click();
 
     // fill and submit  business form
@@ -67,6 +58,7 @@ describe('Onboarding', () => {
 
     // fill and submit address form
     cy.findByRole('textbox', { name: /cep \*/i }).type(fakeAddress.cep);
+    cy.wait(2000);
     cy.findByRole('textbox', { name: /número \*/i }).type(fakeAddress.number);
     cy.findByRole('textbox', { name: /raio\/ km \*/i })
       .clear()

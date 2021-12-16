@@ -15,8 +15,29 @@
 
 // Import commands.js using ES2015 syntax:
 import './commands';
+import getFirebaseClient from '../firebase';
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
-Cypress.env('main_user_email', 'mainuser@test.com');
-Cypress.env('main_user_password', 'Testing1234');
+const config = Cypress.env('firebase');
+const mainUserEmail = 'mainuser@test.com';
+const mainUserPassword = 'Testing1234';
+const onboardingUserEmail = 'onbuser@test.com';
+const onboardingUserPassword = 'OnbTesting1234';
+Cypress.env('main_user_email', mainUserEmail);
+Cypress.env('main_user_password', mainUserPassword);
+Cypress.env('onboarding_user_email', onboardingUserEmail);
+Cypress.env('onboarding_user_password', onboardingUserPassword);
+
+// create users
+const createUsersAndClearDb = async () => {
+  const { createTestingUser, deleteBusinessesByManagerEmail } = await getFirebaseClient(config);
+  // main user
+  await createTestingUser(mainUserEmail, mainUserPassword);
+  // onboarding user
+  await createTestingUser(onboardingUserEmail, onboardingUserPassword);
+  // clear onboarding user businesses
+  await deleteBusinessesByManagerEmail(onboardingUserEmail);
+};
+
+createUsersAndClearDb();

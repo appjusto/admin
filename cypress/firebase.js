@@ -12,11 +12,21 @@ const getFirebaseClient = async (config) => {
     .catch((error) => {
       console.log(error);
     });
+
+  // Firestore
+  const firestore = await import('firebase/firestore').then(() => {
+    if (firebase) return firebase.firestore();
+  });
+  firestore.settings({ experimentalForceLongPolling: true });
+  firestore.useEmulator('localhost', 8080);
+
+  // Auth
   const auth = await import('firebase/auth').then(() => {
     if (firebase) return firebase.auth();
   });
   auth.useEmulator('http://localhost:9099');
 
+  // handlers
   const createTestingUser = async (userEmail, userPassword) => {
     const email = userEmail ?? `${nanoid(5)}@test.com`;
     const password = userPassword ?? `${nanoid(8)}`;
@@ -27,10 +37,22 @@ const getFirebaseClient = async (config) => {
     }
     return { email, password };
   };
-  // const deleteUser = () => {
-  //   return auth.currentUser.delete();
-  // };
-  return { createTestingUser, currentUser: auth.currentUser };
+
+  const deleteBusinessesByManagerEmail = async (email) => {
+    console.log('DELETE EMAIL:', email);
+    if (!email) return;
+    const BusinessesRef = firestore.collection('businesses');
+    let docs = (await BusinessesRef.where('managers', 'array-contains', email).get()).docs;
+    console.log('DOCS', docs);
+    if (docs) {
+      docs.forEach((doc) => {
+        console.log('BusinessId:', doc.id);
+        BusinessesRef.doc(doc.id).delete(); // PERMISSION_DENIED
+      });
+    }
+  };
+
+  return { createTestingUser, deleteBusinessesByManagerEmail };
 };
 
 export default getFirebaseClient;

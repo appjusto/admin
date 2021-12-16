@@ -1,34 +1,10 @@
-import getFirebaseClient from '../firebase';
-
 describe('Business Schedules', () => {
-  let config;
-  let userEmail;
-  let userPassword;
-
-  before(() => {
-    config = Cypress.env('firebase');
-    userEmail = Cypress.env('main_user_email');
-    userPassword = Cypress.env('main_user_password');
-  });
-
   it('User can save business schedules', async () => {
-    // create user
-    const { currentUser } = await getFirebaseClient(config);
-    // visit
-    if (!currentUser) {
-      cy.visit('/login');
-      // filling form
-      cy.findByRole('textbox', { name: /e\-mail/i }).type(userEmail);
-      cy.findByRole('checkbox', { name: /login-password-checkbox/i }).check({ force: true });
-      cy.findByLabelText(/senha/i).type(userPassword);
-      cy.findByRole('button', { name: /entrar/i }).click();
-      // assert
-      cy.wait(4000);
-      // user is in home page
-      cy.findByRole('heading', { name: /início/i }).should('be.visible');
-    } else {
-      cy.visit('/app');
-    }
+    // login
+    cy.login();
+    cy.wait(4000);
+    // assert user is in home page
+    cy.findByRole('heading', { name: /início/i }).should('be.visible');
     // navigate to business schedules page
     cy.findByRole('link', { name: /horários/i }).click();
     cy.findByRole('heading', { name: /horário/i }).should('be.visible');

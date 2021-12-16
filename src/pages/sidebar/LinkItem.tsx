@@ -31,6 +31,7 @@ export const LinkItem = ({ to, label }: LinkItemProps) => {
         height="100%"
         display="flex"
         alignItems="center"
+        aria-label={`sidebar-link-${label.toLowerCase()}`}
         _hover={{ textDecor: 'none' }}
         _focus={{ outline: 'none' }}
       >

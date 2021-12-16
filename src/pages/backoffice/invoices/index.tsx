@@ -66,39 +66,46 @@ const InvoicesPage = () => {
       </Flex>
       <Flex mt="8" w="100%" justifyContent="space-between" borderBottom="1px solid #C8D7CB">
         <HStack spacing={4}>
-          <FilterText isActive={!filterBar} onClick={() => setFilterBar(undefined)}>
-            {t('Todas')}
-          </FilterText>
+          <FilterText
+            isActive={!filterBar}
+            label={t('Todas')}
+            onClick={() => setFilterBar(undefined)}
+          />
           <FilterText
             isActive={filterBar === 'in_analysis'}
+            label={t('Análise')}
             onClick={() => setFilterBar('in_analysis')}
-          >
-            {t('Análise')}
-          </FilterText>
-          <FilterText isActive={filterBar === 'pending'} onClick={() => setFilterBar('pending')}>
-            {t('Pendente')}
-          </FilterText>
-          <FilterText isActive={filterBar === 'paid'} onClick={() => setFilterBar('paid')}>
-            {t('Paga')}
-          </FilterText>
-          <FilterText isActive={filterBar === 'refunded'} onClick={() => setFilterBar('refunded')}>
-            {t('Reembol.')}
-          </FilterText>
-          <FilterText isActive={filterBar === 'canceled'} onClick={() => setFilterBar('canceled')}>
-            {t('Cancelada')}
-          </FilterText>
+          />
+          <FilterText
+            isActive={filterBar === 'pending'}
+            label={t('Pendente')}
+            onClick={() => setFilterBar('pending')}
+          />
+          <FilterText
+            isActive={filterBar === 'paid'}
+            label={t('Paga')}
+            onClick={() => setFilterBar('paid')}
+          />
+          <FilterText
+            isActive={filterBar === 'refunded'}
+            label={t('Reembol.')}
+            onClick={() => setFilterBar('refunded')}
+          />
+          <FilterText
+            isActive={filterBar === 'canceled'}
+            label={t('Cancelada')}
+            onClick={() => setFilterBar('canceled')}
+          />
           <FilterText
             isActive={filterBar === 'in_protest'}
+            label={t('Protesto')}
             onClick={() => setFilterBar('in_protest')}
-          >
-            {t('Protesto')}
-          </FilterText>
+          />
           <FilterText
             isActive={filterBar === 'chargeback'}
+            label={t('Estorno')}
             onClick={() => setFilterBar('chargeback')}
-          >
-            {t('Estorno')}
-          </FilterText>
+          />
         </HStack>
         <HStack spacing={2} color="#697667" cursor="pointer" onClick={clearFilters}>
           <DeleteIcon />

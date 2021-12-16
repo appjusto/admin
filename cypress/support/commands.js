@@ -24,3 +24,18 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 import '@testing-library/cypress/add-commands';
+import getFirebaseClient from '../firebase';
+
+Cypress.Commands.add('login', (email, password) => {
+  const defaultEmail = Cypress.env('main_user_email');
+  const defaultPassword = Cypress.env('main_user_password');
+  const currentEmail = email ?? defaultEmail;
+  cy.log('currentEmail', currentEmail);
+  // visit
+  cy.visit('/login');
+  // filling login form
+  cy.findByRole('textbox', { name: /e\-mail/i }).type(currentEmail);
+  cy.findByRole('checkbox', { name: /login-password-checkbox/i }).check({ force: true });
+  cy.findByLabelText(/senha/i).type(password ?? defaultPassword);
+  cy.findByRole('button', { name: /entrar/i }).click();
+});
