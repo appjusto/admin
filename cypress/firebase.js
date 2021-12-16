@@ -30,7 +30,7 @@ const getFirebaseClient = async (config) => {
   // const deleteUser = () => {
   //   return auth.currentUser.delete();
   // };
-  return { createTestingUser };
+  return { createTestingUser, currentUser: auth.currentUser };
 };
 
 export default getFirebaseClient;

@@ -51,6 +51,7 @@ export const DaySchedule = ({
   return (
     <Flex flexDir="column" mt="8">
       <CustomCheckbox
+        aria-label={`${weekDay}-checkbox`}
         width="120px"
         colorScheme="green"
         size="lg"
@@ -71,10 +72,10 @@ export const DaySchedule = ({
           color="black"
         >
           <Flex flexDir="column" justifyContent="flex-start">
-            <CustomRadio mt="2" value="no-break">
+            <CustomRadio mt="2" value="no-break" aria-label={`${weekDay}-no-break`}>
               {t('Sem pausa')}
             </CustomRadio>
-            <CustomRadio mt="2" value="break">
+            <CustomRadio mt="2" value="break" aria-label={`${weekDay}-break`}>
               {t('O restaurante faz uma pausa durante o dia')}
             </CustomRadio>
           </Flex>
@@ -92,6 +93,7 @@ export const DaySchedule = ({
                   maxW="150px"
                   id={`${weekDay}-from-1`}
                   label={t('Início')}
+                  aria-label={`${weekDay}-from-${index}`}
                   value={item.from}
                   validationLength={4}
                   onValueChange={(value) => onChangeValue(index, 'from', value)}
@@ -109,6 +111,7 @@ export const DaySchedule = ({
                   maxW="200px"
                   id={`${weekDay}-to-1`}
                   label={t('Término')}
+                  aria-label={`${weekDay}-to-${index}`}
                   value={item.to}
                   validationLength={4}
                   onValueChange={(value) => onChangeValue(index, 'to', value)}
@@ -133,6 +136,7 @@ export const DaySchedule = ({
           fontSize="xs"
           fontWeight="700"
           onClick={replicate}
+          aria-label={`${weekDay}-replication-link`}
         >
           {t('Replicar horário anterior')}
         </Link>

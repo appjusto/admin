@@ -23,7 +23,10 @@ describe('Login', () => {
     cy.findByLabelText(/senha/i).type(password);
     cy.findByRole('button', { name: /entrar/i }).click();
     // assert
-    cy.wait(10000);
-    cy.findByRole('button', { name: /começar/i }).should('be.visible');
+    cy.wait(4000);
+    // iser in onboarding
+    //cy.findByRole('button', { name: /começar/i }).should('be.visible');
+    // user is in home page
+    cy.findByRole('heading', { name: /início/i }).should('be.visible');
   });
 });
