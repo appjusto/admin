@@ -1,7 +1,7 @@
 describe('Business Menu', () => {
   beforeEach(() => {
     // login
-    cy.customLogin();
+    cy.userLogin();
     // assert
     cy.wait(4000);
     // user is in home page

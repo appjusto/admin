@@ -82,8 +82,11 @@
     "deploy:community": "ENV=community yarn deploy",
     "deploy:live": "ENV=live yarn deploy",
     "postversion": "git push && git push --tags && git fetch",
-    "cypress": "cypress open",
-    "cypress:run": "cypress run"
+    "cypress:config": "cross-env FIREBASE_AUTH_EMULATOR_HOST=localhost:9099 FIRESTORE_EMULATOR_HOST=localhost:8080",
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run",
+    "cypress:o": "yarn cypress:config yarn cypress:open",
+    "cypress:r": "yarn cypress:config yarn cypress:run"
   },
   "eslintConfig": {
     "extends": [
@@ -107,6 +110,7 @@
     "@testing-library/cypress": "^8.0.2",
     "@types/mapbox__polyline": "^1.0.2",
     "@types/react-select": "^4.0.17",
+    "cross-env": "^7.0.3",
     "cypress": "^9.1.1",
     "cypress-firebase": "^2.2.0",
     "eslint-plugin-cypress": "^2.12.1",
