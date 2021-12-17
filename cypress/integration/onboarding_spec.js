@@ -3,12 +3,6 @@ import * as cnpjutils from '@fnando/cnpj';
 
 // helpers
 const testingPhone = '81999999999';
-export const fakeBankAgency = '66400';
-export const fakeBankAccount = '2204363';
-const fakeAddress = {
-  cep: '01310200',
-  number: '1578',
-};
 
 describe('Onboarding', () => {
   let cpf;
@@ -56,22 +50,15 @@ describe('Onboarding', () => {
     cy.findByRole('button', { name: /salvar e continuar/i }).click();
     cy.wait(4000);
     // fill and submit banking info form
-    cy.findByRole('combobox', { name: /banco \*/i }).select('Banco do Brasil');
-    cy.findByRole('textbox', { name: /agência \*/i }).type(fakeBankAgency);
-    cy.findByRole('textbox', { name: /conta \*/i }).type(fakeBankAccount);
+    cy.fillBankingInfoForm();
     cy.findByRole('button', { name: /salvar e continuar/i }).click();
     cy.wait(4000);
     // fill and submit address form
-    cy.findByRole('textbox', { name: /cep \*/i }).type(fakeAddress.cep);
-    cy.wait(2000);
-    cy.findByRole('textbox', { name: /número \*/i }).type(fakeAddress.number);
-    cy.findByRole('textbox', { name: /raio\/ km \*/i })
-      .clear()
-      .type('6');
+    cy.fillDeliveryArea();
     cy.findByRole('button', { name: /salvar e continuar/i }).click();
     cy.wait(4000);
     // confirm account creation
-    cy.findByRole('button', { name: /confirmar e criar minha conta/i }).click();
+    cy.findByRole('button', { name: /confirmar e criar minha conta/i }).click({ force: true });
     cy.wait(4000);
     // user is in home page
     cy.findByRole('heading', { name: /início/i }).should('be.visible');

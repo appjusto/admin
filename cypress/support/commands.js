@@ -49,3 +49,42 @@ Cypress.Commands.add('userLogin', (email, password) => {
   cy.findByLabelText(/senha/i).type(password ?? defaultPassword);
   cy.findByRole('button', { name: /entrar/i }).click();
 });
+
+Cypress.Commands.add('mainUserLogin', () => {
+  // login
+  cy.userLogin();
+  cy.wait(4000);
+  // assert user is in home page
+  cy.findByRole('heading', { name: /início/i }).should('be.visible');
+});
+
+Cypress.Commands.add('fillBankingInfoForm', () => {
+  // fill form
+  cy.findByLabelText(/pessoa física/i).click({ force: true });
+  cy.findByLabelText(/pessoa jurídica/i).click({ force: true });
+  cy.findByRole('combobox', { name: /banco \*/i }).select('Banco do Brasil');
+  cy.findByRole('textbox', { name: /agência \*/i }).type('66400');
+  cy.findByRole('textbox', { name: /conta \*/i }).type('2204363');
+  cy.findByLabelText(/poupança/i).click({ force: true });
+  cy.findByLabelText(/corrente/i).click({ force: true });
+});
+
+const fakeAddress = {
+  cep: '01310200',
+  number: '1578',
+};
+
+Cypress.Commands.add('fillDeliveryArea', () => {
+  // fill form
+  cy.findByRole('textbox', { name: /cep \*/i })
+    .clear()
+    .type(fakeAddress.cep);
+  cy.wait(2000);
+  cy.findByRole('textbox', { name: /número \*/i })
+    .clear()
+    .type(fakeAddress.number);
+  cy.findByRole('textbox', { name: /raio\/ km \*/i })
+    .clear()
+    .type('6');
+  cy.findByLabelText(/40 minutos/i).click({ force: true });
+});

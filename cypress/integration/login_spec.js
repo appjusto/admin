@@ -3,8 +3,7 @@ describe('Login', () => {
     // command
     cy.userLogin();
     cy.wait(6000);
-    // assert
-    // iser in onboarding or in home page
+    // assert user is in onboarding or in home page
     cy.findAllByText(/início|começar/i).should('be.visible');
   });
 });

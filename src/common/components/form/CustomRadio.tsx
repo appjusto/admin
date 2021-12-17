@@ -26,6 +26,7 @@ const CustomRadio = ({ children, w, h, mt, mb, isDisabled, ...props }: RadioProp
           isDisabled={isDisabled}
           _checked={{ bgColor: mainColor, outline: 'none' }}
           _disabled={{}}
+          aria-label={typeof children === 'string' ? children : 'radio-button'}
           {...props}
         />
       </Center>
