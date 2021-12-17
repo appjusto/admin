@@ -211,7 +211,7 @@
     "@algolia/requester-common" "4.9.0"
 
 "@appjusto/types@../types":
-  version "3.30.0"
+  version "3.30.1"
 
 "@babel/code-frame@7.10.4":
   version "7.10.4"
@@ -4488,7 +4488,7 @@ anymatch@~3.1.2:
     picomatch "^2.0.4"
 
 appjusto-types@../types:
-  version "3.30.0"
+  version "3.30.1"
 
 aproba@^1.1.1:
   version "1.2.0"
@@ -6394,6 +6394,11 @@ cyclist@^1.0.1:
   resolved "https://registry.yarnpkg.com/cyclist/-/cyclist-1.0.1.tgz#596e9698fd0c80e12038c2b82d6eb1b35b6224d9"
   integrity sha1-WW6WmP0MgOEgOMK4LW6xs1tiJNk=
 
+cypress-firebase@^2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/cypress-firebase/-/cypress-firebase-2.2.0.tgz#532b6792c5b4c9a26d9f20474b7ae9b78daf89b8"
+  integrity sha512-Gf548z1z1si/1xBZuNBY7ykvjDj/JX0OQuW8Jyq33vUMz6xTK0gg6NI6qLaOomOKS3XbliHU6rtb433dNVZK2w==
+
 cypress@^9.1.1:
   version "9.1.1"
   resolved "https://registry.yarnpkg.com/cypress/-/cypress-9.1.1.tgz#26720ca5a22077cd85f49745616b7a08152a298f"
@@ -7798,10 +7803,10 @@ find-up@^3.0.0:
   dependencies:
     locate-path "^3.0.0"
 
-firebase-admin@^10.0.0:
-  version "10.0.0"
-  resolved "https://registry.yarnpkg.com/firebase-admin/-/firebase-admin-10.0.0.tgz#0638cd50d2395fddc9d8af4e1699d0a10b1b22d8"
-  integrity sha512-EOAk5ZaqXhBBvx9ZyXd28kw8glMTt3xl0g3BepGRCy0RSSUPGOzfAqjGhc65guSKgFOpT5mAUycYcJbqullKUQ==
+firebase-admin@9:
+  version "9.12.0"
+  resolved "https://registry.yarnpkg.com/firebase-admin/-/firebase-admin-9.12.0.tgz#d7e889e97c9c31610efbcd131bb6d06a783af757"
+  integrity sha512-AtA7OH5RbIFGoc0gZOQgaYC6cdjdhZv4w3XgWoupkPKO1HY+0GzixOuXDa75kFeoVyhIyo4PkLg/GAC1dC1P6w==
   dependencies:
     "@firebase/database-compat" "^0.1.1"
     "@firebase/database-types" "^0.7.2"
@@ -15152,11 +15157,6 @@ typedarray@^0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
-
-types@^0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/types/-/types-0.1.1.tgz#860c6859d11366293f835d8c95aebcf95029838e"
-  integrity sha1-hgxoWdETZik/g12Mla68+VApg44=
 
 typescript@^4.1.2:
   version "4.1.3"

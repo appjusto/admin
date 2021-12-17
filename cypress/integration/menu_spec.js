@@ -1,7 +1,7 @@
 describe('Business Menu', () => {
   beforeEach(() => {
     // login
-    cy.login();
+    cy.customLogin();
     // assert
     cy.wait(4000);
     // user is in home page
@@ -11,7 +11,7 @@ describe('Business Menu', () => {
     cy.findByRole('heading', { name: /cardápio/i }).should('be.visible');
   });
 
-  it('User can create complements', async () => {
+  it('User can create complements', () => {
     // navigate to complements
     cy.findByLabelText(/nav\-complementos/i).click();
   });

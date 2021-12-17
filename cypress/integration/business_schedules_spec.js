@@ -1,7 +1,7 @@
 describe('Business Schedules', () => {
-  it('User can save business schedules', async () => {
+  it('User can save business schedules', () => {
     // login
-    cy.login();
+    cy.customLogin();
     cy.wait(4000);
     // assert user is in home page
     cy.findByRole('heading', { name: /início/i }).should('be.visible');

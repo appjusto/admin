@@ -1,7 +1,7 @@
 describe('Login', () => {
   it('User can login', () => {
     // command
-    cy.login();
+    cy.customLogin();
     cy.wait(6000);
     // assert
     // iser in onboarding or in home page

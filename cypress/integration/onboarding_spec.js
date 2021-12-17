@@ -21,11 +21,12 @@ describe('Onboarding', () => {
     cnpj = cnpjutils.generate();
     email = Cypress.env('onboarding_user_email');
     password = Cypress.env('onboarding_user_password');
+    cy.clearOnboardingBusinesses();
   });
 
   it('User can finish the onboarding', () => {
     // login
-    cy.login(email, password);
+    cy.customLogin(email, password);
     cy.wait(10000);
 
     // start onboarding

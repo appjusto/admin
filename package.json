@@ -108,8 +108,9 @@
     "@types/mapbox__polyline": "^1.0.2",
     "@types/react-select": "^4.0.17",
     "cypress": "^9.1.1",
+    "cypress-firebase": "^2.2.0",
     "eslint-plugin-cypress": "^2.12.1",
-    "firebase-admin": "^10.0.0",
+    "firebase-admin": "9",
     "msw": "^0.36.3",
     "prettier": "^2.2.1"
   }

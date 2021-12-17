@@ -1,32 +1,46 @@
-// ***********************************************
-// This example commands.js shows you how to
-// create various custom commands and overwrite
-// existing commands.
-//
-// For more comprehensive examples of custom
-// commands please read more here:
-// https://on.cypress.io/custom-commands
-// ***********************************************
-//
-//
-// -- This is a parent command --
-// Cypress.Commands.add('login', (email, password) => { ... })
-//
-//
-// -- This is a child command --
-// Cypress.Commands.add('drag', { prevSubject: 'element'}, (subject, options) => { ... })
-//
-//
-// -- This is a dual command --
-// Cypress.Commands.add('dismiss', { prevSubject: 'optional'}, (subject, options) => { ... })
-//
-//
-// -- This will overwrite an existing command --
-// Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 import '@testing-library/cypress/add-commands';
-import getFirebaseClient from '../firebase';
+import firebase from 'firebase/app';
+import 'firebase/auth';
+import 'firebase/database';
+import 'firebase/firestore';
+import { attachCustomCommands } from 'cypress-firebase';
 
-Cypress.Commands.add('login', (email, password) => {
+const config = Cypress.env('firebase');
+
+if (!firebase.apps.length) {
+  firebase.initializeApp(config);
+}
+
+const firestore = firebase.firestore();
+firestore.settings({ experimentalForceLongPolling: true });
+firestore.useEmulator('localhost', 8080);
+
+// Auth
+const auth = firebase.auth();
+auth.useEmulator('http://localhost:9099');
+
+// handlers
+const createTestingUser = async (email, password) => {
+  try {
+    await auth.createUserWithEmailAndPassword(email, password);
+  } catch (error) {
+    console.log('createUserError', error);
+  }
+  return { email, password };
+};
+
+attachCustomCommands({ Cypress, cy, firebase });
+
+Cypress.Commands.add('createTestUsers', () => {
+  const mainUserEmail = Cypress.env('main_user_email');
+  const mainUserPassword = Cypress.env('main_user_password');
+  const onboardingUserEmail = Cypress.env('onboarding_user_email');
+  const onboardingUserPassword = Cypress.env('onboarding_user_password');
+  createTestingUser(mainUserEmail, mainUserPassword);
+  createTestingUser(onboardingUserEmail, onboardingUserPassword);
+});
+
+Cypress.Commands.add('customLogin', (email, password) => {
   const defaultEmail = Cypress.env('main_user_email');
   const defaultPassword = Cypress.env('main_user_password');
   const currentEmail = email ?? defaultEmail;
@@ -38,4 +52,11 @@ Cypress.Commands.add('login', (email, password) => {
   cy.findByRole('checkbox', { name: /login-password-checkbox/i }).check({ force: true });
   cy.findByLabelText(/senha/i).type(password ?? defaultPassword);
   cy.findByRole('button', { name: /entrar/i }).click();
+});
+
+Cypress.Commands.add('clearOnboardingBusinesses', () => {
+  const onboardingUserEmail = Cypress.env('onboarding_user_email');
+  cy.callFirestore('delete', 'businesses', {
+    where: ['managers', 'array-contains', onboardingUserEmail],
+  });
 });

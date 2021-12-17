@@ -6,6 +6,7 @@
 .pnp.js
 
 # testing
+serviceAccount.json
 cypress.env.json
 /coverage
 /cypress/videos
