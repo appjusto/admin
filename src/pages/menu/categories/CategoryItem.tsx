@@ -55,7 +55,7 @@ export const CategoryItem = React.memo(({ category, products, index, hidden, url
             />
             <Link to={`${url}/category/${category.id}`}>
               <Tooltip placement="top" label={t('Editar')} aria-label={t('Editar')}>
-                <EditButton />
+                <EditButton aria-label={`editar-categoria-${slugfyName(category.name)}`} />
               </Tooltip>
             </Link>
           </Flex>

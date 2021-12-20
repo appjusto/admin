@@ -9,7 +9,7 @@ import { productRatios, productResizedWidth } from 'common/imagesDimensions';
 import { useProductContext } from 'pages/menu/context/ProductContext';
 import React from 'react';
 import { Link as RouterLink, useHistory, useRouteMatch } from 'react-router-dom';
-import { useQuery } from 'utils/functions';
+import { slugfyName, useQuery } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { DrawerButtons } from '../DrawerButtons';
 import { CategorySelect } from './CategorySelect';
@@ -279,7 +279,11 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
       >
         <VStack alignItems="flex-start" mt="4" color="black" spacing={2}>
           {platformClassifications.map((item) => (
-            <CustomCheckbox key={item.id} value={item.name} aria-label={`${item.name}-checkbox`}>
+            <CustomCheckbox
+              key={item.id}
+              value={item.name}
+              aria-label={`${slugfyName(item.name)}-checkbox`}
+            >
               {item.name}
             </CustomCheckbox>
           ))}

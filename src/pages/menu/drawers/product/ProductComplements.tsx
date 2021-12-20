@@ -19,6 +19,7 @@ import CustomRadio from 'common/components/form/CustomRadio';
 import { useProductContext } from 'pages/menu/context/ProductContext';
 import React from 'react';
 import { Link as RouterLink, Redirect, useRouteMatch } from 'react-router-dom';
+import { slugfyName } from 'utils/functions';
 import { t } from 'utils/i18n';
 
 export const ProductComplements = () => {
@@ -40,7 +41,7 @@ export const ProductComplements = () => {
   const complementsExists = complementsGroupsWithItems.length > 0;
   // handlers
   const handleComplementsEnable = (value: string) => {
-    setHasComplements(value === '1' ? false : true);
+    setHasComplements(value === 'complements-disabled' ? false : true);
   };
   const handleComplementsGroupsConnection = () => {
     if (!hasComplements || connectedGroups.length === 0) {
@@ -73,16 +74,16 @@ export const ProductComplements = () => {
       </Text>
       <RadioGroup
         onChange={(value) => handleComplementsEnable(value.toString())}
-        value={hasComplements ? '2' : '1'}
-        defaultValue="1"
+        value={hasComplements ? 'complements-enabled' : 'complements-disabled'}
+        defaultValue="complements-disabled"
         colorScheme="green"
         color="black"
       >
         <Flex flexDir="column" justifyContent="flex-start">
-          <CustomRadio mt="2" value="1">
+          <CustomRadio mt="2" value="complements-disabled">
             {t('Não possui')}
           </CustomRadio>
-          <CustomRadio mt="2" value="2" isDisabled={!complementsExists}>
+          <CustomRadio mt="2" value="complements-enabled" isDisabled={!complementsExists}>
             {t('Sim, possui complementos')}
           </CustomRadio>
         </Flex>
@@ -121,7 +122,12 @@ export const ProductComplements = () => {
             >
               {complementsGroupsWithItems.map((group) => (
                 <Box key={group.id} w="100%" p="4" border="1px solid #D7E7DA" borderRadius="lg">
-                  <CustomCheckbox w="100%" value={group.id} isDisabled={group.items?.length === 0}>
+                  <CustomCheckbox
+                    w="100%"
+                    value={group.id}
+                    isDisabled={group.items?.length === 0}
+                    aria-label={`${slugfyName(group.name)}-checkbox`}
+                  >
                     <Box ml="2">
                       <HStack spacing={2}>
                         <Text>{group.name}</Text>

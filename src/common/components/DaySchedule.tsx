@@ -33,6 +33,8 @@ export const DaySchedule = ({
   const { day: weekDay, checked, schedule } = day;
   // state
   const [breakValue, setBreakValue] = React.useState<Break>('no-break');
+  // helpers
+  const weekDayLowerCase = weekDay.toLowerCase();
   // handlers
   const inputValidation = (from: string, to: string, beforeTo?: string) => {
     if (from === '' || to === '') return true;
@@ -51,7 +53,7 @@ export const DaySchedule = ({
   return (
     <Flex flexDir="column" mt="8">
       <CustomCheckbox
-        aria-label={`${weekDay}-checkbox`}
+        aria-label={`${weekDayLowerCase}-checkbox`}
         width="120px"
         colorScheme="green"
         size="lg"
@@ -72,10 +74,10 @@ export const DaySchedule = ({
           color="black"
         >
           <Flex flexDir="column" justifyContent="flex-start">
-            <CustomRadio mt="2" value="no-break" aria-label={`${weekDay}-no-break`}>
+            <CustomRadio mt="2" value="no-break" aria-label={`${weekDayLowerCase}-no-break`}>
               {t('Sem pausa')}
             </CustomRadio>
-            <CustomRadio mt="2" value="break" aria-label={`${weekDay}-break`}>
+            <CustomRadio mt="2" value="break" aria-label={`${weekDayLowerCase}-break`}>
               {t('O restaurante faz uma pausa durante o dia')}
             </CustomRadio>
           </Flex>
@@ -91,9 +93,9 @@ export const DaySchedule = ({
                 <Input
                   w="100%"
                   maxW="150px"
-                  id={`${weekDay}-from-1`}
+                  id={`${weekDayLowerCase}-from-${index}`}
                   label={t('Início')}
-                  aria-label={`${weekDay}-from-${index}`}
+                  aria-label={`${weekDayLowerCase}-from-${index}`}
                   value={item.from}
                   validationLength={4}
                   onValueChange={(value) => onChangeValue(index, 'from', value)}
@@ -109,9 +111,9 @@ export const DaySchedule = ({
                   w="100%"
                   ml="2"
                   maxW="200px"
-                  id={`${weekDay}-to-1`}
+                  id={`${weekDayLowerCase}-to-${index}`}
                   label={t('Término')}
-                  aria-label={`${weekDay}-to-${index}`}
+                  aria-label={`${weekDayLowerCase}-to-${index}`}
                   value={item.to}
                   validationLength={4}
                   onValueChange={(value) => onChangeValue(index, 'to', value)}
@@ -136,7 +138,7 @@ export const DaySchedule = ({
           fontSize="xs"
           fontWeight="700"
           onClick={replicate}
-          aria-label={`${weekDay}-replication-link`}
+          aria-label={`${weekDayLowerCase}-replication-link`}
         >
           {t('Replicar horário anterior')}
         </Link>

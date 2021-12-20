@@ -90,7 +90,11 @@ export const GroupItem = React.memo(({ group, complements, index, hidden }: Prop
                 </Tooltip>
                 <Tooltip placement="top" label={t('Editar')} aria-label={t('Editar')}>
                   <Link to={`${url}/complementsgroup/${group.id}`}>
-                    <EditButton ml="2" title={t('Editar')} />
+                    <EditButton
+                      ml="2"
+                      title={t('Editar')}
+                      aria-label={`editar-grupo-${slugfyName(group.name)}`}
+                    />
                   </Link>
                 </Tooltip>
                 <Tooltip
