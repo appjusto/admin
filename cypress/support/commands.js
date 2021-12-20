@@ -58,17 +58,55 @@ Cypress.Commands.add('mainUserLogin', () => {
   cy.findByRole('heading', { name: /início/i }).should('be.visible');
 });
 
+Cypress.Commands.add('fillManagerProfile', (user) => {
+  // fill form
+  cy.findByRole('textbox', { name: /e\-mail/i }).should('be.disabled');
+  cy.findByRole('textbox', { name: 'Nome *' }).clear().type(user.name);
+  cy.findByRole('textbox', { name: 'Sobrenome *' }).clear().type(user.lastname);
+  cy.findByRole('textbox', { name: /celular/i })
+    .clear()
+    .type(user.phone);
+  cy.findByRole('textbox', { name: /cpf \*/i })
+    .clear()
+    .type(user.cpf);
+});
+
+Cypress.Commands.add('fillBusinessProfile', (business) => {
+  // fill form
+  cy.findByRole('textbox', { name: /cnpj \*/i })
+    .clear()
+    .type(business.cnpj);
+  cy.findByRole('textbox', { name: /nome do restaurante \*/i })
+    .clear()
+    .type(business.name);
+  cy.findByRole('textbox', { name: /razão social \*/i })
+    .clear()
+    .type(business.corporateName);
+  cy.findByRole('textbox', { name: /telefone para atendimento sobre pedidos \*/i })
+    .clear()
+    .type(business.phone);
+  cy.findByRole('combobox', { name: /tipo de cozinha \*/i }).select(business.cuisine);
+  cy.findByRole('textbox', { name: /descrição/i })
+    .clear()
+    .type(business.description);
+});
+
 Cypress.Commands.add('fillBankingInfoForm', () => {
   // fill form
   cy.findByLabelText(/pessoa física/i).click({ force: true });
   cy.findByLabelText(/pessoa jurídica/i).click({ force: true });
   cy.findByRole('combobox', { name: /banco \*/i }).select('Banco do Brasil');
-  cy.findByRole('textbox', { name: /agência \*/i }).type('66400');
-  cy.findByRole('textbox', { name: /conta \*/i }).type('2204363');
+  cy.findByRole('textbox', { name: /agência \*/i })
+    .clear()
+    .type('66400');
+  cy.findByRole('textbox', { name: /conta \*/i })
+    .clear()
+    .type('2204363');
   cy.findByLabelText(/poupança/i).click({ force: true });
   cy.findByLabelText(/corrente/i).click({ force: true });
 });
 
+// helpers
 const fakeAddress = {
   cep: '01310200',
   number: '1578',
