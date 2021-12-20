@@ -124,5 +124,5 @@ Cypress.Commands.add('fillDeliveryArea', () => {
   cy.findByRole('textbox', { name: /raio\/ km \*/i })
     .clear()
     .type('6');
-  cy.findByLabelText(/40 minutos/i).click({ force: true });
+  cy.findByLabelText(/40/i).click({ force: true });
 });

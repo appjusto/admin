@@ -203,6 +203,7 @@ export const getCroppedImg = async (
     // As a blob
     return new Promise((resolve, reject) => {
       canvas.toBlob(async (file) => {
+        if (!file) return;
         try {
           const url = URL.createObjectURL(file);
           const result = await getResizedImage(url, ratio, resizedWidth, imageType);
@@ -304,4 +305,8 @@ export const getCEFAccountCode = (
     }
   }
   return operation;
+};
+
+export const slugfyName = (name: string) => {
+  return name.toLowerCase().split(' ').join('-');
 };

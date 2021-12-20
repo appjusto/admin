@@ -279,7 +279,7 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
       >
         <VStack alignItems="flex-start" mt="4" color="black" spacing={2}>
           {platformClassifications.map((item) => (
-            <CustomCheckbox key={item.id} value={item.name}>
+            <CustomCheckbox key={item.id} value={item.name} aria-label={`${item.name}-checkbox`}>
               {item.name}
             </CustomCheckbox>
           ))}
