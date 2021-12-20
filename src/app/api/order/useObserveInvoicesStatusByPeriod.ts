@@ -41,7 +41,8 @@ export const useObserveInvoicesStatusByPeriod = (
       return (total += invoice.value ?? 0);
     }, 0);
     const appjusto = invoices.reduce((total, invoice) => {
-      return (total += invoice.commission ?? 0);
+      let commission = invoice.commission ? invoice.commission - 9 : 0;
+      return (total += commission);
     }, 0);
     const iugu = invoices.length * 9 + amount * 0.0221;
     setPeriodAmount(amount);
