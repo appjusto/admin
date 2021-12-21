@@ -6,6 +6,7 @@ import 'firebase/firestore';
 import { attachCustomCommands } from 'cypress-firebase';
 
 const config = Cypress.env('firebase');
+const emulatorEnabled = Cypress.env('emulator');
 
 if (!firebase.apps.length) {
   firebase.initializeApp(config);
@@ -13,7 +14,7 @@ if (!firebase.apps.length) {
 
 // Auth
 const auth = firebase.auth();
-auth.useEmulator('http://localhost:9099');
+if (emulatorEnabled) auth.useEmulator('http://localhost:9099');
 
 attachCustomCommands({ Cypress, cy, firebase });
 

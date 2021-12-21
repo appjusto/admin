@@ -77,13 +77,16 @@ In project root directory create `cypress.env.json` with:
   "storageBucket": "",
   "messagingSenderId": "",
   "appId": ""
- }
+ },
+"emulator": true
 }
 ```
 
-Write tests in `cypress/integrations/` with `your_test_name_spec.js` file format
+Write tests in `cypress/integrations/` with `testName_spec.js` file format
 
-Run tests with `yarn cypress`
+To run tests with firebase emulators, run `yarn cypress:e:open` or `yarn cypress:e:run`.
+
+Without firebase emulators, change `cypress.env.json` "emulator" variable to false and run `yarn cypress:open` or `yarn cypress:run`.
 
 ## Learn More
 

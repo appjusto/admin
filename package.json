@@ -82,11 +82,11 @@
     "deploy:community": "ENV=community yarn deploy",
     "deploy:live": "ENV=live yarn deploy",
     "postversion": "git push && git push --tags && git fetch",
-    "cypress:config": "cross-env FIREBASE_AUTH_EMULATOR_HOST=localhost:9099 FIRESTORE_EMULATOR_HOST=localhost:8080",
+    "cypress:emulator": "cross-env FIREBASE_AUTH_EMULATOR_HOST=localhost:9099 FIRESTORE_EMULATOR_HOST=localhost:8080",
+    "cypress:e:open": "yarn cypress:emulator yarn cypress:open",
+    "cypress:e:run": "yarn cypress:emulator yarn cypress:run",
     "cypress:open": "cypress open",
-    "cypress:run": "cypress run",
-    "cypress:o": "yarn cypress:config yarn cypress:open",
-    "cypress:r": "yarn cypress:config yarn cypress:run"
+    "cypress:run": "cypress run"
   },
   "eslintConfig": {
     "extends": [
