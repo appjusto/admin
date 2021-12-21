@@ -32,8 +32,9 @@ describe('Business Menu', () => {
     cy.findByRole('textbox', { name: /preço/i }).type('500');
     cy.findByRole('button', { name: /btn\-plus/i }).click();
     cy.findByRole('button', { name: /salvar/i }).click();
+    cy.wait(2000);
     // assert: complement was created
-    cy.findByText(/tomate/i).should('be.visible');
+    cy.findAllByText(/tomate/i).should('be.visible');
   });
 
   it('User can create products', () => {
@@ -114,6 +115,7 @@ describe('Business Menu', () => {
     cy.findByRole('button', { name: /editar\-categoria\-prato\-do\-dia/i }).click({ force: true });
     cy.findByRole('button', { name: /apagar categoria/i }).click();
     cy.findByRole('button', { name: /apagar categoria/i }).click();
+    cy.wait(2000);
     // assert: category was deleted
     cy.findByText(/prato\-do\-dia/i).should('not.exist');
   });
@@ -136,6 +138,7 @@ describe('Business Menu', () => {
     cy.findByRole('button', { name: /editar\-grupo\-molhos\-especiais/i }).click({ force: true });
     cy.findByRole('button', { name: /apagar grupo/i }).click();
     cy.findByRole('button', { name: /apagar grupo/i }).click();
+    cy.wait(2000);
     // assert: group was deleted
     cy.findByText(/molhos\-especiais/i).should('not.exist');
   });
