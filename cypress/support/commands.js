@@ -25,7 +25,6 @@ const createTestingUser = async (email, password) => {
   } catch (error) {
     console.log('createUserError', error);
   }
-  return { email, password };
 };
 
 Cypress.Commands.add('createTestUsers', () => {

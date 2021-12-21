@@ -82,7 +82,11 @@ In project root directory create `cypress.env.json` with:
 }
 ```
 
-Write tests in `cypress/integrations/` with `testName_spec.js` file format
+Run `yarn cypress:e:open` and in cypress window run login_spec.js to create test users.
+
+Login and complete main user onboarding, then submit and approve his business.
+
+Write tests in `cypress/integrations/` with `testName_spec.js` file format.
 
 To run tests with firebase emulators, run `yarn cypress:e:open` or `yarn cypress:e:run`.
 
