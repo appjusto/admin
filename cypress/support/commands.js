@@ -45,7 +45,7 @@ Cypress.Commands.add('userLogin', (email, password) => {
   cy.visit('/login');
   // filling login form
   cy.findByRole('textbox', { name: /e\-mail/i }).type(currentEmail);
-  cy.findByRole('checkbox', { name: /login-password-checkbox/i }).check({ force: true });
+  cy.findByRole('checkbox', { name: /login\-password\-checkbox/i }).check({ force: true });
   cy.findByLabelText(/senha/i).type(password ?? defaultPassword);
   cy.findByRole('button', { name: /entrar/i }).click();
 });

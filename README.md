@@ -82,6 +82,8 @@ In project root directory create `cypress.env.json` with:
 }
 ```
 
+And get and paste the project's `serviceAccount.json` file.
+
 Run `yarn cypress:e:open` and in cypress window run login_spec.js to create test users.
 
 Login and complete main user onboarding, then submit and approve his business.

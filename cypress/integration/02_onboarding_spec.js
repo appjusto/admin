@@ -8,6 +8,12 @@ describe('Onboarding', () => {
   let password;
 
   before(() => {
+    email = Cypress.env('onboarding_user_email');
+    password = Cypress.env('onboarding_user_password');
+    cy.callFirestore('delete', 'businesses', {
+      where: ['managers', 'array-contains', email],
+    });
+    cy.log('onboardingUserEmail', email);
     user = {
       name: 'Onboarding',
       lastname: 'User',
@@ -22,12 +28,6 @@ describe('Onboarding', () => {
       cuisine: 'Brasileira',
       description: 'Restaurante para teste de onboarding',
     };
-    email = Cypress.env('onboarding_user_email');
-    password = Cypress.env('onboarding_user_password');
-    cy.log('onboardingUserEmail', email);
-    cy.callFirestore('delete', 'businesses', {
-      where: ['managers', 'array-contains', email],
-    });
   });
 
   it('User can finish the onboarding', () => {
