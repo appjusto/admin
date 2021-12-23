@@ -2,11 +2,10 @@ import { Box, BoxProps, Circle, HStack, Skeleton, Stack, Text } from '@chakra-ui
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextBusinessDashboard } from 'app/state/dashboards/business';
 import { CrowdfundingCard } from 'common/components/CrowdfundingCard';
-import { NewFeatureBox } from 'common/components/NewFeatureBox';
+import { NotificationBox } from 'common/components/NotificationBox';
 import I18n from 'i18n-js';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import React from 'react';
-import { BsShare } from 'react-icons/bs';
 import { useRouteMatch } from 'react-router';
 import { formatCurrency, formatPct } from 'utils/formatters';
 import { getDateTime } from 'utils/functions';
@@ -148,8 +147,9 @@ const Dashboard = () => {
       />
       {business?.situation === 'approved' ? (
         <Box>
+          <NotificationBox />
           <CrowdfundingCard />
-          <NewFeatureBox
+          {/*<NewFeatureBox
             icon={BsShare}
             title={t('Compartilhe seu restaurante como quiser!')}
             description={t(
@@ -158,7 +158,7 @@ const Dashboard = () => {
             link={`${path}/sharing`}
             btnLabel={t('Visualizar links')}
             isNew={false}
-          />
+            />*/}
           <Box mt="8" border="1px solid #E5E5E5" borderRadius="lg" p="4">
             <SectionTitle mt="0" fontWeight="700">
               {t('Acompanhamento diário')}
