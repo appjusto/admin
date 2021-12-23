@@ -7,6 +7,7 @@ import { ReactComponent as DragHandle } from 'common/img/drag-handle.svg';
 import React from 'react';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
 import { Link } from 'react-router-dom';
+import { slugfyName } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { ProductItem } from './ProductItem';
 
@@ -54,7 +55,7 @@ export const CategoryItem = React.memo(({ category, products, index, hidden, url
             />
             <Link to={`${url}/category/${category.id}`}>
               <Tooltip placement="top" label={t('Editar')} aria-label={t('Editar')}>
-                <EditButton />
+                <EditButton aria-label={`editar-categoria-${slugfyName(category.name)}`} />
               </Tooltip>
             </Link>
           </Flex>
@@ -81,6 +82,7 @@ export const CategoryItem = React.memo(({ category, products, index, hidden, url
             w={{ base: '100%', md: '220px' }}
             link={`${url}/product/new?categoryId=${category.id}`}
             label={t('Adicionar produto')}
+            aria-label={`adicionar-produto-${slugfyName(category.name)}`}
             variant="outline"
           />
         </Box>

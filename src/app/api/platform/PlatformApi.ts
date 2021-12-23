@@ -90,7 +90,12 @@ export default class PlatformApi {
   }
 
   async getServerTime(): Promise<number> {
-    const result = await this.refs.getServerTimeCallable()();
-    return result.data.time;
+    try {
+      const result = await this.refs.getServerTimeCallable()();
+      return result.data.time;
+    } catch (error) {
+      console.error('getServerTimeError', error);
+      return 0;
+    }
   }
 }

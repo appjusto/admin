@@ -3,11 +3,11 @@ import React from 'react';
 
 interface FilterProps {
   isActive: boolean;
+  label: string;
   onClick(): void;
-  children: React.ReactNode | React.ReactNode[];
 }
 
-export const FilterText = ({ isActive, onClick, children, ...props }: FilterProps) => {
+export const FilterText = ({ isActive, label, onClick, ...props }: FilterProps) => {
   return (
     <Text
       pb="2"
@@ -20,9 +20,10 @@ export const FilterText = ({ isActive, onClick, children, ...props }: FilterProp
       borderBottom={isActive ? '4px solid #78E08F' : 'none'}
       cursor="pointer"
       onClick={onClick}
+      aria-label={`nav-${label}`}
       {...props}
     >
-      {children}
+      {label}
     </Text>
   );
 };

@@ -63,6 +63,37 @@ See the section about [deployment](https://facebook.github.io/create-react-app/d
 
 Deploy on firebase.
 
+## Cypress setup
+
+In project root directory create `cypress.env.json` with:
+
+```bash
+{
+ "firebase": {
+  "apiKey": "",
+  "region": "",
+  "authDomain": "",
+  "projectId": "",
+  "storageBucket": "",
+  "messagingSenderId": "",
+  "appId": ""
+ },
+"emulator": true
+}
+```
+
+And get and paste the project's `serviceAccount.json` file.
+
+Run `yarn cypress:e:open` and in cypress window run login_spec.js to create test users.
+
+Login and complete main user onboarding, then submit and approve his business.
+
+Write tests in `cypress/integrations/` with `testName_spec.js` file format.
+
+To run tests with firebase emulators, run `yarn cypress:e:open` or `yarn cypress:e:run`.
+
+Without firebase emulators, change `cypress.env.json` "emulator" variable to false and run `yarn cypress:open` or `yarn cypress:run`.
+
 ## Learn More
 
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).

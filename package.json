@@ -73,13 +73,20 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "test-env": "yarn env-cmd -f .env.$ENV yarn test",
+    "test:community": "ENV=community yarn test-env",
     "eject": "react-scripts eject",
     "deploy": "git checkout $ENV && git pull && yarn version && env-cmd -f .env.$ENV yarn build && firebase use app-justo-$ENV && firebase deploy",
     "deploy:dev": "ENV=dev yarn deploy",
     "deploy:staging": "ENV=staging yarn deploy",
     "deploy:community": "ENV=community yarn deploy",
     "deploy:live": "ENV=live yarn deploy",
-    "postversion": "git push && git push --tags && git fetch"
+    "postversion": "git push && git push --tags && git fetch",
+    "cypress:emulator": "cross-env FIREBASE_AUTH_EMULATOR_HOST=localhost:9099 FIRESTORE_EMULATOR_HOST=localhost:8080",
+    "cypress:e:open": "yarn cypress:emulator yarn cypress:open",
+    "cypress:e:run": "yarn cypress:emulator yarn cypress:run",
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run"
   },
   "eslintConfig": {
     "extends": [
@@ -100,8 +107,15 @@
     ]
   },
   "devDependencies": {
+    "@testing-library/cypress": "^8.0.2",
     "@types/mapbox__polyline": "^1.0.2",
     "@types/react-select": "^4.0.17",
+    "cross-env": "^7.0.3",
+    "cypress": "^9.1.1",
+    "cypress-firebase": "^2.2.0",
+    "eslint-plugin-cypress": "^2.12.1",
+    "firebase-admin": "9",
+    "msw": "^0.36.3",
     "prettier": "^2.2.1"
   }
 }

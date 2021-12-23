@@ -111,12 +111,16 @@ const UsersPage = () => {
       </Flex>
       <Flex mt="8" w="100%" justifyContent="space-between" borderBottom="1px solid #C8D7CB">
         <HStack spacing={4}>
-          <FilterText isActive={!isBlocked} onClick={() => setIsBlocked(false)}>
-            {t('Todos')}
-          </FilterText>
-          <FilterText isActive={isBlocked} onClick={() => setIsBlocked(true)}>
-            {t('Bloqueados')}
-          </FilterText>
+          <FilterText
+            isActive={!isBlocked}
+            label={t('Todos')}
+            onClick={() => setIsBlocked(false)}
+          />
+          <FilterText
+            isActive={isBlocked}
+            label={t('Bloqueados')}
+            onClick={() => setIsBlocked(true)}
+          />
         </HStack>
         <HStack spacing={2} color="#697667" cursor="pointer" onClick={clearFilters}>
           <DeleteIcon />

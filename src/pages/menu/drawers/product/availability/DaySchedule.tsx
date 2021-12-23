@@ -39,6 +39,8 @@ export const DaySchedule = ({
   // state
   const [availability, setAvailability] = React.useState<MainAvailability>('when-is-open');
   const [warning, setWarning] = React.useState<string>();
+  // helpers
+  const weekDayLowerCase = weekDay.toLowerCase();
   // handlers
   const inputValidation = (from: string, to: string, beforeTo?: string) => {
     if (from === '' || to === '') return true;
@@ -67,6 +69,7 @@ export const DaySchedule = ({
   return (
     <Flex flexDir="column" mt="8">
       <CustomCheckbox
+        aria-label={`${weekDayLowerCase}-checkbox`}
         colorScheme="green"
         size="lg"
         spacing="1rem"
@@ -86,10 +89,10 @@ export const DaySchedule = ({
           color="black"
         >
           <Flex flexDir="column" justifyContent="flex-start">
-            <CustomRadio mt="2" value="when-is-open">
+            <CustomRadio mt="2" value="when-is-open" aria-label={`${weekDayLowerCase}-no-break`}>
               {t('Enquanto estiver aberto')}
             </CustomRadio>
-            <CustomRadio mt="2" value="defined">
+            <CustomRadio mt="2" value="defined" aria-label={`${weekDayLowerCase}-defined`}>
               {t('Definir horário específico')}
             </CustomRadio>
           </Flex>
@@ -105,8 +108,9 @@ export const DaySchedule = ({
                 <Input
                   w="100%"
                   maxW="150px"
-                  id={`${weekDay}-from-1`}
+                  id={`${weekDayLowerCase}-from-${index}`}
                   label={t('Início')}
+                  aria-label={`${weekDayLowerCase}-from-${index}`}
                   value={item.from}
                   validationLength={4}
                   onValueChange={(value) => onChangeValue(index, 'from', value)}
@@ -122,8 +126,9 @@ export const DaySchedule = ({
                   w="100%"
                   ml="2"
                   maxW="200px"
-                  id={`${weekDay}-to-1`}
+                  id={`${weekDayLowerCase}-to-${index}`}
                   label={t('Término')}
+                  aria-label={`${weekDayLowerCase}-to-${index}`}
                   value={item.to}
                   validationLength={4}
                   onValueChange={(value) => onChangeValue(index, 'to', value)}
@@ -138,6 +143,7 @@ export const DaySchedule = ({
                 <Flex ml="4" mt="4" minW="30px" justifyContent="center" alignItems="center">
                   {schedule.length > 1 && (
                     <Button
+                      aria-label={`${weekDayLowerCase}-close-${index}`}
                       variant="outline"
                       size="sm"
                       maxW="30px"
@@ -164,6 +170,7 @@ export const DaySchedule = ({
               fontWeight="700"
               color="green.600"
               cursor="pointer"
+              aria-label={`adicionar-turno-${weekDayLowerCase}`}
               onClick={() => handleChangeItemsNumber('add')}
               _hover={{ textDecor: 'underline' }}
             >
@@ -179,6 +186,7 @@ export const DaySchedule = ({
           fontWeight="700"
           color="green.600"
           cursor="pointer"
+          aria-label={`replicar-anterior-${weekDayLowerCase}`}
           onClick={replicate}
           _hover={{ textDecor: 'underline' }}
         >

@@ -96,34 +96,29 @@ const ConsumersPage = () => {
         <HStack spacing={4}>
           <FilterText
             isActive={filterBar === 'all' ? true : false}
+            label={t('Todos')}
             onClick={() => setFilterBar('all')}
-          >
-            {t('Todos')}
-          </FilterText>
+          />
           <FilterText
             isActive={filterBar === 'submitted' ? true : false}
+            label={t('Submetidos')}
             onClick={() => setFilterBar('submitted')}
-          >
-            {t('Submetidos')}
-          </FilterText>
+          />
           <FilterText
             isActive={filterBar === 'approved' ? true : false}
+            label={t('Aprovados')}
             onClick={() => setFilterBar('approved')}
-          >
-            {t('Aprovados')}
-          </FilterText>
+          />
           <FilterText
             isActive={filterBar === 'rejected' ? true : false}
+            label={t('Rejeitados')}
             onClick={() => setFilterBar('rejected')}
-          >
-            {t('Rejeitados')}
-          </FilterText>
+          />
           <FilterText
             isActive={filterBar === 'blocked' ? true : false}
+            label={t('Bloqueados')}
             onClick={() => setFilterBar('blocked')}
-          >
-            {t('Bloqueados')}
-          </FilterText>
+          />
         </HStack>
         <HStack spacing={2} color="#697667" cursor="pointer" onClick={clearSearchAndFilters}>
           <DeleteIcon />

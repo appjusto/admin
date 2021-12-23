@@ -177,6 +177,7 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
           {t('Personalidade da conta:')}
         </Text>
         <RadioGroup
+          name="account-person"
           onChange={(value) => {
             setPersonType(value as BankAccountPersonType);
             setType('Corrente');
@@ -196,10 +197,10 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
             fontSize="16px"
             lineHeight="22px"
           >
-            <CustomRadio isDisabled={disabled} value="Pessoa Jurídica">
+            <CustomRadio isDisabled={disabled} value="Pessoa Jurídica" aria-label="pessoa jurídica">
               {t('Pessoa Jurídica')}
             </CustomRadio>
-            <CustomRadio isDisabled={disabled} value="Pessoa Física">
+            <CustomRadio isDisabled={disabled} value="Pessoa Física" aria-label="pessoa física">
               {t('Pessoa Física')}
             </CustomRadio>
           </Stack>
@@ -337,6 +338,7 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
           redirect={redirect}
           isLoading={isLoading}
           isDisabled={disabled}
+          submitLabel={t('Salvar dados bancários')}
         />
       </form>
     </Box>

@@ -101,52 +101,44 @@ const OrdersPage = () => {
         <HStack spacing={4}>
           <FilterText
             isActive={filterBar === 'all' ? true : false}
+            label={t('Todos')}
             onClick={() => setFilterBar('all')}
-          >
-            {t('Todos')}
-          </FilterText>
+          />
           <FilterText
             isActive={filterBar === 'confirming' ? true : false}
+            label={t('Aguardando confirmação')}
             onClick={() => setFilterBar('confirming')}
-          >
-            {t('Aguardando confirmação')}
-          </FilterText>
+          />
           <FilterText
             isActive={filterBar === 'preparing' ? true : false}
+            label={t('Em preparação')}
             onClick={() => setFilterBar('preparing')}
-          >
-            {t('Em preparação')}
-          </FilterText>
+          />
           <FilterText
             isActive={filterBar === 'ready' ? true : false}
+            label={t('Prontos')}
             onClick={() => setFilterBar('ready')}
-          >
-            {t('Prontos')}
-          </FilterText>
+          />
           <FilterText
             isActive={filterBar === 'dispatching' ? true : false}
+            label={t('A caminho')}
             onClick={() => setFilterBar('dispatching')}
-          >
-            {t('A caminho')}
-          </FilterText>
+          />
           <FilterText
             isActive={filterBar === 'delivered' ? true : false}
+            label={t('Entregues')}
             onClick={() => setFilterBar('delivered')}
-          >
-            {t('Entregues')}
-          </FilterText>
+          />
           <FilterText
             isActive={filterBar === 'declined' ? true : false}
+            label={t('Recusados')}
             onClick={() => setFilterBar('declined')}
-          >
-            {t('Recusados')}
-          </FilterText>
+          />
           <FilterText
             isActive={filterBar === 'canceled' ? true : false}
+            label={t('Cancelados')}
             onClick={() => setFilterBar('canceled')}
-          >
-            {t('Cancelados')}
-          </FilterText>
+          />
         </HStack>
         <HStack spacing={2} color="#697667" cursor="pointer" onClick={clearFilters}>
           <DeleteIcon />

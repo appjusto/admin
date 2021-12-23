@@ -8,6 +8,7 @@ import { ReactComponent as DragHandle } from 'common/img/drag-handle.svg';
 import React from 'react';
 import { Draggable } from 'react-beautiful-dnd';
 import { Link as RouterLink, useRouteMatch } from 'react-router-dom';
+import { slugfyName } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { CurrencyInput } from '../../../common/components/form/input/currency-input/CurrencyInput2';
 
@@ -123,7 +124,7 @@ export const ComplementItem = React.memo(({ complement, index }: Props) => {
           />
           <Link as={RouterLink} to={`${url}/complement/${complement.id}`}>
             <Tooltip placement="top" label={t('Editar')} aria-label={t('Editar')}>
-              <EditButton />
+              <EditButton aria-label={`editar-complemento-${slugfyName(complement.name)}`} />
             </Tooltip>
           </Link>
         </Flex>
