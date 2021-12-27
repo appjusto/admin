@@ -51,6 +51,7 @@ export default class FirebaseRefs {
   getPlatformStatisticsRef = () => this.getPlatformRef().doc('statistics');
   getPlatformDatasRef = () => this.getPlatformRef().doc('data');
   getPlatformLogsRef = () => this.getPlatformRef().doc('logs');
+  getPlatformAccessRef = () => this.getPlatformRef().doc('access');
   // fraud prevention
   getFraudPreventionRef = () => this.getPlatformRef().doc('fraud');
   getFraudPreventionSubdocsRef = () => this.getFraudPreventionRef().collection('subdocs');

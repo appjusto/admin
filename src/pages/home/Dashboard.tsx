@@ -2,11 +2,11 @@ import { Box, BoxProps, Circle, HStack, Skeleton, Stack, Text } from '@chakra-ui
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextBusinessDashboard } from 'app/state/dashboards/business';
 import { CrowdfundingCard } from 'common/components/CrowdfundingCard';
-import { NotificationBox } from 'common/components/NotificationBox';
+import { MaintenanceBox } from 'common/components/MaintenanceBox';
 import I18n from 'i18n-js';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import React from 'react';
-import { useRouteMatch } from 'react-router';
+//import { useRouteMatch } from 'react-router';
 import { formatCurrency, formatPct } from 'utils/formatters';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
@@ -79,7 +79,7 @@ const InfoBox = ({
 
 const Dashboard = () => {
   // context
-  const { path } = useRouteMatch();
+  //const { path } = useRouteMatch();
   const { business, isDeleted, setIsDeleted } = useContextBusiness();
   const {
     todayOrders,
@@ -147,7 +147,7 @@ const Dashboard = () => {
       />
       {business?.situation === 'approved' ? (
         <Box>
-          <NotificationBox />
+          <MaintenanceBox />
           <CrowdfundingCard />
           {/*<NewFeatureBox
             icon={BsShare}
