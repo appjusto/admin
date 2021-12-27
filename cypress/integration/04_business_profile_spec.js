@@ -2,7 +2,9 @@ import * as cnpjutils from '@fnando/cnpj';
 
 describe('Business Profile', () => {
   let business = {};
+  let isApproved;
   before(() => {
+    isApproved = Cypress.env('approved');
     business = {
       cnpj: cnpjutils.generate(),
       name: 'Restaurante para testes',
@@ -19,7 +21,7 @@ describe('Business Profile', () => {
     cy.findByRole('link', { name: /sidebar\-link\-perfil do restaurante/i }).click();
     cy.findByRole('heading', { name: /perfil do restaurante/i }).should('be.visible');
     // fill and submit form
-    cy.fillBusinessProfile(business);
+    cy.fillBusinessProfile(business, isApproved);
     cy.findByRole('button', { name: /salvar/i }).click();
     cy.wait(5000);
     // assert

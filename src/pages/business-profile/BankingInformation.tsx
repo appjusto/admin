@@ -177,7 +177,7 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
           {t('Personalidade da conta:')}
         </Text>
         <RadioGroup
-          name="account-person"
+          aria-label="account-person"
           onChange={(value) => {
             setPersonType(value as BankAccountPersonType);
             setType('Corrente');
@@ -298,8 +298,12 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
                 fontSize="16px"
                 lineHeight="22px"
               >
-                <CustomRadio value="Corrente">{t('003 – Conta Corrente')}</CustomRadio>
-                <CustomRadio value="Poupança">{t('022 – Conta Poupança')}</CustomRadio>
+                <CustomRadio isDisabled={disabled} value="Corrente">
+                  {t('003 – Conta Corrente')}
+                </CustomRadio>
+                <CustomRadio isDisabled={disabled} value="Poupança">
+                  {t('022 – Conta Poupança')}
+                </CustomRadio>
               </Stack>
             ) : (
               <Stack
@@ -311,10 +315,16 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
                 fontSize="16px"
                 lineHeight="22px"
               >
-                <CustomRadio value="Corrente">{t('001 – Conta Corrente')}</CustomRadio>
-                <CustomRadio value="Simples">{t('002 – Conta Simples')}</CustomRadio>
-                <CustomRadio value="Poupança">{t('013 – Conta Poupança')}</CustomRadio>
-                <CustomRadio value="Nova Poupança">
+                <CustomRadio isDisabled={disabled} value="Corrente">
+                  {t('001 – Conta Corrente')}
+                </CustomRadio>
+                <CustomRadio isDisabled={disabled} value="Simples">
+                  {t('002 – Conta Simples')}
+                </CustomRadio>
+                <CustomRadio isDisabled={disabled} value="Poupança">
+                  {t('013 – Conta Poupança')}
+                </CustomRadio>
+                <CustomRadio isDisabled={disabled} value="Nova Poupança">
                   {t('1288 – Conta Poupança (novo formato)')}
                 </CustomRadio>
               </Stack>
@@ -328,8 +338,12 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
               fontSize="16px"
               lineHeight="22px"
             >
-              <CustomRadio value="Corrente">{t('Corrente')}</CustomRadio>
-              <CustomRadio value="Poupança">{t('Poupança')}</CustomRadio>
+              <CustomRadio isDisabled={disabled} value="Corrente">
+                {t('Corrente')}
+              </CustomRadio>
+              <CustomRadio isDisabled={disabled} value="Poupança">
+                {t('Poupança')}
+              </CustomRadio>
             </Stack>
           )}
         </RadioGroup>

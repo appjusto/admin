@@ -236,6 +236,7 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
         id="drawer-price"
         value={price}
         label={t('Preço')}
+        aria-label={t('preço-do-novo-produto')}
         placeholder={t('0,00')}
         onChangeValue={(value) => handleStateUpdate('price', value)}
         maxLength={6}

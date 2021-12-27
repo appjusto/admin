@@ -78,7 +78,8 @@ In project root directory create `cypress.env.json` with:
   "messagingSenderId": "",
   "appId": ""
  },
-"emulator": true
+"emulator": true,
+"approved": true
 }
 ```
 

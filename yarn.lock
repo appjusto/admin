@@ -211,7 +211,7 @@
     "@algolia/requester-common" "4.9.0"
 
 "@appjusto/types@../types":
-  version "3.30.1"
+  version "3.30.3"
 
 "@babel/code-frame@7.10.4":
   version "7.10.4"
@@ -4488,7 +4488,7 @@ anymatch@~3.1.2:
     picomatch "^2.0.4"
 
 appjusto-types@../types:
-  version "3.30.1"
+  version "3.30.3"
 
 aproba@^1.1.1:
   version "1.2.0"
@@ -15164,11 +15164,6 @@ typedarray@^0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
-
-types@^0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/types/-/types-0.1.1.tgz#860c6859d11366293f835d8c95aebcf95029838e"
-  integrity sha1-hgxoWdETZik/g12Mla68+VApg44=
 
 typescript@^4.1.2:
   version "4.1.3"

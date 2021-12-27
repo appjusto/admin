@@ -29,7 +29,7 @@ describe('Business Menu', () => {
       .should('have.text', 'Molhos especiais');
     cy.findByRole('textbox', { name: /nome do item/i }).type('Tomate');
     cy.findByRole('textbox', { name: /descrição do item/i }).type('Molho de tomate especial');
-    cy.findByRole('textbox', { name: /preço/i }).type('500');
+    cy.findByRole('textbox', { name: /preço\-do\-novo\-complemento/i }).type('500');
     cy.findByRole('button', { name: /btn\-plus/i }).click();
     cy.findByRole('button', { name: /salvar/i }).click();
     cy.wait(2000);
@@ -52,7 +52,7 @@ describe('Business Menu', () => {
       .should('have.text', 'Prato do dia');
     cy.findByRole('textbox', { name: /nome/i }).type('Feijoada');
     cy.findByRole('textbox', { name: /descrição/i }).type('Feijoada completa (500g)');
-    cy.findByRole('textbox', { name: /preço/i }).type('3000');
+    cy.findByRole('textbox', { name: /preço\-do\-novo\-produto/i }).type('3000');
     cy.findByRole('checkbox', { name: /orgânico\-checkbox/i }).check({ force: true });
     cy.findByRole('button', { name: /salvar/i }).click();
     // assert: product was created

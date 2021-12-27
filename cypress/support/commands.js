@@ -58,7 +58,7 @@ Cypress.Commands.add('mainUserLogin', () => {
   cy.findByRole('heading', { name: /início/i }).should('be.visible');
 });
 
-Cypress.Commands.add('fillManagerProfile', (user) => {
+Cypress.Commands.add('fillManagerProfile', (user, isApproved) => {
   // fill form
   cy.findByRole('textbox', { name: /e\-mail/i }).should('be.disabled');
   cy.findByRole('textbox', { name: 'Nome *' }).clear().type(user.name);
@@ -66,16 +66,24 @@ Cypress.Commands.add('fillManagerProfile', (user) => {
   cy.findByRole('textbox', { name: /celular/i })
     .clear()
     .type(user.phone);
-  cy.findByRole('textbox', { name: /cpf \*/i })
-    .clear()
-    .type(user.cpf);
+  if (isApproved) {
+    cy.findByRole('textbox', { name: /cpf \*/i }).should('be.disabled');
+  } else {
+    cy.findByRole('textbox', { name: /cpf \*/i })
+      .clear()
+      .type(user.cpf);
+  }
 });
 
-Cypress.Commands.add('fillBusinessProfile', (business) => {
+Cypress.Commands.add('fillBusinessProfile', (business, isApproved) => {
   // fill form
-  cy.findByRole('textbox', { name: /cnpj \*/i })
-    .clear()
-    .type(business.cnpj);
+  if (isApproved) {
+    cy.findByRole('textbox', { name: /cnpj \*/i }).should('be.disabled');
+  } else {
+    cy.findByRole('textbox', { name: /cnpj \*/i })
+      .clear()
+      .type(business.cnpj);
+  }
   cy.findByRole('textbox', { name: /nome do restaurante \*/i })
     .clear()
     .type(business.name);
@@ -91,19 +99,27 @@ Cypress.Commands.add('fillBusinessProfile', (business) => {
     .type(business.description);
 });
 
-Cypress.Commands.add('fillBankingInfoForm', () => {
-  // fill form
-  cy.findByLabelText(/pessoa física/i).click({ force: true });
-  cy.findByLabelText(/pessoa jurídica/i).click({ force: true });
-  cy.findByRole('combobox', { name: /banco \*/i }).select('Banco do Brasil');
-  cy.findByRole('textbox', { name: /agência \*/i })
-    .clear()
-    .type('66400');
-  cy.findByRole('textbox', { name: /conta \*/i })
-    .clear()
-    .type('2204363');
-  cy.findByLabelText(/poupança/i).click({ force: true });
-  cy.findByLabelText(/corrente/i).click({ force: true });
+Cypress.Commands.add('fillBankingInfoForm', (isApproved) => {
+  if (isApproved) {
+    // all inputs disabled
+    cy.findAllByRole('radio').should('be.disabled');
+    cy.findByRole('combobox', { name: /banco \*/i }).should('be.disabled');
+    cy.findByRole('textbox', { name: /agência \*/i }).should('be.disabled');
+    cy.findByRole('textbox', { name: /conta \*/i }).should('be.disabled');
+  } else {
+    // fill form
+    cy.findByLabelText(/pessoa física/i).click({ force: true });
+    cy.findByLabelText(/pessoa jurídica/i).click({ force: true });
+    cy.findByRole('combobox', { name: /banco \*/i }).select('Banco do Brasil');
+    cy.findByRole('textbox', { name: /agência \*/i })
+      .clear()
+      .type('66400');
+    cy.findByRole('textbox', { name: /conta \*/i })
+      .clear()
+      .type('2204363');
+    cy.findByLabelText(/poupança/i).click({ force: true });
+    cy.findByLabelText(/corrente/i).click({ force: true });
+  }
 });
 
 // helpers
