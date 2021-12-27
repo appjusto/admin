@@ -28,8 +28,9 @@ export const MaintenanceBox = () => {
           <Text mt="1" color="black" fontSize="18px" lineHeight="26px" fontWeight="700">
             {platformAccess.maintenance.header}
           </Text>
-          {platformAccess.maintenance.body?.map((text) => (
+          {platformAccess.maintenance.body?.map((text, index) => (
             <Text
+              key={index}
               mt="2"
               color="black"
               minW="140px"
