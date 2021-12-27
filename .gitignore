@@ -10,7 +10,7 @@ serviceAccount.json
 cypress.env.json
 /coverage
 /cypress/videos
-/cypress/screenshorts
+/cypress/screenshots
 
 # production
 /build
