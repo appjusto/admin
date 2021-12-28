@@ -1,3 +1,4 @@
+import { useObserveOrderChats } from 'app/api/order/useObserveOrderChats';
 import { useOrder } from 'app/api/order/useOrder';
 import { useFlaggedLocations } from 'app/api/platform/useFlaggedLocations';
 import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';
@@ -61,6 +62,7 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
   } = useOrder(orderId);
   const cancelOptions = useIssuesByType(cancelOptionsArray);
   const { addFlaggedLocation } = useFlaggedLocations();
+  const chatMessages = useObserveOrderChats(orderId);
   // state
   const [status, setStatus] = React.useState<OrderStatus | undefined>(order?.status ?? undefined);
   const [issue, setIssue] = React.useState<Issue | null>();
@@ -68,6 +70,7 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
   const [refund, setRefund] = React.useState<InvoiceType[]>(['platform', 'products', 'delivery']);
   const [loadingState, setLoadingState] = React.useState<OrderDrawerLoadingState>('idle');
   // helpers
+  const isChatMessages = chatMessages ? chatMessages?.length > 0 : false;
   let refundValue = 0;
   if (refund.includes('platform') && order?.fare?.platform?.value)
     refundValue += order.fare.platform.value;
@@ -195,6 +198,7 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
         updateOrderStatus={updateOrderStatus}
         cancellation={cancellation}
         loadingState={loadingState}
+        isChatMessages={isChatMessages}
         {...props}
       >
         <Switch>

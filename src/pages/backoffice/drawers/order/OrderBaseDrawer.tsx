@@ -31,6 +31,7 @@ interface BaseDrawerProps {
   updateOrderStatus(value?: OrderStatus): void;
   cancellation(type?: 'prevention'): void;
   loadingState: OrderDrawerLoadingState;
+  isChatMessages: boolean;
   children: React.ReactNode | React.ReactNode[];
 }
 
@@ -41,6 +42,7 @@ export const OrderBaseDrawer = ({
   updateOrderStatus,
   cancellation,
   loadingState,
+  isChatMessages,
   children,
   ...props
 }: BaseDrawerProps) => {
@@ -87,6 +89,12 @@ export const OrderBaseDrawer = ({
               {t('Status:')}{' '}
               <Text as="span" fontWeight="500">
                 {orderStatus ? orderStatusPTOptions[orderStatus] : 'N/E'}
+              </Text>
+            </Text>
+            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+              {t('Mensagens no chat:')}{' '}
+              <Text as="span" fontWeight="500">
+                {isChatMessages ? t('Sim') : t('Não')}
               </Text>
             </Text>
             {order?.issue && (
