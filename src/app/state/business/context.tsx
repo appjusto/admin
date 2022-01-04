@@ -26,7 +26,6 @@ interface Props {
 
 export const BusinessProvider = ({ children }: Props) => {
   // context
-  console.log('Render BusinessProvider');
   const queryClient = useQueryClient();
   const { user, isBackofficeUser, refreshUserToken } = useContextFirebaseUser();
   const businesses = useObserveBusinessManagedBy(user?.email);

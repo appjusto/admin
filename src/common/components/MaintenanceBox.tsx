@@ -7,7 +7,7 @@ export const MaintenanceBox = () => {
   // context
   const { platformAccess } = useContextBusiness();
   // UI
-  if (!platformAccess) return <Box />;
+  if (!platformAccess?.maintenance.active) return <Box />;
   return (
     <Stack
       mt="8"

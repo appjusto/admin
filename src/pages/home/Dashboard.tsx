@@ -3,10 +3,12 @@ import { useContextBusiness } from 'app/state/business/context';
 import { useContextBusinessDashboard } from 'app/state/dashboards/business';
 import { CrowdfundingCard } from 'common/components/CrowdfundingCard';
 import { MaintenanceBox } from 'common/components/MaintenanceBox';
+import { NewFeatureBox } from 'common/components/NewFeatureBox';
 import I18n from 'i18n-js';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import React from 'react';
-//import { useRouteMatch } from 'react-router';
+import { BsShare } from 'react-icons/bs';
+import { useRouteMatch } from 'react-router';
 import { formatCurrency, formatPct } from 'utils/formatters';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
@@ -79,7 +81,7 @@ const InfoBox = ({
 
 const Dashboard = () => {
   // context
-  //const { path } = useRouteMatch();
+  const { path } = useRouteMatch();
   const { business, isDeleted, setIsDeleted } = useContextBusiness();
   const {
     todayOrders,
@@ -149,7 +151,7 @@ const Dashboard = () => {
         <Box>
           <MaintenanceBox />
           <CrowdfundingCard />
-          {/*<NewFeatureBox
+          <NewFeatureBox
             icon={BsShare}
             title={t('Compartilhe seu restaurante como quiser!')}
             description={t(
@@ -158,7 +160,7 @@ const Dashboard = () => {
             link={`${path}/sharing`}
             btnLabel={t('Visualizar links')}
             isNew={false}
-            />*/}
+          />
           <Box mt="8" border="1px solid #E5E5E5" borderRadius="lg" p="4">
             <SectionTitle mt="0" fontWeight="700">
               {t('Acompanhamento diário')}

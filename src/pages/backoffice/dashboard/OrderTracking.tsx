@@ -88,13 +88,6 @@ export const OrderTracking = ({ orderId, isCompact }: OrderTrackingProps) => {
       </Box>
     );
   }
-  if (logs === null) {
-    return (
-      <Box>
-        <Text>{t('Não foi possível carregar os logs deste pedido.! =/')}</Text>
-      </Box>
-    );
-  }
   return (
     <Box w="100%">
       <Box>
