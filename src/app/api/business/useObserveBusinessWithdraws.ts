@@ -10,7 +10,7 @@ export const useObserveBusinessWithdraws = (
   // context
   const api = useContextApi();
   // state
-  const [withdraws, setWithdraws] = React.useState<WithId<AccountWithdraw>[] | null>();
+  const [withdraws, setWithdraws] = React.useState<WithId<AccountWithdraw>[]>();
   // side effects
   React.useEffect(() => {
     if (!businessId) return;

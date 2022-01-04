@@ -10,7 +10,7 @@ export const useObserveBusinessAdvances = (
   // context
   const api = useContextApi();
   // state
-  const [advances, setAdvances] = React.useState<WithId<AccountAdvance>[] | null>();
+  const [advances, setAdvances] = React.useState<WithId<AccountAdvance>[]>();
   // side effects
   React.useEffect(() => {
     if (!businessId) return;

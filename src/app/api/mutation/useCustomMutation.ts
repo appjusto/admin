@@ -37,11 +37,11 @@ export const useCustomMutation = <
   React.useEffect(() => {
     if (!resetting) return;
     if (!isSuccess && !isError) return;
-    console.log('Call reset!');
+    // console.log('Call reset!');
     reset();
   }, [resetting, isSuccess, isError, reset]);
-  if (isLoading) console.log(`${fnName} - isLoading:`, isLoading);
-  if (isSuccess) console.log(`${fnName} - isSuccess:`, isSuccess);
-  if (isError) console.log(`${fnName} - isError:`, isError);
+  // if (isLoading) console.log(`${fnName} - %cisLoading: ${isLoading}`, 'color: blue');
+  // if (isSuccess) console.log(`${fnName} - %cisSuccess: ${isSuccess}`, 'color: green');
+  if (isError) console.log(`${fnName} - %cisError: ${isError}`, 'color: red');
   return { mutate, mutateAsync, mutationResult: { isLoading, isSuccess, isError, error } };
 };
