@@ -32,7 +32,7 @@ export const BusinessProvider = ({ children }: Props) => {
   const [businessId, setBusinessId] = React.useState<string | undefined | null>();
   const [isDeleted, setIsDeleted] = React.useState(false);
   const hookBusiness = useObserveBusinessProfile(businessId);
-  const platformAccess = usePlatformAccess();
+  const platformAccess = usePlatformAccess(typeof user?.uid === 'string');
   // state
   const [business, setBusiness] = React.useState<WithId<Business> | null>();
   // helpers
