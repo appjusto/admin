@@ -10,7 +10,6 @@ import {
 import FilesApi from '../FilesApi';
 import FirebaseRefs from '../FirebaseRefs';
 import firebase from 'firebase/app';
-import { documentAs, documentsAs } from 'core/fb';
 import * as Sentry from '@sentry/react';
 import { customCollectionSnapshot, customDocumentSnapshot } from '../utils';
 
