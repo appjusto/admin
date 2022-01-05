@@ -303,7 +303,6 @@ export default class BusinessApi {
     email: string,
     resultHandler: (result: WithId<Business>[]) => void
   ): firebase.Unsubscribe {
-    console.log('%cRun api observer', 'color: orange');
     const query = this.refs
       .getBusinessesRef()
       .where('managers', 'array-contains', email)

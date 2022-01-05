@@ -7,9 +7,9 @@ import {
   WithId,
 } from 'appjusto-types';
 import { GetBusinessManagersPayload } from 'appjusto-types/payloads/profile';
-import { documentsAs } from 'core/fb';
 import firebase from 'firebase/app';
 import FirebaseRefs from '../FirebaseRefs';
+import { customCollectionSnapshot, customDocumentSnapshot } from '../utils';
 import { ManagerWithRole } from './types';
 
 export default class ManagerApi {
@@ -20,17 +20,9 @@ export default class ManagerApi {
     id: string,
     resultHandler: (profile: WithId<ManagerProfile> | null) => void
   ): firebase.Unsubscribe {
-    const unsubscribe = this.refs.getManagerRef(id).onSnapshot(
-      async (doc) => {
-        if (!doc.exists) resultHandler(null);
-        else resultHandler({ ...(doc.data() as ManagerProfile), id });
-      },
-      (error) => {
-        console.error(error);
-      }
-    );
+    const query = this.refs.getManagerRef(id);
     // returns the unsubscribe function
-    return unsubscribe;
+    return customDocumentSnapshot(query, resultHandler);
   }
 
   observeProfileByEmail(
@@ -38,17 +30,10 @@ export default class ManagerApi {
     resultHandler: (profile: WithId<ManagerProfile> | null) => void
   ): firebase.Unsubscribe {
     const query = this.refs.getManagersRef().where('email', '==', email);
-    const unsubscribe = query.onSnapshot(
-      async (querySnapshot) => {
-        const data = documentsAs<ManagerProfile>(querySnapshot.docs);
-        resultHandler(data[0]);
-      },
-      (error) => {
-        console.error(error);
-      }
-    );
     // returns the unsubscribe function
-    return unsubscribe;
+    return customCollectionSnapshot<ManagerProfile>(query, (result) => {
+      resultHandler(result[0]);
+    });
   }
 
   observeManagerBusinesses(
@@ -56,16 +41,8 @@ export default class ManagerApi {
     resultHandler: (businesses: WithId<Business>[] | null) => void
   ): firebase.Unsubscribe {
     const query = this.refs.getBusinessesRef().where('managers', 'array-contains', email);
-    const unsubscribe = query.onSnapshot(
-      async (querySnapshot) => {
-        resultHandler(documentsAs<Business>(querySnapshot.docs));
-      },
-      (error) => {
-        console.error(error);
-      }
-    );
     // returns the unsubscribe function
-    return unsubscribe;
+    return customCollectionSnapshot(query, resultHandler);
   }
 
   async getBusinessManagers(
