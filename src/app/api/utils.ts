@@ -17,14 +17,11 @@ export const customCollectionSnapshot = <T extends object>(
 ) => {
   return query.onSnapshot(
     (snapshot) => {
-      // console.log(`%cGet snapshot | docs: ${snapshot.docs?.length}`, 'color: red');
       if (options?.avoidPenddingWrites) {
         if (!snapshot.metadata.hasPendingWrites) {
-          // console.log(`%cCall resultHandler`, 'color: purple');
           resultHandler(documentsAs<T>(snapshot.docs));
         }
       } else {
-        // console.log(`%cCall resultHandler`, 'color: purple');
         resultHandler(documentsAs<T>(snapshot.docs));
       }
     },

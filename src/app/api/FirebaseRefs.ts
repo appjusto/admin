@@ -1,6 +1,8 @@
 import firebase from 'firebase/app';
 import * as geofirestore from 'geofirestore';
 
+const monitoring = true;
+
 export default class FirebaseRefs {
   private firestoreWithGeo: geofirestore.GeoFirestore;
   constructor(
@@ -11,7 +13,6 @@ export default class FirebaseRefs {
   }
 
   // functions
-  getBatchRef = () => this.firestore.batch();
   getServerTimeCallable = () => this.functions.httpsCallable('getServerTime');
   getUpdateEmailCallable = () => this.functions.httpsCallable('updateEmail');
   getDeleteAccountCallable = () => this.functions.httpsCallable('deleteAccount');
@@ -33,18 +34,31 @@ export default class FirebaseRefs {
   getAdvanceReceivablesCallable = () => this.functions.httpsCallable('advanceReceivables');
 
   // firestore
+  getBatchRef = () => this.firestore.batch();
   // users
-  getUsersRef = () => this.firestore.collection('users');
+  getUsersRef = () => {
+    if (monitoring) console.log('Call getUsersRef');
+    return this.firestore.collection('users');
+  };
   getUsersChangesRef = () => this.getUsersRef().doc('subcollections').collection('changes');
 
   // advances
-  getAdvancesRef = () => this.firestore.collection('advances');
+  getAdvancesRef = () => {
+    if (monitoring) console.log('Call getAdvancesRef');
+    return this.firestore.collection('advances');
+  };
 
   // withdraws
-  getWithdrawsRef = () => this.firestore.collection('withdraws');
+  getWithdrawsRef = () => {
+    if (monitoring) console.log('Call getWithdrawsRef');
+    return this.firestore.collection('withdraws');
+  };
 
   // platform
-  getPlatformRef = () => this.firestore.collection('platform');
+  getPlatformRef = () => {
+    if (monitoring) console.log('Call getPlatformRef');
+    return this.firestore.collection('platform');
+  };
 
   // platform docs
   getPlatformParamsRef = () => this.getPlatformRef().doc('params');
@@ -60,8 +74,10 @@ export default class FirebaseRefs {
   getFlaggedLocationRef = (locationId: string) =>
     this.getFraudPreventionRef().collection('flaggedlocations').doc(locationId);
   // platform / fraud / flaggedlocations with geo
-  getFlaggedLocationsWithGeoRef = () =>
-    this.firestoreWithGeo.collection('platform').doc('fraud').collection('flaggedlocations');
+  getFlaggedLocationsWithGeoRef = () => {
+    if (monitoring) console.log('Call getFlaggedLocationsWithGeoRef');
+    return this.firestoreWithGeo.collection('platform').doc('fraud').collection('flaggedlocations');
+  };
 
   // platform data subcollections
   getBanksRef = () => this.getPlatformDatasRef().collection('banks');
@@ -73,7 +89,10 @@ export default class FirebaseRefs {
   getPlatformLoginLogsRef = () => this.getPlatformLogsRef().collection('logins');
 
   // businesses
-  getBusinessesRef = () => this.firestore.collection('businesses');
+  getBusinessesRef = () => {
+    if (monitoring) console.log('Call getBusinessesRef');
+    return this.firestore.collection('businesses');
+  };
   getBusinessRef = (id: string) => this.getBusinessesRef().doc(id);
   getBusinessProfileNotesRef = (id: string) => this.getBusinessRef(id).collection('profilenotes');
   getBusinessProfileNoteRef = (businessId: string, profileNoteId: string) =>
@@ -111,16 +130,22 @@ export default class FirebaseRefs {
     this.getBusinessComplementsRef(businessId).doc(complementId);
 
   // business private subcollections and docs
-  getBusinessPrivateRef = (id: string) => this.getBusinessesRef().doc(id).collection('private');
+  getBusinessPrivateRef = (id: string) => this.getBusinessRef(id).collection('private');
   getBusinessBankAccountRef = (id: string) => this.getBusinessPrivateRef(id).doc('bank');
   getBusinessMarketPlaceRef = (id: string) => this.getBusinessPrivateRef(id).doc('marketplace');
 
   // managers
-  getManagersRef = () => this.firestore.collection('managers');
+  getManagersRef = () => {
+    if (monitoring) console.log('Call getManagersRef');
+    return this.firestore.collection('managers');
+  };
   getManagerRef = (managerId: string) => this.firestore.collection('managers').doc(managerId);
 
   // orders
-  getOrdersRef = () => this.firestore.collection('orders');
+  getOrdersRef = () => {
+    if (monitoring) console.log('Call getOrdersRef');
+    return this.firestore.collection('orders');
+  };
   getOrderRef = (id: string) => this.getOrdersRef().doc(id);
   getOrderChatRef = (id: string) => this.getOrderRef(id).collection('chat');
   getOrderIssuesRef = (id: string) => this.getOrderRef(id).collection('issues');
@@ -133,17 +158,26 @@ export default class FirebaseRefs {
   getOrderFraudPreventionRef = (id: string) => this.getOrderPrivateRef(id).doc('fraudprevention');
 
   // invoices
-  getInvoicesRef = () => this.firestore.collection('invoices');
+  getInvoicesRef = () => {
+    if (monitoring) console.log('Call getInvoicesRef');
+    return this.firestore.collection('invoices');
+  };
 
   // consumers
-  getConsumersRef = () => this.firestore.collection('consumers');
+  getConsumersRef = () => {
+    if (monitoring) console.log('Call getConsumersRef');
+    return this.firestore.collection('consumers');
+  };
   getConsumerRef = (id: string) => this.getConsumersRef().doc(id);
   getConsumerProfileNotesRef = (id: string) => this.getConsumerRef(id).collection('profilenotes');
   getConsumerProfileNoteRef = (id: string, profileNoteId: string) =>
     this.getConsumerProfileNotesRef(id).doc(profileNoteId);
 
   // couriers
-  getCouriersRef = () => this.firestore.collection('couriers');
+  getCouriersRef = () => {
+    if (monitoring) console.log('Call getCouriersRef');
+    return this.firestore.collection('couriers');
+  };
   getCourierRef = (id: string) => this.getCouriersRef().doc(id);
   getCourierReviewsRef = (id: string) => this.getCourierRef(id).collection('reviews');
   getCourierPrivateRef = (id: string) => this.getCourierRef(id).collection('private');
@@ -153,12 +187,18 @@ export default class FirebaseRefs {
     this.getCourierProfileNotesRef(id).doc(profileNoteId);
 
   // fleets
-  getFleetsRef = () => this.firestore.collection('fleets');
+  getFleetsRef = () => {
+    if (monitoring) console.log('Call getFleetsRef');
+    return this.firestore.collection('fleets');
+  };
   getFleetRef = (id: string) => this.getFleetsRef().doc(id);
   getAppJustoFleetRef = () => this.getFleetRef('appjusto');
 
   // invoices
-  getRecommendationsRef = () => this.firestore.collection('recommendations');
+  getRecommendationsRef = () => {
+    if (monitoring) console.log('Call getRecommendationsRef');
+    return this.firestore.collection('recommendations');
+  };
   getRecommendationRef = (id: string) => this.getRecommendationsRef().doc(id);
 
   // storage
