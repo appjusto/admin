@@ -440,11 +440,25 @@ export default class BusinessApi {
   ): firebase.Unsubscribe {
     const query = this.refs.getBusinessCategoriesRef(businessId);
     // returns the unsubscribe function
-    return customCollectionSnapshot(query, resultHandler);
+    return customCollectionSnapshot(query, resultHandler, {
+      avoidPenddingWrites: true,
+      monitoring: true,
+    });
   }
 
   createCategoryRef(businessId: string): string {
     return this.refs.getBusinessCategoriesRef(businessId).doc().id;
+  }
+
+  async fethCategories(businessId: string) {
+    const query = this.refs.getBusinessCategoriesRef(businessId);
+    let snapshot = await query.get({ source: 'cache' });
+    if (snapshot.empty) {
+      snapshot = await query.get({ source: 'server' });
+    }
+    console.log(snapshot.metadata.fromCache ? '%cfrom Cache' : '%cfrom Server', 'color: red');
+    return documentsAs<Category>(snapshot.docs);
+    //return customCollectionGet<Category>(query, { cacheFirst: true });
   }
 
   async fetchCategory(businessId: string, categoryId: string) {

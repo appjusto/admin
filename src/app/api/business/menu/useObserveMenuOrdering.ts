@@ -4,7 +4,7 @@ import { Ordering } from 'appjusto-types';
 import { isEmpty } from 'lodash';
 import React from 'react';
 
-export const useObserveMenuOrdering = (businessId: string | undefined) => {
+export const useObserveMenuOrdering = (isMenuActive: boolean, businessId?: string) => {
   const api = useContextApi();
   //state
   const [productsOrdering, setProductsOrdering] = React.useState<Ordering>(menu.empty());
@@ -19,6 +19,7 @@ export const useObserveMenuOrdering = (businessId: string | undefined) => {
   };
   // side effects
   React.useEffect(() => {
+    if (!isMenuActive) return;
     if (!businessId) return;
     const unsub = api.business().observeMenuOrdering(businessId, (config) => {
       setProductsOrdering(!isEmpty(config) ? config : menu.empty());
@@ -34,7 +35,7 @@ export const useObserveMenuOrdering = (businessId: string | undefined) => {
       unsub();
       unsub2();
     };
-  }, [api, businessId]);
+  }, [api, isMenuActive, businessId]);
   // result
   return {
     productsOrdering,

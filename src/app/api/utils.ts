@@ -6,6 +6,7 @@ import * as Sentry from '@sentry/react';
 interface customSnapshotOptions {
   captureException?: boolean;
   avoidPenddingWrites?: boolean;
+  monitoring?: boolean;
 }
 
 export const customCollectionSnapshot = <T extends object>(
@@ -17,6 +18,7 @@ export const customCollectionSnapshot = <T extends object>(
 ) => {
   return query.onSnapshot(
     (snapshot) => {
+      if (options.monitoring) console.log('%cSnapshot result!', 'color: blue');
       if (options?.avoidPenddingWrites) {
         if (!snapshot.metadata.hasPendingWrites) {
           resultHandler(documentsAs<T>(snapshot.docs));
@@ -57,3 +59,24 @@ export const customDocumentSnapshot = <T extends object>(
     }
   );
 };
+
+// interface customCollectionGetOptions {
+//   cacheFirst?: boolean;
+// }
+
+// export const customCollectionGet = async <T extends object>(
+//   ref: firebase.firestore.CollectionReference<firebase.firestore.DocumentData>,
+//   options?: customCollectionGetOptions
+// ) => {
+//   let snapshot;
+//   if (options?.cacheFirst) {
+//     snapshot = await ref.get({ source: 'cache' });
+//     if (snapshot.empty) {
+//       snapshot = await ref.get({ source: 'server' });
+//     }
+//   } else {
+//     snapshot = await ref.get();
+//   }
+//   console.log(`fromCach:${snapshot.metadata.fromCache}`);
+//   return documentsAs<T>(snapshot.docs);
+// };

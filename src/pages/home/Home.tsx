@@ -1,6 +1,7 @@
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { BusinessDashboardProvider } from 'app/state/dashboards/business';
+import { MenuContextProvider } from 'app/state/menu/context';
 import { OrdersContextProvider } from 'app/state/order';
 import { Loading } from 'common/components/Loading';
 import BusinessProfile from 'pages/business-profile/BusinessProfile';
@@ -10,7 +11,7 @@ import DeliveryArea from 'pages/delivery-area/DeliveryArea';
 import FinancesPage from 'pages/finances/FinancesPage';
 import { UserNotFound } from 'pages/join/UserNotFound';
 import ManagerProfilePage from 'pages/manager-profile/ManagerProfilePage';
-import MenuPage from 'pages/menu/MenuPage';
+import Menu from 'pages/menu/Menu';
 import OrdersHistoryPage from 'pages/orders/history/OrdersHistoryPage';
 import OrdersPage from 'pages/orders/OrdersPage';
 import PageLayout from 'pages/PageLayout';
@@ -66,7 +67,9 @@ const Home = () => {
             <PageLayout mt={isBackofficeUser ? '60px' : '0'}>
               <Route exact path={path} component={Dashboard} />
               <Route path={`${path}/sharing`} component={SharingPage} />
-              <Route path={`${path}/menu`} component={MenuPage} />
+              <MenuContextProvider>
+                <Route path={`${path}/menu`} component={Menu} />
+              </MenuContextProvider>
               <Route path={`${path}/business-schedules`} component={SchedulesPage} />
               <Route path={`${path}/delivery-area`} component={DeliveryArea} />
               <Route path={`${path}/business-profile`} component={BusinessProfile} />
