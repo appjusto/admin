@@ -69,9 +69,9 @@ interface ContextProps {
 interface ProviderProps {
   children: React.ReactNode | React.ReactNode[];
 }
-const MenuProviderContext = React.createContext<ContextProps>({} as ContextProps);
+const MenuContext = React.createContext<ContextProps>({} as ContextProps);
 
-export const MenuProvider = (props: ProviderProps) => {
+export const MenuContextProvider = (props: ProviderProps) => {
   // context
   const api = useContextApi();
   const businessId = useContextBusinessId();
@@ -170,7 +170,7 @@ export const MenuProvider = (props: ProviderProps) => {
   }, 'deleteComplement');
   // provider
   return (
-    <MenuProviderContext.Provider
+    <MenuContext.Provider
       value={{
         isProductsPage,
         setIsProductPage,
@@ -200,5 +200,5 @@ export const MenuProvider = (props: ProviderProps) => {
 };
 
 export const useContextMenu = () => {
-  return React.useContext(MenuProviderContext)!;
+  return React.useContext(MenuContext)!;
 };

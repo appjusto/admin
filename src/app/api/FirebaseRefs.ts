@@ -55,19 +55,19 @@ export default class FirebaseRefs {
   };
 
   // platform
-  getPlatformRef = () => {
-    if (monitoring) console.log('Call getPlatformRef');
+  getPlatformRef = (doc: string) => {
+    if (monitoring) console.log(`Call getPlatformRef:${doc}`);
     return this.firestore.collection('platform');
   };
 
   // platform docs
-  getPlatformParamsRef = () => this.getPlatformRef().doc('params');
-  getPlatformStatisticsRef = () => this.getPlatformRef().doc('statistics');
-  getPlatformDatasRef = () => this.getPlatformRef().doc('data');
-  getPlatformLogsRef = () => this.getPlatformRef().doc('logs');
-  getPlatformAccessRef = () => this.getPlatformRef().doc('access');
+  getPlatformParamsRef = () => this.getPlatformRef('params').doc('params');
+  getPlatformStatisticsRef = () => this.getPlatformRef('statistics').doc('statistics');
+  getPlatformDatasRef = () => this.getPlatformRef('data').doc('data');
+  getPlatformLogsRef = () => this.getPlatformRef('logs').doc('logs');
+  getPlatformAccessRef = () => this.getPlatformRef('access').doc('access');
   // fraud prevention
-  getFraudPreventionRef = () => this.getPlatformRef().doc('fraud');
+  getFraudPreventionRef = () => this.getPlatformRef('fraud').doc('fraud');
   getFraudPreventionSubdocsRef = () => this.getFraudPreventionRef().collection('subdocs');
   getFraudPreventionParamsRef = () => this.getFraudPreventionSubdocsRef().doc('params');
   getFlaggedLocationsRef = () => this.getFraudPreventionRef().collection('flaggedlocations');
@@ -89,22 +89,32 @@ export default class FirebaseRefs {
   getPlatformLoginLogsRef = () => this.getPlatformLogsRef().collection('logins');
 
   // businesses
-  getBusinessesRef = () => {
-    if (monitoring) console.log('Call getBusinessesRef');
+  getBusinessesRef = (stopMonitoring?: boolean) => {
+    if (!stopMonitoring && monitoring) console.log('Call getBusinessesRef');
     return this.firestore.collection('businesses');
   };
-  getBusinessRef = (id: string) => this.getBusinessesRef().doc(id);
-  getBusinessProfileNotesRef = (id: string) => this.getBusinessRef(id).collection('profilenotes');
+  getBusinessRef = (id: string, child?: string) => {
+    if (monitoring) console.log(`Call getBusinessRef:${child ?? ''}`);
+    return this.getBusinessesRef(true).doc(id);
+  };
+  getBusinessProfileNotesRef = (id: string) =>
+    this.getBusinessRef(id, 'profilenotes').collection('profilenotes');
   getBusinessProfileNoteRef = (businessId: string, profileNoteId: string) =>
     this.getBusinessProfileNotesRef(businessId).doc(profileNoteId);
 
   // business menu
+  getBusinessMenuRef = (businessId: string) =>
+    this.getBusinessRef(businessId, 'menu').collection('menu');
+  getBusinessMenuOrderingRef = (businessId: string, menuId: string = 'default') =>
+    this.getBusinessMenuRef(businessId).doc(menuId);
+  getBusinessMenuMessageRef = (businessId: string) =>
+    this.getBusinessMenuRef(businessId).doc('message');
   getBusinessCategoriesRef = (businessId: string) =>
-    this.getBusinessRef(businessId).collection('categories');
+    this.getBusinessRef(businessId, 'categories').collection('categories');
   getBusinessCategoryRef = (businessId: string, categoryId: string) =>
     this.getBusinessCategoriesRef(businessId).doc(categoryId);
   getBusinessProductsRef = (businessId: string) =>
-    this.getBusinessRef(businessId).collection('products');
+    this.getBusinessRef(businessId, 'products').collection('products');
   getBusinessProductRef = (businessId: string, id: string) =>
     this.getBusinessProductsRef(businessId).doc(id);
   getBusinessProductComplementsGroupsRef = (businessId: string, productId: string) =>
@@ -115,22 +125,18 @@ export default class FirebaseRefs {
     this.getBusinessProductRef(businessId, productId).collection('complements');
   getBusinessProductComplementRef = (businessId: string, productId: string, complementId: string) =>
     this.getBusinessProductComplementsRef(businessId, productId).doc(complementId);
-  getBusinessMenuOrderingRef = (businessId: string, menuId: string = 'default') =>
-    this.getBusinessRef(businessId).collection('menu').doc(menuId);
-  getBusinessMenuMessageRef = (businessId: string) =>
-    this.getBusinessRef(businessId).collection('menu').doc('message');
   // new complements logic
   getBusinessComplementsGroupsRef = (businessId: string) =>
-    this.getBusinessRef(businessId).collection('complementsgroups');
+    this.getBusinessRef(businessId, 'complementsgroups').collection('complementsgroups');
   getBusinessComplementGroupRef = (businessId: string, groupId: string) =>
     this.getBusinessComplementsGroupsRef(businessId).doc(groupId);
   getBusinessComplementsRef = (businessId: string) =>
-    this.getBusinessRef(businessId).collection('complements');
+    this.getBusinessRef(businessId, 'complements').collection('complements');
   getBusinessComplementRef = (businessId: string, complementId: string) =>
     this.getBusinessComplementsRef(businessId).doc(complementId);
 
   // business private subcollections and docs
-  getBusinessPrivateRef = (id: string) => this.getBusinessRef(id).collection('private');
+  getBusinessPrivateRef = (id: string) => this.getBusinessRef(id, 'private').collection('private');
   getBusinessBankAccountRef = (id: string) => this.getBusinessPrivateRef(id).doc('bank');
   getBusinessMarketPlaceRef = (id: string) => this.getBusinessPrivateRef(id).doc('marketplace');
 
