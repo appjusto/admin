@@ -148,20 +148,27 @@ export default class FirebaseRefs {
   getManagerRef = (managerId: string) => this.firestore.collection('managers').doc(managerId);
 
   // orders
-  getOrdersRef = () => {
-    if (monitoring) console.log('%cCall getOrdersRef', 'color: purple');
+  getOrdersRef = (stopMonitoring?: boolean) => {
+    if (!stopMonitoring && monitoring) console.log('%cCall getOrdersRef', 'color: purple');
     return this.firestore.collection('orders');
   };
-  getOrderRef = (id: string) => this.getOrdersRef().doc(id);
-  getOrderChatRef = (id: string) => this.getOrderRef(id).collection('chat');
-  getOrderIssuesRef = (id: string) => this.getOrderRef(id).collection('issues');
-  getOrderLogsRef = (id: string) => this.getOrderRef(id).collection('logs');
-  getOrderPrivateRef = (id: string) => this.getOrderRef(id).collection('private');
-  getOrderPaymentsRef = (id: string) => this.getOrderPrivateRef(id).doc('payments');
-  getOrderCancellationRef = (id: string) => this.getOrderPrivateRef(id).doc('cancellation');
-  getOrderConfirmationRef = (id: string) => this.getOrderPrivateRef(id).doc('confirmation');
-  getOrderMatchingRef = (id: string) => this.getOrderPrivateRef(id).doc('matching');
-  getOrderFraudPreventionRef = (id: string) => this.getOrderPrivateRef(id).doc('fraudprevention');
+  getOrderRef = (id: string, collection?: string) => {
+    if (monitoring) console.log(`%cCall getOrderRef:${collection ?? ''}`, 'color: purple');
+    return this.getOrdersRef(true).doc(id);
+  };
+  getOrderChatRef = (id: string) => this.getOrderRef(id, 'chat').collection('chat');
+  getOrderIssuesRef = (id: string) => this.getOrderRef(id, 'issues').collection('issues');
+  getOrderLogsRef = (id: string) => this.getOrderRef(id, 'logs').collection('logs');
+  getOrderPrivateRef = (id: string, doc?: string) =>
+    this.getOrderRef(id, `private:${doc ?? ''}`).collection('private');
+  getOrderPaymentsRef = (id: string) => this.getOrderPrivateRef(id, 'payments').doc('payments');
+  getOrderCancellationRef = (id: string) =>
+    this.getOrderPrivateRef(id, 'cancellation').doc('cancellation');
+  getOrderConfirmationRef = (id: string) =>
+    this.getOrderPrivateRef(id, 'confirmation').doc('confirmation');
+  getOrderMatchingRef = (id: string) => this.getOrderPrivateRef(id, 'matching').doc('matching');
+  getOrderFraudPreventionRef = (id: string) =>
+    this.getOrderPrivateRef(id, 'fraudprevention').doc('fraudprevention');
 
   // invoices
   getInvoicesRef = () => {

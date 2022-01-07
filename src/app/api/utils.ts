@@ -45,6 +45,7 @@ export const customDocumentSnapshot = <T extends object>(
 ) => {
   return query.onSnapshot(
     (snapshot) => {
+      if (options.monitoring) console.log('%cGot snapshot result!', 'color: blue');
       if (options?.avoidPenddingWrites) {
         if (!snapshot.metadata.hasPendingWrites) {
           if (snapshot.exists) resultHandler(documentAs<T>(snapshot));

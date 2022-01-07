@@ -1,4 +1,5 @@
 import { useObserveOrderChats } from 'app/api/order/useObserveOrderChats';
+import { useObserveOrderInvoices } from 'app/api/order/useObserveOrderInvoices';
 import { useOrder } from 'app/api/order/useOrder';
 import { useFlaggedLocations } from 'app/api/platform/useFlaggedLocations';
 import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';
@@ -51,7 +52,6 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
   const { orderId } = useParams<Params>();
   const {
     order,
-    invoices,
     updateOrder,
     updateResult,
     cancelOrder,
@@ -60,6 +60,7 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
     orderCancellation,
     orderCancellationCosts,
   } = useOrder(orderId);
+  const invoices = useObserveOrderInvoices(orderId);
   const cancelOptions = useIssuesByType(cancelOptionsArray);
   const { addFlaggedLocation } = useFlaggedLocations();
   const chatMessages = useObserveOrderChats(orderId);
