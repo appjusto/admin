@@ -14,11 +14,12 @@ export const customCollectionSnapshot = <T extends object>(
   resultHandler: (result: WithId<T>[]) => void,
   options: customSnapshotOptions = {
     avoidPenddingWrites: true,
+    captureException: true,
   }
 ) => {
   return query.onSnapshot(
     (snapshot) => {
-      if (options.monitoring) console.log('%cSnapshot result!', 'color: blue');
+      if (options.monitoring) console.log('%cGot snapshot result!', 'color: blue');
       if (options?.avoidPenddingWrites) {
         if (!snapshot.metadata.hasPendingWrites) {
           resultHandler(documentsAs<T>(snapshot.docs));
@@ -39,6 +40,7 @@ export const customDocumentSnapshot = <T extends object>(
   resultHandler: (result: WithId<T> | null) => void,
   options: customSnapshotOptions = {
     avoidPenddingWrites: true,
+    captureException: true,
   }
 ) => {
   return query.onSnapshot(

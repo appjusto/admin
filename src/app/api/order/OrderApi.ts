@@ -57,10 +57,7 @@ export default class OrderApi {
       query = query.where('business.id', '==', businessId);
     }
     // returns the unsubscribe function
-    return customCollectionSnapshot(query, resultHandler, {
-      avoidPenddingWrites: true,
-      captureException: true,
-    });
+    return customCollectionSnapshot(query, resultHandler);
   }
 
   observeBusinessOrdersCompletedInTheLastHour(
@@ -78,10 +75,7 @@ export default class OrderApi {
       .where('status', 'in', statuses)
       .where('updatedOn', '>', baseTim);
     // returns the unsubscribe function
-    return customCollectionSnapshot(query, resultHandler, {
-      avoidPenddingWrites: true,
-      captureException: true,
-    });
+    return customCollectionSnapshot(query, resultHandler);
   }
 
   observeDashboardOrders(
@@ -99,10 +93,7 @@ export default class OrderApi {
       .where('updatedOn', '>=', start)
       .where('updatedOn', '<=', end);
     // returns the unsubscribe function
-    return customCollectionSnapshot(query, resultHandler, {
-      avoidPenddingWrites: true,
-      captureException: true,
-    });
+    return customCollectionSnapshot(query, resultHandler);
   }
 
   observeBODashboardOrders(
@@ -115,10 +106,7 @@ export default class OrderApi {
       .where('updatedOn', '>', start)
       .where('status', 'in', statuses);
     // returns the unsubscribe function
-    return customCollectionSnapshot(query, resultHandler, {
-      avoidPenddingWrites: true,
-      captureException: true,
-    });
+    return customCollectionSnapshot(query, resultHandler);
   }
 
   observeOrdersHistory(
@@ -216,10 +204,7 @@ export default class OrderApi {
       .where('business.id', '==', businessId)
       .where('status', '==', 'canceled');
     // returns the unsubscribe function
-    return customCollectionSnapshot(query, resultHandler, {
-      avoidPenddingWrites: true,
-      captureException: true,
-    });
+    return customCollectionSnapshot(query, resultHandler);
   }
 
   observeOrder(
@@ -228,16 +213,9 @@ export default class OrderApi {
   ): firebase.Unsubscribe {
     let query = this.refs.getOrderRef(orderId);
     // returns the unsubscribe function
-    return customDocumentSnapshot<Order>(
-      query,
-      (result) => {
-        if (result) resultHandler(result);
-      },
-      {
-        avoidPenddingWrites: true,
-        captureException: true,
-      }
-    );
+    return customDocumentSnapshot<Order>(query, (result) => {
+      if (result) resultHandler(result);
+    });
   }
 
   observeOrderLogs(
@@ -246,10 +224,7 @@ export default class OrderApi {
   ): firebase.Unsubscribe {
     let query = this.refs.getOrderLogsRef(orderId).orderBy('timestamp', 'asc');
     // returns the unsubscribe function
-    return customCollectionSnapshot(query, resultHandler, {
-      avoidPenddingWrites: true,
-      captureException: true,
-    });
+    return customCollectionSnapshot(query, resultHandler);
   }
 
   observeOrderChats(
@@ -288,10 +263,7 @@ export default class OrderApi {
       .where('to.id', '==', counterpartId)
       .orderBy('timestamp', 'asc');
     // returns the unsubscribe function
-    return customCollectionSnapshot(query, resultHandler, {
-      avoidPenddingWrites: true,
-      captureException: true,
-    });
+    return customCollectionSnapshot(query, resultHandler);
   }
 
   observeOrderIssues(
@@ -300,10 +272,7 @@ export default class OrderApi {
   ): firebase.Unsubscribe {
     let query = this.refs.getOrderIssuesRef(orderId).orderBy('createdOn', 'desc');
     // returns the unsubscribe function
-    return customCollectionSnapshot(query, resultHandler, {
-      avoidPenddingWrites: true,
-      captureException: true,
-    });
+    return customCollectionSnapshot(query, resultHandler);
   }
 
   observeOrderFraudPrevention(
@@ -403,10 +372,7 @@ export default class OrderApi {
       .where('confirmedOn', '>=', start)
       .where('confirmedOn', '<=', end);
     // returns the unsubscribe function
-    return customCollectionSnapshot(query, resultHandler, {
-      avoidPenddingWrites: true,
-      captureException: true,
-    });
+    return customCollectionSnapshot(query, resultHandler);
   }
 
   observeOrderInvoices(
@@ -420,10 +386,7 @@ export default class OrderApi {
       .where('orderId', '==', orderId);
     if (businessId) query = query.where('accountId', '==', businessId);
     // returns the unsubscribe function
-    return customCollectionSnapshot(query, resultHandler, {
-      avoidPenddingWrites: true,
-      captureException: true,
-    });
+    return customCollectionSnapshot(query, resultHandler);
   }
 
   observeInvoices(
@@ -472,10 +435,7 @@ export default class OrderApi {
       .where('createdOn', '>=', start)
       .where('createdOn', '<=', end);
     // returns the unsubscribe function
-    return customCollectionSnapshot(query, resultHandler, {
-      avoidPenddingWrites: true,
-      captureException: true,
-    });
+    return customCollectionSnapshot(query, resultHandler);
   }
 
   observeInvoice(
@@ -484,16 +444,9 @@ export default class OrderApi {
   ): firebase.Unsubscribe {
     let query = this.refs.getInvoicesRef().doc(invoiceId);
     // returns the unsubscribe function
-    return customDocumentSnapshot<Invoice>(
-      query,
-      (result) => {
-        if (result) resultHandler(result);
-      },
-      {
-        avoidPenddingWrites: true,
-        captureException: true,
-      }
-    );
+    return customDocumentSnapshot<Invoice>(query, (result) => {
+      if (result) resultHandler(result);
+    });
   }
 
   async sendMessage(orderId: string, message: Partial<ChatMessage>) {

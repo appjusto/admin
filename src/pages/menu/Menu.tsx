@@ -31,7 +31,6 @@ const Menu = () => {
   React.useEffect(() => {
     setIsMenuActive(true);
   }, [setIsMenuActive]);
-  console.log('Menu Render');
   // UI
   return (
     <Box>

@@ -37,26 +37,26 @@ export default class FirebaseRefs {
   getBatchRef = () => this.firestore.batch();
   // users
   getUsersRef = () => {
-    if (monitoring) console.log('Call getUsersRef');
+    if (monitoring) console.log('%cCall getUsersRef', 'color: purple');
     return this.firestore.collection('users');
   };
   getUsersChangesRef = () => this.getUsersRef().doc('subcollections').collection('changes');
 
   // advances
   getAdvancesRef = () => {
-    if (monitoring) console.log('Call getAdvancesRef');
+    if (monitoring) console.log('%cCall getAdvancesRef', 'color: purple');
     return this.firestore.collection('advances');
   };
 
   // withdraws
   getWithdrawsRef = () => {
-    if (monitoring) console.log('Call getWithdrawsRef');
+    if (monitoring) console.log('%cCall getWithdrawsRef', 'color: purple');
     return this.firestore.collection('withdraws');
   };
 
   // platform
   getPlatformRef = (doc: string) => {
-    if (monitoring) console.log(`Call getPlatformRef:${doc}`);
+    if (monitoring) console.log(`%cCall getPlatformRef:${doc}`, 'color: purple');
     return this.firestore.collection('platform');
   };
 
@@ -75,7 +75,7 @@ export default class FirebaseRefs {
     this.getFraudPreventionRef().collection('flaggedlocations').doc(locationId);
   // platform / fraud / flaggedlocations with geo
   getFlaggedLocationsWithGeoRef = () => {
-    if (monitoring) console.log('Call getFlaggedLocationsWithGeoRef');
+    if (monitoring) console.log('%cCall getFlaggedLocationsWithGeoRef', 'color: purple');
     return this.firestoreWithGeo.collection('platform').doc('fraud').collection('flaggedlocations');
   };
 
@@ -90,11 +90,11 @@ export default class FirebaseRefs {
 
   // businesses
   getBusinessesRef = (stopMonitoring?: boolean) => {
-    if (!stopMonitoring && monitoring) console.log('Call getBusinessesRef');
+    if (!stopMonitoring && monitoring) console.log('%cCall getBusinessesRef', 'color: purple');
     return this.firestore.collection('businesses');
   };
   getBusinessRef = (id: string, child?: string) => {
-    if (monitoring) console.log(`Call getBusinessRef:${child ?? ''}`);
+    if (monitoring) console.log(`%cCall getBusinessRef:${child ?? ''}`, 'color: purple');
     return this.getBusinessesRef(true).doc(id);
   };
   getBusinessProfileNotesRef = (id: string) =>
@@ -142,14 +142,14 @@ export default class FirebaseRefs {
 
   // managers
   getManagersRef = () => {
-    if (monitoring) console.log('Call getManagersRef');
+    if (monitoring) console.log('%cCall getManagersRef', 'color: purple');
     return this.firestore.collection('managers');
   };
   getManagerRef = (managerId: string) => this.firestore.collection('managers').doc(managerId);
 
   // orders
   getOrdersRef = () => {
-    if (monitoring) console.log('Call getOrdersRef');
+    if (monitoring) console.log('%cCall getOrdersRef', 'color: purple');
     return this.firestore.collection('orders');
   };
   getOrderRef = (id: string) => this.getOrdersRef().doc(id);
@@ -165,13 +165,13 @@ export default class FirebaseRefs {
 
   // invoices
   getInvoicesRef = () => {
-    if (monitoring) console.log('Call getInvoicesRef');
+    if (monitoring) console.log('%cCall getInvoicesRef', 'color: purple');
     return this.firestore.collection('invoices');
   };
 
   // consumers
   getConsumersRef = () => {
-    if (monitoring) console.log('Call getConsumersRef');
+    if (monitoring) console.log('%cCall getConsumersRef', 'color: purple');
     return this.firestore.collection('consumers');
   };
   getConsumerRef = (id: string) => this.getConsumersRef().doc(id);
@@ -181,7 +181,7 @@ export default class FirebaseRefs {
 
   // couriers
   getCouriersRef = () => {
-    if (monitoring) console.log('Call getCouriersRef');
+    if (monitoring) console.log('%cCall getCouriersRef', 'color: purple');
     return this.firestore.collection('couriers');
   };
   getCourierRef = (id: string) => this.getCouriersRef().doc(id);
@@ -194,7 +194,7 @@ export default class FirebaseRefs {
 
   // fleets
   getFleetsRef = () => {
-    if (monitoring) console.log('Call getFleetsRef');
+    if (monitoring) console.log('%cCall getFleetsRef', 'color: purple');
     return this.firestore.collection('fleets');
   };
   getFleetRef = (id: string) => this.getFleetsRef().doc(id);
@@ -202,7 +202,7 @@ export default class FirebaseRefs {
 
   // invoices
   getRecommendationsRef = () => {
-    if (monitoring) console.log('Call getRecommendationsRef');
+    if (monitoring) console.log('%cCall getRecommendationsRef', 'color: purple');
     return this.firestore.collection('recommendations');
   };
   getRecommendationRef = (id: string) => this.getRecommendationsRef().doc(id);

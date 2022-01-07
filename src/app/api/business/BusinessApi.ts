@@ -440,10 +440,7 @@ export default class BusinessApi {
   ): firebase.Unsubscribe {
     const query = this.refs.getBusinessCategoriesRef(businessId);
     // returns the unsubscribe function
-    return customCollectionSnapshot(query, resultHandler, {
-      avoidPenddingWrites: true,
-      monitoring: true,
-    });
+    return customCollectionSnapshot(query, resultHandler);
   }
 
   createCategoryRef(businessId: string): string {
