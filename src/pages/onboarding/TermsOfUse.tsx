@@ -27,16 +27,16 @@ export const TermsOfUse = ({ redirect }: TermsProps) => {
   if (accept && redirect) return <Redirect to={redirect} push />;
   return (
     <>
-      {terms ? (
-        <Markdown className="markdown-body" children={terms} />
-      ) : terms === undefined ? (
+      {terms === undefined ? (
         <Text>{t('Carregando termos de uso...')}</Text>
-      ) : (
+      ) : terms === null ? (
         <Text>
           {t(
             'Para ler os termos, favor acessar o arquivo: https://github.com/appjusto/docs/blob/main/legal/termos-de-uso-restaurantes.md'
           )}
         </Text>
+      ) : (
+        <Markdown className="markdown-body" children={terms} />
       )}
       <Button mt="8" onClick={() => setAccept(true)}>
         {t('Confirmar e criar minha conta')}

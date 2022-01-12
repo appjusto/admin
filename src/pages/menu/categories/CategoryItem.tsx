@@ -79,9 +79,9 @@ export const CategoryItem = React.memo(({ category, products, index, hidden, url
           </Droppable>
           <Button
             mt="0"
-            w={{ base: '100%', md: '220px' }}
+            w={{ base: '100%', md: '300px' }}
             link={`${url}/product/new?categoryId=${category.id}`}
-            label={t('Adicionar produto')}
+            label={t('Adicionar produto à categoria')}
             aria-label={`adicionar-produto-${slugfyName(category.name)}`}
             variant="outline"
           />
