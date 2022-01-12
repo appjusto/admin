@@ -10,8 +10,8 @@ import {
 import FilesApi from '../FilesApi';
 import FirebaseRefs from '../FirebaseRefs';
 import firebase from 'firebase/app';
-import { documentAs, documentsAs } from 'core/fb';
 import * as Sentry from '@sentry/react';
+import { customCollectionSnapshot, customDocumentSnapshot } from '../utils';
 
 export type CourierReviewType = 'positive' | 'negative';
 
@@ -29,70 +29,35 @@ export default class CourierApi {
     resultHandler: (result: WithId<CourierProfile>[]) => void
   ): firebase.Unsubscribe {
     const query = this.refs.getCouriersRef().where('status', 'in', statuses);
-    const unsubscribe = query.onSnapshot(
-      (querySnapshot) => {
-        if (!querySnapshot.empty) resultHandler(documentsAs<CourierProfile>(querySnapshot.docs));
-        else resultHandler([]);
-      },
-      (error) => {
-        console.error(error);
-      }
-    );
-    return unsubscribe;
+    // returns the unsubscribe function
+    return customCollectionSnapshot(query, resultHandler);
   }
 
   observeCourierProfile(
     courierId: string,
     resultHandler: (result: WithId<CourierProfile> | null) => void
   ): firebase.Unsubscribe {
-    const unsubscribe = this.refs.getCourierRef(courierId).onSnapshot(
-      (doc) => {
-        if (doc.exists) resultHandler(documentAs<CourierProfile>(doc));
-        else resultHandler(null);
-      },
-      (error) => {
-        console.error(error);
-      }
-    );
-    return unsubscribe;
+    const query = this.refs.getCourierRef(courierId);
+    // returns the unsubscribe function
+    return customDocumentSnapshot(query, resultHandler);
   }
 
   observeCourierProfileByCode(
     courierCode: string,
     resultHandler: (result: WithId<CourierProfile>[] | null) => void
   ): firebase.Unsubscribe {
-    const unsubscribe = this.refs
-      .getCouriersRef()
-      .where('code', '==', courierCode)
-      .onSnapshot(
-        (snaptShot) => {
-          if (!snaptShot.empty) resultHandler(documentsAs<CourierProfile>(snaptShot.docs));
-          else resultHandler(null);
-        },
-        (error) => {
-          console.error(error);
-        }
-      );
-    return unsubscribe;
+    const query = this.refs.getCouriersRef().where('code', '==', courierCode);
+    // returns the unsubscribe function
+    return customCollectionSnapshot(query, resultHandler);
   }
 
   observeCourierProfileByName(
     courierName: string,
     resultHandler: (result: WithId<CourierProfile>[] | null) => void
   ): firebase.Unsubscribe {
-    const unsubscribe = this.refs
-      .getCouriersRef()
-      .where('name', '==', courierName)
-      .onSnapshot(
-        (snaptShot) => {
-          if (!snaptShot.empty) resultHandler(documentsAs<CourierProfile>(snaptShot.docs));
-          else resultHandler(null);
-        },
-        (error) => {
-          console.error(error);
-        }
-      );
-    return unsubscribe;
+    const query = this.refs.getCouriersRef().where('name', '==', courierName);
+    // returns the unsubscribe function
+    return customCollectionSnapshot(query, resultHandler);
   }
 
   observeCourierReviews(
@@ -108,32 +73,17 @@ export default class CourierApi {
       .where('type', 'in', types)
       .where('createdOn', '>=', start)
       .where('createdOn', '<=', end);
-    const unsubscribe = query.onSnapshot(
-      (querySnapshot) => {
-        if (!querySnapshot.empty) resultHandler(documentsAs<CourierReview>(querySnapshot.docs));
-        else resultHandler(null);
-      },
-      (error) => {
-        console.error(error);
-      }
-    );
-    return unsubscribe;
+    // returns the unsubscribe function
+    return customCollectionSnapshot(query, resultHandler);
   }
 
   observeCourierMarketPlace(
     courierId: string,
     resultHandler: (result: MarketplaceAccountInfo | null) => void
   ): firebase.Unsubscribe {
-    const unsubscribe = this.refs.getCourierMarketPlaceRef(courierId).onSnapshot(
-      (doc) => {
-        if (doc.exists) resultHandler(documentAs<MarketplaceAccountInfo>(doc));
-        else resultHandler(null);
-      },
-      (error) => {
-        console.error(error);
-      }
-    );
-    return unsubscribe;
+    const query = this.refs.getCourierMarketPlaceRef(courierId);
+    // returns the unsubscribe function
+    return customDocumentSnapshot(query, resultHandler);
   }
 
   // profile notes
@@ -141,18 +91,9 @@ export default class CourierApi {
     courierId: string,
     resultHandler: (result: WithId<ProfileNote>[]) => void
   ): firebase.Unsubscribe {
-    const unsubscribe = this.refs
-      .getCourierProfileNotesRef(courierId)
-      .orderBy('createdOn', 'desc')
-      .onSnapshot(
-        (querySnapshot) => {
-          resultHandler(documentsAs<ProfileNote>(querySnapshot.docs));
-        },
-        (error) => {
-          console.error(error);
-        }
-      );
-    return unsubscribe;
+    const query = this.refs.getCourierProfileNotesRef(courierId).orderBy('createdOn', 'desc');
+    // returns the unsubscribe function
+    return customCollectionSnapshot(query, resultHandler);
   }
 
   async createProfileNote(courierId: string, data: Partial<ProfileNote>) {

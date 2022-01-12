@@ -4,9 +4,9 @@ import { t } from 'utils/i18n';
 
 interface PeriodTableProps {
   period: string;
-  amount?: number | null;
-  appjustoFee?: number | null;
-  iuguFee?: number | null;
+  amount?: number;
+  appjustoFee?: number;
+  iuguFee?: number;
 }
 
 export const PeriodTable = ({ period, amount, appjustoFee, iuguFee }: PeriodTableProps) => {
@@ -19,7 +19,12 @@ export const PeriodTable = ({ period, amount, appjustoFee, iuguFee }: PeriodTabl
   return (
     <Table mt="6" size="md" variant="simple">
       <Tbody>
-        {amount ? (
+        {amount === undefined ? (
+          <Tr color="black" fontSize="xs" fontWeight="700">
+            <Td>{t('Carregando...')}</Td>
+            <Td></Td>
+          </Tr>
+        ) : (
           <>
             <Tr color="black" fontSize="xs" fontWeight="500">
               <Td>{t('Total de vendas')}</Td>
@@ -38,16 +43,6 @@ export const PeriodTable = ({ period, amount, appjustoFee, iuguFee }: PeriodTabl
               </Td>
             </Tr>
           </>
-        ) : amount === null ? (
-          <Tr color="black" fontSize="xs" fontWeight="700">
-            <Td>{t('Não há dados para o período informado')}</Td>
-            <Td></Td>
-          </Tr>
-        ) : (
-          <Tr color="black" fontSize="xs" fontWeight="700">
-            <Td>{t('Carregando...')}</Td>
-            <Td></Td>
-          </Tr>
         )}
       </Tbody>
       <Tfoot bgColor="gray.50">

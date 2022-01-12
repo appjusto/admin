@@ -16,7 +16,7 @@ export const useBusinessProfileValidation = (businessId?: string) => {
   // context
   const { business, setBusinessId } = useContextBusiness();
   const { manager, setManagerEmail } = useContextManagerProfile();
-  const products = useObserveProducts(business?.id);
+  const products = useObserveProducts(true, business?.id);
   const { bankAccount } = useBusinessBankAccount();
 
   // state

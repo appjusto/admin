@@ -32,6 +32,7 @@ import {
   IuguMarketplaceAccountAdvanceSimulation,
   IuguMarketplaceAccountReceivables,
 } from 'appjusto-types/payment/iugu';
+import { customCollectionSnapshot, customDocumentSnapshot } from '../utils';
 
 export default class BusinessApi {
   constructor(private refs: FirebaseRefs, private files: FilesApi) {}
@@ -41,21 +42,12 @@ export default class BusinessApi {
     situations: string[],
     resultHandler: (result: WithId<Business>[]) => void
   ): firebase.Unsubscribe {
-    let query = this.refs
+    const query = this.refs
       .getBusinessesRef()
       .orderBy('createdOn', 'asc')
       .where('situation', 'in', situations);
-
-    const unsubscribe = query.onSnapshot(
-      (querySnapshot) => {
-        resultHandler(documentsAs<Business>(querySnapshot.docs));
-      },
-      (error) => {
-        console.error(error);
-      }
-    );
     // returns the unsubscribe function
-    return unsubscribe;
+    return customCollectionSnapshot(query, resultHandler);
   }
 
   observeBusinessesByStatus(
@@ -63,16 +55,8 @@ export default class BusinessApi {
     resultHandler: (result: WithId<Business>[]) => void
   ): firebase.Unsubscribe {
     const query = this.refs.getBusinessesRef().where('status', '==', status);
-    const unsubscribe = query.onSnapshot(
-      (querySnapshot) => {
-        if (!querySnapshot.empty) resultHandler(documentsAs<Business>(querySnapshot.docs));
-        else resultHandler([]);
-      },
-      (error) => {
-        console.error(error);
-      }
-    );
-    return unsubscribe;
+    // returns the unsubscribe function
+    return customCollectionSnapshot(query, resultHandler);
   }
 
   // business profile
@@ -80,23 +64,16 @@ export default class BusinessApi {
     businessId: string,
     resultHandler: (result: WithId<Business> | null) => void
   ): firebase.Unsubscribe {
-    const unsubscribe = this.refs.getBusinessRef(businessId).onSnapshot(
-      (doc) => {
-        if (doc.exists) resultHandler(documentAs<Business>(doc));
-        else resultHandler(null);
-      },
-      (error) => {
-        console.error(error);
-      }
-    );
-    return unsubscribe;
+    const query = this.refs.getBusinessRef(businessId);
+    // returns the unsubscribe function
+    return customDocumentSnapshot(query, resultHandler);
   }
 
   observeBusinessAdvances(
     businessId: string,
     start: Date,
     end: Date,
-    resultHandler: (result: WithId<AccountAdvance>[] | null) => void
+    resultHandler: (result: WithId<AccountAdvance>[]) => void
   ): firebase.Unsubscribe {
     const query = this.refs
       .getAdvancesRef()
@@ -104,23 +81,15 @@ export default class BusinessApi {
       .where('accountId', '==', businessId)
       .where('createdOn', '>=', start)
       .where('createdOn', '<=', end);
-    const unsubscribe = query.onSnapshot(
-      (data) => {
-        if (!data.empty) resultHandler(documentsAs<AccountAdvance>(data.docs));
-        else resultHandler(null);
-      },
-      (error) => {
-        console.error(error);
-      }
-    );
-    return unsubscribe;
+    // returns the unsubscribe function
+    return customCollectionSnapshot(query, resultHandler);
   }
 
   observeBusinessWithdraws(
     businessId: string,
     start: Date,
     end: Date,
-    resultHandler: (result: WithId<AccountWithdraw>[] | null) => void
+    resultHandler: (result: WithId<AccountWithdraw>[]) => void
   ): firebase.Unsubscribe {
     const query = this.refs
       .getWithdrawsRef()
@@ -128,16 +97,8 @@ export default class BusinessApi {
       .where('accountId', '==', businessId)
       .where('createdOn', '>=', start)
       .where('createdOn', '<=', end);
-    const unsubscribe = query.onSnapshot(
-      (data) => {
-        if (!data.empty) resultHandler(documentsAs<AccountWithdraw>(data.docs));
-        else resultHandler(null);
-      },
-      (error) => {
-        console.error(error);
-      }
-    );
-    return unsubscribe;
+    // returns the unsubscribe function
+    return customCollectionSnapshot(query, resultHandler);
   }
 
   observeBusinessChatMessageAsFrom(
@@ -202,16 +163,9 @@ export default class BusinessApi {
     businessId: string,
     resultHandler: (result: MarketplaceAccountInfo | null) => void
   ): firebase.Unsubscribe {
-    const unsubscribe = this.refs.getBusinessMarketPlaceRef(businessId).onSnapshot(
-      (doc) => {
-        if (doc.exists) resultHandler(documentAs<MarketplaceAccountInfo>(doc));
-        else resultHandler(null);
-      },
-      (error) => {
-        console.error(error);
-      }
-    );
-    return unsubscribe;
+    const query = this.refs.getBusinessMarketPlaceRef(businessId);
+    // returns the unsubscribe function
+    return customDocumentSnapshot(query, resultHandler);
   }
 
   async deletePrivateMarketPlace(businessId: string) {
@@ -349,19 +303,12 @@ export default class BusinessApi {
     email: string,
     resultHandler: (result: WithId<Business>[]) => void
   ): firebase.Unsubscribe {
-    const unsubscribe = this.refs
+    const query = this.refs
       .getBusinessesRef()
       .where('managers', 'array-contains', email)
-      .orderBy('createdOn', 'desc')
-      .onSnapshot(
-        (querySnapshot) => {
-          resultHandler(documentsAs<Business>(querySnapshot.docs));
-        },
-        (error) => {
-          console.error(error);
-        }
-      );
-    return unsubscribe;
+      .orderBy('createdOn', 'desc');
+    // returns the unsubscribe function
+    return customCollectionSnapshot(query, resultHandler);
   }
 
   // profile notes
@@ -369,18 +316,9 @@ export default class BusinessApi {
     businessId: string,
     resultHandler: (result: WithId<ProfileNote>[]) => void
   ): firebase.Unsubscribe {
-    const unsubscribe = this.refs
-      .getBusinessProfileNotesRef(businessId)
-      .orderBy('createdOn', 'desc')
-      .onSnapshot(
-        (querySnapshot) => {
-          resultHandler(documentsAs<ProfileNote>(querySnapshot.docs));
-        },
-        (error) => {
-          console.error(error);
-        }
-      );
-    return unsubscribe;
+    const query = this.refs.getBusinessProfileNotesRef(businessId).orderBy('createdOn', 'desc');
+    // returns the unsubscribe function
+    return customCollectionSnapshot(query, resultHandler);
   }
 
   async createProfileNote(businessId: string, data: Partial<ProfileNote>) {
@@ -500,19 +438,24 @@ export default class BusinessApi {
     businessId: string,
     resultHandler: (result: WithId<Category>[]) => void
   ): firebase.Unsubscribe {
-    const unsubscribe = this.refs.getBusinessCategoriesRef(businessId).onSnapshot(
-      (querySnapshot) => {
-        resultHandler(documentsAs<Category>(querySnapshot.docs));
-      },
-      (error) => {
-        console.error(error);
-      }
-    );
-    return unsubscribe;
+    const query = this.refs.getBusinessCategoriesRef(businessId);
+    // returns the unsubscribe function
+    return customCollectionSnapshot(query, resultHandler);
   }
 
   createCategoryRef(businessId: string): string {
     return this.refs.getBusinessCategoriesRef(businessId).doc().id;
+  }
+
+  async fethCategories(businessId: string) {
+    const query = this.refs.getBusinessCategoriesRef(businessId);
+    let snapshot = await query.get({ source: 'cache' });
+    if (snapshot.empty) {
+      snapshot = await query.get({ source: 'server' });
+    }
+    console.log(snapshot.metadata.fromCache ? '%cfrom Cache' : '%cfrom Server', 'color: red');
+    return documentsAs<Category>(snapshot.docs);
+    //return customCollectionGet<Category>(query, { cacheFirst: true });
   }
 
   async fetchCategory(businessId: string, categoryId: string) {
@@ -547,15 +490,8 @@ export default class BusinessApi {
     resultHandler: (result: WithId<Product>[]) => void
   ): firebase.Unsubscribe {
     const query = this.refs.getBusinessProductsRef(businessId);
-    const unsubscribe = query.onSnapshot(
-      (querySnapshot) => {
-        resultHandler(documentsAs<Product>(querySnapshot.docs));
-      },
-      (error) => {
-        console.error(error);
-      }
-    );
-    return unsubscribe;
+    // returns the unsubscribe function
+    return customCollectionSnapshot(query, resultHandler);
   }
   observeProduct(
     businessId: string,
@@ -563,15 +499,10 @@ export default class BusinessApi {
     resultHandler: (result: WithId<Product>) => void
   ): firebase.Unsubscribe {
     const query = this.refs.getBusinessProductRef(businessId, productId);
-    const unsubscribe = query.onSnapshot(
-      (querySnapshot) => {
-        resultHandler(documentAs<Product>(querySnapshot));
-      },
-      (error) => {
-        console.error(error);
-      }
-    );
-    return unsubscribe;
+    // returns the unsubscribe function
+    return customDocumentSnapshot<Product>(query, (result) => {
+      if (result) resultHandler(result);
+    });
   }
 
   createProductRef(businessId: string): string {
@@ -675,17 +606,8 @@ export default class BusinessApi {
     resultHandler: (result: WithId<ComplementGroup>[]) => void
   ): firebase.Unsubscribe {
     const query = this.refs.getBusinessComplementsGroupsRef(businessId);
-    const unsubscribe = query.onSnapshot(
-      (querySnapshot) => {
-        if (!querySnapshot.empty) {
-          resultHandler(documentsAs<ComplementGroup>(querySnapshot.docs));
-        }
-      },
-      (error) => {
-        console.error(error);
-      }
-    );
-    return unsubscribe;
+    // returns the unsubscribe function
+    return customCollectionSnapshot(query, resultHandler);
   }
 
   observeComplements(
@@ -693,17 +615,8 @@ export default class BusinessApi {
     resultHandler: (result: WithId<Complement>[]) => void
   ): firebase.Unsubscribe {
     const query = this.refs.getBusinessComplementsRef(businessId);
-    const unsubscribe = query.onSnapshot(
-      (querySnapshot) => {
-        if (!querySnapshot.empty) {
-          resultHandler(documentsAs<Complement>(querySnapshot.docs));
-        }
-      },
-      (error) => {
-        console.error(error);
-      }
-    );
-    return unsubscribe;
+    // returns the unsubscribe function
+    return customCollectionSnapshot(query, resultHandler);
   }
 
   async createComplementsGroup(businessId: string, group: ComplementGroup) {

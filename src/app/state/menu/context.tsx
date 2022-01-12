@@ -11,6 +11,7 @@ import { useContextApi } from '../api/context';
 import { useContextBusinessId } from '../business/context';
 
 interface ContextProps {
+  setIsMenuActive: (value: boolean) => void;
   isProductsPage: boolean;
   setIsProductPage(value: boolean): void;
   categories: WithId<Category>[];
@@ -69,22 +70,27 @@ interface ContextProps {
 interface ProviderProps {
   children: React.ReactNode | React.ReactNode[];
 }
-const MenuProviderContext = React.createContext<ContextProps>({} as ContextProps);
+const MenuContext = React.createContext<ContextProps>({} as ContextProps);
 
-export const MenuProvider = (props: ProviderProps) => {
+export const MenuContextProvider = (props: ProviderProps) => {
   // context
   const api = useContextApi();
   const businessId = useContextBusinessId();
-  const unorderedCategories = useObserveCategories(businessId);
-  const products = useObserveProducts(businessId);
+  // state
+  const [isMenuActive, setIsMenuActive] = React.useState(false);
+  const [isProductsPage, setIsProductPage] = React.useState(true);
+  // hooks
+  const unorderedCategories = useObserveCategories(isMenuActive, businessId);
+  const products = useObserveProducts(isMenuActive, businessId);
   const {
     productsOrdering,
     updateProductsOrdering,
     complementsOrdering,
     updateComplementsOrdering,
-  } = useObserveMenuOrdering(businessId);
+  } = useObserveMenuOrdering(isMenuActive, businessId);
+  const { complementsGroups, complements } = useObserveComplements(isMenuActive, businessId);
+  // helpers
   const categories = menu.getSorted(unorderedCategories, products, productsOrdering);
-  const { complementsGroups, complements } = useObserveComplements(businessId!);
   const complementsGroupsWithItems = menu.getSorted(
     complementsGroups,
     complements,
@@ -95,12 +101,9 @@ export const MenuProvider = (props: ProviderProps) => {
     complements,
     complementsOrdering
   );
-  // state
-  const [isProductsPage, setIsProductPage] = React.useState(true);
   // complements groups
   const getComplementsGroupById = (groupId?: string) =>
     complementsGroups.find((group) => group.id === groupId);
-
   const {
     mutateAsync: updateComplementsGroup,
     mutationResult: updateGroupResult,
@@ -134,7 +137,6 @@ export const MenuProvider = (props: ProviderProps) => {
     const group = complementsGroups.find((group) => group.id === parentId);
     return { group, complement };
   };
-
   const {
     mutateAsync: updateComplement,
     mutationResult: updateComplementResult,
@@ -170,8 +172,9 @@ export const MenuProvider = (props: ProviderProps) => {
   }, 'deleteComplement');
   // provider
   return (
-    <MenuProviderContext.Provider
+    <MenuContext.Provider
       value={{
+        setIsMenuActive,
         isProductsPage,
         setIsProductPage,
         categories,
@@ -200,5 +203,5 @@ export const MenuProvider = (props: ProviderProps) => {
 };
 
 export const useContextMenu = () => {
-  return React.useContext(MenuProviderContext)!;
+  return React.useContext(MenuContext)!;
 };

@@ -3,7 +3,7 @@ import { Complement, ComplementGroup } from 'appjusto-types';
 import React from 'react';
 import { useContextApi } from '../../../state/api/context';
 
-export const useObserveComplements = (businessId?: string) => {
+export const useObserveComplements = (isMenuActive: boolean, businessId?: string) => {
   // context
   const api = useContextApi();
   // state
@@ -11,15 +11,17 @@ export const useObserveComplements = (businessId?: string) => {
   const [complements, setComplements] = React.useState<WithId<Complement>[]>([]);
   // side effects
   React.useEffect(() => {
+    if (!isMenuActive) return;
     if (!businessId) return;
     const unsub = api.business().observeComplementsGroups(businessId, setComplementsGroups);
     return () => unsub();
-  }, [api, businessId]);
+  }, [api, isMenuActive, businessId]);
   React.useEffect(() => {
+    if (!isMenuActive) return;
     if (!businessId) return;
     const unsub = api.business().observeComplements(businessId, setComplements);
     return () => unsub();
-  }, [api, businessId]);
+  }, [api, isMenuActive, businessId]);
   // result
   return { complementsGroups, complements };
 };

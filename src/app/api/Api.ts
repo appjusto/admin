@@ -55,6 +55,7 @@ export default class Api {
         ssl: false,
       });
     }
+
     this._functions = Api.app.functions(config.firebase.config.region);
     this._analytics = Api.app.analytics();
     this._analytics.setAnalyticsCollectionEnabled(false);

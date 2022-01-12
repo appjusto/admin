@@ -12,10 +12,10 @@ export const useObserveInvoicesStatusByPeriod = (
   // context
   const api = useContextApi();
   // state
-  const [invoices, setInvoices] = React.useState<WithId<Invoice>[] | null>();
-  const [periodAmount, setPeriodAmount] = React.useState<number | null>();
-  const [appjustoFee, setAppjustoFee] = React.useState<number | null>();
-  const [iuguFee, setIuguFee] = React.useState<number | null>();
+  const [invoices, setInvoices] = React.useState<WithId<Invoice>[]>();
+  const [periodAmount, setPeriodAmount] = React.useState<number>();
+  const [appjustoFee, setAppjustoFee] = React.useState<number>();
+  const [iuguFee, setIuguFee] = React.useState<number>();
   // side effects
   React.useEffect(() => {
     if (!businessId) return;
@@ -30,13 +30,7 @@ export const useObserveInvoicesStatusByPeriod = (
     return () => unsub();
   }, [api, businessId, month, status]);
   React.useEffect(() => {
-    if (invoices === undefined) return;
-    if (invoices === null) {
-      setPeriodAmount(null);
-      setAppjustoFee(null);
-      setIuguFee(null);
-      return;
-    }
+    if (!invoices) return;
     const amount = invoices.reduce((total, invoice) => {
       return (total += invoice.value ?? 0);
     }, 0);

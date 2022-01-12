@@ -7,7 +7,7 @@ export const useObserveOrderLogs = (orderId?: string) => {
   // context
   const api = useContextApi();
   // state
-  const [logs, setLogs] = React.useState<WithId<OrderLog>[] | null>();
+  const [logs, setLogs] = React.useState<WithId<OrderLog>[]>();
   // side effects
   React.useEffect(() => {
     if (!orderId) return;

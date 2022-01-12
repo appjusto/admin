@@ -1,6 +1,6 @@
 import { As, Box, BoxProps, Button, Icon, Skeleton, Text } from '@chakra-ui/react';
 import { CustomButton } from 'common/components/buttons/CustomButton';
-import { formatCents, formatIuguValueToDisplay } from './utils';
+import { formatIuguValueToDisplay, getStringCents } from './utils';
 
 interface BasicInfoBoxProps extends BoxProps {
   label: string;
@@ -29,7 +29,7 @@ export const BasicInfoBox = ({
   ...props
 }: BasicInfoBoxProps) => {
   // helpers
-  const btnIsAvailable = value && formatCents(value) > valueLimit ? true : false;
+  const btnIsAvailable = value && getStringCents(value) > valueLimit ? true : false;
   // UI
   return (
     <Box
@@ -65,7 +65,6 @@ export const BasicInfoBox = ({
           label={btnLabel}
           variant={btnVariant}
           isDisabled={!btnIsAvailable}
-          //onClick={btnFunction}
         />
       )}
       {btnLabel && btnFunction && (

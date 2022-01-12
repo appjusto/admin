@@ -22,11 +22,15 @@ const Menu = () => {
   // context
   const { path } = useRouteMatch();
   const history = useHistory();
-  const { isProductsPage, setIsProductPage } = useContextMenu();
+  const { setIsMenuActive, isProductsPage, setIsProductPage } = useContextMenu();
   // state
   const [productSearch, setProductSearch] = React.useState('');
   // handler
   const closeDrawerHandler = () => history.replace(path);
+  // side effects
+  React.useEffect(() => {
+    setIsMenuActive(true);
+  }, [setIsMenuActive]);
   // UI
   return (
     <Box>

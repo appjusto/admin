@@ -49,7 +49,6 @@ export const OrderDrawer = (props: Props) => {
   const [isCanceling, setIsCanceling] = React.useState(false);
   const [isOutsourceDelivery, setIsOutsourceDelivery] = React.useState<boolean>();
   // refs
-  const submission = React.useRef(0);
   const printComponent = React.useRef<HTMLDivElement>(null);
   // helpers
   const cancellator = getOrderCancellator(orderCancellation?.issue?.type);
@@ -58,7 +57,6 @@ export const OrderDrawer = (props: Props) => {
     : 'N/E';
   // handlers
   const handleCancel = async (issue: WithId<Issue>) => {
-    submission.current += 1;
     if (!manager?.id || !manager?.name) {
       return dispatchAppRequestResult({
         status: 'error',

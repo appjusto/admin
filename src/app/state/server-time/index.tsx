@@ -1,5 +1,6 @@
 import { useServerTime } from 'app/api/platform/useServerTime';
 import React from 'react';
+import { useContextFirebaseUser } from '../auth/context';
 
 interface ServerTimeContextProps {
   getServerTime: () => Date;
@@ -13,7 +14,8 @@ interface Props {
 
 export const ServerTimeProvider = ({ children }: Props) => {
   // context
-  const getServerTime = useServerTime();
+  const { user } = useContextFirebaseUser();
+  const getServerTime = useServerTime(typeof user?.uid === 'string');
   // provider
   return (
     <ServerTimeContext.Provider value={{ getServerTime }}>{children}</ServerTimeContext.Provider>

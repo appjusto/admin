@@ -33,7 +33,7 @@ const AdvancesTableItem = ({ advance }: AdvancesTableItemProps) => {
 };
 
 interface AdvancesTableProps {
-  advances?: WithId<AccountAdvance>[] | null;
+  advances?: WithId<AccountAdvance>[];
 }
 
 export const AdvancesTable = ({ advances }: AdvancesTableProps) => {
@@ -74,7 +74,7 @@ export const AdvancesTable = ({ advances }: AdvancesTableProps) => {
           <Td></Td>
         </Tr>
         {advances !== undefined ? (
-          advances !== null ? (
+          advances.length > 0 ? (
             advances.map((advance) => <AdvancesTableItem key={advance.id} advance={advance} />)
           ) : (
             <Tr color="black" fontSize="xs" fontWeight="700">

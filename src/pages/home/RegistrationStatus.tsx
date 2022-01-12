@@ -81,8 +81,8 @@ export const RegistrationStatus = () => {
   const [isFetching, setIsFetching] = React.useState(true);
   const [validation, setValidation] = React.useState(initialState);
   const [rejection, setRejection] = React.useState<string[]>([]);
-  const isValid = validation.filter((data) => data.status === false).length === 0;
   // helpers
+  const isValid = validation.filter((data) => data.status === false).length === 0;
   const pendencies = validation.filter((item) => item.status === false).length;
   // handlers
   const handleSubmitRegistration = () => {
