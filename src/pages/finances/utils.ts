@@ -1,3 +1,13 @@
+export const getStringCents = (value: string) => {
+  let result = 0;
+  if (value.includes('R$')) {
+    result = parseInt(value.split(' ')[1].replaceAll(',', '').replaceAll('.', ''));
+  } else {
+    result = parseInt(value.split(' ')[0].replaceAll(',', '').replaceAll('.', ''));
+  }
+  return result;
+};
+
 export const formatCents = (value: string) => {
   let result = 0;
   if (value.includes('R$')) {
