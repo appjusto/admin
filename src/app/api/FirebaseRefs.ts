@@ -1,7 +1,7 @@
 import firebase from 'firebase/app';
 import * as geofirestore from 'geofirestore';
 
-const monitoring = true;
+const monitoring = false;
 
 export default class FirebaseRefs {
   private firestoreWithGeo: geofirestore.GeoFirestore;
