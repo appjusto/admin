@@ -33,6 +33,7 @@ export const useObserveConfirmedOrders = (businessId?: string, notify: boolean =
   // sound
   const [playSound] = useSound(newOrderSound, { volume: 1 });
 
+  // side effects
   React.useEffect(() => {
     if (isBackofficeUser) return;
     if (confirmedOrders.length === 0) return;
@@ -43,7 +44,6 @@ export const useObserveConfirmedOrders = (businessId?: string, notify: boolean =
     return () => clearInterval(SoundInterval);
   }, [isBackofficeUser, confirmedOrders, playSound]);
 
-  // side effects
   React.useEffect(() => {
     if (confirmedOrders.length === 0) {
       return;
