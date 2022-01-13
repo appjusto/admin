@@ -7,8 +7,8 @@ export const formatCurrency = (value: number, options?: ToCurrencyOptions) =>
 
 export const convertBalance = (value: string) => {
   if (value.includes('R$'))
-    return parseFloat(value.replace('R$', '').replace('.', '').replace(',', '.'));
-  else return parseFloat(value.replace('BRL', '').replace(',', ''));
+    return parseFloat(value.replace('R$', '').replaceAll('.', '').replace(',', '.'));
+  else return parseFloat(value.replace('BRL', '').replaceAll(',', ''));
 };
 
 // percentage
