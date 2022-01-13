@@ -133,7 +133,7 @@ const FinancesPage = () => {
         <Route path={`${path}/withdraw`}>
           <WithdrawsDrawer
             isOpen
-            totalWithdraws={withdraws?.length}
+            totalWithdraws={withdraws?.length ?? 0}
             withdrawValue={availableWithdraw}
             requestWithdraw={handleWithdrawRequest}
             isLoading={isLoading}

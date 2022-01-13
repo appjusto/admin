@@ -8,7 +8,7 @@ import { formatCents, formatIuguValueToDisplay } from './utils';
 
 interface WithdrawsDrawerProps {
   isOpen: boolean;
-  totalWithdraws?: number;
+  totalWithdraws: number;
   withdrawValue?: string | null;
   requestWithdraw(): void;
   isLoading: boolean;
@@ -28,7 +28,7 @@ export const WithdrawsDrawer = ({
   // state
   const [requestedValue, setRequestedValue] = React.useState<string | null>();
   // helpers
-  const withdrawsLeft = totalWithdraws ? 4 - totalWithdraws : 'N/E';
+  const withdrawsLeft = 4 - totalWithdraws;
   // side effects
   React.useEffect(() => {
     if (!withdrawValue) return;
