@@ -11,7 +11,7 @@ import { formatCurrency } from 'utils/formatters';
 import { t } from 'utils/i18n';
 import { BasicInfoBox } from './BasicInfoBox';
 import { FinancesBaseDrawer } from './FinancesBaseDrawer';
-import { formatIuguDateToDisplay, formatIuguValueToDisplay } from './utils';
+import { formatCents, formatIuguDateToDisplay, formatIuguValueToDisplay } from './utils';
 
 interface WithdrawalsDrawerProps {
   isOpen: boolean;
@@ -66,10 +66,7 @@ export const AdvancesDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps) =>
     if (receivables?.items) {
       setItems(receivables.items);
       const total = receivables.items.reduce<number>((result, item) => {
-        let value = 0;
-        if (item.total.includes('R$'))
-          value = parseFloat(item.total.split(' ')[1].replace(',', '.')) * 100;
-        else value = parseFloat(item.total.split(' ')[0].replace(',', '.')) * 100;
+        let value = item.total ? formatCents(item.total) : 0;
         return (result += value);
       }, 0);
       setTotalAvailable(formatCurrency(total));
@@ -79,10 +76,7 @@ export const AdvancesDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps) =>
     if (items.length === 0) return;
     const itemsSelected = items.filter((item) => selected.includes(item.id.toString()));
     const total = itemsSelected.reduce<number>((result, item) => {
-      let value = 0;
-      if (item.total.includes('R$'))
-        value = parseFloat(item.total.split(' ')[1].replace(',', '.')) * 100;
-      else value = parseFloat(item.total.split(' ')[0].replace(',', '.')) * 100;
+      let value = item.total ? formatCents(item.total) : 0;
       return (result += value);
     }, 0);
     setTotalSelected(formatCurrency(total));
