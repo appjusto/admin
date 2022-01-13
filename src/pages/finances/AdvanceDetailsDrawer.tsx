@@ -6,6 +6,7 @@ import { useParams } from 'react-router';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { FinancesBaseDrawer } from './FinancesBaseDrawer';
+import { formatIuguValueToDisplay } from './utils';
 
 interface AdvanceDetailsDrawerProps {
   isOpen: boolean;
@@ -42,19 +43,26 @@ export const AdvanceDetailsDrawer = ({
       <Text fontSize="md" fontWeight="700" color="black">
         {t('Valor solicitado:')}{' '}
         <Text as="span" fontWeight="500">
-          {advance?.data.total.advanced_value ?? 'N/E'}
+          {advance?.data.total.advanced_value
+            ? formatIuguValueToDisplay(advance.data.total.advanced_value)
+            : 'N/E'}
         </Text>
       </Text>
       <Text fontSize="md" fontWeight="700" color="black">
         {t('Taxa:')}{' '}
         <Text as="span" color="red" fontWeight="500">
-          - {advance?.data.total.advance_fee ?? 'N/E'}
+          -{' '}
+          {advance?.data.total.advance_fee
+            ? formatIuguValueToDisplay(advance.data.total.advance_fee)
+            : 'N/E'}
         </Text>
       </Text>
       <Text fontSize="md" fontWeight="700" color="black">
         {t('Valor antecipado:')}{' '}
         <Text as="span" color="green.700" fontWeight="500">
-          {advance?.data.total.received_value ?? 'N/E'}
+          {advance?.data.total.received_value
+            ? formatIuguValueToDisplay(advance.data.total.received_value)
+            : 'N/E'}
         </Text>
       </Text>
       <SectionTitle>{t('Transações:')}</SectionTitle>
@@ -80,12 +88,21 @@ export const AdvanceDetailsDrawer = ({
                     fontWeight="500"
                   >
                     <Td>{transaction.id}</Td>
-                    <Td isNumeric>{transaction.advanced_value}</Td>
+                    <Td isNumeric>
+                      {transaction.advanced_value
+                        ? formatIuguValueToDisplay(transaction.advanced_value)
+                        : 'N/E'}
+                    </Td>
                     <Td color="red" isNumeric>
-                      - {transaction.advance_fee}
+                      -{' '}
+                      {transaction.advance_fee
+                        ? formatIuguValueToDisplay(transaction.advance_fee)
+                        : 'N/E'}
                     </Td>
                     <Td color="green.700" isNumeric>
-                      {transaction.received_value}
+                      {transaction.received_value
+                        ? formatIuguValueToDisplay(transaction.received_value)
+                        : 'N/E'}
                     </Td>
                   </Tr>
                 );

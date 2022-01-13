@@ -13,9 +13,9 @@ export const useObserveInvoicesStatusByPeriod = (
   const api = useContextApi();
   // state
   const [invoices, setInvoices] = React.useState<WithId<Invoice>[]>();
-  const [periodAmount, setPeriodAmount] = React.useState<number>();
-  const [appjustoFee, setAppjustoFee] = React.useState<number>();
-  const [iuguFee, setIuguFee] = React.useState<number>();
+  const [periodAmount, setPeriodAmount] = React.useState(0);
+  const [appjustoFee, setAppjustoFee] = React.useState(0);
+  const [iuguFee, setIuguFee] = React.useState(0);
   // side effects
   React.useEffect(() => {
     if (!businessId) return;

@@ -2,6 +2,7 @@ import firebase from 'firebase/app';
 import * as geofirestore from 'geofirestore';
 
 const monitoring = false;
+//  process.env.REACT_APP_ENVIRONMENT === 'dev' || process.env.REACT_APP_ENVIRONMENT === 'staging';
 
 export default class FirebaseRefs {
   private firestoreWithGeo: geofirestore.GeoFirestore;

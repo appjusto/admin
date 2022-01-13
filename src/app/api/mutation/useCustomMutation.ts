@@ -2,7 +2,8 @@ import { useContextAppRequests } from 'app/state/requests/context';
 import { useMutation, MutationFunction, UseMutationOptions } from 'react-query';
 import React from 'react';
 
-const monitoringMutation = true;
+const monitoringMutation =
+  process.env.REACT_APP_ENVIRONMENT === 'dev' || process.env.REACT_APP_ENVIRONMENT === 'staging';
 
 export interface MutationResult {
   isLoading: boolean;

@@ -4,17 +4,12 @@ import { t } from 'utils/i18n';
 
 interface PeriodTableProps {
   period: string;
-  amount?: number;
-  appjustoFee?: number;
-  iuguFee?: number;
+  amount: number;
+  appjustoFee: number;
+  iuguFee: number;
 }
 
 export const PeriodTable = ({ period, amount, appjustoFee, iuguFee }: PeriodTableProps) => {
-  // helpers
-  const getResult = () => {
-    if (!amount || !appjustoFee || !iuguFee) return 0;
-    return amount - appjustoFee - iuguFee;
-  };
   // UI
   return (
     <Table mt="6" size="md" variant="simple">
@@ -33,13 +28,13 @@ export const PeriodTable = ({ period, amount, appjustoFee, iuguFee }: PeriodTabl
             <Tr fontSize="xs" fontWeight="500">
               <Td color="black">{t('Taxas - AppJusto (5%)')}</Td>
               <Td color="red" isNumeric>
-                {appjustoFee ? `- ${formatCurrency(appjustoFee)}` : 'N/E'}
+                {`- ${formatCurrency(appjustoFee)}`}
               </Td>
             </Tr>
             <Tr fontSize="xs" fontWeight="500">
               <Td color="black">{t('Taxas - Iugu (2,21% + R$0,09)')}</Td>
               <Td color="red" isNumeric>
-                {iuguFee ? `- ${formatCurrency(iuguFee)}` : 'N/E'}
+                {`- ${formatCurrency(iuguFee)}`}
               </Td>
             </Tr>
           </>
@@ -49,7 +44,7 @@ export const PeriodTable = ({ period, amount, appjustoFee, iuguFee }: PeriodTabl
         <Tr>
           <Th>{t(`Resultado para ${period}`)}</Th>
           <Th color="green.700" isNumeric>
-            {formatCurrency(getResult())}
+            {formatCurrency(amount - appjustoFee - iuguFee)}
           </Th>
         </Tr>
       </Tfoot>
