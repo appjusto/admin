@@ -115,40 +115,34 @@ const CouriersPage = () => {
         <HStack spacing={4}>
           <FilterText
             isActive={filterBar === 'all' ? true : false}
+            label={t('Todos')}
             onClick={() => setFilterBar('all')}
-          >
-            {t('Todos')}
-          </FilterText>
+          />
           <FilterText
             isActive={filterBar === 'approved' ? true : false}
+            label={t('Aprovados')}
             onClick={() => setFilterBar('approved')}
-          >
-            {t('Aprovados')}
-          </FilterText>
+          />
           <FilterText
             isActive={filterBar === 'verified' ? true : false}
+            label={t('Verificados')}
             onClick={() => setFilterBar('verified')}
-          >
-            {t('Verificados')}
-          </FilterText>
+          />
           <FilterText
             isActive={filterBar === 'invalid' ? true : false}
+            label={t('Inválidos')}
             onClick={() => setFilterBar('invalid')}
-          >
-            {t('Inválidos')}
-          </FilterText>
+          />
           <FilterText
             isActive={filterBar === 'pending' ? true : false}
+            label={t('Pendentes')}
             onClick={() => setFilterBar('pending')}
-          >
-            {t('Pendentes')}
-          </FilterText>
+          />
           <FilterText
             isActive={filterBar === 'blocked' ? true : false}
+            label={t('Bloqueados')}
             onClick={() => setFilterBar('blocked')}
-          >
-            {t('Bloqueados')}
-          </FilterText>
+          />
         </HStack>
         <HStack spacing={2} color="#697667" cursor="pointer" onClick={clearSearchAndFilters}>
           <DeleteIcon />

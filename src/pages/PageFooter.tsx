@@ -9,6 +9,7 @@ interface Props extends OnboardingProps {
   isDisabled?: boolean;
   deleteLabel?: string;
   onDelete?(): void;
+  submitLabel?: string;
 }
 
 const PageFooter = ({
@@ -18,9 +19,11 @@ const PageFooter = ({
   isDisabled = false,
   deleteLabel,
   onDelete,
+  submitLabel,
 }: Props) => {
   // helpers
   const showSkip = onboarding && !['1', '2'].includes(onboarding) && redirect;
+  const buttonLabel = submitLabel ?? t('Salvar');
   // UI
   return (
     <Box mt="8">
@@ -43,7 +46,7 @@ const PageFooter = ({
           loadingText={t('Salvando')}
           isDisabled={isDisabled}
         >
-          {onboarding ? t('Salvar e continuar') : t('Salvar')}
+          {onboarding ? t('Salvar e continuar') : buttonLabel}
         </Button>
         {!onboarding && deleteLabel && (
           <Button

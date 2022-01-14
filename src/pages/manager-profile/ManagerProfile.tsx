@@ -353,7 +353,12 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
             </Text>
           </Text>
         )}
-        <PageFooter onboarding={onboarding} redirect={redirect} isLoading={isLoading} />
+        <PageFooter
+          onboarding={onboarding}
+          redirect={redirect}
+          isLoading={isLoading}
+          submitLabel={t('Salvar dados pessoais')}
+        />
       </form>
     </Box>
   );

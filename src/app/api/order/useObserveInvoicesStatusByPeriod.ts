@@ -12,10 +12,10 @@ export const useObserveInvoicesStatusByPeriod = (
   // context
   const api = useContextApi();
   // state
-  const [invoices, setInvoices] = React.useState<WithId<Invoice>[] | null>();
-  const [periodAmount, setPeriodAmount] = React.useState<number | null>();
-  const [appjustoFee, setAppjustoFee] = React.useState<number | null>();
-  const [iuguFee, setIuguFee] = React.useState<number | null>();
+  const [invoices, setInvoices] = React.useState<WithId<Invoice>[]>();
+  const [periodAmount, setPeriodAmount] = React.useState(0);
+  const [appjustoFee, setAppjustoFee] = React.useState(0);
+  const [iuguFee, setIuguFee] = React.useState(0);
   // side effects
   React.useEffect(() => {
     if (!businessId) return;
@@ -30,18 +30,12 @@ export const useObserveInvoicesStatusByPeriod = (
     return () => unsub();
   }, [api, businessId, month, status]);
   React.useEffect(() => {
-    if (invoices === undefined) return;
-    if (invoices === null) {
-      setPeriodAmount(null);
-      setAppjustoFee(null);
-      setIuguFee(null);
-      return;
-    }
+    if (!invoices) return;
     const amount = invoices.reduce((total, invoice) => {
       return (total += invoice.value ?? 0);
     }, 0);
     const appjusto = invoices.reduce((total, invoice) => {
-      let commission = invoice.commission ? invoice.commission - 9 : 0;
+      const commission = invoice.commission ? invoice.commission - 9 : 0;
       return (total += commission);
     }, 0);
     const iugu = invoices.length * 9 + amount * 0.0221;

@@ -8,7 +8,7 @@ import { Redirect, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { DaySchedule } from './availability/DaySchedule';
 
-type Availability = 'always' | 'defined';
+type Availability = 'always-available' | 'availability-defined';
 
 const scheduleObj = { from: '', to: '' };
 
@@ -40,7 +40,7 @@ export const ProductAvailability = () => {
   const { isLoading } = updateProductResult;
   //state
   const [schedules, setSchedules] = React.useState<BusinessSchedule>(initialState);
-  const [mainAvailability, setMainAvailability] = React.useState<Availability>('always');
+  const [mainAvailability, setMainAvailability] = React.useState<Availability>('always-available');
   // handlers
   const handleCheck = (stateIndex: number, value: boolean) => {
     setSchedules((prevSchedule) => {
@@ -175,7 +175,7 @@ export const ProductAvailability = () => {
     return result;
   };
   const handleUpdate = () => {
-    if (mainAvailability === 'always') {
+    if (mainAvailability === 'always-available') {
       setSchedules(initialState);
       return updateProduct({ changes: { availability: alwaysState } });
     }
@@ -199,14 +199,14 @@ export const ProductAvailability = () => {
       product.availability.find((item) => !item.checked) === undefined &&
       product.availability.find((item) => item.schedule.length > 0) === undefined
     ) {
-      setMainAvailability('always');
+      setMainAvailability('always-available');
       return;
     }
     const initialAvailability = product.availability.map((item) => {
       if (item.schedule.length === 0) return { ...item, schedule: [scheduleObj] };
       else return item;
     });
-    setMainAvailability('defined');
+    setMainAvailability('availability-defined');
     setSchedules(initialAvailability);
   }, [product?.availability]);
   // UI
@@ -232,15 +232,15 @@ export const ProductAvailability = () => {
         size="lg"
       >
         <Flex flexDir="column" justifyContent="flex-start">
-          <CustomRadio mt="2" value="always">
+          <CustomRadio mt="2" value="always-available">
             {t('Sempre disponível quando o restaurante estiver aberto')}
           </CustomRadio>
-          <CustomRadio mt="2" value="defined">
+          <CustomRadio mt="2" value="availability-defined">
             {t('Disponível em dias e horários específicos')}
           </CustomRadio>
         </Flex>
       </RadioGroup>
-      {mainAvailability === 'defined' && (
+      {mainAvailability === 'availability-defined' && (
         <Flex flexDir="column" mt="4">
           {schedules.map((day, index) => {
             return (

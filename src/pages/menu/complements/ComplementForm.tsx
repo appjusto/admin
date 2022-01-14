@@ -181,6 +181,7 @@ export const ComplementForm = ({
                 mt="0"
                 id="complements-item-price"
                 label={t('Preço')}
+                aria-label={t('preço-do-novo-complemento')}
                 value={price}
                 onChangeValue={(value) => setPrice(value)}
                 maxLength={5}

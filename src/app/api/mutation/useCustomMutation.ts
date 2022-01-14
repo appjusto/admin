@@ -2,6 +2,9 @@ import { useContextAppRequests } from 'app/state/requests/context';
 import { useMutation, MutationFunction, UseMutationOptions } from 'react-query';
 import React from 'react';
 
+const monitoringMutation =
+  process.env.REACT_APP_ENVIRONMENT === 'dev' || process.env.REACT_APP_ENVIRONMENT === 'staging';
+
 export interface MutationResult {
   isLoading: boolean;
   isSuccess: boolean;
@@ -37,11 +40,13 @@ export const useCustomMutation = <
   React.useEffect(() => {
     if (!resetting) return;
     if (!isSuccess && !isError) return;
-    console.log('Call reset!');
+    if (monitoringMutation) console.log('Call reset!');
     reset();
   }, [resetting, isSuccess, isError, reset]);
-  if (isLoading) console.log(`${fnName} - isLoading:`, isLoading);
-  if (isSuccess) console.log(`${fnName} - isSuccess:`, isSuccess);
-  if (isError) console.log(`${fnName} - isError:`, isError);
+  if (monitoringMutation && isLoading)
+    console.log(`${fnName} - %cisLoading: ${isLoading}`, 'color: blue');
+  if (monitoringMutation && isSuccess)
+    console.log(`${fnName} - %cisSuccess: ${isSuccess}`, 'color: green');
+  if (isError) console.log(`${fnName} - %cisError: ${isError}`, 'color: red');
   return { mutate, mutateAsync, mutationResult: { isLoading, isSuccess, isError, error } };
 };

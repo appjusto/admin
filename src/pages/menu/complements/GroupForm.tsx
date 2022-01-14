@@ -1,6 +1,7 @@
-import { Box, Flex, Radio, RadioGroup, Text } from '@chakra-ui/react';
+import { Box, Flex, RadioGroup, Text } from '@chakra-ui/react';
 import { useContextMenu } from 'app/state/menu/context';
 import { ComplementGroup, WithId } from 'appjusto-types';
+import CustomRadio from 'common/components/form/CustomRadio';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import React from 'react';
 import { t } from 'utils/i18n';
@@ -13,6 +14,8 @@ interface GroupFormProps {
   groupData?: WithId<ComplementGroup>;
   onSuccess(): void;
 }
+
+type RequiredOptions = 'Obrigatório' | 'Opcional';
 
 export const GroupForm = ({ atDrawer = false, groupId, groupData, onSuccess }: GroupFormProps) => {
   // context
@@ -28,11 +31,11 @@ export const GroupForm = ({ atDrawer = false, groupId, groupData, onSuccess }: G
   // helpers
   const minimumValue = required ? 1 : 0;
   //handler
-  const handleIsRequired = (value: string) => {
-    if (value === '1') {
+  const handleIsRequired = (value: RequiredOptions) => {
+    if (value === 'Opcional') {
       setRequired(false);
       setMin(0);
-    } else if (value === '2') {
+    } else if (value === 'Obrigatório') {
       setRequired(true);
       if (minimum === 0) setMin(1);
       if (maximum === 0) setMax(1);
@@ -107,19 +110,19 @@ export const GroupForm = ({ atDrawer = false, groupId, groupData, onSuccess }: G
         </Text>
         <Text fontSize="sm">{t('Esse grupo é necessário para o pedido do prato?')}</Text>
         <RadioGroup
-          onChange={(value) => handleIsRequired(value as string)}
-          value={required ? '2' : '1'}
+          onChange={(value) => handleIsRequired(value as RequiredOptions)}
+          value={required ? 'Obrigatório' : 'Opcional'}
           defaultValue="1"
           colorScheme="green"
           color="black"
         >
           <Flex mt="2" flexDir="column" justifyContent="flex-start">
-            <Radio mt="2" value="1">
+            <CustomRadio mt="2" value="Opcional">
               {t('Opcional: o cliente pode ou não selecionar itens desse grupo')}
-            </Radio>
-            <Radio mt="2" value="2">
+            </CustomRadio>
+            <CustomRadio mt="2" value="Obrigatório">
               {t('Obrigatório: o cliente deve selecionar 1 ou mais itens desse grupo')}
-            </Radio>
+            </CustomRadio>
           </Flex>
         </RadioGroup>
         <Text mt="8" fontSize="xl" color="black">

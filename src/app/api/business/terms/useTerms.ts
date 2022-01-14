@@ -13,8 +13,9 @@ export const useTerms = () => {
   const query = useQuery(['terms'], () => axios.get<string>(url));
   // side effects
   React.useEffect(() => {
-    if (query.data?.data) setUnformattedTerms(query.data.data);
-    else if (query.isError) setUnformattedTerms(null);
+    if (query.isLoading) return;
+    if (query.isSuccess && query.data?.data) setUnformattedTerms(query.data.data);
+    else setUnformattedTerms(null);
   }, [query]);
   // result
   return unformattedTerms;

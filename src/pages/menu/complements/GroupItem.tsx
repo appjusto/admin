@@ -8,6 +8,7 @@ import { ReactComponent as DragHandle } from 'common/img/drag-handle.svg';
 import React from 'react';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
 import { Link, useRouteMatch } from 'react-router-dom';
+import { slugfyName } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { ComplementItem } from './ComplementItem';
 
@@ -89,7 +90,11 @@ export const GroupItem = React.memo(({ group, complements, index, hidden }: Prop
                 </Tooltip>
                 <Tooltip placement="top" label={t('Editar')} aria-label={t('Editar')}>
                   <Link to={`${url}/complementsgroup/${group.id}`}>
-                    <EditButton ml="2" title={t('Editar')} />
+                    <EditButton
+                      ml="2"
+                      title={t('Editar')}
+                      aria-label={`editar-grupo-${slugfyName(group.name)}`}
+                    />
                   </Link>
                 </Tooltip>
                 <Tooltip
@@ -130,6 +135,7 @@ export const GroupItem = React.memo(({ group, complements, index, hidden }: Prop
             w={{ base: '100%', md: '260px' }}
             link={`${url}/complement/new?groupId=${group.id}`}
             label={t('Adicionar complemento')}
+            aria-label={`adicionar-complemento-${slugfyName(group.name)}`}
             variant="outline"
           />
         </Box>

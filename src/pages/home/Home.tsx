@@ -1,7 +1,7 @@
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { BusinessDashboardProvider } from 'app/state/dashboards/business';
-import { MenuProvider } from 'app/state/menu/context';
+import { MenuContextProvider } from 'app/state/menu/context';
 import { OrdersContextProvider } from 'app/state/order';
 import { Loading } from 'common/components/Loading';
 import BusinessProfile from 'pages/business-profile/BusinessProfile';
@@ -60,25 +60,25 @@ const Home = () => {
     return (
       <BusinessDashboardProvider>
         <OrdersContextProvider>
-          {isBackofficeUser && <AgentPersonificationBar />}
-          <Switch>
-            <Route path={`${path}/orders`} component={OrdersPage} />
-            <Route path={`${path}/chat`} component={ChatPage} />
-            <PageLayout mt={isBackofficeUser ? '60px' : '0'}>
-              <Route exact path={path} component={Dashboard} />
-              <Route path={`${path}/sharing`} component={SharingPage} />
-              <MenuProvider>
+          <MenuContextProvider>
+            {isBackofficeUser && <AgentPersonificationBar />}
+            <Switch>
+              <Route path={`${path}/orders`} component={OrdersPage} />
+              <Route path={`${path}/chat`} component={ChatPage} />
+              <PageLayout mt={isBackofficeUser ? '60px' : '0'}>
+                <Route exact path={path} component={Dashboard} />
+                <Route path={`${path}/sharing`} component={SharingPage} />
                 <Route path={`${path}/menu`} component={Menu} />
-              </MenuProvider>
-              <Route path={`${path}/business-schedules`} component={SchedulesPage} />
-              <Route path={`${path}/delivery-area`} component={DeliveryArea} />
-              <Route path={`${path}/business-profile`} component={BusinessProfile} />
-              <Route path={`${path}/manager-profile`} component={ManagerProfilePage} />
-              <Route path={`${path}/orders-history`} component={OrdersHistoryPage} />
-              <Route path={`${path}/finances`} component={FinancesPage} />
-              <Route path={`${path}/team`} component={TeamPage} />
-            </PageLayout>
-          </Switch>
+                <Route path={`${path}/business-schedules`} component={SchedulesPage} />
+                <Route path={`${path}/delivery-area`} component={DeliveryArea} />
+                <Route path={`${path}/business-profile`} component={BusinessProfile} />
+                <Route path={`${path}/manager-profile`} component={ManagerProfilePage} />
+                <Route path={`${path}/orders-history`} component={OrdersHistoryPage} />
+                <Route path={`${path}/finances`} component={FinancesPage} />
+                <Route path={`${path}/team`} component={TeamPage} />
+              </PageLayout>
+            </Switch>
+          </MenuContextProvider>
         </OrdersContextProvider>
       </BusinessDashboardProvider>
     );

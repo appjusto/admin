@@ -1,3 +1,4 @@
+import { useToast } from '@chakra-ui/react';
 import { useBusinessChats } from 'app/api/business/chat/useBusinessChats';
 import { useBusinessOpenClose } from 'app/api/business/profile/useBusinessOpenClose';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
@@ -10,6 +11,7 @@ import { useObservePreparingOrders } from 'app/api/order/useObservePreparingOrde
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { Business, Order, OrderStatus, WithId } from 'appjusto-types';
+import { CustomToastAutoPlay } from 'common/components/CustomToast';
 import React from 'react';
 import { useContextFirebaseUser } from '../auth/context';
 import { useContextAppRequests } from '../requests/context';
@@ -54,6 +56,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   const [orders, setOrders] = React.useState<WithId<Order>[]>([]);
   const [newChatMessages, setNewChatMessages] = React.useState<string[]>([]);
   //handlers
+  const toast = useToast();
   const getOrderById = (id: string) => {
     const order = orders.find((order: WithId<Order>) => order.id === id);
     return order;
@@ -110,6 +113,29 @@ export const OrdersContextProvider = (props: ProviderProps) => {
     [api, dispatchAppRequestResult]
   );
   // side effects
+  React.useEffect(() => {
+    setTimeout(() => {
+      const root = document.getElementById('root');
+      let audio = document.createElement('audio');
+      audio.setAttribute('id', 'audio-to-test');
+      root?.appendChild(audio);
+      audio
+        .play()
+        .then(() => console.log('Play success'))
+        .catch((err) => {
+          const isInteractionError = err.message.includes('user');
+          if (isInteractionError && !toast.isActive('AutoPlayToast')) {
+            toast({
+              id: 'AutoPlayToast',
+              duration: null,
+              render: () => <CustomToastAutoPlay />,
+            });
+          }
+        });
+      audio.remove();
+    }, 2000);
+  }, [toast]);
+
   React.useEffect(() => {
     setOrders([...activeOrders, ...completedAndActiveOrders]);
   }, [activeOrders, completedAndActiveOrders]);

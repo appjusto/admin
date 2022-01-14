@@ -15,8 +15,7 @@ interface Props {
 export const ServerTimeProvider = ({ children }: Props) => {
   // context
   const { user } = useContextFirebaseUser();
-  const isAuthed = user !== undefined && user !== null;
-  const getServerTime = useServerTime(isAuthed);
+  const getServerTime = useServerTime(typeof user?.uid === 'string');
   // provider
   return (
     <ServerTimeContext.Provider value={{ getServerTime }}>{children}</ServerTimeContext.Provider>

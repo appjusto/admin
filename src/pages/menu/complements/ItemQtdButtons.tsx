@@ -23,13 +23,27 @@ export const ItemsQtdButtons = ({
     <Box {...boxProps}>
       {label && <Text>{label}</Text>}
       <Flex flexDir="row" alignItems="center">
-        <Button maxW="48px" fontSize="3xl" variant="outline" onClick={decrement} {...props}>
+        <Button
+          maxW="48px"
+          fontSize="3xl"
+          variant="outline"
+          aria-label={`${label ?? 'btn'}-minus`}
+          onClick={decrement}
+          {...props}
+        >
           -
         </Button>
         <Text fontSize="md" mx="2">
           {value}
         </Text>
-        <Button maxW="48px" fontSize="3xl" variant="outline" onClick={increment} {...props}>
+        <Button
+          maxW="48px"
+          fontSize="3xl"
+          variant="outline"
+          aria-label={`${label ?? 'btn'}-plus`}
+          onClick={increment}
+          {...props}
+        >
           +
         </Button>
       </Flex>

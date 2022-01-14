@@ -47,6 +47,15 @@ export default class Api {
 
     this._authentication = Api.app.auth();
     this._firestore = Api.app.firestore();
+    // @ts-ignore
+    if (window.Cypress) {
+      this._firestore.settings({
+        experimentalForceLongPolling: true,
+        host: 'localhost:8080',
+        ssl: false,
+      });
+    }
+
     this._functions = Api.app.functions(config.firebase.config.region);
     this._analytics = Api.app.analytics();
     this._analytics.setAnalyticsCollectionEnabled(false);

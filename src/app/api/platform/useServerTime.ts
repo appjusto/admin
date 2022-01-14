@@ -1,7 +1,7 @@
 import { useContextApi } from 'app/state/api/context';
 import React from 'react';
 
-export const useServerTime = (isAuthed: boolean) => {
+export const useServerTime = (loggedUser: boolean) => {
   // context
   const api = useContextApi();
   // state
@@ -13,12 +13,13 @@ export const useServerTime = (isAuthed: boolean) => {
   }, [delta]);
   // side effects
   React.useEffect(() => {
-    if (!isAuthed) return;
+    if (!loggedUser) return;
     (async () => {
       const serverTime = await api.platform().getServerTime();
-      setDelta(serverTime - new Date().getTime());
+      if (serverTime === 0) setDelta(serverTime);
+      else setDelta(serverTime - new Date().getTime());
     })();
-  }, [api, isAuthed]);
+  }, [api, loggedUser]);
   // result
   return getServerTime;
 };

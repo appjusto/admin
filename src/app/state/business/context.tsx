@@ -1,6 +1,7 @@
 import { useObserveBusinessManagedBy } from 'app/api/business/profile/useObserveBusinessManagedBy';
 import { useObserveBusinessProfile } from 'app/api/business/profile/useObserveBusinessProfile';
-import { Business, WithId } from 'appjusto-types';
+import { usePlatformAccess } from 'app/api/platform/usePlatformAccess';
+import { Business, PlatformAccess, WithId } from 'appjusto-types';
 import React from 'react';
 import { useQueryClient } from 'react-query';
 import { useContextFirebaseUser } from '../auth/context';
@@ -14,6 +15,7 @@ interface ContextProps {
   setBusinessIdByBusinesses(): void;
   isDeleted: boolean;
   setIsDeleted(value: boolean): void;
+  platformAccess?: PlatformAccess;
 }
 
 const BusinessContext = React.createContext<ContextProps>({} as ContextProps);
@@ -30,6 +32,7 @@ export const BusinessProvider = ({ children }: Props) => {
   const [businessId, setBusinessId] = React.useState<string | undefined | null>();
   const [isDeleted, setIsDeleted] = React.useState(false);
   const hookBusiness = useObserveBusinessProfile(businessId);
+  const platformAccess = usePlatformAccess(typeof user?.uid === 'string');
   // state
   const [business, setBusiness] = React.useState<WithId<Business> | null>();
   // helpers
@@ -117,6 +120,7 @@ export const BusinessProvider = ({ children }: Props) => {
         setIsDeleted,
         businessesIsEmpty,
         setBusinessIdByBusinesses,
+        platformAccess,
       }}
     >
       {children}

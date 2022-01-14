@@ -65,7 +65,6 @@ export const BasicInfoBox = ({
           label={btnLabel}
           variant={btnVariant}
           isDisabled={!btnIsAvailable}
-          //onClick={btnFunction}
         />
       )}
       {btnLabel && btnFunction && (

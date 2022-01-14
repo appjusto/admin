@@ -4,6 +4,7 @@ import FirebaseRefs from '../FirebaseRefs';
 import firebase from 'firebase/app';
 import { documentsAs, FirebaseDocument } from 'core/fb';
 import * as Sentry from '@sentry/react';
+import { customCollectionSnapshot, customDocumentSnapshot } from '../utils';
 
 export default class ConsumerApi {
   constructor(private refs: FirebaseRefs, private files: FilesApi) {}
@@ -12,33 +13,20 @@ export default class ConsumerApi {
     resultHandler: (consumers: WithId<ConsumerProfile>[]) => void,
     start: Date
   ): firebase.Unsubscribe {
-    let query = this.refs.getConsumersRef().where('createdOn', '>=', start);
-    const unsubscribe = query.onSnapshot(
-      (querySnapshot) => {
-        resultHandler(documentsAs<ConsumerProfile>(querySnapshot.docs));
-      },
-      (error) => {
-        console.error(error);
-        Sentry.captureException(error);
-      }
-    );
+    const query = this.refs.getConsumersRef().where('createdOn', '>=', start);
     // returns the unsubscribe function
-    return unsubscribe;
+    return customCollectionSnapshot(query, resultHandler);
   }
 
   observeConsumerProfile(
     consumerId: string,
     resultHandler: (result: WithId<ConsumerProfile>) => void
   ): firebase.Unsubscribe {
-    const unsubscribe = this.refs.getConsumerRef(consumerId).onSnapshot(
-      (doc) => {
-        if (doc.exists) resultHandler({ ...(doc.data() as ConsumerProfile), id: consumerId });
-      },
-      (error) => {
-        console.error(error);
-      }
-    );
-    return unsubscribe;
+    const query = this.refs.getConsumerRef(consumerId);
+    // returns the unsubscribe function
+    return customDocumentSnapshot<ConsumerProfile>(query, (result) => {
+      if (result) resultHandler(result);
+    });
   }
 
   observeRecommendations(
@@ -90,18 +78,9 @@ export default class ConsumerApi {
     consumerId: string,
     resultHandler: (result: WithId<ProfileNote>[]) => void
   ): firebase.Unsubscribe {
-    const unsubscribe = this.refs
-      .getConsumerProfileNotesRef(consumerId)
-      .orderBy('createdOn', 'desc')
-      .onSnapshot(
-        (querySnapshot) => {
-          resultHandler(documentsAs<ProfileNote>(querySnapshot.docs));
-        },
-        (error) => {
-          console.error(error);
-        }
-      );
-    return unsubscribe;
+    const query = this.refs.getConsumerProfileNotesRef(consumerId).orderBy('createdOn', 'desc');
+    // returns the unsubscribe function
+    return customCollectionSnapshot(query, resultHandler);
   }
 
   async createProfileNote(consumerId: string, data: Partial<ProfileNote>) {

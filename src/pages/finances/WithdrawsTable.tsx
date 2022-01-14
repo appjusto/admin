@@ -28,7 +28,7 @@ const WithdrawsTableItem = ({ withdraw }: WithdrawsTableItemProps) => {
 };
 
 interface WithdrawsTableProps {
-  withdraws?: WithId<AccountWithdraw>[] | null;
+  withdraws?: WithId<AccountWithdraw>[];
 }
 
 export const WithdrawsTable = ({ withdraws }: WithdrawsTableProps) => {
@@ -50,7 +50,7 @@ export const WithdrawsTable = ({ withdraws }: WithdrawsTableProps) => {
           <Td>{t('Status')}</Td>
         </Tr>
         {withdraws !== undefined ? (
-          withdraws !== null ? (
+          withdraws.length > 0 ? (
             withdraws.map((withdraw) => (
               <WithdrawsTableItem key={withdraw.id} withdraw={withdraw} />
             ))

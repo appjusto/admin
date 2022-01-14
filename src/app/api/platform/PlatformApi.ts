@@ -3,6 +3,7 @@ import {
   Cuisine,
   IssueType,
   Issue,
+  PlatformAccess,
   PlatformStatistics,
   FlaggedLocation,
   WithId,
@@ -22,6 +23,22 @@ export default class PlatformApi {
       (querySnapshot) => {
         const data = querySnapshot.data();
         if (data) resultHandler(data as PlatformStatistics);
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+    // returns the unsubscribe function
+    return unsubscribe;
+  }
+
+  observeAccess(resultHandler: (result: PlatformAccess) => void): firebase.Unsubscribe {
+    let query = this.refs.getPlatformAccessRef();
+
+    const unsubscribe = query.onSnapshot(
+      (querySnapshot) => {
+        const data = querySnapshot.data();
+        if (data) resultHandler(data as PlatformAccess);
       },
       (error) => {
         console.error(error);
@@ -90,7 +107,12 @@ export default class PlatformApi {
   }
 
   async getServerTime(): Promise<number> {
-    const result = await this.refs.getServerTimeCallable()();
-    return result.data.time;
+    try {
+      const result = await this.refs.getServerTimeCallable()();
+      return result.data.time;
+    } catch (error) {
+      console.error('getServerTimeError', error);
+      return 0;
+    }
   }
 }

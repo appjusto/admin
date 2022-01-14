@@ -2,6 +2,7 @@ import { Box, BoxProps, Circle, HStack, Skeleton, Stack, Text } from '@chakra-ui
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextBusinessDashboard } from 'app/state/dashboards/business';
 import { CrowdfundingCard } from 'common/components/CrowdfundingCard';
+import { MaintenanceBox } from 'common/components/MaintenanceBox';
 import { NewFeatureBox } from 'common/components/NewFeatureBox';
 import I18n from 'i18n-js';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
@@ -148,6 +149,7 @@ const Dashboard = () => {
       />
       {business?.situation === 'approved' ? (
         <Box>
+          <MaintenanceBox />
           <CrowdfundingCard />
           <NewFeatureBox
             icon={BsShare}

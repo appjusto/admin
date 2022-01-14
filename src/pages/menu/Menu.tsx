@@ -22,11 +22,15 @@ const Menu = () => {
   // context
   const { path } = useRouteMatch();
   const history = useHistory();
-  const { isProductsPage, setIsProductPage } = useContextMenu();
+  const { setIsMenuActive, isProductsPage, setIsProductPage } = useContextMenu();
   // state
   const [productSearch, setProductSearch] = React.useState('');
   // handler
   const closeDrawerHandler = () => history.replace(path);
+  // side effects
+  React.useEffect(() => {
+    setIsMenuActive(true);
+  }, [setIsMenuActive]);
   // UI
   return (
     <Box>
@@ -50,12 +54,16 @@ const Menu = () => {
             borderBottom="1px solid #C8D7CB"
           >
             <HStack spacing={4}>
-              <FilterText isActive={isProductsPage} onClick={() => setIsProductPage(true)}>
-                {t('Produtos')}
-              </FilterText>
-              <FilterText isActive={!isProductsPage} onClick={() => setIsProductPage(false)}>
-                {t('Complementos')}
-              </FilterText>
+              <FilterText
+                isActive={isProductsPage}
+                label={t('Produtos')}
+                onClick={() => setIsProductPage(true)}
+              />
+              <FilterText
+                isActive={!isProductsPage}
+                label={t('Complementos')}
+                onClick={() => setIsProductPage(false)}
+              />
             </HStack>
           </Flex>
         </Box>

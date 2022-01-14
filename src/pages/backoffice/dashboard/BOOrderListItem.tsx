@@ -1,4 +1,5 @@
-import { Box, Flex, Image, Stack, Text } from '@chakra-ui/react';
+import { Box, Flex, Icon, Image, Stack, Text } from '@chakra-ui/react';
+import { useObserveOrderChats } from 'app/api/order/useObserveOrderChats';
 import { useObserveOrderIssues } from 'app/api/order/useObserveOrderIssues';
 import { useContextServerTime } from 'app/state/server-time';
 import { Order, WithId } from 'appjusto-types';
@@ -7,6 +8,7 @@ import p2pIcon from 'common/img/bo-p2p.svg';
 import firebase from 'firebase/app';
 import React from 'react';
 import { MdErrorOutline, MdPolicy } from 'react-icons/md';
+import { RiChat3Line } from 'react-icons/ri';
 import { useRouteMatch } from 'react-router-dom';
 import { getTimestampMilliseconds, getTimeUntilNow } from 'utils/functions';
 import { CustomLink } from './CustomLink';
@@ -20,10 +22,12 @@ export const BOOrderListItem = ({ order }: Props) => {
   // context
   const { url } = useRouteMatch();
   const { getServerTime } = useContextServerTime();
+  const chatMessages = useObserveOrderChats(order.id);
   const issues = useObserveOrderIssues(order.id);
   // state
   const [orderDT, setOrderDT] = React.useState<number>();
   // helpers
+  const isMessages = chatMessages ? chatMessages?.length > 0 : false;
   const issuesFound = issues && issues.length > 0 ? true : false;
   const isFlagged = order.status === 'charged' && order.flagged;
   // side effects
@@ -52,6 +56,16 @@ export const BOOrderListItem = ({ order }: Props) => {
           <Text fontSize="sm" lineHeight="21px">
             {orderDT ? `${orderDT}min` : 'Agora'}
           </Text>
+          <Flex
+            w="24px"
+            h="24px"
+            justifyContent="center"
+            alignItems="center"
+            bg={isMessages ? '#6CE787' : 'none'}
+            borderRadius="lg"
+          >
+            <Icon as={RiChat3Line} color={isMessages ? 'black' : '#C8D7CB'} />
+          </Flex>
           <Flex
             w="24px"
             h="24px"

@@ -5,7 +5,7 @@ import { useRouteMatch } from 'react-router-dom';
 import { formatCurrency } from 'utils/formatters';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
-import { formatIuguValueToDisplay } from './utils';
+import { formatCents, formatIuguValueToDisplay } from './utils';
 
 interface AdvancesTableItemProps {
   advance: WithId<AccountAdvance>;
@@ -33,20 +33,11 @@ const AdvancesTableItem = ({ advance }: AdvancesTableItemProps) => {
 };
 
 interface AdvancesTableProps {
-  advances?: WithId<AccountAdvance>[] | null;
+  advances?: WithId<AccountAdvance>[];
 }
 
 export const AdvancesTable = ({ advances }: AdvancesTableProps) => {
   // helpers
-  const formatCents = (value: string) => {
-    let result = 0;
-    if (value.includes('R$')) {
-      result = parseFloat(value.split(' ')[1].replace(',', '.')) * 100;
-    } else {
-      result = parseFloat(value.split(' ')[0].replace(',', '.')) * 100;
-    }
-    return result;
-  };
   const totalRequested =
     advances?.reduce<number>((result, item) => {
       const value = formatCents(item.data.total.advanced_value);
@@ -74,7 +65,7 @@ export const AdvancesTable = ({ advances }: AdvancesTableProps) => {
           <Td></Td>
         </Tr>
         {advances !== undefined ? (
-          advances !== null ? (
+          advances.length > 0 ? (
             advances.map((advance) => <AdvancesTableItem key={advance.id} advance={advance} />)
           ) : (
             <Tr color="black" fontSize="xs" fontWeight="700">
