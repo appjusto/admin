@@ -150,15 +150,6 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
                   name={getName(group.from)}
                   messages={group.messages}
                 />
-                /*chat.map((message, index) => (
-                <ChatMessages
-                  key={message.id}
-                  image={getImage(message.from.id)}
-                  name={getName(message.from.id)}
-                  message={message.message}
-                  timestamp={message.timestamp}
-                  isGrouped={index > 1 && chat[index - 1].from.id === message.from.id}
-                />*/
               ))}
           </DrawerBody>
           <DrawerFooter borderTop="1px solid #C8D7CB">

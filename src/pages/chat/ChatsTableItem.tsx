@@ -1,6 +1,7 @@
 import { Icon, Td, Text, Tr, VStack } from '@chakra-ui/react';
 import { OrderChatGroup } from 'app/api/chat/types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
+import { flavorsPTOptions } from 'pages/backoffice/utils';
 import { useRouteMatch } from 'react-router';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
@@ -8,11 +9,6 @@ import { t } from 'utils/i18n';
 interface ChatsTableItemProps {
   chat: OrderChatGroup;
 }
-
-const flavorsPT = {
-  courier: 'Entregador',
-  consumer: 'Cliente',
-};
 
 export const ChatsTableItem = ({ chat }: ChatsTableItemProps) => {
   // context
@@ -31,8 +27,7 @@ export const ChatsTableItem = ({ chat }: ChatsTableItemProps) => {
       <Td>
         <VStack spacing={4} alignItems="flex-start">
           {chat.counterParts.map((part) => (
-            //@ts-ignore
-            <Text key={part.id}>{flavorsPT[part.flavor]}</Text>
+            <Text key={part.id}>{flavorsPTOptions[part.flavor]}</Text>
           ))}
         </VStack>
       </Td>

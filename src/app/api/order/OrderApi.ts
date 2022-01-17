@@ -237,7 +237,7 @@ export default class OrderApi {
       .onSnapshot(
         (querySnapshot) => {
           //@ts-ignore
-          resultHandler((prev) => {
+          resultHandler(() => {
             const docs = documentsAs<ChatMessage>(querySnapshot.docs);
             const messages = docs.map((msg) => ({ orderId, ...msg }));
             return [...messages];

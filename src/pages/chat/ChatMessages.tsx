@@ -12,13 +12,13 @@ interface ChatMessagesProps {
 
 export const ChatMessages = ({ name, messages, image }: ChatMessagesProps) => {
   // helpers
+  const userName = messages[0].from.name ?? name;
   const getTime = (timestamp: firebase.firestore.FieldValue) => {
     if (!timestamp) return;
     const fullDate = getDateAndHour(timestamp);
     const time = fullDate.split(' ')[1];
     return time;
   };
-
   // UI
   return (
     <Box mt="4" mb="2">
@@ -35,7 +35,7 @@ export const ChatMessages = ({ name, messages, image }: ChatMessagesProps) => {
           <Image src={image ?? managerIcon} width="100%" />
         </Flex>
         <Text fontSize="15px" lineHeight="21px" fontWeight="500" color="black">
-          {name}
+          {userName}
         </Text>
       </HStack>
       {messages.map((message) => (
