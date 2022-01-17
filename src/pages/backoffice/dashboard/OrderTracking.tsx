@@ -38,6 +38,7 @@ export const OrderTracking = ({ orderId, isCompact }: OrderTrackingProps) => {
       if (currentStatus === 'ready' || currentStatus === 'preparing')
         return `${orderDispatchingStatusPTOptions[currentDispatchingStatus].toUpperCase()} `;
     }
+    if (currentDispatchingStatus === 'outsourced') return 'ENTREGA TERCEIRIZADA ';
     if (currentDispatchingState === 'going-pickup') return 'ENTREG. A CAMINHO DA RETIRADA ';
     if (currentDispatchingState === 'arrived-pickup') return 'ENTREG. NO LOCAL DA RETIRADA ';
     if (currentDispatchingState === 'going-destination') return 'ENTREG. A CAMINHO DA ENTREGA ';
