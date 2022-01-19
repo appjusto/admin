@@ -19,7 +19,8 @@ export const OrdersTableItem = ({ order, isBackoffice }: ItemProps) => {
   const getFoodOrderTotal = () => {
     let total = 0;
     if (!isBackoffice) {
-      if (order.fare?.business?.value) total = order.fare.business.value;
+      if (order.outsourcedBy === 'business' && order.fare?.total) total = order.fare.total;
+      else if (order.fare?.business?.value) total = order.fare.business.value;
       else return 'N/E';
     } else {
       if (order.fare?.total) total = order.fare.total;

@@ -5,15 +5,13 @@ import { useCustomMutation } from '../mutation/useCustomMutation';
 export const useGetOutsourceDelivery = (orderId?: string) => {
   // context
   const api = useContextApi();
-  // status
-  //const [deliveryAccountType, setDeliveryAccountType] = React.useState<AccountType>();
   // mutations
   const {
     mutateAsync: getOutsourceDelivery,
     mutationResult: outsourceDeliveryResult,
   } = useCustomMutation(
-    async (accountType: OutsourceAccountType) =>
-      orderId ? api.order().getOutsourceDelivery(orderId, accountType) : null,
+    async (data: { accountType?: OutsourceAccountType }) =>
+      orderId ? api.order().getOutsourceDelivery(orderId, data.accountType) : null,
     'getOutsourceDelivery'
   );
   const {
@@ -27,15 +25,7 @@ export const useGetOutsourceDelivery = (orderId?: string) => {
       },
     } as Partial<Order>;
     return api.order().updateOrder(orderId, partialOrder);
-  }, 'getOutsourceDelivery');
-  // side effets
-  /*React.useEffect(() => {
-    if (!orderId) return;
-    return api.order().observeOrderInvoices(orderId, (invoices: WithId<Invoice>[]) => {
-      const delivery = invoices.find((invoice) => invoice.invoiceType === 'delivery');
-      if (delivery) setDeliveryAccountType(delivery.accountType);
-    });
-  }, [api, orderId]);*/
+  }, 'updateOutsourcingCourierName');
   // return
   return {
     getOutsourceDelivery,

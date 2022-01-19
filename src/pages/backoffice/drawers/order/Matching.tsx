@@ -176,7 +176,7 @@ export const Matching = ({
             </Button>
             <Button
               mt="0"
-              onClick={() => getOutsourceDelivery(outsourcingAccountType)}
+              onClick={() => getOutsourceDelivery({ accountType: outsourcingAccountType })}
               isLoading={outsourceDeliveryResult.isLoading}
             >
               {t('Confirmar')}
