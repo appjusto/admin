@@ -121,6 +121,12 @@ export const OrderDrawer = (props: Props) => {
                           `Não foi possível encontrar entregadores disponíveis na nossa rede. Um entregador de outra rede já está a caminho para retirar o pedido. A equipe AppJusto está monitorando o pedido e concluirá o mesmo após a realização da entrega.`
                         )}
                       </Text>
+                      <Text mt="2">
+                        {t('Nome do entregador: ')}
+                        <Text as="span" fontWeight="700">
+                          {order.courier?.name ?? 'Não informado'}
+                        </Text>
+                      </Text>
                       {/*<Text mt="2">
                         {t(
                           `O AppJusto não terá como monitorar o pedido a partir daqui. Caso seja necessário, entre em contato com o cliente para mantê-lo informado sobre sua entrega.`
