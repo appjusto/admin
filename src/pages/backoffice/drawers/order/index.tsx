@@ -216,13 +216,7 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
             <Invoices invoices={invoices} />
           </Route>
           <Route exact path={`${path}/matching`}>
-            <Matching
-              orderId={orderId}
-              orderType={order?.type}
-              orderStatus={order?.status}
-              orderDispatchingStatus={order?.dispatchingStatus}
-              orderCourierName={order?.courier?.name}
-            />
+            <Matching order={order} />
           </Route>
           <Route exact path={`${path}/status`}>
             <OrderStatusBar

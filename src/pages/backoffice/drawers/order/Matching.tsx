@@ -2,8 +2,7 @@ import { Box, Button, Flex, HStack, RadioGroup, Text } from '@chakra-ui/react';
 import { useGetOutsourceDelivery } from 'app/api/order/useGetOutsourceDelivery';
 import { useObserveOrderMatching } from 'app/api/order/useObserveOrderMatching';
 import { useOrderCourierManualAllocation } from 'app/api/order/useOrderCourierManualAllocation';
-import { OrderStatus, OrderType, OutsourceAccountType } from 'appjusto-types';
-import { DispatchingStatus } from 'appjusto-types/order/dispatching';
+import { Order, OutsourceAccountType, WithId } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import CustomRadio from 'common/components/form/CustomRadio';
 import { CustomInput } from 'common/components/form/input/CustomInput';
@@ -15,20 +14,10 @@ import { CourierNotifiedBox } from './matching/CourierNotifiedBox';
 import { LogsTable } from './matching/LogsTable';
 
 interface MatchingProps {
-  orderId: string;
-  orderType?: OrderType;
-  orderStatus?: OrderStatus;
-  orderDispatchingStatus?: DispatchingStatus;
-  orderCourierName?: string;
+  order?: WithId<Order> | null;
 }
 
-export const Matching = ({
-  orderId,
-  orderType,
-  orderStatus,
-  orderDispatchingStatus,
-  orderCourierName,
-}: MatchingProps) => {
+export const Matching = ({ order }: MatchingProps) => {
   // context
   const {
     matching,
@@ -36,14 +25,14 @@ export const Matching = ({
     updateResult,
     restartMatching,
     restartResult,
-  } = useObserveOrderMatching(orderId);
+  } = useObserveOrderMatching(order?.id);
   const { courierManualAllocation, allocationResult } = useOrderCourierManualAllocation();
   const {
     getOutsourceDelivery,
     outsourceDeliveryResult,
     updateOutsourcingCourierName,
     updateOutsourcingCourierNameResult,
-  } = useGetOutsourceDelivery(orderId);
+  } = useGetOutsourceDelivery(order?.id);
   // state
   //const [isAuto, setIsAuto] = React.useState(true);
   const [logs, setLogs] = React.useState<string[]>();
@@ -58,17 +47,17 @@ export const Matching = ({
   const [outsourcingCourierName, setOutsourcingCourierName] = React.useState<string>();
   //const [couriersRejections, setCouriersRejections] = React.useState<OrderMatchingRejection[]>();
   // helpers
-  const isOrderActive = orderStatus
-    ? ['confirmed', 'preparing', 'ready', 'dispatching'].includes(orderStatus)
+  const isOrderActive = order?.status
+    ? ['confirmed', 'preparing', 'ready', 'dispatching'].includes(order.status)
     : false;
-  const isNoMatch = orderDispatchingStatus === 'no-match';
+  const isNoMatch = order?.dispatchingStatus === 'no-match';
   const getDispatchingStatus = () => {
-    if (!orderDispatchingStatus) return 'N/E';
-    if (orderDispatchingStatus === 'matching') {
+    if (!order?.dispatchingStatus) return 'N/E';
+    if (order.dispatchingStatus === 'matching') {
       if (logs && logs.length > 0) return 'Buscando';
       else return 'Ocioso';
     }
-    return orderDispatchingStatusPTOptions[orderDispatchingStatus];
+    return orderDispatchingStatusPTOptions[order.dispatchingStatus];
   };
   // handlers
   const removeCourierNotified = async (courierId: string) => {
@@ -78,7 +67,8 @@ export const Matching = ({
     setCourierRemoving(null);
   };
   const allocateCourier = (courierId: string, comment: string) => {
-    return courierManualAllocation({ orderId, courierId, comment });
+    if (!order?.id) return;
+    return courierManualAllocation({ orderId: order.id, courierId, comment });
   };
   // side effects
   React.useEffect(() => {
@@ -95,15 +85,15 @@ export const Matching = ({
     setAttemps(matching.attempt);
   }, [matching]);
   React.useEffect(() => {
-    if (orderDispatchingStatus === 'outsourced') setIsOutsourcing(true);
-  }, [orderDispatchingStatus]);
+    if (order?.dispatchingStatus === 'outsourced') setIsOutsourcing(true);
+  }, [order?.dispatchingStatus]);
   React.useEffect(() => {
     if (restartResult.isSuccess) setIsRestarting(false);
   }, [restartResult]);
   React.useEffect(() => {
-    if (!orderCourierName) return;
-    setOutsourcingCourierName(orderCourierName);
-  }, [orderCourierName]);
+    if (!order?.courier?.name) return;
+    setOutsourcingCourierName(order?.courier?.name);
+  }, [order?.courier?.name]);
   // UI
   return (
     <>
@@ -115,17 +105,27 @@ export const Matching = ({
           variant="yellowDark"
           onClick={() => setIsOutsourcing(true)}
           isDisabled={
-            orderDispatchingStatus
-              ? ['matched', 'confirmed'].includes(orderDispatchingStatus)
+            order?.dispatchingStatus
+              ? ['matched', 'confirmed'].includes(order.dispatchingStatus)
               : true
           }
         >
           {t('Logística fora da rede')}
         </Button>
-      ) : orderDispatchingStatus === 'outsourced' ? (
+      ) : order?.dispatchingStatus === 'outsourced' ? (
         <Box mt="4" border="2px solid #FFBE00" borderRadius="lg" bg="" p="4">
           <SectionTitle mt="0">{t('Logística fora da rede ativada')}</SectionTitle>
-          <Text mt="2">{t(`Será necessário concluir o pedido após a entrega finalizada`)}</Text>
+          <Text mt="4">
+            {t('Responsável: ')}
+            <Text as="span" fontWeight="700">
+              {order.outsourcedBy === 'business' ? t('Restaurante') : t('Plataforma')}
+            </Text>
+          </Text>
+          {isOrderActive && order.outsourcedBy !== 'business' && (
+            <Text mt="2">
+              {t('Será necessário finalizar o pedido quando o mesmo for entregue.')}
+            </Text>
+          )}
           <HStack mt="4">
             <CustomInput
               mt="0"
@@ -138,7 +138,7 @@ export const Matching = ({
               h="60px"
               onClick={() => updateOutsourcingCourierName(outsourcingCourierName!)}
               isLoading={updateOutsourcingCourierNameResult.isLoading}
-              isDisabled={!outsourcingCourierName}
+              isDisabled={!outsourcingCourierName || !isOrderActive}
             >
               {t('Salvar')}
             </Button>
@@ -164,7 +164,7 @@ export const Matching = ({
             >
               <HStack spacing={6}>
                 <CustomRadio value="platform">{t('Plataforma')}</CustomRadio>
-                <CustomRadio value="business" isDisabled={orderType === 'p2p'}>
+                <CustomRadio value="business" isDisabled={order?.type === 'p2p'}>
                   {t('Restaurante')}
                 </CustomRadio>
               </HStack>
@@ -191,7 +191,7 @@ export const Matching = ({
             {getDispatchingStatus()}
           </Text>
         </SectionTitle>
-        {orderDispatchingStatus === 'no-match' &&
+        {order?.dispatchingStatus === 'no-match' &&
           (isRestarting ? (
             <Flex
               w="60%"
@@ -289,10 +289,10 @@ export const Matching = ({
             couriersNotified.map((courierId) => (
               <CourierNotifiedBox
                 key={courierId}
-                orderId={orderId}
+                orderId={order?.id!}
                 isOrderActive={isOrderActive}
                 courierId={courierId}
-                dispatchingStatus={orderDispatchingStatus}
+                dispatchingStatus={order?.dispatchingStatus}
                 removeCourier={removeCourierNotified}
                 allocateCourier={allocateCourier}
                 courierRemoving={courierRemoving}

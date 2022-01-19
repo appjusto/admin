@@ -260,6 +260,17 @@ export const OrderBaseDrawer = ({
               </Flex>
             </DrawerFooter>
           )}
+          {order?.status === 'dispatching' && order.outsourcedBy === 'business' && (
+            <DrawerFooter borderTop="1px solid #F2F6EA">
+              <Flex w="full" justifyContent="flex-start">
+                <Flex w="full" maxW="607px" pr="12" flexDir="row" justifyContent="flex-start">
+                  <Button width="full" maxW="200px" variant="dangerLight" onClick={cancel}>
+                    {t('Cancelar pedido')}
+                  </Button>
+                </Flex>
+              </Flex>
+            </DrawerFooter>
+          )}
         </DrawerContent>
       </DrawerOverlay>
     </Drawer>

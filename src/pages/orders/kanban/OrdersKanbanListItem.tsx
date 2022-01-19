@@ -331,7 +331,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
                   </Text>
                   {order?.dispatchingStatus === 'outsourced' && (
                     <Text mt="1" fontSize="xs" textAlign="end">
-                      {t('Enviamos um entregador de outra rede para retirar este pedido.')}
+                      {t('Um entregador de outra rede fará a retirada.')}
                     </Text>
                   )}
                   {isMatched &&
