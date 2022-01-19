@@ -1,10 +1,12 @@
-import { Box, Button, Flex, HStack, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, HStack, RadioGroup, Text } from '@chakra-ui/react';
 import { useGetOutsourceDelivery } from 'app/api/order/useGetOutsourceDelivery';
 import { useObserveOrderMatching } from 'app/api/order/useObserveOrderMatching';
 import { useOrderCourierManualAllocation } from 'app/api/order/useOrderCourierManualAllocation';
 import { OrderStatus } from 'appjusto-types';
 import { DispatchingStatus } from 'appjusto-types/order/dispatching';
 import { CustomButton } from 'common/components/buttons/CustomButton';
+import CustomRadio from 'common/components/form/CustomRadio';
+import { CustomInput } from 'common/components/form/input/CustomInput';
 import React from 'react';
 import { t } from 'utils/i18n';
 import { orderDispatchingStatusPTOptions } from '../../utils/index';
@@ -12,13 +14,21 @@ import { SectionTitle } from '../generics/SectionTitle';
 import { CourierNotifiedBox } from './matching/CourierNotifiedBox';
 import { LogsTable } from './matching/LogsTable';
 
+type OutsourcingFlavor = 'platform' | 'business';
+
 interface MatchingProps {
   orderId: string;
   orderStatus?: OrderStatus;
   orderDispatchingStatus?: DispatchingStatus;
+  orderCourierName?: string;
 }
 
-export const Matching = ({ orderId, orderStatus, orderDispatchingStatus }: MatchingProps) => {
+export const Matching = ({
+  orderId,
+  orderStatus,
+  orderDispatchingStatus,
+  orderCourierName,
+}: MatchingProps) => {
   // context
   const {
     matching,
@@ -28,7 +38,12 @@ export const Matching = ({ orderId, orderStatus, orderDispatchingStatus }: Match
     restartResult,
   } = useObserveOrderMatching(orderId);
   const { courierManualAllocation, allocationResult } = useOrderCourierManualAllocation();
-  const { getOutsourceDelivery, outsourceDeliveryResult } = useGetOutsourceDelivery(orderId);
+  const {
+    getOutsourceDelivery,
+    outsourceDeliveryResult,
+    updateOutsourcingCourierName,
+    updateOutsourcingCourierNameResult,
+  } = useGetOutsourceDelivery(orderId);
   // state
   //const [isAuto, setIsAuto] = React.useState(true);
   const [logs, setLogs] = React.useState<string[]>();
@@ -37,6 +52,8 @@ export const Matching = ({ orderId, orderStatus, orderDispatchingStatus }: Match
   const [courierRemoving, setCourierRemoving] = React.useState<string | null>(null);
   const [isRestarting, setIsRestarting] = React.useState<boolean>(false);
   const [isOutsourcing, setIsOutsourcing] = React.useState<boolean>(false);
+  const [outsourcingFlavor, setOutsourcingFlavor] = React.useState<OutsourcingFlavor>('platform');
+  const [outsourcingCourierName, setOutsourcingCourierName] = React.useState<string>();
   //const [couriersRejections, setCouriersRejections] = React.useState<OrderMatchingRejection[]>();
   // helpers
   const isOrderActive = orderStatus
@@ -81,6 +98,10 @@ export const Matching = ({ orderId, orderStatus, orderDispatchingStatus }: Match
   React.useEffect(() => {
     if (restartResult.isSuccess) setIsRestarting(false);
   }, [restartResult]);
+  React.useEffect(() => {
+    if (!orderCourierName) return;
+    setOutsourcingCourierName(orderCourierName);
+  }, [orderCourierName]);
   // UI
   return (
     <>
@@ -103,6 +124,23 @@ export const Matching = ({ orderId, orderStatus, orderDispatchingStatus }: Match
         <Box mt="4" border="2px solid #FFBE00" borderRadius="lg" bg="" p="4">
           <SectionTitle mt="0">{t('Logística fora da rede ativada')}</SectionTitle>
           <Text mt="2">{t(`Será necessário concluir o pedido após a entrega finalizada`)}</Text>
+          <HStack mt="4">
+            <CustomInput
+              mt="0"
+              id="out-courier-name"
+              label={t('Nome do entregador')}
+              value={outsourcingCourierName ?? ''}
+              onChange={(ev) => setOutsourcingCourierName(ev.target.value)}
+            />
+            <Button
+              h="60px"
+              onClick={() => updateOutsourcingCourierName(outsourcingCourierName!)}
+              isLoading={updateOutsourcingCourierNameResult.isLoading}
+              isDisabled={!outsourcingCourierName}
+            >
+              {t('Salvar')}
+            </Button>
+          </HStack>
         </Box>
       ) : (
         <Box mt="4" border="2px solid #FFBE00" borderRadius="lg" bg="" p="4">
@@ -112,13 +150,29 @@ export const Matching = ({ orderId, orderStatus, orderDispatchingStatus }: Match
               `Ao realizar a logística de entrega fora da rede, restaurante e consumidor não serão informados, pelo Admin/App, sobre a localização do entregador.`
             )}
           </Text>
-          <HStack mt="4">
+          <HStack mt="6" spacing={4} bgColor="#f6f6f67b" borderRadius="lg" p="4">
+            <Text fontWeight="700">{t(`O valor da entrega será destinado para:`)}</Text>
+            <RadioGroup
+              onChange={(value: OutsourcingFlavor) => setOutsourcingFlavor(value)}
+              value={outsourcingFlavor}
+              colorScheme="green"
+              color="black"
+              fontSize="15px"
+              lineHeight="21px"
+            >
+              <HStack spacing={6}>
+                <CustomRadio value="platform">{t('Plataforma')}</CustomRadio>
+                <CustomRadio value="business">{t('Restaurante')}</CustomRadio>
+              </HStack>
+            </RadioGroup>
+          </HStack>
+          <HStack mt="6" justifyContent="flex-end">
             <Button mt="0" variant="dangerLight" onClick={() => setIsOutsourcing(false)}>
               {t('Cancelar')}
             </Button>
             <Button
               mt="0"
-              onClick={() => getOutsourceDelivery()}
+              onClick={() => getOutsourceDelivery(outsourcingFlavor)}
               isLoading={outsourceDeliveryResult.isLoading}
             >
               {t('Confirmar')}

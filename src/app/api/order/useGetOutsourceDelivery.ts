@@ -1,4 +1,5 @@
 import { useContextApi } from 'app/state/api/context';
+import { Flavor, Order } from 'appjusto-types';
 import { useCustomMutation } from '../mutation/useCustomMutation';
 
 export const useGetOutsourceDelivery = (orderId?: string) => {
@@ -11,9 +12,21 @@ export const useGetOutsourceDelivery = (orderId?: string) => {
     mutateAsync: getOutsourceDelivery,
     mutationResult: outsourceDeliveryResult,
   } = useCustomMutation(
-    async () => (orderId ? api.order().getOutsourceDelivery(orderId) : null),
+    async (flavor: Flavor) => (orderId ? api.order().getOutsourceDelivery(orderId, flavor) : null),
     'getOutsourceDelivery'
   );
+  const {
+    mutateAsync: updateOutsourcingCourierName,
+    mutationResult: updateOutsourcingCourierNameResult,
+  } = useCustomMutation(async (name: string) => {
+    if (!orderId) return null;
+    const partialOrder = {
+      courier: {
+        name,
+      },
+    } as Partial<Order>;
+    return api.order().updateOrder(orderId, partialOrder);
+  }, 'getOutsourceDelivery');
   // side effets
   /*React.useEffect(() => {
     if (!orderId) return;
@@ -23,5 +36,10 @@ export const useGetOutsourceDelivery = (orderId?: string) => {
     });
   }, [api, orderId]);*/
   // return
-  return { getOutsourceDelivery, outsourceDeliveryResult };
+  return {
+    getOutsourceDelivery,
+    outsourceDeliveryResult,
+    updateOutsourcingCourierName,
+    updateOutsourcingCourierNameResult,
+  };
 };

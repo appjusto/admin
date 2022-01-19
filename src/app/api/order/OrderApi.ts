@@ -2,6 +2,7 @@ import {
   CancelOrderPayload,
   ChatMessage,
   DropOrderPayload,
+  Flavor,
   Invoice,
   Issue,
   MatchOrderPayload,
@@ -293,21 +294,6 @@ export default class OrderApi {
     return unsubscribe;
   }
 
-  async getOrderStatusTimestamp(
-    orderId: string,
-    status: OrderStatus,
-    resultHandler: (timestamp: firebase.firestore.Timestamp | null) => void
-  ) {
-    const query = this.refs
-      .getOrderLogsRef(orderId)
-      .where('after.status', '==', status)
-      .orderBy('timestamp', 'desc')
-      .limit(1);
-    const result = await query.get();
-    const log = documentsAs<OrderChange>(result.docs).find(() => true);
-    return resultHandler((log?.timestamp as firebase.firestore.Timestamp) ?? null);
-  }
-
   observeOrderPrivateMatching(
     orderId: string,
     resultHandler: (matching: OrderMatching | null) => void
@@ -324,39 +310,6 @@ export default class OrderApi {
     );
     // returns the unsubscribe function
     return unsubscribe;
-  }
-
-  async getOrderPrivateCancellation(orderId: string) {
-    const data = await this.refs.getOrderCancellationRef(orderId).get();
-    if (!data.exists) return null;
-    return documentAs<OrderCancellation>(data);
-  }
-
-  async updateOrderCourierNotified(orderId: string, couriersNotified: string[]) {
-    return this.refs.getOrderMatchingRef(orderId).update({ couriersNotified });
-  }
-
-  async getOrderIssues(orderId: string) {
-    return documentsAs<OrderIssue>(
-      (await this.refs.getOrderIssuesRef(orderId).orderBy('createdOn', 'desc').get()).docs
-    );
-  }
-
-  async fetchOrderById(orderId: string) {
-    const data = await this.refs.getOrderRef(orderId).get();
-    return data ? { ...data.data(), id: orderId } : null;
-  }
-
-  async fetchOrdersByConsumerId(consumerId: string) {
-    return documentsAs<Order>(
-      (
-        await this.refs
-          .getOrdersRef()
-          .orderBy('createdOn', 'desc')
-          .where('consumer.id', '==', consumerId)
-          .get()
-      ).docs
-    );
   }
 
   observeOrdersByCourierId(
@@ -449,6 +402,54 @@ export default class OrderApi {
     });
   }
 
+  async getOrderStatusTimestamp(
+    orderId: string,
+    status: OrderStatus,
+    resultHandler: (timestamp: firebase.firestore.Timestamp | null) => void
+  ) {
+    const query = this.refs
+      .getOrderLogsRef(orderId)
+      .where('after.status', '==', status)
+      .orderBy('timestamp', 'desc')
+      .limit(1);
+    const result = await query.get();
+    const log = documentsAs<OrderChange>(result.docs).find(() => true);
+    return resultHandler((log?.timestamp as firebase.firestore.Timestamp) ?? null);
+  }
+
+  async getOrderPrivateCancellation(orderId: string) {
+    const data = await this.refs.getOrderCancellationRef(orderId).get();
+    if (!data.exists) return null;
+    return documentAs<OrderCancellation>(data);
+  }
+
+  async updateOrderCourierNotified(orderId: string, couriersNotified: string[]) {
+    return this.refs.getOrderMatchingRef(orderId).update({ couriersNotified });
+  }
+
+  async getOrderIssues(orderId: string) {
+    return documentsAs<OrderIssue>(
+      (await this.refs.getOrderIssuesRef(orderId).orderBy('createdOn', 'desc').get()).docs
+    );
+  }
+
+  async fetchOrderById(orderId: string) {
+    const data = await this.refs.getOrderRef(orderId).get();
+    return data ? { ...data.data(), id: orderId } : null;
+  }
+
+  async fetchOrdersByConsumerId(consumerId: string) {
+    return documentsAs<Order>(
+      (
+        await this.refs
+          .getOrdersRef()
+          .orderBy('createdOn', 'desc')
+          .where('consumer.id', '==', consumerId)
+          .get()
+      ).docs
+    );
+  }
+
   async sendMessage(orderId: string, message: Partial<ChatMessage>) {
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
     return this.refs.getOrderChatRef(orderId).add({
@@ -509,7 +510,7 @@ export default class OrderApi {
     return await this.refs.getDropOrderCallable()(payload);
   }
 
-  async getOutsourceDelivery(orderId: string) {
+  async getOutsourceDelivery(orderId: string, flavor: Flavor) {
     const payload: OutsourceDeliveryPayload = {
       meta: { version: '1' }, // TODO: pass correct version on
       orderId,

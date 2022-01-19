@@ -155,7 +155,7 @@ export const OrderDrawer = (props: Props) => {
                         </Button>
                         <Button
                           mt="0"
-                          onClick={() => getOutsourceDelivery()}
+                          onClick={() => getOutsourceDelivery('business')}
                           isLoading={outsourceDeliveryResult.isLoading}
                         >
                           {t('Confirmar')}
