@@ -616,7 +616,9 @@ export default class BusinessApi {
   ): firebase.Unsubscribe {
     const query = this.refs.getBusinessComplementsRef(businessId);
     // returns the unsubscribe function
-    return customCollectionSnapshot(query, resultHandler);
+    return customCollectionSnapshot(query, resultHandler, {
+      avoidPenddingWrites: false,
+    });
   }
 
   async createComplementsGroup(businessId: string, group: ComplementGroup) {

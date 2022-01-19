@@ -92,6 +92,14 @@ export const iuguSituationPTOptions = {
   'invalid': 'Inválida',
 };
 
+export const flavorsPTOptions = {
+  courier: 'Entregador',
+  consumer: 'Cliente',
+  business: 'Restaurante',
+  backoffice: 'Backoffice',
+  platform: 'Plataforma',
+};
+
 export const getEditableProfile = (profile: any, isEditingEmail: boolean) => {
   let omittedKeys = [
     'id',

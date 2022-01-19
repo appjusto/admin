@@ -7,7 +7,7 @@ import foodIcon from 'common/img/bo-food.svg';
 import p2pIcon from 'common/img/bo-p2p.svg';
 import firebase from 'firebase/app';
 import React from 'react';
-import { MdErrorOutline, MdPolicy } from 'react-icons/md';
+import { MdErrorOutline, MdMoped, MdPolicy } from 'react-icons/md';
 import { RiChat3Line } from 'react-icons/ri';
 import { useRouteMatch } from 'react-router-dom';
 import { getTimestampMilliseconds, getTimeUntilNow } from 'utils/functions';
@@ -26,10 +26,34 @@ export const BOOrderListItem = ({ order }: Props) => {
   const issues = useObserveOrderIssues(order.id);
   // state
   const [orderDT, setOrderDT] = React.useState<number>();
+  // handlers
+  const getCourierIconStatus = () => {
+    if (typeof order.courier?.id === 'string')
+      return {
+        bg: '#6CE787',
+        color: 'black',
+      };
+    if (order.dispatchingStatus === 'outsourced')
+      return {
+        bg: '#FFBE00',
+        color: 'black',
+      };
+    if (['ready', 'dispatching'].includes(order.status) && !order.courier?.id) {
+      return {
+        bg: 'red',
+        color: 'white',
+      };
+    }
+    return {
+      bg: 'none',
+      color: '#C8D7CB',
+    };
+  };
   // helpers
   const isMessages = chatMessages ? chatMessages?.length > 0 : false;
   const issuesFound = issues && issues.length > 0 ? true : false;
   const isFlagged = order.status === 'charged' && order.flagged;
+  const courierIconStatus = getCourierIconStatus();
   // side effects
   React.useEffect(() => {
     const setNewTime = () => {
@@ -61,10 +85,11 @@ export const BOOrderListItem = ({ order }: Props) => {
             h="24px"
             justifyContent="center"
             alignItems="center"
-            bg={isMessages ? '#6CE787' : 'none'}
-            borderRadius="lg"
+            borderRadius="12px"
+            border="2px solid"
+            borderColor={isFlagged ? 'red' : 'transparent'}
           >
-            <Icon as={RiChat3Line} color={isMessages ? 'black' : '#C8D7CB'} />
+            <MdPolicy color={isFlagged ? 'red' : '#C8D7CB'} />
           </Flex>
           <Flex
             w="24px"
@@ -81,11 +106,20 @@ export const BOOrderListItem = ({ order }: Props) => {
             h="24px"
             justifyContent="center"
             alignItems="center"
-            borderRadius="12px"
-            border="2px solid"
-            borderColor={isFlagged ? 'red' : 'transparent'}
+            bg={isMessages ? '#6CE787' : 'none'}
+            borderRadius="lg"
           >
-            <MdPolicy color={isFlagged ? 'red' : '#C8D7CB'} />
+            <Icon as={RiChat3Line} color={isMessages ? 'black' : '#C8D7CB'} />
+          </Flex>
+          <Flex
+            w="24px"
+            h="24px"
+            justifyContent="center"
+            alignItems="center"
+            bg={courierIconStatus.bg}
+            borderRadius="lg"
+          >
+            <Icon as={MdMoped} w="20px" h="20px" color={courierIconStatus.color} />
           </Flex>
         </Flex>
         <OrderTracking orderId={order.id} isCompact />
