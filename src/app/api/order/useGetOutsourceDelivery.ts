@@ -1,5 +1,5 @@
 import { useContextApi } from 'app/state/api/context';
-import { Flavor, Order } from 'appjusto-types';
+import { OutsourceAccountType, Order } from 'appjusto-types';
 import { useCustomMutation } from '../mutation/useCustomMutation';
 
 export const useGetOutsourceDelivery = (orderId?: string) => {
@@ -12,7 +12,8 @@ export const useGetOutsourceDelivery = (orderId?: string) => {
     mutateAsync: getOutsourceDelivery,
     mutationResult: outsourceDeliveryResult,
   } = useCustomMutation(
-    async (flavor: Flavor) => (orderId ? api.order().getOutsourceDelivery(orderId, flavor) : null),
+    async (accountType: OutsourceAccountType) =>
+      orderId ? api.order().getOutsourceDelivery(orderId, accountType) : null,
     'getOutsourceDelivery'
   );
   const {

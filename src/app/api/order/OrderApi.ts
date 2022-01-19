@@ -2,7 +2,7 @@ import {
   CancelOrderPayload,
   ChatMessage,
   DropOrderPayload,
-  Flavor,
+  OutsourceAccountType,
   Invoice,
   Issue,
   MatchOrderPayload,
@@ -510,10 +510,11 @@ export default class OrderApi {
     return await this.refs.getDropOrderCallable()(payload);
   }
 
-  async getOutsourceDelivery(orderId: string, flavor: Flavor) {
+  async getOutsourceDelivery(orderId: string, accountType: OutsourceAccountType) {
     const payload: OutsourceDeliveryPayload = {
       meta: { version: '1' }, // TODO: pass correct version on
       orderId,
+      accountType,
     };
     return await this.refs.getOutsourceDeliveryCallable()(payload);
   }

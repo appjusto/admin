@@ -2,7 +2,7 @@ import { Box, Button, Flex, HStack, RadioGroup, Text } from '@chakra-ui/react';
 import { useGetOutsourceDelivery } from 'app/api/order/useGetOutsourceDelivery';
 import { useObserveOrderMatching } from 'app/api/order/useObserveOrderMatching';
 import { useOrderCourierManualAllocation } from 'app/api/order/useOrderCourierManualAllocation';
-import { OrderStatus, OrderType } from 'appjusto-types';
+import { OrderStatus, OrderType, OutsourceAccountType } from 'appjusto-types';
 import { DispatchingStatus } from 'appjusto-types/order/dispatching';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import CustomRadio from 'common/components/form/CustomRadio';
@@ -13,8 +13,6 @@ import { orderDispatchingStatusPTOptions } from '../../utils/index';
 import { SectionTitle } from '../generics/SectionTitle';
 import { CourierNotifiedBox } from './matching/CourierNotifiedBox';
 import { LogsTable } from './matching/LogsTable';
-
-type OutsourcingFlavor = 'platform' | 'business';
 
 interface MatchingProps {
   orderId: string;
@@ -54,7 +52,9 @@ export const Matching = ({
   const [courierRemoving, setCourierRemoving] = React.useState<string | null>(null);
   const [isRestarting, setIsRestarting] = React.useState<boolean>(false);
   const [isOutsourcing, setIsOutsourcing] = React.useState<boolean>(false);
-  const [outsourcingFlavor, setOutsourcingFlavor] = React.useState<OutsourcingFlavor>('platform');
+  const [outsourcingAccountType, setOutsourcingAccountType] = React.useState<OutsourceAccountType>(
+    'platform'
+  );
   const [outsourcingCourierName, setOutsourcingCourierName] = React.useState<string>();
   //const [couriersRejections, setCouriersRejections] = React.useState<OrderMatchingRejection[]>();
   // helpers
@@ -155,8 +155,8 @@ export const Matching = ({
           <HStack mt="6" spacing={4} bgColor="#f6f6f67b" borderRadius="lg" p="4">
             <Text fontWeight="700">{t(`O valor da entrega será destinado para:`)}</Text>
             <RadioGroup
-              onChange={(value: OutsourcingFlavor) => setOutsourcingFlavor(value)}
-              value={outsourcingFlavor}
+              onChange={(value: OutsourceAccountType) => setOutsourcingAccountType(value)}
+              value={outsourcingAccountType}
               colorScheme="green"
               color="black"
               fontSize="15px"
@@ -176,7 +176,7 @@ export const Matching = ({
             </Button>
             <Button
               mt="0"
-              onClick={() => getOutsourceDelivery(outsourcingFlavor)}
+              onClick={() => getOutsourceDelivery(outsourcingAccountType)}
               isLoading={outsourceDeliveryResult.isLoading}
             >
               {t('Confirmar')}
