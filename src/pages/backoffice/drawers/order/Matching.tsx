@@ -2,7 +2,7 @@ import { Box, Button, Flex, HStack, RadioGroup, Text } from '@chakra-ui/react';
 import { useGetOutsourceDelivery } from 'app/api/order/useGetOutsourceDelivery';
 import { useObserveOrderMatching } from 'app/api/order/useObserveOrderMatching';
 import { useOrderCourierManualAllocation } from 'app/api/order/useOrderCourierManualAllocation';
-import { OrderStatus } from 'appjusto-types';
+import { OrderStatus, OrderType } from 'appjusto-types';
 import { DispatchingStatus } from 'appjusto-types/order/dispatching';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import CustomRadio from 'common/components/form/CustomRadio';
@@ -18,6 +18,7 @@ type OutsourcingFlavor = 'platform' | 'business';
 
 interface MatchingProps {
   orderId: string;
+  orderType?: OrderType;
   orderStatus?: OrderStatus;
   orderDispatchingStatus?: DispatchingStatus;
   orderCourierName?: string;
@@ -25,6 +26,7 @@ interface MatchingProps {
 
 export const Matching = ({
   orderId,
+  orderType,
   orderStatus,
   orderDispatchingStatus,
   orderCourierName,
@@ -162,7 +164,9 @@ export const Matching = ({
             >
               <HStack spacing={6}>
                 <CustomRadio value="platform">{t('Plataforma')}</CustomRadio>
-                <CustomRadio value="business">{t('Restaurante')}</CustomRadio>
+                <CustomRadio value="business" isDisabled={orderType === 'p2p'}>
+                  {t('Restaurante')}
+                </CustomRadio>
               </HStack>
             </RadioGroup>
           </HStack>
