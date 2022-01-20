@@ -13,6 +13,8 @@ interface ConsumerProfileContextProps {
   consumer?: WithId<ConsumerProfile> | null;
   pictures: { selfie?: string | null; document?: string | null };
   contextValidation: Validation;
+  isOrdersActive: boolean;
+  setIsOrdersActive(value: boolean): void;
   orders: WithId<Order>[];
   isEditingEmail: boolean;
   selfieFiles?: File[] | null;
@@ -45,7 +47,6 @@ export const ConsumerProvider = ({ children }: Props) => {
   const profile = useConsumerProfile(consumerId);
   // change to useConsumerProfilePictures
   const pictures = useConsumerProfilePictures(consumerId, '_1024x1024', '_1024x1024');
-  const orders = useConsumerOrders(consumerId);
   const issueOptions = useIssuesByType(issueOptionsArray);
   // state
   const [consumer, dispatch] = React.useReducer(consumerReducer, {} as WithId<ConsumerProfile>);
@@ -55,6 +56,8 @@ export const ConsumerProvider = ({ children }: Props) => {
   const [isEditingEmail, setIsEditingEmail] = React.useState(false);
   const [selfieFiles, setSelfieFiles] = React.useState<File[] | null>(null);
   const [documentFiles, setDocumentFiles] = React.useState<File[] | null>(null);
+  const [isOrdersActive, setIsOrdersActive] = React.useState(false);
+  const orders = useConsumerOrders(consumerId, isOrdersActive);
   // handlers
   const handleProfileChange = (key: string, value: any) => {
     dispatch({ type: 'update_state', payload: { [key]: value } });
@@ -82,6 +85,8 @@ export const ConsumerProvider = ({ children }: Props) => {
         consumer,
         pictures,
         contextValidation,
+        isOrdersActive,
+        setIsOrdersActive,
         orders,
         isEditingEmail,
         selfieFiles,
