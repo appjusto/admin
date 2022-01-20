@@ -3,6 +3,7 @@ import {
   Button,
   Flex,
   HStack,
+  Link,
   Table,
   Tbody,
   Td,
@@ -19,6 +20,7 @@ import { Order, WithId } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { CustomDateFilter } from 'common/components/form/input/CustomDateFilter';
 import React from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import { formatCurrency } from 'utils/formatters';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
@@ -32,21 +34,17 @@ const CourierOrdersTableItem = ({ order }: ItemPros) => {
   // UI
   return (
     <Tr color="black" fontSize="xs">
-      <Td>{order.code ?? 'N/E'}</Td>
+      <Td>
+        <Link as={RouterLink} to={`/backoffice/orders/${order.id}`}>
+          {order.code ?? 'N/E'}
+        </Link>
+      </Td>
       <Td>
         {order.confirmedOn ? getDateAndHour(order.confirmedOn) : getDateAndHour(order.updatedOn)}
       </Td>
       <Td>{order.type === 'food' ? 'Comida' : 'p2p'}</Td>
       <Td>{order.business?.name ?? 'N/I'}</Td>
       <Td>{order.fare?.courier.value ? formatCurrency(order.fare?.courier.value) : 'N/E'}</Td>
-      <Td>
-        <CustomButton
-          size="sm"
-          variant="outline"
-          label={t('Detalhes')}
-          link={`/backoffice/orders/${order.id}`}
-        />
-      </Td>
     </Tr>
   );
 };
@@ -187,7 +185,6 @@ export const CourierOrders = () => {
                 <Th>{t('tipo')}</Th>
                 <Th>{t('Restaurante')}</Th>
                 <Th>{t('Valor')}</Th>
-                <Th></Th>
               </Tr>
             </Thead>
             <Tbody>
