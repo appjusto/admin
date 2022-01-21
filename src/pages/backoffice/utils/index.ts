@@ -55,6 +55,7 @@ export const orderStatusPTOptionsForTableItem = {
 
 export const orderDispatchingStatusPTOptions = {
   'idle': 'Ocioso',
+  'scheduled': 'Agendado',
   'matching': 'Buscando',
   'no-match': 'Não encontrado',
   'matched': 'Encontrado',
