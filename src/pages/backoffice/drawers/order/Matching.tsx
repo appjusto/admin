@@ -235,43 +235,6 @@ export const Matching = ({ order }: MatchingProps) => {
           ))}
       </Flex>
       <SectionTitle mt={isNoMatch ? '2' : '4'}>{t('Tentativas: ') + attemps}</SectionTitle>
-      {/*<Flex
-        my="8"
-        fontSize="lg"
-        flexDir="row"
-        alignItems="flex-start"
-        height="38px"
-        borderBottom="1px solid #C8D7CB"
-      >
-        <Text
-          pb="2"
-          px="4"
-          mr="4"
-          fontSize="lg"
-          fontWeight="500"
-          cursor="pointer"
-          _hover={{ textDecor: 'none' }}
-          _focus={{ boxShadow: 'none' }}
-          borderBottom={isAuto ? '4px solid #78E08F' : 'none'}
-          onClick={() => setIsAuto(true)}
-        >
-          {t('Automático')}
-        </Text>
-        <Text
-          pb="2"
-          px="4"
-          mr="4"
-          fontSize="lg"
-          fontWeight="500"
-          cursor="pointer"
-          _hover={{ textDecor: 'none' }}
-          _focus={{ boxShadow: 'none' }}
-          borderBottom={!isAuto ? '4px solid #78E08F' : 'none'}
-          onClick={() => setIsAuto(false)}
-        >
-          {t('Manual')}
-        </Text>
-      </Flex>*/}
       <Box>
         <SectionTitle mt="4">{t('Entregadores notificados')}</SectionTitle>
         <Box
