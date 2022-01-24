@@ -9,7 +9,6 @@ import {
   Order,
   OrderCancellation,
   //OrderCancellation,
-  OrderChange,
   OrderFraudPreventionFlags,
   OrderIssue,
   OrderMatching,
@@ -51,7 +50,7 @@ export default class OrderApi {
   ): firebase.Unsubscribe {
     let query = this.refs
       .getOrdersRef()
-      .orderBy('chargedOn', ordering)
+      .orderBy('timestamps.charged', ordering)
       .where('status', 'in', statuses);
 
     if (businessId) {
@@ -320,10 +319,10 @@ export default class OrderApi {
   ): firebase.Unsubscribe {
     let query = this.refs
       .getOrdersRef()
-      .orderBy('confirmedOn', 'desc')
+      .orderBy('timestamps.confirmed', 'desc')
       .where('courier.id', '==', courierId)
-      .where('confirmedOn', '>=', start)
-      .where('confirmedOn', '<=', end);
+      .where('timestamps.confirmed', '>=', start)
+      .where('timestamps.confirmed', '<=', end);
     // returns the unsubscribe function
     return customCollectionSnapshot(query, resultHandler);
   }
@@ -402,21 +401,6 @@ export default class OrderApi {
     });
   }
 
-  async getOrderStatusTimestamp(
-    orderId: string,
-    status: OrderStatus,
-    resultHandler: (timestamp: firebase.firestore.Timestamp | null) => void
-  ) {
-    const query = this.refs
-      .getOrderLogsRef(orderId)
-      .where('after.status', '==', status)
-      .orderBy('timestamp', 'desc')
-      .limit(1);
-    const result = await query.get();
-    const log = documentsAs<OrderChange>(result.docs).find(() => true);
-    return resultHandler((log?.timestamp as firebase.firestore.Timestamp) ?? null);
-  }
-
   async getOrderPrivateCancellation(orderId: string) {
     const data = await this.refs.getOrderCancellationRef(orderId).get();
     if (!data.exists) return null;
@@ -468,7 +452,8 @@ export default class OrderApi {
       ...changes,
       updatedOn: timestamp,
     };
-    if (changes.status === 'confirmed') orderChanges.confirmedOn = timestamp;
+    // CHECK IT
+    //if (changes.status === 'confirmed') orderChanges.confirmedOn = timestamp;
     await this.refs.getOrderRef(orderId).update(orderChanges);
   }
 
