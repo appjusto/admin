@@ -15,7 +15,10 @@ export const useObserveBusinessOrdersHistory = (
   // context
   const api = useContextApi();
   // state
-  const [orders, setOrders] = React.useState<WithId<Order>[] | null>();
+  const [orders, setOrders] = React.useState<WithId<Order>[]>();
+  const [ordersMap, setOrdersMap] = React.useState<Map<string | undefined, WithId<Order>[]>>(
+    new Map()
+  );
   const [startAfter, setStartAfter] = React.useState<
     firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
   >();
@@ -35,15 +38,11 @@ export const useObserveBusinessOrdersHistory = (
     let endDate = end ? dayjs(end).endOf('day').toDate() : null;
     const unsub = api.order().observeBusinessOrdersHistory(
       (results, last) => {
-        if (!startAfter) setOrders(results);
-        else
-          setOrders((prev) => {
-            if (prev) {
-              const union = [...prev, ...results];
-              return uniqWith(union, isEqual);
-            }
-            return results;
-          });
+        setOrdersMap((current) => {
+          const value = new Map(current.entries());
+          value.set(startAfter?.id, results);
+          return value;
+        });
         setLastOrder(last);
       },
       businessId,
@@ -55,6 +54,11 @@ export const useObserveBusinessOrdersHistory = (
     );
     return () => unsub();
   }, [api, startAfter, businessId, statuses, orderCode, start, end]);
+  React.useEffect(() => {
+    setOrders(
+      Array.from(ordersMap.values()).reduce((result, orders) => [...result, ...orders], [])
+    );
+  }, [ordersMap]);
   // return
   return { orders, fetchNextPage };
 };
