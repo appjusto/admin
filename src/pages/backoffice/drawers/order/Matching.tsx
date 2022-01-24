@@ -91,8 +91,8 @@ export const Matching = ({ order }: MatchingProps) => {
     if (restartResult.isSuccess) setIsRestarting(false);
   }, [restartResult]);
   React.useEffect(() => {
-    if (!order?.courier?.name) return;
-    setOutsourcingCourierName(order?.courier?.name);
+    if (!order?.courier?.name) setOutsourcingCourierName(undefined);
+    else setOutsourcingCourierName(order?.courier?.name);
   }, [order?.courier?.name]);
   // UI
   return (
