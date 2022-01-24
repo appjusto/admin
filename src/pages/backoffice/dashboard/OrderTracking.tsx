@@ -30,7 +30,7 @@ export const OrderTracking = ({ orderId, isCompact }: OrderTrackingProps) => {
     let color = '#C8D7CB';
     if (currentDispatchingStatus === 'no-match') color = '#DC3545';
     else if (currentDispatchingStatus === 'outsourced') color = '#FFBE00';
-    else if (currentDispatchingStatus === 'matching') color = '#055AFF';
+    else if (currentDispatchingStatus === 'matching' || currentDispatchingState) color = '#055AFF';
     return color;
   };
   const getMatchingLabel = () => {
@@ -58,6 +58,7 @@ export const OrderTracking = ({ orderId, isCompact }: OrderTrackingProps) => {
   const getLogMatchingLabel = (status?: DispatchingStatus, state?: DispatchingState) => {
     if (status) return orderDispatchingStatusPTOptions[status];
     else if (state) {
+      if (state === 'going-pickup') return 'Entreg. a caminho da retirada ';
       if (state === 'arrived-pickup') return 'Entreg. no local da retirada ';
       if (state === 'going-destination') return 'Entreg. a caminho da entrega ';
       if (state === 'arrived-destination') return 'Entreg. no local da entrega ';

@@ -16,7 +16,7 @@ export const useObserveOrderMatching = (orderId?: string) => {
     'updateCourierNotified'
   );
   const { mutateAsync: restartMatching, mutationResult: restartResult } = useCustomMutation(
-    async () => api.order().updateOrder(orderId!, { dispatchingStatus: 'matching' }),
+    async () => api.order().updateOrder(orderId!, { dispatchingStatus: 'scheduled' }),
     'restartMatching',
     false
   );
