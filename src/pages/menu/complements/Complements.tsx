@@ -4,13 +4,23 @@ import { useContextMenu } from 'app/state/menu/context';
 import { isEmpty } from 'lodash';
 import React from 'react';
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
+import { useLocation } from 'react-router-dom';
 import { GroupItem } from './GroupItem';
+
+function useQuery() {
+  const { search } = useLocation();
+  return React.useMemo(() => new URLSearchParams(search), [search]);
+}
 
 interface Props {
   search?: string;
 }
 
 export const Complements = ({ search }: Props) => {
+  // context
+  const query = useQuery();
+  // helpers
+  const groupQuery = query.get('group');
   // state
   const {
     sortedComplementsGroups,
@@ -40,7 +50,11 @@ export const Complements = ({ search }: Props) => {
       );
     }
   };
-
+  React.useEffect(() => {
+    if (!groupQuery) return;
+    const element = document.getElementById(groupQuery);
+    if (element) element.scrollIntoView();
+  }, [groupQuery]);
   // UI
   return (
     <DragDropContext onDragEnd={onDragEnd}>

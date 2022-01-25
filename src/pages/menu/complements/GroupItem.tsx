@@ -33,6 +33,7 @@ export const GroupItem = React.memo(({ group, complements, index, hidden }: Prop
     <Draggable draggableId={group.id} index={index}>
       {(draggable) => (
         <Box
+          id={group.id}
           borderWidth="1px"
           borderRadius="lg"
           bg="white"

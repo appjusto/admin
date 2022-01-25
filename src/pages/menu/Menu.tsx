@@ -57,7 +57,10 @@ const Menu = () => {
               <FilterText
                 isActive={isProductsPage}
                 label={t('Produtos')}
-                onClick={() => setIsProductPage(true)}
+                onClick={() => {
+                  closeDrawerHandler();
+                  setIsProductPage(true);
+                }}
               />
               <FilterText
                 isActive={!isProductsPage}
