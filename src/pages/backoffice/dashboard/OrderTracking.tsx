@@ -30,7 +30,11 @@ export const OrderTracking = ({ orderId, isCompact }: OrderTrackingProps) => {
     let color = '#C8D7CB';
     if (currentDispatchingStatus === 'no-match') color = '#DC3545';
     else if (currentDispatchingStatus === 'outsourced') color = '#FFBE00';
-    else if (currentDispatchingStatus === 'matching' || currentDispatchingState) color = '#055AFF';
+    else if (
+      (currentDispatchingStatus && currentDispatchingStatus !== 'scheduled') ||
+      currentDispatchingState
+    )
+      color = '#055AFF';
     return color;
   };
   const getMatchingLabel = () => {
@@ -72,8 +76,10 @@ export const OrderTracking = ({ orderId, isCompact }: OrderTrackingProps) => {
     const lastLogWithStatus = last(logs.filter((log) => log.after.status));
     if (lastLog) setCurrentTime(getHourAndMinute(lastLog.timestamp));
     if (lastLogWithStatus) setCurrentStatus(lastLogWithStatus.after.status);
-    if (lastLog?.after.dispatchingStatus)
+    if (lastLog?.after.dispatchingStatus) {
+      if (lastLog.after.dispatchingStatus === 'matching') setCurrentDispatchingState(undefined);
       setCurrentDispatchingStatus(lastLog.after.dispatchingStatus);
+    }
     if (lastLog?.after.dispatchingState) setCurrentDispatchingState(lastLog.after.dispatchingState);
     if (trackingBoxRef.current) {
       trackingBoxRef.current.scroll({

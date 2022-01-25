@@ -28,22 +28,28 @@ export const BOOrderListItem = ({ order }: Props) => {
   const [orderDT, setOrderDT] = React.useState<number>();
   // handlers
   const getCourierIconStatus = () => {
-    if (typeof order.courier?.id === 'string')
-      return {
-        bg: '#6CE787',
-        color: 'black',
-      };
-    if (order.dispatchingStatus === 'outsourced')
-      return {
-        bg: '#FFBE00',
-        color: 'black',
-      };
     if (['ready', 'dispatching'].includes(order.status) && !order.courier?.id) {
       return {
         bg: 'red',
         color: 'white',
       };
     }
+    if (typeof order.courier?.id === 'string')
+      return {
+        bg: '#6CE787',
+        color: 'black',
+      };
+    if (order.dispatchingStatus === 'matching') {
+      return {
+        bg: '#055AFF',
+        color: 'white',
+      };
+    }
+    if (order.dispatchingStatus === 'outsourced')
+      return {
+        bg: '#FFBE00',
+        color: 'black',
+      };
     return {
       bg: 'none',
       color: '#C8D7CB',
