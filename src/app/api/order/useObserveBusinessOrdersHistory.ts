@@ -4,6 +4,8 @@ import React from 'react';
 import firebase from 'firebase/app';
 import dayjs from 'dayjs';
 
+const initialMap = new Map();
+
 export const useObserveBusinessOrdersHistory = (
   businessId: string | undefined,
   statuses: OrderStatus[] | null,
@@ -14,10 +16,10 @@ export const useObserveBusinessOrdersHistory = (
   // context
   const api = useContextApi();
   // state
-  const [orders, setOrders] = React.useState<WithId<Order>[]>();
   const [ordersMap, setOrdersMap] = React.useState<Map<string | undefined, WithId<Order>[]>>(
-    new Map()
+    initialMap
   );
+  const [orders, setOrders] = React.useState<WithId<Order>[]>();
   const [startAfter, setStartAfter] = React.useState<
     firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
   >();
@@ -30,6 +32,8 @@ export const useObserveBusinessOrdersHistory = (
   }, [lastOrder]);
   // side effects
   React.useEffect(() => {
+    if (start && !end) return;
+    setOrdersMap(initialMap);
     setStartAfter(undefined);
   }, [orderCode, start, end]);
   React.useEffect(() => {
