@@ -122,7 +122,6 @@ export default class OrderApi {
     orderStatus: OrderStatus | undefined,
     orderType: OrderType | null,
     startAfter: FirebaseDocument | undefined
-    //ignoreCache: boolean | undefined = false
   ): firebase.Unsubscribe {
     let query = this.refs.getOrdersRef().orderBy('updatedOn', 'desc').limit(20);
     if (orderStatus) query = query.where('status', '==', orderStatus);
@@ -134,12 +133,9 @@ export default class OrderApi {
     if (orderType) query = query.where('type', '==', orderType);
     const unsubscribe = query.onSnapshot(
       (snapshot) => {
-        const last = snapshot.docs.length > 0 ? snapshot.docs[snapshot.size - 1] : undefined;
-        //if (ignoreCache) {
-        //  if (!snapshot.metadata.fromCache)
-        //    resultHandler(documentsAs<Order>(snapshot.docs), last);
-        //} else resultHandler(documentsAs<Order>(snapshot.docs), last);
         if (!snapshot.metadata.hasPendingWrites) {
+          const last =
+            snapshot.docs.length > 0 ? snapshot.docs[snapshot.docs.length - 1] : undefined;
           resultHandler(documentsAs<Order>(snapshot.docs), last);
         }
       },
@@ -163,7 +159,6 @@ export default class OrderApi {
     start: Date | null | undefined,
     end: Date | null | undefined,
     startAfter: FirebaseDocument | undefined
-    //ignoreCache: boolean | undefined = false
   ): firebase.Unsubscribe {
     let query = this.refs
       .getOrdersRef()
@@ -176,8 +171,9 @@ export default class OrderApi {
     if (start && end) query = query.where('updatedOn', '>=', start).where('updatedOn', '<=', end);
     const unsubscribe = query.onSnapshot(
       (snapshot) => {
-        const last = snapshot.docs.length > 0 ? snapshot.docs[snapshot.size - 1] : undefined;
         if (!snapshot.metadata.hasPendingWrites) {
+          const last =
+            snapshot.docs.length > 0 ? snapshot.docs[snapshot.docs.length - 1] : undefined;
           resultHandler(documentsAs<Order>(snapshot.docs), last);
         }
       },

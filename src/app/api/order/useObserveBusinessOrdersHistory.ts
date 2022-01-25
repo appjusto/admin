@@ -2,7 +2,6 @@ import { useContextApi } from 'app/state/api/context';
 import { WithId, OrderStatus, Order } from 'appjusto-types';
 import React from 'react';
 import firebase from 'firebase/app';
-import { uniqWith, isEqual } from 'lodash';
 import dayjs from 'dayjs';
 
 export const useObserveBusinessOrdersHistory = (
