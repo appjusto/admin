@@ -45,7 +45,7 @@ export const useObserveOrdersHistory = (
           value.set(startAfter?.id, results);
           return value;
         });
-        setLastOrder(last);
+        if (last) setLastOrder(last);
       },
       businessId,
       statuses,

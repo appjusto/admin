@@ -48,7 +48,7 @@ export const useObserveUsers = (
             }
             return results;
           });
-        setLastUser(last);
+        if (last) setLastUser(last);
       },
       loggedFilter,
       isBlocked,

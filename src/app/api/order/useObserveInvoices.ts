@@ -3,6 +3,7 @@ import { WithId, Invoice } from 'appjusto-types';
 import React from 'react';
 import firebase from 'firebase/app';
 import { IuguInvoiceStatus } from 'appjusto-types/payment/iugu';
+import dayjs from 'dayjs';
 
 export const useObserveInvoices = (
   orderCode?: string | null,
@@ -29,13 +30,13 @@ export const useObserveInvoices = (
     setStartAfter(undefined);
   }, [orderCode, start, end]);
   React.useEffect(() => {
-    let startDate = start ? new Date(`${start} 00:00:00`) : null;
-    let endDate = end ? new Date(`${end} 23:59:59`) : null;
+    let startDate = start ? dayjs(start).startOf('day').toDate() : null;
+    let endDate = end ? dayjs(end).endOf('day').toDate() : null;
     const unsub = api.order().observeInvoices(
       (results, last) => {
         if (!startAfter) setInvoices(results);
         else setInvoices((prev) => (prev ? [...prev, ...results] : results));
-        setLastInvoice(last);
+        if (last) setLastInvoice(last);
       },
       orderCode,
       startDate,
