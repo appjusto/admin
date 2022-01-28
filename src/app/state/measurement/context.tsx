@@ -2,10 +2,10 @@ import { useMeasurement } from 'app/api/measurement/useMeasurement';
 import React from 'react';
 import ReactPixel from 'react-facebook-pixel';
 
-type ConsentResponse = 'accept' | 'refuse';
+type ConsentResponse = 'accepted' | 'refused' | 'pending';
 
 interface ContextProps {
-  userConsent: undefined | boolean;
+  userConsent?: ConsentResponse;
   handleUserConsent(value: ConsentResponse): void;
 }
 
@@ -19,22 +19,18 @@ export const MeasurementProvider = ({ children }: Props) => {
   // context
   const { setAnalyticsConsent } = useMeasurement();
   // state
-  const [userConsent, setUserConsent] = React.useState<boolean>();
+  const [userConsent, setUserConsent] = React.useState<ConsentResponse>();
   // handlers
   const handleUserConsent = React.useCallback((response: ConsentResponse) => {
-    if (response === 'refuse') {
-      localStorage.setItem('appjusto-consent', 'false');
-      setUserConsent(false);
-      return;
-    }
-    localStorage.setItem('appjusto-consent', 'true');
-    setUserConsent(true);
+    localStorage.setItem('appjusto-consent', response);
+    setUserConsent(response);
   }, []);
   // side effects
   React.useEffect(() => {
     const consent = localStorage.getItem('appjusto-consent');
-    if (consent === 'true') setUserConsent(true);
-    else if (consent === 'false') setUserConsent(false);
+    if (consent === 'true' || consent === 'accepted') setUserConsent('accepted');
+    else if (consent === 'false' || consent === 'refused') setUserConsent('refused');
+    else setUserConsent('pending');
   }, []);
   React.useEffect(() => {
     //if(!analytics) return;
