@@ -12,14 +12,14 @@ interface ItemProps {
   business: BusinessAlgolia;
 }
 
-type OpeningColor = 'gray.50' | 'green.500' | 'red';
+type OpeningColor = 'gray.300' | 'green.500' | 'red';
 
 export const BusinessesTableItem = ({ business }: ItemProps) => {
   // context
   const { path } = useRouteMatch();
   const { getServerTime } = useContextServerTime();
   // states
-  const [openingColor, setOpeningColor] = React.useState<OpeningColor>('gray.50');
+  const [openingColor, setOpeningColor] = React.useState<OpeningColor>('gray.300');
   // helpers
   const status = business.situation as ProfileSituation;
   const step = business.onboarding;

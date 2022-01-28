@@ -21,7 +21,7 @@ export const BusinessesTable = ({ businesses }: BusinessesTableProps) => {
             <Th>{t('Nome do restaurante')}</Th>
             <Th>{t('Situação')}</Th>
             <Th>{t('Etapa')}</Th>
-            <Th>{t('Aberto')}</Th>
+            <Th>{t('Status')}</Th>
             <Th></Th>
           </Tr>
         </Thead>
@@ -48,7 +48,7 @@ export const BusinessesTable = ({ businesses }: BusinessesTableProps) => {
           <Text>{t('Legenda:')}</Text>
           <Circle w="8px" h="8px" bgColor="green.500" />
           <Text>{t('aberto /')}</Text>
-          <Circle w="8px" h="8px" bgColor="gray.50" />
+          <Circle w="8px" h="8px" bgColor="gray.400" />
           <Text>{t('fechado /')}</Text>
           <Circle w="8px" h="8px" bgColor="red" />
           <Text>{t('deveria estar aberto')}</Text>
