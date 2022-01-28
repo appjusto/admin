@@ -1,4 +1,4 @@
-import { Box, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
+import { Box, Circle, HStack, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
 import { BusinessAlgolia } from 'appjusto-types';
 import { t } from 'utils/i18n';
 import { BusinessesTableItem } from './BusinessesTableItem';
@@ -21,7 +21,7 @@ export const BusinessesTable = ({ businesses }: BusinessesTableProps) => {
             <Th>{t('Nome do restaurante')}</Th>
             <Th>{t('Situação')}</Th>
             <Th>{t('Etapa')}</Th>
-            <Th>{t('Ligado')}</Th>
+            <Th>{t('Aberto')}</Th>
             <Th></Th>
           </Tr>
         </Thead>
@@ -43,6 +43,17 @@ export const BusinessesTable = ({ businesses }: BusinessesTableProps) => {
           )}
         </Tbody>
       </Table>
+      <Box mt="6">
+        <HStack>
+          <Text>{t('Legenda:')}</Text>
+          <Circle w="8px" h="8px" bgColor="green.500" />
+          <Text>{t('aberto /')}</Text>
+          <Circle w="8px" h="8px" bgColor="gray.50" />
+          <Text>{t('fechado /')}</Text>
+          <Circle w="8px" h="8px" bgColor="red" />
+          <Text>{t('deveria estar aberto')}</Text>
+        </HStack>
+      </Box>
     </Box>
   );
 };
