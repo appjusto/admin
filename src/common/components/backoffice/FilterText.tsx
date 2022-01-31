@@ -12,8 +12,8 @@ export const FilterText = ({ isActive, label, onClick, ...props }: FilterProps) 
     <Text
       pb="2"
       px="4"
-      fontSize="lg"
-      lineHeight="26px"
+      fontSize="16px"
+      lineHeight="24px"
       fontWeight="500"
       _hover={{ textDecor: 'none' }}
       _focus={{ boxShadow: 'none' }}
