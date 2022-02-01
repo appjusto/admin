@@ -13,6 +13,8 @@ import { SectionTitle } from '../generics/SectionTitle';
 import { CourierNotifiedBox } from './matching/CourierNotifiedBox';
 import { LogsTable } from './matching/LogsTable';
 
+export type NotifiedCouriers = { id: string; name?: string };
+
 interface MatchingProps {
   order?: WithId<Order> | null;
 }
@@ -37,7 +39,7 @@ export const Matching = ({ order }: MatchingProps) => {
   //const [isAuto, setIsAuto] = React.useState(true);
   const [logs, setLogs] = React.useState<string[]>();
   const [attemps, setAttemps] = React.useState<number>(0);
-  const [couriersNotified, setCouriersNotified] = React.useState<string[]>([]);
+  const [couriersNotified, setCouriersNotified] = React.useState<NotifiedCouriers[]>([]);
   const [courierRemoving, setCourierRemoving] = React.useState<string | null>(null);
   const [isRestarting, setIsRestarting] = React.useState<boolean>(false);
   const [isOutsourcing, setIsOutsourcing] = React.useState<boolean>(false);
@@ -51,18 +53,12 @@ export const Matching = ({ order }: MatchingProps) => {
     ? ['confirmed', 'preparing', 'ready', 'dispatching'].includes(order.status)
     : false;
   const isNoMatch = order?.dispatchingStatus === 'no-match';
-  const getDispatchingStatus = () => {
-    if (!order?.dispatchingStatus) return 'N/E';
-    if (order.dispatchingStatus === 'matching') {
-      if (logs && logs.length > 0) return 'Buscando';
-      else return 'Ocioso';
-    }
-    return orderDispatchingStatusPTOptions[order.dispatchingStatus];
-  };
   // handlers
   const removeCourierNotified = async (courierId: string) => {
     setCourierRemoving(courierId);
-    const newArray = couriersNotified.filter((id) => id !== courierId);
+    const newArray = couriersNotified
+      .filter((courier) => courier.id !== courierId)
+      .map((courier) => courier.id);
     await updateCourierNotified(newArray);
     setCourierRemoving(null);
   };
@@ -79,7 +75,13 @@ export const Matching = ({ order }: MatchingProps) => {
       setLogs([]);
       return;
     }
-    setCouriersNotified(matching.couriersNotified);
+    if (matching.couriersNotified) {
+      const notified = matching.couriersNotified.map((id) => ({ id }));
+      // @ts-ignore
+      setCouriersNotified(notified);
+      return;
+    }
+    setCouriersNotified(matching.notifiedCouriers);
     //setCouriersRejections(matching.rejections);
     setLogs(matching.logs);
     setAttemps(matching.attempt);
@@ -188,7 +190,9 @@ export const Matching = ({ order }: MatchingProps) => {
         <SectionTitle mt="0">
           {t('Status:')}{' '}
           <Text as="span" color={isNoMatch ? 'red' : 'black'}>
-            {getDispatchingStatus()}
+            {order?.dispatchingStatus
+              ? orderDispatchingStatusPTOptions[order.dispatchingStatus]
+              : 'N/E'}
           </Text>
         </SectionTitle>
         {order?.dispatchingStatus === 'no-match' &&
@@ -249,12 +253,12 @@ export const Matching = ({ order }: MatchingProps) => {
           {!couriersNotified ? (
             <Text>{t('Carregando dados...')}</Text>
           ) : (
-            couriersNotified.map((courierId) => (
+            couriersNotified.map((courier) => (
               <CourierNotifiedBox
-                key={courierId}
+                key={courier.id}
                 orderId={order?.id!}
                 isOrderActive={isOrderActive}
-                courierId={courierId}
+                courier={courier}
                 dispatchingStatus={order?.dispatchingStatus}
                 removeCourier={removeCourierNotified}
                 allocateCourier={allocateCourier}

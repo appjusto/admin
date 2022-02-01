@@ -10,9 +10,10 @@ const IconWrapper = ({ children, ...props }: CenterProps) => {
       top="0"
       h="100%"
       px="2"
+      pb="1"
       borderRadius="lg"
       _hover={{ bgColor: 'gray.100' }}
-      zIndex="9999"
+      zIndex="100"
       cursor="pointer"
       {...props}
     >
@@ -42,7 +43,7 @@ export const FiltersScrollBar = ({ children }: BoxProps) => {
   }, [childrenWrapperRef]);
   React.useEffect(() => {
     if (!filtersScroll || !scrollArea) return;
-    console.log('Calc', scrollArea + filtersScroll);
+    //console.log('Calc', scrollArea + filtersScroll);
     if (scrollArea + filtersScroll < 0) setScrollRightActive(false);
     else setScrollRightActive(true);
   }, [filtersScroll, scrollArea]);
