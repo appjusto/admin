@@ -24,7 +24,7 @@ const IconWrapper = ({ children, ...props }: CenterProps) => {
 export const FiltersScrollBar = ({ children }: BoxProps) => {
   // state
   const [filtersScroll, setFiltersScroll] = React.useState(0);
-  const [wrapperW, setWrapperW] = React.useState<number>();
+  const [scrollArea, setScrollArea] = React.useState<number>();
   const [scrollRightActive, setScrollRightActive] = React.useState(true);
   // refs
   const childrenWrapperRef = React.useRef<HTMLDivElement>(null);
@@ -35,14 +35,17 @@ export const FiltersScrollBar = ({ children }: BoxProps) => {
   };
   React.useEffect(() => {
     if (!childrenWrapperRef.current) return;
-    setWrapperW(childrenWrapperRef.current.clientWidth);
+    const clientW = childrenWrapperRef.current.clientWidth;
+    const scrollWidth = childrenWrapperRef.current.scrollWidth;
+    const diff = scrollWidth - clientW;
+    setScrollArea(diff);
   }, [childrenWrapperRef]);
   React.useEffect(() => {
-    if (!filtersScroll || !wrapperW) return;
-    const middle = wrapperW / 2;
-    if (middle + filtersScroll < 0) setScrollRightActive(false);
+    if (!filtersScroll || !scrollArea) return;
+    console.log('Calc', scrollArea + filtersScroll);
+    if (scrollArea + filtersScroll < 0) setScrollRightActive(false);
     else setScrollRightActive(true);
-  }, [filtersScroll, wrapperW]);
+  }, [filtersScroll, scrollArea]);
   // UI
   return (
     <Box position="relative" overflowX={{ base: 'scroll', lg: 'hidden' }} w="100%">
