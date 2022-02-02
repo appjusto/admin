@@ -13,6 +13,7 @@ const CustomRadio = ({ children, w, h, mt, mb, isDisabled, ...props }: RadioProp
         borderColor={isDisabled ? 'gray.400' : 'black'}
         position="relative"
         w="24px"
+        minW="24px"
         h="24px"
         borderRadius="12px"
         boxShadow="none"
