@@ -36,7 +36,7 @@ export const RecommendationBaseDrawer = ({ onClose, ...props }: BaseDrawerProps)
     return (
       <Drawer placement="right" size="lg" onClose={onClose} {...props}>
         <DrawerOverlay>
-          <DrawerContent>
+          <DrawerContent mt={{ base: '16', md: '0' }}>
             <DrawerCloseButton bg="green.500" mr="12px" _focus={{ outline: 'none' }} />
             <DrawerHeader pb="6">
               <SectionTitle mt="0">{t('Indicação...')}</SectionTitle>
@@ -66,7 +66,7 @@ export const RecommendationBaseDrawer = ({ onClose, ...props }: BaseDrawerProps)
     return (
       <Drawer placement="right" size="lg" onClose={onClose} {...props}>
         <DrawerOverlay>
-          <DrawerContent>
+          <DrawerContent mt={{ base: '16', md: '0' }}>
             <DrawerCloseButton bg="green.500" mr="12px" _focus={{ outline: 'none' }} />
             <DrawerHeader pb="6">
               <SectionTitle mt="0">{t('Indicação')}</SectionTitle>
@@ -84,7 +84,7 @@ export const RecommendationBaseDrawer = ({ onClose, ...props }: BaseDrawerProps)
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
       <DrawerOverlay>
-        <DrawerContent>
+        <DrawerContent mt={{ base: '16', md: '0' }}>
           <DrawerCloseButton bg="green.500" mr="12px" _focus={{ outline: 'none' }} />
           <DrawerHeader pb="6">
             <SectionTitle mt="0">

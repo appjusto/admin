@@ -9,7 +9,15 @@ interface ClearFiltersButtonProps extends StackProps {
 export const ClearFiltersButton = ({ clearFunction, ...props }: ClearFiltersButtonProps) => {
   // UI
   return (
-    <HStack spacing={2} pl="2" color="#697667" cursor="pointer" onClick={clearFunction} {...props}>
+    <HStack
+      spacing={2}
+      pl="2"
+      pb="2"
+      color="#697667"
+      cursor="pointer"
+      onClick={clearFunction}
+      {...props}
+    >
       <DeleteIcon />
       <Text fontSize="15px" lineHeight="21px" display={{ base: 'none', md: 'block' }}>
         {t('Limpar busca/filtros')}

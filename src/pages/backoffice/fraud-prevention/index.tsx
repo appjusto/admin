@@ -1,5 +1,5 @@
 import { ArrowDownIcon } from '@chakra-ui/icons';
-import { Button, Flex, HStack, Text } from '@chakra-ui/react';
+import { Button, Flex, HStack, Stack, Text } from '@chakra-ui/react';
 //import { useFlaggedLocations } from 'app/api/platform/useFlaggedLocations';
 import { useFlaggedlocationsSearch } from 'app/api/search/useFlaggedlocationsSearch';
 import { FlaggedLocationsAlgolia } from 'appjusto-types';
@@ -65,7 +65,7 @@ const FraudPreventionPage = () => {
       <PageHeader title={t('Antifraude')} subtitle={t(`Atualizado ${dateTime}`)} />
       <SectionTitle>{t('Endereços suspeitos de fraude')}</SectionTitle>
       <Flex mt="6">
-        <HStack spacing={4}>
+        <Stack spacing={4} direction={{ base: 'column', md: 'row' }}>
           <CustomInput
             mt="0"
             minW={{ lg: '400px' }}
@@ -80,7 +80,7 @@ const FraudPreventionPage = () => {
             getEnd={setSearchTo}
             clearNumber={clearDateNumber}
           />
-        </HStack>
+        </Stack>
       </Flex>
       <Flex mt="6" w="100%" justifyContent="flex-end" borderBottom="1px solid #C8D7CB">
         <ClearFiltersButton clearFunction={clearFilters} />

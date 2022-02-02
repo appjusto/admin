@@ -16,7 +16,7 @@ export const BOProfileChangesListItem = ({ changes }: Props) => {
   return (
     <CustomLink to={`${url}/profile-changes/${changes?.id}`}>
       <Flex justifyContent="space-between" alignItems="center">
-        <Text fontSize="sm" lineHeight="21px" color="black">
+        <Text fontSize="sm" lineHeight="21px" color="black" maxW={{ base: '200px', lg: '260px' }}>
           {changes?.accountId}
         </Text>
         <Text fontSize="sm" lineHeight="21px">

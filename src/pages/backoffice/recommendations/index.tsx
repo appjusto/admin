@@ -1,5 +1,5 @@
 import { ArrowDownIcon } from '@chakra-ui/icons';
-import { Button, Flex, HStack, Text } from '@chakra-ui/react';
+import { Button, Flex, HStack, Stack, Text } from '@chakra-ui/react';
 import { useObserveRecommendations } from 'app/api/consumer/useObserveRecommendations';
 import { ClearFiltersButton } from 'common/components/backoffice/ClearFiltersButton';
 import { CustomDateFilter } from 'common/components/form/input/CustomDateFilter';
@@ -53,7 +53,7 @@ const RecommendationsPage = () => {
     <>
       <PageHeader title={t('Indicações')} subtitle={t(`Atualizado ${dateTime}`)} />
       <Flex mt="8">
-        <HStack spacing={4}>
+        <Stack spacing={4} direction={{ base: 'column', md: 'row' }}>
           <CustomInput
             mt="0"
             minW={{ lg: '260px' }}
@@ -68,9 +68,9 @@ const RecommendationsPage = () => {
             getEnd={setSearchTo}
             clearNumber={clearDateNumber}
           />
-        </HStack>
+        </Stack>
       </Flex>
-      <Flex mt="8" w="100%" pb="2" justifyContent="flex-end" borderBottom="1px solid #C8D7CB">
+      <Flex mt="8" w="100%" justifyContent="flex-end" borderBottom="1px solid #C8D7CB">
         <ClearFiltersButton clearFunction={clearFilters} />
       </Flex>
       <HStack mt="6" spacing={8} color="black">
