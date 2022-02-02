@@ -57,7 +57,14 @@ export const BaseDrawer = ({
               {title}
             </Text>
             {type === 'product' && (
-              <Flex fontSize="sm" mt="4" flexDir="row" alignItems="flex-start" height="38px">
+              <Flex
+                fontSize="sm"
+                mt="4"
+                flexDir="row"
+                alignItems="flex-start"
+                height="38px"
+                overflowX="auto"
+              >
                 <DrawerLink to={`${url}`} label="Detalhes" />
                 <DrawerLink
                   to={`${url}/complements`}

@@ -91,7 +91,12 @@ export const OrderBaseDrawer = ({
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
       <DrawerOverlay>
         <DrawerContent>
-          <DrawerCloseButton bg="green.500" mr="12px" _focus={{ outline: 'none' }} />
+          <DrawerCloseButton
+            bg="green.500"
+            mr="12px"
+            mt={{ base: '76px', md: '0' }}
+            _focus={{ outline: 'none' }}
+          />
           <DrawerHeader pb="2">
             <Flex
               flexDir={{ base: 'column', md: 'row' }}
