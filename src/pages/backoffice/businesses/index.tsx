@@ -1,9 +1,10 @@
 import { ArrowDownIcon, DeleteIcon } from '@chakra-ui/icons';
-import { Button, CheckboxGroup, Flex, HStack, Text } from '@chakra-ui/react';
+import { Button, CheckboxGroup, Flex, HStack, Stack, Text } from '@chakra-ui/react';
 import { BusinessesFilter } from 'app/api/search/types';
 import { useBusinessesSearch } from 'app/api/search/useBusinessesSearch';
 import { useContextBusiness } from 'app/state/business/context';
 import { BusinessAlgolia, BusinessStatus } from 'appjusto-types';
+import { FiltersScrollBar } from 'common/components/backoffice/FiltersScrollBar';
 import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import React from 'react';
@@ -96,7 +97,7 @@ const BusinessesPage = () => {
   return (
     <>
       <PageHeader title={t('Restaurantes')} subtitle={t(`Atualizado ${dateTime}`)} />
-      <HStack mt="8" spacing={4}>
+      <Stack mt="8" spacing={4} direction={{ base: 'column', md: 'row' }}>
         <CustomInput
           mt="0"
           mr="0"
@@ -113,53 +114,58 @@ const BusinessesPage = () => {
           city={city}
           handleCityChange={setCity}
         />
-      </HStack>
+      </Stack>
       <Flex mt="8" w="100%" justifyContent="space-between" borderBottom="1px solid #C8D7CB">
-        <HStack spacing={4}>
-          <FilterText
-            isActive={filterBar === 'all' ? true : false}
-            label={t('Todos')}
-            onClick={() => setFilterBar('all')}
-          />
-          <FilterText
-            isActive={filterBar === 'approved' ? true : false}
-            label={t('Aprovados')}
-            onClick={() => setFilterBar('approved')}
-          />
-          <FilterText
-            isActive={filterBar === 'verified' ? true : false}
-            label={t('Verificados')}
-            onClick={() => setFilterBar('verified')}
-          />
-          <FilterText
-            isActive={filterBar === 'invalid' ? true : false}
-            label={t('Inválidos')}
-            onClick={() => setFilterBar('invalid')}
-          />
-          <FilterText
-            isActive={filterBar === 'rejected' ? true : false}
-            label={t('Rejeitados')}
-            onClick={() => setFilterBar('rejected')}
-          />
-          <FilterText
-            isActive={filterBar === 'pending' ? true : false}
-            label={t('Pendentes')}
-            onClick={() => setFilterBar('pending')}
-          />
-          <FilterText
-            isActive={filterBar === 'blocked' ? true : false}
-            label={t('Bloqueados')}
-            onClick={() => setFilterBar('blocked')}
-          />
-          <HStack spacing={2} color="#697667" cursor="pointer" onClick={clearSearchAndFilters}>
-            <DeleteIcon />
-            <Text fontSize="15px" lineHeight="21px">
-              {t('Limpar busca/filtros')}
-            </Text>
+        <FiltersScrollBar>
+          <HStack spacing={4}>
+            <FilterText
+              isActive={filterBar === 'all' ? true : false}
+              label={t('Todos')}
+              onClick={() => setFilterBar('all')}
+            />
+            <FilterText
+              isActive={filterBar === 'approved' ? true : false}
+              label={t('Aprovados')}
+              onClick={() => setFilterBar('approved')}
+            />
+            <FilterText
+              isActive={filterBar === 'verified' ? true : false}
+              label={t('Verificados')}
+              onClick={() => setFilterBar('verified')}
+            />
+            <FilterText
+              isActive={filterBar === 'invalid' ? true : false}
+              label={t('Inválidos')}
+              onClick={() => setFilterBar('invalid')}
+            />
+            <FilterText
+              isActive={filterBar === 'rejected' ? true : false}
+              label={t('Rejeitados')}
+              onClick={() => setFilterBar('rejected')}
+            />
+            <FilterText
+              isActive={filterBar === 'pending' ? true : false}
+              label={t('Pendentes')}
+              onClick={() => setFilterBar('pending')}
+            />
+            <FilterText
+              isActive={filterBar === 'blocked' ? true : false}
+              label={t('Bloqueados')}
+              onClick={() => setFilterBar('blocked')}
+            />
           </HStack>
+        </FiltersScrollBar>
+        <HStack spacing={2} pl="2" color="#697667" cursor="pointer" onClick={clearSearchAndFilters}>
+          <DeleteIcon />
+          <Text fontSize="15px" lineHeight="21px" display={{ base: 'none', md: 'block' }}>
+            {t('Limpar busca/filtros')}
+          </Text>
+          <Text fontSize="15px" lineHeight="21px" display={{ base: 'block', md: 'none' }}>
+            {t('Limpar')}
+          </Text>
         </HStack>
       </Flex>
-      <HStack mt="6" spacing={8} color="black">
+      <Stack mt="6" spacing={8} color="black" direction={{ base: 'column', md: 'row' }}>
         <Text fontSize="lg" fontWeight="700" lineHeight="26px">
           {t(`${businesses?.length ?? '0'} itens na lista`)}
         </Text>
@@ -179,7 +185,7 @@ const BusinessesPage = () => {
             <CustomCheckbox value="closed">{t('Fechado')}</CustomCheckbox>
           </HStack>
         </CheckboxGroup>
-      </HStack>
+      </Stack>
       <BusinessesTable businesses={businesses} />
       <Button mt="8" variant="secondary" onClick={fetchNextPage}>
         <ArrowDownIcon mr="2" />

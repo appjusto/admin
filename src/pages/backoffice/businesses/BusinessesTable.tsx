@@ -12,7 +12,7 @@ export const BusinessesTable = ({ businesses }: BusinessesTableProps) => {
 
   // UI
   return (
-    <Box mt="12">
+    <Box mt="12" overflowX="auto">
       <Table mt="4" size="md" variant="simple">
         <Thead>
           <Tr>
@@ -43,7 +43,7 @@ export const BusinessesTable = ({ businesses }: BusinessesTableProps) => {
           )}
         </Tbody>
       </Table>
-      <Box mt="6">
+      <Box mt="6" fontSize={{ base: '12px', lg: '15px' }}>
         <HStack>
           <Text>{t('Legenda:')}</Text>
           <Circle w="8px" h="8px" bgColor="green.500" />

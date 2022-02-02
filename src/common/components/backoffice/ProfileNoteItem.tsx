@@ -55,7 +55,7 @@ export const ProfileNoteItem = ({
           <HStack mt="4" justifyContent="flex-end" spacing={4}>
             <Button
               size="md"
-              minW="160px"
+              w={{ base: '90px', md: '160px' }}
               variant="dangerLight"
               onClick={() => setIsEditing(false)}
             >
@@ -63,7 +63,7 @@ export const ProfileNoteItem = ({
             </Button>
             <Button
               size="md"
-              minW="160px"
+              w={{ base: '90px', md: '160px' }}
               onClick={() => {
                 updateNote(profileNote.id, note);
                 setIsEditing(false);

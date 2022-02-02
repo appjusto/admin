@@ -86,12 +86,17 @@ export const ProfileNotes = ({
             onChange={(ev) => setNewNote(ev.target.value)}
           />
           <HStack mt="4" justifyContent="flex-end" spacing={4}>
-            <Button size="md" minW="160px" variant="dangerLight" onClick={() => setIsAdding(false)}>
+            <Button
+              size="md"
+              w={{ base: '90px', md: '160px' }}
+              variant="dangerLight"
+              onClick={() => setIsAdding(false)}
+            >
               {t('Cancelar')}
             </Button>
             <Button
               size="md"
-              minW="160px"
+              w={{ base: '90px', md: '160px' }}
               onClick={handleAddNote}
               isLoading={isLoading}
               loadingText={t('Salvando')}

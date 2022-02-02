@@ -26,7 +26,7 @@ export const MenuMobile = () => {
   const isBackOffice = path.includes('backoffice');
   //UI
   return (
-    <Box position="absolute" w="100vw" h="100vh">
+    <Box position="absolute" w="100vw" h={isOpen ? '100vh' : 'auto'}>
       <Flex
         as="header"
         w="100%"
