@@ -38,15 +38,19 @@ export const FiltersScrollBar = ({ children }: BoxProps) => {
     if (!childrenWrapperRef.current) return;
     const clientW = childrenWrapperRef.current.clientWidth;
     const scrollWidth = childrenWrapperRef.current.scrollWidth;
-    const diff = scrollWidth - clientW;
-    setScrollArea(diff);
+    if (clientW < scrollWidth) {
+      const diff = scrollWidth - clientW;
+      setScrollArea(diff);
+    } else {
+      setScrollRightActive(false);
+    }
   }, [childrenWrapperRef]);
   React.useEffect(() => {
-    if (!filtersScroll || !scrollArea) return;
-    //console.log('Calc', scrollArea + filtersScroll);
+    if (filtersScroll === undefined || scrollArea === undefined) return;
     if (scrollArea + filtersScroll < 0) setScrollRightActive(false);
     else setScrollRightActive(true);
   }, [filtersScroll, scrollArea]);
+  //console.log('scrollRightActive', scrollRightActive);
   // UI
   return (
     <Box position="relative" overflowX={{ base: 'scroll', lg: 'hidden' }} w="100%">

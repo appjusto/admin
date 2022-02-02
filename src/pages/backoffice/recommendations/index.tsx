@@ -70,7 +70,13 @@ const RecommendationsPage = () => {
           />
         </Stack>
       </Flex>
-      <Flex mt="8" w="100%" justifyContent="flex-end" borderBottom="1px solid #C8D7CB">
+      <Flex
+        mt="8"
+        w="100%"
+        pb={{ lg: '2' }}
+        justifyContent="flex-end"
+        borderBottom="1px solid #C8D7CB"
+      >
         <ClearFiltersButton clearFunction={clearFilters} />
       </Flex>
       <HStack mt="6" spacing={8} color="black">

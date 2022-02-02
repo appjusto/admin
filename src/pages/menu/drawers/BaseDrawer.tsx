@@ -46,8 +46,8 @@ export const BaseDrawer = ({
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
       <DrawerOverlay>
-        <DrawerContent pt={{ base: '76px', md: '0' }}>
-          <DrawerCloseButton mt={{ base: '80px', md: '0' }} />
+        <DrawerContent pt={{ base: '16', md: '0' }}>
+          <DrawerCloseButton />
           <DrawerHeader
             borderBottom={type === 'product' ? '1px solid #C8D7CB' : 'none'}
             pb="0"
@@ -62,7 +62,7 @@ export const BaseDrawer = ({
                 mt="4"
                 flexDir="row"
                 alignItems="flex-start"
-                height="38px"
+                //height="38px"
                 overflowX="auto"
               >
                 <DrawerLink to={`${url}`} label="Detalhes" />

@@ -111,7 +111,6 @@ export const BusinessBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
               fontSize="lg"
               flexDir="row"
               alignItems="flex-start"
-              height="38px"
               borderBottom="1px solid #C8D7CB"
               overflowX="auto"
             >

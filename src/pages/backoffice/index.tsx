@@ -21,7 +21,7 @@ const BackOffice = () => {
   // UI
   return (
     <BackofficeDashboardProvider>
-      <PageLayout maxW="1024px">
+      <PageLayout maxW="1124px">
         <Switch>
           <BOAccessRoute path={`${path}/orders`} component={OrdersPage} />
           <BOAccessRoute path={`${path}/couriers`} component={CouriersPage} />
