@@ -55,9 +55,9 @@ export const OrderBaseDrawer = ({
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
       <DrawerOverlay>
-        <DrawerContent>
+        <DrawerContent mt={{ base: '16', md: '0' }}>
           <DrawerCloseButton bg="green.500" mr="12px" _focus={{ outline: 'none' }} />
-          <DrawerHeader pb="0">
+          <DrawerHeader pb={{ base: '2', md: '0' }}>
             <Text color="black" fontSize="2xl" fontWeight="700" lineHeight="28px" mb="2">
               {order?.code ? `#${order.code}` : 'N/E'}
             </Text>
@@ -130,6 +130,7 @@ export const OrderBaseDrawer = ({
               alignItems="flex-start"
               height="38px"
               borderBottom="1px solid #C8D7CB"
+              overflowX="auto"
             >
               <DrawerLink to={`${url}`} label={t('Participantes')} />
               <DrawerLink to={`${url}/order`} label={t('Pedido')} />

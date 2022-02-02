@@ -1,5 +1,5 @@
 import { ArrowDownIcon, DeleteIcon } from '@chakra-ui/icons';
-import { Button, CheckboxGroup, Flex, HStack, Text } from '@chakra-ui/react';
+import { Button, CheckboxGroup, Flex, HStack, Stack, Text } from '@chakra-ui/react';
 import { useObserveOrdersHistory } from 'app/api/order/useObserveOrdersHistory';
 import { OrderStatus, OrderType } from 'appjusto-types';
 import { FiltersScrollBar } from 'common/components/backoffice/FiltersScrollBar';
@@ -82,7 +82,7 @@ const OrdersPage = () => {
     <>
       <PageHeader title={t('Pedidos')} subtitle={t(`Atualizado ${dateTime}`)} />
       <Flex mt="8">
-        <HStack spacing={4}>
+        <Stack spacing={4} direction={{ base: 'column', md: 'row' }}>
           <CustomInput
             mt="0"
             maxW="212px"
@@ -97,7 +97,7 @@ const OrdersPage = () => {
             getEnd={setSearchTo}
             clearNumber={clearDateNumber}
           />
-        </HStack>
+        </Stack>
       </Flex>
       <Flex mt="8" w="100%" justifyContent="space-between" borderBottom="1px solid #C8D7CB">
         <FiltersScrollBar>
@@ -154,16 +154,19 @@ const OrdersPage = () => {
           color="#697667"
           cursor="pointer"
           onClick={clearFilters}
-          minW="130px"
+          minW={{ base: 'auto', md: '130px' }}
           px="2"
         >
           <DeleteIcon />
-          <Text fontSize="15px" lineHeight="21px">
+          <Text fontSize="15px" lineHeight="21px" display={{ base: 'none', md: 'block' }}>
             {t('Limpar filtro')}
+          </Text>
+          <Text fontSize="15px" lineHeight="21px" display={{ base: 'block', md: 'none' }}>
+            {t('Limpar')}
           </Text>
         </HStack>
       </Flex>
-      <HStack mt="6" spacing={8} color="black">
+      <Stack mt="6" direction={{ base: 'column', md: 'row' }} spacing={8} color="black">
         <Text fontSize="lg" fontWeight="700" lineHeight="26px">
           {t(`${orders?.length ?? '0'} itens na lista`)}
         </Text>
@@ -183,7 +186,7 @@ const OrdersPage = () => {
             <CustomCheckbox value="p2p">{t('Encomendas')}</CustomCheckbox>
           </HStack>
         </CheckboxGroup>
-      </HStack>
+      </Stack>
       <OrdersTable orders={orders} isBackoffice />
       <Button mt="8" variant="secondary" onClick={fetchNextPage}>
         <ArrowDownIcon mr="2" />

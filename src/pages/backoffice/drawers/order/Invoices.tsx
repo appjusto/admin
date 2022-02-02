@@ -18,46 +18,48 @@ export const Invoices = ({ invoices }: InvoicesProps) => {
   return (
     <Box>
       <SectionTitle mt="10">{t('Faturas do pedido')}</SectionTitle>
-      <Table mt="4" size="md" variant="simple">
-        <Thead>
-          <Tr>
-            <Th>{t('Data/Horário')}</Th>
-            <Th>{t('Status')}</Th>
-            <Th>{t('Tipo')}</Th>
-            <Th isNumeric>{t('Valor')}</Th>
-            <Th></Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {invoices && invoices.length > 0 ? (
-            invoices?.map((invoice: WithId<Invoice>) => (
-              <Tr key={invoice.id} color="black" fontSize="sm">
-                <Td>{getDateAndHour(invoice.createdOn)}</Td>
-                <Td>{invoiceStatusPTOptions[invoice.status as IuguInvoiceStatus]}</Td>
-                <Td>{invoiceTypePTOptions[invoice.invoiceType]}</Td>
-                <Td isNumeric>{formatCurrency(invoice.value)}</Td>
-                <Td>
-                  <CustomButton
-                    mt="0"
-                    variant="outline"
-                    label={t('Detalhes')}
-                    link={`/backoffice/invoices/${invoice.id}`}
-                    size="sm"
-                  />
-                </Td>
-              </Tr>
-            ))
-          ) : (
-            <Tr color="black" fontSize="sm" fontWeight="700">
-              <Td>{t('Não foram encontradas faturas para este pedido.')}</Td>
-              <Td></Td>
-              <Td></Td>
-              <Td></Td>
+      <Box overflowX="auto">
+        <Table mt="4" size="md" variant="simple">
+          <Thead>
+            <Tr>
+              <Th>{t('Data/Horário')}</Th>
+              <Th>{t('Status')}</Th>
+              <Th>{t('Tipo')}</Th>
+              <Th isNumeric>{t('Valor')}</Th>
+              <Th></Th>
             </Tr>
-          )}
-        </Tbody>
-        <Tfoot bgColor="gray.50"></Tfoot>
-      </Table>
+          </Thead>
+          <Tbody>
+            {invoices && invoices.length > 0 ? (
+              invoices?.map((invoice: WithId<Invoice>) => (
+                <Tr key={invoice.id} color="black" fontSize="sm">
+                  <Td>{getDateAndHour(invoice.createdOn)}</Td>
+                  <Td>{invoiceStatusPTOptions[invoice.status as IuguInvoiceStatus]}</Td>
+                  <Td>{invoiceTypePTOptions[invoice.invoiceType]}</Td>
+                  <Td isNumeric>{formatCurrency(invoice.value)}</Td>
+                  <Td>
+                    <CustomButton
+                      mt="0"
+                      variant="outline"
+                      label={t('Detalhes')}
+                      link={`/backoffice/invoices/${invoice.id}`}
+                      size="sm"
+                    />
+                  </Td>
+                </Tr>
+              ))
+            ) : (
+              <Tr color="black" fontSize="sm" fontWeight="700">
+                <Td>{t('Não foram encontradas faturas para este pedido.')}</Td>
+                <Td></Td>
+                <Td></Td>
+                <Td></Td>
+              </Tr>
+            )}
+          </Tbody>
+          <Tfoot bgColor="gray.50"></Tfoot>
+        </Table>
+      </Box>
     </Box>
   );
 };
