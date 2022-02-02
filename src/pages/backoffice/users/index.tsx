@@ -1,5 +1,5 @@
 import { ArrowDownIcon } from '@chakra-ui/icons';
-import { Box, Button, Flex, HStack, RadioGroup, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, HStack, RadioGroup, Stack, Text } from '@chakra-ui/react';
 import { useObserveUsers } from 'app/api/users/useObserveUsers';
 import { UsersSearchType } from 'app/api/users/UsersApi';
 import { UserType } from 'appjusto-types';
@@ -64,9 +64,9 @@ const UsersPage = () => {
 
   // UI
   return (
-    <>
+    <Box>
       <PageHeader title={t('Usuários')} subtitle={t(`Atualizado ${dateTime}`)} />
-      <Box mt="6">
+      <Flex mt="8" flexDirection={{ base: 'column', md: 'row' }}>
         <Text mb="1" color="black" fontWeight="500">
           {t('Buscar por:')}
         </Text>
@@ -91,9 +91,9 @@ const UsersPage = () => {
             <CustomRadio value="cpf">{t('CPF')}</CustomRadio>
           </HStack>
         </RadioGroup>
-      </Box>
+      </Flex>
       <Flex mt="2">
-        <HStack spacing={4}>
+        <Stack spacing={4} direction={{ base: 'column', md: 'row' }}>
           <CustomInput
             mt="0"
             minW={{ lg: '260px' }}
@@ -108,10 +108,10 @@ const UsersPage = () => {
             getEnd={setSearchTo}
             clearNumber={clearDateNumber}
           />
-        </HStack>
+        </Stack>
       </Flex>
       <Flex mt="8" w="100%" justifyContent="space-between" borderBottom="1px solid #C8D7CB">
-        <HStack spacing={4}>
+        <HStack spacing={4} overflowX="auto">
           <FilterText
             isActive={!isBlocked}
             label={t('Todos')}
@@ -157,7 +157,7 @@ const UsersPage = () => {
           <UserBaseDrawer isOpen onClose={closeDrawerHandler} />
         </Route>
       </Switch>
-    </>
+    </Box>
   );
 };
 

@@ -26,10 +26,10 @@ export const MenuMobile = () => {
   const isBackOffice = path.includes('backoffice');
   //UI
   return (
-    <Box position="absolute" w="100vw" h={isOpen ? '100vh' : 'auto'}>
+    <>
       <Flex
         as="header"
-        w="100%"
+        w="100vw"
         bg="#F6F6F6"
         flexDir="column"
         justifyContent="center"
@@ -99,6 +99,6 @@ export const MenuMobile = () => {
           zIndex="990"
         />
       )}
-    </Box>
+    </>
   );
 };
