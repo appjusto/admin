@@ -1,7 +1,8 @@
-import { ArrowDownIcon, DeleteIcon } from '@chakra-ui/icons';
+import { ArrowDownIcon } from '@chakra-ui/icons';
 import { Button, CheckboxGroup, Flex, HStack, Stack, Text } from '@chakra-ui/react';
 import { useObserveOrdersHistory } from 'app/api/order/useObserveOrdersHistory';
 import { OrderStatus, OrderType } from 'appjusto-types';
+import { ClearFiltersButton } from 'common/components/backoffice/ClearFiltersButton';
 import { FiltersScrollBar } from 'common/components/backoffice/FiltersScrollBar';
 import { FilterText } from 'common/components/backoffice/FilterText';
 import CustomCheckbox from 'common/components/form/CustomCheckbox';
@@ -149,22 +150,7 @@ const OrdersPage = () => {
             />
           </HStack>
         </FiltersScrollBar>
-        <HStack
-          spacing={2}
-          color="#697667"
-          cursor="pointer"
-          onClick={clearFilters}
-          minW={{ base: 'auto', md: '130px' }}
-          px="2"
-        >
-          <DeleteIcon />
-          <Text fontSize="15px" lineHeight="21px" display={{ base: 'none', md: 'block' }}>
-            {t('Limpar filtro')}
-          </Text>
-          <Text fontSize="15px" lineHeight="21px" display={{ base: 'block', md: 'none' }}>
-            {t('Limpar')}
-          </Text>
-        </HStack>
+        <ClearFiltersButton clearFunction={clearFilters} />
       </Flex>
       <Stack mt="6" direction={{ base: 'column', md: 'row' }} spacing={8} color="black">
         <Text fontSize="lg" fontWeight="700" lineHeight="26px">

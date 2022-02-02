@@ -1,8 +1,10 @@
-import { ArrowDownIcon, DeleteIcon } from '@chakra-ui/icons';
-import { Button, Flex, HStack, Text } from '@chakra-ui/react';
+import { ArrowDownIcon } from '@chakra-ui/icons';
+import { Button, Flex, HStack, Stack, Text } from '@chakra-ui/react';
 import { BasicUserFilter } from 'app/api/search/types';
 import { useBasicUsersSearch } from 'app/api/search/useBasicUsersSearch';
 import { ConsumerAlgolia } from 'appjusto-types';
+import { ClearFiltersButton } from 'common/components/backoffice/ClearFiltersButton';
+import { FiltersScrollBar } from 'common/components/backoffice/FiltersScrollBar';
 import { FilterText } from 'common/components/backoffice/FilterText';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import React from 'react';
@@ -75,7 +77,7 @@ const ConsumersPage = () => {
   return (
     <>
       <PageHeader title={t('Clientes')} subtitle={t(`Atualizado ${dateTime}`)} />
-      <HStack mt="8" spacing={4}>
+      <Stack mt="8" spacing={4} direction={{ base: 'column', md: 'row' }}>
         <CustomInput
           mt="0"
           w="100%"
@@ -91,41 +93,38 @@ const ConsumersPage = () => {
           city={city}
           handleCityChange={setCity}
         />
-      </HStack>
+      </Stack>
       <Flex mt="8" w="100%" justifyContent="space-between" borderBottom="1px solid #C8D7CB">
-        <HStack spacing={4}>
-          <FilterText
-            isActive={filterBar === 'all' ? true : false}
-            label={t('Todos')}
-            onClick={() => setFilterBar('all')}
-          />
-          <FilterText
-            isActive={filterBar === 'submitted' ? true : false}
-            label={t('Submetidos')}
-            onClick={() => setFilterBar('submitted')}
-          />
-          <FilterText
-            isActive={filterBar === 'approved' ? true : false}
-            label={t('Aprovados')}
-            onClick={() => setFilterBar('approved')}
-          />
-          <FilterText
-            isActive={filterBar === 'rejected' ? true : false}
-            label={t('Rejeitados')}
-            onClick={() => setFilterBar('rejected')}
-          />
-          <FilterText
-            isActive={filterBar === 'blocked' ? true : false}
-            label={t('Bloqueados')}
-            onClick={() => setFilterBar('blocked')}
-          />
-        </HStack>
-        <HStack spacing={2} color="#697667" cursor="pointer" onClick={clearSearchAndFilters}>
-          <DeleteIcon />
-          <Text fontSize="15px" lineHeight="21px">
-            {t('Limpar filtro')}
-          </Text>
-        </HStack>
+        <FiltersScrollBar>
+          <HStack spacing={4}>
+            <FilterText
+              isActive={filterBar === 'all' ? true : false}
+              label={t('Todos')}
+              onClick={() => setFilterBar('all')}
+            />
+            <FilterText
+              isActive={filterBar === 'submitted' ? true : false}
+              label={t('Submetidos')}
+              onClick={() => setFilterBar('submitted')}
+            />
+            <FilterText
+              isActive={filterBar === 'approved' ? true : false}
+              label={t('Aprovados')}
+              onClick={() => setFilterBar('approved')}
+            />
+            <FilterText
+              isActive={filterBar === 'rejected' ? true : false}
+              label={t('Rejeitados')}
+              onClick={() => setFilterBar('rejected')}
+            />
+            <FilterText
+              isActive={filterBar === 'blocked' ? true : false}
+              label={t('Bloqueados')}
+              onClick={() => setFilterBar('blocked')}
+            />
+          </HStack>
+        </FiltersScrollBar>
+        <ClearFiltersButton clearFunction={clearSearchAndFilters} />
       </Flex>
       <HStack mt="6" spacing={8} color="black">
         <Text fontSize="lg" fontWeight="700" lineHeight="26px">

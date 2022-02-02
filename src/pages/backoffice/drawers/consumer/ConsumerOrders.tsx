@@ -1,4 +1,4 @@
-import { Link, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
+import { Box, Link, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
 import { useContextConsumerProfile } from 'app/state/consumer/context';
 import { Order, WithId } from 'appjusto-types';
 import React from 'react';
@@ -39,34 +39,36 @@ export const ConsumerOrders = () => {
   }, [isOrdersActive, setIsOrdersActive]);
   // UI
   return (
-    <>
+    <Box>
       <Text fontSize="20px" lineHeight="26px" color="black">
         {`${totalOrders} pedidos realizados`}
       </Text>
-      <Table mt="4" size="md" variant="simple">
-        <Thead>
-          <Tr>
-            <Th>{t('ID')}</Th>
-            <Th>{t('Data')}</Th>
-            <Th>{t('Restaurante')}</Th>
-            <Th>{t('Valor')}</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {orders && orders.length > 0 ? (
-            orders.map((order) => {
-              return <ConsumerOrdersTableItem key={order.id} order={order} />;
-            })
-          ) : (
-            <Tr color="black" fontSize="xs" fontWeight="700">
-              <Td>{t('Não há pedidos no momento.')}</Td>
-              <Td></Td>
-              <Td></Td>
-              <Td></Td>
+      <Box overflowX="auto">
+        <Table mt="4" size="md" variant="simple">
+          <Thead>
+            <Tr>
+              <Th>{t('ID')}</Th>
+              <Th>{t('Data')}</Th>
+              <Th>{t('Restaurante')}</Th>
+              <Th>{t('Valor')}</Th>
             </Tr>
-          )}
-        </Tbody>
-      </Table>
-    </>
+          </Thead>
+          <Tbody>
+            {orders && orders.length > 0 ? (
+              orders.map((order) => {
+                return <ConsumerOrdersTableItem key={order.id} order={order} />;
+              })
+            ) : (
+              <Tr color="black" fontSize="xs" fontWeight="700">
+                <Td>{t('Não há pedidos no momento.')}</Td>
+                <Td></Td>
+                <Td></Td>
+                <Td></Td>
+              </Tr>
+            )}
+          </Tbody>
+        </Table>
+      </Box>
+    </Box>
   );
 };

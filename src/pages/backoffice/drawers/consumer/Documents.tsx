@@ -76,7 +76,7 @@ export const Documents = () => {
   return (
     <Box>
       <SectionTitle>{t('Fotos')}</SectionTitle>
-      <HStack mt="6" spacing={4}>
+      <HStack mt="6" spacing={{ base: 2, md: 4 }}>
         <Box textAlign="center">
           <ImageUploads
             key={pictures?.selfie ?? 'selfie'}

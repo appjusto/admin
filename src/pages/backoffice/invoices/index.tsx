@@ -1,7 +1,8 @@
-import { ArrowDownIcon, DeleteIcon } from '@chakra-ui/icons';
+import { ArrowDownIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, HStack, Text } from '@chakra-ui/react';
 import { useObserveInvoices } from 'app/api/order/useObserveInvoices';
 import { IuguInvoiceStatus } from 'appjusto-types/payment/iugu';
+import { ClearFiltersButton } from 'common/components/backoffice/ClearFiltersButton';
 import { FilterText } from 'common/components/backoffice/FilterText';
 import { CustomDateFilter } from 'common/components/form/input/CustomDateFilter';
 import { CustomInput } from 'common/components/form/input/CustomInput';
@@ -107,12 +108,7 @@ const InvoicesPage = () => {
             onClick={() => setFilterBar('chargeback')}
           />
         </HStack>
-        <HStack spacing={2} color="#697667" cursor="pointer" onClick={clearFilters}>
-          <DeleteIcon />
-          <Text fontSize="15px" lineHeight="21px">
-            {t('Limpar filtro')}
-          </Text>
-        </HStack>
+        <ClearFiltersButton clearFunction={clearFilters} />
       </Flex>
       <HStack mt="6" spacing={8} color="black">
         <Text fontSize="lg" fontWeight="700" lineHeight="26px">

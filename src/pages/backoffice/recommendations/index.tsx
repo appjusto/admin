@@ -1,6 +1,7 @@
-import { ArrowDownIcon, DeleteIcon } from '@chakra-ui/icons';
+import { ArrowDownIcon } from '@chakra-ui/icons';
 import { Button, Flex, HStack, Text } from '@chakra-ui/react';
 import { useObserveRecommendations } from 'app/api/consumer/useObserveRecommendations';
+import { ClearFiltersButton } from 'common/components/backoffice/ClearFiltersButton';
 import { CustomDateFilter } from 'common/components/form/input/CustomDateFilter';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import React from 'react';
@@ -70,12 +71,7 @@ const RecommendationsPage = () => {
         </HStack>
       </Flex>
       <Flex mt="8" w="100%" pb="2" justifyContent="flex-end" borderBottom="1px solid #C8D7CB">
-        <HStack spacing={2} color="#697667" cursor="pointer" onClick={clearFilters}>
-          <DeleteIcon />
-          <Text fontSize="15px" lineHeight="21px">
-            {t('Limpar filtro')}
-          </Text>
-        </HStack>
+        <ClearFiltersButton clearFunction={clearFilters} />
       </Flex>
       <HStack mt="6" spacing={8} color="black">
         <Text fontSize="lg" fontWeight="700" lineHeight="26px">

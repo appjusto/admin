@@ -1,9 +1,10 @@
-import { ArrowDownIcon, DeleteIcon } from '@chakra-ui/icons';
+import { ArrowDownIcon } from '@chakra-ui/icons';
 import { Button, CheckboxGroup, Flex, HStack, Stack, Text } from '@chakra-ui/react';
 import { BusinessesFilter } from 'app/api/search/types';
 import { useBusinessesSearch } from 'app/api/search/useBusinessesSearch';
 import { useContextBusiness } from 'app/state/business/context';
 import { BusinessAlgolia, BusinessStatus } from 'appjusto-types';
+import { ClearFiltersButton } from 'common/components/backoffice/ClearFiltersButton';
 import { FiltersScrollBar } from 'common/components/backoffice/FiltersScrollBar';
 import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import { CustomInput } from 'common/components/form/input/CustomInput';
@@ -155,15 +156,7 @@ const BusinessesPage = () => {
             />
           </HStack>
         </FiltersScrollBar>
-        <HStack spacing={2} pl="2" color="#697667" cursor="pointer" onClick={clearSearchAndFilters}>
-          <DeleteIcon />
-          <Text fontSize="15px" lineHeight="21px" display={{ base: 'none', md: 'block' }}>
-            {t('Limpar busca/filtros')}
-          </Text>
-          <Text fontSize="15px" lineHeight="21px" display={{ base: 'block', md: 'none' }}>
-            {t('Limpar')}
-          </Text>
-        </HStack>
+        <ClearFiltersButton clearFunction={clearSearchAndFilters} />
       </Flex>
       <Stack mt="6" spacing={8} color="black" direction={{ base: 'column', md: 'row' }}>
         <Text fontSize="lg" fontWeight="700" lineHeight="26px">

@@ -12,7 +12,7 @@ export const ConsumersTable = ({ consumers }: ConsumersTableProps) => {
 
   // UI
   return (
-    <Box mt="12">
+    <Box mt="12" overflowX="auto">
       <Table mt="4" size="md" variant="simple">
         <Thead>
           <Tr>

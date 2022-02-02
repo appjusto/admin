@@ -1,8 +1,9 @@
-import { ArrowDownIcon, DeleteIcon } from '@chakra-ui/icons';
+import { ArrowDownIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, HStack, RadioGroup, Text } from '@chakra-ui/react';
 import { useObserveUsers } from 'app/api/users/useObserveUsers';
 import { UsersSearchType } from 'app/api/users/UsersApi';
 import { UserType } from 'appjusto-types';
+import { ClearFiltersButton } from 'common/components/backoffice/ClearFiltersButton';
 import { FilterText } from 'common/components/backoffice/FilterText';
 //import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import CustomRadio from 'common/components/form/CustomRadio';
@@ -122,12 +123,7 @@ const UsersPage = () => {
             onClick={() => setIsBlocked(true)}
           />
         </HStack>
-        <HStack spacing={2} color="#697667" cursor="pointer" onClick={clearFilters}>
-          <DeleteIcon />
-          <Text fontSize="15px" lineHeight="21px">
-            {t('Limpar filtro')}
-          </Text>
-        </HStack>
+        <ClearFiltersButton clearFunction={clearFilters} />
       </Flex>
       <HStack mt="6" spacing={8} color="black">
         <Text fontSize="lg" fontWeight="700" lineHeight="26px">
