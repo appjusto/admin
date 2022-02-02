@@ -44,6 +44,9 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
   const [number, setNumber] = React.useState(business?.businessAddress?.number ?? '');
   const [city, setCity] = React.useState(business?.businessAddress?.city ?? '');
   const [state, setState] = React.useState(business?.businessAddress?.state ?? '');
+  const [neighborhood, setNeighborhood] = React.useState(
+    business?.businessAddress?.neighborhood ?? ''
+  );
   const [additional, setAdditional] = React.useState(business?.businessAddress?.additional ?? '');
   const [deliveryRange, setDeliveryRange] = React.useState(
     String(business?.deliveryRange ?? defaultRadius)
@@ -79,6 +82,7 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
         number,
         city,
         state,
+        neighborhood,
         additional,
         latlng: geocodingResult,
       },
@@ -113,11 +117,12 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
       return;
     }
     setCEPNotFound(false);
-    const { logradouro, localidade, uf } = !cepResult
-      ? { logradouro: null, localidade: null, uf: null }
+    const { logradouro, localidade, bairro, uf } = !cepResult
+      ? { logradouro: null, localidade: null, bairro: null, uf: null }
       : cepResult;
     if (logradouro) setAddress(logradouro);
     if (localidade) setCity(localidade);
+    if (bairro) setNeighborhood(bairro);
     if (uf) setState(uf);
     if (logradouro && localidade && uf) numberRef?.current?.focus();
   }, [cepResult, address, city, state]);
