@@ -4,6 +4,7 @@ import {
   Flex,
   HStack,
   Link,
+  Stack,
   Table,
   Tbody,
   Td,
@@ -143,9 +144,14 @@ export const CourierOrders = () => {
                 </HStack>
               </Box>
             ) : (
-              <HStack spacing={4}>
+              <Stack
+                mt={{ base: '4', md: '0' }}
+                spacing={4}
+                direction={{ base: 'column', md: 'row' }}
+              >
                 <CustomButton
                   mt="0"
+                  w="100%"
                   minW="166px"
                   size="md"
                   variant="outline"
@@ -155,7 +161,7 @@ export const CourierOrders = () => {
                 <Button size="md" variant="dangerLight" onClick={() => setRelease(true)}>
                   {t('Liberar entregador')}
                 </Button>
-              </HStack>
+              </Stack>
             )}
           </Flex>
         </Box>
@@ -177,32 +183,34 @@ export const CourierOrders = () => {
           <Text mt="4" fontSize="20px" lineHeight="26px" color="black">
             {`${totalOrders} corridas realizadas`}
           </Text>
-          <Table mt="4" size="md" variant="simple">
-            <Thead>
-              <Tr>
-                <Th>{t('ID')}</Th>
-                <Th>{t('Data')}</Th>
-                <Th>{t('tipo')}</Th>
-                <Th>{t('Restaurante')}</Th>
-                <Th>{t('Valor')}</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {orders && orders.length > 0 ? (
-                orders.map((order) => {
-                  return <CourierOrdersTableItem key={order.id} order={order} />;
-                })
-              ) : (
-                <Tr color="black" fontSize="xs" fontWeight="700">
-                  <Td>{t('Não há registro de corridas.')}</Td>
-                  <Td></Td>
-                  <Td></Td>
-                  <Td></Td>
-                  <Td></Td>
+          <Box overflowX="auto">
+            <Table mt="4" size="md" variant="simple">
+              <Thead>
+                <Tr>
+                  <Th>{t('ID')}</Th>
+                  <Th>{t('Data')}</Th>
+                  <Th>{t('tipo')}</Th>
+                  <Th>{t('Restaurante')}</Th>
+                  <Th>{t('Valor')}</Th>
                 </Tr>
-              )}
-            </Tbody>
-          </Table>
+              </Thead>
+              <Tbody>
+                {orders && orders.length > 0 ? (
+                  orders.map((order) => {
+                    return <CourierOrdersTableItem key={order.id} order={order} />;
+                  })
+                ) : (
+                  <Tr color="black" fontSize="xs" fontWeight="700">
+                    <Td>{t('Não há registro de corridas.')}</Td>
+                    <Td></Td>
+                    <Td></Td>
+                    <Td></Td>
+                    <Td></Td>
+                  </Tr>
+                )}
+              </Tbody>
+            </Table>
+          </Box>
         </Box>
       )}
     </Box>

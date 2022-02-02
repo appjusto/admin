@@ -1,8 +1,9 @@
 import { ArrowDownIcon, DeleteIcon } from '@chakra-ui/icons';
-import { Button, CheckboxGroup, Flex, HStack, Text } from '@chakra-ui/react';
+import { Button, CheckboxGroup, Flex, HStack, Stack, Text } from '@chakra-ui/react';
 import { BasicUserFilter } from 'app/api/search/types';
 import { useBasicUsersSearch } from 'app/api/search/useBasicUsersSearch';
 import { CourierAlgolia, CourierStatus } from 'appjusto-types';
+import { FiltersScrollBar } from 'common/components/backoffice/FiltersScrollBar';
 import { FilterText } from 'common/components/backoffice/FilterText';
 import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import { CustomInput } from 'common/components/form/input/CustomInput';
@@ -94,7 +95,7 @@ const CouriersPage = () => {
   return (
     <>
       <PageHeader title={t('Entregadores')} subtitle={t(`Atualizado ${dateTime}`)} />
-      <HStack mt="8" spacing={4}>
+      <Stack mt="8" spacing={4} direction={{ base: 'column', md: 'row' }}>
         <CustomInput
           mt="0"
           w="100%"
@@ -110,48 +111,53 @@ const CouriersPage = () => {
           city={city}
           handleCityChange={setCity}
         />
-      </HStack>
+      </Stack>
       <Flex mt="8" w="100%" justifyContent="space-between" borderBottom="1px solid #C8D7CB">
-        <HStack spacing={4}>
-          <FilterText
-            isActive={filterBar === 'all' ? true : false}
-            label={t('Todos')}
-            onClick={() => setFilterBar('all')}
-          />
-          <FilterText
-            isActive={filterBar === 'approved' ? true : false}
-            label={t('Aprovados')}
-            onClick={() => setFilterBar('approved')}
-          />
-          <FilterText
-            isActive={filterBar === 'verified' ? true : false}
-            label={t('Verificados')}
-            onClick={() => setFilterBar('verified')}
-          />
-          <FilterText
-            isActive={filterBar === 'invalid' ? true : false}
-            label={t('Inválidos')}
-            onClick={() => setFilterBar('invalid')}
-          />
-          <FilterText
-            isActive={filterBar === 'pending' ? true : false}
-            label={t('Pendentes')}
-            onClick={() => setFilterBar('pending')}
-          />
-          <FilterText
-            isActive={filterBar === 'blocked' ? true : false}
-            label={t('Bloqueados')}
-            onClick={() => setFilterBar('blocked')}
-          />
-        </HStack>
-        <HStack spacing={2} color="#697667" cursor="pointer" onClick={clearSearchAndFilters}>
+        <FiltersScrollBar>
+          <HStack spacing={4}>
+            <FilterText
+              isActive={filterBar === 'all' ? true : false}
+              label={t('Todos')}
+              onClick={() => setFilterBar('all')}
+            />
+            <FilterText
+              isActive={filterBar === 'approved' ? true : false}
+              label={t('Aprovados')}
+              onClick={() => setFilterBar('approved')}
+            />
+            <FilterText
+              isActive={filterBar === 'verified' ? true : false}
+              label={t('Verificados')}
+              onClick={() => setFilterBar('verified')}
+            />
+            <FilterText
+              isActive={filterBar === 'invalid' ? true : false}
+              label={t('Inválidos')}
+              onClick={() => setFilterBar('invalid')}
+            />
+            <FilterText
+              isActive={filterBar === 'pending' ? true : false}
+              label={t('Pendentes')}
+              onClick={() => setFilterBar('pending')}
+            />
+            <FilterText
+              isActive={filterBar === 'blocked' ? true : false}
+              label={t('Bloqueados')}
+              onClick={() => setFilterBar('blocked')}
+            />
+          </HStack>
+        </FiltersScrollBar>
+        <HStack spacing={2} pl="2" color="#697667" cursor="pointer" onClick={clearSearchAndFilters}>
           <DeleteIcon />
-          <Text fontSize="15px" lineHeight="21px">
+          <Text fontSize="15px" lineHeight="21px" display={{ base: 'none', md: 'block' }}>
             {t('Limpar busca/filtros')}
+          </Text>
+          <Text fontSize="15px" lineHeight="21px" display={{ base: 'block', md: 'none' }}>
+            {t('Limpar')}
           </Text>
         </HStack>
       </Flex>
-      <HStack mt="6" spacing={8} color="black">
+      <Stack mt="6" spacing={8} direction={{ base: 'column', md: 'row' }} color="black">
         <Text fontSize="lg" fontWeight="700" lineHeight="26px">
           {t(`${couriers?.length ?? '0'} itens na lista`)}
         </Text>
@@ -160,19 +166,20 @@ const CouriersPage = () => {
           value={filterCheck}
           onChange={(values: CourierStatus[]) => setFilterCheck(values)}
         >
-          <HStack
+          <Stack
+            direction={{ base: 'column', md: 'row' }}
             alignItems="flex-start"
             color="black"
-            spacing={8}
+            spacing={{ base: 4, md: 8 }}
             fontSize="16px"
             lineHeight="22px"
           >
             <CustomCheckbox value="available">{t('Disponível')}</CustomCheckbox>
             <CustomCheckbox value="unavailable">{t('Indisponível')}</CustomCheckbox>
             <CustomCheckbox value="dispatching">{t('Realizando entrega')}</CustomCheckbox>
-          </HStack>
+          </Stack>
         </CheckboxGroup>
-      </HStack>
+      </Stack>
       <CouriersTable couriers={couriers} />
       <Button mt="8" variant="secondary" onClick={fetchNextPage}>
         <ArrowDownIcon mr="2" />

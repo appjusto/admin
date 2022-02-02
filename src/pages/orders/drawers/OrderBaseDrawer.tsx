@@ -20,6 +20,7 @@ import { CustomButton } from 'common/components/buttons/CustomButton';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import React from 'react';
 import { MdPrint } from 'react-icons/md';
+import { useRouteMatch } from 'react-router-dom';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { orderStatusPTOptions } from '../../backoffice/utils/index';
@@ -48,10 +49,12 @@ export const OrderBaseDrawer = ({
   ...props
 }: BaseDrawerProps) => {
   //context
+  const { path } = useRouteMatch();
   const { changeOrderStatus } = useOrdersContext();
   // refs
   const bodyRef = React.useRef<HTMLDivElement>(null);
   // helpers
+  const isHistory = path.includes('orders-history');
   const isCurrierArrived = order?.dispatchingState === 'arrived-pickup';
   //handlers
   const handlePrint = () => {
@@ -90,13 +93,8 @@ export const OrderBaseDrawer = ({
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
       <DrawerOverlay>
-        <DrawerContent>
-          <DrawerCloseButton
-            bg="green.500"
-            mr="12px"
-            mt={{ base: '76px', md: '0' }}
-            _focus={{ outline: 'none' }}
-          />
+        <DrawerContent mt={isHistory ? { base: '16', md: '0' } : '0'}>
+          <DrawerCloseButton bg="green.500" mr="12px" _focus={{ outline: 'none' }} />
           <DrawerHeader pb="2">
             <Flex
               flexDir={{ base: 'column', md: 'row' }}

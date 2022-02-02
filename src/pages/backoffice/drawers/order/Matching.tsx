@@ -79,9 +79,9 @@ export const Matching = ({ order }: MatchingProps) => {
       const notified = matching.couriersNotified.map((id) => ({ id }));
       // @ts-ignore
       setCouriersNotified(notified);
-      return;
+    } else {
+      setCouriersNotified(matching.notifiedCouriers);
     }
-    setCouriersNotified(matching.notifiedCouriers);
     //setCouriersRejections(matching.rejections);
     setLogs(matching.logs);
     setAttemps(matching.attempt);

@@ -126,7 +126,7 @@ export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDr
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
       <DrawerOverlay>
-        <DrawerContent>
+        <DrawerContent mt={{ base: '16', md: '0' }}>
           <DrawerCloseButton bg="green.500" mr="12px" _focus={{ outline: 'none' }} />
           <DrawerHeader pb="2">
             <Text color="black" fontSize="2xl" fontWeight="700" lineHeight="28px" mb="2">
@@ -210,6 +210,7 @@ export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDr
               alignItems="flex-start"
               height="38px"
               borderBottom="1px solid #C8D7CB"
+              overflowX="auto"
             >
               <DrawerLink px="2" to={`${url}`} label={t('Cadastro')} />
               <DrawerLink px="2" to={`${url}/status`} label={t('Status')} />

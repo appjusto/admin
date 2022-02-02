@@ -12,7 +12,7 @@ export const CouriersTable = ({ couriers }: CouriersTableProps) => {
 
   // UI
   return (
-    <Box mt="12">
+    <Box mt="12" overflowX="auto">
       <Table mt="4" size="md" variant="simple">
         <Thead>
           <Tr>
