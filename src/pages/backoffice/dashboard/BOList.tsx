@@ -20,7 +20,7 @@ export const BOList = ({ title, data, listType, details }: Props) => {
   return (
     <Flex
       w="100%"
-      h={['600px']}
+      h={listType === 'orders' ? '600px' : '300px'}
       borderRadius="lg"
       borderColor="gray.500"
       borderWidth="1px"
@@ -28,7 +28,7 @@ export const BOList = ({ title, data, listType, details }: Props) => {
       direction="column"
     >
       <Box
-        h={['60px']}
+        minH="60px"
         p="2"
         bg="gray.50"
         borderColor="gray.500"
@@ -37,12 +37,12 @@ export const BOList = ({ title, data, listType, details }: Props) => {
         borderBottomWidth="1px"
       >
         <Flex alignItems="center">
-          <Circle size={['40px']} bg="white">
+          <Circle size="40px" bg="white">
             <Text fontSize="lg" color="black">
               {data.length}
             </Text>
           </Circle>
-          <Text ml="4" fontSize="lg" color="black" fontWeight="bold">
+          <Text ml="4" fontSize={{ base: 'md', lg: 'lg' }} color="black" fontWeight="bold">
             {title}
           </Text>
         </Flex>

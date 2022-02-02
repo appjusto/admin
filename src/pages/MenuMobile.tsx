@@ -26,18 +26,17 @@ export const MenuMobile = () => {
   const isBackOffice = path.includes('backoffice');
   //UI
   return (
-    <Box position="relative" w="100vw" h="100vh">
+    <Box position="absolute" w="100vw" h="100vh">
       <Flex
         as="header"
         w="100%"
-        //h={isOpen ? '100%' : 'auto'}
         bg="#F6F6F6"
         flexDir="column"
         justifyContent="center"
         position="fixed"
         top="0"
         left="0"
-        pb="2"
+        pb={isOpen ? '2' : '0'}
         zIndex="9999"
         display={{ base: 'flex', md: 'none' }}
       >
@@ -64,7 +63,7 @@ export const MenuMobile = () => {
                 )}
               </Box>
               {!isOpen && (
-                <Box _focus={{ outline: 'none' }} w={{ base: '100px', lg: '100px' }}>
+                <Box _focus={{ outline: 'none' }} w="90px">
                   <Image src={logo} alt="Logo AppJusto" width="100%" loading="eager" />
                 </Box>
               )}

@@ -90,7 +90,7 @@ export const Panel = () => {
           <BOInfoBox title={t('Clientes novos')} value={consumers} />
         </HStack>
       </Box>
-      <Box>
+      <Box mt={{ base: '8', md: '0' }}>
         <Text fontSize="2xl" fontWeight="700" lineHeight="28.8px">
           {t('Geral')}
         </Text>
