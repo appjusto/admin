@@ -21,7 +21,7 @@ import firebase from 'firebase/app';
 import FirebaseRefs from '../FirebaseRefs';
 import * as Sentry from '@sentry/react';
 import { IuguInvoiceStatus } from 'appjusto-types/payment/iugu';
-import { customCollectionSnapshot, customDocumentSnapshot } from '../utils';
+import { customCollectionSnapshot, customDocumentSnapshot, queryLimit } from '../utils';
 
 export type CancellationData = {
   issue: WithId<Issue>;
@@ -122,7 +122,7 @@ export default class OrderApi {
     orderType: OrderType | null,
     startAfter: FirebaseDocument | undefined
   ): firebase.Unsubscribe {
-    let query = this.refs.getOrdersRef().orderBy('updatedOn', 'desc').limit(20);
+    let query = this.refs.getOrdersRef().orderBy('updatedOn', 'desc').limit(queryLimit);
     if (orderStatus) query = query.where('status', '==', orderStatus);
     else query = query.where('status', 'in', statuses);
     if (startAfter) query = query.startAfter(startAfter);
@@ -162,7 +162,7 @@ export default class OrderApi {
     let query = this.refs
       .getOrdersRef()
       .orderBy('updatedOn', 'desc')
-      .limit(20)
+      .limit(queryLimit)
       .where('business.id', '==', businessId)
       .where('status', 'in', statuses);
     if (startAfter) query = query.startAfter(startAfter);
@@ -347,7 +347,7 @@ export default class OrderApi {
     startAfter?: FirebaseDocument,
     status?: IuguInvoiceStatus
   ): firebase.Unsubscribe {
-    let query = this.refs.getInvoicesRef().orderBy('createdOn', 'desc').limit(20);
+    let query = this.refs.getInvoicesRef().orderBy('createdOn', 'desc').limit(queryLimit);
     if (status) query = query.where('status', '==', status);
     if (startAfter) query = query.startAfter(startAfter);
     if (orderCode) query = query.where('orderCode', '==', orderCode);

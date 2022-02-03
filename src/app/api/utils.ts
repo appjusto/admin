@@ -3,6 +3,7 @@ import { documentsAs, documentAs } from 'core/fb';
 import firebase from 'firebase/app';
 import * as Sentry from '@sentry/react';
 
+export const queryLimit = 10;
 interface customSnapshotOptions {
   captureException?: boolean;
   avoidPenddingWrites?: boolean;

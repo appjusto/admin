@@ -4,6 +4,7 @@ import { documentAs, documentsAs, FirebaseDocument } from '../../../core/fb';
 import FirebaseRefs from '../FirebaseRefs';
 import firebase from 'firebase/app';
 import { ProfileChangesSituations } from './useObserveUsersChanges';
+import { queryLimit } from '../utils';
 
 export type UsersSearchType = 'email' | 'cpf' | 'phone';
 export default class UsersApi {
@@ -47,7 +48,7 @@ export default class UsersApi {
       // returns the unsubscribe function
       return unsubscribe;
     }
-    let query = this.refs.getUsersRef().orderBy('lastSignInRequest', 'desc').limit(20);
+    let query = this.refs.getUsersRef().orderBy('lastSignInRequest', 'desc').limit(queryLimit);
     // search
     if (startAfter) query = query.startAfter(startAfter);
     if (searchType === 'cpf' && search) query = query.where('cpf', '==', search);

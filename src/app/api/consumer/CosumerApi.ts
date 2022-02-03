@@ -4,7 +4,7 @@ import FirebaseRefs from '../FirebaseRefs';
 import firebase from 'firebase/app';
 import { documentsAs, FirebaseDocument } from 'core/fb';
 import * as Sentry from '@sentry/react';
-import { customCollectionSnapshot, customDocumentSnapshot } from '../utils';
+import { customCollectionSnapshot, customDocumentSnapshot, queryLimit } from '../utils';
 
 export default class ConsumerApi {
   constructor(private refs: FirebaseRefs, private files: FilesApi) {}
@@ -47,7 +47,7 @@ export default class ConsumerApi {
     //  end: end,
     //});
     // query
-    let query = this.refs.getRecommendationsRef().orderBy('createdOn', 'desc').limit(20);
+    let query = this.refs.getRecommendationsRef().orderBy('createdOn', 'desc').limit(queryLimit);
     // search
     if (startAfter) query = query.startAfter(startAfter);
     if (search) query = query.where('recommendedBusiness.address.main', '==', search);

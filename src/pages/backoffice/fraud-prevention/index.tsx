@@ -4,6 +4,7 @@ import { Button, Flex, HStack, Stack, Text } from '@chakra-ui/react';
 import { useFlaggedlocationsSearch } from 'app/api/search/useFlaggedlocationsSearch';
 import { FlaggedLocationsAlgolia } from 'appjusto-types';
 import { ClearFiltersButton } from 'common/components/backoffice/ClearFiltersButton';
+import { SearchButton } from 'common/components/backoffice/SearchButton';
 import { CustomDateFilter } from 'common/components/form/input/CustomDateFilter';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import dayjs from 'dayjs';
@@ -20,23 +21,37 @@ const FraudPreventionPage = () => {
   const [search, setSearch] = React.useState('');
   const [searchFrom, setSearchFrom] = React.useState('');
   const [searchTo, setSearchTo] = React.useState('');
-
   const [filters, setFilters] = React.useState<number[]>();
-
   const [clearDateNumber, setClearDateNumber] = React.useState(0);
+  const [isSeachEnabled, setIsSeachEnabled] = React.useState(false);
 
   //const { flaggedLocations } = useFlaggedLocations();
-
   const {
     results: flaggedLocations,
     fetchNextPage,
     refetch,
-  } = useFlaggedlocationsSearch<FlaggedLocationsAlgolia>(true, 'flaggedlocations', filters, search);
+  } = useFlaggedlocationsSearch<FlaggedLocationsAlgolia>(
+    isSeachEnabled,
+    'flaggedlocations',
+    filters,
+    search
+  );
 
   // handlers
   //const closeDrawerHandler = () => {
   //  history.replace(path);
   //};
+
+  const handleSearch = () => {
+    if (search.length === 0 && !filters) return;
+    console.log('Do Search!');
+    setIsSeachEnabled(true);
+  };
+
+  const handleDataLoad = () => {
+    if (flaggedLocations) fetchNextPage();
+    else setIsSeachEnabled(true);
+  };
 
   const clearFilters = () => {
     setClearDateNumber((prev) => prev + 1);
@@ -59,6 +74,10 @@ const FraudPreventionPage = () => {
     setFilters([startDate, endDate]);
   }, [searchFrom, searchTo]);
 
+  React.useEffect(() => {
+    setIsSeachEnabled(false);
+  }, [flaggedLocations]);
+
   // UI
   return (
     <>
@@ -80,6 +99,7 @@ const FraudPreventionPage = () => {
             getEnd={setSearchTo}
             clearNumber={clearDateNumber}
           />
+          <SearchButton onClick={handleSearch} />
         </Stack>
       </Flex>
       <Flex
@@ -97,7 +117,7 @@ const FraudPreventionPage = () => {
         </Text>
       </HStack>
       <FlaggedLocationsTable locations={flaggedLocations} refetch={refetch} />
-      <Button mt="8" variant="secondary" onClick={fetchNextPage}>
+      <Button mt="8" variant="secondary" onClick={handleDataLoad}>
         <ArrowDownIcon mr="2" />
         {t('Carregar mais')}
       </Button>
