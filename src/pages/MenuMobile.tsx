@@ -38,7 +38,7 @@ export const MenuMobile = () => {
         left="0"
         pb={isOpen ? '2' : '0'}
         zIndex="9999"
-        display={{ base: 'flex', md: 'none' }}
+        display={{ base: 'flex', lg: 'none' }}
       >
         <Container py="2">
           <Flex
@@ -97,6 +97,7 @@ export const MenuMobile = () => {
           h="100vh"
           bgColor="blackAlpha.500"
           zIndex="990"
+          onClick={onToggle}
         />
       )}
     </>

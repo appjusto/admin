@@ -19,7 +19,7 @@ const PageLayout = ({ maxW = '960px', mt = '0', children }: PageLayoutProps) => 
         <Container
           w="100%"
           maxW={{ lg: maxW, xl: '1144px' }}
-          pt={{ base: '16', md: '10' }}
+          pt={{ base: '16', lg: '10' }}
           pb={{ base: '8', md: '14' }}
         >
           {children}

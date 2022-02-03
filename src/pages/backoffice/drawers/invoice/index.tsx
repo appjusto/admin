@@ -35,7 +35,7 @@ export const InvoiceDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
       <DrawerOverlay>
-        <DrawerContent mt={{ base: '16', md: '0' }}>
+        <DrawerContent mt={{ base: '16', lg: '0' }}>
           <DrawerCloseButton bg="green.500" mr="12px" _focus={{ outline: 'none' }} />
           <DrawerHeader pb="2">
             <Text color="black" fontSize="2xl" fontWeight="700" lineHeight="28px" mb="2">

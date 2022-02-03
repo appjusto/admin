@@ -20,10 +20,10 @@ export const ClearFiltersButton = ({ clearFunction, ...props }: ClearFiltersButt
       {...props}
     >
       <DeleteIcon />
-      <Text fontSize="15px" lineHeight="21px" display={{ base: 'none', md: 'block' }}>
+      <Text fontSize="15px" lineHeight="21px" display={{ base: 'none', lg: 'block' }}>
         {t('Limpar filtros')}
       </Text>
-      <Text fontSize="15px" lineHeight="21px" display={{ base: 'block', md: 'none' }}>
+      <Text fontSize="15px" lineHeight="21px" display={{ base: 'block', lg: 'none' }}>
         {t('Limpar')}
       </Text>
     </HStack>

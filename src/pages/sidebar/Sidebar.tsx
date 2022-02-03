@@ -46,7 +46,7 @@ const Sidebar = () => {
   return (
     <Box
       position="relative"
-      d={{ base: 'none', md: 'block' }}
+      d={{ base: 'none', lg: 'block' }}
       w="220px"
       minW="220px"
       backgroundColor="gray.300"

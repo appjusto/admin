@@ -46,7 +46,7 @@ export const BaseDrawer = ({
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
       <DrawerOverlay>
-        <DrawerContent pt={{ base: '16', md: '0' }}>
+        <DrawerContent mt={{ base: '16', lg: '0' }}>
           <DrawerCloseButton />
           <DrawerHeader
             borderBottom={type === 'product' ? '1px solid #C8D7CB' : 'none'}
