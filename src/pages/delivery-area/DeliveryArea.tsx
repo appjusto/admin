@@ -39,11 +39,14 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
   const [map, setMap] = React.useState<google.maps.Map>();
   const [range, setRange] = React.useState<google.maps.Circle>();
   const [cep, setCEP] = React.useState(business?.businessAddress?.cep ?? '');
-  const [cepNotFound, setCEPNotFound] = React.useState(false);
+  //const [cepNotFound, setCEPNotFound] = React.useState(false);
   const [address, setAddress] = React.useState(business?.businessAddress?.address ?? '');
   const [number, setNumber] = React.useState(business?.businessAddress?.number ?? '');
   const [city, setCity] = React.useState(business?.businessAddress?.city ?? '');
   const [state, setState] = React.useState(business?.businessAddress?.state ?? '');
+  const [neighborhood, setNeighborhood] = React.useState(
+    business?.businessAddress?.neighborhood ?? ''
+  );
   const [additional, setAdditional] = React.useState(business?.businessAddress?.additional ?? '');
   const [deliveryRange, setDeliveryRange] = React.useState(
     String(business?.deliveryRange ?? defaultRadius)
@@ -62,10 +65,19 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
   });
   // geocoding
   const geocode = () =>
-    api.maps().googleGeocode(`${address}, ${number} - ${city} - ${state}`, autocompleteSession);
-  const { data: geocodingResult } = useQuery(['geocoding', address, number, city, state], geocode, {
-    enabled: address?.length > 0 && number.length > 0,
-  });
+    api
+      .maps()
+      .googleGeocode(
+        `${address}, ${number}, ${neighborhood} - ${city} - ${state}`,
+        autocompleteSession
+      );
+  const { data: geocodingResult } = useQuery(
+    ['geocoding', address, number, neighborhood, city, state],
+    geocode,
+    {
+      enabled: address?.length > 0 && number.length > 0,
+    }
+  );
   const center = coordsFromLatLnt(geocodingResult ?? SaoPauloCoords);
   // refs
   const cepRef = React.useRef<HTMLInputElement>(null);
@@ -79,6 +91,7 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
         number,
         city,
         state,
+        neighborhood,
         additional,
         latlng: geocodingResult,
       },
@@ -108,22 +121,19 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
   }, [business]);
   // after postal lookup, change focus to number input
   React.useEffect(() => {
-    if (cepResult?.erro) {
-      setCEPNotFound(true);
-      return;
-    }
-    setCEPNotFound(false);
-    const { logradouro, localidade, uf } = !cepResult
-      ? { logradouro: null, localidade: null, uf: null }
+    if (cepResult?.erro) return;
+    const { logradouro, localidade, bairro, uf } = !cepResult
+      ? { logradouro: null, localidade: null, bairro: null, uf: null }
       : cepResult;
     if (logradouro) setAddress(logradouro);
     if (localidade) setCity(localidade);
+    if (bairro) setNeighborhood(bairro);
     if (uf) setState(uf);
     if (logradouro && localidade && uf) numberRef?.current?.focus();
-  }, [cepResult, address, city, state]);
+  }, [cepResult]);
   React.useEffect(() => {
     setCities([]);
-    if (!cepResult?.erro) return;
+    //if (!cepResult?.erro) return;
     if (!state) return;
     (async () => {
       const citiesList = await getCitiesByState(state as UF);
@@ -176,6 +186,46 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
             validationLength={8}
           />
         </Flex>
+        <Stack mt="4" spacing={4} direction="row">
+          <Select
+            mt="0"
+            maxW={{ base: '90px', md: '110px' }}
+            id="delivery-state"
+            label="UF *"
+            placeholder="UF"
+            value={state}
+            onChange={(ev) => setState(ev.target.value)}
+          >
+            {ufs.map((uf) => (
+              <option key={uf.id} value={uf.sigla}>
+                {uf.sigla}
+              </option>
+            ))}
+          </Select>
+          <Select
+            mt="0"
+            id="delivery-city"
+            label={t('Cidade *')}
+            placeholder={t('Sua cidade')}
+            value={city}
+            onChange={(ev) => setCity(ev.target.value)}
+            isDisabled={cities.length === 0}
+          >
+            {cities.map((city) => (
+              <option key={city} value={city}>
+                {city}
+              </option>
+            ))}
+          </Select>
+        </Stack>
+        <Input
+          id="delivery-neighborhood"
+          label={t('Bairro *')}
+          placeholder={t('Seu bairro')}
+          value={neighborhood}
+          onChange={(ev) => setNeighborhood(ev.target.value)}
+          isRequired
+        />
         <Flex flexDir={{ base: 'column', md: 'row' }}>
           <Input
             isRequired
@@ -205,39 +255,6 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
           value={additional}
           onChange={(ev) => setAdditional(ev.target.value)}
         />
-        {cepNotFound && (
-          <Stack mt="4" spacing={4} direction="row">
-            <Select
-              mt="0"
-              id="delivery-state"
-              label="UF *"
-              placeholder="UF"
-              value={state}
-              onChange={(ev) => setState(ev.target.value)}
-            >
-              {ufs.map((uf) => (
-                <option key={uf.id} value={uf.sigla}>
-                  {uf.sigla}
-                </option>
-              ))}
-            </Select>
-            <Select
-              mt="0"
-              id="delivery-city"
-              label={t('Cidade *')}
-              placeholder={t('Sua cidade')}
-              value={city}
-              onChange={(ev) => setCity(ev.target.value)}
-              isDisabled={cities.length === 0}
-            >
-              {cities.map((city) => (
-                <option key={city} value={city}>
-                  {city}
-                </option>
-              ))}
-            </Select>
-          </Stack>
-        )}
         <Text mt="8" fontSize="xl" color="black">
           {t('Raio de entrega')}
         </Text>
