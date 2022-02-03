@@ -58,7 +58,7 @@ const FraudPreventionPage = () => {
     setSearch('');
     setSearchFrom('');
     setSearchTo('');
-    refetch();
+    //refetch();
   };
 
   // side effects

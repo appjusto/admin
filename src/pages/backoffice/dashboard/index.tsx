@@ -6,12 +6,16 @@ import {
   useObserveUsersChanges,
 } from 'app/api/users/useObserveUsersChanges';
 import { OrderStatus } from 'appjusto-types';
+import { DirectAccessById } from 'common/components/backoffice/DirectAccessById';
 import React from 'react';
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import PageHeader from '../../PageHeader';
 import { BusinessDrawer } from '../drawers/business';
+import { ConsumerDrawer } from '../drawers/consumer';
+import { CourierDrawer } from '../drawers/courier';
+import { InvoiceDrawer } from '../drawers/invoice';
 import { BackofficeOrderDrawer } from '../drawers/order';
 import { UserChangeDrawer } from '../drawers/profile-changes/UserChangeDrawer';
 import { BOList } from './BOList';
@@ -46,6 +50,7 @@ const BODashboard = () => {
     <>
       <PageHeader title={t('Visão geral')} subtitle={t(`Atualizado ${dateTime}`)} showVersion />
       <Panel />
+      <DirectAccessById />
       <Stack mt="4" w="100%" direction={{ base: 'column', md: 'row' }} spacing={4}>
         <BOList
           title={t('Pedidos em andamento')}
@@ -81,6 +86,15 @@ const BODashboard = () => {
         </Route>
         <Route path={`${path}/profile-changes/:changesId`}>
           <UserChangeDrawer isOpen onClose={closeDrawerHandler} />
+        </Route>
+        <Route path={`${path}/courier/:courierId`}>
+          <CourierDrawer isOpen onClose={closeDrawerHandler} />
+        </Route>
+        <Route path={`${path}/consumer/:consumerId`}>
+          <ConsumerDrawer isOpen onClose={closeDrawerHandler} />
+        </Route>
+        <Route path={`${path}/invoice/:invoiceId`}>
+          <InvoiceDrawer isOpen onClose={closeDrawerHandler} />
         </Route>
       </Switch>
     </>
