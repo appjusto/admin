@@ -498,4 +498,16 @@ export default class OrderApi {
     if (accountType) payload.accountType = accountType;
     return await this.refs.getOutsourceDeliveryCallable()(payload);
   }
+
+  async getOrderIdByOrderCode(orderCode: string) {
+    const orderId = await this.refs
+      .getOrdersRef()
+      .where('code', '==', orderCode)
+      .get()
+      .then((snapshot) => {
+        if (!snapshot.empty) return snapshot.docs[0].id;
+        else return null;
+      });
+    return orderId;
+  }
 }
