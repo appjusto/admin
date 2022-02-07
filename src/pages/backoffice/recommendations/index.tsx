@@ -1,6 +1,6 @@
 import { ArrowDownIcon } from '@chakra-ui/icons';
 import { Button, Flex, HStack, Stack, Text } from '@chakra-ui/react';
-import { useObserveRecommendations } from 'app/api/consumer/useObserveRecommendations';
+import { useRecommendations } from 'app/api/consumer/useRecommendations';
 import { ClearFiltersButton } from 'common/components/backoffice/ClearFiltersButton';
 import { SearchButton } from 'common/components/backoffice/SearchButton';
 import { CustomDateFilter } from 'common/components/form/input/CustomDateFilter';
@@ -22,47 +22,27 @@ const RecommendationsPage = () => {
   const [search, setSearch] = React.useState('');
   const [searchFrom, setSearchFrom] = React.useState('');
   const [searchTo, setSearchTo] = React.useState('');
-  const [isSeachEnabled, setIsSeachEnabled] = React.useState(false);
-
   const [clearDateNumber, setClearDateNumber] = React.useState(0);
-
-  const { recommendations, fetchNextPage } = useObserveRecommendations(
-    isSeachEnabled,
-    search,
-    searchFrom,
-    searchTo
-  );
-
+  const { recommendations, getRecomendations } = useRecommendations(search, searchFrom, searchTo);
   // handlers
   const closeDrawerHandler = () => {
     history.replace(path);
   };
-
   const handleSearch = () => {
     if (search.length === 0 && (!searchFrom || !searchTo)) return;
-    setIsSeachEnabled(true);
+    getRecomendations();
   };
-
-  const handleDataLoad = () => {
-    if (recommendations.length > 0) fetchNextPage();
-    else setIsSeachEnabled(true);
-  };
-
   const clearFilters = () => {
     setClearDateNumber((prev) => prev + 1);
     setSearch('');
     setSearchFrom('');
     setSearchTo('');
   };
-
   // side effects
   React.useEffect(() => {
     const { date, time } = getDateTime();
     setDateTime(`${date} às ${time}`);
   }, []);
-  React.useEffect(() => {
-    setIsSeachEnabled(false);
-  }, [recommendations]);
   // UI
   return (
     <>
@@ -101,7 +81,7 @@ const RecommendationsPage = () => {
         </Text>
       </HStack>
       <RecommendationsTable recommendations={recommendations} />
-      <Button mt="8" variant="secondary" onClick={handleDataLoad}>
+      <Button mt="8" variant="secondary" onClick={getRecomendations}>
         <ArrowDownIcon mr="2" />
         {t('Carregar mais')}
       </Button>
