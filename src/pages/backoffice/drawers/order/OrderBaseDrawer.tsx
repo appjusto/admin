@@ -70,7 +70,7 @@ export const OrderBaseDrawer = ({
             <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
               {t('Pedido confirmado em:')}{' '}
               <Text as="span" fontWeight="500">
-                {getDateAndHour(order?.confirmedOn)}
+                {getDateAndHour(order?.timestamps.confirmed)}
               </Text>
             </Text>
             <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
