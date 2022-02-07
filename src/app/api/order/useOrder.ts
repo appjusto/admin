@@ -9,9 +9,12 @@ import {
 } from 'appjusto-types';
 import React from 'react';
 import { useCustomMutation } from '../mutation/useCustomMutation';
+import { Unsubscribe } from './OrderApi';
 import { calculateCancellationCosts } from './utils';
 
-export const useOrder = (orderId?: string) => {
+const globalIdLength = 20;
+
+export const useOrder = (orderIdentifier?: string) => {
   // context
   const api = useContextApi();
   // state
@@ -21,7 +24,7 @@ export const useOrder = (orderId?: string) => {
   const [orderCancellationCosts, setOrderCancellationCosts] = React.useState<number>();
   // mutations
   const { mutateAsync: updateOrder, mutationResult: updateResult } = useCustomMutation(
-    async (changes: Partial<Order>) => api.order().updateOrder(orderId!, changes),
+    async (changes: Partial<Order>) => api.order().updateOrder(order?.id!, changes),
     'updateOrder'
   );
   const { mutateAsync: cancelOrder, mutationResult: cancelResult } = useCustomMutation(
@@ -32,22 +35,28 @@ export const useOrder = (orderId?: string) => {
   );
   // side effects
   React.useEffect(() => {
-    if (!orderId) return;
-    const unsub = api.order().observeOrder(orderId, setOrder);
-    const unsub2 = api.order().observeOrderIssues(orderId, setOrderIssues);
-    return () => {
-      unsub();
-      unsub2();
-    };
-  }, [api, orderId]);
+    if (!orderIdentifier) return;
+    let unsub: Unsubscribe;
+    if (orderIdentifier.length < globalIdLength) {
+      unsub = api.order().observeOrderByOrderCode(orderIdentifier, setOrder);
+    } else {
+      unsub = api.order().observeOrder(orderIdentifier, setOrder);
+    }
+    return () => unsub();
+  }, [api, orderIdentifier]);
   React.useEffect(() => {
-    if (order?.status !== 'canceled' || !orderId) return;
+    if (!order?.id) return;
+    const unsub = api.order().observeOrderIssues(order.id, setOrderIssues);
+    return () => unsub();
+  }, [api, order?.id]);
+  React.useEffect(() => {
+    if (!order?.id || order?.status !== 'canceled') return;
     (async () => {
-      const cancellation = await api.order().getOrderPrivateCancellation(orderId);
+      const cancellation = await api.order().getOrderPrivateCancellation(order.id);
       if (cancellation) setOrderCancellation(cancellation);
       else setOrderCancellation(null);
     })();
-  }, [api, order?.status, orderId]);
+  }, [api, order?.id, order?.status]);
   React.useEffect(() => {
     if (!order) return;
     let debt = [] as InvoiceType[];

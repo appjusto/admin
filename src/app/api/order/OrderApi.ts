@@ -31,6 +31,7 @@ export type CancellationData = {
 
 export type Ordering = 'asc' | 'desc';
 
+export type Unsubscribe = firebase.Unsubscribe;
 export interface OrderLog {
   before: Partial<Order>;
   after: Partial<Order>;
@@ -211,6 +212,15 @@ export default class OrderApi {
     return customDocumentSnapshot<Order>(query, (result) => {
       if (result) resultHandler(result);
     });
+  }
+
+  observeOrderByOrderCode(orderCode: string, resultHandler: (order: WithId<Order>) => void) {
+    return this.refs
+      .getOrdersRef()
+      .where('code', '==', orderCode)
+      .onSnapshot((snapshot) => {
+        if (!snapshot.empty) resultHandler(documentAs<Order>(snapshot.docs[0]));
+      });
   }
 
   observeOrderLogs(
@@ -497,17 +507,5 @@ export default class OrderApi {
     };
     if (accountType) payload.accountType = accountType;
     return await this.refs.getOutsourceDeliveryCallable()(payload);
-  }
-
-  async getOrderIdByOrderCode(orderCode: string) {
-    const orderId = await this.refs
-      .getOrdersRef()
-      .where('code', '==', orderCode)
-      .get()
-      .then((snapshot) => {
-        if (!snapshot.empty) return snapshot.docs[0].id;
-        else return null;
-      });
-    return orderId;
   }
 }
