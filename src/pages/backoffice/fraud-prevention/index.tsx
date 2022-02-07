@@ -44,7 +44,6 @@ const FraudPreventionPage = () => {
 
   const handleSearch = () => {
     if (search.length === 0 && !filters) return;
-    console.log('Do Search!');
     setIsSeachEnabled(true);
   };
 

@@ -5,7 +5,12 @@ import dayjs from 'dayjs';
 import { uniqWith, isEqual } from 'lodash';
 import firebase from 'firebase/app';
 
-export const useObserveRecommendations = (search?: string, start?: string, end?: string) => {
+export const useObserveRecommendations = (
+  isEnable: boolean,
+  search?: string,
+  start?: string,
+  end?: string
+) => {
   // context
   const api = useContextApi();
   // state
@@ -24,6 +29,7 @@ export const useObserveRecommendations = (search?: string, start?: string, end?:
   }, [lastDocument]);
   // side effects
   React.useEffect(() => {
+    if (!isEnable) return;
     let startDate = start ? dayjs(start).startOf('day').toDate() : null;
     let endDate = end ? dayjs(end).endOf('day').toDate() : null;
     const unsub = api.consumer().observeRecommendations(
@@ -45,7 +51,7 @@ export const useObserveRecommendations = (search?: string, start?: string, end?:
       startAfter
     );
     return () => unsub();
-  }, [api, search, start, end, startAfter]);
+  }, [api, isEnable, search, start, end, startAfter]);
 
   // return
   return { recommendations, fetchNextPage };

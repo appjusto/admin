@@ -2,6 +2,7 @@ import { ArrowDownIcon } from '@chakra-ui/icons';
 import { Button, Flex, HStack, Stack, Text } from '@chakra-ui/react';
 import { useObserveRecommendations } from 'app/api/consumer/useObserveRecommendations';
 import { ClearFiltersButton } from 'common/components/backoffice/ClearFiltersButton';
+import { SearchButton } from 'common/components/backoffice/SearchButton';
 import { CustomDateFilter } from 'common/components/form/input/CustomDateFilter';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import React from 'react';
@@ -21,10 +22,12 @@ const RecommendationsPage = () => {
   const [search, setSearch] = React.useState('');
   const [searchFrom, setSearchFrom] = React.useState('');
   const [searchTo, setSearchTo] = React.useState('');
+  const [isSeachEnabled, setIsSeachEnabled] = React.useState(false);
 
   const [clearDateNumber, setClearDateNumber] = React.useState(0);
 
   const { recommendations, fetchNextPage } = useObserveRecommendations(
+    isSeachEnabled,
     search,
     searchFrom,
     searchTo
@@ -33,6 +36,16 @@ const RecommendationsPage = () => {
   // handlers
   const closeDrawerHandler = () => {
     history.replace(path);
+  };
+
+  const handleSearch = () => {
+    if (search.length === 0 && (!searchFrom || !searchTo)) return;
+    setIsSeachEnabled(true);
+  };
+
+  const handleDataLoad = () => {
+    if (recommendations.length > 0) fetchNextPage();
+    else setIsSeachEnabled(true);
   };
 
   const clearFilters = () => {
@@ -47,7 +60,9 @@ const RecommendationsPage = () => {
     const { date, time } = getDateTime();
     setDateTime(`${date} às ${time}`);
   }, []);
-
+  React.useEffect(() => {
+    setIsSeachEnabled(false);
+  }, [recommendations]);
   // UI
   return (
     <>
@@ -68,6 +83,7 @@ const RecommendationsPage = () => {
             getEnd={setSearchTo}
             clearNumber={clearDateNumber}
           />
+          <SearchButton onClick={handleSearch} />
         </Stack>
       </Flex>
       <Flex
@@ -85,7 +101,7 @@ const RecommendationsPage = () => {
         </Text>
       </HStack>
       <RecommendationsTable recommendations={recommendations} />
-      <Button mt="8" variant="secondary" onClick={fetchNextPage}>
+      <Button mt="8" variant="secondary" onClick={handleDataLoad}>
         <ArrowDownIcon mr="2" />
         {t('Carregar mais')}
       </Button>
