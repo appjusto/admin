@@ -29,9 +29,7 @@ const UsersPage = () => {
   const [search, setSearch] = React.useState('');
   const [searchFrom, setSearchFrom] = React.useState('');
   const [searchTo, setSearchTo] = React.useState('');
-
   const [clearDateNumber, setClearDateNumber] = React.useState(0);
-
   const { users, fetchNextPage } = useObserveUsers(
     loggedAt,
     isBlocked,
@@ -40,12 +38,10 @@ const UsersPage = () => {
     searchFrom,
     searchTo
   );
-
   // handlers
   const closeDrawerHandler = () => {
     history.replace(path);
   };
-
   const clearFilters = () => {
     setClearDateNumber((prev) => prev + 1);
     setLoggedAt(['manager', 'courier', 'consumer']);
@@ -55,13 +51,11 @@ const UsersPage = () => {
     setSearchFrom('');
     setSearchTo('');
   };
-
   // side effects
   React.useEffect(() => {
     const { date, time } = getDateTime();
     setDateTime(`${date} às ${time}`);
   }, []);
-
   // UI
   return (
     <Box>

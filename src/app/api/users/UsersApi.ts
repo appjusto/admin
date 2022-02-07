@@ -23,13 +23,6 @@ export default class UsersApi {
     end?: Date | null,
     startAfter?: FirebaseDocument
   ): firebase.Unsubscribe {
-    //console.log({
-    //  searchType: searchType,
-    //  search: search,
-    //  isBlocked: isBlocked,
-    //  start: start,
-    //  end: end,
-    //});
     // query
     if (searchType === 'email' && search) {
       const unsubscribe = this.refs
