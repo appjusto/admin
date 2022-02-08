@@ -39,15 +39,30 @@ export default class BusinessApi {
 
   // businesses
   observeBusinesses(
+    resultHandler: (
+      result: WithId<Business>[],
+      last?: firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
+    ) => void,
     situations: string[],
-    resultHandler: (result: WithId<Business>[]) => void
+    startAfter?: firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
   ): firebase.Unsubscribe {
-    const query = this.refs
+    let query = this.refs
       .getBusinessesRef()
       .orderBy('createdOn', 'asc')
-      .where('situation', 'in', situations);
+      .where('situation', 'in', situations)
+      .limit(5);
+    if (startAfter) query = query.startAfter(startAfter);
     // returns the unsubscribe function
-    return customCollectionSnapshot(query, resultHandler);
+    return query.onSnapshot(
+      (snapshot) => {
+        const last = snapshot.docs.length > 0 ? snapshot.docs[snapshot.docs.length - 1] : undefined;
+        resultHandler(documentsAs<Business>(snapshot.docs), last);
+      },
+      (error) => {
+        console.error(error);
+        Sentry.captureException(error);
+      }
+    );
   }
 
   observeBusinessesByStatus(

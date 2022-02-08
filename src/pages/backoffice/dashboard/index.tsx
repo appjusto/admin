@@ -1,5 +1,5 @@
 import { Stack } from '@chakra-ui/react';
-import { useBusinesses } from 'app/api/business/useBusinesses';
+import { useObserveBusinesses } from 'app/api/business/useObserveBusinesses';
 import { useObserveOrders } from 'app/api/order/useObserveOrders';
 import {
   ProfileChangesSituations,
@@ -31,9 +31,11 @@ const BODashboard = () => {
   // context
   const { path } = useRouteMatch();
   const history = useHistory();
-  const businesses = useBusinesses(businessSituations);
+  const { businesses, fetchNextPage: fetchNextBusiness } = useObserveBusinesses(businessSituations);
   const orders = useObserveOrders(statuses);
-  const changes = useObserveUsersChanges(usersChangesSituations);
+  const { changes, fetchNextPage: fetchNextChanges } = useObserveUsersChanges(
+    usersChangesSituations
+  );
   // state
   const [dateTime, setDateTime] = React.useState('');
   // handlers
@@ -67,6 +69,8 @@ const BODashboard = () => {
           details={t(
             'Aqui ficarão listados todos os novos cadastros de restaurantes aguardando aprovação.'
           )}
+          infiniteScroll
+          loadData={fetchNextBusiness}
         />
         <BOList
           title={t('Solicitações de alteração de perfil')}
@@ -75,6 +79,8 @@ const BODashboard = () => {
           details={t(
             'Aqui ficarão listados todas as solicitações de alteração de perfil aguardando aprovação.'
           )}
+          infiniteScroll
+          loadData={fetchNextChanges}
         />
       </Stack>
       <Switch>

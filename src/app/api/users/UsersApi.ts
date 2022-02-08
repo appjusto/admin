@@ -91,8 +91,12 @@ export default class UsersApi {
   }
 
   observeUsersChanges(
+    resultHandler: (
+      changes: WithId<ProfileChange>[],
+      last?: firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
+    ) => void,
     situations: ProfileChangesSituations[],
-    resultHandler: (changes: WithId<ProfileChange>[]) => void
+    startAfter?: firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
   ): firebase.Unsubscribe {
     // query
     let query = this.refs
@@ -100,15 +104,18 @@ export default class UsersApi {
       .orderBy('createdOn', 'asc')
       .where('situation', 'in', situations);
     // observer
-    const unsubscribe = query.onSnapshot(
-      (querySnapshot) => resultHandler(documentsAs<ProfileChange>(querySnapshot.docs)),
+    if (startAfter) query = query.startAfter(startAfter);
+    // returns the unsubscribe function
+    return query.onSnapshot(
+      (snapshot) => {
+        const last = snapshot.docs.length > 0 ? snapshot.docs[snapshot.docs.length - 1] : undefined;
+        resultHandler(documentsAs<ProfileChange>(snapshot.docs), last);
+      },
       (error) => {
         console.error(error);
         Sentry.captureException(error);
       }
     );
-    // returns the unsubscribe function
-    return unsubscribe;
   }
 
   observeUserChange(

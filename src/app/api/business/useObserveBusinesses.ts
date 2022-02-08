@@ -1,40 +1,38 @@
 import { useContextApi } from 'app/state/api/context';
-import { ProfileChange, WithId } from 'appjusto-types';
+import { Business, WithId } from 'appjusto-types';
 import React from 'react';
-import { uniqWith, isEqual } from 'lodash';
 import firebase from 'firebase/app';
+import { uniqWith, isEqual } from 'lodash';
 
-export type ProfileChangesSituations = 'pending' | 'approved' | 'rejected';
-
-export const useObserveUsersChanges = (situations: ProfileChangesSituations[]) => {
+export const useObserveBusinesses = (situations: string[]) => {
   // context
   const api = useContextApi();
   // state
-  const [changes, setChanges] = React.useState<WithId<ProfileChange>[]>([]);
+  const [businesses, setBusinesses] = React.useState<WithId<Business>[]>([]);
   const [startAfter, setStartAfter] = React.useState<
     firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
   >();
-  const [lastChange, setLastChange] = React.useState<
+  const [lastBusiness, setLastBusiness] = React.useState<
     firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
   >();
   // handlers
   const fetchNextPage = React.useCallback(() => {
-    setStartAfter(lastChange);
-  }, [lastChange]);
+    setStartAfter(lastBusiness);
+  }, [lastBusiness]);
   // side effects
   React.useEffect(() => {
-    const unsub = api.users().observeUsersChanges(
+    const unsub = api.business().observeBusinesses(
       (results, last) => {
-        if (!startAfter) setChanges(results);
+        if (!startAfter) setBusinesses(results);
         else
-          setChanges((prev) => {
+          setBusinesses((prev) => {
             if (prev) {
               const union = [...prev, ...results];
               return uniqWith(union, isEqual);
             }
             return results;
           });
-        if (last) setLastChange(last);
+        if (last) setLastBusiness(last);
       },
       situations,
       startAfter
@@ -42,5 +40,5 @@ export const useObserveUsersChanges = (situations: ProfileChangesSituations[]) =
     return () => unsub();
   }, [api, situations, startAfter]);
   // return
-  return { changes, fetchNextPage };
+  return { businesses, fetchNextPage };
 };

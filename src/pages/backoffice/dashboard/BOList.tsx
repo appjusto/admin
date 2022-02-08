@@ -13,13 +13,37 @@ interface Props {
   data: WithId<Business>[] | WithId<Order>[] | WithId<ProfileChange>[];
   listType: ListType;
   details?: string;
+  infiniteScroll?: boolean;
+  loadData?(): void;
 }
 
-export const BOList = ({ title, data, listType, details }: Props) => {
+export const BOList = ({
+  title,
+  data,
+  listType,
+  details,
+  infiniteScroll = false,
+  loadData,
+}: Props) => {
+  // refs
+  const listRef = React.useRef<HTMLDivElement>(null);
+  // side effects
+  React.useEffect(() => {
+    if (!infiniteScroll || !listRef.current || !loadData) return;
+    const handleScrollTop = () => {
+      if (listRef.current) {
+        let shouldLoad = listRef.current.scrollHeight - listRef.current.scrollTop < 240;
+        if (shouldLoad) loadData();
+      }
+    };
+    listRef.current.addEventListener('scroll', handleScrollTop);
+    return () => document.removeEventListener('scroll', handleScrollTop);
+  }, [infiniteScroll, listRef, loadData]);
   // UI
   return (
     <Flex
       w="100%"
+      position="relative"
       h={listType === 'orders' ? '600px' : '300px'}
       borderRadius="lg"
       borderColor="gray.500"
@@ -58,7 +82,7 @@ export const BOList = ({ title, data, listType, details }: Props) => {
       </ShowIf>
       <ShowIf test={data.length > 0}>
         {() => (
-          <VStack flex={1} p="4" overflowX="hidden">
+          <VStack ref={listRef} flex={1} p="4" overflowX="hidden">
             {listType === 'businesses'
               ? (data as WithId<Business>[]).map((item) => (
                   <BOBusinessListItem key={item.id} business={item} />
