@@ -11,7 +11,8 @@ export const useObserveBusinessOrdersHistory = (
   statuses: OrderStatus[] | null,
   orderCode?: string,
   start?: string,
-  end?: string
+  end?: string,
+  orderStatus?: OrderStatus
 ) => {
   // context
   const api = useContextApi();
@@ -35,7 +36,7 @@ export const useObserveBusinessOrdersHistory = (
     if (start && !end) return;
     setOrdersMap(initialMap);
     setStartAfter(undefined);
-  }, [orderCode, start, end]);
+  }, [orderCode, start, end, orderStatus]);
   React.useEffect(() => {
     let startDate = start ? dayjs(start).startOf('day').toDate() : null;
     let endDate = end ? dayjs(end).endOf('day').toDate() : null;
@@ -53,10 +54,11 @@ export const useObserveBusinessOrdersHistory = (
       orderCode,
       startDate,
       endDate,
+      orderStatus,
       startAfter
     );
     return () => unsub();
-  }, [api, startAfter, businessId, statuses, orderCode, start, end]);
+  }, [api, startAfter, businessId, statuses, orderCode, start, end, orderStatus]);
   React.useEffect(() => {
     setOrders(
       Array.from(ordersMap.values()).reduce((result, orders) => [...result, ...orders], [])

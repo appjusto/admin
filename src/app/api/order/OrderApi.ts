@@ -155,10 +155,11 @@ export default class OrderApi {
     ) => void,
     businessId: string | undefined,
     statuses: OrderStatus[] | null,
-    orderCode: string | null | undefined,
-    start: Date | null | undefined,
-    end: Date | null | undefined,
-    startAfter: FirebaseDocument | undefined
+    orderCode?: string | null,
+    start?: Date | null,
+    end?: Date | null,
+    orderStatus?: OrderStatus,
+    startAfter?: FirebaseDocument
   ): firebase.Unsubscribe {
     let query = this.refs
       .getOrdersRef()
@@ -169,6 +170,7 @@ export default class OrderApi {
     if (startAfter) query = query.startAfter(startAfter);
     if (orderCode) query = query.where('code', '==', orderCode);
     if (start && end) query = query.where('updatedOn', '>=', start).where('updatedOn', '<=', end);
+    if (orderStatus) query = query.where('status', '==', orderStatus);
     const unsubscribe = query.onSnapshot(
       (snapshot) => {
         if (!snapshot.metadata.hasPendingWrites) {
