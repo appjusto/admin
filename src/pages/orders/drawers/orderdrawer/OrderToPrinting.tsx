@@ -165,11 +165,17 @@ export const OrderToPrinting = React.forwardRef<HTMLDivElement, OrderToPrintProp
         <SectionTitle mt="2" fontSize="18px">
           {t('Observações')}
         </SectionTitle>
-        {order?.additionalInfo ? (
+        {order?.consumer.cpf && (
+          <Text mt="1" fontSize="12px" fontWeight="700">
+            {t('Incluir CPF na nota')}
+          </Text>
+        )}
+        {order?.additionalInfo && (
           <Text mt="1" fontSize="12px" fontWeight="700">
             {order?.additionalInfo}
           </Text>
-        ) : (
+        )}
+        {!order?.consumer.cpf && !order?.additionalInfo && (
           <Text mt="1" fontSize="12px">
             {t('Sem observações.')}
           </Text>
