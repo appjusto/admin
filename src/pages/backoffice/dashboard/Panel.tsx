@@ -1,5 +1,4 @@
 import { Box, Flex, HStack, Skeleton, Text } from '@chakra-ui/react';
-import { usePlatformStatistics } from 'app/api/platform/usePlatformStatistics';
 import { useContextBackofficeDashboard } from 'app/state/dashboards/backoffice';
 import I18n from 'i18n-js';
 import React from 'react';
@@ -38,13 +37,13 @@ const BOInfoBox = ({ title, value, isCurrency }: BOInfoBoxProps) => {
 
 export const Panel = () => {
   // context
-  const statistics = usePlatformStatistics();
   const {
+    statistics,
     todayOrders,
     todayDeliveredOrders,
     todayAverage,
     couriers,
-    businesses,
+    businessesNumber,
     consumers,
   } = useContextBackofficeDashboard();
   // state
@@ -86,7 +85,7 @@ export const Panel = () => {
           <BOInfoBox title={t('Entregadores ativos')} value={couriers} />
         </HStack>
         <HStack mt="4" spacing={6}>
-          <BOInfoBox title={t('Restaurantes abertos')} value={businesses} />
+          <BOInfoBox title={t('Restaurantes abertos')} value={businessesNumber} />
           <BOInfoBox title={t('Clientes novos')} value={consumers} />
         </HStack>
       </Box>

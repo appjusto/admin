@@ -10,7 +10,7 @@ export const useObserveUsersChanges = (situations: ProfileChangesSituations[]) =
   // context
   const api = useContextApi();
   // state
-  const [changes, setChanges] = React.useState<WithId<ProfileChange>[]>([]);
+  const [userChanges, setUserChanges] = React.useState<WithId<ProfileChange>[]>([]);
   const [startAfter, setStartAfter] = React.useState<
     firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
   >();
@@ -25,9 +25,9 @@ export const useObserveUsersChanges = (situations: ProfileChangesSituations[]) =
   React.useEffect(() => {
     const unsub = api.users().observeUsersChanges(
       (results, last) => {
-        if (!startAfter) setChanges(results);
+        if (!startAfter) setUserChanges(results);
         else
-          setChanges((prev) => {
+          setUserChanges((prev) => {
             if (prev) {
               const union = [...prev, ...results];
               return uniqWith(union, isEqual);
@@ -42,5 +42,5 @@ export const useObserveUsersChanges = (situations: ProfileChangesSituations[]) =
     return () => unsub();
   }, [api, situations, startAfter]);
   // return
-  return { changes, fetchNextPage };
+  return { userChanges, fetchNextPage };
 };
