@@ -1,4 +1,4 @@
-import { Box, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
+import { Box, Table, Tbody, Td, Tfoot, Th, Thead, Tr } from '@chakra-ui/react';
 import { Order, WithId } from 'appjusto-types';
 import { formatCurrency } from 'utils/formatters';
 import { t } from 'utils/i18n';
@@ -13,7 +13,6 @@ export const OrdersTable = ({ orders, isBackoffice }: OrdersTableProps) => {
   // helpers
   const totalValue = orders
     ? orders.reduce<number>((result, order) => {
-        if (order.status === 'canceled') return result;
         if (order.outsourcedBy === 'business' && order.fare?.total)
           return (result += order.fare.total);
         else if (order.fare?.business?.value) return (result += order.fare.business.value);
@@ -53,18 +52,20 @@ export const OrdersTable = ({ orders, isBackoffice }: OrdersTableProps) => {
               <Td></Td>
             </Tr>
           )}
-          {!isBackoffice && (
-            <Tr bgColor="gray.500" color="black" fontSize="xs" fontWeight="700">
+        </Tbody>
+        {!isBackoffice && (
+          <Tfoot bgColor="gray.50">
+            <Tr color="black" fontSize="xs" fontWeight="700">
               <Td></Td>
               <Td></Td>
               <Td></Td>
               <Td></Td>
-              <Td>{t('Total entregue:')}</Td>
+              <Td>{t('Total:')}</Td>
               <Td>{formatCurrency(totalValue)}</Td>
               <Td></Td>
             </Tr>
-          )}
-        </Tbody>
+          </Tfoot>
+        )}
       </Table>
     </Box>
   );
