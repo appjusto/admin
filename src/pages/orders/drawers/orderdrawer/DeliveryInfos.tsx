@@ -14,9 +14,14 @@ import { DeliveryMap } from './DeliveryMap';
 interface DeliveryInfosProps {
   order: WithId<Order>;
   setOutsource?(value: boolean): void;
+  isBackofficeDrawer?: boolean;
 }
 
-export const DeliveryInfos = ({ order, setOutsource }: DeliveryInfosProps) => {
+export const DeliveryInfos = ({
+  order,
+  setOutsource,
+  isBackofficeDrawer = false,
+}: DeliveryInfosProps) => {
   // context
   const { getServerTime } = useContextServerTime();
   const { isBackofficeUser } = useContextFirebaseUser();
@@ -124,11 +129,13 @@ export const DeliveryInfos = ({ order, setOutsource }: DeliveryInfosProps) => {
               )}
             </Flex>
           </Flex>
-          <Link to={`/app/orders/chat/${order.id}/${order.courier?.id}`}>
-            <Button variant="outline" size="sm" mt={{ base: '4', md: '0' }}>
-              {t('Abrir chat com o entregador')}
-            </Button>
-          </Link>
+          {!isBackofficeDrawer && (
+            <Link to={`/app/orders/chat/${order.id}/${order.courier?.id}`}>
+              <Button variant="outline" size="sm" mt={{ base: '4', md: '0' }}>
+                {t('Abrir chat com o entregador')}
+              </Button>
+            </Link>
+          )}
         </Flex>
       )}
       <DeliveryMap

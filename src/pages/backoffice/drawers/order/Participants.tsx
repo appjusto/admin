@@ -306,7 +306,7 @@ export const Participants = ({ order }: ParticipantsProps) => {
         </Text>
       </Text>
       {isOrderActive ? (
-        <DeliveryInfos order={order!} />
+        <DeliveryInfos order={order!} isBackofficeDrawer />
       ) : (
         <>
           <SectionTitle>{t('Destino do pedido')}</SectionTitle>
