@@ -21,6 +21,7 @@ import { t } from 'utils/i18n';
 import { OrderDrawerLoadingState } from '.';
 import { orderStatusPTOptions } from '../../utils/index';
 import { SectionTitle } from '../generics/SectionTitle';
+import { BaseDrawerInfoItem } from './BaseDrawerInfoItem';
 import { FraudPrevention } from './FraudPrevention';
 
 interface BaseDrawerProps {
@@ -61,56 +62,39 @@ export const OrderBaseDrawer = ({
             <Text color="black" fontSize="2xl" fontWeight="700" lineHeight="28px" mb="2">
               {order?.code ? `#${order.code}` : 'N/E'}
             </Text>
-            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
-              {t('Tipo:')}{' '}
-              <Text as="span" fontWeight="500">
-                {order?.type === 'food' ? 'Comida' : 'p2p'}
-              </Text>
-            </Text>
-            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
-              {t('Pedido confirmado em:')}{' '}
-              <Text as="span" fontWeight="500">
-                {getDateAndHour(order?.timestamps.confirmed)}
-              </Text>
-            </Text>
-            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
-              {t('Atualizado em:')}{' '}
-              <Text as="span" fontWeight="500">
-                {getDateAndHour(order?.updatedOn)}
-              </Text>
-            </Text>
-            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
-              {t('Nome do cliente:')}{' '}
-              <Text as="span" fontWeight="500">
-                {order?.consumer?.name ?? 'N/E'}
-              </Text>
-            </Text>
-            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
-              {t('Status:')}{' '}
-              <Text as="span" fontWeight="500">
-                {orderStatus ? orderStatusPTOptions[orderStatus] : 'N/E'}
-              </Text>
-            </Text>
-            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
-              {t('Mensagens no chat:')}{' '}
-              <Text as="span" fontWeight="500">
-                {isChatMessages ? t('Sim') : t('Não')}
-              </Text>
-            </Text>
+            <BaseDrawerInfoItem
+              label={t('Tipo:')}
+              value={order?.type === 'food' ? 'Comida' : 'p2p'}
+            />
+            <BaseDrawerInfoItem
+              label={t('Pedido confirmado em:')}
+              value={getDateAndHour(order?.timestamps.confirmed)}
+            />
+            <BaseDrawerInfoItem
+              label={t('Atualizado em:')}
+              value={getDateAndHour(order?.updatedOn)}
+            />
+            <BaseDrawerInfoItem
+              label={t('Tempo de preparo:')}
+              value={t(`${order?.cookingTime ? order?.cookingTime / 60 : 'N/I'} min`)}
+            />
+            <BaseDrawerInfoItem
+              label={t('Nome do cliente:')}
+              value={order?.consumer?.name ?? 'N/E'}
+            />
+            <BaseDrawerInfoItem
+              label={t('Status:')}
+              value={orderStatus ? orderStatusPTOptions[orderStatus] : 'N/E'}
+            />
+            <BaseDrawerInfoItem
+              label={t('Mensagens no chat:')}
+              value={isChatMessages ? t('Sim') : t('Não')}
+            />
+
             {order?.issue && (
-              <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
-                {t('Motivo da recusa:')}{' '}
-                <Text as="span" fontWeight="500">
-                  {order.issue}
-                </Text>
-              </Text>
+              <BaseDrawerInfoItem label={t('Motivo da recusa:')} value={order.issue} />
             )}
-            {/*<Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
-              {t('Agente responsável:')}{' '}
-              <Text as="span" fontWeight="500">
-                *
-              </Text>
-            </Text>*/}
+            {/*<BaseDrawerInfoItem label={t('Agente responsável:')} value={???} />*/}
           </DrawerHeader>
           <DrawerBody pb="28">
             {isFlagged && (
