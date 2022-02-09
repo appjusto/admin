@@ -58,7 +58,7 @@ export const OrderBaseDrawer = ({
       <DrawerOverlay>
         <DrawerContent mt={{ base: '16', lg: '0' }}>
           <DrawerCloseButton bg="green.500" mr="12px" _focus={{ outline: 'none' }} />
-          <DrawerHeader pb={{ base: '2', md: '0' }}>
+          <DrawerHeader pb="2">
             <Text color="black" fontSize="2xl" fontWeight="700" lineHeight="28px" mb="2">
               {order?.code ? `#${order.code}` : 'N/E'}
             </Text>
@@ -105,7 +105,9 @@ export const OrderBaseDrawer = ({
                 loadingState={loadingState}
               />
             )}
-            <SectionTitle mb="4">{t('Andamento do pedido')}</SectionTitle>
+            <SectionTitle mt="4" mb="4">
+              {t('Andamento do pedido')}
+            </SectionTitle>
             <OrderTracking orderId={order?.id} />
             <Flex
               my="8"
