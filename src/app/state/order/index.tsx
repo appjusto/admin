@@ -8,6 +8,7 @@ import { useObserveConfirmedOrders } from 'app/api/order/useObserveConfirmedOrde
 import { useObserveOrders } from 'app/api/order/useObserveOrders';
 import { useObserveOrdersCompletedInTheLastHour } from 'app/api/order/useObserveOrdersCompletedInTheLastHour';
 import { useObservePreparingOrders } from 'app/api/order/useObservePreparingOrders';
+import { usePlatformParams } from 'app/api/platform/usePlatformParams';
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { Business, Order, OrderStatus, WithId } from 'appjusto-types';
@@ -37,6 +38,7 @@ interface ProviderProps {
 export const OrdersContextProvider = (props: ProviderProps) => {
   // context
   const api = useContextApi();
+  const { isPlatformLive } = usePlatformParams();
   const { dispatchAppRequestResult } = useContextAppRequests();
   const { isBackofficeUser } = useContextFirebaseUser();
   const { business } = useContextBusiness();
@@ -135,7 +137,6 @@ export const OrdersContextProvider = (props: ProviderProps) => {
       audio.remove();
     }, 2000);
   }, [toast]);
-
   React.useEffect(() => {
     setOrders([...activeOrders, ...completedAndActiveOrders]);
   }, [activeOrders, completedAndActiveOrders]);
@@ -154,6 +155,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   }, [chats]);
   // business keep alive
   React.useEffect(() => {
+    if (!isPlatformLive) return;
     if (business?.situation !== 'approved') return;
     if (business?.status !== 'open') return;
     sendBusinessKeepAlive();
@@ -162,35 +164,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
       sendBusinessKeepAlive();
     }, time);
     return () => clearInterval(keepAliveInterval);
-  }, [business?.situation, business?.status, sendBusinessKeepAlive]);
-  /*React.useEffect(() => {
-    if (isBackofficeUser) return;
-    if (business?.situation !== 'approved') return;
-    if (business?.status !== 'open') return;
-    const onCloseListener = (e: BeforeUnloadEvent) => {
-      // Cancel the event
-      e.preventDefault();
-      console.log('onCloseListener');
-      updateBusinessProfile({ status: 'closed' });
-      toast({
-        duration: 12000,
-        render: () => (
-          <CustomToast
-            type="warning"
-            message={{
-              title: 'Seu restaurante foi fechado.',
-              description:
-                'Ao tentar fechar ou recarregar esta página, seu restaurante é fechado automaticamente. Se deseja continuar recebendo pedidos, basta abri-lo novamente.',
-            }}
-          />
-        ),
-      });
-      // Chrome requires returnValue to be set
-      e.returnValue = '';
-    };
-    window.addEventListener('beforeunload', onCloseListener);
-    return () => window.removeEventListener('beforeunload', onCloseListener);
-  }, [updateBusinessProfile, toast, isBackofficeUser, business?.situation, business?.status]);*/
+  }, [isPlatformLive, business?.situation, business?.status, sendBusinessKeepAlive]);
   React.useEffect(() => {
     if (isBackofficeUser) return;
     if (business?.situation !== 'approved') return;
