@@ -1,5 +1,12 @@
 import { Box, Flex, HStack, RadioGroup, Text, Textarea } from '@chakra-ui/react';
-import { InvoiceType, Issue, IssueType, OrderStatus, OrderType } from 'appjusto-types';
+import {
+  DispatchingState,
+  InvoiceType,
+  Issue,
+  IssueType,
+  OrderStatus,
+  OrderType,
+} from 'appjusto-types';
 import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import CustomRadio from 'common/components/form/CustomRadio';
 import React from 'react';
@@ -12,19 +19,21 @@ interface OrderStatusProps {
   orderType?: OrderType;
   orderStatus?: OrderStatus;
   status?: OrderStatus;
+  dispatchingState?: DispatchingState;
   issue?: Issue | null;
   message?: string;
   cancelOptions?: Issue[] | null;
   refund: InvoiceType[];
   refundValue: number;
   onRefundingChange(type: InvoiceType, value: boolean): void;
-  updateState(type: string, value: OrderStatus | IssueType | string): void;
+  updateState(type: string, value: OrderStatus | DispatchingState | IssueType | string): void;
 }
 
 export const OrderStatusBar = ({
   orderType,
   orderStatus,
   status,
+  dispatchingState,
   issue,
   message,
   cancelOptions,
@@ -34,46 +43,82 @@ export const OrderStatusBar = ({
   updateState,
 }: OrderStatusProps) => {
   // helpers
+  const isOrderActive = orderStatus
+    ? ['preparing', 'ready', 'dispatching'].includes(orderStatus)
+    : false;
   const cancelator = getOrderCancellator(issue?.type);
   // UI
   return (
     <Box>
-      <SectionTitle mt="0">{t('Alterar status do pedido:')}</SectionTitle>
-      <RadioGroup
-        mt="2"
-        onChange={(value: OrderStatus) => updateState('status', value)}
-        value={status}
-        defaultValue="1"
-        colorScheme="green"
-        color="black"
-        fontSize="15px"
-        lineHeight="21px"
-      >
-        <Flex flexDir="column" justifyContent="flex-start">
-          <CustomRadio mt="2" value="confirming">
-            {t('Aguardando confirmação')}
-          </CustomRadio>
-          {orderType === 'food' && (
-            <>
-              <CustomRadio mt="2" value="preparing">
-                {t('Em preparo')}
+      <Flex flexDir="row" justifyContent="space-between" px="4">
+        <Box>
+          <SectionTitle mt="0">{t('Alterar status do pedido:')}</SectionTitle>
+          <RadioGroup
+            mt="2"
+            onChange={(value: OrderStatus) => updateState('status', value)}
+            value={status}
+            defaultValue="1"
+            colorScheme="green"
+            color="black"
+            fontSize="15px"
+            lineHeight="21px"
+          >
+            <Flex flexDir="column" justifyContent="flex-start">
+              <CustomRadio mt="2" value="confirmed">
+                {t('Aguardando aceite do restaurante')}
               </CustomRadio>
-              <CustomRadio mt="2" value="ready">
-                {t('Pronto - aguardando entregador')}
+              {orderType === 'food' && (
+                <>
+                  <CustomRadio mt="2" value="preparing">
+                    {t('Em preparo')}
+                  </CustomRadio>
+                  <CustomRadio mt="2" value="ready">
+                    {t('Pronto - aguardando entregador')}
+                  </CustomRadio>
+                </>
+              )}
+              <CustomRadio mt="2" value="dispatching">
+                {t('A caminho da entrega')}
               </CustomRadio>
-            </>
-          )}
-          <CustomRadio mt="2" value="dispatching">
-            {t('A caminho da entrega')}
-          </CustomRadio>
-          <CustomRadio mt="2" value="delivered">
-            {t('Entregue')}
-          </CustomRadio>
-          <CustomRadio mt="2" value="canceled">
-            {t('Cancelado')}
-          </CustomRadio>
-        </Flex>
-      </RadioGroup>
+              <CustomRadio mt="2" value="delivered">
+                {t('Entregue')}
+              </CustomRadio>
+              <CustomRadio mt="2" value="canceled">
+                {t('Cancelado')}
+              </CustomRadio>
+            </Flex>
+          </RadioGroup>
+        </Box>
+        {isOrderActive && (
+          <Box>
+            <SectionTitle mt="0">{t('Alterar status da entrega:')}</SectionTitle>
+            <RadioGroup
+              mt="2"
+              onChange={(value: DispatchingState) => updateState('dispatchingState', value)}
+              value={dispatchingState}
+              colorScheme="green"
+              color="black"
+              fontSize="15px"
+              lineHeight="21px"
+            >
+              <Flex flexDir="column" justifyContent="flex-start">
+                <CustomRadio mt="2" value="going-pickup">
+                  {t('Entreg. a caminho da retirada')}
+                </CustomRadio>
+                <CustomRadio mt="2" value="arrived-pickup">
+                  {t('Entreg. no local da retirada')}
+                </CustomRadio>
+                <CustomRadio mt="2" value="going-destination">
+                  {t('Entreg. a caminho da entrega')}
+                </CustomRadio>
+                <CustomRadio mt="2" value="arrived-destination">
+                  {t('Entreg. no local da entrega')}
+                </CustomRadio>
+              </Flex>
+            </RadioGroup>
+          </Box>
+        )}
+      </Flex>
       {status === 'canceled' && (
         <>
           <SectionTitle>{t('Dados do cancelamento:')}</SectionTitle>
