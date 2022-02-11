@@ -1,9 +1,7 @@
-import * as Sentry from '@sentry/react';
 import { WithId, ChatMessage } from 'appjusto-types';
-import { documentAs, documentsAs, FirebaseDocument } from '../../../core/fb';
 import FirebaseRefs from '../FirebaseRefs';
 import firebase from 'firebase/app';
-import { customCollectionSnapshot, queryLimit } from '../utils';
+import { customCollectionSnapshot } from '../utils';
 import { ChatMessageType } from 'appjusto-types/order/chat';
 
 export default class ChatApi {
