@@ -13,12 +13,15 @@ import {
   Textarea,
   useToast,
 } from '@chakra-ui/react';
-import { useUpdateChatMessage } from 'app/api/business/chat/useUpdateChatMessage';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
+// import { Participants, useOrderChat } from 'app/api/order/useOrderChat';
+import { Participants, useOrderChat } from 'app/api/chat/useOrderChat';
+// import { useUpdateChatMessage } from 'app/api/business/chat/useUpdateChatMessage';
+import { useUpdateChatMessage } from 'app/api/chat/useUpdateChatMessage';
 import { getUnreadChatMessages } from 'app/api/chat/utils';
-import { Participants, useOrderChat } from 'app/api/order/useOrderChat';
 import { useContextServerTime } from 'app/state/server-time';
 import { ChatMessage, Flavor } from 'appjusto-types';
+import { ChatMessageType } from 'appjusto-types/order/chat';
 import React, { KeyboardEvent } from 'react';
 import { useParams } from 'react-router';
 import { getDateTime } from 'utils/functions';
@@ -76,12 +79,15 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
         isClosable: true,
       });
     }
+
     const flavor = participants[counterpartId].flavor as Flavor;
+    const type = `business-${flavor}` as ChatMessageType;
     const to: { agent: Flavor; id: string } = {
       agent: flavor,
       id: counterpartId,
     };
     sendMessage({
+      type,
       to,
       message: inputText.trim(),
     });
@@ -103,7 +109,6 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
       if (unreadMessagesIds.length > 0) {
         unreadMessagesIds.forEach((messageId) => {
           updateChatMessage({
-            orderId,
             messageId,
             changes: { read: true } as Partial<ChatMessage>,
           });
