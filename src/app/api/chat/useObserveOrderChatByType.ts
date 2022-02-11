@@ -25,7 +25,11 @@ export interface Participants {
 const orderActivedStatuses = ['confirmed', 'preparing', 'ready', 'dispatching'] as OrderStatus[];
 const orderCompleteStatuses = ['delivered', 'canceled'] as OrderStatus[];
 
-export const useOrderChat = (getServerTime: () => Date, orderId: string, counterpartId: string) => {
+export const useObserveOrderChatByType = (
+  getServerTime: () => Date,
+  orderId: string,
+  counterpartId: string
+) => {
   // context
   const api = useContextApi();
   const businessId = useContextBusinessId();
@@ -34,8 +38,7 @@ export const useOrderChat = (getServerTime: () => Date, orderId: string, counter
   const [isActive, setIsActive] = React.useState(false);
   const [participants, setParticipants] = React.useState<Participants>({});
   const [counterPartFlavor, setCounterPartFlavor] = React.useState<Flavor>();
-  const [chatFromBusiness, setChatFromBusiness] = React.useState<WithId<ChatMessage>[]>([]);
-  const [chatFromCounterPart, setChatFromCounterPart] = React.useState<WithId<ChatMessage>[]>([]);
+  const [chatMessages, setChatMessages] = React.useState<WithId<ChatMessage>[]>([]);
   const [chat, setChat] = React.useState<GroupedChatMessages[]>([]);
   const courierProfilePicture = useCourierProfilePicture(
     counterpartId,
@@ -47,7 +50,9 @@ export const useOrderChat = (getServerTime: () => Date, orderId: string, counter
     async (data: Partial<ChatMessage>) => {
       if (!businessId) return;
       const from = { agent: 'business' as Flavor, id: businessId };
-      api.order().sendMessage(orderId, {
+      api.chat().sendMessage({
+        orderId,
+        participantsIds: [businessId, counterpartId],
         from,
         ...data,
       });
@@ -59,23 +64,8 @@ export const useOrderChat = (getServerTime: () => Date, orderId: string, counter
   React.useEffect(() => {
     if (!orderId) return;
     const unsub = api.order().observeOrder(orderId, setOrder);
-    return () => {
-      unsub();
-    };
+    return () => unsub();
   }, [api, orderId]);
-  React.useEffect(() => {
-    if (!orderId || !businessId || !counterpartId) return;
-    const unsub = api
-      .order()
-      .observeOrderChat(orderId, businessId, counterpartId, setChatFromBusiness);
-    const unsub2 = api
-      .order()
-      .observeOrderChat(orderId, counterpartId, businessId, setChatFromCounterPart);
-    return () => {
-      unsub();
-      unsub2();
-    };
-  }, [api, orderId, businessId, counterpartId]);
   React.useEffect(() => {
     if (!order) return;
     let counterpartName = 'N/E';
@@ -101,24 +91,30 @@ export const useOrderChat = (getServerTime: () => Date, orderId: string, counter
     setParticipants(participantsObject);
   }, [order, counterpartId, businessId, courierProfilePicture]);
   React.useEffect(() => {
+    if (!orderId || !businessId || !counterPartFlavor) return;
+    const chatType = counterPartFlavor === 'courier' ? 'business-courier' : 'business-consumer';
+    const unsub = api.chat().observeOrderChatByType(orderId, chatType, setChatMessages);
+    return () => unsub();
+  }, [api, orderId, businessId, counterPartFlavor]);
+  React.useEffect(() => {
     if (!order?.status) return;
     if (orderActivedStatuses.includes(order.status)) setIsActive(true);
     else if (orderCompleteStatuses.includes(order.status)) {
       const baseTime =
-        order.status === 'delivered' && order.deliveredOn
-          ? (order.deliveredOn as firebase.firestore.Timestamp).toMillis()
+        order.status === 'delivered' && order.timestamps.delivered
+          ? (order.timestamps.delivered as firebase.firestore.Timestamp).toMillis()
           : (order.updatedOn as firebase.firestore.Timestamp).toMillis();
       const now = getServerTime().getTime();
       const elapsedTime = getTimeUntilNow(now, baseTime, false);
       if (elapsedTime < 60) setIsActive(true);
       else setIsActive(false);
     } else setIsActive(false);
-  }, [getServerTime, order?.status, order?.deliveredOn, order?.updatedOn]);
+  }, [getServerTime, order?.status, order?.timestamps?.delivered, order?.updatedOn]);
   React.useEffect(() => {
-    const sorted = chatFromBusiness.concat(chatFromCounterPart).sort(sortMessages);
+    const sorted = chatMessages.sort(sortMessages);
     const groups = groupOrderChatMessages(sorted).reverse();
     setChat(groups);
-  }, [chatFromBusiness, chatFromCounterPart]);
+  }, [chatMessages]);
   // return
   return { isActive, orderCode: order?.code, participants, chat, sendMessage, sendMessageResult };
 };

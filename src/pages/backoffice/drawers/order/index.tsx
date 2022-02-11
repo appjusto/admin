@@ -1,4 +1,4 @@
-import { useObserveOrderChats } from 'app/api/order/useObserveOrderChats';
+import { useObserveOrderChatMessages } from 'app/api/chat/useObserveOrderChatMessages';
 import { useObserveOrderInvoices } from 'app/api/order/useObserveOrderInvoices';
 import { useOrder } from 'app/api/order/useOrder';
 import { useFlaggedLocations } from 'app/api/platform/useFlaggedLocations';
@@ -65,7 +65,7 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
   const invoices = useObserveOrderInvoices(orderId);
   const cancelOptions = useIssuesByType(cancelOptionsArray);
   const { addFlaggedLocation } = useFlaggedLocations();
-  const chatMessages = useObserveOrderChats(orderId);
+  const chatMessages = useObserveOrderChatMessages(orderId);
   // state
   const [status, setStatus] = React.useState<OrderStatus | undefined>(order?.status);
   const [dispatchingState, setDispatchingState] = React.useState<DispatchingState | undefined>(

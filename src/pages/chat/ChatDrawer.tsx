@@ -15,7 +15,7 @@ import {
 } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 // import { Participants, useOrderChat } from 'app/api/order/useOrderChat';
-import { Participants, useOrderChat } from 'app/api/chat/useOrderChat';
+import { Participants, useObserveOrderChatByType } from 'app/api/chat/useObserveOrderChatByType';
 // import { useUpdateChatMessage } from 'app/api/business/chat/useUpdateChatMessage';
 import { useUpdateChatMessage } from 'app/api/chat/useUpdateChatMessage';
 import { getUnreadChatMessages } from 'app/api/chat/utils';
@@ -44,11 +44,14 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
   const { logo } = useBusinessProfile();
   const { orderId, counterpartId } = useParams<Params>();
   const { updateChatMessage } = useUpdateChatMessage();
-  const { isActive, orderCode, participants, chat, sendMessage, sendMessageResult } = useOrderChat(
-    getServerTime,
-    orderId,
-    counterpartId
-  );
+  const {
+    isActive,
+    orderCode,
+    participants,
+    chat,
+    sendMessage,
+    sendMessageResult,
+  } = useObserveOrderChatByType(getServerTime, orderId, counterpartId);
   const toast = useToast();
   // state
   const [dateTime, setDateTime] = React.useState('');

@@ -1,5 +1,5 @@
 import { Box, Flex, Icon, Image, Stack, Text } from '@chakra-ui/react';
-import { useObserveOrderChats } from 'app/api/order/useObserveOrderChats';
+import { useObserveOrderChatMessages } from 'app/api/chat/useObserveOrderChatMessages';
 import { useObserveOrderIssues } from 'app/api/order/useObserveOrderIssues';
 import { useContextServerTime } from 'app/state/server-time';
 import { Order, WithId } from 'appjusto-types';
@@ -23,7 +23,7 @@ export const BOOrderListItem = ({ order }: Props) => {
   // context
   const { url } = useRouteMatch();
   const { getServerTime } = useContextServerTime();
-  const chatMessages = useObserveOrderChats(order.id);
+  const chatMessages = useObserveOrderChatMessages(order.id);
   const issues = useObserveOrderIssues(order.id);
   // state
   const [orderDT, setOrderDT] = React.useState<number>();
@@ -40,7 +40,9 @@ export const BOOrderListItem = ({ order }: Props) => {
   React.useEffect(() => {
     const setNewTime = () => {
       const now = getServerTime().getTime();
-      const chargedOn = getTimestampMilliseconds(order.chargedOn as firebase.firestore.Timestamp);
+      const chargedOn = getTimestampMilliseconds(
+        order.timestamps.charged as firebase.firestore.Timestamp
+      );
       const time = chargedOn ? getTimeUntilNow(now, chargedOn) : null;
       if (time) setOrderDT(time);
     };

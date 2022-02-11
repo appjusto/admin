@@ -234,30 +234,6 @@ export default class OrderApi {
     return customCollectionSnapshot(query, resultHandler);
   }
 
-  observeOrderChats(
-    orderId: string,
-    resultHandler: (messages: ChatMessage[]) => void
-  ): firebase.Unsubscribe {
-    const unsubscribe = this.refs
-      .getOrderChatRef(orderId)
-      .orderBy('timestamp', 'asc')
-      .onSnapshot(
-        (querySnapshot) => {
-          //@ts-ignore
-          resultHandler(() => {
-            const docs = documentsAs<ChatMessage>(querySnapshot.docs);
-            const messages = docs.map((msg) => ({ orderId, ...msg }));
-            return [...messages];
-          });
-        },
-        (error) => {
-          console.error(error);
-        }
-      );
-    // returns the unsubscribe function
-    return unsubscribe;
-  }
-
   observeOrderChat(
     orderId: string,
     partId: string,
@@ -439,14 +415,6 @@ export default class OrderApi {
           .get()
       ).docs
     );
-  }
-
-  async sendMessage(orderId: string, message: Partial<ChatMessage>) {
-    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
-    return this.refs.getOrderChatRef(orderId).add({
-      ...message,
-      timestamp,
-    });
   }
 
   async createFakeOrder(order: Order) {

@@ -33,6 +33,17 @@ export default class ChatApi {
     return customCollectionSnapshot(query, resultHandler);
   }
 
+  observeOrderChatMessages(
+    orderId: string,
+    resultHandler: (messages: WithId<ChatMessage>[]) => void
+  ) {
+    const query = this.refs
+      .getChatsRef()
+      .where('orderId', '==', orderId)
+      .orderBy('timestamp', 'asc');
+    return customCollectionSnapshot(query, resultHandler);
+  }
+
   observeOrderChatByType(
     orderId: string,
     type: ChatMessageType,
