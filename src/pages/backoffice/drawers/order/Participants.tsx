@@ -250,7 +250,7 @@ export const Participants = ({ order }: ParticipantsProps) => {
             address={order?.destination?.address?.main ?? 'N/E'}
             additionalInfo={order?.destination?.additionalInfo}
             buttonLabel={t('Ver cadastro do cliente')}
-            buttonLink={`/backoffice/consumers/${order?.consumer.id}`}
+            buttonLink={`/backoffice/consumer/${order?.consumer.id}`}
           />
           <SectionTitle>{t('Restaurante')}</SectionTitle>
           <Participant
@@ -258,7 +258,7 @@ export const Participants = ({ order }: ParticipantsProps) => {
             address={order?.origin?.address?.main ?? 'N/E'}
             additionalInfo={order?.origin?.additionalInfo}
             buttonLabel={t('Ver cadastro do restaurante')}
-            buttonLink={`/backoffice/businesses/${order?.business?.id}`}
+            buttonLink={`/backoffice/business/${order?.business?.id}`}
           />
         </Box>
       ) : (
@@ -267,7 +267,7 @@ export const Participants = ({ order }: ParticipantsProps) => {
           <Participant
             name={order?.consumer?.name ?? 'N/E'}
             buttonLabel={t('Ver cadastro do cliente')}
-            buttonLink={`/backoffice/consumers/${order?.consumer.id}`}
+            buttonLink={`/backoffice/consumer/${order?.consumer.id}`}
           />
           <SectionTitle>{t('Origem')}</SectionTitle>
           <Participant
@@ -292,7 +292,7 @@ export const Participants = ({ order }: ParticipantsProps) => {
         name={order?.courier?.name ?? 'N/E'}
         mode={order?.courier?.mode}
         buttonLabel={t('Ver cadastro do entregador')}
-        buttonLink={`/backoffice/couriers/${order?.courier?.id}`}
+        buttonLink={`/backoffice/courier/${order?.courier?.id}`}
         isBtnDisabled={!order?.courier}
         dropIssues={issues}
         removeCourier={removeCourierFromOrder}
