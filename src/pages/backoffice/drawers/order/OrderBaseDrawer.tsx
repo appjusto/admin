@@ -12,6 +12,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { Order, OrderStatus, WithId } from 'appjusto-types';
+import { FiltersScrollBar } from 'common/components/backoffice/FiltersScrollBar';
 import { OrderTracking } from 'pages/backoffice/dashboard/OrderTracking';
 import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
 import React from 'react';
@@ -109,19 +110,17 @@ export const OrderBaseDrawer = ({
               {t('Andamento do pedido')}
             </SectionTitle>
             <OrderTracking orderId={order?.id} />
-            <Flex
-              my="8"
-              fontSize="lg"
-              flexDir="row"
-              alignItems="flex-start"
-              borderBottom="1px solid #C8D7CB"
-              overflowX="auto"
-            >
-              <DrawerLink to={`${url}`} label={t('Participantes')} />
-              <DrawerLink to={`${url}/order`} label={t('Pedido')} />
-              <DrawerLink to={`${url}/invoices`} label={t('Faturas')} />
-              <DrawerLink to={`${url}/matching`} label={t('Matching')} />
-              <DrawerLink to={`${url}/status`} label={t('Status')} />
+            <Flex mt="8" fontSize="lg" borderBottom="1px solid #C8D7CB">
+              <FiltersScrollBar>
+                <HStack spacing={4}>
+                  <DrawerLink to={`${url}`} label={t('Participantes')} />
+                  <DrawerLink to={`${url}/order`} label={t('Pedido')} />
+                  <DrawerLink to={`${url}/invoices`} label={t('Faturas')} />
+                  <DrawerLink to={`${url}/matching`} label={t('Matching')} />
+                  <DrawerLink to={`${url}/status`} label={t('Status')} />
+                  {isChatMessages && <DrawerLink to={`${url}/chats`} label={t('Chat')} />}
+                </HStack>
+              </FiltersScrollBar>
             </Flex>
             {children}
           </DrawerBody>

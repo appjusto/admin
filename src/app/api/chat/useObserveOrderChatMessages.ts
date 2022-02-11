@@ -2,7 +2,7 @@ import { useContextApi } from 'app/state/api/context';
 import { ChatMessage, WithId } from 'appjusto-types';
 import React from 'react';
 
-export const useObserveOrderChatMessages = (orderId: string) => {
+export const useObserveOrderChatMessages = (orderId?: string) => {
   // context
   const api = useContextApi();
   // state

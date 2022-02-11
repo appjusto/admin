@@ -24,6 +24,7 @@ import { Route, Switch, useParams, useRouteMatch } from 'react-router-dom';
 import { Invoices } from './Invoices';
 import { Matching } from './Matching';
 import { OrderBaseDrawer } from './OrderBaseDrawer';
+import { OrderChats } from './OrderChats';
 import { OrderStatusBar } from './OrderStatusBar';
 import { Participants } from './Participants';
 
@@ -62,10 +63,10 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
     orderCancellation,
     orderCancellationCosts,
   } = useOrder(orderId);
-  const invoices = useObserveOrderInvoices(orderId);
+  const invoices = useObserveOrderInvoices(order?.id);
   const cancelOptions = useIssuesByType(cancelOptionsArray);
   const { addFlaggedLocation } = useFlaggedLocations();
-  const chatMessages = useObserveOrderChatMessages(orderId);
+  const chatMessages = useObserveOrderChatMessages(order?.id);
   // state
   const [status, setStatus] = React.useState<OrderStatus | undefined>(order?.status);
   const [dispatchingState, setDispatchingState] = React.useState<DispatchingState | undefined>(
@@ -247,6 +248,9 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
               onRefundingChange={onRefundingChange}
               updateState={updateState}
             />
+          </Route>
+          <Route exact path={`${path}/chats`}>
+            <OrderChats />
           </Route>
         </Switch>
       </OrderBaseDrawer>
