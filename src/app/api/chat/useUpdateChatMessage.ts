@@ -7,8 +7,8 @@ export const useUpdateChatMessage = () => {
   const api = useContextApi();
   // mutations
   const { mutateAsync: updateChatMessage, mutationResult: updateResult } = useCustomMutation(
-    async (data: { orderId: string; messageId: string; changes: Partial<ChatMessage> }) =>
-      api.business().updateChatMessage(data.orderId, data.messageId, data.changes),
+    async (data: { messageId: string; changes: Partial<ChatMessage> }) =>
+      api.chat().updateChatMessage(data.messageId, data.changes),
     'updateChatMessage',
     false
   );

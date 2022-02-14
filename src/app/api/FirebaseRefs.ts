@@ -171,6 +171,10 @@ export default class FirebaseRefs {
   getOrderFraudPreventionRef = (id: string) =>
     this.getOrderPrivateRef(id, 'fraudprevention').doc('fraudprevention');
 
+  // chats
+  getChatsRef = () => this.firestore.collection('chats');
+  getChatMessageRef = (messageId: string) => this.getChatsRef().doc(messageId);
+
   // invoices
   getInvoicesRef = () => {
     if (monitoring) console.log('%cCall getInvoicesRef', 'color: purple');

@@ -1,5 +1,5 @@
 import { useContextApi } from 'app/state/api/context';
-import { useContextBusinessId } from 'app/state/business/context';
+import { useContextBusiness } from 'app/state/business/context';
 import { ChatMessage, Flavor, Order, OrderStatus, WithId } from 'appjusto-types';
 import React from 'react';
 import { useCourierProfilePicture } from '../courier/useCourierProfilePicture';
@@ -25,17 +25,20 @@ export interface Participants {
 const orderActivedStatuses = ['confirmed', 'preparing', 'ready', 'dispatching'] as OrderStatus[];
 const orderCompleteStatuses = ['delivered', 'canceled'] as OrderStatus[];
 
-export const useOrderChat = (getServerTime: () => Date, orderId: string, counterpartId: string) => {
+export const useObserveBusinessOrderChatByType = (
+  getServerTime: () => Date,
+  orderId: string,
+  counterpartId: string
+) => {
   // context
   const api = useContextApi();
-  const businessId = useContextBusinessId();
+  const { business } = useContextBusiness();
   // state
   const [order, setOrder] = React.useState<WithId<Order> | null>();
   const [isActive, setIsActive] = React.useState(false);
   const [participants, setParticipants] = React.useState<Participants>({});
   const [counterPartFlavor, setCounterPartFlavor] = React.useState<Flavor>();
-  const [chatFromBusiness, setChatFromBusiness] = React.useState<WithId<ChatMessage>[]>([]);
-  const [chatFromCounterPart, setChatFromCounterPart] = React.useState<WithId<ChatMessage>[]>([]);
+  const [chatMessages, setChatMessages] = React.useState<WithId<ChatMessage>[]>([]);
   const [chat, setChat] = React.useState<GroupedChatMessages[]>([]);
   const courierProfilePicture = useCourierProfilePicture(
     counterpartId,
@@ -45,9 +48,11 @@ export const useOrderChat = (getServerTime: () => Date, orderId: string, counter
   // mutations;
   const { mutateAsync: sendMessage, mutationResult: sendMessageResult } = useCustomMutation(
     async (data: Partial<ChatMessage>) => {
-      if (!businessId) return;
-      const from = { agent: 'business' as Flavor, id: businessId };
-      api.order().sendMessage(orderId, {
+      if (!business?.id || !business?.name) return;
+      const from = { agent: 'business' as Flavor, id: business.id, name: business.name };
+      api.chat().sendMessage({
+        orderId,
+        participantsIds: [business.id, counterpartId],
         from,
         ...data,
       });
@@ -59,24 +64,10 @@ export const useOrderChat = (getServerTime: () => Date, orderId: string, counter
   React.useEffect(() => {
     if (!orderId) return;
     const unsub = api.order().observeOrder(orderId, setOrder);
-    return () => {
-      unsub();
-    };
+    return () => unsub();
   }, [api, orderId]);
   React.useEffect(() => {
-    if (!orderId || !businessId || !counterpartId) return;
-    const unsub = api
-      .order()
-      .observeOrderChat(orderId, businessId, counterpartId, setChatFromBusiness);
-    const unsub2 = api
-      .order()
-      .observeOrderChat(orderId, counterpartId, businessId, setChatFromCounterPart);
-    return () => {
-      unsub();
-      unsub2();
-    };
-  }, [api, orderId, businessId, counterpartId]);
-  React.useEffect(() => {
+    if (!business?.id) return;
     if (!order) return;
     let counterpartName = 'N/E';
     let flavor = 'courier' as Flavor;
@@ -88,7 +79,7 @@ export const useOrderChat = (getServerTime: () => Date, orderId: string, counter
     }
     setCounterPartFlavor(flavor);
     const participantsObject = {
-      [businessId!]: {
+      [business.id]: {
         name: order.business?.name ?? 'N/E',
         image: null,
       },
@@ -99,26 +90,32 @@ export const useOrderChat = (getServerTime: () => Date, orderId: string, counter
       },
     };
     setParticipants(participantsObject);
-  }, [order, counterpartId, businessId, courierProfilePicture]);
+  }, [order, counterpartId, business?.id, courierProfilePicture]);
+  React.useEffect(() => {
+    if (!orderId || !counterPartFlavor) return;
+    const chatType = counterPartFlavor === 'courier' ? 'business-courier' : 'business-consumer';
+    const unsub = api.chat().observeOrderChatByType(orderId, chatType, setChatMessages);
+    return () => unsub();
+  }, [api, orderId, counterPartFlavor]);
   React.useEffect(() => {
     if (!order?.status) return;
     if (orderActivedStatuses.includes(order.status)) setIsActive(true);
     else if (orderCompleteStatuses.includes(order.status)) {
       const baseTime =
-        order.status === 'delivered' && order.deliveredOn
-          ? (order.deliveredOn as firebase.firestore.Timestamp).toMillis()
+        order.status === 'delivered' && order.timestamps.delivered
+          ? (order.timestamps.delivered as firebase.firestore.Timestamp).toMillis()
           : (order.updatedOn as firebase.firestore.Timestamp).toMillis();
       const now = getServerTime().getTime();
       const elapsedTime = getTimeUntilNow(now, baseTime, false);
       if (elapsedTime < 60) setIsActive(true);
       else setIsActive(false);
     } else setIsActive(false);
-  }, [getServerTime, order?.status, order?.deliveredOn, order?.updatedOn]);
+  }, [getServerTime, order?.status, order?.timestamps?.delivered, order?.updatedOn]);
   React.useEffect(() => {
-    const sorted = chatFromBusiness.concat(chatFromCounterPart).sort(sortMessages);
+    const sorted = chatMessages.sort(sortMessages);
     const groups = groupOrderChatMessages(sorted).reverse();
     setChat(groups);
-  }, [chatFromBusiness, chatFromCounterPart]);
+  }, [chatMessages]);
   // return
   return { isActive, orderCode: order?.code, participants, chat, sendMessage, sendMessageResult };
 };
