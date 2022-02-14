@@ -23,7 +23,7 @@ export const BOOrderListItem = ({ order }: Props) => {
   // context
   const { url } = useRouteMatch();
   const { getServerTime } = useContextServerTime();
-  const chatMessages = useObserveOrderChatMessages(order.id);
+  const { chatMessages } = useObserveOrderChatMessages(order.id);
   const issues = useObserveOrderIssues(order.id);
   // state
   const [orderDT, setOrderDT] = React.useState<number>();

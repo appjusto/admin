@@ -66,7 +66,7 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
   const invoices = useObserveOrderInvoices(order?.id);
   const cancelOptions = useIssuesByType(cancelOptionsArray);
   const { addFlaggedLocation } = useFlaggedLocations();
-  const chatMessages = useObserveOrderChatMessages(order?.id);
+  const { chatMessages, orderChatGroup } = useObserveOrderChatMessages(order?.id);
   // state
   const [status, setStatus] = React.useState<OrderStatus | undefined>(order?.status);
   const [dispatchingState, setDispatchingState] = React.useState<DispatchingState | undefined>(
@@ -250,7 +250,7 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
             />
           </Route>
           <Route exact path={`${path}/chats`}>
-            <OrderChats />
+            <OrderChats groups={orderChatGroup} />
           </Route>
         </Switch>
       </OrderBaseDrawer>

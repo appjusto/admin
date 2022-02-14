@@ -15,7 +15,10 @@ import {
 } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 // import { Participants, useOrderChat } from 'app/api/order/useOrderChat';
-import { Participants, useObserveOrderChatByType } from 'app/api/chat/useObserveOrderChatByType';
+import {
+  Participants,
+  useObserveBusinessOrderChatByType,
+} from 'app/api/chat/useObserveBusinessOrderChatByType';
 // import { useUpdateChatMessage } from 'app/api/business/chat/useUpdateChatMessage';
 import { useUpdateChatMessage } from 'app/api/chat/useUpdateChatMessage';
 import { getUnreadChatMessages } from 'app/api/chat/utils';
@@ -51,7 +54,7 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
     chat,
     sendMessage,
     sendMessageResult,
-  } = useObserveOrderChatByType(getServerTime, orderId, counterpartId);
+  } = useObserveBusinessOrderChatByType(getServerTime, orderId, counterpartId);
   const toast = useToast();
   // state
   const [dateTime, setDateTime] = React.useState('');
@@ -154,8 +157,8 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
               chat.map((group) => (
                 <ChatMessages
                   key={group.id}
-                  image={getImage(group.from)}
-                  name={getName(group.from)}
+                  image={getImage(group.from.id)}
+                  name={group.from.name ?? 'N/E'}
                   messages={group.messages}
                 />
               ))}

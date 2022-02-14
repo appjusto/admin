@@ -110,17 +110,27 @@ export const OrderBaseDrawer = ({
               {t('Andamento do pedido')}
             </SectionTitle>
             <OrderTracking orderId={order?.id} />
-            <Flex mt="8" fontSize="lg" borderBottom="1px solid #C8D7CB">
-              <FiltersScrollBar>
+            <Flex mt="8" mb="6" fontSize="lg" borderBottom="1px solid #C8D7CB">
+              {isChatMessages ? (
+                <FiltersScrollBar>
+                  <HStack spacing={4}>
+                    <DrawerLink to={`${url}`} label={t('Participantes')} />
+                    <DrawerLink to={`${url}/order`} label={t('Pedido')} />
+                    <DrawerLink to={`${url}/invoices`} label={t('Faturas')} />
+                    <DrawerLink to={`${url}/matching`} label={t('Matching')} />
+                    <DrawerLink to={`${url}/status`} label={t('Status')} />
+                    <DrawerLink to={`${url}/chats`} label={t('Chats')} />
+                  </HStack>
+                </FiltersScrollBar>
+              ) : (
                 <HStack spacing={4}>
                   <DrawerLink to={`${url}`} label={t('Participantes')} />
                   <DrawerLink to={`${url}/order`} label={t('Pedido')} />
                   <DrawerLink to={`${url}/invoices`} label={t('Faturas')} />
                   <DrawerLink to={`${url}/matching`} label={t('Matching')} />
                   <DrawerLink to={`${url}/status`} label={t('Status')} />
-                  {isChatMessages && <DrawerLink to={`${url}/chats`} label={t('Chat')} />}
                 </HStack>
-              </FiltersScrollBar>
+              )}
             </Flex>
             {children}
           </DrawerBody>

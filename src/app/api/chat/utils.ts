@@ -1,7 +1,8 @@
 import { ChatMessage, WithId } from 'appjusto-types';
 import { first } from 'lodash';
-import { GroupedChatMessages, OrderChatGroup } from './types';
+import { GroupedChatMessages, OrderChatGroup, OrderChatTypeGroup } from './types';
 import firebase from 'firebase/app';
+import { ChatMessageType } from 'appjusto-types/order/chat';
 
 export const timestampToDate = (value: firebase.firestore.FieldValue) =>
   (value as firebase.firestore.Timestamp).toDate();
@@ -64,15 +65,44 @@ export const getOrderChatGroup = (businessId: string, messages: WithId<ChatMessa
   }, []);
 };
 
+export const getOrderChatTypeGroup = (messages: WithId<ChatMessage>[]) => {
+  return messages.reduce<OrderChatTypeGroup[]>((groups, message) => {
+    let currentGroup = groups.find((group) => group.type === message.type);
+    if (currentGroup) {
+      if (!currentGroup?.lastUpdate || currentGroup.lastUpdate < message.timestamp) {
+        currentGroup.lastUpdate = message.timestamp;
+      }
+      if (!message.read) currentGroup.unreadMessages = true;
+      return groups;
+    } else {
+      currentGroup = {
+        orderId: message.orderId,
+        type: message.type,
+        participantsIds: message.participantsIds,
+        lastUpdate: message.timestamp,
+        unreadMessages: message.read ? !message.read : true,
+      };
+      return [...groups, currentGroup];
+    }
+  }, []);
+};
+
 export const groupOrderChatMessages = (messages: WithId<ChatMessage>[]) =>
   messages.reduce<GroupedChatMessages[]>((groups, message) => {
     const currentGroup = first(groups);
-    if (message.from.id === currentGroup?.from) {
+    if (message.from.id === currentGroup?.from.id) {
       currentGroup!.messages.push(message);
       return groups;
     }
     // use as id for chat group the id of the first message of the group
-    return [{ id: message.id, from: message.from.id, messages: [message] }, ...groups];
+    return [
+      {
+        id: message.id,
+        from: message.from,
+        messages: [message],
+      },
+      ...groups,
+    ];
   }, []);
 
 export const getUnreadChatMessages = (chats: GroupedChatMessages[], counterpartId: string) => {
@@ -83,4 +113,11 @@ export const getUnreadChatMessages = (chats: GroupedChatMessages[], counterpartI
     return list.concat([...unread]);
   }, []);
   return unreadMessagesIds;
+};
+
+export const getChatTypeLabel = (type: ChatMessageType) => {
+  if (type === 'business-consumer') return 'restaurante - consumidor';
+  else if (type === 'business-courier') return 'restaurante - entregador';
+  else if (type === 'consumer-courier') return 'consumidor - entregador';
+  return 'N/E';
 };
