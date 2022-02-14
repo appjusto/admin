@@ -1,5 +1,5 @@
 import { useContextApi } from 'app/state/api/context';
-import { useContextBusiness, useContextBusinessId } from 'app/state/business/context';
+import { useContextBusiness } from 'app/state/business/context';
 import { ChatMessage, Flavor, Order, OrderStatus, WithId } from 'appjusto-types';
 import React from 'react';
 import { useCourierProfilePicture } from '../courier/useCourierProfilePicture';
