@@ -1,5 +1,5 @@
 import { useContextApi } from 'app/state/api/context';
-import { useContextBusinessId } from 'app/state/business/context';
+import { useContextBusiness, useContextBusinessId } from 'app/state/business/context';
 import { ChatMessage, Flavor, Order, OrderStatus, WithId } from 'appjusto-types';
 import React from 'react';
 import { useCourierProfilePicture } from '../courier/useCourierProfilePicture';
@@ -32,7 +32,7 @@ export const useObserveBusinessOrderChatByType = (
 ) => {
   // context
   const api = useContextApi();
-  const businessId = useContextBusinessId();
+  const { business } = useContextBusiness();
   // state
   const [order, setOrder] = React.useState<WithId<Order> | null>();
   const [isActive, setIsActive] = React.useState(false);
@@ -48,11 +48,11 @@ export const useObserveBusinessOrderChatByType = (
   // mutations;
   const { mutateAsync: sendMessage, mutationResult: sendMessageResult } = useCustomMutation(
     async (data: Partial<ChatMessage>) => {
-      if (!businessId) return;
-      const from = { agent: 'business' as Flavor, id: businessId };
+      if (!business?.id || !business?.name) return;
+      const from = { agent: 'business' as Flavor, id: business.id, name: business.name };
       api.chat().sendMessage({
         orderId,
-        participantsIds: [businessId, counterpartId],
+        participantsIds: [business.id, counterpartId],
         from,
         ...data,
       });
@@ -67,6 +67,7 @@ export const useObserveBusinessOrderChatByType = (
     return () => unsub();
   }, [api, orderId]);
   React.useEffect(() => {
+    if (!business?.id) return;
     if (!order) return;
     let counterpartName = 'N/E';
     let flavor = 'courier' as Flavor;
@@ -78,7 +79,7 @@ export const useObserveBusinessOrderChatByType = (
     }
     setCounterPartFlavor(flavor);
     const participantsObject = {
-      [businessId!]: {
+      [business.id]: {
         name: order.business?.name ?? 'N/E',
         image: null,
       },
@@ -89,13 +90,13 @@ export const useObserveBusinessOrderChatByType = (
       },
     };
     setParticipants(participantsObject);
-  }, [order, counterpartId, businessId, courierProfilePicture]);
+  }, [order, counterpartId, business?.id, courierProfilePicture]);
   React.useEffect(() => {
-    if (!orderId || !businessId || !counterPartFlavor) return;
+    if (!orderId || !counterPartFlavor) return;
     const chatType = counterPartFlavor === 'courier' ? 'business-courier' : 'business-consumer';
     const unsub = api.chat().observeOrderChatByType(orderId, chatType, setChatMessages);
     return () => unsub();
-  }, [api, orderId, businessId, counterPartFlavor]);
+  }, [api, orderId, counterPartFlavor]);
   React.useEffect(() => {
     if (!order?.status) return;
     if (orderActivedStatuses.includes(order.status)) setIsActive(true);
