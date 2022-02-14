@@ -26,7 +26,6 @@ import firebase from 'firebase/app';
 import { documentAs, documentsAs } from '../../../core/fb';
 import FilesApi from '../FilesApi';
 import FirebaseRefs from '../FirebaseRefs';
-import { BusinessChatMessage } from './chat/useBusinessChats';
 import * as Sentry from '@sentry/react';
 import {
   IuguMarketplaceAccountAdvanceSimulation,
@@ -114,64 +113,6 @@ export default class BusinessApi {
       .where('createdOn', '<=', end);
     // returns the unsubscribe function
     return customCollectionSnapshot(query, resultHandler);
-  }
-
-  observeBusinessChatMessageAsFrom(
-    orderId: string,
-    businessId: string,
-    resultHandler: (orders: WithId<BusinessChatMessage>[]) => void
-  ): firebase.Unsubscribe {
-    const unsubscribe = this.refs
-      .getOrderChatRef(orderId)
-      .where('from.id', '==', businessId)
-      .orderBy('timestamp', 'asc')
-      .onSnapshot(
-        (querySnapshot) => {
-          //@ts-ignore
-          resultHandler((prev) => {
-            const prevFiltered = prev.filter(
-              (msg: WithId<BusinessChatMessage>) => msg.orderId !== orderId
-            );
-            const docs = documentsAs<ChatMessage>(querySnapshot.docs);
-            const messages = docs.map((msg) => ({ orderId, ...msg }));
-            return [...prevFiltered, ...messages];
-          });
-        },
-        (error) => {
-          console.error(error);
-        }
-      );
-    // returns the unsubscribe function
-    return unsubscribe;
-  }
-
-  observeBusinessChatMessageAsTo(
-    orderId: string,
-    businessId: string,
-    resultHandler: (orders: WithId<BusinessChatMessage>[]) => void
-  ): firebase.Unsubscribe {
-    const unsubscribe = this.refs
-      .getOrderChatRef(orderId)
-      .where('to.id', '==', businessId)
-      .orderBy('timestamp', 'asc')
-      .onSnapshot(
-        (querySnapshot) => {
-          //@ts-ignore
-          resultHandler((prev) => {
-            const prevFiltered = prev.filter(
-              (msg: WithId<BusinessChatMessage>) => msg.orderId !== orderId
-            );
-            const docs = documentsAs<ChatMessage>(querySnapshot.docs);
-            const messages = docs.map((msg) => ({ orderId, ...msg }));
-            return [...prevFiltered, ...messages];
-          });
-        },
-        (error) => {
-          console.error(error);
-        }
-      );
-    // returns the unsubscribe function
-    return unsubscribe;
   }
 
   observeBusinessMarketPlace(
