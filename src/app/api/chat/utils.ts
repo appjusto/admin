@@ -121,3 +121,15 @@ export const getChatTypeLabel = (type: ChatMessageType) => {
   else if (type === 'consumer-courier') return 'consumidor - entregador';
   return 'N/E';
 };
+
+export const getChatLastUpdate = (chat: GroupedChatMessages[]) => {
+  let messages = chat.reduce<WithId<ChatMessage>[]>((result, group) => {
+    const msgs = group.messages;
+    return [...result, ...msgs];
+  }, []);
+  let lastUpdate: firebase.firestore.FieldValue | undefined = undefined;
+  messages.forEach((msg) => {
+    if (!lastUpdate || lastUpdate < msg.timestamp) lastUpdate = msg.timestamp;
+  });
+  return lastUpdate as firebase.firestore.FieldValue | undefined;
+};

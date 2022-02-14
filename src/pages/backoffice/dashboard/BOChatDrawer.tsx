@@ -8,16 +8,16 @@ import {
   Flex,
   Text,
 } from '@chakra-ui/react';
-// import { Participants, useOrderChat } from 'app/api/order/useOrderChat';
 import { useObserveOrderChatByType } from 'app/api/chat/useObserveOrderChatByType';
-import { getChatTypeLabel } from 'app/api/chat/utils';
+import { getChatLastUpdate, getChatTypeLabel } from 'app/api/chat/utils';
 import { Flavor } from 'appjusto-types';
 import { ChatMessageType } from 'appjusto-types/order/chat';
 import restaurantIcon from 'common/img/restaurant.svg';
+import firebase from 'firebase/app';
 import { ChatMessages } from 'pages/chat/ChatMessages';
 import React from 'react';
 import { useParams } from 'react-router';
-import { getDateTime } from 'utils/functions';
+import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 
 interface ChatDrawerProps {
@@ -35,10 +35,9 @@ export const BOChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
   const { orderId, type } = useParams<Params>();
   const { chat } = useObserveOrderChatByType(orderId, type);
   // state
-  const [dateTime, setDateTime] = React.useState('');
+  const [lastUpdate, setLastUpdate] = React.useState<firebase.firestore.FieldValue>();
   // refs
   const messagesBox = React.useRef<HTMLDivElement>(null);
-  const inputRef = React.useRef<HTMLTextAreaElement>(null);
   //handlers
   const getImage = (flavor: Flavor) => {
     if (flavor === 'business') return restaurantIcon;
@@ -46,12 +45,11 @@ export const BOChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
   };
   // side effects
   React.useEffect(() => {
-    inputRef?.current?.focus();
-    const { date, time } = getDateTime();
-    setDateTime(`${date} às ${time}`);
+    if (chat.length === 0) return;
     if (chat && messagesBox.current) {
       messagesBox.current.scroll({ top: messagesBox.current.scrollHeight, behavior: 'smooth' });
     }
+    setLastUpdate(getChatLastUpdate(chat));
   }, [chat]);
   //UI
   return (
@@ -66,7 +64,7 @@ export const BOChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
                   {t('Tipo de chat: ')}
                   {getChatTypeLabel(type)}
                 </Text>
-                <Text fontSize="md" color="black" fontWeight="700" lineHeight="22px">
+                <Text mt="2" fontSize="md" color="black" fontWeight="700" lineHeight="22px">
                   {t('ID do pedido:')}{' '}
                   <Text as="span" color="gray.600" fontWeight="500">
                     {orderId ?? 'N/E'}
@@ -75,7 +73,7 @@ export const BOChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
                 <Text fontSize="md" color="black" fontWeight="700" lineHeight="22px">
                   {t('Atualizado em:')}{' '}
                   <Text as="span" color="gray.600" fontWeight="500">
-                    {dateTime}
+                    {getDateAndHour(lastUpdate)}
                   </Text>
                 </Text>
               </Flex>
