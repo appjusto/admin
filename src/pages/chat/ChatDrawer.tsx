@@ -15,10 +15,7 @@ import {
 } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 // import { Participants, useOrderChat } from 'app/api/order/useOrderChat';
-import {
-  Participants,
-  useObserveBusinessOrderChatByType,
-} from 'app/api/chat/useObserveBusinessOrderChatByType';
+import { useObserveBusinessOrderChatByType } from 'app/api/chat/useObserveBusinessOrderChatByType';
 // import { useUpdateChatMessage } from 'app/api/business/chat/useUpdateChatMessage';
 import { useUpdateChatMessage } from 'app/api/chat/useUpdateChatMessage';
 import { getUnreadChatMessages } from 'app/api/chat/utils';
@@ -41,6 +38,12 @@ type Params = {
   counterpartId: string;
 };
 
+type CurrentCounterPart = {
+  name: string;
+  flavor?: Flavor;
+  flavorLabel: string;
+};
+
 export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
   //context
   const { getServerTime } = useContextServerTime();
@@ -58,24 +61,23 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
   const toast = useToast();
   // state
   const [dateTime, setDateTime] = React.useState('');
+  const [currentCounterPart, setCurrentCounterPart] = React.useState<CurrentCounterPart>();
   const [inputText, setInputText] = React.useState('');
   // refs
   const messagesBox = React.useRef<HTMLDivElement>(null);
   const inputRef = React.useRef<HTMLTextAreaElement>(null);
   //handlers
-  const getImage = <K extends keyof Participants>(id?: K) => {
+  const getImage = (id?: string) => {
     if (!id) return null;
-    if (id === counterpartId) return participants[counterpartId]?.image;
-    else return logo;
-  };
-  const getName = <K extends keyof Participants>(id?: K) => {
-    if (!id) return 'N/E';
-    const name = participants[id]?.name;
-    return name ?? participants[counterpartId]?.flavor ?? 'N/E';
+    const participant = participants.find((participant) => participant.id === id);
+    if (participant?.flavor === 'business') return logo;
+    const image = participant?.image;
+    return image ?? null;
   };
   const sendMessageHandler = () => {
     if (!inputText) return;
     if (!counterpartId) return;
+    if (!currentCounterPart?.flavor) return;
     if (!isActive) {
       return toast({
         title: 'Não é possível enviar a mensagem.',
@@ -86,7 +88,7 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
       });
     }
 
-    const flavor = participants[counterpartId].flavor as Flavor;
+    const flavor = currentCounterPart.flavor;
     const type = `business-${flavor}` as ChatMessageType;
     const to: { agent: Flavor; id: string } = {
       agent: flavor,
@@ -125,7 +127,22 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
       messagesBox.current.scroll({ top: messagesBox.current.scrollHeight, behavior: 'smooth' });
     }
   }, [chat, orderId, counterpartId, updateChatMessage]);
+  React.useEffect(() => {
+    if (!participants || !counterpartId) return;
+    const current = participants.find((participant) => participant.id === counterpartId);
+    const getFlavorLabel = (flavor?: Flavor) => {
+      if (flavor === 'consumer') return 'cliente';
+      else if (flavor === 'courier') return 'entregador';
+      else return 'N/E';
+    };
+    setCurrentCounterPart({
+      name: current?.name ?? 'N/E',
+      flavor: current?.flavor,
+      flavorLabel: getFlavorLabel(current?.flavor),
+    });
+  }, [participants, counterpartId]);
   //UI
+  if (participants.length > 0) console.log('participants', participants);
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
       <DrawerOverlay>
@@ -135,7 +152,8 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
             <Flex justifyContent="space-between" alignItems="flex-end">
               <Flex flexDir="column">
                 <Text color="black" fontSize="2xl" fontWeight="700" lineHeight="28px" mb="2">
-                  {t('Chat com ')} {`{${getName(counterpartId)}}`}
+                  {t('Chat com ')}{' '}
+                  {`${currentCounterPart?.flavorLabel} {${currentCounterPart?.name}}`}
                 </Text>
                 <Text fontSize="md" color="black" fontWeight="700" lineHeight="22px">
                   {t('ID do pedido:')}{' '}

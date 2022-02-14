@@ -104,7 +104,7 @@ export const ChatPage = () => {
                 borderColor="black"
                 _hover={{ borderColor: 'black' }}
                 value={search}
-                placeholder={t('Pesquisar por chat (ID ou Nome)')}
+                placeholder={t('Pesquisar por ID do pedido')}
                 onChange={(ev) => setSearch(ev.target.value)}
               />
               <InputRightElement

@@ -30,7 +30,15 @@ interface ContextProps {
 
 const OrdersContext = React.createContext<ContextProps>({} as ContextProps);
 
-const statuses = ['confirmed', 'preparing', 'ready', 'dispatching'] as OrderStatus[];
+// remove delivered and canceled
+const statuses = [
+  'confirmed',
+  'preparing',
+  'ready',
+  'dispatching',
+  'delivered',
+  'canceled',
+] as OrderStatus[];
 
 interface ProviderProps {
   children: React.ReactNode | React.ReactNode[];

@@ -30,3 +30,10 @@ export interface OrderChatTypeGroup {
   participantsIds: string[];
   unreadMessages: boolean;
 }
+
+export type Participants = {
+  id: string;
+  name: string;
+  flavor?: Flavor;
+  image?: string | null;
+};

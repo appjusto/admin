@@ -2,25 +2,10 @@ import { useContextApi } from 'app/state/api/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { ChatMessage, Flavor, Order, OrderStatus, WithId } from 'appjusto-types';
 import React from 'react';
-import { useCourierProfilePicture } from '../courier/useCourierProfilePicture';
-import { GroupedChatMessages } from 'app/api/chat/types';
+import { GroupedChatMessages, Participants } from 'app/api/chat/types';
 import { groupOrderChatMessages, sortMessages } from 'app/api/chat/utils';
 import { getTimeUntilNow } from 'utils/functions';
 import { useCustomMutation } from '../mutation/useCustomMutation';
-
-export interface Participants {
-  [x: string]:
-    | {
-        name: string;
-        image: null;
-        flavor?: string;
-      }
-    | {
-        name: string;
-        flavor: string;
-        image: string | null | undefined;
-      };
-}
 
 const orderActivedStatuses = ['confirmed', 'preparing', 'ready', 'dispatching'] as OrderStatus[];
 const orderCompleteStatuses = ['delivered', 'canceled'] as OrderStatus[];
@@ -36,15 +21,10 @@ export const useObserveBusinessOrderChatByType = (
   // state
   const [order, setOrder] = React.useState<WithId<Order> | null>();
   const [isActive, setIsActive] = React.useState(false);
-  const [participants, setParticipants] = React.useState<Participants>({});
+  const [participants, setParticipants] = React.useState<Participants[]>([]);
   const [counterPartFlavor, setCounterPartFlavor] = React.useState<Flavor>();
   const [chatMessages, setChatMessages] = React.useState<WithId<ChatMessage>[]>([]);
   const [chat, setChat] = React.useState<GroupedChatMessages[]>([]);
-  const courierProfilePicture = useCourierProfilePicture(
-    counterpartId,
-    undefined,
-    counterPartFlavor === 'courier'
-  );
   // mutations;
   const { mutateAsync: sendMessage, mutationResult: sendMessageResult } = useCustomMutation(
     async (data: Partial<ChatMessage>) => {
@@ -69,28 +49,12 @@ export const useObserveBusinessOrderChatByType = (
   React.useEffect(() => {
     if (!business?.id) return;
     if (!order) return;
-    let counterpartName = 'N/E';
     let flavor = 'courier' as Flavor;
     if (order.consumer?.id === counterpartId) {
       flavor = 'consumer';
-      counterpartName = order.consumer?.name ?? 'N/E';
-    } else if (order.courier?.id === counterpartId) {
-      counterpartName = order.courier?.name ?? 'N/E';
     }
     setCounterPartFlavor(flavor);
-    const participantsObject = {
-      [business.id]: {
-        name: order.business?.name ?? 'N/E',
-        image: null,
-      },
-      [counterpartId]: {
-        name: counterpartName,
-        flavor,
-        image: courierProfilePicture,
-      },
-    };
-    setParticipants(participantsObject);
-  }, [order, counterpartId, business?.id, courierProfilePicture]);
+  }, [order, counterpartId, business?.id]);
   React.useEffect(() => {
     if (!orderId || !counterPartFlavor) return;
     const chatType = counterPartFlavor === 'courier' ? 'business-courier' : 'business-consumer';
@@ -116,6 +80,41 @@ export const useObserveBusinessOrderChatByType = (
     const groups = groupOrderChatMessages(sorted).reverse();
     setChat(groups);
   }, [chatMessages]);
+  React.useEffect(() => {
+    if (!chat) return;
+    (async () => {
+      const updateParticipants = async (participants: Participants[]) => {
+        const result = Promise.all(
+          participants.map(async (participant) => {
+            if (participant.flavor === 'courier' && !participant.image) {
+              const image = await api
+                .courier()
+                .getCourierProfilePictureURL(participant.id, '_160x160');
+              return {
+                ...participant,
+                image,
+              };
+            } else return participant;
+          })
+        );
+        return result;
+      };
+      let participants = chat.reduce<Participants[]>((result, group) => {
+        let currentParticipantsIds = result.map((res) => res.id);
+        if (!currentParticipantsIds.includes(group.from.id)) {
+          let participantObj = {
+            id: group.from.id,
+            name: group.from.name ?? 'N/E',
+            flavor: group.from.agent,
+            image: null,
+          } as Participants;
+          return [...result, participantObj];
+        } else return result;
+      }, []);
+      const newArray = await updateParticipants(participants);
+      setParticipants(newArray);
+    })();
+  }, [api, chat]);
   // return
   return { isActive, orderCode: order?.code, participants, chat, sendMessage, sendMessageResult };
 };
