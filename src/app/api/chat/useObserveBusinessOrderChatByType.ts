@@ -47,14 +47,33 @@ export const useObserveBusinessOrderChatByType = (
     return () => unsub();
   }, [api, orderId]);
   React.useEffect(() => {
-    if (!business?.id) return;
+    if (!business?.id || !business?.name) return;
     if (!order) return;
-    let flavor = 'courier' as Flavor;
-    if (order.consumer?.id === counterpartId) {
-      flavor = 'consumer';
+    let flavor = 'consumer' as Flavor;
+    let counterpartObj = {
+      id: order.consumer.id,
+      name: order.consumer.name,
+      flavor: 'consumer',
+      image: null,
+    } as Participants;
+    if (order.courier?.id === counterpartId) {
+      flavor = 'courier';
+      counterpartObj = {
+        id: order.courier.id,
+        name: order.courier.name,
+        flavor: 'courier',
+        image: null,
+      } as Participants;
     }
+    let businessObj = {
+      id: business.id,
+      name: business.name,
+      flavor: 'business',
+      image: null,
+    } as Participants;
     setCounterPartFlavor(flavor);
-  }, [order, counterpartId, business?.id]);
+    setParticipants([businessObj, counterpartObj]);
+  }, [order, counterpartId, business?.id, business?.name]);
   React.useEffect(() => {
     if (!orderId || !counterPartFlavor) return;
     const chatType = counterPartFlavor === 'courier' ? 'business-courier' : 'business-consumer';
@@ -83,36 +102,39 @@ export const useObserveBusinessOrderChatByType = (
   React.useEffect(() => {
     if (!chat) return;
     (async () => {
-      const updateParticipants = async (participants: Participants[]) => {
+      const updateCouriers = async (couriers: Participants[]) => {
         const result = Promise.all(
-          participants.map(async (participant) => {
-            if (participant.flavor === 'courier' && !participant.image) {
-              const image = await api
-                .courier()
-                .getCourierProfilePictureURL(participant.id, '_160x160');
+          couriers.map(async (courier) => {
+            if (courier.flavor === 'courier' && !courier.image) {
+              const image = await api.courier().getCourierProfilePictureURL(courier.id, '_160x160');
               return {
-                ...participant,
+                ...courier,
                 image,
               };
-            } else return participant;
+            } else return courier;
           })
         );
         return result;
       };
-      let participants = chat.reduce<Participants[]>((result, group) => {
+      let couriers = chat.reduce<Participants[]>((result, group) => {
         let currentParticipantsIds = result.map((res) => res.id);
-        if (!currentParticipantsIds.includes(group.from.id)) {
-          let participantObj = {
+        if (!currentParticipantsIds.includes(group.from.id) && group.from.agent === 'courier') {
+          let courierObj = {
             id: group.from.id,
             name: group.from.name ?? 'N/E',
             flavor: group.from.agent,
             image: null,
           } as Participants;
-          return [...result, participantObj];
+          return [...result, courierObj];
         } else return result;
       }, []);
-      const newArray = await updateParticipants(participants);
-      setParticipants(newArray);
+      if (couriers.length > 0) {
+        const newCouriers = await updateCouriers(couriers);
+        setParticipants((prev) => {
+          let business = prev.filter((participant) => participant.flavor === 'business');
+          return [...business, ...newCouriers];
+        });
+      }
     })();
   }, [api, chat]);
   // return
