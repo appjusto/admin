@@ -21,19 +21,18 @@ export const getOrderedChatPage = (chats: OrderChatGroup[], orders: WithId<Order
     const orderCode = order?.code ?? 'N/E';
     let lastUpdate = order?.createdOn as firebase.firestore.FieldValue;
     const counterpartName = (counterpartId: string) => {
-      const isCourier = order?.courier?.id === counterpartId;
       let name = 'N/E';
-      if (isCourier) name = order?.courier?.name!;
-      else name = order?.consumer.name!;
+      if (order?.courier?.id === counterpartId) name = order.courier.name;
+      else if (order?.consumer?.id === counterpartId) name = order.consumer.name!;
       return name;
     };
-    const newCounterPart = chat.counterParts.map((part) => {
+    const newCounterParts = chat.counterParts.map((part) => {
       if (part.updatedOn > lastUpdate) lastUpdate = part.updatedOn;
       return { ...part, name: counterpartName(part.id) };
     });
     const newChat = {
       ...chat,
-      counterParts: newCounterPart,
+      counterParts: newCounterParts,
       orderCode,
       lastUpdate,
     } as OrderChatGroup;
@@ -53,8 +52,8 @@ export const getOrderChatGroup = (businessId: string, messages: WithId<ChatMessa
   return messages.reduce<OrderChatGroup[]>((groups, message) => {
     const existingGroup = groups.find((group) => group.orderId === message.orderId);
     const counterPartId = businessId === message.from.id ? message.to.id : message.from.id;
-    const counterPartFlavor =
-      counterPartId === message.from.id ? message.from.agent : message.to.agent;
+    const counterPart = counterPartId === message.from.id ? message.from : message.to;
+    const counterPartFlavor = counterPart.agent;
     const isUnread = message.from.id !== businessId && !message.read;
     const counterPartObject = {
       id: counterPartId,

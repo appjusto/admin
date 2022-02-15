@@ -49,15 +49,18 @@ export const useObserveBusinessOrderChatByType = (
   React.useEffect(() => {
     if (!business?.id || !business?.name) return;
     if (!order) return;
-    let flavor = 'consumer' as Flavor;
-    let counterpartObj = {
-      id: order.consumer.id,
-      name: order.consumer.name,
-      flavor: 'consumer',
-      image: null,
-    } as Participants;
+    let flavor = 'courier' as Flavor;
+    let counterpartObj;
+    if (order.consumer?.id === counterpartId) {
+      flavor = 'consumer';
+      counterpartObj = {
+        id: order.consumer.id,
+        name: order.consumer.name,
+        flavor: 'consumer',
+        image: null,
+      } as Participants;
+    }
     if (order.courier?.id === counterpartId) {
-      flavor = 'courier';
       counterpartObj = {
         id: order.courier.id,
         name: order.courier.name,
@@ -72,7 +75,8 @@ export const useObserveBusinessOrderChatByType = (
       image: null,
     } as Participants;
     setCounterPartFlavor(flavor);
-    setParticipants([businessObj, counterpartObj]);
+    if (counterpartObj) setParticipants([businessObj, counterpartObj]);
+    else setParticipants([businessObj]);
   }, [order, counterpartId, business?.id, business?.name]);
   React.useEffect(() => {
     if (!orderId || !counterPartFlavor) return;
