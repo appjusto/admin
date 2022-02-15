@@ -75,6 +75,11 @@ const InvoicesPage = () => {
               onClick={() => setFilterBar(undefined)}
             />
             <FilterText
+              isActive={filterBar === 'created'}
+              label={t('Criada')}
+              onClick={() => setFilterBar('created')}
+            />
+            <FilterText
               isActive={filterBar === 'in_analysis'}
               label={t('Análise')}
               onClick={() => setFilterBar('in_analysis')}

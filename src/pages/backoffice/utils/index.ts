@@ -75,6 +75,7 @@ export const invoiceTypePTOptions = {
 
 export const invoiceStatusPTOptions = {
   in_analysis: 'Em análise',
+  created: 'Criada',
   pending: 'Pendente',
   paid: 'Paga',
   partially_paid: 'Parcialmente paga',

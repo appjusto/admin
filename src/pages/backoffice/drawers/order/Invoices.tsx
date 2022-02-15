@@ -1,6 +1,5 @@
 import { Box, Table, Tbody, Td, Tfoot, Th, Thead, Tr } from '@chakra-ui/react';
 import { Invoice, WithId } from 'appjusto-types';
-import { IuguInvoiceStatus } from 'appjusto-types/payment/iugu';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { invoiceStatusPTOptions, invoiceTypePTOptions } from 'pages/backoffice/utils';
 import React from 'react';
@@ -34,7 +33,7 @@ export const Invoices = ({ invoices }: InvoicesProps) => {
               invoices?.map((invoice: WithId<Invoice>) => (
                 <Tr key={invoice.id} color="black" fontSize="sm">
                   <Td>{getDateAndHour(invoice.createdOn)}</Td>
-                  <Td>{invoiceStatusPTOptions[invoice.status as IuguInvoiceStatus]}</Td>
+                  <Td>{invoice.status ? invoiceStatusPTOptions[invoice.status] : 'N/E'}</Td>
                   <Td>{invoiceTypePTOptions[invoice.invoiceType]}</Td>
                   <Td isNumeric>{formatCurrency(invoice.value)}</Td>
                   <Td>
