@@ -11,7 +11,7 @@ export const useObserveInvoices = (
   orderCode?: string | null,
   start?: string,
   end?: string,
-  status?: IuguInvoiceStatus
+  status?: 'created' | IuguInvoiceStatus
 ) => {
   // context
   const api = useContextApi();

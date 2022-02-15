@@ -21,7 +21,7 @@ const InvoicesPage = () => {
   const [searchId, setSearchId] = React.useState('');
   const [searchFrom, setSearchFrom] = React.useState('');
   const [searchTo, setSearchTo] = React.useState('');
-  const [filterBar, setFilterBar] = React.useState<IuguInvoiceStatus>();
+  const [filterBar, setFilterBar] = React.useState<'created' | IuguInvoiceStatus>();
   const [clearDateNumber, setClearDateNumber] = React.useState(0);
   // context
   const { path } = useRouteMatch();
