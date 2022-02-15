@@ -195,7 +195,7 @@ export const Matching = ({ order }: MatchingProps) => {
               : 'N/E'}
           </Text>
         </SectionTitle>
-        {order?.dispatchingStatus === 'no-match' &&
+        {isOrderActive &&
           (isRestarting ? (
             <Flex
               w="60%"
