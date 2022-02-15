@@ -142,7 +142,6 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
     });
   }, [participants, counterpartId]);
   //UI
-  if (participants.length > 0) console.log('participants', participants);
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
       <DrawerOverlay>

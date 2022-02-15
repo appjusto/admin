@@ -1,4 +1,4 @@
-import { ChatMessage, WithId } from 'appjusto-types';
+import { ChatMessage, Order, WithId } from 'appjusto-types';
 import { first } from 'lodash';
 import { GroupedChatMessages, OrderChatGroup, OrderChatTypeGroup } from './types';
 import firebase from 'firebase/app';
@@ -13,6 +13,41 @@ export const sortMessages = (a: ChatMessage, b: ChatMessage) => {
   if (!a.timestamp) return 1;
   else if (!b.timestamp) return -1;
   return 0;
+};
+
+export const getOrderedChatPage = (chats: OrderChatGroup[], orders: WithId<Order>[]) => {
+  console.log('chats', chats);
+  const fullChats = chats.map((chat) => {
+    const order = orders.find((order) => order.id === chat.orderId);
+    const orderCode = order?.code ?? 'N/E';
+    let lastUpdate = order?.createdOn as firebase.firestore.FieldValue;
+    const counterpartName = (counterpartId: string) => {
+      const isCourier = order?.courier?.id === counterpartId;
+      let name = 'N/E';
+      if (isCourier) name = order?.courier?.name!;
+      else name = order?.consumer.name!;
+      return name;
+    };
+    const newCounterPart = chat.counterParts.map((part) => {
+      if (part.updatedOn > lastUpdate) lastUpdate = part.updatedOn;
+      return { ...part, name: counterpartName(part.id) };
+    });
+    const newChat = {
+      ...chat,
+      counterParts: newCounterPart,
+      orderCode,
+      lastUpdate,
+    } as OrderChatGroup;
+    return newChat;
+  });
+  const sortMessages = (a: OrderChatGroup, b: OrderChatGroup) => {
+    if (a.lastUpdate && b.lastUpdate)
+      return timestampToDate(b.lastUpdate).getTime() - timestampToDate(a.lastUpdate).getTime();
+    if (!a.lastUpdate) return 1;
+    else if (!b.lastUpdate) return -1;
+    return 0;
+  };
+  return fullChats.sort(sortMessages);
 };
 
 export const getOrderChatGroup = (businessId: string, messages: WithId<ChatMessage>[]) => {
@@ -50,6 +85,15 @@ export const getOrderChatGroup = (businessId: string, messages: WithId<ChatMessa
           existingCounterpart.updatedOn = message.timestamp;
         }
         return groups;
+      }
+      if (counterPartFlavor === 'courier') {
+        let currentCourierIndex = existingGroup.counterParts.findIndex(
+          (part) => part.flavor === 'courier'
+        );
+        if (currentCourierIndex > -1) {
+          existingGroup.counterParts[currentCourierIndex] = counterPartObject;
+          return groups;
+        }
       }
       existingGroup.counterParts.push(counterPartObject);
       return groups;
