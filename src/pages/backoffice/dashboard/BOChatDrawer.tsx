@@ -39,6 +39,12 @@ export const BOChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
   // refs
   const messagesBox = React.useRef<HTMLDivElement>(null);
   //handlers
+  const getNameToDisplay = (flavor: Flavor, name?: string) => {
+    let ptFlavor = '(Rest.)';
+    if (flavor === 'consumer') ptFlavor = '(Consum.)';
+    else if (flavor === 'courier') ptFlavor = '(Entreg.)';
+    return `${ptFlavor} ${name ?? 'N/E'}`;
+  };
   const getImage = (flavor: Flavor) => {
     if (flavor === 'business') return restaurantIcon;
     else return null;
@@ -85,7 +91,7 @@ export const BOChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
                 <ChatMessages
                   key={group.id}
                   image={getImage(group.from.agent)}
-                  name={group.from.name ?? 'N/E'}
+                  name={getNameToDisplay(group.from.agent, group.from.name)}
                   messages={group.messages}
                 />
               ))}
