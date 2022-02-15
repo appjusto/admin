@@ -45,7 +45,7 @@ export const FraudPrevention = ({
       )}
       {flags?.newUser && (
         <Text mt="1" fontWeight="700">
-          <Icon as={MdWarningAmber} mr="2" /> {t('Primeiro pedido do consumidor;')}
+          <Icon as={MdWarningAmber} mr="2" /> {t('Consumidor novo;')}
         </Text>
       )}
       {flags?.highTicketPrice && (
