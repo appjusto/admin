@@ -16,7 +16,6 @@ export const sortMessages = (a: ChatMessage, b: ChatMessage) => {
 };
 
 export const getOrderedChatPage = (chats: OrderChatGroup[], orders: WithId<Order>[]) => {
-  console.log('chats', chats);
   const fullChats = chats.map((chat) => {
     const order = orders.find((order) => order.id === chat.orderId);
     const orderCode = order?.code ?? 'N/E';
