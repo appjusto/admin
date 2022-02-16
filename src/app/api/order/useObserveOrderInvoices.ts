@@ -1,7 +1,7 @@
 import { useContextApi } from 'app/state/api/context';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusinessId } from 'app/state/business/context';
-import { WithId, Invoice } from 'appjusto-types';
+import { WithId, Invoice } from '@appjusto/types';
 import React from 'react';
 
 export const useObserveOrderInvoices = (orderId?: string) => {

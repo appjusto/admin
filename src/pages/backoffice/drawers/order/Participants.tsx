@@ -1,10 +1,10 @@
+import { CourierMode, Issue, IssueType, Order, WithId } from '@appjusto/types';
 import { Box, Flex, RadioGroup, Stack, Text } from '@chakra-ui/react';
 import { useOrderCourierRemoval } from 'app/api/order/useOrderCourierRemoval';
 import { useOrderDeliveryInfos } from 'app/api/order/useOrderDeliveryInfos';
 import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { useContextServerTime } from 'app/state/server-time';
-import { CourierMode, Issue, IssueType, Order, WithId } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import CustomRadio from 'common/components/form/CustomRadio';
 import { Textarea } from 'common/components/form/input/Textarea';

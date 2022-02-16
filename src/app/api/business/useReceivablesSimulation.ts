@@ -1,5 +1,5 @@
 import { useContextApi } from 'app/state/api/context';
-import { IuguMarketplaceAccountAdvanceSimulation } from 'appjusto-types/payment/iugu';
+import { IuguMarketplaceAccountAdvanceSimulation } from '@appjusto/types/payment/iugu';
 import React from 'react';
 
 export const useReceivablesSimulation = (businessId: string | undefined, ids: string[]) => {

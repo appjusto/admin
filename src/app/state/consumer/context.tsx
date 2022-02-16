@@ -1,9 +1,9 @@
+import { ConsumerProfile, Issue, IssueType, Order, WithId } from '@appjusto/types';
 import * as cpfutils from '@fnando/cpf';
 import { useConsumerOrders } from 'app/api/consumer/useConsumerOrders';
 import { useConsumerProfile } from 'app/api/consumer/useConsumerProfile';
 import { useConsumerProfilePictures } from 'app/api/consumer/useConsumerProfilePictures';
 import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';
-import { ConsumerProfile, Issue, IssueType, Order, WithId } from 'appjusto-types';
 import React, { Dispatch, SetStateAction } from 'react';
 import { useParams } from 'react-router';
 import { consumerReducer } from './consumerReducer';

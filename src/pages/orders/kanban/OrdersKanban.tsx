@@ -1,3 +1,4 @@
+import { Order, OrderStatus, WithId } from '@appjusto/types';
 import {
   Box,
   Flex,
@@ -11,7 +12,6 @@ import {
 } from '@chakra-ui/react';
 import { splitByStatus } from 'app/api/order/selectors';
 import { useOrdersContext } from 'app/state/order';
-import { Order, OrderStatus, WithId } from 'appjusto-types';
 import { ReactComponent as SearchIcon } from 'common/img/searchIcon.svg';
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';

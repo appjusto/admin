@@ -1,6 +1,6 @@
 import { SearchResponse } from '@algolia/client-search';
 import { useContextSearchApi } from 'app/state/search/context';
-import { OrderStatus, OrderType } from 'appjusto-types';
+import { OrderStatus, OrderType } from '@appjusto/types';
 import { debounce } from 'lodash';
 import React from 'react';
 import { SearchKind } from './types';

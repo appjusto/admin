@@ -1,3 +1,5 @@
+import { ChatMessage, Flavor } from '@appjusto/types';
+import { ChatMessageType } from '@appjusto/types/order/chat';
 import {
   Box,
   Button,
@@ -20,8 +22,6 @@ import { useObserveBusinessOrderChatByType } from 'app/api/chat/useObserveBusine
 import { useUpdateChatMessage } from 'app/api/chat/useUpdateChatMessage';
 import { getUnreadChatMessages } from 'app/api/chat/utils';
 import { useContextServerTime } from 'app/state/server-time';
-import { ChatMessage, Flavor } from 'appjusto-types';
-import { ChatMessageType } from 'appjusto-types/order/chat';
 import React, { KeyboardEvent } from 'react';
 import { useParams } from 'react-router';
 import { getDateTime } from 'utils/functions';

@@ -9,7 +9,7 @@ import {
   WithId,
   Classification,
   PlatformParams,
-} from 'appjusto-types';
+} from '@appjusto/types';
 import { documentsAs } from '../../../core/fb';
 import FirebaseRefs from '../FirebaseRefs';
 import firebase from 'firebase/app';

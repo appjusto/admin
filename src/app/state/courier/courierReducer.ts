@@ -1,4 +1,4 @@
-import { WithId, CourierProfile } from 'appjusto-types';
+import { WithId, CourierProfile } from '@appjusto/types';
 
 export type Actions =
   | { type: 'load_state'; payload: WithId<CourierProfile> }

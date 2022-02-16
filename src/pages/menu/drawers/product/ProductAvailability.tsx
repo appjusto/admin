@@ -1,6 +1,6 @@
+import { BusinessSchedule, ScheduleObject } from '@appjusto/types/business';
 import { Button, Flex, RadioGroup, Text } from '@chakra-ui/react';
 import { useContextAppRequests } from 'app/state/requests/context';
-import { BusinessSchedule, ScheduleObject } from 'appjusto-types/business';
 import CustomRadio from 'common/components/form/CustomRadio';
 import { useProductContext } from 'pages/menu/context/ProductContext';
 import React from 'react';

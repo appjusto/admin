@@ -1,7 +1,7 @@
 import { useCustomMutation } from 'app/api/mutation/useCustomMutation';
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusinessId } from 'app/state/business/context';
-import { BankAccount } from 'appjusto-types';
+import { BankAccount } from '@appjusto/types';
 import { useQuery } from 'react-query';
 
 export const useBusinessBankAccount = (isOnboarding: boolean = false) => {

@@ -1,5 +1,5 @@
 import firebase from 'firebase/app';
-import { Order, WithId } from 'appjusto-types';
+import { Order, WithId } from '@appjusto/types';
 import React from 'react';
 import { getTimeUntilNow } from 'utils/functions';
 

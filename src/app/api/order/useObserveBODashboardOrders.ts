@@ -1,5 +1,5 @@
 import { useContextApi } from 'app/state/api/context';
-import { WithId, Order, OrderStatus } from 'appjusto-types';
+import { WithId, Order, OrderStatus } from '@appjusto/types';
 import React from 'react';
 import dayjs from 'dayjs';
 

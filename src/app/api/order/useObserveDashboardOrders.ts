@@ -1,5 +1,5 @@
 import { useContextApi } from 'app/state/api/context';
-import { WithId, OrderStatus, Order } from 'appjusto-types';
+import { WithId, OrderStatus, Order } from '@appjusto/types';
 import React from 'react';
 import { orderPeriodFilter, findMostFrequentProduct, splitOrdersValuesByPeriod } from './utils';
 

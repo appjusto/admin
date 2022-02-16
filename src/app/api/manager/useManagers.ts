@@ -2,7 +2,7 @@ import { useContextApi } from 'app/state/api/context';
 import { useContextBusiness } from 'app/state/business/context';
 import React from 'react';
 import { ManagerWithRole } from './types';
-import { NewManagerData } from 'appjusto-types';
+import { NewManagerData } from '@appjusto/types';
 import { GeneralRoles } from 'app/state/auth/context';
 import { useCustomMutation } from '../mutation/useCustomMutation';
 

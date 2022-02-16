@@ -1,6 +1,6 @@
+import { DispatchingState, DispatchingStatus, OrderStatus } from '@appjusto/types';
 import { Box, Circle, HStack, Icon, Skeleton, Text } from '@chakra-ui/react';
 import { useObserveOrderLogs } from 'app/api/order/useObserveOrderLogs';
-import { DispatchingState, DispatchingStatus, OrderStatus } from 'appjusto-types';
 import { last } from 'lodash';
 import React from 'react';
 import { MdInfoOutline } from 'react-icons/md';

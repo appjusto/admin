@@ -1,4 +1,4 @@
-import { UserProfile } from 'appjusto-types';
+import { UserProfile } from '@appjusto/types';
 
 export type UpdateProfile = ({}) => void;
 

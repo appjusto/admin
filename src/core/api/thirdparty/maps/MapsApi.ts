@@ -1,4 +1,4 @@
-import { LatLng } from 'appjusto-types';
+import { LatLng } from '@appjusto/types';
 import axios, { CancelToken } from 'axios';
 import { AutoCompleteResult, GooglePlacesPredictionsResult } from './types';
 

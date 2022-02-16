@@ -1,4 +1,4 @@
-import { Category, WithId } from 'appjusto-types';
+import { Category, WithId } from '@appjusto/types';
 import React from 'react';
 import { useContextApi } from '../../../state/api/context';
 

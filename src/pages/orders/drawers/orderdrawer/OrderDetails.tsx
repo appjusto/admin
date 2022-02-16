@@ -1,6 +1,6 @@
+import { Order, OrderItem, WithId } from '@appjusto/types';
 import { Box, Table, Tbody, Td, Text, Tfoot, Th, Thead, Tr } from '@chakra-ui/react';
 import * as cpfutils from '@fnando/cpf';
-import { Order, OrderItem, WithId } from 'appjusto-types';
 import React from 'react';
 import { formatCurrency } from 'utils/formatters';
 import { t } from 'utils/i18n';

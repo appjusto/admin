@@ -1,7 +1,7 @@
+import { Fleet } from '@appjusto/types';
 import { Box, Text } from '@chakra-ui/react';
 import { useCourierFleet } from 'app/api/courier/useCourierFleet';
 import { useContextCourierProfile } from 'app/state/courier/context';
-import { Fleet } from 'appjusto-types';
 import React from 'react';
 import { t } from 'utils/i18n';
 

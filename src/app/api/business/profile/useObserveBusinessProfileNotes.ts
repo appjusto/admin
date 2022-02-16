@@ -1,6 +1,6 @@
 import { useCustomMutation } from 'app/api/mutation/useCustomMutation';
 import { useContextApi } from 'app/state/api/context';
-import { WithId, ProfileNote } from 'appjusto-types';
+import { WithId, ProfileNote } from '@appjusto/types';
 import React from 'react';
 
 export const useObserveBusinessProfileNotes = (businessId?: string) => {

@@ -1,3 +1,13 @@
+import {
+  Business,
+  BusinessStatus,
+  CourierStatus,
+  Order,
+  OrderStatus,
+  PlatformStatistics,
+  ProfileChange,
+  WithId,
+} from '@appjusto/types';
 import { useObserveBusinesses } from 'app/api/business/useObserveBusinesses';
 import { useObserveBusinessesByStatus } from 'app/api/business/useObserveBusinessesByStatus';
 import { useObserveNewConsumers } from 'app/api/consumer/useObserveNewConsumers';
@@ -9,16 +19,6 @@ import {
   ProfileChangesSituations,
   useObserveUsersChanges,
 } from 'app/api/users/useObserveUsersChanges';
-import {
-  Business,
-  BusinessStatus,
-  CourierStatus,
-  Order,
-  OrderStatus,
-  PlatformStatistics,
-  ProfileChange,
-  WithId,
-} from 'appjusto-types';
 import React from 'react';
 
 interface ContextProps {

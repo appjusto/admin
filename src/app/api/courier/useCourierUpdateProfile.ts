@@ -1,5 +1,5 @@
 import { useContextApi } from 'app/state/api/context';
-import { CourierProfile } from 'appjusto-types';
+import { CourierProfile } from '@appjusto/types';
 import { useCustomMutation } from '../mutation/useCustomMutation';
 
 export const useCourierUpdateProfile = (courierId?: string) => {

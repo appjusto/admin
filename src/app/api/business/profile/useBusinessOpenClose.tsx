@@ -1,7 +1,7 @@
+import { Business, WithId } from '@appjusto/types';
 import { useToast } from '@chakra-ui/toast';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextServerTime } from 'app/state/server-time';
-import { Business, WithId } from 'appjusto-types';
 import { CustomToast } from 'common/components/CustomToast';
 import React from 'react';
 import { useBusinessProfile } from './useBusinessProfile';

@@ -1,6 +1,6 @@
 import { useCustomMutation } from 'app/api/mutation/useCustomMutation';
 import { useContextApi } from 'app/state/api/context';
-import { ChatMessage } from 'appjusto-types';
+import { ChatMessage } from '@appjusto/types';
 
 export const useUpdateChatMessage = () => {
   // context

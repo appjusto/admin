@@ -6,7 +6,7 @@ import {
   WithId,
   ReleaseCourierPayload,
   ProfileNote,
-} from 'appjusto-types';
+} from '@appjusto/types';
 import FilesApi from '../FilesApi';
 import FirebaseRefs from '../FirebaseRefs';
 import firebase from 'firebase/app';

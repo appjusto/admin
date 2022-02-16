@@ -1,5 +1,5 @@
 import { useContextApi } from 'app/state/api/context';
-import { WithId } from 'appjusto-types';
+import { WithId } from '@appjusto/types';
 import React from 'react';
 import { CourierReview, CourierReviewType } from './CourierApi';
 import dayjs from 'dayjs';

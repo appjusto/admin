@@ -1,5 +1,5 @@
+import { Business, Order, ProfileChange, WithId } from '@appjusto/types';
 import { Box, Circle, Flex, Text, VStack } from '@chakra-ui/react';
-import { Business, Order, ProfileChange, WithId } from 'appjusto-types';
 import { ShowIf } from 'core/components/ShowIf';
 import React from 'react';
 import { BOBusinessListItem } from './BOBusinessListItem';

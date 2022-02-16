@@ -1,6 +1,6 @@
+import { Bank, BankAccount, WithId } from '@appjusto/types';
 import { Box, Flex, RadioGroup, Stack, Text } from '@chakra-ui/react';
 import { useBanks } from 'app/api/business/profile/useBanks';
-import { Bank, BankAccount, WithId } from 'appjusto-types';
 import { AlertWarning } from 'common/components/AlertWarning';
 import CustomRadio from 'common/components/form/CustomRadio';
 import { CustomPatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';

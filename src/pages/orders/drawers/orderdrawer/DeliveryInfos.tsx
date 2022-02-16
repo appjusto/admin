@@ -1,9 +1,9 @@
+import { Order, WithId } from '@appjusto/types';
 import { Box, Button, Circle, Flex, HStack, Image, Text } from '@chakra-ui/react';
 import { useCourierProfilePicture } from 'app/api/courier/useCourierProfilePicture';
 import { useOrderDeliveryInfos } from 'app/api/order/useOrderDeliveryInfos';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextServerTime } from 'app/state/server-time';
-import { Order, WithId } from 'appjusto-types';
 import { AlertWarning } from 'common/components/AlertWarning';
 import firebase from 'firebase/app';
 import I18n from 'i18n-js';

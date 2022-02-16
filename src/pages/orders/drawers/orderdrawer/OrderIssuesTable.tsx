@@ -1,5 +1,5 @@
+import { OrderIssue, WithId } from '@appjusto/types';
 import { Box, HStack, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
-import { OrderIssue, WithId } from 'appjusto-types';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import React from 'react';
 import { getDateAndHour } from 'utils/functions';

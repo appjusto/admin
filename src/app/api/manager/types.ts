@@ -1,4 +1,4 @@
-import { ManagerProfile } from 'appjusto-types';
+import { ManagerProfile } from '@appjusto/types';
 
 export interface BusinessManager extends ManagerProfile {
   role: string | null;

@@ -1,6 +1,6 @@
+import { Complement, ComplementGroup, WithId } from '@appjusto/types';
 import { Box, Flex, Switch, Text, Tooltip } from '@chakra-ui/react';
 import { useContextMenu } from 'app/state/menu/context';
-import { Complement, ComplementGroup, WithId } from 'appjusto-types';
 import { CustomButton as Button } from 'common/components/buttons/CustomButton';
 import { DropdownButton } from 'common/components/buttons/DropdownButton';
 import { EditButton } from 'common/components/buttons/EditButton';

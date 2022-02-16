@@ -1,6 +1,6 @@
+import { ComplementGroup, WithId } from '@appjusto/types';
 import { Box, Flex, RadioGroup, Text } from '@chakra-ui/react';
 import { useContextMenu } from 'app/state/menu/context';
-import { ComplementGroup, WithId } from 'appjusto-types';
 import CustomRadio from 'common/components/form/CustomRadio';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import React from 'react';

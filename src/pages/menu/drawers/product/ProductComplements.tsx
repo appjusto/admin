@@ -1,3 +1,4 @@
+import { ComplementGroup, WithId } from '@appjusto/types';
 import {
   Alert,
   AlertDescription,
@@ -14,7 +15,6 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { useContextMenu } from 'app/state/menu/context';
-import { ComplementGroup, WithId } from 'appjusto-types';
 import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import CustomRadio from 'common/components/form/CustomRadio';
 import { useProductContext } from 'pages/menu/context/ProductContext';

@@ -1,3 +1,4 @@
+import { CourierProfile } from '@appjusto/types';
 import {
   Box,
   Button,
@@ -17,7 +18,6 @@ import { useAuthentication } from 'app/api/auth/useAuthentication';
 import { useCourierUpdateProfile } from 'app/api/courier/useCourierUpdateProfile';
 import { useContextCourierProfile } from 'app/state/courier/context';
 import { useContextAppRequests } from 'app/state/requests/context';
-import { CourierProfile } from 'appjusto-types';
 import { getEditableProfile, modePTOptions, situationPTOptions } from 'pages/backoffice/utils';
 import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
 import React from 'react';

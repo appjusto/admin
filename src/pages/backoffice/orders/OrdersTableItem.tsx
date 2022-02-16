@@ -1,5 +1,5 @@
+import { Order, OrderStatus, WithId } from '@appjusto/types';
 import { Td, Tr } from '@chakra-ui/react';
-import { Order, OrderStatus, WithId } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { useRouteMatch } from 'react-router';
 import { formatCurrency } from 'utils/formatters';

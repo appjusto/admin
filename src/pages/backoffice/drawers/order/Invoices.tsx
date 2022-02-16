@@ -1,5 +1,5 @@
+import { Invoice, WithId } from '@appjusto/types';
 import { Box, Table, Tbody, Td, Tfoot, Th, Thead, Tr } from '@chakra-ui/react';
-import { Invoice, WithId } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { invoiceStatusPTOptions, invoiceTypePTOptions } from 'pages/backoffice/utils';
 import React from 'react';

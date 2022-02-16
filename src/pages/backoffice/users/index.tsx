@@ -1,8 +1,8 @@
+import { UserType } from '@appjusto/types';
 import { ArrowDownIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, HStack, RadioGroup, Stack, Text } from '@chakra-ui/react';
 import { useObserveUsers } from 'app/api/users/useObserveUsers';
 import { UsersSearchType } from 'app/api/users/UsersApi';
-import { UserType } from 'appjusto-types';
 import { ClearFiltersButton } from 'common/components/backoffice/ClearFiltersButton';
 import { FilterText } from 'common/components/backoffice/FilterText';
 //import CustomCheckbox from 'common/components/form/CustomCheckbox';

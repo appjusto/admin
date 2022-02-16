@@ -1,9 +1,9 @@
+import { BusinessAlgolia, BusinessStatus } from '@appjusto/types';
 import { ArrowDownIcon } from '@chakra-ui/icons';
 import { Button, CheckboxGroup, Flex, HStack, Stack, Text } from '@chakra-ui/react';
 import { BusinessesFilter } from 'app/api/search/types';
 import { useBusinessesSearch } from 'app/api/search/useBusinessesSearch';
 import { useContextBusiness } from 'app/state/business/context';
-import { BusinessAlgolia, BusinessStatus } from 'appjusto-types';
 import { ClearFiltersButton } from 'common/components/backoffice/ClearFiltersButton';
 import { FiltersScrollBar } from 'common/components/backoffice/FiltersScrollBar';
 import CustomCheckbox from 'common/components/form/CustomCheckbox';

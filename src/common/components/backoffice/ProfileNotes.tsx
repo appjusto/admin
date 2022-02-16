@@ -1,7 +1,7 @@
+import { ProfileNote, WithId } from '@appjusto/types';
 import { Box, Button, Flex, HStack, Text } from '@chakra-ui/react';
 import { MutationResult } from 'app/api/mutation/useCustomMutation';
 import { useContextAgentProfile } from 'app/state/agent/context';
-import { ProfileNote, WithId } from 'appjusto-types';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
 import { omitBy } from 'lodash';
 import React from 'react';

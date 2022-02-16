@@ -1,3 +1,4 @@
+import { Order, OrderStatus, WithId } from '@appjusto/types';
 import {
   Button,
   Drawer,
@@ -11,7 +12,6 @@ import {
   HStack,
   Text,
 } from '@chakra-ui/react';
-import { Order, OrderStatus, WithId } from 'appjusto-types';
 import { FiltersScrollBar } from 'common/components/backoffice/FiltersScrollBar';
 import { OrderTracking } from 'pages/backoffice/dashboard/OrderTracking';
 import { DrawerLink } from 'pages/menu/drawers/DrawerLink';

@@ -4,7 +4,7 @@ import {
   useContextFirebaseUserEmail,
   useContextFirebaseUserId,
 } from 'app/state/auth/context';
-import { ManagerProfile, WithId } from 'appjusto-types';
+import { ManagerProfile, WithId } from '@appjusto/types';
 import React from 'react';
 
 export const useManagerProfile = () => {

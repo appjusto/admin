@@ -1,8 +1,8 @@
+import { FlaggedLocationsAlgolia } from '@appjusto/types';
 import { ArrowDownIcon } from '@chakra-ui/icons';
 import { Button, Flex, HStack, Stack, Text } from '@chakra-ui/react';
 //import { useFlaggedLocations } from 'app/api/platform/useFlaggedLocations';
 import { useFlaggedlocationsSearch } from 'app/api/search/useFlaggedlocationsSearch';
-import { FlaggedLocationsAlgolia } from 'appjusto-types';
 import { ClearFiltersButton } from 'common/components/backoffice/ClearFiltersButton';
 import { SearchButton } from 'common/components/backoffice/SearchButton';
 import { CustomDateFilter } from 'common/components/form/input/CustomDateFilter';

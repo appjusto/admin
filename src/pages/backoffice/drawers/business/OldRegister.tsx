@@ -1,6 +1,6 @@
+import { Bank, WithId } from '@appjusto/types';
 import { Box } from '@chakra-ui/react';
 import { useBanks } from 'app/api/business/profile/useBanks';
-import { Bank, WithId } from 'appjusto-types';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import { CustomPatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';
 import {

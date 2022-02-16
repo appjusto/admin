@@ -1,5 +1,5 @@
+import { AccountAdvance, WithId } from '@appjusto/types';
 import { Table, Tbody, Td, Tfoot, Th, Tr } from '@chakra-ui/react';
-import { AccountAdvance, WithId } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { useRouteMatch } from 'react-router-dom';
 import { formatCurrency } from 'utils/formatters';

@@ -1,4 +1,4 @@
-import { WithId, ConsumerProfile, BusinessRecommendation, ProfileNote } from 'appjusto-types';
+import { WithId, ConsumerProfile, BusinessRecommendation, ProfileNote } from '@appjusto/types';
 import FilesApi from '../FilesApi';
 import FirebaseRefs from '../FirebaseRefs';
 import firebase from 'firebase/app';

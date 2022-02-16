@@ -1,4 +1,3 @@
-import { Box, Flex, HStack, RadioGroup, Text, Textarea } from '@chakra-ui/react';
 import {
   DispatchingState,
   InvoiceType,
@@ -6,7 +5,8 @@ import {
   IssueType,
   OrderStatus,
   OrderType,
-} from 'appjusto-types';
+} from '@appjusto/types';
+import { Box, Flex, HStack, RadioGroup, Text, Textarea } from '@chakra-ui/react';
 import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import CustomRadio from 'common/components/form/CustomRadio';
 import React from 'react';

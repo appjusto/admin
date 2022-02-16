@@ -1,5 +1,5 @@
+import { Invoice, WithId } from '@appjusto/types';
 import { Box, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
-import { Invoice, WithId } from 'appjusto-types';
 import { t } from 'utils/i18n';
 import { InvoicesTableItem } from './InvoicesTableItem';
 

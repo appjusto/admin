@@ -1,5 +1,5 @@
 import { useContextApi } from 'app/state/api/context';
-import { Issue, IssueType } from 'appjusto-types';
+import { Issue, IssueType } from '@appjusto/types';
 import React from 'react';
 import * as Sentry from '@sentry/react';
 

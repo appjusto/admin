@@ -1,3 +1,4 @@
+import { Order, WithId } from '@appjusto/types';
 import { Box, Button, Flex, HStack, Progress, Text } from '@chakra-ui/react';
 import { useObserveOrderLogs } from 'app/api/order/useObserveOrderLogs';
 import { useOrderArrivalTimes } from 'app/api/order/useOrderArrivalTimes';
@@ -5,7 +6,6 @@ import { useOrderDeliveryInfos } from 'app/api/order/useOrderDeliveryInfos';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useOrdersContext } from 'app/state/order';
 import { useContextServerTime } from 'app/state/server-time';
-import { Order, WithId } from 'appjusto-types';
 import { ReactComponent as Alarm } from 'common/img/alarm_outlined.svg';
 import React from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';

@@ -1,5 +1,5 @@
 import { useContextApi } from 'app/state/api/context';
-import { BusinessStatus } from 'appjusto-types';
+import { BusinessStatus } from '@appjusto/types';
 import React from 'react';
 
 export const useObserveBusinessesByStatus = (status: BusinessStatus) => {

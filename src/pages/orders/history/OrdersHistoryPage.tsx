@@ -1,8 +1,8 @@
+import { OrderStatus } from '@appjusto/types';
 import { ArrowDownIcon } from '@chakra-ui/icons';
 import { Button, Flex, HStack, Stack, Text } from '@chakra-ui/react';
 import { useObserveBusinessOrdersHistory } from 'app/api/order/useObserveBusinessOrdersHistory';
 import { useContextBusinessId } from 'app/state/business/context';
-import { OrderStatus } from 'appjusto-types';
 import { ClearFiltersButton } from 'common/components/backoffice/ClearFiltersButton';
 import { FilterText } from 'common/components/backoffice/FilterText';
 import Container from 'common/components/Container';

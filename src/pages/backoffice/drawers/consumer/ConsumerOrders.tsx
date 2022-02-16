@@ -1,6 +1,6 @@
+import { Order, WithId } from '@appjusto/types';
 import { Box, Link, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
 import { useContextConsumerProfile } from 'app/state/consumer/context';
-import { Order, WithId } from 'appjusto-types';
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { formatCurrency } from 'utils/formatters';

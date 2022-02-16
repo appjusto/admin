@@ -1,6 +1,6 @@
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusiness } from 'app/state/business/context';
-import { ChatMessage, Flavor, Order, OrderStatus, WithId } from 'appjusto-types';
+import { ChatMessage, Flavor, Order, OrderStatus, WithId } from '@appjusto/types';
 import React from 'react';
 import { GroupedChatMessages, Participants } from 'app/api/chat/types';
 import { groupOrderChatMessages, sortMessages } from 'app/api/chat/utils';

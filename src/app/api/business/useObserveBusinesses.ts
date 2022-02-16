@@ -1,5 +1,5 @@
 import { useContextApi } from 'app/state/api/context';
-import { Business, WithId } from 'appjusto-types';
+import { Business, WithId } from '@appjusto/types';
 import React from 'react';
 import firebase from 'firebase/app';
 import { uniqWith, isEqual } from 'lodash';

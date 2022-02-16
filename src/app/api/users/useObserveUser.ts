@@ -1,5 +1,5 @@
 import { useContextApi } from 'app/state/api/context';
-import { User, WithId } from 'appjusto-types';
+import { User, WithId } from '@appjusto/types';
 import React from 'react';
 
 export const useObserveUser = (userId: string) => {

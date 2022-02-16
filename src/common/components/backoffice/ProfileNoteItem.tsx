@@ -1,6 +1,6 @@
+import { ProfileNote, WithId } from '@appjusto/types';
 import { Box, Button, Flex, HStack, Text } from '@chakra-ui/react';
 import { useContextAgentProfile } from 'app/state/agent/context';
-import { ProfileNote, WithId } from 'appjusto-types';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
 import React from 'react';
 import { getDateAndHour } from 'utils/functions';

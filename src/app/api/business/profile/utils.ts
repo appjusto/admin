@@ -1,4 +1,4 @@
-import { BusinessSchedule } from 'appjusto-types';
+import { BusinessSchedule } from '@appjusto/types';
 import dayjs from 'dayjs';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';

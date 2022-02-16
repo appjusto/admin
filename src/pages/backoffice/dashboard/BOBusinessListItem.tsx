@@ -1,5 +1,5 @@
+import { Business, WithId } from '@appjusto/types';
 import { Flex, Text } from '@chakra-ui/react';
-import { Business, WithId } from 'appjusto-types';
 import React from 'react';
 import { useRouteMatch } from 'react-router-dom';
 import { getDateAndHour } from 'utils/functions';

@@ -1,3 +1,4 @@
+import { Order, OrderItem, WithId } from '@appjusto/types';
 import {
   Box,
   Flex,
@@ -13,7 +14,6 @@ import {
   Tr,
 } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
-import { Order, OrderItem, WithId } from 'appjusto-types';
 import logoAppjusto from 'common/img/logo-black.svg';
 import React from 'react';
 import { formatCurrency } from 'utils/formatters';

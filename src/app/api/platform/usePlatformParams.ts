@@ -1,5 +1,5 @@
 import { useContextApi } from 'app/state/api/context';
-import { PlatformParams } from 'appjusto-types';
+import { PlatformParams } from '@appjusto/types';
 import React from 'react';
 import { useServerTime } from './useServerTime';
 import dayjs from 'dayjs';

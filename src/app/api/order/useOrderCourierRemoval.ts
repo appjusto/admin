@@ -1,5 +1,5 @@
 import { useContextApi } from 'app/state/api/context';
-import { Issue, WithId } from 'appjusto-types';
+import { Issue, WithId } from '@appjusto/types';
 import { useCustomMutation } from '../mutation/useCustomMutation';
 
 interface RemovalData {

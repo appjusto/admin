@@ -1,6 +1,6 @@
 import { useContextFirebaseUser } from 'app/state/auth/context';
-import { DispatchingState, Order, WithId } from 'appjusto-types';
-import { DispatchingStatus } from 'appjusto-types/order/dispatching';
+import { DispatchingState, Order, WithId } from '@appjusto/types';
+import { DispatchingStatus } from '@appjusto/types/order/dispatching';
 import React from 'react';
 import { useObserveOrderMatching } from './useObserveOrderMatching';
 import { useOrderArrivalTimes } from './useOrderArrivalTimes';

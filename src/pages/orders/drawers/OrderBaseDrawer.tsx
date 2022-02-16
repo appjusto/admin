@@ -1,3 +1,4 @@
+import { Order, WithId } from '@appjusto/types';
 import {
   Box,
   Button,
@@ -15,7 +16,6 @@ import {
   Tooltip,
 } from '@chakra-ui/react';
 import { useOrdersContext } from 'app/state/order';
-import { Order, WithId } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import React from 'react';

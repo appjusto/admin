@@ -1,7 +1,7 @@
 import React from 'react';
 import polyline from '@mapbox/polyline';
 import { getCoordinatesMidpoint } from 'utils/functions';
-import { LatLng } from 'appjusto-types';
+import { LatLng } from '@appjusto/types';
 
 type ShortLatLng = {
   lat: number;

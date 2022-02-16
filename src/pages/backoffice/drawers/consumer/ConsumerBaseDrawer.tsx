@@ -1,3 +1,4 @@
+import { ConsumerProfile } from '@appjusto/types';
 import {
   Box,
   Button,
@@ -16,7 +17,6 @@ import { useAuthentication } from 'app/api/auth/useAuthentication';
 import { useConsumerUpdateProfile } from 'app/api/consumer/useConsumerUpdateProfile';
 import { useContextConsumerProfile } from 'app/state/consumer/context';
 import { useContextAppRequests } from 'app/state/requests/context';
-import { ConsumerProfile } from 'appjusto-types';
 import { getEditableProfile } from 'pages/backoffice/utils';
 import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
 import React from 'react';

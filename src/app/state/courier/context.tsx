@@ -1,3 +1,11 @@
+import {
+  CourierProfile,
+  Issue,
+  IssueType,
+  MarketplaceAccountInfo,
+  Order,
+  WithId,
+} from '@appjusto/types';
 import * as cnpjutils from '@fnando/cnpj';
 import * as cpfutils from '@fnando/cpf';
 import { useCourierMarketPlace } from 'app/api/courier/useCourierMarketPlace';
@@ -6,14 +14,6 @@ import { useCourierProfile } from 'app/api/courier/useCourierProfile';
 import { useCourierProfilePictures } from 'app/api/courier/useCourierProfilePictures';
 import { MutationResult } from 'app/api/mutation/useCustomMutation';
 import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';
-import {
-  CourierProfile,
-  Issue,
-  IssueType,
-  MarketplaceAccountInfo,
-  Order,
-  WithId,
-} from 'appjusto-types';
 import { BackofficeProfileValidation } from 'common/types';
 import React, { Dispatch, SetStateAction } from 'react';
 import { UseMutateAsyncFunction } from 'react-query';

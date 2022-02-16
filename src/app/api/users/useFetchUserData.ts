@@ -1,5 +1,5 @@
 import { useContextApi } from 'app/state/api/context';
-import { UserProfile, UserType, WithId } from 'appjusto-types';
+import { UserProfile, UserType, WithId } from '@appjusto/types';
 import React from 'react';
 
 export const useFetchUserData = (accountId?: string, userType?: UserType) => {

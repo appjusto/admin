@@ -1,7 +1,7 @@
+import { BusinessAlgolia, ProfileSituation } from '@appjusto/types';
 import { Icon, Td, Tr } from '@chakra-ui/react';
 import { businessShouldBeOpen } from 'app/api/business/profile/utils';
 import { useContextServerTime } from 'app/state/server-time';
-import { BusinessAlgolia, ProfileSituation } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import React from 'react';
 import { useRouteMatch } from 'react-router';

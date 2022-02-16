@@ -15,12 +15,12 @@ import {
   OrderType,
   OutsourceDeliveryPayload,
   WithId,
-} from 'appjusto-types';
+} from '@appjusto/types';
 import { documentAs, documentsAs, FirebaseDocument } from 'core/fb';
 import firebase from 'firebase/app';
 import FirebaseRefs from '../FirebaseRefs';
 import * as Sentry from '@sentry/react';
-import { IuguInvoiceStatus } from 'appjusto-types/payment/iugu';
+import { IuguInvoiceStatus } from '@appjusto/types/payment/iugu';
 import { customCollectionSnapshot, customDocumentSnapshot, queryLimit } from '../utils';
 
 export type CancellationData = {

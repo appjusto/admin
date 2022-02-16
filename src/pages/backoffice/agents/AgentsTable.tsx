@@ -1,3 +1,4 @@
+import { WithId } from '@appjusto/types';
 import {
   Box,
   Button,
@@ -11,7 +12,6 @@ import {
   Thead,
   Tr,
 } from '@chakra-ui/react';
-import { WithId } from 'appjusto-types';
 import CustomRadio from 'common/components/form/CustomRadio';
 import React from 'react';
 import { getDateAndHour } from 'utils/functions';

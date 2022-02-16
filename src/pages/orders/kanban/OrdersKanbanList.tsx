@@ -1,5 +1,5 @@
+import { Order, WithId } from '@appjusto/types';
 import { Box, Circle, Flex, Stack, Text } from '@chakra-ui/react';
-import { Order, WithId } from 'appjusto-types';
 import { ShowIf } from 'core/components/ShowIf';
 import React from 'react';
 import { OrdersKanbanListItem } from './OrdersKanbanListItem';

@@ -1,5 +1,5 @@
+import { BusinessAlgolia } from '@appjusto/types';
 import { Box, Circle, HStack, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
-import { BusinessAlgolia } from 'appjusto-types';
 import { t } from 'utils/i18n';
 import { BusinessesTableItem } from './BusinessesTableItem';
 

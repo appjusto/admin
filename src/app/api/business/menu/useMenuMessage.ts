@@ -1,6 +1,6 @@
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusinessId } from 'app/state/business/context';
-import { BusinessMenuMessage } from 'appjusto-types';
+import { BusinessMenuMessage } from '@appjusto/types';
 import React from 'react';
 import { useCustomMutation } from 'app/api/mutation/useCustomMutation';
 

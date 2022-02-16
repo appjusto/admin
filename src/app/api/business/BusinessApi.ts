@@ -20,8 +20,8 @@ import {
   AccountAdvance,
   AccountWithdraw,
   BusinessMenuMessage,
-} from 'appjusto-types';
-import { Complement, ComplementGroup, Ordering, ProfileNote } from 'appjusto-types';
+} from '@appjusto/types';
+import { Complement, ComplementGroup, Ordering, ProfileNote } from '@appjusto/types';
 import firebase from 'firebase/app';
 import { documentAs, documentsAs } from '../../../core/fb';
 import FilesApi from '../FilesApi';
@@ -30,7 +30,7 @@ import * as Sentry from '@sentry/react';
 import {
   IuguMarketplaceAccountAdvanceSimulation,
   IuguMarketplaceAccountReceivables,
-} from 'appjusto-types/payment/iugu';
+} from '@appjusto/types/payment/iugu';
 import { customCollectionSnapshot, customDocumentSnapshot } from '../utils';
 
 export default class BusinessApi {

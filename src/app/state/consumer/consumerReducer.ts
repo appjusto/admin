@@ -1,4 +1,4 @@
-import { WithId, ConsumerProfile } from 'appjusto-types';
+import { WithId, ConsumerProfile } from '@appjusto/types';
 
 export type Actions =
   | { type: 'load_state'; payload: WithId<ConsumerProfile> }

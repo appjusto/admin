@@ -1,5 +1,5 @@
 import { useContextApi } from 'app/state/api/context';
-import { ProfileChange, WithId } from 'appjusto-types';
+import { ProfileChange, WithId } from '@appjusto/types';
 import React from 'react';
 import { uniqWith, isEqual } from 'lodash';
 import firebase from 'firebase/app';

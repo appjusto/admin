@@ -1,6 +1,6 @@
 import { useContextApi } from 'app/state/api/context';
 import { GeneralRoles } from 'app/state/auth/context';
-import { Business, WithId } from 'appjusto-types';
+import { Business, WithId } from '@appjusto/types';
 import React from 'react';
 
 export const useManagerBusinesses = (managerEmail?: string, role?: GeneralRoles | null) => {

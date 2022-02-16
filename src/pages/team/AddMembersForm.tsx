@@ -1,8 +1,8 @@
+import { AdminRole } from '@appjusto/types';
 import { Box, Button, HStack, Switch, Text, Tooltip } from '@chakra-ui/react';
 import { useManagers } from 'app/api/manager/useManagers';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextAppRequests } from 'app/state/requests/context';
-import { AdminRole } from 'appjusto-types';
 import { CloseButton } from 'common/components/buttons/CloseButton';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import { intersection } from 'lodash';

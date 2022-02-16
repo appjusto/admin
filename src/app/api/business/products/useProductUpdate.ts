@@ -1,5 +1,5 @@
 import { useContextBusinessId } from 'app/state/business/context';
-import { Product } from 'appjusto-types';
+import { Product } from '@appjusto/types';
 import { useMutation } from 'react-query';
 import { useContextApi } from '../../../state/api/context';
 

@@ -1,3 +1,5 @@
+import { Flavor } from '@appjusto/types';
+import { ChatMessageType } from '@appjusto/types/order/chat';
 import {
   Drawer,
   DrawerBody,
@@ -10,8 +12,6 @@ import {
 } from '@chakra-ui/react';
 import { useObserveOrderChatByType } from 'app/api/chat/useObserveOrderChatByType';
 import { getChatLastUpdate, getChatTypeLabel } from 'app/api/chat/utils';
-import { Flavor } from 'appjusto-types';
-import { ChatMessageType } from 'appjusto-types/order/chat';
 import restaurantIcon from 'common/img/restaurant.svg';
 import firebase from 'firebase/app';
 import { ChatMessages } from 'pages/chat/ChatMessages';

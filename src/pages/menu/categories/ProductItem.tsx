@@ -1,8 +1,8 @@
+import { Product, WithId } from '@appjusto/types';
 import { Box, Flex, Image, Link, Spacer, Switch, Text, Tooltip } from '@chakra-ui/react';
 import { useProductImage } from 'app/api/business/products/useProductImage';
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusinessId } from 'app/state/business/context';
-import { Product, WithId } from 'appjusto-types';
 import { EditButton } from 'common/components/buttons/EditButton';
 import { ImageFbLoading } from 'common/components/ImageFbLoading';
 import { ReactComponent as DragHandle } from 'common/img/drag-handle.svg';

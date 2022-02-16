@@ -1,5 +1,5 @@
+import { ConsumerAlgolia } from '@appjusto/types';
 import { Td, Tr } from '@chakra-ui/react';
-import { ConsumerAlgolia } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { useRouteMatch } from 'react-router';
 import { getAlgoliaFieldDateAndHour } from 'utils/functions';

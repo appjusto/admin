@@ -1,5 +1,5 @@
+import { ManagerProfile, WithId } from '@appjusto/types';
 import { useAgentProfile } from 'app/api/agent/useAgentProfile';
-import { ManagerProfile, WithId } from 'appjusto-types';
 import React from 'react';
 
 interface ContextProps {

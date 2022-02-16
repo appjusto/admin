@@ -1,7 +1,7 @@
+import { Business, PlatformAccess, WithId } from '@appjusto/types';
 import { useObserveBusinessManagedBy } from 'app/api/business/profile/useObserveBusinessManagedBy';
 import { useObserveBusinessProfile } from 'app/api/business/profile/useObserveBusinessProfile';
 import { usePlatformAccess } from 'app/api/platform/usePlatformAccess';
-import { Business, PlatformAccess, WithId } from 'appjusto-types';
 import React from 'react';
 import { useQueryClient } from 'react-query';
 import { useContextFirebaseUser } from '../auth/context';

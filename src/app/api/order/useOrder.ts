@@ -6,7 +6,7 @@ import {
   OrderIssue,
   InvoiceType,
   WithId,
-} from 'appjusto-types';
+} from '@appjusto/types';
 import React from 'react';
 import { useCustomMutation } from '../mutation/useCustomMutation';
 import { Unsubscribe } from './OrderApi';

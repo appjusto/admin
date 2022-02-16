@@ -1,5 +1,5 @@
 import { useContextApi } from 'app/state/api/context';
-import { User, UserType, WithId } from 'appjusto-types';
+import { User, UserType, WithId } from '@appjusto/types';
 import React from 'react';
 import { UsersSearchType } from './UsersApi';
 import dayjs from 'dayjs';

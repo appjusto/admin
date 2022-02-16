@@ -1,5 +1,5 @@
 import { useContextApi } from 'app/state/api/context';
-import { WithId, Invoice } from 'appjusto-types';
+import { WithId, Invoice } from '@appjusto/types';
 import React from 'react';
 
 export const useObserveInvoice = (invoiceId?: string) => {

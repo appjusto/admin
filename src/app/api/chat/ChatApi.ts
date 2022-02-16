@@ -1,8 +1,7 @@
-import { WithId, ChatMessage } from 'appjusto-types';
+import { WithId, ChatMessage, ChatMessageType } from '@appjusto/types';
 import FirebaseRefs from '../FirebaseRefs';
 import firebase from 'firebase/app';
 import { customCollectionSnapshot } from '../utils';
-import { ChatMessageType } from 'appjusto-types/order/chat';
 
 export default class ChatApi {
   constructor(private refs: FirebaseRefs) {}

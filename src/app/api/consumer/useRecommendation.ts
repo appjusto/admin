@@ -1,5 +1,5 @@
 import { useContextApi } from 'app/state/api/context';
-import { BusinessRecommendation, WithId } from 'appjusto-types';
+import { BusinessRecommendation, WithId } from '@appjusto/types';
 import React from 'react';
 import { documentAs } from 'core/fb';
 

@@ -1,6 +1,6 @@
 import { useContextApi } from 'app/state/api/context';
 import { useContextManagerProfile } from 'app/state/manager/context';
-import { ManagerProfile } from 'appjusto-types';
+import { ManagerProfile } from '@appjusto/types';
 import { useAuthentication } from '../auth/useAuthentication';
 import { useCustomMutation } from '../mutation/useCustomMutation';
 

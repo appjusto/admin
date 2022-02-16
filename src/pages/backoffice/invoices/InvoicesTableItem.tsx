@@ -1,5 +1,5 @@
+import { Invoice, WithId } from '@appjusto/types';
 import { Link, Td, Tr } from '@chakra-ui/react';
-import { Invoice, WithId } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { useRouteMatch } from 'react-router';
 import { Link as RouterLink } from 'react-router-dom';

@@ -1,5 +1,5 @@
 import * as Sentry from '@sentry/react';
-import { WithId, User, ProfileChange, UserProfile, UserType } from 'appjusto-types';
+import { WithId, User, ProfileChange, UserProfile, UserType } from '@appjusto/types';
 import { documentAs, documentsAs, FirebaseDocument } from '../../../core/fb';
 import FirebaseRefs from '../FirebaseRefs';
 import firebase from 'firebase/app';

@@ -1,6 +1,6 @@
+import { FlaggedLocationsAlgolia } from '@appjusto/types';
 import { Button, HStack, Td, Text, Tr } from '@chakra-ui/react';
 import { useFlaggedLocations } from 'app/api/platform/useFlaggedLocations';
-import { FlaggedLocationsAlgolia } from 'appjusto-types';
 import React from 'react';
 import { getAlgoliaFieldDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';

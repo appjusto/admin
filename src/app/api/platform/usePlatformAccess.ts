@@ -1,5 +1,5 @@
 import { useContextApi } from 'app/state/api/context';
-import { PlatformAccess } from 'appjusto-types';
+import { PlatformAccess } from '@appjusto/types';
 import React from 'react';
 
 export const usePlatformAccess = (loggedUser: boolean) => {

@@ -2,7 +2,7 @@ import { ApiConfig } from 'app/api/config/types';
 import firebase from 'firebase/app';
 import FirebaseRefs from '../FirebaseRefs';
 import * as Sentry from '@sentry/react';
-import { DeleteAccountPayload, UpdateEmailPayload } from 'appjusto-types';
+import { DeleteAccountPayload, UpdateEmailPayload } from '@appjusto/types';
 
 export default class AuthApi {
   constructor(

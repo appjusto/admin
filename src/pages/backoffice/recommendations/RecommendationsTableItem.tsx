@@ -1,5 +1,5 @@
+import { BusinessRecommendation, WithId } from '@appjusto/types';
 import { Td, Tr } from '@chakra-ui/react';
-import { BusinessRecommendation, WithId } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { phoneFormatter } from 'common/components/form/input/pattern-input/formatters';
 import { useRouteMatch } from 'react-router';

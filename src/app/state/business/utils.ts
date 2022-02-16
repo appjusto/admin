@@ -1,4 +1,4 @@
-import { Business, WithId } from 'appjusto-types';
+import { Business, WithId } from '@appjusto/types';
 import { isEqual } from 'lodash';
 
 type K = keyof WithId<Business>;

@@ -1,5 +1,5 @@
 import { useContextApi } from 'app/state/api/context';
-import { OutsourceAccountType, Order } from 'appjusto-types';
+import { OutsourceAccountType, Order } from '@appjusto/types';
 import { useCustomMutation } from '../mutation/useCustomMutation';
 
 export const useGetOutsourceDelivery = (orderId?: string) => {

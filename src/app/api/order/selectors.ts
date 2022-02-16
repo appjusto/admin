@@ -1,4 +1,4 @@
-import { Order, OrderStatus, WithId } from 'appjusto-types';
+import { Order, OrderStatus, WithId } from '@appjusto/types';
 //import { FoodOrdersValues } from './OrderApi';
 
 export type OrdersByStatus = { [key: string]: WithId<Order>[] };

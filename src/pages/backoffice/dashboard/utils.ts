@@ -1,4 +1,4 @@
-import { DispatchingStatus, OrderStatus } from 'appjusto-types';
+import { DispatchingStatus, OrderStatus } from '@appjusto/types';
 
 export const getOrderMatchingColor = (
   orderStatus: OrderStatus,

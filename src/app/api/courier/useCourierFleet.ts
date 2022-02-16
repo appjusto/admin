@@ -1,5 +1,5 @@
 import { useContextApi } from 'app/state/api/context';
-import { Fleet } from 'appjusto-types';
+import { Fleet } from '@appjusto/types';
 import React from 'react';
 
 export const useCourierFleet = (fleetId: string | undefined | null) => {

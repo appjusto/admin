@@ -1,5 +1,5 @@
 import { useContextApi } from 'app/state/api/context';
-import { ConsumerProfile, WithId } from 'appjusto-types';
+import { ConsumerProfile, WithId } from '@appjusto/types';
 import React from 'react';
 
 export const useConsumerProfile = (consumerId: string | undefined | null) => {

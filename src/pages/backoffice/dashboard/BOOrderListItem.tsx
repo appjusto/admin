@@ -1,8 +1,8 @@
+import { Order, WithId } from '@appjusto/types';
 import { Box, Flex, Icon, Image, Stack, Text } from '@chakra-ui/react';
 import { useObserveOrderChatMessages } from 'app/api/chat/useObserveOrderChatMessages';
 import { useObserveOrderIssues } from 'app/api/order/useObserveOrderIssues';
 import { useContextServerTime } from 'app/state/server-time';
-import { Order, WithId } from 'appjusto-types';
 import foodIcon from 'common/img/bo-food.svg';
 import p2pIcon from 'common/img/bo-p2p.svg';
 import firebase from 'firebase/app';

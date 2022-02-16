@@ -1,5 +1,5 @@
+import { Order, WithId } from '@appjusto/types';
 import { Box, Table, Tbody, Td, Tfoot, Th, Thead, Tr } from '@chakra-ui/react';
-import { Order, WithId } from 'appjusto-types';
 import { formatCurrency } from 'utils/formatters';
 import { t } from 'utils/i18n';
 import { OrdersTableItem } from './OrdersTableItem';

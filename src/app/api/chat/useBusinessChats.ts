@@ -1,6 +1,6 @@
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusinessId } from 'app/state/business/context';
-import { ChatMessage, Order, WithId } from 'appjusto-types';
+import { ChatMessage, Order, WithId } from '@appjusto/types';
 import React from 'react';
 import { OrderChatGroup } from 'app/api/chat/types';
 import { getOrderChatGroup } from './utils';
