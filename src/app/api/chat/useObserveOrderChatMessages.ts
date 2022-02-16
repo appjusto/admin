@@ -15,7 +15,7 @@ export const useObserveOrderChatMessages = (orderId?: string, limit?: number) =>
     if (!orderId) return;
     const unsub = api.chat().observeOrderChatMessages({ orderId, limit }, setChatMessages);
     return () => unsub();
-  }, [api, orderId]);
+  }, [api, orderId, limit]);
   React.useEffect(() => {
     if (!chatMessages) return;
     setOrderChatGroup(getOrderChatTypeGroup(chatMessages));
