@@ -1,4 +1,4 @@
-import { ScheduleObject } from '@appjusto/types/business';
+import { ScheduleObject } from '@appjusto/types';
 import { Flex, HStack, Link, RadioGroup } from '@chakra-ui/react';
 import { CustomPatternInput as Input } from 'common/components/form/input/pattern-input/CustomPatternInput';
 import { TimeFormatter, TimeMask } from 'common/components/form/input/pattern-input/formatters';

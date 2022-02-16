@@ -1,4 +1,4 @@
-import { ScheduleObject } from '@appjusto/types/business';
+import { ScheduleObject } from '@appjusto/types';
 import { CloseIcon, InfoOutlineIcon } from '@chakra-ui/icons';
 import { Button, Flex, RadioGroup, Text } from '@chakra-ui/react';
 import CustomCheckbox from 'common/components/form/CustomCheckbox';

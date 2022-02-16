@@ -1,5 +1,4 @@
-import { Flavor } from '@appjusto/types';
-import { ChatMessageType } from '@appjusto/types/order/chat';
+import { ChatMessageType, Flavor } from '@appjusto/types';
 import {
   Drawer,
   DrawerBody,

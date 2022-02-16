@@ -1,4 +1,4 @@
-import { DispatchingStatus } from '@appjusto/types/order/dispatching';
+import { DispatchingStatus } from '@appjusto/types';
 import { Box, Flex, HStack, Text } from '@chakra-ui/react';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { Textarea } from 'common/components/form/input/Textarea';

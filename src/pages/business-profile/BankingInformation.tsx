@@ -1,5 +1,4 @@
-import { Bank, BankAccount, WithId } from '@appjusto/types';
-import { BankAccountPersonType, BankAccountType } from '@appjusto/types/banking';
+import { Bank, BankAccount, BankAccountPersonType, BankAccountType, WithId } from '@appjusto/types';
 import { Box, Flex, RadioGroup, Stack, Text } from '@chakra-ui/react';
 import { useBanks } from 'app/api/business/profile/useBanks';
 import { useBusinessBankAccount } from 'app/api/business/profile/useBusinessBankAccount';

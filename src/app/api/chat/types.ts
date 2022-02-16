@@ -1,5 +1,4 @@
-import { ChatMessageUser, ChatMessage, WithId, Flavor } from '@appjusto/types';
-import { ChatMessageType } from '@appjusto/types/order/chat';
+import { ChatMessageUser, ChatMessage, WithId, Flavor, ChatMessageType } from '@appjusto/types';
 import firebase from 'firebase/app';
 
 export interface GroupedChatMessages {

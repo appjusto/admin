@@ -1,5 +1,4 @@
-import { ChatMessage, Flavor } from '@appjusto/types';
-import { ChatMessageType } from '@appjusto/types/order/chat';
+import { ChatMessage, ChatMessageType, Flavor } from '@appjusto/types';
 import {
   Box,
   Button,

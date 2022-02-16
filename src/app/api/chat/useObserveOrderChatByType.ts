@@ -1,9 +1,8 @@
 import { useContextApi } from 'app/state/api/context';
-import { ChatMessage, WithId } from '@appjusto/types';
+import { ChatMessage, WithId, ChatMessageType } from '@appjusto/types';
 import React from 'react';
 import { GroupedChatMessages } from 'app/api/chat/types';
 import { groupOrderChatMessages, sortMessages } from 'app/api/chat/utils';
-import { ChatMessageType } from '@appjusto/types/order/chat';
 
 export const useObserveOrderChatByType = (orderId: string, type: ChatMessageType) => {
   // context

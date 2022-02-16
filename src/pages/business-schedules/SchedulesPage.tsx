@@ -1,4 +1,4 @@
-import { BusinessSchedule, ScheduleObject } from '@appjusto/types/business';
+import { BusinessSchedule, ScheduleObject } from '@appjusto/types';
 import { Button, Flex } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useContextBusiness } from 'app/state/business/context';

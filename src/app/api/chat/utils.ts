@@ -1,8 +1,7 @@
-import { ChatMessage, Order, WithId } from '@appjusto/types';
+import { ChatMessage, Order, WithId, ChatMessageType } from '@appjusto/types';
 import { first } from 'lodash';
 import { GroupedChatMessages, OrderChatGroup, OrderChatTypeGroup } from './types';
 import firebase from 'firebase/app';
-import { ChatMessageType } from '@appjusto/types/order/chat';
 
 export const timestampToDate = (value: firebase.firestore.FieldValue) =>
   (value as firebase.firestore.Timestamp).toDate();

@@ -1,4 +1,4 @@
-import { DispatchingStatus } from '@appjusto/types/order/dispatching';
+import { DispatchingStatus } from '@appjusto/types';
 import { Box, HStack, Text } from '@chakra-ui/react';
 import { useCourierSearch } from 'app/api/courier/useCourierSearch';
 import { AlertSuccess } from 'common/components/AlertSuccess';
