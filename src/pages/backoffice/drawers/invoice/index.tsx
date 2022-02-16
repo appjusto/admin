@@ -1,4 +1,3 @@
-import { IuguInvoiceStatus } from '@appjusto/types/payment/iugu';
 import {
   Box,
   Drawer,
@@ -71,9 +70,7 @@ export const InvoiceDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
             <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
               {t('Status:')}{' '}
               <Text as="span" fontWeight="500">
-                {invoice?.status
-                  ? invoiceStatusPTOptions[invoice.status as IuguInvoiceStatus]
-                  : 'N/E'}
+                {invoice?.status ? invoiceStatusPTOptions[invoice.status] : 'N/E'}
               </Text>
             </Text>
             <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
