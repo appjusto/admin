@@ -16,6 +16,7 @@ import firebase from 'firebase/app';
 import { ChatMessages } from 'pages/chat/ChatMessages';
 import React from 'react';
 import { useParams } from 'react-router';
+import { Link } from 'react-router-dom';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 
@@ -71,9 +72,16 @@ export const BOChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
                 </Text>
                 <Text mt="2" fontSize="md" color="black" fontWeight="700" lineHeight="22px">
                   {t('ID do pedido:')}{' '}
-                  <Text as="span" color="gray.600" fontWeight="500">
-                    {orderId ?? 'N/E'}
-                  </Text>
+                  <Link to={`/backoffice/order/${orderId}/chats`}>
+                    <Text
+                      as="span"
+                      color="gray.600"
+                      fontWeight="500"
+                      _hover={{ textDecor: 'underline' }}
+                    >
+                      {orderId ?? 'N/E'}
+                    </Text>
+                  </Link>
                 </Text>
                 <Text fontSize="md" color="black" fontWeight="700" lineHeight="22px">
                   {t('Atualizado em:')}{' '}
