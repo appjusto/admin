@@ -66,7 +66,7 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
   const invoices = useObserveOrderInvoices(order?.id);
   const cancelOptions = useIssuesByType(cancelOptionsArray);
   const { addFlaggedLocation } = useFlaggedLocations();
-  const { chatMessages, orderChatGroup } = useObserveOrderChatMessages(order?.id);
+  const { chatMessages, orderChatGroup } = useObserveOrderChatMessages(order?.id, 1);
   // state
   const [status, setStatus] = React.useState<OrderStatus | undefined>(order?.status);
   const [dispatchingState, setDispatchingState] = React.useState<DispatchingState | undefined>(

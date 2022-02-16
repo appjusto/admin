@@ -4,7 +4,7 @@ import React from 'react';
 import { OrderChatTypeGroup } from './types';
 import { getOrderChatTypeGroup } from './utils';
 
-export const useObserveOrderChatMessages = (orderId?: string) => {
+export const useObserveOrderChatMessages = (orderId?: string, limit?: number) => {
   // context
   const api = useContextApi();
   // state
@@ -13,7 +13,7 @@ export const useObserveOrderChatMessages = (orderId?: string) => {
   // side effects
   React.useEffect(() => {
     if (!orderId) return;
-    const unsub = api.chat().observeOrderChatMessages(orderId, setChatMessages);
+    const unsub = api.chat().observeOrderChatMessages({ orderId, limit }, setChatMessages);
     return () => unsub();
   }, [api, orderId]);
   React.useEffect(() => {

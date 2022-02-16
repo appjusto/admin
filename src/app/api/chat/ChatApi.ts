@@ -34,13 +34,11 @@ export default class ChatApi {
   }
 
   observeOrderChatMessages(
-    orderId: string,
+    { orderId, limit }: { orderId: string; limit?: number },
     resultHandler: (messages: WithId<ChatMessage>[]) => void
   ) {
-    const query = this.refs
-      .getChatsRef()
-      .where('orderId', '==', orderId)
-      .orderBy('timestamp', 'asc');
+    let query = this.refs.getChatsRef().where('orderId', '==', orderId).orderBy('timestamp', 'asc');
+    if (limit) query = query.limit(limit);
     return customCollectionSnapshot(query, resultHandler);
   }
 
