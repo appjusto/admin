@@ -21,7 +21,7 @@ const InvoicesPage = () => {
   const [searchId, setSearchId] = React.useState('');
   const [searchFrom, setSearchFrom] = React.useState('');
   const [searchTo, setSearchTo] = React.useState('');
-  const [filterBar, setFilterBar] = React.useState<'created' | IuguInvoiceStatus>();
+  const [filterBar, setFilterBar] = React.useState<IuguInvoiceStatus>();
   const [clearDateNumber, setClearDateNumber] = React.useState(0);
   // context
   const { path } = useRouteMatch();
@@ -73,11 +73,6 @@ const InvoicesPage = () => {
               isActive={!filterBar}
               label={t('Todas')}
               onClick={() => setFilterBar(undefined)}
-            />
-            <FilterText
-              isActive={filterBar === 'created'}
-              label={t('Criada')}
-              onClick={() => setFilterBar('created')}
             />
             <FilterText
               isActive={filterBar === 'in_analysis'}

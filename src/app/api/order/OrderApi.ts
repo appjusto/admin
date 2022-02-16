@@ -333,7 +333,7 @@ export default class OrderApi {
     start?: Date | null,
     end?: Date | null,
     startAfter?: FirebaseDocument,
-    status?: 'created' | IuguInvoiceStatus
+    status?: IuguInvoiceStatus
   ): firebase.Unsubscribe {
     let query = this.refs.getInvoicesRef().orderBy('createdOn', 'desc').limit(queryLimit);
     if (status) query = query.where('status', '==', status);
