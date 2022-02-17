@@ -95,7 +95,7 @@ export const OrderToPrinting = React.forwardRef<HTMLDivElement, OrderToPrintProp
                 {t('Item')}
               </Th>
               <Th isNumeric fontSize="12px" pr="0">
-                {t('Valor')}
+                {t('Valor und.')}
               </Th>
             </Tr>
           </Thead>

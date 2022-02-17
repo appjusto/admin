@@ -70,7 +70,7 @@ export const FraudPrevention = ({
           isLoading={loadingState === 'preventCancel'}
           loadingText={t('Cancelando')}
         >
-          {t('Cancelar pedido')}
+          {t('Rejeitar pedido')}
         </Button>
         <Button
           w="100%"
