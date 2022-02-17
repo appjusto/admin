@@ -29,7 +29,10 @@ export default class ChatApi {
       .where('orderId', 'in', ordersIds)
       .where('participantsIds', 'array-contains', businessId)
       .orderBy('timestamp', 'asc');
-    return customCollectionSnapshot(query, resultHandler);
+    return customCollectionSnapshot(query, resultHandler, {
+      avoidPenddingWrites: false,
+      captureException: false,
+    });
   }
 
   observeOrderChatMessages(
