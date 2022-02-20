@@ -7,6 +7,7 @@ import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useOrdersContext } from 'app/state/order';
 import { useContextServerTime } from 'app/state/server-time';
 import { ReactComponent as Alarm } from 'common/img/alarm_outlined.svg';
+import firebase from 'firebase/app';
 import React from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
 import { getTimestampMilliseconds, getTimeUntilNow } from 'utils/functions';
