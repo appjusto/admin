@@ -1,5 +1,5 @@
+import { AlgoliaConfig, Environment } from '@appjusto/types';
 import { getSearchConfig } from 'app/api/config';
-import { AlgoliaConfig, Environment } from 'appjusto-types';
 import React, { useContext } from 'react';
 import Api from '../../api/search/SearchApi';
 

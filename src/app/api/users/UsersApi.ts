@@ -1,9 +1,10 @@
 import * as Sentry from '@sentry/react';
-import { WithId, User, ProfileChange, UserProfile, UserType } from 'appjusto-types';
+import { WithId, User, ProfileChange, UserProfile, UserType } from '@appjusto/types';
 import { documentAs, documentsAs, FirebaseDocument } from '../../../core/fb';
 import FirebaseRefs from '../FirebaseRefs';
 import firebase from 'firebase/app';
 import { ProfileChangesSituations } from './useObserveUsersChanges';
+import { queryLimit } from '../utils';
 
 export type UsersSearchType = 'email' | 'cpf' | 'phone';
 export default class UsersApi {
@@ -22,13 +23,6 @@ export default class UsersApi {
     end?: Date | null,
     startAfter?: FirebaseDocument
   ): firebase.Unsubscribe {
-    //console.log({
-    //  searchType: searchType,
-    //  search: search,
-    //  isBlocked: isBlocked,
-    //  start: start,
-    //  end: end,
-    //});
     // query
     if (searchType === 'email' && search) {
       const unsubscribe = this.refs
@@ -47,7 +41,7 @@ export default class UsersApi {
       // returns the unsubscribe function
       return unsubscribe;
     }
-    let query = this.refs.getUsersRef().orderBy('lastSignInRequest', 'desc').limit(20);
+    let query = this.refs.getUsersRef().orderBy('lastSignInRequest', 'desc').limit(queryLimit);
     // search
     if (startAfter) query = query.startAfter(startAfter);
     if (searchType === 'cpf' && search) query = query.where('cpf', '==', search);
@@ -97,8 +91,12 @@ export default class UsersApi {
   }
 
   observeUsersChanges(
+    resultHandler: (
+      changes: WithId<ProfileChange>[],
+      last?: firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
+    ) => void,
     situations: ProfileChangesSituations[],
-    resultHandler: (changes: WithId<ProfileChange>[]) => void
+    startAfter?: firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
   ): firebase.Unsubscribe {
     // query
     let query = this.refs
@@ -106,15 +104,18 @@ export default class UsersApi {
       .orderBy('createdOn', 'asc')
       .where('situation', 'in', situations);
     // observer
-    const unsubscribe = query.onSnapshot(
-      (querySnapshot) => resultHandler(documentsAs<ProfileChange>(querySnapshot.docs)),
+    if (startAfter) query = query.startAfter(startAfter);
+    // returns the unsubscribe function
+    return query.onSnapshot(
+      (snapshot) => {
+        const last = snapshot.docs.length > 0 ? snapshot.docs[snapshot.docs.length - 1] : undefined;
+        resultHandler(documentsAs<ProfileChange>(snapshot.docs), last);
+      },
       (error) => {
         console.error(error);
         Sentry.captureException(error);
       }
     );
-    // returns the unsubscribe function
-    return unsubscribe;
   }
 
   observeUserChange(

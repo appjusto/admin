@@ -1,5 +1,5 @@
+import { Invoice, WithId } from '@appjusto/types';
 import { Box, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
-import { Invoice, WithId } from 'appjusto-types';
 import { t } from 'utils/i18n';
 import { InvoicesTableItem } from './InvoicesTableItem';
 
@@ -10,7 +10,7 @@ interface InvoicesTableProps {
 export const InvoicesTable = ({ invoices }: InvoicesTableProps) => {
   // UI
   return (
-    <Box mt="12" maxW="100vw" overflowX="auto">
+    <Box mt="6" maxW="100vw" overflowX="auto">
       <Table mt="4" size="md" variant="simple" pos="relative">
         <Thead>
           <Tr>

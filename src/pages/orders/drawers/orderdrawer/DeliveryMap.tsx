@@ -1,7 +1,7 @@
+import { LatLng, OrderStatus } from '@appjusto/types';
 import { Box, Flex, Spinner } from '@chakra-ui/react';
 import { getConfig } from 'app/api/config';
 import { useOrderDeliveryRoute } from 'app/api/order/useOrderDeliveryRoute';
-import { LatLng, OrderStatus } from 'appjusto-types';
 import { Marker } from 'common/components/MapsMarker';
 import BlackPackageSvg from 'common/img/map-black-package.svg';
 import BlackPointSvg from 'common/img/map-black-point.svg';

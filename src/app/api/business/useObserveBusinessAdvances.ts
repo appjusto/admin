@@ -1,5 +1,5 @@
 import { useContextApi } from 'app/state/api/context';
-import { AccountAdvance, WithId } from 'appjusto-types';
+import { AccountAdvance, WithId } from '@appjusto/types';
 import React from 'react';
 import dayjs from 'dayjs';
 

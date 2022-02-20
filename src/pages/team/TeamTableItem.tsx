@@ -69,7 +69,12 @@ export const TeamTableItem = ({
               formatTime((manager.createdOn as unknown) as Date)}
           </Td>
           <Td>
-            <Button size="sm" variant="dangerLight" onClick={() => setIsDeleting(true)}>
+            <Button
+              size="sm"
+              minW="160px"
+              variant="dangerLight"
+              onClick={() => setIsDeleting(true)}
+            >
               {t('Excluir colaborador')}
             </Button>
           </Td>

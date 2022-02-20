@@ -1,6 +1,6 @@
+import { MarketplaceAccountInfo } from '@appjusto/types';
 import { Box, Button, HStack, Text } from '@chakra-ui/react';
 import { MutationResult } from 'app/api/mutation/useCustomMutation';
-import { MarketplaceAccountInfo } from 'appjusto-types';
 import { AlertError } from 'common/components/AlertError';
 import React from 'react';
 import { getDateAndHour } from 'utils/functions';

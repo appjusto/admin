@@ -81,7 +81,7 @@ export const Documents = () => {
   // UI
   return (
     <Box mt="4">
-      <HStack spacing={4}>
+      <HStack spacing={{ base: 2, md: 4 }}>
         <Box textAlign="center">
           <ImageUploads
             key={pictures?.selfie ?? 'selfie'}

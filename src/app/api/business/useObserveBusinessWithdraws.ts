@@ -1,5 +1,5 @@
 import { useContextApi } from 'app/state/api/context';
-import { AccountWithdraw, WithId } from 'appjusto-types';
+import { AccountWithdraw, WithId } from '@appjusto/types';
 import React from 'react';
 import dayjs from 'dayjs';
 

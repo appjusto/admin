@@ -1,8 +1,8 @@
+import { WithId } from '@appjusto/types';
 import { Box, CheckboxGroup, Flex, HStack, Icon, Link, Text } from '@chakra-ui/react';
 import { CourierReview, CourierReviewType } from 'app/api/courier/CourierApi';
 import { useObserveCourierReviews } from 'app/api/courier/useObserveCourierReviews';
 import { useContextCourierProfile } from 'app/state/courier/context';
-import { WithId } from 'appjusto-types';
 import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import { CustomDateFilter } from 'common/components/form/input/CustomDateFilter';
 import React from 'react';

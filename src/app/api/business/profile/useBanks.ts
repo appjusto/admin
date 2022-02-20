@@ -1,5 +1,5 @@
 import { useContextApi } from 'app/state/api/context';
-import { Bank, WithId } from 'appjusto-types';
+import { Bank, WithId } from '@appjusto/types';
 import React from 'react';
 
 export const useBanks = () => {

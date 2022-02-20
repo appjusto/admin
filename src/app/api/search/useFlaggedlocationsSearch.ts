@@ -2,6 +2,7 @@ import { SearchResponse } from '@algolia/client-search';
 import { useContextSearchApi } from 'app/state/search/context';
 import { debounce } from 'lodash';
 import React from 'react';
+import { queryLimit } from '../utils';
 import { SearchKind } from './types';
 
 export const useFlaggedlocationsSearch = <T extends object>(
@@ -9,7 +10,7 @@ export const useFlaggedlocationsSearch = <T extends object>(
   kind: SearchKind,
   dateFilter?: number[],
   soughtValue?: string,
-  hitsPerPage: number = 20
+  hitsPerPage: number = queryLimit
 ) => {
   // context
   const api = useContextSearchApi();

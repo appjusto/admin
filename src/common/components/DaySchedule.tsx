@@ -1,5 +1,5 @@
+import { ScheduleObject } from '@appjusto/types';
 import { Flex, HStack, Link, RadioGroup } from '@chakra-ui/react';
-import { ScheduleObject } from 'appjusto-types/business';
 import { CustomPatternInput as Input } from 'common/components/form/input/pattern-input/CustomPatternInput';
 import { TimeFormatter, TimeMask } from 'common/components/form/input/pattern-input/formatters';
 import { numbersOnlyParser } from 'common/components/form/input/pattern-input/parsers';

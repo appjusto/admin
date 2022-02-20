@@ -1,8 +1,8 @@
+import { Order, WithId } from '@appjusto/types';
 import { Box, Flex, Icon, Image, Stack, Text } from '@chakra-ui/react';
-import { useObserveOrderChats } from 'app/api/order/useObserveOrderChats';
+import { useObserveOrderChatMessages } from 'app/api/chat/useObserveOrderChatMessages';
 import { useObserveOrderIssues } from 'app/api/order/useObserveOrderIssues';
 import { useContextServerTime } from 'app/state/server-time';
-import { Order, WithId } from 'appjusto-types';
 import foodIcon from 'common/img/bo-food.svg';
 import p2pIcon from 'common/img/bo-p2p.svg';
 import firebase from 'firebase/app';
@@ -13,6 +13,7 @@ import { useRouteMatch } from 'react-router-dom';
 import { getTimestampMilliseconds, getTimeUntilNow } from 'utils/functions';
 import { CustomLink } from './CustomLink';
 import { OrderTracking } from './OrderTracking';
+import { getOrderMatchingColor } from './utils';
 
 interface Props {
   order: WithId<Order>;
@@ -22,43 +23,26 @@ export const BOOrderListItem = ({ order }: Props) => {
   // context
   const { url } = useRouteMatch();
   const { getServerTime } = useContextServerTime();
-  const chatMessages = useObserveOrderChats(order.id);
+  const { chatMessages } = useObserveOrderChatMessages(order.id, 1);
   const issues = useObserveOrderIssues(order.id);
   // state
   const [orderDT, setOrderDT] = React.useState<number>();
-  // handlers
-  const getCourierIconStatus = () => {
-    if (typeof order.courier?.id === 'string')
-      return {
-        bg: '#6CE787',
-        color: 'black',
-      };
-    if (order.dispatchingStatus === 'outsourced')
-      return {
-        bg: '#FFBE00',
-        color: 'black',
-      };
-    if (['ready', 'dispatching'].includes(order.status) && !order.courier?.id) {
-      return {
-        bg: 'red',
-        color: 'white',
-      };
-    }
-    return {
-      bg: 'none',
-      color: '#C8D7CB',
-    };
-  };
   // helpers
   const isMessages = chatMessages ? chatMessages?.length > 0 : false;
   const issuesFound = issues && issues.length > 0 ? true : false;
   const isFlagged = order.status === 'charged' && order.flagged;
-  const courierIconStatus = getCourierIconStatus();
+  const courierIconStatus = getOrderMatchingColor(
+    order.status,
+    order.dispatchingStatus,
+    order.courier?.id
+  );
   // side effects
   React.useEffect(() => {
     const setNewTime = () => {
       const now = getServerTime().getTime();
-      const chargedOn = getTimestampMilliseconds(order.chargedOn as firebase.firestore.Timestamp);
+      const chargedOn = getTimestampMilliseconds(
+        order.timestamps.charged as firebase.firestore.Timestamp
+      );
       const time = chargedOn ? getTimeUntilNow(now, chargedOn) : null;
       if (time) setOrderDT(time);
     };

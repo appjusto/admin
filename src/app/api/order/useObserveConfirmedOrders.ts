@@ -1,5 +1,5 @@
 import React from 'react';
-import { OrderStatus } from 'appjusto-types';
+import { OrderStatus } from '@appjusto/types';
 import { useNotificationPermission } from 'app/utils/notifications/useNotificationPermission';
 import { difference } from 'lodash';
 import { useObserveOrders } from 'app/api/order/useObserveOrders';

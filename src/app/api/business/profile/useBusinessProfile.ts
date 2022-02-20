@@ -1,6 +1,6 @@
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusiness } from 'app/state/business/context';
-import { Business } from 'appjusto-types';
+import { Business } from '@appjusto/types';
 import React from 'react';
 import { useQuery } from 'react-query';
 import * as Sentry from '@sentry/react';

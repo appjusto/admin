@@ -1,6 +1,6 @@
+import { ProfileSituation } from '@appjusto/types';
 import { Box, CheckboxGroup, Flex, RadioGroup, Text, Textarea, VStack } from '@chakra-ui/react';
 import { useContextCourierProfile } from 'app/state/courier/context';
-import { ProfileSituation } from 'appjusto-types';
 import { AlertError } from 'common/components/AlertError';
 import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import CustomRadio from 'common/components/form/CustomRadio';

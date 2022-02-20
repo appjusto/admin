@@ -8,7 +8,8 @@ import {
   FlaggedLocation,
   WithId,
   Classification,
-} from 'appjusto-types';
+  PlatformParams,
+} from '@appjusto/types';
 import { documentsAs } from '../../../core/fb';
 import FirebaseRefs from '../FirebaseRefs';
 import firebase from 'firebase/app';
@@ -62,6 +63,18 @@ export default class PlatformApi {
     );
     // returns the unsubscribe function
     return unsubscribe;
+  }
+
+  observeParams(resultHandler: (params: PlatformParams | null) => void) {
+    return this.refs.getPlatformParamsRef().onSnapshot(
+      (snapshot) => {
+        if (snapshot.exists) resultHandler(snapshot.data() as PlatformParams);
+        else resultHandler(null);
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
   }
 
   async addFlaggedLocation(location: Partial<FlaggedLocation>) {

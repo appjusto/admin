@@ -1,7 +1,7 @@
+import { ProfileNote, WithId } from '@appjusto/types';
 import { Box, Button, Flex, HStack, Text } from '@chakra-ui/react';
 import { MutationResult } from 'app/api/mutation/useCustomMutation';
 import { useContextAgentProfile } from 'app/state/agent/context';
-import { ProfileNote, WithId } from 'appjusto-types';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
 import { omitBy } from 'lodash';
 import React from 'react';
@@ -86,12 +86,17 @@ export const ProfileNotes = ({
             onChange={(ev) => setNewNote(ev.target.value)}
           />
           <HStack mt="4" justifyContent="flex-end" spacing={4}>
-            <Button size="md" minW="160px" variant="dangerLight" onClick={() => setIsAdding(false)}>
+            <Button
+              size="md"
+              w={{ base: '90px', md: '160px' }}
+              variant="dangerLight"
+              onClick={() => setIsAdding(false)}
+            >
               {t('Cancelar')}
             </Button>
             <Button
               size="md"
-              minW="160px"
+              w={{ base: '90px', md: '160px' }}
               onClick={handleAddNote}
               isLoading={isLoading}
               loadingText={t('Salvando')}

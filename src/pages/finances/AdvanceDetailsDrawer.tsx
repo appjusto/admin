@@ -1,5 +1,5 @@
+import { AccountAdvance, WithId } from '@appjusto/types';
 import { Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
-import { AccountAdvance, WithId } from 'appjusto-types';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import React from 'react';
 import { useParams } from 'react-router';

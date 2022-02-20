@@ -1,8 +1,8 @@
+import { BusinessSchedule, ScheduleObject } from '@appjusto/types';
 import { Button, Flex } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextAppRequests } from 'app/state/requests/context';
-import { BusinessSchedule, ScheduleObject } from 'appjusto-types/business';
 import { Break, DaySchedule } from 'common/components/DaySchedule';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';

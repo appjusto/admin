@@ -1,6 +1,6 @@
+import { BusinessStatus } from '@appjusto/types';
 import { Box, Flex, RadioGroup, Text } from '@chakra-ui/react';
 import { useContextBusinessBackoffice } from 'app/state/business/businessBOContext';
-import { BusinessStatus } from 'appjusto-types';
 import CustomRadio from 'common/components/form/CustomRadio';
 import React from 'react';
 import { t } from 'utils/i18n';

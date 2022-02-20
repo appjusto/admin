@@ -1,5 +1,5 @@
-import { WithId } from 'appjusto-types';
-import { Complement, ComplementGroup } from 'appjusto-types';
+import { WithId } from '@appjusto/types';
+import { Complement, ComplementGroup } from '@appjusto/types';
 import React from 'react';
 import { useContextApi } from '../../../state/api/context';
 

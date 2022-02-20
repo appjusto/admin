@@ -5,8 +5,8 @@ import {
   ManagerProfile,
   NewManagerData,
   WithId,
-} from 'appjusto-types';
-import { GetBusinessManagersPayload } from 'appjusto-types/payloads/profile';
+  GetBusinessManagersPayload,
+} from '@appjusto/types';
 import firebase from 'firebase/app';
 import FirebaseRefs from '../FirebaseRefs';
 import { customCollectionSnapshot, customDocumentSnapshot } from '../utils';

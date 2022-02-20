@@ -1,5 +1,5 @@
+import { CourierProfile, WithId } from '@appjusto/types';
 import { Button, Icon, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
-import { CourierProfile, WithId } from 'appjusto-types';
 import React from 'react';
 import { t } from 'utils/i18n';
 

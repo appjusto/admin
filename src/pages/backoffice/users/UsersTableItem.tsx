@@ -1,5 +1,5 @@
+import { User, WithId } from '@appjusto/types';
 import { Icon, Td, Tr } from '@chakra-ui/react';
-import { User, WithId } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { MdBlock } from 'react-icons/md';
 import { useRouteMatch } from 'react-router';

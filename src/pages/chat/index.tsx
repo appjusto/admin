@@ -1,11 +1,10 @@
 import { ArrowBackIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, Icon, Input, InputGroup, InputRightElement } from '@chakra-ui/react';
 import { OrderChatGroup } from 'app/api/chat/types';
-import { timestampToDate } from 'app/api/chat/utils';
+import { getOrderedChatPage } from 'app/api/chat/utils';
 import { useOrdersContext } from 'app/state/order';
 import Container from 'common/components/Container';
 import { ReactComponent as SearchIcon } from 'common/img/searchIcon.svg';
-import firebase from 'firebase/app';
 import { OrdersHeader } from 'pages/orders/OrdersHeader';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
@@ -34,37 +33,7 @@ export const ChatPage = () => {
   }, []);
   React.useEffect(() => {
     if (!chats || !orders) return;
-    const fullChats = chats.map((chat) => {
-      const order = orders.find((order) => order.id === chat.orderId);
-      const orderCode = order?.code ?? 'N/E';
-      let lastUpdate = order?.createdOn as firebase.firestore.FieldValue;
-      const counterpartName = (counterpartId: string) => {
-        const isCourier = order?.courier?.id === counterpartId;
-        let name = 'N/E';
-        if (isCourier) name = order?.courier?.name!;
-        else name = order?.consumer.name!;
-        return name;
-      };
-      const newCounterPart = chat.counterParts.map((part) => {
-        if (part.updatedOn > lastUpdate) lastUpdate = part.updatedOn;
-        return { ...part, name: counterpartName(part.id) };
-      });
-      const newChat = {
-        ...chat,
-        counterParts: newCounterPart,
-        orderCode,
-        lastUpdate,
-      } as OrderChatGroup;
-      return newChat;
-    });
-    const sortMessages = (a: OrderChatGroup, b: OrderChatGroup) => {
-      if (a.lastUpdate && b.lastUpdate)
-        return timestampToDate(b.lastUpdate).getTime() - timestampToDate(a.lastUpdate).getTime();
-      if (!a.lastUpdate) return 1;
-      else if (!b.lastUpdate) return -1;
-      return 0;
-    };
-    const ordered = fullChats.sort(sortMessages);
+    const ordered = getOrderedChatPage(chats, orders);
     setOrderedChats(ordered);
   }, [orders, chats, setOrderedChats]);
   React.useEffect(() => {
@@ -104,7 +73,7 @@ export const ChatPage = () => {
                 borderColor="black"
                 _hover={{ borderColor: 'black' }}
                 value={search}
-                placeholder={t('Pesquisar por chat (ID ou Nome)')}
+                placeholder={t('Pesquisar por ID do pedido')}
                 onChange={(ev) => setSearch(ev.target.value)}
               />
               <InputRightElement

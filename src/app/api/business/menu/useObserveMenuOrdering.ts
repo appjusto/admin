@@ -1,6 +1,6 @@
 import * as menu from 'app/api/business/menu/functions';
 import { useContextApi } from 'app/state/api/context';
-import { Ordering } from 'appjusto-types';
+import { Ordering } from '@appjusto/types';
 import { isEmpty } from 'lodash';
 import React from 'react';
 

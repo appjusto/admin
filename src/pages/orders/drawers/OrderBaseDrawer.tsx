@@ -1,3 +1,4 @@
+import { Order, WithId } from '@appjusto/types';
 import {
   Box,
   Button,
@@ -15,11 +16,11 @@ import {
   Tooltip,
 } from '@chakra-ui/react';
 import { useOrdersContext } from 'app/state/order';
-import { Order, WithId } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import React from 'react';
 import { MdPrint } from 'react-icons/md';
+import { useRouteMatch } from 'react-router-dom';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { orderStatusPTOptions } from '../../backoffice/utils/index';
@@ -48,10 +49,12 @@ export const OrderBaseDrawer = ({
   ...props
 }: BaseDrawerProps) => {
   //context
+  const { path } = useRouteMatch();
   const { changeOrderStatus } = useOrdersContext();
   // refs
   const bodyRef = React.useRef<HTMLDivElement>(null);
   // helpers
+  const isHistory = path.includes('orders-history');
   const isCurrierArrived = order?.dispatchingState === 'arrived-pickup';
   //handlers
   const handlePrint = () => {
@@ -90,7 +93,7 @@ export const OrderBaseDrawer = ({
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
       <DrawerOverlay>
-        <DrawerContent>
+        <DrawerContent mt={isHistory ? { base: '16', lg: '0' } : '0'}>
           <DrawerCloseButton bg="green.500" mr="12px" _focus={{ outline: 'none' }} />
           <DrawerHeader pb="2">
             <Flex
@@ -157,7 +160,7 @@ export const OrderBaseDrawer = ({
                 <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
                   {t('Horário do pedido:')}{' '}
                   <Text as="span" color="black" fontWeight="700">
-                    {getDateAndHour(order?.confirmedOn)}
+                    {getDateAndHour(order?.timestamps.confirmed)}
                   </Text>
                 </Text>
                 {order?.status && order?.status !== 'confirmed' && (
@@ -256,6 +259,17 @@ export const OrderBaseDrawer = ({
                       {t(PrimaryButtonLabel)}
                     </Button>
                   )}
+                </Flex>
+              </Flex>
+            </DrawerFooter>
+          )}
+          {order?.status === 'dispatching' && order.outsourcedBy === 'business' && (
+            <DrawerFooter borderTop="1px solid #F2F6EA">
+              <Flex w="full" justifyContent="flex-start">
+                <Flex w="full" maxW="607px" pr="12" flexDir="row" justifyContent="flex-start">
+                  <Button width="full" maxW="200px" variant="dangerLight" onClick={cancel}>
+                    {t('Cancelar pedido')}
+                  </Button>
                 </Flex>
               </Flex>
             </DrawerFooter>

@@ -20,18 +20,17 @@ import {
   AccountAdvance,
   AccountWithdraw,
   BusinessMenuMessage,
-} from 'appjusto-types';
-import { Complement, ComplementGroup, Ordering, ProfileNote } from 'appjusto-types';
+} from '@appjusto/types';
+import { Complement, ComplementGroup, Ordering, ProfileNote } from '@appjusto/types';
 import firebase from 'firebase/app';
 import { documentAs, documentsAs } from '../../../core/fb';
 import FilesApi from '../FilesApi';
 import FirebaseRefs from '../FirebaseRefs';
-import { BusinessChatMessage } from './chat/useBusinessChats';
 import * as Sentry from '@sentry/react';
 import {
   IuguMarketplaceAccountAdvanceSimulation,
   IuguMarketplaceAccountReceivables,
-} from 'appjusto-types/payment/iugu';
+} from '@appjusto/types/payment/iugu';
 import { customCollectionSnapshot, customDocumentSnapshot } from '../utils';
 
 export default class BusinessApi {
@@ -39,15 +38,30 @@ export default class BusinessApi {
 
   // businesses
   observeBusinesses(
+    resultHandler: (
+      result: WithId<Business>[],
+      last?: firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
+    ) => void,
     situations: string[],
-    resultHandler: (result: WithId<Business>[]) => void
+    startAfter?: firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
   ): firebase.Unsubscribe {
-    const query = this.refs
+    let query = this.refs
       .getBusinessesRef()
       .orderBy('createdOn', 'asc')
-      .where('situation', 'in', situations);
+      .where('situation', 'in', situations)
+      .limit(5);
+    if (startAfter) query = query.startAfter(startAfter);
     // returns the unsubscribe function
-    return customCollectionSnapshot(query, resultHandler);
+    return query.onSnapshot(
+      (snapshot) => {
+        const last = snapshot.docs.length > 0 ? snapshot.docs[snapshot.docs.length - 1] : undefined;
+        resultHandler(documentsAs<Business>(snapshot.docs), last);
+      },
+      (error) => {
+        console.error(error);
+        Sentry.captureException(error);
+      }
+    );
   }
 
   observeBusinessesByStatus(
@@ -99,64 +113,6 @@ export default class BusinessApi {
       .where('createdOn', '<=', end);
     // returns the unsubscribe function
     return customCollectionSnapshot(query, resultHandler);
-  }
-
-  observeBusinessChatMessageAsFrom(
-    orderId: string,
-    businessId: string,
-    resultHandler: (orders: WithId<BusinessChatMessage>[]) => void
-  ): firebase.Unsubscribe {
-    const unsubscribe = this.refs
-      .getOrderChatRef(orderId)
-      .where('from.id', '==', businessId)
-      .orderBy('timestamp', 'asc')
-      .onSnapshot(
-        (querySnapshot) => {
-          //@ts-ignore
-          resultHandler((prev) => {
-            const prevFiltered = prev.filter(
-              (msg: WithId<BusinessChatMessage>) => msg.orderId !== orderId
-            );
-            const docs = documentsAs<ChatMessage>(querySnapshot.docs);
-            const messages = docs.map((msg) => ({ orderId, ...msg }));
-            return [...prevFiltered, ...messages];
-          });
-        },
-        (error) => {
-          console.error(error);
-        }
-      );
-    // returns the unsubscribe function
-    return unsubscribe;
-  }
-
-  observeBusinessChatMessageAsTo(
-    orderId: string,
-    businessId: string,
-    resultHandler: (orders: WithId<BusinessChatMessage>[]) => void
-  ): firebase.Unsubscribe {
-    const unsubscribe = this.refs
-      .getOrderChatRef(orderId)
-      .where('to.id', '==', businessId)
-      .orderBy('timestamp', 'asc')
-      .onSnapshot(
-        (querySnapshot) => {
-          //@ts-ignore
-          resultHandler((prev) => {
-            const prevFiltered = prev.filter(
-              (msg: WithId<BusinessChatMessage>) => msg.orderId !== orderId
-            );
-            const docs = documentsAs<ChatMessage>(querySnapshot.docs);
-            const messages = docs.map((msg) => ({ orderId, ...msg }));
-            return [...prevFiltered, ...messages];
-          });
-        },
-        (error) => {
-          console.error(error);
-        }
-      );
-    // returns the unsubscribe function
-    return unsubscribe;
   }
 
   observeBusinessMarketPlace(

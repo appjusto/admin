@@ -1,5 +1,5 @@
 import { useContextApi } from 'app/state/api/context';
-import { Order, WithId } from 'appjusto-types';
+import { Order, WithId } from '@appjusto/types';
 import React from 'react';
 
 export const useCourierOrders = (courierId?: string | null, start?: string, end?: string) => {

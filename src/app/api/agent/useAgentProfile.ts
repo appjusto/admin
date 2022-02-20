@@ -1,6 +1,6 @@
 import { useContextApi } from 'app/state/api/context';
 import { useContextFirebaseUser } from 'app/state/auth/context';
-import { ManagerProfile, WithId } from 'appjusto-types';
+import { ManagerProfile, WithId } from '@appjusto/types';
 import React from 'react';
 
 export const useAgentProfile = () => {

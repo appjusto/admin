@@ -17,6 +17,7 @@ import CourierApi from './courier/CourierApi';
 import ConsumerApi from './consumer/CosumerApi';
 import UsersApi from './users/UsersApi';
 import MeasurementApi from './measurement/MeasurementApi';
+import ChatApi from './chat/ChatApi';
 
 export default class Api {
   private static app: firebase.app.App;
@@ -39,6 +40,7 @@ export default class Api {
   private _consumer: ConsumerApi;
   private _users: UsersApi;
   private _measurement: MeasurementApi;
+  private _chat: ChatApi;
 
   constructor(config: ApiConfig) {
     if (!Api.app) {
@@ -83,6 +85,7 @@ export default class Api {
     this._consumer = new ConsumerApi(this._refs, this._files);
     this._users = new UsersApi(this._refs);
     this._measurement = new MeasurementApi(this._analytics);
+    this._chat = new ChatApi(this._refs);
   }
 
   measurement() {
@@ -123,5 +126,9 @@ export default class Api {
 
   users() {
     return this._users;
+  }
+
+  chat() {
+    return this._chat;
   }
 }

@@ -1,5 +1,5 @@
 import algoliasearch, { SearchClient, SearchIndex } from 'algoliasearch/lite';
-import { AlgoliaConfig, Environment, OrderStatus, OrderType } from 'appjusto-types';
+import { AlgoliaConfig, Environment, OrderStatus, OrderType } from '@appjusto/types';
 import { BusinessesFilter, SearchKind, BasicUserFilter } from './types';
 import { createNullCache } from '@algolia/cache-common';
 //import { createInMemoryCache } from '@algolia/cache-in-memory';

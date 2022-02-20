@@ -1,3 +1,4 @@
+import { ConsumerProfile } from '@appjusto/types';
 import {
   Box,
   Button,
@@ -16,7 +17,6 @@ import { useAuthentication } from 'app/api/auth/useAuthentication';
 import { useConsumerUpdateProfile } from 'app/api/consumer/useConsumerUpdateProfile';
 import { useContextConsumerProfile } from 'app/state/consumer/context';
 import { useContextAppRequests } from 'app/state/requests/context';
-import { ConsumerProfile } from 'appjusto-types';
 import { getEditableProfile } from 'pages/backoffice/utils';
 import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
 import React from 'react';
@@ -96,7 +96,7 @@ export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
       <DrawerOverlay>
-        <DrawerContent>
+        <DrawerContent mt={{ base: '16', lg: '0' }}>
           <DrawerCloseButton bg="green.500" mr="12px" _focus={{ outline: 'none' }} />
           <DrawerHeader pb="2">
             <Text color="black" fontSize="2xl" fontWeight="700" lineHeight="28px" mb="2">

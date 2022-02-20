@@ -1,6 +1,6 @@
+import { DispatchingState, DispatchingStatus, OrderStatus } from '@appjusto/types';
 import { Box, Circle, HStack, Icon, Skeleton, Text } from '@chakra-ui/react';
 import { useObserveOrderLogs } from 'app/api/order/useObserveOrderLogs';
-import { DispatchingState, DispatchingStatus, OrderStatus } from 'appjusto-types';
 import { last } from 'lodash';
 import React from 'react';
 import { MdInfoOutline } from 'react-icons/md';
@@ -25,18 +25,23 @@ export const OrderTracking = ({ orderId, isCompact }: OrderTrackingProps) => {
   const [currentTime, setCurrentTime] = React.useState<string>();
   // refs
   const trackingBoxRef = React.useRef<HTMLDivElement>(null);
-  // helpers
-  const matchingLabelColor =
-    currentDispatchingStatus === 'no-match'
-      ? '#DC3545'
-      : currentDispatchingStatus === 'outsourced'
-      ? '#FFBE00'
-      : '#055AFF';
   // handlers
+  const getMatchingLabelColor = () => {
+    let color = '#C8D7CB';
+    if (currentDispatchingStatus === 'no-match') color = '#DC3545';
+    else if (currentDispatchingStatus === 'outsourced') color = '#FFBE00';
+    else if (
+      (currentDispatchingStatus && currentDispatchingStatus !== 'scheduled') ||
+      currentDispatchingState
+    )
+      color = '#055AFF';
+    return color;
+  };
   const getMatchingLabel = () => {
     if (currentDispatchingStatus && !currentDispatchingState) {
       if (currentStatus === 'ready' || currentStatus === 'preparing')
-        return `${orderDispatchingStatusPTOptions[currentDispatchingStatus].toUpperCase()} `;
+        if (currentDispatchingStatus !== 'scheduled')
+          return `${orderDispatchingStatusPTOptions[currentDispatchingStatus].toUpperCase()} `;
     }
     if (currentDispatchingStatus === 'outsourced') return 'ENTREGA TERCEIRIZADA ';
     if (currentDispatchingState === 'going-pickup') return 'ENTREG. A CAMINHO DA RETIRADA ';
@@ -57,6 +62,7 @@ export const OrderTracking = ({ orderId, isCompact }: OrderTrackingProps) => {
   const getLogMatchingLabel = (status?: DispatchingStatus, state?: DispatchingState) => {
     if (status) return orderDispatchingStatusPTOptions[status];
     else if (state) {
+      if (state === 'going-pickup') return 'Entreg. a caminho da retirada ';
       if (state === 'arrived-pickup') return 'Entreg. no local da retirada ';
       if (state === 'going-destination') return 'Entreg. a caminho da entrega ';
       if (state === 'arrived-destination') return 'Entreg. no local da entrega ';
@@ -70,8 +76,10 @@ export const OrderTracking = ({ orderId, isCompact }: OrderTrackingProps) => {
     const lastLogWithStatus = last(logs.filter((log) => log.after.status));
     if (lastLog) setCurrentTime(getHourAndMinute(lastLog.timestamp));
     if (lastLogWithStatus) setCurrentStatus(lastLogWithStatus.after.status);
-    if (lastLog?.after.dispatchingStatus)
+    if (lastLog?.after.dispatchingStatus) {
+      if (lastLog.after.dispatchingStatus === 'matching') setCurrentDispatchingState(undefined);
       setCurrentDispatchingStatus(lastLog.after.dispatchingStatus);
+    }
     if (lastLog?.after.dispatchingState) setCurrentDispatchingState(lastLog.after.dispatchingState);
     if (trackingBoxRef.current) {
       trackingBoxRef.current.scroll({
@@ -81,6 +89,7 @@ export const OrderTracking = ({ orderId, isCompact }: OrderTrackingProps) => {
     }
   }, [logs]);
   // UI
+  const matchingLabelColor = getMatchingLabelColor();
   if (logs === undefined) {
     return (
       <Box w="100%" pb="2">

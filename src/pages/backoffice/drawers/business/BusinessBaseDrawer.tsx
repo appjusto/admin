@@ -39,7 +39,7 @@ export const BusinessBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
       <DrawerOverlay>
-        <DrawerContent>
+        <DrawerContent mt={{ base: '16', lg: '0' }}>
           <DrawerCloseButton bg="green.500" mr="12px" _focus={{ outline: 'none' }} />
           <DrawerHeader pb="0">
             <Text color="black" fontSize="2xl" fontWeight="700" lineHeight="28px" mb="2">
@@ -111,8 +111,8 @@ export const BusinessBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
               fontSize="lg"
               flexDir="row"
               alignItems="flex-start"
-              height="38px"
               borderBottom="1px solid #C8D7CB"
+              overflowX="auto"
             >
               <DrawerLink to={`${url}`} label={t('Cadastro')} />
               {business?.situation === 'approved' && (
@@ -127,8 +127,8 @@ export const BusinessBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
             <Flex w="full" flexDir="row" justifyContent="space-between">
               <Button
                 width="full"
-                maxW="240px"
-                fontSize="15px"
+                maxW={{ base: '160px', md: '240px' }}
+                fontSize={{ base: '13px', md: '15px' }}
                 onClick={handleSave}
                 isLoading={isLoading}
                 loadingText={t('Salvando')}
@@ -139,7 +139,8 @@ export const BusinessBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
                 id="personification"
                 mt="0"
                 width="full"
-                maxW="240px"
+                maxW={{ base: '160px', md: '240px' }}
+                fontSize={{ base: '13px', md: '15px' }}
                 variant="secondary"
                 label={t('Personificar restaurante')}
                 link={'/app'}

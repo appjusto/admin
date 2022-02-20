@@ -1,27 +1,36 @@
 import { useContextApi } from 'app/state/api/context';
+import { OutsourceAccountType, Order } from '@appjusto/types';
 import { useCustomMutation } from '../mutation/useCustomMutation';
 
 export const useGetOutsourceDelivery = (orderId?: string) => {
   // context
   const api = useContextApi();
-  // status
-  //const [deliveryAccountType, setDeliveryAccountType] = React.useState<AccountType>();
   // mutations
   const {
     mutateAsync: getOutsourceDelivery,
     mutationResult: outsourceDeliveryResult,
   } = useCustomMutation(
-    async () => (orderId ? api.order().getOutsourceDelivery(orderId) : null),
+    async (data: { accountType?: OutsourceAccountType }) =>
+      orderId ? api.order().getOutsourceDelivery(orderId, data.accountType) : null,
     'getOutsourceDelivery'
   );
-  // side effets
-  /*React.useEffect(() => {
-    if (!orderId) return;
-    return api.order().observeOrderInvoices(orderId, (invoices: WithId<Invoice>[]) => {
-      const delivery = invoices.find((invoice) => invoice.invoiceType === 'delivery');
-      if (delivery) setDeliveryAccountType(delivery.accountType);
-    });
-  }, [api, orderId]);*/
+  const {
+    mutateAsync: updateOutsourcingCourierName,
+    mutationResult: updateOutsourcingCourierNameResult,
+  } = useCustomMutation(async (name: string) => {
+    if (!orderId) return null;
+    const partialOrder = {
+      courier: {
+        name,
+      },
+    } as Partial<Order>;
+    return api.order().updateOrder(orderId, partialOrder);
+  }, 'updateOutsourcingCourierName');
   // return
-  return { getOutsourceDelivery, outsourceDeliveryResult };
+  return {
+    getOutsourceDelivery,
+    outsourceDeliveryResult,
+    updateOutsourcingCourierName,
+    updateOutsourcingCourierNameResult,
+  };
 };

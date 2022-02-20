@@ -1,7 +1,7 @@
+import { Complement, WithId } from '@appjusto/types';
 import { Box, Flex, HStack, Text, VStack } from '@chakra-ui/react';
 import { useComplementImage } from 'app/api/business/complements/useComplementImage';
 import { MutationResult } from 'app/api/mutation/useCustomMutation';
-import { Complement, WithId } from 'appjusto-types';
 import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput2';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';

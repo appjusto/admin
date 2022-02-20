@@ -1,5 +1,5 @@
+import { BusinessRecommendation, WithId } from '@appjusto/types';
 import { Box, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
-import { BusinessRecommendation, WithId } from 'appjusto-types';
 import { t } from 'utils/i18n';
 import { RecommendationsTableItem } from './RecommendationsTableItem';
 
@@ -8,11 +8,9 @@ interface RecommendationsTableProps {
 }
 
 export const RecommendationsTable = ({ recommendations }: RecommendationsTableProps) => {
-  // context
-
   // UI
   return (
-    <Box mt="12" maxW="100vw" overflowX="auto">
+    <Box mt={{ base: '6', md: '12' }} maxW="100vw" overflowX="auto">
       <Table mt="4" size="md" variant="simple" pos="relative">
         <Thead>
           <Tr>

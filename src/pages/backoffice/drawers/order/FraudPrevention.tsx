@@ -45,7 +45,7 @@ export const FraudPrevention = ({
       )}
       {flags?.newUser && (
         <Text mt="1" fontWeight="700">
-          <Icon as={MdWarningAmber} mr="2" /> {t('Primeiro pedido do consumidor;')}
+          <Icon as={MdWarningAmber} mr="2" /> {t('Consumidor novo;')}
         </Text>
       )}
       {flags?.highTicketPrice && (
@@ -70,7 +70,7 @@ export const FraudPrevention = ({
           isLoading={loadingState === 'preventCancel'}
           loadingText={t('Cancelando')}
         >
-          {t('Cancelar pedido')}
+          {t('Rejeitar pedido')}
         </Button>
         <Button
           w="100%"

@@ -1,5 +1,5 @@
+import { CourierAlgolia, ProfileSituation } from '@appjusto/types';
 import { Icon, Td, Tr } from '@chakra-ui/react';
-import { CourierAlgolia, ProfileSituation } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { useRouteMatch } from 'react-router';
 import { getAlgoliaFieldDateAndHour } from 'utils/functions';

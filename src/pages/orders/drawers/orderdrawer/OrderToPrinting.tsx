@@ -1,3 +1,4 @@
+import { Order, OrderItem, WithId } from '@appjusto/types';
 import {
   Box,
   Flex,
@@ -13,7 +14,6 @@ import {
   Tr,
 } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
-import { Order, OrderItem, WithId } from 'appjusto-types';
 import logoAppjusto from 'common/img/logo-black.svg';
 import React from 'react';
 import { formatCurrency } from 'utils/formatters';
@@ -95,7 +95,7 @@ export const OrderToPrinting = React.forwardRef<HTMLDivElement, OrderToPrintProp
                 {t('Item')}
               </Th>
               <Th isNumeric fontSize="12px" pr="0">
-                {t('Valor')}
+                {t('Valor und.')}
               </Th>
             </Tr>
           </Thead>
@@ -165,11 +165,17 @@ export const OrderToPrinting = React.forwardRef<HTMLDivElement, OrderToPrintProp
         <SectionTitle mt="2" fontSize="18px">
           {t('Observações')}
         </SectionTitle>
-        {order?.additionalInfo ? (
+        {order?.consumer.cpf && (
+          <Text mt="1" fontSize="12px" fontWeight="700">
+            {t('Incluir CPF na nota')}
+          </Text>
+        )}
+        {order?.additionalInfo && (
           <Text mt="1" fontSize="12px" fontWeight="700">
             {order?.additionalInfo}
           </Text>
-        ) : (
+        )}
+        {!order?.consumer.cpf && !order?.additionalInfo && (
           <Text mt="1" fontSize="12px">
             {t('Sem observações.')}
           </Text>

@@ -1,4 +1,4 @@
-import { WithId } from 'appjusto-types';
+import { WithId } from '@appjusto/types';
 import firebase from 'firebase/app';
 import { FirebaseError } from '../app/api/types';
 

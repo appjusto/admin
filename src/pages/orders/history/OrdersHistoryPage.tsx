@@ -1,8 +1,10 @@
-import { ArrowDownIcon, DeleteIcon } from '@chakra-ui/icons';
+import { OrderStatus } from '@appjusto/types';
+import { ArrowDownIcon } from '@chakra-ui/icons';
 import { Button, Flex, HStack, Stack, Text } from '@chakra-ui/react';
 import { useObserveBusinessOrdersHistory } from 'app/api/order/useObserveBusinessOrdersHistory';
 import { useContextBusinessId } from 'app/state/business/context';
-import { OrderStatus } from 'appjusto-types';
+import { ClearFiltersButton } from 'common/components/backoffice/ClearFiltersButton';
+import { FilterText } from 'common/components/backoffice/FilterText';
 import Container from 'common/components/Container';
 import { CustomDateFilter } from 'common/components/form/input/CustomDateFilter';
 import { CustomInput } from 'common/components/form/input/CustomInput';
@@ -33,13 +35,16 @@ const OrdersHistoryPage = () => {
   const [searchFrom, setSearchFrom] = React.useState('');
   const [searchTo, setSearchTo] = React.useState('');
   const [clearDateNumber, setClearDateNumber] = React.useState(0);
+  const [filterBar, setFilterBar] = React.useState('all');
+  const [orderStatus, setOrderStatus] = React.useState<OrderStatus>();
 
   const { orders, fetchNextPage } = useObserveBusinessOrdersHistory(
     businessId,
     statuses,
     searchId,
     searchFrom,
-    searchTo
+    searchTo,
+    orderStatus
   );
 
   // handlers
@@ -52,7 +57,14 @@ const OrdersHistoryPage = () => {
     setSearchId('');
     setSearchFrom('');
     setSearchTo('');
+    setFilterBar('all');
   };
+
+  // side effects
+  React.useEffect(() => {
+    if (filterBar === 'all') setOrderStatus(undefined);
+    else setOrderStatus(filterBar as OrderStatus);
+  }, [filterBar]);
 
   // UI
   return (
@@ -81,13 +93,27 @@ const OrdersHistoryPage = () => {
             getEnd={setSearchTo}
             clearNumber={clearDateNumber}
           />
-          <HStack spacing={2} color="#697667" cursor="pointer" onClick={clearFilters}>
-            <DeleteIcon />
-            <Text w="120px" fontSize="15px" lineHeight="21px">
-              {t('Limpar filtros')}
-            </Text>
-          </HStack>
         </Stack>
+      </Flex>
+      <Flex mt="8" w="100%" justifyContent="space-between" borderBottom="1px solid #C8D7CB">
+        <HStack spacing={4}>
+          <FilterText
+            isActive={filterBar === 'all' ? true : false}
+            label={t('Todos')}
+            onClick={() => setFilterBar('all')}
+          />
+          <FilterText
+            isActive={filterBar === 'delivered' ? true : false}
+            label={t('Entregues')}
+            onClick={() => setFilterBar('delivered')}
+          />
+          <FilterText
+            isActive={filterBar === 'canceled' ? true : false}
+            label={t('Cancelados')}
+            onClick={() => setFilterBar('canceled')}
+          />
+        </HStack>
+        <ClearFiltersButton clearFunction={clearFilters} />
       </Flex>
       <HStack mt="6" spacing={8} color="black">
         <Text fontSize="lg" fontWeight="700" lineHeight="26px">

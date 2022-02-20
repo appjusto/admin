@@ -1,6 +1,8 @@
-import { ArrowDownIcon, DeleteIcon } from '@chakra-ui/icons';
-import { Button, Flex, HStack, Text } from '@chakra-ui/react';
-import { useObserveRecommendations } from 'app/api/consumer/useObserveRecommendations';
+import { ArrowDownIcon } from '@chakra-ui/icons';
+import { Button, Flex, HStack, Stack, Text } from '@chakra-ui/react';
+import { useRecommendations } from 'app/api/consumer/useRecommendations';
+import { ClearFiltersButton } from 'common/components/backoffice/ClearFiltersButton';
+import { SearchButton } from 'common/components/backoffice/SearchButton';
 import { CustomDateFilter } from 'common/components/form/input/CustomDateFilter';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import React from 'react';
@@ -20,39 +22,33 @@ const RecommendationsPage = () => {
   const [search, setSearch] = React.useState('');
   const [searchFrom, setSearchFrom] = React.useState('');
   const [searchTo, setSearchTo] = React.useState('');
-
   const [clearDateNumber, setClearDateNumber] = React.useState(0);
-
-  const { recommendations, fetchNextPage } = useObserveRecommendations(
-    search,
-    searchFrom,
-    searchTo
-  );
-
+  const { recommendations, getRecomendations } = useRecommendations(search, searchFrom, searchTo);
   // handlers
   const closeDrawerHandler = () => {
     history.replace(path);
   };
-
+  const handleSearch = () => {
+    if (search.length === 0 && (!searchFrom || !searchTo)) return;
+    getRecomendations();
+  };
   const clearFilters = () => {
     setClearDateNumber((prev) => prev + 1);
     setSearch('');
     setSearchFrom('');
     setSearchTo('');
   };
-
   // side effects
   React.useEffect(() => {
     const { date, time } = getDateTime();
     setDateTime(`${date} às ${time}`);
   }, []);
-
   // UI
   return (
     <>
       <PageHeader title={t('Indicações')} subtitle={t(`Atualizado ${dateTime}`)} />
       <Flex mt="8">
-        <HStack spacing={4}>
+        <Stack spacing={4} direction={{ base: 'column', md: 'row' }}>
           <CustomInput
             mt="0"
             minW={{ lg: '260px' }}
@@ -67,15 +63,17 @@ const RecommendationsPage = () => {
             getEnd={setSearchTo}
             clearNumber={clearDateNumber}
           />
-        </HStack>
+          <SearchButton onClick={handleSearch} />
+        </Stack>
       </Flex>
-      <Flex mt="8" w="100%" pb="2" justifyContent="flex-end" borderBottom="1px solid #C8D7CB">
-        <HStack spacing={2} color="#697667" cursor="pointer" onClick={clearFilters}>
-          <DeleteIcon />
-          <Text fontSize="15px" lineHeight="21px">
-            {t('Limpar filtro')}
-          </Text>
-        </HStack>
+      <Flex
+        mt="8"
+        w="100%"
+        pb={{ lg: '2' }}
+        justifyContent="flex-end"
+        borderBottom="1px solid #C8D7CB"
+      >
+        <ClearFiltersButton clearFunction={clearFilters} />
       </Flex>
       <HStack mt="6" spacing={8} color="black">
         <Text fontSize="lg" fontWeight="700" lineHeight="26px">
@@ -83,7 +81,7 @@ const RecommendationsPage = () => {
         </Text>
       </HStack>
       <RecommendationsTable recommendations={recommendations} />
-      <Button mt="8" variant="secondary" onClick={fetchNextPage}>
+      <Button mt="8" variant="secondary" onClick={getRecomendations}>
         <ArrowDownIcon mr="2" />
         {t('Carregar mais')}
       </Button>

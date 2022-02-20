@@ -1,6 +1,6 @@
+import { Issue, IssueType } from '@appjusto/types';
 import { Box, Button, Flex, Image, Radio, RadioGroup, Text } from '@chakra-ui/react';
 import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';
-import { Issue, IssueType } from 'appjusto-types';
 import iconTraffic from 'common/img/icon-traffic.svg';
 import React from 'react';
 import { formatCurrency } from 'utils/formatters';

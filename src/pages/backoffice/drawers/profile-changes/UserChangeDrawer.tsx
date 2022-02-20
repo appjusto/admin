@@ -55,7 +55,7 @@ export const UserChangeDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
     return (
       <Drawer placement="right" size="lg" onClose={onClose} {...props}>
         <DrawerOverlay>
-          <DrawerContent>
+          <DrawerContent mt={{ base: '16', lg: '0' }}>
             <DrawerCloseButton bg="green.500" mr="12px" _focus={{ outline: 'none' }} />
             <DrawerHeader pb="2">
               <SectionTitle>{t('Dados do usuário')}</SectionTitle>
@@ -96,7 +96,7 @@ export const UserChangeDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
     return (
       <Drawer placement="right" size="lg" onClose={onClose} {...props}>
         <DrawerOverlay>
-          <DrawerContent>
+          <DrawerContent mt={{ base: '16', lg: '0' }}>
             <DrawerCloseButton bg="green.500" mr="12px" _focus={{ outline: 'none' }} />
             <DrawerHeader pb="2">
               <Text color="black" fontSize="2xl" fontWeight="700" lineHeight="28px" mb="2">
@@ -113,7 +113,7 @@ export const UserChangeDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
       <DrawerOverlay>
-        <DrawerContent>
+        <DrawerContent mt={{ base: '16', lg: '0' }}>
           <DrawerCloseButton bg="green.500" mr="12px" _focus={{ outline: 'none' }} />
           <DrawerHeader pb="2">
             <SectionTitle mt="0">{t('Dados do usuário')}</SectionTitle>

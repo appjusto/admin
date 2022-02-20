@@ -1,5 +1,5 @@
 import { useContextApi } from 'app/state/api/context';
-import { ProfileChange, WithId } from 'appjusto-types';
+import { ProfileChange, WithId } from '@appjusto/types';
 import React from 'react';
 import { useCustomMutation } from '../mutation/useCustomMutation';
 

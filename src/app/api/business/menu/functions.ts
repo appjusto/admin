@@ -1,5 +1,5 @@
 import { arrayMove } from 'app/utils/arrayMove';
-import { Ordering, WithId } from 'appjusto-types';
+import { Ordering, WithId } from '@appjusto/types';
 import { without, omit, isEmpty } from 'lodash';
 
 export const empty = (): Ordering => ({ firstLevelIds: [], secondLevelIdsByFirstLevelId: {} });

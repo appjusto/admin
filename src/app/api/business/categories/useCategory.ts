@@ -1,6 +1,6 @@
 import { useCustomMutation } from 'app/api/mutation/useCustomMutation';
 import { useContextBusinessId } from 'app/state/business/context';
-import { Category } from 'appjusto-types';
+import { Category } from '@appjusto/types';
 import React from 'react';
 import { useQuery } from 'react-query';
 import { useContextApi } from '../../../state/api/context';

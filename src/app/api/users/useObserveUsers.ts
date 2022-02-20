@@ -1,10 +1,11 @@
 import { useContextApi } from 'app/state/api/context';
-import { User, UserType, WithId } from 'appjusto-types';
+import { User, UserType, WithId } from '@appjusto/types';
 import React from 'react';
 import { UsersSearchType } from './UsersApi';
-import { uniqWith, isEqual } from 'lodash';
 import dayjs from 'dayjs';
 import firebase from 'firebase/app';
+
+const initialMap = new Map();
 
 export const useObserveUsers = (
   loggedAt: UserType[],
@@ -17,6 +18,9 @@ export const useObserveUsers = (
   // context
   const api = useContextApi();
   // state
+  const [usersMap, setUsersMap] = React.useState<Map<string | undefined, WithId<User>[]>>(
+    initialMap
+  );
   const [users, setUsers] = React.useState<WithId<User>[]>();
   const [startAfter, setStartAfter] = React.useState<
     firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
@@ -30,6 +34,8 @@ export const useObserveUsers = (
   }, [lastUser]);
   // side effects
   React.useEffect(() => {
+    if (start && !end) return;
+    setUsersMap(initialMap);
     setStartAfter(undefined);
   }, [loggedAt, searchType, search, isBlocked, start, end]);
   React.useEffect(() => {
@@ -39,16 +45,12 @@ export const useObserveUsers = (
     let endDate = end ? dayjs(end).endOf('day').toDate() : null;
     const unsub = api.users().observeUsers(
       (results, last) => {
-        if (!startAfter) setUsers(results);
-        else
-          setUsers((prev) => {
-            if (prev) {
-              const union = [...prev, ...results];
-              return uniqWith(union, isEqual);
-            }
-            return results;
-          });
-        setLastUser(last);
+        setUsersMap((current) => {
+          const value = new Map(current.entries());
+          value.set(startAfter?.id, results);
+          return value;
+        });
+        if (last) setLastUser(last);
       },
       loggedFilter,
       isBlocked,
@@ -60,6 +62,9 @@ export const useObserveUsers = (
     );
     return () => unsub();
   }, [api, startAfter, loggedAt, searchType, search, isBlocked, start, end]);
+  React.useEffect(() => {
+    setUsers(Array.from(usersMap.values()).reduce((result, orders) => [...result, ...orders], []));
+  }, [usersMap]);
   // return
   return { users, fetchNextPage };
 };

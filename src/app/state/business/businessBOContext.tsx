@@ -1,15 +1,15 @@
-import * as cpfutils from '@fnando/cpf';
-import { useBusinessBankAccount } from 'app/api/business/profile/useBusinessBankAccount';
-import { useBusinessManagerAndBankAccountBatch } from 'app/api/business/profile/useBusinessManagerAndBankAccountBatch';
-import { useBusinessMarketPlace } from 'app/api/business/useBusinessMarketPlace';
-import { MutationResult } from 'app/api/mutation/useCustomMutation';
 import {
   BankAccount,
   Business,
   ManagerProfile,
   MarketplaceAccountInfo,
   WithId,
-} from 'appjusto-types';
+} from '@appjusto/types';
+import * as cpfutils from '@fnando/cpf';
+import { useBusinessBankAccount } from 'app/api/business/profile/useBusinessBankAccount';
+import { useBusinessManagerAndBankAccountBatch } from 'app/api/business/profile/useBusinessManagerAndBankAccountBatch';
+import { useBusinessMarketPlace } from 'app/api/business/useBusinessMarketPlace';
+import { MutationResult } from 'app/api/mutation/useCustomMutation';
 import { BackofficeProfileValidation } from 'common/types';
 import { isEmpty, isEqual } from 'lodash';
 import React, { Dispatch, SetStateAction } from 'react';

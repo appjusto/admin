@@ -1,4 +1,4 @@
-import { FlaggedLocation } from 'appjusto-types';
+import { FlaggedLocation } from '@appjusto/types';
 import { useContextApi } from 'app/state/api/context';
 import { useCustomMutation } from '../mutation/useCustomMutation';
 

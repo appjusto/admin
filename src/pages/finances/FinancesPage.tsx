@@ -1,3 +1,4 @@
+import { IuguInvoiceStatus } from '@appjusto/types/payment/iugu';
 import { Box, Stack } from '@chakra-ui/react';
 import { useAccountInformation } from 'app/api/business/useAccountInformation';
 import { useObserveBusinessAdvances } from 'app/api/business/useObserveBusinessAdvances';
@@ -6,7 +7,6 @@ import { useRequestWithdraw } from 'app/api/business/useRequestWithdraw';
 import { useObserveInvoicesStatusByPeriod } from 'app/api/order/useObserveInvoicesStatusByPeriod';
 import { useContextBusinessId } from 'app/state/business/context';
 import { useContextAppRequests } from 'app/state/requests/context';
-import { IuguInvoiceStatus } from 'appjusto-types/payment/iugu';
 import { CustomMonthInput } from 'common/components/form/input/CustomMonthInput';
 import { ReactComponent as Checked } from 'common/img/icon-checked.svg';
 import { ReactComponent as Watch } from 'common/img/icon-stopwatch.svg';

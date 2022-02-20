@@ -2,13 +2,12 @@ import {
   CancelOrderPayload,
   ChatMessage,
   DropOrderPayload,
+  OutsourceAccountType,
   Invoice,
   Issue,
   MatchOrderPayload,
   Order,
   OrderCancellation,
-  //OrderCancellation,
-  OrderChange,
   OrderFraudPreventionFlags,
   OrderIssue,
   OrderMatching,
@@ -16,13 +15,13 @@ import {
   OrderType,
   OutsourceDeliveryPayload,
   WithId,
-} from 'appjusto-types';
+} from '@appjusto/types';
 import { documentAs, documentsAs, FirebaseDocument } from 'core/fb';
 import firebase from 'firebase/app';
 import FirebaseRefs from '../FirebaseRefs';
 import * as Sentry from '@sentry/react';
-import { IuguInvoiceStatus } from 'appjusto-types/payment/iugu';
-import { customCollectionSnapshot, customDocumentSnapshot } from '../utils';
+import { IuguInvoiceStatus } from '@appjusto/types/payment/iugu';
+import { customCollectionSnapshot, customDocumentSnapshot, queryLimit } from '../utils';
 
 export type CancellationData = {
   issue: WithId<Issue>;
@@ -32,6 +31,7 @@ export type CancellationData = {
 
 export type Ordering = 'asc' | 'desc';
 
+export type Unsubscribe = firebase.Unsubscribe;
 export interface OrderLog {
   before: Partial<Order>;
   after: Partial<Order>;
@@ -50,7 +50,7 @@ export default class OrderApi {
   ): firebase.Unsubscribe {
     let query = this.refs
       .getOrdersRef()
-      .orderBy('chargedOn', ordering)
+      .orderBy('timestamps.charged', ordering)
       .where('status', 'in', statuses);
 
     if (businessId) {
@@ -122,9 +122,8 @@ export default class OrderApi {
     orderStatus: OrderStatus | undefined,
     orderType: OrderType | null,
     startAfter: FirebaseDocument | undefined
-    //ignoreCache: boolean | undefined = false
   ): firebase.Unsubscribe {
-    let query = this.refs.getOrdersRef().orderBy('updatedOn', 'desc').limit(20);
+    let query = this.refs.getOrdersRef().orderBy('updatedOn', 'desc').limit(queryLimit);
     if (orderStatus) query = query.where('status', '==', orderStatus);
     else query = query.where('status', 'in', statuses);
     if (startAfter) query = query.startAfter(startAfter);
@@ -134,12 +133,9 @@ export default class OrderApi {
     if (orderType) query = query.where('type', '==', orderType);
     const unsubscribe = query.onSnapshot(
       (snapshot) => {
-        const last = snapshot.docs.length > 0 ? snapshot.docs[snapshot.size - 1] : undefined;
-        //if (ignoreCache) {
-        //  if (!snapshot.metadata.fromCache)
-        //    resultHandler(documentsAs<Order>(snapshot.docs), last);
-        //} else resultHandler(documentsAs<Order>(snapshot.docs), last);
         if (!snapshot.metadata.hasPendingWrites) {
+          const last =
+            snapshot.docs.length > 0 ? snapshot.docs[snapshot.docs.length - 1] : undefined;
           resultHandler(documentsAs<Order>(snapshot.docs), last);
         }
       },
@@ -159,25 +155,27 @@ export default class OrderApi {
     ) => void,
     businessId: string | undefined,
     statuses: OrderStatus[] | null,
-    orderCode: string | null | undefined,
-    start: Date | null | undefined,
-    end: Date | null | undefined,
-    startAfter: FirebaseDocument | undefined
-    //ignoreCache: boolean | undefined = false
+    orderCode?: string | null,
+    start?: Date | null,
+    end?: Date | null,
+    orderStatus?: OrderStatus,
+    startAfter?: FirebaseDocument
   ): firebase.Unsubscribe {
     let query = this.refs
       .getOrdersRef()
       .orderBy('updatedOn', 'desc')
-      .limit(20)
+      .limit(queryLimit)
       .where('business.id', '==', businessId)
       .where('status', 'in', statuses);
     if (startAfter) query = query.startAfter(startAfter);
     if (orderCode) query = query.where('code', '==', orderCode);
     if (start && end) query = query.where('updatedOn', '>=', start).where('updatedOn', '<=', end);
+    if (orderStatus) query = query.where('status', '==', orderStatus);
     const unsubscribe = query.onSnapshot(
       (snapshot) => {
-        const last = snapshot.docs.length > 0 ? snapshot.docs[snapshot.size - 1] : undefined;
         if (!snapshot.metadata.hasPendingWrites) {
+          const last =
+            snapshot.docs.length > 0 ? snapshot.docs[snapshot.docs.length - 1] : undefined;
           resultHandler(documentsAs<Order>(snapshot.docs), last);
         }
       },
@@ -218,6 +216,15 @@ export default class OrderApi {
     });
   }
 
+  observeOrderByOrderCode(orderCode: string, resultHandler: (order: WithId<Order>) => void) {
+    return this.refs
+      .getOrdersRef()
+      .where('code', '==', orderCode)
+      .onSnapshot((snapshot) => {
+        if (!snapshot.empty) resultHandler(documentAs<Order>(snapshot.docs[0]));
+      });
+  }
+
   observeOrderLogs(
     orderId: string,
     resultHandler: (order: WithId<OrderLog>[]) => void
@@ -225,30 +232,6 @@ export default class OrderApi {
     let query = this.refs.getOrderLogsRef(orderId).orderBy('timestamp', 'asc');
     // returns the unsubscribe function
     return customCollectionSnapshot(query, resultHandler);
-  }
-
-  observeOrderChats(
-    orderId: string,
-    resultHandler: (messages: ChatMessage[]) => void
-  ): firebase.Unsubscribe {
-    const unsubscribe = this.refs
-      .getOrderChatRef(orderId)
-      .orderBy('timestamp', 'asc')
-      .onSnapshot(
-        (querySnapshot) => {
-          //@ts-ignore
-          resultHandler(() => {
-            const docs = documentsAs<ChatMessage>(querySnapshot.docs);
-            const messages = docs.map((msg) => ({ orderId, ...msg }));
-            return [...messages];
-          });
-        },
-        (error) => {
-          console.error(error);
-        }
-      );
-    // returns the unsubscribe function
-    return unsubscribe;
   }
 
   observeOrderChat(
@@ -293,21 +276,6 @@ export default class OrderApi {
     return unsubscribe;
   }
 
-  async getOrderStatusTimestamp(
-    orderId: string,
-    status: OrderStatus,
-    resultHandler: (timestamp: firebase.firestore.Timestamp | null) => void
-  ) {
-    const query = this.refs
-      .getOrderLogsRef(orderId)
-      .where('after.status', '==', status)
-      .orderBy('timestamp', 'desc')
-      .limit(1);
-    const result = await query.get();
-    const log = documentsAs<OrderChange>(result.docs).find(() => true);
-    return resultHandler((log?.timestamp as firebase.firestore.Timestamp) ?? null);
-  }
-
   observeOrderPrivateMatching(
     orderId: string,
     resultHandler: (matching: OrderMatching | null) => void
@@ -326,39 +294,6 @@ export default class OrderApi {
     return unsubscribe;
   }
 
-  async getOrderPrivateCancellation(orderId: string) {
-    const data = await this.refs.getOrderCancellationRef(orderId).get();
-    if (!data.exists) return null;
-    return documentAs<OrderCancellation>(data);
-  }
-
-  async updateOrderCourierNotified(orderId: string, couriersNotified: string[]) {
-    return this.refs.getOrderMatchingRef(orderId).update({ couriersNotified });
-  }
-
-  async getOrderIssues(orderId: string) {
-    return documentsAs<OrderIssue>(
-      (await this.refs.getOrderIssuesRef(orderId).orderBy('createdOn', 'desc').get()).docs
-    );
-  }
-
-  async fetchOrderById(orderId: string) {
-    const data = await this.refs.getOrderRef(orderId).get();
-    return data ? { ...data.data(), id: orderId } : null;
-  }
-
-  async fetchOrdersByConsumerId(consumerId: string) {
-    return documentsAs<Order>(
-      (
-        await this.refs
-          .getOrdersRef()
-          .orderBy('createdOn', 'desc')
-          .where('consumer.id', '==', consumerId)
-          .get()
-      ).docs
-    );
-  }
-
   observeOrdersByCourierId(
     courierId: string,
     resultHandler: (orders: WithId<Order>[]) => void,
@@ -367,10 +302,10 @@ export default class OrderApi {
   ): firebase.Unsubscribe {
     let query = this.refs
       .getOrdersRef()
-      .orderBy('confirmedOn', 'desc')
+      .orderBy('timestamps.confirmed', 'desc')
       .where('courier.id', '==', courierId)
-      .where('confirmedOn', '>=', start)
-      .where('confirmedOn', '<=', end);
+      .where('timestamps.confirmed', '>=', start)
+      .where('timestamps.confirmed', '<=', end);
     // returns the unsubscribe function
     return customCollectionSnapshot(query, resultHandler);
   }
@@ -400,7 +335,7 @@ export default class OrderApi {
     startAfter?: FirebaseDocument,
     status?: IuguInvoiceStatus
   ): firebase.Unsubscribe {
-    let query = this.refs.getInvoicesRef().orderBy('createdOn', 'desc').limit(20);
+    let query = this.refs.getInvoicesRef().orderBy('createdOn', 'desc').limit(queryLimit);
     if (status) query = query.where('status', '==', status);
     if (startAfter) query = query.startAfter(startAfter);
     if (orderCode) query = query.where('orderCode', '==', orderCode);
@@ -449,12 +384,37 @@ export default class OrderApi {
     });
   }
 
-  async sendMessage(orderId: string, message: Partial<ChatMessage>) {
-    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
-    return this.refs.getOrderChatRef(orderId).add({
-      ...message,
-      timestamp,
-    });
+  async getOrderPrivateCancellation(orderId: string) {
+    const data = await this.refs.getOrderCancellationRef(orderId).get();
+    if (!data.exists) return null;
+    return documentAs<OrderCancellation>(data);
+  }
+
+  async updateOrderCourierNotified(orderId: string, couriersNotified: string[]) {
+    return this.refs.getOrderMatchingRef(orderId).update({ couriersNotified });
+  }
+
+  async getOrderIssues(orderId: string) {
+    return documentsAs<OrderIssue>(
+      (await this.refs.getOrderIssuesRef(orderId).orderBy('createdOn', 'desc').get()).docs
+    );
+  }
+
+  async fetchOrderById(orderId: string) {
+    const data = await this.refs.getOrderRef(orderId).get();
+    return data ? { ...data.data(), id: orderId } : null;
+  }
+
+  async fetchOrdersByConsumerId(consumerId: string) {
+    return documentsAs<Order>(
+      (
+        await this.refs
+          .getOrdersRef()
+          .orderBy('createdOn', 'desc')
+          .where('consumer.id', '==', consumerId)
+          .get()
+      ).docs
+    );
   }
 
   async createFakeOrder(order: Order) {
@@ -467,7 +427,8 @@ export default class OrderApi {
       ...changes,
       updatedOn: timestamp,
     };
-    if (changes.status === 'confirmed') orderChanges.confirmedOn = timestamp;
+    // CHECK IT
+    //if (changes.status === 'confirmed') orderChanges.confirmedOn = timestamp;
     await this.refs.getOrderRef(orderId).update(orderChanges);
   }
 
@@ -509,11 +470,12 @@ export default class OrderApi {
     return await this.refs.getDropOrderCallable()(payload);
   }
 
-  async getOutsourceDelivery(orderId: string) {
+  async getOutsourceDelivery(orderId: string, accountType?: OutsourceAccountType) {
     const payload: OutsourceDeliveryPayload = {
       meta: { version: '1' }, // TODO: pass correct version on
       orderId,
     };
+    if (accountType) payload.accountType = accountType;
     return await this.refs.getOutsourceDeliveryCallable()(payload);
   }
 }

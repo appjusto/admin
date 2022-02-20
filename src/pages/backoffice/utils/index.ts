@@ -30,6 +30,7 @@ export const orderStatusPTOptions = {
   confirming: 'Aguardando confirmação',
   charged: 'Cobrado',
   declined: 'Recusado',
+  rejected: 'Rejeitado',
   confirmed: 'Confirmado',
   preparing: 'Em preparo',
   ready: 'Pronto',
@@ -44,6 +45,7 @@ export const orderStatusPTOptionsForTableItem = {
   confirming: 'Confirmando',
   charged: 'Cobrado',
   declined: 'Recusado',
+  rejected: 'Rejeitado',
   confirmed: 'Confirmado',
   preparing: 'Em preparo',
   ready: 'Pronto',
@@ -55,6 +57,7 @@ export const orderStatusPTOptionsForTableItem = {
 
 export const orderDispatchingStatusPTOptions = {
   'idle': 'Ocioso',
+  'scheduled': 'Agendado',
   'matching': 'Buscando',
   'no-match': 'Não encontrado',
   'matched': 'Encontrado',
@@ -72,6 +75,7 @@ export const invoiceTypePTOptions = {
 
 export const invoiceStatusPTOptions = {
   in_analysis: 'Em análise',
+  created: 'Criada',
   pending: 'Pendente',
   paid: 'Paga',
   partially_paid: 'Parcialmente paga',

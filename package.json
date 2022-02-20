@@ -1,6 +1,6 @@
 {
   "name": "appjusto-admin",
-  "version": "6.5.0",
+  "version": "7.0.0",
   "private": true,
   "dependencies": {
     "@appjusto/types": "../types",
@@ -30,7 +30,6 @@
     "@types/react-router-dom": "^5.1.6",
     "@types/react-scroll": "^1.8.2",
     "algoliasearch": "^4.9.0",
-    "appjusto-types": "../types",
     "axios": "^0.21.0",
     "browser-image-compression": "^1.0.14",
     "chakra-ui-markdown-renderer": "^1.1.0",

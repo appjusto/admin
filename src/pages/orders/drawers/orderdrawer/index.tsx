@@ -1,10 +1,11 @@
+import { CancelOrderPayload, Issue, WithId } from '@appjusto/types';
 import { Box, Button, HStack, Text } from '@chakra-ui/react';
 import { useGetOutsourceDelivery } from 'app/api/order/useGetOutsourceDelivery';
 import { useOrder } from 'app/api/order/useOrder';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextManagerProfile } from 'app/state/manager/context';
 import { useContextAppRequests } from 'app/state/requests/context';
-import { CancelOrderPayload, Issue, WithId } from 'appjusto-types';
+import { CustomInput } from 'common/components/form/input/CustomInput';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import React from 'react';
 import { useParams } from 'react-router-dom';
@@ -37,6 +38,8 @@ export const OrderDrawer = (props: Props) => {
   const { business } = useContextBusiness();
   const {
     order,
+    updateOrder,
+    updateResult,
     cancelOrder,
     cancelResult,
     orderIssues,
@@ -44,10 +47,16 @@ export const OrderDrawer = (props: Props) => {
     orderCancellationCosts,
   } = useOrder(orderId);
   const { manager } = useContextManagerProfile();
-  const { getOutsourceDelivery, outsourceDeliveryResult } = useGetOutsourceDelivery(orderId);
+  const {
+    getOutsourceDelivery,
+    outsourceDeliveryResult,
+    updateOutsourcingCourierName,
+    updateOutsourcingCourierNameResult,
+  } = useGetOutsourceDelivery(orderId);
   // state
   const [isCanceling, setIsCanceling] = React.useState(false);
   const [isOutsourceDelivery, setIsOutsourceDelivery] = React.useState<boolean>();
+  const [outsourcingCourierName, setOutsourcingCourierName] = React.useState<string>();
   // refs
   const printComponent = React.useRef<HTMLDivElement>(null);
   // helpers
@@ -89,6 +98,10 @@ export const OrderDrawer = (props: Props) => {
     if (order?.dispatchingStatus === 'outsourced') setIsOutsourceDelivery(true);
     if (query.get('outsource')) setIsOutsourceDelivery(true);
   }, [query, isOutsourceDelivery, order]);
+  React.useEffect(() => {
+    if (!order?.courier?.name) return;
+    setOutsourcingCourierName(order?.courier?.name);
+  }, [order?.courier?.name]);
   // UI
   return (
     <OrderBaseDrawer
@@ -116,26 +129,63 @@ export const OrderDrawer = (props: Props) => {
                   order.dispatchingStatus === 'outsourced' ? (
                     <Box mt="4" border="2px solid #FFBE00" borderRadius="lg" bg="" p="4">
                       <SectionTitle mt="0">{t('Logística fora da rede AppJusto')}</SectionTitle>
-                      <Text mt="2">
-                        {t(
-                          `Não foi possível encontrar entregadores disponíveis na nossa rede. Um entregador de outra rede já está a caminho para retirar o pedido. A equipe AppJusto está monitorando o pedido e concluirá o mesmo após a realização da entrega.`
-                        )}
-                      </Text>
+                      {order.outsourcedBy === 'business' ? (
+                        <>
+                          <Text mt="2">
+                            {t(
+                              `Não foi possível encontrar entregadores disponíveis na nossa rede e você optou por assumir a logística, recebendo o repasse do valor do frete (${deliveryFare}).`
+                            )}
+                          </Text>
+                          <HStack mt="4">
+                            <CustomInput
+                              mt="0"
+                              id="out-courier-name"
+                              label={t('Informe o nome do entregador')}
+                              value={outsourcingCourierName ?? ''}
+                              onChange={(ev) => setOutsourcingCourierName(ev.target.value)}
+                            />
+                            <Button
+                              h="60px"
+                              onClick={() => updateOutsourcingCourierName(outsourcingCourierName!)}
+                              isLoading={updateOutsourcingCourierNameResult.isLoading}
+                              isDisabled={!outsourcingCourierName}
+                            >
+                              {t('Salvar')}
+                            </Button>
+                          </HStack>
+                          <Text mt="6">
+                            {t(`Após a realização da entrega, confirme com o botão abaixo:`)}
+                          </Text>
+                          <Button
+                            mt="4"
+                            onClick={() => updateOrder({ status: 'delivered' })}
+                            isLoading={updateResult.isLoading}
+                            isDisabled={order.status !== 'dispatching'}
+                          >
+                            {t('Confirmar que o pedido foi entregue ao cliente')}
+                          </Button>
+                        </>
+                      ) : (
+                        <>
+                          <Text mt="2">
+                            {t(
+                              `Não foi possível encontrar entregadores disponíveis na nossa rede. Um entregador de outra rede fará a retirada. A equipe AppJusto está monitorando o pedido e concluirá o mesmo após a realização da entrega.`
+                            )}
+                          </Text>
+                          <Text mt="4">
+                            {t('Nome do entregador: ')}
+                            <Text as="span" fontWeight="700">
+                              {order.courier?.name ?? 'Buscando'}
+                            </Text>
+                          </Text>
+                        </>
+                      )}
                       {/*<Text mt="2">
                         {t(
                           `O AppJusto não terá como monitorar o pedido a partir daqui. Caso seja necessário, entre em contato com o cliente para mantê-lo informado sobre sua entrega.`
                         )}
                       </Text>
-                      <Text mt="4">
-                        {t(`Após a realização da entrega, confirme com o botão abaixo:`)}
-                      </Text>
-                      <Button
-                        mt="2"
-                        onClick={() => //({ status: 'delivered' })}
-                        isLoading={updateResult.isLoading}
-                      >
-                        {t('Confirmar que o pedido foi entregue ao cliente')}
-                        </Button>*/}
+                      */}
                     </Box>
                   ) : (
                     <Box mt="4" border="2px solid #FFBE00" borderRadius="lg" bg="" p="4">
@@ -155,7 +205,7 @@ export const OrderDrawer = (props: Props) => {
                         </Button>
                         <Button
                           mt="0"
-                          onClick={() => getOutsourceDelivery()}
+                          onClick={() => getOutsourceDelivery({})}
                           isLoading={outsourceDeliveryResult.isLoading}
                         >
                           {t('Confirmar')}

@@ -1,6 +1,6 @@
+import { Business, ManagerProfile, WithId } from '@appjusto/types';
 import { useManagerBusinesses } from 'app/api/manager/useManagerBusinesses';
 import { useManagerProfile } from 'app/api/manager/useManagerProfile';
-import { Business, ManagerProfile, WithId } from 'appjusto-types';
 import React, { Dispatch, SetStateAction } from 'react';
 import { useContextFirebaseUser } from '../auth/context';
 

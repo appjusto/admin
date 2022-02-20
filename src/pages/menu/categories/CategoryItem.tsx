@@ -1,6 +1,6 @@
+import { Category, Product, WithId } from '@appjusto/types';
 import { Box, Flex, Heading, Spacer, Switch, Tooltip } from '@chakra-ui/react';
 import { useCategory } from 'app/api/business/categories/useCategory';
-import { Category, Product, WithId } from 'appjusto-types';
 import { CustomButton as Button } from 'common/components/buttons/CustomButton';
 import { EditButton } from 'common/components/buttons/EditButton';
 import { ReactComponent as DragHandle } from 'common/img/drag-handle.svg';

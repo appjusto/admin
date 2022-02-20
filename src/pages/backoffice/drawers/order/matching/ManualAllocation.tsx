@@ -1,6 +1,6 @@
+import { DispatchingStatus } from '@appjusto/types';
 import { Box, HStack, Text } from '@chakra-ui/react';
 import { useCourierSearch } from 'app/api/courier/useCourierSearch';
-import { DispatchingStatus } from 'appjusto-types/order/dispatching';
 import { AlertSuccess } from 'common/components/AlertSuccess';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import React from 'react';

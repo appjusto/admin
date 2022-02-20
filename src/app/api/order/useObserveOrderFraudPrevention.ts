@@ -1,5 +1,5 @@
 import { useContextApi } from 'app/state/api/context';
-import { OrderFraudPreventionFlags } from 'appjusto-types';
+import { OrderFraudPreventionFlags } from '@appjusto/types';
 import React from 'react';
 
 export const useObserveOrderFraudPrevention = (orderId?: string) => {

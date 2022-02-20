@@ -1,5 +1,5 @@
 import { useContextApi } from 'app/state/api/context';
-import { PlatformStatistics } from 'appjusto-types';
+import { PlatformStatistics } from '@appjusto/types';
 import React from 'react';
 
 export const usePlatformStatistics = () => {

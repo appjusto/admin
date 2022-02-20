@@ -1,5 +1,5 @@
 import { useContextApi } from 'app/state/api/context';
-import { CourierProfile, WithId } from 'appjusto-types';
+import { CourierProfile, WithId } from '@appjusto/types';
 import React from 'react';
 
 export const useCourierProfile = (courierId: string | undefined | null) => {

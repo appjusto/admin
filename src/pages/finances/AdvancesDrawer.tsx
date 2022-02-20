@@ -1,10 +1,10 @@
+import { IuguMarketplaceAccountReceivableItem } from '@appjusto/types/payment/iugu';
 import { Box, Button, Checkbox, CheckboxGroup, Flex, Icon, Skeleton, Text } from '@chakra-ui/react';
 import { useAdvanceReceivables } from 'app/api/business/useAdvanceReceivables';
 import { useReceivables } from 'app/api/business/useReceivables';
 import { useReceivablesSimulation } from 'app/api/business/useReceivablesSimulation';
 import { useContextBusinessId } from 'app/state/business/context';
 import { useContextAppRequests } from 'app/state/requests/context';
-import { IuguMarketplaceAccountReceivableItem } from 'appjusto-types/payment/iugu';
 import { ReactComponent as Checked } from 'common/img/icon-checked.svg';
 import React from 'react';
 import { formatCurrency } from 'utils/formatters';

@@ -1,5 +1,5 @@
 import { useContextApi } from 'app/state/api/context';
-import { ConsumerProfile } from 'appjusto-types';
+import { ConsumerProfile } from '@appjusto/types';
 import { useCustomMutation } from '../mutation/useCustomMutation';
 
 export const useConsumerUpdateProfile = (consumerId?: string) => {

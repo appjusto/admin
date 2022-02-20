@@ -1,4 +1,4 @@
-import { Order, OrderCancellationParams, WithId } from 'appjusto-types';
+import { Order, OrderCancellationParams, WithId } from '@appjusto/types';
 import { omit } from 'lodash';
 import { use } from 'utils/local';
 import { Acknowledgement, OrderAcknowledgement } from './types';

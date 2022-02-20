@@ -1,6 +1,6 @@
 import { useContextApi } from 'app/state/api/context';
 import { useContextFirebaseUser } from 'app/state/auth/context';
-import { OrderMatching } from 'appjusto-types';
+import { OrderMatching } from '@appjusto/types';
 import React from 'react';
 import { useCustomMutation } from '../mutation/useCustomMutation';
 
@@ -16,7 +16,7 @@ export const useObserveOrderMatching = (orderId?: string) => {
     'updateCourierNotified'
   );
   const { mutateAsync: restartMatching, mutationResult: restartResult } = useCustomMutation(
-    async () => api.order().updateOrder(orderId!, { dispatchingStatus: 'matching' }),
+    async () => api.order().updateOrder(orderId!, { dispatchingStatus: 'scheduled' }),
     'restartMatching',
     false
   );

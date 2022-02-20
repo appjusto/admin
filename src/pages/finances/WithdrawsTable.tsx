@@ -1,5 +1,5 @@
+import { AccountWithdraw, WithId } from '@appjusto/types';
 import { Table, Tbody, Td, Tfoot, Th, Tr } from '@chakra-ui/react';
-import { AccountWithdraw, WithId } from 'appjusto-types';
 import { formatCurrency } from 'utils/formatters';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';

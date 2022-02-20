@@ -1,4 +1,14 @@
-import { useObserveOrderChats } from 'app/api/order/useObserveOrderChats';
+import {
+  CancelOrderPayload,
+  DispatchingState,
+  InvoiceType,
+  Issue,
+  IssueType,
+  Order,
+  OrderStatus,
+  WithId,
+} from '@appjusto/types';
+import { useObserveOrderChatMessages } from 'app/api/chat/useObserveOrderChatMessages';
 import { useObserveOrderInvoices } from 'app/api/order/useObserveOrderInvoices';
 import { useOrder } from 'app/api/order/useOrder';
 import { useFlaggedLocations } from 'app/api/platform/useFlaggedLocations';
@@ -6,14 +16,6 @@ import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';
 import { useContextAgentProfile } from 'app/state/agent/context';
 import { ConsumerProvider } from 'app/state/consumer/context';
 import { useContextAppRequests } from 'app/state/requests/context';
-import {
-  CancelOrderPayload,
-  InvoiceType,
-  Issue,
-  IssueType,
-  OrderStatus,
-  WithId,
-} from 'appjusto-types';
 import firebase from 'firebase/app';
 import { OrderDetails } from 'pages/orders/drawers/orderdrawer/OrderDetails';
 import { OrderIssuesTable } from 'pages/orders/drawers/orderdrawer/OrderIssuesTable';
@@ -22,6 +24,7 @@ import { Route, Switch, useParams, useRouteMatch } from 'react-router-dom';
 import { Invoices } from './Invoices';
 import { Matching } from './Matching';
 import { OrderBaseDrawer } from './OrderBaseDrawer';
+import { OrderChats } from './OrderChats';
 import { OrderStatusBar } from './OrderStatusBar';
 import { Participants } from './Participants';
 
@@ -60,12 +63,15 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
     orderCancellation,
     orderCancellationCosts,
   } = useOrder(orderId);
-  const invoices = useObserveOrderInvoices(orderId);
+  const invoices = useObserveOrderInvoices(order?.id);
   const cancelOptions = useIssuesByType(cancelOptionsArray);
   const { addFlaggedLocation } = useFlaggedLocations();
-  const chatMessages = useObserveOrderChats(orderId);
+  const { chatMessages, orderChatGroup } = useObserveOrderChatMessages(order?.id);
   // state
-  const [status, setStatus] = React.useState<OrderStatus | undefined>(order?.status ?? undefined);
+  const [status, setStatus] = React.useState<OrderStatus | undefined>(order?.status);
+  const [dispatchingState, setDispatchingState] = React.useState<DispatchingState | undefined>(
+    order?.dispatchingState
+  );
   const [issue, setIssue] = React.useState<Issue | null>();
   const [message, setMessage] = React.useState<string>();
   const [refund, setRefund] = React.useState<InvoiceType[]>(['platform', 'products', 'delivery']);
@@ -81,10 +87,11 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
     refundValue += order.fare.courier.value;
   //handlers
   const updateState = (
-    type: 'status' | 'issue' | 'message',
+    type: 'status' | 'dispatchingState' | 'issue' | 'message',
     value: OrderStatus | WithId<Issue> | string
   ) => {
     if (type === 'status') setStatus(value as OrderStatus);
+    else if (type === 'dispatchingState') setDispatchingState(value as DispatchingState);
     else if (type === 'issue') setIssue(cancelOptions?.find((item) => item.id === value) ?? null);
     else if (type === 'message') setMessage(value as string);
   };
@@ -165,14 +172,23 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
     return cancelOrder(cancellationData);
   };
   const updateOrderStatus = async (value?: OrderStatus) => {
-    if (value) updateOrder({ status: value });
-    else if (status === 'canceled') cancellation();
-    else updateOrder({ status });
+    if (value) {
+      updateOrder({ status: value });
+      return;
+    }
+    if (status === 'canceled') {
+      cancellation();
+      return;
+    }
+    let changes = { status } as Partial<Order>;
+    if (dispatchingState) changes.dispatchingState = dispatchingState;
+    updateOrder(changes);
   };
   // side effects
   React.useEffect(() => {
     if (order?.status) setStatus(order.status);
-  }, [order?.status]);
+    if (order?.dispatchingState) setDispatchingState(order.dispatchingState);
+  }, [order?.status, order?.dispatchingState]);
   React.useEffect(() => {
     if (orderCancellation) {
       setIssue(orderCancellation.issue ?? null);
@@ -216,17 +232,14 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
             <Invoices invoices={invoices} />
           </Route>
           <Route exact path={`${path}/matching`}>
-            <Matching
-              orderId={orderId}
-              orderStatus={order?.status}
-              orderDispatchingStatus={order?.dispatchingStatus}
-            />
+            <Matching order={order} />
           </Route>
           <Route exact path={`${path}/status`}>
             <OrderStatusBar
               orderType={order?.type}
               orderStatus={order?.status}
               status={status}
+              dispatchingState={dispatchingState}
               issue={issue}
               message={message}
               cancelOptions={cancelOptions}
@@ -235,6 +248,9 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
               onRefundingChange={onRefundingChange}
               updateState={updateState}
             />
+          </Route>
+          <Route exact path={`${path}/chats`}>
+            <OrderChats groups={orderChatGroup} />
           </Route>
         </Switch>
       </OrderBaseDrawer>

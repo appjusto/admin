@@ -1,5 +1,5 @@
+import { CourierAlgolia } from '@appjusto/types';
 import { Box, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
-import { CourierAlgolia } from 'appjusto-types';
 import { t } from 'utils/i18n';
 import { CouriersTableItem } from './CouriersTableItem';
 
@@ -12,7 +12,7 @@ export const CouriersTable = ({ couriers }: CouriersTableProps) => {
 
   // UI
   return (
-    <Box mt="12">
+    <Box mt="12" overflowX="auto">
       <Table mt="4" size="md" variant="simple">
         <Thead>
           <Tr>

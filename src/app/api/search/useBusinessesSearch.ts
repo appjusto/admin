@@ -2,6 +2,7 @@ import { SearchResponse } from '@algolia/client-search';
 import { useContextSearchApi } from 'app/state/search/context';
 import { debounce } from 'lodash';
 import React from 'react';
+import { queryLimit } from '../utils';
 import { BusinessesFilter, SearchKind } from './types';
 
 export const useBusinessesSearch = <T extends object>(
@@ -9,7 +10,7 @@ export const useBusinessesSearch = <T extends object>(
   kind: SearchKind,
   filters: BusinessesFilter[],
   soughtValue?: string,
-  hitsPerPage: number = 20
+  hitsPerPage: number = queryLimit
 ) => {
   // context
   const api = useContextSearchApi();

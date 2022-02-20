@@ -9,6 +9,7 @@ const CustomCheckbox = ({ children, w, h, mt, mb, isDisabled, ...props }: Checkb
         borderColor={isDisabled ? 'gray.200' : 'black'}
         position="relative"
         w="24px"
+        minW="24px"
         h="24px"
         borderRadius="4px"
         boxShadow="none"

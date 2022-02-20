@@ -1,5 +1,5 @@
+import { Business, Order, ProfileChange, WithId } from '@appjusto/types';
 import { Box, Circle, Flex, Text, VStack } from '@chakra-ui/react';
-import { Business, Order, ProfileChange, WithId } from 'appjusto-types';
 import { ShowIf } from 'core/components/ShowIf';
 import React from 'react';
 import { BOBusinessListItem } from './BOBusinessListItem';
@@ -13,14 +13,38 @@ interface Props {
   data: WithId<Business>[] | WithId<Order>[] | WithId<ProfileChange>[];
   listType: ListType;
   details?: string;
+  infiniteScroll?: boolean;
+  loadData?(): void;
 }
 
-export const BOList = ({ title, data, listType, details }: Props) => {
+export const BOList = ({
+  title,
+  data,
+  listType,
+  details,
+  infiniteScroll = false,
+  loadData,
+}: Props) => {
+  // refs
+  const listRef = React.useRef<HTMLDivElement>(null);
+  // side effects
+  React.useEffect(() => {
+    if (!infiniteScroll || !listRef.current || !loadData) return;
+    const handleScrollTop = () => {
+      if (listRef.current) {
+        let shouldLoad = listRef.current.scrollHeight - listRef.current.scrollTop < 240;
+        if (shouldLoad) loadData();
+      }
+    };
+    listRef.current.addEventListener('scroll', handleScrollTop);
+    return () => document.removeEventListener('scroll', handleScrollTop);
+  }, [infiniteScroll, listRef, loadData]);
   // UI
   return (
     <Flex
       w="100%"
-      h={['600px']}
+      position="relative"
+      h={listType === 'orders' ? '600px' : '300px'}
       borderRadius="lg"
       borderColor="gray.500"
       borderWidth="1px"
@@ -28,7 +52,7 @@ export const BOList = ({ title, data, listType, details }: Props) => {
       direction="column"
     >
       <Box
-        h={['60px']}
+        minH="60px"
         p="2"
         bg="gray.50"
         borderColor="gray.500"
@@ -37,12 +61,12 @@ export const BOList = ({ title, data, listType, details }: Props) => {
         borderBottomWidth="1px"
       >
         <Flex alignItems="center">
-          <Circle size={['40px']} bg="white">
+          <Circle size="40px" bg="white">
             <Text fontSize="lg" color="black">
               {data.length}
             </Text>
           </Circle>
-          <Text ml="4" fontSize="lg" color="black" fontWeight="bold">
+          <Text ml="4" fontSize={{ base: 'md', lg: 'lg' }} color="black" fontWeight="bold">
             {title}
           </Text>
         </Flex>
@@ -58,7 +82,7 @@ export const BOList = ({ title, data, listType, details }: Props) => {
       </ShowIf>
       <ShowIf test={data.length > 0}>
         {() => (
-          <VStack flex={1} p="4" overflowX="hidden">
+          <VStack ref={listRef} flex={1} p="4" overflowX="hidden">
             {listType === 'businesses'
               ? (data as WithId<Business>[]).map((item) => (
                   <BOBusinessListItem key={item.id} business={item} />

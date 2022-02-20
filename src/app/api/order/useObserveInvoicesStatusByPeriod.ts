@@ -1,7 +1,7 @@
 import { useContextApi } from 'app/state/api/context';
-import { WithId, Invoice } from 'appjusto-types';
+import { WithId, Invoice } from '@appjusto/types';
 import React from 'react';
-import { IuguInvoiceStatus } from 'appjusto-types/payment/iugu';
+import { IuguInvoiceStatus } from '@appjusto/types/payment/iugu';
 import dayjs from 'dayjs';
 
 export const useObserveInvoicesStatusByPeriod = (

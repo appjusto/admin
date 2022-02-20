@@ -1,9 +1,9 @@
+import { Order, WithId } from '@appjusto/types';
 import { Box, Button, Circle, Flex, HStack, Image, Text } from '@chakra-ui/react';
 import { useCourierProfilePicture } from 'app/api/courier/useCourierProfilePicture';
 import { useOrderDeliveryInfos } from 'app/api/order/useOrderDeliveryInfos';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextServerTime } from 'app/state/server-time';
-import { Order, WithId } from 'appjusto-types';
 import { AlertWarning } from 'common/components/AlertWarning';
 import firebase from 'firebase/app';
 import I18n from 'i18n-js';
@@ -14,9 +14,14 @@ import { DeliveryMap } from './DeliveryMap';
 interface DeliveryInfosProps {
   order: WithId<Order>;
   setOutsource?(value: boolean): void;
+  isBackofficeDrawer?: boolean;
 }
 
-export const DeliveryInfos = ({ order, setOutsource }: DeliveryInfosProps) => {
+export const DeliveryInfos = ({
+  order,
+  setOutsource,
+  isBackofficeDrawer = false,
+}: DeliveryInfosProps) => {
   // context
   const { getServerTime } = useContextServerTime();
   const { isBackofficeUser } = useContextFirebaseUser();
@@ -124,11 +129,13 @@ export const DeliveryInfos = ({ order, setOutsource }: DeliveryInfosProps) => {
               )}
             </Flex>
           </Flex>
-          <Link to={`/app/orders/chat/${order.id}/${order.courier?.id}`}>
-            <Button variant="outline" size="sm" mt={{ base: '4', md: '0' }}>
-              {t('Abrir chat com o entregador')}
-            </Button>
-          </Link>
+          {!isBackofficeDrawer && (
+            <Link to={`/app/orders/chat/${order.id}/${order.courier?.id}`}>
+              <Button variant="outline" size="sm" mt={{ base: '4', md: '0' }}>
+                {t('Abrir chat com o entregador')}
+              </Button>
+            </Link>
+          )}
         </Flex>
       )}
       <DeliveryMap

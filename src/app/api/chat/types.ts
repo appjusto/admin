@@ -1,9 +1,9 @@
-import { ChatMessage, WithId, Flavor } from 'appjusto-types';
+import { ChatMessageUser, ChatMessage, WithId, Flavor, ChatMessageType } from '@appjusto/types';
 import firebase from 'firebase/app';
 
 export interface GroupedChatMessages {
   id: string;
-  from: string;
+  from: ChatMessageUser;
   messages: WithId<ChatMessage>[];
 }
 
@@ -21,3 +21,18 @@ export interface OrderChatGroup {
     }
   ];
 }
+
+export interface OrderChatTypeGroup {
+  orderId: string;
+  lastUpdate?: firebase.firestore.FieldValue;
+  type: ChatMessageType;
+  participantsIds: string[];
+  unreadMessages: boolean;
+}
+
+export type Participants = {
+  id: string;
+  name: string;
+  flavor?: Flavor;
+  image?: string | null;
+};

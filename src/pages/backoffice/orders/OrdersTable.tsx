@@ -1,5 +1,6 @@
-import { Box, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
-import { Order, WithId } from 'appjusto-types';
+import { Order, WithId } from '@appjusto/types';
+import { Box, Table, Tbody, Td, Tfoot, Th, Thead, Tr } from '@chakra-ui/react';
+import { formatCurrency } from 'utils/formatters';
 import { t } from 'utils/i18n';
 import { OrdersTableItem } from './OrdersTableItem';
 
@@ -9,6 +10,15 @@ interface OrdersTableProps {
 }
 
 export const OrdersTable = ({ orders, isBackoffice }: OrdersTableProps) => {
+  // helpers
+  const totalValue = orders
+    ? orders.reduce<number>((result, order) => {
+        if (order.outsourcedBy === 'business' && order.fare?.total)
+          return (result += order.fare.total);
+        else if (order.fare?.business?.value) return (result += order.fare.business.value);
+        return result;
+      }, 0)
+    : 0;
   // UI
   return (
     <Box mt="12" maxW="100vw" overflowX="auto">
@@ -43,6 +53,19 @@ export const OrdersTable = ({ orders, isBackoffice }: OrdersTableProps) => {
             </Tr>
           )}
         </Tbody>
+        {!isBackoffice && (
+          <Tfoot bgColor="gray.50">
+            <Tr color="black" fontSize="xs" fontWeight="700">
+              <Td></Td>
+              <Td></Td>
+              <Td></Td>
+              <Td></Td>
+              <Td>{t('Total:')}</Td>
+              <Td>{formatCurrency(totalValue)}</Td>
+              <Td></Td>
+            </Tr>
+          </Tfoot>
+        )}
       </Table>
     </Box>
   );

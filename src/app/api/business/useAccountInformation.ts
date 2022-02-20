@@ -1,5 +1,5 @@
 import { useContextApi } from 'app/state/api/context';
-import { FetchAccountInformationResponse } from 'appjusto-types';
+import { FetchAccountInformationResponse } from '@appjusto/types';
 import React from 'react';
 import * as Sentry from '@sentry/react';
 

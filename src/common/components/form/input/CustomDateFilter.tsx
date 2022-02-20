@@ -1,4 +1,4 @@
-import { Box, BoxProps, HStack } from '@chakra-ui/react';
+import { Box, BoxProps, Stack } from '@chakra-ui/react';
 import { AlertWarning } from 'common/components/AlertWarning';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import React from 'react';
@@ -43,7 +43,7 @@ export const CustomDateFilter = ({
   // UI
   return (
     <Box {...props}>
-      <HStack spacing={4}>
+      <Stack spacing={4} direction={{ base: 'column', md: 'row' }}>
         <CustomInput
           mt="0"
           type="date"
@@ -62,7 +62,7 @@ export const CustomDateFilter = ({
           label={t('Até')}
           isInvalid={!dateValidation(end)}
         />
-      </HStack>
+      </Stack>
       {showWarning && (!dateValidation(start) || !dateValidation(end)) && (
         <AlertWarning
           description={t(

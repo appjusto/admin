@@ -1,3 +1,4 @@
+import { ChatMessage, ChatMessageType, Flavor } from '@appjusto/types';
 import {
   Box,
   Button,
@@ -13,12 +14,13 @@ import {
   Textarea,
   useToast,
 } from '@chakra-ui/react';
-import { useUpdateChatMessage } from 'app/api/business/chat/useUpdateChatMessage';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
+// import { Participants, useOrderChat } from 'app/api/order/useOrderChat';
+import { useObserveBusinessOrderChatByType } from 'app/api/chat/useObserveBusinessOrderChatByType';
+// import { useUpdateChatMessage } from 'app/api/business/chat/useUpdateChatMessage';
+import { useUpdateChatMessage } from 'app/api/chat/useUpdateChatMessage';
 import { getUnreadChatMessages } from 'app/api/chat/utils';
-import { Participants, useOrderChat } from 'app/api/order/useOrderChat';
 import { useContextServerTime } from 'app/state/server-time';
-import { ChatMessage, Flavor } from 'appjusto-types';
 import React, { KeyboardEvent } from 'react';
 import { useParams } from 'react-router';
 import { getDateTime } from 'utils/functions';
@@ -35,38 +37,46 @@ type Params = {
   counterpartId: string;
 };
 
+type CurrentCounterPart = {
+  name: string;
+  flavor?: Flavor;
+  flavorLabel: string;
+};
+
 export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
   //context
   const { getServerTime } = useContextServerTime();
   const { logo } = useBusinessProfile();
   const { orderId, counterpartId } = useParams<Params>();
   const { updateChatMessage } = useUpdateChatMessage();
-  const { isActive, orderCode, participants, chat, sendMessage, sendMessageResult } = useOrderChat(
-    getServerTime,
-    orderId,
-    counterpartId
-  );
+  const {
+    isActive,
+    orderCode,
+    participants,
+    chat,
+    sendMessage,
+    sendMessageResult,
+  } = useObserveBusinessOrderChatByType(getServerTime, orderId, counterpartId);
   const toast = useToast();
   // state
   const [dateTime, setDateTime] = React.useState('');
+  const [currentCounterPart, setCurrentCounterPart] = React.useState<CurrentCounterPart>();
   const [inputText, setInputText] = React.useState('');
   // refs
   const messagesBox = React.useRef<HTMLDivElement>(null);
   const inputRef = React.useRef<HTMLTextAreaElement>(null);
   //handlers
-  const getImage = <K extends keyof Participants>(id?: K) => {
+  const getImage = (id?: string) => {
     if (!id) return null;
-    if (id === counterpartId) return participants[counterpartId]?.image;
-    else return logo;
-  };
-  const getName = <K extends keyof Participants>(id?: K) => {
-    if (!id) return 'N/E';
-    const name = participants[id]?.name;
-    return name ?? participants[counterpartId]?.flavor ?? 'N/E';
+    const participant = participants.find((participant) => participant.id === id);
+    if (participant?.flavor === 'business') return logo;
+    const image = participant?.image;
+    return image ?? null;
   };
   const sendMessageHandler = () => {
     if (!inputText) return;
     if (!counterpartId) return;
+    if (!currentCounterPart?.flavor) return;
     if (!isActive) {
       return toast({
         title: 'Não é possível enviar a mensagem.',
@@ -76,12 +86,15 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
         isClosable: true,
       });
     }
-    const flavor = participants[counterpartId].flavor as Flavor;
+
+    const flavor = currentCounterPart.flavor;
+    const type = `business-${flavor}` as ChatMessageType;
     const to: { agent: Flavor; id: string } = {
       agent: flavor,
       id: counterpartId,
     };
     sendMessage({
+      type,
       to,
       message: inputText.trim(),
     });
@@ -103,7 +116,6 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
       if (unreadMessagesIds.length > 0) {
         unreadMessagesIds.forEach((messageId) => {
           updateChatMessage({
-            orderId,
             messageId,
             changes: { read: true } as Partial<ChatMessage>,
           });
@@ -114,6 +126,20 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
       messagesBox.current.scroll({ top: messagesBox.current.scrollHeight, behavior: 'smooth' });
     }
   }, [chat, orderId, counterpartId, updateChatMessage]);
+  React.useEffect(() => {
+    if (!participants || !counterpartId) return;
+    const current = participants.find((participant) => participant.id === counterpartId);
+    const getFlavorLabel = (flavor?: Flavor) => {
+      if (flavor === 'consumer') return 'cliente';
+      else if (flavor === 'courier') return 'entregador';
+      else return 'N/E';
+    };
+    setCurrentCounterPart({
+      name: current?.name ?? 'N/E',
+      flavor: current?.flavor,
+      flavorLabel: getFlavorLabel(current?.flavor),
+    });
+  }, [participants, counterpartId]);
   //UI
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
@@ -124,7 +150,8 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
             <Flex justifyContent="space-between" alignItems="flex-end">
               <Flex flexDir="column">
                 <Text color="black" fontSize="2xl" fontWeight="700" lineHeight="28px" mb="2">
-                  {t('Chat com ')} {`{${getName(counterpartId)}}`}
+                  {t('Chat com ')}{' '}
+                  {`${currentCounterPart?.flavorLabel} {${currentCounterPart?.name}}`}
                 </Text>
                 <Text fontSize="md" color="black" fontWeight="700" lineHeight="22px">
                   {t('ID do pedido:')}{' '}
@@ -146,8 +173,8 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
               chat.map((group) => (
                 <ChatMessages
                   key={group.id}
-                  image={getImage(group.from)}
-                  name={getName(group.from)}
+                  image={getImage(group.from.id)}
+                  name={group.from.name ?? 'N/E'}
                   messages={group.messages}
                 />
               ))}

@@ -1,5 +1,5 @@
 import { useContextApi } from 'app/state/api/context';
-import { IuguMarketplaceAccountReceivables } from 'appjusto-types/payment/iugu';
+import { IuguMarketplaceAccountReceivables } from '@appjusto/types/payment/iugu';
 import React from 'react';
 
 export const useReceivables = (businessId?: string) => {

@@ -1,8 +1,9 @@
-import { ArrowDownIcon, DeleteIcon } from '@chakra-ui/icons';
-import { Box, Button, Flex, HStack, RadioGroup, Text } from '@chakra-ui/react';
+import { UserType } from '@appjusto/types';
+import { ArrowDownIcon } from '@chakra-ui/icons';
+import { Box, Button, Flex, HStack, RadioGroup, Stack, Text } from '@chakra-ui/react';
 import { useObserveUsers } from 'app/api/users/useObserveUsers';
 import { UsersSearchType } from 'app/api/users/UsersApi';
-import { UserType } from 'appjusto-types';
+import { ClearFiltersButton } from 'common/components/backoffice/ClearFiltersButton';
 import { FilterText } from 'common/components/backoffice/FilterText';
 //import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import CustomRadio from 'common/components/form/CustomRadio';
@@ -28,9 +29,7 @@ const UsersPage = () => {
   const [search, setSearch] = React.useState('');
   const [searchFrom, setSearchFrom] = React.useState('');
   const [searchTo, setSearchTo] = React.useState('');
-
   const [clearDateNumber, setClearDateNumber] = React.useState(0);
-
   const { users, fetchNextPage } = useObserveUsers(
     loggedAt,
     isBlocked,
@@ -39,12 +38,10 @@ const UsersPage = () => {
     searchFrom,
     searchTo
   );
-
   // handlers
   const closeDrawerHandler = () => {
     history.replace(path);
   };
-
   const clearFilters = () => {
     setClearDateNumber((prev) => prev + 1);
     setLoggedAt(['manager', 'courier', 'consumer']);
@@ -54,18 +51,16 @@ const UsersPage = () => {
     setSearchFrom('');
     setSearchTo('');
   };
-
   // side effects
   React.useEffect(() => {
     const { date, time } = getDateTime();
     setDateTime(`${date} às ${time}`);
   }, []);
-
   // UI
   return (
-    <>
+    <Box>
       <PageHeader title={t('Usuários')} subtitle={t(`Atualizado ${dateTime}`)} />
-      <Box mt="6">
+      <Flex mt="8" flexDirection={{ base: 'column', md: 'row' }}>
         <Text mb="1" color="black" fontWeight="500">
           {t('Buscar por:')}
         </Text>
@@ -90,9 +85,9 @@ const UsersPage = () => {
             <CustomRadio value="cpf">{t('CPF')}</CustomRadio>
           </HStack>
         </RadioGroup>
-      </Box>
+      </Flex>
       <Flex mt="2">
-        <HStack spacing={4}>
+        <Stack spacing={4} direction={{ base: 'column', md: 'row' }}>
           <CustomInput
             mt="0"
             minW={{ lg: '260px' }}
@@ -107,10 +102,10 @@ const UsersPage = () => {
             getEnd={setSearchTo}
             clearNumber={clearDateNumber}
           />
-        </HStack>
+        </Stack>
       </Flex>
       <Flex mt="8" w="100%" justifyContent="space-between" borderBottom="1px solid #C8D7CB">
-        <HStack spacing={4}>
+        <HStack spacing={4} overflowX="auto">
           <FilterText
             isActive={!isBlocked}
             label={t('Todos')}
@@ -122,12 +117,7 @@ const UsersPage = () => {
             onClick={() => setIsBlocked(true)}
           />
         </HStack>
-        <HStack spacing={2} color="#697667" cursor="pointer" onClick={clearFilters}>
-          <DeleteIcon />
-          <Text fontSize="15px" lineHeight="21px">
-            {t('Limpar filtro')}
-          </Text>
-        </HStack>
+        <ClearFiltersButton clearFunction={clearFilters} />
       </Flex>
       <HStack mt="6" spacing={8} color="black">
         <Text fontSize="lg" fontWeight="700" lineHeight="26px">
@@ -161,7 +151,7 @@ const UsersPage = () => {
           <UserBaseDrawer isOpen onClose={closeDrawerHandler} />
         </Route>
       </Switch>
-    </>
+    </Box>
   );
 };
 

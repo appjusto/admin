@@ -1,7 +1,9 @@
-import { ArrowDownIcon, DeleteIcon } from '@chakra-ui/icons';
-import { Button, CheckboxGroup, Flex, HStack, Text } from '@chakra-ui/react';
+import { OrderStatus, OrderType } from '@appjusto/types';
+import { ArrowDownIcon } from '@chakra-ui/icons';
+import { Button, CheckboxGroup, Flex, HStack, Stack, Text } from '@chakra-ui/react';
 import { useObserveOrdersHistory } from 'app/api/order/useObserveOrdersHistory';
-import { OrderStatus, OrderType } from 'appjusto-types';
+import { ClearFiltersButton } from 'common/components/backoffice/ClearFiltersButton';
+import { FiltersScrollBar } from 'common/components/backoffice/FiltersScrollBar';
 import { FilterText } from 'common/components/backoffice/FilterText';
 import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import { CustomDateFilter } from 'common/components/form/input/CustomDateFilter';
@@ -17,6 +19,7 @@ import { OrdersTable } from './OrdersTable';
 const statuses = [
   'confirming',
   'declined',
+  'rejected',
   'confirmed',
   'preparing',
   'ready',
@@ -80,7 +83,7 @@ const OrdersPage = () => {
     <>
       <PageHeader title={t('Pedidos')} subtitle={t(`Atualizado ${dateTime}`)} />
       <Flex mt="8">
-        <HStack spacing={4}>
+        <Stack spacing={4} direction={{ base: 'column', md: 'row' }}>
           <CustomInput
             mt="0"
             maxW="212px"
@@ -95,59 +98,61 @@ const OrdersPage = () => {
             getEnd={setSearchTo}
             clearNumber={clearDateNumber}
           />
-        </HStack>
+        </Stack>
       </Flex>
       <Flex mt="8" w="100%" justifyContent="space-between" borderBottom="1px solid #C8D7CB">
-        <HStack spacing={4}>
-          <FilterText
-            isActive={filterBar === 'all' ? true : false}
-            label={t('Todos')}
-            onClick={() => setFilterBar('all')}
-          />
-          <FilterText
-            isActive={filterBar === 'confirming' ? true : false}
-            label={t('Aguardando confirmação')}
-            onClick={() => setFilterBar('confirming')}
-          />
-          <FilterText
-            isActive={filterBar === 'preparing' ? true : false}
-            label={t('Em preparação')}
-            onClick={() => setFilterBar('preparing')}
-          />
-          <FilterText
-            isActive={filterBar === 'ready' ? true : false}
-            label={t('Prontos')}
-            onClick={() => setFilterBar('ready')}
-          />
-          <FilterText
-            isActive={filterBar === 'dispatching' ? true : false}
-            label={t('A caminho')}
-            onClick={() => setFilterBar('dispatching')}
-          />
-          <FilterText
-            isActive={filterBar === 'delivered' ? true : false}
-            label={t('Entregues')}
-            onClick={() => setFilterBar('delivered')}
-          />
-          <FilterText
-            isActive={filterBar === 'declined' ? true : false}
-            label={t('Recusados')}
-            onClick={() => setFilterBar('declined')}
-          />
-          <FilterText
-            isActive={filterBar === 'canceled' ? true : false}
-            label={t('Cancelados')}
-            onClick={() => setFilterBar('canceled')}
-          />
-        </HStack>
-        <HStack spacing={2} color="#697667" cursor="pointer" onClick={clearFilters}>
-          <DeleteIcon />
-          <Text fontSize="15px" lineHeight="21px">
-            {t('Limpar filtro')}
-          </Text>
-        </HStack>
+        <FiltersScrollBar>
+          <HStack spacing={4}>
+            <FilterText
+              isActive={filterBar === 'all' ? true : false}
+              label={t('Todos')}
+              onClick={() => setFilterBar('all')}
+            />
+            <FilterText
+              isActive={filterBar === 'confirming' ? true : false}
+              label={t('Confirmando')}
+              onClick={() => setFilterBar('confirming')}
+            />
+            <FilterText
+              isActive={filterBar === 'preparing' ? true : false}
+              label={t('Preparando')}
+              onClick={() => setFilterBar('preparing')}
+            />
+            <FilterText
+              isActive={filterBar === 'ready' ? true : false}
+              label={t('Prontos')}
+              onClick={() => setFilterBar('ready')}
+            />
+            <FilterText
+              isActive={filterBar === 'dispatching' ? true : false}
+              label={t('Despachando')}
+              onClick={() => setFilterBar('dispatching')}
+            />
+            <FilterText
+              isActive={filterBar === 'delivered' ? true : false}
+              label={t('Entregues')}
+              onClick={() => setFilterBar('delivered')}
+            />
+            <FilterText
+              isActive={filterBar === 'declined' ? true : false}
+              label={t('Recusados')}
+              onClick={() => setFilterBar('declined')}
+            />
+            <FilterText
+              isActive={filterBar === 'rejected' ? true : false}
+              label={t('Rejeitados')}
+              onClick={() => setFilterBar('rejected')}
+            />
+            <FilterText
+              isActive={filterBar === 'canceled' ? true : false}
+              label={t('Cancelados')}
+              onClick={() => setFilterBar('canceled')}
+            />
+          </HStack>
+        </FiltersScrollBar>
+        <ClearFiltersButton clearFunction={clearFilters} />
       </Flex>
-      <HStack mt="6" spacing={8} color="black">
+      <Stack mt="6" direction={{ base: 'column', md: 'row' }} spacing={8} color="black">
         <Text fontSize="lg" fontWeight="700" lineHeight="26px">
           {t(`${orders?.length ?? '0'} itens na lista`)}
         </Text>
@@ -167,7 +172,7 @@ const OrdersPage = () => {
             <CustomCheckbox value="p2p">{t('Encomendas')}</CustomCheckbox>
           </HStack>
         </CheckboxGroup>
-      </HStack>
+      </Stack>
       <OrdersTable orders={orders} isBackoffice />
       <Button mt="8" variant="secondary" onClick={fetchNextPage}>
         <ArrowDownIcon mr="2" />

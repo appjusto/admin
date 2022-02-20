@@ -1,7 +1,7 @@
+import { Complement, WithId } from '@appjusto/types';
 import { Box, Flex, Image, Link, Spacer, Switch, Text, Tooltip } from '@chakra-ui/react';
 import { useComplementImage } from 'app/api/business/complements/useComplementImage';
 import { useContextMenu } from 'app/state/menu/context';
-import { Complement, WithId } from 'appjusto-types';
 import { EditButton } from 'common/components/buttons/EditButton';
 import { ImageFbLoading } from 'common/components/ImageFbLoading';
 import { ReactComponent as DragHandle } from 'common/img/drag-handle.svg';

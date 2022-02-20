@@ -1,5 +1,5 @@
 import { useContextApi } from 'app/state/api/context';
-import { OrderIssue, WithId } from 'appjusto-types';
+import { OrderIssue, WithId } from '@appjusto/types';
 import React from 'react';
 
 export const useObserveOrderIssues = (orderId?: string) => {

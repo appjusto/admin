@@ -1,5 +1,5 @@
+import { ChatMessage, WithId } from '@appjusto/types';
 import { Box, Flex, HStack, Image, Text } from '@chakra-ui/react';
-import { ChatMessage, WithId } from 'appjusto-types';
 import managerIcon from 'common/img/manager.svg';
 import firebase from 'firebase/app';
 import { getDateAndHour } from 'utils/functions';
@@ -12,7 +12,6 @@ interface ChatMessagesProps {
 
 export const ChatMessages = ({ name, messages, image }: ChatMessagesProps) => {
   // helpers
-  const userName = messages[0].from.name ?? name;
   const getTime = (timestamp: firebase.firestore.FieldValue) => {
     if (!timestamp) return;
     const fullDate = getDateAndHour(timestamp);
@@ -35,7 +34,7 @@ export const ChatMessages = ({ name, messages, image }: ChatMessagesProps) => {
           <Image src={image ?? managerIcon} width="100%" />
         </Flex>
         <Text fontSize="15px" lineHeight="21px" fontWeight="500" color="black">
-          {userName}
+          {name}
         </Text>
       </HStack>
       {messages.map((message) => (

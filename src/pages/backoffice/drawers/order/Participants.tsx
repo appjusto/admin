@@ -1,11 +1,12 @@
-import { Box, Flex, HStack, Radio, RadioGroup, Text } from '@chakra-ui/react';
+import { CourierMode, Issue, IssueType, Order, WithId } from '@appjusto/types';
+import { Box, Flex, RadioGroup, Stack, Text } from '@chakra-ui/react';
 import { useOrderCourierRemoval } from 'app/api/order/useOrderCourierRemoval';
 import { useOrderDeliveryInfos } from 'app/api/order/useOrderDeliveryInfos';
 import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { useContextServerTime } from 'app/state/server-time';
-import { CourierMode, Issue, IssueType, Order, WithId } from 'appjusto-types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
+import CustomRadio from 'common/components/form/CustomRadio';
 import { Textarea } from 'common/components/form/input/Textarea';
 import firebase from 'firebase/app';
 import { modePTOptions } from 'pages/backoffice/utils';
@@ -114,7 +115,7 @@ const Participant = ({
         </Text>
       )}
       {buttonLabel && (
-        <HStack mt="4" w="100%" spacing={4}>
+        <Stack mt="4" w="100%" spacing={4} direction={{ base: 'column', md: 'row' }}>
           {isRemoving ? (
             <Flex
               w="100%"
@@ -133,9 +134,9 @@ const Participant = ({
                 <Flex flexDir="column" justifyContent="flex-start">
                   {dropIssues &&
                     dropIssues.map((issue) => (
-                      <Radio mt="1" key={issue.id} value={issue.id} size="md" bg="white">
+                      <CustomRadio mt={{ base: '3', md: '1' }} key={issue.id} value={issue.id}>
                         {issue.title}
-                      </Radio>
+                      </CustomRadio>
                     ))}
                 </Flex>
               </RadioGroup>
@@ -148,7 +149,7 @@ const Participant = ({
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
               />
-              <Flex mt="4" w="100%" justifyContent="space-between">
+              <Flex mt="4" w="100%" justifyContent="flex-end">
                 <CustomButton
                   mt="0"
                   h="34px"
@@ -160,6 +161,7 @@ const Participant = ({
                 />
                 <CustomButton
                   mt="0"
+                  ml="4"
                   h="34px"
                   w="100%"
                   variant="danger"
@@ -174,6 +176,7 @@ const Participant = ({
           ) : (
             <>
               <CustomButton
+                minW="220px"
                 h="34px"
                 mt="0"
                 borderColor="#697667"
@@ -198,7 +201,7 @@ const Participant = ({
               )}
             </>
           )}
-        </HStack>
+        </Stack>
       )}
     </Box>
   );
@@ -247,7 +250,7 @@ export const Participants = ({ order }: ParticipantsProps) => {
             address={order?.destination?.address?.main ?? 'N/E'}
             additionalInfo={order?.destination?.additionalInfo}
             buttonLabel={t('Ver cadastro do cliente')}
-            buttonLink={`/backoffice/consumers/${order?.consumer.id}`}
+            buttonLink={`/backoffice/consumer/${order?.consumer.id}`}
           />
           <SectionTitle>{t('Restaurante')}</SectionTitle>
           <Participant
@@ -255,7 +258,7 @@ export const Participants = ({ order }: ParticipantsProps) => {
             address={order?.origin?.address?.main ?? 'N/E'}
             additionalInfo={order?.origin?.additionalInfo}
             buttonLabel={t('Ver cadastro do restaurante')}
-            buttonLink={`/backoffice/businesses/${order?.business?.id}`}
+            buttonLink={`/backoffice/business/${order?.business?.id}`}
           />
         </Box>
       ) : (
@@ -264,7 +267,7 @@ export const Participants = ({ order }: ParticipantsProps) => {
           <Participant
             name={order?.consumer?.name ?? 'N/E'}
             buttonLabel={t('Ver cadastro do cliente')}
-            buttonLink={`/backoffice/consumers/${order?.consumer.id}`}
+            buttonLink={`/backoffice/consumer/${order?.consumer.id}`}
           />
           <SectionTitle>{t('Origem')}</SectionTitle>
           <Participant
@@ -289,7 +292,7 @@ export const Participants = ({ order }: ParticipantsProps) => {
         name={order?.courier?.name ?? 'N/E'}
         mode={order?.courier?.mode}
         buttonLabel={t('Ver cadastro do entregador')}
-        buttonLink={`/backoffice/couriers/${order?.courier?.id}`}
+        buttonLink={`/backoffice/courier/${order?.courier?.id}`}
         isBtnDisabled={!order?.courier}
         dropIssues={issues}
         removeCourier={removeCourierFromOrder}
@@ -303,7 +306,7 @@ export const Participants = ({ order }: ParticipantsProps) => {
         </Text>
       </Text>
       {isOrderActive ? (
-        <DeliveryInfos order={order!} />
+        <DeliveryInfos order={order!} isBackofficeDrawer />
       ) : (
         <>
           <SectionTitle>{t('Destino do pedido')}</SectionTitle>

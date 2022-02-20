@@ -1,4 +1,4 @@
-import { WithId, Business, ManagerProfile, BankAccount } from 'appjusto-types';
+import { WithId, Business, ManagerProfile, BankAccount } from '@appjusto/types';
 
 export interface businessBOState {
   manager: WithId<ManagerProfile>;

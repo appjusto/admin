@@ -1,13 +1,14 @@
+import { DispatchingStatus } from '@appjusto/types';
 import { Box, Flex, HStack, Text } from '@chakra-ui/react';
-import { DispatchingStatus } from 'appjusto-types/order/dispatching';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { Textarea } from 'common/components/form/input/Textarea';
 import React from 'react';
 import { t } from 'utils/i18n';
+import { NotifiedCouriers } from '../Matching';
 interface CourierNotifiedBoxProps {
   isOrderActive: boolean;
   orderId: string;
-  courierId: string;
+  courier: NotifiedCouriers;
   issue?: string;
   dispatchingStatus?: DispatchingStatus;
   removeCourier(courierId: string): void;
@@ -18,7 +19,7 @@ interface CourierNotifiedBoxProps {
 
 export const CourierNotifiedBox = ({
   isOrderActive,
-  courierId,
+  courier,
   issue,
   dispatchingStatus,
   removeCourier,
@@ -30,7 +31,7 @@ export const CourierNotifiedBox = ({
   const [isAllocating, setIsAllocating] = React.useState(false);
   const [comment, setComment] = React.useState('');
   // helpers
-  const shortId = courierId.substring(0, 7) + '...';
+  const nameToDisplay = courier.name ? courier.name : courier.id.substring(0, 7) + '...';
   // side effects
   React.useEffect(() => {
     if (dispatchingStatus === 'matched' || dispatchingStatus === 'confirmed')
@@ -41,7 +42,8 @@ export const CourierNotifiedBox = ({
     <Box p="3" border="1px solid #ECF0E3" borderRadius="lg" bg="white">
       <Flex justifyContent="space-between" alignItems="center">
         <Box>
-          <Text>{!isAllocating ? shortId : courierId}</Text>
+          {/* <Text>{!isAllocating ? shortId : nameToDisplay}</Text> */}
+          <Text>{nameToDisplay}</Text>
           {issue && <Text>{issue}</Text>}
         </Box>
         <HStack>
@@ -51,7 +53,7 @@ export const CourierNotifiedBox = ({
             w="120px"
             h="36px"
             label={t('Ver cadastro')}
-            link={`/backoffice/couriers/${courierId}`}
+            link={`/backoffice/couriers/${courier.id}`}
             variant="outline"
           />
           {!isAllocating && (
@@ -68,8 +70,8 @@ export const CourierNotifiedBox = ({
                   dispatchingStatus === 'matched' ||
                   dispatchingStatus === 'confirmed'
                 }
-                isLoading={isLoading && courierRemoving === courierId}
-                onClick={() => removeCourier!(courierId)}
+                isLoading={isLoading && courierRemoving === courier.id}
+                onClick={() => removeCourier!(courier.id)}
               />
               <CustomButton
                 mt="0"
@@ -116,7 +118,7 @@ export const CourierNotifiedBox = ({
                 !comment
               }
               isLoading={isLoading && !courierRemoving}
-              onClick={() => allocateCourier(courierId, comment)}
+              onClick={() => allocateCourier(courier.id, comment)}
             />
           </Flex>
         </Box>

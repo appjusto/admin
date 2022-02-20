@@ -1,7 +1,7 @@
+import { IssueType, ProfileSituation } from '@appjusto/types';
 import { Box, CheckboxGroup, Flex, RadioGroup, Text, Textarea, VStack } from '@chakra-ui/react';
 import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';
 import { useContextBusinessBackoffice } from 'app/state/business/businessBOContext';
-import { IssueType, ProfileSituation } from 'appjusto-types';
 import { AlertError } from 'common/components/AlertError';
 import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import CustomRadio from 'common/components/form/CustomRadio';
