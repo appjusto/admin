@@ -1,6 +1,7 @@
 import { useContextApi } from 'app/state/api/context';
 import firebase from 'firebase/app';
 import React from 'react';
+import * as Sentry from '@sentry/react';
 
 export const useFirebaseUser = () => {
   // contex
@@ -10,7 +11,13 @@ export const useFirebaseUser = () => {
   // side effects
   React.useEffect(() => {
     const unsub = api.auth().observeAuthState((user) => {
-      setFirebaseUser(user);
+      if (user) {
+        Sentry.setUser({ id: user.uid, email: user.email! });
+        setFirebaseUser(user);
+      } else {
+        setFirebaseUser(null);
+        Sentry.configureScope((scope) => scope.setUser(null));
+      }
     });
     return () => unsub();
   }, [api]);
