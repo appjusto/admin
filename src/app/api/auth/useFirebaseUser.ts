@@ -13,11 +13,10 @@ export const useFirebaseUser = () => {
     const unsub = api.auth().observeAuthState((user) => {
       if (user) {
         Sentry.setUser({ id: user.uid, email: user.email! });
-        setFirebaseUser(user);
       } else {
-        setFirebaseUser(null);
         Sentry.configureScope((scope) => scope.setUser(null));
       }
+      setFirebaseUser(user);
     });
     return () => unsub();
   }, [api]);
