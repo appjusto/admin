@@ -12,6 +12,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
+import { useContextFirebaseUserEmail } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
@@ -26,6 +27,7 @@ interface BaseDrawerProps {
 
 export const BusinessDeleteDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   //context
+  const email = useContextFirebaseUserEmail();
   const { dispatchAppRequestResult } = useContextAppRequests();
   const { business, setIsDeleted } = useContextBusiness();
   const { deleteBusinessProfile, deleteResult } = useBusinessProfile();
@@ -42,6 +44,7 @@ export const BusinessDeleteDrawer = ({ onClose, ...props }: BaseDrawerProps) => 
       });
     } else {
       setIsDeleted(true);
+      if (email) localStorage.removeItem(`business-${process.env.REACT_APP_ENVIRONMENT}-${email}`);
       await deleteBusinessProfile();
     }
   };

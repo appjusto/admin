@@ -1,21 +1,21 @@
 import { useAuthentication } from 'app/api/auth/useAuthentication';
-import { useFirebaseUser } from 'app/api/auth/useFirebaseUser';
+import { useContextFirebaseUserEmail } from 'app/state/auth/context';
 import { Loading } from 'common/components/Loading';
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 
 const Logout = () => {
   // context
-  const user = useFirebaseUser();
+  const email = useContextFirebaseUserEmail();
   const { signOut } = useAuthentication();
   // state
   const [isLogout, setIsLogout] = React.useState<boolean>();
   // side effects
   React.useEffect(() => {
-    if (!user?.email) return;
-    signOut(user.email);
+    if (email) signOut(email);
+    else signOut();
     setIsLogout(true);
-  }, [user, signOut]);
+  }, [email, signOut]);
   // UI
   if (isLogout) return <Redirect to="/" />;
   return <Loading />;
