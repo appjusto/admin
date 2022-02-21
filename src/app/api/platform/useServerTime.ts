@@ -1,5 +1,6 @@
 import { useContextApi } from 'app/state/api/context';
 import React from 'react';
+import * as Sentry from '@sentry/react';
 
 interface DeltaInfo {
   delta: number;
@@ -48,16 +49,21 @@ export const useServerTime = (loggedUser: boolean) => {
   React.useEffect(() => {
     if (!loggedUser) return;
     (async () => {
-      const info = retrieve();
-      if (expired(info)) {
-        const serverTime = await api.platform().getServerTime();
-        const newDelta = serverTime - new Date().getTime();
-        console.log('Atualizando o sever time com delta de ', newDelta);
-        store(newDelta);
-        setDelta(newDelta);
-      } else {
-        console.log('Recuperando o delta de server time', info!.delta);
-        setDelta(info!.delta);
+      try {
+        const info = retrieve();
+        if (expired(info)) {
+          const serverTime = await api.platform().getServerTime();
+          const newDelta = serverTime - new Date().getTime();
+          console.log('Atualizando o sever time com delta de ', newDelta);
+          store(newDelta);
+          setDelta(newDelta);
+        } else {
+          console.log('Recuperando o delta de server time', info!.delta);
+          setDelta(info!.delta);
+        }
+      } catch (error) {
+        console.log('Erro ao acessar o delta de server time:', error);
+        Sentry.captureException(error);
       }
     })();
   }, [api, loggedUser]);
