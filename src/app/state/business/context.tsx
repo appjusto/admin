@@ -40,9 +40,7 @@ export const BusinessProvider = ({ children }: Props) => {
   // handlers
   const setBusinessIdByBusinesses = React.useCallback(() => {
     if (!businesses) return;
-    if (businesses.length > 1) {
-      setBusinessId(businesses.find((business) => business.situation === 'approved')?.id ?? null);
-    } else setBusinessId(businesses.find(() => true)?.id ?? null);
+    setBusinessId(businesses.find(() => true)?.id ?? null);
   }, [businesses]);
   const updateContextBusiness = React.useCallback(
     (newState: WithId<Business> | null) => {
