@@ -11,11 +11,8 @@ export const useFirebaseUser = () => {
   // side effects
   React.useEffect(() => {
     const unsub = api.auth().observeAuthState((user) => {
-      if (user) {
-        Sentry.setUser({ id: user.uid, email: user.email! });
-      } else {
-        Sentry.configureScope((scope) => scope.setUser(null));
-      }
+      if (user) Sentry.setUser({ id: user.uid, email: user.email! });
+      else Sentry.configureScope((scope) => scope.setUser(null));
       setFirebaseUser(user);
     });
     return () => unsub();
