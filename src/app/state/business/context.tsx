@@ -88,11 +88,9 @@ export const BusinessProvider = ({ children }: Props) => {
     if (isBackofficeUser) return;
     if (!user?.email) return;
     if (businessId) return;
-    console.log('local key', `business-${process.env.REACT_APP_ENVIRONMENT}-${user.email}`);
     const localBusinessId = localStorage.getItem(
       `business-${process.env.REACT_APP_ENVIRONMENT}-${user.email}`
     );
-    console.log('localBusinessId', localBusinessId);
     if (localBusinessId) {
       setBusinessId(localBusinessId);
       return;
