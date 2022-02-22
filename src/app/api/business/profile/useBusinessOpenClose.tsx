@@ -20,9 +20,11 @@ export const useBusinessOpenClose = (business?: WithId<Business> | null) => {
     if (!business?.schedules) return;
     const today = getServerTime();
     const shouldBeOpen = businessShouldBeOpen(today, business.schedules);
+    console.log('shouldBeOpen', shouldBeOpen);
     if (shouldBeOpen && business?.status === 'closed') {
       updateBusinessProfile({ status: 'open' });
     } else if (!shouldBeOpen && business?.status === 'open') {
+      console.log('FECHANDO!');
       updateBusinessProfile({ status: 'closed' });
       toast({
         duration: 12000,
