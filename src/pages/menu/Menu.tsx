@@ -15,6 +15,7 @@ import { ProductContextProvider } from './context/ProductContext';
 import { CategoryDrawer } from './drawers/CategoryDrawer';
 import { ComplementDrawer } from './drawers/ComplementDrawer';
 import { GroupDrawer } from './drawers/GroupDrawer';
+import { GroupDuplicationDrawer } from './drawers/GroupDuplicationDrawer';
 import { MessageDrawer } from './drawers/MessageDrawer';
 import { ProductDrawer } from './drawers/ProductDrawer';
 import { MainButtons } from './MainButtons';
@@ -105,6 +106,9 @@ const Menu = () => {
         </Route>
         <Route path={`${path}/complementsgroup/:groupId`}>
           <GroupDrawer isOpen onClose={closeDrawerHandler} />
+        </Route>
+        <Route path={`${path}/complementsgroup-duplication/:groupId`}>
+          <GroupDuplicationDrawer isOpen onClose={closeDrawerHandler} />
         </Route>
         <Route path={`${path}/complement/:complementId`}>
           <ComplementDrawer isOpen onClose={closeDrawerHandler} />

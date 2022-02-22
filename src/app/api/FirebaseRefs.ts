@@ -20,6 +20,7 @@ export default class FirebaseRefs {
   getCreateBusinessProfileCallable = () => this.functions.httpsCallable('createBusinessProfile');
   getUpdateBusinessSlugCallable = () => this.functions.httpsCallable('updateBusinessSlug');
   getCloneBusinessCallable = () => this.functions.httpsCallable('cloneBusiness');
+  getCloneComplementsGroupCallable = () => this.functions.httpsCallable('cloneComplementsGroup');
   getCreateManagersCallable = () => this.functions.httpsCallable('createManagers');
   getGetBusinessManagersCallable = () => this.functions.httpsCallable('getBusinessManagers');
   getCancelOrderCallable = () => this.functions.httpsCallable('cancelOrder');

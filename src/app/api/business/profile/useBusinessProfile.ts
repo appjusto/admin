@@ -69,6 +69,15 @@ export const useBusinessProfile = (isOnboarding: boolean = false) => {
     },
     'cloneBusiness'
   );
+  const {
+    mutateAsync: cloneComplementsGroup,
+    mutationResult: cloneGroupResult,
+  } = useCustomMutation(async (data: { groupId: string; name?: string }) => {
+    const newGroupId = await api
+      .business()
+      .cloneComplementsGroup(businessId!, data.groupId, data.name);
+    return newGroupId;
+  }, 'cloneComplementsGroup');
   const sendBusinessKeepAlive = React.useCallback(() => {
     if (!business?.id || business.status !== 'open') return;
     try {
@@ -92,11 +101,13 @@ export const useBusinessProfile = (isOnboarding: boolean = false) => {
     updateBusinessSlug,
     deleteBusinessProfile,
     cloneBusiness,
+    cloneComplementsGroup,
     updateResult,
     updateWithImagesResult,
     updateSlugResult,
     deleteResult,
     cloneResult,
+    cloneGroupResult,
     sendBusinessKeepAlive,
   };
 };

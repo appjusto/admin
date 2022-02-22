@@ -3,6 +3,7 @@ import { Box, Flex, Switch, Text, Tooltip } from '@chakra-ui/react';
 import { useContextMenu } from 'app/state/menu/context';
 import { CustomButton as Button } from 'common/components/buttons/CustomButton';
 import { DropdownButton } from 'common/components/buttons/DropdownButton';
+import { DuplicateButton } from 'common/components/buttons/DuplicateButton';
 import { EditButton } from 'common/components/buttons/EditButton';
 import { ReactComponent as DragHandle } from 'common/img/drag-handle.svg';
 import React from 'react';
@@ -95,6 +96,15 @@ export const GroupItem = React.memo(({ group, complements, index, hidden }: Prop
                       ml="2"
                       title={t('Editar')}
                       aria-label={`editar-grupo-${slugfyName(group.name)}`}
+                    />
+                  </Link>
+                </Tooltip>
+                <Tooltip placement="top" label={t('Duplicar')} aria-label={t('Duplicar')}>
+                  <Link to={`${url}/complementsgroup-duplication/${group.id}`}>
+                    <DuplicateButton
+                      ml="2"
+                      title={t('Duplicar')}
+                      aria-label={`duplicar-grupo-${slugfyName(group.name)}`}
                     />
                   </Link>
                 </Tooltip>

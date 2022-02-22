@@ -20,6 +20,7 @@ import {
   AccountAdvance,
   AccountWithdraw,
   BusinessMenuMessage,
+  CloneComplementsGroupPayload,
 } from '@appjusto/types';
 import { Complement, ComplementGroup, Ordering, ProfileNote } from '@appjusto/types';
 import firebase from 'firebase/app';
@@ -152,6 +153,17 @@ export default class BusinessApi {
     };
     const business = await this.refs.getCloneBusinessCallable()(payload);
     return business.data as WithId<Business>;
+  }
+
+  async cloneComplementsGroup(businessId: string, groupId: string, name?: string) {
+    let payload: CloneComplementsGroupPayload = {
+      businessId,
+      groupId,
+      meta: { version: '1' }, // TODO: pass correct version on
+    };
+    if (name) payload.name = name;
+    const result = await this.refs.getCloneComplementsGroupCallable()(payload);
+    return result.data as string;
   }
 
   async updateBusinessSlug(data: { businessId: string; slug: string }) {
