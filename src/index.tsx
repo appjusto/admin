@@ -8,7 +8,7 @@ import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 
 Sentry.init({
   dsn: 'https://e5edc0b4010c46978ceab1fa81fc2e90@o432207.ingest.sentry.io/5728413',
-  release: 'appjusto-admin@' + process.env.npm_package_version,
+  release: 'appjusto-admin@' + process.env.REACT_APP_VERSION,
   environment: process.env.REACT_APP_ENVIRONMENT,
   debug: process.env.REACT_APP_ENVIRONMENT !== 'live',
 });
