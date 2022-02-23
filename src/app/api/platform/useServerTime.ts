@@ -13,6 +13,7 @@ const HOUR = 1000 * 60 * 60;
 
 const isDeltaValid = (delta: number) => {
   if (delta > HOUR || delta < -HOUR) {
+    console.log('%cDelta inválido: ', 'color: red', delta);
     Sentry.captureException(`Invalid server time Delta: ${delta}`);
     return false;
   } else return true;
@@ -30,7 +31,7 @@ const retrieve = () => {
       return { ...info, updatedOn: new Date(info.updatedOn) } as DeltaInfo;
     }
   } catch (error: any) {
-    console.log('Server time retrieve error', error);
+    console.log('%cServer time retrieve error', 'color: red', error);
   }
   return null;
 };
@@ -46,7 +47,7 @@ const store = (delta: number) => {
       } as DeltaInfo)
     );
   } catch (error: any) {
-    console.log('Server time store error', error);
+    console.log('%cServer time store error', 'color: red', error);
   }
 };
 
@@ -71,18 +72,18 @@ export const useServerTime = (loggedUser: boolean) => {
         const info = retrieve();
         if (expired(info)) {
           const serverTime = await api.platform().getServerTime();
-          console.log('SERVER TIME API CALL result: ', serverTime);
+          console.log('%cSERVER TIME API CALL result:', 'color: red', serverTime);
           const newDelta = serverTime - new Date().getTime();
           if (!isDeltaValid(newDelta)) return;
-          console.log('Atualizando o sever time com delta de ', newDelta);
+          console.log('%cAtualizando o sever time com delta de ', 'color: purple', newDelta);
           store(newDelta);
           setDelta(newDelta);
         } else {
-          console.log('Recuperando o delta de server time', info!.delta);
+          console.log('%cRecuperando o delta de server time', 'color: purple', info!.delta);
           setDelta(info!.delta);
         }
       } catch (error) {
-        console.log('Erro ao gerar o delta de server time:', error);
+        console.log('%cErro ao gerar o delta de server time:', 'color: red', error);
         Sentry.captureException(error);
       }
     })();

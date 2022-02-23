@@ -20,7 +20,7 @@ export const useBusinessOpenClose = (business?: WithId<Business> | null) => {
     if (!business?.enabled) return;
     if (!business?.schedules) return;
     const today = getServerTime();
-    console.log('getServerTime result: ', today);
+    console.log('%cgetServerTime result: ', 'color: green', today);
     const shouldBeOpen = businessShouldBeOpen(today, business.schedules);
     console.log('shouldBeOpen', shouldBeOpen);
     if (shouldBeOpen && business?.status === 'closed') {
@@ -53,8 +53,8 @@ export const useBusinessOpenClose = (business?: WithId<Business> | null) => {
   ]);
   // side effects
   React.useEffect(() => {
-    console.log('User role:', role);
     if (isBackofficeUser) return;
+    console.log('%cUser role :', 'color: blue', role);
     if (!role) return;
     if (business?.situation !== 'approved') return;
     if (!business?.enabled) return;
