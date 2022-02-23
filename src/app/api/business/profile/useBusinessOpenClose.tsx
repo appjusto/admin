@@ -53,12 +53,12 @@ export const useBusinessOpenClose = (business?: WithId<Business> | null) => {
   ]);
   // side effects
   React.useEffect(() => {
+    console.log('User role:', role);
     if (isBackofficeUser) return;
     if (!role) return;
     if (business?.situation !== 'approved') return;
     if (!business?.enabled) return;
     if (!business?.schedules) return;
-    console.log('User role:', role);
     checkBusinessStatus();
     const openCloseInterval = setInterval(() => {
       checkBusinessStatus();
