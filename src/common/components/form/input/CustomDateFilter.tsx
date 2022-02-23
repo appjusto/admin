@@ -1,6 +1,7 @@
 import { Box, BoxProps, Stack } from '@chakra-ui/react';
 import { AlertWarning } from 'common/components/AlertWarning';
 import { CustomInput } from 'common/components/form/input/CustomInput';
+import dayjs from 'dayjs';
 import React from 'react';
 import { t } from 'utils/i18n';
 
@@ -9,7 +10,6 @@ interface DateFilterPros extends BoxProps {
   getEnd(end: string): void;
   clearNumber?: number; // parent state that changes when clear date is required
   showWarning?: boolean;
-  defaultStart?: boolean;
 }
 
 const currentYear = new Date().getFullYear();
@@ -19,16 +19,16 @@ export const CustomDateFilter = ({
   getEnd,
   clearNumber,
   showWarning = false,
-  defaultStart = false,
   ...props
 }: DateFilterPros) => {
   // state
-  const [start, setStart] = React.useState(defaultStart ? '2021-06-01' : '');
+  const [start, setStart] = React.useState('');
   const [end, setEnd] = React.useState('');
   // handlers
-  const dateValidation = React.useCallback((date: string) => {
-    if (date === '') return true;
-    return Number(date.split('-')[0]) >= 2021 && Number(date.split('-')[0]) <= currentYear;
+  const dateValidation = React.useCallback((value: string) => {
+    if (value === '') return true;
+    let date = dayjs(value).year();
+    return date >= 2021 && date <= currentYear;
   }, []);
   // side effects
   React.useEffect(() => {
