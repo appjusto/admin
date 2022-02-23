@@ -24,7 +24,7 @@ const retrieve = () => {
     if (value) {
       const info = JSON.parse(value) as DeltaInfo;
       if (!isDeltaValid(info.delta)) {
-        window.localStorage.removeItem('server-time');
+        window.localStorage.removeItem(KEY);
         return null;
       }
       return { ...info, updatedOn: new Date(info.updatedOn) } as DeltaInfo;
