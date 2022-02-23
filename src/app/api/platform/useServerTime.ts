@@ -6,13 +6,27 @@ interface DeltaInfo {
   delta: number;
   updatedOn: Date;
 }
+
 const KEY = 'server-time';
 const THRESHOLD = 1000 * 60 * 60 * 24; // day
+const HOUR = 1000 * 60 * 60;
+
+const isDeltaValid = (delta: number) => {
+  if (delta > HOUR || delta < -HOUR) {
+    Sentry.captureException(`Invalid server time Delta: ${delta}`);
+    return false;
+  } else return true;
+};
+
 const retrieve = () => {
   try {
     const value = window.localStorage.getItem(KEY);
     if (value) {
       const info = JSON.parse(value) as DeltaInfo;
+      if (!isDeltaValid(info.delta)) {
+        window.localStorage.removeItem('server-time');
+        return null;
+      }
       return { ...info, updatedOn: new Date(info.updatedOn) } as DeltaInfo;
     }
   } catch (error: any) {
@@ -57,7 +71,9 @@ export const useServerTime = (loggedUser: boolean) => {
         const info = retrieve();
         if (expired(info)) {
           const serverTime = await api.platform().getServerTime();
+          console.log('SERVER TIME API CALL result: ', serverTime);
           const newDelta = serverTime - new Date().getTime();
+          if (!isDeltaValid(newDelta)) return;
           console.log('Atualizando o sever time com delta de ', newDelta);
           store(newDelta);
           setDelta(newDelta);
