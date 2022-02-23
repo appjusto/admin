@@ -1,6 +1,6 @@
+import * as Sentry from '@sentry/react';
 import { useContextApi } from 'app/state/api/context';
 import React from 'react';
-import * as Sentry from '@sentry/react';
 
 interface DeltaInfo {
   delta: number;
@@ -15,7 +15,9 @@ const retrieve = () => {
       const info = JSON.parse(value) as DeltaInfo;
       return { ...info, updatedOn: new Date(info.updatedOn) } as DeltaInfo;
     }
-  } catch (error: any) {}
+  } catch (error: any) {
+    console.log('Server time retrieve error', error);
+  }
   return null;
 };
 
@@ -29,7 +31,9 @@ const store = (delta: number) => {
         updatedOn: now,
       } as DeltaInfo)
     );
-  } catch (error: any) {}
+  } catch (error: any) {
+    console.log('Server time store error', error);
+  }
 };
 
 const expired = (info: DeltaInfo | null) => {
@@ -62,7 +66,7 @@ export const useServerTime = (loggedUser: boolean) => {
           setDelta(info!.delta);
         }
       } catch (error) {
-        console.log('Erro ao acessar o delta de server time:', error);
+        console.log('Erro ao gerar o delta de server time:', error);
         Sentry.captureException(error);
       }
     })();

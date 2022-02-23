@@ -156,6 +156,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   }, [chats]);
   // business keep alive
   React.useEffect(() => {
+    console.log('isPlatformLive', isPlatformLive);
     if (!isPlatformLive) return;
     if (business?.situation !== 'approved') return;
     if (business?.status !== 'open') return;

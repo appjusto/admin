@@ -10,6 +10,7 @@ import { businessShouldBeOpen } from './utils';
 export const useBusinessOpenClose = (business?: WithId<Business> | null) => {
   // context
   const { isBackofficeUser } = useContextFirebaseUser();
+  const { role } = useContextFirebaseUser();
   const { updateBusinessProfile } = useBusinessProfile();
   const { getServerTime } = useContextServerTime();
   // handlers
@@ -19,6 +20,7 @@ export const useBusinessOpenClose = (business?: WithId<Business> | null) => {
     if (!business?.enabled) return;
     if (!business?.schedules) return;
     const today = getServerTime();
+    console.log('getServerTime result: ', today);
     const shouldBeOpen = businessShouldBeOpen(today, business.schedules);
     console.log('shouldBeOpen', shouldBeOpen);
     if (shouldBeOpen && business?.status === 'closed') {
@@ -52,9 +54,11 @@ export const useBusinessOpenClose = (business?: WithId<Business> | null) => {
   // side effects
   React.useEffect(() => {
     if (isBackofficeUser) return;
+    if (!role) return;
     if (business?.situation !== 'approved') return;
     if (!business?.enabled) return;
     if (!business?.schedules) return;
+    console.log('User role:', role);
     checkBusinessStatus();
     const openCloseInterval = setInterval(() => {
       checkBusinessStatus();
@@ -62,6 +66,7 @@ export const useBusinessOpenClose = (business?: WithId<Business> | null) => {
     return () => clearInterval(openCloseInterval);
   }, [
     isBackofficeUser,
+    role,
     business?.situation,
     business?.enabled,
     business?.schedules,
