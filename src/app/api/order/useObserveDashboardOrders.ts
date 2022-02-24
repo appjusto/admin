@@ -1,7 +1,8 @@
+import { Order, OrderStatus, WithId } from '@appjusto/types';
 import { useContextApi } from 'app/state/api/context';
-import { WithId, OrderStatus, Order } from '@appjusto/types';
+import firebase from 'firebase/app';
 import React from 'react';
-import { orderPeriodFilter, findMostFrequentProduct, splitOrdersValuesByPeriod } from './utils';
+import { findMostFrequentProduct, orderPeriodFilter, splitOrdersValuesByPeriod } from './utils';
 
 export const useObserveDashboardOrders = (businessId?: string | null) => {
   // context

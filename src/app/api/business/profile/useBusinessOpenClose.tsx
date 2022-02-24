@@ -10,6 +10,7 @@ import { businessShouldBeOpen } from './utils';
 export const useBusinessOpenClose = (business?: WithId<Business> | null) => {
   // context
   const { isBackofficeUser } = useContextFirebaseUser();
+  const { role } = useContextFirebaseUser();
   const { updateBusinessProfile } = useBusinessProfile();
   const { getServerTime } = useContextServerTime();
   // handlers
@@ -19,10 +20,13 @@ export const useBusinessOpenClose = (business?: WithId<Business> | null) => {
     if (!business?.enabled) return;
     if (!business?.schedules) return;
     const today = getServerTime();
+    console.log('%cgetServerTime result: ', 'color: green', today);
     const shouldBeOpen = businessShouldBeOpen(today, business.schedules);
+    console.log('shouldBeOpen', shouldBeOpen);
     if (shouldBeOpen && business?.status === 'closed') {
       updateBusinessProfile({ status: 'open' });
     } else if (!shouldBeOpen && business?.status === 'open') {
+      console.log('FECHANDO!');
       updateBusinessProfile({ status: 'closed' });
       toast({
         duration: 12000,
@@ -50,6 +54,8 @@ export const useBusinessOpenClose = (business?: WithId<Business> | null) => {
   // side effects
   React.useEffect(() => {
     if (isBackofficeUser) return;
+    console.log('%cUser role :', 'color: blue', role);
+    if (!role) return;
     if (business?.situation !== 'approved') return;
     if (!business?.enabled) return;
     if (!business?.schedules) return;
@@ -60,6 +66,7 @@ export const useBusinessOpenClose = (business?: WithId<Business> | null) => {
     return () => clearInterval(openCloseInterval);
   }, [
     isBackofficeUser,
+    role,
     business?.situation,
     business?.enabled,
     business?.schedules,

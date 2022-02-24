@@ -78,13 +78,7 @@ export const CourierReviews = () => {
           <CustomCheckbox value="negative">{t('Negativas')}</CustomCheckbox>
         </HStack>
       </CheckboxGroup>
-      <CustomDateFilter
-        mt="4"
-        getStart={setDateStart}
-        getEnd={setDateEnd}
-        showWarning
-        defaultStart
-      />
+      <CustomDateFilter mt="4" getStart={setDateStart} getEnd={setDateEnd} showWarning />
       {!dateStart || !dateEnd ? (
         <Text mt="4">{t('Selecione tipos e datas que deseja buscar')}</Text>
       ) : reviwes === undefined ? (

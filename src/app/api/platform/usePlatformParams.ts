@@ -1,13 +1,13 @@
-import { useContextApi } from 'app/state/api/context';
 import { PlatformParams } from '@appjusto/types';
-import React from 'react';
-import { useServerTime } from './useServerTime';
+import { useContextApi } from 'app/state/api/context';
+import { useContextServerTime } from 'app/state/server-time';
 import dayjs from 'dayjs';
+import React from 'react';
 
 export const usePlatformParams = () => {
   // context
   const api = useContextApi();
-  const getServerTime = useServerTime(true);
+  const { getServerTime } = useContextServerTime();
   // state
   const [params, setParams] = React.useState<PlatformParams | null>();
   const [isPlatformLive, setIsPlatformLive] = React.useState(true);

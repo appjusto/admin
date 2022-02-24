@@ -210,8 +210,10 @@
     "@algolia/logger-common" "4.9.0"
     "@algolia/requester-common" "4.9.0"
 
-"@appjusto/types@../types":
-  version "4.1.1"
+"@appjusto/types@4.2.6":
+  version "4.2.6"
+  resolved "https://registry.yarnpkg.com/@appjusto/types/-/types-4.2.6.tgz#57ada210d5c7da823a2adc38a58aa913a4ca0e60"
+  integrity sha512-mnS8uiFGYcjo0SW64Sdj6drtt1R/zDwiogksPYmmUkqgyzlLUcwHt1ky9+RsxON0KQbSov/wB431lYmhkGMH2g==
 
 "@babel/code-frame@7.10.4":
   version "7.10.4"

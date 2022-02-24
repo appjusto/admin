@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/react';
 import { useContextApi } from 'app/state/api/context';
 import React from 'react';
 
@@ -5,16 +6,33 @@ interface DeltaInfo {
   delta: number;
   updatedOn: Date;
 }
+
 const KEY = 'server-time';
 const THRESHOLD = 1000 * 60 * 60 * 24; // day
+const HOUR = 1000 * 60 * 60;
+
+const isDeltaValid = (delta: number) => {
+  if (delta > HOUR || delta < -HOUR) {
+    console.log('%cDelta inválido: ', 'color: red', delta);
+    Sentry.captureException(`Invalid server time Delta: ${delta}`);
+    return false;
+  } else return true;
+};
+
 const retrieve = () => {
   try {
     const value = window.localStorage.getItem(KEY);
     if (value) {
       const info = JSON.parse(value) as DeltaInfo;
+      if (!isDeltaValid(info.delta)) {
+        window.localStorage.removeItem(KEY);
+        return null;
+      }
       return { ...info, updatedOn: new Date(info.updatedOn) } as DeltaInfo;
     }
-  } catch (error: any) {}
+  } catch (error: any) {
+    console.log('%cServer time retrieve error', 'color: red', error);
+  }
   return null;
 };
 
@@ -28,7 +46,9 @@ const store = (delta: number) => {
         updatedOn: now,
       } as DeltaInfo)
     );
-  } catch (error: any) {}
+  } catch (error: any) {
+    console.log('%cServer time store error', 'color: red', error);
+  }
 };
 
 const expired = (info: DeltaInfo | null) => {
@@ -48,16 +68,23 @@ export const useServerTime = (loggedUser: boolean) => {
   React.useEffect(() => {
     if (!loggedUser) return;
     (async () => {
-      const info = retrieve();
-      if (expired(info)) {
-        const serverTime = await api.platform().getServerTime();
-        const newDelta = serverTime - new Date().getTime();
-        console.log('Atualizando o sever time com delta de ', newDelta);
-        store(newDelta);
-        setDelta(newDelta);
-      } else {
-        console.log('Recuperando o delta de server time', info!.delta);
-        setDelta(info!.delta);
+      try {
+        const info = retrieve();
+        if (expired(info)) {
+          const serverTime = await api.platform().getServerTime();
+          console.log('%cSERVER TIME API CALL result:', 'color: red', serverTime);
+          const newDelta = serverTime - new Date().getTime();
+          if (!isDeltaValid(newDelta)) return;
+          console.log('%cAtualizando o sever time com delta de ', 'color: purple', newDelta);
+          store(newDelta);
+          setDelta(newDelta);
+        } else {
+          console.log('%cRecuperando o delta de server time', 'color: purple', info!.delta);
+          setDelta(info!.delta);
+        }
+      } catch (error) {
+        console.log('%cErro ao gerar o delta de server time:', 'color: red', error);
+        Sentry.captureException(error);
       }
     })();
   }, [api, loggedUser]);
