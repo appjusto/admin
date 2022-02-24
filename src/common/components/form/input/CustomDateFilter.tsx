@@ -11,8 +11,7 @@ interface DateFilterPros extends BoxProps {
   clearNumber?: number; // parent state that changes when clear date is required
   showWarning?: boolean;
 }
-
-const currentYear = new Date().getFullYear();
+type DateValidation = { status: boolean; message?: string };
 
 export const CustomDateFilter = ({
   getStart,
@@ -24,17 +23,33 @@ export const CustomDateFilter = ({
   // state
   const [start, setStart] = React.useState('');
   const [end, setEnd] = React.useState('');
+  const [isDatesValid, setisDatesValid] = React.useState<DateValidation>({ status: false });
   // handlers
-  const dateValidation = React.useCallback((value: string) => {
-    if (value === '') return true;
-    let date = dayjs(value).year();
-    return date >= 2021 && date <= currentYear;
-  }, []);
+  const handleDate = (type: 'start' | 'end', value: string) => {
+    if (value.length > 10) return;
+    if (type === 'start') setStart(value);
+    if (type === 'end') setEnd(value);
+  };
   // side effects
   React.useEffect(() => {
-    if (dateValidation(start)) getStart(start);
-    if (dateValidation(end)) getEnd(end);
-  }, [start, end, getStart, getEnd, dateValidation]);
+    let startDate = null;
+    let endDate = null;
+    if (start.length === 10) startDate = dayjs(start).toDate();
+    if (end.length === 10) endDate = dayjs(end).toDate();
+    if (startDate && endDate) {
+      if (startDate > endDate) {
+        setisDatesValid({
+          status: false,
+          message: 'As datas informadas não são válidas.',
+        });
+      } else setisDatesValid({ status: true });
+    }
+  }, [start, end]);
+  React.useEffect(() => {
+    if (!isDatesValid.status) return;
+    getStart(start);
+    getEnd(end);
+  }, [isDatesValid, start, end, getStart, getEnd]);
   React.useEffect(() => {
     if (clearNumber === undefined) return;
     setStart('');
@@ -49,27 +64,21 @@ export const CustomDateFilter = ({
           type="date"
           id="search-name"
           value={start ?? ''}
-          onChange={(event) => setStart(event.target.value)}
+          onChange={(event) => handleDate('start', event.target.value)}
           label={t('De')}
-          isInvalid={!dateValidation(start)}
+          isInvalid={isDatesValid['message'] !== undefined}
         />
         <CustomInput
           mt="0"
           type="date"
           id="search-name"
           value={end ?? ''}
-          onChange={(event) => setEnd(event.target.value)}
+          onChange={(event) => handleDate('end', event.target.value)}
           label={t('Até')}
-          isInvalid={!dateValidation(end)}
+          isInvalid={isDatesValid['message'] !== undefined}
         />
       </Stack>
-      {showWarning && (!dateValidation(start) || !dateValidation(end)) && (
-        <AlertWarning
-          description={t(
-            'As datas devem partir de 2021 e não podem possuir ano maior que o ano atual.'
-          )}
-        />
-      )}
+      {showWarning && isDatesValid.message && <AlertWarning description={isDatesValid.message} />}
     </Box>
   );
 };
