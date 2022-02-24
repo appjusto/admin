@@ -25,12 +25,10 @@ export const ComplementItem = React.memo(({ complement, index }: Props) => {
   //state
   const [imageUrl, setImageUrl] = React.useState<string>('');
   const [price, setPrice] = React.useState(0);
-
   //handlres
   const updatePriceState = (value: number | undefined) => {
     if (value || value === 0) setPrice(value);
   };
-
   const onUpdateComplement = async (updateEnabled?: boolean, value?: boolean) => {
     let dataToUpdate = { ...complement };
     //@ts-ignore
@@ -48,17 +46,15 @@ export const ComplementItem = React.memo(({ complement, index }: Props) => {
         changes: { ...dataToUpdate, price },
       });
   };
-
   //side effects
   React.useEffect(() => {
-    if (!complement?.imageExists) setImageUrl('/static/media/product-placeholder.png');
+    if (!complement?.imageExists || hookImageUrl === null)
+      setImageUrl('/static/media/product-placeholder.png');
     else if (hookImageUrl) setImageUrl(hookImageUrl);
   }, [complement?.imageExists, hookImageUrl]);
-
   React.useEffect(() => {
     updatePriceState(complement.price);
   }, [complement.price]);
-
   // UI
   return (
     <Draggable draggableId={complement.id} index={index}>

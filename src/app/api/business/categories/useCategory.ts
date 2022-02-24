@@ -29,7 +29,7 @@ export const useCategory = (id: string) => {
     'updateCategory',
     false
   );
-  const { mutateAsync: deleteCategory } = useCustomMutation(
+  const { mutateAsync: deleteCategory, mutationResult: deleteCategoryResult } = useCustomMutation(
     async () => api.business().deleteCategory(businessId, categoryId),
     'deleteCategory',
     false
@@ -44,6 +44,7 @@ export const useCategory = (id: string) => {
     updateCategory,
     deleteCategory,
     saveCategory,
+    deleteCategoryResult,
     result,
   };
 };
