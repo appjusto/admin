@@ -124,6 +124,10 @@ export const MenuContextProvider = (props: ProviderProps) => {
     mutationResult: deleteGroupResult,
   } = useCustomMutation(
     async (groupId: string) => {
+      const complementsIds = complementsOrdering.secondLevelIdsByFirstLevelId[groupId];
+      complementsIds.forEach(async (id) => {
+        await api.business().deleteComplement(businessId!, id);
+      });
       updateComplementsOrdering(menu.removeFirstLevel(complementsOrdering, groupId));
       await api.business().deleteComplementsGroup(businessId!, groupId);
     },

@@ -19,7 +19,12 @@ type RequiredOptions = 'Obrigatório' | 'Opcional';
 
 export const GroupForm = ({ atDrawer = false, groupId, groupData, onSuccess }: GroupFormProps) => {
   // context
-  const { updateComplementsGroup, updateGroupResult, deleteComplementsGroup } = useContextMenu();
+  const {
+    updateComplementsGroup,
+    updateGroupResult,
+    deleteComplementsGroup,
+    deleteGroupResult,
+  } = useContextMenu();
   const { isLoading } = updateGroupResult;
   // state
   const [name, setName] = React.useState('');
@@ -150,6 +155,7 @@ export const GroupForm = ({ atDrawer = false, groupId, groupData, onSuccess }: G
           isEditing={groupId !== 'new'}
           onDelete={handleDelete}
           isLoading={isLoading}
+          deletingLoading={deleteGroupResult.isLoading}
         />
       </form>
     </Box>
