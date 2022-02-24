@@ -3,7 +3,7 @@ import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile'
 import { useContextMenu } from 'app/state/menu/context';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import React from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { Redirect, useParams } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { BaseDrawer } from './BaseDrawer';
 
@@ -18,7 +18,6 @@ type Params = {
 
 export const GroupDuplicationDrawer = (props: Props) => {
   //context
-  const { push } = useHistory();
   const { groupId } = useParams<Params>();
   const { cloneComplementsGroup, cloneGroupResult } = useBusinessProfile();
   const { getComplementsGroupById } = useContextMenu();
@@ -43,14 +42,18 @@ export const GroupDuplicationDrawer = (props: Props) => {
     const currentGroup = getComplementsGroupById(groupId);
     if (currentGroup) {
       setCurrentGroupName(currentGroup.name);
-      setName(currentGroup.name);
+      setName((prev) => {
+        if (prev.length === 0) return currentGroup.name;
+        else return prev;
+      });
     }
   }, [groupId, getComplementsGroupById]);
-  React.useEffect(() => {
-    if (!newGoupId) return;
-    push(`/app/menu?group=${newGoupId}`);
-  }, [newGoupId, push]);
+  // React.useEffect(() => {
+  //   if (!newGoupId) return;
+  //   setTimeout(() => push(), 1000);
+  // }, [newGoupId, push]);
   // UI
+  if (newGoupId) return <Redirect to={`/app/menu?group=${newGoupId}`} />;
   return (
     <BaseDrawer {...props} title={t('Duplicar grupo')} type="group" headerMd="0">
       <Box>
