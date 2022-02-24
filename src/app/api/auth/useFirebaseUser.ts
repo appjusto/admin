@@ -2,7 +2,6 @@ import * as Sentry from '@sentry/react';
 import { useContextApi } from 'app/state/api/context';
 import firebase from 'firebase/app';
 import React from 'react';
-import * as Sentry from '@sentry/react';
 
 export const useFirebaseUser = () => {
   // contex
