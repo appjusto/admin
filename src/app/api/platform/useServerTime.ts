@@ -72,7 +72,6 @@ export const useServerTime = (loggedUser: boolean) => {
         const info = retrieve();
         if (expired(info)) {
           const serverTime = await api.platform().getServerTime();
-          console.log('%cSERVER TIME API CALL result:', 'color: red', serverTime);
           const newDelta = serverTime - new Date().getTime();
           if (!isDeltaValid(newDelta)) return;
           console.log('%cAtualizando o sever time com delta de ', 'color: purple', newDelta);
