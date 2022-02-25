@@ -1,6 +1,6 @@
 {
   "name": "appjusto-admin",
-  "version": "7.3.0",
+  "version": "7.3.1",
   "private": true,
   "dependencies": {
     "@appjusto/types": "4.2.6",
