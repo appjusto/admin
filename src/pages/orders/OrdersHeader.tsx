@@ -10,6 +10,8 @@ export const OrdersHeader = () => {
   // context
   const { user, role } = useContextFirebaseUser();
   const { business } = useContextBusiness();
+  // helpers
+  const version = process.env.REACT_APP_VERSION;
   // UI
   return (
     <Flex p="6" h="76px" flex={1} alignItems="center" justifyContent="space-between" bg="gray.50">
@@ -21,6 +23,16 @@ export const OrdersHeader = () => {
           <Flex flexDir="column" minW={{ lg: '280px' }}>
             <Text fontSize={{ base: '13px', lg: '16px' }} fontWeight="700" lineHeight="22px">
               {business?.status === 'open' ? t('Restaurante aberto') : t('Restaurante fechado')}
+              <Text
+                ml="2"
+                as="span"
+                fontSize="11px"
+                lineHeight="16px"
+                fontWeight="700"
+                letterSpacing="0.6px"
+              >
+                {t(`v${version ?? 'N/E'}`)}
+              </Text>
             </Text>
             {role === 'manager' && (
               <Link as={RouterLink} to="/app/business-schedules">
