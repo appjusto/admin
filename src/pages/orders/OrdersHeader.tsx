@@ -5,13 +5,12 @@ import logo from 'common/img/logo.svg';
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { t } from 'utils/i18n';
+import { version } from '../../../package.json';
 
 export const OrdersHeader = () => {
   // context
   const { user, role } = useContextFirebaseUser();
   const { business } = useContextBusiness();
-  // helpers
-  const version = process.env.REACT_APP_VERSION;
   // UI
   return (
     <Flex p="6" h="76px" flex={1} alignItems="center" justifyContent="space-between" bg="gray.50">

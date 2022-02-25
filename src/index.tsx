@@ -1,6 +1,7 @@
 import * as Sentry from '@sentry/react';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { version } from '../package.json';
 import App from './app/App';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
@@ -8,7 +9,7 @@ import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 
 Sentry.init({
   dsn: 'https://e5edc0b4010c46978ceab1fa81fc2e90@o432207.ingest.sentry.io/5728413',
-  release: 'appjusto-admin@' + process.env.REACT_APP_VERSION,
+  release: 'appjusto-admin@' + version,
   environment: process.env.REACT_APP_ENVIRONMENT,
   debug: process.env.REACT_APP_ENVIRONMENT !== 'live',
 });

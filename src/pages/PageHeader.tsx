@@ -1,6 +1,7 @@
 import { Box, Flex, Heading, Text, TextProps } from '@chakra-ui/react';
 import React from 'react';
 import { t } from 'utils/i18n';
+import { version } from '../../package.json';
 interface Props extends TextProps {
   title: string;
   subtitle?: string;
@@ -8,8 +9,6 @@ interface Props extends TextProps {
 }
 
 const PageHeader = ({ title, subtitle, showVersion, ...props }: Props) => {
-  // herlpers
-  const version = process.env.REACT_APP_VERSION;
   // UI
   return (
     <Box>
