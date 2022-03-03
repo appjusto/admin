@@ -65,7 +65,7 @@ export const OrderStatusBar = ({
           >
             <Flex flexDir="column" justifyContent="flex-start">
               <CustomRadio mt="2" value="confirmed">
-                {t('Aguardando aceite do restaurante')}
+                {t('Confirmado')}
               </CustomRadio>
               {orderType === 'food' && (
                 <>
