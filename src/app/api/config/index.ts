@@ -22,7 +22,7 @@ export const getConfig = (): AppConfig => {
           emulatorHost: process.env.REACT_APP_FIREBASE_EMULATOR_HOST,
         },
       },
-      googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY!,
+      googleMapsApiKey: process.env.REACT_APP_FIREBASE_API_KEY!,
     },
   };
 };
