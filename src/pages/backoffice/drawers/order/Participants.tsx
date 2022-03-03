@@ -22,6 +22,8 @@ interface ParticipantProps {
   name?: string;
   mode?: CourierMode;
   instruction?: string;
+  deliveries?: number;
+  rejected?: number;
   address?: string;
   additionalInfo?: string;
   onboarding?: firebase.firestore.FieldValue;
@@ -39,6 +41,8 @@ const Participant = ({
   name,
   mode,
   instruction,
+  deliveries,
+  rejected,
   address,
   additionalInfo,
   onboarding,
@@ -89,6 +93,22 @@ const Participant = ({
             </Text>
           )}
         </>
+      )}
+      {typeof deliveries === 'number' && (
+        <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+          {t('Pedidos entregues:')}{' '}
+          <Text as="span" fontWeight="500">
+            {deliveries}
+          </Text>
+        </Text>
+      )}
+      {typeof rejected === 'number' && (
+        <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+          {t('Pedidos rejeitados:')}{' '}
+          <Text as="span" fontWeight="500">
+            {rejected}
+          </Text>
+        </Text>
       )}
       {address && (
         <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
@@ -291,6 +311,8 @@ export const Participants = ({ order }: ParticipantsProps) => {
         }
         name={order?.courier?.name ?? 'N/E'}
         mode={order?.courier?.mode}
+        deliveries={order?.courier?.statistics?.deliveries}
+        rejected={order?.courier?.statistics?.rejected}
         buttonLabel={t('Ver cadastro do entregador')}
         buttonLink={`/backoffice/courier/${order?.courier?.id}`}
         isBtnDisabled={!order?.courier}
