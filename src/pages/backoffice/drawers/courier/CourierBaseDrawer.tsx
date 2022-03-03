@@ -177,6 +177,28 @@ export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDr
                 {courier?.mode ? modePTOptions[courier.mode] : 'N/I'}
               </Text>
             </Text>
+            <Flex mt="1" alignItems="flex-end">
+              <Text fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+                {t('Nº de pedidos:')}
+              </Text>
+              <Text ml="3" as="span" fontWeight="500">
+                {`entregues (${courier?.statistics?.deliveries ?? 'N/E'})`}
+              </Text>
+              <Text ml="2" as="span" fontWeight="500">
+                {`rejeitados (${courier?.statistics?.rejected ?? 'N/E'})`}
+              </Text>
+            </Flex>
+            <Flex mt="1" alignItems="flex-end">
+              <Text fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+                {t('Avaliações:')}
+              </Text>
+              <Text ml="3" as="span" fontWeight="500" color="green.600">
+                <Icon mr="1" as={MdThumbUpOffAlt} />({courier?.statistics?.positiveReviews ?? 0})
+              </Text>
+              <Text ml="4" as="span" fontWeight="500" color="red">
+                <Icon mr="1" as={MdThumbDownOffAlt} />({courier?.statistics?.negativeReviews ?? 0})
+              </Text>
+            </Flex>
             <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
               {t('Live:')}{' '}
               <Text as="span" fontWeight="500">
@@ -192,17 +214,6 @@ export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDr
                 </Icon>
               </Text>
             </Text>
-            <Flex mt="1" alignItems="flex-end">
-              <Text fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
-                {t('Avaliações:')}
-              </Text>
-              <Text ml="3" as="span" fontWeight="500" color="green.600">
-                <Icon mr="1" as={MdThumbUpOffAlt} />({courier?.statistics?.positiveReviews ?? 0})
-              </Text>
-              <Text ml="4" as="span" fontWeight="500" color="red">
-                <Icon mr="1" as={MdThumbDownOffAlt} />({courier?.statistics?.negativeReviews ?? 0})
-              </Text>
-            </Flex>
             <Flex
               my="8"
               fontSize="lg"
