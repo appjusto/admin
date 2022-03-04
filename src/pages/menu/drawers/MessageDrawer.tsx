@@ -61,7 +61,6 @@ export const MessageDrawer = ({ onClose, ...props }: Props) => {
           ev.preventDefault();
           handleSave();
         }}
-        {...props}
       >
         <DrawerContent>
           <DrawerCloseButton bg="green.500" mr="12px" _focus={{ outline: 'none' }} />
