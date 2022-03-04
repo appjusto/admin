@@ -14,7 +14,6 @@ import { coordsFromLatLnt, SaoPauloCoords } from 'core/api/thirdparty/maps/utils
 import { fetchCEPInfo } from 'core/api/thirdparty/viacep';
 import { safeParseInt } from 'core/numbers';
 import GoogleMapReact from 'google-map-react';
-import { nanoid } from 'nanoid';
 import { OnboardingProps } from 'pages/onboarding/types';
 import PageFooter from 'pages/PageFooter';
 import PageHeader from 'pages/PageHeader';
@@ -35,7 +34,6 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
   const { googleMapsApiKey } = getConfig().api;
   // state
   const defaultRadius = 10; // 10km
-  const [autocompleteSession] = React.useState(nanoid());
   const [map, setMap] = React.useState<google.maps.Map>();
   const [range, setRange] = React.useState<google.maps.Circle>();
   const [cep, setCEP] = React.useState(business?.businessAddress?.cep ?? '');
@@ -65,12 +63,7 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
   });
   // geocoding
   const geocode = () =>
-    api
-      .maps()
-      .googleGeocode(
-        `${address}, ${number}, ${neighborhood} - ${city} - ${state}`,
-        autocompleteSession
-      );
+    api.maps().googleGeocode(`${address}, ${number}, ${neighborhood} - ${city} - ${state}`);
   const { data: geocodingResult } = useQuery(
     ['geocoding', address, number, neighborhood, city, state],
     geocode,
@@ -93,7 +86,7 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
         state,
         neighborhood,
         additional,
-        latlng: geocodingResult,
+        latlng: geocodingResult ?? undefined,
       },
       deliveryRange: safeParseInt(deliveryRange, defaultRadius) * 1000,
       averageCookingTime: parseInt(averageCookingTime) * 60,
