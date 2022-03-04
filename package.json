@@ -3,7 +3,7 @@
   "version": "7.4.0",
   "private": true,
   "dependencies": {
-    "@appjusto/types": "4.2.6",
+    "@appjusto/types": "4.3.4",
     "@chakra-ui/icons": "^1.0.3",
     "@chakra-ui/react": "^1.6.3",
     "@emotion/react": "^11.0.0",
