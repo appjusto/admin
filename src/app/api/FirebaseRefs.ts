@@ -15,6 +15,7 @@ export default class FirebaseRefs {
 
   // functions
   getServerTimeCallable = () => this.functions.httpsCallable('getServerTime');
+  getQueryGoogleMapsCallable = () => this.functions.httpsCallable('queryGoogleMaps');
   getUpdateEmailCallable = () => this.functions.httpsCallable('updateEmail');
   getDeleteAccountCallable = () => this.functions.httpsCallable('deleteAccount');
   getCreateBusinessProfileCallable = () => this.functions.httpsCallable('createBusinessProfile');

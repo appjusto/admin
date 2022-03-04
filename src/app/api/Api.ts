@@ -1,23 +1,23 @@
 import { ApiConfig } from 'app/api/config/types';
 import MapsApi from 'core/api/thirdparty/maps/MapsApi';
+import 'firebase/analytics';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
 import 'firebase/functions';
 import 'firebase/storage';
-import 'firebase/analytics';
 import AuthApi from './auth/AuthApi';
 import BusinessApi from './business/BusinessApi';
+import ChatApi from './chat/ChatApi';
+import ConsumerApi from './consumer/CosumerApi';
+import CourierApi from './courier/CourierApi';
 import FilesApi from './FilesApi';
 import FirebaseRefs from './FirebaseRefs';
 import ManagerApi from './manager/ManagerApi';
+import MeasurementApi from './measurement/MeasurementApi';
 import OrderApi from './order/OrderApi';
 import PlatformApi from './platform/PlatformApi';
-import CourierApi from './courier/CourierApi';
-import ConsumerApi from './consumer/CosumerApi';
 import UsersApi from './users/UsersApi';
-import MeasurementApi from './measurement/MeasurementApi';
-import ChatApi from './chat/ChatApi';
 
 export default class Api {
   private static app: firebase.app.App;
@@ -76,7 +76,7 @@ export default class Api {
     this._refs = new FirebaseRefs(this._functions, this._firestore);
     this._auth = new AuthApi(this._refs, this._authentication, config);
     this._files = new FilesApi(this._storage);
-    this._maps = new MapsApi(config.googleMapsApiKey);
+    this._maps = new MapsApi(this._refs, config.googleMapsApiKey);
     this._platform = new PlatformApi(this._refs);
     this._manager = new ManagerApi(this._refs);
     this._business = new BusinessApi(this._refs, this._files);
