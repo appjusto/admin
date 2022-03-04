@@ -1,37 +1,41 @@
 import {
+  AccountAdvance,
+  AccountWithdraw,
+  AdvanceReceivablesPayload,
   BankAccount,
   Business,
+  BusinessMenuMessage,
   BusinessStatus,
   Category,
   ChatMessage,
+  CloneBusinessPayload,
+  CloneComplementsGroupPayload,
+  Complement,
+  ComplementGroup,
   CreateBusinessProfilePayload,
-  UpdateBusinessSlugPayload,
+  FetchAccountInformationPayload,
+  FetchAccountInformationResponse,
+  FetchAdvanceSimulationPayload,
+  FetchReceivablesPayload,
   ManagerProfile,
   MarketplaceAccountInfo,
+  Ordering,
   Product,
-  WithId,
-  CloneBusinessPayload,
+  ProfileNote,
   RequestWithdrawPayload,
-  FetchReceivablesPayload,
-  FetchAdvanceSimulationPayload,
-  AdvanceReceivablesPayload,
-  FetchAccountInformationResponse,
-  FetchAccountInformationPayload,
-  AccountAdvance,
-  AccountWithdraw,
-  BusinessMenuMessage,
-  CloneComplementsGroupPayload,
+  UpdateBusinessSlugPayload,
+  WithId,
 } from '@appjusto/types';
-import { Complement, ComplementGroup, Ordering, ProfileNote } from '@appjusto/types';
-import firebase from 'firebase/app';
-import { documentAs, documentsAs } from '../../../core/fb';
-import FilesApi from '../FilesApi';
-import FirebaseRefs from '../FirebaseRefs';
-import * as Sentry from '@sentry/react';
 import {
   IuguMarketplaceAccountAdvanceSimulation,
   IuguMarketplaceAccountReceivables,
 } from '@appjusto/types/payment/iugu';
+import * as Sentry from '@sentry/react';
+// import firebase from 'firebase/compat/app';
+import { DocumentData, QueryDocumentSnapshot, Unsubscribe } from 'firebase/firestore';
+import { documentAs, documentsAs } from '../../../core/fb';
+import FilesApi from '../FilesApi';
+import FirebaseRefs from '../FirebaseRefs';
 import { customCollectionSnapshot, customDocumentSnapshot } from '../utils';
 
 export default class BusinessApi {
@@ -39,13 +43,10 @@ export default class BusinessApi {
 
   // businesses
   observeBusinesses(
-    resultHandler: (
-      result: WithId<Business>[],
-      last?: firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
-    ) => void,
+    resultHandler: (result: WithId<Business>[], last?: QueryDocumentSnapshot<DocumentData>) => void,
     situations: string[],
-    startAfter?: firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
-  ): firebase.Unsubscribe {
+    startAfter?: QueryDocumentSnapshot<DocumentData>
+  ): Unsubscribe {
     let query = this.refs
       .getBusinessesRef()
       .orderBy('createdOn', 'asc')
@@ -68,7 +69,7 @@ export default class BusinessApi {
   observeBusinessesByStatus(
     status: BusinessStatus,
     resultHandler: (result: WithId<Business>[]) => void
-  ): firebase.Unsubscribe {
+  ): Unsubscribe {
     const query = this.refs.getBusinessesRef().where('status', '==', status);
     // returns the unsubscribe function
     return customCollectionSnapshot(query, resultHandler);
@@ -78,7 +79,7 @@ export default class BusinessApi {
   observeBusinessProfile(
     businessId: string,
     resultHandler: (result: WithId<Business> | null) => void
-  ): firebase.Unsubscribe {
+  ): Unsubscribe {
     const query = this.refs.getBusinessRef(businessId);
     // returns the unsubscribe function
     return customDocumentSnapshot(query, resultHandler);
@@ -89,7 +90,7 @@ export default class BusinessApi {
     start: Date,
     end: Date,
     resultHandler: (result: WithId<AccountAdvance>[]) => void
-  ): firebase.Unsubscribe {
+  ): Unsubscribe {
     const query = this.refs
       .getAdvancesRef()
       .orderBy('createdOn', 'desc')
@@ -105,7 +106,7 @@ export default class BusinessApi {
     start: Date,
     end: Date,
     resultHandler: (result: WithId<AccountWithdraw>[]) => void
-  ): firebase.Unsubscribe {
+  ): Unsubscribe {
     const query = this.refs
       .getWithdrawsRef()
       .orderBy('createdOn', 'desc')
@@ -119,7 +120,7 @@ export default class BusinessApi {
   observeBusinessMarketPlace(
     businessId: string,
     resultHandler: (result: MarketplaceAccountInfo | null) => void
-  ): firebase.Unsubscribe {
+  ): Unsubscribe {
     const query = this.refs.getBusinessMarketPlaceRef(businessId);
     // returns the unsubscribe function
     return customDocumentSnapshot(query, resultHandler);
@@ -270,7 +271,7 @@ export default class BusinessApi {
   observeBusinessManagedBy(
     email: string,
     resultHandler: (result: WithId<Business>[]) => void
-  ): firebase.Unsubscribe {
+  ): Unsubscribe {
     const query = this.refs
       .getBusinessesRef()
       .where('managers', 'array-contains', email)
@@ -283,7 +284,7 @@ export default class BusinessApi {
   observeBusinessProfileNotes(
     businessId: string,
     resultHandler: (result: WithId<ProfileNote>[]) => void
-  ): firebase.Unsubscribe {
+  ): Unsubscribe {
     const query = this.refs.getBusinessProfileNotesRef(businessId).orderBy('createdOn', 'desc');
     // returns the unsubscribe function
     return customCollectionSnapshot(query, resultHandler);
@@ -371,7 +372,7 @@ export default class BusinessApi {
     businessId: string,
     resultHandler: (result: Ordering) => void,
     menuId?: string
-  ): firebase.Unsubscribe {
+  ): Unsubscribe {
     const unsubscribe = this.refs.getBusinessMenuOrderingRef(businessId, menuId).onSnapshot(
       (doc) => {
         resultHandler({ ...(doc.data() as Ordering) });
@@ -405,7 +406,7 @@ export default class BusinessApi {
   observeCategories(
     businessId: string,
     resultHandler: (result: WithId<Category>[]) => void
-  ): firebase.Unsubscribe {
+  ): Unsubscribe {
     const query = this.refs.getBusinessCategoriesRef(businessId);
     // returns the unsubscribe function
     return customCollectionSnapshot(query, resultHandler);
@@ -456,7 +457,7 @@ export default class BusinessApi {
   observeProducts(
     businessId: string,
     resultHandler: (result: WithId<Product>[]) => void
-  ): firebase.Unsubscribe {
+  ): Unsubscribe {
     const query = this.refs.getBusinessProductsRef(businessId);
     // returns the unsubscribe function
     return customCollectionSnapshot(query, resultHandler);
@@ -465,7 +466,7 @@ export default class BusinessApi {
     businessId: string,
     productId: string,
     resultHandler: (result: WithId<Product>) => void
-  ): firebase.Unsubscribe {
+  ): Unsubscribe {
     const query = this.refs.getBusinessProductRef(businessId, productId);
     // returns the unsubscribe function
     return customDocumentSnapshot<Product>(query, (result) => {
@@ -572,7 +573,7 @@ export default class BusinessApi {
   observeComplementsGroups(
     businessId: string,
     resultHandler: (result: WithId<ComplementGroup>[]) => void
-  ): firebase.Unsubscribe {
+  ): Unsubscribe {
     const query = this.refs.getBusinessComplementsGroupsRef(businessId);
     // returns the unsubscribe function
     return customCollectionSnapshot(query, resultHandler);
@@ -581,7 +582,7 @@ export default class BusinessApi {
   observeComplements(
     businessId: string,
     resultHandler: (result: WithId<Complement>[]) => void
-  ): firebase.Unsubscribe {
+  ): Unsubscribe {
     const query = this.refs.getBusinessComplementsRef(businessId);
     // returns the unsubscribe function
     return customCollectionSnapshot(query, resultHandler, {
