@@ -1,7 +1,7 @@
 import { WithId } from '@appjusto/types';
-import { documentsAs, documentAs } from 'core/fb';
-import firebase from 'firebase/app';
 import * as Sentry from '@sentry/react';
+import { documentAs, documentsAs } from 'core/fb';
+import firebase from 'firebase/compat/app';
 
 export const queryLimit = 10;
 interface customSnapshotOptions {

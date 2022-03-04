@@ -3,7 +3,7 @@
   "version": "7.4.0",
   "private": true,
   "dependencies": {
-    "@appjusto/types": "4.2.6",
+    "@appjusto/types": "^5.0.2",
     "@chakra-ui/icons": "^1.0.3",
     "@chakra-ui/react": "^1.6.3",
     "@emotion/react": "^11.0.0",
@@ -36,7 +36,7 @@
     "chart.js": "^3.5.0",
     "dayjs": "^1.10.6",
     "env-cmd": "^10.1.0",
-    "firebase": "^8.8.1",
+    "firebase": "9.6.7",
     "framer-motion": "^4.1.17",
     "geofirestore": "^4.4.2",
     "github-markdown-css": "^4.0.0",

@@ -1,4 +1,5 @@
-import firebase from 'firebase/app';
+import { Firestore } from 'firebase/firestore';
+import { Functions } from 'firebase/functions';
 import * as geofirestore from 'geofirestore';
 
 const monitoring = false;
@@ -6,15 +7,13 @@ const monitoring = false;
 
 export default class FirebaseRefs {
   private firestoreWithGeo: geofirestore.GeoFirestore;
-  constructor(
-    private functions: firebase.functions.Functions,
-    private firestore: firebase.firestore.Firestore
-  ) {
+  constructor(private functions: Functions, private firestore: Firestore) {
     this.firestoreWithGeo = geofirestore.initializeApp(this.firestore);
   }
 
   // functions
   getServerTimeCallable = () => this.functions.httpsCallable('getServerTime');
+  getQueryGoogleMapsCallable = () => this.functions.httpsCallable('queryGoogleMaps');
   getUpdateEmailCallable = () => this.functions.httpsCallable('updateEmail');
   getDeleteAccountCallable = () => this.functions.httpsCallable('deleteAccount');
   getCreateBusinessProfileCallable = () => this.functions.httpsCallable('createBusinessProfile');
