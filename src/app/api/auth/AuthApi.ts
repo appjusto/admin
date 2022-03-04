@@ -1,17 +1,26 @@
-import { ApiConfig } from 'app/api/config/types';
-import firebase from 'firebase/app';
-import FirebaseRefs from '../FirebaseRefs';
-import * as Sentry from '@sentry/react';
 import { DeleteAccountPayload, UpdateEmailPayload } from '@appjusto/types';
+import * as Sentry from '@sentry/react';
+import { ApiConfig } from 'app/api/config/types';
+import {
+  Auth,
+  createUserWithEmailAndPassword,
+  EmailAuthProvider,
+  isSignInWithEmailLink,
+  reauthenticateWithCredential,
+  sendSignInLinkToEmail,
+  signInWithEmailAndPassword,
+  signInWithEmailLink,
+  Unsubscribe,
+  updatePassword,
+  User,
+} from 'firebase/auth';
+import { serverTimestamp } from 'firebase/firestore/lite';
+import FirebaseRefs from '../FirebaseRefs';
 
 export default class AuthApi {
-  constructor(
-    private refs: FirebaseRefs,
-    private auth: firebase.auth.Auth,
-    private config: ApiConfig
-  ) {}
+  constructor(private refs: FirebaseRefs, private auth: Auth, private config: ApiConfig) {}
 
-  observeAuthState(handler: (a: firebase.User | null) => any): firebase.Unsubscribe {
+  observeAuthState(handler: (a: User | null) => any): Unsubscribe {
     return this.auth.onAuthStateChanged(handler);
   }
 
@@ -24,7 +33,7 @@ export default class AuthApi {
   }
 
   isSignInWithEmailLink(link: string): boolean {
-    return this.auth.isSignInWithEmailLink(link);
+    return isSignInWithEmailLink(this.auth, link);
   }
 
   getUser() {
@@ -41,10 +50,10 @@ export default class AuthApi {
       await this.refs.getPlatformLoginLogsRef().add({
         email,
         flavor: 'business',
-        signInAt: firebase.firestore.FieldValue.serverTimestamp(),
+        signInAt: serverTimestamp(),
       });
     } catch (error) {}
-    await this.auth.sendSignInLinkToEmail(email, {
+    await sendSignInLinkToEmail(this.auth, email, {
       url: `${this.config.publicURL}/join`,
       handleCodeInApp: true,
     });
@@ -57,7 +66,7 @@ export default class AuthApi {
 
   async signInWithEmailLink(email: string, link: string) {
     await this.auth.signOut();
-    const userCredential = await this.auth.signInWithEmailLink(email, link);
+    const userCredential = await signInWithEmailLink(this.auth, email, link);
     try {
       window.localStorage.removeItem('email');
     } catch (error) {}
@@ -66,7 +75,7 @@ export default class AuthApi {
 
   async signInWithEmailAndPassword(email: string, password: string) {
     await this.auth.signOut();
-    const userCredential = await this.auth.signInWithEmailAndPassword(email, password);
+    const userCredential = await signInWithEmailAndPassword(this.auth, email, password);
     try {
       window.localStorage.removeItem('email');
     } catch (error) {}
@@ -75,7 +84,7 @@ export default class AuthApi {
 
   async createUserWithEmailAndPassword(email: string, password: string) {
     await this.auth.signOut();
-    const userCredential = await this.auth.createUserWithEmailAndPassword(email, password);
+    const userCredential = await createUserWithEmailAndPassword(this.auth, email, password);
     try {
       window.localStorage.removeItem('email');
     } catch (error) {}
@@ -86,11 +95,12 @@ export default class AuthApi {
     const user = this.auth.currentUser;
     if (!user) throw new Error('User not found!');
     if (currentPassword && user.email)
-      await user.reauthenticateWithCredential(
-        firebase.auth.EmailAuthProvider.credential(user.email, currentPassword)
+      await reauthenticateWithCredential(
+        user,
+        EmailAuthProvider.credential(user.email, currentPassword)
       );
     try {
-      await user.updatePassword(password);
+      await updatePassword(user, password);
     } catch (error) {
       Sentry.captureException(error);
       throw error;

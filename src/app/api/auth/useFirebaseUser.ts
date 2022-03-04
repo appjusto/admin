@@ -1,13 +1,13 @@
 import * as Sentry from '@sentry/react';
 import { useContextApi } from 'app/state/api/context';
-import firebase from 'firebase/app';
+import { User } from 'firebase/auth';
 import React from 'react';
 
 export const useFirebaseUser = () => {
   // contex
   const api = useContextApi();
   // state
-  const [firebaseUser, setFirebaseUser] = React.useState<firebase.User | null>();
+  const [firebaseUser, setFirebaseUser] = React.useState<User | null>();
   // side effects
   React.useEffect(() => {
     const unsub = api.auth().observeAuthState((user) => {
