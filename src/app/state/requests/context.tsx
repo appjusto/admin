@@ -1,9 +1,19 @@
 import { useToast } from '@chakra-ui/react';
 import * as Sentry from '@sentry/react';
+import { FirebaseError } from 'app/api/types';
 import { CustomToast } from 'common/components/CustomToast';
 import { getFirebaseErrorMessage } from 'core/fb';
 import { isEmpty } from 'lodash';
 import React from 'react';
+
+const skippedExceptions = [
+  'auth/user-not-found',
+  'auth/wrong-password',
+  'auth/invalid-action-code',
+  'auth/too-many-requests',
+  'auth/requires-recent-login',
+  'auth/network-request-failed',
+];
 
 type ErrorMessage = { title: string; description?: string };
 
@@ -54,8 +64,10 @@ export const AppRequestsProvider = ({ children }: Props) => {
     (result: AppRequestResult) => {
       if (result.requestId === requestId) return;
       if (result.status === 'error') {
-        if (result.error && !toast.isActive(result.requestId))
-          Sentry.captureException(result.error);
+        if (result.error && !toast.isActive(result.requestId)) {
+          const { code } = result.error as FirebaseError;
+          if (!code || !skippedExceptions.includes(code)) Sentry.captureException(result.error);
+        }
         const errorMessage = getErrorMessage(
           result.message,
           result.error ? result.error : undefined
