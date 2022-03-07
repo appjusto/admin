@@ -3,7 +3,7 @@ import FirebaseRefs from 'app/api/FirebaseRefs';
 
 export default class MapsApi {
   constructor(private refs: FirebaseRefs, private googleMapsApiKey?: string) {}
-  async googleGeocode(address: string): Promise<LatLng | undefined> {
+  async googleGeocode(address: string): Promise<LatLng | null> {
     const payload: QueryGoogleMapsPayload = {
       meta: { version: '1' }, // TODO: pass correct version on
       flavor: 'business',
@@ -11,6 +11,6 @@ export default class MapsApi {
       address,
     };
     const result = await this.refs.getQueryGoogleMapsCallable()(payload);
-    if (result?.data) return result.data;
+    return result.data;
   }
 }
