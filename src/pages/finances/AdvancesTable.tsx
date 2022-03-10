@@ -1,5 +1,5 @@
 import { AccountAdvance, WithId } from '@appjusto/types';
-import { Table, Tbody, Td, Tfoot, Th, Tr } from '@chakra-ui/react';
+import { Box, Table, Tbody, Td, Tfoot, Th, Tr } from '@chakra-ui/react';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { useRouteMatch } from 'react-router-dom';
 import { formatCurrency } from 'utils/formatters';
@@ -55,52 +55,54 @@ export const AdvancesTable = ({ advances }: AdvancesTableProps) => {
     }, 0) ?? 0;
   // UI
   return (
-    <Table mt="4" size="md" variant="simple">
-      <Tbody>
-        <Tr fontSize="15px" lineHeight="21px" fontWeight="500">
-          <Td>{t('Data')}</Td>
-          <Td isNumeric>{t('Valor solicitado')}</Td>
-          <Td isNumeric>{t('Taxa de antecipação')}</Td>
-          <Td isNumeric>{t('Valor antecipado')}</Td>
-          <Td></Td>
-        </Tr>
-        {advances !== undefined ? (
-          advances.length > 0 ? (
-            advances.map((advance) => <AdvancesTableItem key={advance.id} advance={advance} />)
-          ) : (
-            <Tr color="black" fontSize="xs" fontWeight="700">
-              <Td>{t('Sem resultados para o período informado')}</Td>
-              <Td isNumeric></Td>
-              <Td isNumeric></Td>
-              <Td isNumeric></Td>
-              <Td></Td>
-            </Tr>
-          )
-        ) : (
-          <Tr color="black" fontSize="xs" fontWeight="700">
-            <Td>{t('Carregando...')}</Td>
-            <Td></Td>
-            <Td></Td>
-            <Td></Td>
+    <Box overflowX="auto">
+      <Table mt="4" size="md" variant="simple">
+        <Tbody>
+          <Tr fontSize="15px" lineHeight="21px" fontWeight="500">
+            <Td>{t('Data')}</Td>
+            <Td isNumeric>{t('Valor solicitado')}</Td>
+            <Td isNumeric>{t('Taxa de antecipação')}</Td>
+            <Td isNumeric>{t('Valor antecipado')}</Td>
             <Td></Td>
           </Tr>
-        )}
-      </Tbody>
-      <Tfoot bgColor="gray.50">
-        <Tr>
-          <Th>{t('Total')}</Th>
-          <Th color="black" isNumeric>
-            {formatCurrency(totalRequested)}
-          </Th>
-          <Th color="red" isNumeric>
-            - {formatCurrency(totalFees)}
-          </Th>
-          <Th color="green.700" isNumeric>
-            {formatCurrency(totalAdvanced)}
-          </Th>
-          <Th></Th>
-        </Tr>
-      </Tfoot>
-    </Table>
+          {advances !== undefined ? (
+            advances.length > 0 ? (
+              advances.map((advance) => <AdvancesTableItem key={advance.id} advance={advance} />)
+            ) : (
+              <Tr color="black" fontSize="xs" fontWeight="700">
+                <Td>{t('Sem resultados para o período informado')}</Td>
+                <Td isNumeric></Td>
+                <Td isNumeric></Td>
+                <Td isNumeric></Td>
+                <Td></Td>
+              </Tr>
+            )
+          ) : (
+            <Tr color="black" fontSize="xs" fontWeight="700">
+              <Td>{t('Carregando...')}</Td>
+              <Td></Td>
+              <Td></Td>
+              <Td></Td>
+              <Td></Td>
+            </Tr>
+          )}
+        </Tbody>
+        <Tfoot bgColor="gray.50">
+          <Tr>
+            <Th>{t('Total')}</Th>
+            <Th color="black" isNumeric>
+              {formatCurrency(totalRequested)}
+            </Th>
+            <Th color="red" isNumeric>
+              - {formatCurrency(totalFees)}
+            </Th>
+            <Th color="green.700" isNumeric>
+              {formatCurrency(totalAdvanced)}
+            </Th>
+            <Th></Th>
+          </Tr>
+        </Tfoot>
+      </Table>
+    </Box>
   );
 };

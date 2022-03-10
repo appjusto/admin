@@ -228,7 +228,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
           subtitle={t('Inclua os dados do seu restaurante')}
         />
       )}
-      <Box maxW="833px">
+      <Box maxW={{ base: '760px', lg: '833px' }}>
         <form
           onSubmit={(ev) => {
             ev.preventDefault();
