@@ -110,7 +110,7 @@
     "@types/mapbox__polyline": "^1.0.2",
     "@types/react-select": "^4.0.17",
     "cross-env": "^7.0.3",
-    "cypress": "^9.1.1",
+    "cypress": "9.5.1",
     "cypress-firebase": "^2.2.0",
     "eslint-plugin-cypress": "^2.12.1",
     "firebase-admin": "9",
