@@ -1,5 +1,6 @@
 import { BusinessPhone } from '@appjusto/types';
-import { Box, Button, HStack, Stack, Text } from '@chakra-ui/react';
+import { Box, Button, HStack, Stack, Text, Tooltip } from '@chakra-ui/react';
+import { CloseButton } from 'common/components/buttons/CloseButton';
 import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import { CustomPatternInput as PatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';
 import { phoneFormatter, phoneMask } from 'common/components/form/input/pattern-input/formatters';
@@ -96,9 +97,25 @@ export const BusinessPhones = ({
               {t('Whatsapp')}
             </CustomCheckbox>
             {phones.length > 1 && (
-              <Button size="sm" variant="ghost" fontSize="13px" onClick={() => removePhone(index)}>
-                {t('Remover')}
-              </Button>
+              <>
+                <Button
+                  display={{ base: 'block', md: 'none' }}
+                  size="sm"
+                  variant="ghost"
+                  fontSize="13px"
+                  onClick={() => removePhone(index)}
+                >
+                  {t('Remover')}
+                </Button>
+                <Tooltip placement="top" label={t('Remover')} aria-label={t('Remover')}>
+                  <CloseButton
+                    display={{ base: 'none', md: 'block' }}
+                    size="sm"
+                    variant="dangerLight"
+                    onClick={() => removePhone(index)}
+                  />
+                </Tooltip>
+              </>
             )}
           </HStack>
         </Stack>
