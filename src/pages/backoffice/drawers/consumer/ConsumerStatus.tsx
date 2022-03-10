@@ -10,6 +10,8 @@ import { SectionTitle } from '../generics/SectionTitle';
 export const ConsumerStatus = () => {
   // context
   const { consumer, handleProfileChange, issueOptions } = useContextConsumerProfile();
+  // helpers
+  const profileIssues = (consumer?.profileIssues as string[]) ?? [];
   // UI
   return (
     <Box>
@@ -44,7 +46,7 @@ export const ConsumerStatus = () => {
           <SectionTitle>{t('Motivo da recusa:')}</SectionTitle>
           <CheckboxGroup
             colorScheme="green"
-            value={consumer?.profileIssues ?? []}
+            value={profileIssues}
             onChange={(value) => handleProfileChange('profileIssues', value)}
           >
             <VStack alignItems="flex-start" mt="4" color="black" spacing={2}>

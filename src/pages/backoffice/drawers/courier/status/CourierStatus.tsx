@@ -13,6 +13,8 @@ export const CourierStatus = () => {
   const { courier, issueOptions, marketPlace, handleProfileChange } = useContextCourierProfile();
   // state
   const [financialIssues, setFinancialIssues] = React.useState<string[]>([]);
+  // helpers
+  const profileIssues = (courier?.profileIssues as string[]) ?? [];
   // side effects
   React.useEffect(() => {
     if (marketPlace?.issues) setFinancialIssues(marketPlace.issues);
@@ -66,7 +68,7 @@ export const CourierStatus = () => {
           <SectionTitle>{t('Motivo da recusa:')}</SectionTitle>
           <CheckboxGroup
             colorScheme="green"
-            value={courier?.profileIssues ?? []}
+            value={profileIssues}
             onChange={(value) => handleProfileChange('profileIssues', value)}
           >
             <VStack alignItems="flex-start" mt="4" color="black" spacing={2}>
