@@ -25,6 +25,7 @@ import PageHeader from 'pages/PageHeader';
 import React from 'react';
 import { useQueryClient } from 'react-query';
 import { Redirect, Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
+import { assertPhonesIsValid, serializePhones } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { CuisineSelect } from '../../common/components/form/select/CuisineSelect';
 import { BusinessDeleteDrawer } from './BusinessDeleteDrawer';
@@ -55,7 +56,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const [name, setName] = React.useState(business?.name ?? '');
   const [companyName, setCompanyName] = React.useState(business?.companyName ?? '');
   //const [phone, setPhone] = React.useState(business?.phone ?? '');
-  const [phones, setPhones] = React.useState(initialState);
+  const [phones, setPhones] = React.useState(business?.phones ?? initialState);
   const [cuisineName, setCuisineName] = React.useState(business?.cuisine ?? '');
   const [description, setDescription] = React.useState(business?.description ?? '');
   const [minimumOrder, setMinimumOrder] = React.useState(business?.minimumOrder ?? 0);
@@ -103,7 +104,6 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
     field: 'type' | 'number' | 'calls' | 'whatsapp',
     value: any
   ) => {
-    console.log('update', stateIndex, field, value);
     setPhones((prevState) => {
       const newState = prevState.map((phone, index) => {
         if (index === stateIndex) {
@@ -125,19 +125,19 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
       });
       return cnpjRef?.current?.focus();
     }
-    // if (phone.length < 10) {
-    //   dispatchAppRequestResult({
-    //     status: 'error',
-    //     requestId: 'BusinessProfile-valid-phone',
-    //     message: { title: 'O telefone informado não é válido.' },
-    //   });
-    //   return phoneRef?.current?.focus();
-    // }
+    const serializedPhones = serializePhones(phones);
+    if (!assertPhonesIsValid(serializedPhones)) {
+      dispatchAppRequestResult({
+        status: 'error',
+        requestId: 'BusinessProfile-valid-phone',
+        message: { title: 'Você precisa informar ao menos um telefone de contato válido.' },
+      });
+    }
     const changes = {
       name,
       companyName,
       //phone,
-      phones,
+      phones: serializedPhones,
       cnpj,
       description,
       minimumOrder,

@@ -14,6 +14,7 @@ export const getBusinessChangedKeys = (
     'companyName',
     'cnpj',
     'phone',
+    'phones',
     'status',
     'situation',
     'enabled',

@@ -1,12 +1,18 @@
-import { OrderItemComplement, OrderItem, OrderStatus, BankAccountType } from '@appjusto/types';
-import { formatCurrency, formatDate } from './formatters';
-import { round } from 'lodash';
-import { CroppedAreaProps } from 'common/components/ImageCropping';
-import I18n from 'i18n-js';
-import firebase from 'firebase/app';
+import {
+  BankAccountType,
+  BusinessPhone,
+  OrderItem,
+  OrderItemComplement,
+  OrderStatus,
+} from '@appjusto/types';
 import { AlgoliaCreatedOn } from 'app/api/types';
+import { CroppedAreaProps } from 'common/components/ImageCropping';
 import { ImageType } from 'common/components/ImageUploads';
+import firebase from 'firebase/app';
+import I18n from 'i18n-js';
+import { round } from 'lodash';
 import { useLocation } from 'react-router-dom';
+import { formatCurrency, formatDate } from './formatters';
 
 // translation
 export const getTranslatedOrderStatus = (status: OrderStatus) => {
@@ -309,4 +315,17 @@ export const getCEFAccountCode = (
 
 export const slugfyName = (name: string) => {
   return name.toLowerCase().split(' ').join('-');
+};
+
+// phones
+
+export const serializePhones = (phones: BusinessPhone[]) => {
+  return phones.filter((phone) => phone.number !== '');
+};
+
+export const assertPhonesIsValid = (phones: BusinessPhone[]) => {
+  console.log('assertPhonesIsValid', phones);
+  if (!phones) return false;
+  else if (phones.length === 1 && phones[0].number === '') return false;
+  else return true;
 };

@@ -59,7 +59,7 @@ export const BusinessPhones = ({
             <PatternInput
               w={{ base: '100%' }}
               minW={{ md: '220px' }}
-              isRequired
+              isRequired={index === 0}
               //ref={phoneRef}
               id={`business-phone-${index}`}
               label={t(`Número do telefone ${index === 0 ? '*' : ''}`)}
