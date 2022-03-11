@@ -28,8 +28,8 @@ import { Redirect, Route, Switch, useHistory, useRouteMatch } from 'react-router
 import { assertPhonesIsValid, serializePhones } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { CuisineSelect } from '../../common/components/form/select/CuisineSelect';
+import { BusinessPhoneField, BusinessPhones } from './business-phones';
 import { BusinessDeleteDrawer } from './BusinessDeleteDrawer';
-import { BusinessPhones } from './BusinessPhones';
 
 const defaultPhone = {
   type: 'desk',
@@ -99,11 +99,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
       return prevState.filter((item, index) => index !== stateIndex);
     });
   };
-  const handlePhoneUpdate = (
-    stateIndex: number,
-    field: 'type' | 'number' | 'calls' | 'whatsapp',
-    value: any
-  ) => {
+  const handlePhoneUpdate = (stateIndex: number, field: BusinessPhoneField, value: any) => {
     setPhones((prevState) => {
       const newState = prevState.map((phone, index) => {
         if (index === stateIndex) {
