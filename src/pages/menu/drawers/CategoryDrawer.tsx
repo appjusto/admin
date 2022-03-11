@@ -1,5 +1,5 @@
+import * as menu from '@appjusto/menu';
 import { useCategory } from 'app/api/business/categories/useCategory';
-import * as menu from 'app/api/business/menu/functions';
 import { useContextMenu } from 'app/state/menu/context';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import React from 'react';
