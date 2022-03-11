@@ -52,36 +52,46 @@ export const BusinessPhones = ({
         <Text fontSize="xl" color="black">
           {t('Telefones de contato:')}
         </Text>
-        <Text my="2" fontSize="md">
-          {t('A ordenação dos telefones deve seguir o critério de maior efetividade de contato.')}
-        </Text>
-        <DragDropContext onDragEnd={onDragEnd}>
-          <Droppable droppableId="phones">
-            {(droppable, snapshot) => (
-              <Box
-                ref={droppable.innerRef}
-                {...droppable.droppableProps}
-                bg={snapshot.isDraggingOver ? 'gray.50' : 'white'}
-                minH={100}
-                w="100%"
-                overflow="auto"
-              >
-                {phones.map((phone, index) => (
-                  <BusinessPhoneItem
-                    key={index}
-                    index={index}
-                    phone={phone}
-                    isRemoving={phones.length > 1}
-                    handlePhoneUpdate={handlePhoneUpdate}
-                    removePhone={removePhone}
-                    isBackoffice
-                  />
-                ))}
-                {droppable.placeholder}
-              </Box>
-            )}
-          </Droppable>
-        </DragDropContext>
+        {phones.length > 0 ? (
+          <>
+            <Text my="2" fontSize="md">
+              {t(
+                'A ordenação dos telefones deve seguir o critério de maior efetividade de contato.'
+              )}
+            </Text>
+            <DragDropContext onDragEnd={onDragEnd}>
+              <Droppable droppableId="phones">
+                {(droppable, snapshot) => (
+                  <Box
+                    ref={droppable.innerRef}
+                    {...droppable.droppableProps}
+                    bg={snapshot.isDraggingOver ? 'gray.50' : 'white'}
+                    minH={100}
+                    w="100%"
+                    overflow="auto"
+                  >
+                    {phones.map((phone, index) => (
+                      <BusinessPhoneItem
+                        key={index}
+                        index={index}
+                        phone={phone}
+                        isRemoving={phones.length > 1}
+                        handlePhoneUpdate={handlePhoneUpdate}
+                        removePhone={removePhone}
+                        isBackoffice
+                      />
+                    ))}
+                    {droppable.placeholder}
+                  </Box>
+                )}
+              </Droppable>
+            </DragDropContext>
+          </>
+        ) : (
+          <Text my="2" fontSize="sm" color="black">
+            {t('Nenhum telefone informado.')}
+          </Text>
+        )}
         <Button mt="4" variant="secondary" size="sm" onClick={addPhone}>
           {t('Adicionar telefone')}
         </Button>

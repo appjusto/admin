@@ -210,10 +210,10 @@
     "@algolia/logger-common" "4.9.0"
     "@algolia/requester-common" "4.9.0"
 
-"@appjusto/types@4.3.4":
-  version "4.3.4"
-  resolved "https://registry.yarnpkg.com/@appjusto/types/-/types-4.3.4.tgz#6b62deec586ff6119cc757f93cbfdfabd922323d"
-  integrity sha512-gIhAWXprcd3O8820/5FXScICx30SDvvhmZ+nFbUCuhaA8TDYB3+ZzJerUDJXG9dSYNp+tv0dPHApsDocZgnzdA==
+"@appjusto/types@4.4.1":
+  version "4.4.1"
+  resolved "https://registry.yarnpkg.com/@appjusto/types/-/types-4.4.1.tgz#34c1945cf9e16e58fa82bd5c2b622a69952150be"
+  integrity sha512-zFykYCSPJxd5WHN91Uhot1Csp795gCMkXQsrpkYWR+8XX7D4uCx3CMWnE+JDEa8AHzN1ba+ab8KnzSUBq/9cCw==
 
 "@babel/code-frame@7.10.4":
   version "7.10.4"

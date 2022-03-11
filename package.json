@@ -3,7 +3,7 @@
   "version": "7.5.1",
   "private": true,
   "dependencies": {
-    "@appjusto/types": "4.3.4",
+    "@appjusto/types": "4.4.1",
     "@chakra-ui/icons": "^1.0.3",
     "@chakra-ui/react": "^1.6.3",
     "@emotion/react": "^11.0.0",
@@ -81,6 +81,7 @@
     "deploy:community": "ENV=community yarn deploy",
     "deploy:live": "ENV=live yarn deploy",
     "postversion": "git push && git push --tags && git fetch",
+    "install-local-types": "yarn remove @appjusto/types && yarn add ../types",
     "cypress:emulator": "cross-env FIREBASE_AUTH_EMULATOR_HOST=localhost:9099 FIRESTORE_EMULATOR_HOST=localhost:8080",
     "cypress:e:open": "yarn cypress:emulator yarn cypress:open",
     "cypress:e:run": "yarn cypress:emulator yarn cypress:run",
