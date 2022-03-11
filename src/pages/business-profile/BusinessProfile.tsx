@@ -126,8 +126,9 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
       dispatchAppRequestResult({
         status: 'error',
         requestId: 'BusinessProfile-valid-phone',
-        message: { title: 'Você precisa informar ao menos um telefone de contato válido.' },
+        message: { title: 'Um ou mais telefones informados não são válidos.' },
       });
+      return;
     }
     const changes = {
       name,

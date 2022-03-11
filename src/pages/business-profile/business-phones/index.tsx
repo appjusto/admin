@@ -52,6 +52,9 @@ export const BusinessPhones = ({
         <Text fontSize="xl" color="black">
           {t('Telefones de contato:')}
         </Text>
+        <Text my="2" fontSize="md">
+          {t('A ordenação dos telefones deve seguir o critério de maior efetividade de contato.')}
+        </Text>
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="phones">
             {(droppable, snapshot) => (

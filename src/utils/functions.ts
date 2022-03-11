@@ -324,8 +324,12 @@ export const serializePhones = (phones: BusinessPhone[]) => {
 };
 
 export const assertPhonesIsValid = (phones: BusinessPhone[]) => {
-  console.log('assertPhonesIsValid', phones);
   if (!phones) return false;
-  else if (phones.length === 1 && phones[0].number === '') return false;
-  else return true;
+  let n = 0;
+  let result = true;
+  while (phones.length > n && result === true) {
+    if (phones[n].number.length < 10) result = false;
+    n++;
+  }
+  return result;
 };
