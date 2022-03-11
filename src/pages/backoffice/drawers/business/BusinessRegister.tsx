@@ -11,7 +11,11 @@ import { BOManagerProfile } from './forms/BOManagerProfile';
 
 export const BusinessRegister = () => {
   // context
-  const { business, handleBussinesPhonesChange } = useContextBusinessBackoffice();
+  const {
+    business,
+    handleBussinesPhonesChange,
+    handleBusinessPhoneOrdering,
+  } = useContextBusinessBackoffice();
   const {
     profileNotes,
     updateNote,
@@ -29,6 +33,7 @@ export const BusinessRegister = () => {
         handlePhoneUpdate={(index: number, field: BusinessPhoneField, value: any) =>
           handleBussinesPhonesChange('update', { index, field, value })
         }
+        handleOrdering={handleBusinessPhoneOrdering}
         isBackoffice
       />
       <SectionTitle>{t('Dados pessoais')}</SectionTitle>

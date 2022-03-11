@@ -23,6 +23,7 @@ export type Actions =
       type: 'update_business_phone';
       payload: { index: number; field: BusinessPhoneField; value: any };
     }
+  | { type: 'ordering_business_phone'; payload: BusinessPhone[] }
   | { type: 'clear_business' }
   | { type: 'load_manager'; payload: WithId<ManagerProfile> }
   | { type: 'update_manager'; payload: Partial<WithId<ManagerProfile>> }
@@ -77,6 +78,14 @@ export const businessBOReducer = (state: businessBOState, action: Actions): busi
               return phone;
             }
           }),
+        },
+      };
+    case 'ordering_business_phone':
+      return {
+        ...state,
+        businessProfile: {
+          ...state.businessProfile,
+          phones: action.payload,
         },
       };
     case 'clear_business':
