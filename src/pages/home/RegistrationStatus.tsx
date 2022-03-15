@@ -27,9 +27,9 @@ const initialState = [
   {
     status: false,
     type: 'manager',
-    label: 'Perfil do administrador e dados bancários',
+    label: 'Perfil do administrador',
     link: 'manager-profile',
-    helpText: 'Dúvidas sobre o seu perfil e dados bancários',
+    helpText: 'Dúvidas sobre o seu perfil',
     helpLink:
       'https://appjusto.freshdesk.com/support/solutions/articles/67000631086-d%C3%BAvidas-sobre-o-perfil-e-dados-banc%C3%A1rios',
   },
@@ -41,6 +41,15 @@ const initialState = [
     helpText: 'Como melhorar a página do restaurante',
     helpLink:
       'https://appjusto.freshdesk.com/support/solutions/articles/67000631083-como-melhorar-a-p%C3%A1gina-do-restaurante',
+  },
+  {
+    status: false,
+    type: 'banking',
+    label: 'Dados bancários',
+    link: 'banking-information',
+    helpText: 'Dúvidas sobre os dados bancários',
+    helpLink:
+      'https://appjusto.freshdesk.com/support/solutions/articles/67000631086-d%C3%BAvidas-sobre-o-perfil-e-dados-banc%C3%A1rios',
   },
   {
     status: false,
@@ -101,6 +110,9 @@ export const RegistrationStatus = () => {
           return { ...data, status };
         } else if (data.type === 'business') {
           const status = businessProfileValidation.businessProfile;
+          return { ...data, status };
+        } else if (data.type === 'banking') {
+          const status = businessProfileValidation.bankingInformation;
           return { ...data, status };
         } else if (data.type === 'address') {
           const status = businessProfileValidation.businessAddress;

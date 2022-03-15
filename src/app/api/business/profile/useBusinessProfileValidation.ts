@@ -1,12 +1,13 @@
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextManagerProfile } from 'app/state/manager/context';
+import React from 'react';
 import { useObserveProducts } from '../products/useObserveProducts';
 import { useBusinessBankAccount } from './useBusinessBankAccount';
-import React from 'react';
 
 const initialState = {
   managerProfile: false,
   businessProfile: false,
+  bankingInformation: false,
   businessAddress: false,
   businessMenu: false,
   businessSchedules: false,
@@ -39,7 +40,7 @@ export const useBusinessProfileValidation = (businessId?: string) => {
           ? true
           : false;
       const isBusinessInfosOk =
-        business?.name && business?.description && business?.cnpj && business.phone ? true : false;
+        business?.name && business?.description && business?.cnpj && business.phones ? true : false;
       const isAddressInfosOk =
         business?.businessAddress?.address &&
         business?.businessAddress?.cep &&
@@ -50,8 +51,9 @@ export const useBusinessProfileValidation = (businessId?: string) => {
       const isSchedulesOk = business?.schedules ? true : false;
       const isMenuOk = products?.length > 0;
       setBusinessProfileValidation({
-        managerProfile: isManagerInfosOk && isBankingInfosOk,
+        managerProfile: isManagerInfosOk,
         businessProfile: isBusinessInfosOk,
+        bankingInformation: isBankingInfosOk,
         businessAddress: isAddressInfosOk,
         businessMenu: isMenuOk,
         businessSchedules: isSchedulesOk,
