@@ -96,7 +96,7 @@ export const RegistrationForm = () => {
               placeholder="Digite seu e-mail"
               value={email}
               handleChange={(event: ChangeEvent<HTMLInputElement>) => {
-                setEmail(event.target.value);
+                setEmail(event.target.value.toLowerCase());
               }}
               isInvalid={email !== '' && isEmailInvalid}
               minW={[null, null, '300px']}

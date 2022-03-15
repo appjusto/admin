@@ -79,7 +79,7 @@ const Login = () => {
             label={t('E-mail')}
             placeholder={t('Endereço de e-mail')}
             value={email}
-            handleChange={(ev) => setEmail(ev.target.value)}
+            handleChange={(ev) => setEmail(ev.target.value.toLowerCase())}
             isInvalid={email !== '' && isEmailInvalid}
           />
           <CustomCheckbox
