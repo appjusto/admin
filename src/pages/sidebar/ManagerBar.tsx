@@ -15,13 +15,13 @@ export const ManagerBar = (props: FlexProps) => {
   const name = manager?.name ? `, ${manager.name}!` : '!';
   return (
     <Flex
-      mt={{ base: '4', lg: '0' }}
-      position={{ base: 'relative', md: 'fixed' }}
+      mt={{ base: '3', lg: '0' }}
+      position={{ base: 'relative', lg: 'fixed' }}
       bottom={{ md: '0' }}
       left={{ md: '0' }}
       w={{ base: isBackOffice ? '100vw' : '75vw', md: '220px' }}
       borderTop={{ lg: '1px solid #C8D7CB' }}
-      bgColor="#EEEEEE"
+      bgColor={{ base: '#F6F6F6', lg: '#EEEEEE' }}
       px="4"
       py="2"
       {...props}

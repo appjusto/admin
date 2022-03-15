@@ -12,11 +12,16 @@ const customStyles = {
     cursor: 'pointer',
   }),
   //@ts-ignore
+  menu: (styles) => ({
+    ...styles,
+    backgroundColor: '#EEEEEE',
+  }),
+  //@ts-ignore
   option: (styles, { data, isDisabled, isFocused, isSelected }) => {
     return {
       ...styles,
-      backgroundColor: isFocused ? '#EEEEEE' : null,
-      color: isSelected ? '#4EA031' : '#505A4F',
+      backgroundColor: isFocused ? '#FFF' : null,
+      color: isSelected ? '#55c76e' : '#505A4F',
       cursor: isDisabled ? 'not-allowed' : 'pointer',
     };
   },
