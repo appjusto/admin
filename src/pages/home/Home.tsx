@@ -4,6 +4,7 @@ import { BusinessDashboardProvider } from 'app/state/dashboards/business';
 import { MenuContextProvider } from 'app/state/menu/context';
 import { OrdersContextProvider } from 'app/state/order';
 import { Loading } from 'common/components/Loading';
+import BankingInformation from 'pages/banking-information/BankingInformation';
 import BusinessProfile from 'pages/business-profile/BusinessProfile';
 import SchedulesPage from 'pages/business-schedules/SchedulesPage';
 import ChatPage from 'pages/chat';
@@ -75,6 +76,7 @@ const Home = () => {
                 <Route path={`${path}/manager-profile`} component={ManagerProfilePage} />
                 <Route path={`${path}/orders-history`} component={OrdersHistoryPage} />
                 <Route path={`${path}/finances`} component={FinancesPage} />
+                <Route path={`${path}/banking-information`} component={BankingInformation} />
                 <Route path={`${path}/team`} component={TeamPage} />
               </PageLayout>
             </Switch>
