@@ -49,6 +49,7 @@ const ProtectedLinks = ({ isApproved }: ProtectedLinksProps) => {
         <LinkItem to={`${url}/orders-history`} label={t('Histórico de pedidos')} />
         <LinkItem to={`${url}/finances`} label={t('Financeiro')} />
         <LinkItem to={`${url}/business-profile`} label={t('Perfil do restaurante')} />
+        <LinkItem to={`${url}/banking-information`} label={t('Dados bancários')} />
         <LinkItem to={`${url}/team`} label={t('Colaboradores')} />
       </Box>
     </>

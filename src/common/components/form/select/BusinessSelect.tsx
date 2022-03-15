@@ -15,7 +15,7 @@ const customStyles = {
   option: (styles, { data, isDisabled, isFocused, isSelected }) => {
     return {
       ...styles,
-      backgroundColor: isFocused ? '#F6F5FF' : null,
+      backgroundColor: isFocused ? '#EEEEEE' : null,
       color: isSelected ? '#4EA031' : '#505A4F',
       cursor: isDisabled ? 'not-allowed' : 'pointer',
     };

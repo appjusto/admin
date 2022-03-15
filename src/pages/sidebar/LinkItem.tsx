@@ -21,7 +21,7 @@ export const LinkItem = ({ to, label }: LinkItemProps) => {
       pl={match ? '0' : '6'}
       height="34px"
       cursor="pointer"
-      _hover={match ? {} : { bg: 'gray.100' }}
+      _hover={{ bg: 'white' }}
     >
       {match ? <Box w="4px" h="36px" bg="green.500" borderRadius="8px" ml="1" mr="4" /> : null}
       <Link
