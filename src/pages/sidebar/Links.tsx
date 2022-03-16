@@ -5,6 +5,7 @@ import React from 'react';
 import { useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { LinkItem } from './LinkItem';
+import { OrdersLinkItem } from './OrdersLinkItem';
 
 interface DisabledLinkProps {
   label: string;
@@ -32,7 +33,7 @@ const ProtectedLinks = ({ isApproved }: ProtectedLinksProps) => {
         <LinkItem to={`${url}`} label={t('Início')} />
         {isApproved ? (
           <>
-            <LinkItem to={`${url}/orders`} label={t('Gerenciador de pedidos')} />
+            <OrdersLinkItem to={`${url}/orders`} />
             <LinkItem to={`${url}/sharing`} label={t('Compartilhamento')} />
           </>
         ) : (
@@ -74,7 +75,7 @@ export const Links = (props: BoxProps) => {
           <LinkItem to={`${url}`} label={t('Início')} />
           {isApproved ? (
             <>
-              <LinkItem to={`${url}/orders`} label={t('Gerenciador de pedidos')} />
+              <OrdersLinkItem to={`${url}/orders`} />
               <LinkItem to={`${url}/sharing`} label={t('Compartilhamento')} />
             </>
           ) : (
