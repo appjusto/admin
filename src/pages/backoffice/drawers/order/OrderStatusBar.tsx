@@ -83,6 +83,9 @@ export const OrderStatusBar = ({
               <CustomRadio mt="2" value="delivered">
                 {t('Entregue')}
               </CustomRadio>
+              <CustomRadio mt="2" value="rejected">
+                {t('Rejeitado')}
+              </CustomRadio>
               <CustomRadio mt="2" value="canceled">
                 {t('Cancelado')}
               </CustomRadio>
@@ -201,14 +204,10 @@ export const OrderStatusBar = ({
               {t('Entrega')}
             </CustomCheckbox>
           </HStack>
-          <SectionTitle>{t('Comentário:')}</SectionTitle>
-          <Textarea
-            mt="2"
-            value={message}
-            onChange={(ev) => updateState('message', ev.target.value)}
-          />
         </>
       )}
+      <SectionTitle>{t('Comentário:')}</SectionTitle>
+      <Textarea mt="2" value={message} onChange={(ev) => updateState('message', ev.target.value)} />
     </Box>
   );
 };
