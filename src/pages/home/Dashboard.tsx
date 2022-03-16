@@ -4,10 +4,10 @@ import { useContextBusinessDashboard } from 'app/state/dashboards/business';
 import { CrowdfundingCard } from 'common/components/CrowdfundingCard';
 import { MaintenanceBox } from 'common/components/MaintenanceBox';
 import { NewFeatureBox } from 'common/components/NewFeatureBox';
+import { ReactComponent as ExtensionIcon } from 'common/img/chrome-extension-icon.svg';
 import I18n from 'i18n-js';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import React from 'react';
-import { BsShare } from 'react-icons/bs';
 import { useRouteMatch } from 'react-router';
 import { formatCurrency, formatPct } from 'utils/formatters';
 import { getDateTime } from 'utils/functions';
@@ -151,7 +151,7 @@ const Dashboard = () => {
         <Box>
           <MaintenanceBox />
           <CrowdfundingCard />
-          <NewFeatureBox
+          {/* <NewFeatureBox
             icon={BsShare}
             title={t('Compartilhe seu restaurante como quiser!')}
             description={t(
@@ -160,6 +160,19 @@ const Dashboard = () => {
             link={`${path}/sharing`}
             btnLabel={t('Visualizar links')}
             isNew={false}
+          /> */}
+          <NewFeatureBox
+            icon={ExtensionIcon}
+            iconSize="lg"
+            title={t('Extensão para Google Chrome')}
+            description={t(
+              'Nova extensão Appjusto Admin para Google Chrome! Ela ajuda a manter sua aplicação sempre ativa para receber pedidos.'
+            )}
+            link="https://chrome.google.com/webstore/detail/appjusto-admin/mcmielagmkelelpmnmjlnlpeakdmmeap?hl=pt-br"
+            btnLabel={t('Instalar')}
+            btnVariant="solid"
+            isExternal
+            isNew
           />
           <Box mt="8" border="1px solid #E5E5E5" borderRadius="lg" p="4">
             <SectionTitle mt="0" fontWeight="700">
