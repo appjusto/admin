@@ -6,10 +6,10 @@ import { CustomButton } from 'common/components/buttons/CustomButton';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import { Loading } from 'common/components/Loading';
 import { ReactComponent as Logo } from 'common/img/logo.svg';
+import { BasicErrorPage } from 'pages/error/BasicErrorPage';
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { t } from 'utils/i18n';
-import { UserNotFound } from './UserNotFound';
 
 const timeoutLimit = 6; // in seconds
 
@@ -46,7 +46,13 @@ const Join = () => {
   }, [isLinkValid, isEmailSaved, signInWithEmailLink, savedEmail, link]);
 
   // UI
-  if (isTimeout && !isBackofficeUser && isEmailSaved) return <UserNotFound />;
+  if (isTimeout && !isBackofficeUser && isEmailSaved)
+    return (
+      <BasicErrorPage
+        title="Ocorreu um erro de autenticação."
+        description="Não foi possível acessar as credenciais do seu usuário. Já tentou recarregar esta página?"
+      />
+    );
 
   if (isSuccess) {
     if (isBackofficeUser) return <Redirect to="/backoffice" />;

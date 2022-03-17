@@ -36,9 +36,7 @@ class MainErrorBoundary extends Component<Props, State> {
 
   public render() {
     if (this.state.hasError) {
-      return (
-        <BasicErrorPage title={this.state.error?.name} description={this.state.error?.message} />
-      );
+      return <BasicErrorPage description={this.state.error?.message} />;
     }
     return this.props.children;
   }

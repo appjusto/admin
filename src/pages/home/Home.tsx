@@ -9,8 +9,8 @@ import BusinessProfile from 'pages/business-profile/BusinessProfile';
 import SchedulesPage from 'pages/business-schedules/SchedulesPage';
 import ChatPage from 'pages/chat';
 import DeliveryArea from 'pages/delivery-area/DeliveryArea';
+import { BasicErrorPage } from 'pages/error/BasicErrorPage';
 import FinancesPage from 'pages/finances/FinancesPage';
-import { UserNotFound } from 'pages/join/UserNotFound';
 import ManagerProfilePage from 'pages/manager-profile/ManagerProfilePage';
 import Menu from 'pages/menu/Menu';
 import OrdersHistoryPage from 'pages/orders/history/OrdersHistoryPage';
@@ -52,7 +52,12 @@ const Home = () => {
     return <Redirect to={`/onboarding/${!business?.onboarding ? '' : business.onboarding}`} />;
   }
   if (business?.onboarding === 'completed' && !userWithGrantedRole && isTimeout) {
-    return <UserNotFound />;
+    return (
+      <BasicErrorPage
+        title="Ocorreu um erro de autenticação."
+        description="Não foi possível acessar as credenciais do seu usuário. Já tentou recarregar esta página?"
+      />
+    );
   }
   if (
     (business && isBackofficeUser) ||

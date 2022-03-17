@@ -9,7 +9,7 @@ interface BasicErrorPageProps {
 }
 
 export const BasicErrorPage = ({
-  title = 'Ocorreu um erro ao carregar a aplicação.',
+  title = 'Erro ao carregar a aplicação.',
   description = 'Tenta recarregar a página?',
 }: BasicErrorPageProps) => {
   return (

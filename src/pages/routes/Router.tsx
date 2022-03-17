@@ -1,5 +1,5 @@
 import { Loading } from 'common/components/Loading';
-import { BasicErrorPage } from 'pages/error/BasicErrorPage';
+import Join from 'pages/join/Join';
 import LandingPage from 'pages/landing/LandingPage';
 import Login from 'pages/login/Login';
 import Logout from 'pages/logout/Logout';
@@ -30,8 +30,7 @@ export const Router = () => {
           <Switch>
             <Route exact path="/" component={LandingPage} />
             <Route path="/login" component={Login} />
-            {/* <Route path="/join" component={Join} /> */}
-            <Route path="/join" component={BasicErrorPage} />
+            <Route path="/join" component={Join} />
             <Route path="/deleted" component={DeletedPage} />
             <ProtectedRoute path="/app" component={Home} />
             <ProtectedRoute path="/onboarding" component={Onboarding} />
