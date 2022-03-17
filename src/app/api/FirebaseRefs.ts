@@ -1,5 +1,5 @@
-import { collection, doc, Firestore } from 'firebase/firestore';
-import { Functions } from 'firebase/functions';
+import { collection, doc, Firestore, writeBatch } from 'firebase/firestore';
+import { Functions, httpsCallable } from 'firebase/functions';
 import * as geofirestore from 'geofirestore';
 
 export default class FirebaseRefs {
@@ -9,30 +9,30 @@ export default class FirebaseRefs {
   }
 
   // functions
-  getServerTimeCallable = () => this.functions.httpsCallable('getServerTime');
-  getQueryGoogleMapsCallable = () => this.functions.httpsCallable('queryGoogleMaps');
-  getUpdateEmailCallable = () => this.functions.httpsCallable('updateEmail');
-  getDeleteAccountCallable = () => this.functions.httpsCallable('deleteAccount');
-  getCreateBusinessProfileCallable = () => this.functions.httpsCallable('createBusinessProfile');
-  getUpdateBusinessSlugCallable = () => this.functions.httpsCallable('updateBusinessSlug');
-  getCloneBusinessCallable = () => this.functions.httpsCallable('cloneBusiness');
-  getCloneComplementsGroupCallable = () => this.functions.httpsCallable('cloneComplementsGroup');
-  getCreateManagersCallable = () => this.functions.httpsCallable('createManagers');
-  getGetBusinessManagersCallable = () => this.functions.httpsCallable('getBusinessManagers');
-  getCancelOrderCallable = () => this.functions.httpsCallable('cancelOrder');
-  getMatchOrderCallable = () => this.functions.httpsCallable('matchOrder');
-  getDropOrderCallable = () => this.functions.httpsCallable('dropOrder');
-  getOutsourceDeliveryCallable = () => this.functions.httpsCallable('outsourceDelivery');
-  getReleaseCourierCallable = () => this.functions.httpsCallable('releaseCourier');
+  getServerTimeCallable = () => httpsCallable(this.functions, 'getServerTime');
+  getQueryGoogleMapsCallable = () => httpsCallable(this.functions, 'queryGoogleMaps');
+  getUpdateEmailCallable = () => httpsCallable(this.functions, 'updateEmail');
+  getDeleteAccountCallable = () => httpsCallable(this.functions, 'deleteAccount');
+  getCreateBusinessProfileCallable = () => httpsCallable(this.functions, 'createBusinessProfile');
+  getUpdateBusinessSlugCallable = () => httpsCallable(this.functions, 'updateBusinessSlug');
+  getCloneBusinessCallable = () => httpsCallable(this.functions, 'cloneBusiness');
+  getCloneComplementsGroupCallable = () => httpsCallable(this.functions, 'cloneComplementsGroup');
+  getCreateManagersCallable = () => httpsCallable(this.functions, 'createManagers');
+  getGetBusinessManagersCallable = () => httpsCallable(this.functions, 'getBusinessManagers');
+  getCancelOrderCallable = () => httpsCallable(this.functions, 'cancelOrder');
+  getMatchOrderCallable = () => httpsCallable(this.functions, 'matchOrder');
+  getDropOrderCallable = () => httpsCallable(this.functions, 'dropOrder');
+  getOutsourceDeliveryCallable = () => httpsCallable(this.functions, 'outsourceDelivery');
+  getReleaseCourierCallable = () => httpsCallable(this.functions, 'releaseCourier');
   getFetchAccountInformationCallable = () =>
-    this.functions.httpsCallable('fetchAccountInformation');
-  getFetchReceivablesCallable = () => this.functions.httpsCallable('fetchReceivables');
-  getFetchAdvanceSimulationCallable = () => this.functions.httpsCallable('fetchAdvanceSimulation');
-  getRequestWithdrawCallable = () => this.functions.httpsCallable('requestWithdraw');
-  getAdvanceReceivablesCallable = () => this.functions.httpsCallable('advanceReceivables');
+    httpsCallable(this.functions, 'fetchAccountInformation');
+  getFetchReceivablesCallable = () => httpsCallable(this.functions, 'fetchReceivables');
+  getFetchAdvanceSimulationCallable = () => httpsCallable(this.functions, 'fetchAdvanceSimulation');
+  getRequestWithdrawCallable = () => httpsCallable(this.functions, 'requestWithdraw');
+  getAdvanceReceivablesCallable = () => httpsCallable(this.functions, 'advanceReceivables');
 
   // firestore
-  getBatchRef = () => this.firestore.batch();
+  getBatchRef = () => writeBatch(this.firestore);
   // users
   getUsersRef = () => collection(this.firestore, 'users');
 
