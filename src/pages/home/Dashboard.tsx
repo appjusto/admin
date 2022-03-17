@@ -8,7 +8,6 @@ import { ReactComponent as ExtensionIcon } from 'common/img/chrome-extension-ico
 import I18n from 'i18n-js';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import React from 'react';
-import { useRouteMatch } from 'react-router';
 import { formatCurrency, formatPct } from 'utils/formatters';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
@@ -81,7 +80,6 @@ const InfoBox = ({
 
 const Dashboard = () => {
   // context
-  const { path } = useRouteMatch();
   const { business, isDeleted, setIsDeleted } = useContextBusiness();
   const {
     todayOrders,
