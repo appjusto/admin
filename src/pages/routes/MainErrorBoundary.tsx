@@ -28,7 +28,7 @@ class MainErrorBoundary extends Component<Props, State> {
   }
 
   public componentDidCatch(error: CustomError, errorInfo: ErrorInfo) {
-    console.error('Uncaught error:', error, errorInfo);
+    console.error('MainErrorBoundary:', error, errorInfo);
     if (error.name === 'ChunkLoadError' || error.message?.includes('ChunkLoadError')) {
       window.location.reload();
     }
