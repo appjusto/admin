@@ -1,9 +1,14 @@
 import { ApiConfig } from 'app/api/config/types';
 import MapsApi from 'core/api/thirdparty/maps/MapsApi';
+import { Analytics, getAnalytics } from 'firebase/analytics';
 import { FirebaseApp, initializeApp } from 'firebase/app';
-import { Analytics } from 'firebase/app/dist/analytics';
 import { Auth, connectAuthEmulator, getAuth } from 'firebase/auth';
-import { connectFirestoreEmulator, Firestore, getFirestore } from 'firebase/firestore';
+import {
+  connectFirestoreEmulator,
+  Firestore,
+  FirestoreSettings,
+  initializeFirestore,
+} from 'firebase/firestore';
 import { connectFunctionsEmulator, Functions, getFunctions } from 'firebase/functions';
 import { connectStorageEmulator, FirebaseStorage, getStorage } from 'firebase/storage';
 import AuthApi from './auth/AuthApi';
@@ -47,20 +52,21 @@ export default class Api {
       Api.app = initializeApp({ ...config.firebase.config });
     }
     this._authentication = getAuth(Api.app);
-    this._firestore = getFirestore(Api.app);
+    let firestoreSettings = {} as FirestoreSettings;
     // @ts-ignore
     if (window.Cypress) {
-      this._firestore.settings({
+      firestoreSettings = {
         experimentalForceLongPolling: true,
         host: 'localhost:8080',
         ssl: false,
-      });
+      };
     }
+    this._firestore = initializeFirestore(Api.app, firestoreSettings);
 
     this._functions = getFunctions(Api.app, config.firebase.config.region);
     this._storage = getStorage(Api.app);
-    // this._analytics = Api.app.analytics();
-    this._analytics.setAnalyticsCollectionEnabled(false);
+    this._analytics = getAnalytics(Api.app);
+    //this._analytics.setAnalyticsCollectionEnabled(false);
 
     if (config.firebase.options.useEmulator && config.firebase.options.emulatorHost) {
       const { emulatorHost } = config.firebase.options;

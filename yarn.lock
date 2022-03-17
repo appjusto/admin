@@ -210,10 +210,10 @@
     "@algolia/logger-common" "4.9.0"
     "@algolia/requester-common" "4.9.0"
 
-"@appjusto/types@^5.0.2":
-  version "5.0.2"
-  resolved "https://registry.yarnpkg.com/@appjusto/types/-/types-5.0.2.tgz#fd8c6746b6f1ac7bbcbd7b0f852e6f959c91781b"
-  integrity sha512-JvTkreDd2RiAlXuQARU+qeD6f7w3fVtUMutFFGQyVC21298JaMn1OwJuZIzvwzOxludRfzvbGjyhZ43CMjA+uQ==
+"@appjusto/types@^5.2.0":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@appjusto/types/-/types-5.3.0.tgz#ea07e868931b2d4fed4977478d9b7543b56a7740"
+  integrity sha512-FasmsoJ588kWn1YWRQG1LiYROcz4kwdvNk9LTbB2AVsgaijKxvd5NBWZD7KvcI1Rg+SlSs5RSN5Me82ZGFdSWQ==
   dependencies:
     firebase "^9.6.7"
 
