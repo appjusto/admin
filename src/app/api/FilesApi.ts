@@ -1,12 +1,11 @@
-import { FirebaseStorage } from 'firebase/storage';
+import { FirebaseStorage, getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 export default class FilesApi {
   constructor(private storage: FirebaseStorage) {}
 
   async upload(file: File, path: string, progressHandler?: (progress: number) => void) {
     return new Promise<boolean>(async (resolve, reject) => {
-      const ref = this.storage.ref().child(path);
-      const task = ref.put(file);
-      task.on(
+      const reference = ref(this.storage, path);
+      return uploadBytesResumable(reference, file).on(
         'state_changed',
         (snapshot) => {
           const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
@@ -23,9 +22,8 @@ export default class FilesApi {
   }
 
   async getDownloadURL(path: string) {
-    const ref = this.storage.ref().child(path);
-    const uri = await ref
-      .getDownloadURL()
+    const reference = ref(this.storage, path);
+    const uri = await getDownloadURL(reference)
       .then((res: string | null) => res)
       .catch(() => null);
     return uri;
