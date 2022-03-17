@@ -21,6 +21,7 @@ import { useContextAppRequests } from '../requests/context';
 interface ContextProps {
   business: WithId<Business> | null | undefined;
   orders: WithId<Order>[];
+  confirmedNumber: number;
   chats: OrderChatGroup[];
   newChatMessages: string[];
   getOrderById(id: string): WithId<Order> | undefined;
@@ -48,7 +49,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   const completedAndActiveOrders = useObserveOrdersCompletedInTheLastHour(business?.id);
   //const canceledOrders = useCanceledOrders(business?.id);
   const chats = useBusinessChats(activeOrders, completedAndActiveOrders);
-  useObserveConfirmedOrders(business?.id);
+  const confirmedNumber = useObserveConfirmedOrders(business?.id);
   useObservePreparingOrders(business?.id);
   // freshdesk
   useFreshDesk(business?.id, business?.name, business?.phone);
@@ -198,6 +199,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
       value={{
         business,
         orders,
+        confirmedNumber,
         chats,
         newChatMessages,
         getOrderById,

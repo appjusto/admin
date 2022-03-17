@@ -4,12 +4,13 @@ import { BusinessDashboardProvider } from 'app/state/dashboards/business';
 import { MenuContextProvider } from 'app/state/menu/context';
 import { OrdersContextProvider } from 'app/state/order';
 import { Loading } from 'common/components/Loading';
+import BankingInformation from 'pages/banking-information/BankingInformation';
 import BusinessProfile from 'pages/business-profile/BusinessProfile';
 import SchedulesPage from 'pages/business-schedules/SchedulesPage';
 import ChatPage from 'pages/chat';
 import DeliveryArea from 'pages/delivery-area/DeliveryArea';
+import { BasicErrorPage } from 'pages/error/BasicErrorPage';
 import FinancesPage from 'pages/finances/FinancesPage';
-import { UserNotFound } from 'pages/join/UserNotFound';
 import ManagerProfilePage from 'pages/manager-profile/ManagerProfilePage';
 import Menu from 'pages/menu/Menu';
 import OrdersHistoryPage from 'pages/orders/history/OrdersHistoryPage';
@@ -51,7 +52,12 @@ const Home = () => {
     return <Redirect to={`/onboarding/${!business?.onboarding ? '' : business.onboarding}`} />;
   }
   if (business?.onboarding === 'completed' && !userWithGrantedRole && isTimeout) {
-    return <UserNotFound />;
+    return (
+      <BasicErrorPage
+        title="Ocorreu um erro de autenticação."
+        description="Não foi possível acessar as credenciais do seu usuário. Já tentou recarregar esta página?"
+      />
+    );
   }
   if (
     (business && isBackofficeUser) ||
@@ -75,6 +81,7 @@ const Home = () => {
                 <Route path={`${path}/manager-profile`} component={ManagerProfilePage} />
                 <Route path={`${path}/orders-history`} component={OrdersHistoryPage} />
                 <Route path={`${path}/finances`} component={FinancesPage} />
+                <Route path={`${path}/banking-information`} component={BankingInformation} />
                 <Route path={`${path}/team`} component={TeamPage} />
               </PageLayout>
             </Switch>

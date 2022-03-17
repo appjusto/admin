@@ -5,21 +5,33 @@ import { t } from 'utils/i18n';
 
 interface NewFeatureBoxProps {
   icon: any;
+  iconSize?: 'sm' | 'lg';
   title: string;
   description: string;
   link: string;
   btnLabel: string;
+  btnVariant?: string;
+  isExternal?: boolean;
   isNew?: boolean;
 }
 
 export const NewFeatureBox = ({
   icon,
+  iconSize = 'sm',
   title,
   description,
   link,
   btnLabel,
+  btnVariant,
+  isExternal = false,
   isNew = true,
 }: NewFeatureBoxProps) => {
+  // helpers
+  const iconDimentions = {
+    box: iconSize === 'sm' ? '48px' : '64px',
+    icon: iconSize === 'sm' ? '24px' : '36px',
+  };
+  // UI
   return (
     <Stack
       mt="8"
@@ -33,8 +45,14 @@ export const NewFeatureBox = ({
       spacing={4}
     >
       <Stack w="100%" direction={{ base: 'column', md: 'row' }} spacing={4} alignItems="center">
-        <Center w="48px" h="48px" bgColor="#fff" borderRadius="24px" overflow="hidden">
-          <Icon as={icon} w="24px" h="24px" />
+        <Center
+          w={iconDimentions.box}
+          h={iconDimentions.box}
+          bgColor="#fff"
+          borderRadius="24px"
+          overflow="hidden"
+        >
+          <Icon as={icon} w={iconDimentions.icon} h={iconDimentions.icon} />
         </Center>
         <Box maxW="612px">
           <HStack spacing={4}>
@@ -68,7 +86,15 @@ export const NewFeatureBox = ({
           </Text>
         </Box>
       </Stack>
-      <CustomButton minW="220px" label={btnLabel} link={link} variant="black" />
+      <CustomButton
+        minW="220px"
+        fontSize="15px"
+        fontWeight="700"
+        label={btnLabel}
+        link={link}
+        variant={btnVariant ?? 'black'}
+        isExternal={isExternal}
+      />
     </Stack>
   );
 };

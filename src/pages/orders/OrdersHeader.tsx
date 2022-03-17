@@ -13,7 +13,7 @@ export const OrdersHeader = () => {
   const { business } = useContextBusiness();
   // UI
   return (
-    <Flex p="6" h="76px" flex={1} alignItems="center" justifyContent="space-between" bg="gray.50">
+    <Flex p="6" h="76px" flex={1} alignItems="center" justifyContent="space-between" bg="#EEEEEE">
       <HStack spacing={6}>
         <Flex flexDir="row">
           <Box pt="7px" pr="2">

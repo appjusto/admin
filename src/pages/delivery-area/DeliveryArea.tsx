@@ -1,7 +1,8 @@
+import { BusinessAddress } from '@appjusto/types';
 import { Box, Flex, RadioGroup, Stack, Text } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
+import { useCepAndGeocode } from 'app/api/business/useCepAndGeocode';
 import { getConfig } from 'app/api/config';
-import { useContextApi } from 'app/state/api/context';
 import { useContextBusiness } from 'app/state/business/context';
 import CustomRadio from 'common/components/form/CustomRadio';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
@@ -11,14 +12,12 @@ import { cepFormatter, cepMask } from 'common/components/form/input/pattern-inpu
 import { numbersOnlyParser } from 'common/components/form/input/pattern-input/parsers';
 import { Select } from 'common/components/form/select/Select';
 import { coordsFromLatLnt, SaoPauloCoords } from 'core/api/thirdparty/maps/utils';
-import { fetchCEPInfo } from 'core/api/thirdparty/viacep';
 import { safeParseInt } from 'core/numbers';
 import GoogleMapReact from 'google-map-react';
 import { OnboardingProps } from 'pages/onboarding/types';
 import PageFooter from 'pages/PageFooter';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
-import { useQuery } from 'react-query';
 import { Redirect } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { Marker } from '../../common/components/MapsMarker';
@@ -29,7 +28,6 @@ const radioOptions = ['10', '20', '25', '30', '40', '45', '50', '60'];
 
 const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
   // context
-  const api = useContextApi();
   const { business } = useContextBusiness();
   const { googleMapsApiKey } = getConfig().api;
   // state
@@ -37,7 +35,6 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
   const [map, setMap] = React.useState<google.maps.Map>();
   const [range, setRange] = React.useState<google.maps.Circle>();
   const [cep, setCEP] = React.useState(business?.businessAddress?.cep ?? '');
-  //const [cepNotFound, setCEPNotFound] = React.useState(false);
   const [address, setAddress] = React.useState(business?.businessAddress?.address ?? '');
   const [number, setNumber] = React.useState(business?.businessAddress?.number ?? '');
   const [city, setCity] = React.useState(business?.businessAddress?.city ?? '');
@@ -51,25 +48,19 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
   );
   const [averageCookingTime, setAverageCookingTime] = React.useState('30');
   const [cities, setCities] = React.useState<string[]>([]);
-  // queries & mutations
   // business profile
   const { updateBusinessProfile, updateResult: result } = useBusinessProfile(
     typeof onboarding === 'string'
   );
   const { isLoading, isSuccess } = result;
-  // cep
-  const { data: cepResult } = useQuery(['cep', cep], () => fetchCEPInfo(cep), {
-    enabled: cep.length === 8,
-  });
-  // geocoding
-  const geocode = () =>
-    api.maps().googleGeocode(`${address}, ${number}, ${neighborhood} - ${city} - ${state}`);
-  const { data: geocodingResult } = useQuery(
-    ['geocoding', address, number, neighborhood, city, state],
-    geocode,
-    {
-      enabled: address?.length > 0 && number.length > 0,
-    }
+  // cep & geocoding
+  const { cepResult, geocodingResult } = useCepAndGeocode(
+    cep,
+    address,
+    number,
+    neighborhood,
+    city,
+    state
   );
   const center = coordsFromLatLnt(geocodingResult ?? SaoPauloCoords);
   // refs
@@ -77,17 +68,18 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
   const numberRef = React.useRef<HTMLInputElement>(null);
   // handlers
   const onSubmitHandler = async () => {
+    let addressObj = {
+      cep,
+      address,
+      number,
+      city,
+      state,
+      neighborhood,
+      additional,
+    } as BusinessAddress;
+    if (geocodingResult) addressObj.latlng = geocodingResult;
     await updateBusinessProfile({
-      businessAddress: {
-        cep,
-        address,
-        number,
-        city,
-        state,
-        neighborhood,
-        additional,
-        latlng: geocodingResult ?? undefined,
-      },
+      businessAddress: addressObj,
       deliveryRange: safeParseInt(deliveryRange, defaultRadius) * 1000,
       averageCookingTime: parseInt(averageCookingTime) * 60,
     });
@@ -126,7 +118,6 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
   }, [cepResult]);
   React.useEffect(() => {
     setCities([]);
-    //if (!cepResult?.erro) return;
     if (!state) return;
     (async () => {
       const citiesList = await getCitiesByState(state as UF);
@@ -266,33 +257,42 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
             }
           />
         </Flex>
-        <Box
-          mt="6"
-          w={{ base: '328px', md: '380px', lg: onboarding ? '536px' : '756px' }}
-          h={{ base: '240px', md: '260px', lg: onboarding ? '380px' : '420px' }}
-        >
-          <GoogleMapReact
-            bootstrapURLKeys={{ key: googleMapsApiKey }}
-            defaultCenter={coordsFromLatLnt(SaoPauloCoords)}
-            center={center}
-            defaultZoom={onboarding ? 12 : 13}
-            onGoogleApiLoaded={({ map }) => {
-              setRange(
-                new google.maps.Circle({
-                  strokeColor: '#FFFFFF',
-                  strokeOpacity: 0.8,
-                  strokeWeight: 2,
-                  fillColor: '#78E08F',
-                  fillOpacity: 0.5,
-                })
-              );
-              setMap(map);
-            }}
-            yesIWantToUseGoogleMapApiInternals
-          >
-            <Marker lat={center.lat} lng={center.lng} />
-          </GoogleMapReact>
-        </Box>
+        {geocodingResult !== undefined && (
+          <>
+            <Box
+              mt="6"
+              w={{ base: '328px', md: '380px', lg: onboarding ? '536px' : '756px' }}
+              h={{ base: '240px', md: '260px', lg: onboarding ? '380px' : '420px' }}
+            >
+              <GoogleMapReact
+                bootstrapURLKeys={{ key: googleMapsApiKey }}
+                defaultCenter={coordsFromLatLnt(SaoPauloCoords)}
+                center={center}
+                defaultZoom={onboarding ? 12 : 13}
+                onGoogleApiLoaded={({ map }) => {
+                  setRange(
+                    new google.maps.Circle({
+                      strokeColor: '#FFFFFF',
+                      strokeOpacity: 0.8,
+                      strokeWeight: 2,
+                      fillColor: '#78E08F',
+                      fillOpacity: 0.5,
+                    })
+                  );
+                  setMap(map);
+                }}
+                yesIWantToUseGoogleMapApiInternals
+              >
+                <Marker lat={center.lat} lng={center.lng} />
+              </GoogleMapReact>
+            </Box>
+            {geocodingResult === null && (
+              <Text mt="2" fontSize="sm" lineHeight="21px" color="red">
+                {t('Não foi possível encontrar uma geolocalização para o endereço informado.')}
+              </Text>
+            )}
+          </>
+        )}
         <Text mt="12" fontSize="xl" lineHeight="26px" color="black">
           {t('Tempo médio de preparo dos pratos')}
         </Text>

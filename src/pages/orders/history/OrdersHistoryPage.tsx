@@ -4,6 +4,7 @@ import { Button, Flex, HStack, Stack, Text } from '@chakra-ui/react';
 import { useObserveBusinessOrdersHistory } from 'app/api/order/useObserveBusinessOrdersHistory';
 import { useContextBusinessId } from 'app/state/business/context';
 import { ClearFiltersButton } from 'common/components/backoffice/ClearFiltersButton';
+import { FiltersScrollBar } from 'common/components/backoffice/FiltersScrollBar';
 import { FilterText } from 'common/components/backoffice/FilterText';
 import Container from 'common/components/Container';
 import { CustomDateFilter } from 'common/components/form/input/CustomDateFilter';
@@ -96,23 +97,25 @@ const OrdersHistoryPage = () => {
         </Stack>
       </Flex>
       <Flex mt="8" w="100%" justifyContent="space-between" borderBottom="1px solid #C8D7CB">
-        <HStack spacing={4}>
-          <FilterText
-            isActive={filterBar === 'all' ? true : false}
-            label={t('Todos')}
-            onClick={() => setFilterBar('all')}
-          />
-          <FilterText
-            isActive={filterBar === 'delivered' ? true : false}
-            label={t('Entregues')}
-            onClick={() => setFilterBar('delivered')}
-          />
-          <FilterText
-            isActive={filterBar === 'canceled' ? true : false}
-            label={t('Cancelados')}
-            onClick={() => setFilterBar('canceled')}
-          />
-        </HStack>
+        <FiltersScrollBar>
+          <HStack spacing={4}>
+            <FilterText
+              isActive={filterBar === 'all' ? true : false}
+              label={t('Todos')}
+              onClick={() => setFilterBar('all')}
+            />
+            <FilterText
+              isActive={filterBar === 'delivered' ? true : false}
+              label={t('Entregues')}
+              onClick={() => setFilterBar('delivered')}
+            />
+            <FilterText
+              isActive={filterBar === 'canceled' ? true : false}
+              label={t('Cancelados')}
+              onClick={() => setFilterBar('canceled')}
+            />
+          </HStack>
+        </FiltersScrollBar>
         <ClearFiltersButton clearFunction={clearFilters} />
       </Flex>
       <HStack mt="6" spacing={8} color="black">

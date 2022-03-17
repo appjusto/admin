@@ -75,10 +75,10 @@ export const MenuMobile = () => {
             <BackOfficeLinks onClick={onToggle} />
           ) : (
             <Box>
-              <Box ml="4" mt="6">
+              <Box ml="4" mt="2">
                 <BusinessInfo />
               </Box>
-              <Box mt="6">
+              <Box mt="4">
                 <Links onClick={onToggle} />
               </Box>
             </Box>

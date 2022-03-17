@@ -1,16 +1,20 @@
 import { Loading } from 'common/components/Loading';
+import Join from 'pages/join/Join';
 import LandingPage from 'pages/landing/LandingPage';
+import Login from 'pages/login/Login';
+import Logout from 'pages/logout/Logout';
 import React from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { BackOfficeRoute } from './BackOfficeRoute';
+import MainErrorBoundary from './MainErrorBoundary';
 import { ProtectedRoute } from './ProtectedRoute';
 
-const Login = React.lazy(() => import(/* webpackPrefetch: true */ 'pages/login/Login'));
-const Join = React.lazy(() => import(/* webpackPrefetch: true */ 'pages/join/Join'));
+// const Login = React.lazy(() => import(/* webpackPrefetch: true */ 'pages/login/Login'));
+// const Join = React.lazy(() => import(/* webpackPrefetch: true */ 'pages/join/Join'));
+// const Logout = React.lazy(() => import(/* webpackPrefetch: true */ 'pages/logout/Logout'));
 const Onboarding = React.lazy(
   () => import(/* webpackPrefetch: true */ 'pages/onboarding/OnboardingPage')
 );
-const Logout = React.lazy(() => import(/* webpackPrefetch: true */ 'pages/logout/Logout'));
 const Home = React.lazy(() => import(/* webpackPrefetch: true */ 'pages/home/Home'));
 const BackOffice = React.lazy(() => import(/* webpackPrefetch: true */ 'pages/backoffice'));
 const DeletedPage = React.lazy(
@@ -20,20 +24,22 @@ const PageNotFound = React.lazy(() => import(/* webpackPrefetch: true */ 'pages/
 
 export const Router = () => {
   return (
-    <BrowserRouter>
-      <React.Suspense fallback={<Loading />}>
-        <Switch>
-          <Route exact path="/" component={LandingPage} />
-          <Route path="/login" component={Login} />
-          <Route path="/join" component={Join} />
-          <Route path="/deleted" component={DeletedPage} />
-          <ProtectedRoute path="/app" component={Home} />
-          <ProtectedRoute path="/onboarding" component={Onboarding} />
-          <BackOfficeRoute path="/backoffice" component={BackOffice} />
-          <ProtectedRoute path="/logout" component={Logout} />
-          <Route path="*" component={PageNotFound} />
-        </Switch>
-      </React.Suspense>
-    </BrowserRouter>
+    <MainErrorBoundary>
+      <BrowserRouter>
+        <React.Suspense fallback={<Loading />}>
+          <Switch>
+            <Route exact path="/" component={LandingPage} />
+            <Route path="/login" component={Login} />
+            <Route path="/join" component={Join} />
+            <Route path="/deleted" component={DeletedPage} />
+            <ProtectedRoute path="/app" component={Home} />
+            <ProtectedRoute path="/onboarding" component={Onboarding} />
+            <BackOfficeRoute path="/backoffice" component={BackOffice} />
+            <ProtectedRoute path="/logout" component={Logout} />
+            <Route path="*" component={PageNotFound} />
+          </Switch>
+        </React.Suspense>
+      </BrowserRouter>
+    </MainErrorBoundary>
   );
 };

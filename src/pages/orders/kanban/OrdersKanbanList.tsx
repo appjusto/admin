@@ -25,7 +25,7 @@ export const OrdersKanbanList = ({ title, orders, details }: Props) => {
       <Box
         h={['60px']}
         p="2"
-        bg="gray.50"
+        bg="#EEEEEE"
         borderColor="gray.500"
         borderTopWidth="1px"
         borderTopRadius="lg"

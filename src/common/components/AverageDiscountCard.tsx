@@ -87,30 +87,32 @@ export const AverageDiscountCard = ({ ...props }: StackProps) => {
           </Text>
         </Box>
       </Stack>
-      <Box maxW="140px">
-        <CustomNumberInput
-          mt="0"
-          id="average-discount-input"
-          bgColor="white"
-          fontSize="13px"
-          label={t('Desconto médio %')}
-          placeholder="0"
-          value={averageDiscount}
-          onChange={(e) => setAverageDiscount(e.target.value)}
-          maxLength={2}
-        />
-      </Box>
-      <Button
-        h="60px"
-        fontSize="15px"
-        lineHeight="21px"
-        fontWeight="700"
-        onClick={handleSaveAverageDiscount}
-        loadingText={t('Salvando')}
-        isLoading={updateResult.isLoading}
-      >
-        {t('Salvar')}
-      </Button>
+      <HStack spacing={{ base: 4, lg: 8 }}>
+        <Box maxW="140px" minW="140px">
+          <CustomNumberInput
+            mt="0"
+            id="average-discount-input"
+            bgColor="white"
+            fontSize="13px"
+            label={t('Desconto médio %')}
+            placeholder="0"
+            value={averageDiscount}
+            onChange={(e) => setAverageDiscount(e.target.value)}
+            maxLength={2}
+          />
+        </Box>
+        <Button
+          h="60px"
+          fontSize="15px"
+          lineHeight="21px"
+          fontWeight="700"
+          onClick={handleSaveAverageDiscount}
+          loadingText={t('Salvando')}
+          isLoading={updateResult.isLoading}
+        >
+          {t('Salvar')}
+        </Button>
+      </HStack>
     </Stack>
   );
 };

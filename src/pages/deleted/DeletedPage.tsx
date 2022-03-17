@@ -1,5 +1,6 @@
-import { Box, Button, Flex, Image, Link, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, Link, Text } from '@chakra-ui/react';
 import { useContextBusiness } from 'app/state/business/context';
+import Image from 'common/components/Image';
 import iconErase from 'common/img/icon-erase-rest.png';
 import leftImage from 'common/img/login-left@2x.jpg';
 import rightImage from 'common/img/login-right@2x.jpg';

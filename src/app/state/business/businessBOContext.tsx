@@ -1,6 +1,7 @@
 import {
   BankAccount,
   Business,
+  BusinessPhone,
   ManagerProfile,
   MarketplaceAccountInfo,
   WithId,
@@ -12,6 +13,7 @@ import { useBusinessMarketPlace } from 'app/api/business/useBusinessMarketPlace'
 import { MutationResult } from 'app/api/mutation/useCustomMutation';
 import { BackofficeProfileValidation } from 'common/types';
 import { isEmpty, isEqual } from 'lodash';
+import { BusinessPhoneField } from 'pages/business-profile/business-phones';
 import React, { Dispatch, SetStateAction } from 'react';
 import { UseMutateAsyncFunction } from 'react-query';
 import { useParams } from 'react-router';
@@ -33,6 +35,11 @@ interface BusinessBOContextProps {
   contextValidation: BackofficeProfileValidation;
   isLoading: boolean;
   handleBusinessStatusChange(key: string, value: any): void;
+  handleBussinesPhonesChange(
+    operation: 'add' | 'remove' | 'update' | 'ordering',
+    args?: number | { index: number; field: BusinessPhoneField; value: any }
+  ): void;
+  handleBusinessPhoneOrdering(newPhones: BusinessPhone[]): void;
   handleManagerProfileChange(key: string, value: any): void;
   handleBankingInfoChange(newBankAccount: Partial<BankAccount>): void;
   setContextValidation: Dispatch<SetStateAction<BackofficeProfileValidation>>;
@@ -86,6 +93,31 @@ export const BusinessBOProvider = ({ children }: Props) => {
     } else dispatch({ type: 'update_business', payload: { [key]: value } });
   }, []);
 
+  const handleBussinesPhonesChange = (
+    operation: 'add' | 'remove' | 'update' | 'ordering',
+    args?: number | { index: number; field: BusinessPhoneField; value: any }
+  ) => {
+    if (operation === 'add') {
+      return dispatch({ type: 'add_business_phone' });
+    } else if (operation === 'remove' && typeof args === 'number') {
+      return dispatch({ type: 'remove_business_phone', payload: args });
+    } else if (operation === 'update' && args && typeof args !== 'number') {
+      return dispatch({
+        type: 'update_business_phone',
+        payload: args as { index: number; field: BusinessPhoneField; value: any },
+      });
+    }
+    dispatchAppRequestResult({
+      status: 'error',
+      requestId: 'bo-business-handle-phone',
+      message: { title: 'Os argumentos para esta função não são válidos.' },
+    });
+  };
+
+  const handleBusinessPhoneOrdering = (newPhones: BusinessPhone[]) => {
+    return dispatch({ type: 'ordering_business_phone', payload: newPhones });
+  };
+
   const handleManagerProfileChange = (key: string, value: any) => {
     dispatch({ type: 'update_manager', payload: { [key]: value } });
   };
@@ -107,7 +139,7 @@ export const BusinessBOProvider = ({ children }: Props) => {
         return dispatchAppRequestResult({
           status: 'error',
           requestId: 'bo-business-context-valid-phone',
-          message: { title: 'O cecular informado não é válido' },
+          message: { title: 'O celular informado para o manager não é válido' },
         });
       if (!agency)
         return dispatchAppRequestResult({
@@ -176,6 +208,8 @@ export const BusinessBOProvider = ({ children }: Props) => {
         contextValidation,
         isLoading: updateResult.isLoading,
         handleBusinessStatusChange,
+        handleBussinesPhonesChange,
+        handleBusinessPhoneOrdering,
         handleManagerProfileChange,
         handleBankingInfoChange,
         setContextValidation,

@@ -240,7 +240,9 @@ export const Matching = ({ order }: MatchingProps) => {
       </Flex>
       <SectionTitle mt={isNoMatch ? '2' : '4'}>{t('Tentativas: ') + attemps}</SectionTitle>
       <Box>
-        <SectionTitle mt="4">{t('Entregadores notificados')}</SectionTitle>
+        <SectionTitle mt="4">
+          {t(`Entregadores notificados: ${couriersNotified ? couriersNotified.length : 0}`)}
+        </SectionTitle>
         <Box
           mt="4"
           p="2"

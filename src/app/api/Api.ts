@@ -75,7 +75,7 @@ export default class Api {
     this._refs = new FirebaseRefs(this._functions, this._firestore);
     this._auth = new AuthApi(this._refs, this._authentication, config);
     this._files = new FilesApi(this._storage);
-    this._maps = new MapsApi(config.googleMapsApiKey, this._refs);
+    this._maps = new MapsApi(this._refs, config.googleMapsApiKey);
     this._platform = new PlatformApi(this._refs);
     this._manager = new ManagerApi(this._refs);
     this._business = new BusinessApi(this._refs, this._files);

@@ -49,7 +49,7 @@ const Sidebar = () => {
       d={{ base: 'none', lg: 'block' }}
       w="220px"
       minW="220px"
-      backgroundColor="gray.300"
+      backgroundColor="#EEEEEE"
       flexShrink={0}
     >
       <Box position="fixed" top="4" w="220px" h="100vh" pb="24" overflowY="auto">

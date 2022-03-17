@@ -1,23 +1,22 @@
-import React from 'react';
 import { OrderStatus } from '@appjusto/types';
-import { useNotificationPermission } from 'app/utils/notifications/useNotificationPermission';
-import { difference } from 'lodash';
+import * as Sentry from '@sentry/react';
 import { useObserveOrders } from 'app/api/order/useObserveOrders';
-import useSound from 'use-sound';
+import { useContextFirebaseUser } from 'app/state/auth/context';
+import { useNotificationPermission } from 'app/utils/notifications/useNotificationPermission';
 //@ts-ignore
 import newOrderSound from 'common/sounds/bell-ding-v3.mp3';
-
+import { difference } from 'lodash';
+import React from 'react';
+import useSound from 'use-sound';
 import {
+  addOrderAck,
   getAck,
-  setAck,
   getAckOrderIds,
   getAckOrders,
-  addOrderAck,
-  updateOrderAck,
   removeOrderAck,
+  setAck,
+  updateOrderAck,
 } from './utils';
-import * as Sentry from '@sentry/react';
-import { useContextFirebaseUser } from 'app/state/auth/context';
 
 const key = 'confirmed';
 
@@ -30,6 +29,7 @@ export const useObserveConfirmedOrders = (businessId?: string, notify: boolean =
   const confirmedOrders = useObserveOrders(statuses, businessId);
   // state
   const [changed, setChanged] = React.useState(false);
+  const [confirmedNumber, setConfirmedNumber] = React.useState(0);
   // sound
   const [playSound] = useSound(newOrderSound, { volume: 1 });
 
@@ -45,6 +45,7 @@ export const useObserveConfirmedOrders = (businessId?: string, notify: boolean =
   }, [isBackofficeUser, confirmedOrders, playSound]);
 
   React.useEffect(() => {
+    setConfirmedNumber(confirmedOrders.length);
     if (confirmedOrders.length === 0) {
       return;
     }
@@ -101,4 +102,6 @@ export const useObserveConfirmedOrders = (businessId?: string, notify: boolean =
     setAck(key, ack);
     setChanged(false);
   }, [changed, notify, permission]);
+  // result
+  return confirmedNumber;
 };

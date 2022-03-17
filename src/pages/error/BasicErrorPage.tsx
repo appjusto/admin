@@ -3,7 +3,15 @@ import { ReactComponent as Logo } from 'common/img/logo.svg';
 import React from 'react';
 import { t } from 'utils/i18n';
 
-export const UserNotFound = () => {
+interface BasicErrorPageProps {
+  title?: string;
+  description?: string;
+}
+
+export const BasicErrorPage = ({
+  title = 'Erro ao carregar a aplicação.',
+  description = 'Tenta recarregar a página?',
+}: BasicErrorPageProps) => {
   return (
     <Center height="100vh">
       <Container mt="4">
@@ -11,11 +19,14 @@ export const UserNotFound = () => {
           <Logo />
         </Flex>
         <Text mt="8" fontSize="18px" lineHeight="22px" fontWeight="700" textAlign="center">
-          {t('Ocorreu um erro de autenticação =/')}
+          {title}
         </Text>
         <Text mt="4" fontSize="15px" lineHeight="21px" fontWeight="500" textAlign="center">
+          {description}
+        </Text>
+        <Text mt="8" fontSize="15px" lineHeight="21px" fontWeight="500" textAlign="center">
           {t(
-            'Não foi possível acessar as credenciais do seu usuário, recarregue esta página, para tentar novamente, ou entre em contato com o nosso suporte pelos canais abaixo:'
+            'Se o problema persistir, você pode entrar em contato com o nosso suporte pelos canais abaixo:'
           )}
         </Text>
         <Text mt="6" fontSize="15px" lineHeight="21px" fontWeight="700" textAlign="center">

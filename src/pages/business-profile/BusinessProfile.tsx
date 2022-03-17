@@ -1,4 +1,4 @@
-import { Business } from '@appjusto/types';
+import { Business, BusinessPhone } from '@appjusto/types';
 import { Box, Button, Flex, Switch as ChakraSwitch, Text, useBreakpoint } from '@chakra-ui/react';
 import * as cnpjutils from '@fnando/cnpj';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
@@ -9,12 +9,7 @@ import { CurrencyInput } from 'common/components/form/input/currency-input/Curre
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
 import { CustomPatternInput as PatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';
-import {
-  cnpjFormatter,
-  cnpjMask,
-  phoneFormatter,
-  phoneMask,
-} from 'common/components/form/input/pattern-input/formatters';
+import { cnpjFormatter, cnpjMask } from 'common/components/form/input/pattern-input/formatters';
 import { numbersOnlyParser } from 'common/components/form/input/pattern-input/parsers';
 import { ImageUploads } from 'common/components/ImageUploads';
 import {
@@ -30,9 +25,20 @@ import PageHeader from 'pages/PageHeader';
 import React from 'react';
 import { useQueryClient } from 'react-query';
 import { Redirect, Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
+import { assertPhonesIsValid, serializePhones } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { CuisineSelect } from '../../common/components/form/select/CuisineSelect';
+import { BusinessPhoneField, BusinessPhones } from './business-phones';
 import { BusinessDeleteDrawer } from './BusinessDeleteDrawer';
+
+const defaultPhone = {
+  type: 'desk',
+  number: '',
+  calls: true,
+  whatsapp: true,
+} as BusinessPhone;
+
+const initialState = [defaultPhone];
 
 const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   // context
@@ -49,7 +55,8 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const [cnpj, setCNPJ] = React.useState(business?.cnpj ?? devCNPJ);
   const [name, setName] = React.useState(business?.name ?? '');
   const [companyName, setCompanyName] = React.useState(business?.companyName ?? '');
-  const [phone, setPhone] = React.useState(business?.phone ?? '');
+  //const [phone, setPhone] = React.useState(business?.phone ?? '');
+  const [phones, setPhones] = React.useState(business?.phones ?? initialState);
   const [cuisineName, setCuisineName] = React.useState(business?.cuisine ?? '');
   const [description, setDescription] = React.useState(business?.description ?? '');
   const [minimumOrder, setMinimumOrder] = React.useState(business?.minimumOrder ?? 0);
@@ -61,7 +68,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const [coverFiles, setCoverFiles] = React.useState<File[] | null>(null);
   // refs
   const cnpjRef = React.useRef<HTMLInputElement>(null);
-  const phoneRef = React.useRef<HTMLInputElement>(null);
+  //const phoneRef = React.useRef<HTMLInputElement>(null);
   const minimumOrderRef = React.useRef<HTMLInputElement>(null);
   const isMountedRef = React.useRef(false);
   // queries & mutations
@@ -86,6 +93,24 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
       setEnabled(false);
     }
   };
+  const addPhone = () => setPhones((prev) => [...prev, defaultPhone]);
+  const removePhone = (stateIndex: number) => {
+    setPhones((prevState) => {
+      return prevState.filter((item, index) => index !== stateIndex);
+    });
+  };
+  const handlePhoneUpdate = (stateIndex: number, field: BusinessPhoneField, value: any) => {
+    setPhones((prevState) => {
+      const newState = prevState.map((phone, index) => {
+        if (index === stateIndex) {
+          return { ...phone, [field]: value };
+        } else {
+          return phone;
+        }
+      });
+      return newState;
+    });
+  };
   const onSubmitHandler = async () => {
     //if (minimumOrder === 0) return minimumOrderRef.current?.focus();
     if (!isCNPJValid()) {
@@ -96,18 +121,20 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
       });
       return cnpjRef?.current?.focus();
     }
-    if (phone.length < 10) {
+    const serializedPhones = serializePhones(phones);
+    if (!assertPhonesIsValid(serializedPhones)) {
       dispatchAppRequestResult({
         status: 'error',
         requestId: 'BusinessProfile-valid-phone',
-        message: { title: 'O telefone informado não é válido.' },
+        message: { title: 'Um ou mais telefones informados não são válidos.' },
       });
-      return phoneRef?.current?.focus();
+      return;
     }
     const changes = {
       name,
       companyName,
-      phone,
+      //phone,
+      phones: serializedPhones,
       cnpj,
       description,
       minimumOrder,
@@ -176,7 +203,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
       if (business.cnpj) setCNPJ(business.cnpj);
       setName(business.name ?? '');
       setCompanyName(business.companyName ?? '');
-      setPhone(business.phone ?? '');
+      if (business.phones) setPhones(business.phones);
       setDescription(business.description ?? '');
       setMinimumOrder(business.minimumOrder ?? 0);
       setCuisineName(business.cuisine ?? '');
@@ -198,7 +225,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
           subtitle={t('Inclua os dados do seu restaurante')}
         />
       )}
-      <Box maxW="833px">
+      <Box maxW={{ base: '760px', lg: '833px' }}>
         <form
           onSubmit={(ev) => {
             ev.preventDefault();
@@ -213,7 +240,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
           ) : (
             <Box>
               <SectionTitle>{t('Sobre o restaurante')}</SectionTitle>
-              <Text>{t('Essas informações serão vistas por seus visitantes')}</Text>
+              <Text fontSize="md">{t('Essas informações serão vistas por seus visitantes')}</Text>
             </Box>
           )}
           <Box maxW="400px">
@@ -247,19 +274,6 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
               value={companyName}
               onChange={(ev) => setCompanyName(ev.target.value)}
             />
-            <PatternInput
-              isRequired
-              ref={phoneRef}
-              id="business-phone"
-              label={t('Telefone para atendimento sobre pedidos *')}
-              placeholder={t('Número de telefone ou celular')}
-              mask={phoneMask}
-              parser={numbersOnlyParser}
-              formatter={phoneFormatter}
-              value={phone}
-              onValueChange={(value) => setPhone(value)}
-              validationLength={10}
-            />
             <CuisineSelect
               isRequired
               value={cuisineName}
@@ -286,6 +300,12 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
               />
             )}
           </Box>
+          <BusinessPhones
+            phones={phones}
+            handlePhoneUpdate={handlePhoneUpdate}
+            addPhone={addPhone}
+            removePhone={removePhone}
+          />
           {/* logo */}
           <Text mt="8" fontSize="xl" color="black">
             {t('Logo do estabelecimento')}

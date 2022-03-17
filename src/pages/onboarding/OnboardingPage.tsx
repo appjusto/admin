@@ -1,5 +1,5 @@
 import { useContextFirebaseUser } from 'app/state/auth/context';
-import BankingInformation from 'pages/business-profile/BankingInformation';
+import BankingInformation from 'pages/banking-information/BankingInformation';
 import BusinessProfile from 'pages/business-profile/BusinessProfile';
 import DeliveryArea from 'pages/delivery-area/DeliveryArea';
 import { ManagerProfile } from 'pages/manager-profile/ManagerProfile';
