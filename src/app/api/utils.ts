@@ -1,7 +1,7 @@
 import { WithId } from '@appjusto/types';
 import * as Sentry from '@sentry/react';
 import { documentAs, documentsAs } from 'core/fb';
-import firebase from 'firebase/compat/app';
+import { DocumentData, DocumentReference, onSnapshot, Query } from 'firebase/firestore';
 
 export const queryLimit = 10;
 interface customSnapshotOptions {
@@ -11,14 +11,15 @@ interface customSnapshotOptions {
 }
 
 export const customCollectionSnapshot = <T extends object>(
-  query: firebase.firestore.Query<firebase.firestore.DocumentData>,
+  query: Query<DocumentData>,
   resultHandler: (result: WithId<T>[]) => void,
   options: customSnapshotOptions = {
     avoidPenddingWrites: true,
     captureException: true,
   }
 ) => {
-  return query.onSnapshot(
+  return onSnapshot(
+    query,
     (snapshot) => {
       if (options.monitoring) console.log('%cGot snapshot result!', 'color: blue');
       if (options?.avoidPenddingWrites) {
@@ -37,23 +38,24 @@ export const customCollectionSnapshot = <T extends object>(
 };
 
 export const customDocumentSnapshot = <T extends object>(
-  query: firebase.firestore.DocumentReference<firebase.firestore.DocumentData>,
+  query: DocumentReference<DocumentData>,
   resultHandler: (result: WithId<T> | null) => void,
   options: customSnapshotOptions = {
     avoidPenddingWrites: true,
     captureException: true,
   }
 ) => {
-  return query.onSnapshot(
+  return onSnapshot(
+    query,
     (snapshot) => {
       if (options.monitoring) console.log('%cGot snapshot result!', 'color: blue');
       if (options?.avoidPenddingWrites) {
         if (!snapshot.metadata.hasPendingWrites) {
-          if (snapshot.exists) resultHandler(documentAs<T>(snapshot));
+          if (snapshot.exists()) resultHandler(documentAs<T>(snapshot));
           else resultHandler(null);
         }
       } else {
-        if (snapshot.exists) resultHandler(documentAs<T>(snapshot));
+        if (snapshot.exists()) resultHandler(documentAs<T>(snapshot));
         else resultHandler(null);
       }
     },
@@ -63,24 +65,3 @@ export const customDocumentSnapshot = <T extends object>(
     }
   );
 };
-
-// interface customCollectionGetOptions {
-//   cacheFirst?: boolean;
-// }
-
-// export const customCollectionGet = async <T extends object>(
-//   ref: firebase.firestore.CollectionReference<firebase.firestore.DocumentData>,
-//   options?: customCollectionGetOptions
-// ) => {
-//   let snapshot;
-//   if (options?.cacheFirst) {
-//     snapshot = await ref.get({ source: 'cache' });
-//     if (snapshot.empty) {
-//       snapshot = await ref.get({ source: 'server' });
-//     }
-//   } else {
-//     snapshot = await ref.get();
-//   }
-//   console.log(`fromCach:${snapshot.metadata.fromCache}`);
-//   return documentsAs<T>(snapshot.docs);
-// };

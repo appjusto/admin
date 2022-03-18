@@ -1,13 +1,13 @@
-import * as Sentry from '@sentry/react';
 import {
   Business,
   CreateManagersPayload,
+  GetBusinessManagersPayload,
   ManagerProfile,
   NewManagerData,
   WithId,
-  GetBusinessManagersPayload,
 } from '@appjusto/types';
-import firebase from 'firebase/app';
+import * as Sentry from '@sentry/react';
+import { getDoc, query, setDoc, Unsubscribe, updateDoc, where } from 'firebase/firestore';
 import FirebaseRefs from '../FirebaseRefs';
 import { customCollectionSnapshot, customDocumentSnapshot } from '../utils';
 import { ManagerWithRole } from './types';
@@ -19,19 +19,19 @@ export default class ManagerApi {
   observeProfile(
     id: string,
     resultHandler: (profile: WithId<ManagerProfile> | null) => void
-  ): firebase.Unsubscribe {
-    const query = this.refs.getManagerRef(id);
+  ): Unsubscribe {
+    const ref = this.refs.getManagerRef(id);
     // returns the unsubscribe function
-    return customDocumentSnapshot(query, resultHandler);
+    return customDocumentSnapshot(ref, resultHandler);
   }
 
   observeProfileByEmail(
     email: string,
     resultHandler: (profile: WithId<ManagerProfile> | null) => void
-  ): firebase.Unsubscribe {
-    const query = this.refs.getManagersRef().where('email', '==', email);
+  ): Unsubscribe {
+    const q = query(this.refs.getManagersRef(), where('email', '==', email));
     // returns the unsubscribe function
-    return customCollectionSnapshot<ManagerProfile>(query, (result) => {
+    return customCollectionSnapshot<ManagerProfile>(q, (result) => {
       resultHandler(result[0]);
     });
   }
@@ -39,10 +39,10 @@ export default class ManagerApi {
   observeManagerBusinesses(
     email: string,
     resultHandler: (businesses: WithId<Business>[] | null) => void
-  ): firebase.Unsubscribe {
-    const query = this.refs.getBusinessesRef().where('managers', 'array-contains', email);
+  ): Unsubscribe {
+    const q = query(this.refs.getBusinessesRef(), where('managers', 'array-contains', email));
     // returns the unsubscribe function
-    return customCollectionSnapshot(query, resultHandler);
+    return customCollectionSnapshot(q, resultHandler);
   }
 
   async getBusinessManagers(
@@ -54,7 +54,9 @@ export default class ManagerApi {
       businessId,
     };
     try {
-      const users = await this.refs.getGetBusinessManagersCallable()(payload);
+      const users = ((await this.refs.getGetBusinessManagersCallable()(payload)) as unknown) as {
+        data: ManagerWithRole[];
+      };
       resultHandler(users.data);
     } catch (error) {
       //@ts-ignore
@@ -64,9 +66,9 @@ export default class ManagerApi {
   }
 
   public async createProfile(id: string, email: string) {
-    const data = (await this.refs.getManagerRef(id).get()).data();
-    if (!data) {
-      await this.refs.getManagerRef(id).set({
+    const data = await getDoc(this.refs.getManagerRef(id));
+    if (!data.exists()) {
+      await setDoc(this.refs.getManagerRef(id), {
         situation: 'pending',
         email,
       } as Partial<ManagerProfile>);
@@ -74,7 +76,7 @@ export default class ManagerApi {
   }
 
   async updateProfile(id: string, changes: Partial<ManagerProfile>) {
-    await this.refs.getManagerRef(id).update(changes);
+    await updateDoc(this.refs.getManagerRef(id), changes);
   }
 
   async createManager(data: { key: string; managers: NewManagerData[] }) {
