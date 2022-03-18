@@ -11,6 +11,6 @@ export default class MapsApi {
       address,
     };
     const result = await this.refs.getQueryGoogleMapsCallable()(payload);
-    return result.data;
+    return (result.data as unknown) as LatLng | null;
   }
 }
