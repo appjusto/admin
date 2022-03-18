@@ -8303,7 +8303,7 @@ geofirestore@^4.4.2:
   dependencies:
     geofirestore-core "^4.4.4"
 
-geokit@^1.1.0:
+geokit@1.1.0, geokit@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/geokit/-/geokit-1.1.0.tgz#b87042ce4b97996406cc90efdf1e7f5b988f9299"
   integrity sha512-kTxs9TomJKBmK9J2RFNH1s4jy/3WN1vpmNfjyAIQRcM1jfuSqHMwLLPLe7ZbcTixGHNoqHyFyu/1b8YMR/zvVA==

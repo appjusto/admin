@@ -1,12 +1,7 @@
 import { collection, doc, Firestore, writeBatch } from 'firebase/firestore';
 import { Functions, httpsCallable } from 'firebase/functions';
-import * as geofirestore from 'geofirestore';
-
 export default class FirebaseRefs {
-  private firestoreWithGeo: geofirestore.GeoFirestore;
-  constructor(private functions: Functions, private firestore: Firestore) {
-    this.firestoreWithGeo = geofirestore.initializeApp(this.firestore);
-  }
+  constructor(private functions: Functions, private firestore: Firestore) {}
 
   // functions
   getServerTimeCallable = () => httpsCallable(this.functions, 'getServerTime');
@@ -59,13 +54,8 @@ export default class FirebaseRefs {
   getFraudPreventionParamsRef = () => doc(this.firestore, 'platform', 'fraud', 'subdocs', 'params');
 
   // STOP UPDATE HERE <<<
-  getFlaggedLocationsRef = () => this.getFraudPreventionRef().collection('flaggedlocations');
-  getFlaggedLocationRef = (locationId: string) =>
-    this.getFraudPreventionRef().collection('flaggedlocations').doc(locationId);
-  // platform / fraud / flaggedlocations with geo
-  getFlaggedLocationsWithGeoRef = () => {
-    return this.firestoreWithGeo.collection('platform').doc('fraud').collection('flaggedlocations');
-  };
+  getFlaggedLocationsRef = () => collection(this.getFraudPreventionRef(), 'flaggedlocations');
+  getFlaggedLocationRef = (locationId: string) => doc(this.getFlaggedLocationsRef(), locationId);
 
   // platform data subcollections
   getBanksRef = () => this.getPlatformDatasRef().collection('banks');

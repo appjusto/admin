@@ -1,18 +1,19 @@
 import {
   Bank,
-  Cuisine,
-  IssueType,
-  Issue,
-  PlatformAccess,
-  PlatformStatistics,
-  FlaggedLocation,
-  WithId,
   Classification,
+  Cuisine,
+  FlaggedLocation,
+  Issue,
+  IssueType,
+  PlatformAccess,
   PlatformParams,
+  PlatformStatistics,
+  WithId,
 } from '@appjusto/types';
+import firebase from 'firebase/app';
+import { hash } from 'geokit';
 import { documentsAs } from '../../../core/fb';
 import FirebaseRefs from '../FirebaseRefs';
-import firebase from 'firebase/app';
 
 export default class PlatformApi {
   constructor(private refs: FirebaseRefs) {}
@@ -78,19 +79,28 @@ export default class PlatformApi {
   }
 
   async addFlaggedLocation(location: Partial<FlaggedLocation>) {
+    const { address, coordinates } = location;
     const isNewLocation = (
       await this.refs
         .getFlaggedLocationsRef()
-        .where('address.description', '==', location.address?.description)
+        .where('address.description', '==', address?.description)
         .get()
     ).empty;
     if (!isNewLocation) return;
     const createdOn = firebase.firestore.FieldValue.serverTimestamp();
     const newLocation = {
-      ...location,
+      address,
+      coordinates,
       createdOn,
+      g: {
+        geopoint: coordinates,
+        geohash: hash({
+          lat: coordinates?.latitude!,
+          lng: coordinates?.longitude!,
+        }),
+      },
     };
-    return await this.refs.getFlaggedLocationsWithGeoRef().add(newLocation);
+    return await this.refs.getFlaggedLocationsRef().add(newLocation);
   }
 
   async deleteFlaggedLocation(locationId: string) {

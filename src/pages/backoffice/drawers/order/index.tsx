@@ -16,7 +16,7 @@ import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';
 import { useContextAgentProfile } from 'app/state/agent/context';
 import { ConsumerProvider } from 'app/state/consumer/context';
 import { useContextAppRequests } from 'app/state/requests/context';
-import firebase from 'firebase/compat/app';
+import { GeoPoint } from 'firebase/firestore';
 import { OrderDetails } from 'pages/orders/drawers/orderdrawer/OrderDetails';
 import { OrderIssuesTable } from 'pages/orders/drawers/orderdrawer/OrderIssuesTable';
 import React from 'react';
@@ -129,7 +129,7 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
       } as CancelOrderPayload;
       if (message) cancellationData.comment = message;
       // add flagged location
-      const coordinates = new firebase.firestore.GeoPoint(
+      const coordinates = new GeoPoint(
         order?.destination?.location?.latitude!,
         order?.destination?.location?.longitude!
       );
@@ -146,7 +146,6 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
       }
       if (type === 'prevention') setLoadingState('preventCancel');
       addFlaggedLocation({
-        // @ts-ignore
         coordinates,
         address,
       });
