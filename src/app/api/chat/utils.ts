@@ -1,10 +1,9 @@
-import { ChatMessage, Order, WithId, ChatMessageType } from '@appjusto/types';
+import { ChatMessage, ChatMessageType, Order, WithId } from '@appjusto/types';
+import { FieldValue, Timestamp } from 'firebase/firestore';
 import { first } from 'lodash';
 import { GroupedChatMessages, OrderChatGroup, OrderChatTypeGroup } from './types';
-import firebase from 'firebase/app';
 
-export const timestampToDate = (value: firebase.firestore.FieldValue) =>
-  (value as firebase.firestore.Timestamp).toDate();
+export const timestampToDate = (value: FieldValue) => (value as Timestamp).toDate();
 
 export const sortMessages = (a: ChatMessage, b: ChatMessage) => {
   if (a.timestamp && b.timestamp)
@@ -18,7 +17,7 @@ export const getOrderedChatPage = (chats: OrderChatGroup[], orders: WithId<Order
   const fullChats = chats.map((chat) => {
     const order = orders.find((order) => order.id === chat.orderId);
     const orderCode = order?.code ?? 'N/E';
-    let lastUpdate = order?.createdOn as firebase.firestore.FieldValue;
+    let lastUpdate = order?.createdOn as FieldValue;
     const counterpartName = (counterpartId: string) => {
       let name = 'N/E';
       if (order?.courier?.id === counterpartId) name = order.courier.name;
@@ -168,9 +167,9 @@ export const getChatLastUpdate = (chat: GroupedChatMessages[]) => {
     const msgs = group.messages;
     return [...result, ...msgs];
   }, []);
-  let lastUpdate: firebase.firestore.FieldValue | undefined = undefined;
+  let lastUpdate: FieldValue | undefined = undefined;
   messages.forEach((msg) => {
     if (!lastUpdate || lastUpdate < msg.timestamp) lastUpdate = msg.timestamp;
   });
-  return lastUpdate as firebase.firestore.FieldValue | undefined;
+  return lastUpdate as FieldValue | undefined;
 };

@@ -1,5 +1,6 @@
-import { useContextApi } from 'app/state/api/context';
 import { Order, WithId } from '@appjusto/types';
+import { useContextApi } from 'app/state/api/context';
+import dayjs from 'dayjs';
 import React from 'react';
 
 export const useCourierOrders = (courierId?: string | null, start?: string, end?: string) => {
@@ -10,12 +11,11 @@ export const useCourierOrders = (courierId?: string | null, start?: string, end?
   // side effects
   React.useEffect(() => {
     if (!courierId || !start || !end) return; // during initialization
-    let startDate = new Date(`${start} 00:00:00`);
-    let endDate = new Date(`${end} 23:59:59`);
+    let startDate = dayjs(start).startOf('day').toDate();
+    let endDate = dayjs(end).endOf('day').toDate();
     const unsub = api.order().observeOrdersByCourierId(courierId!, setOrders, startDate, endDate);
     return () => unsub();
   }, [api, courierId, start, end]);
-
   // return
   return orders;
 };

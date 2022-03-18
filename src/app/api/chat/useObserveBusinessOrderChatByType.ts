@@ -3,7 +3,7 @@ import { GroupedChatMessages, Participants } from 'app/api/chat/types';
 import { groupOrderChatMessages, sortMessages } from 'app/api/chat/utils';
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusiness } from 'app/state/business/context';
-import firebase from 'firebase/app';
+import { Timestamp } from 'firebase/firestore';
 import React from 'react';
 import { getTimeUntilNow } from 'utils/functions';
 import { useCustomMutation } from '../mutation/useCustomMutation';
@@ -91,8 +91,8 @@ export const useObserveBusinessOrderChatByType = (
     else if (orderCompleteStatuses.includes(order.status)) {
       const baseTime =
         order.status === 'delivered' && order.timestamps.delivered
-          ? (order.timestamps.delivered as firebase.firestore.Timestamp).toMillis()
-          : (order.updatedOn as firebase.firestore.Timestamp).toMillis();
+          ? (order.timestamps.delivered as Timestamp).toMillis()
+          : (order.updatedOn as Timestamp).toMillis();
       const now = getServerTime().getTime();
       const elapsedTime = getTimeUntilNow(now, baseTime, false);
       if (elapsedTime < 60) setIsActive(true);

@@ -1,8 +1,8 @@
 import { Order, OrderCancellationParams, WithId } from '@appjusto/types';
+import { Timestamp } from 'firebase/firestore';
 import { omit } from 'lodash';
 import { use } from 'utils/local';
 import { Acknowledgement, OrderAcknowledgement } from './types';
-import firebase from 'firebase/app';
 
 const { setObject, getObject, removeObject } = use('kanban');
 
@@ -66,11 +66,7 @@ export const calculateCancellationCosts = (order: Order, params: OrderCancellati
   return costs;
 };
 
-export const orderPeriodFilter = (
-  timestamp: firebase.firestore.Timestamp,
-  start: Date,
-  end?: Date
-) => {
+export const orderPeriodFilter = (timestamp: Timestamp, start: Date, end?: Date) => {
   if (!timestamp) return false;
   let value = timestamp.seconds;
   let startLimit = start.getTime() / 1000;
@@ -128,7 +124,7 @@ export const splitOrdersValuesByPeriod = (
     period.push({ date, value: 0 });
   }
   orders.forEach((order) => {
-    const date = (order.updatedOn as firebase.firestore.Timestamp).toDate().getDate();
+    const date = (order.updatedOn as Timestamp).toDate().getDate();
     let item = period.find((item) => item.date === date);
     if (item) item.value += 1;
   });

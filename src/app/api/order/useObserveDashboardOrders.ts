@@ -1,6 +1,6 @@
 import { Order, OrderStatus, WithId } from '@appjusto/types';
 import { useContextApi } from 'app/state/api/context';
-import firebase from 'firebase/app';
+import { Timestamp } from 'firebase/firestore';
 import React from 'react';
 import { findMostFrequentProduct, orderPeriodFilter, splitOrdersValuesByPeriod } from './utils';
 
@@ -44,7 +44,7 @@ export const useObserveDashboardOrders = (businessId?: string | null) => {
     let today = new Date();
     today.setHours(0, 0, 0, 0);
     const todayOrders = orders.filter((order) =>
-      orderPeriodFilter(order.updatedOn as firebase.firestore.Timestamp, today)
+      orderPeriodFilter(order.updatedOn as Timestamp, today)
     );
     setTodayOrders(todayOrders.length);
     setTodayValue(todayOrders.reduce((result, order) => result + order.fare?.business?.value!, 0));
@@ -61,7 +61,7 @@ export const useObserveDashboardOrders = (businessId?: string | null) => {
     let today = new Date();
     let firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
     const monthOrders = orders.filter((order) =>
-      orderPeriodFilter(order.updatedOn as firebase.firestore.Timestamp, firstDay)
+      orderPeriodFilter(order.updatedOn as Timestamp, firstDay)
     );
     setMonthOrders(monthOrders.length);
     setMonthValue(monthOrders.reduce((result, order) => result + order.fare?.business?.value!, 0));
@@ -87,7 +87,7 @@ export const useObserveDashboardOrders = (businessId?: string | null) => {
     }
     let start = new Date(year, month, day);
     const currentWeekOrders = orders.filter((order) =>
-      orderPeriodFilter(order.updatedOn as firebase.firestore.Timestamp, start)
+      orderPeriodFilter(order.updatedOn as Timestamp, start)
     );
     setCurrentWeekOrders(currentWeekOrders.length);
     setCurrentWeekValue(
@@ -132,7 +132,7 @@ export const useObserveDashboardOrders = (businessId?: string | null) => {
     let start = new Date(year, month, startDay);
     let end = new Date(year, month, endDay, 23, 59, 59);
     const lastWeekOrders = orders.filter((order) =>
-      orderPeriodFilter(order.updatedOn as firebase.firestore.Timestamp, start, end)
+      orderPeriodFilter(order.updatedOn as Timestamp, start, end)
     );
     setLastWeekOrders(lastWeekOrders.length);
     setLastWeekValue(

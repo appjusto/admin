@@ -1,5 +1,5 @@
-import { useContextApi } from 'app/state/api/context';
 import { ChatMessage, WithId } from '@appjusto/types';
+import { useContextApi } from 'app/state/api/context';
 import React from 'react';
 import { OrderChatTypeGroup } from './types';
 import { getOrderChatTypeGroup } from './utils';
@@ -13,7 +13,9 @@ export const useObserveOrderChatMessages = (orderId?: string, limit?: number) =>
   // side effects
   React.useEffect(() => {
     if (!orderId) return;
-    const unsub = api.chat().observeOrderChatMessages({ orderId, limit }, setChatMessages);
+    const unsub = api
+      .chat()
+      .observeOrderChatMessages({ orderId, queryLimit: limit }, setChatMessages);
     return () => unsub();
   }, [api, orderId, limit]);
   React.useEffect(() => {

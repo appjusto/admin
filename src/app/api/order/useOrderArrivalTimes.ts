@@ -1,5 +1,5 @@
-import firebase from 'firebase/app';
 import { Order, WithId } from '@appjusto/types';
+import { Timestamp } from 'firebase/firestore';
 import React from 'react';
 import { getTimeUntilNow } from 'utils/functions';
 
@@ -9,7 +9,7 @@ export const useOrderArrivalTimes = (getServerTime: () => Date, order?: WithId<O
 
   // handlers
   const handleArrivalTime = React.useCallback(
-    (baseTime: firebase.firestore.Timestamp) => {
+    (baseTime: Timestamp) => {
       if (!baseTime) return;
       const now = getServerTime().getTime();
       const newTime = getTimeUntilNow(now, baseTime.toMillis(), true);
@@ -21,8 +21,8 @@ export const useOrderArrivalTimes = (getServerTime: () => Date, order?: WithId<O
   // side effects
   React.useEffect(() => {
     if (!order) return;
-    const courierArrivalTime = order.arrivals?.origin?.estimate as firebase.firestore.Timestamp;
-    const orderArrivalTime = order.arrivals?.destination?.estimate as firebase.firestore.Timestamp;
+    const courierArrivalTime = order.arrivals?.origin?.estimate as Timestamp;
+    const orderArrivalTime = order.arrivals?.destination?.estimate as Timestamp;
     let arrivalInterval: NodeJS.Timeout;
     if (order.status === 'ready' && order.dispatchingState === 'going-pickup') {
       arrivalInterval = setInterval(() => handleArrivalTime(courierArrivalTime), 60000);

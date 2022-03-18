@@ -1,5 +1,5 @@
-import { useContextFirebaseUser } from 'app/state/auth/context';
 import { DispatchingState, DispatchingStatus, Order, WithId } from '@appjusto/types';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import React from 'react';
 import { useObserveOrderMatching } from './useObserveOrderMatching';
 import { useOrderArrivalTimes } from './useOrderArrivalTimes';
@@ -27,14 +27,12 @@ export const useOrderDeliveryInfos = (getServerTime: () => Date, order?: WithId<
     order?.dispatchingState === 'arrived-pickup'
   );
   const [isDelivered, setIsDelivered] = React.useState<boolean>(order?.status === 'delivered');
-
   // side effects
   React.useEffect(() => {
     if (!order?.status) return;
     setIsOrderActive(['confirmed', 'preparing', 'ready', 'dispatching'].includes(order.status));
     setIsDelivered(order.status === 'delivered');
   }, [order?.status]);
-
   React.useEffect(() => {
     if (!order?.dispatchingStatus) return;
     const getOrderDispatchingKanbanItemText = (
@@ -73,14 +71,12 @@ export const useOrderDeliveryInfos = (getServerTime: () => Date, order?: WithId<
     getOrderDispatchingText(order.dispatchingStatus, order?.dispatchingState);
     setIsCurrierArrived(order.dispatchingState === 'arrived-pickup');
   }, [order?.dispatchingState, order?.dispatchingStatus, matching, isBackofficeUser]);
-
   React.useEffect(() => {
     if (!order?.dispatchingStatus) return;
     setIsMatching(order.dispatchingStatus === 'matching');
     setIsMatched(order.dispatchingStatus === 'matched' || order.dispatchingStatus === 'confirmed');
     setIsNoMatch(order.dispatchingStatus === 'no-match');
   }, [order?.dispatchingStatus]);
-
   // result
   return {
     isOrderActive,

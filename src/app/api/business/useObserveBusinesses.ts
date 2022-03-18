@@ -1,20 +1,16 @@
-import { useContextApi } from 'app/state/api/context';
 import { Business, WithId } from '@appjusto/types';
+import { useContextApi } from 'app/state/api/context';
+import { DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
+import { isEqual, uniqWith } from 'lodash';
 import React from 'react';
-import firebase from 'firebase/app';
-import { uniqWith, isEqual } from 'lodash';
 
 export const useObserveBusinesses = (situations: string[]) => {
   // context
   const api = useContextApi();
   // state
   const [businesses, setBusinesses] = React.useState<WithId<Business>[]>([]);
-  const [startAfter, setStartAfter] = React.useState<
-    firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
-  >();
-  const [lastBusiness, setLastBusiness] = React.useState<
-    firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
-  >();
+  const [startAfter, setStartAfter] = React.useState<QueryDocumentSnapshot<DocumentData>>();
+  const [lastBusiness, setLastBusiness] = React.useState<QueryDocumentSnapshot<DocumentData>>();
   // handlers
   const fetchNextPage = React.useCallback(() => {
     setStartAfter(lastBusiness);

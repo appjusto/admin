@@ -1,9 +1,9 @@
-import { useContextApi } from 'app/state/api/context';
 import { User, UserType, WithId } from '@appjusto/types';
+import { useContextApi } from 'app/state/api/context';
+import dayjs from 'dayjs';
+import { DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
 import React from 'react';
 import { UsersSearchType } from './UsersApi';
-import dayjs from 'dayjs';
-import firebase from 'firebase/app';
 
 const initialMap = new Map();
 
@@ -22,12 +22,8 @@ export const useObserveUsers = (
     initialMap
   );
   const [users, setUsers] = React.useState<WithId<User>[]>();
-  const [startAfter, setStartAfter] = React.useState<
-    firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
-  >();
-  const [lastUser, setLastUser] = React.useState<
-    firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
-  >();
+  const [startAfter, setStartAfter] = React.useState<QueryDocumentSnapshot<DocumentData>>();
+  const [lastUser, setLastUser] = React.useState<QueryDocumentSnapshot<DocumentData>>();
   // handlers
   const fetchNextPage = React.useCallback(() => {
     setStartAfter(lastUser);

@@ -1,8 +1,8 @@
-import { useContextApi } from 'app/state/api/context';
 import { ProfileChange, WithId } from '@appjusto/types';
+import { useContextApi } from 'app/state/api/context';
+import { DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
+import { isEqual, uniqWith } from 'lodash';
 import React from 'react';
-import { uniqWith, isEqual } from 'lodash';
-import firebase from 'firebase/app';
 
 export type ProfileChangesSituations = 'pending' | 'approved' | 'rejected';
 
@@ -11,12 +11,8 @@ export const useObserveUsersChanges = (situations: ProfileChangesSituations[]) =
   const api = useContextApi();
   // state
   const [userChanges, setUserChanges] = React.useState<WithId<ProfileChange>[]>([]);
-  const [startAfter, setStartAfter] = React.useState<
-    firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
-  >();
-  const [lastChange, setLastChange] = React.useState<
-    firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
-  >();
+  const [startAfter, setStartAfter] = React.useState<QueryDocumentSnapshot<DocumentData>>();
+  const [lastChange, setLastChange] = React.useState<QueryDocumentSnapshot<DocumentData>>();
   // handlers
   const fetchNextPage = React.useCallback(() => {
     setStartAfter(lastChange);

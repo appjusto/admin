@@ -1,9 +1,9 @@
-import { useContextApi } from 'app/state/api/context';
-import { WithId, Invoice } from '@appjusto/types';
-import React from 'react';
-import firebase from 'firebase/app';
+import { Invoice, WithId } from '@appjusto/types';
 import { IuguInvoiceStatus } from '@appjusto/types/payment/iugu';
+import { useContextApi } from 'app/state/api/context';
 import dayjs from 'dayjs';
+import { DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
+import React from 'react';
 
 const initialMap = new Map();
 
@@ -20,12 +20,8 @@ export const useObserveInvoices = (
     initialMap
   );
   const [invoices, setInvoices] = React.useState<WithId<Invoice>[] | null>();
-  const [startAfter, setStartAfter] = React.useState<
-    firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
-  >();
-  const [lastInvoice, setLastInvoice] = React.useState<
-    firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
-  >();
+  const [startAfter, setStartAfter] = React.useState<QueryDocumentSnapshot<DocumentData>>();
+  const [lastInvoice, setLastInvoice] = React.useState<QueryDocumentSnapshot<DocumentData>>();
   // handlers
   const fetchNextPage = React.useCallback(() => {
     setStartAfter(lastInvoice);

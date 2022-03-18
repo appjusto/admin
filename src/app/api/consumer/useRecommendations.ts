@@ -1,9 +1,9 @@
-import { useContextApi } from 'app/state/api/context';
 import { BusinessRecommendation, WithId } from '@appjusto/types';
-import React from 'react';
+import { useContextApi } from 'app/state/api/context';
 import dayjs from 'dayjs';
-import { uniqWith, isEqual } from 'lodash';
-import firebase from 'firebase/app';
+import { DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
+import { isEqual, uniqWith } from 'lodash';
+import React from 'react';
 
 export const useRecommendations = (search?: string, start?: string, end?: string) => {
   // context
@@ -12,9 +12,7 @@ export const useRecommendations = (search?: string, start?: string, end?: string
   const [recommendations, setRecommendations] = React.useState<WithId<BusinessRecommendation>[]>(
     []
   );
-  const [startAfter, setStartAfter] = React.useState<
-    firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
-  >();
+  const [startAfter, setStartAfter] = React.useState<QueryDocumentSnapshot<DocumentData>>();
   // handlers
   const getRecomendations = React.useCallback(() => {
     let startDate = start ? dayjs(start).startOf('day').toDate() : null;

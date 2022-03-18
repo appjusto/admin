@@ -1,8 +1,8 @@
+import { Order, OrderStatus, OrderType, WithId } from '@appjusto/types';
 import { useContextApi } from 'app/state/api/context';
-import { WithId, OrderStatus, OrderType, Order } from '@appjusto/types';
-import React from 'react';
-import firebase from 'firebase/app';
 import dayjs from 'dayjs';
+import { DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
+import React from 'react';
 
 const initialMap = new Map();
 
@@ -22,12 +22,8 @@ export const useObserveOrdersHistory = (
     initialMap
   );
   const [orders, setOrders] = React.useState<WithId<Order>[] | null>();
-  const [startAfter, setStartAfter] = React.useState<
-    firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
-  >();
-  const [lastOrder, setLastOrder] = React.useState<
-    firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
-  >();
+  const [startAfter, setStartAfter] = React.useState<QueryDocumentSnapshot<DocumentData>>();
+  const [lastOrder, setLastOrder] = React.useState<QueryDocumentSnapshot<DocumentData>>();
   // handlers
   const fetchNextPage = React.useCallback(() => {
     setStartAfter(lastOrder);
