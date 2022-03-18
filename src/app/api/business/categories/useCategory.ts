@@ -39,14 +39,14 @@ export const useCategory = (id: string) => {
 
   // side effects
   React.useEffect(() => {
-    if (!id) return;
+    if (!businessId || !id) return;
     if (id === 'new') {
       (async () => {
         const newId = await api.business().createCategoryRef(businessId);
         setCategoryId(newId);
       })();
     } else setCategoryId(id);
-  }, [id]);
+  }, [api, businessId, id]);
   // return
   return {
     category: fetchResult.data,

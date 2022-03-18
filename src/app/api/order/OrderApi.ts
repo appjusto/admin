@@ -31,6 +31,7 @@ import {
   query,
   QueryDocumentSnapshot,
   serverTimestamp,
+  startAfter,
   Timestamp,
   Unsubscribe,
   updateDoc,
@@ -136,12 +137,12 @@ export default class OrderApi {
     end: Date | null | undefined,
     orderStatus: OrderStatus | undefined,
     orderType: OrderType | null,
-    startAfter: FirebaseDocument | undefined
+    startAfterDoc: FirebaseDocument | undefined
   ): Unsubscribe {
     let q = query(this.refs.getOrdersRef(), orderBy('updatedOn', 'desc'), limit(queryLimit));
     if (orderStatus) q = query(q, where('status', '==', orderStatus));
     else q = query(q, where('status', 'in', statuses));
-    if (startAfter) q = query(q, startAfter(startAfter));
+    if (startAfterDoc) q = query(q, startAfter(startAfterDoc));
     if (businessId) q = query(q, where('business.id', '==', businessId));
     if (orderCode) q = query(q, where('code', '==', orderCode));
     if (start && end) q = query(q, where('updatedOn', '>=', start), where('updatedOn', '<=', end));
@@ -172,7 +173,7 @@ export default class OrderApi {
     start?: Date | null,
     end?: Date | null,
     orderStatus?: OrderStatus,
-    startAfter?: FirebaseDocument
+    startAfterDoc?: FirebaseDocument
   ): Unsubscribe {
     let q = query(
       this.refs.getOrdersRef(),
@@ -181,7 +182,7 @@ export default class OrderApi {
       where('business.id', '==', businessId),
       where('status', 'in', statuses)
     );
-    if (startAfter) q = query(q, startAfter(startAfter));
+    if (startAfterDoc) q = query(q, startAfter(startAfterDoc));
     if (orderCode) q = query(q, where('code', '==', orderCode));
     if (start && end) q = query(q, where('updatedOn', '>=', start), where('updatedOn', '<=', end));
     if (orderStatus) q = query(q, where('status', '==', orderStatus));
@@ -348,12 +349,12 @@ export default class OrderApi {
     orderCode?: string | null,
     start?: Date | null,
     end?: Date | null,
-    startAfter?: FirebaseDocument,
+    startAfterDoc?: FirebaseDocument,
     status?: IuguInvoiceStatus
   ): Unsubscribe {
     let q = query(this.refs.getInvoicesRef(), orderBy('createdOn', 'desc'), limit(queryLimit));
     if (status) q = query(q, where('status', '==', status));
-    if (startAfter) q = query(q, startAfter(startAfter));
+    if (startAfterDoc) q = query(q, startAfter(startAfterDoc));
     if (orderCode) q = query(q, where('orderCode', '==', orderCode));
     if (start && end) q = query(q, where('createdOn', '>=', start), where('createdOn', '<=', end));
     const unsubscribe = onSnapshot(

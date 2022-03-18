@@ -31,7 +31,7 @@ export default class UsersApi {
     search?: string | null,
     start?: Date | null,
     end?: Date | null,
-    startAfter?: FirebaseDocument
+    startAfterDoc?: FirebaseDocument
   ): Unsubscribe {
     // query
     if (searchType === 'email' && search) {
@@ -52,7 +52,7 @@ export default class UsersApi {
     }
     let q = query(this.refs.getUsersRef(), orderBy('lastSignInRequest', 'desc'), limit(queryLimit));
     // search
-    if (startAfter) q = query(q, startAfter(startAfter));
+    if (startAfterDoc) q = query(q, startAfter(startAfterDoc));
     if (searchType === 'cpf' && search) q = query(q, where('cpf', '==', search));
     if (searchType === 'phone' && search) q = query(q, where('phone', '==', search));
     // filters
