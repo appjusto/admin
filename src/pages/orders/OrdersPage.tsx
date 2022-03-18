@@ -18,7 +18,6 @@ const OrdersPage = () => {
   const history = useHistory();
   // handlers
   const closeDrawerHandler = React.useCallback(() => history.replace(path), [history, path]);
-
   // UI
   if (business?.situation !== 'approved') {
     return <Redirect to="/app" push />;

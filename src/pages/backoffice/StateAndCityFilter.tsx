@@ -2,7 +2,7 @@ import { Box, HStack } from '@chakra-ui/react';
 import { Select } from 'common/components/form/select/Select';
 import React from 'react';
 import { t } from 'utils/i18n';
-import ufs from './utils/ufs';
+import ufs from '../../utils/ufs';
 
 const IBGEUrl = 'https://servicodados.ibge.gov.br/api/v1/localidades/estados';
 

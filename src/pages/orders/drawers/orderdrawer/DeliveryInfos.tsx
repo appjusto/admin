@@ -5,7 +5,7 @@ import { useOrderDeliveryInfos } from 'app/api/order/useOrderDeliveryInfos';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextServerTime } from 'app/state/server-time';
 import { AlertWarning } from 'common/components/AlertWarning';
-import firebase from 'firebase/app';
+import { Timestamp } from 'firebase/firestore';
 import I18n from 'i18n-js';
 import React from 'react';
 import { Link } from 'react-router-dom';
@@ -42,7 +42,7 @@ export const DeliveryInfos = ({
 
   // side effects
   React.useEffect(() => {
-    const date = order.courier?.joined as firebase.firestore.Timestamp;
+    const date = order.courier?.joined as Timestamp;
     if (date) {
       try {
         const month = I18n.strftime(date.toDate(), '%B');

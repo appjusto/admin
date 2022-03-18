@@ -1,7 +1,7 @@
 import { ChatMessage, WithId } from '@appjusto/types';
 import { Box, Flex, HStack, Image, Text } from '@chakra-ui/react';
 import managerIcon from 'common/img/manager.svg';
-import firebase from 'firebase/app';
+import { FieldValue } from 'firebase/firestore';
 import { getDateAndHour } from 'utils/functions';
 
 interface ChatMessagesProps {
@@ -12,7 +12,7 @@ interface ChatMessagesProps {
 
 export const ChatMessages = ({ name, messages, image }: ChatMessagesProps) => {
   // helpers
-  const getTime = (timestamp: firebase.firestore.FieldValue) => {
+  const getTime = (timestamp: FieldValue) => {
     if (!timestamp) return;
     const fullDate = getDateAndHour(timestamp);
     const time = fullDate.split(' ')[1];

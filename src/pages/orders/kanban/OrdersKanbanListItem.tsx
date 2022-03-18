@@ -7,7 +7,7 @@ import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useOrdersContext } from 'app/state/order';
 import { useContextServerTime } from 'app/state/server-time';
 import { ReactComponent as Alarm } from 'common/img/alarm_outlined.svg';
-import firebase from 'firebase/app';
+import { Timestamp } from 'firebase/firestore';
 import React from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
 import { getTimestampMilliseconds, getTimeUntilNow } from 'utils/functions';
@@ -64,16 +64,12 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
     const setNewTime = () => {
       if (order.status === 'confirmed') {
         const confirmedLog = logs?.find((log) => log.after.status === 'confirmed');
-        const confirmedTime = getTimestampMilliseconds(
-          confirmedLog?.timestamp as firebase.firestore.Timestamp
-        );
+        const confirmedTime = getTimestampMilliseconds(confirmedLog?.timestamp as Timestamp);
         serverOrderTime = confirmedTime;
       }
       if (order.status === 'preparing') {
         const preparingLog = logs?.find((log) => log.after.status === 'preparing');
-        const preparingTime = getTimestampMilliseconds(
-          preparingLog?.timestamp as firebase.firestore.Timestamp
-        );
+        const preparingTime = getTimestampMilliseconds(preparingLog?.timestamp as Timestamp);
         serverOrderTime = preparingTime;
       }
       if (serverOrderTime) {

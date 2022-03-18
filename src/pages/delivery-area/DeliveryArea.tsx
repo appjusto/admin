@@ -21,8 +21,8 @@ import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { Marker } from '../../common/components/MapsMarker';
-import { getCitiesByState, IBGEResult, UF } from './ApiIBGE';
-import { ufs } from './ufs';
+import { getCitiesByState, IBGEResult, UF } from '../../utils/ApiIBGE';
+import ufs from '../../utils/ufs';
 
 const radioOptions = ['10', '20', '25', '30', '40', '45', '50', '60'];
 
