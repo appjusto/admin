@@ -14,7 +14,7 @@ import {
   updatePassword,
   User,
 } from 'firebase/auth';
-import { serverTimestamp } from 'firebase/firestore/lite';
+import { addDoc, serverTimestamp } from 'firebase/firestore/lite';
 import FirebaseRefs from '../FirebaseRefs';
 
 export default class AuthApi {
@@ -47,7 +47,7 @@ export default class AuthApi {
   async sendSignInLinkToEmail(email: string): Promise<void> {
     this.auth.languageCode = 'pt'; // i18n
     try {
-      await this.refs.getPlatformLoginLogsRef().add({
+      await addDoc(this.refs.getPlatformLoginLogsRef(), {
         email,
         flavor: 'business',
         signInAt: serverTimestamp(),
