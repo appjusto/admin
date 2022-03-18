@@ -113,7 +113,7 @@ export default class UsersApi {
       where('situation', 'in', situations)
     );
     // observer
-    if (startAfter) q = query(q, startAfter(startAfterDoc));
+    if (startAfterDoc) q = query(q, startAfter(startAfterDoc));
     // returns the unsubscribe function
     return onSnapshot(
       q,

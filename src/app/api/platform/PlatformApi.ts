@@ -141,8 +141,7 @@ export default class PlatformApi {
   async fetchIssues(types: IssueType[]) {
     const q = query(this.refs.getIssuesRef(), where('type', 'in', types));
     const data = await getDocs(q);
-    // const issues = data.docs.map<Issue>((doc) => doc.data() as Issue);
-    return documentsAs<Issue>(data.docs);
+    return data.docs.map<Issue>((doc) => doc.data() as Issue);
   }
 
   async getServerTime(): Promise<number> {

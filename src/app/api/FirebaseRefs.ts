@@ -55,8 +55,6 @@ export default class FirebaseRefs {
   getFraudPreventionRef = () => doc(this.firestore, 'platform', 'fraud');
   getFraudPreventionSubdocsRef = () => collection(this.firestore, 'platform', 'fraud', 'subdocs');
   getFraudPreventionParamsRef = () => doc(this.firestore, 'platform', 'fraud', 'subdocs', 'params');
-
-  // STOP UPDATE HERE <<<
   getFlaggedLocationsRef = () => collection(this.getFraudPreventionRef(), 'flaggedlocations');
   getFlaggedLocationRef = (locationId: string) => doc(this.getFlaggedLocationsRef(), locationId);
 
@@ -120,17 +118,17 @@ export default class FirebaseRefs {
   getOrderChatRef = (orderId: string) => collection(this.firestore, 'orders', orderId, 'chat');
   getOrderIssuesRef = (orderId: string) => collection(this.firestore, 'orders', orderId, 'issues');
   getOrderLogsRef = (orderId: string) => collection(this.firestore, 'orders', orderId, 'logs');
+  // orders private
   getOrderPrivateRef = (orderId: string) =>
     collection(this.firestore, 'orders', orderId, 'private');
-
-  getOrderPaymentsRef = (orderId: string) => doc(this.firestore, 'orders', orderId, 'payments');
+  getOrderPaymentsRef = (orderId: string) => doc(this.getOrderPrivateRef(orderId), 'payments');
   getOrderCancellationRef = (orderId: string) =>
-    doc(this.firestore, 'orders', orderId, 'cancellation');
+    doc(this.getOrderPrivateRef(orderId), 'cancellation');
   getOrderConfirmationRef = (orderId: string) =>
-    doc(this.firestore, 'orders', orderId, 'confirmation');
-  getOrderMatchingRef = (orderId: string) => doc(this.firestore, 'orders', orderId, 'matching');
+    doc(this.getOrderPrivateRef(orderId), 'confirmation');
+  getOrderMatchingRef = (orderId: string) => doc(this.getOrderPrivateRef(orderId), 'matching');
   getOrderFraudPreventionRef = (orderId: string) =>
-    doc(this.firestore, 'orders', orderId, 'fraudprevention');
+    doc(this.getOrderPrivateRef(orderId), 'fraudprevention');
 
   // chats
   getChatsRef = () => collection(this.firestore, 'chats');

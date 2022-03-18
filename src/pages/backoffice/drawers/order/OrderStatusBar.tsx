@@ -122,10 +122,10 @@ export const OrderStatusBar = ({
           </Box>
         )}
       </Flex>
-      {status === 'canceled' && (
+      {(status === 'canceled' || status === 'rejected') && (
         <>
           <SectionTitle>{t('Dados do cancelamento:')}</SectionTitle>
-          {orderStatus === 'canceled' ? (
+          {orderStatus === 'canceled' || orderStatus === 'rejected' ? (
             <>
               <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
                 {t('Cancelado por:')}{' '}
