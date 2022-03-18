@@ -3,14 +3,25 @@ import {
   CourierStatus,
   Fleet,
   MarketplaceAccountInfo,
-  WithId,
-  ReleaseCourierPayload,
   ProfileNote,
+  ReleaseCourierPayload,
+  WithId,
 } from '@appjusto/types';
+import * as Sentry from '@sentry/react';
+import {
+  addDoc,
+  deleteDoc,
+  FieldValue,
+  getDoc,
+  orderBy,
+  query,
+  serverTimestamp,
+  Unsubscribe,
+  updateDoc,
+  where,
+} from 'firebase/firestore';
 import FilesApi from '../FilesApi';
 import FirebaseRefs from '../FirebaseRefs';
-import firebase from 'firebase/app';
-import * as Sentry from '@sentry/react';
 import { customCollectionSnapshot, customDocumentSnapshot } from '../utils';
 
 export type CourierReviewType = 'positive' | 'negative';
@@ -18,7 +29,7 @@ export type CourierReviewType = 'positive' | 'negative';
 export interface CourierReview {
   orderId: string;
   type: CourierReviewType;
-  createdOn: firebase.firestore.FieldValue;
+  createdOn: FieldValue;
   comment?: string;
 }
 export default class CourierApi {
@@ -27,37 +38,37 @@ export default class CourierApi {
   observeCouriersByStatus(
     statuses: CourierStatus[],
     resultHandler: (result: WithId<CourierProfile>[]) => void
-  ): firebase.Unsubscribe {
-    const query = this.refs.getCouriersRef().where('status', 'in', statuses);
+  ): Unsubscribe {
+    const q = query(this.refs.getCouriersRef(), where('status', 'in', statuses));
     // returns the unsubscribe function
-    return customCollectionSnapshot(query, resultHandler);
+    return customCollectionSnapshot(q, resultHandler);
   }
 
   observeCourierProfile(
     courierId: string,
     resultHandler: (result: WithId<CourierProfile> | null) => void
-  ): firebase.Unsubscribe {
-    const query = this.refs.getCourierRef(courierId);
+  ): Unsubscribe {
+    const ref = this.refs.getCourierRef(courierId);
     // returns the unsubscribe function
-    return customDocumentSnapshot(query, resultHandler);
+    return customDocumentSnapshot(ref, resultHandler);
   }
 
   observeCourierProfileByCode(
     courierCode: string,
     resultHandler: (result: WithId<CourierProfile>[] | null) => void
-  ): firebase.Unsubscribe {
-    const query = this.refs.getCouriersRef().where('code', '==', courierCode);
+  ): Unsubscribe {
+    const q = query(this.refs.getCouriersRef(), where('code', '==', courierCode));
     // returns the unsubscribe function
-    return customCollectionSnapshot(query, resultHandler);
+    return customCollectionSnapshot(q, resultHandler);
   }
 
   observeCourierProfileByName(
     courierName: string,
     resultHandler: (result: WithId<CourierProfile>[] | null) => void
-  ): firebase.Unsubscribe {
-    const query = this.refs.getCouriersRef().where('name', '==', courierName);
+  ): Unsubscribe {
+    const q = query(this.refs.getCouriersRef(), where('name', '==', courierName));
     // returns the unsubscribe function
-    return customCollectionSnapshot(query, resultHandler);
+    return customCollectionSnapshot(q, resultHandler);
   }
 
   observeCourierReviews(
@@ -66,39 +77,40 @@ export default class CourierApi {
     start: Date,
     end: Date,
     resultHandler: (result: WithId<CourierReview>[] | null) => void
-  ): firebase.Unsubscribe {
-    const query = this.refs
-      .getCourierReviewsRef(courierId)
-      .orderBy('createdOn', 'desc')
-      .where('type', 'in', types)
-      .where('createdOn', '>=', start)
-      .where('createdOn', '<=', end);
+  ): Unsubscribe {
+    const q = query(
+      this.refs.getCourierReviewsRef(courierId),
+      orderBy('createdOn', 'desc'),
+      where('type', 'in', types),
+      where('createdOn', '>=', start),
+      where('createdOn', '<=', end)
+    );
     // returns the unsubscribe function
-    return customCollectionSnapshot(query, resultHandler);
+    return customCollectionSnapshot(q, resultHandler);
   }
 
   observeCourierMarketPlace(
     courierId: string,
     resultHandler: (result: MarketplaceAccountInfo | null) => void
-  ): firebase.Unsubscribe {
-    const query = this.refs.getCourierMarketPlaceRef(courierId);
+  ): Unsubscribe {
+    const ref = this.refs.getCourierMarketPlaceRef(courierId);
     // returns the unsubscribe function
-    return customDocumentSnapshot(query, resultHandler);
+    return customDocumentSnapshot(ref, resultHandler);
   }
 
   // profile notes
   observeCourierProfileNotes(
     courierId: string,
     resultHandler: (result: WithId<ProfileNote>[]) => void
-  ): firebase.Unsubscribe {
-    const query = this.refs.getCourierProfileNotesRef(courierId).orderBy('createdOn', 'desc');
+  ): Unsubscribe {
+    const q = query(this.refs.getCourierProfileNotesRef(courierId), orderBy('createdOn', 'desc'));
     // returns the unsubscribe function
-    return customCollectionSnapshot(query, resultHandler);
+    return customCollectionSnapshot(q, resultHandler);
   }
 
   async createProfileNote(courierId: string, data: Partial<ProfileNote>) {
-    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
-    await this.refs.getCourierProfileNotesRef(courierId).add({
+    const timestamp = serverTimestamp();
+    await addDoc(this.refs.getCourierProfileNotesRef(courierId), {
       ...data,
       createdOn: timestamp,
       updatedOn: timestamp,
@@ -106,15 +118,15 @@ export default class CourierApi {
   }
 
   async updateProfileNote(courierId: string, profileNoteId: string, changes: Partial<ProfileNote>) {
-    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
-    await this.refs.getCourierProfileNoteRef(courierId, profileNoteId).update({
+    const timestamp = serverTimestamp();
+    await updateDoc(this.refs.getCourierProfileNoteRef(courierId, profileNoteId), {
       ...changes,
       updatedOn: timestamp,
     } as Partial<ProfileNote>);
   }
 
   async deleteProfileNote(courierId: string, profileNoteId: string) {
-    await this.refs.getCourierProfileNoteRef(courierId, profileNoteId).delete();
+    await deleteDoc(this.refs.getCourierProfileNoteRef(courierId, profileNoteId));
   }
 
   // courier profile picture
@@ -129,7 +141,7 @@ export default class CourierApi {
   }
 
   async getCourierFleet(fleetId: string) {
-    const fleet = await this.refs.getFleetRef(fleetId).get();
+    const fleet = await getDoc(this.refs.getFleetRef(fleetId));
     return fleet.data() as Fleet;
   }
 
@@ -158,13 +170,13 @@ export default class CourierApi {
     selfieFile: File | null,
     documentFile: File | null
   ) {
-    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+    const timestamp = serverTimestamp();
     const fullChanges = {
       ...changes,
       updatedOn: timestamp,
     };
     try {
-      await this.refs.getCourierRef(courierId).update(fullChanges);
+      await updateDoc(this.refs.getCourierRef(courierId), fullChanges);
       // logo
       if (selfieFile) await this.selfieUpload(courierId, selfieFile, () => {});
       //cover
@@ -176,7 +188,7 @@ export default class CourierApi {
   }
 
   async deletePrivateMarketPlace(courierId: string) {
-    return await this.refs.getCourierMarketPlaceRef(courierId).delete();
+    return await deleteDoc(this.refs.getCourierMarketPlaceRef(courierId));
   }
 
   async releaseCourier(data: { courierId: string; comment: string }) {
