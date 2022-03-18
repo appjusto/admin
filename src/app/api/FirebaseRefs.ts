@@ -138,6 +138,7 @@ export default class FirebaseRefs {
 
   // invoices
   getInvoicesRef = () => collection(this.firestore, 'invoices');
+  getInvoiceRef = (invoiceId: string) => doc(this.firestore, 'invoices', invoiceId);
 
   // consumers
   getConsumersRef = () => collection(this.firestore, 'consumers');

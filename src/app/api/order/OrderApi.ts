@@ -2,7 +2,6 @@ import {
   CancelOrderPayload,
   ChatMessage,
   DropOrderPayload,
-  OutsourceAccountType,
   Invoice,
   Issue,
   MatchOrderPayload,
@@ -13,14 +12,31 @@ import {
   OrderMatching,
   OrderStatus,
   OrderType,
+  OutsourceAccountType,
   OutsourceDeliveryPayload,
   WithId,
 } from '@appjusto/types';
-import { documentAs, documentsAs, FirebaseDocument } from 'core/fb';
-import firebase from 'firebase/app';
-import FirebaseRefs from '../FirebaseRefs';
-import * as Sentry from '@sentry/react';
 import { IuguInvoiceStatus } from '@appjusto/types/payment/iugu';
+import * as Sentry from '@sentry/react';
+import { documentAs, documentsAs, FirebaseDocument } from 'core/fb';
+import {
+  addDoc,
+  DocumentData,
+  FieldValue,
+  getDoc,
+  getDocs,
+  limit,
+  onSnapshot,
+  orderBy,
+  query,
+  QueryDocumentSnapshot,
+  serverTimestamp,
+  Timestamp,
+  Unsubscribe,
+  updateDoc,
+  where,
+} from 'firebase/firestore';
+import FirebaseRefs from '../FirebaseRefs';
 import { customCollectionSnapshot, customDocumentSnapshot, queryLimit } from '../utils';
 
 export type CancellationData = {
@@ -30,12 +46,10 @@ export type CancellationData = {
 };
 
 export type Ordering = 'asc' | 'desc';
-
-export type Unsubscribe = firebase.Unsubscribe;
 export interface OrderLog {
   before: Partial<Order>;
   after: Partial<Order>;
-  timestamp: firebase.firestore.FieldValue;
+  timestamp: FieldValue;
 }
 
 export default class OrderApi {
@@ -47,35 +61,37 @@ export default class OrderApi {
     resultHandler: (orders: WithId<Order>[]) => void,
     businessId?: string,
     ordering: Ordering = 'desc'
-  ): firebase.Unsubscribe {
-    let query = this.refs
-      .getOrdersRef()
-      .orderBy('timestamps.charged', ordering)
-      .where('status', 'in', statuses);
+  ): Unsubscribe {
+    let q = query(
+      this.refs.getOrdersRef(),
+      orderBy('timestamps.charged', ordering),
+      where('status', 'in', statuses)
+    );
 
     if (businessId) {
-      query = query.where('business.id', '==', businessId);
+      q = query(q, where('business.id', '==', businessId));
     }
     // returns the unsubscribe function
-    return customCollectionSnapshot(query, resultHandler);
+    return customCollectionSnapshot(q, resultHandler);
   }
 
   observeBusinessOrdersCompletedInTheLastHour(
     resultHandler: (orders: WithId<Order>[]) => void,
     businessId?: string,
     ordering: Ordering = 'desc'
-  ): firebase.Unsubscribe {
+  ): Unsubscribe {
     const statuses = ['delivered', 'canceled'] as OrderStatus[];
     const baseTim = new Date();
     baseTim.setHours(baseTim.getHours() - 1);
-    let query = this.refs
-      .getOrdersRef()
-      .orderBy('updatedOn', ordering)
-      .where('business.id', '==', businessId)
-      .where('status', 'in', statuses)
-      .where('updatedOn', '>', baseTim);
+    const q = query(
+      this.refs.getOrdersRef(),
+      orderBy('updatedOn', ordering),
+      where('business.id', '==', businessId),
+      where('status', 'in', statuses),
+      where('updatedOn', '>', baseTim)
+    );
     // returns the unsubscribe function
-    return customCollectionSnapshot(query, resultHandler);
+    return customCollectionSnapshot(q, resultHandler);
   }
 
   observeDashboardOrders(
@@ -84,36 +100,35 @@ export default class OrderApi {
     start?: Date | null,
     end?: Date | null,
     orderStatus?: OrderStatus
-  ): firebase.Unsubscribe {
-    let query = this.refs
-      .getOrdersRef()
-      .orderBy('updatedOn', 'desc')
-      .where('business.id', '==', businessId)
-      .where('status', '==', orderStatus)
-      .where('updatedOn', '>=', start)
-      .where('updatedOn', '<=', end);
+  ): Unsubscribe {
+    const q = query(
+      this.refs.getOrdersRef(),
+      orderBy('updatedOn', 'desc'),
+      where('business.id', '==', businessId),
+      where('status', '==', orderStatus),
+      where('updatedOn', '>=', start),
+      where('updatedOn', '<=', end)
+    );
     // returns the unsubscribe function
-    return customCollectionSnapshot(query, resultHandler);
+    return customCollectionSnapshot(q, resultHandler);
   }
 
   observeBODashboardOrders(
     statuses: OrderStatus[],
     resultHandler: (orders: WithId<Order>[]) => void,
     start?: Date | null
-  ): firebase.Unsubscribe {
-    let query = this.refs
-      .getOrdersRef()
-      .where('updatedOn', '>', start)
-      .where('status', 'in', statuses);
+  ): Unsubscribe {
+    const q = query(
+      this.refs.getOrdersRef(),
+      where('updatedOn', '>', start),
+      where('status', 'in', statuses)
+    );
     // returns the unsubscribe function
-    return customCollectionSnapshot(query, resultHandler);
+    return customCollectionSnapshot(q, resultHandler);
   }
 
   observeOrdersHistory(
-    resultHandler: (
-      orders: WithId<Order>[],
-      last?: firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
-    ) => void,
+    resultHandler: (orders: WithId<Order>[], last?: QueryDocumentSnapshot<DocumentData>) => void,
     businessId: string | null | undefined,
     statuses: OrderStatus[] | null,
     orderCode: string | null | undefined,
@@ -122,16 +137,17 @@ export default class OrderApi {
     orderStatus: OrderStatus | undefined,
     orderType: OrderType | null,
     startAfter: FirebaseDocument | undefined
-  ): firebase.Unsubscribe {
-    let query = this.refs.getOrdersRef().orderBy('updatedOn', 'desc').limit(queryLimit);
-    if (orderStatus) query = query.where('status', '==', orderStatus);
-    else query = query.where('status', 'in', statuses);
-    if (startAfter) query = query.startAfter(startAfter);
-    if (businessId) query = query.where('business.id', '==', businessId);
-    if (orderCode) query = query.where('code', '==', orderCode);
-    if (start && end) query = query.where('updatedOn', '>=', start).where('updatedOn', '<=', end);
-    if (orderType) query = query.where('type', '==', orderType);
-    const unsubscribe = query.onSnapshot(
+  ): Unsubscribe {
+    let q = query(this.refs.getOrdersRef(), orderBy('updatedOn', 'desc'), limit(queryLimit));
+    if (orderStatus) q = query(q, where('status', '==', orderStatus));
+    else q = query(q, where('status', 'in', statuses));
+    if (startAfter) q = query(q, startAfter(startAfter));
+    if (businessId) q = query(q, where('business.id', '==', businessId));
+    if (orderCode) q = query(q, where('code', '==', orderCode));
+    if (start && end) q = query(q, where('updatedOn', '>=', start), where('updatedOn', '<=', end));
+    if (orderType) q = query(q, where('type', '==', orderType));
+    const unsubscribe = onSnapshot(
+      q,
       (snapshot) => {
         if (!snapshot.metadata.hasPendingWrites) {
           const last =
@@ -149,10 +165,7 @@ export default class OrderApi {
   }
 
   observeBusinessOrdersHistory(
-    resultHandler: (
-      orders: WithId<Order>[],
-      last?: firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
-    ) => void,
+    resultHandler: (orders: WithId<Order>[], last?: QueryDocumentSnapshot<DocumentData>) => void,
     businessId: string | undefined,
     statuses: OrderStatus[] | null,
     orderCode?: string | null,
@@ -160,18 +173,20 @@ export default class OrderApi {
     end?: Date | null,
     orderStatus?: OrderStatus,
     startAfter?: FirebaseDocument
-  ): firebase.Unsubscribe {
-    let query = this.refs
-      .getOrdersRef()
-      .orderBy('updatedOn', 'desc')
-      .limit(queryLimit)
-      .where('business.id', '==', businessId)
-      .where('status', 'in', statuses);
-    if (startAfter) query = query.startAfter(startAfter);
-    if (orderCode) query = query.where('code', '==', orderCode);
-    if (start && end) query = query.where('updatedOn', '>=', start).where('updatedOn', '<=', end);
-    if (orderStatus) query = query.where('status', '==', orderStatus);
-    const unsubscribe = query.onSnapshot(
+  ): Unsubscribe {
+    let q = query(
+      this.refs.getOrdersRef(),
+      orderBy('updatedOn', 'desc'),
+      limit(queryLimit),
+      where('business.id', '==', businessId),
+      where('status', 'in', statuses)
+    );
+    if (startAfter) q = query(q, startAfter(startAfter));
+    if (orderCode) q = query(q, where('code', '==', orderCode));
+    if (start && end) q = query(q, where('updatedOn', '>=', start), where('updatedOn', '<=', end));
+    if (orderStatus) q = query(q, where('status', '==', orderStatus));
+    const unsubscribe = onSnapshot(
+      q,
       (snapshot) => {
         if (!snapshot.metadata.hasPendingWrites) {
           const last =
@@ -191,47 +206,42 @@ export default class OrderApi {
   observeBusinessCanceledOrders(
     resultHandler: (orders: WithId<Order>[]) => void,
     businessId: string
-  ): firebase.Unsubscribe {
+  ): Unsubscribe {
     const timeLimit = new Date().getTime() - 86400000;
-    const start_time = firebase.firestore.Timestamp.fromDate(new Date(timeLimit));
-
-    let query = this.refs
-      .getOrdersRef()
-      .orderBy('updatedOn', 'desc')
-      .where('updatedOn', '>=', start_time)
-      .where('business.id', '==', businessId)
-      .where('status', '==', 'canceled');
+    const start_time = Timestamp.fromDate(new Date(timeLimit));
+    const q = query(
+      this.refs.getOrdersRef(),
+      orderBy('updatedOn', 'desc'),
+      where('updatedOn', '>=', start_time),
+      where('business.id', '==', businessId),
+      where('status', '==', 'canceled')
+    );
     // returns the unsubscribe function
-    return customCollectionSnapshot(query, resultHandler);
+    return customCollectionSnapshot(q, resultHandler);
   }
 
-  observeOrder(
-    orderId: string,
-    resultHandler: (order: WithId<Order>) => void
-  ): firebase.Unsubscribe {
-    let query = this.refs.getOrderRef(orderId);
+  observeOrder(orderId: string, resultHandler: (order: WithId<Order>) => void): Unsubscribe {
+    const ref = this.refs.getOrderRef(orderId);
     // returns the unsubscribe function
-    return customDocumentSnapshot<Order>(query, (result) => {
+    return customDocumentSnapshot<Order>(ref, (result) => {
       if (result) resultHandler(result);
     });
   }
 
   observeOrderByOrderCode(orderCode: string, resultHandler: (order: WithId<Order>) => void) {
-    return this.refs
-      .getOrdersRef()
-      .where('code', '==', orderCode)
-      .onSnapshot((snapshot) => {
-        if (!snapshot.empty) resultHandler(documentAs<Order>(snapshot.docs[0]));
-      });
+    const q = query(this.refs.getOrdersRef(), where('code', '==', orderCode));
+    return onSnapshot(q, (snapshot) => {
+      if (!snapshot.empty) resultHandler(documentAs<Order>(snapshot.docs[0]));
+    });
   }
 
   observeOrderLogs(
     orderId: string,
     resultHandler: (order: WithId<OrderLog>[]) => void
-  ): firebase.Unsubscribe {
-    let query = this.refs.getOrderLogsRef(orderId).orderBy('timestamp', 'asc');
+  ): Unsubscribe {
+    const q = query(this.refs.getOrderLogsRef(orderId), orderBy('timestamp', 'asc'));
     // returns the unsubscribe function
-    return customCollectionSnapshot(query, resultHandler);
+    return customCollectionSnapshot(q, resultHandler);
   }
 
   observeOrderChat(
@@ -239,33 +249,36 @@ export default class OrderApi {
     partId: string,
     counterpartId: string,
     resultHandler: (orders: WithId<ChatMessage>[]) => void
-  ): firebase.Unsubscribe {
-    const query = this.refs
-      .getOrderChatRef(orderId)
-      .where('from.id', '==', partId)
-      .where('to.id', '==', counterpartId)
-      .orderBy('timestamp', 'asc');
+  ): Unsubscribe {
+    const q = query(
+      this.refs.getOrderChatRef(orderId),
+      where('from.id', '==', partId),
+      where('to.id', '==', counterpartId),
+      orderBy('timestamp', 'asc')
+    );
     // returns the unsubscribe function
-    return customCollectionSnapshot(query, resultHandler);
+    return customCollectionSnapshot(q, resultHandler);
   }
 
   observeOrderIssues(
     orderId: string,
     resultHandler: (orderIssues: WithId<OrderIssue>[]) => void
-  ): firebase.Unsubscribe {
-    let query = this.refs.getOrderIssuesRef(orderId).orderBy('createdOn', 'desc');
+  ): Unsubscribe {
+    const q = query(this.refs.getOrderIssuesRef(orderId), orderBy('createdOn', 'desc'));
     // returns the unsubscribe function
-    return customCollectionSnapshot(query, resultHandler);
+    return customCollectionSnapshot(q, resultHandler);
   }
 
   observeOrderFraudPrevention(
     orderId: string,
     resultHandler: (flags: OrderFraudPreventionFlags | null) => void
-  ): firebase.Unsubscribe {
-    let query = this.refs.getOrderFraudPreventionRef(orderId);
-    const unsubscribe = query.onSnapshot(
+  ): Unsubscribe {
+    const ref = this.refs.getOrderFraudPreventionRef(orderId);
+    const unsubscribe = onSnapshot(
+      ref,
       (querySnapshot) => {
-        if (querySnapshot.exists) resultHandler(querySnapshot.data() as OrderFraudPreventionFlags);
+        if (querySnapshot.exists())
+          resultHandler(querySnapshot.data() as OrderFraudPreventionFlags);
         else resultHandler(null);
       },
       (error) => {
@@ -279,11 +292,12 @@ export default class OrderApi {
   observeOrderPrivateMatching(
     orderId: string,
     resultHandler: (matching: OrderMatching | null) => void
-  ): firebase.Unsubscribe {
-    let query = this.refs.getOrderMatchingRef(orderId);
-    const unsubscribe = query.onSnapshot(
+  ): Unsubscribe {
+    const ref = this.refs.getOrderMatchingRef(orderId);
+    const unsubscribe = onSnapshot(
+      ref,
       (querySnapshot) => {
-        if (querySnapshot.exists) resultHandler(querySnapshot.data() as OrderMatching);
+        if (querySnapshot.exists()) resultHandler(querySnapshot.data() as OrderMatching);
         else resultHandler(null);
       },
       (error) => {
@@ -299,48 +313,51 @@ export default class OrderApi {
     resultHandler: (orders: WithId<Order>[]) => void,
     start: Date,
     end: Date
-  ): firebase.Unsubscribe {
-    let query = this.refs
-      .getOrdersRef()
-      .orderBy('timestamps.confirmed', 'desc')
-      .where('courier.id', '==', courierId)
-      .where('timestamps.confirmed', '>=', start)
-      .where('timestamps.confirmed', '<=', end);
+  ): Unsubscribe {
+    const q = query(
+      this.refs.getOrdersRef(),
+      orderBy('timestamps.confirmed', 'desc'),
+      where('courier.id', '==', courierId),
+      where('timestamps.confirmed', '>=', start),
+      where('timestamps.confirmed', '<=', end)
+    );
     // returns the unsubscribe function
-    return customCollectionSnapshot(query, resultHandler);
+    return customCollectionSnapshot(q, resultHandler);
   }
 
   observeOrderInvoices(
     orderId: string,
     resultHandler: (invoices: WithId<Invoice>[]) => void,
     businessId?: string
-  ): firebase.Unsubscribe {
-    let query = this.refs
-      .getInvoicesRef()
-      .orderBy('createdOn', 'asc')
-      .where('orderId', '==', orderId);
-    if (businessId) query = query.where('accountId', '==', businessId);
+  ): Unsubscribe {
+    let q = query(
+      this.refs.getInvoicesRef(),
+      orderBy('createdOn', 'asc'),
+      where('orderId', '==', orderId)
+    );
+    if (businessId) q = query(q, where('accountId', '==', businessId));
     // returns the unsubscribe function
-    return customCollectionSnapshot(query, resultHandler);
+    return customCollectionSnapshot(q, resultHandler);
   }
 
   observeInvoices(
     resultHandler: (
       invoices: WithId<Invoice>[],
-      last?: firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
+      last?: QueryDocumentSnapshot<DocumentData>
     ) => void,
     orderCode?: string | null,
     start?: Date | null,
     end?: Date | null,
     startAfter?: FirebaseDocument,
     status?: IuguInvoiceStatus
-  ): firebase.Unsubscribe {
-    let query = this.refs.getInvoicesRef().orderBy('createdOn', 'desc').limit(queryLimit);
-    if (status) query = query.where('status', '==', status);
-    if (startAfter) query = query.startAfter(startAfter);
-    if (orderCode) query = query.where('orderCode', '==', orderCode);
-    if (start && end) query = query.where('createdOn', '>=', start).where('createdOn', '<=', end);
-    const unsubscribe = query.onSnapshot(
+  ): Unsubscribe {
+    let q = query(this.refs.getInvoicesRef(), orderBy('createdOn', 'desc'), limit(queryLimit));
+    if (status) q = query(q, where('status', '==', status));
+    if (startAfter) q = query(q, startAfter(startAfter));
+    if (orderCode) q = query(q, where('orderCode', '==', orderCode));
+    if (start && end) q = query(q, where('createdOn', '>=', start), where('createdOn', '<=', end));
+    const unsubscribe = onSnapshot(
+      q,
       (querySnapshot) => {
         const last =
           querySnapshot.docs.length > 0 ? querySnapshot.docs[querySnapshot.size - 1] : undefined;
@@ -361,75 +378,75 @@ export default class OrderApi {
     end: Date,
     status: IuguInvoiceStatus,
     resultHandler: (invoices: WithId<Invoice>[]) => void
-  ): firebase.Unsubscribe {
-    let query = this.refs
-      .getInvoicesRef()
-      .orderBy('createdOn', 'desc')
-      .where('accountId', '==', businessId)
-      .where('status', '==', status)
-      .where('createdOn', '>=', start)
-      .where('createdOn', '<=', end);
+  ): Unsubscribe {
+    const q = query(
+      this.refs.getInvoicesRef(),
+      orderBy('createdOn', 'desc'),
+      where('accountId', '==', businessId),
+      where('status', '==', status),
+      where('createdOn', '>=', start),
+      where('createdOn', '<=', end)
+    );
     // returns the unsubscribe function
-    return customCollectionSnapshot(query, resultHandler);
+    return customCollectionSnapshot(q, resultHandler);
   }
 
   observeInvoice(
     invoiceId: string,
     resultHandler: (invoice: WithId<Invoice>) => void
-  ): firebase.Unsubscribe {
-    let query = this.refs.getInvoicesRef().doc(invoiceId);
+  ): Unsubscribe {
+    const ref = this.refs.getInvoiceRef(invoiceId);
     // returns the unsubscribe function
-    return customDocumentSnapshot<Invoice>(query, (result) => {
+    return customDocumentSnapshot<Invoice>(ref, (result) => {
       if (result) resultHandler(result);
     });
   }
 
   async getOrderPrivateCancellation(orderId: string) {
-    const data = await this.refs.getOrderCancellationRef(orderId).get();
+    const data = await getDoc(this.refs.getOrderCancellationRef(orderId));
     if (!data.exists) return null;
     return documentAs<OrderCancellation>(data);
   }
 
   async updateOrderCourierNotified(orderId: string, couriersNotified: string[]) {
-    return this.refs.getOrderMatchingRef(orderId).update({ couriersNotified });
+    return updateDoc(this.refs.getOrderMatchingRef(orderId), { couriersNotified });
   }
 
   async getOrderIssues(orderId: string) {
-    return documentsAs<OrderIssue>(
-      (await this.refs.getOrderIssuesRef(orderId).orderBy('createdOn', 'desc').get()).docs
-    );
+    const q = query(this.refs.getOrderIssuesRef(orderId), orderBy('createdOn', 'desc'));
+    const data = await getDocs(q);
+    return documentsAs<OrderIssue>(data.docs);
   }
 
   async fetchOrderById(orderId: string) {
-    const data = await this.refs.getOrderRef(orderId).get();
-    return data ? { ...data.data(), id: orderId } : null;
+    const data = await getDoc(this.refs.getOrderRef(orderId));
+    if (data.exists()) return documentAs<Order>(data);
+    else return null;
   }
 
   async fetchOrdersByConsumerId(consumerId: string) {
-    return documentsAs<Order>(
-      (
-        await this.refs
-          .getOrdersRef()
-          .orderBy('createdOn', 'desc')
-          .where('consumer.id', '==', consumerId)
-          .get()
-      ).docs
+    const q = query(
+      this.refs.getOrdersRef(),
+      orderBy('createdOn', 'desc'),
+      where('consumer.id', '==', consumerId)
     );
+    const data = await getDocs(q);
+    return documentsAs<Order>(data.docs);
   }
 
   async createFakeOrder(order: Order) {
-    return this.refs.getOrdersRef().add(order);
+    return addDoc(this.refs.getOrdersRef(), order);
   }
 
   async updateOrder(orderId: string, changes: Partial<Order>) {
-    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+    const timestamp = serverTimestamp();
     const orderChanges = {
       ...changes,
       updatedOn: timestamp,
     };
     // CHECK IT
     //if (changes.status === 'confirmed') orderChanges.confirmedOn = timestamp;
-    await this.refs.getOrderRef(orderId).update(orderChanges);
+    await updateDoc(this.refs.getOrderRef(orderId), orderChanges);
   }
 
   async cancelOrder(data: CancelOrderPayload) {
