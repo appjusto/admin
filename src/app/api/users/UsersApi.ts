@@ -1,20 +1,30 @@
+import { ProfileChange, User, UserProfile, UserType, WithId } from '@appjusto/types';
 import * as Sentry from '@sentry/react';
-import { WithId, User, ProfileChange, UserProfile, UserType } from '@appjusto/types';
+import {
+  DocumentData,
+  getDoc,
+  limit,
+  onSnapshot,
+  orderBy,
+  query,
+  QueryDocumentSnapshot,
+  serverTimestamp,
+  startAfter,
+  Unsubscribe,
+  updateDoc,
+  where,
+} from 'firebase/firestore';
 import { documentAs, documentsAs, FirebaseDocument } from '../../../core/fb';
 import FirebaseRefs from '../FirebaseRefs';
-import firebase from 'firebase/app';
-import { ProfileChangesSituations } from './useObserveUsersChanges';
 import { queryLimit } from '../utils';
+import { ProfileChangesSituations } from './useObserveUsersChanges';
 
 export type UsersSearchType = 'email' | 'cpf' | 'phone';
 export default class UsersApi {
   constructor(private refs: FirebaseRefs) {}
   // firestore
   observeUsers(
-    resultHandler: (
-      users: WithId<User>[],
-      last?: firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
-    ) => void,
+    resultHandler: (users: WithId<User>[], last?: QueryDocumentSnapshot<DocumentData>) => void,
     loggedAt: UserType[] | null,
     isBlocked: boolean,
     searchType?: UsersSearchType,
@@ -22,39 +32,39 @@ export default class UsersApi {
     start?: Date | null,
     end?: Date | null,
     startAfter?: FirebaseDocument
-  ): firebase.Unsubscribe {
+  ): Unsubscribe {
     // query
     if (searchType === 'email' && search) {
-      const unsubscribe = this.refs
-        .getUsersRef()
-        .doc(search)
-        .onSnapshot(
-          (querySnapshot) => {
-            if (querySnapshot.exists) resultHandler([documentAs<User>(querySnapshot)]);
-            else resultHandler([]);
-          },
-          (error) => {
-            console.error(error);
-            Sentry.captureException(error);
-          }
-        );
+      const ref = this.refs.getUserRef(search);
+      const unsubscribe = onSnapshot(
+        ref,
+        (querySnapshot) => {
+          if (querySnapshot.exists()) resultHandler([documentAs<User>(querySnapshot)]);
+          else resultHandler([]);
+        },
+        (error) => {
+          console.error(error);
+          Sentry.captureException(error);
+        }
+      );
       // returns the unsubscribe function
       return unsubscribe;
     }
-    let query = this.refs.getUsersRef().orderBy('lastSignInRequest', 'desc').limit(queryLimit);
+    let q = query(this.refs.getUsersRef(), orderBy('lastSignInRequest', 'desc'), limit(queryLimit));
     // search
-    if (startAfter) query = query.startAfter(startAfter);
-    if (searchType === 'cpf' && search) query = query.where('cpf', '==', search);
-    if (searchType === 'phone' && search) query = query.where('phone', '==', search);
+    if (startAfter) q = query(q, startAfter(startAfter));
+    if (searchType === 'cpf' && search) q = query(q, where('cpf', '==', search));
+    if (searchType === 'phone' && search) q = query(q, where('phone', '==', search));
     // filters
-    //if (loggedAt?.includes('consumer')) query = query.where('consumer', '!=', false);
-    //if (loggedAt?.includes('courier')) query = query.where('courier', '!=', false);
-    //if (loggedAt?.includes('manager')) query = query.where('manager', '!=', false);
-    if (isBlocked) query = query.where('blocked', '==', true);
+    //if (loggedAt?.includes('consumer')) q = query(q, where('consumer', '!=', false));
+    //if (loggedAt?.includes('courier')) q = query(q, where('courier', '!=', false));
+    //if (loggedAt?.includes('manager')) q = query(q, where('manager', '!=', false));
+    if (isBlocked) q = query(q, where('blocked', '==', true));
     if (start && end)
-      query = query.where('lastSignInRequest', '>=', start).where('lastSignInRequest', '<=', end);
+      q = query(q, where('lastSignInRequest', '>=', start), where('lastSignInRequest', '<=', end));
     // observer
-    const unsubscribe = query.onSnapshot(
+    const unsubscribe = onSnapshot(
+      q,
       (querySnapshot) => {
         const last =
           querySnapshot.docs.length > 0 ? querySnapshot.docs[querySnapshot.size - 1] : undefined;
@@ -69,16 +79,14 @@ export default class UsersApi {
     return unsubscribe;
   }
 
-  observeUser(
-    userId: string,
-    resultHandler: (user: WithId<User> | null) => void
-  ): firebase.Unsubscribe {
+  observeUser(userId: string, resultHandler: (user: WithId<User> | null) => void): Unsubscribe {
     // query
-    let query = this.refs.getUsersRef().doc(userId);
+    let ref = this.refs.getUserRef(userId);
     // observer
-    const unsubscribe = query.onSnapshot(
+    const unsubscribe = onSnapshot(
+      ref,
       (querySnapshot) => {
-        if (querySnapshot.exists) resultHandler(documentAs<User>(querySnapshot));
+        if (querySnapshot.exists()) resultHandler(documentAs<User>(querySnapshot));
         else resultHandler(null);
       },
       (error) => {
@@ -93,20 +101,22 @@ export default class UsersApi {
   observeUsersChanges(
     resultHandler: (
       changes: WithId<ProfileChange>[],
-      last?: firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
+      last?: QueryDocumentSnapshot<DocumentData>
     ) => void,
     situations: ProfileChangesSituations[],
-    startAfter?: firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
-  ): firebase.Unsubscribe {
+    startAfterDoc?: QueryDocumentSnapshot<DocumentData>
+  ): Unsubscribe {
     // query
-    let query = this.refs
-      .getUsersChangesRef()
-      .orderBy('createdOn', 'asc')
-      .where('situation', 'in', situations);
+    let q = query(
+      this.refs.getUsersChangesRef(),
+      orderBy('createdOn', 'asc'),
+      where('situation', 'in', situations)
+    );
     // observer
-    if (startAfter) query = query.startAfter(startAfter);
+    if (startAfter) q = query(q, startAfter(startAfterDoc));
     // returns the unsubscribe function
-    return query.onSnapshot(
+    return onSnapshot(
+      q,
       (snapshot) => {
         const last = snapshot.docs.length > 0 ? snapshot.docs[snapshot.docs.length - 1] : undefined;
         resultHandler(documentsAs<ProfileChange>(snapshot.docs), last);
@@ -121,13 +131,14 @@ export default class UsersApi {
   observeUserChange(
     changeId: string,
     resultHandler: (change: WithId<ProfileChange> | null) => void
-  ): firebase.Unsubscribe {
+  ): Unsubscribe {
     // query
-    let query = this.refs.getUsersChangesRef().doc(changeId);
+    let ref = this.refs.getUsersChangeRef(changeId);
     // observer
-    const unsubscribe = query.onSnapshot(
+    const unsubscribe = onSnapshot(
+      ref,
       (querySnapshot) => {
-        if (querySnapshot.exists) resultHandler(documentAs<ProfileChange>(querySnapshot));
+        if (querySnapshot.exists()) resultHandler(documentAs<ProfileChange>(querySnapshot));
         else resultHandler(null);
       },
       (error) => {
@@ -140,13 +151,14 @@ export default class UsersApi {
   }
 
   async updateUser(userId: string, changes: Partial<User>) {
-    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+    const timestamp = serverTimestamp();
     const fullChanges = {
       ...changes,
       updatedOn: timestamp,
     };
     try {
-      await this.refs.getUsersRef().doc(userId).update(fullChanges);
+      const ref = this.refs.getUserRef(userId);
+      await updateDoc(ref, fullChanges);
     } catch (error) {
       Sentry.captureException(error);
       throw error;
@@ -156,13 +168,13 @@ export default class UsersApi {
   async fetchUserData(accountId: string, userType: UserType): Promise<WithId<UserProfile> | null> {
     try {
       if (userType === 'courier') {
-        const courier = await this.refs.getCourierRef(accountId).get();
-        if (courier) return documentAs<UserProfile>(courier);
+        const courier = await getDoc(this.refs.getCourierRef(accountId));
+        if (courier.exists()) return documentAs<UserProfile>(courier);
       } else if (userType === 'consumer') {
-        const consumer = await this.refs.getConsumerRef(accountId).get();
-        if (consumer) return documentAs<UserProfile>(consumer);
+        const consumer = await getDoc(this.refs.getConsumerRef(accountId));
+        if (consumer.exists()) return documentAs<UserProfile>(consumer);
       } else if (userType === 'manager') {
-        const manager = await this.refs.getManagerRef(accountId).get();
+        const manager = await getDoc(this.refs.getManagerRef(accountId));
         if (manager) return documentAs<UserProfile>(manager);
       }
       return null;
@@ -174,7 +186,7 @@ export default class UsersApi {
 
   async updateChanges(changesId: string, changes: Partial<ProfileChange>) {
     try {
-      await this.refs.getUsersChangesRef().doc(changesId).update(changes);
+      await updateDoc(this.refs.getUsersChangeRef(changesId), changes);
     } catch (error) {
       Sentry.captureException(error);
       throw error;

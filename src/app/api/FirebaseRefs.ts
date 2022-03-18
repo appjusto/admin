@@ -30,8 +30,11 @@ export default class FirebaseRefs {
   getBatchRef = () => writeBatch(this.firestore);
   // users
   getUsersRef = () => collection(this.firestore, 'users');
+  getUserRef = (userId: string) => doc(this.firestore, 'users', userId);
 
   getUsersChangesRef = () => collection(this.firestore, 'users', 'subcollections', 'changes');
+  getUsersChangeRef = (changeId: string) =>
+    doc(this.firestore, 'users', 'subcollections', 'changes', changeId);
 
   // advances
   getAdvancesRef = () => collection(this.firestore, 'advances');
