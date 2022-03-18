@@ -1,6 +1,6 @@
 import { ApiConfig } from 'app/api/config/types';
 import MapsApi from 'core/api/thirdparty/maps/MapsApi';
-import { Analytics, getAnalytics } from 'firebase/analytics';
+import { Analytics, getAnalytics, setAnalyticsCollectionEnabled } from 'firebase/analytics';
 import { FirebaseApp, initializeApp } from 'firebase/app';
 import { Auth, connectAuthEmulator, getAuth } from 'firebase/auth';
 import {
@@ -66,7 +66,7 @@ export default class Api {
     this._functions = getFunctions(Api.app, config.firebase.config.region);
     this._storage = getStorage(Api.app);
     this._analytics = getAnalytics(Api.app);
-    //this._analytics.setAnalyticsCollectionEnabled(false);
+    setAnalyticsCollectionEnabled(this._analytics, false);
 
     if (config.firebase.options.useEmulator && config.firebase.options.emulatorHost) {
       const { emulatorHost } = config.firebase.options;

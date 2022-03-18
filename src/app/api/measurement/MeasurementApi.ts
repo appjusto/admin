@@ -1,9 +1,9 @@
-import firebase from 'firebase/app';
+import { Analytics, setAnalyticsCollectionEnabled } from 'firebase/analytics';
 
 export default class MeasurementApi {
-  constructor(private analytics: firebase.analytics.Analytics) {}
+  constructor(private analytics: Analytics) {}
   // consent
   setAnalyticsCollectionEnabled() {
-    return this.analytics.setAnalyticsCollectionEnabled(true);
+    return setAnalyticsCollectionEnabled(this.analytics, true);
   }
 }
