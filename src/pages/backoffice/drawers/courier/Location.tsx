@@ -5,7 +5,7 @@ import { CustomButton } from 'common/components/buttons/CustomButton';
 import { Marker } from 'common/components/MapsMarker';
 import GreenPointSvg from 'common/img/map-green-point.svg';
 import { coordsFromLatLnt, SaoPauloCoords } from 'core/api/thirdparty/maps/utils';
-import firebase from 'firebase/app';
+import { GeoPoint } from 'firebase/firestore';
 import GoogleMapReact from 'google-map-react';
 import React from 'react';
 import { t } from 'utils/i18n';
@@ -13,7 +13,7 @@ import { courierLocationStatusPTOptions } from '../../utils/index';
 import { SectionTitle } from '../generics/SectionTitle';
 
 interface CourierLocationMapProps {
-  coordinates: firebase.firestore.GeoPoint;
+  coordinates: GeoPoint;
 }
 
 const CourierLocationMap = ({ coordinates }: CourierLocationMapProps) => {

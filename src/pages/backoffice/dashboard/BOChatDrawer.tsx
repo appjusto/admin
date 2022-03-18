@@ -12,7 +12,7 @@ import {
 import { useObserveOrderChatByType } from 'app/api/chat/useObserveOrderChatByType';
 import { getChatLastUpdate, getChatTypeLabel } from 'app/api/chat/utils';
 import restaurantIcon from 'common/img/restaurant.svg';
-import firebase from 'firebase/app';
+import { FieldValue } from 'firebase/firestore';
 import { ChatMessages } from 'pages/chat/ChatMessages';
 import React from 'react';
 import { useParams } from 'react-router';
@@ -35,7 +35,7 @@ export const BOChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
   const { orderId, type } = useParams<Params>();
   const { chat } = useObserveOrderChatByType(orderId, type);
   // state
-  const [lastUpdate, setLastUpdate] = React.useState<firebase.firestore.FieldValue>();
+  const [lastUpdate, setLastUpdate] = React.useState<FieldValue>();
   // refs
   const messagesBox = React.useRef<HTMLDivElement>(null);
   //handlers

@@ -5,7 +5,7 @@ import { useObserveOrderIssues } from 'app/api/order/useObserveOrderIssues';
 import { useContextServerTime } from 'app/state/server-time';
 import foodIcon from 'common/img/bo-food.svg';
 import p2pIcon from 'common/img/bo-p2p.svg';
-import firebase from 'firebase/app';
+import { Timestamp } from 'firebase/firestore';
 import React from 'react';
 import { MdErrorOutline, MdMoped, MdPolicy } from 'react-icons/md';
 import { RiChat3Line } from 'react-icons/ri';
@@ -40,9 +40,7 @@ export const BOOrderListItem = ({ order }: Props) => {
   React.useEffect(() => {
     const setNewTime = () => {
       const now = getServerTime().getTime();
-      const chargedOn = getTimestampMilliseconds(
-        order.timestamps.charged as firebase.firestore.Timestamp
-      );
+      const chargedOn = getTimestampMilliseconds(order.timestamps.charged as Timestamp);
       const time = chargedOn ? getTimeUntilNow(now, chargedOn) : null;
       if (time) setOrderDT(time);
     };

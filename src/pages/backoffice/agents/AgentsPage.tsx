@@ -1,6 +1,6 @@
 import { WithId } from '@appjusto/types';
 import { useContextAgentProfile } from 'app/state/agent/context';
-import firebase from 'firebase/app';
+import { FieldValue } from 'firebase/firestore';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
 import { t } from 'utils/i18n';
@@ -11,7 +11,7 @@ export type AgentRole = 'owner' | 'staff' | 'viewer';
 export interface Agent {
   email: string;
   role: AgentRole;
-  createdOn: firebase.firestore.FieldValue;
+  createdOn: FieldValue;
 }
 
 const AgentsPage = () => {

@@ -8,7 +8,7 @@ import { useContextServerTime } from 'app/state/server-time';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import CustomRadio from 'common/components/form/CustomRadio';
 import { Textarea } from 'common/components/form/input/Textarea';
-import firebase from 'firebase/app';
+import { FieldValue } from 'firebase/firestore';
 import { modePTOptions } from 'pages/backoffice/utils';
 import { DeliveryInfos } from 'pages/orders/drawers/orderdrawer/DeliveryInfos';
 import React from 'react';
@@ -26,7 +26,7 @@ interface ParticipantProps {
   rejected?: number;
   address?: string;
   additionalInfo?: string;
-  onboarding?: firebase.firestore.FieldValue;
+  onboarding?: FieldValue;
   buttonLabel?: string;
   buttonLink?: string;
   isBtnDisabled?: boolean;
