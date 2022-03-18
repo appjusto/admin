@@ -1,6 +1,15 @@
-import { WithId, ChatMessage, ChatMessageType } from '@appjusto/types';
+import { ChatMessage, ChatMessageType, WithId } from '@appjusto/types';
+import {
+  addDoc,
+  limit,
+  orderBy,
+  query,
+  serverTimestamp,
+  Unsubscribe,
+  updateDoc,
+  where,
+} from 'firebase/firestore';
 import FirebaseRefs from '../FirebaseRefs';
-import firebase from 'firebase/app';
 import { customCollectionSnapshot } from '../utils';
 
 export default class ChatApi {
@@ -10,13 +19,14 @@ export default class ChatApi {
     orderId: string,
     participantId: string,
     resultHandler: (messages: WithId<ChatMessage>[]) => void
-  ): firebase.Unsubscribe {
-    const query = this.refs
-      .getChatsRef()
-      .where('orderId', '==', orderId)
-      .where('participantsIds', 'array-contains', participantId)
-      .orderBy('timestamp', 'asc');
-    return customCollectionSnapshot(query, resultHandler);
+  ): Unsubscribe {
+    const q = query(
+      this.refs.getChatsRef(),
+      where('orderId', '==', orderId),
+      where('participantsIds', 'array-contains', participantId),
+      orderBy('timestamp', 'asc')
+    );
+    return customCollectionSnapshot(q, resultHandler);
   }
 
   observeBusinessActiveChatMessages(
@@ -24,24 +34,29 @@ export default class ChatApi {
     ordersIds: string[],
     resultHandler: (messages: WithId<ChatMessage>[]) => void
   ) {
-    const query = this.refs
-      .getChatsRef()
-      .where('orderId', 'in', ordersIds)
-      .where('participantsIds', 'array-contains', businessId)
-      .orderBy('timestamp', 'asc');
-    return customCollectionSnapshot(query, resultHandler, {
+    const q = query(
+      this.refs.getChatsRef(),
+      where('orderId', 'in', ordersIds),
+      where('participantsIds', 'array-contains', businessId),
+      orderBy('timestamp', 'asc')
+    );
+    return customCollectionSnapshot(q, resultHandler, {
       avoidPenddingWrites: false,
       captureException: false,
     });
   }
 
   observeOrderChatMessages(
-    { orderId, limit }: { orderId: string; limit?: number },
+    { orderId, queryLimit }: { orderId: string; queryLimit?: number },
     resultHandler: (messages: WithId<ChatMessage>[]) => void
   ) {
-    let query = this.refs.getChatsRef().where('orderId', '==', orderId).orderBy('timestamp', 'asc');
-    if (limit) query = query.limit(limit);
-    return customCollectionSnapshot(query, resultHandler);
+    let q = query(
+      this.refs.getChatsRef(),
+      where('orderId', '==', orderId),
+      orderBy('timestamp', 'asc')
+    );
+    if (queryLimit) q = query(q, limit(queryLimit));
+    return customCollectionSnapshot(q, resultHandler);
   }
 
   observeOrderChatByType(
@@ -49,24 +64,25 @@ export default class ChatApi {
     type: ChatMessageType,
     resultHandler: (messages: WithId<ChatMessage>[]) => void
   ) {
-    const query = this.refs
-      .getChatsRef()
-      .where('orderId', '==', orderId)
-      .where('type', '==', type)
-      .orderBy('timestamp', 'asc');
-    return customCollectionSnapshot(query, resultHandler);
+    const q = query(
+      this.refs.getChatsRef(),
+      where('orderId', '==', orderId),
+      where('type', '==', type),
+      orderBy('timestamp', 'asc')
+    );
+    return customCollectionSnapshot(q, resultHandler);
   }
 
   async sendMessage(message: Partial<ChatMessage>) {
-    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
-    return this.refs.getChatsRef().add({
+    const timestamp = serverTimestamp();
+    return addDoc(this.refs.getChatsRef(), {
       ...message,
       timestamp,
     });
   }
 
   async updateChatMessage(messageId: string, changes: Partial<ChatMessage>) {
-    await this.refs.getChatMessageRef(messageId).update({
+    await updateDoc(this.refs.getChatMessageRef(messageId), {
       ...changes,
     } as Partial<ChatMessage>);
   }
