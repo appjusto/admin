@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/react';
 import { useFirebaseUser } from 'app/api/auth/useFirebaseUser';
-import firebase from 'firebase/app';
+import { User } from 'firebase/auth';
 import React from 'react';
 
 export type GeneralRoles =
@@ -16,7 +16,7 @@ type AdminRole = 'manager' | 'collaborator';
 export const backofficeRoles: GeneralRoles[] = ['owner', 'staff', 'viewer', 'courier-manager'];
 
 interface FirebaseUserContextProps {
-  user?: firebase.User | null;
+  user?: User | null;
   role?: GeneralRoles | null;
   isBackofficeUser?: boolean | null;
   refreshUserToken?(businessId?: string): Promise<void>;
@@ -44,7 +44,7 @@ export const FirebaseUserProvider = ({ children }: Props) => {
       }
       try {
         const token = await user.getIdTokenResult(true);
-        if (Object.keys(token?.claims).includes('role')) setRole(token?.claims.role);
+        if (Object.keys(token?.claims).includes('role')) setRole(token.claims.role as GeneralRoles);
         else if (businessId) {
           const userRole = token.claims[businessId] as AdminRole | undefined;
           setRole(userRole ?? null);

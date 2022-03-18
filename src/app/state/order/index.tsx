@@ -4,7 +4,6 @@ import { useBusinessOpenClose } from 'app/api/business/profile/useBusinessOpenCl
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useFreshDesk } from 'app/api/business/useFresdesk';
 import { OrderChatGroup } from 'app/api/chat/types';
-// import { useBusinessChats } from 'app/api/business/chat/useBusinessChats';
 import { useBusinessChats } from 'app/api/chat/useBusinessChats';
 import { useObserveConfirmedOrders } from 'app/api/order/useObserveConfirmedOrders';
 import { useObserveOrders } from 'app/api/order/useObserveOrders';
