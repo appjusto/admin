@@ -10,7 +10,17 @@ import {
   PlatformStatistics,
   WithId,
 } from '@appjusto/types';
-import firebase from 'firebase/app';
+import {
+  addDoc,
+  deleteDoc,
+  getDocs,
+  onSnapshot,
+  orderBy,
+  query,
+  serverTimestamp,
+  Unsubscribe,
+  where,
+} from 'firebase/firestore';
 import { hash } from 'geokit';
 import { documentsAs } from '../../../core/fb';
 import FirebaseRefs from '../FirebaseRefs';
@@ -18,10 +28,10 @@ import FirebaseRefs from '../FirebaseRefs';
 export default class PlatformApi {
   constructor(private refs: FirebaseRefs) {}
   // firestore
-  observeStatistics(resultHandler: (result: PlatformStatistics) => void): firebase.Unsubscribe {
-    let query = this.refs.getPlatformStatisticsRef();
-
-    const unsubscribe = query.onSnapshot(
+  observeStatistics(resultHandler: (result: PlatformStatistics) => void): Unsubscribe {
+    const ref = this.refs.getPlatformStatisticsRef();
+    const unsubscribe = onSnapshot(
+      ref,
       (querySnapshot) => {
         const data = querySnapshot.data();
         if (data) resultHandler(data as PlatformStatistics);
@@ -34,10 +44,10 @@ export default class PlatformApi {
     return unsubscribe;
   }
 
-  observeAccess(resultHandler: (result: PlatformAccess) => void): firebase.Unsubscribe {
-    let query = this.refs.getPlatformAccessRef();
-
-    const unsubscribe = query.onSnapshot(
+  observeAccess(resultHandler: (result: PlatformAccess) => void): Unsubscribe {
+    const ref = this.refs.getPlatformAccessRef();
+    const unsubscribe = onSnapshot(
+      ref,
       (querySnapshot) => {
         const data = querySnapshot.data();
         if (data) resultHandler(data as PlatformAccess);
@@ -52,8 +62,10 @@ export default class PlatformApi {
 
   observeFlaggedLocations(
     resultHandler: (locations: WithId<FlaggedLocation>[] | null) => void
-  ): firebase.Unsubscribe {
-    const unsubscribe = this.refs.getFlaggedLocationsRef().onSnapshot(
+  ): Unsubscribe {
+    const ref = this.refs.getFlaggedLocationsRef();
+    const unsubscribe = onSnapshot(
+      ref,
       (querySnapShot) => {
         if (!querySnapShot.empty) resultHandler(documentsAs<FlaggedLocation>(querySnapShot.docs));
         else resultHandler(null);
@@ -67,9 +79,11 @@ export default class PlatformApi {
   }
 
   observeParams(resultHandler: (params: PlatformParams | null) => void) {
-    return this.refs.getPlatformParamsRef().onSnapshot(
+    const ref = this.refs.getPlatformParamsRef();
+    return onSnapshot(
+      ref,
       (snapshot) => {
-        if (snapshot.exists) resultHandler(snapshot.data() as PlatformParams);
+        if (snapshot.exists()) resultHandler(snapshot.data() as PlatformParams);
         else resultHandler(null);
       },
       (error) => {
@@ -80,14 +94,13 @@ export default class PlatformApi {
 
   async addFlaggedLocation(location: Partial<FlaggedLocation>) {
     const { address, coordinates } = location;
-    const isNewLocation = (
-      await this.refs
-        .getFlaggedLocationsRef()
-        .where('address.description', '==', address?.description)
-        .get()
-    ).empty;
-    if (!isNewLocation) return;
-    const createdOn = firebase.firestore.FieldValue.serverTimestamp();
+    const q = query(
+      this.refs.getFlaggedLocationsRef(),
+      where('address.description', '==', address?.description)
+    );
+    const currenLocation = await getDocs(q);
+    if (!currenLocation.empty) return;
+    const createdOn = serverTimestamp();
     const newLocation = {
       address,
       coordinates,
@@ -100,38 +113,43 @@ export default class PlatformApi {
         }),
       },
     };
-    return await this.refs.getFlaggedLocationsRef().add(newLocation);
+    return await addDoc(this.refs.getFlaggedLocationsRef(), newLocation);
   }
 
   async deleteFlaggedLocation(locationId: string) {
-    return await this.refs.getFlaggedLocationRef(locationId).delete();
+    return await deleteDoc(this.refs.getFlaggedLocationRef(locationId));
   }
 
   async fetchCuisines() {
-    return documentsAs<Cuisine>(
-      (await this.refs.getCuisinesRef().orderBy('order', 'asc').get()).docs
-    );
+    const q = query(this.refs.getCuisinesRef(), orderBy('order', 'asc'));
+    const data = await getDocs(q);
+    return documentsAs<Cuisine>(data.docs);
   }
 
   async fetchClassifications() {
-    return documentsAs<Classification>(
-      (await this.refs.getClassificationsRef().orderBy('order', 'asc').get()).docs
-    );
+    const q = query(this.refs.getClassificationsRef(), orderBy('order', 'asc'));
+    const data = await getDocs(q);
+    return documentsAs<Classification>(data.docs);
   }
 
   async fetchBanks() {
-    return documentsAs<Bank>((await this.refs.getBanksRef().orderBy('order', 'asc').get()).docs);
+    const q = query(this.refs.getBanksRef(), orderBy('order', 'asc'));
+    const data = await getDocs(q);
+    return documentsAs<Bank>(data.docs);
   }
 
   async fetchIssues(types: IssueType[]) {
-    const docs = (await this.refs.getIssuesRef().where('type', 'in', types).get()).docs;
-    const issues = docs.map<Issue>((doc) => doc.data() as Issue);
-    return issues;
+    const q = query(this.refs.getIssuesRef(), where('type', 'in', types));
+    const data = await getDocs(q);
+    // const issues = data.docs.map<Issue>((doc) => doc.data() as Issue);
+    return documentsAs<Issue>(data.docs);
   }
 
   async getServerTime(): Promise<number> {
     try {
-      const result = await this.refs.getServerTimeCallable()();
+      const result = ((await this.refs.getServerTimeCallable()()) as unknown) as {
+        data: { time: number };
+      };
       return result.data.time;
     } catch (error) {
       console.error('getServerTimeError', error);
