@@ -95,7 +95,7 @@ export default class FirebaseRefs {
   // new complements logic
   getBusinessComplementsGroupsRef = (businessId: string) =>
     collection(this.firestore, 'businesses', businessId, 'complementsgroups');
-  getBusinessComplementGroupRef = (businessId: string, groupId: string) =>
+  getBusinessComplementsGroupRef = (businessId: string, groupId: string) =>
     doc(this.firestore, 'businesses', businessId, 'complementsgroups', groupId);
   getBusinessComplementsRef = (businessId: string) =>
     collection(this.firestore, 'businesses', businessId, 'complements');

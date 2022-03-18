@@ -7,7 +7,6 @@ import {
   BusinessMenuMessage,
   BusinessStatus,
   Category,
-  ChatMessage,
   CloneBusinessPayload,
   CloneComplementsGroupPayload,
   Complement,
@@ -32,7 +31,26 @@ import {
 } from '@appjusto/types/payment/iugu';
 import * as Sentry from '@sentry/react';
 // import firebase from 'firebase/compat/app';
-import { DocumentData, QueryDocumentSnapshot, Unsubscribe } from 'firebase/firestore';
+import {
+  addDoc,
+  CollectionReference,
+  deleteDoc,
+  DocumentData,
+  getDoc,
+  getDocsFromCache,
+  getDocsFromServer,
+  limit,
+  onSnapshot,
+  orderBy,
+  query,
+  QueryDocumentSnapshot,
+  serverTimestamp,
+  setDoc,
+  startAfter,
+  Unsubscribe,
+  updateDoc,
+  where,
+} from 'firebase/firestore';
 import { documentAs, documentsAs } from '../../../core/fb';
 import FilesApi from '../FilesApi';
 import FirebaseRefs from '../FirebaseRefs';
@@ -45,16 +63,18 @@ export default class BusinessApi {
   observeBusinesses(
     resultHandler: (result: WithId<Business>[], last?: QueryDocumentSnapshot<DocumentData>) => void,
     situations: string[],
-    startAfter?: QueryDocumentSnapshot<DocumentData>
+    startAfterDoc?: QueryDocumentSnapshot<DocumentData>
   ): Unsubscribe {
-    let query = this.refs
-      .getBusinessesRef()
-      .orderBy('createdOn', 'asc')
-      .where('situation', 'in', situations)
-      .limit(5);
-    if (startAfter) query = query.startAfter(startAfter);
+    let q = query(
+      this.refs.getBusinessesRef(),
+      orderBy('createdOn', 'asc'),
+      where('situation', 'in', situations),
+      limit(5)
+    );
+    if (startAfterDoc) q = query(q, startAfter(startAfterDoc));
     // returns the unsubscribe function
-    return query.onSnapshot(
+    return onSnapshot(
+      q,
       (snapshot) => {
         const last = snapshot.docs.length > 0 ? snapshot.docs[snapshot.docs.length - 1] : undefined;
         resultHandler(documentsAs<Business>(snapshot.docs), last);
@@ -70,9 +90,9 @@ export default class BusinessApi {
     status: BusinessStatus,
     resultHandler: (result: WithId<Business>[]) => void
   ): Unsubscribe {
-    const query = this.refs.getBusinessesRef().where('status', '==', status);
+    const q = query(this.refs.getBusinessesRef(), where('status', '==', status));
     // returns the unsubscribe function
-    return customCollectionSnapshot(query, resultHandler);
+    return customCollectionSnapshot(q, resultHandler);
   }
 
   // business profile
@@ -91,14 +111,15 @@ export default class BusinessApi {
     end: Date,
     resultHandler: (result: WithId<AccountAdvance>[]) => void
   ): Unsubscribe {
-    const query = this.refs
-      .getAdvancesRef()
-      .orderBy('createdOn', 'desc')
-      .where('accountId', '==', businessId)
-      .where('createdOn', '>=', start)
-      .where('createdOn', '<=', end);
+    const q = query(
+      this.refs.getAdvancesRef(),
+      orderBy('createdOn', 'desc'),
+      where('accountId', '==', businessId),
+      where('createdOn', '>=', start),
+      where('createdOn', '<=', end)
+    );
     // returns the unsubscribe function
-    return customCollectionSnapshot(query, resultHandler);
+    return customCollectionSnapshot(q, resultHandler);
   }
 
   observeBusinessWithdraws(
@@ -107,41 +128,43 @@ export default class BusinessApi {
     end: Date,
     resultHandler: (result: WithId<AccountWithdraw>[]) => void
   ): Unsubscribe {
-    const query = this.refs
-      .getWithdrawsRef()
-      .orderBy('createdOn', 'desc')
-      .where('accountId', '==', businessId)
-      .where('createdOn', '>=', start)
-      .where('createdOn', '<=', end);
+    const q = query(
+      this.refs.getWithdrawsRef(),
+      orderBy('createdOn', 'desc'),
+      where('accountId', '==', businessId),
+      where('createdOn', '>=', start),
+      where('createdOn', '<=', end)
+    );
     // returns the unsubscribe function
-    return customCollectionSnapshot(query, resultHandler);
+    return customCollectionSnapshot(q, resultHandler);
   }
 
   observeBusinessMarketPlace(
     businessId: string,
     resultHandler: (result: MarketplaceAccountInfo | null) => void
   ): Unsubscribe {
-    const query = this.refs.getBusinessMarketPlaceRef(businessId);
+    const ref = this.refs.getBusinessMarketPlaceRef(businessId);
     // returns the unsubscribe function
-    return customDocumentSnapshot(query, resultHandler);
+    return customDocumentSnapshot(ref, resultHandler);
   }
 
   async deletePrivateMarketPlace(businessId: string) {
-    return await this.refs.getBusinessMarketPlaceRef(businessId).delete();
+    return await deleteDoc(this.refs.getBusinessMarketPlaceRef(businessId));
   }
 
-  async updateChatMessage(orderId: string, messageId: string, changes: Partial<ChatMessage>) {
-    await this.refs
-      .getOrderChatRef(orderId)
-      .doc(messageId)
-      .update({
-        ...changes,
-      } as Partial<ChatMessage>);
-  }
+  // async updateChatMessage(orderId: string, messageId: string, changes: Partial<ChatMessage>) {
+  //   await this.refs
+  //     .getOrderChatRef(orderId)
+  //     .doc(messageId)
+  //     .update({
+  //       ...changes,
+  //     } as Partial<ChatMessage>);
+  // }
 
   async createBusinessProfile() {
     const payload: CreateBusinessProfilePayload = {
       meta: { version: '1' }, // TODO: pass correct version on
+      operation: 'create',
     };
     const business = await this.refs.getCreateBusinessProfileCallable()(payload);
     return business.data as WithId<Business>;
@@ -151,6 +174,7 @@ export default class BusinessApi {
     const payload: CloneBusinessPayload = {
       businessId,
       meta: { version: '1' }, // TODO: pass correct version on
+      operation: 'clone',
     };
     const business = await this.refs.getCloneBusinessCallable()(payload);
     return business.data as WithId<Business>;
@@ -173,19 +197,19 @@ export default class BusinessApi {
       meta: { version: '1' }, // TODO: pass correct version on
       businessId,
       slug,
+      operation: 'update-slug',
     };
     const result = await this.refs.getUpdateBusinessSlugCallable()(payload);
     return result;
   }
 
   async updateBusinessProfile(businessId: string, changes: Partial<Business>) {
-    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+    const timestamp = serverTimestamp();
     const fullChanges = {
       ...changes,
       updatedOn: timestamp,
     };
-    const result = await this.refs.getBusinessRef(businessId).set(fullChanges, { merge: true });
-    return result;
+    return await updateDoc(this.refs.getBusinessRef(businessId), fullChanges);
   }
 
   async updateBusinessManagerAndBankAccountBatch(
@@ -197,7 +221,7 @@ export default class BusinessApi {
   ) {
     let batch = this.refs.getBatchRef();
     // business
-    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+    const timestamp = serverTimestamp();
     const fullBusinessChanges = {
       ...businessChanges,
       updatedOn: timestamp,
@@ -225,13 +249,13 @@ export default class BusinessApi {
     coverFiles: File[] | null
   ) {
     //business
-    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+    const timestamp = serverTimestamp();
     const fullChanges = {
       ...changes,
       updatedOn: timestamp,
     };
     try {
-      await this.refs.getBusinessRef(businessId).set(fullChanges, { merge: true });
+      await updateDoc(this.refs.getBusinessRef(businessId), fullChanges);
       // logo
       if (logoFile) await this.uploadBusinessLogo(businessId, logoFile, () => {});
       //cover
@@ -246,25 +270,22 @@ export default class BusinessApi {
   }
 
   async removeBusinessManager(business: WithId<Business>, managerEmail: string) {
-    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+    const timestamp = serverTimestamp();
     const managers = business.managers?.filter((email) => email !== managerEmail);
     const fullChanges = {
       managers,
       updatedOn: timestamp,
     };
-    const result = await this.refs.getBusinessRef(business.id).set(fullChanges, { merge: true });
-    return result;
+    return await updateDoc(this.refs.getBusinessRef(business.id), fullChanges);
   }
 
   async sendBusinessKeepAlive(businessId: string) {
-    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
-    return await this.refs
-      .getBusinessRef(businessId)
-      .set({ keepAlive: timestamp }, { merge: true });
+    const timestamp = serverTimestamp();
+    return await updateDoc(this.refs.getBusinessRef(businessId), { keepAlive: timestamp });
   }
 
   async deleteBusinessProfile(businessId: string) {
-    return await this.refs.getBusinessRef(businessId).delete();
+    return await deleteDoc(this.refs.getBusinessRef(businessId));
   }
 
   // managers
@@ -272,12 +293,13 @@ export default class BusinessApi {
     email: string,
     resultHandler: (result: WithId<Business>[]) => void
   ): Unsubscribe {
-    const query = this.refs
-      .getBusinessesRef()
-      .where('managers', 'array-contains', email)
-      .orderBy('createdOn', 'desc');
+    const q = query(
+      this.refs.getBusinessesRef(),
+      where('managers', 'array-contains', email),
+      orderBy('createdOn', 'desc')
+    );
     // returns the unsubscribe function
-    return customCollectionSnapshot(query, resultHandler);
+    return customCollectionSnapshot(q, resultHandler);
   }
 
   // profile notes
@@ -285,14 +307,14 @@ export default class BusinessApi {
     businessId: string,
     resultHandler: (result: WithId<ProfileNote>[]) => void
   ): Unsubscribe {
-    const query = this.refs.getBusinessProfileNotesRef(businessId).orderBy('createdOn', 'desc');
+    const q = query(this.refs.getBusinessProfileNotesRef(businessId), orderBy('createdOn', 'desc'));
     // returns the unsubscribe function
-    return customCollectionSnapshot(query, resultHandler);
+    return customCollectionSnapshot(q, resultHandler);
   }
 
   async createProfileNote(businessId: string, data: Partial<ProfileNote>) {
-    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
-    await this.refs.getBusinessProfileNotesRef(businessId).add({
+    const timestamp = serverTimestamp();
+    await addDoc(this.refs.getBusinessProfileNotesRef(businessId), {
       ...data,
       createdOn: timestamp,
       updatedOn: timestamp,
@@ -304,25 +326,25 @@ export default class BusinessApi {
     profileNoteId: string,
     changes: Partial<ProfileNote>
   ) {
-    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
-    await this.refs.getBusinessProfileNoteRef(businessId, profileNoteId).update({
+    const timestamp = serverTimestamp();
+    await updateDoc(this.refs.getBusinessProfileNoteRef(businessId, profileNoteId), {
       ...changes,
       updatedOn: timestamp,
     } as Partial<ProfileNote>);
   }
 
   async deleteProfileNote(businessId: string, profileNoteId: string) {
-    await this.refs.getBusinessProfileNoteRef(businessId, profileNoteId).delete();
+    await deleteDoc(this.refs.getBusinessProfileNoteRef(businessId, profileNoteId));
   }
 
   // bank account
   async fetchBankAccount(businessId: string) {
-    const doc = await this.refs.getBusinessBankAccountRef(businessId).get();
+    const doc = await getDoc(this.refs.getBusinessBankAccountRef(businessId));
     return documentAs<BankAccount>(doc);
   }
 
   async updateBankAccount(businessId: string, changes: Partial<BankAccount>) {
-    await this.refs.getBusinessBankAccountRef(businessId).set(changes, { merge: true });
+    await updateDoc(this.refs.getBusinessBankAccountRef(businessId), changes);
   }
 
   // logo
@@ -373,33 +395,39 @@ export default class BusinessApi {
     resultHandler: (result: Ordering) => void,
     menuId?: string
   ): Unsubscribe {
-    const unsubscribe = this.refs.getBusinessMenuOrderingRef(businessId, menuId).onSnapshot(
+    const ref = this.refs.getBusinessMenuOrderingRef(businessId, menuId);
+    const unsubscribe = onSnapshot(
+      ref,
       (doc) => {
-        resultHandler({ ...(doc.data() as Ordering) });
+        resultHandler(documentAs<Ordering>(doc));
       },
       (error) => {
         console.error(error);
+        Sentry.captureException(error);
       }
     );
     return unsubscribe;
   }
 
   async updateMenuOrdering(businessId: string, ordering: Ordering, menuId?: string) {
-    await this.refs.getBusinessMenuOrderingRef(businessId, menuId).set(ordering, { merge: false });
+    const ref = this.refs.getBusinessMenuOrderingRef(businessId, menuId);
+    await setDoc(ref, ordering, { merge: false });
   }
 
   async addMenuMessage(businessId: string, message: BusinessMenuMessage) {
-    return await this.refs.getBusinessMenuMessageRef(businessId).set(message);
+    const ref = this.refs.getBusinessMenuMessageRef(businessId);
+    return await setDoc(ref, message);
   }
 
   async deleteMenuMessage(businessId: string) {
-    return await this.refs.getBusinessMenuMessageRef(businessId).delete();
+    const ref = this.refs.getBusinessMenuMessageRef(businessId);
+    return await deleteDoc(ref);
   }
 
   async fetchMenuMessage(businessId: string) {
-    return (
-      await this.refs.getBusinessMenuMessageRef(businessId).get()
-    ).data() as BusinessMenuMessage;
+    const ref = this.refs.getBusinessMenuMessageRef(businessId);
+    const data = await getDoc(ref);
+    return data.data() as BusinessMenuMessage;
   }
 
   // categories
@@ -407,34 +435,37 @@ export default class BusinessApi {
     businessId: string,
     resultHandler: (result: WithId<Category>[]) => void
   ): Unsubscribe {
-    const query = this.refs.getBusinessCategoriesRef(businessId);
+    const ref = this.refs.getBusinessCategoriesRef(businessId);
     // returns the unsubscribe function
-    return customCollectionSnapshot(query, resultHandler);
+    return customCollectionSnapshot(ref, resultHandler);
   }
 
-  createCategoryRef(businessId: string): string {
-    return this.refs.getBusinessCategoriesRef(businessId).doc().id;
+  async createCategoryRef(businessId: string): Promise<string> {
+    const ref = this.refs.getBusinessCategoriesRef(businessId);
+    const newCategory = await addDoc(ref, {});
+    return newCategory.id;
   }
 
   async fethCategories(businessId: string) {
-    const query = this.refs.getBusinessCategoriesRef(businessId);
-    let snapshot = await query.get({ source: 'cache' });
+    const ref = this.refs.getBusinessCategoriesRef(businessId);
+    let snapshot = await getDocsFromCache(ref);
     if (snapshot.empty) {
-      snapshot = await query.get({ source: 'server' });
+      snapshot = await getDocsFromServer(ref);
     }
-    console.log(snapshot.metadata.fromCache ? '%cfrom Cache' : '%cfrom Server', 'color: red');
     return documentsAs<Category>(snapshot.docs);
     //return customCollectionGet<Category>(query, { cacheFirst: true });
   }
 
   async fetchCategory(businessId: string, categoryId: string) {
-    const doc = await this.refs.getBusinessCategoryRef(businessId, categoryId).get();
+    const ref = this.refs.getBusinessCategoryRef(businessId, categoryId);
+    const doc = await getDoc(ref);
     return documentAs<Category>(doc);
   }
 
   async createCategory(businessId: string, categoryId: string, category: Category) {
-    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
-    await this.refs.getBusinessCategoryRef(businessId, categoryId).set({
+    const timestamp = serverTimestamp();
+    const ref = this.refs.getBusinessCategoryRef(businessId, categoryId);
+    await setDoc(ref, {
       ...category,
       createdOn: timestamp,
       updatedOn: timestamp,
@@ -442,15 +473,17 @@ export default class BusinessApi {
   }
 
   async updateCategory(businessId: string, categoryId: string, changes: Partial<Category>) {
-    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
-    await this.refs.getBusinessCategoryRef(businessId, categoryId).update({
+    const timestamp = serverTimestamp();
+    const ref = this.refs.getBusinessCategoryRef(businessId, categoryId);
+    await updateDoc(ref, {
       ...changes,
       updatedOn: timestamp,
     } as Partial<Category>);
   }
 
   async deleteCategory(businessId: string, categoryId: string) {
-    await this.refs.getBusinessCategoryRef(businessId, categoryId).delete();
+    const ref = this.refs.getBusinessCategoryRef(businessId, categoryId);
+    await deleteDoc(ref);
   }
 
   // products
@@ -458,40 +491,42 @@ export default class BusinessApi {
     businessId: string,
     resultHandler: (result: WithId<Product>[]) => void
   ): Unsubscribe {
-    const query = this.refs.getBusinessProductsRef(businessId);
+    const ref = this.refs.getBusinessProductsRef(businessId);
     // returns the unsubscribe function
-    return customCollectionSnapshot(query, resultHandler);
+    return customCollectionSnapshot(ref, resultHandler);
   }
   observeProduct(
     businessId: string,
     productId: string,
     resultHandler: (result: WithId<Product>) => void
   ): Unsubscribe {
-    const query = this.refs.getBusinessProductRef(businessId, productId);
+    const ref = this.refs.getBusinessProductRef(businessId, productId);
     // returns the unsubscribe function
-    return customDocumentSnapshot<Product>(query, (result) => {
+    return customDocumentSnapshot<Product>(ref, (result) => {
       if (result) resultHandler(result);
     });
   }
 
-  createProductRef(businessId: string): string {
-    return this.refs.getBusinessProductsRef(businessId).doc().id;
+  async getNewDocumentId(ref: CollectionReference<DocumentData>): Promise<string> {
+    const newDoc = await addDoc(ref, {});
+    return newDoc.id;
   }
 
   async fetchProduct(businessId: string, productId: string) {
-    const doc = await this.refs.getBusinessProductRef(businessId, productId).get();
+    const ref = this.refs.getBusinessProductRef(businessId, productId);
+    const doc = await getDoc(ref);
     return documentAs<Product>(doc);
   }
 
   async createProduct(businessId: string, product: Product, imageFiles?: File[] | null) {
     // creating product
-    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
-    const productId = this.refs.getBusinessProductsRef(businessId).doc().id;
+    const timestamp = serverTimestamp();
+    const productId = await this.getNewDocumentId(this.refs.getBusinessProductsRef(businessId));
     if (imageFiles) {
       await this.uploadProductPhoto(businessId, productId, imageFiles);
     }
     try {
-      await this.refs.getBusinessProductRef(businessId, productId).set({
+      await setDoc(this.refs.getBusinessProductRef(businessId, productId), {
         ...product,
         createdOn: timestamp,
         updatedOn: timestamp,
@@ -508,7 +543,7 @@ export default class BusinessApi {
     changes: Partial<Product>,
     imageFiles?: File[] | null
   ) {
-    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+    const timestamp = serverTimestamp();
     let newProductObject = {};
     if (changes.imageExists) {
       if (imageFiles) {
@@ -525,9 +560,9 @@ export default class BusinessApi {
       };
     }
     try {
-      await this.refs
-        .getBusinessProductRef(businessId, productId)
-        .set(newProductObject as Partial<Product>, { merge: true });
+      await setDoc(this.refs.getBusinessProductRef(businessId, productId), newProductObject, {
+        merge: true,
+      });
       return true;
     } catch (error) {
       throw new Error(`updateProductError: ${error}`);
@@ -535,7 +570,7 @@ export default class BusinessApi {
   }
 
   async deleteProduct(businessId: string, productId: string) {
-    await this.refs.getBusinessProductRef(businessId, productId).delete();
+    await deleteDoc(this.refs.getBusinessProductRef(businessId, productId));
   }
 
   async uploadProductPhoto(
@@ -574,31 +609,32 @@ export default class BusinessApi {
     businessId: string,
     resultHandler: (result: WithId<ComplementGroup>[]) => void
   ): Unsubscribe {
-    const query = this.refs.getBusinessComplementsGroupsRef(businessId);
+    const ref = this.refs.getBusinessComplementsGroupsRef(businessId);
     // returns the unsubscribe function
-    return customCollectionSnapshot(query, resultHandler);
+    return customCollectionSnapshot(ref, resultHandler);
   }
 
   observeComplements(
     businessId: string,
     resultHandler: (result: WithId<Complement>[]) => void
   ): Unsubscribe {
-    const query = this.refs.getBusinessComplementsRef(businessId);
+    const ref = this.refs.getBusinessComplementsRef(businessId);
     // returns the unsubscribe function
-    return customCollectionSnapshot(query, resultHandler, {
+    return customCollectionSnapshot(ref, resultHandler, {
       avoidPenddingWrites: false,
     });
   }
 
   async createComplementsGroup(businessId: string, group: ComplementGroup) {
-    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+    const timestamp = serverTimestamp();
     const newGroup = {
       ...group,
       enabled: true,
       createdOn: timestamp,
       updatedOn: timestamp,
     };
-    return await this.refs.getBusinessComplementsGroupsRef(businessId).add(newGroup);
+    const ref = this.refs.getBusinessComplementsGroupsRef(businessId);
+    return await addDoc(ref, newGroup);
   }
 
   async updateComplementsGroup(
@@ -606,30 +642,30 @@ export default class BusinessApi {
     groupId: string,
     changes: Partial<ComplementGroup>
   ) {
-    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+    const timestamp = serverTimestamp();
     let changesToSave = changes;
     if (changesToSave.items) delete changesToSave.items;
-    await this.refs
-      .getBusinessComplementsGroupsRef(businessId)
-      .doc(groupId)
-      .update({
-        ...changesToSave,
-        updatedOn: timestamp,
-      } as Partial<ComplementGroup>);
+    const ref = this.refs.getBusinessComplementsGroupRef(businessId, groupId);
+    await updateDoc(ref, {
+      ...changesToSave,
+      updatedOn: timestamp,
+    } as Partial<ComplementGroup>);
   }
 
   async deleteComplementsGroup(businessId: string, groupId: string) {
-    await this.refs.getBusinessComplementsGroupsRef(businessId).doc(groupId).delete();
+    await deleteDoc(this.refs.getBusinessComplementsGroupRef(businessId, groupId));
   }
 
   async createComplement(businessId: string, item: Complement, imageFile?: File | null) {
-    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
-    const complementId = this.refs.getBusinessComplementsRef(businessId).doc().id;
+    const timestamp = serverTimestamp();
+    const complementId = await this.getNewDocumentId(
+      this.refs.getBusinessComplementsRef(businessId)
+    );
     if (imageFile) {
       await this.uploadComplementPhoto(businessId, complementId, imageFile);
     }
     try {
-      await this.refs.getBusinessComplementRef(businessId, complementId).set({
+      await setDoc(this.refs.getBusinessComplementRef(businessId, complementId), {
         ...item,
         enabled: true,
         createdOn: timestamp,
@@ -644,24 +680,25 @@ export default class BusinessApi {
   async updateComplement(
     businessId: string,
     complementId: string,
-    item: Partial<Complement>,
+    changes: Partial<Complement>,
     imageFile?: File | null
   ) {
-    let newItem = {
-      ...item,
-    };
+    // let newItem = {
+    //   ...item,
+    // };
+    const ref = this.refs.getBusinessComplementRef(businessId, complementId);
     if (imageFile) {
       await this.uploadComplementPhoto(businessId, complementId, imageFile);
     }
     try {
-      return await this.refs.getBusinessComplementRef(businessId, complementId).update(newItem);
+      return await updateDoc(ref, changes);
     } catch (error) {
       throw new Error(`updateComplementError: ${error}`);
     }
   }
 
   async deleteComplement(businessId: string, complementId: string) {
-    return await this.refs.getBusinessComplementRef(businessId, complementId).delete();
+    return await deleteDoc(this.refs.getBusinessComplementRef(businessId, complementId));
   }
 
   /////// NEW COMPLEMENTS LOGIC END
@@ -683,13 +720,14 @@ export default class BusinessApi {
     }
   }
   // Advances and withdrawls
-  async fetchAccountInformation(accountId: string): Promise<FetchAccountInformationResponse> {
+  async fetchAccountInformation(accountId: string) {
     const payload: FetchAccountInformationPayload = {
       accountType: 'business',
       accountId,
       meta: { version: '1' }, // TODO: pass correct version on
     };
-    return (await this.refs.getFetchAccountInformationCallable()(payload)).data;
+    return ((await this.refs.getFetchAccountInformationCallable()(payload))
+      .data as unknown) as FetchAccountInformationResponse;
   }
   async requestWithdraw(accountId: string, amount: number): Promise<any> {
     const payload: RequestWithdrawPayload = {
@@ -700,25 +738,24 @@ export default class BusinessApi {
     };
     return (await this.refs.getRequestWithdrawCallable()(payload)).data;
   }
-  async fetchReceivables(accountId: string): Promise<IuguMarketplaceAccountReceivables> {
+  async fetchReceivables(accountId: string) {
     const payload: FetchReceivablesPayload = {
       accountType: 'business',
       accountId,
       meta: { version: '1' }, // TODO: pass correct version on
     };
-    return (await this.refs.getFetchReceivablesCallable()(payload)).data;
+    return ((await this.refs.getFetchReceivablesCallable()(payload))
+      .data as unknown) as IuguMarketplaceAccountReceivables;
   }
-  async fetchAdvanceSimulation(
-    accountId: string,
-    ids: number[]
-  ): Promise<IuguMarketplaceAccountAdvanceSimulation> {
+  async fetchAdvanceSimulation(accountId: string, ids: number[]) {
     const payload: FetchAdvanceSimulationPayload = {
       accountType: 'business',
       accountId,
       ids,
       meta: { version: '1' }, // TODO: pass correct version on
     };
-    return (await this.refs.getFetchAdvanceSimulationCallable()(payload)).data;
+    return ((await this.refs.getFetchAdvanceSimulationCallable()(payload))
+      .data as unknown) as IuguMarketplaceAccountAdvanceSimulation;
   }
   async advanceReceivables(accountId: string, ids: number[]): Promise<any> {
     const payload: AdvanceReceivablesPayload = {

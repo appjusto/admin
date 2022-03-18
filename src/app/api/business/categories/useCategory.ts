@@ -1,6 +1,6 @@
+import { Category } from '@appjusto/types';
 import { useCustomMutation } from 'app/api/mutation/useCustomMutation';
 import { useContextBusinessId } from 'app/state/business/context';
-import { Category } from '@appjusto/types';
 import React from 'react';
 import { useQuery } from 'react-query';
 import { useContextApi } from '../../../state/api/context';
@@ -10,8 +10,8 @@ export const useCategory = (id: string) => {
   const api = useContextApi();
   const businessId = useContextBusinessId()!;
   const isNew = id === 'new';
-  const idRef = React.useRef(isNew ? api.business().createCategoryRef(businessId) : id);
-  const categoryId = idRef.current;
+  // state
+  const [categoryId, setCategoryId] = React.useState<string>(id);
 
   // queries
   const fetchCategory = () => api.business().fetchCategory(businessId, categoryId);
@@ -36,6 +36,17 @@ export const useCategory = (id: string) => {
   );
   const saveCategory = isNew ? createCategory : updateCategory;
   const result = createResult || updateResult;
+
+  // side effects
+  React.useEffect(() => {
+    if (!id) return;
+    if (id === 'new') {
+      (async () => {
+        const newId = await api.business().createCategoryRef(businessId);
+        setCategoryId(newId);
+      })();
+    } else setCategoryId(id);
+  }, [id]);
   // return
   return {
     category: fetchResult.data,
