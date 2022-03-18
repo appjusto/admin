@@ -8,7 +8,7 @@ import {
 import { AlgoliaCreatedOn } from 'app/api/types';
 import { CroppedAreaProps } from 'common/components/ImageCropping';
 import { ImageType } from 'common/components/ImageUploads';
-import firebase from 'firebase/app';
+import { FieldValue, Timestamp } from 'firebase/firestore';
 import I18n from 'i18n-js';
 import { round } from 'lodash';
 import { useLocation } from 'react-router-dom';
@@ -50,15 +50,12 @@ export const getDateTime = () => {
   return { date, time };
 };
 
-export const getDateAndHour = (
-  timestamp?: firebase.firestore.FieldValue | Date,
-  onlyDate?: boolean
-) => {
+export const getDateAndHour = (timestamp?: FieldValue | Date, onlyDate?: boolean) => {
   if (!timestamp) return 'N/E';
   try {
     let timeToDate = timestamp;
     if (!(timeToDate instanceof Date)) {
-      timeToDate = (timestamp as firebase.firestore.Timestamp).toDate();
+      timeToDate = (timestamp as Timestamp).toDate();
     }
     const date = I18n.strftime(timeToDate, '%d/%m/%Y');
     const hour = I18n.strftime(timeToDate, '%H:%M');
@@ -70,12 +67,12 @@ export const getDateAndHour = (
   }
 };
 
-export const getHourAndMinute = (timestamp?: firebase.firestore.FieldValue | Date) => {
+export const getHourAndMinute = (timestamp?: FieldValue | Date) => {
   if (!timestamp) return 'N/E';
   try {
     let timeToDate = timestamp;
     if (!(timeToDate instanceof Date)) {
-      timeToDate = (timestamp as firebase.firestore.Timestamp).toDate();
+      timeToDate = (timestamp as Timestamp).toDate();
     }
     const hour = I18n.strftime(timeToDate, '%H:%M');
     return hour;
@@ -85,7 +82,7 @@ export const getHourAndMinute = (timestamp?: firebase.firestore.FieldValue | Dat
   }
 };
 
-export const getAlgoliaFieldDateAndHour = (timestamp: firebase.firestore.FieldValue | number) => {
+export const getAlgoliaFieldDateAndHour = (timestamp: FieldValue | number) => {
   if (typeof timestamp === 'number') {
     try {
       const date = new Date(timestamp).toLocaleDateString();
@@ -111,7 +108,7 @@ export const getAlgoliaFieldDateAndHour = (timestamp: firebase.firestore.FieldVa
   }
 };
 
-export const getTimestampMilliseconds = (timestamp?: firebase.firestore.Timestamp) => {
+export const getTimestampMilliseconds = (timestamp?: Timestamp) => {
   if (!timestamp) return null;
   return timestamp.seconds * 1000;
 };
