@@ -1,9 +1,24 @@
-import { WithId, ConsumerProfile, BusinessRecommendation, ProfileNote } from '@appjusto/types';
+import { BusinessRecommendation, ConsumerProfile, ProfileNote, WithId } from '@appjusto/types';
+import * as Sentry from '@sentry/react';
+import { documentsAs, FirebaseDocument } from 'core/fb';
+import {
+  addDoc,
+  deleteDoc,
+  DocumentData,
+  getDoc,
+  getDocs,
+  limit,
+  orderBy,
+  query,
+  QueryDocumentSnapshot,
+  serverTimestamp,
+  startAfter,
+  Unsubscribe,
+  updateDoc,
+  where,
+} from 'firebase/firestore';
 import FilesApi from '../FilesApi';
 import FirebaseRefs from '../FirebaseRefs';
-import firebase from 'firebase/app';
-import { documentsAs, FirebaseDocument } from 'core/fb';
-import * as Sentry from '@sentry/react';
 import { customCollectionSnapshot, customDocumentSnapshot, queryLimit } from '../utils';
 
 export default class ConsumerApi {
@@ -12,19 +27,19 @@ export default class ConsumerApi {
   observeNewConsumers(
     resultHandler: (consumers: WithId<ConsumerProfile>[]) => void,
     start: Date
-  ): firebase.Unsubscribe {
-    const query = this.refs.getConsumersRef().where('createdOn', '>=', start);
+  ): Unsubscribe {
+    const q = query(this.refs.getConsumersRef(), where('createdOn', '>=', start));
     // returns the unsubscribe function
-    return customCollectionSnapshot(query, resultHandler);
+    return customCollectionSnapshot(q, resultHandler);
   }
 
   observeConsumerProfile(
     consumerId: string,
     resultHandler: (result: WithId<ConsumerProfile>) => void
-  ): firebase.Unsubscribe {
-    const query = this.refs.getConsumerRef(consumerId);
+  ): Unsubscribe {
+    const ref = this.refs.getConsumerRef(consumerId);
     // returns the unsubscribe function
-    return customDocumentSnapshot<ConsumerProfile>(query, (result) => {
+    return customDocumentSnapshot<ConsumerProfile>(ref, (result) => {
       if (result) resultHandler(result);
     });
   }
@@ -33,23 +48,26 @@ export default class ConsumerApi {
   getRecommendations(
     resultHandler: (
       recommendatios: WithId<BusinessRecommendation>[],
-      last?: firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
+      last?: QueryDocumentSnapshot<DocumentData>
     ) => void,
     search?: string | null,
     start?: Date | null,
     end?: Date | null,
-    startAfter?: FirebaseDocument
+    startAfterDoc?: FirebaseDocument
   ) {
     // query
-    let query = this.refs.getRecommendationsRef().orderBy('createdOn', 'desc').limit(queryLimit);
+    let q = query(
+      this.refs.getRecommendationsRef(),
+      orderBy('createdOn', 'desc'),
+      limit(queryLimit)
+    );
     // search
-    if (startAfter) query = query.startAfter(startAfter);
-    if (search) query = query.where('recommendedBusiness.address.main', '==', search);
+    if (startAfterDoc) q = query(q, startAfter(startAfterDoc));
+    if (search) q = query(q, where('recommendedBusiness.address.main', '==', search));
     // filters
-    if (start && end) query = query.where('createdOn', '>=', start).where('createdOn', '<=', end);
+    if (start && end) q = query(q, where('createdOn', '>=', start), where('createdOn', '<=', end));
     // fetch
-    query
-      .get()
+    getDocs(q)
       .then((querySnapshot) => {
         const last =
           querySnapshot.docs.length > 0 ? querySnapshot.docs[querySnapshot.size - 1] : undefined;
@@ -62,22 +80,22 @@ export default class ConsumerApi {
   }
 
   async fecthRecommendation(recommendationId: string) {
-    return await this.refs.getRecommendationRef(recommendationId).get();
+    return await getDoc(this.refs.getRecommendationRef(recommendationId));
   }
 
   // profile notes
   observeConsumerProfileNotes(
     consumerId: string,
     resultHandler: (result: WithId<ProfileNote>[]) => void
-  ): firebase.Unsubscribe {
-    const query = this.refs.getConsumerProfileNotesRef(consumerId).orderBy('createdOn', 'desc');
+  ): Unsubscribe {
+    const q = query(this.refs.getConsumerProfileNotesRef(consumerId), orderBy('createdOn', 'desc'));
     // returns the unsubscribe function
-    return customCollectionSnapshot(query, resultHandler);
+    return customCollectionSnapshot(q, resultHandler);
   }
 
   async createProfileNote(consumerId: string, data: Partial<ProfileNote>) {
-    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
-    await this.refs.getConsumerProfileNotesRef(consumerId).add({
+    const timestamp = serverTimestamp();
+    await addDoc(this.refs.getConsumerProfileNotesRef(consumerId), {
       ...data,
       createdOn: timestamp,
       updatedOn: timestamp,
@@ -89,15 +107,15 @@ export default class ConsumerApi {
     profileNoteId: string,
     changes: Partial<ProfileNote>
   ) {
-    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
-    await this.refs.getConsumerProfileNoteRef(consumerId, profileNoteId).update({
+    const timestamp = serverTimestamp();
+    await updateDoc(this.refs.getConsumerProfileNoteRef(consumerId, profileNoteId), {
       ...changes,
       updatedOn: timestamp,
     } as Partial<ProfileNote>);
   }
 
   async deleteProfileNote(consumerId: string, profileNoteId: string) {
-    await this.refs.getConsumerProfileNoteRef(consumerId, profileNoteId).delete();
+    await deleteDoc(this.refs.getConsumerProfileNoteRef(consumerId, profileNoteId));
   }
 
   // consumer profile picture
@@ -138,13 +156,13 @@ export default class ConsumerApi {
     selfieFile: File | null,
     documentFile: File | null
   ) {
-    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+    const timestamp = serverTimestamp();
     const fullChanges = {
       ...changes,
       updatedOn: timestamp,
     };
     try {
-      await this.refs.getConsumerRef(consumerId).update(fullChanges);
+      await updateDoc(this.refs.getConsumerRef(consumerId), fullChanges);
       // logo
       if (selfieFile) await this.selfieUpload(consumerId, selfieFile, () => {});
       //cover
