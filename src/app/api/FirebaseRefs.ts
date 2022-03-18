@@ -58,133 +58,115 @@ export default class FirebaseRefs {
   getFlaggedLocationRef = (locationId: string) => doc(this.getFlaggedLocationsRef(), locationId);
 
   // platform data subcollections
-  getBanksRef = () => this.getPlatformDatasRef().collection('banks');
-  getIssuesRef = () => this.getPlatformDatasRef().collection('issues');
-  getCuisinesRef = () => this.getPlatformDatasRef().collection('cuisines');
-  getClassificationsRef = () => this.getPlatformDatasRef().collection('classifications');
+  getBanksRef = () => collection(this.getPlatformDatasRef(), 'banks');
+  getIssuesRef = () => collection(this.getPlatformDatasRef(), 'issues');
+  getCuisinesRef = () => collection(this.getPlatformDatasRef(), 'cuisines');
+  getClassificationsRef = () => collection(this.getPlatformDatasRef(), 'classifications');
 
   // platform logs subcollections
-  getPlatformLoginLogsRef = () => this.getPlatformLogsRef().collection('logins');
+  getPlatformLoginLogsRef = () => collection(this.getPlatformLogsRef(), 'logins');
 
   // businesses
-  getBusinessesRef = (stopMonitoring?: boolean) => {
-    return this.firestore.collection('businesses');
-  };
-  getBusinessRef = (id: string, child?: string) => {
-    return this.getBusinessesRef(true).doc(id);
-  };
+  getBusinessesRef = () => collection(this.firestore, 'businesses');
+  getBusinessRef = (id: string) => doc(this.firestore, 'businesses', id);
   getBusinessProfileNotesRef = (id: string) =>
-    this.getBusinessRef(id, 'profilenotes').collection('profilenotes');
+    collection(this.firestore, 'businesses', id, 'profilenotes');
   getBusinessProfileNoteRef = (businessId: string, profileNoteId: string) =>
-    this.getBusinessProfileNotesRef(businessId).doc(profileNoteId);
+    doc(this.firestore, 'businesses', businessId, 'profilenotes', profileNoteId);
 
   // business menu
   getBusinessMenuRef = (businessId: string) =>
-    this.getBusinessRef(businessId, 'menu').collection('menu');
+    collection(this.firestore, 'businesses', businessId, 'menu');
   getBusinessMenuOrderingRef = (businessId: string, menuId: string = 'default') =>
-    this.getBusinessMenuRef(businessId).doc(menuId);
+    doc(this.firestore, 'businesses', businessId, 'menu', menuId);
   getBusinessMenuMessageRef = (businessId: string) =>
-    this.getBusinessMenuRef(businessId).doc('message');
+    doc(this.firestore, 'businesses', businessId, 'menu', 'message');
   getBusinessCategoriesRef = (businessId: string) =>
-    this.getBusinessRef(businessId, 'categories').collection('categories');
+    collection(this.firestore, 'businesses', businessId, 'categories');
   getBusinessCategoryRef = (businessId: string, categoryId: string) =>
-    this.getBusinessCategoriesRef(businessId).doc(categoryId);
+    doc(this.firestore, 'businesses', businessId, 'categories', categoryId);
   getBusinessProductsRef = (businessId: string) =>
-    this.getBusinessRef(businessId, 'products').collection('products');
-  getBusinessProductRef = (businessId: string, id: string) =>
-    this.getBusinessProductsRef(businessId).doc(id);
-  getBusinessProductComplementsGroupsRef = (businessId: string, productId: string) =>
-    this.getBusinessProductRef(businessId, productId).collection('complementsgroups');
-  getBusinessProductComplementGroupRef = (businessId: string, productId: string, groupId: string) =>
-    this.getBusinessProductComplementsGroupsRef(businessId, productId).doc(groupId);
-  getBusinessProductComplementsRef = (businessId: string, productId: string) =>
-    this.getBusinessProductRef(businessId, productId).collection('complements');
-  getBusinessProductComplementRef = (businessId: string, productId: string, complementId: string) =>
-    this.getBusinessProductComplementsRef(businessId, productId).doc(complementId);
+    collection(this.firestore, 'businesses', businessId, 'products');
+  getBusinessProductRef = (businessId: string, productId: string) =>
+    doc(this.firestore, 'businesses', businessId, 'products', productId);
   // new complements logic
   getBusinessComplementsGroupsRef = (businessId: string) =>
-    this.getBusinessRef(businessId, 'complementsgroups').collection('complementsgroups');
+    collection(this.firestore, 'businesses', businessId, 'complementsgroups');
   getBusinessComplementGroupRef = (businessId: string, groupId: string) =>
-    this.getBusinessComplementsGroupsRef(businessId).doc(groupId);
+    doc(this.firestore, 'businesses', businessId, 'complementsgroups', groupId);
   getBusinessComplementsRef = (businessId: string) =>
-    this.getBusinessRef(businessId, 'complements').collection('complements');
+    collection(this.firestore, 'businesses', businessId, 'complements');
   getBusinessComplementRef = (businessId: string, complementId: string) =>
-    this.getBusinessComplementsRef(businessId).doc(complementId);
+    doc(this.firestore, 'businesses', businessId, 'complements', complementId);
 
   // business private subcollections and docs
-  getBusinessPrivateRef = (id: string) => this.getBusinessRef(id, 'private').collection('private');
-  getBusinessBankAccountRef = (id: string) => this.getBusinessPrivateRef(id).doc('bank');
-  getBusinessMarketPlaceRef = (id: string) => this.getBusinessPrivateRef(id).doc('marketplace');
+  getBusinessPrivateRef = (businessId: string) =>
+    collection(this.firestore, 'businesses', businessId, 'private');
+  getBusinessBankAccountRef = (businessId: string) =>
+    doc(this.firestore, 'businesses', businessId, 'private', 'bank');
+  getBusinessMarketPlaceRef = (businessId: string) =>
+    doc(this.firestore, 'businesses', businessId, 'private', 'marketplace');
 
   // managers
-  getManagersRef = () => {
-    return this.firestore.collection('managers');
-  };
-  getManagerRef = (managerId: string) => this.firestore.collection('managers').doc(managerId);
+  getManagersRef = () => collection(this.firestore, 'managers');
+  getManagerRef = (managerId: string) => doc(this.firestore, 'managers', managerId);
 
   // orders
-  getOrdersRef = (stopMonitoring?: boolean) => {
-    return this.firestore.collection('orders');
-  };
-  getOrderRef = (id: string, collection?: string) => {
-    return this.getOrdersRef(true).doc(id);
-  };
-  getOrderChatRef = (id: string) => this.getOrderRef(id, 'chat').collection('chat');
-  getOrderIssuesRef = (id: string) => this.getOrderRef(id, 'issues').collection('issues');
-  getOrderLogsRef = (id: string) => this.getOrderRef(id, 'logs').collection('logs');
-  getOrderPrivateRef = (id: string, doc?: string) =>
-    this.getOrderRef(id, `private:${doc ?? ''}`).collection('private');
-  getOrderPaymentsRef = (id: string) => this.getOrderPrivateRef(id, 'payments').doc('payments');
-  getOrderCancellationRef = (id: string) =>
-    this.getOrderPrivateRef(id, 'cancellation').doc('cancellation');
-  getOrderConfirmationRef = (id: string) =>
-    this.getOrderPrivateRef(id, 'confirmation').doc('confirmation');
-  getOrderMatchingRef = (id: string) => this.getOrderPrivateRef(id, 'matching').doc('matching');
-  getOrderFraudPreventionRef = (id: string) =>
-    this.getOrderPrivateRef(id, 'fraudprevention').doc('fraudprevention');
+  getOrdersRef = () => collection(this.firestore, 'orders');
+  getOrderRef = (orderId: string) => doc(this.firestore, 'orders', orderId);
+  getOrderChatRef = (orderId: string) => collection(this.firestore, 'orders', orderId, 'chat');
+  getOrderIssuesRef = (orderId: string) => collection(this.firestore, 'orders', orderId, 'issues');
+  getOrderLogsRef = (orderId: string) => collection(this.firestore, 'orders', orderId, 'logs');
+  getOrderPrivateRef = (orderId: string) =>
+    collection(this.firestore, 'orders', orderId, 'private');
+
+  getOrderPaymentsRef = (orderId: string) => doc(this.firestore, 'orders', orderId, 'payments');
+  getOrderCancellationRef = (orderId: string) =>
+    doc(this.firestore, 'orders', orderId, 'cancellation');
+  getOrderConfirmationRef = (orderId: string) =>
+    doc(this.firestore, 'orders', orderId, 'confirmation');
+  getOrderMatchingRef = (orderId: string) => doc(this.firestore, 'orders', orderId, 'matching');
+  getOrderFraudPreventionRef = (orderId: string) =>
+    doc(this.firestore, 'orders', orderId, 'fraudprevention');
 
   // chats
-  getChatsRef = () => this.firestore.collection('chats');
-  getChatMessageRef = (messageId: string) => this.getChatsRef().doc(messageId);
+  getChatsRef = () => collection(this.firestore, 'chats');
+  getChatMessageRef = (messageId: string) => doc(this.firestore, 'chats', messageId);
 
   // invoices
-  getInvoicesRef = () => {
-    return this.firestore.collection('invoices');
-  };
+  getInvoicesRef = () => collection(this.firestore, 'invoices');
 
   // consumers
-  getConsumersRef = () => {
-    return this.firestore.collection('consumers');
-  };
-  getConsumerRef = (id: string) => this.getConsumersRef().doc(id);
-  getConsumerProfileNotesRef = (id: string) => this.getConsumerRef(id).collection('profilenotes');
-  getConsumerProfileNoteRef = (id: string, profileNoteId: string) =>
-    this.getConsumerProfileNotesRef(id).doc(profileNoteId);
+  getConsumersRef = () => collection(this.firestore, 'consumers');
+  getConsumerRef = (consumerId: string) => doc(this.firestore, 'consumers', consumerId);
+  getConsumerProfileNotesRef = (consumerId: string) =>
+    collection(this.firestore, 'consumers', consumerId, 'profilenotes');
+  getConsumerProfileNoteRef = (consumerId: string, profileNoteId: string) =>
+    doc(this.firestore, 'consumers', consumerId, 'profilenotes', profileNoteId);
 
   // couriers
-  getCouriersRef = () => {
-    return this.firestore.collection('couriers');
-  };
-  getCourierRef = (id: string) => this.getCouriersRef().doc(id);
-  getCourierReviewsRef = (id: string) => this.getCourierRef(id).collection('reviews');
-  getCourierPrivateRef = (id: string) => this.getCourierRef(id).collection('private');
-  getCourierMarketPlaceRef = (id: string) => this.getCourierPrivateRef(id).doc('marketplace');
-  getCourierProfileNotesRef = (id: string) => this.getCourierRef(id).collection('profilenotes');
-  getCourierProfileNoteRef = (id: string, profileNoteId: string) =>
-    this.getCourierProfileNotesRef(id).doc(profileNoteId);
+  getCouriersRef = () => collection(this.firestore, 'couriers');
+  getCourierRef = (courierId: string) => doc(this.firestore, 'couriers', courierId);
+  getCourierReviewsRef = (courierId: string) =>
+    collection(this.firestore, 'couriers', courierId, 'reviews');
+  getCourierPrivateRef = (courierId: string) =>
+    collection(this.firestore, 'couriers', courierId, 'private');
+  getCourierMarketPlaceRef = (courierId: string) =>
+    doc(this.firestore, 'couriers', courierId, 'private', 'marketplace');
+  getCourierProfileNotesRef = (courierId: string) =>
+    collection(this.firestore, 'couriers', courierId, 'profilenotes');
+  getCourierProfileNoteRef = (courierId: string, profileNoteId: string) =>
+    doc(this.firestore, 'couriers', courierId, 'profilenotes', profileNoteId);
 
   // fleets
-  getFleetsRef = () => {
-    return this.firestore.collection('fleets');
-  };
-  getFleetRef = (id: string) => this.getFleetsRef().doc(id);
+  getFleetsRef = () => collection(this.firestore, 'fleets');
+  getFleetRef = (fleetId: string) => doc(this.firestore, 'fleets', fleetId);
   getAppJustoFleetRef = () => this.getFleetRef('appjusto');
 
   // invoices
-  getRecommendationsRef = () => {
-    return this.firestore.collection('recommendations');
-  };
-  getRecommendationRef = (id: string) => this.getRecommendationsRef().doc(id);
+  getRecommendationsRef = () => collection(this.firestore, 'recommendations');
+  getRecommendationRef = (recommendationsId: string) =>
+    doc(this.firestore, 'recommendations', recommendationsId);
 
   // storage
   // business
