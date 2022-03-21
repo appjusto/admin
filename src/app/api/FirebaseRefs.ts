@@ -28,13 +28,12 @@ export default class FirebaseRefs {
 
   // firestore
   getBatchRef = () => writeBatch(this.firestore);
+
   // users
   getUsersRef = () => collection(this.firestore, 'users');
-  getUserRef = (userId: string) => doc(this.firestore, 'users', userId);
-
-  getUsersChangesRef = () => collection(this.firestore, 'users', 'subcollections', 'changes');
-  getUsersChangeRef = (changeId: string) =>
-    doc(this.firestore, 'users', 'subcollections', 'changes', changeId);
+  getUserRef = (userId: string) => doc(this.getUsersRef(), userId);
+  getUsersChangesRef = () => collection(this.getUsersRef(), 'subcollections', 'changes');
+  getUsersChangeRef = (changeId: string) => doc(this.getUsersChangesRef(), changeId);
 
   // advances
   getAdvancesRef = () => collection(this.firestore, 'advances');
@@ -44,83 +43,80 @@ export default class FirebaseRefs {
 
   // platform
   getPlatformRef = () => collection(this.firestore, 'platform');
-
   // platform docs
-  getPlatformParamsRef = () => doc(this.firestore, 'platform', 'params');
-  getPlatformStatisticsRef = () => doc(this.firestore, 'platform', 'statistics');
-  getPlatformDatasRef = () => doc(this.firestore, 'platform', 'data');
-  getPlatformLogsRef = () => doc(this.firestore, 'platform', 'logs');
-  getPlatformAccessRef = () => doc(this.firestore, 'platform', 'access');
+  getPlatformParamsRef = () => doc(this.getPlatformRef(), 'params');
+  getPlatformStatisticsRef = () => doc(this.getPlatformRef(), 'statistics');
+  getPlatformDataRef = () => doc(this.getPlatformRef(), 'data');
+  getPlatformLogsRef = () => doc(this.getPlatformRef(), 'logs');
+  getPlatformAccessRef = () => doc(this.getPlatformRef(), 'access');
   // fraud prevention
-  getFraudPreventionRef = () => doc(this.firestore, 'platform', 'fraud');
-  getFraudPreventionSubdocsRef = () => collection(this.firestore, 'platform', 'fraud', 'subdocs');
-  getFraudPreventionParamsRef = () => doc(this.firestore, 'platform', 'fraud', 'subdocs', 'params');
+  getFraudPreventionRef = () => doc(this.getPlatformRef(), 'fraud');
+  getFraudPreventionSubdocsRef = () => collection(this.getFraudPreventionRef(), 'subdocs');
+  getFraudPreventionParamsRef = () => doc(this.getFraudPreventionSubdocsRef(), 'params');
   getFlaggedLocationsRef = () => collection(this.getFraudPreventionRef(), 'flaggedlocations');
   getFlaggedLocationRef = (locationId: string) => doc(this.getFlaggedLocationsRef(), locationId);
 
   // platform data subcollections
-  getBanksRef = () => collection(this.getPlatformDatasRef(), 'banks');
-  getIssuesRef = () => collection(this.getPlatformDatasRef(), 'issues');
-  getCuisinesRef = () => collection(this.getPlatformDatasRef(), 'cuisines');
-  getClassificationsRef = () => collection(this.getPlatformDatasRef(), 'classifications');
+  getBanksRef = () => collection(this.getPlatformDataRef(), 'banks');
+  getIssuesRef = () => collection(this.getPlatformDataRef(), 'issues');
+  getCuisinesRef = () => collection(this.getPlatformDataRef(), 'cuisines');
+  getClassificationsRef = () => collection(this.getPlatformDataRef(), 'classifications');
 
   // platform logs subcollections
   getPlatformLoginLogsRef = () => collection(this.getPlatformLogsRef(), 'logins');
 
   // businesses
   getBusinessesRef = () => collection(this.firestore, 'businesses');
-  getBusinessRef = (id: string) => doc(this.firestore, 'businesses', id);
-  getBusinessProfileNotesRef = (id: string) =>
-    collection(this.firestore, 'businesses', id, 'profilenotes');
+  getBusinessRef = (businessId: string) => doc(this.getBusinessesRef(), businessId);
+  getBusinessProfileNotesRef = (businessId: string) =>
+    collection(this.getBusinessRef(businessId), 'profilenotes');
   getBusinessProfileNoteRef = (businessId: string, profileNoteId: string) =>
-    doc(this.firestore, 'businesses', businessId, 'profilenotes', profileNoteId);
+    doc(this.getBusinessProfileNotesRef(businessId), profileNoteId);
 
   // business menu
-  getBusinessMenuRef = (businessId: string) =>
-    collection(this.firestore, 'businesses', businessId, 'menu');
+  getBusinessMenuRef = (businessId: string) => collection(this.getBusinessRef(businessId), 'menu');
   getBusinessMenuOrderingRef = (businessId: string, menuId: string = 'default') =>
-    doc(this.firestore, 'businesses', businessId, 'menu', menuId);
+    doc(this.getBusinessMenuRef(businessId), menuId);
   getBusinessMenuMessageRef = (businessId: string) =>
-    doc(this.firestore, 'businesses', businessId, 'menu', 'message');
+    doc(this.getBusinessMenuRef(businessId), 'message');
   getBusinessCategoriesRef = (businessId: string) =>
-    collection(this.firestore, 'businesses', businessId, 'categories');
+    collection(this.getBusinessRef(businessId), 'categories');
   getBusinessCategoryRef = (businessId: string, categoryId: string) =>
-    doc(this.firestore, 'businesses', businessId, 'categories', categoryId);
+    doc(this.getBusinessCategoriesRef(businessId), categoryId);
   getBusinessProductsRef = (businessId: string) =>
-    collection(this.firestore, 'businesses', businessId, 'products');
+    collection(this.getBusinessRef(businessId), 'products');
   getBusinessProductRef = (businessId: string, productId: string) =>
-    doc(this.firestore, 'businesses', businessId, 'products', productId);
+    doc(this.getBusinessProductsRef(businessId), productId);
   // new complements logic
   getBusinessComplementsGroupsRef = (businessId: string) =>
-    collection(this.firestore, 'businesses', businessId, 'complementsgroups');
+    collection(this.getBusinessRef(businessId), 'complementsgroups');
   getBusinessComplementsGroupRef = (businessId: string, groupId: string) =>
-    doc(this.firestore, 'businesses', businessId, 'complementsgroups', groupId);
+    doc(this.getBusinessComplementsGroupsRef(businessId), groupId);
   getBusinessComplementsRef = (businessId: string) =>
-    collection(this.firestore, 'businesses', businessId, 'complements');
+    collection(this.getBusinessRef(businessId), 'complements');
   getBusinessComplementRef = (businessId: string, complementId: string) =>
-    doc(this.firestore, 'businesses', businessId, 'complements', complementId);
+    doc(this.getBusinessComplementsRef(businessId), complementId);
 
   // business private subcollections and docs
   getBusinessPrivateRef = (businessId: string) =>
-    collection(this.firestore, 'businesses', businessId, 'private');
+    collection(this.getBusinessRef(businessId), 'private');
   getBusinessBankAccountRef = (businessId: string) =>
-    doc(this.firestore, 'businesses', businessId, 'private', 'bank');
+    doc(this.getBusinessPrivateRef(businessId), 'bank');
   getBusinessMarketPlaceRef = (businessId: string) =>
-    doc(this.firestore, 'businesses', businessId, 'private', 'marketplace');
+    doc(this.getBusinessPrivateRef(businessId), 'marketplace');
 
   // managers
   getManagersRef = () => collection(this.firestore, 'managers');
-  getManagerRef = (managerId: string) => doc(this.firestore, 'managers', managerId);
+  getManagerRef = (managerId: string) => doc(this.getManagersRef(), managerId);
 
   // orders
   getOrdersRef = () => collection(this.firestore, 'orders');
-  getOrderRef = (orderId: string) => doc(this.firestore, 'orders', orderId);
-  getOrderChatRef = (orderId: string) => collection(this.firestore, 'orders', orderId, 'chat');
-  getOrderIssuesRef = (orderId: string) => collection(this.firestore, 'orders', orderId, 'issues');
-  getOrderLogsRef = (orderId: string) => collection(this.firestore, 'orders', orderId, 'logs');
+  getOrderRef = (orderId: string) => doc(this.getOrdersRef(), orderId);
+  //getOrderChatRef = (orderId: string) => collection(this.getOrderRef(orderId), 'chat');
+  getOrderIssuesRef = (orderId: string) => collection(this.getOrderRef(orderId), 'issues');
+  getOrderLogsRef = (orderId: string) => collection(this.getOrderRef(orderId), 'logs');
   // orders private
-  getOrderPrivateRef = (orderId: string) =>
-    collection(this.firestore, 'orders', orderId, 'private');
+  getOrderPrivateRef = (orderId: string) => collection(this.getOrderRef(orderId), 'private');
   getOrderPaymentsRef = (orderId: string) => doc(this.getOrderPrivateRef(orderId), 'payments');
   getOrderCancellationRef = (orderId: string) =>
     doc(this.getOrderPrivateRef(orderId), 'cancellation');
@@ -132,43 +128,43 @@ export default class FirebaseRefs {
 
   // chats
   getChatsRef = () => collection(this.firestore, 'chats');
-  getChatMessageRef = (messageId: string) => doc(this.firestore, 'chats', messageId);
+  getChatMessageRef = (messageId: string) => doc(this.getChatsRef(), messageId);
 
   // invoices
   getInvoicesRef = () => collection(this.firestore, 'invoices');
-  getInvoiceRef = (invoiceId: string) => doc(this.firestore, 'invoices', invoiceId);
+  getInvoiceRef = (invoiceId: string) => doc(this.getInvoicesRef(), invoiceId);
 
   // consumers
   getConsumersRef = () => collection(this.firestore, 'consumers');
-  getConsumerRef = (consumerId: string) => doc(this.firestore, 'consumers', consumerId);
+  getConsumerRef = (consumerId: string) => doc(this.getConsumersRef(), consumerId);
   getConsumerProfileNotesRef = (consumerId: string) =>
-    collection(this.firestore, 'consumers', consumerId, 'profilenotes');
+    collection(this.getConsumerRef(consumerId), 'profilenotes');
   getConsumerProfileNoteRef = (consumerId: string, profileNoteId: string) =>
-    doc(this.firestore, 'consumers', consumerId, 'profilenotes', profileNoteId);
+    doc(this.getConsumerProfileNotesRef(consumerId), profileNoteId);
 
   // couriers
   getCouriersRef = () => collection(this.firestore, 'couriers');
-  getCourierRef = (courierId: string) => doc(this.firestore, 'couriers', courierId);
+  getCourierRef = (courierId: string) => doc(this.getCouriersRef(), courierId);
   getCourierReviewsRef = (courierId: string) =>
-    collection(this.firestore, 'couriers', courierId, 'reviews');
+    collection(this.getCourierRef(courierId), 'reviews');
   getCourierPrivateRef = (courierId: string) =>
-    collection(this.firestore, 'couriers', courierId, 'private');
+    collection(this.getCourierRef(courierId), 'private');
   getCourierMarketPlaceRef = (courierId: string) =>
-    doc(this.firestore, 'couriers', courierId, 'private', 'marketplace');
+    doc(this.getCourierPrivateRef(courierId), 'marketplace');
   getCourierProfileNotesRef = (courierId: string) =>
-    collection(this.firestore, 'couriers', courierId, 'profilenotes');
+    collection(this.getCourierRef(courierId), 'profilenotes');
   getCourierProfileNoteRef = (courierId: string, profileNoteId: string) =>
-    doc(this.firestore, 'couriers', courierId, 'profilenotes', profileNoteId);
+    doc(this.getCourierProfileNotesRef(courierId), profileNoteId);
 
   // fleets
   getFleetsRef = () => collection(this.firestore, 'fleets');
-  getFleetRef = (fleetId: string) => doc(this.firestore, 'fleets', fleetId);
+  getFleetRef = (fleetId: string) => doc(this.getFleetsRef(), fleetId);
   getAppJustoFleetRef = () => this.getFleetRef('appjusto');
 
   // invoices
   getRecommendationsRef = () => collection(this.firestore, 'recommendations');
   getRecommendationRef = (recommendationsId: string) =>
-    doc(this.firestore, 'recommendations', recommendationsId);
+    doc(this.getRecommendationsRef(), recommendationsId);
 
   // storage
   // business

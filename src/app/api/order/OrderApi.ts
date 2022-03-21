@@ -1,6 +1,5 @@
 import {
   CancelOrderPayload,
-  ChatMessage,
   DropOrderPayload,
   Invoice,
   Issue,
@@ -241,22 +240,6 @@ export default class OrderApi {
     resultHandler: (order: WithId<OrderLog>[]) => void
   ): Unsubscribe {
     const q = query(this.refs.getOrderLogsRef(orderId), orderBy('timestamp', 'asc'));
-    // returns the unsubscribe function
-    return customCollectionSnapshot(q, resultHandler);
-  }
-
-  observeOrderChat(
-    orderId: string,
-    partId: string,
-    counterpartId: string,
-    resultHandler: (orders: WithId<ChatMessage>[]) => void
-  ): Unsubscribe {
-    const q = query(
-      this.refs.getOrderChatRef(orderId),
-      where('from.id', '==', partId),
-      where('to.id', '==', counterpartId),
-      orderBy('timestamp', 'asc')
-    );
     // returns the unsubscribe function
     return customCollectionSnapshot(q, resultHandler);
   }
