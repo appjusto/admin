@@ -35,6 +35,7 @@ export const MeasurementProvider = ({ children }: Props) => {
   React.useEffect(() => {
     //if(!analytics) return;
     if (!userConsent) return;
+    if (process.env.NODE_ENV !== 'production') return;
     const PixelId = process.env.REACT_APP_FACEBOOK_PIXEL_ID;
     setAnalyticsConsent();
     if (PixelId) ReactPixel.init(PixelId);

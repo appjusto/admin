@@ -29,6 +29,7 @@ const LandingPage = () => {
   }, [isDeleted, setIsDeleted]);
   React.useEffect(() => {
     if (!userConsent) return;
+    if (process.env.NODE_ENV !== 'production') return;
     ReactPixel.pageView();
   }, [userConsent]);
   // UI
