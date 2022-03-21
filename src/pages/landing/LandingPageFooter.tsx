@@ -41,7 +41,6 @@ export const LandingPageFooter = () => {
             >
               <Icon as={MdMailOutline} color="green.500" mr="12px" w="20px" h="20px" />
               <Link
-                name="contact_footer"
                 href="mailto:contato@appjusto.com.br"
                 color="white"
                 _hover={{ color: '#055AFF' }}

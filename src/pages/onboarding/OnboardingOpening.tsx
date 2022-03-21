@@ -17,7 +17,7 @@ const OnboardingOpening = ({ path }: OpeningProps) => {
     <Box w="100vw" minH="100vh" position="relative">
       <Box
         position="absolute"
-        to="0"
+        top="0"
         right="0"
         w="300px"
         h="240px"

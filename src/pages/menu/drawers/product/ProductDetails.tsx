@@ -42,15 +42,8 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
   const query = useQuery();
   const { url, path } = useRouteMatch();
   const { push } = useHistory();
-  const {
-    contextCategoryId,
-    productId,
-    product,
-    isValid,
-    imageUrl,
-    updateProduct,
-    deleteProduct,
-  } = useProductContext();
+  const { contextCategoryId, productId, product, isValid, imageUrl, updateProduct, deleteProduct } =
+    useProductContext();
   const platformClassifications = useClassifications();
   //state
   const [state, dispatch] = React.useReducer(productReducer, initialState);
@@ -290,7 +283,7 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
           ))}
         </VStack>
       </CheckboxGroup>{' '}
-      <Flex mt="8" flexDir="row" alignItems="center" spacing={2}>
+      <Flex mt="8" flexDir="row" alignItems="center">
         <Switch
           isChecked={enabled}
           onChange={(ev) => {

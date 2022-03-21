@@ -5,7 +5,8 @@ import logo from 'common/img/logo.svg';
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { t } from 'utils/i18n';
-import { version } from '../../../package.json';
+
+const version = process.env.npm_package_version ?? process.env.$npm_package_version;
 
 export const OrdersHeader = () => {
   // context

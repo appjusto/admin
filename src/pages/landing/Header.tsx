@@ -141,24 +141,24 @@ export const Header = () => {
             </Link>
             <HStack spacing={8}>
               <Link
-                name="go_to_linkedin_footer"
-                link="https://www.linkedin.com/company/appjusto/"
+                aria-label="go to linkedin"
+                href="https://www.linkedin.com/company/appjusto/"
                 isExternal
                 color="black"
               >
                 <Icon as={FaLinkedin} w="20px" h="20px" />
               </Link>
               <Link
-                name="go_to_facebook_footer"
-                link="https://www.facebook.com/appjusto"
+                aria-label="go to facebook"
+                href="https://www.facebook.com/appjusto"
                 isExternal
                 color="black"
               >
                 <Icon as={FaFacebookSquare} w="20px" h="20px" />
               </Link>
               <Link
-                name="go_to_instagram_footer"
-                link="https://www.instagram.com/appjusto/"
+                aria-label="go to instagram"
+                href="https://www.instagram.com/appjusto/"
                 isExternal
                 color="black"
               >

@@ -1,7 +1,8 @@
 import { Box, Flex, Heading, Text, TextProps } from '@chakra-ui/react';
 import React from 'react';
 import { t } from 'utils/i18n';
-import { version } from '../../package.json';
+
+const version = process.env.npm_package_version ?? process.env.$npm_package_version;
 interface Props extends TextProps {
   title: string;
   subtitle?: string;

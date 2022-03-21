@@ -46,11 +46,11 @@ export const BusinessesTable = ({ businesses }: BusinessesTableProps) => {
       <Box mt="6" fontSize={{ base: '12px', lg: '15px' }}>
         <HStack>
           <Text>{t('Legenda:')}</Text>
-          <Circle w="8px" h="8px" bgColor="green.500" />
+          <Circle size="8px" bgColor="green.500" />
           <Text>{t('aberto /')}</Text>
-          <Circle w="8px" h="8px" bgColor="gray.400" />
+          <Circle size="8px" bgColor="gray.400" />
           <Text>{t('fechado /')}</Text>
-          <Circle w="8px" h="8px" bgColor="red" />
+          <Circle size="8px" bgColor="red" />
           <Text>{t('deveria estar aberto')}</Text>
         </HStack>
       </Box>

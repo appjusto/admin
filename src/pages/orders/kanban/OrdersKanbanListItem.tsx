@@ -27,13 +27,8 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
   const { business, changeOrderStatus } = useOrdersContext();
   const arrivalTime = useOrderArrivalTimes(getServerTime, order);
   const { isBackofficeUser } = useContextFirebaseUser();
-  const {
-    isMatched,
-    isNoMatch,
-    isCurrierArrived,
-    isDelivered,
-    orderDispatchingKanbanItemText,
-  } = useOrderDeliveryInfos(getServerTime, order);
+  const { isMatched, isNoMatch, isCurrierArrived, isDelivered, orderDispatchingKanbanItemText } =
+    useOrderDeliveryInfos(getServerTime, order);
   const logs = useObserveOrderLogs(order.id);
   //const { restartMatching, restartResult } = useObserveOrderMatching(order.id);
 
@@ -50,9 +45,10 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
   const conrumerName = order.consumer.name ? order.consumer.name.split(' ')[0] : 'N/E';
 
   // handlers
-  const cookingTime = React.useMemo(() => (order?.cookingTime ? order?.cookingTime / 60 : null), [
-    order?.cookingTime,
-  ]);
+  const cookingTime = React.useMemo(
+    () => (order?.cookingTime ? order?.cookingTime / 60 : null),
+    [order?.cookingTime]
+  );
   //const cookingTime = order?.cookingTime ? order?.cookingTime / 60 : null;
   const cookingProgress = cookingTime && elapsedTime ? (elapsedTime / cookingTime) * 100 : 0;
   // const cancelator = orderCancelator(order?.cancellation?.issue?.type);
@@ -226,7 +222,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
             mt="3"
             w="full"
             maxH="34px"
-            siz="xs"
+            size="xs"
             fontSize="xs"
             onClick={() => changeOrderStatus(order.id, 'ready')}
           >
@@ -371,7 +367,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
             isDisabled={!isCurrierArrived && order?.dispatchingStatus !== 'outsourced'}
             w="full"
             maxH="34px"
-            siz="xs"
+            size="xs"
             fontSize="xs"
             onClick={() => changeOrderStatus(order.id, 'dispatching')}
           >

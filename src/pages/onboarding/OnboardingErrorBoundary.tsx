@@ -29,7 +29,7 @@ const FallbackErrorComponent = () => {
     return (
       <Flex w="100vw" h="100vh" flexDir="column" justifyContent="center" alignItems="center">
         <Box>
-          <Image src={logo} eagerLoading height="60px" />
+          <Image src={logo} height="60px" />
         </Box>
         <Box mt="8" color="black" textAlign="center">
           <Text fontSize="24px" lineHeight="22px">
@@ -54,7 +54,7 @@ const FallbackErrorComponent = () => {
   return (
     <Flex w="100vw" h="100vh" flexDir="column" justifyContent="center" alignItems="center">
       <Box>
-        <Image src={logo} eagerLoading height="60px" />
+        <Image src={logo} height="60px" />
       </Box>
       <Box mt="8" color="black" textAlign="center">
         <Text fontSize="24px" lineHeight="22px">
