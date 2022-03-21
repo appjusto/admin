@@ -222,7 +222,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
             mt="3"
             w="full"
             maxH="34px"
-            size="xs"
+            size="sm"
             fontSize="xs"
             onClick={() => changeOrderStatus(order.id, 'ready')}
           >
@@ -367,7 +367,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
             isDisabled={!isCurrierArrived && order?.dispatchingStatus !== 'outsourced'}
             w="full"
             maxH="34px"
-            size="xs"
+            size="sm"
             fontSize="xs"
             onClick={() => changeOrderStatus(order.id, 'dispatching')}
           >
