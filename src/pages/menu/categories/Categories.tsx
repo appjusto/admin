@@ -1,5 +1,6 @@
+import * as menu from '@appjusto/menu';
 import { Box } from '@chakra-ui/react';
-import * as menu from 'app/api/business/menu/functions';
+import { filterItemBySearch } from 'app/api/business/menu/functions';
 import { useContextMenu } from 'app/state/menu/context';
 import { isEmpty } from 'lodash';
 import React from 'react';
@@ -46,7 +47,7 @@ export const Categories = ({ productSearch }: Props) => {
         {(droppable) => (
           <Box ref={droppable.innerRef} {...droppable.droppableProps}>
             {categories.map((category, index) => {
-              const products = menu.filterItemBySearch(category.items!, productSearch);
+              const products = filterItemBySearch(category.items!, productSearch);
               return (
                 <CategoryItem
                   url={url}

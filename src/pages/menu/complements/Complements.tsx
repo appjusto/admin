@@ -1,5 +1,6 @@
+import * as menu from '@appjusto/menu';
 import { Box } from '@chakra-ui/react';
-import * as menu from 'app/api/business/menu/functions';
+import { filterItemBySearch } from 'app/api/business/menu/functions';
 import { useContextMenu } from 'app/state/menu/context';
 import { isEmpty } from 'lodash';
 import React from 'react';
@@ -63,7 +64,7 @@ export const Complements = ({ search }: Props) => {
           <Box ref={droppable.innerRef} {...droppable.droppableProps}>
             {sortedComplementsGroups.map((group, index) => {
               if (search) {
-                const complements = menu.filterItemBySearch(group.items!, search);
+                const complements = filterItemBySearch(group.items!, search);
                 return (
                   <GroupItem
                     key={group.id}
