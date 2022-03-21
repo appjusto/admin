@@ -55,13 +55,11 @@ export default class FirebaseRefs {
   getFraudPreventionParamsRef = () => doc(this.getFraudPreventionSubdocsRef(), 'params');
   getFlaggedLocationsRef = () => collection(this.getFraudPreventionRef(), 'flaggedlocations');
   getFlaggedLocationRef = (locationId: string) => doc(this.getFlaggedLocationsRef(), locationId);
-
   // platform data subcollections
   getBanksRef = () => collection(this.getPlatformDataRef(), 'banks');
   getIssuesRef = () => collection(this.getPlatformDataRef(), 'issues');
   getCuisinesRef = () => collection(this.getPlatformDataRef(), 'cuisines');
   getClassificationsRef = () => collection(this.getPlatformDataRef(), 'classifications');
-
   // platform logs subcollections
   getPlatformLoginLogsRef = () => collection(this.getPlatformLogsRef(), 'logins');
 
@@ -72,7 +70,6 @@ export default class FirebaseRefs {
     collection(this.getBusinessRef(businessId), 'profilenotes');
   getBusinessProfileNoteRef = (businessId: string, profileNoteId: string) =>
     doc(this.getBusinessProfileNotesRef(businessId), profileNoteId);
-
   // business menu
   getBusinessMenuRef = (businessId: string) => collection(this.getBusinessRef(businessId), 'menu');
   getBusinessMenuOrderingRef = (businessId: string, menuId: string = 'default') =>
@@ -96,7 +93,6 @@ export default class FirebaseRefs {
     collection(this.getBusinessRef(businessId), 'complements');
   getBusinessComplementRef = (businessId: string, complementId: string) =>
     doc(this.getBusinessComplementsRef(businessId), complementId);
-
   // business private subcollections and docs
   getBusinessPrivateRef = (businessId: string) =>
     collection(this.getBusinessRef(businessId), 'private');
@@ -112,7 +108,6 @@ export default class FirebaseRefs {
   // orders
   getOrdersRef = () => collection(this.firestore, 'orders');
   getOrderRef = (orderId: string) => doc(this.getOrdersRef(), orderId);
-  //getOrderChatRef = (orderId: string) => collection(this.getOrderRef(orderId), 'chat');
   getOrderIssuesRef = (orderId: string) => collection(this.getOrderRef(orderId), 'issues');
   getOrderLogsRef = (orderId: string) => collection(this.getOrderRef(orderId), 'logs');
   // orders private
