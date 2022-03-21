@@ -1,12 +1,12 @@
 import * as Sentry from '@sentry/react';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import packageInfo from '../package.json';
 import App from './app/App';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
-
-const version = process.env.npm_package_version ?? process.env.$npm_package_version;
+const version = packageInfo.version;
 
 Sentry.init({
   dsn: 'https://e5edc0b4010c46978ceab1fa81fc2e90@o432207.ingest.sentry.io/5728413',

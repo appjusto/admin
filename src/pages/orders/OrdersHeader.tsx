@@ -5,8 +5,8 @@ import logo from 'common/img/logo.svg';
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { t } from 'utils/i18n';
-
-const version = process.env.npm_package_version ?? process.env.$npm_package_version;
+import packageInfo from '../../../package.json';
+const version = packageInfo.version;
 
 export const OrdersHeader = () => {
   // context
