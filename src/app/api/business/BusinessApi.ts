@@ -33,7 +33,6 @@ import * as Sentry from '@sentry/react';
 // import firebase from 'firebase/compat/app';
 import {
   addDoc,
-  CollectionReference,
   deleteDoc,
   DocumentData,
   getDoc,
@@ -335,7 +334,7 @@ export default class BusinessApi {
   }
 
   async updateBankAccount(businessId: string, changes: Partial<BankAccount>) {
-    await updateDoc(this.refs.getBusinessBankAccountRef(businessId), changes);
+    await setDoc(this.refs.getBusinessBankAccountRef(businessId), changes);
   }
 
   // logo
@@ -389,8 +388,8 @@ export default class BusinessApi {
     const ref = this.refs.getBusinessMenuOrderingRef(businessId, menuId);
     const unsubscribe = onSnapshot(
       ref,
-      (doc) => {
-        resultHandler(documentAs<Ordering>(doc));
+      (snapshot) => {
+        if (snapshot.exists()) resultHandler(snapshot.data() as Ordering);
       },
       (error) => {
         console.error(error);
@@ -432,9 +431,18 @@ export default class BusinessApi {
   }
 
   async createCategoryRef(businessId: string): Promise<string> {
-    const ref = this.refs.getBusinessCategoriesRef(businessId);
-    const newCategory = await addDoc(ref, {});
-    return newCategory.id;
+    const id = this.refs.getBusinessCategoryNewRef(businessId);
+    return id;
+  }
+
+  async createCategory(businessId: string, categoryId: string, category: Category) {
+    const timestamp = serverTimestamp();
+    const ref = this.refs.getBusinessCategoryRef(businessId, categoryId);
+    await setDoc(ref, {
+      ...category,
+      createdOn: timestamp,
+      updatedOn: timestamp,
+    } as Category);
   }
 
   async fethCategories(businessId: string) {
@@ -451,16 +459,6 @@ export default class BusinessApi {
     const ref = this.refs.getBusinessCategoryRef(businessId, categoryId);
     const doc = await getDoc(ref);
     return documentAs<Category>(doc);
-  }
-
-  async createCategory(businessId: string, categoryId: string, category: Category) {
-    const timestamp = serverTimestamp();
-    const ref = this.refs.getBusinessCategoryRef(businessId, categoryId);
-    await setDoc(ref, {
-      ...category,
-      createdOn: timestamp,
-      updatedOn: timestamp,
-    } as Category);
   }
 
   async updateCategory(businessId: string, categoryId: string, changes: Partial<Category>) {
@@ -498,11 +496,6 @@ export default class BusinessApi {
     });
   }
 
-  async getNewDocumentId(ref: CollectionReference<DocumentData>): Promise<string> {
-    const newDoc = await addDoc(ref, {});
-    return newDoc.id;
-  }
-
   async fetchProduct(businessId: string, productId: string) {
     const ref = this.refs.getBusinessProductRef(businessId, productId);
     const doc = await getDoc(ref);
@@ -512,7 +505,7 @@ export default class BusinessApi {
   async createProduct(businessId: string, product: Product, imageFiles?: File[] | null) {
     // creating product
     const timestamp = serverTimestamp();
-    const productId = await this.getNewDocumentId(this.refs.getBusinessProductsRef(businessId));
+    const productId = this.refs.getBusinessProductNewRef(businessId);
     if (imageFiles) {
       await this.uploadProductPhoto(businessId, productId, imageFiles);
     }
@@ -649,9 +642,7 @@ export default class BusinessApi {
 
   async createComplement(businessId: string, item: Complement, imageFile?: File | null) {
     const timestamp = serverTimestamp();
-    const complementId = await this.getNewDocumentId(
-      this.refs.getBusinessComplementsRef(businessId)
-    );
+    const complementId = this.refs.getBusinessComplementNewRef(businessId);
     if (imageFile) {
       await this.uploadComplementPhoto(businessId, complementId, imageFile);
     }
@@ -717,8 +708,8 @@ export default class BusinessApi {
       accountId,
       meta: { version: '1' }, // TODO: pass correct version on
     };
-    return ((await this.refs.getFetchAccountInformationCallable()(payload))
-      .data as unknown) as FetchAccountInformationResponse;
+    return (await this.refs.getFetchAccountInformationCallable()(payload))
+      .data as unknown as FetchAccountInformationResponse;
   }
   async requestWithdraw(accountId: string, amount: number): Promise<any> {
     const payload: RequestWithdrawPayload = {
@@ -735,8 +726,8 @@ export default class BusinessApi {
       accountId,
       meta: { version: '1' }, // TODO: pass correct version on
     };
-    return ((await this.refs.getFetchReceivablesCallable()(payload))
-      .data as unknown) as IuguMarketplaceAccountReceivables;
+    return (await this.refs.getFetchReceivablesCallable()(payload))
+      .data as unknown as IuguMarketplaceAccountReceivables;
   }
   async fetchAdvanceSimulation(accountId: string, ids: number[]) {
     const payload: FetchAdvanceSimulationPayload = {
@@ -745,8 +736,8 @@ export default class BusinessApi {
       ids,
       meta: { version: '1' }, // TODO: pass correct version on
     };
-    return ((await this.refs.getFetchAdvanceSimulationCallable()(payload))
-      .data as unknown) as IuguMarketplaceAccountAdvanceSimulation;
+    return (await this.refs.getFetchAdvanceSimulationCallable()(payload))
+      .data as unknown as IuguMarketplaceAccountAdvanceSimulation;
   }
   async advanceReceivables(accountId: string, ids: number[]): Promise<any> {
     const payload: AdvanceReceivablesPayload = {

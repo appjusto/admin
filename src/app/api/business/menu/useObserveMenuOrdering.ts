@@ -1,8 +1,8 @@
-import { useContextApi } from 'app/state/api/context';
+import * as menu from '@appjusto/menu';
 import { Ordering } from '@appjusto/types';
+import { useContextApi } from 'app/state/api/context';
 import { isEmpty } from 'lodash';
 import React from 'react';
-import * as menu from '@appjusto/menu';
 
 export const useObserveMenuOrdering = (isMenuActive: boolean, businessId?: string) => {
   const api = useContextApi();

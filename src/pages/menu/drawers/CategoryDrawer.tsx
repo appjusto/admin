@@ -22,9 +22,8 @@ export const CategoryDrawer = (props: Props) => {
   const { categoryId } = useParams<Params>();
   // state
   const { productsOrdering, updateProductsOrdering } = useContextMenu();
-  const { category, id, saveCategory, deleteCategory, result, deleteCategoryResult } = useCategory(
-    categoryId
-  );
+  const { category, id, saveCategory, deleteCategory, result, deleteCategoryResult } =
+    useCategory(categoryId);
   const { isLoading, isError, error } = result;
   const [name, setName] = React.useState(category?.name ?? '');
   // const [enabled, setEnabled] = React.useState(category?.enabled ?? true);

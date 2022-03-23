@@ -12,7 +12,6 @@ export const useCategory = (id: string) => {
   const isNew = id === 'new';
   // state
   const [categoryId, setCategoryId] = React.useState<string>(id);
-
   // queries
   const fetchCategory = () => api.business().fetchCategory(businessId, categoryId);
   const fetchResult = useQuery(['category', categoryId], fetchCategory, { enabled: !isNew });

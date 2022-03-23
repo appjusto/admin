@@ -78,10 +78,14 @@ export default class FirebaseRefs {
     doc(this.getBusinessMenuRef(businessId), 'message');
   getBusinessCategoriesRef = (businessId: string) =>
     collection(this.getBusinessRef(businessId), 'categories');
+  getBusinessCategoryNewRef = (businessId: string) =>
+    doc(this.getBusinessCategoriesRef(businessId)).id;
   getBusinessCategoryRef = (businessId: string, categoryId: string) =>
     doc(this.getBusinessCategoriesRef(businessId), categoryId);
   getBusinessProductsRef = (businessId: string) =>
     collection(this.getBusinessRef(businessId), 'products');
+  getBusinessProductNewRef = (businessId: string) =>
+    doc(this.getBusinessProductsRef(businessId)).id;
   getBusinessProductRef = (businessId: string, productId: string) =>
     doc(this.getBusinessProductsRef(businessId), productId);
   // new complements logic
@@ -91,6 +95,8 @@ export default class FirebaseRefs {
     doc(this.getBusinessComplementsGroupsRef(businessId), groupId);
   getBusinessComplementsRef = (businessId: string) =>
     collection(this.getBusinessRef(businessId), 'complements');
+  getBusinessComplementNewRef = (businessId: string) =>
+    doc(this.getBusinessComplementsRef(businessId)).id;
   getBusinessComplementRef = (businessId: string, complementId: string) =>
     doc(this.getBusinessComplementsRef(businessId), complementId);
   // business private subcollections and docs
