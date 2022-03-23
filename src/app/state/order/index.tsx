@@ -117,6 +117,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   );
   // side effects
   React.useEffect(() => {
+    if (business?.situation !== 'approved' || business?.status !== 'open') return;
     setTimeout(() => {
       const root = document.getElementById('root');
       let audio = document.createElement('audio');
@@ -137,7 +138,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
         });
       audio.remove();
     }, 2000);
-  }, [toast]);
+  }, [toast, business?.situation, business?.status]);
   React.useEffect(() => {
     setOrders([...activeOrders, ...completedAndActiveOrders]);
   }, [activeOrders, completedAndActiveOrders]);
