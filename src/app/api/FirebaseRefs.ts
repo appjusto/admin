@@ -140,8 +140,6 @@ export default class FirebaseRefs {
   // couriers
   getCouriersRef = () => collection(this.firestore, 'couriers');
   getCourierRef = (courierId: string) => doc(this.getCouriersRef(), courierId);
-  getCourierReviewsRef = (courierId: string) =>
-    collection(this.getCourierRef(courierId), 'reviews');
   getCourierPrivateRef = (courierId: string) =>
     collection(this.getCourierRef(courierId), 'private');
   getCourierMarketPlaceRef = (courierId: string) =>
@@ -150,6 +148,9 @@ export default class FirebaseRefs {
     collection(this.getCourierRef(courierId), 'profilenotes');
   getCourierProfileNoteRef = (courierId: string, profileNoteId: string) =>
     doc(this.getCourierProfileNotesRef(courierId), profileNoteId);
+
+  // reviews
+  getReviewsRef = () => collection(this.firestore, 'reviews');
 
   // fleets
   getFleetsRef = () => collection(this.firestore, 'fleets');

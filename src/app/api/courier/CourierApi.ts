@@ -79,11 +79,12 @@ export default class CourierApi {
     resultHandler: (result: WithId<CourierReview>[] | null) => void
   ): Unsubscribe {
     const q = query(
-      this.refs.getCourierReviewsRef(courierId),
-      orderBy('createdOn', 'desc'),
+      this.refs.getReviewsRef(),
+      orderBy('reviewedOn', 'desc'),
+      where('courier.id', '==', courierId),
       where('type', 'in', types),
-      where('createdOn', '>=', start),
-      where('createdOn', '<=', end)
+      where('reviewedOn', '>=', start),
+      where('reviewedOn', '<=', end)
     );
     // returns the unsubscribe function
     return customCollectionSnapshot(q, resultHandler);
