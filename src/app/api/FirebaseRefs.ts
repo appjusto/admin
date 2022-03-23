@@ -8,9 +8,10 @@ export default class FirebaseRefs {
   getQueryGoogleMapsCallable = () => httpsCallable(this.functions, 'queryGoogleMaps');
   getUpdateEmailCallable = () => httpsCallable(this.functions, 'updateEmail');
   getDeleteAccountCallable = () => httpsCallable(this.functions, 'deleteAccount');
-  getCreateBusinessProfileCallable = () => httpsCallable(this.functions, 'createBusinessProfile');
-  getUpdateBusinessSlugCallable = () => httpsCallable(this.functions, 'updateBusinessSlug');
-  getCloneBusinessCallable = () => httpsCallable(this.functions, 'cloneBusiness');
+  // getCreateBusinessProfileCallable = () => httpsCallable(this.functions, 'createBusinessProfile');
+  // getUpdateBusinessSlugCallable = () => httpsCallable(this.functions, 'updateBusinessSlug');
+  // getCloneBusinessCallable = () => httpsCallable(this.functions, 'cloneBusiness');
+  getBusinessProfileCallable = () => httpsCallable(this.functions, 'businessProfile');
   getCloneComplementsGroupCallable = () => httpsCallable(this.functions, 'cloneComplementsGroup');
   getCreateManagersCallable = () => httpsCallable(this.functions, 'createManagers');
   getGetBusinessManagersCallable = () => httpsCallable(this.functions, 'getBusinessManagers');

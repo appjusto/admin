@@ -156,7 +156,7 @@ export default class BusinessApi {
       meta: { version: '1' }, // TODO: pass correct version on
       operation: 'create',
     };
-    const business = await this.refs.getCreateBusinessProfileCallable()(payload);
+    const business = await this.refs.getBusinessProfileCallable()(payload);
     return business.data as WithId<Business>;
   }
 
@@ -166,7 +166,7 @@ export default class BusinessApi {
       meta: { version: '1' }, // TODO: pass correct version on
       operation: 'clone',
     };
-    const business = await this.refs.getCloneBusinessCallable()(payload);
+    const business = await this.refs.getBusinessProfileCallable()(payload);
     return business.data as WithId<Business>;
   }
 
@@ -189,7 +189,7 @@ export default class BusinessApi {
       slug,
       operation: 'update-slug',
     };
-    const result = await this.refs.getUpdateBusinessSlugCallable()(payload);
+    const result = await this.refs.getBusinessProfileCallable()(payload);
     return result;
   }
 
