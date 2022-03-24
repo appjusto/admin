@@ -1,4 +1,4 @@
-import { Order, OrderStatus, WithId } from '@appjusto/types';
+import { DispatchingState, IssueType, Order, OrderStatus, WithId } from '@appjusto/types';
 import {
   Button,
   Drawer,
@@ -30,6 +30,8 @@ interface BaseDrawerProps {
   order?: WithId<Order> | null;
   isOpen: boolean;
   onClose(): void;
+  message?: string;
+  updateState(type: string, value: OrderStatus | DispatchingState | IssueType | string): void;
   updateOrderStatus(value?: OrderStatus): void;
   cancellation(type?: 'prevention'): void;
   loadingState: OrderDrawerLoadingState;
@@ -41,6 +43,8 @@ export const OrderBaseDrawer = ({
   agent,
   order,
   onClose,
+  message,
+  updateState,
   updateOrderStatus,
   cancellation,
   loadingState,
@@ -101,6 +105,8 @@ export const OrderBaseDrawer = ({
             {isFlagged && (
               <FraudPrevention
                 orderId={order?.id!}
+                message={message}
+                updateMessage={(message: string) => updateState('message', message)}
                 handleConfirm={() => updateOrderStatus('confirmed')}
                 handleCancel={() => cancellation('prevention')}
                 loadingState={loadingState}

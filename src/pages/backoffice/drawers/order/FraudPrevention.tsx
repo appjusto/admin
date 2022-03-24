@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Icon, Stack, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, Icon, Stack, Text, Textarea } from '@chakra-ui/react';
 import { useObserveOrderFraudPrevention } from 'app/api/order/useObserveOrderFraudPrevention';
 import { MdPolicy, MdWarningAmber } from 'react-icons/md';
 import { t } from 'utils/i18n';
@@ -7,6 +7,8 @@ import { SectionTitle } from '../generics/SectionTitle';
 
 interface FraudPreventionProps {
   orderId: string;
+  message?: string;
+  updateMessage(message: string): void;
   handleConfirm(): void;
   handleCancel(): void;
   loadingState: OrderDrawerLoadingState;
@@ -14,6 +16,8 @@ interface FraudPreventionProps {
 
 export const FraudPrevention = ({
   orderId,
+  message,
+  updateMessage,
   handleConfirm,
   handleCancel,
   loadingState,
@@ -58,6 +62,13 @@ export const FraudPrevention = ({
           <Icon as={MdWarningAmber} mr="2" /> {t('Endereço próximo a local de fraude confirmada;')}
         </Text>
       )}
+      <SectionTitle>{t('Comentário:')}</SectionTitle>
+      <Textarea
+        mt="2"
+        bgColor="white"
+        value={message}
+        onChange={(ev) => updateMessage(ev.target.value)}
+      />
       <Text mt="4">
         {t('Se nenhuma ação for tomada, o pedido será confirmado dentro de instantes:')}
       </Text>

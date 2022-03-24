@@ -83,7 +83,7 @@ export const OrderStatusBar = ({
               <CustomRadio mt="2" value="delivered">
                 {t('Entregue')}
               </CustomRadio>
-              <CustomRadio mt="2" value="rejected">
+              <CustomRadio mt="2" value="rejected" isDisabled>
                 {t('Rejeitado')}
               </CustomRadio>
               <CustomRadio mt="2" value="canceled">
