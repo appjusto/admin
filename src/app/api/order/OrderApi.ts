@@ -113,6 +113,25 @@ export default class OrderApi {
     return customCollectionSnapshot(q, resultHandler);
   }
 
+  observeDashboardInvoices(
+    resultHandler: (orders: WithId<Invoice>[]) => void,
+    businessId?: string | null,
+    start?: Date | null,
+    end?: Date | null,
+    invoiceStatus?: IuguInvoiceStatus
+  ): Unsubscribe {
+    const q = query(
+      this.refs.getInvoicesRef(),
+      orderBy('updatedOn', 'desc'),
+      where('accountId', '==', businessId),
+      where('status', '==', invoiceStatus),
+      where('updatedOn', '>=', start),
+      where('updatedOn', '<=', end)
+    );
+    // returns the unsubscribe function
+    return customCollectionSnapshot(q, resultHandler);
+  }
+
   observeBODashboardOrders(
     statuses: OrderStatus[],
     resultHandler: (orders: WithId<Order>[]) => void,

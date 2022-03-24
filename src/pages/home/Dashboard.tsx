@@ -82,18 +82,18 @@ const Dashboard = () => {
   // context
   const { business, isDeleted, setIsDeleted } = useContextBusiness();
   const {
-    todayOrders,
+    todayInvoices,
     todayValue,
     todayAverage,
-    monthOrders,
+    monthInvoices,
     monthValue,
     monthAverage,
-    currentWeekOrders,
+    currentWeekInvoices,
     currentWeekValue,
     currentWeekAverage,
     currentWeekProduct,
     currentWeekByDay,
-    lastWeekOrders,
+    lastWeekInvoices,
     lastWeekValue,
     lastWeekByDay,
   } = useContextBusinessDashboard();
@@ -125,7 +125,7 @@ const Dashboard = () => {
     );
     return `${sign} (${result})`;
   };
-  const showChart = currentWeekOrders! > 0 || lastWeekOrders! > 0;
+  const showChart = currentWeekInvoices! > 0 || lastWeekInvoices! > 0;
   // side effects
   React.useEffect(() => {
     const { date, time } = getDateTime();
@@ -189,12 +189,12 @@ const Dashboard = () => {
                 <InfoBox
                   minW="140px"
                   isJoined
-                  data={todayOrders}
+                  data={todayInvoices}
                   title={t('Pedidos/ Hoje')}
                   titleColor="green.600"
                 >
                   <Text mt="1" color="black" minW="140px" fontSize="2xl" lineHeight="30px">
-                    {`${todayOrders ?? 'N/E'} pedidos`}
+                    {`${todayInvoices ?? 'N/E'} pedidos`}
                   </Text>
                   <Text mt="1" fontSize="md" lineHeight="22px">
                     {todayValue !== undefined ? formatCurrency(todayValue) : 'N/E'}
@@ -212,9 +212,9 @@ const Dashboard = () => {
                 </InfoBox>
               </Stack>
               <Stack direction={{ base: 'column', md: 'row' }}>
-                <InfoBox data={monthOrders} title={t(`Pedidos/ ${currentMonth}`)}>
+                <InfoBox data={monthInvoices} title={t(`Pedidos/ ${currentMonth}`)}>
                   <Text mt="1" color="black" minW="140px" fontSize="2xl" lineHeight="30px">
-                    {`${monthOrders ?? 'N/E'} pedidos`}
+                    {`${monthInvoices ?? 'N/E'} pedidos`}
                   </Text>
                   <Text mt="1" fontSize="md" lineHeight="22px">
                     {monthValue ? formatCurrency(monthValue) : 'R$ 0,00'}
@@ -236,12 +236,12 @@ const Dashboard = () => {
               <Stack w="100%" direction={{ base: 'column', md: 'row' }}>
                 <InfoBox
                   w="100%"
-                  data={currentWeekOrders}
+                  data={currentWeekInvoices}
                   title={t('Total de pedidos')}
                   circleBg="green.600"
                 >
                   <Text mt="1" color="black" minW="140px" fontSize="2xl" lineHeight="30px">
-                    {`${currentWeekOrders ?? 'N/E'} pedidos`}
+                    {`${currentWeekInvoices ?? 'N/E'} pedidos`}
                   </Text>
                   <Text mt="1" fontSize="md" lineHeight="22px">
                     {currentWeekValue ? formatCurrency(currentWeekValue) : 'R$ 0,00'}
@@ -262,12 +262,12 @@ const Dashboard = () => {
 
                 <InfoBox
                   w="100%"
-                  data={lastWeekOrders}
+                  data={lastWeekInvoices}
                   title={t('Semana anterior')}
                   circleBg="gray.500"
                 >
                   <Text mt="1" color="black" minW="140px" fontSize="2xl" lineHeight="30px">
-                    {`${lastWeekOrders ?? 'N/E'} pedidos`}
+                    {`${lastWeekInvoices ?? 'N/E'} pedidos`}
                   </Text>
                   <Text mt="1" color="black" fontSize="sm" lineHeight="22px">
                     {getRevenueDifference()}

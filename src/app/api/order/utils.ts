@@ -1,4 +1,4 @@
-import { Order, OrderCancellationParams, WithId } from '@appjusto/types';
+import { Invoice, Order, OrderCancellationParams, WithId } from '@appjusto/types';
 import dayjs from 'dayjs';
 import { Timestamp } from 'firebase/firestore';
 import { omit } from 'lodash';
@@ -67,7 +67,7 @@ export const calculateCancellationCosts = (order: Order, params: OrderCancellati
   return costs;
 };
 
-export const orderPeriodFilter = (timestamp: Timestamp, start: Date, end?: Date) => {
+export const objectPeriodFilter = (timestamp: Timestamp, start: Date, end?: Date) => {
   if (!timestamp) return false;
   let value = timestamp.seconds;
   let startLimit = start.getTime() / 1000;
@@ -99,24 +99,24 @@ export const findMostFrequentProduct = (products: string[]) => {
   return mostFreq;
 };
 
-export interface OrdersByDay {
+export interface ItemByDay {
   date: number;
   value: number;
 }
 
-export const splitOrdersValuesByPeriod = (
-  orders: WithId<Order>[],
+export const splitInvoicesValuesByPeriod = (
+  invoices: WithId<Invoice>[],
   periodNumber: number,
   startDate: number // milliseconds
 ) => {
-  let period = [] as OrdersByDay[];
+  let period = [] as ItemByDay[];
   for (let i = 0; i < periodNumber; i++) {
     const time = i * 1000 * 60 * 60 * 24;
     const date = dayjs(startDate + time).date();
     period.push({ date, value: 0 });
   }
-  orders.forEach((order) => {
-    const date = (order.updatedOn as Timestamp).toDate().getDate();
+  invoices.forEach((invoice) => {
+    const date = (invoice.updatedOn as Timestamp).toDate().getDate();
     let item = period.find((item) => item.date === date);
     if (item) item.value += 1;
   });
