@@ -1,4 +1,5 @@
 import { Order, OrderCancellationParams, WithId } from '@appjusto/types';
+import dayjs from 'dayjs';
 import { Timestamp } from 'firebase/firestore';
 import { omit } from 'lodash';
 import { use } from 'utils/local';
@@ -106,21 +107,12 @@ export interface OrdersByDay {
 export const splitOrdersValuesByPeriod = (
   orders: WithId<Order>[],
   periodNumber: number,
-  endDate: number,
-  lastDayLastMonth: number
+  startDate: number // milliseconds
 ) => {
   let period = [] as OrdersByDay[];
-  let currentMonthReducer = 0;
-  let lastMonthReducer = 0;
   for (let i = 0; i < periodNumber; i++) {
-    let date;
-    if (endDate - currentMonthReducer > 0) {
-      date = endDate - currentMonthReducer;
-      currentMonthReducer += 1;
-    } else {
-      date = lastDayLastMonth - lastMonthReducer;
-      lastMonthReducer += 1;
-    }
+    const time = i * 1000 * 60 * 60 * 24;
+    const date = dayjs(startDate + time).date();
     period.push({ date, value: 0 });
   }
   orders.forEach((order) => {
@@ -128,5 +120,5 @@ export const splitOrdersValuesByPeriod = (
     let item = period.find((item) => item.date === date);
     if (item) item.value += 1;
   });
-  return period.reverse();
+  return period.map((item) => item.value);
 };
