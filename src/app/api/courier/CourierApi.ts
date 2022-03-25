@@ -3,15 +3,16 @@ import {
   CourierStatus,
   Fleet,
   MarketplaceAccountInfo,
+  OrderConsumerReview,
   ProfileNote,
   ReleaseCourierPayload,
+  ReviewType,
   WithId,
 } from '@appjusto/types';
 import * as Sentry from '@sentry/react';
 import {
   addDoc,
   deleteDoc,
-  FieldValue,
   getDoc,
   orderBy,
   query,
@@ -24,14 +25,6 @@ import FilesApi from '../FilesApi';
 import FirebaseRefs from '../FirebaseRefs';
 import { customCollectionSnapshot, customDocumentSnapshot } from '../utils';
 
-export type CourierReviewType = 'positive' | 'negative';
-
-export interface CourierReview {
-  orderId: string;
-  type: CourierReviewType;
-  createdOn: FieldValue;
-  comment?: string;
-}
 export default class CourierApi {
   constructor(private refs: FirebaseRefs, private files: FilesApi) {}
 
@@ -73,16 +66,16 @@ export default class CourierApi {
 
   observeCourierReviews(
     courierId: string,
-    types: CourierReviewType[],
+    types: ReviewType[],
     start: Date,
     end: Date,
-    resultHandler: (result: WithId<CourierReview>[] | null) => void
+    resultHandler: (result: WithId<OrderConsumerReview>[] | null) => void
   ): Unsubscribe {
     const q = query(
       this.refs.getReviewsRef(),
       orderBy('reviewedOn', 'desc'),
       where('courier.id', '==', courierId),
-      where('type', 'in', types),
+      where('courier.rating', 'in', types),
       where('reviewedOn', '>=', start),
       where('reviewedOn', '<=', end)
     );

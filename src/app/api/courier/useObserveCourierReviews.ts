@@ -1,19 +1,18 @@
+import { OrderConsumerReview, ReviewType, WithId } from '@appjusto/types';
 import { useContextApi } from 'app/state/api/context';
-import { WithId } from '@appjusto/types';
-import React from 'react';
-import { CourierReview, CourierReviewType } from './CourierApi';
 import dayjs from 'dayjs';
+import React from 'react';
 
 export const useObserveCourierReviews = (
   courierId?: string | null,
-  types?: CourierReviewType[],
+  types?: ReviewType[],
   start?: string,
   end?: string
 ) => {
   // context
   const api = useContextApi();
   // state
-  const [reviews, setReviews] = React.useState<WithId<CourierReview>[] | null>();
+  const [reviews, setReviews] = React.useState<WithId<OrderConsumerReview>[] | null>();
   // side effects
   React.useEffect(() => {
     if (!courierId || !types || !start || !end) return; // during initialization
