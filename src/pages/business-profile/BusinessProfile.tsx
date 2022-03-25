@@ -163,7 +163,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   };
   const cloneBusinessHandler = async () => {
     const newBusiness = await cloneBusiness();
-    if (newBusiness) {
+    if (newBusiness?.id) {
       setBusinessId(newBusiness.id);
       history.push('/app');
     }
