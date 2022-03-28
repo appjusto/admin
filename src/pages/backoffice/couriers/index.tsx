@@ -34,12 +34,11 @@ const CouriersPage = () => {
   ]);
   const [filters, setFilters] = React.useState<BasicUserFilter[]>([]);
 
-  const { results: couriers, fetchNextPage, refetch } = useBasicUsersSearch<CourierAlgolia>(
-    true,
-    'couriers',
-    filters,
-    search
-  );
+  const {
+    results: couriers,
+    fetchNextPage,
+    refetch,
+  } = useBasicUsersSearch<CourierAlgolia>(true, 'couriers', filters, search);
 
   // handlers
   const closeDrawerHandler = () => {
@@ -104,7 +103,7 @@ const CouriersPage = () => {
           value={search}
           onChange={(event) => setSearch(event.target.value)}
           label={t('Buscar')}
-          placeholder={t('Buscar por ID, nome, e-mail ou CPF')}
+          placeholder={t('Buscar por ID, nome, e-mail, CPF ou fone')}
         />
         <StateAndCityFilter
           state={state}
