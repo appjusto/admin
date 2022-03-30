@@ -171,7 +171,6 @@ export const BusinessBOProvider = ({ children }: Props) => {
   };
 
   // side effects
-  console.log(state);
   React.useEffect(() => {
     clearBusiness();
   }, [clearBusiness]);
