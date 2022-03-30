@@ -8,7 +8,7 @@ import { SectionTitle } from '../generics/SectionTitle';
 
 export const BusinessLive = () => {
   // context
-  const { business, handleBusinessStatusChange } = useContextBusinessBackoffice();
+  const { business, handleBusinessProfileChange } = useContextBusinessBackoffice();
 
   // state
   const [isOpen, setIsOpen] = React.useState<BusinessStatus>(business?.status ?? 'closed');
@@ -33,9 +33,9 @@ export const BusinessLive = () => {
   }, [business?.enabled]);
 
   React.useEffect(() => {
-    handleBusinessStatusChange('status', isOpen);
-    handleBusinessStatusChange('enabled', isEnabled === 'true' ? true : false);
-  }, [isOpen, isEnabled, handleBusinessStatusChange]);
+    handleBusinessProfileChange('status', isOpen);
+    handleBusinessProfileChange('enabled', isEnabled === 'true' ? true : false);
+  }, [isOpen, isEnabled, handleBusinessProfileChange]);
 
   // UI
   return (

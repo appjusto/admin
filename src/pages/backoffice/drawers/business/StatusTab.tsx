@@ -13,7 +13,7 @@ const issueOptionsArray = ['business-profile-invalid'] as IssueType[];
 
 export const StatusTab = () => {
   // context
-  const { business, handleBusinessStatusChange, marketPlace } = useContextBusinessBackoffice();
+  const { business, handleBusinessProfileChange, marketPlace } = useContextBusinessBackoffice();
   const issueOptions = useIssuesByType(issueOptionsArray);
   // state
   const [financialIssues, setFinancialIssues] = React.useState<string[]>([]);
@@ -43,7 +43,7 @@ export const StatusTab = () => {
       <SectionTitle mt="0">{t('Alterar status do restaurante:')}</SectionTitle>
       <RadioGroup
         mt="2"
-        onChange={(value: ProfileSituation) => handleBusinessStatusChange('situation', value)}
+        onChange={(value: ProfileSituation) => handleBusinessProfileChange('situation', value)}
         value={business?.situation}
         defaultValue="1"
         colorScheme="green"
@@ -75,7 +75,7 @@ export const StatusTab = () => {
           <CheckboxGroup
             colorScheme="green"
             value={business?.profileIssues}
-            onChange={(value) => handleBusinessStatusChange('profileIssues', value as string[])}
+            onChange={(value) => handleBusinessProfileChange('profileIssues', value as string[])}
           >
             <VStack alignItems="flex-start" mt="4" color="black" spacing={2}>
               {issueOptions?.map((issue) => (
@@ -97,7 +97,7 @@ export const StatusTab = () => {
           <Textarea
             mt="2"
             value={business?.profileIssuesMessage ?? ''}
-            onChange={(ev) => handleBusinessStatusChange('profileIssuesMessage', ev.target.value)}
+            onChange={(ev) => handleBusinessProfileChange('profileIssuesMessage', ev.target.value)}
           />
         </>
       )}

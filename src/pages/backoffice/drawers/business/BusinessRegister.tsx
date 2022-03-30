@@ -2,6 +2,7 @@ import { Box } from '@chakra-ui/react';
 import { useObserveBusinessProfileNotes } from 'app/api/business/profile/useObserveBusinessProfileNotes';
 import { useContextBusinessBackoffice } from 'app/state/business/businessBOContext';
 import { ProfileNotes } from 'common/components/backoffice/ProfileNotes';
+import { CustomInput } from 'common/components/form/input/CustomInput';
 import { BusinessPhoneField, BusinessPhones } from 'pages/business-profile/business-phones';
 import React from 'react';
 import { t } from 'utils/i18n';
@@ -13,16 +14,12 @@ export const BusinessRegister = () => {
   // context
   const {
     business,
+    handleBusinessProfileChange,
     handleBussinesPhonesChange,
     handleBusinessPhoneOrdering,
   } = useContextBusinessBackoffice();
-  const {
-    profileNotes,
-    updateNote,
-    deleteNote,
-    updateResult,
-    deleteResult,
-  } = useObserveBusinessProfileNotes(business?.id);
+  const { profileNotes, updateNote, deleteNote, updateResult, deleteResult } =
+    useObserveBusinessProfileNotes(business?.id);
   // UI
   return (
     <Box>
@@ -40,6 +37,13 @@ export const BusinessRegister = () => {
       <BOManagerProfile />
       <SectionTitle>{t('Dados bancários')}</SectionTitle>
       <BOBankingInformation />
+      <SectionTitle>{t('Desconto médio')}</SectionTitle>
+      <CustomInput
+        id="bo-business-average-discount"
+        label="Percentual de desconto"
+        value={business?.averageDiscount ? business.averageDiscount.toString() : '0'}
+        onChange={(e) => handleBusinessProfileChange('averageDiscount', parseInt(e.target.value))}
+      />
       <SectionTitle>{t('Anotações')}</SectionTitle>
       <ProfileNotes
         profileNotes={profileNotes}

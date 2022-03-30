@@ -12,7 +12,7 @@ import { useBusinessManagerAndBankAccountBatch } from 'app/api/business/profile/
 import { useBusinessMarketPlace } from 'app/api/business/useBusinessMarketPlace';
 import { MutationResult } from 'app/api/mutation/useCustomMutation';
 import { BackofficeProfileValidation } from 'common/types';
-import { isEmpty, isEqual } from 'lodash';
+import { isEmpty, isEqual, pick } from 'lodash';
 import { BusinessPhoneField } from 'pages/business-profile/business-phones';
 import React, { Dispatch, SetStateAction } from 'react';
 import { UseMutateAsyncFunction } from 'react-query';
@@ -34,7 +34,7 @@ interface BusinessBOContextProps {
   business?: WithId<Business> | null;
   contextValidation: BackofficeProfileValidation;
   isLoading: boolean;
-  handleBusinessStatusChange(key: string, value: any): void;
+  handleBusinessProfileChange(key: string, value: any): void;
   handleBussinesPhonesChange(
     operation: 'add' | 'remove' | 'update' | 'ordering',
     args?: number | { index: number; field: BusinessPhoneField; value: any }
@@ -51,6 +51,15 @@ interface BusinessBOContextProps {
 
 const BusinessBOContext = React.createContext<BusinessBOContextProps>({} as BusinessBOContextProps);
 
+const businessKeys: (keyof Business)[] = [
+  'situation',
+  'status',
+  'enabled',
+  'phones',
+  'averageDiscount',
+  'profileIssues',
+  'profileIssuesMessage',
+];
 interface Props {
   children: React.ReactNode | React.ReactNode[];
 }
@@ -66,14 +75,11 @@ export const BusinessBOProvider = ({ children }: Props) => {
   const { setBusinessId, business } = useContextBusiness();
   const { manager, setManagerEmail } = useContextManagerProfile();
   const { bankAccount } = useBusinessBankAccount();
-  const { marketPlace, deleteMarketPlace, deleteMarketPlaceResult } = useBusinessMarketPlace(
-    businessId
-  );
+  const { marketPlace, deleteMarketPlace, deleteMarketPlaceResult } =
+    useBusinessMarketPlace(businessId);
 
-  const {
-    updateBusinessManagerAndBankAccount,
-    updateResult,
-  } = useBusinessManagerAndBankAccountBatch();
+  const { updateBusinessManagerAndBankAccount, updateResult } =
+    useBusinessManagerAndBankAccountBatch();
   // state
   const [state, dispatch] = React.useReducer(businessBOReducer, {} as businessBOState);
   const [contextValidation, setContextValidation] = React.useState<BackofficeProfileValidation>({
@@ -84,7 +90,7 @@ export const BusinessBOProvider = ({ children }: Props) => {
   });
 
   // handlers
-  const handleBusinessStatusChange = React.useCallback((key: string, value: any) => {
+  const handleBusinessProfileChange = React.useCallback((key: string, value: any) => {
     if (key === 'situation' && value === 'blocked') {
       dispatch({
         type: 'update_business',
@@ -125,7 +131,6 @@ export const BusinessBOProvider = ({ children }: Props) => {
   const handleBankingInfoChange = (newBankAccount: Partial<BankAccount>) => {
     dispatch({ type: 'update_banking', payload: newBankAccount });
   };
-
   const handleSave = () => {
     if (business?.situation === 'approved') {
       const { cpf, phone, agency, account } = contextValidation;
@@ -157,7 +162,8 @@ export const BusinessBOProvider = ({ children }: Props) => {
     let businessChanges = null;
     let managerChanges = null;
     let bankingChanges = null;
-    if (!isEqual(state.businessProfile, business)) businessChanges = state.businessProfile;
+    if (!isEqual(state.businessProfile, business))
+      businessChanges = pick(state.businessProfile, businessKeys);
     if (!isEqual(state.manager, manager)) managerChanges = state.manager;
     if (!isEmpty(state.bankingInfo) && !isEqual(state.bankingInfo, bankAccount))
       bankingChanges = state.bankingInfo;
@@ -207,7 +213,7 @@ export const BusinessBOProvider = ({ children }: Props) => {
         business: state.businessProfile,
         contextValidation,
         isLoading: updateResult.isLoading,
-        handleBusinessStatusChange,
+        handleBusinessProfileChange,
         handleBussinesPhonesChange,
         handleBusinessPhoneOrdering,
         handleManagerProfileChange,

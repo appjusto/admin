@@ -216,6 +216,7 @@ export default class BusinessApi {
       ...businessChanges,
       updatedOn: timestamp,
     };
+    console.log('businessChanges', businessChanges);
     if (businessChanges) batch.update(this.refs.getBusinessRef(businessId), fullBusinessChanges);
     // manager
     if (managerChanges) batch.update(this.refs.getManagerRef(managerId), managerChanges);

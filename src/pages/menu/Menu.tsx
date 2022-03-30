@@ -1,6 +1,5 @@
 import { Box, Flex, HStack, Icon, Input, InputGroup, InputRightElement } from '@chakra-ui/react';
 import { useContextMenu } from 'app/state/menu/context';
-import { AverageDiscountCard } from 'common/components/AverageDiscountCard';
 import { FilterText } from 'common/components/backoffice/FilterText';
 import { NewFeatureBox } from 'common/components/NewFeatureBox';
 import { ReactComponent as SearchIcon } from 'common/img/searchIcon.svg';
@@ -38,7 +37,6 @@ const Menu = () => {
     <Box>
       <Box pb="10">
         <PageHeader title={t('Cardápio')} subtitle={t('Defina o cardápio do seu restaurante.')} />
-        <AverageDiscountCard />
         <NewFeatureBox
           icon={BsChat}
           title={t('Adicionar mensagem para seus clientes')}
