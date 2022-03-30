@@ -1,8 +1,8 @@
-import { useContextApi } from 'app/state/api/context';
 import { Business, WithId } from '@appjusto/types';
+import { useContextApi } from 'app/state/api/context';
 import React from 'react';
 
-export const useObserveBusinessManagedBy = (email: string | undefined | null) => {
+export const useObserveBusinessManagedBy = (email?: string | null) => {
   // contex
   const api = useContextApi();
   // state
@@ -12,7 +12,7 @@ export const useObserveBusinessManagedBy = (email: string | undefined | null) =>
     if (!email) return; // during initialization
     const unsub = api.business().observeBusinessManagedBy(email, setBusinesses);
     return () => unsub();
-  }, [email, api]);
+  }, [api, email]);
   // return
   return businesses;
 };

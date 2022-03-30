@@ -72,7 +72,7 @@ export const BusinessBOProvider = ({ children }: Props) => {
   // context
   const { dispatchAppRequestResult } = useContextAppRequests();
   const { businessId } = useParams<Params>();
-  const { setBusinessId, business } = useContextBusiness();
+  const { business, setBusinessId, clearBusiness } = useContextBusiness();
   const { manager, setManagerEmail } = useContextManagerProfile();
   const { bankAccount } = useBusinessBankAccount();
   const { marketPlace, deleteMarketPlace, deleteMarketPlaceResult } =
@@ -171,6 +171,11 @@ export const BusinessBOProvider = ({ children }: Props) => {
   };
 
   // side effects
+  console.log(state);
+  React.useEffect(() => {
+    clearBusiness();
+  }, [clearBusiness]);
+
   React.useEffect(() => {
     if (businessId) setBusinessId(businessId);
   }, [businessId, setBusinessId]);
@@ -183,18 +188,15 @@ export const BusinessBOProvider = ({ children }: Props) => {
 
   React.useEffect(() => {
     if (manager) dispatch({ type: 'load_manager', payload: manager });
-    else dispatch({ type: 'clear_manager' });
   }, [manager]);
 
   React.useEffect(() => {
     if (bankAccount && bankAccountSet(bankAccount))
       dispatch({ type: 'update_banking', payload: bankAccount });
-    else dispatch({ type: 'clear_banking' });
   }, [bankAccount]);
 
   React.useEffect(() => {
     if (business) dispatch({ type: 'load_business', payload: business });
-    else dispatch({ type: 'clear_business' });
   }, [business]);
 
   React.useEffect(() => {

@@ -9,6 +9,7 @@ import { getBusinessChangedKeys } from './utils';
 
 interface ContextProps {
   business?: WithId<Business> | null;
+  clearBusiness(): void;
   setBusinessId(businessId?: string | null): void;
   updateContextBusinessOrderPrint(status: boolean): void;
   businessesIsEmpty: boolean;
@@ -28,7 +29,9 @@ export const BusinessProvider = ({ children }: Props) => {
   // context
   const queryClient = useQueryClient();
   const { user, isBackofficeUser, refreshUserToken } = useContextFirebaseUser();
-  const businesses = useObserveBusinessManagedBy(user?.email);
+  const businesses = useObserveBusinessManagedBy(
+    isBackofficeUser === false ? user?.email : undefined
+  );
   const [businessId, setBusinessId] = React.useState<string | undefined | null>();
   const [isDeleted, setIsDeleted] = React.useState(false);
   const hookBusiness = useObserveBusinessProfile(businessId);
@@ -38,6 +41,9 @@ export const BusinessProvider = ({ children }: Props) => {
   // helpers
   const businessesIsEmpty = businesses?.length === 0;
   // handlers
+  const clearBusiness = React.useCallback(() => {
+    setBusiness(undefined);
+  }, []);
   const setBusinessIdByBusinesses = React.useCallback(() => {
     if (!businesses) return;
     setBusinessId(businesses.find(() => true)?.id ?? null);
@@ -104,6 +110,7 @@ export const BusinessProvider = ({ children }: Props) => {
     <BusinessContext.Provider
       value={{
         business,
+        clearBusiness,
         setBusinessId,
         updateContextBusinessOrderPrint,
         isDeleted,

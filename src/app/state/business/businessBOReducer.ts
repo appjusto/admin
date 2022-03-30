@@ -24,12 +24,9 @@ export type Actions =
       payload: { index: number; field: BusinessPhoneField; value: any };
     }
   | { type: 'ordering_business_phone'; payload: BusinessPhone[] }
-  | { type: 'clear_business' }
   | { type: 'load_manager'; payload: WithId<ManagerProfile> }
   | { type: 'update_manager'; payload: Partial<WithId<ManagerProfile>> }
-  | { type: 'clear_manager' }
-  | { type: 'update_banking'; payload: Partial<BankAccount> }
-  | { type: 'clear_banking' };
+  | { type: 'update_banking'; payload: Partial<BankAccount> };
 
 export const businessBOReducer = (state: businessBOState, action: Actions): businessBOState => {
   switch (action.type) {
@@ -88,11 +85,6 @@ export const businessBOReducer = (state: businessBOState, action: Actions): busi
           phones: action.payload,
         },
       };
-    case 'clear_business':
-      return {
-        ...state,
-        businessProfile: {} as WithId<Business>,
-      };
     case 'load_manager':
       return {
         ...state,
@@ -108,22 +100,12 @@ export const businessBOReducer = (state: businessBOState, action: Actions): busi
           ...action.payload,
         },
       };
-    case 'clear_manager':
-      return {
-        ...state,
-        manager: {} as WithId<ManagerProfile>,
-      };
     case 'update_banking':
       return {
         ...state,
         bankingInfo: {
           ...action.payload,
         },
-      };
-    case 'clear_banking':
-      return {
-        ...state,
-        bankingInfo: {} as WithId<BankAccount>,
       };
     default:
       throw new Error();
