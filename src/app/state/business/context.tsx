@@ -29,9 +29,7 @@ export const BusinessProvider = ({ children }: Props) => {
   // context
   const queryClient = useQueryClient();
   const { user, isBackofficeUser, refreshUserToken } = useContextFirebaseUser();
-  const businesses = useObserveBusinessManagedBy(
-    isBackofficeUser === false ? user?.email : undefined
-  );
+  const businesses = useObserveBusinessManagedBy(user?.email);
   const [businessId, setBusinessId] = React.useState<string | undefined | null>();
   const [isDeleted, setIsDeleted] = React.useState(false);
   const hookBusiness = useObserveBusinessProfile(businessId);

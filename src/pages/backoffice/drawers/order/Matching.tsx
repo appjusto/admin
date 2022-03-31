@@ -21,13 +21,8 @@ interface MatchingProps {
 
 export const Matching = ({ order }: MatchingProps) => {
   // context
-  const {
-    matching,
-    updateCourierNotified,
-    updateResult,
-    restartMatching,
-    restartResult,
-  } = useObserveOrderMatching(order?.id);
+  const { matching, updateCourierNotified, updateResult, restartMatching, restartResult } =
+    useObserveOrderMatching(order?.id);
   const { courierManualAllocation, allocationResult } = useOrderCourierManualAllocation();
   const {
     getOutsourceDelivery,
@@ -43,9 +38,8 @@ export const Matching = ({ order }: MatchingProps) => {
   const [courierRemoving, setCourierRemoving] = React.useState<string | null>(null);
   const [isRestarting, setIsRestarting] = React.useState<boolean>(false);
   const [isOutsourcing, setIsOutsourcing] = React.useState<boolean>(false);
-  const [outsourcingAccountType, setOutsourcingAccountType] = React.useState<OutsourceAccountType>(
-    'platform'
-  );
+  const [outsourcingAccountType, setOutsourcingAccountType] =
+    React.useState<OutsourceAccountType>('platform');
   const [outsourcingCourierName, setOutsourcingCourierName] = React.useState<string>();
   //const [couriersRejections, setCouriersRejections] = React.useState<OrderMatchingRejection[]>();
   // helpers
@@ -243,6 +237,17 @@ export const Matching = ({ order }: MatchingProps) => {
         <SectionTitle mt="4">
           {t(`Entregadores notificados: ${couriersNotified ? couriersNotified.length : 0}`)}
         </SectionTitle>
+        {process.env.REACT_APP_FIREBASE_EMULATOR && (
+          <Button
+            mt="4"
+            h="38px"
+            w="300px"
+            size="sm"
+            onClick={() => allocateCourier('zjbQXFXPAe8DxWjye3DO9qR6sUIM', 'Teste')}
+          >
+            {t('(Emulador) Alocar entregador Local')}
+          </Button>
+        )}
         <Box
           mt="4"
           p="2"
