@@ -44,6 +44,7 @@ const CourierReviewsItem = ({ review }: ItemPros) => {
             <Wrap py="2">
               {review.courier?.tags.map((tag) => (
                 <Text
+                  key={tag.id}
                   px="2"
                   fontSize="13px"
                   color={tag.type === 'positive' ? 'green' : 'red'}
