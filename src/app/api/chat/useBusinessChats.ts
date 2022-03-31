@@ -1,8 +1,9 @@
+import { ChatMessage, Order, WithId } from '@appjusto/types';
+import { OrderChatGroup } from 'app/api/chat/types';
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusinessId } from 'app/state/business/context';
-import { ChatMessage, Order, WithId } from '@appjusto/types';
+import { uniq } from 'lodash';
 import React from 'react';
-import { OrderChatGroup } from 'app/api/chat/types';
 import { getOrderChatGroup } from './utils';
 
 export const useBusinessChats = (
@@ -27,10 +28,21 @@ export const useBusinessChats = (
       setOrderChatGroup([]);
       return;
     }
-    const unsub = api
+    const unsubsPromise = api
       .chat()
-      .observeBusinessActiveChatMessages(businessId, totalActiveOrdersIds, setChatMessages);
-    return () => unsub();
+      .observeBusinessActiveChatMessages(
+        businessId,
+        totalActiveOrdersIds,
+        (messages: WithId<ChatMessage>[]) => {
+          setChatMessages((prev) => {
+            const update = uniq([...prev, ...messages]);
+            return update.filter((msg) => totalActiveOrdersIds.includes(msg.orderId));
+          });
+        }
+      );
+    return () => {
+      unsubsPromise.then((unsubs) => unsubs.forEach((unsub) => unsub()));
+    };
   }, [api, businessId, totalActiveOrdersIds]);
   React.useEffect(() => {
     if (!businessId) return;

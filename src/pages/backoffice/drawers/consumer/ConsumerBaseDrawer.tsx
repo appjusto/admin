@@ -129,7 +129,7 @@ export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
             <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
               {t('NPS:')}{' '}
               <Text as="span" fontWeight="500">
-                {consumer?.nps?.score ?? 'N/E'}
+                {consumer?.nps?.score ? consumer?.nps?.score.toFixed(2) : 'N/E'}
               </Text>
             </Text>
             <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
