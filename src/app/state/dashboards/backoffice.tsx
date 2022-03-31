@@ -6,6 +6,7 @@ import {
   OrderStatus,
   PlatformStatistics,
   ProfileChange,
+  ProfileSituation,
   WithId,
 } from '@appjusto/types';
 import { useObserveBusinesses } from 'app/api/business/useObserveBusinesses';
@@ -47,7 +48,7 @@ interface Props {
 
 const courierStatuses = ['available', 'dispatching'] as CourierStatus[];
 const businessesStatus = 'open' as BusinessStatus;
-const businessSituations = ['submitted', 'verified', 'invalid'];
+const businessSituations = ['submitted', 'verified', 'invalid'] as ProfileSituation[];
 const usersChangesSituations = ['pending'] as ProfileChangesSituations[];
 const statuses = ['charged', 'confirmed', 'preparing', 'ready', 'dispatching'] as OrderStatus[];
 
@@ -62,9 +63,8 @@ export const BackofficeDashboardProvider = ({ children }: Props) => {
   // lists
   const { businesses, fetchNextPage: fetchNextBusiness } = useObserveBusinesses(businessSituations);
   const orders = useObserveOrders(statuses);
-  const { userChanges, fetchNextPage: fetchNextChanges } = useObserveUsersChanges(
-    usersChangesSituations
-  );
+  const { userChanges, fetchNextPage: fetchNextChanges } =
+    useObserveUsersChanges(usersChangesSituations);
   // provider
   return (
     <BackofficeDashboardContext.Provider

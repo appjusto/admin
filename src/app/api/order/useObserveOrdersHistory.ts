@@ -3,12 +3,13 @@ import { useContextApi } from 'app/state/api/context';
 import dayjs from 'dayjs';
 import { DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
 import React from 'react';
+import { InQueryArray } from '../types';
 
 const initialMap = new Map();
 
 export const useObserveOrdersHistory = (
   businessId: string | null | undefined,
-  statuses: OrderStatus[] | null,
+  statuses: InQueryArray<OrderStatus> | null,
   orderCode?: string,
   start?: string,
   end?: string,
@@ -18,9 +19,8 @@ export const useObserveOrdersHistory = (
   // context
   const api = useContextApi();
   // state
-  const [ordersMap, setOrdersMap] = React.useState<Map<string | undefined, WithId<Order>[]>>(
-    initialMap
-  );
+  const [ordersMap, setOrdersMap] =
+    React.useState<Map<string | undefined, WithId<Order>[]>>(initialMap);
   const [orders, setOrders] = React.useState<WithId<Order>[] | null>();
   const [startAfter, setStartAfter] = React.useState<QueryDocumentSnapshot<DocumentData>>();
   const [lastOrder, setLastOrder] = React.useState<QueryDocumentSnapshot<DocumentData>>();

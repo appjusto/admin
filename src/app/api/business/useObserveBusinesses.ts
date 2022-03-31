@@ -1,10 +1,10 @@
-import { Business, WithId } from '@appjusto/types';
+import { Business, ProfileSituation, WithId } from '@appjusto/types';
 import { useContextApi } from 'app/state/api/context';
 import { DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
 import { isEqual, uniqWith } from 'lodash';
 import React from 'react';
 
-export const useObserveBusinesses = (situations: string[]) => {
+export const useObserveBusinesses = (situations: ProfileSituation[]) => {
   // context
   const api = useContextApi();
   // state

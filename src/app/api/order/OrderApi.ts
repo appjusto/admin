@@ -37,6 +37,7 @@ import {
   where,
 } from 'firebase/firestore';
 import FirebaseRefs from '../FirebaseRefs';
+import { InQueryArray } from '../types';
 import { customCollectionSnapshot, customDocumentSnapshot, queryLimit } from '../utils';
 
 export type CancellationData = {
@@ -149,7 +150,7 @@ export default class OrderApi {
   observeOrdersHistory(
     resultHandler: (orders: WithId<Order>[], last?: QueryDocumentSnapshot<DocumentData>) => void,
     businessId: string | null | undefined,
-    statuses: OrderStatus[] | null,
+    statuses: InQueryArray<OrderStatus> | null,
     orderCode: string | null | undefined,
     start: Date | null | undefined,
     end: Date | null | undefined,

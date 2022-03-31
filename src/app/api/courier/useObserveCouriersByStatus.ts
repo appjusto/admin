@@ -1,5 +1,5 @@
-import { useContextApi } from 'app/state/api/context';
 import { CourierStatus } from '@appjusto/types';
+import { useContextApi } from 'app/state/api/context';
 import React from 'react';
 
 export const useObserveCouriersByStatus = (statuses: CourierStatus[]) => {

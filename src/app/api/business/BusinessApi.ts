@@ -21,6 +21,7 @@ import {
   Ordering,
   Product,
   ProfileNote,
+  ProfileSituation,
   RequestWithdrawPayload,
   UpdateBusinessSlugPayload,
   WithId,
@@ -61,7 +62,7 @@ export default class BusinessApi {
   // businesses
   observeBusinesses(
     resultHandler: (result: WithId<Business>[], last?: QueryDocumentSnapshot<DocumentData>) => void,
-    situations: string[],
+    situations: ProfileSituation[],
     startAfterDoc?: QueryDocumentSnapshot<DocumentData>
   ): Unsubscribe {
     let q = query(
