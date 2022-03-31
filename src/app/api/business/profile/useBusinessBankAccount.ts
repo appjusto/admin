@@ -1,7 +1,7 @@
+import { BankAccount } from '@appjusto/types';
 import { useCustomMutation } from 'app/api/mutation/useCustomMutation';
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusinessId } from 'app/state/business/context';
-import { BankAccount } from '@appjusto/types';
 import { useQuery } from 'react-query';
 
 export const useBusinessBankAccount = (isOnboarding: boolean = false) => {
@@ -10,7 +10,8 @@ export const useBusinessBankAccount = (isOnboarding: boolean = false) => {
   const businessId = useContextBusinessId()!;
 
   // queries
-  const fetchBankAccount = () => api.business().fetchBankAccount(businessId);
+  const fetchBankAccount = () =>
+    businessId ? api.business().fetchBankAccount(businessId) : undefined;
   const { data: bankAccount } = useQuery(['business:bank', businessId], fetchBankAccount);
 
   // mutations
