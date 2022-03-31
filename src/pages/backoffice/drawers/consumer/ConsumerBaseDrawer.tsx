@@ -121,6 +121,18 @@ export const ConsumerBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
               </Text>
             </Text>
             <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+              {t('Qtd. de pedidos:')}{' '}
+              <Text as="span" fontWeight="500">
+                {consumer?.statistics?.totalOrders ?? 'N/E'}
+              </Text>
+            </Text>
+            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+              {t('NPS:')}{' '}
+              <Text as="span" fontWeight="500">
+                {consumer?.nps?.score ?? 'N/E'}
+              </Text>
+            </Text>
+            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
               {t('Cidade:')}{' '}
               <Text as="span" fontWeight="500">
                 {city}
