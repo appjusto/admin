@@ -16,6 +16,7 @@ import { CustomButton } from 'common/components/buttons/CustomButton';
 import { isObject } from 'lodash';
 import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
 import React from 'react';
+import { MdThumbDownOffAlt, MdThumbUpOffAlt } from 'react-icons/md';
 import { useRouteMatch } from 'react-router';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
@@ -106,6 +107,17 @@ export const BusinessBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
                 </Icon>
               </Text>
             </Text>
+            <Flex mt="1" alignItems="flex-end">
+              <Text fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+                {t('Avaliações:')}
+              </Text>
+              <Text ml="3" as="span" fontWeight="500" color="green.600">
+                <Icon mr="1" as={MdThumbUpOffAlt} />({business?.statistics?.positiveReviews ?? 0})
+              </Text>
+              <Text ml="4" as="span" fontWeight="500" color="red">
+                <Icon mr="1" as={MdThumbDownOffAlt} />({business?.statistics?.negativeReviews ?? 0})
+              </Text>
+            </Flex>
             <Flex
               my="8"
               fontSize="lg"
