@@ -2,7 +2,6 @@ import { ChatMessage, Order, WithId } from '@appjusto/types';
 import { OrderChatGroup } from 'app/api/chat/types';
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusinessId } from 'app/state/business/context';
-import { uniq } from 'lodash';
 import React from 'react';
 import { getOrderChatGroup } from './utils';
 
@@ -35,7 +34,9 @@ export const useBusinessChats = (
         totalActiveOrdersIds,
         (messages: WithId<ChatMessage>[]) => {
           setChatMessages((prev) => {
-            const update = uniq([...prev, ...messages]);
+            const newMessagesIds = messages.map((msg) => msg.id);
+            let filteredPrev = prev.filter((msg) => !newMessagesIds.includes(msg.id));
+            let update = [...filteredPrev, ...messages];
             return update.filter((msg) => totalActiveOrdersIds.includes(msg.orderId));
           });
         }

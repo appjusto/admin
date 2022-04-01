@@ -147,8 +147,8 @@ export const OrdersContextProvider = (props: ProviderProps) => {
       let unreadMessages = [] as string[];
       chats.forEach((group) => {
         group.counterParts.forEach((part) => {
-          if (part.unreadMessages && part.unreadMessages?.length > 0) {
-            unreadMessages = unreadMessages.concat(part.unreadMessages);
+          if (part.unreadMessages && part.unreadMessages.length > 0) {
+            unreadMessages.push(...part.unreadMessages);
           }
         });
       });
