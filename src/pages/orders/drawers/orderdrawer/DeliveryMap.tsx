@@ -14,8 +14,8 @@ import React from 'react';
 
 interface DeliveryMapProps {
   orderStatus?: OrderStatus;
-  origin?: LatLng;
-  destination?: LatLng;
+  origin?: LatLng | null;
+  destination?: LatLng | null;
   courier?: LatLng;
   orderPolyline?: string;
 }

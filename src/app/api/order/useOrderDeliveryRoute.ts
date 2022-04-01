@@ -1,7 +1,7 @@
-import React from 'react';
-import polyline from '@mapbox/polyline';
-import { getCoordinatesMidpoint } from 'utils/functions';
 import { LatLng } from '@appjusto/types';
+import polyline from '@mapbox/polyline';
+import React from 'react';
+import { getCoordinatesMidpoint } from 'utils/functions';
 
 type ShortLatLng = {
   lat: number;
@@ -16,8 +16,8 @@ export interface Route {
 }
 
 export const useOrderDeliveryRoute = (
-  origin?: LatLng,
-  destination?: LatLng,
+  origin?: LatLng | null,
+  destination?: LatLng | null,
   courier?: LatLng,
   orderPolyline?: string
 ) => {
