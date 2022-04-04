@@ -112,6 +112,7 @@ export const OrderDrawer = (props: Props) => {
       isCanceling={isCanceling}
       printOrder={printOrder}
       orderPrinting={business?.orderPrinting}
+      cookingTimeMode={business?.settings?.cookingTimeMode}
     >
       <Box position="relative">
         <Box w="100%">
@@ -248,6 +249,7 @@ export const OrderDrawer = (props: Props) => {
                   orderId={order.id}
                   cookingTime={order.cookingTime}
                   averageCookingTime={business?.averageCookingTime}
+                  cookingTimeMode={business?.settings?.cookingTimeMode}
                 />
               )}
             </>

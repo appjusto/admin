@@ -1,4 +1,4 @@
-import { Order, WithId } from '@appjusto/types';
+import { CookingTimeMode, Order, WithId } from '@appjusto/types';
 import {
   Box,
   Button,
@@ -35,6 +35,7 @@ interface BaseDrawerProps {
   children: React.ReactNode;
   printOrder?(): void;
   orderPrinting?: boolean;
+  cookingTimeMode?: CookingTimeMode;
 }
 
 export const OrderBaseDrawer = ({
@@ -45,6 +46,7 @@ export const OrderBaseDrawer = ({
   onClose,
   printOrder,
   orderPrinting,
+  cookingTimeMode,
   children,
   ...props
 }: BaseDrawerProps) => {
@@ -198,6 +200,7 @@ export const OrderBaseDrawer = ({
                       {t(`${order?.cookingTime ? order?.cookingTime / 60 : 'N/I'} min`)}
                       <Text
                         ml="2"
+                        display={cookingTimeMode === 'auto' ? 'none' : 'block'}
                         as="span"
                         color="#4EA031"
                         textDecor="underline"

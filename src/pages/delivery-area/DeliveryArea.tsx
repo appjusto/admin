@@ -310,7 +310,13 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
         >
           <Flex flexDir="column" justifyContent="flex-start">
             {radioOptions.map((option) => (
-              <CustomRadio key={option} mt="4" value={option} size="lg">
+              <CustomRadio
+                key={option}
+                mt="4"
+                value={option}
+                size="lg"
+                isDisabled={business?.settings?.cookingTimeMode === 'auto'}
+              >
                 {t(`${option} minutos`)}
               </CustomRadio>
             ))}

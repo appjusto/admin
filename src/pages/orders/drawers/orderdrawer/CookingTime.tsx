@@ -1,4 +1,5 @@
-import { Flex, RadioGroup, Switch, Text } from '@chakra-ui/react';
+import { CookingTimeMode } from '@appjusto/types';
+import { Box, Flex, RadioGroup, Switch, Text } from '@chakra-ui/react';
 import { useOrdersContext } from 'app/state/order';
 import CustomRadio from 'common/components/form/CustomRadio';
 import { CustomNumberInput } from 'common/components/form/input/CustomNumberInput';
@@ -9,11 +10,17 @@ interface CookingTimeProps {
   orderId: string;
   cookingTime?: number | null;
   averageCookingTime?: number | null;
+  cookingTimeMode?: CookingTimeMode;
 }
 
 const radioOptions = ['10', '20', '25', '30', '40', '45', '50', '60'];
 
-export const CookingTime = ({ orderId, cookingTime, averageCookingTime }: CookingTimeProps) => {
+export const CookingTime = ({
+  orderId,
+  cookingTime,
+  averageCookingTime,
+  cookingTimeMode,
+}: CookingTimeProps) => {
   // context
   const { setOrderCookingTime } = useOrdersContext();
 
@@ -54,6 +61,7 @@ export const CookingTime = ({ orderId, cookingTime, averageCookingTime }: Cookin
 
   //side effects
   React.useEffect(() => {
+    if (cookingTimeMode === 'auto') return;
     if (cookingTime) {
       setEnable(true);
       const timeInMinutes = (cookingTime / 60).toString();
@@ -69,9 +77,10 @@ export const CookingTime = ({ orderId, cookingTime, averageCookingTime }: Cookin
       setRadiosValue(timeInMinutes);
       setOrderCookingTime(orderId, averageCookingTime);
     }
-  }, [cookingTime, averageCookingTime, orderId, setOrderCookingTime]);
+  }, [cookingTimeMode, cookingTime, averageCookingTime, orderId, setOrderCookingTime]);
 
   //UI
+  if (cookingTimeMode === 'auto') return <Box />;
   return (
     <>
       <Flex mt="10" flexDir="row">
