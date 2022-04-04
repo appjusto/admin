@@ -30,6 +30,7 @@ export const getBusinessChangedKeys = (
     'coverImageExists',
     'orderPrinting',
     'slug',
+    'settings',
     // object types
     'managers',
     'profileIssues',

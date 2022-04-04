@@ -202,7 +202,7 @@ export const OrderBaseDrawer = ({
                       {t(`${order?.cookingTime ? order?.cookingTime / 60 : 'N/I'} min`)}
                       <Text
                         ml="2"
-                        display={isCookingTimeModeAuto ? 'none' : 'block'}
+                        display={isCookingTimeModeAuto ? 'none' : 'inline-block'}
                         as="span"
                         color="#4EA031"
                         textDecor="underline"

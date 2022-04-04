@@ -78,7 +78,6 @@ export const BusinessBOProvider = ({ children }: Props) => {
   const { bankAccount } = useBusinessBankAccount();
   const { marketPlace, deleteMarketPlace, deleteMarketPlaceResult } =
     useBusinessMarketPlace(businessId);
-
   const { updateBusinessManagerAndBankAccount, updateResult } =
     useBusinessManagerAndBankAccountBatch();
   // state
@@ -89,7 +88,6 @@ export const BusinessBOProvider = ({ children }: Props) => {
     agency: true,
     account: true,
   });
-
   // handlers
   const handleBusinessProfileChange = React.useCallback((key: string, value: any) => {
     if (key === 'situation' && value === 'blocked') {
@@ -99,7 +97,6 @@ export const BusinessBOProvider = ({ children }: Props) => {
       });
     } else dispatch({ type: 'update_business', payload: { [key]: value } });
   }, []);
-
   const handleBussinesPhonesChange = (
     operation: 'add' | 'remove' | 'update' | 'ordering',
     args?: number | { index: number; field: BusinessPhoneField; value: any }
@@ -120,15 +117,12 @@ export const BusinessBOProvider = ({ children }: Props) => {
       message: { title: 'Os argumentos para esta função não são válidos.' },
     });
   };
-
   const handleBusinessPhoneOrdering = (newPhones: BusinessPhone[]) => {
     return dispatch({ type: 'ordering_business_phone', payload: newPhones });
   };
-
   const handleManagerProfileChange = (key: string, value: any) => {
     dispatch({ type: 'update_manager', payload: { [key]: value } });
   };
-
   const handleBankingInfoChange = (newBankAccount: Partial<BankAccount>) => {
     dispatch({ type: 'update_banking', payload: newBankAccount });
   };
@@ -170,42 +164,34 @@ export const BusinessBOProvider = ({ children }: Props) => {
       bankingChanges = state.bankingInfo;
     updateBusinessManagerAndBankAccount({ businessChanges, managerChanges, bankingChanges });
   };
-
   // side effects
   React.useEffect(() => {
     clearBusiness();
   }, [clearBusiness]);
-
   React.useEffect(() => {
     if (businessId) setBusinessId(businessId);
   }, [businessId, setBusinessId]);
-
   React.useEffect(() => {
     if (business && business?.managers) {
       setManagerEmail(business?.managers[0] ?? null);
     } else setManagerEmail(null);
   }, [business, setManagerEmail]);
-
   React.useEffect(() => {
     if (manager) dispatch({ type: 'load_manager', payload: manager });
   }, [manager]);
-
   React.useEffect(() => {
     if (bankAccount && bankAccountSet(bankAccount))
       dispatch({ type: 'update_banking', payload: bankAccount });
   }, [bankAccount]);
-
   React.useEffect(() => {
     if (business) dispatch({ type: 'load_business', payload: business });
   }, [business]);
-
   React.useEffect(() => {
     if (state?.manager?.phone)
       setContextValidation((prev) => ({ ...prev, phone: state.manager.phone?.length === 11 }));
     if (state?.manager?.cpf)
       setContextValidation((prev) => ({ ...prev, cpf: cpfutils.isValid(state.manager.cpf!) }));
   }, [state?.manager?.phone, state?.manager?.cpf]);
-
   // UI
   return (
     <BusinessBOContext.Provider
