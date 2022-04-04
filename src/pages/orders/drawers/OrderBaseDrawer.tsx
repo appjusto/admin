@@ -57,6 +57,7 @@ export const OrderBaseDrawer = ({
   const bodyRef = React.useRef<HTMLDivElement>(null);
   // helpers
   const isHistory = path.includes('orders-history');
+  const isCookingTimeModeAuto = cookingTimeMode === 'auto';
   const isCurrierArrived = order?.dispatchingState === 'arrived-pickup';
   //handlers
   const handlePrint = () => {
@@ -86,9 +87,10 @@ export const OrderBaseDrawer = ({
   //UI conditions
   let orderDispatched = ['dispatching', 'delivered'].includes(order?.status ?? 'not_included');
   let PrimaryButtonIsAble =
-    ['confirmed', 'preparing'].includes(order?.status ?? 'not_included') ||
-    (order?.status === 'ready' && isCurrierArrived) ||
-    order?.dispatchingStatus === 'outsourced';
+    !(order?.status === 'preparing' && isCookingTimeModeAuto) &&
+    (['confirmed', 'preparing'].includes(order?.status ?? 'not_included') ||
+      (order?.status === 'ready' && isCurrierArrived) ||
+      order?.dispatchingStatus === 'outsourced');
   let PrimaryButtonLabel = 'Pedido pronto';
   if (order?.status === 'ready') PrimaryButtonLabel = 'Entregar pedido';
   //UI
@@ -200,7 +202,7 @@ export const OrderBaseDrawer = ({
                       {t(`${order?.cookingTime ? order?.cookingTime / 60 : 'N/I'} min`)}
                       <Text
                         ml="2"
-                        display={cookingTimeMode === 'auto' ? 'none' : 'block'}
+                        display={isCookingTimeModeAuto ? 'none' : 'block'}
                         as="span"
                         color="#4EA031"
                         textDecor="underline"
@@ -257,7 +259,6 @@ export const OrderBaseDrawer = ({
                       width="full"
                       maxW="200px"
                       onClick={PrimaryButtonFunction}
-                      //fontSize={order?.status === 'confirmed' ? '20px' : '15px'}
                     >
                       {t(PrimaryButtonLabel)}
                     </Button>

@@ -36,6 +36,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
   const [elapsedTime, setElapsedTime] = React.useState<number | null>(0);
 
   // helpers
+  const isCookingTimeModeAuto = business?.settings?.cookingTimeMode === 'auto';
   const showArrivalTime =
     typeof arrivalTime === 'number' &&
     order.dispatchingState !== 'arrived-pickup' &&
@@ -182,7 +183,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
         boxShadow="0px 8px 16px -4px rgba(105,118,103,0.1)"
       >
         <Link to={`${url}/${order.id}`}>
-          <Box w="100%" h="100%" px="4" pt="4" pb="58px">
+          <Box w="100%" h="100%" px="4" pt="4" pb={isCookingTimeModeAuto ? '4' : '58px'}>
             <Flex flexDir="column" fontWeight="700">
               <Flex justifyContent="space-between">
                 <Box maxW="90px">
@@ -217,7 +218,15 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
             </Flex>
           </Box>
         </Link>
-        <Box position="absolute" w="100%" bottom="0" px="4" mb="4" zIndex="999">
+        <Box
+          position="absolute"
+          w="100%"
+          bottom="0"
+          px="4"
+          mb="4"
+          zIndex="999"
+          display={isCookingTimeModeAuto ? 'none' : 'block'}
+        >
           <Button
             mt="3"
             w="full"

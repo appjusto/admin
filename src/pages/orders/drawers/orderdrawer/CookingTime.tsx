@@ -61,7 +61,6 @@ export const CookingTime = ({
 
   //side effects
   React.useEffect(() => {
-    if (cookingTimeMode === 'auto') return;
     if (cookingTime) {
       setEnable(true);
       const timeInMinutes = (cookingTime / 60).toString();
