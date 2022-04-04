@@ -1,7 +1,6 @@
-import { BusinessStatus } from '@appjusto/types';
+import { BusinessStatus, CookingTimeMode } from '@appjusto/types';
 import { Box, Flex, RadioGroup, Text } from '@chakra-ui/react';
 import { useContextBusinessBackoffice } from 'app/state/business/businessBOContext';
-import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import CustomRadio from 'common/components/form/CustomRadio';
 import React from 'react';
 import { t } from 'utils/i18n';
@@ -24,10 +23,23 @@ export const BusinessLive = () => {
     }
   };
 
+  const handleCookingTimeMode = (mode: CookingTimeMode) => {
+    handleBusinessProfileChange('settings', {
+      ...business?.settings,
+      cookingTimeMode: mode,
+    });
+  };
+
   // side effects
   React.useEffect(() => {
     if (business?.status) setIsOpen(business.status);
   }, [business?.status]);
+
+  React.useEffect(() => {
+    if (!business?.settings) {
+      handleBusinessProfileChange('settings', { cookingTimeMode: 'manual' });
+    }
+  }, [business?.settings, handleBusinessProfileChange]);
 
   React.useEffect(() => {
     if (business?.enabled !== undefined) setIsEnabled(business.enabled.toString());
@@ -63,24 +75,31 @@ export const BusinessLive = () => {
           </CustomRadio>
         </Flex>
       </RadioGroup>
-      <SectionTitle>{t('Permitir que restaurante defina o Cooking Time:')}</SectionTitle>
+      <SectionTitle>{t('Modo do tempo de preparo (cooking time):')}</SectionTitle>
       <Text fontSize="15px" lineHeight="21px">
         {t(
-          'Ao permitir, restaurante deve definir o tempo de preparo no gerenciador de pedidos. Caso desmarcado, os pedidos aceitos receberão o tempo médio de preparo (averageCookingTime)'
+          'No modo manual (padrão) o restaurante pode definir seu tempo médio de preparo, o tempo de preparo de cada pedido e avançar o pedido de "em preparo" para "pronto". No modo automático, a definição dos tempos de preparo e avanço para "pronto" é automática'
         )}
       </Text>
-      <CustomCheckbox mt="4" colorScheme="green">
-        {t('Permitir')}
-      </CustomCheckbox>
-      <SectionTitle>{t('Ativar ”Pedido pronto” automaticamente:')}</SectionTitle>
-      <Text fontSize="15px" lineHeight="21px">
-        {t(
-          'Ao ativar, o restaurante não pode marcar o pedido como pronto (será definido de acordo com o Cooking Time). Caso desmarcado, o restaurante deve marcar o ’Pedido pronto’ no gerenciador'
-        )}
-      </Text>
-      <CustomCheckbox mt="4" colorScheme="green">
-        {t('Ativar')}
-      </CustomCheckbox>
+      <RadioGroup
+        mt="2"
+        onChange={(value: CookingTimeMode) => handleCookingTimeMode(value)}
+        value={business?.settings?.cookingTimeMode}
+        defaultValue="1"
+        colorScheme="green"
+        color="black"
+        fontSize="15px"
+        lineHeight="21px"
+      >
+        <Flex flexDir="column" justifyContent="flex-start">
+          <CustomRadio mt="2" value="manual">
+            {t('Manual')}
+          </CustomRadio>
+          <CustomRadio mt="2" value="auto">
+            {t('Automático')}
+          </CustomRadio>
+        </Flex>
+      </RadioGroup>
       <SectionTitle>{t('Desligar restaurante do AppJusto:')}</SectionTitle>
       <Text fontSize="15px" lineHeight="21px">
         {t('Ao desligar o restaurante, ele não aparecerá no app enquanto estiver desligado')}

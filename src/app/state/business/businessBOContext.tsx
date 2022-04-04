@@ -59,6 +59,7 @@ const businessKeys: (keyof Business)[] = [
   'averageDiscount',
   'profileIssues',
   'profileIssuesMessage',
+  'settings',
 ];
 interface Props {
   children: React.ReactNode | React.ReactNode[];
