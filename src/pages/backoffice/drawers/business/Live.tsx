@@ -2,6 +2,7 @@ import { BusinessStatus, CookingTimeMode } from '@appjusto/types';
 import { Box, Flex, RadioGroup, Text } from '@chakra-ui/react';
 import { useContextBusinessBackoffice } from 'app/state/business/businessBOContext';
 import CustomRadio from 'common/components/form/CustomRadio';
+import { BusinessAverageCookingTime } from 'pages/delivery-area/BusinessAverageCookingTime';
 import React from 'react';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
@@ -100,6 +101,17 @@ export const BusinessLive = () => {
           </CustomRadio>
         </Flex>
       </RadioGroup>
+      <SectionTitle>{t('Tempo médio de preparo dos pratos:')}</SectionTitle>
+      <Text fontSize="15px" lineHeight="21px">
+        {t(
+          'O tempo médio de preparo será usado para o agendamento do matching, sempre que o tempo de preparo específico de um pedido não for informado'
+        )}
+      </Text>
+      <BusinessAverageCookingTime
+        averageCookingTime={business?.averageCookingTime}
+        getAverageCookingTime={(value) => handleBusinessProfileChange('averageCookingTime', value)}
+        cookingTimeMode={business?.settings?.cookingTimeMode}
+      />
       <SectionTitle>{t('Desligar restaurante do AppJusto:')}</SectionTitle>
       <Text fontSize="15px" lineHeight="21px">
         {t('Ao desligar o restaurante, ele não aparecerá no app enquanto estiver desligado')}

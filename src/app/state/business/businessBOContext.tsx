@@ -57,6 +57,7 @@ const businessKeys: (keyof Business)[] = [
   'enabled',
   'phones',
   'averageDiscount',
+  'averageCookingTime',
   'profileIssues',
   'profileIssuesMessage',
   'settings',

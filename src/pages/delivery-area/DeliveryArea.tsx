@@ -1,10 +1,9 @@
 import { BusinessAddress } from '@appjusto/types';
-import { Box, Flex, RadioGroup, Stack, Text } from '@chakra-ui/react';
+import { Box, Flex, Stack, Text } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useCepAndGeocode } from 'app/api/business/useCepAndGeocode';
 import { getConfig } from 'app/api/config';
 import { useContextBusiness } from 'app/state/business/context';
-import CustomRadio from 'common/components/form/CustomRadio';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import { CustomNumberInput as NumberInput } from 'common/components/form/input/CustomNumberInput';
 import { CustomPatternInput as PatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';
@@ -23,8 +22,7 @@ import { t } from 'utils/i18n';
 import { Marker } from '../../common/components/MapsMarker';
 import { getCitiesByState, IBGEResult, UF } from '../../utils/ApiIBGE';
 import ufs from '../../utils/ufs';
-
-const radioOptions = ['10', '20', '25', '30', '40', '45', '50', '60'];
+import { BusinessAverageCookingTime } from './BusinessAverageCookingTime';
 
 const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
   // context
@@ -46,7 +44,7 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
   const [deliveryRange, setDeliveryRange] = React.useState(
     String(business?.deliveryRange ?? defaultRadius)
   );
-  const [averageCookingTime, setAverageCookingTime] = React.useState('30');
+  const [averageCookingTime, setAverageCookingTime] = React.useState(1800);
   const [cities, setCities] = React.useState<string[]>([]);
   // business profile
   const { updateBusinessProfile, updateResult: result } = useBusinessProfile(
@@ -81,7 +79,7 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
     await updateBusinessProfile({
       businessAddress: addressObj,
       deliveryRange: safeParseInt(deliveryRange, defaultRadius) * 1000,
-      averageCookingTime: parseInt(averageCookingTime) * 60,
+      averageCookingTime: averageCookingTime,
     });
   };
   // side effects
@@ -100,8 +98,7 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
       if (business.businessAddress?.state) setState(business.businessAddress.state);
       if (business.businessAddress?.additional) setAdditional(business.businessAddress.additional);
       if (business.deliveryRange) setDeliveryRange(String(business.deliveryRange / 1000));
-      if (business.averageCookingTime)
-        setAverageCookingTime(String(business.averageCookingTime / 60));
+      if (business.averageCookingTime) setAverageCookingTime(business.averageCookingTime);
     }
   }, [business]);
   // after postal lookup, change focus to number input
@@ -301,27 +298,11 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
             'Sabemos que isso pode variar por prato ou tipo de preparo, mas o tempo médio vai ajudar na disponibilidade de entregadores por região'
           )}
         </Text>
-        <RadioGroup
-          onChange={(value) => setAverageCookingTime(value.toString())}
-          value={averageCookingTime}
-          defaultValue="15"
-          colorScheme="green"
-          pb="8"
-        >
-          <Flex flexDir="column" justifyContent="flex-start">
-            {radioOptions.map((option) => (
-              <CustomRadio
-                key={option}
-                mt="4"
-                value={option}
-                size="lg"
-                isDisabled={business?.settings?.cookingTimeMode === 'auto'}
-              >
-                {t(`${option} minutos`)}
-              </CustomRadio>
-            ))}
-          </Flex>
-        </RadioGroup>
+        <BusinessAverageCookingTime
+          averageCookingTime={averageCookingTime}
+          getAverageCookingTime={setAverageCookingTime}
+          cookingTimeMode={business?.settings?.cookingTimeMode}
+        />
         <PageFooter onboarding={onboarding} redirect={redirect} isLoading={isLoading} />
       </form>
     </Box>
