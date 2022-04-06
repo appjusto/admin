@@ -24,7 +24,7 @@ export const BackOfficeLinks = (props: BoxProps) => {
         <LinkItem to={`${url}/orders`} label={t('Pedidos')} />
         <LinkItem to={`${url}/couriers`} label={t('Entregadores')} />
         <LinkItem to={`${url}/businesses`} label={t('Restaurantes')} />
-        <LinkItem to={`${url}/consumers`} label={t('Clientes')} />
+        <LinkItem to={`${url}/consumers`} label={t('Consumidores')} />
         <LinkItem to={`${url}/invoices`} label={t('Faturas')} />
         <LinkItem to={`${url}/users`} label={t('Usuários')} />
         <LinkItem to={`${url}/recommendations`} label={t('Indicações')} />
