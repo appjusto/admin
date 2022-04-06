@@ -193,7 +193,7 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
     if (orderCancellation) {
       setIssue(orderCancellation.issue ?? null);
       setMessage(orderCancellation.comment ?? '');
-      setRefund(orderCancellation.params.refund);
+      setRefund(orderCancellation.params?.refund ?? []);
     } else if (orderCancellation === null) setRefund([]);
   }, [orderCancellation]);
   React.useEffect(() => {

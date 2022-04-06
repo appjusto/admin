@@ -53,8 +53,7 @@ export const useOrder = (orderIdentifier?: string) => {
     if (!order?.id || !['canceled', 'rejected'].includes(order?.status)) return;
     (async () => {
       const cancellation = await api.order().getOrderPrivateCancellation(order.id);
-      if (cancellation) setOrderCancellation(cancellation);
-      else setOrderCancellation(null);
+      setOrderCancellation(cancellation);
     })();
   }, [api, order?.id, order?.status]);
   React.useEffect(() => {

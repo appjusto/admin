@@ -407,9 +407,9 @@ export default class OrderApi {
   }
 
   async getOrderPrivateCancellation(orderId: string) {
-    const data = await getDoc(this.refs.getOrderCancellationRef(orderId));
-    if (!data.exists) return null;
-    return documentAs<OrderCancellation>(data);
+    const doc = await getDoc(this.refs.getOrderCancellationRef(orderId));
+    if (!doc.exists) return null;
+    return doc.data() as OrderCancellation;
   }
 
   async updateOrderCourierNotified(orderId: string, couriersNotified: string[]) {
