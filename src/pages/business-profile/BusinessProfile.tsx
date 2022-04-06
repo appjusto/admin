@@ -1,5 +1,5 @@
 import { Business, BusinessPhone } from '@appjusto/types';
-import { Box, Button, Flex, Switch as ChakraSwitch, Text, useBreakpoint } from '@chakra-ui/react';
+import { Box, Flex, Switch as ChakraSwitch, Text, useBreakpoint } from '@chakra-ui/react';
 import * as cnpjutils from '@fnando/cnpj';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useContextFirebaseUser } from 'app/state/auth/context';
@@ -30,6 +30,7 @@ import { t } from 'utils/i18n';
 import { CuisineSelect } from '../../common/components/form/select/CuisineSelect';
 import { BusinessPhoneField, BusinessPhones } from './business-phones';
 import { BusinessDeleteDrawer } from './BusinessDeleteDrawer';
+import { CloneBusiness } from './CloneBusiness';
 
 const defaultPhone = {
   type: 'desk',
@@ -375,30 +376,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
             </>
           )}
           {!onboarding && (
-            <>
-              <Text mt="8" fontSize="xl" color="black">
-                {t('Clonar restaurante')}
-              </Text>
-              <Text mt="2" fontSize="md">
-                {t(
-                  'Criar um novo restaurante com as informações básicas e o cardápio do restaurante atual.'
-                )}
-              </Text>
-              <Flex mt="4" pb="8" alignItems="center">
-                <Button
-                  w={{ base: '100%', md: 'auto' }}
-                  mt={{ base: '8', md: '0' }}
-                  size="lg"
-                  fontSize="sm"
-                  variant="dangerLight"
-                  onClick={cloneBusinessHandler}
-                  isLoading={cloneResult.isLoading}
-                  loadingText={t('Clonando...')}
-                >
-                  {t('Criar cópia deste restaurante')}
-                </Button>
-              </Flex>
-            </>
+            <CloneBusiness cloneHandler={cloneBusinessHandler} isLoading={cloneResult.isLoading} />
           )}
           {/* submit */}
           <PageFooter
