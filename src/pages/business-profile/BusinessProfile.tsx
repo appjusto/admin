@@ -132,8 +132,8 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
       return;
     }
     const changes = {
-      name,
-      companyName,
+      name: name.trim(),
+      companyName: companyName.trim(),
       //phone,
       phones: serializedPhones,
       cnpj,
