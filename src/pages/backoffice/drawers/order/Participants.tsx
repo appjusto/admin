@@ -58,6 +58,7 @@ export const Participants = ({ order }: ParticipantsProps) => {
           <SectionTitle>{t('Restaurante')}</SectionTitle>
           <Participant
             type="business"
+            participantId={order.business?.id}
             name={order?.business?.name}
             address={order?.origin?.address?.main}
             additionalInfo={order?.origin?.additionalInfo}
