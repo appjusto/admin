@@ -1,5 +1,4 @@
 import { Box } from '@chakra-ui/react';
-import { useContextBusiness } from 'app/state/business/context';
 import { useContextMeasurement } from 'app/state/measurement/context';
 import Container from 'common/components/Container';
 import { CookiesBar } from 'common/components/CookiesBar';
@@ -19,14 +18,8 @@ import { Transparency } from './Transparency';
 
 const LandingPage = () => {
   // context
-  const { isDeleted, setIsDeleted } = useContextBusiness();
   const { userConsent } = useContextMeasurement();
   // side effects
-  React.useEffect(() => {
-    if (isDeleted) {
-      setIsDeleted(false);
-    }
-  }, [isDeleted, setIsDeleted]);
   React.useEffect(() => {
     if (!userConsent) return;
     if (process.env.NODE_ENV !== 'production') return;

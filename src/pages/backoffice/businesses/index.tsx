@@ -3,7 +3,6 @@ import { ArrowDownIcon } from '@chakra-ui/icons';
 import { Button, CheckboxGroup, Flex, HStack, Stack, Text } from '@chakra-ui/react';
 import { BusinessesFilter } from 'app/api/search/types';
 import { useBusinessesSearch } from 'app/api/search/useBusinessesSearch';
-import { useContextBusiness } from 'app/state/business/context';
 import { ClearFiltersButton } from 'common/components/backoffice/ClearFiltersButton';
 import { FiltersScrollBar } from 'common/components/backoffice/FiltersScrollBar';
 import CustomCheckbox from 'common/components/form/CustomCheckbox';
@@ -22,7 +21,6 @@ const BusinessesPage = () => {
   // context
   const { path } = useRouteMatch();
   const history = useHistory();
-  const { isDeleted, setIsDeleted } = useContextBusiness();
   // state
   const [dateTime, setDateTime] = React.useState('');
   const [search, setSearch] = React.useState('');
@@ -31,26 +29,23 @@ const BusinessesPage = () => {
   const [filterBar, setFilterBar] = React.useState('all');
   const [filterCheck, setFilterCheck] = React.useState<BusinessStatus[]>(['open', 'closed']);
   const [filters, setFilters] = React.useState<BusinessesFilter[]>([]);
-
-  const { results: businesses, fetchNextPage, refetch } = useBusinessesSearch<BusinessAlgolia>(
-    true,
-    'businesses',
-    filters,
-    search
-  );
+  // search
+  const {
+    results: businesses,
+    fetchNextPage,
+    refetch,
+  } = useBusinessesSearch<BusinessAlgolia>(true, 'businesses', filters, search);
   // handlers
   const closeDrawerHandler = () => {
     refetch();
     history.replace(path);
   };
-
   const clearSearchAndFilters = () => {
     setSearch('');
     setState('');
     setCity('');
     setFilterBar('all');
   };
-
   const handleFilters = React.useCallback(() => {
     // state and city
     let stateArray = [] as BusinessesFilter[];
@@ -77,23 +72,14 @@ const BusinessesPage = () => {
     // create filters
     setFilters([...stateArray, ...cityArray, ...situationArray, ...statusArray]);
   }, [filterBar, state, city, filterCheck]);
-
   // side effects
   React.useEffect(() => {
     const { date, time } = getDateTime();
     setDateTime(`${date} às ${time}`);
   }, []);
-
   React.useEffect(() => {
     handleFilters();
   }, [state, city, filterBar, filterCheck, handleFilters]);
-
-  React.useEffect(() => {
-    if (isDeleted) {
-      setIsDeleted(false);
-    }
-  }, [isDeleted, setIsDeleted]);
-
   // UI
   return (
     <>

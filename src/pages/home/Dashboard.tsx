@@ -80,7 +80,7 @@ const InfoBox = ({
 
 const Dashboard = () => {
   // context
-  const { business, isDeleted, setIsDeleted } = useContextBusiness();
+  const { business } = useContextBusiness();
   const {
     todayInvoices,
     todayValue,
@@ -132,11 +132,6 @@ const Dashboard = () => {
     setDateTime(`${date} às ${time}`);
     setCurrentMonth(I18n.strftime(new Date(), '%B'));
   }, []);
-  React.useEffect(() => {
-    if (isDeleted) {
-      setIsDeleted(false);
-    }
-  }, [isDeleted, setIsDeleted]);
   // UI
   return (
     <>
