@@ -42,7 +42,7 @@ export const BusinessDeleteDrawer = ({ onClose, ...props }: BaseDrawerProps) => 
   //context
   const email = useContextFirebaseUserEmail();
   const { dispatchAppRequestResult } = useContextAppRequests();
-  const { business, setIsDeleted } = useContextBusiness();
+  const { business } = useContextBusiness();
   const { deleteBusinessProfile, deleteResult } = useBusinessProfile();
   const { isLoading, isSuccess } = deleteResult;
   // state
@@ -63,7 +63,6 @@ export const BusinessDeleteDrawer = ({ onClose, ...props }: BaseDrawerProps) => 
         message: { title: 'Favor preencher o nome do restaurante corretamente!' },
       });
     } else {
-      setIsDeleted(true);
       if (email) localStorage.removeItem(`business-${process.env.REACT_APP_ENVIRONMENT}-${email}`);
       let data = { ...survey } as Partial<DeleteBusinessPayload>;
       if (comment.length > 0) data.comment = comment;

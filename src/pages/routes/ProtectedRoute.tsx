@@ -7,6 +7,8 @@ import { Redirect, Route, RouteProps } from 'react-router-dom';
 
 type Status = 'initial' | 'unauthenticated' | 'authenticated' | 'profile-loaded';
 
+const delay = 4000; // delay to wait for firebase initialization
+
 export const ProtectedRoute = (props: RouteProps) => {
   // context
   const { user } = useContextFirebaseUser();
@@ -15,7 +17,6 @@ export const ProtectedRoute = (props: RouteProps) => {
   // state
   const [status, setStatus] = React.useState<Status>('initial');
   // side effects
-  const delay = 4000; // delay to wait for firebase initialization
   React.useEffect(() => {
     if (!user) {
       const uid = setTimeout(() => {

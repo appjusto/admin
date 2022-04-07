@@ -14,8 +14,6 @@ interface ContextProps {
   updateContextBusinessOrderPrint(status: boolean): void;
   businessesIsEmpty: boolean;
   setBusinessIdByBusinesses(): void;
-  isDeleted: boolean;
-  setIsDeleted(value: boolean): void;
   platformAccess?: PlatformAccess;
 }
 
@@ -31,7 +29,6 @@ export const BusinessProvider = ({ children }: Props) => {
   const { user, isBackofficeUser, refreshUserToken } = useContextFirebaseUser();
   const businesses = useObserveBusinessManagedBy(user?.email);
   const [businessId, setBusinessId] = React.useState<string | undefined | null>();
-  const [isDeleted, setIsDeleted] = React.useState(false);
   const hookBusiness = useObserveBusinessProfile(businessId);
   const platformAccess = usePlatformAccess(typeof user?.uid === 'string');
   // state
@@ -111,8 +108,6 @@ export const BusinessProvider = ({ children }: Props) => {
         clearBusiness,
         setBusinessId,
         updateContextBusinessOrderPrint,
-        isDeleted,
-        setIsDeleted,
         businessesIsEmpty,
         setBusinessIdByBusinesses,
         platformAccess,

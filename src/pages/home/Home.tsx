@@ -28,7 +28,7 @@ const timeoutLimit = 6; // in seconds
 const Home = () => {
   // context
   const { isBackofficeUser, role } = useContextFirebaseUser();
-  const { business, isDeleted } = useContextBusiness();
+  const { business } = useContextBusiness();
   const { path } = useRouteMatch();
   // states
   const [isTimeout, setIsTimeout] = React.useState(false);
@@ -40,11 +40,11 @@ const Home = () => {
     return () => clearTimeout(timer);
   }, []);
   // UI
+  if (business?.situation === 'deleted') {
+    if (isBackofficeUser) return <Redirect to="/backoffice/businesses" />;
+    else return <Redirect to={`/deleted`} />;
+  }
   if (!business) {
-    if (isDeleted) {
-      if (isBackofficeUser) return <Redirect to="/backoffice/businesses" />;
-      else return <Redirect to={`/deleted`} />;
-    }
     if (isBackofficeUser) return <Redirect to="/backoffice" />;
     else if (isTimeout && business === null) return <Redirect to={`/onboarding`} />;
   }
