@@ -12,6 +12,7 @@ import {
   Complement,
   ComplementGroup,
   CreateBusinessProfilePayload,
+  DeleteBusinessPayload,
   FetchAccountInformationPayload,
   FetchAccountInformationResponse,
   FetchAdvanceSimulationPayload,
@@ -275,8 +276,14 @@ export default class BusinessApi {
     return await updateDoc(this.refs.getBusinessRef(businessId), { keepAlive: timestamp });
   }
 
-  async deleteBusinessProfile(businessId: string) {
-    return await deleteDoc(this.refs.getBusinessRef(businessId));
+  async deleteBusinessProfile(data: Partial<DeleteBusinessPayload>) {
+    const payload = {
+      operation: 'delete',
+      meta: { version: '1' }, // TODO: pass correct version on
+      ...data,
+    } as DeleteBusinessPayload;
+    console.log('payload', payload);
+    return await this.refs.getBusinessProfileCallable()(payload);
   }
 
   // managers
