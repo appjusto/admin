@@ -11,6 +11,7 @@ import {
 } from 'firebase/firestore';
 import { connectFunctionsEmulator, Functions, getFunctions } from 'firebase/functions';
 import { connectStorageEmulator, FirebaseStorage, getStorage } from 'firebase/storage';
+import AgentApi from './agent/AgentApi';
 import AuthApi from './auth/AuthApi';
 import BusinessApi from './business/BusinessApi';
 import ChatApi from './chat/ChatApi';
@@ -38,6 +39,7 @@ export default class Api {
   private _files: FilesApi;
   private _maps: MapsApi;
   private _platform: PlatformApi;
+  private _agent: AgentApi;
   private _manager: ManagerApi;
   private _business: BusinessApi;
   private _order: OrderApi;
@@ -83,6 +85,7 @@ export default class Api {
     this._files = new FilesApi(this._storage);
     this._maps = new MapsApi(this._refs, config.googleMapsApiKey);
     this._platform = new PlatformApi(this._refs);
+    this._agent = new AgentApi(this._refs);
     this._manager = new ManagerApi(this._refs);
     this._business = new BusinessApi(this._refs, this._files);
     this._order = new OrderApi(this._refs);
@@ -107,6 +110,10 @@ export default class Api {
 
   platform() {
     return this._platform;
+  }
+
+  agent() {
+    return this._agent;
   }
 
   manager() {

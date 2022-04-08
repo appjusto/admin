@@ -1,6 +1,6 @@
+import { ManagerProfile, WithId } from '@appjusto/types';
 import { useContextApi } from 'app/state/api/context';
 import { useContextFirebaseUser } from 'app/state/auth/context';
-import { ManagerProfile, WithId } from '@appjusto/types';
 import React from 'react';
 
 export const useAgentProfile = () => {
@@ -13,9 +13,15 @@ export const useAgentProfile = () => {
   // observe profile
   React.useEffect(() => {
     if (!user?.uid || !isBackofficeUser) return;
-    const unsub = api.manager().observeProfile(user.uid, setProfile);
+    const unsub = api.agent().observeProfile(user.uid, setProfile);
     return () => unsub();
   }, [api, user?.uid, isBackofficeUser]);
+  React.useEffect(() => {
+    if (!user?.uid || !isBackofficeUser) return;
+    if (profile === null) {
+      api.agent().createProfile(user.uid, user.email!);
+    }
+  }, [api, user?.uid, isBackofficeUser, profile]);
   // return
   return profile;
 };

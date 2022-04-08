@@ -14,7 +14,7 @@ export default class FirebaseRefs {
   getBusinessProfileCallable = () => httpsCallable(this.functions, 'businessProfile');
   getCloneComplementsGroupCallable = () => httpsCallable(this.functions, 'cloneComplementsGroup');
   getCreateManagersCallable = () => httpsCallable(this.functions, 'createManagers');
-  getGetBusinessManagersCallable = () => httpsCallable(this.functions, 'getBusinessManagers');
+  getGetManagersCallable = () => httpsCallable(this.functions, 'getManagers');
   getCancelOrderCallable = () => httpsCallable(this.functions, 'cancelOrder');
   getMatchOrderCallable = () => httpsCallable(this.functions, 'matchOrder');
   getDropOrderCallable = () => httpsCallable(this.functions, 'dropOrder');
@@ -107,6 +107,10 @@ export default class FirebaseRefs {
     doc(this.getBusinessPrivateRef(businessId), 'bank');
   getBusinessMarketPlaceRef = (businessId: string) =>
     doc(this.getBusinessPrivateRef(businessId), 'marketplace');
+
+  // managers
+  getAgentsRef = () => collection(this.firestore, 'agents');
+  getAgentRef = (agentId: string) => doc(this.getAgentsRef(), agentId);
 
   // managers
   getManagersRef = () => collection(this.firestore, 'managers');

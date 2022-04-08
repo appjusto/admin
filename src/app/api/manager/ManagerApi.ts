@@ -1,7 +1,7 @@
 import {
   Business,
   CreateManagersPayload,
-  GetBusinessManagersPayload,
+  GetManagersPayload,
   ManagerProfile,
   NewManagerData,
   WithId,
@@ -49,12 +49,13 @@ export default class ManagerApi {
     businessId: string,
     resultHandler: (result: ManagerWithRole[]) => void
   ) {
-    const payload: GetBusinessManagersPayload = {
+    const payload: GetManagersPayload = {
       meta: { version: '1' }, // TODO: pass correct version on
+      type: 'managers',
       businessId,
     };
     try {
-      const users = ((await this.refs.getGetBusinessManagersCallable()(payload)) as unknown) as {
+      const users = (await this.refs.getGetManagersCallable()(payload)) as unknown as {
         data: ManagerWithRole[];
       };
       resultHandler(users.data);
