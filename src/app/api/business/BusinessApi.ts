@@ -282,7 +282,6 @@ export default class BusinessApi {
       meta: { version: '1' }, // TODO: pass correct version on
       ...data,
     } as DeleteBusinessPayload;
-    console.log('payload', payload);
     return await this.refs.getBusinessProfileCallable()(payload);
   }
 
