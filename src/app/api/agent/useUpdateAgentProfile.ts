@@ -1,6 +1,6 @@
+import { ManagerProfile } from '@appjusto/types';
 import { useContextAgentProfile } from 'app/state/agent/context';
 import { useContextApi } from 'app/state/api/context';
-import { ManagerProfile } from '@appjusto/types';
 import { useAuthentication } from '../auth/useAuthentication';
 import { useCustomMutation } from '../mutation/useCustomMutation';
 
@@ -21,7 +21,7 @@ export const useUpdateAgentProfile = () => {
       if (data.password) {
         await updateUsersPassword(data.password, data.currentPassword);
       }
-      return api.manager().updateProfile(agent?.id!, data.changes);
+      return api.agent().updateProfile(agent?.id!, data.changes);
     },
     'updateAgentProfile'
   );
