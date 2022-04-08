@@ -1,5 +1,4 @@
-import { WithId } from '@appjusto/types';
-import { useContextAgentProfile } from 'app/state/agent/context';
+import { useAgents } from 'app/api/agent/useAgents';
 import { FieldValue } from 'firebase/firestore';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
@@ -16,24 +15,7 @@ export interface Agent {
 
 const AgentsPage = () => {
   // context
-  const { agent } = useContextAgentProfile();
-  // state
-  const [agents, setAgents] = React.useState<WithId<Agent>[]>([]);
-  // side effects
-  React.useEffect(() => {
-    if (agent) {
-      const fakeMembers = [
-        {
-          id: agent.id,
-          email: agent.email ?? 'não encontrado',
-          role: 'owner' as AgentRole,
-          createdOn: agent.createdOn,
-        },
-      ];
-      setAgents(fakeMembers);
-    }
-  }, [agent]);
-
+  const { agents } = useAgents();
   // UI
   return (
     <>

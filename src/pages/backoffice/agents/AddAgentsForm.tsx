@@ -59,7 +59,7 @@ export const AddAgentsForm = () => {
         }}
       >
         <Text fontSize="lg" color="black">
-          {t('Adicionar novos colaboradores')}
+          {t('Adicionar novos agentes')}
         </Text>
         {agents.map((agent, index) => (
           <HStack key={Math.random()} mt="4" spacing={4} alignItems="center">
@@ -67,8 +67,8 @@ export const AddAgentsForm = () => {
               mt="0"
               w="300px"
               id={`agent-email-${index}`}
-              label={t('E-mail do colaborador')}
-              placeholder={t('Digite o e-mail do colaborador')}
+              label={t('E-mail do agente')}
+              placeholder={t('Digite o e-mail do agente')}
               value={agent.email}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
                 updateAgent(index, 'email', event.target.value)

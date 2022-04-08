@@ -1,12 +1,9 @@
-import { GetManagersPayload, ManagerProfile, NewManagerData, Role, WithId } from '@appjusto/types';
+import { GetManagersPayload, ManagerProfile, NewManagerData, WithId } from '@appjusto/types';
 import * as Sentry from '@sentry/react';
 import { getDoc, setDoc, Unsubscribe, updateDoc } from 'firebase/firestore';
 import FirebaseRefs from '../FirebaseRefs';
 import { customDocumentSnapshot } from '../utils';
-
-interface AgentWithRole extends ManagerProfile {
-  role: Role;
-}
+import { AgentWithRole } from './types';
 
 export default class AgentApi {
   constructor(private refs: FirebaseRefs) {}
@@ -21,14 +18,14 @@ export default class AgentApi {
     return customDocumentSnapshot(ref, resultHandler);
   }
 
-  async getAgents(resultHandler: (result: AgentWithRole[]) => void) {
+  async getAgents(resultHandler: (result: WithId<AgentWithRole>[]) => void) {
     const payload: GetManagersPayload = {
       meta: { version: '1' }, // TODO: pass correct version on
       type: 'agents',
     };
     try {
       const users = (await this.refs.getGetManagersCallable()(payload)) as unknown as {
-        data: AgentWithRole[];
+        data: WithId<AgentWithRole>[];
       };
       resultHandler(users.data);
     } catch (error) {
