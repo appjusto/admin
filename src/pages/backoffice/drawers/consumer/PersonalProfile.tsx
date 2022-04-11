@@ -19,19 +19,10 @@ import { Documents } from './Documents';
 
 export const PersonalProfile = () => {
   // context
-  const {
-    consumer,
-    handleProfileChange,
-    isEditingEmail,
-    setIsEditingEmail,
-  } = useContextConsumerProfile();
-  const {
-    profileNotes,
-    updateNote,
-    deleteNote,
-    updateResult,
-    deleteResult,
-  } = useObserveConsumerProfileNotes(consumer?.id);
+  const { consumer, handleProfileChange, isEditingEmail, setIsEditingEmail } =
+    useContextConsumerProfile();
+  const { profileNotes, updateNote, deleteNote, updateResult, deleteResult } =
+    useObserveConsumerProfileNotes(consumer?.id);
 
   // refs
   const nameRef = React.useRef<HTMLInputElement>(null);
@@ -68,7 +59,7 @@ export const PersonalProfile = () => {
             id="user-profile-email"
             label={t('E-mail')}
             value={consumer?.email ?? ''}
-            onChange={(ev) => handleInputChange('email', ev.target.value)}
+            onChange={(ev) => handleInputChange('email', ev.target.value.toLowerCase())}
           />
         </Box>
       ) : (

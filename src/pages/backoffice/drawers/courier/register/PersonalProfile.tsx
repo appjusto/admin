@@ -23,12 +23,8 @@ interface PersonalProfileProps {
 
 export const PersonalProfile = ({ isCNPJ }: PersonalProfileProps) => {
   // context
-  const {
-    courier,
-    handleProfileChange,
-    isEditingEmail,
-    setIsEditingEmail,
-  } = useContextCourierProfile();
+  const { courier, handleProfileChange, isEditingEmail, setIsEditingEmail } =
+    useContextCourierProfile();
   // refs
   const nameRef = React.useRef<HTMLInputElement>(null);
   const cpfRef = React.useRef<HTMLInputElement>(null);
@@ -66,7 +62,7 @@ export const PersonalProfile = ({ isCNPJ }: PersonalProfileProps) => {
             id="user-profile-email"
             label={t('E-mail')}
             value={courier?.email ?? ''}
-            onChange={(ev) => handleInputChange('email', ev.target.value)}
+            onChange={(ev) => handleInputChange('email', ev.target.value.toLowerCase())}
           />
         </Box>
       ) : (
