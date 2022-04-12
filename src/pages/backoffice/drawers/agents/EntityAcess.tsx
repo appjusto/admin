@@ -1,11 +1,11 @@
+import { BackofficeAccessRules } from '@appjusto/types';
 import { CheckboxGroup, Td, Tr } from '@chakra-ui/react';
 import CustomCheckbox from 'common/components/form/CustomCheckbox';
-import { AcessArray } from './types';
 
 interface EntityAcessProps {
   name: string;
-  value: AcessArray;
-  updateAcess: (value: AcessArray) => void;
+  value: BackofficeAccessRules;
+  updateAcess: (value: BackofficeAccessRules) => void;
 }
 
 export const EntityAcess = ({ name, value, updateAcess }: EntityAcessProps) => {
@@ -15,7 +15,7 @@ export const EntityAcess = ({ name, value, updateAcess }: EntityAcessProps) => {
       <CheckboxGroup
         colorScheme="green"
         value={value as string[]}
-        onChange={(value) => updateAcess(value as AcessArray)}
+        onChange={(value) => updateAcess(value as BackofficeAccessRules)}
       >
         <Td>
           <CustomCheckbox value="read">{'Ler'}</CustomCheckbox>

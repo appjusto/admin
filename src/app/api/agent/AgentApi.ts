@@ -1,4 +1,10 @@
-import { GetManagersPayload, ManagerProfile, NewManagerData, WithId } from '@appjusto/types';
+import {
+  CreateManagersPayload,
+  GetManagersPayload,
+  ManagerProfile,
+  NewAgentData,
+  WithId,
+} from '@appjusto/types';
 import * as Sentry from '@sentry/react';
 import { getDoc, setDoc, Unsubscribe, updateDoc } from 'firebase/firestore';
 import FirebaseRefs from '../FirebaseRefs';
@@ -49,15 +55,13 @@ export default class AgentApi {
     await updateDoc(this.refs.getAgentRef(id), changes);
   }
 
-  async createAgent(data: { key: string; agent: NewManagerData }) {
-    const { key, agent } = data;
-    return console.log(data);
-    // const payload: CreateManagersPayload = {
-    //   meta: { version: '1' }, // TODO: pass correct version on
-    //   key,
-    //   agent,
-    // };
-    // const result = await this.refs.getCreateManagersCallable()(payload);
-    // return result;
+  async createAgent(agent: NewAgentData) {
+    const payload: CreateManagersPayload = {
+      meta: { version: '1' }, // TODO: pass correct version on
+      type: 'agents',
+      agent,
+    };
+    const result = await this.refs.getCreateManagersCallable()(payload);
+    return result;
   }
 }

@@ -77,7 +77,7 @@ const AgentsPage = () => {
         <Text fontSize="lg" fontWeight="700" lineHeight="26px">
           {t(`${agentsList?.length ?? '0'} agentes encontrados`)}
         </Text>
-        <CustomButton label={t('Adicionar agente')} link={`${path}/new`} />
+        <CustomButton mt="0" label={t('Adicionar agente')} link={`${path}/new`} />
       </Flex>
       <AgentsTable agents={agentsList} />
       <Switch>

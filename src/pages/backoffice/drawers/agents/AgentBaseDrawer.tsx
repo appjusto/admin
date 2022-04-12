@@ -1,4 +1,4 @@
-import { WithId } from '@appjusto/types';
+import { BackofficeAccess } from '@appjusto/types';
 import {
   Box,
   Button,
@@ -18,7 +18,9 @@ import {
   Thead,
   Tr,
 } from '@chakra-ui/react';
-import { AgentWithRole } from 'app/api/agent/types';
+import { useAgent } from 'app/api/agent/useAgent';
+import { useAuthentication } from 'app/api/auth/useAuthentication';
+import { useContextAppRequests } from 'app/state/requests/context';
 import CustomRadio from 'common/components/form/CustomRadio';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import React from 'react';
@@ -27,7 +29,6 @@ import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
 import { EntityAcess } from './EntityAcess';
-import { AcessState } from './types';
 
 const initAcess = {
   orders: [],
@@ -35,7 +36,7 @@ const initAcess = {
   consumers: [],
   businesses: [],
   platform: [],
-} as AcessState;
+} as BackofficeAccess;
 
 type GenericMode = 'owner' | 'viewer' | 'custom';
 
@@ -52,27 +53,52 @@ export const AgentBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   //context
   const { agentId } = useParams<Params>();
   const isNew = agentId === 'new';
-  const agent = {
-    id: agentId,
-    email: 'renancostam@gmail.com',
-    name: 'Renan',
-    surname: 'C.',
-    cpf: '35214602820',
-    role: 'owner',
-  } as WithId<AgentWithRole>;
+  const { dispatchAppRequestResult } = useContextAppRequests();
+  // adapt to create and update agent <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+  const { agent, createAgente, createResult } = useAgent(agentId);
+  const { deleteAccount, deleteAccountResult } = useAuthentication();
   // state
   const [email, setEmail] = React.useState('');
-  const [acess, setAcess] = React.useState(initAcess);
+  const [access, setAccess] = React.useState(initAcess);
   const [genericMode, setGenericMode] = React.useState<GenericMode>('custom');
   const [isDeleting, setIsDeleting] = React.useState(false);
   // handlers
-  const handleSave = () => {};
-  const handleDelete = () => {};
+  const handleSave = () => {
+    const isAccessValid = () => {
+      return true;
+    };
+    if (!email) {
+      dispatchAppRequestResult({
+        status: 'error',
+        requestId: 'agent-base-drawer-no-email',
+        message: { title: 'favor informar o email do agente.' },
+      });
+    } else if (!isAccessValid) {
+      dispatchAppRequestResult({
+        status: 'error',
+        requestId: 'agent-base-drawer-no-valid-access',
+        message: { title: 'As permissões informadas não são válidas.' },
+      });
+    } else {
+      createAgente({ email, access });
+    }
+  };
+  const handleDeleteAccount = () => {
+    if (!agent?.id) {
+      dispatchAppRequestResult({
+        status: 'error',
+        requestId: 'agent-base-drawer-valid-no-user-id',
+        message: { title: 'Não foi possível encontrar o id deste usuário.' },
+      });
+    } else {
+      deleteAccount({ accountId: agent.id });
+    }
+  };
   // side effects
   React.useEffect(() => {
-    if (genericMode === 'custom') setAcess(initAcess);
+    if (genericMode === 'custom') setAccess(initAcess);
     else if (genericMode === 'owner') {
-      setAcess({
+      setAccess({
         orders: ['read', 'write'],
         couriers: ['read', 'write'],
         consumers: ['read', 'write'],
@@ -80,7 +106,7 @@ export const AgentBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
         platform: ['read', 'write'],
       });
     } else if (genericMode === 'viewer') {
-      setAcess({
+      setAccess({
         orders: ['read'],
         couriers: ['read'],
         consumers: ['read'],
@@ -90,7 +116,7 @@ export const AgentBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
     }
   }, [genericMode]);
   //UI
-  console.log('acess', acess);
+  console.log('acess', access);
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
       <DrawerOverlay>
@@ -175,9 +201,9 @@ export const AgentBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 <Tbody>
                   <EntityAcess
                     name={t('Pedidos')}
-                    value={acess.orders}
+                    value={access.orders}
                     updateAcess={(value) => {
-                      setAcess((prev) => ({
+                      setAccess((prev) => ({
                         ...prev,
                         ['orders']: value,
                       }));
@@ -185,9 +211,9 @@ export const AgentBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                   />
                   <EntityAcess
                     name={t('Entregadores')}
-                    value={acess.couriers}
+                    value={access.couriers}
                     updateAcess={(value) => {
-                      setAcess((prev) => ({
+                      setAccess((prev) => ({
                         ...prev,
                         ['couriers']: value,
                       }));
@@ -195,9 +221,9 @@ export const AgentBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                   />
                   <EntityAcess
                     name={t('Consumidores')}
-                    value={acess.consumers}
+                    value={access.consumers}
                     updateAcess={(value) => {
-                      setAcess((prev) => ({
+                      setAccess((prev) => ({
                         ...prev,
                         ['consumers']: value,
                       }));
@@ -205,9 +231,9 @@ export const AgentBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                   />
                   <EntityAcess
                     name={t('Restaurantes')}
-                    value={acess.businesses}
+                    value={access.businesses}
                     updateAcess={(value) => {
-                      setAcess((prev) => ({
+                      setAccess((prev) => ({
                         ...prev,
                         ['businesses']: value,
                       }));
@@ -215,9 +241,9 @@ export const AgentBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                   />
                   <EntityAcess
                     name={t('Plataforma')}
-                    value={acess.platform}
+                    value={access.platform}
                     updateAcess={(value) => {
-                      setAcess((prev) => ({
+                      setAccess((prev) => ({
                         ...prev,
                         ['platform']: value,
                       }));
@@ -238,8 +264,8 @@ export const AgentBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                   <Button
                     width="full"
                     variant="danger"
-                    onClick={handleDelete}
-                    // isLoading={deleteAccountResult.isLoading}
+                    onClick={handleDeleteAccount}
+                    isLoading={deleteAccountResult.isLoading}
                   >
                     {t(`Excluir`)}
                   </Button>
@@ -251,7 +277,7 @@ export const AgentBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                   width="full"
                   fontSize="15px"
                   onClick={handleSave}
-                  // isLoading={isLoading}
+                  isLoading={createResult.isLoading}
                   loadingText={t('Salvando')}
                 >
                   {t('Salvar alterações')}

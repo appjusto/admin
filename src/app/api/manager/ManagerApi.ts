@@ -84,6 +84,7 @@ export default class ManagerApi {
     const { key, managers } = data;
     const payload: CreateManagersPayload = {
       meta: { version: '1' }, // TODO: pass correct version on
+      type: 'managers',
       key,
       managers,
     };
