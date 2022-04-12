@@ -28,7 +28,7 @@ const AgentsPage = () => {
   // state
   const [dateTime, setDateTime] = React.useState('');
   const [search, setSearch] = React.useState('');
-  const [agentsList, setAgentsList] = React.useState<WithId<AgentWithRole>[]>([]);
+  const [agentsList, setAgentsList] = React.useState<WithId<AgentWithRole>[]>();
   // handlers
   const closeDrawerHandler = () => {
     history.replace(path);
@@ -39,9 +39,8 @@ const AgentsPage = () => {
     setDateTime(`${date} às ${time}`);
   }, []);
   React.useEffect(() => {
-    if (!agents) return;
     let found = agents;
-    if (search.length > 0) {
+    if (agents && search.length > 0) {
       found = agents.filter((agent) => agent.email.includes(search));
     }
     setAgentsList(found);
