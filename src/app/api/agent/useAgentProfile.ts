@@ -18,8 +18,8 @@ export const useAgentProfile = () => {
   }, [api, user?.uid, isBackofficeUser]);
   React.useEffect(() => {
     if (!user?.uid || !isBackofficeUser) return;
-    if (profile === null) {
-      api.agent().createProfile(user.uid, user.email!);
+    if (profile?.situation === 'pending') {
+      api.agent().updateProfile(user.uid, { situation: 'verified' });
     }
   }, [api, user?.uid, isBackofficeUser, profile]);
   // return

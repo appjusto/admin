@@ -1,4 +1,4 @@
-import { BackofficeAccess } from '@appjusto/types';
+import { BackofficeAccess, ManagerProfile, WithId } from '@appjusto/types';
 import {
   Box,
   Button,
@@ -38,6 +38,16 @@ const initAcess = {
   platform: [],
 } as BackofficeAccess;
 
+const isAccessValid = (access: BackofficeAccess) => {
+  let permission = [] as string[];
+  Object.keys(access).forEach((key) => {
+    const rule = access[key as keyof BackofficeAccess];
+    permission.push(...(rule as string[]));
+  });
+  if (permission.length === 0) return false;
+  else return true;
+};
+
 type GenericMode = 'owner' | 'viewer' | 'custom';
 
 interface BaseDrawerProps {
@@ -54,26 +64,23 @@ export const AgentBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   const { agentId } = useParams<Params>();
   const isNew = agentId === 'new';
   const { dispatchAppRequestResult } = useContextAppRequests();
-  // adapt to create and update agent <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-  const { agent, createAgente, createResult } = useAgent(agentId);
+  const { getAgente, createAgente, createResult } = useAgent();
   const { deleteAccount, deleteAccountResult } = useAuthentication();
   // state
   const [email, setEmail] = React.useState('');
+  const [agentProfile, setAgentProfile] = React.useState<WithId<ManagerProfile>>();
   const [access, setAccess] = React.useState(initAcess);
   const [genericMode, setGenericMode] = React.useState<GenericMode>('custom');
   const [isDeleting, setIsDeleting] = React.useState(false);
   // handlers
   const handleSave = () => {
-    const isAccessValid = () => {
-      return true;
-    };
-    if (!email) {
+    if (isNew && !email) {
       dispatchAppRequestResult({
         status: 'error',
         requestId: 'agent-base-drawer-no-email',
-        message: { title: 'favor informar o email do agente.' },
+        message: { title: 'É preciso informar o email do agente.' },
       });
-    } else if (!isAccessValid) {
+    } else if (!isAccessValid(access)) {
       dispatchAppRequestResult({
         status: 'error',
         requestId: 'agent-base-drawer-no-valid-access',
@@ -83,27 +90,41 @@ export const AgentBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
       createAgente({ email, access });
     }
   };
-  const handleDeleteAccount = () => {
-    if (!agent?.id) {
+  const handleDeleteAccount = async () => {
+    if (!agentProfile?.id) {
       dispatchAppRequestResult({
         status: 'error',
         requestId: 'agent-base-drawer-valid-no-user-id',
         message: { title: 'Não foi possível encontrar o id deste usuário.' },
       });
     } else {
-      deleteAccount({ accountId: agent.id });
+      await deleteAccount({ accountId: agentProfile.id });
     }
   };
   // side effects
   React.useEffect(() => {
+    if (agentId === 'new') return;
+    (async () => {
+      const data = await getAgente(agentId);
+      console.log('data', data?.agent);
+      console.log('data', data?.access);
+      if (data?.agent) setAgentProfile(data.agent);
+      if (data?.access) setAccess(data.access);
+    })();
+  }, [agentId]);
+  React.useEffect(() => {
+    if (!agentProfile) return;
+    setEmail(agentProfile.email);
+  }, [agentProfile]);
+  React.useEffect(() => {
     if (genericMode === 'custom') setAccess(initAcess);
     else if (genericMode === 'owner') {
       setAccess({
-        orders: ['read', 'write'],
-        couriers: ['read', 'write'],
-        consumers: ['read', 'write'],
-        businesses: ['read', 'write'],
-        platform: ['read', 'write'],
+        orders: ['read', 'write', 'delete'],
+        couriers: ['read', 'write', 'delete'],
+        consumers: ['read', 'write', 'delete'],
+        businesses: ['read', 'write', 'delete'],
+        platform: ['read', 'write', 'delete'],
       });
     } else if (genericMode === 'viewer') {
       setAccess({
@@ -115,8 +136,10 @@ export const AgentBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
       });
     }
   }, [genericMode]);
+  React.useEffect(() => {
+    if (deleteAccountResult.isSuccess) onClose();
+  }, [deleteAccountResult.isSuccess]);
   //UI
-  console.log('acess', access);
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
       <DrawerOverlay>
@@ -143,19 +166,19 @@ export const AgentBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 <Text fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
                   {t('Email:')}{' '}
                   <Text as="span" fontWeight="500">
-                    {agent?.email ?? 'N/E'}
+                    {agentProfile?.email ?? 'N/E'}
                   </Text>
                 </Text>
                 <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
                   {t('Nome:')}{' '}
                   <Text as="span" fontWeight="500">
-                    {`${agent?.name ?? 'N/E'}` + ` ${agent?.surname ?? ''}`}
+                    {`${agentProfile?.name ?? 'N/E'}` + ` ${agentProfile?.surname ?? ''}`}
                   </Text>
                 </Text>
                 <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
                   {t('Criado em:')}{' '}
                   <Text as="span" fontWeight="500">
-                    {getDateAndHour(agent?.createdOn)}
+                    {getDateAndHour(agentProfile?.createdOn)}
                   </Text>
                 </Text>
               </>
@@ -195,6 +218,7 @@ export const AgentBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                   <Tr>
                     <Th>{t('Entidade')}</Th>
                     <Th>{t('permissões')}</Th>
+                    <Th></Th>
                     <Th></Th>
                   </Tr>
                 </Thead>

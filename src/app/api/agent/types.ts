@@ -1,5 +1,5 @@
-import { ManagerProfile, Role } from '@appjusto/types';
+import { BackofficeAccess, ManagerProfile } from '@appjusto/types';
 
-export interface AgentWithRole extends ManagerProfile {
-  role: Role;
+export interface AgentWithAccess extends ManagerProfile {
+  access: BackofficeAccess;
 }

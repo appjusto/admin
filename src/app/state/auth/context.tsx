@@ -1,3 +1,4 @@
+import { BackofficeAccess } from '@appjusto/types';
 import * as Sentry from '@sentry/react';
 import { useFirebaseUser } from 'app/api/auth/useFirebaseUser';
 import { User } from 'firebase/auth';
@@ -18,6 +19,7 @@ export const backofficeRoles: GeneralRoles[] = ['owner', 'staff', 'viewer', 'cou
 interface FirebaseUserContextProps {
   user?: User | null;
   role?: GeneralRoles | null;
+  backofficeAccess?: BackofficeAccess;
   isBackofficeUser?: boolean | null;
   refreshUserToken?(businessId?: string): Promise<void>;
 }
@@ -32,6 +34,7 @@ export const FirebaseUserProvider = ({ children }: Props) => {
   const user = useFirebaseUser();
   // states
   const [role, setRole] = React.useState<GeneralRoles | null>();
+  const [backofficeAccess, setBackofficeAccess] = React.useState<BackofficeAccess>();
   const [isBackofficeUser, setIsBackofficeUser] = React.useState<boolean | null>();
   // handlers
   const refreshUserToken = React.useCallback(
@@ -45,6 +48,8 @@ export const FirebaseUserProvider = ({ children }: Props) => {
       try {
         const token = await user.getIdTokenResult(true);
         if (Object.keys(token?.claims).includes('role')) setRole(token.claims.role as GeneralRoles);
+        if (Object.keys(token?.claims).includes('access'))
+          setBackofficeAccess(token.claims.access as BackofficeAccess);
         else if (businessId) {
           const userRole = token.claims[businessId] as AdminRole | undefined;
           setRole(userRole ?? null);
@@ -61,12 +66,14 @@ export const FirebaseUserProvider = ({ children }: Props) => {
     refreshUserToken();
   }, [refreshUserToken]);
   React.useEffect(() => {
-    if (!role) return;
-    setIsBackofficeUser(backofficeRoles.indexOf(role) !== -1);
-  }, [role]);
+    if (!role && !backofficeAccess) return;
+    setIsBackofficeUser(true);
+  }, [role, backofficeAccess]);
   // provider
   return (
-    <FirebaseUserContext.Provider value={{ user, role, isBackofficeUser, refreshUserToken }}>
+    <FirebaseUserContext.Provider
+      value={{ user, role, isBackofficeUser, backofficeAccess, refreshUserToken }}
+    >
       {children}
     </FirebaseUserContext.Provider>
   );

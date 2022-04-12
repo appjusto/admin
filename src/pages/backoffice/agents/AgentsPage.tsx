@@ -1,6 +1,5 @@
-import { WithId } from '@appjusto/types';
+import { ManagerProfile, WithId } from '@appjusto/types';
 import { Flex, Text } from '@chakra-ui/react';
-import { AgentWithRole } from 'app/api/agent/types';
 import { useAgents } from 'app/api/agent/useAgents';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { CustomInput } from 'common/components/form/input/CustomInput';
@@ -28,7 +27,7 @@ const AgentsPage = () => {
   // state
   const [dateTime, setDateTime] = React.useState('');
   const [search, setSearch] = React.useState('');
-  const [agentsList, setAgentsList] = React.useState<WithId<AgentWithRole>[]>();
+  const [agentsList, setAgentsList] = React.useState<WithId<ManagerProfile>[]>();
   // handlers
   const closeDrawerHandler = () => {
     history.replace(path);
@@ -39,7 +38,7 @@ const AgentsPage = () => {
     setDateTime(`${date} às ${time}`);
   }, []);
   React.useEffect(() => {
-    let found = agents;
+    let found = agents ?? [];
     if (agents && search.length > 0) {
       found = agents.filter((agent) => agent.email.includes(search));
     }

@@ -1,30 +1,14 @@
-import { WithId } from '@appjusto/types';
+import { ManagerProfile, WithId } from '@appjusto/types';
 import { Box, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
-import { AgentWithRole } from 'app/api/agent/types';
 import React from 'react';
 import { t } from 'utils/i18n';
 import { AgentsTableItem } from './AgentsTableItem';
 
 interface AgentsTableProps {
-  agents?: WithId<AgentWithRole>[];
+  agents?: WithId<ManagerProfile>[];
 }
 
 export const AgentsTable = ({ agents }: AgentsTableProps) => {
-  // context
-
-  // state
-
-  // handlers
-  const updateAgent = (agentId: string, role: string) => {
-    console.log('update', agentId, role);
-  };
-
-  const deleteAgent = (agentId: string) => {
-    console.log('delete', agentId);
-  };
-
-  // side effects
-
   // UI
   return (
     <Box mt="8">
@@ -32,9 +16,8 @@ export const AgentsTable = ({ agents }: AgentsTableProps) => {
         <Thead>
           <Tr>
             <Th>{t('E-mail')}</Th>
-            <Th>{t('Nome')}</Th>
+            <Th>{t('Situação')}</Th>
             <Th>{t('Telefone')}</Th>
-            <Th>{t('CPF')}</Th>
             <Th>{t('Adicionado em')}</Th>
             <Th></Th>
           </Tr>
@@ -47,7 +30,6 @@ export const AgentsTable = ({ agents }: AgentsTableProps) => {
               <Td></Td>
               <Td></Td>
               <Td></Td>
-              <Td></Td>
             </Tr>
           ) : agents.length > 0 ? (
             agents.map((agent) => {
@@ -56,7 +38,6 @@ export const AgentsTable = ({ agents }: AgentsTableProps) => {
           ) : (
             <Tr color="black" fontSize="xs" fontWeight="700">
               <Td>{t('Não há agentes adicionados.')}</Td>
-              <Td></Td>
               <Td></Td>
               <Td></Td>
               <Td></Td>

@@ -23,6 +23,9 @@ export const EntityAcess = ({ name, value, updateAcess }: EntityAcessProps) => {
         <Td>
           <CustomCheckbox value="write">{'Escrever'}</CustomCheckbox>
         </Td>
+        <Td>
+          <CustomCheckbox value="delete">{'Apagar'}</CustomCheckbox>
+        </Td>
       </CheckboxGroup>
     </Tr>
   );

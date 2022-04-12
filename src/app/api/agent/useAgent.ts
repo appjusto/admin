@@ -1,15 +1,10 @@
-import { ManagerProfile, NewAgentData, WithId } from '@appjusto/types';
+import { NewAgentData } from '@appjusto/types';
 import { useContextApi } from 'app/state/api/context';
-import { useContextFirebaseUser } from 'app/state/auth/context';
-import React from 'react';
 import { useCustomMutation } from '../mutation/useCustomMutation';
 
-export const useAgent = (agentId: string) => {
+export const useAgent = () => {
   // contex
   const api = useContextApi();
-  const { isBackofficeUser } = useContextFirebaseUser();
-  // state
-  const [agent, setAgent] = React.useState<WithId<ManagerProfile> | undefined | null>();
   // mutations
   const { mutateAsync: createAgente, mutationResult: createResult } = useCustomMutation(
     async (agent: NewAgentData) => {
@@ -17,14 +12,12 @@ export const useAgent = (agentId: string) => {
     },
     'createAgent'
   );
-  // side effects
-  // observe profile
-  React.useEffect(() => {
-    if (!isBackofficeUser) return;
-    if (!agentId || agentId === 'new') return;
-    const unsub = api.agent().observeProfile(agentId, setAgent);
-    return () => unsub();
-  }, [api, agentId, isBackofficeUser]);
+  const { mutateAsync: getAgente, mutationResult: getAgentResult } = useCustomMutation(
+    async (agentId: string) => {
+      return api.agent().getAgent(agentId);
+    },
+    'createAgent'
+  );
   // return
-  return { agent, createAgente, createResult };
+  return { getAgente, getAgentResult, createAgente, createResult };
 };

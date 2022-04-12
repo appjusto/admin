@@ -1,4 +1,5 @@
 import {
+  BackofficeAccess,
   CreateManagersPayload,
   GetManagersPayload,
   ManagerProfile,
@@ -6,10 +7,9 @@ import {
   WithId,
 } from '@appjusto/types';
 import * as Sentry from '@sentry/react';
-import { getDoc, setDoc, Unsubscribe, updateDoc } from 'firebase/firestore';
+import { orderBy, query, Unsubscribe, updateDoc } from 'firebase/firestore';
 import FirebaseRefs from '../FirebaseRefs';
-import { customDocumentSnapshot } from '../utils';
-import { AgentWithRole } from './types';
+import { customCollectionSnapshot, customDocumentSnapshot } from '../utils';
 
 export default class AgentApi {
   constructor(private refs: FirebaseRefs) {}
@@ -24,16 +24,25 @@ export default class AgentApi {
     return customDocumentSnapshot(ref, resultHandler);
   }
 
-  async getAgents(resultHandler: (result: WithId<AgentWithRole>[]) => void) {
+  observeAgents(resultHandler: (agents: WithId<ManagerProfile>[] | null) => void): Unsubscribe {
+    const q = query(this.refs.getAgentsRef(), orderBy('email'));
+    // returns the unsubscribe function
+    return customCollectionSnapshot(q, resultHandler);
+  }
+
+  async getAgent(agentId: string) {
     const payload: GetManagersPayload = {
       meta: { version: '1' }, // TODO: pass correct version on
       type: 'agents',
+      agentId,
     };
     try {
-      const users = (await this.refs.getGetManagersCallable()(payload)) as unknown as {
-        data: WithId<AgentWithRole>[];
+      const result = await this.refs.getGetManagersCallable()(payload);
+      const data = result.data as {
+        agent: WithId<ManagerProfile>;
+        access: BackofficeAccess;
       };
-      resultHandler(users.data);
+      return data;
     } catch (error) {
       //@ts-ignore
       Sentry.captureException(error);
@@ -41,15 +50,15 @@ export default class AgentApi {
     }
   }
 
-  public async createProfile(id: string, email: string) {
-    const data = await getDoc(this.refs.getAgentRef(id));
-    if (!data.exists()) {
-      await setDoc(this.refs.getAgentRef(id), {
-        situation: 'pending',
-        email,
-      } as Partial<ManagerProfile>);
-    }
-  }
+  // public async createProfile(id: string, email: string) {
+  //   const data = await getDoc(this.refs.getAgentRef(id));
+  //   if (!data.exists()) {
+  //     await setDoc(this.refs.getAgentRef(id), {
+  //       situation: 'pending',
+  //       email,
+  //     } as Partial<ManagerProfile>);
+  //   }
+  // }
 
   async updateProfile(id: string, changes: Partial<ManagerProfile>) {
     await updateDoc(this.refs.getAgentRef(id), changes);
