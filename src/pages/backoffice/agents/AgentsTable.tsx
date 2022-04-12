@@ -17,6 +17,7 @@ export const AgentsTable = ({ agents }: AgentsTableProps) => {
           <Tr>
             <Th>{t('E-mail')}</Th>
             <Th>{t('Situação')}</Th>
+            <Th>{t('Nome')}</Th>
             <Th>{t('Telefone')}</Th>
             <Th>{t('Adicionado em')}</Th>
             <Th></Th>
@@ -30,6 +31,7 @@ export const AgentsTable = ({ agents }: AgentsTableProps) => {
               <Td></Td>
               <Td></Td>
               <Td></Td>
+              <Td></Td>
             </Tr>
           ) : agents.length > 0 ? (
             agents.map((agent) => {
@@ -38,6 +40,7 @@ export const AgentsTable = ({ agents }: AgentsTableProps) => {
           ) : (
             <Tr color="black" fontSize="xs" fontWeight="700">
               <Td>{t('Não há agentes adicionados.')}</Td>
+              <Td></Td>
               <Td></Td>
               <Td></Td>
               <Td></Td>
