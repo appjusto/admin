@@ -14,6 +14,7 @@ export type GeneralRoles =
 
 type AdminRole = 'manager' | 'collaborator';
 
+export const adminRoles: GeneralRoles[] = ['manager', 'collaborator'];
 export const backofficeRoles: GeneralRoles[] = ['owner', 'staff', 'viewer', 'courier-manager'];
 
 interface FirebaseUserContextProps {
@@ -53,6 +54,7 @@ export const FirebaseUserProvider = ({ children }: Props) => {
         else if (businessId) {
           const userRole = token.claims[businessId] as AdminRole | undefined;
           setRole(userRole ?? null);
+          setIsBackofficeUser(false);
         }
       } catch (error) {
         console.dir('role_error', error);
@@ -66,8 +68,11 @@ export const FirebaseUserProvider = ({ children }: Props) => {
     refreshUserToken();
   }, [refreshUserToken]);
   React.useEffect(() => {
-    if (!role && !backofficeAccess) return;
-    setIsBackofficeUser(true);
+    if (role) {
+      if (adminRoles.includes(role)) setIsBackofficeUser(false);
+      else if (backofficeRoles.includes(role)) setIsBackofficeUser(true);
+    }
+    if (backofficeAccess) setIsBackofficeUser(true);
   }, [role, backofficeAccess]);
   // provider
   return (
