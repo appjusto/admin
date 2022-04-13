@@ -82,7 +82,7 @@ export const AgentBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   const [genericMode, setGenericMode] = React.useState<GenericMode>('custom');
   const [isDeleting, setIsDeleting] = React.useState(false);
   // helpers
-  const isFetchingData = agentProfile === undefined;
+  const isFetchingData = !isNew && agentProfile === undefined;
   const agentName = (agentProfile?.name ?? 'N/E') + ' ' + (agentProfile?.surname ?? '');
   // handlers
   const handleSave = () => {
@@ -313,39 +313,43 @@ export const AgentBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 </Tbody>
               </Table>
             </Box>
-            <SectionTitle mt="8">{t('Status')}</SectionTitle>
-            <Text>
-              {t(
-                'Quando criado, o status do agente é definido como pendente e sua aprovação é automática, quando o mesmo loga com sucesso na plataforma'
-              )}
-            </Text>
-            <RadioGroup
-              mt="2"
-              onChange={(value: ProfileSituation) =>
-                setSituation((prev) => ({ ...prev, after: value }))
-              }
-              value={situation.after}
-              defaultValue="1"
-              colorScheme="green"
-              color="black"
-              fontSize="15px"
-              lineHeight="21px"
-            >
-              <Flex flexDir="column" justifyContent="flex-start">
-                <CustomRadio mt="2" value="approved">
-                  {t('Aprovado')}
-                </CustomRadio>
-                <CustomRadio mt="2" value="verified" isDisabled>
-                  {t('Verificado')}
-                </CustomRadio>
-                <CustomRadio mt="2" value="pending" isDisabled>
-                  {t('Pendente')}
-                </CustomRadio>
-                <CustomRadio mt="2" value="blocked">
-                  {t('Bloquear agente')}
-                </CustomRadio>
-              </Flex>
-            </RadioGroup>
+            {!isNew && (
+              <>
+                <SectionTitle mt="8">{t('Status')}</SectionTitle>
+                <Text>
+                  {t(
+                    'Quando criado, o status do agente é definido como pendente e sua aprovação é automática, quando o mesmo loga com sucesso na plataforma'
+                  )}
+                </Text>
+                <RadioGroup
+                  mt="2"
+                  onChange={(value: ProfileSituation) =>
+                    setSituation((prev) => ({ ...prev, after: value }))
+                  }
+                  value={situation.after}
+                  defaultValue="1"
+                  colorScheme="green"
+                  color="black"
+                  fontSize="15px"
+                  lineHeight="21px"
+                >
+                  <Flex flexDir="column" justifyContent="flex-start">
+                    <CustomRadio mt="2" value="approved">
+                      {t('Aprovado')}
+                    </CustomRadio>
+                    <CustomRadio mt="2" value="verified" isDisabled>
+                      {t('Verificado')}
+                    </CustomRadio>
+                    <CustomRadio mt="2" value="pending" isDisabled>
+                      {t('Pendente')}
+                    </CustomRadio>
+                    <CustomRadio mt="2" value="blocked">
+                      {t('Bloquear agente')}
+                    </CustomRadio>
+                  </Flex>
+                </RadioGroup>
+              </>
+            )}
           </DrawerBody>
           <DrawerFooter borderTop="1px solid #F2F6EA">
             {isDeleting ? (
