@@ -27,7 +27,10 @@ export default class AgentApi {
   observeAgents(resultHandler: (agents: WithId<ManagerProfile>[] | null) => void): Unsubscribe {
     const q = query(this.refs.getAgentsRef(), orderBy('email'));
     // returns the unsubscribe function
-    return customCollectionSnapshot(q, resultHandler);
+    return customCollectionSnapshot(q, resultHandler, {
+      avoidPenddingWrites: false,
+      captureException: true,
+    });
   }
 
   async getAgent(agentId: string) {

@@ -1,4 +1,4 @@
-import { BackofficeAccess, ManagerProfile, WithId } from '@appjusto/types';
+import { BackofficeAccess, ManagerProfile, ProfileSituation, WithId } from '@appjusto/types';
 import {
   Box,
   Button,
@@ -9,8 +9,10 @@ import {
   DrawerFooter,
   DrawerHeader,
   DrawerOverlay,
+  Flex,
   HStack,
   RadioGroup,
+  Skeleton,
   Table,
   Tbody,
   Text,
@@ -38,6 +40,11 @@ const initAcess = {
   platform: [],
 } as BackofficeAccess;
 
+type Situation = {
+  before?: ProfileSituation;
+  after?: ProfileSituation;
+};
+
 const isAccessValid = (access: BackofficeAccess) => {
   let permission = [] as string[];
   Object.keys(access).forEach((key) => {
@@ -64,14 +71,18 @@ export const AgentBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   const { agentId } = useParams<Params>();
   const isNew = agentId === 'new';
   const { dispatchAppRequestResult } = useContextAppRequests();
-  const { getAgente, createAgente, createResult } = useAgent();
+  const { getAgente, createAgente, createResult, updateAgenteSituation, updateSituationResult } =
+    useAgent();
   const { deleteAccount, deleteAccountResult } = useAuthentication();
   // state
   const [email, setEmail] = React.useState('');
-  const [agentProfile, setAgentProfile] = React.useState<WithId<ManagerProfile>>();
+  const [agentProfile, setAgentProfile] = React.useState<WithId<ManagerProfile> | null>();
   const [access, setAccess] = React.useState(initAcess);
+  const [situation, setSituation] = React.useState<Situation>({});
   const [genericMode, setGenericMode] = React.useState<GenericMode>('custom');
   const [isDeleting, setIsDeleting] = React.useState(false);
+  // helpers
+  const isFetchingData = agentProfile === undefined;
   // handlers
   const handleSave = () => {
     if (isNew && !email) {
@@ -86,9 +97,9 @@ export const AgentBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
         requestId: 'agent-base-drawer-no-valid-access',
         message: { title: 'As permissões informadas não são válidas.' },
       });
-    } else {
-      createAgente({ email, access });
-    }
+    } else if (situation.after && situation.before !== situation.after) {
+      updateAgenteSituation({ agentId, situation: situation.after });
+    } else createAgente({ email, access });
   };
   const handleDeleteAccount = async () => {
     if (!agentProfile?.id) {
@@ -106,10 +117,13 @@ export const AgentBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
     if (agentId === 'new') return;
     (async () => {
       const data = await getAgente(agentId);
-      console.log('data', data?.agent);
-      console.log('data', data?.access);
-      if (data?.agent) setAgentProfile(data.agent);
+      setAgentProfile(data?.agent ?? null);
       if (data?.access) setAccess(data.access);
+      if (data?.agent?.situation)
+        setSituation({
+          before: data.agent.situation,
+          after: data.agent.situation,
+        });
     })();
   }, [agentId]);
   React.useEffect(() => {
@@ -152,7 +166,6 @@ export const AgentBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
             {isNew ? (
               <CustomInput
                 mt="8"
-                // w="300px"
                 id="add-agent-email-input"
                 label={t('E-mail do agente')}
                 placeholder={t('Digite o e-mail do agente')}
@@ -161,6 +174,27 @@ export const AgentBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                   setEmail(event.target.value.toLowerCase())
                 }
               />
+            ) : isFetchingData ? (
+              <>
+                <HStack mt="1" spacing={2}>
+                  <Text fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+                    {t('Email:')}
+                  </Text>
+                  <Skeleton w="100%" height="20px" maxW="200px" />
+                </HStack>
+                <HStack mt="1" spacing={2}>
+                  <Text fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+                    {t('Nome:')}
+                  </Text>
+                  <Skeleton w="100%" height="20px" maxW="200px" />
+                </HStack>
+                <HStack mt="1" spacing={2}>
+                  <Text fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+                    {t('Criado em:')}
+                  </Text>
+                  <Skeleton w="100%" height="20px" maxW="200px" />
+                </HStack>
+              </>
             ) : (
               <>
                 <Text fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
@@ -185,7 +219,9 @@ export const AgentBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
             )}
           </DrawerHeader>
           <DrawerBody pb="28">
-            <SectionTitle mt="4">{t('Permissões')}</SectionTitle>
+            <SectionTitle mt="4">
+              {isFetchingData ? t('Carregando permissões...') : t('Permissões')}
+            </SectionTitle>
             <Text>{t('Defina as permissões deste agente, para cada entidade')}</Text>
             <RadioGroup
               mt="4"
@@ -276,6 +312,39 @@ export const AgentBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 </Tbody>
               </Table>
             </Box>
+            <SectionTitle mt="8">{t('Status')}</SectionTitle>
+            <Text>
+              {t(
+                'Quando criado, o status do agente é definido como pendente e sua aprovação é automática, quando o mesmo loga com sucesso na plataforma'
+              )}
+            </Text>
+            <RadioGroup
+              mt="2"
+              onChange={(value: ProfileSituation) =>
+                setSituation((prev) => ({ ...prev, after: value }))
+              }
+              value={situation.after}
+              defaultValue="1"
+              colorScheme="green"
+              color="black"
+              fontSize="15px"
+              lineHeight="21px"
+            >
+              <Flex flexDir="column" justifyContent="flex-start">
+                <CustomRadio mt="2" value="approved">
+                  {t('Aprovado')}
+                </CustomRadio>
+                <CustomRadio mt="2" value="verified" isDisabled>
+                  {t('Verificado')}
+                </CustomRadio>
+                <CustomRadio mt="2" value="pending" isDisabled>
+                  {t('Pendente')}
+                </CustomRadio>
+                <CustomRadio mt="2" value="blocked">
+                  {t('Bloquear agente')}
+                </CustomRadio>
+              </Flex>
+            </RadioGroup>
           </DrawerBody>
           <DrawerFooter borderTop="1px solid #F2F6EA">
             {isDeleting ? (
@@ -301,7 +370,9 @@ export const AgentBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                   width="full"
                   fontSize="15px"
                   onClick={handleSave}
-                  isLoading={createResult.isLoading}
+                  isLoading={
+                    createResult.isLoading || updateSituationResult.isLoading ? true : false
+                  }
                   loadingText={t('Salvando')}
                 >
                   {t('Salvar alterações')}
