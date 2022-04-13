@@ -83,6 +83,7 @@ export const AgentBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   const [isDeleting, setIsDeleting] = React.useState(false);
   // helpers
   const isFetchingData = agentProfile === undefined;
+  const agentName = (agentProfile?.name ?? 'N/E') + ' ' + (agentProfile?.surname ?? '');
   // handlers
   const handleSave = () => {
     if (isNew && !email) {
@@ -125,7 +126,7 @@ export const AgentBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
           after: data.agent.situation,
         });
     })();
-  }, [agentId]);
+  }, [agentId, getAgente]);
   React.useEffect(() => {
     if (!agentProfile) return;
     setEmail(agentProfile.email);
@@ -152,7 +153,7 @@ export const AgentBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   }, [genericMode]);
   React.useEffect(() => {
     if (deleteAccountResult.isSuccess) onClose();
-  }, [deleteAccountResult.isSuccess]);
+  }, [deleteAccountResult.isSuccess, onClose]);
   //UI
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
@@ -206,7 +207,7 @@ export const AgentBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
                   {t('Nome:')}{' '}
                   <Text as="span" fontWeight="500">
-                    {`${agentProfile?.name ?? 'N/E'}` + ` ${agentProfile?.surname ?? ''}`}
+                    {agentName}
                   </Text>
                 </Text>
                 <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
@@ -265,7 +266,7 @@ export const AgentBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                     updateAcess={(value) => {
                       setAccess((prev) => ({
                         ...prev,
-                        ['orders']: value,
+                        orders: value,
                       }));
                     }}
                   />
@@ -275,7 +276,7 @@ export const AgentBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                     updateAcess={(value) => {
                       setAccess((prev) => ({
                         ...prev,
-                        ['couriers']: value,
+                        couriers: value,
                       }));
                     }}
                   />
@@ -285,7 +286,7 @@ export const AgentBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                     updateAcess={(value) => {
                       setAccess((prev) => ({
                         ...prev,
-                        ['consumers']: value,
+                        consumers: value,
                       }));
                     }}
                   />
@@ -295,7 +296,7 @@ export const AgentBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                     updateAcess={(value) => {
                       setAccess((prev) => ({
                         ...prev,
-                        ['businesses']: value,
+                        businesses: value,
                       }));
                     }}
                   />
@@ -305,7 +306,7 @@ export const AgentBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                     updateAcess={(value) => {
                       setAccess((prev) => ({
                         ...prev,
-                        ['platform']: value,
+                        platform: value,
                       }));
                     }}
                   />
