@@ -84,6 +84,7 @@ export const AgentBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   // helpers
   const isFetchingData = !isNew && agentProfile === undefined;
   const agentName = (agentProfile?.name ?? 'N/E') + ' ' + (agentProfile?.surname ?? '');
+  const isSituationChanged = situation.before !== situation.after;
   // handlers
   const handleSave = () => {
     if (isNew && !email) {
@@ -100,7 +101,9 @@ export const AgentBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
       });
     } else if (situation.after && situation.before !== situation.after) {
       updateAgenteSituation({ agentId, situation: situation.after });
-    } else createAgente({ email, access });
+    } else {
+      createAgente({ email, access });
+    }
   };
   const handleDeleteAccount = async () => {
     if (!agentProfile?.id) {
@@ -152,8 +155,8 @@ export const AgentBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
     }
   }, [genericMode]);
   React.useEffect(() => {
-    if (deleteAccountResult.isSuccess) onClose();
-  }, [deleteAccountResult.isSuccess, onClose]);
+    if (deleteAccountResult.isSuccess || createResult.isSuccess) onClose();
+  }, [deleteAccountResult.isSuccess, createResult.isSuccess, onClose]);
   //UI
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
@@ -380,7 +383,7 @@ export const AgentBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                   }
                   loadingText={t('Salvando')}
                 >
-                  {t('Salvar alterações')}
+                  {isSituationChanged ? t('Salvar novo status') : t('Salvar alterações')}
                 </Button>
                 {isNew ? (
                   <Button width="full" fontSize="15px" variant="dangerLight" onClick={onClose}>
