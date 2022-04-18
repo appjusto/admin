@@ -72,7 +72,7 @@ const StaffsPage = () => {
       </Flex>
       <StaffsTable staffs={staffsList} />
       <Switch>
-        <Route path={`${path}/:agentId`}>
+        <Route path={`${path}/:staffId`}>
           <StaffBaseDrawer isOpen onClose={closeDrawerHandler} />
         </Route>
       </Switch>
