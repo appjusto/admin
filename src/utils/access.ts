@@ -26,7 +26,14 @@ const access = {
   'staff': 'platform',
 } as Access;
 
-const collaboratorPages = ['orders', 'sharing', 'menu', 'orders-history', 'manager-profile'];
+const collaboratorPages = [
+  'orders',
+  'sharing',
+  'menu',
+  'orders-history',
+  'manager-profile',
+  'chat',
+];
 
 export const isAccessGranted = (
   type: 'admin' | 'backoffice',
