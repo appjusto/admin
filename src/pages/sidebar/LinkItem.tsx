@@ -1,19 +1,36 @@
-import { Box, Flex, Link } from '@chakra-ui/react';
+import { Box, Flex, Link, Text } from '@chakra-ui/react';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import React from 'react';
 import { Link as RouterLink, useRouteMatch } from 'react-router-dom';
+import { isAccessGranted } from 'utils/access';
 
 interface LinkItemProps {
+  type?: 'admin' | 'backoffice';
   to: string;
   label: string;
+  isDisabled?: boolean;
 }
 
-export const LinkItem = ({ to, label }: LinkItemProps) => {
+export const LinkItem = ({ type = 'admin', to, label, isDisabled }: LinkItemProps) => {
+  // context
+  const { role, backofficePermissions } = useContextFirebaseUser();
   let match = useRouteMatch({
     path: to,
     exact: true,
   });
+  // helpers
+  const userHasAccess = isAccessGranted(type, to, backofficePermissions, role);
+  // UI
+  if (isDisabled) {
+    return (
+      <Flex pl="6" h="34px" alignItems="center">
+        <Text color="gray.600">{label}</Text>
+      </Flex>
+    );
+  }
   return (
     <Flex
+      display={userHasAccess ? 'flex' : 'none'}
       alignItems="center"
       bg={match ? 'white' : ''}
       fontSize="sm"

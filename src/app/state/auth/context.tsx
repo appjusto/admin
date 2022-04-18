@@ -49,8 +49,8 @@ export const FirebaseUserProvider = ({ children }: Props) => {
       try {
         const token = await user.getIdTokenResult(true);
         if (Object.keys(token?.claims).includes('role')) setRole(token.claims.role as GeneralRoles);
-        if (Object.keys(token?.claims).includes('access'))
-          setBackofficePermissions(token.claims.access as BackofficePermissions);
+        if (Object.keys(token?.claims).includes('permissions'))
+          setBackofficePermissions(token.claims.permissions as BackofficePermissions);
         else if (businessId) {
           const userRole = token.claims[businessId] as AdminRole | undefined;
           setRole(userRole ?? null);
