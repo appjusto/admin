@@ -29,7 +29,7 @@ export const BackOfficeLinks = (props: BoxProps) => {
         <LinkItem to={`${url}/users`} label={t('Usuários')} />
         <LinkItem to={`${url}/recommendations`} label={t('Indicações')} />
         <LinkItem to={`${url}/fraud-prevention`} label={t('Antifraude')} />
-        {role === 'owner' && isDev && <LinkItem to={`${url}/agents`} label={t('Agentes')} />}
+        {role === 'owner' && isDev && <LinkItem to={`${url}/staff`} label={t('Agentes')} />}
       </Box>
     );
 };

@@ -1,9 +1,9 @@
 import {
-  BackofficeAccess,
+  BackofficePermissions,
   CreateManagersPayload,
   GetManagersPayload,
-  ManagerProfile,
-  NewAgentData,
+  NewStaffData,
+  StaffProfile,
   WithId,
 } from '@appjusto/types';
 import * as Sentry from '@sentry/react';
@@ -11,21 +11,21 @@ import { orderBy, query, Unsubscribe, updateDoc } from 'firebase/firestore';
 import FirebaseRefs from '../FirebaseRefs';
 import { customCollectionSnapshot, customDocumentSnapshot } from '../utils';
 
-export default class AgentApi {
+export default class StaffApi {
   constructor(private refs: FirebaseRefs) {}
 
   // firestore
   observeProfile(
     id: string,
-    resultHandler: (profile: WithId<ManagerProfile> | null) => void
+    resultHandler: (profile: WithId<StaffProfile> | null) => void
   ): Unsubscribe {
-    const ref = this.refs.getAgentRef(id);
+    const ref = this.refs.getStaffRef(id);
     // returns the unsubscribe function
     return customDocumentSnapshot(ref, resultHandler);
   }
 
-  observeAgents(resultHandler: (agents: WithId<ManagerProfile>[] | null) => void): Unsubscribe {
-    const q = query(this.refs.getAgentsRef(), orderBy('email'));
+  observeStaffs(resultHandler: (staff: WithId<StaffProfile>[] | null) => void): Unsubscribe {
+    const q = query(this.refs.getStaffsRef(), orderBy('email'));
     // returns the unsubscribe function
     return customCollectionSnapshot(q, resultHandler, {
       avoidPenddingWrites: false,
@@ -33,17 +33,17 @@ export default class AgentApi {
     });
   }
 
-  async getAgent(agentId: string) {
+  async getStaff(staffId: string) {
     const payload: GetManagersPayload = {
       meta: { version: '1' }, // TODO: pass correct version on
-      type: 'agents',
-      agentId,
+      type: 'staff',
+      staffId,
     };
     try {
       const result = await this.refs.getGetManagersCallable()(payload);
       const data = result.data as {
-        agent: WithId<ManagerProfile>;
-        access: BackofficeAccess;
+        staff: WithId<StaffProfile>;
+        permissions: BackofficePermissions;
       };
       return data;
     } catch (error) {
@@ -59,19 +59,19 @@ export default class AgentApi {
   //     await setDoc(this.refs.getAgentRef(id), {
   //       situation: 'pending',
   //       email,
-  //     } as Partial<ManagerProfile>);
+  //     } as Partial<StaffProfile>);
   //   }
   // }
 
-  async updateProfile(id: string, changes: Partial<ManagerProfile>) {
-    await updateDoc(this.refs.getAgentRef(id), changes);
+  async updateProfile(id: string, changes: Partial<StaffProfile>) {
+    await updateDoc(this.refs.getStaffRef(id), changes);
   }
 
-  async createAgent(agent: NewAgentData) {
+  async createStaff(staff: NewStaffData) {
     const payload: CreateManagersPayload = {
       meta: { version: '1' }, // TODO: pass correct version on
-      type: 'agents',
-      agent,
+      type: 'staff',
+      staff,
     };
     const result = await this.refs.getCreateManagersCallable()(payload);
     return result;

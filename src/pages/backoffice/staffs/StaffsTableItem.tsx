@@ -1,4 +1,4 @@
-import { ManagerProfile, WithId } from '@appjusto/types';
+import { StaffProfile, WithId } from '@appjusto/types';
 import { Td, Tr } from '@chakra-ui/react';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { phoneFormatter } from 'common/components/form/input/pattern-input/formatters';
@@ -8,28 +8,28 @@ import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { situationPTOptions } from '../utils';
 
-interface AgentTableItemProps {
-  agent: WithId<ManagerProfile>;
+interface StaffsTableItemProps {
+  staff: WithId<StaffProfile>;
 }
 
-export const AgentsTableItem = ({ agent }: AgentTableItemProps) => {
+export const StaffsTableItem = ({ staff }: StaffsTableItemProps) => {
   // context
   const { path } = useRouteMatch();
   // state
   // UI
   return (
-    <Tr key={agent.email} color="black" fontSize="sm" h="66px">
-      <Td>{agent.email}</Td>
-      <Td>{agent.situation ? situationPTOptions[agent.situation] : 'N/I'}</Td>
-      <Td>{agent.name ?? 'N/I'}</Td>
-      <Td>{agent.phone ? phoneFormatter(agent.phone) : 'N/I'}</Td>
-      <Td>{getDateAndHour(agent.createdOn)}</Td>
+    <Tr key={staff.email} color="black" fontSize="sm" h="66px">
+      <Td>{staff.email}</Td>
+      <Td>{staff.situation ? situationPTOptions[staff.situation] : 'N/I'}</Td>
+      <Td>{staff.name ?? 'N/I'}</Td>
+      <Td>{staff.phone ? phoneFormatter(staff.phone) : 'N/I'}</Td>
+      <Td>{getDateAndHour(staff.createdOn)}</Td>
       <Td>
         <CustomButton
           mt="0"
           variant="outline"
           label={t('Detalhes')}
-          link={`${path}/${agent.id}`}
+          link={`${path}/${staff.id}`}
           size="sm"
         />
       </Td>

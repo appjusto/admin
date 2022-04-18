@@ -23,13 +23,13 @@ import { t } from 'utils/i18n';
 import { situationPTOptions } from '../../utils';
 
 interface BaseDrawerProps {
-  agent: { id: string | undefined; name: string };
+  staff: { id: string | undefined; name: string };
   isOpen: boolean;
   onClose(): void;
   children: React.ReactNode | React.ReactNode[];
 }
 
-export const BusinessBaseDrawer = ({ agent, onClose, children, ...props }: BaseDrawerProps) => {
+export const BusinessBaseDrawer = ({ staff, onClose, children, ...props }: BaseDrawerProps) => {
   //context
   const { url } = useRouteMatch();
   const { business, manager, handleSave, isLoading, marketPlace } = useContextBusinessBackoffice();

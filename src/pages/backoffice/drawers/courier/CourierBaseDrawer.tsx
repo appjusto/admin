@@ -29,13 +29,13 @@ import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
 
 interface BaseDrawerProps {
-  agent: { id: string | undefined; name: string };
+  staff: { id: string | undefined; name: string };
   isOpen: boolean;
   onClose(): void;
   children: React.ReactNode | React.ReactNode[];
 }
 
-export const CourierBaseDrawer = ({ agent, onClose, children, ...props }: BaseDrawerProps) => {
+export const CourierBaseDrawer = ({ staff, onClose, children, ...props }: BaseDrawerProps) => {
   //context
   const { dispatchAppRequestResult } = useContextAppRequests();
   const queryClient = useQueryClient();

@@ -1,14 +1,14 @@
-import { ManagerProfile, WithId } from '@appjusto/types';
+import { StaffProfile, WithId } from '@appjusto/types';
 import { Box, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import React from 'react';
 import { t } from 'utils/i18n';
-import { AgentsTableItem } from './AgentsTableItem';
+import { StaffsTableItem } from './StaffsTableItem';
 
-interface AgentsTableProps {
-  agents?: WithId<ManagerProfile>[];
+interface StaffsTableProps {
+  staffs?: WithId<StaffProfile>[];
 }
 
-export const AgentsTable = ({ agents }: AgentsTableProps) => {
+export const StaffsTable = ({ staffs }: StaffsTableProps) => {
   // UI
   return (
     <Box mt="8">
@@ -24,7 +24,7 @@ export const AgentsTable = ({ agents }: AgentsTableProps) => {
           </Tr>
         </Thead>
         <Tbody>
-          {agents === undefined ? (
+          {staffs === undefined ? (
             <Tr color="black" fontSize="xs" fontWeight="700">
               <Td>{t('Carregando agentes...')}</Td>
               <Td></Td>
@@ -33,9 +33,9 @@ export const AgentsTable = ({ agents }: AgentsTableProps) => {
               <Td></Td>
               <Td></Td>
             </Tr>
-          ) : agents.length > 0 ? (
-            agents.map((agent) => {
-              return <AgentsTableItem key={agent.id} agent={agent} />;
+          ) : staffs.length > 0 ? (
+            staffs.map((staff) => {
+              return <StaffsTableItem key={staff.id} staff={staff} />;
             })
           ) : (
             <Tr color="black" fontSize="xs" fontWeight="700">

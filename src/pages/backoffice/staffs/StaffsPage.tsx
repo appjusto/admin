@@ -1,33 +1,25 @@
-import { ManagerProfile, WithId } from '@appjusto/types';
+import { StaffProfile, WithId } from '@appjusto/types';
 import { Flex, Text } from '@chakra-ui/react';
-import { useAgents } from 'app/api/agent/useAgents';
+import { useStaffs } from 'app/api/staff/useStaffs';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { CustomInput } from 'common/components/form/input/CustomInput';
-import { FieldValue } from 'firebase/firestore';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
-import { AgentBaseDrawer } from '../drawers/agents/AgentBaseDrawer';
-import { AgentsTable } from './AgentsTable';
+import { StaffBaseDrawer } from '../drawers/staff/StaffBaseDrawer';
+import { StaffsTable } from './StaffsTable';
 
-export type AgentRole = 'owner' | 'staff' | 'viewer';
-export interface Agent {
-  email: string;
-  role: AgentRole;
-  createdOn: FieldValue;
-}
-
-const AgentsPage = () => {
+const StaffsPage = () => {
   // context
   const { path } = useRouteMatch();
   const history = useHistory();
-  const { agents } = useAgents();
+  const { staffs } = useStaffs();
   // state
   const [dateTime, setDateTime] = React.useState('');
   const [search, setSearch] = React.useState('');
-  const [agentsList, setAgentsList] = React.useState<WithId<ManagerProfile>[]>();
+  const [staffsList, setStaffsList] = React.useState<WithId<StaffProfile>[]>();
   // handlers
   const closeDrawerHandler = () => {
     history.replace(path);
@@ -38,12 +30,12 @@ const AgentsPage = () => {
     setDateTime(`${date} às ${time}`);
   }, []);
   React.useEffect(() => {
-    let found = agents ?? [];
-    if (agents && search.length > 0) {
-      found = agents.filter((agent) => agent.email.includes(search));
+    let found = staffs ?? [];
+    if (staffs && search.length > 0) {
+      found = staffs.filter((agent) => agent.email.includes(search));
     }
-    setAgentsList(found);
-  }, [agents, search]);
+    setStaffsList(found);
+  }, [staffs, search]);
   // UI
   return (
     <>
@@ -74,18 +66,18 @@ const AgentsPage = () => {
         color="black"
       >
         <Text fontSize="lg" fontWeight="700" lineHeight="26px">
-          {t(`${agentsList?.length ?? '0'} agentes encontrados`)}
+          {t(`${staffsList?.length ?? '0'} agentes encontrados`)}
         </Text>
         <CustomButton mt="0" label={t('Adicionar agente')} link={`${path}/new`} />
       </Flex>
-      <AgentsTable agents={agentsList} />
+      <StaffsTable staffs={staffsList} />
       <Switch>
         <Route path={`${path}/:agentId`}>
-          <AgentBaseDrawer isOpen onClose={closeDrawerHandler} />
+          <StaffBaseDrawer isOpen onClose={closeDrawerHandler} />
         </Route>
       </Switch>
     </>
   );
 };
 
-export default AgentsPage;
+export default StaffsPage;

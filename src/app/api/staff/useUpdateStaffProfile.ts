@@ -1,29 +1,29 @@
 import { ManagerProfile } from '@appjusto/types';
-import { useContextAgentProfile } from 'app/state/agent/context';
 import { useContextApi } from 'app/state/api/context';
+import { useContextStaffProfile } from 'app/state/staff/context';
 import { useAuthentication } from '../auth/useAuthentication';
 import { useCustomMutation } from '../mutation/useCustomMutation';
 
-interface UpdateAgentData {
+interface UpdateStaffData {
   changes: Partial<ManagerProfile>;
   password?: string;
   currentPassword?: string;
 }
 
-export const useUpdateAgentProfile = () => {
+export const useUpdateStaffProfile = () => {
   // context
   const api = useContextApi();
   const { updateUsersPassword } = useAuthentication();
-  const { agent } = useContextAgentProfile();
+  const { staff } = useContextStaffProfile();
   // mutations
   const { mutateAsync: updateProfile, mutationResult: updateResult } = useCustomMutation(
-    async (data: UpdateAgentData) => {
+    async (data: UpdateStaffData) => {
       if (data.password) {
         await updateUsersPassword(data.password, data.currentPassword);
       }
-      return api.agent().updateProfile(agent?.id!, data.changes);
+      return api.staff().updateProfile(staff?.id!, data.changes);
     },
-    'updateAgentProfile'
+    'updateStaffProfile'
   );
   // return
   return { updateProfile, updateResult };

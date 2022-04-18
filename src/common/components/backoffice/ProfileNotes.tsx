@@ -1,7 +1,7 @@
 import { ProfileNote, WithId } from '@appjusto/types';
 import { Box, Button, Flex, HStack, Text } from '@chakra-ui/react';
 import { MutationResult } from 'app/api/mutation/useCustomMutation';
-import { useContextAgentProfile } from 'app/state/agent/context';
+import { useContextStaffProfile } from 'app/state/staff/context';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
 import { omitBy } from 'lodash';
 import React from 'react';
@@ -32,19 +32,19 @@ export const ProfileNotes = ({
   // props
   const { isLoading, isSuccess } = updateResult;
   // context
-  const { agent } = useContextAgentProfile();
+  const { staff } = useContextStaffProfile();
   // state
   const [isAdding, setIsAdding] = React.useState(false);
   const [newNote, setNewNote] = React.useState('');
   // handlers
   const handleAddNote = () => {
     if (!newNote) return;
-    if (!agent?.id) return;
-    if (!agent?.email) return;
+    if (!staff?.id) return;
+    if (!staff?.email) return;
     let changes = {
-      agentId: agent.id,
-      agentEmail: agent.email,
-      agentName: agent?.name,
+      staffId: staff.id,
+      staffEmail: staff.email,
+      staffName: staff?.name,
       note: newNote,
     } as Partial<ProfileNote>;
     changes = omitBy(changes, (value) => !value);
@@ -53,10 +53,10 @@ export const ProfileNotes = ({
   const handleUpdateNote = (id: string, note: string) => {
     if (!id) return;
     if (!note) return;
-    if (!agent?.id) return;
-    if (!agent?.email) return;
+    if (!staff?.id) return;
+    if (!staff?.email) return;
     let changes = {
-      agentName: agent?.name,
+      staffName: staff?.name,
       note,
     } as Partial<ProfileNote>;
     changes = omitBy(changes, (value) => !value);

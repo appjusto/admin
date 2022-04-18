@@ -3,7 +3,7 @@ import { useContextApi } from 'app/state/api/context';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import React from 'react';
 
-export const useAgentProfile = () => {
+export const useStaffProfile = () => {
   // contex
   const api = useContextApi();
   const { user, isBackofficeUser } = useContextFirebaseUser();
@@ -13,13 +13,13 @@ export const useAgentProfile = () => {
   // observe profile
   React.useEffect(() => {
     if (!user?.uid || !isBackofficeUser) return;
-    const unsub = api.agent().observeProfile(user.uid, setProfile);
+    const unsub = api.staff().observeProfile(user.uid, setProfile);
     return () => unsub();
   }, [api, user?.uid, isBackofficeUser]);
   React.useEffect(() => {
     if (!user?.uid || !isBackofficeUser) return;
     if (profile?.situation === 'pending') {
-      api.agent().updateProfile(user.uid, { situation: 'verified' });
+      api.staff().updateProfile(user.uid, { situation: 'verified' });
     }
   }, [api, user?.uid, isBackofficeUser, profile]);
   // return

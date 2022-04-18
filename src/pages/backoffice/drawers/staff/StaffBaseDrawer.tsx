@@ -1,4 +1,4 @@
-import { BackofficeAccess, ManagerProfile, ProfileSituation, WithId } from '@appjusto/types';
+import { BackofficePermissions, ProfileSituation, StaffProfile, WithId } from '@appjusto/types';
 import {
   Box,
   Button,
@@ -20,8 +20,8 @@ import {
   Thead,
   Tr,
 } from '@chakra-ui/react';
-import { useAgent } from 'app/api/agent/useAgent';
 import { useAuthentication } from 'app/api/auth/useAuthentication';
+import { useStaff } from 'app/api/staff/useStaff';
 import { useContextAppRequests } from 'app/state/requests/context';
 import CustomRadio from 'common/components/form/CustomRadio';
 import { CustomInput } from 'common/components/form/input/CustomInput';
@@ -38,20 +38,20 @@ const initAcess = {
   consumers: [],
   businesses: [],
   platform: [],
-} as BackofficeAccess;
+} as BackofficePermissions;
 
 type Situation = {
   before?: ProfileSituation;
   after?: ProfileSituation;
 };
 
-const isAccessValid = (access: BackofficeAccess) => {
-  let permission = [] as string[];
-  Object.keys(access).forEach((key) => {
-    const rule = access[key as keyof BackofficeAccess];
-    permission.push(...(rule as string[]));
+const isPermissionsValid = (permissions: BackofficePermissions) => {
+  let rules = [] as string[];
+  Object.keys(permissions).forEach((key) => {
+    const rule = permissions[key as keyof BackofficePermissions];
+    rules.push(...(rule as string[]));
   });
-  if (permission.length === 0) return false;
+  if (rules.length === 0) return false;
   else return true;
 };
 
@@ -63,27 +63,27 @@ interface BaseDrawerProps {
 }
 
 type Params = {
-  agentId: string;
+  staffId: string;
 };
 
-export const AgentBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
+export const StaffBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   //context
-  const { agentId } = useParams<Params>();
-  const isNew = agentId === 'new';
+  const { staffId } = useParams<Params>();
+  const isNew = staffId === 'new';
   const { dispatchAppRequestResult } = useContextAppRequests();
-  const { getAgente, createAgente, createResult, updateAgenteSituation, updateSituationResult } =
-    useAgent();
+  const { getStaff, createStaff, createResult, updateStaffSituation, updateSituationResult } =
+    useStaff();
   const { deleteAccount, deleteAccountResult } = useAuthentication();
   // state
   const [email, setEmail] = React.useState('');
-  const [agentProfile, setAgentProfile] = React.useState<WithId<ManagerProfile> | null>();
-  const [access, setAccess] = React.useState(initAcess);
+  const [staffProfile, setStaffProfile] = React.useState<WithId<StaffProfile> | null>();
+  const [permissions, setPermissions] = React.useState(initAcess);
   const [situation, setSituation] = React.useState<Situation>({});
   const [genericMode, setGenericMode] = React.useState<GenericMode>('custom');
   const [isDeleting, setIsDeleting] = React.useState(false);
   // helpers
-  const isFetchingData = !isNew && agentProfile === undefined;
-  const agentName = (agentProfile?.name ?? 'N/E') + ' ' + (agentProfile?.surname ?? '');
+  const isFetchingData = !isNew && staffProfile === undefined;
+  const agentName = (staffProfile?.name ?? 'N/E') + ' ' + (staffProfile?.surname ?? '');
   const isSituationChanged = situation.before !== situation.after;
   // handlers
   const handleSave = () => {
@@ -93,51 +93,51 @@ export const AgentBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
         requestId: 'agent-base-drawer-no-email',
         message: { title: 'É preciso informar o email do agente.' },
       });
-    } else if (!isAccessValid(access)) {
+    } else if (!isPermissionsValid(permissions)) {
       dispatchAppRequestResult({
         status: 'error',
-        requestId: 'agent-base-drawer-no-valid-access',
+        requestId: 'agent-base-drawer-no-valid-permissions',
         message: { title: 'As permissões informadas não são válidas.' },
       });
     } else if (situation.after && situation.before !== situation.after) {
-      updateAgenteSituation({ agentId, situation: situation.after });
+      updateStaffSituation({ staffId, situation: situation.after });
     } else {
-      createAgente({ email, access });
+      createStaff({ email, permissions });
     }
   };
   const handleDeleteAccount = async () => {
-    if (!agentProfile?.id) {
+    if (!staffProfile?.id) {
       dispatchAppRequestResult({
         status: 'error',
         requestId: 'agent-base-drawer-valid-no-user-id',
         message: { title: 'Não foi possível encontrar o id deste usuário.' },
       });
     } else {
-      await deleteAccount({ accountId: agentProfile.id });
+      await deleteAccount({ accountId: staffProfile.id });
     }
   };
   // side effects
   React.useEffect(() => {
-    if (agentId === 'new') return;
+    if (staffId === 'new') return;
     (async () => {
-      const data = await getAgente(agentId);
-      setAgentProfile(data?.agent ?? null);
-      if (data?.access) setAccess(data.access);
-      if (data?.agent?.situation)
+      const data = await getStaff(staffId);
+      setStaffProfile(data?.staff ?? null);
+      if (data?.permissions) setPermissions(data.permissions);
+      if (data?.staff?.situation)
         setSituation({
-          before: data.agent.situation,
-          after: data.agent.situation,
+          before: data.staff.situation,
+          after: data.staff.situation,
         });
     })();
-  }, [agentId, getAgente]);
+  }, [staffId, getStaff]);
   React.useEffect(() => {
-    if (!agentProfile) return;
-    setEmail(agentProfile.email);
-  }, [agentProfile]);
+    if (!staffProfile) return;
+    setEmail(staffProfile.email);
+  }, [staffProfile]);
   React.useEffect(() => {
-    if (genericMode === 'custom') setAccess(initAcess);
+    if (genericMode === 'custom') setPermissions(initAcess);
     else if (genericMode === 'owner') {
-      setAccess({
+      setPermissions({
         orders: ['read', 'write', 'delete'],
         couriers: ['read', 'write', 'delete'],
         consumers: ['read', 'write', 'delete'],
@@ -145,7 +145,7 @@ export const AgentBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
         platform: ['read', 'write', 'delete'],
       });
     } else if (genericMode === 'viewer') {
-      setAccess({
+      setPermissions({
         orders: ['read'],
         couriers: ['read'],
         consumers: ['read'],
@@ -204,7 +204,7 @@ export const AgentBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 <Text fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
                   {t('Email:')}{' '}
                   <Text as="span" fontWeight="500">
-                    {agentProfile?.email ?? 'N/E'}
+                    {staffProfile?.email ?? 'N/E'}
                   </Text>
                 </Text>
                 <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
@@ -216,7 +216,7 @@ export const AgentBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
                   {t('Criado em:')}{' '}
                   <Text as="span" fontWeight="500">
-                    {getDateAndHour(agentProfile?.createdOn)}
+                    {getDateAndHour(staffProfile?.createdOn)}
                   </Text>
                 </Text>
               </>
@@ -265,9 +265,9 @@ export const AgentBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 <Tbody>
                   <EntityAcess
                     name={t('Pedidos')}
-                    value={access.orders}
+                    value={permissions.orders}
                     updateAcess={(value) => {
-                      setAccess((prev) => ({
+                      setPermissions((prev) => ({
                         ...prev,
                         orders: value,
                       }));
@@ -275,9 +275,9 @@ export const AgentBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                   />
                   <EntityAcess
                     name={t('Entregadores')}
-                    value={access.couriers}
+                    value={permissions.couriers}
                     updateAcess={(value) => {
-                      setAccess((prev) => ({
+                      setPermissions((prev) => ({
                         ...prev,
                         couriers: value,
                       }));
@@ -285,9 +285,9 @@ export const AgentBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                   />
                   <EntityAcess
                     name={t('Consumidores')}
-                    value={access.consumers}
+                    value={permissions.consumers}
                     updateAcess={(value) => {
-                      setAccess((prev) => ({
+                      setPermissions((prev) => ({
                         ...prev,
                         consumers: value,
                       }));
@@ -295,9 +295,9 @@ export const AgentBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                   />
                   <EntityAcess
                     name={t('Restaurantes')}
-                    value={access.businesses}
+                    value={permissions.businesses}
                     updateAcess={(value) => {
-                      setAccess((prev) => ({
+                      setPermissions((prev) => ({
                         ...prev,
                         businesses: value,
                       }));
@@ -305,9 +305,9 @@ export const AgentBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                   />
                   <EntityAcess
                     name={t('Plataforma')}
-                    value={access.platform}
+                    value={permissions.platform}
                     updateAcess={(value) => {
-                      setAccess((prev) => ({
+                      setPermissions((prev) => ({
                         ...prev,
                         platform: value,
                       }));

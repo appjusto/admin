@@ -1,6 +1,6 @@
 import { Box, Flex, FlexProps, Image, Link, Text } from '@chakra-ui/react';
-import { useContextAgentProfile } from 'app/state/agent/context';
 import { useContextManagerProfile } from 'app/state/manager/context';
+import { useContextStaffProfile } from 'app/state/staff/context';
 import { EditButton } from 'common/components/buttons/EditButton';
 import managerIcon from 'common/img/manager.svg';
 import { Link as RouterLink, useRouteMatch } from 'react-router-dom';
@@ -10,7 +10,7 @@ export const ManagerBar = (props: FlexProps) => {
   // context
   const { path, url } = useRouteMatch();
   const { manager } = useContextManagerProfile();
-  const { username } = useContextAgentProfile();
+  const { username } = useContextStaffProfile();
   const isBackOffice = path.includes('backoffice');
   const name = manager?.name ? `, ${manager.name}!` : '!';
   return (
@@ -44,7 +44,7 @@ export const ManagerBar = (props: FlexProps) => {
             {t('Sair')}
           </Link>
         </Box>
-        <RouterLink to={isBackOffice ? `${url}/agent-profile` : `${url}/manager-profile`}>
+        <RouterLink to={isBackOffice ? `${url}/staff-profile` : `${url}/manager-profile`}>
           <EditButton />
         </RouterLink>
       </Flex>

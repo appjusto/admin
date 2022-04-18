@@ -108,11 +108,11 @@ export default class FirebaseRefs {
   getBusinessMarketPlaceRef = (businessId: string) =>
     doc(this.getBusinessPrivateRef(businessId), 'marketplace');
 
-  // agents
-  getAgentsRef = () => collection(this.firestore, 'agents');
-  getAgentRef = (agentId: string) => doc(this.getAgentsRef(), agentId);
-  getAgentPrivateRef = (agentId: string) => collection(this.getAgentRef(agentId), 'private');
-  getAgentDeletionRef = (agentId: string) => doc(this.getAgentPrivateRef(agentId), 'deletion');
+  // staff
+  getStaffsRef = () => collection(this.firestore, 'staff');
+  getStaffRef = (staffId: string) => doc(this.getStaffsRef(), staffId);
+  getStaffPrivateRef = (staffId: string) => collection(this.getStaffRef(staffId), 'private');
+  getStaffDeletionRef = (staffId: string) => doc(this.getStaffPrivateRef(staffId), 'deletion');
 
   // managers
   getManagersRef = () => collection(this.firestore, 'managers');
