@@ -19,7 +19,7 @@ export const useStaffProfile = () => {
   React.useEffect(() => {
     if (!user?.uid || !isBackofficeUser) return;
     if (profile?.situation === 'pending') {
-      api.staff().updateProfile(user.uid, { situation: 'verified' });
+      api.staff().updateProfile(user.uid, { situation: 'approved' });
     }
   }, [api, user?.uid, isBackofficeUser, profile]);
   // return
