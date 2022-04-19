@@ -1,30 +1,16 @@
 import { BackofficePermissions } from '@appjusto/types';
-import { AnyMongoAbility } from '@casl/ability';
 import * as Sentry from '@sentry/react';
 import { useFirebaseUser } from 'app/api/auth/useFirebaseUser';
 import { User } from 'firebase/auth';
 import React from 'react';
-import { defineUserAbility } from './userAbility';
-
-// export type GeneralRoles =
-//   | 'owner'
-//   | 'staff'
-//   | 'viewer'
-//   | 'courier-manager'
-//   | 'manager'
-//   | 'collaborator';
 
 export type AdminRole = 'manager' | 'collaborator';
-
-// export const adminRoles: GeneralRoles[] = ['manager', 'collaborator'];
-// export const backofficeRoles: GeneralRoles[] = ['owner', 'staff', 'viewer', 'courier-manager'];
 
 interface FirebaseUserContextProps {
   user?: User | null;
   adminRole?: AdminRole | null;
   backofficePermissions?: BackofficePermissions;
   isBackofficeUser?: boolean | null;
-  userAbility?: AnyMongoAbility;
   refreshUserToken?(businessId?: string): Promise<void>;
 }
 
@@ -40,7 +26,6 @@ export const FirebaseUserProvider = ({ children }: Props) => {
   const [adminRole, setAdminRole] = React.useState<AdminRole | null>();
   const [backofficePermissions, setBackofficePermissions] = React.useState<BackofficePermissions>();
   const [isBackofficeUser, setIsBackofficeUser] = React.useState<boolean | null>();
-  const [userAbility, setUserAbility] = React.useState<AnyMongoAbility>();
   // handlers
   const refreshUserToken = React.useCallback(
     async (businessId?: string) => {
@@ -74,8 +59,6 @@ export const FirebaseUserProvider = ({ children }: Props) => {
   React.useEffect(() => {
     if (!backofficePermissions) return;
     setIsBackofficeUser(true);
-    const ability = defineUserAbility(backofficePermissions);
-    setUserAbility(ability);
   }, [backofficePermissions]);
   // provider
   return (
@@ -85,7 +68,6 @@ export const FirebaseUserProvider = ({ children }: Props) => {
         adminRole,
         isBackofficeUser,
         backofficePermissions,
-        userAbility,
         refreshUserToken,
       }}
     >
