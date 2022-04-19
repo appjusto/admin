@@ -6,12 +6,12 @@ import { isAccessGranted } from 'utils/access';
 
 export const AdminAccessRoute = (props: RouteProps) => {
   // context
-  const { isBackofficeUser, role } = useContextFirebaseUser();
+  const { isBackofficeUser, adminRole } = useContextFirebaseUser();
   const { path } = props;
   // redirects
   if (isBackofficeUser) return <Route {...props} />;
-  if (path && role) {
-    if (path === '/app' || isAccessGranted('admin', path as string, undefined, role))
+  if (path && adminRole) {
+    if (path === '/app' || isAccessGranted('admin', path as string, undefined, adminRole))
       return <Route {...props} />;
     else return <Redirect to="/app" push />;
   }

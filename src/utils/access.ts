@@ -1,5 +1,5 @@
 import { BackofficePermissions } from '@appjusto/types';
-import { GeneralRoles } from 'app/state/auth/context';
+import { AdminRole } from 'app/state/auth/context';
 
 type BackofficeAccess = {
   'orders': string;
@@ -39,7 +39,7 @@ export const isAccessGranted = (
   type: 'admin' | 'backoffice',
   path: string,
   backofficePermissions?: BackofficePermissions,
-  role?: GeneralRoles | null
+  role?: AdminRole | null
 ) => {
   try {
     if (type === 'admin' && backofficePermissions) return true;

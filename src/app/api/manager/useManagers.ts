@@ -1,14 +1,15 @@
 import { NewManagerData } from '@appjusto/types';
 import { useContextApi } from 'app/state/api/context';
-import { GeneralRoles } from 'app/state/auth/context';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
 import React from 'react';
 import { useCustomMutation } from '../mutation/useCustomMutation';
 import { ManagerWithRole } from './types';
 
-export const useManagers = (role?: GeneralRoles | null) => {
+export const useManagers = () => {
   // contex
   const api = useContextApi();
+  const { adminRole, isBackofficeUser } = useContextFirebaseUser();
   const { business } = useContextBusiness();
   // state
   const [managers, setManagers] = React.useState<ManagerWithRole[]>();
@@ -27,10 +28,10 @@ export const useManagers = (role?: GeneralRoles | null) => {
   );
   // side effects
   React.useEffect(() => {
-    if (!role || !['manager', 'owner', 'staff', 'viewer'].includes(role)) return;
+    if (!adminRole && !isBackofficeUser) return;
     if (!business?.id || !business?.managers) return;
     api.manager().getBusinessManagers(business.id, setManagers);
-  }, [api, business?.id, business?.managers, role]);
+  }, [api, business?.id, business?.managers, adminRole, isBackofficeUser]);
   // return
   return {
     managers,

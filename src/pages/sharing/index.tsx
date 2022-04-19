@@ -21,7 +21,7 @@ export type Copied = {
 
 const SharingPage = () => {
   // context
-  const { role, isBackofficeUser } = useContextFirebaseUser();
+  const { adminRole, isBackofficeUser } = useContextFirebaseUser();
   const { business } = useContextBusiness();
   const { updateBusinessSlug, updateSlugResult } = useBusinessProfile();
   const { isLoading } = updateSlugResult;
@@ -30,7 +30,7 @@ const SharingPage = () => {
   const [deeplink, setDeeplink] = React.useState('');
   const [isCopied, setIsCopied] = React.useState<Copied>({ status: false });
   // helpers
-  const isManager = role === 'manager' || isBackofficeUser;
+  const isManager = adminRole === 'manager' || isBackofficeUser;
   // handlers
   const getBusinessLinkByMode = (mode?: Mode) => `${deeplink}${mode ? `?mode=${mode}` : ''}`;
   const copyToClipboard = (mode?: 'whatsapp' | 'in-store') => {

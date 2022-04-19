@@ -28,13 +28,13 @@ const timeoutLimit = 6; // in seconds
 
 const Home = () => {
   // context
-  const { isBackofficeUser, role } = useContextFirebaseUser();
+  const { isBackofficeUser, adminRole } = useContextFirebaseUser();
   const { business } = useContextBusiness();
   const { path } = useRouteMatch();
   // states
   const [isTimeout, setIsTimeout] = React.useState(false);
   // helpers
-  const userWithGrantedRole = isBackofficeUser || role != null;
+  const userWithGrantedRole = isBackofficeUser || adminRole != null;
   // side effects
   React.useEffect(() => {
     const timer = setTimeout(() => setIsTimeout(true), timeoutLimit * 1000);
