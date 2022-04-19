@@ -104,6 +104,22 @@ export const flavorsPTOptions = {
   platform: 'Plataforma',
 };
 
+export const permissionsPTOptions = {
+  orders: 'Pedidos',
+  couriers: 'Entregadores',
+  consumers: 'Consumidores',
+  businesses: 'Restaurantes',
+  chats: 'Chats',
+  invoices: 'Faturas',
+  withdraws: 'Saques',
+  advances: 'Adiantamentos',
+  managers: 'Managers',
+  recommendations: 'Recomendações',
+  staff: 'Staff',
+  users: 'Usuários',
+  platform: 'Plataforma',
+} as { [key: string]: string };
+
 export const getEditableProfile = (profile: any, isEditingEmail: boolean) => {
   let omittedKeys = [
     'id',

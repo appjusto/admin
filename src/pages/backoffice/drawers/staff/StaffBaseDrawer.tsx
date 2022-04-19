@@ -25,18 +25,28 @@ import { useStaff } from 'app/api/staff/useStaff';
 import { useContextAppRequests } from 'app/state/requests/context';
 import CustomRadio from 'common/components/form/CustomRadio';
 import { CustomInput } from 'common/components/form/input/CustomInput';
+import { permissionsPTOptions } from 'pages/backoffice/utils';
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
 import { EntityAcess } from './EntityAcess';
+import { GenericMode, getGenericModePermissions } from './utils';
 
 const initAcess = {
   orders: [],
   couriers: [],
   consumers: [],
   businesses: [],
+  chats: [],
+  invoices: [],
+  withdraws: [],
+  advances: [],
+  managers: [],
+  recommendations: [],
+  staff: [],
+  users: [],
   platform: [],
 } as BackofficePermissions;
 
@@ -54,8 +64,6 @@ const isPermissionsValid = (permissions: BackofficePermissions) => {
   if (rules.length === 0) return false;
   else return true;
 };
-
-type GenericMode = 'owner' | 'viewer' | 'custom';
 
 interface BaseDrawerProps {
   isOpen: boolean;
@@ -135,24 +143,8 @@ export const StaffBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
     setEmail(staffProfile.email);
   }, [staffProfile]);
   React.useEffect(() => {
-    if (genericMode === 'custom') setPermissions(initAcess);
-    else if (genericMode === 'owner') {
-      setPermissions({
-        orders: ['read', 'write', 'delete'],
-        couriers: ['read', 'write', 'delete'],
-        consumers: ['read', 'write', 'delete'],
-        businesses: ['read', 'write', 'delete'],
-        platform: ['read', 'write', 'delete'],
-      });
-    } else if (genericMode === 'viewer') {
-      setPermissions({
-        orders: ['read'],
-        couriers: ['read'],
-        consumers: ['read'],
-        businesses: ['read'],
-        platform: ['read'],
-      });
-    }
+    const changedPermissions = getGenericModePermissions(genericMode);
+    setPermissions(changedPermissions);
   }, [genericMode]);
   React.useEffect(() => {
     if (deleteAccountResult.isSuccess || createResult.isSuccess) onClose();
@@ -237,17 +229,31 @@ export const StaffBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
               fontSize="15px"
               lineHeight="21px"
             >
+              <Text fontSize="16px" color="black" fontWeight="700" lineHeight="22px">
+                {t('Definição geral:')}
+              </Text>
               <HStack
+                mt="4"
                 alignItems="flex-start"
                 color="black"
                 spacing={8}
                 fontSize="16px"
                 lineHeight="22px"
               >
-                <Text fontSize="16px" color="black" fontWeight="700" lineHeight="22px">
-                  {t('Definição geral:')}
-                </Text>
                 <CustomRadio value="owner">{t('Permtir tudo')}</CustomRadio>
+                <CustomRadio value="orders-manager">{t('Pedidos')}</CustomRadio>
+                <CustomRadio value="businesses-manager">{t('Restaurantes')}</CustomRadio>
+                <CustomRadio value="couriers-manager">{t('Entregadores')}</CustomRadio>
+              </HStack>
+              <HStack
+                mt="4"
+                alignItems="flex-start"
+                color="black"
+                spacing={8}
+                fontSize="16px"
+                lineHeight="22px"
+              >
+                <CustomRadio value="consumers-manager">{t('Consumidores')}</CustomRadio>
                 <CustomRadio value="viewer">{t('Apenas leitura')}</CustomRadio>
                 <CustomRadio value="custom">{t('Customizado')}</CustomRadio>
               </HStack>
@@ -263,56 +269,18 @@ export const StaffBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                   </Tr>
                 </Thead>
                 <Tbody>
-                  <EntityAcess
-                    name={t('Pedidos')}
-                    value={permissions.orders}
-                    updateAcess={(value) => {
-                      setPermissions((prev) => ({
-                        ...prev,
-                        orders: value,
-                      }));
-                    }}
-                  />
-                  <EntityAcess
-                    name={t('Entregadores')}
-                    value={permissions.couriers}
-                    updateAcess={(value) => {
-                      setPermissions((prev) => ({
-                        ...prev,
-                        couriers: value,
-                      }));
-                    }}
-                  />
-                  <EntityAcess
-                    name={t('Consumidores')}
-                    value={permissions.consumers}
-                    updateAcess={(value) => {
-                      setPermissions((prev) => ({
-                        ...prev,
-                        consumers: value,
-                      }));
-                    }}
-                  />
-                  <EntityAcess
-                    name={t('Restaurantes')}
-                    value={permissions.businesses}
-                    updateAcess={(value) => {
-                      setPermissions((prev) => ({
-                        ...prev,
-                        businesses: value,
-                      }));
-                    }}
-                  />
-                  <EntityAcess
-                    name={t('Plataforma')}
-                    value={permissions.platform}
-                    updateAcess={(value) => {
-                      setPermissions((prev) => ({
-                        ...prev,
-                        platform: value,
-                      }));
-                    }}
-                  />
+                  {Object.keys(permissions).map((key) => (
+                    <EntityAcess
+                      name={permissionsPTOptions[key]}
+                      value={permissions[key as keyof BackofficePermissions]}
+                      updateAcess={(value) => {
+                        setPermissions((prev) => ({
+                          ...prev,
+                          [key]: value,
+                        }));
+                      }}
+                    />
+                  ))}
                 </Tbody>
               </Table>
             </Box>
