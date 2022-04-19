@@ -1,7 +1,7 @@
 import { BackofficePermissions } from '@appjusto/types';
 import { GeneralRoles } from 'app/state/auth/context';
 
-type Access = {
+type BackofficeAccess = {
   'orders': string;
   'couriers': string;
   'businesses': string;
@@ -14,17 +14,17 @@ type Access = {
   'staff-profile': string;
 };
 
-const access = {
+const backofficeAccess = {
   'orders': 'orders',
   'couriers': 'couriers',
   'businesses': 'businesses',
   'consumers': 'consumers',
-  'invoices': 'orders',
-  'users': 'orders',
-  'recommendations': 'businesses',
+  'invoices': 'invoices',
+  'users': 'users',
+  'recommendations': 'recommendations',
   'fraud-prevention': 'platform',
-  'staff': 'platform',
-} as Access;
+  'staff': 'staff',
+} as BackofficeAccess;
 
 const collaboratorPages = [
   'orders',
@@ -49,9 +49,9 @@ export const isAccessGranted = (
       else if (collaboratorPages.includes(page)) return true;
       else return false;
     } else if (type === 'backoffice' && backofficePermissions) {
-      const page = path.split('/backoffice/')[1] as keyof Access;
+      const page = path.split('/backoffice/')[1] as keyof BackofficeAccess;
       if (!page || page === 'staff-profile') return true;
-      const accessProperty = access[page] as keyof BackofficePermissions;
+      const accessProperty = backofficeAccess[page] as keyof BackofficePermissions;
       return backofficePermissions[accessProperty].includes('read');
     }
     return false;

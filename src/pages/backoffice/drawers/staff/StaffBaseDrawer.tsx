@@ -271,6 +271,7 @@ export const StaffBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 <Tbody>
                   {Object.keys(permissions).map((key) => (
                     <EntityAcess
+                      key={key}
                       name={permissionsPTOptions[key]}
                       value={permissions[key as keyof BackofficePermissions]}
                       updateAcess={(value) => {
