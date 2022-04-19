@@ -62,14 +62,14 @@ export const getGenericModePermissions = (mode: GenericMode): BackofficePermissi
     return {
       orders: ['read'],
       couriers: ['read', 'write'],
-      consumers: ['read'],
+      consumers: [],
       businesses: ['read'],
       chats: ['read'],
       invoices: ['read'],
       withdraws: ['read'],
       advances: ['read'],
       managers: ['read'],
-      recommendations: ['read', 'write'],
+      recommendations: ['read'],
       staff: [],
       users: ['read'],
       platform: [],
@@ -77,8 +77,8 @@ export const getGenericModePermissions = (mode: GenericMode): BackofficePermissi
   } else if (mode === 'businesses-manager') {
     return {
       orders: ['read'],
-      couriers: ['read'],
-      consumers: ['read'],
+      couriers: [],
+      consumers: [],
       businesses: ['read', 'write'],
       chats: ['read'],
       invoices: ['read'],

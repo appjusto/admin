@@ -34,7 +34,7 @@ const Home = () => {
   // states
   const [isTimeout, setIsTimeout] = React.useState(false);
   // helpers
-  const userWithGrantedRole = role != null;
+  const userWithGrantedRole = isBackofficeUser || role != null;
   // side effects
   React.useEffect(() => {
     const timer = setTimeout(() => setIsTimeout(true), timeoutLimit * 1000);
