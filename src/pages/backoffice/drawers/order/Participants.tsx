@@ -67,7 +67,11 @@ export const Participants = ({ order }: ParticipantsProps) => {
       ) : (
         <Box>
           <SectionTitle>{t('Cliente')}</SectionTitle>
-          <Participant type="consumer" name={order?.consumer?.name ?? 'N/E'} />
+          <Participant
+            type="consumer"
+            participantId={order?.consumer?.id}
+            name={order?.consumer?.name ?? 'N/E'}
+          />
           <SectionTitle>{t('Origem')}</SectionTitle>
           <Participant
             type="p2p-instructions"
