@@ -1,5 +1,6 @@
 import { StaffProfile, WithId } from '@appjusto/types';
-import { Flex, Text } from '@chakra-ui/react';
+import { ArrowDownIcon } from '@chakra-ui/icons';
+import { Button, Flex, Text } from '@chakra-ui/react';
 import { useStaffs } from 'app/api/staff/useStaffs';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { CustomInput } from 'common/components/form/input/CustomInput';
@@ -15,7 +16,7 @@ const StaffsPage = () => {
   // context
   const { path } = useRouteMatch();
   const history = useHistory();
-  const { staffs } = useStaffs();
+  const { staffs, fetchNextPage } = useStaffs();
   // state
   const [dateTime, setDateTime] = React.useState('');
   const [search, setSearch] = React.useState('');
@@ -71,6 +72,10 @@ const StaffsPage = () => {
         <CustomButton mt="0" label={t('Adicionar agente')} link={`${path}/new`} />
       </Flex>
       <StaffsTable staffs={staffsList} />
+      <Button mt="8" variant="secondary" onClick={fetchNextPage}>
+        <ArrowDownIcon mr="2" />
+        {t('Carregar mais')}
+      </Button>
       <Switch>
         <Route path={`${path}/:staffId`}>
           <StaffBaseDrawer isOpen onClose={closeDrawerHandler} />

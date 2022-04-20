@@ -7,9 +7,20 @@ import {
   WithId,
 } from '@appjusto/types';
 import * as Sentry from '@sentry/react';
-import { orderBy, query, Unsubscribe, updateDoc } from 'firebase/firestore';
+import { documentsAs, FirebaseDocument } from 'core/fb';
+import {
+  DocumentData,
+  limit,
+  onSnapshot,
+  orderBy,
+  query,
+  QueryDocumentSnapshot,
+  startAfter,
+  Unsubscribe,
+  updateDoc,
+} from 'firebase/firestore';
 import FirebaseRefs from '../FirebaseRefs';
-import { customCollectionSnapshot, customDocumentSnapshot } from '../utils';
+import { customDocumentSnapshot } from '../utils';
 
 export default class StaffApi {
   constructor(private refs: FirebaseRefs) {}
@@ -24,13 +35,32 @@ export default class StaffApi {
     return customDocumentSnapshot(ref, resultHandler);
   }
 
-  observeStaffs(resultHandler: (staff: WithId<StaffProfile>[] | null) => void): Unsubscribe {
-    const q = query(this.refs.getStaffsRef(), orderBy('email'));
+  observeStaffs(
+    resultHandler: (
+      staff: WithId<StaffProfile>[],
+      last?: QueryDocumentSnapshot<DocumentData>
+    ) => void,
+    startAfterDoc?: FirebaseDocument
+  ): Unsubscribe {
+    let q = query(this.refs.getStaffsRef(), orderBy('email'), limit(10));
+    if (startAfterDoc) q = query(q, startAfter(startAfterDoc));
     // returns the unsubscribe function
-    return customCollectionSnapshot(q, resultHandler, {
-      avoidPenddingWrites: false,
-      captureException: true,
-    });
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        if (!snapshot.metadata.hasPendingWrites) {
+          const last =
+            snapshot.docs.length > 0 ? snapshot.docs[snapshot.docs.length - 1] : undefined;
+          resultHandler(documentsAs<StaffProfile>(snapshot.docs), last);
+        }
+      },
+      (error) => {
+        console.error(error);
+        Sentry.captureException(error);
+      }
+    );
+    // returns the unsubscribe function
+    return unsubscribe;
   }
 
   async getStaff(staffId: string) {
