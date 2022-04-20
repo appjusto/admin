@@ -29,7 +29,7 @@ export const getGenericModePermissions = (mode: GenericMode): BackofficePermissi
   } else if (mode === 'orders-manager') {
     return {
       orders: ['read', 'write'],
-      couriers: ['read'],
+      couriers: ['read', 'write'],
       consumers: ['read'],
       businesses: ['read', 'write'],
       chats: ['read'],
