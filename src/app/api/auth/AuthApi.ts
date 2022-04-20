@@ -14,7 +14,7 @@ import {
   updatePassword,
   User,
 } from 'firebase/auth';
-import { addDoc, serverTimestamp } from 'firebase/firestore/lite';
+import { addDoc, serverTimestamp } from 'firebase/firestore';
 import FirebaseRefs from '../FirebaseRefs';
 
 export default class AuthApi {
@@ -47,12 +47,14 @@ export default class AuthApi {
   async sendSignInLinkToEmail(email: string): Promise<void> {
     this.auth.languageCode = 'pt'; // i18n
     try {
-      await addDoc(this.refs.getPlatformLoginLogsRef(), {
+      await addDoc(this.refs.getPlatformLogsLoginsRef(), {
         email,
         flavor: 'business',
         signInAt: serverTimestamp(),
       });
-    } catch (error) {}
+    } catch (error) {
+      console.error('add login log error:', error);
+    }
     await sendSignInLinkToEmail(this.auth, email, {
       url: `${this.config.publicURL}/join`,
       handleCodeInApp: true,
