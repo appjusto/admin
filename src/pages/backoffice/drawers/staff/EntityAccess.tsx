@@ -2,13 +2,13 @@ import { BackofficePermissionRules } from '@appjusto/types';
 import { CheckboxGroup, Td, Tr } from '@chakra-ui/react';
 import CustomCheckbox from 'common/components/form/CustomCheckbox';
 
-interface EntityAcessProps {
+interface EntityAccessProps {
   name: string;
   value: BackofficePermissionRules;
   updateAcess: (value: BackofficePermissionRules) => void;
 }
 
-export const EntityAcess = ({ name, value, updateAcess }: EntityAcessProps) => {
+export const EntityAccess = ({ name, value, updateAcess }: EntityAccessProps) => {
   return (
     <Tr>
       <Td>{name}</Td>
@@ -18,10 +18,13 @@ export const EntityAcess = ({ name, value, updateAcess }: EntityAcessProps) => {
         onChange={(value) => updateAcess(value as BackofficePermissionRules)}
       >
         <Td>
+          <CustomCheckbox value="create">{'Criar'}</CustomCheckbox>
+        </Td>
+        <Td>
           <CustomCheckbox value="read">{'Ler'}</CustomCheckbox>
         </Td>
         <Td>
-          <CustomCheckbox value="write">{'Escrever'}</CustomCheckbox>
+          <CustomCheckbox value="update">{'Alterar'}</CustomCheckbox>
         </Td>
         <Td>
           <CustomCheckbox value="delete">{'Apagar'}</CustomCheckbox>

@@ -31,7 +31,7 @@ import { useParams } from 'react-router-dom';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
-import { EntityAcess } from './EntityAcess';
+import { EntityAccess } from './EntityAccess';
 import { GenericMode, getGenericModePermissions } from './utils';
 
 const initAcess = {
@@ -270,7 +270,7 @@ export const StaffBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 </Thead>
                 <Tbody>
                   {Object.keys(permissions).map((key) => (
-                    <EntityAcess
+                    <EntityAccess
                       key={key}
                       name={permissionsPTOptions[key]}
                       value={permissions[key as keyof BackofficePermissions]}
