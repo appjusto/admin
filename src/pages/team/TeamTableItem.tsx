@@ -1,4 +1,4 @@
-import { Box, Button, HStack, RadioGroup, Td, Tr } from '@chakra-ui/react';
+import { Box, Button, HStack, RadioGroup, Td, Text, Tr } from '@chakra-ui/react';
 import { ManagerWithPermissions } from 'app/api/manager/types';
 import CustomRadio from 'common/components/form/CustomRadio';
 import React from 'react';
@@ -20,17 +20,25 @@ export const TeamTableItem = ({
   isLoading,
 }: TeamTableItemProps) => {
   // state
+  const [currentRole, setCurrentRole] = React.useState<ManagerBasicRole>();
   const [role, setRole] = React.useState<ManagerBasicRole>();
   const [isDeleting, setIsDeleting] = React.useState(false);
   const [isUpdating, setIsUpdating] = React.useState(false);
   // side effects
   React.useEffect(() => {
     if (!manager.permissions) return;
-    console.log('Permissions', manager.permissions);
     const basicRole = getBusinessManagerBasicRole(manager.permissions);
-    console.log('basicRole', basicRole);
+    setCurrentRole(basicRole);
     setRole(basicRole);
   }, [manager.permissions, getBusinessManagerBasicRole]);
+  React.useEffect(() => {
+    if (!currentRole || !role) return;
+    if (currentRole !== role) setIsUpdating(true);
+  }, [currentRole, role]);
+  React.useEffect(() => {
+    if (isUpdating || !currentRole) return;
+    if (!isUpdating) setRole(currentRole);
+  }, [isUpdating, currentRole]);
   // UI
   if (isDeleting) {
     return (
@@ -62,10 +70,33 @@ export const TeamTableItem = ({
     return (
       <Tr color="black" fontSize="sm" h="66px" pos="relative">
         <Td>{manager.email}</Td>
-        <Td>{t('Confirmar atualização?')}</Td>
+        <Td textAlign="center">
+          <RadioGroup
+            onChange={(value: ManagerBasicRole) => setRole(value)}
+            value={role}
+            defaultValue="1"
+            colorScheme="green"
+            color="black"
+            fontSize="15px"
+            lineHeight="21px"
+          >
+            <HStack
+              alignItems="flex-start"
+              color="black"
+              spacing={8}
+              fontSize="16px"
+              lineHeight="22px"
+            >
+              <CustomRadio value="owner">{t('Proprietário')}</CustomRadio>
+              <CustomRadio value="manager">{t('Gerente')}</CustomRadio>
+              <CustomRadio value="collaborator">{t('Colaborador')}</CustomRadio>
+            </HStack>
+          </RadioGroup>
+        </Td>
         <Td position="relative">
-          <Box position="absolute" top="4">
-            <HStack spacing={4}>
+          <Box position="absolute" top="1">
+            <Text>{t('Confirmar atualização?')}</Text>
+            <HStack mt="1" spacing={4}>
               <Button w="150px" size="sm" variant="danger" onClick={() => setIsUpdating(false)}>
                 {t('Cancelar')}
               </Button>
