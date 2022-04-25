@@ -20,6 +20,16 @@ const memberObj = {
   role: 'collaborator',
 } as Member;
 
+const ownerLabel = t(
+  'Como proprietário, o usuário terá total acesso à plataforma do restaurante. Sendo prerrogativa apenas sua, clonar ou excluir o restaurante e criar e alterar colaboradores'
+);
+const managerLabel = t(
+  'Como gerente, o usuário pode alterar dados do restaurante, realizar operações financeiras (como saques e antecipações), adicionar, alterar e excluir items do cardápio, gerenciar o fluxo dos pedidos e enviar e receber mensagens de chat'
+);
+const collaboratorLabel = t(
+  'Como colaborador, o usuário pode gerenciar o fluxo dos pedidos, enviar e receber mensagens de chat e realizar alterações em itens existentes do cardápio'
+);
+
 export const AddMembersForm = () => {
   //context
   const { dispatchAppRequestResult } = useContextAppRequests();
@@ -144,9 +154,21 @@ export const AddMembersForm = () => {
                   fontSize="16px"
                   lineHeight="22px"
                 >
-                  <CustomRadio value="owner">{t('Proprietário')}</CustomRadio>
-                  <CustomRadio value="manager">{t('Gerente')}</CustomRadio>
-                  <CustomRadio value="collaborator">{t('Colaborador')}</CustomRadio>
+                  <Tooltip hasArrow label={ownerLabel} placement="top">
+                    <Box>
+                      <CustomRadio value="owner">{t('Proprietário')}</CustomRadio>
+                    </Box>
+                  </Tooltip>
+                  <Tooltip hasArrow label={managerLabel} placement="top">
+                    <Box>
+                      <CustomRadio value="manager">{t('Gerente')}</CustomRadio>
+                    </Box>
+                  </Tooltip>
+                  <Tooltip hasArrow label={collaboratorLabel} placement="top">
+                    <Box>
+                      <CustomRadio value="collaborator">{t('Colaborador')}</CustomRadio>
+                    </Box>
+                  </Tooltip>
                 </Stack>
               </RadioGroup>
               <Box w="40px">

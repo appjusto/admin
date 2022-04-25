@@ -8,7 +8,12 @@ import { getBusinessManagerPermissionsObject, ManagerBasicRole } from './utils';
 
 export const TeamTable = () => {
   // context
-  const { managers: businessManagers, removeBusinessManager, createManager } = useManagers();
+  const {
+    managers: businessManagers,
+    removeBusinessManager,
+    createManager,
+    createResult,
+  } = useManagers();
   // state
   const [managers, setManagers] = React.useState<ManagerWithPermissions[]>();
   const [isLoading, setIsLoading] = React.useState(false);
@@ -70,6 +75,7 @@ export const TeamTable = () => {
                     key={manager.uid}
                     manager={manager}
                     updateMember={updateMember}
+                    updateSuccess={createResult.isSuccess}
                     deleteMember={deleteMember}
                     isLoading={isLoading}
                   />

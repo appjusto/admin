@@ -9,6 +9,7 @@ import { getBusinessManagerBasicRole, ManagerBasicRole } from './utils';
 interface TeamTableItemProps {
   manager: ManagerWithPermissions;
   updateMember(managerEmail: string, role: ManagerBasicRole): void;
+  updateSuccess: boolean;
   deleteMember(managerEmail: string): void;
   isLoading: boolean;
 }
@@ -16,6 +17,7 @@ interface TeamTableItemProps {
 export const TeamTableItem = ({
   manager,
   updateMember,
+  updateSuccess,
   deleteMember,
   isLoading,
 }: TeamTableItemProps) => {
@@ -23,7 +25,7 @@ export const TeamTableItem = ({
   const [currentRole, setCurrentRole] = React.useState<ManagerBasicRole>();
   const [role, setRole] = React.useState<ManagerBasicRole>();
   const [isDeleting, setIsDeleting] = React.useState(false);
-  const [isUpdating, setIsUpdating] = React.useState(false);
+  const [isUpdating, setIsUpdating] = React.useState<boolean>();
   // side effects
   React.useEffect(() => {
     if (!manager.permissions) return;
@@ -37,14 +39,20 @@ export const TeamTableItem = ({
   }, [currentRole, role]);
   React.useEffect(() => {
     if (isUpdating || !currentRole) return;
-    if (!isUpdating) setRole(currentRole);
-  }, [isUpdating, currentRole]);
+    if (isUpdating === false) setRole(currentRole);
+  }, [updateSuccess, isUpdating, currentRole]);
+  React.useEffect(() => {
+    if (updateSuccess) {
+      setIsUpdating(undefined);
+      return;
+    }
+  }, [updateSuccess]);
   // UI
   if (isDeleting) {
     return (
       <Tr color="black" fontSize="sm" h="66px" bg="rgba(254, 215, 215, 0.3)" pos="relative">
         <Td>{manager.email}</Td>
-        <Td>{t('Confirmar exclusão?')}</Td>
+        <Td isNumeric>{t('Confirmar exclusão?')}</Td>
         <Td position="relative">
           <Box position="absolute" top="4">
             <HStack spacing={4}>
@@ -68,7 +76,7 @@ export const TeamTableItem = ({
     );
   } else if (isUpdating) {
     return (
-      <Tr color="black" fontSize="sm" h="66px" pos="relative">
+      <Tr color="black" fontSize="sm" h="66px" pos="relative" bg="green.50">
         <Td>{manager.email}</Td>
         <Td textAlign="center">
           <RadioGroup

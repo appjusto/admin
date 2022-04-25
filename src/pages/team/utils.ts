@@ -19,7 +19,7 @@ const managerObject = {
   businesses: ['read', 'update'],
   chats: ['create', 'read', 'update'],
   invoices: ['read', 'update'],
-  managers: ['create', 'read', 'update'],
+  managers: [],
   menu: ['create', 'read', 'update', 'delete'],
   orders: ['read', 'update'],
   withdraws: ['create', 'read', 'update'],
