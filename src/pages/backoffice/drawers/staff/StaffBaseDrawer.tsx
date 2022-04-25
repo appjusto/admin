@@ -18,7 +18,7 @@ import {
   Text,
   Th,
   Thead,
-  Tr
+  Tr,
 } from '@chakra-ui/react';
 import { useAuthentication } from 'app/api/auth/useAuthentication';
 import { useStaff } from 'app/api/staff/useStaff';
@@ -32,7 +32,7 @@ import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
 import { EntityAccess } from './EntityAccess';
-import { GenericMode, getGenericModePermissions } from './utils';
+import { GenericMode, getGenericModePermissions, getGenericModeRole } from './utils';
 
 const initAcess = {
   orders: [],
@@ -131,7 +131,11 @@ export const StaffBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
     (async () => {
       const data = await getStaff(staffId);
       setStaffProfile(data?.staff ?? null);
-      if (data?.permissions) setPermissions(data.permissions);
+      if (data?.permissions) {
+        setPermissions(data.permissions);
+        const genericRole = getGenericModeRole(data.permissions);
+        setGenericMode(genericRole);
+      }
       if (data?.staff?.situation)
         setSituation({
           before: data.staff.situation,
