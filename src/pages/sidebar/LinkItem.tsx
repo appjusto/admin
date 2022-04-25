@@ -13,13 +13,18 @@ interface LinkItemProps {
 
 export const LinkItem = ({ type = 'admin', to, label, isDisabled }: LinkItemProps) => {
   // context
-  const { adminRole, backofficePermissions } = useContextFirebaseUser();
+  const { backofficePermissions, adminRole } = useContextFirebaseUser();
   let match = useRouteMatch({
     path: to,
     exact: true,
   });
   // helpers
-  const userHasAccess = isAccessGranted(type, to, backofficePermissions, adminRole);
+  const userHasAccess = isAccessGranted({
+    type,
+    path: to,
+    backofficePermissions,
+    adminRole,
+  });
   // UI
   if (isDisabled) {
     return (

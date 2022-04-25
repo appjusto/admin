@@ -26,28 +26,83 @@ const backofficeAccess = {
   'staff': 'staff',
 } as BackofficeAccess;
 
-const collaboratorPages = [
+type AdminAccess = {
+  'orders': string;
+  'sharing': string;
+  'menu': string;
+  'business-schedules': string;
+  'delivery-area': string;
+  'orders-history': string;
+  'finances': string;
+  'business-profile': string;
+  'banking-information': string;
+  'team': string;
+  'chat': string;
+  'manager-profile': string;
+};
+
+// const adminAccess = {
+//   'orders': 'orders',
+//   'sharing': 'orders',
+//   'menu': 'menu',
+//   'business-schedules': 'businesses',
+//   'delivery-area': 'businesses',
+//   'orders-history': 'orders',
+//   'finances': 'withdraws',
+//   'business-profile': 'businesses',
+//   'banking-information': 'businesses',
+//   'team': 'managers',
+//   'chat': 'orders',
+// } as AdminAccess;
+
+// const adminOwnerPages = [
+//   'orders',
+//   'sharing',
+//   'menu',
+//   'business-schedules',
+//   'delivery-area',
+//   'orders-history',
+//   'finances',
+//   'business-profile',
+//   'banking-information',
+//   'team',
+//   'chat',
+// ]
+
+const adminManagerPages = [
   'orders',
   'sharing',
   'menu',
+  'business-schedules',
+  'delivery-area',
   'orders-history',
-  'manager-profile',
+  'finances',
+  'business-profile',
+  'banking-information',
   'chat',
 ];
 
-export const isAccessGranted = (
-  type: 'admin' | 'backoffice',
-  path: string,
-  backofficePermissions?: UserPermissions,
-  role?: AdminRole | null
-) => {
+const adminCollaboratorPages = ['orders', 'sharing', 'menu', 'orders-history', 'chat'];
+
+type IsAccessGrantedArgs = {
+  type: 'admin' | 'backoffice';
+  path: string;
+  backofficePermissions?: UserPermissions;
+  adminRole?: AdminRole | null;
+};
+
+export const isAccessGranted = (args: IsAccessGrantedArgs) => {
+  const { type, path, backofficePermissions, adminRole } = args;
   try {
     if (type === 'admin' && backofficePermissions) return true;
-    else if (type === 'admin' && role) {
-      const page = path.split('/app/')[1];
-      if (role === 'manager' || !page) return true;
-      else if (collaboratorPages.includes(page)) return true;
-      else return false;
+    if (type === 'admin' && adminRole) {
+      const page = path.split('/app/')[1] as keyof AdminAccess;
+      if (!page || adminRole === 'owner' || page === 'manager-profile') return true;
+      if (adminRole === 'manager') {
+        return adminManagerPages.includes(page);
+      } else if (adminRole === 'collaborator') {
+        return adminCollaboratorPages.includes(page);
+      }
     } else if (type === 'backoffice' && backofficePermissions) {
       const page = path.split('/backoffice/')[1] as keyof BackofficeAccess;
       if (!page || page === 'staff-profile') return true;
