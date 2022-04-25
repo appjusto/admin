@@ -1,4 +1,4 @@
-import { BackofficePermissions, ProfileSituation, StaffProfile, WithId } from '@appjusto/types';
+import { ProfileSituation, StaffProfile, UserPermissions, WithId } from '@appjusto/types';
 import {
   Box,
   Button,
@@ -18,7 +18,7 @@ import {
   Text,
   Th,
   Thead,
-  Tr,
+  Tr
 } from '@chakra-ui/react';
 import { useAuthentication } from 'app/api/auth/useAuthentication';
 import { useStaff } from 'app/api/staff/useStaff';
@@ -49,17 +49,17 @@ const initAcess = {
   staff: [],
   users: [],
   platform: [],
-} as BackofficePermissions;
+} as UserPermissions;
 
 type Situation = {
   before?: ProfileSituation;
   after?: ProfileSituation;
 };
 
-const isPermissionsValid = (permissions: BackofficePermissions) => {
+const isPermissionsValid = (permissions: UserPermissions) => {
   let rules = [] as string[];
   Object.keys(permissions).forEach((key) => {
-    const rule = permissions[key as keyof BackofficePermissions];
+    const rule = permissions[key as keyof UserPermissions];
     rules.push(...(rule as string[]));
   });
   if (rules.length === 0) return false;
@@ -274,7 +274,7 @@ export const StaffBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                     <EntityAccess
                       key={key}
                       name={permissionsPTOptions[key]}
-                      value={permissions[key as keyof BackofficePermissions]}
+                      value={permissions[key as keyof UserPermissions]}
                       updateAcess={(value) => {
                         setPermissions((prev) => ({
                           ...prev,

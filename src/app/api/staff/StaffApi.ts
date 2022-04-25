@@ -1,9 +1,9 @@
 import {
-  BackofficePermissions,
   CreateManagersPayload,
   GetManagersPayload,
-  NewStaffData,
+  NewUserData,
   StaffProfile,
+  UserPermissions,
   WithId,
 } from '@appjusto/types';
 import * as Sentry from '@sentry/react';
@@ -73,7 +73,7 @@ export default class StaffApi {
       const result = await this.refs.getGetManagersCallable()(payload);
       const data = result.data as {
         staff: WithId<StaffProfile>;
-        permissions: BackofficePermissions;
+        permissions: UserPermissions;
       };
       return data;
     } catch (error) {
@@ -97,11 +97,11 @@ export default class StaffApi {
     await updateDoc(this.refs.getStaffRef(id), changes);
   }
 
-  async createStaff(staff: NewStaffData) {
+  async createStaff(staff: NewUserData) {
     const payload: CreateManagersPayload = {
       meta: { version: '1' }, // TODO: pass correct version on
       type: 'staff',
-      staff,
+      usersData: [staff],
     };
     const result = await this.refs.getCreateManagersCallable()(payload);
     return result;

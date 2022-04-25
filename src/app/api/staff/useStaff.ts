@@ -1,4 +1,4 @@
-import { NewStaffData, ProfileSituation } from '@appjusto/types';
+import { NewUserData, ProfileSituation } from '@appjusto/types';
 import { useContextApi } from 'app/state/api/context';
 import { useCustomMutation } from '../mutation/useCustomMutation';
 
@@ -7,7 +7,7 @@ export const useStaff = () => {
   const api = useContextApi();
   // mutations
   const { mutateAsync: createStaff, mutationResult: createResult } = useCustomMutation(
-    async (staff: NewStaffData) => {
+    async (staff: NewUserData) => {
       return api.staff().createStaff(staff);
     },
     'createStaff'

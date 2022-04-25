@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@appjusto/menu": "^0.1.4",
-    "@appjusto/types": "5.6.6",
+    "@appjusto/types": "5.6.8",
     "@chakra-ui/icons": "^1.0.3",
     "@chakra-ui/react": "^1.6.3",
     "@emotion/react": "^11.0.0",

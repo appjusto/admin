@@ -1,28 +1,30 @@
 import { Box, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
-import { ManagerWithRole } from 'app/api/manager/types';
+import { ManagerWithPermissions } from 'app/api/manager/types';
 import { useManagers } from 'app/api/manager/useManagers';
 import React from 'react';
 import { t } from 'utils/i18n';
 import { TeamTableItem } from './TeamTableItem';
+import { getBusinessManagerPermissionsObject, ManagerBasicRole } from './utils';
 
 export const TeamTable = () => {
   // context
   const { managers: businessManagers, removeBusinessManager, createManager } = useManagers();
   // state
-  const [managers, setManagers] = React.useState<ManagerWithRole[]>();
+  const [managers, setManagers] = React.useState<ManagerWithPermissions[]>();
   const [isLoading, setIsLoading] = React.useState(false);
   // handlers
-  const updateMember = async (managerEmail: string, isManager: boolean) => {
+  const updateMember = async (managerEmail: string, role: ManagerBasicRole) => {
     setIsLoading(true);
     setManagers((prev) =>
       prev?.map((manager) => {
         if (manager.email === managerEmail) {
-          return { ...manager, role: isManager ? 'manager' : 'collaborator' };
+          return { ...manager, role };
         }
         return manager;
       })
     );
-    await createManager([{ email: managerEmail, role: isManager ? 'manager' : 'collaborator' }]);
+    const permissions = getBusinessManagerPermissionsObject(role);
+    await createManager([{ email: managerEmail, permissions }]);
     setIsLoading(false);
   };
   const deleteMember = async (managerEmail: string) => {
@@ -55,7 +57,7 @@ export const TeamTable = () => {
           <Thead>
             <Tr>
               <Th>{t('E-mail do colaborador')}</Th>
-              <Th>{t('Administrador')}</Th>
+              <Th>{t('Papel do usuário')}</Th>
               <Th>{t('Adicionado em')}</Th>
               <Th></Th>
             </Tr>

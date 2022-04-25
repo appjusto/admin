@@ -1,4 +1,4 @@
-import { BackofficePermissions } from '@appjusto/types';
+import { UserPermissions } from '@appjusto/types';
 import { AdminRole } from 'app/state/auth/context';
 
 type BackofficeAccess = {
@@ -38,7 +38,7 @@ const collaboratorPages = [
 export const isAccessGranted = (
   type: 'admin' | 'backoffice',
   path: string,
-  backofficePermissions?: BackofficePermissions,
+  backofficePermissions?: UserPermissions,
   role?: AdminRole | null
 ) => {
   try {
@@ -51,7 +51,7 @@ export const isAccessGranted = (
     } else if (type === 'backoffice' && backofficePermissions) {
       const page = path.split('/backoffice/')[1] as keyof BackofficeAccess;
       if (!page || page === 'staff-profile') return true;
-      const accessProperty = backofficeAccess[page] as keyof BackofficePermissions;
+      const accessProperty = backofficeAccess[page] as keyof UserPermissions;
       return backofficePermissions[accessProperty].includes('read');
     }
     return false;

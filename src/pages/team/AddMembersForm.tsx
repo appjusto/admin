@@ -1,23 +1,24 @@
-import { AdminRole } from '@appjusto/types';
-import { Box, Button, HStack, Switch, Text, Tooltip } from '@chakra-ui/react';
+import { Box, Button, RadioGroup, Stack, Text, Tooltip } from '@chakra-ui/react';
 import { useManagers } from 'app/api/manager/useManagers';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { CloseButton } from 'common/components/buttons/CloseButton';
+import CustomRadio from 'common/components/form/CustomRadio';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import { intersection } from 'lodash';
 import React from 'react';
 import { t } from 'utils/i18n';
+import { getBusinessManagerPermissionsObject, ManagerBasicRole } from './utils';
 
 type Member = {
   email: string;
-  isManager: boolean;
+  role: ManagerBasicRole;
 };
 
 const memberObj = {
   email: '',
-  isManager: false,
-};
+  role: 'collaborator',
+} as Member;
 
 export const AddMembersForm = () => {
   //context
@@ -55,10 +56,10 @@ export const AddMembersForm = () => {
         requestId: 'AddMembersForm-valid-no-business',
       });
     const managers = members.map((member) => {
-      const userRole: AdminRole = member.isManager ? 'manager' : 'collaborator';
+      const permissions = getBusinessManagerPermissionsObject(member.role);
       return {
         email: member.email,
-        role: userRole,
+        permissions,
       };
     });
     if (managers.find((manager) => !manager.email)) {
@@ -91,7 +92,7 @@ export const AddMembersForm = () => {
   }, [isSuccess]);
   // UI
   return (
-    <Box mt="8" maxW={{ base: '100vw', lg: '700px' }}>
+    <Box mt="8" w="100%">
       <form
         onSubmit={(ev) => {
           ev.preventDefault();
@@ -103,13 +104,14 @@ export const AddMembersForm = () => {
         </Text>
         <Box overflowX="auto">
           {members.map((member, index) => (
-            <HStack
+            <Stack
               key={members.length + index}
               mt="4"
+              w="100%"
+              direction={{ base: 'column', md: 'row' }}
               spacing={4}
-              alignItems="center"
+              alignItems={{ base: 'flex-start', md: 'center' }}
               pos="relative"
-              minW="500px"
             >
               <CustomInput
                 mt="0"
@@ -122,16 +124,31 @@ export const AddMembersForm = () => {
                   updateMember(index, 'email', event.target.value)
                 }
               />
-              <Text color="black" fontSize="sm">
-                {t('Incluir como Administrador:')}
+              <Text color="black" fontSize="sm" fontWeight="700">
+                {t('Papel do usuário:')}
               </Text>
-              <Switch
-                isChecked={member.isManager}
-                onChange={(ev) => {
-                  ev.stopPropagation();
-                  updateMember(index, 'isManager', ev.target.checked);
-                }}
-              />
+              <RadioGroup
+                onChange={(value: ManagerBasicRole) => updateMember(index, 'role', value)}
+                value={member.role}
+                defaultValue="1"
+                colorScheme="green"
+                color="black"
+                fontSize="15px"
+                lineHeight="21px"
+              >
+                <Stack
+                  direction={{ base: 'column', md: 'row' }}
+                  alignItems="flex-start"
+                  color="black"
+                  spacing={8}
+                  fontSize="16px"
+                  lineHeight="22px"
+                >
+                  <CustomRadio value="owner">{t('Proprietário')}</CustomRadio>
+                  <CustomRadio value="manager">{t('Gerente')}</CustomRadio>
+                  <CustomRadio value="collaborator">{t('Colaborador')}</CustomRadio>
+                </Stack>
+              </RadioGroup>
               <Box w="40px">
                 {index > 0 && (
                   <Tooltip placement="top" label={t('Remover')} aria-label={t('Remover')}>
@@ -143,7 +160,7 @@ export const AddMembersForm = () => {
                   </Tooltip>
                 )}
               </Box>
-            </HStack>
+            </Stack>
           ))}
         </Box>
         <Button mt="4" size="sm" variant="outline" onClick={AddMemberFields}>

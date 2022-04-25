@@ -1,4 +1,4 @@
-import { BackofficePermissions } from '@appjusto/types';
+import { UserPermissions } from '@appjusto/types';
 
 export type GenericMode =
   | 'owner'
@@ -9,7 +9,7 @@ export type GenericMode =
   | 'viewer'
   | 'custom';
 
-export const getGenericModePermissions = (mode: GenericMode): BackofficePermissions => {
+export const getGenericModePermissions = (mode: GenericMode): UserPermissions => {
   if (mode === 'owner') {
     return {
       orders: ['create', 'read', 'update', 'delete'],
