@@ -109,6 +109,7 @@ export const permissionsPTOptions = {
   couriers: 'Entregadores',
   consumers: 'Consumidores',
   businesses: 'Restaurantes',
+  menu: 'Cardápios',
   chats: 'Chats',
   invoices: 'Faturas',
   withdraws: 'Saques',

@@ -39,6 +39,7 @@ const initAcess = {
   couriers: [],
   consumers: [],
   businesses: [],
+  menu: [],
   chats: [],
   invoices: [],
   withdraws: [],
