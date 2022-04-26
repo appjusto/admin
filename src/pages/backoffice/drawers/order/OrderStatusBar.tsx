@@ -64,7 +64,7 @@ export const OrderStatusBar = ({
             lineHeight="21px"
           >
             <Flex flexDir="column" justifyContent="flex-start">
-              <CustomRadio mt="2" value="confirmed">
+              <CustomRadio mt="2" value="confirmed" isDisabled>
                 {t('Confirmado')}
               </CustomRadio>
               {orderType === 'food' && (
