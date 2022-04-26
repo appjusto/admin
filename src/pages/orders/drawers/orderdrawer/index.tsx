@@ -66,7 +66,7 @@ export const OrderDrawer = (props: Props) => {
     : 'N/E';
   // handlers
   const handleCancel = async (issue: WithId<Issue>) => {
-    if (!manager?.id || !manager?.name) {
+    if (!manager?.id) {
       return dispatchAppRequestResult({
         status: 'error',
         requestId: 'OrderDrawer-valid',
