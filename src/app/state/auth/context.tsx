@@ -4,6 +4,7 @@ import { useFirebaseUser } from 'app/api/auth/useFirebaseUser';
 import { User } from 'firebase/auth';
 import { getBusinessManagerBasicRole } from 'pages/team/utils';
 import React from 'react';
+import { AppAbility, defineAbilityFor } from './userAbility';
 
 export type AdminRole = 'owner' | 'manager' | 'collaborator';
 
@@ -13,6 +14,7 @@ interface FirebaseUserContextProps {
   backofficePermissions?: UserPermissions;
   adminPermissions?: UserPermissions;
   isBackofficeUser?: boolean | null;
+  userAbility?: AppAbility;
   refreshUserToken?(businessId?: string): Promise<void>;
 }
 
@@ -29,8 +31,7 @@ export const FirebaseUserProvider = ({ children }: Props) => {
   const [adminPermissions, setAdminPermissions] = React.useState<UserPermissions>();
   const [backofficePermissions, setBackofficePermissions] = React.useState<UserPermissions>();
   const [isBackofficeUser, setIsBackofficeUser] = React.useState<boolean | null>();
-  console.log('adminPermissions', adminPermissions);
-  console.log('backofficePermissions', backofficePermissions);
+  const [userAbility, setUserAbility] = React.useState<AppAbility>();
   // handlers
   const refreshUserToken = React.useCallback(
     async (businessId?: string) => {
@@ -44,25 +45,30 @@ export const FirebaseUserProvider = ({ children }: Props) => {
         const token = await user.getIdTokenResult(true);
         const claims: { [key: string]: any } = token.claims ?? {};
         // if (Object.keys(token?.claims).includes('role')) setRole(token.claims.role as GeneralRoles);
-        if (Object.keys(claims).includes('permissions'))
+        if (Object.keys(claims).includes('permissions')) {
           setBackofficePermissions(claims.permissions as UserPermissions);
-        else if (businessId) {
+          const ability = defineAbilityFor(claims.permissions);
+          setUserAbility(ability);
+        } else if (businessId) {
           const userPermissions = claims.businesses[businessId] as UserPermissions | undefined;
           if (!userPermissions) {
             // error
+            console.error('refreshUserToken: Não foi possível encontrar as permissões do usuário.');
             return;
           }
+          const ability = defineAbilityFor(userPermissions);
           const managerBasicRole = getBusinessManagerBasicRole(userPermissions);
           setAdminRole(managerBasicRole ?? null);
           setAdminPermissions(userPermissions);
           setIsBackofficeUser(false);
+          setUserAbility(ability);
         }
       } catch (error) {
         console.dir('role_error', error);
         Sentry.captureException(error);
       }
     },
-    [user]
+    [user, defineAbilityFor]
   );
   // side effects
   React.useEffect(() => {
@@ -81,6 +87,7 @@ export const FirebaseUserProvider = ({ children }: Props) => {
         backofficePermissions,
         adminPermissions,
         isBackofficeUser,
+        userAbility,
         refreshUserToken,
       }}
     >

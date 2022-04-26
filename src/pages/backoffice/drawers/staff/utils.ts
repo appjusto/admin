@@ -148,18 +148,3 @@ export const getGenericModeRole = (permissions: UserPermissions): GenericMode =>
   else if (isEqual(permissions, viewerObject)) return 'viewer';
   else return 'custom';
 };
-
-// "orders": ["create", "read", "update", "delete"],
-// "couriers": ["create", "read", "update", "delete"],
-// "consumers": ["create", "read", "update", "delete"],
-// "businesses": ["create", "read", "update", "delete"],
-// "menu": ["create", "read", "update", "delete"],
-// "chats": ["create", "read", "update", "delete"],
-// "invoices": ["create", "read", "update", "delete"],
-// "withdraws": ["create", "read", "update", "delete"],
-// "advances": ["create", "read", "update", "delete"],
-// "managers": ["create", "read", "update", "delete"],
-// "recommendations": ["create", "read", "update", "delete"],
-// "staff": ["create", "read", "update", "delete"],
-// "users": ["create", "read", "update", "delete"],
-// "platform": ["create", "read", "update", "delete"]
