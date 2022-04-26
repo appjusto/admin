@@ -11,6 +11,7 @@ import {
   Icon,
   Text,
 } from '@chakra-ui/react';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusinessBackoffice } from 'app/state/business/businessBOContext';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { isObject } from 'lodash';
@@ -31,9 +32,11 @@ interface BaseDrawerProps {
 
 export const BusinessBaseDrawer = ({ staff, onClose, children, ...props }: BaseDrawerProps) => {
   //context
+  const { userAbility } = useContextFirebaseUser();
   const { url } = useRouteMatch();
   const { business, manager, handleSave, isLoading, marketPlace } = useContextBusinessBackoffice();
   // helpers
+  const userCanUpdate = userAbility?.can('update', 'businesses');
   const isMarketplace = isObject(marketPlace);
   const situationAlert = business?.situation === 'rejected' || business?.situation === 'invalid';
   //UI
@@ -136,8 +139,13 @@ export const BusinessBaseDrawer = ({ staff, onClose, children, ...props }: BaseD
             {children}
           </DrawerBody>
           <DrawerFooter borderTop="1px solid #F2F6EA">
-            <Flex w="full" flexDir="row" justifyContent="space-between">
+            <Flex
+              w="full"
+              flexDir="row"
+              justifyContent={userCanUpdate ? 'space-between' : 'flex-end'}
+            >
               <Button
+                display={userCanUpdate ? 'inline-block' : 'none'}
                 width="full"
                 maxW={{ base: '160px', md: '240px' }}
                 fontSize={{ base: '13px', md: '15px' }}

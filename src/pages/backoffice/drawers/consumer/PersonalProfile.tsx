@@ -1,6 +1,7 @@
 import { Box, Text } from '@chakra-ui/react';
 import * as cpfutils from '@fnando/cpf';
 import { useObserveConsumerProfileNotes } from 'app/api/consumer/useObserveConsumerProfileNotes';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextConsumerProfile } from 'app/state/consumer/context';
 import { ProfileNotes } from 'common/components/backoffice/ProfileNotes';
 import { CustomInput } from 'common/components/form/input/CustomInput';
@@ -19,19 +20,11 @@ import { Documents } from './Documents';
 
 export const PersonalProfile = () => {
   // context
-  const {
-    consumer,
-    handleProfileChange,
-    isEditingEmail,
-    setIsEditingEmail,
-  } = useContextConsumerProfile();
-  const {
-    profileNotes,
-    updateNote,
-    deleteNote,
-    updateResult,
-    deleteResult,
-  } = useObserveConsumerProfileNotes(consumer?.id);
+  const { userAbility } = useContextFirebaseUser();
+  const { consumer, handleProfileChange, isEditingEmail, setIsEditingEmail } =
+    useContextConsumerProfile();
+  const { profileNotes, updateNote, deleteNote, updateResult, deleteResult } =
+    useObserveConsumerProfileNotes(consumer?.id);
 
   // refs
   const nameRef = React.useRef<HTMLInputElement>(null);
@@ -74,6 +67,7 @@ export const PersonalProfile = () => {
       ) : (
         <Box>
           <Text
+            display={userAbility?.can('update', 'consumers') ? 'block' : 'none'}
             textAlign="end"
             color="green.600"
             textDecor="underline"

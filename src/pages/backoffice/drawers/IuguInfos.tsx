@@ -10,11 +10,12 @@ import { SectionTitle } from './generics/SectionTitle';
 
 interface IuguInfosProps {
   account?: MarketplaceAccountInfo | null;
+  userCanDelete: boolean;
   deleteAccount(): void;
   result: MutationResult;
 }
 
-export const IuguInfos = ({ account, deleteAccount, result }: IuguInfosProps) => {
+export const IuguInfos = ({ account, userCanDelete, deleteAccount, result }: IuguInfosProps) => {
   // context
   const { isLoading, isSuccess } = result;
   // state
@@ -98,6 +99,7 @@ export const IuguInfos = ({ account, deleteAccount, result }: IuguInfosProps) =>
         </AlertError>
       ) : (
         <Button
+          display={userCanDelete ? 'inline-block' : 'none'}
           mt="4"
           size="md"
           variant="dangerLight"

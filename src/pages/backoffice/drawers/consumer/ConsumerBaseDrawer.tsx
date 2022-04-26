@@ -15,6 +15,7 @@ import {
 } from '@chakra-ui/react';
 import { useAuthentication } from 'app/api/auth/useAuthentication';
 import { useConsumerUpdateProfile } from 'app/api/consumer/useConsumerUpdateProfile';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextConsumerProfile } from 'app/state/consumer/context';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { getEditableProfile } from 'pages/backoffice/utils';
@@ -35,6 +36,7 @@ interface BaseDrawerProps {
 
 export const ConsumerBaseDrawer = ({ staff, onClose, children, ...props }: BaseDrawerProps) => {
   //context
+  const { userAbility } = useContextFirebaseUser();
   const { dispatchAppRequestResult } = useContextAppRequests();
   const queryClient = useQueryClient();
   const { url } = useRouteMatch();
@@ -167,7 +169,10 @@ export const ConsumerBaseDrawer = ({ staff, onClose, children, ...props }: BaseD
             </Flex>
             {children}
           </DrawerBody>
-          <DrawerFooter borderTop="1px solid #F2F6EA">
+          <DrawerFooter
+            display={userAbility?.can('update', 'consumers') ? 'flex' : 'none'}
+            borderTop="1px solid #F2F6EA"
+          >
             {isDeleting ? (
               <Box mt="8" w="100%" bg="#FFF8F8" border="1px solid red" borderRadius="lg" p="6">
                 <Text color="red">{t(`Tem certeza que deseja excluir esta conta?`)}</Text>

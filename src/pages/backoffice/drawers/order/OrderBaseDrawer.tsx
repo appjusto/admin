@@ -12,6 +12,7 @@ import {
   HStack,
   Text,
 } from '@chakra-ui/react';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import { FiltersScrollBar } from 'common/components/backoffice/FiltersScrollBar';
 import { OrderTracking } from 'pages/backoffice/dashboard/OrderTracking';
 import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
@@ -53,6 +54,7 @@ export const OrderBaseDrawer = ({
   ...props
 }: BaseDrawerProps) => {
   //context
+  const { userAbility } = useContextFirebaseUser();
   const { url } = useRouteMatch();
   // helpers
   const orderStatus = order?.status as OrderStatus;
@@ -140,7 +142,10 @@ export const OrderBaseDrawer = ({
             </Flex>
             {children}
           </DrawerBody>
-          <DrawerFooter borderTop="1px solid #F2F6EA">
+          <DrawerFooter
+            display={userAbility?.can('update', 'orders') ? 'flex' : 'none'}
+            borderTop="1px solid #F2F6EA"
+          >
             <HStack w="full" spacing={4}>
               <Button
                 width="full"
