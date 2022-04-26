@@ -4,7 +4,7 @@ import { useFirebaseUser } from 'app/api/auth/useFirebaseUser';
 import { User } from 'firebase/auth';
 import { getBusinessManagerBasicRole } from 'pages/team/utils';
 import React from 'react';
-import { AppAbility, defineAbilityFor } from './userAbility';
+import { AppAbility, defineUserAbility } from './userAbility';
 
 export type AdminRole = 'owner' | 'manager' | 'collaborator';
 
@@ -47,8 +47,6 @@ export const FirebaseUserProvider = ({ children }: Props) => {
         // if (Object.keys(token?.claims).includes('role')) setRole(token.claims.role as GeneralRoles);
         if (Object.keys(claims).includes('permissions')) {
           setBackofficePermissions(claims.permissions as UserPermissions);
-          const ability = defineAbilityFor(claims.permissions);
-          setUserAbility(ability);
         } else if (businessId) {
           const userPermissions = claims.businesses[businessId] as UserPermissions | undefined;
           if (!userPermissions) {
@@ -56,19 +54,16 @@ export const FirebaseUserProvider = ({ children }: Props) => {
             console.error('refreshUserToken: Não foi possível encontrar as permissões do usuário.');
             return;
           }
-          const ability = defineAbilityFor(userPermissions);
           const managerBasicRole = getBusinessManagerBasicRole(userPermissions);
           setAdminRole(managerBasicRole ?? null);
           setAdminPermissions(userPermissions);
-          setIsBackofficeUser(false);
-          setUserAbility(ability);
         }
       } catch (error) {
         console.dir('role_error', error);
         Sentry.captureException(error);
       }
     },
-    [user, defineAbilityFor]
+    [user, defineUserAbility]
   );
   // side effects
   React.useEffect(() => {
@@ -76,8 +71,16 @@ export const FirebaseUserProvider = ({ children }: Props) => {
   }, [refreshUserToken]);
   React.useEffect(() => {
     if (!backofficePermissions) return;
+    const ability = defineUserAbility(backofficePermissions);
+    setUserAbility(ability);
     setIsBackofficeUser(true);
-  }, [backofficePermissions]);
+  }, [backofficePermissions, defineUserAbility]);
+  React.useEffect(() => {
+    if (!adminPermissions || !adminRole) return;
+    const ability = defineUserAbility(adminPermissions, adminRole);
+    setUserAbility(ability);
+    setIsBackofficeUser(false);
+  }, [adminPermissions, adminRole, defineUserAbility]);
   // provider
   return (
     <FirebaseUserContext.Provider

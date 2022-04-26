@@ -1,6 +1,7 @@
 import { Category, Product, WithId } from '@appjusto/types';
 import { Box, Flex, Heading, Spacer, Switch, Tooltip } from '@chakra-ui/react';
 import { useCategory } from 'app/api/business/categories/useCategory';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import { CustomButton as Button } from 'common/components/buttons/CustomButton';
 import { EditButton } from 'common/components/buttons/EditButton';
 import { ReactComponent as DragHandle } from 'common/img/drag-handle.svg';
@@ -20,6 +21,8 @@ interface Props {
 }
 
 export const CategoryItem = React.memo(({ category, products, index, hidden, url }: Props) => {
+  // context
+  const { userAbility } = useContextFirebaseUser();
   // mutations
   const { updateCategory } = useCategory(category.id);
   // UI
@@ -79,6 +82,7 @@ export const CategoryItem = React.memo(({ category, products, index, hidden, url
           </Droppable>
           <Button
             mt="0"
+            display={userAbility?.can('create', 'menu') ? 'inline-block' : 'none'}
             w={{ base: '100%', md: '300px' }}
             link={`${url}/product/new?categoryId=${category.id}`}
             label={t('Adicionar produto à categoria')}

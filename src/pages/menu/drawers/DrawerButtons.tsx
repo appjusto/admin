@@ -1,4 +1,5 @@
 import { Box, Button, Stack, Text } from '@chakra-ui/react';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import React from 'react';
 import { t } from 'utils/i18n';
 
@@ -18,7 +19,11 @@ export const DrawerButtons = ({
   onDelete,
   ...props
 }: DrawerButtonsProps) => {
+  // context
+  const { userAbility } = useContextFirebaseUser();
+  // state
   const [deleteConfirm, setDeleteConfirm] = React.useState(false);
+  // UI
   if (!deleteConfirm) {
     return (
       <Stack mt="8" spacing={4} direction="row" {...props}>
@@ -33,6 +38,7 @@ export const DrawerButtons = ({
         </Button>
         {isEditing && (
           <Button
+            display={userAbility?.can('create', 'menu') ? 'flex' : 'none'}
             width="full"
             variant="dangerLight"
             ml={3}

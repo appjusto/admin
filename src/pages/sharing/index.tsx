@@ -21,7 +21,7 @@ export type Copied = {
 
 const SharingPage = () => {
   // context
-  const { adminRole, isBackofficeUser } = useContextFirebaseUser();
+  const { userAbility } = useContextFirebaseUser();
   const { business } = useContextBusiness();
   const { updateBusinessSlug, updateSlugResult } = useBusinessProfile();
   const { isLoading } = updateSlugResult;
@@ -29,8 +29,6 @@ const SharingPage = () => {
   const [slug, setSlug] = React.useState('');
   const [deeplink, setDeeplink] = React.useState('');
   const [isCopied, setIsCopied] = React.useState<Copied>({ status: false });
-  // helpers
-  const isManager = adminRole === 'manager' || isBackofficeUser;
   // handlers
   const getBusinessLinkByMode = (mode?: Mode) => `${deeplink}${mode ? `?mode=${mode}` : ''}`;
   const copyToClipboard = (mode?: 'whatsapp' | 'in-store') => {
@@ -78,7 +76,12 @@ const SharingPage = () => {
           'Você pode compartilhar o acesso direto ao seu restaurante no AppJusto. Crie um identificador, com a sugestão abaixo ou digitando à sua escolha e clicando em salvar, depois copie o link gerado e divulgue nas suas redes!'
         )}
       </Text>
-      <Stack mt="4" spacing={2} direction={{ base: 'column', md: 'row' }}>
+      <Stack
+        display={userAbility?.can('update', 'businesses', 'slug') ? 'flex' : 'none'}
+        mt="4"
+        spacing={2}
+        direction={{ base: 'column', md: 'row' }}
+      >
         <CustomInput
           mt="0"
           maxW="320px"
@@ -88,17 +91,8 @@ const SharingPage = () => {
           value={slug}
           onChange={(e) => setSlug(slugify(e.target.value))}
           onBlur={(e) => setSlug(slugify(e.target.value, true))}
-          //isDisabled={deeplink !== undefined}
-          isDisabled={!isManager}
         />
-        <Button
-          h="60px"
-          minW="120px"
-          onClick={handleUpdate}
-          isLoading={isLoading}
-          //isDisabled={deeplink !== undefined}
-          isDisabled={!isManager}
-        >
+        <Button h="60px" minW="120px" onClick={handleUpdate} isLoading={isLoading}>
           {t('Salvar')}
         </Button>
       </Stack>
