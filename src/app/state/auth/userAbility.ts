@@ -1,5 +1,5 @@
 import { UserPermissions } from '@appjusto/types';
-import { Ability, defineAbility } from '@casl/ability';
+import { Ability, AbilityOptionsOf, defineAbility, detectSubjectType } from '@casl/ability';
 import { AdminRole } from './context';
 
 // const staffClaim = {
@@ -53,6 +53,15 @@ type Subjects =
 
 export type AppAbility = Ability<[Actions, Subjects | any]>;
 
+const options: AbilityOptionsOf<AppAbility> = {
+  detectSubjectType: (subject) => {
+    if (subject && typeof subject === 'object' && subject.kind) {
+      return subject.kind;
+    }
+    return detectSubjectType(subject);
+  },
+};
+
 export const defineUserAbility = (permissions: UserPermissions, adminRole?: AdminRole) => {
   if (adminRole === 'collaborator') {
     return defineAbility<AppAbility>((can) => {
@@ -63,11 +72,25 @@ export const defineUserAbility = (permissions: UserPermissions, adminRole?: Admi
           } else can(rule, subject as Subjects);
         });
       });
-    });
+    }, options);
+  } else if (adminRole === 'manager') {
+    return defineAbility<AppAbility>((can) => {
+      Object.keys(permissions).forEach((subject) => {
+        permissions[subject].forEach((rule: Actions) => {
+          if (
+            (subject === 'managers' && rule === 'create') ||
+            rule === 'update' ||
+            rule === 'delete'
+          ) {
+            can(rule, subject as Subjects, { role: 'collaborator' });
+          } else can(rule, subject as Subjects);
+        });
+      });
+    }, options);
   }
   return defineAbility<AppAbility>((can) => {
     Object.keys(permissions).forEach((subject) => {
       permissions[subject].forEach((rule: Actions) => can(rule, subject as Subjects));
     });
-  });
+  }, options);
 };

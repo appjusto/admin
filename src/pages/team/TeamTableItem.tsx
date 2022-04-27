@@ -1,5 +1,6 @@
 import { Box, Button, HStack, RadioGroup, Td, Text, Tr } from '@chakra-ui/react';
 import { ManagerWithPermissions } from 'app/api/manager/types';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import CustomRadio from 'common/components/form/CustomRadio';
 import React from 'react';
 import { formatDate, formatTime } from 'utils/formatters';
@@ -21,11 +22,15 @@ export const TeamTableItem = ({
   deleteMember,
   isLoading,
 }: TeamTableItemProps) => {
+  // context
+  const { userAbility } = useContextFirebaseUser();
   // state
   const [currentRole, setCurrentRole] = React.useState<ManagerBasicRole>();
   const [role, setRole] = React.useState<ManagerBasicRole>();
   const [isDeleting, setIsDeleting] = React.useState(false);
   const [isUpdating, setIsUpdating] = React.useState<boolean>();
+  // helpers
+  const userCanUpdate = userAbility?.can('update', { kind: 'managers', role });
   // side effects
   React.useEffect(() => {
     if (!manager.permissions) return;
@@ -149,9 +154,15 @@ export const TeamTableItem = ({
             fontSize="16px"
             lineHeight="22px"
           >
-            <CustomRadio value="owner">{t('Proprietário')}</CustomRadio>
-            <CustomRadio value="manager">{t('Gerente')}</CustomRadio>
-            <CustomRadio value="collaborator">{t('Colaborador')}</CustomRadio>
+            <CustomRadio value="owner" isDisabled={!userCanUpdate}>
+              {t('Proprietário')}
+            </CustomRadio>
+            <CustomRadio value="manager" isDisabled={!userCanUpdate}>
+              {t('Gerente')}
+            </CustomRadio>
+            <CustomRadio value="collaborator" isDisabled={!userCanUpdate}>
+              {t('Colaborador')}
+            </CustomRadio>
           </HStack>
         </RadioGroup>
       </Td>
@@ -161,7 +172,13 @@ export const TeamTableItem = ({
           formatTime(manager.createdOn as unknown as Date)}
       </Td>
       <Td>
-        <Button size="sm" minW="160px" variant="dangerLight" onClick={() => setIsDeleting(true)}>
+        <Button
+          size="sm"
+          minW="160px"
+          variant="dangerLight"
+          onClick={() => setIsDeleting(true)}
+          isDisabled={!userCanUpdate}
+        >
           {t('Excluir colaborador')}
         </Button>
       </Td>

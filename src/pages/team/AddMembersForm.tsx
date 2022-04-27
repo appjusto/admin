@@ -21,13 +21,13 @@ const memberObj = {
 } as Member;
 
 const ownerLabel = t(
-  'Como proprietário, o usuário terá total acesso à plataforma do restaurante. Sendo prerrogativa apenas sua, clonar ou excluir o restaurante e criar e alterar colaboradores'
+  'Como proprietário, o usuário terá total acesso à plataforma do restaurante. Sendo prerrogativa apenas sua, clonar ou excluir o restaurante e criar e alterar colaboradores com papel de proprietário ou gerente'
 );
 const managerLabel = t(
-  'Como gerente, o usuário pode alterar dados do restaurante, realizar operações financeiras (como saques e antecipações), adicionar, alterar e excluir items do cardápio, gerenciar o fluxo dos pedidos e enviar e receber mensagens de chat'
+  'Como gerente, o usuário pode alterar dados do restaurante, adicionar, alterar ou excluir colaboradores com papel de "colaborador", realizar operações financeiras (como saques e antecipações), adicionar, alterar e excluir items do cardápio, gerenciar o fluxo dos pedidos e enviar e receber mensagens de chat'
 );
 const collaboratorLabel = t(
-  'Como colaborador, o usuário pode gerenciar o fluxo dos pedidos, enviar e receber mensagens de chat e realizar alterações em itens existentes do cardápio'
+  'Como colaborador, o usuário pode realizar alterações em itens existentes do cardápio, gerenciar o fluxo dos pedidos e enviar e receber mensagens de chat'
 );
 
 export const AddMembersForm = () => {
