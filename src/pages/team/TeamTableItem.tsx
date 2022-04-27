@@ -38,7 +38,7 @@ export const TeamTableItem = ({
     const basicRole = getBusinessManagerBasicRole(manager.permissions);
     setCurrentRole(basicRole);
     setRole(basicRole);
-  }, [manager.permissions, getBusinessManagerBasicRole]);
+  }, [manager.permissions]);
   React.useEffect(() => {
     if (!currentRole || !role) return;
     if (currentRole !== role) setIsUpdating(true);

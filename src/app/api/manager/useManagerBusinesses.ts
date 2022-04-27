@@ -6,7 +6,7 @@ import React from 'react';
 export const useManagerBusinesses = (managerEmail?: string) => {
   // contex
   const api = useContextApi();
-  const { user, adminRole } = useContextFirebaseUser();
+  const { adminRole } = useContextFirebaseUser();
   // state
   const [businesses, setBusinesses] = React.useState<WithId<Business>[] | null>();
   // side effects

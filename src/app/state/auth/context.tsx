@@ -63,7 +63,7 @@ export const FirebaseUserProvider = ({ children }: Props) => {
         Sentry.captureException(error);
       }
     },
-    [user, defineUserAbility]
+    [user]
   );
   // side effects
   React.useEffect(() => {
@@ -74,13 +74,13 @@ export const FirebaseUserProvider = ({ children }: Props) => {
     const ability = defineUserAbility(backofficePermissions);
     setUserAbility(ability);
     setIsBackofficeUser(true);
-  }, [backofficePermissions, defineUserAbility]);
+  }, [backofficePermissions]);
   React.useEffect(() => {
     if (!adminPermissions || !adminRole) return;
     const ability = defineUserAbility(adminPermissions, adminRole);
     setUserAbility(ability);
     setIsBackofficeUser(false);
-  }, [adminPermissions, adminRole, defineUserAbility]);
+  }, [adminPermissions, adminRole]);
   // provider
   return (
     <FirebaseUserContext.Provider
