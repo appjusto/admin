@@ -1,4 +1,5 @@
 import { Box, BoxProps, Button, Icon, Link, Stack, Text } from '@chakra-ui/react';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import React from 'react';
 import { VscOpenPreview } from 'react-icons/vsc';
 import { Link as RouterLink, useRouteMatch } from 'react-router-dom';
@@ -10,6 +11,7 @@ type DataType = 'order' | 'business' | 'courier' | 'consumer' | 'invoice';
 
 export const DirectAccessById = ({ ...props }: BoxProps) => {
   // context
+  const { userAbility } = useContextFirebaseUser();
   const { url } = useRouteMatch();
   // state
   const [type, setType] = React.useState<DataType>('order');
@@ -37,11 +39,17 @@ export const DirectAccessById = ({ ...props }: BoxProps) => {
           value={type}
           onChange={(e) => setType(e.target.value as DataType)}
         >
-          <option value="order">{t('Pedido')}</option>
-          <option value="courier">{t('Entregador')}</option>
-          <option value="business">{t('Restaurante')}</option>
-          <option value="consumer">{t('Cliente')}</option>
-          <option value="invoice">{t('Fatura')}</option>
+          {userAbility?.can('read', 'orders') && <option value="order">{t('Pedido')}</option>}
+          {userAbility?.can('read', 'couriers') && (
+            <option value="courier">{t('Entregador')}</option>
+          )}
+          {userAbility?.can('read', 'businesses') && (
+            <option value="business">{t('Restaurante')}</option>
+          )}
+          {userAbility?.can('read', 'consumers') && (
+            <option value="consumer">{t('Consumidor')}</option>
+          )}
+          {userAbility?.can('read', 'invoices') && <option value="invoice">{t('Fatura')}</option>}
         </Select>
         <CustomInput
           mt="0"

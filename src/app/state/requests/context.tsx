@@ -13,6 +13,7 @@ const skippedExceptions = [
   'auth/too-many-requests',
   'auth/requires-recent-login',
   'auth/network-request-failed',
+  'permission-denied',
 ];
 
 type ErrorMessage = { title: string; description?: string };

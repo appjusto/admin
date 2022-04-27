@@ -1,5 +1,4 @@
-import { Box, BoxProps, Flex, Text } from '@chakra-ui/react';
-import { useContextFirebaseUser } from 'app/state/auth/context';
+import { Box, BoxProps } from '@chakra-ui/react';
 import { useContextBusiness } from 'app/state/business/context';
 import React from 'react';
 import { useRouteMatch } from 'react-router-dom';
@@ -7,41 +6,23 @@ import { t } from 'utils/i18n';
 import { LinkItem } from './LinkItem';
 import { OrdersLinkItem } from './OrdersLinkItem';
 
-interface DisabledLinkProps {
-  label: string;
-}
-
-const DisabledLink = ({ label }: DisabledLinkProps) => {
-  return (
-    <Flex pl="6" h="34px" alignItems="center">
-      <Text color="gray.600">{label}</Text>
-    </Flex>
-  );
-};
-
-interface ProtectedLinksProps {
-  isApproved: boolean;
-}
-
-const ProtectedLinks = ({ isApproved }: ProtectedLinksProps) => {
+export const Links = (props: BoxProps) => {
   // context
+  const { business } = useContextBusiness();
   const { url } = useRouteMatch();
+  // helpers
+  const isBusinessPending = business?.situation !== 'approved';
   // UI
   return (
-    <>
+    <Box {...props}>
       <Box>
         <LinkItem to={`${url}`} label={t('Início')} />
-        {isApproved ? (
-          <>
-            <OrdersLinkItem to={`${url}/orders`} />
-            <LinkItem to={`${url}/sharing`} label={t('Compartilhamento')} />
-          </>
-        ) : (
-          <>
-            <DisabledLink label={t('Gerenciador de pedidos')} />
-            <DisabledLink label={t('Compartilhamento')} />
-          </>
-        )}
+        <OrdersLinkItem to={`${url}/orders`} isDisabled={isBusinessPending} />
+        <LinkItem
+          to={`${url}/sharing`}
+          label={t('Compartilhamento')}
+          isDisabled={isBusinessPending}
+        />
       </Box>
       <Box mt="5">
         <LinkItem to={`${url}/menu`} label={t('Cardápio')} />
@@ -53,43 +34,6 @@ const ProtectedLinks = ({ isApproved }: ProtectedLinksProps) => {
         <LinkItem to={`${url}/banking-information`} label={t('Dados bancários')} />
         <LinkItem to={`${url}/team`} label={t('Colaboradores')} />
       </Box>
-    </>
-  );
-};
-
-export const Links = (props: BoxProps) => {
-  // context
-  const { role, isBackofficeUser } = useContextFirebaseUser();
-  const { business } = useContextBusiness();
-  const { url } = useRouteMatch();
-  // helpers
-  const isApproved = business?.situation === 'approved';
-  const isManager = role === 'manager' || isBackofficeUser;
-  // UI
-  return (
-    <Box {...props}>
-      {isManager ? (
-        <ProtectedLinks isApproved={isApproved} />
-      ) : (
-        <Box mt="5">
-          <LinkItem to={`${url}`} label={t('Início')} />
-          {isApproved ? (
-            <>
-              <OrdersLinkItem to={`${url}/orders`} />
-              <LinkItem to={`${url}/sharing`} label={t('Compartilhamento')} />
-            </>
-          ) : (
-            <>
-              <DisabledLink label={t('Gerenciador de pedidos')} />
-              <DisabledLink label={t('Compartilhamento')} />
-            </>
-          )}
-          <Box mt="5">
-            <LinkItem to={`${url}/menu`} label={t('Cardápio')} />
-            <LinkItem to={`${url}/orders-history`} label={t('Histórico de pedidos')} />
-          </Box>
-        </Box>
-      )}
     </Box>
   );
 };

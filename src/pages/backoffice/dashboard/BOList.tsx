@@ -1,5 +1,5 @@
 import { Business, Order, ProfileChange, WithId } from '@appjusto/types';
-import { Box, Circle, Flex, Text, VStack } from '@chakra-ui/react';
+import { Box, Circle, Flex, FlexProps, Text, VStack } from '@chakra-ui/react';
 import { ShowIf } from 'core/components/ShowIf';
 import React from 'react';
 import { BOBusinessListItem } from './BOBusinessListItem';
@@ -8,7 +8,7 @@ import { BOProfileChangesListItem } from './BOProfileChangesListItem';
 
 type ListType = 'orders' | 'businesses' | 'profile-changes';
 
-interface Props {
+interface BOListProps extends FlexProps {
   title: string;
   data: WithId<Business>[] | WithId<Order>[] | WithId<ProfileChange>[];
   listType: ListType;
@@ -24,7 +24,8 @@ export const BOList = ({
   details,
   infiniteScroll = false,
   loadData,
-}: Props) => {
+  ...props
+}: BOListProps) => {
   // refs
   const listRef = React.useRef<HTMLDivElement>(null);
   // side effects
@@ -50,6 +51,7 @@ export const BOList = ({
       borderWidth="1px"
       borderTopWidth="0px"
       direction="column"
+      {...props}
     >
       <Box
         minH="60px"

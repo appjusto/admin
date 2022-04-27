@@ -1,4 +1,5 @@
 import { Stack } from '@chakra-ui/react';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBackofficeDashboard } from 'app/state/dashboards/backoffice';
 import { DirectAccessById } from 'common/components/backoffice/DirectAccessById';
 import React from 'react';
@@ -18,17 +19,15 @@ import { Panel } from './Panel';
 
 const BODashboard = () => {
   // context
+  const { userAbility } = useContextFirebaseUser();
   const { path } = useRouteMatch();
   const history = useHistory();
-  const {
-    orders,
-    businesses,
-    userChanges,
-    fetchNextBusiness,
-    fetchNextChanges,
-  } = useContextBackofficeDashboard();
+  const { orders, businesses, userChanges, fetchNextBusiness, fetchNextChanges } =
+    useContextBackofficeDashboard();
   // state
   const [dateTime, setDateTime] = React.useState('');
+  // helpers
+  const userCanUpdateBusiness = userAbility?.can('read', 'businesses');
   // handlers
   const closeDrawerHandler = () => {
     history.replace(path);
@@ -46,14 +45,21 @@ const BODashboard = () => {
       <DirectAccessById />
       <Stack mt="4" w="100%" direction={{ base: 'column', md: 'row' }} spacing={4}>
         <BOList
+          display={userAbility?.can('read', 'orders') ? 'flex' : 'none'}
           title={t('Pedidos em andamento')}
           data={orders}
           listType="orders"
           details={t('Aqui ficarão listados todos os pedidos em andamento no momento.')}
         />
       </Stack>
-      <Stack mt="4" w="100%" direction={{ base: 'column', md: 'row' }} spacing={4}>
+      <Stack
+        mt="4"
+        w="100%"
+        direction={{ base: 'column', md: 'row' }}
+        spacing={userCanUpdateBusiness ? 4 : 0}
+      >
         <BOList
+          display={userCanUpdateBusiness ? 'flex' : 'none'}
           title={t('Restaurantes - Aguardando aprovação')}
           data={businesses}
           listType="businesses"

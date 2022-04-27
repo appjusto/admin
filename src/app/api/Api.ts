@@ -22,6 +22,7 @@ import ManagerApi from './manager/ManagerApi';
 import MeasurementApi from './measurement/MeasurementApi';
 import OrderApi from './order/OrderApi';
 import PlatformApi from './platform/PlatformApi';
+import StaffApi from './staff/StaffApi';
 import UsersApi from './users/UsersApi';
 
 export default class Api {
@@ -38,6 +39,7 @@ export default class Api {
   private _files: FilesApi;
   private _maps: MapsApi;
   private _platform: PlatformApi;
+  private _staff: StaffApi;
   private _manager: ManagerApi;
   private _business: BusinessApi;
   private _order: OrderApi;
@@ -83,6 +85,7 @@ export default class Api {
     this._files = new FilesApi(this._storage);
     this._maps = new MapsApi(this._refs, config.googleMapsApiKey);
     this._platform = new PlatformApi(this._refs);
+    this._staff = new StaffApi(this._refs);
     this._manager = new ManagerApi(this._refs);
     this._business = new BusinessApi(this._refs, this._files);
     this._order = new OrderApi(this._refs);
@@ -107,6 +110,10 @@ export default class Api {
 
   platform() {
     return this._platform;
+  }
+
+  staff() {
+    return this._staff;
   }
 
   manager() {

@@ -1,4 +1,5 @@
 import { Box, Flex, HStack, Skeleton, Text } from '@chakra-ui/react';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBackofficeDashboard } from 'app/state/dashboards/backoffice';
 import I18n from 'i18n-js';
 import React from 'react';
@@ -9,9 +10,10 @@ interface BOInfoBoxProps {
   title: string;
   value?: number;
   isCurrency?: boolean;
+  isDisplayed?: boolean;
 }
 
-const BOInfoBox = ({ title, value, isCurrency }: BOInfoBoxProps) => {
+const BOInfoBox = ({ title, value, isCurrency, isDisplayed }: BOInfoBoxProps) => {
   // handlers
   const formatValue = (value: number) => {
     const zeros = 4 - value.toString().length;
@@ -20,7 +22,7 @@ const BOInfoBox = ({ title, value, isCurrency }: BOInfoBoxProps) => {
   };
   //UI
   return (
-    <Box w="142px">
+    <Box display={isDisplayed ? 'block' : 'none'} w="142px">
       <Text fontSize="sm" lineHeight="21px" color="gray.700">
         {title}
       </Text>
@@ -37,6 +39,7 @@ const BOInfoBox = ({ title, value, isCurrency }: BOInfoBoxProps) => {
 
 export const Panel = () => {
   // context
+  const { userAbility } = useContextFirebaseUser();
   const {
     statistics,
     todayOrders,
@@ -77,16 +80,41 @@ export const Panel = () => {
           {date}
         </Text>
         <HStack mt="4" spacing={6}>
-          <BOInfoBox title={t('Pedidos criados')} value={todayOrders} />
-          <BOInfoBox title={t('Pedidos entregues')} value={todayDeliveredOrders} />
+          <BOInfoBox
+            isDisplayed={userAbility?.can('read', 'orders')}
+            title={t('Pedidos criados')}
+            value={todayOrders}
+          />
+          <BOInfoBox
+            isDisplayed={userAbility?.can('read', 'orders')}
+            title={t('Pedidos entregues')}
+            value={todayDeliveredOrders}
+          />
         </HStack>
         <HStack mt="4" spacing={6}>
-          <BOInfoBox title={t('Ticket médio')} value={todayAverage} isCurrency />
-          <BOInfoBox title={t('Entregadores ativos')} value={couriers} />
+          <BOInfoBox
+            isDisplayed={userAbility?.can('read', 'orders')}
+            title={t('Ticket médio')}
+            value={todayAverage}
+            isCurrency
+          />
+          <BOInfoBox
+            isDisplayed={userAbility?.can('read', 'couriers')}
+            title={t('Entregadores ativos')}
+            value={couriers}
+          />
         </HStack>
         <HStack mt="4" spacing={6}>
-          <BOInfoBox title={t('Restaurantes abertos')} value={businessesNumber} />
-          <BOInfoBox title={t('Clientes novos')} value={consumers} />
+          <BOInfoBox
+            isDisplayed={userAbility?.can('read', 'businesses')}
+            title={t('Restaurantes abertos')}
+            value={businessesNumber}
+          />
+          <BOInfoBox
+            isDisplayed={userAbility?.can('read', 'consumers')}
+            title={t('Clientes novos')}
+            value={consumers}
+          />
         </HStack>
       </Box>
       <Box mt={{ base: '8', md: '0' }}>
@@ -98,15 +126,24 @@ export const Panel = () => {
         </Text>
         <HStack mt="4" spacing={6}>
           {/*<BOInfoBox title={t('Rest. aprovados')} value={businesses} />*/}
-          <BOInfoBox title={t('Entreg. aprovados')} value={statistics?.couriers?.totalApproved} />
-          <BOInfoBox title={t('Comida entregues')} value={statistics?.food?.totalOrders} />
+          <BOInfoBox
+            isDisplayed
+            title={t('Entreg. aprovados')}
+            value={statistics?.couriers?.totalApproved}
+          />
+          <BOInfoBox
+            isDisplayed
+            title={t('Comida entregues')}
+            value={statistics?.food?.totalOrders}
+          />
         </HStack>
         {/*<HStack mt="4" spacing={6}>
-          <BOInfoBox title={t('Clientes ativos')} value={consumers} />
+          <BOInfoBox isDisplayed title={t('Clientes ativos')} value={consumers} />
         </HStack>*/}
         <HStack mt="4" spacing={6}>
-          <BOInfoBox title={t('P2P entregues')} value={statistics?.p2p?.totalOrders} />
+          <BOInfoBox isDisplayed title={t('P2P entregues')} value={statistics?.p2p?.totalOrders} />
           <BOInfoBox
+            isDisplayed
             title={t('Ticket médio')}
             value={statistics?.food?.averageTicketPrice}
             isCurrency

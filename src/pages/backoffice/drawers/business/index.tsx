@@ -1,5 +1,5 @@
-import { useContextAgentProfile } from 'app/state/agent/context';
 import { BusinessBOProvider } from 'app/state/business/businessBOContext';
+import { useContextStaffProfile } from 'app/state/staff/context';
 import React from 'react';
 import { Route, Switch, useRouteMatch } from 'react-router-dom';
 import { BusinessBaseDrawer } from './BusinessBaseDrawer';
@@ -16,11 +16,11 @@ interface BusinessDrawerProps {
 export const BusinessDrawer = ({ onClose, ...props }: BusinessDrawerProps) => {
   //context
   const { path } = useRouteMatch();
-  const { agent, username } = useContextAgentProfile();
+  const { staff, username } = useContextStaffProfile();
   //UI
   return (
     <BusinessBOProvider>
-      <BusinessBaseDrawer agent={{ id: agent?.id, name: username }} onClose={onClose} {...props}>
+      <BusinessBaseDrawer staff={{ id: staff?.id, name: username }} onClose={onClose} {...props}>
         <Switch>
           <Route exact path={`${path}`}>
             <BusinessRegister />

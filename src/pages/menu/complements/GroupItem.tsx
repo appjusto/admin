@@ -1,5 +1,6 @@
 import { Complement, ComplementGroup, WithId } from '@appjusto/types';
 import { Box, Flex, Switch, Text, Tooltip } from '@chakra-ui/react';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextMenu } from 'app/state/menu/context';
 import { CustomButton as Button } from 'common/components/buttons/CustomButton';
 import { DropdownButton } from 'common/components/buttons/DropdownButton';
@@ -22,6 +23,7 @@ interface Props {
 
 export const GroupItem = React.memo(({ group, complements, index, hidden }: Props) => {
   // context
+  const { userAbility } = useContextFirebaseUser();
   const { url } = useRouteMatch();
   const { updateComplementsGroup } = useContextMenu();
   // state
@@ -102,6 +104,7 @@ export const GroupItem = React.memo(({ group, complements, index, hidden }: Prop
                 <Tooltip placement="top" label={t('Duplicar')} aria-label={t('Duplicar')}>
                   <Link to={`${url}/complementsgroup-duplication/${group.id}`}>
                     <DuplicateButton
+                      display={userAbility?.can('create', 'menu') ? 'flex' : 'none'}
                       ml="2"
                       title={t('Duplicar')}
                       aria-label={`duplicar-grupo-${slugfyName(group.name)}`}
@@ -143,6 +146,7 @@ export const GroupItem = React.memo(({ group, complements, index, hidden }: Prop
           </Droppable>
           <Button
             mt="0"
+            display={userAbility?.can('create', 'menu') ? 'inline-block' : 'none'}
             w={{ base: '100%', md: '260px' }}
             link={`${url}/complement/new?groupId=${group.id}`}
             label={t('Adicionar complemento')}

@@ -16,10 +16,11 @@ import Menu from 'pages/menu/Menu';
 import OrdersHistoryPage from 'pages/orders/history/OrdersHistoryPage';
 import OrdersPage from 'pages/orders/OrdersPage';
 import PageLayout from 'pages/PageLayout';
+import { AdminAccessRoute } from 'pages/routes/AdminAccessRoute';
 import SharingPage from 'pages/sharing';
 import TeamPage from 'pages/team/TeamPage';
 import React from 'react';
-import { Redirect, Route, Switch, useRouteMatch } from 'react-router-dom';
+import { Redirect, Switch, useRouteMatch } from 'react-router-dom';
 import { AgentPersonificationBar } from './AgentPersonificationBar';
 import Dashboard from './Dashboard';
 
@@ -27,13 +28,13 @@ const timeoutLimit = 6; // in seconds
 
 const Home = () => {
   // context
-  const { isBackofficeUser, role } = useContextFirebaseUser();
+  const { isBackofficeUser, adminRole } = useContextFirebaseUser();
   const { business } = useContextBusiness();
   const { path } = useRouteMatch();
   // states
   const [isTimeout, setIsTimeout] = React.useState(false);
   // helpers
-  const userWithGrantedRole = role != null;
+  const userWithGrantedRole = isBackofficeUser || adminRole != null;
   // side effects
   React.useEffect(() => {
     const timer = setTimeout(() => setIsTimeout(true), timeoutLimit * 1000);
@@ -69,20 +70,23 @@ const Home = () => {
           <MenuContextProvider>
             {isBackofficeUser && <AgentPersonificationBar />}
             <Switch>
-              <Route path={`${path}/orders`} component={OrdersPage} />
-              <Route path={`${path}/chat`} component={ChatPage} />
+              <AdminAccessRoute path={`${path}/orders`} component={OrdersPage} />
+              <AdminAccessRoute path={`${path}/chat`} component={ChatPage} />
               <PageLayout mt={isBackofficeUser ? '60px' : '0'}>
-                <Route exact path={path} component={Dashboard} />
-                <Route path={`${path}/sharing`} component={SharingPage} />
-                <Route path={`${path}/menu`} component={Menu} />
-                <Route path={`${path}/business-schedules`} component={SchedulesPage} />
-                <Route path={`${path}/delivery-area`} component={DeliveryArea} />
-                <Route path={`${path}/business-profile`} component={BusinessProfile} />
-                <Route path={`${path}/manager-profile`} component={ManagerProfilePage} />
-                <Route path={`${path}/orders-history`} component={OrdersHistoryPage} />
-                <Route path={`${path}/finances`} component={FinancesPage} />
-                <Route path={`${path}/banking-information`} component={BankingInformation} />
-                <Route path={`${path}/team`} component={TeamPage} />
+                <AdminAccessRoute exact path={path} component={Dashboard} />
+                <AdminAccessRoute path={`${path}/sharing`} component={SharingPage} />
+                <AdminAccessRoute path={`${path}/menu`} component={Menu} />
+                <AdminAccessRoute path={`${path}/business-schedules`} component={SchedulesPage} />
+                <AdminAccessRoute path={`${path}/delivery-area`} component={DeliveryArea} />
+                <AdminAccessRoute path={`${path}/business-profile`} component={BusinessProfile} />
+                <AdminAccessRoute path={`${path}/manager-profile`} component={ManagerProfilePage} />
+                <AdminAccessRoute path={`${path}/orders-history`} component={OrdersHistoryPage} />
+                <AdminAccessRoute path={`${path}/finances`} component={FinancesPage} />
+                <AdminAccessRoute
+                  path={`${path}/banking-information`}
+                  component={BankingInformation}
+                />
+                <AdminAccessRoute path={`${path}/team`} component={TeamPage} />
               </PageLayout>
             </Switch>
           </MenuContextProvider>

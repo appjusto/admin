@@ -1,5 +1,6 @@
 import { BusinessPhone } from '@appjusto/types';
 import { Box, Button, HStack, Icon, Stack, Tooltip } from '@chakra-ui/react';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import { CloseButton } from 'common/components/buttons/CloseButton';
 import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import { CustomPatternInput as PatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';
@@ -30,6 +31,8 @@ export const BusinessPhoneItem = ({
   removePhone,
   isBackoffice = false,
 }: BusinessPhoneItemProps) => {
+  // context
+  const { userAbility } = useContextFirebaseUser();
   // UI
   if (isBackoffice) {
     return (
@@ -51,7 +54,13 @@ export const BusinessPhoneItem = ({
               direction={{ base: 'column', md: 'row' }}
             >
               <HStack>
-                <Box px="2" bg="white" {...draggable.dragHandleProps} ref={draggable.innerRef}>
+                <Box
+                  display={userAbility?.can('update', 'businesses') ? 'flex' : 'none'}
+                  px="2"
+                  bg="white"
+                  {...draggable.dragHandleProps}
+                  ref={draggable.innerRef}
+                >
                   <DragHandle />
                 </Box>
                 <Select

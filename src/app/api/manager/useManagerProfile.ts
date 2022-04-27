@@ -30,15 +30,16 @@ export const useManagerProfile = () => {
     const unsub = api.manager().observeProfileByEmail(managerEmail, setManager);
     return () => unsub();
   }, [api, isBackofficeUser, managerEmail]);
-  // create profile for regular and backoffice users
+  // create profile for regular users
   // if manager is null for backoffice purposes, the createProfile func
   // will check the manager existence before create a new one
   React.useEffect(() => {
+    if (isBackofficeUser) return;
     if (!id || !email) return;
     if (manager === null) {
       api.manager().createProfile(id, email);
     }
-  }, [id, email, manager, api]);
+  }, [id, email, manager, api, isBackofficeUser]);
   // return
   return { manager, setManagerEmail };
 };

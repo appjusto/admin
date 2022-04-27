@@ -1,14 +1,14 @@
-import { Stack } from '@chakra-ui/react';
+import { Stack, StackProps } from '@chakra-ui/react';
 import { useContextMenu } from 'app/state/menu/context';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { useRouteMatch } from 'react-router';
 import { t } from 'utils/i18n';
 
-interface MainButtonsProps {
+interface MainButtonsProps extends StackProps {
   isProducts: boolean;
 }
 
-export const MainButtons = ({ isProducts }: MainButtonsProps) => {
+export const MainButtons = ({ isProducts, ...props }: MainButtonsProps) => {
   // context
   const { url } = useRouteMatch();
   const { categories } = useContextMenu();
@@ -16,7 +16,7 @@ export const MainButtons = ({ isProducts }: MainButtonsProps) => {
   const isCategories = categories?.length > 0;
   // UI
   return (
-    <Stack mt="4" direction={{ base: 'column', md: 'row' }} spacing={4}>
+    <Stack mt="4" direction={{ base: 'column', md: 'row' }} spacing={4} {...props}>
       <CustomButton
         mt="0"
         minW="220px"

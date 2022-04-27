@@ -13,9 +13,9 @@ import { useObserveOrderInvoices } from 'app/api/order/useObserveOrderInvoices';
 import { useOrder } from 'app/api/order/useOrder';
 import { useFlaggedLocations } from 'app/api/platform/useFlaggedLocations';
 import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';
-import { useContextAgentProfile } from 'app/state/agent/context';
 import { ConsumerProvider } from 'app/state/consumer/context';
 import { useContextAppRequests } from 'app/state/requests/context';
+import { useContextStaffProfile } from 'app/state/staff/context';
 import { GeoPoint } from 'firebase/firestore';
 import { OrderDetails } from 'pages/orders/drawers/orderdrawer/OrderDetails';
 import { OrderIssuesTable } from 'pages/orders/drawers/orderdrawer/OrderIssuesTable';
@@ -51,7 +51,7 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
   //context
   const { dispatchAppRequestResult } = useContextAppRequests();
   const { path } = useRouteMatch();
-  const { agent, username } = useContextAgentProfile();
+  const { staff, username } = useContextStaffProfile();
   const { orderId } = useParams<Params>();
   const {
     order,
@@ -209,7 +209,7 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
   return (
     <ConsumerProvider>
       <OrderBaseDrawer
-        agent={{ id: agent?.id, name: username }}
+        agent={{ id: staff?.id, name: username }}
         order={order}
         onClose={onClose}
         message={message}

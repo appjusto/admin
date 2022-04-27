@@ -2,7 +2,6 @@ import { Business, ManagerProfile, WithId } from '@appjusto/types';
 import { useManagerBusinesses } from 'app/api/manager/useManagerBusinesses';
 import { useManagerProfile } from 'app/api/manager/useManagerProfile';
 import React, { Dispatch, SetStateAction } from 'react';
-import { useContextFirebaseUser } from '../auth/context';
 
 interface ProfileContextProps {
   manager?: WithId<ManagerProfile> | null;
@@ -17,9 +16,8 @@ interface Props {
 }
 
 export const ManagerProvider = ({ children }: Props) => {
-  const { role } = useContextFirebaseUser();
   const { manager, setManagerEmail } = useManagerProfile();
-  const managerBusinesses = useManagerBusinesses(manager?.email, role);
+  const managerBusinesses = useManagerBusinesses(manager?.email);
   return (
     <ProfileContext.Provider value={{ manager, setManagerEmail, managerBusinesses }}>
       {children}

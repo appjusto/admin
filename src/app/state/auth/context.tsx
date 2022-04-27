@@ -1,24 +1,20 @@
+import { UserPermissions } from '@appjusto/types';
 import * as Sentry from '@sentry/react';
 import { useFirebaseUser } from 'app/api/auth/useFirebaseUser';
 import { User } from 'firebase/auth';
+import { getBusinessManagerBasicRole } from 'pages/team/utils';
 import React from 'react';
+import { AppAbility, defineUserAbility } from './userAbility';
 
-export type GeneralRoles =
-  | 'owner'
-  | 'staff'
-  | 'viewer'
-  | 'courier-manager'
-  | 'manager'
-  | 'collaborator';
-
-type AdminRole = 'manager' | 'collaborator';
-
-export const backofficeRoles: GeneralRoles[] = ['owner', 'staff', 'viewer', 'courier-manager'];
+export type AdminRole = 'owner' | 'manager' | 'collaborator';
 
 interface FirebaseUserContextProps {
   user?: User | null;
-  role?: GeneralRoles | null;
+  adminRole?: AdminRole | null;
+  backofficePermissions?: UserPermissions;
+  adminPermissions?: UserPermissions;
   isBackofficeUser?: boolean | null;
+  userAbility?: AppAbility;
   refreshUserToken?(businessId?: string): Promise<void>;
 }
 
@@ -31,42 +27,73 @@ export const FirebaseUserProvider = ({ children }: Props) => {
   // context
   const user = useFirebaseUser();
   // states
-  const [role, setRole] = React.useState<GeneralRoles | null>();
+  const [adminRole, setAdminRole] = React.useState<AdminRole | null>();
+  const [adminPermissions, setAdminPermissions] = React.useState<UserPermissions>();
+  const [backofficePermissions, setBackofficePermissions] = React.useState<UserPermissions>();
   const [isBackofficeUser, setIsBackofficeUser] = React.useState<boolean | null>();
+  const [userAbility, setUserAbility] = React.useState<AppAbility>();
   // handlers
   const refreshUserToken = React.useCallback(
     async (businessId?: string) => {
       if (user === undefined) return;
       if (user === null) {
-        setRole(null);
+        setAdminRole(null);
         setIsBackofficeUser(null);
         return;
       }
       try {
         const token = await user.getIdTokenResult(true);
-        if (Object.keys(token?.claims).includes('role')) setRole(token.claims.role as GeneralRoles);
-        else if (businessId) {
-          const userRole = token.claims[businessId] as AdminRole | undefined;
-          setRole(userRole ?? null);
+        const claims: { [key: string]: any } = token.claims ?? {};
+        // if (Object.keys(token?.claims).includes('role')) setRole(token.claims.role as GeneralRoles);
+        if (Object.keys(claims).includes('permissions')) {
+          setBackofficePermissions(claims.permissions as UserPermissions);
+        } else if (businessId) {
+          const userPermissions = claims.businesses[businessId] as UserPermissions | undefined;
+          if (!userPermissions) {
+            // error
+            console.error('refreshUserToken: Não foi possível encontrar as permissões do usuário.');
+            return;
+          }
+          const managerBasicRole = getBusinessManagerBasicRole(userPermissions);
+          setAdminRole(managerBasicRole ?? null);
+          setAdminPermissions(userPermissions);
         }
       } catch (error) {
         console.dir('role_error', error);
         Sentry.captureException(error);
       }
     },
-    [user]
+    [user, defineUserAbility]
   );
   // side effects
   React.useEffect(() => {
     refreshUserToken();
   }, [refreshUserToken]);
   React.useEffect(() => {
-    if (!role) return;
-    setIsBackofficeUser(backofficeRoles.indexOf(role) !== -1);
-  }, [role]);
+    if (!backofficePermissions) return;
+    const ability = defineUserAbility(backofficePermissions);
+    setUserAbility(ability);
+    setIsBackofficeUser(true);
+  }, [backofficePermissions, defineUserAbility]);
+  React.useEffect(() => {
+    if (!adminPermissions || !adminRole) return;
+    const ability = defineUserAbility(adminPermissions, adminRole);
+    setUserAbility(ability);
+    setIsBackofficeUser(false);
+  }, [adminPermissions, adminRole, defineUserAbility]);
   // provider
   return (
-    <FirebaseUserContext.Provider value={{ user, role, isBackofficeUser, refreshUserToken }}>
+    <FirebaseUserContext.Provider
+      value={{
+        user,
+        adminRole,
+        backofficePermissions,
+        adminPermissions,
+        isBackofficeUser,
+        userAbility,
+        refreshUserToken,
+      }}
+    >
       {children}
     </FirebaseUserContext.Provider>
   );

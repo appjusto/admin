@@ -1,5 +1,6 @@
 import { DispatchingStatus } from '@appjusto/types';
 import { Box, Flex, HStack, Text } from '@chakra-ui/react';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { Textarea } from 'common/components/form/input/Textarea';
 import React from 'react';
@@ -27,6 +28,8 @@ export const CourierNotifiedBox = ({
   courierRemoving,
   isLoading = false,
 }: CourierNotifiedBoxProps) => {
+  // context
+  const { userAbility } = useContextFirebaseUser();
   // state
   const [isAllocating, setIsAllocating] = React.useState(false);
   const [comment, setComment] = React.useState('');
@@ -56,7 +59,7 @@ export const CourierNotifiedBox = ({
             link={`/backoffice/couriers/${courier.id}`}
             variant="outline"
           />
-          {!isAllocating && (
+          {!isAllocating && userAbility?.can('update', 'orders') && (
             <>
               <CustomButton
                 mt="0"

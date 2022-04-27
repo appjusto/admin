@@ -1,9 +1,9 @@
 import { Box, Button, Heading, Text } from '@chakra-ui/react';
 import * as cpfutils from '@fnando/cpf';
-import { useUpdateAgentProfile } from 'app/api/agent/useUpdateAgentProfile';
 import { useAuthentication } from 'app/api/auth/useAuthentication';
-import { useContextAgentProfile } from 'app/state/agent/context';
+import { useUpdateStaffProfile } from 'app/api/staff/useUpdateStaffProfile';
 import { useContextAppRequests } from 'app/state/requests/context';
+import { useContextStaffProfile } from 'app/state/staff/context';
 import { AlertSuccess } from 'common/components/AlertSuccess';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import { CustomPasswordInput } from 'common/components/form/input/CustomPasswordInput';
@@ -20,19 +20,19 @@ import PageHeader from 'pages/PageHeader';
 import React from 'react';
 import { t } from 'utils/i18n';
 
-export const AgentProfile = () => {
+export const StaffProfile = () => {
   // context
   const { dispatchAppRequestResult } = useContextAppRequests();
-  const { agent } = useContextAgentProfile();
+  const { staff } = useContextStaffProfile();
   const { sendSignInLinkToEmail, sendingLinkResult } = useAuthentication();
-  const { updateProfile, updateResult } = useUpdateAgentProfile();
+  const { updateProfile, updateResult } = useUpdateStaffProfile();
   const { isLoading, isError, error: updateError } = updateResult;
 
   // state
-  const [name, setName] = React.useState(agent?.name ?? '');
-  const [surname, setSurname] = React.useState(agent?.surname ?? '');
-  const [phoneNumber, setPhoneNumber] = React.useState(agent?.phone ?? '');
-  const [cpf, setCPF] = React.useState(agent?.cpf ?? '');
+  const [name, setName] = React.useState(staff?.name ?? '');
+  const [surname, setSurname] = React.useState(staff?.surname ?? '');
+  const [phoneNumber, setPhoneNumber] = React.useState(staff?.phone ?? '');
+  const [cpf, setCPF] = React.useState(staff?.cpf ?? '');
   const [isEditingPasswd, setIsEditingPasswd] = React.useState(true);
   const [passwd, setPasswd] = React.useState('');
   const [passwdConfirm, setPasswdConfirm] = React.useState('');
@@ -125,14 +125,14 @@ export const AgentProfile = () => {
   // side effects
   React.useEffect(() => {
     clearState();
-    if (agent) {
-      if (agent.name) setName(agent.name);
-      if (agent.surname) setSurname(agent.surname);
-      if (agent.phone) setPhoneNumber(agent.phone);
-      if (agent.cpf) setCPF(agent.cpf);
-      if (agent.isPasswordActive) setIsEditingPasswd(false);
+    if (staff) {
+      if (staff.name) setName(staff.name);
+      if (staff.surname) setSurname(staff.surname);
+      if (staff.phone) setPhoneNumber(staff.phone);
+      if (staff.cpf) setCPF(staff.cpf);
+      if (staff.isPasswordActive) setIsEditingPasswd(false);
     }
-  }, [agent, clearState]);
+  }, [staff, clearState]);
 
   React.useEffect(() => {
     if (isError) {
@@ -157,14 +157,14 @@ export const AgentProfile = () => {
           subtitle={t('Informações do agente appjusto')}
         />
         <CustomInput
-          id="agent-profile-email"
+          id="staff-profile-email"
           label={t('E-mail')}
-          value={agent?.email ?? ''}
+          value={staff?.email ?? ''}
           isDisabled
         />
         <CustomInput
           isRequired
-          id="agent-profile-name"
+          id="staff-profile-name"
           ref={nameRef}
           label={t('Nome')}
           placeholder={t('Nome')}
@@ -173,7 +173,7 @@ export const AgentProfile = () => {
         />
         <CustomInput
           isRequired
-          id="agent-profile-lastname"
+          id="staff-profile-lastname"
           label={t('Sobrenome')}
           placeholder={t('Sobrenome')}
           value={surname}
@@ -182,7 +182,7 @@ export const AgentProfile = () => {
         <CustomPatternInput
           isRequired
           ref={phoneNumberRef}
-          id="agent-phone"
+          id="staff-phone"
           label={t('Celular')}
           placeholder={t('Número do seu celular')}
           mask={phoneMask}
@@ -195,7 +195,7 @@ export const AgentProfile = () => {
         <CustomPatternInput
           isRequired
           ref={cpfRef}
-          id="agent-cpf"
+          id="staff-cpf"
           label={t('CPF')}
           placeholder={t('Número do seu CPF')}
           mask={cpfMask}
@@ -208,7 +208,7 @@ export const AgentProfile = () => {
         {isEditingPasswd ? (
           <>
             <Heading mt="8" color="black" fontSize="xl">
-              {agent?.isPasswordActive ? t('Alterar senha') : t('Senha de acesso')}
+              {staff?.isPasswordActive ? t('Alterar senha') : t('Senha de acesso')}
             </Heading>
             <Text mt="1" fontSize="sm" maxW="580px">
               {t(
@@ -216,7 +216,7 @@ export const AgentProfile = () => {
               )}
             </Text>
             {isReauthenticationRequired() ? (
-              agent?.isPasswordActive ? (
+              staff?.isPasswordActive ? (
                 <>
                   <Text
                     mt="4"
@@ -285,7 +285,7 @@ export const AgentProfile = () => {
                   <Button
                     mt="4"
                     w="100%"
-                    onClick={() => sendSignInLinkToEmail(agent?.email!)}
+                    onClick={() => sendSignInLinkToEmail(staff?.email!)}
                     isLoading={sendingLinkResult.isLoading}
                   >
                     {t('Enviar link de acesso')}

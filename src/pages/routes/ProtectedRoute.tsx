@@ -1,6 +1,6 @@
-import { useContextAgentProfile } from 'app/state/agent/context';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextManagerProfile } from 'app/state/manager/context';
+import { useContextStaffProfile } from 'app/state/staff/context';
 import { Loading } from 'common/components/Loading';
 import React from 'react';
 import { Redirect, Route, RouteProps } from 'react-router-dom';
@@ -13,7 +13,7 @@ export const ProtectedRoute = (props: RouteProps) => {
   // context
   const { user } = useContextFirebaseUser();
   const { manager } = useContextManagerProfile();
-  const { agent } = useContextAgentProfile();
+  const { staff } = useContextStaffProfile();
   // state
   const [status, setStatus] = React.useState<Status>('initial');
   // side effects
@@ -24,8 +24,8 @@ export const ProtectedRoute = (props: RouteProps) => {
       }, delay);
       return () => clearTimeout(uid);
     }
-    if (user && (manager || agent)) setStatus('profile-loaded');
-  }, [user, agent, manager]);
+    if (user && (manager || staff)) setStatus('profile-loaded');
+  }, [user, staff, manager]);
   // UI
   // redirects to / when user is not authenticated
   if (status === 'unauthenticated') return <Redirect to="/login" />;
