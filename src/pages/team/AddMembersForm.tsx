@@ -1,5 +1,6 @@
 import { Box, Button, RadioGroup, Stack, Text, Tooltip } from '@chakra-ui/react';
 import { useManagers } from 'app/api/manager/useManagers';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { CloseButton } from 'common/components/buttons/CloseButton';
@@ -32,12 +33,15 @@ const collaboratorLabel = t(
 
 export const AddMembersForm = () => {
   //context
+  const { userAbility } = useContextFirebaseUser();
   const { dispatchAppRequestResult } = useContextAppRequests();
   const { business } = useContextBusiness();
   const { createManager, createResult } = useManagers();
   const { isLoading, isSuccess } = createResult;
   // state
   const [members, setMembers] = React.useState<Member[]>([memberObj]);
+  // helpers
+  const userIsOwner = userAbility?.can('delete', 'businesses');
   // handlers
   const AddMemberFields = () => {
     setMembers((prevState) => [...prevState, memberObj]);
@@ -155,12 +159,12 @@ export const AddMembersForm = () => {
                   lineHeight="22px"
                 >
                   <Tooltip hasArrow label={ownerLabel} placement="top">
-                    <Box>
+                    <Box display={userIsOwner ? 'block' : 'none'}>
                       <CustomRadio value="owner">{t('Proprietário')}</CustomRadio>
                     </Box>
                   </Tooltip>
                   <Tooltip hasArrow label={managerLabel} placement="top">
-                    <Box>
+                    <Box display={userIsOwner ? 'block' : 'none'}>
                       <CustomRadio value="manager">{t('Gerente')}</CustomRadio>
                     </Box>
                   </Tooltip>

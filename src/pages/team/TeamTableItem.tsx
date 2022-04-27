@@ -30,6 +30,7 @@ export const TeamTableItem = ({
   const [isDeleting, setIsDeleting] = React.useState(false);
   const [isUpdating, setIsUpdating] = React.useState<boolean>();
   // helpers
+  const userIsOwner = userAbility?.can('delete', 'businesses');
   const userCanUpdate = userAbility?.can('update', { kind: 'managers', role });
   // side effects
   React.useEffect(() => {
@@ -154,13 +155,13 @@ export const TeamTableItem = ({
             fontSize="16px"
             lineHeight="22px"
           >
-            <CustomRadio value="owner" isDisabled={!userCanUpdate}>
+            <CustomRadio value="owner" isDisabled={!userIsOwner}>
               {t('Proprietário')}
             </CustomRadio>
-            <CustomRadio value="manager" isDisabled={!userCanUpdate}>
+            <CustomRadio value="manager" isDisabled={!userIsOwner}>
               {t('Gerente')}
             </CustomRadio>
-            <CustomRadio value="collaborator" isDisabled={!userCanUpdate}>
+            <CustomRadio value="collaborator" isDisabled={!userIsOwner}>
               {t('Colaborador')}
             </CustomRadio>
           </HStack>
