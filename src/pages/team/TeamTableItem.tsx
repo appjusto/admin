@@ -1,3 +1,4 @@
+import { AdminRole } from '@appjusto/types';
 import { Box, Button, HStack, RadioGroup, Td, Text, Tr } from '@chakra-ui/react';
 import { ManagerWithPermissions } from 'app/api/manager/types';
 import { useContextFirebaseUser } from 'app/state/auth/context';
@@ -5,11 +6,9 @@ import CustomRadio from 'common/components/form/CustomRadio';
 import React from 'react';
 import { formatDate, formatTime } from 'utils/formatters';
 import { t } from 'utils/i18n';
-import { getBusinessManagerBasicRole, ManagerBasicRole } from './utils';
-
 interface TeamTableItemProps {
   manager: ManagerWithPermissions;
-  updateMember(managerEmail: string, role: ManagerBasicRole): void;
+  updateMember(managerEmail: string, role: AdminRole): void;
   updateSuccess: boolean;
   deleteMember(managerEmail: string): void;
   isLoading: boolean;
@@ -25,8 +24,8 @@ export const TeamTableItem = ({
   // context
   const { userAbility } = useContextFirebaseUser();
   // state
-  const [currentRole, setCurrentRole] = React.useState<ManagerBasicRole>();
-  const [role, setRole] = React.useState<ManagerBasicRole>();
+  const [currentRole, setCurrentRole] = React.useState<AdminRole>();
+  const [role, setRole] = React.useState<AdminRole>();
   const [isDeleting, setIsDeleting] = React.useState(false);
   const [isUpdating, setIsUpdating] = React.useState<boolean>();
   // helpers
@@ -35,9 +34,8 @@ export const TeamTableItem = ({
   // side effects
   React.useEffect(() => {
     if (!manager.permissions) return;
-    const basicRole = getBusinessManagerBasicRole(manager.permissions);
-    setCurrentRole(basicRole);
-    setRole(basicRole);
+    setCurrentRole(manager.permissions);
+    setRole(manager.permissions);
   }, [manager.permissions]);
   React.useEffect(() => {
     if (!currentRole || !role) return;
@@ -86,7 +84,7 @@ export const TeamTableItem = ({
         <Td>{manager.email}</Td>
         <Td textAlign="center">
           <RadioGroup
-            onChange={(value: ManagerBasicRole) => setRole(value)}
+            onChange={(value: AdminRole) => setRole(value)}
             value={role}
             defaultValue="1"
             colorScheme="green"
@@ -140,7 +138,7 @@ export const TeamTableItem = ({
       <Td>{manager.email}</Td>
       <Td textAlign="center">
         <RadioGroup
-          onChange={(value: ManagerBasicRole) => setRole(value)}
+          onChange={(value: AdminRole) => setRole(value)}
           value={role}
           defaultValue="1"
           colorScheme="green"

@@ -1,3 +1,4 @@
+import { AdminRole } from '@appjusto/types';
 import { Box, Button, RadioGroup, Stack, Text, Tooltip } from '@chakra-ui/react';
 import { useManagers } from 'app/api/manager/useManagers';
 import { useContextFirebaseUser } from 'app/state/auth/context';
@@ -9,11 +10,10 @@ import { CustomInput } from 'common/components/form/input/CustomInput';
 import { intersection } from 'lodash';
 import React from 'react';
 import { t } from 'utils/i18n';
-import { getBusinessManagerPermissionsObject, ManagerBasicRole } from './utils';
 
 type Member = {
   email: string;
-  role: ManagerBasicRole;
+  role: AdminRole;
 };
 
 const memberObj = {
@@ -69,14 +69,7 @@ export const AddMembersForm = () => {
         status: 'error',
         requestId: 'AddMembersForm-valid-no-business',
       });
-    const managers = members.map((member) => {
-      const permissions = getBusinessManagerPermissionsObject(member.role);
-      return {
-        email: member.email,
-        permissions,
-      };
-    });
-    if (managers.find((manager) => !manager.email)) {
+    if (members.find((member) => !member.email)) {
       return dispatchAppRequestResult({
         status: 'error',
         requestId: 'AddMembersForm-valid-no-email',
@@ -98,7 +91,11 @@ export const AddMembersForm = () => {
         },
       });
     }
-    await createManager(managers);
+    const newManagers = members.map((member) => ({
+      email: member.email,
+      permissions: member.role,
+    }));
+    await createManager(newManagers);
   };
   // side effects
   React.useEffect(() => {
@@ -142,7 +139,7 @@ export const AddMembersForm = () => {
                 {t('Papel do usuário:')}
               </Text>
               <RadioGroup
-                onChange={(value: ManagerBasicRole) => updateMember(index, 'role', value)}
+                onChange={(value: AdminRole) => updateMember(index, 'role', value)}
                 value={member.role}
                 defaultValue="1"
                 colorScheme="green"

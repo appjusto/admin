@@ -1,4 +1,4 @@
-import { ManagerProfile, UserPermissions } from '@appjusto/types';
+import { AdminRole, ManagerProfile } from '@appjusto/types';
 
 export interface BusinessManager extends ManagerProfile {
   role: string | null;
@@ -12,6 +12,6 @@ export interface UserWithRole {
 export interface ManagerWithPermissions {
   uid: string;
   email: string;
-  permissions: UserPermissions | null;
+  permissions: AdminRole | null;
   createdOn: string;
 }

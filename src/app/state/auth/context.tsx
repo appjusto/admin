@@ -2,7 +2,6 @@ import { UserPermissions } from '@appjusto/types';
 import * as Sentry from '@sentry/react';
 import { useFirebaseUser } from 'app/api/auth/useFirebaseUser';
 import { User } from 'firebase/auth';
-import { getBusinessManagerBasicRole } from 'pages/team/utils';
 import React from 'react';
 import { AppAbility, defineUserAbility } from './userAbility';
 
@@ -28,7 +27,6 @@ export const FirebaseUserProvider = ({ children }: Props) => {
   const user = useFirebaseUser();
   // states
   const [adminRole, setAdminRole] = React.useState<AdminRole | null>();
-  const [adminPermissions, setAdminPermissions] = React.useState<UserPermissions>();
   const [backofficePermissions, setBackofficePermissions] = React.useState<UserPermissions>();
   const [isBackofficeUser, setIsBackofficeUser] = React.useState<boolean | null>();
   const [userAbility, setUserAbility] = React.useState<AppAbility>();
@@ -48,15 +46,13 @@ export const FirebaseUserProvider = ({ children }: Props) => {
         if (Object.keys(claims).includes('permissions')) {
           setBackofficePermissions(claims.permissions as UserPermissions);
         } else if (businessId) {
-          const userPermissions = claims.businesses[businessId] as UserPermissions | undefined;
-          if (!userPermissions) {
+          const role = claims.businesses[businessId] as AdminRole;
+          if (!role) {
             // error
             console.error('refreshUserToken: Não foi possível encontrar as permissões do usuário.');
             return;
           }
-          const managerBasicRole = getBusinessManagerBasicRole(userPermissions);
-          setAdminRole(managerBasicRole ?? null);
-          setAdminPermissions(userPermissions);
+          setAdminRole(role ?? null);
         }
       } catch (error) {
         console.dir('role_error', error);
@@ -76,11 +72,11 @@ export const FirebaseUserProvider = ({ children }: Props) => {
     setIsBackofficeUser(true);
   }, [backofficePermissions]);
   React.useEffect(() => {
-    if (!adminPermissions || !adminRole) return;
-    const ability = defineUserAbility(adminPermissions, adminRole);
+    if (!adminRole) return;
+    const ability = defineUserAbility(adminRole);
     setUserAbility(ability);
     setIsBackofficeUser(false);
-  }, [adminPermissions, adminRole]);
+  }, [adminRole]);
   // provider
   return (
     <FirebaseUserContext.Provider
@@ -88,7 +84,6 @@ export const FirebaseUserProvider = ({ children }: Props) => {
         user,
         adminRole,
         backofficePermissions,
-        adminPermissions,
         isBackofficeUser,
         userAbility,
         refreshUserToken,

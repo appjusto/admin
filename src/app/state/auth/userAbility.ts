@@ -1,6 +1,12 @@
-import { UserPermissions } from '@appjusto/types';
+import { CRUD, UserPermissions } from '@appjusto/types';
 import { Ability, AbilityOptionsOf, defineAbility, detectSubjectType } from '@casl/ability';
 import { AdminRole } from './context';
+import {
+  AdminPermissionObject,
+  businessCollaboratorObject,
+  businessManagerObject,
+  businessOwnerObject,
+} from './utils';
 
 // const staffClaim = {
 //   "orders": ["create", "read", "update", "delete"],
@@ -21,17 +27,7 @@ import { AdminRole } from './context';
 
 // const managerClaim = {
 //   "businesses": {
-//     "uGxPaBFKWq9PBLYhEP7X": {
-//       "advances": ["create", "read", "update"],
-//       "businesses": ["create", "read", "update", "delete"],
-//       "chats": ["create", "read", "update"],
-//       "invoices": ["read", "update"],
-//       "managers": ["create", "read", "update", "delete"],
-//       "menu": ["create", "read", "update", "delete"],
-//       "orders": ["read", "update"],
-//       "withdraws": ["create", "read", "update"]
-//     }
-//   }
+//     "uGxPaBFKWq9PBLYhEP7X": "owner" | "manager" | "collaborator"
 // }
 
 type Actions = 'create' | 'read' | 'update' | 'delete';
@@ -62,35 +58,41 @@ const options: AbilityOptionsOf<AppAbility> = {
   },
 };
 
-export const defineUserAbility = (permissions: UserPermissions, adminRole?: AdminRole) => {
-  if (adminRole === 'collaborator') {
-    return defineAbility<AppAbility>((can) => {
-      Object.keys(permissions).forEach((subject) => {
-        permissions[subject].forEach((rule: Actions) => {
-          if (subject === 'businesses' && rule === 'update') {
-            can(rule, subject as Subjects, ['status', 'keepAlive']);
-          } else can(rule, subject as Subjects);
-        });
-      });
-    }, options);
-  } else if (adminRole === 'manager') {
-    return defineAbility<AppAbility>((can) => {
-      Object.keys(permissions).forEach((subject) => {
-        permissions[subject].forEach((rule: Actions) => {
-          if (
-            (subject === 'managers' && rule === 'create') ||
-            rule === 'update' ||
-            rule === 'delete'
-          ) {
-            can(rule, subject as Subjects, { role: 'collaborator' });
-          } else can(rule, subject as Subjects);
-        });
-      });
-    }, options);
+const ruleParser = (r: CRUD): Actions => {
+  switch (r) {
+    case 'c':
+      return 'create';
+    case 'r':
+      return 'read';
+    case 'u':
+      return 'update';
+    case 'd':
+      return 'delete';
   }
+};
+
+export const defineUserAbility = (permissions: UserPermissions | AdminRole) => {
   return defineAbility<AppAbility>((can) => {
-    Object.keys(permissions).forEach((subject) => {
-      permissions[subject].forEach((rule: Actions) => can(rule, subject as Subjects));
-    });
+    // helper
+    const defineAbilityByPermissionsObject = (
+      permissionsObject: AdminPermissionObject | UserPermissions
+    ) => {
+      Object.keys(permissionsObject).forEach((subject) => {
+        permissionsObject[subject].forEach((permission) => {
+          if (typeof permission === 'object') {
+            can(ruleParser(permission.rule), subject, permission.conditions);
+          } else can(ruleParser(permission), subject);
+        });
+      });
+    };
+    if (typeof permissions === 'object') {
+      defineAbilityByPermissionsObject(permissions);
+    } else if (permissions === 'owner') {
+      defineAbilityByPermissionsObject(businessOwnerObject);
+    } else if (permissions === 'manager') {
+      defineAbilityByPermissionsObject(businessManagerObject);
+    } else if (permissions === 'collaborator') {
+      defineAbilityByPermissionsObject(businessCollaboratorObject);
+    }
   }, options);
 };
