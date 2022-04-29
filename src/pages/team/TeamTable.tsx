@@ -1,10 +1,10 @@
+import { AdminRole } from '@appjusto/types';
 import { Box, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
 import { ManagerWithPermissions } from 'app/api/manager/types';
 import { useManagers } from 'app/api/manager/useManagers';
 import React from 'react';
 import { t } from 'utils/i18n';
 import { TeamTableItem } from './TeamTableItem';
-import { getBusinessManagerPermissionsObject, ManagerBasicRole } from './utils';
 
 export const TeamTable = () => {
   // context
@@ -18,7 +18,7 @@ export const TeamTable = () => {
   const [managers, setManagers] = React.useState<ManagerWithPermissions[]>();
   const [isLoading, setIsLoading] = React.useState(false);
   // handlers
-  const updateMember = async (managerEmail: string, role: ManagerBasicRole) => {
+  const updateMember = async (managerEmail: string, role: AdminRole) => {
     setIsLoading(true);
     setManagers((prev) =>
       prev?.map((manager) => {
@@ -28,8 +28,7 @@ export const TeamTable = () => {
         return manager;
       })
     );
-    const permissions = getBusinessManagerPermissionsObject(role);
-    await createManager([{ email: managerEmail, permissions }]);
+    await createManager([{ email: managerEmail, permissions: role }]);
     setIsLoading(false);
   };
   const deleteMember = async (managerEmail: string) => {
