@@ -108,7 +108,7 @@ export const isAccessGranted = (args: IsAccessGrantedArgs) => {
       const page = path.split('/backoffice/')[1] as keyof BackofficeAccess;
       if (!page || page === 'staff-profile') return true;
       const accessProperty = backofficeAccess[page] as keyof UserPermissions;
-      return backofficePermissions[accessProperty].includes('read');
+      return backofficePermissions[accessProperty].includes('r');
     }
     return false;
   } catch (error) {

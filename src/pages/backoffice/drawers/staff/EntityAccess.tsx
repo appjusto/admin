@@ -18,16 +18,16 @@ export const EntityAccess = ({ name, value, updateAcess }: EntityAccessProps) =>
         onChange={(value) => updateAcess(value as UserPermissionRules)}
       >
         <Td>
-          <CustomCheckbox value="create">{'Criar'}</CustomCheckbox>
+          <CustomCheckbox value="c">{'Criar'}</CustomCheckbox>
         </Td>
         <Td>
-          <CustomCheckbox value="read">{'Ler'}</CustomCheckbox>
+          <CustomCheckbox value="r">{'Ler'}</CustomCheckbox>
         </Td>
         <Td>
-          <CustomCheckbox value="update">{'Alterar'}</CustomCheckbox>
+          <CustomCheckbox value="u">{'Alterar'}</CustomCheckbox>
         </Td>
         <Td>
-          <CustomCheckbox value="delete">{'Apagar'}</CustomCheckbox>
+          <CustomCheckbox value="d">{'Apagar'}</CustomCheckbox>
         </Td>
       </CheckboxGroup>
     </Tr>
