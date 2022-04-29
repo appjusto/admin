@@ -12,7 +12,7 @@ interface ContextProps {
   clearBusiness(): void;
   setBusinessId(businessId?: string | null): void;
   updateContextBusinessOrderPrint(status: boolean): void;
-  businessesIsEmpty: boolean;
+  businesses?: WithId<Business>[];
   setBusinessIdByBusinesses(): void;
   platformAccess?: PlatformAccess;
 }
@@ -33,8 +33,6 @@ export const BusinessProvider = ({ children }: Props) => {
   const platformAccess = usePlatformAccess(typeof user?.uid === 'string');
   // state
   const [business, setBusiness] = React.useState<WithId<Business> | null>();
-  // helpers
-  const businessesIsEmpty = businesses?.length === 0;
   // handlers
   const clearBusiness = React.useCallback(() => {
     setBusiness(undefined);
@@ -108,7 +106,7 @@ export const BusinessProvider = ({ children }: Props) => {
         clearBusiness,
         setBusinessId,
         updateContextBusinessOrderPrint,
-        businessesIsEmpty,
+        businesses,
         setBusinessIdByBusinesses,
         platformAccess,
       }}

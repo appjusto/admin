@@ -1,7 +1,6 @@
 import { Box, Circle, Image, Text } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useContextBusiness } from 'app/state/business/context';
-import { useContextManagerProfile } from 'app/state/manager/context';
 import {
   BusinessSelect,
   BusinessSelectOptions,
@@ -12,11 +11,10 @@ import { BusinessStatus } from './BusinessStatus';
 
 const BusinessInfo = () => {
   // context
-  const { managerBusinesses } = useContextManagerProfile();
-  const { business, setBusinessId } = useContextBusiness();
+  const { business, setBusinessId, businesses } = useContextBusiness();
   const { logo } = useBusinessProfile();
   // state
-  const [businesses, setBusinesses] = React.useState<BusinessSelectOptions[]>([]);
+  const [managerBusinesses, setManagerBusinesses] = React.useState<BusinessSelectOptions[]>([]);
   const [selectedBusiness, setSelectedBusiness] = React.useState<BusinessSelectOptions>();
   // handlers
   const handleSwitchBussines = (selected: BusinessSelectOptions) => {
@@ -32,13 +30,13 @@ const BusinessInfo = () => {
     });
   }, [business]);
   React.useEffect(() => {
-    if (!managerBusinesses) return;
-    const businessesList = managerBusinesses.map((business) => ({
+    if (!businesses) return;
+    const businessesList = businesses.map((business) => ({
       value: business.id,
       label: `${business.name}: ${business.businessAddress?.address ?? 'Não informado'}`,
     }));
-    setBusinesses(businessesList);
-  }, [managerBusinesses]);
+    setManagerBusinesses(businessesList);
+  }, [businesses]);
   // UI
   return (
     <Box>
@@ -53,10 +51,10 @@ const BusinessInfo = () => {
       ) : (
         <Circle size="40px" bg="gray.400" />
       )}
-      {managerBusinesses && managerBusinesses.length > 1 ? (
+      {managerBusinesses.length > 1 ? (
         <Box mt="2" pr="4">
           <BusinessSelect
-            options={businesses}
+            options={managerBusinesses}
             selected={selectedBusiness}
             onChange={handleSwitchBussines}
           />

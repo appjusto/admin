@@ -13,7 +13,9 @@ import { t } from 'utils/i18n';
 const DeletedPage = () => {
   // context
   const history = useHistory();
-  const { businessesIsEmpty, setBusinessIdByBusinesses, setBusinessId } = useContextBusiness();
+  const { businesses, setBusinessIdByBusinesses, setBusinessId } = useContextBusiness();
+  // helpers
+  const businessesIsEmpty = businesses?.length === 0;
   // handlers
   const handleRedirect = (path: '/onboarding' | '/app') => {
     if (path === '/app') setBusinessIdByBusinesses();

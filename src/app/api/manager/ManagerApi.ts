@@ -1,5 +1,4 @@
 import {
-  Business,
   CreateManagersPayload,
   GetManagersPayload,
   ManagerProfile,
@@ -34,15 +33,6 @@ export default class ManagerApi {
     return customCollectionSnapshot<ManagerProfile>(q, (result) => {
       resultHandler(result[0]);
     });
-  }
-
-  observeManagerBusinesses(
-    email: string,
-    resultHandler: (businesses: WithId<Business>[] | null) => void
-  ): Unsubscribe {
-    const q = query(this.refs.getBusinessesRef(), where('managers', 'array-contains', email));
-    // returns the unsubscribe function
-    return customCollectionSnapshot(q, resultHandler);
   }
 
   async getBusinessManagers(
