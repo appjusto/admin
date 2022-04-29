@@ -69,6 +69,7 @@ export const OrderBaseDrawer = ({
             <Text color="black" fontSize="2xl" fontWeight="700" lineHeight="28px" mb="2">
               {order?.code ? `#${order.code}` : 'N/E'}
             </Text>
+            <BaseDrawerInfoItem label={t('ID:')} value={order?.id ?? 'N/E'} />
             <BaseDrawerInfoItem
               label={t('Tipo:')}
               value={order?.type === 'food' ? 'Comida' : 'p2p'}
