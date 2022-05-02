@@ -14,7 +14,7 @@ const HOUR = 1000 * 60 * 60;
 const isDeltaValid = (delta: number) => {
   if (delta > HOUR || delta < -HOUR) {
     console.log('%cDelta inválido: ', 'color: red', delta);
-    Sentry.captureException(`Invalid server time Delta: ${delta}`);
+    // Sentry.captureException(`Invalid server time Delta: ${delta}`);
     return false;
   } else return true;
 };
