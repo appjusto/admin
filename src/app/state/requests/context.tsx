@@ -67,7 +67,9 @@ export const AppRequestsProvider = ({ children }: Props) => {
       if (result.status === 'error') {
         if (result.error && !toast.isActive(result.requestId)) {
           const { code } = result.error as FirebaseError;
-          if (!code || !skippedExceptions.includes(code)) Sentry.captureException(result.error);
+          if (!code || !skippedExceptions.includes(code)) {
+            Sentry.captureException(result.error);
+          }
         }
         const errorMessage = getErrorMessage(
           result.message,
