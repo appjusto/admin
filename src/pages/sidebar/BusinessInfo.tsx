@@ -1,6 +1,7 @@
 import { Box, Circle, Image, Text } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useContextBusiness } from 'app/state/business/context';
+import { useContextManagerProfile } from 'app/state/manager/context';
 import {
   BusinessSelect,
   BusinessSelectOptions,
@@ -12,6 +13,7 @@ import { BusinessStatus } from './BusinessStatus';
 const BusinessInfo = () => {
   // context
   const { business, setBusinessId, businesses } = useContextBusiness();
+  const { updateLastBusinessId } = useContextManagerProfile();
   const { logo } = useBusinessProfile();
   // state
   const [managerBusinesses, setManagerBusinesses] = React.useState<BusinessSelectOptions[]>([]);
@@ -20,6 +22,7 @@ const BusinessInfo = () => {
   const handleSwitchBussines = (selected: BusinessSelectOptions) => {
     setSelectedBusiness(selected);
     setBusinessId(selected.value);
+    updateLastBusinessId(selected.value);
   };
   // side effects
   React.useEffect(() => {
