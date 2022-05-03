@@ -109,7 +109,7 @@ export const BusinessDeleteDrawer = ({ onClose, ...props }: BaseDrawerProps) => 
             )}
             <Text mt="4" fontSize="18px" color="black">
               {t(
-                'Lamentamos que tenha optado por excluir seu restaurante. Você poderia nos dizer qual ou quais motivos te trouxeram aqui?'
+                'Lamentamos que tenha optado por excluir seu restaurante. Você poderia nos dizer qual ou quais motivos o trouxeram aqui?'
               )}
             </Text>
             <Stack
@@ -221,7 +221,7 @@ export const BusinessDeleteDrawer = ({ onClose, ...props }: BaseDrawerProps) => 
                   onClick={handleDelete}
                   isLoading={isLoading}
                   loadingText={t('Excluindo')}
-                  isDisabled={businessName !== business?.name}
+                  isDisabled={business?.name ? businessName !== business?.name : false}
                 >
                   {t('Excluir restaurante')}
                 </Button>
