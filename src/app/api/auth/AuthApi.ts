@@ -101,12 +101,7 @@ export default class AuthApi {
         user,
         EmailAuthProvider.credential(user.email, currentPassword)
       );
-    try {
-      await updatePassword(user, password);
-    } catch (error) {
-      Sentry.captureException(error);
-      throw error;
-    }
+    await updatePassword(user, password);
   }
 
   async updateEmail(data: { accountId: string; email: string }) {

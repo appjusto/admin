@@ -25,23 +25,19 @@ export const useAuthentication = () => {
     false,
     false
   );
-  const {
-    mutateAsync: sendSignInLinkToEmail,
-    mutationResult: sendingLinkResult,
-  } = useCustomMutation(
-    async (email: string) => api.auth().sendSignInLinkToEmail(email),
-    'sendSignInLinkToEmail',
-    false,
-    false
-  );
+  const { mutateAsync: sendSignInLinkToEmail, mutationResult: sendingLinkResult } =
+    useCustomMutation(
+      async (email: string) => api.auth().sendSignInLinkToEmail(email),
+      'sendSignInLinkToEmail',
+      false,
+      false
+    );
   const { mutateAsync: signInWithEmailLink, mutationResult: signInResult } = useCustomMutation(
     async (data: SignInData) => api.auth().signInWithEmailLink(data.email, data.link),
     'signInWithEmailLink',
     false,
     false
   );
-  const updateUsersPassword = (password: string, currentPassword?: string) =>
-    api.auth().updateUsersPassword(password, currentPassword);
   const signOut = React.useCallback(
     (email?: string) => {
       if (email) localStorage.removeItem(`business-${process.env.REACT_APP_ENVIRONMENT}-${email}`);
@@ -53,6 +49,9 @@ export const useAuthentication = () => {
     async (data: DeleteAccountData) => api.auth().deleteAccount(data),
     'deleteUserAccount'
   );
+  // every profile calls it with his mutation
+  const updateUsersPassword = (password: string, currentPassword?: string) =>
+    api.auth().updateUsersPassword(password, currentPassword);
   // return
   return {
     login,
