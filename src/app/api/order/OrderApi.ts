@@ -13,6 +13,7 @@ import {
   OrderType,
   OutsourceAccountType,
   OutsourceDeliveryPayload,
+  ProfileNote,
   WithId,
 } from '@appjusto/types';
 import { IuguInvoiceStatus } from '@appjusto/types/payment/iugu';
@@ -20,6 +21,7 @@ import * as Sentry from '@sentry/react';
 import { documentAs, documentsAs, FirebaseDocument } from 'core/fb';
 import {
   addDoc,
+  deleteDoc,
   DocumentData,
   FieldValue,
   getDoc,
@@ -498,5 +500,36 @@ export default class OrderApi {
     };
     if (accountType) payload.accountType = accountType;
     return await this.refs.getOutsourceDeliveryCallable()(payload);
+  }
+
+  // order notes
+  observeOrderNotes(
+    orderId: string,
+    resultHandler: (result: WithId<ProfileNote>[]) => void
+  ): Unsubscribe {
+    const q = query(this.refs.getOrderNotesRef(orderId), orderBy('createdOn', 'desc'));
+    // returns the unsubscribe function
+    return customCollectionSnapshot(q, resultHandler);
+  }
+
+  async createOrderNote(orderId: string, data: Partial<ProfileNote>) {
+    const timestamp = serverTimestamp();
+    await addDoc(this.refs.getOrderNotesRef(orderId), {
+      ...data,
+      createdOn: timestamp,
+      updatedOn: timestamp,
+    } as ProfileNote);
+  }
+
+  async updateOrderNote(orderId: string, orderNoteId: string, changes: Partial<ProfileNote>) {
+    const timestamp = serverTimestamp();
+    await updateDoc(this.refs.getOrderNoteRef(orderId, orderNoteId), {
+      ...changes,
+      updatedOn: timestamp,
+    } as Partial<ProfileNote>);
+  }
+
+  async deleteOrderNote(orderId: string, orderNoteId: string) {
+    await deleteDoc(this.refs.getOrderNoteRef(orderId, orderNoteId));
   }
 }

@@ -123,6 +123,9 @@ export default class FirebaseRefs {
   getOrderRef = (orderId: string) => doc(this.getOrdersRef(), orderId);
   getOrderIssuesRef = (orderId: string) => collection(this.getOrderRef(orderId), 'issues');
   getOrderLogsRef = (orderId: string) => collection(this.getOrderRef(orderId), 'logs');
+  getOrderNotesRef = (orderId: string) => collection(this.getOrderRef(orderId), 'ordernotes');
+  getOrderNoteRef = (orderId: string, orderNoteId: string) =>
+    doc(this.getOrderNotesRef(orderId), orderNoteId);
   // orders private
   getOrderPrivateRef = (orderId: string) => collection(this.getOrderRef(orderId), 'private');
   getOrderPaymentsRef = (orderId: string) => doc(this.getOrderPrivateRef(orderId), 'payments');
