@@ -23,13 +23,14 @@ export const useAuthentication = () => {
     async (data: LoginData) => {
       const { email, password, isLogin } = data;
       if (isLogin && !password) {
-        // let isUserNotFound = false;
+        // if user is trying to login with email link
+        // check if the user exists
         try {
           await api.auth().signInWithEmailAndPassword(email, nanoid(8));
         } catch (error) {
           const { code } = error as FirebaseError;
           if (code === 'auth/user-not-found') {
-            // isUserNotFound = true;
+            // if user not exists return error
             throw new Error('Usuário não encontrado');
           }
         }
