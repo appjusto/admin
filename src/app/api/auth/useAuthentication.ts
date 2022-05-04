@@ -1,9 +1,12 @@
 import { useContextApi } from 'app/state/api/context';
+import { nanoid } from 'nanoid';
 import React from 'react';
 import { useCustomMutation } from '../mutation/useCustomMutation';
+import { FirebaseError } from '../types';
 interface LoginData {
   email: string;
   password?: string;
+  isLogin?: boolean;
 }
 interface SignInData {
   email: string;
@@ -18,8 +21,21 @@ export const useAuthentication = () => {
   // mutations
   const { mutateAsync: login, mutationResult: loginResult } = useCustomMutation(
     async (data: LoginData) => {
-      if (data.password) return api.auth().signInWithEmailAndPassword(data.email, data.password);
-      else return api.auth().sendSignInLinkToEmail(data.email);
+      const { email, password, isLogin } = data;
+      if (isLogin && !password) {
+        // let isUserNotFound = false;
+        try {
+          await api.auth().signInWithEmailAndPassword(email, nanoid(8));
+        } catch (error) {
+          const { code } = error as FirebaseError;
+          if (code === 'auth/user-not-found') {
+            // isUserNotFound = true;
+            throw new Error('Usuário não encontrado');
+          }
+        }
+      }
+      if (password) return api.auth().signInWithEmailAndPassword(email, password);
+      else return api.auth().sendSignInLinkToEmail(email);
     },
     'login',
     false,

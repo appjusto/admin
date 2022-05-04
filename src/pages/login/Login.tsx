@@ -23,6 +23,7 @@ const Login = () => {
   const emailRef = React.useRef<HTMLInputElement>(null);
   const passwdRef = React.useRef<HTMLInputElement>(null);
   // state
+  const [isLogin, setIsLogin] = React.useState(true);
   const [email, setEmail] = React.useState('');
   const [passwd, setPasswd] = React.useState('');
   const [isPassword, setIsPassword] = React.useState(false);
@@ -38,7 +39,7 @@ const Login = () => {
       });
     }
     try {
-      await login({ email, password: passwd });
+      await login({ email, password: passwd, isLogin });
     } catch (error) {}
   };
   // side effects
@@ -84,19 +85,23 @@ const Login = () => {
             handleChange={(ev) => setEmail(normalizeEmail(ev.target.value))}
             isInvalid={email !== '' && isEmailInvalid}
           />
-          <CustomCheckbox
-            mt="4"
-            aria-label="login-password-checkbox"
-            colorScheme="green"
-            value="available"
-            isChecked={isPassword}
-            onChange={(e) => setIsPassword(e.target.checked)}
-          >
-            {t('Usar senha de acesso')}
-          </CustomCheckbox>
-          <Text mt="2" fontSize="xs">
-            {t('Ao entrar sem senha, enviaremos um link de acesso para o e-mail cadastrado.')}
-          </Text>
+          {isLogin && (
+            <>
+              <CustomCheckbox
+                mt="4"
+                aria-label="login-password-checkbox"
+                colorScheme="green"
+                value="available"
+                isChecked={isPassword}
+                onChange={(e) => setIsPassword(e.target.checked)}
+              >
+                {t('Usar senha de acesso')}
+              </CustomCheckbox>
+              <Text mt="2" fontSize="xs">
+                {t('Ao entrar sem senha, enviaremos um link de acesso para o e-mail cadastrado.')}
+              </Text>
+            </>
+          )}
           {isPassword && (
             <>
               <CustomPasswordInput
@@ -122,8 +127,31 @@ const Login = () => {
             />
           )}
           <Button type="submit" width="full" h="60px" mt="6" isLoading={isLoading}>
-            {t('Entrar')}
+            {isLogin ? t('Entrar') : t('Cadastrar')}
           </Button>
+          {isLogin ? (
+            <Text mt="4" textAlign="center">
+              {t('Ainda não possui uma conta? ')}
+              <Text
+                as="span"
+                textDecor="underline"
+                cursor="pointer"
+                onClick={() => setIsLogin(false)}
+              >
+                {t('Clica aqui.')}
+              </Text>
+            </Text>
+          ) : (
+            <Text
+              mt="4"
+              textAlign="center"
+              textDecor="underline"
+              cursor="pointer"
+              onClick={() => setIsLogin(true)}
+            >
+              {t('Já tenho uma conta')}
+            </Text>
+          )}
         </Flex>
       </Flex>
       <Box w={{ lg: 1 / 3 }} display={{ base: 'none', lg: 'block' }}>
