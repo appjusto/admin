@@ -1,4 +1,4 @@
-import { Box, BoxProps, Circle, HStack, Skeleton, Stack, Text } from '@chakra-ui/react';
+import { Box, BoxProps, Circle, HStack, Link, Skeleton, Stack, Text } from '@chakra-ui/react';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextBusinessDashboard } from 'app/state/dashboards/business';
 import { CrowdfundingCard } from 'common/components/CrowdfundingCard';
@@ -281,6 +281,36 @@ const Dashboard = () => {
       ) : (
         <RegistrationStatus />
       )}
+      <Stack
+        mt="14"
+        w="100%"
+        direction={{ base: 'column', md: 'row' }}
+        spacing={6}
+        justifyContent="center"
+        // alignItems={{ base: 'center' }}
+      >
+        <Link
+          isExternal
+          href="https://github.com/appjusto/docs/blob/main/legal/politica-de-privacidade.md"
+          fontSize="15px"
+          textDecor="underline"
+          _hover={{ color: 'gray.900' }}
+          _focus={{ outline: 'none' }}
+        >
+          {t('Política de Privacidade')}
+        </Link>
+        <Link
+          isExternal
+          href="https://github.com/appjusto/docs/blob/main/legal/termos-de-uso-restaurantes.md"
+          fontSize="15px"
+          textDecor="underline"
+          _hover={{ color: 'gray.900' }}
+          _focus={{ outline: 'none' }}
+        >
+          {t('Termos de uso')}
+        </Link>
+        <Text fontSize="15px">© {new Date().getFullYear()} AppJusto</Text>
+      </Stack>
     </>
   );
 };
