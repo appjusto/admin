@@ -230,9 +230,9 @@ export const StaffBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 </Text>
                 <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
                   {t('Token de notificação:')}{' '}
-                  {!staffProfile?.notificationToken ? (
+                  {staffProfile?.notificationToken ? (
                     <Text as="span" fontWeight="500">
-                      {t('copiado')}
+                      {t('Copiado')}
                     </Text>
                   ) : (
                     <Text
