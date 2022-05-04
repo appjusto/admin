@@ -14,7 +14,7 @@ export const useCepAndGeocode = (
   let shouldFetchNewData = true;
   const partialSavedAddress = omit(savedAddress, 'latlng');
   if (isEqual(partialSavedAddress, stateAddress)) {
-    console.log('Retrive saved address data...');
+    console.log('Retrive saved address data');
     shouldFetchNewData = false;
   }
   // args
@@ -35,7 +35,7 @@ export const useCepAndGeocode = (
   const geocode = () => {
     if (!stateAddress) return;
     if (shouldFetchNewData) {
-      console.log('Fetching new data...');
+      console.log('Fetching new data');
       return api
         .maps()
         .googleGeocode(`${address}, ${number}, ${neighborhood} - ${city} - ${state}`);
