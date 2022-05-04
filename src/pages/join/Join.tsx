@@ -9,6 +9,7 @@ import { getFirebaseErrorMessage } from 'core/fb';
 import { BasicErrorPage } from 'pages/error/BasicErrorPage';
 import React from 'react';
 import { Redirect } from 'react-router-dom';
+import { normalizeEmail } from 'utils/email';
 import { t } from 'utils/i18n';
 
 const timeoutLimit = 6; // in seconds
@@ -81,7 +82,7 @@ const Join = () => {
               label={t('E-mail')}
               placeholder={t('Endereço de e-mail')}
               value={email}
-              onChange={(ev) => setEmail(ev.target.value)}
+              onChange={(ev) => setEmail(normalizeEmail(ev.target.value))}
             />
           </FormControl>
           <Button

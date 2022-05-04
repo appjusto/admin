@@ -28,3 +28,5 @@ export const isEmailValid = (email: string) => {
   if (COMMONLY_EMAIL_TYPOS.includes(domain)) return false;
   return true;
 };
+
+export const normalizeEmail = (email: string) => email.toLowerCase().replace('/', '');

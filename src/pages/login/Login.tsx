@@ -11,7 +11,7 @@ import rightImage from 'common/img/login-right@2x.jpg';
 import logo from 'common/img/logo.svg';
 import React from 'react';
 import { Redirect } from 'react-router-dom';
-import { isEmailValid } from 'utils/email';
+import { isEmailValid, normalizeEmail } from 'utils/email';
 import { t } from 'utils/i18n';
 
 const Login = () => {
@@ -81,7 +81,7 @@ const Login = () => {
             label={t('E-mail')}
             placeholder={t('Endereço de e-mail')}
             value={email}
-            handleChange={(ev) => setEmail(ev.target.value.toLowerCase())}
+            handleChange={(ev) => setEmail(normalizeEmail(ev.target.value))}
             isInvalid={email !== '' && isEmailInvalid}
           />
           <CustomCheckbox

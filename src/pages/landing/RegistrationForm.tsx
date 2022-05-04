@@ -7,7 +7,7 @@ import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import delivery from 'common/img/big-delivery.svg';
 import React, { ChangeEvent, FormEvent } from 'react';
-import { isEmailValid } from 'utils/email';
+import { isEmailValid, normalizeEmail } from 'utils/email';
 import { t } from 'utils/i18n';
 import { Section } from './Section';
 
@@ -96,7 +96,7 @@ export const RegistrationForm = () => {
               placeholder="Digite seu e-mail"
               value={email}
               handleChange={(event: ChangeEvent<HTMLInputElement>) => {
-                setEmail(event.target.value.toLowerCase());
+                setEmail(normalizeEmail(event.target.value));
               }}
               isInvalid={email !== '' && isEmailInvalid}
               minW={[null, null, '300px']}

@@ -14,6 +14,7 @@ import {
 } from 'common/components/form/input/pattern-input/formatters';
 import { numbersOnlyParser } from 'common/components/form/input/pattern-input/parsers';
 import React from 'react';
+import { normalizeEmail } from 'utils/email';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
 import { Documents } from './Documents';
@@ -61,7 +62,7 @@ export const PersonalProfile = () => {
             id="user-profile-email"
             label={t('E-mail')}
             value={consumer?.email ?? ''}
-            onChange={(ev) => handleInputChange('email', ev.target.value.toLowerCase())}
+            onChange={(ev) => handleInputChange('email', normalizeEmail(ev.target.value))}
           />
         </Box>
       ) : (
