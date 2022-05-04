@@ -18,13 +18,16 @@ export const useStaff = () => {
       return api.staff().updateProfile(staffId, { situation });
     }, 'updateStaffSituation');
   const { mutateAsync: getStaff, mutationResult: getStaffResult } = useCustomMutation(
-    async (staffId: string) => {
-      return api.staff().getStaff(staffId);
-    },
+    async (staffId: string) => api.staff().getStaff(staffId),
     'getStaff',
     false,
     true
   );
+  const { mutateAsync: getNotificationToken, mutationResult: getNotificationTokenResult } =
+    useCustomMutation(
+      async (staffId: string) => api.staff().getNotificationToken(staffId),
+      'getNotificationToken'
+    );
   // return
   return {
     getStaff,
@@ -33,5 +36,7 @@ export const useStaff = () => {
     createResult,
     updateStaffSituation,
     updateSituationResult,
+    getNotificationToken,
+    getNotificationTokenResult,
   };
 };

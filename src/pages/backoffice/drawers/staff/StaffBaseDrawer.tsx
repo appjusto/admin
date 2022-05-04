@@ -80,8 +80,15 @@ export const StaffBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   const { staffId } = useParams<Params>();
   const isNew = staffId === 'new';
   const { dispatchAppRequestResult } = useContextAppRequests();
-  const { getStaff, createStaff, createResult, updateStaffSituation, updateSituationResult } =
-    useStaff();
+  const {
+    getStaff,
+    createStaff,
+    createResult,
+    updateStaffSituation,
+    updateSituationResult,
+    getNotificationToken,
+    getNotificationTokenResult,
+  } = useStaff();
   const { deleteAccount, deleteAccountResult } = useAuthentication();
   // state
   const [email, setEmail] = React.useState('');
@@ -124,6 +131,11 @@ export const StaffBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
     } else {
       await deleteAccount({ accountId: staffProfile.id });
     }
+  };
+  const handleNotificationToken = async () => {
+    try {
+      await getNotificationToken(staffId);
+    } catch (error) {}
   };
   // side effects
   React.useEffect(() => {
@@ -215,6 +227,25 @@ export const StaffBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                   <Text as="span" fontWeight="500">
                     {getDateAndHour(staffProfile?.createdOn)}
                   </Text>
+                </Text>
+                <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+                  {t('Token de notificação:')}{' '}
+                  {!staffProfile?.notificationToken ? (
+                    <Text as="span" fontWeight="500">
+                      {t('copiado')}
+                    </Text>
+                  ) : (
+                    <Text
+                      as="span"
+                      fontWeight="500"
+                      color="green.600"
+                      textDecor="underline"
+                      cursor="pointer"
+                      onClick={handleNotificationToken}
+                    >
+                      {getNotificationTokenResult.isLoading ? t('Buscando...') : t('Buscar')}
+                    </Text>
+                  )}
                 </Text>
               </>
             )}

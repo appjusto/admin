@@ -14,7 +14,7 @@ export const useCepAndGeocode = (
   let shouldFetchNewData = true;
   const partialSavedAddress = omit(savedAddress, 'latlng');
   if (isEqual(partialSavedAddress, stateAddress)) {
-    console.log('Retrive savedAddress data...');
+    console.log('Retrive saved address data...');
     shouldFetchNewData = false;
   }
   // args

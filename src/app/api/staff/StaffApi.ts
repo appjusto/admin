@@ -1,4 +1,5 @@
 import {
+  ConsumerProfile,
   CreateManagersPayload,
   GetManagersPayload,
   NewUserData,
@@ -7,9 +8,10 @@ import {
   WithId,
 } from '@appjusto/types';
 import * as Sentry from '@sentry/react';
-import { documentsAs, FirebaseDocument } from 'core/fb';
+import { documentAs, documentsAs, FirebaseDocument } from 'core/fb';
 import {
   DocumentData,
+  getDoc,
   limit,
   onSnapshot,
   orderBy,
@@ -83,16 +85,6 @@ export default class StaffApi {
     }
   }
 
-  // public async createProfile(id: string, email: string) {
-  //   const data = await getDoc(this.refs.getAgentRef(id));
-  //   if (!data.exists()) {
-  //     await setDoc(this.refs.getAgentRef(id), {
-  //       situation: 'pending',
-  //       email,
-  //     } as Partial<StaffProfile>);
-  //   }
-  // }
-
   async updateProfile(id: string, changes: Partial<StaffProfile>) {
     await updateDoc(this.refs.getStaffRef(id), changes);
   }
@@ -105,5 +97,18 @@ export default class StaffApi {
     };
     const result = await this.refs.getCreateManagersCallable()(payload);
     return result;
+  }
+
+  async getNotificationToken(staffId: string) {
+    const consumerSnapshot = await getDoc(this.refs.getConsumerRef(staffId));
+    if (consumerSnapshot.exists()) {
+      const consumer = documentAs<ConsumerProfile>(consumerSnapshot);
+      const { notificationToken } = consumer;
+      if (notificationToken) {
+        return updateDoc(this.refs.getStaffRef(staffId), { notificationToken });
+      }
+      throw new Error('Documento de consumer não possui notificationToken');
+    }
+    throw new Error('Nenhum perfil de consumer encontrado');
   }
 }
