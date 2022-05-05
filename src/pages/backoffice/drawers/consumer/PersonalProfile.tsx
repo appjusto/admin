@@ -1,9 +1,10 @@
-import { Box, Text } from '@chakra-ui/react';
+import { Box, CheckboxGroup, Stack, Text } from '@chakra-ui/react';
 import * as cpfutils from '@fnando/cpf';
 import { useObserveConsumerProfileNotes } from 'app/api/consumer/useObserveConsumerProfileNotes';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextConsumerProfile } from 'app/state/consumer/context';
 import { ProfileNotes } from 'common/components/backoffice/ProfileNotes';
+import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import { CustomPatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';
 import {
@@ -36,7 +37,7 @@ export const PersonalProfile = () => {
   const isCPFValid = () => cpfutils.isValid(consumer?.cpf!);
 
   // handlers
-  const handleInputChange = (field: string, value: string) => {
+  const handleInputChange = (field: string, value: string | string[]) => {
     return handleProfileChange(field, value);
   };
 
@@ -130,6 +131,42 @@ export const PersonalProfile = () => {
         externalValidation={{ active: true, status: isCPFValid() }}
       />
       <Documents />
+      <SectionTitle>{t('Preferências de notificação')}</SectionTitle>
+      <CheckboxGroup
+        colorScheme="green"
+        value={consumer?.notificationPreferences}
+        onChange={(values: string[]) => handleInputChange('notificationPreferences', values)}
+      >
+        <Stack
+          mt="6"
+          alignItems="flex-start"
+          color="black"
+          spacing={4}
+          fontSize="16px"
+          lineHeight="22px"
+        >
+          <Box>
+            <CustomCheckbox value="status">{t('Comunicações operacionais')}</CustomCheckbox>
+            <Text fontSize="13px">
+              {t('Para saber sobre novas versões, atualizações do app e mais.')}
+            </Text>
+          </Box>
+          <Box>
+            <CustomCheckbox value="general">{t('Comunicações institucionais')}</CustomCheckbox>
+            <Text fontSize="13px">
+              {t(
+                'Para conhecer mais sobre o AppJusto: propósito, impacto, crescimento, financiamento e mais.'
+              )}
+            </Text>
+          </Box>
+          <Box>
+            <CustomCheckbox value="marketing">{t('Promoções e ofertas')}</CustomCheckbox>
+            <Text fontSize="13px">
+              {t('Avisar sobre promoções e ofertas referentes aos restaurantes da rede.')}
+            </Text>
+          </Box>
+        </Stack>
+      </CheckboxGroup>
       <SectionTitle>{t('Anotações')}</SectionTitle>
       <ProfileNotes
         profileNotes={profileNotes}
