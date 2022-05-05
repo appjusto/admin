@@ -120,7 +120,7 @@ export const ManagersTableItem = ({
     >
       <Td>{manager.email}</Td>
       <Td>{adminRolePTOptions[manager.permissions as AdminRole]}</Td>
-      <Td>v8.3.4</Td>
+      <Td>{manager?.appVersion ?? 'N/E'}</Td>
       {userAbility?.can('update', 'businesses') ? (
         <Td>
           <EditButton onClick={() => setIsUpdating(true)} />

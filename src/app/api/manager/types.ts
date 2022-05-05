@@ -14,4 +14,5 @@ export interface ManagerWithPermissions {
   email: string;
   permissions: AdminRole | null;
   createdOn: string;
+  appVersion?: string;
 }
