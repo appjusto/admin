@@ -9,10 +9,10 @@ export interface UserWithRole {
   role: string | null;
 }
 
-export interface ManagerWithPermissions {
-  uid: string;
+export interface ManagerWithRole {
+  id: string;
   email: string;
-  permissions: AdminRole | null;
+  role: AdminRole | null;
   createdOn: string;
   appVersion?: string;
 }

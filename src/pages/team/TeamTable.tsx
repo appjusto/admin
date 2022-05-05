@@ -1,21 +1,21 @@
 import { AdminRole } from '@appjusto/types';
-import { Box, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
-import { ManagerWithPermissions } from 'app/api/manager/types';
+import { Box, HStack, Icon, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
+import { ManagerWithRole } from 'app/api/manager/types';
 import { useManagers } from 'app/api/manager/useManagers';
+import { useContextBusiness } from 'app/state/business/context';
 import React from 'react';
 import { t } from 'utils/i18n';
 import { TeamTableItem } from './TeamTableItem';
 
-interface TeamTableProps {
-  businessManagers?: ManagerWithPermissions[];
-}
-
-export const TeamTable = ({ businessManagers }: TeamTableProps) => {
+export const TeamTable = () => {
   // context
+  const { businessManagers, platformAccess } = useContextBusiness();
   const { removeBusinessManager, createManager, createManagerResult } = useManagers();
   // state
-  const [managers, setManagers] = React.useState<ManagerWithPermissions[]>();
+  const [managers, setManagers] = React.useState<ManagerWithRole[]>();
   const [isLoading, setIsLoading] = React.useState(false);
+  // helpers
+  const minVersion = platformAccess?.minVersions?.businessWeb;
   // handlers
   const updateMember = async (managerEmail: string, role: AdminRole) => {
     setIsLoading(true);
@@ -56,12 +56,13 @@ export const TeamTable = ({ businessManagers }: TeamTableProps) => {
         {t('Colaboradores adicionados')}
       </Text>
       <Box maxW="100vw" overflowX="auto">
-        <Table mt="4" size="md" variant="simple" pos="relative" minW="800px">
+        <Table mt="4" size="sm" variant="simple" pos="relative" minW="800px">
           <Thead>
             <Tr>
               <Th>{t('E-mail do colaborador')}</Th>
               <Th>{t('Papel do usuário')}</Th>
               <Th>{t('Adicionado em')}</Th>
+              <Th>{t('Versão')}</Th>
               <Th></Th>
             </Tr>
           </Thead>
@@ -70,8 +71,9 @@ export const TeamTable = ({ businessManagers }: TeamTableProps) => {
               managers.map((manager) => {
                 return (
                   <TeamTableItem
-                    key={manager.uid}
+                    key={manager.id}
                     manager={manager}
+                    minVersion={minVersion}
                     updateMember={updateMember}
                     updateSuccess={createManagerResult.isSuccess}
                     deleteMember={deleteMember}
@@ -89,6 +91,27 @@ export const TeamTable = ({ businessManagers }: TeamTableProps) => {
             )}
           </Tbody>
         </Table>
+        <HStack mt="8" fontSize="13px">
+          <Text>{t('Legenda da versão:')}</Text>
+          <HStack>
+            <Text>{t('Ativa')}</Text>
+            <Icon mt="-2px" viewBox="0 0 200 200" color="black">
+              <path
+                fill="currentColor"
+                d="M 100, 100 m -75, 0 a 75,75 0 1,0 150,0 a 75,75 0 1,0 -150,0"
+              />
+            </Icon>
+          </HStack>
+          <HStack>
+            <Text>{t('Inativa')}</Text>
+            <Icon mt="-2px" viewBox="0 0 200 200" color="red">
+              <path
+                fill="currentColor"
+                d="M 100, 100 m -75, 0 a 75,75 0 1,0 150,0 a 75,75 0 1,0 -150,0"
+              />
+            </Icon>
+          </HStack>
+        </HStack>
       </Box>
     </Box>
   );

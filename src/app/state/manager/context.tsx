@@ -3,7 +3,11 @@ import { useManagerProfile } from 'app/api/manager/useManagerProfile';
 import { useUpdateManagerProfile } from 'app/api/manager/useUpdateManagerProfile';
 import React, { Dispatch, SetStateAction } from 'react';
 import { UseMutateAsyncFunction } from 'react-query';
+import packageInfo from '../../../../package.json';
+import { useContextFirebaseUser } from '../auth/context';
 import { useContextBusiness } from '../business/context';
+
+const version = packageInfo.version;
 
 interface ProfileContextProps {
   manager?: WithId<ManagerProfile> | null;
@@ -19,14 +23,22 @@ interface Props {
 
 export const ManagerProvider = ({ children }: Props) => {
   // context
+  const { user } = useContextFirebaseUser();
   const { setBusinessId } = useContextBusiness();
   const { manager, setManagerEmail } = useManagerProfile();
-  const { updateLastBusinessId } = useUpdateManagerProfile(manager?.id);
+  const { updateProfile, updateLastBusinessId } = useUpdateManagerProfile(manager?.id);
   // update business context with manager last business id
   React.useEffect(() => {
     if (!manager?.lastBusinessId) return;
     setBusinessId(manager.lastBusinessId);
   }, [manager?.lastBusinessId]);
+  React.useEffect(() => {
+    if (!user || !manager?.id) return;
+    if (user.uid !== manager.id) return;
+    if (!version || manager?.appVersion === version) return;
+    console.log('Update manager appVersion');
+    updateProfile({ changes: { appVersion: version } });
+  }, [user, manager?.id, manager?.appVersion]);
   // UI
   return (
     <ProfileContext.Provider value={{ manager, setManagerEmail, updateLastBusinessId }}>

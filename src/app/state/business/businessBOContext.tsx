@@ -4,13 +4,14 @@ import {
   BusinessPhone,
   ManagerProfile,
   MarketplaceAccountInfo,
+  PlatformAccess,
   WithId,
 } from '@appjusto/types';
 import * as cpfutils from '@fnando/cpf';
 import { useBusinessBankAccount } from 'app/api/business/profile/useBusinessBankAccount';
 import { useBusinessManagerAndBankAccountBatch } from 'app/api/business/profile/useBusinessManagerAndBankAccountBatch';
 import { useBusinessMarketPlace } from 'app/api/business/useBusinessMarketPlace';
-import { ManagerWithPermissions } from 'app/api/manager/types';
+import { ManagerWithRole } from 'app/api/manager/types';
 import { MutationResult } from 'app/api/mutation/useCustomMutation';
 import { BackofficeProfileValidation } from 'common/types';
 import { isEmpty, isEqual, pick } from 'lodash';
@@ -48,9 +49,10 @@ interface BusinessBOContextProps {
   marketPlace?: MarketplaceAccountInfo | null;
   deleteMarketPlace: UseMutateAsyncFunction<void, unknown, void, unknown>;
   deleteMarketPlaceResult: MutationResult;
-  businessManagers?: ManagerWithPermissions[];
+  businessManagers?: ManagerWithRole[];
   setIsGetManagersActive: React.Dispatch<React.SetStateAction<boolean>>;
   fetchManagers(): void;
+  platformAccess?: PlatformAccess;
 }
 
 const BusinessBOContext = React.createContext<BusinessBOContextProps>({} as BusinessBOContextProps);
@@ -85,6 +87,7 @@ export const BusinessBOProvider = ({ children }: Props) => {
     businessManagers,
     setIsGetManagersActive,
     fetchManagers,
+    platformAccess,
   } = useContextBusiness();
   const { manager, setManagerEmail } = useContextManagerProfile();
   const { bankAccount } = useBusinessBankAccount();
@@ -226,6 +229,7 @@ export const BusinessBOProvider = ({ children }: Props) => {
         businessManagers,
         setIsGetManagersActive,
         fetchManagers,
+        platformAccess,
       }}
     >
       {children}

@@ -1,22 +1,21 @@
 import { AdminRole } from '@appjusto/types';
-import { Box, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
-import { ManagerWithPermissions } from 'app/api/manager/types';
+import { Box, HStack, Icon, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
+import { ManagerWithRole } from 'app/api/manager/types';
 import { useManagers } from 'app/api/manager/useManagers';
+import { useContextBusinessBackoffice } from 'app/state/business/businessBOContext';
 import React from 'react';
 import { t } from 'utils/i18n';
 import { ManagersTableItem } from './ManagersTableItem';
 
-interface ManagersTableProps {
-  businessManagers?: ManagerWithPermissions[];
-  fetchManagers(): void;
-}
-
-export const ManagersTable = ({ businessManagers, fetchManagers }: ManagersTableProps) => {
+export const ManagersTable = () => {
   // context
+  const { businessManagers, fetchManagers, platformAccess } = useContextBusinessBackoffice();
   const { removeBusinessManager, createManager, createManagerResult } = useManagers();
   // state
-  const [managers, setManagers] = React.useState<ManagerWithPermissions[]>();
+  const [managers, setManagers] = React.useState<ManagerWithRole[]>();
   const [isLoading, setIsLoading] = React.useState(false);
+  // helpers
+  const minVersion = platformAccess?.minVersions?.businessWeb;
   // handlers
   const updateMember = async (managerEmail: string, role: AdminRole) => {
     setIsLoading(true);
@@ -72,8 +71,9 @@ export const ManagersTable = ({ businessManagers, fetchManagers }: ManagersTable
               managers.map((manager) => {
                 return (
                   <ManagersTableItem
-                    key={manager.uid}
+                    key={manager.id}
                     manager={manager}
+                    minVersion={minVersion}
                     updateMember={updateMember}
                     updateSuccess={createManagerResult.isSuccess}
                     deleteMember={deleteMember}
@@ -92,6 +92,27 @@ export const ManagersTable = ({ businessManagers, fetchManagers }: ManagersTable
           </Tbody>
         </Table>
       </Box>
+      <HStack mt="4" fontSize="13px">
+        <Text>{t('Legenda da versão:')}</Text>
+        <HStack>
+          <Text>{t('Ativa')}</Text>
+          <Icon mt="-2px" viewBox="0 0 200 200" color="black">
+            <path
+              fill="currentColor"
+              d="M 100, 100 m -75, 0 a 75,75 0 1,0 150,0 a 75,75 0 1,0 -150,0"
+            />
+          </Icon>
+        </HStack>
+        <HStack>
+          <Text>{t('Inativa')}</Text>
+          <Icon mt="-2px" viewBox="0 0 200 200" color="red">
+            <path
+              fill="currentColor"
+              d="M 100, 100 m -75, 0 a 75,75 0 1,0 150,0 a 75,75 0 1,0 -150,0"
+            />
+          </Icon>
+        </HStack>
+      </HStack>
     </Box>
   );
 };

@@ -7,7 +7,7 @@ import { TeamTable } from './TeamTable';
 
 const TeamPage = () => {
   // context
-  const { businessManagers, setIsGetManagersActive } = useContextBusiness();
+  const { setIsGetManagersActive } = useContextBusiness();
   // side effects
   React.useEffect(() => {
     setIsGetManagersActive(true);
@@ -21,7 +21,7 @@ const TeamPage = () => {
           'Gerencie as pessoas que terão acesso ao Portal do parceiro e ao Gerenciador de pedidos. Somente os administradores podem incluir novos colaboradores.'
         )}
       />
-      <TeamTable businessManagers={businessManagers} />
+      <TeamTable />
       <AddMembersForm />
     </>
   );

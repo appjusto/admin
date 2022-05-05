@@ -7,8 +7,7 @@ import { ManagersTable } from './managers/ManagersTable';
 
 export const BusinessManagers = () => {
   // context
-  const { businessManagers, setIsGetManagersActive, fetchManagers } =
-    useContextBusinessBackoffice();
+  const { setIsGetManagersActive } = useContextBusinessBackoffice();
   // side effects
   React.useEffect(() => {
     setIsGetManagersActive(true);
@@ -17,7 +16,7 @@ export const BusinessManagers = () => {
   return (
     <Box>
       <SectionTitle>{t('Colaboradores adicionados')}</SectionTitle>
-      <ManagersTable businessManagers={businessManagers} fetchManagers={fetchManagers} />
+      <ManagersTable />
     </Box>
   );
 };

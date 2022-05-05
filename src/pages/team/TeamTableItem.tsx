@@ -1,13 +1,15 @@
 import { AdminRole } from '@appjusto/types';
 import { Box, Button, HStack, RadioGroup, Td, Text, Tr } from '@chakra-ui/react';
-import { ManagerWithPermissions } from 'app/api/manager/types';
+import { ManagerWithRole } from 'app/api/manager/types';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import CustomRadio from 'common/components/form/CustomRadio';
 import React from 'react';
 import { formatDate, formatTime } from 'utils/formatters';
 import { t } from 'utils/i18n';
+import { getAppVersionLabelColor } from 'utils/version';
 interface TeamTableItemProps {
-  manager: ManagerWithPermissions;
+  manager: ManagerWithRole;
+  minVersion?: string | null;
   updateMember(managerEmail: string, role: AdminRole): void;
   updateSuccess: boolean;
   deleteMember(managerEmail: string): void;
@@ -16,6 +18,7 @@ interface TeamTableItemProps {
 
 export const TeamTableItem = ({
   manager,
+  minVersion,
   updateMember,
   updateSuccess,
   deleteMember,
@@ -31,12 +34,14 @@ export const TeamTableItem = ({
   // helpers
   const userIsOwner = userAbility?.can('delete', 'businesses');
   const userCanUpdate = userAbility?.can('update', { kind: 'managers', role });
+  const versionLabelColor = getAppVersionLabelColor(minVersion, manager.appVersion);
+  // haldlers
   // side effects
   React.useEffect(() => {
-    if (!manager.permissions) return;
-    setCurrentRole(manager.permissions);
-    setRole(manager.permissions);
-  }, [manager.permissions]);
+    if (!manager.role) return;
+    setCurrentRole(manager.role);
+    setRole(manager.role);
+  }, [manager.role]);
   React.useEffect(() => {
     if (!currentRole || !role) return;
     if (currentRole !== role) setIsUpdating(true);
@@ -149,7 +154,7 @@ export const TeamTableItem = ({
           <HStack
             alignItems="flex-start"
             color="black"
-            spacing={8}
+            spacing={4}
             fontSize="16px"
             lineHeight="22px"
           >
@@ -170,6 +175,7 @@ export const TeamTableItem = ({
           ' - ' +
           formatTime(manager.createdOn as unknown as Date)}
       </Td>
+      <Td color={versionLabelColor}>{manager.appVersion ?? 'N/E'}</Td>
       <Td>
         <Button
           size="sm"

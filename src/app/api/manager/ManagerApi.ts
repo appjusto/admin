@@ -9,7 +9,7 @@ import * as Sentry from '@sentry/react';
 import { getDoc, query, setDoc, Unsubscribe, updateDoc, where } from 'firebase/firestore';
 import FirebaseRefs from '../FirebaseRefs';
 import { customCollectionSnapshot, customDocumentSnapshot } from '../utils';
-import { ManagerWithPermissions } from './types';
+import { ManagerWithRole } from './types';
 
 export default class ManagerApi {
   constructor(private refs: FirebaseRefs) {}
@@ -37,7 +37,7 @@ export default class ManagerApi {
 
   async getBusinessManagers(
     businessId: string,
-    resultHandler: (result: ManagerWithPermissions[]) => void
+    resultHandler: (result: ManagerWithRole[]) => void
   ) {
     const payload: GetManagersPayload = {
       meta: { version: '1' }, // TODO: pass correct version on
@@ -46,7 +46,7 @@ export default class ManagerApi {
     };
     try {
       const users = (await this.refs.getGetManagersCallable()(payload)) as unknown as {
-        data: ManagerWithPermissions[];
+        data: ManagerWithRole[];
       };
       resultHandler(users.data);
     } catch (error) {

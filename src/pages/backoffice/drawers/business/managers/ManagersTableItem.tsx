@@ -1,15 +1,17 @@
 import { AdminRole } from '@appjusto/types';
 import { Box, Button, HStack, Select, Td, Text, Tr } from '@chakra-ui/react';
-import { ManagerWithPermissions } from 'app/api/manager/types';
+import { ManagerWithRole } from 'app/api/manager/types';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { DeleteButton } from 'common/components/buttons/DeleteButton';
 import { EditButton } from 'common/components/buttons/EditButton';
 import { adminRolePTOptions } from 'pages/backoffice/utils';
 import React from 'react';
 import { t } from 'utils/i18n';
+import { getAppVersionLabelColor } from 'utils/version';
 
 interface ManagersTableItemProps {
-  manager: ManagerWithPermissions;
+  manager: ManagerWithRole;
+  minVersion?: string | null;
   updateMember(managerEmail: string, role: AdminRole): void;
   updateSuccess: boolean;
   deleteMember(managerEmail: string): void;
@@ -18,6 +20,7 @@ interface ManagersTableItemProps {
 
 export const ManagersTableItem = ({
   manager,
+  minVersion,
   updateMember,
   updateSuccess,
   deleteMember,
@@ -30,6 +33,8 @@ export const ManagersTableItem = ({
   const [role, setRole] = React.useState<AdminRole>();
   const [isDeleting, setIsDeleting] = React.useState(false);
   const [isUpdating, setIsUpdating] = React.useState(false);
+  //helpers
+  const versionLabelColor = getAppVersionLabelColor(minVersion, manager.appVersion);
   // handlers
   const handleCancelUpdate = () => {
     setIsUpdating(false);
@@ -37,10 +42,10 @@ export const ManagersTableItem = ({
   };
   // side effects
   React.useEffect(() => {
-    if (!manager.permissions) return;
-    setCurrentRole(manager.permissions);
-    setRole(manager.permissions);
-  }, [manager.permissions]);
+    if (!manager.role) return;
+    setCurrentRole(manager.role);
+    setRole(manager.role);
+  }, [manager.role]);
   React.useEffect(() => {
     if (!updateSuccess) return;
     setIsUpdating(false);
@@ -119,8 +124,8 @@ export const ManagersTableItem = ({
       pos="relative"
     >
       <Td>{manager.email}</Td>
-      <Td>{adminRolePTOptions[manager.permissions as AdminRole]}</Td>
-      <Td>{manager?.appVersion ?? 'N/E'}</Td>
+      <Td>{adminRolePTOptions[manager.role as AdminRole]}</Td>
+      <Td color={versionLabelColor}>{manager?.appVersion ?? 'N/E'}</Td>
       {userAbility?.can('update', 'businesses') ? (
         <Td>
           <EditButton onClick={() => setIsUpdating(true)} />

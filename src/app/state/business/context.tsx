@@ -1,7 +1,7 @@
 import { Business, PlatformAccess, WithId } from '@appjusto/types';
 import { useObserveBusinessManagedBy } from 'app/api/business/profile/useObserveBusinessManagedBy';
 import { useObserveBusinessProfile } from 'app/api/business/profile/useObserveBusinessProfile';
-import { ManagerWithPermissions } from 'app/api/manager/types';
+import { ManagerWithRole } from 'app/api/manager/types';
 import { useGetManagers } from 'app/api/manager/useGetManagers';
 import { usePlatformAccess } from 'app/api/platform/usePlatformAccess';
 import React from 'react';
@@ -17,7 +17,7 @@ interface ContextProps {
   businesses?: WithId<Business>[];
   setBusinessIdByBusinesses(): void;
   platformAccess?: PlatformAccess;
-  businessManagers?: ManagerWithPermissions[];
+  businessManagers?: ManagerWithRole[];
   setIsGetManagersActive: React.Dispatch<React.SetStateAction<boolean>>;
   fetchManagers(): void;
 }

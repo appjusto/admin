@@ -2,14 +2,14 @@ import { Business, WithId } from '@appjusto/types';
 import { useContextApi } from 'app/state/api/context';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import React from 'react';
-import { ManagerWithPermissions } from './types';
+import { ManagerWithRole } from './types';
 
 export const useGetManagers = (business?: WithId<Business> | null, isActive?: boolean) => {
   // contex
   const api = useContextApi();
   const { userAbility } = useContextFirebaseUser();
   // state
-  const [managers, setManagers] = React.useState<ManagerWithPermissions[]>();
+  const [managers, setManagers] = React.useState<ManagerWithRole[]>();
   // helpers
   const userCanRead = userAbility?.can('read', 'managers');
   // handlers
