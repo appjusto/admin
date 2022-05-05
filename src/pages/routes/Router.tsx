@@ -1,4 +1,5 @@
 import { Loading } from 'common/components/Loading';
+import { InactiveAppVersionPage } from 'pages/error/InactiveAppVersionPage';
 import Join from 'pages/join/Join';
 import LandingPage from 'pages/landing/LandingPage';
 import Login from 'pages/login/Login';
@@ -32,6 +33,7 @@ export const Router = () => {
             <Route path="/login" component={Login} />
             <Route path="/join" component={Join} />
             <Route path="/deleted" component={DeletedPage} />
+            <Route path="/inactive-version" component={InactiveAppVersionPage} />
             <ProtectedRoute path="/app" component={Home} />
             <ProtectedRoute path="/onboarding" component={Onboarding} />
             <BackOfficeRoute path="/backoffice" component={BackOffice} />

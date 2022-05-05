@@ -31,14 +31,14 @@ export const ManagerProvider = ({ children }: Props) => {
   React.useEffect(() => {
     if (!manager?.lastBusinessId) return;
     setBusinessId(manager.lastBusinessId);
-  }, [manager?.lastBusinessId]);
+  }, [manager?.lastBusinessId, setBusinessId]);
   React.useEffect(() => {
     if (!user || !manager?.id) return;
     if (user.uid !== manager.id) return;
     if (!version || manager?.appVersion === version) return;
     console.log('Update manager appVersion');
     updateProfile({ changes: { appVersion: version } });
-  }, [user, manager?.id, manager?.appVersion]);
+  }, [user, manager?.id, manager?.appVersion, updateProfile]);
   // UI
   return (
     <ProfileContext.Provider value={{ manager, setManagerEmail, updateLastBusinessId }}>

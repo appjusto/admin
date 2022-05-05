@@ -1,9 +1,8 @@
-import { Business, PlatformAccess, WithId } from '@appjusto/types';
+import { Business, WithId } from '@appjusto/types';
 import { useObserveBusinessManagedBy } from 'app/api/business/profile/useObserveBusinessManagedBy';
 import { useObserveBusinessProfile } from 'app/api/business/profile/useObserveBusinessProfile';
 import { ManagerWithRole } from 'app/api/manager/types';
 import { useGetManagers } from 'app/api/manager/useGetManagers';
-import { usePlatformAccess } from 'app/api/platform/usePlatformAccess';
 import React from 'react';
 import { useQueryClient } from 'react-query';
 import { useContextFirebaseUser } from '../auth/context';
@@ -16,7 +15,6 @@ interface ContextProps {
   updateContextBusinessOrderPrint(status: boolean): void;
   businesses?: WithId<Business>[];
   setBusinessIdByBusinesses(): void;
-  platformAccess?: PlatformAccess;
   businessManagers?: ManagerWithRole[];
   setIsGetManagersActive: React.Dispatch<React.SetStateAction<boolean>>;
   fetchManagers(): void;
@@ -35,7 +33,6 @@ export const BusinessProvider = ({ children }: Props) => {
   const businesses = useObserveBusinessManagedBy(user?.email);
   const [businessId, setBusinessId] = React.useState<string | undefined | null>();
   const hookBusiness = useObserveBusinessProfile(businessId);
-  const platformAccess = usePlatformAccess(typeof user?.uid === 'string');
   // state
   const [business, setBusiness] = React.useState<WithId<Business> | null>();
   const [isGetManagersActive, setIsGetManagersActive] = React.useState(false);
@@ -106,7 +103,6 @@ export const BusinessProvider = ({ children }: Props) => {
         updateContextBusinessOrderPrint,
         businesses,
         setBusinessIdByBusinesses,
-        platformAccess,
         businessManagers,
         setIsGetManagersActive,
         fetchManagers,

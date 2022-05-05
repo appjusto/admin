@@ -1,6 +1,5 @@
-import { CRUD, UserPermissions } from '@appjusto/types';
+import { AdminRole, CRUD, UserPermissions } from '@appjusto/types';
 import { Ability, AbilityOptionsOf, defineAbility, detectSubjectType } from '@casl/ability';
-import { AdminRole } from './context';
 import {
   AdminPermissionObject,
   businessCollaboratorObject,

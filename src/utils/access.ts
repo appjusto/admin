@@ -1,5 +1,4 @@
-import { UserPermissions } from '@appjusto/types';
-import { AdminRole } from 'app/state/auth/context';
+import { AdminRole, UserPermissions } from '@appjusto/types';
 
 type BackofficeAccess = {
   'orders': string;

@@ -2,6 +2,7 @@ import { AdminRole } from '@appjusto/types';
 import { Box, HStack, Icon, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
 import { ManagerWithRole } from 'app/api/manager/types';
 import { useManagers } from 'app/api/manager/useManagers';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusinessBackoffice } from 'app/state/business/businessBOContext';
 import React from 'react';
 import { t } from 'utils/i18n';
@@ -9,13 +10,12 @@ import { ManagersTableItem } from './ManagersTableItem';
 
 export const ManagersTable = () => {
   // context
-  const { businessManagers, fetchManagers, platformAccess } = useContextBusinessBackoffice();
+  const { minVersion } = useContextFirebaseUser();
+  const { businessManagers, fetchManagers } = useContextBusinessBackoffice();
   const { removeBusinessManager, createManager, createManagerResult } = useManagers();
   // state
   const [managers, setManagers] = React.useState<ManagerWithRole[]>();
   const [isLoading, setIsLoading] = React.useState(false);
-  // helpers
-  const minVersion = platformAccess?.minVersions?.businessWeb;
   // handlers
   const updateMember = async (managerEmail: string, role: AdminRole) => {
     setIsLoading(true);

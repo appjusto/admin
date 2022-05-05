@@ -4,7 +4,6 @@ import {
   BusinessPhone,
   ManagerProfile,
   MarketplaceAccountInfo,
-  PlatformAccess,
   WithId,
 } from '@appjusto/types';
 import * as cpfutils from '@fnando/cpf';
@@ -52,7 +51,6 @@ interface BusinessBOContextProps {
   businessManagers?: ManagerWithRole[];
   setIsGetManagersActive: React.Dispatch<React.SetStateAction<boolean>>;
   fetchManagers(): void;
-  platformAccess?: PlatformAccess;
 }
 
 const BusinessBOContext = React.createContext<BusinessBOContextProps>({} as BusinessBOContextProps);
@@ -87,7 +85,6 @@ export const BusinessBOProvider = ({ children }: Props) => {
     businessManagers,
     setIsGetManagersActive,
     fetchManagers,
-    platformAccess,
   } = useContextBusiness();
   const { manager, setManagerEmail } = useContextManagerProfile();
   const { bankAccount } = useBusinessBankAccount();
@@ -229,7 +226,6 @@ export const BusinessBOProvider = ({ children }: Props) => {
         businessManagers,
         setIsGetManagersActive,
         fetchManagers,
-        platformAccess,
       }}
     >
       {children}

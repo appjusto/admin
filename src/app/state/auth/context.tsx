@@ -1,14 +1,15 @@
-import { UserPermissions } from '@appjusto/types';
+import { AdminRole, PlatformAccess, UserPermissions } from '@appjusto/types';
 import * as Sentry from '@sentry/react';
 import { useFirebaseUser } from 'app/api/auth/useFirebaseUser';
+import { usePlatformAccess } from 'app/api/platform/usePlatformAccess';
 import { User } from 'firebase/auth';
 import React from 'react';
 import { AppAbility, defineUserAbility } from './userAbility';
 
-export type AdminRole = 'owner' | 'manager' | 'collaborator';
-
 interface FirebaseUserContextProps {
   user?: User | null;
+  platformAccess?: PlatformAccess;
+  minVersion?: string | null;
   adminRole?: AdminRole | null;
   backofficePermissions?: UserPermissions;
   adminPermissions?: UserPermissions;
@@ -30,6 +31,9 @@ export const FirebaseUserProvider = ({ children }: Props) => {
   const [backofficePermissions, setBackofficePermissions] = React.useState<UserPermissions>();
   const [isBackofficeUser, setIsBackofficeUser] = React.useState<boolean | null>();
   const [userAbility, setUserAbility] = React.useState<AppAbility>();
+  const platformAccess = usePlatformAccess(typeof user?.uid === 'string');
+  // helpers
+  const minVersion = platformAccess?.minVersions.businessWeb;
   // handlers
   const refreshUserToken = React.useCallback(
     async (businessId?: string) => {
@@ -42,7 +46,6 @@ export const FirebaseUserProvider = ({ children }: Props) => {
       try {
         const token = await user.getIdTokenResult(true);
         const claims: { [key: string]: any } = token.claims ?? {};
-        // if (Object.keys(token?.claims).includes('role')) setRole(token.claims.role as GeneralRoles);
         if (Object.keys(claims).includes('permissions')) {
           setBackofficePermissions(claims.permissions as UserPermissions);
         } else if (businessId) {
@@ -82,6 +85,8 @@ export const FirebaseUserProvider = ({ children }: Props) => {
     <FirebaseUserContext.Provider
       value={{
         user,
+        platformAccess,
+        minVersion,
         adminRole,
         backofficePermissions,
         isBackofficeUser,

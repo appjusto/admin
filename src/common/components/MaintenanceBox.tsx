@@ -1,11 +1,11 @@
 import { Box, Center, Image, Stack, Text } from '@chakra-ui/react';
-import { useContextBusiness } from 'app/state/business/context';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import party from 'common/img/emoji-party.png';
 import React from 'react';
 
 export const MaintenanceBox = () => {
   // context
-  const { platformAccess } = useContextBusiness();
+  const { platformAccess } = useContextFirebaseUser();
   // UI
   if (!platformAccess?.maintenance.active) return <Box />;
   return (
