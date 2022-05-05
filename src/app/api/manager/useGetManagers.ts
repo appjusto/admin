@@ -14,15 +14,15 @@ export const useGetManagers = (business?: WithId<Business> | null, isActive?: bo
   const userCanRead = userAbility?.can('read', 'managers');
   // handlers
   const fetchManagers = React.useCallback(() => {
+    if (!userCanRead) return;
     if (!business?.id || !business?.managers) return;
     api.manager().getBusinessManagers(business.id, setManagers);
-  }, [business?.id, business?.managers]);
+  }, [api, userCanRead, business?.id, business?.managers]);
   // side effects
   React.useEffect(() => {
     if (!isActive) return;
-    if (!userCanRead) return;
     fetchManagers();
-  }, [api, isActive, business?.managers, userCanRead]);
+  }, [isActive, business?.managers, fetchManagers]);
   // return
   return { managers, fetchManagers };
 };

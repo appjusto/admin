@@ -12,7 +12,7 @@ export const BusinessManagers = () => {
   // side effects
   React.useEffect(() => {
     setIsGetManagersActive(true);
-  }, []);
+  }, [setIsGetManagersActive]);
   // UI
   return (
     <Box>

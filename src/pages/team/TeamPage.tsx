@@ -11,7 +11,7 @@ const TeamPage = () => {
   // side effects
   React.useEffect(() => {
     setIsGetManagersActive(true);
-  }, []);
+  }, [setIsGetManagersActive]);
   // UI
   return (
     <>
