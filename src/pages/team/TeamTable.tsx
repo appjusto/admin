@@ -6,14 +6,13 @@ import React from 'react';
 import { t } from 'utils/i18n';
 import { TeamTableItem } from './TeamTableItem';
 
-export const TeamTable = () => {
+interface TeamTableProps {
+  businessManagers?: ManagerWithPermissions[];
+}
+
+export const TeamTable = ({ businessManagers }: TeamTableProps) => {
   // context
-  const {
-    managers: businessManagers,
-    removeBusinessManager,
-    createManager,
-    createResult,
-  } = useManagers();
+  const { removeBusinessManager, createManager, createManagerResult } = useManagers();
   // state
   const [managers, setManagers] = React.useState<ManagerWithPermissions[]>();
   const [isLoading, setIsLoading] = React.useState(false);
@@ -74,7 +73,7 @@ export const TeamTable = () => {
                     key={manager.uid}
                     manager={manager}
                     updateMember={updateMember}
-                    updateSuccess={createResult.isSuccess}
+                    updateSuccess={createManagerResult.isSuccess}
                     deleteMember={deleteMember}
                     isLoading={isLoading}
                   />

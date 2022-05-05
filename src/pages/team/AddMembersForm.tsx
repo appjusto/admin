@@ -36,8 +36,8 @@ export const AddMembersForm = () => {
   const { userAbility } = useContextFirebaseUser();
   const { dispatchAppRequestResult } = useContextAppRequests();
   const { business } = useContextBusiness();
-  const { createManager, createResult } = useManagers();
-  const { isLoading, isSuccess } = createResult;
+  const { createManager, createManagerResult } = useManagers();
+  const { isLoading, isSuccess } = createManagerResult;
   // state
   const [members, setMembers] = React.useState<Member[]>([memberObj]);
   // helpers
