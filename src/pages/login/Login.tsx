@@ -67,12 +67,27 @@ const Login = () => {
         px={{ base: '8', md: '24', lg: '8' }}
       >
         <Image src={logo} scrollCheck={false} mb="8" />
-        <Text fontSize="xl" textAlign="center">
-          {t('Portal do Restaurante')}
-        </Text>
-        <Text fontSize="md" textAlign="center" color="gray.500">
-          {t('Gerencie seu estabelecimento')}
-        </Text>
+        {isLogin ? (
+          <>
+            <Text fontSize="xl" color="black" textAlign="center">
+              {t('Entrar no portal do restaurante')}
+            </Text>
+            <Text fontSize="md" textAlign="center" color="gray.700">
+              {t('Gerencie seu estabelecimento')}
+            </Text>
+          </>
+        ) : (
+          <>
+            <Text fontSize="xl" color="black" textAlign="center">
+              {t('Criar novo cadastro')}
+            </Text>
+            <Text maxW="360px" fontSize="md" textAlign="center" color="gray.700">
+              {t(
+                'Você está prestes a ter uma experiência mais justa para seus clientes e entregadores!'
+              )}
+            </Text>
+          </>
+        )}
         <Flex as="form" w="100%" flexDir="column" onSubmit={handleSubmit}>
           <CustomInput
             ref={emailRef}
@@ -138,7 +153,7 @@ const Login = () => {
                 cursor="pointer"
                 onClick={() => setIsLogin(false)}
               >
-                {t('Clica aqui.')}
+                {t('Clique aqui.')}
               </Text>
             </Text>
           ) : (
