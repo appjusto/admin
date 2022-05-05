@@ -7,10 +7,10 @@ import { TeamTable } from './TeamTable';
 
 const TeamPage = () => {
   // context
-  const { businessManagers, setIsObservingManagers } = useContextBusiness();
+  const { businessManagers, setIsGetManagersActive } = useContextBusiness();
   // side effects
   React.useEffect(() => {
-    setIsObservingManagers(true);
+    setIsGetManagersActive(true);
   }, []);
   // UI
   return (

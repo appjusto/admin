@@ -12,13 +12,17 @@ export const useGetManagers = (business?: WithId<Business> | null, isActive?: bo
   const [managers, setManagers] = React.useState<ManagerWithPermissions[]>();
   // helpers
   const userCanRead = userAbility?.can('read', 'managers');
+  // handlers
+  const fetchManagers = React.useCallback(() => {
+    if (!business?.id || !business?.managers) return;
+    api.manager().getBusinessManagers(business.id, setManagers);
+  }, [business?.id, business?.managers]);
   // side effects
   React.useEffect(() => {
     if (!isActive) return;
     if (!userCanRead) return;
-    if (!business?.id || !business?.managers) return;
-    api.manager().getBusinessManagers(business.id, setManagers);
-  }, [api, isActive, business?.id, business?.managers, userCanRead]);
+    fetchManagers();
+  }, [api, isActive, business?.managers, userCanRead]);
   // return
-  return { managers };
+  return { managers, fetchManagers };
 };

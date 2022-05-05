@@ -130,6 +130,7 @@ export const BusinessBaseDrawer = ({ staff, onClose, children, ...props }: BaseD
               overflowX="auto"
             >
               <DrawerLink to={`${url}`} label={t('Cadastro')} />
+              <DrawerLink to={`${url}/managers`} label={t('Colaboradores')} />
               {business?.situation === 'approved' && (
                 <DrawerLink to={`${url}/live`} label={t('Live')} />
               )}

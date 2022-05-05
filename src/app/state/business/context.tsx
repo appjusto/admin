@@ -18,7 +18,8 @@ interface ContextProps {
   setBusinessIdByBusinesses(): void;
   platformAccess?: PlatformAccess;
   businessManagers?: ManagerWithPermissions[];
-  setIsObservingManagers: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsGetManagersActive: React.Dispatch<React.SetStateAction<boolean>>;
+  fetchManagers(): void;
 }
 
 const BusinessContext = React.createContext<ContextProps>({} as ContextProps);
@@ -37,9 +38,12 @@ export const BusinessProvider = ({ children }: Props) => {
   const platformAccess = usePlatformAccess(typeof user?.uid === 'string');
   // state
   const [business, setBusiness] = React.useState<WithId<Business> | null>();
-  const [isObservingManagers, setIsObservingManagers] = React.useState(false);
+  const [isGetManagersActive, setIsGetManagersActive] = React.useState(false);
   // business managers
-  const { managers: businessManagers } = useGetManagers(business, isObservingManagers);
+  const { managers: businessManagers, fetchManagers } = useGetManagers(
+    business,
+    isGetManagersActive
+  );
   // handlers
   const clearBusiness = React.useCallback(() => {
     setBusiness(undefined);
@@ -104,7 +108,8 @@ export const BusinessProvider = ({ children }: Props) => {
         setBusinessIdByBusinesses,
         platformAccess,
         businessManagers,
-        setIsObservingManagers,
+        setIsGetManagersActive,
+        fetchManagers,
       }}
     >
       {children}

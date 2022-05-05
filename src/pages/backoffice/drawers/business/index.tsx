@@ -4,6 +4,7 @@ import React from 'react';
 import { Route, Switch, useRouteMatch } from 'react-router-dom';
 import { BusinessBaseDrawer } from './BusinessBaseDrawer';
 import { BusinessIugu } from './BusinessIugu';
+import { BusinessManagers } from './BusinessManagers';
 import { BusinessRegister } from './BusinessRegister';
 import { BusinessLive } from './Live';
 import { StatusTab } from './StatusTab';
@@ -24,6 +25,9 @@ export const BusinessDrawer = ({ onClose, ...props }: BusinessDrawerProps) => {
         <Switch>
           <Route exact path={`${path}`}>
             <BusinessRegister />
+          </Route>
+          <Route exact path={`${path}/managers`}>
+            <BusinessManagers />
           </Route>
           <Route exact path={`${path}/live`}>
             <BusinessLive />

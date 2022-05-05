@@ -121,6 +121,12 @@ export const permissionsPTOptions = {
   platform: 'Plataforma',
 } as { [key: string]: string };
 
+export const adminRolePTOptions = {
+  owner: 'Dono',
+  manager: 'Gerente',
+  collaborator: 'Colaborador',
+};
+
 export const getEditableProfile = (profile: any, isEditingEmail: boolean) => {
   let omittedKeys = [
     'id',
