@@ -157,6 +157,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   }, [chats]);
   // business keep alive
   React.useEffect(() => {
+    if (isBackofficeUser) return;
     if (!isPlatformLive) return;
     if (business?.situation !== 'approved') return;
     if (business?.status !== 'open') return;
@@ -166,7 +167,13 @@ export const OrdersContextProvider = (props: ProviderProps) => {
       sendBusinessKeepAlive();
     }, time);
     return () => clearInterval(keepAliveInterval);
-  }, [isPlatformLive, business?.situation, business?.status, sendBusinessKeepAlive]);
+  }, [
+    isPlatformLive,
+    isBackofficeUser,
+    business?.situation,
+    business?.status,
+    sendBusinessKeepAlive,
+  ]);
   React.useEffect(() => {
     if (isBackofficeUser) return;
     if (business?.situation !== 'approved') return;
