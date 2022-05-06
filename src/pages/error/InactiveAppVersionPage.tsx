@@ -43,7 +43,7 @@ const InactiveAppVersionPage = () => {
         </Text>
         <Text mt="4" fontSize="15px" lineHeight="21px" fontWeight="500" textAlign="center">
           {t(
-            `A sua versão atual (v${version}) é inferior à versão mínima necessária para utilizar a plataforma (v${minVersion}). Clique no botão abaixo para atualiza-la:`
+            `A sua versão atual (v${version}) é inferior à versão mínima necessária para utilizar a plataforma (v${minVersion}). Clique no botão abaixo para atualizá-la:`
           )}
         </Text>
         <Center>
