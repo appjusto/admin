@@ -4,12 +4,16 @@ import { useContextManagerProfile } from 'app/state/manager/context';
 import { Loading } from 'common/components/Loading';
 import React from 'react';
 import { Redirect, Route, RouteProps } from 'react-router-dom';
+import { isAppVersionAllowed } from 'utils/version';
+import packageInfo from '../../../package.json';
+
+const version = packageInfo.version;
 
 type Status = 'initial' | 'unauthenticated' | 'authenticated' | 'profile-loaded';
 
 export const ProtectedRoute = (props: RouteProps) => {
   // context
-  const { user } = useContextFirebaseUser();
+  const { user, minVersion } = useContextFirebaseUser();
   const { manager } = useContextManagerProfile();
   const { agent } = useContextAgentProfile();
   // state
@@ -26,6 +30,9 @@ export const ProtectedRoute = (props: RouteProps) => {
     if (user && (manager || agent)) setStatus('profile-loaded');
   }, [user, agent, manager]);
   // UI
+  if (minVersion && !isAppVersionAllowed(minVersion, version)) {
+    return <Redirect to="/inactive-version" />;
+  }
   // redirects to / when user is not authenticated
   if (status === 'unauthenticated') return <Redirect to="/login" />;
   // load route when profile is loaded

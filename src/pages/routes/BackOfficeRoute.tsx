@@ -3,6 +3,10 @@ import { useContextFirebaseUser } from 'app/state/auth/context';
 import { Loading } from 'common/components/Loading';
 import React from 'react';
 import { Redirect, Route, RouteProps } from 'react-router-dom';
+import { isAppVersionAllowed } from 'utils/version';
+import packageInfo from '../../../package.json';
+
+const version = packageInfo.version;
 
 type Status = 'initial' | 'unauthenticated' | 'authenticated' | 'profile-loaded';
 
@@ -10,7 +14,7 @@ type Status = 'initial' | 'unauthenticated' | 'authenticated' | 'profile-loaded'
 
 export const BackOfficeRoute = (props: RouteProps) => {
   // context
-  const user = useContextFirebaseUser();
+  const { user, minVersion } = useContextFirebaseUser();
   const { agent } = useContextAgentProfile();
   // state
   const [status, setStatus] = React.useState<Status>('initial');
@@ -26,6 +30,9 @@ export const BackOfficeRoute = (props: RouteProps) => {
     if (user && agent) setStatus('profile-loaded');
   }, [user, agent]);
   // UI
+  if (minVersion && !isAppVersionAllowed(minVersion, version)) {
+    return <Redirect to="/inactive-version" />;
+  }
   // redirects to / when user is not authenticated
   if (status === 'unauthenticated') return <Redirect to="/login" />;
   // load route when profile is loaded

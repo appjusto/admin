@@ -21,6 +21,9 @@ const DeletedPage = React.lazy(
   () => import(/* webpackPrefetch: true */ 'pages/deleted/DeletedPage')
 );
 const PageNotFound = React.lazy(() => import(/* webpackPrefetch: true */ 'pages/404'));
+const InactiveAppVersionPage = React.lazy(
+  () => import(/* webpackPrefetch: true */ 'pages/error/InactiveAppVersionPage')
+);
 
 export const Router = () => {
   return (
@@ -32,6 +35,7 @@ export const Router = () => {
             <Route path="/login" component={Login} />
             <Route path="/join" component={Join} />
             <Route path="/deleted" component={DeletedPage} />
+            <Route path="/inactive-version" component={InactiveAppVersionPage} />
             <ProtectedRoute path="/app" component={Home} />
             <ProtectedRoute path="/onboarding" component={Onboarding} />
             <BackOfficeRoute path="/backoffice" component={BackOffice} />

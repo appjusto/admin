@@ -1,5 +1,6 @@
 import * as Sentry from '@sentry/react';
 import { useFirebaseUser } from 'app/api/auth/useFirebaseUser';
+import { usePlatformAccess } from 'app/api/platform/usePlatformAccess';
 import { User } from 'firebase/auth';
 import React from 'react';
 
@@ -17,6 +18,7 @@ export const backofficeRoles: GeneralRoles[] = ['owner', 'staff', 'viewer', 'cou
 
 interface FirebaseUserContextProps {
   user?: User | null;
+  minVersion?: string | null;
   role?: GeneralRoles | null;
   isBackofficeUser?: boolean | null;
   refreshUserToken?(businessId?: string): Promise<void>;
@@ -33,6 +35,9 @@ export const FirebaseUserProvider = ({ children }: Props) => {
   // states
   const [role, setRole] = React.useState<GeneralRoles | null>();
   const [isBackofficeUser, setIsBackofficeUser] = React.useState<boolean | null>();
+  const platformAccess = usePlatformAccess(typeof user?.uid === 'string');
+  // helpers
+  const minVersion = platformAccess?.minVersions.businessWeb;
   // handlers
   const refreshUserToken = React.useCallback(
     async (businessId?: string) => {
@@ -66,7 +71,9 @@ export const FirebaseUserProvider = ({ children }: Props) => {
   }, [role]);
   // provider
   return (
-    <FirebaseUserContext.Provider value={{ user, role, isBackofficeUser, refreshUserToken }}>
+    <FirebaseUserContext.Provider
+      value={{ user, minVersion, role, isBackofficeUser, refreshUserToken }}
+    >
       {children}
     </FirebaseUserContext.Provider>
   );
