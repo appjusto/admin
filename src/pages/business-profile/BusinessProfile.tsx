@@ -366,7 +366,9 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
               </Flex>
             </>
           )}
-          {!onboarding && userAbility?.can('create', 'businesses') && <CloneBusiness />}
+          {!onboarding &&
+            userAbility?.can('create', 'businesses') &&
+            typeof business?.companyName === 'string' && <CloneBusiness />}
           {/* submit */}
           <PageFooter
             onboarding={onboarding}

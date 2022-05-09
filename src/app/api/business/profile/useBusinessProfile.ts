@@ -61,8 +61,8 @@ export const useBusinessProfile = (isOnboarding: boolean = false) => {
     false
   );
   const { mutateAsync: cloneBusiness, mutationResult: cloneResult } = useCustomMutation(
-    async () => {
-      const newBusiness = await api.business().cloneBusiness(businessId!);
+    async (isFromScratch?: boolean) => {
+      const newBusiness = await api.business().cloneBusiness(businessId!, isFromScratch);
       if (refreshUserToken && newBusiness?.id) refreshUserToken(newBusiness.id);
       return newBusiness;
     },

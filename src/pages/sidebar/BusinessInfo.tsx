@@ -29,14 +29,18 @@ const BusinessInfo = () => {
     if (!business) return;
     setSelectedBusiness({
       value: business.id,
-      label: `${business.name}: ${business.businessAddress?.address ?? 'Não informado'}`,
+      label: `${business.name ?? 'Sem nome'}: ${
+        business.businessAddress?.address ?? 'Não informado'
+      }`,
     });
   }, [business]);
   React.useEffect(() => {
     if (!businesses) return;
     const businessesList = businesses.map((business) => ({
       value: business.id,
-      label: `${business.name}: ${business.businessAddress?.address ?? 'Não informado'}`,
+      label: `${business.name ?? 'Sem nome'}: ${
+        business.businessAddress?.address ?? 'Não informado'
+      }`,
     }));
     setManagerBusinesses(businessesList);
   }, [businesses]);

@@ -162,11 +162,12 @@ export default class BusinessApi {
     return business.data as WithId<Business>;
   }
 
-  async cloneBusiness(businessId: string) {
+  async cloneBusiness(businessId: string, isFromScratch?: boolean) {
     const payload: CloneBusinessPayload = {
       businessId,
       meta: { version: '1' }, // TODO: pass correct version on
       operation: 'clone',
+      isFromScratch,
     };
     const business = await this.refs.getBusinessProfileCallable()(payload);
     return business.data as WithId<Business>;
