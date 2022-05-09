@@ -26,7 +26,9 @@ export const ManagerProvider = ({ children }: Props) => {
   const { user } = useContextFirebaseUser();
   const { setBusinessId } = useContextBusiness();
   const { manager, setManagerEmail } = useManagerProfile();
-  const { updateProfile, updateLastBusinessId } = useUpdateManagerProfile(manager?.id);
+  // set useUpdateManagerProfile isOnboarding to "true" to avoid dispatching update
+  // manager appVersion changes results
+  const { updateProfile, updateLastBusinessId } = useUpdateManagerProfile(manager?.id, true);
   // update business context with manager last business id
   React.useEffect(() => {
     if (!manager?.lastBusinessId) return;
