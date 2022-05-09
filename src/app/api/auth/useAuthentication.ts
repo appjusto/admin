@@ -31,7 +31,7 @@ export const useAuthentication = () => {
           const { code } = error as FirebaseError;
           if (code === 'auth/user-not-found') {
             // if user not exists return error
-            throw new Error('Usuário não encontrado');
+            throw new Error('Não foi possível enviar o link de acesso para o e-mail informado');
           }
         }
       }
