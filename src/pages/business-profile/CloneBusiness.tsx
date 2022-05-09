@@ -1,13 +1,23 @@
 import { Box, Button, Flex, Stack, Text } from '@chakra-ui/react';
+import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
+import { useContextBusiness } from 'app/state/business/context';
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 import { t } from 'utils/i18n';
 
-interface CloneBusinessProps {
-  cloneHandler: () => void;
-  isLoading?: boolean;
-}
-
-export const CloneBusiness = ({ cloneHandler, isLoading }: CloneBusinessProps) => {
+export const CloneBusiness = () => {
+  // context
+  const history = useHistory();
+  const { setBusinessId } = useContextBusiness();
+  const { cloneBusiness, cloneResult } = useBusinessProfile();
+  // handlers
+  const cloneHandler = async () => {
+    const newBusiness = await cloneBusiness();
+    if (newBusiness?.id) {
+      setBusinessId(newBusiness.id);
+      history.push('/app');
+    }
+  };
   // state
   const [isCloning, setIsCloning] = React.useState(false);
   // UI
@@ -34,7 +44,7 @@ export const CloneBusiness = ({ cloneHandler, isLoading }: CloneBusinessProps) =
               width="full"
               size="md"
               onClick={cloneHandler}
-              isLoading={isLoading}
+              isLoading={cloneResult.isLoading}
               loadingText={t('Clonando...')}
             >
               {t('Confirmar')}
