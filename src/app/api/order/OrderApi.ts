@@ -467,6 +467,20 @@ export default class OrderApi {
     return await this.refs.getCancelOrderCallable()(payload);
   }
 
+  async deleteQuoteOrder(orderId: string) {
+    const orderRef = this.refs.getOrderRef(orderId);
+    const orderSnapshot = await getDoc(orderRef);
+    if (!orderSnapshot.exists()) {
+      throw new Error('O pedido informado não existe');
+    }
+    const order = documentAs<Order>(orderSnapshot);
+    if (order.status !== 'quote') {
+      throw new Error('Operação negada. O status do pedido informado não é "cotação"');
+    }
+    await deleteDoc(orderRef);
+    return true;
+  }
+
   async courierManualAllocation(orderId: string, courierId: string, comment: string) {
     const payload: MatchOrderPayload = {
       meta: { version: '1' }, // TODO: pass correct version on

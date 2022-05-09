@@ -59,6 +59,8 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
     updateResult,
     cancelOrder,
     cancelResult,
+    deleteQuoteOrder,
+    deleteOrderResult,
     orderIssues,
     orderCancellation,
     orderCancellationCosts,
@@ -205,6 +207,10 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
       });
     else setLoadingState('idle');
   }, [updateResult.isLoading, cancelResult.isLoading]);
+  React.useEffect(() => {
+    if (!deleteOrderResult.isSuccess) return;
+    onClose();
+  }, [deleteOrderResult.isSuccess, onClose]);
   //UI
   return (
     <ConsumerProvider>
@@ -218,6 +224,8 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
         cancellation={cancellation}
         loadingState={loadingState}
         isChatMessages={isChatMessages}
+        deleteOrder={deleteQuoteOrder}
+        deleteLoading={deleteOrderResult.isLoading}
         {...props}
       >
         <Switch>

@@ -1,5 +1,6 @@
 import { DispatchingState, IssueType, Order, OrderStatus, WithId } from '@appjusto/types';
 import {
+  Box,
   Button,
   Drawer,
   DrawerBody,
@@ -13,6 +14,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { useContextFirebaseUser } from 'app/state/auth/context';
+import { useContextAppRequests } from 'app/state/requests/context';
 import { FiltersScrollBar } from 'common/components/backoffice/FiltersScrollBar';
 import { OrderTracking } from 'pages/backoffice/dashboard/OrderTracking';
 import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
@@ -37,6 +39,8 @@ interface BaseDrawerProps {
   cancellation(type?: 'prevention'): void;
   loadingState: OrderDrawerLoadingState;
   isChatMessages: boolean;
+  deleteOrder(orderId: string): Promise<void>;
+  deleteLoading: boolean;
   children: React.ReactNode | React.ReactNode[];
 }
 
@@ -50,15 +54,33 @@ export const OrderBaseDrawer = ({
   cancellation,
   loadingState,
   isChatMessages,
+  deleteOrder,
+  deleteLoading,
   children,
   ...props
 }: BaseDrawerProps) => {
   //context
-  const { userAbility } = useContextFirebaseUser();
   const { url } = useRouteMatch();
+  const { userAbility } = useContextFirebaseUser();
+  const { dispatchAppRequestResult } = useContextAppRequests();
+  // state
+  const [isDeleting, setIsDeleting] = React.useState(false);
   // helpers
   const orderStatus = order?.status as OrderStatus;
   const isFlagged = order?.status === 'charged' && order?.flagged;
+  // handlers
+  const handleDelete = async () => {
+    if (!order?.id) {
+      return dispatchAppRequestResult({
+        status: 'error',
+        requestId: 'OrderBaseDrawer-handleDelete',
+        message: { title: 'Parâmetros inválidos. O Id do pedido não existe.' },
+      });
+    }
+    try {
+      await deleteOrder(order.id);
+    } catch (error) {}
+  };
   //UI
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
@@ -147,18 +169,51 @@ export const OrderBaseDrawer = ({
             display={userAbility?.can('update', 'orders') ? 'flex' : 'none'}
             borderTop="1px solid #F2F6EA"
           >
-            <HStack w="full" spacing={4}>
-              <Button
-                width="full"
-                maxW="240px"
-                fontSize="15px"
-                onClick={() => updateOrderStatus()}
-                isLoading={loadingState === 'general'}
-                loadingText={t('Salvando')}
-              >
-                {t('Salvar alterações')}
-              </Button>
-            </HStack>
+            <Flex w="full" direction="row" justifyContent="space-between">
+              {isDeleting ? (
+                <Box mt="8" w="100%" bg="#FFF8F8" border="1px solid red" borderRadius="lg" p="6">
+                  <Text color="red">{t(`Tem certeza que deseja excluir este pedido?`)}</Text>
+                  <HStack mt="4" spacing={4}>
+                    <Button width="full" onClick={() => setIsDeleting(false)}>
+                      {t(`Manter pedido`)}
+                    </Button>
+                    <Button
+                      width="full"
+                      variant="danger"
+                      onClick={handleDelete}
+                      isLoading={deleteLoading}
+                      loadingText={t('Excluindo')}
+                    >
+                      {t(`Excluir`)}
+                    </Button>
+                  </HStack>
+                </Box>
+              ) : (
+                <>
+                  <Button
+                    width="full"
+                    maxW="240px"
+                    fontSize="15px"
+                    onClick={() => updateOrderStatus()}
+                    isLoading={loadingState === 'general'}
+                    loadingText={t('Salvando')}
+                  >
+                    {t('Salvar alterações')}
+                  </Button>
+                  {order?.status === 'quote' && (
+                    <Button
+                      width="full"
+                      maxW="240px"
+                      fontSize="15px"
+                      variant="dangerLight"
+                      onClick={() => setIsDeleting(true)}
+                    >
+                      {t('Excluir pedido')}
+                    </Button>
+                  )}
+                </>
+              )}
+            </Flex>
           </DrawerFooter>
         </DrawerContent>
       </DrawerOverlay>

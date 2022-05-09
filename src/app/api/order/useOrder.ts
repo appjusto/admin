@@ -33,6 +33,12 @@ export const useOrder = (orderIdentifier?: string) => {
     },
     'cancelOrder'
   );
+  const { mutateAsync: deleteQuoteOrder, mutationResult: deleteOrderResult } = useCustomMutation(
+    async (orderId: string) => {
+      await api.order().deleteQuoteOrder(orderId);
+    },
+    'deleteQuoteOrder'
+  );
   // side effects
   React.useEffect(() => {
     if (!orderIdentifier) return;
@@ -69,8 +75,10 @@ export const useOrder = (orderIdentifier?: string) => {
     order,
     updateOrder,
     cancelOrder,
+    deleteQuoteOrder,
     updateResult,
     cancelResult,
+    deleteOrderResult,
     orderIssues,
     orderCancellation,
     orderCancellationCosts,
