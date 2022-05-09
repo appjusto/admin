@@ -14,6 +14,7 @@ const skippedExceptions = [
   'auth/requires-recent-login',
   'auth/network-request-failed',
   'permission-denied',
+  'functions/already-exists',
 ];
 
 type ErrorMessage = { title: string; description?: string };

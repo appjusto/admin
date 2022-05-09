@@ -46,9 +46,11 @@ const SharingPage = () => {
       )}`
     );
   };
-  const handleUpdate = () => {
+  const handleUpdate = async () => {
     if (!business?.id || !slug) return;
-    updateBusinessSlug({ businessId: business.id, slug });
+    try {
+      await updateBusinessSlug({ businessId: business.id, slug });
+    } catch (error) {}
   };
   // side effects
   React.useEffect(() => {
