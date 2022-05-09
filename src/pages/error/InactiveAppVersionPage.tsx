@@ -9,7 +9,7 @@ import { isAppVersionAllowed } from '../../utils/version';
 
 const version = packageInfo.version;
 
-export const InactiveAppVersionPage = () => {
+const InactiveAppVersionPage = () => {
   // context
   const { minVersion, isBackofficeUser } = useContextFirebaseUser();
   // handlers
@@ -43,28 +43,31 @@ export const InactiveAppVersionPage = () => {
         </Text>
         <Text mt="4" fontSize="15px" lineHeight="21px" fontWeight="500" textAlign="center">
           {t(
-            `A sua versão atual (v${version}) é inferior à versão mínima necessária para utilizar a plataforma (v${minVersion}). Clique no botão abaixo para recarregar a página, ou pressione as teclas:`
+            `A sua versão atual (v${version}) é inferior à versão mínima necessária para utilizar a plataforma (v${minVersion}). Clique no botão abaixo para atualizá-la:`
           )}
         </Text>
-        <Flex flexDir="column" alignItems="center">
-          <Text mt="4" fontWeight="700">
-            {t('Se estiver no windows:')}
-          </Text>
-          <Code mt="2" w="160px">
-            Ctrl + F5
-          </Code>
-          <Text mt="4" fontWeight="700">
-            {t('Se estiver no Mac ou Linux:')}
-          </Text>
-          <Code mt="2" w="160px">
-            Ctrl + Shift + R
-          </Code>
-        </Flex>
         <Center>
           <Button mt="6" onClick={handleHardReload}>
             {t('Recarregar para atualizar')}
           </Button>
         </Center>
+        <Text mt="6" fontSize="15px" lineHeight="21px" fontWeight="500" textAlign="center">
+          {t('Ou use as teclas de atalho a seguir:')}
+        </Text>
+        <Flex flexDir="column" alignItems="center">
+          <Text mt="4" fontWeight="700">
+            {t('Opção 1:')}
+          </Text>
+          <Code mt="2" w="160px">
+            Ctrl + F5
+          </Code>
+          <Text mt="4" fontWeight="700">
+            {t('Opção 2:')}
+          </Text>
+          <Code mt="2" w="160px">
+            Ctrl + Shift + R
+          </Code>
+        </Flex>
         <Text mt="8" fontSize="15px" lineHeight="21px" fontWeight="500" textAlign="center">
           {t(
             'Se o problema persistir, você pode entrar em contato com o nosso suporte pelos canais abaixo:'
@@ -91,3 +94,5 @@ export const InactiveAppVersionPage = () => {
     </Center>
   );
 };
+
+export default InactiveAppVersionPage;

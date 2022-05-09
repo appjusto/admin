@@ -1,6 +1,4 @@
 import { Loading } from 'common/components/Loading';
-import { InactiveAppVersionPage } from 'pages/error/InactiveAppVersionPage';
-import Join from 'pages/join/Join';
 import LandingPage from 'pages/landing/LandingPage';
 import Login from 'pages/login/Login';
 import Logout from 'pages/logout/Logout';
@@ -11,8 +9,8 @@ import MainErrorBoundary from './MainErrorBoundary';
 import { ProtectedRoute } from './ProtectedRoute';
 
 // const Login = React.lazy(() => import(/* webpackPrefetch: true */ 'pages/login/Login'));
-// const Join = React.lazy(() => import(/* webpackPrefetch: true */ 'pages/join/Join'));
 // const Logout = React.lazy(() => import(/* webpackPrefetch: true */ 'pages/logout/Logout'));
+const Join = React.lazy(() => import(/* webpackPrefetch: true */ 'pages/join/Join'));
 const Onboarding = React.lazy(
   () => import(/* webpackPrefetch: true */ 'pages/onboarding/OnboardingPage')
 );
@@ -22,6 +20,9 @@ const DeletedPage = React.lazy(
   () => import(/* webpackPrefetch: true */ 'pages/deleted/DeletedPage')
 );
 const PageNotFound = React.lazy(() => import(/* webpackPrefetch: true */ 'pages/404'));
+const InactiveAppVersionPage = React.lazy(
+  () => import(/* webpackPrefetch: true */ 'pages/error/InactiveAppVersionPage')
+);
 
 export const Router = () => {
   return (
