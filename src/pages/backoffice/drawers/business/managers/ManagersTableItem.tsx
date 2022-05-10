@@ -1,7 +1,9 @@
 import { AdminRole } from '@appjusto/types';
-import { Box, Button, HStack, Select, Td, Text, Tr } from '@chakra-ui/react';
+import { Box, Button, HStack, Select, Td, Text, Tooltip, Tr } from '@chakra-ui/react';
 import { ManagerWithRole } from 'app/api/manager/types';
 import { useContextFirebaseUser } from 'app/state/auth/context';
+import { CancelButton } from 'common/components/buttons/CancelButton';
+import { CheckButton } from 'common/components/buttons/CheckButton';
 import { DeleteButton } from 'common/components/buttons/DeleteButton';
 import { EditButton } from 'common/components/buttons/EditButton';
 import { adminRolePTOptions } from 'pages/backoffice/utils';
@@ -94,20 +96,23 @@ export const ManagersTableItem = ({
           </Select>
         </Td>
         <Td position="relative">
-          <Box position="absolute" top="1">
+          <Box position="absolute" top="1" minW="154px">
             <Text>{t('Confirmar atualização?')}</Text>
-            <HStack mt="1" spacing={4}>
-              <Button w="150px" size="sm" variant="danger" onClick={handleCancelUpdate}>
-                {t('Cancelar')}
-              </Button>
-              <Button
-                w="150px"
-                size="sm"
-                onClick={() => updateMember(manager.email, role!)}
-                isLoading={isLoading}
+            <HStack mt="1" spacing={2}>
+              <Tooltip placement="top" label={t('Cancelar')} aria-label={t('cancelar-edicao')}>
+                <CancelButton w="full" onClick={handleCancelUpdate} />
+              </Tooltip>
+              <Tooltip
+                placement="top"
+                label={t('Atualizar')}
+                aria-label={t('atualizar-colaborador')}
               >
-                {t('Atualizar')}
-              </Button>
+                <CheckButton
+                  w="full"
+                  onClick={() => updateMember(manager.email, role!)}
+                  isLoading={isLoading}
+                />
+              </Tooltip>
             </HStack>
           </Box>
         </Td>
@@ -128,8 +133,12 @@ export const ManagersTableItem = ({
       <Td color={versionLabelColor}>{manager?.appVersion ?? 'N/E'}</Td>
       {userAbility?.can('update', 'businesses') ? (
         <Td>
-          <EditButton onClick={() => setIsUpdating(true)} />
-          <DeleteButton onClick={() => setIsDeleting(true)} />
+          <Tooltip placement="top" label={t('Editar')} aria-label={t('editar-colaborador')}>
+            <EditButton onClick={() => setIsUpdating(true)} />
+          </Tooltip>
+          <Tooltip placement="top" label={t('Remover')} aria-label={t('remover-colaborador')}>
+            <DeleteButton onClick={() => setIsDeleting(true)} />
+          </Tooltip>
         </Td>
       ) : (
         <Td></Td>
