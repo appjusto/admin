@@ -47,7 +47,7 @@ export const ManagersTable = () => {
   // UI
   if (!managers) {
     return (
-      <Box mt="8">
+      <Box mt="4">
         <Text fontSize="lg" color="black">
           {t('Carregando colaboradores...')}
         </Text>
@@ -55,7 +55,7 @@ export const ManagersTable = () => {
     );
   }
   return (
-    <Box mt="8">
+    <Box mt="4">
       <Box overflowX="auto">
         <Table mt="4" size="sm" variant="simple" pos="relative" maxW="624px">
           <Thead>

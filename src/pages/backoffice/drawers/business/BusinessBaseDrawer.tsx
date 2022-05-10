@@ -19,9 +19,12 @@ import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
 import React from 'react';
 import { MdThumbDownOffAlt, MdThumbUpOffAlt } from 'react-icons/md';
 import { useRouteMatch } from 'react-router';
+import { useLocation } from 'react-router-dom';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { situationPTOptions } from '../../utils';
+
+const withoutActionPages = ['managers', 'iugu'];
 
 interface BaseDrawerProps {
   staff: { id: string | undefined; name: string };
@@ -34,11 +37,14 @@ export const BusinessBaseDrawer = ({ staff, onClose, children, ...props }: BaseD
   //context
   const { userAbility } = useContextFirebaseUser();
   const { url } = useRouteMatch();
+  const { pathname } = useLocation();
   const { business, manager, handleSave, isLoading, marketPlace } = useContextBusinessBackoffice();
   // helpers
   const userCanUpdate = userAbility?.can('update', 'businesses');
   const isMarketplace = isObject(marketPlace);
   const situationAlert = business?.situation === 'rejected' || business?.situation === 'invalid';
+  const pageName = pathname.split('/').pop();
+  const pageHasAction = pageName ? !withoutActionPages.includes(pageName) : true;
   //UI
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
@@ -143,10 +149,10 @@ export const BusinessBaseDrawer = ({ staff, onClose, children, ...props }: BaseD
             <Flex
               w="full"
               flexDir="row"
-              justifyContent={userCanUpdate ? 'space-between' : 'flex-end'}
+              justifyContent={userCanUpdate && pageHasAction ? 'space-between' : 'flex-end'}
             >
               <Button
-                display={userCanUpdate ? 'inline-block' : 'none'}
+                display={userCanUpdate && pageHasAction ? 'inline-block' : 'none'}
                 width="full"
                 maxW={{ base: '160px', md: '240px' }}
                 fontSize={{ base: '13px', md: '15px' }}

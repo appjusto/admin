@@ -1,5 +1,6 @@
 import { Box } from '@chakra-ui/react';
 import { useContextBusinessBackoffice } from 'app/state/business/businessBOContext';
+import { AddMembersForm } from 'pages/team/AddMembersForm';
 import React from 'react';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
@@ -17,6 +18,7 @@ export const BusinessManagers = () => {
     <Box>
       <SectionTitle>{t('Colaboradores adicionados')}</SectionTitle>
       <ManagersTable />
+      <AddMembersForm isBackoffice />
     </Box>
   );
 };
