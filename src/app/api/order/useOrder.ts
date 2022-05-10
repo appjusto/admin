@@ -4,6 +4,7 @@ import {
   Order,
   OrderCancellation,
   OrderIssue,
+  OrderStaff,
   WithId,
 } from '@appjusto/types';
 import { useContextApi } from 'app/state/api/context';
@@ -27,6 +28,11 @@ export const useOrder = (orderIdentifier?: string) => {
     async (changes: Partial<Order>) => api.order().updateOrder(order?.id!, changes),
     'updateOrder'
   );
+  const { mutateAsync: updateOrderStaff, mutationResult: updateOrderStaffResult } =
+    useCustomMutation(
+      async (staff: OrderStaff | null) => api.order().updateOrder(order?.id!, { staff }),
+      'updateOrderStaff'
+    );
   const { mutateAsync: cancelOrder, mutationResult: cancelResult } = useCustomMutation(
     async (cancellationData: CancelOrderPayload) => {
       await api.order().cancelOrder(cancellationData);
@@ -74,9 +80,11 @@ export const useOrder = (orderIdentifier?: string) => {
   return {
     order,
     updateOrder,
+    updateOrderStaff,
     cancelOrder,
     deleteQuoteOrder,
     updateResult,
+    updateOrderStaffResult,
     cancelResult,
     deleteOrderResult,
     orderIssues,

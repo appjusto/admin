@@ -49,14 +49,16 @@ export interface RefundParams {
 
 export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps) => {
   //context
+  const { staff } = useContextStaffProfile();
   const { dispatchAppRequestResult } = useContextAppRequests();
   const { path } = useRouteMatch();
-  const { staff, username } = useContextStaffProfile();
   const { orderId } = useParams<Params>();
   const {
     order,
     updateOrder,
     updateResult,
+    updateOrderStaff,
+    updateOrderStaffResult,
     cancelOrder,
     cancelResult,
     deleteQuoteOrder,
@@ -88,6 +90,35 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
   if (refund.includes('delivery') && order?.fare?.courier?.value)
     refundValue += order.fare.courier.value;
   //handlers
+  const handleUpdateOrderStaff = async (type: 'assume' | 'release') => {
+    if (type === 'assume') {
+      if (order?.staff) {
+        return dispatchAppRequestResult({
+          status: 'error',
+          requestId: 'Operação negada',
+          message: { title: 'Já existe um agente responsável pelo pedido.' },
+        });
+      }
+      try {
+        await updateOrderStaff({
+          id: staff?.id!,
+          email: staff?.email!,
+          name: staff?.name ?? null,
+        });
+      } catch (error) {}
+    } else if (type === 'release') {
+      if (type === 'release' && staff?.id !== order?.staff?.id) {
+        return dispatchAppRequestResult({
+          status: 'error',
+          requestId: 'Operação negada',
+          message: { title: 'Este usuário não é o responsável pelo pedido.' },
+        });
+      }
+      try {
+        await updateOrderStaff(null);
+      } catch (error) {}
+    }
+  };
   const updateState = (
     type: 'status' | 'dispatchingState' | 'issue' | 'message',
     value: OrderStatus | WithId<Issue> | string
@@ -215,12 +246,13 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
   return (
     <ConsumerProvider>
       <OrderBaseDrawer
-        agent={{ id: staff?.id, name: username }}
         order={order}
         onClose={onClose}
         message={message}
         updateState={updateState}
         updateOrderStatus={updateOrderStatus}
+        updateOrderStaff={handleUpdateOrderStaff}
+        updateStaffResult={updateOrderStaffResult}
         cancellation={cancellation}
         loadingState={loadingState}
         isChatMessages={isChatMessages}

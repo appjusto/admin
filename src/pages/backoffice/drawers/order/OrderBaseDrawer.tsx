@@ -13,6 +13,7 @@ import {
   HStack,
   Text,
 } from '@chakra-ui/react';
+import { MutationResult } from 'app/api/mutation/useCustomMutation';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { FiltersScrollBar } from 'common/components/backoffice/FiltersScrollBar';
@@ -29,13 +30,14 @@ import { BaseDrawerInfoItem } from './BaseDrawerInfoItem';
 import { FraudPrevention } from './FraudPrevention';
 
 interface BaseDrawerProps {
-  agent: { id: string | undefined; name: string };
   order?: WithId<Order> | null;
   isOpen: boolean;
   onClose(): void;
   message?: string;
   updateState(type: string, value: OrderStatus | DispatchingState | IssueType | string): void;
   updateOrderStatus(value?: OrderStatus): void;
+  updateOrderStaff(type: 'assume' | 'release'): void;
+  updateStaffResult: MutationResult;
   cancellation(type?: 'prevention'): void;
   loadingState: OrderDrawerLoadingState;
   isChatMessages: boolean;
@@ -45,11 +47,12 @@ interface BaseDrawerProps {
 }
 
 export const OrderBaseDrawer = ({
-  agent,
   order,
   onClose,
   message,
   updateState,
+  updateOrderStaff,
+  updateStaffResult,
   updateOrderStatus,
   cancellation,
   loadingState,
@@ -61,7 +64,7 @@ export const OrderBaseDrawer = ({
 }: BaseDrawerProps) => {
   //context
   const { url } = useRouteMatch();
-  const { userAbility } = useContextFirebaseUser();
+  const { user, userAbility } = useContextFirebaseUser();
   const { dispatchAppRequestResult } = useContextAppRequests();
   // state
   const [isDeleting, setIsDeleting] = React.useState(false);
@@ -90,6 +93,40 @@ export const OrderBaseDrawer = ({
           <DrawerHeader pb="2">
             <Text color="black" fontSize="2xl" fontWeight="700" lineHeight="28px" mb="2">
               {order?.code ? `#${order.code}` : 'N/E'}
+            </Text>
+            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+              {t('Agente responsável:')}{' '}
+              {typeof order?.staff?.id === 'string' ? (
+                <>
+                  <Text as="span" fontWeight="500">
+                    {order.staff?.name ?? order.staff.email}
+                  </Text>
+                  {order.staff.id === user?.uid && (
+                    <Text
+                      as="span"
+                      ml="2"
+                      fontWeight="500"
+                      color="red"
+                      textDecor="underline"
+                      cursor="pointer"
+                      onClick={() => updateOrderStaff('release')}
+                    >
+                      {updateStaffResult.isLoading ? t('(Liberando...)') : t('(Liberar)')}
+                    </Text>
+                  )}
+                </>
+              ) : (
+                <Text
+                  as="span"
+                  fontWeight="500"
+                  color="green.600"
+                  textDecor="underline"
+                  cursor="pointer"
+                  onClick={() => updateOrderStaff('assume')}
+                >
+                  {updateStaffResult.isLoading ? t('Assumindo...') : t('Assumir')}
+                </Text>
+              )}
             </Text>
             <BaseDrawerInfoItem label={t('ID:')} value={order?.id ?? 'N/E'} />
             <BaseDrawerInfoItem
@@ -124,7 +161,6 @@ export const OrderBaseDrawer = ({
             {order?.issue && (
               <BaseDrawerInfoItem label={t('Motivo da recusa:')} value={order.issue} />
             )}
-            {/*<BaseDrawerInfoItem label={t('Agente responsável:')} value={???} />*/}
           </DrawerHeader>
           <DrawerBody pb="28">
             {isFlagged && (
