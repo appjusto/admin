@@ -1,3 +1,4 @@
+import { Order, WithId } from '@appjusto/types';
 import { Stack } from '@chakra-ui/react';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBackofficeDashboard } from 'app/state/dashboards/backoffice';
@@ -16,16 +17,19 @@ import { UserChangeDrawer } from '../drawers/profile-changes/UserChangeDrawer';
 import { BOChatDrawer } from './BOChatDrawer';
 import { BOList } from './BOList';
 import { Panel } from './Panel';
+import { StaffFilterOptions } from './StaffFilter';
 
 const BODashboard = () => {
   // context
-  const { userAbility } = useContextFirebaseUser();
+  const { user, userAbility } = useContextFirebaseUser();
   const { path } = useRouteMatch();
   const history = useHistory();
   const { orders, businesses, userChanges, fetchNextBusiness, fetchNextChanges } =
     useContextBackofficeDashboard();
   // state
   const [dateTime, setDateTime] = React.useState('');
+  const [listOrders, setListOrders] = React.useState<WithId<Order>[]>([]);
+  const [staffFilter, setStaffFilter] = React.useState<StaffFilterOptions>();
   // helpers
   const userCanUpdateBusiness = userAbility?.can('read', 'businesses');
   // handlers
@@ -33,6 +37,14 @@ const BODashboard = () => {
     history.replace(path);
   };
   // side effects
+  React.useEffect(() => {
+    if (!user?.uid) return;
+    if (staffFilter === 'my') {
+      setListOrders(orders.filter((order) => order.staff?.id === user.uid));
+    } else {
+      setListOrders(orders);
+    }
+  }, [user?.uid, orders, staffFilter]);
   React.useEffect(() => {
     const { date, time } = getDateTime();
     setDateTime(`${date} às ${time}`);
@@ -47,9 +59,11 @@ const BODashboard = () => {
         <BOList
           display={userAbility?.can('read', 'orders') ? 'flex' : 'none'}
           title={t('Pedidos em andamento')}
-          data={orders}
+          data={listOrders}
           listType="orders"
           details={t('Aqui ficarão listados todos os pedidos em andamento no momento.')}
+          staffFilter
+          handleStaffFilter={(value) => setStaffFilter(value)}
         />
       </Stack>
       <Stack

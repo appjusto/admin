@@ -1,10 +1,11 @@
 import { Business, Order, ProfileChange, WithId } from '@appjusto/types';
-import { Box, Circle, Flex, FlexProps, Text, VStack } from '@chakra-ui/react';
+import { Box, Circle, Flex, FlexProps, HStack, Text, VStack } from '@chakra-ui/react';
 import { ShowIf } from 'core/components/ShowIf';
 import React from 'react';
 import { BOBusinessListItem } from './BOBusinessListItem';
 import { BOOrderListItem } from './BOOrderListItem';
 import { BOProfileChangesListItem } from './BOProfileChangesListItem';
+import { StaffFilter, StaffFilterOptions } from './StaffFilter';
 
 type ListType = 'orders' | 'businesses' | 'profile-changes';
 
@@ -14,6 +15,8 @@ interface BOListProps extends FlexProps {
   listType: ListType;
   details?: string;
   infiniteScroll?: boolean;
+  staffFilter?: boolean;
+  handleStaffFilter?(value: StaffFilterOptions): void;
   loadData?(): void;
 }
 
@@ -23,6 +26,8 @@ export const BOList = ({
   listType,
   details,
   infiniteScroll = false,
+  staffFilter,
+  handleStaffFilter,
   loadData,
   ...props
 }: BOListProps) => {
@@ -62,15 +67,18 @@ export const BOList = ({
         borderTopRadius="lg"
         borderBottomWidth="1px"
       >
-        <Flex alignItems="center">
-          <Circle size="40px" bg="white">
-            <Text fontSize="lg" color="black">
-              {data.length}
+        <Flex alignItems="center" justifyContent={staffFilter ? 'space-between' : 'flex-start'}>
+          <HStack spacing={4}>
+            <Circle size="40px" bg="white">
+              <Text fontSize="lg" color="black">
+                {data.length}
+              </Text>
+            </Circle>
+            <Text ml="4" fontSize={{ base: 'md', lg: 'lg' }} color="black" fontWeight="bold">
+              {title}
             </Text>
-          </Circle>
-          <Text ml="4" fontSize={{ base: 'md', lg: 'lg' }} color="black" fontWeight="bold">
-            {title}
-          </Text>
+          </HStack>
+          {staffFilter && <StaffFilter handleFilter={handleStaffFilter!} />}
         </Flex>
       </Box>
       <ShowIf test={data.length === 0 && Boolean(details)}>
