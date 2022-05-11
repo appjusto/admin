@@ -111,7 +111,7 @@ export const OrderBaseDrawer = ({
                       cursor="pointer"
                       onClick={() => updateOrderStaff('release')}
                     >
-                      {updateStaffResult.isLoading ? t('(Liberando...)') : t('(Liberar)')}
+                      {updateStaffResult.isLoading ? t('(Saindo...)') : t('(Sair)')}
                     </Text>
                   )}
                 </>

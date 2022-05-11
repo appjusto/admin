@@ -60,9 +60,11 @@ const BODashboard = () => {
           display={userAbility?.can('read', 'orders') ? 'flex' : 'none'}
           title={t('Pedidos em andamento')}
           data={listOrders}
+          dataLength={orders.length}
           listType="orders"
           details={t('Aqui ficarão listados todos os pedidos em andamento no momento.')}
           staffFilter
+          filterActive={staffFilter === 'my'}
           handleStaffFilter={(value) => setStaffFilter(value)}
         />
       </Stack>

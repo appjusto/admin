@@ -12,10 +12,12 @@ type ListType = 'orders' | 'businesses' | 'profile-changes';
 interface BOListProps extends FlexProps {
   title: string;
   data: WithId<Business>[] | WithId<Order>[] | WithId<ProfileChange>[];
+  dataLength?: number;
   listType: ListType;
   details?: string;
   infiniteScroll?: boolean;
   staffFilter?: boolean;
+  filterActive?: boolean;
   handleStaffFilter?(value: StaffFilterOptions): void;
   loadData?(): void;
 }
@@ -23,10 +25,12 @@ interface BOListProps extends FlexProps {
 export const BOList = ({
   title,
   data,
+  dataLength,
   listType,
   details,
   infiniteScroll = false,
   staffFilter,
+  filterActive,
   handleStaffFilter,
   loadData,
   ...props
@@ -69,9 +73,9 @@ export const BOList = ({
       >
         <Flex alignItems="center" justifyContent={staffFilter ? 'space-between' : 'flex-start'}>
           <HStack spacing={4}>
-            <Circle size="40px" bg="white">
+            <Circle minH="40px" minInlineSize="40px" px="1" bg="white">
               <Text fontSize="lg" color="black">
-                {data.length}
+                {filterActive && dataLength ? `${data.length}/${dataLength}` : data.length}
               </Text>
             </Circle>
             <Text ml="4" fontSize={{ base: 'md', lg: 'lg' }} color="black" fontWeight="bold">
