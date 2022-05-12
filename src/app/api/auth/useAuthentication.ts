@@ -1,8 +1,8 @@
 import { useContextApi } from 'app/state/api/context';
+import { FirebaseError } from 'firebase/app';
 import { nanoid } from 'nanoid';
 import React from 'react';
 import { useCustomMutation } from '../mutation/useCustomMutation';
-import { FirebaseError } from '../types';
 interface LoginData {
   email: string;
   password?: string;
@@ -31,7 +31,10 @@ export const useAuthentication = () => {
           const { code } = error as FirebaseError;
           if (code === 'auth/user-not-found') {
             // if user not exists return error
-            throw new Error('Não foi possível enviar o link de acesso para o e-mail informado');
+            throw new FirebaseError(
+              'ignored-error',
+              'Não foi possível enviar o link de acesso para o e-mail informado.'
+            );
           }
         }
       }

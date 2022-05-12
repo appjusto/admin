@@ -1,6 +1,7 @@
 import { DeleteAccountPayload, UpdateEmailPayload } from '@appjusto/types';
 import * as Sentry from '@sentry/react';
 import { ApiConfig } from 'app/api/config/types';
+import { FirebaseError } from 'firebase/app';
 import {
   Auth,
   createUserWithEmailAndPassword,
@@ -95,7 +96,7 @@ export default class AuthApi {
 
   async updateUsersPassword(password: string, currentPassword?: string) {
     const user = this.auth.currentUser;
-    if (!user) throw new Error('User not found!');
+    if (!user) throw new FirebaseError('ignored-error', 'Não foi possível encontrar o usuário.');
     if (currentPassword && user.email)
       await reauthenticateWithCredential(
         user,
