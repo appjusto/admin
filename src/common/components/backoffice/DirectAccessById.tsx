@@ -48,9 +48,9 @@ export const DirectAccessById = ({ ...props }: BoxProps) => {
     false
   );
   // handlers
-  const handleGetLink = () => {
+  const handleGetLink = async () => {
     try {
-      return getLink();
+      return await getLink();
     } catch (error) {}
   };
   // UI
