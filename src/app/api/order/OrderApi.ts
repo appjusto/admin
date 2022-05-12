@@ -19,6 +19,7 @@ import {
 import { IuguInvoiceStatus } from '@appjusto/types/payment/iugu';
 import * as Sentry from '@sentry/react';
 import { documentAs, documentsAs, FirebaseDocument } from 'core/fb';
+import { FirebaseError } from 'firebase/app';
 import {
   addDoc,
   deleteDoc,
@@ -406,6 +407,15 @@ export default class OrderApi {
     return customDocumentSnapshot<Invoice>(ref, (result) => {
       if (result) resultHandler(result);
     });
+  }
+
+  async getOrderIdByCode(orderCode: string) {
+    const q = query(this.refs.getOrdersRef(), where('code', '==', orderCode));
+    const orderId = await getDocs(q).then((snapshot) => {
+      if (!snapshot.empty) return snapshot.docs[0].id;
+      else throw new FirebaseError('ignored-error', 'Não foi possível encontrar o pedido.');
+    });
+    return orderId;
   }
 
   async getOrderPrivateCancellation(orderId: string) {

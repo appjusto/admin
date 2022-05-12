@@ -14,6 +14,7 @@ import {
   addDoc,
   deleteDoc,
   getDoc,
+  getDocs,
   orderBy,
   query,
   serverTimestamp,
@@ -100,6 +101,12 @@ export default class CourierApi {
     const q = query(this.refs.getCourierProfileNotesRef(courierId), orderBy('createdOn', 'desc'));
     // returns the unsubscribe function
     return customCollectionSnapshot(q, resultHandler);
+  }
+
+  async getCourierIdByCode(courierCode: string) {
+    const q = query(this.refs.getCouriersRef(), where('code', '==', courierCode));
+    const courierId = await getDocs(q).then((snapshot) => snapshot.docs[0].id);
+    return courierId;
   }
 
   async createProfileNote(courierId: string, data: Partial<ProfileNote>) {

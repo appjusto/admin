@@ -38,6 +38,7 @@ import {
   deleteDoc,
   DocumentData,
   getDoc,
+  getDocs,
   getDocsFromCache,
   getDocsFromServer,
   limit,
@@ -147,6 +148,12 @@ export default class BusinessApi {
     const ref = this.refs.getBusinessMarketPlaceRef(businessId);
     // returns the unsubscribe function
     return customDocumentSnapshot(ref, resultHandler);
+  }
+
+  async getBusinessIdByCode(businessCode: string) {
+    const q = query(this.refs.getBusinessesRef(), where('code', '==', businessCode));
+    const businessId = await getDocs(q).then((snapshot) => snapshot.docs[0].id);
+    return businessId;
   }
 
   async deletePrivateMarketPlace(businessId: string) {

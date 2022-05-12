@@ -8,14 +8,11 @@ import {
   WithId,
 } from '@appjusto/types';
 import { useContextApi } from 'app/state/api/context';
-import { Unsubscribe } from 'firebase/firestore';
 import React from 'react';
 import { useCustomMutation } from '../mutation/useCustomMutation';
 import { calculateCancellationCosts } from './utils';
 
-const globalIdLength = 20;
-
-export const useOrder = (orderIdentifier?: string) => {
+export const useOrder = (orderId?: string) => {
   // context
   const api = useContextApi();
   // state
@@ -47,15 +44,10 @@ export const useOrder = (orderIdentifier?: string) => {
   );
   // side effects
   React.useEffect(() => {
-    if (!orderIdentifier) return;
-    let unsub: Unsubscribe;
-    if (orderIdentifier.length < globalIdLength) {
-      unsub = api.order().observeOrderByOrderCode(orderIdentifier, setOrder);
-    } else {
-      unsub = api.order().observeOrder(orderIdentifier, setOrder);
-    }
+    if (!orderId) return;
+    const unsub = api.order().observeOrder(orderId, setOrder);
     return () => unsub();
-  }, [api, orderIdentifier]);
+  }, [api, orderId]);
   React.useEffect(() => {
     if (!order?.id) return;
     const unsub = api.order().observeOrderIssues(order.id, setOrderIssues);

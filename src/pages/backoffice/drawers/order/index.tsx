@@ -67,10 +67,10 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
     orderCancellation,
     orderCancellationCosts,
   } = useOrder(orderId);
-  const invoices = useObserveOrderInvoices(order?.id);
+  const invoices = useObserveOrderInvoices(orderId);
   const cancelOptions = useIssuesByType(cancelOptionsArray);
   const { addFlaggedLocation } = useFlaggedLocations();
-  const { chatMessages, orderChatGroup } = useObserveOrderChatMessages(order?.id);
+  const { chatMessages, orderChatGroup } = useObserveOrderChatMessages(orderId);
   // state
   const [status, setStatus] = React.useState<OrderStatus | undefined>(order?.status);
   const [dispatchingState, setDispatchingState] = React.useState<DispatchingState | undefined>(

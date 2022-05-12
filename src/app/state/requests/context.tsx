@@ -7,6 +7,7 @@ import { isEmpty } from 'lodash';
 import React from 'react';
 
 const skippedExceptions = [
+  'ignored-error',
   'auth/user-not-found',
   'auth/wrong-password',
   'auth/invalid-action-code',
