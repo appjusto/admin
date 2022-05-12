@@ -83,7 +83,7 @@ export const FirebaseUserProvider = ({ children }: Props) => {
         });
       }
     },
-    []
+    [dispatchAppRequestResult]
   );
   // side effects
   React.useEffect(() => {
