@@ -12,7 +12,7 @@ const version = packageInfo.version;
 interface ProfileContextProps {
   manager?: WithId<ManagerProfile> | null;
   setManagerEmail: Dispatch<SetStateAction<string | null | undefined>>;
-  updateLastBusinessId: UseMutateAsyncFunction<void, unknown, string, unknown>;
+  updateLastBusinessId: UseMutateAsyncFunction<void, unknown, string | null, unknown>;
 }
 
 const ProfileContext = React.createContext<ProfileContextProps>({} as ProfileContextProps);

@@ -25,7 +25,7 @@ export const useUpdateManagerProfile = (managerId?: string, isOnboarding: boolea
     !isOnboarding
   );
   const { mutateAsync: updateLastBusinessId } = useCustomMutation(
-    async (businessId: string) => {
+    async (businessId: string | null) => {
       return api.manager().updateProfile(managerId!, { lastBusinessId: businessId });
     },
     'updateLastBusinessId',

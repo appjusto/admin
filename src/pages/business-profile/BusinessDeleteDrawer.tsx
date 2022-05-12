@@ -16,6 +16,7 @@ import {
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useContextFirebaseUserEmail } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
+import { useContextManagerProfile } from 'app/state/manager/context';
 import { useContextAppRequests } from 'app/state/requests/context';
 import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
@@ -43,6 +44,7 @@ export const BusinessDeleteDrawer = ({ onClose, ...props }: BaseDrawerProps) => 
   const email = useContextFirebaseUserEmail();
   const { dispatchAppRequestResult } = useContextAppRequests();
   const { business } = useContextBusiness();
+  const { updateLastBusinessId } = useContextManagerProfile();
   const { deleteBusinessProfile, deleteResult } = useBusinessProfile();
   const { isLoading, isSuccess } = deleteResult;
   // state
@@ -66,6 +68,7 @@ export const BusinessDeleteDrawer = ({ onClose, ...props }: BaseDrawerProps) => 
       if (email) localStorage.removeItem(`business-${process.env.REACT_APP_ENVIRONMENT}-${email}`);
       let data = { ...survey } as Partial<DeleteBusinessPayload>;
       if (comment.length > 0) data.comment = comment;
+      await updateLastBusinessId(null);
       await deleteBusinessProfile(data);
     }
   };
