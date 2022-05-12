@@ -1,7 +1,8 @@
-import algoliasearch, { SearchClient, SearchIndex } from 'algoliasearch/lite';
-import { AlgoliaConfig, Environment, OrderStatus, OrderType } from '@appjusto/types';
-import { BusinessesFilter, SearchKind, BasicUserFilter } from './types';
 import { createNullCache } from '@algolia/cache-common';
+import { AlgoliaConfig, Environment, OrderStatus, OrderType } from '@appjusto/types';
+import algoliasearch, { SearchClient, SearchIndex } from 'algoliasearch/lite';
+import { FirebaseError } from 'firebase/app';
+import { BasicUserFilter, BusinessesFilter, SearchKind } from './types';
 //import { createInMemoryCache } from '@algolia/cache-in-memory';
 
 export default class SearchApi {
@@ -78,7 +79,7 @@ export default class SearchApi {
     hitsPerPage?: number
   ) {
     const index = this.getSearchIndex(kind);
-    if (!index) throw new Error('Invalid index');
+    if (!index) throw new FirebaseError('business-search/invalid-index', 'Indíce não encontrado.');
     return index.search<T>(query, {
       page,
       hitsPerPage,
@@ -121,7 +122,7 @@ export default class SearchApi {
     hitsPerPage?: number
   ) {
     const index = this.getSearchIndex(kind);
-    if (!index) throw new Error('Invalid index');
+    if (!index) throw new FirebaseError('order-search/invalid-index', 'Indíce não encontrado.');
     return index.search<T>(query, {
       page,
       hitsPerPage,
@@ -145,7 +146,7 @@ export default class SearchApi {
     hitsPerPage?: number
   ) {
     const index = this.getSearchIndex(kind);
-    if (!index) throw new Error('Invalid index');
+    if (!index) throw new FirebaseError('flagged-search/invalid-index', 'Indíce não encontrado.');
     return index.search<T>(query, {
       page,
       hitsPerPage,
@@ -201,7 +202,8 @@ export default class SearchApi {
     hitsPerPage?: number
   ) {
     const index = this.getSearchIndex(kind);
-    if (!index) throw new Error('Invalid index');
+    if (!index)
+      throw new FirebaseError('basic-user-search/invalid-index', 'Indíce não encontrado.');
     return index.search<T>(query, {
       page,
       hitsPerPage,

@@ -152,6 +152,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
     } catch (error) {
       dispatchAppRequestResult({
         status: 'error',
+        error,
         requestId: 'BusinessProfile-submit-error',
         message: {
           title: 'Erro de conexão com o servidor',

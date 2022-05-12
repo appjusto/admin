@@ -481,11 +481,14 @@ export default class OrderApi {
     const orderRef = this.refs.getOrderRef(orderId);
     const orderSnapshot = await getDoc(orderRef);
     if (!orderSnapshot.exists()) {
-      throw new Error('O pedido informado não existe');
+      throw new FirebaseError('ignored-error', 'O pedido informado não existe.');
     }
     const order = documentAs<Order>(orderSnapshot);
     if (order.status !== 'quote') {
-      throw new Error('Operação negada. O status do pedido informado não é "cotação"');
+      throw new FirebaseError(
+        'ignored-error',
+        'Operação negada. O status do pedido informado não é "cotação".'
+      );
     }
     await deleteDoc(orderRef);
     return true;

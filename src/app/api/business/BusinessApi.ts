@@ -254,19 +254,13 @@ export default class BusinessApi {
       ...changes,
       updatedOn: timestamp,
     };
-    try {
-      await updateDoc(this.refs.getBusinessRef(businessId), fullChanges);
-      // logo
-      if (logoFile) await this.uploadBusinessLogo(businessId, logoFile, () => {});
-      //cover
-      if (coverFiles) await this.uploadBusinessCover(businessId, coverFiles, () => {});
-      // result
-      return true;
-    } catch (error) {
-      console.log(error);
-      Sentry.captureException(error);
-      throw new Error('BusinessUpdateWithImagesError');
-    }
+    await updateDoc(this.refs.getBusinessRef(businessId), fullChanges);
+    // logo
+    if (logoFile) await this.uploadBusinessLogo(businessId, logoFile, () => {});
+    //cover
+    if (coverFiles) await this.uploadBusinessCover(businessId, coverFiles, () => {});
+    // result
+    return true;
   }
 
   async removeBusinessManager(business: WithId<Business>, managerEmail: string) {

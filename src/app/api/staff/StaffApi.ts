@@ -9,6 +9,7 @@ import {
 } from '@appjusto/types';
 import * as Sentry from '@sentry/react';
 import { documentAs, documentsAs, FirebaseDocument } from 'core/fb';
+import { FirebaseError } from 'firebase/app';
 import {
   DocumentData,
   getDoc,
@@ -107,8 +108,11 @@ export default class StaffApi {
       if (notificationToken) {
         return updateDoc(this.refs.getStaffRef(staffId), { notificationToken });
       }
-      throw new Error('Documento de consumer não possui notificationToken');
+      throw new FirebaseError(
+        'ignored-error',
+        'Documento de consumer não possui notificationToken.'
+      );
     }
-    throw new Error('Nenhum perfil de consumer encontrado');
+    throw new FirebaseError('ignored-error', 'Nenhum perfil de consumer encontrado.');
   }
 }
