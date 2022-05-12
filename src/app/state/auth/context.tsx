@@ -4,6 +4,7 @@ import { useFirebaseUser } from 'app/api/auth/useFirebaseUser';
 import { usePlatformAccess } from 'app/api/platform/usePlatformAccess';
 import { User } from 'firebase/auth';
 import React from 'react';
+import { useContextAppRequests } from '../requests/context';
 import { AppAbility, defineUserAbility } from './userAbility';
 
 interface FirebaseUserContextProps {
@@ -26,6 +27,7 @@ interface Props {
 export const FirebaseUserProvider = ({ children }: Props) => {
   // context
   const user = useFirebaseUser();
+  const { dispatchAppRequestResult } = useContextAppRequests();
   // states
   const [adminRole, setAdminRole] = React.useState<AdminRole | null>();
   const [backofficePermissions, setBackofficePermissions] = React.useState<UserPermissions>();
@@ -64,22 +66,42 @@ export const FirebaseUserProvider = ({ children }: Props) => {
     },
     [user]
   );
+  const handleUserAbility = React.useCallback(
+    (permissions: UserPermissions | AdminRole, userId?: string) => {
+      try {
+        const ability = defineUserAbility(permissions, userId);
+        return ability;
+      } catch (error) {
+        dispatchAppRequestResult({
+          requestId: 'define-ability-error',
+          status: 'error',
+          error,
+          message: {
+            title: 'Erro:',
+            description: 'Erro ao definir as permissões do usuário',
+          },
+        });
+      }
+    },
+    []
+  );
   // side effects
   React.useEffect(() => {
     refreshUserToken();
   }, [refreshUserToken]);
   React.useEffect(() => {
+    if (!user?.uid) return;
     if (!backofficePermissions) return;
-    const ability = defineUserAbility(backofficePermissions);
+    const ability = handleUserAbility(backofficePermissions, user.uid);
     setUserAbility(ability);
     setIsBackofficeUser(true);
-  }, [backofficePermissions]);
+  }, [user?.uid, backofficePermissions, handleUserAbility]);
   React.useEffect(() => {
     if (!adminRole) return;
-    const ability = defineUserAbility(adminRole);
+    const ability = handleUserAbility(adminRole);
     setUserAbility(ability);
     setIsBackofficeUser(false);
-  }, [adminRole]);
+  }, [adminRole, handleUserAbility]);
   // provider
   return (
     <FirebaseUserContext.Provider

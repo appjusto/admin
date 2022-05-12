@@ -97,7 +97,9 @@ export const Matching = ({ order }: MatchingProps) => {
     <>
       {!isOutsourcing ? (
         <Button
-          display={userAbility?.can('update', 'orders') ? 'inline-block' : 'none'}
+          display={
+            userAbility?.can('update', { kind: 'orders', ...order }) ? 'inline-block' : 'none'
+          }
           h="38px"
           w="220px"
           size="sm"
@@ -266,7 +268,7 @@ export const Matching = ({ order }: MatchingProps) => {
             couriersNotified.map((courier) => (
               <CourierNotifiedBox
                 key={courier.id}
-                orderId={order?.id!}
+                order={order}
                 isOrderActive={isOrderActive}
                 courier={courier}
                 dispatchingStatus={order?.dispatchingStatus}

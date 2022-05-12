@@ -202,7 +202,7 @@ export const OrderBaseDrawer = ({
             {children}
           </DrawerBody>
           <DrawerFooter
-            display={userAbility?.can('update', 'orders') ? 'flex' : 'none'}
+            display={userAbility?.can('update', { kind: 'orders', ...order }) ? 'flex' : 'none'}
             borderTop="1px solid #F2F6EA"
           >
             <Flex w="full" direction="row" justifyContent="space-between">

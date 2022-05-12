@@ -1,4 +1,4 @@
-import { CRUD } from '@appjusto/types';
+import { CRUD, UserPermissions } from '@appjusto/types';
 import { MongoQuery } from '@casl/ability';
 
 type Rule =
@@ -8,7 +8,7 @@ type Rule =
     }
   | CRUD;
 
-export type AdminPermissionObject = {
+export type FullPermissions = {
   [key: string]: Rule[];
 };
 
@@ -21,7 +21,7 @@ export const businessOwnerObject = {
   menu: ['c', 'r', 'u', 'd'],
   orders: ['r', 'u'],
   withdraws: ['c', 'r', 'u'],
-} as AdminPermissionObject;
+} as FullPermissions;
 
 export const businessManagerObject = {
   advances: ['c', 'r', 'u'],
@@ -37,7 +37,7 @@ export const businessManagerObject = {
   menu: ['c', 'r', 'u', 'd'],
   orders: ['r', 'u'],
   withdraws: ['c', 'r', 'u'],
-} as AdminPermissionObject;
+} as FullPermissions;
 
 export const businessCollaboratorObject = {
   advances: [],
@@ -48,4 +48,21 @@ export const businessCollaboratorObject = {
   menu: ['r', 'u'],
   orders: ['r', 'u'],
   withdraws: [],
-} as AdminPermissionObject;
+} as FullPermissions;
+
+export const getStaffUIConditions = (
+  userId: string,
+  permissions: UserPermissions
+): FullPermissions => {
+  let result = { ...permissions } as FullPermissions;
+  Object.keys(permissions).forEach((key) => {
+    if (key === 'orders') {
+      let keyPermissions = permissions[key].map((rule) => {
+        if (rule !== 'r') return { rule, conditions: { 'staff.id': userId } };
+        else return rule;
+      });
+      result.orders = keyPermissions;
+    }
+  });
+  return result;
+};

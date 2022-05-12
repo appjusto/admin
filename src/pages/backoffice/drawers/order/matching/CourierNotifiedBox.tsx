@@ -1,4 +1,4 @@
-import { DispatchingStatus } from '@appjusto/types';
+import { DispatchingStatus, Order, WithId } from '@appjusto/types';
 import { Box, Flex, HStack, Text } from '@chakra-ui/react';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { CustomButton } from 'common/components/buttons/CustomButton';
@@ -8,7 +8,7 @@ import { t } from 'utils/i18n';
 import { NotifiedCouriers } from '../Matching';
 interface CourierNotifiedBoxProps {
   isOrderActive: boolean;
-  orderId: string;
+  order?: WithId<Order> | null;
   courier: NotifiedCouriers;
   issue?: string;
   dispatchingStatus?: DispatchingStatus;
@@ -20,6 +20,7 @@ interface CourierNotifiedBoxProps {
 
 export const CourierNotifiedBox = ({
   isOrderActive,
+  order,
   courier,
   issue,
   dispatchingStatus,
@@ -59,7 +60,7 @@ export const CourierNotifiedBox = ({
             link={`/backoffice/couriers/${courier.id}`}
             variant="outline"
           />
-          {!isAllocating && userAbility?.can('update', 'orders') && (
+          {!isAllocating && userAbility?.can('update', { kind: 'orders', ...order }) && (
             <>
               <CustomButton
                 mt="0"

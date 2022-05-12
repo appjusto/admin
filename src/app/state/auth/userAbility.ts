@@ -1,10 +1,12 @@
 import { AdminRole, CRUD, UserPermissions } from '@appjusto/types';
 import { Ability, AbilityOptionsOf, defineAbility, detectSubjectType } from '@casl/ability';
+import { FirebaseError } from 'firebase/app';
 import {
-  AdminPermissionObject,
   businessCollaboratorObject,
   businessManagerObject,
   businessOwnerObject,
+  FullPermissions,
+  getStaffUIConditions,
 } from './utils';
 
 // const staffClaim = {
@@ -70,11 +72,11 @@ const ruleParser = (r: CRUD): Actions => {
   }
 };
 
-export const defineUserAbility = (permissions: UserPermissions | AdminRole) => {
+export const defineUserAbility = (permissions: UserPermissions | AdminRole, userId?: string) => {
   return defineAbility<AppAbility>((can) => {
     // helper
     const defineAbilityByPermissionsObject = (
-      permissionsObject: AdminPermissionObject | UserPermissions
+      permissionsObject: FullPermissions | UserPermissions
     ) => {
       Object.keys(permissionsObject).forEach((subject) => {
         permissionsObject[subject].forEach((permission) => {
@@ -85,7 +87,11 @@ export const defineUserAbility = (permissions: UserPermissions | AdminRole) => {
       });
     };
     if (typeof permissions === 'object') {
-      defineAbilityByPermissionsObject(permissions);
+      if (!userId) {
+        throw new FirebaseError('define-ability', 'O Id do usuário não foi encontrado');
+      }
+      const fullPermission = getStaffUIConditions(userId, permissions);
+      defineAbilityByPermissionsObject(fullPermission);
     } else if (permissions === 'owner') {
       defineAbilityByPermissionsObject(businessOwnerObject);
     } else if (permissions === 'manager') {
