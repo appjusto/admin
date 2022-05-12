@@ -6,6 +6,7 @@ import {
   MatchOrderPayload,
   Order,
   OrderCancellation,
+  OrderChange,
   OrderFraudPreventionFlags,
   OrderIssue,
   OrderMatching,
@@ -24,7 +25,6 @@ import {
   addDoc,
   deleteDoc,
   DocumentData,
-  FieldValue,
   getDoc,
   getDocs,
   limit,
@@ -50,11 +50,6 @@ export type CancellationData = {
 };
 
 export type Ordering = 'asc' | 'desc';
-export interface OrderLog {
-  before: Partial<Order>;
-  after: Partial<Order>;
-  timestamp: FieldValue;
-}
 
 export default class OrderApi {
   constructor(private refs: FirebaseRefs) {}
@@ -260,7 +255,7 @@ export default class OrderApi {
 
   observeOrderLogs(
     orderId: string,
-    resultHandler: (order: WithId<OrderLog>[]) => void
+    resultHandler: (order: WithId<OrderChange>[]) => void
   ): Unsubscribe {
     const q = query(this.refs.getOrderLogsRef(orderId), orderBy('timestamp', 'asc'));
     // returns the unsubscribe function
