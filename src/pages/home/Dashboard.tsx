@@ -287,7 +287,6 @@ const Dashboard = () => {
         direction={{ base: 'column', md: 'row' }}
         spacing={6}
         justifyContent="center"
-        // alignItems={{ base: 'center' }}
       >
         <Link
           isExternal

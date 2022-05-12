@@ -2,8 +2,6 @@ import {
   AspectRatio,
   Box,
   Button,
-  HStack,
-  Icon,
   Image,
   Link,
   ListItem,
@@ -19,9 +17,10 @@ import { AlertWarning } from 'common/components/AlertWarning';
 import SharingBar from 'common/components/landing/share/SharingBar';
 import submittedImg from 'common/img/submitted.svg';
 import React from 'react';
-import { FaFacebookSquare, FaInstagram, FaLinkedin } from 'react-icons/fa';
 import { t } from 'utils/i18n';
+import { OutsideAreaPage } from './OutsideAreaPage';
 import { RegistrationItem } from './RegistrationItem';
+import { Social } from './Social';
 
 const initialState = [
   {
@@ -90,6 +89,7 @@ export const RegistrationStatus = () => {
   const [isFetching, setIsFetching] = React.useState(true);
   const [validation, setValidation] = React.useState(initialState);
   const [rejection, setRejection] = React.useState<string[]>([]);
+  const [isOusideArea, setIsOusideArea] = React.useState<boolean>();
   // helpers
   const isValid = validation.filter((data) => data.status === false).length === 0;
   const pendencies = validation.filter((item) => item.status === false).length;
@@ -132,6 +132,11 @@ export const RegistrationStatus = () => {
   React.useEffect(() => {
     if (business?.situation === 'rejected') {
       setRejection(business?.profileIssues ?? []);
+      setIsOusideArea(
+        typeof business?.profileIssues?.find(
+          (issue) => issue === 'Restaurante fora da área de operação'
+        ) === 'string'
+      );
     }
   }, [business]);
   // UI
@@ -217,83 +222,53 @@ export const RegistrationStatus = () => {
             allowFullScreen
           />
         </AspectRatio>
-        <HStack mt="16" spacing={2}>
-          <Text fontSize="24px" lineHeight="30px" fontWeight="700">
-            {t('Aproveite para seguir o AppJusto nas redes sociais')}
-          </Text>
-          <Link
-            href="https://www.instagram.com/appjusto/"
-            isExternal
-            aria-label="Link para a página do Instagram do Appjusto"
-            _hover={{ color: 'green.500' }}
-            _focus={{ outline: 'none' }}
-          >
-            <Icon as={FaInstagram} w="30px" h="30px" />
-          </Link>
-          <Link
-            href="https://www.facebook.com/appjusto"
-            isExternal
-            aria-label="Link para a página do Facebook do Appjusto"
-            _hover={{ color: 'green.500' }}
-            _focus={{ outline: 'none' }}
-          >
-            <Icon as={FaFacebookSquare} w="30px" h="30px" />
-          </Link>
-          <Link
-            href="https://www.linkedin.com/company/appjusto/"
-            isExternal
-            aria-label="Link para a página do Linkedin do Appjusto"
-            _hover={{ color: 'green.500' }}
-            _focus={{ outline: 'none' }}
-          >
-            <Icon as={FaLinkedin} w="30px" h="30px" />
-          </Link>
-        </HStack>
-        <Text mt="2" fontSize="lg" lineHeight="26px">
-          {t('E fique por dentro das nossas novidades!')}
-        </Text>
+        <Social />
       </Box>
     );
   }
   if (business?.situation === 'rejected') {
-    return (
-      <>
-        <AlertWarning
-          title={t(
-            'Olá! Avaliamos o seu cadastro, mas ele ainda precisa de ajustes para ser aprovado'
-          )}
-          description={t(
-            'Corrija os itens listados abaixo para seguir com a liberação da plataforma:'
-          )}
-          icon={false}
-        >
-          <UnorderedList mt="1">
-            {rejection.map((issue) => (
-              <ListItem key={issue}>{t(`${issue}`)}</ListItem>
-            ))}
-          </UnorderedList>
-          {business.profileIssuesMessage && (
-            <Box mt="6">
-              <Text fontWeight="700">
-                {t('Dica:')}{' '}
-                <Text as="span" fontWeight="500">
-                  {business.profileIssuesMessage}
+    if (isOusideArea) {
+      return <OutsideAreaPage />;
+    } else {
+      return (
+        <>
+          <AlertWarning
+            title={t(
+              'Olá! Avaliamos o seu cadastro, mas ele ainda precisa de ajustes para ser aprovado'
+            )}
+            description={t(
+              'Corrija os itens listados abaixo para seguir com a liberação da plataforma:'
+            )}
+            icon={false}
+          >
+            <UnorderedList mt="1">
+              {rejection.map((issue) => (
+                <ListItem key={issue}>{t(`${issue}`)}</ListItem>
+              ))}
+            </UnorderedList>
+            {business.profileIssuesMessage && (
+              <Box mt="6">
+                <Text fontWeight="700">
+                  {t('Dica:')}{' '}
+                  <Text as="span" fontWeight="500">
+                    {business.profileIssuesMessage}
+                  </Text>
                 </Text>
-              </Text>
-            </Box>
-          )}
-          <Text mt="4">{t('Após a correção, basta reenviar o cadastro.')}</Text>
-        </AlertWarning>
-        <Button
-          mt="4"
-          onClick={handleSubmitRegistration}
-          isDisabled={!isValid}
-          isLoading={isLoading}
-        >
-          {t('Reenviar cadastro para aprovação')}
-        </Button>
-      </>
-    );
+              </Box>
+            )}
+            <Text mt="4">{t('Após a correção, basta reenviar o cadastro.')}</Text>
+          </AlertWarning>
+          <Button
+            mt="4"
+            onClick={handleSubmitRegistration}
+            isDisabled={!isValid}
+            isLoading={isLoading}
+          >
+            {t('Reenviar cadastro para aprovação')}
+          </Button>
+        </>
+      );
+    }
   }
   if (business?.situation === 'blocked') {
     return (
