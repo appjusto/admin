@@ -12,6 +12,8 @@ import React from 'react';
 import { useCustomMutation } from '../mutation/useCustomMutation';
 // import { calculateCancellationCosts } from './utils';
 
+const orderCancellationCosts = 0;
+
 export const useOrder = (orderId?: string) => {
   // context
   const api = useContextApi();
@@ -19,7 +21,7 @@ export const useOrder = (orderId?: string) => {
   const [order, setOrder] = React.useState<WithId<Order> | null>();
   const [orderIssues, setOrderIssues] = React.useState<WithId<OrderIssue>[] | null>();
   const [orderCancellation, setOrderCancellation] = React.useState<OrderCancellation | null>();
-  const [orderCancellationCosts, setOrderCancellationCosts] = React.useState<number>(0);
+  // const [orderCancellationCosts, setOrderCancellationCosts] = React.useState<number>(0);
   // mutations
   const { mutateAsync: updateOrder, mutationResult: updateResult } = useCustomMutation(
     async (changes: Partial<Order>) => api.order().updateOrder(order?.id!, changes),

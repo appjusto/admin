@@ -7,8 +7,8 @@ interface NewRegistrationItemProps {
   label: string;
   btnLabel: string;
   btnLink: string;
-  helpText: string;
-  helpLink: string;
+  helpText?: string;
+  helpLink?: string;
 }
 
 export const NewRegistrationItem = ({
@@ -37,21 +37,23 @@ export const NewRegistrationItem = ({
           <Text fontSize="16px" lineHeight="22px" fontWeight="700">
             {label}
           </Text>
-          <HStack spacing={2}>
-            <InfoOutlineIcon w="16px" h="16px" />
-            <Link
-              href={helpLink}
-              isExternal
-              fontSize="15px"
-              lineHeight="21px"
-              textDecor="underline"
-            >
-              {helpText}
-            </Link>
-          </HStack>
+          {helpText && helpLink && (
+            <HStack spacing={2}>
+              <InfoOutlineIcon w="16px" h="16px" />
+              <Link
+                href={helpLink}
+                isExternal
+                fontSize="15px"
+                lineHeight="21px"
+                textDecor="underline"
+              >
+                {helpText}
+              </Link>
+            </HStack>
+          )}
         </Box>
       </HStack>
-      <CustomButton mt="0" label={btnLabel} link={btnLink} />
+      <CustomButton mt="0" label={btnLabel} link={btnLink} isExternal />
     </Flex>
   );
 };

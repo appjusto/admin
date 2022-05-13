@@ -25,9 +25,9 @@ export const OutsideAreaPage = () => {
       <NewRegistrationItem
         label={t('Materiais de devulgação')}
         btnLabel={t('Visualizar')}
-        btnLink={'http://localhost:3000'}
-        helpText={t('Assista ao vídeo sobre como utilizá-los')}
-        helpLink={'http://localhost:3000'}
+        btnLink="https://drive.google.com/drive/folders/1r3xKazHLAHY8-W0hb12e22ekK6DaDAua?usp=sharing"
+        // helpText={t('Assista ao vídeo sobre como utilizá-los')}
+        // helpLink={'http://localhost:3000'}
       />
       <Social />
     </Box>
