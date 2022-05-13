@@ -2,7 +2,7 @@ import { Box, BoxProps, Button, Icon, Stack, Text } from '@chakra-ui/react';
 import { useCustomMutation } from 'app/api/mutation/useCustomMutation';
 import { useContextApi } from 'app/state/api/context';
 import { useContextFirebaseUser } from 'app/state/auth/context';
-import React from 'react';
+import React, { KeyboardEvent } from 'react';
 import { VscOpenPreview } from 'react-icons/vsc';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
@@ -53,6 +53,12 @@ export const DirectAccessById = ({ ...props }: BoxProps) => {
       return await getLink();
     } catch (error) {}
   };
+  const handleUserKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      handleGetLink();
+    }
+  };
   // UI
   return (
     <Box mt="4" border="1px solid #F6F6F6" borderRadius="lg" py="6" px="8" {...props}>
@@ -87,6 +93,7 @@ export const DirectAccessById = ({ ...props }: BoxProps) => {
           onChange={(event) => setSearchId(event.target.value)}
           label={type !== 'invoice' ? t('Id ou código:') : t('Id:')}
           placeholder={t('Digite o id')}
+          onKeyPress={handleUserKeyPress}
         />
         <Button
           w={{ base: '100%', md: 'auto' }}
