@@ -162,7 +162,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
     if (business?.situation !== 'approved') return;
     if (business?.status !== 'open') return;
     sendBusinessKeepAlive();
-    const time = process.env.REACT_APP_ENVIRONMENT === 'live' ? 180_000 : 30_000;
+    const time = process.env.REACT_APP_ENVIRONMENT === 'live' ? 300_000 : 30_000;
     const keepAliveInterval = setInterval(() => {
       sendBusinessKeepAlive();
     }, time);
