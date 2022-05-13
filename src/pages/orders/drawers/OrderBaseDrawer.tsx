@@ -59,6 +59,9 @@ export const OrderBaseDrawer = ({
   const isHistory = path.includes('orders-history');
   const isCookingTimeModeAuto = cookingTimeMode === 'auto';
   const isCurrierArrived = order?.dispatchingState === 'arrived-pickup';
+  const cannotCancelOrder =
+    typeof order?.courier?.id === 'string' ||
+    (order?.dispatchingStatus === 'outsourced' && order.outsourcedBy !== 'business');
   //handlers
   const handlePrint = () => {
     if (printOrder) return printOrder();
@@ -255,7 +258,7 @@ export const OrderBaseDrawer = ({
                     maxW="200px"
                     variant="dangerLight"
                     onClick={cancel}
-                    isDisabled={typeof order?.courier?.id === 'string'}
+                    isDisabled={cannotCancelOrder}
                   >
                     {t('Cancelar pedido')}
                   </Button>
@@ -282,7 +285,7 @@ export const OrderBaseDrawer = ({
                     maxW="200px"
                     variant="dangerLight"
                     onClick={cancel}
-                    isDisabled={typeof order?.courier?.id === 'string'}
+                    isDisabled={cannotCancelOrder}
                   >
                     {t('Cancelar pedido')}
                   </Button>
