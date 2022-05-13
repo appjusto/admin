@@ -1,6 +1,6 @@
 import {
   CancelOrderPayload,
-  InvoiceType,
+  // InvoiceType,
   Order,
   OrderCancellation,
   OrderIssue,
@@ -10,7 +10,7 @@ import {
 import { useContextApi } from 'app/state/api/context';
 import React from 'react';
 import { useCustomMutation } from '../mutation/useCustomMutation';
-import { calculateCancellationCosts } from './utils';
+// import { calculateCancellationCosts } from './utils';
 
 export const useOrder = (orderId?: string) => {
   // context
@@ -19,7 +19,7 @@ export const useOrder = (orderId?: string) => {
   const [order, setOrder] = React.useState<WithId<Order> | null>();
   const [orderIssues, setOrderIssues] = React.useState<WithId<OrderIssue>[] | null>();
   const [orderCancellation, setOrderCancellation] = React.useState<OrderCancellation | null>();
-  const [orderCancellationCosts, setOrderCancellationCosts] = React.useState<number>();
+  const [orderCancellationCosts, setOrderCancellationCosts] = React.useState<number>(0);
   // mutations
   const { mutateAsync: updateOrder, mutationResult: updateResult } = useCustomMutation(
     async (changes: Partial<Order>) => api.order().updateOrder(order?.id!, changes),
@@ -60,14 +60,14 @@ export const useOrder = (orderId?: string) => {
       setOrderCancellation(cancellation);
     })();
   }, [api, order?.id, order?.status]);
-  React.useEffect(() => {
-    if (!order) return;
-    let debt = [] as InvoiceType[];
-    //if (['preparing', 'ready'].includes(order.status)) debt.push('platform');
-    //if (order.dispatchingState === 'arrived-pickup') debt.push('delivery');
-    const cancellationCosts = calculateCancellationCosts(order, { refund: debt });
-    setOrderCancellationCosts(cancellationCosts);
-  }, [order]);
+  // React.useEffect(() => {
+  //   if (!order) return;
+  //   let debt = [] as InvoiceType[];
+  //   //if (['preparing', 'ready'].includes(order.status)) debt.push('platform');
+  //   //if (order.dispatchingState === 'arrived-pickup') debt.push('delivery');
+  //   // const cancellationCosts = calculateCancellationCosts(order, { refund: debt });
+  //   // setOrderCancellationCosts(cancellationCosts);
+  // }, [order]);
   // return
   return {
     order,

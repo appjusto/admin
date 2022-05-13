@@ -250,7 +250,13 @@ export const OrderBaseDrawer = ({
                   flexDir="row"
                   justifyContent={order?.status === 'confirmed' ? 'flex-start' : 'space-between'}
                 >
-                  <Button width="full" maxW="200px" variant="dangerLight" onClick={cancel}>
+                  <Button
+                    width="full"
+                    maxW="200px"
+                    variant="dangerLight"
+                    onClick={cancel}
+                    isDisabled={typeof order?.courier?.id === 'string'}
+                  >
                     {t('Cancelar pedido')}
                   </Button>
                   {order?.status !== 'confirmed' && (
@@ -271,7 +277,13 @@ export const OrderBaseDrawer = ({
             <DrawerFooter borderTop="1px solid #F2F6EA">
               <Flex w="full" justifyContent="flex-start">
                 <Flex w="full" maxW="607px" pr="12" flexDir="row" justifyContent="flex-start">
-                  <Button width="full" maxW="200px" variant="dangerLight" onClick={cancel}>
+                  <Button
+                    width="full"
+                    maxW="200px"
+                    variant="dangerLight"
+                    onClick={cancel}
+                    isDisabled={typeof order?.courier?.id === 'string'}
+                  >
                     {t('Cancelar pedido')}
                   </Button>
                 </Flex>
