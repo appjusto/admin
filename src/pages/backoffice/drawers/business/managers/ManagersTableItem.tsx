@@ -1,6 +1,5 @@
-import { AdminRole } from '@appjusto/types';
+import { AdminRole, ManagerWithRole } from '@appjusto/types';
 import { Box, Button, HStack, Select, Td, Text, Tooltip, Tr } from '@chakra-ui/react';
-import { ManagerWithRole } from 'app/api/manager/types';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { CancelButton } from 'common/components/buttons/CancelButton';
 import { CheckButton } from 'common/components/buttons/CheckButton';
@@ -130,7 +129,13 @@ export const ManagersTableItem = ({
     >
       <Td>{manager.email}</Td>
       <Td>{adminRolePTOptions[manager.role as AdminRole]}</Td>
-      <Td color={versionLabelColor}>{manager?.appVersion ?? 'N/E'}</Td>
+      <Td>
+        <Text as="span" color={versionLabelColor}>
+          {manager?.webAppVersion ?? 'N/E'}
+        </Text>
+        {' / '}
+        <Text as="span">{manager?.appVersion ?? 'N/E'}</Text>
+      </Td>
       {userAbility?.can('update', 'businesses') ? (
         <Td>
           <Tooltip placement="top" label={t('Editar')} aria-label={t('editar-colaborador')}>

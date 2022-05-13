@@ -1,8 +1,7 @@
-import { Business, WithId } from '@appjusto/types';
+import { Business, ManagerWithRole, WithId } from '@appjusto/types';
 import { useContextApi } from 'app/state/api/context';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import React from 'react';
-import { ManagerWithRole } from './types';
 
 export const useGetManagers = (business?: WithId<Business> | null, isActive?: boolean) => {
   // contex

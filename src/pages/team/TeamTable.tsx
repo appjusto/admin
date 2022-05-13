@@ -1,6 +1,5 @@
-import { AdminRole } from '@appjusto/types';
+import { AdminRole, ManagerWithRole } from '@appjusto/types';
 import { Box, HStack, Icon, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
-import { ManagerWithRole } from 'app/api/manager/types';
 import { useManagers } from 'app/api/manager/useManagers';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
@@ -62,7 +61,7 @@ export const TeamTable = () => {
               <Th>{t('E-mail do colaborador')}</Th>
               <Th>{t('Papel do usuário')}</Th>
               <Th>{t('Adicionado em')}</Th>
-              <Th>{t('Versão')}</Th>
+              <Th>{t('Versão web/mob')}</Th>
               <Th></Th>
             </Tr>
           </Thead>

@@ -2,6 +2,7 @@ import {
   CreateManagersPayload,
   GetManagersPayload,
   ManagerProfile,
+  ManagerWithRole,
   NewUserData,
   WithId,
 } from '@appjusto/types';
@@ -9,7 +10,6 @@ import * as Sentry from '@sentry/react';
 import { getDoc, query, setDoc, Unsubscribe, updateDoc, where } from 'firebase/firestore';
 import FirebaseRefs from '../FirebaseRefs';
 import { customCollectionSnapshot, customDocumentSnapshot } from '../utils';
-import { ManagerWithRole } from './types';
 
 export default class ManagerApi {
   constructor(private refs: FirebaseRefs) {}

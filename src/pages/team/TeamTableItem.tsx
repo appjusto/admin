@@ -1,6 +1,5 @@
-import { AdminRole } from '@appjusto/types';
+import { AdminRole, ManagerWithRole } from '@appjusto/types';
 import { Box, Button, HStack, RadioGroup, Td, Text, Tr } from '@chakra-ui/react';
-import { ManagerWithRole } from 'app/api/manager/types';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import CustomRadio from 'common/components/form/CustomRadio';
 import React from 'react';
@@ -175,7 +174,13 @@ export const TeamTableItem = ({
           ' - ' +
           formatTime(manager.createdOn as unknown as Date)}
       </Td>
-      <Td color={versionLabelColor}>{manager.appVersion ?? 'N/E'}</Td>
+      <Td>
+        <Text as="span" color={versionLabelColor}>
+          {manager?.webAppVersion ?? 'N/E'}
+        </Text>
+        {' / '}
+        <Text as="span">{manager?.appVersion ?? 'N/E'}</Text>
+      </Td>
       <Td>
         <Button
           size="sm"

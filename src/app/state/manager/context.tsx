@@ -27,7 +27,7 @@ export const ManagerProvider = ({ children }: Props) => {
   const { setBusinessId } = useContextBusiness();
   const { manager, setManagerEmail } = useManagerProfile();
   // set useUpdateManagerProfile isOnboarding to "true" to avoid dispatching update
-  // manager appVersion changes results
+  // manager webAppVersion changes results
   const { updateProfile, updateLastBusinessId } = useUpdateManagerProfile(manager?.id, true);
   // update business context with manager last business id
   React.useEffect(() => {
@@ -37,10 +37,9 @@ export const ManagerProvider = ({ children }: Props) => {
   React.useEffect(() => {
     if (!user || !manager?.id) return;
     if (user.uid !== manager.id) return;
-    if (!version || manager?.appVersion === version) return;
-    console.log('Update manager appVersion');
-    updateProfile({ changes: { appVersion: version } });
-  }, [user, manager?.id, manager?.appVersion, updateProfile]);
+    if (!version || manager?.webAppVersion === version) return;
+    updateProfile({ changes: { webAppVersion: version } });
+  }, [user, manager?.id, manager?.webAppVersion, updateProfile]);
   // UI
   return (
     <ProfileContext.Provider value={{ manager, setManagerEmail, updateLastBusinessId }}>

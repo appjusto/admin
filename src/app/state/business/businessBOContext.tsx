@@ -3,6 +3,7 @@ import {
   Business,
   BusinessPhone,
   ManagerProfile,
+  ManagerWithRole,
   MarketplaceAccountInfo,
   WithId,
 } from '@appjusto/types';
@@ -10,7 +11,6 @@ import * as cpfutils from '@fnando/cpf';
 import { useBusinessBankAccount } from 'app/api/business/profile/useBusinessBankAccount';
 import { useBusinessManagerAndBankAccountBatch } from 'app/api/business/profile/useBusinessManagerAndBankAccountBatch';
 import { useBusinessMarketPlace } from 'app/api/business/useBusinessMarketPlace';
-import { ManagerWithRole } from 'app/api/manager/types';
 import { MutationResult } from 'app/api/mutation/useCustomMutation';
 import { BackofficeProfileValidation } from 'common/types';
 import { isEmpty, isEqual, pick } from 'lodash';
