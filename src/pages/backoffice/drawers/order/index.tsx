@@ -13,6 +13,7 @@ import { useObserveOrderInvoices } from 'app/api/order/useObserveOrderInvoices';
 import { useOrder } from 'app/api/order/useOrder';
 import { useFlaggedLocations } from 'app/api/platform/useFlaggedLocations';
 import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import { ConsumerProvider } from 'app/state/consumer/context';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { useContextStaffProfile } from 'app/state/staff/context';
@@ -49,6 +50,7 @@ export interface RefundParams {
 
 export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps) => {
   //context
+  const { userAbility } = useContextFirebaseUser();
   const { staff } = useContextStaffProfile();
   const { dispatchAppRequestResult } = useContextAppRequests();
   const { path } = useRouteMatch();
@@ -89,6 +91,8 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
     refundValue += order.fare.business.value;
   if (refund.includes('delivery') && order?.fare?.courier?.value)
     refundValue += order.fare.courier.value;
+  const canUpdateOrderStaff =
+    order?.staff?.id === staff?.id || userAbility?.can('create', 'orders');
   //handlers
   const handleUpdateOrderStaff = async (type: 'assume' | 'release') => {
     if (type === 'assume') {
@@ -107,7 +111,7 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
         });
       } catch (error) {}
     } else if (type === 'release') {
-      if (type === 'release' && staff?.id !== order?.staff?.id) {
+      if (type === 'release' && !canUpdateOrderStaff) {
         return dispatchAppRequestResult({
           status: 'error',
           requestId: 'Operação negada',

@@ -23,7 +23,7 @@ export const OutsideAreaPage = () => {
         )}
       </Text>
       <NewRegistrationItem
-        label={t('Materiais de devulgação')}
+        label={t('Materiais de divulgação')}
         btnLabel={t('Visualizar')}
         btnLink="https://drive.google.com/drive/folders/1r3xKazHLAHY8-W0hb12e22ekK6DaDAua?usp=sharing"
         // helpText={t('Assista ao vídeo sobre como utilizá-los')}

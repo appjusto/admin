@@ -71,6 +71,9 @@ export const OrderBaseDrawer = ({
   // helpers
   const orderStatus = order?.status as OrderStatus;
   const isFlagged = order?.status === 'charged' && order?.flagged;
+  const canUpdateOrderStaff =
+    order?.staff?.id === user?.uid || userAbility?.can('create', 'orders');
+  const canDeleteOrder = order?.status === 'quote' && userAbility?.can('delete', 'orders');
   // handlers
   const handleDelete = async () => {
     if (!order?.id) {
@@ -78,6 +81,13 @@ export const OrderBaseDrawer = ({
         status: 'error',
         requestId: 'OrderBaseDrawer-handleDelete',
         message: { title: 'Parâmetros inválidos. O Id do pedido não existe.' },
+      });
+    }
+    if (!canDeleteOrder) {
+      return dispatchAppRequestResult({
+        status: 'error',
+        requestId: 'OrderBaseDrawer-handleDelete',
+        message: { title: 'Usuário não tem permissão para excluir o pedido.' },
       });
     }
     try {
@@ -101,7 +111,7 @@ export const OrderBaseDrawer = ({
                   <Text as="span" fontWeight="500">
                     {order.staff?.name ?? order.staff.email}
                   </Text>
-                  {order.staff.id === user?.uid && (
+                  {canUpdateOrderStaff && (
                     <Text
                       as="span"
                       ml="2"
@@ -236,7 +246,7 @@ export const OrderBaseDrawer = ({
                   >
                     {t('Salvar alterações')}
                   </Button>
-                  {order?.status === 'quote' && (
+                  {canDeleteOrder && (
                     <Button
                       width="full"
                       maxW="240px"
