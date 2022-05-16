@@ -1,22 +1,26 @@
 import '@testing-library/cypress/add-commands';
-import firebase from 'firebase/app';
+import firebase, { initializeApp } from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/database';
 import 'firebase/firestore';
 import { attachCustomCommands } from 'cypress-firebase';
+import { connectAuthEmulator, getAuth } from 'firebase/auth';
 
 const config = Cypress.env('firebase');
 const emulatorEnabled = Cypress.env('emulator');
 
-if (!firebase.apps.length) {
-  firebase.initializeApp(config);
+let app;
+
+if (!app?.apps.length) {
+  app = initializeApp(config);
 }
 
 // Auth
-const auth = firebase.auth();
-if (emulatorEnabled) auth.useEmulator('http://localhost:9099');
+const auth = getAuth(app);
+// if (emulatorEnabled) auth.useEmulator('http://localhost:9099');
+if (emulatorEnabled) connectAuthEmulator(auth, 'http://localhost:9099');
 
-attachCustomCommands({ Cypress, cy, firebase });
+attachCustomCommands({ Cypress, cy, firebase, app });
 
 // handlers
 const createTestingUser = async (email, password) => {
