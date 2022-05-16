@@ -9,9 +9,12 @@ describe('Business Profile', () => {
       cnpj: cnpjutils.generate(),
       name: 'Restaurante para testes',
       corporateName: 'TESTES LTDA',
-      phone: '11999999999',
       cuisine: 'Brasileira',
       description: 'Restaurante usado para testes com usuário padrão',
+      phoneType1: 'Gerente',
+      phone1: '11999999999',
+      phoneType2: 'Balcão',
+      phone2: '11988888888',
     };
   });
   it('User can save business profile data', () => {
@@ -23,7 +26,7 @@ describe('Business Profile', () => {
     // fill and submit form
     cy.fillBusinessProfile(business, isApproved);
     cy.findByRole('button', { name: /salvar/i }).click();
-    cy.wait(5000);
+    cy.wait(2000);
     // assert
     cy.findAllByText(/informações salvas com sucesso/i).should('be.visible');
   });

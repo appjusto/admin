@@ -68,6 +68,7 @@ export const BusinessPhoneItem = ({
                   w={{ base: '110px' }}
                   minW={{ base: '110px' }}
                   label={t('Tipo')}
+                  aria-label={t('tipo-de-telefone')}
                   value={phone.type}
                   onChange={(e) => handlePhoneUpdate(index, 'type', e.target.value)}
                 >
@@ -158,6 +159,7 @@ export const BusinessPhoneItem = ({
           w={{ base: '110px' }}
           minW={{ base: '110px' }}
           label={t('Tipo')}
+          aria-label={t(`tipo-de-telefone-${index}`)}
           value={phone.type}
           onChange={(e) => handlePhoneUpdate(index, 'type', e.target.value)}
         >
@@ -172,6 +174,7 @@ export const BusinessPhoneItem = ({
           //ref={phoneRef}
           id={`business-phone-${index}`}
           label={t(`Número do telefone ${index === 0 ? '*' : ''}`)}
+          aria-label={t(`numero-do-telefone-${index}`)}
           placeholder={t('Nº de telefone ou celular')}
           mask={phoneMask}
           parser={numbersOnlyParser}
@@ -193,6 +196,7 @@ export const BusinessPhoneItem = ({
           value="calls"
           isChecked={phone.calls}
           onChange={(e) => handlePhoneUpdate(index, 'calls', e.target.checked)}
+          aria-label={`calls-checkbox-${index}`}
         >
           {isBackoffice ? <Icon w="20px" h="20px" as={FaPhoneAlt} /> : t('Chamadas')}
         </CustomCheckbox>
@@ -201,6 +205,7 @@ export const BusinessPhoneItem = ({
           value="whatsapp"
           isChecked={phone.whatsapp}
           onChange={(e) => handlePhoneUpdate(index, 'whatsapp', e.target.checked)}
+          aria-label={`whatsapp-checkbox-${index}`}
         >
           {isBackoffice ? <Icon w="22px" h="22px" as={FaWhatsapp} /> : t('Whatsapp')}
         </CustomCheckbox>
