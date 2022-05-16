@@ -10,7 +10,7 @@ describe('Business Banking information', () => {
     // login
     cy.mainUserLogin();
     // navigate to business schedules page
-    cy.findByRole('button', { name: /edit product/i }).click({ force: true });
+    cy.findByRole('link', { name: /dados bancários/i }).click();
     cy.findByRole('heading', { name: /dados bancários/i }).should('be.visible');
     // fill form
     cy.fillBankingInfoForm(isApproved);

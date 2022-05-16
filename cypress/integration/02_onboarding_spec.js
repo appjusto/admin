@@ -24,9 +24,12 @@ describe('Onboarding', () => {
       cnpj: cnpjutils.generate(),
       name: 'Teste de onboarding',
       corporateName: 'TESTES LTDA',
-      phone: '11999999999',
       cuisine: 'Brasileira',
       description: 'Restaurante para teste de onboarding',
+      phoneType1: 'Gerente',
+      phone1: '11999999999',
+      phoneType2: 'Balcão',
+      phone2: '11988888888',
     };
   });
 
