@@ -3,6 +3,7 @@ import { Box, Button, Flex, HStack, RadioGroup, Text } from '@chakra-ui/react';
 import { useGetOutsourceDelivery } from 'app/api/order/useGetOutsourceDelivery';
 import { useObserveOrderMatching } from 'app/api/order/useObserveOrderMatching';
 import { useOrderCourierManualAllocation } from 'app/api/order/useOrderCourierManualAllocation';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import CustomRadio from 'common/components/form/CustomRadio';
 import { CustomInput } from 'common/components/form/input/CustomInput';
@@ -21,6 +22,7 @@ interface MatchingProps {
 
 export const Matching = ({ order }: MatchingProps) => {
   // context
+  const { userAbility } = useContextFirebaseUser();
   const { matching, updateCourierNotified, updateResult, restartMatching, restartResult } =
     useObserveOrderMatching(order?.id);
   const { courierManualAllocation, allocationResult } = useOrderCourierManualAllocation();
@@ -95,6 +97,9 @@ export const Matching = ({ order }: MatchingProps) => {
     <>
       {!isOutsourcing ? (
         <Button
+          display={
+            userAbility?.can('update', { kind: 'orders', ...order }) ? 'inline-block' : 'none'
+          }
           h="38px"
           w="220px"
           size="sm"
@@ -263,7 +268,7 @@ export const Matching = ({ order }: MatchingProps) => {
             couriersNotified.map((courier) => (
               <CourierNotifiedBox
                 key={courier.id}
-                orderId={order?.id!}
+                order={order}
                 isOrderActive={isOrderActive}
                 courier={courier}
                 dispatchingStatus={order?.dispatchingStatus}

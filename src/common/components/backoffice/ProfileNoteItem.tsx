@@ -1,6 +1,6 @@
 import { ProfileNote, WithId } from '@appjusto/types';
 import { Box, Button, Flex, HStack, Text } from '@chakra-ui/react';
-import { useContextAgentProfile } from 'app/state/agent/context';
+import { useContextStaffProfile } from 'app/state/staff/context';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
 import React from 'react';
 import { getDateAndHour } from 'utils/functions';
@@ -24,7 +24,7 @@ export const ProfileNoteItem = ({
   isLoading,
 }: ProfileNoteItemProps) => {
   // context
-  const { agent } = useContextAgentProfile();
+  const { staff } = useContextStaffProfile();
   // state
   const [isEditing, setIsEditing] = React.useState(false);
   const [isDeleting, setIsDeleting] = React.useState(false);
@@ -36,7 +36,7 @@ export const ProfileNoteItem = ({
         <Text fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
           {t('Agente:')}{' '}
           <Text as="span" fontWeight="500">
-            {profileNote.agentName ?? profileNote.agentEmail}
+            {profileNote.staffName ?? profileNote.staffEmail}
           </Text>
         </Text>
         <Text fontSize="13px" lineHeight="18px">
@@ -102,7 +102,7 @@ export const ProfileNoteItem = ({
               <Text flex={3} fontSize="15px" color="black" fontWeight="500" lineHeight="22px">
                 {profileNote.note}
               </Text>
-              {profileNote.agentId === agent?.id && (
+              {profileNote.staffId === staff?.id && (
                 <HStack flex={1} spacing={4} justifyContent="flex-end">
                   <EditButton onClick={() => setIsEditing(true)} />
                   <DeleteButton onClick={() => setIsDeleting(true)} />

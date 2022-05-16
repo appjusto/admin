@@ -1,4 +1,4 @@
-import { Badge, Box, Flex, Link } from '@chakra-ui/react';
+import { Badge, Box, Flex, Link, Text } from '@chakra-ui/react';
 import { useOrdersContext } from 'app/state/order';
 import React from 'react';
 import { Link as RouterLink, useRouteMatch } from 'react-router-dom';
@@ -6,9 +6,10 @@ import { t } from 'utils/i18n';
 
 interface LinkItemProps {
   to: string;
+  isDisabled?: boolean;
 }
 
-export const OrdersLinkItem = ({ to }: LinkItemProps) => {
+export const OrdersLinkItem = ({ to, isDisabled }: LinkItemProps) => {
   // contex
   const { confirmedNumber } = useOrdersContext();
   let match = useRouteMatch({
@@ -34,6 +35,13 @@ export const OrdersLinkItem = ({ to }: LinkItemProps) => {
     return () => clearInterval(alertInterval);
   }, [confirmedNumber]);
   // UI
+  if (isDisabled) {
+    return (
+      <Flex pl="6" h="34px" alignItems="center">
+        <Text color="gray.600">{t('Gerenciador de pedidos')}</Text>
+      </Flex>
+    );
+  }
   return (
     <Flex
       alignItems="center"

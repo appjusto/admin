@@ -1,6 +1,6 @@
 import { Box, Flex, FlexProps, Image, Link, Text } from '@chakra-ui/react';
-import { useContextAgentProfile } from 'app/state/agent/context';
 import { useContextManagerProfile } from 'app/state/manager/context';
+import { useContextStaffProfile } from 'app/state/staff/context';
 import { EditButton } from 'common/components/buttons/EditButton';
 import managerIcon from 'common/img/manager.svg';
 import { Link as RouterLink, useRouteMatch } from 'react-router-dom';
@@ -10,9 +10,12 @@ export const ManagerBar = (props: FlexProps) => {
   // context
   const { path, url } = useRouteMatch();
   const { manager } = useContextManagerProfile();
-  const { username } = useContextAgentProfile();
+  const { username } = useContextStaffProfile();
+  // helpers
+  const isEmulated = process.env.REACT_APP_FIREBASE_EMULATOR;
   const isBackOffice = path.includes('backoffice');
   const name = manager?.name ? `, ${manager.name}!` : '!';
+  // UI
   return (
     <Flex
       mt={{ base: '3', lg: '0' }}
@@ -24,6 +27,7 @@ export const ManagerBar = (props: FlexProps) => {
       bgColor={{ base: '#F6F6F6', lg: '#EEEEEE' }}
       px="4"
       py="2"
+      pb={isEmulated ? '8' : '0'}
       {...props}
     >
       <Flex mr="2" justifyContent="center" alignItems="center">
@@ -44,7 +48,7 @@ export const ManagerBar = (props: FlexProps) => {
             {t('Sair')}
           </Link>
         </Box>
-        <RouterLink to={isBackOffice ? `${url}/agent-profile` : `${url}/manager-profile`}>
+        <RouterLink to={isBackOffice ? `${url}/staff-profile` : `${url}/manager-profile`}>
           <EditButton />
         </RouterLink>
       </Flex>

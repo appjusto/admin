@@ -139,7 +139,7 @@ export const OrdersKanban = () => {
         <Stack w="100%" direction={{ base: 'column', lg: 'row' }} mt="8" spacing={4}>
           <Stack w="100%" direction={{ base: 'column', md: 'row' }} spacing={4}>
             <OrdersKanbanList
-              title={t('Pedidos à confirmar')}
+              title={t('Pedidos a confirmar')}
               orders={ordersByStatus['confirmed']}
               details={t('Aqui você verá os novos pedidos. Aceite-os para confirmar o preparo.')}
             />

@@ -1,6 +1,7 @@
 import { Box, Text } from '@chakra-ui/react';
 import * as cnpjutils from '@fnando/cnpj';
 import * as cpfutils from '@fnando/cpf';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextCourierProfile } from 'app/state/courier/context';
 import { WhatsappButton } from 'common/components/buttons/WhatsappButton';
 import { CustomInput } from 'common/components/form/input/CustomInput';
@@ -15,6 +16,7 @@ import {
 } from 'common/components/form/input/pattern-input/formatters';
 import { numbersOnlyParser } from 'common/components/form/input/pattern-input/parsers';
 import React from 'react';
+import { normalizeEmail } from 'utils/email';
 import { t } from 'utils/i18n';
 
 interface PersonalProfileProps {
@@ -23,12 +25,9 @@ interface PersonalProfileProps {
 
 export const PersonalProfile = ({ isCNPJ }: PersonalProfileProps) => {
   // context
-  const {
-    courier,
-    handleProfileChange,
-    isEditingEmail,
-    setIsEditingEmail,
-  } = useContextCourierProfile();
+  const { userAbility } = useContextFirebaseUser();
+  const { courier, handleProfileChange, isEditingEmail, setIsEditingEmail } =
+    useContextCourierProfile();
   // refs
   const nameRef = React.useRef<HTMLInputElement>(null);
   const cpfRef = React.useRef<HTMLInputElement>(null);
@@ -66,12 +65,13 @@ export const PersonalProfile = ({ isCNPJ }: PersonalProfileProps) => {
             id="user-profile-email"
             label={t('E-mail')}
             value={courier?.email ?? ''}
-            onChange={(ev) => handleInputChange('email', ev.target.value)}
+            onChange={(ev) => handleInputChange('email', normalizeEmail(ev.target.value))}
           />
         </Box>
       ) : (
         <Box>
           <Text
+            display={userAbility?.can('update', 'couriers') ? 'block' : 'none'}
             textAlign="end"
             color="green.600"
             textDecor="underline"

@@ -44,11 +44,11 @@ const initialState = [defaultPhone];
 const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   // context
   const { dispatchAppRequestResult } = useContextAppRequests();
-  const { business, setBusinessId } = useContextBusiness();
+  const { business } = useContextBusiness();
   const queryClient = useQueryClient();
   const { path } = useRouteMatch();
   const history = useHistory();
-  const { isBackofficeUser } = useContextFirebaseUser();
+  const { isBackofficeUser, userAbility } = useContextFirebaseUser();
   // state
   const devCNPJ = ['dev', 'staging'].includes(process.env.REACT_APP_ENVIRONMENT ?? '')
     ? cnpjutils.generate()
@@ -75,12 +75,10 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   // queries & mutations
   const {
     createBusinessProfile,
-    cloneBusiness,
     updateBusinessProfileWithImages,
     logo,
     cover,
     updateWithImagesResult,
-    cloneResult,
   } = useBusinessProfile(typeof onboarding === 'string');
   const { isLoading, isSuccess } = updateWithImagesResult;
   // handlers
@@ -154,19 +152,13 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
     } catch (error) {
       dispatchAppRequestResult({
         status: 'error',
+        error,
         requestId: 'BusinessProfile-submit-error',
         message: {
           title: 'Erro de conexão com o servidor',
           description: 'As iformações podem não ter sido salvas.',
         },
       });
-    }
-  };
-  const cloneBusinessHandler = async () => {
-    const newBusiness = await cloneBusiness();
-    if (newBusiness?.id) {
-      setBusinessId(newBusiness.id);
-      history.push('/app');
     }
   };
   const clearDropImages = React.useCallback((type: string) => {
@@ -375,16 +367,18 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
               </Flex>
             </>
           )}
-          {!onboarding && (
-            <CloneBusiness cloneHandler={cloneBusinessHandler} isLoading={cloneResult.isLoading} />
-          )}
+          {!onboarding &&
+            userAbility?.can('create', 'businesses') &&
+            typeof business?.companyName === 'string' && <CloneBusiness />}
           {/* submit */}
           <PageFooter
             onboarding={onboarding}
             redirect={redirect}
             isLoading={isLoading}
-            deleteLabel={t('Excluir restaurante')}
-            onDelete={openDrawerHandler}
+            deleteLabel={
+              userAbility?.can('delete', 'businesses') ? t('Excluir restaurante') : undefined
+            }
+            onDelete={userAbility?.can('delete', 'businesses') ? openDrawerHandler : undefined}
           />
         </form>
       </Box>

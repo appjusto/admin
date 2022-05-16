@@ -1,13 +1,18 @@
-import { Business, ManagerProfile, WithId } from '@appjusto/types';
-import { useManagerBusinesses } from 'app/api/manager/useManagerBusinesses';
+import { ManagerProfile, WithId } from '@appjusto/types';
 import { useManagerProfile } from 'app/api/manager/useManagerProfile';
+import { useUpdateManagerProfile } from 'app/api/manager/useUpdateManagerProfile';
 import React, { Dispatch, SetStateAction } from 'react';
+import { UseMutateAsyncFunction } from 'react-query';
+import packageInfo from '../../../../package.json';
 import { useContextFirebaseUser } from '../auth/context';
+import { useContextBusiness } from '../business/context';
+
+const version = packageInfo.version;
 
 interface ProfileContextProps {
   manager?: WithId<ManagerProfile> | null;
   setManagerEmail: Dispatch<SetStateAction<string | null | undefined>>;
-  managerBusinesses?: WithId<Business>[] | null;
+  updateLastBusinessId: UseMutateAsyncFunction<void, unknown, string | null, unknown>;
 }
 
 const ProfileContext = React.createContext<ProfileContextProps>({} as ProfileContextProps);
@@ -17,11 +22,27 @@ interface Props {
 }
 
 export const ManagerProvider = ({ children }: Props) => {
-  const { role } = useContextFirebaseUser();
+  // context
+  const { user } = useContextFirebaseUser();
+  const { setBusinessId } = useContextBusiness();
   const { manager, setManagerEmail } = useManagerProfile();
-  const managerBusinesses = useManagerBusinesses(manager?.email, role);
+  // set useUpdateManagerProfile isOnboarding to "true" to avoid dispatching update
+  // manager webAppVersion changes results
+  const { updateProfile, updateLastBusinessId } = useUpdateManagerProfile(manager?.id, true);
+  // update business context with manager last business id
+  React.useEffect(() => {
+    if (!manager?.lastBusinessId) return;
+    setBusinessId(manager.lastBusinessId);
+  }, [manager?.lastBusinessId, setBusinessId]);
+  React.useEffect(() => {
+    if (!user || !manager?.id) return;
+    if (user.uid !== manager.id) return;
+    if (!version || manager?.webAppVersion === version) return;
+    updateProfile({ changes: { webAppVersion: version } });
+  }, [user, manager?.id, manager?.webAppVersion, updateProfile]);
+  // UI
   return (
-    <ProfileContext.Provider value={{ manager, setManagerEmail, managerBusinesses }}>
+    <ProfileContext.Provider value={{ manager, setManagerEmail, updateLastBusinessId }}>
       {children}
     </ProfileContext.Provider>
   );

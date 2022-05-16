@@ -62,7 +62,7 @@ export const getDateAndHour = (timestamp?: FieldValue | Date, onlyDate?: boolean
     if (onlyDate) return date;
     return `${date} ${hour}`;
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return 'N/E';
   }
 };
@@ -95,10 +95,10 @@ export const getAlgoliaFieldDateAndHour = (timestamp: FieldValue | number) => {
   } else {
     try {
       const date = new Date(
-        ((timestamp as unknown) as AlgoliaCreatedOn)._seconds * 1000
+        (timestamp as unknown as AlgoliaCreatedOn)._seconds * 1000
       ).toLocaleDateString();
       const hour = new Date(
-        ((timestamp as unknown) as AlgoliaCreatedOn)._seconds * 1000
+        (timestamp as unknown as AlgoliaCreatedOn)._seconds * 1000
       ).toLocaleTimeString();
       return `${date} - ${hour}`;
     } catch (error) {

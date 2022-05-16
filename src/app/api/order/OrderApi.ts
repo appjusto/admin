@@ -6,6 +6,7 @@ import {
   MatchOrderPayload,
   Order,
   OrderCancellation,
+  OrderChange,
   OrderFraudPreventionFlags,
   OrderIssue,
   OrderMatching,
@@ -13,15 +14,17 @@ import {
   OrderType,
   OutsourceAccountType,
   OutsourceDeliveryPayload,
+  ProfileNote,
   WithId,
 } from '@appjusto/types';
 import { IuguInvoiceStatus } from '@appjusto/types/payment/iugu';
 import * as Sentry from '@sentry/react';
 import { documentAs, documentsAs, FirebaseDocument } from 'core/fb';
+import { FirebaseError } from 'firebase/app';
 import {
   addDoc,
+  deleteDoc,
   DocumentData,
-  FieldValue,
   getDoc,
   getDocs,
   limit,
@@ -47,11 +50,6 @@ export type CancellationData = {
 };
 
 export type Ordering = 'asc' | 'desc';
-export interface OrderLog {
-  before: Partial<Order>;
-  after: Partial<Order>;
-  timestamp: FieldValue;
-}
 
 export default class OrderApi {
   constructor(private refs: FirebaseRefs) {}
@@ -257,7 +255,7 @@ export default class OrderApi {
 
   observeOrderLogs(
     orderId: string,
-    resultHandler: (order: WithId<OrderLog>[]) => void
+    resultHandler: (order: WithId<OrderChange>[]) => void
   ): Unsubscribe {
     const q = query(this.refs.getOrderLogsRef(orderId), orderBy('timestamp', 'asc'));
     // returns the unsubscribe function
@@ -406,6 +404,15 @@ export default class OrderApi {
     });
   }
 
+  async getOrderIdByCode(orderCode: string) {
+    const q = query(this.refs.getOrdersRef(), where('code', '==', orderCode));
+    const orderId = await getDocs(q).then((snapshot) => {
+      if (!snapshot.empty) return snapshot.docs[0].id;
+      else throw new FirebaseError('ignored-error', 'Não foi possível encontrar o pedido.');
+    });
+    return orderId;
+  }
+
   async getOrderPrivateCancellation(orderId: string) {
     const doc = await getDoc(this.refs.getOrderCancellationRef(orderId));
     if (!doc.exists) return null;
@@ -456,13 +463,29 @@ export default class OrderApi {
   async cancelOrder(data: CancelOrderPayload) {
     const { params } = data;
     const paramsData = params ?? { refund: ['products', 'delivery', 'platform'] };
-    // get callable function ref and send data to bakcend
     const payload: CancelOrderPayload = {
       ...data,
       meta: { version: '1' }, // TODO: pass correct version on
       params: paramsData,
     };
     return await this.refs.getCancelOrderCallable()(payload);
+  }
+
+  async deleteQuoteOrder(orderId: string) {
+    const orderRef = this.refs.getOrderRef(orderId);
+    const orderSnapshot = await getDoc(orderRef);
+    if (!orderSnapshot.exists()) {
+      throw new FirebaseError('ignored-error', 'O pedido informado não existe.');
+    }
+    const order = documentAs<Order>(orderSnapshot);
+    if (order.status !== 'quote') {
+      throw new FirebaseError(
+        'ignored-error',
+        'Operação negada. O status do pedido informado não é "cotação".'
+      );
+    }
+    await deleteDoc(orderRef);
+    return true;
   }
 
   async courierManualAllocation(orderId: string, courierId: string, comment: string) {
@@ -498,5 +521,36 @@ export default class OrderApi {
     };
     if (accountType) payload.accountType = accountType;
     return await this.refs.getOutsourceDeliveryCallable()(payload);
+  }
+
+  // order notes
+  observeOrderNotes(
+    orderId: string,
+    resultHandler: (result: WithId<ProfileNote>[]) => void
+  ): Unsubscribe {
+    const q = query(this.refs.getOrderNotesRef(orderId), orderBy('createdOn', 'desc'));
+    // returns the unsubscribe function
+    return customCollectionSnapshot(q, resultHandler);
+  }
+
+  async createOrderNote(orderId: string, data: Partial<ProfileNote>) {
+    const timestamp = serverTimestamp();
+    await addDoc(this.refs.getOrderNotesRef(orderId), {
+      ...data,
+      createdOn: timestamp,
+      updatedOn: timestamp,
+    } as ProfileNote);
+  }
+
+  async updateOrderNote(orderId: string, orderNoteId: string, changes: Partial<ProfileNote>) {
+    const timestamp = serverTimestamp();
+    await updateDoc(this.refs.getOrderNoteRef(orderId, orderNoteId), {
+      ...changes,
+      updatedOn: timestamp,
+    } as Partial<ProfileNote>);
+  }
+
+  async deleteOrderNote(orderId: string, orderNoteId: string) {
+    await deleteDoc(this.refs.getOrderNoteRef(orderId, orderNoteId));
   }
 }

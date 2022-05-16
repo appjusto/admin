@@ -79,6 +79,12 @@ export default class ConsumerApi {
       });
   }
 
+  async getConsumerIdByCode(consumerCode: string) {
+    const q = query(this.refs.getConsumersRef(), where('code', '==', consumerCode));
+    const consumerId = await getDocs(q).then((snapshot) => snapshot.docs[0].id);
+    return consumerId;
+  }
+
   async fecthRecommendation(recommendationId: string) {
     return await getDoc(this.refs.getRecommendationRef(recommendationId));
   }

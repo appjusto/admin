@@ -1,5 +1,5 @@
-import { useContextAgentProfile } from 'app/state/agent/context';
 import { useContextFirebaseUser } from 'app/state/auth/context';
+import { useContextStaffProfile } from 'app/state/staff/context';
 import { Loading } from 'common/components/Loading';
 import React from 'react';
 import { Redirect, Route, RouteProps } from 'react-router-dom';
@@ -10,16 +10,16 @@ const version = packageInfo.version;
 
 type Status = 'initial' | 'unauthenticated' | 'authenticated' | 'profile-loaded';
 
-// type role = 'root' | 'staff' | 'admin' | 'collaborator';
+const delay = 4000; // delay to wait for firebase initialization
 
 export const BackOfficeRoute = (props: RouteProps) => {
   // context
   const { user, minVersion } = useContextFirebaseUser();
-  const { agent } = useContextAgentProfile();
+  const { staff } = useContextStaffProfile();
   // state
   const [status, setStatus] = React.useState<Status>('initial');
+  // helpers
   // side effects
-  const delay = 4000; // delay to wait for firebase initialization
   React.useEffect(() => {
     if (!user) {
       const uid = setTimeout(() => {
@@ -27,8 +27,8 @@ export const BackOfficeRoute = (props: RouteProps) => {
       }, delay);
       return () => clearTimeout(uid);
     }
-    if (user && agent) setStatus('profile-loaded');
-  }, [user, agent]);
+    if (user && staff) setStatus('profile-loaded');
+  }, [user, staff]);
   // UI
   if (minVersion && !isAppVersionAllowed(minVersion, version)) {
     return <Redirect to="/inactive-version" />;

@@ -13,9 +13,10 @@ import { useObserveOrderInvoices } from 'app/api/order/useObserveOrderInvoices';
 import { useOrder } from 'app/api/order/useOrder';
 import { useFlaggedLocations } from 'app/api/platform/useFlaggedLocations';
 import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';
-import { useContextAgentProfile } from 'app/state/agent/context';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import { ConsumerProvider } from 'app/state/consumer/context';
 import { useContextAppRequests } from 'app/state/requests/context';
+import { useContextStaffProfile } from 'app/state/staff/context';
 import { GeoPoint } from 'firebase/firestore';
 import { OrderDetails } from 'pages/orders/drawers/orderdrawer/OrderDetails';
 import { OrderIssuesTable } from 'pages/orders/drawers/orderdrawer/OrderIssuesTable';
@@ -49,24 +50,29 @@ export interface RefundParams {
 
 export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps) => {
   //context
+  const { userAbility } = useContextFirebaseUser();
+  const { staff } = useContextStaffProfile();
   const { dispatchAppRequestResult } = useContextAppRequests();
   const { path } = useRouteMatch();
-  const { agent, username } = useContextAgentProfile();
   const { orderId } = useParams<Params>();
   const {
     order,
     updateOrder,
     updateResult,
+    updateOrderStaff,
+    updateOrderStaffResult,
     cancelOrder,
     cancelResult,
+    deleteQuoteOrder,
+    deleteOrderResult,
     orderIssues,
     orderCancellation,
     orderCancellationCosts,
   } = useOrder(orderId);
-  const invoices = useObserveOrderInvoices(order?.id);
+  const invoices = useObserveOrderInvoices(orderId);
   const cancelOptions = useIssuesByType(cancelOptionsArray);
   const { addFlaggedLocation } = useFlaggedLocations();
-  const { chatMessages, orderChatGroup } = useObserveOrderChatMessages(order?.id);
+  const { chatMessages, orderChatGroup } = useObserveOrderChatMessages(orderId);
   // state
   const [status, setStatus] = React.useState<OrderStatus | undefined>(order?.status);
   const [dispatchingState, setDispatchingState] = React.useState<DispatchingState | undefined>(
@@ -85,7 +91,38 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
     refundValue += order.fare.business.value;
   if (refund.includes('delivery') && order?.fare?.courier?.value)
     refundValue += order.fare.courier.value;
+  const canUpdateOrderStaff =
+    order?.staff?.id === staff?.id || userAbility?.can('create', 'orders');
   //handlers
+  const handleUpdateOrderStaff = async (type: 'assume' | 'release') => {
+    if (type === 'assume') {
+      if (order?.staff) {
+        return dispatchAppRequestResult({
+          status: 'error',
+          requestId: 'Operação negada',
+          message: { title: 'Já existe um agente responsável pelo pedido.' },
+        });
+      }
+      try {
+        await updateOrderStaff({
+          id: staff?.id!,
+          email: staff?.email!,
+          name: staff?.name ?? null,
+        });
+      } catch (error) {}
+    } else if (type === 'release') {
+      if (type === 'release' && !canUpdateOrderStaff) {
+        return dispatchAppRequestResult({
+          status: 'error',
+          requestId: 'Operação negada',
+          message: { title: 'Este usuário não é o responsável pelo pedido.' },
+        });
+      }
+      try {
+        await updateOrderStaff(null);
+      } catch (error) {}
+    }
+  };
   const updateState = (
     type: 'status' | 'dispatchingState' | 'issue' | 'message',
     value: OrderStatus | WithId<Issue> | string
@@ -205,19 +242,26 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
       });
     else setLoadingState('idle');
   }, [updateResult.isLoading, cancelResult.isLoading]);
+  React.useEffect(() => {
+    if (!deleteOrderResult.isSuccess) return;
+    onClose();
+  }, [deleteOrderResult.isSuccess, onClose]);
   //UI
   return (
     <ConsumerProvider>
       <OrderBaseDrawer
-        agent={{ id: agent?.id, name: username }}
         order={order}
         onClose={onClose}
         message={message}
         updateState={updateState}
         updateOrderStatus={updateOrderStatus}
+        updateOrderStaff={handleUpdateOrderStaff}
+        updateStaffResult={updateOrderStaffResult}
         cancellation={cancellation}
         loadingState={loadingState}
         isChatMessages={isChatMessages}
+        deleteOrder={deleteQuoteOrder}
+        deleteLoading={deleteOrderResult.isLoading}
         {...props}
       >
         <Switch>
@@ -238,6 +282,7 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
           </Route>
           <Route exact path={`${path}/status`}>
             <OrderStatusBar
+              orderId={orderId}
               orderType={order?.type}
               orderStatus={order?.status}
               status={status}

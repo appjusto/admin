@@ -1,9 +1,9 @@
+import { ManagerProfile, WithId } from '@appjusto/types';
 import { useContextApi } from 'app/state/api/context';
 import { useContextFirebaseUser } from 'app/state/auth/context';
-import { ManagerProfile, WithId } from '@appjusto/types';
 import React from 'react';
 
-export const useAgentProfile = () => {
+export const useStaffProfile = () => {
   // contex
   const api = useContextApi();
   const { user, isBackofficeUser } = useContextFirebaseUser();
@@ -13,9 +13,15 @@ export const useAgentProfile = () => {
   // observe profile
   React.useEffect(() => {
     if (!user?.uid || !isBackofficeUser) return;
-    const unsub = api.manager().observeProfile(user.uid, setProfile);
+    const unsub = api.staff().observeProfile(user.uid, setProfile);
     return () => unsub();
   }, [api, user?.uid, isBackofficeUser]);
+  React.useEffect(() => {
+    if (!user?.uid || !isBackofficeUser) return;
+    if (profile?.situation === 'pending') {
+      api.staff().updateProfile(user.uid, { situation: 'approved' });
+    }
+  }, [api, user?.uid, isBackofficeUser, profile]);
   // return
   return profile;
 };

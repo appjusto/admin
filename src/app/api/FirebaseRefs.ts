@@ -14,7 +14,7 @@ export default class FirebaseRefs {
   getBusinessProfileCallable = () => httpsCallable(this.functions, 'businessProfile');
   getCloneComplementsGroupCallable = () => httpsCallable(this.functions, 'cloneComplementsGroup');
   getCreateManagersCallable = () => httpsCallable(this.functions, 'createManagers');
-  getGetBusinessManagersCallable = () => httpsCallable(this.functions, 'getBusinessManagers');
+  getGetManagersCallable = () => httpsCallable(this.functions, 'getManagers');
   getCancelOrderCallable = () => httpsCallable(this.functions, 'cancelOrder');
   getMatchOrderCallable = () => httpsCallable(this.functions, 'matchOrder');
   getDropOrderCallable = () => httpsCallable(this.functions, 'dropOrder');
@@ -108,6 +108,12 @@ export default class FirebaseRefs {
   getBusinessMarketPlaceRef = (businessId: string) =>
     doc(this.getBusinessPrivateRef(businessId), 'marketplace');
 
+  // staff
+  getStaffsRef = () => collection(this.firestore, 'staff');
+  getStaffRef = (staffId: string) => doc(this.getStaffsRef(), staffId);
+  getStaffPrivateRef = (staffId: string) => collection(this.getStaffRef(staffId), 'private');
+  getStaffDeletionRef = (staffId: string) => doc(this.getStaffPrivateRef(staffId), 'deletion');
+
   // managers
   getManagersRef = () => collection(this.firestore, 'managers');
   getManagerRef = (managerId: string) => doc(this.getManagersRef(), managerId);
@@ -117,6 +123,9 @@ export default class FirebaseRefs {
   getOrderRef = (orderId: string) => doc(this.getOrdersRef(), orderId);
   getOrderIssuesRef = (orderId: string) => collection(this.getOrderRef(orderId), 'issues');
   getOrderLogsRef = (orderId: string) => collection(this.getOrderRef(orderId), 'logs');
+  getOrderNotesRef = (orderId: string) => collection(this.getOrderRef(orderId), 'ordernotes');
+  getOrderNoteRef = (orderId: string, orderNoteId: string) =>
+    doc(this.getOrderNotesRef(orderId), orderNoteId);
   // orders private
   getOrderPrivateRef = (orderId: string) => collection(this.getOrderRef(orderId), 'private');
   getOrderPaymentsRef = (orderId: string) => doc(this.getOrderPrivateRef(orderId), 'payments');

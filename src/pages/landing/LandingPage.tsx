@@ -1,11 +1,8 @@
 import { Box } from '@chakra-ui/react';
-import { useContextBusiness } from 'app/state/business/context';
-import { useContextMeasurement } from 'app/state/measurement/context';
 import Container from 'common/components/Container';
 import { CookiesBar } from 'common/components/CookiesBar';
 import { CrowdfundingCard } from 'common/components/CrowdfundingCard';
 import React from 'react';
-import ReactPixel from 'react-facebook-pixel';
 import { CalculatorCall } from './CalculatorCall';
 import { Content } from './Content';
 import { ForYourBusiness } from './ForYourBusiness';
@@ -19,19 +16,13 @@ import { Transparency } from './Transparency';
 
 const LandingPage = () => {
   // context
-  const { isDeleted, setIsDeleted } = useContextBusiness();
-  const { userConsent } = useContextMeasurement();
+  // const { userConsent } = useContextMeasurement();
   // side effects
-  React.useEffect(() => {
-    if (isDeleted) {
-      setIsDeleted(false);
-    }
-  }, [isDeleted, setIsDeleted]);
-  React.useEffect(() => {
-    if (!userConsent) return;
-    if (process.env.NODE_ENV !== 'production') return;
-    ReactPixel.pageView();
-  }, [userConsent]);
+  // React.useEffect(() => {
+  //   if (!userConsent) return;
+  //   if (process.env.NODE_ENV !== 'production') return;
+  //   ReactPixel.pageView();
+  // }, [userConsent]);
   // UI
   return (
     <Box>

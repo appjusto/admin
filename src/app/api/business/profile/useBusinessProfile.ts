@@ -1,11 +1,11 @@
+import { Business, DeleteBusinessPayload } from '@appjusto/types';
+import * as Sentry from '@sentry/react';
+import { useCustomMutation } from 'app/api/mutation/useCustomMutation';
 import { useContextApi } from 'app/state/api/context';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
-import { Business } from '@appjusto/types';
 import React from 'react';
 import { useQuery } from 'react-query';
-import * as Sentry from '@sentry/react';
-import { useContextFirebaseUser } from 'app/state/auth/context';
-import { useCustomMutation } from 'app/api/mutation/useCustomMutation';
 
 export const useBusinessProfile = (isOnboarding: boolean = false) => {
   // context
@@ -36,48 +36,45 @@ export const useBusinessProfile = (isOnboarding: boolean = false) => {
     'updateBusinessProfile',
     !isOnboarding
   );
-  const {
-    mutateAsync: updateBusinessProfileWithImages,
-    mutationResult: updateWithImagesResult,
-  } = useCustomMutation(
-    async (data: {
-      changes: Partial<Business>;
-      logoFileToSave: File | null;
-      coverFilesToSave: File[] | null;
-    }) =>
-      api
-        .business()
-        .updateBusinessProfileWithImages(
-          businessId!,
-          data.changes,
-          data.logoFileToSave,
-          data.coverFilesToSave
-        ),
-    'updateBusinessProfileWithImages',
-    !isOnboarding
-  );
+  const { mutateAsync: updateBusinessProfileWithImages, mutationResult: updateWithImagesResult } =
+    useCustomMutation(
+      async (data: {
+        changes: Partial<Business>;
+        logoFileToSave: File | null;
+        coverFilesToSave: File[] | null;
+      }) =>
+        api
+          .business()
+          .updateBusinessProfileWithImages(
+            businessId!,
+            data.changes,
+            data.logoFileToSave,
+            data.coverFilesToSave
+          ),
+      'updateBusinessProfileWithImages',
+      !isOnboarding
+    );
   const { mutateAsync: deleteBusinessProfile, mutationResult: deleteResult } = useCustomMutation(
-    async () => api.business().deleteBusinessProfile(businessId!),
+    async (survey: Partial<DeleteBusinessPayload>) =>
+      api.business().deleteBusinessProfile({ businessId, ...survey }),
     'deleteBusinessProfile',
     false
   );
   const { mutateAsync: cloneBusiness, mutationResult: cloneResult } = useCustomMutation(
-    async () => {
-      const newBusiness = await api.business().cloneBusiness(businessId!);
+    async (isFromScratch?: boolean) => {
+      const newBusiness = await api.business().cloneBusiness(businessId!, isFromScratch);
       if (refreshUserToken && newBusiness?.id) refreshUserToken(newBusiness.id);
       return newBusiness;
     },
     'cloneBusiness'
   );
-  const {
-    mutateAsync: cloneComplementsGroup,
-    mutationResult: cloneGroupResult,
-  } = useCustomMutation(async (data: { groupId: string; name?: string }) => {
-    const newGroupId = await api
-      .business()
-      .cloneComplementsGroup(businessId!, data.groupId, data.name);
-    return newGroupId;
-  }, 'cloneComplementsGroup');
+  const { mutateAsync: cloneComplementsGroup, mutationResult: cloneGroupResult } =
+    useCustomMutation(async (data: { groupId: string; name?: string }) => {
+      const newGroupId = await api
+        .business()
+        .cloneComplementsGroup(businessId!, data.groupId, data.name);
+      return newGroupId;
+    }, 'cloneComplementsGroup');
   const sendBusinessKeepAlive = React.useCallback(() => {
     if (!business?.id || business.status !== 'open') return;
     try {

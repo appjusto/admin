@@ -1,4 +1,5 @@
 import { Box, Flex, HStack, Icon, Input, InputGroup, InputRightElement } from '@chakra-ui/react';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextMenu } from 'app/state/menu/context';
 import { FilterText } from 'common/components/backoffice/FilterText';
 import { NewFeatureBox } from 'common/components/NewFeatureBox';
@@ -21,11 +22,14 @@ import { MainButtons } from './MainButtons';
 
 const Menu = () => {
   // context
+  const { userAbility } = useContextFirebaseUser();
   const { path } = useRouteMatch();
   const history = useHistory();
   const { setIsMenuActive, isProductsPage, setIsProductPage } = useContextMenu();
   // state
   const [productSearch, setProductSearch] = React.useState('');
+  // helpers
+  const isMenuCreator = userAbility?.can('create', 'menu');
   // handler
   const closeDrawerHandler = () => history.replace(path);
   // side effects
@@ -70,8 +74,13 @@ const Menu = () => {
             </HStack>
           </Flex>
         </Box>
-        <Flex flexDir={{ base: 'column', lg: 'row' }} justifyContent="space-between" mt="2" mb="8">
-          <MainButtons isProducts={isProductsPage} />
+        <Flex
+          flexDir={{ base: 'column', lg: 'row' }}
+          justifyContent={isMenuCreator ? 'space-between' : 'flex-end'}
+          mt="2"
+          mb="8"
+        >
+          <MainButtons isProducts={isProductsPage} display={isMenuCreator ? 'flex' : 'none'} />
           <InputGroup maxW="360px">
             <Input
               size="lg"

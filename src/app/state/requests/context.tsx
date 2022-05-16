@@ -7,12 +7,15 @@ import { isEmpty } from 'lodash';
 import React from 'react';
 
 const skippedExceptions = [
+  'ignored-error',
   'auth/user-not-found',
   'auth/wrong-password',
   'auth/invalid-action-code',
   'auth/too-many-requests',
   'auth/requires-recent-login',
   'auth/network-request-failed',
+  'permission-denied',
+  'functions/already-exists',
 ];
 
 type ErrorMessage = { title: string; description?: string };
@@ -66,7 +69,9 @@ export const AppRequestsProvider = ({ children }: Props) => {
       if (result.status === 'error') {
         if (result.error && !toast.isActive(result.requestId)) {
           const { code } = result.error as FirebaseError;
-          if (!code || !skippedExceptions.includes(code)) Sentry.captureException(result.error);
+          if (!code || !skippedExceptions.includes(code)) {
+            Sentry.captureException(result.error);
+          }
         }
         const errorMessage = getErrorMessage(
           result.message,

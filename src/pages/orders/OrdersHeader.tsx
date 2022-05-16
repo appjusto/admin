@@ -10,7 +10,7 @@ const version = packageInfo.version;
 
 export const OrdersHeader = () => {
   // context
-  const { user, role } = useContextFirebaseUser();
+  const { user, adminRole } = useContextFirebaseUser();
   const { business } = useContextBusiness();
   // UI
   return (
@@ -34,7 +34,7 @@ export const OrdersHeader = () => {
                 {t(`v${version ?? 'N/E'}`)}
               </Text>
             </Text>
-            {role === 'manager' && (
+            {adminRole === 'manager' && (
               <Link as={RouterLink} to="/app/business-schedules">
                 <Text fontSize={{ base: '13px', lg: '15px' }} fontWeight="500" textStyle="link">
                   {t('Alterar horário de funcionamento')}
@@ -48,7 +48,7 @@ export const OrdersHeader = () => {
       <HStack spacing={6} display={{ base: 'none', lg: 'flex' }}>
         <HStack spacing={1}>
           <Text fontSize="16px" fontWeight="700">
-            {role === 'collaborator' ? t('Colaborador') : t('Administrador')}:
+            {adminRole === 'collaborator' ? t('Colaborador') : t('Administrador')}:
           </Text>
           <Text fontSize="16px">{user?.email ?? 'N/E'}</Text>
         </HStack>

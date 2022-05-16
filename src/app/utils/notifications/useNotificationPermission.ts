@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/react';
 import React from 'react';
 
 export const useNotificationPermission = () => {
@@ -10,7 +11,12 @@ export const useNotificationPermission = () => {
     }
     if (permission === 'granted') {
     } else if (permission !== 'denied') {
-      Notification.requestPermission().then(setPermission);
+      try {
+        Notification.requestPermission().then(setPermission);
+      } catch (error) {
+        console.error(error);
+        Sentry.captureException(error);
+      }
     }
   }, [permission]);
   // result

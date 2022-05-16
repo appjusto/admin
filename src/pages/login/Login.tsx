@@ -11,7 +11,7 @@ import rightImage from 'common/img/login-right@2x.jpg';
 import logo from 'common/img/logo.svg';
 import React from 'react';
 import { Redirect } from 'react-router-dom';
-import { isEmailValid } from 'utils/email';
+import { isEmailValid, normalizeEmail } from 'utils/email';
 import { t } from 'utils/i18n';
 
 const Login = () => {
@@ -23,12 +23,13 @@ const Login = () => {
   const emailRef = React.useRef<HTMLInputElement>(null);
   const passwdRef = React.useRef<HTMLInputElement>(null);
   // state
+  const [isLogin, setIsLogin] = React.useState(true);
   const [email, setEmail] = React.useState('');
   const [passwd, setPasswd] = React.useState('');
   const [isPassword, setIsPassword] = React.useState(false);
   const isEmailInvalid = React.useMemo(() => !isEmailValid(email), [email]);
   // handlers
-  const handleSubmit = (event: React.FormEvent<HTMLDivElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLDivElement>) => {
     event.preventDefault();
     if (isEmailInvalid) {
       return dispatchAppRequestResult({
@@ -37,7 +38,9 @@ const Login = () => {
         message: { title: 'O e-mail informado não é válido. Corrija e tente novamente.' },
       });
     }
-    login({ email, password: passwd });
+    try {
+      await login({ email, password: passwd, isLogin });
+    } catch (error) {}
   };
   // side effects
   React.useEffect(() => {
@@ -64,12 +67,27 @@ const Login = () => {
         px={{ base: '8', md: '24', lg: '8' }}
       >
         <Image src={logo} scrollCheck={false} mb="8" />
-        <Text fontSize="xl" textAlign="center">
-          {t('Portal do Restaurante')}
-        </Text>
-        <Text fontSize="md" textAlign="center" color="gray.500">
-          {t('Gerencie seu estabelecimento')}
-        </Text>
+        {isLogin ? (
+          <>
+            <Text fontSize="xl" color="black" textAlign="center">
+              {t('Entrar no portal do restaurante')}
+            </Text>
+            <Text fontSize="md" textAlign="center" color="gray.700">
+              {t('Gerencie seu estabelecimento')}
+            </Text>
+          </>
+        ) : (
+          <>
+            <Text fontSize="xl" color="black" textAlign="center">
+              {t('Criar novo cadastro')}
+            </Text>
+            <Text maxW="360px" fontSize="md" textAlign="center" color="gray.700">
+              {t(
+                'Você está prestes a ter uma experiência mais justa para seus clientes e entregadores!'
+              )}
+            </Text>
+          </>
+        )}
         <Flex as="form" w="100%" flexDir="column" onSubmit={handleSubmit}>
           <CustomInput
             ref={emailRef}
@@ -79,22 +97,26 @@ const Login = () => {
             label={t('E-mail')}
             placeholder={t('Endereço de e-mail')}
             value={email}
-            handleChange={(ev) => setEmail(ev.target.value.toLowerCase())}
+            handleChange={(ev) => setEmail(normalizeEmail(ev.target.value))}
             isInvalid={email !== '' && isEmailInvalid}
           />
-          <CustomCheckbox
-            mt="4"
-            aria-label="login-password-checkbox"
-            colorScheme="green"
-            value="available"
-            isChecked={isPassword}
-            onChange={(e) => setIsPassword(e.target.checked)}
-          >
-            {t('Usar senha de acesso')}
-          </CustomCheckbox>
-          <Text mt="2" fontSize="xs">
-            {t('Ao entrar sem senha, enviaremos um link de acesso para o e-mail cadastrado.')}
-          </Text>
+          {isLogin && (
+            <>
+              <CustomCheckbox
+                mt="4"
+                aria-label="login-password-checkbox"
+                colorScheme="green"
+                value="available"
+                isChecked={isPassword}
+                onChange={(e) => setIsPassword(e.target.checked)}
+              >
+                {t('Usar senha de acesso')}
+              </CustomCheckbox>
+              <Text mt="2" fontSize="xs">
+                {t('Ao entrar sem senha, enviaremos um link de acesso para o e-mail cadastrado.')}
+              </Text>
+            </>
+          )}
           {isPassword && (
             <>
               <CustomPasswordInput
@@ -120,8 +142,31 @@ const Login = () => {
             />
           )}
           <Button type="submit" width="full" h="60px" mt="6" isLoading={isLoading}>
-            {t('Entrar')}
+            {isLogin ? t('Entrar') : t('Cadastrar')}
           </Button>
+          {isLogin ? (
+            <Text mt="4" textAlign="center">
+              {t('Ainda não possui uma conta? ')}
+              <Text
+                as="span"
+                textDecor="underline"
+                cursor="pointer"
+                onClick={() => setIsLogin(false)}
+              >
+                {t('Clique aqui.')}
+              </Text>
+            </Text>
+          ) : (
+            <Text
+              mt="4"
+              textAlign="center"
+              textDecor="underline"
+              cursor="pointer"
+              onClick={() => setIsLogin(true)}
+            >
+              {t('Já tenho uma conta')}
+            </Text>
+          )}
         </Flex>
       </Flex>
       <Box w={{ lg: 1 / 3 }} display={{ base: 'none', lg: 'block' }}>

@@ -1,30 +1,40 @@
 import { Business, Order, ProfileChange, WithId } from '@appjusto/types';
-import { Box, Circle, Flex, Text, VStack } from '@chakra-ui/react';
+import { Box, Circle, Flex, FlexProps, HStack, Text, VStack } from '@chakra-ui/react';
 import { ShowIf } from 'core/components/ShowIf';
 import React from 'react';
 import { BOBusinessListItem } from './BOBusinessListItem';
 import { BOOrderListItem } from './BOOrderListItem';
 import { BOProfileChangesListItem } from './BOProfileChangesListItem';
+import { StaffFilter, StaffFilterOptions } from './StaffFilter';
 
 type ListType = 'orders' | 'businesses' | 'profile-changes';
 
-interface Props {
+interface BOListProps extends FlexProps {
   title: string;
   data: WithId<Business>[] | WithId<Order>[] | WithId<ProfileChange>[];
+  dataLength?: number;
   listType: ListType;
   details?: string;
   infiniteScroll?: boolean;
+  staffFilter?: boolean;
+  filterActive?: boolean;
+  handleStaffFilter?(value: StaffFilterOptions): void;
   loadData?(): void;
 }
 
 export const BOList = ({
   title,
   data,
+  dataLength,
   listType,
   details,
   infiniteScroll = false,
+  staffFilter,
+  filterActive,
+  handleStaffFilter,
   loadData,
-}: Props) => {
+  ...props
+}: BOListProps) => {
   // refs
   const listRef = React.useRef<HTMLDivElement>(null);
   // side effects
@@ -50,6 +60,7 @@ export const BOList = ({
       borderWidth="1px"
       borderTopWidth="0px"
       direction="column"
+      {...props}
     >
       <Box
         minH="60px"
@@ -60,15 +71,18 @@ export const BOList = ({
         borderTopRadius="lg"
         borderBottomWidth="1px"
       >
-        <Flex alignItems="center">
-          <Circle size="40px" bg="white">
-            <Text fontSize="lg" color="black">
-              {data.length}
+        <Flex alignItems="center" justifyContent={staffFilter ? 'space-between' : 'flex-start'}>
+          <HStack spacing={4}>
+            <Circle minH="40px" minInlineSize="40px" px="1" bg="white">
+              <Text fontSize="lg" color="black">
+                {filterActive && dataLength ? `${data.length}/${dataLength}` : data.length}
+              </Text>
+            </Circle>
+            <Text ml="4" fontSize={{ base: 'md', lg: 'lg' }} color="black" fontWeight="bold">
+              {title}
             </Text>
-          </Circle>
-          <Text ml="4" fontSize={{ base: 'md', lg: 'lg' }} color="black" fontWeight="bold">
-            {title}
-          </Text>
+          </HStack>
+          {staffFilter && <StaffFilter handleFilter={handleStaffFilter!} />}
         </Flex>
       </Box>
       <ShowIf test={data.length === 0 && Boolean(details)}>

@@ -11,6 +11,7 @@ import {
   Icon,
   Text,
 } from '@chakra-ui/react';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusinessBackoffice } from 'app/state/business/businessBOContext';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { isObject } from 'lodash';
@@ -18,24 +19,32 @@ import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
 import React from 'react';
 import { MdThumbDownOffAlt, MdThumbUpOffAlt } from 'react-icons/md';
 import { useRouteMatch } from 'react-router';
+import { useLocation } from 'react-router-dom';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { situationPTOptions } from '../../utils';
 
+const withoutActionPages = ['managers', 'iugu'];
+
 interface BaseDrawerProps {
-  agent: { id: string | undefined; name: string };
+  staff: { id: string | undefined; name: string };
   isOpen: boolean;
   onClose(): void;
   children: React.ReactNode | React.ReactNode[];
 }
 
-export const BusinessBaseDrawer = ({ agent, onClose, children, ...props }: BaseDrawerProps) => {
+export const BusinessBaseDrawer = ({ staff, onClose, children, ...props }: BaseDrawerProps) => {
   //context
+  const { userAbility } = useContextFirebaseUser();
   const { url } = useRouteMatch();
+  const { pathname } = useLocation();
   const { business, manager, handleSave, isLoading, marketPlace } = useContextBusinessBackoffice();
   // helpers
+  const userCanUpdate = userAbility?.can('update', 'businesses');
   const isMarketplace = isObject(marketPlace);
   const situationAlert = business?.situation === 'rejected' || business?.situation === 'invalid';
+  const pageName = pathname.split('/').pop();
+  const pageHasAction = pageName ? !withoutActionPages.includes(pageName) : true;
   //UI
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
@@ -127,6 +136,7 @@ export const BusinessBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
               overflowX="auto"
             >
               <DrawerLink to={`${url}`} label={t('Cadastro')} />
+              <DrawerLink to={`${url}/managers`} label={t('Colaboradores')} />
               {business?.situation === 'approved' && (
                 <DrawerLink to={`${url}/live`} label={t('Live')} />
               )}
@@ -136,8 +146,13 @@ export const BusinessBaseDrawer = ({ agent, onClose, children, ...props }: BaseD
             {children}
           </DrawerBody>
           <DrawerFooter borderTop="1px solid #F2F6EA">
-            <Flex w="full" flexDir="row" justifyContent="space-between">
+            <Flex
+              w="full"
+              flexDir="row"
+              justifyContent={userCanUpdate && pageHasAction ? 'space-between' : 'flex-end'}
+            >
               <Button
+                display={userCanUpdate && pageHasAction ? 'inline-block' : 'none'}
                 width="full"
                 maxW={{ base: '160px', md: '240px' }}
                 fontSize={{ base: '13px', md: '15px' }}

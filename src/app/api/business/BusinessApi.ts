@@ -12,6 +12,7 @@ import {
   Complement,
   ComplementGroup,
   CreateBusinessProfilePayload,
+  DeleteBusinessPayload,
   FetchAccountInformationPayload,
   FetchAccountInformationResponse,
   FetchAdvanceSimulationPayload,
@@ -37,6 +38,7 @@ import {
   deleteDoc,
   DocumentData,
   getDoc,
+  getDocs,
   getDocsFromCache,
   getDocsFromServer,
   limit,
@@ -148,6 +150,12 @@ export default class BusinessApi {
     return customDocumentSnapshot(ref, resultHandler);
   }
 
+  async getBusinessIdByCode(businessCode: string) {
+    const q = query(this.refs.getBusinessesRef(), where('code', '==', businessCode));
+    const businessId = await getDocs(q).then((snapshot) => snapshot.docs[0].id);
+    return businessId;
+  }
+
   async deletePrivateMarketPlace(businessId: string) {
     return await deleteDoc(this.refs.getBusinessMarketPlaceRef(businessId));
   }
@@ -161,11 +169,12 @@ export default class BusinessApi {
     return business.data as WithId<Business>;
   }
 
-  async cloneBusiness(businessId: string) {
+  async cloneBusiness(businessId: string, isFromScratch?: boolean) {
     const payload: CloneBusinessPayload = {
       businessId,
       meta: { version: '1' }, // TODO: pass correct version on
       operation: 'clone',
+      isFromScratch,
     };
     const business = await this.refs.getBusinessProfileCallable()(payload);
     return business.data as WithId<Business>;
@@ -245,19 +254,13 @@ export default class BusinessApi {
       ...changes,
       updatedOn: timestamp,
     };
-    try {
-      await updateDoc(this.refs.getBusinessRef(businessId), fullChanges);
-      // logo
-      if (logoFile) await this.uploadBusinessLogo(businessId, logoFile, () => {});
-      //cover
-      if (coverFiles) await this.uploadBusinessCover(businessId, coverFiles, () => {});
-      // result
-      return true;
-    } catch (error) {
-      console.log(error);
-      Sentry.captureException(error);
-      throw new Error('BusinessUpdateWithImagesError');
-    }
+    await updateDoc(this.refs.getBusinessRef(businessId), fullChanges);
+    // logo
+    if (logoFile) await this.uploadBusinessLogo(businessId, logoFile, () => {});
+    //cover
+    if (coverFiles) await this.uploadBusinessCover(businessId, coverFiles, () => {});
+    // result
+    return true;
   }
 
   async removeBusinessManager(business: WithId<Business>, managerEmail: string) {
@@ -275,8 +278,13 @@ export default class BusinessApi {
     return await updateDoc(this.refs.getBusinessRef(businessId), { keepAlive: timestamp });
   }
 
-  async deleteBusinessProfile(businessId: string) {
-    return await deleteDoc(this.refs.getBusinessRef(businessId));
+  async deleteBusinessProfile(data: Partial<DeleteBusinessPayload>) {
+    const payload = {
+      operation: 'delete',
+      meta: { version: '1' }, // TODO: pass correct version on
+      ...data,
+    } as DeleteBusinessPayload;
+    return await this.refs.getBusinessProfileCallable()(payload);
   }
 
   // managers

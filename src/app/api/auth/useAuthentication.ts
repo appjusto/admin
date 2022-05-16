@@ -1,9 +1,12 @@
 import { useContextApi } from 'app/state/api/context';
+import { FirebaseError } from 'firebase/app';
+import { nanoid } from 'nanoid';
 import React from 'react';
 import { useCustomMutation } from '../mutation/useCustomMutation';
 interface LoginData {
   email: string;
   password?: string;
+  isLogin?: boolean;
 }
 interface SignInData {
   email: string;
@@ -18,30 +21,43 @@ export const useAuthentication = () => {
   // mutations
   const { mutateAsync: login, mutationResult: loginResult } = useCustomMutation(
     async (data: LoginData) => {
-      if (data.password) return api.auth().signInWithEmailAndPassword(data.email, data.password);
-      else return api.auth().sendSignInLinkToEmail(data.email);
+      const { email, password, isLogin } = data;
+      if (isLogin && !password) {
+        // if user is trying to login with email link
+        // check if the user exists
+        try {
+          await api.auth().signInWithEmailAndPassword(email, nanoid(8));
+        } catch (error) {
+          const { code } = error as FirebaseError;
+          if (code === 'auth/user-not-found') {
+            // if user not exists return error
+            throw new FirebaseError(
+              'ignored-error',
+              'Não foi possível enviar o link de acesso para o e-mail informado.'
+            );
+          }
+        }
+      }
+      if (password) return api.auth().signInWithEmailAndPassword(email, password);
+      else return api.auth().sendSignInLinkToEmail(email);
     },
     'login',
     false,
     false
   );
-  const {
-    mutateAsync: sendSignInLinkToEmail,
-    mutationResult: sendingLinkResult,
-  } = useCustomMutation(
-    async (email: string) => api.auth().sendSignInLinkToEmail(email),
-    'sendSignInLinkToEmail',
-    false,
-    false
-  );
+  const { mutateAsync: sendSignInLinkToEmail, mutationResult: sendingLinkResult } =
+    useCustomMutation(
+      async (email: string) => api.auth().sendSignInLinkToEmail(email),
+      'sendSignInLinkToEmail',
+      false,
+      false
+    );
   const { mutateAsync: signInWithEmailLink, mutationResult: signInResult } = useCustomMutation(
     async (data: SignInData) => api.auth().signInWithEmailLink(data.email, data.link),
     'signInWithEmailLink',
     false,
     false
   );
-  const updateUsersPassword = (password: string, currentPassword?: string) =>
-    api.auth().updateUsersPassword(password, currentPassword);
   const signOut = React.useCallback(
     (email?: string) => {
       if (email) localStorage.removeItem(`business-${process.env.REACT_APP_ENVIRONMENT}-${email}`);
@@ -53,6 +69,9 @@ export const useAuthentication = () => {
     async (data: DeleteAccountData) => api.auth().deleteAccount(data),
     'deleteUserAccount'
   );
+  // every profile calls it with his mutation
+  const updateUsersPassword = (password: string, currentPassword?: string) =>
+    api.auth().updateUsersPassword(password, currentPassword);
   // return
   return {
     login,

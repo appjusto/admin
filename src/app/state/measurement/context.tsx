@@ -1,6 +1,6 @@
 import { useMeasurement } from 'app/api/measurement/useMeasurement';
+// import ReactPixel from 'react-facebook-pixel';
 import React from 'react';
-import ReactPixel from 'react-facebook-pixel';
 
 type ConsentResponse = 'accepted' | 'refused' | 'pending';
 
@@ -36,9 +36,9 @@ export const MeasurementProvider = ({ children }: Props) => {
     //if(!analytics) return;
     if (!userConsent) return;
     if (process.env.NODE_ENV !== 'production') return;
-    const PixelId = process.env.REACT_APP_FACEBOOK_PIXEL_ID;
     setAnalyticsConsent();
-    if (PixelId) ReactPixel.init(PixelId);
+    // const PixelId = process.env.REACT_APP_FACEBOOK_PIXEL_ID;
+    // if (PixelId) ReactPixel.init(PixelId);
   }, [userConsent, setAnalyticsConsent]);
   // provider
   return (

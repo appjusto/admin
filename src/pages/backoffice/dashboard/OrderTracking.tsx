@@ -1,4 +1,10 @@
-import { DispatchingState, DispatchingStatus, OrderStatus } from '@appjusto/types';
+import {
+  DispatchingState,
+  DispatchingStatus,
+  OrderChange,
+  OrderStatus,
+  WithId,
+} from '@appjusto/types';
 import { Box, Circle, HStack, Icon, Skeleton, Text } from '@chakra-ui/react';
 import { useObserveOrderLogs } from 'app/api/order/useObserveOrderLogs';
 import { last } from 'lodash';
@@ -16,11 +22,10 @@ interface OrderTrackingProps {
 export const OrderTracking = ({ orderId, isCompact }: OrderTrackingProps) => {
   // state
   const logs = useObserveOrderLogs(orderId);
+  const [filteredLogs, setFilteredLogs] = React.useState<WithId<OrderChange>[]>();
   const [currentStatus, setCurrentStatus] = React.useState<OrderStatus>();
-  const [
-    currentDispatchingStatus,
-    setCurrentDispatchingStatus,
-  ] = React.useState<DispatchingStatus>();
+  const [currentDispatchingStatus, setCurrentDispatchingStatus] =
+    React.useState<DispatchingStatus>();
   const [currentDispatchingState, setCurrentDispatchingState] = React.useState<DispatchingState>();
   const [currentTime, setCurrentTime] = React.useState<string>();
   // refs
@@ -51,8 +56,8 @@ export const OrderTracking = ({ orderId, isCompact }: OrderTrackingProps) => {
     return '';
   };
   const getLogsLastStatus = (index: number) => {
-    if (!logs) return 'N/E';
-    const logsUsed = logs.slice(undefined, index);
+    if (!filteredLogs) return 'N/E';
+    const logsUsed = filteredLogs.slice(undefined, index);
     const lastLogWithStatus = last(logsUsed.filter((log) => log.after.status));
     const lastStatus = lastLogWithStatus?.after.status
       ? orderStatusPTOptions[lastLogWithStatus.after.status]
@@ -71,9 +76,15 @@ export const OrderTracking = ({ orderId, isCompact }: OrderTrackingProps) => {
   };
   // side effects
   React.useEffect(() => {
-    if (!logs) return;
-    const lastLog = last(logs);
-    const lastLogWithStatus = last(logs.filter((log) => log.after.status));
+    const filtered = logs?.filter((log) => {
+      return log.after.status || log.after.dispatchingStatus || log.after.dispatchingState;
+    });
+    setFilteredLogs(filtered);
+  }, [logs]);
+  React.useEffect(() => {
+    if (!filteredLogs) return;
+    const lastLog = last(filteredLogs);
+    const lastLogWithStatus = last(filteredLogs.filter((log) => log.after.status));
     if (lastLog) setCurrentTime(getHourAndMinute(lastLog.timestamp));
     if (lastLogWithStatus) setCurrentStatus(lastLogWithStatus.after.status);
     if (lastLog?.after.dispatchingStatus) {
@@ -87,10 +98,10 @@ export const OrderTracking = ({ orderId, isCompact }: OrderTrackingProps) => {
         behavior: 'smooth',
       });
     }
-  }, [logs]);
+  }, [filteredLogs]);
   // UI
   const matchingLabelColor = getMatchingLabelColor();
-  if (logs === undefined) {
+  if (filteredLogs === undefined) {
     return (
       <Box w="100%" pb="2">
         <Skeleton height="20px" maxW="260px" />
@@ -178,7 +189,7 @@ export const OrderTracking = ({ orderId, isCompact }: OrderTrackingProps) => {
             bgColor="#F6F6F6"
             borderRadius="16px"
           >
-            {logs?.map((log, index) => (
+            {filteredLogs?.map((log, index) => (
               <Text
                 key={log.id}
                 mt="2"

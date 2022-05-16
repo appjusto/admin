@@ -12,33 +12,38 @@ import { BusinessStatus } from './BusinessStatus';
 
 const BusinessInfo = () => {
   // context
-  const { managerBusinesses } = useContextManagerProfile();
-  const { business, setBusinessId } = useContextBusiness();
+  const { business, setBusinessId, businesses } = useContextBusiness();
+  const { updateLastBusinessId } = useContextManagerProfile();
   const { logo } = useBusinessProfile();
   // state
-  const [businesses, setBusinesses] = React.useState<BusinessSelectOptions[]>([]);
+  const [managerBusinesses, setManagerBusinesses] = React.useState<BusinessSelectOptions[]>([]);
   const [selectedBusiness, setSelectedBusiness] = React.useState<BusinessSelectOptions>();
   // handlers
   const handleSwitchBussines = (selected: BusinessSelectOptions) => {
     setSelectedBusiness(selected);
     setBusinessId(selected.value);
+    updateLastBusinessId(selected.value);
   };
   // side effects
   React.useEffect(() => {
     if (!business) return;
     setSelectedBusiness({
       value: business.id,
-      label: `${business.name}: ${business.businessAddress?.address ?? 'Não informado'}`,
+      label: `${business.name ?? 'Sem nome'}: ${
+        business.businessAddress?.address ?? 'Não informado'
+      }`,
     });
   }, [business]);
   React.useEffect(() => {
-    if (!managerBusinesses) return;
-    const businessesList = managerBusinesses.map((business) => ({
+    if (!businesses) return;
+    const businessesList = businesses.map((business) => ({
       value: business.id,
-      label: `${business.name}: ${business.businessAddress?.address ?? 'Não informado'}`,
+      label: `${business.name ?? 'Sem nome'}: ${
+        business.businessAddress?.address ?? 'Não informado'
+      }`,
     }));
-    setBusinesses(businessesList);
-  }, [managerBusinesses]);
+    setManagerBusinesses(businessesList);
+  }, [businesses]);
   // UI
   return (
     <Box>
@@ -53,10 +58,10 @@ const BusinessInfo = () => {
       ) : (
         <Circle size="40px" bg="gray.400" />
       )}
-      {managerBusinesses && managerBusinesses.length > 1 ? (
+      {managerBusinesses.length > 1 ? (
         <Box mt="2" pr="4">
           <BusinessSelect
-            options={businesses}
+            options={managerBusinesses}
             selected={selectedBusiness}
             onChange={handleSwitchBussines}
           />

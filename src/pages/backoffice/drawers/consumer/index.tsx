@@ -1,5 +1,5 @@
-import { useContextAgentProfile } from 'app/state/agent/context';
 import { ConsumerProvider } from 'app/state/consumer/context';
+import { useContextStaffProfile } from 'app/state/staff/context';
 import React from 'react';
 import { Route, Switch, useRouteMatch } from 'react-router-dom';
 import { ConsumerBaseDrawer } from './ConsumerBaseDrawer';
@@ -15,11 +15,11 @@ interface ConsumerDrawerProps {
 export const ConsumerDrawer = ({ onClose, ...props }: ConsumerDrawerProps) => {
   //context
   const { path } = useRouteMatch();
-  const { agent, username } = useContextAgentProfile();
+  const { staff, username } = useContextStaffProfile();
   //UI
   return (
     <ConsumerProvider>
-      <ConsumerBaseDrawer agent={{ id: agent?.id, name: username }} onClose={onClose} {...props}>
+      <ConsumerBaseDrawer staff={{ id: staff?.id, name: username }} onClose={onClose} {...props}>
         <Switch>
           <Route exact path={`${path}`}>
             <PersonalProfile />

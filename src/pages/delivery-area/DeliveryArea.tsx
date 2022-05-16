@@ -52,14 +52,15 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
   );
   const { isLoading, isSuccess } = result;
   // cep & geocoding
-  const { cepResult, geocodingResult } = useCepAndGeocode(
+  const { cepResult, geocodingResult } = useCepAndGeocode(business?.businessAddress, {
     cep,
     address,
     number,
     neighborhood,
     city,
-    state
-  );
+    state,
+    additional,
+  });
   const center = coordsFromLatLnt(geocodingResult ?? SaoPauloCoords);
   // refs
   const cepRef = React.useRef<HTMLInputElement>(null);
@@ -103,7 +104,7 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
   }, [business]);
   // after postal lookup, change focus to number input
   React.useEffect(() => {
-    if (cepResult?.erro) return;
+    if (!cepResult || cepResult?.erro) return;
     const { logradouro, localidade, bairro, uf } = !cepResult
       ? { logradouro: null, localidade: null, bairro: null, uf: null }
       : cepResult;

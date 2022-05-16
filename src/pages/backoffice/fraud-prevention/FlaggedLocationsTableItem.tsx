@@ -1,6 +1,7 @@
 import { FlaggedLocationsAlgolia } from '@appjusto/types';
 import { Button, HStack, Td, Text, Tr } from '@chakra-ui/react';
 import { useFlaggedLocations } from 'app/api/platform/useFlaggedLocations';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import React from 'react';
 import { getAlgoliaFieldDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
@@ -15,6 +16,7 @@ export const FlaggedLocationsTableItem = ({
   refetch,
 }: FlaggedLocationsTableItemProps) => {
   // context
+  const { userAbility } = useContextFirebaseUser();
   const { deleteFlaggedLocation, deleteFlaggedLocationResult } = useFlaggedLocations();
   const { isLoading, isSuccess } = deleteFlaggedLocationResult;
   // state
@@ -55,7 +57,13 @@ export const FlaggedLocationsTableItem = ({
         </Td>
       ) : (
         <Td>
-          <Button mt="0" variant="dangerLight" size="sm" onClick={() => setIsDeleting(true)}>
+          <Button
+            display={userAbility?.can('update', 'platform') ? 'inline-block' : 'none'}
+            mt="0"
+            variant="dangerLight"
+            size="sm"
+            onClick={() => setIsDeleting(true)}
+          >
             {t('Remover')}
           </Button>
         </Td>

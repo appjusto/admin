@@ -7,6 +7,8 @@ import {
   OrderType,
 } from '@appjusto/types';
 import { Box, Flex, HStack, RadioGroup, Text, Textarea } from '@chakra-ui/react';
+import { useOrderNotes } from 'app/api/order/useOrderNotes';
+import { ProfileNotes } from 'common/components/backoffice/ProfileNotes';
 import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import CustomRadio from 'common/components/form/CustomRadio';
 import React from 'react';
@@ -16,6 +18,7 @@ import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
 
 interface OrderStatusProps {
+  orderId: string;
   orderType?: OrderType;
   orderStatus?: OrderStatus;
   status?: OrderStatus;
@@ -30,6 +33,7 @@ interface OrderStatusProps {
 }
 
 export const OrderStatusBar = ({
+  orderId,
   orderType,
   orderStatus,
   status,
@@ -42,6 +46,9 @@ export const OrderStatusBar = ({
   onRefundingChange,
   updateState,
 }: OrderStatusProps) => {
+  // context
+  const { orderNotes, updateOrderNote, deleteOrderNote, updateResult, deleteResult } =
+    useOrderNotes(orderId);
   // helpers
   const isOrderActive = orderStatus
     ? ['preparing', 'ready', 'dispatching'].includes(orderStatus)
@@ -64,7 +71,7 @@ export const OrderStatusBar = ({
             lineHeight="21px"
           >
             <Flex flexDir="column" justifyContent="flex-start">
-              <CustomRadio mt="2" value="confirmed">
+              <CustomRadio mt="2" value="confirmed" isDisabled>
                 {t('Confirmado')}
               </CustomRadio>
               {orderType === 'food' && (
@@ -204,10 +211,22 @@ export const OrderStatusBar = ({
               {t('Entrega')}
             </CustomCheckbox>
           </HStack>
+          <SectionTitle>{t('Comentário:')}</SectionTitle>
+          <Textarea
+            mt="2"
+            value={message}
+            onChange={(ev) => updateState('message', ev.target.value)}
+          />
         </>
       )}
-      <SectionTitle>{t('Comentário:')}</SectionTitle>
-      <Textarea mt="2" value={message} onChange={(ev) => updateState('message', ev.target.value)} />
+      <SectionTitle>{t('Anotações')}</SectionTitle>
+      <ProfileNotes
+        profileNotes={orderNotes}
+        updateNote={updateOrderNote}
+        deleteNote={deleteOrderNote}
+        updateResult={updateResult}
+        deleteResult={deleteResult}
+      />
     </Box>
   );
 };

@@ -1,3 +1,4 @@
+import { useContextBusiness } from 'app/state/business/context';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
 import { t } from 'utils/i18n';
@@ -5,6 +6,12 @@ import { AddMembersForm } from './AddMembersForm';
 import { TeamTable } from './TeamTable';
 
 const TeamPage = () => {
+  // context
+  const { setIsGetManagersActive } = useContextBusiness();
+  // side effects
+  React.useEffect(() => {
+    setIsGetManagersActive(true);
+  }, [setIsGetManagersActive]);
   // UI
   return (
     <>

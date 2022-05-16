@@ -3,6 +3,7 @@ import {
   Business,
   BusinessPhone,
   ManagerProfile,
+  ManagerWithRole,
   MarketplaceAccountInfo,
   WithId,
 } from '@appjusto/types';
@@ -47,6 +48,9 @@ interface BusinessBOContextProps {
   marketPlace?: MarketplaceAccountInfo | null;
   deleteMarketPlace: UseMutateAsyncFunction<void, unknown, void, unknown>;
   deleteMarketPlaceResult: MutationResult;
+  businessManagers?: ManagerWithRole[];
+  setIsGetManagersActive: React.Dispatch<React.SetStateAction<boolean>>;
+  fetchManagers(): void;
 }
 
 const BusinessBOContext = React.createContext<BusinessBOContextProps>({} as BusinessBOContextProps);
@@ -74,7 +78,14 @@ export const BusinessBOProvider = ({ children }: Props) => {
   // context
   const { dispatchAppRequestResult } = useContextAppRequests();
   const { businessId } = useParams<Params>();
-  const { business, setBusinessId, clearBusiness } = useContextBusiness();
+  const {
+    business,
+    setBusinessId,
+    clearBusiness,
+    businessManagers,
+    setIsGetManagersActive,
+    fetchManagers,
+  } = useContextBusiness();
   const { manager, setManagerEmail } = useContextManagerProfile();
   const { bankAccount } = useBusinessBankAccount();
   const { marketPlace, deleteMarketPlace, deleteMarketPlaceResult } =
@@ -212,6 +223,9 @@ export const BusinessBOProvider = ({ children }: Props) => {
         marketPlace,
         deleteMarketPlace,
         deleteMarketPlaceResult,
+        businessManagers,
+        setIsGetManagersActive,
+        fetchManagers,
       }}
     >
       {children}

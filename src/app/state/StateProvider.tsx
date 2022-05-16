@@ -1,11 +1,11 @@
 import React from 'react';
-import { AgentProvider } from './agent/context';
 import { FirebaseUserProvider } from './auth/context';
 import { BusinessProvider } from './business/context';
 import { ManagerProvider } from './manager/context';
 import { MeasurementProvider } from './measurement/context';
 import { AppRequestsProvider } from './requests/context';
 import { ServerTimeProvider } from './server-time';
+import { StaffProvider } from './staff/context';
 
 interface Props {
   children: React.ReactNode;
@@ -16,13 +16,13 @@ export const StateProvider = ({ children }: Props) => {
     <AppRequestsProvider>
       <FirebaseUserProvider>
         <ServerTimeProvider>
-          <AgentProvider>
+          <StaffProvider>
             <BusinessProvider>
               <ManagerProvider>
                 <MeasurementProvider>{children}</MeasurementProvider>
               </ManagerProvider>
             </BusinessProvider>
-          </AgentProvider>
+          </StaffProvider>
         </ServerTimeProvider>
       </FirebaseUserProvider>
     </AppRequestsProvider>

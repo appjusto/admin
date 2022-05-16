@@ -2,8 +2,6 @@ import { BackofficeDashboardProvider } from 'app/state/dashboards/backoffice';
 import PageLayout from 'pages/PageLayout';
 import React from 'react';
 import { Switch, useRouteMatch } from 'react-router-dom';
-import { AgentProfile } from './agent/AgentProfile';
-import AgentsPage from './agents/AgentsPage';
 import BusinessesPage from './businesses';
 import ConsumersPage from './consumers';
 import CouriersPage from './couriers';
@@ -13,6 +11,8 @@ import InvoicesPage from './invoices';
 import OrdersPage from './orders';
 import RecommendationsPage from './recommendations';
 import { BOAccessRoute } from './routes/BOAccessRoute';
+import { StaffProfile } from './staff/StaffProfile';
+import StaffsPage from './staffs';
 import UsersPage from './users';
 
 const BackOffice = () => {
@@ -28,9 +28,9 @@ const BackOffice = () => {
           <BOAccessRoute path={`${path}/businesses`} component={BusinessesPage} />
           <BOAccessRoute path={`${path}/consumers`} component={ConsumersPage} />
           <BOAccessRoute path={`${path}/invoices`} component={InvoicesPage} />
-          <BOAccessRoute path={`${path}/agents`} component={AgentsPage} />
+          <BOAccessRoute path={`${path}/staff`} component={StaffsPage} />
           <BOAccessRoute path={`${path}/fraud-prevention`} component={FraudPreventionPage} />
-          <BOAccessRoute path={`${path}/agent-profile`} component={AgentProfile} />
+          <BOAccessRoute path={`${path}/staff-profile`} component={StaffProfile} />
           <BOAccessRoute path={`${path}/users`} component={UsersPage} />
           <BOAccessRoute path={`${path}/recommendations`} component={RecommendationsPage} />
           <BOAccessRoute path={path} component={BODashboard} />

@@ -1,7 +1,7 @@
-import { Business, PlatformAccess, WithId } from '@appjusto/types';
+import { Business, ManagerWithRole, WithId } from '@appjusto/types';
 import { useObserveBusinessManagedBy } from 'app/api/business/profile/useObserveBusinessManagedBy';
 import { useObserveBusinessProfile } from 'app/api/business/profile/useObserveBusinessProfile';
-import { usePlatformAccess } from 'app/api/platform/usePlatformAccess';
+import { useGetManagers } from 'app/api/manager/useGetManagers';
 import React from 'react';
 import { useQueryClient } from 'react-query';
 import { useContextFirebaseUser } from '../auth/context';
@@ -12,11 +12,11 @@ interface ContextProps {
   clearBusiness(): void;
   setBusinessId(businessId?: string | null): void;
   updateContextBusinessOrderPrint(status: boolean): void;
-  businessesIsEmpty: boolean;
+  businesses?: WithId<Business>[];
   setBusinessIdByBusinesses(): void;
-  isDeleted: boolean;
-  setIsDeleted(value: boolean): void;
-  platformAccess?: PlatformAccess;
+  businessManagers?: ManagerWithRole[];
+  setIsGetManagersActive: React.Dispatch<React.SetStateAction<boolean>>;
+  fetchManagers(): void;
 }
 
 const BusinessContext = React.createContext<ContextProps>({} as ContextProps);
@@ -31,13 +31,15 @@ export const BusinessProvider = ({ children }: Props) => {
   const { user, isBackofficeUser, refreshUserToken } = useContextFirebaseUser();
   const businesses = useObserveBusinessManagedBy(user?.email);
   const [businessId, setBusinessId] = React.useState<string | undefined | null>();
-  const [isDeleted, setIsDeleted] = React.useState(false);
   const hookBusiness = useObserveBusinessProfile(businessId);
-  const platformAccess = usePlatformAccess(typeof user?.uid === 'string');
   // state
   const [business, setBusiness] = React.useState<WithId<Business> | null>();
-  // helpers
-  const businessesIsEmpty = businesses?.length === 0;
+  const [isGetManagersActive, setIsGetManagersActive] = React.useState(false);
+  // business managers
+  const { managers: businessManagers, fetchManagers } = useGetManagers(
+    business,
+    isGetManagersActive
+  );
   // handlers
   const clearBusiness = React.useCallback(() => {
     setBusiness(undefined);
@@ -79,12 +81,6 @@ export const BusinessProvider = ({ children }: Props) => {
       setBusiness(null);
       return;
     }
-    if (isBackofficeUser === false) {
-      localStorage.setItem(
-        `business-${process.env.REACT_APP_ENVIRONMENT}-${user.email}`,
-        hookBusiness.id
-      );
-    }
     updateContextBusiness(hookBusiness);
     queryClient.invalidateQueries();
   }, [user, hookBusiness, isBackofficeUser, queryClient, updateContextBusiness]);
@@ -92,13 +88,6 @@ export const BusinessProvider = ({ children }: Props) => {
     if (isBackofficeUser) return;
     if (!user?.email) return;
     if (businessId) return;
-    const localBusinessId = localStorage.getItem(
-      `business-${process.env.REACT_APP_ENVIRONMENT}-${user.email}`
-    );
-    if (localBusinessId) {
-      setBusinessId(localBusinessId);
-      return;
-    }
     // select first business, or first business approved, or set it to null to indicate that user doesn't
     // manage any business
     setBusinessIdByBusinesses();
@@ -111,11 +100,11 @@ export const BusinessProvider = ({ children }: Props) => {
         clearBusiness,
         setBusinessId,
         updateContextBusinessOrderPrint,
-        isDeleted,
-        setIsDeleted,
-        businessesIsEmpty,
+        businesses,
         setBusinessIdByBusinesses,
-        platformAccess,
+        businessManagers,
+        setIsGetManagersActive,
+        fetchManagers,
       }}
     >
       {children}

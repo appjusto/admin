@@ -1,16 +1,15 @@
 import {
-  Business,
   CreateManagersPayload,
-  GetBusinessManagersPayload,
+  GetManagersPayload,
   ManagerProfile,
-  NewManagerData,
+  ManagerWithRole,
+  NewUserData,
   WithId,
 } from '@appjusto/types';
 import * as Sentry from '@sentry/react';
 import { getDoc, query, setDoc, Unsubscribe, updateDoc, where } from 'firebase/firestore';
 import FirebaseRefs from '../FirebaseRefs';
 import { customCollectionSnapshot, customDocumentSnapshot } from '../utils';
-import { ManagerWithRole } from './types';
 
 export default class ManagerApi {
   constructor(private refs: FirebaseRefs) {}
@@ -36,25 +35,17 @@ export default class ManagerApi {
     });
   }
 
-  observeManagerBusinesses(
-    email: string,
-    resultHandler: (businesses: WithId<Business>[] | null) => void
-  ): Unsubscribe {
-    const q = query(this.refs.getBusinessesRef(), where('managers', 'array-contains', email));
-    // returns the unsubscribe function
-    return customCollectionSnapshot(q, resultHandler);
-  }
-
   async getBusinessManagers(
     businessId: string,
     resultHandler: (result: ManagerWithRole[]) => void
   ) {
-    const payload: GetBusinessManagersPayload = {
+    const payload: GetManagersPayload = {
       meta: { version: '1' }, // TODO: pass correct version on
+      type: 'managers',
       businessId,
     };
     try {
-      const users = ((await this.refs.getGetBusinessManagersCallable()(payload)) as unknown) as {
+      const users = (await this.refs.getGetManagersCallable()(payload)) as unknown as {
         data: ManagerWithRole[];
       };
       resultHandler(users.data);
@@ -79,12 +70,13 @@ export default class ManagerApi {
     await updateDoc(this.refs.getManagerRef(id), changes);
   }
 
-  async createManager(data: { key: string; managers: NewManagerData[] }) {
+  async createManager(data: { key: string; managers: NewUserData[] }) {
     const { key, managers } = data;
     const payload: CreateManagersPayload = {
       meta: { version: '1' }, // TODO: pass correct version on
+      type: 'managers',
       key,
-      managers,
+      usersData: managers,
     };
     const result = await this.refs.getCreateManagersCallable()(payload);
     return result;
