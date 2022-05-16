@@ -50,7 +50,7 @@ export interface RefundParams {
 
 export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps) => {
   //context
-  const { userAbility } = useContextFirebaseUser();
+  const { isBackofficeSuperuser } = useContextFirebaseUser();
   const { staff } = useContextStaffProfile();
   const { dispatchAppRequestResult } = useContextAppRequests();
   const { path } = useRouteMatch();
@@ -91,8 +91,7 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
     refundValue += order.fare.business.value;
   if (refund.includes('delivery') && order?.fare?.courier?.value)
     refundValue += order.fare.courier.value;
-  const canUpdateOrderStaff =
-    order?.staff?.id === staff?.id || userAbility?.can('create', 'orders');
+  const canUpdateOrderStaff = order?.staff?.id === staff?.id || isBackofficeSuperuser;
   //handlers
   const handleUpdateOrderStaff = async (type: 'assume' | 'release') => {
     if (type === 'assume') {

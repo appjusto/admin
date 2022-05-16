@@ -15,6 +15,7 @@ interface FirebaseUserContextProps {
   backofficePermissions?: UserPermissions;
   adminPermissions?: UserPermissions;
   isBackofficeUser?: boolean | null;
+  isBackofficeSuperuser?: boolean | null;
   userAbility?: AppAbility;
   refreshUserToken?(businessId?: string): Promise<void>;
 }
@@ -33,6 +34,7 @@ export const FirebaseUserProvider = ({ children }: Props) => {
   const [backofficePermissions, setBackofficePermissions] = React.useState<UserPermissions>();
   const [isBackofficeUser, setIsBackofficeUser] = React.useState<boolean | null>();
   const [userAbility, setUserAbility] = React.useState<AppAbility>();
+  const [isBackofficeSuperuser, setIsBackofficeSuperuser] = React.useState<boolean | null>();
   const platformAccess = usePlatformAccess(typeof user?.uid === 'string');
   // helpers
   const minVersion = platformAccess?.minVersions.businessWeb;
@@ -95,6 +97,9 @@ export const FirebaseUserProvider = ({ children }: Props) => {
     const ability = handleUserAbility(backofficePermissions, user.uid);
     setUserAbility(ability);
     setIsBackofficeUser(true);
+    // there is no practical need for backoffice users to create orders. So
+    // we use the permission to 'create' 'orders' as superuser characteristic
+    setIsBackofficeSuperuser(ability?.can('create', 'orders'));
   }, [user?.uid, backofficePermissions, handleUserAbility]);
   React.useEffect(() => {
     if (!adminRole) return;
@@ -112,6 +117,7 @@ export const FirebaseUserProvider = ({ children }: Props) => {
         adminRole,
         backofficePermissions,
         isBackofficeUser,
+        isBackofficeSuperuser,
         userAbility,
         refreshUserToken,
       }}

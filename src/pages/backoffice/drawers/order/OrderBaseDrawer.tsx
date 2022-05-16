@@ -64,15 +64,14 @@ export const OrderBaseDrawer = ({
 }: BaseDrawerProps) => {
   //context
   const { url } = useRouteMatch();
-  const { user, userAbility } = useContextFirebaseUser();
+  const { user, userAbility, isBackofficeSuperuser } = useContextFirebaseUser();
   const { dispatchAppRequestResult } = useContextAppRequests();
   // state
   const [isDeleting, setIsDeleting] = React.useState(false);
   // helpers
   const orderStatus = order?.status as OrderStatus;
   const isFlagged = order?.status === 'charged' && order?.flagged;
-  const canUpdateOrderStaff =
-    order?.staff?.id === user?.uid || userAbility?.can('create', 'orders');
+  const canUpdateOrderStaff = order?.staff?.id === user?.uid || isBackofficeSuperuser;
   const canDeleteOrder = order?.status === 'quote' && userAbility?.can('delete', 'orders');
   // handlers
   const handleDelete = async () => {
