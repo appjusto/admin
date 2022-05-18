@@ -4,6 +4,7 @@ import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile'
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { Break, DaySchedule } from 'common/components/DaySchedule';
+import { isEqual } from 'lodash';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
 import { t } from 'utils/i18n';
@@ -164,12 +165,9 @@ const SchedulesPage = () => {
   };
   // side effects
   React.useEffect(() => {
-    if (business?.schedules) {
-      setSchedules((prev) => {
-        if (prev === initialState) return business?.schedules;
-        else return prev;
-      });
-    }
+    if (!business?.schedules) return;
+    if (isEqual(schedules, business.schedules)) return;
+    setSchedules(business.schedules);
   }, [business?.schedules]);
   // UI
   return (
