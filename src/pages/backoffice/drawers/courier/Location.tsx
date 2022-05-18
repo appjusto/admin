@@ -50,15 +50,15 @@ const CourierLocationMap = ({ coordinates }: CourierLocationMapProps) => {
 
 export const Location = () => {
   // context
-  const { courier } = useContextCourierProfile();
+  const { courier, coordinates } = useContextCourierProfile();
   // state
   const [googleLink, setGoogleLink] = React.useState<string>();
   // side effects
   React.useEffect(() => {
-    if (!courier?.coordinates || courier?.status === 'unavailable') return;
-    const link = `https://www.google.com/maps/search/?api=1&query=${courier.coordinates.latitude}%2C${courier.coordinates.longitude}`;
+    if (courier?.status === 'unavailable' || !coordinates) return;
+    const link = `https://www.google.com/maps/search/?api=1&query=${coordinates.latitude}%2C${coordinates.longitude}`;
     setGoogleLink(link);
-  }, [courier?.coordinates, courier?.status]);
+  }, [courier?.status, coordinates]);
   //UI
   return (
     <Box>
@@ -82,8 +82,8 @@ export const Location = () => {
           _focus={{ outline: 'none' }}
         />
       </Flex>
-      {courier?.status !== 'unavailable' && courier?.coordinates && (
-        <CourierLocationMap key={courier?.id} coordinates={courier.coordinates} />
+      {courier?.status !== 'unavailable' && coordinates && (
+        <CourierLocationMap key={courier?.id} coordinates={coordinates} />
       )}
     </Box>
   );

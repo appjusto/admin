@@ -45,6 +45,7 @@ export const CourierBaseDrawer = ({ staff, onClose, children, ...props }: BaseDr
   const { deleteAccount, deleteAccountResult } = useAuthentication();
   const {
     courier,
+    updatedOn,
     isEditingEmail,
     setIsEditingEmail,
     contextValidation,
@@ -143,7 +144,7 @@ export const CourierBaseDrawer = ({ staff, onClose, children, ...props }: BaseDr
             <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
               {t('Atualizado em:')}{' '}
               <Text as="span" fontWeight="500">
-                {getDateAndHour(courier?.updatedOn)}
+                {getDateAndHour(updatedOn)}
               </Text>
             </Text>
             <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
