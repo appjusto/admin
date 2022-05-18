@@ -23,7 +23,7 @@ interface Props {
 
 export const ManagerProvider = ({ children }: Props) => {
   // context
-  const { user } = useContextFirebaseUser();
+  const { user, isBackofficeUser } = useContextFirebaseUser();
   const { setBusinessId } = useContextBusiness();
   const { manager, setManagerEmail } = useManagerProfile();
   // set useUpdateManagerProfile isOnboarding to "true" to avoid dispatching update
@@ -31,9 +31,10 @@ export const ManagerProvider = ({ children }: Props) => {
   const { updateProfile, updateLastBusinessId } = useUpdateManagerProfile(manager?.id, true);
   // update business context with manager last business id
   React.useEffect(() => {
+    if (isBackofficeUser) return;
     if (!manager?.lastBusinessId) return;
     setBusinessId(manager.lastBusinessId);
-  }, [manager?.lastBusinessId, setBusinessId]);
+  }, [isBackofficeUser, manager?.lastBusinessId, setBusinessId]);
   React.useEffect(() => {
     if (!user || !manager?.id) return;
     if (user.uid !== manager.id) return;
