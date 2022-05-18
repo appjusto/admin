@@ -166,8 +166,10 @@ const SchedulesPage = () => {
   // side effects
   React.useEffect(() => {
     if (!business?.schedules) return;
-    if (isEqual(schedules, business.schedules)) return;
-    setSchedules(business.schedules);
+    setSchedules((prev) => {
+      if (!isEqual(prev, business.schedules)) return business.schedules;
+      else return prev;
+    });
   }, [business?.schedules]);
   // UI
   return (
