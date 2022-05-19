@@ -1,3 +1,4 @@
+import { CourierProfile, WithId } from '@appjusto/types';
 import { omit, omitBy } from 'lodash';
 
 export const situationPTOptions = {
@@ -128,7 +129,7 @@ export const adminRolePTOptions = {
 };
 
 export const getEditableProfile = (profile: any, isEditingEmail: boolean) => {
-  let omittedKeys = [
+  let omittedKeys: (keyof WithId<CourierProfile>)[] = [
     'id',
     'code',
     'createdOn',
@@ -136,6 +137,10 @@ export const getEditableProfile = (profile: any, isEditingEmail: boolean) => {
     'statistics',
     'onboarded',
     'notificationToken',
+    'appVersion',
+    'fleet',
+    'mode',
+    'status',
     'email',
   ];
   if (isEditingEmail) omittedKeys.pop();

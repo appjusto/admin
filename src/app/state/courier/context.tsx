@@ -15,14 +15,38 @@ import { useCourierProfilePictures } from 'app/api/courier/useCourierProfilePict
 import { MutationResult } from 'app/api/mutation/useCustomMutation';
 import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';
 import { BackofficeProfileValidation } from 'common/types';
+import { FieldValue, GeoPoint } from 'firebase/firestore';
+import { pick } from 'lodash';
 import React, { Dispatch, SetStateAction } from 'react';
 import { UseMutateAsyncFunction } from 'react-query';
 import { useParams } from 'react-router';
 import { useContextApi } from '../api/context';
+import { shouldUpdateState } from '../utils';
 import { courierReducer } from './courierReducer';
+
+export const courierWatchedFields: (keyof CourierProfile)[] = [
+  'situation',
+  'status',
+  'code',
+  'name',
+  'surname',
+  'cpf',
+  'phone',
+  'company',
+  'statistics',
+  'appVersion',
+  'createdOn',
+  // 'updatedOn',
+  'mode',
+  'bankAccount',
+  'email',
+  'fleet',
+];
 
 interface CourierProfileContextProps {
   courier: WithId<CourierProfile> | undefined | null;
+  coordinates?: GeoPoint;
+  updatedOn?: FieldValue;
   pictures: { selfie?: string | null; document?: string | null };
   isEditingEmail: boolean;
   setIsEditingEmail: Dispatch<SetStateAction<boolean>>;
@@ -65,12 +89,16 @@ export const CourierProvider = ({ children }: Props) => {
   const { courierId } = useParams<Params>();
   const profile = useCourierProfile(courierId);
   const pictures = useCourierProfilePictures(courierId, '_1024x1024', '_1024x1024');
-  const { marketPlace, deleteMarketPlace, deleteMarketPlaceResult } = useCourierMarketPlace(
-    courierId
-  );
+  const { marketPlace, deleteMarketPlace, deleteMarketPlaceResult } =
+    useCourierMarketPlace(courierId);
   const issueOptions = useIssuesByType(issueOptionsArray);
   // state
+  const [watchedProfile, setWatchedProfile] = React.useState<Partial<
+    WithId<CourierProfile>
+  > | null>();
   const [courier, dispatch] = React.useReducer(courierReducer, {} as WithId<CourierProfile>);
+  const [coordinates, setCoordinates] = React.useState<GeoPoint>();
+  const [updatedOn, setUpdatedOn] = React.useState<FieldValue>();
   const [isEditingEmail, setIsEditingEmail] = React.useState(false);
   const [contextValidation, setContextValidation] = React.useState({
     cpf: true,
@@ -85,18 +113,33 @@ export const CourierProvider = ({ children }: Props) => {
   const [currentOrder, setCurrentOrder] = React.useState<WithId<Order> | null>(null);
   const orders = useCourierOrders(courierId, dateStart, dateEnd);
   // handlers
+  const updateWatchedProfile = React.useCallback(
+    (newState: WithId<CourierProfile> | null) => {
+      if (!shouldUpdateState(watchedProfile, newState, courierWatchedFields)) return;
+      else {
+        const watched = { ...pick(newState!, courierWatchedFields), id: newState!.id };
+        setWatchedProfile(watched);
+      }
+    },
+    [watchedProfile]
+  );
   const handleProfileChange = (key: string, value: any) => {
     dispatch({ type: 'update_state', payload: { [key]: value } });
   };
   // side effects
   React.useEffect(() => {
-    if (profile) {
-      dispatch({
-        type: 'load_state',
-        payload: profile,
-      });
-    }
+    if (!profile) return;
+    if (profile.coordinates) setCoordinates(profile.coordinates);
+    setUpdatedOn(profile.updatedOn);
+    updateWatchedProfile(profile);
   }, [profile]);
+  React.useEffect(() => {
+    if (!watchedProfile) return;
+    dispatch({
+      type: 'update_state',
+      payload: watchedProfile,
+    });
+  }, [watchedProfile]);
   React.useEffect(() => {
     if (!courier?.ongoingOrderId) return setCurrentOrder(null);
     const unsub = api.order().observeOrder(courier.ongoingOrderId, setCurrentOrder);
@@ -116,6 +159,8 @@ export const CourierProvider = ({ children }: Props) => {
     <CourierProfileContext.Provider
       value={{
         courier,
+        coordinates,
+        updatedOn,
         pictures,
         isEditingEmail,
         setIsEditingEmail,
