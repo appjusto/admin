@@ -5,7 +5,7 @@ import React, { Dispatch, SetStateAction } from 'react';
 import { UseMutateAsyncFunction } from 'react-query';
 import packageInfo from '../../../../package.json';
 import { useContextFirebaseUser } from '../auth/context';
-import { useContextBusiness } from '../business/context';
+// import { useContextBusiness } from '../business/context';
 
 const version = packageInfo.version;
 
@@ -24,16 +24,17 @@ interface Props {
 export const ManagerProvider = ({ children }: Props) => {
   // context
   const { user } = useContextFirebaseUser();
-  const { setBusinessId } = useContextBusiness();
+  // const { setBusinessId } = useContextBusiness();
   const { manager, setManagerEmail } = useManagerProfile();
   // set useUpdateManagerProfile isOnboarding to "true" to avoid dispatching update
   // manager webAppVersion changes results
   const { updateProfile, updateLastBusinessId } = useUpdateManagerProfile(manager?.id, true);
   // update business context with manager last business id
-  React.useEffect(() => {
-    if (!manager?.lastBusinessId) return;
-    setBusinessId(manager.lastBusinessId);
-  }, [manager?.lastBusinessId, setBusinessId]);
+  // React.useEffect(() => {
+  //   if (isBackofficeUser) return;
+  //   if (!manager?.lastBusinessId) return;
+  //   setBusinessId(manager.lastBusinessId);
+  // }, [isBackofficeUser, manager?.lastBusinessId, setBusinessId]);
   React.useEffect(() => {
     if (!user || !manager?.id) return;
     if (user.uid !== manager.id) return;

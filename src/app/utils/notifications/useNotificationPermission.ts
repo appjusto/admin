@@ -1,11 +1,15 @@
 import * as Sentry from '@sentry/react';
 import React from 'react';
 
+const supportsNotification = !!('Notification' in window);
+
 export const useNotificationPermission = () => {
-  const [permission, setPermission] = React.useState(Notification?.permission);
+  const [permission, setPermission] = React.useState(
+    supportsNotification ? Notification.permission : undefined
+  );
   // request permission if necessary
   React.useEffect(() => {
-    if (!('Notification' in window)) {
+    if (!supportsNotification) {
       console.warn('Navegador não suporta notificações');
       return;
     }

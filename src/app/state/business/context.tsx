@@ -5,7 +5,37 @@ import { useGetManagers } from 'app/api/manager/useGetManagers';
 import React from 'react';
 import { useQueryClient } from 'react-query';
 import { useContextFirebaseUser } from '../auth/context';
-import { getBusinessChangedKeys } from './utils';
+import { shouldUpdateState } from '../utils';
+
+const watchedFields: (keyof Business)[] = [
+  // primitive types
+  'name',
+  'companyName',
+  'cnpj',
+  'phone',
+  'phones',
+  'status',
+  'situation',
+  'enabled',
+  'profileIssuesMessage',
+  'cuisine',
+  'description',
+  'minimumOrder',
+  'averageCookingTime',
+  'orderAcceptanceTime',
+  'deliveryRange',
+  'onboarding',
+  'logoExists',
+  'coverImageExists',
+  'orderPrinting',
+  'slug',
+  'settings',
+  // object types
+  'managers',
+  'profileIssues',
+  'businessAddress',
+  'schedules',
+];
 
 interface ContextProps {
   business?: WithId<Business> | null;
@@ -50,11 +80,8 @@ export const BusinessProvider = ({ children }: Props) => {
   }, [businesses]);
   const updateContextBusiness = React.useCallback(
     (newState: WithId<Business> | null) => {
-      if (business && newState) {
-        const changedKeys = getBusinessChangedKeys(business, newState);
-        if (changedKeys.length === 0) return;
-        else setBusiness(newState);
-      } else setBusiness(newState);
+      if (!shouldUpdateState(business, newState, watchedFields)) return;
+      else setBusiness(newState);
     },
     [business]
   );
