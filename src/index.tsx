@@ -15,25 +15,13 @@ Sentry.init({
   debug: process.env.REACT_APP_ENVIRONMENT !== 'live',
 });
 
-const onNewContentIsAvailable = (registration: ServiceWorkerRegistration) => {
-  if (!registration.waiting) {
-    console.log('%cregistration.waiting is null', 'color: red');
-    return;
-  }
-  registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-  // if (caches) {
-  //   console.log('Clearing old cache...');
-  //   // Service worker cache should be cleared with caches.delete()
-  //   caches.keys().then((names) => {
-  //     for (const name of names) {
-  //       caches.delete(name);
-  //     }
-  //   });
-  // }
-  // console.log('Reloading Admin...');
-  // // delete browser cache and hard reload
-  // window.location.reload();
-};
+// const onNewContentIsAvailable = (registration: ServiceWorkerRegistration) => {
+//   if (!registration.waiting) {
+//     console.log('%cregistration.waiting is null', 'color: red');
+//     return;
+//   }
+//   registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+// };
 
 ReactDOM.render(
   <React.StrictMode>
@@ -45,7 +33,8 @@ ReactDOM.render(
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://cra.link/PWA
-serviceWorkerRegistration.register({ onUpdate: onNewContentIsAvailable });
+serviceWorkerRegistration.register();
+// serviceWorkerRegistration.register({ onUpdate: onNewContentIsAvailable });
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
