@@ -88,7 +88,7 @@ export default class Api {
     this._staff = new StaffApi(this._refs);
     this._manager = new ManagerApi(this._refs);
     this._business = new BusinessApi(this._refs, this._files);
-    this._order = new OrderApi(this._refs);
+    this._order = new OrderApi(this._refs, this._files);
     this._courier = new CourierApi(this._refs, this._files);
     this._consumer = new ConsumerApi(this._refs, this._files);
     this._users = new UsersApi(this._refs);

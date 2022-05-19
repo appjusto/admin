@@ -1,5 +1,5 @@
-import { useContextApi } from 'app/state/api/context';
 import { OrderFraudPreventionFlags } from '@appjusto/types';
+import { useContextApi } from 'app/state/api/context';
 import React from 'react';
 
 export const useObserveOrderFraudPrevention = (orderId?: string) => {
@@ -10,7 +10,7 @@ export const useObserveOrderFraudPrevention = (orderId?: string) => {
   // side effects
   React.useEffect(() => {
     if (!orderId) return;
-    const unsub = api.order().observeOrderFraudPrevention(orderId, setFlags);
+    const unsub = api.order().observeOrderPrivateFraudPrevention(orderId, setFlags);
     return () => unsub();
   }, [api, orderId]);
   // return

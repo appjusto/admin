@@ -6,12 +6,14 @@ import {
   OrderStatus,
   OrderType,
 } from '@appjusto/types';
-import { Box, Flex, HStack, RadioGroup, Text, Textarea } from '@chakra-ui/react';
+import { Box, Flex, HStack, Icon, Link, RadioGroup, Text, Textarea } from '@chakra-ui/react';
+import { useObserveOrderPrivateConfirmation } from 'app/api/order/useObserveOrderPrivateConfirmation';
 import { useOrderNotes } from 'app/api/order/useOrderNotes';
 import { ProfileNotes } from 'common/components/backoffice/ProfileNotes';
 import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import CustomRadio from 'common/components/form/CustomRadio';
 import React from 'react';
+import { MdOpenInNew } from 'react-icons/md';
 import { formatCurrency } from 'utils/formatters';
 import { getOrderCancellator } from 'utils/functions';
 import { t } from 'utils/i18n';
@@ -30,6 +32,7 @@ interface OrderStatusProps {
   refundValue: number;
   onRefundingChange(type: InvoiceType, value: boolean): void;
   updateState(type: string, value: OrderStatus | DispatchingState | IssueType | string): void;
+  courierId?: string;
 }
 
 export const OrderStatusBar = ({
@@ -45,8 +48,13 @@ export const OrderStatusBar = ({
   refundValue,
   onRefundingChange,
   updateState,
+  courierId,
 }: OrderStatusProps) => {
   // context
+  const { confirmation, frontUrl, packageUrl } = useObserveOrderPrivateConfirmation(
+    orderId,
+    courierId
+  );
   const { orderNotes, updateOrderNote, deleteOrderNote, updateResult, deleteResult } =
     useOrderNotes(orderId);
   // helpers
@@ -56,8 +64,8 @@ export const OrderStatusBar = ({
   const cancelator = getOrderCancellator(issue?.type);
   // UI
   return (
-    <Box>
-      <Flex flexDir="row" justifyContent="space-between" px="4">
+    <Box px="4">
+      <Flex flexDir="row" justifyContent="space-between">
         <Box>
           <SectionTitle mt="0">{t('Alterar status do pedido:')}</SectionTitle>
           <RadioGroup
@@ -129,6 +137,61 @@ export const OrderStatusBar = ({
           </Box>
         )}
       </Flex>
+      {orderStatus === 'delivered' && (
+        <>
+          <SectionTitle>{t('Dados da confirmação:')}</SectionTitle>
+          <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+            {t('Código informado:')}{' '}
+            <Text as="span" fontWeight="500">
+              {confirmation?.handshakeResponse ? t('Sim') : t('Não')}
+            </Text>
+          </Text>
+          {confirmation?.deliveredTo && (
+            <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+              {t('Entregue para:')}{' '}
+              <Text as="span" fontWeight="500">
+                {confirmation.deliveredTo}
+              </Text>
+            </Text>
+          )}
+          {confirmation?.comment && (
+            <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+              {t('Comentário:')}{' '}
+              <Text as="span" fontWeight="500">
+                {confirmation.comment}
+              </Text>
+            </Text>
+          )}
+          <Flex flexDir="column">
+            {frontUrl && (
+              <Link
+                mt="2"
+                color="black"
+                href={frontUrl}
+                _focus={{ outline: 'none' }}
+                textDecor="underline"
+                isExternal
+              >
+                {t('Foto da fachada')}
+                <Icon ml="2" mb="-1" as={MdOpenInNew} />
+              </Link>
+            )}
+            {packageUrl && (
+              <Link
+                mt="2"
+                color="black"
+                href={packageUrl}
+                _focus={{ outline: 'none' }}
+                textDecor="underline"
+                isExternal
+              >
+                {t('Foto do pacote')}
+                <Icon ml="2" mb="-1" as={MdOpenInNew} />
+              </Link>
+            )}
+          </Flex>
+        </>
+      )}
       {(status === 'canceled' || status === 'rejected') && (
         <>
           <SectionTitle>{t('Dados do cancelamento:')}</SectionTitle>

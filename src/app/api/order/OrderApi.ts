@@ -7,6 +7,7 @@ import {
   Order,
   OrderCancellation,
   OrderChange,
+  OrderConfirmation,
   OrderFraudPreventionFlags,
   OrderIssue,
   OrderMatching,
@@ -39,6 +40,7 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
+import FilesApi from '../FilesApi';
 import FirebaseRefs from '../FirebaseRefs';
 import { InQueryArray } from '../types';
 import { customCollectionSnapshot, customDocumentSnapshot, queryLimit } from '../utils';
@@ -52,7 +54,7 @@ export type CancellationData = {
 export type Ordering = 'asc' | 'desc';
 
 export default class OrderApi {
-  constructor(private refs: FirebaseRefs) {}
+  constructor(private refs: FirebaseRefs, private files: FilesApi) {}
 
   // firestore
   observeOrders(
@@ -271,7 +273,7 @@ export default class OrderApi {
     return customCollectionSnapshot(q, resultHandler);
   }
 
-  observeOrderFraudPrevention(
+  observeOrderPrivateFraudPrevention(
     orderId: string,
     resultHandler: (flags: OrderFraudPreventionFlags | null) => void
   ): Unsubscribe {
@@ -300,6 +302,25 @@ export default class OrderApi {
       ref,
       (querySnapshot) => {
         if (querySnapshot.exists()) resultHandler(querySnapshot.data() as OrderMatching);
+        else resultHandler(null);
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+    // returns the unsubscribe function
+    return unsubscribe;
+  }
+
+  observeOrderPrivateConfirmation(
+    orderId: string,
+    resultHandler: (matching: OrderConfirmation | null) => void
+  ): Unsubscribe {
+    const ref = this.refs.getOrderConfirmationRef(orderId);
+    const unsubscribe = onSnapshot(
+      ref,
+      (querySnapshot) => {
+        if (querySnapshot.exists()) resultHandler(querySnapshot.data() as OrderConfirmation);
         else resultHandler(null);
       },
       (error) => {
@@ -552,5 +573,15 @@ export default class OrderApi {
 
   async deleteOrderNote(orderId: string, orderNoteId: string) {
     await deleteDoc(this.refs.getOrderNoteRef(orderId, orderNoteId));
+  }
+
+  async getOrderConfirmationPictureURL(
+    orderId: string,
+    courierId: string,
+    type: 'front' | 'package' = 'front'
+  ) {
+    return await this.files.getDownloadURL(
+      this.refs.getOrderConsumerStoragePath(orderId, courierId, type)
+    );
   }
 }

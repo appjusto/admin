@@ -293,6 +293,7 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
               refundValue={refundValue}
               onRefundingChange={onRefundingChange}
               updateState={updateState}
+              courierId={order?.courier?.id}
             />
           </Route>
           <Route exact path={`${path}/chats`}>
