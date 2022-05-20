@@ -23,7 +23,7 @@ interface Props {
 
 export const ManagerProvider = ({ children }: Props) => {
   // context
-  const { user } = useContextFirebaseUser();
+  const { user, isBackofficeUser } = useContextFirebaseUser();
   // const { setBusinessId } = useContextBusiness();
   const { manager, setManagerEmail } = useManagerProfile();
   // set useUpdateManagerProfile isOnboarding to "true" to avoid dispatching update
@@ -41,6 +41,19 @@ export const ManagerProvider = ({ children }: Props) => {
     if (!version || manager?.webAppVersion === version) return;
     updateProfile({ changes: { webAppVersion: version } });
   }, [user, manager?.id, manager?.webAppVersion, updateProfile]);
+  React.useEffect(() => {
+    if (!manager) return;
+    if (isBackofficeUser !== false) return;
+    (async () => {
+      try {
+        const userAgent = window?.navigator?.userAgent;
+        if (userAgent && manager.userAgent !== userAgent)
+          await updateProfile({ changes: { userAgent } });
+      } catch (error) {
+        console.error('Unabled to save userAgent: ', error);
+      }
+    })();
+  }, [isBackofficeUser, manager, updateProfile]);
   // UI
   return (
     <ProfileContext.Provider value={{ manager, setManagerEmail, updateLastBusinessId }}>

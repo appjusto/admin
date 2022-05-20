@@ -1,5 +1,6 @@
 import { StaffProfile, WithId } from '@appjusto/types';
 import { useStaffProfile } from 'app/api/staff/useStaffProfile';
+import { useUpdateStaffProfile } from 'app/api/staff/useUpdateStaffProfile';
 import React from 'react';
 
 interface ContextProps {
@@ -16,7 +17,21 @@ interface Props {
 export const StaffProvider = ({ children }: Props) => {
   // state
   const staff = useStaffProfile();
+  const { updateProfile } = useUpdateStaffProfile(staff, false);
   const username = staff?.name ?? (staff?.email ? staff?.email.split('@')[0] : '');
+  // side effects
+  React.useEffect(() => {
+    if (!staff) return;
+    (async () => {
+      try {
+        const userAgent = window?.navigator?.userAgent;
+        if (userAgent && staff.userAgent !== userAgent)
+          await updateProfile({ changes: { userAgent } });
+      } catch (error) {
+        console.error('Unabled to save userAgent: ', error);
+      }
+    })();
+  }, [staff, updateProfile]);
   // provider
   return (
     <StaffProfileContext.Provider value={{ staff, username }}>

@@ -25,7 +25,7 @@ export const StaffProfile = () => {
   const { dispatchAppRequestResult } = useContextAppRequests();
   const { staff } = useContextStaffProfile();
   const { sendSignInLinkToEmail, sendingLinkResult } = useAuthentication();
-  const { updateProfile, updateResult } = useUpdateStaffProfile();
+  const { updateProfile, updateResult } = useUpdateStaffProfile(staff);
   const { isLoading, isError, error: updateError } = updateResult;
 
   // state

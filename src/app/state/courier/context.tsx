@@ -132,6 +132,7 @@ export const CourierProvider = ({ children }: Props) => {
     if (profile.coordinates) setCoordinates(profile.coordinates);
     setUpdatedOn(profile.updatedOn);
     updateWatchedProfile(profile);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profile]);
   React.useEffect(() => {
     if (!watchedProfile) return;

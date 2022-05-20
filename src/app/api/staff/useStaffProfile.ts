@@ -1,4 +1,4 @@
-import { ManagerProfile, WithId } from '@appjusto/types';
+import { StaffProfile, WithId } from '@appjusto/types';
 import { useContextApi } from 'app/state/api/context';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import React from 'react';
@@ -8,7 +8,7 @@ export const useStaffProfile = () => {
   const api = useContextApi();
   const { user, isBackofficeUser } = useContextFirebaseUser();
   // state
-  const [profile, setProfile] = React.useState<WithId<ManagerProfile> | undefined | null>();
+  const [profile, setProfile] = React.useState<WithId<StaffProfile> | undefined | null>();
   // side effects
   // observe profile
   React.useEffect(() => {
