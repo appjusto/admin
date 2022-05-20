@@ -12,13 +12,14 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { useManager } from 'app/api/manager/useManager';
+import { useUpdateManagerProfile } from 'app/api/manager/useUpdateManagerProfile';
 import { situationPTOptions } from 'pages/backoffice/utils';
 import React from 'react';
 import { useParams } from 'react-router';
 import { useHistory } from 'react-router-dom';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
-import { SectionTitle } from '../generics/SectionTitle';
+import { ManagerForm } from './ManagerForm';
 
 const FetchingHeader = () => {
   return (
@@ -126,6 +127,7 @@ export const ManagerBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   const { goBack } = useHistory();
   const { managerId } = useParams<Params>();
   const { manager } = useManager(managerId);
+  const { updateProfile, updateResult } = useUpdateManagerProfile(managerId);
   //UI
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
@@ -202,8 +204,12 @@ export const ManagerBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
               </Text>
             </DrawerHeader>
           )}
-          <DrawerBody pb="28">
-            <SectionTitle>{t('Dados:')}</SectionTitle>
+          <DrawerBody position="relative">
+            <ManagerForm
+              manager={manager}
+              updateManager={(changes) => updateProfile({ changes })}
+              isLoading={updateResult.isLoading}
+            />
           </DrawerBody>
         </DrawerContent>
       </DrawerOverlay>
