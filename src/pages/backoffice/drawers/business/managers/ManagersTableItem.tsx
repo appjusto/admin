@@ -1,5 +1,5 @@
 import { AdminRole, ManagerWithRole } from '@appjusto/types';
-import { Box, Button, HStack, Select, Td, Text, Tooltip, Tr } from '@chakra-ui/react';
+import { Box, Button, HStack, Link, Select, Td, Text, Tooltip, Tr } from '@chakra-ui/react';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { CancelButton } from 'common/components/buttons/CancelButton';
 import { CheckButton } from 'common/components/buttons/CheckButton';
@@ -7,6 +7,7 @@ import { DeleteButton } from 'common/components/buttons/DeleteButton';
 import { EditButton } from 'common/components/buttons/EditButton';
 import { adminRolePTOptions } from 'pages/backoffice/utils';
 import React from 'react';
+import { Link as RouterLink, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { getAppVersionLabelColor } from 'utils/version';
 
@@ -28,6 +29,7 @@ export const ManagersTableItem = ({
   isLoading,
 }: ManagersTableItemProps) => {
   // context
+  const { path } = useRouteMatch();
   const { userAbility } = useContextFirebaseUser();
   // state
   const [currentRole, setCurrentRole] = React.useState<AdminRole>();
@@ -127,7 +129,11 @@ export const ManagersTableItem = ({
       bg={isDeleting ? 'rgba(254, 215, 215, 0.3)' : 'none'}
       pos="relative"
     >
-      <Td>{manager.email}</Td>
+      <Td>
+        <Link as={RouterLink} to={`${path}/${manager.id}`} textDecor="underline">
+          {manager.email}
+        </Link>
+      </Td>
       <Td>{adminRolePTOptions[manager.role as AdminRole]}</Td>
       <Td>
         <Text as="span" color={versionLabelColor}>

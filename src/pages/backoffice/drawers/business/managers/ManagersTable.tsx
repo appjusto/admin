@@ -62,7 +62,7 @@ export const ManagersTable = () => {
               <Th>{t('E-mail')}</Th>
               <Th>{t('Papel')}</Th>
               <Th>{t('Versão web/mob')}</Th>
-              <Th minW="150px"></Th>
+              <Th minW="140px"></Th>
             </Tr>
           </Thead>
           <Tbody>

@@ -7,7 +7,15 @@ import {
   WithId,
 } from '@appjusto/types';
 import * as Sentry from '@sentry/react';
-import { getDoc, query, setDoc, Unsubscribe, updateDoc, where } from 'firebase/firestore';
+import {
+  getDoc,
+  query,
+  serverTimestamp,
+  setDoc,
+  Unsubscribe,
+  updateDoc,
+  where,
+} from 'firebase/firestore';
 import FirebaseRefs from '../FirebaseRefs';
 import { customCollectionSnapshot, customDocumentSnapshot } from '../utils';
 
@@ -67,7 +75,8 @@ export default class ManagerApi {
   }
 
   async updateProfile(id: string, changes: Partial<ManagerProfile>) {
-    await updateDoc(this.refs.getManagerRef(id), changes);
+    const timestamp = serverTimestamp();
+    await updateDoc(this.refs.getManagerRef(id), { ...changes, updatedOn: timestamp });
   }
 
   async createManager(data: { key: string; managers: NewUserData[] }) {

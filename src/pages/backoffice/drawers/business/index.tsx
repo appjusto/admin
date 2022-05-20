@@ -2,6 +2,7 @@ import { BusinessBOProvider } from 'app/state/business/businessBOContext';
 import { useContextStaffProfile } from 'app/state/staff/context';
 import React from 'react';
 import { Route, Switch, useRouteMatch } from 'react-router-dom';
+import { ManagerBaseDrawer } from '../manager/ManagerBaseDrawer';
 import { BusinessBaseDrawer } from './BusinessBaseDrawer';
 import { BusinessIugu } from './BusinessIugu';
 import { BusinessManagers } from './BusinessManagers';
@@ -28,6 +29,9 @@ export const BusinessDrawer = ({ onClose, ...props }: BusinessDrawerProps) => {
           </Route>
           <Route exact path={`${path}/managers`}>
             <BusinessManagers />
+          </Route>
+          <Route exact path={`${path}/managers/:managerId`}>
+            <ManagerBaseDrawer onClose={onClose} {...props} />
           </Route>
           <Route exact path={`${path}/live`}>
             <BusinessLive />
