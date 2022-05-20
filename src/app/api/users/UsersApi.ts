@@ -19,6 +19,10 @@ import FirebaseRefs from '../FirebaseRefs';
 import { queryLimit } from '../utils';
 import { ProfileChangesSituations } from './useObserveUsersChanges';
 
+export type WithAuthId<T extends object> = T & {
+  authId: string | null;
+};
+
 export type UsersSearchType = 'email' | 'cpf' | 'phone';
 export default class UsersApi {
   constructor(private refs: FirebaseRefs) {}
@@ -79,15 +83,26 @@ export default class UsersApi {
     return unsubscribe;
   }
 
-  observeUser(userId: string, resultHandler: (user: WithId<User> | null) => void): Unsubscribe {
+  observeUser(
+    userId: string,
+    resultHandler: (user: WithAuthId<WithId<User>> | null) => void
+  ): Unsubscribe {
     // query
     let ref = this.refs.getUserRef(userId);
     // observer
     const unsubscribe = onSnapshot(
       ref,
       (querySnapshot) => {
-        if (querySnapshot.exists()) resultHandler(documentAs<User>(querySnapshot));
-        else resultHandler(null);
+        if (querySnapshot.exists()) {
+          const data = querySnapshot.data() as User;
+          const customDoc = {
+            ...data,
+            authId: data.id,
+            id: querySnapshot.id,
+          };
+          // resultHandler(documentAs<User>(querySnapshot));
+          resultHandler(customDoc);
+        } else resultHandler(null);
       },
       (error) => {
         console.error(error);

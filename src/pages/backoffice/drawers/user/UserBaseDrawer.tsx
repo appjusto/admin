@@ -107,6 +107,12 @@ export const UserBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
               {user?.id ?? 'N/E'}
             </Text>
             <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+              {t('Id de autenticação:')}{' '}
+              <Text as="span" fontWeight="500">
+                {user.authId ?? 'N/E'}
+              </Text>
+            </Text>
+            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
               {t('Última requisição:')}{' '}
               <Text as="span" fontWeight="500">
                 {getDateAndHour(user?.lastSignInRequest)}
