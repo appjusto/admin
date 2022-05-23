@@ -53,6 +53,7 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
+import { omit } from 'lodash';
 import { documentAs, documentsAs } from '../../../core/fb';
 import FilesApi from '../FilesApi';
 import FirebaseRefs from '../FirebaseRefs';
@@ -636,8 +637,7 @@ export default class BusinessApi {
     changes: Partial<ComplementGroup>
   ) {
     const timestamp = serverTimestamp();
-    let changesToSave = changes;
-    if (changesToSave.items) delete changesToSave.items;
+    let changesToSave = omit(changes, 'items');
     const ref = this.refs.getBusinessComplementsGroupRef(businessId, groupId);
     await updateDoc(ref, {
       ...changesToSave,
