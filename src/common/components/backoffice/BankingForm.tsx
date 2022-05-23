@@ -174,7 +174,7 @@ export const BankingForm = ({
       <CustomPatternInput
         id="banking-agency"
         ref={agencyRef}
-        label={t('Agência')}
+        label={t('Agência *')}
         placeholder={
           (selectedBank?.agencyPattern.indexOf('D') ?? -1) > -1
             ? t('Número da agência com o dígito')
@@ -199,7 +199,7 @@ export const BankingForm = ({
           id="banking-account"
           ref={accountRef}
           flex={3}
-          label={t('Conta')}
+          label={t('Conta *')}
           placeholder={
             (selectedBank?.accountPattern.indexOf('D') ?? -1) > -1
               ? t('Número da conta com o dígito')

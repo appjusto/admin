@@ -22,6 +22,7 @@ import { useContextManagerProfile } from '../manager/context';
 import { useContextAppRequests } from '../requests/context';
 import { businessBOReducer, businessBOState } from './businessBOReducer';
 import { useContextBusiness } from './context';
+import { bankingInfoIsEmpty, getValidationStatus } from './utils';
 
 const bankAccountSet = (bankAccount: BankAccount): boolean => {
   return (
@@ -104,10 +105,10 @@ export const BusinessBOProvider = ({ children }: Props) => {
   // state
   const [state, dispatch] = React.useReducer(businessBOReducer, {} as businessBOState);
   const [contextValidation, setContextValidation] = React.useState<BackofficeProfileValidation>({
-    // cpf: true,
-    // phone: true,
     cnpj: true,
+    profile: true,
     cep: true,
+    address: true,
     deliveryRange: true,
     agency: true,
     account: true,
@@ -155,43 +156,8 @@ export const BusinessBOProvider = ({ children }: Props) => {
   };
   const handleSave = () => {
     if (business?.situation === 'approved') {
-      const { cnpj, cep, deliveryRange, agency, account } = contextValidation;
-      if (!cnpj)
-        return dispatchAppRequestResult({
-          status: 'error',
-          requestId: 'bo-business-context-valid-cnpj',
-          message: { title: 'O CNPJ informado não é válido' },
-        });
-      if (!cep)
-        return dispatchAppRequestResult({
-          status: 'error',
-          requestId: 'bo-business-context-valid-cep',
-          message: { title: 'O CEP informado não é válido' },
-        });
-      if (!deliveryRange)
-        return dispatchAppRequestResult({
-          status: 'error',
-          requestId: 'bo-business-context-valid-range',
-          message: { title: 'O raio de entrega informado não é válido' },
-        });
-      // if (!phone)
-      //   return dispatchAppRequestResult({
-      //     status: 'error',
-      //     requestId: 'bo-business-context-valid-phone',
-      //     message: { title: 'O celular informado para o manager não é válido' },
-      //   });
-      if (!agency)
-        return dispatchAppRequestResult({
-          status: 'error',
-          requestId: 'bo-business-context-valid-agency',
-          message: { title: 'A agência informada não é válida' },
-        });
-      if (!account)
-        return dispatchAppRequestResult({
-          status: 'error',
-          requestId: 'bo-business-context-valid-account',
-          message: { title: 'A conta informada não é válida' },
-        });
+      const validation = getValidationStatus(contextValidation, dispatchAppRequestResult);
+      if (!validation) return;
     }
     let businessChanges = null;
     let managerChanges = null;
@@ -199,7 +165,7 @@ export const BusinessBOProvider = ({ children }: Props) => {
     if (!isEqual(state.businessProfile, business))
       businessChanges = pick(state.businessProfile, businessKeys);
     // if (!isEqual(state.manager, manager)) managerChanges = state.manager;
-    if (!isEmpty(state.bankingInfo) && !isEqual(state.bankingInfo, bankAccount))
+    if (!bankingInfoIsEmpty(state.bankingInfo) && !isEqual(state.bankingInfo, bankAccount))
       bankingChanges = state.bankingInfo;
     updateBusinessManagerAndBankAccount({ businessChanges, managerChanges, bankingChanges });
   };
@@ -240,6 +206,22 @@ export const BusinessBOProvider = ({ children }: Props) => {
     }
   }, [state?.businessProfile?.cnpj]);
   React.useEffect(() => {
+    if (state?.businessProfile) {
+      const { name, companyName, description, cuisine } = state?.businessProfile;
+      if (!name || !companyName || !description || !cuisine) {
+        setContextValidation((prev) => ({
+          ...prev,
+          profile: false,
+        }));
+      } else {
+        setContextValidation((prev) => ({
+          ...prev,
+          profile: true,
+        }));
+      }
+    }
+  }, [state?.businessProfile]);
+  React.useEffect(() => {
     if (state?.businessProfile?.businessAddress?.cep) {
       setContextValidation((prev) => ({
         ...prev,
@@ -248,10 +230,32 @@ export const BusinessBOProvider = ({ children }: Props) => {
     }
   }, [state?.businessProfile?.businessAddress?.cep]);
   React.useEffect(() => {
-    if (state?.businessProfile?.deliveryRange) {
+    if (state?.businessProfile?.businessAddress) {
+      const {
+        state: uf,
+        city,
+        neighborhood,
+        address,
+        number,
+      } = state.businessProfile.businessAddress;
+      if (!uf || !city || !neighborhood || !address || !number) {
+        setContextValidation((prev) => ({
+          ...prev,
+          address: false,
+        }));
+      } else {
+        setContextValidation((prev) => ({
+          ...prev,
+          address: true,
+        }));
+      }
+    }
+  }, [state?.businessProfile?.businessAddress]);
+  React.useEffect(() => {
+    if (typeof state?.businessProfile?.deliveryRange === 'number') {
       setContextValidation((prev) => ({
         ...prev,
-        deliveryRange: state.businessProfile.deliveryRange! > 1000,
+        deliveryRange: state.businessProfile.deliveryRange! >= 1000,
       }));
     }
   }, [state?.businessProfile?.deliveryRange]);

@@ -17,7 +17,7 @@ const defaultPhone = {
 
 export interface businessBOState {
   // manager: WithId<ManagerProfile>;
-  bankingInfo: Partial<BankAccount>;
+  bankingInfo: BankAccount;
   businessProfile: WithId<Business>;
 }
 
@@ -124,6 +124,7 @@ export const businessBOReducer = (state: businessBOState, action: Actions): busi
       return {
         ...state,
         bankingInfo: {
+          ...state.bankingInfo,
           ...action.payload,
         },
       };

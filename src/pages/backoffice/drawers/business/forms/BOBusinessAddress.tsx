@@ -6,7 +6,6 @@ import { CustomPatternInput as PatternInput } from 'common/components/form/input
 import { cepFormatter, cepMask } from 'common/components/form/input/pattern-input/formatters';
 import { numbersOnlyParser } from 'common/components/form/input/pattern-input/parsers';
 import { Select } from 'common/components/form/select/Select';
-import { safeParseInt } from 'core/numbers';
 import React from 'react';
 import { t } from 'utils/i18n';
 import { getCitiesByState, IBGEResult, UF } from '../../../../../utils/ApiIBGE';
@@ -20,7 +19,8 @@ export const BOBusinessAddress = () => {
   // state
   const [cities, setCities] = React.useState<string[]>([]);
   // helpers
-  const deliveryRange = business?.deliveryRange ? (business.deliveryRange / 1000).toString() : '';
+  const deliveryRange =
+    typeof business?.deliveryRange === 'number' ? (business.deliveryRange / 1000).toString() : '';
   // side effects
   React.useEffect(() => {
     setCities([]);
@@ -119,9 +119,10 @@ export const BOBusinessAddress = () => {
         maxW="160px"
         label={t('Raio de entrega (km) *')}
         value={deliveryRange}
-        onChange={(ev: React.ChangeEvent<HTMLInputElement>) =>
-          handleBusinessProfileChange('deliveryRange', safeParseInt(ev.target.value, 10) * 1000)
-        }
+        onChange={(ev: React.ChangeEvent<HTMLInputElement>) => {
+          const value = parseInt(ev.target.value) * 1000;
+          handleBusinessProfileChange('deliveryRange', value);
+        }}
       />
     </Box>
   );

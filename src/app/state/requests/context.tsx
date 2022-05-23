@@ -28,8 +28,10 @@ export interface AppRequestResult {
   duration?: number;
 }
 
+export type AppDispatch = (result: AppRequestResult) => void;
+
 interface AppRequestsContextProps {
-  dispatchAppRequestResult: (result: AppRequestResult) => void;
+  dispatchAppRequestResult: AppDispatch;
 }
 
 const AppRequestsContext = React.createContext<AppRequestsContextProps>(

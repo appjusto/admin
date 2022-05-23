@@ -56,7 +56,7 @@ export const BOBusinessProfile = () => {
       <Textarea
         isRequired
         id="business-description"
-        label={t('Descrição *:')}
+        label={t('Descrição *')}
         placeholder={t('Descreva seu restaurante')}
         value={business?.description ?? ''}
         onChange={(ev) => handleChange('description', ev.target.value)}
