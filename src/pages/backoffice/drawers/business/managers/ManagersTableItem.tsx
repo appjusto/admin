@@ -29,7 +29,7 @@ export const ManagersTableItem = ({
   isLoading,
 }: ManagersTableItemProps) => {
   // context
-  const { path } = useRouteMatch();
+  const { url } = useRouteMatch();
   const { userAbility } = useContextFirebaseUser();
   // state
   const [currentRole, setCurrentRole] = React.useState<AdminRole>();
@@ -130,7 +130,7 @@ export const ManagersTableItem = ({
       pos="relative"
     >
       <Td>
-        <Link as={RouterLink} to={`${path}/${manager.id}`} textDecor="underline">
+        <Link as={RouterLink} to={`${url}/${manager.id}`} textDecor="underline">
           {manager.email}
         </Link>
       </Td>

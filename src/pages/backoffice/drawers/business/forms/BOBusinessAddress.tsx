@@ -20,7 +20,6 @@ export const BOBusinessAddress = () => {
   // state
   const [cities, setCities] = React.useState<string[]>([]);
   // helpers
-  console.log('business.deliveryRange', business?.deliveryRange);
   const deliveryRange = business?.deliveryRange ? (business.deliveryRange / 1000).toString() : '';
   // side effects
   React.useEffect(() => {
@@ -117,8 +116,8 @@ export const BOBusinessAddress = () => {
       <NumberInput
         isRequired
         id="delivery-ray"
-        maxW="100px"
-        label={t('Raio/ km *')}
+        maxW="160px"
+        label={t('Raio de entrega (km) *')}
         value={deliveryRange}
         onChange={(ev: React.ChangeEvent<HTMLInputElement>) =>
           handleBusinessProfileChange('deliveryRange', safeParseInt(ev.target.value, 10) * 1000)
