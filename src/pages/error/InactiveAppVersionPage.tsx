@@ -1,7 +1,20 @@
-import { Button, Center, Code, Container, Flex, Link, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Center,
+  Code,
+  Collapse,
+  Container,
+  Flex,
+  Icon,
+  Link,
+  Text,
+  useDisclosure,
+} from '@chakra-ui/react';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { ReactComponent as Logo } from 'common/img/logo.svg';
 import React from 'react';
+import { FaAngleDown, FaAngleUp } from 'react-icons/fa';
 import { Redirect } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import packageInfo from '../../../package.json';
@@ -12,6 +25,7 @@ const version = packageInfo.version;
 const InactiveAppVersionPage = () => {
   // context
   const { minVersion, isBackofficeUser } = useContextFirebaseUser();
+  const { isOpen, onToggle } = useDisclosure();
   // handlers
   const handleHardReload = () => {
     if (caches) {
@@ -51,23 +65,45 @@ const InactiveAppVersionPage = () => {
             {t('Recarregar para atualizar')}
           </Button>
         </Center>
-        <Text mt="6" fontSize="15px" lineHeight="21px" fontWeight="500" textAlign="center">
-          {t('Ou use as teclas de atalho a seguir:')}
-        </Text>
-        <Flex flexDir="column" alignItems="center">
-          <Text mt="4" fontWeight="700">
-            {t('Opção 1:')}
-          </Text>
-          <Code mt="2" w="160px">
-            Ctrl + F5
-          </Code>
-          <Text mt="4" fontWeight="700">
-            {t('Opção 2:')}
-          </Text>
-          <Code mt="2" w="160px">
-            Ctrl + Shift + R
-          </Code>
-        </Flex>
+        <Center>
+          <Box w="128px" borderBottom="1px solid #505A4F">
+            <Text
+              mt="6"
+              fontSize="15px"
+              lineHeight="21px"
+              fontWeight="500"
+              textAlign="center"
+              cursor="pointer"
+              onClick={onToggle}
+              mb="-0.5"
+            >
+              {isOpen ? t('Ver menos') : t('Ver mais opções')}
+              <Icon ml="1" mb="-1" as={isOpen ? FaAngleUp : FaAngleDown} />
+            </Text>
+          </Box>
+        </Center>
+        <Collapse in={isOpen} animateOpacity>
+          <Flex flexDir="column" alignItems="center">
+            <Text mt="4" fontWeight="700">
+              {t('Opção 1:')}
+            </Text>
+            <Code mt="2" w="170px">
+              Ctrl + F5
+            </Code>
+            <Text mt="4" fontWeight="700">
+              {t('Opção 2:')}
+            </Text>
+            <Code mt="2" w="170px">
+              Ctrl + Shift + R
+            </Code>
+            <Text mt="4" fontWeight="700">
+              {t('ou:')}
+            </Text>
+            <Code mt="2" w="170px">
+              Command + Shift + R
+            </Code>
+          </Flex>
+        </Collapse>
         <Text mt="8" fontSize="15px" lineHeight="21px" fontWeight="500" textAlign="center">
           {t(
             'Se o problema persistir, você pode entrar em contato com o nosso suporte pelos canais abaixo:'
