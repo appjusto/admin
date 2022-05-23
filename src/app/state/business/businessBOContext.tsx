@@ -7,6 +7,7 @@ import {
   MarketplaceAccountInfo,
   WithId,
 } from '@appjusto/types';
+import * as cnpjutils from '@fnando/cnpj';
 import { useBusinessBankAccount } from 'app/api/business/profile/useBusinessBankAccount';
 import { useBusinessManagerAndBankAccountBatch } from 'app/api/business/profile/useBusinessManagerAndBankAccountBatch';
 import { useBusinessMarketPlace } from 'app/api/business/useBusinessMarketPlace';
@@ -103,8 +104,11 @@ export const BusinessBOProvider = ({ children }: Props) => {
   // state
   const [state, dispatch] = React.useReducer(businessBOReducer, {} as businessBOState);
   const [contextValidation, setContextValidation] = React.useState<BackofficeProfileValidation>({
-    cpf: true,
+    // cpf: true,
     // phone: true,
+    cnpj: true,
+    cep: true,
+    deliveryRange: true,
     agency: true,
     account: true,
   });
@@ -151,12 +155,24 @@ export const BusinessBOProvider = ({ children }: Props) => {
   };
   const handleSave = () => {
     if (business?.situation === 'approved') {
-      const { cpf, phone, agency, account } = contextValidation;
-      if (!cpf)
+      const { cnpj, cep, deliveryRange, agency, account } = contextValidation;
+      if (!cnpj)
         return dispatchAppRequestResult({
           status: 'error',
-          requestId: 'bo-business-context-valid-cpf',
-          message: { title: 'O CPF informado não é válido' },
+          requestId: 'bo-business-context-valid-cnpj',
+          message: { title: 'O CNPJ informado não é válido' },
+        });
+      if (!cep)
+        return dispatchAppRequestResult({
+          status: 'error',
+          requestId: 'bo-business-context-valid-cep',
+          message: { title: 'O CEP informado não é válido' },
+        });
+      if (!deliveryRange)
+        return dispatchAppRequestResult({
+          status: 'error',
+          requestId: 'bo-business-context-valid-range',
+          message: { title: 'O raio de entrega informado não é válido' },
         });
       // if (!phone)
       //   return dispatchAppRequestResult({
@@ -215,6 +231,30 @@ export const BusinessBOProvider = ({ children }: Props) => {
   //   if (state?.manager?.cpf)
   //     setContextValidation((prev) => ({ ...prev, cpf: cpfutils.isValid(state.manager.cpf!) }));
   // }, [state?.manager?.phone, state?.manager?.cpf]);
+  React.useEffect(() => {
+    if (state?.businessProfile?.cnpj) {
+      setContextValidation((prev) => ({
+        ...prev,
+        cnpj: cnpjutils.isValid(state.businessProfile.cnpj!),
+      }));
+    }
+  }, [state?.businessProfile?.cnpj]);
+  React.useEffect(() => {
+    if (state?.businessProfile?.businessAddress?.cep) {
+      setContextValidation((prev) => ({
+        ...prev,
+        cep: state.businessProfile.businessAddress?.cep!.length === 8,
+      }));
+    }
+  }, [state?.businessProfile?.businessAddress?.cep]);
+  React.useEffect(() => {
+    if (state?.businessProfile?.deliveryRange) {
+      setContextValidation((prev) => ({
+        ...prev,
+        deliveryRange: state.businessProfile.deliveryRange! > 1000,
+      }));
+    }
+  }, [state?.businessProfile?.deliveryRange]);
   // UI
   return (
     <BusinessBOContext.Provider

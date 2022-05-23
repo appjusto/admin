@@ -1,7 +1,9 @@
 export interface BackofficeProfileValidation {
-  cpf: boolean;
-  cnpj?: boolean;
+  cpf?: boolean;
   phone?: boolean;
+  cnpj?: boolean;
+  cep?: boolean;
+  deliveryRange?: boolean;
   agency: boolean;
   account: boolean;
   message?: string;
