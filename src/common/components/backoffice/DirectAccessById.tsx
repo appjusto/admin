@@ -13,8 +13,9 @@ const orderIdLength = 20;
 const businessIdLength = 20;
 const courierIdLength = 28;
 const consumerIdLength = 28;
+// const managerIdLength = 28;
 
-type DataType = 'order' | 'business' | 'courier' | 'consumer' | 'invoice';
+type DataType = 'order' | 'business' | 'courier' | 'consumer' | 'invoice' | 'manager';
 
 export const DirectAccessById = ({ ...props }: BoxProps) => {
   // context
@@ -40,6 +41,9 @@ export const DirectAccessById = ({ ...props }: BoxProps) => {
       } else if (type === 'consumer' && searchId.length < consumerIdLength) {
         const consumerId = await api.consumer().getConsumerIdByCode(searchId);
         return push(`${url}/${type}/${consumerId}`);
+      } else if (type === 'manager' && searchId.includes('@')) {
+        const managerId = await api.manager().getManagerIdByEmail(searchId);
+        return push(`${url}/${type}/${managerId}`);
       } else {
         return push(`${url}/${type}/${searchId}`);
       }
@@ -48,6 +52,11 @@ export const DirectAccessById = ({ ...props }: BoxProps) => {
     false
   );
   // handlers
+  const getInputLabel = () => {
+    if (type === 'invoice') return t('Id:');
+    else if (type === 'manager') return t('Id ou e-mail');
+    else return t('Id ou código:');
+  };
   const handleGetLink = async () => {
     try {
       return await getLink();
@@ -84,6 +93,9 @@ export const DirectAccessById = ({ ...props }: BoxProps) => {
             <option value="consumer">{t('Consumidor')}</option>
           )}
           {userAbility?.can('read', 'invoices') && <option value="invoice">{t('Fatura')}</option>}
+          {userAbility?.can('read', 'managers') && (
+            <option value="manager">{t('Colaborador')}</option>
+          )}
         </Select>
         <CustomInput
           mt="0"
@@ -91,8 +103,8 @@ export const DirectAccessById = ({ ...props }: BoxProps) => {
           id="direct-access-search"
           value={searchId}
           onChange={(event) => setSearchId(event.target.value)}
-          label={type !== 'invoice' ? t('Id ou código:') : t('Id:')}
-          placeholder={t('Digite o id')}
+          label={getInputLabel()}
+          placeholder={t('Digite o valor buscado')}
           onKeyPress={handleUserKeyPress}
         />
         <Button

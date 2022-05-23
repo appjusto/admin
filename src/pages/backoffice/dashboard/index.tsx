@@ -12,6 +12,7 @@ import { BusinessDrawer } from '../drawers/business';
 import { ConsumerDrawer } from '../drawers/consumer';
 import { CourierDrawer } from '../drawers/courier';
 import { InvoiceDrawer } from '../drawers/invoice';
+import { ManagerBaseDrawer } from '../drawers/manager/ManagerBaseDrawer';
 import { BackofficeOrderDrawer } from '../drawers/order';
 import { UserChangeDrawer } from '../drawers/profile-changes/UserChangeDrawer';
 import { BOChatDrawer } from './BOChatDrawer';
@@ -114,6 +115,9 @@ const BODashboard = () => {
         </Route>
         <Route path={`${path}/invoice/:invoiceId`}>
           <InvoiceDrawer isOpen onClose={closeDrawerHandler} />
+        </Route>
+        <Route path={`${path}/manager/:managerId`}>
+          <ManagerBaseDrawer isOpen onClose={closeDrawerHandler} />
         </Route>
         <Route path={`${path}/chat/:orderId/:type`}>
           <BOChatDrawer isOpen onClose={closeDrawerHandler} />

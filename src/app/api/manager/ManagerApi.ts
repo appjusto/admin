@@ -9,6 +9,7 @@ import {
 import * as Sentry from '@sentry/react';
 import {
   getDoc,
+  getDocs,
   query,
   serverTimestamp,
   setDoc,
@@ -41,6 +42,12 @@ export default class ManagerApi {
     return customCollectionSnapshot<ManagerProfile>(q, (result) => {
       resultHandler(result[0]);
     });
+  }
+
+  async getManagerIdByEmail(email: string) {
+    const q = query(this.refs.getManagersRef(), where('email', '==', email));
+    const managerId = await getDocs(q).then((snapshot) => snapshot.docs[0].id);
+    return managerId;
   }
 
   async getBusinessManagers(
