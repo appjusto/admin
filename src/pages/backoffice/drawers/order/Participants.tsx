@@ -47,14 +47,6 @@ export const Participants = ({ order }: ParticipantsProps) => {
     <Box>
       {order?.type === 'food' ? (
         <Box>
-          <SectionTitle>{t('Cliente')}</SectionTitle>
-          <Participant
-            type="consumer"
-            participantId={order?.consumer?.id}
-            name={order?.consumer?.name}
-            address={order?.destination?.address?.main}
-            additionalInfo={order?.destination?.additionalInfo}
-          />
           <SectionTitle>{t('Restaurante')}</SectionTitle>
           <Participant
             type="business"
@@ -62,6 +54,14 @@ export const Participants = ({ order }: ParticipantsProps) => {
             name={order?.business?.name}
             address={order?.origin?.address?.main}
             additionalInfo={order?.origin?.additionalInfo}
+          />
+          <SectionTitle>{t('Cliente')}</SectionTitle>
+          <Participant
+            type="consumer"
+            participantId={order?.consumer?.id}
+            name={order?.consumer?.name}
+            address={order?.destination?.address?.main}
+            additionalInfo={order?.destination?.additionalInfo}
           />
         </Box>
       ) : (
