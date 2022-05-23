@@ -1,31 +1,31 @@
 import { Box } from '@chakra-ui/react';
-import * as cpfutils from '@fnando/cpf';
-import { useContextBusinessBackoffice } from 'app/state/business/businessBOContext';
-import { CustomInput } from 'common/components/form/input/CustomInput';
-import { CustomPatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';
-import {
-  cpfFormatter,
-  cpfMask,
-  phoneFormatter,
-  phoneMask,
-} from 'common/components/form/input/pattern-input/formatters';
-import { numbersOnlyParser } from 'common/components/form/input/pattern-input/parsers';
+// import * as cpfutils from '@fnando/cpf';
+// import { useContextBusinessBackoffice } from 'app/state/business/businessBOContext';
+// import { CustomInput } from 'common/components/form/input/CustomInput';
+// import { CustomPatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';
+// import {
+//   cpfFormatter,
+//   cpfMask,
+//   phoneFormatter,
+//   phoneMask,
+// } from 'common/components/form/input/pattern-input/formatters';
+// import { numbersOnlyParser } from 'common/components/form/input/pattern-input/parsers';
 import React from 'react';
-import { t } from 'utils/i18n';
+// import { t } from 'utils/i18n';
 
 export const BOManagerProfile = () => {
   // context
-  const { manager, handleManagerProfileChange: handleChange } = useContextBusinessBackoffice();
+  // const { manager, handleManagerProfileChange: handleChange } = useContextBusinessBackoffice();
   // refs
-  const nameRef = React.useRef<HTMLInputElement>(null);
-  const cpfRef = React.useRef<HTMLInputElement>(null);
-  const phoneNumberRef = React.useRef<HTMLInputElement>(null);
+  // const nameRef = React.useRef<HTMLInputElement>(null);
+  // const cpfRef = React.useRef<HTMLInputElement>(null);
+  // const phoneNumberRef = React.useRef<HTMLInputElement>(null);
   // helpers
-  const isCPFValid = () => (manager?.cpf ? cpfutils.isValid(manager.cpf) : true);
+  // const isCPFValid = () => (manager?.cpf ? cpfutils.isValid(manager.cpf) : true);
   // UI
   return (
     <Box maxW="464px">
-      <CustomInput
+      {/* <CustomInput
         id="manager-profile-email"
         label={t('E-mail')}
         value={manager?.email ?? ''}
@@ -73,7 +73,7 @@ export const BOManagerProfile = () => {
         value={manager?.cpf ?? ''}
         onValueChange={(value) => handleChange('cpf', value)}
         externalValidation={{ active: true, status: isCPFValid() }}
-      />
+      /> */}
     </Box>
   );
 };

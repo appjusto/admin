@@ -82,9 +82,9 @@ export const BusinessBaseDrawer = ({ staff, onClose, children, ...props }: BaseD
               </Text>
               </Text>*/}
             <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
-              {t('Nome do administrador:')}{' '}
+              {t('Administrador:')}{' '}
               <Text as="span" fontWeight="500">
-                {manager?.name ?? 'N/E'}
+                {manager?.name ?? manager?.email ?? 'N/E'}
               </Text>
             </Text>
             <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">

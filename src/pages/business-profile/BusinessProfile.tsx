@@ -11,6 +11,7 @@ import { CustomTextarea as Textarea } from 'common/components/form/input/CustomT
 import { CustomPatternInput as PatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';
 import { cnpjFormatter, cnpjMask } from 'common/components/form/input/pattern-input/formatters';
 import { numbersOnlyParser } from 'common/components/form/input/pattern-input/parsers';
+import { CuisineSelect } from 'common/components/form/select/CuisineSelect';
 import { ImageUploads } from 'common/components/ImageUploads';
 import {
   coverRatios,
@@ -27,7 +28,6 @@ import { useQueryClient } from 'react-query';
 import { Redirect, Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import { assertPhonesIsValid, serializePhones } from 'utils/functions';
 import { t } from 'utils/i18n';
-import { CuisineSelect } from '../../common/components/form/select/CuisineSelect';
 import { BusinessPhoneField, BusinessPhones } from './business-phones';
 import { BusinessDeleteDrawer } from './BusinessDeleteDrawer';
 import { CloneBusiness } from './CloneBusiness';

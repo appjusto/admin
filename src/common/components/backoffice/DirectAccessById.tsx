@@ -89,13 +89,13 @@ export const DirectAccessById = ({ ...props }: BoxProps) => {
           {userAbility?.can('read', 'businesses') && (
             <option value="business">{t('Restaurante')}</option>
           )}
+          {userAbility?.can('read', 'managers') && (
+            <option value="manager">{t('Colaborador')}</option>
+          )}
           {userAbility?.can('read', 'consumers') && (
             <option value="consumer">{t('Consumidor')}</option>
           )}
           {userAbility?.can('read', 'invoices') && <option value="invoice">{t('Fatura')}</option>}
-          {userAbility?.can('read', 'managers') && (
-            <option value="manager">{t('Colaborador')}</option>
-          )}
         </Select>
         <CustomInput
           mt="0"

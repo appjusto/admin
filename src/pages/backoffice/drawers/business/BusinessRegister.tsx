@@ -8,7 +8,8 @@ import React from 'react';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
 import BOBankingInformation from './forms/BOBankingInformation';
-import { BOManagerProfile } from './forms/BOManagerProfile';
+import { BOBusinessAddress } from './forms/BOBusinessAddress';
+import { BOBusinessProfile } from './forms/BOBusinessProfile';
 
 export const BusinessRegister = () => {
   // context
@@ -33,10 +34,8 @@ export const BusinessRegister = () => {
         handleOrdering={handleBusinessPhoneOrdering}
         isBackoffice
       />
-      <SectionTitle>{t('Dados pessoais')}</SectionTitle>
-      <BOManagerProfile />
-      <SectionTitle>{t('Dados bancários')}</SectionTitle>
-      <BOBankingInformation />
+      <SectionTitle>{t('Dados do restaurante')}</SectionTitle>
+      <BOBusinessProfile />
       <SectionTitle>{t('Desconto médio')}</SectionTitle>
       <CustomInput
         id="bo-business-average-discount"
@@ -44,6 +43,10 @@ export const BusinessRegister = () => {
         value={business?.averageDiscount ? business.averageDiscount.toString() : '0'}
         onChange={(e) => handleBusinessProfileChange('averageDiscount', parseInt(e.target.value))}
       />
+      <SectionTitle>{t('Endereço')}</SectionTitle>
+      <BOBusinessAddress />
+      <SectionTitle>{t('Dados bancários')}</SectionTitle>
+      <BOBankingInformation />
       <SectionTitle>{t('Anotações')}</SectionTitle>
       <ProfileNotes
         profileNotes={profileNotes}

@@ -7,7 +7,6 @@ import {
   MarketplaceAccountInfo,
   WithId,
 } from '@appjusto/types';
-import * as cpfutils from '@fnando/cpf';
 import { useBusinessBankAccount } from 'app/api/business/profile/useBusinessBankAccount';
 import { useBusinessManagerAndBankAccountBatch } from 'app/api/business/profile/useBusinessManagerAndBankAccountBatch';
 import { useBusinessMarketPlace } from 'app/api/business/useBusinessMarketPlace';
@@ -41,7 +40,8 @@ interface BusinessBOContextProps {
     args?: number | { index: number; field: BusinessPhoneField; value: any }
   ): void;
   handleBusinessPhoneOrdering(newPhones: BusinessPhone[]): void;
-  handleManagerProfileChange(key: string, value: any): void;
+  // handleManagerProfileChange(key: string, value: any): void;
+  handleBusinessAddressChange(key: string, value: any): void;
   handleBankingInfoChange(newBankAccount: Partial<BankAccount>): void;
   setContextValidation: Dispatch<SetStateAction<BackofficeProfileValidation>>;
   handleSave(): void;
@@ -65,6 +65,14 @@ const businessKeys: (keyof Business)[] = [
   'profileIssues',
   'profileIssuesMessage',
   'settings',
+  'businessAddress',
+  'name',
+  'description',
+  'cuisine',
+  'cnpj',
+  'companyName',
+  'deliveryRange',
+  'minimumOrder',
 ];
 interface Props {
   children: React.ReactNode | React.ReactNode[];
@@ -96,7 +104,7 @@ export const BusinessBOProvider = ({ children }: Props) => {
   const [state, dispatch] = React.useReducer(businessBOReducer, {} as businessBOState);
   const [contextValidation, setContextValidation] = React.useState<BackofficeProfileValidation>({
     cpf: true,
-    phone: true,
+    // phone: true,
     agency: true,
     account: true,
   });
@@ -108,6 +116,9 @@ export const BusinessBOProvider = ({ children }: Props) => {
         payload: { situation: 'blocked', enabled: false, status: 'closed' },
       });
     } else dispatch({ type: 'update_business', payload: { [key]: value } });
+  }, []);
+  const handleBusinessAddressChange = React.useCallback((key: string, value: any) => {
+    dispatch({ type: 'update_business_address', payload: { [key]: value } });
   }, []);
   const handleBussinesPhonesChange = (
     operation: 'add' | 'remove' | 'update' | 'ordering',
@@ -132,9 +143,9 @@ export const BusinessBOProvider = ({ children }: Props) => {
   const handleBusinessPhoneOrdering = (newPhones: BusinessPhone[]) => {
     return dispatch({ type: 'ordering_business_phone', payload: newPhones });
   };
-  const handleManagerProfileChange = (key: string, value: any) => {
-    dispatch({ type: 'update_manager', payload: { [key]: value } });
-  };
+  // const handleManagerProfileChange = (key: string, value: any) => {
+  //   dispatch({ type: 'update_manager', payload: { [key]: value } });
+  // };
   const handleBankingInfoChange = (newBankAccount: Partial<BankAccount>) => {
     dispatch({ type: 'update_banking', payload: newBankAccount });
   };
@@ -147,12 +158,12 @@ export const BusinessBOProvider = ({ children }: Props) => {
           requestId: 'bo-business-context-valid-cpf',
           message: { title: 'O CPF informado não é válido' },
         });
-      if (!phone)
-        return dispatchAppRequestResult({
-          status: 'error',
-          requestId: 'bo-business-context-valid-phone',
-          message: { title: 'O celular informado para o manager não é válido' },
-        });
+      // if (!phone)
+      //   return dispatchAppRequestResult({
+      //     status: 'error',
+      //     requestId: 'bo-business-context-valid-phone',
+      //     message: { title: 'O celular informado para o manager não é válido' },
+      //   });
       if (!agency)
         return dispatchAppRequestResult({
           status: 'error',
@@ -171,7 +182,7 @@ export const BusinessBOProvider = ({ children }: Props) => {
     let bankingChanges = null;
     if (!isEqual(state.businessProfile, business))
       businessChanges = pick(state.businessProfile, businessKeys);
-    if (!isEqual(state.manager, manager)) managerChanges = state.manager;
+    // if (!isEqual(state.manager, manager)) managerChanges = state.manager;
     if (!isEmpty(state.bankingInfo) && !isEqual(state.bankingInfo, bankAccount))
       bankingChanges = state.bankingInfo;
     updateBusinessManagerAndBankAccount({ businessChanges, managerChanges, bankingChanges });
@@ -188,9 +199,9 @@ export const BusinessBOProvider = ({ children }: Props) => {
       setManagerEmail(business?.managers[0] ?? null);
     } else setManagerEmail(null);
   }, [business, setManagerEmail]);
-  React.useEffect(() => {
-    if (manager) dispatch({ type: 'load_manager', payload: manager });
-  }, [manager]);
+  // React.useEffect(() => {
+  //   if (manager) dispatch({ type: 'load_manager', payload: manager });
+  // }, [manager]);
   React.useEffect(() => {
     if (bankAccount && bankAccountSet(bankAccount))
       dispatch({ type: 'update_banking', payload: bankAccount });
@@ -198,25 +209,26 @@ export const BusinessBOProvider = ({ children }: Props) => {
   React.useEffect(() => {
     if (business) dispatch({ type: 'load_business', payload: business });
   }, [business]);
-  React.useEffect(() => {
-    if (state?.manager?.phone)
-      setContextValidation((prev) => ({ ...prev, phone: state.manager.phone?.length === 11 }));
-    if (state?.manager?.cpf)
-      setContextValidation((prev) => ({ ...prev, cpf: cpfutils.isValid(state.manager.cpf!) }));
-  }, [state?.manager?.phone, state?.manager?.cpf]);
+  // React.useEffect(() => {
+  //   if (state?.manager?.phone)
+  //     setContextValidation((prev) => ({ ...prev, phone: state.manager.phone?.length === 11 }));
+  //   if (state?.manager?.cpf)
+  //     setContextValidation((prev) => ({ ...prev, cpf: cpfutils.isValid(state.manager.cpf!) }));
+  // }, [state?.manager?.phone, state?.manager?.cpf]);
   // UI
   return (
     <BusinessBOContext.Provider
       value={{
-        manager: state.manager,
+        manager,
         bankAccount: state.bankingInfo,
         business: state.businessProfile,
         contextValidation,
         isLoading: updateResult.isLoading,
         handleBusinessProfileChange,
+        handleBusinessAddressChange,
         handleBussinesPhonesChange,
         handleBusinessPhoneOrdering,
-        handleManagerProfileChange,
+        // handleManagerProfileChange,
         handleBankingInfoChange,
         setContextValidation,
         handleSave,
