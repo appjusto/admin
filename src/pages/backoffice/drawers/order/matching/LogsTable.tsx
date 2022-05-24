@@ -1,9 +1,11 @@
+import { OrderMatchingLog, WithId } from '@appjusto/types';
 import { Table, Tbody, Td, Tr } from '@chakra-ui/react';
 import React from 'react';
+import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 
 interface LogsTableProps {
-  logs?: string[];
+  logs?: WithId<OrderMatchingLog>[];
 }
 
 export const LogsTable = ({ logs }: LogsTableProps) => {
@@ -21,9 +23,10 @@ export const LogsTable = ({ logs }: LogsTableProps) => {
     <Table mt="4" size="md" variant="simple">
       <Tbody>
         {logs && logs.length > 0 ? (
-          logs.map((log, index) => (
-            <Tr key={`${log}-${index}`} color="black" fontSize="xs" fontWeight="700">
-              <Td>{log}</Td>
+          logs.map((log) => (
+            <Tr key={log.id} color="black" fontSize="xs" fontWeight="700">
+              <Td>{getDateAndHour(log.timestamp)}</Td>
+              <Td>{JSON.stringify(log.info)}</Td>
             </Tr>
           ))
         ) : (

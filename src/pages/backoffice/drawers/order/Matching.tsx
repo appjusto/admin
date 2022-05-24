@@ -23,7 +23,7 @@ interface MatchingProps {
 export const Matching = ({ order }: MatchingProps) => {
   // context
   const { userAbility } = useContextFirebaseUser();
-  const { matching, updateCourierNotified, updateResult, restartMatching, restartResult } =
+  const { matching, logs, updateCourierNotified, updateResult, restartMatching, restartResult } =
     useObserveOrderMatching(order?.id);
   const { courierManualAllocation, allocationResult } = useOrderCourierManualAllocation();
   const {
@@ -34,7 +34,7 @@ export const Matching = ({ order }: MatchingProps) => {
   } = useGetOutsourceDelivery(order?.id);
   // state
   //const [isAuto, setIsAuto] = React.useState(true);
-  const [logs, setLogs] = React.useState<string[]>();
+  // const [logs, setLogs] = React.useState<string[]>();
   const [attemps, setAttemps] = React.useState<number>(0);
   const [couriersNotified, setCouriersNotified] = React.useState<NotifiedCouriers[]>([]);
   const [courierRemoving, setCourierRemoving] = React.useState<string | null>(null);
@@ -68,18 +68,12 @@ export const Matching = ({ order }: MatchingProps) => {
     if (matching === null) {
       setCouriersNotified([]);
       //setCouriersRejections([]);
-      setLogs([]);
+      // setLogs([]);
       return;
     }
-    if (matching.couriersNotified) {
-      const notified = matching.couriersNotified.map((id) => ({ id }));
-      // @ts-ignore
-      setCouriersNotified(notified);
-    } else {
-      setCouriersNotified(matching.notifiedCouriers);
-    }
+    setCouriersNotified(matching.notifiedCouriers);
     //setCouriersRejections(matching.rejections);
-    setLogs(matching.logs);
+    // setLogs(matching.logs);
     setAttemps(matching.attempt);
   }, [matching]);
   React.useEffect(() => {

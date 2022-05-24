@@ -1,7 +1,7 @@
 import {
   DispatchingState,
   DispatchingStatus,
-  OrderChange,
+  OrderChangeLog,
   OrderStatus,
   WithId,
 } from '@appjusto/types';
@@ -21,8 +21,8 @@ interface OrderTrackingProps {
 
 export const OrderTracking = ({ orderId, isCompact }: OrderTrackingProps) => {
   // state
-  const logs = useObserveOrderLogs(orderId);
-  const [filteredLogs, setFilteredLogs] = React.useState<WithId<OrderChange>[]>();
+  const changeLogs = useObserveOrderLogs(orderId, 'change') as WithId<OrderChangeLog>[];
+  // const [filteredLogs, setFilteredLogs] = React.useState<WithId<OrderChange>[]>();
   const [currentStatus, setCurrentStatus] = React.useState<OrderStatus>();
   const [currentDispatchingStatus, setCurrentDispatchingStatus] =
     React.useState<DispatchingStatus>();
@@ -56,8 +56,8 @@ export const OrderTracking = ({ orderId, isCompact }: OrderTrackingProps) => {
     return '';
   };
   const getLogsLastStatus = (index: number) => {
-    if (!filteredLogs) return 'N/E';
-    const logsUsed = filteredLogs.slice(undefined, index);
+    if (!changeLogs) return 'N/E';
+    const logsUsed = changeLogs.slice(undefined, index);
     const lastLogWithStatus = last(logsUsed.filter((log) => log.after.status));
     const lastStatus = lastLogWithStatus?.after.status
       ? orderStatusPTOptions[lastLogWithStatus.after.status]
@@ -75,16 +75,16 @@ export const OrderTracking = ({ orderId, isCompact }: OrderTrackingProps) => {
     return '';
   };
   // side effects
+  // React.useEffect(() => {
+  //   const filtered = logs?.filter((log) => {
+  //     return log.after.status || log.after.dispatchingStatus || log.after.dispatchingState;
+  //   });
+  //   setFilteredLogs(filtered);
+  // }, [changeLogs]);
   React.useEffect(() => {
-    const filtered = logs?.filter((log) => {
-      return log.after.status || log.after.dispatchingStatus || log.after.dispatchingState;
-    });
-    setFilteredLogs(filtered);
-  }, [logs]);
-  React.useEffect(() => {
-    if (!filteredLogs) return;
-    const lastLog = last(filteredLogs);
-    const lastLogWithStatus = last(filteredLogs.filter((log) => log.after.status));
+    if (!changeLogs) return;
+    const lastLog = last(changeLogs);
+    const lastLogWithStatus = last(changeLogs.filter((log) => log.after.status));
     if (lastLog) setCurrentTime(getHourAndMinute(lastLog.timestamp));
     if (lastLogWithStatus) setCurrentStatus(lastLogWithStatus.after.status);
     if (lastLog?.after.dispatchingStatus) {
@@ -98,10 +98,10 @@ export const OrderTracking = ({ orderId, isCompact }: OrderTrackingProps) => {
         behavior: 'smooth',
       });
     }
-  }, [filteredLogs]);
+  }, [changeLogs]);
   // UI
   const matchingLabelColor = getMatchingLabelColor();
-  if (filteredLogs === undefined) {
+  if (changeLogs === undefined) {
     return (
       <Box w="100%" pb="2">
         <Skeleton height="20px" maxW="260px" />
@@ -189,7 +189,7 @@ export const OrderTracking = ({ orderId, isCompact }: OrderTrackingProps) => {
             bgColor="#F6F6F6"
             borderRadius="16px"
           >
-            {filteredLogs?.map((log, index) => (
+            {changeLogs?.map((log, index) => (
               <Text
                 key={log.id}
                 mt="2"

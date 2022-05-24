@@ -1,4 +1,4 @@
-import { Order, WithId } from '@appjusto/types';
+import { Order, OrderChangeLog, WithId } from '@appjusto/types';
 import { Box, Button, Flex, HStack, Progress, Text } from '@chakra-ui/react';
 import { useObserveOrderLogs } from 'app/api/order/useObserveOrderLogs';
 import { useOrderArrivalTimes } from 'app/api/order/useOrderArrivalTimes';
@@ -29,7 +29,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
   const { isBackofficeUser } = useContextFirebaseUser();
   const { isMatched, isNoMatch, isCurrierArrived, isDelivered, orderDispatchingKanbanItemText } =
     useOrderDeliveryInfos(getServerTime, order);
-  const logs = useObserveOrderLogs(order.id);
+  const changeLogs = useObserveOrderLogs(order.id, 'change') as WithId<OrderChangeLog>[];
   //const { restartMatching, restartResult } = useObserveOrderMatching(order.id);
 
   // state
@@ -60,12 +60,12 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
     let serverOrderTime: number | null = null;
     const setNewTime = () => {
       if (order.status === 'confirmed') {
-        const confirmedLog = logs?.find((log) => log.after.status === 'confirmed');
+        const confirmedLog = changeLogs?.find((log) => log.after.status === 'confirmed');
         const confirmedTime = getTimestampMilliseconds(confirmedLog?.timestamp as Timestamp);
         serverOrderTime = confirmedTime;
       }
       if (order.status === 'preparing') {
-        const preparingLog = logs?.find((log) => log.after.status === 'preparing');
+        const preparingLog = changeLogs?.find((log) => log.after.status === 'preparing');
         const preparingTime = getTimestampMilliseconds(preparingLog?.timestamp as Timestamp);
         serverOrderTime = preparingTime;
       }
@@ -83,7 +83,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
       return clearInterval(timeInterval);
     }
     return () => clearInterval(timeInterval);
-  }, [getServerTime, order.id, order.status, logs]);
+  }, [getServerTime, order.id, order.status, changeLogs]);
 
   React.useEffect(() => {
     // disabled for backoffice users

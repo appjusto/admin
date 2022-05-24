@@ -6,10 +6,10 @@ import {
   MatchOrderPayload,
   Order,
   OrderCancellation,
-  OrderChange,
   OrderConfirmation,
   OrderFraudPreventionFlags,
   OrderIssue,
+  OrderLog,
   OrderMatching,
   OrderStatus,
   OrderType,
@@ -52,6 +52,8 @@ export type CancellationData = {
 };
 
 export type Ordering = 'asc' | 'desc';
+
+export type OrderLogType = 'change' | 'payment' | 'info' | 'matching' | 'courier-location';
 
 export default class OrderApi {
   constructor(private refs: FirebaseRefs, private files: FilesApi) {}
@@ -257,9 +259,14 @@ export default class OrderApi {
 
   observeOrderLogs(
     orderId: string,
-    resultHandler: (order: WithId<OrderChange>[]) => void
+    type: OrderLogType,
+    resultHandler: (logs: WithId<OrderLog>[]) => void
   ): Unsubscribe {
-    const q = query(this.refs.getOrderLogsRef(orderId), orderBy('timestamp', 'asc'));
+    const q = query(
+      this.refs.getOrderLogsRef(orderId),
+      where('type', '==', type),
+      orderBy('timestamp', 'asc')
+    );
     // returns the unsubscribe function
     return customCollectionSnapshot(q, resultHandler);
   }
