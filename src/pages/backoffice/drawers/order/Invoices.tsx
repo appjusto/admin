@@ -1,4 +1,4 @@
-import { Invoice, WithId } from '@appjusto/types';
+import { Invoice, OrderPaymentLog, WithId } from '@appjusto/types';
 import { Box, Table, Tbody, Td, Tfoot, Th, Thead, Tr } from '@chakra-ui/react';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { invoiceStatusPTOptions, invoiceTypePTOptions } from 'pages/backoffice/utils';
@@ -7,12 +7,14 @@ import { formatCurrency } from 'utils/formatters';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../../../backoffice/drawers/generics/SectionTitle';
+import { LogsTable } from './invoices/LogsTable';
 
 interface InvoicesProps {
   invoices?: WithId<Invoice>[] | null;
+  logs?: WithId<OrderPaymentLog>[];
 }
 
-export const Invoices = ({ invoices }: InvoicesProps) => {
+export const Invoices = ({ invoices, logs }: InvoicesProps) => {
   // UI
   return (
     <Box>
@@ -58,6 +60,10 @@ export const Invoices = ({ invoices }: InvoicesProps) => {
           </Tbody>
           <Tfoot bgColor="gray.50"></Tfoot>
         </Table>
+      </Box>
+      <SectionTitle>{t('Logs do pagamento')}</SectionTitle>
+      <Box mt="4" maxH="300px" overflowY="scroll" border="1px solid #ECF0E3" borderRadius="lg">
+        <LogsTable logs={logs} />
       </Box>
     </Box>
   );

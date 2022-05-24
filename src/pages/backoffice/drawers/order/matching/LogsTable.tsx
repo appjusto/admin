@@ -39,7 +39,7 @@ export const LogsTable = ({ logs }: LogsTableProps) => {
                     {log.info.map((info, index) => {
                       const isFunction = log.info.length === 2 && index === 0;
                       return (
-                        <Text key={info} color={isFunction ? '#055AFF' : 'black'}>
+                        <Text key={info} fontWeight={isFunction ? '700' : '500'}>
                           {info}
                         </Text>
                       );

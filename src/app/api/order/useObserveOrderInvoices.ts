@@ -1,7 +1,7 @@
+import { Invoice, OrderLog, WithId } from '@appjusto/types';
 import { useContextApi } from 'app/state/api/context';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusinessId } from 'app/state/business/context';
-import { WithId, Invoice } from '@appjusto/types';
 import React from 'react';
 
 export const useObserveOrderInvoices = (orderId?: string) => {
@@ -11,17 +11,22 @@ export const useObserveOrderInvoices = (orderId?: string) => {
   const businessId = useContextBusinessId();
   // state
   const [invoices, setInvoices] = React.useState<WithId<Invoice>[] | null>();
+  const [logs, setLogs] = React.useState<WithId<OrderLog>[]>();
   // side effects
   React.useEffect(() => {
     if (!orderId) return;
     if (isBackofficeUser) {
-      const unsub = api.order().observeOrderInvoices(orderId, setInvoices);
-      return () => unsub();
+      const unsub1 = api.order().observeOrderInvoices(orderId, setInvoices);
+      const unsub2 = api.order().observeOrderLogs(orderId, 'payment', setLogs);
+      return () => {
+        unsub1();
+        unsub2();
+      };
     } else if (businessId) {
       const unsub = api.order().observeOrderInvoices(orderId, setInvoices, businessId);
       return () => unsub();
     }
-  }, [orderId, api, isBackofficeUser, businessId]);
+  }, [api, isBackofficeUser, businessId, orderId]);
   // return
-  return invoices;
+  return { invoices, logs };
 };

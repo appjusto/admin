@@ -5,6 +5,7 @@ import {
   Issue,
   IssueType,
   Order,
+  OrderPaymentLog,
   OrderStatus,
   WithId,
 } from '@appjusto/types';
@@ -69,7 +70,7 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
     orderCancellation,
     orderCancellationCosts,
   } = useOrder(orderId);
-  const invoices = useObserveOrderInvoices(orderId);
+  const { invoices, logs } = useObserveOrderInvoices(orderId);
   const cancelOptions = useIssuesByType(cancelOptionsArray);
   const { addFlaggedLocation } = useFlaggedLocations();
   const { chatMessages, orderChatGroup } = useObserveOrderChatMessages(orderId);
@@ -274,7 +275,7 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
             </>
           </Route>
           <Route exact path={`${path}/invoices`}>
-            <Invoices invoices={invoices} />
+            <Invoices invoices={invoices} logs={logs as WithId<OrderPaymentLog>[] | undefined} />
           </Route>
           <Route exact path={`${path}/matching`}>
             <Matching order={order} />
