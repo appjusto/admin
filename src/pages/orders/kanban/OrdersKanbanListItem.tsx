@@ -1,6 +1,6 @@
 import { Order, OrderChangeLog, WithId } from '@appjusto/types';
 import { Box, Button, Flex, HStack, Progress, Text } from '@chakra-ui/react';
-import { useObserveOrderLogs } from 'app/api/order/useObserveOrderLogs';
+import { useObserveOrderChangeLogs } from 'app/api/order/useObserveOrderChangeLogs';
 import { useOrderArrivalTimes } from 'app/api/order/useOrderArrivalTimes';
 import { useOrderDeliveryInfos } from 'app/api/order/useOrderDeliveryInfos';
 import { useContextFirebaseUser } from 'app/state/auth/context';
@@ -29,7 +29,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
   const { isBackofficeUser } = useContextFirebaseUser();
   const { isMatched, isNoMatch, isCurrierArrived, isDelivered, orderDispatchingKanbanItemText } =
     useOrderDeliveryInfos(getServerTime, order);
-  const changeLogs = useObserveOrderLogs(order.id, 'change') as WithId<OrderChangeLog>[];
+  const changeLogs = useObserveOrderChangeLogs(order.id) as WithId<OrderChangeLog>[];
   //const { restartMatching, restartResult } = useObserveOrderMatching(order.id);
 
   // state

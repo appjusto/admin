@@ -6,7 +6,7 @@ import {
   WithId,
 } from '@appjusto/types';
 import { Box, Circle, HStack, Icon, Skeleton, Text } from '@chakra-ui/react';
-import { useObserveOrderLogs } from 'app/api/order/useObserveOrderLogs';
+import { useObserveOrderChangeLogs } from 'app/api/order/useObserveOrderChangeLogs';
 import { last } from 'lodash';
 import React from 'react';
 import { MdInfoOutline } from 'react-icons/md';
@@ -21,7 +21,7 @@ interface OrderTrackingProps {
 
 export const OrderTracking = ({ orderId, isCompact }: OrderTrackingProps) => {
   // state
-  const changeLogs = useObserveOrderLogs(orderId, 'change') as WithId<OrderChangeLog>[] | undefined;
+  const changeLogs = useObserveOrderChangeLogs(orderId) as WithId<OrderChangeLog>[] | undefined;
   const [filteredLogs, setFilteredLogs] = React.useState<WithId<OrderChangeLog>[]>();
   const [currentStatus, setCurrentStatus] = React.useState<OrderStatus>();
   const [currentDispatchingStatus, setCurrentDispatchingStatus] =
@@ -78,7 +78,6 @@ export const OrderTracking = ({ orderId, isCompact }: OrderTrackingProps) => {
   React.useEffect(() => {
     if (!changeLogs) return;
     if (changeLogs[0] && !changeLogs[0].type) {
-      console.log('Filtered !!!');
       const filtered = changeLogs?.filter((log) => {
         return log.after.status || log.after.dispatchingStatus || log.after.dispatchingState;
       });
