@@ -1,6 +1,5 @@
-import { Order, OrderChangeLog, WithId } from '@appjusto/types';
+import { Order, WithId } from '@appjusto/types';
 import { Box, Button, Flex, HStack, Progress, Text } from '@chakra-ui/react';
-import { useObserveOrderChangeLogs } from 'app/api/order/useObserveOrderChangeLogs';
 import { useOrderArrivalTimes } from 'app/api/order/useOrderArrivalTimes';
 import { useOrderDeliveryInfos } from 'app/api/order/useOrderDeliveryInfos';
 import { useContextFirebaseUser } from 'app/state/auth/context';
@@ -29,7 +28,6 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
   const { isBackofficeUser } = useContextFirebaseUser();
   const { isMatched, isNoMatch, isCurrierArrived, isDelivered, orderDispatchingKanbanItemText } =
     useOrderDeliveryInfos(getServerTime, order);
-  const changeLogs = useObserveOrderChangeLogs(order.id) as WithId<OrderChangeLog>[];
   //const { restartMatching, restartResult } = useObserveOrderMatching(order.id);
 
   // state
@@ -59,15 +57,11 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
     if (!order.id) return;
     let serverOrderTime: number | null = null;
     const setNewTime = () => {
-      if (order.status === 'confirmed') {
-        const confirmedLog = changeLogs?.find((log) => log.after.status === 'confirmed');
-        const confirmedTime = getTimestampMilliseconds(confirmedLog?.timestamp as Timestamp);
-        serverOrderTime = confirmedTime;
+      if (order.status === 'confirmed' && order.timestamps.confirmed) {
+        serverOrderTime = getTimestampMilliseconds(order.timestamps.confirmed as Timestamp);
       }
-      if (order.status === 'preparing') {
-        const preparingLog = changeLogs?.find((log) => log.after.status === 'preparing');
-        const preparingTime = getTimestampMilliseconds(preparingLog?.timestamp as Timestamp);
-        serverOrderTime = preparingTime;
+      if (order.status === 'preparing' && order.timestamps.preparing) {
+        serverOrderTime = getTimestampMilliseconds(order.timestamps.preparing as Timestamp);
       }
       if (serverOrderTime) {
         const now = getServerTime().getTime();
@@ -83,7 +77,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
       return clearInterval(timeInterval);
     }
     return () => clearInterval(timeInterval);
-  }, [getServerTime, order.id, order.status, changeLogs]);
+  }, [getServerTime, order.id, order.status, order.timestamps]);
 
   React.useEffect(() => {
     // disabled for backoffice users
