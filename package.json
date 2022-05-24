@@ -1,6 +1,6 @@
 {
   "name": "appjusto-admin",
-  "version": "8.9.7",
+  "version": "8.9.8",
   "private": true,
   "dependencies": {
     "@appjusto/menu": "^0.1.4",
