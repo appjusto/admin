@@ -257,6 +257,20 @@ export default class OrderApi {
     });
   }
 
+  observeOrderDeprecatedLogs(
+    orderId: string,
+    timeLimit: Date,
+    resultHandler: (order: WithId<OrderLog>[]) => void
+  ): Unsubscribe {
+    const q = query(
+      this.refs.getOrderLogsRef(orderId),
+      where('timestamp', '<=', timeLimit),
+      orderBy('timestamp', 'asc')
+    );
+    // returns the unsubscribe function
+    return customCollectionSnapshot(q, resultHandler);
+  }
+
   observeOrderLogs(
     orderId: string,
     type: OrderLogType,
