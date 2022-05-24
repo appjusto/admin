@@ -483,8 +483,6 @@ export default class OrderApi {
       ...changes,
       updatedOn: timestamp,
     };
-    // CHECK IT
-    //if (changes.status === 'confirmed') orderChanges.confirmedOn = timestamp;
     await updateDoc(this.refs.getOrderRef(orderId), orderChanges);
   }
 
