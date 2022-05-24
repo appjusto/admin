@@ -140,7 +140,7 @@ export const OrderBaseDrawer = ({
                 </HStack>
                 {order?.status === 'canceled' && (
                   <Text fontSize="md" color="red" fontWeight="700" lineHeight="22px">
-                    {t('Pedido cancelado pelo')} <Text as="span">{cancellator}</Text>
+                    {t('Pedido cancelado por:')} <Text as="span">{cancellator}</Text>
                   </Text>
                 )}
                 <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">

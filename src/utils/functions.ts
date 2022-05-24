@@ -270,6 +270,7 @@ export const getCoordinatesMidpoint = (origin: latLng, destination: latLng) => {
 // orders
 export const getOrderCancellator = (issueIype?: string) => {
   let cancelator = 'N/E';
+  if (issueIype?.includes('platform')) cancelator = 'Plataforma';
   if (issueIype?.includes('restaurant')) cancelator = 'Restaurante';
   if (issueIype?.includes('consumer')) cancelator = 'Cliente';
   if (issueIype?.includes('courier')) cancelator = 'Entregador';
