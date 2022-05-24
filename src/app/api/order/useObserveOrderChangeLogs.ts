@@ -13,9 +13,13 @@ export const useObserveOrderChangeLogs = (orderId: string | undefined) => {
   React.useEffect(() => {
     if (!orderId) return;
     // change to deploy date
-    const timeLimit = dayjs('05-24-2022').startOf('day').toDate();
-    const unsub = api.order().observeOrderDeprecatedLogs(orderId, timeLimit, setChangeLogs);
-    return () => unsub();
+    try {
+      const timeLimit = dayjs('2022-05-24').startOf('day').toDate();
+      const unsub = api.order().observeOrderDeprecatedLogs(orderId, timeLimit, setChangeLogs);
+      return () => unsub();
+    } catch (error) {
+      console.error('Unabled to fetch order logs', error);
+    }
   }, [api, orderId]);
   React.useEffect(() => {
     if (!orderId) return;
