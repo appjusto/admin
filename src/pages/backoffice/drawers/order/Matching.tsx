@@ -222,6 +222,9 @@ export const Matching = ({ order }: MatchingProps) => {
             </Flex>
           ) : (
             <CustomButton
+              display={
+                userAbility?.can('update', { kind: 'orders', ...order }) ? 'inline-block' : 'none'
+              }
               mt="2"
               h="38px"
               size="sm"
