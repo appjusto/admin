@@ -1,14 +1,15 @@
 import { OrderMatchingLog, WithId } from '@appjusto/types';
-import { Table, Tbody, Td, Tr } from '@chakra-ui/react';
+import { Box, Table, Tbody, Td, Text, Tr } from '@chakra-ui/react';
 import React from 'react';
-import { getDateAndHour } from 'utils/functions';
+import { getHourAndMinute } from 'utils/functions';
 import { t } from 'utils/i18n';
 
 interface LogsTableProps {
-  logs?: WithId<OrderMatchingLog>[];
+  logs?: string[] | WithId<OrderMatchingLog>[];
 }
 
 export const LogsTable = ({ logs }: LogsTableProps) => {
+  // UI
   if (!logs)
     return (
       <Table mt="4" size="md" variant="simple">
@@ -23,12 +24,31 @@ export const LogsTable = ({ logs }: LogsTableProps) => {
     <Table mt="4" size="md" variant="simple">
       <Tbody>
         {logs && logs.length > 0 ? (
-          logs.map((log) => (
-            <Tr key={log.id} color="black" fontSize="xs" fontWeight="700">
-              <Td>{getDateAndHour(log.timestamp)}</Td>
-              <Td>{JSON.stringify(log.info)}</Td>
-            </Tr>
-          ))
+          logs.map((log, index) => {
+            if (typeof log === 'string')
+              return (
+                <Tr key={index} color="black" fontSize="xs" fontWeight="700">
+                  <Td>{log}</Td>
+                </Tr>
+              );
+            return (
+              <Tr key={log.id} color="black" fontSize="xs" fontWeight="700">
+                <Td>{getHourAndMinute(log.timestamp)}</Td>
+                <Td>
+                  <Box>
+                    {log.info.map((info, index) => {
+                      const isFunction = log.info.length === 2 && index === 0;
+                      return (
+                        <Text key={info} color={isFunction ? '#055AFF' : 'black'}>
+                          {info}
+                        </Text>
+                      );
+                    })}
+                  </Box>
+                </Td>
+              </Tr>
+            );
+          })
         ) : (
           <Tr color="black" fontSize="xs" fontWeight="700">
             <Td>{t('Não foram encontrados registros')}</Td>

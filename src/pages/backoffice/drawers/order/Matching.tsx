@@ -276,7 +276,7 @@ export const Matching = ({ order }: MatchingProps) => {
         </Box>
         <SectionTitle>{t('Logs do pedido')}</SectionTitle>
         <Box mt="4" maxH="300px" overflowY="scroll" border="1px solid #ECF0E3" borderRadius="lg">
-          <LogsTable logs={logs} />
+          <LogsTable logs={matching?.logs ?? logs} />
         </Box>
       </Box>
     </>
