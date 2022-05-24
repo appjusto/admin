@@ -40,9 +40,7 @@ const CourierOrdersTableItem = ({ order }: ItemPros) => {
           {order.code ?? 'N/E'}
         </Link>
       </Td>
-      <Td>
-        {order.confirmedOn ? getDateAndHour(order.confirmedOn) : getDateAndHour(order.updatedOn)}
-      </Td>
+      <Td>{getDateAndHour(order.timestamps?.confirmed)}</Td>
       <Td>{order.type === 'food' ? 'Comida' : 'p2p'}</Td>
       <Td>{order.business?.name ?? 'N/I'}</Td>
       <Td>{order.fare?.courier.value ? formatCurrency(order.fare?.courier.value) : 'N/E'}</Td>
@@ -54,15 +52,8 @@ export const CourierOrders = () => {
   // context
   const { dispatchAppRequestResult } = useContextAppRequests();
   const { releaseCourier, releaseCourierResult } = useReleaseCourier();
-  const {
-    courier,
-    currentOrder,
-    orders,
-    dateStart,
-    dateEnd,
-    setDateStart,
-    setDateEnd,
-  } = useContextCourierProfile();
+  const { courier, currentOrder, orders, dateStart, dateEnd, setDateStart, setDateEnd } =
+    useContextCourierProfile();
   // state
   const [release, setRelease] = React.useState(false);
   const [releaseComment, setReleaseComment] = React.useState('');

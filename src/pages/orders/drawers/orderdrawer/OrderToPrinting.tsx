@@ -67,7 +67,7 @@ export const OrderToPrinting = React.forwardRef<HTMLDivElement, OrderToPrintProp
         <Text fontSize="12px" fontWeight="500" lineHeight="16px">
           {t('Hora:')}{' '}
           <Text as="span" fontWeight="700">
-            {getDateAndHour(order?.confirmedOn)}
+            {getDateAndHour(order?.timestamps?.confirmed)}
           </Text>
         </Text>
         <Text fontSize="12px" fontWeight="500" lineHeight="16px">
