@@ -30,7 +30,7 @@ const BODashboard = () => {
   // state
   const [dateTime, setDateTime] = React.useState('');
   const [listOrders, setListOrders] = React.useState<WithId<Order>[]>([]);
-  const [staffFilter, setStaffFilter] = React.useState<StaffFilterOptions>();
+  const [staffFilter, setStaffFilter] = React.useState<StaffFilterOptions>('all');
   // helpers
   const userCanUpdateBusiness = userAbility?.can('read', 'businesses');
   // handlers
