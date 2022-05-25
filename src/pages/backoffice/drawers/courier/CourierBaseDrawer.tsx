@@ -25,9 +25,12 @@ import React from 'react';
 import { MdThumbDownOffAlt, MdThumbUpOffAlt } from 'react-icons/md';
 import { useQueryClient } from 'react-query';
 import { useRouteMatch } from 'react-router';
+import { useLocation } from 'react-router-dom';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
+
+const withoutActionPages = ['location', 'orders', 'iugu', 'reviews'];
 
 interface BaseDrawerProps {
   staff: { id: string | undefined; name: string };
@@ -42,6 +45,7 @@ export const CourierBaseDrawer = ({ staff, onClose, children, ...props }: BaseDr
   const { dispatchAppRequestResult } = useContextAppRequests();
   const queryClient = useQueryClient();
   const { url } = useRouteMatch();
+  const { pathname } = useLocation();
   const { deleteAccount, deleteAccountResult } = useAuthentication();
   const {
     courier,
@@ -61,6 +65,8 @@ export const CourierBaseDrawer = ({ staff, onClose, children, ...props }: BaseDr
   const [isDeleting, setIsDeleting] = React.useState(false);
 
   // helpers
+  const pageName = pathname.split('/').pop();
+  const pageHasAction = pageName ? !withoutActionPages.includes(pageName) : true;
   const situationAlert = courier?.situation === 'rejected' || courier?.situation === 'invalid';
   const city = courier?.city && courier?.state ? `${courier?.city} - ${courier?.state}` : 'N/I';
   //handlers
@@ -264,9 +270,14 @@ export const CourierBaseDrawer = ({ staff, onClose, children, ...props }: BaseDr
                 </HStack>
               </Box>
             ) : (
-              <HStack w="100%" spacing={4}>
+              <HStack
+                w="100%"
+                spacing={4}
+                justifyContent={pageHasAction ? 'flex-start' : 'flex-end'}
+              >
                 <Button
-                  width="full"
+                  display={pageHasAction ? 'inline-block' : 'none'}
+                  width="49%"
                   fontSize="15px"
                   onClick={handleSave}
                   isLoading={isLoading}
@@ -275,7 +286,7 @@ export const CourierBaseDrawer = ({ staff, onClose, children, ...props }: BaseDr
                   {t('Salvar alterações')}
                 </Button>
                 <Button
-                  width="full"
+                  width="49%"
                   fontSize="15px"
                   variant="dangerLight"
                   onClick={() => setIsDeleting(true)}
