@@ -42,6 +42,8 @@ const BODashboard = () => {
     if (!user?.uid) return;
     if (staffFilter === 'my') {
       setListOrders(orders.filter((order) => order.staff?.id === user.uid));
+    } else if (staffFilter === 'none') {
+      setListOrders(orders.filter((order) => !order.staff));
     } else {
       setListOrders(orders);
     }
@@ -64,8 +66,7 @@ const BODashboard = () => {
           dataLength={orders.length}
           listType="orders"
           details={t('Aqui ficarão listados todos os pedidos em andamento no momento.')}
-          staffFilter
-          filterActive={staffFilter === 'my'}
+          staffFilter={staffFilter}
           handleStaffFilter={(value) => setStaffFilter(value)}
         />
       </Stack>

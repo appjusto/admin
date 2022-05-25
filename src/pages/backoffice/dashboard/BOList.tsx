@@ -16,8 +16,7 @@ interface BOListProps extends FlexProps {
   listType: ListType;
   details?: string;
   infiniteScroll?: boolean;
-  staffFilter?: boolean;
-  filterActive?: boolean;
+  staffFilter?: StaffFilterOptions;
   handleStaffFilter?(value: StaffFilterOptions): void;
   loadData?(): void;
 }
@@ -30,13 +29,14 @@ export const BOList = ({
   details,
   infiniteScroll = false,
   staffFilter,
-  filterActive,
   handleStaffFilter,
   loadData,
   ...props
 }: BOListProps) => {
   // refs
   const listRef = React.useRef<HTMLDivElement>(null);
+  // helpers
+  const filterActive = staffFilter && staffFilter !== 'all';
   // side effects
   React.useEffect(() => {
     if (!infiniteScroll || !listRef.current || !loadData) return;
@@ -82,7 +82,9 @@ export const BOList = ({
               {title}
             </Text>
           </HStack>
-          {staffFilter && <StaffFilter handleFilter={handleStaffFilter!} />}
+          {staffFilter && (
+            <StaffFilter currentValue={staffFilter} handleFilter={handleStaffFilter!} />
+          )}
         </Flex>
       </Box>
       <ShowIf test={data.length === 0 && Boolean(details)}>

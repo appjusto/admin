@@ -16,13 +16,14 @@ import React from 'react';
 import { RiCheckLine, RiEqualizerLine } from 'react-icons/ri';
 import { t } from 'utils/i18n';
 
-export type StaffFilterOptions = 'all' | 'my';
+export type StaffFilterOptions = 'all' | 'my' | 'none';
 
 interface StaffFilterProps {
+  currentValue: StaffFilterOptions;
   handleFilter(value: StaffFilterOptions): void;
 }
 
-export const StaffFilter = ({ handleFilter }: StaffFilterProps) => {
+export const StaffFilter = ({ currentValue, handleFilter }: StaffFilterProps) => {
   // state
   const [isActive, setIsActive] = React.useState<boolean>(false);
   const [isOpen, setIsOpen] = React.useState(false);
@@ -31,7 +32,7 @@ export const StaffFilter = ({ handleFilter }: StaffFilterProps) => {
   const close = () => setIsOpen(false);
   const handleFilterSelect = (value: StaffFilterOptions) => {
     close();
-    if (value === 'my') setIsActive(true);
+    if (value === 'my' || value === 'none') setIsActive(true);
     else setIsActive(false);
     handleFilter(value);
   };
@@ -76,7 +77,7 @@ export const StaffFilter = ({ handleFilter }: StaffFilterProps) => {
                 onClick={() => handleFilterSelect('all')}
               >
                 <Text>{t('Todos')}</Text>
-                {!isActive && <Icon ml="1" as={RiCheckLine} />}
+                {currentValue === 'all' && <Icon ml="1" as={RiCheckLine} />}
               </Flex>
               <Flex
                 flexDir="row"
@@ -88,7 +89,19 @@ export const StaffFilter = ({ handleFilter }: StaffFilterProps) => {
                 onClick={() => handleFilterSelect('my')}
               >
                 <Text>{t('Os meus')}</Text>
-                {isActive && <Icon ml="1" as={RiCheckLine} />}
+                {currentValue === 'my' && <Icon ml="1" as={RiCheckLine} />}
+              </Flex>
+              <Flex
+                flexDir="row"
+                alignItems="center"
+                px="3"
+                py="1"
+                cursor="pointer"
+                _hover={{ bgColor: '#EEEEEE', color: '#697667' }}
+                onClick={() => handleFilterSelect('none')}
+              >
+                <Text>{t('Sem agente')}</Text>
+                {currentValue === 'none' && <Icon ml="1" as={RiCheckLine} />}
               </Flex>
             </PopoverBody>
           </PopoverContent>
