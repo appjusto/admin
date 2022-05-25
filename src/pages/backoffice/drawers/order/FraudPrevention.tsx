@@ -110,10 +110,15 @@ export const FraudPrevention = ({
           </Stack>
         </>
       ) : (
-        <Text mt="4">
-          <Icon as={MdInfo} mr="2" mb="-0.5" />
-          {t('É preciso assumir o pedido para realizar alguma ação.')}
-        </Text>
+        <>
+          <Text mt="4">
+            <Icon as={MdInfo} mr="2" mb="-0.5" />
+            {t('É preciso assumir o pedido para realizar alguma ação.')}
+          </Text>
+          <Text mt="2">
+            {t('Se nenhuma ação for tomada, o pedido será confirmado dentro de instantes.')}
+          </Text>
+        </>
       )}
     </Box>
   );
