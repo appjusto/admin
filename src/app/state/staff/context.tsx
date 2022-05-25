@@ -3,6 +3,8 @@ import { useStaffProfile } from 'app/api/staff/useStaffProfile';
 import { useUpdateStaffProfile } from 'app/api/staff/useUpdateStaffProfile';
 import React from 'react';
 
+let updateUserAgentCount = 0;
+
 interface ContextProps {
   staff: WithId<StaffProfile> | undefined | null;
   username: string;
@@ -22,16 +24,19 @@ export const StaffProvider = ({ children }: Props) => {
   // side effects
   React.useEffect(() => {
     if (!staff) return;
+    if (updateUserAgentCount > 0) return;
     (async () => {
       try {
         const userAgent = window?.navigator?.userAgent;
-        if (userAgent && staff.userAgent !== userAgent)
+        if (userAgent && staff.userAgent !== userAgent) {
+          updateUserAgentCount++;
           await updateProfile({ changes: { userAgent } });
+        }
       } catch (error) {
         console.error('Unabled to save userAgent: ', error);
       }
     })();
-  }, [staff, updateProfile]);
+  }, [staff, updateProfile, updateUserAgentCount]);
   // provider
   return (
     <StaffProfileContext.Provider value={{ staff, username }}>

@@ -9,6 +9,8 @@ import { useContextFirebaseUser } from '../auth/context';
 
 const version = packageInfo.version;
 
+let updateUserAgentCount = 0;
+
 interface ProfileContextProps {
   manager?: WithId<ManagerProfile> | null;
   setManagerEmail: Dispatch<SetStateAction<string | null | undefined>>;
@@ -44,16 +46,19 @@ export const ManagerProvider = ({ children }: Props) => {
   React.useEffect(() => {
     if (!manager) return;
     if (isBackofficeUser !== false) return;
+    if (updateUserAgentCount > 0) return;
     (async () => {
       try {
         const userAgent = window?.navigator?.userAgent;
-        if (userAgent && manager.userAgent !== userAgent)
+        if (userAgent && manager.userAgent !== userAgent) {
+          updateUserAgentCount++;
           await updateProfile({ changes: { userAgent } });
+        }
       } catch (error) {
         console.error('Unabled to save userAgent: ', error);
       }
     })();
-  }, [isBackofficeUser, manager, updateProfile]);
+  }, [isBackofficeUser, manager, updateProfile, updateUserAgentCount]);
   // UI
   return (
     <ProfileContext.Provider value={{ manager, setManagerEmail, updateLastBusinessId }}>
