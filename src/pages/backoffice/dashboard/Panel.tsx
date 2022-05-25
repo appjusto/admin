@@ -64,10 +64,10 @@ export const Panel = () => {
   // UI
   return (
     <Flex
-      mt="10"
+      mt="6"
       flexDir={{ base: 'column', md: 'row' }}
       justifyContent="space-between"
-      border="1px solid #F6F6F6"
+      border="1px solid #E5E5E5"
       borderRadius="lg"
       p="8"
       color="black"
