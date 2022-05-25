@@ -108,6 +108,9 @@ export const BusinessProvider = ({ children }: Props) => {
       setBusiness(null);
       return;
     }
+    if (isBackofficeUser === false) {
+      localStorage.setItem(`${user.email}-${process.env.REACT_APP_ENVIRONMENT}`, hookBusiness.id);
+    }
     updateContextBusiness(hookBusiness);
     queryClient.invalidateQueries();
   }, [user, hookBusiness, isBackofficeUser, queryClient, updateContextBusiness]);
@@ -115,6 +118,13 @@ export const BusinessProvider = ({ children }: Props) => {
     if (isBackofficeUser) return;
     if (!user?.email) return;
     if (businessId) return;
+    const localBusinessId = localStorage.getItem(
+      `${user.email}-${process.env.REACT_APP_ENVIRONMENT}`
+    );
+    if (localBusinessId) {
+      setBusinessId(localBusinessId);
+      return;
+    }
     // select first business, or first business approved, or set it to null to indicate that user doesn't
     // manage any business
     setBusinessIdByBusinesses();

@@ -60,7 +60,7 @@ export const useAuthentication = () => {
   );
   const signOut = React.useCallback(
     (email?: string) => {
-      if (email) localStorage.removeItem(`business-${process.env.REACT_APP_ENVIRONMENT}-${email}`);
+      if (email) localStorage.removeItem(`${email}-${process.env.REACT_APP_ENVIRONMENT}`);
       api.auth().signOut();
     },
     [api]
