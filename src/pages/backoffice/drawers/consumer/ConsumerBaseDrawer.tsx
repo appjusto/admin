@@ -23,9 +23,12 @@ import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
 import React from 'react';
 import { useQueryClient } from 'react-query';
 import { useRouteMatch } from 'react-router';
+import { useLocation } from 'react-router-dom';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
+
+const withoutActionPages = ['payment', 'orders'];
 
 interface BaseDrawerProps {
   staff: { id: string | undefined; name: string };
@@ -40,6 +43,7 @@ export const ConsumerBaseDrawer = ({ staff, onClose, children, ...props }: BaseD
   const { dispatchAppRequestResult } = useContextAppRequests();
   const queryClient = useQueryClient();
   const { url } = useRouteMatch();
+  const { pathname } = useLocation();
   const { deleteAccount, deleteAccountResult } = useAuthentication();
   const {
     consumer,
@@ -54,6 +58,8 @@ export const ConsumerBaseDrawer = ({ staff, onClose, children, ...props }: BaseD
   // state
   const [isDeleting, setIsDeleting] = React.useState(false);
   //helpers
+  const pageName = pathname.split('/').pop();
+  const pageHasAction = pageName ? !withoutActionPages.includes(pageName) : true;
   //const toast = useToast();
   let consumerName = consumer?.name ?? 'N/I';
   if (consumer?.surname) consumerName += ` ${consumer.surname}`;
@@ -164,6 +170,7 @@ export const ConsumerBaseDrawer = ({ staff, onClose, children, ...props }: BaseD
               borderBottom="1px solid #C8D7CB"
             >
               <DrawerLink to={`${url}`} label={t('Cadastro')} />
+              <DrawerLink to={`${url}/payment`} label={t('Pagamento')} />
               <DrawerLink to={`${url}/orders`} label={t('Pedidos')} />
               <DrawerLink to={`${url}/status`} label={t('Status')} />
             </Flex>
@@ -191,9 +198,14 @@ export const ConsumerBaseDrawer = ({ staff, onClose, children, ...props }: BaseD
                 </HStack>
               </Box>
             ) : (
-              <HStack w="100%" spacing={4}>
+              <HStack
+                w="100%"
+                spacing={4}
+                justifyContent={pageHasAction ? 'flex-start' : 'flex-end'}
+              >
                 <Button
-                  width="full"
+                  display={pageHasAction ? 'inline-block' : 'none'}
+                  width="49%"
                   fontSize="15px"
                   onClick={handleSave}
                   isLoading={updateResult.isLoading}
@@ -202,7 +214,7 @@ export const ConsumerBaseDrawer = ({ staff, onClose, children, ...props }: BaseD
                   {t('Salvar alterações')}
                 </Button>
                 <Button
-                  width="full"
+                  width="49%"
                   fontSize="15px"
                   variant="dangerLight"
                   onClick={() => setIsDeleting(true)}
