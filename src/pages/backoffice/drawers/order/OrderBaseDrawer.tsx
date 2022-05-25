@@ -72,7 +72,9 @@ export const OrderBaseDrawer = ({
   const orderStatus = order?.status as OrderStatus;
   const isFlagged = order?.status === 'charged' && order?.flagged;
   const canUpdateOrderStaff = order?.staff?.id === user?.uid || isBackofficeSuperuser;
-  const canDeleteOrder = order?.status === 'quote' && userAbility?.can('delete', 'orders');
+  const canUpdateOrder = userAbility?.can('update', { kind: 'orders', ...order });
+  const canDeleteOrder =
+    order?.status === 'quote' && userAbility?.can('delete', { kind: 'orders', ...order });
   // handlers
   const handleDelete = async () => {
     if (!order?.id) {
@@ -175,6 +177,7 @@ export const OrderBaseDrawer = ({
             {isFlagged && (
               <FraudPrevention
                 orderId={order?.id!}
+                canUpdateOrder={canUpdateOrder}
                 message={message}
                 updateMessage={(message: string) => updateState('message', message)}
                 handleConfirm={() => updateOrderStatus('confirmed')}
@@ -210,10 +213,7 @@ export const OrderBaseDrawer = ({
             </Flex>
             {children}
           </DrawerBody>
-          <DrawerFooter
-            display={userAbility?.can('update', { kind: 'orders', ...order }) ? 'flex' : 'none'}
-            borderTop="1px solid #F2F6EA"
-          >
+          <DrawerFooter display={canUpdateOrder ? 'flex' : 'none'} borderTop="1px solid #F2F6EA">
             <Flex w="full" direction="row" justifyContent="space-between">
               {isDeleting ? (
                 <Box mt="8" w="100%" bg="#FFF8F8" border="1px solid red" borderRadius="lg" p="6">
