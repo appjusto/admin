@@ -22,7 +22,7 @@ interface PaymentMethodCardProps {
   method: IuguCustomerPaymentMethod;
 }
 
-const PaymentMethodCard = ({ method }: PaymentMethodCardProps) => {
+export const PaymentMethodCard = ({ method }: PaymentMethodCardProps) => {
   return (
     <Box mt="4" border="1px solid #E5E5E5" borderRadius="lg" p="4">
       <Text fontSize="15px" color="black" fontWeight="700" lineHeight="22px">

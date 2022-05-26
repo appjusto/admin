@@ -1,8 +1,8 @@
 import { ConsumerProfile, Issue, IssueType, Order, WithId } from '@appjusto/types';
 import * as cpfutils from '@fnando/cpf';
 import { useConsumerOrders } from 'app/api/consumer/useConsumerOrders';
-import { useConsumerProfile } from 'app/api/consumer/useConsumerProfile';
 import { useConsumerProfilePictures } from 'app/api/consumer/useConsumerProfilePictures';
+import { useObserveConsumerProfile } from 'app/api/consumer/useObserveConsumerProfile';
 import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';
 import React, { Dispatch, SetStateAction } from 'react';
 import { useParams } from 'react-router';
@@ -44,7 +44,7 @@ const issueOptionsArray = ['consumer-profile-invalid'] as IssueType[];
 export const ConsumerProvider = ({ children }: Props) => {
   // context
   const { consumerId } = useParams<Params>();
-  const profile = useConsumerProfile(consumerId);
+  const profile = useObserveConsumerProfile(consumerId);
   // change to useConsumerProfilePictures
   const pictures = useConsumerProfilePictures(consumerId, '_1024x1024', '_1024x1024');
   const issueOptions = useIssuesByType(issueOptionsArray);
