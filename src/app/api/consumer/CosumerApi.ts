@@ -1,6 +1,6 @@
 import { BusinessRecommendation, ConsumerProfile, ProfileNote, WithId } from '@appjusto/types';
 import * as Sentry from '@sentry/react';
-import { documentsAs, FirebaseDocument } from 'core/fb';
+import { documentAs, documentsAs, FirebaseDocument } from 'core/fb';
 import {
   addDoc,
   deleteDoc,
@@ -77,6 +77,12 @@ export default class ConsumerApi {
         console.error(error);
         Sentry.captureException(error);
       });
+  }
+
+  async getConsumerById(consumerId: string) {
+    const ref = this.refs.getConsumerRef(consumerId);
+    const consumerSnapshot = await getDoc(ref);
+    return documentAs<ConsumerProfile>(consumerSnapshot);
   }
 
   async getConsumerIdByCode(consumerCode: string) {

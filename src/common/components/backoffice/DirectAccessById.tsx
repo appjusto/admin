@@ -70,7 +70,7 @@ export const DirectAccessById = ({ ...props }: BoxProps) => {
   };
   // UI
   return (
-    <Box mt="4" border="1px solid #F6F6F6" borderRadius="lg" py="6" px="8" {...props}>
+    <Box mt="4" border="1px solid #E5E5E5" borderRadius="lg" py="6" px="8" {...props}>
       <Text fontSize="20px" fontWeight="500" color="black">
         {t('Acesso direto:')}
       </Text>
