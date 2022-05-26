@@ -36,7 +36,7 @@ export const StaffProvider = ({ children }: Props) => {
         console.error('Unabled to save userAgent: ', error);
       }
     })();
-  }, [staff, updateProfile, updateUserAgentCount]);
+  }, [staff, updateProfile]);
   // provider
   return (
     <StaffProfileContext.Provider value={{ staff, username }}>

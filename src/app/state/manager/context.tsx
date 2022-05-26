@@ -58,7 +58,7 @@ export const ManagerProvider = ({ children }: Props) => {
         console.error('Unabled to save userAgent: ', error);
       }
     })();
-  }, [isBackofficeUser, manager, updateProfile, updateUserAgentCount]);
+  }, [isBackofficeUser, manager, updateProfile]);
   // UI
   return (
     <ProfileContext.Provider value={{ manager, setManagerEmail, updateLastBusinessId }}>
