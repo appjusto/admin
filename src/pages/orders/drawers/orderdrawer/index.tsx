@@ -7,9 +7,9 @@ import { useContextManagerProfile } from 'app/state/manager/context';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
+import printJS from 'print-js';
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { useReactToPrint } from 'react-to-print';
 import { formatCurrency } from 'utils/formatters';
 import { getOrderCancellator, useQuery } from 'utils/functions';
 import { t } from 'utils/i18n';
@@ -19,7 +19,7 @@ import { CookingTime } from './CookingTime';
 import { DeliveryInfos } from './DeliveryInfos';
 import { OrderDetails } from './OrderDetails';
 import { OrderIssuesTable } from './OrderIssuesTable';
-import { OrderToPrinting } from './OrderToPrinting';
+import { OrderToPrinting2 } from './OrderToPrinting2';
 
 interface Props {
   isOpen: boolean;
@@ -89,9 +89,10 @@ export const OrderDrawer = (props: Props) => {
     await cancelOrder(cancellationData);
     props.onClose();
   };
-  const printOrder = useReactToPrint({
-    content: () => printComponent.current,
-  });
+  const printOrder = () => printJS({ printable: 'template-to-print', type: 'html' });
+  // const printOrder = useReactToPrint({
+  //   content: () => printComponent.current,
+  // });
   // side effects
   React.useEffect(() => {
     if (!query || isOutsourceDelivery !== undefined) return;
@@ -255,7 +256,8 @@ export const OrderDrawer = (props: Props) => {
             </>
           )}
         </Box>
-        <OrderToPrinting businessName={business?.name} order={order} ref={printComponent} />
+        {/* <OrderToPrinting businessName={business?.name} order={order} ref={printComponent} /> */}
+        <OrderToPrinting2 order={order} />
       </Box>
     </OrderBaseDrawer>
   );

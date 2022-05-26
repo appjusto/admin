@@ -48,6 +48,7 @@
     "lodash": "^4.17.20",
     "marked": "^2.0.3",
     "nanoid": "^3.1.20",
+    "print-js": "^1.6.0",
     "react": "^17.0.1",
     "react-beautiful-dnd": "^13.0.0",
     "react-chartjs-2": "^3.0.4",

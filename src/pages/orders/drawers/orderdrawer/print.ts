@@ -2,7 +2,11 @@ import { Order, OrderItem, WithId } from '@appjusto/types';
 import { formatCurrency } from 'utils/formatters';
 import { getDateAndHour } from 'utils/functions';
 
-export const getOrderToPrint = (order: WithId<Order>) => {
+export const getOrderToPrint = (
+  order: WithId<Order>,
+  businessLogo?: string | null,
+  appjustoLogo?: string
+) => {
   const printItems = (items: OrderItem[]) => {
     return items.map((item) => {
       return `<tr role="row" style="border-bottom: 1px solid black;">
@@ -34,43 +38,55 @@ export const getOrderToPrint = (order: WithId<Order>) => {
     });
   };
 
-  return `<html>
+  const template = `<html>
     <head>
       <meta
         name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no"
       />
     </head>
-    <body>
-      <div style="max-width: 300px">
+    <body style="font-family: Helvetica; color: black">
+      <div style="padding-top: 14px; padding: 4px; max-width: 300px" id="template-to-print">
         <div>
-          <div style="align-items: center; flex-direction: column">
-            <div style="max-width: 80px">
-            </div>
-          </div>
-          <p style="font-size: 11px">Por um delivery mais justo e transparente!</p>
-          <p style="font-size: 16px; font-weight: 700; margin-top: 4">${order.business?.name}</p>
+          ${
+            businessLogo &&
+            appjustoLogo &&
+            `<div style="display: flex; flex-direction: row; justify-content: center; align-items: center">
+                <div style="position: relative">
+                  <image src=${businessLogo} width="48px" height="48px"/>
+                </div style="position: relative">
+                <div>
+                  <image src=${appjustoLogo} width="48px" height="48px"/>
+                </div>
+              </div>`
+          }
+          <p style="font-size: 11px; text-align: center">Por um delivery mais justo e transparente!</p>
+          <p style="font-size: 16px; font-weight: 700; margin-top: 2px; text-align: center">${
+            order.business?.name
+          }</p>
         </div>
-        <p style="font-size: 24px; font-weight: 700; line-height: 28px; margin-top: 4">
+        <p style="font-size: 24px; font-weight: 700; ; line-height: 24px; margin-top: 6px">
           Pedido Nº ${order.code}
         </p>
-        <p style="font-size: 12px; font-weight: 500; line-height: 16px">
-          Cliente: <span style="font-weight: 700">${order.consumer.name}</span>
-        </p>
-        <p style="font-size: 12px; font-weight: 500; line-height: 16px">
-          Hora: <span style="font-weight: 700">${getDateAndHour(
-            order?.timestamps?.confirmed
-          )}</span>
-        </p>
-        <p style="font-size: 12px; font-weight: 500; line-height: 16px">
-          Endereço: <span style="font-weight: 700">${order.destination?.address.main}</span>
-        </p>
-        <p style="font-size: 12px; font-weight: 500; line-height: 16px">
-          Complemento:
-          <span style="font-weight: 700">${order.destination?.additionalInfo ?? 'N/I'}</span>
-        </p>
-        <p style="font-size: 18px; margin-top: 2">Detalhes do pedido</p>
-        <table role="table" style="margin-top: 2">
+        <div style="margin-top: 8px; font-size: 12px; font-weight: 500; line-height: 16px">
+          <p>
+            Cliente: <span style="font-weight: 700">${order.consumer.name}</span>
+          </p>
+          <p>
+            Hora: <span style="font-weight: 700">${getDateAndHour(
+              order?.timestamps?.confirmed
+            )}</span>
+          </p>
+          <p>
+            Endereço: <span style="font-weight: 700">${order.destination?.address.main}</span>
+          </p>
+          <p>
+            Complemento:
+            <span style="font-weight: 700">${order.destination?.additionalInfo ?? 'N/I'}</span>
+          </p>
+        </div>
+        <p style="font-size: 18px; margin-top: 8px">Detalhes do pedido</p>
+        <table role="table" style="margin-top: 8px; width: 100%; border-collapse: collapse">
           <thead style="border-bottom: 1px solid black">
             <tr role="row">
               <th data-is-numeric="true" style="font-size: 12; max-width: 20px;">Qtd.</th>
@@ -115,4 +131,9 @@ export const getOrderToPrint = (order: WithId<Order>) => {
       </div>
     </body>
   </html>`;
+  return template;
+  // if (returnString) return template;
+  // const parser = new DOMParser();
+  // const doc = parser.parseFromString(template, 'text/html');
+  // return doc.body;
 };
