@@ -18,10 +18,8 @@ export const useOrderDeliveryInfos = (getServerTime: () => Date, order?: WithId<
   const [isNoMatch, setIsNoMatch] = React.useState<boolean>(
     order?.dispatchingStatus === 'no-match'
   );
-  const [
-    orderDispatchingKanbanItemText,
-    setOrderDispatchingKanbanItemText,
-  ] = React.useState<string>();
+  const [orderDispatchingKanbanItemText, setOrderDispatchingKanbanItemText] =
+    React.useState<string>();
   const [orderDispatchingText, setOrderDispatchingText] = React.useState<string>();
   const [isCurrierArrived, setIsCurrierArrived] = React.useState<boolean>(
     order?.dispatchingState === 'arrived-pickup'
@@ -37,7 +35,7 @@ export const useOrderDeliveryInfos = (getServerTime: () => Date, order?: WithId<
     if (!order?.dispatchingStatus) return;
     const getOrderDispatchingKanbanItemText = (
       status: DispatchingStatus,
-      state?: DispatchingState
+      state?: DispatchingState | null
     ) => {
       let result = 'Buscando entregador...';
       if (status === 'matched' || status === 'confirmed') {
@@ -50,7 +48,10 @@ export const useOrderDeliveryInfos = (getServerTime: () => Date, order?: WithId<
       else if (status === 'outsourced') result = 'Logística fora da rede';
       setOrderDispatchingKanbanItemText(result);
     };
-    const getOrderDispatchingText = (status: DispatchingStatus, state?: DispatchingState) => {
+    const getOrderDispatchingText = (
+      status: DispatchingStatus,
+      state?: DispatchingState | null
+    ) => {
       let result = 'Informações da entrega';
       if (
         status === 'matching' &&

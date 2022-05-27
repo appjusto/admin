@@ -64,7 +64,7 @@ export const OrderTracking = ({ orderId, isCompact }: OrderTrackingProps) => {
       : 'N/E';
     return lastStatus;
   };
-  const getLogMatchingLabel = (status?: DispatchingStatus, state?: DispatchingState) => {
+  const getLogMatchingLabel = (status?: DispatchingStatus, state?: DispatchingState | null) => {
     if (status) return orderDispatchingStatusPTOptions[status];
     else if (state) {
       if (state === 'going-pickup') return 'Entreg. a caminho da retirada ';

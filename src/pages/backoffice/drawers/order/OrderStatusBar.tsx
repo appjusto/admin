@@ -24,7 +24,7 @@ interface OrderStatusProps {
   orderType?: OrderType;
   orderStatus?: OrderStatus;
   status?: OrderStatus;
-  dispatchingState?: DispatchingState;
+  dispatchingState?: DispatchingState | null;
   issue?: Issue | null;
   message?: string;
   cancelOptions?: Issue[] | null;
@@ -113,7 +113,7 @@ export const OrderStatusBar = ({
             <RadioGroup
               mt="2"
               onChange={(value: DispatchingState) => updateState('dispatchingState', value)}
-              value={dispatchingState}
+              value={dispatchingState ?? undefined}
               colorScheme="green"
               color="black"
               fontSize="15px"

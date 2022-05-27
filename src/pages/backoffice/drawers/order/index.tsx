@@ -76,9 +76,9 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
   const { chatMessages, orderChatGroup } = useObserveOrderChatMessages(orderId);
   // state
   const [status, setStatus] = React.useState<OrderStatus | undefined>(order?.status);
-  const [dispatchingState, setDispatchingState] = React.useState<DispatchingState | undefined>(
-    order?.dispatchingState
-  );
+  const [dispatchingState, setDispatchingState] = React.useState<
+    DispatchingState | undefined | null
+  >(order?.dispatchingState);
   const [issue, setIssue] = React.useState<Issue | null>();
   const [message, setMessage] = React.useState<string>();
   const [refund, setRefund] = React.useState<InvoiceType[]>(['platform', 'products', 'delivery']);
