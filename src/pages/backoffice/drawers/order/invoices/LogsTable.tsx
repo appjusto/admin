@@ -1,7 +1,7 @@
 import { OrderPaymentLog, WithId } from '@appjusto/types';
 import { Box, Table, Tbody, Td, Text, Tr } from '@chakra-ui/react';
 import React from 'react';
-import { getHourAndMinute } from 'utils/functions';
+import { getFullTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 
 interface LogsTableProps {
@@ -26,7 +26,7 @@ export const LogsTable = ({ logs }: LogsTableProps) => {
         {logs && logs.length > 0 ? (
           logs.map((log) => (
             <Tr key={log.id} color="black" fontSize="xs" fontWeight="700">
-              <Td>{getHourAndMinute(log.timestamp)}</Td>
+              <Td>{getFullTime(log.timestamp)}</Td>
               <Td>
                 <Box>
                   {log.info.map((info, index) => {

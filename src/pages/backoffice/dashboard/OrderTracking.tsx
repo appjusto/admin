@@ -10,7 +10,7 @@ import { useObserveOrderChangeLogs } from 'app/api/order/useObserveOrderChangeLo
 import { last } from 'lodash';
 import React from 'react';
 import { MdInfoOutline } from 'react-icons/md';
-import { getHourAndMinute } from 'utils/functions';
+import { getFullTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { orderDispatchingStatusPTOptions, orderStatusPTOptions } from '../utils';
 
@@ -90,7 +90,7 @@ export const OrderTracking = ({ orderId, isCompact }: OrderTrackingProps) => {
     if (!filteredLogs) return;
     const lastLog = last(filteredLogs);
     const lastLogWithStatus = last(filteredLogs.filter((log) => log.after.status));
-    if (lastLog) setCurrentTime(getHourAndMinute(lastLog.timestamp));
+    if (lastLog) setCurrentTime(getFullTime(lastLog.timestamp));
     if (lastLogWithStatus) setCurrentStatus(lastLogWithStatus.after.status);
     if (lastLog?.after.dispatchingStatus) {
       if (lastLog.after.dispatchingStatus === 'matching') setCurrentDispatchingState(undefined);
@@ -220,7 +220,7 @@ export const OrderTracking = ({ orderId, isCompact }: OrderTrackingProps) => {
                   {getLogMatchingLabel(log.after.dispatchingStatus, log.after.dispatchingState)}
                 </Text>
                 <Text as="span" fontWeight="500">
-                  {t(' às ') + getHourAndMinute(log.timestamp)}
+                  {t(' às ') + getFullTime(log.timestamp)}
                 </Text>
               </Text>
             ))}
