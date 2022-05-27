@@ -1,6 +1,7 @@
-import { Order, WithId } from '@appjusto/types';
+import { LatLng, Order, OrderCourierLocationLog, WithId } from '@appjusto/types';
 import { Box, Button, Circle, Flex, HStack, Image, Text } from '@chakra-ui/react';
 import { useCourierProfilePicture } from 'app/api/courier/useCourierProfilePicture';
+import { useObserveOrderLogs } from 'app/api/order/useObserveOrderLogs';
 import { useOrderDeliveryInfos } from 'app/api/order/useOrderDeliveryInfos';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextServerTime } from 'app/state/server-time';
@@ -25,6 +26,10 @@ export const DeliveryInfos = ({
   // context
   const { getServerTime } = useContextServerTime();
   const { isBackofficeUser } = useContextFirebaseUser();
+  const courierLocationLogs = useObserveOrderLogs(
+    order.id,
+    'courier-location'
+  ) as WithId<OrderCourierLocationLog>[];
   const courierPictureUrl = useCourierProfilePicture(order.courier?.id);
   const { isMatched, orderDispatchingText, arrivalTime, isNoMatch } = useOrderDeliveryInfos(
     getServerTime,
@@ -32,7 +37,7 @@ export const DeliveryInfos = ({
   );
   // state
   const [joined, setJoined] = React.useState<string | null>();
-
+  const [courierLocation, setCourierLocation] = React.useState<LatLng>();
   // helpers
   const showArrivalTime =
     isMatched &&
@@ -55,7 +60,11 @@ export const DeliveryInfos = ({
       }
     }
   }, [order.courier]);
-
+  React.useEffect(() => {
+    if (!courierLocationLogs) return;
+    const lastLog = courierLocationLogs.pop();
+    if (lastLog) setCourierLocation(lastLog.location);
+  }, [courierLocationLogs]);
   // UI
   return (
     <Box mt="6">
@@ -143,7 +152,7 @@ export const DeliveryInfos = ({
         orderStatus={order.status}
         origin={order.origin?.location}
         destination={order.destination?.location}
-        courier={order.courier?.location}
+        courier={courierLocation}
         orderPolyline={order.route?.polyline}
       />
       <Text mt="4" fontSize="xl" color="black">
