@@ -9,28 +9,6 @@ import {
   getStaffUIConditions,
 } from './utils';
 
-// const staffClaim = {
-//   "orders": ["c", "r", "u", "d"],
-//   "couriers": ["c", "r", "u", "d"],
-//   "consumers": ["c", "r", "u", "d"],
-//   "businesses": ["c", "r", "u", "d"],
-//   "menu": ["c", "r", "u", "d"],
-//   "chats": ["c", "r", "u", "d"],
-//   "invoices": ["c", "r", "u", "d"],
-//   "withdraws": ["c", "r", "u", "d"],
-//   "advances": ["c", "r", "u", "d"],
-//   "managers": ["c", "r", "u", "d"],
-//   "recommendations": ["c", "r", "u", "d"],
-//   "staff": ["c", "r", "u", "d"],
-//   "users": ["c", "r", "u", "d"],
-//   "platform": ["c", "r", "u", "d"]
-// }
-
-// const managerClaim = {
-//   "businesses": {
-//     "uGxPaBFKWq9PBLYhEP7X": "owner" | "manager" | "collaborator"
-// }
-
 type Actions = 'create' | 'read' | 'update' | 'delete';
 type Subjects =
   | 'orders'
