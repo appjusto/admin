@@ -1,4 +1,4 @@
-import { Business, Order, OrderStatus, WithId } from '@appjusto/types';
+import { Business, Order, OrderStatus, PlatformParams, WithId } from '@appjusto/types';
 import { useToast } from '@chakra-ui/react';
 import { useBusinessOpenClose } from 'app/api/business/profile/useBusinessOpenClose';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
@@ -26,6 +26,7 @@ interface ContextProps {
   getOrderById(id: string): WithId<Order> | undefined;
   changeOrderStatus(orderId: string, status: OrderStatus): void;
   setOrderCookingTime(orderId: string, cookingTime: number | null): void;
+  platformParams?: PlatformParams | null;
 }
 
 const OrdersContext = React.createContext<ContextProps>({} as ContextProps);
@@ -39,7 +40,7 @@ interface ProviderProps {
 export const OrdersContextProvider = (props: ProviderProps) => {
   // context
   const api = useContextApi();
-  const { isPlatformLive } = usePlatformParams();
+  const { platformParams, isPlatformLive } = usePlatformParams();
   const { dispatchAppRequestResult } = useContextAppRequests();
   const { isBackofficeUser } = useContextFirebaseUser();
   const { business } = useContextBusiness();
@@ -212,6 +213,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
         getOrderById,
         changeOrderStatus,
         setOrderCookingTime,
+        platformParams,
       }}
       {...props}
     />

@@ -13,6 +13,7 @@ interface BasicInfoBoxProps extends BoxProps {
   btnFunction?(): void;
   isLoading?: boolean;
   btnWarning?: string;
+  isAvailable?: boolean;
 }
 
 export const BasicInfoBox = ({
@@ -26,10 +27,11 @@ export const BasicInfoBox = ({
   btnFunction,
   isLoading,
   btnWarning,
+  isAvailable = true,
   ...props
 }: BasicInfoBoxProps) => {
   // helpers
-  const btnIsAvailable = value && formatCents(value) > valueLimit ? true : false;
+  const btnIsAvailable = isAvailable && value && formatCents(value) > valueLimit ? true : false;
   // UI
   return (
     <Box

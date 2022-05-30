@@ -9,17 +9,17 @@ export const usePlatformParams = () => {
   const api = useContextApi();
   const { getServerTime } = useContextServerTime();
   // state
-  const [params, setParams] = React.useState<PlatformParams | null>();
+  const [platformParams, setPlatformParams] = React.useState<PlatformParams | null>();
   const [isPlatformLive, setIsPlatformLive] = React.useState(true);
   // side effects
   React.useEffect(() => {
-    const unsub = api.platform().observeParams(setParams);
+    const unsub = api.platform().observeParams(setPlatformParams);
     return () => unsub();
   }, [api]);
 
   React.useEffect(() => {
-    if (!params?.consumer.support) return;
-    const { support } = params.consumer;
+    if (!platformParams?.consumer.support) return;
+    const { support } = platformParams.consumer;
     const startH = parseInt(support.starts.slice(0, 2));
     const startM = parseInt(support.starts.slice(2));
     const endH = parseInt(support.ends.slice(0, 2));
@@ -29,7 +29,7 @@ export const usePlatformParams = () => {
     const end = dayjs().hour(endH).minute(endM).toDate();
     if (now > start && now < end) setIsPlatformLive(true);
     else setIsPlatformLive(false);
-  }, [getServerTime, params]);
+  }, [getServerTime, platformParams]);
   // result
-  return { isPlatformLive };
+  return { platformParams, isPlatformLive };
 };

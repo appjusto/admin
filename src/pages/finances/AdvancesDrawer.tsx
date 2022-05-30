@@ -3,9 +3,12 @@ import { Box, Button, Checkbox, CheckboxGroup, Flex, Icon, Skeleton, Text } from
 import { useAdvanceReceivables } from 'app/api/business/useAdvanceReceivables';
 import { useReceivables } from 'app/api/business/useReceivables';
 import { useReceivablesSimulation } from 'app/api/business/useReceivablesSimulation';
+import { useCanAdvanceReceivables } from 'app/api/platform/useCanAdvanceReceivables';
 import { useContextBusinessId } from 'app/state/business/context';
+import { useOrdersContext } from 'app/state/order';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { ReactComponent as Checked } from 'common/img/icon-checked.svg';
+import dayjs from 'dayjs';
 import React from 'react';
 import { formatCurrency } from 'utils/formatters';
 import { t } from 'utils/i18n';
@@ -22,11 +25,17 @@ export const AdvancesDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps) =>
   // context
   const { dispatchAppRequestResult } = useContextAppRequests();
   const businessId = useContextBusinessId();
+  const { platformParams } = useOrdersContext();
   const { receivables } = useReceivables(businessId);
   const { advanceReceivables, advanceReceivablesResult } = useAdvanceReceivables(businessId);
   const { isLoading, isSuccess } = advanceReceivablesResult;
+  const canAdvanceReceivables = useCanAdvanceReceivables();
+  const advanceableAfterHours = platformParams?.courier.advanceableAfterHours ?? 48;
   // state
   const [items, setItems] = React.useState<IuguMarketplaceAccountReceivableItem[]>([]);
+  const [advanceables, setAdvanceables] = React.useState<IuguMarketplaceAccountReceivableItem[]>(
+    []
+  );
   const [selectedAll, setSelectedAll] = React.useState(false);
   const [selected, setSelected] = React.useState<string[]>([]);
   const [isReviewing, setIsReviewing] = React.useState(false);
@@ -40,6 +49,12 @@ export const AdvancesDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps) =>
   // refs
   const acceptCheckBoxRef = React.useRef<HTMLInputElement>(null);
   // handlers
+  const advanceableAt = (createdAt: string) => {
+    const date = dayjs(createdAt).add(advanceableAfterHours, 'hour').toDate();
+    const monthNum = date.getMonth() + 1;
+    const monthStr = monthNum > 9 ? monthNum : `0${monthNum}`;
+    return `${date.getFullYear()}-${monthStr}-${date.getDate()}`;
+  };
   const handleReceivablesRequest = async () => {
     if (selected.length === 0)
       return dispatchAppRequestResult({
@@ -65,31 +80,37 @@ export const AdvancesDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps) =>
   React.useEffect(() => {
     if (receivables?.items) {
       setItems(receivables.items);
-      const total = receivables.items.reduce<number>((result, item) => {
-        let value = item.total ? formatCents(item.total) : 0;
-        return (result += value);
-      }, 0);
-      setTotalAvailable(formatCurrency(total));
+      const canBeSelected = receivables.items.filter((item) => item.advanceable);
+      setAdvanceables(canBeSelected);
     } else setItems([]);
   }, [receivables]);
   React.useEffect(() => {
-    if (items.length === 0) return;
-    const itemsSelected = items.filter((item) => selected.includes(item.id.toString()));
+    if (!advanceables) return;
+    const total = advanceables.reduce<number>((result, item) => {
+      let value = item.total ? formatCents(item.total) : 0;
+      return (result += value);
+    }, 0);
+    setTotalAvailable(formatCurrency(total));
+  }, [advanceables]);
+
+  React.useEffect(() => {
+    if (advanceables.length === 0) return;
+    const itemsSelected = advanceables.filter((item) => selected.includes(item.id.toString()));
     const total = itemsSelected.reduce<number>((result, item) => {
       let value = item.total ? formatCents(item.total) : 0;
       return (result += value);
     }, 0);
     setTotalSelected(formatCurrency(total));
-  }, [items, selected]);
+  }, [advanceables, selected]);
   React.useEffect(() => {
-    if (selectedAll) setSelected(items.map((item) => item.id.toString()));
-    //else setSelected([]);
-  }, [items, selectedAll]);
+    if (selectedAll) setSelected(advanceables.map((item) => item.id.toString()));
+    // else setSelected([]);
+  }, [advanceables, selectedAll]);
   React.useEffect(() => {
-    if (items.length === 0) return;
-    if (selected.length !== items.length) setSelectedAll(false);
+    if (advanceables.length === 0) return;
+    if (selected.length === 0 || selected.length !== advanceables.length) setSelectedAll(false);
     else setSelectedAll(true);
-  }, [items, selected]);
+  }, [advanceables, selected]);
   // UI
   if (isSuccess) {
     return (
@@ -122,7 +143,7 @@ export const AdvancesDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps) =>
       onClose={onClose}
       title={t('Antecipação dos valores')}
       description={t(
-        'O prazo padrão para faturar os pagamentos é de 30 dias. Se quiser, você pode selecionar os valores disponíveis abaixo e realizar a antecipação, pagando uma taxa de até 2.5% por operação (taxa proporcional ao tempo que falta para completar 30 dias). Nada desse dinheiro ficará com o AppJusto.'
+        'O prazo padrão para processar os pagamentos é de 30 dias. Para antecipar, você paga uma taxa de até 1.99% por operação. Funciona assim: se for antecipar no primeiro dia útil após a corrida, você pagará o valor cheio de 1.99%, e a taxa diminui proporcionalmente a cada dia que passa. Se você esperar 15 dias, por exemplo, pagará 0.99%.'
       )}
       isReviewing={isReviewing}
       footer={() => (
@@ -133,8 +154,13 @@ export const AdvancesDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps) =>
             onClick={handleReceivablesRequest}
             isLoading={isLoading}
             loadingText={t('Confirmando')}
+            isDisabled={!canAdvanceReceivables || selected.length === 0}
           >
-            {isReviewing ? t('Confirmar adiantamento') : t('Revisar adiantamento')}
+            {isReviewing
+              ? t('Confirmar adiantamento')
+              : canAdvanceReceivables
+              ? t('Revisar adiantamento')
+              : t('Fora do horário')}
           </Button>
           {isReviewing && (
             <Button mr="16" fontSize="15px" variant="outline" onClick={() => setIsReviewing(false)}>
@@ -145,14 +171,19 @@ export const AdvancesDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps) =>
       )}
       {...props}
     >
+      <Text mt="-2" color="red">
+        {t(
+          'Atenção: a Iugu só permite realizar antecipações em dias úteis, de 09:00 às 16:00 e só é possível antecipar faturas pagas há mais de 2 dias úteis.'
+        )}
+      </Text>
       {isReviewing ? (
         <>
-          <Box mt="2">
+          <Box mt="4">
             <Text fontSize="15px" fontWeight="500" lineHeight="21px">
               {t('Você selecionou')}
             </Text>
             <Text fontSize="24px" fontWeight="500" lineHeight="30px">
-              {selected.length} pedidos
+              {selected.length} {selected.length > 1 ? t('pedidos') : t('pedido')}
             </Text>
           </Box>
           <Box mt="6">
@@ -207,6 +238,7 @@ export const AdvancesDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps) =>
       ) : (
         <>
           <BasicInfoBox
+            mt="4"
             label={t('Disponível para adiantamento')}
             icon={Checked}
             value={totalAvailable}
@@ -217,7 +249,11 @@ export const AdvancesDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps) =>
               colorScheme="green"
               borderColor="black"
               isChecked={selectedAll}
-              onChange={(e) => setSelectedAll(e.target.checked)}
+              onChange={(e) => {
+                if (e.target.checked) setSelectedAll(e.target.checked);
+                else setSelected([]);
+              }}
+              isDisabled={advanceables.length === 0}
             >
               <Text color="black" fontSize="15px" lineHeight="21px" fontWeight="700">
                 {t('Selecionar todos')}
@@ -232,7 +268,12 @@ export const AdvancesDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps) =>
             >
               {items.map((item) => (
                 <Box key={item.id} w="100%" py="4" borderBottom="1px solid #C8D7CB">
-                  <Checkbox size="lg" value={item.id.toString()} borderColor="black">
+                  <Checkbox
+                    size="lg"
+                    value={item.id.toString()}
+                    borderColor="black"
+                    isDisabled={!item.advanceable}
+                  >
                     <Box ml="4">
                       <Text fontSize="15px" fontWeight="500" lineHeight="21px" color="black">
                         {formatIuguValueToDisplay(item.total)}
@@ -240,6 +281,12 @@ export const AdvancesDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps) =>
                       <Text mt="2" fontSize="15px" fontWeight="500" lineHeight="21px">
                         {t('Será faturado em: ') + formatIuguDateToDisplay(item.scheduled_date)}
                       </Text>
+                      {!item.advanceable && (
+                        <Text mt="2" fontSize="15px" fontWeight="500" lineHeight="21px">
+                          {t('Disponível após: ') +
+                            formatIuguDateToDisplay(advanceableAt(item.created_at))}
+                        </Text>
+                      )}
                     </Box>
                   </Checkbox>
                 </Box>

@@ -5,6 +5,7 @@ import { useObserveBusinessAdvances } from 'app/api/business/useObserveBusinessA
 import { useObserveBusinessWithdraws } from 'app/api/business/useObserveBusinessWithdraws';
 import { useRequestWithdraw } from 'app/api/business/useRequestWithdraw';
 import { useObserveInvoicesStatusByPeriod } from 'app/api/order/useObserveInvoicesStatusByPeriod';
+import { useCanAdvanceReceivables } from 'app/api/platform/useCanAdvanceReceivables';
 import { useContextBusinessId } from 'app/state/business/context';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { CustomMonthInput } from 'common/components/form/input/CustomMonthInput';
@@ -36,6 +37,7 @@ const FinancesPage = () => {
   const { accountInformation, refreshAccountInformation } = useAccountInformation(businessId);
   const { requestWithdraw, requestWithdrawResult } = useRequestWithdraw(businessId);
   const { isLoading, isSuccess } = requestWithdrawResult;
+  const canAdvanceReceivables = useCanAdvanceReceivables();
   // state
   const [dateTime, setDateTime] = React.useState('');
   const [month, setMonth] = React.useState<Date | null>(new Date());
@@ -108,9 +110,12 @@ const FinancesPage = () => {
           label={t('Vendas em processamento')}
           icon={Watch}
           value={availableReceivable}
-          btnLabel={t('Pedir antecipação de valores')}
+          btnLabel={
+            canAdvanceReceivables ? t('Pedir antecipação de valores') : t('Fora do horário')
+          }
           btnVariant="outline"
           btnLink={`${url}/advances`}
+          isAvailable={canAdvanceReceivables}
         />
       </Stack>
       <SectionTitle>{t('Período')}</SectionTitle>
