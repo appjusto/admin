@@ -1,5 +1,7 @@
 import { ApiConfig } from 'app/api/config/types';
 import MapsApi from 'core/api/thirdparty/maps/MapsApi';
+import dayjs from 'dayjs';
+import timezone from 'dayjs/plugin/timezone';
 import { Analytics, getAnalytics, setAnalyticsCollectionEnabled } from 'firebase/analytics';
 import { FirebaseApp, initializeApp } from 'firebase/app';
 import { Auth, connectAuthEmulator, getAuth } from 'firebase/auth';
@@ -24,6 +26,9 @@ import OrderApi from './order/OrderApi';
 import PlatformApi from './platform/PlatformApi';
 import StaffApi from './staff/StaffApi';
 import UsersApi from './users/UsersApi';
+dayjs.extend(timezone);
+
+dayjs.tz.setDefault('America/Sao_Paulo');
 
 export default class Api {
   private static app: FirebaseApp;
