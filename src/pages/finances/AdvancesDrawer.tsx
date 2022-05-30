@@ -30,7 +30,7 @@ export const AdvancesDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps) =>
   const { advanceReceivables, advanceReceivablesResult } = useAdvanceReceivables(businessId);
   const { isLoading, isSuccess } = advanceReceivablesResult;
   const canAdvanceReceivables = useCanAdvanceReceivables();
-  const advanceableAfterHours = platformParams?.courier.advanceableAfterHours ?? 48;
+  const advanceableAfterHours = platformParams?.marketplace.advances.advanceableAfterHours ?? 48;
   // state
   const [items, setItems] = React.useState<IuguMarketplaceAccountReceivableItem[]>([]);
   const [advanceables, setAdvanceables] = React.useState<IuguMarketplaceAccountReceivableItem[]>(
