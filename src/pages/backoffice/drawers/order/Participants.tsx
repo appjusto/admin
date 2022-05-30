@@ -62,6 +62,7 @@ export const Participants = ({ order }: ParticipantsProps) => {
             name={order?.consumer?.name}
             address={order?.destination?.address?.main}
             additionalInfo={order?.destination?.additionalInfo}
+            coordinates={order?.consumer.coordinates}
           />
         </Box>
       ) : (
@@ -71,6 +72,7 @@ export const Participants = ({ order }: ParticipantsProps) => {
             type="consumer"
             participantId={order?.consumer?.id}
             name={order?.consumer?.name ?? 'N/E'}
+            coordinates={order?.consumer.coordinates}
           />
           <SectionTitle>{t('Origem')}</SectionTitle>
           <Participant
