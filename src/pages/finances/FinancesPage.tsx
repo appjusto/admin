@@ -41,6 +41,7 @@ const FinancesPage = () => {
   const [month, setMonth] = React.useState<Date | null>(new Date());
   const [availableReceivable, setAvailableReceivable] = React.useState<string | null>();
   const [availableWithdraw, setAvailableWithdraw] = React.useState<string | null>();
+  const [activeWithdraw, setActiveWithdraw] = React.useState<number>();
   // page data with filters
   const { periodAmount, appjustoFee, iuguFee } = useObserveInvoicesStatusByPeriod(
     businessId,
@@ -84,6 +85,11 @@ const FinancesPage = () => {
     setAvailableReceivable(accountInformation?.receivable_balance ?? null);
     setAvailableWithdraw(accountInformation?.balance_available_for_withdraw ?? null);
   }, [accountInformation]);
+  React.useEffect(() => {
+    if (!withdraws) return;
+    const active = withdraws.filter((w) => w.status !== 'rejected');
+    setActiveWithdraw(active.length);
+  }, [withdraws]);
   // UI
   return (
     <>
@@ -133,7 +139,7 @@ const FinancesPage = () => {
         <Route path={`${path}/withdraw`}>
           <WithdrawsDrawer
             isOpen
-            totalWithdraws={withdraws?.length ?? 0}
+            totalWithdraws={activeWithdraw}
             withdrawValue={availableWithdraw}
             requestWithdraw={handleWithdrawRequest}
             isLoading={isLoading}

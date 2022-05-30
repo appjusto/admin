@@ -8,7 +8,7 @@ import { formatCents, formatIuguValueToDisplay } from './utils';
 
 interface WithdrawsDrawerProps {
   isOpen: boolean;
-  totalWithdraws: number;
+  totalWithdraws?: number;
   withdrawValue?: string | null;
   requestWithdraw(): void;
   isLoading: boolean;
@@ -27,14 +27,19 @@ export const WithdrawsDrawer = ({
 }: WithdrawsDrawerProps) => {
   // state
   const [requestedValue, setRequestedValue] = React.useState<string | null>();
+  const [withdrawsLeft, setWithdrawsLeft] = React.useState<number | null>();
+  const [withdrawIsAvailable, setWithdrawIsAvailable] = React.useState<boolean>();
   // helpers
-  const withdrawsLeft = 4 - totalWithdraws;
   // side effects
   React.useEffect(() => {
-    if (!withdrawValue) return;
+    if (!withdrawValue || totalWithdraws === undefined) return;
     const value = formatCents(withdrawValue);
+    const withdrawsLeft = 4 - totalWithdraws;
+    const isAvailable = value > 0 && withdrawsLeft > 0;
+    setWithdrawsLeft(withdrawsLeft);
+    setWithdrawIsAvailable(isAvailable);
     if (value > 0) setRequestedValue(withdrawValue);
-  }, [withdrawValue]);
+  }, [withdrawValue, totalWithdraws]);
   // UI
   if (isSuccess) {
     return (
@@ -57,6 +62,21 @@ export const WithdrawsDrawer = ({
       </FinancesBaseDrawer>
     );
   }
+  if (withdrawIsAvailable === undefined) {
+    return (
+      <FinancesBaseDrawer onClose={onClose} title={t('Confirmação de Transferência')} {...props}>
+        <Text fontSize="18px" fontWeight="500" lineHeight="28px">
+          {t('Carregando informações...')}
+        </Text>
+        <BasicInfoBox
+          mt="6"
+          label={t('Total disponível para transferência')}
+          icon={Checked}
+          value={withdrawValue}
+        />
+      </FinancesBaseDrawer>
+    );
+  }
   return (
     <FinancesBaseDrawer
       onClose={onClose}
@@ -69,6 +89,7 @@ export const WithdrawsDrawer = ({
             onClick={requestWithdraw}
             isLoading={isLoading}
             loadingText={t('Confirmando')}
+            isDisabled={!withdrawIsAvailable}
           >
             {t('Confirmar transferência')}
           </Button>
@@ -82,7 +103,7 @@ export const WithdrawsDrawer = ({
           {withdrawsLeft}
         </Text>
         {t(' transferências disponíveis este mês (de um total de 4).')} <br />
-        {t('Deseja confirmar a transferência do valor disponível abaixo?')}
+        {withdrawIsAvailable && t('Deseja confirmar a transferência do valor disponível abaixo?')}
       </Text>
       <BasicInfoBox
         mt="6"
