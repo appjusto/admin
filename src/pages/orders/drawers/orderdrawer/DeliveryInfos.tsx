@@ -147,14 +147,16 @@ export const DeliveryInfos = ({
           )}
         </Flex>
       )}
-      <DeliveryMap
-        key={order.id}
-        orderStatus={order.status}
-        origin={order.origin?.location}
-        destination={order.destination?.location}
-        courier={courierLocation}
-        orderPolyline={order.route?.polyline}
-      />
+      {order.dispatchingStatus !== 'outsourced' && (
+        <DeliveryMap
+          key={order.id}
+          orderStatus={order.status}
+          origin={order.origin?.location}
+          destination={order.destination?.location}
+          courier={courierLocation}
+          orderPolyline={order.route?.polyline}
+        />
+      )}
       <Text mt="4" fontSize="xl" color="black">
         {t('Destino do pedido')}
       </Text>
