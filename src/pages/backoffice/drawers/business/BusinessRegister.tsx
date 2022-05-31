@@ -4,6 +4,7 @@ import { useContextBusinessBackoffice } from 'app/state/business/businessBOConte
 import { ProfileNotes } from 'common/components/backoffice/ProfileNotes';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import { BusinessPhoneField, BusinessPhones } from 'pages/business-profile/business-phones';
+import { BusinessFulfillment } from 'pages/business-profile/BusinessFulfillment';
 import React from 'react';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
@@ -36,6 +37,11 @@ export const BusinessRegister = () => {
       />
       <SectionTitle>{t('Dados do restaurante')}</SectionTitle>
       <BOBusinessProfile />
+      <BusinessFulfillment
+        fulfillment={business?.fulfillment}
+        handleChange={(value) => handleBusinessProfileChange('fulfillment', value)}
+        isBackoffice
+      />
       <SectionTitle>{t('Desconto médio')}</SectionTitle>
       <CustomInput
         id="bo-business-average-discount"
