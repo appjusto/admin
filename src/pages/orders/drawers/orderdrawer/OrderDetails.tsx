@@ -5,6 +5,7 @@ import React from 'react';
 import { formatCurrency } from 'utils/formatters';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../../../backoffice/drawers/generics/SectionTitle';
+import { Multiplier } from './Multiplier';
 
 interface DetailsProps {
   order?: WithId<Order> | null;
@@ -54,7 +55,16 @@ export const OrderDetails = ({ order }: DetailsProps) => {
                             {complement.name}
                           </Text>
                         </Td>
-                        <Td isNumeric>{complement.quantity ?? 1}</Td>
+                        <Td isNumeric>
+                          {item.quantity > 1 ? (
+                            <Multiplier
+                              products={item.quantity}
+                              complements={complement.quantity}
+                            />
+                          ) : (
+                            complement.quantity ?? 1
+                          )}
+                        </Td>
                         <Td isNumeric>{formatCurrency(complement.price)}</Td>
                       </Tr>
                     ))}
