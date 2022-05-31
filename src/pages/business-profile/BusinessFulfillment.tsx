@@ -37,7 +37,7 @@ export const BusinessFulfillment = ({
           lineHeight="22px"
         >
           <CustomCheckbox value="delivery">{t('Delivery')}</CustomCheckbox>
-          <CustomCheckbox value="take-away">{t('Retirar na loja')}</CustomCheckbox>
+          <CustomCheckbox value="take-away">{t('Para retirar')}</CustomCheckbox>
         </HStack>
       </CheckboxGroup>
     </Box>

@@ -170,6 +170,12 @@ export const OrderBaseDrawer = ({
                     {getDateAndHour(order?.timestamps.confirmed)}
                   </Text>
                 </Text>
+                <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
+                  {t('Tipo de entrega:')}{' '}
+                  <Text as="span" color="black" fontWeight="700">
+                    {order?.fulfillment === 'take-away' ? 'Para retirar' : 'Delivery'}
+                  </Text>
+                </Text>
                 {order?.status && order?.status !== 'confirmed' && (
                   <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
                     {t('Status:')}{' '}

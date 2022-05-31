@@ -144,6 +144,12 @@ export const OrderBaseDrawer = ({
               label={t('Tipo:')}
               value={order?.type === 'food' ? 'Comida' : 'p2p'}
             />
+            {order?.type === 'food' && (
+              <BaseDrawerInfoItem
+                label={t('Tipo de entrega:')}
+                value={order?.fulfillment === 'take-away' ? 'Para retirar' : 'Delivery'}
+              />
+            )}
             <BaseDrawerInfoItem
               label={t('Pedido confirmado em:')}
               value={getDateAndHour(order?.timestamps.confirmed)}
