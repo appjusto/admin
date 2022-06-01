@@ -118,6 +118,7 @@ export const OrderDrawer = (props: Props) => {
         <Box w="100%">
           {isCanceling ? (
             <Cancelation
+              fulfillment={order?.fulfillment}
               handleConfirm={handleCancel}
               handleKeep={() => setIsCanceling(false)}
               isLoading={cancelResult.isLoading}
