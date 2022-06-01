@@ -43,7 +43,7 @@ const CourierOrdersTableItem = ({ order }: ItemPros) => {
       <Td>{getDateAndHour(order.timestamps?.confirmed)}</Td>
       <Td>{order.type === 'food' ? 'Comida' : 'p2p'}</Td>
       <Td>{order.business?.name ?? 'N/I'}</Td>
-      <Td>{order.fare?.courier.value ? formatCurrency(order.fare?.courier.value) : 'N/E'}</Td>
+      <Td>{order.fare?.courier?.value ? formatCurrency(order.fare.courier.value) : 'N/E'}</Td>
     </Tr>
   );
 };

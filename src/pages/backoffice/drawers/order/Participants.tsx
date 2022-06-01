@@ -90,28 +90,32 @@ export const Participants = ({ order }: ParticipantsProps) => {
           />
         </Box>
       )}
-      <SectionTitle>{t('Entregador')}</SectionTitle>
-      <Participant
-        type="courier"
-        participantId={order?.courier?.id}
-        isOutsource={order?.dispatchingStatus === 'outsourced'}
-        isOrderActive={isOrderActive}
-        name={order?.courier?.name}
-        mode={order?.courier?.mode}
-        deliveries={order?.courier?.statistics?.deliveries}
-        rejected={order?.courier?.statistics?.rejected}
-        dropIssues={issues}
-        removeCourier={removeCourierFromOrder}
-        isLoading={removalResult.isLoading}
-      />
-      <SectionTitle>{t('Frota')}</SectionTitle>
-      <Text mt="2" mb="10" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
-        {t('Nome:')}{' '}
-        <Text as="span" fontWeight="500">
-          {order?.fare?.fleet.name ?? 'N/E'}
-        </Text>
-      </Text>
-      {isOrderActive ? (
+      {order?.fulfillment === 'delivery' && (
+        <>
+          <SectionTitle>{t('Entregador')}</SectionTitle>
+          <Participant
+            type="courier"
+            participantId={order?.courier?.id}
+            isOutsource={order?.dispatchingStatus === 'outsourced'}
+            isOrderActive={isOrderActive}
+            name={order?.courier?.name}
+            mode={order?.courier?.mode}
+            deliveries={order?.courier?.statistics?.deliveries}
+            rejected={order?.courier?.statistics?.rejected}
+            dropIssues={issues}
+            removeCourier={removeCourierFromOrder}
+            isLoading={removalResult.isLoading}
+          />
+          <SectionTitle>{t('Frota')}</SectionTitle>
+          <Text mt="2" mb="10" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+            {t('Nome:')}{' '}
+            <Text as="span" fontWeight="500">
+              {order?.fare?.fleet?.name ?? 'N/E'}
+            </Text>
+          </Text>
+        </>
+      )}
+      {isOrderActive && order?.fulfillment === 'delivery' ? (
         <DeliveryInfos order={order!} isBackofficeDrawer />
       ) : (
         <>
