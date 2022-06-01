@@ -52,6 +52,14 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
   const cookingProgress = cookingTime && elapsedTime ? (elapsedTime / cookingTime) * 100 : 0;
   // const cancelator = orderCancelator(order?.cancellation?.issue?.type);
 
+  const handleOrderDispatching = () => {
+    if (order.fulfillment === 'delivery') {
+      changeOrderStatus(order.id, 'dispatching');
+    } else {
+      changeOrderStatus(order.id, 'delivered');
+    }
+  };
+
   // side effects
   React.useEffect(() => {
     if (!order.id) return;
@@ -317,62 +325,74 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
                     {`{${conrumerName}}`}
                   </Text>
                 </Box>
-                <Box>
-                  <Text
-                    color={isCurrierArrived ? 'red' : 'gray.700'}
-                    fontWeight="700"
-                    textAlign="end"
-                  >
-                    {orderDispatchingKanbanItemText}
-                  </Text>
-                  {order?.dispatchingStatus === 'outsourced' && (
-                    <Text mt="1" fontSize="xs" textAlign="end">
-                      {t('Um entregador de outra rede fará a retirada.')}
+                {order.fulfillment === 'delivery' ? (
+                  <Box>
+                    <Text
+                      color={isCurrierArrived ? 'red' : 'gray.700'}
+                      fontWeight="700"
+                      textAlign="end"
+                    >
+                      {orderDispatchingKanbanItemText}
                     </Text>
-                  )}
-                  {isMatched &&
-                    (isCurrierArrived ? (
-                      <Text color="black" fontSize="xs" fontWeight="500">
-                        {t('Nome: ') + order.courier?.name}
+                    {order?.dispatchingStatus === 'outsourced' && (
+                      <Text mt="1" fontSize="xs" textAlign="end">
+                        {t('Um entregador de outra rede fará a retirada.')}
                       </Text>
-                    ) : (
-                      <>
-                        {showArrivalTime ? (
-                          arrivalTime! > 0 ? (
-                            <Text color="gray.700" fontWeight="500">
-                              {t(
-                                `Aprox. ${
-                                  arrivalTime! > 1
-                                    ? arrivalTime + ' minutos'
-                                    : arrivalTime + ' minuto'
-                                }`
-                              )}
-                            </Text>
+                    )}
+                    {isMatched &&
+                      (isCurrierArrived ? (
+                        <Text color="black" fontSize="xs" fontWeight="500">
+                          {t('Nome: ') + order.courier?.name}
+                        </Text>
+                      ) : (
+                        <>
+                          {showArrivalTime ? (
+                            arrivalTime! > 0 ? (
+                              <Text color="gray.700" fontWeight="500">
+                                {t(
+                                  `Aprox. ${
+                                    arrivalTime! > 1
+                                      ? arrivalTime + ' minutos'
+                                      : arrivalTime + ' minuto'
+                                  }`
+                                )}
+                              </Text>
+                            ) : (
+                              <Text color="gray.700" fontWeight="500">
+                                {t(`Menos de 1 minuto`)}
+                              </Text>
+                            )
                           ) : (
                             <Text color="gray.700" fontWeight="500">
-                              {t(`Menos de 1 minuto`)}
+                              {t(`Calculando...`)}
                             </Text>
-                          )
-                        ) : (
-                          <Text color="gray.700" fontWeight="500">
-                            {t(`Calculando...`)}
-                          </Text>
-                        )}
-                      </>
-                    ))}
-                </Box>
+                          )}
+                        </>
+                      ))}
+                  </Box>
+                ) : (
+                  <Box>
+                    <Text color="gray.700" fontWeight="700" textAlign="end">
+                      {t('Aguadando retirada do cliente')}
+                    </Text>
+                  </Box>
+                )}
               </Flex>
             </Flex>
           </Box>
         </Link>
         <Box position="absolute" w="100%" bottom="0" px="4" mb="4" zIndex="999">
           <Button
-            isDisabled={!isCurrierArrived && order?.dispatchingStatus !== 'outsourced'}
+            isDisabled={
+              order.fulfillment === 'delivery' &&
+              !isCurrierArrived &&
+              order?.dispatchingStatus !== 'outsourced'
+            }
             w="full"
             maxH="34px"
             size="sm"
             fontSize="xs"
-            onClick={() => changeOrderStatus(order.id, 'dispatching')}
+            onClick={handleOrderDispatching}
           >
             {t('Entregar pedido')}
           </Button>
