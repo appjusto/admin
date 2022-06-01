@@ -108,11 +108,21 @@ export const BOOrderListItem = ({ order }: Props) => {
           <Flex
             w="24px"
             h="24px"
+            position="relative"
             justifyContent="center"
             alignItems="center"
             bg={courierIconStatus.bg}
             borderRadius="lg"
           >
+            {order.fulfillment !== 'delivery' && (
+              <Box
+                w="100%"
+                h="2px"
+                position="absolute"
+                bgColor="#C8D7CB"
+                transform="rotate(45deg)"
+              />
+            )}
             <Icon as={MdMoped} w="20px" h="20px" color={courierIconStatus.color} />
           </Flex>
         </Flex>
