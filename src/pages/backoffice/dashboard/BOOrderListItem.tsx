@@ -33,6 +33,7 @@ export const BOOrderListItem = ({ order }: Props) => {
   const issuesFound = issues && issues.length > 0 ? true : false;
   const isFlagged = order.status === 'charged' && order.flagged;
   const courierIconStatus = getOrderMatchingColor(
+    order.fulfillment,
     order.status,
     order.dispatchingStatus,
     order.courier?.id
