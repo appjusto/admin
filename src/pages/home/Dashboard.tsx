@@ -1,7 +1,6 @@
 import { Box, BoxProps, Circle, HStack, Link, Skeleton, Stack, Text } from '@chakra-ui/react';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextBusinessDashboard } from 'app/state/dashboards/business';
-import { CrowdfundingCard } from 'common/components/CrowdfundingCard';
 import { MaintenanceBox } from 'common/components/MaintenanceBox';
 import { NewFeatureBox } from 'common/components/NewFeatureBox';
 import { ReactComponent as ExtensionIcon } from 'common/img/chrome-extension-icon.svg';
@@ -143,7 +142,6 @@ const Dashboard = () => {
       {business?.situation === 'approved' ? (
         <Box>
           <MaintenanceBox />
-          <CrowdfundingCard />
           {/* <NewFeatureBox
             icon={BsShare}
             title={t('Compartilhe seu restaurante como quiser!')}
