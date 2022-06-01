@@ -373,7 +373,10 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
                 ) : (
                   <Box>
                     <Text color="gray.700" fontWeight="700" textAlign="end">
-                      {t('Aguadando retirada do cliente')}
+                      {t('Aguardando retirada')}
+                    </Text>
+                    <Text color="gray.700" fontWeight="700" textAlign="end">
+                      {t('pelo cliente')}
                     </Text>
                   </Box>
                 )}
