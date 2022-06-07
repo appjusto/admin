@@ -4,9 +4,16 @@ import { useGetOutsourceDelivery } from 'app/api/order/useGetOutsourceDelivery';
 import { useObserveOrderMatching } from 'app/api/order/useObserveOrderMatching';
 import { useOrderCourierManualAllocation } from 'app/api/order/useOrderCourierManualAllocation';
 import { useContextFirebaseUser } from 'app/state/auth/context';
+import { useContextAppRequests } from 'app/state/requests/context';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import CustomRadio from 'common/components/form/CustomRadio';
 import { CustomInput } from 'common/components/form/input/CustomInput';
+import { CustomPatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';
+import {
+  phoneFormatter,
+  phoneMask
+} from 'common/components/form/input/pattern-input/formatters';
+import { numbersOnlyParser } from 'common/components/form/input/pattern-input/parsers';
 import React from 'react';
 import { t } from 'utils/i18n';
 import { orderDispatchingStatusPTOptions } from '../../utils/index';
@@ -23,14 +30,15 @@ interface MatchingProps {
 export const Matching = ({ order }: MatchingProps) => {
   // context
   const { userAbility } = useContextFirebaseUser();
+  const { dispatchAppRequestResult } = useContextAppRequests();
   const { matching, logs, updateCourierNotified, updateResult, restartMatching, restartResult } =
     useObserveOrderMatching(order?.id);
   const { courierManualAllocation, allocationResult } = useOrderCourierManualAllocation();
   const {
     getOutsourceDelivery,
     outsourceDeliveryResult,
-    updateOutsourcingCourierName,
-    updateOutsourcingCourierNameResult,
+    updateOutsourcingCourierInfos,
+    updateOutsourcingCourierInfosResult,
   } = useGetOutsourceDelivery(order?.id);
   // state
   //const [isAuto, setIsAuto] = React.useState(true);
@@ -43,6 +51,7 @@ export const Matching = ({ order }: MatchingProps) => {
   const [outsourcingAccountType, setOutsourcingAccountType] =
     React.useState<OutsourceAccountType>('platform');
   const [outsourcingCourierName, setOutsourcingCourierName] = React.useState<string>();
+  const [outsourcingCourierPhone, setOutsourcingCourierPhone] = React.useState<string>();
   //const [couriersRejections, setCouriersRejections] = React.useState<OrderMatchingRejection[]>();
   // helpers
   const isOrderActive = order?.status
@@ -62,6 +71,20 @@ export const Matching = ({ order }: MatchingProps) => {
     if (!order?.id) return;
     return courierManualAllocation({ orderId: order.id, courierId, comment });
   };
+  const handleOutsourcingCourierInfos = () => {
+    if(!outsourcingCourierName || !outsourcingCourierPhone) {
+      return dispatchAppRequestResult({
+        status: 'error',
+        requestId: 'Operação negada',
+        message: { title: 'Favor informar o nome e o fone do entregador.' },
+      });
+    };
+    const data = {
+      name: outsourcingCourierName,
+      phone: outsourcingCourierPhone
+    }
+    updateOutsourcingCourierInfos(data)
+  }
   // side effects
   React.useEffect(() => {
     if (matching === undefined) return;
@@ -129,10 +152,22 @@ export const Matching = ({ order }: MatchingProps) => {
               value={outsourcingCourierName ?? ''}
               onChange={(ev) => setOutsourcingCourierName(ev.target.value)}
             />
+            <CustomPatternInput
+              isRequired
+              id="courier-phone"
+              label={t('Celular *')}
+              placeholder={t('Número do celular')}
+              mask={phoneMask}
+              parser={numbersOnlyParser}
+              formatter={phoneFormatter}
+              value={outsourcingCourierPhone}
+              onValueChange={(value) => setOutsourcingCourierPhone(value)}
+              validationLength={11}
+            />
             <Button
               h="60px"
-              onClick={() => updateOutsourcingCourierName(outsourcingCourierName!)}
-              isLoading={updateOutsourcingCourierNameResult.isLoading}
+              onClick={handleOutsourcingCourierInfos}
+              isLoading={updateOutsourcingCourierInfosResult.isLoading}
               isDisabled={!outsourcingCourierName || !isOrderActive}
             >
               {t('Salvar')}

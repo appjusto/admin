@@ -50,8 +50,8 @@ export const OrderDrawer = (props: Props) => {
   const {
     getOutsourceDelivery,
     outsourceDeliveryResult,
-    updateOutsourcingCourierName,
-    updateOutsourcingCourierNameResult,
+    updateOutsourcingCourierInfos,
+    updateOutsourcingCourierInfosResult,
   } = useGetOutsourceDelivery(orderId);
   // state
   const [isCanceling, setIsCanceling] = React.useState(false);
@@ -147,8 +147,8 @@ export const OrderDrawer = (props: Props) => {
                             />
                             <Button
                               h="60px"
-                              onClick={() => updateOutsourcingCourierName(outsourcingCourierName!)}
-                              isLoading={updateOutsourcingCourierNameResult.isLoading}
+                              onClick={() => updateOutsourcingCourierInfos({name: outsourcingCourierName!})}
+                              isLoading={updateOutsourcingCourierInfosResult.isLoading}
                               isDisabled={!outsourcingCourierName}
                             >
                               {t('Salvar')}
