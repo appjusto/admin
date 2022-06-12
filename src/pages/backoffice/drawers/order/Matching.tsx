@@ -50,8 +50,8 @@ export const Matching = ({ order }: MatchingProps) => {
   const [isOutsourcing, setIsOutsourcing] = React.useState<boolean>(false);
   const [outsourcingAccountType, setOutsourcingAccountType] =
     React.useState<OutsourceAccountType>('platform');
-  const [outsourcingCourierName, setOutsourcingCourierName] = React.useState<string>();
-  const [outsourcingCourierPhone, setOutsourcingCourierPhone] = React.useState<string>();
+  const [outsourcingCourierName, setOutsourcingCourierName] = React.useState('');
+  const [outsourcingCourierPhone, setOutsourcingCourierPhone] = React.useState('');
   //const [couriersRejections, setCouriersRejections] = React.useState<OrderMatchingRejection[]>();
   // helpers
   const isOrderActive = order?.status
@@ -72,11 +72,11 @@ export const Matching = ({ order }: MatchingProps) => {
     return courierManualAllocation({ orderId: order.id, courierId, comment });
   };
   const handleOutsourcingCourierInfos = () => {
-    if(!outsourcingCourierName || !outsourcingCourierPhone) {
+    if(outsourcingCourierName.length === 0 || outsourcingCourierPhone.length  !== 11) {
       return dispatchAppRequestResult({
         status: 'error',
         requestId: 'Operação negada',
-        message: { title: 'Favor informar o nome e o fone do entregador.' },
+        message: { title: 'Favor informar corretamente o nome e o celular do entregador.' },
       });
     };
     const data = {
@@ -106,9 +106,13 @@ export const Matching = ({ order }: MatchingProps) => {
     if (restartResult.isSuccess) setIsRestarting(false);
   }, [restartResult]);
   React.useEffect(() => {
-    if (!order?.courier?.name) setOutsourcingCourierName(undefined);
-    else setOutsourcingCourierName(order?.courier?.name);
-  }, [order?.courier?.name]);
+    if(order?.dispatchingStatus === 'outsourced') {
+      if (!order?.courier?.name) setOutsourcingCourierName('');
+      else setOutsourcingCourierName(order?.courier?.name);
+      if (!order?.courier?.phone) setOutsourcingCourierPhone('');
+      else setOutsourcingCourierPhone(order?.courier?.phone);
+    }
+  }, [order?.dispatchingStatus, order?.courier]);
   // UI
   return (
     <>
@@ -144,11 +148,12 @@ export const Matching = ({ order }: MatchingProps) => {
               {t('Será necessário finalizar o pedido quando o mesmo for entregue.')}
             </Text>
           )}
-          <HStack mt="4">
+          <Text mt="4" fontWeight="700">{t('Dados do entregador')}</Text>
+          <HStack mt="2">
             <CustomInput
               mt="0"
               id="out-courier-name"
-              label={t('Nome do entregador')}
+              label={t('Nome *')}
               value={outsourcingCourierName ?? ''}
               onChange={(ev) => setOutsourcingCourierName(ev.target.value)}
             />
