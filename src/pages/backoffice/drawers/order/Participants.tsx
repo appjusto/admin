@@ -108,7 +108,7 @@ export const Participants = ({ order }: ParticipantsProps) => {
       <Text mt="2" mb="10" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
         {t('Nome:')}{' '}
         <Text as="span" fontWeight="500">
-          {order?.fare?.fleet.name ?? 'N/E'}
+          {order?.fare?.fleet?.name ?? 'N/E'}
         </Text>
       </Text>
       {isOrderActive ? (

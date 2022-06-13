@@ -61,7 +61,7 @@ export const OrderDrawer = (props: Props) => {
   const printComponent = React.useRef<HTMLDivElement>(null);
   // helpers
   const cancellator = getOrderCancellator(orderCancellation?.issue?.type);
-  const deliveryFare = order?.fare?.courier.value
+  const deliveryFare = order?.fare?.courier?.value
     ? formatCurrency(order.fare.courier.value)
     : 'N/E';
   // handlers
@@ -147,7 +147,7 @@ export const OrderDrawer = (props: Props) => {
                             />
                             <Button
                               h="60px"
-                              onClick={() => updateOutsourcingCourierInfos({name: outsourcingCourierName!})}
+                              onClick={() => updateOutsourcingCourierInfos({ name: outsourcingCourierName! })}
                               isLoading={updateOutsourcingCourierInfosResult.isLoading}
                               isDisabled={!outsourcingCourierName}
                             >
