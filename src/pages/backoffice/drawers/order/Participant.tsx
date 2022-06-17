@@ -6,7 +6,7 @@ import { Textarea } from 'common/components/form/input/Textarea';
 import { FieldValue } from 'firebase/firestore';
 import { modePTOptions } from 'pages/backoffice/utils';
 import React from 'react';
-import { MdOpenInNew } from 'react-icons/md';
+import { MdOpenInNew, MdOutlineFileCopy } from 'react-icons/md';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 
@@ -52,10 +52,16 @@ export const Participant = ({
   const [issueId, setIssueId] = React.useState((dropIssues && dropIssues[0].id) ?? '');
   const [comment, setComment] = React.useState('');
   const [googleLink, setGoogleLink] = React.useState<string>();
+  const [isCopied, setIsCopied] = React.useState(false);
   // handlers
   const handleRemoving = () => {
     const issue = dropIssues?.find((issue) => issue.id === issueId);
     removeCourier!(issue, comment);
+  };
+  const copyToClipboard = () => {
+    setIsCopied(true);
+    setTimeout(() => setIsCopied(false), 500);
+    return navigator.clipboard.writeText(address!);
   };
   // side effects
   React.useEffect(() => {
@@ -81,10 +87,11 @@ export const Participant = ({
         </Text>
         {typeof address === 'string' && (
           <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
-            {t('Endereço principal:')}{' '}
+            {t('Endereço:')}{' '}
             <Text as="span" fontWeight="500">
               {address ?? 'N/E'}
             </Text>
+            <Icon ml="2" mb="-0.5" cursor="pointer" as={MdOutlineFileCopy} onClick={copyToClipboard} color={isCopied ? 'green.700' : 'black'} />
           </Text>
         )}
         {typeof additionalInfo === 'string' && (
@@ -134,10 +141,11 @@ export const Participant = ({
           </Text>
         </Text>
         <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
-          {t('Endereço principal:')}{' '}
+          {t('Endereço:')}{' '}
           <Text as="span" fontWeight="500">
             {address ?? 'N/E'}
           </Text>
+          <Icon ml="2" mb="-0.5" cursor="pointer" as={MdOutlineFileCopy} onClick={copyToClipboard} color={isCopied ? 'green.700' : 'black'} />
         </Text>
         <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
           {t('Complemento:')}{' '}
@@ -158,10 +166,11 @@ export const Participant = ({
           </Text>
         </Text>
         <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
-          {t('Endereço principal:')}{' '}
+          {t('Endereço:')}{' '}
           <Text as="span" fontWeight="500">
             {address ?? 'N/E'}
           </Text>
+          <Icon ml="2" mb="-0.5" cursor="pointer" as={MdOutlineFileCopy} onClick={copyToClipboard} color={isCopied ? 'green.700' : 'black'} />
         </Text>
         <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
           {t('Complemento:')}{' '}
