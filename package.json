@@ -72,7 +72,10 @@
     "web-vitals": "^0.2.4"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "cp .env.$ENV .env.development.local && react-scripts start",
+    "start:dev": "ENV=dev yarn start",
+    "start:staging": "ENV=staging yarn start",
+    "start:live": "ENV=live yarn start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "test-env": "yarn env-cmd -f .env.$ENV yarn test",
