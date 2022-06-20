@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@appjusto/menu": "^0.1.4",
-    "@appjusto/types": "6.0.11",
+    "@appjusto/types": "6.2.1",
     "@casl/ability": "^5.4.3",
     "@chakra-ui/icons": "^1.0.3",
     "@chakra-ui/react": "^1.6.3",
@@ -41,7 +41,7 @@
     "firebase": "9.6.7",
     "framer-motion": "^4.1.17",
     "geofirestore": "^4.4.2",
-    "geokit": "1.1.0",
+    "geokit": "^1.1.0",
     "github-markdown-css": "^4.0.0",
     "google-map-react": "^2.1.9",
     "i18n-js": "^3.8.0",
