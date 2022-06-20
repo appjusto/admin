@@ -72,7 +72,7 @@ export const Matching = ({ order }: MatchingProps) => {
     return courierManualAllocation({ orderId: order.id, courierId, comment });
   };
   const handleOutsourcingCourierInfos = () => {
-    if(outsourcingCourierName.length === 0 || outsourcingCourierPhone.length  !== 11) {
+    if (outsourcingCourierName.length === 0 || outsourcingCourierPhone.length !== 11) {
       return dispatchAppRequestResult({
         status: 'error',
         requestId: 'Operação negada',
@@ -106,7 +106,7 @@ export const Matching = ({ order }: MatchingProps) => {
     if (restartResult.isSuccess) setIsRestarting(false);
   }, [restartResult]);
   React.useEffect(() => {
-    if(order?.dispatchingStatus === 'outsourced') {
+    if (order?.dispatchingStatus === 'outsourced') {
       if (!order?.courier?.name) setOutsourcingCourierName('');
       else setOutsourcingCourierName(order?.courier?.name);
       if (!order?.courier?.phone) setOutsourcingCourierPhone('');
@@ -285,7 +285,7 @@ export const Matching = ({ order }: MatchingProps) => {
             h="38px"
             w="300px"
             size="sm"
-            onClick={() => allocateCourier('zjbQXFXPAe8DxWjye3DO9qR6sUIM', 'Teste')}
+            onClick={() => allocateCourier('UjNO0hIl0RTEuSa1pPt7t7A8YHFE', 'Teste')}
           >
             {t('(Emulador) Alocar entregador Local')}
           </Button>

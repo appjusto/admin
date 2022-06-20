@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@appjusto/menu": "^0.1.4",
-    "@appjusto/types": "6.2.1",
+    "@appjusto/types": "6.2.2",
     "@casl/ability": "^5.4.3",
     "@chakra-ui/icons": "^1.0.3",
     "@chakra-ui/react": "^1.6.3",
@@ -73,6 +73,7 @@
   },
   "scripts": {
     "start": "cp .env.$ENV .env.development.local && react-scripts start",
+    "start:emulator": "REACT_APP_FIREBASE_EMULATOR=true ENV=dev yarn start",
     "start:dev": "ENV=dev yarn start",
     "start:staging": "ENV=staging yarn start",
     "start:live": "ENV=live yarn start",
