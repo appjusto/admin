@@ -61,7 +61,7 @@ export const FraudPrevention = ({
       )}
       {flags?.consumerHasSuspectInvoices && (
         <Text mt="1" fontWeight="700">
-          <Icon as={MdWarningAmber} mr="2" /> {t('Faturas suspeitas;')}
+          <Icon as={MdWarningAmber} mr="2" /> {t('Faturas anteriores suspeitas;')}
         </Text>
       )}
       {flags?.highTicketPrice && (
@@ -71,7 +71,7 @@ export const FraudPrevention = ({
       )}
       {flags?.flaggedLocationsNearby && (
         <Text mt="1" fontWeight="700">
-          <Icon as={MdWarningAmber} mr="2" /> {t('Local de fraude confirmada;')}
+          <Icon as={MdWarningAmber} mr="2" /> {t('Local próximo a uma fraude anterior;')}
         </Text>
       )}
       {canUpdateOrder ? (
