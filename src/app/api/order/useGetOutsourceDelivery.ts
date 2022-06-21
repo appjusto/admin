@@ -23,7 +23,7 @@ export const useGetOutsourceDelivery = (orderId?: string) => {
     const partialOrder = {
       courier: {
         name,
-        phone
+        phone: phone ?? null
       },
     } as Partial<Order>;
     return api.order().updateOrder(orderId, partialOrder);
