@@ -17,7 +17,7 @@ import {
   coverRatios,
   coverResizedWidth,
   logoRatios,
-  logoResizedWidth,
+  logoResizedWidth
 } from 'common/imagesDimensions';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import { OnboardingProps } from 'pages/onboarding/types';
@@ -149,17 +149,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
       await updateBusinessProfileWithImages({ changes, logoFileToSave, coverFilesToSave });
       // invalidate logo query
       if (logoFiles) queryClient.invalidateQueries(['business:logo', business?.id]);
-    } catch (error) {
-      dispatchAppRequestResult({
-        status: 'error',
-        error,
-        requestId: 'BusinessProfile-submit-error',
-        message: {
-          title: 'Erro de conexão com o servidor',
-          description: 'As iformações podem não ter sido salvas.',
-        },
-      });
-    }
+    } catch (error) { }
   };
   const clearDropImages = React.useCallback((type: string) => {
     if (type === 'logo') {

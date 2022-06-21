@@ -11,7 +11,7 @@ import {
   Flex,
   Stack,
   Text,
-  Textarea,
+  Textarea
 } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useContextFirebaseUserEmail } from 'app/state/auth/context';
@@ -68,7 +68,7 @@ export const BusinessDeleteDrawer = ({ onClose, ...props }: BaseDrawerProps) => 
       if (email) localStorage.removeItem(`business-${process.env.REACT_APP_ENVIRONMENT}-${email}`);
       let data = { ...survey } as Partial<DeleteBusinessPayload>;
       if (comment.length > 0) data.comment = comment;
-      await updateLastBusinessId(null);
+      updateLastBusinessId(null);
       await deleteBusinessProfile(data);
     }
   };

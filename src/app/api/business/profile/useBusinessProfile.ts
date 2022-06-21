@@ -21,7 +21,7 @@ export const useBusinessProfile = (isOnboarding: boolean = false) => {
     businessId ? api.business().getBusinessCoverURL(businessId!, '1008x360') : null;
   const { data: cover } = useQuery(['business:cover', businessId], getBusinessCoverURL);
   // mutations
-  const { mutateAsync: createBusinessProfile } = useCustomMutation(
+  const { mutate: createBusinessProfile } = useCustomMutation(
     async () => {
       const business = await api.business().createBusinessProfile();
       setBusinessId(business.id);
@@ -30,15 +30,14 @@ export const useBusinessProfile = (isOnboarding: boolean = false) => {
     'createBusinessProfile',
     false
   );
-  const { mutateAsync: updateBusinessProfile, mutationResult: updateResult } = useCustomMutation(
-    async (changes: Partial<Business>) =>
-      api.business().updateBusinessProfile(businessId!, changes),
+  const { mutate: updateBusinessProfile, mutationResult: updateResult } = useCustomMutation(
+    (changes: Partial<Business>) => api.business().updateBusinessProfile(businessId!, changes),
     'updateBusinessProfile',
     !isOnboarding
   );
   const { mutateAsync: updateBusinessProfileWithImages, mutationResult: updateWithImagesResult } =
     useCustomMutation(
-      async (data: {
+      (data: {
         changes: Partial<Business>;
         logoFileToSave: File | null;
         coverFilesToSave: File[] | null;
@@ -83,9 +82,8 @@ export const useBusinessProfile = (isOnboarding: boolean = false) => {
       Sentry.captureException(error);
     }
   }, [api, business?.id, business?.status]);
-  const { mutateAsync: updateBusinessSlug, mutationResult: updateSlugResult } = useCustomMutation(
-    async (data: { businessId: string; slug: string }) =>
-      await api.business().updateBusinessSlug(data),
+  const { mutate: updateBusinessSlug, mutationResult: updateSlugResult } = useCustomMutation(
+    (data: { businessId: string; slug: string }) => api.business().updateBusinessSlug(data),
     'updateBusinessSlug'
   );
   // return

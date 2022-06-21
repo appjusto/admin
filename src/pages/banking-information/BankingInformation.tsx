@@ -9,7 +9,7 @@ import CustomRadio from 'common/components/form/CustomRadio';
 import { CustomPatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';
 import {
   addZerosToBeginning,
-  hyphenFormatter,
+  hyphenFormatter
 } from 'common/components/form/input/pattern-input/formatters';
 import { numbersAndLettersParser } from 'common/components/form/input/pattern-input/parsers';
 import { BankSelect } from 'common/components/form/select/BankSelect';
@@ -81,7 +81,7 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
     }
   };
 
-  const onSubmitHandler = async () => {
+  const onSubmitHandler = () => {
     let code = '';
     if (!validation.agency) {
       dispatchAppRequestResult({
@@ -112,7 +112,7 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
     }
     const agencyFormatted = agencyFormatter!(agency);
     const accountFormatted = code + accountFormatter!(account);
-    await updateBankAccount({
+    updateBankAccount({
       personType,
       type,
       name,
