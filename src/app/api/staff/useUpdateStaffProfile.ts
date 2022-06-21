@@ -17,7 +17,7 @@ export const useUpdateStaffProfile = (
   const api = useContextApi();
   const { updateUsersPassword } = useAuthentication();
   // mutations
-  const { mutateAsync: updateProfile, mutationResult: updateResult } = useCustomMutation(
+  const { mutate: updateProfile, mutationResult: updateResult } = useCustomMutation(
     async (data: UpdateStaffData) => {
       if (!staff) return;
       if (data.password) {

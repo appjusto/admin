@@ -6,26 +6,27 @@ export const useStaff = () => {
   // contex
   const api = useContextApi();
   // mutations
-  const { mutateAsync: createStaff, mutationResult: createResult } = useCustomMutation(
-    async (staff: NewUserData) => {
-      return api.staff().createStaff(staff);
-    },
+  const { mutate: createStaff, mutationResult: createResult } = useCustomMutation(
+    (staff: NewUserData) => api.staff().createStaff(staff),
     'createStaff'
   );
-  const { mutateAsync: updateStaffSituation, mutationResult: updateSituationResult } =
-    useCustomMutation(async (data: { staffId: string; situation: ProfileSituation }) => {
-      const { staffId, situation } = data;
-      return api.staff().updateProfile(staffId, { situation });
-    }, 'updateStaffSituation');
+  const { mutate: updateStaffSituation, mutationResult: updateSituationResult } =
+    useCustomMutation(
+      (data: { staffId: string; situation: ProfileSituation }) => {
+        const { staffId, situation } = data;
+        return api.staff().updateProfile(staffId, { situation });
+      }, 
+      'updateStaffSituation'
+    );
   const { mutateAsync: getStaff, mutationResult: getStaffResult } = useCustomMutation(
     async (staffId: string) => api.staff().getStaff(staffId),
     'getStaff',
     false,
     true
   );
-  const { mutateAsync: getNotificationToken, mutationResult: getNotificationTokenResult } =
+  const { mutate: getNotificationToken, mutationResult: getNotificationTokenResult } =
     useCustomMutation(
-      async (staffId: string) => api.staff().getNotificationToken(staffId),
+      (staffId: string) => api.staff().getNotificationToken(staffId),
       'getNotificationToken'
     );
   // return

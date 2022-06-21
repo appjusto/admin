@@ -132,27 +132,26 @@ export const StaffBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
       deleteAccount({ accountId: staffProfile.id });
     }
   };
-  const handleNotificationToken = async () => {
-    try {
-      await getNotificationToken(staffId);
-    } catch (error) { }
-  };
   // side effects
   React.useEffect(() => {
     if (staffId === 'new') return;
     (async () => {
-      const data = await getStaff(staffId);
-      setStaffProfile(data?.staff ?? null);
-      if (data?.permissions) {
-        setPermissions(data.permissions);
-        const genericRole = getGenericModeRole(data.permissions);
-        setGenericMode(genericRole);
+      try {
+        const data = await getStaff(staffId);
+        setStaffProfile(data?.staff ?? null);
+        if (data?.permissions) {
+          setPermissions(data.permissions);
+          const genericRole = getGenericModeRole(data.permissions);
+          setGenericMode(genericRole);
+        }
+        if (data?.staff?.situation)
+          setSituation({
+            before: data.staff.situation,
+            after: data.staff.situation,
+          });
+      } catch (error) {
+        console.error(error);
       }
-      if (data?.staff?.situation)
-        setSituation({
-          before: data.staff.situation,
-          after: data.staff.situation,
-        });
     })();
   }, [staffId, getStaff]);
   React.useEffect(() => {
@@ -241,7 +240,7 @@ export const StaffBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                       color="green.600"
                       textDecor="underline"
                       cursor="pointer"
-                      onClick={handleNotificationToken}
+                      onClick={() => getNotificationToken(staffId)}
                     >
                       {getNotificationTokenResult.isLoading ? t('Buscando...') : t('Buscar')}
                     </Text>
