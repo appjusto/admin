@@ -10,15 +10,15 @@ export const useFlaggedLocations = () => {
   //  WithId<FlaggedLocation>[] | null
   //>();
   // mutations
-  const { mutateAsync: addFlaggedLocation, mutationResult: addFlaggedLocationResult } =
+  const { mutate: addFlaggedLocation, mutationResult: addFlaggedLocationResult } =
     useCustomMutation(
-      async (location: Partial<FlaggedLocation>) => api.platform().addFlaggedLocation(location),
+      (location: Partial<FlaggedLocation>) => api.platform().addFlaggedLocation(location),
       'addFlaggedLocation',
       false
     );
-  const { mutateAsync: deleteFlaggedLocation, mutationResult: deleteFlaggedLocationResult } =
+  const { mutate: deleteFlaggedLocation, mutationResult: deleteFlaggedLocationResult } =
     useCustomMutation(
-      async (locationId: string) => api.platform().deleteFlaggedLocation(locationId),
+      (locationId: string) => api.platform().deleteFlaggedLocation(locationId),
       'deleteFlaggedLocation',
       false,
       false
