@@ -14,7 +14,7 @@ import {
   cpfFormatter,
   cpfMask,
   phoneFormatter,
-  phoneMask,
+  phoneMask
 } from 'common/components/form/input/pattern-input/formatters';
 import { numbersOnlyParser } from 'common/components/form/input/pattern-input/parsers';
 import { OnboardingProps } from 'pages/onboarding/types';
@@ -116,7 +116,11 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
         password: passwd,
         currentPassword: currentPasswd,
       };
-      await updateProfile(data);
+      try {
+        await updateProfile(data);
+      } catch (error) {
+        console.error(error);
+      }
     } else {
       const data = {
         changes: {

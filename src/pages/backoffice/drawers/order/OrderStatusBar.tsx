@@ -4,7 +4,7 @@ import {
   Issue,
   IssueType,
   OrderStatus,
-  OrderType,
+  OrderType
 } from '@appjusto/types';
 import { Box, Flex, HStack, Icon, Link, RadioGroup, Text, Textarea } from '@chakra-ui/react';
 import { useObserveOrderPrivateConfirmation } from 'app/api/order/useObserveOrderPrivateConfirmation';
@@ -12,7 +12,6 @@ import { useOrderNotes } from 'app/api/order/useOrderNotes';
 import { ProfileNotes } from 'common/components/backoffice/ProfileNotes';
 import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import CustomRadio from 'common/components/form/CustomRadio';
-import React from 'react';
 import { MdOpenInNew } from 'react-icons/md';
 import { formatCurrency } from 'utils/formatters';
 import { getOrderCancellator } from 'utils/functions';
