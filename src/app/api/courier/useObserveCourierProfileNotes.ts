@@ -1,5 +1,5 @@
+import { ProfileNote, WithId } from '@appjusto/types';
 import { useContextApi } from 'app/state/api/context';
-import { WithId, ProfileNote } from '@appjusto/types';
 import React from 'react';
 import { useCustomMutation } from '../mutation/useCustomMutation';
 
@@ -9,16 +9,15 @@ export const useObserveCourierProfileNotes = (courierId?: string) => {
   // state
   const [profileNotes, setProfileNotes] = React.useState<WithId<ProfileNote>[]>([]);
   // mutations
-  const { mutateAsync: updateNote, mutationResult: updateResult } = useCustomMutation(
-    async (data: { changes: Partial<ProfileNote>; id?: string }) => {
-      if (!data.id) return await api.courier().createProfileNote(courierId!, data.changes);
-      else return await api.courier().updateProfileNote(courierId!, data.id, data.changes);
+  const { mutate: updateNote, mutationResult: updateResult } = useCustomMutation(
+    (data: { changes: Partial<ProfileNote>; id?: string }) => {
+      if (!data.id) return api.courier().createProfileNote(courierId!, data.changes);
+      else return api.courier().updateProfileNote(courierId!, data.id, data.changes);
     },
     'updateNote'
   );
-  const { mutateAsync: deleteNote, mutationResult: deleteResult } = useCustomMutation(
-    async (profileNoteId: string) =>
-      await api.courier().deleteProfileNote(courierId!, profileNoteId),
+  const { mutate: deleteNote, mutationResult: deleteResult } = useCustomMutation(
+    (profileNoteId: string) => api.courier().deleteProfileNote(courierId!, profileNoteId),
     'deleteNote',
     false
   );
