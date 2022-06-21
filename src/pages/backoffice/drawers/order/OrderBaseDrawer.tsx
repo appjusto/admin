@@ -11,7 +11,7 @@ import {
   DrawerOverlay,
   Flex,
   HStack,
-  Text,
+  Text
 } from '@chakra-ui/react';
 import { MutationResult } from 'app/api/mutation/useCustomMutation';
 import { useContextFirebaseUser } from 'app/state/auth/context';
@@ -41,7 +41,7 @@ interface BaseDrawerProps {
   cancellation(type?: 'prevention'): void;
   loadingState: OrderDrawerLoadingState;
   isChatMessages: boolean;
-  deleteOrder(orderId: string): Promise<void>;
+  deleteOrder(orderId: string): void;
   deleteLoading: boolean;
   children: React.ReactNode | React.ReactNode[];
 }
@@ -93,7 +93,7 @@ export const OrderBaseDrawer = ({
     }
     try {
       await deleteOrder(order.id);
-    } catch (error) {}
+    } catch (error) { }
   };
   //UI
   return (

@@ -7,7 +7,7 @@ import {
   Order,
   OrderPaymentLog,
   OrderStatus,
-  WithId,
+  WithId
 } from '@appjusto/types';
 import { useObserveOrderChatMessages } from 'app/api/chat/useObserveOrderChatMessages';
 import { useObserveOrderInvoices } from 'app/api/order/useObserveOrderInvoices';
@@ -103,13 +103,11 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
           message: { title: 'Já existe um agente responsável pelo pedido.' },
         });
       }
-      try {
-        await updateOrderStaff({
-          id: staff?.id!,
-          email: staff?.email!,
-          name: staff?.name ?? null,
-        });
-      } catch (error) {}
+      updateOrderStaff({
+        id: staff?.id!,
+        email: staff?.email!,
+        name: staff?.name ?? null,
+      });
     } else if (type === 'release') {
       if (type === 'release' && !canUpdateOrderStaff) {
         return dispatchAppRequestResult({
@@ -118,9 +116,7 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
           message: { title: 'Este usuário não é o responsável pelo pedido.' },
         });
       }
-      try {
-        await updateOrderStaff(null);
-      } catch (error) {}
+      updateOrderStaff(null);
     }
   };
   const updateState = (

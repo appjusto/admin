@@ -5,7 +5,7 @@ import {
   OrderCancellation,
   OrderIssue,
   OrderStaff,
-  WithId,
+  WithId
 } from '@appjusto/types';
 import { useContextApi } from 'app/state/api/context';
 import React from 'react';
@@ -23,25 +23,21 @@ export const useOrder = (orderId?: string) => {
   const [orderCancellation, setOrderCancellation] = React.useState<OrderCancellation | null>();
   // const [orderCancellationCosts, setOrderCancellationCosts] = React.useState<number>(0);
   // mutations
-  const { mutateAsync: updateOrder, mutationResult: updateResult } = useCustomMutation(
-    async (changes: Partial<Order>) => api.order().updateOrder(order?.id!, changes),
+  const { mutate: updateOrder, mutationResult: updateResult } = useCustomMutation(
+    (changes: Partial<Order>) => api.order().updateOrder(order?.id!, changes),
     'updateOrder'
   );
-  const { mutateAsync: updateOrderStaff, mutationResult: updateOrderStaffResult } =
+  const { mutate: updateOrderStaff, mutationResult: updateOrderStaffResult } =
     useCustomMutation(
-      async (staff: OrderStaff | null) => api.order().updateOrder(order?.id!, { staff }),
+      (staff: OrderStaff | null) => api.order().updateOrder(order?.id!, { staff }),
       'updateOrderStaff'
     );
-  const { mutateAsync: cancelOrder, mutationResult: cancelResult } = useCustomMutation(
-    async (cancellationData: CancelOrderPayload) => {
-      await api.order().cancelOrder(cancellationData);
-    },
+  const { mutate: cancelOrder, mutationResult: cancelResult } = useCustomMutation(
+    (cancellationData: CancelOrderPayload) => api.order().cancelOrder(cancellationData),
     'cancelOrder'
   );
-  const { mutateAsync: deleteQuoteOrder, mutationResult: deleteOrderResult } = useCustomMutation(
-    async (orderId: string) => {
-      await api.order().deleteQuoteOrder(orderId);
-    },
+  const { mutate: deleteQuoteOrder, mutationResult: deleteOrderResult } = useCustomMutation(
+    (orderId: string) => api.order().deleteQuoteOrder(orderId),
     'deleteQuoteOrder'
   );
   // side effects

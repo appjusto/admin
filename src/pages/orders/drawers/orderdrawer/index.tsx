@@ -32,6 +32,7 @@ type Params = {
 
 export const OrderDrawer = (props: Props) => {
   //context
+  const { onClose } = props;
   const { dispatchAppRequestResult } = useContextAppRequests();
   const query = useQuery();
   const { orderId } = useParams<Params>();
@@ -65,7 +66,7 @@ export const OrderDrawer = (props: Props) => {
     ? formatCurrency(order.fare.courier.value)
     : 'N/E';
   // handlers
-  const handleCancel = async (issue: WithId<Issue>) => {
+  const handleCancel = (issue: WithId<Issue>) => {
     if (!manager?.id) {
       return dispatchAppRequestResult({
         status: 'error',
@@ -86,8 +87,7 @@ export const OrderDrawer = (props: Props) => {
       acknowledgedCosts: orderCancellationCosts,
       cancellation: issue,
     } as CancelOrderPayload;
-    await cancelOrder(cancellationData);
-    props.onClose();
+    cancelOrder(cancellationData);
   };
   const printOrder = useReactToPrint({
     content: () => printComponent.current,
@@ -102,6 +102,10 @@ export const OrderDrawer = (props: Props) => {
     if (!order?.courier?.name) return;
     setOutsourcingCourierName(order?.courier?.name);
   }, [order?.courier?.name]);
+  React.useEffect(() => {
+    if (!cancelResult.isSuccess) return;
+    onClose();
+  }, [cancelResult.isSuccess, onClose])
   // UI
   return (
     <OrderBaseDrawer

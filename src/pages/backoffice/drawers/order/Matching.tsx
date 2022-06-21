@@ -253,9 +253,7 @@ export const Matching = ({ order }: MatchingProps) => {
                   h="30px"
                   size="sm"
                   label="Confirmar"
-                  onClick={() => {
-                    restartMatching();
-                  }}
+                  onClick={() => restartMatching()}
                   isLoading={restartResult.isLoading}
                 />
               </HStack>
