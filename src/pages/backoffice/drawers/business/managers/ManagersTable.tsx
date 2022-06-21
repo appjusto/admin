@@ -11,13 +11,12 @@ export const ManagersTable = () => {
   // context
   const { minVersion } = useContextFirebaseUser();
   const { businessManagers, fetchManagers } = useContextBusinessBackoffice();
-  const { removeBusinessManager, createManager, createManagerResult } = useManagers();
+  const { removeBusinessManager, createManager, createManagerResult, removeResult } = useManagers();
   // state
   const [managers, setManagers] = React.useState<ManagerWithRole[]>();
   const [isLoading, setIsLoading] = React.useState(false);
   // handlers
-  const updateMember = async (managerEmail: string, role: AdminRole) => {
-    setIsLoading(true);
+  const updateMember = (managerEmail: string, role: AdminRole) => {
     setManagers((prev) =>
       prev?.map((manager) => {
         if (manager.email === managerEmail) {
@@ -26,19 +25,20 @@ export const ManagersTable = () => {
         return manager;
       })
     );
-    await createManager([{ email: managerEmail, permissions: role }]);
-    setIsLoading(false);
+    createManager([{ email: managerEmail, permissions: role }]);
   };
-  const deleteMember = async (managerEmail: string) => {
-    setIsLoading(true);
-    await removeBusinessManager(managerEmail);
-    setIsLoading(false);
+  const deleteMember = (managerEmail: string) => {
+    removeBusinessManager(managerEmail);
   };
   // side effects
   React.useEffect(() => {
     if (!businessManagers) return;
     setManagers(businessManagers);
   }, [businessManagers]);
+  React.useEffect(() => {
+    if (!createManagerResult.isLoading && !removeResult.isLoading) setIsLoading(false);
+    else if (createManagerResult.isLoading || removeResult.isLoading) setIsLoading(true);
+  }, [createManagerResult.isLoading, removeResult.isLoading])
   React.useEffect(() => {
     if (!createManagerResult.isSuccess) return;
     fetchManagers();

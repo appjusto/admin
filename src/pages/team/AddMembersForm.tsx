@@ -68,7 +68,7 @@ export const AddMembersForm = ({ isBackoffice }: AddMembersFormProps) => {
       return newState;
     });
   };
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     if (!business?.id)
       return dispatchAppRequestResult({
         status: 'error',
@@ -100,7 +100,7 @@ export const AddMembersForm = ({ isBackoffice }: AddMembersFormProps) => {
       email: member.email,
       permissions: member.role,
     }));
-    await createManager(newManagers);
+    createManager(newManagers);
   };
   // side effects
   React.useEffect(() => {

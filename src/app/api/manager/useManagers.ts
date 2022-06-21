@@ -8,15 +8,15 @@ export const useManagers = () => {
   const api = useContextApi();
   const { business } = useContextBusiness();
   // mutations
-  const { mutateAsync: createManager, mutationResult: createManagerResult } = useCustomMutation(
+  const { mutate: createManager, mutationResult: createManagerResult } = useCustomMutation(
     async (managers: NewUserData[]) => {
       const dataWithKey = { key: business?.id!, managers };
-      return api.manager().createManager(dataWithKey);
+      return await api.manager().createManager(dataWithKey);
     },
     'createManager'
   );
-  const { mutateAsync: removeBusinessManager, mutationResult: removeResult } = useCustomMutation(
-    async (managerEmail: string) => api.business().removeBusinessManager(business!, managerEmail),
+  const { mutate: removeBusinessManager, mutationResult: removeResult } = useCustomMutation(
+    (managerEmail: string) => api.business().removeBusinessManager(business!, managerEmail),
     'removeBusinessManager',
     false
   );
