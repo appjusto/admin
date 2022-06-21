@@ -2,7 +2,7 @@ import { ManagerProfile, WithId } from '@appjusto/types';
 import { useManagerProfile } from 'app/api/manager/useManagerProfile';
 import { useUpdateManagerProfile } from 'app/api/manager/useUpdateManagerProfile';
 import React, { Dispatch, SetStateAction } from 'react';
-import { UseMutateAsyncFunction } from 'react-query';
+import { UseMutateFunction } from 'react-query';
 import packageInfo from '../../../../package.json';
 import { useContextFirebaseUser } from '../auth/context';
 // import { useContextBusiness } from '../business/context';
@@ -14,7 +14,7 @@ let updateUserAgentCount = 0;
 interface ProfileContextProps {
   manager?: WithId<ManagerProfile> | null;
   setManagerEmail: Dispatch<SetStateAction<string | null | undefined>>;
-  updateLastBusinessId: UseMutateAsyncFunction<void, unknown, string | null, unknown>;
+  updateLastBusinessId: UseMutateFunction<void, unknown, string | null, unknown>;
 }
 
 const ProfileContext = React.createContext<ProfileContextProps>({} as ProfileContextProps);
@@ -47,17 +47,11 @@ export const ManagerProvider = ({ children }: Props) => {
     if (!manager) return;
     if (isBackofficeUser !== false) return;
     if (updateUserAgentCount > 0) return;
-    (async () => {
-      try {
-        const userAgent = window?.navigator?.userAgent;
-        if (userAgent && manager.userAgent !== userAgent) {
-          updateUserAgentCount++;
-          await updateProfile({ changes: { userAgent } });
-        }
-      } catch (error) {
-        console.error('Unabled to save userAgent: ', error);
-      }
-    })();
+    const userAgent = window?.navigator?.userAgent;
+    if (userAgent && manager.userAgent !== userAgent) {
+      updateUserAgentCount++;
+      updateProfile({ changes: { userAgent } });
+    }
   }, [isBackofficeUser, manager, updateProfile]);
   // UI
   return (

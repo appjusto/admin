@@ -116,11 +116,7 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
         password: passwd,
         currentPassword: currentPasswd,
       };
-      try {
-        await updateProfile(data);
-      } catch (error) {
-        console.error(error);
-      }
+      updateProfile(data);
     } else {
       const data = {
         changes: {
@@ -131,7 +127,7 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
           isPasswordActive: true,
         },
       };
-      await updateProfile(data);
+      updateProfile(data);
     }
   };
 

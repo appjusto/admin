@@ -14,7 +14,7 @@ export const useUpdateManagerProfile = (managerId?: string, isOnboarding: boolea
   const api = useContextApi();
   const { updateUsersPassword } = useAuthentication();
   // mutations
-  const { mutateAsync: updateProfile, mutationResult: updateResult } = useCustomMutation(
+  const { mutate: updateProfile, mutationResult: updateResult } = useCustomMutation(
     async (data: UpdateManagerData) => {
       if (data.password) {
         await updateUsersPassword(data.password, data.currentPassword);
@@ -24,10 +24,8 @@ export const useUpdateManagerProfile = (managerId?: string, isOnboarding: boolea
     'updateManagerProfile',
     !isOnboarding
   );
-  const { mutateAsync: updateLastBusinessId } = useCustomMutation(
-    async (businessId: string | null) => {
-      return api.manager().updateProfile(managerId!, { lastBusinessId: businessId });
-    },
+  const { mutate: updateLastBusinessId } = useCustomMutation(
+    (businessId: string | null) => api.manager().updateProfile(managerId!, { lastBusinessId: businessId }),
     'updateLastBusinessId',
     false
   );
