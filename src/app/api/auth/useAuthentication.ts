@@ -19,7 +19,7 @@ export const useAuthentication = () => {
   // contex
   const api = useContextApi();
   // mutations
-  const { mutateAsync: login, mutationResult: loginResult } = useCustomMutation(
+  const { mutate: login, mutationResult: loginResult } = useCustomMutation(
     async (data: LoginData) => {
       const { email, password, isLogin } = data;
       if (isLogin && !password) {
@@ -45,15 +45,15 @@ export const useAuthentication = () => {
     false,
     false
   );
-  const { mutateAsync: sendSignInLinkToEmail, mutationResult: sendingLinkResult } =
+  const { mutate: sendSignInLinkToEmail, mutationResult: sendingLinkResult } =
     useCustomMutation(
-      async (email: string) => api.auth().sendSignInLinkToEmail(email),
+      (email: string) => api.auth().sendSignInLinkToEmail(email),
       'sendSignInLinkToEmail',
       false,
       false
     );
-  const { mutateAsync: signInWithEmailLink, mutationResult: signInResult } = useCustomMutation(
-    async (data: SignInData) => api.auth().signInWithEmailLink(data.email, data.link),
+  const { mutate: signInWithEmailLink, mutationResult: signInResult } = useCustomMutation(
+    (data: SignInData) => api.auth().signInWithEmailLink(data.email, data.link),
     'signInWithEmailLink',
     false,
     false
@@ -65,8 +65,8 @@ export const useAuthentication = () => {
     },
     [api]
   );
-  const { mutateAsync: deleteAccount, mutationResult: deleteAccountResult } = useCustomMutation(
-    async (data: DeleteAccountData) => api.auth().deleteAccount(data),
+  const { mutate: deleteAccount, mutationResult: deleteAccountResult } = useCustomMutation(
+    (data: DeleteAccountData) => api.auth().deleteAccount(data),
     'deleteUserAccount'
   );
   // every profile calls it with his mutation

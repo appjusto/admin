@@ -31,11 +31,7 @@ const Join = () => {
   const emailRef = React.useRef<HTMLInputElement>(null);
   // handler
   const handleSingIn = React.useCallback(
-    async (email: string, link: string) => {
-      try {
-        await signInWithEmailLink({ email, link });
-      } catch (error) {}
-    },
+    (email: string, link: string) => signInWithEmailLink({ email, link }),
     [signInWithEmailLink]
   );
   // side effects

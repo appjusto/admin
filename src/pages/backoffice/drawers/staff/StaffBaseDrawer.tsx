@@ -18,7 +18,7 @@ import {
   Text,
   Th,
   Thead,
-  Tr,
+  Tr
 } from '@chakra-ui/react';
 import { useAuthentication } from 'app/api/auth/useAuthentication';
 import { useStaff } from 'app/api/staff/useStaff';
@@ -121,7 +121,7 @@ export const StaffBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
       createStaff({ email, permissions });
     }
   };
-  const handleDeleteAccount = async () => {
+  const handleDeleteAccount = () => {
     if (!staffProfile?.id) {
       dispatchAppRequestResult({
         status: 'error',
@@ -129,13 +129,13 @@ export const StaffBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
         message: { title: 'Não foi possível encontrar o id deste usuário.' },
       });
     } else {
-      await deleteAccount({ accountId: staffProfile.id });
+      deleteAccount({ accountId: staffProfile.id });
     }
   };
   const handleNotificationToken = async () => {
     try {
       await getNotificationToken(staffId);
-    } catch (error) {}
+    } catch (error) { }
   };
   // side effects
   React.useEffect(() => {

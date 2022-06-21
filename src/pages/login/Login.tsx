@@ -29,7 +29,7 @@ const Login = () => {
   const [isPassword, setIsPassword] = React.useState(false);
   const isEmailInvalid = React.useMemo(() => !isEmailValid(email), [email]);
   // handlers
-  const handleSubmit = async (event: React.FormEvent<HTMLDivElement>) => {
+  const handleSubmit = (event: React.FormEvent<HTMLDivElement>) => {
     event.preventDefault();
     if (isEmailInvalid) {
       return dispatchAppRequestResult({
@@ -38,9 +38,7 @@ const Login = () => {
         message: { title: 'O e-mail informado não é válido. Corrija e tente novamente.' },
       });
     }
-    try {
-      await login({ email, password: passwd, isLogin });
-    } catch (error) {}
+    login({ email, password: passwd, isLogin });
   };
   // side effects
   React.useEffect(() => {
