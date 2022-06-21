@@ -60,7 +60,7 @@ const FinancesPage = () => {
     refreshAccountInformation();
     history.replace(path);
   };
-  const handleWithdrawRequest = async () => {
+  const handleWithdrawRequest = () => {
     if (!availableWithdraw)
       return dispatchAppRequestResult({
         status: 'error',
@@ -68,8 +68,7 @@ const FinancesPage = () => {
         message: { title: 'Não existe valor disponível para transferência.' },
       });
     const amount = convertBalance(availableWithdraw);
-    await requestWithdraw(amount);
-    refreshAccountInformation();
+    requestWithdraw(amount);
   };
   const getAdvanceById = React.useCallback(
     (advanceId: string) => {
@@ -92,6 +91,10 @@ const FinancesPage = () => {
     const active = withdraws.filter((w) => w.status !== 'rejected');
     setActiveWithdraw(active.length);
   }, [withdraws]);
+  React.useEffect(() => {
+    if (!isSuccess) return;
+    refreshAccountInformation();
+  }, [isSuccess, refreshAccountInformation])
   // UI
   return (
     <>
