@@ -82,7 +82,7 @@ export const useBusinessProfile = (isOnboarding: boolean = false) => {
     } catch (error) {
       Sentry.captureException(error);
     }
-  }, [api, business]);
+  }, [api, business?.id, business?.status]);
   const { mutateAsync: updateBusinessSlug, mutationResult: updateSlugResult } = useCustomMutation(
     async (data: { businessId: string; slug: string }) =>
       await api.business().updateBusinessSlug(data),

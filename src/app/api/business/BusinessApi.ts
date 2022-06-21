@@ -25,11 +25,11 @@ import {
   ProfileSituation,
   RequestWithdrawPayload,
   UpdateBusinessSlugPayload,
-  WithId,
+  WithId
 } from '@appjusto/types';
 import {
   IuguMarketplaceAccountAdvanceSimulation,
-  IuguMarketplaceAccountReceivables,
+  IuguMarketplaceAccountReceivables
 } from '@appjusto/types/payment/iugu';
 import * as Sentry from '@sentry/react';
 // import firebase from 'firebase/compat/app';
@@ -51,7 +51,7 @@ import {
   startAfter,
   Unsubscribe,
   updateDoc,
-  where,
+  where
 } from 'firebase/firestore';
 import { omit } from 'lodash';
 import { documentAs, documentsAs } from '../../../core/fb';
