@@ -3,6 +3,7 @@ import { GroupedChatMessages, Participants } from 'app/api/chat/types';
 import { groupOrderChatMessages, sortMessages } from 'app/api/chat/utils';
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusiness } from 'app/state/business/context';
+import { FirebaseError } from 'firebase/app';
 import { Timestamp } from 'firebase/firestore';
 import React from 'react';
 import { getTimeUntilNow } from 'utils/functions';
@@ -27,11 +28,13 @@ export const useObserveBusinessOrderChatByType = (
   const [chatMessages, setChatMessages] = React.useState<WithId<ChatMessage>[]>([]);
   const [chat, setChat] = React.useState<GroupedChatMessages[]>([]);
   // mutations;
-  const { mutateAsync: sendMessage, mutationResult: sendMessageResult } = useCustomMutation(
-    async (data: Partial<ChatMessage>) => {
-      if (!business?.id || !business?.name) return;
+  const { mutate: sendMessage, mutationResult: sendMessageResult } = useCustomMutation(
+    (data: Partial<ChatMessage>) => {
+      if (!business?.id || !business?.name) {
+        throw new FirebaseError("sendMessageError", "Não foi possível encontrar os dados do restaurante.")
+      };
       const from = { agent: 'business' as Flavor, id: business.id, name: business.name };
-      api.chat().sendMessage({
+      return api.chat().sendMessage({
         orderId,
         participantsIds: [business.id, counterpartId],
         from,
