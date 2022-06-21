@@ -27,7 +27,7 @@ export const DirectAccessById = ({ ...props }: BoxProps) => {
   const [type, setType] = React.useState<DataType>('order');
   const [searchId, setSearchId] = React.useState('');
   // mutations
-  const { mutateAsync: getLink, mutationResult: getLinkResult } = useCustomMutation(
+  const { mutate: getLink, mutationResult: getLinkResult } = useCustomMutation(
     async () => {
       if (type === 'order' && searchId.length < orderIdLength) {
         const orderId = await api.order().getOrderIdByCode(searchId);
@@ -57,15 +57,10 @@ export const DirectAccessById = ({ ...props }: BoxProps) => {
     else if (type === 'manager') return t('Id ou e-mail');
     else return t('Id ou código:');
   };
-  const handleGetLink = async () => {
-    try {
-      return await getLink();
-    } catch (error) {}
-  };
   const handleUserKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
-      handleGetLink();
+      getLink();
     }
   };
   // UI
@@ -111,7 +106,7 @@ export const DirectAccessById = ({ ...props }: BoxProps) => {
           w={{ base: '100%', md: 'auto' }}
           h="60px"
           isDisabled={!searchId}
-          onClick={handleGetLink}
+          onClick={() => getLink()}
           isLoading={getLinkResult.isLoading}
           loadingText={t('Buscando...')}
         >
