@@ -2,6 +2,7 @@
   "name": "appjusto-admin",
   "version": "9.1.2",
   "private": true,
+  "main": "electron-starter.js",
   "dependencies": {
     "@appjusto/menu": "^0.1.4",
     "@appjusto/types": "6.2.2",
@@ -93,7 +94,9 @@
     "cypress:e:open": "yarn cypress:emulator yarn cypress:open",
     "cypress:e:run": "yarn cypress:emulator yarn cypress:run",
     "cypress:open": "cypress open",
-    "cypress:run": "cypress run"
+    "cypress:run": "cypress run",
+    "electron:start": "NODE_ENV=development electronmon .",
+    "electron:build": "NODE_ENV=development ENV=staging && env-cmd -f .env.$ENV yarn build"
   },
   "eslintConfig": {
     "extends": [
@@ -120,6 +123,10 @@
     "cross-env": "^7.0.3",
     "cypress": "9.5.1",
     "cypress-firebase": "^2.2.0",
+    "electron": "18.2.3",
+    "electron-debug": "3.2.0",
+    "electron-devtools-installer": "^3.2.0",
+    "electronmon": "^2.0.2",
     "eslint-plugin-cypress": "^2.12.1",
     "firebase-admin": "9",
     "msw": "^0.36.3",
