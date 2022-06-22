@@ -248,7 +248,7 @@ export const OrderDrawer = (props: Props) => {
                   <Text fontSize="sm">{order?.destination?.address.description}</Text>
                 </>
               )}
-              {(order?.status === 'confirmed' || order?.status === 'preparing') && (
+              {order?.status === 'confirmed' && (
                 <CookingTime
                   orderId={order.id}
                   cookingTime={order.cookingTime}
