@@ -56,8 +56,8 @@
      height: 728,
      icon: getAssetPath('logo192.png'),
      webPreferences: {
-       nodeIntegration: true,
-    //    contextIsolation: false,
+      //  nodeIntegration: true,
+      //  contextIsolation: false,
        preload: path.join(__dirname, 'desktop/preload.js')
      },
    });
