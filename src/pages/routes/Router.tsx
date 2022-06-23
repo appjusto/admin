@@ -1,4 +1,6 @@
 import { Loading } from 'common/components/Loading';
+import { isElectron } from 'pages/desktop/utils';
+import { WelcomePage } from 'pages/desktop/WelcomePage';
 import LandingPage from 'pages/landing/LandingPage';
 import Login from 'pages/login/Login';
 import Logout from 'pages/logout/Logout';
@@ -30,7 +32,7 @@ export const Router = () => {
       <BrowserRouter>
         <React.Suspense fallback={<Loading />}>
           <Switch>
-            <Route exact path="/" component={LandingPage} />
+            <Route exact path="/" component={isElectron() ? WelcomePage : LandingPage} />
             <Route path="/login" component={Login} />
             <Route path="/join" component={Join} />
             <Route path="/deleted" component={DeletedPage} />
