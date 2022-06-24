@@ -2,7 +2,7 @@
   "name": "appjusto-admin",
   "version": "9.1.2",
   "private": true,
-  "main": "electron-starter.js",
+  "main": "desktop-build/desktop/main.js",
   "dependencies": {
     "@appjusto/menu": "^0.1.4",
     "@appjusto/types": "6.2.2",
@@ -95,7 +95,8 @@
     "cypress:e:run": "yarn cypress:emulator yarn cypress:run",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
-    "electron:start": "NODE_ENV=development electronmon .",
+    "electron:watch": "cross-env NODE_ENV=development && tsc -p desktop -w",
+    "electron:start": "cross-env NODE_ENV=development && electronmon .",
     "electron:build": "NODE_ENV=development ENV=staging && env-cmd -f .env.$ENV yarn build"
   },
   "eslintConfig": {
