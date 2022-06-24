@@ -3,7 +3,6 @@
   "version": "9.2.0",
   "private": true,
   "main": "build/desktop/main.js",
-  "homepage": ".",
   "dependencies": {
     "@appjusto/menu": "^0.1.4",
     "@appjusto/types": "6.2.2",
