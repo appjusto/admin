@@ -1,4 +1,5 @@
 import { OrderStatus } from '@appjusto/types';
+import { isElectron } from '@firebase/util';
 import * as Sentry from '@sentry/react';
 import { useObserveOrders } from 'app/api/order/useObserveOrders';
 import { useContextFirebaseUser } from 'app/state/auth/context';
@@ -15,12 +16,17 @@ import {
   getAckOrders,
   removeOrderAck,
   setAck,
-  updateOrderAck,
+  updateOrderAck
 } from './utils';
+
+const isDesktopApp = isElectron();
 
 const key = 'confirmed';
 
 const statuses: OrderStatus[] = ['confirmed'];
+
+const showNotification = (title: string, options: NotificationOptions) =>
+  new window.Notification(title, options);
 
 export const useObserveConfirmedOrders = (businessId?: string, notify: boolean = true) => {
   // context
@@ -32,7 +38,7 @@ export const useObserveConfirmedOrders = (businessId?: string, notify: boolean =
   const [confirmedNumber, setConfirmedNumber] = React.useState(0);
   // sound
   const [playSound] = useSound(newOrderSound, { volume: 1 });
-
+  console.log("NODE_ENV", process.env.NODE_ENV);
   // side effects
   React.useEffect(() => {
     if (isBackofficeUser) return;
@@ -79,8 +85,9 @@ export const useObserveConfirmedOrders = (businessId?: string, notify: boolean =
         body: `${unnotified.order.consumer.name} está esperando sua confirmação!`,
         icon: '/logo192.png',
         requireInteraction: true,
+        silent: false,
       };
-      if (process.env.NODE_ENV === 'production') {
+      if (!isDesktopApp && process.env.NODE_ENV === 'production') {
         try {
           navigator.serviceWorker
             .getRegistration()
@@ -96,7 +103,7 @@ export const useObserveConfirmedOrders = (businessId?: string, notify: boolean =
           Sentry.captureException(error);
         }
       } else {
-        new Notification(title, options);
+        showNotification(title, options);
       }
     });
     setAck(key, ack);
