@@ -5,7 +5,7 @@
         "module": "commonjs",
         "sourceMap": true,
         "strict": true,
-        "outDir": "../desktop-build",
+        "outDir": "../build",
         "rootDir": "../",
         "noEmitOnError": true,
         "typeRoots": [
