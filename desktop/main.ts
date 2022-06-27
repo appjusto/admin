@@ -7,11 +7,6 @@ const isDebug = isDev || process.env.DEBUG_PROD === 'true';
 
 let mainWindow: BrowserWindow | null = null;
 
-ipcMain.on('main-focus', (event: IpcMainEvent, args?: unknown[]) => {
-  console.log("Main Focus Call!", `${args}`)
-  mainWindow?.focus();
-})
-
 const installExtensions = async () => {
   const installer = require('electron-devtools-installer');
   const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
@@ -60,7 +55,11 @@ async function createWindow() {
   }
 }
 
-
+ipcMain.on('main-focus', (event: IpcMainEvent, args?: unknown[]) => {
+  console.log("Main Focus Call!", `${args}`)
+  if(mainWindow) mainWindow.show();
+  else console.log("mainWindow not found.")
+})
 
 app.whenReady().then(() => {
 
