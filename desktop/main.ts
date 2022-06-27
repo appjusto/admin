@@ -1,9 +1,16 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain, IpcMainEvent } from 'electron';
 import * as path from 'path';
 
 const isDev = process.env.NODE_ENV === 'development';
 
 const isDebug = isDev || process.env.DEBUG_PROD === 'true';
+
+let mainWindow: BrowserWindow | null = null;
+
+ipcMain.on('main-focus', (event: IpcMainEvent, args?: unknown[]) => {
+  console.log("Main Focus Call!", `${args}`)
+  mainWindow?.focus();
+})
 
 const installExtensions = async () => {
   const installer = require('electron-devtools-installer');
@@ -24,12 +31,12 @@ async function createWindow() {
     await installExtensions();
   }
 
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
-    icon: path.join(__dirname, 'logo.png'),
     webPreferences: {
-      // contextIsolation: false,
+      // contextIsolation: true,
+      // nodeIntegration: true,
       preload: path.join(__dirname, 'preload.js')
     }
   })
@@ -52,6 +59,7 @@ async function createWindow() {
     mainWindow.webContents.openDevTools();
   }
 }
+
 
 
 app.whenReady().then(() => {
