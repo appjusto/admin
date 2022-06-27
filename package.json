@@ -1,6 +1,8 @@
 {
   "name": "appjusto-admin",
   "version": "9.2.2",
+  "author": "AppJusto",
+  "description": "AppJusto Admin Desktop",
   "private": true,
   "main": "build/desktop/main.js",
   "dependencies": {
@@ -121,13 +123,23 @@
     ]
   },
   "build": {
-    "appId": "appjusto-admin-desktop",
+    "appId": "br.com.appjusto.admin-desktop",
+    "productName": "AppJusto Admin Desktop",
     "extends": null,
     "files": [
       "build/desktop/*"
     ],
     "directories": {
-      "buildResources": "assets"
+      "buildResources": "public"
+    },
+    "mac": {
+      "target": "dmg"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "linux": {
+      "target": "deb"
     }
   },
   "devDependencies": {
