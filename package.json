@@ -1,7 +1,7 @@
 {
   "name": "appjusto-admin",
   "version": "9.2.4",
-  "author": "AppJusto",
+  "author": "AppJusto <contato@appjusto.com.br> (https://appjusto.com.br/)",
   "description": "AppJusto Admin Desktop",
   "private": true,
   "main": "build/desktop/main.js",
@@ -133,13 +133,15 @@
       "buildResources": "public"
     },
     "mac": {
-      "target": "dmg"
+      "target": "dmg",
+      "category": "public.app-category.business"
     },
     "win": {
       "target": "nsis"
     },
     "linux": {
-      "target": "deb"
+      "target": "deb",
+      "category": "office"
     }
   },
   "devDependencies": {
