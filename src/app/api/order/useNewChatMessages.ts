@@ -4,19 +4,22 @@ import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useNotificationPermission } from 'app/utils/notifications/useNotificationPermission';
 //@ts-ignore
 import newMessageSound from 'common/sounds/new-message.mp3';
+import { isEqual } from 'lodash';
 import React from 'react';
-import { useHistory } from 'react-router-dom';
 import useSound from 'use-sound';
 import { OrderChatGroup } from '../chat/types';
 import { showNotification } from '../utils';
+import { useRedirectToOrders } from './useRedirectToOrders';
 
 const isDesktopApp = isElectron();
 
+let messagesToNotify: string[] = [];
+
 export const useNewChatMessages = (chats: OrderChatGroup[]) => {
   // context
-  const { push } =useHistory();
   const { isBackofficeUser } = useContextFirebaseUser();
   const permission = useNotificationPermission();
+  const redirectToOrders = useRedirectToOrders(["/app/orders", "/app/chat"]);
   // state
   const [newChatMessages, setNewChatMessages] = React.useState<string[]>([]);
   // sound
@@ -38,20 +41,23 @@ export const useNewChatMessages = (chats: OrderChatGroup[]) => {
   React.useEffect(() => {
     if (isBackofficeUser) return;
     if (newChatMessages.length === 0) return;
-    if(isDesktopApp) {
-      try {
-        window.electron.ipcRenderer.sendMessage('mainWindow-show')
-      } catch (error) {
-        console.error("Unable to call mainWindow:", error);
+    if (!isEqual(messagesToNotify, newChatMessages)) {
+      if(isDesktopApp) {
+        try {
+          window.electron.ipcRenderer.sendMessage('mainWindow-show')
+        } catch (error) {
+          console.error("Unable to call mainWindow:", error);
+        }
       }
+      playSound();
+      redirectToOrders();
+      messagesToNotify = newChatMessages;
     }
-    playSound();
-    push('/app/orders');
     const SoundInterval = setInterval(() => {
       playSound();
     }, 8000);
     return () => clearInterval(SoundInterval);
-  }, [isBackofficeUser, playSound, push, newChatMessages]);
+  }, [isBackofficeUser, playSound, redirectToOrders, newChatMessages]);
   React.useEffect(() => {
     if (permission !== 'granted') return;
     if (newChatMessages.length === 0) return;
