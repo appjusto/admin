@@ -1,4 +1,5 @@
-import { Box, BoxProps, Button, Circle, HStack, Link, Skeleton, Stack, Text } from '@chakra-ui/react';
+import { Box, BoxProps, Circle, HStack, Link, Skeleton, Stack, Text } from '@chakra-ui/react';
+import { isElectron } from '@firebase/util';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextBusinessDashboard } from 'app/state/dashboards/business';
 import { MaintenanceBox } from 'common/components/MaintenanceBox';
@@ -13,7 +14,6 @@ import { t } from 'utils/i18n';
 import PageHeader from '../PageHeader';
 import { LineChart } from './LineChart';
 import { RegistrationStatus } from './RegistrationStatus';
-// const { ipcRenderer } = window.require('electron');
 
 interface InfoBoxProps extends BoxProps {
   isJoined?: boolean;
@@ -132,14 +132,6 @@ const Dashboard = () => {
     setDateTime(`${date} às ${time}`);
     setCurrentMonth(I18n.strftime(new Date(), '%B'));
   }, []);
-  const handleIpc = () => {
-    try {
-      // window.electron.ipcRenderer.sendMessage('main-focus');
-      setTimeout(() => window.electron.ipcRenderer.sendMessage('main-focus'), 3000)
-    } catch (error) {
-      console.error(error)
-    }
-  }
   // UI
   return (
     <>
@@ -150,7 +142,6 @@ const Dashboard = () => {
       />
       {business?.situation === 'approved' ? (
         <Box>
-          <Button onClick={handleIpc}>Main Call</Button>
           <MaintenanceBox />
           {/* <NewFeatureBox
             icon={BsShare}
@@ -162,19 +153,23 @@ const Dashboard = () => {
             btnLabel={t('Visualizar links')}
             isNew={false}
           /> */}
-          <NewFeatureBox
-            icon={ExtensionIcon}
-            iconSize="lg"
-            title={t('Extensão para Google Chrome')}
-            description={t(
-              'Nova extensão Appjusto Admin para Google Chrome! Ela ajuda a manter sua aplicação sempre ativa para receber pedidos.'
-            )}
-            link="https://chrome.google.com/webstore/detail/appjusto-admin/mcmielagmkelelpmnmjlnlpeakdmmeap?hl=pt-br"
-            btnLabel={t('Instalar')}
-            btnVariant="solid"
-            isExternal
-            isNew
-          />
+          {
+            !isElectron() && (
+              <NewFeatureBox
+                icon={ExtensionIcon}
+                iconSize="lg"
+                title={t('Extensão para Google Chrome')}
+                description={t(
+                  'Nova extensão Appjusto Admin para Google Chrome! Ela ajuda a manter sua aplicação sempre ativa para receber pedidos.'
+                )}
+                link="https://chrome.google.com/webstore/detail/appjusto-admin/mcmielagmkelelpmnmjlnlpeakdmmeap?hl=pt-br"
+                btnLabel={t('Instalar')}
+                btnVariant="solid"
+                isExternal
+                isNew
+              />
+            )
+          }
           <Box mt="8" border="1px solid #E5E5E5" borderRadius="lg" p="4">
             <SectionTitle mt="0" fontWeight="700">
               {t('Acompanhamento diário')}

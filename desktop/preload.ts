@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
 
-export type Channels = 'main-focus';
+export type Channels = 'mainWindow-show';
 
 contextBridge.exposeInMainWorld('electron', {
   ipcRenderer: {

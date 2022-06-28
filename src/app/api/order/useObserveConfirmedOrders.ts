@@ -43,6 +43,13 @@ export const useObserveConfirmedOrders = (businessId?: string, notify: boolean =
   React.useEffect(() => {
     if (isBackofficeUser) return;
     if (confirmedOrders.length === 0) return;
+    if(isElectron()) {
+      try {
+        window.electron.ipcRenderer.sendMessage('mainWindow-show')
+      } catch (error) {
+        console.error("Unable to call mainWindow:", error);
+      }
+    }
     playSound();
     const SoundInterval = setInterval(() => {
       playSound();

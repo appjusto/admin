@@ -55,7 +55,7 @@ async function createWindow() {
   }
 }
 
-ipcMain.on('main-focus', (event: IpcMainEvent, args?: unknown[]) => {
+ipcMain.on('mainWindow-show', (event: IpcMainEvent, args?: unknown[]) => {
   console.log("Main Focus Call!", `${args}`)
   if(mainWindow) mainWindow.show();
   else console.log("mainWindow not found.")
