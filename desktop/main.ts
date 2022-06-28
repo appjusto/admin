@@ -1,5 +1,6 @@
 import { app, BrowserWindow, ipcMain, IpcMainEvent } from 'electron';
 import * as path from 'path';
+import { IpcArgs } from './types';
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -55,7 +56,7 @@ async function createWindow() {
   }
 }
 
-ipcMain.on('mainWindow-show', (event: IpcMainEvent, args?: unknown[]) => {
+ipcMain.on('mainWindow-show', (event: IpcMainEvent, args?: IpcArgs[]) => {
   console.log("Main Focus Call!", `${args}`)
   if(mainWindow) mainWindow.show();
   else console.log("mainWindow not found.")

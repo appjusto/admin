@@ -8,7 +8,9 @@ import { useNotificationPermission } from 'app/utils/notifications/useNotificati
 import newOrderSound from 'common/sounds/bell-ding-v3.mp3';
 import { difference } from 'lodash';
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 import useSound from 'use-sound';
+import { showNotification } from '../utils';
 import {
   addOrderAck,
   getAck,
@@ -25,11 +27,9 @@ const key = 'confirmed';
 
 const statuses: OrderStatus[] = ['confirmed'];
 
-const showNotification = (title: string, options: NotificationOptions) =>
-  new window.Notification(title, options);
-
 export const useObserveConfirmedOrders = (businessId?: string, notify: boolean = true) => {
   // context
+  const { push } =useHistory();
   const { isBackofficeUser } = useContextFirebaseUser();
   const permission = useNotificationPermission();
   const confirmedOrders = useObserveOrders(statuses, businessId);
@@ -38,12 +38,11 @@ export const useObserveConfirmedOrders = (businessId?: string, notify: boolean =
   const [confirmedNumber, setConfirmedNumber] = React.useState(0);
   // sound
   const [playSound] = useSound(newOrderSound, { volume: 1 });
-  console.log("NODE_ENV", process.env.NODE_ENV);
   // side effects
   React.useEffect(() => {
     if (isBackofficeUser) return;
     if (confirmedOrders.length === 0) return;
-    if(isElectron()) {
+    if(isDesktopApp) {
       try {
         window.electron.ipcRenderer.sendMessage('mainWindow-show')
       } catch (error) {
@@ -51,11 +50,12 @@ export const useObserveConfirmedOrders = (businessId?: string, notify: boolean =
       }
     }
     playSound();
+    push('/app/orders');
     const SoundInterval = setInterval(() => {
       playSound();
     }, 4000);
     return () => clearInterval(SoundInterval);
-  }, [isBackofficeUser, confirmedOrders, playSound]);
+  }, [isBackofficeUser, confirmedOrders, playSound, push]);
 
   React.useEffect(() => {
     setConfirmedNumber(confirmedOrders.length);
