@@ -59,7 +59,7 @@ export const OrderDrawer = (props: Props) => {
   const [isOutsourceDelivery, setIsOutsourceDelivery] = React.useState<boolean>();
   const [outsourcingCourierName, setOutsourcingCourierName] = React.useState<string>();
   // refs
-  const printComponent = React.useRef<HTMLDivElement>(null);
+  // const printComponent = React.useRef<HTMLDivElement>(null);
   // helpers
   const cancellator = getOrderCancellator(orderCancellation?.issue?.type);
   const deliveryFare = order?.fare?.courier?.value
@@ -93,8 +93,9 @@ export const OrderDrawer = (props: Props) => {
     printable: 'template-to-print', 
     type: 'html', 
     // scanStyles: true, 
-    // honorMarginPadding: true, 
-    targetStyles: ['*']
+    targetStyles: ['*'],
+    honorColor: true,
+    honorMarginPadding: true
   });
   // const printOrder = useReactToPrint({
   //   content: () => printComponent.current,
