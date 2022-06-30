@@ -4,7 +4,7 @@ import {
   IssueType,
   MarketplaceAccountInfo,
   Order,
-  WithId,
+  WithId
 } from '@appjusto/types';
 import * as cnpjutils from '@fnando/cnpj';
 import * as cpfutils from '@fnando/cpf';
@@ -32,6 +32,8 @@ export const courierWatchedFields: (keyof CourierProfile)[] = [
   'surname',
   'cpf',
   'phone',
+  'profileIssues',
+  'profileIssuesMessage',
   'company',
   'statistics',
   'appVersion',
