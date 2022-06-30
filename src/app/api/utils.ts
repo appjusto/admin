@@ -65,3 +65,6 @@ export const customDocumentSnapshot = <T extends object>(
     }
   );
 };
+
+export const showNotification = (title: string, options: NotificationOptions) =>
+  new window.Notification(title, options);

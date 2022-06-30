@@ -1,4 +1,6 @@
+import { isElectron } from '@firebase/util';
 import { Loading } from 'common/components/Loading';
+import { WelcomePage } from 'pages/desktop/WelcomePage';
 import LandingPage from 'pages/landing/LandingPage';
 import Login from 'pages/login/Login';
 import Logout from 'pages/logout/Logout';
@@ -24,13 +26,15 @@ const InactiveAppVersionPage = React.lazy(
   () => import(/* webpackPrefetch: true */ 'pages/error/InactiveAppVersionPage')
 );
 
+const isDesktopApp = isElectron();
+console.log("isDesktopApp", isDesktopApp);
 export const Router = () => {
   return (
     <MainErrorBoundary>
       <BrowserRouter>
         <React.Suspense fallback={<Loading />}>
           <Switch>
-            <Route exact path="/" component={LandingPage} />
+            <Route exact path="/" component={isDesktopApp ? WelcomePage : LandingPage} />
             <Route path="/login" component={Login} />
             <Route path="/join" component={Join} />
             <Route path="/deleted" component={DeletedPage} />

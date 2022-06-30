@@ -1,11 +1,13 @@
 import { Center, Container, Flex, Link, Text } from '@chakra-ui/react';
 import { ReactComponent as Logo } from 'common/img/logo.svg';
-import React from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
 
 const PageNotFound = () => {
+  // context
+  const { url } = useRouteMatch();
   // UI
+  console.log("Not found url:", url);
   return (
     <Center height="100vh">
       <Container mt="4">

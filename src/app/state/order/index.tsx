@@ -5,6 +5,7 @@ import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile'
 import { useFreshDesk } from 'app/api/business/useFresdesk';
 import { OrderChatGroup } from 'app/api/chat/types';
 import { useBusinessChats } from 'app/api/chat/useBusinessChats';
+import { useNewChatMessages } from 'app/api/order/useNewChatMessages';
 import { useObserveConfirmedOrders } from 'app/api/order/useObserveConfirmedOrders';
 import { useObserveOrders } from 'app/api/order/useObserveOrders';
 import { useObserveOrdersCompletedInTheLastHour } from 'app/api/order/useObserveOrdersCompletedInTheLastHour';
@@ -55,10 +56,11 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   useFreshDesk(business?.id, business?.name, business?.phone);
   // automatic opening and closing of the business
   useBusinessOpenClose(business);
+  // handle new chat messages
+  const newChatMessages = useNewChatMessages(chats);
   //state
   const [businessAlertDisplayed, setBusinessAlertDisplayed] = React.useState(false);
   const [orders, setOrders] = React.useState<WithId<Order>[]>([]);
-  const [newChatMessages, setNewChatMessages] = React.useState<string[]>([]);
   //handlers
   const toast = useToast();
   const getOrderById = (id: string) => {
@@ -143,19 +145,6 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   React.useEffect(() => {
     setOrders([...activeOrders, ...completedAndActiveOrders]);
   }, [activeOrders, completedAndActiveOrders]);
-  React.useEffect(() => {
-    if (chats.length > 0) {
-      let unreadMessages = [] as string[];
-      chats.forEach((group) => {
-        group.counterParts.forEach((part) => {
-          if (part.unreadMessages && part.unreadMessages.length > 0) {
-            unreadMessages.push(...part.unreadMessages);
-          }
-        });
-      });
-      setNewChatMessages(unreadMessages);
-    }
-  }, [chats]);
   // business keep alive
   React.useEffect(() => {
     if (isBackofficeUser) return;
