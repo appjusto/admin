@@ -1,11 +1,12 @@
-import { CourierMode, Issue } from '@appjusto/types';
-import { Box, Flex, RadioGroup, Stack, Text } from '@chakra-ui/react';
+import { CourierMode, Issue, LatLng } from '@appjusto/types';
+import { Box, Flex, Icon, Link, RadioGroup, Stack, Text } from '@chakra-ui/react';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import CustomRadio from 'common/components/form/CustomRadio';
 import { Textarea } from 'common/components/form/input/Textarea';
 import { FieldValue } from 'firebase/firestore';
 import { modePTOptions } from 'pages/backoffice/utils';
 import React from 'react';
+import { MdOpenInNew, MdOutlineFileCopy } from 'react-icons/md';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 
@@ -25,6 +26,7 @@ interface ParticipantProps {
   dropIssues?: Issue[] | null;
   removeCourier?(issue?: Issue, comment?: string): void;
   isLoading?: boolean;
+  coordinates?: LatLng | null;
 }
 
 export const Participant = ({
@@ -43,15 +45,23 @@ export const Participant = ({
   dropIssues,
   removeCourier,
   isLoading,
+  coordinates,
 }: ParticipantProps) => {
   // state
   const [isRemoving, setIsRemoving] = React.useState(false);
   const [issueId, setIssueId] = React.useState((dropIssues && dropIssues[0].id) ?? '');
   const [comment, setComment] = React.useState('');
+  const [googleLink, setGoogleLink] = React.useState<string>();
+  const [isCopied, setIsCopied] = React.useState(false);
   // handlers
   const handleRemoving = () => {
     const issue = dropIssues?.find((issue) => issue.id === issueId);
     removeCourier!(issue, comment);
+  };
+  const copyToClipboard = () => {
+    setIsCopied(true);
+    setTimeout(() => setIsCopied(false), 500);
+    return navigator.clipboard.writeText(address!);
   };
   // side effects
   React.useEffect(() => {
@@ -60,6 +70,11 @@ export const Participant = ({
   React.useEffect(() => {
     if (!participantId) setIsRemoving(false);
   }, [participantId]);
+  React.useEffect(() => {
+    if (!coordinates) return;
+    const link = `https://www.google.com/maps/search/?api=1&query=${coordinates.latitude}%2C${coordinates.longitude}`;
+    setGoogleLink(link);
+  }, [coordinates]);
   // UI
   if (type === 'consumer') {
     return (
@@ -72,10 +87,11 @@ export const Participant = ({
         </Text>
         {typeof address === 'string' && (
           <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
-            {t('Endereço principal:')}{' '}
+            {t('Endereço:')}{' '}
             <Text as="span" fontWeight="500">
               {address ?? 'N/E'}
             </Text>
+            <Icon ml="2" mb="-0.5" cursor="pointer" as={MdOutlineFileCopy} onClick={copyToClipboard} color={isCopied ? 'green.700' : 'black'} />
           </Text>
         )}
         {typeof additionalInfo === 'string' && (
@@ -85,6 +101,21 @@ export const Participant = ({
               {additionalInfo ?? 'N/E'}
             </Text>
           </Text>
+        )}
+        {googleLink && (
+          <Box mt="2">
+            <Link
+              mt="2"
+              color="black"
+              href={googleLink}
+              _focus={{ outline: 'none' }}
+              textDecor="underline"
+              isExternal
+            >
+              {t('Abrir endereço no mapa')}
+              <Icon ml="2" mb="-1" as={MdOpenInNew} />
+            </Link>
+          </Box>
         )}
         <CustomButton
           minW="220px"
@@ -110,10 +141,11 @@ export const Participant = ({
           </Text>
         </Text>
         <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
-          {t('Endereço principal:')}{' '}
+          {t('Endereço:')}{' '}
           <Text as="span" fontWeight="500">
             {address ?? 'N/E'}
           </Text>
+          <Icon ml="2" mb="-0.5" cursor="pointer" as={MdOutlineFileCopy} onClick={copyToClipboard} color={isCopied ? 'green.700' : 'black'} />
         </Text>
         <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
           {t('Complemento:')}{' '}
@@ -134,10 +166,11 @@ export const Participant = ({
           </Text>
         </Text>
         <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
-          {t('Endereço principal:')}{' '}
+          {t('Endereço:')}{' '}
           <Text as="span" fontWeight="500">
             {address ?? 'N/E'}
           </Text>
+          <Icon ml="2" mb="-0.5" cursor="pointer" as={MdOutlineFileCopy} onClick={copyToClipboard} color={isCopied ? 'green.700' : 'black'} />
         </Text>
         <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
           {t('Complemento:')}{' '}

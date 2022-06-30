@@ -1,13 +1,16 @@
 import { OrderStatus } from '@appjusto/types';
+import { isElectron } from '@firebase/util';
 import * as Sentry from '@sentry/react';
 import { useObserveOrders } from 'app/api/order/useObserveOrders';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useNotificationPermission } from 'app/utils/notifications/useNotificationPermission';
 //@ts-ignore
 import newOrderSound from 'common/sounds/bell-ding-v3.mp3';
-import { difference } from 'lodash';
+import { difference, isEqual } from 'lodash';
 import React from 'react';
 import useSound from 'use-sound';
+import { showNotification } from '../utils';
+import { useRedirectToOrders } from './useRedirectToOrders';
 import {
   addOrderAck,
   getAck,
@@ -15,34 +18,50 @@ import {
   getAckOrders,
   removeOrderAck,
   setAck,
-  updateOrderAck,
+  updateOrderAck
 } from './utils';
+
+const isDesktopApp = isElectron();
 
 const key = 'confirmed';
 
 const statuses: OrderStatus[] = ['confirmed'];
+
+let ordersToNotify: string[] = [];
 
 export const useObserveConfirmedOrders = (businessId?: string, notify: boolean = true) => {
   // context
   const { isBackofficeUser } = useContextFirebaseUser();
   const permission = useNotificationPermission();
   const confirmedOrders = useObserveOrders(statuses, businessId);
+  const redirectToOrders = useRedirectToOrders(["/app/orders"]);
   // state
   const [changed, setChanged] = React.useState(false);
   const [confirmedNumber, setConfirmedNumber] = React.useState(0);
   // sound
   const [playSound] = useSound(newOrderSound, { volume: 1 });
-
   // side effects
   React.useEffect(() => {
     if (isBackofficeUser) return;
     if (confirmedOrders.length === 0) return;
-    playSound();
+    const confirmedIds = confirmedOrders.map(order => order.id);
+    if(!isEqual(ordersToNotify, confirmedIds)) {
+      if(isDesktopApp) {
+        try {
+          window.electron.ipcRenderer.sendMessage('mainWindow-show')
+        } catch (error) {
+          console.error("Unable to call mainWindow:", error);
+        }
+      }
+      playSound();
+      redirectToOrders();
+      ordersToNotify = confirmedIds;
+    };
     const SoundInterval = setInterval(() => {
       playSound();
     }, 4000);
     return () => clearInterval(SoundInterval);
-  }, [isBackofficeUser, confirmedOrders, playSound]);
+  }, [isBackofficeUser, confirmedOrders, playSound, redirectToOrders]);
 
   React.useEffect(() => {
     setConfirmedNumber(confirmedOrders.length);
@@ -79,8 +98,9 @@ export const useObserveConfirmedOrders = (businessId?: string, notify: boolean =
         body: `${unnotified.order.consumer.name} está esperando sua confirmação!`,
         icon: '/logo192.png',
         requireInteraction: true,
+        silent: false,
       };
-      if (process.env.NODE_ENV === 'production') {
+      if (!isDesktopApp && process.env.NODE_ENV === 'production') {
         try {
           navigator.serviceWorker
             .getRegistration()
@@ -96,7 +116,7 @@ export const useObserveConfirmedOrders = (businessId?: string, notify: boolean =
           Sentry.captureException(error);
         }
       } else {
-        new Notification(title, options);
+        showNotification(title, options);
       }
     });
     setAck(key, ack);

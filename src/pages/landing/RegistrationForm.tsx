@@ -21,7 +21,7 @@ export const RegistrationForm = () => {
   const [formMsg, setFormMsg] = React.useState({ status: false, type: '', message: '' });
   const isEmailInvalid = React.useMemo(() => !isEmailValid(email), [email]);
   // handlers
-  const handleSubmit = async (event: FormEvent) => {
+  const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
     setFormMsg({ status: false, type: '', message: '' });
     if (!accept) {
@@ -38,7 +38,7 @@ export const RegistrationForm = () => {
         message: 'O e-mail informado não é válido. Corrija e tente novamente.',
       });
     }
-    await sendSignInLinkToEmail(email);
+    sendSignInLinkToEmail(email);
   };
   // side effects
   React.useEffect(() => {

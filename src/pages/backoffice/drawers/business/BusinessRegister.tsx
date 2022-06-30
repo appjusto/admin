@@ -4,7 +4,6 @@ import { useContextBusinessBackoffice } from 'app/state/business/businessBOConte
 import { ProfileNotes } from 'common/components/backoffice/ProfileNotes';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import { BusinessPhoneField, BusinessPhones } from 'pages/business-profile/business-phones';
-import React from 'react';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
 import BOBankingInformation from './forms/BOBankingInformation';

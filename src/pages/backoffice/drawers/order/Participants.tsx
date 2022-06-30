@@ -6,7 +6,6 @@ import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { useContextServerTime } from 'app/state/server-time';
 import { DeliveryInfos } from 'pages/orders/drawers/orderdrawer/DeliveryInfos';
-import React from 'react';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
 import { Participant } from './Participant';
@@ -52,7 +51,7 @@ export const Participants = ({ order }: ParticipantsProps) => {
             type="business"
             participantId={order.business?.id}
             name={order?.business?.name}
-            address={order?.origin?.address?.main}
+            address={order?.origin?.address?.description}
             additionalInfo={order?.origin?.additionalInfo}
           />
           <SectionTitle>{t('Cliente')}</SectionTitle>
@@ -60,8 +59,9 @@ export const Participants = ({ order }: ParticipantsProps) => {
             type="consumer"
             participantId={order?.consumer?.id}
             name={order?.consumer?.name}
-            address={order?.destination?.address?.main}
+            address={order?.destination?.address?.description}
             additionalInfo={order?.destination?.additionalInfo}
+            coordinates={order?.consumer.coordinates}
           />
         </Box>
       ) : (
@@ -71,19 +71,20 @@ export const Participants = ({ order }: ParticipantsProps) => {
             type="consumer"
             participantId={order?.consumer?.id}
             name={order?.consumer?.name ?? 'N/E'}
+            coordinates={order?.consumer.coordinates}
           />
           <SectionTitle>{t('Origem')}</SectionTitle>
           <Participant
             type="p2p-instructions"
             instruction={order?.origin?.intructions}
-            address={order?.origin?.address?.main}
+            address={order?.origin?.address?.description}
             additionalInfo={order?.origin?.additionalInfo}
           />
           <SectionTitle>{t('Destino')}</SectionTitle>
           <Participant
             type="p2p-instructions"
             instruction={order?.destination?.intructions}
-            address={order?.destination?.address?.main}
+            address={order?.destination?.address?.description}
             additionalInfo={order?.destination?.additionalInfo}
           />
         </Box>
@@ -106,7 +107,7 @@ export const Participants = ({ order }: ParticipantsProps) => {
       <Text mt="2" mb="10" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
         {t('Nome:')}{' '}
         <Text as="span" fontWeight="500">
-          {order?.fare?.fleet.name ?? 'N/E'}
+          {order?.fare?.fleet?.name ?? 'N/E'}
         </Text>
       </Text>
       {isOrderActive ? (

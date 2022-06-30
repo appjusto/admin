@@ -82,6 +82,21 @@ export const getHourAndMinute = (timestamp?: FieldValue | Date) => {
   }
 };
 
+export const getFullTime = (timestamp?: FieldValue | Date) => {
+  if (!timestamp) return 'N/E';
+  try {
+    let timeToDate = timestamp;
+    if (!(timeToDate instanceof Date)) {
+      timeToDate = (timestamp as Timestamp).toDate();
+    }
+    const hour = I18n.strftime(timeToDate, '%H:%M:%S');
+    return hour;
+  } catch (error) {
+    console.log(error);
+    return 'N/E';
+  }
+};
+
 export const getAlgoliaFieldDateAndHour = (timestamp: FieldValue | number) => {
   if (typeof timestamp === 'number') {
     try {

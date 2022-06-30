@@ -81,6 +81,7 @@ export const invoiceStatusPTOptions = {
   paid: 'Paga',
   partially_paid: 'Parcialmente paga',
   refunded: 'Reembolsada',
+  partially_refunded: 'Parcialmente reembolsada',
   expired: 'Expirada',
   authorized: 'Autorizada',
   canceled: 'Cancelada',

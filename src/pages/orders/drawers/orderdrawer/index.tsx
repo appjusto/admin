@@ -32,6 +32,7 @@ type Params = {
 
 export const OrderDrawer = (props: Props) => {
   //context
+  const { onClose } = props;
   const { dispatchAppRequestResult } = useContextAppRequests();
   const query = useQuery();
   const { orderId } = useParams<Params>();
@@ -50,8 +51,8 @@ export const OrderDrawer = (props: Props) => {
   const {
     getOutsourceDelivery,
     outsourceDeliveryResult,
-    updateOutsourcingCourierName,
-    updateOutsourcingCourierNameResult,
+    updateOutsourcingCourierInfos,
+    updateOutsourcingCourierInfosResult,
   } = useGetOutsourceDelivery(orderId);
   // state
   const [isCanceling, setIsCanceling] = React.useState(false);
@@ -61,11 +62,11 @@ export const OrderDrawer = (props: Props) => {
   const printComponent = React.useRef<HTMLDivElement>(null);
   // helpers
   const cancellator = getOrderCancellator(orderCancellation?.issue?.type);
-  const deliveryFare = order?.fare?.courier.value
+  const deliveryFare = order?.fare?.courier?.value
     ? formatCurrency(order.fare.courier.value)
     : 'N/E';
   // handlers
-  const handleCancel = async (issue: WithId<Issue>) => {
+  const handleCancel = (issue: WithId<Issue>) => {
     if (!manager?.id) {
       return dispatchAppRequestResult({
         status: 'error',
@@ -86,8 +87,7 @@ export const OrderDrawer = (props: Props) => {
       acknowledgedCosts: orderCancellationCosts,
       cancellation: issue,
     } as CancelOrderPayload;
-    await cancelOrder(cancellationData);
-    props.onClose();
+    cancelOrder(cancellationData);
   };
   const printOrder = () => printJS({ printable: 'template-to-print', type: 'html' });
   // const printOrder = useReactToPrint({
@@ -103,6 +103,10 @@ export const OrderDrawer = (props: Props) => {
     if (!order?.courier?.name) return;
     setOutsourcingCourierName(order?.courier?.name);
   }, [order?.courier?.name]);
+  React.useEffect(() => {
+    if (!cancelResult.isSuccess) return;
+    onClose();
+  }, [cancelResult.isSuccess, onClose])
   // UI
   return (
     <OrderBaseDrawer
@@ -148,8 +152,8 @@ export const OrderDrawer = (props: Props) => {
                             />
                             <Button
                               h="60px"
-                              onClick={() => updateOutsourcingCourierName(outsourcingCourierName!)}
-                              isLoading={updateOutsourcingCourierNameResult.isLoading}
+                              onClick={() => updateOutsourcingCourierInfos({ name: outsourcingCourierName! })}
+                              isLoading={updateOutsourcingCourierInfosResult.isLoading}
                               isDisabled={!outsourcingCourierName}
                             >
                               {t('Salvar')}
@@ -245,7 +249,7 @@ export const OrderDrawer = (props: Props) => {
                   <Text fontSize="sm">{order?.destination?.address.description}</Text>
                 </>
               )}
-              {(order?.status === 'confirmed' || order?.status === 'preparing') && (
+              {order?.status === 'confirmed' && (
                 <CookingTime
                   orderId={order.id}
                   cookingTime={order.cookingTime}

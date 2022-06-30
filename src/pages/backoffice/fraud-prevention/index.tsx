@@ -41,6 +41,9 @@ const FraudPreventionPage = () => {
   //const closeDrawerHandler = () => {
   //  history.replace(path);
   //};
+  const handleRefetch = () => {
+    setTimeout(() => refetch(), 1000);
+  };
 
   const handleSearch = () => {
     if (search.length === 0 && !filters) return;
@@ -115,7 +118,7 @@ const FraudPreventionPage = () => {
           {t(`${flaggedLocations?.length ?? '0'} endereços encontrados`)}
         </Text>
       </HStack>
-      <FlaggedLocationsTable locations={flaggedLocations} refetch={refetch} />
+      <FlaggedLocationsTable locations={flaggedLocations} refetch={handleRefetch} />
       <Button mt="8" variant="secondary" onClick={handleDataLoad}>
         <ArrowDownIcon mr="2" />
         {t('Carregar mais')}

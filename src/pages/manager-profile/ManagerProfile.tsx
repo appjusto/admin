@@ -14,7 +14,7 @@ import {
   cpfFormatter,
   cpfMask,
   phoneFormatter,
-  phoneMask,
+  phoneMask
 } from 'common/components/form/input/pattern-input/formatters';
 import { numbersOnlyParser } from 'common/components/form/input/pattern-input/parsers';
 import { OnboardingProps } from 'pages/onboarding/types';
@@ -116,7 +116,7 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
         password: passwd,
         currentPassword: currentPasswd,
       };
-      await updateProfile(data);
+      updateProfile(data);
     } else {
       const data = {
         changes: {
@@ -127,7 +127,7 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
           isPasswordActive: true,
         },
       };
-      await updateProfile(data);
+      updateProfile(data);
     }
   };
 

@@ -39,18 +39,15 @@ const SharingPage = () => {
   };
   const getWhatsappSharingMessage = (mode?: Mode) => {
     return encodeURIComponent(
-      `Olá, queria indicar o ${
-        business?.name
+      `Olá, queria indicar o ${business?.name
       }! No AppJusto, os preços dos pratos são menores, e você valoriza mais ainda o restaurante e o entregador. Um delivery mais justo de verdade ;)\n\n${getBusinessLinkByMode(
         mode
       )}`
     );
   };
-  const handleUpdate = async () => {
+  const handleUpdate = () => {
     if (!business?.id || !slug) return;
-    try {
-      await updateBusinessSlug({ businessId: business.id, slug });
-    } catch (error) {}
+    updateBusinessSlug({ businessId: business.id, slug });
   };
   // side effects
   React.useEffect(() => {

@@ -5,7 +5,7 @@ import {
   ManagerProfile,
   ManagerWithRole,
   MarketplaceAccountInfo,
-  WithId,
+  WithId
 } from '@appjusto/types';
 import * as cnpjutils from '@fnando/cnpj';
 import { useBusinessBankAccount } from 'app/api/business/profile/useBusinessBankAccount';
@@ -155,7 +155,7 @@ export const BusinessBOProvider = ({ children }: Props) => {
     dispatch({ type: 'update_banking', payload: newBankAccount });
   };
   const handleSave = () => {
-    if (business?.situation === 'approved') {
+    if (state.businessProfile.situation === 'approved') {
       const validation = getValidationStatus(contextValidation, dispatchAppRequestResult);
       if (!validation) return;
     }

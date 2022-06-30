@@ -17,9 +17,15 @@ interface WithdrawsTableItemProps {
 }
 
 const WithdrawsTableItem = ({ withdraw }: WithdrawsTableItemProps) => {
+  // handlers
+  const getColor = () => {
+    if (withdraw.status === "pending" || withdraw.status === "processing") return "blue.600";
+    else if (withdraw.status === "rejected") return "red";
+    return "black";
+  }
   // UI
   return (
-    <Tr color="black" fontSize="15px" lineHeight="21px" fontWeight="500">
+    <Tr color={getColor()} fontSize="15px" lineHeight="21px" fontWeight="500">
       <Td>{getDateAndHour(withdraw.createdOn)}</Td>
       <Td isNumeric>{formatIuguValueToDisplay(withdraw.amount)}</Td>
       <Td>{withdrawStatusPTOptions[withdraw.status]}</Td>
@@ -35,7 +41,7 @@ export const WithdrawsTable = ({ withdraws }: WithdrawsTableProps) => {
   // helpers
   const total =
     withdraws?.reduce<number>((result, item) => {
-      const value = formatCents(item.amount);
+      const value = item.status === "accepted" ? formatCents(item.amount) : 0;
       return (result += value);
     }, 0) ?? 0;
   // UI

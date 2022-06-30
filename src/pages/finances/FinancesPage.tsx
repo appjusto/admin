@@ -5,6 +5,7 @@ import { useObserveBusinessAdvances } from 'app/api/business/useObserveBusinessA
 import { useObserveBusinessWithdraws } from 'app/api/business/useObserveBusinessWithdraws';
 import { useRequestWithdraw } from 'app/api/business/useRequestWithdraw';
 import { useObserveInvoicesStatusByPeriod } from 'app/api/order/useObserveInvoicesStatusByPeriod';
+import { useCanAdvanceReceivables } from 'app/api/platform/useCanAdvanceReceivables';
 import { useContextBusinessId } from 'app/state/business/context';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { CustomMonthInput } from 'common/components/form/input/CustomMonthInput';
@@ -36,11 +37,13 @@ const FinancesPage = () => {
   const { accountInformation, refreshAccountInformation } = useAccountInformation(businessId);
   const { requestWithdraw, requestWithdrawResult } = useRequestWithdraw(businessId);
   const { isLoading, isSuccess } = requestWithdrawResult;
+  const canAdvanceReceivables = useCanAdvanceReceivables();
   // state
   const [dateTime, setDateTime] = React.useState('');
   const [month, setMonth] = React.useState<Date | null>(new Date());
   const [availableReceivable, setAvailableReceivable] = React.useState<string | null>();
   const [availableWithdraw, setAvailableWithdraw] = React.useState<string | null>();
+  const [activeWithdraw, setActiveWithdraw] = React.useState<number>();
   // page data with filters
   const { periodAmount, appjustoFee, iuguFee } = useObserveInvoicesStatusByPeriod(
     businessId,
@@ -57,7 +60,7 @@ const FinancesPage = () => {
     refreshAccountInformation();
     history.replace(path);
   };
-  const handleWithdrawRequest = async () => {
+  const handleWithdrawRequest = () => {
     if (!availableWithdraw)
       return dispatchAppRequestResult({
         status: 'error',
@@ -65,8 +68,7 @@ const FinancesPage = () => {
         message: { title: 'Não existe valor disponível para transferência.' },
       });
     const amount = convertBalance(availableWithdraw);
-    await requestWithdraw(amount);
-    refreshAccountInformation();
+    requestWithdraw(amount);
   };
   const getAdvanceById = React.useCallback(
     (advanceId: string) => {
@@ -84,6 +86,15 @@ const FinancesPage = () => {
     setAvailableReceivable(accountInformation?.receivable_balance ?? null);
     setAvailableWithdraw(accountInformation?.balance_available_for_withdraw ?? null);
   }, [accountInformation]);
+  React.useEffect(() => {
+    if (!withdraws) return;
+    const active = withdraws.filter((w) => w.status !== 'rejected');
+    setActiveWithdraw(active.length);
+  }, [withdraws]);
+  React.useEffect(() => {
+    if (!isSuccess) return;
+    refreshAccountInformation();
+  }, [isSuccess, refreshAccountInformation])
   // UI
   return (
     <>
@@ -102,9 +113,12 @@ const FinancesPage = () => {
           label={t('Vendas em processamento')}
           icon={Watch}
           value={availableReceivable}
-          btnLabel={t('Pedir antecipação de valores')}
+          btnLabel={
+            canAdvanceReceivables ? t('Pedir antecipação de valores') : t('Fora do horário')
+          }
           btnVariant="outline"
           btnLink={`${url}/advances`}
+          isAvailable={canAdvanceReceivables}
         />
       </Stack>
       <SectionTitle>{t('Período')}</SectionTitle>
@@ -133,7 +147,7 @@ const FinancesPage = () => {
         <Route path={`${path}/withdraw`}>
           <WithdrawsDrawer
             isOpen
-            totalWithdraws={withdraws?.length ?? 0}
+            totalWithdraws={activeWithdraw}
             withdrawValue={availableWithdraw}
             requestWithdraw={handleWithdrawRequest}
             isLoading={isLoading}

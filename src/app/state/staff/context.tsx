@@ -25,18 +25,12 @@ export const StaffProvider = ({ children }: Props) => {
   React.useEffect(() => {
     if (!staff) return;
     if (updateUserAgentCount > 0) return;
-    (async () => {
-      try {
-        const userAgent = window?.navigator?.userAgent;
-        if (userAgent && staff.userAgent !== userAgent) {
-          updateUserAgentCount++;
-          await updateProfile({ changes: { userAgent } });
-        }
-      } catch (error) {
-        console.error('Unabled to save userAgent: ', error);
-      }
-    })();
-  }, [staff, updateProfile, updateUserAgentCount]);
+    const userAgent = window?.navigator?.userAgent;
+    if (userAgent && staff.userAgent !== userAgent) {
+      updateUserAgentCount++;
+      updateProfile({ changes: { userAgent } });
+    }
+  }, [staff, updateProfile]);
   // provider
   return (
     <StaffProfileContext.Provider value={{ staff, username }}>

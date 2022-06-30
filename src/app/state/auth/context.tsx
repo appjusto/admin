@@ -53,7 +53,7 @@ export const FirebaseUserProvider = ({ children }: Props) => {
         if (Object.keys(claims).includes('permissions')) {
           setBackofficePermissions(claims.permissions as UserPermissions);
         } else if (businessId) {
-          const role = claims.businesses[businessId] as AdminRole;
+          const role = claims.businesses ? claims.businesses[businessId] as AdminRole : null;
           if (!role) {
             // error
             console.error('refreshUserToken: Não foi possível encontrar as permissões do usuário.');

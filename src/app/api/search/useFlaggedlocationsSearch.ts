@@ -36,7 +36,7 @@ export const useFlaggedlocationsSearch = <T extends object>(
   );
 
   const refetch = () => {
-    search(soughtValue!);
+    debouncedSearch(soughtValue!, dateFilter);
   };
   // side effects
   // debounce search when search input changes

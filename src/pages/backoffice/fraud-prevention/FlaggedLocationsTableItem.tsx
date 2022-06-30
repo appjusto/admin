@@ -11,6 +11,8 @@ interface FlaggedLocationsTableItemProps {
   refetch(): void;
 }
 
+let refetching = true;
+
 export const FlaggedLocationsTableItem = ({
   location,
   refetch,
@@ -23,11 +25,15 @@ export const FlaggedLocationsTableItem = ({
   const [isDeleting, setIsDeleting] = React.useState(false);
   // side effects
   React.useEffect(() => {
-    if (isSuccess) refetch();
+    if (isSuccess && refetching) {
+      refetching = false;
+      refetch();
+    }
   }, [isSuccess, refetch]);
   // UI
   return (
     <Tr
+      display={isSuccess ? 'none' : 'table-row'}
       key={location.objectID}
       color="black"
       fontSize="15px"

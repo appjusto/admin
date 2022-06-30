@@ -2,7 +2,6 @@ import { Invoice, OrderPaymentLog, WithId } from '@appjusto/types';
 import { Box, Table, Tbody, Td, Tfoot, Th, Thead, Tr } from '@chakra-ui/react';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { invoiceStatusPTOptions, invoiceTypePTOptions } from 'pages/backoffice/utils';
-import React from 'react';
 import { formatCurrency } from 'utils/formatters';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';

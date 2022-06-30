@@ -20,6 +20,7 @@ import { formatCurrency } from 'utils/formatters';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../../../backoffice/drawers/generics/SectionTitle';
+import { Multiplier } from './Multiplier';
 interface OrderToPrintProps {
   businessName?: string;
   order?: WithId<Order> | null;
@@ -135,7 +136,11 @@ export const OrderToPrinting = React.forwardRef<HTMLDivElement, OrderToPrintProp
                       }
                     >
                       <Td isNumeric fontSize="11px" fontWeight="500" px="0">
-                        {complement.quantity ?? 1}
+                        {item.quantity > 1 ? (
+                          <Multiplier products={item.quantity} complements={complement.quantity} />
+                        ) : (
+                          complement.quantity ?? 1
+                        )}
                       </Td>
                       <Td fontSize="11px" fontWeight="500">
                         {complement.groupName ?? 'N/E'}

@@ -9,15 +9,15 @@ export const useOrderNotes = (orderId?: string) => {
   // state
   const [orderNotes, setOrderNotes] = React.useState<WithId<ProfileNote>[]>([]);
   // mutations
-  const { mutateAsync: updateOrderNote, mutationResult: updateResult } = useCustomMutation(
-    async (data: { changes: Partial<ProfileNote>; id?: string }) => {
-      if (!data.id) return await api.order().createOrderNote(orderId!, data.changes);
-      else return await api.order().updateOrderNote(orderId!, data.id, data.changes);
+  const { mutate: updateOrderNote, mutationResult: updateResult } = useCustomMutation(
+    (data: { changes: Partial<ProfileNote>; id?: string }) => {
+      if (!data.id) return api.order().createOrderNote(orderId!, data.changes);
+      else return api.order().updateOrderNote(orderId!, data.id, data.changes);
     },
     'updateOrderNote'
   );
-  const { mutateAsync: deleteOrderNote, mutationResult: deleteResult } = useCustomMutation(
-    async (orderNoteId: string) => await api.order().deleteOrderNote(orderId!, orderNoteId),
+  const { mutate: deleteOrderNote, mutationResult: deleteResult } = useCustomMutation(
+    (orderNoteId: string) => api.order().deleteOrderNote(orderId!, orderNoteId),
     'deleteOrderNote',
     false
   );

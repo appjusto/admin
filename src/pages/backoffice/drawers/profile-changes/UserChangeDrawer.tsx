@@ -9,7 +9,7 @@ import {
   DrawerOverlay,
   HStack,
   Skeleton,
-  Text,
+  Text
 } from '@chakra-ui/react';
 import * as cpfutils from '@fnando/cpf';
 import { useFetchUserData } from 'app/api/users/useFetchUserData';
@@ -41,7 +41,7 @@ export const UserChangeDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   //context
   const { changesId } = useParams<Params>();
   const { changes, updateChange, updateChangeResult } = useObserveUserChanges(changesId);
-  const { isLoading } = updateChangeResult;
+  const { isLoading, isSuccess } = updateChangeResult;
   const user = useFetchUserData(changes?.accountId, changes?.userType);
   // refs
   const actionType = React.useRef<'approved' | 'rejected'>();
@@ -50,6 +50,11 @@ export const UserChangeDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
     actionType.current = situation;
     return updateChange({ situation });
   };
+  // side effects
+  React.useEffect(() => {
+    if (!isSuccess) return;
+    onClose();
+  }, [isSuccess, onClose])
   //UI
   if (changes === undefined)
     return (

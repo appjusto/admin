@@ -41,7 +41,7 @@ const ordersManagerObject = {
   recommendations: ['r', 'u'],
   staff: [],
   users: ['r'],
-  platform: [],
+  platform: ['c'],
 } as UserPermissions;
 
 const consumersManagerObject = {

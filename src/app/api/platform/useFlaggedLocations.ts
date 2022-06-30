@@ -10,23 +10,19 @@ export const useFlaggedLocations = () => {
   //  WithId<FlaggedLocation>[] | null
   //>();
   // mutations
-  const {
-    mutateAsync: addFlaggedLocation,
-    mutationResult: addFlaggedLocationResult,
-  } = useCustomMutation(
-    async (location: Partial<FlaggedLocation>) => api.platform().addFlaggedLocation(location),
-    'addFlaggedLocation',
-    false
-  );
-  const {
-    mutateAsync: deleteFlaggedLocation,
-    mutationResult: deleteFlaggedLocationResult,
-  } = useCustomMutation(
-    async (locationId: string) => api.platform().deleteFlaggedLocation(locationId),
-    'deleteFlaggedLocation',
-    false,
-    false
-  );
+  const { mutate: addFlaggedLocation, mutationResult: addFlaggedLocationResult } =
+    useCustomMutation(
+      (location: Partial<FlaggedLocation>) => api.platform().addFlaggedLocation(location),
+      'addFlaggedLocation',
+      false
+    );
+  const { mutate: deleteFlaggedLocation, mutationResult: deleteFlaggedLocationResult } =
+    useCustomMutation(
+      (locationId: string) => api.platform().deleteFlaggedLocation(locationId),
+      'deleteFlaggedLocation',
+      false,
+      false
+    );
   // side effects
   //React.useEffect(() => {
   //  if (!observe) return;

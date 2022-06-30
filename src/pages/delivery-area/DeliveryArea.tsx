@@ -1,4 +1,4 @@
-import { BusinessAddress } from '@appjusto/types';
+import { Business, BusinessAddress } from '@appjusto/types';
 import { Box, Flex, Stack, Text } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useCepAndGeocode } from 'app/api/business/useCepAndGeocode';
@@ -12,6 +12,8 @@ import { numbersOnlyParser } from 'common/components/form/input/pattern-input/pa
 import { Select } from 'common/components/form/select/Select';
 import { coordsFromLatLnt, SaoPauloCoords } from 'core/api/thirdparty/maps/utils';
 import { safeParseInt } from 'core/numbers';
+import { GeoPoint } from 'firebase/firestore';
+import { hash } from 'geokit';
 import GoogleMapReact from 'google-map-react';
 import { OnboardingProps } from 'pages/onboarding/types';
 import PageFooter from 'pages/PageFooter';
@@ -76,12 +78,23 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
       neighborhood,
       additional,
     } as BusinessAddress;
-    if (geocodingResult) addressObj.latlng = geocodingResult;
-    await updateBusinessProfile({
-      businessAddress: addressObj,
+    let profile: Partial<Business> = {
       deliveryRange: safeParseInt(deliveryRange, defaultRadius) * 1000,
       averageCookingTime: averageCookingTime,
-    });
+    };
+    if (geocodingResult) {
+      addressObj.latlng = geocodingResult;
+      profile.coordinates = new GeoPoint(geocodingResult.latitude, geocodingResult.longitude);
+      profile.g = {
+        geopoint: profile.coordinates,
+        geohash: hash({
+          lat: geocodingResult.latitude,
+          lng: geocodingResult.longitude,
+        }),
+      };
+    }
+    profile.businessAddress = addressObj;
+    await updateBusinessProfile(profile);
   };
   // side effects
   // initial focus

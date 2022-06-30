@@ -5,13 +5,13 @@ import { useContextStaffProfile } from 'app/state/staff/context';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
 import { omitBy } from 'lodash';
 import React from 'react';
-import { MutateFunction } from 'react-query';
+import { UseMutateFunction } from 'react-query';
 import { t } from 'utils/i18n';
 import { ProfileNoteItem } from './ProfileNoteItem';
 
 interface ProfileNotesProps {
   profileNotes: WithId<ProfileNote>[];
-  updateNote: MutateFunction<
+  updateNote: UseMutateFunction<
     void,
     unknown,
     { changes: Partial<ProfileNote>; id?: string },
