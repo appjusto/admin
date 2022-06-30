@@ -45,7 +45,7 @@ export const getOrderToPrint = (
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no"
       />
     </head>
-    <body style="font-family: Helvetica; color: black">
+    <body style="font-size: 10px; font-height: 14px; color: black">
       <div style="padding-top: 14px; padding: 4px; max-width: 300px" id="template-to-print">
         <div>
           ${
@@ -58,17 +58,17 @@ export const getOrderToPrint = (
                 <div>
                   <image src=${appjustoLogo} width="48px" height="48px"/>
                 </div>
-              </div>`
+            </div>`
           }
-          <p style="font-size: 11px; text-align: center">Por um delivery mais justo e transparente!</p>
-          <p style="font-size: 16px; font-weight: 700; margin-top: 2px; text-align: center">${
+          <p style="text-align: center">Por um delivery mais justo e transparente!</p>
+          <p style="font-weight: 700; margin-top: 2px; text-align: center">${
             order.business?.name
           }</p>
         </div>
         <p style="font-size: 24px; font-weight: 700; ; line-height: 24px; margin-top: 6px">
           Pedido Nº ${order.code}
         </p>
-        <div style="margin-top: 8px; font-size: 12px; font-weight: 500; line-height: 16px">
+        <div style="margin-top: 8px;  font-weight: 500; line-height: 16px">
           <p>
             Cliente: <span style="font-weight: 700">${order.consumer.name}</span>
           </p>
@@ -99,7 +99,7 @@ export const getOrderToPrint = (
           </tbody>
           <tfoot>
             <tr role="row">
-              <th style="font-size: 12px;">Total</th>
+              <th style="">Total</th>
               <th></th>
               <th data-is-numeric="true">${
                 order?.fare?.business?.value ? formatCurrency(order.fare.business.value) : 0
@@ -107,26 +107,26 @@ export const getOrderToPrint = (
             </tr>
           </tfoot>
         </table>
-        <div style="margin-top: 2px; font-size: 12px;">
+        <div style="margin-top: 2px;">
           <p>Observações:</p>
           ${
             order.consumer.cpf !== null ||
             (order.consumer.cpf !== undefined &&
-              `<br /><p style="font-size: 12px; font-weight: 500; margin-top: 1;">Incluir CPF na nota</p>`)
+              `<br /><p style="font-weight: 500; margin-top: 1;">Incluir CPF na nota</p>`)
           }
           ${
             order.additionalInfo !== null ||
             (order.additionalInfo !== undefined &&
-              `<br /><p style="font-size: 12px; font-weight: 500; margin-top: 1;">${order.additionalInfo}</p>`)
+              `<br /><p style="font-weight: 500; margin-top: 1;">${order.additionalInfo}</p>`)
           }
           ${
             !order?.consumer.cpf &&
             !order?.additionalInfo &&
-            `<br /><p style="font-size: 12px; margin-top: 1;">Sem observações.</p>`
+            `<br /><p style="margin-top: 1;">Sem observações.</p>`
           }
         </div>
-        <div style=" margin-top: 4; background-color: black; text-align: center;">
-          <p style="font-size: 12px; font-weight: 700; color: white;">Este pedido já está pago</p>
+        <div style="margin-top: 4; background-color: black; text-align: center;">
+          <p style="font-weight: 700; color: white;">Este pedido já está pago</p>
         </div>
       </div>
     </body>

@@ -89,7 +89,13 @@ export const OrderDrawer = (props: Props) => {
     } as CancelOrderPayload;
     cancelOrder(cancellationData);
   };
-  const printOrder = () => printJS({ printable: 'template-to-print', type: 'html' });
+  const printOrder = () => printJS({ 
+    printable: 'template-to-print', 
+    type: 'html', 
+    // scanStyles: true, 
+    // honorMarginPadding: true, 
+    targetStyles: ['*']
+  });
   // const printOrder = useReactToPrint({
   //   content: () => printComponent.current,
   // });
