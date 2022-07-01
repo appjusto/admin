@@ -3,15 +3,7 @@ import {
   Box,
   Flex,
   HStack,
-  Image,
-  Table,
-  Tbody,
-  Td,
-  Text,
-  Tfoot,
-  Th,
-  Thead,
-  Tr,
+  Image, Text
 } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import logoAppjusto from 'common/img/logo-black.svg';
@@ -20,27 +12,75 @@ import { formatCurrency } from 'utils/formatters';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../../../backoffice/drawers/generics/SectionTitle';
-import { Multiplier } from './Multiplier';
 interface OrderToPrintProps {
   businessName?: string;
   order?: WithId<Order> | null;
+}
+
+const renderItems = (items?: OrderItem[]) => {
+  if(items) return items.map(item => {
+    return (
+      <Box key={item.id} mb="4">
+          <Flex flexDir="row" fontWeight="700">
+            <Box w="10%">{item.quantity}</Box>
+            <Box w="60%">
+              <Text>
+                {item.product.name}
+              </Text>
+            </Box>
+            <Box w="30%" textAlign="end">
+              {formatCurrency(item.product.price)}
+            </Box>
+          </Flex>
+          {item.complements && item.complements.map(complement => {
+            return (
+              <Flex key={complement.name} flexDir="row">
+                <Box w="10%"></Box>
+                <HStack w="60%" spacing={2}>
+                  <Text>
+                    {complement.quantity ?? 1}
+                  </Text>
+                  <Text>
+                    {complement.name ?? 'N/E'}
+                  </Text>
+                </HStack>
+                <Box w="30%" textAlign="end">
+                  {formatCurrency(complement.price)}
+                </Box>
+              </Flex>
+            )
+          })}
+          {
+            item.notes && (
+              <Text fontWeight="500">
+                Obs: {item.notes.toUpperCase()}
+              </Text>
+            )
+          }
+        </Box>
+    )
+  })
 }
 
 export const OrderToPrinting = React.forwardRef<HTMLDivElement, OrderToPrintProps>(
   ({ businessName, order }, ref) => {
     // context
     const { logo } = useBusinessProfile();
+    // helpers
+    const isAdditional = order?.destination?.additionalInfo && order.destination.additionalInfo.length > 0;
     // UI - Hidden
     return (
       <Box
         ref={ref}
         maxW="300px"
         p="4"
-        position="absolute"
-        top="0"
-        left="0"
+        // position="absolute"
+        // top="0"
+        // left="0"
+        fontFamily="Tahoma"
+        fontSize="12px"
         color="black"
-        zIndex="-999"
+        // zIndex="-999"
       >
         <Flex flexDir="column" alignItems="center">
           <HStack spacing={2} alignItems="center">
@@ -59,34 +99,48 @@ export const OrderToPrinting = React.forwardRef<HTMLDivElement, OrderToPrintProp
         <Text mt="4" fontSize="2xl" fontWeight="700" lineHeight="28px" mb="2">
           {t('Pedido Nº')} {order?.code}
         </Text>
-        <Text fontSize="12px" fontWeight="500" lineHeight="16px">
+        <Text fontWeight="500" lineHeight="16px">
           {t('Cliente:')}{' '}
           <Text as="span" fontWeight="700">
             {order?.consumer?.name ?? 'N/E'}
           </Text>
         </Text>
-        <Text fontSize="12px" fontWeight="500" lineHeight="16px">
+        <Text fontWeight="500" lineHeight="16px">
           {t('Hora:')}{' '}
           <Text as="span" fontWeight="700">
             {getDateAndHour(order?.timestamps?.confirmed)}
           </Text>
         </Text>
-        <Text fontSize="12px" fontWeight="500" lineHeight="16px">
+        <Text fontWeight="500" lineHeight="16px">
           {t('Endereço:')}{' '}
           <Text as="span" fontWeight="700">
             {order?.destination?.address.main ?? 'N/E'}
           </Text>
         </Text>
-        <Text fontSize="12px" fontWeight="500" lineHeight="16px">
+        <Text fontWeight="500" lineHeight="16px">
           {t('Complemento:')}{' '}
           <Text as="span" fontWeight="700">
-            {order?.destination?.additionalInfo ?? 'N/I'}
+            {isAdditional ? order?.destination?.additionalInfo : 'N/I'}
           </Text>
         </Text>
         <SectionTitle mt="2" fontSize="18px">
           {t('Detalhes do pedido')}
         </SectionTitle>
-        <Table mt="2" size="sm" variant="unstyled" color="black">
+        <Box mt="2">
+          <Flex flexDir="row" fontWeight="700" borderBottom="1px solid black">
+            <Box w="10%">Qtd.</Box>
+            <Box w="60%">Item</Box>
+            <Box w="30%" textAlign="end">Preço (un.)</Box>
+          </Flex>
+          {renderItems(order?.items)}
+          <Flex flexDir="row" borderTop="1px solid black">
+            <Box w="50%">Total</Box>
+            <Box w="50%" textAlign="end">
+              {order?.fare?.business?.value ? formatCurrency(order.fare.business.value) : 0}
+            </Box>
+          </Flex>
+        </Box>
+        {/* <Table mt="2" size="sm" variant="unstyled" color="black">
           <Thead borderBottom="1px solid black">
             <Tr>
               <Th isNumeric fontSize="12px" px="0" maxW="20px">
@@ -166,18 +220,18 @@ export const OrderToPrinting = React.forwardRef<HTMLDivElement, OrderToPrintProp
               </Th>
             </Tr>
           </Tfoot>
-        </Table>
+        </Table> */}
         <SectionTitle mt="2" fontSize="18px">
           {t('Observações')}
         </SectionTitle>
         {order?.consumer.cpf && (
-          <Text mt="1" fontSize="12px" fontWeight="700">
-            {t('Incluir CPF na nota')}
+          <Text mt="1" fontSize="12px">
+            {t('INCLUIR CPF NA NOTA')}
           </Text>
         )}
         {order?.additionalInfo && (
-          <Text mt="1" fontSize="12px" fontWeight="700">
-            {order?.additionalInfo}
+          <Text mt="1" fontSize="12px">
+            {order?.additionalInfo.toUpperCase()}
           </Text>
         )}
         {!order?.consumer.cpf && !order?.additionalInfo && (
