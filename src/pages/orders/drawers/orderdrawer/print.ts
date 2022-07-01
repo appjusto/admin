@@ -44,11 +44,11 @@ export const getOrderToPrint = (
                     </div>
                   `
                 );
-              }).join().replaceAll(",", "")
+              }).join(" ")
             }
           </div>
       `);
-    }).join().replaceAll(",", "");
+    }).join(" ")
   };
 
   const template = `<html>
