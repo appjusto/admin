@@ -20,7 +20,7 @@ interface OrderToPrintProps {
 const renderItems = (items?: OrderItem[]) => {
   if(items) return items.map(item => {
     return (
-      <Box key={item.id} mb="4">
+      <Box key={item.id} mb="2">
           <Flex flexDir="row" fontWeight="700">
             <Box w="10%">{item.quantity}</Box>
             <Box w="60%">
@@ -52,9 +52,14 @@ const renderItems = (items?: OrderItem[]) => {
           })}
           {
             item.notes && (
-              <Text fontWeight="500">
-                Obs: {item.notes.toUpperCase()}
-              </Text>
+              <Flex flexDir="row">
+                <Box w="10%"></Box>
+                <Box w="90%">
+                  <Text fontWeight="500">
+                    Obs: {item.notes.toUpperCase()}
+                  </Text>
+                </Box>
+              </Flex>
             )
           }
         </Box>
@@ -74,13 +79,13 @@ export const OrderToPrinting = React.forwardRef<HTMLDivElement, OrderToPrintProp
         ref={ref}
         maxW="300px"
         p="4"
-        // position="absolute"
-        // top="0"
-        // left="0"
+        position="absolute"
+        top="0"
+        left="0"
         fontFamily="Tahoma"
         fontSize="12px"
         color="black"
-        // zIndex="-999"
+        zIndex="-999"
       >
         <Flex flexDir="column" alignItems="center">
           <HStack spacing={2} alignItems="center">
@@ -133,7 +138,7 @@ export const OrderToPrinting = React.forwardRef<HTMLDivElement, OrderToPrintProp
             <Box w="30%" textAlign="end">Preço (un.)</Box>
           </Flex>
           {renderItems(order?.items)}
-          <Flex flexDir="row" borderTop="1px solid black">
+          <Flex flexDir="row" borderTop="1px solid black" fontWeight="700">
             <Box w="50%">Total</Box>
             <Box w="50%" textAlign="end">
               {order?.fare?.business?.value ? formatCurrency(order.fare.business.value) : 0}
