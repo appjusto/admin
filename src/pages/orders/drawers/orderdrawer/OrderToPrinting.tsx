@@ -9,7 +9,7 @@ import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile'
 import logoAppjusto from 'common/img/logo-black.svg';
 import React from 'react';
 import { formatCurrency } from 'utils/formatters';
-import { getDateAndHour } from 'utils/functions';
+import { getComplementQtd, getComplementSubtotal, getDateAndHour, getProductSubtotal } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../../../backoffice/drawers/generics/SectionTitle';
 interface OrderToPrintProps {
@@ -29,7 +29,7 @@ const renderItems = (items?: OrderItem[]) => {
               </Text>
             </Box>
             <Box w="30%" textAlign="end">
-              {formatCurrency(item.product.price)}
+              {formatCurrency(getProductSubtotal(item.quantity, item.product.price))}
             </Box>
           </Flex>
           {item.complements && item.complements.map(complement => {
@@ -38,14 +38,14 @@ const renderItems = (items?: OrderItem[]) => {
                 <Box w="10%"></Box>
                 <HStack w="60%" spacing={2}>
                   <Text>
-                    {complement.quantity ?? 1}
+                    {getComplementQtd(item.quantity, complement.quantity)}
                   </Text>
                   <Text>
                     {complement.name ?? 'N/E'}
                   </Text>
                 </HStack>
                 <Box w="30%" textAlign="end">
-                  {formatCurrency(complement.price)}
+                  {formatCurrency(getComplementSubtotal(item.quantity, complement.quantity, complement.price))}
                 </Box>
               </Flex>
             )
@@ -133,9 +133,9 @@ export const OrderToPrinting = React.forwardRef<HTMLDivElement, OrderToPrintProp
         </SectionTitle>
         <Box mt="2">
           <Flex flexDir="row" fontWeight="700" borderBottom="1px solid black">
-            <Box w="10%">Qtd.</Box>
+            <Box w="10%">Qtd</Box>
             <Box w="60%">Item</Box>
-            <Box w="30%" textAlign="end">Preço (un.)</Box>
+            <Box w="30%" textAlign="end">Preço</Box>
           </Flex>
           {renderItems(order?.items)}
           <Flex flexDir="row" borderTop="1px solid black" fontWeight="700">

@@ -3,7 +3,7 @@ import {
   BusinessPhone,
   OrderItem,
   OrderItemComplement,
-  OrderStatus,
+  OrderStatus
 } from '@appjusto/types';
 import { AlgoliaCreatedOn } from 'app/api/types';
 import { CroppedAreaProps } from 'common/components/ImageCropping';
@@ -39,6 +39,25 @@ export const getTranslatedOrderStatus = (status: OrderStatus) => {
   const index = en.indexOf(status);
   return pt[index];
 };
+
+export const getComplementQtd = (itemQtd?: number, complQtd?: number) => {
+  const prod = itemQtd ?? 1;
+  const compl = complQtd ?? 1;
+  return prod * compl;
+}
+
+export const getComplementSubtotal = (itemQtd?: number, complQtd?: number, complPrice?: number) => {
+  const prod = itemQtd ?? 1;
+  const compl = complQtd ?? 1;
+  const price = complPrice ?? 0;
+  return prod * compl * price;
+}
+
+export const getProductSubtotal = (productQtd?: number, productPrice?: number) => {
+  const prod = productQtd ?? 1;
+  const price = productPrice ?? 0;
+  return prod * price;
+}
 
 //date
 export const getDateTime = () => {
