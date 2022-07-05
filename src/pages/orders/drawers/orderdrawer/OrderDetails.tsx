@@ -7,6 +7,13 @@ import { t } from 'utils/i18n';
 import { SectionTitle } from '../../../backoffice/drawers/generics/SectionTitle';
 import { Multiplier } from './Multiplier';
 
+const getComplementSubtotal = (itemQtd?: number, complQtd?: number, complPrice?: number) => {
+  const prod = itemQtd ?? 1;
+  const compl = complQtd ?? 1;
+  const price = complPrice ?? 0;
+  return prod * compl * price;
+}
+
 interface DetailsProps {
   order?: WithId<Order> | null;
 }
@@ -25,7 +32,8 @@ export const OrderDetails = ({ order }: DetailsProps) => {
               <Tr>
                 <Th>{t('Item')}</Th>
                 <Th isNumeric>{t('Qtde.')}</Th>
-                <Th isNumeric>{t('Valor/Item')}</Th>
+                <Th isNumeric>{t('Valor (un.)')}</Th>
+                <Th isNumeric>{t('Subtotal')}</Th>
               </Tr>
             </Thead>
             <Tbody>
@@ -44,6 +52,7 @@ export const OrderDetails = ({ order }: DetailsProps) => {
                     </Td>
                     <Td isNumeric>{item.quantity}</Td>
                     <Td isNumeric>{formatCurrency(item.product.price)}</Td>
+                    <Td isNumeric>{formatCurrency(item.quantity * item.product.price)}</Td>
                   </Tr>
                   {item.complements &&
                     item.complements.map((complement) => (
@@ -66,6 +75,7 @@ export const OrderDetails = ({ order }: DetailsProps) => {
                           )}
                         </Td>
                         <Td isNumeric>{formatCurrency(complement.price)}</Td>
+                        <Td isNumeric>{formatCurrency(getComplementSubtotal(item.quantity, complement.quantity, complement.price))}</Td>
                       </Tr>
                     ))}
                 </React.Fragment>
@@ -74,6 +84,7 @@ export const OrderDetails = ({ order }: DetailsProps) => {
             <Tfoot bgColor="gray.50">
               <Tr color="black">
                 <Th>{t('Valor total de itens:')}</Th>
+                <Th></Th>
                 <Th></Th>
                 <Th isNumeric>
                   {order?.fare?.business?.value ? formatCurrency(order.fare.business.value) : 0}
