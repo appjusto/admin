@@ -43,7 +43,7 @@ async function createWindow() {
   //     slashes: true
   // });
   // const baseURL = isDev ? 'http://localhost:3000' : `file://${__dirname}/../index.html`;
-  const baseURL = isDev ? 'http://localhost:3000' : `https://dev.admin.appjusto.com.br`;
+  const baseURL = isDev ? 'http://localhost:3000' : `https://admin.appjusto.com.br`;
   mainWindow.loadURL(baseURL);
   // if (app.isPackaged) {
   //   // 'build/index.html'
