@@ -1,5 +1,5 @@
 import { CourierProfile, WithId } from '@appjusto/types';
-import { omit, omitBy } from 'lodash';
+import { isEmpty, omit, omitBy } from 'lodash';
 
 export const situationPTOptions = {
   pending: 'Pendente',
@@ -130,7 +130,7 @@ export const adminRolePTOptions = {
 };
 
 export const getEditableProfile = (profile: any, isEditingEmail: boolean) => {
-  let omittedKeys: (keyof WithId<CourierProfile>)[] = [
+  const omittedKeys: (keyof WithId<CourierProfile>)[] = [
     'id',
     'code',
     'createdOn',
@@ -145,7 +145,8 @@ export const getEditableProfile = (profile: any, isEditingEmail: boolean) => {
     'email',
   ];
   if (isEditingEmail) omittedKeys.pop();
-  let editable = omit(profile, omittedKeys);
-  let serialized = omitBy(editable, (value) => !value);
+  const editable = omit(profile, omittedKeys);
+  const serialized = omitBy(editable, (value) => !value);
+  serialized.profileIssuesMessage = !isEmpty(profile.profileIssuesMessage) ? profile.profileIssuesMessage : null;
   return serialized;
 };

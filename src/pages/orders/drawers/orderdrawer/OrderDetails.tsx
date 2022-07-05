@@ -3,9 +3,9 @@ import { Box, Table, Tbody, Td, Text, Tfoot, Th, Thead, Tr } from '@chakra-ui/re
 import * as cpfutils from '@fnando/cpf';
 import React from 'react';
 import { formatCurrency } from 'utils/formatters';
+import { getComplementQtd, getComplementSubtotal, getProductSubtotal } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../../../backoffice/drawers/generics/SectionTitle';
-import { Multiplier } from './Multiplier';
 
 interface DetailsProps {
   order?: WithId<Order> | null;
@@ -20,12 +20,13 @@ export const OrderDetails = ({ order }: DetailsProps) => {
           {order.status !== 'confirmed' && (
             <SectionTitle mt="10">{t('Detalhes do pedido')}</SectionTitle>
           )}
-          <Table size="md" variant="simple">
+          <Table mt="4" size="sm" variant="simple">
             <Thead>
               <Tr>
                 <Th>{t('Item')}</Th>
-                <Th isNumeric>{t('Qtde.')}</Th>
-                <Th isNumeric>{t('Valor/Item')}</Th>
+                <Th isNumeric>{t('Qtd.*')}</Th>
+                <Th isNumeric>{t('Valor (un.)')}</Th>
+                <Th isNumeric>{t('Subtotal')}</Th>
               </Tr>
             </Thead>
             <Tbody>
@@ -44,6 +45,7 @@ export const OrderDetails = ({ order }: DetailsProps) => {
                     </Td>
                     <Td isNumeric>{item.quantity}</Td>
                     <Td isNumeric>{formatCurrency(item.product.price)}</Td>
+                    <Td isNumeric>{formatCurrency(getProductSubtotal(item.quantity, item.product.price))}</Td>
                   </Tr>
                   {item.complements &&
                     item.complements.map((complement) => (
@@ -56,6 +58,9 @@ export const OrderDetails = ({ order }: DetailsProps) => {
                           </Text>
                         </Td>
                         <Td isNumeric>
+                          {getComplementQtd(item.quantity, complement.quantity)}
+                        </Td>
+                        {/* <Td isNumeric>
                           {item.quantity > 1 ? (
                             <Multiplier
                               products={item.quantity}
@@ -64,8 +69,9 @@ export const OrderDetails = ({ order }: DetailsProps) => {
                           ) : (
                             complement.quantity ?? 1
                           )}
-                        </Td>
+                        </Td> */}
                         <Td isNumeric>{formatCurrency(complement.price)}</Td>
+                        <Td isNumeric>{formatCurrency(getComplementSubtotal(item.quantity, complement.quantity, complement.price))}</Td>
                       </Tr>
                     ))}
                 </React.Fragment>
@@ -75,12 +81,14 @@ export const OrderDetails = ({ order }: DetailsProps) => {
               <Tr color="black">
                 <Th>{t('Valor total de itens:')}</Th>
                 <Th></Th>
+                <Th></Th>
                 <Th isNumeric>
                   {order?.fare?.business?.value ? formatCurrency(order.fare.business.value) : 0}
                 </Th>
               </Tr>
             </Tfoot>
           </Table>
+          <Text mt="4" fontSize="xs">{t('* A coluna de quantidade (Qtd.) já exibe o valor total de cada item ou complemento para o pedido.')}</Text>
         </>
       )}
       <SectionTitle mt="10">{t('Observações')}</SectionTitle>
