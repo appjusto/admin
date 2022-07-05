@@ -30,6 +30,7 @@ const Login = () => {
   const [email, setEmail] = React.useState('');
   const [passwd, setPasswd] = React.useState('');
   const [isPassword, setIsPassword] = React.useState(isDesktopApp);
+  const [showDesktopHelp, setShowDesktopHelp] = React.useState(false);
   const isEmailInvalid = React.useMemo(() => !isEmailValid(email), [email]);
   // handlers
   const handleSubmit = (event: React.FormEvent<HTMLDivElement>) => {
@@ -96,12 +97,30 @@ const Login = () => {
               value={passwd}
               handleChange={(ev) => setPasswd(ev.target.value)}
             />
-            <Text mt="4" fontSize="sm">
+            <Text 
+              mt="4" 
+              textAlign="center" 
+              fontSize="sm" 
+              textDecor="underline" 
+              cursor="pointer" 
+              onClick={() => setShowDesktopHelp(true)}
+            >
               {t(
-                'Esqueceu a senha? Acesse o portal do seu restaurante pela web e redefina sua senha.'
+                'Esqueci minha senha'
               )}
             </Text>
-            <Button type="submit" width="full" h="60px" mt="6" isLoading={isLoading}>
+            <Text mt="4" fontSize="sm" display={showDesktopHelp ? "initial" : "none"}>
+              {t(
+                'Acesse o portal do seu restaurante pela web, com o seu e-mail, redefina sua senha e retorne para esta aplicação.'
+              )}
+            </Text>
+            <Button 
+              type="submit" 
+              width="full" 
+              h="60px" mt="6" 
+              isDisabled={email.length === 0 || passwd.length === 0} 
+              isLoading={isLoading}
+            >
               {t('Entrar')}
             </Button>
           </Flex>

@@ -29,6 +29,10 @@ const InactiveAppVersionPage = React.lazy(
 const isDesktopApp = isElectron();
 console.log("isDesktopApp", isDesktopApp);
 export const Router = () => {
+  React.useEffect(() => {
+    if(!isDesktopApp) return;
+    document.title = "AppJusto | Restaurantes"
+  }, [])
   return (
     <MainErrorBoundary>
       <BrowserRouter>
