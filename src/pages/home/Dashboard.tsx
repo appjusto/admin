@@ -15,6 +15,8 @@ import PageHeader from '../PageHeader';
 import { LineChart } from './LineChart';
 import { RegistrationStatus } from './RegistrationStatus';
 
+const isDesktopApp = isElectron();
+
 interface InfoBoxProps extends BoxProps {
   isJoined?: boolean;
   data?: any;
@@ -154,7 +156,7 @@ const Dashboard = () => {
             isNew={false}
           /> */}
           {
-            !isElectron() && (
+            !isDesktopApp && (
               <NewFeatureBox
                 icon={ExtensionIcon}
                 iconSize="lg"

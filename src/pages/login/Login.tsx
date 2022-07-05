@@ -1,4 +1,5 @@
 import { Box, Button, Flex, Text } from '@chakra-ui/react';
+import { isElectron } from '@firebase/util';
 import { useAuthentication } from 'app/api/auth/useAuthentication';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { AlertSuccess } from 'common/components/AlertSuccess';
@@ -14,6 +15,8 @@ import { Redirect } from 'react-router-dom';
 import { isEmailValid, normalizeEmail } from 'utils/email';
 import { t } from 'utils/i18n';
 
+const isDesktopApp = isElectron();
+
 const Login = () => {
   // context
   const { dispatchAppRequestResult } = useContextAppRequests();
@@ -26,7 +29,7 @@ const Login = () => {
   const [isLogin, setIsLogin] = React.useState(true);
   const [email, setEmail] = React.useState('');
   const [passwd, setPasswd] = React.useState('');
-  const [isPassword, setIsPassword] = React.useState(false);
+  const [isPassword, setIsPassword] = React.useState(isDesktopApp);
   const isEmailInvalid = React.useMemo(() => !isEmailValid(email), [email]);
   // handlers
   const handleSubmit = (event: React.FormEvent<HTMLDivElement>) => {
@@ -52,6 +55,63 @@ const Login = () => {
   }, [isPassword]);
   // UI
   if (isPassword && isSuccess) return <Redirect to="/app" />;
+  if (isDesktopApp) {
+    return (
+      <Flex w="100wh" h="100vh" justifyContent={{ sm: 'center' }}>
+        <Box w={{ lg: 1 / 3 }} display={{ base: 'none', lg: 'block' }}>
+          <Image src={leftImage} scrollCheck={false} w="100%" h="100vh" />
+        </Box>
+        <Flex
+          flexDir="column"
+          justifyContent="center"
+          alignItems="center"
+          w={{ base: '100%', md: '80%', lg: 1 / 3 }}
+          px={{ base: '8', md: '24', lg: '8' }}
+        >
+          <Image src={logo} scrollCheck={false} mb="8" />
+          <Text fontSize="xl" color="black" textAlign="center">
+            {t('Entrar no portal do restaurante')}
+          </Text>
+          <Text fontSize="md" textAlign="center" color="gray.700">
+            {t('Gerencie seu estabelecimento')}
+          </Text>
+          <Flex as="form" w="100%" flexDir="column" onSubmit={handleSubmit}>
+            <CustomInput
+              ref={emailRef}
+              isRequired
+              type="email"
+              id="login-email"
+              label={t('E-mail')}
+              placeholder={t('Endereço de e-mail')}
+              value={email}
+              handleChange={(ev) => setEmail(normalizeEmail(ev.target.value))}
+              isInvalid={email !== '' && isEmailInvalid}
+            />
+            <CustomPasswordInput
+              ref={passwdRef}
+              isRequired={isPassword}
+              id="login-password"
+              label={t('Senha')}
+              placeholder={t('Senha de acesso')}
+              value={passwd}
+              handleChange={(ev) => setPasswd(ev.target.value)}
+            />
+            <Text mt="4" fontSize="sm">
+              {t(
+                'Esqueceu a senha? Acesse o portal do seu restaurante pela web e redefina sua senha.'
+              )}
+            </Text>
+            <Button type="submit" width="full" h="60px" mt="6" isLoading={isLoading}>
+              {t('Entrar')}
+            </Button>
+          </Flex>
+        </Flex>
+        <Box w={{ lg: 1 / 3 }} display={{ base: 'none', lg: 'block' }}>
+          <Image src={rightImage} scrollCheck={false} w="100%" h="100vh" />
+        </Box>
+      </Flex>
+    )
+  }
   return (
     <Flex w="100wh" h="100vh" justifyContent={{ sm: 'center' }}>
       <Box w={{ lg: 1 / 3 }} display={{ base: 'none', lg: 'block' }}>
