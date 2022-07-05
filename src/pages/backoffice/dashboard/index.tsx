@@ -39,6 +39,9 @@ const BODashboard = () => {
   };
   // side effects
   React.useEffect(() => {
+    document.title = "AppJusto | Backoffice"
+  }, [])
+  React.useEffect(() => {
     if (!user?.uid) return;
     if (staffFilter === 'my') {
       setListOrders(orders.filter((order) => order.staff?.id === user.uid));
