@@ -1,5 +1,4 @@
 import { Box, Button, Flex, Link, Text } from '@chakra-ui/react';
-import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { OnboardingProps } from './onboarding/types';

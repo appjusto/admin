@@ -67,6 +67,9 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const [coverExists, setCoverExists] = React.useState(false);
   const [logoFiles, setLogoFiles] = React.useState<File[] | null>(null);
   const [coverFiles, setCoverFiles] = React.useState<File[] | null>(null);
+  const [isLoading, setIsLoading] = React.useState(false);
+  // helpers
+  const blockImagesOnLoading = typeof onboarding === 'string' && isLoading;
   // refs
   const cnpjRef = React.useRef<HTMLInputElement>(null);
   //const phoneRef = React.useRef<HTMLInputElement>(null);
@@ -80,7 +83,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
     cover,
     updateWithImagesResult,
   } = useBusinessProfile(typeof onboarding === 'string');
-  const { isLoading, isSuccess } = updateWithImagesResult;
+  const { isSuccess } = updateWithImagesResult;
   // handlers
   const openDrawerHandler = () => history.push(`${path}/delete`);
   const closeDrawerHandler = () => history.replace(path);
@@ -129,6 +132,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
       });
       return;
     }
+    setIsLoading(true);
     const changes = {
       name: name.trim(),
       companyName: companyName.trim(),
@@ -146,10 +150,16 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
     const logoFileToSave = logoFiles ? logoFiles[0] : null;
     const coverFilesToSave = coverFiles ?? null;
     try {
+      if(business === null) {
+        await createBusinessProfile();
+      }
       await updateBusinessProfileWithImages({ changes, logoFileToSave, coverFilesToSave });
+      setIsLoading(false);
       // invalidate logo query
       if (logoFiles) queryClient.invalidateQueries(['business:logo', business?.id]);
-    } catch (error) { }
+    } catch (error) {
+      setIsLoading(false);
+    }
   };
   const clearDropImages = React.useCallback((type: string) => {
     if (type === 'logo') {
@@ -192,10 +202,8 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
       setCuisineName(business.cuisine ?? '');
       if (business.logoExists && logo) setLogoExists(true);
       if (business.coverImageExists && cover) setCoverExists(true);
-    } else if (business === null) {
-      createBusinessProfile();
-    }
-  }, [business, cover, logo, createBusinessProfile]);
+    } 
+  }, [business, cover, logo]);
   // UI
   const breakpoint = useBreakpoint();
   const coverWidth = breakpoint === 'base' ? 328 : breakpoint === 'md' ? 420 : 536;
@@ -303,7 +311,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
             mt="4"
             width={200}
             height={200}
-            imageUrl={logo}
+            imageUrl={blockImagesOnLoading ? null : logo}
             ratios={logoRatios}
             resizedWidth={logoResizedWidth}
             placeholderText={t('Logo do estabelecimento')}
@@ -325,7 +333,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
             mt="4"
             width={coverWidth}
             height={coverWidth / coverRatios[0]}
-            imageUrl={cover}
+            imageUrl={blockImagesOnLoading ? null : cover}
             ratios={coverRatios}
             resizedWidth={coverResizedWidth}
             placeholderText={t('Imagem de capa')}

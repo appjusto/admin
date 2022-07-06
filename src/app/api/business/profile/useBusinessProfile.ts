@@ -21,11 +21,12 @@ export const useBusinessProfile = (isOnboarding: boolean = false) => {
     businessId ? api.business().getBusinessCoverURL(businessId!, '1008x360') : null;
   const { data: cover } = useQuery(['business:cover', businessId], getBusinessCoverURL);
   // mutations
-  const { mutate: createBusinessProfile } = useCustomMutation(
+  const { mutateAsync: createBusinessProfile } = useCustomMutation(
     async () => {
       const business = await api.business().createBusinessProfile();
       setBusinessId(business.id);
-      if (refreshUserToken) refreshUserToken(business.id);
+      if (refreshUserToken) await refreshUserToken(business.id);
+      return console.log('Restaurante criado!');
     },
     'createBusinessProfile',
     false
