@@ -9,6 +9,12 @@ export const Button = {
     borderRadius: 'lg',
     whiteSpace: 'normal',
     wordWrap: 'break-word',
+    _loading: { 
+      opacity: 1,
+      _hover: {
+        color: 'grey'
+      } 
+    }
   },
   // Variants
   variants: {
