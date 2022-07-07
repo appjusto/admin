@@ -76,6 +76,12 @@ export const OrderBaseDrawer = ({
   const canDeleteOrder =
     order?.status === 'quote' && userAbility?.can('delete', { kind: 'orders', ...order });
   // handlers
+  const handleConfirm = () => {
+    if(order?.scheduledTo) {
+      return updateOrderStatus('scheduled');
+    } 
+    return updateOrderStatus('confirmed');
+  }
   const handleDelete = async () => {
     if (!order?.id) {
       return dispatchAppRequestResult({
@@ -180,7 +186,7 @@ export const OrderBaseDrawer = ({
                 canUpdateOrder={canUpdateOrder}
                 message={message}
                 updateMessage={(message: string) => updateState('message', message)}
-                handleConfirm={() => updateOrderStatus('confirmed')}
+                handleConfirm={handleConfirm}
                 handleCancel={() => cancellation('prevention')}
                 loadingState={loadingState}
               />
