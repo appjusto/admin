@@ -3,7 +3,7 @@ import {
   DispatchingStatus,
   OrderChangeLog,
   OrderStatus,
-  WithId,
+  WithId
 } from '@appjusto/types';
 import { Box, Circle, HStack, Icon, Skeleton, Text } from '@chakra-ui/react';
 import { useObserveOrderChangeLogs } from 'app/api/order/useObserveOrderChangeLogs';
@@ -119,7 +119,7 @@ export const OrderTracking = ({ orderId, isCompact }: OrderTrackingProps) => {
       <Box>
         <HStack spacing={2} alignItems="center">
           <Text fontSize="12px" lineHeight="18px" fontWeight="700">
-            {currentStatus ? orderStatusPTOptions[currentStatus].toUpperCase() : 'N/E'}
+            {currentStatus ? orderStatusPTOptions[currentStatus]?.toUpperCase() : 'N/E'}
             {': '}
             <Text as="span" color={matchingLabelColor}>
               {getMatchingLabel()}

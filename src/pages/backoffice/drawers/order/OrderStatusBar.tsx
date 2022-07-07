@@ -6,17 +6,22 @@ import {
   OrderStatus,
   OrderType
 } from '@appjusto/types';
-import { Box, Flex, HStack, Icon, Link, RadioGroup, Text, Textarea } from '@chakra-ui/react';
+import { Box, Button, Flex, HStack, Icon, Link, RadioGroup, Text, Textarea } from '@chakra-ui/react';
 import { useObserveOrderPrivateConfirmation } from 'app/api/order/useObserveOrderPrivateConfirmation';
+import { useOrder } from 'app/api/order/useOrder';
 import { useOrderNotes } from 'app/api/order/useOrderNotes';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import { ProfileNotes } from 'common/components/backoffice/ProfileNotes';
 import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import CustomRadio from 'common/components/form/CustomRadio';
+import React from 'react';
 import { MdOpenInNew } from 'react-icons/md';
 import { formatCurrency } from 'utils/formatters';
 import { getOrderCancellator } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
+
+type ReprocessingType = 'status'| 'dispatchingState' | null;
 
 interface OrderStatusProps {
   orderId: string;
@@ -50,17 +55,33 @@ export const OrderStatusBar = ({
   courierId,
 }: OrderStatusProps) => {
   // context
+  const { isBackofficeSuperuser } = useContextFirebaseUser()
+  const { updateOrder } = useOrder (orderId);
   const { confirmation, frontUrl, packageUrl } = useObserveOrderPrivateConfirmation(
     orderId,
     courierId
   );
   const { orderNotes, updateOrderNote, deleteOrderNote, updateResult, deleteResult } =
     useOrderNotes(orderId);
+  // states
+  const [reprocessing, setReprocessing] = React.useState<ReprocessingType>(null);
   // helpers
   const isOrderActive = orderStatus
     ? ['preparing', 'ready', 'dispatching'].includes(orderStatus)
     : false;
   const cancelator = getOrderCancellator(issue?.type);
+  // handlers
+  const handleReprocessing = async (type: ReprocessingType) => {
+    if(type === 'status') {
+      setReprocessing('status');
+      const current = orderStatus;
+      // @ts-ignore
+      updateOrder({ status: 'reprocessing' });
+      // @ts-ignore
+      if (current) updateOrder({ status: current });
+      setReprocessing(null);
+    }
+  };
   // UI
   return (
     <Box px="4">
@@ -139,6 +160,31 @@ export const OrderStatusBar = ({
           </Box>
         )}
       </Flex>
+      {
+        isBackofficeSuperuser && isOrderActive && (
+          <>
+            <SectionTitle>{t('Reprocessamento:')}</SectionTitle>
+            <HStack mt="4">
+              <Button 
+                w="100%" 
+                variant="secondary" 
+                size="md"
+                onClick={() => handleReprocessing('status')}
+                isLoading={reprocessing === 'status'}
+              >
+                {t('Reprocessar Status')}
+              </Button>
+              <Button 
+                w="100%" 
+                variant="secondary" 
+                size="md"
+              >
+                {t('Reprocessar Matching')}
+              </Button>
+            </HStack>
+          </>
+        )
+      }
       {orderStatus === 'delivered' && (
         <>
           <SectionTitle>{t('Dados da confirmação:')}</SectionTitle>

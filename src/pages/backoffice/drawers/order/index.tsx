@@ -70,6 +70,8 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
     orderCancellation,
     orderCancellationCosts,
   } = useOrder(orderId);
+  console.log("dispatchingStatus", order?.dispatchingStatus)
+  // console.log("dispatchingState", order?.dispatchingState)
   const { invoices, logs } = useObserveOrderInvoices(orderId);
   const cancelOptions = useIssuesByType(cancelOptionsArray);
   const { addFlaggedLocation } = useFlaggedLocations();

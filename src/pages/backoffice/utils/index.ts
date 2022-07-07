@@ -39,6 +39,7 @@ export const orderStatusPTOptions = {
   delivered: 'Entregue',
   canceled: 'Cancelado',
   expired: 'Expirado',
+  reprocessing: 'Reprocessando',
 };
 
 export const orderStatusPTOptionsForTableItem = {
