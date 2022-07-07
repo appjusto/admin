@@ -1,7 +1,6 @@
 import { BusinessPhone } from '@appjusto/types';
 import { Box, Button, Text } from '@chakra-ui/react';
 import { useContextFirebaseUser } from 'app/state/auth/context';
-import React from 'react';
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
 import { t } from 'utils/i18n';
 import { BusinessPhoneItem } from './BusinessPhoneItem';
@@ -15,6 +14,7 @@ interface BusinessPhonesProps {
   handlePhoneUpdate(index: number, field: BusinessPhoneField, value: any): void;
   handleOrdering?(newPhones: BusinessPhone[]): void;
   isBackoffice?: boolean;
+  isOnboarding?: boolean;
 }
 
 export const BusinessPhones = ({
@@ -24,11 +24,12 @@ export const BusinessPhones = ({
   handlePhoneUpdate,
   handleOrdering,
   isBackoffice = false,
+  isOnboarding = false,
 }: BusinessPhonesProps) => {
   // context
   const { userAbility } = useContextFirebaseUser();
   // helpers
-  const userCanUpdate = userAbility?.can('update', 'businesses');
+  const userCanUpdate = userAbility?.can('update', 'businesses') || isOnboarding;
   // handlers
   const onDragEnd = (result: DropResult) => {
     const { destination, source } = result;

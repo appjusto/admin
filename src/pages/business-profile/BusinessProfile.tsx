@@ -296,6 +296,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
             handlePhoneUpdate={handlePhoneUpdate}
             addPhone={addPhone}
             removePhone={removePhone}
+            isOnboarding={typeof onboarding === 'string'}
           />
           {/* logo */}
           <Text mt="8" fontSize="xl" color="black">
