@@ -9,7 +9,7 @@ import { ReactComponent as Alarm } from 'common/img/alarm_outlined.svg';
 import { Timestamp } from 'firebase/firestore';
 import React from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
-import { getTimestampMilliseconds, getTimeUntilNow } from 'utils/functions';
+import { getDateAndHour, getTimestampMilliseconds, getTimeUntilNow } from 'utils/functions';
 import { t } from 'utils/i18n';
 
 // const confirmedKey = 'confirmed';
@@ -130,6 +130,36 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
               <Text fontWeight="700">{t('Cancelado')}</Text>
               {/* <Text fontWeight="500">{cancelator}</Text> */}
             </Flex>
+          </Flex>
+        </Box>
+      </Link>
+    );
+  }
+  if (order.status === 'scheduled') {
+    return (
+      <Link to={`${url}/${order.id}`}>
+        <Box
+          p="4"
+          // bg="green.300"
+          borderRadius="lg"
+          borderColor="black"
+          borderWidth="2px"
+          color="black"
+          cursor="pointer"
+        >
+          <Flex justifyContent="space-between" alignItems="center">
+            <Box maxW="90px">
+              <Text fontSize="lg" fontWeight="700">
+                #{order.code}
+              </Text>
+              <Text fontSize="xs" lineHeight="lg">
+                {`{${conrumerName}}`}
+              </Text>
+            </Box>
+            <Box>
+              <Text fontSize="sm" textAlign="end">{t(`Agendado para:`)}</Text>
+              <Text fontSize="sm">{order?.scheduledTo ? getDateAndHour(order.scheduledTo) : 'N/I'}</Text>
+            </Box>
           </Flex>
         </Box>
       </Link>
