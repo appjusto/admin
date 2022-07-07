@@ -8,7 +8,7 @@ import {
   InputRightElement,
   Link,
   Stack,
-  Text,
+  Text
 } from '@chakra-ui/react';
 import { splitByStatus } from 'app/api/order/selectors';
 import { useOrdersContext } from 'app/state/order';
@@ -22,7 +22,7 @@ import { OrderSearchResult } from './OrderSearchResult';
 import { OrdersKanbanList } from './OrdersKanbanList';
 import { PrintSwitch } from './PrintSwitch';
 
-const statuses = ['confirmed', 'preparing', 'ready', 'dispatching', 'canceled'] as OrderStatus[];
+const statuses = ['scheduled', 'confirmed', 'preparing', 'ready', 'dispatching', 'canceled'] as OrderStatus[];
 
 export const OrdersKanban = () => {
   // context
@@ -137,6 +137,11 @@ export const OrdersKanban = () => {
         <OrderSearchResult orders={searchResult} />
       ) : (
         <Stack w="100%" direction={{ base: 'column', lg: 'row' }} mt="8" spacing={4}>
+          <OrdersKanbanList
+            title={t('Agendados')}
+            orders={ordersByStatus['scheduled']}
+            details={t('Aqui você verá os pedidos agendados.')}
+          />
           <Stack w="100%" direction={{ base: 'column', md: 'row' }} spacing={4}>
             <OrdersKanbanList
               title={t('Pedidos a confirmar')}

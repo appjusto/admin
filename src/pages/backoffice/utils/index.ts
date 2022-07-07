@@ -28,6 +28,7 @@ export const courierLocationStatusPTOptions = {
 
 export const orderStatusPTOptions = {
   quote: 'Cotação',
+  scheduled: 'Agendado',
   confirming: 'Aguardando confirmação',
   charged: 'Cobrado',
   declined: 'Recusado',
@@ -43,6 +44,7 @@ export const orderStatusPTOptions = {
 
 export const orderStatusPTOptionsForTableItem = {
   quote: 'Cotação',
+  scheduled: 'Agendado',
   confirming: 'Confirmando',
   charged: 'Cobrado',
   declined: 'Recusado',
@@ -68,6 +70,7 @@ export const orderDispatchingStatusPTOptions = {
 };
 
 export const invoiceTypePTOptions = {
+  order: 'Pedido',
   products: 'Produtos',
   delivery: 'Entrega',
   platform: 'Plataforma',
