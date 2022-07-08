@@ -41,7 +41,8 @@ export const BOOrderListItem = ({ order }: Props) => {
   React.useEffect(() => {
     const setNewTime = () => {
       const now = getServerTime().getTime();
-      const chargedOn = getTimestampMilliseconds(order.timestamps.charged as Timestamp);
+      const comparisonTime = order.scheduledTo ? order.timestamps.confirmed : order.timestamps.charged;
+      const chargedOn = getTimestampMilliseconds(comparisonTime as Timestamp);
       const time = chargedOn ? getTimeUntilNow(now, chargedOn) : null;
       if (time) setOrderDT(time);
     };
