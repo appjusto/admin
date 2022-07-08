@@ -46,7 +46,7 @@ export const ScheduledOrders = ({ orders }: OrderSearchProps) => {
             <OrdersKanbanList
               title={`Dia ${group.date}`}
               orders={group.orders}
-              minW={{ lg: '260px' }}
+              minW={{ lg: '280px' }}
             />
           </WrapItem>
         ))

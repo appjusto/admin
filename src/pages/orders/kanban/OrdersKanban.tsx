@@ -174,7 +174,7 @@ export const OrdersKanban = () => {
                       title={t('Agendados para hoje')}
                       orders={ordersScheduledForToday}
                       details={t('Aqui você verá os pedidos agendados.')}
-                      maxW={{ lg: '260px' }}
+                      maxW={{ lg: '280px' }}
                     />
                   )
                 }
