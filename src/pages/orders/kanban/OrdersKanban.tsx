@@ -18,6 +18,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { ChatButton } from './ChatButton';
+import { getFakeOrders } from './fakeOrders';
 import { OrderSearchResult } from './OrderSearchResult';
 import { OrdersKanbanList } from './OrdersKanbanList';
 import { PrintSwitch } from './PrintSwitch';
@@ -27,7 +28,9 @@ const statuses = ['scheduled', 'confirmed', 'preparing', 'ready', 'dispatching',
 export const OrdersKanban = () => {
   // context
   //const { path } = useRouteMatch();
-  const { business, orders, newChatMessages } = useOrdersContext();
+  // const { business, orders, newChatMessages } = useOrdersContext();
+  const { business, newChatMessages } = useOrdersContext();
+  const orders = getFakeOrders();
   // state
   const ordersByStatus = splitByStatus(orders, statuses);
   const [dateTime, setDateTime] = React.useState('');
