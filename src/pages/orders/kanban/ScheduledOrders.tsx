@@ -43,7 +43,7 @@ export const ScheduledOrders = ({ orders }: OrderSearchProps) => {
     <Wrap mt="8">
       {
         splitedByDay.map(group => (
-          <WrapItem>
+          <WrapItem key={group.orders[0].id}>
             <OrdersKanbanList
               title={group.date}
               orders={group.orders}

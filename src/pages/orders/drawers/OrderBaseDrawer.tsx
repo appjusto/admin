@@ -13,7 +13,7 @@ import {
   HStack,
   Icon,
   Text,
-  Tooltip,
+  Tooltip
 } from '@chakra-ui/react';
 import { useOrdersContext } from 'app/state/order';
 import { CustomButton } from 'common/components/buttons/CustomButton';
@@ -175,6 +175,14 @@ export const OrderBaseDrawer = ({
                     {t('Status:')}{' '}
                     <Text as="span" color="black" fontWeight="700">
                       {order?.status ? orderStatusPTOptions[order.status] : 'N/E'}
+                    </Text>
+                  </Text>
+                )}
+                {order?.scheduledTo && order?.status === 'scheduled' && (
+                  <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
+                    {t('Preparo agendado para:')}{' '}
+                    <Text as="span" color="black" fontWeight="700">
+                      {getDateAndHour(order.scheduledTo)}
                     </Text>
                   </Text>
                 )}

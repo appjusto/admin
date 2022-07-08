@@ -8,6 +8,7 @@ interface FilterProps {
 }
 
 export const PageSelector = ({ isActive, label, onClick, orders, ...props }: FilterProps) => {
+  const isFirst = label.includes('Hoje');
   return (
     <Flex
       py="2"
@@ -19,9 +20,11 @@ export const PageSelector = ({ isActive, label, onClick, orders, ...props }: Fil
       fontWeight="500"
       _hover={{ textDecor: 'none' }}
       _focus={{ boxShadow: 'none' }}
-      bgColor={isActive ? 'white' : '#EEEEEE'}
+      bgColor={isActive ? 'white' : '#EEEEEE4F'}
+      border="1px solid #EEEEEE"
       borderBottom={isActive ? '4px solid #78E08F' : 'none'}
-      borderTopRadius="lg"
+      borderTopLeftRadius={isFirst ? 'lg' : '0' }
+      borderTopRightRadius={!isFirst ? 'lg' : '0' }
       cursor="pointer"
       onClick={onClick}
       aria-label={`nav-${label}`}

@@ -1,9 +1,7 @@
 import { Order, OrderStatus, WithId } from '@appjusto/types';
 import {
   Box,
-  Flex,
-  HStack,
-  Icon,
+  Flex, Icon,
   Input,
   InputGroup,
   InputRightElement,
@@ -47,8 +45,8 @@ export const OrdersKanban = () => {
   const [orderSearch, setOrderSearch] = React.useState('');
   const [searchResult, setSearchResult] = React.useState<WithId<Order>[]>([]);
   // helpers
-  const todayOrders = orders.length;
-  const nextDayOrders = orders.length;
+  const todayOrders = orders.length + ordersScheduledForToday.length;
+  const nextDayOrders = ordersScheduledForNextDays.length;
   const isNewChatMessage = newChatMessages.length > 0;
   // side effects
   React.useEffect(() => {
@@ -152,21 +150,19 @@ export const OrdersKanban = () => {
         <OrderSearchResult orders={searchResult} />
       ) : (
         <>
-          <Flex mt="8" w="100%" justifyContent="space-between" borderBottom="1px solid #C8D7CB">
-            <HStack>
-              <PageSelector
-                isActive={currentPage === 'realtime' ? true : false}
-                label={t('Para Hoje')}
-                onClick={() => setCurrentPage('realtime')}
-                orders={todayOrders}
-              />
-              <PageSelector
-                isActive={currentPage === 'scheduled' ? true : false}
-                label={t('Agendados para próximos dias')}
-                onClick={() => setCurrentPage('scheduled')}
-                orders={nextDayOrders}
-              />
-            </HStack>
+          <Flex mt="8" w="100%" borderBottom="1px solid #C8D7CB">
+            <PageSelector
+              isActive={currentPage === 'realtime' ? true : false}
+              label={t('Para Hoje')}
+              onClick={() => setCurrentPage('realtime')}
+              orders={todayOrders}
+            />
+            <PageSelector
+              isActive={currentPage === 'scheduled' ? true : false}
+              label={t('Agendados para próximos dias')}
+              onClick={() => setCurrentPage('scheduled')}
+              orders={nextDayOrders}
+            />
           </Flex>
           {
             currentPage === 'realtime' ? (

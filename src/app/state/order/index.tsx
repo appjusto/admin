@@ -34,7 +34,7 @@ interface ContextProps {
 
 const OrdersContext = React.createContext<ContextProps>({} as ContextProps);
 
-const statuses = ['scheduled', 'confirmed', 'preparing', 'ready', 'dispatching'] as OrderStatus[];
+const statuses = ['confirmed', 'preparing', 'ready', 'dispatching'] as OrderStatus[];
 
 interface ProviderProps {
   children: React.ReactNode | React.ReactNode[];
