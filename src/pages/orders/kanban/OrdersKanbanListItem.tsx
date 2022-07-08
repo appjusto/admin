@@ -140,7 +140,6 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
       <Link to={`${url}/${order.id}`}>
         <Box
           p="4"
-          // bg="green.300"
           borderRadius="lg"
           borderColor="green.700"
           borderWidth="2px"
@@ -159,7 +158,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
             <Box>
               <Text fontSize="sm" textAlign="end">{t('Preparo agendado')}</Text>
               <Text fontSize="sm" textAlign="end">
-                {t('para ')} 
+                {t('para às ')} 
                 <Text as="span" fontWeight="700">
                   {order?.scheduledTo ? getHourAndMinute(order.scheduledTo) : 'N/I'}
                 </Text>

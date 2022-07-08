@@ -1,16 +1,15 @@
 import { Order, WithId } from '@appjusto/types';
-import { Box, Circle, Flex, Stack, Text } from '@chakra-ui/react';
+import { Box, Circle, Flex, FlexProps, Stack, Text } from '@chakra-ui/react';
 import { ShowIf } from 'core/components/ShowIf';
-import React from 'react';
 import { OrdersKanbanListItem } from './OrdersKanbanListItem';
 
-interface Props {
+interface OrdersKanbanListProps extends FlexProps {
   title: string;
   orders: WithId<Order>[];
   details?: string;
 }
 
-export const OrdersKanbanList = ({ title, orders, details }: Props) => {
+export const OrdersKanbanList = ({ title, orders, details, ...props }: OrdersKanbanListProps) => {
   return (
     <Flex
       w="100%"
@@ -21,6 +20,7 @@ export const OrdersKanbanList = ({ title, orders, details }: Props) => {
       borderWidth="1px"
       borderTopWidth="0px"
       direction="column"
+      {...props}
     >
       <Box
         h={['60px']}

@@ -10,6 +10,7 @@ import { useObserveConfirmedOrders } from 'app/api/order/useObserveConfirmedOrde
 import { useObserveOrders } from 'app/api/order/useObserveOrders';
 import { useObserveOrdersCompletedInTheLastHour } from 'app/api/order/useObserveOrdersCompletedInTheLastHour';
 import { useObservePreparingOrders } from 'app/api/order/useObservePreparingOrders';
+import { useObserveScheduledOrders } from 'app/api/order/useObserveScheduledOrders';
 import { usePlatformParams } from 'app/api/platform/usePlatformParams';
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusiness } from 'app/state/business/context';
@@ -20,6 +21,7 @@ import { useContextAppRequests } from '../requests/context';
 
 interface ContextProps {
   business: WithId<Business> | null | undefined;
+  scheduledOrders: WithId<Order>[];
   orders: WithId<Order>[];
   confirmedNumber: number;
   chats: OrderChatGroup[];
@@ -46,6 +48,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   const { isBackofficeUser } = useContextFirebaseUser();
   const { business } = useContextBusiness();
   const { sendBusinessKeepAlive } = useBusinessProfile();
+  const scheduledOrders = useObserveScheduledOrders(business?.id)
   const activeOrders = useObserveOrders(statuses, business?.id);
   const completedAndActiveOrders = useObserveOrdersCompletedInTheLastHour(business?.id);
   //const canceledOrders = useCanceledOrders(business?.id);
@@ -195,6 +198,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
     <OrdersContext.Provider
       value={{
         business,
+        scheduledOrders,
         orders,
         confirmedNumber,
         chats,

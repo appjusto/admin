@@ -2,6 +2,7 @@ import { Order, OrderStatus, WithId } from '@appjusto/types';
 import {
   Box,
   Flex,
+  HStack,
   Icon,
   Input,
   InputGroup,
@@ -13,32 +14,41 @@ import {
 import { splitByStatus } from 'app/api/order/selectors';
 import { useOrdersContext } from 'app/state/order';
 import { ReactComponent as SearchIcon } from 'common/img/searchIcon.svg';
+import { difference } from 'lodash';
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { ChatButton } from './ChatButton';
-import { getFakeOrders } from './fakeOrders';
+// import { getFakeOrders } from './fakeOrders';
 import { OrderSearchResult } from './OrderSearchResult';
 import { OrdersKanbanList } from './OrdersKanbanList';
+import { PageSelector } from './PageSelector';
 import { PrintSwitch } from './PrintSwitch';
+import { ScheduledOrders } from './ScheduledOrders';
 import { ordersScheduledDayFilter } from './utils';
 
-const statuses = ['scheduled', 'confirmed', 'preparing', 'ready', 'dispatching', 'canceled'] as OrderStatus[];
+const statuses = ['confirmed', 'preparing', 'ready', 'dispatching', 'canceled'] as OrderStatus[];
+
+type Pages = 'realtime' | 'scheduled';
 
 export const OrdersKanban = () => {
   // context
   //const { path } = useRouteMatch();
-  // const { business, orders, newChatMessages } = useOrdersContext();
-  const { business, newChatMessages } = useOrdersContext();
-  const orders = getFakeOrders();
+  const { business, scheduledOrders, orders, newChatMessages } = useOrdersContext();
+  // const { business, newChatMessages } = useOrdersContext();
+  // const orders = getFakeOrders();
   // state
   const ordersByStatus = splitByStatus(orders, statuses);
-  const ordersScheduledForToday = ordersScheduledDayFilter(ordersByStatus['scheduled']);
+  const ordersScheduledForToday = ordersScheduledDayFilter(scheduledOrders);
+  const ordersScheduledForNextDays = difference(scheduledOrders, ordersScheduledForToday);
+  const [currentPage, setCurrentPage] = React.useState<Pages>('realtime');
   const [dateTime, setDateTime] = React.useState('');
   const [orderSearch, setOrderSearch] = React.useState('');
   const [searchResult, setSearchResult] = React.useState<WithId<Order>[]>([]);
   // helpers
+  const todayOrders = orders.length;
+  const nextDayOrders = orders.length;
   const isNewChatMessage = newChatMessages.length > 0;
   // side effects
   React.useEffect(() => {
@@ -141,39 +151,68 @@ export const OrdersKanban = () => {
       {orderSearch.length > 0 ? (
         <OrderSearchResult orders={searchResult} />
       ) : (
-        <Stack w="100%" direction={{ base: 'column', lg: 'row' }} mt="8" spacing={4}>
-          <OrdersKanbanList
-            title={t('Agendados')}
-            orders={ordersScheduledForToday}
-            details={t('Aqui você verá os pedidos agendados.')}
-          />
-          <Stack w="100%" direction={{ base: 'column', md: 'row' }} spacing={4}>
-            <OrdersKanbanList
-              title={t('Pedidos a confirmar')}
-              orders={ordersByStatus['confirmed']}
-              details={t('Aqui você verá os novos pedidos. Aceite-os para confirmar o preparo.')}
-            />
-            <OrdersKanbanList
-              title={t('Em preparação')}
-              orders={ordersByStatus['preparing']}
-              details={t(
-                'Aqui você verá os pedidos que estão sendo preparados por você. Quando clicar em "Pedido pronto” ou o tempo expirar, o entregador estará esperando para buscá-lo.'
-              )}
-            />
-          </Stack>
-          <Stack w="100%" direction={{ base: 'column', md: 'row' }} spacing={4}>
-            <OrdersKanbanList
-              title={t('Retirada/entrega')}
-              orders={[...ordersByStatus['ready'], ...ordersByStatus['dispatching']]}
-              details={t('Aqui você verá os pedidos aguardando retirada pelo entregador.')}
-            />
-            <OrdersKanbanList
-              title={t('Pedidos cancelados')}
-              orders={ordersByStatus['canceled']}
-              details={t('Aqui você verá os pedidos cancelados.')}
-            />
-          </Stack>
-        </Stack>
+        <>
+          <Flex mt="8" w="100%" justifyContent="space-between" borderBottom="1px solid #C8D7CB">
+            <HStack>
+              <PageSelector
+                isActive={currentPage === 'realtime' ? true : false}
+                label={t('Para Hoje')}
+                onClick={() => setCurrentPage('realtime')}
+                orders={todayOrders}
+              />
+              <PageSelector
+                isActive={currentPage === 'scheduled' ? true : false}
+                label={t('Agendados para próximos dias')}
+                onClick={() => setCurrentPage('scheduled')}
+                orders={nextDayOrders}
+              />
+            </HStack>
+          </Flex>
+          {
+            currentPage === 'realtime' ? (
+              <Stack w="100%" direction={{ base: 'column', lg: 'row' }} mt="8" spacing={4}>
+                {
+                  ordersScheduledForToday.length > 0 && (
+                    <OrdersKanbanList
+                      title={t('Agendados para hoje')}
+                      orders={ordersScheduledForToday}
+                      details={t('Aqui você verá os pedidos agendados.')}
+                      maxW={{ lg: '260px' }}
+                    />
+                  )
+                }
+                <Stack w="100%" direction={{ base: 'column', md: 'row' }} spacing={4}>
+                  <OrdersKanbanList
+                    title={t('Pedidos a confirmar')}
+                    orders={ordersByStatus['confirmed']}
+                    details={t('Aqui você verá os novos pedidos. Aceite-os para confirmar o preparo.')}
+                    />
+                  <OrdersKanbanList
+                    title={t('Em preparação')}
+                    orders={ordersByStatus['preparing']}
+                    details={t(
+                      'Aqui você verá os pedidos que estão sendo preparados por você. Quando clicar em "Pedido pronto” ou o tempo expirar, o entregador estará esperando para buscá-lo.'
+                      )}
+                      />
+                </Stack>
+                <Stack w="100%" direction={{ base: 'column', md: 'row' }} spacing={4}>
+                  <OrdersKanbanList
+                    title={t('Retirada/entrega')}
+                    orders={[...ordersByStatus['ready'], ...ordersByStatus['dispatching']]}
+                    details={t('Aqui você verá os pedidos aguardando retirada pelo entregador.')}
+                    />
+                  <OrdersKanbanList
+                    title={t('Pedidos cancelados')}
+                    orders={ordersByStatus['canceled']}
+                    details={t('Aqui você verá os pedidos cancelados.')}
+                    />
+                </Stack>
+              </Stack>
+            ) : (
+              <ScheduledOrders orders={ordersScheduledForNextDays} />
+            )
+          }
+        </>
       )}
     </Box>
   );

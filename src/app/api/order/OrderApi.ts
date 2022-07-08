@@ -16,11 +16,12 @@ import {
   OutsourceAccountType,
   OutsourceDeliveryPayload,
   ProfileNote,
-  WithId,
+  WithId
 } from '@appjusto/types';
 import { IuguInvoiceStatus } from '@appjusto/types/payment/iugu';
 import * as Sentry from '@sentry/react';
 import { documentAs, documentsAs, FirebaseDocument } from 'core/fb';
+import dayjs from 'dayjs';
 import { FirebaseError } from 'firebase/app';
 import {
   addDoc,
@@ -38,7 +39,7 @@ import {
   Timestamp,
   Unsubscribe,
   updateDoc,
-  where,
+  where
 } from 'firebase/firestore';
 import FilesApi from '../FilesApi';
 import FirebaseRefs from '../FirebaseRefs';
@@ -74,6 +75,23 @@ export default class OrderApi {
     if (businessId) {
       q = query(q, where('business.id', '==', businessId));
     }
+    // returns the unsubscribe function
+    return customCollectionSnapshot(q, resultHandler);
+  }
+
+  observeScheduledOrders(
+    resultHandler: (orders: WithId<Order>[]) => void,
+    businessId?: string,
+    ordering: Ordering = 'desc'
+  ): Unsubscribe {
+    const lastWeedDay = dayjs().add(7, 'day').toDate();
+    let q = query(
+      this.refs.getOrdersRef(),
+      orderBy('scheduledTo', ordering),
+      where('business.id', '==', businessId),
+      where('status', '==', 'scheduled'),
+      where('scheduledTo', '<=', lastWeedDay)
+    );
     // returns the unsubscribe function
     return customCollectionSnapshot(q, resultHandler);
   }
