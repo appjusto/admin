@@ -82,7 +82,7 @@ export default class OrderApi {
   observeScheduledOrders(
     resultHandler: (orders: WithId<Order>[]) => void,
     businessId?: string,
-    ordering: Ordering = 'desc'
+    ordering: Ordering = 'asc'
   ): Unsubscribe {
     const lastWeedDay = dayjs().add(7, 'day').toDate();
     let q = query(

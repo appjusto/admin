@@ -30,7 +30,6 @@ const getOrdersByDay = (orders: WithId<Order>[]) => {
 export const ScheduledOrders = ({ orders }: OrderSearchProps) => {
   // helpers
   const splitedByDay = getOrdersByDay(orders);
-  console.log("splitedByDay", splitedByDay)
   // UI
   if(splitedByDay.length === 0) {
     return (
