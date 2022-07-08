@@ -21,6 +21,7 @@ const watchedFields: (keyof Business)[] = [
   'cuisine',
   'description',
   'minimumOrder',
+  'preparationModes',
   'fulfillment',
   'averageCookingTime',
   'orderAcceptanceTime',

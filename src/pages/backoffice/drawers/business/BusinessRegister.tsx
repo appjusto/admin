@@ -5,6 +5,7 @@ import { ProfileNotes } from 'common/components/backoffice/ProfileNotes';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import { BusinessPhoneField, BusinessPhones } from 'pages/business-profile/business-phones';
 import { BusinessFulfillment } from 'pages/business-profile/BusinessFulfillment';
+import { BusinessPreparationModes } from 'pages/business-profile/BusinessPreparationModes';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
 import BOBankingInformation from './forms/BOBankingInformation';
@@ -36,6 +37,11 @@ export const BusinessRegister = () => {
       />
       <SectionTitle>{t('Dados do restaurante')}</SectionTitle>
       <BOBusinessProfile />
+      <BusinessPreparationModes
+        preparationModes={business?.preparationModes}
+        handleChange={(value) => handleBusinessProfileChange('preparationModes', value)}
+        isBackoffice
+      />
       <BusinessFulfillment
         fulfillment={business?.fulfillment}
         handleChange={(value) => handleBusinessProfileChange('fulfillment', value)}

@@ -1,4 +1,4 @@
-import { Business, BusinessPhone, Fulfillment } from '@appjusto/types';
+import { Business, BusinessPhone, Fulfillment, PreparationMode } from '@appjusto/types';
 import { Box, Flex, Switch as ChakraSwitch, Text, useBreakpoint } from '@chakra-ui/react';
 import * as cnpjutils from '@fnando/cnpj';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
@@ -31,6 +31,7 @@ import { t } from 'utils/i18n';
 import { BusinessPhoneField, BusinessPhones } from './business-phones';
 import { BusinessDeleteDrawer } from './BusinessDeleteDrawer';
 import { BusinessFulfillment } from './BusinessFulfillment';
+import { BusinessPreparationModes } from './BusinessPreparationModes';
 import { CloneBusiness } from './CloneBusiness';
 
 const defaultPhone = {
@@ -64,6 +65,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const [minimumOrder, setMinimumOrder] = React.useState(business?.minimumOrder ?? 0);
   const [enabled, setEnabled] = React.useState(business?.enabled ?? false);
   const [status, setStatus] = React.useState(business?.status ?? 'closed');
+  const [preparationModes, setPreparationModes] = React.useState<PreparationMode[]>(['realtime']);
   const [fulfillment, setFulfillment] = React.useState<Fulfillment[]>(['delivery']);
   const [logoExists, setLogoExists] = React.useState(false);
   const [coverExists, setCoverExists] = React.useState(false);
@@ -146,6 +148,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
       enabled,
       status,
       cuisine: cuisineName,
+      preparationModes,
       fulfillment,
       logoExists: logoExists,
       coverImageExists: coverExists,
@@ -203,6 +206,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
       setDescription(business.description ?? '');
       setMinimumOrder(business.minimumOrder ?? 0);
       setCuisineName(business.cuisine ?? '');
+      if (business.preparationModes) setPreparationModes(business.preparationModes);
       if (business.fulfillment) setFulfillment(business.fulfillment);
       if (business.logoExists && logo) setLogoExists(true);
       if (business.coverImageExists && cover) setCoverExists(true);
@@ -302,6 +306,8 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
             removePhone={removePhone}
             isOnboarding={typeof onboarding === 'string'}
           />
+          {/* preparation modes */}
+          <BusinessPreparationModes preparationModes={preparationModes} handleChange={setPreparationModes} />
           {/* fulfillment */}
           <BusinessFulfillment fulfillment={fulfillment} handleChange={setFulfillment} />
           {/* logo */}

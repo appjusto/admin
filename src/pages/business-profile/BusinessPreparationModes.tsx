@@ -1,24 +1,24 @@
-import { Fulfillment } from '@appjusto/types';
+import { PreparationMode } from '@appjusto/types';
 import { Badge, Box, CheckboxGroup, HStack, Text } from '@chakra-ui/react';
 import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import { t } from 'utils/i18n';
 
-interface FulfillmentProps {
-  fulfillment?: Fulfillment[];
-  handleChange: (value: Fulfillment[]) => void;
+interface BusinessPreparationModesProps {
+  preparationModes?: PreparationMode[];
+  handleChange: (value: PreparationMode[]) => void;
   isBackoffice?: boolean;
 }
 
-export const BusinessFulfillment = ({
-  fulfillment,
+export const BusinessPreparationModes = ({
+  preparationModes,
   handleChange,
   isBackoffice,
-}: FulfillmentProps) => {
+}: BusinessPreparationModesProps) => {
   return (
     <Box>
       <SectionTitle>
-        {t('Tipos de entrega')} 
+        {t('Tipos de pedido')}
         <Badge
           ml="2"
           mt="-12px"
@@ -36,13 +36,13 @@ export const BusinessFulfillment = ({
       </SectionTitle>
       {!isBackoffice && (
         <Text mt="2" fontSize="md">
-          {t('Selecione os tipos de entrega que o restaurante oferece')}
+          {t('Selecione os tipos de pedido que o restaurante aceita receber')}
         </Text>
       )}
       <CheckboxGroup
         colorScheme="green"
-        value={fulfillment}
-        onChange={(values: Fulfillment[]) => handleChange(values)}
+        value={preparationModes}
+        onChange={(values: PreparationMode[]) => handleChange(values)}
       >
         <HStack
           mt="4"
@@ -52,8 +52,8 @@ export const BusinessFulfillment = ({
           fontSize="16px"
           lineHeight="22px"
         >
-          <CustomCheckbox value="delivery">{t('Delivery')}</CustomCheckbox>
-          <CustomCheckbox value="take-away">{t('Para retirar')}</CustomCheckbox>
+          <CustomCheckbox value="realtime">{t('Tempo real')}</CustomCheckbox>
+          <CustomCheckbox value="scheduled">{t('Agendado')}</CustomCheckbox>
         </HStack>
       </CheckboxGroup>
     </Box>
