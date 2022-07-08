@@ -19,6 +19,7 @@ import { OrdersTable } from './OrdersTable';
 
 const statuses = [
   'confirming',
+  'scheduled',
   'declined',
   'rejected',
   'confirmed',
