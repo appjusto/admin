@@ -22,6 +22,7 @@ import { getFakeOrders } from './fakeOrders';
 import { OrderSearchResult } from './OrderSearchResult';
 import { OrdersKanbanList } from './OrdersKanbanList';
 import { PrintSwitch } from './PrintSwitch';
+import { ordersScheduledDayFilter } from './utils';
 
 const statuses = ['scheduled', 'confirmed', 'preparing', 'ready', 'dispatching', 'canceled'] as OrderStatus[];
 
@@ -33,6 +34,7 @@ export const OrdersKanban = () => {
   const orders = getFakeOrders();
   // state
   const ordersByStatus = splitByStatus(orders, statuses);
+  const ordersScheduledForToday = ordersScheduledDayFilter(ordersByStatus['scheduled']);
   const [dateTime, setDateTime] = React.useState('');
   const [orderSearch, setOrderSearch] = React.useState('');
   const [searchResult, setSearchResult] = React.useState<WithId<Order>[]>([]);
@@ -142,7 +144,7 @@ export const OrdersKanban = () => {
         <Stack w="100%" direction={{ base: 'column', lg: 'row' }} mt="8" spacing={4}>
           <OrdersKanbanList
             title={t('Agendados')}
-            orders={ordersByStatus['scheduled']}
+            orders={ordersScheduledForToday}
             details={t('Aqui você verá os pedidos agendados.')}
           />
           <Stack w="100%" direction={{ base: 'column', md: 'row' }} spacing={4}>

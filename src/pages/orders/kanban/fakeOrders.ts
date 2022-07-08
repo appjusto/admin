@@ -1,9 +1,10 @@
 import { Order, WithId } from "@appjusto/types";
 import dayjs from "dayjs";
-import { FieldValue, serverTimestamp } from "firebase/firestore";
+import { FieldValue } from "firebase/firestore";
 import { nanoid } from "nanoid";
 
-const fakeTime = serverTimestamp();
+// const fakeTime = serverTimestamp();
+const fakeTime = dayjs('2022-07-06').set('hour', 10).toDate() as unknown as FieldValue;
 
 const fakeOrders = [
   {
