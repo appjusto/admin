@@ -56,6 +56,7 @@ export const OrderBaseDrawer = ({
   // refs
   const bodyRef = React.useRef<HTMLDivElement>(null);
   // helpers
+  const isScheduled = order?.scheduledTo && order?.status === 'scheduled';
   const isHistory = path.includes('orders-history');
   const isCookingTimeModeAuto = cookingTimeMode === 'auto';
   const isCurrierArrived = order?.dispatchingState === 'arrived-pickup';
@@ -167,7 +168,7 @@ export const OrderBaseDrawer = ({
                 <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
                   {t('Horário do pedido:')}{' '}
                   <Text as="span" color="black" fontWeight="700">
-                    {getDateAndHour(order?.timestamps.confirmed)}
+                    {getDateAndHour(isScheduled ? order?.timestamps.charged : order?.timestamps.confirmed)}
                   </Text>
                 </Text>
                 {order?.status && order?.status !== 'confirmed' && (
@@ -178,23 +179,35 @@ export const OrderBaseDrawer = ({
                     </Text>
                   </Text>
                 )}
-                {order?.scheduledTo && order?.status === 'scheduled' && (
-                  <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
-                    {t('Preparo agendado para:')}{' '}
-                    <Text as="span" color="black" fontWeight="700">
-                      {getDateAndHour(order.scheduledTo)}
+                {isScheduled && (
+                  <>
+                    <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
+                      {t('Início do preparo para:')}{' '}
+                      <Text as="span" color="black" fontWeight="700">
+                        {getDateAndHour(order?.scheduledTo!)}
+                      </Text>
                     </Text>
-                  </Text>
+                    <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
+                      {t('Cliente solicitou entrega para:')}{' '}
+                      <Text as="span" color="black" fontWeight="700">
+                        {getDateAndHour(order?.scheduledTo!)}
+                      </Text>
+                    </Text>
+                  </>
                 )}
               </Flex>
-              <Flex flexDir="column">
-                <CustomButton
-                  label="Abrir chat com o cliente"
-                  link={`/app/orders/chat/${order?.id}/${order?.consumer?.id}`}
-                  size="sm"
-                  variant="outline"
-                />
-              </Flex>
+              {
+                !isScheduled && (
+                  <Flex flexDir="column">
+                    <CustomButton
+                      label="Abrir chat com o cliente"
+                      link={`/app/orders/chat/${order?.id}/${order?.consumer?.id}`}
+                      size="sm"
+                      variant="outline"
+                    />
+                  </Flex>
+                )
+              }
             </Flex>
             {order?.status === 'confirmed' && (
               <Flex

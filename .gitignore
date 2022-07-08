@@ -5,6 +5,9 @@
 /.pnp
 .pnp.js
 
+# dev
+/src/devutils
+
 # testing
 serviceAccount.json
 cypress.env.json

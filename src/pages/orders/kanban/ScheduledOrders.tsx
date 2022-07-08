@@ -39,12 +39,12 @@ export const ScheduledOrders = ({ orders }: OrderSearchProps) => {
     )
   }
   return (
-    <Wrap mt="8">
+    <Wrap mt="8" w="100%">
       {
         splitedByDay.map(group => (
-          <WrapItem key={group.orders[0].id}>
+          <WrapItem key={group.orders[0].id} w={{base: "100%", md: 'auto'}}>
             <OrdersKanbanList
-              title={group.date}
+              title={`Dia ${group.date}`}
               orders={group.orders}
               minW={{ lg: '260px' }}
             />

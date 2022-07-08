@@ -27,6 +27,7 @@ import { ScheduledOrders } from './ScheduledOrders';
 import { ordersScheduledDayFilter } from './utils';
 
 const statuses = ['confirmed', 'preparing', 'ready', 'dispatching', 'canceled'] as OrderStatus[];
+const activeStatuses = ['confirmed', 'preparing', 'ready', 'dispatching'] as OrderStatus[];
 
 type Pages = 'realtime' | 'scheduled';
 
@@ -45,7 +46,7 @@ export const OrdersKanban = () => {
   const [orderSearch, setOrderSearch] = React.useState('');
   const [searchResult, setSearchResult] = React.useState<WithId<Order>[]>([]);
   // helpers
-  const todayOrders = orders.length + ordersScheduledForToday.length;
+  const todayOrders = orders.filter(o => activeStatuses.includes(o.status)).length + ordersScheduledForToday.length;
   const nextDayOrders = ordersScheduledForNextDays.length;
   const isNewChatMessage = newChatMessages.length > 0;
   // side effects
@@ -188,8 +189,8 @@ export const OrdersKanban = () => {
                     orders={ordersByStatus['preparing']}
                     details={t(
                       'Aqui você verá os pedidos que estão sendo preparados por você. Quando clicar em "Pedido pronto” ou o tempo expirar, o entregador estará esperando para buscá-lo.'
-                      )}
-                      />
+                    )}
+                  />
                 </Stack>
                 <Stack w="100%" direction={{ base: 'column', md: 'row' }} spacing={4}>
                   <OrdersKanbanList
