@@ -1,4 +1,4 @@
-import { Business, BusinessPhone } from '@appjusto/types';
+import { Business, BusinessPhone, Fulfillment } from '@appjusto/types';
 import { Box, Flex, Switch as ChakraSwitch, Text, useBreakpoint } from '@chakra-ui/react';
 import * as cnpjutils from '@fnando/cnpj';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
@@ -30,6 +30,7 @@ import { assertPhonesIsValid, serializePhones } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { BusinessPhoneField, BusinessPhones } from './business-phones';
 import { BusinessDeleteDrawer } from './BusinessDeleteDrawer';
+import { BusinessFulfillment } from './BusinessFulfillment';
 import { CloneBusiness } from './CloneBusiness';
 
 const defaultPhone = {
@@ -63,6 +64,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const [minimumOrder, setMinimumOrder] = React.useState(business?.minimumOrder ?? 0);
   const [enabled, setEnabled] = React.useState(business?.enabled ?? false);
   const [status, setStatus] = React.useState(business?.status ?? 'closed');
+  const [fulfillment, setFulfillment] = React.useState<Fulfillment[]>(['delivery']);
   const [logoExists, setLogoExists] = React.useState(false);
   const [coverExists, setCoverExists] = React.useState(false);
   const [logoFiles, setLogoFiles] = React.useState<File[] | null>(null);
@@ -144,6 +146,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
       enabled,
       status,
       cuisine: cuisineName,
+      fulfillment,
       logoExists: logoExists,
       coverImageExists: coverExists,
     } as Partial<Business>;
@@ -200,6 +203,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
       setDescription(business.description ?? '');
       setMinimumOrder(business.minimumOrder ?? 0);
       setCuisineName(business.cuisine ?? '');
+      if (business.fulfillment) setFulfillment(business.fulfillment);
       if (business.logoExists && logo) setLogoExists(true);
       if (business.coverImageExists && cover) setCoverExists(true);
     } 
@@ -298,6 +302,8 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
             removePhone={removePhone}
             isOnboarding={typeof onboarding === 'string'}
           />
+          {/* fulfillment */}
+          <BusinessFulfillment fulfillment={fulfillment} handleChange={setFulfillment} />
           {/* logo */}
           <Text mt="8" fontSize="xl" color="black">
             {t('Logo do estabelecimento')}

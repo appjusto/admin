@@ -152,7 +152,7 @@ export const BusinessBaseDrawer = ({ staff, onClose, children, ...props }: BaseD
               justifyContent={userCanUpdate && pageHasAction ? 'space-between' : 'flex-end'}
             >
               <Button
-                display={userCanUpdate && pageHasAction ? 'inline-block' : 'none'}
+                display={userCanUpdate && pageHasAction ? 'inline-flex' : 'none'}
                 width="full"
                 maxW={{ base: '160px', md: '240px' }}
                 fontSize={{ base: '13px', md: '15px' }}

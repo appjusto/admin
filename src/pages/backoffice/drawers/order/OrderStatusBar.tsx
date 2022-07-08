@@ -1,5 +1,6 @@
 import {
   DispatchingState,
+  Fulfillment,
   InvoiceType,
   Issue,
   IssueType,
@@ -22,6 +23,7 @@ interface OrderStatusProps {
   orderId: string;
   orderType?: OrderType;
   orderStatus?: OrderStatus;
+  fulfillment?: Fulfillment;
   status?: OrderStatus;
   dispatchingState?: DispatchingState | null;
   issue?: Issue | null;
@@ -38,6 +40,7 @@ export const OrderStatusBar = ({
   orderId,
   orderType,
   orderStatus,
+  fulfillment,
   status,
   dispatchingState,
   issue,
@@ -112,7 +115,7 @@ export const OrderStatusBar = ({
             </Flex>
           </RadioGroup>
         </Box>
-        {isOrderActive && (
+        {isOrderActive && fulfillment === 'delivery' && (
           <Box>
             <SectionTitle mt="0">{t('Alterar status da entrega:')}</SectionTitle>
             <RadioGroup

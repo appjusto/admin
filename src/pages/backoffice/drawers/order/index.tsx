@@ -281,6 +281,7 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
               orderId={orderId}
               orderType={order?.type}
               orderStatus={order?.status}
+              fulfillment={order?.fulfillment}
               status={status}
               dispatchingState={dispatchingState}
               issue={issue}

@@ -110,13 +110,15 @@ export const OrderDetails = ({ order }: DetailsProps) => {
       {order?.status !== 'canceled' && (
         <>
           <SectionTitle mt="10">{t('Forma de pagamento')}</SectionTitle>
-          <Text mt="1" fontSize="md">
-            {t('Valor do frete:')}{' '}
-            <Text as="span" color="black">
-              {order?.fare?.courier?.value ? formatCurrency(order.fare.courier.value) : 'N/E'}
-              {order?.outsourcedBy === 'business' && ` (${t('Assumido pelo restaurante')})`}
+          {order?.fulfillment === 'delivery' && (
+            <Text mt="1" fontSize="md">
+              {t('Valor do frete:')}{' '}
+              <Text as="span" color="black">
+                {order?.fare?.courier?.value ? formatCurrency(order.fare.courier.value) : 'N/E'}
+                {order?.outsourcedBy === 'business' && ` (${t('Assumido pelo restaurante')})`}
+              </Text>
             </Text>
-          </Text>
+          )}
           <Text mt="1" fontSize="md">
             {t('Total pago:')}{' '}
             <Text as="span" color="black">

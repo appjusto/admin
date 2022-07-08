@@ -1,6 +1,7 @@
-import { DispatchingStatus, OrderStatus } from '@appjusto/types';
+import { DispatchingStatus, Fulfillment, OrderStatus } from '@appjusto/types';
 
 export const getOrderMatchingColor = (
+  orderFulfillment: Fulfillment | undefined,
   orderStatus: OrderStatus,
   dispatchingStatus?: DispatchingStatus,
   courierId?: string
@@ -10,7 +11,7 @@ export const getOrderMatchingColor = (
       bg: '#6CE787',
       color: 'black',
     };
-  if (dispatchingStatus === 'idle') {
+  if (dispatchingStatus === 'idle' && orderFulfillment === 'delivery') {
     if (['ready', 'dispatching'].includes(orderStatus) && !courierId) {
       return {
         bg: 'red',

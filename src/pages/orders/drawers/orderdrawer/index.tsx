@@ -122,6 +122,7 @@ export const OrderDrawer = (props: Props) => {
         <Box w="100%">
           {isCanceling ? (
             <Cancelation
+              fulfillment={order?.fulfillment}
               handleConfirm={handleCancel}
               handleKeep={() => setIsCanceling(false)}
               isLoading={cancelResult.isLoading}
@@ -129,7 +130,8 @@ export const OrderDrawer = (props: Props) => {
             />
           ) : (
             <>
-              {(order?.status === 'ready' || order?.status === 'dispatching') &&
+              {order?.fulfillment === 'delivery' &&
+                (order?.status === 'ready' || order?.status === 'dispatching') &&
                 (isOutsourceDelivery ? (
                   order.dispatchingStatus === 'outsourced' ? (
                     <Box mt="4" border="2px solid #FFBE00" borderRadius="lg" bg="" p="4">
@@ -221,6 +223,12 @@ export const OrderDrawer = (props: Props) => {
                 ) : (
                   <DeliveryInfos order={order} setOutsource={setIsOutsourceDelivery} />
                 ))}
+              {order?.status === 'ready' && order.fulfillment === 'take-away' && (
+                <Box mt="4" border="2px solid #FFBE00" borderRadius="lg" bg="" p="4">
+                  <SectionTitle mt="0">{t('Aguardando retirada pelo cliente')}</SectionTitle>
+                  <Text mt="2">{t('O cliente optou por retirar o pedido no estabelecimento')}</Text>
+                </Box>
+              )}
               <OrderDetails order={order} />
               {order?.status === 'canceled' && (
                 <>

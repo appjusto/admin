@@ -150,6 +150,12 @@ export const OrderBaseDrawer = ({
               label={t('Tipo:')}
               value={order?.type === 'food' ? 'Comida' : 'p2p'}
             />
+            {order?.type === 'food' && (
+              <BaseDrawerInfoItem
+                label={t('Tipo de entrega:')}
+                value={order?.fulfillment === 'take-away' ? 'Para retirar' : 'Delivery'}
+              />
+            )}
             <BaseDrawerInfoItem
               label={t('Pedido confirmado em:')}
               value={getDateAndHour(order?.timestamps.confirmed)}
@@ -202,7 +208,9 @@ export const OrderBaseDrawer = ({
                     <DrawerLink to={`${url}`} label={t('Participantes')} />
                     <DrawerLink to={`${url}/order`} label={t('Pedido')} />
                     <DrawerLink to={`${url}/invoices`} label={t('Faturas')} />
-                    <DrawerLink to={`${url}/matching`} label={t('Matching')} />
+                    {order?.fulfillment === 'delivery' && (
+                      <DrawerLink to={`${url}/matching`} label={t('Matching')} />
+                    )}
                     <DrawerLink to={`${url}/status`} label={t('Status')} />
                     <DrawerLink to={`${url}/chats`} label={t('Chats')} />
                   </HStack>
@@ -212,7 +220,9 @@ export const OrderBaseDrawer = ({
                   <DrawerLink to={`${url}`} label={t('Participantes')} />
                   <DrawerLink to={`${url}/order`} label={t('Pedido')} />
                   <DrawerLink to={`${url}/invoices`} label={t('Faturas')} />
-                  <DrawerLink to={`${url}/matching`} label={t('Matching')} />
+                  {order?.fulfillment === 'delivery' && (
+                    <DrawerLink to={`${url}/matching`} label={t('Matching')} />
+                  )}
                   <DrawerLink to={`${url}/status`} label={t('Status')} />
                 </HStack>
               )}

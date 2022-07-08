@@ -276,7 +276,7 @@ export const CourierBaseDrawer = ({ staff, onClose, children, ...props }: BaseDr
                 justifyContent={pageHasAction ? 'flex-start' : 'flex-end'}
               >
                 <Button
-                  display={pageHasAction ? 'inline-block' : 'none'}
+                  display={pageHasAction ? 'inline-flex' : 'none'}
                   width="49%"
                   fontSize="15px"
                   onClick={handleSave}

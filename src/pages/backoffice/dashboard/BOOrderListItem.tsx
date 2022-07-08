@@ -33,6 +33,7 @@ export const BOOrderListItem = ({ order }: Props) => {
   const issuesFound = issues && issues.length > 0 ? true : false;
   const isFlagged = order.status === 'charged' && order.flagged;
   const courierIconStatus = getOrderMatchingColor(
+    order.fulfillment,
     order.status,
     order.dispatchingStatus,
     order.courier?.id
@@ -108,11 +109,21 @@ export const BOOrderListItem = ({ order }: Props) => {
           <Flex
             w="24px"
             h="24px"
+            position="relative"
             justifyContent="center"
             alignItems="center"
             bg={courierIconStatus.bg}
             borderRadius="lg"
           >
+            {order.fulfillment !== 'delivery' && (
+              <Box
+                w="100%"
+                h="2px"
+                position="absolute"
+                bgColor="#C8D7CB"
+                transform="rotate(45deg)"
+              />
+            )}
             <Icon as={MdMoped} w="20px" h="20px" color={courierIconStatus.color} />
           </Flex>
         </Flex>

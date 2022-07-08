@@ -76,7 +76,10 @@ export const OrderBaseDrawer = ({
   };
   const PrimaryButtonFunction = () => {
     if (order?.status === 'preparing') changeOrderStatus(order.id, 'ready');
-    if (order?.status === 'ready') changeOrderStatus(order.id, 'dispatching');
+    if (order?.status === 'ready' && order.fulfillment === 'delivery')
+      changeOrderStatus(order.id, 'dispatching');
+    if (order?.status === 'ready' && order.fulfillment !== 'delivery')
+      changeOrderStatus(order.id, 'delivered');
     onClose();
   };
   const updateCookingTimeScroll = () => {
@@ -93,6 +96,7 @@ export const OrderBaseDrawer = ({
   let PrimaryButtonIsAble =
     !(order?.status === 'preparing' && isCookingTimeModeAuto) &&
     (['confirmed', 'preparing'].includes(order?.status ?? 'not_included') ||
+      (order?.status === 'ready' && order.fulfillment !== 'delivery') ||
       (order?.status === 'ready' && isCurrierArrived) ||
       order?.dispatchingStatus === 'outsourced');
   let PrimaryButtonLabel = 'Pedido pronto';
@@ -169,6 +173,18 @@ export const OrderBaseDrawer = ({
                   {t('Horário do pedido:')}{' '}
                   <Text as="span" color="black" fontWeight="700">
                     {getDateAndHour(isScheduled ? order?.timestamps.charged : order?.timestamps.confirmed)}
+                  </Text>
+                </Text>
+                <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
+                  {t('Atualizado às:')}{' '}
+                  <Text as="span" color="black" fontWeight="700">
+                    {getDateAndHour(order?.updatedOn)}
+                  </Text>
+                </Text>
+                <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
+                  {t('Tipo de entrega:')}{' '}
+                  <Text as="span" color="black" fontWeight="700">
+                    {order?.fulfillment === 'take-away' ? 'Para retirar' : 'Delivery'}
                   </Text>
                 </Text>
                 {order?.status && order?.status !== 'confirmed' && (

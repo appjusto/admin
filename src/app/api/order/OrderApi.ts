@@ -6,6 +6,7 @@ import {
   MatchOrderPayload,
   Order,
   OrderCancellation,
+  OrderCancellationParams,
   OrderConfirmation,
   OrderFraudPreventionFlags,
   OrderIssue,
@@ -519,8 +520,16 @@ export default class OrderApi {
   }
 
   async cancelOrder(data: CancelOrderPayload) {
-    const { params } = data;
-    const paramsData = params ?? { refund: ['products', 'delivery', 'platform'] };
+    const { params, cancellation } = data;
+    const defaultParams: OrderCancellationParams =
+      cancellation?.id === 'restaurant-cancel-missing-client'
+        ? {
+            refund: [],
+          }
+        : {
+            refund: ['products', 'delivery', 'platform'],
+          };
+    const paramsData = params ?? defaultParams;
     const payload: CancelOrderPayload = {
       ...data,
       meta: { version: '1' }, // TODO: pass correct version on

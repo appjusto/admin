@@ -1,4 +1,4 @@
-import { Issue, IssueType } from '@appjusto/types';
+import { Fulfillment, Issue, IssueType } from '@appjusto/types';
 import { Box, Button, Flex, Image, Radio, RadioGroup, Text } from '@chakra-ui/react';
 import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';
 import iconTraffic from 'common/img/icon-traffic.svg';
@@ -6,6 +6,7 @@ import React from 'react';
 import { formatCurrency } from 'utils/formatters';
 import { t } from 'utils/i18n';
 interface CancelationProps {
+  fulfillment?: Fulfillment;
   handleConfirm(issue: Issue): void;
   handleKeep(): void;
   isLoading: boolean;
@@ -15,6 +16,7 @@ interface CancelationProps {
 const issueOptionsArray = ['restaurant-cancel'] as IssueType[];
 
 export const Cancelation = ({
+  fulfillment,
   handleConfirm,
   handleKeep,
   isLoading,
@@ -39,6 +41,12 @@ export const Cancelation = ({
   //side effects
   React.useEffect(() => {
     if (cancelOptions) {
+      if (fulfillment === 'delivery') {
+        setOptions(
+          cancelOptions.filter((option) => option.id !== 'restaurant-cancel-missing-client')
+        );
+        return;
+      }
       setOptions(cancelOptions);
       if (cancelOptions[0].id) setOptionId(cancelOptions[0].id);
     } else if (cancelOptions === null) {
@@ -47,7 +55,7 @@ export const Cancelation = ({
         message: 'Não foi possível carregar a lista de motivos. Tenta novamente? ',
       });
     }
-  }, [cancelOptions]);
+  }, [fulfillment, cancelOptions]);
 
   // UI
   return (
