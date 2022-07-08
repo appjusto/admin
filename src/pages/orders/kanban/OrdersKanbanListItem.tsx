@@ -9,7 +9,7 @@ import { ReactComponent as Alarm } from 'common/img/alarm_outlined.svg';
 import { Timestamp } from 'firebase/firestore';
 import React from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
-import { getDateAndHour, getTimestampMilliseconds, getTimeUntilNow } from 'utils/functions';
+import { getHourAndMinute, getTimestampMilliseconds, getTimeUntilNow } from 'utils/functions';
 import { t } from 'utils/i18n';
 
 // const confirmedKey = 'confirmed';
@@ -142,7 +142,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
           p="4"
           // bg="green.300"
           borderRadius="lg"
-          borderColor="black"
+          borderColor="green.700"
           borderWidth="2px"
           color="black"
           cursor="pointer"
@@ -157,8 +157,13 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
               </Text>
             </Box>
             <Box>
-              <Text fontSize="sm" textAlign="end">{t(`Agendado para:`)}</Text>
-              <Text fontSize="sm">{order?.scheduledTo ? getDateAndHour(order.scheduledTo) : 'N/I'}</Text>
+              <Text fontSize="sm" textAlign="end">{t('Preparo agendado')}</Text>
+              <Text fontSize="sm" textAlign="end">
+                {t('para ')} 
+                <Text as="span" fontWeight="700">
+                  {order?.scheduledTo ? getHourAndMinute(order.scheduledTo) : 'N/I'}
+                </Text>
+              </Text>
             </Box>
           </Flex>
         </Box>
