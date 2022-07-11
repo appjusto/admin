@@ -28,16 +28,13 @@ export const Cancelation = ({
   const [options, setOptions] = React.useState<Issue[]>(cancelOptions ?? []);
   const [optionId, setOptionId] = React.useState('');
   const [optionsError, setOptionsError] = React.useState({ status: false, message: '' });
-
   // helpers
   const isCosts = typeof orderCancellationCosts === 'number' && orderCancellationCosts > 0;
-
   //handler
   const handleCancel = () => {
     const issue = options.filter((option) => option.id === optionId)[0];
     if (issue) return handleConfirm(issue);
   };
-
   //side effects
   React.useEffect(() => {
     if (cancelOptions) {
@@ -48,7 +45,6 @@ export const Cancelation = ({
         return;
       }
       setOptions(cancelOptions);
-      if (cancelOptions[0].id) setOptionId(cancelOptions[0].id);
     } else if (cancelOptions === null) {
       setOptionsError({
         status: true,
@@ -56,7 +52,9 @@ export const Cancelation = ({
       });
     }
   }, [fulfillment, cancelOptions]);
-
+  React.useEffect(() => {
+    if (options[0]?.id) setOptionId(options[0].id);
+  }, [options]);
   // UI
   return (
     <Box py="4" px="6" bgColor="#FFF8F8" border="1px solid #DC3545" borderRadius="lg">
