@@ -374,16 +374,25 @@ export default class OrderApi {
   observeOrdersByCourierId(
     courierId: string,
     resultHandler: (orders: WithId<Order>[]) => void,
-    start: Date,
-    end: Date
+    statuses?: OrderStatus[], 
+    start?: Date,
+    end?: Date
   ): Unsubscribe {
-    const q = query(
+    let q = query(
       this.refs.getOrdersRef(),
       orderBy('timestamps.confirmed', 'desc'),
-      where('courier.id', '==', courierId),
-      where('timestamps.confirmed', '>=', start),
-      where('timestamps.confirmed', '<=', end)
+      where('courier.id', '==', courierId)
     );
+    if(statuses) {
+      q = query(q, where('status', 'in', statuses))
+    }
+    if(start && end) {
+      q = query(
+        q, 
+        where('timestamps.confirmed', '>=', start), 
+        where('timestamps.confirmed', '<=', end)
+      )
+    }
     // returns the unsubscribe function
     return customCollectionSnapshot(q, resultHandler);
   }

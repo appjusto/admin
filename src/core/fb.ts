@@ -25,5 +25,6 @@ export const getFirebaseErrorMessage = (error: unknown) => {
   else if ((error as FirebaseError).code === 'auth/network-request-failed')
     return 'Ocorreu um erro de rede (como tempo limite, conexão interrompida ou host inacessível). Tenta novamente?';
   else if ((error as FirebaseError).code === 'permission-denied') return 'Permissão negada';
+  else if ((error as FirebaseError).code === 'deadline-exceeded') return 'Tempo de execução excedido';
   else return (error as FirebaseError).message;
 };

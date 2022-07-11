@@ -1,24 +1,15 @@
 import { Order, WithId } from '@appjusto/types';
 import {
-  Box,
-  Button,
-  Flex,
-  HStack,
-  Link,
-  Stack,
-  Table,
+  Box, Button, HStack, Link, Table,
   Tbody,
   Td,
-  Text,
-  Textarea,
-  Th,
+  Text, Textarea, Th,
   Thead,
   Tr
 } from '@chakra-ui/react';
 import { useReleaseCourier } from 'app/api/courier/useReleaseCourier';
 import { useContextCourierProfile } from 'app/state/courier/context';
 import { useContextAppRequests } from 'app/state/requests/context';
-import { CustomButton } from 'common/components/buttons/CustomButton';
 import { CustomDateFilter } from 'common/components/form/input/CustomDateFilter';
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
@@ -26,6 +17,7 @@ import { formatCurrency } from 'utils/formatters';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
+import { CurrentOrderCard } from './CurrentOrderCard';
 
 interface ItemPros {
   order: WithId<Order>;
@@ -52,18 +44,13 @@ export const CourierOrders = () => {
   // context
   const { dispatchAppRequestResult } = useContextAppRequests();
   const { releaseCourier, releaseCourierResult } = useReleaseCourier();
-  const { courier, currentOrder, orders, dateStart, dateEnd, setDateStart, setDateEnd } =
+  const { courier, currentOrders, orders, dateStart, dateEnd, setDateStart, setDateEnd } =
     useContextCourierProfile();
   // state
   const [release, setRelease] = React.useState(false);
   const [releaseComment, setReleaseComment] = React.useState('');
   // helpers
   const totalOrders = orders?.length ?? '0';
-  const orderType = currentOrder?.type
-    ? currentOrder.type === 'food'
-      ? 'Comida'
-      : 'Entrega'
-    : 'N/E';
   // handlers
   const handleReleaseCourier = () => {
     if (!courier?.id) return;
@@ -83,80 +70,50 @@ export const CourierOrders = () => {
   // UI
   return (
     <Box>
-      {currentOrder && (
-        <Box mb="6">
-          <SectionTitle>{t('Agora com o pedido:')}</SectionTitle>
-          <Flex
-            mt="4"
-            flexDir={{ base: 'column', md: release ? 'column' : 'row' }}
-            justifyContent="space-between"
-            p="4"
-            border="1px solid #C8D7CB"
-            borderRadius="lg"
-          >
-            <HStack spacing={4}>
-              <Text color="black" fontSize="26px" fontWeight="500" lineHeight="28px">
-                #{currentOrder?.code ?? 'N/E'}
-              </Text>
-              <Box>
-                <Text fontSize="13px" fontWeight="500" lineHeight="12px" color="green.600">
-                  {orderType}
-                </Text>
-                {currentOrder?.type === 'food' && (
-                  <Text fontSize="16px" fontWeight="500" lineHeight="18px">
-                    {currentOrder?.business?.name ?? 'N/E'}
-                  </Text>
-                )}
-              </Box>
-            </HStack>
-            {release ? (
-              <Box mt="4" minW="348px" bg="#FFF8F8" border="1px solid red" borderRadius="lg" p="4">
-                <Text color="red">{t(`Se deseja confirmar, informe o motivo da liberação:`)}</Text>
-                <Textarea
-                  mt="2"
-                  bg="white"
-                  borderColor="#C8D7CB"
-                  value={releaseComment}
-                  onChange={(e) => setReleaseComment(e.target.value)}
-                />
-                <HStack mt="2" spacing={4}>
-                  <Button width="full" size="md" onClick={() => setRelease(false)}>
-                    {t(`Manter`)}
-                  </Button>
-                  <Button
-                    width="full"
-                    size="md"
-                    variant="danger"
-                    onClick={handleReleaseCourier}
-                    isLoading={releaseCourierResult.isLoading}
-                  >
-                    {t(`Liberar`)}
-                  </Button>
-                </HStack>
-              </Box>
-            ) : (
-              <Stack
-                mt={{ base: '4', md: '0' }}
-                spacing={4}
-                direction={{ base: 'column', md: 'row' }}
-              >
-                <CustomButton
-                  mt="0"
-                  w="100%"
-                  minW="166px"
-                  size="md"
-                  variant="outline"
-                  label={t('Ver pedido')}
-                  link={`/backoffice/orders/${currentOrder?.id}`}
-                />
-                <Button size="md" variant="dangerLight" onClick={() => setRelease(true)}>
-                  {t('Liberar entregador')}
-                </Button>
-              </Stack>
-            )}
-          </Flex>
+      {release ? (
+        <Box mt="4" minW="348px" bg="#FFF8F8" border="1px solid red" borderRadius="lg" p="4">
+          <Text color="red">{t(`Se deseja confirmar, informe o motivo da liberação:`)}</Text>
+          <Textarea
+            mt="2"
+            bg="white"
+            borderColor="#C8D7CB"
+            value={releaseComment}
+            onChange={(e) => setReleaseComment(e.target.value)}
+          />
+          <HStack mt="2" spacing={4}>
+            <Button width="full" size="md" onClick={() => setRelease(false)}>
+              {t(`Manter`)}
+            </Button>
+            <Button
+              width="full"
+              size="md"
+              variant="danger"
+              onClick={handleReleaseCourier}
+              isLoading={releaseCourierResult.isLoading}
+              loadingText={t('Liberando...')}
+            >
+              {t('Liberar')}
+            </Button>
+          </HStack>
         </Box>
-      )}
+      ) : (
+        <Button size="md" variant="dangerLight" onClick={() => setRelease(true)}>
+          {t('Liberar entregador')}
+        </Button>
+      )} 
+      {
+        currentOrders.length > 0 && (
+          <>
+            <SectionTitle>{t('Pedidos ativos')}</SectionTitle>
+            {
+              currentOrders.map(order => (
+                <CurrentOrderCard key={order.id} courierId={courier?.id} order={order} />
+              ))
+            }
+          </>
+        )
+        
+      }
       <SectionTitle>{t('Filtrar por período')}</SectionTitle>
       <CustomDateFilter mt="4" getStart={setDateStart} getEnd={setDateEnd} showWarning />
       {!dateStart || !dateEnd ? (

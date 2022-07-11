@@ -8,6 +8,7 @@ import {
 } from '@appjusto/types';
 import * as cnpjutils from '@fnando/cnpj';
 import * as cpfutils from '@fnando/cpf';
+import { useCourierCurrentOrders } from 'app/api/courier/useCourierCurrentOrders';
 import { useCourierMarketPlace } from 'app/api/courier/useCourierMarketPlace';
 import { useCourierOrders } from 'app/api/courier/useCourierOrders';
 import { useCourierProfile } from 'app/api/courier/useCourierProfile';
@@ -20,7 +21,6 @@ import { pick } from 'lodash';
 import React, { Dispatch, SetStateAction } from 'react';
 import { UseMutateAsyncFunction } from 'react-query';
 import { useParams } from 'react-router';
-import { useContextApi } from '../api/context';
 import { shouldUpdateState } from '../utils';
 import { courierReducer } from './courierReducer';
 
@@ -61,7 +61,7 @@ interface CourierProfileContextProps {
   deleteMarketPlace: UseMutateAsyncFunction<void, unknown, void, unknown>;
   deleteMarketPlaceResult: MutationResult;
   contextValidation: BackofficeProfileValidation;
-  currentOrder: WithId<Order> | null;
+  currentOrders: WithId<Order>[];
   orders?: WithId<Order>[] | null;
   dateStart?: string;
   dateEnd?: string;
@@ -87,13 +87,13 @@ const issueOptionsArray = ['courier-profile-invalid'] as IssueType[];
 
 export const CourierProvider = ({ children }: Props) => {
   // context
-  const api = useContextApi();
   const { courierId } = useParams<Params>();
   const profile = useCourierProfile(courierId);
   const pictures = useCourierProfilePictures(courierId, '_1024x1024', '_1024x1024');
   const { marketPlace, deleteMarketPlace, deleteMarketPlaceResult } =
     useCourierMarketPlace(courierId);
   const issueOptions = useIssuesByType(issueOptionsArray);
+  const currentOrders = useCourierCurrentOrders(courierId);
   // state
   const [watchedProfile, setWatchedProfile] = React.useState<Partial<
     WithId<CourierProfile>
@@ -112,7 +112,6 @@ export const CourierProvider = ({ children }: Props) => {
   const [documentFiles, setDocumentFiles] = React.useState<File[] | null>(null);
   const [dateStart, setDateStart] = React.useState<string>();
   const [dateEnd, setDateEnd] = React.useState<string>();
-  const [currentOrder, setCurrentOrder] = React.useState<WithId<Order> | null>(null);
   const orders = useCourierOrders(courierId, dateStart, dateEnd);
   // handlers
   const updateWatchedProfile = React.useCallback(
@@ -144,11 +143,6 @@ export const CourierProvider = ({ children }: Props) => {
     });
   }, [watchedProfile]);
   React.useEffect(() => {
-    if (!courier?.ongoingOrderId) return setCurrentOrder(null);
-    const unsub = api.order().observeOrder(courier.ongoingOrderId, setCurrentOrder);
-    return () => unsub();
-  }, [api, courier?.ongoingOrderId]);
-  React.useEffect(() => {
     setContextValidation((prevState) => {
       return {
         ...prevState,
@@ -176,7 +170,7 @@ export const CourierProvider = ({ children }: Props) => {
         deleteMarketPlace,
         deleteMarketPlaceResult,
         contextValidation,
-        currentOrder,
+        currentOrders,
         orders,
         dateStart,
         dateEnd,
