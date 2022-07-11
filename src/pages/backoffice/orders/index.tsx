@@ -111,6 +111,11 @@ const OrdersPage = () => {
               onClick={() => setFilterBar('all')}
             />
             <FilterText
+              isActive={filterBar === 'scheduled' ? true : false}
+              label={t('Agendado')}
+              onClick={() => setFilterBar('scheduled')}
+            />
+            <FilterText
               isActive={filterBar === 'confirming' ? true : false}
               label={t('Confirmando')}
               onClick={() => setFilterBar('confirming')}

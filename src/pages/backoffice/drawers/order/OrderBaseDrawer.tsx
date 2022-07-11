@@ -1,5 +1,10 @@
 import { DispatchingState, IssueType, Order, OrderStatus, WithId } from '@appjusto/types';
 import {
+  Accordion,
+  AccordionButton,
+  AccordionIcon,
+  AccordionItem,
+  AccordionPanel,
   Box,
   Button,
   Drawer,
@@ -147,43 +152,69 @@ export const OrderBaseDrawer = ({
             </Text>
             <BaseDrawerInfoItem label={t('ID:')} value={order?.id ?? 'N/E'} />
             <BaseDrawerInfoItem
-              label={t('Tipo:')}
-              value={order?.type === 'food' ? 'Comida' : 'p2p'}
-            />
-            {order?.type === 'food' && (
-              <BaseDrawerInfoItem
-                label={t('Tipo de entrega:')}
-                value={order?.fulfillment === 'take-away' ? 'Para retirar' : 'Delivery'}
-              />
-            )}
-            <BaseDrawerInfoItem
-              label={t('Pedido confirmado em:')}
-              value={getDateAndHour(order?.timestamps.confirmed)}
-            />
-            <BaseDrawerInfoItem
-              label={t('Atualizado em:')}
-              value={getDateAndHour(order?.updatedOn)}
-            />
-            <BaseDrawerInfoItem
-              label={t('Tempo de preparo:')}
-              value={t(`${order?.cookingTime ? order?.cookingTime / 60 : 'N/I'} min`)}
-            />
-            <BaseDrawerInfoItem
               label={t('Nome do cliente:')}
               value={order?.consumer?.name ?? 'N/E'}
             />
-            <BaseDrawerInfoItem
-              label={t('Status:')}
-              value={orderStatus ? orderStatusPTOptions[orderStatus] : 'N/E'}
-            />
-            <BaseDrawerInfoItem
-              label={t('Mensagens no chat:')}
-              value={isChatMessages ? t('Sim') : t('Não')}
-            />
+            <Accordion defaultIndex={[0]} allowToggle>
+              <AccordionItem px="0" borderTop="none">
+                {({ isExpanded }: { isExpanded: boolean }) => (
+                  <>
+                    <AccordionPanel p="0">
+                      <BaseDrawerInfoItem
+                        label={t('Tipo:')}
+                        value={order?.type === 'food' ? 'Comida' : 'p2p'}
+                      />
+                      {order?.type === 'food' && (
+                        <BaseDrawerInfoItem
+                          label={t('Tipo de entrega:')}
+                          value={order?.fulfillment === 'take-away' ? 'Para retirar' : 'Delivery'}
+                        />
+                      )}
+                      <BaseDrawerInfoItem
+                        label={t('Pedido confirmado em:')}
+                        value={getDateAndHour(order?.timestamps.confirmed)}
+                      />
+                      <BaseDrawerInfoItem
+                        label={t('Atualizado em:')}
+                        value={getDateAndHour(order?.updatedOn)}
+                      />
+                      <BaseDrawerInfoItem
+                        label={t('Tempo de preparo:')}
+                        value={t(`${order?.cookingTime ? order?.cookingTime / 60 : 'N/I'} min`)}
+                      />
+                      <BaseDrawerInfoItem
+                        label={t('Status:')}
+                        value={orderStatus ? orderStatusPTOptions[orderStatus] : 'N/E'}
+                      />
+                      {
+                        order?.scheduledTo && (
+                          <BaseDrawerInfoItem
+                            label={t('Agendado para:')}
+                            value={getDateAndHour(order.scheduledTo)}
+                          />
+                        )
+                      }
+                      <BaseDrawerInfoItem
+                        label={t('Mensagens no chat:')}
+                        value={isChatMessages ? t('Sim') : t('Não')}
+                      />
+                      {order?.issue && (
+                        <BaseDrawerInfoItem label={t('Motivo da recusa:')} value={order.issue} />
+                      )}
+                    </AccordionPanel>
+                    <Box>
+                      <AccordionButton mt="-20px" mb="2" p="0" _focus={{ outline: 'none'}}>
+                        <Box flex='1' textAlign='right' fontSize="15px" fontWeight="500" lineHeight="22px" mr="2">
+                          {isExpanded ? 'Ver menos' : 'Ver mais'}
+                        </Box>
+                        <AccordionIcon />
+                      </AccordionButton>
+                    </Box>
+                  </>
 
-            {order?.issue && (
-              <BaseDrawerInfoItem label={t('Motivo da recusa:')} value={order.issue} />
-            )}
+                )}
+              </AccordionItem>
+            </Accordion>
           </DrawerHeader>
           <DrawerBody pb="28">
             {isFlagged && (

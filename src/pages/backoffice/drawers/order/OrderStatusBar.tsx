@@ -87,7 +87,7 @@ export const OrderStatusBar = ({
               <CustomRadio mt="2" value="scheduled">
                 {t('Agendado')}
               </CustomRadio>
-              <CustomRadio mt="2" value="confirmed" isDisabled>
+              <CustomRadio mt="2" value="confirmed" isDisabled={orderStatus !== 'scheduled'}>
                 {t('Confirmado')}
               </CustomRadio>
               {orderType === 'food' && (
