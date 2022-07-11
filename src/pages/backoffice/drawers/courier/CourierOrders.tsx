@@ -8,6 +8,7 @@ import {
   Tr
 } from '@chakra-ui/react';
 import { useReleaseCourier } from 'app/api/courier/useReleaseCourier';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextCourierProfile } from 'app/state/courier/context';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { CustomDateFilter } from 'common/components/form/input/CustomDateFilter';
@@ -42,6 +43,7 @@ const CourierOrdersTableItem = ({ order }: ItemPros) => {
 
 export const CourierOrders = () => {
   // context
+  const { userAbility } = useContextFirebaseUser();
   const { dispatchAppRequestResult } = useContextAppRequests();
   const { releaseCourier, releaseCourierResult } = useReleaseCourier();
   const { courier, currentOrders, orders, dateStart, dateEnd, setDateStart, setDateEnd } =
@@ -97,7 +99,12 @@ export const CourierOrders = () => {
           </HStack>
         </Box>
       ) : (
-        <Button size="md" variant="dangerLight" onClick={() => setRelease(true)}>
+        <Button 
+          size="md" 
+          variant="dangerLight" 
+          onClick={() => setRelease(true)} 
+          display={userAbility?.can('update', 'couriers') ? 'initial' : 'none'}
+        >
           {t('Liberar entregador')}
         </Button>
       )} 
