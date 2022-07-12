@@ -9,7 +9,7 @@ import {
   DrawerOverlay,
   Flex,
   Icon,
-  Text,
+  Text
 } from '@chakra-ui/react';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusinessBackoffice } from 'app/state/business/businessBOContext';
@@ -141,7 +141,7 @@ export const BusinessBaseDrawer = ({ staff, onClose, children, ...props }: BaseD
                 <DrawerLink to={`${url}/live`} label={t('Live')} />
               )}
               <DrawerLink to={`${url}/status`} label={t('Status')} />
-              {isMarketplace && <DrawerLink to={`${url}/iugu`} label={t('Iugu')} />}
+              {isMarketplace && <DrawerLink to={`${url}/account`} label={t('Conta')} />}
             </Flex>
             {children}
           </DrawerBody>

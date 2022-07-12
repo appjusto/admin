@@ -58,6 +58,7 @@ interface BusinessBOContextProps {
 const BusinessBOContext = React.createContext<BusinessBOContextProps>({} as BusinessBOContextProps);
 
 const businessKeys: (keyof Business)[] = [
+  'accountManager',
   'situation',
   'status',
   'enabled',

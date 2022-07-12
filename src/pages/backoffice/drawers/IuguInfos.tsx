@@ -35,7 +35,7 @@ export const IuguInfos = ({ account, userCanDelete, deleteAccount, result }: Iug
   // UI
   return (
     <Box>
-      <SectionTitle>{t('Subconta')}</SectionTitle>
+      <SectionTitle>{t('Iugu - Subconta')}</SectionTitle>
       {account && !account?.account && (
         <AlertError
           mt="2"

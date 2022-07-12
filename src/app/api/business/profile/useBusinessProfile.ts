@@ -1,4 +1,4 @@
-import { Business, DeleteBusinessPayload } from '@appjusto/types';
+import { Business, BusinessAccountManager, DeleteBusinessPayload } from '@appjusto/types';
 import * as Sentry from '@sentry/react';
 import { useCustomMutation } from 'app/api/mutation/useCustomMutation';
 import { useContextApi } from 'app/state/api/context';
@@ -35,6 +35,10 @@ export const useBusinessProfile = (isOnboarding: boolean = false) => {
     (changes: Partial<Business>) => api.business().updateBusinessProfile(businessId!, changes),
     'updateBusinessProfile',
     !isOnboarding
+  );
+  const { mutate: updateBusinessAccountManager, mutationResult: updateAccountManagerResult } = useCustomMutation(
+    (managerData: Partial<BusinessAccountManager>) => api.business().updateBusinessAccountManager(businessId!, managerData),
+    'updateBusinessAccountManager'
   );
   const { mutateAsync: updateBusinessProfileWithImages, mutationResult: updateWithImagesResult } =
     useCustomMutation(
@@ -95,12 +99,14 @@ export const useBusinessProfile = (isOnboarding: boolean = false) => {
     updateBusinessProfile,
     updateBusinessProfileWithImages,
     updateBusinessSlug,
+    updateBusinessAccountManager,
     deleteBusinessProfile,
     cloneBusiness,
     cloneComplementsGroup,
     updateResult,
     updateWithImagesResult,
     updateSlugResult,
+    updateAccountManagerResult,
     deleteResult,
     cloneResult,
     cloneGroupResult,
