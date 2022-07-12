@@ -4,7 +4,6 @@ import {
   AdvanceReceivablesPayload,
   BankAccount,
   Business,
-  BusinessAccountManager,
   BusinessMenuMessage,
   BusinessStatus,
   Category,
@@ -212,15 +211,6 @@ export default class BusinessApi {
       updatedOn: timestamp,
     };
     return await updateDoc(this.refs.getBusinessRef(businessId), fullChanges);
-  }
-
-  async updateBusinessAccountManager(businessId: string, managerData: Partial<BusinessAccountManager>) {
-    const timestamp = serverTimestamp();
-    const accountManager = {
-      ...managerData,
-      updatedOn: timestamp,
-    };
-    return await updateDoc(this.refs.getBusinessRef(businessId), { accountManager });
   }
 
   async updateBusinessManagerAndBankAccountBatch(

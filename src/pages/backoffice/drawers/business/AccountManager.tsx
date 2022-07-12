@@ -13,11 +13,20 @@ export const AccountManager = () => {
   //context
   const { staffs } = useStaffs()
   const { business } = useContextBusinessBackoffice();
-  console.log("accountManager", business?.accountManager?.id)
   // state
+  const [accountManager, setAccountManager] = React.useState<WithId<StaffProfile> | null>();
   const [search, setSearch] = React.useState('');
   const [searchResult, setSearchResult] = React.useState<WithId<StaffProfile>[]>([]);
   // side effects
+  React.useEffect(() => {
+    if(business?.accountManagerId === undefined || !staffs) return;
+    if(business.accountManagerId === null) {
+      setAccountManager(null);
+      return;
+    }
+    const manager = staffs.find(staff => staff.id === business?.accountManagerId);
+    setAccountManager(manager);
+  }, [business?.accountManagerId, staffs])
   React.useEffect(() => {
     if(!staffs) return;
     if(search.length > 0) {
@@ -33,8 +42,8 @@ export const AccountManager = () => {
     <Box mt="6">
       <SectionTitle>{t('Gerente da conta')}</SectionTitle>
       {
-        business?.accountManager?.id ? (
-          <AccountManagerCard accountManager={business.accountManager} />
+        accountManager ? (
+          <AccountManagerCard accountManager={accountManager} />
           ) : (
           <Box mt="4">
             <Text>{t('Este restaurante ainda não possui um gerente de contas')}</Text>

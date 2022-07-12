@@ -11,18 +11,13 @@ interface ItemPros {
 
 export const StaffsTableItem = ({ staff }: ItemPros) => {
   // context
-  const { updateBusinessAccountManager, updateAccountManagerResult } = useBusinessProfile();
-  const { isLoading, isSuccess } = updateAccountManagerResult;
+  const { updateBusinessProfile, updateResult } = useBusinessProfile();
+  const { isLoading, isSuccess } = updateResult;
   // state
   const [isConfirming, setIsConfirming] = React.useState(false);
   // handlers
   const handleUpdateAccountManager = () => {
-    const managerData = {
-      id: staff.id,
-      email: staff.email,
-      name: staff.name ?? null
-    };
-    return updateBusinessAccountManager(managerData);
+    return updateBusinessProfile({ accountManagerId: staff.id});
   }
   // side effects
   React.useEffect(() => {

@@ -9,7 +9,7 @@ import { shouldUpdateState } from '../utils';
 
 const watchedFields: (keyof Business)[] = [
   // primitive types
-  'accountManager',
+  'accountManagerId',
   'name',
   'companyName',
   'cnpj',

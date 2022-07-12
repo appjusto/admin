@@ -1,4 +1,4 @@
-import { BusinessAccountManager } from '@appjusto/types';
+import { StaffProfile, WithId } from '@appjusto/types';
 import { Box, Button, Flex, HStack, Link, Text } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import React from 'react';
@@ -6,22 +6,17 @@ import { Link as RouterLink } from 'react-router-dom';
 import { t } from 'utils/i18n';
 
 interface AccountManagerCardProps {
-  accountManager: BusinessAccountManager;
+  accountManager: WithId<StaffProfile>;
 }
 
 export const AccountManagerCard = ({ accountManager }: AccountManagerCardProps) => {
   // context
-  const { updateBusinessAccountManager, updateAccountManagerResult } = useBusinessProfile();
+  const { updateBusinessProfile, updateResult } = useBusinessProfile();
   // state
   const [isConfirming, setIsConfirming] = React.useState(false);
   // handlers
   const handleRemoveAccountManager = () => {
-    const managerData = {
-      id: null,
-      email: null,
-      name: null
-    };
-    return updateBusinessAccountManager(managerData);
+    return updateBusinessProfile({ accountManagerId: null });
   }
   // UI
   return (
@@ -75,7 +70,7 @@ export const AccountManagerCard = ({ accountManager }: AccountManagerCardProps) 
                 size="sm"
                 variant="danger"
                 onClick={handleRemoveAccountManager}
-                isLoading={updateAccountManagerResult.isLoading}
+                isLoading={updateResult.isLoading}
                 loadingText={t('Removendo...')}
               >
                 {t('Remover')}
