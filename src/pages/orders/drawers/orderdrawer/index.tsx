@@ -2,6 +2,7 @@ import { CancelOrderPayload, Issue, WithId } from '@appjusto/types';
 import { Box, Button, HStack, Text } from '@chakra-ui/react';
 import { useGetOutsourceDelivery } from 'app/api/order/useGetOutsourceDelivery';
 import { useOrder } from 'app/api/order/useOrder';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextManagerProfile } from 'app/state/manager/context';
 import { useContextAppRequests } from 'app/state/requests/context';
@@ -16,6 +17,7 @@ import { t } from 'utils/i18n';
 import { OrderBaseDrawer } from '../OrderBaseDrawer';
 import { Cancelation } from './Cancelation';
 import { CookingTime } from './CookingTime';
+import { CourierAllocation } from './CourierAllocation';
 import { DeliveryInfos } from './DeliveryInfos';
 import { OrderDetails } from './OrderDetails';
 import { OrderIssuesTable } from './OrderIssuesTable';
@@ -33,6 +35,7 @@ type Params = {
 export const OrderDrawer = (props: Props) => {
   //context
   const { onClose } = props;
+  const { adminRole } = useContextFirebaseUser();
   const { dispatchAppRequestResult } = useContextAppRequests();
   const query = useQuery();
   const { orderId } = useParams<Params>();
@@ -65,6 +68,11 @@ export const OrderDrawer = (props: Props) => {
   const deliveryFare = order?.fare?.courier?.value
     ? formatCurrency(order.fare.courier.value)
     : 'N/E';
+  const canAllocateCourier = adminRole && 
+    ['owner', 'manager'].includes(adminRole) && 
+    !order?.courier && 
+    business?.tags && 
+    business.tags.includes('can-match-courier');
   // handlers
   const handleCancel = (issue: WithId<Issue>) => {
     if (!manager?.id) {
@@ -118,6 +126,9 @@ export const OrderDrawer = (props: Props) => {
       orderPrinting={business?.orderPrinting}
       cookingTimeMode={business?.settings?.cookingTimeMode}
     >
+      {
+        canAllocateCourier && <CourierAllocation orderId={orderId} courier={order?.courier} />
+      }
       <Box position="relative">
         <Box w="100%">
           {isCanceling ? (
