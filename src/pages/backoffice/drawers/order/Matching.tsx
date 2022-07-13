@@ -29,7 +29,7 @@ interface MatchingProps {
 
 export const Matching = ({ order }: MatchingProps) => {
   // context
-  const { userAbility } = useContextFirebaseUser();
+  const { user, userAbility, isBackofficeSuperuser } = useContextFirebaseUser();
   const { dispatchAppRequestResult } = useContextAppRequests();
   const { matching, logs, updateCourierNotified, updateResult, restartMatching, restartResult } =
     useObserveOrderMatching(order?.id);
@@ -50,6 +50,7 @@ export const Matching = ({ order }: MatchingProps) => {
   const [isOutsourcing, setIsOutsourcing] = React.useState<boolean>(false);
   const [outsourcingAccountType, setOutsourcingAccountType] =
     React.useState<OutsourceAccountType>('platform');
+  const [courierCode, setCourierCode] = React.useState('');
   const [outsourcingCourierName, setOutsourcingCourierName] = React.useState('');
   const [outsourcingCourierPhone, setOutsourcingCourierPhone] = React.useState('');
   //const [couriersRejections, setCouriersRejections] = React.useState<OrderMatchingRejection[]>();
@@ -277,16 +278,32 @@ export const Matching = ({ order }: MatchingProps) => {
         <SectionTitle mt="4">
           {t(`Entregadores notificados: ${couriersNotified ? couriersNotified.length : 0}`)}
         </SectionTitle>
-        {process.env.REACT_APP_FIREBASE_EMULATOR && (
-          <Button
-            mt="4"
-            h="38px"
-            w="300px"
-            size="sm"
-            onClick={() => allocateCourier('UjNO0hIl0RTEuSa1pPt7t7A8YHFE', 'Teste')}
-          >
-            {t('(Emulador) Alocar entregador Local')}
-          </Button>
+        {isBackofficeSuperuser && (
+          <Box mt="4" border="2px solid #FFBE00" borderRadius="lg" bg="" p="4">
+            <Text fontWeight="700">{t('Alocação de entregador por código ou Id')}</Text>
+            <HStack mt="4">
+              <CustomInput
+                mt="0"
+                id="courier-allocation-code"
+                label={t('Informe o código ou Id do entregador')}
+                placeholder={t('Digite o identificador')}
+                value={courierCode}
+                onChange={(ev) => setCourierCode(ev.target.value)}
+              />
+              <Button
+                h="60px"
+                w="40%"
+                onClick={() => allocateCourier(
+                  courierCode, `Alocação manual por código pelo staff: ${user?.uid}`)
+                }
+                isLoading={allocationResult.isLoading}
+                loadingText={t('Alocando...')}
+                isDisabled={courierCode.length < 7}
+              >
+                {t('Alocar')}
+              </Button>
+            </HStack>
+          </Box>
         )}
         <Box
           mt="4"

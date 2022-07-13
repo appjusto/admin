@@ -2,7 +2,6 @@ import { CancelOrderPayload, Issue, WithId } from '@appjusto/types';
 import { Box, Button, HStack, Text } from '@chakra-ui/react';
 import { useGetOutsourceDelivery } from 'app/api/order/useGetOutsourceDelivery';
 import { useOrder } from 'app/api/order/useOrder';
-import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextManagerProfile } from 'app/state/manager/context';
 import { useContextAppRequests } from 'app/state/requests/context';
@@ -35,7 +34,6 @@ type Params = {
 export const OrderDrawer = (props: Props) => {
   //context
   const { onClose } = props;
-  const { adminRole } = useContextFirebaseUser();
   const { dispatchAppRequestResult } = useContextAppRequests();
   const query = useQuery();
   const { orderId } = useParams<Params>();
