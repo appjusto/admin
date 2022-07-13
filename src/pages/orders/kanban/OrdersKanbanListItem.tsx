@@ -24,7 +24,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
   // context
   const { url } = useRouteMatch();
   const { getServerTime } = useContextServerTime();
-  const { business, changeOrderStatus, platformParams } = useOrdersContext();
+  const { business, changeOrderStatus } = useOrdersContext();
   const arrivalTime = useOrderArrivalTimes(getServerTime, order);
   const { isBackofficeUser } = useContextFirebaseUser();
   const { isMatched, isNoMatch, isCurrierArrived, isDelivered, orderDispatchingKanbanItemText } =
@@ -41,10 +41,12 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
     order.dispatchingState !== 'arrived-pickup' &&
     order.dispatchingState !== 'arrived-destination';
   const showArrivalTimeCalc =
-    order.dispatchingState !== 'arrived-pickup' && order.dispatchingState !== 'arrived-destination';
-  const conrumerName = order.consumer.name ? order.consumer.name.split(' ')[0] : 'N/E';
+    order.dispatchingState !== 'arrived-pickup' && 
+    order.dispatchingState !== 'arrived-destination';
+  const conrumerName = order.consumer.name ? 
+    order.consumer.name.split(' ')[0] : 'N/E';
   const scheduledStartTime = getScheduledStartTime(
-    order.scheduledTo, business?.averageCookingTime, platformParams?.business.averageCookingTime
+    order.scheduledTo, order?.cookingTime
   )
   // handlers
   const cookingTime = React.useMemo(

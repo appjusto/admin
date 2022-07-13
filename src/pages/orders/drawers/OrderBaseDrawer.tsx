@@ -53,7 +53,7 @@ export const OrderBaseDrawer = ({
 }: BaseDrawerProps) => {
   //context
   const { path } = useRouteMatch();
-  const { business, platformParams, changeOrderStatus } = useOrdersContext();
+  const { changeOrderStatus } = useOrdersContext();
   // refs
   const bodyRef = React.useRef<HTMLDivElement>(null);
   // helpers
@@ -65,7 +65,7 @@ export const OrderBaseDrawer = ({
     typeof order?.courier?.id === 'string' ||
     (order?.dispatchingStatus === 'outsourced' && order.outsourcedBy !== 'business');
   const scheduledStartTime = getScheduledStartTime(
-    order?.scheduledTo, business?.averageCookingTime, platformParams?.business.averageCookingTime
+    order?.scheduledTo, order?.cookingTime
   )
   //handlers
   const handlePrint = () => {
@@ -99,7 +99,8 @@ export const OrderBaseDrawer = ({
   //UI conditions
   let orderDispatched = ['dispatching', 'delivered'].includes(order?.status ?? 'not_included');
   let PrimaryButtonIsAble =
-    (order?.status === 'scheduled' && isScheduledMarginValid(order.scheduledTo)) ||
+    (order?.status === 'scheduled' && 
+      isScheduledMarginValid(order.scheduledTo)) ||
     (!(order?.status === 'preparing' && isCookingTimeModeAuto) &&
     (['confirmed', 'preparing'].includes(order?.status ?? 'not_included') ||
       (order?.status === 'ready' && order.fulfillment !== 'delivery') ||

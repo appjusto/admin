@@ -17,16 +17,13 @@ export const ordersScheduledDayFilter = (orders: WithId<Order>[], filterDate?: D
 
 export const getScheduledStartTime = (
   scheduledTo?: FieldValue | null, 
-  averageCookingTime?: number,
-  platformAverageCookingTime?: number,
+  cookingTime?: number | null,
 ) => {
-  if(!scheduledTo) return null;
+  if(!scheduledTo || !cookingTime) return null;
   try {
-    let preparationTime = averageCookingTime ?? platformAverageCookingTime;
-    if (!preparationTime) preparationTime = 0;
     const scheduledToDate = (scheduledTo as Timestamp).toDate();
     const startAt = dayjs(scheduledToDate)
-      .subtract(preparationTime, 'second')
+      .subtract(cookingTime, 'second')
       .toDate();
     return startAt;
   } catch (error) {
@@ -35,14 +32,15 @@ export const getScheduledStartTime = (
 };
 
 export const isScheduledMarginValid = (
-  scheduledTo: FieldValue | null, 
+  scheduledTo: FieldValue | null,
+  margin: number = 3600 
 ) => {
   if(!scheduledTo) return false;
   try {
     const scheduledToDate = (scheduledTo as Timestamp).toDate();
     const now = dayjs().toDate();
     const startAt = dayjs(scheduledToDate)
-      .subtract(3600, 'second')
+      .subtract(margin, 'second')
       .toDate();
     return now > startAt;
   } catch (error) {
