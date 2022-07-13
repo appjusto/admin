@@ -1,5 +1,7 @@
 import { OrderCourier } from "@appjusto/types";
 import { Box, Button, HStack, Text } from "@chakra-ui/react";
+import { useOrderCourierManualAllocation } from "app/api/order/useOrderCourierManualAllocation";
+import { useContextManagerProfile } from "app/state/manager/context";
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import { SectionTitle } from "pages/backoffice/drawers/generics/SectionTitle";
 import React from "react";
@@ -11,6 +13,9 @@ interface CourierAllocationProps {
 }
 
 export const CourierAllocation = ({ orderId, courier }: CourierAllocationProps) => {
+  // context
+  const { manager } = useContextManagerProfile();
+  const { courierManualAllocation, allocationResult } = useOrderCourierManualAllocation();
   // state
   const [courierCode, setCourierCode] = React.useState('');
   // helpers
@@ -22,6 +27,8 @@ export const CourierAllocation = ({ orderId, courier }: CourierAllocationProps) 
   }
   const handleCourierAllocation = () => {
     console.log("Code", courierCode);
+    const comment = `Alocação manual por parte do manager: ${manager?.id}`;
+    courierManualAllocation({ orderId, courierId: courierCode, comment });
   }
   // UI
   return (
@@ -55,7 +62,9 @@ export const CourierAllocation = ({ orderId, courier }: CourierAllocationProps) 
               h="60px"
               w="40%"
               onClick={handleCourierAllocation}
-              // isLoading={resul.isLoading}
+              isLoading={allocationResult.isLoading}
+              loadingText={t('Alocando...')}
+              isDisabled={courierCode.length < 7}
             >
               {t('Alocar')}
             </Button>

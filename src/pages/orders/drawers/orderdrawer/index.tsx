@@ -68,11 +68,12 @@ export const OrderDrawer = (props: Props) => {
   const deliveryFare = order?.fare?.courier?.value
     ? formatCurrency(order.fare.courier.value)
     : 'N/E';
-  const canAllocateCourier = adminRole && 
-    ['owner', 'manager'].includes(adminRole) && 
-    !order?.courier && 
-    business?.tags && 
-    business.tags.includes('can-match-courier');
+  const canAllocateCourier = business?.tags && 
+    business.tags.includes('can-match-courier') &&
+    order?.status && (
+      ['scheduled', 'confirmed', 'preparing'].includes(order.status) ||
+      (order.status === 'ready' && !order.courier)
+    );
   // handlers
   const handleCancel = (issue: WithId<Issue>) => {
     if (!manager?.id) {
