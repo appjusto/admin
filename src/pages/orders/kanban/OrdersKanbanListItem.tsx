@@ -11,6 +11,7 @@ import React from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
 import { getHourAndMinute, getTimestampMilliseconds, getTimeUntilNow } from 'utils/functions';
 import { t } from 'utils/i18n';
+import { getScheduledStartTime } from './utils';
 
 // const confirmedKey = 'confirmed';
 // const preparingKey = 'preparing';
@@ -23,7 +24,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
   // context
   const { url } = useRouteMatch();
   const { getServerTime } = useContextServerTime();
-  const { business, changeOrderStatus } = useOrdersContext();
+  const { business, changeOrderStatus, platformParams } = useOrdersContext();
   const arrivalTime = useOrderArrivalTimes(getServerTime, order);
   const { isBackofficeUser } = useContextFirebaseUser();
   const { isMatched, isNoMatch, isCurrierArrived, isDelivered, orderDispatchingKanbanItemText } =
@@ -42,7 +43,9 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
   const showArrivalTimeCalc =
     order.dispatchingState !== 'arrived-pickup' && order.dispatchingState !== 'arrived-destination';
   const conrumerName = order.consumer.name ? order.consumer.name.split(' ')[0] : 'N/E';
-
+  const scheduledStartTime = getScheduledStartTime(
+    order.scheduledTo, business?.averageCookingTime, platformParams?.business.averageCookingTime
+  )
   // handlers
   const cookingTime = React.useMemo(
     () => (order?.cookingTime ? order?.cookingTime / 60 : null),
@@ -168,7 +171,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
               <Text fontSize="sm" textAlign="end">
                 {t('para às ')} 
                 <Text as="span" fontWeight="700">
-                  {order?.scheduledTo ? getHourAndMinute(order.scheduledTo) : 'N/I'}
+                  {scheduledStartTime ? getHourAndMinute(scheduledStartTime) : 'N/I'}
                 </Text>
               </Text>
             </Box>

@@ -1,6 +1,6 @@
 import { Order, WithId } from "@appjusto/types";
 import dayjs from "dayjs";
-import { Timestamp } from "firebase/firestore";
+import { FieldValue, Timestamp } from "firebase/firestore";
 
 export const ordersScheduledDayFilter = (orders: WithId<Order>[], filterDate?: Date) => {
   try {
@@ -14,3 +14,22 @@ export const ordersScheduledDayFilter = (orders: WithId<Order>[], filterDate?: D
     return [] as WithId<Order>[];
   }
 } 
+
+export const getScheduledStartTime = (
+  scheduledTo: FieldValue | null, 
+  averageCookingTime?: number,
+  platformAverageCookingTime?: number,
+) => {
+  if(!scheduledTo) return null;
+  try {
+    let preparationTime = averageCookingTime ?? platformAverageCookingTime;
+    if (!preparationTime) preparationTime = 0;
+    const scheduledToDate = (scheduledTo as Timestamp).toDate();
+    const startAt = dayjs(scheduledToDate)
+      .subtract(preparationTime, 'second')
+      .toDate();
+    return startAt;
+  } catch (error) {
+    console.error(error);
+  }
+};
