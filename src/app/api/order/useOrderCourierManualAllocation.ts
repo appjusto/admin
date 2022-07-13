@@ -3,7 +3,8 @@ import { useCustomMutation } from '../mutation/useCustomMutation';
 
 interface AllocationData {
   orderId: string;
-  courierId: string;
+  courierId?: string;
+  courierCode?: string;
   comment: string;
 }
 
@@ -16,7 +17,7 @@ export const useOrderCourierManualAllocation = () => {
     mutationResult: allocationResult,
   } = useCustomMutation(
     async (data: AllocationData) =>
-      api.order().courierManualAllocation(data.orderId, data.courierId, data.comment),
+      api.order().courierManualAllocation(data.orderId, data.courierId, data.courierCode, data.comment),
     'courierManualAllocation'
   );
   // return

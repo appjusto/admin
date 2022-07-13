@@ -28,7 +28,7 @@ export const CourierAllocation = ({ orderId, courier }: CourierAllocationProps) 
   const handleCourierAllocation = () => {
     console.log("Code", courierCode);
     const comment = `Alocação manual por parte do manager: ${manager?.id}`;
-    courierManualAllocation({ orderId, courierId: courierCode, comment });
+    courierManualAllocation({ orderId, courierCode, comment });
   }
   // UI
   return (

@@ -71,9 +71,18 @@ export const Matching = ({ order }: MatchingProps) => {
     await updateCourierNotified(newArray);
     setCourierRemoving(null);
   };
-  const allocateCourier = (courierId: string, comment: string) => {
+  const allocateCourier = (courierInfo: string, comment: string) => {
     if (!order?.id) return;
-    return courierManualAllocation({ orderId: order.id, courierId, comment });
+    let courierId = undefined;
+    let courierCode = undefined;
+    if(/^[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]{7}$/.exec(courierInfo)) {
+      courierCode = courierInfo;
+    } else {
+      courierId = courierInfo;
+    }
+    return courierManualAllocation({ 
+      orderId: order.id, courierId, courierCode, comment 
+    });
   };
   const handleOutsourcingCourierInfos = () => {
     if (outsourcingCourierName.length === 0 || outsourcingCourierPhone.length !== 11) {

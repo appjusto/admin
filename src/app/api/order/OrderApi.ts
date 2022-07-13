@@ -564,11 +564,17 @@ export default class OrderApi {
     return true;
   }
 
-  async courierManualAllocation(orderId: string, courierId: string, comment: string) {
+  async courierManualAllocation(
+    orderId: string, 
+    courierId: string | undefined, 
+    courierCode: string | undefined, 
+    comment: string
+  ) {
     const payload: MatchOrderPayload = {
       meta: { version: '1' }, // TODO: pass correct version on
       orderId,
       courierId,
+      courierCode,
       comment,
     };
     return await this.refs.getMatchOrderCallable()(payload);
