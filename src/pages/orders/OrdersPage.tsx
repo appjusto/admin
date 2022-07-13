@@ -9,8 +9,8 @@ import { Redirect, Route, Switch, useHistory, useRouteMatch } from 'react-router
 import { OrderAcceptanceTimeDrawer } from './drawers/OrderAcceptanceTimeDrawer';
 import { OrderDrawer } from './drawers/orderdrawer';
 import { OrdersKanban } from './kanban/OrdersKanban';
-import { ordersScheduledDayFilter } from './kanban/utils';
 import { OrdersHeader } from './OrdersHeader';
+import { ordersScheduledDayFilter } from './utils';
 
 const OrdersPage = () => {
   // context

@@ -19,12 +19,12 @@ import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { ChatButton } from './ChatButton';
 // import { getFakeOrders } from './fakeOrders';
+import { ordersScheduledDayFilter } from '../utils';
 import { OrderSearchResult } from './OrderSearchResult';
 import { OrdersKanbanList } from './OrdersKanbanList';
 import { PageSelector } from './PageSelector';
 import { PrintSwitch } from './PrintSwitch';
 import { ScheduledOrders } from './ScheduledOrders';
-import { ordersScheduledDayFilter } from './utils';
 
 const statuses = ['confirmed', 'preparing', 'ready', 'dispatching', 'canceled'] as OrderStatus[];
 const activeStatuses = ['confirmed', 'preparing', 'ready', 'dispatching'] as OrderStatus[];

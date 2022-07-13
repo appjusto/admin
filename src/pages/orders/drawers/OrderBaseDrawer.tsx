@@ -21,9 +21,10 @@ import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import React from 'react';
 import { MdPrint } from 'react-icons/md';
 import { useRouteMatch } from 'react-router-dom';
-import { getDateAndHour } from 'utils/functions';
+import { getDateAndHour, getHourAndMinute } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { orderStatusPTOptions } from '../../backoffice/utils/index';
+import { getDatePlusTime, getScheduledStartTime, isScheduledMarginValid } from '../utils';
 
 interface BaseDrawerProps {
   order?: WithId<Order> | null;
@@ -52,7 +53,7 @@ export const OrderBaseDrawer = ({
 }: BaseDrawerProps) => {
   //context
   const { path } = useRouteMatch();
-  const { changeOrderStatus } = useOrdersContext();
+  const { business, platformParams, changeOrderStatus } = useOrdersContext();
   // refs
   const bodyRef = React.useRef<HTMLDivElement>(null);
   // helpers
@@ -63,6 +64,9 @@ export const OrderBaseDrawer = ({
   const cannotCancelOrder =
     typeof order?.courier?.id === 'string' ||
     (order?.dispatchingStatus === 'outsourced' && order.outsourcedBy !== 'business');
+  const scheduledStartTime = getScheduledStartTime(
+    order?.scheduledTo, business?.averageCookingTime, platformParams?.business.averageCookingTime
+  )
   //handlers
   const handlePrint = () => {
     if (printOrder) return printOrder();
@@ -75,6 +79,7 @@ export const OrderBaseDrawer = ({
     onClose();
   };
   const PrimaryButtonFunction = () => {
+    if (order?.status === 'scheduled') changeOrderStatus(order.id, 'confirmed');
     if (order?.status === 'preparing') changeOrderStatus(order.id, 'ready');
     if (order?.status === 'ready' && order.fulfillment === 'delivery')
       changeOrderStatus(order.id, 'dispatching');
@@ -94,13 +99,15 @@ export const OrderBaseDrawer = ({
   //UI conditions
   let orderDispatched = ['dispatching', 'delivered'].includes(order?.status ?? 'not_included');
   let PrimaryButtonIsAble =
-    !(order?.status === 'preparing' && isCookingTimeModeAuto) &&
+    (order?.status === 'scheduled' && isScheduledMarginValid(order.scheduledTo)) ||
+    (!(order?.status === 'preparing' && isCookingTimeModeAuto) &&
     (['confirmed', 'preparing'].includes(order?.status ?? 'not_included') ||
       (order?.status === 'ready' && order.fulfillment !== 'delivery') ||
       (order?.status === 'ready' && isCurrierArrived) ||
-      order?.dispatchingStatus === 'outsourced');
+      order?.dispatchingStatus === 'outsourced'));
   let PrimaryButtonLabel = 'Pedido pronto';
-  if (order?.status === 'ready') PrimaryButtonLabel = 'Entregar pedido';
+  if (order?.status === 'scheduled') PrimaryButtonLabel = 'Avançar pedido';
+  else if (order?.status === 'ready') PrimaryButtonLabel = 'Entregar pedido';
   //UI
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
@@ -200,13 +207,16 @@ export const OrderBaseDrawer = ({
                     <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
                       {t('Início do preparo para:')}{' '}
                       <Text as="span" color="black" fontWeight="700">
-                        {getDateAndHour(order?.scheduledTo!)}
+                        {scheduledStartTime ? getDateAndHour(scheduledStartTime) : 'N/E'}
                       </Text>
                     </Text>
                     <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
-                      {t('Cliente solicitou entrega para:')}{' '}
+                      {t('Cliente solicitou entrega entre:')}{' '}
                       <Text as="span" color="black" fontWeight="700">
-                        {getDateAndHour(order?.scheduledTo!)}
+                        {getHourAndMinute(order?.scheduledTo!)}
+                      </Text>
+                      <Text as="span" color="black" fontWeight="700">
+                        {` e ${getHourAndMinute(getDatePlusTime(order?.scheduledTo))}`}
                       </Text>
                     </Text>
                   </>

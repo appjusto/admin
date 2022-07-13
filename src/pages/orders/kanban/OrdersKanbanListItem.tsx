@@ -11,7 +11,7 @@ import React from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
 import { getHourAndMinute, getTimestampMilliseconds, getTimeUntilNow } from 'utils/functions';
 import { t } from 'utils/i18n';
-import { getScheduledStartTime } from './utils';
+import { getScheduledStartTime } from '../utils';
 
 // const confirmedKey = 'confirmed';
 // const preparingKey = 'preparing';
