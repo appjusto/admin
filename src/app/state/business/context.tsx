@@ -33,6 +33,7 @@ const watchedFields: (keyof Business)[] = [
   'orderPrinting',
   'slug',
   'settings',
+  'tags',
   // object types
   'managers',
   'profileIssues',

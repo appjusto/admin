@@ -59,6 +59,9 @@ export const Matching = ({ order }: MatchingProps) => {
     ? ['confirmed', 'preparing', 'ready', 'dispatching'].includes(order.status)
     : false;
   const isNoMatch = order?.dispatchingStatus === 'no-match';
+  const canAllocateCourierById = isBackofficeSuperuser && 
+    userAbility?.can('update', { kind: 'orders', ...order }) &&
+    !order?.courier;
   // handlers
   const removeCourierNotified = async (courierId: string) => {
     setCourierRemoving(courierId);
@@ -278,7 +281,7 @@ export const Matching = ({ order }: MatchingProps) => {
         <SectionTitle mt="4">
           {t(`Entregadores notificados: ${couriersNotified ? couriersNotified.length : 0}`)}
         </SectionTitle>
-        {isBackofficeSuperuser && (
+        {canAllocateCourierById && (
           <Box mt="4" border="2px solid #FFBE00" borderRadius="lg" bg="" p="4">
             <Text fontWeight="700">{t('Alocação de entregador por código ou Id')}</Text>
             <HStack mt="4">

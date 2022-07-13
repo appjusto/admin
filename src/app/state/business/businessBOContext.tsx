@@ -78,6 +78,7 @@ const businessKeys: (keyof Business)[] = [
   'companyName',
   'deliveryRange',
   'minimumOrder',
+  'tags',
 ];
 interface Props {
   children: React.ReactNode | React.ReactNode[];
