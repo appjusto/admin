@@ -34,6 +34,7 @@ const watchedFields: (keyof Business)[] = [
   'slug',
   'settings',
   'tags',
+  'maxOrdersPerHour',
   // object types
   'managers',
   'profileIssues',

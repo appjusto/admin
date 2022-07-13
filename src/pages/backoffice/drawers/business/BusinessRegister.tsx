@@ -1,8 +1,9 @@
-import { Box } from '@chakra-ui/react';
+import { Badge, Box, Text } from '@chakra-ui/react';
 import { useObserveBusinessProfileNotes } from 'app/api/business/profile/useObserveBusinessProfileNotes';
 import { useContextBusinessBackoffice } from 'app/state/business/businessBOContext';
 import { ProfileNotes } from 'common/components/backoffice/ProfileNotes';
 import { CustomInput } from 'common/components/form/input/CustomInput';
+import { CustomNumberInput as NumberInput } from 'common/components/form/input/CustomNumberInput';
 import { BusinessPhoneField, BusinessPhones } from 'pages/business-profile/business-phones';
 import { BusinessFulfillment } from 'pages/business-profile/BusinessFulfillment';
 import { BusinessPreparationModes } from 'pages/business-profile/BusinessPreparationModes';
@@ -41,6 +42,33 @@ export const BusinessRegister = () => {
         preparationModes={business?.preparationModes}
         handleChange={(value) => handleBusinessProfileChange('preparationModes', value)}
         isBackoffice
+        />
+      <SectionTitle>
+        {t('Máximo de pedidos por hora')}
+        <Badge
+          ml="2"
+          mt="-12px"
+          px="8px"
+          py="2px"
+          bgColor="#FFBE00"
+          color="black"
+          borderRadius="16px"
+          fontSize="11px"
+          lineHeight="18px"
+          fontWeight="700"
+        >
+          {t('NOVIDADE')}
+        </Badge>
+      </SectionTitle>
+      <Text mt="1" fontSize="md">{t('Usar "0" para desativado')}</Text>
+      <NumberInput
+        id="business-max-order-per-hour"
+        label={t('Número máximo de pedidos por hora')}
+        value={String(business?.maxOrdersPerHour ?? '')}
+        onChange={(e) => handleBusinessProfileChange(
+          'maxOrdersPerHour', parseInt(e.target.value, 10)
+          )
+        }
       />
       <BusinessFulfillment
         fulfillment={business?.fulfillment}

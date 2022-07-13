@@ -32,7 +32,7 @@ export const getScheduledStartTime = (
 };
 
 export const isScheduledMarginValid = (
-  scheduledTo: FieldValue | null,
+  scheduledTo?: FieldValue | null,
   margin: number = 3600 
 ) => {
   if(!scheduledTo) return false;

@@ -1,5 +1,5 @@
 import { Business, BusinessPhone, Fulfillment, PreparationMode } from '@appjusto/types';
-import { Box, Flex, Switch as ChakraSwitch, Text, useBreakpoint } from '@chakra-ui/react';
+import { Badge, Box, Flex, Switch as ChakraSwitch, Text, useBreakpoint } from '@chakra-ui/react';
 import * as cnpjutils from '@fnando/cnpj';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useContextFirebaseUser } from 'app/state/auth/context';
@@ -7,6 +7,7 @@ import { useContextBusiness } from 'app/state/business/context';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput2';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
+import { CustomNumberInput as NumberInput } from 'common/components/form/input/CustomNumberInput';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
 import { CustomPatternInput as PatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';
 import { cnpjFormatter, cnpjMask } from 'common/components/form/input/pattern-input/formatters';
@@ -65,6 +66,9 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const [minimumOrder, setMinimumOrder] = React.useState(business?.minimumOrder ?? 0);
   const [enabled, setEnabled] = React.useState(business?.enabled ?? false);
   const [status, setStatus] = React.useState(business?.status ?? 'closed');
+  const [maxOrdersPerHour, setMaxOrdersPerHour] = React.useState(
+    String(business?.maxOrdersPerHour ?? '0') 
+    );
   const [preparationModes, setPreparationModes] = React.useState<PreparationMode[]>(['realtime']);
   const [fulfillment, setFulfillment] = React.useState<Fulfillment[]>(['delivery']);
   const [logoExists, setLogoExists] = React.useState(false);
@@ -148,6 +152,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
       enabled,
       status,
       cuisine: cuisineName,
+      maxOrdersPerHour: parseInt(maxOrdersPerHour, 10),
       preparationModes,
       fulfillment,
       logoExists: logoExists,
@@ -206,7 +211,10 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
       setDescription(business.description ?? '');
       setMinimumOrder(business.minimumOrder ?? 0);
       setCuisineName(business.cuisine ?? '');
-      if (business.preparationModes) setPreparationModes(business.preparationModes);
+      if (business.maxOrdersPerHour) 
+        setMaxOrdersPerHour(String(business.maxOrdersPerHour));
+      if (business.preparationModes) 
+        setPreparationModes(business.preparationModes);
       if (business.fulfillment) setFulfillment(business.fulfillment);
       if (business.logoExists && logo) setLogoExists(true);
       if (business.coverImageExists && cover) setCoverExists(true);
@@ -308,6 +316,39 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
           />
           {/* preparation modes */}
           <BusinessPreparationModes preparationModes={preparationModes} handleChange={setPreparationModes} />
+          {/* maxOrdersPerHour */}
+          <Text mt="8" fontSize="xl" color="black">
+            {t('Máximo de pedidos')}
+            <Badge
+              ml="2"
+              mt="-12px"
+              px="8px"
+              py="2px"
+              bgColor="#FFBE00"
+              color="black"
+              borderRadius="16px"
+              fontSize="11px"
+              lineHeight="18px"
+              fontWeight="700"
+            >
+              {t('NOVIDADE')}
+            </Badge>
+          </Text>
+          <Text mt="2" fontSize="md">
+            {t(
+              'Caso aplicável, informe a quantidade máxima de pedidos que o restaurante aceita no intervalo de 1h (0 = desativado)'
+              )}
+          </Text>
+          <NumberInput
+            id="business-max-order-per-hour"
+            maxW="400px"
+            label={t('Número de pedidos por hora')}
+            value={maxOrdersPerHour}
+            onChange={(ev: React.ChangeEvent<HTMLInputElement>) =>
+              setMaxOrdersPerHour(ev.target.value)
+            }
+            isRequired
+          />
           {/* fulfillment */}
           <BusinessFulfillment fulfillment={fulfillment} handleChange={setFulfillment} />
           {/* logo */}
