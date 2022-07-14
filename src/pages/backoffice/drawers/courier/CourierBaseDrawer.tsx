@@ -12,7 +12,7 @@ import {
   Flex,
   HStack,
   Icon,
-  Text,
+  Text
 } from '@chakra-ui/react';
 import { useAuthentication } from 'app/api/auth/useAuthentication';
 import { useCourierUpdateProfile } from 'app/api/courier/useCourierUpdateProfile';
@@ -195,6 +195,9 @@ export const CourierBaseDrawer = ({ staff, onClose, children, ...props }: BaseDr
               </Text>
               <Text ml="2" as="span" fontWeight="500">
                 {`rejeitados (${courier?.statistics?.rejected ?? 'N/E'})`}
+              </Text>
+              <Text ml="2" as="span" fontWeight="500">
+                {`cancelados (${courier?.statistics?.canceled ?? 'N/E'})`}
               </Text>
             </Flex>
             <Flex mt="1" alignItems="flex-end">
