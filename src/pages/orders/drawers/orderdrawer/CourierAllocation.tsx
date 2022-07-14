@@ -22,7 +22,7 @@ export const CourierAllocation = ({ orderId, courier }: CourierAllocationProps) 
   const isCourierAllocated = typeof courier?.id === 'string';
   // handlers
   const handleCodeInput = (value: string) => {
-    const serialized = value.replace(/[\W_]+/g,'');
+    const serialized = value.replace(/[\W_]+/g,'').toUpperCase();
     setCourierCode(serialized);
   }
   const handleCourierAllocation = () => {
