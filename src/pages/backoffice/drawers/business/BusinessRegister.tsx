@@ -1,5 +1,6 @@
 import { Badge, Box, Text } from '@chakra-ui/react';
 import { useObserveBusinessProfileNotes } from 'app/api/business/profile/useObserveBusinessProfileNotes';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusinessBackoffice } from 'app/state/business/businessBOContext';
 import { ProfileNotes } from 'common/components/backoffice/ProfileNotes';
 import { CustomInput } from 'common/components/form/input/CustomInput';
@@ -9,12 +10,14 @@ import { BusinessFulfillment } from 'pages/business-profile/BusinessFulfillment'
 import { BusinessPreparationModes } from 'pages/business-profile/BusinessPreparationModes';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
+import { BusinessTags } from './BusinessTags';
 import BOBankingInformation from './forms/BOBankingInformation';
 import { BOBusinessAddress } from './forms/BOBusinessAddress';
 import { BOBusinessProfile } from './forms/BOBusinessProfile';
 
 export const BusinessRegister = () => {
   // context
+  const { isBackofficeSuperuser } = useContextFirebaseUser();
   const {
     business,
     handleBusinessProfileChange,
@@ -86,6 +89,14 @@ export const BusinessRegister = () => {
       <BOBusinessAddress />
       <SectionTitle>{t('Dados bancários')}</SectionTitle>
       <BOBankingInformation />
+      {
+        isBackofficeSuperuser && (
+          <>
+            <SectionTitle>{t('Tags')}</SectionTitle>
+            <BusinessTags />
+          </>
+        )
+      }
       <SectionTitle>{t('Anotações')}</SectionTitle>
       <ProfileNotes
         profileNotes={profileNotes}
