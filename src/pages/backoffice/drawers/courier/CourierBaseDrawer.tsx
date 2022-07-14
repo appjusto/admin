@@ -197,7 +197,7 @@ export const CourierBaseDrawer = ({ staff, onClose, children, ...props }: BaseDr
                 {`rejeitados (${courier?.statistics?.rejected ?? 'N/E'})`}
               </Text>
               <Text ml="2" as="span" fontWeight="500">
-                {`cancelados (${courier?.statistics?.canceled ?? 'N/E'})`}
+                {`liberados (${courier?.statistics?.canceled ?? 'N/E'})`}
               </Text>
             </Flex>
             <Flex mt="1" alignItems="flex-end">
