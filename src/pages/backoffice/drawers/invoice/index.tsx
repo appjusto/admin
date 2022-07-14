@@ -8,7 +8,7 @@ import {
   DrawerHeader,
   DrawerOverlay,
   Link,
-  Text,
+  Text
 } from '@chakra-ui/react';
 import { useConsumerProfile } from 'app/api/consumer/useConsumerProfile';
 import { useObserveInvoice } from 'app/api/order/useObserveInvoice';
@@ -37,9 +37,13 @@ export const InvoiceDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   const invoice = useObserveInvoice(invoiceId);
   const consumer = useConsumerProfile(invoice?.consumerId);
   // state
-  const [paymentMethod, setPaymentMethod] = React.useState<IuguCustomerPaymentMethod | null>();
+  const [paymentMethod, setPaymentMethod] = React.useState<IuguCustomerPaymentMethod | string | null>();
   // side effects
   React.useEffect(() => {
+    if(invoice?.paymentMethod && invoice?.paymentMethod !== 'credit_card') {
+      setPaymentMethod(invoice?.paymentMethod);
+      return;
+    }
     if (!invoice?.customerPaymentMethodId) return;
     if (!consumer?.paymentChannel?.methods) return;
     const method = consumer.paymentChannel.methods.find(
@@ -47,7 +51,11 @@ export const InvoiceDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
     );
     if (method) setPaymentMethod(method);
     else setPaymentMethod(null);
-  }, [invoice?.customerPaymentMethodId, consumer?.paymentChannel?.methods]);
+  }, [
+      invoice?.paymentMethod, 
+      invoice?.customerPaymentMethodId, 
+      consumer?.paymentChannel?.methods
+  ]);
   //UI
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
@@ -138,20 +146,21 @@ export const InvoiceDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
               />
             </Box>
             <SectionTitle>{t('Método de pagamento')}</SectionTitle>
-            {paymentMethod === undefined ? (
-              <Text>{t('Carregando método de pagamento...')}</Text>
-            ) : paymentMethod === null ? (
-              <Text>
-                {t(
-                  `Método de pagamento com ID: ${
-                    invoice?.customerPaymentMethodId ?? 'N/E'
-                  } não encontrado`
-                )}
-              </Text>
-            ) : (
-              <PaymentMethodCard method={paymentMethod} />
-            )}
-
+            {
+              paymentMethod === undefined ? (
+                <Text>{t('Carregando método de pagamento...')}</Text>
+              ) : paymentMethod === null ? (
+                <Text>
+                  {t(
+                    `Método de pagamento com ID: ${
+                      invoice?.customerPaymentMethodId ?? 'N/E'
+                    } não encontrado`
+                  )}
+                </Text>
+              ) : (
+                <PaymentMethodCard method={paymentMethod} />
+              )
+            }
             {invoice?.invoiceType !== 'platform' && (
               <>
                 <SectionTitle>{t('Subconta')}</SectionTitle>

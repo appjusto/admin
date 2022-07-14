@@ -1,6 +1,5 @@
 import { Box, HStack, Text } from '@chakra-ui/react';
 import { useContextConsumerProfile } from 'app/state/consumer/context';
-import React from 'react';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
 
@@ -19,10 +18,20 @@ export interface IuguCustomerPaymentMethod {
 }
 
 interface PaymentMethodCardProps {
-  method: IuguCustomerPaymentMethod;
+  method: IuguCustomerPaymentMethod | string;
 }
 
 export const PaymentMethodCard = ({ method }: PaymentMethodCardProps) => {
+  if(typeof method === 'string') {
+    return (
+      <Text mt="4" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+        {t('Pago por:')}{' '}
+        <Text as="span" fontWeight="500">
+          {method ?? 'N/E'}
+        </Text>
+      </Text>
+    )
+  }
   return (
     <Box mt="4" border="1px solid #E5E5E5" borderRadius="lg" p="4">
       <Text fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
