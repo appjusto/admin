@@ -32,7 +32,13 @@ export const CourierAllocation = ({ orderId, courier }: CourierAllocationProps) 
   }
   // UI
   return (
-    <Box mt="4" border="2px solid #FFBE00" borderRadius="lg" bg="" p="4">
+    <Box 
+      mt="4" 
+      border="2px solid #FFBE00" 
+      borderRadius="lg" 
+      bg="" 
+      p="4"
+      >
       <SectionTitle mt="0">
         {
           isCourierAllocated ? t('Entregador alocado') : t('Alocar entregador ao pedido')
@@ -49,26 +55,34 @@ export const CourierAllocation = ({ orderId, courier }: CourierAllocationProps) 
             </Text>
           </Box>
         ) : (
-          <HStack mt="4">
-            <CustomInput
-              mt="0"
-              id="courier-allocation-code"
-              label={t('Informe o código do entregador')}
-              placeholder={t('Ex: WNJKSDT')}
-              value={courierCode}
-              onChange={(ev) => handleCodeInput(ev.target.value)}
-            />
-            <Button
-              h="60px"
-              w="40%"
-              onClick={handleCourierAllocation}
-              isLoading={allocationResult.isLoading}
-              loadingText={t('Alocando...')}
-              isDisabled={courierCode.length < 7}
-            >
-              {t('Alocar')}
-            </Button>
-          </HStack>
+          <form 
+            onSubmit={(e) => {
+              e.preventDefault()
+              handleCourierAllocation()
+            }}
+          >
+            <HStack mt="4">
+              <CustomInput
+                mt="0"
+                id="courier-allocation-code"
+                label={t('Informe o código do entregador')}
+                placeholder={t('Ex: WNJKSDT')}
+                value={courierCode}
+                onChange={(ev) => handleCodeInput(ev.target.value)}
+              />
+              <Button
+                h="60px"
+                w="40%"
+                type="submit"
+                // onClick={handleCourierAllocation}
+                isLoading={allocationResult.isLoading}
+                loadingText={t('Alocando...')}
+                isDisabled={courierCode.length < 7}
+              >
+                {t('Alocar')}
+              </Button>
+            </HStack>
+          </form>
         )
       }
     </Box>
