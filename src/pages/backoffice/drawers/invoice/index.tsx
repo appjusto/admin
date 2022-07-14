@@ -41,7 +41,7 @@ export const InvoiceDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   // side effects
   React.useEffect(() => {
     if(invoice?.paymentMethod && invoice?.paymentMethod !== 'credit_card') {
-      setPaymentMethod(invoice?.paymentMethod);
+      setPaymentMethod(invoice.paymentMethod.toUpperCase());
       return;
     }
     if (!invoice?.customerPaymentMethodId) return;
