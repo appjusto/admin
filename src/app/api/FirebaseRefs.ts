@@ -149,6 +149,9 @@ export default class FirebaseRefs {
   getLedgerRef = () => collection(this.firestore, 'ledger');
   getLedgerEntryRef = (entryId: string) => doc(this.getLedgerRef(), entryId);
 
+  // tasks
+  getTasksRef = () => collection(this.firestore, 'tasks');
+  
   // consumers
   getConsumersRef = () => collection(this.firestore, 'consumers');
   getConsumerRef = (consumerId: string) => doc(this.getConsumersRef(), consumerId);

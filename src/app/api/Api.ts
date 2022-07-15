@@ -9,7 +9,7 @@ import {
   connectFirestoreEmulator,
   Firestore,
   FirestoreSettings,
-  initializeFirestore,
+  initializeFirestore
 } from 'firebase/firestore';
 import { connectFunctionsEmulator, Functions, getFunctions } from 'firebase/functions';
 import { connectStorageEmulator, FirebaseStorage, getStorage } from 'firebase/storage';
@@ -25,6 +25,7 @@ import MeasurementApi from './measurement/MeasurementApi';
 import OrderApi from './order/OrderApi';
 import PlatformApi from './platform/PlatformApi';
 import StaffApi from './staff/StaffApi';
+import TasksApi from './tasks/TasksApi';
 import UsersApi from './users/UsersApi';
 dayjs.extend(timezone);
 
@@ -53,6 +54,7 @@ export default class Api {
   private _users: UsersApi;
   private _measurement: MeasurementApi;
   private _chat: ChatApi;
+  private _tasks: TasksApi;
 
   constructor(config: ApiConfig) {
     if (!Api.app) {
@@ -99,6 +101,7 @@ export default class Api {
     this._users = new UsersApi(this._refs);
     this._measurement = new MeasurementApi(this._analytics);
     this._chat = new ChatApi(this._refs);
+    this._tasks = new TasksApi(this._refs);
   }
 
   measurement() {
@@ -147,5 +150,9 @@ export default class Api {
 
   chat() {
     return this._chat;
+  }
+  
+  tasks() {
+    return this._tasks;
   }
 }
