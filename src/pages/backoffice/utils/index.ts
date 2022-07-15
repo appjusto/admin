@@ -92,6 +92,13 @@ export const invoiceStatusPTOptions = {
   chargeback: 'Estornada',
 };
 
+export const ledgerEntryStatusPTOptions = {
+  canceled: 'Cancelada',
+  paid: 'Paga',
+  pending: 'Pendente',
+  processing: 'Processando',
+};
+
 export const iuguSituationPTOptions = {
   'pending': 'Pendente',
   'created': 'Criada',

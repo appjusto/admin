@@ -1,6 +1,5 @@
 import { BackofficeDashboardProvider } from 'app/state/dashboards/backoffice';
 import PageLayout from 'pages/PageLayout';
-import React from 'react';
 import { Switch, useRouteMatch } from 'react-router-dom';
 import BusinessesPage from './businesses';
 import ConsumersPage from './consumers';
@@ -8,6 +7,7 @@ import CouriersPage from './couriers';
 import BODashboard from './dashboard';
 import FraudPreventionPage from './fraud-prevention';
 import InvoicesPage from './invoices';
+import LedgerPage from './ledger';
 import OrdersPage from './orders';
 import RecommendationsPage from './recommendations';
 import { BOAccessRoute } from './routes/BOAccessRoute';
@@ -28,6 +28,7 @@ const BackOffice = () => {
           <BOAccessRoute path={`${path}/businesses`} component={BusinessesPage} />
           <BOAccessRoute path={`${path}/consumers`} component={ConsumersPage} />
           <BOAccessRoute path={`${path}/invoices`} component={InvoicesPage} />
+          <BOAccessRoute path={`${path}/ledger`} component={LedgerPage} />
           <BOAccessRoute path={`${path}/staff`} component={StaffsPage} />
           <BOAccessRoute path={`${path}/fraud-prevention`} component={FraudPreventionPage} />
           <BOAccessRoute path={`${path}/staff-profile`} component={StaffProfile} />
