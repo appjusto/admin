@@ -24,7 +24,7 @@ import { useRouteMatch } from 'react-router-dom';
 import { getDateAndHour, getHourAndMinute } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { orderStatusPTOptions } from '../../backoffice/utils/index';
-import { getDatePlusTime, getScheduledStartTime, isScheduledMarginValid } from '../utils';
+import { getDatePlusTime, isScheduledMarginValid } from '../utils';
 
 interface BaseDrawerProps {
   order?: WithId<Order> | null;
@@ -64,9 +64,6 @@ export const OrderBaseDrawer = ({
   const cannotCancelOrder =
     typeof order?.courier?.id === 'string' ||
     (order?.dispatchingStatus === 'outsourced' && order.outsourcedBy !== 'business');
-  const scheduledStartTime = getScheduledStartTime(
-    order?.scheduledTo, order?.cookingTime
-  )
   //handlers
   const handlePrint = () => {
     if (printOrder) return printOrder();
@@ -208,7 +205,11 @@ export const OrderBaseDrawer = ({
                     <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
                       {t('Início do preparo para:')}{' '}
                       <Text as="span" color="black" fontWeight="700">
-                        {scheduledStartTime ? getDateAndHour(scheduledStartTime) : 'N/E'}
+                      {
+                        order?.confirmedScheduledTo ? 
+                        getHourAndMinute(order.confirmedScheduledTo) : 
+                        'N/E'
+                      }
                       </Text>
                     </Text>
                     <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">

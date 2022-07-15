@@ -11,7 +11,6 @@ import React from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
 import { getHourAndMinute, getTimestampMilliseconds, getTimeUntilNow } from 'utils/functions';
 import { t } from 'utils/i18n';
-import { getScheduledStartTime } from '../utils';
 
 // const confirmedKey = 'confirmed';
 // const preparingKey = 'preparing';
@@ -30,10 +29,8 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
   const { isMatched, isNoMatch, isCurrierArrived, isDelivered, orderDispatchingKanbanItemText } =
     useOrderDeliveryInfos(getServerTime, order);
   //const { restartMatching, restartResult } = useObserveOrderMatching(order.id);
-
   // state
   const [elapsedTime, setElapsedTime] = React.useState<number | null>(0);
-
   // helpers
   const isCookingTimeModeAuto = business?.settings?.cookingTimeMode === 'auto';
   const showArrivalTime =
@@ -45,9 +42,6 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
     order.dispatchingState !== 'arrived-destination';
   const conrumerName = order.consumer.name ? 
     order.consumer.name.split(' ')[0] : 'N/E';
-  const scheduledStartTime = getScheduledStartTime(
-    order.scheduledTo, order?.cookingTime
-  )
   // handlers
   const cookingTime = React.useMemo(
     () => (order?.cookingTime ? order?.cookingTime / 60 : null),
@@ -56,7 +50,6 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
   //const cookingTime = order?.cookingTime ? order?.cookingTime / 60 : null;
   const cookingProgress = cookingTime && elapsedTime ? (elapsedTime / cookingTime) * 100 : 0;
   // const cancelator = orderCancelator(order?.cancellation?.issue?.type);
-
   const handleOrderDispatching = () => {
     if (order.fulfillment === 'delivery') {
       changeOrderStatus(order.id, 'dispatching');
@@ -64,7 +57,6 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
       changeOrderStatus(order.id, 'delivered');
     }
   };
-
   // side effects
   React.useEffect(() => {
     if (!order.id) return;
@@ -91,7 +83,6 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
     }
     return () => clearInterval(timeInterval);
   }, [getServerTime, order.id, order.status, order.timestamps]);
-
   React.useEffect(() => {
     // disabled for backoffice users
     if (isBackofficeUser) return;
@@ -116,7 +107,6 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
     cookingTime,
     isBackofficeUser,
   ]);
-
   // UI
   if (order.status === 'canceled') {
     return (
@@ -173,7 +163,11 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
               <Text fontSize="sm" textAlign="end">
                 {t('para às ')} 
                 <Text as="span" fontWeight="700">
-                  {scheduledStartTime ? getHourAndMinute(scheduledStartTime) : 'N/I'}
+                  {
+                    order?.confirmedScheduledTo ? 
+                    getHourAndMinute(order.confirmedScheduledTo) : 
+                    'N/E'
+                  }
                 </Text>
               </Text>
             </Box>
