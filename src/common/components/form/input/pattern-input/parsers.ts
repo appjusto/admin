@@ -1,4 +1,5 @@
-export const numbersOnlyParser = (value: string) => value.replace(/[^0-9]/g, '');
+export const numbersOnlyParser = (value: string, allowDecimals = false) =>
+  value.replace(allowDecimals ? /[^0-9.]/g : /[^0-9]/g, '');
 
 export const numbersAndLettersParser = (mask: string, padWithZeros?: boolean) => {
   const regexp = (char: string): RegExp => {

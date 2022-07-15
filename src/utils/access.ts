@@ -11,6 +11,7 @@ type BackofficeAccess = {
   'fraud-prevention': string;
   'staff': string;
   'staff-profile': string;
+  'platform': string;
 };
 
 const backofficeAccess = {
@@ -23,6 +24,7 @@ const backofficeAccess = {
   'recommendations': 'recommendations',
   'fraud-prevention': 'platform',
   'staff': 'staff',
+  'platform': 'platform',
 } as BackofficeAccess;
 
 type AdminAccess = {
@@ -107,6 +109,7 @@ export const isAccessGranted = (args: IsAccessGrantedArgs) => {
       const page = path.split('/backoffice/')[1] as keyof BackofficeAccess;
       if (!page || page === 'staff-profile') return true;
       const accessProperty = backofficeAccess[page] as keyof UserPermissions;
+
       return backofficePermissions[accessProperty].includes('r');
     }
     return false;

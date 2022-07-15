@@ -1,5 +1,4 @@
 import { Box, BoxProps } from '@chakra-ui/react';
-import React from 'react';
 import { useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { LinkItem } from './LinkItem';
@@ -20,6 +19,7 @@ export const BackOfficeLinks = (props: BoxProps) => {
       <LinkItem type="backoffice" to={`${url}/recommendations`} label={t('Indicações')} />
       <LinkItem type="backoffice" to={`${url}/fraud-prevention`} label={t('Antifraude')} />
       <LinkItem type="backoffice" to={`${url}/staff`} label={t('Agentes')} />
+      <LinkItem type="backoffice" to={`${url}/platform`} label={t('Parâmetros')} />
     </Box>
   );
 };

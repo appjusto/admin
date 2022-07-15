@@ -6,6 +6,7 @@ import {
   Issue,
   IssueType,
   PlatformAccess,
+  PlatformFees,
   PlatformParams,
   PlatformStatistics,
   WithId,
@@ -19,12 +20,18 @@ import {
   query,
   serverTimestamp,
   Unsubscribe,
+  updateDoc,
   where,
 } from 'firebase/firestore';
 import { hash } from 'geokit';
 import { documentsAs } from '../../../core/fb';
 import FirebaseRefs from '../FirebaseRefs';
 
+type DeepPartial<T> = T extends object
+  ? {
+      [P in keyof T]?: DeepPartial<T[P]>;
+    }
+  : T;
 export default class PlatformApi {
   constructor(private refs: FirebaseRefs) {}
   // firestore
@@ -92,6 +99,20 @@ export default class PlatformApi {
     );
   }
 
+  observeFees(resultHandler: (fees: PlatformFees | null) => void) {
+    const ref = this.refs.getPlatformFeesRef();
+    return onSnapshot(
+      ref,
+      (snapshot) => {
+        if (snapshot.exists()) resultHandler(snapshot.data() as PlatformFees);
+        else resultHandler(null);
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+  }
+
   async addFlaggedLocation(location: Partial<FlaggedLocation>) {
     const { address, coordinates } = location;
     const q = query(
@@ -146,7 +167,7 @@ export default class PlatformApi {
 
   async getServerTime(): Promise<number> {
     try {
-      const result = ((await this.refs.getServerTimeCallable()()) as unknown) as {
+      const result = (await this.refs.getServerTimeCallable()()) as unknown as {
         data: { time: number };
       };
       return result.data.time;
@@ -154,5 +175,25 @@ export default class PlatformApi {
       console.error('getServerTimeError', error);
       return 0;
     }
+  }
+
+  async updatePlatformParams(changes: DeepPartial<PlatformParams>) {
+    const timestamp = serverTimestamp();
+    const fullChanges = {
+      ...changes,
+      updatedOn: timestamp,
+    };
+    return await updateDoc(this.refs.getPlatformParamsRef(), fullChanges);
+  }
+
+  async updatePlatformFees(changes: DeepPartial<PlatformFees>) {
+    const ref = this.refs.getPlatformFeesRef();
+    const timestamp = serverTimestamp();
+    const fullChanges = {
+      ...changes,
+      updatedOn: timestamp,
+    };
+
+    return await updateDoc(ref, fullChanges);
   }
 }

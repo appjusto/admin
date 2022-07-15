@@ -7,15 +7,19 @@ interface Props extends InputProps {
   label?: string;
   value: string;
   maxLength?: number;
+  allowDecimals?: boolean;
 }
 
 export const CustomNumberInput = React.forwardRef<HTMLInputElement, Props>(
-  ({ id, label, value, maxLength, mt = '16px', mb, ml, mr, flex, ...props }: Props, ref) => {
+  (
+    { id, label, value, maxLength, mt = '16px', mb, ml, mr, flex, allowDecimals, ...props }: Props,
+    ref
+  ) => {
     const [state, setState] = React.useState('');
     const controlProps = { mt, mb, ml, mr, flex };
     const styles = useMultiStyleConfig('CustomInput', {});
     React.useLayoutEffect(() => {
-      const newState = numbersOnlyParser(value);
+      const newState = numbersOnlyParser(value, allowDecimals);
       setState((prevState) => {
         if (maxLength && newState.length < maxLength) {
           return newState;
@@ -25,7 +29,7 @@ export const CustomNumberInput = React.forwardRef<HTMLInputElement, Props>(
           return newState;
         }
       });
-    }, [value, maxLength]);
+    }, [value, maxLength, allowDecimals]);
     return (
       <FormControl id={id} sx={styles.control} {...controlProps}>
         {label && <FormLabel sx={styles.label}>{label}</FormLabel>}

@@ -1,6 +1,5 @@
 import { Box, Flex, Link, Text } from '@chakra-ui/react';
 import { useContextFirebaseUser } from 'app/state/auth/context';
-import React from 'react';
 import { Link as RouterLink, useRouteMatch } from 'react-router-dom';
 import { isAccessGranted } from 'utils/access';
 
@@ -25,6 +24,7 @@ export const LinkItem = ({ type = 'admin', to, label, isDisabled }: LinkItemProp
     backofficePermissions,
     adminRole,
   });
+
   // UI
   if (isDisabled) {
     return (
