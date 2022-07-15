@@ -7,6 +7,7 @@ import { useContextManagerProfile } from 'app/state/manager/context';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
+import { isToday } from 'pages/orders/utils';
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useReactToPrint } from 'react-to-print';
@@ -66,7 +67,10 @@ export const OrderDrawer = (props: Props) => {
   const deliveryFare = order?.fare?.courier?.value
     ? formatCurrency(order.fare.courier.value)
     : 'N/E';
-  const canAllocateCourier = business?.tags && 
+  const canAllocateCourier = (
+    !order?.scheduledTo || isToday(order?.scheduledTo)
+    ) &&
+    business?.tags && 
     business.tags.includes('can-match-courier') &&
     order?.status && (
       ['scheduled', 'confirmed', 'preparing'].includes(order.status) ||

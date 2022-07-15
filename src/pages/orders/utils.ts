@@ -64,3 +64,15 @@ export const getDatePlusTime = (
     return undefined;
   }
 };
+
+
+export const isToday = (dateValue?: FieldValue | null) => {
+  if(!dateValue) return undefined;
+  try {
+    const date = (dateValue as Timestamp).toDate();
+    return dayjs().startOf('day').isSame(dayjs(date).startOf('day'));
+  } catch (error) {
+    console.error(error);
+    return undefined;
+  }
+};
