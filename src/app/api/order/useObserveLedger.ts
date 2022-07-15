@@ -7,7 +7,7 @@ import React from 'react';
 const initialMap = new Map();
 
 export const useObserveLedger = (
-  orderCode?: string | null,
+  orderId?: string | null,
   start?: string,
   end?: string,
   status?: LedgerEntryStatus
@@ -30,7 +30,7 @@ export const useObserveLedger = (
     if (start && !end) return;
     setEntriesMap(initialMap);
     setStartAfter(undefined);
-  }, [orderCode, start, end, status]);
+  }, [orderId, start, end, status]);
   React.useEffect(() => {
     let startDate = start ? dayjs(start).startOf('day').toDate() : null;
     let endDate = end ? dayjs(end).endOf('day').toDate() : null;
@@ -43,14 +43,14 @@ export const useObserveLedger = (
         });
         if (last) setLastInvoice(last);
       },
-      orderCode,
+      orderId,
       startDate,
       endDate,
       startAfter,
       status
     );
     return () => unsub();
-  }, [api, startAfter, orderCode, start, end, status]);
+  }, [api, startAfter, orderId, start, end, status]);
   React.useEffect(() => {
     setEntries(
       Array.from(entriesMap.values()).reduce((result, orders) => [...result, ...orders], [])

@@ -481,7 +481,7 @@ export default class OrderApi {
       entries: WithId<LedgerEntry>[],
       last?: QueryDocumentSnapshot<DocumentData>
     ) => void,
-    orderCode?: string | null,
+    orderId?: string | null,
     start?: Date | null,
     end?: Date | null,
     startAfterDoc?: FirebaseDocument,
@@ -490,7 +490,7 @@ export default class OrderApi {
     let q = query(this.refs.getLedgerRef(), orderBy('createdOn', 'desc'), limit(queryLimit));
     if (status) q = query(q, where('status', '==', status));
     if (startAfterDoc) q = query(q, startAfter(startAfterDoc));
-    if (orderCode) q = query(q, where('orderCode', '==', orderCode));
+    if (orderId) q = query(q, where('orderId', '==', orderId));
     if (start && end) q = query(q, where('createdOn', '>=', start), where('createdOn', '<=', end));
     const unsubscribe = onSnapshot(
       q,
