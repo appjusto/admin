@@ -14,6 +14,7 @@ import {
   phoneMask
 } from 'common/components/form/input/pattern-input/formatters';
 import { numbersOnlyParser } from 'common/components/form/input/pattern-input/parsers';
+import { isToday } from 'pages/orders/utils';
 import React from 'react';
 import { t } from 'utils/i18n';
 import { orderDispatchingStatusPTOptions } from '../../utils/index';
@@ -60,6 +61,7 @@ export const Matching = ({ order }: MatchingProps) => {
     : false;
   const isNoMatch = order?.dispatchingStatus === 'no-match';
   const canAllocateCourierById = isBackofficeSuperuser && 
+    (!order?.scheduledTo || isToday(order.scheduledTo)) &&
     userAbility?.can('update', { kind: 'orders', ...order }) &&
     !order?.courier;
   // handlers
