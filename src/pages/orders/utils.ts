@@ -51,7 +51,7 @@ export const isScheduledMarginValid = (
 
 export const getDatePlusTime = (
   dateValue?: FieldValue | null, 
-  time: number = 1800, 
+  time: number = 3600, 
 ) => {
   if(!dateValue) return undefined;
   try {
