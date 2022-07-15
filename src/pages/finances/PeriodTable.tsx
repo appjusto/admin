@@ -32,7 +32,7 @@ export const PeriodTable = ({ period, amount, appjustoFee, iuguFee }: PeriodTabl
               </Td>
             </Tr>
             <Tr fontSize="xs" fontWeight="500">
-              <Td color="black">{t('Taxas - Iugu (2,21% + R$0,09)')}</Td>
+              <Td color="black">{t('Taxas - Iugu (2,42% + R$0,09)')}</Td>
               <Td color="red" isNumeric>
                 {`- ${formatCurrency(iuguFee)}`}
               </Td>
