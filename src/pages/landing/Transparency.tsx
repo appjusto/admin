@@ -34,7 +34,7 @@ export const Transparency = () => {
                   5%
                 </Text>
                 <Text fontSize="lg" lineHeight="26px">
-                  {t('+ 2,21% da operadora financeira')}
+                  {t('+ 2,42% da operadora financeira')}
                 </Text>
               </Box>
               <Box
