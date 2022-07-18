@@ -1,4 +1,4 @@
-import { Box, BoxProps, Circle, HStack, Link, Skeleton, Stack, Text } from '@chakra-ui/react';
+import { Box, BoxProps, Circle, HStack, Icon, Link, Skeleton, Stack, Text, Tooltip } from '@chakra-ui/react';
 import { isElectron } from '@firebase/util';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextBusinessDashboard } from 'app/state/dashboards/business';
@@ -8,6 +8,7 @@ import { ReactComponent as ExtensionIcon } from 'common/img/chrome-extension-ico
 import I18n from 'i18n-js';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import React from 'react';
+import { MdOpenInNew } from 'react-icons/md';
 import { formatCurrency, formatPct } from 'utils/formatters';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
@@ -16,6 +17,30 @@ import { LineChart } from './LineChart';
 import { RegistrationStatus } from './RegistrationStatus';
 
 const isDesktopApp = isElectron();
+
+const NewWindowButton = () => {
+  return (
+    <Tooltip label={t('Abrir nova janela')}>
+      <Link 
+        position="absolute"
+        top="4"
+        right="4"
+        border="1px solid #E5E5E5"
+        borderRadius="lg"
+        px="1"
+        h="23px"
+        _hover={{
+          color: 'white',
+          bgColor: '#505A4F'
+        }}
+        href="/app"
+        isExternal
+      >
+        <Icon as={MdOpenInNew} />
+      </Link>
+    </Tooltip>
+  )
+}
 
 interface InfoBoxProps extends BoxProps {
   isJoined?: boolean;
@@ -144,6 +169,7 @@ const Dashboard = () => {
       />
       {business?.situation === 'approved' ? (
         <Box>
+          {isDesktopApp && <NewWindowButton />}
           <MaintenanceBox />
           {/* <NewFeatureBox
             icon={BsShare}
