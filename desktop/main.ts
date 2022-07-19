@@ -1,10 +1,15 @@
-import { app, BrowserWindow, ipcMain, IpcMainEvent } from 'electron';
+import { app, BrowserWindow, dialog, ipcMain, IpcMainEvent } from 'electron';
 import log from 'electron-log';
 // import { autoUpdater } from "electron-updater";
 import * as path from 'path';
 import { IpcArgs } from './types';
 // required is used to avoid electron bug with node versions conflict
 const autoUpdater = require("electron-updater");
+
+interface UpdateDownloadedProps {
+  releaseNotes?: string | any;
+  releaseName?: string;
+}
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -43,8 +48,6 @@ async function createWindow() {
     width: 1200,
     height: 800,
     webPreferences: {
-      // contextIsolation: true,
-      // nodeIntegration: true,
       preload: path.join(__dirname, 'preload.js')
     }
   })
@@ -55,7 +58,9 @@ async function createWindow() {
   //     slashes: true
   // });
   // const baseURL = isDev ? 'http://localhost:3000' : `file://${__dirname}/../index.html`;
-  const baseURL = isDev ? 'http://localhost:3000' : `https://admin.appjusto.com.br`;
+  const baseURL = isDev ? 
+    'http://localhost:3000' : 
+    `https://admin.appjusto.com.br`;
   mainWindow.loadURL(baseURL);
   // if (app.isPackaged) {
   //   // 'build/index.html'
@@ -74,6 +79,22 @@ ipcMain.on('mainWindow-show', (event: IpcMainEvent, args?: IpcArgs[]) => {
   console.log("Main Focus Call!", `${args}`)
   if(mainWindow) mainWindow.show();
   else console.log("mainWindow not found.")
+})
+
+autoUpdater.signals.updateDownloaded((
+  {releaseNotes, releaseName}: UpdateDownloadedProps
+) => {
+  const release = (releaseNotes && typeof releaseNotes === 'string') ? releaseNotes : releaseName;
+  const dialogOpts = {
+    type: 'info',
+    buttons: ['Reiniciar', 'Depois'],
+    title: 'Application Update',
+    message: `Atualização disponível ${release ? release : ''}`,
+    detail: 'Uma nova versão foi baixada. Reinicie a aplicação para instalar a versão mais atual.'
+  }
+  dialog.showMessageBox(dialogOpts).then((returnValue) => {
+    if (returnValue.response === 0) autoUpdater.quitAndInstall()
+  })
 })
 
 app.whenReady().then(() => {
