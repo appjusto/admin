@@ -1,10 +1,22 @@
 import { app, BrowserWindow, ipcMain, IpcMainEvent } from 'electron';
+import log from 'electron-log';
+// import { autoUpdater } from "electron-updater";
 import * as path from 'path';
 import { IpcArgs } from './types';
+// required is used to avoid electron bug with node versions conflict
+const autoUpdater = require("electron-updater");
 
 const isDev = process.env.NODE_ENV === 'development';
 
 const isDebug = isDev || process.env.DEBUG_PROD === 'true';
+
+export default class AppUpdater {
+  constructor() {
+    log.transports.file.level = 'info';
+    autoUpdater.logger = log;
+    autoUpdater.checkForUpdatesAndNotify();
+  }
+}
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -54,6 +66,8 @@ async function createWindow() {
   if(isDebug) {
     mainWindow.webContents.openDevTools();
   }
+  // App auto updates
+  new AppUpdater();
 }
 
 ipcMain.on('mainWindow-show', (event: IpcMainEvent, args?: IpcArgs[]) => {
