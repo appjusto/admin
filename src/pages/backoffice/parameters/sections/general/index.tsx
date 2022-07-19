@@ -1,9 +1,8 @@
-import { Box, Button, Stack, Text, VStack } from '@chakra-ui/react';
+import { Box, Button, Stack, Switch, Text, VStack } from '@chakra-ui/react';
 import { usePlatformManagement } from 'app/api/platform/usePlatformManagement';
 import { usePlatformParams } from 'app/api/platform/usePlatformParams';
 
 import { useContextApi } from 'app/state/api/context';
-import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import { CustomNumberInput } from 'common/components/form/input/CustomNumberInput';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
@@ -85,7 +84,7 @@ const InputToggle: React.FunctionComponent<ToggleProps> = ({ label, value, onCha
       <Text fontSize="sm" color="black" mb="2">
         {t(label)}
       </Text>
-      <CustomCheckbox onChange={onChange} colorScheme="green" id={label} isChecked={value} />
+      <Switch onChange={onChange} id={label} isChecked={value} />
     </Box>
   );
 };
