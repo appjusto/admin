@@ -133,6 +133,10 @@ const TaxesParameters: React.FC = () => {
       newFees.commissions = { food: { percent: 0, fixed: 0 }, p2p: { percent: 0, fixed: 0 } };
     }
 
+    if (!newFees.insurance) {
+      newFees.insurance = { food: { percent: 0, fixed: 0 }, p2p: { percent: 0, fixed: 0 } };
+    }
+
     if (platformPercentFee !== undefined) {
       newFees.commissions.food.percent = platformPercentFee as number;
     }

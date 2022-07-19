@@ -3,6 +3,7 @@ import PageHeader from 'pages/PageHeader';
 import React from 'react';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
+import GeneralParameters from './sections/general';
 import TaxesParameters from './sections/taxes';
 
 const ParamatersPage: React.FC = () => {
@@ -17,6 +18,7 @@ const ParamatersPage: React.FC = () => {
   return (
     <Box>
       <PageHeader title={t('Parâmetros')} subtitle={t(`Atualizado em ${dateTime}`)} />
+      <GeneralParameters />
       <TaxesParameters />
     </Box>
   );

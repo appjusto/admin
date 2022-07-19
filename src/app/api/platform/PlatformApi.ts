@@ -7,6 +7,7 @@ import {
   IssueType,
   PlatformAccess,
   PlatformFees,
+  PlatformManagement,
   PlatformParams,
   PlatformStatistics,
   WithId,
@@ -91,6 +92,20 @@ export default class PlatformApi {
       ref,
       (snapshot) => {
         if (snapshot.exists()) resultHandler(snapshot.data() as PlatformParams);
+        else resultHandler(null);
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+  }
+
+  observeManagement(resultHandler: (params: PlatformManagement | null) => void) {
+    const ref = this.refs.getPlatformManagementRef();
+    return onSnapshot(
+      ref,
+      (snapshot) => {
+        if (snapshot.exists()) resultHandler(snapshot.data() as PlatformManagement);
         else resultHandler(null);
       },
       (error) => {
@@ -184,6 +199,15 @@ export default class PlatformApi {
       updatedOn: timestamp,
     };
     return await updateDoc(this.refs.getPlatformParamsRef(), fullChanges);
+  }
+
+  async updatePlatformManagement(changes: DeepPartial<PlatformManagement>) {
+    const timestamp = serverTimestamp();
+    const fullChanges = {
+      ...changes,
+      updatedOn: timestamp,
+    };
+    return await updateDoc(this.refs.getPlatformManagementRef(), fullChanges);
   }
 
   async updatePlatformFees(changes: DeepPartial<PlatformFees>) {
