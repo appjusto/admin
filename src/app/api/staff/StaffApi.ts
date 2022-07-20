@@ -5,7 +5,7 @@ import {
   NewUserData,
   StaffProfile,
   UserPermissions,
-  WithId,
+  WithId
 } from '@appjusto/types';
 import * as Sentry from '@sentry/react';
 import { documentAs, documentsAs, FirebaseDocument } from 'core/fb';
@@ -21,6 +21,7 @@ import {
   startAfter,
   Unsubscribe,
   updateDoc,
+  where
 } from 'firebase/firestore';
 import FirebaseRefs from '../FirebaseRefs';
 import { customDocumentSnapshot } from '../utils';
@@ -43,9 +44,11 @@ export default class StaffApi {
       staff: WithId<StaffProfile>[],
       last?: QueryDocumentSnapshot<DocumentData>
     ) => void,
-    startAfterDoc?: FirebaseDocument
+    startAfterDoc?: FirebaseDocument,
+    email?: string
   ): Unsubscribe {
-    let q = query(this.refs.getStaffsRef(), orderBy('email'), limit(10));
+    let q = query(this.refs.getStaffsRef(), orderBy('createdOn'), limit(10));
+    if(email) q = query(q, where('email', '==', email));
     if (startAfterDoc) q = query(q, startAfter(startAfterDoc));
     // returns the unsubscribe function
     const unsubscribe = onSnapshot(

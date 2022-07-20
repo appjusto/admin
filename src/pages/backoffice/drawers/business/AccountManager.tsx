@@ -1,5 +1,6 @@
 import { StaffProfile, WithId } from '@appjusto/types';
-import { Box, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
+import { ArrowDownIcon } from '@chakra-ui/icons';
+import { Box, Button, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
 import { useStaffs } from 'app/api/staff/useStaffs';
 import { useContextBusinessBackoffice } from 'app/state/business/businessBOContext';
 import { CustomInput } from 'common/components/form/input/CustomInput';
@@ -11,12 +12,11 @@ import { StaffsTableItem } from './account-manager/StaffsTableItem';
 
 export const AccountManager = () => {
   //context
-  const { staffs } = useStaffs()
   const { business } = useContextBusinessBackoffice();
   // state
   const [accountManager, setAccountManager] = React.useState<WithId<StaffProfile> | null>();
   const [search, setSearch] = React.useState('');
-  const [searchResult, setSearchResult] = React.useState<WithId<StaffProfile>[]>([]);
+  const { staffs, fetchNextPage } = useStaffs(search);
   // side effects
   React.useEffect(() => {
     if(business?.accountManagerId === undefined || !staffs) return;
@@ -27,16 +27,6 @@ export const AccountManager = () => {
     const manager = staffs.find(staff => staff.id === business?.accountManagerId);
     setAccountManager(manager);
   }, [business?.accountManagerId, staffs])
-  React.useEffect(() => {
-    if(!staffs) return;
-    if(search.length > 0) {
-      const regexp = new RegExp(search, 'i');
-      const result = staffs.filter((staff) => regexp.test(staff.email as string));
-      setSearchResult(result);
-    } else {
-      setSearchResult(staffs);
-    }
-  }, [staffs, search]);
   //UI
   return (
     <Box mt="6">
@@ -70,8 +60,8 @@ export const AccountManager = () => {
             </Tr>
           </Thead>
           <Tbody>
-            {searchResult.length > 0 ? (
-              searchResult.map((staff) => (
+            {staffs && staffs.length > 0 ? (
+              staffs.map((staff) => (
                 <StaffsTableItem key={staff.id} staff={staff} />
               ))
             ) : (
@@ -84,6 +74,10 @@ export const AccountManager = () => {
           </Tbody>
         </Table>
       </Box>
+      <Button mt="8" size="md" variant="secondary" onClick={fetchNextPage}>
+        <ArrowDownIcon mr="2" />
+        {t('Carregar mais')}
+      </Button>
     </Box>
   );
 };

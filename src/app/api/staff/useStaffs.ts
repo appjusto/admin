@@ -5,7 +5,7 @@ import React from 'react';
 
 const initialMap = new Map();
 
-export const useStaffs = () => {
+export const useStaffs = (email?: string) => {
   // contex
   const api = useContextApi();
   // state
@@ -27,8 +27,8 @@ export const useStaffs = () => {
         return value;
       });
       if (last) setLastStaff(last);
-    }, startAfter);
-  }, [api, startAfter]);
+    }, startAfter, email);
+  }, [api, startAfter, email]);
   React.useEffect(() => {
     setStaffs(Array.from(staffMap.values()).reduce((result, staffs) => [...result, ...staffs], []));
   }, [staffMap]);
