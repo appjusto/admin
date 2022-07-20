@@ -6,9 +6,10 @@ import {
   Issue,
   IssueType,
   PlatformAccess,
+  PlatformFees,
   PlatformParams,
   PlatformStatistics,
-  WithId,
+  WithId
 } from '@appjusto/types';
 import {
   addDoc,
@@ -19,7 +20,7 @@ import {
   query,
   serverTimestamp,
   Unsubscribe,
-  where,
+  where
 } from 'firebase/firestore';
 import { hash } from 'geokit';
 import { documentsAs } from '../../../core/fb';
@@ -84,6 +85,20 @@ export default class PlatformApi {
       ref,
       (snapshot) => {
         if (snapshot.exists()) resultHandler(snapshot.data() as PlatformParams);
+        else resultHandler(null);
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+  }
+
+  observeFees(resultHandler: (fees: PlatformFees | null) => void) {
+    const ref = this.refs.getPlatformFeesRef();
+    return onSnapshot(
+      ref,
+      (snapshot) => {
+        if (snapshot.exists()) resultHandler(snapshot.data() as PlatformFees);
         else resultHandler(null);
       },
       (error) => {

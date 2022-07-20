@@ -1,4 +1,6 @@
-import { Table, Tbody, Td, Tfoot, Th, Tr } from '@chakra-ui/react';
+import { Icon, Table, Tbody, Td, Text, Tfoot, Th, Tooltip, Tr } from '@chakra-ui/react';
+import { usePlatformFees } from 'app/api/platform/usePlatformFees';
+import { MdInfoOutline } from 'react-icons/md';
 import { formatCurrency, formatPct } from 'utils/formatters';
 import { t } from 'utils/i18n';
 import { InvoicesCosts } from './utils';
@@ -11,6 +13,8 @@ interface PeriodTableProps {
 }
 
 export const PeriodTable = ({ period, amount, appjustoCosts, iuguCosts }: PeriodTableProps) => {
+  // context
+  const { platformFees } = usePlatformFees();
   // UI
   return (
     <Table mt="6" size="md" variant="simple">
@@ -27,9 +31,7 @@ export const PeriodTable = ({ period, amount, appjustoCosts, iuguCosts }: Period
               <Td isNumeric>{formatCurrency(amount)}</Td>
             </Tr>
             <Tr fontSize="xs" fontWeight="500">
-              <Td color="black">
-                {t(`Taxas - AppJusto (${formatPct(appjustoCosts.fee)})`)}
-              </Td>
+              <Td color="black">{t(`Taxas - AppJusto (${formatPct(appjustoCosts.fee)})`)}</Td>
               <Td color="red" isNumeric>
                 {`- ${formatCurrency(appjustoCosts.value)}`}
               </Td>
@@ -37,6 +39,20 @@ export const PeriodTable = ({ period, amount, appjustoCosts, iuguCosts }: Period
             <Tr fontSize="xs" fontWeight="500">
               <Td color="black">
                 {t(`Taxas - Iugu (${formatPct(iuguCosts.fee)})`)}
+                <Tooltip 
+                  placement="top" 
+                  label={platformFees?.iuguFeeDescription ?? 'Informação não encontrada'}
+                >
+                  <Text as="span">
+                    <Icon 
+                      ml="2" 
+                      w="16px" 
+                      h="16px" 
+                      cursor="pointer" 
+                      as={MdInfoOutline} 
+                    />
+                  </Text>
+                </Tooltip>
               </Td>
               <Td color="red" isNumeric>
                 {`- ${formatCurrency(iuguCosts.value)}`}
