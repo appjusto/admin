@@ -45,7 +45,7 @@ const FinancesPage = () => {
   const [availableWithdraw, setAvailableWithdraw] = React.useState<string | null>();
   const [activeWithdraw, setActiveWithdraw] = React.useState<number>();
   // page data with filters
-  const { periodAmount, appjustoFee, iuguFee } = useObserveInvoicesStatusByPeriod(
+  const { periodAmount, appjustoCosts, iuguCosts } = useObserveInvoicesStatusByPeriod(
     businessId,
     month,
     periodStatus
@@ -133,8 +133,8 @@ const FinancesPage = () => {
       <PeriodTable
         period={`${monthName} de ${year}`}
         amount={periodAmount}
-        appjustoFee={appjustoFee}
-        iuguFee={iuguFee}
+        appjustoCosts={appjustoCosts}
+        iuguCosts={iuguCosts}
       />
       <SectionTitle>{t('Antecipações')}</SectionTitle>
       <AdvancesTable advances={advances} />

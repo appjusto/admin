@@ -1,8 +1,9 @@
-import { useContextApi } from 'app/state/api/context';
-import { WithId, Invoice } from '@appjusto/types';
-import React from 'react';
+import { Invoice, WithId } from '@appjusto/types';
 import { IuguInvoiceStatus } from '@appjusto/types/payment/iugu';
+import { useContextApi } from 'app/state/api/context';
 import dayjs from 'dayjs';
+import { calculateAppJustoCosts, calculateIuguCosts, InvoicesCosts } from 'pages/finances/utils';
+import React from 'react';
 
 export const useObserveInvoicesStatusByPeriod = (
   businessId?: string,
@@ -14,8 +15,10 @@ export const useObserveInvoicesStatusByPeriod = (
   // state
   const [invoices, setInvoices] = React.useState<WithId<Invoice>[]>();
   const [periodAmount, setPeriodAmount] = React.useState(0);
-  const [appjustoFee, setAppjustoFee] = React.useState(0);
-  const [iuguFee, setIuguFee] = React.useState(0);
+  const [appjustoCosts, setAppjustoCosts] = React.useState<InvoicesCosts>({ 
+    value: 0, fee: 0 
+  });
+  const [iuguCosts, setIuguCosts] = React.useState<InvoicesCosts>({ value: 0, fee: 0 });
   // side effects
   React.useEffect(() => {
     if (!businessId) return;
@@ -34,15 +37,12 @@ export const useObserveInvoicesStatusByPeriod = (
     const amount = invoices.reduce((total, invoice) => {
       return (total += invoice.value ?? 0);
     }, 0);
-    const appjusto = invoices.reduce((total, invoice) => {
-      const commission = invoice.commission ? invoice.commission - 9 : 0;
-      return (total += commission);
-    }, 0);
-    const iugu = invoices.length * 9 + amount * 0.0221;
+    const appjusto = calculateAppJustoCosts(amount, invoices);
+    const iugu = calculateIuguCosts(amount, invoices);
     setPeriodAmount(amount);
-    setAppjustoFee(appjusto);
-    setIuguFee(iugu);
+    setAppjustoCosts(appjusto);
+    setIuguCosts(iugu);
   }, [invoices]);
   // return
-  return { invoices, periodAmount, appjustoFee, iuguFee };
+  return { invoices, periodAmount, appjustoCosts, iuguCosts };
 };

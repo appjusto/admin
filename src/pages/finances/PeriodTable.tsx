@@ -1,15 +1,16 @@
 import { Table, Tbody, Td, Tfoot, Th, Tr } from '@chakra-ui/react';
-import { formatCurrency } from 'utils/formatters';
+import { formatCurrency, formatPct } from 'utils/formatters';
 import { t } from 'utils/i18n';
+import { InvoicesCosts } from './utils';
 
 interface PeriodTableProps {
   period: string;
   amount: number;
-  appjustoFee: number;
-  iuguFee: number;
+  appjustoCosts: InvoicesCosts;
+  iuguCosts: InvoicesCosts;
 }
 
-export const PeriodTable = ({ period, amount, appjustoFee, iuguFee }: PeriodTableProps) => {
+export const PeriodTable = ({ period, amount, appjustoCosts, iuguCosts }: PeriodTableProps) => {
   // UI
   return (
     <Table mt="6" size="md" variant="simple">
@@ -26,15 +27,19 @@ export const PeriodTable = ({ period, amount, appjustoFee, iuguFee }: PeriodTabl
               <Td isNumeric>{formatCurrency(amount)}</Td>
             </Tr>
             <Tr fontSize="xs" fontWeight="500">
-              <Td color="black">{t('Taxas - AppJusto (5%)')}</Td>
+              <Td color="black">
+                {t(`Taxas - AppJusto (${formatPct(appjustoCosts.fee)})`)}
+              </Td>
               <Td color="red" isNumeric>
-                {`- ${formatCurrency(appjustoFee)}`}
+                {`- ${formatCurrency(appjustoCosts.value)}`}
               </Td>
             </Tr>
             <Tr fontSize="xs" fontWeight="500">
-              <Td color="black">{t('Taxas - Iugu (2,42% + R$0,09)')}</Td>
+              <Td color="black">
+                {t(`Taxas - Iugu (${formatPct(iuguCosts.fee)})`)}
+              </Td>
               <Td color="red" isNumeric>
-                {`- ${formatCurrency(iuguFee)}`}
+                {`- ${formatCurrency(iuguCosts.value)}`}
               </Td>
             </Tr>
           </>
@@ -44,7 +49,7 @@ export const PeriodTable = ({ period, amount, appjustoFee, iuguFee }: PeriodTabl
         <Tr>
           <Th>{t(`Resultado para ${period}`)}</Th>
           <Th color="green.700" isNumeric>
-            {formatCurrency(amount - appjustoFee - iuguFee)}
+            {formatCurrency(amount - appjustoCosts.value - iuguCosts.value)}
           </Th>
         </Tr>
       </Tfoot>
