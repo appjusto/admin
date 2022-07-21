@@ -9,6 +9,7 @@ import FraudPreventionPage from './fraud-prevention';
 import InvoicesPage from './invoices';
 import LedgerPage from './ledger';
 import OrdersPage from './orders';
+import PushPage from './push';
 import RecommendationsPage from './recommendations';
 import { BOAccessRoute } from './routes/BOAccessRoute';
 import { StaffProfile } from './staff/StaffProfile';
@@ -34,6 +35,7 @@ const BackOffice = () => {
           <BOAccessRoute path={`${path}/staff-profile`} component={StaffProfile} />
           <BOAccessRoute path={`${path}/users`} component={UsersPage} />
           <BOAccessRoute path={`${path}/recommendations`} component={RecommendationsPage} />
+          <BOAccessRoute path={`${path}/push`} component={PushPage} />
           <BOAccessRoute path={path} component={BODashboard} />
         </Switch>
       </PageLayout>

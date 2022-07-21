@@ -23,6 +23,7 @@ export const BackOfficeLinks = (props: BoxProps) => {
       <LinkItem type="backoffice" to={`${url}/users`} label={t('Usuários')} />
       <LinkItem type="backoffice" to={`${url}/recommendations`} label={t('Indicações')} />
       <LinkItem type="backoffice" to={`${url}/fraud-prevention`} label={t('Antifraude')} />
+      <LinkItem type="backoffice" to={`${url}/push`} label={t('Notificações')} />
       <LinkItem type="backoffice" to={`${url}/staff`} label={t('Agentes')} />
     </Box>
   );
