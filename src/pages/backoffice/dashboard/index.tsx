@@ -24,7 +24,7 @@ const BODashboard = () => {
   const { user, userAbility, isBackofficeSuperuser } = useContextFirebaseUser();
   const { path } = useRouteMatch();
   const history = useHistory();
-  const { noStaffOrders, staffOrders, businesses, userChanges, fetchNextNoStaffOrders, fetchNextBusiness, fetchNextChanges } =
+  const { noStaffOrders, staffOrders, businesses, userChanges, fetchNextActiveOrders, fetchNextBusiness, fetchNextChanges } =
     useContextBackofficeDashboard();
   // state
   const [dateTime, setDateTime] = React.useState('');
@@ -71,7 +71,7 @@ const BODashboard = () => {
           // staffFilter={staffFilter}
           // handleStaffFilter={(value) => setStaffFilter(value)}
           infiniteScroll
-          loadData={fetchNextNoStaffOrders}
+          loadData={fetchNextActiveOrders}
         />
         {
           staffOrders.length > 0 && (

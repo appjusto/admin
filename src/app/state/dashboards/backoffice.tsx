@@ -39,7 +39,7 @@ interface ContextProps {
   staffOrders: WithId<Order>[];
   businesses: WithId<Business>[];
   userChanges: WithId<ProfileChange>[];
-  fetchNextNoStaffOrders(): void;
+  fetchNextActiveOrders(): void;
   fetchNextBusiness(): void;
   fetchNextChanges(): void;
 }
@@ -67,7 +67,7 @@ export const BackofficeDashboardProvider = ({ children }: Props) => {
   const consumers = useObserveNewConsumers();
   // lists
   const { businesses, fetchNextPage: fetchNextBusiness } = useObserveBusinesses(businessSituations);
-  const { orders: noStaffOrders, fetchNextOrders: fetchNextNoStaffOrders } = useObserveBOActiveOrders(statuses, isBackofficeSuperuser ? false : true)
+  const { orders: noStaffOrders, fetchNextOrders: fetchNextActiveOrders } = useObserveBOActiveOrders(statuses, isBackofficeSuperuser ? false : true)
   const staffOrders = useObserveStaffOrders(statuses, user?.uid);
   const { userChanges, fetchNextPage: fetchNextChanges } =
     useObserveUsersChanges(usersChangesSituations);
@@ -86,7 +86,7 @@ export const BackofficeDashboardProvider = ({ children }: Props) => {
         staffOrders,
         businesses,
         userChanges,
-        fetchNextNoStaffOrders,
+        fetchNextActiveOrders,
         fetchNextBusiness,
         fetchNextChanges,
       }}
