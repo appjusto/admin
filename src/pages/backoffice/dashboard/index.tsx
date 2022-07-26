@@ -17,19 +17,19 @@ import { UserChangeDrawer } from '../drawers/profile-changes/UserChangeDrawer';
 import { BOChatDrawer } from './BOChatDrawer';
 import { BOList } from './BOList';
 import { Panel } from './Panel';
-import { StaffFilterOptions } from './StaffFilter';
+// import { StaffFilterOptions } from './StaffFilter';
 
 const BODashboard = () => {
   // context
-  const { user, userAbility, isBackofficeSuperuser } = useContextFirebaseUser();
+  const { userAbility, isBackofficeSuperuser } = useContextFirebaseUser();
   const { path } = useRouteMatch();
   const history = useHistory();
-  const { noStaffOrders, staffOrders, businesses, userChanges, fetchNextActiveOrders, fetchNextBusiness, fetchNextChanges } =
+  const { activeOrders, staffOrders, businesses, userChanges, fetchNextActiveOrders, fetchNextBusiness, fetchNextChanges } =
     useContextBackofficeDashboard();
   // state
   const [dateTime, setDateTime] = React.useState('');
   // const [listOrders, setListOrders] = React.useState<WithId<Order>[]>([]);
-  const [staffFilter, setStaffFilter] = React.useState<StaffFilterOptions>('all');
+  // const [staffFilter, setStaffFilter] = React.useState<StaffFilterOptions>('all');
   // helpers
   const userCanUpdateBusiness = userAbility?.can('read', 'businesses');
   // handlers
@@ -41,15 +41,16 @@ const BODashboard = () => {
     document.title = "AppJusto | Backoffice"
   }, [])
   // React.useEffect(() => {
-  //   if (!user?.uid) return;
-  //   if (staffFilter === 'my') {
-  //     setListOrders(orders.filter((order) => order.staff?.id === user.uid));
+  //   if (staffFilter === 'staff') {
+  //     setListOrders(activeOrders.filter((order) => 
+  //       typeof order.staff?.id === "string"
+  //     ));
   //   } else if (staffFilter === 'none') {
-  //     setListOrders(orders.filter((order) => !order.staff));
+  //     setListOrders(activeOrders.filter((order) => !order.staff));
   //   } else {
-  //     setListOrders(orders);
+  //     setListOrders(activeOrders);
   //   }
-  // }, [user?.uid, orders, staffFilter]);
+  // }, [activeOrders, staffFilter]);
   React.useEffect(() => {
     const { date, time } = getDateTime();
     setDateTime(`${date} às ${time}`);
@@ -64,8 +65,8 @@ const BODashboard = () => {
         <BOList
           display={userAbility?.can('read', 'orders') ? 'flex' : 'none'}
           title={isBackofficeSuperuser ? t('Pedidos em andamento') : t('Novos pedidos')}
-          data={noStaffOrders}
-          dataLength={noStaffOrders.length}
+          data={activeOrders}
+          dataLength={activeOrders.length}
           listType="orders"
           details={t('Aqui ficarão listados todos os pedidos em andamento no momento.')}
           // staffFilter={staffFilter}
