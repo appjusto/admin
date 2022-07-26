@@ -7,20 +7,22 @@ import {
   PlatformStatistics,
   ProfileChange,
   ProfileSituation,
-  WithId,
+  WithId
 } from '@appjusto/types';
 import { useObserveBusinesses } from 'app/api/business/useObserveBusinesses';
 import { useObserveBusinessesByStatus } from 'app/api/business/useObserveBusinessesByStatus';
 import { useObserveNewConsumers } from 'app/api/consumer/useObserveNewConsumers';
 import { useObserveCouriersByStatus } from 'app/api/courier/useObserveCouriersByStatus';
+import { useObserveBOActiveOrders } from 'app/api/order/useObserveBOActiveOrders';
 import { useObserveBODashboardOrders } from 'app/api/order/useObserveBODashboardOrders';
-import { useObserveOrders } from 'app/api/order/useObserveOrders';
+import { useObserveStaffOrders } from 'app/api/order/useObserveStaffOrders';
 import { usePlatformStatistics } from 'app/api/platform/usePlatformStatistics';
 import {
   ProfileChangesSituations,
-  useObserveUsersChanges,
+  useObserveUsersChanges
 } from 'app/api/users/useObserveUsersChanges';
 import React from 'react';
+import { useContextFirebaseUser } from '../auth/context';
 
 interface ContextProps {
   // panel
@@ -33,9 +35,11 @@ interface ContextProps {
   businessesNumber?: number;
   consumers?: number;
   // lists
-  orders: WithId<Order>[];
+  noStaffOrders: WithId<Order>[];
+  staffOrders: WithId<Order>[];
   businesses: WithId<Business>[];
   userChanges: WithId<ProfileChange>[];
+  fetchNextNoStaffOrders(): void;
   fetchNextBusiness(): void;
   fetchNextChanges(): void;
 }
@@ -54,6 +58,7 @@ const statuses = ['charged', 'confirmed', 'preparing', 'ready', 'dispatching'] a
 
 export const BackofficeDashboardProvider = ({ children }: Props) => {
   // context
+  const { user, isBackofficeSuperuser } = useContextFirebaseUser();
   // panel
   const statistics = usePlatformStatistics();
   const { todayOrders, todayDeliveredOrders, todayAverage } = useObserveBODashboardOrders();
@@ -62,7 +67,8 @@ export const BackofficeDashboardProvider = ({ children }: Props) => {
   const consumers = useObserveNewConsumers();
   // lists
   const { businesses, fetchNextPage: fetchNextBusiness } = useObserveBusinesses(businessSituations);
-  const orders = useObserveOrders(statuses);
+  const { orders: noStaffOrders, fetchNextOrders: fetchNextNoStaffOrders } = useObserveBOActiveOrders(statuses, isBackofficeSuperuser ? false : true)
+  const staffOrders = useObserveStaffOrders(statuses, user?.uid);
   const { userChanges, fetchNextPage: fetchNextChanges } =
     useObserveUsersChanges(usersChangesSituations);
   // provider
@@ -76,9 +82,11 @@ export const BackofficeDashboardProvider = ({ children }: Props) => {
         couriers,
         businessesNumber,
         consumers,
-        orders,
+        noStaffOrders,
+        staffOrders,
         businesses,
         userChanges,
+        fetchNextNoStaffOrders,
         fetchNextBusiness,
         fetchNextChanges,
       }}
