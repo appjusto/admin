@@ -24,9 +24,15 @@ const BODashboard = () => {
   const { userAbility, isBackofficeSuperuser } = useContextFirebaseUser();
   const { path } = useRouteMatch();
   const history = useHistory();
-  const { activeOrders, watchedOrders, businesses, userChanges, fetchNextActiveOrders, fetchNextBusiness, fetchNextChanges } =
-    useContextBackofficeDashboard();
-  console.log("watchedOrders", watchedOrders)
+  const { 
+    activeOrders, 
+    watchedOrders, 
+    businesses, 
+    userChanges, 
+    fetchNextActiveOrders, 
+    fetchNextBusiness, 
+    fetchNextChanges 
+  } = useContextBackofficeDashboard();
   // state
   const [dateTime, setDateTime] = React.useState('');
   // const [listOrders, setListOrders] = React.useState<WithId<Order>[]>([]);

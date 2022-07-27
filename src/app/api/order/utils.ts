@@ -124,7 +124,16 @@ export const splitInvoicesValuesByPeriod = (
   return period.map((item) => item.value);
 };
 
-export const getOrderWarning = (order: WithId<Order>, now: number) => {
+export const getOrderWarning = (
+  order: WithId<Order>, 
+  now: number,
+  confirmed: number, 
+  matching: number, 
+  goingPickup: number, 
+  readyArrivedPickup: number, 
+  dispatchingArrivedPickup: number, 
+  goingDestination: number, 
+  ) => {
   console.log("getOrderWarning Call: ", new Date())
   try {
     let warning = null;
@@ -135,7 +144,7 @@ export const getOrderWarning = (order: WithId<Order>, now: number) => {
       ) {
         const baseTime = (order.timestamps.confirmed as Timestamp).toMillis();
         const elapsedTime = getTimeUntilNow(now, baseTime);
-        if(elapsedTime >= 2) {
+        if(elapsedTime >= confirmed) {
           warning = 'DEMORA NO ACEITE';
         }
     } else if (
@@ -144,7 +153,7 @@ export const getOrderWarning = (order: WithId<Order>, now: number) => {
       ) {
         const baseTime = (order.dispatchingTimestamps.matching as Timestamp).toMillis();
         const elapsedTime = getTimeUntilNow(now, baseTime);
-        if(elapsedTime >= 2) {
+        if(elapsedTime >= matching) {
           warning = 'DEMORA NO MATCHING';
         }
     } else if (
@@ -153,7 +162,7 @@ export const getOrderWarning = (order: WithId<Order>, now: number) => {
       ) {
         const baseTime = (order.dispatchingTimestamps.goingPickup as Timestamp).toMillis();
         const elapsedTime = getTimeUntilNow(now, baseTime);
-        if(elapsedTime >= 2) {
+        if(elapsedTime >= goingPickup) {
           warning = 'DEMORA A CAMINHO DA COLETA';
         }
     } else if (
@@ -163,7 +172,7 @@ export const getOrderWarning = (order: WithId<Order>, now: number) => {
       ) {
         const baseTime = (order.dispatchingTimestamps.arrivedPickup as Timestamp).toMillis();
         const elapsedTime = getTimeUntilNow(now, baseTime);
-        if(elapsedTime >= 2) {
+        if(elapsedTime >= readyArrivedPickup) {
           warning = 'DEMORA PARA RECEBER O PEDIDO';
         }
     } else if (
@@ -173,7 +182,7 @@ export const getOrderWarning = (order: WithId<Order>, now: number) => {
     ) {
         const baseTime = (order.timestamps.dispatching as Timestamp).toMillis();
         const elapsedTime = getTimeUntilNow(now, baseTime);
-        if(elapsedTime >= 2) {
+        if(elapsedTime >= dispatchingArrivedPickup) {
           warning = 'DEMORA NA SAIDA PARA ENTREGA';
         }
     } else if (
@@ -182,17 +191,8 @@ export const getOrderWarning = (order: WithId<Order>, now: number) => {
       ) {
         const baseTime = (order.dispatchingTimestamps.goingDestination as Timestamp).toMillis();
         const elapsedTime = getTimeUntilNow(now, baseTime);
-        if(elapsedTime >= 2) {
+        if(elapsedTime >= goingDestination) {
           warning = 'DEMORA A CAMINHO DA ENTREGA';
-        }
-    } else if (
-      order.dispatchingState === 'arrived-destination' && 
-      order.dispatchingTimestamps.arrivedDestination
-      ) {
-        const baseTime = (order.dispatchingTimestamps.arrivedDestination as Timestamp).toMillis();
-        const elapsedTime = getTimeUntilNow(now, baseTime);
-        if(elapsedTime >= 2) {
-          warning = 'DEMORA PARA ENTREGAR';
         }
     }
     return warning;

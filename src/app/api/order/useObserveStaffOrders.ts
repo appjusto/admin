@@ -8,6 +8,13 @@ export interface OrderWithWarning extends Order {
   warning?: string | null;
 }
 
+const confirmed = 1; // 3
+const matching = 2; // 4
+const goingPickup = 2; // 10
+const readyArrivedPickup = 2; // 15 
+const dispatchingArrivedPickup = 2; // 5
+const goingDestination = 2; // 10
+
 export const useObserveStaffOrders = (
   getServerTime: () => Date,
   statuses: OrderStatus[],
@@ -30,13 +37,22 @@ export const useObserveStaffOrders = (
     const warningCheck = () => {
       const now = getServerTime();
       const watched = orders.map(order => {
-        const warning = getOrderWarning(order, now.getTime());
+        const warning = getOrderWarning(
+            order, 
+            now.getTime(),
+            confirmed,
+            matching,
+            goingPickup,
+            readyArrivedPickup,
+            dispatchingArrivedPickup,
+            goingDestination,
+          );
         return {...order, warning};
       })
       setwatchedOrders(watched);
     };
     warningCheck();
-    const timeInterval = setInterval(warningCheck, 60000);
+    const timeInterval = setInterval(warningCheck, 32000);
     return () => clearInterval(timeInterval);
   }, [orders, getServerTime])
   // return
