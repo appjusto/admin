@@ -2,6 +2,7 @@ import { Invoice, Order, OrderCancellationParams, WithId } from '@appjusto/types
 import dayjs from 'dayjs';
 import { Timestamp } from 'firebase/firestore';
 import { omit } from 'lodash';
+import { getTimeUntilNow } from 'utils/functions';
 import { use } from 'utils/local';
 import { Acknowledgement, OrderAcknowledgement } from './types';
 
@@ -122,3 +123,81 @@ export const splitInvoicesValuesByPeriod = (
   });
   return period.map((item) => item.value);
 };
+
+export const getOrderWarning = (order: WithId<Order>, now: number) => {
+  console.log("getOrderWarning Call: ", new Date())
+  try {
+    let warning = null;
+    if(
+      order.type === 'food' && 
+      order.status === 'confirmed' &&
+      order.timestamps.confirmed
+      ) {
+        const baseTime = (order.timestamps.confirmed as Timestamp).toMillis();
+        const elapsedTime = getTimeUntilNow(now, baseTime);
+        if(elapsedTime >= 2) {
+          warning = 'DEMORA NO ACEITE';
+        }
+    } else if (
+      order.dispatchingStatus === 'matching' &&
+      order.dispatchingTimestamps.matching
+      ) {
+        const baseTime = (order.dispatchingTimestamps.matching as Timestamp).toMillis();
+        const elapsedTime = getTimeUntilNow(now, baseTime);
+        if(elapsedTime >= 2) {
+          warning = 'DEMORA NO MATCHING';
+        }
+    } else if (
+      order.dispatchingState === 'going-pickup' &&
+      order.dispatchingTimestamps.goingPickup
+      ) {
+        const baseTime = (order.dispatchingTimestamps.goingPickup as Timestamp).toMillis();
+        const elapsedTime = getTimeUntilNow(now, baseTime);
+        if(elapsedTime >= 2) {
+          warning = 'DEMORA A CAMINHO DA COLETA';
+        }
+    } else if (
+      order.status === 'ready' &&
+      order.dispatchingState === 'arrived-pickup' && 
+      order.dispatchingTimestamps.arrivedPickup
+      ) {
+        const baseTime = (order.dispatchingTimestamps.arrivedPickup as Timestamp).toMillis();
+        const elapsedTime = getTimeUntilNow(now, baseTime);
+        if(elapsedTime >= 2) {
+          warning = 'DEMORA PARA RECEBER O PEDIDO';
+        }
+    } else if (
+      order.status === 'dispatching' &&
+      order.timestamps.dispatching &&
+      order.dispatchingState === 'arrived-pickup'
+    ) {
+        const baseTime = (order.timestamps.dispatching as Timestamp).toMillis();
+        const elapsedTime = getTimeUntilNow(now, baseTime);
+        if(elapsedTime >= 2) {
+          warning = 'DEMORA NA SAIDA PARA ENTREGA';
+        }
+    } else if (
+      order.dispatchingState === 'going-destination' && 
+      order.dispatchingTimestamps.goingDestination
+      ) {
+        const baseTime = (order.dispatchingTimestamps.goingDestination as Timestamp).toMillis();
+        const elapsedTime = getTimeUntilNow(now, baseTime);
+        if(elapsedTime >= 2) {
+          warning = 'DEMORA A CAMINHO DA ENTREGA';
+        }
+    } else if (
+      order.dispatchingState === 'arrived-destination' && 
+      order.dispatchingTimestamps.arrivedDestination
+      ) {
+        const baseTime = (order.dispatchingTimestamps.arrivedDestination as Timestamp).toMillis();
+        const elapsedTime = getTimeUntilNow(now, baseTime);
+        if(elapsedTime >= 2) {
+          warning = 'DEMORA PARA ENTREGAR';
+        }
+    }
+    return warning;
+  } catch (error) {
+    console.error("getOrderWarning error: ", error);
+    return null;
+  }
+}

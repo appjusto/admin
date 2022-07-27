@@ -24,8 +24,9 @@ const BODashboard = () => {
   const { userAbility, isBackofficeSuperuser } = useContextFirebaseUser();
   const { path } = useRouteMatch();
   const history = useHistory();
-  const { activeOrders, staffOrders, businesses, userChanges, fetchNextActiveOrders, fetchNextBusiness, fetchNextChanges } =
+  const { activeOrders, watchedOrders, businesses, userChanges, fetchNextActiveOrders, fetchNextBusiness, fetchNextChanges } =
     useContextBackofficeDashboard();
+  console.log("watchedOrders", watchedOrders)
   // state
   const [dateTime, setDateTime] = React.useState('');
   // const [listOrders, setListOrders] = React.useState<WithId<Order>[]>([]);
@@ -75,12 +76,12 @@ const BODashboard = () => {
           loadData={fetchNextActiveOrders}
         />
         {
-          staffOrders.length > 0 && (
+          watchedOrders.length > 0 && (
             <BOList
               display={userAbility?.can('read', 'orders') ? 'flex' : 'none'}
               title={t('Meus pedidos')}
-              data={staffOrders}
-              dataLength={staffOrders.length}  
+              data={watchedOrders}
+              dataLength={watchedOrders.length}  
               listType="orders"
               details={t('Aqui ficarão listados todos os pedidos em andamento no momento.')}
               // staffFilter={staffFilter}

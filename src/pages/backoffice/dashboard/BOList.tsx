@@ -1,5 +1,6 @@
-import { Business, Order, ProfileChange, WithId } from '@appjusto/types';
+import { Business, ProfileChange, WithId } from '@appjusto/types';
 import { Box, Circle, Flex, FlexProps, HStack, Text, VStack } from '@chakra-ui/react';
+import { OrderWithWarning } from 'app/api/order/useObserveStaffOrders';
 import { ShowIf } from 'core/components/ShowIf';
 import React from 'react';
 import { BOBusinessListItem } from './BOBusinessListItem';
@@ -9,9 +10,44 @@ import { StaffFilter, StaffFilterOptions } from './StaffFilter';
 
 type ListType = 'orders' | 'businesses' | 'profile-changes';
 
+const sortByWarning = (
+  a: WithId<OrderWithWarning>, 
+  b: WithId<OrderWithWarning>
+) => {
+  if((a.warning && b.warning) || (!a.warning && !b.warning)) return 0;
+  else if(a.warning && !b.warning) return -1;
+  else return 1;
+}
+
+const renderList = (
+  data: WithId<Business>[] | 
+  WithId<OrderWithWarning>[] | 
+  WithId<ProfileChange>[],
+  listType: ListType
+) => {
+  if(listType === 'businesses') {
+    return (data as WithId<Business>[])
+      .map((item) => (
+      <BOBusinessListItem key={item.id} business={item} />
+    ))
+  } else if(listType === 'orders') {
+    return (data as WithId<OrderWithWarning>[])
+      .sort(sortByWarning)
+      .map((item) => (
+      <BOOrderListItem key={item.id} order={item} />
+    ))
+  } else {
+    return (data as WithId<ProfileChange>[]).map((item) => (
+      <BOProfileChangesListItem key={item.id} changes={item} />
+    ))
+  }
+}
+
 interface BOListProps extends FlexProps {
   title: string;
-  data: WithId<Business>[] | WithId<Order>[] | WithId<ProfileChange>[];
+  data: WithId<Business>[] | 
+    WithId<OrderWithWarning>[] | 
+    WithId<ProfileChange>[];
   dataLength?: number;
   listType: ListType;
   details?: string;
@@ -87,29 +123,15 @@ export const BOList = ({
           )}
         </Flex>
       </Box>
-      <ShowIf test={data.length === 0 && Boolean(details)}>
-        {() => (
-          <Flex flex={1} p="6" alignItems="center" justifyContent="center">
-            <Text fontSize="sm" textColor="gray.700" align="center">
-              {details}
-            </Text>
-          </Flex>
-        )}
-      </ShowIf>
       <ShowIf test={data.length > 0}>
         {() => (
-          <VStack ref={listRef} flex={1} p="4" overflowX="hidden">
-            {listType === 'businesses'
-              ? (data as WithId<Business>[]).map((item) => (
-                  <BOBusinessListItem key={item.id} business={item} />
-                ))
-              : listType === 'orders'
-              ? (data as WithId<Order>[]).map((item) => (
-                  <BOOrderListItem key={item.id} order={item} />
-                ))
-              : (data as WithId<ProfileChange>[]).map((item) => (
-                  <BOProfileChangesListItem key={item.id} changes={item} />
-                ))}
+          <VStack 
+            ref={listRef} 
+            flex={1} 
+            p="4" 
+            overflowX="hidden"
+            >
+            {renderList(data, listType)}
           </VStack>
         )}
       </ShowIf>

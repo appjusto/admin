@@ -1,7 +1,8 @@
-import { Order, WithId } from '@appjusto/types';
+import { WithId } from '@appjusto/types';
 import { Box, Flex, Icon, Image, Text, Wrap, WrapItem } from '@chakra-ui/react';
 import { useObserveOrderChatMessages } from 'app/api/chat/useObserveOrderChatMessages';
 import { useObserveOrderIssues } from 'app/api/order/useObserveOrderIssues';
+import { OrderWithWarning } from 'app/api/order/useObserveStaffOrders';
 import { useContextServerTime } from 'app/state/server-time';
 import foodIcon from 'common/img/bo-food.svg';
 import p2pIcon from 'common/img/bo-p2p.svg';
@@ -16,10 +17,11 @@ import { OrderTracking } from './OrderTracking';
 import { getOrderMatchingColor } from './utils';
 
 interface Props {
-  order: WithId<Order>;
+  order: WithId<OrderWithWarning>;
 }
 
 export const BOOrderListItem = ({ order }: Props) => {
+  console.log("Warning: ", order.warning)
   // context
   const { url } = useRouteMatch();
   const { getServerTime } = useContextServerTime();
@@ -130,7 +132,7 @@ export const BOOrderListItem = ({ order }: Props) => {
           </Flex>
         </WrapItem>
         <WrapItem w={{ base: '100%', lg: '45%' }} minW={{lg: "460px"}}>
-          <OrderTracking orderId={order.id} isCompact />
+          <OrderTracking orderId={order.id} warning={order.warning} isCompact />
         </WrapItem>
       </Wrap>
     </CustomLink>

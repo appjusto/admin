@@ -15,7 +15,7 @@ import { useObserveNewConsumers } from 'app/api/consumer/useObserveNewConsumers'
 import { useObserveCouriersByStatus } from 'app/api/courier/useObserveCouriersByStatus';
 import { useObserveBOActiveOrders } from 'app/api/order/useObserveBOActiveOrders';
 import { useObserveBODashboardOrders } from 'app/api/order/useObserveBODashboardOrders';
-import { useObserveStaffOrders } from 'app/api/order/useObserveStaffOrders';
+import { OrderWithWarning, useObserveStaffOrders } from 'app/api/order/useObserveStaffOrders';
 import { usePlatformStatistics } from 'app/api/platform/usePlatformStatistics';
 import {
   ProfileChangesSituations,
@@ -23,6 +23,7 @@ import {
 } from 'app/api/users/useObserveUsersChanges';
 import React from 'react';
 import { useContextFirebaseUser } from '../auth/context';
+import { useContextServerTime } from '../server-time';
 
 interface ContextProps {
   // panel
@@ -36,7 +37,7 @@ interface ContextProps {
   consumers?: number;
   // lists
   activeOrders: WithId<Order>[];
-  staffOrders: WithId<Order>[];
+  watchedOrders: WithId<OrderWithWarning>[];
   businesses: WithId<Business>[];
   userChanges: WithId<ProfileChange>[];
   fetchNextActiveOrders(): void;
@@ -59,6 +60,7 @@ const statuses = ['charged', 'confirmed', 'preparing', 'ready', 'dispatching'] a
 export const BackofficeDashboardProvider = ({ children }: Props) => {
   // context
   const { user, isBackofficeSuperuser } = useContextFirebaseUser();
+  const { getServerTime } = useContextServerTime();
   // panel
   const statistics = usePlatformStatistics();
   const { todayOrders, todayDeliveredOrders, todayAverage } = useObserveBODashboardOrders();
@@ -68,7 +70,7 @@ export const BackofficeDashboardProvider = ({ children }: Props) => {
   // lists
   const { businesses, fetchNextPage: fetchNextBusiness } = useObserveBusinesses(businessSituations);
   const { orders: activeOrders, fetchNextOrders: fetchNextActiveOrders } = useObserveBOActiveOrders(statuses, isBackofficeSuperuser ? false : true)
-  const staffOrders = useObserveStaffOrders(statuses, user?.uid);
+  const watchedOrders = useObserveStaffOrders(getServerTime, statuses, user?.uid);
   const { userChanges, fetchNextPage: fetchNextChanges } =
     useObserveUsersChanges(usersChangesSituations);
   // provider
@@ -83,7 +85,7 @@ export const BackofficeDashboardProvider = ({ children }: Props) => {
         businessesNumber,
         consumers,
         activeOrders,
-        staffOrders,
+        watchedOrders, 
         businesses,
         userChanges,
         fetchNextActiveOrders,
