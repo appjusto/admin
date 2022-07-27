@@ -1,4 +1,4 @@
-import { Order, OrderStatus, WithId } from '@appjusto/types';
+import { Order, OrderStatus, PlatformParams, WithId } from '@appjusto/types';
 import { useContextApi } from 'app/state/api/context';
 import React from 'react';
 import { Ordering } from './OrderApi';
@@ -8,18 +8,19 @@ export interface OrderWithWarning extends Order {
   warning?: string | null;
 }
 
-const confirmed = 1; // 3
-const matching = 2; // 4
-const goingPickup = 2; // 10
-const readyArrivedPickup = 2; // 15 
-const dispatchingArrivedPickup = 2; // 5
-const goingDestination = 2; // 10
+// const confirmed = 1; // 3
+// const matching = 2; // 4
+// const goingPickup = 2; // 10
+// const readyArrivedPickup = 2; // 15 
+// const dispatchingArrivedPickup = 2; // 5
+// const goingDestination = 2; // 10
 
 export const useObserveStaffOrders = (
   getServerTime: () => Date,
   statuses: OrderStatus[],
   staffId?: string,
-  ordering?: Ordering
+  backofficeWarnings?: PlatformParams['orders']['backofficeWarnings'],
+  ordering?: Ordering,
 ) => {
   // context
   const api = useContextApi();
@@ -37,6 +38,15 @@ export const useObserveStaffOrders = (
     const warningCheck = () => {
       const now = getServerTime();
       const watched = orders.map(order => {
+        if(!backofficeWarnings) return order;
+        const {
+          confirmed,
+          matching,
+          goingPickup,
+          readyArrivedPickup,
+          dispatchingArrivedPickup,
+          goingDestination,
+        } = backofficeWarnings;
         const warning = getOrderWarning(
             order, 
             now.getTime(),
@@ -54,7 +64,7 @@ export const useObserveStaffOrders = (
     warningCheck();
     const timeInterval = setInterval(warningCheck, 32000);
     return () => clearInterval(timeInterval);
-  }, [orders, getServerTime])
+  }, [orders, getServerTime, backofficeWarnings])
   // return
   return watchedOrders;
 };

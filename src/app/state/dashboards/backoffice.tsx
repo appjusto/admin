@@ -16,6 +16,7 @@ import { useObserveCouriersByStatus } from 'app/api/courier/useObserveCouriersBy
 import { useObserveBOActiveOrders } from 'app/api/order/useObserveBOActiveOrders';
 import { useObserveBODashboardOrders } from 'app/api/order/useObserveBODashboardOrders';
 import { OrderWithWarning, useObserveStaffOrders } from 'app/api/order/useObserveStaffOrders';
+import { usePlatformParams } from 'app/api/platform/usePlatformParams';
 import { usePlatformStatistics } from 'app/api/platform/usePlatformStatistics';
 import {
   ProfileChangesSituations,
@@ -63,6 +64,7 @@ export const BackofficeDashboardProvider = ({ children }: Props) => {
   const { getServerTime } = useContextServerTime();
   // panel
   const statistics = usePlatformStatistics();
+  const { platformParams } = usePlatformParams();
   const { todayOrders, todayDeliveredOrders, todayAverage } = useObserveBODashboardOrders();
   const couriers = useObserveCouriersByStatus(courierStatuses);
   const businessesNumber = useObserveBusinessesByStatus(businessesStatus);
@@ -70,7 +72,12 @@ export const BackofficeDashboardProvider = ({ children }: Props) => {
   // lists
   const { businesses, fetchNextPage: fetchNextBusiness } = useObserveBusinesses(businessSituations);
   const { orders: activeOrders, fetchNextOrders: fetchNextActiveOrders } = useObserveBOActiveOrders(statuses, isBackofficeSuperuser ? false : true)
-  const watchedOrders = useObserveStaffOrders(getServerTime, statuses, user?.uid);
+  const watchedOrders = useObserveStaffOrders(
+    getServerTime, 
+    statuses, 
+    user?.uid,
+    platformParams?.orders.backofficeWarnings
+  );
   const { userChanges, fetchNextPage: fetchNextChanges } =
     useObserveUsersChanges(usersChangesSituations);
   // provider
