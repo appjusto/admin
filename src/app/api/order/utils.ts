@@ -144,7 +144,7 @@ export const getOrderWarning = (
       ) {
         const baseTime = (order.timestamps.confirmed as Timestamp).toMillis();
         const elapsedTime = getTimeUntilNow(now, baseTime);
-        if(elapsedTime >= confirmed) {
+        if(elapsedTime >= confirmed / 60) {
           warning = 'DEMORA NO ACEITE';
         }
     } else if (
@@ -153,7 +153,7 @@ export const getOrderWarning = (
       ) {
         const baseTime = (order.dispatchingTimestamps.matching as Timestamp).toMillis();
         const elapsedTime = getTimeUntilNow(now, baseTime);
-        if(elapsedTime >= matching) {
+        if(elapsedTime >= matching / 60) {
           warning = 'DEMORA NO MATCHING';
         }
     } else if (
@@ -162,7 +162,7 @@ export const getOrderWarning = (
       ) {
         const baseTime = (order.dispatchingTimestamps.goingPickup as Timestamp).toMillis();
         const elapsedTime = getTimeUntilNow(now, baseTime);
-        if(elapsedTime >= goingPickup) {
+        if(elapsedTime >= goingPickup / 60) {
           warning = 'DEMORA A CAMINHO DA COLETA';
         }
     } else if (
@@ -172,7 +172,7 @@ export const getOrderWarning = (
       ) {
         const baseTime = (order.dispatchingTimestamps.arrivedPickup as Timestamp).toMillis();
         const elapsedTime = getTimeUntilNow(now, baseTime);
-        if(elapsedTime >= readyArrivedPickup) {
+        if(elapsedTime >= readyArrivedPickup / 60) {
           warning = 'DEMORA PARA RECEBER O PEDIDO';
         }
     } else if (
@@ -182,7 +182,7 @@ export const getOrderWarning = (
     ) {
         const baseTime = (order.timestamps.dispatching as Timestamp).toMillis();
         const elapsedTime = getTimeUntilNow(now, baseTime);
-        if(elapsedTime >= dispatchingArrivedPickup) {
+        if(elapsedTime >= dispatchingArrivedPickup / 60) {
           warning = 'DEMORA NA SAIDA PARA ENTREGA';
         }
     } else if (
@@ -191,7 +191,7 @@ export const getOrderWarning = (
       ) {
         const baseTime = (order.dispatchingTimestamps.goingDestination as Timestamp).toMillis();
         const elapsedTime = getTimeUntilNow(now, baseTime);
-        if(elapsedTime >= goingDestination) {
+        if(elapsedTime >= goingDestination / 60) {
           warning = 'DEMORA A CAMINHO DA ENTREGA';
         }
     }
