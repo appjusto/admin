@@ -166,7 +166,7 @@ export const getOrderWarning = (
           warning = 'COLETA';
         }
     } else if (
-      order.status === 'ready' &&
+      (order.status === 'preparing' || order.status === 'ready') &&
       order.dispatchingState === 'arrived-pickup' && 
       order.dispatchingTimestamps.arrivedPickup
       ) {
