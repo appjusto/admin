@@ -21,7 +21,6 @@ interface Props {
 }
 
 export const BOOrderListItem = ({ order }: Props) => {
-  console.log("Warning: ", order.warning)
   // context
   const { url } = useRouteMatch();
   const { getServerTime } = useContextServerTime();

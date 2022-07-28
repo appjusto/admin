@@ -101,30 +101,19 @@ export default class OrderApi {
   observeBOActiveOrders(
     statuses: OrderStatus[],
     resultHandler: (orders: WithId<Order>[], last?: QueryDocumentSnapshot<DocumentData>) => void,
-    startAfterDoc?: QueryDocumentSnapshot<DocumentData>,
-    isNoStaff: boolean = false,
-    ordering: Ordering = 'desc'
+    queryLimit: number = 10,
+    isNoStaff: boolean = true,
+    ordering: Ordering = 'asc'
   ): Unsubscribe {
     let q = query(
       this.refs.getOrdersRef(),
       orderBy('timestamps.charged', ordering),
       where('status', 'in', statuses),
-      limit(10)
+      limit(queryLimit)
     );
     if (isNoStaff) q = query(q, where('staff', '==', null));
-    if (startAfterDoc) q = query(q, startAfter(startAfterDoc));
     // returns the unsubscribe function
-    return onSnapshot(
-      q,
-      (snapshot) => {
-        const last = snapshot.docs.length > 0 ? snapshot.docs[snapshot.docs.length - 1] : undefined;
-        resultHandler(documentsAs<Order>(snapshot.docs), last);
-      },
-      (error) => {
-        console.error(error);
-        Sentry.captureException(error);
-      }
-    );
+    return customCollectionSnapshot(q, resultHandler);
   }
 
   observeScheduledOrders(

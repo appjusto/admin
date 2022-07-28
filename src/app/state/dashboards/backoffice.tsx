@@ -71,7 +71,7 @@ export const BackofficeDashboardProvider = ({ children }: Props) => {
   const consumers = useObserveNewConsumers();
   // lists
   const { businesses, fetchNextPage: fetchNextBusiness } = useObserveBusinesses(businessSituations);
-  const { orders: activeOrders, fetchNextOrders: fetchNextActiveOrders } = useObserveBOActiveOrders(statuses, isBackofficeSuperuser ? false : true)
+  const { orders: activeOrders, fetchNextOrders: fetchNextActiveOrders } = useObserveBOActiveOrders(statuses, !isBackofficeSuperuser);
   const watchedOrders = useObserveStaffOrders(
     getServerTime, 
     statuses, 
