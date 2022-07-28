@@ -253,15 +253,33 @@ export default class OrderApi {
   ): Unsubscribe {
     let q = query(
       this.refs.getOrdersRef(),
-      orderBy('updatedOn', 'desc'),
+      // orderBy('updatedOn', 'desc'),
       limit(queryLimit),
       where('business.id', '==', businessId),
       where('status', 'in', statuses)
     );
+    // orderBy
+    if(orderStatus !== 'scheduled') q = query(q, orderBy('updatedOn', 'desc'));
+    else q = query(q, orderBy('scheduledTo', 'desc'));
+    // filters
     if (startAfterDoc) q = query(q, startAfter(startAfterDoc));
     if (orderCode) q = query(q, where('code', '==', orderCode));
-    if (start && end) q = query(q, where('updatedOn', '>=', start), where('updatedOn', '<=', end));
+    // dates
+    if (orderStatus !== 'scheduled' && start && end) 
+      q = query(
+          q, 
+          where('updatedOn', '>=', start), 
+          where('updatedOn', '<=', end)
+        );
+    if (orderStatus === 'scheduled' && start && end) 
+      q = query(
+          q, 
+          where('scheduledTo', '>=', start), 
+          where('scheduledTo', '<=', end)
+        );
+    // status
     if (orderStatus) q = query(q, where('status', '==', orderStatus));
+    // Unsubscribe
     const unsubscribe = onSnapshot(
       q,
       (snapshot) => {

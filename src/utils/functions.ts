@@ -69,7 +69,7 @@ export const getDateTime = () => {
   return { date, time };
 };
 
-export const getDateAndHour = (timestamp?: FieldValue | Date, onlyDate?: boolean) => {
+export const getDateAndHour = (timestamp?: FieldValue | Date | null, onlyDate?: boolean) => {
   if (!timestamp) return 'N/E';
   try {
     let timeToDate = timestamp;

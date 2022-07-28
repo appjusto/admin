@@ -207,7 +207,7 @@ export const OrderBaseDrawer = ({
                       <Text as="span" color="black" fontWeight="700">
                       {
                         order?.confirmedScheduledTo ? 
-                        getHourAndMinute(order.confirmedScheduledTo) : 
+                        getDateAndHour(order.confirmedScheduledTo) : 
                         'N/E'
                       }
                       </Text>

@@ -17,6 +17,7 @@ import PageHeader from '../../PageHeader';
 import { OrderDrawer } from '../drawers/orderdrawer';
 
 const statuses = [
+  'scheduled',
   'confirmed',
   'preparing',
   'ready',
@@ -103,6 +104,11 @@ const OrdersHistoryPage = () => {
               isActive={filterBar === 'all' ? true : false}
               label={t('Todos')}
               onClick={() => setFilterBar('all')}
+            />
+            <FilterText
+              isActive={filterBar === 'scheduled' ? true : false}
+              label={t('Agendados')}
+              onClick={() => setFilterBar('scheduled')}
             />
             <FilterText
               isActive={filterBar === 'delivered' ? true : false}
