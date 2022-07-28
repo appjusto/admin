@@ -20,7 +20,7 @@ export const useObserveStaffOrders = (
   statuses: OrderStatus[],
   staffId?: string,
   backofficeWarnings?: PlatformParams['orders']['backofficeWarnings'],
-  ordering?: Ordering,
+  ordering: Ordering = 'asc',
 ) => {
   // context
   const api = useContextApi();

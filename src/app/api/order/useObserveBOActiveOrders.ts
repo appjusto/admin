@@ -12,12 +12,11 @@ export const useObserveBOActiveOrders = (
   const [queryLimit, setQueryLimit] = React.useState(10);
   // handlers
   const fetchNextOrders = React.useCallback(() => {
-    console.log("fetchNextOrders", queryLimit);
     setQueryLimit(prev => {
       if(orders.length < prev) return prev;
       else return prev + 10;
     });
-  }, [orders, queryLimit]);
+  }, [orders]);
   // side effects
   React.useEffect(() => {
     const unsub = api.order().observeBOActiveOrders(
