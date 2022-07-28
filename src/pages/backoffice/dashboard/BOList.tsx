@@ -82,7 +82,6 @@ export const BOList = ({
       if (listRef.current) {
         let shouldLoad = listRef.current.scrollHeight - listRef.current.scrollTop < scrollTopLimit;
         if (shouldLoad) {
-          console.log("Scroll Calc: ", listRef.current.scrollHeight - listRef.current.scrollTop)
           loadData()
         };
       }
