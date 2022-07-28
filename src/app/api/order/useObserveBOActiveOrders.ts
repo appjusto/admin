@@ -13,6 +13,7 @@ export const useObserveBOActiveOrders = (statuses: OrderStatus[], isNoStaff?: bo
   const [lastOrder, setLastOrder] = React.useState<QueryDocumentSnapshot<DocumentData>>();
   // handlers
   const fetchNextOrders = React.useCallback(() => {
+    console.log("fetchNextOrders")
     setStartAfter(lastOrder);
   }, [lastOrder]);
   // side effects

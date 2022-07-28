@@ -79,6 +79,7 @@ const BODashboard = () => {
           // staffFilter={staffFilter}
           // handleStaffFilter={(value) => setStaffFilter(value)}
           infiniteScroll
+          scrollTopLimit={550}
           loadData={fetchNextActiveOrders}
         />
         {

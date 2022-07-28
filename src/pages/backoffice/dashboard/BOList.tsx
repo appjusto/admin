@@ -52,6 +52,7 @@ interface BOListProps extends FlexProps {
   listType: ListType;
   details?: string;
   infiniteScroll?: boolean;
+  scrollTopLimit?: number;
   staffFilter?: StaffFilterOptions;
   handleStaffFilter?(value: StaffFilterOptions): void;
   loadData?(): void;
@@ -64,6 +65,7 @@ export const BOList = ({
   listType,
   details,
   infiniteScroll = false,
+  scrollTopLimit = 240,
   staffFilter,
   handleStaffFilter,
   loadData,
@@ -78,13 +80,17 @@ export const BOList = ({
     if (!infiniteScroll || !listRef.current || !loadData) return;
     const handleScrollTop = () => {
       if (listRef.current) {
-        let shouldLoad = listRef.current.scrollHeight - listRef.current.scrollTop < 240;
-        if (shouldLoad) loadData();
+        let shouldLoad = listRef.current.scrollHeight - listRef.current.scrollTop < scrollTopLimit;
+        console.log("Calc: ", listRef.current.scrollHeight - listRef.current.scrollTop)
+        if (shouldLoad) {
+          console.log("handleScrollTop")
+          loadData()
+        };
       }
     };
     listRef.current.addEventListener('scroll', handleScrollTop);
     return () => document.removeEventListener('scroll', handleScrollTop);
-  }, [infiniteScroll, listRef, loadData]);
+  }, [infiniteScroll, scrollTopLimit, listRef, loadData]);
   // UI
   return (
     <Flex
