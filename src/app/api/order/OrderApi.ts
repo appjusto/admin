@@ -121,13 +121,15 @@ export default class OrderApi {
     businessId?: string,
     ordering: Ordering = 'asc'
   ): Unsubscribe {
-    const lastWeedDay = dayjs().add(7, 'day').toDate();
+    const start = dayjs().startOf("day").toDate();
+    const end = dayjs().endOf("day").toDate();
     let q = query(
       this.refs.getOrdersRef(),
       orderBy('scheduledTo', ordering),
       where('business.id', '==', businessId),
       where('status', '==', 'scheduled'),
-      where('scheduledTo', '<=', lastWeedDay)
+      where('scheduledTo', '>=', start),
+      where('scheduledTo', '<=', end)
     );
     // returns the unsubscribe function
     return customCollectionSnapshot(q, resultHandler);

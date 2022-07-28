@@ -10,7 +10,8 @@ export const useObserveScheduledOrders = (
   // context
   const api = useContextApi();
   // state
-  const [scheduledOrders, setScheduledOrders] = React.useState<WithId<Order>[]>([]);
+  const [scheduledOrders, setScheduledOrders] = 
+    React.useState<WithId<Order>[]>([]);
   // side effects
   React.useEffect(() => {
     const unsub = api.order().observeScheduledOrders(setScheduledOrders, businessId, ordering);

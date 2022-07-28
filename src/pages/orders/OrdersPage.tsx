@@ -10,7 +10,6 @@ import { OrderAcceptanceTimeDrawer } from './drawers/OrderAcceptanceTimeDrawer';
 import { OrderDrawer } from './drawers/orderdrawer';
 import { OrdersKanban } from './kanban/OrdersKanban';
 import { OrdersHeader } from './OrdersHeader';
-import { ordersScheduledDayFilter } from './utils';
 
 const OrdersPage = () => {
   // context
@@ -20,7 +19,7 @@ const OrdersPage = () => {
   const { path } = useRouteMatch();
   const history = useHistory();
   // helpers
-  const isScheduledOrders = ordersScheduledDayFilter(scheduledOrders).length > 0;
+  const isScheduledOrders = scheduledOrders.length > 0;
   // handlers
   const closeDrawerHandler = React.useCallback(() => history.replace(path), [history, path]);
   // UI
