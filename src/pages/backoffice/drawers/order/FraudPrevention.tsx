@@ -1,5 +1,8 @@
 import { Box, Button, Flex, Icon, Stack, Text, Textarea } from '@chakra-ui/react';
 import { useObserveOrderFraudPrevention } from 'app/api/order/useObserveOrderFraudPrevention';
+import { useContextFirebaseUser } from 'app/state/auth/context';
+import CustomCheckbox from 'common/components/form/CustomCheckbox';
+import React from 'react';
 import { MdInfo, MdPolicy, MdWarningAmber } from 'react-icons/md';
 import { t } from 'utils/i18n';
 import { OrderDrawerLoadingState } from '.';
@@ -10,7 +13,7 @@ interface FraudPreventionProps {
   canUpdateOrder?: boolean;
   message?: string;
   updateMessage(message: string): void;
-  handleConfirm(): void;
+  handleConfirm(removeStaff: boolean): void;
   handleCancel(): void;
   loadingState: OrderDrawerLoadingState;
 }
@@ -25,7 +28,10 @@ export const FraudPrevention = ({
   loadingState,
 }: FraudPreventionProps) => {
   // context
+  const { isBackofficeSuperuser } = useContextFirebaseUser();
   const flags = useObserveOrderFraudPrevention(orderId);
+  // state
+  const [removeStaff, setRemoveStaff] = React.useState(true);
   // UI
   return (
     <Box
@@ -87,6 +93,18 @@ export const FraudPrevention = ({
           <Text mt="4">
             {t('Se nenhuma ação for tomada, o pedido será confirmado dentro de instantes:')}
           </Text>
+          {
+            isBackofficeSuperuser && (
+              <Box mt="4">
+                <CustomCheckbox 
+                  colorScheme="green"
+                  isChecked={removeStaff} 
+                  onChange={() => setRemoveStaff(prev => !prev)}>
+                  {t('Sair do pedido após a triagem')}
+                </CustomCheckbox>
+              </Box>
+            )
+          }
           <Stack mt="4" direction={{ base: 'column', md: 'row' }} spacing={4}>
             <Button
               w="100%"
@@ -101,7 +119,7 @@ export const FraudPrevention = ({
             <Button
               w="100%"
               size="md"
-              onClick={handleConfirm}
+              onClick={() => handleConfirm(removeStaff)}
               isLoading={loadingState === 'preventConfirm'}
               loadingText={t('Salvando')}
             >

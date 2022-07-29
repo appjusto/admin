@@ -81,11 +81,12 @@ export const OrderBaseDrawer = ({
   const canDeleteOrder =
     order?.status === 'quote' && userAbility?.can('delete', { kind: 'orders', ...order });
   // handlers
-  const handleConfirm = () => {
+  const handleConfirm = (removeStaff: boolean) => {
     if(order?.scheduledTo) {
-      return updateOrderStatus('scheduled');
+      updateOrderStatus('scheduled');
     } 
-    return updateOrderStatus('confirmed');
+    updateOrderStatus('confirmed');
+    if(removeStaff) updateOrderStaff("release");
   }
   const handleDelete = async () => {
     if (!order?.id) {
@@ -224,7 +225,9 @@ export const OrderBaseDrawer = ({
                 message={message}
                 updateMessage={(message: string) => updateState('message', message)}
                 handleConfirm={handleConfirm}
-                handleCancel={() => cancellation('prevention')}
+                handleCancel={
+                  () => cancellation('prevention')
+                }
                 loadingState={loadingState}
               />
             )}
