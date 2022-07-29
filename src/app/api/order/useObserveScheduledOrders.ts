@@ -12,11 +12,28 @@ export const useObserveScheduledOrders = (
   // state
   const [scheduledOrders, setScheduledOrders] = 
     React.useState<WithId<Order>[]>([]);
+  const [queryLimit, setQueryLimit] = React.useState(10);
+  const [scheduledOrdersNumber, setScheduledOrdersNumber] = React.useState(0);
+  // handlers
+  const fetchNextScheduledOrders = React.useCallback(() => {
+    setQueryLimit(prev => {
+      if(scheduledOrders.length < prev) return prev;
+      else return prev + 10;
+    });
+  }, [scheduledOrders]);
   // side effects
   React.useEffect(() => {
-    const unsub = api.order().observeScheduledOrders(setScheduledOrders, businessId, ordering);
+    if(!businessId) return;
+    const unsub = api.order().observeScheduledOrders(
+      setScheduledOrders, queryLimit, businessId, ordering);
     return () => unsub();
-  }, [api, businessId, ordering]);
+  }, [api, businessId, queryLimit, ordering]);
+  React.useEffect(() => {
+    if(!businessId) return;
+    const unsub = api.order().observeScheduledOrdersTotal(
+      setScheduledOrdersNumber, businessId);
+    return () => unsub();
+  }, [api, businessId]);
   // return
-  return scheduledOrders;
+  return { scheduledOrders, scheduledOrdersNumber, fetchNextScheduledOrders };
 };

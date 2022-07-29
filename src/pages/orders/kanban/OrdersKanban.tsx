@@ -25,7 +25,14 @@ const statuses = ['confirmed', 'preparing', 'ready', 'dispatching', 'canceled'] 
 
 export const OrdersKanban = () => {
   // context
-  const { business, scheduledOrders, orders, newChatMessages } = useOrdersContext();
+  const { 
+    business, 
+    scheduledOrders, 
+    scheduledOrdersNumber,
+    orders, 
+    newChatMessages, 
+    fetchNextScheduledOrders 
+  } = useOrdersContext();
   // state
   const ordersByStatus = splitByStatus(orders, statuses);
   const [dateTime, setDateTime] = React.useState('');
@@ -141,8 +148,11 @@ export const OrdersKanban = () => {
               <OrdersKanbanList
                 title={t('Agendados para hoje')}
                 orders={scheduledOrders}
+                dataLength={scheduledOrdersNumber}
                 details={t('Aqui você verá os pedidos agendados.')}
                 maxW={{ lg: '280px' }}
+                infiniteScroll
+                loadData={fetchNextScheduledOrders}
               />
             )
           }

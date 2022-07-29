@@ -22,10 +22,12 @@ import { useContextAppRequests } from '../requests/context';
 interface ContextProps {
   business: WithId<Business> | null | undefined;
   scheduledOrders: WithId<Order>[];
+  scheduledOrdersNumber: number;
   orders: WithId<Order>[];
   confirmedNumber: number;
   chats: OrderChatGroup[];
   newChatMessages: string[];
+  fetchNextScheduledOrders(): void;
   getOrderById(id: string): WithId<Order> | undefined;
   changeOrderStatus(orderId: string, status: OrderStatus): void;
   setOrderCookingTime(orderId: string, cookingTime: number | null): void;
@@ -48,7 +50,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   const { isBackofficeUser } = useContextFirebaseUser();
   const { business } = useContextBusiness();
   const { sendBusinessKeepAlive } = useBusinessProfile();
-  const scheduledOrders = useObserveScheduledOrders(business?.id)
+  const { scheduledOrders, scheduledOrdersNumber, fetchNextScheduledOrders } = useObserveScheduledOrders(business?.id)
   const activeOrders = useObserveOrders(statuses, business?.id);
   const completedAndActiveOrders = useObserveOrdersCompletedInTheLastHour(business?.id);
   //const canceledOrders = useCanceledOrders(business?.id);
@@ -199,10 +201,12 @@ export const OrdersContextProvider = (props: ProviderProps) => {
       value={{
         business,
         scheduledOrders,
+        scheduledOrdersNumber,
         orders,
         confirmedNumber,
         chats,
         newChatMessages,
+        fetchNextScheduledOrders,
         getOrderById,
         changeOrderStatus,
         setOrderCookingTime,

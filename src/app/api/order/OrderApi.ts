@@ -118,6 +118,7 @@ export default class OrderApi {
 
   observeScheduledOrders(
     resultHandler: (orders: WithId<Order>[]) => void,
+    queryLimit: number,
     businessId?: string,
     ordering: Ordering = 'asc'
   ): Unsubscribe {
@@ -129,10 +130,40 @@ export default class OrderApi {
       where('business.id', '==', businessId),
       where('status', '==', 'scheduled'),
       where('scheduledTo', '>=', start),
-      where('scheduledTo', '<=', end)
+      where('scheduledTo', '<=', end),
+      limit(queryLimit)
     );
     // returns the unsubscribe function
     return customCollectionSnapshot(q, resultHandler);
+  }
+
+  observeScheduledOrdersTotal(
+    resultHandler: (total: number) => void,
+    businessId?: string,
+  ): Unsubscribe {
+    const start = dayjs().startOf("day").toDate();
+    const end = dayjs().endOf("day").toDate();
+    let q = query(
+      this.refs.getOrdersRef(),
+      where('business.id', '==', businessId),
+      where('status', '==', 'scheduled'),
+      where('scheduledTo', '>=', start),
+      where('scheduledTo', '<=', end),
+    );
+    // returns the unsubscribe function
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        if (snapshot.empty) resultHandler(0); 
+        else resultHandler(snapshot.size);
+      },
+      (error) => {
+        console.error(error);
+        Sentry.captureException(error);
+      }
+    );
+    // returns the unsubscribe function
+    return unsubscribe;
   }
 
   observeBusinessOrdersCompletedInTheLastHour(
