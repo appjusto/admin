@@ -635,6 +635,17 @@ export default class OrderApi {
     else return null;
   }
 
+  async fetchOrderByCode(orderCode: string, businessId?: string) {
+    let q = query(
+      this.refs.getOrdersRef(), 
+      where('code', '==', orderCode),
+    );
+    if(businessId) q = query(q, where('business.id', '==', businessId))
+    const data = await getDocs(q);
+    if (!data.empty) return documentsAs<Order>(data.docs);
+    else return null;
+  }
+
   async fetchOrdersByConsumerId(consumerId: string) {
     const q = query(
       this.refs.getOrdersRef(),

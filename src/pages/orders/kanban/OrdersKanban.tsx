@@ -1,4 +1,4 @@
-import { Order, OrderStatus, WithId } from '@appjusto/types';
+import { OrderStatus } from '@appjusto/types';
 import {
   Box,
   Flex, Icon,
@@ -10,6 +10,7 @@ import {
   Text
 } from '@chakra-ui/react';
 import { splitByStatus } from 'app/api/order/selectors';
+import { useFetchOrderByCode } from 'app/api/order/useFetchOrderByCode';
 import { useOrdersContext } from 'app/state/order';
 import { ReactComponent as SearchIcon } from 'common/img/searchIcon.svg';
 import React from 'react';
@@ -37,7 +38,7 @@ export const OrdersKanban = () => {
   const ordersByStatus = splitByStatus(orders, statuses);
   const [dateTime, setDateTime] = React.useState('');
   const [orderSearch, setOrderSearch] = React.useState('');
-  const [searchResult, setSearchResult] = React.useState<WithId<Order>[]>([]);
+  const searchedOrder = useFetchOrderByCode(orderSearch, business?.id);
   // helpers
   const isNewChatMessage = newChatMessages.length > 0;
   // side effects
@@ -45,14 +46,6 @@ export const OrdersKanban = () => {
     const { date, time } = getDateTime();
     setDateTime(`${date} às ${time}`);
   }, [orders]);
-  React.useEffect(() => {
-    if (orderSearch) {
-      const regexp = new RegExp(orderSearch, 'i');
-      const result = [...orders, ...scheduledOrders]
-        .filter((order) => regexp.test(order.code as string));
-      setSearchResult(result);
-    }
-  }, [orders, scheduledOrders, orderSearch]);
   // UI
   return (
     <Box pb="12">
@@ -140,7 +133,7 @@ export const OrdersKanban = () => {
         </Flex>
       </Flex>
       {orderSearch.length > 0 ? (
-        <OrderSearchResult orders={searchResult} />
+        <OrderSearchResult orders={searchedOrder} />
       ) : (
         <Stack w="100%" direction={{ base: 'column', lg: 'row' }} mt="8" spacing={4}>
           {
