@@ -1,5 +1,4 @@
 import { Container, Flex, FlexProps } from '@chakra-ui/react';
-import React from 'react';
 import { MenuMobile } from './MenuMobile';
 import Sidebar from './sidebar/Sidebar';
 
@@ -18,7 +17,7 @@ const PageLayout = ({ maxW = '960px', mt = '0', children }: PageLayoutProps) => 
       <Flex w="100%" justifyContent="center">
         <Container
           w="100%"
-          maxW={{ lg: maxW, xl: '1144px' }}
+          maxW={{ lg: maxW, xl: '1188px' }}
           pt={{ base: '16', lg: '10' }}
           pb={{ base: '8', md: '14' }}
         >
