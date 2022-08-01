@@ -84,8 +84,9 @@ export const OrderBaseDrawer = ({
   const handleConfirm = (removeStaff: boolean) => {
     if(order?.scheduledTo) {
       updateOrderStatus('scheduled');
-    } 
-    updateOrderStatus('confirmed');
+    } else {
+      updateOrderStatus('confirmed');
+    };
     if(removeStaff) updateOrderStaff("release");
   }
   const handleDelete = async () => {
