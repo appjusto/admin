@@ -35,6 +35,7 @@ const watchedFields: (keyof Business)[] = [
   'settings',
   'tags',
   'maxOrdersPerHour',
+  'minHoursForScheduledOrders',
   // object types
   'managers',
   'profileIssues',

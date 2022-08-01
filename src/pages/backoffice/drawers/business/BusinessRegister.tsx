@@ -73,6 +73,33 @@ export const BusinessRegister = () => {
           )
         }
       />
+      <SectionTitle>
+        {t('Mínimo de horas de antecedência para pedidos agendados')}
+        <Badge
+          ml="2"
+          mt="-12px"
+          px="8px"
+          py="2px"
+          bgColor="#FFBE00"
+          color="black"
+          borderRadius="16px"
+          fontSize="11px"
+          lineHeight="18px"
+          fontWeight="700"
+        >
+          {t('NOVIDADE')}
+        </Badge>
+      </SectionTitle>
+      <Text mt="1" fontSize="md">{t('Usar "0" para desativado')}</Text>
+      <NumberInput
+        id="business-max-order-per-hour"
+        label={t('Número máximo de pedidos por hora')}
+        value={String(business?.minHoursForScheduledOrders ?? '')}
+        onChange={(e) => handleBusinessProfileChange(
+          'minHoursForScheduledOrders', parseInt(e.target.value, 10)
+          )
+        }
+      />
       <BusinessFulfillment
         fulfillment={business?.fulfillment}
         handleChange={(value) => handleBusinessProfileChange('fulfillment', value)}

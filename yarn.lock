@@ -142,10 +142,10 @@
   dependencies:
     firebase "^9.6.7"
 
-"@appjusto/types@^7.6.12":
-  version "7.6.12"
-  resolved "https://registry.yarnpkg.com/@appjusto/types/-/types-7.6.12.tgz#b6aab3de1bcb6873316976ad9b6e5d6c08e0662e"
-  integrity sha512-1QQesJkmqmVwalMSZiV6brrStfCoSHWiqbILo+pQ9z5xlyCZSaTK21RkUwKQlu9cvcjOYMF1xgYg36SP+B4foA==
+"@appjusto/types@^7.6.13":
+  version "7.6.13"
+  resolved "https://registry.yarnpkg.com/@appjusto/types/-/types-7.6.13.tgz#2ecc90522e75dfbc95548a4b27d1ec1f87e9d48e"
+  integrity sha512-UxmXlE0SnMlGGrA703XUsk5NCDX2Mjcs4ACeV0M1dtbPTpPTV2a4lG1rcLbc/s8e7lKywKo/6ph5so0mNQwviA==
   dependencies:
     firebase "^9.6.7"
 

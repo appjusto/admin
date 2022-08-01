@@ -80,6 +80,7 @@ const businessKeys: (keyof Business)[] = [
   'minimumOrder',
   'tags',
   'maxOrdersPerHour',
+  'minHoursForScheduledOrders',
 ];
 interface Props {
   children: React.ReactNode | React.ReactNode[];
