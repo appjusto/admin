@@ -134,7 +134,6 @@ export const getOrderWarning = (
   dispatchingArrivedPickup: number, 
   goingDestination: number, 
   ) => {
-  console.log("getOrderWarning Call: ", new Date())
   try {
     let warning = null;
     if(
