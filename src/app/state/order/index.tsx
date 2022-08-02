@@ -54,7 +54,8 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   const activeOrders = useObserveOrders(statuses, business?.id);
   const completedAndActiveOrders = useObserveOrdersCompletedInTheLastHour(business?.id);
   //const canceledOrders = useCanceledOrders(business?.id);
-  const chats = useBusinessChats(activeOrders, completedAndActiveOrders);
+  // const chats = useBusinessChats(activeOrders, completedAndActiveOrders);
+  const chats = useBusinessChats(business?.id);
   const confirmedNumber = useObserveConfirmedOrders(business?.id);
   useObservePreparingOrders(business?.id);
   // freshdesk
