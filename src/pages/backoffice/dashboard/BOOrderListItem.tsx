@@ -28,7 +28,10 @@ export const BOOrderListItem = ({ order }: Props) => {
   const issues = useObserveOrderIssues(order.id);
   // state
   const [orderDT, setOrderDT] = React.useState<number>();
+  // refs
+  const itemRef = React.useRef<HTMLDivElement>(null);
   // helpers
+  const isCompact = typeof itemRef.current?.clientWidth === 'number' && itemRef.current?.clientWidth < 550;
   const isStaff = typeof order.staff?.id === 'string';
   const isMessages = chatMessages ? chatMessages?.length > 0 : false;
   const issuesFound = issues && issues.length > 0 ? true : false;
@@ -54,8 +57,12 @@ export const BOOrderListItem = ({ order }: Props) => {
   }, [getServerTime, order]);
   // UI
   return (
-    <CustomLink to={`${url}/order/${order?.id}`} bg={orderDT && orderDT > 40 ? '#FBD7D7' : 'white'}>
-      <Wrap spacing={6}>
+    <CustomLink 
+      to={`${url}/order/${order?.id}`} 
+      bg={orderDT && orderDT > 40 ? '#FBD7D7' : 'white'}
+      py={isCompact ? '3' : '4'}
+    >
+      <Wrap spacing={isCompact ? 2 : 6} ref={itemRef}>
         <WrapItem w={{ base: '100%', lg: '45%' }} minW={{lg: "460px"}}>
           <Flex w="100%" justifyContent="space-between" alignItems="center">
             <Box>

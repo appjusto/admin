@@ -94,7 +94,7 @@ export const BOList = ({
     <Flex
       w="100%"
       position="relative"
-      h={listType === 'orders' ? '600px' : '300px'}
+      h={listType === 'orders' ? '800px' : '300px'}
       borderRadius="lg"
       borderColor="gray.500"
       borderWidth="1px"
