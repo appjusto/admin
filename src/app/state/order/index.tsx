@@ -58,7 +58,8 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   const confirmedNumber = useObserveConfirmedOrders(business?.id);
   useObservePreparingOrders(business?.id);
   // freshdesk
-  useFreshDesk(business?.id, business?.name, business?.phone);
+  const businessPhone = business?.phones ? business?.phones[0].number : 'N/E';
+  useFreshDesk(business?.id, business?.name, businessPhone);
   // automatic opening and closing of the business
   useBusinessOpenClose(business);
   // handle new chat messages
