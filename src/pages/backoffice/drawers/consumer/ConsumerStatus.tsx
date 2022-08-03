@@ -3,7 +3,6 @@ import { Box, CheckboxGroup, Flex, RadioGroup, Textarea, VStack } from '@chakra-
 import { useContextConsumerProfile } from 'app/state/consumer/context';
 import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import CustomRadio from 'common/components/form/CustomRadio';
-import React from 'react';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
 
@@ -29,6 +28,9 @@ export const ConsumerStatus = () => {
         <Flex flexDir="column" justifyContent="flex-start">
           <CustomRadio mt="2" value="submitted">
             {t('Submetido')}
+          </CustomRadio>
+          <CustomRadio mt="2" value="pending" isDisabled>
+            {t('Pendente')}
           </CustomRadio>
           <CustomRadio mt="2" value="approved">
             {t('Aprovado')}

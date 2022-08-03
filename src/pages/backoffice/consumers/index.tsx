@@ -76,7 +76,7 @@ const ConsumersPage = () => {
   // UI
   return (
     <>
-      <PageHeader title={t('Clientes')} subtitle={t(`Atualizado ${dateTime}`)} />
+      <PageHeader title={t('Consumidores')} subtitle={t(`Atualizado ${dateTime}`)} />
       <Stack mt="8" spacing={4} direction={{ base: 'column', md: 'row' }}>
         <CustomInput
           mt="0"
@@ -106,6 +106,11 @@ const ConsumersPage = () => {
               isActive={filterBar === 'submitted' ? true : false}
               label={t('Submetidos')}
               onClick={() => setFilterBar('submitted')}
+            />
+            <FilterText
+              isActive={filterBar === 'pending' ? true : false}
+              label={t('Pendentes')}
+              onClick={() => setFilterBar('pending')}
             />
             <FilterText
               isActive={filterBar === 'approved' ? true : false}
