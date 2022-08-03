@@ -1,13 +1,14 @@
 import { OrderStatus } from '@appjusto/types';
 import {
   Box,
-  Flex, Icon,
+  Flex,
+  Icon,
   Input,
   InputGroup,
   InputRightElement,
   Link,
   Stack,
-  Text
+  Text,
 } from '@chakra-ui/react';
 import { splitByStatus } from 'app/api/order/selectors';
 import { useFetchOrderByCode } from 'app/api/order/useFetchOrderByCode';
@@ -22,17 +23,25 @@ import { OrderSearchResult } from './OrderSearchResult';
 import { OrdersKanbanList } from './OrdersKanbanList';
 import { PrintSwitch } from './PrintSwitch';
 
-const statuses = ['confirmed', 'preparing', 'ready', 'dispatching', 'canceled'] as OrderStatus[];
+const statuses = [
+  'confirmed',
+  'preparing',
+  'ready',
+  'dispatching',
+  'canceled',
+] as OrderStatus[];
 
 export const OrdersKanban = () => {
   // context
-  const { 
-    business, 
-    scheduledOrders, 
+  const {
+    business,
+    scheduledOrders,
     scheduledOrdersNumber,
-    orders, 
-    newChatMessages, 
-    fetchNextScheduledOrders 
+    orders,
+    canceledOrders,
+    newChatMessages,
+    fetchNextScheduledOrders,
+    fetchNextCanceledOrders,
   } = useOrdersContext();
   // state
   const ordersByStatus = splitByStatus(orders, statuses);
@@ -58,16 +67,31 @@ export const OrdersKanban = () => {
       >
         {isNewChatMessage &&
           (newChatMessages.length > 1 ? (
-            <Text fontSize="xs" fontWeight="700" lineHeight="lg" color="black" textAlign="end">
+            <Text
+              fontSize="xs"
+              fontWeight="700"
+              lineHeight="lg"
+              color="black"
+              textAlign="end"
+            >
               {t(`Você tem ${newChatMessages.length} novas mensagens!`)}
             </Text>
           ) : (
-            <Text fontSize="xs" fontWeight="700" lineHeight="lg" color="black" textAlign="end">
+            <Text
+              fontSize="xs"
+              fontWeight="700"
+              lineHeight="lg"
+              color="black"
+              textAlign="end"
+            >
               {t(`Você tem ${newChatMessages.length} nova mensagen!`)}
             </Text>
           ))}
       </Flex>
-      <Flex flexDir={{ base: 'column', md: 'row' }} justifyContent="space-between">
+      <Flex
+        flexDir={{ base: 'column', md: 'row' }}
+        justifyContent="space-between"
+      >
         <Flex flexDir="column">
           <Text mt="-10px" fontSize="3xl" fontWeight="700" color="black">
             {t('Gerenciador de pedidos')}
@@ -101,7 +125,11 @@ export const OrdersKanban = () => {
           */}
           <PrintSwitch />
         </Flex>
-        <Flex mt={{ base: '4', md: '0' }} flexDir="column" alignItems="flex-end">
+        <Flex
+          mt={{ base: '4', md: '0' }}
+          flexDir="column"
+          alignItems="flex-end"
+        >
           <Stack w="100%" direction={{ base: 'column', lg: 'row' }} spacing={4}>
             <InputGroup w="100%" maxW={{ md: '320px', lg: '360px' }}>
               <Input
@@ -120,7 +148,11 @@ export const OrdersKanban = () => {
                 children={<Icon w="22px" h="22px" as={SearchIcon} />}
               />
             </InputGroup>
-            <Link as={RouterLink} to="/app/chat" textAlign={{ base: 'end', lg: 'start' }}>
+            <Link
+              as={RouterLink}
+              to="/app/chat"
+              textAlign={{ base: 'end', lg: 'start' }}
+            >
               <ChatButton key={Math.random()} isNewMessage={isNewChatMessage} />
             </Link>
           </Stack>
@@ -135,26 +167,31 @@ export const OrdersKanban = () => {
       {orderSearch.length > 0 ? (
         <OrderSearchResult orders={searchedOrder} />
       ) : (
-        <Stack w="100%" direction={{ base: 'column', lg: 'row' }} mt="8" spacing={4}>
-          {
-            scheduledOrders.length > 0 && (
-              <OrdersKanbanList
-                title={t('Agendados para hoje')}
-                orders={scheduledOrders}
-                dataLength={scheduledOrdersNumber}
-                details={t('Aqui você verá os pedidos agendados.')}
-                maxW={{ lg: '280px' }}
-                infiniteScroll
-                loadData={fetchNextScheduledOrders}
-              />
-            )
-          }
+        <Stack
+          w="100%"
+          direction={{ base: 'column', lg: 'row' }}
+          mt="8"
+          spacing={4}
+        >
+          {scheduledOrders.length > 0 && (
+            <OrdersKanbanList
+              title={t('Agendados para hoje')}
+              orders={scheduledOrders}
+              dataLength={scheduledOrdersNumber}
+              details={t('Aqui você verá os pedidos agendados.')}
+              maxW={{ lg: '280px' }}
+              infiniteScroll
+              loadData={fetchNextScheduledOrders}
+            />
+          )}
           <Stack w="100%" direction={{ base: 'column', md: 'row' }} spacing={4}>
             <OrdersKanbanList
               title={t('Pedidos a confirmar')}
               orders={ordersByStatus['confirmed']}
-              details={t('Aqui você verá os novos pedidos. Aceite-os para confirmar o preparo.')}
-              />
+              details={t(
+                'Aqui você verá os novos pedidos. Aceite-os para confirmar o preparo.'
+              )}
+            />
             <OrdersKanbanList
               title={t('Em preparação')}
               orders={ordersByStatus['preparing']}
@@ -166,14 +203,21 @@ export const OrdersKanban = () => {
           <Stack w="100%" direction={{ base: 'column', md: 'row' }} spacing={4}>
             <OrdersKanbanList
               title={t('Retirada/entrega')}
-              orders={[...ordersByStatus['ready'], ...ordersByStatus['dispatching']]}
-              details={t('Aqui você verá os pedidos aguardando retirada pelo entregador.')}
-              />
+              orders={[
+                ...ordersByStatus['ready'],
+                ...ordersByStatus['dispatching'],
+              ]}
+              details={t(
+                'Aqui você verá os pedidos aguardando retirada pelo entregador.'
+              )}
+            />
             <OrdersKanbanList
               title={t('Pedidos cancelados')}
-              orders={ordersByStatus['canceled']}
+              orders={canceledOrders}
               details={t('Aqui você verá os pedidos cancelados.')}
-              />
+              infiniteScroll
+              loadData={fetchNextCanceledOrders}
+            />
           </Stack>
         </Stack>
       )}

@@ -13,8 +13,12 @@ export const useBusinessChats = (
   const api = useContextApi();
   // state
   // const [totalActiveOrdersIds, setTotalActiveOrdersIds] = React.useState<string[]>([]);
-  const [chatMessages, setChatMessages] = React.useState<WithId<ChatMessage>[]>([]);
-  const [orderChatGroup, setOrderChatGroup] = React.useState<OrderChatGroup[]>([]);
+  const [chatMessages, setChatMessages] = React.useState<WithId<ChatMessage>[]>(
+    []
+  );
+  const [orderChatGroup, setOrderChatGroup] = React.useState<OrderChatGroup[]>(
+    []
+  );
   // side effects
   // React.useEffect(() => {
   //   const activeOrdersIds = [...activeOrders, ...completedAndActiveOrders].map((order) => order.id);
@@ -46,17 +50,16 @@ export const useBusinessChats = (
   // }, [api, businessId, totalActiveOrdersIds]);
   React.useEffect(() => {
     if (!businessId) return;
-    const unsub = api.chat().observeBusinessActiveChatMessages(
-      businessId, setChatMessages
-    );
+    const unsub = api
+      .chat()
+      .observeBusinessActiveChatMessages(businessId, setChatMessages);
     return () => unsub();
-  }, [api, businessId])
+  }, [api, businessId]);
   React.useEffect(() => {
     if (!businessId) return;
     const result = getOrderChatGroup(businessId, chatMessages);
     setOrderChatGroup(result);
   }, [businessId, chatMessages]);
-  console.log("chatMessages", chatMessages)
   // return
   return orderChatGroup;
 };
