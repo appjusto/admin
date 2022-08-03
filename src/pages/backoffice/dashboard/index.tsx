@@ -24,14 +24,14 @@ const BODashboard = () => {
   const { userAbility, isBackofficeSuperuser } = useContextFirebaseUser();
   const { path } = useRouteMatch();
   const history = useHistory();
-  const { 
-    activeOrders, 
-    watchedOrders, 
-    businesses, 
-    userChanges, 
-    fetchNextActiveOrders, 
-    fetchNextBusiness, 
-    fetchNextChanges 
+  const {
+    activeOrders,
+    watchedOrders,
+    businesses,
+    userChanges,
+    fetchNextActiveOrders,
+    fetchNextBusiness,
+    fetchNextChanges,
   } = useContextBackofficeDashboard();
   // state
   const [dateTime, setDateTime] = React.useState('');
@@ -45,11 +45,11 @@ const BODashboard = () => {
   };
   // side effects
   React.useEffect(() => {
-    document.title = "AppJusto | Backoffice"
-  }, [])
+    document.title = 'AppJusto | Backoffice';
+  }, []);
   // React.useEffect(() => {
   //   if (staffFilter === 'staff') {
-  //     setListOrders(activeOrders.filter((order) => 
+  //     setListOrders(activeOrders.filter((order) =>
   //       typeof order.staff?.id === "string"
   //     ));
   //   } else if (staffFilter === 'none') {
@@ -65,37 +65,52 @@ const BODashboard = () => {
   // UI
   return (
     <>
-      <PageHeader title={t('Visão geral')} subtitle={t(`Atualizado ${dateTime}`)} showVersion />
+      <PageHeader
+        title={t('Visão geral')}
+        subtitle={t(`Atualizado ${dateTime}`)}
+        showVersion
+      />
       <Panel />
       <DirectAccessById />
-      <Stack mt="4" w="100%" direction={{ base: 'column', md: 'row' }} spacing={4}>
+      <Stack
+        mt="4"
+        w="100%"
+        direction={{ base: 'column', md: 'row' }}
+        spacing={4}
+      >
         <BOList
           display={userAbility?.can('read', 'orders') ? 'flex' : 'none'}
-          title={isBackofficeSuperuser ? t('Pedidos em andamento') : t('Novos pedidos')}
+          title={
+            isBackofficeSuperuser
+              ? t('Pedidos em andamento')
+              : t('Novos pedidos')
+          }
           data={activeOrders}
           dataLength={activeOrders.length}
           listType="orders"
-          details={t('Aqui ficarão listados todos os pedidos em andamento no momento.')}
+          details={t(
+            'Aqui ficarão listados todos os pedidos em andamento no momento.'
+          )}
           // staffFilter={staffFilter}
           // handleStaffFilter={(value) => setStaffFilter(value)}
           infiniteScroll
-          scrollTopLimit={550}
+          scrollTopLimit={750}
           loadData={fetchNextActiveOrders}
         />
-        {
-          watchedOrders.length > 0 && (
-            <BOList
-              display={userAbility?.can('read', 'orders') ? 'flex' : 'none'}
-              title={t('Meus pedidos')}
-              data={watchedOrders}
-              dataLength={watchedOrders.length}  
-              listType="orders"
-              details={t('Aqui ficarão listados todos os pedidos em andamento no momento.')}
-              // staffFilter={staffFilter}
-              // handleStaffFilter={(value) => setStaffFilter(value)}
-            />
-          )
-        }
+        {watchedOrders.length > 0 && (
+          <BOList
+            display={userAbility?.can('read', 'orders') ? 'flex' : 'none'}
+            title={t('Meus pedidos')}
+            data={watchedOrders}
+            dataLength={watchedOrders.length}
+            listType="orders"
+            details={t(
+              'Aqui ficarão listados todos os pedidos em andamento no momento.'
+            )}
+            // staffFilter={staffFilter}
+            // handleStaffFilter={(value) => setStaffFilter(value)}
+          />
+        )}
       </Stack>
       <Stack
         mt="4"
