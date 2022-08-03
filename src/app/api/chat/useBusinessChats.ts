@@ -23,7 +23,6 @@ export const useBusinessChats = (businessId?: string) => {
   }, [api, businessId]);
   React.useEffect(() => {
     if (!businessId) return;
-    console.log(chatMessages.filter((m) => !m.read).map((m) => m.id));
     const result = getOrderChatGroup(businessId, chatMessages);
     setOrderChatGroup(result);
   }, [businessId, chatMessages]);

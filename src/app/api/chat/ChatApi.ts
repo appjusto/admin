@@ -67,7 +67,6 @@ export default class ChatApi {
     businessId: string,
     resultHandler: (messages: WithId<ChatMessage>[]) => void
   ) {
-    console.log('businessId', businessId);
     const timeLimit = dayjs().subtract(2, 'hour').toDate();
     const q = query(
       this.refs.getChatsRef(),

@@ -116,7 +116,6 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
     setDateTime(`${date} às ${time}`);
     if (chat) {
       const unreadMessagesIds = getUnreadChatMessages(chat, counterpartId);
-      console.log('unreadMessagesIds', unreadMessagesIds);
       if (unreadMessagesIds.length > 0) {
         unreadMessagesIds.forEach((messageId) => {
           updateChatMessage({
