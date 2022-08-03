@@ -1,61 +1,46 @@
-import { ChatMessage, ChatMessageType, Order, WithId } from '@appjusto/types';
+import { ChatMessage, ChatMessageType, WithId } from '@appjusto/types';
 import { FieldValue, Timestamp } from 'firebase/firestore';
 import { first } from 'lodash';
-import { GroupedChatMessages, OrderChatGroup, OrderChatTypeGroup } from './types';
+import {
+  GroupedChatMessages,
+  OrderChatGroup,
+  OrderChatTypeGroup,
+} from './types';
 
-export const timestampToDate = (value: FieldValue) => (value as Timestamp).toDate();
+export const timestampToDate = (value: FieldValue) =>
+  (value as Timestamp).toDate();
 
 export const sortMessages = (a: ChatMessage, b: ChatMessage) => {
   if (a.timestamp && b.timestamp)
-    return timestampToDate(a.timestamp).getTime() - timestampToDate(b.timestamp).getTime();
+    return (
+      timestampToDate(a.timestamp).getTime() -
+      timestampToDate(b.timestamp).getTime()
+    );
   if (!a.timestamp) return 1;
   else if (!b.timestamp) return -1;
   return 0;
 };
 
-export const getOrderedChatPage = (chats: OrderChatGroup[], orders: WithId<Order>[]) => {
-  const fullChats = chats.map((chat) => {
-    const order = orders.find((order) => order.id === chat.orderId);
-    const orderCode = order?.code ?? 'N/E';
-    let lastUpdate = order?.createdOn as FieldValue;
-    const counterpartName = (counterpartId: string) => {
-      let name = 'N/E';
-      if (order?.courier?.id === counterpartId) name = order.courier.name;
-      else if (order?.consumer?.id === counterpartId) name = order.consumer.name!;
-      return name;
-    };
-    const newCounterParts = chat.counterParts.map((part) => {
-      if (part.updatedOn > lastUpdate) lastUpdate = part.updatedOn;
-      return { ...part, name: counterpartName(part.id) };
-    });
-    const newChat = {
-      ...chat,
-      counterParts: newCounterParts,
-      orderCode,
-      lastUpdate,
-    } as OrderChatGroup;
-    return newChat;
-  });
-  const sortMessages = (a: OrderChatGroup, b: OrderChatGroup) => {
-    if (a.lastUpdate && b.lastUpdate)
-      return timestampToDate(b.lastUpdate).getTime() - timestampToDate(a.lastUpdate).getTime();
-    if (!a.lastUpdate) return 1;
-    else if (!b.lastUpdate) return -1;
-    return 0;
-  };
-  return fullChats.sort(sortMessages);
-};
-
-export const getOrderChatGroup = (businessId: string, messages: WithId<ChatMessage>[]) => {
+// chat page
+export const getOrderChatGroup = (
+  businessId: string,
+  messages: WithId<ChatMessage>[]
+) => {
   return messages.reduce<OrderChatGroup[]>((groups, message) => {
-    const existingGroup = groups.find((group) => group.orderId === message.orderId);
-    const counterPartId = businessId === message.from.id ? message.to.id : message.from.id;
-    const counterPart = counterPartId === message.from.id ? message.from : message.to;
+    const existingGroup = groups.find(
+      (group) => group.orderId === message.orderId
+    );
+    const counterPartId =
+      businessId === message.from.id ? message.to.id : message.from.id;
+    const counterPart =
+      counterPartId === message.from.id ? message.from : message.to;
     const counterPartFlavor = counterPart.agent;
+    const counterPartName = counterPart.name;
     const isUnread = message.from.id !== businessId && !message.read;
     const counterPartObject = {
       id: counterPartId,
       flavor: counterPartFlavor,
+      name: counterPartName,
       updatedOn: message.timestamp,
       unreadMessages: isUnread ? [message.id] : [],
     };
@@ -73,9 +58,10 @@ export const getOrderChatGroup = (businessId: string, messages: WithId<ChatMessa
             ? existingCounterpart.unreadMessages.push(message.id)
             : (existingCounterpart.unreadMessages = [message.id]);
         } else {
-          existingCounterpart.unreadMessages = existingCounterpart.unreadMessages?.filter(
-            (msg) => msg !== message.id
-          );
+          existingCounterpart.unreadMessages =
+            existingCounterpart.unreadMessages?.filter(
+              (msg) => msg !== message.id
+            );
         }
         if (existingCounterpart.updatedOn < message.timestamp) {
           existingCounterpart.updatedOn = message.timestamp;
@@ -97,6 +83,7 @@ export const getOrderChatGroup = (businessId: string, messages: WithId<ChatMessa
     return [
       {
         orderId: message.orderId,
+        orderCode: message.orderCode,
         lastUpdate: message.timestamp,
         counterParts: [counterPartObject],
       },
@@ -109,7 +96,10 @@ export const getOrderChatTypeGroup = (messages: WithId<ChatMessage>[]) => {
   return messages.reduce<OrderChatTypeGroup[]>((groups, message) => {
     let currentGroup = groups.find((group) => group.type === message.type);
     if (currentGroup) {
-      if (!currentGroup?.lastUpdate || currentGroup.lastUpdate < message.timestamp) {
+      if (
+        !currentGroup?.lastUpdate ||
+        currentGroup.lastUpdate < message.timestamp
+      ) {
         currentGroup.lastUpdate = message.timestamp;
       }
       if (!message.read) currentGroup.unreadMessages = true;
@@ -145,7 +135,10 @@ export const groupOrderChatMessages = (messages: WithId<ChatMessage>[]) =>
     ];
   }, []);
 
-export const getUnreadChatMessages = (chats: GroupedChatMessages[], counterpartId: string) => {
+export const getUnreadChatMessages = (
+  chats: GroupedChatMessages[],
+  counterpartId: string
+) => {
   const unreadMessagesIds = chats.reduce<string[]>((list, chat) => {
     const unread = chat.messages
       .filter((msg) => msg.from.id === counterpartId && !msg.read)

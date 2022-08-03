@@ -89,12 +89,12 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
         isClosable: true,
       });
     }
-
     const flavor = currentCounterPart.flavor;
     const type = `business-${flavor}` as ChatMessageType;
-    const to: { agent: Flavor; id: string } = {
+    const to: { agent: Flavor; id: string; name: string } = {
       agent: flavor,
       id: counterpartId,
+      name: currentCounterPart.name,
     };
     sendMessage({
       type,
