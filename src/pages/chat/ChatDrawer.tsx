@@ -60,7 +60,8 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
   const toast = useToast();
   // state
   const [dateTime, setDateTime] = React.useState('');
-  const [currentCounterPart, setCurrentCounterPart] = React.useState<CurrentCounterPart>();
+  const [currentCounterPart, setCurrentCounterPart] =
+    React.useState<CurrentCounterPart>();
   const [inputText, setInputText] = React.useState('');
   // refs
   const messagesBox = React.useRef<HTMLDivElement>(null);
@@ -68,7 +69,9 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
   //handlers
   const getImage = (id?: string) => {
     if (!id) return null;
-    const participant = participants.find((participant) => participant.id === id);
+    const participant = participants.find(
+      (participant) => participant.id === id
+    );
     if (participant?.flavor === 'business') return logo;
     const image = participant?.image;
     return image ?? null;
@@ -113,6 +116,7 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
     setDateTime(`${date} às ${time}`);
     if (chat) {
       const unreadMessagesIds = getUnreadChatMessages(chat, counterpartId);
+      console.log('unreadMessagesIds', unreadMessagesIds);
       if (unreadMessagesIds.length > 0) {
         unreadMessagesIds.forEach((messageId) => {
           updateChatMessage({
@@ -123,12 +127,17 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
       }
     }
     if (messagesBox.current) {
-      messagesBox.current.scroll({ top: messagesBox.current.scrollHeight, behavior: 'smooth' });
+      messagesBox.current.scroll({
+        top: messagesBox.current.scrollHeight,
+        behavior: 'smooth',
+      });
     }
   }, [chat, orderId, counterpartId, updateChatMessage]);
   React.useEffect(() => {
     if (!participants || !counterpartId) return;
-    const current = participants.find((participant) => participant.id === counterpartId);
+    const current = participants.find(
+      (participant) => participant.id === counterpartId
+    );
     const getFlavorLabel = (flavor?: Flavor) => {
       if (flavor === 'consumer') return 'cliente';
       else if (flavor === 'courier') return 'entregador';
@@ -145,21 +154,41 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
       <DrawerOverlay>
         <DrawerContent>
-          <DrawerCloseButton bg="green.500" mr="12px" _focus={{ outline: 'none' }} />
+          <DrawerCloseButton
+            bg="green.500"
+            mr="12px"
+            _focus={{ outline: 'none' }}
+          />
           <DrawerHeader pb="4">
             <Flex justifyContent="space-between" alignItems="flex-end">
               <Flex flexDir="column">
-                <Text color="black" fontSize="2xl" fontWeight="700" lineHeight="28px" mb="2">
+                <Text
+                  color="black"
+                  fontSize="2xl"
+                  fontWeight="700"
+                  lineHeight="28px"
+                  mb="2"
+                >
                   {t('Chat com ')}{' '}
                   {`${currentCounterPart?.flavorLabel} {${currentCounterPart?.name}}`}
                 </Text>
-                <Text fontSize="md" color="black" fontWeight="700" lineHeight="22px">
+                <Text
+                  fontSize="md"
+                  color="black"
+                  fontWeight="700"
+                  lineHeight="22px"
+                >
                   {t('ID do pedido:')}{' '}
                   <Text as="span" color="gray.600" fontWeight="500">
                     {orderCode ?? 'N/E'}
                   </Text>
                 </Text>
-                <Text fontSize="md" color="black" fontWeight="700" lineHeight="22px">
+                <Text
+                  fontSize="md"
+                  color="black"
+                  fontWeight="700"
+                  lineHeight="22px"
+                >
                   {t('Atualizado em:')}{' '}
                   <Text as="span" color="gray.600" fontWeight="500">
                     {dateTime}

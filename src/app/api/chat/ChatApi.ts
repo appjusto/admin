@@ -2,12 +2,13 @@ import { ChatMessage, ChatMessageType, WithId } from '@appjusto/types';
 import dayjs from 'dayjs';
 import {
   addDoc,
-  limit, orderBy,
+  limit,
+  orderBy,
   query,
   serverTimestamp,
   Unsubscribe,
   updateDoc,
-  where
+  where,
 } from 'firebase/firestore';
 import FirebaseRefs from '../FirebaseRefs';
 import { customCollectionSnapshot } from '../utils';
@@ -66,7 +67,7 @@ export default class ChatApi {
     businessId: string,
     resultHandler: (messages: WithId<ChatMessage>[]) => void
   ) {
-    console.log("businessId", businessId)
+    console.log('businessId', businessId);
     const timeLimit = dayjs().subtract(2, 'hour').toDate();
     const q = query(
       this.refs.getChatsRef(),
@@ -74,7 +75,10 @@ export default class ChatApi {
       where('participantsIds', 'array-contains', businessId),
       where('timestamp', '>=', timeLimit)
     );
-    return customCollectionSnapshot(q, resultHandler);
+    return customCollectionSnapshot(q, resultHandler, {
+      avoidPenddingWrites: false,
+      captureException: true,
+    });
   }
 
   observeOrderChatMessages(
