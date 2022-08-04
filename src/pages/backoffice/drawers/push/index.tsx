@@ -1,4 +1,4 @@
-import { Flavor } from '@appjusto/types';
+import { Flavor, NotificationChannel } from '@appjusto/types';
 import {
   Box,
   Button,
@@ -9,17 +9,22 @@ import {
   DrawerFooter,
   DrawerHeader,
   DrawerOverlay,
-  Flex, HStack, RadioGroup,
-  Text
+  HStack,
+  RadioGroup,
+  Text,
+  VStack,
 } from '@chakra-ui/react';
+import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import CustomRadio from 'common/components/form/CustomRadio';
 import { CustomInput } from 'common/components/form/input/CustomInput';
+import { CustomNumberInput as NumberInput } from 'common/components/form/input/CustomNumberInput';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
-import { FileUploadLink } from './FileUploadLink';
+
+type Status = 'pending' | 'approved' | 'canceled';
 
 interface BaseDrawerProps {
   isOpen: boolean;
@@ -34,27 +39,48 @@ export const PushDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   //context
   const { pushId } = useParams<Params>();
   // state
-  const [flavor, setFlavor] = React.useState<Flavor>('consumer')
-  const [campaign, setCampaign] = React.useState('')
-  const [title, setTitle] = React.useState('')
-  const [message, setMessage] = React.useState('')
-  const [pushDate, setPushDate] = React.useState('')
-  const [pushTime, setPushTime] = React.useState('')
-  const [testFile, setTestFile] = React.useState('')
-  const [tokensFile, setTokensFile] = React.useState('')
+  const [flavor, setFlavor] = React.useState<Flavor>('consumer');
+  const [channel, setChannel] =
+    React.useState<NotificationChannel>('marketing');
+  const [isGeo, setIsGeo] = React.useState(false);
+  const [latitude, setLatitude] = React.useState('');
+  const [longitude, setLongitude] = React.useState('');
+  const [radius, setRadius] = React.useState('');
+  const [campaign, setCampaign] = React.useState('');
+  const [title, setTitle] = React.useState('');
+  const [message, setMessage] = React.useState('');
+  const [pushDate, setPushDate] = React.useState('');
+  const [pushTime, setPushTime] = React.useState('');
+  const [status, setStatus] = React.useState<Status>('pending');
   const [isDeleting, setIsDeleting] = React.useState(false);
   // helpers
   const isNew = pushId === 'new';
   // side effects
-  
+  React.useEffect(() => {
+    if (!isGeo) {
+      setLatitude('');
+      setLongitude('');
+      setRadius('');
+    }
+  }, [isGeo]);
   //UI
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
       <DrawerOverlay>
         <DrawerContent mt={{ base: '16', lg: '0' }}>
-          <DrawerCloseButton bg="green.500" mr="12px" _focus={{ outline: 'none' }} />
+          <DrawerCloseButton
+            bg="green.500"
+            mr="12px"
+            _focus={{ outline: 'none' }}
+          />
           <DrawerHeader pb="2">
-            <Text color="black" fontSize="2xl" fontWeight="700" lineHeight="28px" mb="2">
+            <Text
+              color="black"
+              fontSize="2xl"
+              fontWeight="700"
+              lineHeight="28px"
+              mb="2"
+            >
               {t('Notificação')}
             </Text>
           </DrawerHeader>
@@ -70,18 +96,72 @@ export const PushDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
               fontSize="15px"
               lineHeight="21px"
             >
-              <Flex flexDir="column" justifyContent="flex-start">
-                <CustomRadio mt="2" value="consumer">
-                  {t('Consumidor')}
-                </CustomRadio>
-                <CustomRadio mt="2" value="courier">
-                  {t('Entregador')}
-                </CustomRadio>
-                <CustomRadio mt="2" value="business">
-                  {t('Restaurante')}
-                </CustomRadio>
-              </Flex>
+              <HStack spacing={4}>
+                <CustomRadio value="consumer">{t('Consumidor')}</CustomRadio>
+                <CustomRadio value="courier">{t('Entregador')}</CustomRadio>
+                <CustomRadio value="business">{t('Restaurante')}</CustomRadio>
+              </HStack>
             </RadioGroup>
+            <SectionTitle>{t('Canal')}</SectionTitle>
+            <RadioGroup
+              mt="4"
+              onChange={(value: NotificationChannel) => setChannel(value)}
+              value={channel}
+              defaultValue="1"
+              colorScheme="green"
+              color="black"
+              fontSize="15px"
+              lineHeight="21px"
+            >
+              <HStack spacing={4}>
+                <CustomRadio value="marketing">{t('Marketing')}</CustomRadio>
+                <CustomRadio value="status">{t('Status')}</CustomRadio>
+                <CustomRadio value="general">{t('Geral')}</CustomRadio>
+              </HStack>
+            </RadioGroup>
+            <SectionTitle>{t('Georreferenciada')}</SectionTitle>
+            <CustomCheckbox
+              mt="4"
+              colorScheme="green"
+              isChecked={isGeo}
+              onChange={() => setIsGeo((prev) => !prev)}
+            >
+              {t('É georreferenciada')}
+            </CustomCheckbox>
+            {isGeo && (
+              <>
+                <HStack mt="4">
+                  <NumberInput
+                    mt="0"
+                    id="campaign-lat"
+                    label={t('Latitude')}
+                    placeholder={t('Digite a latitude')}
+                    value={latitude}
+                    onChange={(ev) => setLatitude(ev.target.value)}
+                    isCoordinates
+                    isRequired
+                  />
+                  <NumberInput
+                    mt="0"
+                    id="campaign-lng"
+                    label={t('Longitude')}
+                    placeholder={t('Digite a longitude')}
+                    value={longitude}
+                    onChange={(ev) => setLongitude(ev.target.value)}
+                    isCoordinates
+                    isRequired
+                  />
+                </HStack>
+                <NumberInput
+                  id="campaign-radius"
+                  label={t('Raio')}
+                  placeholder={t('0')}
+                  value={radius}
+                  onChange={(ev) => setRadius(ev.target.value)}
+                  isRequired
+                />
+              </>
+            )}
             <SectionTitle>{t('Dados da notificação')}</SectionTitle>
             <CustomInput
               id="campaign-name"
@@ -126,21 +206,37 @@ export const PushDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 label={t('Horário')}
               />
             </HStack>
-            <FileUploadLink 
-              labelText={t('Upload do arquivo de teste (.csv)')}
-              value={testFile}
-              handleChange={setTestFile}
-            />
-            <FileUploadLink 
-              labelText={t('Upload do arquivo de tokens (.csv)')}
-              value={tokensFile}
-              handleChange={setTokensFile}
-            />
+            <SectionTitle>{t('Status')}</SectionTitle>
+            <RadioGroup
+              mt="2"
+              onChange={(value: Status) => setStatus(value)}
+              value={status}
+              defaultValue="1"
+              colorScheme="green"
+              color="black"
+              fontSize="15px"
+              lineHeight="21px"
+            >
+              <VStack mt="4" spacing={2} alignItems="flex-start">
+                <CustomRadio value="pending">{t('Pendente')}</CustomRadio>
+                <CustomRadio value="approved">{t('Aprovada')}</CustomRadio>
+                <CustomRadio value="canceled">{t('Cancelada')}</CustomRadio>
+              </VStack>
+            </RadioGroup>
           </DrawerBody>
           <DrawerFooter borderTop="1px solid #F2F6EA">
             {isDeleting ? (
-              <Box mt="8" w="100%" bg="#FFF8F8" border="1px solid red" borderRadius="lg" p="6">
-                <Text color="red">{t(`Tem certeza que deseja excluir este agente?`)}</Text>
+              <Box
+                mt="8"
+                w="100%"
+                bg="#FFF8F8"
+                border="1px solid red"
+                borderRadius="lg"
+                p="6"
+              >
+                <Text color="red">
+                  {t(`Tem certeza que deseja excluir este agente?`)}
+                </Text>
                 <HStack mt="4" spacing={4}>
                   <Button width="full" onClick={() => setIsDeleting(false)}>
                     {t(`Manter agente`)}
@@ -167,7 +263,12 @@ export const PushDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                   {t('Salvar alterações')}
                 </Button>
                 {isNew ? (
-                  <Button width="full" fontSize="15px" variant="dangerLight" onClick={onClose}>
+                  <Button
+                    width="full"
+                    fontSize="15px"
+                    variant="dangerLight"
+                    onClick={onClose}
+                  >
                     {t('Cancelar')}
                   </Button>
                 ) : (
