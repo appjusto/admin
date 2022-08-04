@@ -23,6 +23,7 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
+import { InputCounter } from './InputCounter';
 
 type Status = 'pending' | 'approved' | 'canceled';
 
@@ -180,14 +181,16 @@ export const PushDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
               maxLength={65}
               isRequired
             />
+            <InputCounter max={65} current={title.length} />
             <Textarea
               id="push-message"
               label={t('Corpo da mensagem')}
               placeholder={t('Digite o corpo da mensagem')}
               value={message}
               onChange={(ev) => setMessage(ev.target.value)}
-              maxLength={178}
+              maxLength={178 - title.length}
             />
+            <InputCounter max={178 - title.length} current={message.length} />
             <HStack mt="4" spacing={4}>
               <CustomInput
                 mt="0"
