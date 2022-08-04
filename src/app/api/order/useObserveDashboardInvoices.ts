@@ -19,7 +19,8 @@ export const useObserveDashboardInvoices = (businessId?: string | null) => {
   const [monthInvoices, setMonthInvoices] = React.useState<number>();
   const [monthValue, setMonthValue] = React.useState<number>();
   const [monthAverage, setMonthAverage] = React.useState<number>();
-  const [currentWeekInvoices, setCurrentWeekInvoices] = React.useState<number>();
+  const [currentWeekInvoices, setCurrentWeekInvoices] =
+    React.useState<number>();
   const [currentWeekValue, setCurrentWeekValue] = React.useState<number>();
   const [currentWeekAverage, setCurrentWeekAverage] = React.useState<number>();
   const [currentWeekByDay, setCurrentWeekByDay] = React.useState<number[]>();
@@ -30,14 +31,21 @@ export const useObserveDashboardInvoices = (businessId?: string | null) => {
   // total invoices current month or last 15 days
   React.useEffect(() => {
     if (!businessId) return;
-    const thisDay = dayjs().startOf('day').toDate().getTime();
     const daysBefore = dayjs().date() > 15 ? dayjs().date() - 1 : 14;
-    const timeBefore = 1000 * 60 * 60 * 24 * daysBefore;
-    const startDate = dayjs(thisDay - timeBefore).toDate();
+    const startDate = dayjs()
+      .subtract(daysBefore, 'day')
+      .startOf('day')
+      .toDate();
     const endDate = dayjs().endOf('day').toDate();
     const unsub = api
       .order()
-      .observeDashboardInvoices(setInvoices, businessId, startDate, endDate, invoiceStatus);
+      .observeDashboardInvoices(
+        setInvoices,
+        businessId,
+        startDate,
+        endDate,
+        invoiceStatus
+      );
     return () => unsub();
   }, [api, businessId]);
   // today invoices
@@ -45,10 +53,12 @@ export const useObserveDashboardInvoices = (businessId?: string | null) => {
     if (!invoices) return;
     const today = dayjs().startOf('day').toDate();
     const todayInvoices = invoices.filter((invoice) =>
-      objectPeriodFilter(invoice.updatedOn as Timestamp, today)
+      dayjs((invoice.createdOn as Timestamp).toDate()).isAfter(today)
     );
     setTodayInvoices(todayInvoices.length);
-    setTodayValue(todayInvoices.reduce((result, invoice) => result + invoice.value!, 0));
+    setTodayValue(
+      todayInvoices.reduce((result, invoice) => result + invoice.value!, 0)
+    );
   }, [invoices]);
   // today average
   React.useEffect(() => {
@@ -60,11 +70,13 @@ export const useObserveDashboardInvoices = (businessId?: string | null) => {
   React.useEffect(() => {
     if (!invoices) return;
     const startDate = dayjs().startOf('month').toDate();
-    const monthInvoices = invoices.filter((invoices) =>
-      objectPeriodFilter(invoices.updatedOn as Timestamp, startDate)
+    const monthInvoices = invoices.filter((invoice) =>
+      dayjs((invoice.createdOn as Timestamp).toDate()).isAfter(startDate)
     );
     setMonthInvoices(monthInvoices.length);
-    setMonthValue(monthInvoices.reduce((result, invoice) => result + invoice.value!, 0));
+    setMonthValue(
+      monthInvoices.reduce((result, invoice) => result + invoice.value!, 0)
+    );
   }, [invoices]);
   // month average
   React.useEffect(() => {
@@ -75,14 +87,16 @@ export const useObserveDashboardInvoices = (businessId?: string | null) => {
   // current week invoices
   React.useEffect(() => {
     if (!invoices) return;
-    const startTime = dayjs().startOf('day').toDate().getTime() - 1000 * 60 * 60 * 24 * 6;
-    const startDate = dayjs(startTime).toDate();
+    const startDate = dayjs().startOf('day').subtract(6, 'day').toDate();
     const currentWeekInvoices = invoices.filter((invoice) =>
       objectPeriodFilter(invoice.updatedOn as Timestamp, startDate)
     );
     setCurrentWeekInvoices(currentWeekInvoices.length);
     setCurrentWeekValue(
-      currentWeekInvoices.reduce((result, invoice) => result + invoice.value!, 0)
+      currentWeekInvoices.reduce(
+        (result, invoice) => result + invoice.value!,
+        0
+      )
     );
     const weekValuesByDay = splitInvoicesValuesByPeriod(
       currentWeekInvoices,
@@ -93,25 +107,29 @@ export const useObserveDashboardInvoices = (businessId?: string | null) => {
   }, [invoices]);
   // current week average
   React.useEffect(() => {
-    if (currentWeekInvoices === undefined || currentWeekValue === undefined) return;
-    if (currentWeekInvoices === 0 || currentWeekValue === 0) return setCurrentWeekAverage(0);
+    if (currentWeekInvoices === undefined || currentWeekValue === undefined)
+      return;
+    if (currentWeekInvoices === 0 || currentWeekValue === 0)
+      return setCurrentWeekAverage(0);
     setCurrentWeekAverage(currentWeekValue / currentWeekInvoices);
   }, [currentWeekInvoices, currentWeekValue]);
   // last week
   React.useEffect(() => {
     if (!invoices) return;
-    const dayMilliseconds = 1000 * 60 * 60 * 24;
-    const todayTime = dayjs().startOf('day').toDate().getTime();
-    const startTime = todayTime - dayMilliseconds * 13;
-    const endTime = todayTime - dayMilliseconds * 7;
-    const startDate = dayjs(startTime).toDate();
-    const endDate = dayjs(endTime).toDate();
+    const startDate = dayjs().startOf('day').subtract(13, 'day').toDate();
+    const endDate = dayjs().startOf('day').subtract(7, 'day').toDate();
     const lastWeekInvoices = invoices.filter((order) =>
       objectPeriodFilter(order.updatedOn as Timestamp, startDate, endDate)
     );
     setLastWeekInvoices(lastWeekInvoices.length);
-    setLastWeekValue(lastWeekInvoices.reduce((result, invoice) => result + invoice.value!, 0));
-    const weekValuesByDay = splitInvoicesValuesByPeriod(lastWeekInvoices, 7, startDate.getTime());
+    setLastWeekValue(
+      lastWeekInvoices.reduce((result, invoice) => result + invoice.value!, 0)
+    );
+    const weekValuesByDay = splitInvoicesValuesByPeriod(
+      lastWeekInvoices,
+      7,
+      startDate.getTime()
+    );
     setLastWeekByDay(weekValuesByDay);
   }, [invoices]);
   // return
