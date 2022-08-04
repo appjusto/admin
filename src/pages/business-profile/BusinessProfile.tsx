@@ -69,6 +69,9 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const [maxOrdersPerHour, setMaxOrdersPerHour] = React.useState(
     String(business?.maxOrdersPerHour ?? '0') 
     );
+  const [minHoursForScheduledOrders, setMinHoursForScheduledOrders] = React.useState(
+    String(business?.minHoursForScheduledOrders ?? '0') 
+    );
   const [preparationModes, setPreparationModes] = React.useState<PreparationMode[]>(['realtime']);
   const [fulfillment, setFulfillment] = React.useState<Fulfillment[]>(['delivery']);
   const [logoExists, setLogoExists] = React.useState(false);
@@ -153,6 +156,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
       status,
       cuisine: cuisineName,
       maxOrdersPerHour: parseInt(maxOrdersPerHour, 10),
+      minHoursForScheduledOrders: parseInt(minHoursForScheduledOrders, 10),
       preparationModes,
       fulfillment,
       logoExists: logoExists,
@@ -213,6 +217,10 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
       setCuisineName(business.cuisine ?? '');
       if (business.maxOrdersPerHour) 
         setMaxOrdersPerHour(String(business.maxOrdersPerHour));
+      if (business.minHoursForScheduledOrders) 
+        setMinHoursForScheduledOrders(
+          String(business.minHoursForScheduledOrders)
+        );
       if (business.preparationModes) 
         setPreparationModes(business.preparationModes);
       if (business.fulfillment) setFulfillment(business.fulfillment);
@@ -346,6 +354,39 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
             value={maxOrdersPerHour}
             onChange={(ev: React.ChangeEvent<HTMLInputElement>) =>
               setMaxOrdersPerHour(ev.target.value)
+            }
+            isRequired
+          />
+          {/* minHoursForScheduledOrders */}
+          <Text mt="8" fontSize="xl" color="black">
+            {t('Mínimo de horas de antecedência para pedidos agendados')}
+            <Badge
+              ml="2"
+              mt="-12px"
+              px="8px"
+              py="2px"
+              bgColor="#FFBE00"
+              color="black"
+              borderRadius="16px"
+              fontSize="11px"
+              lineHeight="18px"
+              fontWeight="700"
+            >
+              {t('NOVIDADE')}
+            </Badge>
+          </Text>
+          <Text mt="2" fontSize="md">
+            {t(
+              'Caso aplicável, informe o número mínimo de horas de antecedência para que o consumidor possa realizar um pedido agendado (0 = desativado)'
+              )}
+          </Text>
+          <NumberInput
+            id="business-min-hours-for-scheduled-orders"
+            maxW="400px"
+            label={t('Número mínimo de horas')}
+            value={minHoursForScheduledOrders}
+            onChange={(ev: React.ChangeEvent<HTMLInputElement>) =>
+              setMinHoursForScheduledOrders(ev.target.value)
             }
             isRequired
           />

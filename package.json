@@ -1,13 +1,13 @@
 {
   "name": "appjusto-admin",
-  "version": "9.7.4",
+  "version": "9.9.2",
   "author": "AppJusto <contato@appjusto.com.br> (https://appjusto.com.br/)",
   "description": "AppJusto Admin Desktop",
   "private": true,
   "main": "build/desktop/main.js",
   "dependencies": {
     "@appjusto/menu": "^0.1.4",
-    "@appjusto/types": "7.6.6",
+    "@appjusto/types": "^7.6.14",
     "@casl/ability": "^5.4.3",
     "@chakra-ui/icons": "^1.0.3",
     "@chakra-ui/react": "^1.6.3",

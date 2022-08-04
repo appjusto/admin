@@ -135,17 +135,17 @@
     "@appjusto/types" "^5.1.2"
     lodash "^4.17.21"
 
-"@appjusto/types@7.6.6":
-  version "7.6.6"
-  resolved "https://registry.yarnpkg.com/@appjusto/types/-/types-7.6.6.tgz#8d71805e99d074daa8d843104db9f43aa4f6b8c6"
-  integrity sha512-x5PYqa0giyVpuaCX7R0oY1UDx0vvLeoaQ8k6swTg467yZvD+j5YjI0Smrf+zfesTr2lD/s0G+qqFLIMQfWrPGA==
-  dependencies:
-    firebase "^9.6.7"
-
 "@appjusto/types@^5.1.2":
   version "5.3.0"
   resolved "https://registry.yarnpkg.com/@appjusto/types/-/types-5.3.0.tgz#ea07e868931b2d4fed4977478d9b7543b56a7740"
   integrity sha512-FasmsoJ588kWn1YWRQG1LiYROcz4kwdvNk9LTbB2AVsgaijKxvd5NBWZD7KvcI1Rg+SlSs5RSN5Me82ZGFdSWQ==
+  dependencies:
+    firebase "^9.6.7"
+
+"@appjusto/types@^7.6.14":
+  version "7.6.14"
+  resolved "https://registry.yarnpkg.com/@appjusto/types/-/types-7.6.14.tgz#35bda222089f44ebc6834c74881fdebbad514ea0"
+  integrity sha512-aY2tm1J4sgHI0NxGCQhobw9LmRU0rjFD42XFPRj3iqh6WjEV3TEawiWnrrKjYj0aPqUdKKlPkY7JF0ggYMLqbQ==
   dependencies:
     firebase "^9.6.7"
 

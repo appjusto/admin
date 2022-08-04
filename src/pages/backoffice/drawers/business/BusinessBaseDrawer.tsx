@@ -14,7 +14,6 @@ import {
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusinessBackoffice } from 'app/state/business/businessBOContext';
 import { CustomButton } from 'common/components/buttons/CustomButton';
-import { isObject } from 'lodash';
 import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
 import React from 'react';
 import { MdThumbDownOffAlt, MdThumbUpOffAlt } from 'react-icons/md';
@@ -38,10 +37,9 @@ export const BusinessBaseDrawer = ({ staff, onClose, children, ...props }: BaseD
   const { userAbility } = useContextFirebaseUser();
   const { url } = useRouteMatch();
   const { pathname } = useLocation();
-  const { business, manager, handleSave, isLoading, marketPlace } = useContextBusinessBackoffice();
+  const { business, manager, handleSave, isLoading } = useContextBusinessBackoffice();
   // helpers
   const userCanUpdate = userAbility?.can('update', 'businesses');
-  const isMarketplace = isObject(marketPlace);
   const situationAlert = business?.situation === 'rejected' || business?.situation === 'invalid';
   const pageName = pathname.split('/').pop();
   const pageHasAction = pageName ? !withoutActionPages.includes(pageName) : true;
@@ -141,7 +139,7 @@ export const BusinessBaseDrawer = ({ staff, onClose, children, ...props }: BaseD
                 <DrawerLink to={`${url}/live`} label={t('Live')} />
               )}
               <DrawerLink to={`${url}/status`} label={t('Status')} />
-              {isMarketplace && <DrawerLink to={`${url}/account`} label={t('Conta')} />}
+              <DrawerLink to={`${url}/account`} label={t('Conta')} />
             </Flex>
             {children}
           </DrawerBody>

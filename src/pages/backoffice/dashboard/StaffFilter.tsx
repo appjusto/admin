@@ -10,13 +10,13 @@ import {
   PopoverHeader,
   PopoverTrigger,
   Text,
-  Tooltip,
+  Tooltip
 } from '@chakra-ui/react';
 import React from 'react';
 import { RiCheckLine, RiEqualizerLine } from 'react-icons/ri';
 import { t } from 'utils/i18n';
 
-export type StaffFilterOptions = 'all' | 'my' | 'none';
+export type StaffFilterOptions = 'all' | 'staff' | 'none';
 
 interface StaffFilterProps {
   currentValue: StaffFilterOptions;
@@ -32,7 +32,7 @@ export const StaffFilter = ({ currentValue, handleFilter }: StaffFilterProps) =>
   const close = () => setIsOpen(false);
   const handleFilterSelect = (value: StaffFilterOptions) => {
     close();
-    if (value === 'my' || value === 'none') setIsActive(true);
+    if (value === 'staff' || value === 'none') setIsActive(true);
     else setIsActive(false);
     handleFilter(value);
   };
@@ -86,10 +86,10 @@ export const StaffFilter = ({ currentValue, handleFilter }: StaffFilterProps) =>
                 py="1"
                 cursor="pointer"
                 _hover={{ bgColor: '#EEEEEE', color: '#697667' }}
-                onClick={() => handleFilterSelect('my')}
+                onClick={() => handleFilterSelect('staff')}
               >
-                <Text>{t('Os meus')}</Text>
-                {currentValue === 'my' && <Icon ml="1" as={RiCheckLine} />}
+                <Text>{t('Assumidos')}</Text>
+                {currentValue === 'staff' && <Icon ml="1" as={RiCheckLine} />}
               </Flex>
               <Flex
                 flexDir="row"

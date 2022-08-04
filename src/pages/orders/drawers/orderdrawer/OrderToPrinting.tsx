@@ -1,15 +1,15 @@
 import { Order, OrderItem, WithId } from '@appjusto/types';
-import {
-  Box,
-  Flex,
-  HStack,
-  Image, Text
-} from '@chakra-ui/react';
+import { Box, Flex, HStack, Image, Text } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import logoAppjusto from 'common/img/logo-black.svg';
 import React from 'react';
 import { formatCurrency } from 'utils/formatters';
-import { getComplementQtd, getComplementSubtotal, getDateAndHour, getProductSubtotal } from 'utils/functions';
+import {
+  getComplementQtd,
+  getComplementSubtotal,
+  getDateAndHour,
+  getProductSubtotal,
+} from 'utils/functions';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../../../backoffice/drawers/generics/SectionTitle';
 interface OrderToPrintProps {
@@ -18,61 +18,56 @@ interface OrderToPrintProps {
 }
 
 const renderItems = (items?: OrderItem[]) => {
-  if(items) return items.map(item => {
-    return (
-      <Box key={item.id} mb="2">
+  if (items)
+    return items.map((item) => {
+      return (
+        <Box key={item.id} mb="2">
           <Flex flexDir="row" fontWeight="700">
             <Box w="10%">{item.quantity}</Box>
             <Box w="60%">
-              <Text>
-                {item.product.name}
-              </Text>
+              <Text>{item.product.name}</Text>
             </Box>
             <Box w="30%" textAlign="end">
               {formatCurrency(getProductSubtotal(item.quantity, item.product.price))}
             </Box>
           </Flex>
-          {item.complements && item.complements.map(complement => {
-            return (
-              <Flex key={complement.name} flexDir="row">
-                <Box w="10%"></Box>
-                <HStack w="60%" spacing={2}>
-                  <Text>
-                    {getComplementQtd(item.quantity, complement.quantity)}
-                  </Text>
-                  <Text>
-                    {complement.name ?? 'N/E'}
-                  </Text>
-                </HStack>
-                <Box w="30%" textAlign="end">
-                  {formatCurrency(getComplementSubtotal(item.quantity, complement.quantity, complement.price))}
-                </Box>
-              </Flex>
-            )
-          })}
-          {
-            item.notes && (
-              <Flex flexDir="row">
-                <Box w="10%"></Box>
-                <Box w="90%">
-                  <Text fontWeight="500">
-                    Obs: {item.notes.toUpperCase()}
-                  </Text>
-                </Box>
-              </Flex>
-            )
-          }
+          {item.complements &&
+            item.complements.map((complement) => {
+              return (
+                <Flex key={complement.name} flexDir="row">
+                  <Box w="10%"></Box>
+                  <HStack w="60%" spacing={2}>
+                    <Text>{getComplementQtd(item.quantity, complement.quantity)}</Text>
+                    <Text>{complement.name ?? 'N/E'}</Text>
+                  </HStack>
+                  <Box w="30%" textAlign="end">
+                    {formatCurrency(
+                      getComplementSubtotal(item.quantity, complement.quantity, complement.price)
+                    )}
+                  </Box>
+                </Flex>
+              );
+            })}
+          {item.notes && (
+            <Flex flexDir="row">
+              <Box w="10%"></Box>
+              <Box w="90%">
+                <Text fontWeight="500">Obs: {item.notes.toUpperCase()}</Text>
+              </Box>
+            </Flex>
+          )}
         </Box>
-    )
-  })
-}
+      );
+    });
+};
 
 export const OrderToPrinting = React.forwardRef<HTMLDivElement, OrderToPrintProps>(
   ({ businessName, order }, ref) => {
     // context
     const { logo } = useBusinessProfile();
     // helpers
-    const isAdditional = order?.destination?.additionalInfo && order.destination.additionalInfo.length > 0;
+    const isAdditional =
+      order?.destination?.additionalInfo && order.destination.additionalInfo.length > 0;
     // UI - Hidden
     return (
       <Box
@@ -111,11 +106,19 @@ export const OrderToPrinting = React.forwardRef<HTMLDivElement, OrderToPrintProp
           </Text>
         </Text>
         <Text fontWeight="500" lineHeight="16px">
-          {t('Hora:')}{' '}
+          {t('Data/Hora:')}{' '}
           <Text as="span" fontWeight="700">
-            {getDateAndHour(order?.timestamps?.confirmed)}
+            {getDateAndHour(order?.timestamps?.scheduled ?? order?.timestamps?.confirmed)}
           </Text>
         </Text>
+        {order?.scheduledTo && (
+          <Text fontWeight="500" lineHeight="16px">
+            {t('Agendado para:')}{' '}
+            <Text as="span" fontWeight="700">
+              {getDateAndHour(order.scheduledTo)}
+            </Text>
+          </Text>
+        )}
         <Text fontWeight="500" lineHeight="16px">
           {t('Endereço:')}{' '}
           <Text as="span" fontWeight="700">
@@ -135,7 +138,9 @@ export const OrderToPrinting = React.forwardRef<HTMLDivElement, OrderToPrintProp
           <Flex flexDir="row" fontWeight="700" borderBottom="1px solid black">
             <Box w="10%">Qtd</Box>
             <Box w="60%">Item</Box>
-            <Box w="30%" textAlign="end">Preço</Box>
+            <Box w="30%" textAlign="end">
+              Preço
+            </Box>
           </Flex>
           {renderItems(order?.items)}
           <Flex flexDir="row" borderTop="1px solid black" fontWeight="700">

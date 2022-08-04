@@ -1,11 +1,9 @@
 import { Order, WithId } from '@appjusto/types';
 import { useContextApi } from 'app/state/api/context';
 import React from 'react';
-import { Ordering } from './OrderApi';
 
-export const useObserveOrdersCompletedInTheLastHour = (
-  businessId?: string,
-  ordering?: Ordering
+export const useFetchOrderByCode = (
+  orderCode: string, businessId?: string
 ) => {
   // context
   const api = useContextApi();
@@ -13,11 +11,12 @@ export const useObserveOrdersCompletedInTheLastHour = (
   const [orders, setOrders] = React.useState<WithId<Order>[]>([]);
   // side effects
   React.useEffect(() => {
-    const unsub = api
-      .order()
-      .observeBusinessOrdersCompletedInTheLastHour(setOrders, businessId, ordering);
-    return () => unsub();
-  }, [api, businessId, ordering]);
+    (async () => {
+      const result = await api.order().fetchOrderByCode(orderCode, businessId);
+      if(result) setOrders(result);
+      else setOrders([]);
+    })()
+  }, [api, orderCode, businessId]);
   // return
   return orders;
 };

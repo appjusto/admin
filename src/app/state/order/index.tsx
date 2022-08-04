@@ -1,4 +1,10 @@
-import { Business, Order, OrderStatus, PlatformParams, WithId } from '@appjusto/types';
+import {
+  Business,
+  Order,
+  OrderStatus,
+  PlatformParams,
+  WithId,
+} from '@appjusto/types';
 import { useToast } from '@chakra-ui/react';
 import { useBusinessOpenClose } from 'app/api/business/profile/useBusinessOpenClose';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
@@ -6,9 +12,9 @@ import { useFreshDesk } from 'app/api/business/useFresdesk';
 import { OrderChatGroup } from 'app/api/chat/types';
 import { useBusinessChats } from 'app/api/chat/useBusinessChats';
 import { useNewChatMessages } from 'app/api/order/useNewChatMessages';
+import { useObserveCanceledOrdersInTheLastHour } from 'app/api/order/useObserveCanceledOrdersInTheLastHour';
 import { useObserveConfirmedOrders } from 'app/api/order/useObserveConfirmedOrders';
 import { useObserveOrders } from 'app/api/order/useObserveOrders';
-import { useObserveOrdersCompletedInTheLastHour } from 'app/api/order/useObserveOrdersCompletedInTheLastHour';
 import { useObservePreparingOrders } from 'app/api/order/useObservePreparingOrders';
 import { useObserveScheduledOrders } from 'app/api/order/useObserveScheduledOrders';
 import { usePlatformParams } from 'app/api/platform/usePlatformParams';
@@ -22,10 +28,14 @@ import { useContextAppRequests } from '../requests/context';
 interface ContextProps {
   business: WithId<Business> | null | undefined;
   scheduledOrders: WithId<Order>[];
+  scheduledOrdersNumber: number;
   orders: WithId<Order>[];
+  canceledOrders: WithId<Order>[];
   confirmedNumber: number;
   chats: OrderChatGroup[];
   newChatMessages: string[];
+  fetchNextScheduledOrders(): void;
+  fetchNextCanceledOrders(): void;
   getOrderById(id: string): WithId<Order> | undefined;
   changeOrderStatus(orderId: string, status: OrderStatus): void;
   setOrderCookingTime(orderId: string, cookingTime: number | null): void;
@@ -34,7 +44,12 @@ interface ContextProps {
 
 const OrdersContext = React.createContext<ContextProps>({} as ContextProps);
 
-const statuses = ['confirmed', 'preparing', 'ready', 'dispatching'] as OrderStatus[];
+const statuses = [
+  'confirmed',
+  'preparing',
+  'ready',
+  'dispatching',
+] as OrderStatus[];
 
 interface ProviderProps {
   children: React.ReactNode | React.ReactNode[];
@@ -48,21 +63,24 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   const { isBackofficeUser } = useContextFirebaseUser();
   const { business } = useContextBusiness();
   const { sendBusinessKeepAlive } = useBusinessProfile();
-  const scheduledOrders = useObserveScheduledOrders(business?.id)
+  const { scheduledOrders, scheduledOrdersNumber, fetchNextScheduledOrders } =
+    useObserveScheduledOrders(business?.id);
   const activeOrders = useObserveOrders(statuses, business?.id);
-  const completedAndActiveOrders = useObserveOrdersCompletedInTheLastHour(business?.id);
-  //const canceledOrders = useCanceledOrders(business?.id);
-  const chats = useBusinessChats(activeOrders, completedAndActiveOrders);
+  const { canceledOrders, fetchNextCanceledOrders } =
+    useObserveCanceledOrdersInTheLastHour(business?.id);
+  const chats = useBusinessChats(business?.id);
   const confirmedNumber = useObserveConfirmedOrders(business?.id);
   useObservePreparingOrders(business?.id);
   // freshdesk
-  useFreshDesk(business?.id, business?.name, business?.phone);
+  const businessPhone = business?.phones ? business?.phones[0].number : 'N/E';
+  useFreshDesk(business?.id, business?.name, businessPhone);
   // automatic opening and closing of the business
   useBusinessOpenClose(business);
   // handle new chat messages
   const newChatMessages = useNewChatMessages(chats);
   //state
-  const [businessAlertDisplayed, setBusinessAlertDisplayed] = React.useState(false);
+  const [businessAlertDisplayed, setBusinessAlertDisplayed] =
+    React.useState(false);
   const [orders, setOrders] = React.useState<WithId<Order>[]>([]);
   //handlers
   const toast = useToast();
@@ -123,7 +141,8 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   );
   // side effects
   React.useEffect(() => {
-    if (business?.situation !== 'approved' || business?.status !== 'open') return;
+    if (business?.situation !== 'approved' || business?.status !== 'open')
+      return;
     setTimeout(() => {
       const root = document.getElementById('root');
       let audio = document.createElement('audio');
@@ -146,8 +165,8 @@ export const OrdersContextProvider = (props: ProviderProps) => {
     }, 2000);
   }, [toast, business?.situation, business?.status]);
   React.useEffect(() => {
-    setOrders([...activeOrders, ...completedAndActiveOrders]);
-  }, [activeOrders, completedAndActiveOrders]);
+    setOrders(activeOrders);
+  }, [activeOrders]);
   // business keep alive
   React.useEffect(() => {
     if (isBackofficeUser) return;
@@ -155,7 +174,8 @@ export const OrdersContextProvider = (props: ProviderProps) => {
     if (business?.situation !== 'approved') return;
     if (business?.status !== 'open') return;
     sendBusinessKeepAlive();
-    const time = process.env.REACT_APP_ENVIRONMENT === 'live' ? 300_000 : 30_000;
+    const time =
+      process.env.REACT_APP_ENVIRONMENT === 'live' ? 300_000 : 30_000;
     const keepAliveInterval = setInterval(() => {
       sendBusinessKeepAlive();
     }, time);
@@ -199,10 +219,14 @@ export const OrdersContextProvider = (props: ProviderProps) => {
       value={{
         business,
         scheduledOrders,
+        scheduledOrdersNumber,
         orders,
+        canceledOrders,
         confirmedNumber,
         chats,
         newChatMessages,
+        fetchNextCanceledOrders,
+        fetchNextScheduledOrders,
         getOrderById,
         changeOrderStatus,
         setOrderCookingTime,
@@ -216,7 +240,9 @@ export const OrdersContextProvider = (props: ProviderProps) => {
 export const useOrdersContext = () => {
   const context = React.useContext(OrdersContext);
   if (!context) {
-    throw new Error('useOrdersContext must be used within the OrdersContextProvider');
+    throw new Error(
+      'useOrdersContext must be used within the OrdersContextProvider'
+    );
   }
   return context;
 };

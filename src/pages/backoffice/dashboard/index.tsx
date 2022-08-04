@@ -1,4 +1,3 @@
-import { Order, WithId } from '@appjusto/types';
 import { Stack } from '@chakra-ui/react';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBackofficeDashboard } from 'app/state/dashboards/backoffice';
@@ -18,19 +17,26 @@ import { UserChangeDrawer } from '../drawers/profile-changes/UserChangeDrawer';
 import { BOChatDrawer } from './BOChatDrawer';
 import { BOList } from './BOList';
 import { Panel } from './Panel';
-import { StaffFilterOptions } from './StaffFilter';
+// import { StaffFilterOptions } from './StaffFilter';
 
 const BODashboard = () => {
   // context
-  const { user, userAbility } = useContextFirebaseUser();
+  const { userAbility, isBackofficeSuperuser } = useContextFirebaseUser();
   const { path } = useRouteMatch();
   const history = useHistory();
-  const { orders, businesses, userChanges, fetchNextBusiness, fetchNextChanges } =
-    useContextBackofficeDashboard();
+  const {
+    activeOrders,
+    watchedOrders,
+    businesses,
+    userChanges,
+    fetchNextActiveOrders,
+    fetchNextBusiness,
+    fetchNextChanges,
+  } = useContextBackofficeDashboard();
   // state
   const [dateTime, setDateTime] = React.useState('');
-  const [listOrders, setListOrders] = React.useState<WithId<Order>[]>([]);
-  const [staffFilter, setStaffFilter] = React.useState<StaffFilterOptions>('all');
+  // const [listOrders, setListOrders] = React.useState<WithId<Order>[]>([]);
+  // const [staffFilter, setStaffFilter] = React.useState<StaffFilterOptions>('all');
   // helpers
   const userCanUpdateBusiness = userAbility?.can('read', 'businesses');
   // handlers
@@ -39,18 +45,19 @@ const BODashboard = () => {
   };
   // side effects
   React.useEffect(() => {
-    document.title = "AppJusto | Backoffice"
-  }, [])
-  React.useEffect(() => {
-    if (!user?.uid) return;
-    if (staffFilter === 'my') {
-      setListOrders(orders.filter((order) => order.staff?.id === user.uid));
-    } else if (staffFilter === 'none') {
-      setListOrders(orders.filter((order) => !order.staff));
-    } else {
-      setListOrders(orders);
-    }
-  }, [user?.uid, orders, staffFilter]);
+    document.title = 'AppJusto | Backoffice';
+  }, []);
+  // React.useEffect(() => {
+  //   if (staffFilter === 'staff') {
+  //     setListOrders(activeOrders.filter((order) =>
+  //       typeof order.staff?.id === "string"
+  //     ));
+  //   } else if (staffFilter === 'none') {
+  //     setListOrders(activeOrders.filter((order) => !order.staff));
+  //   } else {
+  //     setListOrders(activeOrders);
+  //   }
+  // }, [activeOrders, staffFilter]);
   React.useEffect(() => {
     const { date, time } = getDateTime();
     setDateTime(`${date} às ${time}`);
@@ -58,20 +65,52 @@ const BODashboard = () => {
   // UI
   return (
     <>
-      <PageHeader title={t('Visão geral')} subtitle={t(`Atualizado ${dateTime}`)} showVersion />
+      <PageHeader
+        title={t('Visão geral')}
+        subtitle={t(`Atualizado ${dateTime}`)}
+        showVersion
+      />
       <Panel />
       <DirectAccessById />
-      <Stack mt="4" w="100%" direction={{ base: 'column', md: 'row' }} spacing={4}>
+      <Stack
+        mt="4"
+        w="100%"
+        direction={{ base: 'column', md: 'row' }}
+        spacing={4}
+      >
         <BOList
           display={userAbility?.can('read', 'orders') ? 'flex' : 'none'}
-          title={t('Pedidos em andamento')}
-          data={listOrders}
-          dataLength={orders.length}
+          title={
+            isBackofficeSuperuser
+              ? t('Pedidos em andamento')
+              : t('Novos pedidos')
+          }
+          data={activeOrders}
+          dataLength={activeOrders.length}
           listType="orders"
-          details={t('Aqui ficarão listados todos os pedidos em andamento no momento.')}
-          staffFilter={staffFilter}
-          handleStaffFilter={(value) => setStaffFilter(value)}
+          details={t(
+            'Aqui ficarão listados todos os pedidos em andamento no momento.'
+          )}
+          // staffFilter={staffFilter}
+          // handleStaffFilter={(value) => setStaffFilter(value)}
+          infiniteScroll
+          scrollTopLimit={750}
+          loadData={fetchNextActiveOrders}
         />
+        {watchedOrders.length > 0 && (
+          <BOList
+            display={userAbility?.can('read', 'orders') ? 'flex' : 'none'}
+            title={t('Meus pedidos')}
+            data={watchedOrders}
+            dataLength={watchedOrders.length}
+            listType="orders"
+            details={t(
+              'Aqui ficarão listados todos os pedidos em andamento no momento.'
+            )}
+            // staffFilter={staffFilter}
+            // handleStaffFilter={(value) => setStaffFilter(value)}
+          />
+        )}
       </Stack>
       <Stack
         mt="4"

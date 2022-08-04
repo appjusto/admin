@@ -97,7 +97,7 @@ export const OrderBaseDrawer = ({
   let orderDispatched = ['dispatching', 'delivered'].includes(order?.status ?? 'not_included');
   let PrimaryButtonIsAble =
     (order?.status === 'scheduled' && 
-      isScheduledMarginValid(order.scheduledTo)) ||
+      isScheduledMarginValid(order.scheduledTo, 5400)) ||
     (!(order?.status === 'preparing' && isCookingTimeModeAuto) &&
     (['confirmed', 'preparing'].includes(order?.status ?? 'not_included') ||
       (order?.status === 'ready' && order.fulfillment !== 'delivery') ||
@@ -207,7 +207,7 @@ export const OrderBaseDrawer = ({
                       <Text as="span" color="black" fontWeight="700">
                       {
                         order?.confirmedScheduledTo ? 
-                        getHourAndMinute(order.confirmedScheduledTo) : 
+                        getDateAndHour(order.confirmedScheduledTo) : 
                         'N/E'
                       }
                       </Text>

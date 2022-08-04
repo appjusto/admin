@@ -25,6 +25,7 @@ export const getTranslatedOrderStatus = (status: OrderStatus) => {
     'dispatching',
     'delivered',
     'canceled',
+    'scheduled',
   ];
   const pt = [
     'Em cotação',
@@ -35,6 +36,7 @@ export const getTranslatedOrderStatus = (status: OrderStatus) => {
     'Despachando',
     'Entregue',
     'Cancelado',
+    'Agendado',
   ];
   const index = en.indexOf(status);
   return pt[index];
@@ -69,7 +71,7 @@ export const getDateTime = () => {
   return { date, time };
 };
 
-export const getDateAndHour = (timestamp?: FieldValue | Date, onlyDate?: boolean) => {
+export const getDateAndHour = (timestamp?: FieldValue | Date | null, onlyDate?: boolean) => {
   if (!timestamp) return 'N/E';
   try {
     let timeToDate = timestamp;

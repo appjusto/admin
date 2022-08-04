@@ -27,6 +27,7 @@ export const OrdersTable = ({ orders, isBackoffice }: OrdersTableProps) => {
           <Tr>
             <Th>{t('ID')}</Th>
             <Th>{t('Atualizado em')}</Th>
+            <Th>{t('Agendado para')}</Th>
             {isBackoffice && <Th>{t('Tipo')}</Th>}
             <Th>{t('Status')}</Th>
             {isBackoffice && <Th>{t('Restaurante')}</Th>}
@@ -44,6 +45,7 @@ export const OrdersTable = ({ orders, isBackoffice }: OrdersTableProps) => {
           ) : (
             <Tr color="black" fontSize="xs" fontWeight="700">
               <Td>{t('Sem resultados para o número informado')}</Td>
+              <Td></Td>
               <Td></Td>
               <Td></Td>
               <Td></Td>

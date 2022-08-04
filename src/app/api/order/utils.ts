@@ -2,6 +2,7 @@ import { Invoice, Order, OrderCancellationParams, WithId } from '@appjusto/types
 import dayjs from 'dayjs';
 import { Timestamp } from 'firebase/firestore';
 import { omit } from 'lodash';
+import { getTimeUntilNow } from 'utils/functions';
 import { use } from 'utils/local';
 import { Acknowledgement, OrderAcknowledgement } from './types';
 
@@ -122,3 +123,80 @@ export const splitInvoicesValuesByPeriod = (
   });
   return period.map((item) => item.value);
 };
+
+export const getOrderWarning = (
+  order: WithId<Order>, 
+  now: number,
+  confirmed: number, 
+  matching: number, 
+  goingPickup: number, 
+  readyArrivedPickup: number, 
+  dispatchingArrivedPickup: number, 
+  goingDestination: number, 
+  ) => {
+  try {
+    let warning = null;
+    if(
+      order.type === 'food' && 
+      order.status === 'confirmed' &&
+      order.timestamps.confirmed
+      ) {
+        const baseTime = (order.timestamps.confirmed as Timestamp).toMillis();
+        const elapsedTime = getTimeUntilNow(now, baseTime);
+        if(elapsedTime >= confirmed / 60) {
+          warning = 'ACEITE';
+        }
+    } else if (
+      order.dispatchingStatus === 'matching' &&
+      order.dispatchingTimestamps.matching
+      ) {
+        const baseTime = (order.dispatchingTimestamps.matching as Timestamp).toMillis();
+        const elapsedTime = getTimeUntilNow(now, baseTime);
+        if(elapsedTime >= matching / 60) {
+          warning = 'MATCHING';
+        }
+    } else if (
+      order.dispatchingState === 'going-pickup' &&
+      order.dispatchingTimestamps.goingPickup
+      ) {
+        const baseTime = (order.dispatchingTimestamps.goingPickup as Timestamp).toMillis();
+        const elapsedTime = getTimeUntilNow(now, baseTime);
+        if(elapsedTime >= goingPickup / 60) {
+          warning = 'COLETA';
+        }
+    } else if (
+      (order.status === 'preparing' || order.status === 'ready') &&
+      order.dispatchingState === 'arrived-pickup' && 
+      order.dispatchingTimestamps.arrivedPickup
+      ) {
+        const baseTime = (order.dispatchingTimestamps.arrivedPickup as Timestamp).toMillis();
+        const elapsedTime = getTimeUntilNow(now, baseTime);
+        if(elapsedTime >= readyArrivedPickup / 60) {
+          warning = 'RECEBIMENTO';
+        }
+    } else if (
+      order.status === 'dispatching' &&
+      order.timestamps.dispatching &&
+      order.dispatchingState === 'arrived-pickup'
+    ) {
+        const baseTime = (order.timestamps.dispatching as Timestamp).toMillis();
+        const elapsedTime = getTimeUntilNow(now, baseTime);
+        if(elapsedTime >= dispatchingArrivedPickup / 60) {
+          warning = 'DESPACHO';
+        }
+    } else if (
+      order.dispatchingState === 'going-destination' && 
+      order.dispatchingTimestamps.goingDestination
+      ) {
+        const baseTime = (order.dispatchingTimestamps.goingDestination as Timestamp).toMillis();
+        const elapsedTime = getTimeUntilNow(now, baseTime);
+        if(elapsedTime >= goingDestination / 60) {
+          warning = 'ENTREGA';
+        }
+    }
+    return warning;
+  } catch (error) {
+    console.error("getOrderWarning error: ", error);
+    return null;
+  }
+}
