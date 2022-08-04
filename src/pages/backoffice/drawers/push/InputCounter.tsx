@@ -8,7 +8,7 @@ interface InputCounterProps {
 
 export const InputCounter = ({ max, current }: InputCounterProps) => {
   return (
-    <Text mt="1" color="gray.600">
+    <Text mt="1" color="gray.600" fontSize="13px">
       {t(`(${current} de ${max} caracteres)`)}
     </Text>
   );
