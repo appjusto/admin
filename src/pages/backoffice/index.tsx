@@ -9,7 +9,7 @@ import FraudPreventionPage from './fraud-prevention';
 import InvoicesPage from './invoices';
 import LedgerPage from './ledger';
 import OrdersPage from './orders';
-import PushPage from './push';
+import PushCampaignPage from './push-campaign';
 import RecommendationsPage from './recommendations';
 import { BOAccessRoute } from './routes/BOAccessRoute';
 import { StaffProfile } from './staff/StaffProfile';
@@ -26,16 +26,31 @@ const BackOffice = () => {
         <Switch>
           <BOAccessRoute path={`${path}/orders`} component={OrdersPage} />
           <BOAccessRoute path={`${path}/couriers`} component={CouriersPage} />
-          <BOAccessRoute path={`${path}/businesses`} component={BusinessesPage} />
+          <BOAccessRoute
+            path={`${path}/businesses`}
+            component={BusinessesPage}
+          />
           <BOAccessRoute path={`${path}/consumers`} component={ConsumersPage} />
           <BOAccessRoute path={`${path}/invoices`} component={InvoicesPage} />
           <BOAccessRoute path={`${path}/ledger`} component={LedgerPage} />
           <BOAccessRoute path={`${path}/staff`} component={StaffsPage} />
-          <BOAccessRoute path={`${path}/fraud-prevention`} component={FraudPreventionPage} />
-          <BOAccessRoute path={`${path}/staff-profile`} component={StaffProfile} />
+          <BOAccessRoute
+            path={`${path}/fraud-prevention`}
+            component={FraudPreventionPage}
+          />
+          <BOAccessRoute
+            path={`${path}/staff-profile`}
+            component={StaffProfile}
+          />
           <BOAccessRoute path={`${path}/users`} component={UsersPage} />
-          <BOAccessRoute path={`${path}/recommendations`} component={RecommendationsPage} />
-          <BOAccessRoute path={`${path}/push`} component={PushPage} />
+          <BOAccessRoute
+            path={`${path}/recommendations`}
+            component={RecommendationsPage}
+          />
+          <BOAccessRoute
+            path={`${path}/push-campaign`}
+            component={PushCampaignPage}
+          />
           <BOAccessRoute path={path} component={BODashboard} />
         </Switch>
       </PageLayout>

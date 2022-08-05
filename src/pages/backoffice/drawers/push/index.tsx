@@ -33,12 +33,12 @@ interface BaseDrawerProps {
 }
 
 type Params = {
-  pushId: string;
+  campaignId: string;
 };
 
 export const PushDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   //context
-  const { pushId } = useParams<Params>();
+  const { campaignId } = useParams<Params>();
   // state
   const [flavor, setFlavor] = React.useState<Flavor>('consumer');
   const [channel, setChannel] =
@@ -55,7 +55,7 @@ export const PushDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   const [status, setStatus] = React.useState<Status>('pending');
   const [isDeleting, setIsDeleting] = React.useState(false);
   // helpers
-  const isNew = pushId === 'new';
+  const isNew = campaignId === 'new';
   // side effects
   React.useEffect(() => {
     if (!isGeo) {

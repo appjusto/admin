@@ -11,7 +11,7 @@ type BackofficeAccess = {
   'recommendations': string;
   'fraud-prevention': string;
   'staff': string;
-  'push': string;
+  'push-campaign': string;
   'staff-profile': string;
 };
 
@@ -25,7 +25,7 @@ const backofficeAccess = {
   'users': 'users',
   'recommendations': 'recommendations',
   'fraud-prevention': 'platform',
-  'push': 'platform',
+  'push-campaign': 'platform',
   'staff': 'staff',
 } as BackofficeAccess;
 
@@ -86,7 +86,13 @@ const adminManagerPages = [
   'chat',
 ];
 
-const adminCollaboratorPages = ['orders', 'sharing', 'menu', 'orders-history', 'chat'];
+const adminCollaboratorPages = [
+  'orders',
+  'sharing',
+  'menu',
+  'orders-history',
+  'chat',
+];
 
 type IsAccessGrantedArgs = {
   type: 'admin' | 'backoffice';
@@ -101,7 +107,8 @@ export const isAccessGranted = (args: IsAccessGrantedArgs) => {
     if (type === 'admin' && backofficePermissions) return true;
     if (type === 'admin' && adminRole) {
       const page = path.split('/app/')[1] as keyof AdminAccess;
-      if (!page || adminRole === 'owner' || page === 'manager-profile') return true;
+      if (!page || adminRole === 'owner' || page === 'manager-profile')
+        return true;
       if (adminRole === 'manager') {
         return adminManagerPages.includes(page);
       } else if (adminRole === 'collaborator') {
