@@ -1,4 +1,14 @@
-import { Icon, Table, Tbody, Td, Text, Tfoot, Th, Tooltip, Tr } from '@chakra-ui/react';
+import {
+  Icon,
+  Table,
+  Tbody,
+  Td,
+  Text,
+  Tfoot,
+  Th,
+  Tooltip,
+  Tr,
+} from '@chakra-ui/react';
 import { usePlatformFees } from 'app/api/platform/usePlatformFees';
 import { MdInfoOutline } from 'react-icons/md';
 import { formatCurrency, formatPct } from 'utils/formatters';
@@ -7,12 +17,19 @@ import { InvoicesCosts } from './utils';
 
 interface PeriodTableProps {
   period: string;
+  total: number;
   amount: number;
   appjustoCosts: InvoicesCosts;
   iuguCosts: InvoicesCosts;
 }
 
-export const PeriodTable = ({ period, amount, appjustoCosts, iuguCosts }: PeriodTableProps) => {
+export const PeriodTable = ({
+  period,
+  total,
+  amount,
+  appjustoCosts,
+  iuguCosts,
+}: PeriodTableProps) => {
   // context
   const { platformFees } = usePlatformFees();
   // UI
@@ -31,7 +48,9 @@ export const PeriodTable = ({ period, amount, appjustoCosts, iuguCosts }: Period
               <Td isNumeric>{formatCurrency(amount)}</Td>
             </Tr>
             <Tr fontSize="xs" fontWeight="500">
-              <Td color="black">{t(`Taxas - AppJusto (${formatPct(appjustoCosts.fee)})`)}</Td>
+              <Td color="black">
+                {t(`Taxas - AppJusto (${formatPct(appjustoCosts.fee)})`)}
+              </Td>
               <Td color="red" isNumeric>
                 {`- ${formatCurrency(appjustoCosts.value)}`}
               </Td>
@@ -39,17 +58,20 @@ export const PeriodTable = ({ period, amount, appjustoCosts, iuguCosts }: Period
             <Tr fontSize="xs" fontWeight="500">
               <Td color="black">
                 {t(`Taxas - Iugu (${formatPct(iuguCosts.fee)})`)}
-                <Tooltip 
-                  placement="top" 
-                  label={platformFees?.iuguFeeDescription ?? 'Informação não encontrada'}
+                <Tooltip
+                  placement="top"
+                  label={
+                    platformFees?.iuguFeeDescription ??
+                    'Informação não encontrada'
+                  }
                 >
                   <Text as="span">
-                    <Icon 
-                      ml="2" 
-                      w="16px" 
-                      h="16px" 
-                      cursor="pointer" 
-                      as={MdInfoOutline} 
+                    <Icon
+                      ml="2"
+                      w="16px"
+                      h="16px"
+                      cursor="pointer"
+                      as={MdInfoOutline}
                     />
                   </Text>
                 </Tooltip>
@@ -63,7 +85,7 @@ export const PeriodTable = ({ period, amount, appjustoCosts, iuguCosts }: Period
       </Tbody>
       <Tfoot bgColor="gray.50">
         <Tr>
-          <Th>{t(`Resultado para ${period}`)}</Th>
+          <Th>{t(`Resultado para ${period} (Total de pedidos: ${total})`)}</Th>
           <Th color="green.700" isNumeric>
             {formatCurrency(amount - appjustoCosts.value - iuguCosts.value)}
           </Th>

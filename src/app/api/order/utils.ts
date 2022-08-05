@@ -1,4 +1,9 @@
-import { Invoice, Order, OrderCancellationParams, WithId } from '@appjusto/types';
+import {
+  Invoice,
+  Order,
+  OrderCancellationParams,
+  WithId,
+} from '@appjusto/types';
 import dayjs from 'dayjs';
 import { Timestamp } from 'firebase/firestore';
 import { omit } from 'lodash';
@@ -10,7 +15,8 @@ const { setObject, getObject, removeObject } = use('kanban');
 
 export const getAck = (key: string) => getObject<Acknowledgement>(key) ?? {};
 
-export const setAck = (key: string, ack: Acknowledgement) => setObject<Acknowledgement>(key, ack);
+export const setAck = (key: string, ack: Acknowledgement) =>
+  setObject<Acknowledgement>(key, ack);
 
 export const removeAck = (key: string) => removeObject(key);
 
@@ -19,7 +25,8 @@ export const getAckOrderIds = (ack: Acknowledgement) => Object.keys(ack);
 export const getAckOrders = (ack: Acknowledgement) =>
   getAckOrderIds(ack).map((orderId) => getOrderAck(ack, orderId));
 
-export const getOrderAck = (ack: Acknowledgement, orderId: string) => ack[orderId];
+export const getOrderAck = (ack: Acknowledgement, orderId: string) =>
+  ack[orderId];
 
 export const addOrderAck = (ack: Acknowledgement, order: WithId<Order>) =>
   ({
@@ -37,7 +44,10 @@ export const addOrderAck = (ack: Acknowledgement, order: WithId<Order>) =>
     },
   } as Acknowledgement);
 
-export const updateOrderAck = (ack: Acknowledgement, orderAck: OrderAcknowledgement) =>
+export const updateOrderAck = (
+  ack: Acknowledgement,
+  orderAck: OrderAcknowledgement
+) =>
   ({
     ...ack,
     [orderAck.order.id]: orderAck,
@@ -57,7 +67,10 @@ export const getOrderAckTime = (key: string, orderId: string) => {
   }
 };
 
-export const calculateCancellationCosts = (order: Order, params: OrderCancellationParams) => {
+export const calculateCancellationCosts = (
+  order: Order,
+  params: OrderCancellationParams
+) => {
   let costs = 0;
   if (order.fare?.business && params.refund.indexOf('products') !== -1)
     costs += order.fare.business.value;
@@ -68,13 +81,32 @@ export const calculateCancellationCosts = (order: Order, params: OrderCancellati
   return costs;
 };
 
-export const objectPeriodFilter = (timestamp: Timestamp, start: Date, end?: Date) => {
-  if (!timestamp) return false;
-  let value = timestamp.seconds;
-  let startLimit = start.getTime() / 1000;
-  let endLimit = end ? end.getTime() / 1000 : null;
-  if (endLimit) return value > startLimit && value < endLimit;
-  else return value > startLimit;
+// export const objectPeriodFilter = (timestamp: Timestamp, start: Date, end?: Date) => {
+//   if (!timestamp) return false;
+//   let value = timestamp.seconds;
+//   let startLimit = start.getTime() / 1000;
+//   let endLimit = end ? end.getTime() / 1000 : null;
+//   if (endLimit) return value > startLimit && value < endLimit;
+//   else return value > startLimit;
+// };
+
+export const invoicesPeriodFilter = (
+  invoices: WithId<Invoice>[],
+  start: Date,
+  end?: Date
+) => {
+  return invoices.filter((invoice) => {
+    const baseTime = (invoice.createdOn as Timestamp).toDate();
+    if (!end) return dayjs(baseTime).isAfter(start);
+    else return dayjs(baseTime).isAfter(start) && dayjs(baseTime).isBefore(end);
+  });
+};
+
+export const getInvoicesBusinessTotalValue = (invoices: WithId<Invoice>[]) => {
+  return invoices.reduce((result, invoice) => {
+    const deliveryCosts = invoice.deliveryCosts ?? 0;
+    return result + invoice.value - deliveryCosts;
+  }, 0);
 };
 
 export const findMostFrequentProduct = (products: string[]) => {
@@ -108,12 +140,11 @@ export interface ItemByDay {
 export const splitInvoicesValuesByPeriod = (
   invoices: WithId<Invoice>[],
   periodNumber: number,
-  startDate: number // milliseconds
+  startDate: Date // milliseconds
 ) => {
   let period = [] as ItemByDay[];
   for (let i = 0; i < periodNumber; i++) {
-    const time = i * 1000 * 60 * 60 * 24;
-    const date = dayjs(startDate + time).date();
+    const date = dayjs(startDate).add(i, 'day').date();
     period.push({ date, value: 0 });
   }
   invoices.forEach((invoice) => {
@@ -125,78 +156,86 @@ export const splitInvoicesValuesByPeriod = (
 };
 
 export const getOrderWarning = (
-  order: WithId<Order>, 
+  order: WithId<Order>,
   now: number,
-  confirmed: number, 
-  matching: number, 
-  goingPickup: number, 
-  readyArrivedPickup: number, 
-  dispatchingArrivedPickup: number, 
-  goingDestination: number, 
-  ) => {
+  confirmed: number,
+  matching: number,
+  goingPickup: number,
+  readyArrivedPickup: number,
+  dispatchingArrivedPickup: number,
+  goingDestination: number
+) => {
   try {
     let warning = null;
-    if(
-      order.type === 'food' && 
+    if (
+      order.type === 'food' &&
       order.status === 'confirmed' &&
       order.timestamps.confirmed
-      ) {
-        const baseTime = (order.timestamps.confirmed as Timestamp).toMillis();
-        const elapsedTime = getTimeUntilNow(now, baseTime);
-        if(elapsedTime >= confirmed / 60) {
-          warning = 'ACEITE';
-        }
+    ) {
+      const baseTime = (order.timestamps.confirmed as Timestamp).toMillis();
+      const elapsedTime = getTimeUntilNow(now, baseTime);
+      if (elapsedTime >= confirmed / 60) {
+        warning = 'ACEITE';
+      }
     } else if (
       order.dispatchingStatus === 'matching' &&
       order.dispatchingTimestamps.matching
-      ) {
-        const baseTime = (order.dispatchingTimestamps.matching as Timestamp).toMillis();
-        const elapsedTime = getTimeUntilNow(now, baseTime);
-        if(elapsedTime >= matching / 60) {
-          warning = 'MATCHING';
-        }
+    ) {
+      const baseTime = (
+        order.dispatchingTimestamps.matching as Timestamp
+      ).toMillis();
+      const elapsedTime = getTimeUntilNow(now, baseTime);
+      if (elapsedTime >= matching / 60) {
+        warning = 'MATCHING';
+      }
     } else if (
       order.dispatchingState === 'going-pickup' &&
       order.dispatchingTimestamps.goingPickup
-      ) {
-        const baseTime = (order.dispatchingTimestamps.goingPickup as Timestamp).toMillis();
-        const elapsedTime = getTimeUntilNow(now, baseTime);
-        if(elapsedTime >= goingPickup / 60) {
-          warning = 'COLETA';
-        }
+    ) {
+      const baseTime = (
+        order.dispatchingTimestamps.goingPickup as Timestamp
+      ).toMillis();
+      const elapsedTime = getTimeUntilNow(now, baseTime);
+      if (elapsedTime >= goingPickup / 60) {
+        warning = 'COLETA';
+      }
     } else if (
       (order.status === 'preparing' || order.status === 'ready') &&
-      order.dispatchingState === 'arrived-pickup' && 
+      order.dispatchingState === 'arrived-pickup' &&
       order.dispatchingTimestamps.arrivedPickup
-      ) {
-        const baseTime = (order.dispatchingTimestamps.arrivedPickup as Timestamp).toMillis();
-        const elapsedTime = getTimeUntilNow(now, baseTime);
-        if(elapsedTime >= readyArrivedPickup / 60) {
-          warning = 'RECEBIMENTO';
-        }
+    ) {
+      const baseTime = (
+        order.dispatchingTimestamps.arrivedPickup as Timestamp
+      ).toMillis();
+      const elapsedTime = getTimeUntilNow(now, baseTime);
+      if (elapsedTime >= readyArrivedPickup / 60) {
+        warning = 'RECEBIMENTO';
+      }
     } else if (
       order.status === 'dispatching' &&
       order.timestamps.dispatching &&
       order.dispatchingState === 'arrived-pickup'
     ) {
-        const baseTime = (order.timestamps.dispatching as Timestamp).toMillis();
-        const elapsedTime = getTimeUntilNow(now, baseTime);
-        if(elapsedTime >= dispatchingArrivedPickup / 60) {
-          warning = 'DESPACHO';
-        }
+      const baseTime = (order.timestamps.dispatching as Timestamp).toMillis();
+      const elapsedTime = getTimeUntilNow(now, baseTime);
+      if (elapsedTime >= dispatchingArrivedPickup / 60) {
+        warning = 'DESPACHO';
+      }
     } else if (
-      order.dispatchingState === 'going-destination' && 
+      order.dispatchingState === 'going-destination' &&
       order.dispatchingTimestamps.goingDestination
-      ) {
-        const baseTime = (order.dispatchingTimestamps.goingDestination as Timestamp).toMillis();
-        const elapsedTime = getTimeUntilNow(now, baseTime);
-        if(elapsedTime >= goingDestination / 60) {
-          warning = 'ENTREGA';
-        }
+    ) {
+      const baseTime = (
+        order.dispatchingTimestamps.goingDestination as Timestamp
+      ).toMillis();
+      const elapsedTime = getTimeUntilNow(now, baseTime);
+      if (elapsedTime >= goingDestination / 60) {
+        warning = 'ENTREGA';
+      }
     }
     return warning;
   } catch (error) {
-    console.error("getOrderWarning error: ", error);
+    console.error('getOrderWarning error: ', error);
     return null;
   }
-}
+};

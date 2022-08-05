@@ -34,22 +34,25 @@ const FinancesPage = () => {
   const { path, url } = useRouteMatch();
   const history = useHistory();
   const businessId = useContextBusinessId();
-  const { accountInformation, refreshAccountInformation } = useAccountInformation(businessId);
-  const { requestWithdraw, requestWithdrawResult } = useRequestWithdraw(businessId);
+  const { accountInformation, refreshAccountInformation } =
+    useAccountInformation(businessId);
+  const { requestWithdraw, requestWithdrawResult } =
+    useRequestWithdraw(businessId);
   const { isLoading, isSuccess } = requestWithdrawResult;
   const canAdvanceReceivables = useCanAdvanceReceivables();
   // state
   const [dateTime, setDateTime] = React.useState('');
   const [month, setMonth] = React.useState<Date | null>(new Date());
-  const [availableReceivable, setAvailableReceivable] = React.useState<string | null>();
-  const [availableWithdraw, setAvailableWithdraw] = React.useState<string | null>();
+  const [availableReceivable, setAvailableReceivable] = React.useState<
+    string | null
+  >();
+  const [availableWithdraw, setAvailableWithdraw] = React.useState<
+    string | null
+  >();
   const [activeWithdraw, setActiveWithdraw] = React.useState<number>();
   // page data with filters
-  const { periodAmount, appjustoCosts, iuguCosts } = useObserveInvoicesStatusByPeriod(
-    businessId,
-    month,
-    periodStatus
-  );
+  const { periodAmount, total, appjustoCosts, iuguCosts } =
+    useObserveInvoicesStatusByPeriod(businessId, month, periodStatus);
   const advances = useObserveBusinessAdvances(businessId, month);
   const withdraws = useObserveBusinessWithdraws(businessId, month);
   // helpers
@@ -84,7 +87,9 @@ const FinancesPage = () => {
   React.useEffect(() => {
     if (accountInformation === undefined) return;
     setAvailableReceivable(accountInformation?.receivable_balance ?? null);
-    setAvailableWithdraw(accountInformation?.balance_available_for_withdraw ?? null);
+    setAvailableWithdraw(
+      accountInformation?.balance_available_for_withdraw ?? null
+    );
   }, [accountInformation]);
   React.useEffect(() => {
     if (!withdraws) return;
@@ -94,11 +99,14 @@ const FinancesPage = () => {
   React.useEffect(() => {
     if (!isSuccess) return;
     refreshAccountInformation();
-  }, [isSuccess, refreshAccountInformation])
+  }, [isSuccess, refreshAccountInformation]);
   // UI
   return (
     <>
-      <PageHeader title={t('Financeiro')} subtitle={t(`Dados atualizados em ${dateTime}`)} />
+      <PageHeader
+        title={t('Financeiro')}
+        subtitle={t(`Dados atualizados em ${dateTime}`)}
+      />
       <Stack mt="8" direction={{ base: 'column', md: 'row' }} spacing={4}>
         <BasicInfoBox
           label={t('Disponível para saque')}
@@ -114,7 +122,9 @@ const FinancesPage = () => {
           icon={Watch}
           value={availableReceivable}
           btnLabel={
-            canAdvanceReceivables ? t('Pedir antecipação de valores') : t('Fora do horário')
+            canAdvanceReceivables
+              ? t('Pedir antecipação de valores')
+              : t('Fora do horário')
           }
           btnVariant="outline"
           btnLink={`${url}/advances`}
@@ -132,6 +142,7 @@ const FinancesPage = () => {
       </Box>
       <PeriodTable
         period={`${monthName} de ${year}`}
+        total={total}
         amount={periodAmount}
         appjustoCosts={appjustoCosts}
         iuguCosts={iuguCosts}
