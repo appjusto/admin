@@ -2,9 +2,12 @@ import { Invoice, WithId } from '@appjusto/types';
 import { IuguInvoiceStatus } from '@appjusto/types/payment/iugu';
 import { useContextApi } from 'app/state/api/context';
 import dayjs from 'dayjs';
-import { Timestamp } from 'firebase/firestore';
 import React from 'react';
-import { objectPeriodFilter, splitInvoicesValuesByPeriod } from './utils';
+import {
+  getInvoicesBusinessTotalValue,
+  invoicesPeriodFilter,
+  splitInvoicesValuesByPeriod,
+} from './utils';
 
 const invoiceStatus = 'paid' as IuguInvoiceStatus;
 
@@ -52,13 +55,10 @@ export const useObserveDashboardInvoices = (businessId?: string | null) => {
   React.useEffect(() => {
     if (!invoices) return;
     const today = dayjs().startOf('day').toDate();
-    const todayInvoices = invoices.filter((invoice) =>
-      dayjs((invoice.createdOn as Timestamp).toDate()).isAfter(today)
-    );
+    const todayInvoices = invoicesPeriodFilter(invoices, today);
     setTodayInvoices(todayInvoices.length);
-    setTodayValue(
-      todayInvoices.reduce((result, invoice) => result + invoice.value!, 0)
-    );
+    const todayTotal = getInvoicesBusinessTotalValue(todayInvoices);
+    setTodayValue(todayTotal);
   }, [invoices]);
   // today average
   React.useEffect(() => {
@@ -70,13 +70,10 @@ export const useObserveDashboardInvoices = (businessId?: string | null) => {
   React.useEffect(() => {
     if (!invoices) return;
     const startDate = dayjs().startOf('month').toDate();
-    const monthInvoices = invoices.filter((invoice) =>
-      dayjs((invoice.createdOn as Timestamp).toDate()).isAfter(startDate)
-    );
+    const monthInvoices = invoicesPeriodFilter(invoices, startDate);
     setMonthInvoices(monthInvoices.length);
-    setMonthValue(
-      monthInvoices.reduce((result, invoice) => result + invoice.value!, 0)
-    );
+    const monthTotal = getInvoicesBusinessTotalValue(monthInvoices);
+    setMonthValue(monthTotal);
   }, [invoices]);
   // month average
   React.useEffect(() => {
@@ -88,20 +85,14 @@ export const useObserveDashboardInvoices = (businessId?: string | null) => {
   React.useEffect(() => {
     if (!invoices) return;
     const startDate = dayjs().startOf('day').subtract(6, 'day').toDate();
-    const currentWeekInvoices = invoices.filter((invoice) =>
-      objectPeriodFilter(invoice.updatedOn as Timestamp, startDate)
-    );
+    const currentWeekInvoices = invoicesPeriodFilter(invoices, startDate);
     setCurrentWeekInvoices(currentWeekInvoices.length);
-    setCurrentWeekValue(
-      currentWeekInvoices.reduce(
-        (result, invoice) => result + invoice.value!,
-        0
-      )
-    );
+    const weekValue = getInvoicesBusinessTotalValue(currentWeekInvoices);
+    setCurrentWeekValue(weekValue);
     const weekValuesByDay = splitInvoicesValuesByPeriod(
       currentWeekInvoices,
       7,
-      startDate.getTime()
+      startDate
     );
     setCurrentWeekByDay(weekValuesByDay);
   }, [invoices]);
@@ -118,17 +109,14 @@ export const useObserveDashboardInvoices = (businessId?: string | null) => {
     if (!invoices) return;
     const startDate = dayjs().startOf('day').subtract(13, 'day').toDate();
     const endDate = dayjs().startOf('day').subtract(7, 'day').toDate();
-    const lastWeekInvoices = invoices.filter((order) =>
-      objectPeriodFilter(order.updatedOn as Timestamp, startDate, endDate)
-    );
+    const lastWeekInvoices = invoicesPeriodFilter(invoices, startDate, endDate);
     setLastWeekInvoices(lastWeekInvoices.length);
-    setLastWeekValue(
-      lastWeekInvoices.reduce((result, invoice) => result + invoice.value!, 0)
-    );
+    const lastWeekValue = getInvoicesBusinessTotalValue(lastWeekInvoices);
+    setLastWeekValue(lastWeekValue);
     const weekValuesByDay = splitInvoicesValuesByPeriod(
       lastWeekInvoices,
       7,
-      startDate.getTime()
+      startDate
     );
     setLastWeekByDay(weekValuesByDay);
   }, [invoices]);
