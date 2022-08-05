@@ -1,4 +1,4 @@
-import { Flavor, NotificationChannel } from '@appjusto/types';
+import { Flavor, NotificationChannel, PushCampaign } from '@appjusto/types';
 import {
   Box,
   Button,
@@ -14,18 +14,20 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
+import { useObservePushCampaign } from 'app/api/push-campaign/useObservePushCampaign';
 import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import CustomRadio from 'common/components/form/CustomRadio';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import { CustomNumberInput as NumberInput } from 'common/components/form/input/CustomNumberInput';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
+import dayjs from 'dayjs';
+import { Timestamp } from 'firebase/firestore';
 import React from 'react';
 import { useParams } from 'react-router-dom';
+import { formatTimestampToInput } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
 import { InputCounter } from './InputCounter';
-
-type Status = 'pending' | 'approved' | 'canceled';
 
 interface BaseDrawerProps {
   isOpen: boolean;
@@ -39,6 +41,13 @@ type Params = {
 export const PushDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   //context
   const { campaignId } = useParams<Params>();
+  const {
+    campaign,
+    submitPushCampaign,
+    updatePushCampaign,
+    submitPushCampaignResult,
+    updatePushCampaignResult,
+  } = useObservePushCampaign(campaignId !== 'new' ? campaignId : undefined);
   // state
   const [flavor, setFlavor] = React.useState<Flavor>('consumer');
   const [channel, setChannel] =
@@ -47,16 +56,72 @@ export const PushDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   const [latitude, setLatitude] = React.useState('');
   const [longitude, setLongitude] = React.useState('');
   const [radius, setRadius] = React.useState('');
-  const [campaign, setCampaign] = React.useState('');
+  const [name, setName] = React.useState('');
   const [title, setTitle] = React.useState('');
-  const [message, setMessage] = React.useState('');
+  const [body, setBody] = React.useState('');
   const [pushDate, setPushDate] = React.useState('');
   const [pushTime, setPushTime] = React.useState('');
-  const [status, setStatus] = React.useState<Status>('pending');
+  const [status, setStatus] =
+    React.useState<PushCampaign['status']>('submitted');
   const [isDeleting, setIsDeleting] = React.useState(false);
   // helpers
   const isNew = campaignId === 'new';
+  const isLoading = isNew
+    ? submitPushCampaignResult.isLoading
+    : updatePushCampaignResult.isLoading;
+  // handlers
+  const handleSubmit = () => {
+    const time = pushTime.split(':');
+    const scheduledTo = Timestamp.fromDate(
+      dayjs(pushDate)
+        .set('hour', Number(time[0]))
+        .set('minute', Number(time[1]))
+        .toDate()
+    );
+    let newCampaign = {
+      to: flavor,
+      channel,
+      name,
+      title,
+      body,
+      status,
+      scheduledTo,
+    } as Partial<PushCampaign>;
+    if (isGeo) {
+      const nearby = {
+        coordinates: {
+          latitude: Number(latitude),
+          longitude: Number(longitude),
+        },
+        radius: Number(radius),
+      };
+      newCampaign.nearby = nearby;
+    }
+    if (isNew) {
+      submitPushCampaign(newCampaign);
+    } else {
+      updatePushCampaign({ campaignId, changes: newCampaign });
+    }
+  };
   // side effects
+  React.useEffect(() => {
+    if (!campaign) return;
+    setFlavor(campaign.to);
+    setChannel(campaign.channel);
+    if (campaign.nearby) {
+      setIsGeo(true);
+      setLatitude(String(campaign.nearby.coordinates.latitude));
+      setLongitude(String(campaign.nearby.coordinates.longitude));
+      setRadius(String(campaign.nearby.radius));
+    }
+    setName(campaign.name);
+    setTitle(campaign.title);
+    setBody(campaign.body);
+    setStatus(campaign.status);
+    const { date, time } = formatTimestampToInput(campaign.scheduledTo);
+    if (date) setPushDate(date);
+    if (time) setPushTime(time);
+  }, [campaign]);
   React.useEffect(() => {
     if (!isGeo) {
       setLatitude('');
@@ -64,230 +129,253 @@ export const PushDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
       setRadius('');
     }
   }, [isGeo]);
+  React.useEffect(() => {
+    if (!submitPushCampaignResult.isSuccess) return;
+    onClose();
+  }, [onClose, submitPushCampaignResult.isSuccess]);
   //UI
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
       <DrawerOverlay>
-        <DrawerContent mt={{ base: '16', lg: '0' }}>
-          <DrawerCloseButton
-            bg="green.500"
-            mr="12px"
-            _focus={{ outline: 'none' }}
-          />
-          <DrawerHeader pb="2">
-            <Text
-              color="black"
-              fontSize="2xl"
-              fontWeight="700"
-              lineHeight="28px"
-              mb="2"
-            >
-              {t('Notificação')}
-            </Text>
-          </DrawerHeader>
-          <DrawerBody pb="28">
-            <SectionTitle mt="0">{t('Perfil')}</SectionTitle>
-            <RadioGroup
-              mt="2"
-              onChange={(value: Flavor) => setFlavor(value)}
-              value={flavor}
-              defaultValue="1"
-              colorScheme="green"
-              color="black"
-              fontSize="15px"
-              lineHeight="21px"
-            >
-              <HStack spacing={4}>
-                <CustomRadio value="consumer">{t('Consumidor')}</CustomRadio>
-                <CustomRadio value="courier">{t('Entregador')}</CustomRadio>
-                <CustomRadio value="business">{t('Restaurante')}</CustomRadio>
-              </HStack>
-            </RadioGroup>
-            <SectionTitle>{t('Canal')}</SectionTitle>
-            <RadioGroup
-              mt="4"
-              onChange={(value: NotificationChannel) => setChannel(value)}
-              value={channel}
-              defaultValue="1"
-              colorScheme="green"
-              color="black"
-              fontSize="15px"
-              lineHeight="21px"
-            >
-              <HStack spacing={4}>
-                <CustomRadio value="marketing">{t('Marketing')}</CustomRadio>
-                <CustomRadio value="status">{t('Status')}</CustomRadio>
-                <CustomRadio value="general">{t('Geral')}</CustomRadio>
-              </HStack>
-            </RadioGroup>
-            <SectionTitle>{t('Georreferenciada')}</SectionTitle>
-            <CustomCheckbox
-              mt="4"
-              colorScheme="green"
-              isChecked={isGeo}
-              onChange={() => setIsGeo((prev) => !prev)}
-            >
-              {t('É georreferenciada')}
-            </CustomCheckbox>
-            {isGeo && (
-              <>
-                <HStack mt="4">
-                  <NumberInput
-                    mt="0"
-                    id="campaign-lat"
-                    label={t('Latitude')}
-                    placeholder={t('Digite a latitude')}
-                    value={latitude}
-                    onChange={(ev) => setLatitude(ev.target.value)}
-                    isCoordinates
-                    isRequired
-                  />
-                  <NumberInput
-                    mt="0"
-                    id="campaign-lng"
-                    label={t('Longitude')}
-                    placeholder={t('Digite a longitude')}
-                    value={longitude}
-                    onChange={(ev) => setLongitude(ev.target.value)}
-                    isCoordinates
-                    isRequired
-                  />
-                </HStack>
-                <NumberInput
-                  id="campaign-radius"
-                  label={t('Raio')}
-                  placeholder={t('0')}
-                  value={radius}
-                  onChange={(ev) => setRadius(ev.target.value)}
-                  isRequired
-                />
-              </>
-            )}
-            <SectionTitle>{t('Dados da notificação')}</SectionTitle>
-            <CustomInput
-              id="campaign-name"
-              label={t('Nome da campanha')}
-              placeholder={t('Digite o nome da campanha')}
-              value={campaign}
-              onChange={(ev) => setCampaign(ev.target.value)}
-              isRequired
+        <form
+          onSubmit={(ev) => {
+            ev.preventDefault();
+            handleSubmit();
+          }}
+        >
+          <DrawerContent mt={{ base: '16', lg: '0' }}>
+            <DrawerCloseButton
+              bg="green.500"
+              mr="12px"
+              _focus={{ outline: 'none' }}
             />
-            <CustomInput
-              id="push-title"
-              label={t('Título')}
-              placeholder={t('Digite o título da notificação')}
-              value={title}
-              onChange={(ev) => setTitle(ev.target.value)}
-              maxLength={65}
-              isRequired
-            />
-            <InputCounter max={65} current={title.length} />
-            <Textarea
-              id="push-message"
-              label={t('Corpo da mensagem')}
-              placeholder={t('Digite o corpo da mensagem')}
-              value={message}
-              onChange={(ev) => setMessage(ev.target.value)}
-              maxLength={178 - title.length}
-            />
-            <InputCounter max={178 - title.length} current={message.length} />
-            <HStack mt="4" spacing={4}>
-              <CustomInput
-                mt="0"
-                type="date"
-                id="push-date"
-                value={pushDate}
-                onChange={(event) => setPushDate(event.target.value)}
-                label={t('Data')}
-              />
-              <CustomInput
-                mt="0"
-                type="time"
-                id="push-time"
-                value={pushTime}
-                onChange={(event) => setPushTime(event.target.value)}
-                label={t('Horário')}
-              />
-            </HStack>
-            <SectionTitle>{t('Status')}</SectionTitle>
-            <RadioGroup
-              mt="2"
-              onChange={(value: Status) => setStatus(value)}
-              value={status}
-              defaultValue="1"
-              colorScheme="green"
-              color="black"
-              fontSize="15px"
-              lineHeight="21px"
-            >
-              <VStack mt="4" spacing={2} alignItems="flex-start">
-                <CustomRadio value="pending">{t('Pendente')}</CustomRadio>
-                <CustomRadio value="approved">{t('Aprovada')}</CustomRadio>
-                <CustomRadio value="canceled">{t('Cancelada')}</CustomRadio>
-              </VStack>
-            </RadioGroup>
-          </DrawerBody>
-          <DrawerFooter borderTop="1px solid #F2F6EA">
-            {isDeleting ? (
-              <Box
-                mt="8"
-                w="100%"
-                bg="#FFF8F8"
-                border="1px solid red"
-                borderRadius="lg"
-                p="6"
+            <DrawerHeader pb="2">
+              <Text
+                color="black"
+                fontSize="2xl"
+                fontWeight="700"
+                lineHeight="28px"
+                mb="2"
               >
-                <Text color="red">
-                  {t(`Tem certeza que deseja excluir este agente?`)}
-                </Text>
-                <HStack mt="4" spacing={4}>
-                  <Button width="full" onClick={() => setIsDeleting(false)}>
-                    {t(`Manter agente`)}
-                  </Button>
-                  <Button
-                    width="full"
-                    variant="danger"
-                    // onClick={}
-                    // isLoading={deleteAccountResult.isLoading}
-                  >
-                    {t(`Excluir`)}
-                  </Button>
+                {t('Notificação')}
+              </Text>
+            </DrawerHeader>
+            <DrawerBody pb="28">
+              <SectionTitle mt="0">{t('Perfil')}</SectionTitle>
+              <RadioGroup
+                mt="2"
+                onChange={(value: Flavor) => setFlavor(value)}
+                value={flavor}
+                defaultValue="1"
+                colorScheme="green"
+                color="black"
+                fontSize="15px"
+                lineHeight="21px"
+              >
+                <HStack spacing={4}>
+                  <CustomRadio value="consumer">{t('Consumidor')}</CustomRadio>
+                  <CustomRadio value="courier">{t('Entregador')}</CustomRadio>
+                  <CustomRadio value="business">{t('Restaurante')}</CustomRadio>
                 </HStack>
-              </Box>
-            ) : (
-              <HStack w="100%" spacing={4}>
-                <Button
-                  width="full"
-                  fontSize="15px"
-                  // onClick={handleSave}
-                  // isLoading={}
-                  loadingText={t('Salvando')}
-                >
-                  {t('Salvar alterações')}
-                </Button>
-                {isNew ? (
-                  <Button
-                    width="full"
-                    fontSize="15px"
-                    variant="dangerLight"
-                    onClick={onClose}
-                  >
-                    {t('Cancelar')}
-                  </Button>
-                ) : (
-                  <Button
-                    width="full"
-                    fontSize="15px"
-                    variant="dangerLight"
-                    onClick={() => setIsDeleting(true)}
-                  >
-                    {t('Excluir agente')}
-                  </Button>
-                )}
+              </RadioGroup>
+              <SectionTitle>{t('Canal')}</SectionTitle>
+              <RadioGroup
+                mt="4"
+                onChange={(value: NotificationChannel) => setChannel(value)}
+                value={channel}
+                defaultValue="1"
+                colorScheme="green"
+                color="black"
+                fontSize="15px"
+                lineHeight="21px"
+              >
+                <HStack spacing={4}>
+                  <CustomRadio value="marketing">{t('Marketing')}</CustomRadio>
+                  <CustomRadio value="status">{t('Status')}</CustomRadio>
+                  <CustomRadio value="general">{t('Geral')}</CustomRadio>
+                </HStack>
+              </RadioGroup>
+              <SectionTitle>{t('Georreferenciada')}</SectionTitle>
+              <CustomCheckbox
+                mt="4"
+                colorScheme="green"
+                isChecked={isGeo}
+                onChange={() => setIsGeo((prev) => !prev)}
+              >
+                {t('É georreferenciada')}
+              </CustomCheckbox>
+              {isGeo && (
+                <>
+                  <HStack mt="4">
+                    <NumberInput
+                      mt="0"
+                      id="campaign-lat"
+                      label={t('Latitude')}
+                      placeholder={t('Digite a latitude')}
+                      value={latitude}
+                      onChange={(ev) => setLatitude(ev.target.value)}
+                      isCoordinates
+                      isRequired
+                    />
+                    <NumberInput
+                      mt="0"
+                      id="campaign-lng"
+                      label={t('Longitude')}
+                      placeholder={t('Digite a longitude')}
+                      value={longitude}
+                      onChange={(ev) => setLongitude(ev.target.value)}
+                      isCoordinates
+                      isRequired
+                    />
+                  </HStack>
+                  <NumberInput
+                    id="campaign-radius"
+                    label={t('Raio')}
+                    placeholder={t('0')}
+                    value={radius}
+                    onChange={(ev) => setRadius(ev.target.value)}
+                    isRequired
+                  />
+                </>
+              )}
+              <SectionTitle>{t('Dados da notificação')}</SectionTitle>
+              <CustomInput
+                id="campaign-name"
+                label={t('Nome da campanha')}
+                placeholder={t('Digite o nome da campanha')}
+                value={name}
+                onChange={(ev) => setName(ev.target.value)}
+                isRequired
+              />
+              <CustomInput
+                id="push-title"
+                label={t('Título')}
+                placeholder={t('Digite o título da notificação')}
+                value={title}
+                onChange={(ev) => setTitle(ev.target.value)}
+                maxLength={65}
+                isRequired
+              />
+              <InputCounter max={65} current={title.length} />
+              <Textarea
+                id="push-message"
+                label={t('Corpo da mensagem')}
+                placeholder={t('Digite o corpo da mensagem')}
+                value={body}
+                onChange={(ev) => setBody(ev.target.value)}
+                maxLength={178 - title.length}
+              />
+              <InputCounter max={178 - title.length} current={body.length} />
+              <HStack mt="4" spacing={4}>
+                <CustomInput
+                  mt="0"
+                  type="date"
+                  id="push-date"
+                  value={pushDate}
+                  onChange={(event) => setPushDate(event.target.value)}
+                  label={t('Data')}
+                />
+                <CustomInput
+                  mt="0"
+                  type="time"
+                  id="push-time"
+                  value={pushTime}
+                  onChange={(event) => setPushTime(event.target.value)}
+                  label={t('Horário')}
+                />
               </HStack>
-            )}
-          </DrawerFooter>
-        </DrawerContent>
+              {!isNew && (
+                <>
+                  <SectionTitle>{t('Status')}</SectionTitle>
+                  <RadioGroup
+                    mt="2"
+                    onChange={(value: PushCampaign['status']) =>
+                      setStatus(value)
+                    }
+                    value={status}
+                    defaultValue="1"
+                    colorScheme="green"
+                    color="black"
+                    fontSize="15px"
+                    lineHeight="21px"
+                  >
+                    <VStack mt="4" spacing={2} alignItems="flex-start">
+                      <CustomRadio value="submitted">
+                        {t('Submetida')}
+                      </CustomRadio>
+                      <CustomRadio value="approved">
+                        {t('Aprovada')}
+                      </CustomRadio>
+                      <CustomRadio value="rejected">
+                        {t('Rejeitada')}
+                      </CustomRadio>
+                    </VStack>
+                  </RadioGroup>
+                </>
+              )}
+            </DrawerBody>
+            <DrawerFooter borderTop="1px solid #F2F6EA">
+              {isDeleting ? (
+                <Box
+                  mt="8"
+                  w="100%"
+                  bg="#FFF8F8"
+                  border="1px solid red"
+                  borderRadius="lg"
+                  p="6"
+                >
+                  <Text color="red">
+                    {t(`Tem certeza que deseja excluir esta campanha?`)}
+                  </Text>
+                  <HStack mt="4" spacing={4}>
+                    <Button width="full" onClick={() => setIsDeleting(false)}>
+                      {t(`Manter campanha`)}
+                    </Button>
+                    <Button
+                      width="full"
+                      variant="danger"
+                      // onClick={}
+                      // isLoading={deleteAccountResult.isLoading}
+                    >
+                      {t(`Excluir`)}
+                    </Button>
+                  </HStack>
+                </Box>
+              ) : (
+                <HStack w="100%" spacing={4}>
+                  <Button
+                    width="full"
+                    fontSize="15px"
+                    type="submit"
+                    isLoading={isLoading}
+                    loadingText={t('Salvando')}
+                  >
+                    {isNew ? t('Submeter') : t('Salvar alterações')}
+                  </Button>
+                  {isNew ? (
+                    <Button
+                      width="full"
+                      fontSize="15px"
+                      variant="dangerLight"
+                      onClick={onClose}
+                    >
+                      {t('Cancelar')}
+                    </Button>
+                  ) : (
+                    <Button
+                      width="full"
+                      fontSize="15px"
+                      variant="dangerLight"
+                      onClick={() => setIsDeleting(true)}
+                    >
+                      {t('Excluir campanha')}
+                    </Button>
+                  )}
+                </HStack>
+              )}
+            </DrawerFooter>
+          </DrawerContent>
+        </form>
       </DrawerOverlay>
     </Drawer>
   );

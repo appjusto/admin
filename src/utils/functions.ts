@@ -3,7 +3,7 @@ import {
   BusinessPhone,
   OrderItem,
   OrderItemComplement,
-  OrderStatus
+  OrderStatus,
 } from '@appjusto/types';
 import { AlgoliaCreatedOn } from 'app/api/types';
 import { CroppedAreaProps } from 'common/components/ImageCropping';
@@ -46,20 +46,27 @@ export const getComplementQtd = (itemQtd?: number, complQtd?: number) => {
   const prod = itemQtd ?? 1;
   const compl = complQtd ?? 1;
   return prod * compl;
-}
+};
 
-export const getComplementSubtotal = (itemQtd?: number, complQtd?: number, complPrice?: number) => {
+export const getComplementSubtotal = (
+  itemQtd?: number,
+  complQtd?: number,
+  complPrice?: number
+) => {
   const prod = itemQtd ?? 1;
   const compl = complQtd ?? 1;
   const price = complPrice ?? 0;
   return prod * compl * price;
-}
+};
 
-export const getProductSubtotal = (productQtd?: number, productPrice?: number) => {
+export const getProductSubtotal = (
+  productQtd?: number,
+  productPrice?: number
+) => {
   const prod = productQtd ?? 1;
   const price = productPrice ?? 0;
   return prod * price;
-}
+};
 
 //date
 export const getDateTime = () => {
@@ -71,7 +78,10 @@ export const getDateTime = () => {
   return { date, time };
 };
 
-export const getDateAndHour = (timestamp?: FieldValue | Date | null, onlyDate?: boolean) => {
+export const getDateAndHour = (
+  timestamp?: FieldValue | Date | null,
+  onlyDate?: boolean
+) => {
   if (!timestamp) return 'N/E';
   try {
     let timeToDate = timestamp;
@@ -86,6 +96,19 @@ export const getDateAndHour = (timestamp?: FieldValue | Date | null, onlyDate?: 
     // console.log(error);
     return 'N/E';
   }
+};
+
+export const formatTimestampToInput = (
+  timestamp?: FieldValue | Date | null
+) => {
+  if (!timestamp) return { date: null, time: null };
+  const dateTime = getDateAndHour(timestamp);
+  const date = dateTime.split(' ')[0];
+  const time = dateTime.split(' ')[1];
+  const year = date.split('/')[2];
+  const month = date.split('/')[1];
+  const day = date.split('/')[0];
+  return { date: `${year}-${month}-${day}`, time };
 };
 
 export const getHourAndMinute = (timestamp?: FieldValue | Date) => {
@@ -149,7 +172,11 @@ export const getTimestampMilliseconds = (timestamp?: Timestamp) => {
   return timestamp.seconds * 1000;
 };
 
-export const getTimeUntilNow = (serverTime: number, baseTime: number, reverse: boolean = false) => {
+export const getTimeUntilNow = (
+  serverTime: number,
+  baseTime: number,
+  reverse: boolean = false
+) => {
   //const now = new Date().getTime();
   if (reverse) {
     let elapsedTime = (baseTime - serverTime) / 1000 / 60;
@@ -161,11 +188,17 @@ export const getTimeUntilNow = (serverTime: number, baseTime: number, reverse: b
 };
 
 // pricing
-const getProductTotalPrice = (price: number, complements: OrderItemComplement[] | undefined) => {
+const getProductTotalPrice = (
+  price: number,
+  complements: OrderItemComplement[] | undefined
+) => {
   let complementsPrice = 0;
   if (complements) {
     complementsPrice =
-      complements.reduce((n1: number, n2: OrderItemComplement) => n1 + n2.price, 0) || 0;
+      complements.reduce(
+        (n1: number, n2: OrderItemComplement) => n1 + n2.price,
+        0
+      ) || 0;
   }
   return price + complementsPrice;
 };
@@ -226,7 +259,11 @@ export const getCroppedImg = async (
     ctx.rotate(getRadianAngle(0));
     ctx.translate(-safeArea / 2, -safeArea / 2);
     // draw rotated image and store data.
-    ctx.drawImage(image, safeArea / 2 - image.width * 0.5, safeArea / 2 - image.height * 0.5);
+    ctx.drawImage(
+      image,
+      safeArea / 2 - image.width * 0.5,
+      safeArea / 2 - image.height * 0.5
+    );
     const data = ctx.getImageData(0, 0, safeArea, safeArea);
     // set canvas width to final desired crop size - this will clear existing context
     canvas.width = pixelCrop.width;
@@ -245,7 +282,12 @@ export const getCroppedImg = async (
         if (!file) return;
         try {
           const url = URL.createObjectURL(file);
-          const result = await getResizedImage(url, ratio, resizedWidth, imageType);
+          const result = await getResizedImage(
+            url,
+            ratio,
+            resizedWidth,
+            imageType
+          );
           resolve(result);
         } catch (error) {
           console.log('getCroppedImg Error', error);

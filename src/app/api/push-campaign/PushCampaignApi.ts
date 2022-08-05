@@ -9,6 +9,7 @@ import {
   orderBy,
   query,
   QueryDocumentSnapshot,
+  serverTimestamp,
   startAfter,
   Unsubscribe,
   updateDoc,
@@ -74,10 +75,20 @@ export default class PushCampaignApi {
   }
 
   async submitPushCampaign(data: Partial<PushCampaign>) {
-    await addDoc(this.refs.getPushCampaignsRef(), data);
+    const timestamp = serverTimestamp();
+    const fullData = {
+      ...data,
+      createdOn: timestamp,
+    } as Partial<PushCampaign>;
+    await addDoc(this.refs.getPushCampaignsRef(), fullData);
   }
 
   async updatePushCampaign(campaignId: string, changes: Partial<PushCampaign>) {
-    await updateDoc(this.refs.getStaffRef(campaignId), changes);
+    const timestamp = serverTimestamp();
+    const fullChanges = {
+      ...changes,
+      updatedOn: timestamp,
+    } as Partial<PushCampaign>;
+    await updateDoc(this.refs.getStaffRef(campaignId), fullChanges);
   }
 }

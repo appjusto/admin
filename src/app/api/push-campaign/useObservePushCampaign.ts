@@ -3,7 +3,7 @@ import { useContextApi } from 'app/state/api/context';
 import React from 'react';
 import { useCustomMutation } from '../mutation/useCustomMutation';
 
-export const useObservePushCampaign = (campaignId: string) => {
+export const useObservePushCampaign = (campaignId?: string) => {
   // contex
   const api = useContextApi();
   // state
