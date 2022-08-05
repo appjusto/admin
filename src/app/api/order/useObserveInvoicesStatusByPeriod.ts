@@ -19,6 +19,7 @@ export const useObserveInvoicesStatusByPeriod = (
   const api = useContextApi();
   // state
   const [invoices, setInvoices] = React.useState<WithId<Invoice>[]>();
+  const [total, setTotal] = React.useState(0);
   const [periodAmount, setPeriodAmount] = React.useState(0);
   const [appjustoCosts, setAppjustoCosts] = React.useState<InvoicesCosts>({
     value: 0,
@@ -52,10 +53,11 @@ export const useObserveInvoicesStatusByPeriod = (
     const amount = getInvoicesBusinessTotalValue(invoices);
     const appjusto = calculateAppJustoCosts(amount, invoices);
     const iugu = calculateIuguCosts(amount, invoices);
+    setTotal(invoices.length);
     setPeriodAmount(amount);
     setAppjustoCosts(appjusto);
     setIuguCosts(iugu);
   }, [invoices]);
   // return
-  return { invoices, periodAmount, appjustoCosts, iuguCosts };
+  return { invoices, total, periodAmount, appjustoCosts, iuguCosts };
 };
