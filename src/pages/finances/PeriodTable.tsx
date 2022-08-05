@@ -85,7 +85,7 @@ export const PeriodTable = ({
       </Tbody>
       <Tfoot bgColor="gray.50">
         <Tr>
-          <Th>{t(`Resultado para ${period} - ${total} pedidos entregues`)}</Th>
+          <Th>{t(`Resultado para ${period} (Total de pedidos: ${total})`)}</Th>
           <Th color="green.700" isNumeric>
             {formatCurrency(amount - appjustoCosts.value - iuguCosts.value)}
           </Th>
