@@ -26,7 +26,12 @@ const InvoicesPage = () => {
   // context
   const { path } = useRouteMatch();
   const history = useHistory();
-  const { invoices, fetchNextPage } = useObserveInvoices(searchId, searchFrom, searchTo, filterBar);
+  const { invoices, fetchNextPage } = useObserveInvoices(
+    searchId,
+    searchFrom,
+    searchTo,
+    filterBar
+  );
   // handlers
   const closeDrawerHandler = () => {
     history.replace(path);
@@ -66,7 +71,12 @@ const InvoicesPage = () => {
           />
         </Stack>
       </Flex>
-      <Flex mt="8" w="100%" justifyContent="space-between" borderBottom="1px solid #C8D7CB">
+      <Flex
+        mt="8"
+        w="100%"
+        justifyContent="space-between"
+        borderBottom="1px solid #C8D7CB"
+      >
         <FiltersScrollBar>
           <HStack spacing={4}>
             <FilterText
@@ -93,6 +103,11 @@ const InvoicesPage = () => {
               isActive={filterBar === 'refunded'}
               label={t('Reembol.')}
               onClick={() => setFilterBar('refunded')}
+            />
+            <FilterText
+              isActive={filterBar === 'partially_refunded'}
+              label={t('Parc. Reembol.')}
+              onClick={() => setFilterBar('partially_refunded')}
             />
             <FilterText
               isActive={filterBar === 'canceled'}
