@@ -14,6 +14,7 @@ import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import PageHeader from '../../PageHeader';
 import { PushDrawer } from '../drawers/push';
+import { PushCampaignTable } from './PushCampaignTable';
 
 const PushCampaignPage = () => {
   // state
@@ -26,7 +27,7 @@ const PushCampaignPage = () => {
   // context
   const { path } = useRouteMatch();
   const history = useHistory();
-  const { campaings, fetchNextPage } = useObservePushCampaigns(
+  const { campaigns, fetchNextPage } = useObservePushCampaigns(
     searchName,
     searchFrom,
     searchTo,
@@ -108,11 +109,11 @@ const PushCampaignPage = () => {
       </Flex>
       <Flex mt="6" color="black" justifyContent="space-between">
         <Text fontSize="lg" fontWeight="700" lineHeight="26px">
-          {t(`${campaings?.length ?? '0'} itens na lista`)}
+          {t(`${campaigns?.length ?? '0'} itens na lista`)}
         </Text>
         <CustomButton label={t('Criar campanha')} link={`${path}/new`} />
       </Flex>
-      {/* <InvoicesTable invoices={invoices} /> */}
+      <PushCampaignTable campaigns={campaigns} />
       <Button mt="8" variant="secondary" onClick={fetchNextPage}>
         <ArrowDownIcon mr="2" />
         {t('Carregar mais')}

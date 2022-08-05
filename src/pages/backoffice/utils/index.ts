@@ -99,6 +99,12 @@ export const ledgerEntryStatusPTOptions = {
   processing: 'Processando',
 };
 
+export const pushStatusPTOptions = {
+  submitted: 'Submetida',
+  approved: 'Aprovada',
+  rejected: 'Rejeitada',
+};
+
 export const iuguSituationPTOptions = {
   'pending': 'Pendente',
   'created': 'Criada',
@@ -157,6 +163,8 @@ export const getEditableProfile = (profile: any, isEditingEmail: boolean) => {
   if (isEditingEmail) omittedKeys.pop();
   const editable = omit(profile, omittedKeys);
   const serialized = omitBy(editable, (value) => !value);
-  serialized.profileIssuesMessage = !isEmpty(profile.profileIssuesMessage) ? profile.profileIssuesMessage : null;
+  serialized.profileIssuesMessage = !isEmpty(profile.profileIssuesMessage)
+    ? profile.profileIssuesMessage
+    : null;
   return serialized;
 };

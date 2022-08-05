@@ -15,11 +15,9 @@ export const useObservePushCampaigns = (
   // context
   const api = useContextApi();
   // state
-  const [campaingsMap, setCampaignsMap] =
+  const [campaignsMap, setCampaignsMap] =
     React.useState<Map<string | undefined, WithId<PushCampaign>[]>>(initialMap);
-  const [campaings, setCampaings] = React.useState<
-    WithId<PushCampaign>[] | null
-  >();
+  const [campaigns, setCampaigns] = React.useState<WithId<PushCampaign>[]>();
   const [startAfter, setStartAfter] =
     React.useState<QueryDocumentSnapshot<DocumentData>>();
   const [lastPush, setLastPush] =
@@ -55,13 +53,13 @@ export const useObservePushCampaigns = (
     return () => unsub();
   }, [api, startAfter, name, start, end, status]);
   React.useEffect(() => {
-    setCampaings(
-      Array.from(campaingsMap.values()).reduce(
+    setCampaigns(
+      Array.from(campaignsMap.values()).reduce(
         (result, pushs) => [...result, ...pushs],
         []
       )
     );
-  }, [campaingsMap]);
+  }, [campaignsMap]);
   // return
-  return { campaings, fetchNextPage };
+  return { campaigns, fetchNextPage };
 };
