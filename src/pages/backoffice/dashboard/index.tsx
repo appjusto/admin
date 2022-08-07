@@ -16,7 +16,6 @@ import { BackofficeOrderDrawer } from '../drawers/order';
 import { UserChangeDrawer } from '../drawers/profile-changes/UserChangeDrawer';
 import { BOChatDrawer } from './BOChatDrawer';
 import { BOList } from './BOList';
-import { Panel } from './Panel';
 // import { StaffFilterOptions } from './StaffFilter';
 
 const BODashboard = () => {
@@ -70,7 +69,6 @@ const BODashboard = () => {
         subtitle={t(`Atualizado ${dateTime}`)}
         showVersion
       />
-      <Panel />
       <DirectAccessById />
       <Stack
         mt="4"
