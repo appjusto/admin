@@ -10,10 +10,13 @@ import { AdminAccessRoute } from 'pages/routes/AdminAccessRoute';
 import React from 'react';
 import { Redirect, Switch, useRouteMatch } from 'react-router-dom';
 import { AgentPersonificationBar } from './AgentPersonificationBar';
-import Dashboard from './Dashboard';
+// import Dashboard from './Dashboard';
 
 const timeoutLimit = 6; // in seconds
 
+const Dashboard = React.lazy(
+  () => import(/* webpackPrefetch: true */ './Dashboard')
+);
 const OrdersPage = React.lazy(
   () => import(/* webpackPrefetch: true */ 'pages/orders/OrdersPage')
 );
