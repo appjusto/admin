@@ -76,14 +76,15 @@ export default class OrderApi {
     statuses: OrderStatus[],
     resultHandler: (orders: WithId<Order>[]) => void,
     businessId?: string,
-    ordering: Ordering = 'desc'
+    ordering: Ordering = 'desc',
+    queryLimit?: number
   ): Unsubscribe {
     let q = query(
       this.refs.getOrdersRef(),
       orderBy('timestamps.charged', ordering),
       where('status', 'in', statuses)
     );
-
+    if (queryLimit) q = query(q, limit(queryLimit));
     if (businessId) {
       q = query(q, where('business.id', '==', businessId));
     }
