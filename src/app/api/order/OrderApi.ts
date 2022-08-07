@@ -157,11 +157,11 @@ export default class OrderApi {
     const end = dayjs().endOf('day').toDate();
     let q = query(
       this.refs.getOrdersRef(),
-      orderBy('scheduledTo', ordering),
+      orderBy('confirmedScheduledTo', ordering),
       where('business.id', '==', businessId),
       where('status', '==', 'scheduled'),
-      where('scheduledTo', '>=', start),
-      where('scheduledTo', '<=', end),
+      where('confirmedScheduledTo', '>=', start),
+      where('confirmedScheduledTo', '<=', end),
       limit(queryLimit)
     );
     // returns the unsubscribe function
