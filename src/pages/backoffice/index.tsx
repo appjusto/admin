@@ -1,20 +1,9 @@
 import { BackofficeDashboardProvider } from 'app/state/dashboards/backoffice';
 import PageLayout from 'pages/PageLayout';
-import { Switch, useRouteMatch } from 'react-router-dom';
-// import BusinessesPage from './businesses';
-// import ConsumersPage from './consumers';
-// import CouriersPage from './couriers';
-import BODashboard from './dashboard';
-// import FraudPreventionPage from './fraud-prevention';
-// import InvoicesPage from './invoices';
-// import LedgerPage from './ledger';
-// import OrdersPage from './orders';
-// import RecommendationsPage from './recommendations';
-import { BOAccessRoute } from './routes/BOAccessRoute';
-// import { StaffProfile } from './staff/StaffProfile';
-// import StaffsPage from './staffs';
-// import UsersPage from './users';
 import React from 'react';
+import { Switch, useRouteMatch } from 'react-router-dom';
+import BODashboard from './dashboard';
+import { BOAccessRoute } from './routes/BOAccessRoute';
 
 const OrdersPage = React.lazy(
   () => import(/* webpackPrefetch: true */ './orders')

@@ -4,27 +4,61 @@ import { BusinessDashboardProvider } from 'app/state/dashboards/business';
 import { MenuContextProvider } from 'app/state/menu/context';
 import { OrdersContextProvider } from 'app/state/order';
 import { Loading } from 'common/components/Loading';
-import BankingInformation from 'pages/banking-information/BankingInformation';
-import BusinessProfile from 'pages/business-profile/BusinessProfile';
-import SchedulesPage from 'pages/business-schedules/SchedulesPage';
-import ChatPage from 'pages/chat';
-import DeliveryArea from 'pages/delivery-area/DeliveryArea';
 import { BasicErrorPage } from 'pages/error/BasicErrorPage';
-import FinancesPage from 'pages/finances/FinancesPage';
-import ManagerProfilePage from 'pages/manager-profile/ManagerProfilePage';
-import Menu from 'pages/menu/Menu';
-import OrdersHistoryPage from 'pages/orders/history/OrdersHistoryPage';
-import OrdersPage from 'pages/orders/OrdersPage';
 import PageLayout from 'pages/PageLayout';
 import { AdminAccessRoute } from 'pages/routes/AdminAccessRoute';
-import SharingPage from 'pages/sharing';
-import TeamPage from 'pages/team/TeamPage';
 import React from 'react';
 import { Redirect, Switch, useRouteMatch } from 'react-router-dom';
 import { AgentPersonificationBar } from './AgentPersonificationBar';
 import Dashboard from './Dashboard';
 
 const timeoutLimit = 6; // in seconds
+
+const OrdersPage = React.lazy(
+  () => import(/* webpackPrefetch: true */ 'pages/orders/OrdersPage')
+);
+const ChatPage = React.lazy(
+  () => import(/* webpackPrefetch: true */ 'pages/chat')
+);
+const SharingPage = React.lazy(
+  () => import(/* webpackPrefetch: true */ 'pages/sharing')
+);
+const Menu = React.lazy(
+  () => import(/* webpackPrefetch: true */ 'pages/menu/Menu')
+);
+const SchedulesPage = React.lazy(
+  () =>
+    import(/* webpackPrefetch: true */ 'pages/business-schedules/SchedulesPage')
+);
+const DeliveryArea = React.lazy(
+  () => import(/* webpackPrefetch: true */ 'pages/delivery-area/DeliveryArea')
+);
+const BusinessProfile = React.lazy(
+  () =>
+    import(/* webpackPrefetch: true */ 'pages/business-profile/BusinessProfile')
+);
+const ManagerProfilePage = React.lazy(
+  () =>
+    import(
+      /* webpackPrefetch: true */ 'pages/manager-profile/ManagerProfilePage'
+    )
+);
+const OrdersHistoryPage = React.lazy(
+  () =>
+    import(/* webpackPrefetch: true */ 'pages/orders/history/OrdersHistoryPage')
+);
+const FinancesPage = React.lazy(
+  () => import(/* webpackPrefetch: true */ 'pages/finances/FinancesPage')
+);
+const BankingInformation = React.lazy(
+  () =>
+    import(
+      /* webpackPrefetch: true */ 'pages/banking-information/BankingInformation'
+    )
+);
+const TeamPage = React.lazy(
+  () => import(/* webpackPrefetch: true */ 'pages/team/TeamPage')
+);
 
 const Home = () => {
   // context
@@ -47,12 +81,21 @@ const Home = () => {
   }
   if (!business) {
     if (isBackofficeUser) return <Redirect to="/backoffice" />;
-    else if (isTimeout && business === null) return <Redirect to={`/onboarding`} />;
+    else if (isTimeout && business === null)
+      return <Redirect to={`/onboarding`} />;
   }
   if (business && business?.onboarding !== 'completed' && !isBackofficeUser) {
-    return <Redirect to={`/onboarding/${!business?.onboarding ? '' : business.onboarding}`} />;
+    return (
+      <Redirect
+        to={`/onboarding/${!business?.onboarding ? '' : business.onboarding}`}
+      />
+    );
   }
-  if (business?.onboarding === 'completed' && !userWithGrantedRole && isTimeout) {
+  if (
+    business?.onboarding === 'completed' &&
+    !userWithGrantedRole &&
+    isTimeout
+  ) {
     return (
       <BasicErrorPage
         title="Ocorreu um erro de autenticação."
@@ -70,18 +113,42 @@ const Home = () => {
           <MenuContextProvider>
             {isBackofficeUser && <AgentPersonificationBar />}
             <Switch>
-              <AdminAccessRoute path={`${path}/orders`} component={OrdersPage} />
+              <AdminAccessRoute
+                path={`${path}/orders`}
+                component={OrdersPage}
+              />
               <AdminAccessRoute path={`${path}/chat`} component={ChatPage} />
               <PageLayout mt={isBackofficeUser ? '60px' : '0'}>
                 <AdminAccessRoute exact path={path} component={Dashboard} />
-                <AdminAccessRoute path={`${path}/sharing`} component={SharingPage} />
+                <AdminAccessRoute
+                  path={`${path}/sharing`}
+                  component={SharingPage}
+                />
                 <AdminAccessRoute path={`${path}/menu`} component={Menu} />
-                <AdminAccessRoute path={`${path}/business-schedules`} component={SchedulesPage} />
-                <AdminAccessRoute path={`${path}/delivery-area`} component={DeliveryArea} />
-                <AdminAccessRoute path={`${path}/business-profile`} component={BusinessProfile} />
-                <AdminAccessRoute path={`${path}/manager-profile`} component={ManagerProfilePage} />
-                <AdminAccessRoute path={`${path}/orders-history`} component={OrdersHistoryPage} />
-                <AdminAccessRoute path={`${path}/finances`} component={FinancesPage} />
+                <AdminAccessRoute
+                  path={`${path}/business-schedules`}
+                  component={SchedulesPage}
+                />
+                <AdminAccessRoute
+                  path={`${path}/delivery-area`}
+                  component={DeliveryArea}
+                />
+                <AdminAccessRoute
+                  path={`${path}/business-profile`}
+                  component={BusinessProfile}
+                />
+                <AdminAccessRoute
+                  path={`${path}/manager-profile`}
+                  component={ManagerProfilePage}
+                />
+                <AdminAccessRoute
+                  path={`${path}/orders-history`}
+                  component={OrdersHistoryPage}
+                />
+                <AdminAccessRoute
+                  path={`${path}/finances`}
+                  component={FinancesPage}
+                />
                 <AdminAccessRoute
                   path={`${path}/banking-information`}
                   component={BankingInformation}
