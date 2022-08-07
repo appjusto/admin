@@ -14,7 +14,7 @@ import React from 'react';
 import { BOBusinessListItem } from './BOBusinessListItem';
 import { BOOrderListItem } from './BOOrderListItem';
 import { BOProfileChangesListItem } from './BOProfileChangesListItem';
-import { StaffFilter, StaffFilterOptions } from './StaffFilter';
+import { StaffFilterOptions } from './StaffFilter';
 
 type ListType = 'orders' | 'businesses' | 'profile-changes';
 
@@ -60,7 +60,6 @@ interface BOListProps extends FlexProps {
   details?: string;
   infiniteScroll?: boolean;
   scrollTopLimit?: number;
-  staffFilter?: StaffFilterOptions;
   handleStaffFilter?(value: StaffFilterOptions): void;
   loadData?(): void;
 }
@@ -73,15 +72,12 @@ export const BOList = ({
   details,
   infiniteScroll = false,
   scrollTopLimit = 240,
-  staffFilter,
   handleStaffFilter,
   loadData,
   ...props
 }: BOListProps) => {
   // refs
   const listRef = React.useRef<HTMLDivElement>(null);
-  // helpers
-  const filterActive = staffFilter && staffFilter !== 'all';
   // side effects
   React.useEffect(() => {
     if (!infiniteScroll || !listRef.current || !loadData) return;
@@ -103,7 +99,7 @@ export const BOList = ({
     <Flex
       w="100%"
       position="relative"
-      h={listType === 'orders' ? '800px' : '300px'}
+      h={listType === 'orders' ? '600px' : '300px'}
       borderRadius="lg"
       borderColor="gray.500"
       borderWidth="1px"
@@ -120,16 +116,11 @@ export const BOList = ({
         borderTopRadius="lg"
         borderBottomWidth="1px"
       >
-        <Flex
-          alignItems="center"
-          justifyContent={staffFilter ? 'space-between' : 'flex-start'}
-        >
+        <Flex alignItems="center" justifyContent={'flex-start'}>
           <HStack spacing={4}>
             <Circle minH="40px" minInlineSize="40px" px="1" bg="white">
               <Text fontSize="lg" color="black">
-                {filterActive && dataLength
-                  ? `${data.length}/${dataLength}`
-                  : data.length}
+                {data.length}
               </Text>
             </Circle>
             <Text
@@ -141,12 +132,6 @@ export const BOList = ({
               {title}
             </Text>
           </HStack>
-          {staffFilter && (
-            <StaffFilter
-              currentValue={staffFilter}
-              handleFilter={handleStaffFilter!}
-            />
-          )}
         </Flex>
       </Box>
       <ShowIf test={data.length > 0}>

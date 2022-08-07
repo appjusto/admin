@@ -5,7 +5,7 @@ import {
   ProfileChange,
   WithId,
 } from '@appjusto/types';
-import { useObserveBOActiveOrders } from 'app/api/order/useObserveBOActiveOrders';
+import { useObserveFlaggedOrders } from 'app/api/order/useObserveFlaggedOrders';
 import {
   OrderWithWarning,
   useObserveStaffOrders,
@@ -17,11 +17,17 @@ import { useContextServerTime } from '../server-time';
 
 interface ContextProps {
   // lists
-  activeOrders: WithId<Order>[];
+  // activeOrders: WithId<Order>[];
+  unsafeOrders: WithId<Order>[];
+  matchingIssueOrders: WithId<Order>[];
+  issueOrders: WithId<Order>[];
   watchedOrders: WithId<OrderWithWarning>[];
   businesses: WithId<Business>[];
   userChanges: WithId<ProfileChange>[];
-  fetchNextActiveOrders(): void;
+  // fetchNextActiveOrders(): void;
+  fetchNextUnsafeOrders(): void;
+  fetchNextIssueOrders(): void;
+  fetchNextMatchingIssueOrders(): void;
   fetchNextBusiness?(): void;
   fetchNextChanges?(): void;
 }
@@ -42,6 +48,10 @@ const statuses = [
   'dispatching',
 ] as OrderStatus[];
 
+const unsafeFlag = 'unsafe';
+const matchingFlag = 'matching';
+const issueFlag = 'issue';
+
 export const BackofficeDashboardProvider = ({ children }: Props) => {
   // context
   const { user, isBackofficeSuperuser } = useContextFirebaseUser();
@@ -50,8 +60,16 @@ export const BackofficeDashboardProvider = ({ children }: Props) => {
   const { platformParams } = usePlatformParams();
   // lists
   // const { businesses, fetchNextPage: fetchNextBusiness } = useObserveBusinesses(businessSituations);
-  const { orders: activeOrders, fetchNextOrders: fetchNextActiveOrders } =
-    useObserveBOActiveOrders(statuses, !isBackofficeSuperuser);
+  // const { orders: activeOrders, fetchNextOrders: fetchNextActiveOrders } =
+  //   useObserveBOActiveOrders(statuses, !isBackofficeSuperuser);
+  const { orders: unsafeOrders, fetchNextOrders: fetchNextUnsafeOrders } =
+    useObserveFlaggedOrders(statuses, unsafeFlag, !isBackofficeSuperuser);
+  const {
+    orders: matchingIssueOrders,
+    fetchNextOrders: fetchNextMatchingIssueOrders,
+  } = useObserveFlaggedOrders(statuses, matchingFlag, !isBackofficeSuperuser);
+  const { orders: issueOrders, fetchNextOrders: fetchNextIssueOrders } =
+    useObserveFlaggedOrders(statuses, issueFlag, !isBackofficeSuperuser);
   const watchedOrders = useObserveStaffOrders(
     getServerTime,
     statuses,
@@ -64,11 +82,17 @@ export const BackofficeDashboardProvider = ({ children }: Props) => {
   return (
     <BackofficeDashboardContext.Provider
       value={{
-        activeOrders,
+        // activeOrders,
+        unsafeOrders,
+        matchingIssueOrders,
+        issueOrders,
         watchedOrders,
         businesses: [],
         userChanges: [],
-        fetchNextActiveOrders,
+        // fetchNextActiveOrders,
+        fetchNextUnsafeOrders,
+        fetchNextMatchingIssueOrders,
+        fetchNextIssueOrders,
       }}
     >
       {children}

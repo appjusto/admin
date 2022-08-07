@@ -32,7 +32,6 @@ export const ChatPage = () => {
   const { path } = useRouteMatch();
   const history = useHistory();
   const { activeChat, chats } = useOrdersContext();
-  console.log('Chats', chats);
   // state
   const [search, setSearch] = React.useState('');
   const [dateTime, setDateTime] = React.useState('');

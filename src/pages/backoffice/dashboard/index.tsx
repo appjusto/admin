@@ -20,22 +20,26 @@ import { BOList } from './BOList';
 
 const BODashboard = () => {
   // context
-  const { userAbility, isBackofficeSuperuser } = useContextFirebaseUser();
+  const { userAbility } = useContextFirebaseUser();
   const { path } = useRouteMatch();
   const history = useHistory();
   const {
-    activeOrders,
+    // activeOrders,
+    unsafeOrders,
+    matchingIssueOrders,
+    issueOrders,
     watchedOrders,
     businesses,
     userChanges,
-    fetchNextActiveOrders,
+    // fetchNextActiveOrders,
+    fetchNextUnsafeOrders,
+    fetchNextMatchingIssueOrders,
+    fetchNextIssueOrders,
     fetchNextBusiness,
     fetchNextChanges,
   } = useContextBackofficeDashboard();
   // state
   const [dateTime, setDateTime] = React.useState('');
-  // const [listOrders, setListOrders] = React.useState<WithId<Order>[]>([]);
-  // const [staffFilter, setStaffFilter] = React.useState<StaffFilterOptions>('all');
   // helpers
   const userCanUpdateBusiness = userAbility?.can('read', 'businesses');
   // handlers
@@ -46,17 +50,6 @@ const BODashboard = () => {
   React.useEffect(() => {
     document.title = 'AppJusto | Backoffice';
   }, []);
-  // React.useEffect(() => {
-  //   if (staffFilter === 'staff') {
-  //     setListOrders(activeOrders.filter((order) =>
-  //       typeof order.staff?.id === "string"
-  //     ));
-  //   } else if (staffFilter === 'none') {
-  //     setListOrders(activeOrders.filter((order) => !order.staff));
-  //   } else {
-  //     setListOrders(activeOrders);
-  //   }
-  // }, [activeOrders, staffFilter]);
   React.useEffect(() => {
     const { date, time } = getDateTime();
     setDateTime(`${date} às ${time}`);
@@ -78,22 +71,16 @@ const BODashboard = () => {
       >
         <BOList
           display={userAbility?.can('read', 'orders') ? 'flex' : 'none'}
-          title={
-            isBackofficeSuperuser
-              ? t('Pedidos em andamento')
-              : t('Novos pedidos')
-          }
-          data={activeOrders}
-          dataLength={activeOrders.length}
+          title={t('Pedidos para triagem')}
+          data={unsafeOrders}
+          dataLength={unsafeOrders.length}
           listType="orders"
           details={t(
-            'Aqui ficarão listados todos os pedidos em andamento no momento.'
+            'Aqui ficarão listados todos os pedidos em andamento que precisam de triagem.'
           )}
-          // staffFilter={staffFilter}
-          // handleStaffFilter={(value) => setStaffFilter(value)}
           infiniteScroll
           scrollTopLimit={750}
-          loadData={fetchNextActiveOrders}
+          loadData={fetchNextUnsafeOrders}
         />
         {watchedOrders.length > 0 && (
           <BOList
@@ -103,12 +90,43 @@ const BODashboard = () => {
             dataLength={watchedOrders.length}
             listType="orders"
             details={t(
-              'Aqui ficarão listados todos os pedidos em andamento no momento.'
+              'Aqui ficarão listados todos os pedidos assumidos pelo agente.'
             )}
-            // staffFilter={staffFilter}
-            // handleStaffFilter={(value) => setStaffFilter(value)}
           />
         )}
+      </Stack>
+      <Stack
+        mt="4"
+        w="100%"
+        direction={{ base: 'column', md: 'row' }}
+        spacing={4}
+      >
+        <BOList
+          display={userAbility?.can('read', 'orders') ? 'flex' : 'none'}
+          title={t('Pedidos com problemas no matching')}
+          data={matchingIssueOrders}
+          dataLength={unsafeOrders.length}
+          listType="orders"
+          details={t(
+            'Aqui ficarão listados todos os pedidos em andamento que precisam de triagem.'
+          )}
+          infiniteScroll
+          scrollTopLimit={750}
+          loadData={fetchNextUnsafeOrders}
+        />
+        <BOList
+          display={userAbility?.can('read', 'orders') ? 'flex' : 'none'}
+          title={t('Pedidos com problemas reportados')}
+          data={issueOrders}
+          dataLength={issueOrders.length}
+          listType="orders"
+          details={t(
+            'Aqui ficarão listados todos os pedidos em andamento com problemas.'
+          )}
+          infiniteScroll
+          scrollTopLimit={750}
+          loadData={fetchNextUnsafeOrders}
+        />
       </Stack>
       <Stack
         mt="4"

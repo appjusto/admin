@@ -84,7 +84,6 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   const chats = useBusinessChats(business?.id, isChatActive);
   // handle new chat messages
   const newChatMessages = useNewChatMessages(business?.id);
-  console.log('newChatMessages', newChatMessages);
   //handlers
   const toast = useToast();
   const getOrderById = (id: string) => {

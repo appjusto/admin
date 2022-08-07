@@ -128,6 +128,29 @@ export default class OrderApi {
     return customCollectionSnapshot(q, resultHandler);
   }
 
+  observeFlaggedOrders(
+    statuses: OrderStatus[],
+    flags: string,
+    resultHandler: (
+      orders: WithId<Order>[],
+      last?: QueryDocumentSnapshot<DocumentData>
+    ) => void,
+    queryLimit: number = 10,
+    isNoStaff: boolean = true,
+    ordering: Ordering = 'asc'
+  ): Unsubscribe {
+    let q = query(
+      this.refs.getOrdersRef(),
+      orderBy('timestamps.charged', ordering),
+      where('status', 'in', statuses),
+      where('flags', 'array-contains', flags),
+      limit(queryLimit)
+    );
+    if (isNoStaff) q = query(q, where('staff', '==', null));
+    // returns the unsubscribe function
+    return customCollectionSnapshot(q, resultHandler);
+  }
+
   observeCanceledOrdersInTheLastHour(
     resultHandler: (orders: WithId<Order>[]) => void,
     queryLimit: number,
