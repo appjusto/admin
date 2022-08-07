@@ -1,4 +1,10 @@
-import { DispatchingState, IssueType, Order, OrderStatus, WithId } from '@appjusto/types';
+import {
+  DispatchingState,
+  IssueType,
+  Order,
+  OrderStatus,
+  WithId,
+} from '@appjusto/types';
 import {
   Accordion,
   AccordionButton,
@@ -16,7 +22,7 @@ import {
   DrawerOverlay,
   Flex,
   HStack,
-  Text
+  Text,
 } from '@chakra-ui/react';
 import { MutationResult } from 'app/api/mutation/useCustomMutation';
 import { useContextFirebaseUser } from 'app/state/auth/context';
@@ -39,7 +45,12 @@ interface BaseDrawerProps {
   isOpen: boolean;
   onClose(): void;
   message?: string;
-  updateState(type: string, value: OrderStatus | DispatchingState | IssueType | string): void;
+  handleIssueOrder(): void;
+  handleIssueOrderLoading: boolean;
+  updateState(
+    type: string,
+    value: OrderStatus | DispatchingState | IssueType | string
+  ): void;
   updateOrderStatus(value?: OrderStatus): void;
   updateOrderStaff(type: 'assume' | 'release'): void;
   updateStaffResult: MutationResult;
@@ -55,6 +66,8 @@ export const OrderBaseDrawer = ({
   order,
   onClose,
   message,
+  handleIssueOrder,
+  handleIssueOrderLoading,
   updateState,
   updateOrderStaff,
   updateStaffResult,
@@ -76,19 +89,28 @@ export const OrderBaseDrawer = ({
   // helpers
   const orderStatus = order?.status as OrderStatus;
   const isFlagged = order?.status === 'charged' && order?.flagged;
-  const canUpdateOrderStaff = order?.staff?.id === user?.uid || isBackofficeSuperuser;
-  const canUpdateOrder = userAbility?.can('update', { kind: 'orders', ...order });
+  const canUpdateOrderStaff =
+    order?.staff?.id === user?.uid || isBackofficeSuperuser;
+  const canUpdateOrder = userAbility?.can('update', {
+    kind: 'orders',
+    ...order,
+  });
   const canDeleteOrder =
-    order?.status === 'quote' && userAbility?.can('delete', { kind: 'orders', ...order });
+    order?.status === 'quote' &&
+    userAbility?.can('delete', { kind: 'orders', ...order });
+  const isIssueOrder =
+    order?.flags &&
+    order?.flags?.includes('issue') &&
+    userAbility?.can('update', { kind: 'orders', ...order });
   // handlers
   const handleConfirm = (removeStaff: boolean) => {
-    if(order?.scheduledTo) {
+    if (order?.scheduledTo) {
       updateOrderStatus('scheduled');
     } else {
       updateOrderStatus('confirmed');
-    };
-    if(removeStaff) updateOrderStaff("release");
-  }
+    }
+    if (removeStaff) updateOrderStaff('release');
+  };
   const handleDelete = async () => {
     if (!order?.id) {
       return dispatchAppRequestResult({
@@ -106,19 +128,35 @@ export const OrderBaseDrawer = ({
     }
     try {
       await deleteOrder(order.id);
-    } catch (error) { }
+    } catch (error) {}
   };
   //UI
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
       <DrawerOverlay>
         <DrawerContent mt={{ base: '16', lg: '0' }}>
-          <DrawerCloseButton bg="green.500" mr="12px" _focus={{ outline: 'none' }} />
+          <DrawerCloseButton
+            bg="green.500"
+            mr="12px"
+            _focus={{ outline: 'none' }}
+          />
           <DrawerHeader pb="2">
-            <Text color="black" fontSize="2xl" fontWeight="700" lineHeight="28px" mb="2">
+            <Text
+              color="black"
+              fontSize="2xl"
+              fontWeight="700"
+              lineHeight="28px"
+              mb="2"
+            >
               {order?.code ? `#${order.code}` : 'N/E'}
             </Text>
-            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+            <Text
+              mt="1"
+              fontSize="15px"
+              color="black"
+              fontWeight="700"
+              lineHeight="22px"
+            >
               {t('Agente responsável:')}{' '}
               {typeof order?.staff?.id === 'string' ? (
                 <>
@@ -135,7 +173,9 @@ export const OrderBaseDrawer = ({
                       cursor="pointer"
                       onClick={() => updateOrderStaff('release')}
                     >
-                      {updateStaffResult.isLoading ? t('(Saindo...)') : t('(Sair)')}
+                      {updateStaffResult.isLoading
+                        ? t('(Saindo...)')
+                        : t('(Sair)')}
                     </Text>
                   )}
                 </>
@@ -148,7 +188,9 @@ export const OrderBaseDrawer = ({
                   cursor="pointer"
                   onClick={() => updateOrderStaff('assume')}
                 >
-                  {updateStaffResult.isLoading ? t('Assumindo...') : t('Assumir')}
+                  {updateStaffResult.isLoading
+                    ? t('Assumindo...')
+                    : t('Assumir')}
                 </Text>
               )}
             </Text>
@@ -169,7 +211,11 @@ export const OrderBaseDrawer = ({
                       {order?.type === 'food' && (
                         <BaseDrawerInfoItem
                           label={t('Tipo de entrega:')}
-                          value={order?.fulfillment === 'take-away' ? 'Para retirar' : 'Delivery'}
+                          value={
+                            order?.fulfillment === 'take-away'
+                              ? 'Para retirar'
+                              : 'Delivery'
+                          }
                         />
                       )}
                       <BaseDrawerInfoItem
@@ -182,38 +228,58 @@ export const OrderBaseDrawer = ({
                       />
                       <BaseDrawerInfoItem
                         label={t('Tempo de preparo:')}
-                        value={t(`${order?.cookingTime ? order?.cookingTime / 60 : 'N/I'} min`)}
+                        value={t(
+                          `${
+                            order?.cookingTime ? order?.cookingTime / 60 : 'N/I'
+                          } min`
+                        )}
                       />
                       <BaseDrawerInfoItem
                         label={t('Status:')}
-                        value={orderStatus ? orderStatusPTOptions[orderStatus] : 'N/E'}
+                        value={
+                          orderStatus
+                            ? orderStatusPTOptions[orderStatus]
+                            : 'N/E'
+                        }
                       />
-                      {
-                        order?.scheduledTo && (
-                          <BaseDrawerInfoItem
-                            label={t('Agendado para:')}
-                            value={getDateAndHour(order.scheduledTo)}
-                          />
-                        )
-                      }
+                      {order?.scheduledTo && (
+                        <BaseDrawerInfoItem
+                          label={t('Agendado para:')}
+                          value={getDateAndHour(order.scheduledTo)}
+                        />
+                      )}
                       <BaseDrawerInfoItem
                         label={t('Mensagens no chat:')}
                         value={isChatMessages ? t('Sim') : t('Não')}
                       />
                       {order?.issue && (
-                        <BaseDrawerInfoItem label={t('Motivo da recusa:')} value={order.issue} />
+                        <BaseDrawerInfoItem
+                          label={t('Motivo da recusa:')}
+                          value={order.issue}
+                        />
                       )}
                     </AccordionPanel>
                     <Box>
-                      <AccordionButton mt="-20px" mb="2" p="0" _focus={{ outline: 'none'}}>
-                        <Box flex='1' textAlign='right' fontSize="15px" fontWeight="500" lineHeight="22px" mr="2">
+                      <AccordionButton
+                        mt="-20px"
+                        mb="2"
+                        p="0"
+                        _focus={{ outline: 'none' }}
+                      >
+                        <Box
+                          flex="1"
+                          textAlign="right"
+                          fontSize="15px"
+                          fontWeight="500"
+                          lineHeight="22px"
+                          mr="2"
+                        >
                           {isExpanded ? 'Ver menos' : 'Ver mais'}
                         </Box>
                         <AccordionIcon />
                       </AccordionButton>
                     </Box>
                   </>
-
                 )}
               </AccordionItem>
             </Accordion>
@@ -224,11 +290,11 @@ export const OrderBaseDrawer = ({
                 orderId={order?.id!}
                 canUpdateOrder={canUpdateOrder}
                 message={message}
-                updateMessage={(message: string) => updateState('message', message)}
-                handleConfirm={handleConfirm}
-                handleCancel={
-                  () => cancellation('prevention')
+                updateMessage={(message: string) =>
+                  updateState('message', message)
                 }
+                handleConfirm={handleConfirm}
+                handleCancel={() => cancellation('prevention')}
                 loadingState={loadingState}
               />
             )}
@@ -244,7 +310,10 @@ export const OrderBaseDrawer = ({
                     <DrawerLink to={`${url}/order`} label={t('Pedido')} />
                     <DrawerLink to={`${url}/invoices`} label={t('Faturas')} />
                     {order?.fulfillment === 'delivery' && (
-                      <DrawerLink to={`${url}/matching`} label={t('Matching')} />
+                      <DrawerLink
+                        to={`${url}/matching`}
+                        label={t('Matching')}
+                      />
                     )}
                     <DrawerLink to={`${url}/status`} label={t('Status')} />
                     <DrawerLink to={`${url}/chats`} label={t('Chats')} />
@@ -264,11 +333,23 @@ export const OrderBaseDrawer = ({
             </Flex>
             {children}
           </DrawerBody>
-          <DrawerFooter display={canUpdateOrder ? 'flex' : 'none'} borderTop="1px solid #F2F6EA">
+          <DrawerFooter
+            display={canUpdateOrder ? 'flex' : 'none'}
+            borderTop="1px solid #F2F6EA"
+          >
             <Flex w="full" direction="row" justifyContent="space-between">
               {isDeleting ? (
-                <Box mt="8" w="100%" bg="#FFF8F8" border="1px solid red" borderRadius="lg" p="6">
-                  <Text color="red">{t(`Tem certeza que deseja excluir este pedido?`)}</Text>
+                <Box
+                  mt="8"
+                  w="100%"
+                  bg="#FFF8F8"
+                  border="1px solid red"
+                  borderRadius="lg"
+                  p="6"
+                >
+                  <Text color="red">
+                    {t(`Tem certeza que deseja excluir este pedido?`)}
+                  </Text>
                   <HStack mt="4" spacing={4}>
                     <Button width="full" onClick={() => setIsDeleting(false)}>
                       {t(`Manter pedido`)}
@@ -305,6 +386,19 @@ export const OrderBaseDrawer = ({
                       onClick={() => setIsDeleting(true)}
                     >
                       {t('Excluir pedido')}
+                    </Button>
+                  )}
+                  {isIssueOrder && (
+                    <Button
+                      width="full"
+                      maxW="240px"
+                      fontSize="15px"
+                      variant="dangerLight"
+                      onClick={handleIssueOrder}
+                      isLoading={handleIssueOrderLoading}
+                      loadingText={t('Tratando')}
+                    >
+                      {t('Problema tratado')}
                     </Button>
                   )}
                 </>
