@@ -90,6 +90,8 @@
     "deploy:staging": "ENV=staging yarn deploy",
     "deploy:community": "ENV=community yarn deploy",
     "deploy:live": "ENV=live yarn deploy",
+    "deploy:staging:preview": "env-cmd -f .env.staging yarn build && firebase use app-justo-staging && firebase hosting:channel:deploy preview --expires 4d",
+    "deploy:live:preview": "env-cmd -f .env.live yarn build && firebase use app-justo-live && firebase hosting:channel:deploy preview --expires 4d",
     "postversion": "git push && git push --tags && git fetch",
     "install-local-types": "yarn remove @appjusto/types && yarn add ../types",
     "cypress:emulator": "cross-env FIREBASE_AUTH_EMULATOR_HOST=localhost:9099 FIRESTORE_EMULATOR_HOST=localhost:8080",
