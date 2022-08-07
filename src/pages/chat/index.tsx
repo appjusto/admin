@@ -31,7 +31,8 @@ export const ChatPage = () => {
   // context
   const { path } = useRouteMatch();
   const history = useHistory();
-  const { chats } = useOrdersContext();
+  const { activeChat, chats } = useOrdersContext();
+  console.log('Chats', chats);
   // state
   const [search, setSearch] = React.useState('');
   const [dateTime, setDateTime] = React.useState('');
@@ -40,9 +41,10 @@ export const ChatPage = () => {
   const closeDrawerHandler = () => history.replace(path);
   // side effects
   React.useEffect(() => {
+    if (activeChat) activeChat();
     const { date, time } = getDateTime();
     setDateTime(`${date} às ${time}`);
-  }, []);
+  }, [activeChat]);
   React.useEffect(() => {
     if (search) {
       const regexp = new RegExp(search, 'i');

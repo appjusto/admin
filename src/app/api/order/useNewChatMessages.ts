@@ -1,5 +1,6 @@
 import { isElectron } from '@firebase/util';
 import * as Sentry from '@sentry/react';
+import { useContextApi } from 'app/state/api/context';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useNotificationPermission } from 'app/utils/notifications/useNotificationPermission';
 //@ts-ignore
@@ -7,7 +8,6 @@ import newMessageSound from 'common/sounds/new-message.mp3';
 import { isEqual } from 'lodash';
 import React from 'react';
 import useSound from 'use-sound';
-import { OrderChatGroup } from '../chat/types';
 import { showNotification } from '../utils';
 import { useRedirectToOrders } from './useRedirectToOrders';
 
@@ -15,38 +15,33 @@ const isDesktopApp = isElectron();
 
 let messagesToNotify: string[] = [];
 
-export const useNewChatMessages = (chats: OrderChatGroup[]) => {
+export const useNewChatMessages = (businessId?: string) => {
   // context
+  const api = useContextApi();
   const { isBackofficeUser } = useContextFirebaseUser();
   const permission = useNotificationPermission();
-  const redirectToOrders = useRedirectToOrders(["/app/orders", "/app/chat"]);
+  const redirectToOrders = useRedirectToOrders(['/app/orders', '/app/chat']);
   // state
   const [newChatMessages, setNewChatMessages] = React.useState<string[]>([]);
   // sound
   const [playSound] = useSound(newMessageSound, { volume: 1 });
   // side effects
   React.useEffect(() => {
-    if (chats.length > 0) {
-      let unreadMessages = [] as string[];
-      chats.forEach((group) => {
-        group.counterParts.forEach((part) => {
-          if (part.unreadMessages && part.unreadMessages.length > 0) {
-            unreadMessages.push(...part.unreadMessages);
-          }
-        });
-      });
-      setNewChatMessages(unreadMessages);
-    }
-  }, [chats]);
+    if (!businessId) return;
+    const unsub = api
+      .chat()
+      .observeBusinessNewChatMessages(businessId, setNewChatMessages);
+    return () => unsub();
+  }, [api, businessId]);
   React.useEffect(() => {
     if (isBackofficeUser) return;
     if (newChatMessages.length === 0) return;
     if (!isEqual(messagesToNotify, newChatMessages)) {
-      if(isDesktopApp) {
+      if (isDesktopApp) {
         try {
-          window.electron.ipcRenderer.sendMessage('mainWindow-show')
+          window.electron.ipcRenderer.sendMessage('mainWindow-show');
         } catch (error) {
-          console.error("Unable to call mainWindow:", error);
+          console.error('Unable to call mainWindow:', error);
         }
       }
       playSound();

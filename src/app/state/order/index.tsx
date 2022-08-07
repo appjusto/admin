@@ -32,6 +32,7 @@ interface ContextProps {
   orders: WithId<Order>[];
   canceledOrders: WithId<Order>[];
   confirmedNumber: number;
+  activeChat?(): void;
   chats: OrderChatGroup[];
   newChatMessages: string[];
   fetchNextScheduledOrders(): void;
@@ -68,7 +69,6 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   const activeOrders = useObserveOrders(statuses, business?.id);
   const { canceledOrders, fetchNextCanceledOrders } =
     useObserveCanceledOrdersInTheLastHour(business?.id);
-  const chats = useBusinessChats(business?.id);
   const confirmedNumber = useObserveConfirmedOrders(business?.id);
   useObservePreparingOrders(business?.id);
   // freshdesk
@@ -76,12 +76,15 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   useFreshDesk(business?.id, business?.name, businessPhone);
   // automatic opening and closing of the business
   useBusinessOpenClose(business);
-  // handle new chat messages
-  const newChatMessages = useNewChatMessages(chats);
   //state
   const [businessAlertDisplayed, setBusinessAlertDisplayed] =
     React.useState(false);
   const [orders, setOrders] = React.useState<WithId<Order>[]>([]);
+  const [isChatActive, setIsChatActive] = React.useState(false);
+  const chats = useBusinessChats(business?.id, isChatActive);
+  // handle new chat messages
+  const newChatMessages = useNewChatMessages(business?.id);
+  console.log('newChatMessages', newChatMessages);
   //handlers
   const toast = useToast();
   const getOrderById = (id: string) => {
@@ -139,6 +142,9 @@ export const OrdersContextProvider = (props: ProviderProps) => {
     },
     [api, dispatchAppRequestResult]
   );
+  const activeChat = React.useCallback(() => {
+    setIsChatActive(true);
+  }, []);
   // side effects
   React.useEffect(() => {
     if (business?.situation !== 'approved' || business?.status !== 'open')
@@ -223,6 +229,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
         orders,
         canceledOrders,
         confirmedNumber,
+        activeChat,
         chats,
         newChatMessages,
         fetchNextCanceledOrders,
