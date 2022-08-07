@@ -112,7 +112,7 @@ const BODashboard = () => {
           )}
           infiniteScroll
           scrollTopLimit={750}
-          loadData={fetchNextUnsafeOrders}
+          loadData={fetchNextMatchingIssueOrders}
         />
         <BOList
           display={userAbility?.can('read', 'orders') ? 'flex' : 'none'}
@@ -125,7 +125,7 @@ const BODashboard = () => {
           )}
           infiniteScroll
           scrollTopLimit={750}
-          loadData={fetchNextUnsafeOrders}
+          loadData={fetchNextIssueOrders}
         />
       </Stack>
       <Stack
