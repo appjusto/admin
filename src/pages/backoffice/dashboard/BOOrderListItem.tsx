@@ -1,6 +1,5 @@
 import { WithId } from '@appjusto/types';
 import { Box, Flex, Icon, Image, Text, Wrap, WrapItem } from '@chakra-ui/react';
-import { useObserveOrderChatMessages } from 'app/api/chat/useObserveOrderChatMessages';
 import { useObserveOrderIssues } from 'app/api/order/useObserveOrderIssues';
 import { OrderWithWarning } from 'app/api/order/useObserveStaffOrders';
 import { useContextServerTime } from 'app/state/server-time';
@@ -13,7 +12,6 @@ import { RiChat3Line, RiUserSearchLine } from 'react-icons/ri';
 import { useRouteMatch } from 'react-router-dom';
 import { getTimestampMilliseconds, getTimeUntilNow } from 'utils/functions';
 import { CustomLink } from './CustomLink';
-import { OrderTracking } from './OrderTracking';
 import { getOrderMatchingColor } from './utils';
 
 interface Props {
@@ -24,16 +22,17 @@ export const BOOrderListItem = ({ order }: Props) => {
   // context
   const { url } = useRouteMatch();
   const { getServerTime } = useContextServerTime();
-  const { chatMessages } = useObserveOrderChatMessages(order.id, 1);
   const issues = useObserveOrderIssues(order.id);
   // state
   const [orderDT, setOrderDT] = React.useState<number>();
   // refs
   const itemRef = React.useRef<HTMLDivElement>(null);
   // helpers
-  const isCompact = typeof itemRef.current?.clientWidth === 'number' && itemRef.current?.clientWidth < 550;
+  const isCompact =
+    typeof itemRef.current?.clientWidth === 'number' &&
+    itemRef.current?.clientWidth < 550;
   const isStaff = typeof order.staff?.id === 'string';
-  const isMessages = chatMessages ? chatMessages?.length > 0 : false;
+  const isMessages = order.flags && order.flags.includes('chat');
   const issuesFound = issues && issues.length > 0 ? true : false;
   const isFlagged = order.status === 'charged' && order.flagged;
   const courierIconStatus = getOrderMatchingColor(
@@ -46,7 +45,9 @@ export const BOOrderListItem = ({ order }: Props) => {
   React.useEffect(() => {
     const setNewTime = () => {
       const now = getServerTime().getTime();
-      const comparisonTime = order.scheduledTo ? order.timestamps.confirmed : order.timestamps.charged;
+      const comparisonTime = order.scheduledTo
+        ? order.timestamps.confirmed
+        : order.timestamps.charged;
       const chargedOn = getTimestampMilliseconds(comparisonTime as Timestamp);
       const time = chargedOn ? getTimeUntilNow(now, chargedOn) : null;
       if (time) setOrderDT(time);
@@ -57,16 +58,20 @@ export const BOOrderListItem = ({ order }: Props) => {
   }, [getServerTime, order]);
   // UI
   return (
-    <CustomLink 
-      to={`${url}/order/${order?.id}`} 
+    <CustomLink
+      to={`${url}/order/${order?.id}`}
       bg={orderDT && orderDT > 40 ? '#FBD7D7' : 'white'}
       py={isCompact ? '3' : '4'}
     >
       <Wrap spacing={isCompact ? 2 : 6} ref={itemRef}>
-        <WrapItem w={{ base: '100%', lg: '45%' }} minW={{lg: "460px"}}>
+        <WrapItem w={{ base: '100%', lg: '45%' }} minW={{ lg: '460px' }}>
           <Flex w="100%" justifyContent="space-between" alignItems="center">
             <Box>
-              <Image src={order?.type === 'food' ? foodIcon : p2pIcon} w="24px" h="24px" />
+              <Image
+                src={order?.type === 'food' ? foodIcon : p2pIcon}
+                w="24px"
+                h="24px"
+              />
             </Box>
             <Text fontSize="sm" lineHeight="21px" color="black">
               #{order?.code}
@@ -133,12 +138,14 @@ export const BOOrderListItem = ({ order }: Props) => {
                   transform="rotate(45deg)"
                 />
               )}
-              <Icon as={MdMoped} w="20px" h="20px" color={courierIconStatus.color} />
+              <Icon
+                as={MdMoped}
+                w="20px"
+                h="20px"
+                color={courierIconStatus.color}
+              />
             </Flex>
           </Flex>
-        </WrapItem>
-        <WrapItem w={{ base: '100%', lg: '45%' }} minW={{lg: "460px"}}>
-          <OrderTracking orderId={order.id} warning={order.warning} isCompact />
         </WrapItem>
       </Wrap>
     </CustomLink>
