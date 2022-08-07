@@ -1,6 +1,6 @@
 import { useContextApi } from 'app/state/api/context';
-import React from 'react';
 import dayjs from 'dayjs';
+import React from 'react';
 
 export const useObserveNewConsumers = () => {
   // context
@@ -10,10 +10,11 @@ export const useObserveNewConsumers = () => {
   const [date, setDate] = React.useState(new Date());
   // side effects
   React.useEffect(() => {
-    const unsub = api.consumer().observeNewConsumers((consumers) => {
-      setConsumers(consumers.length);
-    }, dayjs(date).startOf('day').toDate());
-    return () => unsub();
+    // const unsub = api.consumer().observeNewConsumers((consumers) => {
+    //   setConsumers(consumers.length);
+    // }, dayjs(date).startOf('day').toDate());
+    // return () => unsub();
+    setConsumers(0);
   }, [date, api]);
   // update date reference
   React.useEffect(() => {

@@ -1,17 +1,17 @@
+import { Order, WithId } from '@appjusto/types';
 import { useContextApi } from 'app/state/api/context';
-import { WithId, Order, OrderStatus } from '@appjusto/types';
-import React from 'react';
 import dayjs from 'dayjs';
+import React from 'react';
 
-const statuses = [
-  'declined',
-  'confirmed',
-  'preparing',
-  'ready',
-  'dispatching',
-  'delivered',
-  'canceled',
-] as OrderStatus[];
+// const statuses = [
+//   'declined',
+//   'confirmed',
+//   'preparing',
+//   'ready',
+//   'dispatching',
+//   'delivered',
+//   'canceled',
+// ] as OrderStatus[];
 
 export const useObserveBODashboardOrders = () => {
   // context
@@ -20,15 +20,17 @@ export const useObserveBODashboardOrders = () => {
   const [date, setDate] = React.useState(new Date());
   const [orders, setOrders] = React.useState<WithId<Order>[] | null>();
   const [todayOrders, setTodayOrders] = React.useState<number>();
-  const [todayDeliveredOrders, setTodayDeliveredOrders] = React.useState<number>();
+  const [todayDeliveredOrders, setTodayDeliveredOrders] =
+    React.useState<number>();
   const [todayValue, setTodayValue] = React.useState<number>();
   const [todayAverage, setTodayAverage] = React.useState<number>();
   // side effects
   React.useEffect(() => {
-    const unsub = api
-      .order()
-      .observeBODashboardOrders(statuses, setOrders, dayjs(date).startOf('day').toDate());
-    return () => unsub();
+    // const unsub = api
+    //   .order()
+    //   .observeBODashboardOrders(statuses, setOrders, dayjs(date).startOf('day').toDate());
+    // return () => unsub();
+    setOrders([]);
   }, [api, date]);
   React.useEffect(() => {
     const diff = dayjs(date).add(1, 'day').diff(date);
@@ -51,7 +53,8 @@ export const useObserveBODashboardOrders = () => {
   // orders average
   React.useEffect(() => {
     if (todayDeliveredOrders === undefined || todayValue === undefined) return;
-    if (todayDeliveredOrders === 0 || todayValue === 0) return setTodayAverage(0);
+    if (todayDeliveredOrders === 0 || todayValue === 0)
+      return setTodayAverage(0);
     setTodayAverage(todayValue / todayDeliveredOrders);
   }, [todayDeliveredOrders, todayValue]);
   // return

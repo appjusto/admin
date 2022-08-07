@@ -9,10 +9,11 @@ export const useObserveCouriersByStatus = (statuses: CourierStatus[]) => {
   const [couriers, setCouriers] = React.useState<number>();
   // side effects
   React.useEffect(() => {
-    const unsub = api.courier().observeCouriersByStatus(statuses, (couriers) => {
-      setCouriers(couriers.length);
-    });
-    return () => unsub();
+    // const unsub = api.courier().observeCouriersByStatus(statuses, (couriers) => {
+    //   setCouriers(couriers.length);
+    // });
+    // return () => unsub();
+    setCouriers(0);
   }, [api, statuses]);
   // return
   return couriers;
