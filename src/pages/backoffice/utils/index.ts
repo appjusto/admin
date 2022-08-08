@@ -77,6 +77,12 @@ export const invoiceTypePTOptions = {
   tip: 'Gorjeta',
 };
 
+export const paymentMethodPTOptions = {
+  credit_card: 'Cartão de crédito',
+  pix: 'Pix',
+  vr: 'VR',
+};
+
 export const invoiceStatusPTOptions = {
   in_analysis: 'Em análise',
   created: 'Criada',
@@ -157,6 +163,8 @@ export const getEditableProfile = (profile: any, isEditingEmail: boolean) => {
   if (isEditingEmail) omittedKeys.pop();
   const editable = omit(profile, omittedKeys);
   const serialized = omitBy(editable, (value) => !value);
-  serialized.profileIssuesMessage = !isEmpty(profile.profileIssuesMessage) ? profile.profileIssuesMessage : null;
+  serialized.profileIssuesMessage = !isEmpty(profile.profileIssuesMessage)
+    ? profile.profileIssuesMessage
+    : null;
   return serialized;
 };
