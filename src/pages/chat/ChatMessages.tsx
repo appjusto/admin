@@ -2,6 +2,8 @@ import { ChatMessage, WithId } from '@appjusto/types';
 import { Box, Flex, HStack, Image, Text } from '@chakra-ui/react';
 import managerIcon from 'common/img/manager.svg';
 import { FieldValue } from 'firebase/firestore';
+import { isEqual } from 'lodash';
+import React from 'react';
 import { getDateAndHour } from 'utils/functions';
 
 interface ChatMessagesProps {
@@ -10,7 +12,7 @@ interface ChatMessagesProps {
   image?: string | null;
 }
 
-export const ChatMessages = ({ name, messages, image }: ChatMessagesProps) => {
+const ChatMessages = ({ name, messages, image }: ChatMessagesProps) => {
   // helpers
   const getTime = (timestamp: FieldValue) => {
     if (!timestamp) return;
@@ -59,3 +61,12 @@ export const ChatMessages = ({ name, messages, image }: ChatMessagesProps) => {
     </Box>
   );
 };
+
+const areEqual = (
+  prevProps: ChatMessagesProps,
+  nextProps: ChatMessagesProps
+) => {
+  return isEqual(prevProps, nextProps);
+};
+
+export default React.memo(ChatMessages, areEqual);

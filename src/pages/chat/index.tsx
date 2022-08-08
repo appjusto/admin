@@ -25,7 +25,7 @@ import {
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { ChatDrawer } from './ChatDrawer';
-import { ChatsTable } from './ChatsTable';
+import ChatsTable from './ChatsTable';
 
 export const ChatPage = () => {
   // context

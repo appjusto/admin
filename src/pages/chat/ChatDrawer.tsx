@@ -25,7 +25,7 @@ import React, { KeyboardEvent } from 'react';
 import { useParams } from 'react-router';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
-import { ChatMessages } from './ChatMessages';
+import ChatMessages from './ChatMessages';
 
 interface ChatDrawerProps {
   isOpen: boolean;

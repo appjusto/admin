@@ -212,7 +212,7 @@ export const OrdersKanban = () => {
                 ...ordersByStatus['dispatching'],
               ]}
               details={t(
-                'Aqui você verá os pedidos aguardando retirada pelo entregador.'
+                'Aqui você verá os pedidos aguardando retirada pelo entregador e os pedidos que estão a caminho da entrega.'
               )}
             />
             <OrdersKanbanList

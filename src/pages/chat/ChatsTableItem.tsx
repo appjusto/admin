@@ -1,7 +1,9 @@
 import { Icon, Td, Text, Tr, VStack } from '@chakra-ui/react';
 import { OrderChatGroup } from 'app/api/chat/types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
+import { isEqual } from 'lodash';
 import { flavorsPTOptions } from 'pages/backoffice/utils';
+import React from 'react';
 import { useRouteMatch } from 'react-router';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
@@ -10,7 +12,7 @@ interface ChatsTableItemProps {
   chat: OrderChatGroup;
 }
 
-export const ChatsTableItem = ({ chat }: ChatsTableItemProps) => {
+const ChatsTableItem = ({ chat }: ChatsTableItemProps) => {
   // context
   const { path } = useRouteMatch();
   //  UI
@@ -46,7 +48,9 @@ export const ChatsTableItem = ({ chat }: ChatsTableItemProps) => {
               mt="-2px"
               viewBox="0 0 200 200"
               color={
-                part.unreadMessages && part.unreadMessages?.length > 0 ? 'green.500' : 'gray.50'
+                part.unreadMessages && part.unreadMessages?.length > 0
+                  ? 'green.500'
+                  : 'gray.50'
               }
             >
               <path
@@ -75,3 +79,12 @@ export const ChatsTableItem = ({ chat }: ChatsTableItemProps) => {
     </Tr>
   );
 };
+
+const areEqual = (
+  prevProps: ChatsTableItemProps,
+  nextProps: ChatsTableItemProps
+) => {
+  return isEqual(prevProps, nextProps);
+};
+
+export default React.memo(ChatsTableItem, areEqual);
