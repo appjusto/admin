@@ -131,7 +131,6 @@ export const BOOrderListItem = ({ listType, order }: Props) => {
   }
   if (listType === 'orders-watched' || listType === 'orders-matching') {
     iconsConfig.courierIconStatus = getOrderMatchingColor(
-      order.fulfillment,
       order.status,
       order.dispatchingStatus,
       order.courier?.id
