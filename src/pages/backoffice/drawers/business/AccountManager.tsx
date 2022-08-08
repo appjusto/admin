@@ -1,6 +1,15 @@
-import { StaffProfile, WithId } from '@appjusto/types';
 import { ArrowDownIcon } from '@chakra-ui/icons';
-import { Box, Button, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Table,
+  Tbody,
+  Td,
+  Text,
+  Th,
+  Thead,
+  Tr,
+} from '@chakra-ui/react';
 import { useStaffs } from 'app/api/staff/useStaffs';
 import { useContextBusinessBackoffice } from 'app/state/business/businessBOContext';
 import { CustomInput } from 'common/components/form/input/CustomInput';
@@ -14,32 +23,21 @@ export const AccountManager = () => {
   //context
   const { business } = useContextBusinessBackoffice();
   // state
-  const [accountManager, setAccountManager] = React.useState<WithId<StaffProfile> | null>();
   const [search, setSearch] = React.useState('');
   const { staffs, fetchNextPage } = useStaffs(search);
-  // side effects
-  React.useEffect(() => {
-    if(business?.accountManagerId === undefined || !staffs) return;
-    if(business.accountManagerId === null) {
-      setAccountManager(null);
-      return;
-    }
-    const manager = staffs.find(staff => staff.id === business?.accountManagerId);
-    setAccountManager(manager);
-  }, [business?.accountManagerId, staffs])
   //UI
   return (
     <Box mt="6">
       <SectionTitle>{t('Gerente da conta')}</SectionTitle>
-      {
-        accountManager ? (
-          <AccountManagerCard accountManager={accountManager} />
-          ) : (
-          <Box mt="4">
-            <Text>{t('Este restaurante ainda não possui um gerente de contas')}</Text>
-          </Box>
-        )
-      }
+      {business?.accountManagerId ? (
+        <AccountManagerCard accountManagerId={business.accountManagerId} />
+      ) : (
+        <Box mt="4">
+          <Text>
+            {t('Este restaurante ainda não possui um gerente de contas')}
+          </Text>
+        </Box>
+      )}
       <SectionTitle>{t('Agentes')}</SectionTitle>
       <CustomInput
         mr="0"

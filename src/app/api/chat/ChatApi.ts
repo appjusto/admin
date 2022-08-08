@@ -97,7 +97,6 @@ export default class ChatApi {
       q,
       (snapshot) => {
         const ids = snapshot.docs.map((message) => message.id);
-        console.log('snapshot.docs', snapshot.docs);
         resultHandler(ids);
       },
       (error) => {
