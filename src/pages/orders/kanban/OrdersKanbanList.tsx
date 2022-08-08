@@ -1,28 +1,34 @@
-import { Order, WithId } from '@appjusto/types';
+import { Order, OrderStatus, WithId } from '@appjusto/types';
 import { Box, Circle, Flex, FlexProps, Stack, Text } from '@chakra-ui/react';
 import { ShowIf } from 'core/components/ShowIf';
 import React from 'react';
-import { OrdersKanbanListItem } from './OrdersKanbanListItem';
+import OrderCanceledCard from './items/OrderCanceledCard';
+import { OrderConfirmedCard } from './items/OrderConfirmedCard';
+import { OrderPreparingCard } from './items/OrderPreparingCard';
+import { OrderReadyCard } from './items/OrderReadyCard';
+import OrderScheduledCard from './items/OrderScheduledCard';
 
 interface OrdersKanbanListProps extends FlexProps {
+  type: OrderStatus;
   title: string;
   orders: WithId<Order>[];
   dataLength?: number;
   details?: string;
-  infiniteScroll?: boolean,
-  scrollTopLimit?: number,
+  infiniteScroll?: boolean;
+  scrollTopLimit?: number;
   loadData?(): void;
 }
 
-export const OrdersKanbanList = ({ 
-  title, 
-  orders, 
+export const OrdersKanbanList = ({
+  type,
+  title,
+  orders,
   dataLength,
-  details, 
+  details,
   infiniteScroll = false,
   scrollTopLimit = 550,
   loadData,
-  ...props 
+  ...props
 }: OrdersKanbanListProps) => {
   // refs
   const listRef = React.useRef<HTMLDivElement>(null);
@@ -33,10 +39,12 @@ export const OrdersKanbanList = ({
     if (!infiniteScroll || !listRef.current || !loadData) return;
     const handleScrollTop = () => {
       if (listRef.current) {
-        let shouldLoad = listRef.current.scrollHeight - listRef.current.scrollTop < scrollTopLimit;
+        let shouldLoad =
+          listRef.current.scrollHeight - listRef.current.scrollTop <
+          scrollTopLimit;
         if (shouldLoad) {
-          loadData()
-        };
+          loadData();
+        }
       }
     };
     listRef.current.addEventListener('scroll', handleScrollTop);
@@ -87,9 +95,26 @@ export const OrdersKanbanList = ({
       <ShowIf test={orders.length > 0}>
         {() => (
           <Stack flex={1} p="4" overflowX="hidden" ref={listRef}>
-            {orders.map((order) => (
-              <OrdersKanbanListItem key={order.id} order={order} />
-            ))}
+            {type === 'scheduled' &&
+              orders.map((order) => (
+                <OrderScheduledCard key={order.id} order={order} />
+              ))}
+            {type === 'confirmed' &&
+              orders.map((order) => (
+                <OrderConfirmedCard key={order.id} order={order} />
+              ))}
+            {type === 'preparing' &&
+              orders.map((order) => (
+                <OrderPreparingCard key={order.id} order={order} />
+              ))}
+            {type === 'ready' &&
+              orders.map((order) => (
+                <OrderReadyCard key={order.id} order={order} />
+              ))}
+            {type === 'canceled' &&
+              orders.map((order) => (
+                <OrderCanceledCard key={order.id} order={order} />
+              ))}
           </Stack>
         )}
       </ShowIf>

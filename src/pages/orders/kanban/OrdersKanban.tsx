@@ -175,6 +175,7 @@ export const OrdersKanban = () => {
         >
           {scheduledOrders.length > 0 && (
             <OrdersKanbanList
+              type="scheduled"
               title={t('Agendados para hoje')}
               orders={scheduledOrders}
               dataLength={scheduledOrdersNumber}
@@ -186,6 +187,7 @@ export const OrdersKanban = () => {
           )}
           <Stack w="100%" direction={{ base: 'column', md: 'row' }} spacing={4}>
             <OrdersKanbanList
+              type="confirmed"
               title={t('Pedidos a confirmar')}
               orders={ordersByStatus['confirmed']}
               details={t(
@@ -193,6 +195,7 @@ export const OrdersKanban = () => {
               )}
             />
             <OrdersKanbanList
+              type="preparing"
               title={t('Em preparação')}
               orders={ordersByStatus['preparing']}
               details={t(
@@ -202,6 +205,7 @@ export const OrdersKanban = () => {
           </Stack>
           <Stack w="100%" direction={{ base: 'column', md: 'row' }} spacing={4}>
             <OrdersKanbanList
+              type="ready"
               title={t('Retirada/entrega')}
               orders={[
                 ...ordersByStatus['ready'],
@@ -212,6 +216,7 @@ export const OrdersKanban = () => {
               )}
             />
             <OrdersKanbanList
+              type="canceled"
               title={t('Pedidos cancelados')}
               orders={canceledOrders}
               details={t('Aqui você verá os pedidos cancelados.')}
