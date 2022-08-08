@@ -1,7 +1,7 @@
 import { WithId } from '@appjusto/types';
-import { Box, Flex, Icon, Image, Text, Wrap, WrapItem } from '@chakra-ui/react';
-import { useObserveOrderIssues } from 'app/api/order/useObserveOrderIssues';
+import { Box, Flex, Icon, Image, Text } from '@chakra-ui/react';
 import { OrderWithWarning } from 'app/api/order/useObserveStaffOrders';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextServerTime } from 'app/state/server-time';
 import foodIcon from 'common/img/bo-food.svg';
 import p2pIcon from 'common/img/bo-p2p.svg';
@@ -11,36 +11,132 @@ import { MdErrorOutline, MdMoped, MdPolicy } from 'react-icons/md';
 import { RiChat3Line, RiUserSearchLine } from 'react-icons/ri';
 import { useRouteMatch } from 'react-router-dom';
 import { getTimestampMilliseconds, getTimeUntilNow } from 'utils/functions';
+import { ListType } from './BOList';
 import { CustomLink } from './CustomLink';
 import { getOrderMatchingColor } from './utils';
 
 interface Props {
+  listType: ListType;
   order: WithId<OrderWithWarning>;
 }
 
-export const BOOrderListItem = ({ order }: Props) => {
+type IconsConfig = {
+  isStaff?: boolean;
+  isUnsafe?: boolean;
+  isIssue?: boolean;
+  isMessages?: boolean;
+  courierIconStatus?: { bg: string; color: string };
+};
+
+const renderIcons = (iconsConfig: IconsConfig) => {
+  // props
+  const { isStaff, isUnsafe, isIssue, isMessages, courierIconStatus } =
+    iconsConfig;
+  // UI
+  return (
+    <>
+      {isStaff !== undefined && (
+        <Flex
+          w="24px"
+          h="24px"
+          justifyContent="center"
+          alignItems="center"
+          bg={isStaff ? '#6CE787' : 'none'}
+          borderRadius="lg"
+        >
+          <RiUserSearchLine color={isStaff ? 'black' : '#C8D7CB'} />
+        </Flex>
+      )}
+      {isUnsafe !== undefined && (
+        <Flex
+          w="24px"
+          h="24px"
+          justifyContent="center"
+          alignItems="center"
+          borderRadius="12px"
+          border="2px solid"
+          borderColor={isUnsafe ? 'red' : 'transparent'}
+        >
+          <MdPolicy color={isUnsafe ? 'red' : '#C8D7CB'} />
+        </Flex>
+      )}
+      {isIssue !== undefined && (
+        <Flex
+          w="24px"
+          h="24px"
+          justifyContent="center"
+          alignItems="center"
+          bg={isIssue ? 'red' : 'none'}
+          borderRadius="lg"
+        >
+          <MdErrorOutline color={isIssue ? 'white' : '#C8D7CB'} />
+        </Flex>
+      )}
+      {isMessages !== undefined && (
+        <Flex
+          w="24px"
+          h="24px"
+          justifyContent="center"
+          alignItems="center"
+          bg={isMessages ? '#6CE787' : 'none'}
+          borderRadius="lg"
+        >
+          <Icon as={RiChat3Line} color={isMessages ? 'black' : '#C8D7CB'} />
+        </Flex>
+      )}
+      {courierIconStatus !== undefined && (
+        <Flex
+          w="24px"
+          h="24px"
+          position="relative"
+          justifyContent="center"
+          alignItems="center"
+          bg={courierIconStatus.bg}
+          borderRadius="lg"
+        >
+          <Icon
+            as={MdMoped}
+            w="20px"
+            h="20px"
+            color={courierIconStatus.color}
+          />
+        </Flex>
+      )}
+    </>
+  );
+};
+
+export const BOOrderListItem = ({ listType, order }: Props) => {
   // context
   const { url } = useRouteMatch();
   const { getServerTime } = useContextServerTime();
-  const issues = useObserveOrderIssues(order.id);
+  const { isBackofficeSuperuser } = useContextFirebaseUser();
   // state
   const [orderDT, setOrderDT] = React.useState<number>();
   // refs
   const itemRef = React.useRef<HTMLDivElement>(null);
   // helpers
-  const isCompact =
-    typeof itemRef.current?.clientWidth === 'number' &&
-    itemRef.current?.clientWidth < 550;
-  const isStaff = typeof order.staff?.id === 'string';
-  const isMessages = order.flags && order.flags.includes('chat');
-  const issuesFound = issues && issues.length > 0 ? true : false;
-  const isFlagged = order.status === 'charged' && order.flagged;
-  const courierIconStatus = getOrderMatchingColor(
-    order.fulfillment,
-    order.status,
-    order.dispatchingStatus,
-    order.courier?.id
-  );
+  let iconsConfig = {} as IconsConfig;
+  if (isBackofficeSuperuser) {
+    iconsConfig.isStaff = typeof order.staff?.id === 'string';
+  }
+  if (listType === 'orders-watched') {
+    iconsConfig.isMessages = order.flags && order.flags.includes('chat');
+  }
+  if (listType === 'orders-watched' || listType === 'orders-unsafe') {
+    iconsConfig.isUnsafe = order.flags && order.flags.includes('unsafe');
+  }
+  if (listType === 'orders-watched' || listType === 'orders-issue') {
+    iconsConfig.isIssue = order.flags && order.flags.includes('issue');
+  }
+  if (listType === 'orders-watched' || listType === 'orders-matching') {
+    iconsConfig.courierIconStatus = getOrderMatchingColor(
+      order.fulfillment,
+      order.status,
+      order.dispatchingStatus,
+      order.courier?.id
+    );
+  }
   // side effects
   React.useEffect(() => {
     const setNewTime = () => {
@@ -61,93 +157,24 @@ export const BOOrderListItem = ({ order }: Props) => {
     <CustomLink
       to={`${url}/order/${order?.id}`}
       bg={orderDT && orderDT > 40 ? '#FBD7D7' : 'white'}
-      py={isCompact ? '3' : '4'}
+      py="4"
     >
-      <Wrap spacing={isCompact ? 2 : 6} ref={itemRef}>
-        <WrapItem w={{ base: '100%', lg: '45%' }} minW={{ lg: '460px' }}>
-          <Flex w="100%" justifyContent="space-between" alignItems="center">
-            <Box>
-              <Image
-                src={order?.type === 'food' ? foodIcon : p2pIcon}
-                w="24px"
-                h="24px"
-              />
-            </Box>
-            <Text fontSize="sm" lineHeight="21px" color="black">
-              #{order?.code}
-            </Text>
-            <Text fontSize="sm" lineHeight="21px">
-              {orderDT ? `${orderDT}min` : 'Agora'}
-            </Text>
-            <Flex
-              w="24px"
-              h="24px"
-              justifyContent="center"
-              alignItems="center"
-              bg={isStaff ? '#6CE787' : 'none'}
-              borderRadius="lg"
-            >
-              <RiUserSearchLine color={isStaff ? 'black' : '#C8D7CB'} />
-            </Flex>
-            <Flex
-              w="24px"
-              h="24px"
-              justifyContent="center"
-              alignItems="center"
-              borderRadius="12px"
-              border="2px solid"
-              borderColor={isFlagged ? 'red' : 'transparent'}
-            >
-              <MdPolicy color={isFlagged ? 'red' : '#C8D7CB'} />
-            </Flex>
-            <Flex
-              w="24px"
-              h="24px"
-              justifyContent="center"
-              alignItems="center"
-              bg={issuesFound ? 'red' : 'none'}
-              borderRadius="lg"
-            >
-              <MdErrorOutline color={issuesFound ? 'white' : '#C8D7CB'} />
-            </Flex>
-            <Flex
-              w="24px"
-              h="24px"
-              justifyContent="center"
-              alignItems="center"
-              bg={isMessages ? '#6CE787' : 'none'}
-              borderRadius="lg"
-            >
-              <Icon as={RiChat3Line} color={isMessages ? 'black' : '#C8D7CB'} />
-            </Flex>
-            <Flex
-              w="24px"
-              h="24px"
-              position="relative"
-              justifyContent="center"
-              alignItems="center"
-              bg={courierIconStatus.bg}
-              borderRadius="lg"
-            >
-              {order.fulfillment !== 'delivery' && (
-                <Box
-                  w="100%"
-                  h="2px"
-                  position="absolute"
-                  bgColor="#C8D7CB"
-                  transform="rotate(45deg)"
-                />
-              )}
-              <Icon
-                as={MdMoped}
-                w="20px"
-                h="20px"
-                color={courierIconStatus.color}
-              />
-            </Flex>
-          </Flex>
-        </WrapItem>
-      </Wrap>
+      <Flex ref={itemRef} flexDir="row" justifyContent="space-between">
+        <Box>
+          <Image
+            src={order?.type === 'food' ? foodIcon : p2pIcon}
+            w="24px"
+            h="24px"
+          />
+        </Box>
+        <Text fontSize="sm" lineHeight="21px" color="black">
+          #{order?.code}
+        </Text>
+        <Text fontSize="sm" lineHeight="21px">
+          {orderDT ? `${orderDT}min` : 'Agora'}
+        </Text>
+        {renderIcons(iconsConfig)}
+      </Flex>
     </CustomLink>
   );
 };

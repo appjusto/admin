@@ -1,4 +1,4 @@
-import { Stack } from '@chakra-ui/react';
+import { Box, Stack } from '@chakra-ui/react';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBackofficeDashboard } from 'app/state/dashboards/backoffice';
 import { DirectAccessById } from 'common/components/backoffice/DirectAccessById';
@@ -63,6 +63,17 @@ const BODashboard = () => {
         showVersion
       />
       <DirectAccessById />
+      <Box mt="4">
+        {watchedOrders.length > 0 && (
+          <BOList
+            display={userAbility?.can('read', 'orders') ? 'flex' : 'none'}
+            title={t('Meus pedidos')}
+            data={watchedOrders}
+            dataLength={watchedOrders.length}
+            listType="orders-watched"
+          />
+        )}
+      </Box>
       <Stack
         mt="4"
         w="100%"
@@ -74,7 +85,7 @@ const BODashboard = () => {
           title={t('Pedidos para triagem')}
           data={unsafeOrders}
           dataLength={unsafeOrders.length}
-          listType="orders"
+          listType="orders-unsafe"
           details={t(
             'Aqui ficarão listados todos os pedidos em andamento que precisam de triagem.'
           )}
@@ -82,33 +93,14 @@ const BODashboard = () => {
           scrollTopLimit={750}
           loadData={fetchNextUnsafeOrders}
         />
-        {watchedOrders.length > 0 && (
-          <BOList
-            display={userAbility?.can('read', 'orders') ? 'flex' : 'none'}
-            title={t('Meus pedidos')}
-            data={watchedOrders}
-            dataLength={watchedOrders.length}
-            listType="orders"
-            details={t(
-              'Aqui ficarão listados todos os pedidos assumidos pelo agente.'
-            )}
-          />
-        )}
-      </Stack>
-      <Stack
-        mt="4"
-        w="100%"
-        direction={{ base: 'column', md: 'row' }}
-        spacing={4}
-      >
         <BOList
           display={userAbility?.can('read', 'orders') ? 'flex' : 'none'}
           title={t('Pedidos com problemas no matching')}
           data={matchingIssueOrders}
           dataLength={unsafeOrders.length}
-          listType="orders"
+          listType="orders-matching"
           details={t(
-            'Aqui ficarão listados todos os pedidos em andamento que precisam de triagem.'
+            'Aqui ficarão listados todos os pedidos em andamento com atraso no matching.'
           )}
           infiniteScroll
           scrollTopLimit={750}
@@ -119,9 +111,9 @@ const BODashboard = () => {
           title={t('Pedidos com problemas reportados')}
           data={issueOrders}
           dataLength={issueOrders.length}
-          listType="orders"
+          listType="orders-issue"
           details={t(
-            'Aqui ficarão listados todos os pedidos em andamento com problemas.'
+            'Aqui ficarão listados todos os pedidos em andamento com problemas reportados.'
           )}
           infiniteScroll
           scrollTopLimit={750}

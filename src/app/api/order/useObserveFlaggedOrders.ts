@@ -11,7 +11,7 @@ export const useObserveFlaggedOrders = (
   const api = useContextApi();
   // state
   const [orders, setOrders] = React.useState<WithId<Order>[]>([]);
-  const [queryLimit, setQueryLimit] = React.useState(15);
+  const [queryLimit, setQueryLimit] = React.useState(10);
   // handlers
   const fetchNextOrders = React.useCallback(() => {
     setQueryLimit((prev) => {

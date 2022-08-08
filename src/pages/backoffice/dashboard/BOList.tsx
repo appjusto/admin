@@ -1,6 +1,7 @@
-import { Business, ProfileChange, WithId } from '@appjusto/types';
+import { Business, Order, ProfileChange, WithId } from '@appjusto/types';
 import {
   Box,
+  Center,
   Circle,
   Flex,
   FlexProps,
@@ -16,32 +17,26 @@ import { BOOrderListItem } from './BOOrderListItem';
 import { BOProfileChangesListItem } from './BOProfileChangesListItem';
 import { StaffFilterOptions } from './StaffFilter';
 
-type ListType = 'orders' | 'businesses' | 'profile-changes';
-
-const sortByWarning = (
-  a: WithId<OrderWithWarning>,
-  b: WithId<OrderWithWarning>
-) => {
-  if ((a.warning && b.warning) || (!a.warning && !b.warning)) return 0;
-  else if (a.warning && !b.warning) return -1;
-  else return 1;
-};
+export type ListType =
+  | 'orders-unsafe'
+  | 'orders-matching'
+  | 'orders-issue'
+  | 'orders-watched'
+  | 'businesses'
+  | 'profile-changes';
 
 const renderList = (
-  data:
-    | WithId<Business>[]
-    | WithId<OrderWithWarning>[]
-    | WithId<ProfileChange>[],
+  data: WithId<Business>[] | WithId<Order>[] | WithId<ProfileChange>[],
   listType: ListType
 ) => {
   if (listType === 'businesses') {
     return (data as WithId<Business>[]).map((item) => (
       <BOBusinessListItem key={item.id} business={item} />
     ));
-  } else if (listType === 'orders') {
-    return (data as WithId<OrderWithWarning>[])
-      .sort(sortByWarning)
-      .map((item) => <BOOrderListItem key={item.id} order={item} />);
+  } else if (listType.includes('orders')) {
+    return (data as WithId<Order>[]).map((item) => (
+      <BOOrderListItem key={item.id} listType={listType} order={item} />
+    ));
   } else {
     return (data as WithId<ProfileChange>[]).map((item) => (
       <BOProfileChangesListItem key={item.id} changes={item} />
@@ -78,6 +73,10 @@ export const BOList = ({
 }: BOListProps) => {
   // refs
   const listRef = React.useRef<HTMLDivElement>(null);
+  const listHeight =
+    listType.includes('orders') && listType !== 'orders-watched'
+      ? '600px'
+      : '300px';
   // side effects
   React.useEffect(() => {
     if (!infiniteScroll || !listRef.current || !loadData) return;
@@ -99,7 +98,7 @@ export const BOList = ({
     <Flex
       w="100%"
       position="relative"
-      h={listType === 'orders' ? '600px' : '300px'}
+      h={listHeight}
       borderRadius="lg"
       borderColor="gray.500"
       borderWidth="1px"
@@ -134,6 +133,15 @@ export const BOList = ({
           </HStack>
         </Flex>
       </Box>
+      <ShowIf test={data.length === 0}>
+        {() => (
+          <Center ref={listRef} flex={1} p="4" overflowX="hidden">
+            <Text color="gray.600" textAlign="center">
+              {details}
+            </Text>
+          </Center>
+        )}
+      </ShowIf>
       <ShowIf test={data.length > 0}>
         {() => (
           <VStack ref={listRef} flex={1} p="4" overflowX="hidden">
