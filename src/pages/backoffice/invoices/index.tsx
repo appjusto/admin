@@ -12,7 +12,7 @@ import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import PageHeader from '../../PageHeader';
-import { InvoiceDrawer } from '../drawers/invoice';
+import InvoiceDrawer from '../drawers/invoice';
 import { InvoicesTable } from './InvoicesTable';
 
 const InvoicesPage = () => {

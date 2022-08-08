@@ -14,7 +14,6 @@ import {
 import { useManager } from 'app/api/manager/useManager';
 import { useUpdateManagerProfile } from 'app/api/manager/useUpdateManagerProfile';
 import { situationPTOptions } from 'pages/backoffice/utils';
-import React from 'react';
 import { useParams } from 'react-router';
 import { useHistory } from 'react-router-dom';
 import { getDateAndHour } from 'utils/functions';
@@ -24,31 +23,85 @@ import { ManagerForm } from './ManagerForm';
 const FetchingHeader = () => {
   return (
     <DrawerHeader pb="2">
-      <Text color="black" fontSize="2xl" fontWeight="700" lineHeight="28px" mb="2">
+      <Text
+        color="black"
+        fontSize="2xl"
+        fontWeight="700"
+        lineHeight="28px"
+        mb="2"
+      >
         {t('Colaborador')}
       </Text>
-      <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+      <Text
+        mt="1"
+        fontSize="15px"
+        color="black"
+        fontWeight="700"
+        lineHeight="22px"
+      >
         {t('Criado em:')} <Skeleton as="span" maxW="100px" />
       </Text>
-      <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+      <Text
+        mt="1"
+        fontSize="15px"
+        color="black"
+        fontWeight="700"
+        lineHeight="22px"
+      >
         {t('Atualizado em:')} <Skeleton as="span" maxW="100px" />
       </Text>
-      <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+      <Text
+        mt="1"
+        fontSize="15px"
+        color="black"
+        fontWeight="700"
+        lineHeight="22px"
+      >
         {t('Senha ativa:')} <Skeleton as="span" maxW="100px" />
       </Text>
-      <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+      <Text
+        mt="1"
+        fontSize="15px"
+        color="black"
+        fontWeight="700"
+        lineHeight="22px"
+      >
         {t('Situação:')} <Skeleton as="span" maxW="100px" />
       </Text>
-      <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+      <Text
+        mt="1"
+        fontSize="15px"
+        color="black"
+        fontWeight="700"
+        lineHeight="22px"
+      >
         {t('Versão mobile:')} <Skeleton as="span" maxW="100px" />
       </Text>
-      <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+      <Text
+        mt="1"
+        fontSize="15px"
+        color="black"
+        fontWeight="700"
+        lineHeight="22px"
+      >
         {t('Versão web:')} <Skeleton as="span" maxW="100px" />
       </Text>
-      <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+      <Text
+        mt="1"
+        fontSize="15px"
+        color="black"
+        fontWeight="700"
+        lineHeight="22px"
+      >
         {t('Último restaurante acessado:')} <Skeleton as="span" maxW="100px" />
       </Text>
-      <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+      <Text
+        mt="1"
+        fontSize="15px"
+        color="black"
+        fontWeight="700"
+        lineHeight="22px"
+      >
         {t('Info. do navegador:')} <Skeleton as="span" maxW="100px" />
       </Text>
     </DrawerHeader>
@@ -58,52 +111,106 @@ const FetchingHeader = () => {
 const ManagerNotFoundHeader = () => {
   return (
     <DrawerHeader pb="2">
-      <Text color="black" fontSize="2xl" fontWeight="700" lineHeight="28px" mb="2">
+      <Text
+        color="black"
+        fontSize="2xl"
+        fontWeight="700"
+        lineHeight="28px"
+        mb="2"
+      >
         {t('Colaborador não encontrado')}
       </Text>
-      <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+      <Text
+        mt="1"
+        fontSize="15px"
+        color="black"
+        fontWeight="700"
+        lineHeight="22px"
+      >
         {t('Criado em:')}{' '}
         <Text as="span" fontWeight="500">
           N/E
         </Text>
       </Text>
-      <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+      <Text
+        mt="1"
+        fontSize="15px"
+        color="black"
+        fontWeight="700"
+        lineHeight="22px"
+      >
         {t('Atualizado em:')}{' '}
         <Text as="span" fontWeight="500">
           N/E
         </Text>
       </Text>
-      <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+      <Text
+        mt="1"
+        fontSize="15px"
+        color="black"
+        fontWeight="700"
+        lineHeight="22px"
+      >
         {t('Senha ativa:')}{' '}
         <Text as="span" fontWeight="500">
           N/E
         </Text>
       </Text>
-      <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+      <Text
+        mt="1"
+        fontSize="15px"
+        color="black"
+        fontWeight="700"
+        lineHeight="22px"
+      >
         {t('Situação:')}{' '}
         <Text as="span" fontWeight="500">
           N/E
         </Text>
       </Text>
-      <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+      <Text
+        mt="1"
+        fontSize="15px"
+        color="black"
+        fontWeight="700"
+        lineHeight="22px"
+      >
         {t('Versão mobile:')}{' '}
         <Text as="span" fontWeight="500">
           N/E
         </Text>
       </Text>
-      <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+      <Text
+        mt="1"
+        fontSize="15px"
+        color="black"
+        fontWeight="700"
+        lineHeight="22px"
+      >
         {t('Versão web:')}{' '}
         <Text as="span" fontWeight="500">
           N/E
         </Text>
       </Text>
-      <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+      <Text
+        mt="1"
+        fontSize="15px"
+        color="black"
+        fontWeight="700"
+        lineHeight="22px"
+      >
         {t('Último restaurante acessado:')}{' '}
         <Text as="span" fontWeight="500">
           N/E
         </Text>
       </Text>
-      <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+      <Text
+        mt="1"
+        fontSize="15px"
+        color="black"
+        fontWeight="700"
+        lineHeight="22px"
+      >
         {t('Info. do navegador:')}{' '}
         <Text as="span" fontWeight="500">
           N/E
@@ -122,7 +229,7 @@ type Params = {
   managerId: string;
 };
 
-export const ManagerBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
+const ManagerBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   //context
   const { goBack } = useHistory();
   const { managerId } = useParams<Params>();
@@ -144,59 +251,117 @@ export const ManagerBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
               onClick={goBack}
             />
           </Box>
-          <DrawerCloseButton bg="green.500" mr="12px" _focus={{ outline: 'none' }} />
+          <DrawerCloseButton
+            bg="green.500"
+            mr="12px"
+            _focus={{ outline: 'none' }}
+          />
           {manager === undefined ? (
             <FetchingHeader />
           ) : manager === null ? (
             <ManagerNotFoundHeader />
           ) : (
             <DrawerHeader pb="2">
-              <Text color="black" fontSize="2xl" fontWeight="700" lineHeight="28px" mb="2">
+              <Text
+                color="black"
+                fontSize="2xl"
+                fontWeight="700"
+                lineHeight="28px"
+                mb="2"
+              >
                 {t('Colaborador')}
               </Text>
-              <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+              <Text
+                mt="1"
+                fontSize="15px"
+                color="black"
+                fontWeight="700"
+                lineHeight="22px"
+              >
                 {t('Criado em:')}{' '}
                 <Text as="span" fontWeight="500">
                   {getDateAndHour(manager.createdOn)}
                 </Text>
               </Text>
-              <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+              <Text
+                mt="1"
+                fontSize="15px"
+                color="black"
+                fontWeight="700"
+                lineHeight="22px"
+              >
                 {t('Atualizado em:')}{' '}
                 <Text as="span" fontWeight="500">
                   {getDateAndHour(manager.updatedOn)}
                 </Text>
               </Text>
-              <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+              <Text
+                mt="1"
+                fontSize="15px"
+                color="black"
+                fontWeight="700"
+                lineHeight="22px"
+              >
                 {t('Senha ativa:')}{' '}
                 <Text as="span" fontWeight="500">
                   {manager.isPasswordActive ? t('Sim') : t('Não')}
                 </Text>
               </Text>
-              <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+              <Text
+                mt="1"
+                fontSize="15px"
+                color="black"
+                fontWeight="700"
+                lineHeight="22px"
+              >
                 {t('Situação:')}{' '}
                 <Text as="span" fontWeight="500">
                   {situationPTOptions[manager.situation] ?? 'N/E'}
                 </Text>
               </Text>
-              <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+              <Text
+                mt="1"
+                fontSize="15px"
+                color="black"
+                fontWeight="700"
+                lineHeight="22px"
+              >
                 {t('Versão mobile:')}{' '}
                 <Text as="span" fontWeight="500">
                   {manager.appVersion ?? 'N/E'}
                 </Text>
               </Text>
-              <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+              <Text
+                mt="1"
+                fontSize="15px"
+                color="black"
+                fontWeight="700"
+                lineHeight="22px"
+              >
                 {t('Versão web:')}{' '}
                 <Text as="span" fontWeight="500">
                   {manager.webAppVersion ?? 'N/E'}
                 </Text>
               </Text>
-              <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+              <Text
+                mt="1"
+                fontSize="15px"
+                color="black"
+                fontWeight="700"
+                lineHeight="22px"
+              >
                 {t('Último restaurante acessado:')}{' '}
                 <Text as="span" fontWeight="500">
                   {manager.lastBusinessId ?? 'N/E'}
                 </Text>
               </Text>
-              <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+              <Text
+                mt="1"
+                fontSize="15px"
+                color="black"
+                fontWeight="700"
+                lineHeight="22px"
+              >
                 {t('Info. do navegador:')}{' '}
                 <Text as="span" fontWeight="500">
                   {manager.userAgent ?? 'N/E'}
@@ -216,3 +381,5 @@ export const ManagerBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
     </Drawer>
   );
 };
+
+export default ManagerBaseDrawer;

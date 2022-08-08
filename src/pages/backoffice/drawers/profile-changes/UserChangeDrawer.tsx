@@ -9,7 +9,7 @@ import {
   DrawerOverlay,
   HStack,
   Skeleton,
-  Text
+  Text,
 } from '@chakra-ui/react';
 import * as cpfutils from '@fnando/cpf';
 import { useFetchUserData } from 'app/api/users/useFetchUserData';
@@ -37,10 +37,11 @@ const userTypePTOption = {
   manager: 'Manager',
 };
 
-export const UserChangeDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
+const UserChangeDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   //context
   const { changesId } = useParams<Params>();
-  const { changes, updateChange, updateChangeResult } = useObserveUserChanges(changesId);
+  const { changes, updateChange, updateChangeResult } =
+    useObserveUserChanges(changesId);
   const { isLoading, isSuccess } = updateChangeResult;
   const user = useFetchUserData(changes?.accountId, changes?.userType);
   // refs
@@ -54,41 +55,100 @@ export const UserChangeDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   React.useEffect(() => {
     if (!isSuccess) return;
     onClose();
-  }, [isSuccess, onClose])
+  }, [isSuccess, onClose]);
   //UI
   if (changes === undefined)
     return (
       <Drawer placement="right" size="lg" onClose={onClose} {...props}>
         <DrawerOverlay>
           <DrawerContent mt={{ base: '16', lg: '0' }}>
-            <DrawerCloseButton bg="green.500" mr="12px" _focus={{ outline: 'none' }} />
+            <DrawerCloseButton
+              bg="green.500"
+              mr="12px"
+              _focus={{ outline: 'none' }}
+            />
             <DrawerHeader pb="2">
               <SectionTitle>{t('Dados do usuário')}</SectionTitle>
-              <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+              <Text
+                mt="1"
+                fontSize="15px"
+                color="black"
+                fontWeight="700"
+                lineHeight="22px"
+              >
                 {t('AccountId:')} <Skeleton as="span" maxW="100px" />
               </Text>
-              <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
-                {t('Primeira correspondência como:')} <Skeleton as="span" maxW="100px" />
+              <Text
+                mt="1"
+                fontSize="15px"
+                color="black"
+                fontWeight="700"
+                lineHeight="22px"
+              >
+                {t('Primeira correspondência como:')}{' '}
+                <Skeleton as="span" maxW="100px" />
               </Text>
-              <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+              <Text
+                mt="1"
+                fontSize="15px"
+                color="black"
+                fontWeight="700"
+                lineHeight="22px"
+              >
                 {t('Nome:')} <Skeleton as="span" maxW="100px" />
               </Text>
-              <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+              <Text
+                mt="1"
+                fontSize="15px"
+                color="black"
+                fontWeight="700"
+                lineHeight="22px"
+              >
                 {t('Sobrenome:')} <Skeleton as="span" maxW="100px" />
               </Text>
-              <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+              <Text
+                mt="1"
+                fontSize="15px"
+                color="black"
+                fontWeight="700"
+                lineHeight="22px"
+              >
                 {t('CPF:')} <Skeleton as="span" maxW="100px" />
               </Text>
-              <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+              <Text
+                mt="1"
+                fontSize="15px"
+                color="black"
+                fontWeight="700"
+                lineHeight="22px"
+              >
                 {t('Fone:')} <Skeleton as="span" maxW="100px" />
               </Text>
-              <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+              <Text
+                mt="1"
+                fontSize="15px"
+                color="black"
+                fontWeight="700"
+                lineHeight="22px"
+              >
                 {t('Status:')} <Skeleton as="span" maxW="100px" />
               </Text>
-              <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+              <Text
+                mt="1"
+                fontSize="15px"
+                color="black"
+                fontWeight="700"
+                lineHeight="22px"
+              >
                 {t('Criado em:')} <Skeleton as="span" maxW="100px" />
               </Text>
-              <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+              <Text
+                mt="1"
+                fontSize="15px"
+                color="black"
+                fontWeight="700"
+                lineHeight="22px"
+              >
                 {t('Atualizado em:')} <Skeleton as="span" maxW="100px" />
               </Text>
             </DrawerHeader>
@@ -102,14 +162,26 @@ export const UserChangeDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
       <Drawer placement="right" size="lg" onClose={onClose} {...props}>
         <DrawerOverlay>
           <DrawerContent mt={{ base: '16', lg: '0' }}>
-            <DrawerCloseButton bg="green.500" mr="12px" _focus={{ outline: 'none' }} />
+            <DrawerCloseButton
+              bg="green.500"
+              mr="12px"
+              _focus={{ outline: 'none' }}
+            />
             <DrawerHeader pb="2">
-              <Text color="black" fontSize="2xl" fontWeight="700" lineHeight="28px" mb="2">
+              <Text
+                color="black"
+                fontSize="2xl"
+                fontWeight="700"
+                lineHeight="28px"
+                mb="2"
+              >
                 {changesId ?? 'N/E'}
               </Text>
             </DrawerHeader>
             <DrawerBody pb="28">
-              <SectionTitle>{t('Solicitação de alteração não encontrada! =/')}</SectionTitle>
+              <SectionTitle>
+                {t('Solicitação de alteração não encontrada! =/')}
+              </SectionTitle>
             </DrawerBody>
           </DrawerContent>
         </DrawerOverlay>
@@ -119,58 +191,118 @@ export const UserChangeDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
       <DrawerOverlay>
         <DrawerContent mt={{ base: '16', lg: '0' }}>
-          <DrawerCloseButton bg="green.500" mr="12px" _focus={{ outline: 'none' }} />
+          <DrawerCloseButton
+            bg="green.500"
+            mr="12px"
+            _focus={{ outline: 'none' }}
+          />
           <DrawerHeader pb="2">
             <SectionTitle mt="0">{t('Dados do usuário')}</SectionTitle>
-            <Text mt="6" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+            <Text
+              mt="6"
+              fontSize="15px"
+              color="black"
+              fontWeight="700"
+              lineHeight="22px"
+            >
               {t('AccountId:')}{' '}
               <Text as="span" fontWeight="500">
                 {user?.id ?? 'N/E'}
               </Text>
             </Text>
-            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+            <Text
+              mt="1"
+              fontSize="15px"
+              color="black"
+              fontWeight="700"
+              lineHeight="22px"
+            >
               {t('Tipo de perfil:')}{' '}
               <Text as="span" fontWeight="500">
-                {changes?.userType ? userTypePTOption[changes?.userType] : 'N/E'}
+                {changes?.userType
+                  ? userTypePTOption[changes?.userType]
+                  : 'N/E'}
               </Text>
             </Text>
-            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+            <Text
+              mt="1"
+              fontSize="15px"
+              color="black"
+              fontWeight="700"
+              lineHeight="22px"
+            >
               {t('Nome:')}{' '}
               <Text as="span" fontWeight="500">
                 {user?.name ?? 'N/E'}
               </Text>
             </Text>
-            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+            <Text
+              mt="1"
+              fontSize="15px"
+              color="black"
+              fontWeight="700"
+              lineHeight="22px"
+            >
               {t('Sobrenome:')}{' '}
               <Text as="span" fontWeight="500">
                 {user?.surname ?? 'N/E'}
               </Text>
             </Text>
-            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+            <Text
+              mt="1"
+              fontSize="15px"
+              color="black"
+              fontWeight="700"
+              lineHeight="22px"
+            >
               {t('CPF:')}{' '}
               <Text as="span" fontWeight="500">
                 {user?.cpf ? cpfutils.format(user.cpf) : 'N/I'}
               </Text>
             </Text>
-            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+            <Text
+              mt="1"
+              fontSize="15px"
+              color="black"
+              fontWeight="700"
+              lineHeight="22px"
+            >
               {t('Fone:')}{' '}
               <Text as="span" fontWeight="500">
                 {user?.phone ? phoneFormatter(user.phone) : 'N/I'}
               </Text>
             </Text>
-            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+            <Text
+              mt="1"
+              fontSize="15px"
+              color="black"
+              fontWeight="700"
+              lineHeight="22px"
+            >
               {t('Status:')}{' '}
               <Text as="span" fontWeight="500">
                 {user?.situation ? situationPTOptions[user?.situation] : 'N/E'}
               </Text>
             </Text>
-            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+            <Text
+              mt="1"
+              fontSize="15px"
+              color="black"
+              fontWeight="700"
+              lineHeight="22px"
+            >
               {t('Criado em:')}{' '}
               <Text as="span" fontWeight="500">
                 {getDateAndHour(user?.createdOn)}
               </Text>
             </Text>
-            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+            <Text
+              mt="1"
+              fontSize="15px"
+              color="black"
+              fontWeight="700"
+              lineHeight="22px"
+            >
               {t('Atualizado em:')}{' '}
               <Text as="span" fontWeight="500">
                 {getDateAndHour(user?.updatedOn)}
@@ -178,9 +310,17 @@ export const UserChangeDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
             </Text>
           </DrawerHeader>
           <DrawerBody pb="28">
-            <SectionTitle mb="5">{t('Solicitando alteração dos seguintes dados:')}</SectionTitle>
+            <SectionTitle mb="5">
+              {t('Solicitando alteração dos seguintes dados:')}
+            </SectionTitle>
             {changes?.name && (
-              <Text mt="1" fontSize="15px" color="red" fontWeight="700" lineHeight="22px">
+              <Text
+                mt="1"
+                fontSize="15px"
+                color="red"
+                fontWeight="700"
+                lineHeight="22px"
+              >
                 {t('Nome:')}{' '}
                 <Text as="span" fontWeight="500">
                   {changes.name}
@@ -188,7 +328,13 @@ export const UserChangeDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
               </Text>
             )}
             {changes?.surname && (
-              <Text mt="1" fontSize="15px" color="red" fontWeight="700" lineHeight="22px">
+              <Text
+                mt="1"
+                fontSize="15px"
+                color="red"
+                fontWeight="700"
+                lineHeight="22px"
+              >
                 {t('Sobrenome:')}{' '}
                 <Text as="span" fontWeight="500">
                   {changes.surname}
@@ -196,7 +342,13 @@ export const UserChangeDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
               </Text>
             )}
             {changes?.cpf && (
-              <Text mt="1" fontSize="15px" color="red" fontWeight="700" lineHeight="22px">
+              <Text
+                mt="1"
+                fontSize="15px"
+                color="red"
+                fontWeight="700"
+                lineHeight="22px"
+              >
                 {t('CPF:')}{' '}
                 <Text as="span" fontWeight="500">
                   {cpfutils.format(changes.cpf)}
@@ -204,23 +356,43 @@ export const UserChangeDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
               </Text>
             )}
             {changes?.phone && (
-              <Text mt="1" fontSize="15px" color="red" fontWeight="700" lineHeight="22px">
+              <Text
+                mt="1"
+                fontSize="15px"
+                color="red"
+                fontWeight="700"
+                lineHeight="22px"
+              >
                 {t('Fone:')}{' '}
                 <Text as="span" fontWeight="500">
                   {changes?.phone ? phoneFormatter(changes.phone) : 'N/I'}
                 </Text>
               </Text>
             )}
-            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+            <Text
+              mt="1"
+              fontSize="15px"
+              color="black"
+              fontWeight="700"
+              lineHeight="22px"
+            >
               {t('Criada em:')}{' '}
               <Text as="span" fontWeight="500">
                 {getDateAndHour(changes?.createdOn)}
               </Text>
             </Text>
-            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+            <Text
+              mt="1"
+              fontSize="15px"
+              color="black"
+              fontWeight="700"
+              lineHeight="22px"
+            >
               {t('Status:')}{' '}
               <Text as="span" fontWeight="500">
-                {changes?.situation ? situationPTOptions[changes.situation] : 'N/E'}
+                {changes?.situation
+                  ? situationPTOptions[changes.situation]
+                  : 'N/E'}
               </Text>
             </Text>
           </DrawerBody>
@@ -252,3 +424,5 @@ export const UserChangeDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
     </Drawer>
   );
 };
+
+export default UserChangeDrawer;

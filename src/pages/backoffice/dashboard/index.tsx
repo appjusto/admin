@@ -7,16 +7,33 @@ import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import PageHeader from '../../PageHeader';
-import { BusinessDrawer } from '../drawers/business';
-import { ConsumerDrawer } from '../drawers/consumer';
-import { CourierDrawer } from '../drawers/courier';
-import { InvoiceDrawer } from '../drawers/invoice';
-import { ManagerBaseDrawer } from '../drawers/manager/ManagerBaseDrawer';
 import { BackofficeOrderDrawer } from '../drawers/order';
-import { UserChangeDrawer } from '../drawers/profile-changes/UserChangeDrawer';
 import { BOChatDrawer } from './BOChatDrawer';
 import { BOList } from './BOList';
 // import { StaffFilterOptions } from './StaffFilter';
+
+const ManagerBaseDrawer = React.lazy(
+  () =>
+    import(/* webpackPrefetch: true */ '../drawers/manager/ManagerBaseDrawer')
+);
+const BusinessDrawer = React.lazy(
+  () => import(/* webpackPrefetch: true */ '../drawers/business')
+);
+const ConsumerDrawer = React.lazy(
+  () => import(/* webpackPrefetch: true */ '../drawers/consumer')
+);
+const CourierDrawer = React.lazy(
+  () => import(/* webpackPrefetch: true */ '../drawers/courier')
+);
+const InvoiceDrawer = React.lazy(
+  () => import(/* webpackPrefetch: true */ '../drawers/invoice')
+);
+const UserChangeDrawer = React.lazy(
+  () =>
+    import(
+      /* webpackPrefetch: true */ '../drawers/profile-changes/UserChangeDrawer'
+    )
+);
 
 const BODashboard = () => {
   // context
@@ -29,19 +46,15 @@ const BODashboard = () => {
     matchingIssueOrders,
     issueOrders,
     watchedOrders,
-    businesses,
     userChanges,
     // fetchNextActiveOrders,
     fetchNextUnsafeOrders,
     fetchNextMatchingIssueOrders,
     fetchNextIssueOrders,
-    fetchNextBusiness,
     fetchNextChanges,
   } = useContextBackofficeDashboard();
   // state
   const [dateTime, setDateTime] = React.useState('');
-  // helpers
-  const userCanUpdateBusiness = userAbility?.can('read', 'businesses');
   // handlers
   const closeDrawerHandler = () => {
     history.replace(path);
@@ -120,23 +133,7 @@ const BODashboard = () => {
           loadData={fetchNextIssueOrders}
         />
       </Stack>
-      <Stack
-        mt="4"
-        w="100%"
-        direction={{ base: 'column', md: 'row' }}
-        spacing={userCanUpdateBusiness ? 4 : 0}
-      >
-        <BOList
-          display={userCanUpdateBusiness ? 'flex' : 'none'}
-          title={t('Restaurantes - Aguardando aprovação')}
-          data={businesses}
-          listType="businesses"
-          details={t(
-            'Aqui ficarão listados todos os novos cadastros de restaurantes aguardando aprovação.'
-          )}
-          infiniteScroll
-          loadData={fetchNextBusiness}
-        />
+      <Box mt="4">
         <BOList
           title={t('Solicitações de alteração de perfil')}
           data={userChanges}
@@ -147,7 +144,7 @@ const BODashboard = () => {
           infiniteScroll
           loadData={fetchNextChanges}
         />
-      </Stack>
+      </Box>
       <Switch>
         <Route path={`${path}/business/:businessId`}>
           <BusinessDrawer isOpen onClose={closeDrawerHandler} />

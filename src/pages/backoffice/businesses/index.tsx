@@ -1,6 +1,13 @@
 import { BusinessAlgolia, BusinessStatus } from '@appjusto/types';
 import { ArrowDownIcon } from '@chakra-ui/icons';
-import { Button, CheckboxGroup, Flex, HStack, Stack, Text } from '@chakra-ui/react';
+import {
+  Button,
+  CheckboxGroup,
+  Flex,
+  HStack,
+  Stack,
+  Text,
+} from '@chakra-ui/react';
 import { BusinessesFilter } from 'app/api/search/types';
 import { useBusinessesSearch } from 'app/api/search/useBusinessesSearch';
 import { ClearFiltersButton } from 'common/components/backoffice/ClearFiltersButton';
@@ -13,7 +20,7 @@ import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { FilterText } from '../../../common/components/backoffice/FilterText';
 import PageHeader from '../../PageHeader';
-import { BusinessDrawer } from '../drawers/business';
+import BusinessDrawer from '../drawers/business';
 import { StateAndCityFilter } from '../StateAndCityFilter';
 import { BusinessesTable } from './BusinessesTable';
 
@@ -27,7 +34,10 @@ const BusinessesPage = () => {
   const [state, setState] = React.useState('');
   const [city, setCity] = React.useState('');
   const [filterBar, setFilterBar] = React.useState('all');
-  const [filterCheck, setFilterCheck] = React.useState<BusinessStatus[]>(['open', 'closed']);
+  const [filterCheck, setFilterCheck] = React.useState<BusinessStatus[]>([
+    'open',
+    'closed',
+  ]);
   const [filters, setFilters] = React.useState<BusinessesFilter[]>([]);
   // search
   const {
@@ -63,14 +73,20 @@ const BusinessesPage = () => {
         { type: 'situation', value: 'submitted' },
         { type: 'situation', value: 'pending' },
       ];
-    else if (filterBar !== 'all') situationArray = [{ type: 'situation', value: filterBar }];
+    else if (filterBar !== 'all')
+      situationArray = [{ type: 'situation', value: filterBar }];
     // status
     let statusArray = filterCheck.map((str) => ({
       type: 'status',
       value: str,
     })) as BusinessesFilter[];
     // create filters
-    setFilters([...stateArray, ...cityArray, ...situationArray, ...statusArray]);
+    setFilters([
+      ...stateArray,
+      ...cityArray,
+      ...situationArray,
+      ...statusArray,
+    ]);
   }, [filterBar, state, city, filterCheck]);
   // side effects
   React.useEffect(() => {
@@ -83,7 +99,10 @@ const BusinessesPage = () => {
   // UI
   return (
     <>
-      <PageHeader title={t('Restaurantes')} subtitle={t(`Atualizado ${dateTime}`)} />
+      <PageHeader
+        title={t('Restaurantes')}
+        subtitle={t(`Atualizado ${dateTime}`)}
+      />
       <Stack mt="8" spacing={4} direction={{ base: 'column', md: 'row' }}>
         <CustomInput
           mt="0"
@@ -93,7 +112,9 @@ const BusinessesPage = () => {
           value={search}
           onChange={(event) => setSearch(event.target.value)}
           label={t('Buscar')}
-          placeholder={t('Buscar por ID, nome, CNPJ ou e-mail do administrador')}
+          placeholder={t(
+            'Buscar por ID, nome, CNPJ ou e-mail do administrador'
+          )}
         />
         <StateAndCityFilter
           state={state}
@@ -102,7 +123,12 @@ const BusinessesPage = () => {
           handleCityChange={setCity}
         />
       </Stack>
-      <Flex mt="8" w="100%" justifyContent="space-between" borderBottom="1px solid #C8D7CB">
+      <Flex
+        mt="8"
+        w="100%"
+        justifyContent="space-between"
+        borderBottom="1px solid #C8D7CB"
+      >
         <FiltersScrollBar>
           <HStack spacing={4}>
             <FilterText
@@ -144,7 +170,12 @@ const BusinessesPage = () => {
         </FiltersScrollBar>
         <ClearFiltersButton clearFunction={clearSearchAndFilters} />
       </Flex>
-      <Stack mt="6" spacing={8} color="black" direction={{ base: 'column', md: 'row' }}>
+      <Stack
+        mt="6"
+        spacing={8}
+        color="black"
+        direction={{ base: 'column', md: 'row' }}
+      >
         <Text fontSize="lg" fontWeight="700" lineHeight="26px">
           {t(`${businesses?.length ?? '0'} itens na lista`)}
         </Text>
