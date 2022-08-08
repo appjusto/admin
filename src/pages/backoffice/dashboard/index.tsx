@@ -103,7 +103,7 @@ const BODashboard = () => {
             'Aqui ficarão listados todos os pedidos em andamento que precisam de triagem.'
           )}
           infiniteScroll
-          scrollTopLimit={750}
+          scrollTopLimit={550}
           loadData={fetchNextUnsafeOrders}
         />
         <BOList
@@ -116,7 +116,7 @@ const BODashboard = () => {
             'Aqui ficarão listados todos os pedidos em andamento com atraso no matching.'
           )}
           infiniteScroll
-          scrollTopLimit={750}
+          scrollTopLimit={550}
           loadData={fetchNextMatchingIssueOrders}
         />
         <BOList
@@ -129,7 +129,7 @@ const BODashboard = () => {
             'Aqui ficarão listados todos os pedidos em andamento com problemas reportados.'
           )}
           infiniteScroll
-          scrollTopLimit={750}
+          scrollTopLimit={550}
           loadData={fetchNextIssueOrders}
         />
       </Stack>

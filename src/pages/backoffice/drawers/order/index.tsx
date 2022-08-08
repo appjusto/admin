@@ -80,7 +80,7 @@ export const BackofficeOrderDrawer = ({
   const { invoices, logs } = useObserveOrderInvoices(orderId);
   const cancelOptions = useIssuesByType(cancelOptionsArray);
   const { addFlaggedLocation } = useFlaggedLocations();
-  const { chatMessages, orderChatGroup } = useObserveOrderChatMessages(orderId);
+  const { orderChatGroup } = useObserveOrderChatMessages(orderId);
   // state
   const [status, setStatus] = React.useState<OrderStatus | undefined>(
     order?.status
@@ -98,7 +98,6 @@ export const BackofficeOrderDrawer = ({
   const [loadingState, setLoadingState] =
     React.useState<OrderDrawerLoadingState>('idle');
   // helpers
-  const isChatMessages = chatMessages ? chatMessages?.length > 0 : false;
   let refundValue = 0;
   if (refund.includes('platform') && order?.fare?.platform?.value)
     refundValue += order.fare.platform.value;
@@ -284,7 +283,6 @@ export const BackofficeOrderDrawer = ({
         updateStaffResult={updateOrderStaffResult}
         cancellation={cancellation}
         loadingState={loadingState}
-        isChatMessages={isChatMessages}
         deleteOrder={deleteQuoteOrder}
         deleteLoading={deleteOrderResult.isLoading}
         {...props}

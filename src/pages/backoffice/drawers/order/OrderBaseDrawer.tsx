@@ -56,7 +56,6 @@ interface BaseDrawerProps {
   updateStaffResult: MutationResult;
   cancellation(type?: 'prevention'): void;
   loadingState: OrderDrawerLoadingState;
-  isChatMessages: boolean;
   deleteOrder(orderId: string): void;
   deleteLoading: boolean;
   children: React.ReactNode | React.ReactNode[];
@@ -74,7 +73,6 @@ export const OrderBaseDrawer = ({
   updateOrderStatus,
   cancellation,
   loadingState,
-  isChatMessages,
   deleteOrder,
   deleteLoading,
   children,
@@ -89,6 +87,7 @@ export const OrderBaseDrawer = ({
   // helpers
   const orderStatus = order?.status as OrderStatus;
   const isFlagged = order?.status === 'charged' && order?.flagged;
+  const isChatMessages = order?.flags && order.flags.includes('chat');
   const canUpdateOrderStaff =
     order?.staff?.id === user?.uid || isBackofficeSuperuser;
   const canUpdateOrder = userAbility?.can('update', {

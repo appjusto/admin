@@ -66,7 +66,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   const { sendBusinessKeepAlive } = useBusinessProfile();
   const { scheduledOrders, scheduledOrdersNumber, fetchNextScheduledOrders } =
     useObserveScheduledOrders(business?.id);
-  const activeOrders = useObserveOrders(statuses, business?.id, undefined, 20);
+  const activeOrders = useObserveOrders(statuses, business?.id);
   const { canceledOrders, fetchNextCanceledOrders } =
     useObserveCanceledOrdersInTheLastHour(business?.id);
   const confirmedNumber = useObserveConfirmedOrders(business?.id);
