@@ -5,7 +5,7 @@ import { useRouteMatch } from 'react-router-dom';
 import {
   getDateAndHour,
   getOrderTotalPriceToDisplay,
-  getTranslatedOrderStatus
+  getTranslatedOrderStatus,
 } from 'utils/functions';
 import { t } from 'utils/i18n';
 
@@ -41,12 +41,19 @@ export const OrderSearchResult = ({ orders }: OrderSearchProps) => {
                 <Tr key={order.code} color="black" fontSize="xs">
                   <Td maxW="120px">{order.code}</Td>
                   <Td>{getDateAndHour(order.createdOn)}</Td>
-                  <Td>{order.scheduledTo ? getDateAndHour(order.scheduledTo) : 'Tempo real' }</Td>
+                  <Td>
+                    {order.scheduledTo
+                      ? getDateAndHour(order.scheduledTo)
+                      : 'Tempo real'}
+                  </Td>
                   <Td>{getTranslatedOrderStatus(order.status)}</Td>
                   <Td>{order.courier?.name ?? t('Sem entregador')}</Td>
-                  <Td isNumeric>{getOrderTotalPriceToDisplay(order.items ?? [])}</Td>
+                  <Td isNumeric>
+                    {getOrderTotalPriceToDisplay(order.items ?? [])}
+                  </Td>
                   <Td>
                     <CustomButton
+                      mt="0"
                       label={t('Detalhes')}
                       link={`${url}/${order.id}`}
                       size="sm"
