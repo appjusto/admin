@@ -15,8 +15,8 @@ const backofficeOwnerObject = {
   orders: ['c', 'r', 'u', 'd'],
   couriers: ['c', 'r', 'u', 'd'],
   consumers: ['c', 'r', 'u', 'd'],
-  businesses: ['c', 'r', 'u', 'd'],
   account_manager: ['c', 'r', 'u', 'd'],
+  businesses: ['c', 'r', 'u', 'd'],
   menu: ['c', 'r', 'u', 'd'],
   chats: ['c', 'r', 'u', 'd'],
   invoices: ['c', 'r', 'u', 'd'],
@@ -33,8 +33,8 @@ const ordersManagerObject = {
   orders: ['r', 'u'],
   couriers: ['r', 'u'],
   consumers: ['r'],
-  businesses: ['r', 'u'],
   account_manager: [],
+  businesses: ['r', 'u'],
   menu: ['r'],
   chats: ['r'],
   invoices: ['r'],
@@ -51,8 +51,8 @@ const consumersManagerObject = {
   orders: ['r'],
   couriers: [],
   consumers: ['r', 'u'],
-  businesses: ['r'],
   account_manager: [],
+  businesses: ['r'],
   menu: ['r'],
   chats: ['r'],
   invoices: ['r'],
@@ -69,8 +69,8 @@ const couriersManagerObject = {
   orders: ['r'],
   couriers: ['r', 'u'],
   consumers: [],
-  businesses: ['r'],
   account_manager: [],
+  businesses: ['r'],
   menu: ['r'],
   chats: ['r'],
   invoices: ['r'],
@@ -83,37 +83,37 @@ const couriersManagerObject = {
   platform: [],
 } as UserPermissions;
 
-const businessesManagerObject = {
+const businessesHeadManagerObject = {
   orders: ['r'],
   couriers: [],
   consumers: [],
+  account_manager: ['c', 'r', 'u', 'd'],
   businesses: ['c', 'r', 'u', 'd'],
-  account_manager: ['c', 'r'],
   menu: ['c', 'r', 'u', 'd'],
-  chats: ['r'],
+  chats: [],
   invoices: ['r'],
   withdraws: ['r'],
   advances: ['r'],
-  managers: ['r'],
-  recommendations: ['r', 'u'],
+  managers: ['c', 'r', 'u', 'd'],
+  recommendations: ['c', 'r', 'u', 'd'],
   staff: [],
   users: ['r'],
   platform: [],
 } as UserPermissions;
 
-const businessesAccountManagerObject = {
+const businessesManagerObject = {
   orders: ['r'],
   couriers: [],
   consumers: [],
+  account_manager: ['c', 'r'],
   businesses: ['c', 'r', 'u', 'd'],
-  account_manager: ['c', 'r', 'u', 'd'],
   menu: ['c', 'r', 'u', 'd'],
-  chats: ['r'],
+  chats: [],
   invoices: ['r'],
   withdraws: ['r'],
   advances: ['r'],
-  managers: ['r'],
-  recommendations: ['r', 'u'],
+  managers: ['c', 'r', 'u', 'd'],
+  recommendations: ['c', 'r', 'u', 'd'],
   staff: [],
   users: ['r'],
   platform: [],
@@ -123,8 +123,8 @@ const viewerObject = {
   orders: ['r'],
   couriers: ['r'],
   consumers: ['r'],
-  businesses: ['r'],
   account_manager: ['r'],
+  businesses: ['r'],
   menu: ['r'],
   chats: ['r'],
   invoices: ['r'],
@@ -146,15 +146,15 @@ export const getGenericModePermissions = (
   else if (mode === 'couriers-manager') return couriersManagerObject;
   else if (mode === 'businesses-manager') return businessesManagerObject;
   else if (mode === 'businesses-account-manager')
-    return businessesAccountManagerObject;
+    return businessesHeadManagerObject;
   else if (mode === 'viewer') return viewerObject;
   else {
     return {
       orders: [],
       couriers: [],
       consumers: [],
-      businesses: [],
       account_manager: [],
+      businesses: [],
       menu: [],
       chats: [],
       invoices: [],
@@ -180,7 +180,7 @@ export const getGenericModeRole = (
     return 'couriers-manager';
   else if (isEqual(permissions, businessesManagerObject))
     return 'businesses-manager';
-  else if (isEqual(permissions, businessesAccountManagerObject))
+  else if (isEqual(permissions, businessesHeadManagerObject))
     return 'businesses-account-manager';
   else if (isEqual(permissions, viewerObject)) return 'viewer';
   else return 'custom';

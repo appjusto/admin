@@ -7,10 +7,12 @@ import { t } from 'utils/i18n';
 
 interface AccountManagerCardProps {
   accountManagerId: string;
+  canRemove?: boolean;
 }
 
 export const AccountManagerCard = ({
   accountManagerId,
+  canRemove,
 }: AccountManagerCardProps) => {
   // context
   const profile = useFetchStaffProfile(accountManagerId);
@@ -68,44 +70,52 @@ export const AccountManagerCard = ({
           </Text>
         </Text>
       </Box>
-      {isConfirming ? (
-        <Box
-          p="4"
-          w={{
-            base: '100%',
-            md: '280px',
-          }}
-          bgColor="#FFF8F8"
-          border="1px solid red"
-          borderRadius="lg"
-        >
-          <Text fontSize="15px" fontWeight="700">
-            {t('Deseja confirmar remoção?')}
-          </Text>
-          <HStack mt="2">
-            <Button w="100%" size="sm" onClick={() => setIsConfirming(false)}>
-              {t('Manter')}
-            </Button>
-            <Button
-              w="100%"
-              size="sm"
-              variant="danger"
-              onClick={handleRemoveAccountManager}
-              isLoading={updateResult.isLoading}
-              loadingText={t('Removendo...')}
+      {canRemove && (
+        <Box>
+          {isConfirming ? (
+            <Box
+              p="4"
+              w={{
+                base: '100%',
+                md: '280px',
+              }}
+              bgColor="#FFF8F8"
+              border="1px solid red"
+              borderRadius="lg"
             >
-              {t('Remover')}
+              <Text fontSize="15px" fontWeight="700">
+                {t('Deseja confirmar remoção?')}
+              </Text>
+              <HStack mt="2">
+                <Button
+                  w="100%"
+                  size="sm"
+                  onClick={() => setIsConfirming(false)}
+                >
+                  {t('Manter')}
+                </Button>
+                <Button
+                  w="100%"
+                  size="sm"
+                  variant="danger"
+                  onClick={handleRemoveAccountManager}
+                  isLoading={updateResult.isLoading}
+                  loadingText={t('Removendo...')}
+                >
+                  {t('Remover')}
+                </Button>
+              </HStack>
+            </Box>
+          ) : (
+            <Button
+              variant="dangerLight"
+              size="sm"
+              onClick={() => setIsConfirming(true)}
+            >
+              {t('Remover gerente')}
             </Button>
-          </HStack>
+          )}
         </Box>
-      ) : (
-        <Button
-          variant="dangerLight"
-          size="sm"
-          onClick={() => setIsConfirming(true)}
-        >
-          {t('Remover gerente')}
-        </Button>
       )}
     </Flex>
   );
