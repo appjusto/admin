@@ -9,7 +9,7 @@ import {
   PlatformFees,
   PlatformParams,
   PlatformStatistics,
-  WithId
+  WithId,
 } from '@appjusto/types';
 import {
   addDoc,
@@ -20,7 +20,7 @@ import {
   query,
   serverTimestamp,
   Unsubscribe,
-  where
+  where,
 } from 'firebase/firestore';
 import { hash } from 'geokit';
 import { documentsAs } from '../../../core/fb';
@@ -29,7 +29,9 @@ import FirebaseRefs from '../FirebaseRefs';
 export default class PlatformApi {
   constructor(private refs: FirebaseRefs) {}
   // firestore
-  observeStatistics(resultHandler: (result: PlatformStatistics) => void): Unsubscribe {
+  observeStatistics(
+    resultHandler: (result: PlatformStatistics) => void
+  ): Unsubscribe {
     const ref = this.refs.getPlatformStatisticsRef();
     const unsubscribe = onSnapshot(
       ref,
@@ -68,7 +70,8 @@ export default class PlatformApi {
     const unsubscribe = onSnapshot(
       ref,
       (querySnapShot) => {
-        if (!querySnapShot.empty) resultHandler(documentsAs<FlaggedLocation>(querySnapShot.docs));
+        if (!querySnapShot.empty)
+          resultHandler(documentsAs<FlaggedLocation>(querySnapShot.docs));
         else resultHandler(null);
       },
       (error) => {
@@ -161,7 +164,7 @@ export default class PlatformApi {
 
   async getServerTime(): Promise<number> {
     try {
-      const result = ((await this.refs.getServerTimeCallable()()) as unknown) as {
+      const result = (await this.refs.getServerTimeCallable()()) as unknown as {
         data: { time: number };
       };
       return result.data.time;
