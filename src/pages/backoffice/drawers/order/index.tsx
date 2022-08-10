@@ -51,6 +51,8 @@ export interface RefundParams {
   platform: boolean;
   products: boolean;
   delivery: boolean;
+  order: boolean;
+  tip: boolean;
 }
 
 export const BackofficeOrderDrawer = ({
@@ -94,6 +96,8 @@ export const BackofficeOrderDrawer = ({
     'platform',
     'products',
     'delivery',
+    'order',
+    'tip',
   ]);
   const [loadingState, setLoadingState] =
     React.useState<OrderDrawerLoadingState>('idle');
@@ -105,6 +109,10 @@ export const BackofficeOrderDrawer = ({
     refundValue += order.fare.business.value;
   if (refund.includes('delivery') && order?.fare?.courier?.value)
     refundValue += order.fare.courier.value;
+  if (refund.includes('order') && order?.fare?.total)
+    refundValue += order?.fare?.total;
+  if (refund.includes('tip') && order?.tip?.value)
+    refundValue += order.tip.value;
   const canUpdateOrderStaff =
     order?.staff?.id === staff?.id || isBackofficeSuperuser;
   //handlers
@@ -182,7 +190,9 @@ export const BackofficeOrderDrawer = ({
       }
       const cancellationData = {
         orderId,
-        params: { refund: ['platform', 'products', 'delivery'] },
+        params: {
+          refund: ['platform', 'products', 'delivery', 'order', 'tip'],
+        },
         acknowledgedCosts: 0,
         cancellation: preventionIssue,
       } as CancelOrderPayload;

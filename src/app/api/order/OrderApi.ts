@@ -774,7 +774,7 @@ export default class OrderApi {
             refund: [],
           }
         : {
-            refund: ['products', 'delivery', 'platform'],
+            refund: ['products', 'delivery', 'platform', 'order'],
           };
     const paramsData = params ?? defaultParams;
     const payload: CancelOrderPayload = {
