@@ -84,7 +84,7 @@ const ConsumersPage = () => {
           value={search}
           onChange={(event) => setSearch(event.target.value)}
           label={t('Buscar')}
-          placeholder={t('Buscar por ID, nome, e-mail ou CPF')}
+          placeholder={t('Buscar por ID, nome, e-mail, CPF ou fone')}
         />
         <StateAndCityFilter
           state={state}
