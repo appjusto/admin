@@ -21,7 +21,9 @@ export const Participants = ({ order }: ParticipantsProps) => {
   const { dispatchAppRequestResult } = useContextAppRequests();
   const { getServerTime } = useContextServerTime();
   const { isOrderActive } = useOrderDeliveryInfos(getServerTime, order);
-  const issues = useIssuesByType(order?.type === 'food' ? dropsFoodIssues : dropsP2pIssues);
+  const issues = useIssuesByType(
+    order?.type === 'food' ? dropsFoodIssues : dropsP2pIssues
+  );
   const { courierManualRemoval, removalResult } = useOrderCourierRemoval();
   // handlers
   const removeCourierFromOrder = (issue?: WithId<Issue>, comment?: string) => {
@@ -106,7 +108,14 @@ export const Participants = ({ order }: ParticipantsProps) => {
             isLoading={removalResult.isLoading}
           />
           <SectionTitle>{t('Frota')}</SectionTitle>
-          <Text mt="2" mb="10" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+          <Text
+            mt="2"
+            mb="10"
+            fontSize="15px"
+            color="black"
+            fontWeight="700"
+            lineHeight="22px"
+          >
             {t('Nome:')}{' '}
             <Text as="span" fontWeight="500">
               {order?.fare?.fleet?.name ?? 'N/E'}
