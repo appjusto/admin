@@ -41,7 +41,7 @@ const ordersManagerObject = {
   recommendations: ['r', 'u'],
   staff: [],
   users: ['r'],
-  platform: ['c'],
+  platform: ['r'],
 } as UserPermissions;
 
 const consumersManagerObject = {
@@ -112,7 +112,9 @@ const viewerObject = {
   platform: ['r'],
 } as UserPermissions;
 
-export const getGenericModePermissions = (mode: GenericMode): UserPermissions => {
+export const getGenericModePermissions = (
+  mode: GenericMode
+): UserPermissions => {
   if (mode === 'owner') return backofficeOwnerObject;
   else if (mode === 'orders-manager') return ordersManagerObject;
   else if (mode === 'consumers-manager') return consumersManagerObject;
@@ -139,12 +141,17 @@ export const getGenericModePermissions = (mode: GenericMode): UserPermissions =>
   }
 };
 
-export const getGenericModeRole = (permissions: UserPermissions): GenericMode => {
+export const getGenericModeRole = (
+  permissions: UserPermissions
+): GenericMode => {
   if (isEqual(permissions, backofficeOwnerObject)) return 'owner';
   else if (isEqual(permissions, ordersManagerObject)) return 'orders-manager';
-  else if (isEqual(permissions, consumersManagerObject)) return 'consumers-manager';
-  else if (isEqual(permissions, couriersManagerObject)) return 'couriers-manager';
-  else if (isEqual(permissions, businessesManagerObject)) return 'businesses-manager';
+  else if (isEqual(permissions, consumersManagerObject))
+    return 'consumers-manager';
+  else if (isEqual(permissions, couriersManagerObject))
+    return 'couriers-manager';
+  else if (isEqual(permissions, businessesManagerObject))
+    return 'businesses-manager';
   else if (isEqual(permissions, viewerObject)) return 'viewer';
   else return 'custom';
 };
