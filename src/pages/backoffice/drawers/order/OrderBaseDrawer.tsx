@@ -86,7 +86,10 @@ export const OrderBaseDrawer = ({
   const [isDeleting, setIsDeleting] = React.useState(false);
   // helpers
   const orderStatus = order?.status as OrderStatus;
-  const isFlagged = order?.status === 'charged' && order?.flagged;
+  const isFlagged =
+    order?.status === 'charged' &&
+    order?.flags &&
+    order?.flags?.includes('unsafe');
   const isChatMessages = order?.flags && order.flags.includes('chat');
   const canUpdateOrderStaff =
     order?.staff?.id === user?.uid || isBackofficeSuperuser;
