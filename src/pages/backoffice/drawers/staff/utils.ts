@@ -7,6 +7,7 @@ export type GenericMode =
   | 'couriers-manager'
   | 'consumers-manager'
   | 'businesses-manager'
+  | 'businesses-account-manager'
   | 'viewer'
   | 'custom';
 
@@ -15,6 +16,7 @@ const backofficeOwnerObject = {
   couriers: ['c', 'r', 'u', 'd'],
   consumers: ['c', 'r', 'u', 'd'],
   businesses: ['c', 'r', 'u', 'd'],
+  account_manager: ['c', 'r', 'u', 'd'],
   menu: ['c', 'r', 'u', 'd'],
   chats: ['c', 'r', 'u', 'd'],
   invoices: ['c', 'r', 'u', 'd'],
@@ -32,6 +34,7 @@ const ordersManagerObject = {
   couriers: ['r', 'u'],
   consumers: ['r'],
   businesses: ['r', 'u'],
+  account_manager: [],
   menu: ['r'],
   chats: ['r'],
   invoices: ['r'],
@@ -49,6 +52,7 @@ const consumersManagerObject = {
   couriers: [],
   consumers: ['r', 'u'],
   businesses: ['r'],
+  account_manager: [],
   menu: ['r'],
   chats: ['r'],
   invoices: ['r'],
@@ -66,6 +70,7 @@ const couriersManagerObject = {
   couriers: ['r', 'u'],
   consumers: [],
   businesses: ['r'],
+  account_manager: [],
   menu: ['r'],
   chats: ['r'],
   invoices: ['r'],
@@ -83,6 +88,25 @@ const businessesManagerObject = {
   couriers: [],
   consumers: [],
   businesses: ['c', 'r', 'u', 'd'],
+  account_manager: ['c', 'r'],
+  menu: ['c', 'r', 'u', 'd'],
+  chats: ['r'],
+  invoices: ['r'],
+  withdraws: ['r'],
+  advances: ['r'],
+  managers: ['r'],
+  recommendations: ['r', 'u'],
+  staff: [],
+  users: ['r'],
+  platform: [],
+} as UserPermissions;
+
+const businessesAccountManagerObject = {
+  orders: ['r'],
+  couriers: [],
+  consumers: [],
+  businesses: ['c', 'r', 'u', 'd'],
+  account_manager: ['c', 'r', 'u', 'd'],
   menu: ['c', 'r', 'u', 'd'],
   chats: ['r'],
   invoices: ['r'],
@@ -100,6 +124,7 @@ const viewerObject = {
   couriers: ['r'],
   consumers: ['r'],
   businesses: ['r'],
+  account_manager: ['r'],
   menu: ['r'],
   chats: ['r'],
   invoices: ['r'],
@@ -120,6 +145,8 @@ export const getGenericModePermissions = (
   else if (mode === 'consumers-manager') return consumersManagerObject;
   else if (mode === 'couriers-manager') return couriersManagerObject;
   else if (mode === 'businesses-manager') return businessesManagerObject;
+  else if (mode === 'businesses-account-manager')
+    return businessesAccountManagerObject;
   else if (mode === 'viewer') return viewerObject;
   else {
     return {
@@ -127,6 +154,7 @@ export const getGenericModePermissions = (
       couriers: [],
       consumers: [],
       businesses: [],
+      account_manager: [],
       menu: [],
       chats: [],
       invoices: [],
@@ -152,6 +180,8 @@ export const getGenericModeRole = (
     return 'couriers-manager';
   else if (isEqual(permissions, businessesManagerObject))
     return 'businesses-manager';
+  else if (isEqual(permissions, businessesAccountManagerObject))
+    return 'businesses-account-manager';
   else if (isEqual(permissions, viewerObject)) return 'viewer';
   else return 'custom';
 };

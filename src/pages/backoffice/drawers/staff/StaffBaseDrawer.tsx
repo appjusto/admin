@@ -1,4 +1,9 @@
-import { ProfileSituation, StaffProfile, UserPermissions, WithId } from '@appjusto/types';
+import {
+  ProfileSituation,
+  StaffProfile,
+  UserPermissions,
+  WithId,
+} from '@appjusto/types';
 import {
   Box,
   Button,
@@ -18,7 +23,7 @@ import {
   Text,
   Th,
   Thead,
-  Tr
+  Tr,
 } from '@chakra-ui/react';
 import { useAuthentication } from 'app/api/auth/useAuthentication';
 import { useStaff } from 'app/api/staff/useStaff';
@@ -32,13 +37,18 @@ import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
 import { EntityAccess } from './EntityAccess';
-import { GenericMode, getGenericModePermissions, getGenericModeRole } from './utils';
+import {
+  GenericMode,
+  getGenericModePermissions,
+  getGenericModeRole,
+} from './utils';
 
 const initAcess = {
   orders: [],
   couriers: [],
   consumers: [],
   businesses: [],
+  account_manager: [],
   menu: [],
   chats: [],
   invoices: [],
@@ -92,14 +102,16 @@ export const StaffBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   const { deleteAccount, deleteAccountResult } = useAuthentication();
   // state
   const [email, setEmail] = React.useState('');
-  const [staffProfile, setStaffProfile] = React.useState<WithId<StaffProfile> | null>();
+  const [staffProfile, setStaffProfile] =
+    React.useState<WithId<StaffProfile> | null>();
   const [permissions, setPermissions] = React.useState(initAcess);
   const [situation, setSituation] = React.useState<Situation>({});
   const [genericMode, setGenericMode] = React.useState<GenericMode>('custom');
   const [isDeleting, setIsDeleting] = React.useState(false);
   // helpers
   const isFetchingData = !isNew && staffProfile === undefined;
-  const agentName = (staffProfile?.name ?? 'N/E') + ' ' + (staffProfile?.surname ?? '');
+  const agentName =
+    (staffProfile?.name ?? 'N/E') + ' ' + (staffProfile?.surname ?? '');
   const isSituationChanged = situation.before !== situation.after;
   // handlers
   const handleSave = () => {
@@ -170,9 +182,19 @@ export const StaffBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
       <DrawerOverlay>
         <DrawerContent mt={{ base: '16', lg: '0' }}>
-          <DrawerCloseButton bg="green.500" mr="12px" _focus={{ outline: 'none' }} />
+          <DrawerCloseButton
+            bg="green.500"
+            mr="12px"
+            _focus={{ outline: 'none' }}
+          />
           <DrawerHeader pb="2">
-            <Text color="black" fontSize="2xl" fontWeight="700" lineHeight="28px" mb="2">
+            <Text
+              color="black"
+              fontSize="2xl"
+              fontWeight="700"
+              lineHeight="28px"
+              mb="2"
+            >
               {isNew ? t('Adicionar agente') : t('Agente')}
             </Text>
             {isNew ? (
@@ -189,19 +211,34 @@ export const StaffBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
             ) : isFetchingData ? (
               <>
                 <HStack mt="1" spacing={2}>
-                  <Text fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+                  <Text
+                    fontSize="15px"
+                    color="black"
+                    fontWeight="700"
+                    lineHeight="22px"
+                  >
                     {t('Email:')}
                   </Text>
                   <Skeleton w="100%" height="20px" maxW="200px" />
                 </HStack>
                 <HStack mt="1" spacing={2}>
-                  <Text fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+                  <Text
+                    fontSize="15px"
+                    color="black"
+                    fontWeight="700"
+                    lineHeight="22px"
+                  >
                     {t('Nome:')}
                   </Text>
                   <Skeleton w="100%" height="20px" maxW="200px" />
                 </HStack>
                 <HStack mt="1" spacing={2}>
-                  <Text fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+                  <Text
+                    fontSize="15px"
+                    color="black"
+                    fontWeight="700"
+                    lineHeight="22px"
+                  >
                     {t('Criado em:')}
                   </Text>
                   <Skeleton w="100%" height="20px" maxW="200px" />
@@ -209,25 +246,48 @@ export const StaffBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
               </>
             ) : (
               <>
-                <Text fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+                <Text
+                  fontSize="15px"
+                  color="black"
+                  fontWeight="700"
+                  lineHeight="22px"
+                >
                   {t('Email:')}{' '}
                   <Text as="span" fontWeight="500">
                     {staffProfile?.email ?? 'N/E'}
                   </Text>
                 </Text>
-                <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+                <Text
+                  mt="2"
+                  fontSize="15px"
+                  color="black"
+                  fontWeight="700"
+                  lineHeight="22px"
+                >
                   {t('Nome:')}{' '}
                   <Text as="span" fontWeight="500">
                     {agentName}
                   </Text>
                 </Text>
-                <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+                <Text
+                  mt="2"
+                  fontSize="15px"
+                  color="black"
+                  fontWeight="700"
+                  lineHeight="22px"
+                >
                   {t('Criado em:')}{' '}
                   <Text as="span" fontWeight="500">
                     {getDateAndHour(staffProfile?.createdOn)}
                   </Text>
                 </Text>
-                <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+                <Text
+                  mt="2"
+                  fontSize="15px"
+                  color="black"
+                  fontWeight="700"
+                  lineHeight="22px"
+                >
                   {t('Token de notificação:')}{' '}
                   {staffProfile?.notificationToken ? (
                     <Text as="span" fontWeight="500">
@@ -242,7 +302,9 @@ export const StaffBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                       cursor="pointer"
                       onClick={() => getNotificationToken(staffId)}
                     >
-                      {getNotificationTokenResult.isLoading ? t('Buscando...') : t('Buscar')}
+                      {getNotificationTokenResult.isLoading
+                        ? t('Buscando...')
+                        : t('Buscar')}
                     </Text>
                   )}
                 </Text>
@@ -253,7 +315,9 @@ export const StaffBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
             <SectionTitle mt="4">
               {isFetchingData ? t('Carregando permissões...') : t('Permissões')}
             </SectionTitle>
-            <Text>{t('Defina as permissões deste agente, para cada entidade')}</Text>
+            <Text>
+              {t('Defina as permissões deste agente, para cada entidade')}
+            </Text>
             <RadioGroup
               mt="4"
               onChange={(value) => setGenericMode(value as GenericMode)}
@@ -264,7 +328,12 @@ export const StaffBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
               fontSize="15px"
               lineHeight="21px"
             >
-              <Text fontSize="16px" color="black" fontWeight="700" lineHeight="22px">
+              <Text
+                fontSize="16px"
+                color="black"
+                fontWeight="700"
+                lineHeight="22px"
+              >
                 {t('Definição geral:')}
               </Text>
               <HStack
@@ -277,8 +346,12 @@ export const StaffBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
               >
                 <CustomRadio value="owner">{t('Permtir tudo')}</CustomRadio>
                 <CustomRadio value="orders-manager">{t('Pedidos')}</CustomRadio>
-                <CustomRadio value="businesses-manager">{t('Restaurantes')}</CustomRadio>
-                <CustomRadio value="couriers-manager">{t('Entregadores')}</CustomRadio>
+                <CustomRadio value="businesses-account-manager">
+                  {t('Chefe comercial')}
+                </CustomRadio>
+                <CustomRadio value="businesses-manager">
+                  {t('Restaurantes')}
+                </CustomRadio>
               </HStack>
               <HStack
                 mt="4"
@@ -288,7 +361,12 @@ export const StaffBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 fontSize="16px"
                 lineHeight="22px"
               >
-                <CustomRadio value="consumers-manager">{t('Consumidores')}</CustomRadio>
+                <CustomRadio value="couriers-manager">
+                  {t('Entregadores')}
+                </CustomRadio>
+                <CustomRadio value="consumers-manager">
+                  {t('Consumidores')}
+                </CustomRadio>
                 <CustomRadio value="viewer">{t('Apenas leitura')}</CustomRadio>
                 <CustomRadio value="custom">{t('Customizado')}</CustomRadio>
               </HStack>
@@ -360,8 +438,17 @@ export const StaffBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
           </DrawerBody>
           <DrawerFooter borderTop="1px solid #F2F6EA">
             {isDeleting ? (
-              <Box mt="8" w="100%" bg="#FFF8F8" border="1px solid red" borderRadius="lg" p="6">
-                <Text color="red">{t(`Tem certeza que deseja excluir este agente?`)}</Text>
+              <Box
+                mt="8"
+                w="100%"
+                bg="#FFF8F8"
+                border="1px solid red"
+                borderRadius="lg"
+                p="6"
+              >
+                <Text color="red">
+                  {t(`Tem certeza que deseja excluir este agente?`)}
+                </Text>
                 <HStack mt="4" spacing={4}>
                   <Button width="full" onClick={() => setIsDeleting(false)}>
                     {t(`Manter agente`)}
@@ -383,14 +470,23 @@ export const StaffBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                   fontSize="15px"
                   onClick={handleSave}
                   isLoading={
-                    createResult.isLoading || updateSituationResult.isLoading ? true : false
+                    createResult.isLoading || updateSituationResult.isLoading
+                      ? true
+                      : false
                   }
                   loadingText={t('Salvando')}
                 >
-                  {isSituationChanged ? t('Salvar novo status') : t('Salvar alterações')}
+                  {isSituationChanged
+                    ? t('Salvar novo status')
+                    : t('Salvar alterações')}
                 </Button>
                 {isNew ? (
-                  <Button width="full" fontSize="15px" variant="dangerLight" onClick={onClose}>
+                  <Button
+                    width="full"
+                    fontSize="15px"
+                    variant="dangerLight"
+                    onClick={onClose}
+                  >
                     {t('Cancelar')}
                   </Button>
                 ) : (
