@@ -1,3 +1,4 @@
+import { ProfileSituation } from '@appjusto/types';
 import { ArrowDownIcon } from '@chakra-ui/icons';
 import {
   Box,
@@ -19,12 +20,14 @@ import { SectionTitle } from '../generics/SectionTitle';
 import { AccountManagerCard } from './account-manager/AccountManagerCard';
 import { StaffsTableItem } from './account-manager/StaffsTableItem';
 
+const situations = ['approved'] as ProfileSituation[];
+
 export const AccountManager = () => {
   //context
   const { business } = useContextBusinessBackoffice();
   // state
   const [search, setSearch] = React.useState('');
-  const { staffs, fetchNextPage } = useStaffs(search);
+  const { staffs, fetchNextPage } = useStaffs(situations, search);
   //UI
   return (
     <Box mt="6">

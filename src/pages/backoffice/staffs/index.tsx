@@ -1,3 +1,4 @@
+import { ProfileSituation } from '@appjusto/types';
 import { ArrowDownIcon } from '@chakra-ui/icons';
 import { Button, Flex, Text } from '@chakra-ui/react';
 import { useStaffs } from 'app/api/staff/useStaffs';
@@ -11,6 +12,8 @@ import { t } from 'utils/i18n';
 import { StaffBaseDrawer } from '../drawers/staff/StaffBaseDrawer';
 import { StaffsTable } from './StaffsTable';
 
+const situations = ['pending', 'approved'] as ProfileSituation[];
+
 const StaffsPage = () => {
   // context
   const { path } = useRouteMatch();
@@ -18,7 +21,7 @@ const StaffsPage = () => {
   // state
   const [dateTime, setDateTime] = React.useState('');
   const [search, setSearch] = React.useState('');
-  const { staffs, fetchNextPage } = useStaffs(search);
+  const { staffs, fetchNextPage } = useStaffs(situations, search);
   // handlers
   const closeDrawerHandler = () => {
     history.replace(path);
@@ -31,7 +34,10 @@ const StaffsPage = () => {
   // UI
   return (
     <>
-      <PageHeader title={t('Agentes Appjusto')} subtitle={t(`Atualizado ${dateTime}`)} />
+      <PageHeader
+        title={t('Agentes Appjusto')}
+        subtitle={t(`Atualizado ${dateTime}`)}
+      />
       <Flex mt="8">
         <CustomInput
           mt="0"
@@ -60,7 +66,11 @@ const StaffsPage = () => {
         <Text fontSize="lg" fontWeight="700" lineHeight="26px">
           {t(`${staffs ? staffs?.length : '0'} agentes encontrados`)}
         </Text>
-        <CustomButton mt="0" label={t('Adicionar agente')} link={`${path}/new`} />
+        <CustomButton
+          mt="0"
+          label={t('Adicionar agente')}
+          link={`${path}/new`}
+        />
       </Flex>
       <StaffsTable staffs={staffs ?? []} />
       <Button mt="8" variant="secondary" onClick={fetchNextPage}>

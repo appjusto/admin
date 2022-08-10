@@ -3,6 +3,7 @@ import {
   CreateManagersPayload,
   GetManagersPayload,
   NewUserData,
+  ProfileSituation,
   StaffProfile,
   UserPermissions,
   WithId,
@@ -44,10 +45,16 @@ export default class StaffApi {
       staff: WithId<StaffProfile>[],
       last?: QueryDocumentSnapshot<DocumentData>
     ) => void,
+    situations: ProfileSituation[],
     startAfterDoc?: FirebaseDocument,
     email?: string
   ): Unsubscribe {
-    let q = query(this.refs.getStaffsRef(), orderBy('createdOn'), limit(10));
+    let q = query(
+      this.refs.getStaffsRef(),
+      orderBy('createdOn'),
+      limit(10),
+      where('situation', 'in', situations)
+    );
     if (email) q = query(q, where('email', '==', email));
     if (startAfterDoc) q = query(q, startAfter(startAfterDoc));
     // returns the unsubscribe function
