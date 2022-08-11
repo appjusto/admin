@@ -141,6 +141,7 @@ export const permissionsPTOptions = {
   advances: 'Adiantamentos',
   managers: 'Managers',
   recommendations: 'Recomendações',
+  push_campaigns: 'Campanhas',
   staff: 'Staff',
   users: 'Usuários',
   platform: 'Plataforma',

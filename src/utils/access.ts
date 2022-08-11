@@ -25,7 +25,7 @@ const backofficeAccess = {
   'users': 'users',
   'recommendations': 'recommendations',
   'fraud-prevention': 'platform',
-  'push-campaigns': 'platform',
+  'push-campaigns': 'push_campaigns',
   'staff': 'staff',
 } as BackofficeAccess;
 
@@ -43,34 +43,6 @@ type AdminAccess = {
   'chat': string;
   'manager-profile': string;
 };
-
-// const adminAccess = {
-//   'orders': 'orders',
-//   'sharing': 'orders',
-//   'menu': 'menu',
-//   'business-schedules': 'businesses',
-//   'delivery-area': 'businesses',
-//   'orders-history': 'orders',
-//   'finances': 'withdraws',
-//   'business-profile': 'businesses',
-//   'banking-information': 'businesses',
-//   'team': 'managers',
-//   'chat': 'orders',
-// } as AdminAccess;
-
-// const adminOwnerPages = [
-//   'orders',
-//   'sharing',
-//   'menu',
-//   'business-schedules',
-//   'delivery-area',
-//   'orders-history',
-//   'finances',
-//   'business-profile',
-//   'banking-information',
-//   'team',
-//   'chat',
-// ]
 
 const adminManagerPages = [
   'orders',
