@@ -77,6 +77,12 @@ export const invoiceTypePTOptions = {
   tip: 'Gorjeta',
 };
 
+export const paymentMethodPTOptions = {
+  credit_card: 'Cartão de crédito',
+  pix: 'Pix',
+  vr: 'VR',
+};
+
 export const invoiceStatusPTOptions = {
   in_analysis: 'Em análise',
   created: 'Criada',
@@ -127,6 +133,7 @@ export const permissionsPTOptions = {
   couriers: 'Entregadores',
   consumers: 'Consumidores',
   businesses: 'Restaurantes',
+  account_manager: 'Ger. Contas',
   menu: 'Cardápios',
   chats: 'Chats',
   invoices: 'Faturas',

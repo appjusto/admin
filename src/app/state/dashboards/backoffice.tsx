@@ -1,102 +1,80 @@
-import {
-  Business,
-  BusinessStatus,
-  CourierStatus,
-  Order,
-  OrderStatus,
-  PlatformStatistics,
-  ProfileChange,
-  ProfileSituation,
-  WithId
-} from '@appjusto/types';
-import { useObserveBusinesses } from 'app/api/business/useObserveBusinesses';
-import { useObserveBusinessesByStatus } from 'app/api/business/useObserveBusinessesByStatus';
-import { useObserveNewConsumers } from 'app/api/consumer/useObserveNewConsumers';
-import { useObserveCouriersByStatus } from 'app/api/courier/useObserveCouriersByStatus';
-import { useObserveBOActiveOrders } from 'app/api/order/useObserveBOActiveOrders';
-import { useObserveBODashboardOrders } from 'app/api/order/useObserveBODashboardOrders';
-import { OrderWithWarning, useObserveStaffOrders } from 'app/api/order/useObserveStaffOrders';
-import { usePlatformParams } from 'app/api/platform/usePlatformParams';
-import { usePlatformStatistics } from 'app/api/platform/usePlatformStatistics';
+import { Order, OrderStatus, ProfileChange, WithId } from '@appjusto/types';
+import { useObserveFlaggedOrders } from 'app/api/order/useObserveFlaggedOrders';
+import { useObserveStaffOrders } from 'app/api/order/useObserveStaffOrders';
 import {
   ProfileChangesSituations,
-  useObserveUsersChanges
+  useObserveUsersChanges,
 } from 'app/api/users/useObserveUsersChanges';
 import React from 'react';
 import { useContextFirebaseUser } from '../auth/context';
-import { useContextServerTime } from '../server-time';
 
 interface ContextProps {
-  // panel
-  statistics?: PlatformStatistics;
-  todayOrders?: number;
-  todayDeliveredOrders?: number;
-  todayValue?: number;
-  todayAverage?: number;
-  couriers?: number;
-  businessesNumber?: number;
-  consumers?: number;
   // lists
-  activeOrders: WithId<Order>[];
-  watchedOrders: WithId<OrderWithWarning>[];
-  businesses: WithId<Business>[];
+  // activeOrders: WithId<Order>[];
+  unsafeOrders: WithId<Order>[];
+  matchingIssueOrders: WithId<Order>[];
+  issueOrders: WithId<Order>[];
+  watchedOrders: WithId<Order>[];
   userChanges: WithId<ProfileChange>[];
-  fetchNextActiveOrders(): void;
-  fetchNextBusiness(): void;
+  // fetchNextActiveOrders(): void;
+  fetchNextUnsafeOrders(): void;
+  fetchNextIssueOrders(): void;
+  fetchNextMatchingIssueOrders(): void;
   fetchNextChanges(): void;
 }
 
-const BackofficeDashboardContext = React.createContext<ContextProps>({} as ContextProps);
+const BackofficeDashboardContext = React.createContext<ContextProps>(
+  {} as ContextProps
+);
 
 interface Props {
   children: React.ReactNode | React.ReactNode[];
 }
 
-const courierStatuses = ['available', 'dispatching'] as CourierStatus[];
-const businessesStatus = 'open' as BusinessStatus;
-const businessSituations = ['submitted', 'verified', 'invalid'] as ProfileSituation[];
+const statuses = [
+  'charged',
+  'confirmed',
+  'preparing',
+  'ready',
+  'dispatching',
+] as OrderStatus[];
 const usersChangesSituations = ['pending'] as ProfileChangesSituations[];
-const statuses = ['charged', 'confirmed', 'preparing', 'ready', 'dispatching'] as OrderStatus[];
+
+const unsafeFlag = 'unsafe';
+const matchingFlag = 'matching';
+const issueFlag = 'issue';
 
 export const BackofficeDashboardProvider = ({ children }: Props) => {
   // context
   const { user, isBackofficeSuperuser } = useContextFirebaseUser();
-  const { getServerTime } = useContextServerTime();
-  // panel
-  const statistics = usePlatformStatistics();
-  const { platformParams } = usePlatformParams();
-  const { todayOrders, todayDeliveredOrders, todayAverage } = useObserveBODashboardOrders();
-  const couriers = useObserveCouriersByStatus(courierStatuses);
-  const businessesNumber = useObserveBusinessesByStatus(businessesStatus);
-  const consumers = useObserveNewConsumers();
   // lists
-  const { businesses, fetchNextPage: fetchNextBusiness } = useObserveBusinesses(businessSituations);
-  const { orders: activeOrders, fetchNextOrders: fetchNextActiveOrders } = useObserveBOActiveOrders(statuses, !isBackofficeSuperuser);
-  const watchedOrders = useObserveStaffOrders(
-    getServerTime, 
-    statuses, 
-    user?.uid,
-    platformParams?.orders.backofficeWarnings
-  );
+  // const { orders: activeOrders, fetchNextOrders: fetchNextActiveOrders } =
+  //   useObserveBOActiveOrders(statuses, !isBackofficeSuperuser);
+  const { orders: unsafeOrders, fetchNextOrders: fetchNextUnsafeOrders } =
+    useObserveFlaggedOrders(statuses, unsafeFlag, !isBackofficeSuperuser);
+  const {
+    orders: matchingIssueOrders,
+    fetchNextOrders: fetchNextMatchingIssueOrders,
+  } = useObserveFlaggedOrders(statuses, matchingFlag, !isBackofficeSuperuser);
+  const { orders: issueOrders, fetchNextOrders: fetchNextIssueOrders } =
+    useObserveFlaggedOrders(statuses, issueFlag, !isBackofficeSuperuser);
+  const watchedOrders = useObserveStaffOrders(statuses, user?.uid);
   const { userChanges, fetchNextPage: fetchNextChanges } =
     useObserveUsersChanges(usersChangesSituations);
   // provider
   return (
     <BackofficeDashboardContext.Provider
       value={{
-        statistics,
-        todayOrders,
-        todayDeliveredOrders,
-        todayAverage,
-        couriers,
-        businessesNumber,
-        consumers,
-        activeOrders,
-        watchedOrders, 
-        businesses,
+        // activeOrders,
+        unsafeOrders,
+        matchingIssueOrders,
+        issueOrders,
+        watchedOrders,
         userChanges,
-        fetchNextActiveOrders,
-        fetchNextBusiness,
+        // fetchNextActiveOrders,
+        fetchNextUnsafeOrders,
+        fetchNextMatchingIssueOrders,
+        fetchNextIssueOrders,
         fetchNextChanges,
       }}
     >

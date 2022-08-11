@@ -1,4 +1,4 @@
-import { Stack } from '@chakra-ui/react';
+import { Box, Stack } from '@chakra-ui/react';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBackofficeDashboard } from 'app/state/dashboards/backoffice';
 import { DirectAccessById } from 'common/components/backoffice/DirectAccessById';
@@ -7,38 +7,54 @@ import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import PageHeader from '../../PageHeader';
-import { BusinessDrawer } from '../drawers/business';
-import { ConsumerDrawer } from '../drawers/consumer';
-import { CourierDrawer } from '../drawers/courier';
-import { InvoiceDrawer } from '../drawers/invoice';
-import { ManagerBaseDrawer } from '../drawers/manager/ManagerBaseDrawer';
 import { BackofficeOrderDrawer } from '../drawers/order';
-import { UserChangeDrawer } from '../drawers/profile-changes/UserChangeDrawer';
 import { BOChatDrawer } from './BOChatDrawer';
 import { BOList } from './BOList';
-import { Panel } from './Panel';
 // import { StaffFilterOptions } from './StaffFilter';
+
+const ManagerBaseDrawer = React.lazy(
+  () =>
+    import(/* webpackPrefetch: true */ '../drawers/manager/ManagerBaseDrawer')
+);
+const BusinessDrawer = React.lazy(
+  () => import(/* webpackPrefetch: true */ '../drawers/business')
+);
+const ConsumerDrawer = React.lazy(
+  () => import(/* webpackPrefetch: true */ '../drawers/consumer')
+);
+const CourierDrawer = React.lazy(
+  () => import(/* webpackPrefetch: true */ '../drawers/courier')
+);
+const InvoiceDrawer = React.lazy(
+  () => import(/* webpackPrefetch: true */ '../drawers/invoice')
+);
+const UserChangeDrawer = React.lazy(
+  () =>
+    import(
+      /* webpackPrefetch: true */ '../drawers/profile-changes/UserChangeDrawer'
+    )
+);
 
 const BODashboard = () => {
   // context
-  const { userAbility, isBackofficeSuperuser } = useContextFirebaseUser();
+  const { userAbility } = useContextFirebaseUser();
   const { path } = useRouteMatch();
   const history = useHistory();
   const {
-    activeOrders,
+    // activeOrders,
+    unsafeOrders,
+    matchingIssueOrders,
+    issueOrders,
     watchedOrders,
-    businesses,
     userChanges,
-    fetchNextActiveOrders,
-    fetchNextBusiness,
+    // fetchNextActiveOrders,
+    fetchNextUnsafeOrders,
+    fetchNextMatchingIssueOrders,
+    fetchNextIssueOrders,
     fetchNextChanges,
   } = useContextBackofficeDashboard();
   // state
   const [dateTime, setDateTime] = React.useState('');
-  // const [listOrders, setListOrders] = React.useState<WithId<Order>[]>([]);
-  // const [staffFilter, setStaffFilter] = React.useState<StaffFilterOptions>('all');
-  // helpers
-  const userCanUpdateBusiness = userAbility?.can('read', 'businesses');
   // handlers
   const closeDrawerHandler = () => {
     history.replace(path);
@@ -47,17 +63,6 @@ const BODashboard = () => {
   React.useEffect(() => {
     document.title = 'AppJusto | Backoffice';
   }, []);
-  // React.useEffect(() => {
-  //   if (staffFilter === 'staff') {
-  //     setListOrders(activeOrders.filter((order) =>
-  //       typeof order.staff?.id === "string"
-  //     ));
-  //   } else if (staffFilter === 'none') {
-  //     setListOrders(activeOrders.filter((order) => !order.staff));
-  //   } else {
-  //     setListOrders(activeOrders);
-  //   }
-  // }, [activeOrders, staffFilter]);
   React.useEffect(() => {
     const { date, time } = getDateTime();
     setDateTime(`${date} às ${time}`);
@@ -70,8 +75,18 @@ const BODashboard = () => {
         subtitle={t(`Atualizado ${dateTime}`)}
         showVersion
       />
-      <Panel />
       <DirectAccessById />
+      <Box mt="4">
+        {watchedOrders.length > 0 && (
+          <BOList
+            display={userAbility?.can('read', 'orders') ? 'flex' : 'none'}
+            title={t('Meus pedidos')}
+            data={watchedOrders}
+            dataLength={watchedOrders.length}
+            listType="orders-watched"
+          />
+        )}
+      </Box>
       <Stack
         mt="4"
         w="100%"
@@ -80,55 +95,45 @@ const BODashboard = () => {
       >
         <BOList
           display={userAbility?.can('read', 'orders') ? 'flex' : 'none'}
-          title={
-            isBackofficeSuperuser
-              ? t('Pedidos em andamento')
-              : t('Novos pedidos')
-          }
-          data={activeOrders}
-          dataLength={activeOrders.length}
-          listType="orders"
+          title={t('Pedidos para triagem')}
+          data={unsafeOrders}
+          dataLength={unsafeOrders.length}
+          listType="orders-unsafe"
           details={t(
-            'Aqui ficarão listados todos os pedidos em andamento no momento.'
+            'Aqui ficarão listados todos os pedidos em andamento que precisam de triagem.'
           )}
-          // staffFilter={staffFilter}
-          // handleStaffFilter={(value) => setStaffFilter(value)}
           infiniteScroll
-          scrollTopLimit={750}
-          loadData={fetchNextActiveOrders}
+          scrollTopLimit={550}
+          loadData={fetchNextUnsafeOrders}
         />
-        {watchedOrders.length > 0 && (
-          <BOList
-            display={userAbility?.can('read', 'orders') ? 'flex' : 'none'}
-            title={t('Meus pedidos')}
-            data={watchedOrders}
-            dataLength={watchedOrders.length}
-            listType="orders"
-            details={t(
-              'Aqui ficarão listados todos os pedidos em andamento no momento.'
-            )}
-            // staffFilter={staffFilter}
-            // handleStaffFilter={(value) => setStaffFilter(value)}
-          />
-        )}
-      </Stack>
-      <Stack
-        mt="4"
-        w="100%"
-        direction={{ base: 'column', md: 'row' }}
-        spacing={userCanUpdateBusiness ? 4 : 0}
-      >
         <BOList
-          display={userCanUpdateBusiness ? 'flex' : 'none'}
-          title={t('Restaurantes - Aguardando aprovação')}
-          data={businesses}
-          listType="businesses"
+          display={userAbility?.can('read', 'orders') ? 'flex' : 'none'}
+          title={t('Pedidos com problemas no matching')}
+          data={matchingIssueOrders}
+          dataLength={unsafeOrders.length}
+          listType="orders-matching"
           details={t(
-            'Aqui ficarão listados todos os novos cadastros de restaurantes aguardando aprovação.'
+            'Aqui ficarão listados todos os pedidos em andamento com atraso no matching.'
           )}
           infiniteScroll
-          loadData={fetchNextBusiness}
+          scrollTopLimit={550}
+          loadData={fetchNextMatchingIssueOrders}
         />
+        <BOList
+          display={userAbility?.can('read', 'orders') ? 'flex' : 'none'}
+          title={t('Pedidos com problemas reportados')}
+          data={issueOrders}
+          dataLength={issueOrders.length}
+          listType="orders-issue"
+          details={t(
+            'Aqui ficarão listados todos os pedidos em andamento com problemas reportados.'
+          )}
+          infiniteScroll
+          scrollTopLimit={550}
+          loadData={fetchNextIssueOrders}
+        />
+      </Stack>
+      <Box mt="4">
         <BOList
           title={t('Solicitações de alteração de perfil')}
           data={userChanges}
@@ -139,7 +144,7 @@ const BODashboard = () => {
           infiniteScroll
           loadData={fetchNextChanges}
         />
-      </Stack>
+      </Box>
       <Switch>
         <Route path={`${path}/business/:businessId`}>
           <BusinessDrawer isOpen onClose={closeDrawerHandler} />

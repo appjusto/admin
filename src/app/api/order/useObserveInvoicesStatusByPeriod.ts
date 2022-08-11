@@ -51,7 +51,7 @@ export const useObserveInvoicesStatusByPeriod = (
   React.useEffect(() => {
     if (!invoices) return;
     const amount = getInvoicesBusinessTotalValue(invoices);
-    const appjusto = calculateAppJustoCosts(amount, invoices);
+    const appjusto = calculateAppJustoCosts(amount);
     const iugu = calculateIuguCosts(amount, invoices);
     setTotal(invoices.length);
     setPeriodAmount(amount);

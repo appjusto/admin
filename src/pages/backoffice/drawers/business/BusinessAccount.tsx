@@ -5,7 +5,7 @@ import { AccountManager } from './AccountManager';
 
 export const BusinessAccount = () => {
   //context
-  const { userAbility, isBackofficeSuperuser } = useContextFirebaseUser();
+  const { userAbility } = useContextFirebaseUser();
   const { marketPlace, deleteMarketPlace, deleteMarketPlaceResult } =
     useContextBusinessBackoffice();
   //UI
@@ -17,9 +17,7 @@ export const BusinessAccount = () => {
         deleteAccount={deleteMarketPlace}
         result={deleteMarketPlaceResult}
       />
-      {
-        isBackofficeSuperuser && <AccountManager />
-      }
+      <AccountManager />
     </>
   );
 };

@@ -16,16 +16,9 @@ export const formatIuguDateToDisplay = (date: string) => {
   return `${dateArr[2]}/${dateArr[1]}/${dateArr[0]}`;
 };
 
-export const calculateAppJustoCosts = (
-  amount: number,
-  invoices: WithId<Invoice>[]
-) => {
-  const value = invoices.reduce((total, invoice) => {
-    let commission = (invoice.commission ?? 0) - 9;
-    if (invoice.deliveryCosts) commission -= invoice.deliveryCosts;
-    return total + commission;
-  }, 0);
-  const fee = value / amount;
+export const calculateAppJustoCosts = (amount: number) => {
+  const fee = 0.05;
+  const value = amount * fee;
   return { value, fee };
 };
 

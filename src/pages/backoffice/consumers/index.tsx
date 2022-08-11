@@ -12,7 +12,7 @@ import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import PageHeader from '../../PageHeader';
-import { ConsumerDrawer } from '../drawers/consumer';
+import ConsumerDrawer from '../drawers/consumer';
 import { StateAndCityFilter } from '../StateAndCityFilter';
 import { ConsumersTable } from './ConsumersTable';
 
@@ -28,12 +28,8 @@ const ConsumersPage = () => {
   const [filterBar, setFilterBar] = React.useState('all');
   const [filters, setFilters] = React.useState<BasicUserFilter[]>([]);
 
-  const { results: consumers, fetchNextPage } = useBasicUsersSearch<ConsumerAlgolia>(
-    true,
-    'consumers',
-    filters,
-    search
-  );
+  const { results: consumers, fetchNextPage } =
+    useBasicUsersSearch<ConsumerAlgolia>(true, 'consumers', filters, search);
 
   // handlers
   const closeDrawerHandler = () => history.replace(path);
@@ -76,7 +72,10 @@ const ConsumersPage = () => {
   // UI
   return (
     <>
-      <PageHeader title={t('Consumidores')} subtitle={t(`Atualizado ${dateTime}`)} />
+      <PageHeader
+        title={t('Consumidores')}
+        subtitle={t(`Atualizado ${dateTime}`)}
+      />
       <Stack mt="8" spacing={4} direction={{ base: 'column', md: 'row' }}>
         <CustomInput
           mt="0"
@@ -85,7 +84,7 @@ const ConsumersPage = () => {
           value={search}
           onChange={(event) => setSearch(event.target.value)}
           label={t('Buscar')}
-          placeholder={t('Buscar por ID, nome, e-mail ou CPF')}
+          placeholder={t('Buscar por ID, nome, e-mail, CPF ou fone')}
         />
         <StateAndCityFilter
           state={state}
@@ -94,7 +93,12 @@ const ConsumersPage = () => {
           handleCityChange={setCity}
         />
       </Stack>
-      <Flex mt="8" w="100%" justifyContent="space-between" borderBottom="1px solid #C8D7CB">
+      <Flex
+        mt="8"
+        w="100%"
+        justifyContent="space-between"
+        borderBottom="1px solid #C8D7CB"
+      >
         <FiltersScrollBar>
           <HStack spacing={4}>
             <FilterText

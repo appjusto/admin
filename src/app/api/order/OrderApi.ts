@@ -76,14 +76,15 @@ export default class OrderApi {
     statuses: OrderStatus[],
     resultHandler: (orders: WithId<Order>[]) => void,
     businessId?: string,
-    ordering: Ordering = 'desc'
+    ordering: Ordering = 'desc',
+    queryLimit?: number
   ): Unsubscribe {
     let q = query(
       this.refs.getOrdersRef(),
       orderBy('timestamps.charged', ordering),
       where('status', 'in', statuses)
     );
-
+    if (queryLimit) q = query(q, limit(queryLimit));
     if (businessId) {
       q = query(q, where('business.id', '==', businessId));
     }
@@ -128,6 +129,29 @@ export default class OrderApi {
     return customCollectionSnapshot(q, resultHandler);
   }
 
+  observeFlaggedOrders(
+    statuses: OrderStatus[],
+    flags: string,
+    resultHandler: (
+      orders: WithId<Order>[],
+      last?: QueryDocumentSnapshot<DocumentData>
+    ) => void,
+    queryLimit: number = 10,
+    isNoStaff: boolean = true,
+    ordering: Ordering = 'asc'
+  ): Unsubscribe {
+    let q = query(
+      this.refs.getOrdersRef(),
+      orderBy('timestamps.charged', ordering),
+      where('status', 'in', statuses),
+      where('flags', 'array-contains', flags),
+      limit(queryLimit)
+    );
+    if (isNoStaff) q = query(q, where('staff', '==', null));
+    // returns the unsubscribe function
+    return customCollectionSnapshot(q, resultHandler);
+  }
+
   observeCanceledOrdersInTheLastHour(
     resultHandler: (orders: WithId<Order>[]) => void,
     queryLimit: number,
@@ -157,11 +181,11 @@ export default class OrderApi {
     const end = dayjs().endOf('day').toDate();
     let q = query(
       this.refs.getOrdersRef(),
-      orderBy('scheduledTo', ordering),
+      orderBy('confirmedScheduledTo', ordering),
       where('business.id', '==', businessId),
       where('status', '==', 'scheduled'),
-      where('scheduledTo', '>=', start),
-      where('scheduledTo', '<=', end),
+      where('confirmedScheduledTo', '>=', start),
+      where('confirmedScheduledTo', '<=', end),
       limit(queryLimit)
     );
     // returns the unsubscribe function
@@ -750,7 +774,7 @@ export default class OrderApi {
             refund: [],
           }
         : {
-            refund: ['products', 'delivery', 'platform'],
+            refund: ['products', 'delivery', 'platform', 'order'],
           };
     const paramsData = params ?? defaultParams;
     const payload: CancelOrderPayload = {

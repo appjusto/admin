@@ -1,6 +1,5 @@
 import { CourierProvider } from 'app/state/courier/context';
 import { useContextStaffProfile } from 'app/state/staff/context';
-import React from 'react';
 import { Route, Switch, useRouteMatch } from 'react-router-dom';
 import { CourierBaseDrawer } from './CourierBaseDrawer';
 import { CourierIugu } from './CourierIugu';
@@ -15,14 +14,18 @@ interface CourierDrawerProps {
   onClose(): void;
 }
 
-export const CourierDrawer = ({ onClose, ...props }: CourierDrawerProps) => {
+const CourierDrawer = ({ onClose, ...props }: CourierDrawerProps) => {
   //context
   const { path } = useRouteMatch();
   const { staff, username } = useContextStaffProfile();
   //UI
   return (
     <CourierProvider>
-      <CourierBaseDrawer staff={{ id: staff?.id, name: username }} onClose={onClose} {...props}>
+      <CourierBaseDrawer
+        staff={{ id: staff?.id, name: username }}
+        onClose={onClose}
+        {...props}
+      >
         <Switch>
           <Route exact path={`${path}`}>
             <CourierRegister />
@@ -47,3 +50,5 @@ export const CourierDrawer = ({ onClose, ...props }: CourierDrawerProps) => {
     </CourierProvider>
   );
 };
+
+export default CourierDrawer;

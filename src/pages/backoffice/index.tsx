@@ -1,20 +1,52 @@
 import { BackofficeDashboardProvider } from 'app/state/dashboards/backoffice';
 import PageLayout from 'pages/PageLayout';
+import React from 'react';
 import { Switch, useRouteMatch } from 'react-router-dom';
-import BusinessesPage from './businesses';
-import ConsumersPage from './consumers';
-import CouriersPage from './couriers';
 import BODashboard from './dashboard';
+<<<<<<< HEAD
 import FraudPreventionPage from './fraud-prevention';
 import InvoicesPage from './invoices';
 import LedgerPage from './ledger';
 import OrdersPage from './orders';
 import PushCampaignPage from './push-campaign';
 import RecommendationsPage from './recommendations';
+=======
+>>>>>>> staging
 import { BOAccessRoute } from './routes/BOAccessRoute';
-import { StaffProfile } from './staff/StaffProfile';
-import StaffsPage from './staffs';
-import UsersPage from './users';
+
+const OrdersPage = React.lazy(
+  () => import(/* webpackPrefetch: true */ './orders')
+);
+const CouriersPage = React.lazy(
+  () => import(/* webpackPrefetch: true */ './couriers')
+);
+const BusinessesPage = React.lazy(
+  () => import(/* webpackPrefetch: true */ './businesses')
+);
+const ConsumersPage = React.lazy(
+  () => import(/* webpackPrefetch: true */ './consumers')
+);
+const InvoicesPage = React.lazy(
+  () => import(/* webpackPrefetch: true */ './invoices')
+);
+const LedgerPage = React.lazy(
+  () => import(/* webpackPrefetch: true */ './ledger')
+);
+const StaffsPage = React.lazy(
+  () => import(/* webpackPrefetch: true */ './staffs')
+);
+const FraudPreventionPage = React.lazy(
+  () => import(/* webpackPrefetch: true */ './fraud-prevention')
+);
+const StaffProfile = React.lazy(
+  () => import(/* webpackPrefetch: true */ './staff/StaffProfile')
+);
+const UsersPage = React.lazy(
+  () => import(/* webpackPrefetch: true */ './users')
+);
+const RecommendationsPage = React.lazy(
+  () => import(/* webpackPrefetch: true */ './recommendations')
+);
 
 const BackOffice = () => {
   // context
@@ -47,10 +79,13 @@ const BackOffice = () => {
             path={`${path}/recommendations`}
             component={RecommendationsPage}
           />
+<<<<<<< HEAD
           <BOAccessRoute
             path={`${path}/push-campaign`}
             component={PushCampaignPage}
           />
+=======
+>>>>>>> staging
           <BOAccessRoute path={path} component={BODashboard} />
         </Switch>
       </PageLayout>

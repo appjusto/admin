@@ -1,8 +1,10 @@
 import { ChatMessage, ChatMessageType, WithId } from '@appjusto/types';
+import * as Sentry from '@sentry/react';
 import dayjs from 'dayjs';
 import {
   addDoc,
   limit,
+  onSnapshot,
   orderBy,
   query,
   serverTimestamp,
@@ -78,6 +80,30 @@ export default class ChatApi {
       avoidPenddingWrites: false,
       captureException: true,
     });
+  }
+
+  observeBusinessNewChatMessages(
+    businessId: string,
+    resultHandler: (messagesIds: string[]) => void
+  ) {
+    const q = query(
+      this.refs.getChatsRef(),
+      orderBy('timestamp', 'asc'),
+      where('to.id', '==', businessId),
+      where('read', '==', false)
+    );
+    // returns the unsubscribe function
+    return onSnapshot(
+      q,
+      (snapshot) => {
+        const ids = snapshot.docs.map((message) => message.id);
+        resultHandler(ids);
+      },
+      (error) => {
+        console.error(error);
+        Sentry.captureException(error);
+      }
+    );
   }
 
   observeOrderChatMessages(

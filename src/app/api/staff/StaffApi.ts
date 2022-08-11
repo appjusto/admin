@@ -3,9 +3,10 @@ import {
   CreateManagersPayload,
   GetManagersPayload,
   NewUserData,
+  ProfileSituation,
   StaffProfile,
   UserPermissions,
-  WithId
+  WithId,
 } from '@appjusto/types';
 import * as Sentry from '@sentry/react';
 import { documentAs, documentsAs, FirebaseDocument } from 'core/fb';
@@ -21,7 +22,7 @@ import {
   startAfter,
   Unsubscribe,
   updateDoc,
-  where
+  where,
 } from 'firebase/firestore';
 import FirebaseRefs from '../FirebaseRefs';
 import { customDocumentSnapshot } from '../utils';
@@ -44,11 +45,17 @@ export default class StaffApi {
       staff: WithId<StaffProfile>[],
       last?: QueryDocumentSnapshot<DocumentData>
     ) => void,
+    situations: ProfileSituation[],
     startAfterDoc?: FirebaseDocument,
     email?: string
   ): Unsubscribe {
-    let q = query(this.refs.getStaffsRef(), orderBy('createdOn'), limit(10));
-    if(email) q = query(q, where('email', '==', email));
+    let q = query(
+      this.refs.getStaffsRef(),
+      orderBy('createdOn'),
+      limit(10),
+      where('situation', 'in', situations)
+    );
+    if (email) q = query(q, where('email', '==', email));
     if (startAfterDoc) q = query(q, startAfter(startAfterDoc));
     // returns the unsubscribe function
     const unsubscribe = onSnapshot(
@@ -56,7 +63,9 @@ export default class StaffApi {
       (snapshot) => {
         if (!snapshot.metadata.hasPendingWrites) {
           const last =
-            snapshot.docs.length > 0 ? snapshot.docs[snapshot.docs.length - 1] : undefined;
+            snapshot.docs.length > 0
+              ? snapshot.docs[snapshot.docs.length - 1]
+              : undefined;
           resultHandler(documentsAs<StaffProfile>(snapshot.docs), last);
         }
       },
@@ -89,6 +98,12 @@ export default class StaffApi {
     }
   }
 
+  async fetchStaffProfile(staffId: string) {
+    const snapshot = await getDoc(this.refs.getStaffRef(staffId));
+    if (!snapshot.exists()) return null;
+    return documentAs<StaffProfile>(snapshot);
+  }
+
   async updateProfile(id: string, changes: Partial<StaffProfile>) {
     await updateDoc(this.refs.getStaffRef(id), changes);
   }
@@ -116,6 +131,9 @@ export default class StaffApi {
         'Documento de consumer não possui notificationToken.'
       );
     }
-    throw new FirebaseError('ignored-error', 'Nenhum perfil de consumer encontrado.');
+    throw new FirebaseError(
+      'ignored-error',
+      'Nenhum perfil de consumer encontrado.'
+    );
   }
 }

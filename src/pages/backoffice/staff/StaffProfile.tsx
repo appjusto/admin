@@ -20,7 +20,7 @@ import PageHeader from 'pages/PageHeader';
 import React from 'react';
 import { t } from 'utils/i18n';
 
-export const StaffProfile = () => {
+const StaffProfile = () => {
   // context
   const { dispatchAppRequestResult } = useContextAppRequests();
   const { staff } = useContextStaffProfile();
@@ -50,7 +50,11 @@ export const StaffProfile = () => {
   // helpers
   const isCPFValid = () => cpfutils.isValid(cpf);
   const isReauthenticationRequired = React.useCallback(() => {
-    if (updateError && JSON.stringify(updateError).includes('recent authentication')) return true;
+    if (
+      updateError &&
+      JSON.stringify(updateError).includes('recent authentication')
+    )
+      return true;
     else return false;
   }, [updateError]);
 
@@ -208,7 +212,9 @@ export const StaffProfile = () => {
         {isEditingPasswd ? (
           <>
             <Heading mt="8" color="black" fontSize="xl">
-              {staff?.isPasswordActive ? t('Alterar senha') : t('Senha de acesso')}
+              {staff?.isPasswordActive
+                ? t('Alterar senha')
+                : t('Senha de acesso')}
             </Heading>
             <Text mt="1" fontSize="sm" maxW="580px">
               {t(
@@ -293,7 +299,9 @@ export const StaffProfile = () => {
                   {sendingLinkResult.isSuccess && (
                     <AlertSuccess
                       title={t('Pronto!')}
-                      description={t('O link de acesso foi enviado para seu e-mail.')}
+                      description={t(
+                        'O link de acesso foi enviado para seu e-mail.'
+                      )}
                     />
                   )}
                 </Box>
@@ -346,3 +354,5 @@ export const StaffProfile = () => {
     </Box>
   );
 };
+
+export default StaffProfile;

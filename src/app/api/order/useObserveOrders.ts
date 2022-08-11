@@ -6,7 +6,8 @@ import { Ordering } from './OrderApi';
 export const useObserveOrders = (
   statuses: OrderStatus[],
   businessId?: string,
-  ordering?: Ordering
+  ordering?: Ordering,
+  queryLimit?: number
 ) => {
   // context
   const api = useContextApi();
@@ -14,9 +15,11 @@ export const useObserveOrders = (
   const [orders, setOrders] = React.useState<WithId<Order>[]>([]);
   // side effects
   React.useEffect(() => {
-    const unsub = api.order().observeOrders(statuses, setOrders, businessId, ordering);
+    const unsub = api
+      .order()
+      .observeOrders(statuses, setOrders, businessId, ordering, queryLimit);
     return () => unsub();
-  }, [api, statuses, businessId, ordering]);
+  }, [api, statuses, businessId, ordering, queryLimit]);
   // return
   return orders;
 };

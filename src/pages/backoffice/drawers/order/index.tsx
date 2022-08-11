@@ -7,7 +7,7 @@ import {
   Order,
   OrderPaymentLog,
   OrderStatus,
-  WithId
+  WithId,
 } from '@appjusto/types';
 import { useObserveOrderChatMessages } from 'app/api/chat/useObserveOrderChatMessages';
 import { useObserveOrderInvoices } from 'app/api/order/useObserveOrderInvoices';
@@ -30,7 +30,11 @@ import { OrderChats } from './OrderChats';
 import { OrderStatusBar } from './OrderStatusBar';
 import { Participants } from './Participants';
 
-export type OrderDrawerLoadingState = 'idle' | 'preventCancel' | 'preventConfirm' | 'general';
+export type OrderDrawerLoadingState =
+  | 'idle'
+  | 'preventCancel'
+  | 'preventConfirm'
+  | 'general';
 
 interface ConsumerDrawerProps {
   isOpen: boolean;
@@ -47,9 +51,14 @@ export interface RefundParams {
   platform: boolean;
   products: boolean;
   delivery: boolean;
+  order: boolean;
+  tip: boolean;
 }
 
-export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps) => {
+export const BackofficeOrderDrawer = ({
+  onClose,
+  ...props
+}: ConsumerDrawerProps) => {
   //context
   const { isBackofficeSuperuser } = useContextFirebaseUser();
   const { staff } = useContextStaffProfile();
@@ -73,18 +82,26 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
   const { invoices, logs } = useObserveOrderInvoices(orderId);
   const cancelOptions = useIssuesByType(cancelOptionsArray);
   const { addFlaggedLocation } = useFlaggedLocations();
-  const { chatMessages, orderChatGroup } = useObserveOrderChatMessages(orderId);
+  const { orderChatGroup } = useObserveOrderChatMessages(orderId);
   // state
-  const [status, setStatus] = React.useState<OrderStatus | undefined>(order?.status);
+  const [status, setStatus] = React.useState<OrderStatus | undefined>(
+    order?.status
+  );
   const [dispatchingState, setDispatchingState] = React.useState<
     DispatchingState | undefined | null
   >(order?.dispatchingState);
   const [issue, setIssue] = React.useState<Issue | null>();
   const [message, setMessage] = React.useState<string>();
-  const [refund, setRefund] = React.useState<InvoiceType[]>(['platform', 'products', 'delivery']);
-  const [loadingState, setLoadingState] = React.useState<OrderDrawerLoadingState>('idle');
+  const [refund, setRefund] = React.useState<InvoiceType[]>([
+    'platform',
+    'products',
+    'delivery',
+    'order',
+    'tip',
+  ]);
+  const [loadingState, setLoadingState] =
+    React.useState<OrderDrawerLoadingState>('idle');
   // helpers
-  const isChatMessages = chatMessages ? chatMessages?.length > 0 : false;
   let refundValue = 0;
   if (refund.includes('platform') && order?.fare?.platform?.value)
     refundValue += order.fare.platform.value;
@@ -92,8 +109,20 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
     refundValue += order.fare.business.value;
   if (refund.includes('delivery') && order?.fare?.courier?.value)
     refundValue += order.fare.courier.value;
-  const canUpdateOrderStaff = order?.staff?.id === staff?.id || isBackofficeSuperuser;
+  if (refund.includes('order') && order?.fare?.total)
+    refundValue += order?.fare?.total;
+  if (refund.includes('tip') && order?.tip?.value)
+    refundValue += order.tip.value;
+  const canUpdateOrderStaff =
+    order?.staff?.id === staff?.id || isBackofficeSuperuser;
   //handlers
+  const handleIssueOrder = () => {
+    const oldFlags = order?.flags;
+    if (oldFlags) {
+      const flags = oldFlags.filter((flag) => flag !== 'issue');
+      updateOrder({ flags });
+    }
+  };
   const handleUpdateOrderStaff = async (type: 'assume' | 'release') => {
     if (type === 'assume') {
       if (order?.staff) {
@@ -124,8 +153,10 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
     value: OrderStatus | WithId<Issue> | string
   ) => {
     if (type === 'status') setStatus(value as OrderStatus);
-    else if (type === 'dispatchingState') setDispatchingState(value as DispatchingState);
-    else if (type === 'issue') setIssue(cancelOptions?.find((item) => item.id === value) ?? null);
+    else if (type === 'dispatchingState')
+      setDispatchingState(value as DispatchingState);
+    else if (type === 'issue')
+      setIssue(cancelOptions?.find((item) => item.id === value) ?? null);
     else if (type === 'message') setMessage(value as string);
   };
   const onRefundingChange = (type: InvoiceType, value: boolean) => {
@@ -140,7 +171,10 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
     });
   };
   const cancellation = (type?: 'prevention') => {
-    if (type === 'prevention' || issue?.id === 'agent-order-cancel-fraud-prevention') {
+    if (
+      type === 'prevention' ||
+      issue?.id === 'agent-order-cancel-fraud-prevention'
+    ) {
       const preventionIssue = cancelOptions?.find(
         (issue) => issue.id === 'agent-order-cancel-fraud-prevention'
       );
@@ -156,7 +190,9 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
       }
       const cancellationData = {
         orderId,
-        params: { refund: ['platform', 'products', 'delivery'] },
+        params: {
+          refund: ['platform', 'products', 'delivery', 'order', 'tip'],
+        },
         acknowledgedCosts: 0,
         cancellation: preventionIssue,
       } as CancelOrderPayload;
@@ -249,13 +285,14 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
         order={order}
         onClose={onClose}
         message={message}
+        handleIssueOrder={handleIssueOrder}
+        handleIssueOrderLoading={updateResult.isLoading}
         updateState={updateState}
         updateOrderStatus={updateOrderStatus}
         updateOrderStaff={handleUpdateOrderStaff}
         updateStaffResult={updateOrderStaffResult}
         cancellation={cancellation}
         loadingState={loadingState}
-        isChatMessages={isChatMessages}
         deleteOrder={deleteQuoteOrder}
         deleteLoading={deleteOrderResult.isLoading}
         {...props}
@@ -271,7 +308,10 @@ export const BackofficeOrderDrawer = ({ onClose, ...props }: ConsumerDrawerProps
             </>
           </Route>
           <Route exact path={`${path}/invoices`}>
-            <Invoices invoices={invoices} logs={logs as WithId<OrderPaymentLog>[] | undefined} />
+            <Invoices
+              invoices={invoices}
+              logs={logs as WithId<OrderPaymentLog>[] | undefined}
+            />
           </Route>
           <Route exact path={`${path}/matching`}>
             <Matching order={order} />

@@ -5,9 +5,18 @@ import {
   Issue,
   IssueType,
   OrderStatus,
-  OrderType
+  OrderType,
 } from '@appjusto/types';
-import { Box, Flex, HStack, Icon, Link, RadioGroup, Text, Textarea } from '@chakra-ui/react';
+import {
+  Box,
+  Flex,
+  HStack,
+  Icon,
+  Link,
+  RadioGroup,
+  Text,
+  Textarea,
+} from '@chakra-ui/react';
 import { useObserveOrderPrivateConfirmation } from 'app/api/order/useObserveOrderPrivateConfirmation';
 import { useOrderNotes } from 'app/api/order/useOrderNotes';
 import { ProfileNotes } from 'common/components/backoffice/ProfileNotes';
@@ -32,7 +41,10 @@ interface OrderStatusProps {
   refund: InvoiceType[];
   refundValue: number;
   onRefundingChange(type: InvoiceType, value: boolean): void;
-  updateState(type: string, value: OrderStatus | DispatchingState | IssueType | string): void;
+  updateState(
+    type: string,
+    value: OrderStatus | DispatchingState | IssueType | string
+  ): void;
   courierId?: string;
 }
 
@@ -53,12 +65,15 @@ export const OrderStatusBar = ({
   courierId,
 }: OrderStatusProps) => {
   // context
-  const { confirmation, frontUrl, packageUrl } = useObserveOrderPrivateConfirmation(
-    orderId,
-    courierId
-  );
-  const { orderNotes, updateOrderNote, deleteOrderNote, updateResult, deleteResult } =
-    useOrderNotes(orderId);
+  const { confirmation, frontUrl, packageUrl } =
+    useObserveOrderPrivateConfirmation(orderId, courierId);
+  const {
+    orderNotes,
+    updateOrderNote,
+    deleteOrderNote,
+    updateResult,
+    deleteResult,
+  } = useOrderNotes(orderId);
   // helpers
   const isOrderActive = orderStatus
     ? ['preparing', 'ready', 'dispatching'].includes(orderStatus)
@@ -87,7 +102,11 @@ export const OrderStatusBar = ({
               <CustomRadio mt="2" value="scheduled">
                 {t('Agendado')}
               </CustomRadio>
-              <CustomRadio mt="2" value="confirmed" isDisabled={orderStatus !== 'scheduled'}>
+              <CustomRadio
+                mt="2"
+                value="confirmed"
+                isDisabled={orderStatus !== 'scheduled'}
+              >
                 {t('Confirmado')}
               </CustomRadio>
               {orderType === 'food' && (
@@ -117,10 +136,14 @@ export const OrderStatusBar = ({
         </Box>
         {isOrderActive && fulfillment === 'delivery' && (
           <Box>
-            <SectionTitle mt="0">{t('Alterar status da entrega:')}</SectionTitle>
+            <SectionTitle mt="0">
+              {t('Alterar status da entrega:')}
+            </SectionTitle>
             <RadioGroup
               mt="2"
-              onChange={(value: DispatchingState) => updateState('dispatchingState', value)}
+              onChange={(value: DispatchingState) =>
+                updateState('dispatchingState', value)
+              }
               value={dispatchingState ?? undefined}
               colorScheme="green"
               color="black"
@@ -148,14 +171,26 @@ export const OrderStatusBar = ({
       {orderStatus === 'delivered' && (
         <>
           <SectionTitle>{t('Dados da confirmação:')}</SectionTitle>
-          <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+          <Text
+            mt="2"
+            fontSize="15px"
+            color="black"
+            fontWeight="700"
+            lineHeight="22px"
+          >
             {t('Código informado:')}{' '}
             <Text as="span" fontWeight="500">
               {confirmation?.handshakeResponse ? t('Sim') : t('Não')}
             </Text>
           </Text>
           {confirmation?.deliveredTo && (
-            <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+            <Text
+              mt="2"
+              fontSize="15px"
+              color="black"
+              fontWeight="700"
+              lineHeight="22px"
+            >
               {t('Entregue para:')}{' '}
               <Text as="span" fontWeight="500">
                 {confirmation.deliveredTo}
@@ -163,7 +198,13 @@ export const OrderStatusBar = ({
             </Text>
           )}
           {confirmation?.comment && (
-            <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+            <Text
+              mt="2"
+              fontSize="15px"
+              color="black"
+              fontWeight="700"
+              lineHeight="22px"
+            >
               {t('Comentário:')}{' '}
               <Text as="span" fontWeight="500">
                 {confirmation.comment}
@@ -205,13 +246,25 @@ export const OrderStatusBar = ({
           <SectionTitle>{t('Dados do cancelamento:')}</SectionTitle>
           {orderStatus === 'canceled' || orderStatus === 'rejected' ? (
             <>
-              <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+              <Text
+                mt="2"
+                fontSize="15px"
+                color="black"
+                fontWeight="700"
+                lineHeight="22px"
+              >
                 {t('Cancelado por:')}{' '}
                 <Text as="span" fontWeight="500">
                   {cancelator}
                 </Text>
               </Text>
-              <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+              <Text
+                mt="2"
+                fontSize="15px"
+                color="black"
+                fontWeight="700"
+                lineHeight="22px"
+              >
                 {t('Motivo informado:')}{' '}
                 <Text as="span" fontWeight="500">
                   {issue?.title ?? 'N/I'}
@@ -220,7 +273,13 @@ export const OrderStatusBar = ({
             </>
           ) : (
             <>
-              <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+              <Text
+                mt="2"
+                fontSize="15px"
+                color="black"
+                fontWeight="700"
+                lineHeight="22px"
+              >
                 {t('Informe quem está solicitando este cancelamento:')}
               </Text>
               <RadioGroup
@@ -244,7 +303,13 @@ export const OrderStatusBar = ({
             </>
           )}
           <SectionTitle>{t('Reembolso:')}</SectionTitle>
-          <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+          <Text
+            mt="2"
+            fontSize="15px"
+            color="black"
+            fontWeight="700"
+            lineHeight="22px"
+          >
             {t(`Valor do reembolso: ${formatCurrency(refundValue)}`)}
           </Text>
           <HStack mt="4" spacing={4}>
@@ -280,6 +345,28 @@ export const OrderStatusBar = ({
               onChange={(e) => onRefundingChange('delivery', e.target.checked)}
             >
               {t('Entrega')}
+            </CustomCheckbox>
+            <CustomCheckbox
+              width="120px"
+              colorScheme="green"
+              size="lg"
+              spacing="1rem"
+              iconSize="1rem"
+              isChecked={refund.includes('order')}
+              onChange={(e) => onRefundingChange('order', e.target.checked)}
+            >
+              {t('Pedido')}
+            </CustomCheckbox>
+            <CustomCheckbox
+              width="120px"
+              colorScheme="green"
+              size="lg"
+              spacing="1rem"
+              iconSize="1rem"
+              isChecked={refund.includes('tip')}
+              onChange={(e) => onRefundingChange('tip', e.target.checked)}
+            >
+              {t('Gorjeta')}
             </CustomCheckbox>
           </HStack>
           <SectionTitle>{t('Comentário:')}</SectionTitle>

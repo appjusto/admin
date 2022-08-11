@@ -4,7 +4,10 @@ import { useContextApi } from 'app/state/api/context';
 import React from 'react';
 import { getOrderChatGroup } from './utils';
 
-export const useBusinessChats = (businessId?: string) => {
+export const useBusinessChats = (
+  businessId?: string,
+  isChatActive?: boolean
+) => {
   // context
   const api = useContextApi();
   // state
@@ -16,11 +19,12 @@ export const useBusinessChats = (businessId?: string) => {
   );
   React.useEffect(() => {
     if (!businessId) return;
+    if (!isChatActive) return;
     const unsub = api
       .chat()
       .observeBusinessActiveChatMessages(businessId, setChatMessages);
     return () => unsub();
-  }, [api, businessId]);
+  }, [api, businessId, isChatActive]);
   React.useEffect(() => {
     if (!businessId) return;
     const result = getOrderChatGroup(businessId, chatMessages);

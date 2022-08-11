@@ -1,4 +1,4 @@
-import { OrderStatus } from '@appjusto/types';
+import { Order, WithId } from '@appjusto/types';
 import {
   Box,
   Flex,
@@ -10,11 +10,11 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/react';
-import { splitByStatus } from 'app/api/order/selectors';
 import { useFetchOrderByCode } from 'app/api/order/useFetchOrderByCode';
 import { useOrdersContext } from 'app/state/order';
 import { ReactComponent as SearchIcon } from 'common/img/searchIcon.svg';
-import React from 'react';
+import { isEqual } from 'lodash';
+import React, { KeyboardEvent } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
@@ -22,14 +22,6 @@ import { ChatButton } from './ChatButton';
 import { OrderSearchResult } from './OrderSearchResult';
 import { OrdersKanbanList } from './OrdersKanbanList';
 import { PrintSwitch } from './PrintSwitch';
-
-const statuses = [
-  'confirmed',
-  'preparing',
-  'ready',
-  'dispatching',
-  'canceled',
-] as OrderStatus[];
 
 export const OrdersKanban = () => {
   // context
@@ -44,16 +36,56 @@ export const OrdersKanban = () => {
     fetchNextCanceledOrders,
   } = useOrdersContext();
   // state
-  const ordersByStatus = splitByStatus(orders, statuses);
   const [dateTime, setDateTime] = React.useState('');
+  const [confirmedOrders, setConfirmedOrders] = React.useState<WithId<Order>[]>(
+    []
+  );
+  const [preparingOrders, setPreparingOrders] = React.useState<WithId<Order>[]>(
+    []
+  );
+  const [readyAndDispatchingOrders, setReadyAndDispatchingOrders] =
+    React.useState<WithId<Order>[]>([]);
   const [orderSearch, setOrderSearch] = React.useState('');
-  const searchedOrder = useFetchOrderByCode(orderSearch, business?.id);
+  const { orders: searchedOrder, fetchOrdersByCode } = useFetchOrderByCode(
+    orderSearch,
+    business?.id
+  );
   // helpers
   const isNewChatMessage = newChatMessages.length > 0;
+  // handlers
+  const handleSearch = () => {
+    if (orderSearch.length === 0) return;
+    fetchOrdersByCode();
+  };
+  const handleUserKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      handleSearch();
+    }
+  };
   // side effects
   React.useEffect(() => {
     const { date, time } = getDateTime();
     setDateTime(`${date} às ${time}`);
+  }, [orders]);
+  React.useEffect(() => {
+    const confirmed = orders.filter((o) => o.status === 'confirmed');
+    const preparing = orders.filter((o) => o.status === 'preparing');
+    const readyAndDispatching = orders.filter(
+      (o) => o.status === 'ready' || o.status === 'dispatching'
+    );
+    setConfirmedOrders((prev) => {
+      if (isEqual(prev, confirmed)) return prev;
+      else return confirmed;
+    });
+    setPreparingOrders((prev) => {
+      if (isEqual(prev, preparing)) return prev;
+      else return preparing;
+    });
+    setReadyAndDispatchingOrders((prev) => {
+      if (isEqual(prev, readyAndDispatching)) return prev;
+      else return readyAndDispatching;
+    });
   }, [orders]);
   // UI
   return (
@@ -141,10 +173,13 @@ export const OrdersKanban = () => {
                 value={orderSearch}
                 placeholder={t('Pesquisar por nº do pedido')}
                 onChange={(ev) => setOrderSearch(ev.target.value)}
+                onKeyDown={handleUserKeyPress}
               />
               <InputRightElement
                 mt="10px"
                 mr="8px"
+                cursor="pointer"
+                onClick={handleSearch}
                 children={<Icon w="22px" h="22px" as={SearchIcon} />}
               />
             </InputGroup>
@@ -164,7 +199,7 @@ export const OrdersKanban = () => {
           </Text>
         </Flex>
       </Flex>
-      {orderSearch.length > 0 ? (
+      {searchedOrder ? (
         <OrderSearchResult orders={searchedOrder} />
       ) : (
         <Stack
@@ -175,6 +210,7 @@ export const OrdersKanban = () => {
         >
           {scheduledOrders.length > 0 && (
             <OrdersKanbanList
+              type="scheduled"
               title={t('Agendados para hoje')}
               orders={scheduledOrders}
               dataLength={scheduledOrdersNumber}
@@ -186,15 +222,17 @@ export const OrdersKanban = () => {
           )}
           <Stack w="100%" direction={{ base: 'column', md: 'row' }} spacing={4}>
             <OrdersKanbanList
+              type="confirmed"
               title={t('Pedidos a confirmar')}
-              orders={ordersByStatus['confirmed']}
+              orders={confirmedOrders}
               details={t(
                 'Aqui você verá os novos pedidos. Aceite-os para confirmar o preparo.'
               )}
             />
             <OrdersKanbanList
+              type="preparing"
               title={t('Em preparação')}
-              orders={ordersByStatus['preparing']}
+              orders={preparingOrders}
               details={t(
                 'Aqui você verá os pedidos que estão sendo preparados por você. Quando clicar em "Pedido pronto” ou o tempo expirar, o entregador estará esperando para buscá-lo.'
               )}
@@ -202,16 +240,15 @@ export const OrdersKanban = () => {
           </Stack>
           <Stack w="100%" direction={{ base: 'column', md: 'row' }} spacing={4}>
             <OrdersKanbanList
+              type="ready"
               title={t('Retirada/entrega')}
-              orders={[
-                ...ordersByStatus['ready'],
-                ...ordersByStatus['dispatching'],
-              ]}
+              orders={readyAndDispatchingOrders}
               details={t(
-                'Aqui você verá os pedidos aguardando retirada pelo entregador.'
+                'Aqui você verá os pedidos aguardando retirada pelo entregador e os pedidos que estão a caminho da entrega.'
               )}
             />
             <OrdersKanbanList
+              type="canceled"
               title={t('Pedidos cancelados')}
               orders={canceledOrders}
               details={t('Aqui você verá os pedidos cancelados.')}

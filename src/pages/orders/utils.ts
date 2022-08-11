@@ -1,25 +1,28 @@
-import { Order, WithId } from "@appjusto/types";
-import dayjs from "dayjs";
-import { FieldValue, Timestamp } from "firebase/firestore";
+import { Order, WithId } from '@appjusto/types';
+import dayjs from 'dayjs';
+import { FieldValue, Timestamp } from 'firebase/firestore';
 
-export const ordersScheduledDayFilter = (orders: WithId<Order>[], filterDate?: Date) => {
+export const ordersScheduledDayFilter = (
+  orders: WithId<Order>[],
+  filterDate?: Date
+) => {
   try {
     const comparator = filterDate ? filterDate : dayjs();
-    return orders.filter(order => {
-      const scheduledTo = (order.scheduledTo as Timestamp).toDate()
-      return dayjs(scheduledTo).isSame(comparator, 'day')
-    })
+    return orders.filter((order) => {
+      const scheduledTo = (order.scheduledTo as Timestamp).toDate();
+      return dayjs(scheduledTo).isSame(comparator, 'day');
+    });
   } catch (error) {
-    console.error(error)
+    console.error(error);
     return [] as WithId<Order>[];
   }
-} 
+};
 
 export const getScheduledStartTime = (
-  scheduledTo?: FieldValue | null, 
-  cookingTime?: number | null,
+  scheduledTo?: FieldValue | null,
+  cookingTime?: number | null
 ) => {
-  if(!scheduledTo || !cookingTime) return null;
+  if (!scheduledTo || !cookingTime) return null;
   try {
     const scheduledToDate = (scheduledTo as Timestamp).toDate();
     const startAt = dayjs(scheduledToDate)
@@ -33,15 +36,13 @@ export const getScheduledStartTime = (
 
 export const isScheduledMarginValid = (
   scheduledTo?: FieldValue | null,
-  margin: number = 3600 
+  margin: number = 3600
 ) => {
-  if(!scheduledTo) return false;
+  if (!scheduledTo) return false;
   try {
     const scheduledToDate = (scheduledTo as Timestamp).toDate();
     const now = dayjs().toDate();
-    const startAt = dayjs(scheduledToDate)
-      .subtract(margin, 'second')
-      .toDate();
+    const startAt = dayjs(scheduledToDate).subtract(margin, 'second').toDate();
     return now > startAt;
   } catch (error) {
     console.error(error);
@@ -50,24 +51,21 @@ export const isScheduledMarginValid = (
 };
 
 export const getDatePlusTime = (
-  dateValue?: FieldValue | null, 
-  time: number = 3600, 
+  dateValue?: FieldValue | null,
+  time: number = 3600
 ) => {
-  if(!dateValue) return undefined;
+  if (!dateValue) return undefined;
   try {
     const date = (dateValue as Timestamp).toDate();
-    return dayjs(date)
-      .add(time, 'second')
-      .toDate();
+    return dayjs(date).add(time, 'second').toDate();
   } catch (error) {
     console.error(error);
     return undefined;
   }
 };
 
-
 export const isToday = (dateValue?: FieldValue | null) => {
-  if(!dateValue) return undefined;
+  if (!dateValue) return undefined;
   try {
     const date = (dateValue as Timestamp).toDate();
     return dayjs().startOf('day').isSame(dayjs(date).startOf('day'));
@@ -75,4 +73,10 @@ export const isToday = (dateValue?: FieldValue | null) => {
     console.error(error);
     return undefined;
   }
+};
+
+export const getOrderDestinationNeighborhood = (secondary?: string) => {
+  if (!secondary) return 'N/E';
+  const neighborhood = secondary.split(',')[0];
+  return neighborhood;
 };

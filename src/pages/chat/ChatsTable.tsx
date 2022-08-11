@@ -1,14 +1,15 @@
 import { Box, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import { OrderChatGroup } from 'app/api/chat/types';
+import { isEqual } from 'lodash';
 import React from 'react';
 import { t } from 'utils/i18n';
-import { ChatsTableItem } from './ChatsTableItem';
+import ChatsTableItem from './ChatsTableItem';
 
-interface ChatTableProps {
+interface ChatsTableProps {
   chats: OrderChatGroup[];
 }
 
-export const ChatsTable = ({ chats }: ChatTableProps) => {
+const ChatsTable = ({ chats }: ChatsTableProps) => {
   // UI
   return (
     <Box mt="12" overflow="auto">
@@ -42,3 +43,9 @@ export const ChatsTable = ({ chats }: ChatTableProps) => {
     </Box>
   );
 };
+
+const areEqual = (prevProps: ChatsTableProps, nextProps: ChatsTableProps) => {
+  return isEqual(prevProps, nextProps);
+};
+
+export default React.memo(ChatsTable, areEqual);
