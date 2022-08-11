@@ -13,10 +13,11 @@ import {
   HStack,
   Icon,
   Text,
-  Tooltip
+  Tooltip,
 } from '@chakra-ui/react';
 import { useOrdersContext } from 'app/state/order';
 import { CustomButton } from 'common/components/buttons/CustomButton';
+import { phoneFormatter } from 'common/components/form/input/pattern-input/formatters';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import React from 'react';
 import { MdPrint } from 'react-icons/md';
@@ -63,7 +64,8 @@ export const OrderBaseDrawer = ({
   const isCurrierArrived = order?.dispatchingState === 'arrived-pickup';
   const cannotCancelOrder =
     typeof order?.courier?.id === 'string' ||
-    (order?.dispatchingStatus === 'outsourced' && order.outsourcedBy !== 'business');
+    (order?.dispatchingStatus === 'outsourced' &&
+      order.outsourcedBy !== 'business');
   //handlers
   const handlePrint = () => {
     if (printOrder) return printOrder();
@@ -94,15 +96,17 @@ export const OrderBaseDrawer = ({
     if (isCanceling && bodyRef.current) bodyRef.current.scrollTop = 0;
   }, [isCanceling]);
   //UI conditions
-  let orderDispatched = ['dispatching', 'delivered'].includes(order?.status ?? 'not_included');
+  let orderDispatched = ['dispatching', 'delivered'].includes(
+    order?.status ?? 'not_included'
+  );
   let PrimaryButtonIsAble =
-    (order?.status === 'scheduled' && 
+    (order?.status === 'scheduled' &&
       isScheduledMarginValid(order.scheduledTo, 5400)) ||
     (!(order?.status === 'preparing' && isCookingTimeModeAuto) &&
-    (['confirmed', 'preparing'].includes(order?.status ?? 'not_included') ||
-      (order?.status === 'ready' && order.fulfillment !== 'delivery') ||
-      (order?.status === 'ready' && isCurrierArrived) ||
-      order?.dispatchingStatus === 'outsourced'));
+      (['confirmed', 'preparing'].includes(order?.status ?? 'not_included') ||
+        (order?.status === 'ready' && order.fulfillment !== 'delivery') ||
+        (order?.status === 'ready' && isCurrierArrived) ||
+        order?.dispatchingStatus === 'outsourced'));
   let PrimaryButtonLabel = 'Pedido pronto';
   if (order?.status === 'scheduled') PrimaryButtonLabel = 'Avançar pedido';
   else if (order?.status === 'ready') PrimaryButtonLabel = 'Entregar pedido';
@@ -111,7 +115,11 @@ export const OrderBaseDrawer = ({
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
       <DrawerOverlay>
         <DrawerContent mt={isHistory ? { base: '16', lg: '0' } : '0'}>
-          <DrawerCloseButton bg="green.500" mr="12px" _focus={{ outline: 'none' }} />
+          <DrawerCloseButton
+            bg="green.500"
+            mr="12px"
+            _focus={{ outline: 'none' }}
+          />
           <DrawerHeader pb="2">
             <Flex
               flexDir={{ base: 'column', md: 'row' }}
@@ -149,21 +157,50 @@ export const OrderBaseDrawer = ({
                   </Tooltip>
                 </HStack>
                 {order?.status === 'canceled' && (
-                  <Text fontSize="md" color="red" fontWeight="700" lineHeight="22px">
-                    {t('Pedido cancelado por:')} <Text as="span">{cancellator}</Text>
+                  <Text
+                    fontSize="md"
+                    color="red"
+                    fontWeight="700"
+                    lineHeight="22px"
+                  >
+                    {t('Pedido cancelado por:')}{' '}
+                    <Text as="span">{cancellator}</Text>
                   </Text>
                 )}
-                <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
+                <Text
+                  fontSize="md"
+                  color="gray.600"
+                  fontWeight="500"
+                  lineHeight="22px"
+                >
                   {t('Nome do cliente:')}{' '}
                   <Text as="span" color="black" fontWeight="700">
                     {order?.consumer?.name ?? 'N/E'}
                   </Text>
                 </Text>
                 {order?.consumer.email && (
-                  <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
+                  <Text
+                    fontSize="md"
+                    color="gray.600"
+                    fontWeight="500"
+                    lineHeight="22px"
+                  >
                     {t('E-mail do cliente:')}{' '}
                     <Text as="span" color="black" fontWeight="700">
                       {order?.consumer.email}
+                    </Text>
+                  </Text>
+                )}
+                {order?.consumer?.phone && (
+                  <Text
+                    fontSize="md"
+                    color="gray.600"
+                    fontWeight="500"
+                    lineHeight="22px"
+                  >
+                    {t('Fone do cliente:')}{' '}
+                    <Text as="span" color="black" fontWeight="700">
+                      {phoneFormatter(order.consumer.phone)}
                     </Text>
                   </Text>
                 )}
@@ -174,68 +211,104 @@ export const OrderBaseDrawer = ({
                   </Text>
                   <Pendency />
                 </Text>*/}
-                <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
+                <Text
+                  fontSize="md"
+                  color="gray.600"
+                  fontWeight="500"
+                  lineHeight="22px"
+                >
                   {t('Horário do pedido:')}{' '}
                   <Text as="span" color="black" fontWeight="700">
-                    {getDateAndHour(isScheduled ? order?.timestamps.charged : order?.timestamps.confirmed)}
+                    {getDateAndHour(
+                      isScheduled
+                        ? order?.timestamps.charged
+                        : order?.timestamps.confirmed
+                    )}
                   </Text>
                 </Text>
-                <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
+                <Text
+                  fontSize="md"
+                  color="gray.600"
+                  fontWeight="500"
+                  lineHeight="22px"
+                >
                   {t('Atualizado às:')}{' '}
                   <Text as="span" color="black" fontWeight="700">
                     {getDateAndHour(order?.updatedOn)}
                   </Text>
                 </Text>
-                <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
+                <Text
+                  fontSize="md"
+                  color="gray.600"
+                  fontWeight="500"
+                  lineHeight="22px"
+                >
                   {t('Tipo de entrega:')}{' '}
                   <Text as="span" color="black" fontWeight="700">
-                    {order?.fulfillment === 'take-away' ? 'Para retirar' : 'Delivery'}
+                    {order?.fulfillment === 'take-away'
+                      ? 'Para retirar'
+                      : 'Delivery'}
                   </Text>
                 </Text>
                 {order?.status && order?.status !== 'confirmed' && (
-                  <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
+                  <Text
+                    fontSize="md"
+                    color="gray.600"
+                    fontWeight="500"
+                    lineHeight="22px"
+                  >
                     {t('Status:')}{' '}
                     <Text as="span" color="black" fontWeight="700">
-                      {order?.status ? orderStatusPTOptions[order.status] : 'N/E'}
+                      {order?.status
+                        ? orderStatusPTOptions[order.status]
+                        : 'N/E'}
                     </Text>
                   </Text>
                 )}
                 {isScheduled && (
                   <>
-                    <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
+                    <Text
+                      fontSize="md"
+                      color="gray.600"
+                      fontWeight="500"
+                      lineHeight="22px"
+                    >
                       {t('Início do preparo para:')}{' '}
                       <Text as="span" color="black" fontWeight="700">
-                      {
-                        order?.confirmedScheduledTo ? 
-                        getDateAndHour(order.confirmedScheduledTo) : 
-                        'N/E'
-                      }
+                        {order?.confirmedScheduledTo
+                          ? getDateAndHour(order.confirmedScheduledTo)
+                          : 'N/E'}
                       </Text>
                     </Text>
-                    <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
+                    <Text
+                      fontSize="md"
+                      color="gray.600"
+                      fontWeight="500"
+                      lineHeight="22px"
+                    >
                       {t('Cliente solicitou entrega entre:')}{' '}
                       <Text as="span" color="black" fontWeight="700">
                         {getHourAndMinute(order?.scheduledTo!)}
                       </Text>
                       <Text as="span" color="black" fontWeight="700">
-                        {` e ${getHourAndMinute(getDatePlusTime(order?.scheduledTo))}`}
+                        {` e ${getHourAndMinute(
+                          getDatePlusTime(order?.scheduledTo)
+                        )}`}
                       </Text>
                     </Text>
                   </>
                 )}
               </Flex>
-              {
-                !isScheduled && (
-                  <Flex flexDir="column">
-                    <CustomButton
-                      label="Abrir chat com o cliente"
-                      link={`/app/orders/chat/${order?.id}/${order?.consumer?.id}`}
-                      size="sm"
-                      variant="outline"
-                    />
-                  </Flex>
-                )
-              }
+              {!isScheduled && (
+                <Flex flexDir="column">
+                  <CustomButton
+                    label="Abrir chat com o cliente"
+                    link={`/app/orders/chat/${order?.id}/${order?.consumer?.id}`}
+                    size="sm"
+                    variant="outline"
+                  />
+                </Flex>
+              )}
             </Flex>
             {order?.status === 'confirmed' && (
               <Flex
@@ -247,14 +320,25 @@ export const OrderBaseDrawer = ({
                 <Box>
                   <SectionTitle mt="0">{t('Detalhes do pedido')}</SectionTitle>
                   <Flex color="black" fontSize="xs">
-                    <Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
+                    <Text
+                      fontSize="md"
+                      color="gray.600"
+                      fontWeight="500"
+                      lineHeight="22px"
+                    >
                       {t('Tempo de preparo:')}
                     </Text>
                     <Text ml="1" fontSize="md" fontWeight="700">
-                      {t(`${order?.cookingTime ? order?.cookingTime / 60 : 'N/I'} min`)}
+                      {t(
+                        `${
+                          order?.cookingTime ? order?.cookingTime / 60 : 'N/I'
+                        } min`
+                      )}
                       <Text
                         ml="2"
-                        display={isCookingTimeModeAuto ? 'none' : 'inline-block'}
+                        display={
+                          isCookingTimeModeAuto ? 'none' : 'inline-block'
+                        }
                         as="span"
                         color="#4EA031"
                         textDecor="underline"
@@ -300,7 +384,11 @@ export const OrderBaseDrawer = ({
                   maxW="607px"
                   pr="12"
                   flexDir="row"
-                  justifyContent={order?.status === 'confirmed' ? 'flex-start' : 'space-between'}
+                  justifyContent={
+                    order?.status === 'confirmed'
+                      ? 'flex-start'
+                      : 'space-between'
+                  }
                 >
                   <Button
                     width="full"
@@ -325,23 +413,30 @@ export const OrderBaseDrawer = ({
               </Flex>
             </DrawerFooter>
           )}
-          {order?.status === 'dispatching' && order.outsourcedBy === 'business' && (
-            <DrawerFooter borderTop="1px solid #F2F6EA">
-              <Flex w="full" justifyContent="flex-start">
-                <Flex w="full" maxW="607px" pr="12" flexDir="row" justifyContent="flex-start">
-                  <Button
-                    width="full"
-                    maxW="200px"
-                    variant="dangerLight"
-                    onClick={cancel}
-                    isDisabled={cannotCancelOrder}
+          {order?.status === 'dispatching' &&
+            order.outsourcedBy === 'business' && (
+              <DrawerFooter borderTop="1px solid #F2F6EA">
+                <Flex w="full" justifyContent="flex-start">
+                  <Flex
+                    w="full"
+                    maxW="607px"
+                    pr="12"
+                    flexDir="row"
+                    justifyContent="flex-start"
                   >
-                    {t('Cancelar pedido')}
-                  </Button>
+                    <Button
+                      width="full"
+                      maxW="200px"
+                      variant="dangerLight"
+                      onClick={cancel}
+                      isDisabled={cannotCancelOrder}
+                    >
+                      {t('Cancelar pedido')}
+                    </Button>
+                  </Flex>
                 </Flex>
-              </Flex>
-            </DrawerFooter>
-          )}
+              </DrawerFooter>
+            )}
         </DrawerContent>
       </DrawerOverlay>
     </Drawer>

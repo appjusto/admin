@@ -1,17 +1,12 @@
 import { Order, OrderStatus, ProfileChange, WithId } from '@appjusto/types';
 import { useObserveFlaggedOrders } from 'app/api/order/useObserveFlaggedOrders';
-import {
-  OrderWithWarning,
-  useObserveStaffOrders,
-} from 'app/api/order/useObserveStaffOrders';
-import { usePlatformParams } from 'app/api/platform/usePlatformParams';
+import { useObserveStaffOrders } from 'app/api/order/useObserveStaffOrders';
 import {
   ProfileChangesSituations,
   useObserveUsersChanges,
 } from 'app/api/users/useObserveUsersChanges';
 import React from 'react';
 import { useContextFirebaseUser } from '../auth/context';
-import { useContextServerTime } from '../server-time';
 
 interface ContextProps {
   // lists
@@ -19,7 +14,7 @@ interface ContextProps {
   unsafeOrders: WithId<Order>[];
   matchingIssueOrders: WithId<Order>[];
   issueOrders: WithId<Order>[];
-  watchedOrders: WithId<OrderWithWarning>[];
+  watchedOrders: WithId<Order>[];
   userChanges: WithId<ProfileChange>[];
   // fetchNextActiveOrders(): void;
   fetchNextUnsafeOrders(): void;
@@ -52,9 +47,6 @@ const issueFlag = 'issue';
 export const BackofficeDashboardProvider = ({ children }: Props) => {
   // context
   const { user, isBackofficeSuperuser } = useContextFirebaseUser();
-  const { getServerTime } = useContextServerTime();
-  // panel
-  const { platformParams } = usePlatformParams();
   // lists
   // const { orders: activeOrders, fetchNextOrders: fetchNextActiveOrders } =
   //   useObserveBOActiveOrders(statuses, !isBackofficeSuperuser);
@@ -66,12 +58,7 @@ export const BackofficeDashboardProvider = ({ children }: Props) => {
   } = useObserveFlaggedOrders(statuses, matchingFlag, !isBackofficeSuperuser);
   const { orders: issueOrders, fetchNextOrders: fetchNextIssueOrders } =
     useObserveFlaggedOrders(statuses, issueFlag, !isBackofficeSuperuser);
-  const watchedOrders = useObserveStaffOrders(
-    getServerTime,
-    statuses,
-    user?.uid,
-    platformParams?.orders.backofficeWarnings
-  );
+  const watchedOrders = useObserveStaffOrders(statuses, user?.uid);
   const { userChanges, fetchNextPage: fetchNextChanges } =
     useObserveUsersChanges(usersChangesSituations);
   // provider

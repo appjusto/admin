@@ -1,6 +1,5 @@
-import { WithId } from '@appjusto/types';
+import { Order, WithId } from '@appjusto/types';
 import { Box, Flex, Icon, Image, Text } from '@chakra-ui/react';
-import { OrderWithWarning } from 'app/api/order/useObserveStaffOrders';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextServerTime } from 'app/state/server-time';
 import foodIcon from 'common/img/bo-food.svg';
@@ -17,7 +16,7 @@ import { getOrderMatchingColor } from './utils';
 
 interface Props {
   listType: ListType;
-  order: WithId<OrderWithWarning>;
+  order: WithId<Order>;
 }
 
 type IconsConfig = {

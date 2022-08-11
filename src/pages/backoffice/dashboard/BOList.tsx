@@ -9,7 +9,6 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import { OrderWithWarning } from 'app/api/order/useObserveStaffOrders';
 import { ShowIf } from 'core/components/ShowIf';
 import React from 'react';
 import { BOBusinessListItem } from './BOBusinessListItem';
@@ -46,10 +45,7 @@ const renderList = (
 
 interface BOListProps extends FlexProps {
   title: string;
-  data:
-    | WithId<Business>[]
-    | WithId<OrderWithWarning>[]
-    | WithId<ProfileChange>[];
+  data: WithId<Order>[] | WithId<Business>[] | WithId<ProfileChange>[];
   dataLength?: number;
   listType: ListType;
   details?: string;
