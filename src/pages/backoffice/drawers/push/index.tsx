@@ -14,7 +14,7 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import { useObservePushCampaign } from 'app/api/push-campaign/useObservePushCampaign';
+import { useObservePushCampaign } from 'app/api/push-campaigns/useObservePushCampaign';
 import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import CustomRadio from 'common/components/form/CustomRadio';
 import { CustomInput } from 'common/components/form/input/CustomInput';

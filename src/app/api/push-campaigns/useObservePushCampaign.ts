@@ -14,7 +14,7 @@ export const useObservePushCampaign = (campaignId?: string) => {
     mutationResult: submitPushCampaignResult,
   } = useCustomMutation(
     (data: Partial<PushCampaign>) =>
-      api.push_campaign().submitPushCampaign(data),
+      api.push_campaigns().submitPushCampaign(data),
     'submitPushCampaign'
   );
   const {
@@ -22,14 +22,14 @@ export const useObservePushCampaign = (campaignId?: string) => {
     mutationResult: updatePushCampaignResult,
   } = useCustomMutation(
     (data: { campaignId: string; changes: Partial<PushCampaign> }) =>
-      api.push_campaign().updatePushCampaign(data.campaignId, data.changes),
+      api.push_campaigns().updatePushCampaign(data.campaignId, data.changes),
     'updatePushCampaign'
   );
   // side effects
   React.useEffect(() => {
     if (!campaignId) return;
     const unsub = api
-      .push_campaign()
+      .push_campaigns()
       .observePushCampaign(campaignId, setCampaign);
     return () => unsub();
   }, [api, campaignId]);

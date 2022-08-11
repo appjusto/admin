@@ -45,7 +45,7 @@ export const BackOfficeLinks = (props: BoxProps) => {
       />
       <LinkItem
         type="backoffice"
-        to={`${url}/push-campaign`}
+        to={`${url}/push-campaigns`}
         label={t('Campanhas')}
       />
       <LinkItem type="backoffice" to={`${url}/staff`} label={t('Agentes')} />

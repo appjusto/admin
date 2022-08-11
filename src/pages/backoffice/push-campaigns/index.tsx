@@ -1,7 +1,7 @@
 import { PushCampaign } from '@appjusto/types';
 import { ArrowDownIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, HStack, Stack, Text } from '@chakra-ui/react';
-import { useObservePushCampaigns } from 'app/api/push-campaign/useObservePushCampaigns';
+import { useObservePushCampaigns } from 'app/api/push-campaigns/useObservePushCampaigns';
 import { ClearFiltersButton } from 'common/components/backoffice/ClearFiltersButton';
 import { FiltersScrollBar } from 'common/components/backoffice/FiltersScrollBar';
 import { FilterText } from 'common/components/backoffice/FilterText';

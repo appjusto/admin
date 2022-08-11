@@ -205,8 +205,8 @@ export default class FirebaseRefs {
   // reviews
   getReviewsRef = () => collection(this.firestore, 'reviews');
 
-  // push-campaign
-  getPushCampaignsRef = () => collection(this.firestore, 'push-campaign');
+  // push-campaigns
+  getPushCampaignsRef = () => collection(this.firestore, 'push-campaigns');
   getPushCampaignRef = (campaignId: string) =>
     doc(this.getPushCampaignsRef(), campaignId);
 

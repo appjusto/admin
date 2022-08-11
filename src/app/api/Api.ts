@@ -36,7 +36,7 @@ import ManagerApi from './manager/ManagerApi';
 import MeasurementApi from './measurement/MeasurementApi';
 import OrderApi from './order/OrderApi';
 import PlatformApi from './platform/PlatformApi';
-import PushCampaignApi from './push-campaign/PushCampaignApi';
+import PushCampaignApi from './push-campaigns/PushCampaignApi';
 import StaffApi from './staff/StaffApi';
 import UsersApi from './users/UsersApi';
 dayjs.extend(timezone);
@@ -66,7 +66,7 @@ export default class Api {
   private _users: UsersApi;
   private _measurement: MeasurementApi;
   private _chat: ChatApi;
-  private _push_campaign: PushCampaignApi;
+  private _push_campaigns: PushCampaignApi;
 
   constructor(config: ApiConfig) {
     if (!Api.app) {
@@ -116,7 +116,7 @@ export default class Api {
     this._users = new UsersApi(this._refs);
     this._measurement = new MeasurementApi(this._analytics);
     this._chat = new ChatApi(this._refs);
-    this._push_campaign = new PushCampaignApi(this._refs);
+    this._push_campaigns = new PushCampaignApi(this._refs);
   }
 
   measurement() {
@@ -167,7 +167,7 @@ export default class Api {
     return this._chat;
   }
 
-  push_campaign() {
-    return this._push_campaign;
+  push_campaigns() {
+    return this._push_campaigns;
   }
 }
