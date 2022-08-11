@@ -14,7 +14,7 @@ import { useFetchOrderByCode } from 'app/api/order/useFetchOrderByCode';
 import { useOrdersContext } from 'app/state/order';
 import { ReactComponent as SearchIcon } from 'common/img/searchIcon.svg';
 import { isEqual } from 'lodash';
-import React from 'react';
+import React, { KeyboardEvent } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
@@ -46,9 +46,23 @@ export const OrdersKanban = () => {
   const [readyAndDispatchingOrders, setReadyAndDispatchingOrders] =
     React.useState<WithId<Order>[]>([]);
   const [orderSearch, setOrderSearch] = React.useState('');
-  const searchedOrder = useFetchOrderByCode(orderSearch, business?.id);
+  const { orders: searchedOrder, fetchOrdersByCode } = useFetchOrderByCode(
+    orderSearch,
+    business?.id
+  );
   // helpers
   const isNewChatMessage = newChatMessages.length > 0;
+  // handlers
+  const handleSearch = () => {
+    if (orderSearch.length === 0) return;
+    fetchOrdersByCode();
+  };
+  const handleUserKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      handleSearch();
+    }
+  };
   // side effects
   React.useEffect(() => {
     const { date, time } = getDateTime();
@@ -159,10 +173,13 @@ export const OrdersKanban = () => {
                 value={orderSearch}
                 placeholder={t('Pesquisar por nº do pedido')}
                 onChange={(ev) => setOrderSearch(ev.target.value)}
+                onKeyDown={handleUserKeyPress}
               />
               <InputRightElement
                 mt="10px"
                 mr="8px"
+                cursor="pointer"
+                onClick={handleSearch}
                 children={<Icon w="22px" h="22px" as={SearchIcon} />}
               />
             </InputGroup>
@@ -182,7 +199,7 @@ export const OrdersKanban = () => {
           </Text>
         </Flex>
       </Flex>
-      {orderSearch.length > 0 ? (
+      {searchedOrder ? (
         <OrderSearchResult orders={searchedOrder} />
       ) : (
         <Stack
