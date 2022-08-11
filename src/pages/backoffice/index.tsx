@@ -3,15 +3,6 @@ import PageLayout from 'pages/PageLayout';
 import React from 'react';
 import { Switch, useRouteMatch } from 'react-router-dom';
 import BODashboard from './dashboard';
-<<<<<<< HEAD
-import FraudPreventionPage from './fraud-prevention';
-import InvoicesPage from './invoices';
-import LedgerPage from './ledger';
-import OrdersPage from './orders';
-import PushCampaignPage from './push-campaign';
-import RecommendationsPage from './recommendations';
-=======
->>>>>>> staging
 import { BOAccessRoute } from './routes/BOAccessRoute';
 
 const OrdersPage = React.lazy(
@@ -79,13 +70,6 @@ const BackOffice = () => {
             path={`${path}/recommendations`}
             component={RecommendationsPage}
           />
-<<<<<<< HEAD
-          <BOAccessRoute
-            path={`${path}/push-campaign`}
-            component={PushCampaignPage}
-          />
-=======
->>>>>>> staging
           <BOAccessRoute path={path} component={BODashboard} />
         </Switch>
       </PageLayout>
