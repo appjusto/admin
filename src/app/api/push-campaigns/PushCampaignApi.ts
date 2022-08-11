@@ -3,6 +3,7 @@ import * as Sentry from '@sentry/react';
 import { documentsAs, FirebaseDocument } from 'core/fb';
 import {
   addDoc,
+  deleteDoc,
   DocumentData,
   limit,
   onSnapshot,
@@ -44,7 +45,7 @@ export default class PushCampaignApi {
   ): Unsubscribe {
     let q = query(
       this.refs.getPushCampaignsRef(),
-      orderBy('createdOn', 'desc'),
+      orderBy('scheduledTo', 'desc'),
       limit(10)
     );
     // if (name) q = query(q, where('name', '==', name));
@@ -53,8 +54,8 @@ export default class PushCampaignApi {
     if (start && end)
       q = query(
         q,
-        where('createdOn', '>=', start),
-        where('createdOn', '<=', end)
+        where('scheduledTo', '>=', start),
+        where('scheduledTo', '<=', end)
       );
     const unsubscribe = onSnapshot(
       q,
@@ -89,6 +90,10 @@ export default class PushCampaignApi {
       ...changes,
       updatedOn: timestamp,
     } as Partial<PushCampaign>;
-    await updateDoc(this.refs.getStaffRef(campaignId), fullChanges);
+    await updateDoc(this.refs.getPushCampaignRef(campaignId), fullChanges);
+  }
+
+  async deletePushCampaign(campaignId: string) {
+    await deleteDoc(this.refs.getPushCampaignRef(campaignId));
   }
 }

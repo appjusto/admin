@@ -32,6 +32,11 @@ export const BackOfficeLinks = (props: BoxProps) => {
         to={`${url}/ledger`}
         label={t('Conciliações')}
       />
+      <LinkItem
+        type="backoffice"
+        to={`${url}/push-campaigns`}
+        label={t('Campanhas')}
+      />
       <LinkItem type="backoffice" to={`${url}/users`} label={t('Usuários')} />
       <LinkItem
         type="backoffice"
@@ -42,11 +47,6 @@ export const BackOfficeLinks = (props: BoxProps) => {
         type="backoffice"
         to={`${url}/fraud-prevention`}
         label={t('Antifraude')}
-      />
-      <LinkItem
-        type="backoffice"
-        to={`${url}/push-campaigns`}
-        label={t('Campanhas')}
       />
       <LinkItem type="backoffice" to={`${url}/staff`} label={t('Agentes')} />
     </Box>

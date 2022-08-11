@@ -15,12 +15,13 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { useObservePushCampaign } from 'app/api/push-campaigns/useObservePushCampaign';
+import { useContextFirebaseUser } from 'app/state/auth/context';
+import { useContextAppRequests } from 'app/state/requests/context';
 import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import CustomRadio from 'common/components/form/CustomRadio';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import { CustomNumberInput as NumberInput } from 'common/components/form/input/CustomNumberInput';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
-import dayjs from 'dayjs';
 import { Timestamp } from 'firebase/firestore';
 import React from 'react';
 import { useParams } from 'react-router-dom';
@@ -28,6 +29,7 @@ import { formatTimestampToInput } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
 import { InputCounter } from './InputCounter';
+import { getScheduledDate } from './utils';
 
 interface BaseDrawerProps {
   isOpen: boolean;
@@ -41,12 +43,16 @@ type Params = {
 export const PushDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   //context
   const { campaignId } = useParams<Params>();
+  const { userAbility } = useContextFirebaseUser();
+  const { dispatchAppRequestResult } = useContextAppRequests();
   const {
     campaign,
     submitPushCampaign,
     updatePushCampaign,
+    deletePushCampaign,
     submitPushCampaignResult,
     updatePushCampaignResult,
+    deletePushCampaignResult,
   } = useObservePushCampaign(campaignId !== 'new' ? campaignId : undefined);
   // state
   const [flavor, setFlavor] = React.useState<Flavor>('consumer');
@@ -64,20 +70,27 @@ export const PushDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   const [status, setStatus] =
     React.useState<PushCampaign['status']>('submitted');
   const [isDeleting, setIsDeleting] = React.useState(false);
+  const [isDateValid, setIsDateValid] = React.useState(true);
   // helpers
   const isNew = campaignId === 'new';
+  const canUpdate = !isNew && userAbility?.can('update', 'push_campaigns');
   const isLoading = isNew
     ? submitPushCampaignResult.isLoading
     : updatePushCampaignResult.isLoading;
   // handlers
   const handleSubmit = () => {
-    const time = pushTime.split(':');
-    const scheduledTo = Timestamp.fromDate(
-      dayjs(pushDate)
-        .set('hour', Number(time[0]))
-        .set('minute', Number(time[1]))
-        .toDate()
-    );
+    const scheduledDate = getScheduledDate(pushDate, pushTime);
+    if (!scheduledDate) {
+      return dispatchAppRequestResult({
+        status: 'error',
+        requestId: 'PushDrawer-submit-error',
+        message: {
+          title: 'Informações inválidas.',
+          description: 'A data e horário informados não são válidos.',
+        },
+      });
+    }
+    const scheduledTo = Timestamp.fromDate(scheduledDate as Date);
     let newCampaign = {
       to: flavor,
       channel,
@@ -130,9 +143,22 @@ export const PushDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
     }
   }, [isGeo]);
   React.useEffect(() => {
-    if (!submitPushCampaignResult.isSuccess) return;
-    onClose();
-  }, [onClose, submitPushCampaignResult.isSuccess]);
+    if (
+      submitPushCampaignResult.isSuccess ||
+      deletePushCampaignResult.isSuccess
+    ) {
+      onClose();
+    }
+  }, [
+    onClose,
+    submitPushCampaignResult.isSuccess,
+    deletePushCampaignResult.isSuccess,
+  ]);
+  React.useEffect(() => {
+    if (!pushDate || !pushTime) return;
+    const isValid = getScheduledDate(pushDate, pushTime, true);
+    setIsDateValid(isValid as boolean);
+  }, [pushDate, pushTime]);
   //UI
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
@@ -274,6 +300,8 @@ export const PushDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                   value={pushDate}
                   onChange={(event) => setPushDate(event.target.value)}
                   label={t('Data')}
+                  isInvalid={!isDateValid}
+                  isRequired
                 />
                 <CustomInput
                   mt="0"
@@ -282,9 +310,11 @@ export const PushDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                   value={pushTime}
                   onChange={(event) => setPushTime(event.target.value)}
                   label={t('Horário')}
+                  isInvalid={!isDateValid}
+                  isRequired
                 />
               </HStack>
-              {!isNew && (
+              {canUpdate && (
                 <>
                   <SectionTitle>{t('Status')}</SectionTitle>
                   <RadioGroup
@@ -314,34 +344,8 @@ export const PushDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 </>
               )}
             </DrawerBody>
-            <DrawerFooter borderTop="1px solid #F2F6EA">
-              {isDeleting ? (
-                <Box
-                  mt="8"
-                  w="100%"
-                  bg="#FFF8F8"
-                  border="1px solid red"
-                  borderRadius="lg"
-                  p="6"
-                >
-                  <Text color="red">
-                    {t(`Tem certeza que deseja excluir esta campanha?`)}
-                  </Text>
-                  <HStack mt="4" spacing={4}>
-                    <Button width="full" onClick={() => setIsDeleting(false)}>
-                      {t(`Manter campanha`)}
-                    </Button>
-                    <Button
-                      width="full"
-                      variant="danger"
-                      // onClick={}
-                      // isLoading={deleteAccountResult.isLoading}
-                    >
-                      {t(`Excluir`)}
-                    </Button>
-                  </HStack>
-                </Box>
-              ) : (
+            {isNew && (
+              <DrawerFooter borderTop="1px solid #F2F6EA">
                 <HStack w="100%" spacing={4}>
                   <Button
                     width="full"
@@ -350,18 +354,63 @@ export const PushDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                     isLoading={isLoading}
                     loadingText={t('Salvando')}
                   >
-                    {isNew ? t('Submeter') : t('Salvar alterações')}
+                    {t('Submeter')}
                   </Button>
-                  {isNew ? (
+                  <Button
+                    width="full"
+                    fontSize="15px"
+                    variant="dangerLight"
+                    onClick={onClose}
+                  >
+                    {t('Cancelar')}
+                  </Button>
+                </HStack>
+              </DrawerFooter>
+            )}
+            {canUpdate && (
+              <DrawerFooter borderTop="1px solid #F2F6EA">
+                {isDeleting ? (
+                  <Box
+                    mt="8"
+                    w="100%"
+                    bg="#FFF8F8"
+                    border="1px solid red"
+                    borderRadius="lg"
+                    p="6"
+                  >
+                    <Text color="red">
+                      {t(`Tem certeza que deseja excluir esta campanha?`)}
+                    </Text>
+                    <HStack mt="4" spacing={4}>
+                      <Button
+                        width="full"
+                        fontSize="15px"
+                        onClick={() => setIsDeleting(false)}
+                      >
+                        {t(`Manter campanha`)}
+                      </Button>
+                      <Button
+                        width="full"
+                        variant="danger"
+                        fontSize="15px"
+                        onClick={() => deletePushCampaign(campaignId)}
+                        isLoading={deletePushCampaignResult.isLoading}
+                      >
+                        {t(`Excluir`)}
+                      </Button>
+                    </HStack>
+                  </Box>
+                ) : (
+                  <HStack w="100%" spacing={4}>
                     <Button
                       width="full"
                       fontSize="15px"
-                      variant="dangerLight"
-                      onClick={onClose}
+                      type="submit"
+                      isLoading={isLoading}
+                      loadingText={t('Salvando')}
                     >
-                      {t('Cancelar')}
+                      {t('Salvar alterações')}
                     </Button>
-                  ) : (
                     <Button
                       width="full"
                       fontSize="15px"
@@ -370,10 +419,10 @@ export const PushDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                     >
                       {t('Excluir campanha')}
                     </Button>
-                  )}
-                </HStack>
-              )}
-            </DrawerFooter>
+                  </HStack>
+                )}
+              </DrawerFooter>
+            )}
           </DrawerContent>
         </form>
       </DrawerOverlay>

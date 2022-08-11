@@ -25,6 +25,13 @@ export const useObservePushCampaign = (campaignId?: string) => {
       api.push_campaigns().updatePushCampaign(data.campaignId, data.changes),
     'updatePushCampaign'
   );
+  const {
+    mutate: deletePushCampaign,
+    mutationResult: deletePushCampaignResult,
+  } = useCustomMutation(
+    (campaignId: string) => api.push_campaigns().deletePushCampaign(campaignId),
+    'deletePushCampaign'
+  );
   // side effects
   React.useEffect(() => {
     if (!campaignId) return;
@@ -38,7 +45,9 @@ export const useObservePushCampaign = (campaignId?: string) => {
     campaign,
     submitPushCampaign,
     updatePushCampaign,
+    deletePushCampaign,
     submitPushCampaignResult,
     updatePushCampaignResult,
+    deletePushCampaignResult,
   };
 };
