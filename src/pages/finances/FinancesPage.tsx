@@ -4,7 +4,7 @@ import { useAccountInformation } from 'app/api/business/useAccountInformation';
 import { useObserveBusinessAdvances } from 'app/api/business/useObserveBusinessAdvances';
 import { useObserveBusinessWithdraws } from 'app/api/business/useObserveBusinessWithdraws';
 import { useRequestWithdraw } from 'app/api/business/useRequestWithdraw';
-import { useObserveInvoicesStatusByPeriod } from 'app/api/order/useObserveInvoicesStatusByPeriod';
+import { useObserveInvoicesStatusByPeriod } from 'app/api/invoices/useObserveInvoicesStatusByPeriod';
 import { useCanAdvanceReceivables } from 'app/api/platform/useCanAdvanceReceivables';
 import { useContextBusinessId } from 'app/state/business/context';
 import { useContextAppRequests } from 'app/state/requests/context';

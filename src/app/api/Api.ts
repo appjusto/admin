@@ -32,6 +32,7 @@ import ConsumerApi from './consumer/CosumerApi';
 import CourierApi from './courier/CourierApi';
 import FilesApi from './FilesApi';
 import FirebaseRefs from './FirebaseRefs';
+import InvoicesApi from './invoices/InvoicesApi';
 import ManagerApi from './manager/ManagerApi';
 import MeasurementApi from './measurement/MeasurementApi';
 import OrderApi from './order/OrderApi';
@@ -61,6 +62,7 @@ export default class Api {
   private _manager: ManagerApi;
   private _business: BusinessApi;
   private _order: OrderApi;
+  private _invoices: InvoicesApi;
   private _courier: CourierApi;
   private _consumer: ConsumerApi;
   private _users: UsersApi;
@@ -111,6 +113,7 @@ export default class Api {
     this._manager = new ManagerApi(this._refs);
     this._business = new BusinessApi(this._refs, this._files);
     this._order = new OrderApi(this._refs, this._files);
+    this._invoices = new InvoicesApi(this._refs);
     this._courier = new CourierApi(this._refs, this._files);
     this._consumer = new ConsumerApi(this._refs, this._files);
     this._users = new UsersApi(this._refs);
@@ -149,6 +152,10 @@ export default class Api {
 
   order() {
     return this._order;
+  }
+
+  invoices() {
+    return this._invoices;
   }
 
   courier() {

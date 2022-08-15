@@ -1,7 +1,7 @@
 import { IuguInvoiceStatus } from '@appjusto/types/payment/iugu';
 import { ArrowDownIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, HStack, Stack, Text } from '@chakra-ui/react';
-import { useObserveInvoices } from 'app/api/order/useObserveInvoices';
+import { useObserveInvoices } from 'app/api/invoices/useObserveInvoices';
 import { ClearFiltersButton } from 'common/components/backoffice/ClearFiltersButton';
 import { FiltersScrollBar } from 'common/components/backoffice/FiltersScrollBar';
 import { FilterText } from 'common/components/backoffice/FilterText';

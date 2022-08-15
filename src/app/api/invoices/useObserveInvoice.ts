@@ -1,5 +1,5 @@
+import { Invoice, WithId } from '@appjusto/types';
 import { useContextApi } from 'app/state/api/context';
-import { WithId, Invoice } from '@appjusto/types';
 import React from 'react';
 
 export const useObserveInvoice = (invoiceId?: string) => {
@@ -10,7 +10,7 @@ export const useObserveInvoice = (invoiceId?: string) => {
   // side effects
   React.useEffect(() => {
     if (!invoiceId) return;
-    const unsub = api.order().observeInvoice(invoiceId, setInvoice);
+    const unsub = api.invoices().observeInvoice(invoiceId, setInvoice);
     return () => unsub();
   }, [api, invoiceId]);
   // return

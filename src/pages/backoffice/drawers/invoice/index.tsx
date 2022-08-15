@@ -11,7 +11,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { useConsumerProfile } from 'app/api/consumer/useConsumerProfile';
-import { useObserveInvoice } from 'app/api/order/useObserveInvoice';
+import { useObserveInvoice } from 'app/api/invoices/useObserveInvoice';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import {
   invoiceStatusPTOptions,
