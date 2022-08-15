@@ -18,7 +18,7 @@ import {
   getAckOrders,
   removeOrderAck,
   setAck,
-  updateOrderAck
+  updateOrderAck,
 } from './utils';
 
 const isDesktopApp = isElectron();
@@ -29,12 +29,15 @@ const statuses: OrderStatus[] = ['confirmed'];
 
 let ordersToNotify: string[] = [];
 
-export const useObserveConfirmedOrders = (businessId?: string, notify: boolean = true) => {
+export const useObserveConfirmedOrders = (
+  businessId?: string,
+  notify: boolean = true
+) => {
   // context
   const { isBackofficeUser } = useContextFirebaseUser();
   const permission = useNotificationPermission();
   const confirmedOrders = useObserveOrders(statuses, businessId);
-  const redirectToOrders = useRedirectToOrders(["/app/orders"]);
+  const redirectToOrders = useRedirectToOrders(['/app/orders', '/app/chat']);
   // state
   const [changed, setChanged] = React.useState(false);
   const [confirmedNumber, setConfirmedNumber] = React.useState(0);
@@ -44,19 +47,19 @@ export const useObserveConfirmedOrders = (businessId?: string, notify: boolean =
   React.useEffect(() => {
     if (isBackofficeUser) return;
     if (confirmedOrders.length === 0) return;
-    const confirmedIds = confirmedOrders.map(order => order.id);
-    if(!isEqual(ordersToNotify, confirmedIds)) {
-      if(isDesktopApp) {
+    const confirmedIds = confirmedOrders.map((order) => order.id);
+    if (!isEqual(ordersToNotify, confirmedIds)) {
+      if (isDesktopApp) {
         try {
-          window.electron.ipcRenderer.sendMessage('mainWindow-show')
+          window.electron.ipcRenderer.sendMessage('mainWindow-show');
         } catch (error) {
-          console.error("Unable to call mainWindow:", error);
+          console.error('Unable to call mainWindow:', error);
         }
       }
       playSound();
       redirectToOrders();
       ordersToNotify = confirmedIds;
-    };
+    }
     const SoundInterval = setInterval(() => {
       playSound();
     }, 4000);
@@ -108,7 +111,10 @@ export const useObserveConfirmedOrders = (businessId?: string, notify: boolean =
               if (reg) return reg.showNotification(title, options);
             })
             .catch((error) => {
-              console.log('navigator.serviceWorker.getRegistration error', error);
+              console.log(
+                'navigator.serviceWorker.getRegistration error',
+                error
+              );
               Sentry.captureException(error);
             });
         } catch (error) {
