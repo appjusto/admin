@@ -111,7 +111,7 @@ const PushCampaignPage = () => {
         <Text fontSize="lg" fontWeight="700" lineHeight="26px">
           {t(`${campaigns?.length ?? '0'} itens na lista`)}
         </Text>
-        <CustomButton label={t('Criar campanha')} link={`${path}/new`} />
+        <CustomButton mt="0" label={t('Criar campanha')} link={`${path}/new`} />
       </Flex>
       <PushCampaignTable campaigns={campaigns} />
       <Button mt="8" variant="secondary" onClick={fetchNextPage}>
