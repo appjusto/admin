@@ -2,14 +2,18 @@ import { LedgerEntry, LedgerEntryStatus, WithId } from '@appjusto/types';
 import * as Sentry from '@sentry/react';
 import { documentsAs, FirebaseDocument } from 'core/fb';
 import {
+  addDoc,
+  deleteDoc,
   DocumentData,
   limit,
   onSnapshot,
   orderBy,
   query,
   QueryDocumentSnapshot,
+  serverTimestamp,
   startAfter,
   Unsubscribe,
+  updateDoc,
   where,
 } from 'firebase/firestore';
 import FirebaseRefs from '../FirebaseRefs';
@@ -71,5 +75,27 @@ export default class LedgerApi {
     return customDocumentSnapshot<LedgerEntry>(ref, (result) => {
       if (result) resultHandler(result);
     });
+  }
+
+  async submitLedgerEntry(data: Partial<LedgerEntry>) {
+    const timestamp = serverTimestamp();
+    const fullData = {
+      ...data,
+      createdOn: timestamp,
+    } as Partial<LedgerEntry>;
+    await addDoc(this.refs.getLedgerRef(), fullData);
+  }
+
+  async updateLedgerEntry(entryId: string, changes: Partial<LedgerEntry>) {
+    const timestamp = serverTimestamp();
+    const fullChanges = {
+      ...changes,
+      updatedOn: timestamp,
+    } as Partial<LedgerEntry>;
+    await updateDoc(this.refs.getLedgerEntryRef(entryId), fullChanges);
+  }
+
+  async deleteLedgerEntry(entryId: string) {
+    await deleteDoc(this.refs.getLedgerEntryRef(entryId));
   }
 }

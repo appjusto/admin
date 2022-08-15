@@ -107,6 +107,11 @@ export const ledgerEntryStatusPTOptions = {
   rejected: 'Rejeitada',
 };
 
+export const ledgerEntryOperationPTOptions = {
+  'delivery': 'Delivery',
+  'same-owner-accounts': 'Entre contas de um mesmo usuário',
+};
+
 export const pushStatusPTOptions = {
   submitted: 'Submetida',
   approved: 'Aprovada',
