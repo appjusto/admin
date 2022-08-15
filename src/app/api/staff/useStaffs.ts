@@ -6,7 +6,11 @@ import React from 'react';
 
 const initialMap = new Map();
 
-export const useStaffs = (situations: ProfileSituation[], email?: string) => {
+export const useStaffs = (
+  situations: ProfileSituation[],
+  email?: string,
+  stopQuery?: boolean
+) => {
   // contex
   const api = useContextApi();
   const { userAbility } = useContextFirebaseUser();
@@ -24,11 +28,7 @@ export const useStaffs = (situations: ProfileSituation[], email?: string) => {
   }, [lastStaff]);
   // side effects
   React.useEffect(() => {
-    if (
-      userAbility?.cannot('read', 'staff') ||
-      userAbility?.cannot('update', 'account_manager')
-    )
-      return;
+    if (userAbility?.cannot('read', 'staff') || stopQuery === true) return;
     api.staff().observeStaffs(
       (results, last) => {
         setStaffMap((current) => {
@@ -42,7 +42,7 @@ export const useStaffs = (situations: ProfileSituation[], email?: string) => {
       startAfter,
       email
     );
-  }, [api, userAbility, startAfter, situations, email]);
+  }, [api, userAbility, stopQuery, startAfter, situations, email]);
   React.useEffect(() => {
     setStaffs(
       Array.from(staffMap.values()).reduce(

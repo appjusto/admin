@@ -86,11 +86,13 @@ export default class ChatApi {
     businessId: string,
     resultHandler: (messagesIds: string[]) => void
   ) {
+    const timeLimit = dayjs().subtract(2, 'hour').toDate();
     const q = query(
       this.refs.getChatsRef(),
       orderBy('timestamp', 'asc'),
       where('to.id', '==', businessId),
-      where('read', '==', false)
+      where('read', '==', false),
+      where('timestamp', '>=', timeLimit)
     );
     // returns the unsubscribe function
     return onSnapshot(

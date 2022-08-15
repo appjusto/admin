@@ -31,7 +31,11 @@ export const AccountManager = () => {
   const { updateBusinessProfile, updateResult } = useBusinessProfile();
   // state
   const [search, setSearch] = React.useState('');
-  const { staffs, fetchNextPage } = useStaffs(situations, search);
+  const { staffs, fetchNextPage } = useStaffs(
+    situations,
+    search,
+    userAbility?.cannot('update', 'account_manager')
+  );
   // helpers
   const isHead = userAbility?.can('update', 'account_manager');
   // handlers
