@@ -57,11 +57,11 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   const [orderId, setOrderId] = React.useState('');
   const [operation, setOperation] =
     React.useState<LedgerEntryOperation>('delivery');
-  const [fromAccountId, setFromAccountId] = React.useState('');
+  const [fromAccountId, setFromAccountId] = React.useState<string | null>('');
   const [fromAccountType, setFromAccountType] =
     React.useState<AccountType>('platform');
   const [fromToken, setFromToken] = React.useState('');
-  const [toAccountId, setToAccountId] = React.useState('');
+  const [toAccountId, setToAccountId] = React.useState<string | null>('');
   const [toAccountType, setToAccountType] =
     React.useState<AccountType>('courier');
   const [description, setDescription] = React.useState('');
@@ -125,6 +125,14 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
     setEntryValue(entry.value);
     setStatus(entry.status);
   }, [entry]);
+  React.useEffect(() => {
+    if (fromAccountType === 'platform') setFromAccountId(null);
+    else setFromAccountId('');
+  }, [fromAccountType]);
+  React.useEffect(() => {
+    if (toAccountType === 'platform') setToAccountId(null);
+    else setToAccountId('');
+  }, [toAccountType]);
   // React.useEffect(() => {
   //   if (
   //     submitPushCampaignResult.isSuccess ||
@@ -184,11 +192,51 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 fontWeight="700"
                 lineHeight="22px"
               >
-                {t('Data:')}{' '}
+                {t('Criada em:')}{' '}
                 <Text as="span" fontWeight="500">
                   {getDateAndHour(entry?.createdOn)}
                 </Text>
               </Text>
+              {entry?.updatedOn && (
+                <Text
+                  mt="2"
+                  fontSize="15px"
+                  color="black"
+                  fontWeight="700"
+                  lineHeight="22px"
+                >
+                  {t('Atualizada em:')}{' '}
+                  <Text as="span" fontWeight="500">
+                    {getDateAndHour(entry.updatedOn)}
+                  </Text>
+                </Text>
+              )}
+              <Text
+                mt="2"
+                fontSize="15px"
+                color="black"
+                fontWeight="700"
+                lineHeight="22px"
+              >
+                {t('Criada por:')}{' '}
+                <Text as="span" fontWeight="500">
+                  {entry?.createdBy?.email ?? 'Sistema'}
+                </Text>
+              </Text>
+              {entry?.updatedBy && (
+                <Text
+                  mt="2"
+                  fontSize="15px"
+                  color="black"
+                  fontWeight="700"
+                  lineHeight="22px"
+                >
+                  {t('Atualizada por:')}{' '}
+                  <Text as="span" fontWeight="500">
+                    {entry.updatedBy.email}
+                  </Text>
+                </Text>
+              )}
               <Text
                 mt="2"
                 fontSize="15px"
@@ -199,6 +247,27 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 {t('Operação:')}{' '}
                 <Text as="span" fontWeight="500">
                   {entry?.operation ?? 'N/E'}
+                </Text>
+              </Text>
+              <Text
+                mt="2"
+                fontSize="15px"
+                color="black"
+                fontWeight="700"
+                lineHeight="22px"
+              >
+                {t('Tipo:')}{' '}
+                <Text as="span" fontWeight="500">
+                  {entry?.from.accountType
+                    ? flavorsPTOptions[entry?.from.accountType]
+                    : 'N/E'}
+                </Text>
+                <Text as="span" fontWeight="500">
+                  {` para ${
+                    entry?.to.accountType
+                      ? flavorsPTOptions[entry?.to.accountType]
+                      : 'N/E'
+                  }`}
                 </Text>
               </Text>
               <Text
@@ -220,30 +289,7 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 fontWeight="700"
                 lineHeight="22px"
               >
-                {t('Tipo:')}{' '}
-                <Text as="span" fontWeight="500">
-                  {`De ${
-                    entry?.from.accountType
-                      ? flavorsPTOptions[entry?.from.accountType]
-                      : 'N/E'
-                  }`}
-                </Text>
-                <Text as="span" fontWeight="500">
-                  {` para ${
-                    entry?.to.accountType
-                      ? flavorsPTOptions[entry?.to.accountType]
-                      : 'N/E'
-                  }`}
-                </Text>
-              </Text>
-              <Text
-                mt="2"
-                fontSize="15px"
-                color="black"
-                fontWeight="700"
-                lineHeight="22px"
-              >
-                {t('Conta de destino:')}{' '}
+                {t('ID da conta de destino:')}{' '}
                 <Text as="span" fontWeight="500">
                   {entry?.to.accountId ?? 'N/E'}
                 </Text>
@@ -294,12 +340,17 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                       <CustomRadio value="approved">
                         {t('Aprovada')}
                       </CustomRadio>
-                      <CustomRadio value="processing">
-                        {t('Processando')}
+                      <CustomRadio value="rejected">
+                        {t('Rejeitada')}
                       </CustomRadio>
-                      <CustomRadio value="paid">{t('Paga')}</CustomRadio>
                       <CustomRadio value="canceled">
                         {t('Cancelada')}
+                      </CustomRadio>
+                      <CustomRadio value="processing" isDisabled>
+                        {t('Processando')}
+                      </CustomRadio>
+                      <CustomRadio value="paid" isDisabled>
+                        {t('Paga')}
                       </CustomRadio>
                     </VStack>
                   </RadioGroup>
@@ -419,22 +470,26 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                   <CustomRadio value="business">{t('Restaurante')}</CustomRadio>
                 </HStack>
               </RadioGroup>
-              <CustomInput
-                id="entry-from-account-id"
-                label={t('ID da conta *')}
-                placeholder={t('Digite o id da conta')}
-                value={fromAccountId}
-                onChange={(ev) => setFromAccountId(ev.target.value)}
-                isRequired
-              />
-              <CustomInput
-                id="entry-from-token"
-                label={t('Token da conta')}
-                placeholder={t('Digite o id da conta, se houver')}
-                value={fromToken}
-                onChange={(ev) => setFromToken(ev.target.value)}
-                isRequired
-              />
+              {fromAccountId !== null && (
+                <>
+                  <CustomInput
+                    id="entry-from-account-id"
+                    label={t('ID da conta *')}
+                    placeholder={t('Digite o id da conta')}
+                    value={fromAccountId}
+                    onChange={(ev) => setFromAccountId(ev.target.value)}
+                    isRequired
+                  />
+                  <CustomInput
+                    id="entry-from-token"
+                    label={t('Token da conta')}
+                    placeholder={t('Digite o id da conta, se houver')}
+                    value={fromToken}
+                    onChange={(ev) => setFromToken(ev.target.value)}
+                    isRequired
+                  />
+                </>
+              )}
               <SectionTitle>{t('Conta de destino')}</SectionTitle>
               <RadioGroup
                 mt="2"
@@ -452,14 +507,16 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                   <CustomRadio value="business">{t('Restaurante')}</CustomRadio>
                 </HStack>
               </RadioGroup>
-              <CustomInput
-                id="entry-to-account-id"
-                label={t('ID da conta *')}
-                placeholder={t('Digite o id da conta')}
-                value={toAccountId}
-                onChange={(ev) => setToAccountId(ev.target.value)}
-                isRequired
-              />
+              {toAccountId !== null && (
+                <CustomInput
+                  id="entry-to-account-id"
+                  label={t('ID da conta *')}
+                  placeholder={t('Digite o id da conta')}
+                  value={toAccountId}
+                  onChange={(ev) => setToAccountId(ev.target.value)}
+                  isRequired
+                />
+              )}
               <SectionTitle>{t('Dados da operação')}</SectionTitle>
               <RadioGroup
                 mt="2"
@@ -473,6 +530,9 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
               >
                 <HStack spacing={4}>
                   <CustomRadio value="delivery">{t('Delivery')}</CustomRadio>
+                  <CustomRadio value="same-owner-accounts">
+                    {t('Contas do mesmo usuário')}
+                  </CustomRadio>
                 </HStack>
               </RadioGroup>
               <Textarea
