@@ -38,6 +38,7 @@ const statuses = [
   'ready',
   'dispatching',
 ] as OrderStatus[];
+const unsafeStatuses = ['charged'] as OrderStatus[];
 const usersChangesSituations = ['pending'] as ProfileChangesSituations[];
 
 const unsafeFlag = 'unsafe';
@@ -51,7 +52,7 @@ export const BackofficeDashboardProvider = ({ children }: Props) => {
   // const { orders: activeOrders, fetchNextOrders: fetchNextActiveOrders } =
   //   useObserveBOActiveOrders(statuses, !isBackofficeSuperuser);
   const { orders: unsafeOrders, fetchNextOrders: fetchNextUnsafeOrders } =
-    useObserveFlaggedOrders(statuses, unsafeFlag, !isBackofficeSuperuser);
+    useObserveFlaggedOrders(unsafeStatuses, unsafeFlag, !isBackofficeSuperuser);
   const {
     orders: matchingIssueOrders,
     fetchNextOrders: fetchNextMatchingIssueOrders,
