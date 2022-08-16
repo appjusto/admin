@@ -43,13 +43,13 @@ const BODashboard = () => {
   const {
     // activeOrders,
     unsafeOrders,
-    matchingIssueOrders,
+    warningOrders,
     issueOrders,
     watchedOrders,
     userChanges,
     // fetchNextActiveOrders,
     fetchNextUnsafeOrders,
-    fetchNextMatchingIssueOrders,
+    fetchNextWarningOrders,
     fetchNextIssueOrders,
     fetchNextChanges,
   } = useContextBackofficeDashboard();
@@ -108,16 +108,16 @@ const BODashboard = () => {
         />
         <BOList
           display={userAbility?.can('read', 'orders') ? 'flex' : 'none'}
-          title={t('Pedidos com problemas no matching')}
-          data={matchingIssueOrders}
+          title={t('Pedidos com alerta automático')}
+          data={warningOrders}
           dataLength={unsafeOrders.length}
-          listType="orders-matching"
+          listType="orders-warning"
           details={t(
-            'Aqui ficarão listados todos os pedidos em andamento com atraso no matching.'
+            'Aqui ficarão listados todos os pedidos em andamento com atraso no aceite ou no matching.'
           )}
           infiniteScroll
           scrollTopLimit={550}
-          loadData={fetchNextMatchingIssueOrders}
+          loadData={fetchNextWarningOrders}
         />
         <BOList
           display={userAbility?.can('read', 'orders') ? 'flex' : 'none'}

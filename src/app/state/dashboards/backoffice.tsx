@@ -12,14 +12,14 @@ interface ContextProps {
   // lists
   // activeOrders: WithId<Order>[];
   unsafeOrders: WithId<Order>[];
-  matchingIssueOrders: WithId<Order>[];
+  warningOrders: WithId<Order>[];
   issueOrders: WithId<Order>[];
   watchedOrders: WithId<Order>[];
   userChanges: WithId<ProfileChange>[];
   // fetchNextActiveOrders(): void;
   fetchNextUnsafeOrders(): void;
   fetchNextIssueOrders(): void;
-  fetchNextMatchingIssueOrders(): void;
+  fetchNextWarningOrders(): void;
   fetchNextChanges(): void;
 }
 
@@ -38,12 +38,12 @@ const statuses = [
   'ready',
   'dispatching',
 ] as OrderStatus[];
-const unsafeStatuses = ['charged'] as OrderStatus[];
+const unsafeStatus = 'charged';
 const usersChangesSituations = ['pending'] as ProfileChangesSituations[];
 
-const unsafeFlag = 'unsafe';
-const matchingFlag = 'matching';
-const issueFlag = 'issue';
+const unsafeFlags = ['unsafe'];
+const autoFlags = ['matching', 'waiting-confirmation'];
+const issueFlags = ['issue'];
 
 export const BackofficeDashboardProvider = ({ children }: Props) => {
   // context
@@ -52,13 +52,11 @@ export const BackofficeDashboardProvider = ({ children }: Props) => {
   // const { orders: activeOrders, fetchNextOrders: fetchNextActiveOrders } =
   //   useObserveBOActiveOrders(statuses, !isBackofficeSuperuser);
   const { orders: unsafeOrders, fetchNextOrders: fetchNextUnsafeOrders } =
-    useObserveFlaggedOrders(unsafeStatuses, unsafeFlag, !isBackofficeSuperuser);
-  const {
-    orders: matchingIssueOrders,
-    fetchNextOrders: fetchNextMatchingIssueOrders,
-  } = useObserveFlaggedOrders(statuses, matchingFlag, !isBackofficeSuperuser);
+    useObserveFlaggedOrders(unsafeFlags, !isBackofficeSuperuser, unsafeStatus);
+  const { orders: warningOrders, fetchNextOrders: fetchNextWarningOrders } =
+    useObserveFlaggedOrders(autoFlags, !isBackofficeSuperuser);
   const { orders: issueOrders, fetchNextOrders: fetchNextIssueOrders } =
-    useObserveFlaggedOrders(statuses, issueFlag, !isBackofficeSuperuser);
+    useObserveFlaggedOrders(issueFlags, !isBackofficeSuperuser);
   const watchedOrders = useObserveStaffOrders(statuses, user?.uid);
   const { userChanges, fetchNextPage: fetchNextChanges } =
     useObserveUsersChanges(usersChangesSituations);
@@ -68,13 +66,13 @@ export const BackofficeDashboardProvider = ({ children }: Props) => {
       value={{
         // activeOrders,
         unsafeOrders,
-        matchingIssueOrders,
+        warningOrders,
         issueOrders,
         watchedOrders,
         userChanges,
         // fetchNextActiveOrders,
         fetchNextUnsafeOrders,
-        fetchNextMatchingIssueOrders,
+        fetchNextWarningOrders,
         fetchNextIssueOrders,
         fetchNextChanges,
       }}

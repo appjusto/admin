@@ -99,10 +99,12 @@ export const invoiceStatusPTOptions = {
 };
 
 export const ledgerEntryStatusPTOptions = {
+  approved: 'Aprovada',
   canceled: 'Cancelada',
   paid: 'Paga',
   pending: 'Pendente',
   processing: 'Processando',
+  rejected: 'Rejeitada',
 };
 
 export const iuguSituationPTOptions = {

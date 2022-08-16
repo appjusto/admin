@@ -18,7 +18,7 @@ import { StaffFilterOptions } from './StaffFilter';
 
 export type ListType =
   | 'orders-unsafe'
-  | 'orders-matching'
+  | 'orders-warning'
   | 'orders-issue'
   | 'orders-watched'
   | 'businesses'
