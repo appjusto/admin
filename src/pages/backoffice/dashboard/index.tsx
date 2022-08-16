@@ -10,6 +10,7 @@ import PageHeader from '../../PageHeader';
 import { BackofficeOrderDrawer } from '../drawers/order';
 import { BOChatDrawer } from './BOChatDrawer';
 import { BOList } from './BOList';
+import { FilterOptions } from './StaffFilter';
 // import { StaffFilterOptions } from './StaffFilter';
 
 const ManagerBaseDrawer = React.lazy(
@@ -35,6 +36,12 @@ const UserChangeDrawer = React.lazy(
     )
 );
 
+const warningOrdersFilterOptions = [
+  { label: 'Todos', value: ['matching', 'waiting-confirmation'] },
+  { label: 'Demora no aceite', value: ['waiting-confirmation'] },
+  { label: 'Demora no matching', value: ['matching'] },
+] as FilterOptions;
+
 const BODashboard = () => {
   // context
   const { userAbility } = useContextFirebaseUser();
@@ -47,7 +54,9 @@ const BODashboard = () => {
     issueOrders,
     watchedOrders,
     userChanges,
+    autoFlags,
     // fetchNextActiveOrders,
+    handleWarningOrdersFilter,
     fetchNextUnsafeOrders,
     fetchNextWarningOrders,
     fetchNextIssueOrders,
@@ -108,9 +117,9 @@ const BODashboard = () => {
         />
         <BOList
           display={userAbility?.can('read', 'orders') ? 'flex' : 'none'}
-          title={t('Pedidos com alerta automático')}
+          title={t('Pedidos com alerta')}
           data={warningOrders}
-          dataLength={unsafeOrders.length}
+          dataLength={warningOrders.length}
           listType="orders-warning"
           details={t(
             'Aqui ficarão listados todos os pedidos em andamento com atraso no aceite ou no matching.'
@@ -118,6 +127,9 @@ const BODashboard = () => {
           infiniteScroll
           scrollTopLimit={550}
           loadData={fetchNextWarningOrders}
+          filterOptions={warningOrdersFilterOptions}
+          filterValue={autoFlags}
+          handleFilter={handleWarningOrdersFilter}
         />
         <BOList
           display={userAbility?.can('read', 'orders') ? 'flex' : 'none'}

@@ -14,7 +14,7 @@ import React from 'react';
 import { BOBusinessListItem } from './BOBusinessListItem';
 import { BOOrderListItem } from './BOOrderListItem';
 import { BOProfileChangesListItem } from './BOProfileChangesListItem';
-import { StaffFilterOptions } from './StaffFilter';
+import { FilterOptions, StaffFilter } from './StaffFilter';
 
 export type ListType =
   | 'orders-unsafe'
@@ -51,7 +51,9 @@ interface BOListProps extends FlexProps {
   details?: string;
   infiniteScroll?: boolean;
   scrollTopLimit?: number;
-  handleStaffFilter?(value: StaffFilterOptions): void;
+  filterOptions?: FilterOptions;
+  filterValue?: string[];
+  handleFilter?(value: string[]): void;
   loadData?(): void;
 }
 
@@ -63,7 +65,9 @@ export const BOList = ({
   details,
   infiniteScroll = false,
   scrollTopLimit = 240,
-  handleStaffFilter,
+  filterOptions,
+  filterValue,
+  handleFilter,
   loadData,
   ...props
 }: BOListProps) => {
@@ -73,6 +77,11 @@ export const BOList = ({
     listType.includes('orders') && listType !== 'orders-watched'
       ? '600px'
       : '300px';
+  // helpers
+  const isFilter =
+    filterOptions !== undefined &&
+    filterValue !== undefined &&
+    handleFilter !== undefined;
   // side effects
   React.useEffect(() => {
     if (!infiniteScroll || !listRef.current || !loadData) return;
@@ -111,7 +120,10 @@ export const BOList = ({
         borderTopRadius="lg"
         borderBottomWidth="1px"
       >
-        <Flex alignItems="center" justifyContent={'flex-start'}>
+        <Flex
+          alignItems="center"
+          justifyContent={isFilter ? 'space-between' : 'flex-start'}
+        >
           <HStack spacing={4}>
             <Circle minH="40px" minInlineSize="40px" px="1" bg="white">
               <Text fontSize="lg" color="black">
@@ -127,6 +139,13 @@ export const BOList = ({
               {title}
             </Text>
           </HStack>
+          {isFilter && (
+            <StaffFilter
+              options={filterOptions!}
+              currentValue={filterValue!}
+              handleFilter={handleFilter!}
+            />
+          )}
         </Flex>
       </Box>
       <ShowIf test={data.length === 0}>

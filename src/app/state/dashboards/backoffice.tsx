@@ -16,7 +16,9 @@ interface ContextProps {
   issueOrders: WithId<Order>[];
   watchedOrders: WithId<Order>[];
   userChanges: WithId<ProfileChange>[];
+  autoFlags: WarningOrdersFilter[];
   // fetchNextActiveOrders(): void;
+  handleWarningOrdersFilter(flags: WarningOrdersFilter[]): void;
   fetchNextUnsafeOrders(): void;
   fetchNextIssueOrders(): void;
   fetchNextWarningOrders(): void;
@@ -31,6 +33,8 @@ interface Props {
   children: React.ReactNode | React.ReactNode[];
 }
 
+export type WarningOrdersFilter = 'matching' | 'waiting-confirmation';
+
 const statuses = [
   'charged',
   'confirmed',
@@ -42,13 +46,18 @@ const unsafeStatus = 'charged';
 const usersChangesSituations = ['pending'] as ProfileChangesSituations[];
 
 const unsafeFlags = ['unsafe'];
-const autoFlags = ['matching', 'waiting-confirmation'];
+const initialAutoFlags = [
+  'matching',
+  'waiting-confirmation',
+] as WarningOrdersFilter[];
 const issueFlags = ['issue'];
 
 export const BackofficeDashboardProvider = ({ children }: Props) => {
   // context
   const { user, isBackofficeSuperuser } = useContextFirebaseUser();
-  // lists
+  // state
+  const [autoFlags, setAutoFlags] =
+    React.useState<WarningOrdersFilter[]>(initialAutoFlags);
   // const { orders: activeOrders, fetchNextOrders: fetchNextActiveOrders } =
   //   useObserveBOActiveOrders(statuses, !isBackofficeSuperuser);
   const { orders: unsafeOrders, fetchNextOrders: fetchNextUnsafeOrders } =
@@ -60,6 +69,11 @@ export const BackofficeDashboardProvider = ({ children }: Props) => {
   const watchedOrders = useObserveStaffOrders(statuses, user?.uid);
   const { userChanges, fetchNextPage: fetchNextChanges } =
     useObserveUsersChanges(usersChangesSituations);
+  // handlers
+  const handleWarningOrdersFilter = React.useCallback(
+    (flags: WarningOrdersFilter[]) => setAutoFlags(flags),
+    []
+  );
   // provider
   return (
     <BackofficeDashboardContext.Provider
@@ -70,7 +84,9 @@ export const BackofficeDashboardProvider = ({ children }: Props) => {
         issueOrders,
         watchedOrders,
         userChanges,
+        autoFlags,
         // fetchNextActiveOrders,
+        handleWarningOrdersFilter,
         fetchNextUnsafeOrders,
         fetchNextWarningOrders,
         fetchNextIssueOrders,

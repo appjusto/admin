@@ -10,31 +10,41 @@ import {
   PopoverHeader,
   PopoverTrigger,
   Text,
-  Tooltip
+  Tooltip,
 } from '@chakra-ui/react';
+import { isEqual } from 'lodash';
 import React from 'react';
 import { RiCheckLine, RiEqualizerLine } from 'react-icons/ri';
 import { t } from 'utils/i18n';
 
-export type StaffFilterOptions = 'all' | 'staff' | 'none';
+// where the first option should be all
+export type FilterOptions = {
+  label: string;
+  value: string[];
+}[];
 
 interface StaffFilterProps {
-  currentValue: StaffFilterOptions;
-  handleFilter(value: StaffFilterOptions): void;
+  options: FilterOptions;
+  currentValue: string[];
+  handleFilter(value: string[]): void;
 }
 
-export const StaffFilter = ({ currentValue, handleFilter }: StaffFilterProps) => {
+export const StaffFilter = ({
+  options,
+  currentValue,
+  handleFilter,
+}: StaffFilterProps) => {
   // state
   const [isActive, setIsActive] = React.useState<boolean>(false);
   const [isOpen, setIsOpen] = React.useState(false);
   // handlers
   const open = () => setIsOpen(!isOpen);
   const close = () => setIsOpen(false);
-  const handleFilterSelect = (value: StaffFilterOptions) => {
-    close();
-    if (value === 'staff' || value === 'none') setIsActive(true);
+  const handleFilterSelect = (value: string[]) => {
+    if (value !== options[0].value) setIsActive(true);
     else setIsActive(false);
     handleFilter(value);
+    close();
   };
   // UI
   return (
@@ -62,47 +72,35 @@ export const StaffFilter = ({ currentValue, handleFilter }: StaffFilterProps) =>
               />
             </Center>
           </PopoverTrigger>
-          <PopoverContent maxW="160px" bg="#697667" color="white" _focus={{ outline: 'none' }}>
-            <PopoverHeader fontWeight="semibold">{t('Visualizar:')}</PopoverHeader>
+          <PopoverContent
+            maxW="180px"
+            bg="#697667"
+            color="white"
+            _focus={{ outline: 'none' }}
+          >
+            <PopoverHeader fontWeight="semibold">
+              {t('Visualizar:')}
+            </PopoverHeader>
             <PopoverArrow bg="#697667" />
             <PopoverCloseButton mt="1" />
             <PopoverBody p="0" m="0">
-              <Flex
-                flexDir="row"
-                alignItems="center"
-                px="3"
-                py="1"
-                cursor="pointer"
-                _hover={{ bgColor: '#EEEEEE', color: '#697667' }}
-                onClick={() => handleFilterSelect('all')}
-              >
-                <Text>{t('Todos')}</Text>
-                {currentValue === 'all' && <Icon ml="1" as={RiCheckLine} />}
-              </Flex>
-              <Flex
-                flexDir="row"
-                alignItems="center"
-                px="3"
-                py="1"
-                cursor="pointer"
-                _hover={{ bgColor: '#EEEEEE', color: '#697667' }}
-                onClick={() => handleFilterSelect('staff')}
-              >
-                <Text>{t('Assumidos')}</Text>
-                {currentValue === 'staff' && <Icon ml="1" as={RiCheckLine} />}
-              </Flex>
-              <Flex
-                flexDir="row"
-                alignItems="center"
-                px="3"
-                py="1"
-                cursor="pointer"
-                _hover={{ bgColor: '#EEEEEE', color: '#697667' }}
-                onClick={() => handleFilterSelect('none')}
-              >
-                <Text>{t('Sem agente')}</Text>
-                {currentValue === 'none' && <Icon ml="1" as={RiCheckLine} />}
-              </Flex>
+              {options.map((option) => (
+                <Flex
+                  key={option.value.join()}
+                  flexDir="row"
+                  alignItems="center"
+                  px="3"
+                  py="1"
+                  cursor="pointer"
+                  _hover={{ bgColor: '#EEEEEE', color: '#697667' }}
+                  onClick={() => handleFilterSelect(option.value)}
+                >
+                  <Text>{option.label}</Text>
+                  {isEqual(currentValue, option.value) && (
+                    <Icon ml="1" as={RiCheckLine} />
+                  )}
+                </Flex>
+              ))}
             </PopoverBody>
           </PopoverContent>
         </Popover>
