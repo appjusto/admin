@@ -79,7 +79,6 @@ export const BackofficeOrderDrawer = ({
     orderCancellation,
     orderCancellationCosts,
   } = useOrder(orderId);
-  const { invoices, logs } = useObserveOrderInvoices(orderId);
   const cancelOptions = useIssuesByType(cancelOptionsArray);
   const { addFlaggedLocation } = useFlaggedLocations();
   const { orderChatGroup } = useObserveOrderChatMessages(orderId);
@@ -101,6 +100,8 @@ export const BackofficeOrderDrawer = ({
   ]);
   const [loadingState, setLoadingState] =
     React.useState<OrderDrawerLoadingState>('idle');
+  const [observeInvoices, setObserveInvoices] = React.useState(false);
+  const { invoices, logs } = useObserveOrderInvoices(orderId, observeInvoices);
   // helpers
   let refundValue = 0;
   if (refund.includes('platform') && order?.fare?.platform?.value)
@@ -311,6 +312,7 @@ export const BackofficeOrderDrawer = ({
             <Invoices
               invoices={invoices}
               logs={logs as WithId<OrderPaymentLog>[] | undefined}
+              observeInvoices={() => setObserveInvoices(true)}
             />
           </Route>
           <Route exact path={`${path}/matching`}>

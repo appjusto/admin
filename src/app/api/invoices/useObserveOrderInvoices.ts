@@ -4,7 +4,10 @@ import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusinessId } from 'app/state/business/context';
 import React from 'react';
 
-export const useObserveOrderInvoices = (orderId?: string) => {
+export const useObserveOrderInvoices = (
+  orderId?: string,
+  isActive?: boolean
+) => {
   // context
   const api = useContextApi();
   const { isBackofficeUser } = useContextFirebaseUser();
@@ -15,6 +18,7 @@ export const useObserveOrderInvoices = (orderId?: string) => {
   // side effects
   React.useEffect(() => {
     if (!orderId) return;
+    if (!isActive) return;
     if (isBackofficeUser) {
       const unsub1 = api.invoices().observeOrderInvoices(orderId, setInvoices);
       const unsub2 = api.order().observeOrderLogs(orderId, 'payment', setLogs);
@@ -28,7 +32,7 @@ export const useObserveOrderInvoices = (orderId?: string) => {
         .observeOrderInvoices(orderId, setInvoices, businessId);
       return () => unsub();
     }
-  }, [api, isBackofficeUser, businessId, orderId]);
+  }, [api, isBackofficeUser, businessId, orderId, isActive]);
   // return
   return { invoices, logs };
 };
