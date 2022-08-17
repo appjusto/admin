@@ -96,7 +96,7 @@ const businessesHeadManagerObject = {
   advances: ['r'],
   managers: ['c', 'r', 'u', 'd'],
   recommendations: ['c', 'r', 'u', 'd'],
-  staff: [],
+  staff: ['r'],
   users: ['r'],
   platform: [],
 } as UserPermissions;
