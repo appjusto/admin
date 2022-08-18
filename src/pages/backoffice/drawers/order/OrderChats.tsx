@@ -1,16 +1,33 @@
-import { Box, HStack, Icon, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
+import {
+  Box,
+  HStack,
+  Icon,
+  Table,
+  Tbody,
+  Td,
+  Text,
+  Th,
+  Thead,
+  Tr,
+} from '@chakra-ui/react';
 import { OrderChatTypeGroup } from 'app/api/chat/types';
 import { getChatTypeLabel } from 'app/api/chat/utils';
 import { CustomButton } from 'common/components/buttons/CustomButton';
+import React from 'react';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
 
 interface OrderChatsProps {
   groups: OrderChatTypeGroup[];
+  activeChat(): void;
 }
 
-export const OrderChats = ({ groups }: OrderChatsProps) => {
+export const OrderChats = ({ groups, activeChat }: OrderChatsProps) => {
+  // side effects
+  React.useEffect(() => {
+    activeChat();
+  }, [activeChat]);
   // UI
   return (
     <Box>

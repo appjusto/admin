@@ -11,6 +11,7 @@ import {
 } from '@appjusto/types';
 import { useObserveOrderChatMessages } from 'app/api/chat/useObserveOrderChatMessages';
 import { useObserveOrderInvoices } from 'app/api/invoices/useObserveOrderInvoices';
+import { useObserveOrderMatching } from 'app/api/order/useObserveOrderMatching';
 import { useOrder } from 'app/api/order/useOrder';
 import { useFlaggedLocations } from 'app/api/platform/useFlaggedLocations';
 import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';
@@ -81,7 +82,6 @@ export const BackofficeOrderDrawer = ({
   } = useOrder(orderId);
   const cancelOptions = useIssuesByType(cancelOptionsArray);
   const { addFlaggedLocation } = useFlaggedLocations();
-  const { orderChatGroup } = useObserveOrderChatMessages(orderId);
   // state
   const [status, setStatus] = React.useState<OrderStatus | undefined>(
     order?.status
@@ -100,8 +100,22 @@ export const BackofficeOrderDrawer = ({
   ]);
   const [loadingState, setLoadingState] =
     React.useState<OrderDrawerLoadingState>('idle');
-  const [observeInvoices, setObserveInvoices] = React.useState(false);
-  const { invoices, logs } = useObserveOrderInvoices(orderId, observeInvoices);
+  const [invoicesDisabled, setInvoicesDisabled] = React.useState(true);
+  const [matchingDisabled, setMatchingDisabled] = React.useState(true);
+  const [chatDisabled, setChatDisabled] = React.useState(true);
+  const { invoices, logs: invoicesLogs } = useObserveOrderInvoices(
+    orderId,
+    invoicesDisabled
+  );
+  const { matching, logs: matchingLogs } = useObserveOrderMatching(
+    orderId,
+    matchingDisabled
+  );
+  const { orderChatGroup } = useObserveOrderChatMessages(
+    orderId,
+    undefined,
+    chatDisabled
+  );
   // helpers
   let refundValue = 0;
   if (refund.includes('platform') && order?.fare?.platform?.value)
@@ -254,6 +268,15 @@ export const BackofficeOrderDrawer = ({
     if (dispatchingState) changes.dispatchingState = dispatchingState;
     updateOrder(changes);
   };
+  const handleActiveInvoices = React.useCallback(
+    () => setInvoicesDisabled(false),
+    []
+  );
+  const handleActiveMatching = React.useCallback(
+    () => setMatchingDisabled(false),
+    []
+  );
+  const handleActiveChat = React.useCallback(() => setChatDisabled(false), []);
   // side effects
   React.useEffect(() => {
     if (order?.status) setStatus(order.status);
@@ -311,12 +334,17 @@ export const BackofficeOrderDrawer = ({
           <Route exact path={`${path}/invoices`}>
             <Invoices
               invoices={invoices}
-              logs={logs as WithId<OrderPaymentLog>[] | undefined}
-              observeInvoices={() => setObserveInvoices(true)}
+              logs={invoicesLogs as WithId<OrderPaymentLog>[] | undefined}
+              activeInvoices={handleActiveInvoices}
             />
           </Route>
           <Route exact path={`${path}/matching`}>
-            <Matching order={order} />
+            <Matching
+              order={order}
+              matching={matching}
+              logs={matchingLogs}
+              activeMatching={handleActiveMatching}
+            />
           </Route>
           <Route exact path={`${path}/status`}>
             <OrderStatusBar
@@ -337,7 +365,7 @@ export const BackofficeOrderDrawer = ({
             />
           </Route>
           <Route exact path={`${path}/chats`}>
-            <OrderChats groups={orderChatGroup} />
+            <OrderChats groups={orderChatGroup} activeChat={handleActiveChat} />
           </Route>
         </Switch>
       </OrderBaseDrawer>

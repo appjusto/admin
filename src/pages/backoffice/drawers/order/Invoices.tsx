@@ -15,18 +15,14 @@ import { LogsTable } from './invoices/LogsTable';
 interface InvoicesProps {
   invoices?: WithId<Invoice>[] | null;
   logs?: WithId<OrderPaymentLog>[];
-  observeInvoices(): void;
+  activeInvoices(): void;
 }
 
-export const Invoices = ({
-  invoices,
-  logs,
-  observeInvoices,
-}: InvoicesProps) => {
+export const Invoices = ({ invoices, logs, activeInvoices }: InvoicesProps) => {
   // side effects
   React.useEffect(() => {
-    observeInvoices();
-  }, [observeInvoices]);
+    activeInvoices();
+  }, [activeInvoices]);
   // UI
   return (
     <Box>
