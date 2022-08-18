@@ -25,7 +25,7 @@ import React from 'react';
 import { t } from 'utils/i18n';
 import { orderDispatchingStatusPTOptions } from '../../utils/index';
 import { SectionTitle } from '../generics/SectionTitle';
-import { CourierNotifiedBox } from './matching/CourierNotifiedBox';
+import CourierNotifiedBox from './matching/CourierNotifiedBox';
 import { LogsTable } from './matching/LogsTable';
 
 export type NotifiedCouriers = { id: string; name?: string };
@@ -143,12 +143,12 @@ export const Matching = ({
     if (matching === undefined) return;
     if (matching === null) {
       setCouriersNotified([]);
-      //setCouriersRejections([]);
+      // setCouriersRejections([]);
       // setLogs([]);
       return;
     }
     setCouriersNotified(matching.notifiedCouriers);
-    //setCouriersRejections(matching.rejections);
+    // setCouriersRejections(matching.rejections);
     // setLogs(matching.logs);
     setAttemps(matching.attempt);
   }, [matching]);
