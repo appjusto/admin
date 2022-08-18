@@ -53,7 +53,7 @@ export const StaffFilter = ({
       label={isActive ? t('Filtro ativo') : t('Filtro')}
       aria-label={t('filtro')}
     >
-      <Flex px="4" alignItems="center">
+      <Flex alignItems="center">
         <Popover placement="bottom-end" isOpen={isOpen} onClose={close}>
           <PopoverTrigger>
             <Center
