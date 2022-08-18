@@ -18,7 +18,6 @@ export const useObserveOrderMatching = (
     if (!orderId) return;
     if (!isBackofficeUser) return;
     if (isDisabled) return;
-    console.log('useObserveOrderMatching');
     const unsub1 = api
       .order()
       .observeOrderPrivateMatching(orderId, setMatching);

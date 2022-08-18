@@ -43,7 +43,6 @@ export const Matching = ({
   logs,
   activeMatching,
 }: MatchingProps) => {
-  console.log('Matching');
   // context
   const { user, userAbility, isBackofficeSuperuser } = useContextFirebaseUser();
   const { dispatchAppRequestResult } = useContextAppRequests();
