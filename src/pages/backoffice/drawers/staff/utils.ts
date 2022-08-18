@@ -100,12 +100,8 @@ const businessesHeadManagerObject = {
   advances: ['r'],
   managers: ['c', 'r', 'u', 'd'],
   recommendations: ['c', 'r', 'u', 'd'],
-<<<<<<< HEAD
   push_campaigns: [],
-  staff: [],
-=======
   staff: ['r'],
->>>>>>> dev
   users: ['r'],
   platform: [],
 } as UserPermissions;
