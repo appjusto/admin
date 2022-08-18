@@ -111,7 +111,7 @@ export const BackofficeOrderDrawer = ({
   if (refund.includes('delivery') && order?.fare?.courier?.value)
     refundValue += order.fare.courier.value;
   if (refund.includes('order') && order?.fare?.total)
-    refundValue += order?.fare?.total;
+    refundValue = order?.fare?.total;
   if (refund.includes('tip') && order?.tip?.value)
     refundValue += order.tip.value;
   const canUpdateOrderStaff =

@@ -126,8 +126,8 @@ export default class OrderApi {
   }
 
   observeFlaggedOrders(
-    statuses: OrderStatus[],
-    flags: string,
+    flags: string[],
+    status: OrderStatus | undefined,
     resultHandler: (
       orders: WithId<Order>[],
       last?: QueryDocumentSnapshot<DocumentData>
@@ -139,10 +139,10 @@ export default class OrderApi {
     let q = query(
       this.refs.getOrdersRef(),
       orderBy('timestamps.charged', ordering),
-      where('status', 'in', statuses),
-      where('flags', 'array-contains', flags),
+      where('flags', 'array-contains-any', flags),
       limit(queryLimit)
     );
+    if (status) q = query(q, where('status', '==', status));
     if (isNoStaff) q = query(q, where('staff', '==', null));
     // returns the unsubscribe function
     return customCollectionSnapshot(q, resultHandler);

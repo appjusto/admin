@@ -105,6 +105,7 @@ export const ledgerEntryStatusPTOptions = {
   pending: 'Pendente',
   processing: 'Processando',
   rejected: 'Rejeitada',
+<<<<<<< HEAD
 };
 
 export const ledgerEntryOperationPTOptions = {
@@ -116,6 +117,8 @@ export const pushStatusPTOptions = {
   submitted: 'Submetida',
   approved: 'Aprovada',
   rejected: 'Rejeitada',
+=======
+>>>>>>> dev
 };
 
 export const iuguSituationPTOptions = {

@@ -12,14 +12,16 @@ interface ContextProps {
   // lists
   // activeOrders: WithId<Order>[];
   unsafeOrders: WithId<Order>[];
-  matchingIssueOrders: WithId<Order>[];
+  warningOrders: WithId<Order>[];
   issueOrders: WithId<Order>[];
   watchedOrders: WithId<Order>[];
   userChanges: WithId<ProfileChange>[];
+  autoFlags: WarningOrdersFilter[];
   // fetchNextActiveOrders(): void;
+  handleWarningOrdersFilter(flags: WarningOrdersFilter[]): void;
   fetchNextUnsafeOrders(): void;
   fetchNextIssueOrders(): void;
-  fetchNextMatchingIssueOrders(): void;
+  fetchNextWarningOrders(): void;
   fetchNextChanges(): void;
 }
 
@@ -31,6 +33,8 @@ interface Props {
   children: React.ReactNode | React.ReactNode[];
 }
 
+export type WarningOrdersFilter = 'matching' | 'waiting-confirmation';
+
 const statuses = [
   'charged',
   'confirmed',
@@ -38,43 +42,53 @@ const statuses = [
   'ready',
   'dispatching',
 ] as OrderStatus[];
-const unsafeStatuses = ['charged'] as OrderStatus[];
+const unsafeStatus = 'charged';
 const usersChangesSituations = ['pending'] as ProfileChangesSituations[];
 
-const unsafeFlag = 'unsafe';
-const matchingFlag = 'matching';
-const issueFlag = 'issue';
+const unsafeFlags = ['unsafe'];
+const initialAutoFlags = [
+  'matching',
+  'waiting-confirmation',
+] as WarningOrdersFilter[];
+const issueFlags = ['issue'];
 
 export const BackofficeDashboardProvider = ({ children }: Props) => {
   // context
   const { user, isBackofficeSuperuser } = useContextFirebaseUser();
-  // lists
+  // state
+  const [autoFlags, setAutoFlags] =
+    React.useState<WarningOrdersFilter[]>(initialAutoFlags);
   // const { orders: activeOrders, fetchNextOrders: fetchNextActiveOrders } =
   //   useObserveBOActiveOrders(statuses, !isBackofficeSuperuser);
   const { orders: unsafeOrders, fetchNextOrders: fetchNextUnsafeOrders } =
-    useObserveFlaggedOrders(unsafeStatuses, unsafeFlag, !isBackofficeSuperuser);
-  const {
-    orders: matchingIssueOrders,
-    fetchNextOrders: fetchNextMatchingIssueOrders,
-  } = useObserveFlaggedOrders(statuses, matchingFlag, !isBackofficeSuperuser);
+    useObserveFlaggedOrders(unsafeFlags, !isBackofficeSuperuser, unsafeStatus);
+  const { orders: warningOrders, fetchNextOrders: fetchNextWarningOrders } =
+    useObserveFlaggedOrders(autoFlags, !isBackofficeSuperuser);
   const { orders: issueOrders, fetchNextOrders: fetchNextIssueOrders } =
-    useObserveFlaggedOrders(statuses, issueFlag, !isBackofficeSuperuser);
+    useObserveFlaggedOrders(issueFlags, !isBackofficeSuperuser);
   const watchedOrders = useObserveStaffOrders(statuses, user?.uid);
   const { userChanges, fetchNextPage: fetchNextChanges } =
     useObserveUsersChanges(usersChangesSituations);
+  // handlers
+  const handleWarningOrdersFilter = React.useCallback(
+    (flags: WarningOrdersFilter[]) => setAutoFlags(flags),
+    []
+  );
   // provider
   return (
     <BackofficeDashboardContext.Provider
       value={{
         // activeOrders,
         unsafeOrders,
-        matchingIssueOrders,
+        warningOrders,
         issueOrders,
         watchedOrders,
         userChanges,
+        autoFlags,
         // fetchNextActiveOrders,
+        handleWarningOrdersFilter,
         fetchNextUnsafeOrders,
-        fetchNextMatchingIssueOrders,
+        fetchNextWarningOrders,
         fetchNextIssueOrders,
         fetchNextChanges,
       }}

@@ -3,9 +3,9 @@ import { useContextApi } from 'app/state/api/context';
 import React from 'react';
 
 export const useObserveFlaggedOrders = (
-  statuses: OrderStatus[],
-  flags: string,
-  isNoStaff?: boolean
+  flags: string[],
+  isNoStaff?: boolean,
+  status?: OrderStatus
 ) => {
   // context
   const api = useContextApi();
@@ -23,9 +23,9 @@ export const useObserveFlaggedOrders = (
   React.useEffect(() => {
     const unsub = api
       .order()
-      .observeFlaggedOrders(statuses, flags, setOrders, queryLimit, isNoStaff);
+      .observeFlaggedOrders(flags, status, setOrders, queryLimit, isNoStaff);
     return () => unsub();
-  }, [api, statuses, flags, isNoStaff, queryLimit]);
+  }, [api, status, flags, isNoStaff, queryLimit]);
   // return
   return { orders, fetchNextOrders };
 };

@@ -7,9 +7,11 @@ import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import PageHeader from '../../PageHeader';
+import { SectionTitle } from '../drawers/generics/SectionTitle';
 import { BackofficeOrderDrawer } from '../drawers/order';
 import { BOChatDrawer } from './BOChatDrawer';
 import { BOList } from './BOList';
+import { FilterOptions } from './StaffFilter';
 // import { StaffFilterOptions } from './StaffFilter';
 
 const ManagerBaseDrawer = React.lazy(
@@ -35,6 +37,12 @@ const UserChangeDrawer = React.lazy(
     )
 );
 
+const warningOrdersFilterOptions = [
+  { label: 'Todos', value: ['matching', 'waiting-confirmation'] },
+  { label: 'Demora no aceite', value: ['waiting-confirmation'] },
+  { label: 'Demora no matching', value: ['matching'] },
+] as FilterOptions;
+
 const BODashboard = () => {
   // context
   const { userAbility } = useContextFirebaseUser();
@@ -43,13 +51,15 @@ const BODashboard = () => {
   const {
     // activeOrders,
     unsafeOrders,
-    matchingIssueOrders,
+    warningOrders,
     issueOrders,
     watchedOrders,
     userChanges,
+    autoFlags,
     // fetchNextActiveOrders,
+    handleWarningOrdersFilter,
     fetchNextUnsafeOrders,
-    fetchNextMatchingIssueOrders,
+    fetchNextWarningOrders,
     fetchNextIssueOrders,
     fetchNextChanges,
   } = useContextBackofficeDashboard();
@@ -76,6 +86,7 @@ const BODashboard = () => {
         showVersion
       />
       <DirectAccessById />
+      <SectionTitle>{t('Pedidos em andamento')}</SectionTitle>
       <Box mt="4">
         {watchedOrders.length > 0 && (
           <BOList
@@ -95,7 +106,7 @@ const BODashboard = () => {
       >
         <BOList
           display={userAbility?.can('read', 'orders') ? 'flex' : 'none'}
-          title={t('Pedidos para triagem')}
+          title={t('Triagem')}
           data={unsafeOrders}
           dataLength={unsafeOrders.length}
           listType="orders-unsafe"
@@ -108,20 +119,23 @@ const BODashboard = () => {
         />
         <BOList
           display={userAbility?.can('read', 'orders') ? 'flex' : 'none'}
-          title={t('Pedidos com problemas no matching')}
-          data={matchingIssueOrders}
-          dataLength={unsafeOrders.length}
-          listType="orders-matching"
+          title={t('Alerta')}
+          data={warningOrders}
+          dataLength={warningOrders.length}
+          listType="orders-warning"
           details={t(
-            'Aqui ficarão listados todos os pedidos em andamento com atraso no matching.'
+            'Aqui ficarão listados todos os pedidos em andamento com atraso no aceite ou no matching.'
           )}
           infiniteScroll
           scrollTopLimit={550}
-          loadData={fetchNextMatchingIssueOrders}
+          loadData={fetchNextWarningOrders}
+          filterOptions={warningOrdersFilterOptions}
+          filterValue={autoFlags}
+          handleFilter={handleWarningOrdersFilter}
         />
         <BOList
           display={userAbility?.can('read', 'orders') ? 'flex' : 'none'}
-          title={t('Pedidos com problemas reportados')}
+          title={t('Problemas')}
           data={issueOrders}
           dataLength={issueOrders.length}
           listType="orders-issue"
@@ -133,9 +147,10 @@ const BODashboard = () => {
           loadData={fetchNextIssueOrders}
         />
       </Stack>
+      <SectionTitle>{t('Solicitações de alteração de perfil')}</SectionTitle>
       <Box mt="4">
         <BOList
-          title={t('Solicitações de alteração de perfil')}
+          title={t('Solicitações pendentes')}
           data={userChanges}
           listType="profile-changes"
           details={t(

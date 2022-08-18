@@ -6,7 +6,12 @@ import foodIcon from 'common/img/bo-food.svg';
 import p2pIcon from 'common/img/bo-p2p.svg';
 import { Timestamp } from 'firebase/firestore';
 import React from 'react';
-import { MdErrorOutline, MdMoped, MdPolicy } from 'react-icons/md';
+import {
+  MdErrorOutline,
+  MdMoped,
+  MdPolicy,
+  MdRestaurant,
+} from 'react-icons/md';
 import { RiChat3Line, RiUserSearchLine } from 'react-icons/ri';
 import { useRouteMatch } from 'react-router-dom';
 import { getTimestampMilliseconds, getTimeUntilNow } from 'utils/functions';
@@ -24,13 +29,20 @@ type IconsConfig = {
   isUnsafe?: boolean;
   isIssue?: boolean;
   isMessages?: boolean;
+  isConfirmedOverLimit?: boolean;
   courierIconStatus?: { bg: string; color: string };
 };
 
 const renderIcons = (iconsConfig: IconsConfig) => {
   // props
-  const { isStaff, isUnsafe, isIssue, isMessages, courierIconStatus } =
-    iconsConfig;
+  const {
+    isStaff,
+    isUnsafe,
+    isIssue,
+    isMessages,
+    isConfirmedOverLimit,
+    courierIconStatus,
+  } = iconsConfig;
   // UI
   return (
     <>
@@ -83,6 +95,21 @@ const renderIcons = (iconsConfig: IconsConfig) => {
           <Icon as={RiChat3Line} color={isMessages ? 'black' : '#C8D7CB'} />
         </Flex>
       )}
+      {isConfirmedOverLimit !== undefined && (
+        <Flex
+          w="24px"
+          h="24px"
+          justifyContent="center"
+          alignItems="center"
+          bg={isConfirmedOverLimit ? 'red' : 'none'}
+          borderRadius="lg"
+        >
+          <Icon
+            as={MdRestaurant}
+            color={isConfirmedOverLimit ? 'white' : '#C8D7CB'}
+          />
+        </Flex>
+      )}
       {courierIconStatus !== undefined && (
         <Flex
           w="24px"
@@ -128,12 +155,19 @@ export const BOOrderListItem = ({ listType, order }: Props) => {
   if (listType === 'orders-watched' || listType === 'orders-issue') {
     iconsConfig.isIssue = order.flags && order.flags.includes('issue');
   }
-  if (listType === 'orders-watched' || listType === 'orders-matching') {
-    iconsConfig.courierIconStatus = getOrderMatchingColor(
+  if (listType === 'orders-watched' || listType === 'orders-warning') {
+    const courierIconStatus = getOrderMatchingColor(
       order.status,
       order.dispatchingStatus,
       order.courier?.id
     );
+    const isConfirmedOverLimit =
+      order.flags && order.flags.includes('waiting-confirmation');
+    iconsConfig = {
+      ...iconsConfig,
+      isConfirmedOverLimit,
+      courierIconStatus,
+    };
   }
   // side effects
   React.useEffect(() => {
