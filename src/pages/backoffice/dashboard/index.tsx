@@ -7,6 +7,7 @@ import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import PageHeader from '../../PageHeader';
+import { SectionTitle } from '../drawers/generics/SectionTitle';
 import { BackofficeOrderDrawer } from '../drawers/order';
 import { BOChatDrawer } from './BOChatDrawer';
 import { BOList } from './BOList';
@@ -85,6 +86,7 @@ const BODashboard = () => {
         showVersion
       />
       <DirectAccessById />
+      <SectionTitle>{t('Pedidos em andamento')}</SectionTitle>
       <Box mt="4">
         {watchedOrders.length > 0 && (
           <BOList
@@ -104,7 +106,7 @@ const BODashboard = () => {
       >
         <BOList
           display={userAbility?.can('read', 'orders') ? 'flex' : 'none'}
-          title={t('Pedidos para triagem')}
+          title={t('Triagem')}
           data={unsafeOrders}
           dataLength={unsafeOrders.length}
           listType="orders-unsafe"
@@ -117,7 +119,7 @@ const BODashboard = () => {
         />
         <BOList
           display={userAbility?.can('read', 'orders') ? 'flex' : 'none'}
-          title={t('Pedidos com alerta')}
+          title={t('Alerta')}
           data={warningOrders}
           dataLength={warningOrders.length}
           listType="orders-warning"
@@ -133,7 +135,7 @@ const BODashboard = () => {
         />
         <BOList
           display={userAbility?.can('read', 'orders') ? 'flex' : 'none'}
-          title={t('Pedidos com problemas reportados')}
+          title={t('Problemas')}
           data={issueOrders}
           dataLength={issueOrders.length}
           listType="orders-issue"
@@ -145,9 +147,10 @@ const BODashboard = () => {
           loadData={fetchNextIssueOrders}
         />
       </Stack>
+      <SectionTitle>{t('Solicitações de alteração de perfil')}</SectionTitle>
       <Box mt="4">
         <BOList
-          title={t('Solicitações de alteração de perfil')}
+          title={t('Solicitações pendentes')}
           data={userChanges}
           listType="profile-changes"
           details={t(

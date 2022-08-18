@@ -73,7 +73,7 @@ export const StaffFilter = ({
             </Center>
           </PopoverTrigger>
           <PopoverContent
-            maxW="180px"
+            maxW="200px"
             bg="#697667"
             color="white"
             _focus={{ outline: 'none' }}
