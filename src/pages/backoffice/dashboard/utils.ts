@@ -1,6 +1,7 @@
 import { DispatchingStatus, OrderStatus } from '@appjusto/types';
 
 export const getOrderMatchingColor = (
+  isFlagged: boolean,
   orderStatus: OrderStatus,
   dispatchingStatus?: DispatchingStatus,
   courierId?: string
@@ -10,6 +11,12 @@ export const getOrderMatchingColor = (
       bg: '#6CE787',
       color: 'black',
     };
+  if (isFlagged || dispatchingStatus === 'no-match') {
+    return {
+      bg: 'red',
+      color: 'white',
+    };
+  }
   if (dispatchingStatus === 'idle') {
     if (['ready', 'dispatching'].includes(orderStatus) && !courierId) {
       return {
@@ -29,12 +36,6 @@ export const getOrderMatchingColor = (
         bg: '#055AFF',
         color: 'white',
       };
-  }
-  if (dispatchingStatus === 'no-match') {
-    return {
-      bg: 'red',
-      color: 'white',
-    };
   }
   if (dispatchingStatus === 'outsourced')
     return {
