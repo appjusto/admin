@@ -8,7 +8,9 @@ export const useStaffProfile = () => {
   const api = useContextApi();
   const { user, isBackofficeUser } = useContextFirebaseUser();
   // state
-  const [profile, setProfile] = React.useState<WithId<StaffProfile> | undefined | null>();
+  const [profile, setProfile] = React.useState<
+    WithId<StaffProfile> | undefined | null
+  >();
   // side effects
   // observe profile
   React.useEffect(() => {
