@@ -15,7 +15,7 @@ import {
 } from './utils';
 
 type Actions = 'create' | 'read' | 'update' | 'delete';
-type Subjects =
+export type Entities =
   | 'orders'
   | 'account_manager'
   | 'businesses'
@@ -33,7 +33,7 @@ type Subjects =
   | 'users'
   | 'platform';
 
-export type AppAbility = Ability<[Actions, Subjects | any]>;
+export type AppAbility = Ability<[Actions, Entities | any]>;
 
 const options: AbilityOptionsOf<AppAbility> = {
   detectSubjectType: (subject) => {
