@@ -13,6 +13,7 @@ import { FirebaseError } from 'firebase/app';
 import { Timestamp } from 'firebase/firestore';
 import React from 'react';
 import { getTimeUntilNow } from 'utils/functions';
+import { useUserCanReadEntity } from '../auth/useUserCanReadEntity';
 import { useCustomMutation } from '../mutation/useCustomMutation';
 
 const orderActivedStatuses = [
@@ -30,6 +31,7 @@ export const useObserveBusinessOrderChatByType = (
 ) => {
   // context
   const api = useContextApi();
+  const userCanRead = useUserCanReadEntity('chats');
   const { business } = useContextBusiness();
   // state
   const [order, setOrder] = React.useState<WithId<Order> | null>();
@@ -111,6 +113,7 @@ export const useObserveBusinessOrderChatByType = (
     else setParticipants([businessObj]);
   }, [order, counterpartId, business?.id, business?.name]);
   React.useEffect(() => {
+    if (!userCanRead) return;
     if (!orderId || !counterPartFlavor) return;
     const chatType =
       counterPartFlavor === 'courier'
@@ -120,7 +123,7 @@ export const useObserveBusinessOrderChatByType = (
       .chat()
       .observeOrderChatByType(orderId, chatType, setChatMessages);
     return () => unsub();
-  }, [api, orderId, counterPartFlavor]);
+  }, [api, userCanRead, orderId, counterPartFlavor]);
   React.useEffect(() => {
     if (!order?.status) return;
     if (orderActivedStatuses.includes(order.status)) setIsActive(true);

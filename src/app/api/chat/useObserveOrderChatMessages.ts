@@ -1,6 +1,7 @@
 import { ChatMessage, WithId } from '@appjusto/types';
 import { useContextApi } from 'app/state/api/context';
 import React from 'react';
+import { useUserCanReadEntity } from '../auth/useUserCanReadEntity';
 import { OrderChatTypeGroup } from './types';
 import { getOrderChatTypeGroup } from './utils';
 
@@ -11,6 +12,7 @@ export const useObserveOrderChatMessages = (
 ) => {
   // context
   const api = useContextApi();
+  const userCanRead = useUserCanReadEntity('chats');
   // state
   const [chatMessages, setChatMessages] = React.useState<WithId<ChatMessage>[]>(
     []
@@ -20,6 +22,7 @@ export const useObserveOrderChatMessages = (
   >([]);
   // side effects
   React.useEffect(() => {
+    if (!userCanRead) return;
     if (!orderId) return;
     if (isDisabled) return;
     const unsub = api
@@ -29,7 +32,7 @@ export const useObserveOrderChatMessages = (
         setChatMessages
       );
     return () => unsub();
-  }, [api, orderId, limit, isDisabled]);
+  }, [api, userCanRead, orderId, limit, isDisabled]);
   React.useEffect(() => {
     if (!chatMessages) return;
     setOrderChatGroup(getOrderChatTypeGroup(chatMessages));
