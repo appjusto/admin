@@ -156,13 +156,19 @@ export const BOOrderListItem = ({ listType, order }: Props) => {
     iconsConfig.isIssue = order.flags && order.flags.includes('issue');
   }
   if (listType === 'orders-watched' || listType === 'orders-warning') {
+    const isMatchinFlag = order.flags
+      ? order.flags.includes('matching')
+      : false;
     const courierIconStatus = getOrderMatchingColor(
+      isMatchinFlag,
       order.status,
       order.dispatchingStatus,
       order.courier?.id
     );
     const isConfirmedOverLimit =
-      order.flags && order.flags.includes('waiting-confirmation');
+      order.type === 'food'
+        ? order.flags && order.flags.includes('waiting-confirmation')
+        : undefined;
     iconsConfig = {
       ...iconsConfig,
       isConfirmedOverLimit,
