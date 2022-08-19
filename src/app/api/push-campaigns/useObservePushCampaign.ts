@@ -1,11 +1,13 @@
 import { PushCampaign, WithId } from '@appjusto/types';
 import { useContextApi } from 'app/state/api/context';
 import React from 'react';
+import { useUserCanReadEntity } from '../auth/useUserCanReadEntity';
 import { useCustomMutation } from '../mutation/useCustomMutation';
 
 export const useObservePushCampaign = (campaignId?: string) => {
   // contex
   const api = useContextApi();
+  const userCanRead = useUserCanReadEntity('push_campaigns');
   // state
   const [campaign, setCampaign] = React.useState<WithId<PushCampaign> | null>();
   // mutations
@@ -34,12 +36,13 @@ export const useObservePushCampaign = (campaignId?: string) => {
   );
   // side effects
   React.useEffect(() => {
+    if (!userCanRead) return;
     if (!campaignId) return;
     const unsub = api
       .push_campaigns()
       .observePushCampaign(campaignId, setCampaign);
     return () => unsub();
-  }, [api, campaignId]);
+  }, [api, userCanRead, campaignId]);
   // return
   return {
     campaign,

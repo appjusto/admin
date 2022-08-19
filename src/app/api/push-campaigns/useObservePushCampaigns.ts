@@ -3,6 +3,7 @@ import { useContextApi } from 'app/state/api/context';
 import dayjs from 'dayjs';
 import { DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
 import React from 'react';
+import { useUserCanReadEntity } from '../auth/useUserCanReadEntity';
 
 const initialMap = new Map();
 
@@ -14,6 +15,7 @@ export const useObservePushCampaigns = (
 ) => {
   // context
   const api = useContextApi();
+  const userCanRead = useUserCanReadEntity('push_campaigns');
   // state
   const [campaignsMap, setCampaignsMap] =
     React.useState<Map<string | undefined, WithId<PushCampaign>[]>>(initialMap);
@@ -33,6 +35,7 @@ export const useObservePushCampaigns = (
     setStartAfter(undefined);
   }, [name, start, end, status]);
   React.useEffect(() => {
+    if (!userCanRead) return;
     let startDate = start ? dayjs(start).startOf('day').toDate() : null;
     let endDate = end ? dayjs(end).endOf('day').toDate() : null;
     const unsub = api.push_campaigns().observePushCampaigns(
@@ -51,7 +54,7 @@ export const useObservePushCampaigns = (
       status
     );
     return () => unsub();
-  }, [api, startAfter, name, start, end, status]);
+  }, [api, userCanRead, startAfter, name, start, end, status]);
   React.useEffect(() => {
     setCampaigns(
       Array.from(campaignsMap.values()).reduce(
