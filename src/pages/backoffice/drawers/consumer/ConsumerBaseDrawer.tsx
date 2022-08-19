@@ -37,7 +37,12 @@ interface BaseDrawerProps {
   children: React.ReactNode | React.ReactNode[];
 }
 
-export const ConsumerBaseDrawer = ({ staff, onClose, children, ...props }: BaseDrawerProps) => {
+export const ConsumerBaseDrawer = ({
+  staff,
+  onClose,
+  children,
+  ...props
+}: BaseDrawerProps) => {
   //context
   const { userAbility } = useContextFirebaseUser();
   const { dispatchAppRequestResult } = useContextAppRequests();
@@ -54,16 +59,23 @@ export const ConsumerBaseDrawer = ({ staff, onClose, children, ...props }: BaseD
     isEditingEmail,
     setIsEditingEmail,
   } = useContextConsumerProfile();
-  const { updateProfile, updateResult } = useConsumerUpdateProfile(consumer?.id);
+  const { updateProfile, updateResult } = useConsumerUpdateProfile(
+    consumer?.id
+  );
   // state
   const [isDeleting, setIsDeleting] = React.useState(false);
   //helpers
   const pageName = pathname.split('/').pop();
-  const pageHasAction = pageName ? !withoutActionPages.includes(pageName) : true;
+  const pageHasAction = pageName
+    ? !withoutActionPages.includes(pageName)
+    : true;
   //const toast = useToast();
   let consumerName = consumer?.name ?? 'N/I';
   if (consumer?.surname) consumerName += ` ${consumer.surname}`;
-  const city = consumer?.city && consumer?.state ? `${consumer?.city} - ${consumer?.state}` : 'N/I';
+  const city =
+    consumer?.city && consumer?.state
+      ? `${consumer?.city} - ${consumer?.state}`
+      : 'N/I';
   //handlers
   const handleSave = () => {
     /*if (consumer?.situation === 'approved') {
@@ -76,12 +88,17 @@ export const ConsumerBaseDrawer = ({ staff, onClose, children, ...props }: BaseD
       }
     }*/
     setIsEditingEmail(false);
-    const changes = getEditableProfile(consumer, isEditingEmail) as Partial<ConsumerProfile>;
+    const changes = getEditableProfile(
+      consumer,
+      isEditingEmail
+    ) as Partial<ConsumerProfile>;
     const selfieFileToSave = selfieFiles ? selfieFiles[0] : null;
     const documentFileToSave = documentFiles ? documentFiles[0] : null;
     updateProfile({ changes, selfieFileToSave, documentFileToSave });
-    if (selfieFileToSave) queryClient.invalidateQueries(['consumer:selfie', consumer?.id]);
-    if (documentFileToSave) queryClient.invalidateQueries(['consumer:document', consumer?.id]);
+    if (selfieFileToSave)
+      queryClient.invalidateQueries(['consumer:selfie', consumer?.id]);
+    if (documentFileToSave)
+      queryClient.invalidateQueries(['consumer:document', consumer?.id]);
     setSelfieFiles(null);
     setDocumentFiles(null);
   };
@@ -105,42 +122,88 @@ export const ConsumerBaseDrawer = ({ staff, onClose, children, ...props }: BaseD
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
       <DrawerOverlay>
         <DrawerContent mt={{ base: '16', lg: '0' }}>
-          <DrawerCloseButton bg="green.500" mr="12px" _focus={{ outline: 'none' }} />
+          <DrawerCloseButton
+            bg="green.500"
+            mr="12px"
+            _focus={{ outline: 'none' }}
+          />
           <DrawerHeader pb="2">
-            <Text color="black" fontSize="2xl" fontWeight="700" lineHeight="28px" mb="2">
+            <Text
+              color="black"
+              fontSize="2xl"
+              fontWeight="700"
+              lineHeight="28px"
+              mb="2"
+            >
               {consumer?.code ?? 'N/E'}
             </Text>
-            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+            <Text
+              mt="1"
+              fontSize="15px"
+              color="black"
+              fontWeight="700"
+              lineHeight="22px"
+            >
               {t('Data do onboarding:')}{' '}
               <Text as="span" fontWeight="500">
                 {getDateAndHour(consumer?.createdOn)}
               </Text>
             </Text>
-            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+            <Text
+              mt="1"
+              fontSize="15px"
+              color="black"
+              fontWeight="700"
+              lineHeight="22px"
+            >
               {t('Atualizado em:')}{' '}
               <Text as="span" fontWeight="500">
                 {getDateAndHour(consumer?.updatedOn)}
               </Text>
             </Text>
-            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+            <Text
+              mt="1"
+              fontSize="15px"
+              color="black"
+              fontWeight="700"
+              lineHeight="22px"
+            >
               {t('Versão do app:')}{' '}
               <Text as="span" fontWeight="500">
                 {consumer?.appVersion ?? 'N/E'}
               </Text>
             </Text>
-            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+            <Text
+              mt="1"
+              fontSize="15px"
+              color="black"
+              fontWeight="700"
+              lineHeight="22px"
+            >
               {t('Qtd. de pedidos:')}{' '}
               <Text as="span" fontWeight="500">
                 {consumer?.statistics?.totalOrders ?? 'N/E'}
               </Text>
             </Text>
-            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+            <Text
+              mt="1"
+              fontSize="15px"
+              color="black"
+              fontWeight="700"
+              lineHeight="22px"
+            >
               {t('NPS:')}{' '}
               <Text as="span" fontWeight="500">
                 {consumer?.nps?.score ? consumer?.nps?.score.toFixed(2) : 'N/E'}
               </Text>
             </Text>
-            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+            <Text
+              mt="1"
+              fontSize="15px"
+              color="black"
+              fontWeight="700"
+              lineHeight="22px"
+            >
               {t('Cidade:')}{' '}
               <Text as="span" fontWeight="500">
                 {city}
@@ -155,7 +218,13 @@ export const ConsumerBaseDrawer = ({ staff, onClose, children, ...props }: BaseD
           </DrawerHeader>
           <DrawerBody pb="28">
             <SectionTitle>{consumerName}</SectionTitle>
-            <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+            <Text
+              mt="2"
+              fontSize="15px"
+              color="black"
+              fontWeight="700"
+              lineHeight="22px"
+            >
               {t('Status:')}{' '}
               <Text as="span" fontWeight="500">
                 {consumer?.situation === 'approved' ? t('Ativo') : t('Inativo')}
@@ -171,6 +240,7 @@ export const ConsumerBaseDrawer = ({ staff, onClose, children, ...props }: BaseD
             >
               <DrawerLink to={`${url}`} label={t('Cadastro')} />
               <DrawerLink to={`${url}/payment`} label={t('Pagamento')} />
+              <DrawerLink to={`${url}/pictures`} label={t('Fotos')} />
               <DrawerLink to={`${url}/orders`} label={t('Pedidos')} />
               <DrawerLink to={`${url}/status`} label={t('Status')} />
             </Flex>
@@ -181,8 +251,17 @@ export const ConsumerBaseDrawer = ({ staff, onClose, children, ...props }: BaseD
             borderTop="1px solid #F2F6EA"
           >
             {isDeleting ? (
-              <Box mt="8" w="100%" bg="#FFF8F8" border="1px solid red" borderRadius="lg" p="6">
-                <Text color="red">{t(`Tem certeza que deseja excluir esta conta?`)}</Text>
+              <Box
+                mt="8"
+                w="100%"
+                bg="#FFF8F8"
+                border="1px solid red"
+                borderRadius="lg"
+                p="6"
+              >
+                <Text color="red">
+                  {t(`Tem certeza que deseja excluir esta conta?`)}
+                </Text>
                 <HStack mt="4" spacing={4}>
                   <Button width="full" onClick={() => setIsDeleting(false)}>
                     {t(`Manter conta`)}

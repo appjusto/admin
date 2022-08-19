@@ -18,7 +18,6 @@ import React from 'react';
 import { normalizeEmail } from 'utils/email';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
-import { Documents } from './Documents';
 
 export const PersonalProfile = () => {
   // context
@@ -63,7 +62,9 @@ export const PersonalProfile = () => {
             id="user-profile-email"
             label={t('E-mail')}
             value={consumer?.email ?? ''}
-            onChange={(ev) => handleInputChange('email', normalizeEmail(ev.target.value))}
+            onChange={(ev) =>
+              handleInputChange('email', normalizeEmail(ev.target.value))
+            }
           />
         </Box>
       ) : (
@@ -130,12 +131,13 @@ export const PersonalProfile = () => {
         onValueChange={(value) => handleInputChange('cpf', value)}
         externalValidation={{ active: true, status: isCPFValid() }}
       />
-      <Documents />
       <SectionTitle>{t('Preferências de notificação')}</SectionTitle>
       <CheckboxGroup
         colorScheme="green"
         value={consumer?.notificationPreferences}
-        onChange={(values: string[]) => handleInputChange('notificationPreferences', values)}
+        onChange={(values: string[]) =>
+          handleInputChange('notificationPreferences', values)
+        }
       >
         <Stack
           mt="6"
@@ -146,13 +148,17 @@ export const PersonalProfile = () => {
           lineHeight="22px"
         >
           <Box>
-            <CustomCheckbox value="status">{t('Comunicações operacionais')}</CustomCheckbox>
+            <CustomCheckbox value="status">
+              {t('Comunicações operacionais')}
+            </CustomCheckbox>
             <Text fontSize="13px">
               {t('Para saber sobre novas versões, atualizações do app e mais.')}
             </Text>
           </Box>
           <Box>
-            <CustomCheckbox value="general">{t('Comunicações institucionais')}</CustomCheckbox>
+            <CustomCheckbox value="general">
+              {t('Comunicações institucionais')}
+            </CustomCheckbox>
             <Text fontSize="13px">
               {t(
                 'Para conhecer mais sobre o AppJusto: propósito, impacto, crescimento, financiamento e mais.'
@@ -160,9 +166,13 @@ export const PersonalProfile = () => {
             </Text>
           </Box>
           <Box>
-            <CustomCheckbox value="marketing">{t('Promoções e ofertas')}</CustomCheckbox>
+            <CustomCheckbox value="marketing">
+              {t('Promoções e ofertas')}
+            </CustomCheckbox>
             <Text fontSize="13px">
-              {t('Avisar sobre promoções e ofertas referentes aos restaurantes da rede.')}
+              {t(
+                'Avisar sobre promoções e ofertas referentes aos restaurantes da rede.'
+              )}
             </Text>
           </Box>
         </Stack>
