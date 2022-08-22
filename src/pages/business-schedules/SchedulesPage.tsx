@@ -172,7 +172,6 @@ const SchedulesPage = () => {
     submission.current += 1;
     updateBusinessProfile({ schedules });
   };
-  console.log(schedules[6].schedule);
   // side effects
   React.useEffect(() => {
     if (!business?.schedules) return;
