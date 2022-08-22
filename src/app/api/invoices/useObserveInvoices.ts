@@ -4,6 +4,7 @@ import { useContextApi } from 'app/state/api/context';
 import dayjs from 'dayjs';
 import { DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
 import React from 'react';
+import { useUserCanReadEntity } from '../auth/useUserCanReadEntity';
 
 const initialMap = new Map();
 
@@ -15,6 +16,7 @@ export const useObserveInvoices = (
 ) => {
   // context
   const api = useContextApi();
+  const userCanRead = useUserCanReadEntity('invoices');
   // state
   const [invoicesMap, setInvoicesMap] =
     React.useState<Map<string | undefined, WithId<Invoice>[]>>(initialMap);
@@ -34,6 +36,7 @@ export const useObserveInvoices = (
     setStartAfter(undefined);
   }, [orderCode, start, end, status]);
   React.useEffect(() => {
+    if (!userCanRead) return;
     let startDate = start ? dayjs(start).startOf('day').toDate() : null;
     let endDate = end ? dayjs(end).endOf('day').toDate() : null;
     const unsub = api.invoices().observeInvoices(
@@ -52,7 +55,7 @@ export const useObserveInvoices = (
       status
     );
     return () => unsub();
-  }, [api, startAfter, orderCode, start, end, status]);
+  }, [api, userCanRead, startAfter, orderCode, start, end, status]);
   React.useEffect(() => {
     setInvoices(
       Array.from(invoicesMap.values()).reduce(

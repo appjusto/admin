@@ -1,15 +1,14 @@
+import { BankAccount, Business, ManagerProfile } from '@appjusto/types';
 import { useCustomMutation } from 'app/api/mutation/useCustomMutation';
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusinessId } from 'app/state/business/context';
 import { useContextManagerProfile } from 'app/state/manager/context';
-import { BankAccount, Business, ManagerProfile } from '@appjusto/types';
 
 export const useBusinessManagerAndBankAccountBatch = () => {
   // context
   const api = useContextApi();
   const businessId = useContextBusinessId()!;
   const { manager } = useContextManagerProfile();
-
   // mutations
   const {
     mutateAsync: updateBusinessManagerAndBankAccount,

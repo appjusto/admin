@@ -8,6 +8,7 @@ import {
   InvoicesCosts,
 } from 'pages/finances/utils';
 import React from 'react';
+import { useUserCanReadEntity } from '../auth/useUserCanReadEntity';
 import { getInvoicesBusinessTotalValue } from './utils';
 
 export const useObserveInvoicesStatusByPeriod = (
@@ -17,6 +18,7 @@ export const useObserveInvoicesStatusByPeriod = (
 ) => {
   // context
   const api = useContextApi();
+  const userCanRead = useUserCanReadEntity('invoices');
   // state
   const [invoices, setInvoices] = React.useState<WithId<Invoice>[]>();
   const [total, setTotal] = React.useState(0);
@@ -31,7 +33,7 @@ export const useObserveInvoicesStatusByPeriod = (
   });
   // side effects
   React.useEffect(() => {
-    if (!businessId) return;
+    if (!userCanRead) return;
     if (!businessId) return;
     if (!month) return;
     if (!status) return;
@@ -47,7 +49,7 @@ export const useObserveInvoicesStatusByPeriod = (
         setInvoices
       );
     return () => unsub();
-  }, [api, businessId, month, status]);
+  }, [api, userCanRead, businessId, month, status]);
   React.useEffect(() => {
     if (!invoices) return;
     const amount = getInvoicesBusinessTotalValue(invoices);

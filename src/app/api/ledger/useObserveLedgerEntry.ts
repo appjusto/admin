@@ -1,11 +1,13 @@
 import { LedgerEntry, WithId } from '@appjusto/types';
 import { useContextApi } from 'app/state/api/context';
 import React from 'react';
+import { useUserCanReadEntity } from '../auth/useUserCanReadEntity';
 import { useCustomMutation } from '../mutation/useCustomMutation';
 
 export const useObserveLedgerEntry = (entryId?: string) => {
   // context
   const api = useContextApi();
+  const userCanRead = useUserCanReadEntity('invoices');
   // state
   const [entry, setEntry] = React.useState<WithId<LedgerEntry> | null>();
   // mutations
@@ -27,10 +29,11 @@ export const useObserveLedgerEntry = (entryId?: string) => {
     );
   // side effects
   React.useEffect(() => {
+    if (!userCanRead) return;
     if (!entryId) return;
     const unsub = api.ledger().observeLedgerEntry(entryId, setEntry);
     return () => unsub();
-  }, [api, entryId]);
+  }, [api, userCanRead, entryId]);
   // return
   return {
     entry,

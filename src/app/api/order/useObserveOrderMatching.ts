@@ -2,6 +2,7 @@ import { OrderMatching, OrderMatchingLog, WithId } from '@appjusto/types';
 import { useContextApi } from 'app/state/api/context';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import React from 'react';
+import { useUserCanReadEntity } from '../auth/useUserCanReadEntity';
 
 export const useObserveOrderMatching = (
   orderId?: string,
@@ -9,12 +10,14 @@ export const useObserveOrderMatching = (
 ) => {
   // context
   const api = useContextApi();
+  const userCanRead = useUserCanReadEntity('orders');
   const { isBackofficeUser } = useContextFirebaseUser();
   // state
   const [matching, setMatching] = React.useState<OrderMatching | null>();
   const [logs, setLogs] = React.useState<WithId<OrderMatchingLog>[]>();
   // side effects
   React.useEffect(() => {
+    if (!userCanRead) return;
     if (!orderId) return;
     if (!isBackofficeUser) return;
     if (isDisabled) return;
@@ -30,7 +33,7 @@ export const useObserveOrderMatching = (
       unsub1();
       unsub2();
     };
-  }, [api, orderId, isBackofficeUser, isDisabled]);
+  }, [api, userCanRead, orderId, isBackofficeUser, isDisabled]);
   // return
   return { matching, logs };
 };

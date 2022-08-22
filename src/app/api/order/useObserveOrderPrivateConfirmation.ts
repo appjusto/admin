@@ -2,6 +2,7 @@ import { OrderConfirmation } from '@appjusto/types';
 import { useContextApi } from 'app/state/api/context';
 import React from 'react';
 import { useQuery } from 'react-query';
+import { useUserCanReadEntity } from '../auth/useUserCanReadEntity';
 
 export const useObserveOrderPrivateConfirmation = (
   orderId?: string,
@@ -9,6 +10,7 @@ export const useObserveOrderPrivateConfirmation = (
 ) => {
   // context
   const api = useContextApi();
+  const userCanRead = useUserCanReadEntity('orders');
   // state
   const [confirmation, setConfirmation] =
     React.useState<OrderConfirmation | null>();
@@ -39,12 +41,13 @@ export const useObserveOrderPrivateConfirmation = (
   );
   // side effects
   React.useEffect(() => {
+    if (!userCanRead) return;
     if (!orderId) return;
     const unsub = api
       .order()
       .observeOrderPrivateConfirmation(orderId, setConfirmation);
     return () => unsub();
-  }, [api, orderId]);
+  }, [api, userCanRead, orderId]);
   // return
   return { confirmation, frontUrl, packageUrl };
 };

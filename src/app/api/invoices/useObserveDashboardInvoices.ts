@@ -3,6 +3,7 @@ import { IuguInvoiceStatus } from '@appjusto/types/payment/iugu';
 import { useContextApi } from 'app/state/api/context';
 import dayjs from 'dayjs';
 import React from 'react';
+import { useUserCanReadEntity } from '../auth/useUserCanReadEntity';
 import {
   getInvoicesBusinessTotalValue,
   invoicesPeriodFilter,
@@ -14,6 +15,7 @@ const invoiceStatus = 'paid' as IuguInvoiceStatus;
 export const useObserveDashboardInvoices = (businessId?: string | null) => {
   // context
   const api = useContextApi();
+  const userCanRead = useUserCanReadEntity('invoices');
   // state
   const [invoices, setInvoices] = React.useState<WithId<Invoice>[] | null>();
   const [todayInvoices, setTodayInvoices] = React.useState<number>();
@@ -33,6 +35,7 @@ export const useObserveDashboardInvoices = (businessId?: string | null) => {
   // side effects
   // total invoices current month or last 15 days
   React.useEffect(() => {
+    if (!userCanRead) return;
     if (!businessId) return;
     const daysBefore = dayjs().date() > 15 ? dayjs().date() - 1 : 14;
     const startDate = dayjs()
@@ -50,7 +53,7 @@ export const useObserveDashboardInvoices = (businessId?: string | null) => {
         invoiceStatus
       );
     return () => unsub();
-  }, [api, businessId]);
+  }, [api, userCanRead, businessId]);
   // today invoices
   React.useEffect(() => {
     if (!invoices) return;

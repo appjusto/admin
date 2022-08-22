@@ -1,6 +1,7 @@
 import { Order, WithId } from '@appjusto/types';
 import { useContextApi } from 'app/state/api/context';
 import React from 'react';
+import { useUserCanReadEntity } from '../auth/useUserCanReadEntity';
 import { Ordering } from './OrderApi';
 
 export const useObserveCanceledOrdersInTheLastHour = (
@@ -9,6 +10,7 @@ export const useObserveCanceledOrdersInTheLastHour = (
 ) => {
   // context
   const api = useContextApi();
+  const userCanRead = useUserCanReadEntity('orders');
   // state
   const [canceledOrders, setOrders] = React.useState<WithId<Order>[]>([]);
   const [queryLimit, setQueryLimit] = React.useState(10);
@@ -21,6 +23,7 @@ export const useObserveCanceledOrdersInTheLastHour = (
   }, [canceledOrders]);
   // side effects
   React.useEffect(() => {
+    if (!userCanRead) return;
     if (!businessId) return;
     const unsub = api
       .order()
@@ -31,7 +34,7 @@ export const useObserveCanceledOrdersInTheLastHour = (
         ordering
       );
     return () => unsub();
-  }, [api, businessId, queryLimit, ordering]);
+  }, [api, userCanRead, businessId, queryLimit, ordering]);
   // return
   return { canceledOrders, fetchNextCanceledOrders };
 };
