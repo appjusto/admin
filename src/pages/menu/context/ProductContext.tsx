@@ -1,15 +1,42 @@
 import * as menu from '@appjusto/menu';
-import { ComplementGroup, Product, WithId } from '@appjusto/types';
+import {
+  BusinessSchedule,
+  ComplementGroup,
+  Product,
+  ScheduleObject,
+  WithId,
+} from '@appjusto/types';
 import { useObserveProduct } from 'app/api/business/products/useObserveProduct';
 import { useProduct } from 'app/api/business/products/useProduct';
 import { MutationResult } from 'app/api/mutation/useCustomMutation';
 import { useContextBusinessId } from 'app/state/business/context';
 import { useContextMenu } from 'app/state/menu/context';
+import { useContextAppRequests } from 'app/state/requests/context';
 import React from 'react';
 import { MutateFunction, UseMutateAsyncFunction } from 'react-query';
 import { useHistory, useParams, useRouteMatch } from 'react-router-dom';
 import { useQuery } from 'utils/functions';
-import { productReducer, StateProps } from './productReducer';
+import { productReducer, ProductStateProps } from './productReducer';
+
+const initialAvailability = [
+  { day: 'Segunda', checked: true, schedule: [{ from: '', to: '' }] },
+  { day: 'Terça', checked: true, schedule: [{ from: '', to: '' }] },
+  { day: 'Quarta', checked: true, schedule: [{ from: '', to: '' }] },
+  { day: 'Quinta', checked: true, schedule: [{ from: '', to: '' }] },
+  { day: 'Sexta', checked: true, schedule: [{ from: '', to: '' }] },
+  { day: 'Sábado', checked: true, schedule: [{ from: '', to: '' }] },
+  { day: 'Domingo', checked: true, schedule: [{ from: '', to: '' }] },
+] as BusinessSchedule;
+
+const alwaysAvailable = [
+  { day: 'Segunda', checked: true, schedule: [] },
+  { day: 'Terça', checked: true, schedule: [] },
+  { day: 'Quarta', checked: true, schedule: [] },
+  { day: 'Quinta', checked: true, schedule: [] },
+  { day: 'Sexta', checked: true, schedule: [] },
+  { day: 'Sábado', checked: true, schedule: [] },
+  { day: 'Domingo', checked: true, schedule: [] },
+] as BusinessSchedule;
 
 const initialState = {
   product: {
@@ -20,13 +47,16 @@ const initialState = {
     externalId: '',
     enabled: true,
     complementsEnabled: false,
+    complementsGroupsIds: [],
     imageExists: false,
+    availability: initialAvailability,
   },
   //details
   categoryId: '',
   imageFiles: null,
+  mainAvailability: 'always-available',
   saveSuccess: false,
-};
+} as ProductStateProps;
 
 interface Params {
   productId: string;
@@ -36,8 +66,9 @@ interface ContextProps {
   contextCategoryId: string | undefined;
   productId: string;
   product: WithId<Product> | undefined | null;
-  state: StateProps;
+  state: ProductStateProps;
   handleStateUpdate: (key: string, value: any) => void;
+  handleProductUpdate: (value: any) => void;
   clearState: () => void;
   imageUrl: string | null;
   sortedGroups: WithId<ComplementGroup>[];
@@ -67,6 +98,7 @@ export const ProductContextProvider = (props: ProviderProps) => {
   const query = useQuery();
   const { url, path } = useRouteMatch();
   const { push } = useHistory();
+  const { dispatchAppRequestResult } = useContextAppRequests();
   const businessId = useContextBusinessId();
   const {
     productsOrdering,
@@ -103,15 +135,51 @@ export const ProductContextProvider = (props: ProviderProps) => {
   const handleStateUpdate = (key: string, value: any) => {
     dispatch({ type: 'update_state', payload: { [key]: value } });
   };
+  const handleProductUpdate = (value: Partial<Product>) => {
+    dispatch({ type: 'update_product', payload: value });
+  };
 
   const clearState = () => {
     dispatch({ type: 'update_state', payload: initialState });
+  };
+  const schedulesValidation = (schedules: ScheduleObject[]) => {
+    let result = true;
+    schedules.forEach((scheduleObject) => {
+      scheduleObject.schedule.forEach((item, index) => {
+        if (item.from !== '' && item.to !== '') {
+          if (Number(item.from) >= Number(item.to)) result = false;
+          if (
+            index > 0 &&
+            Number(item.from) <= Number(scheduleObject.schedule[index - 1].to)
+          )
+            result = false;
+        }
+      });
+    });
+    return result;
   };
   const onProductUpdate = () => {
     // if (price === 0) {
     //   priceRef.current?.focus();
     //   return;
     // }
+    let availability = alwaysAvailable;
+    if (state.mainAvailability === 'availability-defined') {
+      // setSchedules(initialState);
+      const isValid = schedulesValidation(state.product.availability);
+      if (!isValid)
+        return dispatchAppRequestResult({
+          status: 'error',
+          requestId: 'ProductAvailability-valid',
+          message: { title: 'Alguns horários não estão corretos.' },
+        });
+      availability = state.product.availability.map((day) => {
+        const newSchedule = day.schedule.filter(
+          (obj) => obj.from !== '' && obj.to !== ''
+        );
+        return { ...day, schedule: newSchedule };
+      });
+    }
     (async () => {
       const {
         name,
@@ -120,8 +188,9 @@ export const ProductContextProvider = (props: ProviderProps) => {
         classifications,
         externalId,
         enabled,
-        complementsEnabled,
         imageExists,
+        complementsEnabled,
+        complementsGroupsIds,
       } = state.product;
       const newId = await updateProduct({
         changes: {
@@ -131,8 +200,10 @@ export const ProductContextProvider = (props: ProviderProps) => {
           classifications,
           externalId,
           enabled,
-          complementsEnabled,
           imageExists,
+          complementsEnabled,
+          complementsGroupsIds,
+          availability,
         },
         categoryId: state.categoryId,
         imageFiles: state.imageFiles,
@@ -180,8 +251,10 @@ export const ProductContextProvider = (props: ProviderProps) => {
           classifications: product.classifications ?? [],
           externalId: product.externalId ?? '',
           enabled: product.enabled ?? true,
-          complementsEnabled: product.complementsEnabled ?? false,
           imageExists: product.imageExists ?? false,
+          complementsEnabled: product.complementsEnabled ?? false,
+          complementsGroupsIds: product.complementsGroupsIds ?? [],
+          availability: product.availability ?? alwaysAvailable,
         },
       });
     }
@@ -195,6 +268,7 @@ export const ProductContextProvider = (props: ProviderProps) => {
         product,
         state,
         handleStateUpdate,
+        handleProductUpdate,
         clearState,
         imageUrl,
         sortedGroups,

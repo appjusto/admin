@@ -19,7 +19,12 @@ import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import CustomRadio from 'common/components/form/CustomRadio';
 import { useProductContext } from 'pages/menu/context/ProductContext';
 import React from 'react';
-import { Link as RouterLink, Redirect, useHistory, useRouteMatch } from 'react-router-dom';
+import {
+  Link as RouterLink,
+  Redirect,
+  useHistory,
+  useRouteMatch,
+} from 'react-router-dom';
 import { slugfyName } from 'utils/functions';
 import { t } from 'utils/i18n';
 
@@ -64,14 +69,23 @@ const ComplementsGroupCard = ({ group }: ComplementsGroupCardProps) => {
           <Text fontSize="sm" color="gray.700">{`${
             group.required ? 'Obrigatório' : 'Opcional'
           }. Mín: ${group.minimum}. Máx: ${group.maximum}`}</Text>
-          <Text fontSize="sm" color={group.items?.length === 0 ? 'red' : 'gray.700'}>
+          <Text
+            fontSize="sm"
+            color={group.items?.length === 0 ? 'red' : 'gray.700'}
+          >
             {group.items && group.items.length > 0
               ? `Itens: ${group.items.map((item) => item.name).join(', ')}`
               : 'Nenhum item cadastrado'}
           </Text>
         </Box>
       </CustomCheckbox>
-      <Button w="160px" size="sm" fontSize="15px" variant="outline" onClick={makeGroupItemVisible}>
+      <Button
+        w="160px"
+        size="sm"
+        fontSize="15px"
+        variant="outline"
+        onClick={makeGroupItemVisible}
+      >
         {t('Ver detalhes')}
       </Button>
     </Flex>
@@ -83,11 +97,12 @@ export const ProductComplements = () => {
   const { url } = useRouteMatch();
   const {
     productId,
-    product,
-    updateProduct,
+    state,
+    handleProductUpdate,
     //connectComplmentsGroupToProduct,
     connectionResult,
   } = useProductContext();
+  const { product } = state;
   const { complementsGroupsWithItems } = useContextMenu();
   const { isLoading } = connectionResult;
   //state
@@ -102,10 +117,16 @@ export const ProductComplements = () => {
   const handleComplementsGroupsConnection = () => {
     if (!hasComplements || connectedGroups.length === 0) {
       setHasComplements(false);
-      updateProduct({ changes: { complementsEnabled: false, complementsGroupsIds: [] } });
+      handleProductUpdate({
+        complementsEnabled: false,
+        complementsGroupsIds: [],
+      });
       return;
     }
-    updateProduct({ changes: { complementsEnabled: true, complementsGroupsIds: connectedGroups } });
+    handleProductUpdate({
+      complementsEnabled: true,
+      complementsGroupsIds: connectedGroups,
+    });
   };
   // side effects
   React.useEffect(() => {
@@ -139,18 +160,34 @@ export const ProductComplements = () => {
           <CustomRadio mt="2" value="complements-disabled">
             {t('Não possui')}
           </CustomRadio>
-          <CustomRadio mt="2" value="complements-enabled" isDisabled={!complementsExists}>
+          <CustomRadio
+            mt="2"
+            value="complements-enabled"
+            isDisabled={!complementsExists}
+          >
             {t('Sim, possui complementos')}
           </CustomRadio>
         </Flex>
       </RadioGroup>
       {!complementsExists && (
-        <Alert mt="4" status="warning" color="black" border="1px solid #FFBE00" borderRadius="lg">
+        <Alert
+          mt="4"
+          status="warning"
+          color="black"
+          border="1px solid #FFBE00"
+          borderRadius="lg"
+        >
           <AlertIcon />
           <Flex flexDir="column">
             <AlertDescription>
-              {t('Antes de associar um grupo de complementos a um produto, você precisa ')}
-              <Link as={RouterLink} to="/app/menu/complementsgroup/new" textDecor="underline">
+              {t(
+                'Antes de associar um grupo de complementos a um produto, você precisa '
+              )}
+              <Link
+                as={RouterLink}
+                to="/app/menu/complementsgroup/new"
+                textDecor="underline"
+              >
                 {t('cadastrar um grupo de complementos')}.
               </Link>
             </AlertDescription>

@@ -31,7 +31,7 @@ export const ProductDetails = () => {
   //context
   const { url } = useRouteMatch();
   const { push } = useHistory();
-  const { productId, state, handleStateUpdate, clearState, imageUrl } =
+  const { productId, state, handleProductUpdate, clearState, imageUrl } =
     useProductContext();
   const platformClassifications = useClassifications();
   //state
@@ -42,16 +42,14 @@ export const ProductDetails = () => {
   const priceRef = React.useRef<HTMLInputElement>(null);
   // handlers
   const clearDropImages = React.useCallback(() => {
-    handleStateUpdate('imageFiles', null);
-    handleStateUpdate('imageExists', false);
-  }, [handleStateUpdate]);
+    handleProductUpdate({ imageFiles: null, imageExists: false });
+  }, [handleProductUpdate]);
 
   const handleImageFiles = React.useCallback(
     (files: File[]) => {
-      handleStateUpdate('imageFiles', files);
-      handleStateUpdate('imageExists', true);
+      handleProductUpdate({ imageFiles: files, imageExists: true });
     },
-    [handleStateUpdate]
+    [handleProductUpdate]
   );
 
   const handleSaveOther = () => {
@@ -95,12 +93,12 @@ export const ProductDetails = () => {
         value={name}
         label={t('Nome')}
         placeholder={t('Nome do produto')}
-        onChange={(ev) => handleStateUpdate('name', ev.target.value)}
+        onChange={(ev) => handleProductUpdate({ name: ev.target.value })}
       />
       <CategorySelect
         isRequired
         value={categoryId}
-        onChange={(ev) => handleStateUpdate('categoryId', ev.target.value)}
+        onChange={(ev) => handleProductUpdate({ categoryId: ev.target.value })}
       />
       <Textarea
         isRequired
@@ -108,7 +106,7 @@ export const ProductDetails = () => {
         value={description}
         label={t('Descrição')}
         placeholder={t('Descreva seu produto')}
-        onChange={(ev) => handleStateUpdate('description', ev.target.value)}
+        onChange={(ev) => handleProductUpdate({ description: ev.target.value })}
         maxLength={1000}
       />
       <Text fontSize="xs" color="gray.700">
@@ -123,7 +121,7 @@ export const ProductDetails = () => {
         label={t('Preço')}
         aria-label={t('preço-do-novo-produto')}
         placeholder={t('0,00')}
-        onChangeValue={(value) => handleStateUpdate('price', value)}
+        onChangeValue={(value) => handleProductUpdate({ price: value })}
         maxLength={6}
       />
       <Text mt="8" fontSize="sm" color="black">
@@ -138,7 +136,9 @@ export const ProductDetails = () => {
         label="Código PDV"
         placeholder="000"
         value={externalId ? externalId : ''}
-        handleChange={(ev) => handleStateUpdate('externalId', ev.target.value)}
+        handleChange={(ev) =>
+          handleProductUpdate({ externalId: ev.target.value })
+        }
       />
       <Text mt="8" fontSize="xl" color="black">
         {t('Imagem do produto')}
@@ -165,7 +165,7 @@ export const ProductDetails = () => {
       <CheckboxGroup
         colorScheme="green"
         value={classifications}
-        onChange={(value) => handleStateUpdate('classifications', value)}
+        onChange={(value) => handleProductUpdate({ classifications: value })}
       >
         <VStack alignItems="flex-start" mt="4" color="black" spacing={2}>
           {platformClassifications.map((item) => (
@@ -184,7 +184,7 @@ export const ProductDetails = () => {
           isChecked={enabled}
           onChange={(ev) => {
             ev.stopPropagation();
-            handleStateUpdate('enabled', ev.target.checked);
+            handleProductUpdate({ enabled: ev.target.checked });
           }}
         />
         <Text ml="4" color="black">

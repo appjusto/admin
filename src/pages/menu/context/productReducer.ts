@@ -1,6 +1,7 @@
-import { Product } from '@appjusto/types';
+import { BusinessSchedule, Product } from '@appjusto/types';
+import { Availability } from '../drawers/product/ProductAvailability';
 
-export interface StateProps {
+export interface ProductStateProps {
   //product
   product: {
     name: string;
@@ -9,23 +10,26 @@ export interface StateProps {
     classifications: string[];
     externalId: string;
     enabled: boolean;
-    complementsEnabled: boolean;
     imageExists: boolean;
+    complementsEnabled: boolean;
+    complementsGroupsIds: string[];
+    availability: BusinessSchedule;
   };
   //details
   categoryId: string;
   imageFiles: File[] | null;
+  mainAvailability: Availability;
   saveSuccess: boolean;
 }
 
 export type Actions =
-  | { type: 'update_state'; payload: Partial<StateProps> }
+  | { type: 'update_state'; payload: Partial<ProductStateProps> }
   | { type: 'update_product'; payload: Partial<Product> };
 
 export const productReducer = (
-  state: StateProps,
+  state: ProductStateProps,
   action: Actions
-): StateProps => {
+): ProductStateProps => {
   switch (action.type) {
     case 'update_state':
       return {
