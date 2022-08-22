@@ -1,14 +1,32 @@
 import * as menu from '@appjusto/menu';
 import { ComplementGroup, Product, WithId } from '@appjusto/types';
 import { useObserveProduct } from 'app/api/business/products/useObserveProduct';
-import { MutationResult, useCustomMutation } from 'app/api/mutation/useCustomMutation';
-import { useContextApi } from 'app/state/api/context';
+import { useProduct } from 'app/api/business/products/useProduct';
+import { MutationResult } from 'app/api/mutation/useCustomMutation';
 import { useContextBusinessId } from 'app/state/business/context';
 import { useContextMenu } from 'app/state/menu/context';
 import React from 'react';
-import { MutateFunction, UseMutateAsyncFunction, useQueryClient } from 'react-query';
-import { useParams } from 'react-router-dom';
+import { MutateFunction, UseMutateAsyncFunction } from 'react-query';
+import { useHistory, useParams, useRouteMatch } from 'react-router-dom';
+import { useQuery } from 'utils/functions';
+import { productReducer, StateProps } from './productReducer';
 
+const initialState = {
+  product: {
+    name: '',
+    description: '',
+    price: 0,
+    classifications: [],
+    externalId: '',
+    enabled: true,
+    complementsEnabled: false,
+    imageExists: false,
+  },
+  //details
+  categoryId: '',
+  imageFiles: null,
+  saveSuccess: false,
+};
 
 interface Params {
   productId: string;
@@ -17,20 +35,13 @@ interface Params {
 interface ContextProps {
   contextCategoryId: string | undefined;
   productId: string;
-  product: WithId<Product> | undefined;
-  isValid: boolean;
+  product: WithId<Product> | undefined | null;
+  state: StateProps;
+  handleStateUpdate: (key: string, value: any) => void;
+  clearState: () => void;
   imageUrl: string | null;
   sortedGroups: WithId<ComplementGroup>[];
-  updateProduct: MutateFunction<
-    string,
-    unknown,
-    {
-      changes: Partial<Product>;
-      categoryId?: string;
-      imageFiles?: File[] | null | undefined;
-    },
-    unknown
-  >;
+  onProductUpdate: () => void;
   updateProductResult: MutationResult;
   deleteProduct: UseMutateAsyncFunction<void, unknown, void, unknown>;
   deleteProductResult: MutationResult;
@@ -53,74 +64,141 @@ interface ProviderProps {
 
 export const ProductContextProvider = (props: ProviderProps) => {
   // context
-  const api = useContextApi();
+  const query = useQuery();
+  const { url, path } = useRouteMatch();
+  const { push } = useHistory();
   const businessId = useContextBusinessId();
-  const { productsOrdering, updateProductsOrdering, complementsGroupsWithItems } = useContextMenu();
+  const {
+    productsOrdering,
+    updateProductsOrdering,
+    complementsGroupsWithItems,
+  } = useContextMenu();
   const { productId: productIdParam } = useParams<Params>();
   const productId = productIdParam.split('?')[0];
-  const { product, isValid, imageUrl } = useObserveProduct(businessId, productId, '1008x720');
+  const { product, imageUrl } = useObserveProduct(
+    businessId,
+    productId,
+    '1008x720'
+  );
   const contextCategoryId = menu.getParentId(productsOrdering, productId);
-  const queryClient = useQueryClient();
   const sortedGroups = complementsGroupsWithItems.filter((group) => false); // product config complements array
-  // mutations
-  const { mutateAsync: updateProduct, mutationResult: updateProductResult } = useCustomMutation(
-    async (data: {
-      changes: Partial<Product>;
-      categoryId?: string;
-      imageFiles?: File[] | null;
-    }) => {
-      const newProduct = {
-        ...data.changes,
-      } as Product;
-      let id = productId;
-      if (productId === 'new') {
-        id = await api.business().createProduct(businessId!, newProduct, data.imageFiles);
-      } else {
-        await api.business().updateProduct(businessId!, productId, newProduct, data.imageFiles);
-      }
-      if (data.categoryId)
-        updateProductsOrdering(menu.updateParent(productsOrdering, id, data.categoryId));
-      if (data.imageFiles) queryClient.invalidateQueries(['product:image', productId]);
-      return id;
-    },
-    'updateProduct'
-  );
-
-  const { mutateAsync: deleteProduct, mutationResult: deleteProductResult } = useCustomMutation(
-    async () => {
-      if (contextCategoryId) {
-        updateProductsOrdering(
-          menu.removeSecondLevel(productsOrdering, productId, contextCategoryId)
-        );
-      }
-      await api.business().deleteProduct(businessId!, productId);
-    },
-    'deleteProduct'
-  );
-
-  // complements groups
   const {
-    mutateAsync: connectComplmentsGroupToProduct,
-    mutationResult: connectionResult,
-  } = useCustomMutation(async (data: { groupsIds: string[] }) => {
-    if (!data.groupsIds) {
-      throw new Error(`Argumentos inválidos: groupsIds: ${data.groupsIds}.`);
-    }
-    await api
-      .business()
-      .updateProduct(businessId!, productId, { complementsGroupsIds: data.groupsIds });
-  }, 'connectComplmentsGroupToProduct');
+    updateProduct,
+    updateProductResult,
+    deleteProduct,
+    deleteProductResult,
+    connectComplmentsGroupToProduct,
+    connectionResult,
+  } = useProduct(
+    businessId,
+    contextCategoryId,
+    productId,
+    productsOrdering,
+    updateProductsOrdering
+  );
+  //state
+  const [state, dispatch] = React.useReducer(productReducer, initialState);
+  // handlers
+  //handlers
+  const handleStateUpdate = (key: string, value: any) => {
+    dispatch({ type: 'update_state', payload: { [key]: value } });
+  };
 
+  const clearState = () => {
+    dispatch({ type: 'update_state', payload: initialState });
+  };
+  const onProductUpdate = () => {
+    // if (price === 0) {
+    //   priceRef.current?.focus();
+    //   return;
+    // }
+    (async () => {
+      const {
+        name,
+        description,
+        price,
+        classifications,
+        externalId,
+        enabled,
+        complementsEnabled,
+        imageExists,
+      } = state.product;
+      const newId = await updateProduct({
+        changes: {
+          name,
+          description,
+          price,
+          classifications,
+          externalId,
+          enabled,
+          complementsEnabled,
+          imageExists,
+        },
+        categoryId: state.categoryId,
+        imageFiles: state.imageFiles,
+      });
+      if (url.includes('new') && newId) {
+        const newUrl = url.replace('new', newId);
+        push(newUrl);
+        handleStateUpdate('saveSuccess', true);
+      } else {
+        // onClose();
+      }
+    })();
+  };
+
+  //side effects
+  React.useEffect(() => {
+    if (product === null) {
+      const newPath = path.replace(':productId', 'new');
+      push(newPath);
+    }
+  }, [path, push, product]);
+
+  React.useEffect(() => {
+    if (!query) return;
+    if (state.categoryId) return;
+    const paramsId = query.get('categoryId');
+    if (paramsId)
+      dispatch({ type: 'update_state', payload: { categoryId: paramsId } });
+  }, [query, state.categoryId]);
+  // side effects
+  React.useEffect(() => {
+    if (product && productId !== 'new') {
+      dispatch({
+        type: 'update_state',
+        payload: {
+          categoryId: contextCategoryId ?? '',
+        },
+      });
+      dispatch({
+        type: 'update_product',
+        payload: {
+          name: product.name ?? '',
+          description: product.description ?? '',
+          price: product.price ?? 0,
+          classifications: product.classifications ?? [],
+          externalId: product.externalId ?? '',
+          enabled: product.enabled ?? true,
+          complementsEnabled: product.complementsEnabled ?? false,
+          imageExists: product.imageExists ?? false,
+        },
+      });
+    }
+  }, [product, productId, contextCategoryId]);
+  // provider
   return (
     <ProductContext.Provider
       value={{
         contextCategoryId,
         productId,
         product,
-        isValid,
+        state,
+        handleStateUpdate,
+        clearState,
         imageUrl,
         sortedGroups,
-        updateProduct,
+        onProductUpdate,
         updateProductResult,
         deleteProduct,
         deleteProductResult,
@@ -135,7 +213,9 @@ export const ProductContextProvider = (props: ProviderProps) => {
 export const useProductContext = () => {
   const context = React.useContext(ProductContext);
   if (!context) {
-    throw new Error('useProductContext must be used within the ProductContextProvider');
+    throw new Error(
+      'useProductContext must be used within the ProductContextProvider'
+    );
   }
   return context;
 };

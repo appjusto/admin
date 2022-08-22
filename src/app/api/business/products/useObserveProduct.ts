@@ -10,12 +10,13 @@ export const useObserveProduct = (
   // context
   const api = useContextApi();
   // state
-  const [product, setProduct] = React.useState<WithId<Product>>();
-  const [isValid, setIsValid] = React.useState(true);
+  const [product, setProduct] = React.useState<WithId<Product> | null>();
   const [imageUrl, setImageUrl] = React.useState<string | null>(null);
   // handlers
   const getImageUrl = React.useCallback(async () => {
-    const url = await api.business().getProductImageURL(businessId!, productId, imageDim);
+    const url = await api
+      .business()
+      .getProductImageURL(businessId!, productId, imageDim);
     setImageUrl(url);
   }, [api, businessId, imageDim, productId]);
   // side effects
@@ -25,19 +26,16 @@ export const useObserveProduct = (
       return;
     }
     if (!businessId) return;
-    const unsub = api.business().observeProduct(businessId, productId, setProduct);
+    const unsub = api
+      .business()
+      .observeProduct(businessId, productId, setProduct);
     return () => unsub();
   }, [api, businessId, productId]);
-  React.useEffect(() => {
-    if (product?.id && !product.name) {
-      setIsValid(false);
-    }
-  }, [product]);
   React.useEffect(() => {
     if (product?.imageExists) {
       getImageUrl();
     }
   }, [product?.imageExists, getImageUrl]);
   // result
-  return { product, isValid, imageUrl };
+  return { product, imageUrl };
 };
