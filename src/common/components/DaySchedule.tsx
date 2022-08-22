@@ -1,7 +1,10 @@
 import { ScheduleObject } from '@appjusto/types';
 import { Flex, HStack, Link, RadioGroup } from '@chakra-ui/react';
 import { CustomPatternInput as Input } from 'common/components/form/input/pattern-input/CustomPatternInput';
-import { TimeFormatter, TimeMask } from 'common/components/form/input/pattern-input/formatters';
+import {
+  timeFormatter,
+  TimeMask,
+} from 'common/components/form/input/pattern-input/formatters';
 import { numbersOnlyParser } from 'common/components/form/input/pattern-input/parsers';
 import React from 'react';
 import { t } from 'utils/i18n';
@@ -74,10 +77,18 @@ export const DaySchedule = ({
           color="black"
         >
           <Flex flexDir="column" justifyContent="flex-start">
-            <CustomRadio mt="2" value="no-break" aria-label={`${weekDayLowerCase}-no-break`}>
+            <CustomRadio
+              mt="2"
+              value="no-break"
+              aria-label={`${weekDayLowerCase}-no-break`}
+            >
               {t('Sem pausa')}
             </CustomRadio>
-            <CustomRadio mt="2" value="break" aria-label={`${weekDayLowerCase}-break`}>
+            <CustomRadio
+              mt="2"
+              value="break"
+              aria-label={`${weekDayLowerCase}-break`}
+            >
               {t('O restaurante faz uma pausa durante o dia')}
             </CustomRadio>
           </Flex>
@@ -101,7 +112,7 @@ export const DaySchedule = ({
                   onValueChange={(value) => onChangeValue(index, 'from', value)}
                   placeholder="00:00"
                   mask={TimeMask}
-                  formatter={TimeFormatter}
+                  formatter={timeFormatter}
                   parser={numbersOnlyParser}
                   onBlur={() => autoCompleteSchedules(index, 'from', item.from)}
                   isInvalid={!inputValidation(item.from, item.to, beforeTo)}
@@ -119,7 +130,7 @@ export const DaySchedule = ({
                   onValueChange={(value) => onChangeValue(index, 'to', value)}
                   placeholder="00:00"
                   mask={TimeMask}
-                  formatter={TimeFormatter}
+                  formatter={timeFormatter}
                   parser={numbersOnlyParser}
                   onBlur={() => autoCompleteSchedules(index, 'to', item.to)}
                   isInvalid={!inputValidation(item.from, item.to, beforeTo)}

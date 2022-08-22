@@ -4,7 +4,10 @@ import { Button, Flex, RadioGroup, Text } from '@chakra-ui/react';
 import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import CustomRadio from 'common/components/form/CustomRadio';
 import { CustomPatternInput as Input } from 'common/components/form/input/pattern-input/CustomPatternInput';
-import { TimeFormatter, TimeMask } from 'common/components/form/input/pattern-input/formatters';
+import {
+  timeFormatter,
+  TimeMask,
+} from 'common/components/form/input/pattern-input/formatters';
 import { numbersOnlyParser } from 'common/components/form/input/pattern-input/parsers';
 import React from 'react';
 import { t } from 'utils/i18n';
@@ -37,7 +40,8 @@ export const DaySchedule = ({
   // props
   const { day: weekDay, checked, schedule } = day;
   // state
-  const [availability, setAvailability] = React.useState<MainAvailability>('when-is-open');
+  const [availability, setAvailability] =
+    React.useState<MainAvailability>('when-is-open');
   const [warning, setWarning] = React.useState<string>();
   // helpers
   const weekDayLowerCase = weekDay.toLowerCase();
@@ -52,7 +56,10 @@ export const DaySchedule = ({
     setAvailability(value);
     if (value === 'when-is-open') clearDaySchedule();
   };
-  const handleChangeItemsNumber = (type: 'add' | 'remove', itemIndex?: number) => {
+  const handleChangeItemsNumber = (
+    type: 'add' | 'remove',
+    itemIndex?: number
+  ) => {
     if (type === 'add') {
       if (schedule[0].from === '')
         return setWarning('Favor preencher os horários do primeiro turno');
@@ -62,7 +69,8 @@ export const DaySchedule = ({
   // side effects
   React.useEffect(() => {
     setWarning(undefined);
-    if (schedule.length > 0 && schedule[0].from !== '') setAvailability('defined');
+    if (schedule.length > 0 && schedule[0].from !== '')
+      setAvailability('defined');
     else setAvailability('when-is-open');
   }, [schedule]);
   // UI
@@ -89,10 +97,18 @@ export const DaySchedule = ({
           color="black"
         >
           <Flex flexDir="column" justifyContent="flex-start">
-            <CustomRadio mt="2" value="when-is-open" aria-label={`${weekDayLowerCase}-no-break`}>
+            <CustomRadio
+              mt="2"
+              value="when-is-open"
+              aria-label={`${weekDayLowerCase}-no-break`}
+            >
               {t('Enquanto estiver aberto')}
             </CustomRadio>
-            <CustomRadio mt="2" value="defined" aria-label={`${weekDayLowerCase}-defined`}>
+            <CustomRadio
+              mt="2"
+              value="defined"
+              aria-label={`${weekDayLowerCase}-defined`}
+            >
               {t('Definir horário específico')}
             </CustomRadio>
           </Flex>
@@ -116,7 +132,7 @@ export const DaySchedule = ({
                   onValueChange={(value) => onChangeValue(index, 'from', value)}
                   placeholder="00:00"
                   mask={TimeMask}
-                  formatter={TimeFormatter}
+                  formatter={timeFormatter}
                   parser={numbersOnlyParser}
                   onBlur={() => autoCompleteSchedules(index, 'from', item.from)}
                   isInvalid={!inputValidation(item.from, item.to, beforeTo)}
@@ -134,13 +150,19 @@ export const DaySchedule = ({
                   onValueChange={(value) => onChangeValue(index, 'to', value)}
                   placeholder="00:00"
                   mask={TimeMask}
-                  formatter={TimeFormatter}
+                  formatter={timeFormatter}
                   parser={numbersOnlyParser}
                   onBlur={() => autoCompleteSchedules(index, 'to', item.to)}
                   isInvalid={!inputValidation(item.from, item.to, beforeTo)}
                   isRequired
                 />
-                <Flex ml="4" mt="4" minW="30px" justifyContent="center" alignItems="center">
+                <Flex
+                  ml="4"
+                  mt="4"
+                  minW="30px"
+                  justifyContent="center"
+                  alignItems="center"
+                >
                   {schedule.length > 1 && (
                     <Button
                       aria-label={`${weekDayLowerCase}-close-${index}`}
