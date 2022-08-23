@@ -1,5 +1,6 @@
 import {
   Invoice,
+  InvoiceType,
   Order,
   OrderCancellationParams,
   WithId,
@@ -102,10 +103,20 @@ export const invoicesPeriodFilter = (
   });
 };
 
+export const getInvoicesTotalByTypes = (
+  invoices: WithId<Invoice>[],
+  types: InvoiceType[]
+) => {
+  const filtered = invoices.filter((invoice) =>
+    types.includes(invoice.invoiceType)
+  );
+  return filtered.length;
+};
+
 export const getInvoicesBusinessTotalValue = (invoices: WithId<Invoice>[]) => {
   return invoices.reduce((result, invoice) => {
-    const deliveryCosts = invoice.deliveryCosts ?? 0;
-    return result + invoice.value - deliveryCosts;
+    const value = invoice.fare.value ?? 0;
+    return result + value;
   }, 0);
 };
 
@@ -148,9 +159,11 @@ export const splitInvoicesValuesByPeriod = (
     period.push({ date, value: 0 });
   }
   invoices.forEach((invoice) => {
-    const date = (invoice.updatedOn as Timestamp).toDate().getDate();
-    let item = period.find((item) => item.date === date);
-    if (item) item.value += 1;
+    if (['products', 'order'].includes(invoice.invoiceType)) {
+      const date = (invoice.updatedOn as Timestamp).toDate().getDate();
+      let item = period.find((item) => item.date === date);
+      if (item) item.value += 1;
+    }
   });
   return period.map((item) => item.value);
 };

@@ -24,6 +24,7 @@ export const courierLocationStatusPTOptions = {
   unavailable: 'Indisponível',
   available: 'Disponível',
   dispatching: 'Realizando entrega',
+  inactive: 'Inativo',
 };
 
 export const orderStatusPTOptions = {
