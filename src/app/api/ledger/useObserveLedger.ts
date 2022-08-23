@@ -15,12 +15,13 @@ export const useObserveLedger = (
   // context
   const api = useContextApi();
   // state
-  const [entriesMap, setEntriesMap] = React.useState<Map<string | undefined, WithId<LedgerEntry>[]>>(
-    initialMap
-  );
+  const [entriesMap, setEntriesMap] =
+    React.useState<Map<string | undefined, WithId<LedgerEntry>[]>>(initialMap);
   const [entries, setEntries] = React.useState<WithId<LedgerEntry>[] | null>();
-  const [startAfter, setStartAfter] = React.useState<QueryDocumentSnapshot<DocumentData>>();
-  const [lastInvoice, setLastInvoice] = React.useState<QueryDocumentSnapshot<DocumentData>>();
+  const [startAfter, setStartAfter] =
+    React.useState<QueryDocumentSnapshot<DocumentData>>();
+  const [lastInvoice, setLastInvoice] =
+    React.useState<QueryDocumentSnapshot<DocumentData>>();
   // handlers
   const fetchNextPage = React.useCallback(() => {
     setStartAfter(lastInvoice);
@@ -34,7 +35,7 @@ export const useObserveLedger = (
   React.useEffect(() => {
     let startDate = start ? dayjs(start).startOf('day').toDate() : null;
     let endDate = end ? dayjs(end).endOf('day').toDate() : null;
-    const unsub = api.order().observeLedger(
+    const unsub = api.ledger().observeLedger(
       (results, last) => {
         setEntriesMap((current) => {
           const value = new Map(current.entries());
@@ -53,7 +54,10 @@ export const useObserveLedger = (
   }, [api, startAfter, orderId, start, end, status]);
   React.useEffect(() => {
     setEntries(
-      Array.from(entriesMap.values()).reduce((result, orders) => [...result, ...orders], [])
+      Array.from(entriesMap.values()).reduce(
+        (result, orders) => [...result, ...orders],
+        []
+      )
     );
   }, [entriesMap]);
   // return

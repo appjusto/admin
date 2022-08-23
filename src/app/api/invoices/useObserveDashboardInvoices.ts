@@ -43,7 +43,7 @@ export const useObserveDashboardInvoices = (businessId?: string | null) => {
       .toDate();
     const endDate = dayjs().endOf('day').toDate();
     const unsub = api
-      .order()
+      .invoices()
       .observeDashboardInvoices(
         setInvoices,
         businessId,

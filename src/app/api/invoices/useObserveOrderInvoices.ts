@@ -16,14 +16,16 @@ export const useObserveOrderInvoices = (orderId?: string) => {
   React.useEffect(() => {
     if (!orderId) return;
     if (isBackofficeUser) {
-      const unsub1 = api.order().observeOrderInvoices(orderId, setInvoices);
+      const unsub1 = api.invoices().observeOrderInvoices(orderId, setInvoices);
       const unsub2 = api.order().observeOrderLogs(orderId, 'payment', setLogs);
       return () => {
         unsub1();
         unsub2();
       };
     } else if (businessId) {
-      const unsub = api.order().observeOrderInvoices(orderId, setInvoices, businessId);
+      const unsub = api
+        .invoices()
+        .observeOrderInvoices(orderId, setInvoices, businessId);
       return () => unsub();
     }
   }, [api, isBackofficeUser, businessId, orderId]);

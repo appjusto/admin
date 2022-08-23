@@ -10,7 +10,7 @@ import {
   WithId,
 } from '@appjusto/types';
 import { useObserveOrderChatMessages } from 'app/api/chat/useObserveOrderChatMessages';
-import { useObserveOrderInvoices } from 'app/api/order/useObserveOrderInvoices';
+import { useObserveOrderInvoices } from 'app/api/invoices/useObserveOrderInvoices';
 import { useOrder } from 'app/api/order/useOrder';
 import { useFlaggedLocations } from 'app/api/platform/useFlaggedLocations';
 import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';

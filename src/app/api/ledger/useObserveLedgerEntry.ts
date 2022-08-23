@@ -10,7 +10,7 @@ export const useObserveLedgerEntry = (entryId?: string) => {
   // side effects
   React.useEffect(() => {
     if (!entryId) return;
-    const unsub = api.order().observeLedgerEntry(entryId, setEntry);
+    const unsub = api.ledger().observeLedgerEntry(entryId, setEntry);
     return () => unsub();
   }, [api, entryId]);
   // return
