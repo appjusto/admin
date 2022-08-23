@@ -15,7 +15,7 @@ import { AgentPersonificationBar } from './AgentPersonificationBar';
 const timeoutLimit = 6; // in seconds
 
 const Dashboard = React.lazy(
-  () => import(/* webpackPrefetch: true */ './Dashboard')
+  () => import(/* webpackPrefetch: true */ './dashboard')
 );
 const OrdersPage = React.lazy(
   () => import(/* webpackPrefetch: true */ 'pages/orders/OrdersPage')
