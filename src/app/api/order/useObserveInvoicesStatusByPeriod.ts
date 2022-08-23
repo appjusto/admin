@@ -1,4 +1,4 @@
-import { Invoice, WithId } from '@appjusto/types';
+import { Invoice, InvoiceType, WithId } from '@appjusto/types';
 import { IuguInvoiceStatus } from '@appjusto/types/payment/iugu';
 import { useContextApi } from 'app/state/api/context';
 import dayjs from 'dayjs';
@@ -8,7 +8,12 @@ import {
   InvoicesCosts,
 } from 'pages/finances/utils';
 import React from 'react';
-import { getInvoicesBusinessTotalValue } from './utils';
+import {
+  getInvoicesBusinessTotalValue,
+  getInvoicesTotalByTypes,
+} from './utils';
+
+const invoicesTypes = ['products', 'order'] as InvoiceType[];
 
 export const useObserveInvoicesStatusByPeriod = (
   businessId?: string,
@@ -51,9 +56,10 @@ export const useObserveInvoicesStatusByPeriod = (
   React.useEffect(() => {
     if (!invoices) return;
     const amount = getInvoicesBusinessTotalValue(invoices);
-    const appjusto = calculateAppJustoCosts(amount);
+    const appjusto = calculateAppJustoCosts(amount, invoices);
     const iugu = calculateIuguCosts(amount, invoices);
-    setTotal(invoices.length);
+    const total = getInvoicesTotalByTypes(invoices, invoicesTypes);
+    setTotal(total);
     setPeriodAmount(amount);
     setAppjustoCosts(appjusto);
     setIuguCosts(iugu);
