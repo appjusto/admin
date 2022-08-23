@@ -43,7 +43,7 @@ export const useObserveInvoicesStatusByPeriod = (
     const start = dayjs(month).startOf('month').toDate();
     const end = dayjs(month).endOf('month').toDate();
     const unsub = api
-      .order()
+      .invoices()
       .observeInvoicesStatusByPeriod(
         businessId,
         start,

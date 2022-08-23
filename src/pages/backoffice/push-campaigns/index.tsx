@@ -1,10 +1,11 @@
-import { IuguInvoiceStatus } from '@appjusto/types/payment/iugu';
+import { PushCampaign } from '@appjusto/types';
 import { ArrowDownIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, HStack, Stack, Text } from '@chakra-ui/react';
-import { useObserveInvoices } from 'app/api/invoices/useObserveInvoices';
+import { useObservePushCampaigns } from 'app/api/push-campaigns/useObservePushCampaigns';
 import { ClearFiltersButton } from 'common/components/backoffice/ClearFiltersButton';
 import { FiltersScrollBar } from 'common/components/backoffice/FiltersScrollBar';
 import { FilterText } from 'common/components/backoffice/FilterText';
+import { CustomButton } from 'common/components/buttons/CustomButton';
 import { CustomDateFilter } from 'common/components/form/input/CustomDateFilter';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import React from 'react';
@@ -12,22 +13,22 @@ import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import PageHeader from '../../PageHeader';
-import InvoiceDrawer from '../drawers/invoice';
-import { InvoicesTable } from './InvoicesTable';
+import { PushDrawer } from '../drawers/push';
+import { PushCampaignTable } from './PushCampaignTable';
 
-const InvoicesPage = () => {
+const PushCampaignPage = () => {
   // state
   const [dateTime, setDateTime] = React.useState('');
-  const [searchId, setSearchId] = React.useState('');
+  const [searchName, setSearchName] = React.useState('');
   const [searchFrom, setSearchFrom] = React.useState('');
   const [searchTo, setSearchTo] = React.useState('');
-  const [filterBar, setFilterBar] = React.useState<IuguInvoiceStatus>();
+  const [filterBar, setFilterBar] = React.useState<PushCampaign['status']>();
   const [clearDateNumber, setClearDateNumber] = React.useState(0);
   // context
   const { path } = useRouteMatch();
   const history = useHistory();
-  const { invoices, fetchNextPage } = useObserveInvoices(
-    searchId,
+  const { campaigns, fetchNextPage } = useObservePushCampaigns(
+    searchName,
     searchFrom,
     searchTo,
     filterBar
@@ -38,7 +39,7 @@ const InvoicesPage = () => {
   };
   const clearFilters = () => {
     setClearDateNumber((prev) => prev + 1);
-    setSearchId('');
+    setSearchName('');
     setSearchFrom('');
     setSearchTo('');
     setFilterBar(undefined);
@@ -52,17 +53,20 @@ const InvoicesPage = () => {
   // UI
   return (
     <Box>
-      <PageHeader title={t('Faturas')} subtitle={t(`Atualizado ${dateTime}`)} />
+      <PageHeader
+        title={t('Campanhas de notificações')}
+        subtitle={t(`Atualizado ${dateTime}`)}
+      />
       <Flex mt="8">
         <Stack spacing={4} direction={{ base: 'column', md: 'row' }}>
           <CustomInput
             mt="0"
             minW="230px"
             id="search-id"
-            value={searchId}
-            onChange={(event) => setSearchId(event.target.value)}
-            label={t('ID')}
-            placeholder={t('ID do pedido')}
+            value={searchName}
+            onChange={(event) => setSearchName(event.target.value)}
+            label={t('Nome')}
+            placeholder={t('Digite o nome da campanha')}
           />
           <CustomDateFilter
             getStart={setSearchFrom}
@@ -85,66 +89,42 @@ const InvoicesPage = () => {
               onClick={() => setFilterBar(undefined)}
             />
             <FilterText
-              isActive={filterBar === 'in_analysis'}
-              label={t('Análise')}
-              onClick={() => setFilterBar('in_analysis')}
+              isActive={filterBar === 'submitted'}
+              label={t('Submetida')}
+              onClick={() => setFilterBar('submitted')}
             />
             <FilterText
-              isActive={filterBar === 'pending'}
-              label={t('Pendente')}
-              onClick={() => setFilterBar('pending')}
+              isActive={filterBar === 'approved'}
+              label={t('Aprovada')}
+              onClick={() => setFilterBar('approved')}
             />
             <FilterText
-              isActive={filterBar === 'paid'}
-              label={t('Paga')}
-              onClick={() => setFilterBar('paid')}
-            />
-            <FilterText
-              isActive={filterBar === 'refunded'}
-              label={t('Reembol.')}
-              onClick={() => setFilterBar('refunded')}
-            />
-            <FilterText
-              isActive={filterBar === 'partially_refunded'}
-              label={t('Parc. Reembol.')}
-              onClick={() => setFilterBar('partially_refunded')}
-            />
-            <FilterText
-              isActive={filterBar === 'canceled'}
-              label={t('Cancelada')}
-              onClick={() => setFilterBar('canceled')}
-            />
-            <FilterText
-              isActive={filterBar === 'in_protest'}
-              label={t('Protesto')}
-              onClick={() => setFilterBar('in_protest')}
-            />
-            <FilterText
-              isActive={filterBar === 'chargeback'}
-              label={t('Estorno')}
-              onClick={() => setFilterBar('chargeback')}
+              isActive={filterBar === 'rejected'}
+              label={t('Rejeitada')}
+              onClick={() => setFilterBar('rejected')}
             />
           </HStack>
         </FiltersScrollBar>
         <ClearFiltersButton clearFunction={clearFilters} />
       </Flex>
-      <HStack mt="6" spacing={8} color="black">
+      <Flex mt="6" color="black" justifyContent="space-between">
         <Text fontSize="lg" fontWeight="700" lineHeight="26px">
-          {t(`${invoices?.length ?? '0'} itens na lista`)}
+          {t(`${campaigns?.length ?? '0'} itens na lista`)}
         </Text>
-      </HStack>
-      <InvoicesTable invoices={invoices} />
+        <CustomButton label={t('Criar campanha')} link={`${path}/new`} />
+      </Flex>
+      <PushCampaignTable campaigns={campaigns} />
       <Button mt="8" variant="secondary" onClick={fetchNextPage}>
         <ArrowDownIcon mr="2" />
         {t('Carregar mais')}
       </Button>
       <Switch>
-        <Route path={`${path}/:invoiceId`}>
-          <InvoiceDrawer isOpen onClose={closeDrawerHandler} />
+        <Route path={`${path}/:campaignId`}>
+          <PushDrawer isOpen onClose={closeDrawerHandler} />
         </Route>
       </Switch>
     </Box>
   );
 };
 
-export default InvoicesPage;
+export default PushCampaignPage;

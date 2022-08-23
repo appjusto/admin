@@ -108,6 +108,12 @@ export const ledgerEntryStatusPTOptions = {
   rejected: 'Rejeitada',
 };
 
+export const pushStatusPTOptions = {
+  submitted: 'Submetida',
+  approved: 'Aprovada',
+  rejected: 'Rejeitada',
+};
+
 export const iuguSituationPTOptions = {
   'pending': 'Pendente',
   'created': 'Criada',
@@ -138,6 +144,7 @@ export const permissionsPTOptions = {
   advances: 'Adiantamentos',
   managers: 'Managers',
   recommendations: 'Recomendações',
+  push_campaigns: 'Campanhas',
   staff: 'Staff',
   users: 'Usuários',
   platform: 'Plataforma',

@@ -5,27 +5,38 @@ export default class FirebaseRefs {
 
   // functions
   getServerTimeCallable = () => httpsCallable(this.functions, 'getServerTime');
-  getQueryGoogleMapsCallable = () => httpsCallable(this.functions, 'queryGoogleMaps');
+  getQueryGoogleMapsCallable = () =>
+    httpsCallable(this.functions, 'queryGoogleMaps');
   getUpdateEmailCallable = () => httpsCallable(this.functions, 'updateEmail');
-  getDeleteAccountCallable = () => httpsCallable(this.functions, 'deleteAccount');
+  getDeleteAccountCallable = () =>
+    httpsCallable(this.functions, 'deleteAccount');
   // getCreateBusinessProfileCallable = () => httpsCallable(this.functions, 'createBusinessProfile');
   // getUpdateBusinessSlugCallable = () => httpsCallable(this.functions, 'updateBusinessSlug');
   // getCloneBusinessCallable = () => httpsCallable(this.functions, 'cloneBusiness');
-  getBusinessProfileCallable = () => httpsCallable(this.functions, 'businessProfile');
-  getCloneComplementsGroupCallable = () => httpsCallable(this.functions, 'cloneComplementsGroup');
-  getCreateManagersCallable = () => httpsCallable(this.functions, 'createManagers');
+  getBusinessProfileCallable = () =>
+    httpsCallable(this.functions, 'businessProfile');
+  getCloneComplementsGroupCallable = () =>
+    httpsCallable(this.functions, 'cloneComplementsGroup');
+  getCreateManagersCallable = () =>
+    httpsCallable(this.functions, 'createManagers');
   getGetManagersCallable = () => httpsCallable(this.functions, 'getManagers');
   getCancelOrderCallable = () => httpsCallable(this.functions, 'cancelOrder');
   getMatchOrderCallable = () => httpsCallable(this.functions, 'matchOrder');
   getDropOrderCallable = () => httpsCallable(this.functions, 'dropOrder');
-  getOutsourceDeliveryCallable = () => httpsCallable(this.functions, 'outsourceDelivery');
-  getReleaseCourierCallable = () => httpsCallable(this.functions, 'releaseCourier');
+  getOutsourceDeliveryCallable = () =>
+    httpsCallable(this.functions, 'outsourceDelivery');
+  getReleaseCourierCallable = () =>
+    httpsCallable(this.functions, 'releaseCourier');
   getFetchAccountInformationCallable = () =>
     httpsCallable(this.functions, 'fetchAccountInformation');
-  getFetchReceivablesCallable = () => httpsCallable(this.functions, 'fetchReceivables');
-  getFetchAdvanceSimulationCallable = () => httpsCallable(this.functions, 'fetchAdvanceSimulation');
-  getRequestWithdrawCallable = () => httpsCallable(this.functions, 'requestWithdraw');
-  getAdvanceReceivablesCallable = () => httpsCallable(this.functions, 'advanceReceivables');
+  getFetchReceivablesCallable = () =>
+    httpsCallable(this.functions, 'fetchReceivables');
+  getFetchAdvanceSimulationCallable = () =>
+    httpsCallable(this.functions, 'fetchAdvanceSimulation');
+  getRequestWithdrawCallable = () =>
+    httpsCallable(this.functions, 'requestWithdraw');
+  getAdvanceReceivablesCallable = () =>
+    httpsCallable(this.functions, 'advanceReceivables');
 
   // firestore
   getBatchRef = () => writeBatch(this.firestore);
@@ -33,8 +44,10 @@ export default class FirebaseRefs {
   // users
   getUsersRef = () => collection(this.firestore, 'users');
   getUserRef = (userId: string) => doc(this.getUsersRef(), userId);
-  getUsersChangesRef = () => collection(this.getUsersRef(), 'subcollections', 'changes');
-  getUsersChangeRef = (changeId: string) => doc(this.getUsersChangesRef(), changeId);
+  getUsersChangesRef = () =>
+    collection(this.getUsersRef(), 'subcollections', 'changes');
+  getUsersChangeRef = (changeId: string) =>
+    doc(this.getUsersChangesRef(), changeId);
 
   // advances
   getAdvancesRef = () => collection(this.firestore, 'advances');
@@ -53,29 +66,39 @@ export default class FirebaseRefs {
   getPlatformAccessRef = () => doc(this.getPlatformRef(), 'access');
   // fraud prevention
   getFraudPreventionRef = () => doc(this.getPlatformRef(), 'fraud');
-  getFraudPreventionSubdocsRef = () => collection(this.getFraudPreventionRef(), 'subdocs');
-  getFraudPreventionParamsRef = () => doc(this.getFraudPreventionSubdocsRef(), 'params');
-  getFlaggedLocationsRef = () => collection(this.getFraudPreventionRef(), 'flaggedlocations');
-  getFlaggedLocationRef = (locationId: string) => doc(this.getFlaggedLocationsRef(), locationId);
+  getFraudPreventionSubdocsRef = () =>
+    collection(this.getFraudPreventionRef(), 'subdocs');
+  getFraudPreventionParamsRef = () =>
+    doc(this.getFraudPreventionSubdocsRef(), 'params');
+  getFlaggedLocationsRef = () =>
+    collection(this.getFraudPreventionRef(), 'flaggedlocations');
+  getFlaggedLocationRef = (locationId: string) =>
+    doc(this.getFlaggedLocationsRef(), locationId);
   // platform data subcollections
   getBanksRef = () => collection(this.getPlatformDataRef(), 'banks');
   getIssuesRef = () => collection(this.getPlatformDataRef(), 'issues');
   getCuisinesRef = () => collection(this.getPlatformDataRef(), 'cuisines');
-  getClassificationsRef = () => collection(this.getPlatformDataRef(), 'classifications');
+  getClassificationsRef = () =>
+    collection(this.getPlatformDataRef(), 'classifications');
   // platform logs subcollections
-  getPlatformLogsLoginsRef = () => collection(this.getPlatformLogsRef(), 'logins');
+  getPlatformLogsLoginsRef = () =>
+    collection(this.getPlatformLogsRef(), 'logins');
 
   // businesses
   getBusinessesRef = () => collection(this.firestore, 'businesses');
-  getBusinessRef = (businessId: string) => doc(this.getBusinessesRef(), businessId);
+  getBusinessRef = (businessId: string) =>
+    doc(this.getBusinessesRef(), businessId);
   getBusinessProfileNotesRef = (businessId: string) =>
     collection(this.getBusinessRef(businessId), 'profilenotes');
   getBusinessProfileNoteRef = (businessId: string, profileNoteId: string) =>
     doc(this.getBusinessProfileNotesRef(businessId), profileNoteId);
   // business menu
-  getBusinessMenuRef = (businessId: string) => collection(this.getBusinessRef(businessId), 'menu');
-  getBusinessMenuOrderingRef = (businessId: string, menuId: string = 'default') =>
-    doc(this.getBusinessMenuRef(businessId), menuId);
+  getBusinessMenuRef = (businessId: string) =>
+    collection(this.getBusinessRef(businessId), 'menu');
+  getBusinessMenuOrderingRef = (
+    businessId: string,
+    menuId: string = 'default'
+  ) => doc(this.getBusinessMenuRef(businessId), menuId);
   getBusinessMenuMessageRef = (businessId: string) =>
     doc(this.getBusinessMenuRef(businessId), 'message');
   getBusinessCategoriesRef = (businessId: string) =>
@@ -112,8 +135,10 @@ export default class FirebaseRefs {
   // staff
   getStaffsRef = () => collection(this.firestore, 'staff');
   getStaffRef = (staffId: string) => doc(this.getStaffsRef(), staffId);
-  getStaffPrivateRef = (staffId: string) => collection(this.getStaffRef(staffId), 'private');
-  getStaffDeletionRef = (staffId: string) => doc(this.getStaffPrivateRef(staffId), 'deletion');
+  getStaffPrivateRef = (staffId: string) =>
+    collection(this.getStaffRef(staffId), 'private');
+  getStaffDeletionRef = (staffId: string) =>
+    doc(this.getStaffPrivateRef(staffId), 'deletion');
 
   // managers
   getManagersRef = () => collection(this.firestore, 'managers');
@@ -122,19 +147,25 @@ export default class FirebaseRefs {
   // orders
   getOrdersRef = () => collection(this.firestore, 'orders');
   getOrderRef = (orderId: string) => doc(this.getOrdersRef(), orderId);
-  getOrderIssuesRef = (orderId: string) => collection(this.getOrderRef(orderId), 'issues');
-  getOrderLogsRef = (orderId: string) => collection(this.getOrderRef(orderId), 'logs');
-  getOrderNotesRef = (orderId: string) => collection(this.getOrderRef(orderId), 'ordernotes');
+  getOrderIssuesRef = (orderId: string) =>
+    collection(this.getOrderRef(orderId), 'issues');
+  getOrderLogsRef = (orderId: string) =>
+    collection(this.getOrderRef(orderId), 'logs');
+  getOrderNotesRef = (orderId: string) =>
+    collection(this.getOrderRef(orderId), 'ordernotes');
   getOrderNoteRef = (orderId: string, orderNoteId: string) =>
     doc(this.getOrderNotesRef(orderId), orderNoteId);
   // orders private
-  getOrderPrivateRef = (orderId: string) => collection(this.getOrderRef(orderId), 'private');
-  getOrderPaymentsRef = (orderId: string) => doc(this.getOrderPrivateRef(orderId), 'payments');
+  getOrderPrivateRef = (orderId: string) =>
+    collection(this.getOrderRef(orderId), 'private');
+  getOrderPaymentsRef = (orderId: string) =>
+    doc(this.getOrderPrivateRef(orderId), 'payments');
   getOrderCancellationRef = (orderId: string) =>
     doc(this.getOrderPrivateRef(orderId), 'cancellation');
   getOrderConfirmationRef = (orderId: string) =>
     doc(this.getOrderPrivateRef(orderId), 'confirmation');
-  getOrderMatchingRef = (orderId: string) => doc(this.getOrderPrivateRef(orderId), 'matching');
+  getOrderMatchingRef = (orderId: string) =>
+    doc(this.getOrderPrivateRef(orderId), 'matching');
   getOrderFraudPreventionRef = (orderId: string) =>
     doc(this.getOrderPrivateRef(orderId), 'fraudprevention');
 
@@ -145,14 +176,15 @@ export default class FirebaseRefs {
   // invoices
   getInvoicesRef = () => collection(this.firestore, 'invoices');
   getInvoiceRef = (invoiceId: string) => doc(this.getInvoicesRef(), invoiceId);
-  
+
   // ledger
   getLedgerRef = () => collection(this.firestore, 'ledger');
   getLedgerEntryRef = (entryId: string) => doc(this.getLedgerRef(), entryId);
 
   // consumers
   getConsumersRef = () => collection(this.firestore, 'consumers');
-  getConsumerRef = (consumerId: string) => doc(this.getConsumersRef(), consumerId);
+  getConsumerRef = (consumerId: string) =>
+    doc(this.getConsumersRef(), consumerId);
   getConsumerProfileNotesRef = (consumerId: string) =>
     collection(this.getConsumerRef(consumerId), 'profilenotes');
   getConsumerProfileNoteRef = (consumerId: string, profileNoteId: string) =>
@@ -172,6 +204,11 @@ export default class FirebaseRefs {
 
   // reviews
   getReviewsRef = () => collection(this.firestore, 'reviews');
+
+  // push-campaigns
+  getPushCampaignsRef = () => collection(this.firestore, 'push-campaigns');
+  getPushCampaignRef = (campaignId: string) =>
+    doc(this.getPushCampaignsRef(), campaignId);
 
   // fleets
   getFleetsRef = () => collection(this.firestore, 'fleets');
@@ -196,10 +233,16 @@ export default class FirebaseRefs {
     `${this.getBusinessStoragePath(businessId)}/cover_${size}.jpg`;
   getProductsStoragePath = (businessId: string) =>
     `${this.getBusinessStoragePath(businessId)}/products`;
-  getProductUploadStoragePath = (businessId: string, productId: string, size: string) =>
-    `${this.getProductsStoragePath(businessId)}/${productId}_${size}.jpg`;
-  getProductImageStoragePath = (businessId: string, productId: string, size: string) =>
-    `${this.getProductsStoragePath(businessId)}/${productId}_${size}.jpg`;
+  getProductUploadStoragePath = (
+    businessId: string,
+    productId: string,
+    size: string
+  ) => `${this.getProductsStoragePath(businessId)}/${productId}_${size}.jpg`;
+  getProductImageStoragePath = (
+    businessId: string,
+    productId: string,
+    size: string
+  ) => `${this.getProductsStoragePath(businessId)}/${productId}_${size}.jpg`;
   getComplementsStoragePath = (businessId: string) =>
     `${this.getBusinessStoragePath(businessId)}/complements`;
   getComplementUploadStoragePath = (businessId: string, complementId: string) =>
@@ -209,17 +252,28 @@ export default class FirebaseRefs {
   // courier
   getCourierStoragePath = (courierId: string) => `couriers/${courierId}`;
   getCourierSelfieStoragePath = (courierId: string, size?: string) =>
-    `${this.getCourierStoragePath(courierId)}/selfie${size ? `${size}` : ''}.jpg`;
+    `${this.getCourierStoragePath(courierId)}/selfie${
+      size ? `${size}` : ''
+    }.jpg`;
   getCourierDocumentStoragePath = (courierId: string, size?: string) =>
-    `${this.getCourierStoragePath(courierId)}/document${size ? `${size}` : ''}.jpg`;
+    `${this.getCourierStoragePath(courierId)}/document${
+      size ? `${size}` : ''
+    }.jpg`;
   // consumer
   getConsumerStoragePath = (consumerId: string) => `consumers/${consumerId}`;
   getConsumerSelfieStoragePath = (consumerId: string, size?: string) =>
-    `${this.getConsumerStoragePath(consumerId)}/selfie${size ? `${size}` : ''}.jpg`;
+    `${this.getConsumerStoragePath(consumerId)}/selfie${
+      size ? `${size}` : ''
+    }.jpg`;
   getConsumerDocumentStoragePath = (consumerId: string, size?: string) =>
-    `${this.getConsumerStoragePath(consumerId)}/document${size ? `${size}` : ''}.jpg`;
+    `${this.getConsumerStoragePath(consumerId)}/document${
+      size ? `${size}` : ''
+    }.jpg`;
   // order
   getOrderStoragePath = (orderId: string) => `orders/${orderId}`;
-  getOrderConsumerStoragePath = (orderId: string, courierId: string, type: 'front' | 'package') =>
-    `${this.getOrderStoragePath(orderId)}/${courierId}/${type}.jpg`;
+  getOrderConsumerStoragePath = (
+    orderId: string,
+    courierId: string,
+    type: 'front' | 'package'
+  ) => `${this.getOrderStoragePath(orderId)}/${courierId}/${type}.jpg`;
 }

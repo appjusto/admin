@@ -16,12 +16,13 @@ export const useObserveInvoices = (
   // context
   const api = useContextApi();
   // state
-  const [invoicesMap, setInvoicesMap] = React.useState<Map<string | undefined, WithId<Invoice>[]>>(
-    initialMap
-  );
+  const [invoicesMap, setInvoicesMap] =
+    React.useState<Map<string | undefined, WithId<Invoice>[]>>(initialMap);
   const [invoices, setInvoices] = React.useState<WithId<Invoice>[] | null>();
-  const [startAfter, setStartAfter] = React.useState<QueryDocumentSnapshot<DocumentData>>();
-  const [lastInvoice, setLastInvoice] = React.useState<QueryDocumentSnapshot<DocumentData>>();
+  const [startAfter, setStartAfter] =
+    React.useState<QueryDocumentSnapshot<DocumentData>>();
+  const [lastInvoice, setLastInvoice] =
+    React.useState<QueryDocumentSnapshot<DocumentData>>();
   // handlers
   const fetchNextPage = React.useCallback(() => {
     setStartAfter(lastInvoice);
@@ -35,7 +36,7 @@ export const useObserveInvoices = (
   React.useEffect(() => {
     let startDate = start ? dayjs(start).startOf('day').toDate() : null;
     let endDate = end ? dayjs(end).endOf('day').toDate() : null;
-    const unsub = api.order().observeInvoices(
+    const unsub = api.invoices().observeInvoices(
       (results, last) => {
         setInvoicesMap((current) => {
           const value = new Map(current.entries());
@@ -54,7 +55,10 @@ export const useObserveInvoices = (
   }, [api, startAfter, orderCode, start, end, status]);
   React.useEffect(() => {
     setInvoices(
-      Array.from(invoicesMap.values()).reduce((result, orders) => [...result, ...orders], [])
+      Array.from(invoicesMap.values()).reduce(
+        (result, orders) => [...result, ...orders],
+        []
+      )
     );
   }, [invoicesMap]);
   // return

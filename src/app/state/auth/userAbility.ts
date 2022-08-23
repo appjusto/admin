@@ -1,5 +1,10 @@
 import { AdminRole, CRUD, UserPermissions } from '@appjusto/types';
-import { Ability, AbilityOptionsOf, defineAbility, detectSubjectType } from '@casl/ability';
+import {
+  Ability,
+  AbilityOptionsOf,
+  defineAbility,
+  detectSubjectType,
+} from '@casl/ability';
 import { FirebaseError } from 'firebase/app';
 import {
   businessCollaboratorObject,
@@ -12,6 +17,7 @@ import {
 type Actions = 'create' | 'read' | 'update' | 'delete';
 type Subjects =
   | 'orders'
+  | 'account_manager'
   | 'businesses'
   | 'menu'
   | 'couriers'
@@ -22,6 +28,7 @@ type Subjects =
   | 'advances'
   | 'managers'
   | 'recommendations'
+  | 'push_campaigns'
   | 'staff'
   | 'users'
   | 'platform';
@@ -50,7 +57,10 @@ const ruleParser = (r: CRUD): Actions => {
   }
 };
 
-export const defineUserAbility = (permissions: UserPermissions | AdminRole, userId?: string) => {
+export const defineUserAbility = (
+  permissions: UserPermissions | AdminRole,
+  userId?: string
+) => {
   return defineAbility<AppAbility>((can) => {
     // helper
     const defineAbilityByPermissionsObject = (
@@ -66,7 +76,10 @@ export const defineUserAbility = (permissions: UserPermissions | AdminRole, user
     };
     if (typeof permissions === 'object') {
       if (!userId) {
-        throw new FirebaseError('define-ability', 'O Id do usuário não foi encontrado');
+        throw new FirebaseError(
+          'define-ability',
+          'O Id do usuário não foi encontrado'
+        );
       }
       const fullPermission = getStaffUIConditions(userId, permissions);
       defineAbilityByPermissionsObject(fullPermission);

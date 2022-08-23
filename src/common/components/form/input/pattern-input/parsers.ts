@@ -1,6 +1,12 @@
-export const numbersOnlyParser = (value: string) => value.replace(/[^0-9]/g, '');
+export const numbersOnlyParser = (value: string) =>
+  value.replace(/[^0-9]/g, '');
+export const coordinatesOnlyParser = (value: string) =>
+  value.replace(/[^0-9.-]/g, '');
 
-export const numbersAndLettersParser = (mask: string, padWithZeros?: boolean) => {
+export const numbersAndLettersParser = (
+  mask: string,
+  padWithZeros?: boolean
+) => {
   const regexp = (char: string): RegExp => {
     if (char === '9' || char === 'D') return /\d/;
     if (char === 'X') return /\w/;
@@ -13,6 +19,10 @@ export const numbersAndLettersParser = (mask: string, padWithZeros?: boolean) =>
         if (value.charAt(i).match(regex)) return result + value.charAt(i);
         return result;
       },
-      padWithZeros ? '0'.repeat(mask.length - value.length - (mask.match(/-/g) ?? []).length) : ''
+      padWithZeros
+        ? '0'.repeat(
+            mask.length - value.length - (mask.match(/-/g) ?? []).length
+          )
+        : ''
     );
 };

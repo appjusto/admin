@@ -29,6 +29,9 @@ const StaffsPage = React.lazy(
 const FraudPreventionPage = React.lazy(
   () => import(/* webpackPrefetch: true */ './fraud-prevention')
 );
+const PushCampaignPage = React.lazy(
+  () => import(/* webpackPrefetch: true */ './push-campaigns')
+);
 const StaffProfile = React.lazy(
   () => import(/* webpackPrefetch: true */ './staff/StaffProfile')
 );
@@ -61,6 +64,11 @@ const BackOffice = () => {
             path={`${path}/fraud-prevention`}
             component={FraudPreventionPage}
           />
+          <BOAccessRoute
+            path={`${path}/push-campaigns`}
+            component={PushCampaignPage}
+          />
+
           <BOAccessRoute
             path={`${path}/staff-profile`}
             component={StaffProfile}

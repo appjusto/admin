@@ -31,10 +31,15 @@ export const FirebaseUserProvider = ({ children }: Props) => {
   const { dispatchAppRequestResult } = useContextAppRequests();
   // states
   const [adminRole, setAdminRole] = React.useState<AdminRole | null>();
-  const [backofficePermissions, setBackofficePermissions] = React.useState<UserPermissions>();
-  const [isBackofficeUser, setIsBackofficeUser] = React.useState<boolean | null>();
+  const [backofficePermissions, setBackofficePermissions] =
+    React.useState<UserPermissions>();
+  const [isBackofficeUser, setIsBackofficeUser] = React.useState<
+    boolean | null
+  >();
   const [userAbility, setUserAbility] = React.useState<AppAbility>();
-  const [isBackofficeSuperuser, setIsBackofficeSuperuser] = React.useState<boolean | null>();
+  const [isBackofficeSuperuser, setIsBackofficeSuperuser] = React.useState<
+    boolean | null
+  >();
   const platformAccess = usePlatformAccess(typeof user?.uid === 'string');
   // helpers
   const minVersion = platformAccess?.minVersions.businessWeb;
@@ -53,10 +58,14 @@ export const FirebaseUserProvider = ({ children }: Props) => {
         if (Object.keys(claims).includes('permissions')) {
           setBackofficePermissions(claims.permissions as UserPermissions);
         } else if (businessId) {
-          const role = claims.businesses ? claims.businesses[businessId] as AdminRole : null;
+          const role = claims.businesses
+            ? (claims.businesses[businessId] as AdminRole)
+            : null;
           if (!role) {
             // error
-            console.error('refreshUserToken: Não foi possível encontrar as permissões do usuário.');
+            console.error(
+              'refreshUserToken: Não foi possível encontrar as permissões do usuário.'
+            );
             return;
           }
           setAdminRole(role ?? null);

@@ -1,21 +1,48 @@
-import { FormControl, FormLabel, Input, InputProps, useMultiStyleConfig } from '@chakra-ui/react';
+import {
+  FormControl,
+  FormLabel,
+  Input,
+  InputProps,
+  useMultiStyleConfig,
+} from '@chakra-ui/react';
 import React from 'react';
-import { numbersOnlyParser } from './pattern-input/parsers';
+import {
+  coordinatesOnlyParser,
+  numbersOnlyParser,
+} from './pattern-input/parsers';
 
 interface Props extends InputProps {
   id: string;
   label?: string;
   value: string;
   maxLength?: number;
+  isCoordinates?: boolean;
 }
 
 export const CustomNumberInput = React.forwardRef<HTMLInputElement, Props>(
-  ({ id, label, value, maxLength, mt = '16px', mb, ml, mr, flex, ...props }: Props, ref) => {
+  (
+    {
+      id,
+      label,
+      value,
+      maxLength,
+      mt = '16px',
+      mb,
+      ml,
+      mr,
+      flex,
+      isCoordinates,
+      ...props
+    }: Props,
+    ref
+  ) => {
     const [state, setState] = React.useState('');
     const controlProps = { mt, mb, ml, mr, flex };
     const styles = useMultiStyleConfig('CustomInput', {});
     React.useLayoutEffect(() => {
-      const newState = numbersOnlyParser(value);
+      const newState = isCoordinates
+        ? coordinatesOnlyParser(value)
+        : numbersOnlyParser(value);
       setState((prevState) => {
         if (maxLength && newState.length < maxLength) {
           return newState;
@@ -25,7 +52,7 @@ export const CustomNumberInput = React.forwardRef<HTMLInputElement, Props>(
           return newState;
         }
       });
-    }, [value, maxLength]);
+    }, [value, maxLength, isCoordinates]);
     return (
       <FormControl id={id} sx={styles.control} {...controlProps}>
         {label && <FormLabel sx={styles.label}>{label}</FormLabel>}
