@@ -54,6 +54,22 @@ export const PeriodTable = ({
             <Tr fontSize="xs" fontWeight="500">
               <Td color="black">
                 {t(`Taxas - AppJusto (${formatPct(appjustoCosts.fee)})`)}
+                <Tooltip
+                  placement="top"
+                  label={t(
+                    'A comissão do AppJusto incide somente sobre o valor dos produtos vendidos'
+                  )}
+                >
+                  <Text as="span">
+                    <Icon
+                      ml="2"
+                      w="16px"
+                      h="16px"
+                      cursor="pointer"
+                      as={MdInfoOutline}
+                    />
+                  </Text>
+                </Tooltip>
               </Td>
               <Td color="red" isNumeric>
                 {`- ${formatCurrency(appjustoCosts.value)}`}
