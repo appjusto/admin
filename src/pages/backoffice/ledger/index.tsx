@@ -5,7 +5,6 @@ import { useObserveLedger } from 'app/api/ledger/useObserveLedger';
 import { ClearFiltersButton } from 'common/components/backoffice/ClearFiltersButton';
 import { FiltersScrollBar } from 'common/components/backoffice/FiltersScrollBar';
 import { FilterText } from 'common/components/backoffice/FilterText';
-import { CustomButton } from 'common/components/buttons/CustomButton';
 import { CustomDateFilter } from 'common/components/form/input/CustomDateFilter';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import React from 'react';
@@ -116,11 +115,11 @@ const LedgerPage = () => {
         <Text fontSize="lg" fontWeight="700" lineHeight="26px">
           {t(`${entries?.length ?? '0'} itens na lista`)}
         </Text>
-        <CustomButton
+        {/* <CustomButton
           mt="0"
           label={t('Criar transferência')}
           link={`${path}/new`}
-        />
+        /> */}
       </Flex>
       <EntriesTable entries={entries} />
       <Button mt="8" variant="secondary" onClick={fetchNextPage}>

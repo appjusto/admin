@@ -21,7 +21,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { useObserveLedgerEntry } from 'app/api/ledger/useObserveLedgerEntry';
-import { useContextFirebaseUser } from 'app/state/auth/context';
+// import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextAppRequests } from 'app/state/requests/context';
 import CustomRadio from 'common/components/form/CustomRadio';
 import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput2';
@@ -50,7 +50,7 @@ type Params = {
 export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   //context
   const { entryId } = useParams<Params>();
-  const { userAbility } = useContextFirebaseUser();
+  // const { userAbility } = useContextFirebaseUser();
   const { dispatchAppRequestResult } = useContextAppRequests();
   const entry = useObserveLedgerEntry(entryId);
   // state
@@ -70,7 +70,8 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   const [isDeleting, setIsDeleting] = React.useState(false);
   // helpers
   const isNew = entryId === 'new';
-  const canUpdate = !isNew && userAbility?.can('update', 'invoices');
+  // const canUpdate = !isNew && userAbility?.can('update', 'invoices');
+  const canUpdate = false;
   // const isLoading = isNew
   //   ? submitPushCampaignResult.isLoading
   //   : updatePushCampaignResult.isLoading;

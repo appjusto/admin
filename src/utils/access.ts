@@ -11,7 +11,6 @@ type BackofficeAccess = {
   'recommendations': string;
   'fraud-prevention': string;
   'staff': string;
-  'push-campaigns': string;
   'staff-profile': string;
 };
 
@@ -25,7 +24,6 @@ const backofficeAccess = {
   'users': 'users',
   'recommendations': 'recommendations',
   'fraud-prevention': 'platform',
-  'push-campaigns': 'push_campaigns',
   'staff': 'staff',
 } as BackofficeAccess;
 
