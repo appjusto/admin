@@ -8,12 +8,11 @@ import {
   InvoicesCosts,
 } from 'pages/finances/utils';
 import React from 'react';
-import {
-  getInvoicesBusinessTotalValue,
-  getInvoicesTotalByTypes,
-} from './utils';
+import { getInvoicesTotalByTypes, getInvoicesTotalValueByTypes } from './utils';
 
-const invoicesTypes = ['products', 'order'] as InvoiceType[];
+// const invoicesTypes = ['products', 'order'] as InvoiceType[];
+const invoicesProductTypes = ['products', 'order'] as InvoiceType[];
+const invoicesDeliveryTypes = ['delivery'] as InvoiceType[];
 
 export const useObserveInvoicesStatusByPeriod = (
   businessId?: string,
@@ -25,7 +24,8 @@ export const useObserveInvoicesStatusByPeriod = (
   // state
   const [invoices, setInvoices] = React.useState<WithId<Invoice>[]>();
   const [total, setTotal] = React.useState(0);
-  const [periodAmount, setPeriodAmount] = React.useState(0);
+  const [periodProductAmount, setPeriodProductAmount] = React.useState(0);
+  const [periodDeliveryAmount, setPeriodDeliveryAmount] = React.useState(0);
   const [appjustoCosts, setAppjustoCosts] = React.useState<InvoicesCosts>({
     value: 0,
     fee: 0,
@@ -55,15 +55,31 @@ export const useObserveInvoicesStatusByPeriod = (
   }, [api, businessId, month, status]);
   React.useEffect(() => {
     if (!invoices) return;
-    const amount = getInvoicesBusinessTotalValue(invoices);
-    const appjusto = calculateAppJustoCosts(amount, invoices);
-    const iugu = calculateIuguCosts(amount, invoices);
-    const total = getInvoicesTotalByTypes(invoices, invoicesTypes);
+    const amountProducts = getInvoicesTotalValueByTypes(
+      invoices,
+      invoicesProductTypes
+    );
+    const amountDelivery = getInvoicesTotalValueByTypes(
+      invoices,
+      invoicesDeliveryTypes
+    );
+    const amountTotal = amountProducts + amountDelivery;
+    const appjusto = calculateAppJustoCosts(amountProducts, invoices);
+    const iugu = calculateIuguCosts(amountTotal, invoices);
+    const total = getInvoicesTotalByTypes(invoices, invoicesProductTypes);
     setTotal(total);
-    setPeriodAmount(amount);
+    setPeriodProductAmount(amountProducts);
+    setPeriodDeliveryAmount(amountDelivery);
     setAppjustoCosts(appjusto);
     setIuguCosts(iugu);
   }, [invoices]);
   // return
-  return { invoices, total, periodAmount, appjustoCosts, iuguCosts };
+  return {
+    invoices,
+    total,
+    periodProductAmount,
+    periodDeliveryAmount,
+    appjustoCosts,
+    iuguCosts,
+  };
 };

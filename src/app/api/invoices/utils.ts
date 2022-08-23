@@ -24,10 +24,16 @@ export const getInvoicesTotalByTypes = (
   return filtered.length;
 };
 
-export const getInvoicesBusinessTotalValue = (invoices: WithId<Invoice>[]) => {
+export const getInvoicesTotalValueByTypes = (
+  invoices: WithId<Invoice>[],
+  types: InvoiceType[]
+) => {
   return invoices.reduce((result, invoice) => {
-    const value = invoice.fare.value ?? 0;
-    return result + value;
+    if (types.includes(invoice.invoiceType)) {
+      const value = invoice.fare.value ?? 0;
+      return result + value;
+    }
+    return result;
   }, 0);
 };
 

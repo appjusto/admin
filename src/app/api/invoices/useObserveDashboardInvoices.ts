@@ -4,14 +4,15 @@ import { useContextApi } from 'app/state/api/context';
 import dayjs from 'dayjs';
 import React from 'react';
 import {
-  getInvoicesBusinessTotalValue,
   getInvoicesTotalByTypes,
+  getInvoicesTotalValueByTypes,
   invoicesPeriodFilter,
   splitInvoicesValuesByPeriod,
 } from './utils';
 
 const invoiceStatus = 'paid' as IuguInvoiceStatus;
-const invoicesTypes = ['products', 'order'] as InvoiceType[];
+const invoicesTypes = ['products', 'order', 'delivery'] as InvoiceType[];
+const invoicesProductTypes = ['products', 'order'] as InvoiceType[];
 
 export const useObserveDashboardInvoices = (businessId?: string | null) => {
   // context
@@ -58,9 +59,12 @@ export const useObserveDashboardInvoices = (businessId?: string | null) => {
     if (!invoices) return;
     const today = dayjs().startOf('day').toDate();
     const todayInvoices = invoicesPeriodFilter(invoices, today);
-    const total = getInvoicesTotalByTypes(todayInvoices, invoicesTypes);
+    const total = getInvoicesTotalByTypes(todayInvoices, invoicesProductTypes);
     setTodayInvoices(total);
-    const todayTotal = getInvoicesBusinessTotalValue(todayInvoices);
+    const todayTotal = getInvoicesTotalValueByTypes(
+      todayInvoices,
+      invoicesTypes
+    );
     setTodayValue(todayTotal);
   }, [invoices]);
   // today average
@@ -74,9 +78,12 @@ export const useObserveDashboardInvoices = (businessId?: string | null) => {
     if (!invoices) return;
     const startDate = dayjs().startOf('month').toDate();
     const monthInvoices = invoicesPeriodFilter(invoices, startDate);
-    const total = getInvoicesTotalByTypes(monthInvoices, invoicesTypes);
+    const total = getInvoicesTotalByTypes(monthInvoices, invoicesProductTypes);
     setMonthInvoices(total);
-    const monthTotal = getInvoicesBusinessTotalValue(monthInvoices);
+    const monthTotal = getInvoicesTotalValueByTypes(
+      monthInvoices,
+      invoicesTypes
+    );
     setMonthValue(monthTotal);
   }, [invoices]);
   // month average
@@ -90,9 +97,15 @@ export const useObserveDashboardInvoices = (businessId?: string | null) => {
     if (!invoices) return;
     const startDate = dayjs().startOf('day').subtract(6, 'day').toDate();
     const currentWeekInvoices = invoicesPeriodFilter(invoices, startDate);
-    const total = getInvoicesTotalByTypes(currentWeekInvoices, invoicesTypes);
+    const total = getInvoicesTotalByTypes(
+      currentWeekInvoices,
+      invoicesProductTypes
+    );
     setCurrentWeekInvoices(total);
-    const weekValue = getInvoicesBusinessTotalValue(currentWeekInvoices);
+    const weekValue = getInvoicesTotalValueByTypes(
+      currentWeekInvoices,
+      invoicesTypes
+    );
     setCurrentWeekValue(weekValue);
     const weekValuesByDay = splitInvoicesValuesByPeriod(
       currentWeekInvoices,
@@ -115,9 +128,15 @@ export const useObserveDashboardInvoices = (businessId?: string | null) => {
     const startDate = dayjs().startOf('day').subtract(13, 'day').toDate();
     const endDate = dayjs().startOf('day').subtract(7, 'day').toDate();
     const lastWeekInvoices = invoicesPeriodFilter(invoices, startDate, endDate);
-    const total = getInvoicesTotalByTypes(lastWeekInvoices, invoicesTypes);
+    const total = getInvoicesTotalByTypes(
+      lastWeekInvoices,
+      invoicesProductTypes
+    );
     setLastWeekInvoices(total);
-    const lastWeekValue = getInvoicesBusinessTotalValue(lastWeekInvoices);
+    const lastWeekValue = getInvoicesTotalValueByTypes(
+      lastWeekInvoices,
+      invoicesTypes
+    );
     setLastWeekValue(lastWeekValue);
     const weekValuesByDay = splitInvoicesValuesByPeriod(
       lastWeekInvoices,

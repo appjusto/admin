@@ -18,7 +18,8 @@ import { InvoicesCosts } from './utils';
 interface PeriodTableProps {
   period: string;
   total: number;
-  amount: number;
+  amountProducts: number;
+  amountDelivery: number;
   appjustoCosts: InvoicesCosts;
   iuguCosts: InvoicesCosts;
 }
@@ -26,17 +27,20 @@ interface PeriodTableProps {
 export const PeriodTable = ({
   period,
   total,
-  amount,
+  amountProducts,
+  amountDelivery,
   appjustoCosts,
   iuguCosts,
 }: PeriodTableProps) => {
   // context
   const { platformFees } = usePlatformFees();
+  // helpers
+  const amountTotal = (amountProducts ?? 0) + (amountDelivery ?? 0);
   // UI
   return (
     <Table mt="6" size="md" variant="simple">
       <Tbody>
-        {amount === undefined ? (
+        {amountProducts === undefined ? (
           <Tr color="black" fontSize="xs" fontWeight="700">
             <Td>{t('Carregando...')}</Td>
             <Td></Td>
@@ -44,8 +48,8 @@ export const PeriodTable = ({
         ) : (
           <>
             <Tr color="black" fontSize="xs" fontWeight="500">
-              <Td>{t('Total de vendas')}</Td>
-              <Td isNumeric>{formatCurrency(amount)}</Td>
+              <Td>{t('Total de vendas de produtos')}</Td>
+              <Td isNumeric>{formatCurrency(amountProducts)}</Td>
             </Tr>
             <Tr fontSize="xs" fontWeight="500">
               <Td color="black">
@@ -54,6 +58,10 @@ export const PeriodTable = ({
               <Td color="red" isNumeric>
                 {`- ${formatCurrency(appjustoCosts.value)}`}
               </Td>
+            </Tr>
+            <Tr color="black" fontSize="xs" fontWeight="500">
+              <Td>{t('Total recebido por entregas')}</Td>
+              <Td isNumeric>{formatCurrency(amountDelivery)}</Td>
             </Tr>
             <Tr fontSize="xs" fontWeight="500">
               <Td color="black">
@@ -87,7 +95,9 @@ export const PeriodTable = ({
         <Tr>
           <Th>{t(`Resultado para ${period} (Total de pedidos: ${total})`)}</Th>
           <Th color="green.700" isNumeric>
-            {formatCurrency(amount - appjustoCosts.value - iuguCosts.value)}
+            {formatCurrency(
+              amountTotal - appjustoCosts.value - iuguCosts.value
+            )}
           </Th>
         </Tr>
       </Tfoot>
