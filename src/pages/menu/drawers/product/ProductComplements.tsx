@@ -98,13 +98,12 @@ export const ProductComplements = () => {
   const {
     productId,
     state,
-    handleProductUpdate,
+    // handleProductUpdate,
     //connectComplmentsGroupToProduct,
-    connectionResult,
+    // connectionResult,
   } = useProductContext();
   const { product } = state;
   const { complementsGroupsWithItems } = useContextMenu();
-  const { isLoading } = connectionResult;
   //state
   const [hasComplements, setHasComplements] = React.useState(false);
   const [connectedGroups, setConnectedGroups] = React.useState<string[]>([]);
@@ -114,20 +113,20 @@ export const ProductComplements = () => {
   const handleComplementsEnable = (value: string) => {
     setHasComplements(value === 'complements-disabled' ? false : true);
   };
-  const handleComplementsGroupsConnection = () => {
-    if (!hasComplements || connectedGroups.length === 0) {
-      setHasComplements(false);
-      handleProductUpdate({
-        complementsEnabled: false,
-        complementsGroupsIds: [],
-      });
-      return;
-    }
-    handleProductUpdate({
-      complementsEnabled: true,
-      complementsGroupsIds: connectedGroups,
-    });
-  };
+  // const handleComplementsGroupsConnection = () => {
+  //   if (!hasComplements || connectedGroups.length === 0) {
+  //     setHasComplements(false);
+  //     handleProductUpdate({
+  //       complementsEnabled: false,
+  //       complementsGroupsIds: [],
+  //     });
+  //     return;
+  //   }
+  //   handleProductUpdate({
+  //     complementsEnabled: true,
+  //     complementsGroupsIds: connectedGroups,
+  //   });
+  // };
   // side effects
   React.useEffect(() => {
     if (product?.complementsEnabled) {
@@ -220,16 +219,6 @@ export const ProductComplements = () => {
           </CheckboxGroup>
         </Box>
       )}
-      <Button
-        mt="6"
-        width={{ base: '100%', lg: '50%' }}
-        color="black"
-        fontSize="15px"
-        onClick={handleComplementsGroupsConnection}
-        isLoading={isLoading}
-      >
-        {t('Salvar alterações')}
-      </Button>
     </Box>
   );
 };
