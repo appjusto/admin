@@ -38,6 +38,10 @@ export const ProductDrawer = (props: Props) => {
   // helpers
   const title = productId === 'new' ? 'Adicionar produto' : 'Alterar produto';
   //handlers
+  const handleSubmit = async () => {
+    const result = await onProductUpdate();
+    if (result === 'close_drawer') onClose();
+  };
   const handleDelete = () => {
     if (!productId || productId === 'new') return;
     deleteProduct();
@@ -55,7 +59,7 @@ export const ProductDrawer = (props: Props) => {
         <form
           onSubmit={(ev) => {
             ev.preventDefault();
-            onProductUpdate();
+            handleSubmit();
           }}
         >
           <DrawerContent mt={{ base: '16', lg: '0' }}>
@@ -69,7 +73,6 @@ export const ProductDrawer = (props: Props) => {
                 mt="4"
                 flexDir="row"
                 alignItems="flex-start"
-                //height="38px"
                 overflowX="auto"
               >
                 <DrawerLink to={`${url}`} label="Detalhes" />

@@ -78,21 +78,32 @@ export const ProductDetails = () => {
           mt="4"
           w="100%"
           direction={{ base: 'column', md: 'row' }}
-          spacing="4"
+          spacing={{ base: '4', md: '2' }}
         >
-          <Button
-            fontSize="15px"
-            onClick={handleSaveOther}
-            variant="outline"
-            w="100%"
-          >
-            {t('Salvar um novo produto')}
-          </Button>
-          <Link as={RouterLink} to={`${url}/complements`} w="100%">
-            <Button fontSize="15px" variant="outline" w="100%">
-              {t('Adicionar complementos')}
+          <Box>
+            <Button
+              fontSize="15px"
+              onClick={handleSaveOther}
+              variant="outline"
+              w="100%"
+            >
+              {t('Salvar novo Produto')}
             </Button>
-          </Link>
+          </Box>
+          <Box>
+            <Link as={RouterLink} to={`${url}/complements`} w="100%">
+              <Button fontSize="15px" variant="outline" w="100%">
+                {t('Adicionar Complementos')}
+              </Button>
+            </Link>
+          </Box>
+          <Box>
+            <Link as={RouterLink} to={`${url}/availability`} w="100%">
+              <Button fontSize="15px" variant="outline" w="100%">
+                {t('Adicionar Disponibilidade')}
+              </Button>
+            </Link>
+          </Box>
         </Stack>
       </Flex>
     );

@@ -18,6 +18,7 @@ import { useQuery } from 'utils/functions';
 import { productReducer, ProductStateProps } from './productReducer';
 import {
   getAvailabilitySchema,
+  getMainAvailability,
   getSerializedAvailability,
   schedulesValidation,
 } from './utils';
@@ -30,16 +31,6 @@ const initialAvailability = [
   { day: 'Sexta', checked: true, schedule: [{ from: '', to: '' }] },
   { day: 'Sábado', checked: true, schedule: [{ from: '', to: '' }] },
   { day: 'Domingo', checked: true, schedule: [{ from: '', to: '' }] },
-] as BusinessSchedule;
-
-const alwaysAvailable = [
-  { day: 'Segunda', checked: true, schedule: [] },
-  { day: 'Terça', checked: true, schedule: [] },
-  { day: 'Quarta', checked: true, schedule: [] },
-  { day: 'Quinta', checked: true, schedule: [] },
-  { day: 'Sexta', checked: true, schedule: [] },
-  { day: 'Sábado', checked: true, schedule: [] },
-  { day: 'Domingo', checked: true, schedule: [] },
 ] as BusinessSchedule;
 
 const initialState = {
@@ -55,10 +46,9 @@ const initialState = {
     imageExists: false,
     availability: initialAvailability,
   },
-  //details
+  // helpers
   categoryId: '',
   imageFiles: null,
-  mainAvailability: 'always-available',
   saveSuccess: false,
 } as ProductStateProps;
 
@@ -75,7 +65,7 @@ interface ContextProps {
   clearState: () => void;
   imageUrl: string | null;
   sortedGroups: WithId<ComplementGroup>[];
-  onProductUpdate: () => void;
+  onProductUpdate: () => Promise<'close_drawer' | void>;
   updateProductResult: MutationResult;
   deleteProduct: UseMutateAsyncFunction<void, unknown, void, unknown>;
   deleteProductResult: MutationResult;
@@ -116,7 +106,8 @@ export const ProductContextProvider = (props: ProviderProps) => {
     '1008x720'
   );
   const contextCategoryId = menu.getParentId(productsOrdering, productId);
-  const sortedGroups = complementsGroupsWithItems.filter((group) => false); // product config complements array
+  // product config complements array
+  const sortedGroups = complementsGroupsWithItems.filter((group) => false);
   const {
     updateProduct,
     updateProductResult,
@@ -133,7 +124,6 @@ export const ProductContextProvider = (props: ProviderProps) => {
   );
   //state
   const [state, dispatch] = React.useReducer(productReducer, initialState);
-  console.log('state', state);
   // handlers
   const handleStateUpdate = React.useCallback(
     (value: Partial<ProductStateProps>) => {
@@ -147,26 +137,44 @@ export const ProductContextProvider = (props: ProviderProps) => {
   const clearState = React.useCallback(() => {
     dispatch({ type: 'update_state', payload: initialState });
   }, []);
-  const onProductUpdate = () => {
-    // if (price === 0) {
-    //   priceRef.current?.focus();
-    //   return;
-    // }
-    let availability = alwaysAvailable;
-    if (state.mainAvailability === 'availability-defined') {
-      const isValid = schedulesValidation(state.product.availability);
-      if (!isValid)
-        return dispatchAppRequestResult({
-          status: 'error',
-          requestId: 'ProductAvailability-valid',
-          message: {
-            title: 'Alguns horários de disponibilidade não estão corretos.',
-          },
-        });
-      availability = getSerializedAvailability(state.product.availability);
+  const onProductUpdate = async () => {
+    // product validation
+    if (state.product.price === 0) {
+      return dispatchAppRequestResult({
+        status: 'error',
+        requestId: 'ProductPrice-valid',
+        message: {
+          title: 'É preciso informar um preço maior que zero.',
+        },
+      });
     }
-    (async () => {
-      const {
+    // availability validation
+    const availability = getSerializedAvailability(
+      state.mainAvailability!,
+      state.product.availability
+    );
+    const isValid = schedulesValidation(availability);
+    if (!isValid)
+      return dispatchAppRequestResult({
+        status: 'error',
+        requestId: 'ProductAvailability-valid',
+        message: {
+          title: 'Alguns horários de disponibilidade não estão corretos.',
+        },
+      });
+    const {
+      name,
+      description,
+      price,
+      classifications,
+      externalId,
+      enabled,
+      imageExists,
+      complementsEnabled,
+      complementsGroupsIds,
+    } = state.product;
+    const newId = await updateProduct({
+      changes: {
         name,
         description,
         price,
@@ -176,31 +184,18 @@ export const ProductContextProvider = (props: ProviderProps) => {
         imageExists,
         complementsEnabled,
         complementsGroupsIds,
-      } = state.product;
-      const newId = await updateProduct({
-        changes: {
-          name,
-          description,
-          price,
-          classifications,
-          externalId,
-          enabled,
-          imageExists,
-          complementsEnabled,
-          complementsGroupsIds,
-          availability,
-        },
-        categoryId: state.categoryId,
-        imageFiles: state.imageFiles,
-      });
-      if (url.includes('new') && newId) {
-        const newUrl = url.replace('new', newId);
-        push(newUrl);
-        handleStateUpdate({ saveSuccess: true });
-      } else {
-        // onClose();
-      }
-    })();
+        availability,
+      },
+      categoryId: state.categoryId,
+      imageFiles: state.imageFiles,
+    });
+    if (url.includes('new') && newId) {
+      const newUrl = url.replace('new', newId);
+      push(newUrl);
+      handleStateUpdate({ saveSuccess: true });
+      return;
+    }
+    return 'close_drawer';
   };
   //side effects
   React.useEffect(() => {
@@ -218,16 +213,11 @@ export const ProductContextProvider = (props: ProviderProps) => {
   }, [query, state.categoryId]);
   React.useEffect(() => {
     if (product && productId !== 'new') {
-      const isAvailabilityDefined = product.availability?.find(
-        (day) => day.schedule.length > 0
-      );
       dispatch({
         type: 'update_state',
         payload: {
           categoryId: contextCategoryId ?? '',
-          mainAvailability: isAvailabilityDefined
-            ? 'availability-defined'
-            : 'always-available',
+          mainAvailability: getMainAvailability(product.availability),
         },
       });
       dispatch({

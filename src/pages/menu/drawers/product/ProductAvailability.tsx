@@ -2,6 +2,7 @@ import { Flex, RadioGroup, Text } from '@chakra-ui/react';
 import CustomRadio from 'common/components/form/CustomRadio';
 import { timeFormatter } from 'common/components/form/input/pattern-input/formatters';
 import { useProductContext } from 'pages/menu/context/ProductContext';
+import React from 'react';
 import { Redirect, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { DaySchedule } from './availability/DaySchedule';
@@ -130,7 +131,11 @@ export const ProductAvailability = () => {
     handleProductUpdate({ availability: newAvailability });
   };
   // side effects
-
+  React.useEffect(() => {
+    if (state.saveSuccess) {
+      handleStateUpdate({ saveSuccess: false });
+    }
+  }, [state, handleStateUpdate]);
   // UI
   if (productId === 'new') {
     const urlRedirect = url.split('/availability')[0];

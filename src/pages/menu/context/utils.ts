@@ -1,4 +1,26 @@
 import { BusinessSchedule, ScheduleObject } from '@appjusto/types';
+import { Availability } from '../drawers/product/ProductAvailability';
+
+const alwaysAvailable = [
+  { day: 'Segunda', checked: true, schedule: [] },
+  { day: 'Terça', checked: true, schedule: [] },
+  { day: 'Quarta', checked: true, schedule: [] },
+  { day: 'Quinta', checked: true, schedule: [] },
+  { day: 'Sexta', checked: true, schedule: [] },
+  { day: 'Sábado', checked: true, schedule: [] },
+  { day: 'Domingo', checked: true, schedule: [] },
+] as BusinessSchedule;
+
+export const getMainAvailability = (
+  availability?: BusinessSchedule
+): Availability => {
+  if (!availability) return 'always-available';
+  const isDefined = availability?.find(
+    (day) => !day.checked || day.schedule.length > 0
+  );
+  if (isDefined) return 'availability-defined';
+  else return 'always-available';
+};
 
 export const getAvailabilitySchema = (
   initialAvailability: BusinessSchedule,
@@ -35,7 +57,11 @@ export const schedulesValidation = (schedules: ScheduleObject[]) => {
   return result;
 };
 
-export const getSerializedAvailability = (availability: BusinessSchedule) => {
+export const getSerializedAvailability = (
+  mainAvailability: Availability,
+  availability: BusinessSchedule
+) => {
+  if (mainAvailability === 'always-available') return alwaysAvailable;
   const newAvailability = availability.map((day) => {
     if (!day.checked) {
       return {

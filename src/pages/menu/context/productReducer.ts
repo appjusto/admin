@@ -18,7 +18,7 @@ export interface ProductStateProps {
   //details
   categoryId: string;
   imageFiles: File[] | null;
-  mainAvailability: Availability;
+  mainAvailability?: Availability;
   saveSuccess: boolean;
 }
 
