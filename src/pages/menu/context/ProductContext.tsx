@@ -3,7 +3,6 @@ import {
   BusinessSchedule,
   ComplementGroup,
   Product,
-  ScheduleObject,
   WithId,
 } from '@appjusto/types';
 import { useObserveProduct } from 'app/api/business/products/useObserveProduct';
@@ -17,6 +16,11 @@ import { MutateFunction, UseMutateAsyncFunction } from 'react-query';
 import { useHistory, useParams, useRouteMatch } from 'react-router-dom';
 import { useQuery } from 'utils/functions';
 import { productReducer, ProductStateProps } from './productReducer';
+import {
+  getAvailabilitySchema,
+  getSerializedAvailability,
+  schedulesValidation,
+} from './utils';
 
 const initialAvailability = [
   { day: 'Segunda', checked: true, schedule: [{ from: '', to: '' }] },
@@ -140,26 +144,9 @@ export const ProductContextProvider = (props: ProviderProps) => {
   const handleProductUpdate = React.useCallback((value: Partial<Product>) => {
     dispatch({ type: 'update_product', payload: value });
   }, []);
-
   const clearState = React.useCallback(() => {
     dispatch({ type: 'update_state', payload: initialState });
   }, []);
-  const schedulesValidation = (schedules: ScheduleObject[]) => {
-    let result = true;
-    schedules.forEach((scheduleObject) => {
-      scheduleObject.schedule.forEach((item, index) => {
-        if (item.from !== '' && item.to !== '') {
-          if (Number(item.from) >= Number(item.to)) result = false;
-          if (
-            index > 0 &&
-            Number(item.from) <= Number(scheduleObject.schedule[index - 1].to)
-          )
-            result = false;
-        }
-      });
-    });
-    return result;
-  };
   const onProductUpdate = () => {
     // if (price === 0) {
     //   priceRef.current?.focus();
@@ -167,7 +154,6 @@ export const ProductContextProvider = (props: ProviderProps) => {
     // }
     let availability = alwaysAvailable;
     if (state.mainAvailability === 'availability-defined') {
-      // setSchedules(initialState);
       const isValid = schedulesValidation(state.product.availability);
       if (!isValid)
         return dispatchAppRequestResult({
@@ -177,12 +163,7 @@ export const ProductContextProvider = (props: ProviderProps) => {
             title: 'Alguns horários de disponibilidade não estão corretos.',
           },
         });
-      availability = state.product.availability.map((day) => {
-        const newSchedule = day.schedule.filter(
-          (obj) => obj.from !== '' && obj.to !== ''
-        );
-        return { ...day, schedule: newSchedule };
-      });
+      availability = getSerializedAvailability(state.product.availability);
     }
     (async () => {
       const {
@@ -221,7 +202,6 @@ export const ProductContextProvider = (props: ProviderProps) => {
       }
     })();
   };
-
   //side effects
   React.useEffect(() => {
     if (product === null) {
@@ -229,7 +209,6 @@ export const ProductContextProvider = (props: ProviderProps) => {
       push(newPath);
     }
   }, [path, push, product]);
-
   React.useEffect(() => {
     if (!query) return;
     if (state.categoryId) return;
@@ -237,13 +216,18 @@ export const ProductContextProvider = (props: ProviderProps) => {
     if (paramsId)
       dispatch({ type: 'update_state', payload: { categoryId: paramsId } });
   }, [query, state.categoryId]);
-  // side effects
   React.useEffect(() => {
     if (product && productId !== 'new') {
+      const isAvailabilityDefined = product.availability?.find(
+        (day) => day.schedule.length > 0
+      );
       dispatch({
         type: 'update_state',
         payload: {
           categoryId: contextCategoryId ?? '',
+          mainAvailability: isAvailabilityDefined
+            ? 'availability-defined'
+            : 'always-available',
         },
       });
       dispatch({
@@ -258,7 +242,10 @@ export const ProductContextProvider = (props: ProviderProps) => {
           imageExists: product.imageExists ?? false,
           complementsEnabled: product.complementsEnabled ?? false,
           complementsGroupsIds: product.complementsGroupsIds ?? [],
-          availability: product.availability ?? initialAvailability,
+          availability: getAvailabilitySchema(
+            initialAvailability,
+            product.availability
+          ),
         },
       });
     }
