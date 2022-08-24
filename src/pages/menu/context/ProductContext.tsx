@@ -65,7 +65,6 @@ interface Params {
 interface ContextProps {
   contextCategoryId: string | undefined;
   productId: string;
-  product: WithId<Product> | undefined | null;
   state: ProductStateProps;
   handleStateUpdate: (value: Partial<ProductStateProps>) => void;
   handleProductUpdate: (value: Partial<Product>) => void;
@@ -269,7 +268,6 @@ export const ProductContextProvider = (props: ProviderProps) => {
       value={{
         contextCategoryId,
         productId,
-        product,
         state,
         handleStateUpdate,
         handleProductUpdate,
