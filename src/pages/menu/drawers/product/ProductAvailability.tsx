@@ -2,7 +2,6 @@ import { Flex, RadioGroup, Text } from '@chakra-ui/react';
 import CustomRadio from 'common/components/form/CustomRadio';
 import { timeFormatter } from 'common/components/form/input/pattern-input/formatters';
 import { useProductContext } from 'pages/menu/context/ProductContext';
-import React from 'react';
 import { Redirect, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { DaySchedule } from './availability/DaySchedule';
@@ -14,11 +13,11 @@ const scheduleObj = { from: '', to: '' };
 export const ProductAvailability = () => {
   //context
   const { url } = useRouteMatch();
-  const { productId, state, handleProductUpdate } = useProductContext();
-  const { availability } = state.product;
+  const { productId, state, handleStateUpdate, handleProductUpdate } =
+    useProductContext();
+  const { mainAvailability, product } = state;
+  const { availability } = product;
   //state
-  const [mainAvailability, setMainAvailability] =
-    React.useState<Availability>('always-available');
   // handlers
   const handleCheck = (stateIndex: number, value: boolean) => {
     const newAvailability = availability.map((item, index) => {
@@ -131,23 +130,7 @@ export const ProductAvailability = () => {
     handleProductUpdate({ availability: newAvailability });
   };
   // side effects
-  React.useEffect(() => {
-    if (!availability) return;
-    if (
-      availability.find((item) => !item.checked) === undefined &&
-      availability.find((item) => item.schedule.length > 0) === undefined
-    ) {
-      setMainAvailability('always-available');
-      return;
-    }
-    // const initialAvailability = availability.map((item) => {
-    //   if (item.schedule.length === 0)
-    //     return { ...item, schedule: [scheduleObj] };
-    //   else return item;
-    // });
-    setMainAvailability('availability-defined');
-    // setSchedules(initialAvailability);
-  }, [availability]);
+
   // UI
   if (productId === 'new') {
     const urlRedirect = url.split('/availability')[0];
@@ -165,7 +148,9 @@ export const ProductAvailability = () => {
       </Text>
       <RadioGroup
         mt="2"
-        onChange={(value: Availability) => setMainAvailability(value)}
+        onChange={(value: Availability) =>
+          handleStateUpdate({ mainAvailability: value })
+        }
         value={mainAvailability}
         defaultValue="always"
         colorScheme="green"

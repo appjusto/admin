@@ -131,7 +131,6 @@ export const ProductContextProvider = (props: ProviderProps) => {
   const [state, dispatch] = React.useReducer(productReducer, initialState);
   console.log('state', state);
   // handlers
-  //handlers
   const handleStateUpdate = React.useCallback(
     (value: Partial<ProductStateProps>) => {
       dispatch({ type: 'update_state', payload: value });
