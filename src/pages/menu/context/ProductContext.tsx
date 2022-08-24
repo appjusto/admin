@@ -173,7 +173,9 @@ export const ProductContextProvider = (props: ProviderProps) => {
         return dispatchAppRequestResult({
           status: 'error',
           requestId: 'ProductAvailability-valid',
-          message: { title: 'Alguns horários não estão corretos.' },
+          message: {
+            title: 'Alguns horários de disponibilidade não estão corretos.',
+          },
         });
       availability = state.product.availability.map((day) => {
         const newSchedule = day.schedule.filter(
@@ -256,7 +258,7 @@ export const ProductContextProvider = (props: ProviderProps) => {
           imageExists: product.imageExists ?? false,
           complementsEnabled: product.complementsEnabled ?? false,
           complementsGroupsIds: product.complementsGroupsIds ?? [],
-          availability: product.availability ?? alwaysAvailable,
+          availability: product.availability ?? initialAvailability,
         },
       });
     }
