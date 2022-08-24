@@ -67,8 +67,8 @@ interface ContextProps {
   productId: string;
   product: WithId<Product> | undefined | null;
   state: ProductStateProps;
-  handleStateUpdate: (key: string, value: any) => void;
-  handleProductUpdate: (value: any) => void;
+  handleStateUpdate: (value: Partial<ProductStateProps>) => void;
+  handleProductUpdate: (value: Partial<Product>) => void;
   clearState: () => void;
   imageUrl: string | null;
   sortedGroups: WithId<ComplementGroup>[];
@@ -130,18 +130,22 @@ export const ProductContextProvider = (props: ProviderProps) => {
   );
   //state
   const [state, dispatch] = React.useReducer(productReducer, initialState);
+  console.log('state', state);
   // handlers
   //handlers
-  const handleStateUpdate = (key: string, value: any) => {
-    dispatch({ type: 'update_state', payload: { [key]: value } });
-  };
-  const handleProductUpdate = (value: Partial<Product>) => {
+  const handleStateUpdate = React.useCallback(
+    (value: Partial<ProductStateProps>) => {
+      dispatch({ type: 'update_state', payload: value });
+    },
+    []
+  );
+  const handleProductUpdate = React.useCallback((value: Partial<Product>) => {
     dispatch({ type: 'update_product', payload: value });
-  };
+  }, []);
 
-  const clearState = () => {
+  const clearState = React.useCallback(() => {
     dispatch({ type: 'update_state', payload: initialState });
-  };
+  }, []);
   const schedulesValidation = (schedules: ScheduleObject[]) => {
     let result = true;
     schedules.forEach((scheduleObject) => {
@@ -211,7 +215,7 @@ export const ProductContextProvider = (props: ProviderProps) => {
       if (url.includes('new') && newId) {
         const newUrl = url.replace('new', newId);
         push(newUrl);
-        handleStateUpdate('saveSuccess', true);
+        handleStateUpdate({ saveSuccess: true });
       } else {
         // onClose();
       }

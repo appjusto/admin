@@ -31,8 +31,14 @@ export const ProductDetails = () => {
   //context
   const { url } = useRouteMatch();
   const { push } = useHistory();
-  const { productId, state, handleProductUpdate, clearState, imageUrl } =
-    useProductContext();
+  const {
+    productId,
+    state,
+    handleStateUpdate,
+    handleProductUpdate,
+    clearState,
+    imageUrl,
+  } = useProductContext();
   const platformClassifications = useClassifications();
   //state
   const { product, categoryId, saveSuccess } = state;
@@ -42,21 +48,23 @@ export const ProductDetails = () => {
   const priceRef = React.useRef<HTMLInputElement>(null);
   // handlers
   const clearDropImages = React.useCallback(() => {
-    handleProductUpdate({ imageFiles: null, imageExists: false });
-  }, [handleProductUpdate]);
+    handleStateUpdate({ imageFiles: null });
+    handleProductUpdate({ imageExists: false });
+  }, [handleStateUpdate, handleProductUpdate]);
 
   const handleImageFiles = React.useCallback(
     (files: File[]) => {
-      handleProductUpdate({ imageFiles: files, imageExists: true });
+      handleStateUpdate({ imageFiles: files });
+      handleProductUpdate({ imageExists: true });
     },
-    [handleProductUpdate]
+    [handleStateUpdate, handleProductUpdate]
   );
 
-  const handleSaveOther = () => {
+  const handleSaveOther = React.useCallback(() => {
     clearState();
     const newUrl = url.replace(productId, 'new');
     push(newUrl);
-  };
+  }, [clearState, url, push, productId]);
 
   //UI
   if (saveSuccess) {
@@ -72,11 +80,16 @@ export const ProductDetails = () => {
           direction={{ base: 'column', md: 'row' }}
           spacing="4"
         >
-          <Button onClick={handleSaveOther} variant="outline" w="100%">
+          <Button
+            fontSize="15px"
+            onClick={handleSaveOther}
+            variant="outline"
+            w="100%"
+          >
             {t('Salvar um novo produto')}
           </Button>
           <Link as={RouterLink} to={`${url}/complements`} w="100%">
-            <Button variant="outline" w="100%">
+            <Button fontSize="15px" variant="outline" w="100%">
               {t('Adicionar complementos')}
             </Button>
           </Link>
@@ -98,7 +111,7 @@ export const ProductDetails = () => {
       <CategorySelect
         isRequired
         value={categoryId}
-        onChange={(ev) => handleProductUpdate({ categoryId: ev.target.value })}
+        onChange={(ev) => handleStateUpdate({ categoryId: ev.target.value })}
       />
       <Textarea
         isRequired
@@ -165,7 +178,9 @@ export const ProductDetails = () => {
       <CheckboxGroup
         colorScheme="green"
         value={classifications}
-        onChange={(value) => handleProductUpdate({ classifications: value })}
+        onChange={(value) =>
+          handleProductUpdate({ classifications: value as string[] })
+        }
       >
         <VStack alignItems="flex-start" mt="4" color="black" spacing={2}>
           {platformClassifications.map((item) => (
