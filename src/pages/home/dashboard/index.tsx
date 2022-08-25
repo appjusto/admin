@@ -1,4 +1,4 @@
-import { Box, BoxProps, Circle, HStack, Icon, Link, Skeleton, Stack, Text, Tooltip } from '@chakra-ui/react';
+import { Box, Link, Stack, Text } from '@chakra-ui/react';
 import { isElectron } from '@firebase/util';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextBusinessDashboard } from 'app/state/dashboards/business';
@@ -8,102 +8,16 @@ import { ReactComponent as ExtensionIcon } from 'common/img/chrome-extension-ico
 import I18n from 'i18n-js';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import React from 'react';
-import { MdOpenInNew } from 'react-icons/md';
 import { formatCurrency, formatPct } from 'utils/formatters';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
-import PageHeader from '../PageHeader';
-import { LineChart } from './LineChart';
-import { RegistrationStatus } from './RegistrationStatus';
+import PageHeader from '../../PageHeader';
+import { RegistrationStatus } from '../RegistrationStatus';
+import InfoBox from './InfoBox';
+import LineChart from './LineChart';
+import { NewWindowButton } from './NewWindowButton';
 
 const isDesktopApp = isElectron();
-
-const NewWindowButton = () => {
-  return (
-    <Tooltip label={t('Abrir nova janela')}>
-      <Link 
-        position="absolute"
-        top="4"
-        right="4"
-        border="1px solid #E5E5E5"
-        borderRadius="lg"
-        px="1"
-        h="23px"
-        _hover={{
-          color: 'white',
-          bgColor: '#505A4F'
-        }}
-        href="/app"
-        isExternal
-      >
-        <Icon as={MdOpenInNew} />
-      </Link>
-    </Tooltip>
-  )
-}
-
-interface InfoBoxProps extends BoxProps {
-  isJoined?: boolean;
-  data?: any;
-  title: string;
-  titleColor?: string;
-  circleBg?: string;
-  children: React.ReactNode | React.ReactNode[];
-}
-
-const InfoBox = ({
-  isJoined,
-  data,
-  title,
-  titleColor = '#505A4F',
-  circleBg,
-  children,
-  ...props
-}: InfoBoxProps) => {
-  if (isJoined)
-    return (
-      <Box {...props}>
-        <Text color={titleColor} fontSize="15px" lineHeight="21px">
-          {title}
-        </Text>
-        {data !== undefined ? (
-          children
-        ) : (
-          <Box>
-            <Skeleton mt="1" height="30px" colorScheme="#9AA49C" />
-            <Skeleton mt="2" height="20px" mr="4" colorScheme="#9AA49C" />
-          </Box>
-        )}
-      </Box>
-    );
-  return (
-    <Box
-      w={{ base: '100%', lg: '190px' }}
-      h="132px"
-      py="4"
-      px="6"
-      border="1px solid #E5E5E5"
-      borderRadius="lg"
-      alignItems="flex-start"
-      {...props}
-    >
-      <HStack ml={circleBg ? '-16px' : '0'}>
-        {circleBg && <Circle size="8px" bg={circleBg} />}
-        <Text color={titleColor} fontSize="15px" lineHeight="21px">
-          {title}
-        </Text>
-      </HStack>
-      {data !== undefined ? (
-        children
-      ) : (
-        <Box>
-          <Skeleton mt="1" height="30px" colorScheme="#9AA49C" fadeDuration={0.2} />
-          <Skeleton mt="2" height="20px" mr="4" colorScheme="#9AA49C" fadeDuration={0.2} />
-        </Box>
-      )}
-    </Box>
-  );
-};
 
 const Dashboard = () => {
   // context
@@ -130,7 +44,8 @@ const Dashboard = () => {
   // helpers
   const getRevenueDifference = () => {
     let sign = '';
-    if (currentWeekValue === undefined || lastWeekValue === undefined) return 'R$ 0,00';
+    if (currentWeekValue === undefined || lastWeekValue === undefined)
+      return 'R$ 0,00';
     if (currentWeekValue > lastWeekValue) sign = '+';
     let result = formatCurrency(currentWeekValue - lastWeekValue);
     return `${sign} ${result}`;
@@ -147,7 +62,8 @@ const Dashboard = () => {
     else sign = '-';
     let result = formatPct(
       Math.abs(
-        (currentWeekValue - lastWeekValue) / (lastWeekValue > 0 ? lastWeekValue : currentWeekValue)
+        (currentWeekValue - lastWeekValue) /
+          (lastWeekValue > 0 ? lastWeekValue : currentWeekValue)
       )
     );
     return `${sign} (${result})`;
@@ -181,23 +97,21 @@ const Dashboard = () => {
             btnLabel={t('Visualizar links')}
             isNew={false}
           /> */}
-          {
-            !isDesktopApp && (
-              <NewFeatureBox
-                icon={ExtensionIcon}
-                iconSize="lg"
-                title={t('Extensão para Google Chrome')}
-                description={t(
-                  'Nova extensão Appjusto Admin para Google Chrome! Ela ajuda a manter sua aplicação sempre ativa para receber pedidos.'
-                )}
-                link="https://chrome.google.com/webstore/detail/appjusto-admin/mcmielagmkelelpmnmjlnlpeakdmmeap?hl=pt-br"
-                btnLabel={t('Instalar')}
-                btnVariant="solid"
-                isExternal
-                isNew
-              />
-            )
-          }
+          {!isDesktopApp && (
+            <NewFeatureBox
+              icon={ExtensionIcon}
+              iconSize="lg"
+              title={t('Extensão para Google Chrome')}
+              description={t(
+                'Nova extensão Appjusto Admin para Google Chrome! Ela ajuda a manter sua aplicação sempre ativa para receber pedidos.'
+              )}
+              link="https://chrome.google.com/webstore/detail/appjusto-admin/mcmielagmkelelpmnmjlnlpeakdmmeap?hl=pt-br"
+              btnLabel={t('Instalar')}
+              btnVariant="solid"
+              isExternal
+              isNew
+            />
+          )}
           <Box mt="8" border="1px solid #E5E5E5" borderRadius="lg" p="4">
             <SectionTitle mt="0" fontWeight="700">
               {t('Acompanhamento diário')}
@@ -219,11 +133,19 @@ const Dashboard = () => {
                   title={t('Pedidos/ Hoje')}
                   titleColor="green.600"
                 >
-                  <Text mt="1" color="black" minW="140px" fontSize="2xl" lineHeight="30px">
+                  <Text
+                    mt="1"
+                    color="black"
+                    minW="140px"
+                    fontSize="2xl"
+                    lineHeight="30px"
+                  >
                     {`${todayInvoices ?? 'N/E'} pedidos`}
                   </Text>
                   <Text mt="1" fontSize="md" lineHeight="22px">
-                    {todayValue !== undefined ? formatCurrency(todayValue) : 'N/E'}
+                    {todayValue !== undefined
+                      ? formatCurrency(todayValue)
+                      : 'N/E'}
                   </Text>
                 </InfoBox>
                 <InfoBox
@@ -238,15 +160,27 @@ const Dashboard = () => {
                 </InfoBox>
               </Stack>
               <Stack direction={{ base: 'column', md: 'row' }}>
-                <InfoBox data={monthInvoices} title={t(`Pedidos/ ${currentMonth}`)}>
-                  <Text mt="1" color="black" minW="140px" fontSize="2xl" lineHeight="30px">
+                <InfoBox
+                  data={monthInvoices}
+                  title={t(`Pedidos/ ${currentMonth}`)}
+                >
+                  <Text
+                    mt="1"
+                    color="black"
+                    minW="140px"
+                    fontSize="2xl"
+                    lineHeight="30px"
+                  >
                     {`${monthInvoices ?? 'N/E'} pedidos`}
                   </Text>
                   <Text mt="1" fontSize="md" lineHeight="22px">
                     {monthValue ? formatCurrency(monthValue) : 'R$ 0,00'}
                   </Text>
                 </InfoBox>
-                <InfoBox data={monthAverage} title={t(`Ticket médio/ ${currentMonth}`)}>
+                <InfoBox
+                  data={monthAverage}
+                  title={t(`Ticket médio/ ${currentMonth}`)}
+                >
                   <Text mt="1" color="black" fontSize="2xl" lineHeight="30px">
                     {monthAverage ? formatCurrency(monthAverage) : 'R$ 0,00'}
                   </Text>
@@ -266,21 +200,39 @@ const Dashboard = () => {
                   title={t('Total de pedidos')}
                   circleBg="green.600"
                 >
-                  <Text mt="1" color="black" minW="140px" fontSize="2xl" lineHeight="30px">
+                  <Text
+                    mt="1"
+                    color="black"
+                    minW="140px"
+                    fontSize="2xl"
+                    lineHeight="30px"
+                  >
                     {`${currentWeekInvoices ?? 'N/E'} pedidos`}
                   </Text>
                   <Text mt="1" fontSize="md" lineHeight="22px">
-                    {currentWeekValue ? formatCurrency(currentWeekValue) : 'R$ 0,00'}
+                    {currentWeekValue
+                      ? formatCurrency(currentWeekValue)
+                      : 'R$ 0,00'}
                   </Text>
                 </InfoBox>
-                <InfoBox w="100%" data={currentWeekAverage} title={t('Ticket médio')}>
+                <InfoBox
+                  w="100%"
+                  data={currentWeekAverage}
+                  title={t('Ticket médio')}
+                >
                   <Text mt="1" color="black" fontSize="2xl" lineHeight="30px">
-                    {currentWeekAverage ? formatCurrency(currentWeekAverage) : 'R$ 0,00'}
+                    {currentWeekAverage
+                      ? formatCurrency(currentWeekAverage)
+                      : 'R$ 0,00'}
                   </Text>
                 </InfoBox>
               </Stack>
               <Stack w="100%" direction={{ base: 'column', md: 'row' }}>
-                <InfoBox w="100%" data={currentWeekProduct} title={t('Prato mais vendido')}>
+                <InfoBox
+                  w="100%"
+                  data={currentWeekProduct}
+                  title={t('Prato mais vendido')}
+                >
                   <Text mt="1" color="black" fontSize="md" lineHeight="22px">
                     {currentWeekProduct}
                   </Text>
@@ -292,7 +244,13 @@ const Dashboard = () => {
                   title={t('Semana anterior')}
                   circleBg="gray.500"
                 >
-                  <Text mt="1" color="black" minW="140px" fontSize="2xl" lineHeight="30px">
+                  <Text
+                    mt="1"
+                    color="black"
+                    minW="140px"
+                    fontSize="2xl"
+                    lineHeight="30px"
+                  >
                     {`${lastWeekInvoices ?? 'N/E'} pedidos`}
                   </Text>
                   <Text mt="1" color="black" fontSize="sm" lineHeight="22px">
@@ -305,7 +263,10 @@ const Dashboard = () => {
               </Stack>
             </Stack>
             {showChart && (
-              <LineChart currentWeekData={currentWeekByDay!} lastWeekData={lastWeekByDay!} />
+              <LineChart
+                currentWeekData={currentWeekByDay!}
+                lastWeekData={lastWeekByDay!}
+              />
             )}
           </Box>
         </Box>

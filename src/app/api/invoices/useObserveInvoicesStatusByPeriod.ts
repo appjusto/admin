@@ -1,4 +1,4 @@
-import { Invoice, WithId } from '@appjusto/types';
+import { Invoice, InvoiceType, WithId } from '@appjusto/types';
 import { IuguInvoiceStatus } from '@appjusto/types/payment/iugu';
 import { useContextApi } from 'app/state/api/context';
 import dayjs from 'dayjs';
@@ -9,7 +9,11 @@ import {
 } from 'pages/finances/utils';
 import React from 'react';
 import { useUserCanReadEntity } from '../auth/useUserCanReadEntity';
-import { getInvoicesBusinessTotalValue } from './utils';
+import { getInvoicesTotalByTypes, getInvoicesTotalValueByTypes } from './utils';
+
+// const invoicesTypes = ['products', 'order'] as InvoiceType[];
+const invoicesProductTypes = ['products', 'order'] as InvoiceType[];
+const invoicesDeliveryTypes = ['delivery'] as InvoiceType[];
 
 export const useObserveInvoicesStatusByPeriod = (
   businessId?: string,
@@ -22,7 +26,8 @@ export const useObserveInvoicesStatusByPeriod = (
   // state
   const [invoices, setInvoices] = React.useState<WithId<Invoice>[]>();
   const [total, setTotal] = React.useState(0);
-  const [periodAmount, setPeriodAmount] = React.useState(0);
+  const [periodProductAmount, setPeriodProductAmount] = React.useState(0);
+  const [periodDeliveryAmount, setPeriodDeliveryAmount] = React.useState(0);
   const [appjustoCosts, setAppjustoCosts] = React.useState<InvoicesCosts>({
     value: 0,
     fee: 0,
@@ -52,14 +57,31 @@ export const useObserveInvoicesStatusByPeriod = (
   }, [api, userCanRead, businessId, month, status]);
   React.useEffect(() => {
     if (!invoices) return;
-    const amount = getInvoicesBusinessTotalValue(invoices);
-    const appjusto = calculateAppJustoCosts(amount);
-    const iugu = calculateIuguCosts(amount, invoices);
-    setTotal(invoices.length);
-    setPeriodAmount(amount);
+    const amountProducts = getInvoicesTotalValueByTypes(
+      invoices,
+      invoicesProductTypes
+    );
+    const amountDelivery = getInvoicesTotalValueByTypes(
+      invoices,
+      invoicesDeliveryTypes
+    );
+    const amountTotal = amountProducts + amountDelivery;
+    const appjusto = calculateAppJustoCosts(amountProducts, invoices);
+    const iugu = calculateIuguCosts(amountTotal, invoices);
+    const total = getInvoicesTotalByTypes(invoices, invoicesProductTypes);
+    setTotal(total);
+    setPeriodProductAmount(amountProducts);
+    setPeriodDeliveryAmount(amountDelivery);
     setAppjustoCosts(appjusto);
     setIuguCosts(iugu);
   }, [invoices]);
   // return
-  return { invoices, total, periodAmount, appjustoCosts, iuguCosts };
+  return {
+    invoices,
+    total,
+    periodProductAmount,
+    periodDeliveryAmount,
+    appjustoCosts,
+    iuguCosts,
+  };
 };

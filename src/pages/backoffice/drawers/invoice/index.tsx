@@ -24,6 +24,7 @@ import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { PaymentMethodCard } from '../consumer/PaymentMethods';
 import { SectionTitle } from '../generics/SectionTitle';
+import { getAccountBtnLabel, getAccountBtnLink } from './utils';
 
 interface BaseDrawerProps {
   isOpen: boolean;
@@ -43,6 +44,23 @@ const InvoiceDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   const [paymentMethod, setPaymentMethod] = React.useState<
     IuguCustomerPaymentMethod | string | null
   >();
+  // helpers
+  // label={t(
+  //   `Ver ${
+  //     invoice?.invoiceType === 'delivery' ||
+  //     invoice?.invoiceType === 'tip'
+  //       ? 'entregador'
+  //       : 'restaurante'
+  //   }`
+  // )}
+  const accountBtnLabel = getAccountBtnLabel(invoice);
+  const accountBtnLink = getAccountBtnLink(invoice);
+  // link={`/backoffice/${
+  //   invoice?.invoiceType === 'delivery' ||
+  //   invoice?.invoiceType === 'tip'
+  //     ? 'couriers'
+  //     : 'businesses'
+  // }/${invoice?.accountId}`}
   // side effects
   React.useEffect(() => {
     if (invoice?.paymentMethod && invoice?.paymentMethod !== 'credit_card') {
@@ -280,27 +298,17 @@ const InvoiceDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                       </Text>
                     </Text>
                     <Box mt="4">
-                      <CustomButton
-                        mt="0"
-                        minW="220px"
-                        color="black"
-                        variant="outline"
-                        label={t(
-                          `Ver ${
-                            invoice?.invoiceType === 'delivery' ||
-                            invoice?.invoiceType === 'tip'
-                              ? 'entregador'
-                              : 'restaurante'
-                          }`
-                        )}
-                        link={`/backoffice/${
-                          invoice?.invoiceType === 'delivery' ||
-                          invoice?.invoiceType === 'tip'
-                            ? 'couriers'
-                            : 'businesses'
-                        }/${invoice?.accountId}`}
-                        size="sm"
-                      />
+                      {accountBtnLabel && (
+                        <CustomButton
+                          mt="0"
+                          minW="220px"
+                          color="black"
+                          variant="outline"
+                          label={accountBtnLabel}
+                          link={accountBtnLink}
+                          size="sm"
+                        />
+                      )}
                     </Box>
                   </>
                 )}

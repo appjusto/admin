@@ -2,6 +2,7 @@ import { Box, BoxProps, Center, Text } from '@chakra-ui/react';
 import * as Sentry from '@sentry/react';
 import { Chart, registerables } from 'chart.js';
 import I18n from 'i18n-js';
+import { isEqual } from 'lodash';
 import React from 'react';
 import { t } from 'utils/i18n';
 
@@ -10,7 +11,11 @@ interface LineChartProps extends BoxProps {
   lastWeekData: number[];
 }
 
-export const LineChart = ({ currentWeekData, lastWeekData, ...props }: LineChartProps) => {
+const LineChart = ({
+  currentWeekData,
+  lastWeekData,
+  ...props
+}: LineChartProps) => {
   // state
   const [chartLabels, setChartLabels] = React.useState<string[]>();
   const [isError, setIsError] = React.useState(false);
@@ -23,7 +28,11 @@ export const LineChart = ({ currentWeekData, lastWeekData, ...props }: LineChart
     let today = new Date();
     let labels = [];
     for (let i = 0; i < 7; i++) {
-      let pastDay = new Date(today.getFullYear(), today.getMonth(), today.getDate() - i);
+      let pastDay = new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        today.getDate() - i
+      );
       labels.push(I18n.strftime(pastDay, '%a'));
     }
     setChartLabels(labels.reverse());
@@ -79,7 +88,10 @@ export const LineChart = ({ currentWeekData, lastWeekData, ...props }: LineChart
       });
       return () => myChart.destroy();
     } catch (error) {
-      Sentry.captureException({ name: 'Admin dashboard LineChart error', error });
+      Sentry.captureException({
+        name: 'Admin dashboard LineChart error',
+        error,
+      });
       setIsError(true);
     }
   }, [chartLabels, currentWeekData, lastWeekData]);
@@ -97,3 +109,9 @@ export const LineChart = ({ currentWeekData, lastWeekData, ...props }: LineChart
     </Box>
   );
 };
+
+const areEqual = (prevProps: LineChartProps, nextProps: LineChartProps) => {
+  return isEqual(prevProps, nextProps);
+};
+
+export default React.memo(LineChart, areEqual);

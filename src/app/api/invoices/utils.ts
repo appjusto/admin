@@ -1,4 +1,4 @@
-import { Invoice, WithId } from '@appjusto/types';
+import { Invoice, InvoiceType, WithId } from '@appjusto/types';
 import dayjs from 'dayjs';
 import { Timestamp } from 'firebase/firestore';
 
@@ -14,34 +14,27 @@ export const invoicesPeriodFilter = (
   });
 };
 
-export const getInvoicesBusinessTotalValue = (invoices: WithId<Invoice>[]) => {
-  return invoices.reduce((result, invoice) => {
-    const deliveryCosts = invoice.deliveryCosts ?? 0;
-    return result + invoice.value - deliveryCosts;
-  }, 0);
+export const getInvoicesTotalByTypes = (
+  invoices: WithId<Invoice>[],
+  types: InvoiceType[]
+) => {
+  const filtered = invoices.filter((invoice) =>
+    types.includes(invoice.invoiceType)
+  );
+  return filtered.length;
 };
 
-export const findMostFrequentProduct = (products: string[]) => {
-  if (products.length === 0) return 'N/E';
-  let compare = '';
-  let mostFreq = '';
-  products.reduce((acc, val) => {
-    if (val in acc) {
-      //@ts-ignore
-      acc[val]++;
-    } else {
-      //@ts-ignore
-      acc[val] = 1;
+export const getInvoicesTotalValueByTypes = (
+  invoices: WithId<Invoice>[],
+  types: InvoiceType[]
+) => {
+  return invoices.reduce((result, invoice) => {
+    if (types.includes(invoice.invoiceType)) {
+      const value = invoice.fare.value ?? 0;
+      return result + value;
     }
-    //@ts-ignore
-    if (acc[val] > compare) {
-      //@ts-ignore
-      compare = acc[val];
-      mostFreq = val;
-    }
-    return acc;
-  }, {});
-  return mostFreq;
+    return result;
+  }, 0);
 };
 
 export interface ItemByDay {
@@ -60,9 +53,11 @@ export const splitInvoicesValuesByPeriod = (
     period.push({ date, value: 0 });
   }
   invoices.forEach((invoice) => {
-    const date = (invoice.updatedOn as Timestamp).toDate().getDate();
-    let item = period.find((item) => item.date === date);
-    if (item) item.value += 1;
+    if (['products', 'order'].includes(invoice.invoiceType)) {
+      const date = (invoice.updatedOn as Timestamp).toDate().getDate();
+      let item = period.find((item) => item.date === date);
+      if (item) item.value += 1;
+    }
   });
   return period.map((item) => item.value);
 };

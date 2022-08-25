@@ -80,9 +80,6 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   // helpers
   const isNew = entryId === 'new';
   const canUpdate = !isNew && userAbility?.can('update', 'invoices');
-  const isLoading = isNew
-    ? submitLedgerEntryResult.isLoading
-    : updateLedgerEntryResult.isLoading;
   // handlers
   const handleSubmit = () => {
     if (!user) {
@@ -250,7 +247,9 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 >
                   {t('Criada por:')}{' '}
                   <Text as="span" fontWeight="500">
-                    {entry?.createdBy?.email ?? 'Sistema'}
+                    {entry?.createdBy === 'platform'
+                      ? 'Plataforma'
+                      : entry?.createdBy.email ?? 'N/E'}
                   </Text>
                 </Text>
                 {entry?.updatedBy && (
@@ -432,7 +431,7 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                         width="full"
                         fontSize="15px"
                         type="submit"
-                        isLoading={isLoading}
+                        isLoading={updateLedgerEntryResult.isLoading}
                         loadingText={t('Salvando')}
                       >
                         {t('Salvar alterações')}
@@ -597,7 +596,7 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                   width="full"
                   fontSize="15px"
                   type="submit"
-                  isLoading={isLoading}
+                  isLoading={submitLedgerEntryResult.isLoading}
                   loadingText={t('Salvando')}
                 >
                   {t('Salvar')}

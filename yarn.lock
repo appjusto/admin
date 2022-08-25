@@ -135,20 +135,20 @@
     "@appjusto/types" "^5.1.2"
     lodash "^4.17.21"
 
+"@appjusto/types@7.9.3":
+  version "7.9.3"
+  resolved "https://registry.yarnpkg.com/@appjusto/types/-/types-7.9.3.tgz#780745fdda70ed2acc8271f1c43136667b325487"
+  integrity sha512-JlaRmi2mnUDoBYi89+/o/3rAMaY+vceIkwWiR0VUtCSgjtJSg9AVWk/Q+H8xQpgKARYiFZl38UYxYyHfkzSdZQ==
+  dependencies:
+    firebase "^9.6.7"
+
 "@appjusto/types@^5.1.2":
   version "5.3.0"
   resolved "https://registry.yarnpkg.com/@appjusto/types/-/types-5.3.0.tgz#ea07e868931b2d4fed4977478d9b7543b56a7740"
   integrity sha512-FasmsoJ588kWn1YWRQG1LiYROcz4kwdvNk9LTbB2AVsgaijKxvd5NBWZD7KvcI1Rg+SlSs5RSN5Me82ZGFdSWQ==
   dependencies:
     firebase "^9.6.7"
-
-"@appjusto/types@^7.8.4":
-  version "7.8.4"
-  resolved "https://registry.yarnpkg.com/@appjusto/types/-/types-7.8.4.tgz#d3b91d84dd42fa55ea2da86999316a54d8f53bc9"
-  integrity sha512-W6dRignFu8Gh+4hzz+/grtv4+EFH1ITqnYT8rZ7jBPqvwf1AGWfpS17RP7r5Qevz1kZ/SJLwiSpMl1SnnZeOHw==
-  dependencies:
-    firebase "^9.6.7"
-
+    
 "@babel/code-frame@^7.0.0", "@babel/code-frame@^7.10.4", "@babel/code-frame@^7.12.13", "@babel/code-frame@^7.16.0", "@babel/code-frame@^7.16.7", "@babel/code-frame@^7.8.3":
   version "7.16.7"
   resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.16.7.tgz#44416b6bd7624b998f5b1af5d470856c40138789"
