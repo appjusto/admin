@@ -68,7 +68,6 @@ const BackOffice = () => {
             path={`${path}/push-campaigns`}
             component={PushCampaignPage}
           />
-
           <BOAccessRoute
             path={`${path}/staff-profile`}
             component={StaffProfile}
