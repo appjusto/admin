@@ -24,7 +24,7 @@ import { useObserveLedgerEntry } from 'app/api/ledger/useObserveLedgerEntry';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextAppRequests } from 'app/state/requests/context';
 import CustomRadio from 'common/components/form/CustomRadio';
-import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput2';
+import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
 import {

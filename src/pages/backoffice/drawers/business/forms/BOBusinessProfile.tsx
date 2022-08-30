@@ -1,21 +1,25 @@
 import { Box } from '@chakra-ui/react';
 import * as cnpjutils from '@fnando/cnpj';
 import { useContextBusinessBackoffice } from 'app/state/business/businessBOContext';
-import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput2';
+import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
 import { CustomPatternInput as PatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';
-import { cnpjFormatter, cnpjMask } from 'common/components/form/input/pattern-input/formatters';
+import {
+  cnpjFormatter,
+  cnpjMask,
+} from 'common/components/form/input/pattern-input/formatters';
 import { numbersOnlyParser } from 'common/components/form/input/pattern-input/parsers';
 import { CuisineSelect } from 'common/components/form/select/CuisineSelect';
-import React from 'react';
 import { t } from 'utils/i18n';
 
 export const BOBusinessProfile = () => {
   // context
-  const { business, handleBusinessProfileChange: handleChange } = useContextBusinessBackoffice();
+  const { business, handleBusinessProfileChange: handleChange } =
+    useContextBusinessBackoffice();
   // helpers
-  const isCNPJValid = () => (business?.cnpj ? cnpjutils.isValid(business.cnpj) : false);
+  const isCNPJValid = () =>
+    business?.cnpj ? cnpjutils.isValid(business.cnpj) : false;
   // UI
   return (
     <Box>

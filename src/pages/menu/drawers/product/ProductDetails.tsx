@@ -11,7 +11,7 @@ import {
 } from '@chakra-ui/react';
 import { useClassifications } from 'app/api/platform/useClassifications';
 import CustomCheckbox from 'common/components/form/CustomCheckbox';
-import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput2';
+import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
 import { ImageUploads } from 'common/components/ImageUploads';
