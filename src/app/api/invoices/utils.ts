@@ -30,7 +30,7 @@ export const getInvoicesTotalValueByTypes = (
 ) => {
   return invoices.reduce((result, invoice) => {
     if (types.includes(invoice.invoiceType)) {
-      const value = invoice.fare.value ?? 0;
+      const value = invoice.fare?.value ?? 0;
       return result + value;
     }
     return result;
