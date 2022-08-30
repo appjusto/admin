@@ -5,12 +5,12 @@ import {
   Collapse,
   Flex,
   HStack,
+  Image,
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import Container from 'common/components/Container';
-import Image from 'common/components/Image';
 import logo from 'common/img/logo.svg';
 import { BackOfficeLinks } from 'pages/sidebar/BackOfficeLinks';
 import BusinessInfo from 'pages/sidebar/BusinessInfo';
@@ -64,7 +64,12 @@ export const MenuMobile = () => {
               </Box>
               {!isOpen && (
                 <Box _focus={{ outline: 'none' }} w="90px">
-                  <Image src={logo} alt="Logo AppJusto" width="100%" loading="eager" />
+                  <Image
+                    src={logo}
+                    alt="Logo AppJusto"
+                    width="100%"
+                    loading="eager"
+                  />
                 </Box>
               )}
             </HStack>
@@ -83,7 +88,8 @@ export const MenuMobile = () => {
               </Box>
             </Box>
           )}
-          {((!isBackOffice && !isBackofficeUser) || (isBackOffice && isBackofficeUser)) && (
+          {((!isBackOffice && !isBackofficeUser) ||
+            (isBackOffice && isBackofficeUser)) && (
             <ManagerBar onClick={onToggle} />
           )}
         </Collapse>
