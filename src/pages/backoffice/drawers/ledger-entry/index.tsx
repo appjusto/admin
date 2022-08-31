@@ -62,6 +62,7 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
     updateLedgerEntryResult,
     deleteLedgerEntryResult,
   } = useObserveLedgerEntry(entryId);
+  console.log(entry);
   // state
   const [orderId, setOrderId] = React.useState('');
   const [operation, setOperation] =
@@ -249,7 +250,7 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                   <Text as="span" fontWeight="500">
                     {entry?.createdBy === 'platform'
                       ? 'Plataforma'
-                      : entry?.createdBy.email ?? 'N/E'}
+                      : entry?.createdBy?.email ?? 'N/E'}
                   </Text>
                 </Text>
                 {entry?.updatedBy && (
@@ -262,7 +263,7 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                   >
                     {t('Atualizada por:')}{' '}
                     <Text as="span" fontWeight="500">
-                      {entry.updatedBy.email}
+                      {entry.updatedBy?.email ?? 'N/E'}
                     </Text>
                   </Text>
                 )}

@@ -1,3 +1,4 @@
+import { LedgerEntryStatus } from '@appjusto/types';
 import { IuguInvoiceStatus } from '@appjusto/types/payment/iugu';
 import { Box, Stack } from '@chakra-ui/react';
 import { useAccountInformation } from 'app/api/business/useAccountInformation';
@@ -5,6 +6,7 @@ import { useObserveBusinessAdvances } from 'app/api/business/useObserveBusinessA
 import { useObserveBusinessWithdraws } from 'app/api/business/useObserveBusinessWithdraws';
 import { useRequestWithdraw } from 'app/api/business/useRequestWithdraw';
 import { useObserveInvoicesStatusByPeriod } from 'app/api/invoices/useObserveInvoicesStatusByPeriod';
+import { useObserveLedgerStatusByPeriod } from 'app/api/ledger/useObserveLedgerStatusByPeriod';
 import { useCanAdvanceReceivables } from 'app/api/platform/useCanAdvanceReceivables';
 import { useContextBusinessId } from 'app/state/business/context';
 import { useContextAppRequests } from 'app/state/requests/context';
@@ -27,6 +29,7 @@ import { WithdrawsDrawer } from './WithdrawsDrawer';
 import { WithdrawsTable } from './WithdrawsTable';
 
 const periodStatus = 'paid' as IuguInvoiceStatus;
+const ledgerEntriesStatuses = ['paid'] as LedgerEntryStatus[];
 
 const FinancesPage = () => {
   // context
@@ -58,6 +61,11 @@ const FinancesPage = () => {
     appjustoCosts,
     iuguCosts,
   } = useObserveInvoicesStatusByPeriod(businessId, month, periodStatus);
+  const { periodAmount: ledgerAmount } = useObserveLedgerStatusByPeriod(
+    businessId,
+    month,
+    ledgerEntriesStatuses
+  );
   const advances = useObserveBusinessAdvances(businessId, month);
   const withdraws = useObserveBusinessWithdraws(businessId, month);
   // helpers
@@ -149,7 +157,7 @@ const FinancesPage = () => {
         period={`${monthName} de ${year}`}
         total={total}
         amountProducts={periodProductAmount}
-        amountDelivery={periodDeliveryAmount}
+        amountDelivery={periodDeliveryAmount + ledgerAmount}
         appjustoCosts={appjustoCosts}
         iuguCosts={iuguCosts}
       />

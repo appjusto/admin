@@ -17,7 +17,11 @@ import {
   where,
 } from 'firebase/firestore';
 import FirebaseRefs from '../FirebaseRefs';
-import { customDocumentSnapshot, queryLimit } from '../utils';
+import {
+  customCollectionSnapshot,
+  customDocumentSnapshot,
+  queryLimit,
+} from '../utils';
 
 export default class LedgerApi {
   constructor(private refs: FirebaseRefs) {}
@@ -64,6 +68,24 @@ export default class LedgerApi {
     );
     // returns the unsubscribe function
     return unsubscribe;
+  }
+
+  observeBusinessLedgerByPeriod(
+    resultHandler: (entries: WithId<LedgerEntry>[]) => void,
+    businessId: string,
+    statuses: LedgerEntryStatus[],
+    start: Date,
+    end: Date
+  ): Unsubscribe {
+    const q = query(
+      this.refs.getLedgerRef(),
+      orderBy('createdOn', 'desc'),
+      where('to.accountId', '==', businessId),
+      where('status', 'in', statuses),
+      where('createdOn', '>=', start),
+      where('createdOn', '<=', end)
+    );
+    return customCollectionSnapshot(q, resultHandler);
   }
 
   observeLedgerEntry(
