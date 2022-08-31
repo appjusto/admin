@@ -1,10 +1,12 @@
 import { LedgerEntry, LedgerEntryStatus, WithId } from '@appjusto/types';
 import { useContextApi } from 'app/state/api/context';
 import dayjs from 'dayjs';
-import { InvoicesCosts } from 'pages/finances/utils';
 import React from 'react';
 import { useUserCanReadEntity } from '../auth/useUserCanReadEntity';
-import { getLedgerEntriesTotalValue } from './utils';
+import {
+  getLedgerEntriesIuguTotalValue,
+  getLedgerEntriesTotalValue,
+} from './utils';
 
 export const useObserveLedgerStatusByPeriod = (
   businessId?: string,
@@ -17,10 +19,7 @@ export const useObserveLedgerStatusByPeriod = (
   // state
   const [entries, setEntries] = React.useState<WithId<LedgerEntry>[] | null>();
   const [periodAmount, setPeriodAmount] = React.useState(0);
-  const [iuguCosts, setIuguCosts] = React.useState<InvoicesCosts>({
-    value: 0,
-    fee: 0,
-  });
+  const [iuguValue, setIuguValue] = React.useState(0);
   // side effects
   React.useEffect(() => {
     if (!userCanRead) return;
@@ -43,9 +42,11 @@ export const useObserveLedgerStatusByPeriod = (
   React.useEffect(() => {
     if (!entries) return;
     const amount = getLedgerEntriesTotalValue(entries);
+    const iugu = getLedgerEntriesIuguTotalValue(entries);
     setPeriodAmount(amount);
+    setIuguValue(iugu);
     // TODO: iugu costs
   }, [entries]);
   // return
-  return { periodAmount, iuguCosts };
+  return { periodAmount, iuguValue };
 };

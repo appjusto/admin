@@ -32,13 +32,14 @@ export const calculateAppJustoCosts = (
   return { value, fee };
 };
 
-export const calculateIuguCosts = (
-  amount: number,
-  invoices: WithId<Invoice>[]
-) => {
+export const calculateIuguValue = (invoices: WithId<Invoice>[]) => {
   const value = invoices.reduce((total, invoice) => {
     return (total += invoice.fare?.processing?.value ?? 0);
   }, 0);
-  const fee = value / amount;
-  return { value, fee };
+  return value;
+};
+
+export const calculateIuguCosts = (amount: number, iuguValue: number) => {
+  const fee = iuguValue / amount;
+  return { value: iuguValue, fee };
 };

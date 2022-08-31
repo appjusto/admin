@@ -4,7 +4,7 @@ import { useContextApi } from 'app/state/api/context';
 import dayjs from 'dayjs';
 import {
   calculateAppJustoCosts,
-  calculateIuguCosts,
+  calculateIuguValue,
   InvoicesCosts,
 } from 'pages/finances/utils';
 import React from 'react';
@@ -32,10 +32,7 @@ export const useObserveInvoicesStatusByPeriod = (
     value: 0,
     fee: 0,
   });
-  const [iuguCosts, setIuguCosts] = React.useState<InvoicesCosts>({
-    value: 0,
-    fee: 0,
-  });
+  const [iuguValue, setIuguValue] = React.useState(0);
   // side effects
   React.useEffect(() => {
     if (!userCanRead) return;
@@ -65,15 +62,14 @@ export const useObserveInvoicesStatusByPeriod = (
       invoices,
       invoicesDeliveryTypes
     );
-    const amountTotal = amountProducts + amountDelivery;
     const appjusto = calculateAppJustoCosts(amountProducts, invoices);
-    const iugu = calculateIuguCosts(amountTotal, invoices);
+    const iugu = calculateIuguValue(invoices);
     const total = getInvoicesTotalByTypes(invoices, invoicesProductTypes);
     setTotal(total);
     setPeriodProductAmount(amountProducts);
     setPeriodDeliveryAmount(amountDelivery);
     setAppjustoCosts(appjusto);
-    setIuguCosts(iugu);
+    setIuguValue(iugu);
   }, [invoices]);
   // return
   return {
@@ -82,6 +78,6 @@ export const useObserveInvoicesStatusByPeriod = (
     periodProductAmount,
     periodDeliveryAmount,
     appjustoCosts,
-    iuguCosts,
+    iuguValue,
   };
 };
