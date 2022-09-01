@@ -25,7 +25,6 @@ export const calculateAppJustoCosts = (
   amount: number,
   invoices: WithId<Invoice>[]
 ) => {
-  console.log('amount', amount);
   const value = invoices.reduce((total, invoice) => {
     return (total += invoice.fare?.commission ?? 0);
   }, 0);
