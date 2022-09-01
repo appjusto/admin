@@ -11,6 +11,7 @@ import {
   MdMoped,
   MdPolicy,
   MdRestaurant,
+  MdSportsMotorsports,
 } from 'react-icons/md';
 import { RiChat3Line, RiUserSearchLine } from 'react-icons/ri';
 import { useRouteMatch } from 'react-router-dom';
@@ -31,6 +32,7 @@ type IconsConfig = {
   isMessages?: boolean;
   isConfirmedOverLimit?: boolean;
   courierIconStatus?: { bg: string; color: string };
+  isDispatchingOverLimit?: boolean;
 };
 
 const renderIcons = (iconsConfig: IconsConfig) => {
@@ -42,6 +44,7 @@ const renderIcons = (iconsConfig: IconsConfig) => {
     isMessages,
     isConfirmedOverLimit,
     courierIconStatus,
+    isDispatchingOverLimit,
   } = iconsConfig;
   // UI
   return (
@@ -121,10 +124,28 @@ const renderIcons = (iconsConfig: IconsConfig) => {
           borderRadius="lg"
         >
           <Icon
-            as={MdMoped}
+            as={MdSportsMotorsports}
             w="20px"
             h="20px"
             color={courierIconStatus.color}
+          />
+        </Flex>
+      )}
+      {isDispatchingOverLimit !== undefined && (
+        <Flex
+          w="24px"
+          h="24px"
+          position="relative"
+          justifyContent="center"
+          alignItems="center"
+          bg={isDispatchingOverLimit ? 'red' : 'none'}
+          borderRadius="lg"
+        >
+          <Icon
+            as={MdMoped}
+            w="20px"
+            h="20px"
+            color={isDispatchingOverLimit ? 'white' : '#C8D7CB'}
           />
         </Flex>
       )}
@@ -159,6 +180,9 @@ export const BOOrderListItem = ({ listType, order }: Props) => {
     const isMatchinFlag = order.flags
       ? order.flags.includes('matching')
       : false;
+    const isDispatchingFlag = order.flags
+      ? order.flags.includes('dispatching')
+      : false;
     const courierIconStatus = getOrderMatchingColor(
       isMatchinFlag,
       order.status,
@@ -173,6 +197,7 @@ export const BOOrderListItem = ({ listType, order }: Props) => {
       ...iconsConfig,
       isConfirmedOverLimit,
       courierIconStatus,
+      isDispatchingOverLimit: isDispatchingFlag,
     };
   }
   // side effects
