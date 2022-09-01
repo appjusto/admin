@@ -60,7 +60,7 @@ export const AdvancesDrawer = ({
   const [selected, setSelected] = React.useState<string[]>([]);
   const [isReviewing, setIsReviewing] = React.useState(false);
   const [totalAvailable, setTotalAvailable] = React.useState<string>();
-  const [totalSelected, setTotalSelected] = React.useState<number>();
+  const [totalSelected, setTotalSelected] = React.useState(0);
   const [isFeesAccepted, setIsFeesAccepted] = React.useState(false);
   const { advancedValue, advanceFee, receivedValue } = useReceivablesSimulation(
     businessId,
@@ -96,8 +96,7 @@ export const AdvancesDrawer = ({
     // for withdraws
     //let amount = convertBalance(receivedValue);
     const ids = selected.map((id) => parseInt(id));
-    const amount = totalSelected ?? 0;
-    await advanceReceivables({ ids, amount });
+    await advanceReceivables({ ids, amount: totalSelected });
   };
   // side effects
   React.useEffect(() => {
@@ -384,7 +383,7 @@ export const AdvancesDrawer = ({
               ))}
             </CheckboxGroup>
             <Text mt="4" fontSize="15px" fontWeight="700" lineHeight="21px">
-              {t(`Total selecionado: ${formatCurrency(totalSelected ?? 0)}`)}
+              {t(`Total selecionado: ${formatCurrency(totalSelected)}`)}
             </Text>
           </Box>
         </>
