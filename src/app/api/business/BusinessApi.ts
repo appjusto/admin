@@ -25,11 +25,11 @@ import {
   ProfileSituation,
   RequestWithdrawPayload,
   UpdateBusinessSlugPayload,
-  WithId
+  WithId,
 } from '@appjusto/types';
 import {
   IuguMarketplaceAccountAdvanceSimulation,
-  IuguMarketplaceAccountReceivables
+  IuguMarketplaceAccountReceivables,
 } from '@appjusto/types/payment/iugu';
 import * as Sentry from '@sentry/react';
 // import firebase from 'firebase/compat/app';
@@ -51,7 +51,7 @@ import {
   startAfter,
   Unsubscribe,
   updateDoc,
-  where
+  where,
 } from 'firebase/firestore';
 import { omit } from 'lodash';
 import { documentAs, documentsAs } from '../../../core/fb';
@@ -64,7 +64,10 @@ export default class BusinessApi {
 
   // businesses
   observeBusinesses(
-    resultHandler: (result: WithId<Business>[], last?: QueryDocumentSnapshot<DocumentData>) => void,
+    resultHandler: (
+      result: WithId<Business>[],
+      last?: QueryDocumentSnapshot<DocumentData>
+    ) => void,
     situations: ProfileSituation[],
     startAfterDoc?: QueryDocumentSnapshot<DocumentData>
   ): Unsubscribe {
@@ -79,7 +82,10 @@ export default class BusinessApi {
     return onSnapshot(
       q,
       (snapshot) => {
-        const last = snapshot.docs.length > 0 ? snapshot.docs[snapshot.docs.length - 1] : undefined;
+        const last =
+          snapshot.docs.length > 0
+            ? snapshot.docs[snapshot.docs.length - 1]
+            : undefined;
         resultHandler(documentsAs<Business>(snapshot.docs), last);
       },
       (error) => {
@@ -93,7 +99,10 @@ export default class BusinessApi {
     status: BusinessStatus,
     resultHandler: (result: WithId<Business>[]) => void
   ): Unsubscribe {
-    const q = query(this.refs.getBusinessesRef(), where('status', '==', status));
+    const q = query(
+      this.refs.getBusinessesRef(),
+      where('status', '==', status)
+    );
     // returns the unsubscribe function
     return customCollectionSnapshot(q, resultHandler);
   }
@@ -152,7 +161,10 @@ export default class BusinessApi {
   }
 
   async getBusinessIdByCode(businessCode: string) {
-    const q = query(this.refs.getBusinessesRef(), where('code', '==', businessCode));
+    const q = query(
+      this.refs.getBusinessesRef(),
+      where('code', '==', businessCode)
+    );
     const businessId = await getDocs(q).then((snapshot) => snapshot.docs[0].id);
     return businessId;
   }
@@ -181,7 +193,11 @@ export default class BusinessApi {
     return business.data as WithId<Business>;
   }
 
-  async cloneComplementsGroup(businessId: string, groupId: string, name?: string) {
+  async cloneComplementsGroup(
+    businessId: string,
+    groupId: string,
+    name?: string
+  ) {
     let payload: CloneComplementsGroupPayload = {
       businessId,
       groupId,
@@ -227,12 +243,16 @@ export default class BusinessApi {
       ...businessChanges,
       updatedOn: timestamp,
     };
-    if (businessChanges) batch.update(this.refs.getBusinessRef(businessId), fullBusinessChanges);
+    if (businessChanges)
+      batch.update(this.refs.getBusinessRef(businessId), fullBusinessChanges);
     // manager
-    if (managerChanges) batch.update(this.refs.getManagerRef(managerId), managerChanges);
+    if (managerChanges)
+      batch.update(this.refs.getManagerRef(managerId), managerChanges);
     // bank
     if (bankChanges)
-      batch.set(this.refs.getBusinessBankAccountRef(businessId), bankChanges, { merge: true });
+      batch.set(this.refs.getBusinessBankAccountRef(businessId), bankChanges, {
+        merge: true,
+      });
     // commit
     return batch
       .commit()
@@ -259,14 +279,20 @@ export default class BusinessApi {
     // logo
     if (logoFile) await this.uploadBusinessLogo(businessId, logoFile, () => {});
     //cover
-    if (coverFiles) await this.uploadBusinessCover(businessId, coverFiles, () => {});
+    if (coverFiles)
+      await this.uploadBusinessCover(businessId, coverFiles, () => {});
     // result
     return true;
   }
 
-  async removeBusinessManager(business: WithId<Business>, managerEmail: string) {
+  async removeBusinessManager(
+    business: WithId<Business>,
+    managerEmail: string
+  ) {
     const timestamp = serverTimestamp();
-    const managers = business.managers?.filter((email) => email !== managerEmail);
+    const managers = business.managers?.filter(
+      (email) => email !== managerEmail
+    );
     const fullChanges = {
       managers,
       updatedOn: timestamp,
@@ -276,7 +302,9 @@ export default class BusinessApi {
 
   async sendBusinessKeepAlive(businessId: string) {
     const timestamp = serverTimestamp();
-    return await updateDoc(this.refs.getBusinessRef(businessId), { keepAlive: timestamp });
+    return await updateDoc(this.refs.getBusinessRef(businessId), {
+      keepAlive: timestamp,
+    });
   }
 
   async deleteBusinessProfile(data: Partial<DeleteBusinessPayload>) {
@@ -307,7 +335,10 @@ export default class BusinessApi {
     businessId: string,
     resultHandler: (result: WithId<ProfileNote>[]) => void
   ): Unsubscribe {
-    const q = query(this.refs.getBusinessProfileNotesRef(businessId), orderBy('createdOn', 'desc'));
+    const q = query(
+      this.refs.getBusinessProfileNotesRef(businessId),
+      orderBy('createdOn', 'desc')
+    );
     // returns the unsubscribe function
     return customCollectionSnapshot(q, resultHandler);
   }
@@ -327,14 +358,19 @@ export default class BusinessApi {
     changes: Partial<ProfileNote>
   ) {
     const timestamp = serverTimestamp();
-    await updateDoc(this.refs.getBusinessProfileNoteRef(businessId, profileNoteId), {
-      ...changes,
-      updatedOn: timestamp,
-    } as Partial<ProfileNote>);
+    await updateDoc(
+      this.refs.getBusinessProfileNoteRef(businessId, profileNoteId),
+      {
+        ...changes,
+        updatedOn: timestamp,
+      } as Partial<ProfileNote>
+    );
   }
 
   async deleteProfileNote(businessId: string, profileNoteId: string) {
-    await deleteDoc(this.refs.getBusinessProfileNoteRef(businessId, profileNoteId));
+    await deleteDoc(
+      this.refs.getBusinessProfileNoteRef(businessId, profileNoteId)
+    );
   }
 
   // bank account
@@ -348,7 +384,11 @@ export default class BusinessApi {
   }
 
   // logo
-  uploadBusinessLogo(businessId: string, file: File, progressHandler?: (progress: number) => void) {
+  uploadBusinessLogo(
+    businessId: string,
+    file: File,
+    progressHandler?: (progress: number) => void
+  ) {
     return this.files.upload(
       file,
       this.refs.getBusinessLogoUploadStoragePath(businessId),
@@ -356,7 +396,9 @@ export default class BusinessApi {
     );
   }
   getBusinessLogoURL(businessId: string) {
-    return this.files.getDownloadURL(this.refs.getBusinessLogoStoragePath(businessId));
+    return this.files.getDownloadURL(
+      this.refs.getBusinessLogoStoragePath(businessId)
+    );
   }
 
   // cover image
@@ -386,7 +428,9 @@ export default class BusinessApi {
   }
 
   getBusinessCoverURL(businessId: string, size: string) {
-    return this.files.getDownloadURL(this.refs.getBusinessCoverStoragePath(businessId, size));
+    return this.files.getDownloadURL(
+      this.refs.getBusinessCoverStoragePath(businessId, size)
+    );
   }
 
   // menu config
@@ -409,7 +453,11 @@ export default class BusinessApi {
     return unsubscribe;
   }
 
-  async updateMenuOrdering(businessId: string, ordering: Ordering, menuId?: string) {
+  async updateMenuOrdering(
+    businessId: string,
+    ordering: Ordering,
+    menuId?: string
+  ) {
     const ref = this.refs.getBusinessMenuOrderingRef(businessId, menuId);
     await setDoc(ref, ordering, { merge: false });
   }
@@ -445,7 +493,11 @@ export default class BusinessApi {
     return id;
   }
 
-  async createCategory(businessId: string, categoryId: string, category: Category) {
+  async createCategory(
+    businessId: string,
+    categoryId: string,
+    category: Category
+  ) {
     const timestamp = serverTimestamp();
     const ref = this.refs.getBusinessCategoryRef(businessId, categoryId);
     await setDoc(ref, {
@@ -471,7 +523,11 @@ export default class BusinessApi {
     return documentAs<Category>(doc);
   }
 
-  async updateCategory(businessId: string, categoryId: string, changes: Partial<Category>) {
+  async updateCategory(
+    businessId: string,
+    categoryId: string,
+    changes: Partial<Category>
+  ) {
     const timestamp = serverTimestamp();
     const ref = this.refs.getBusinessCategoryRef(businessId, categoryId);
     await updateDoc(ref, {
@@ -512,7 +568,11 @@ export default class BusinessApi {
     return documentAs<Product>(doc);
   }
 
-  async createProduct(businessId: string, product: Product, imageFiles?: File[] | null) {
+  async createProduct(
+    businessId: string,
+    product: Product,
+    imageFiles?: File[] | null
+  ) {
     // creating product
     const timestamp = serverTimestamp();
     const productId = this.refs.getBusinessProductNewRef(businessId);
@@ -554,9 +614,13 @@ export default class BusinessApi {
       };
     }
     try {
-      await setDoc(this.refs.getBusinessProductRef(businessId, productId), newProductObject, {
-        merge: true,
-      });
+      await setDoc(
+        this.refs.getBusinessProductRef(businessId, productId),
+        newProductObject,
+        {
+          merge: true,
+        }
+      );
       return true;
     } catch (error) {
       throw new Error(`updateProductError: ${error}`);
@@ -646,22 +710,31 @@ export default class BusinessApi {
   }
 
   async deleteComplementsGroup(businessId: string, groupId: string) {
-    await deleteDoc(this.refs.getBusinessComplementsGroupRef(businessId, groupId));
+    await deleteDoc(
+      this.refs.getBusinessComplementsGroupRef(businessId, groupId)
+    );
   }
 
-  async createComplement(businessId: string, item: Complement, imageFile?: File | null) {
+  async createComplement(
+    businessId: string,
+    item: Complement,
+    imageFile?: File | null
+  ) {
     const timestamp = serverTimestamp();
     const complementId = this.refs.getBusinessComplementNewRef(businessId);
     if (imageFile) {
       await this.uploadComplementPhoto(businessId, complementId, imageFile);
     }
     try {
-      await setDoc(this.refs.getBusinessComplementRef(businessId, complementId), {
-        ...item,
-        enabled: true,
-        createdOn: timestamp,
-        updatedOn: timestamp,
-      } as Complement);
+      await setDoc(
+        this.refs.getBusinessComplementRef(businessId, complementId),
+        {
+          ...item,
+          enabled: true,
+          createdOn: timestamp,
+          updatedOn: timestamp,
+        } as Complement
+      );
       return complementId;
     } catch (error) {
       throw new Error(`createProductError: ${error}`);
@@ -689,7 +762,9 @@ export default class BusinessApi {
   }
 
   async deleteComplement(businessId: string, complementId: string) {
-    return await deleteDoc(this.refs.getBusinessComplementRef(businessId, complementId));
+    return await deleteDoc(
+      this.refs.getBusinessComplementRef(businessId, complementId)
+    );
   }
 
   /////// NEW COMPLEMENTS LOGIC END
@@ -699,7 +774,11 @@ export default class BusinessApi {
     );
   }
 
-  async uploadComplementPhoto(businessId: string, complementId: string, file: File) {
+  async uploadComplementPhoto(
+    businessId: string,
+    complementId: string,
+    file: File
+  ) {
     try {
       return await this.files.upload(
         file,
@@ -748,11 +827,17 @@ export default class BusinessApi {
     return (await this.refs.getFetchAdvanceSimulationCallable()(payload))
       .data as unknown as IuguMarketplaceAccountAdvanceSimulation;
   }
-  async advanceReceivables(accountId: string, ids: number[]): Promise<any> {
+  async advanceReceivables(
+    accountId: string,
+    data: { ids: number[]; amount: number }
+  ): Promise<any> {
+    const { ids, amount } = data;
     const payload: AdvanceReceivablesPayload = {
       accountType: 'business',
       accountId,
       ids,
+      // @ts-ignore
+      amount,
       meta: { version: '1' }, // TODO: pass correct version on
     };
     return (await this.refs.getAdvanceReceivablesCallable()(payload)).data;
