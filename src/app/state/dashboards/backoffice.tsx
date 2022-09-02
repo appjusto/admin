@@ -49,6 +49,7 @@ const unsafeFlags = ['unsafe'];
 const initialAutoFlags = [
   'matching',
   'waiting-confirmation',
+  'dispatching',
 ] as WarningOrdersFilter[];
 const issueFlags = ['issue'];
 
