@@ -4,8 +4,7 @@ import { useContextApi } from 'app/state/api/context';
 import dayjs from 'dayjs';
 import {
   calculateAppJustoCosts,
-  calculateIuguValue,
-  InvoicesCosts,
+  calculateIuguCosts,
 } from 'pages/finances/utils';
 import React from 'react';
 import { useUserCanReadEntity } from '../auth/useUserCanReadEntity';
@@ -28,11 +27,8 @@ export const useObserveInvoicesStatusByPeriod = (
   const [total, setTotal] = React.useState(0);
   const [periodProductAmount, setPeriodProductAmount] = React.useState(0);
   const [periodDeliveryAmount, setPeriodDeliveryAmount] = React.useState(0);
-  const [appjustoCosts, setAppjustoCosts] = React.useState<InvoicesCosts>({
-    value: 0,
-    fee: 0,
-  });
-  const [iuguValue, setIuguValue] = React.useState(0);
+  const [appjustoCosts, setAppjustoCosts] = React.useState(0);
+  const [iuguCosts, setIuguCosts] = React.useState(0);
   // side effects
   React.useEffect(() => {
     if (!userCanRead) return;
@@ -62,14 +58,14 @@ export const useObserveInvoicesStatusByPeriod = (
       invoices,
       invoicesDeliveryTypes
     );
-    const appjusto = calculateAppJustoCosts(amountProducts, invoices);
-    const iugu = calculateIuguValue(invoices);
+    const appjusto = calculateAppJustoCosts(invoices);
+    const iugu = calculateIuguCosts(invoices);
     const total = getInvoicesTotalByTypes(invoices, invoicesProductTypes);
     setTotal(total);
     setPeriodProductAmount(amountProducts);
     setPeriodDeliveryAmount(amountDelivery);
     setAppjustoCosts(appjusto);
-    setIuguValue(iugu);
+    setIuguCosts(iugu);
   }, [invoices]);
   // return
   return {
@@ -78,6 +74,6 @@ export const useObserveInvoicesStatusByPeriod = (
     periodProductAmount,
     periodDeliveryAmount,
     appjustoCosts,
-    iuguValue,
+    iuguCosts,
   };
 };

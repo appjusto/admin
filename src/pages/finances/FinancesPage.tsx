@@ -25,7 +25,6 @@ import { AdvancesDrawer } from './AdvancesDrawer';
 import { AdvancesTable } from './AdvancesTable';
 import { BasicInfoBox } from './BasicInfoBox';
 import { PeriodTable } from './PeriodTable';
-import { calculateIuguCosts, InvoicesCosts } from './utils';
 import { WithdrawsDrawer } from './WithdrawsDrawer';
 import { WithdrawsTable } from './WithdrawsTable';
 
@@ -47,10 +46,6 @@ const FinancesPage = () => {
   // state
   const [dateTime, setDateTime] = React.useState('');
   const [month, setMonth] = React.useState<Date | null>(new Date());
-  const [iuguCosts, setIuguCosts] = React.useState<InvoicesCosts>({
-    value: 0,
-    fee: 0,
-  });
   const [availableReceivable, setAvailableReceivable] = React.useState<
     string | null
   >();
@@ -64,15 +59,16 @@ const FinancesPage = () => {
     periodDeliveryAmount,
     total,
     appjustoCosts,
-    iuguValue,
+    iuguCosts,
   } = useObserveInvoicesStatusByPeriod(businessId, month, periodStatus);
-  const { periodAmount: ledgerAmount, iuguValue: ledgerIugu } =
+  const { periodAmount: ledgerAmount, iuguValue: ledgerIuguValue } =
     useObserveLedgerStatusByPeriod(businessId, month, ledgerEntriesStatuses);
   const advances = useObserveBusinessAdvances(businessId, month);
   const withdraws = useObserveBusinessWithdraws(businessId, month);
   // helpers
   const monthName = month ? getMonthName(month.getMonth()) : 'N/E';
   const year = month ? month.getFullYear() : 'N/E';
+  const iuguTotalCosts = iuguCosts + ledgerIuguValue;
   // handlers
   const closeDrawerHandler = () => {
     refreshAccountInformation();
@@ -99,19 +95,6 @@ const FinancesPage = () => {
     const { date, time } = getDateTime();
     setDateTime(`${date} às ${time}`);
   }, []);
-  React.useEffect(() => {
-    const amountTotal =
-      periodProductAmount + periodDeliveryAmount + ledgerAmount;
-    const iuguTotal = iuguValue + ledgerIugu;
-    const iuguResult = calculateIuguCosts(amountTotal, iuguTotal);
-    setIuguCosts(iuguResult);
-  }, [
-    periodProductAmount,
-    periodDeliveryAmount,
-    iuguValue,
-    ledgerAmount,
-    ledgerIugu,
-  ]);
   React.useEffect(() => {
     if (accountInformation === undefined) return;
     setAvailableReceivable(accountInformation?.receivable_balance ?? null);
@@ -174,7 +157,7 @@ const FinancesPage = () => {
         amountProducts={periodProductAmount}
         amountDelivery={periodDeliveryAmount + ledgerAmount}
         appjustoCosts={appjustoCosts}
-        iuguCosts={iuguCosts}
+        iuguCosts={iuguTotalCosts}
       />
       <SectionTitle>{t('Antecipações')}</SectionTitle>
       <AdvancesTable advances={advances} />

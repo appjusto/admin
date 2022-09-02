@@ -21,25 +21,16 @@ export const formatIuguDateToDisplay = (date: string) => {
 //   const value = amount * fee;
 //   return { value, fee };
 // };
-export const calculateAppJustoCosts = (
-  amount: number,
-  invoices: WithId<Invoice>[]
-) => {
+export const calculateAppJustoCosts = (invoices: WithId<Invoice>[]) => {
   const value = invoices.reduce((total, invoice) => {
     return (total += invoice.fare?.commission ?? 0);
-  }, 0);
-  const fee = amount > 0 ? value / amount : 0;
-  return { value, fee };
-};
-
-export const calculateIuguValue = (invoices: WithId<Invoice>[]) => {
-  const value = invoices.reduce((total, invoice) => {
-    return (total += invoice.fare?.processing?.value ?? 0);
   }, 0);
   return value;
 };
 
-export const calculateIuguCosts = (amount: number, iuguValue: number) => {
-  const fee = amount > 0 ? iuguValue / amount : 0;
-  return { value: iuguValue, fee };
+export const calculateIuguCosts = (invoices: WithId<Invoice>[]) => {
+  const value = invoices.reduce((total, invoice) => {
+    return (total += invoice.fare?.processing?.value ?? 0);
+  }, 0);
+  return value;
 };
