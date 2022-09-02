@@ -1,4 +1,10 @@
-import { Order, OrderStatus, ProfileChange, WithId } from '@appjusto/types';
+import {
+  Order,
+  OrderFlag,
+  OrderStatus,
+  ProfileChange,
+  WithId,
+} from '@appjusto/types';
 import { useObserveFlaggedOrders } from 'app/api/order/useObserveFlaggedOrders';
 import { useObserveStaffOrders } from 'app/api/order/useObserveStaffOrders';
 import {
@@ -16,9 +22,9 @@ interface ContextProps {
   issueOrders: WithId<Order>[];
   watchedOrders: WithId<Order>[];
   userChanges: WithId<ProfileChange>[];
-  autoFlags: WarningOrdersFilter[];
+  autoFlags: OrderFlag[];
   // fetchNextActiveOrders(): void;
-  handleWarningOrdersFilter(flags: WarningOrdersFilter[]): void;
+  handleWarningOrdersFilter(flags: OrderFlag[]): void;
   fetchNextUnsafeOrders(): void;
   fetchNextIssueOrders(): void;
   fetchNextWarningOrders(): void;
@@ -33,8 +39,6 @@ interface Props {
   children: React.ReactNode | React.ReactNode[];
 }
 
-export type WarningOrdersFilter = 'matching' | 'waiting-confirmation';
-
 const statuses = [
   'charged',
   'confirmed',
@@ -47,10 +51,11 @@ const usersChangesSituations = ['pending'] as ProfileChangesSituations[];
 
 const unsafeFlags = ['unsafe'];
 const initialAutoFlags = [
-  'matching',
   'waiting-confirmation',
-  'dispatching',
-] as WarningOrdersFilter[];
+  'matching',
+  'pick-up',
+  'delivering',
+] as OrderFlag[];
 const issueFlags = ['issue'];
 
 export const BackofficeDashboardProvider = ({ children }: Props) => {
@@ -58,7 +63,7 @@ export const BackofficeDashboardProvider = ({ children }: Props) => {
   const { user, isBackofficeSuperuser } = useContextFirebaseUser();
   // state
   const [autoFlags, setAutoFlags] =
-    React.useState<WarningOrdersFilter[]>(initialAutoFlags);
+    React.useState<OrderFlag[]>(initialAutoFlags);
   // const { orders: activeOrders, fetchNextOrders: fetchNextActiveOrders } =
   //   useObserveBOActiveOrders(statuses, !isBackofficeSuperuser);
   const { orders: unsafeOrders, fetchNextOrders: fetchNextUnsafeOrders } =
@@ -72,7 +77,7 @@ export const BackofficeDashboardProvider = ({ children }: Props) => {
     useObserveUsersChanges(usersChangesSituations);
   // handlers
   const handleWarningOrdersFilter = React.useCallback(
-    (flags: WarningOrdersFilter[]) => setAutoFlags(flags),
+    (flags: OrderFlag[]) => setAutoFlags(flags),
     []
   );
   // provider

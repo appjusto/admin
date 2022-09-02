@@ -569,6 +569,7 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                   <CustomRadio value="same-owner-accounts">
                     {t('Contas do mesmo usuário')}
                   </CustomRadio>
+                  <CustomRadio value="others">{t('Outros')}</CustomRadio>
                 </HStack>
               </RadioGroup>
               <Textarea

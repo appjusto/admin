@@ -6,12 +6,13 @@ import foodIcon from 'common/img/bo-food.svg';
 import p2pIcon from 'common/img/bo-p2p.svg';
 import { Timestamp } from 'firebase/firestore';
 import React from 'react';
+import { FiPackage } from 'react-icons/fi';
 import {
   MdErrorOutline,
   MdMoped,
+  MdOutlineSportsMotorsports,
   MdPolicy,
   MdRestaurant,
-  MdSportsMotorsports,
 } from 'react-icons/md';
 import { RiChat3Line, RiUserSearchLine } from 'react-icons/ri';
 import { useRouteMatch } from 'react-router-dom';
@@ -32,6 +33,7 @@ type IconsConfig = {
   isMessages?: boolean;
   isConfirmedOverLimit?: boolean;
   courierIconStatus?: { bg: string; color: string };
+  isPickupOverLimit?: boolean;
   isDispatchingOverLimit?: boolean;
 };
 
@@ -44,6 +46,7 @@ const renderIcons = (iconsConfig: IconsConfig) => {
     isMessages,
     isConfirmedOverLimit,
     courierIconStatus,
+    isPickupOverLimit,
     isDispatchingOverLimit,
   } = iconsConfig;
   // UI
@@ -124,10 +127,28 @@ const renderIcons = (iconsConfig: IconsConfig) => {
           borderRadius="lg"
         >
           <Icon
-            as={MdSportsMotorsports}
+            as={MdOutlineSportsMotorsports}
             w="20px"
             h="20px"
             color={courierIconStatus.color}
+          />
+        </Flex>
+      )}
+      {isPickupOverLimit !== undefined && (
+        <Flex
+          w="24px"
+          h="24px"
+          position="relative"
+          justifyContent="center"
+          alignItems="center"
+          bg={isPickupOverLimit ? 'red' : 'none'}
+          borderRadius="lg"
+        >
+          <Icon
+            as={FiPackage}
+            w="19px"
+            h="19px"
+            color={isPickupOverLimit ? 'white' : '#C8D7CB'}
           />
         </Flex>
       )}
@@ -177,11 +198,12 @@ export const BOOrderListItem = ({ listType, order }: Props) => {
     iconsConfig.isIssue = order.flags && order.flags.includes('issue');
   }
   if (listType === 'orders-watched' || listType === 'orders-warning') {
+    const isConfirmedOverLimit =
+      order.type === 'food'
+        ? order.flags && order.flags.includes('waiting-confirmation')
+        : undefined;
     const isMatchinFlag = order.flags
       ? order.flags.includes('matching')
-      : false;
-    const isDispatchingFlag = order.flags
-      ? order.flags.includes('dispatching')
       : false;
     const courierIconStatus = getOrderMatchingColor(
       isMatchinFlag,
@@ -189,15 +211,18 @@ export const BOOrderListItem = ({ listType, order }: Props) => {
       order.dispatchingStatus,
       order.courier?.id
     );
-    const isConfirmedOverLimit =
-      order.type === 'food'
-        ? order.flags && order.flags.includes('waiting-confirmation')
-        : undefined;
+    const isPickupOverLimit = order.flags
+      ? order.flags.includes('pick-up')
+      : false;
+    const isDispatchingOverLimit = order.flags
+      ? order.flags.includes('delivering')
+      : false;
     iconsConfig = {
       ...iconsConfig,
       isConfirmedOverLimit,
       courierIconStatus,
-      isDispatchingOverLimit: isDispatchingFlag,
+      isPickupOverLimit,
+      isDispatchingOverLimit,
     };
   }
   // side effects
