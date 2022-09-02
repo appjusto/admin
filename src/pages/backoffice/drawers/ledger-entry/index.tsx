@@ -62,7 +62,6 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
     updateLedgerEntryResult,
     deleteLedgerEntryResult,
   } = useObserveLedgerEntry(entryId);
-  console.log(entry);
   // state
   const [orderId, setOrderId] = React.useState('');
   const [operation, setOperation] =

@@ -50,7 +50,7 @@ const unsafeStatus = 'charged';
 const usersChangesSituations = ['pending'] as ProfileChangesSituations[];
 
 const unsafeFlags = ['unsafe'];
-const initialAutoFlags = [
+export const initialAutoFlags = [
   'waiting-confirmation',
   'matching',
   'pick-up',
