@@ -32,7 +32,7 @@ type IconsConfig = {
   isIssue?: boolean;
   isMessages?: boolean;
   isConfirmedOverLimit?: boolean;
-  courierIconStatus?: { bg: string; color: string };
+  courierIconStatus?: { bg: string; border: string; color: string };
   isPickupOverLimit?: boolean;
   isDispatchingOverLimit?: boolean;
 };
@@ -124,6 +124,7 @@ const renderIcons = (iconsConfig: IconsConfig) => {
           justifyContent="center"
           alignItems="center"
           bg={courierIconStatus.bg}
+          border={courierIconStatus.border}
           borderRadius="lg"
         >
           <Icon
@@ -207,7 +208,6 @@ export const BOOrderListItem = ({ listType, order }: Props) => {
       : false;
     const courierIconStatus = getOrderMatchingColor(
       isMatchinFlag,
-      order.status,
       order.dispatchingStatus,
       order.courier?.id
     );
