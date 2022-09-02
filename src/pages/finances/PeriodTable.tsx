@@ -11,7 +11,7 @@ import {
 } from '@chakra-ui/react';
 import { usePlatformFees } from 'app/api/platform/usePlatformFees';
 import { MdInfoOutline } from 'react-icons/md';
-import { formatCurrency, formatPct } from 'utils/formatters';
+import { formatCurrency } from 'utils/formatters';
 import { t } from 'utils/i18n';
 import { InvoicesCosts } from './utils';
 
@@ -53,11 +53,11 @@ export const PeriodTable = ({
             </Tr>
             <Tr fontSize="xs" fontWeight="500">
               <Td color="black">
-                {t(`Taxas - AppJusto (${formatPct(appjustoCosts.fee)})`)}
+                {t('Taxas - AppJusto')}
                 <Tooltip
                   placement="top"
                   label={t(
-                    'A comissão do AppJusto incide somente sobre o valor dos produtos vendidos'
+                    '5% de comissão do AppJusto que incide somente sobre o valor dos produtos vendidos'
                   )}
                 >
                   <Text as="span">
@@ -81,7 +81,7 @@ export const PeriodTable = ({
             </Tr>
             <Tr fontSize="xs" fontWeight="500">
               <Td color="black">
-                {t(`Taxas - Iugu (${formatPct(iuguCosts.fee)})`)}
+                {t('Taxas - Iugu')}
                 <Tooltip
                   placement="top"
                   label={
