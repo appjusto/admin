@@ -54,7 +54,10 @@ export default class InvoicesApi {
     );
     if (businessId) q = query(q, where('accountId', '==', businessId));
     // returns the unsubscribe function
-    return customCollectionSnapshot(q, resultHandler);
+    return customCollectionSnapshot(q, resultHandler, {
+      captureException: true,
+      avoidPenddingWrites: false,
+    });
   }
 
   observeInvoices(
