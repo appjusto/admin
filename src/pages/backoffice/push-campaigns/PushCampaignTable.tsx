@@ -18,6 +18,7 @@ export const PushCampaignTable = ({ campaigns }: PushCampaignTableProps) => {
             <Th>{t('Agendada para')}</Th>
             <Th>{t('Nome')}</Th>
             <Th>{t('Status')}</Th>
+            <Th>{t('Audiência')}</Th>
             <Th></Th>
           </Tr>
         </Thead>

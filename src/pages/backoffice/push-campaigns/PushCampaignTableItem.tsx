@@ -23,6 +23,7 @@ export const PushCampaignTableItem = ({
       <Td>{getDateAndHour(campaign.scheduledTo)}</Td>
       <Td>{campaign.name}</Td>
       <Td>{pushStatusPTOptions[campaign.status]}</Td>
+      <Td>{campaign.audience ?? 0}</Td>
       <Td>
         <CustomButton
           mt="0"
