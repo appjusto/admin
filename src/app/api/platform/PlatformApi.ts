@@ -139,7 +139,7 @@ export default class PlatformApi {
   }
 
   async fetchCuisines() {
-    const q = query(this.refs.getCuisinesRef(), orderBy('order', 'asc'));
+    const q = query(this.refs.getCuisinesRef(), orderBy('name', 'asc'));
     const data = await getDocs(q);
     return documentsAs<Cuisine>(data.docs);
   }
