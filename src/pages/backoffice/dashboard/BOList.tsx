@@ -73,10 +73,7 @@ export const BOList = ({
 }: BOListProps) => {
   // refs
   const listRef = React.useRef<HTMLDivElement>(null);
-  const listHeight =
-    listType.includes('orders') && listType !== 'orders-watched'
-      ? '600px'
-      : '300px';
+  const listHeight = listType.includes('orders') ? '600px' : '300px';
   // helpers
   const isFilter =
     filterOptions !== undefined &&
