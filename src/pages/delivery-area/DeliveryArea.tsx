@@ -1,5 +1,5 @@
 import { Business, BusinessAddress } from '@appjusto/types';
-import { Box, Flex, Stack, Text } from '@chakra-ui/react';
+import { Box, Flex, HStack, Spinner, Stack, Text } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useCepAndGeocode } from 'app/api/business/useCepAndGeocode';
 import { getConfig } from 'app/api/config';
@@ -7,10 +7,16 @@ import { useContextBusiness } from 'app/state/business/context';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import { CustomNumberInput as NumberInput } from 'common/components/form/input/CustomNumberInput';
 import { CustomPatternInput as PatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';
-import { cepFormatter, cepMask } from 'common/components/form/input/pattern-input/formatters';
+import {
+  cepFormatter,
+  cepMask,
+} from 'common/components/form/input/pattern-input/formatters';
 import { numbersOnlyParser } from 'common/components/form/input/pattern-input/parsers';
 import { Select } from 'common/components/form/select/Select';
-import { coordsFromLatLnt, SaoPauloCoords } from 'core/api/thirdparty/maps/utils';
+import {
+  coordsFromLatLnt,
+  SaoPauloCoords,
+} from 'core/api/thirdparty/maps/utils';
 import { safeParseInt } from 'core/numbers';
 import { GeoPoint } from 'firebase/firestore';
 import { hash } from 'geokit';
@@ -35,14 +41,22 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
   const [map, setMap] = React.useState<google.maps.Map>();
   const [range, setRange] = React.useState<google.maps.Circle>();
   const [cep, setCEP] = React.useState(business?.businessAddress?.cep ?? '');
-  const [address, setAddress] = React.useState(business?.businessAddress?.address ?? '');
-  const [number, setNumber] = React.useState(business?.businessAddress?.number ?? '');
+  const [address, setAddress] = React.useState(
+    business?.businessAddress?.address ?? ''
+  );
+  const [number, setNumber] = React.useState(
+    business?.businessAddress?.number ?? ''
+  );
   const [city, setCity] = React.useState(business?.businessAddress?.city ?? '');
-  const [state, setState] = React.useState(business?.businessAddress?.state ?? '');
+  const [state, setState] = React.useState(
+    business?.businessAddress?.state ?? ''
+  );
   const [neighborhood, setNeighborhood] = React.useState(
     business?.businessAddress?.neighborhood ?? ''
   );
-  const [additional, setAdditional] = React.useState(business?.businessAddress?.additional ?? '');
+  const [additional, setAdditional] = React.useState(
+    business?.businessAddress?.additional ?? ''
+  );
   const [deliveryRange, setDeliveryRange] = React.useState(
     String(business?.deliveryRange ?? defaultRadius)
   );
@@ -54,21 +68,24 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
   );
   const { isLoading, isSuccess } = result;
   // cep & geocoding
-  const { cepResult, geocodingResult } = useCepAndGeocode(business?.businessAddress, {
-    cep,
-    address,
-    number,
-    neighborhood,
-    city,
-    state,
-    additional,
-  });
+  const { cepResult, geocodingResult } = useCepAndGeocode(
+    business?.businessAddress,
+    {
+      cep,
+      address,
+      number,
+      neighborhood,
+      city,
+      state,
+      additional,
+    }
+  );
   const center = coordsFromLatLnt(geocodingResult ?? SaoPauloCoords);
   // refs
   const cepRef = React.useRef<HTMLInputElement>(null);
   const numberRef = React.useRef<HTMLInputElement>(null);
   // handlers
-  const onSubmitHandler = async () => {
+  const onSubmitHandler = () => {
     let addressObj = {
       cep,
       address,
@@ -84,7 +101,10 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
     };
     if (geocodingResult) {
       addressObj.latlng = geocodingResult;
-      profile.coordinates = new GeoPoint(geocodingResult.latitude, geocodingResult.longitude);
+      profile.coordinates = new GeoPoint(
+        geocodingResult.latitude,
+        geocodingResult.longitude
+      );
       profile.g = {
         geopoint: profile.coordinates,
         geohash: hash({
@@ -94,7 +114,7 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
       };
     }
     profile.businessAddress = addressObj;
-    await updateBusinessProfile(profile);
+    updateBusinessProfile(profile);
   };
   // side effects
   // initial focus
@@ -106,13 +126,20 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
   React.useEffect(() => {
     if (business) {
       if (business.businessAddress?.cep) setCEP(business.businessAddress.cep);
-      if (business.businessAddress?.address) setAddress(business.businessAddress.address);
-      if (business.businessAddress?.number) setNumber(business.businessAddress.number);
-      if (business.businessAddress?.city) setCity(business.businessAddress.city);
-      if (business.businessAddress?.state) setState(business.businessAddress.state);
-      if (business.businessAddress?.additional) setAdditional(business.businessAddress.additional);
-      if (business.deliveryRange) setDeliveryRange(String(business.deliveryRange / 1000));
-      if (business.averageCookingTime) setAverageCookingTime(business.averageCookingTime);
+      if (business.businessAddress?.address)
+        setAddress(business.businessAddress.address);
+      if (business.businessAddress?.number)
+        setNumber(business.businessAddress.number);
+      if (business.businessAddress?.city)
+        setCity(business.businessAddress.city);
+      if (business.businessAddress?.state)
+        setState(business.businessAddress.state);
+      if (business.businessAddress?.additional)
+        setAdditional(business.businessAddress.additional);
+      if (business.deliveryRange)
+        setDeliveryRange(String(business.deliveryRange / 1000));
+      if (business.averageCookingTime)
+        setAverageCookingTime(business.averageCookingTime);
     }
   }, [business]);
   // after postal lookup, change focus to number input
@@ -164,7 +191,9 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
       >
         <PageHeader
           title={t('Endereço do restaurante')}
-          subtitle={t('O raio de entrega é calculado a partir do endereço do seu restaurante')}
+          subtitle={t(
+            'O raio de entrega é calculado a partir do endereço do seu restaurante'
+          )}
         />
         <Flex flexGrow={0}>
           <PatternInput
@@ -268,12 +297,20 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
             }
           />
         </Flex>
-        {geocodingResult !== undefined && (
+        {geocodingResult !== undefined ? (
           <>
             <Box
               mt="6"
-              w={{ base: '328px', md: '380px', lg: onboarding ? '536px' : '756px' }}
-              h={{ base: '240px', md: '260px', lg: onboarding ? '380px' : '420px' }}
+              w={{
+                base: '328px',
+                md: '380px',
+                lg: onboarding ? '536px' : '756px',
+              }}
+              h={{
+                base: '240px',
+                md: '260px',
+                lg: onboarding ? '380px' : '420px',
+              }}
             >
               <GoogleMapReact
                 bootstrapURLKeys={{ key: googleMapsApiKey }}
@@ -299,10 +336,19 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
             </Box>
             {geocodingResult === null && (
               <Text mt="2" fontSize="sm" lineHeight="21px" color="red">
-                {t('Não foi possível encontrar uma geolocalização para o endereço informado.')}
+                {t(
+                  'Não foi possível encontrar as coordenadas do endereço informado.'
+                )}
               </Text>
             )}
           </>
+        ) : (
+          <HStack mt="4" spacing={2} alignItems="center">
+            <Text fontSize="lg" fontWeight="500" lineHeight="21px">
+              {t('Buscando coordenadas para o endereço informado')}
+            </Text>
+            <Spinner size="sm" />
+          </HStack>
         )}
         <Text mt="12" fontSize="xl" lineHeight="26px" color="black">
           {t('Tempo médio de preparo dos pratos')}
@@ -317,7 +363,12 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
           getAverageCookingTime={setAverageCookingTime}
           cookingTimeMode={business?.settings?.cookingTimeMode}
         />
-        <PageFooter onboarding={onboarding} redirect={redirect} isLoading={isLoading} />
+        <PageFooter
+          onboarding={onboarding}
+          redirect={redirect}
+          isLoading={isLoading}
+          isDisabled={geocodingResult === undefined}
+        />
       </form>
     </Box>
   );
