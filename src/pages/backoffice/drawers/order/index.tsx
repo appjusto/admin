@@ -5,7 +5,6 @@ import {
   Issue,
   IssueType,
   Order,
-  OrderPaymentLog,
   OrderStatus,
   WithId,
 } from '@appjusto/types';
@@ -100,21 +99,21 @@ export const BackofficeOrderDrawer = ({
   ]);
   const [loadingState, setLoadingState] =
     React.useState<OrderDrawerLoadingState>('idle');
-  const [invoicesDisabled, setInvoicesDisabled] = React.useState(true);
-  const [matchingDisabled, setMatchingDisabled] = React.useState(true);
-  const [chatDisabled, setChatDisabled] = React.useState(true);
+  const [invoicesActive, setInvoicesActive] = React.useState(false);
+  const [matchingActive, setMatchingActive] = React.useState(false);
+  const [chatActive, setChatActive] = React.useState(false);
   const { invoices, logs: invoicesLogs } = useObserveOrderInvoices(
     orderId,
-    invoicesDisabled
+    invoicesActive
   );
   const { matching, logs: matchingLogs } = useObserveOrderMatching(
     orderId,
-    matchingDisabled
+    matchingActive
   );
   const { orderChatGroup } = useObserveOrderChatMessages(
     orderId,
     undefined,
-    chatDisabled
+    chatActive
   );
   // helpers
   let refundValue = 0;
@@ -269,14 +268,14 @@ export const BackofficeOrderDrawer = ({
     updateOrder(changes);
   };
   const handleActiveInvoices = React.useCallback(
-    () => setInvoicesDisabled(false),
+    () => setInvoicesActive(true),
     []
   );
   const handleActiveMatching = React.useCallback(
-    () => setMatchingDisabled(false),
+    () => setMatchingActive(true),
     []
   );
-  const handleActiveChat = React.useCallback(() => setChatDisabled(false), []);
+  const handleActiveChat = React.useCallback(() => setChatActive(true), []);
   // side effects
   React.useEffect(() => {
     if (order?.status) setStatus(order.status);
@@ -334,7 +333,7 @@ export const BackofficeOrderDrawer = ({
           <Route exact path={`${path}/invoices`}>
             <Invoices
               invoices={invoices}
-              logs={invoicesLogs as WithId<OrderPaymentLog>[] | undefined}
+              logs={invoicesLogs}
               activeInvoices={handleActiveInvoices}
             />
           </Route>

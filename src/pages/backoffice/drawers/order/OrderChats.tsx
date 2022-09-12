@@ -26,8 +26,9 @@ interface OrderChatsProps {
 export const OrderChats = ({ groups, activeChat }: OrderChatsProps) => {
   // side effects
   React.useEffect(() => {
+    if (groups.length > 0) return;
     activeChat();
-  }, [activeChat]);
+  }, [activeChat, groups]);
   // UI
   return (
     <Box>

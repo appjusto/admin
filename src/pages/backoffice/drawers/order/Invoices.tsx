@@ -21,8 +21,9 @@ interface InvoicesProps {
 export const Invoices = ({ invoices, logs, activeInvoices }: InvoicesProps) => {
   // side effects
   React.useEffect(() => {
+    if (invoices && invoices?.length > 0) return;
     activeInvoices();
-  }, [activeInvoices]);
+  }, [activeInvoices, invoices]);
   // UI
   return (
     <Box>

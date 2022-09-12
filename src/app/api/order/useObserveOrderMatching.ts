@@ -6,7 +6,7 @@ import { useUserCanReadEntity } from '../auth/useUserCanReadEntity';
 
 export const useObserveOrderMatching = (
   orderId?: string,
-  isDisabled?: boolean
+  isActive: boolean = true
 ) => {
   // context
   const api = useContextApi();
@@ -20,7 +20,7 @@ export const useObserveOrderMatching = (
     if (!userCanRead) return;
     if (!orderId) return;
     if (!isBackofficeUser) return;
-    if (isDisabled) return;
+    if (!isActive) return;
     const unsub1 = api
       .order()
       .observeOrderPrivateMatching(orderId, setMatching);
@@ -33,7 +33,7 @@ export const useObserveOrderMatching = (
       unsub1();
       unsub2();
     };
-  }, [api, userCanRead, orderId, isBackofficeUser, isDisabled]);
+  }, [api, userCanRead, orderId, isBackofficeUser, isActive]);
   // return
   return { matching, logs };
 };

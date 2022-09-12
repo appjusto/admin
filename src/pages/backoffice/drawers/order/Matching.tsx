@@ -137,8 +137,9 @@ export const Matching = ({
   };
   // side effects
   React.useEffect(() => {
+    if (logs && logs.length > 0) return;
     activeMatching();
-  }, [activeMatching]);
+  }, [activeMatching, logs]);
   React.useEffect(() => {
     if (matching === undefined) return;
     if (matching === null) {

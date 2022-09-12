@@ -8,7 +8,7 @@ import { getOrderChatTypeGroup } from './utils';
 export const useObserveOrderChatMessages = (
   orderId?: string,
   limit?: number,
-  isDisabled?: boolean
+  isActive: boolean = true
 ) => {
   // context
   const api = useContextApi();
@@ -24,7 +24,7 @@ export const useObserveOrderChatMessages = (
   React.useEffect(() => {
     if (!userCanRead) return;
     if (!orderId) return;
-    if (isDisabled) return;
+    if (!isActive) return;
     const unsub = api
       .chat()
       .observeOrderChatMessages(
@@ -32,7 +32,7 @@ export const useObserveOrderChatMessages = (
         setChatMessages
       );
     return () => unsub();
-  }, [api, userCanRead, orderId, limit, isDisabled]);
+  }, [api, userCanRead, orderId, limit, isActive]);
   React.useEffect(() => {
     if (!chatMessages) return;
     setOrderChatGroup(getOrderChatTypeGroup(chatMessages));
