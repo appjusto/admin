@@ -28,7 +28,11 @@ import { PeriodTable } from './PeriodTable';
 import { WithdrawsDrawer } from './WithdrawsDrawer';
 import { WithdrawsTable } from './WithdrawsTable';
 
-const periodStatus = 'paid' as IuguInvoiceStatus;
+const periodStatuses = [
+  'paid',
+  'partially_refunded',
+  'partially_paid',
+] as IuguInvoiceStatus[];
 const ledgerEntriesStatuses = ['paid'] as LedgerEntryStatus[];
 
 const FinancesPage = () => {
@@ -60,7 +64,7 @@ const FinancesPage = () => {
     total,
     appjustoCosts,
     iuguCosts,
-  } = useObserveInvoicesStatusByPeriod(businessId, month, periodStatus);
+  } = useObserveInvoicesStatusByPeriod(businessId, month, periodStatuses);
   const { periodAmount: ledgerAmount, iuguValue: ledgerIuguValue } =
     useObserveLedgerStatusByPeriod(businessId, month, ledgerEntriesStatuses);
   const advances = useObserveBusinessAdvances(businessId, month);

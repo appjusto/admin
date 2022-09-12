@@ -11,7 +11,11 @@ import {
   splitInvoicesValuesByPeriod,
 } from './utils';
 
-const invoiceStatus = 'paid' as IuguInvoiceStatus;
+const invoiceStatuses = [
+  'paid',
+  'partially_refunded',
+  'partially_paid',
+] as IuguInvoiceStatus[];
 const invoicesTypes = ['products', 'order', 'delivery'] as InvoiceType[];
 const invoicesProductTypes = ['products', 'order'] as InvoiceType[];
 
@@ -53,7 +57,7 @@ export const useObserveDashboardInvoices = (businessId?: string | null) => {
         businessId,
         startDate,
         endDate,
-        invoiceStatus
+        invoiceStatuses
       );
     return () => unsub();
   }, [api, userCanRead, businessId]);

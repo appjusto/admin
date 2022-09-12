@@ -17,7 +17,7 @@ const invoicesDeliveryTypes = ['delivery'] as InvoiceType[];
 export const useObserveInvoicesStatusByPeriod = (
   businessId?: string,
   month?: Date | null,
-  status?: IuguInvoiceStatus
+  statuses?: IuguInvoiceStatus[]
 ) => {
   // context
   const api = useContextApi();
@@ -34,20 +34,20 @@ export const useObserveInvoicesStatusByPeriod = (
     if (!userCanRead) return;
     if (!businessId) return;
     if (!month) return;
-    if (!status) return;
+    if (!statuses) return;
     const start = dayjs(month).startOf('month').toDate();
     const end = dayjs(month).endOf('month').toDate();
     const unsub = api
       .invoices()
-      .observeInvoicesStatusByPeriod(
+      .observeInvoicesStatusesByPeriod(
         businessId,
         start,
         end,
-        status,
+        statuses,
         setInvoices
       );
     return () => unsub();
-  }, [api, userCanRead, businessId, month, status]);
+  }, [api, userCanRead, businessId, month, statuses]);
   React.useEffect(() => {
     if (!invoices) return;
     const amountProducts = getInvoicesTotalValueByTypes(

@@ -28,13 +28,13 @@ export default class InvoicesApi {
     businessId?: string | null,
     start?: Date | null,
     end?: Date | null,
-    invoiceStatus?: IuguInvoiceStatus
+    invoiceStatuses?: IuguInvoiceStatus[]
   ): Unsubscribe {
     const q = query(
       this.refs.getInvoicesRef(),
       orderBy('updatedOn', 'desc'),
       where('accountId', '==', businessId),
-      where('status', '==', invoiceStatus),
+      where('status', 'in', invoiceStatuses),
       where('updatedOn', '>=', start),
       where('updatedOn', '<=', end)
     );
@@ -103,18 +103,18 @@ export default class InvoicesApi {
     return unsubscribe;
   }
 
-  observeInvoicesStatusByPeriod(
+  observeInvoicesStatusesByPeriod(
     businessId: string,
     start: Date,
     end: Date,
-    status: IuguInvoiceStatus,
+    statuses: IuguInvoiceStatus[],
     resultHandler: (invoices: WithId<Invoice>[]) => void
   ): Unsubscribe {
     const q = query(
       this.refs.getInvoicesRef(),
       orderBy('createdOn', 'desc'),
       where('accountId', '==', businessId),
-      where('status', '==', status),
+      where('status', 'in', statuses),
       where('createdOn', '>=', start),
       where('createdOn', '<=', end)
     );
