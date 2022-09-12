@@ -1,5 +1,6 @@
-import { AccountAdvance, WithId } from '@appjusto/types';
+import { WithId } from '@appjusto/types';
 import { Box, Table, Tbody, Td, Tfoot, Th, Tr } from '@chakra-ui/react';
+import { CustomAccountAdvance } from 'app/api/business/types';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { useRouteMatch } from 'react-router-dom';
 import { formatCurrency } from 'utils/formatters';
@@ -8,7 +9,7 @@ import { t } from 'utils/i18n';
 import { formatCents, formatIuguValueToDisplay } from './utils';
 
 interface AdvancesTableItemProps {
-  advance: WithId<AccountAdvance>;
+  advance: WithId<CustomAccountAdvance>;
 }
 
 const AdvancesTableItem = ({ advance }: AdvancesTableItemProps) => {
@@ -18,7 +19,9 @@ const AdvancesTableItem = ({ advance }: AdvancesTableItemProps) => {
   return (
     <Tr color="black" fontSize="15px" lineHeight="21px" fontWeight="500">
       <Td>{getDateAndHour(advance.createdOn)}</Td>
-      <Td isNumeric>{formatIuguValueToDisplay(advance.data.total.advanced_value)}</Td>
+      <Td isNumeric>
+        {formatIuguValueToDisplay(advance.data.total.advanced_value)}
+      </Td>
       <Td color="red" isNumeric>
         {'-' + formatIuguValueToDisplay(advance.data.total.advance_fee)}
       </Td>
@@ -26,14 +29,19 @@ const AdvancesTableItem = ({ advance }: AdvancesTableItemProps) => {
         {formatIuguValueToDisplay(advance.data.total.received_value)}
       </Td>
       <Td>
-        <CustomButton mt="0" label={t('Detalhes')} link={`${url}/${advance.id}`} size="sm" />
+        <CustomButton
+          mt="0"
+          label={t('Detalhes')}
+          link={`${url}/${advance.id}`}
+          size="sm"
+        />
       </Td>
     </Tr>
   );
 };
 
 interface AdvancesTableProps {
-  advances?: WithId<AccountAdvance>[];
+  advances?: WithId<CustomAccountAdvance>[];
 }
 
 export const AdvancesTable = ({ advances }: AdvancesTableProps) => {
@@ -67,7 +75,9 @@ export const AdvancesTable = ({ advances }: AdvancesTableProps) => {
           </Tr>
           {advances !== undefined ? (
             advances.length > 0 ? (
-              advances.map((advance) => <AdvancesTableItem key={advance.id} advance={advance} />)
+              advances.map((advance) => (
+                <AdvancesTableItem key={advance.id} advance={advance} />
+              ))
             ) : (
               <Tr color="black" fontSize="xs" fontWeight="700">
                 <Td>{t('Sem resultados para o período informado')}</Td>

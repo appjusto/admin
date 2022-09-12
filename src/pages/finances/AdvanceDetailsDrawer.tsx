@@ -1,5 +1,6 @@
-import { AccountAdvance, WithId } from '@appjusto/types';
+import { WithId } from '@appjusto/types';
 import { Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
+import { CustomAccountAdvance } from 'app/api/business/types';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import React from 'react';
 import { useParams } from 'react-router';
@@ -10,7 +11,7 @@ import { formatIuguValueToDisplay } from './utils';
 
 interface AdvanceDetailsDrawerProps {
   isOpen: boolean;
-  getAdvanceById(advanceId: string): WithId<AccountAdvance> | null;
+  getAdvanceById(advanceId: string): WithId<CustomAccountAdvance> | null;
   onClose(): void;
 }
 
@@ -26,14 +27,19 @@ export const AdvanceDetailsDrawer = ({
   // context
   const { advanceId } = useParams<Params>();
   // state
-  const [advance, setAdvance] = React.useState<WithId<AccountAdvance> | null>();
+  const [advance, setAdvance] =
+    React.useState<WithId<CustomAccountAdvance> | null>();
   // side effects
   React.useEffect(() => {
     setAdvance(getAdvanceById(advanceId));
   }, [advanceId, getAdvanceById]);
   // UI
   return (
-    <FinancesBaseDrawer onClose={onClose} title={t('Detalhes da antecipação')} {...props}>
+    <FinancesBaseDrawer
+      onClose={onClose}
+      title={t('Detalhes da antecipação')}
+      {...props}
+    >
       <Text fontSize="md" fontWeight="700" color="black">
         {t('Criada em:')}{' '}
         <Text as="span" fontWeight="500">

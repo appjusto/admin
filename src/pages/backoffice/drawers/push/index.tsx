@@ -91,7 +91,6 @@ export const PushDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
       });
     }
     const scheduledTo = Timestamp.fromDate(scheduledDate as Date);
-    // @ts-ignore
     let newCampaign = {
       to: flavor,
       channel,
