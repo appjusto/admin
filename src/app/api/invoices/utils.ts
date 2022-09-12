@@ -34,7 +34,6 @@ export const getInvoicesTotalValueByTypes = (
       if (invoice.status === 'paid') {
         value = invoice.fare?.value ?? 0;
       } else {
-        console.log(invoice.id, invoice.paid);
         value = invoice.paid ?? 0;
       }
       return result + value;
