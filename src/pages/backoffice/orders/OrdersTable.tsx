@@ -15,7 +15,8 @@ export const OrdersTable = ({ orders, isBackoffice }: OrdersTableProps) => {
     ? orders.reduce<number>((result, order) => {
         if (order.outsourcedBy === 'business' && order.fare?.total)
           return (result += order.fare.total);
-        else if (order.fare?.business?.value) return (result += order.fare.business.value);
+        else if (order.fare?.business?.value)
+          return (result += order.fare.business.value);
         return result;
       }, 0)
     : 0;
@@ -40,7 +41,13 @@ export const OrdersTable = ({ orders, isBackoffice }: OrdersTableProps) => {
         <Tbody>
           {orders && orders.length > 0 ? (
             orders.map((order) => {
-              return <OrdersTableItem key={order.id} order={order} isBackoffice={isBackoffice} />;
+              return (
+                <OrdersTableItem
+                  key={order.id}
+                  order={order}
+                  isBackoffice={isBackoffice}
+                />
+              );
             })
           ) : (
             <Tr color="black" fontSize="xs" fontWeight="700">
@@ -58,6 +65,7 @@ export const OrdersTable = ({ orders, isBackoffice }: OrdersTableProps) => {
         {!isBackoffice && (
           <Tfoot bgColor="gray.50">
             <Tr color="black" fontSize="xs" fontWeight="700">
+              <Td></Td>
               <Td></Td>
               <Td></Td>
               <Td></Td>
