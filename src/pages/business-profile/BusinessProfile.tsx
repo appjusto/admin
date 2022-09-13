@@ -17,7 +17,7 @@ import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile'
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextAppRequests } from 'app/state/requests/context';
-import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput2';
+import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import { CustomNumberInput as NumberInput } from 'common/components/form/input/CustomNumberInput';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';

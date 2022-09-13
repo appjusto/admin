@@ -1,8 +1,7 @@
 import { BoxProps, Center, Flex, Image, Text } from '@chakra-ui/react';
 import { ReactComponent as DropImage } from 'common/img/drop-image.svg';
-import React from 'react';
 import { useDropzone } from 'react-dropzone';
-import { ImageFbLoading } from './ImageFbLoading';
+import { ImageFbLoading } from '../ImageFbLoading';
 interface Props extends BoxProps {
   preview?: string | null;
   placeholderText?: string;

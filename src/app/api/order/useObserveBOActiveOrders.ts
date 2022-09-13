@@ -1,6 +1,7 @@
 import { Order, OrderStatus, WithId } from '@appjusto/types';
 import { useContextApi } from 'app/state/api/context';
 import React from 'react';
+import { useUserCanReadEntity } from '../auth/useUserCanReadEntity';
 
 export const useObserveBOActiveOrders = (
   statuses: OrderStatus[],
@@ -8,6 +9,7 @@ export const useObserveBOActiveOrders = (
 ) => {
   // context
   const api = useContextApi();
+  const userCanRead = useUserCanReadEntity('orders');
   // state
   const [orders, setOrders] = React.useState<WithId<Order>[]>([]);
   const [queryLimit, setQueryLimit] = React.useState(15);
@@ -20,11 +22,12 @@ export const useObserveBOActiveOrders = (
   }, [orders]);
   // side effects
   React.useEffect(() => {
+    if (!userCanRead) return;
     const unsub = api
       .order()
       .observeBOActiveOrders(statuses, setOrders, queryLimit, isNoStaff);
     return () => unsub();
-  }, [api, statuses, isNoStaff, queryLimit]);
+  }, [api, userCanRead, statuses, isNoStaff, queryLimit]);
   // return
   return { orders, fetchNextOrders };
 };

@@ -38,9 +38,10 @@ const UserChangeDrawer = React.lazy(
 );
 
 const warningOrdersFilterOptions = [
-  { label: 'Todos', value: ['matching', 'waiting-confirmation'] },
-  { label: 'Demora no aceite', value: ['waiting-confirmation'] },
-  { label: 'Demora no matching', value: ['matching'] },
+  { label: 'Demora no aceite', value: 'waiting-confirmation' },
+  { label: 'Demora no matching', value: 'matching' },
+  { label: 'Demora na coleta', value: 'pick-up' },
+  { label: 'Demora na entrega', value: 'delivering' },
 ] as FilterOptions;
 
 const BODashboard = () => {

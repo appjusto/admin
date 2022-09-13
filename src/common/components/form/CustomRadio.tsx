@@ -1,6 +1,14 @@
 import { Center, Flex, HStack, Radio, RadioProps } from '@chakra-ui/react';
 
-const CustomRadio = ({ children, w, h, mt, mb, isDisabled, ...props }: RadioProps) => {
+const CustomRadio = ({
+  children,
+  w,
+  h,
+  mt,
+  mb,
+  isDisabled,
+  ...props
+}: RadioProps) => {
   // props
   const { value } = props;
   const containerProps = { w, h, mt, mb };

@@ -1,5 +1,14 @@
 import { Complement, WithId } from '@appjusto/types';
-import { Box, Flex, Image, Link, Spacer, Switch, Text, Tooltip } from '@chakra-ui/react';
+import {
+  Box,
+  Flex,
+  Image,
+  Link,
+  Spacer,
+  Switch,
+  Text,
+  Tooltip,
+} from '@chakra-ui/react';
 import { useComplementImage } from 'app/api/business/complements/useComplementImage';
 import { useContextMenu } from 'app/state/menu/context';
 import { EditButton } from 'common/components/buttons/EditButton';
@@ -10,7 +19,7 @@ import { Draggable } from 'react-beautiful-dnd';
 import { Link as RouterLink, useRouteMatch } from 'react-router-dom';
 import { slugfyName } from 'utils/functions';
 import { t } from 'utils/i18n';
-import { CurrencyInput } from '../../../common/components/form/input/currency-input/CurrencyInput2';
+import { CurrencyInput } from '../../../common/components/form/input/currency-input/CurrencyInput';
 
 interface Props {
   complement: WithId<Complement>;
@@ -29,7 +38,10 @@ export const ComplementItem = React.memo(({ complement, index }: Props) => {
   const updatePriceState = (value: number | undefined) => {
     if (value || value === 0) setPrice(value);
   };
-  const onUpdateComplement = async (updateEnabled?: boolean, value?: boolean) => {
+  const onUpdateComplement = async (
+    updateEnabled?: boolean,
+    value?: boolean
+  ) => {
     let dataToUpdate = { ...complement };
     //@ts-ignore
     delete dataToUpdate.id;
@@ -71,7 +83,12 @@ export const ComplementItem = React.memo(({ complement, index }: Props) => {
           pos="relative"
           minW="700px"
         >
-          <Box mr="4" bg="white" {...draggable.dragHandleProps} ref={draggable.innerRef}>
+          <Box
+            mr="4"
+            bg="white"
+            {...draggable.dragHandleProps}
+            ref={draggable.innerRef}
+          >
             <DragHandle />
           </Box>
           <Link
@@ -119,8 +136,14 @@ export const ComplementItem = React.memo(({ complement, index }: Props) => {
             }}
           />
           <Link as={RouterLink} to={`${url}/complement/${complement.id}`}>
-            <Tooltip placement="top" label={t('Editar')} aria-label={t('Editar')}>
-              <EditButton aria-label={`editar-complemento-${slugfyName(complement.name)}`} />
+            <Tooltip
+              placement="top"
+              label={t('Editar')}
+              aria-label={t('Editar')}
+            >
+              <EditButton
+                aria-label={`editar-complemento-${slugfyName(complement.name)}`}
+              />
             </Tooltip>
           </Link>
         </Flex>

@@ -1,8 +1,14 @@
-import { Order, OutsourceAccountType, WithId } from '@appjusto/types';
+import {
+  Order,
+  OrderMatching,
+  OrderMatchingLog,
+  OutsourceAccountType,
+  WithId,
+} from '@appjusto/types';
 import { Box, Button, Flex, HStack, RadioGroup, Text } from '@chakra-ui/react';
 import { useGetOutsourceDelivery } from 'app/api/order/useGetOutsourceDelivery';
-import { useObserveOrderMatching } from 'app/api/order/useObserveOrderMatching';
 import { useOrderCourierManualAllocation } from 'app/api/order/useOrderCourierManualAllocation';
+import { useOrderMatching } from 'app/api/order/useOrderMatching';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { CustomButton } from 'common/components/buttons/CustomButton';
@@ -11,7 +17,7 @@ import { CustomInput } from 'common/components/form/input/CustomInput';
 import { CustomPatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';
 import {
   phoneFormatter,
-  phoneMask
+  phoneMask,
 } from 'common/components/form/input/pattern-input/formatters';
 import { numbersOnlyParser } from 'common/components/form/input/pattern-input/parsers';
 import { isToday } from 'pages/orders/utils';
@@ -19,22 +25,35 @@ import React from 'react';
 import { t } from 'utils/i18n';
 import { orderDispatchingStatusPTOptions } from '../../utils/index';
 import { SectionTitle } from '../generics/SectionTitle';
-import { CourierNotifiedBox } from './matching/CourierNotifiedBox';
+import CourierNotifiedBox from './matching/CourierNotifiedBox';
 import { LogsTable } from './matching/LogsTable';
 
 export type NotifiedCouriers = { id: string; name?: string };
 
 interface MatchingProps {
   order?: WithId<Order> | null;
+  matching?: OrderMatching | null;
+  logs?: WithId<OrderMatchingLog>[];
+  activeMatching(): void;
 }
 
-export const Matching = ({ order }: MatchingProps) => {
+export const Matching = ({
+  order,
+  matching,
+  logs,
+  activeMatching,
+}: MatchingProps) => {
   // context
   const { user, userAbility, isBackofficeSuperuser } = useContextFirebaseUser();
   const { dispatchAppRequestResult } = useContextAppRequests();
-  const { matching, logs, updateCourierNotified, updateResult, restartMatching, restartResult } =
-    useObserveOrderMatching(order?.id);
-  const { courierManualAllocation, allocationResult } = useOrderCourierManualAllocation();
+  const {
+    updateCourierNotified,
+    updateResult,
+    restartMatching,
+    restartResult,
+  } = useOrderMatching(order?.id);
+  const { courierManualAllocation, allocationResult } =
+    useOrderCourierManualAllocation();
   const {
     getOutsourceDelivery,
     outsourceDeliveryResult,
@@ -45,22 +64,29 @@ export const Matching = ({ order }: MatchingProps) => {
   //const [isAuto, setIsAuto] = React.useState(true);
   // const [logs, setLogs] = React.useState<string[]>();
   const [attemps, setAttemps] = React.useState<number>(0);
-  const [couriersNotified, setCouriersNotified] = React.useState<NotifiedCouriers[]>([]);
-  const [courierRemoving, setCourierRemoving] = React.useState<string | null>(null);
+  const [couriersNotified, setCouriersNotified] = React.useState<
+    NotifiedCouriers[]
+  >([]);
+  const [courierRemoving, setCourierRemoving] = React.useState<string | null>(
+    null
+  );
   const [isRestarting, setIsRestarting] = React.useState<boolean>(false);
   const [isOutsourcing, setIsOutsourcing] = React.useState<boolean>(false);
   const [outsourcingAccountType, setOutsourcingAccountType] =
     React.useState<OutsourceAccountType>('platform');
   const [courierCode, setCourierCode] = React.useState('');
-  const [outsourcingCourierName, setOutsourcingCourierName] = React.useState('');
-  const [outsourcingCourierPhone, setOutsourcingCourierPhone] = React.useState('');
+  const [outsourcingCourierName, setOutsourcingCourierName] =
+    React.useState('');
+  const [outsourcingCourierPhone, setOutsourcingCourierPhone] =
+    React.useState('');
   //const [couriersRejections, setCouriersRejections] = React.useState<OrderMatchingRejection[]>();
   // helpers
   const isOrderActive = order?.status
     ? ['confirmed', 'preparing', 'ready', 'dispatching'].includes(order.status)
     : false;
   const isNoMatch = order?.dispatchingStatus === 'no-match';
-  const canAllocateCourierById = isBackofficeSuperuser && 
+  const canAllocateCourierById =
+    isBackofficeSuperuser &&
     (!order?.scheduledTo || isToday(order.scheduledTo)) &&
     userAbility?.can('update', { kind: 'orders', ...order }) &&
     !order?.courier;
@@ -77,40 +103,53 @@ export const Matching = ({ order }: MatchingProps) => {
     if (!order?.id) return;
     let courierId = undefined;
     let courierCode = undefined;
-    if(/^[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]{7}$/.exec(courierInfo)) {
+    if (/^[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]{7}$/.exec(courierInfo)) {
       courierCode = courierInfo;
     } else {
       courierId = courierInfo;
     }
-    return courierManualAllocation({ 
-      orderId: order.id, courierId, courierCode, comment 
+    return courierManualAllocation({
+      orderId: order.id,
+      courierId,
+      courierCode,
+      comment,
     });
   };
   const handleOutsourcingCourierInfos = () => {
-    if (outsourcingCourierName.length === 0 || outsourcingCourierPhone.length !== 11) {
+    if (
+      outsourcingCourierName.length === 0 ||
+      outsourcingCourierPhone.length !== 11
+    ) {
       return dispatchAppRequestResult({
         status: 'error',
         requestId: 'Operação negada',
-        message: { title: 'Favor informar corretamente o nome e o celular do entregador.' },
+        message: {
+          title:
+            'Favor informar corretamente o nome e o celular do entregador.',
+        },
       });
-    };
+    }
     const data = {
       name: outsourcingCourierName,
-      phone: outsourcingCourierPhone
-    }
-    updateOutsourcingCourierInfos(data)
-  }
+      phone: outsourcingCourierPhone,
+    };
+    updateOutsourcingCourierInfos(data);
+  };
   // side effects
+  React.useEffect(() => {
+    if (logs && logs.length > 0) return;
+    activeMatching();
+  }, [activeMatching, logs]);
   React.useEffect(() => {
     if (matching === undefined) return;
     if (matching === null) {
       setCouriersNotified([]);
-      //setCouriersRejections([]);
+      // setCouriersRejections([]);
       // setLogs([]);
       return;
     }
     setCouriersNotified(matching.notifiedCouriers);
-    //setCouriersRejections(matching.rejections);
+    // setCouriersRejections(matching.rejections);
     // setLogs(matching.logs);
     setAttemps(matching.attempt);
   }, [matching]);
@@ -134,7 +173,9 @@ export const Matching = ({ order }: MatchingProps) => {
       {!isOutsourcing ? (
         <Button
           display={
-            userAbility?.can('update', { kind: 'orders', ...order }) ? 'inline-block' : 'none'
+            userAbility?.can('update', { kind: 'orders', ...order })
+              ? 'inline-block'
+              : 'none'
           }
           h="38px"
           w="220px"
@@ -151,19 +192,27 @@ export const Matching = ({ order }: MatchingProps) => {
         </Button>
       ) : order?.dispatchingStatus === 'outsourced' ? (
         <Box mt="4" border="2px solid #FFBE00" borderRadius="lg" bg="" p="4">
-          <SectionTitle mt="0">{t('Logística fora da rede ativada')}</SectionTitle>
+          <SectionTitle mt="0">
+            {t('Logística fora da rede ativada')}
+          </SectionTitle>
           <Text mt="4">
             {t('Responsável: ')}
             <Text as="span" fontWeight="700">
-              {order.outsourcedBy === 'business' ? t('Restaurante') : t('Plataforma')}
+              {order.outsourcedBy === 'business'
+                ? t('Restaurante')
+                : t('Plataforma')}
             </Text>
           </Text>
           {isOrderActive && order.outsourcedBy !== 'business' && (
             <Text mt="2">
-              {t('Será necessário finalizar o pedido quando o mesmo for entregue.')}
+              {t(
+                'Será necessário finalizar o pedido quando o mesmo for entregue.'
+              )}
             </Text>
           )}
-          <Text mt="4" fontWeight="700">{t('Dados do entregador')}</Text>
+          <Text mt="4" fontWeight="700">
+            {t('Dados do entregador')}
+          </Text>
           <HStack mt="2">
             <CustomInput
               mt="0"
@@ -202,10 +251,20 @@ export const Matching = ({ order }: MatchingProps) => {
               `Ao realizar a logística de entrega fora da rede, restaurante e consumidor não serão informados, pelo Admin/App, sobre a localização do entregador.`
             )}
           </Text>
-          <HStack mt="6" spacing={4} bgColor="#f6f6f67b" borderRadius="lg" p="4">
-            <Text fontWeight="700">{t(`O valor da entrega será destinado para:`)}</Text>
+          <HStack
+            mt="6"
+            spacing={4}
+            bgColor="#f6f6f67b"
+            borderRadius="lg"
+            p="4"
+          >
+            <Text fontWeight="700">
+              {t(`O valor da entrega será destinado para:`)}
+            </Text>
             <RadioGroup
-              onChange={(value: OutsourceAccountType) => setOutsourcingAccountType(value)}
+              onChange={(value: OutsourceAccountType) =>
+                setOutsourcingAccountType(value)
+              }
               value={outsourcingAccountType}
               colorScheme="green"
               color="black"
@@ -214,19 +273,28 @@ export const Matching = ({ order }: MatchingProps) => {
             >
               <HStack spacing={6}>
                 <CustomRadio value="platform">{t('Plataforma')}</CustomRadio>
-                <CustomRadio value="business" isDisabled={order?.type === 'p2p'}>
+                <CustomRadio
+                  value="business"
+                  isDisabled={order?.type === 'p2p'}
+                >
                   {t('Restaurante')}
                 </CustomRadio>
               </HStack>
             </RadioGroup>
           </HStack>
           <HStack mt="6" justifyContent="flex-end">
-            <Button mt="0" variant="dangerLight" onClick={() => setIsOutsourcing(false)}>
+            <Button
+              mt="0"
+              variant="dangerLight"
+              onClick={() => setIsOutsourcing(false)}
+            >
               {t('Cancelar')}
             </Button>
             <Button
               mt="0"
-              onClick={() => getOutsourceDelivery({ accountType: outsourcingAccountType })}
+              onClick={() =>
+                getOutsourceDelivery({ accountType: outsourcingAccountType })
+              }
               isLoading={outsourceDeliveryResult.isLoading}
             >
               {t('Confirmar')}
@@ -276,7 +344,9 @@ export const Matching = ({ order }: MatchingProps) => {
           ) : (
             <CustomButton
               display={
-                userAbility?.can('update', { kind: 'orders', ...order }) ? 'inline-block' : 'none'
+                userAbility?.can('update', { kind: 'orders', ...order })
+                  ? 'inline-block'
+                  : 'none'
               }
               mt="2"
               h="38px"
@@ -287,14 +357,22 @@ export const Matching = ({ order }: MatchingProps) => {
             />
           ))}
       </Flex>
-      <SectionTitle mt={isNoMatch ? '2' : '4'}>{t('Tentativas: ') + attemps}</SectionTitle>
+      <SectionTitle mt={isNoMatch ? '2' : '4'}>
+        {t('Tentativas: ') + attemps}
+      </SectionTitle>
       <Box>
         <SectionTitle mt="4">
-          {t(`Entregadores notificados: ${couriersNotified ? couriersNotified.length : 0}`)}
+          {t(
+            `Entregadores notificados: ${
+              couriersNotified ? couriersNotified.length : 0
+            }`
+          )}
         </SectionTitle>
         {canAllocateCourierById && (
           <Box mt="4" border="2px solid #FFBE00" borderRadius="lg" bg="" p="4">
-            <Text fontWeight="700">{t('Alocação de entregador por código ou Id')}</Text>
+            <Text fontWeight="700">
+              {t('Alocação de entregador por código ou Id')}
+            </Text>
             <HStack mt="4">
               <CustomInput
                 mt="0"
@@ -307,8 +385,11 @@ export const Matching = ({ order }: MatchingProps) => {
               <Button
                 h="60px"
                 w="40%"
-                onClick={() => allocateCourier(
-                  courierCode, `Alocação manual por código pelo staff: ${user?.uid}`)
+                onClick={() =>
+                  allocateCourier(
+                    courierCode,
+                    `Alocação manual por código pelo staff: ${user?.uid}`
+                  )
                 }
                 isLoading={allocationResult.isLoading}
                 loadingText={t('Alocando...')}
@@ -347,7 +428,13 @@ export const Matching = ({ order }: MatchingProps) => {
           )}
         </Box>
         <SectionTitle>{t('Logs do pedido')}</SectionTitle>
-        <Box mt="4" maxH="300px" overflowY="scroll" border="1px solid #ECF0E3" borderRadius="lg">
+        <Box
+          mt="4"
+          maxH="300px"
+          overflowY="scroll"
+          border="1px solid #ECF0E3"
+          borderRadius="lg"
+        >
           <LogsTable logs={matching?.logs ?? logs} />
         </Box>
       </Box>

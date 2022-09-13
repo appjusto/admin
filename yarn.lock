@@ -135,10 +135,10 @@
     "@appjusto/types" "^5.1.2"
     lodash "^4.17.21"
 
-"@appjusto/types@7.9.3":
-  version "7.9.3"
-  resolved "https://registry.yarnpkg.com/@appjusto/types/-/types-7.9.3.tgz#780745fdda70ed2acc8271f1c43136667b325487"
-  integrity sha512-JlaRmi2mnUDoBYi89+/o/3rAMaY+vceIkwWiR0VUtCSgjtJSg9AVWk/Q+H8xQpgKARYiFZl38UYxYyHfkzSdZQ==
+"@appjusto/types@7.12.0":
+  version "7.12.0"
+  resolved "https://registry.yarnpkg.com/@appjusto/types/-/types-7.12.0.tgz#39833447da918b0150d3ba3a3d6901e15f858418"
+  integrity sha512-w4/W9zsb4z2z8JQ/FZJhWN2wUiVrgN44lMQMTqGDRy3xNEe4k2NvKDdjJOpF1L73Lr8tiT1P+81fxF0h7VA8FQ==
   dependencies:
     firebase "^9.6.7"
 

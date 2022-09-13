@@ -91,6 +91,7 @@ export const PushDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
       });
     }
     const scheduledTo = Timestamp.fromDate(scheduledDate as Date);
+    // @ts-ignore
     let newCampaign = {
       to: flavor,
       channel,
@@ -99,6 +100,7 @@ export const PushDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
       body,
       status,
       scheduledTo,
+      nearby: null,
     } as Partial<PushCampaign>;
     if (isGeo) {
       const nearby = {

@@ -139,9 +139,16 @@ export default class PlatformApi {
   }
 
   async fetchCuisines() {
-    const q = query(this.refs.getCuisinesRef(), orderBy('order', 'asc'));
-    const data = await getDocs(q);
-    return documentsAs<Cuisine>(data.docs);
+    try {
+      const q = query(this.refs.getCuisinesRef(), orderBy('name', 'asc'));
+      const data = await getDocs(q);
+      return documentsAs<Cuisine>(data.docs).sort(function (a, b) {
+        return a.name.localeCompare(b.name);
+      });
+    } catch (error) {
+      console.error(error);
+      return documentsAs<Cuisine>([]);
+    }
   }
 
   async fetchClassifications() {

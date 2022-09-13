@@ -3,6 +3,7 @@ import { useContextApi } from 'app/state/api/context';
 import dayjs from 'dayjs';
 import { DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
 import React from 'react';
+import { useUserCanReadEntity } from '../auth/useUserCanReadEntity';
 
 const initialMap = new Map();
 
@@ -14,18 +15,19 @@ export const useObserveLedger = (
 ) => {
   // context
   const api = useContextApi();
+  const userCanRead = useUserCanReadEntity('invoices');
   // state
   const [entriesMap, setEntriesMap] =
     React.useState<Map<string | undefined, WithId<LedgerEntry>[]>>(initialMap);
   const [entries, setEntries] = React.useState<WithId<LedgerEntry>[] | null>();
   const [startAfter, setStartAfter] =
     React.useState<QueryDocumentSnapshot<DocumentData>>();
-  const [lastInvoice, setLastInvoice] =
+  const [lastEntry, setLastEntry] =
     React.useState<QueryDocumentSnapshot<DocumentData>>();
   // handlers
   const fetchNextPage = React.useCallback(() => {
-    setStartAfter(lastInvoice);
-  }, [lastInvoice]);
+    setStartAfter(lastEntry);
+  }, [lastEntry]);
   // side effects
   React.useEffect(() => {
     if (start && !end) return;
@@ -33,6 +35,7 @@ export const useObserveLedger = (
     setStartAfter(undefined);
   }, [orderId, start, end, status]);
   React.useEffect(() => {
+    if (!userCanRead) return;
     let startDate = start ? dayjs(start).startOf('day').toDate() : null;
     let endDate = end ? dayjs(end).endOf('day').toDate() : null;
     const unsub = api.ledger().observeLedger(
@@ -42,7 +45,7 @@ export const useObserveLedger = (
           value.set(startAfter?.id, results);
           return value;
         });
-        if (last) setLastInvoice(last);
+        if (last) setLastEntry(last);
       },
       orderId,
       startDate,
@@ -51,7 +54,7 @@ export const useObserveLedger = (
       status
     );
     return () => unsub();
-  }, [api, startAfter, orderId, start, end, status]);
+  }, [api, userCanRead, startAfter, orderId, start, end, status]);
   React.useEffect(() => {
     setEntries(
       Array.from(entriesMap.values()).reduce(

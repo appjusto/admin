@@ -8,6 +8,7 @@ import newMessageSound from 'common/sounds/new-message.mp3';
 import { isEqual } from 'lodash';
 import React from 'react';
 import useSound from 'use-sound';
+import { useUserCanReadEntity } from '../auth/useUserCanReadEntity';
 import { showNotification } from '../utils';
 import { useRedirectToOrders } from './useRedirectToOrders';
 
@@ -18,6 +19,7 @@ let messagesToNotify: string[] = [];
 export const useNewChatMessages = (businessId?: string) => {
   // context
   const api = useContextApi();
+  const userCanRead = useUserCanReadEntity('chats');
   const { isBackofficeUser } = useContextFirebaseUser();
   const permission = useNotificationPermission();
   const redirectToOrders = useRedirectToOrders(['/app/orders', '/app/chat']);
@@ -27,12 +29,13 @@ export const useNewChatMessages = (businessId?: string) => {
   const [playSound] = useSound(newMessageSound, { volume: 1 });
   // side effects
   React.useEffect(() => {
+    if (!userCanRead) return;
     if (!businessId) return;
     const unsub = api
       .chat()
       .observeBusinessNewChatMessages(businessId, setNewChatMessages);
     return () => unsub();
-  }, [api, businessId]);
+  }, [api, userCanRead, businessId]);
   React.useEffect(() => {
     if (isBackofficeUser) return;
     if (newChatMessages.length === 0) return;

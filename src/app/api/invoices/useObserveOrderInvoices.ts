@@ -1,34 +1,36 @@
-import { Invoice, OrderLog, WithId } from '@appjusto/types';
+import { Invoice, OrderPaymentLog, WithId } from '@appjusto/types';
 import { useContextApi } from 'app/state/api/context';
-import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusinessId } from 'app/state/business/context';
 import React from 'react';
+import { useUserCanReadEntity } from '../auth/useUserCanReadEntity';
 
-export const useObserveOrderInvoices = (orderId?: string) => {
+export const useObserveOrderInvoices = (
+  orderId?: string,
+  isActive: boolean = true
+) => {
   // context
   const api = useContextApi();
-  const { isBackofficeUser } = useContextFirebaseUser();
+  const userCanRead = useUserCanReadEntity('invoices');
   const businessId = useContextBusinessId();
   // state
   const [invoices, setInvoices] = React.useState<WithId<Invoice>[] | null>();
-  const [logs, setLogs] = React.useState<WithId<OrderLog>[]>();
+  const [logs, setLogs] = React.useState<WithId<OrderPaymentLog>[]>();
   // side effects
   React.useEffect(() => {
+    if (!userCanRead) return;
     if (!orderId) return;
-    if (isBackofficeUser) {
-      const unsub1 = api.invoices().observeOrderInvoices(orderId, setInvoices);
-      const unsub2 = api.order().observeOrderLogs(orderId, 'payment', setLogs);
-      return () => {
-        unsub1();
-        unsub2();
-      };
-    } else if (businessId) {
-      const unsub = api
-        .invoices()
-        .observeOrderInvoices(orderId, setInvoices, businessId);
-      return () => unsub();
-    }
-  }, [api, isBackofficeUser, businessId, orderId]);
+    if (!isActive) return;
+    const unsub1 = api.invoices().observeOrderInvoices(orderId, setInvoices);
+    const unsub2 = api
+      .order()
+      .observeOrderLogs(orderId, 'payment', (logs) =>
+        setLogs(logs as WithId<OrderPaymentLog>[])
+      );
+    return () => {
+      unsub1();
+      unsub2();
+    };
+  }, [api, userCanRead, businessId, orderId, isActive]);
   // return
   return { invoices, logs };
 };

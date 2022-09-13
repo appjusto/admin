@@ -3,6 +3,7 @@ import { useContextApi } from 'app/state/api/context';
 import dayjs from 'dayjs';
 import { DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
 import React from 'react';
+import { useUserCanReadEntity } from '../auth/useUserCanReadEntity';
 import { UsersSearchType } from './UsersApi';
 
 const initialMap = new Map();
@@ -17,13 +18,15 @@ export const useObserveUsers = (
 ) => {
   // context
   const api = useContextApi();
+  const userCanRead = useUserCanReadEntity('users');
   // state
-  const [usersMap, setUsersMap] = React.useState<Map<string | undefined, WithId<User>[]>>(
-    initialMap
-  );
+  const [usersMap, setUsersMap] =
+    React.useState<Map<string | undefined, WithId<User>[]>>(initialMap);
   const [users, setUsers] = React.useState<WithId<User>[]>();
-  const [startAfter, setStartAfter] = React.useState<QueryDocumentSnapshot<DocumentData>>();
-  const [lastUser, setLastUser] = React.useState<QueryDocumentSnapshot<DocumentData>>();
+  const [startAfter, setStartAfter] =
+    React.useState<QueryDocumentSnapshot<DocumentData>>();
+  const [lastUser, setLastUser] =
+    React.useState<QueryDocumentSnapshot<DocumentData>>();
   // handlers
   const fetchNextPage = React.useCallback(() => {
     setStartAfter(lastUser);
@@ -35,6 +38,7 @@ export const useObserveUsers = (
     setStartAfter(undefined);
   }, [loggedAt, searchType, search, isBlocked, start, end]);
   React.useEffect(() => {
+    if (!userCanRead) return;
     let loggedFilter = loggedAt.length === 3 ? null : loggedAt;
     let textSearch = search && search.length > 8 ? search : null;
     let startDate = start ? dayjs(start).startOf('day').toDate() : null;
@@ -57,9 +61,24 @@ export const useObserveUsers = (
       startAfter
     );
     return () => unsub();
-  }, [api, startAfter, loggedAt, searchType, search, isBlocked, start, end]);
+  }, [
+    api,
+    userCanRead,
+    startAfter,
+    loggedAt,
+    searchType,
+    search,
+    isBlocked,
+    start,
+    end,
+  ]);
   React.useEffect(() => {
-    setUsers(Array.from(usersMap.values()).reduce((result, orders) => [...result, ...orders], []));
+    setUsers(
+      Array.from(usersMap.values()).reduce(
+        (result, orders) => [...result, ...orders],
+        []
+      )
+    );
   }, [usersMap]);
   // return
   return { users, fetchNextPage };

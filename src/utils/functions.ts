@@ -6,7 +6,7 @@ import {
   OrderStatus,
 } from '@appjusto/types';
 import { AlgoliaCreatedOn } from 'app/api/types';
-import { CroppedAreaProps } from 'common/components/ImageCropping';
+import { CroppedAreaProps } from 'common/components/image-uploads/ImageCropping';
 import { ImageType } from 'common/components/ImageUploads';
 import { FieldValue, Timestamp } from 'firebase/firestore';
 import I18n from 'i18n-js';

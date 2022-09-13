@@ -19,9 +19,13 @@ export const EntriesTableItem = ({ entry }: ItemProps) => {
   return (
     <Tr color="black" fontSize="15px" lineHeight="21px">
       <Td>
-        <Link as={RouterLink} to={`/backoffice/orders/${entry.orderId}`}>
-          {entry.orderId ?? 'N/E'}
-        </Link>
+        {entry.orderId ? (
+          <Link as={RouterLink} to={`/backoffice/orders/${entry.orderId}`}>
+            {entry.orderId}
+          </Link>
+        ) : (
+          'N/E'
+        )}
       </Td>
       <Td>{getDateAndHour(entry.createdOn)}</Td>
       <Td>{entry.status ? ledgerEntryStatusPTOptions[entry.status] : 'N/E'}</Td>

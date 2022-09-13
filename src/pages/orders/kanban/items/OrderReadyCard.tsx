@@ -24,7 +24,6 @@ export const OrderReadyCard = ({ order }: Props) => {
     isCurrierArrived,
     orderDispatchingKanbanItemText,
   } = useOrderDeliveryInfos(getServerTime, order);
-  //const { restartMatching, restartResult } = useObserveOrderMatching(order.id);
   // helpers
   const showArrivalTime =
     typeof arrivalTime === 'number' &&
@@ -74,26 +73,6 @@ export const OrderReadyCard = ({ order }: Props) => {
             </Flex>
           </Box>
         </Link>
-        {/*<Box position="absolute" w="100%" bottom="0" px="4" mb="4" zIndex="999">
-          <Button
-            w="full"
-            maxH="34px"
-            fontSize="xs"
-            onClick={() => restartMatching()}
-            isLoading={restartResult.isLoading}
-          >
-            {t('Tentar novamente')}
-          </Button>}
-          <CustomButton
-            mt="2"
-            w="full"
-            maxH="34px"
-            fontSize="xs"
-            variant="yellowDark"
-            label={t('Assumir logística')}
-            link={`${url}/${order.id}?outsource=true`}
-          />
-          </Box>*/}
       </Box>
     );
   }

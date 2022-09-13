@@ -7,6 +7,7 @@ type BackofficeAccess = {
   'consumers': string;
   'invoices': string;
   'ledger': string;
+  'push-campaigns': string;
   'users': string;
   'recommendations': string;
   'fraud-prevention': string;
@@ -21,6 +22,7 @@ const backofficeAccess = {
   'consumers': 'consumers',
   'invoices': 'invoices',
   'ledger': 'invoices',
+  'push-campaigns': 'push_campaigns',
   'users': 'users',
   'recommendations': 'recommendations',
   'fraud-prevention': 'platform',
@@ -92,7 +94,7 @@ export const isAccessGranted = (args: IsAccessGrantedArgs) => {
     }
     return false;
   } catch (error) {
-    console.error('isAccessGranted Error:', error);
+    console.error(`isAccessGranted Error on path: ${path}`, error);
     return false;
   }
 };

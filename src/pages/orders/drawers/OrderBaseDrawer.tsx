@@ -209,7 +209,6 @@ export const OrderBaseDrawer = ({
                   <Text as="span" color="black" fontWeight="700">
                     {0}
                   </Text>
-                  <Pendency />
                 </Text>*/}
                 <Text
                   fontSize="md"

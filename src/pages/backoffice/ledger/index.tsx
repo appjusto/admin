@@ -2,9 +2,11 @@ import { LedgerEntryStatus } from '@appjusto/types';
 import { ArrowDownIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, HStack, Stack, Text } from '@chakra-ui/react';
 import { useObserveLedger } from 'app/api/ledger/useObserveLedger';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import { ClearFiltersButton } from 'common/components/backoffice/ClearFiltersButton';
 import { FiltersScrollBar } from 'common/components/backoffice/FiltersScrollBar';
 import { FilterText } from 'common/components/backoffice/FilterText';
+import { CustomButton } from 'common/components/buttons/CustomButton';
 import { CustomDateFilter } from 'common/components/form/input/CustomDateFilter';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import React from 'react';
@@ -26,12 +28,15 @@ const LedgerPage = () => {
   // context
   const { path } = useRouteMatch();
   const history = useHistory();
+  const { userAbility } = useContextFirebaseUser();
   const { entries, fetchNextPage } = useObserveLedger(
     searchId,
     searchFrom,
     searchTo,
     filterBar
   );
+  // helpers
+  const canCreate = userAbility?.can('create', 'invoices');
   // handlers
   const closeDrawerHandler = () => {
     history.replace(path);
@@ -115,11 +120,13 @@ const LedgerPage = () => {
         <Text fontSize="lg" fontWeight="700" lineHeight="26px">
           {t(`${entries?.length ?? '0'} itens na lista`)}
         </Text>
-        {/* <CustomButton
-          mt="0"
-          label={t('Criar transferência')}
-          link={`${path}/new`}
-        /> */}
+        {canCreate && (
+          <CustomButton
+            mt="0"
+            label={t('Criar transferência')}
+            link={`${path}/new`}
+          />
+        )}
       </Flex>
       <EntriesTable entries={entries} />
       <Button mt="8" variant="secondary" onClick={fetchNextPage}>

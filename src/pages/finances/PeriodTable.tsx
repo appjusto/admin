@@ -13,15 +13,14 @@ import { usePlatformFees } from 'app/api/platform/usePlatformFees';
 import { MdInfoOutline } from 'react-icons/md';
 import { formatCurrency } from 'utils/formatters';
 import { t } from 'utils/i18n';
-import { InvoicesCosts } from './utils';
 
 interface PeriodTableProps {
   period: string;
   total: number;
   amountProducts: number;
   amountDelivery: number;
-  appjustoCosts: InvoicesCosts;
-  iuguCosts: InvoicesCosts;
+  appjustoCosts: number;
+  iuguCosts: number;
 }
 
 export const PeriodTable = ({
@@ -72,7 +71,7 @@ export const PeriodTable = ({
                 </Tooltip>
               </Td>
               <Td color="red" isNumeric>
-                {`- ${formatCurrency(appjustoCosts.value)}`}
+                {`- ${formatCurrency(appjustoCosts)}`}
               </Td>
             </Tr>
             <Tr color="black" fontSize="xs" fontWeight="500">
@@ -101,7 +100,7 @@ export const PeriodTable = ({
                 </Tooltip>
               </Td>
               <Td color="red" isNumeric>
-                {`- ${formatCurrency(iuguCosts.value)}`}
+                {`- ${formatCurrency(iuguCosts)}`}
               </Td>
             </Tr>
           </>
@@ -111,9 +110,7 @@ export const PeriodTable = ({
         <Tr>
           <Th>{t(`Resultado para ${period} (Total de pedidos: ${total})`)}</Th>
           <Th color="green.700" isNumeric>
-            {formatCurrency(
-              amountTotal - appjustoCosts.value - iuguCosts.value
-            )}
+            {formatCurrency(amountTotal - appjustoCosts - iuguCosts)}
           </Th>
         </Tr>
       </Tfoot>

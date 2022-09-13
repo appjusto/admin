@@ -2,18 +2,26 @@ import { LedgerEntry, LedgerEntryStatus, WithId } from '@appjusto/types';
 import * as Sentry from '@sentry/react';
 import { documentsAs, FirebaseDocument } from 'core/fb';
 import {
+  addDoc,
+  deleteDoc,
   DocumentData,
   limit,
   onSnapshot,
   orderBy,
   query,
   QueryDocumentSnapshot,
+  serverTimestamp,
   startAfter,
   Unsubscribe,
+  updateDoc,
   where,
 } from 'firebase/firestore';
 import FirebaseRefs from '../FirebaseRefs';
-import { customDocumentSnapshot, queryLimit } from '../utils';
+import {
+  customCollectionSnapshot,
+  customDocumentSnapshot,
+  queryLimit,
+} from '../utils';
 
 export default class LedgerApi {
   constructor(private refs: FirebaseRefs) {}
@@ -62,6 +70,24 @@ export default class LedgerApi {
     return unsubscribe;
   }
 
+  observeBusinessLedgerByPeriod(
+    resultHandler: (entries: WithId<LedgerEntry>[]) => void,
+    businessId: string,
+    statuses: LedgerEntryStatus[],
+    start: Date,
+    end: Date
+  ): Unsubscribe {
+    const q = query(
+      this.refs.getLedgerRef(),
+      orderBy('createdOn', 'desc'),
+      where('to.accountId', '==', businessId),
+      where('status', 'in', statuses),
+      where('createdOn', '>=', start),
+      where('createdOn', '<=', end)
+    );
+    return customCollectionSnapshot(q, resultHandler);
+  }
+
   observeLedgerEntry(
     entryId: string,
     resultHandler: (entry: WithId<LedgerEntry>) => void
@@ -71,5 +97,27 @@ export default class LedgerApi {
     return customDocumentSnapshot<LedgerEntry>(ref, (result) => {
       if (result) resultHandler(result);
     });
+  }
+
+  async submitLedgerEntry(data: Partial<LedgerEntry>) {
+    const timestamp = serverTimestamp();
+    const fullData = {
+      ...data,
+      createdOn: timestamp,
+    } as Partial<LedgerEntry>;
+    await addDoc(this.refs.getLedgerRef(), fullData);
+  }
+
+  async updateLedgerEntry(entryId: string, changes: Partial<LedgerEntry>) {
+    const timestamp = serverTimestamp();
+    const fullChanges = {
+      ...changes,
+      updatedOn: timestamp,
+    } as Partial<LedgerEntry>;
+    await updateDoc(this.refs.getLedgerEntryRef(entryId), fullChanges);
+  }
+
+  async deleteLedgerEntry(entryId: string) {
+    await deleteDoc(this.refs.getLedgerEntryRef(entryId));
   }
 }

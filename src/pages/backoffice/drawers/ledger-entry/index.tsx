@@ -21,14 +21,15 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { useObserveLedgerEntry } from 'app/api/ledger/useObserveLedgerEntry';
-// import { useContextFirebaseUser } from 'app/state/auth/context';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextAppRequests } from 'app/state/requests/context';
 import CustomRadio from 'common/components/form/CustomRadio';
-import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput2';
+import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
 import {
   flavorsPTOptions,
+  ledgerEntryOperationPTOptions,
   ledgerEntryStatusPTOptions,
 } from 'pages/backoffice/utils';
 import React from 'react';
@@ -50,9 +51,17 @@ type Params = {
 export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   //context
   const { entryId } = useParams<Params>();
-  // const { userAbility } = useContextFirebaseUser();
+  const { user, userAbility } = useContextFirebaseUser();
   const { dispatchAppRequestResult } = useContextAppRequests();
-  const entry = useObserveLedgerEntry(entryId);
+  const {
+    entry,
+    submitLedgerEntry,
+    updateLedgerEntry,
+    deleteLedgerEntry,
+    submitLedgerEntryResult,
+    updateLedgerEntryResult,
+    deleteLedgerEntryResult,
+  } = useObserveLedgerEntry(entryId);
   // state
   const [orderId, setOrderId] = React.useState('');
   const [operation, setOperation] =
@@ -70,46 +79,53 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   const [isDeleting, setIsDeleting] = React.useState(false);
   // helpers
   const isNew = entryId === 'new';
-  // const canUpdate = !isNew && userAbility?.can('update', 'invoices');
-  const canUpdate = false;
-  // const isLoading = isNew
-  //   ? submitPushCampaignResult.isLoading
-  //   : updatePushCampaignResult.isLoading;
+  const canUpdate = !isNew && userAbility?.can('update', 'invoices');
   // handlers
   const handleSubmit = () => {
-    const validation = true;
-    if (!validation) {
+    if (!user) {
       return dispatchAppRequestResult({
         status: 'error',
-        requestId: 'PushDrawer-submit-error',
+        requestId: 'LedgerEntryDrawer-submit-error',
         message: {
-          title: 'Informações inválidas.',
-          description: 'A data e horário informados não são válidos.',
+          title: 'Usuário não encontrado.',
+          description: 'Não foi possível encontrar o seu usuário.',
         },
       });
     }
-    let newEntry = {
-      orderId,
-      operation,
-      value: entryValue,
-      status,
-      from: {
-        accountId: fromAccountId,
-        accountType: fromAccountType,
-        token: fromToken,
-      },
-      to: {
-        accountId: toAccountId,
-        accountType: toAccountType,
-      },
-      description,
-    } as Partial<LedgerEntry>;
     if (isNew) {
-      // submitPushCampaign(newEntry);
+      const newEntry = {
+        createdBy: {
+          id: user.uid,
+          email: user.email!,
+        },
+        operation,
+        value: entryValue,
+        status,
+        from: {
+          accountId: fromAccountId.length > 0 ? fromAccountId : null,
+          accountType: fromAccountType,
+          token: fromToken.length > 0 ? fromToken : null,
+        },
+        to: {
+          accountId: toAccountId.length > 0 ? toAccountId : null,
+          accountType: toAccountType,
+        },
+        description,
+      } as Partial<LedgerEntry>;
+      if (orderId.length > 0) newEntry.orderId = orderId;
       console.log(newEntry);
+      submitLedgerEntry(newEntry);
     } else {
-      // updatePushCampaign({ entryId, changes: newEntry });
+      const newEntry = {
+        ...entry,
+        status,
+        updatedBy: {
+          id: user.uid,
+          email: user.email!,
+        },
+      };
       console.log(newEntry);
+      updateLedgerEntry({ entryId, changes: newEntry });
     }
   };
   // side effects
@@ -126,130 +142,53 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
     setEntryValue(entry.value);
     setStatus(entry.status);
   }, [entry]);
-  // React.useEffect(() => {
-  //   if (
-  //     submitPushCampaignResult.isSuccess ||
-  //     deletePushCampaignResult.isSuccess
-  //   ) {
-  //     onClose();
-  //   }
-  // }, [
-  //   onClose,
-  //   submitPushCampaignResult.isSuccess,
-  //   deletePushCampaignResult.isSuccess,
-  // ]);
+  React.useEffect(() => {
+    if (fromAccountType === 'platform') setFromAccountId('');
+  }, [fromAccountType]);
+  React.useEffect(() => {
+    if (toAccountType === 'platform') setToAccountId('');
+  }, [toAccountType]);
+  React.useEffect(() => {
+    if (
+      submitLedgerEntryResult.isSuccess ||
+      deleteLedgerEntryResult.isSuccess
+    ) {
+      onClose();
+    }
+  }, [
+    onClose,
+    submitLedgerEntryResult.isSuccess,
+    deleteLedgerEntryResult.isSuccess,
+  ]);
   //UI
   if (!isNew) {
     return (
       <Drawer placement="right" size="lg" onClose={onClose} {...props}>
         <DrawerOverlay>
-          <DrawerContent mt={{ base: '16', lg: '0' }}>
-            <DrawerCloseButton
-              bg="green.500"
-              mr="12px"
-              _focus={{ outline: 'none' }}
-            />
-            <DrawerHeader pb="2">
-              <Text
-                color="black"
-                fontSize="2xl"
-                fontWeight="700"
-                lineHeight="28px"
-                mb="2"
-              >
-                {t('Registro')}
-              </Text>
-            </DrawerHeader>
-            <DrawerBody pb="28">
-              <Text
-                mt="2"
-                fontSize="15px"
-                color="black"
-                fontWeight="700"
-                lineHeight="22px"
-              >
-                {t('ID do pedido:')}{' '}
-                <Link
-                  as={RouterLink}
-                  to={`/backoffice/orders/${entry?.orderId}`}
-                  fontWeight="500"
-                  textDecor="underline"
+          <form
+            onSubmit={(ev) => {
+              ev.preventDefault();
+              handleSubmit();
+            }}
+          >
+            <DrawerContent mt={{ base: '16', lg: '0' }}>
+              <DrawerCloseButton
+                bg="green.500"
+                mr="12px"
+                _focus={{ outline: 'none' }}
+              />
+              <DrawerHeader pb="2">
+                <Text
+                  color="black"
+                  fontSize="2xl"
+                  fontWeight="700"
+                  lineHeight="28px"
+                  mb="2"
                 >
-                  {entry?.orderId ?? 'N/E'}
-                </Link>
-              </Text>
-              <Text
-                mt="2"
-                fontSize="15px"
-                color="black"
-                fontWeight="700"
-                lineHeight="22px"
-              >
-                {t('Data:')}{' '}
-                <Text as="span" fontWeight="500">
-                  {getDateAndHour(entry?.createdOn)}
+                  {t('Transferência')}
                 </Text>
-              </Text>
-              <Text
-                mt="2"
-                fontSize="15px"
-                color="black"
-                fontWeight="700"
-                lineHeight="22px"
-              >
-                {t('Operação:')}{' '}
-                <Text as="span" fontWeight="500">
-                  {entry?.operation ?? 'N/E'}
-                </Text>
-              </Text>
-              <Text
-                mt="2"
-                fontSize="15px"
-                color="black"
-                fontWeight="700"
-                lineHeight="22px"
-              >
-                {t('Descrição:')}{' '}
-                <Text as="span" fontWeight="500">
-                  {entry?.description ?? 'N/E'}
-                </Text>
-              </Text>
-              <Text
-                mt="2"
-                fontSize="15px"
-                color="black"
-                fontWeight="700"
-                lineHeight="22px"
-              >
-                {t('Tipo:')}{' '}
-                <Text as="span" fontWeight="500">
-                  {`De ${
-                    entry?.from.accountType
-                      ? flavorsPTOptions[entry?.from.accountType]
-                      : 'N/E'
-                  }`}
-                </Text>
-                <Text as="span" fontWeight="500">
-                  {` para ${
-                    entry?.to.accountType
-                      ? flavorsPTOptions[entry?.to.accountType]
-                      : 'N/E'
-                  }`}
-                </Text>
-              </Text>
-              <Text
-                mt="2"
-                fontSize="15px"
-                color="black"
-                fontWeight="700"
-                lineHeight="22px"
-              >
-                {t('Conta de destino:')}{' '}
-                <Text as="span" fontWeight="500">
-                  {entry?.to.accountId ?? 'N/E'}
-                </Text>
-              </Text>
-              {!canUpdate && (
+              </DrawerHeader>
+              <DrawerBody pb="28">
                 <Text
                   mt="2"
                   fontSize="15px"
@@ -257,113 +196,260 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                   fontWeight="700"
                   lineHeight="22px"
                 >
-                  {t('Status:')}{' '}
+                  {t('ID do pedido:')}{' '}
+                  {entry?.orderId ? (
+                    <Link
+                      as={RouterLink}
+                      to={`/backoffice/orders/${entry.orderId}`}
+                      fontWeight="500"
+                      textDecor="underline"
+                    >
+                      {entry.orderId}
+                    </Link>
+                  ) : (
+                    <Text as="span" fontWeight="500">
+                      N/E
+                    </Text>
+                  )}
+                </Text>
+                <Text
+                  mt="2"
+                  fontSize="15px"
+                  color="black"
+                  fontWeight="700"
+                  lineHeight="22px"
+                >
+                  {t('Criada em:')}{' '}
                   <Text as="span" fontWeight="500">
-                    {entry?.status
-                      ? ledgerEntryStatusPTOptions[entry.status]
+                    {getDateAndHour(entry?.createdOn)}
+                  </Text>
+                </Text>
+                {entry?.updatedOn && (
+                  <Text
+                    mt="2"
+                    fontSize="15px"
+                    color="black"
+                    fontWeight="700"
+                    lineHeight="22px"
+                  >
+                    {t('Atualizada em:')}{' '}
+                    <Text as="span" fontWeight="500">
+                      {getDateAndHour(entry.updatedOn)}
+                    </Text>
+                  </Text>
+                )}
+                <Text
+                  mt="2"
+                  fontSize="15px"
+                  color="black"
+                  fontWeight="700"
+                  lineHeight="22px"
+                >
+                  {t('Criada por:')}{' '}
+                  <Text as="span" fontWeight="500">
+                    {entry?.createdBy === 'platform'
+                      ? 'Plataforma'
+                      : entry?.createdBy?.email ?? 'N/E'}
+                  </Text>
+                </Text>
+                {entry?.updatedBy && (
+                  <Text
+                    mt="2"
+                    fontSize="15px"
+                    color="black"
+                    fontWeight="700"
+                    lineHeight="22px"
+                  >
+                    {t('Atualizada por:')}{' '}
+                    <Text as="span" fontWeight="500">
+                      {entry.updatedBy?.email ?? 'N/E'}
+                    </Text>
+                  </Text>
+                )}
+                <Text
+                  mt="2"
+                  fontSize="15px"
+                  color="black"
+                  fontWeight="700"
+                  lineHeight="22px"
+                >
+                  {t('Operação:')}{' '}
+                  <Text as="span" fontWeight="500">
+                    {entry?.operation
+                      ? ledgerEntryOperationPTOptions[entry.operation]
                       : 'N/E'}
                   </Text>
                 </Text>
-              )}
-              <Text
-                mt="2"
-                fontSize="15px"
-                color="black"
-                fontWeight="700"
-                lineHeight="22px"
-              >
-                {t('Valor:')}{' '}
-                <Text as="span" fontWeight="500">
-                  {entry?.value ? formatCurrency(entry?.value) : 'N/E'}
+                <Text
+                  mt="2"
+                  fontSize="15px"
+                  color="black"
+                  fontWeight="700"
+                  lineHeight="22px"
+                >
+                  {t('Tipo:')}{' '}
+                  <Text as="span" fontWeight="500">
+                    {entry?.from.accountType
+                      ? flavorsPTOptions[entry?.from.accountType]
+                      : 'N/E'}
+                  </Text>
+                  <Text as="span" fontWeight="500">
+                    {` para ${
+                      entry?.to.accountType
+                        ? flavorsPTOptions[entry?.to.accountType]
+                        : 'N/E'
+                    }`}
+                  </Text>
                 </Text>
-              </Text>
-              {canUpdate && (
-                <>
-                  <SectionTitle>{t('Status')}</SectionTitle>
-                  <RadioGroup
+                <Text
+                  mt="2"
+                  fontSize="15px"
+                  color="black"
+                  fontWeight="700"
+                  lineHeight="22px"
+                >
+                  {t('Descrição:')}{' '}
+                  <Text as="span" fontWeight="500">
+                    {entry?.description ?? 'N/E'}
+                  </Text>
+                </Text>
+                <Text
+                  mt="2"
+                  fontSize="15px"
+                  color="black"
+                  fontWeight="700"
+                  lineHeight="22px"
+                >
+                  {t('ID da conta de destino:')}{' '}
+                  <Text as="span" fontWeight="500">
+                    {entry?.to.accountId ?? 'N/E'}
+                  </Text>
+                </Text>
+                {!canUpdate && (
+                  <Text
                     mt="2"
-                    onChange={(value: LedgerEntryStatus) => setStatus(value)}
-                    value={status}
-                    defaultValue="1"
-                    colorScheme="green"
-                    color="black"
                     fontSize="15px"
-                    lineHeight="21px"
+                    color="black"
+                    fontWeight="700"
+                    lineHeight="22px"
                   >
-                    <VStack mt="4" spacing={2} alignItems="flex-start">
-                      <CustomRadio value="pending">{t('Pendente')}</CustomRadio>
-                      <CustomRadio value="approved">
-                        {t('Aprovada')}
-                      </CustomRadio>
-                      <CustomRadio value="processing">
-                        {t('Processando')}
-                      </CustomRadio>
-                      <CustomRadio value="paid">{t('Paga')}</CustomRadio>
-                      <CustomRadio value="canceled">
-                        {t('Cancelada')}
-                      </CustomRadio>
-                    </VStack>
-                  </RadioGroup>
-                </>
-              )}
-            </DrawerBody>
-            {canUpdate && (
-              <DrawerFooter borderTop="1px solid #F2F6EA">
-                {isDeleting ? (
-                  <Box
-                    mt="8"
-                    w="100%"
-                    bg="#FFF8F8"
-                    border="1px solid red"
-                    borderRadius="lg"
-                    p="6"
-                  >
-                    <Text color="red">
-                      {t(`Tem certeza que deseja excluir esta transferência?`)}
+                    {t('Status:')}{' '}
+                    <Text as="span" fontWeight="500">
+                      {entry?.status
+                        ? ledgerEntryStatusPTOptions[entry.status]
+                        : 'N/E'}
                     </Text>
-                    <HStack mt="4" spacing={4}>
+                  </Text>
+                )}
+                <Text
+                  mt="2"
+                  fontSize="15px"
+                  color="black"
+                  fontWeight="700"
+                  lineHeight="22px"
+                >
+                  {t('Valor:')}{' '}
+                  <Text as="span" fontWeight="500">
+                    {entry?.value ? formatCurrency(entry?.value) : 'N/E'}
+                  </Text>
+                </Text>
+                {canUpdate && (
+                  <>
+                    <SectionTitle>{t('Status')}</SectionTitle>
+                    <RadioGroup
+                      mt="2"
+                      onChange={(value: LedgerEntryStatus) => setStatus(value)}
+                      value={status}
+                      defaultValue="1"
+                      colorScheme="green"
+                      color="black"
+                      fontSize="15px"
+                      lineHeight="21px"
+                    >
+                      <VStack mt="4" spacing={2} alignItems="flex-start">
+                        <CustomRadio value="pending">
+                          {t('Pendente')}
+                        </CustomRadio>
+                        <CustomRadio value="approved">
+                          {t('Aprovada')}
+                        </CustomRadio>
+                        <CustomRadio value="rejected">
+                          {t('Rejeitada')}
+                        </CustomRadio>
+                        <CustomRadio value="canceled">
+                          {t('Cancelada')}
+                        </CustomRadio>
+                        <CustomRadio value="processing" isDisabled>
+                          {t('Processando')}
+                        </CustomRadio>
+                        <CustomRadio value="paid" isDisabled>
+                          {t('Paga')}
+                        </CustomRadio>
+                      </VStack>
+                    </RadioGroup>
+                  </>
+                )}
+              </DrawerBody>
+              {canUpdate && (
+                <DrawerFooter borderTop="1px solid #F2F6EA">
+                  {isDeleting ? (
+                    <Box
+                      mt="8"
+                      w="100%"
+                      bg="#FFF8F8"
+                      border="1px solid red"
+                      borderRadius="lg"
+                      p="6"
+                    >
+                      <Text color="red">
+                        {t(
+                          `Tem certeza que deseja excluir esta transferência?`
+                        )}
+                      </Text>
+                      <HStack mt="4" spacing={4}>
+                        <Button
+                          width="full"
+                          fontSize="15px"
+                          onClick={() => setIsDeleting(false)}
+                        >
+                          {t(`Manter transferência`)}
+                        </Button>
+                        <Button
+                          width="full"
+                          variant="danger"
+                          fontSize="15px"
+                          onClick={() => deleteLedgerEntry(entryId)}
+                          isLoading={deleteLedgerEntryResult.isLoading}
+                        >
+                          {t(`Excluir`)}
+                        </Button>
+                      </HStack>
+                    </Box>
+                  ) : (
+                    <HStack w="100%" spacing={4}>
                       <Button
                         width="full"
                         fontSize="15px"
-                        onClick={() => setIsDeleting(false)}
+                        type="submit"
+                        isLoading={updateLedgerEntryResult.isLoading}
+                        loadingText={t('Salvando')}
                       >
-                        {t(`Manter transferência`)}
+                        {t('Salvar alterações')}
                       </Button>
                       <Button
                         width="full"
-                        variant="danger"
                         fontSize="15px"
-                        // onClick={() => deletePushCampaign(entryId)}
-                        // isLoading={deletePushCampaignResult.isLoading}
+                        variant="dangerLight"
+                        onClick={() => setIsDeleting(true)}
                       >
-                        {t(`Excluir`)}
+                        {t('Excluir transferência')}
                       </Button>
                     </HStack>
-                  </Box>
-                ) : (
-                  <HStack w="100%" spacing={4}>
-                    <Button
-                      width="full"
-                      fontSize="15px"
-                      type="submit"
-                      // isLoading={isLoading}
-                      loadingText={t('Salvando')}
-                    >
-                      {t('Salvar alterações')}
-                    </Button>
-                    <Button
-                      width="full"
-                      fontSize="15px"
-                      variant="dangerLight"
-                      onClick={() => setIsDeleting(true)}
-                    >
-                      {t('Excluir transferência')}
-                    </Button>
-                  </HStack>
-                )}
-              </DrawerFooter>
-            )}
-          </DrawerContent>
+                  )}
+                </DrawerFooter>
+              )}
+            </DrawerContent>
+          </form>
         </DrawerOverlay>
       </Drawer>
     );
@@ -420,22 +506,25 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                   <CustomRadio value="business">{t('Restaurante')}</CustomRadio>
                 </HStack>
               </RadioGroup>
-              <CustomInput
-                id="entry-from-account-id"
-                label={t('ID da conta *')}
-                placeholder={t('Digite o id da conta')}
-                value={fromAccountId}
-                onChange={(ev) => setFromAccountId(ev.target.value)}
-                isRequired
-              />
-              <CustomInput
-                id="entry-from-token"
-                label={t('Token da conta')}
-                placeholder={t('Digite o id da conta, se houver')}
-                value={fromToken}
-                onChange={(ev) => setFromToken(ev.target.value)}
-                isRequired
-              />
+              {fromAccountType !== 'platform' && (
+                <>
+                  <CustomInput
+                    id="entry-from-account-id"
+                    label={t('ID da conta *')}
+                    placeholder={t('Digite o id da conta')}
+                    value={fromAccountId!}
+                    onChange={(ev) => setFromAccountId(ev.target.value)}
+                    isRequired
+                  />
+                  <CustomInput
+                    id="entry-from-token"
+                    label={t('Token da conta')}
+                    placeholder={t('Digite o id da conta, se houver')}
+                    value={fromToken}
+                    onChange={(ev) => setFromToken(ev.target.value)}
+                  />
+                </>
+              )}
               <SectionTitle>{t('Conta de destino')}</SectionTitle>
               <RadioGroup
                 mt="2"
@@ -453,14 +542,16 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                   <CustomRadio value="business">{t('Restaurante')}</CustomRadio>
                 </HStack>
               </RadioGroup>
-              <CustomInput
-                id="entry-to-account-id"
-                label={t('ID da conta *')}
-                placeholder={t('Digite o id da conta')}
-                value={toAccountId}
-                onChange={(ev) => setToAccountId(ev.target.value)}
-                isRequired
-              />
+              {toAccountId !== null && (
+                <CustomInput
+                  id="entry-to-account-id"
+                  label={t('ID da conta *')}
+                  placeholder={t('Digite o id da conta')}
+                  value={toAccountId}
+                  onChange={(ev) => setToAccountId(ev.target.value)}
+                  isRequired
+                />
+              )}
               <SectionTitle>{t('Dados da operação')}</SectionTitle>
               <RadioGroup
                 mt="2"
@@ -474,6 +565,10 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
               >
                 <HStack spacing={4}>
                   <CustomRadio value="delivery">{t('Delivery')}</CustomRadio>
+                  <CustomRadio value="same-owner-accounts">
+                    {t('Contas do mesmo usuário')}
+                  </CustomRadio>
+                  <CustomRadio value="others">{t('Outros')}</CustomRadio>
                 </HStack>
               </RadioGroup>
               <Textarea
@@ -502,7 +597,7 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                   width="full"
                   fontSize="15px"
                   type="submit"
-                  // isLoading={isLoading}
+                  isLoading={submitLedgerEntryResult.isLoading}
                   loadingText={t('Salvando')}
                 >
                   {t('Salvar')}
