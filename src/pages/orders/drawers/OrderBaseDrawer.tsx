@@ -19,12 +19,17 @@ import { useOrdersContext } from 'app/state/order';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { phoneFormatter } from 'common/components/form/input/pattern-input/formatters';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
+import { getFoodOrderTotal } from 'pages/backoffice/orders/utils';
 import React from 'react';
 import { MdPrint } from 'react-icons/md';
 import { useRouteMatch } from 'react-router-dom';
+import { formatCurrency } from 'utils/formatters';
 import { getDateAndHour, getHourAndMinute } from 'utils/functions';
 import { t } from 'utils/i18n';
-import { orderStatusPTOptions } from '../../backoffice/utils/index';
+import {
+  invoiceStatusPTOptions,
+  orderStatusPTOptions,
+} from '../../backoffice/utils/index';
 import { getDatePlusTime, isScheduledMarginValid } from '../utils';
 
 interface BaseDrawerProps {
@@ -58,6 +63,7 @@ export const OrderBaseDrawer = ({
   // refs
   const bodyRef = React.useRef<HTMLDivElement>(null);
   // helpers
+  const invoicedAmount = order ? getFoodOrderTotal(order) : 0;
   const isScheduled = order?.scheduledTo && order?.status === 'scheduled';
   const isHistory = path.includes('orders-history');
   const isCookingTimeModeAuto = cookingTimeMode === 'auto';
@@ -264,6 +270,34 @@ export const OrderBaseDrawer = ({
                     </Text>
                   </Text>
                 )}
+                {order?.status === 'delivered' &&
+                  order.fare?.business?.status &&
+                  order.fare.business?.status !== 'paid' && (
+                    <>
+                      <Text
+                        fontSize="md"
+                        color="gray.600"
+                        fontWeight="500"
+                        lineHeight="22px"
+                      >
+                        {t('Status da fatura:')}{' '}
+                        <Text as="span" color="red" fontWeight="700">
+                          {invoiceStatusPTOptions[order.fare.business.status]}
+                        </Text>
+                      </Text>
+                      <Text
+                        fontSize="md"
+                        color="gray.600"
+                        fontWeight="500"
+                        lineHeight="22px"
+                      >
+                        {t('Valor faturado:')}{' '}
+                        <Text as="span" color="black" fontWeight="700">
+                          {formatCurrency(invoicedAmount)}
+                        </Text>
+                      </Text>
+                    </>
+                  )}
                 {isScheduled && (
                   <>
                     <Text
