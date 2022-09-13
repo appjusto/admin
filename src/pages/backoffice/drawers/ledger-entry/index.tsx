@@ -134,7 +134,6 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
           email: user.email!,
         },
       };
-      console.log(newEntry);
       updateLedgerEntry({ entryId, changes: newEntry });
     }
   };

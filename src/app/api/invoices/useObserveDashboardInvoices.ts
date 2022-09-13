@@ -16,7 +16,7 @@ const invoiceStatuses = [
   'partially_refunded',
   'partially_paid',
 ] as IuguInvoiceStatus[];
-const invoicesTypes = ['products', 'order', 'delivery'] as InvoiceType[];
+const invoicesTypes = ['products', 'order'] as InvoiceType[]; // remove 'delivery' values from business dashboard
 const invoicesProductTypes = ['products', 'order'] as InvoiceType[];
 
 export const useObserveDashboardInvoices = (businessId?: string | null) => {

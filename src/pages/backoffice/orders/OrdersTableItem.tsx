@@ -6,6 +6,7 @@ import { formatCurrency } from 'utils/formatters';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { orderStatusPTOptionsForTableItem } from '../utils';
+import { getFoodOrderTotal } from './utils';
 
 interface ItemProps {
   order: WithId<Order>;
@@ -16,19 +17,7 @@ export const OrdersTableItem = ({ order, isBackoffice }: ItemProps) => {
   // context
   const { path } = useRouteMatch();
   // helpers
-  const getFoodOrderTotal = () => {
-    let total = 0;
-    if (!isBackoffice) {
-      if (order.outsourcedBy === 'business' && order.fare?.total) total = order.fare.total;
-      else if (order.fare?.business?.value) total = order.fare.business.value;
-      else return 'N/E';
-    } else {
-      if (order.fare?.total) total = order.fare.total;
-      else return 'N/E';
-    }
-    return formatCurrency(total);
-  };
-  const total = getFoodOrderTotal();
+  const total = getFoodOrderTotal(order, isBackoffice);
   // UI
   return (
     <Tr key={order.id} color="black" fontSize="15px" lineHeight="21px">
@@ -38,17 +27,23 @@ export const OrdersTableItem = ({ order, isBackoffice }: ItemProps) => {
         {order.scheduledTo ? getDateAndHour(order.scheduledTo) : 'Tempo real'}
       </Td>
       {isBackoffice && (
-        <Td>{order.type ? (order.type === 'food' ? 'Comida' : 'Entrega') : 'N/E'}</Td>
+        <Td>
+          {order.type ? (order.type === 'food' ? 'Comida' : 'Entrega') : 'N/E'}
+        </Td>
       )}
       <Td>
-        {order.status ? orderStatusPTOptionsForTableItem[order.status as OrderStatus] : 'N/I'}
+        {order.status
+          ? orderStatusPTOptionsForTableItem[order.status as OrderStatus]
+          : 'N/I'}
       </Td>
       {isBackoffice && <Td>{order.business?.name ?? 'N/I'}</Td>}
       <Td>{order.consumer.name ?? 'N/I'}</Td>
       <Td>
-        {order.dispatchingStatus === 'outsourced' ? 'Fora da rede' : order.courier?.name ?? 'N/E'}
+        {order.dispatchingStatus === 'outsourced'
+          ? 'Fora da rede'
+          : order.courier?.name ?? 'N/E'}
       </Td>
-      <Td>{total}</Td>
+      <Td>{formatCurrency(total)}</Td>
       <Td>
         <CustomButton
           mt="0"

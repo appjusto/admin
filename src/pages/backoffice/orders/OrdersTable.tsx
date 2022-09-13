@@ -3,6 +3,7 @@ import { Box, Table, Tbody, Td, Tfoot, Th, Thead, Tr } from '@chakra-ui/react';
 import { formatCurrency } from 'utils/formatters';
 import { t } from 'utils/i18n';
 import { OrdersTableItem } from './OrdersTableItem';
+import { getOrdersTableTotal } from './utils';
 
 interface OrdersTableProps {
   orders?: WithId<Order>[] | null;
@@ -11,15 +12,7 @@ interface OrdersTableProps {
 
 export const OrdersTable = ({ orders, isBackoffice }: OrdersTableProps) => {
   // helpers
-  const totalValue = orders
-    ? orders.reduce<number>((result, order) => {
-        if (order.outsourcedBy === 'business' && order.fare?.total)
-          return (result += order.fare.total);
-        else if (order.fare?.business?.value)
-          return (result += order.fare.business.value);
-        return result;
-      }, 0)
-    : 0;
+  const totalValue = isBackoffice ? 0 : getOrdersTableTotal(orders);
   // UI
   return (
     <Box mt="12" maxW="100vw" overflowX="auto">
