@@ -92,6 +92,17 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
         },
       });
     }
+    if (fromAccountType === 'platform' && toAccountType === 'platform') {
+      return dispatchAppRequestResult({
+        status: 'error',
+        requestId: 'LedgerEntryDrawer-submit-error',
+        message: {
+          title: 'Operação inválida.',
+          description:
+            'Não é possível transferir da plataforma para ela mesma.',
+        },
+      });
+    }
     if (isNew) {
       const newEntry = {
         createdBy: {
@@ -113,7 +124,6 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
         description,
       } as Partial<LedgerEntry>;
       if (orderId.length > 0) newEntry.orderId = orderId;
-      console.log(newEntry);
       submitLedgerEntry(newEntry);
     } else {
       const newEntry = {
@@ -142,6 +152,14 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
     setEntryValue(entry.value);
     setStatus(entry.status);
   }, [entry]);
+  React.useEffect(() => {
+    if (operation === 'same-owner-accounts' && fromAccountType === 'platform')
+      setFromAccountType('courier');
+    // if (operation === 'same-owner-accounts' && toAccountType === 'platform')
+    //   setToAccountType('courier');
+    if (operation === 'same-owner-accounts') setToAccountType(fromAccountType);
+    if (operation !== 'same-owner-accounts') setFromToken('');
+  }, [operation, fromAccountType, toAccountType]);
   React.useEffect(() => {
     if (fromAccountType === 'platform') setFromAccountId('');
   }, [fromAccountType]);
@@ -489,70 +507,7 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 value={orderId}
                 onChange={(ev) => setOrderId(ev.target.value)}
               />
-              <SectionTitle>{t('Conta de origem')}</SectionTitle>
-              <RadioGroup
-                mt="2"
-                onChange={(value: AccountType) => setFromAccountType(value)}
-                value={fromAccountType}
-                defaultValue="1"
-                colorScheme="green"
-                color="black"
-                fontSize="15px"
-                lineHeight="21px"
-              >
-                <HStack spacing={4}>
-                  <CustomRadio value="platform">{t('Plataforma')}</CustomRadio>
-                  <CustomRadio value="courier">{t('Entregador')}</CustomRadio>
-                  <CustomRadio value="business">{t('Restaurante')}</CustomRadio>
-                </HStack>
-              </RadioGroup>
-              {fromAccountType !== 'platform' && (
-                <>
-                  <CustomInput
-                    id="entry-from-account-id"
-                    label={t('ID da conta *')}
-                    placeholder={t('Digite o id da conta')}
-                    value={fromAccountId!}
-                    onChange={(ev) => setFromAccountId(ev.target.value)}
-                    isRequired
-                  />
-                  <CustomInput
-                    id="entry-from-token"
-                    label={t('Token da conta')}
-                    placeholder={t('Digite o id da conta, se houver')}
-                    value={fromToken}
-                    onChange={(ev) => setFromToken(ev.target.value)}
-                  />
-                </>
-              )}
-              <SectionTitle>{t('Conta de destino')}</SectionTitle>
-              <RadioGroup
-                mt="2"
-                onChange={(value: AccountType) => setToAccountType(value)}
-                value={toAccountType}
-                defaultValue="1"
-                colorScheme="green"
-                color="black"
-                fontSize="15px"
-                lineHeight="21px"
-              >
-                <HStack spacing={4}>
-                  <CustomRadio value="platform">{t('Plataforma')}</CustomRadio>
-                  <CustomRadio value="courier">{t('Entregador')}</CustomRadio>
-                  <CustomRadio value="business">{t('Restaurante')}</CustomRadio>
-                </HStack>
-              </RadioGroup>
-              {toAccountId !== null && (
-                <CustomInput
-                  id="entry-to-account-id"
-                  label={t('ID da conta *')}
-                  placeholder={t('Digite o id da conta')}
-                  value={toAccountId}
-                  onChange={(ev) => setToAccountId(ev.target.value)}
-                  isRequired
-                />
-              )}
-              <SectionTitle>{t('Dados da operação')}</SectionTitle>
+              <SectionTitle>{t('Tipo de operação')}</SectionTitle>
               <RadioGroup
                 mt="2"
                 onChange={(value: LedgerEntryOperation) => setOperation(value)}
@@ -571,6 +526,100 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                   <CustomRadio value="others">{t('Outros')}</CustomRadio>
                 </HStack>
               </RadioGroup>
+              <SectionTitle>{t('Conta de origem')}</SectionTitle>
+              <RadioGroup
+                mt="2"
+                onChange={(value: AccountType) => setFromAccountType(value)}
+                value={fromAccountType}
+                defaultValue="1"
+                colorScheme="green"
+                color="black"
+                fontSize="15px"
+                lineHeight="21px"
+              >
+                <HStack spacing={4}>
+                  <CustomRadio
+                    value="platform"
+                    isDisabled={operation === 'same-owner-accounts'}
+                  >
+                    {t('Plataforma')}
+                  </CustomRadio>
+                  <CustomRadio value="courier">{t('Entregador')}</CustomRadio>
+                  <CustomRadio value="business">{t('Restaurante')}</CustomRadio>
+                </HStack>
+              </RadioGroup>
+              {fromAccountType !== 'platform' &&
+                operation !== 'same-owner-accounts' && (
+                  <CustomInput
+                    id="entry-from-account-id"
+                    label={t('ID da conta *')}
+                    placeholder={t('Digite o id da conta')}
+                    value={fromAccountId!}
+                    onChange={(ev) => setFromAccountId(ev.target.value)}
+                    isRequired
+                  />
+                )}
+              {fromAccountType !== 'platform' &&
+                operation === 'same-owner-accounts' && (
+                  <>
+                    <Text mt="4">
+                      {t(
+                        'Para transferência entre contas de um mesmo usuário, é preciso informar o token da conta de origem do Iugu'
+                      )}
+                    </Text>
+                    <CustomInput
+                      mt="2"
+                      id="entry-from-token"
+                      label={t('Token da conta (Api Iugu)')}
+                      placeholder={t('Digite o id da conta, se houver')}
+                      value={fromToken}
+                      onChange={(ev) => setFromToken(ev.target.value)}
+                    />
+                  </>
+                )}
+              <SectionTitle>{t('Conta de destino')}</SectionTitle>
+              <RadioGroup
+                mt="2"
+                onChange={(value: AccountType) => setToAccountType(value)}
+                value={toAccountType}
+                defaultValue="1"
+                colorScheme="green"
+                color="black"
+                fontSize="15px"
+                lineHeight="21px"
+              >
+                <HStack spacing={4}>
+                  <CustomRadio
+                    value="platform"
+                    isDisabled={operation === 'same-owner-accounts'}
+                  >
+                    {t('Plataforma')}
+                  </CustomRadio>
+                  <CustomRadio
+                    value="courier"
+                    isDisabled={operation === 'same-owner-accounts'}
+                  >
+                    {t('Entregador')}
+                  </CustomRadio>
+                  <CustomRadio
+                    value="business"
+                    isDisabled={operation === 'same-owner-accounts'}
+                  >
+                    {t('Restaurante')}
+                  </CustomRadio>
+                </HStack>
+              </RadioGroup>
+              {toAccountType !== 'platform' && (
+                <CustomInput
+                  id="entry-to-account-id"
+                  label={t('ID da conta *')}
+                  placeholder={t('Digite o id da conta')}
+                  value={toAccountId}
+                  onChange={(ev) => setToAccountId(ev.target.value)}
+                  isRequired
+                />
+              )}
+              <SectionTitle>{t('Dados da operação')}</SectionTitle>
               <Textarea
                 id="antry-description"
                 label={t('Descrição')}

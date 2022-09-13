@@ -257,7 +257,7 @@ export const PushDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                   </HStack>
                   <NumberInput
                     id="campaign-radius"
-                    label={t('Raio')}
+                    label={t('Raio (km)')}
                     placeholder={t('0')}
                     value={radius}
                     onChange={(ev) => setRadius(ev.target.value)}
