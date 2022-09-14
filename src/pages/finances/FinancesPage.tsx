@@ -4,12 +4,10 @@ import { Box, Stack } from '@chakra-ui/react';
 import { useAccountInformation } from 'app/api/business/useAccountInformation';
 import { useObserveBusinessAdvances } from 'app/api/business/useObserveBusinessAdvances';
 import { useObserveBusinessWithdraws } from 'app/api/business/useObserveBusinessWithdraws';
-import { useRequestWithdraw } from 'app/api/business/useRequestWithdraw';
 import { useObserveInvoicesStatusByPeriod } from 'app/api/invoices/useObserveInvoicesStatusByPeriod';
 import { useObserveLedgerStatusByPeriod } from 'app/api/ledger/useObserveLedgerStatusByPeriod';
 import { useCanAdvanceReceivables } from 'app/api/platform/useCanAdvanceReceivables';
 import { useContextBusinessId } from 'app/state/business/context';
-import { useContextAppRequests } from 'app/state/requests/context';
 import { CustomMonthInput } from 'common/components/form/input/CustomMonthInput';
 import { ReactComponent as Checked } from 'common/img/icon-checked.svg';
 import { ReactComponent as Watch } from 'common/img/icon-stopwatch.svg';
@@ -17,7 +15,7 @@ import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router';
-import { convertBalance, formatCurrency, getMonthName } from 'utils/formatters';
+import { formatCurrency, getMonthName } from 'utils/formatters';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { AdvanceDetailsDrawer } from './AdvanceDetailsDrawer';
@@ -37,15 +35,11 @@ const ledgerEntriesStatuses = ['paid'] as LedgerEntryStatus[];
 
 const FinancesPage = () => {
   // context
-  const { dispatchAppRequestResult } = useContextAppRequests();
   const { path, url } = useRouteMatch();
   const history = useHistory();
   const businessId = useContextBusinessId();
   const { accountInformation, refreshAccountInformation } =
     useAccountInformation(businessId);
-  const { requestWithdraw, requestWithdrawResult } =
-    useRequestWithdraw(businessId);
-  const { isLoading, isSuccess } = requestWithdrawResult;
   const canAdvanceReceivables = useCanAdvanceReceivables();
   // state
   const [dateTime, setDateTime] = React.useState('');
@@ -78,16 +72,6 @@ const FinancesPage = () => {
     refreshAccountInformation();
     history.replace(path);
   };
-  const handleWithdrawRequest = () => {
-    if (!availableWithdraw)
-      return dispatchAppRequestResult({
-        status: 'error',
-        requestId: 'FinancesPage-valid',
-        message: { title: 'Não existe valor disponível para transferência.' },
-      });
-    const amount = convertBalance(availableWithdraw);
-    requestWithdraw(amount);
-  };
   const getAdvanceById = React.useCallback(
     (advanceId: string) => {
       return advances?.find((advance) => advance.id === advanceId) ?? null;
@@ -115,10 +99,6 @@ const FinancesPage = () => {
     const active = withdraws.filter((w) => w.status !== 'rejected');
     setActiveWithdraw(active.length);
   }, [withdraws]);
-  React.useEffect(() => {
-    if (!isSuccess) return;
-    refreshAccountInformation();
-  }, [isSuccess, refreshAccountInformation]);
   // UI
   return (
     <>
@@ -184,9 +164,7 @@ const FinancesPage = () => {
             isOpen
             totalWithdraws={activeWithdraw}
             withdrawValue={availableWithdraw}
-            requestWithdraw={handleWithdrawRequest}
-            isLoading={isLoading}
-            isSuccess={isSuccess}
+            refreshAccountInformation={refreshAccountInformation}
             onClose={closeDrawerHandler}
           />
         </Route>

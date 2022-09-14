@@ -1,6 +1,10 @@
 import { Box, Button, Flex, Icon, Text } from '@chakra-ui/react';
+import { useRequestWithdraw } from 'app/api/business/useRequestWithdraw';
+import { useContextBusinessId } from 'app/state/business/context';
+import { useContextAppRequests } from 'app/state/requests/context';
 import { ReactComponent as Checked } from 'common/img/icon-checked.svg';
 import React from 'react';
+import { convertBalance } from 'utils/formatters';
 import { t } from 'utils/i18n';
 import { BasicInfoBox } from './BasicInfoBox';
 import { FinancesBaseDrawer } from './FinancesBaseDrawer';
@@ -10,9 +14,7 @@ interface WithdrawsDrawerProps {
   isOpen: boolean;
   totalWithdraws?: number;
   withdrawValue?: string | null;
-  requestWithdraw(): void;
-  isLoading: boolean;
-  isSuccess?: boolean;
+  refreshAccountInformation(): void;
   onClose(): void;
 }
 
@@ -20,16 +22,31 @@ export const WithdrawsDrawer = ({
   onClose,
   totalWithdraws,
   withdrawValue,
-  requestWithdraw,
-  isLoading,
-  isSuccess,
+  refreshAccountInformation,
   ...props
 }: WithdrawsDrawerProps) => {
+  // context
+  const businessId = useContextBusinessId();
+  const { dispatchAppRequestResult } = useContextAppRequests();
+  const { requestWithdraw, requestWithdrawResult } =
+    useRequestWithdraw(businessId);
+  const { isLoading, isSuccess } = requestWithdrawResult;
   // state
   const [requestedValue, setRequestedValue] = React.useState<string | null>();
   const [withdrawsLeft, setWithdrawsLeft] = React.useState<number | null>();
-  const [withdrawIsAvailable, setWithdrawIsAvailable] = React.useState<boolean>();
-  // helpers
+  const [withdrawIsAvailable, setWithdrawIsAvailable] =
+    React.useState<boolean>();
+  // handlers
+  const handleWithdrawRequest = () => {
+    if (!withdrawValue)
+      return dispatchAppRequestResult({
+        status: 'error',
+        requestId: 'FinancesPage-valid',
+        message: { title: 'Não existe valor disponível para transferência.' },
+      });
+    const amount = convertBalance(withdrawValue);
+    requestWithdraw(amount);
+  };
   // side effects
   React.useEffect(() => {
     if (!withdrawValue || totalWithdraws === undefined) return;
@@ -40,20 +57,36 @@ export const WithdrawsDrawer = ({
     setWithdrawIsAvailable(isAvailable);
     if (value > 0) setRequestedValue(withdrawValue);
   }, [withdrawValue, totalWithdraws]);
+  React.useEffect(() => {
+    if (!isSuccess) return;
+    refreshAccountInformation();
+  }, [isSuccess, refreshAccountInformation]);
   // UI
   if (isSuccess) {
     return (
-      <FinancesBaseDrawer onClose={onClose} title={t('Confirmação de Transferência')} {...props}>
+      <FinancesBaseDrawer
+        onClose={onClose}
+        title={t('Confirmação de Transferência')}
+        {...props}
+      >
         <Flex w="100%" h="100%" flexDir="column" justifyContent="center">
           <Box>
             <Icon as={Checked} w="36px" h="36px" />
-            <Text mt="2" fontSize="24px" fontWeight="500" lineHeight="30px" color="black">
+            <Text
+              mt="2"
+              fontSize="24px"
+              fontWeight="500"
+              lineHeight="30px"
+              color="black"
+            >
               {t('Transferência realizada com sucesso!')}
             </Text>
             <Text mt="1" fontSize="18px" fontWeight="500" lineHeight="26px">
               {t(
                 `Em até 2 dias úteis o valor de ${
-                  requestedValue ? formatIuguValueToDisplay(requestedValue) : 'N/E'
+                  requestedValue
+                    ? formatIuguValueToDisplay(requestedValue)
+                    : 'N/E'
                 } estará disponível em sua conta.`
               )}
             </Text>
@@ -64,7 +97,11 @@ export const WithdrawsDrawer = ({
   }
   if (withdrawIsAvailable === undefined) {
     return (
-      <FinancesBaseDrawer onClose={onClose} title={t('Confirmação de Transferência')} {...props}>
+      <FinancesBaseDrawer
+        onClose={onClose}
+        title={t('Confirmação de Transferência')}
+        {...props}
+      >
         <Text fontSize="18px" fontWeight="500" lineHeight="28px">
           {t('Carregando informações...')}
         </Text>
@@ -86,7 +123,7 @@ export const WithdrawsDrawer = ({
           <Button
             minW="220px"
             fontSize="15px"
-            onClick={requestWithdraw}
+            onClick={handleWithdrawRequest}
             isLoading={isLoading}
             loadingText={t('Confirmando')}
             isDisabled={!withdrawIsAvailable}
@@ -103,7 +140,8 @@ export const WithdrawsDrawer = ({
           {withdrawsLeft}
         </Text>
         {t(' transferências disponíveis este mês (de um total de 4).')} <br />
-        {withdrawIsAvailable && t('Deseja confirmar a transferência do valor disponível abaixo?')}
+        {withdrawIsAvailable &&
+          t('Deseja confirmar a transferência do valor disponível abaixo?')}
       </Text>
       <BasicInfoBox
         mt="6"

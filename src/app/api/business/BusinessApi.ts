@@ -63,6 +63,7 @@ import {
   developmentAdvanceReceivables,
   developmentFetchAccountInformation,
   developmentFetchAdvanceSimulation,
+  developmentRequestWithdraw,
 } from './utils';
 
 export default class BusinessApi {
@@ -801,7 +802,7 @@ export default class BusinessApi {
       meta: { version: '1' }, // TODO: pass correct version on
     };
     if (process.env.NODE_ENV === 'development') {
-      return developmentFetchAccountInformation();
+      return await developmentFetchAccountInformation();
     } else {
       return (await this.refs.getFetchAccountInformationCallable()(payload))
         .data as unknown as FetchAccountInformationResponse;
@@ -814,7 +815,11 @@ export default class BusinessApi {
       amount,
       meta: { version: '1' }, // TODO: pass correct version on
     };
-    return (await this.refs.getRequestWithdrawCallable()(payload)).data;
+    if (process.env.NODE_ENV === 'development') {
+      return await developmentRequestWithdraw(amount);
+    } else {
+      return (await this.refs.getRequestWithdrawCallable()(payload)).data;
+    }
   }
   async fetchReceivables(accountId: string) {
     const payload: FetchReceivablesPayload = {
