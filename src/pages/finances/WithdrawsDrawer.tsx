@@ -14,7 +14,6 @@ interface WithdrawsDrawerProps {
   isOpen: boolean;
   totalWithdraws?: number;
   withdrawValue?: string | null;
-  refreshAccountInformation(): void;
   onClose(): void;
 }
 
@@ -22,7 +21,6 @@ export const WithdrawsDrawer = ({
   onClose,
   totalWithdraws,
   withdrawValue,
-  refreshAccountInformation,
   ...props
 }: WithdrawsDrawerProps) => {
   // context
@@ -57,10 +55,6 @@ export const WithdrawsDrawer = ({
     setWithdrawIsAvailable(isAvailable);
     if (value > 0) setRequestedValue(withdrawValue);
   }, [withdrawValue, totalWithdraws]);
-  React.useEffect(() => {
-    if (!isSuccess) return;
-    refreshAccountInformation();
-  }, [isSuccess, refreshAccountInformation]);
   // UI
   if (isSuccess) {
     return (

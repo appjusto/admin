@@ -4,28 +4,56 @@ import {
   IuguMarketplaceAccountAdvanceByAmountSimulation,
   IuguMarketplaceAccountWithdrawResponse,
 } from '@appjusto/types/payment/iugu';
+import { FirebaseError } from 'firebase/app';
 import { round } from 'lodash';
 import { formatCurrency } from 'utils/formatters';
 
-export const developmentFetchAccountInformation = () =>
+let accountInfoRequestNumber = 0;
+let withdrawRequestNumber = 0;
+
+export const developmentFetchAccountInformation = (isError?: boolean) =>
   new Promise<FetchAccountInformationResponse>((resolve, reject) => {
     setTimeout(() => {
-      resolve({
+      if (isError) {
+        reject(
+          new FirebaseError(
+            'permission-denied',
+            'Usuário não tem permissão para realizar a operação.'
+          )
+        );
+      }
+      const clearWithdrawValue =
+        accountInfoRequestNumber > 0 && withdrawRequestNumber > 0;
+      const availableWithdraw = clearWithdrawValue ? 'R$ 0,00' : 'R$ 4.500,00';
+      const result = {
         balance: 'R$ 5.000,00',
-        balance_available_for_withdraw: 'R$ 4.500,00',
+        balance_available_for_withdraw: availableWithdraw,
         receivable_balance: 'R$ 2.000,00',
         advanceable_value: 200000,
-      });
+      };
+      accountInfoRequestNumber += 1;
+      resolve(result);
     }, 2000);
   });
 
-export const developmentFetchAdvanceSimulation = (amount: number) =>
+export const developmentFetchAdvanceSimulation = (
+  amount: number,
+  isError?: boolean
+) =>
   new Promise<IuguMarketplaceAccountAdvanceByAmountSimulation>(
     (resolve, reject) => {
       const value = amount * 0.98;
       const fee = value * 0.024;
       const installments = round(value / 60);
       setTimeout(() => {
+        if (isError) {
+          reject(
+            new FirebaseError(
+              'permission-denied',
+              'Usuário não tem permissão para realizar a operação.'
+            )
+          );
+        }
         resolve({
           nearest: {
             advanceable_amount_cents: value,
@@ -44,10 +72,18 @@ export const developmentFetchAdvanceSimulation = (amount: number) =>
     }
   );
 
-export const developmentAdvanceReceivables = () =>
+export const developmentAdvanceReceivables = (isError?: boolean) =>
   new Promise<IuguMarketplaceAccountAdvanceByAmountResponse>(
     (resolve, reject) => {
       setTimeout(() => {
+        if (isError) {
+          reject(
+            new FirebaseError(
+              'permission-denied',
+              'Usuário não tem permissão para realizar a operação.'
+            )
+          );
+        }
         resolve({
           result: {
             advancement_request: 'R$ 2.000,00',
@@ -57,26 +93,36 @@ export const developmentAdvanceReceivables = () =>
     }
   );
 
-export const developmentRequestWithdraw = (amount: number) =>
+export const developmentRequestWithdraw = (amount: number, isError?: boolean) =>
   new Promise<IuguMarketplaceAccountWithdrawResponse>((resolve, reject) => {
     setTimeout(() => {
-      resolve({
-        account_id: 'XXXYYYZZZ',
-        account_name: 'Nome',
-        amount: formatCurrency(amount),
-        bank_address: {
-          account_type: 'business',
-          bank: 'BB',
-          bank_ag: '0000',
-          bank_cc: '0000-0',
-        },
-        created_at: 'date',
-        custom_variables: [{ name: 'Nome', value: 'valor' }],
-        feedback: 'feedback',
-        id: 'AAABBBCCCDDDEEE',
-        reference: 'reference',
-        status: 'pending',
-        updated_at: 'date',
-      });
+      if (isError) {
+        reject(
+          new FirebaseError(
+            'permission-denied',
+            'Usuário não tem permissão para realizar a operação.'
+          )
+        );
+      } else {
+        withdrawRequestNumber += 1;
+        resolve({
+          account_id: 'XXXYYYZZZ',
+          account_name: 'Nome',
+          amount: formatCurrency(amount),
+          bank_address: {
+            account_type: 'business',
+            bank: 'BB',
+            bank_ag: '0000',
+            bank_cc: '0000-0',
+          },
+          created_at: 'date',
+          custom_variables: [{ name: 'Nome', value: 'valor' }],
+          feedback: 'feedback',
+          id: 'AAABBBCCCDDDEEE',
+          reference: 'reference',
+          status: 'pending',
+          updated_at: 'date',
+        });
+      }
     }, 2000);
   });

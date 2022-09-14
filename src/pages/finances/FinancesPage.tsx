@@ -164,7 +164,6 @@ const FinancesPage = () => {
             isOpen
             totalWithdraws={activeWithdraw}
             withdrawValue={availableWithdraw}
-            refreshAccountInformation={refreshAccountInformation}
             onClose={closeDrawerHandler}
           />
         </Route>
