@@ -1,7 +1,7 @@
 import {
   AccountAdvance,
   AccountWithdraw,
-  AdvanceReceivablesPayload,
+  AdvanceReceivablesByAmountPayload,
   BankAccount,
   Business,
   BusinessMenuMessage,
@@ -15,7 +15,7 @@ import {
   DeleteBusinessPayload,
   FetchAccountInformationPayload,
   FetchAccountInformationResponse,
-  FetchAdvanceSimulationPayload,
+  FetchAdvanceByAmountSimulationPayload,
   FetchReceivablesPayload,
   ManagerProfile,
   MarketplaceAccountInfo,
@@ -28,7 +28,8 @@ import {
   WithId,
 } from '@appjusto/types';
 import {
-  IuguMarketplaceAccountAdvanceSimulation,
+  IuguMarketplaceAccountAdvanceByAmountResponse,
+  IuguMarketplaceAccountAdvanceByAmountSimulation,
   IuguMarketplaceAccountReceivables,
 } from '@appjusto/types/payment/iugu';
 import * as Sentry from '@sentry/react';
@@ -58,6 +59,11 @@ import { documentAs, documentsAs } from '../../../core/fb';
 import FilesApi from '../FilesApi';
 import FirebaseRefs from '../FirebaseRefs';
 import { customCollectionSnapshot, customDocumentSnapshot } from '../utils';
+import {
+  developmentAdvanceReceivables,
+  developmentFetchAccountInformation,
+  developmentFetchAdvanceSimulation,
+} from './utils';
 
 export default class BusinessApi {
   constructor(private refs: FirebaseRefs, private files: FilesApi) {}
@@ -794,8 +800,12 @@ export default class BusinessApi {
       accountId,
       meta: { version: '1' }, // TODO: pass correct version on
     };
-    return (await this.refs.getFetchAccountInformationCallable()(payload))
-      .data as unknown as FetchAccountInformationResponse;
+    if (process.env.NODE_ENV === 'development') {
+      return developmentFetchAccountInformation();
+    } else {
+      return (await this.refs.getFetchAccountInformationCallable()(payload))
+        .data as unknown as FetchAccountInformationResponse;
+    }
   }
   async requestWithdraw(accountId: string, amount: number): Promise<any> {
     const payload: RequestWithdrawPayload = {
@@ -815,23 +825,36 @@ export default class BusinessApi {
     return (await this.refs.getFetchReceivablesCallable()(payload))
       .data as unknown as IuguMarketplaceAccountReceivables;
   }
-  async fetchAdvanceSimulation(accountId: string, ids: number[]) {
-    const payload: FetchAdvanceSimulationPayload = {
+  async fetchAdvanceSimulation(accountId: string, amount: number) {
+    const payload: FetchAdvanceByAmountSimulationPayload = {
       accountType: 'business',
       accountId,
-      ids,
+      amount,
       meta: { version: '1' }, // TODO: pass correct version on
     };
-    return (await this.refs.getFetchAdvanceSimulationCallable()(payload))
-      .data as unknown as IuguMarketplaceAccountAdvanceSimulation;
+    if (process.env.NODE_ENV === 'development') {
+      return await developmentFetchAdvanceSimulation(amount);
+    } else {
+      return (
+        await this.refs.getFetchAdvanceByAmountSimulationCallable()(payload)
+      ).data as unknown as IuguMarketplaceAccountAdvanceByAmountSimulation;
+    }
   }
-  async advanceReceivables(accountId: string, ids: number[]): Promise<any> {
-    const payload: AdvanceReceivablesPayload = {
+  async advanceReceivables(
+    accountId: string,
+    simulationId: string
+  ): Promise<any> {
+    const payload: AdvanceReceivablesByAmountPayload = {
       accountType: 'business',
       accountId,
-      ids,
+      simulationId,
       meta: { version: '1' }, // TODO: pass correct version on
     };
-    return (await this.refs.getAdvanceReceivablesCallable()(payload)).data;
+    if (process.env.NODE_ENV === 'development') {
+      return await developmentAdvanceReceivables();
+    } else {
+      return (await this.refs.getAdvanceReceivablesByAmountCallable()(payload))
+        .data as unknown as IuguMarketplaceAccountAdvanceByAmountResponse;
+    }
   }
 }

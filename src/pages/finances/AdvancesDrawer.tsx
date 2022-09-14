@@ -1,118 +1,104 @@
-import { IuguMarketplaceAccountReceivableItem } from '@appjusto/types/payment/iugu';
-import { Box, Button, Checkbox, CheckboxGroup, Flex, Icon, Skeleton, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Checkbox,
+  Flex,
+  Icon,
+  Skeleton,
+  Text,
+} from '@chakra-ui/react';
 import { useAdvanceReceivables } from 'app/api/business/useAdvanceReceivables';
-import { useReceivables } from 'app/api/business/useReceivables';
 import { useReceivablesSimulation } from 'app/api/business/useReceivablesSimulation';
 import { useCanAdvanceReceivables } from 'app/api/platform/useCanAdvanceReceivables';
 import { useContextBusinessId } from 'app/state/business/context';
-import { useOrdersContext } from 'app/state/order';
 import { useContextAppRequests } from 'app/state/requests/context';
+import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput';
 import { ReactComponent as Checked } from 'common/img/icon-checked.svg';
-import dayjs from 'dayjs';
+import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import React from 'react';
 import { formatCurrency } from 'utils/formatters';
 import { t } from 'utils/i18n';
 import { BasicInfoBox } from './BasicInfoBox';
 import { FinancesBaseDrawer } from './FinancesBaseDrawer';
-import { formatCents, formatIuguDateToDisplay, formatIuguValueToDisplay } from './utils';
 
 interface WithdrawalsDrawerProps {
+  advanceableValue?: number;
   isOpen: boolean;
   onClose(): void;
 }
 
-export const AdvancesDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps) => {
+export const AdvancesDrawer = ({
+  advanceableValue,
+  onClose,
+  ...props
+}: WithdrawalsDrawerProps) => {
   // context
   const { dispatchAppRequestResult } = useContextAppRequests();
   const businessId = useContextBusinessId();
-  const { platformParams } = useOrdersContext();
-  const { receivables } = useReceivables(businessId);
-  const { advanceReceivables, advanceReceivablesResult } = useAdvanceReceivables(businessId);
-  const { isLoading, isSuccess } = advanceReceivablesResult;
+  const { advanceReceivables, advanceReceivablesResult } =
+    useAdvanceReceivables(businessId);
   const canAdvanceReceivables = useCanAdvanceReceivables();
-  const advanceableAfterHours = platformParams?.marketplace.advances.advanceableAfterHours ?? 48;
-  // state
-  const [items, setItems] = React.useState<IuguMarketplaceAccountReceivableItem[]>([]);
-  const [advanceables, setAdvanceables] = React.useState<IuguMarketplaceAccountReceivableItem[]>(
-    []
-  );
-  const [selectedAll, setSelectedAll] = React.useState(false);
-  const [selected, setSelected] = React.useState<string[]>([]);
+  const [amount, setAmount] = React.useState<number>(0);
   const [isReviewing, setIsReviewing] = React.useState(false);
-  const [totalAvailable, setTotalAvailable] = React.useState<string>();
-  const [totalSelected, setTotalSelected] = React.useState<string>();
   const [isFeesAccepted, setIsFeesAccepted] = React.useState(false);
-  const { advancedValue, advanceFee, receivedValue } = useReceivablesSimulation(
-    businessId,
-    selected
-  );
+  const {
+    fetchReceivablesSimulation,
+    receivablesSimulationResult,
+    simulationId,
+    advancedValue,
+    advanceFee,
+    receivedValue,
+  } = useReceivablesSimulation(businessId);
   // refs
   const acceptCheckBoxRef = React.useRef<HTMLInputElement>(null);
+  const amountInputRef = React.useRef<HTMLInputElement>(null);
+  // helpers
+  const isLoading =
+    receivablesSimulationResult.isLoading || advanceReceivablesResult.isLoading;
+  const actionLabel = isReviewing
+    ? t('Confirmar adiantamento')
+    : canAdvanceReceivables
+    ? t('Revisar adiantamento')
+    : t('Fora do horário');
+  const loadingText = isReviewing ? t('Confirmando') : t('Simulando');
+  const isAmountInvalid = advanceableValue ? amount > advanceableValue : false;
   // handlers
-  const advanceableAt = (createdAt: string) => {
-    const date = dayjs(createdAt).add(advanceableAfterHours, 'hour').toDate();
-    const monthNum = date.getMonth() + 1;
-    const monthStr = monthNum > 9 ? monthNum : `0${monthNum}`;
-    return `${date.getFullYear()}-${monthStr}-${date.getDate()}`;
+  const getActionDisabledSatus = () => {
+    if (!canAdvanceReceivables) return true;
+    if (amount === 0) return true;
+    if (isReviewing && !isFeesAccepted) return true;
+    return false;
   };
   const handleReceivablesRequest = async () => {
-    if (selected.length === 0)
+    if (isAmountInvalid) {
+      return dispatchAppRequestResult({
+        status: 'error',
+        requestId: 'AdvancesDrawer-invalid-amount',
+        message: {
+          title:
+            'O valor solicitado é maior que o valor disponível para esta operação',
+        },
+      });
+    }
+    if (!isReviewing) {
+      try {
+        await fetchReceivablesSimulation(amount);
+        setIsReviewing(true);
+      } catch (error) {
+        console.error(error);
+      }
+      return;
+    }
+    if (!simulationId)
       return dispatchAppRequestResult({
         status: 'error',
         requestId: 'AdvancesDrawer-valid-no-value',
-        message: { title: 'Nenhum valor foi selecionado para antecipação' },
+        message: { title: 'O Id da simulação não foi encontrado' },
       });
-    if (!isReviewing) return setIsReviewing(true);
-    if (!isFeesAccepted) {
-      acceptCheckBoxRef.current?.focus();
-      return dispatchAppRequestResult({
-        status: 'error',
-        requestId: 'AdvancesDrawer-valid-agreement',
-        message: { title: 'É preciso aceitar os valores informados na simulação.' },
-      });
-    }
-    // for withdraws
-    //let amount = convertBalance(receivedValue);
-    const ids = selected.map((id) => parseInt(id));
-    await advanceReceivables(ids);
+    await advanceReceivables(simulationId);
   };
-  // side effects
-  React.useEffect(() => {
-    if (receivables?.items) {
-      setItems(receivables.items);
-      const canBeSelected = receivables.items.filter((item) => item.advanceable);
-      setAdvanceables(canBeSelected);
-    } else setItems([]);
-  }, [receivables]);
-  React.useEffect(() => {
-    if (!advanceables) return;
-    const total = advanceables.reduce<number>((result, item) => {
-      let value = item.total ? formatCents(item.total) : 0;
-      return (result += value);
-    }, 0);
-    setTotalAvailable(formatCurrency(total));
-  }, [advanceables]);
-
-  React.useEffect(() => {
-    if (advanceables.length === 0) return;
-    const itemsSelected = advanceables.filter((item) => selected.includes(item.id.toString()));
-    const total = itemsSelected.reduce<number>((result, item) => {
-      let value = item.total ? formatCents(item.total) : 0;
-      return (result += value);
-    }, 0);
-    setTotalSelected(formatCurrency(total));
-  }, [advanceables, selected]);
-  React.useEffect(() => {
-    if (selectedAll) setSelected(advanceables.map((item) => item.id.toString()));
-    // else setSelected([]);
-  }, [advanceables, selectedAll]);
-  React.useEffect(() => {
-    if (advanceables.length === 0) return;
-    if (selected.length === 0 || selected.length !== advanceables.length) setSelectedAll(false);
-    else setSelectedAll(true);
-  }, [advanceables, selected]);
   // UI
-  if (isSuccess) {
+  if (advanceReceivablesResult.isSuccess) {
     return (
       <FinancesBaseDrawer
         onClose={onClose}
@@ -123,12 +109,18 @@ export const AdvancesDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps) =>
         <Flex w="100%" h="100%" flexDir="column" justifyContent="center">
           <Box>
             <Icon as={Checked} w="36px" h="36px" />
-            <Text mt="2" fontSize="24px" fontWeight="500" lineHeight="30px" color="black">
+            <Text
+              mt="2"
+              fontSize="24px"
+              fontWeight="500"
+              lineHeight="30px"
+              color="black"
+            >
               {t('Antecipação realizada com sucesso!')}
             </Text>
             <Text mt="1" fontSize="18px" fontWeight="500" lineHeight="26px">
               {t(
-                `Em até 1 dia útil o valor de ${formatIuguValueToDisplay(
+                `Em até 1 dia útil o valor de ${formatCurrency(
                   receivedValue!
                 )} estará disponível para saque.`
               )}
@@ -153,17 +145,18 @@ export const AdvancesDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps) =>
             fontSize="15px"
             onClick={handleReceivablesRequest}
             isLoading={isLoading}
-            loadingText={t('Confirmando')}
-            isDisabled={!canAdvanceReceivables || selected.length === 0}
+            loadingText={loadingText}
+            isDisabled={getActionDisabledSatus()}
           >
-            {isReviewing
-              ? t('Confirmar adiantamento')
-              : canAdvanceReceivables
-              ? t('Revisar adiantamento')
-              : t('Fora do horário')}
+            {actionLabel}
           </Button>
           {isReviewing && (
-            <Button mr="16" fontSize="15px" variant="outline" onClick={() => setIsReviewing(false)}>
+            <Button
+              mr="16"
+              fontSize="15px"
+              variant="outline"
+              onClick={() => setIsReviewing(false)}
+            >
               {t('Voltar')}
             </Button>
           )}
@@ -180,45 +173,65 @@ export const AdvancesDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps) =>
         <>
           <Box mt="4">
             <Text fontSize="15px" fontWeight="500" lineHeight="21px">
-              {t('Você selecionou')}
+              {t('Valor solicitado:')}
             </Text>
             <Text fontSize="24px" fontWeight="500" lineHeight="30px">
-              {selected.length} {selected.length > 1 ? t('pedidos') : t('pedido')}
+              {formatCurrency(amount)}
             </Text>
           </Box>
           <Box mt="6">
             <Text fontSize="15px" fontWeight="500" lineHeight="21px">
-              {t('Total a adiantar')}
+              {t('Total a antecipar')}
             </Text>
             {advancedValue === undefined ? (
-              <Skeleton mt="1" maxW="294px" height="30px" colorScheme="#9AA49C" />
+              <Skeleton
+                mt="1"
+                maxW="294px"
+                height="30px"
+                colorScheme="#9AA49C"
+              />
             ) : advancedValue === null ? (
               'N/E'
             ) : (
-              <Text fontSize="24px" fontWeight="500" lineHeight="30px" color="green.700">
-                + {formatIuguValueToDisplay(advancedValue)}
+              <Text
+                fontSize="24px"
+                fontWeight="500"
+                lineHeight="30px"
+                color="green.700"
+              >
+                + {formatCurrency(advancedValue)}
               </Text>
             )}
           </Box>
           <Box mt="6">
             <Text fontSize="15px" fontWeight="500" lineHeight="21px">
-              {t('Total de taxas de adiantamento')}
+              {t('Total de taxas de antecipação')}
             </Text>
             {advanceFee === undefined ? (
-              <Skeleton mt="1" maxW="294px" height="30px" colorScheme="#9AA49C" />
+              <Skeleton
+                mt="1"
+                maxW="294px"
+                height="30px"
+                colorScheme="#9AA49C"
+              />
             ) : advanceFee === null ? (
               'N/E'
             ) : (
-              <Text fontSize="24px" fontWeight="500" lineHeight="30px" color="red">
-                - {formatIuguValueToDisplay(advanceFee)}
+              <Text
+                fontSize="24px"
+                fontWeight="500"
+                lineHeight="30px"
+                color="red"
+              >
+                - {formatCurrency(advanceFee)}
               </Text>
             )}
           </Box>
           <BasicInfoBox
             mt="6"
-            label={t('Total a receber no adiantamento')}
+            label={t('Total a receber na antecipação')}
             icon={Checked}
-            value={receivedValue}
+            value={formatCurrency(receivedValue ?? 0)}
           />
           <Checkbox
             ref={acceptCheckBoxRef}
@@ -231,7 +244,9 @@ export const AdvancesDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps) =>
             onChange={(e) => setIsFeesAccepted(e.target.checked)}
           >
             <Text fontSize="15px" fontWeight="500" lineHeight="21px">
-              {t('Estou de acordo com as taxas cobradas para o adiantamento do valor')}
+              {t(
+                'Estou de acordo com as taxas cobradas para o adiantamento do valor'
+              )}
             </Text>
           </Checkbox>
         </>
@@ -241,60 +256,24 @@ export const AdvancesDrawer = ({ onClose, ...props }: WithdrawalsDrawerProps) =>
             mt="4"
             label={t('Disponível para adiantamento')}
             icon={Checked}
-            value={totalAvailable}
+            value={formatCurrency(advanceableValue ?? 0)}
           />
-          <Box mt="6" w="100%" py="2" borderBottom="1px solid #C8D7CB">
-            <Checkbox
-              size="lg"
-              colorScheme="green"
-              borderColor="black"
-              isChecked={selectedAll}
-              onChange={(e) => {
-                if (e.target.checked) setSelectedAll(e.target.checked);
-                else setSelected([]);
-              }}
-              isDisabled={advanceables.length === 0}
-            >
-              <Text color="black" fontSize="15px" lineHeight="21px" fontWeight="700">
-                {t('Selecionar todos')}
-              </Text>
-            </Checkbox>
-          </Box>
-          <Box mt="4">
-            <CheckboxGroup
-              colorScheme="green"
-              value={selected}
-              onChange={(values: string[]) => setSelected(values)}
-            >
-              {items.map((item) => (
-                <Box key={item.id} w="100%" py="4" borderBottom="1px solid #C8D7CB">
-                  <Checkbox
-                    size="lg"
-                    value={item.id.toString()}
-                    borderColor="black"
-                    isDisabled={!item.advanceable}
-                  >
-                    <Box ml="4">
-                      <Text fontSize="15px" fontWeight="500" lineHeight="21px" color="black">
-                        {formatIuguValueToDisplay(item.total)}
-                      </Text>
-                      <Text mt="2" fontSize="15px" fontWeight="500" lineHeight="21px">
-                        {t('Será faturado em: ') + formatIuguDateToDisplay(item.scheduled_date)}
-                      </Text>
-                      {!item.advanceable && (
-                        <Text mt="2" fontSize="15px" fontWeight="500" lineHeight="21px">
-                          {t('Disponível após: ') +
-                            formatIuguDateToDisplay(advanceableAt(item.created_at))}
-                        </Text>
-                      )}
-                    </Box>
-                  </Checkbox>
-                </Box>
-              ))}
-            </CheckboxGroup>
-            <Text mt="4" fontSize="15px" fontWeight="700" lineHeight="21px">
-              {t(`Total selecionado: ${totalSelected ?? 'R$ 0,00'}`)}
-            </Text>
+          <Box mt="6" w="100%" py="2" borderTop="1px solid #C8D7CB">
+            <SectionTitle>
+              {t('Informe o valor que deseja antecipar')}
+            </SectionTitle>
+            <CurrencyInput
+              ref={amountInputRef}
+              isRequired
+              maxW="220px"
+              id="drawer-price"
+              value={amount}
+              label={t('Valor da antecipação')}
+              aria-label={t('valor-da-antecipacao')}
+              placeholder={t('0,00')}
+              onChangeValue={(value) => setAmount(value)}
+              isInvalid={isAmountInvalid}
+            />
           </Box>
         </>
       )}

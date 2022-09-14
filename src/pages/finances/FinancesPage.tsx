@@ -17,7 +17,7 @@ import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router';
-import { convertBalance, getMonthName } from 'utils/formatters';
+import { convertBalance, formatCurrency, getMonthName } from 'utils/formatters';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { AdvanceDetailsDrawer } from './AdvanceDetailsDrawer';
@@ -101,7 +101,11 @@ const FinancesPage = () => {
   }, []);
   React.useEffect(() => {
     if (accountInformation === undefined) return;
-    setAvailableReceivable(accountInformation?.receivable_balance ?? null);
+    setAvailableReceivable(
+      accountInformation?.advanceable_value
+        ? formatCurrency(accountInformation.advanceable_value)
+        : null
+    );
     setAvailableWithdraw(
       accountInformation?.balance_available_for_withdraw ?? null
     );
@@ -169,7 +173,11 @@ const FinancesPage = () => {
       <WithdrawsTable withdraws={withdraws} />
       <Switch>
         <Route path={`${path}/advances`}>
-          <AdvancesDrawer isOpen onClose={closeDrawerHandler} />
+          <AdvancesDrawer
+            isOpen
+            onClose={closeDrawerHandler}
+            advanceableValue={accountInformation?.advanceable_value}
+          />
         </Route>
         <Route path={`${path}/withdraw`}>
           <WithdrawsDrawer

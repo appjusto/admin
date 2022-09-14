@@ -1,4 +1,10 @@
-import { FormControl, FormLabel, Input, InputProps, useMultiStyleConfig } from '@chakra-ui/react';
+import {
+  FormControl,
+  FormLabel,
+  Input,
+  InputProps,
+  useMultiStyleConfig,
+} from '@chakra-ui/react';
 import React from 'react';
 import { formattedRawValue, getRawValue } from './utils';
 
@@ -10,7 +16,10 @@ interface CurrencyInputProps extends InputProps {
   maxLength?: number;
 }
 
-export const CurrencyInput = React.forwardRef<HTMLInputElement, CurrencyInputProps>(
+export const CurrencyInput = React.forwardRef<
+  HTMLInputElement,
+  CurrencyInputProps
+>(
   (
     {
       id,
@@ -23,6 +32,7 @@ export const CurrencyInput = React.forwardRef<HTMLInputElement, CurrencyInputPro
       label,
       onChangeValue: onValueChange,
       maxLength,
+      isInvalid,
       ...props
     }: CurrencyInputProps,
     ref
@@ -58,6 +68,8 @@ export const CurrencyInput = React.forwardRef<HTMLInputElement, CurrencyInputPro
           ref={ref}
           value={formattedRawValue(priceText)}
           onChange={handleChange}
+          isInvalid={isInvalid}
+          errorBorderColor="red"
           sx={styles.input}
           {...props}
         />
