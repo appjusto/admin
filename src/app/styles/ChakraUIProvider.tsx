@@ -5,7 +5,7 @@ import { CustomInput } from './components/CustomInput';
 import { CustomTextarea } from './components/CustomTextarea';
 import { IconButton } from './components/IconButton';
 import { Select } from './components/Select';
-import { Switch } from './components/Switch';
+import Switch from './components/Switch';
 import { colors } from './foundations/colors';
 import { typography } from './foundations/typography';
 
