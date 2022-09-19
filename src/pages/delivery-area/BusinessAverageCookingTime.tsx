@@ -45,7 +45,7 @@ export const BusinessAverageCookingTime = ({
             key={option}
             mt="4"
             value={option}
-            size="lg"
+            size="md"
             isDisabled={!isBackofficeUser && cookingTimeMode === 'auto'}
           >
             {t(`${option} minutos`)}

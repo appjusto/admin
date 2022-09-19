@@ -45,18 +45,20 @@ export const ProductComplements = () => {
       </Text>
       <RadioGroup
         onChange={(value) =>
-          handleProductUpdate({ complementsEnabled: Boolean(value) })
+          handleProductUpdate({
+            complementsEnabled: value === 'no' ? false : true,
+          })
         }
-        value={String(product.complementsEnabled)}
+        value={product.complementsEnabled ? 'yes' : 'no'}
         defaultValue="complements-disabled"
         colorScheme="green"
         color="black"
       >
         <Flex flexDir="column" justifyContent="flex-start">
-          <Radio mt="2" value="false">
+          <Radio mt="2" value="no">
             {t('Não possui')}
           </Radio>
-          <Radio mt="2" value="true" isDisabled={!complementsExists}>
+          <Radio mt="2" value="yes" isDisabled={!complementsExists}>
             {t('Sim, possui complementos')}
           </Radio>
         </Flex>

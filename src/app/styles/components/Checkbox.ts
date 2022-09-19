@@ -27,8 +27,8 @@ const baseStyleControl: SystemStyleFunction = (props) => {
         content: `""`,
         display: 'block',
         pos: 'absolute',
-        w: '15%',
-        h: '70%',
+        w: '16px',
+        h: '16px',
         borderRadius: '4px',
         bg: 'currentColor',
       },
@@ -75,17 +75,17 @@ const sizes: Record<string, PartsStyleObject<typeof parts>> = {
   sm: {
     control: { h: 4, w: 4 },
     label: { fontSize: 'sm' },
-    icon: { fontSize: '0.45rem' },
+    icon: { fontSize: '0' },
   },
   md: {
     control: { w: 6, h: 6 },
     label: { fontSize: 'md' },
-    icon: { fontSize: '0.625rem' },
+    icon: { fontSize: '0' },
   },
   lg: {
     control: { w: 7, h: 7 },
     label: { fontSize: 'lg' },
-    icon: { fontSize: '0.625rem' },
+    icon: { fontSize: '0' },
   },
 };
 

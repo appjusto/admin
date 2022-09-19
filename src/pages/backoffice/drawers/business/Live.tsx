@@ -66,11 +66,6 @@ export const BusinessLive = () => {
           if (isEnabled === 'true') setIsOpen(value as BusinessStatus);
         }}
         value={isOpen}
-        defaultValue="1"
-        colorScheme="green"
-        color="black"
-        fontSize="15px"
-        lineHeight="21px"
       >
         <Flex flexDir="column" justifyContent="flex-start">
           <Radio mt="2" value="open">
@@ -93,11 +88,6 @@ export const BusinessLive = () => {
         mt="2"
         onChange={(value: CookingTimeMode) => handleCookingTimeMode(value)}
         value={business?.settings?.cookingTimeMode}
-        defaultValue="1"
-        colorScheme="green"
-        color="black"
-        fontSize="15px"
-        lineHeight="21px"
       >
         <Flex flexDir="column" justifyContent="flex-start">
           <Radio mt="2" value="manual">
@@ -131,11 +121,7 @@ export const BusinessLive = () => {
         mt="2"
         onChange={(value) => handleEnabled(value.toString())}
         value={isEnabled}
-        defaultValue="1"
-        colorScheme="green"
         color="black"
-        fontSize="15px"
-        lineHeight="21px"
       >
         <Flex flexDir="column" justifyContent="flex-start">
           <Radio mt="2" value="true">

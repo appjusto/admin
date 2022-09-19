@@ -204,19 +204,21 @@ export const ProductDetails = () => {
             </Checkbox>
           ))}
         </VStack>
-      </CheckboxGroup>{' '}
-      <Flex mt="8" flexDir="row" alignItems="center">
-        <Switch
-          isChecked={enabled}
-          onChange={(ev) => {
-            ev.stopPropagation();
-            handleProductUpdate({ enabled: ev.target.checked });
-          }}
-        />
-        <Text ml="4" color="black">
-          {t('Ativar produto após a criação')}
-        </Text>
-      </Flex>
+      </CheckboxGroup>
+      {productId === 'new' && (
+        <Flex mt="8" flexDir="row" alignItems="center">
+          <Switch
+            isChecked={enabled}
+            onChange={(ev) => {
+              ev.stopPropagation();
+              handleProductUpdate({ enabled: ev.target.checked });
+            }}
+          />
+          <Text ml="4" color="black">
+            {t('Ativar produto após a criação')}
+          </Text>
+        </Flex>
+      )}
     </Box>
   );
 };
