@@ -1,6 +1,5 @@
 import { UserPermissionRules } from '@appjusto/types';
-import { CheckboxGroup, Td, Tr } from '@chakra-ui/react';
-import CustomCheckbox from 'common/components/form/CustomCheckbox';
+import { Checkbox, CheckboxGroup, Td, Tr } from '@chakra-ui/react';
 
 interface EntityAccessProps {
   name: string;
@@ -8,7 +7,11 @@ interface EntityAccessProps {
   updateAcess: (value: UserPermissionRules) => void;
 }
 
-export const EntityAccess = ({ name, value, updateAcess }: EntityAccessProps) => {
+export const EntityAccess = ({
+  name,
+  value,
+  updateAcess,
+}: EntityAccessProps) => {
   return (
     <Tr>
       <Td>{name}</Td>
@@ -18,16 +21,16 @@ export const EntityAccess = ({ name, value, updateAcess }: EntityAccessProps) =>
         onChange={(value) => updateAcess(value as UserPermissionRules)}
       >
         <Td>
-          <CustomCheckbox value="c">{'Criar'}</CustomCheckbox>
+          <Checkbox value="c">{'Criar'}</Checkbox>
         </Td>
         <Td>
-          <CustomCheckbox value="r">{'Ler'}</CustomCheckbox>
+          <Checkbox value="r">{'Ler'}</Checkbox>
         </Td>
         <Td>
-          <CustomCheckbox value="u">{'Alterar'}</CustomCheckbox>
+          <Checkbox value="u">{'Alterar'}</Checkbox>
         </Td>
         <Td>
-          <CustomCheckbox value="d">{'Apagar'}</CustomCheckbox>
+          <Checkbox value="d">{'Apagar'}</Checkbox>
         </Td>
       </CheckboxGroup>
     </Tr>

@@ -1,6 +1,7 @@
 import { OrderFlag } from '@appjusto/types';
 import {
   Center,
+  Checkbox,
   CheckboxGroup,
   Flex,
   Icon,
@@ -15,7 +16,6 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { initialAutoFlags } from 'app/state/dashboards/backoffice';
-import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import { isEqual } from 'lodash';
 import React from 'react';
 import { RiEqualizerLine } from 'react-icons/ri';
@@ -108,14 +108,14 @@ export const StaffFilter = ({
               borderRadius="0 0 6px 6px"
               color="black"
             >
-              <CustomCheckbox
+              <Checkbox
                 mb="2"
                 colorScheme="green"
                 isChecked={!isActive}
                 onChange={(ev) => handleSelectAll(ev.target.checked)}
               >
                 {t('Todos')}
-              </CustomCheckbox>
+              </Checkbox>
               <CheckboxGroup
                 colorScheme="green"
                 value={currentValue}
@@ -123,9 +123,9 @@ export const StaffFilter = ({
               >
                 <VStack spacing={2} alignItems="flex-start">
                   {options.map((option) => (
-                    <CustomCheckbox key={option.value} value={option.value}>
+                    <Checkbox key={option.value} value={option.value}>
                       {option.label}
-                    </CustomCheckbox>
+                    </Checkbox>
                   ))}
                 </VStack>
               </CheckboxGroup>

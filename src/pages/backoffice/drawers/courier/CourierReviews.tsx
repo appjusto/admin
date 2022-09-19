@@ -1,8 +1,17 @@
 import { OrderConsumerReview, ReviewType, WithId } from '@appjusto/types';
-import { Box, CheckboxGroup, Flex, HStack, Icon, Link, Text, Wrap } from '@chakra-ui/react';
+import {
+  Box,
+  Checkbox,
+  CheckboxGroup,
+  Flex,
+  HStack,
+  Icon,
+  Link,
+  Text,
+  Wrap,
+} from '@chakra-ui/react';
 import { useObserveCourierReviews } from 'app/api/courier/useObserveCourierReviews';
 import { useContextCourierProfile } from 'app/state/courier/context';
-import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import { CustomDateFilter } from 'common/components/form/input/CustomDateFilter';
 import React from 'react';
 import { MdThumbDownOffAlt, MdThumbUpOffAlt } from 'react-icons/md';
@@ -22,7 +31,11 @@ const CourierReviewsItem = ({ review }: ItemPros) => {
       <Flex flexDir="row">
         <Box>
           <Icon
-            as={review.courier?.rating === 'positive' ? MdThumbUpOffAlt : MdThumbDownOffAlt}
+            as={
+              review.courier?.rating === 'positive'
+                ? MdThumbUpOffAlt
+                : MdThumbDownOffAlt
+            }
             color={review.courier?.rating === 'positive' ? 'green.600' : 'red'}
             w="24px"
             h="24px"
@@ -32,7 +45,11 @@ const CourierReviewsItem = ({ review }: ItemPros) => {
           <Flex justifyContent="space-between">
             <Text fontSize="15px" lineHeight="21px" fontWeight="700">
               {t('Pedido:')}{' '}
-              <Link as={RouterLink} to={`/backoffice/orders/${review.orderId}`} fontWeight="500">
+              <Link
+                as={RouterLink}
+                to={`/backoffice/orders/${review.orderId}`}
+                fontWeight="500"
+              >
                 {review.orderId ?? 'N/E'}
               </Link>
             </Text>
@@ -48,7 +65,9 @@ const CourierReviewsItem = ({ review }: ItemPros) => {
                   px="2"
                   fontSize="13px"
                   color={tag.type === 'positive' ? 'green' : 'red'}
-                  border={`1px solid ${tag.type === 'positive' ? 'green' : 'red'}`}
+                  border={`1px solid ${
+                    tag.type === 'positive' ? 'green' : 'red'
+                  }`}
                   borderRadius="lg"
                 >
                   {tag.title}
@@ -74,11 +93,19 @@ export const CourierReviews = () => {
   // context
   const { courier } = useContextCourierProfile();
   // state
-  const [types, setTypes] = React.useState<ReviewType[]>(['positive', 'negative']);
+  const [types, setTypes] = React.useState<ReviewType[]>([
+    'positive',
+    'negative',
+  ]);
   const [dateStart, setDateStart] = React.useState<string>();
   const [dateEnd, setDateEnd] = React.useState<string>();
   // hook
-  const reviwes = useObserveCourierReviews(courier?.id, types, dateStart, dateEnd);
+  const reviwes = useObserveCourierReviews(
+    courier?.id,
+    types,
+    dateStart,
+    dateEnd
+  );
   // UI
   return (
     <Box>
@@ -96,17 +123,24 @@ export const CourierReviews = () => {
           fontSize="16px"
           lineHeight="22px"
         >
-          <CustomCheckbox value="positive">{t('Positivas')}</CustomCheckbox>
-          <CustomCheckbox value="negative">{t('Negativas')}</CustomCheckbox>
+          <Checkbox value="positive">{t('Positivas')}</Checkbox>
+          <Checkbox value="negative">{t('Negativas')}</Checkbox>
         </HStack>
       </CheckboxGroup>
-      <CustomDateFilter mt="4" getStart={setDateStart} getEnd={setDateEnd} showWarning />
+      <CustomDateFilter
+        mt="4"
+        getStart={setDateStart}
+        getEnd={setDateEnd}
+        showWarning
+      />
       {!dateStart || !dateEnd ? (
         <Text mt="4">{t('Selecione tipos e datas que deseja buscar')}</Text>
       ) : reviwes === undefined ? (
         <Text mt="4">{t('Carregando...')}</Text>
       ) : reviwes === null ? (
-        <Text mt="4">{t('Não foram encontradas avaliações nas condições informadas.')}</Text>
+        <Text mt="4">
+          {t('Não foram encontradas avaliações nas condições informadas.')}
+        </Text>
       ) : (
         <Box>
           <Text mt="4" fontSize="20px" lineHeight="26px" color="black">

@@ -1,6 +1,12 @@
 import { PreparationMode } from '@appjusto/types';
-import { Badge, Box, CheckboxGroup, HStack, Text } from '@chakra-ui/react';
-import CustomCheckbox from 'common/components/form/CustomCheckbox';
+import {
+  Badge,
+  Box,
+  Checkbox,
+  CheckboxGroup,
+  HStack,
+  Text,
+} from '@chakra-ui/react';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import { t } from 'utils/i18n';
 
@@ -52,8 +58,8 @@ export const BusinessPreparationModes = ({
           fontSize="16px"
           lineHeight="22px"
         >
-          <CustomCheckbox value="realtime">{t('Tempo real')}</CustomCheckbox>
-          <CustomCheckbox value="scheduled">{t('Agendado')}</CustomCheckbox>
+          <Checkbox value="realtime">{t('Tempo real')}</Checkbox>
+          <Checkbox value="scheduled">{t('Agendado')}</Checkbox>
         </HStack>
       </CheckboxGroup>
     </Box>

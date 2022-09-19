@@ -1,7 +1,6 @@
 import { BusinessStatus, CookingTimeMode } from '@appjusto/types';
-import { Box, Flex, RadioGroup, Text } from '@chakra-ui/react';
+import { Box, Flex, Radio, RadioGroup, Text } from '@chakra-ui/react';
 import { useContextBusinessBackoffice } from 'app/state/business/businessBOContext';
-import CustomRadio from 'common/components/form/CustomRadio';
 import { BusinessAverageCookingTime } from 'pages/delivery-area/BusinessAverageCookingTime';
 import React from 'react';
 import { t } from 'utils/i18n';
@@ -9,11 +8,16 @@ import { SectionTitle } from '../generics/SectionTitle';
 
 export const BusinessLive = () => {
   // context
-  const { business, handleBusinessProfileChange } = useContextBusinessBackoffice();
+  const { business, handleBusinessProfileChange } =
+    useContextBusinessBackoffice();
 
   // state
-  const [isOpen, setIsOpen] = React.useState<BusinessStatus>(business?.status ?? 'closed');
-  const [isEnabled, setIsEnabled] = React.useState(business?.enabled ? 'true' : 'false');
+  const [isOpen, setIsOpen] = React.useState<BusinessStatus>(
+    business?.status ?? 'closed'
+  );
+  const [isEnabled, setIsEnabled] = React.useState(
+    business?.enabled ? 'true' : 'false'
+  );
 
   // handlers
   const handleEnabled = (enabled: string) => {
@@ -43,7 +47,8 @@ export const BusinessLive = () => {
   }, [business?.settings, handleBusinessProfileChange]);
 
   React.useEffect(() => {
-    if (business?.enabled !== undefined) setIsEnabled(business.enabled.toString());
+    if (business?.enabled !== undefined)
+      setIsEnabled(business.enabled.toString());
   }, [business?.enabled]);
 
   React.useEffect(() => {
@@ -68,15 +73,17 @@ export const BusinessLive = () => {
         lineHeight="21px"
       >
         <Flex flexDir="column" justifyContent="flex-start">
-          <CustomRadio mt="2" value="open">
+          <Radio mt="2" value="open">
             {t('Aberto')}
-          </CustomRadio>
-          <CustomRadio mt="2" value="closed">
+          </Radio>
+          <Radio mt="2" value="closed">
             {t('Fechado')}
-          </CustomRadio>
+          </Radio>
         </Flex>
       </RadioGroup>
-      <SectionTitle>{t('Modo do tempo de preparo (cooking time):')}</SectionTitle>
+      <SectionTitle>
+        {t('Modo do tempo de preparo (cooking time):')}
+      </SectionTitle>
       <Text fontSize="15px" lineHeight="21px">
         {t(
           'No modo manual (padrão) o restaurante pode definir seu tempo médio de preparo, o tempo de preparo de cada pedido e avançar o pedido de "em preparo" para "pronto". No modo automático, a definição dos tempos de preparo e avanço para "pronto" é automática'
@@ -93,12 +100,12 @@ export const BusinessLive = () => {
         lineHeight="21px"
       >
         <Flex flexDir="column" justifyContent="flex-start">
-          <CustomRadio mt="2" value="manual">
+          <Radio mt="2" value="manual">
             {t('Manual')}
-          </CustomRadio>
-          <CustomRadio mt="2" value="auto">
+          </Radio>
+          <Radio mt="2" value="auto">
             {t('Automático')}
-          </CustomRadio>
+          </Radio>
         </Flex>
       </RadioGroup>
       <SectionTitle>{t('Tempo médio de preparo dos pratos:')}</SectionTitle>
@@ -109,12 +116,16 @@ export const BusinessLive = () => {
       </Text>
       <BusinessAverageCookingTime
         averageCookingTime={business?.averageCookingTime}
-        getAverageCookingTime={(value) => handleBusinessProfileChange('averageCookingTime', value)}
+        getAverageCookingTime={(value) =>
+          handleBusinessProfileChange('averageCookingTime', value)
+        }
         cookingTimeMode={business?.settings?.cookingTimeMode}
       />
       <SectionTitle>{t('Desligar restaurante do AppJusto:')}</SectionTitle>
       <Text fontSize="15px" lineHeight="21px">
-        {t('Ao desligar o restaurante, ele não aparecerá no app enquanto estiver desligado')}
+        {t(
+          'Ao desligar o restaurante, ele não aparecerá no app enquanto estiver desligado'
+        )}
       </Text>
       <RadioGroup
         mt="2"
@@ -127,12 +138,12 @@ export const BusinessLive = () => {
         lineHeight="21px"
       >
         <Flex flexDir="column" justifyContent="flex-start">
-          <CustomRadio mt="2" value="true">
+          <Radio mt="2" value="true">
             {t('Ligado')}
-          </CustomRadio>
-          <CustomRadio mt="2" value="false">
+          </Radio>
+          <Radio mt="2" value="false">
             {t('Desligado')}
-          </CustomRadio>
+          </Radio>
         </Flex>
       </RadioGroup>
     </Box>

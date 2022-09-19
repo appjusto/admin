@@ -1,7 +1,15 @@
-import { Box, Button, Flex, Icon, Stack, Text, Textarea } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Checkbox,
+  Flex,
+  Icon,
+  Stack,
+  Text,
+  Textarea,
+} from '@chakra-ui/react';
 import { useObserveOrderFraudPrevention } from 'app/api/order/useObserveOrderFraudPrevention';
 import { useContextFirebaseUser } from 'app/state/auth/context';
-import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import React from 'react';
 import { MdInfo, MdPolicy, MdWarningAmber } from 'react-icons/md';
 import { t } from 'utils/i18n';
@@ -56,18 +64,19 @@ export const FraudPrevention = ({
       )}
       {flags?.consumerHasConfirmedPhoneNumber === false && (
         <Text mt="1" fontWeight="700">
-          <Icon as={MdWarningAmber} mr="2" />{' '}
-          {t('Não confirmou o telefone;')}
+          <Icon as={MdWarningAmber} mr="2" /> {t('Não confirmou o telefone;')}
         </Text>
       )}
       {flags?.consumerHasPlacedTooManyOrdersRecently && (
         <Text mt="1" fontWeight="700">
-          <Icon as={MdWarningAmber} mr="2" /> {t('Muitos pedidos recentemente;')}
+          <Icon as={MdWarningAmber} mr="2" />{' '}
+          {t('Muitos pedidos recentemente;')}
         </Text>
       )}
       {flags?.consumerHasSuspectInvoices && (
         <Text mt="1" fontWeight="700">
-          <Icon as={MdWarningAmber} mr="2" /> {t('Faturas anteriores suspeitas;')}
+          <Icon as={MdWarningAmber} mr="2" />{' '}
+          {t('Faturas anteriores suspeitas;')}
         </Text>
       )}
       {flags?.highTicketPrice && (
@@ -77,7 +86,8 @@ export const FraudPrevention = ({
       )}
       {flags?.flaggedLocationsNearby && (
         <Text mt="1" fontWeight="700">
-          <Icon as={MdWarningAmber} mr="2" /> {t('Local próximo a uma fraude anterior;')}
+          <Icon as={MdWarningAmber} mr="2" />{' '}
+          {t('Local próximo a uma fraude anterior;')}
         </Text>
       )}
       {canUpdateOrder ? (
@@ -91,20 +101,21 @@ export const FraudPrevention = ({
             backgroundColor="#F6F6F6"
           />
           <Text mt="4">
-            {t('Se nenhuma ação for tomada, o pedido será confirmado dentro de instantes:')}
+            {t(
+              'Se nenhuma ação for tomada, o pedido será confirmado dentro de instantes:'
+            )}
           </Text>
-          {
-            isBackofficeSuperuser && (
-              <Box mt="4">
-                <CustomCheckbox 
-                  colorScheme="green"
-                  isChecked={removeStaff} 
-                  onChange={() => setRemoveStaff(prev => !prev)}>
-                  {t('Sair do pedido após a triagem')}
-                </CustomCheckbox>
-              </Box>
-            )
-          }
+          {isBackofficeSuperuser && (
+            <Box mt="4">
+              <Checkbox
+                colorScheme="green"
+                isChecked={removeStaff}
+                onChange={() => setRemoveStaff((prev) => !prev)}
+              >
+                {t('Sair do pedido após a triagem')}
+              </Checkbox>
+            </Box>
+          )}
           <Stack mt="4" direction={{ base: 'column', md: 'row' }} spacing={4}>
             <Button
               w="100%"
@@ -134,7 +145,9 @@ export const FraudPrevention = ({
             {t('É preciso assumir o pedido para realizar alguma ação.')}
           </Text>
           <Text mt="2">
-            {t('Se nenhuma ação for tomada, o pedido será confirmado dentro de instantes.')}
+            {t(
+              'Se nenhuma ação for tomada, o pedido será confirmado dentro de instantes.'
+            )}
           </Text>
         </>
       )}

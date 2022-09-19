@@ -1,7 +1,14 @@
 import { ComplementGroup, WithId } from '@appjusto/types';
-import { Badge, Box, Button, Flex, HStack, Text } from '@chakra-ui/react';
+import {
+  Badge,
+  Box,
+  Button,
+  Checkbox,
+  Flex,
+  HStack,
+  Text,
+} from '@chakra-ui/react';
 import { useContextMenu } from 'app/state/menu/context';
-import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import { isEqual } from 'lodash';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
@@ -31,7 +38,7 @@ const ComplementsGroupCard = ({ group }: ComplementsGroupCardProps) => {
       justifyContent="space-between"
       alignItems="center"
     >
-      <CustomCheckbox
+      <Checkbox
         w="100%"
         value={group.id}
         isDisabled={group.items?.length === 0}
@@ -58,7 +65,7 @@ const ComplementsGroupCard = ({ group }: ComplementsGroupCardProps) => {
               : 'Nenhum item cadastrado'}
           </Text>
         </Box>
-      </CustomCheckbox>
+      </Checkbox>
       <Button
         w="160px"
         size="sm"

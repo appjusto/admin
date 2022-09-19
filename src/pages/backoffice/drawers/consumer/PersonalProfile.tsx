@@ -1,10 +1,9 @@
-import { Box, CheckboxGroup, Stack, Text } from '@chakra-ui/react';
+import { Box, Checkbox, CheckboxGroup, Stack, Text } from '@chakra-ui/react';
 import * as cpfutils from '@fnando/cpf';
 import { useObserveConsumerProfileNotes } from 'app/api/consumer/useObserveConsumerProfileNotes';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextConsumerProfile } from 'app/state/consumer/context';
 import { ProfileNotes } from 'common/components/backoffice/ProfileNotes';
-import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import { CustomPatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';
 import {
@@ -148,17 +147,15 @@ export const PersonalProfile = () => {
           lineHeight="22px"
         >
           <Box>
-            <CustomCheckbox value="status">
-              {t('Comunicações operacionais')}
-            </CustomCheckbox>
+            <Checkbox value="status">{t('Comunicações operacionais')}</Checkbox>
             <Text fontSize="13px">
               {t('Para saber sobre novas versões, atualizações do app e mais.')}
             </Text>
           </Box>
           <Box>
-            <CustomCheckbox value="general">
+            <Checkbox value="general">
               {t('Comunicações institucionais')}
-            </CustomCheckbox>
+            </Checkbox>
             <Text fontSize="13px">
               {t(
                 'Para conhecer mais sobre o AppJusto: propósito, impacto, crescimento, financiamento e mais.'
@@ -166,9 +163,7 @@ export const PersonalProfile = () => {
             </Text>
           </Box>
           <Box>
-            <CustomCheckbox value="marketing">
-              {t('Promoções e ofertas')}
-            </CustomCheckbox>
+            <Checkbox value="marketing">{t('Promoções e ofertas')}</Checkbox>
             <Text fontSize="13px">
               {t(
                 'Avisar sobre promoções e ofertas referentes aos restaurantes da rede.'

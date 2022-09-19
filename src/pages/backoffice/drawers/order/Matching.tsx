@@ -5,14 +5,21 @@ import {
   OutsourceAccountType,
   WithId,
 } from '@appjusto/types';
-import { Box, Button, Flex, HStack, RadioGroup, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Flex,
+  HStack,
+  Radio,
+  RadioGroup,
+  Text,
+} from '@chakra-ui/react';
 import { useGetOutsourceDelivery } from 'app/api/order/useGetOutsourceDelivery';
 import { useOrderCourierManualAllocation } from 'app/api/order/useOrderCourierManualAllocation';
 import { useOrderMatching } from 'app/api/order/useOrderMatching';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { CustomButton } from 'common/components/buttons/CustomButton';
-import CustomRadio from 'common/components/form/CustomRadio';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import { CustomPatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';
 import {
@@ -272,13 +279,10 @@ export const Matching = ({
               lineHeight="21px"
             >
               <HStack spacing={6}>
-                <CustomRadio value="platform">{t('Plataforma')}</CustomRadio>
-                <CustomRadio
-                  value="business"
-                  isDisabled={order?.type === 'p2p'}
-                >
+                <Radio value="platform">{t('Plataforma')}</Radio>
+                <Radio value="business" isDisabled={order?.type === 'p2p'}>
                   {t('Restaurante')}
-                </CustomRadio>
+                </Radio>
               </HStack>
             </RadioGroup>
           </HStack>

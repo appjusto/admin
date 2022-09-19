@@ -1,10 +1,18 @@
 import { IssueType, ProfileSituation } from '@appjusto/types';
-import { Box, CheckboxGroup, Flex, RadioGroup, Text, Textarea, VStack } from '@chakra-ui/react';
+import {
+  Box,
+  Checkbox,
+  CheckboxGroup,
+  Flex,
+  Radio,
+  RadioGroup,
+  Text,
+  Textarea,
+  VStack,
+} from '@chakra-ui/react';
 import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';
 import { useContextBusinessBackoffice } from 'app/state/business/businessBOContext';
 import { AlertError } from 'common/components/AlertError';
-import CustomCheckbox from 'common/components/form/CustomCheckbox';
-import CustomRadio from 'common/components/form/CustomRadio';
 import React from 'react';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
@@ -13,7 +21,8 @@ const issueOptionsArray = ['business-profile-invalid'] as IssueType[];
 
 export const StatusTab = () => {
   // context
-  const { business, handleBusinessProfileChange, marketPlace } = useContextBusinessBackoffice();
+  const { business, handleBusinessProfileChange, marketPlace } =
+    useContextBusinessBackoffice();
   const issueOptions = useIssuesByType(issueOptionsArray);
   // state
   const [financialIssues, setFinancialIssues] = React.useState<string[]>([]);
@@ -27,7 +36,9 @@ export const StatusTab = () => {
       {financialIssues.length > 0 && (
         <AlertError
           title={t(
-            `Problemas identificados na verificação financeira: (${financialIssues.length ?? 0})`
+            `Problemas identificados na verificação financeira: (${
+              financialIssues.length ?? 0
+            })`
           )}
           icon={false}
           border="2px solid #DC3545"
@@ -43,7 +54,9 @@ export const StatusTab = () => {
       <SectionTitle mt="0">{t('Alterar status do restaurante:')}</SectionTitle>
       <RadioGroup
         mt="2"
-        onChange={(value: ProfileSituation) => handleBusinessProfileChange('situation', value)}
+        onChange={(value: ProfileSituation) =>
+          handleBusinessProfileChange('situation', value)
+        }
         value={business?.situation}
         defaultValue="1"
         colorScheme="green"
@@ -52,21 +65,25 @@ export const StatusTab = () => {
         lineHeight="21px"
       >
         <Flex flexDir="column" justifyContent="flex-start">
-          <CustomRadio mt="2" value="approved" isDisabled={business?.situation !== 'verified'}>
+          <Radio
+            mt="2"
+            value="approved"
+            isDisabled={business?.situation !== 'verified'}
+          >
             {t('Publicado')}
-          </CustomRadio>
-          <CustomRadio mt="2" value="rejected">
+          </Radio>
+          <Radio mt="2" value="rejected">
             {t('Recusado')}
-          </CustomRadio>
-          <CustomRadio mt="2" value="submitted">
+          </Radio>
+          <Radio mt="2" value="submitted">
             {t('Aguardando aprovação')}
-          </CustomRadio>
-          <CustomRadio mt="2" value="pending">
+          </Radio>
+          <Radio mt="2" value="pending">
             {t('Pendente')}
-          </CustomRadio>
-          <CustomRadio mt="2" value="blocked">
+          </Radio>
+          <Radio mt="2" value="blocked">
             {t('Bloquear restaurante')}
-          </CustomRadio>
+          </Radio>
         </Flex>
       </RadioGroup>
       {business?.situation === 'rejected' && (
@@ -75,19 +92,22 @@ export const StatusTab = () => {
           <CheckboxGroup
             colorScheme="green"
             value={business?.profileIssues}
-            onChange={(value) => handleBusinessProfileChange('profileIssues', value as string[])}
+            onChange={(value) =>
+              handleBusinessProfileChange('profileIssues', value as string[])
+            }
           >
             <VStack alignItems="flex-start" mt="4" color="black" spacing={2}>
               {issueOptions?.map((issue) => (
-                <CustomCheckbox key={issue.id} value={issue.title}>
+                <Checkbox key={issue.id} value={issue.title}>
                   {issue.title}
-                </CustomCheckbox>
+                </Checkbox>
               ))}
             </VStack>
           </CheckboxGroup>
         </>
       )}
-      {(business?.situation === 'rejected' || business?.situation === 'blocked') && (
+      {(business?.situation === 'rejected' ||
+        business?.situation === 'blocked') && (
         <>
           <SectionTitle>
             {business?.situation === 'rejected'
@@ -97,7 +117,12 @@ export const StatusTab = () => {
           <Textarea
             mt="2"
             value={business?.profileIssuesMessage ?? ''}
-            onChange={(ev) => handleBusinessProfileChange('profileIssuesMessage', ev.target.value)}
+            onChange={(ev) =>
+              handleBusinessProfileChange(
+                'profileIssuesMessage',
+                ev.target.value
+              )
+            }
           />
         </>
       )}

@@ -1,7 +1,15 @@
 import { CourierMode, Issue, LatLng } from '@appjusto/types';
-import { Box, Flex, Icon, Link, RadioGroup, Stack, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Flex,
+  Icon,
+  Link,
+  Radio,
+  RadioGroup,
+  Stack,
+  Text,
+} from '@chakra-ui/react';
 import { CustomButton } from 'common/components/buttons/CustomButton';
-import CustomRadio from 'common/components/form/CustomRadio';
 import { Textarea } from 'common/components/form/input/Textarea';
 import { FieldValue } from 'firebase/firestore';
 import { modePTOptions } from 'pages/backoffice/utils';
@@ -49,7 +57,9 @@ export const Participant = ({
 }: ParticipantProps) => {
   // state
   const [isRemoving, setIsRemoving] = React.useState(false);
-  const [issueId, setIssueId] = React.useState((dropIssues && dropIssues[0].id) ?? '');
+  const [issueId, setIssueId] = React.useState(
+    (dropIssues && dropIssues[0].id) ?? ''
+  );
   const [comment, setComment] = React.useState('');
   const [googleLink, setGoogleLink] = React.useState<string>();
   const [isCopied, setIsCopied] = React.useState(false);
@@ -79,23 +89,48 @@ export const Participant = ({
   if (type === 'consumer') {
     return (
       <Box mb="10">
-        <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+        <Text
+          mt="2"
+          fontSize="15px"
+          color="black"
+          fontWeight="700"
+          lineHeight="22px"
+        >
           {t('Nome:')}{' '}
           <Text as="span" fontWeight="500">
             {name ?? 'N/E'}
           </Text>
         </Text>
         {typeof address === 'string' && (
-          <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+          <Text
+            mt="2"
+            fontSize="15px"
+            color="black"
+            fontWeight="700"
+            lineHeight="22px"
+          >
             {t('Endereço:')}{' '}
             <Text as="span" fontWeight="500">
               {address ?? 'N/E'}
             </Text>
-            <Icon ml="2" mb="-0.5" cursor="pointer" as={MdOutlineFileCopy} onClick={copyToClipboard} color={isCopied ? 'green.700' : 'black'} />
+            <Icon
+              ml="2"
+              mb="-0.5"
+              cursor="pointer"
+              as={MdOutlineFileCopy}
+              onClick={copyToClipboard}
+              color={isCopied ? 'green.700' : 'black'}
+            />
           </Text>
         )}
         {typeof additionalInfo === 'string' && (
-          <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+          <Text
+            mt="2"
+            fontSize="15px"
+            color="black"
+            fontWeight="700"
+            lineHeight="22px"
+          >
             {t('Complemento:')}{' '}
             <Text as="span" fontWeight="500">
               {additionalInfo ?? 'N/E'}
@@ -134,20 +169,45 @@ export const Participant = ({
   if (type === 'p2p-instructions') {
     return (
       <Box mb="10">
-        <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+        <Text
+          mt="2"
+          fontSize="15px"
+          color="black"
+          fontWeight="700"
+          lineHeight="22px"
+        >
           {t('Nome:')}{' '}
           <Text as="span" fontWeight="500">
             {instruction ?? 'N/E'}
           </Text>
         </Text>
-        <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+        <Text
+          mt="2"
+          fontSize="15px"
+          color="black"
+          fontWeight="700"
+          lineHeight="22px"
+        >
           {t('Endereço:')}{' '}
           <Text as="span" fontWeight="500">
             {address ?? 'N/E'}
           </Text>
-          <Icon ml="2" mb="-0.5" cursor="pointer" as={MdOutlineFileCopy} onClick={copyToClipboard} color={isCopied ? 'green.700' : 'black'} />
+          <Icon
+            ml="2"
+            mb="-0.5"
+            cursor="pointer"
+            as={MdOutlineFileCopy}
+            onClick={copyToClipboard}
+            color={isCopied ? 'green.700' : 'black'}
+          />
         </Text>
-        <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+        <Text
+          mt="2"
+          fontSize="15px"
+          color="black"
+          fontWeight="700"
+          lineHeight="22px"
+        >
           {t('Complemento:')}{' '}
           <Text as="span" fontWeight="500">
             {additionalInfo ?? 'N/E'}
@@ -159,20 +219,45 @@ export const Participant = ({
   if (type === 'business') {
     return (
       <Box mb="10">
-        <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+        <Text
+          mt="2"
+          fontSize="15px"
+          color="black"
+          fontWeight="700"
+          lineHeight="22px"
+        >
           {t('Nome:')}{' '}
           <Text as="span" fontWeight="500">
             {name ?? 'N/E'}
           </Text>
         </Text>
-        <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+        <Text
+          mt="2"
+          fontSize="15px"
+          color="black"
+          fontWeight="700"
+          lineHeight="22px"
+        >
           {t('Endereço:')}{' '}
           <Text as="span" fontWeight="500">
             {address ?? 'N/E'}
           </Text>
-          <Icon ml="2" mb="-0.5" cursor="pointer" as={MdOutlineFileCopy} onClick={copyToClipboard} color={isCopied ? 'green.700' : 'black'} />
+          <Icon
+            ml="2"
+            mb="-0.5"
+            cursor="pointer"
+            as={MdOutlineFileCopy}
+            onClick={copyToClipboard}
+            color={isCopied ? 'green.700' : 'black'}
+          />
         </Text>
-        <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+        <Text
+          mt="2"
+          fontSize="15px"
+          color="black"
+          fontWeight="700"
+          lineHeight="22px"
+        >
           {t('Complemento:')}{' '}
           <Text as="span" fontWeight="500">
             {additionalInfo ?? 'N/E'}
@@ -195,18 +280,36 @@ export const Participant = ({
   return (
     <Box mb="10">
       {isOutsource ? (
-        <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+        <Text
+          mt="2"
+          fontSize="15px"
+          color="black"
+          fontWeight="700"
+          lineHeight="22px"
+        >
           {t('Logística fora da rede')}
         </Text>
       ) : (
         <>
-          <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+          <Text
+            mt="2"
+            fontSize="15px"
+            color="black"
+            fontWeight="700"
+            lineHeight="22px"
+          >
             {name ? t('Nome:') : t('Instrução:')}{' '}
             <Text as="span" fontWeight="500">
               {name ?? 'N/E'}
             </Text>
           </Text>
-          <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+          <Text
+            mt="2"
+            fontSize="15px"
+            color="black"
+            fontWeight="700"
+            lineHeight="22px"
+          >
             {t('Modalidade da entrega:')}{' '}
             <Text as="span" fontWeight="500">
               {mode ? modePTOptions[mode] : 'N/E'}
@@ -215,7 +318,13 @@ export const Participant = ({
         </>
       )}
       {typeof deliveries === 'number' && (
-        <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+        <Text
+          mt="2"
+          fontSize="15px"
+          color="black"
+          fontWeight="700"
+          lineHeight="22px"
+        >
           {t('Pedidos entregues:')}{' '}
           <Text as="span" fontWeight="500">
             {deliveries}
@@ -223,7 +332,13 @@ export const Participant = ({
         </Text>
       )}
       {typeof rejected === 'number' && (
-        <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+        <Text
+          mt="2"
+          fontSize="15px"
+          color="black"
+          fontWeight="700"
+          lineHeight="22px"
+        >
           {t('Pedidos rejeitados:')}{' '}
           <Text as="span" fontWeight="500">
             {rejected}
@@ -231,7 +346,13 @@ export const Participant = ({
         </Text>
       )}
       {onboarding && (
-        <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+        <Text
+          mt="2"
+          fontSize="15px"
+          color="black"
+          fontWeight="700"
+          lineHeight="22px"
+        >
           {t('Data do onboarding:')}{' '}
           <Text as="span" fontWeight="500">
             {getDateAndHour(onboarding)}
@@ -239,7 +360,12 @@ export const Participant = ({
         </Text>
       )}
       {!isOutsource && (
-        <Stack mt="4" w="100%" spacing={4} direction={{ base: 'column', md: 'row' }}>
+        <Stack
+          mt="4"
+          w="100%"
+          spacing={4}
+          direction={{ base: 'column', md: 'row' }}
+        >
           {isRemoving ? (
             <Flex
               w="100%"
@@ -258,9 +384,13 @@ export const Participant = ({
                 <Flex flexDir="column" justifyContent="flex-start">
                   {dropIssues &&
                     dropIssues.map((issue) => (
-                      <CustomRadio mt={{ base: '3', md: '1' }} key={issue.id} value={issue.id}>
+                      <Radio
+                        mt={{ base: '3', md: '1' }}
+                        key={issue.id}
+                        value={issue.id}
+                      >
                         {issue.title}
-                      </CustomRadio>
+                      </Radio>
                     ))}
                 </Flex>
               </RadioGroup>
@@ -320,7 +450,9 @@ export const Participant = ({
                   fontSize="xs"
                   lineHeight="lg"
                   onClick={() => setIsRemoving(true)}
-                  isDisabled={!isOrderActive || typeof participantId !== 'string'}
+                  isDisabled={
+                    !isOrderActive || typeof participantId !== 'string'
+                  }
                 />
               )}
             </>

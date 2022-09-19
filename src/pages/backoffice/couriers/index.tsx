@@ -1,11 +1,17 @@
 import { CourierAlgolia, CourierStatus } from '@appjusto/types';
 import { ArrowDownIcon } from '@chakra-ui/icons';
-import { Button, CheckboxGroup, Flex, Stack, Text } from '@chakra-ui/react';
+import {
+  Button,
+  Checkbox,
+  CheckboxGroup,
+  Flex,
+  Stack,
+  Text,
+} from '@chakra-ui/react';
 import { BasicUserFilter } from 'app/api/search/types';
 import { useBasicUsersSearch } from 'app/api/search/useBasicUsersSearch';
 import { ClearFiltersButton } from 'common/components/backoffice/ClearFiltersButton';
 import { FiltersScrollBar } from 'common/components/backoffice/FiltersScrollBar';
-import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import React from 'react';
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
@@ -164,13 +170,9 @@ const CouriersPage = () => {
             fontSize="16px"
             lineHeight="22px"
           >
-            <CustomCheckbox value="available">{t('Disponível')}</CustomCheckbox>
-            <CustomCheckbox value="unavailable">
-              {t('Indisponível')}
-            </CustomCheckbox>
-            <CustomCheckbox value="dispatching">
-              {t('Realizando entrega')}
-            </CustomCheckbox>
+            <Checkbox value="available">{t('Disponível')}</Checkbox>
+            <Checkbox value="unavailable">{t('Indisponível')}</Checkbox>
+            <Checkbox value="dispatching">{t('Realizando entrega')}</Checkbox>
           </Stack>
         </CheckboxGroup>
       </Stack>

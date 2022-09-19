@@ -6,12 +6,12 @@ import {
   CheckboxGroup,
   Flex,
   Link,
+  Radio,
   RadioGroup,
   Stack,
   Text,
 } from '@chakra-ui/react';
 import { useContextMenu } from 'app/state/menu/context';
-import CustomRadio from 'common/components/form/CustomRadio';
 import { useProductContext } from 'pages/menu/context/ProductContext';
 import React from 'react';
 import { Link as RouterLink, Redirect, useRouteMatch } from 'react-router-dom';
@@ -53,12 +53,12 @@ export const ProductComplements = () => {
         color="black"
       >
         <Flex flexDir="column" justifyContent="flex-start">
-          <CustomRadio mt="2" value="false">
+          <Radio mt="2" value="false">
             {t('Não possui')}
-          </CustomRadio>
-          <CustomRadio mt="2" value="true" isDisabled={!complementsExists}>
+          </Radio>
+          <Radio mt="2" value="true" isDisabled={!complementsExists}>
             {t('Sim, possui complementos')}
-          </CustomRadio>
+          </Radio>
         </Flex>
       </RadioGroup>
       {!complementsExists && (

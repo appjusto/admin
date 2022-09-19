@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Checkbox,
   CheckboxGroup,
   Flex,
   Link,
@@ -10,7 +11,6 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { useClassifications } from 'app/api/platform/useClassifications';
-import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
@@ -195,13 +195,13 @@ export const ProductDetails = () => {
       >
         <VStack alignItems="flex-start" mt="4" color="black" spacing={2}>
           {platformClassifications.map((item) => (
-            <CustomCheckbox
+            <Checkbox
               key={item.id}
               value={item.name}
               aria-label={`${slugfyName(item.name)}-checkbox`}
             >
               {item.name}
-            </CustomCheckbox>
+            </Checkbox>
           ))}
         </VStack>
       </CheckboxGroup>{' '}

@@ -2,6 +2,7 @@ import { OrderStatus, OrderType } from '@appjusto/types';
 import { ArrowDownIcon } from '@chakra-ui/icons';
 import {
   Button,
+  Checkbox,
   CheckboxGroup,
   Flex,
   HStack,
@@ -12,7 +13,6 @@ import { useObserveOrdersHistory } from 'app/api/order/useObserveOrdersHistory';
 import { InQueryArray } from 'app/api/types';
 import { ClearFiltersButton } from 'common/components/backoffice/ClearFiltersButton';
 import { FiltersScrollBar } from 'common/components/backoffice/FiltersScrollBar';
-import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import { CustomDateFilter } from 'common/components/form/input/CustomDateFilter';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import React from 'react';
@@ -158,8 +158,8 @@ const OrdersPage = () => {
             fontSize="16px"
             lineHeight="22px"
           >
-            <CustomCheckbox value="food">{t('Restaurantes')}</CustomCheckbox>
-            <CustomCheckbox value="p2p">{t('Encomendas')}</CustomCheckbox>
+            <Checkbox value="food">{t('Restaurantes')}</Checkbox>
+            <Checkbox value="p2p">{t('Encomendas')}</Checkbox>
           </HStack>
         </CheckboxGroup>
       </Stack>

@@ -1,11 +1,18 @@
 import { AdminRole } from '@appjusto/types';
-import { Box, Button, RadioGroup, Stack, Text, Tooltip } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Radio,
+  RadioGroup,
+  Stack,
+  Text,
+  Tooltip,
+} from '@chakra-ui/react';
 import { useManagers } from 'app/api/manager/useManagers';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { CloseButton } from 'common/components/buttons/CloseButton';
-import CustomRadio from 'common/components/form/CustomRadio';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import { Select } from 'common/components/form/select/Select';
 import { intersection } from 'lodash';
@@ -56,7 +63,11 @@ export const AddMembersForm = ({ isBackoffice }: AddMembersFormProps) => {
       return prevState.filter((member, index) => index !== stateIndex);
     });
   };
-  const updateMember = (stateIndex: number, field: string, value: string | boolean) => {
+  const updateMember = (
+    stateIndex: number,
+    field: string,
+    value: string | boolean
+  ) => {
     setMembers((prevState) => {
       const newState = prevState.map((member, index) => {
         if (index === stateIndex) {
@@ -85,14 +96,16 @@ export const AddMembersForm = ({ isBackoffice }: AddMembersFormProps) => {
       });
     }
     const membersEmails = members.map((member) => member.email);
-    const isIntersection = intersection(business.managers, membersEmails).length > 0;
+    const isIntersection =
+      intersection(business.managers, membersEmails).length > 0;
     if (isIntersection) {
       return dispatchAppRequestResult({
         status: 'error',
         requestId: 'AddMembersForm-valid-email-in-use',
         message: {
           title: 'Um ou mais usuários já existem.',
-          description: 'Alguns e-mails informados já foram cadastrados para outros usuários.',
+          description:
+            'Alguns e-mails informados já foram cadastrados para outros usuários.',
         },
       });
     }
@@ -145,7 +158,9 @@ export const AddMembersForm = ({ isBackoffice }: AddMembersFormProps) => {
                   w="160px"
                   label={t('Papel do usuário:')}
                   value={member.role}
-                  onChange={(e) => updateMember(index, 'role', e.target.value as AdminRole)}
+                  onChange={(e) =>
+                    updateMember(index, 'role', e.target.value as AdminRole)
+                  }
                 >
                   <option value="owner">{t('Proprietário')}</option>
                   <option value="manager">{t('Gerente')}</option>
@@ -157,7 +172,9 @@ export const AddMembersForm = ({ isBackoffice }: AddMembersFormProps) => {
                     {t('Papel do usuário:')}
                   </Text>
                   <RadioGroup
-                    onChange={(value: AdminRole) => updateMember(index, 'role', value)}
+                    onChange={(value: AdminRole) =>
+                      updateMember(index, 'role', value)
+                    }
                     value={member.role}
                     defaultValue="1"
                     colorScheme="green"
@@ -175,17 +192,21 @@ export const AddMembersForm = ({ isBackoffice }: AddMembersFormProps) => {
                     >
                       <Tooltip hasArrow label={ownerLabel} placement="top">
                         <Box display={userIsOwner ? 'block' : 'none'}>
-                          <CustomRadio value="owner">{t('Proprietário')}</CustomRadio>
+                          <Radio value="owner">{t('Proprietário')}</Radio>
                         </Box>
                       </Tooltip>
                       <Tooltip hasArrow label={managerLabel} placement="top">
                         <Box display={userIsOwner ? 'block' : 'none'}>
-                          <CustomRadio value="manager">{t('Gerente')}</CustomRadio>
+                          <Radio value="manager">{t('Gerente')}</Radio>
                         </Box>
                       </Tooltip>
-                      <Tooltip hasArrow label={collaboratorLabel} placement="top">
+                      <Tooltip
+                        hasArrow
+                        label={collaboratorLabel}
+                        placement="top"
+                      >
                         <Box>
-                          <CustomRadio value="collaborator">{t('Colaborador')}</CustomRadio>
+                          <Radio value="collaborator">{t('Colaborador')}</Radio>
                         </Box>
                       </Tooltip>
                     </Stack>
@@ -194,7 +215,11 @@ export const AddMembersForm = ({ isBackoffice }: AddMembersFormProps) => {
               )}
               <Box w="40px">
                 {members.length > 1 && (
-                  <Tooltip placement="top" label={t('Remover')} aria-label={t('Remover')}>
+                  <Tooltip
+                    placement="top"
+                    label={t('Remover')}
+                    aria-label={t('Remover')}
+                  >
                     <CloseButton
                       size="sm"
                       variant="dangerLight"

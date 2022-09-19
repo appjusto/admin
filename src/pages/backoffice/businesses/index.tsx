@@ -2,6 +2,7 @@ import { BusinessAlgolia, BusinessStatus } from '@appjusto/types';
 import { ArrowDownIcon } from '@chakra-ui/icons';
 import {
   Button,
+  Checkbox,
   CheckboxGroup,
   Flex,
   HStack,
@@ -12,7 +13,6 @@ import { BusinessesFilter } from 'app/api/search/types';
 import { useBusinessesSearch } from 'app/api/search/useBusinessesSearch';
 import { ClearFiltersButton } from 'common/components/backoffice/ClearFiltersButton';
 import { FiltersScrollBar } from 'common/components/backoffice/FiltersScrollBar';
-import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import React from 'react';
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
@@ -166,8 +166,8 @@ const BusinessesPage = () => {
             fontSize="16px"
             lineHeight="22px"
           >
-            <CustomCheckbox value="open">{t('Aberto')}</CustomCheckbox>
-            <CustomCheckbox value="closed">{t('Fechado')}</CustomCheckbox>
+            <Checkbox value="open">{t('Aberto')}</Checkbox>
+            <Checkbox value="closed">{t('Fechado')}</Checkbox>
           </HStack>
         </CheckboxGroup>
       </Stack>
