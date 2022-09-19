@@ -5,7 +5,6 @@ import { useObserveBusinessOrdersHistory } from 'app/api/order/useObserveBusines
 import { useContextBusinessId } from 'app/state/business/context';
 import { ClearFiltersButton } from 'common/components/backoffice/ClearFiltersButton';
 import { FiltersScrollBar } from 'common/components/backoffice/FiltersScrollBar';
-import { FilterText } from 'common/components/backoffice/FilterText';
 import Container from 'common/components/Container';
 import { CustomDateFilter } from 'common/components/form/input/CustomDateFilter';
 import { CustomInput } from 'common/components/form/input/CustomInput';
@@ -25,6 +24,13 @@ const statuses = [
   'delivered',
   'canceled',
 ] as OrderStatus[];
+
+const statusFilterOptions = [
+  { label: 'Todos', value: 'all' },
+  { label: 'Agendados', value: 'scheduled' },
+  { label: 'Entregues', value: 'delivered' },
+  { label: 'Cancelados', value: 'canceled' },
+];
 
 const OrdersHistoryPage = () => {
   // context
@@ -80,7 +86,11 @@ const OrdersHistoryPage = () => {
         maxW="700px"
       />
       <Flex mt="8">
-        <Stack alignItems={{ md: 'end' }} direction={{ base: 'column', md: 'row' }} spacing={4}>
+        <Stack
+          alignItems={{ md: 'end' }}
+          direction={{ base: 'column', md: 'row' }}
+          spacing={4}
+        >
           <CustomInput
             mt="0"
             maxW="212px"
@@ -97,31 +107,17 @@ const OrdersHistoryPage = () => {
           />
         </Stack>
       </Flex>
-      <Flex mt="8" w="100%" justifyContent="space-between" borderBottom="1px solid #C8D7CB">
-        <FiltersScrollBar>
-          <HStack spacing={4}>
-            <FilterText
-              isActive={filterBar === 'all' ? true : false}
-              label={t('Todos')}
-              onClick={() => setFilterBar('all')}
-            />
-            <FilterText
-              isActive={filterBar === 'scheduled' ? true : false}
-              label={t('Agendados')}
-              onClick={() => setFilterBar('scheduled')}
-            />
-            <FilterText
-              isActive={filterBar === 'delivered' ? true : false}
-              label={t('Entregues')}
-              onClick={() => setFilterBar('delivered')}
-            />
-            <FilterText
-              isActive={filterBar === 'canceled' ? true : false}
-              label={t('Cancelados')}
-              onClick={() => setFilterBar('canceled')}
-            />
-          </HStack>
-        </FiltersScrollBar>
+      <Flex
+        mt="8"
+        w="100%"
+        justifyContent="space-between"
+        borderBottom="1px solid #C8D7CB"
+      >
+        <FiltersScrollBar
+          filters={statusFilterOptions}
+          currentValue={filterBar}
+          selectFilter={setFilterBar}
+        />
         <ClearFiltersButton clearFunction={clearFilters} />
       </Flex>
       <HStack mt="6" spacing={8} color="black">
@@ -129,7 +125,11 @@ const OrdersHistoryPage = () => {
           {t(`${orders?.length ?? '0'} itens na lista`)}
         </Text>
       </HStack>
-      {businessId ? <OrdersTable orders={orders} /> : <Text>{t('Carregando...')}</Text>}
+      {businessId ? (
+        <OrdersTable orders={orders} />
+      ) : (
+        <Text>{t('Carregando...')}</Text>
+      )}
       <Button mt="8" variant="secondary" onClick={fetchNextPage}>
         <ArrowDownIcon mr="2" />
         {t('Carregar mais')}

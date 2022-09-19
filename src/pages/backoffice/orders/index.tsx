@@ -1,11 +1,17 @@
 import { OrderStatus, OrderType } from '@appjusto/types';
 import { ArrowDownIcon } from '@chakra-ui/icons';
-import { Button, CheckboxGroup, Flex, HStack, Stack, Text } from '@chakra-ui/react';
+import {
+  Button,
+  CheckboxGroup,
+  Flex,
+  HStack,
+  Stack,
+  Text,
+} from '@chakra-ui/react';
 import { useObserveOrdersHistory } from 'app/api/order/useObserveOrdersHistory';
 import { InQueryArray } from 'app/api/types';
 import { ClearFiltersButton } from 'common/components/backoffice/ClearFiltersButton';
 import { FiltersScrollBar } from 'common/components/backoffice/FiltersScrollBar';
-import { FilterText } from 'common/components/backoffice/FilterText';
 import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import { CustomDateFilter } from 'common/components/form/input/CustomDateFilter';
 import { CustomInput } from 'common/components/form/input/CustomInput';
@@ -30,6 +36,19 @@ const statuses = [
   'canceled',
 ] as InQueryArray<OrderStatus>;
 
+const statusFilterOptions = [
+  { label: 'Todos', value: 'all' },
+  { label: 'Agendados', value: 'scheduled' },
+  { label: 'Confirmando', value: 'confirming' },
+  { label: 'Preparando', value: 'preparing' },
+  { label: 'Prontos', value: 'ready' },
+  { label: 'Despachando', value: 'dispatching' },
+  { label: 'Entregues', value: 'delivered' },
+  { label: 'Recusados', value: 'declined' },
+  { label: 'Rejeitados', value: 'rejected' },
+  { label: 'Cancelados', value: 'canceled' },
+];
+
 const OrdersPage = () => {
   // context
   const { path } = useRouteMatch();
@@ -41,7 +60,10 @@ const OrdersPage = () => {
   const [searchTo, setSearchTo] = React.useState('');
 
   const [filterBar, setFilterBar] = React.useState('all');
-  const [orderType, setOrderType] = React.useState<OrderType[]>(['food', 'p2p']);
+  const [orderType, setOrderType] = React.useState<OrderType[]>([
+    'food',
+    'p2p',
+  ]);
   const [orderStatus, setOrderStatus] = React.useState<OrderStatus>();
 
   const [clearDateNumber, setClearDateNumber] = React.useState(0);
@@ -102,64 +124,25 @@ const OrdersPage = () => {
           />
         </Stack>
       </Flex>
-      <Flex mt="8" w="100%" justifyContent="space-between" borderBottom="1px solid #C8D7CB">
-        <FiltersScrollBar>
-          <HStack spacing={4}>
-            <FilterText
-              isActive={filterBar === 'all' ? true : false}
-              label={t('Todos')}
-              onClick={() => setFilterBar('all')}
-            />
-            <FilterText
-              isActive={filterBar === 'scheduled' ? true : false}
-              label={t('Agendado')}
-              onClick={() => setFilterBar('scheduled')}
-            />
-            <FilterText
-              isActive={filterBar === 'confirming' ? true : false}
-              label={t('Confirmando')}
-              onClick={() => setFilterBar('confirming')}
-            />
-            <FilterText
-              isActive={filterBar === 'preparing' ? true : false}
-              label={t('Preparando')}
-              onClick={() => setFilterBar('preparing')}
-            />
-            <FilterText
-              isActive={filterBar === 'ready' ? true : false}
-              label={t('Prontos')}
-              onClick={() => setFilterBar('ready')}
-            />
-            <FilterText
-              isActive={filterBar === 'dispatching' ? true : false}
-              label={t('Despachando')}
-              onClick={() => setFilterBar('dispatching')}
-            />
-            <FilterText
-              isActive={filterBar === 'delivered' ? true : false}
-              label={t('Entregues')}
-              onClick={() => setFilterBar('delivered')}
-            />
-            <FilterText
-              isActive={filterBar === 'declined' ? true : false}
-              label={t('Recusados')}
-              onClick={() => setFilterBar('declined')}
-            />
-            <FilterText
-              isActive={filterBar === 'rejected' ? true : false}
-              label={t('Rejeitados')}
-              onClick={() => setFilterBar('rejected')}
-            />
-            <FilterText
-              isActive={filterBar === 'canceled' ? true : false}
-              label={t('Cancelados')}
-              onClick={() => setFilterBar('canceled')}
-            />
-          </HStack>
-        </FiltersScrollBar>
+      <Flex
+        mt="8"
+        w="100%"
+        justifyContent="space-between"
+        borderBottom="1px solid #C8D7CB"
+      >
+        <FiltersScrollBar
+          filters={statusFilterOptions}
+          currentValue={filterBar}
+          selectFilter={setFilterBar}
+        />
         <ClearFiltersButton clearFunction={clearFilters} />
       </Flex>
-      <Stack mt="6" direction={{ base: 'column', md: 'row' }} spacing={8} color="black">
+      <Stack
+        mt="6"
+        direction={{ base: 'column', md: 'row' }}
+        spacing={8}
+        color="black"
+      >
         <Text fontSize="lg" fontWeight="700" lineHeight="26px">
           {t(`${orders?.length ?? '0'} itens na lista`)}
         </Text>
