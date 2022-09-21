@@ -600,8 +600,13 @@ export default class OrderApi {
       where('consumer.id', '==', consumerId),
       where('status', 'in', statuses)
     );
-    const data = await getDocs(q);
-    return data.size;
+    try {
+      const data = await getDocs(q);
+      return data.size;
+    } catch (error) {
+      Sentry.captureException(error);
+      return null;
+    }
   }
 
   async createFakeOrder(order: Order) {

@@ -70,6 +70,12 @@ export const OrderBaseDrawer = ({
   // refs
   const bodyRef = React.useRef<HTMLDivElement>(null);
   // helpers
+  const consumerOrders =
+    consumerTotalOrders === null
+      ? 'N/E'
+      : consumerTotalOrders === undefined
+      ? 'Carregando...'
+      : consumerTotalOrders;
   const invoicedAmount = order ? getFoodOrderTotal(order) : 0;
   const isScheduled = order?.scheduledTo && order?.status === 'scheduled';
   const isHistory = path.includes('orders-history');
@@ -225,7 +231,7 @@ export const OrderBaseDrawer = ({
                 >
                   {t('Nº de pedidos:')}{' '}
                   <Text as="span" color="black" fontWeight="700">
-                    {consumerTotalOrders ?? 'N/E'}
+                    {consumerOrders}
                   </Text>
                 </Text>
                 <Text

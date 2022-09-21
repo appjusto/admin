@@ -20,7 +20,7 @@ export const useBusinessTotalOrdersByConsumer = (
   const api = useContextApi();
   const userCanRead = useUserCanReadEntity('orders');
   // state
-  const [ordersTotal, setOrdersTotal] = React.useState<number>();
+  const [ordersTotal, setOrdersTotal] = React.useState<number | null>();
   // side effects
   React.useEffect(() => {
     if (!userCanRead) return;
