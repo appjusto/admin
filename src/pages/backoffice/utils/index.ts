@@ -174,7 +174,6 @@ export const getEditableProfile = (profile: any, isEditingEmail: boolean) => {
     'appVersion',
     'fleet',
     'mode',
-    'status',
     'email',
   ];
   if (isEditingEmail) omittedKeys.pop();

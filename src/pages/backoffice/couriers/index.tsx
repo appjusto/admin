@@ -38,6 +38,7 @@ const CouriersPage = () => {
     'available',
     'unavailable',
     'dispatching',
+    'inactive',
   ]);
   const [filters, setFilters] = React.useState<BasicUserFilter[]>([]);
 
@@ -199,6 +200,7 @@ const CouriersPage = () => {
             <CustomCheckbox value="dispatching">
               {t('Realizando entrega')}
             </CustomCheckbox>
+            <CustomCheckbox value="inactive">{t('Desativado')}</CustomCheckbox>
           </Stack>
         </CheckboxGroup>
       </Stack>

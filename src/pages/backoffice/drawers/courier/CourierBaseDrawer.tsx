@@ -12,14 +12,18 @@ import {
   Flex,
   HStack,
   Icon,
-  Text
+  Text,
 } from '@chakra-ui/react';
 import { useAuthentication } from 'app/api/auth/useAuthentication';
 import { useCourierUpdateProfile } from 'app/api/courier/useCourierUpdateProfile';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextCourierProfile } from 'app/state/courier/context';
 import { useContextAppRequests } from 'app/state/requests/context';
-import { getEditableProfile, modePTOptions, situationPTOptions } from 'pages/backoffice/utils';
+import {
+  getEditableProfile,
+  modePTOptions,
+  situationPTOptions,
+} from 'pages/backoffice/utils';
 import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
 import React from 'react';
 import { MdThumbDownOffAlt, MdThumbUpOffAlt } from 'react-icons/md';
@@ -39,7 +43,12 @@ interface BaseDrawerProps {
   children: React.ReactNode | React.ReactNode[];
 }
 
-export const CourierBaseDrawer = ({ staff, onClose, children, ...props }: BaseDrawerProps) => {
+export const CourierBaseDrawer = ({
+  staff,
+  onClose,
+  children,
+  ...props
+}: BaseDrawerProps) => {
   //context
   const { userAbility } = useContextFirebaseUser();
   const { dispatchAppRequestResult } = useContextAppRequests();
@@ -66,9 +75,15 @@ export const CourierBaseDrawer = ({ staff, onClose, children, ...props }: BaseDr
 
   // helpers
   const pageName = pathname.split('/').pop();
-  const pageHasAction = pageName ? !withoutActionPages.includes(pageName) : true;
-  const situationAlert = courier?.situation === 'rejected' || courier?.situation === 'invalid';
-  const city = courier?.city && courier?.state ? `${courier?.city} - ${courier?.state}` : 'N/I';
+  const pageHasAction = pageName
+    ? !withoutActionPages.includes(pageName)
+    : true;
+  const situationAlert =
+    courier?.situation === 'rejected' || courier?.situation === 'invalid';
+  const city =
+    courier?.city && courier?.state
+      ? `${courier?.city} - ${courier?.state}`
+      : 'N/I';
   //handlers
   let courierName = courier?.name ?? 'N/I';
   if (courier?.surname) courierName += ` ${courier.surname}`;
@@ -81,35 +96,51 @@ export const CourierBaseDrawer = ({ staff, onClose, children, ...props }: BaseDr
           status: 'error',
           requestId: 'courier-base-drawer-valid-cpf',
           message: {
-            title: contextValidation.message ?? 'O CPF não foi informado ou não é válido.',
+            title:
+              contextValidation.message ??
+              'O CPF não foi informado ou não é válido.',
           },
         });
       if (!contextValidation.cnpj)
         return dispatchAppRequestResult({
           status: 'error',
           requestId: 'courier-base-drawer-valid-cnpj',
-          message: { title: contextValidation.message ?? 'O CNPJ informado não é válido.' },
+          message: {
+            title:
+              contextValidation.message ?? 'O CNPJ informado não é válido.',
+          },
         });
       if (!contextValidation.agency)
         return dispatchAppRequestResult({
           status: 'error',
           requestId: 'courier-base-drawer-valid-agency',
-          message: { title: contextValidation.message ?? 'A agência informada não é válida.' },
+          message: {
+            title:
+              contextValidation.message ?? 'A agência informada não é válida.',
+          },
         });
       if (!contextValidation.account)
         return dispatchAppRequestResult({
           status: 'error',
           requestId: 'courier-base-drawer-valid-account',
-          message: { title: contextValidation.message ?? 'A conta informada não é válida.' },
+          message: {
+            title:
+              contextValidation.message ?? 'A conta informada não é válida.',
+          },
         });
     }
     setIsEditingEmail(false);
-    const changes = getEditableProfile(courier, isEditingEmail) as Partial<CourierProfile>;
+    const changes = getEditableProfile(
+      courier,
+      isEditingEmail
+    ) as Partial<CourierProfile>;
     const selfieFileToSave = selfieFiles ? selfieFiles[0] : null;
     const documentFileToSave = documentFiles ? documentFiles[0] : null;
     updateProfile({ changes, selfieFileToSave, documentFileToSave });
-    if (selfieFileToSave) queryClient.invalidateQueries(['courier:selfie', courier?.id]);
-    if (documentFileToSave) queryClient.invalidateQueries(['courier:document', courier?.id]);
+    if (selfieFileToSave)
+      queryClient.invalidateQueries(['courier:selfie', courier?.id]);
+    if (documentFileToSave)
+      queryClient.invalidateQueries(['courier:document', courier?.id]);
     setSelfieFiles(null);
     setDocumentFiles(null);
   };
@@ -136,24 +167,52 @@ export const CourierBaseDrawer = ({ staff, onClose, children, ...props }: BaseDr
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
       <DrawerOverlay>
         <DrawerContent mt={{ base: '16', lg: '0' }}>
-          <DrawerCloseButton bg="green.500" mr="12px" _focus={{ outline: 'none' }} />
+          <DrawerCloseButton
+            bg="green.500"
+            mr="12px"
+            _focus={{ outline: 'none' }}
+          />
           <DrawerHeader pb="2">
-            <Text color="black" fontSize="2xl" fontWeight="700" lineHeight="28px" mb="2">
+            <Text
+              color="black"
+              fontSize="2xl"
+              fontWeight="700"
+              lineHeight="28px"
+              mb="2"
+            >
               {courier?.code ?? 'N/E'}
             </Text>
-            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+            <Text
+              mt="1"
+              fontSize="15px"
+              color="black"
+              fontWeight="700"
+              lineHeight="22px"
+            >
               {t('Data do onboarding:')}{' '}
               <Text as="span" fontWeight="500">
                 {getDateAndHour(courier?.createdOn)}
               </Text>
             </Text>
-            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+            <Text
+              mt="1"
+              fontSize="15px"
+              color="black"
+              fontWeight="700"
+              lineHeight="22px"
+            >
               {t('Atualizado em:')}{' '}
               <Text as="span" fontWeight="500">
                 {getDateAndHour(updatedOn)}
               </Text>
             </Text>
-            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+            <Text
+              mt="1"
+              fontSize="15px"
+              color="black"
+              fontWeight="700"
+              lineHeight="22px"
+            >
               {t('Versão do app:')}{' '}
               <Text as="span" fontWeight="500">
                 {courier?.appVersion ?? 'N/E'}
@@ -168,26 +227,55 @@ export const CourierBaseDrawer = ({ staff, onClose, children, ...props }: BaseDr
           </DrawerHeader>
           <DrawerBody pb="28">
             <SectionTitle mt="0">{courierName}</SectionTitle>
-            <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+            <Text
+              mt="2"
+              fontSize="15px"
+              color="black"
+              fontWeight="700"
+              lineHeight="22px"
+            >
               {t('Cidade:')}{' '}
               <Text as="span" fontWeight="500">
                 {city}
               </Text>
             </Text>
-            <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+            <Text
+              mt="2"
+              fontSize="15px"
+              color="black"
+              fontWeight="700"
+              lineHeight="22px"
+            >
               {t('Status:')}{' '}
-              <Text as="span" fontWeight="500" color={situationAlert ? 'red' : 'black'}>
-                {courier?.situation ? situationPTOptions[courier?.situation] : 'N/E'}
+              <Text
+                as="span"
+                fontWeight="500"
+                color={situationAlert ? 'red' : 'black'}
+              >
+                {courier?.situation
+                  ? situationPTOptions[courier?.situation]
+                  : 'N/E'}
               </Text>
             </Text>
-            <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+            <Text
+              mt="2"
+              fontSize="15px"
+              color="black"
+              fontWeight="700"
+              lineHeight="22px"
+            >
               {t('Método de entrega principal:')}{' '}
               <Text as="span" fontWeight="500">
                 {courier?.mode ? modePTOptions[courier.mode] : 'N/I'}
               </Text>
             </Text>
             <Flex mt="1" alignItems="flex-end">
-              <Text fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+              <Text
+                fontSize="15px"
+                color="black"
+                fontWeight="700"
+                lineHeight="22px"
+              >
                 {t('Nº de pedidos:')}
               </Text>
               <Text ml="3" as="span" fontWeight="500">
@@ -201,17 +289,30 @@ export const CourierBaseDrawer = ({ staff, onClose, children, ...props }: BaseDr
               </Text>
             </Flex>
             <Flex mt="1" alignItems="flex-end">
-              <Text fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+              <Text
+                fontSize="15px"
+                color="black"
+                fontWeight="700"
+                lineHeight="22px"
+              >
                 {t('Avaliações:')}
               </Text>
               <Text ml="3" as="span" fontWeight="500" color="green.600">
-                <Icon mr="1" as={MdThumbUpOffAlt} />({courier?.statistics?.positiveReviews ?? 0})
+                <Icon mr="1" as={MdThumbUpOffAlt} />(
+                {courier?.statistics?.positiveReviews ?? 0})
               </Text>
               <Text ml="4" as="span" fontWeight="500" color="red">
-                <Icon mr="1" as={MdThumbDownOffAlt} />({courier?.statistics?.negativeReviews ?? 0})
+                <Icon mr="1" as={MdThumbDownOffAlt} />(
+                {courier?.statistics?.negativeReviews ?? 0})
               </Text>
             </Flex>
-            <Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+            <Text
+              mt="2"
+              fontSize="15px"
+              color="black"
+              fontWeight="700"
+              lineHeight="22px"
+            >
               {t('Live:')}{' '}
               <Text as="span" fontWeight="500">
                 <Icon
@@ -237,16 +338,27 @@ export const CourierBaseDrawer = ({ staff, onClose, children, ...props }: BaseDr
               <DrawerLink px="2" to={`${url}`} label={t('Cadastro')} />
               <DrawerLink px="2" to={`${url}/status`} label={t('Status')} />
               {courier?.situation === 'approved' && (
-                <DrawerLink px="2" to={`${url}/location`} label={t('Localização')} />
+                <DrawerLink
+                  px="2"
+                  to={`${url}/location`}
+                  label={t('Localização')}
+                />
               )}
-              {(courier?.situation === 'approved' || courier?.situation === 'blocked') && (
+              {(courier?.situation === 'approved' ||
+                courier?.situation === 'blocked') && (
                 <DrawerLink px="2" to={`${url}/orders`} label={t('Pedidos')} />
               )}
-              {(courier?.situation === 'approved' || courier?.situation === 'blocked') && (
+              {(courier?.situation === 'approved' ||
+                courier?.situation === 'blocked') && (
                 <DrawerLink px="2" to={`${url}/iugu`} label={t('Iugu')} />
               )}
-              {(courier?.situation === 'approved' || courier?.situation === 'blocked') && (
-                <DrawerLink px="2" to={`${url}/reviews`} label={t('Avaliações')} />
+              {(courier?.situation === 'approved' ||
+                courier?.situation === 'blocked') && (
+                <DrawerLink
+                  px="2"
+                  to={`${url}/reviews`}
+                  label={t('Avaliações')}
+                />
               )}
             </Flex>
             {children}
@@ -256,8 +368,17 @@ export const CourierBaseDrawer = ({ staff, onClose, children, ...props }: BaseDr
             borderTop="1px solid #F2F6EA"
           >
             {isDeleting ? (
-              <Box mt="8" w="100%" bg="#FFF8F8" border="1px solid red" borderRadius="lg" p="6">
-                <Text color="red">{t(`Tem certeza que deseja excluir esta conta?`)}</Text>
+              <Box
+                mt="8"
+                w="100%"
+                bg="#FFF8F8"
+                border="1px solid red"
+                borderRadius="lg"
+                p="6"
+              >
+                <Text color="red">
+                  {t(`Tem certeza que deseja excluir esta conta?`)}
+                </Text>
                 <HStack mt="4" spacing={4}>
                   <Button width="full" onClick={() => setIsDeleting(false)}>
                     {t(`Manter conta`)}

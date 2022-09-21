@@ -1,5 +1,15 @@
-import { ProfileSituation } from '@appjusto/types';
-import { Box, CheckboxGroup, Flex, RadioGroup, Text, Textarea, VStack } from '@chakra-ui/react';
+import { CourierProfile, ProfileSituation } from '@appjusto/types';
+import {
+  Box,
+  CheckboxGroup,
+  Flex,
+  HStack,
+  RadioGroup,
+  Switch,
+  Text,
+  Textarea,
+  VStack,
+} from '@chakra-ui/react';
 import { useContextCourierProfile } from 'app/state/courier/context';
 import { AlertError } from 'common/components/AlertError';
 import CustomCheckbox from 'common/components/form/CustomCheckbox';
@@ -10,16 +20,23 @@ import { SectionTitle } from '../../generics/SectionTitle';
 
 export const CourierStatus = () => {
   // context
-  const { courier, issueOptions, marketPlace, handleProfileChange } = useContextCourierProfile();
+  const { courier, issueOptions, marketPlace, handleProfileChange } =
+    useContextCourierProfile();
   // state
   const [financialIssues, setFinancialIssues] = React.useState<string[]>([]);
   // helpers
   const profileIssues = (courier?.profileIssues as string[]) ?? [];
+  // handlers
+  const handleCourierActivity = (active: boolean) => {
+    let status = (
+      active ? 'unavailable' : 'inactive'
+    ) as CourierProfile['status'];
+    handleProfileChange('status', status);
+  };
   // side effects
   React.useEffect(() => {
     if (marketPlace?.issues) setFinancialIssues(marketPlace.issues);
   }, [marketPlace?.issues]);
-
   // UI
   return (
     <Box>
@@ -37,10 +54,34 @@ export const CourierStatus = () => {
           </VStack>
         </AlertError>
       )}
-      <SectionTitle mt="0">{t('Alterar status do entregador:')}</SectionTitle>
+      {courier?.situation === 'approved' && (
+        <>
+          <SectionTitle mt="0">{t('Desativar entregador:')}</SectionTitle>
+          <Text mt="2" fontSize="sm">
+            {t(
+              'Quando inativo, o entregador não consegue receber/aceitar corridas, mas pode acessar o app para resolver suas pendências financeiras, antes do seu bloqueio definitivo.'
+            )}
+          </Text>
+          <HStack mt="4">
+            <Switch
+              isChecked={courier?.status !== 'inactive'}
+              onChange={(ev) => {
+                ev.stopPropagation();
+                handleCourierActivity(ev.target.checked);
+              }}
+            />
+            <Text>
+              {courier?.status !== 'inactive' ? t('Ativo') : t('Inativo')}
+            </Text>
+          </HStack>
+        </>
+      )}
+      <SectionTitle>{t('Alterar status do entregador:')}</SectionTitle>
       <RadioGroup
         mt="2"
-        onChange={(value: ProfileSituation) => handleProfileChange('situation', value)}
+        onChange={(value: ProfileSituation) =>
+          handleProfileChange('situation', value)
+        }
         value={courier?.situation ?? 'pending'}
         defaultValue="1"
         colorScheme="green"
@@ -49,8 +90,12 @@ export const CourierStatus = () => {
         lineHeight="21px"
       >
         <Flex flexDir="column" justifyContent="flex-start">
-          <CustomRadio mt="2" value="approved" isDisabled={courier?.situation !== 'verified'}>
-            {t('Publicado')}
+          <CustomRadio
+            mt="2"
+            value="approved"
+            isDisabled={courier?.situation !== 'verified'}
+          >
+            {t('Aprovado')}
           </CustomRadio>
           <CustomRadio mt="2" value="rejected">
             {t('Recusado')}
@@ -81,13 +126,16 @@ export const CourierStatus = () => {
           </CheckboxGroup>
         </>
       )}
-      {(courier?.situation === 'rejected' || courier?.situation === 'blocked') && (
+      {(courier?.situation === 'rejected' ||
+        courier?.situation === 'blocked') && (
         <>
           <SectionTitle>{t('Mensagem personalizada:')}</SectionTitle>
           <Textarea
             mt="2"
             value={courier?.profileIssuesMessage ?? ''}
-            onChange={(ev) => handleProfileChange('profileIssuesMessage', ev.target.value)}
+            onChange={(ev) =>
+              handleProfileChange('profileIssuesMessage', ev.target.value)
+            }
           />
         </>
       )}
