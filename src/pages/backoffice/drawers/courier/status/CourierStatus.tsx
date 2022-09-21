@@ -56,10 +56,10 @@ export const CourierStatus = () => {
       )}
       {courier?.situation === 'approved' && (
         <>
-          <SectionTitle mt="0">{t('Desativar entregador:')}</SectionTitle>
+          <SectionTitle mt="0">{t('Status de disponibilidade:')}</SectionTitle>
           <Text mt="2" fontSize="sm">
             {t(
-              'Quando inativo, o entregador não consegue receber/aceitar corridas, mas pode acessar o app para resolver suas pendências financeiras, antes do seu bloqueio definitivo.'
+              'Quando desativado, o entregador não consegue receber corridas, mas pode acessar o app para resolver suas pendências financeiras, antes do seu bloqueio definitivo.'
             )}
           </Text>
           <HStack mt="4">
@@ -71,7 +71,7 @@ export const CourierStatus = () => {
               }}
             />
             <Text>
-              {courier?.status !== 'inactive' ? t('Ativo') : t('Inativo')}
+              {courier?.status !== 'inactive' ? t('Ativo') : t('Desativado')}
             </Text>
           </HStack>
         </>
