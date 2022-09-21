@@ -15,6 +15,8 @@ import {
   Text,
   Tooltip,
 } from '@chakra-ui/react';
+import { useBusinessTotalOrdersByConsumer } from 'app/api/order/useBusinessTotalOrdersByConsumer';
+import { useContextBusinessId } from 'app/state/business/context';
 import { useOrdersContext } from 'app/state/order';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { phoneFormatter } from 'common/components/form/input/pattern-input/formatters';
@@ -59,7 +61,12 @@ export const OrderBaseDrawer = ({
 }: BaseDrawerProps) => {
   //context
   const { path } = useRouteMatch();
+  const businessId = useContextBusinessId();
   const { changeOrderStatus } = useOrdersContext();
+  const consumerTotalOrders = useBusinessTotalOrdersByConsumer(
+    businessId,
+    order?.consumer.id
+  );
   // refs
   const bodyRef = React.useRef<HTMLDivElement>(null);
   // helpers
@@ -210,12 +217,17 @@ export const OrderBaseDrawer = ({
                     </Text>
                   </Text>
                 )}
-                {/*<Text fontSize="md" color="gray.600" fontWeight="500" lineHeight="22px">
-                  {t('Nº de pedidos no restaurante:')}{' '}
+                <Text
+                  fontSize="md"
+                  color="gray.600"
+                  fontWeight="500"
+                  lineHeight="22px"
+                >
+                  {t('Nº de pedidos:')}{' '}
                   <Text as="span" color="black" fontWeight="700">
-                    {0}
+                    {consumerTotalOrders ?? 'N/E'}
                   </Text>
-                </Text>*/}
+                </Text>
                 <Text
                   fontSize="md"
                   color="gray.600"

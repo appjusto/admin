@@ -588,6 +588,22 @@ export default class OrderApi {
     return documentsAs<Order>(data.docs);
   }
 
+  async fetchBusinessTotalOrdersByConsumer(
+    businessId: string,
+    consumerId: string,
+    statuses: OrderStatus[]
+  ) {
+    const q = query(
+      this.refs.getOrdersRef(),
+      orderBy('createdOn', 'desc'),
+      where('business.id', '==', businessId),
+      where('consumer.id', '==', consumerId),
+      where('status', 'in', statuses)
+    );
+    const data = await getDocs(q);
+    return data.size;
+  }
+
   async createFakeOrder(order: Order) {
     return addDoc(this.refs.getOrdersRef(), order);
   }
