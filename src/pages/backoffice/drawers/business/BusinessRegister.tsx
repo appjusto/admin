@@ -1,4 +1,5 @@
 import { Box, Text } from '@chakra-ui/react';
+import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useObserveBusinessProfileNotes } from 'app/api/business/profile/useObserveBusinessProfileNotes';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusinessBackoffice } from 'app/state/business/businessBOContext';
@@ -13,7 +14,8 @@ import { BusinessFulfillment } from 'pages/business-profile/BusinessFulfillment'
 import { BusinessPreparationModes } from 'pages/business-profile/BusinessPreparationModes';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
-import { BusinessTags } from './BusinessTags';
+import { ProfileTags } from '../ProfileTags';
+// import { BusinessTags } from './BusinessTags';
 import BOBankingInformation from './forms/BOBankingInformation';
 import { BOBusinessAddress } from './forms/BOBusinessAddress';
 import { BOBusinessProfile } from './forms/BOBusinessProfile';
@@ -27,6 +29,8 @@ export const BusinessRegister = () => {
     handleBussinesPhonesChange,
     handleBusinessPhoneOrdering,
   } = useContextBusinessBackoffice();
+  const { updateBusinessProfile, updateResult: updateProfilteResult } =
+    useBusinessProfile();
   const { profileNotes, updateNote, deleteNote, updateResult, deleteResult } =
     useObserveBusinessProfileNotes(business?.id);
   // UI
@@ -113,7 +117,13 @@ export const BusinessRegister = () => {
       {isBackofficeSuperuser && (
         <>
           <SectionTitle>{t('Tags')}</SectionTitle>
-          <BusinessTags />
+          <ProfileTags
+            profile={business}
+            updateProfile={(tags: string[]) => updateBusinessProfile({ tags })}
+            isLoading={updateProfilteResult.isLoading}
+            isSuccess={updateProfilteResult.isSuccess}
+          />
+          {/* <BusinessTags /> */}
         </>
       )}
       <SectionTitle>{t('Anotações')}</SectionTitle>

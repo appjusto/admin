@@ -1,5 +1,6 @@
 import { Box, CheckboxGroup, Stack, Text } from '@chakra-ui/react';
 import * as cpfutils from '@fnando/cpf';
+import { useConsumerUpdateProfile } from 'app/api/consumer/useConsumerUpdateProfile';
 import { useObserveConsumerProfileNotes } from 'app/api/consumer/useObserveConsumerProfileNotes';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextConsumerProfile } from 'app/state/consumer/context';
@@ -18,12 +19,15 @@ import React from 'react';
 import { normalizeEmail } from 'utils/email';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
+import { ProfileTags } from '../ProfileTags';
 
 export const PersonalProfile = () => {
   // context
   const { userAbility } = useContextFirebaseUser();
   const { consumer, handleProfileChange, isEditingEmail, setIsEditingEmail } =
     useContextConsumerProfile();
+  const { updateProfile, updateResult: updateProfileResult } =
+    useConsumerUpdateProfile(consumer?.id);
   const { profileNotes, updateNote, deleteNote, updateResult, deleteResult } =
     useObserveConsumerProfileNotes(consumer?.id);
 
@@ -177,6 +181,19 @@ export const PersonalProfile = () => {
           </Box>
         </Stack>
       </CheckboxGroup>
+      <SectionTitle>{t('Tags')}</SectionTitle>
+      <ProfileTags
+        profile={consumer}
+        updateProfile={(tags: string[]) =>
+          updateProfile({
+            changes: { tags },
+            selfieFileToSave: null,
+            documentFileToSave: null,
+          })
+        }
+        isLoading={updateProfileResult.isLoading}
+        isSuccess={updateProfileResult.isSuccess}
+      />
       <SectionTitle>{t('Anotações')}</SectionTitle>
       <ProfileNotes
         profileNotes={profileNotes}

@@ -1,56 +1,84 @@
-import { Box, Button, Flex, HStack, Tag, TagCloseButton, TagLabel, Text } from "@chakra-ui/react";
-import { useBusinessProfile } from "app/api/business/profile/useBusinessProfile";
-import { useContextBusinessBackoffice } from "app/state/business/businessBOContext";
-import { CustomInput } from "common/components/form/input/CustomInput";
-import React from "react";
-import { t } from "utils/i18n";
+import {
+  Business,
+  ConsumerProfile,
+  CourierProfile,
+  WithId,
+} from '@appjusto/types';
+import {
+  Box,
+  Button,
+  Flex,
+  HStack,
+  Tag,
+  TagCloseButton,
+  TagLabel,
+  Text,
+} from '@chakra-ui/react';
+import { CustomInput } from 'common/components/form/input/CustomInput';
+import React from 'react';
+import { t } from 'utils/i18n';
 
 type IsRemoving = {
   status: boolean;
   tag?: string;
+};
+
+interface ProfileTagsProps {
+  profile?: WithId<Business | ConsumerProfile | CourierProfile> | null;
+  updateProfile: (tags: string[]) => void;
+  isLoading: boolean;
+  isSuccess: boolean;
 }
 
-export const BusinessTags = () => {
-  // context
-  const { business } = useContextBusinessBackoffice();
-  const { updateBusinessProfile, updateResult } = useBusinessProfile();
-  const { isLoading, isSuccess } = updateResult;
+export const ProfileTags = ({
+  profile,
+  updateProfile,
+  isLoading,
+  isSuccess,
+}: ProfileTagsProps) => {
   // state
   const [state, setState] = React.useState<string[]>([]);
   const [newTag, setNewTag] = React.useState('');
   const [isAdding, setIsAdding] = React.useState(false);
-  const [isRemoving, setIsRemoving] = React.useState<IsRemoving>(
-    { status: false }
-  );
+  const [isRemoving, setIsRemoving] = React.useState<IsRemoving>({
+    status: false,
+  });
   // helpers
   const isRemovingTag = (tag: string) =>
     isRemoving.status === true && isRemoving.tag === tag;
   // handlers
   const handleAddNote = () => {
     const tags = [...state, newTag];
-    updateBusinessProfile({ tags });
+    updateProfile(tags);
   };
   const handleRemove = () => {
-    const tags = state.filter(tag => tag !== isRemoving.tag);
-    updateBusinessProfile({ tags });
-  }
+    const tags = state.filter((tag) => tag !== isRemoving.tag);
+    updateProfile(tags);
+  };
   // side effects
   React.useEffect(() => {
-    if(!business?.tags) return;
-    setState(business?.tags);
-  }, [business?.tags]);
+    if (!profile?.tags) return;
+    setState(profile?.tags);
+  }, [profile?.tags]);
   React.useEffect(() => {
-    if(!isSuccess) return;
+    if (!isSuccess) return;
     setIsAdding(false);
-    setIsRemoving({ status: false })
+    setIsRemoving({ status: false });
   }, [isSuccess]);
   React.useEffect(() => {
-    if(isAdding) return;
-    setNewTag('')
-  }, [isAdding])
+    if (isAdding) return;
+    setNewTag('');
+  }, [isAdding]);
   // UI
   return (
-    <Box mt="6" bgColor="#F6F6F6" borderRadius="16px" p="4" maxH="400px" overflowY="auto">
+    <Box
+      mt="6"
+      bgColor="#F6F6F6"
+      borderRadius="16px"
+      p="4"
+      maxH="400px"
+      overflowY="auto"
+    >
       {isAdding ? (
         <Box>
           <CustomInput
@@ -93,45 +121,46 @@ export const BusinessTags = () => {
         </Flex>
       )}
       <Box mt="4">
-        {
-          state.length > 0 ? state.map(tag => (
-            <Tag 
-              key={tag} 
-              px="4" 
-              py="1" 
+        {state.length > 0 ? (
+          state.map((tag) => (
+            <Tag
+              key={tag}
+              px="4"
+              py="1"
               bgColor={isRemovingTag(tag) ? '#FFF8F8' : 'white'}
               mr="2"
             >
               <TagLabel>{tag}</TagLabel>
-              <TagCloseButton onClick={
-                () => setIsRemoving({status: true, tag})
-              }/>
+              <TagCloseButton
+                onClick={() => setIsRemoving({ status: true, tag })}
+              />
             </Tag>
           ))
-          : (
-            <Text mt="6">{t('Ainda não há tags para este restaurante.')}</Text>
+        ) : (
+          <Text mt="6">{t('Ainda não há tags para este perfil.')}</Text>
         )}
       </Box>
-      {
-        isRemoving.status && (
-          <Flex 
-            mt="4"
-            p="4"
-            bgColor="#FFF8F8"
-            borderRadius="lg"
-            flexDir="column" 
-            justifyContent="space-between" 
-            alignItems="center"
-          >
-            <Text>
-              {t('Deseja remover a tag ')}
-              <Text as="span" fontWeight="700">{isRemoving.tag}?</Text>
+      {isRemoving.status && (
+        <Flex
+          mt="4"
+          p="4"
+          bgColor="#FFF8F8"
+          borderRadius="lg"
+          flexDir="column"
+          justifyContent="space-between"
+          alignItems="center"
+        >
+          <Text>
+            {t('Deseja remover a tag ')}
+            <Text as="span" fontWeight="700">
+              {isRemoving.tag}?
             </Text>
-            <HStack mt="4" justifyContent="flex-end" spacing={4}>
+          </Text>
+          <HStack mt="4" justifyContent="flex-end" spacing={4}>
             <Button
               size="md"
               w={{ base: '90px', md: '160px' }}
-              onClick={() => setIsRemoving({ status: false})}
+              onClick={() => setIsRemoving({ status: false })}
             >
               {t('Manter')}
             </Button>
@@ -146,9 +175,8 @@ export const BusinessTags = () => {
               {t('Remover')}
             </Button>
           </HStack>
-          </Flex>
-        )
-      }
+        </Flex>
+      )}
     </Box>
-  )
-}
+  );
+};
