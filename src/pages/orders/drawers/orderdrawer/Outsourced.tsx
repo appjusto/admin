@@ -111,10 +111,10 @@ export const Outsourced = ({
   if (isOrderActive && canOutsource && isOrderFlagged) {
     return (
       <Box mt="4" border="2px solid #FFBE00" borderRadius="lg" bg="" p="4">
-        <SectionTitle mt="0">{t('Assumir logística')}</SectionTitle>
+        <SectionTitle mt="0">{t('Você pode assumir a logística')}</SectionTitle>
         <Text mt="2">
           {t(
-            `Ao assumir a logística de entrega, iremos repassar o valor de ${deliveryFare} pelo custo da entrega, além do valor do pedido que já foi cobrado do cliente. O AppJusto não terá como monitorar o pedido a partir daqui.`
+            `Ao assumir a logística, iremos repassar o valor de ${deliveryFare} pelo custo da entrega, além do valor do pedido que já foi cobrado do cliente. Caso confirme, o AppJusto não terá como monitorar a entrega.`
           )}
         </Text>
         <HStack mt="4">

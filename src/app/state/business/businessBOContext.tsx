@@ -5,7 +5,7 @@ import {
   ManagerProfile,
   ManagerWithRole,
   MarketplaceAccountInfo,
-  WithId
+  WithId,
 } from '@appjusto/types';
 import * as cnpjutils from '@fnando/cnpj';
 import { useBusinessBankAccount } from 'app/api/business/profile/useBusinessBankAccount';
@@ -26,7 +26,9 @@ import { bankingInfoIsEmpty, getValidationStatus } from './utils';
 
 const bankAccountSet = (bankAccount: BankAccount): boolean => {
   return (
-    !isEmpty(bankAccount.name) && !isEmpty(bankAccount.agency) && !isEmpty(bankAccount.account)
+    !isEmpty(bankAccount.name) &&
+    !isEmpty(bankAccount.agency) &&
+    !isEmpty(bankAccount.account)
   );
 };
 
@@ -55,7 +57,9 @@ interface BusinessBOContextProps {
   fetchManagers(): void;
 }
 
-const BusinessBOContext = React.createContext<BusinessBOContextProps>({} as BusinessBOContextProps);
+const BusinessBOContext = React.createContext<BusinessBOContextProps>(
+  {} as BusinessBOContextProps
+);
 
 const businessKeys: (keyof Business)[] = [
   'accountManagerId',
@@ -81,6 +85,7 @@ const businessKeys: (keyof Business)[] = [
   'tags',
   'maxOrdersPerHour',
   'minHoursForScheduledOrders',
+  'reviews',
 ];
 interface Props {
   children: React.ReactNode | React.ReactNode[];
@@ -109,28 +114,38 @@ export const BusinessBOProvider = ({ children }: Props) => {
   const { updateBusinessManagerAndBankAccount, updateResult } =
     useBusinessManagerAndBankAccountBatch();
   // state
-  const [state, dispatch] = React.useReducer(businessBOReducer, {} as businessBOState);
-  const [contextValidation, setContextValidation] = React.useState<BackofficeProfileValidation>({
-    cnpj: true,
-    profile: true,
-    cep: true,
-    address: true,
-    deliveryRange: true,
-    agency: true,
-    account: true,
-  });
+  const [state, dispatch] = React.useReducer(
+    businessBOReducer,
+    {} as businessBOState
+  );
+  const [contextValidation, setContextValidation] =
+    React.useState<BackofficeProfileValidation>({
+      cnpj: true,
+      profile: true,
+      cep: true,
+      address: true,
+      deliveryRange: true,
+      agency: true,
+      account: true,
+    });
   // handlers
-  const handleBusinessProfileChange = React.useCallback((key: string, value: any) => {
-    if (key === 'situation' && value === 'blocked') {
-      dispatch({
-        type: 'update_business',
-        payload: { situation: 'blocked', enabled: false, status: 'closed' },
-      });
-    } else dispatch({ type: 'update_business', payload: { [key]: value } });
-  }, []);
-  const handleBusinessAddressChange = React.useCallback((key: string, value: any) => {
-    dispatch({ type: 'update_business_address', payload: { [key]: value } });
-  }, []);
+  const handleBusinessProfileChange = React.useCallback(
+    (key: string, value: any) => {
+      if (key === 'situation' && value === 'blocked') {
+        dispatch({
+          type: 'update_business',
+          payload: { situation: 'blocked', enabled: false, status: 'closed' },
+        });
+      } else dispatch({ type: 'update_business', payload: { [key]: value } });
+    },
+    []
+  );
+  const handleBusinessAddressChange = React.useCallback(
+    (key: string, value: any) => {
+      dispatch({ type: 'update_business_address', payload: { [key]: value } });
+    },
+    []
+  );
   const handleBussinesPhonesChange = (
     operation: 'add' | 'remove' | 'update' | 'ordering',
     args?: number | { index: number; field: BusinessPhoneField; value: any }
@@ -142,7 +157,11 @@ export const BusinessBOProvider = ({ children }: Props) => {
     } else if (operation === 'update' && args && typeof args !== 'number') {
       return dispatch({
         type: 'update_business_phone',
-        payload: args as { index: number; field: BusinessPhoneField; value: any },
+        payload: args as {
+          index: number;
+          field: BusinessPhoneField;
+          value: any;
+        },
       });
     }
     dispatchAppRequestResult({
@@ -162,7 +181,10 @@ export const BusinessBOProvider = ({ children }: Props) => {
   };
   const handleSave = () => {
     if (state.businessProfile.situation === 'approved') {
-      const validation = getValidationStatus(contextValidation, dispatchAppRequestResult);
+      const validation = getValidationStatus(
+        contextValidation,
+        dispatchAppRequestResult
+      );
       if (!validation) return;
     }
     let businessChanges = null;
@@ -171,9 +193,16 @@ export const BusinessBOProvider = ({ children }: Props) => {
     if (!isEqual(state.businessProfile, business))
       businessChanges = pick(state.businessProfile, businessKeys);
     // if (!isEqual(state.manager, manager)) managerChanges = state.manager;
-    if (!bankingInfoIsEmpty(state.bankingInfo) && !isEqual(state.bankingInfo, bankAccount))
+    if (
+      !bankingInfoIsEmpty(state.bankingInfo) &&
+      !isEqual(state.bankingInfo, bankAccount)
+    )
       bankingChanges = state.bankingInfo;
-    updateBusinessManagerAndBankAccount({ businessChanges, managerChanges, bankingChanges });
+    updateBusinessManagerAndBankAccount({
+      businessChanges,
+      managerChanges,
+      bankingChanges,
+    });
   };
   // side effects
   React.useEffect(() => {
@@ -213,7 +242,8 @@ export const BusinessBOProvider = ({ children }: Props) => {
   }, [state?.businessProfile?.cnpj]);
   React.useEffect(() => {
     if (state?.businessProfile) {
-      const { name, companyName, description, cuisine } = state?.businessProfile;
+      const { name, companyName, description, cuisine } =
+        state?.businessProfile;
       if (!name || !companyName || !description || !cuisine) {
         setContextValidation((prev) => ({
           ...prev,

@@ -36,6 +36,7 @@ const watchedFields: (keyof Business)[] = [
   'tags',
   'maxOrdersPerHour',
   'minHoursForScheduledOrders',
+  'reviews',
   // object types
   'managers',
   'profileIssues',
@@ -66,7 +67,9 @@ export const BusinessProvider = ({ children }: Props) => {
   const queryClient = useQueryClient();
   const { user, isBackofficeUser, refreshUserToken } = useContextFirebaseUser();
   const businesses = useObserveBusinessManagedBy(user?.email);
-  const [businessId, setBusinessId] = React.useState<string | undefined | null>();
+  const [businessId, setBusinessId] = React.useState<
+    string | undefined | null
+  >();
   const hookBusiness = useObserveBusinessProfile(businessId);
   // state
   const [business, setBusiness] = React.useState<WithId<Business> | null>();
@@ -115,11 +118,20 @@ export const BusinessProvider = ({ children }: Props) => {
       return;
     }
     if (isBackofficeUser === false) {
-      localStorage.setItem(`${user.email}-${process.env.REACT_APP_ENVIRONMENT}`, hookBusiness.id);
+      localStorage.setItem(
+        `${user.email}-${process.env.REACT_APP_ENVIRONMENT}`,
+        hookBusiness.id
+      );
     }
     updateContextBusiness(hookBusiness);
     queryClient.invalidateQueries();
-  }, [user, hookBusiness, isBackofficeUser, queryClient, updateContextBusiness]);
+  }, [
+    user,
+    hookBusiness,
+    isBackofficeUser,
+    queryClient,
+    updateContextBusiness,
+  ]);
   React.useEffect(() => {
     if (isBackofficeUser) return;
     if (!user?.email) return;
