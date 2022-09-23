@@ -79,16 +79,6 @@ export const OrderDetails = ({ order }: DetailsProps) => {
                         <Td isNumeric>
                           {getComplementQtd(item.quantity, complement.quantity)}
                         </Td>
-                        {/* <Td isNumeric>
-                          {item.quantity > 1 ? (
-                            <Multiplier
-                              products={item.quantity}
-                              complements={complement.quantity}
-                            />
-                          ) : (
-                            complement.quantity ?? 1
-                          )}
-                        </Td> */}
                         <Td isNumeric>{formatCurrency(complement.price)}</Td>
                         <Td isNumeric>
                           {formatCurrency(

@@ -4,21 +4,11 @@ import {
   OrderCourierLocationLog,
   WithId,
 } from '@appjusto/types';
-import {
-  Box,
-  Button,
-  Circle,
-  Flex,
-  HStack,
-  Image,
-  Text,
-} from '@chakra-ui/react';
+import { Box, Button, Circle, Flex, Image, Text } from '@chakra-ui/react';
 import { useCourierProfilePicture } from 'app/api/courier/useCourierProfilePicture';
 import { useObserveOrderLogs } from 'app/api/order/useObserveOrderLogs';
 import { useOrderDeliveryInfos } from 'app/api/order/useOrderDeliveryInfos';
-import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextServerTime } from 'app/state/server-time';
-import { AlertWarning } from 'common/components/AlertWarning';
 import { Timestamp } from 'firebase/firestore';
 import I18n from 'i18n-js';
 import React from 'react';
@@ -27,24 +17,21 @@ import { t } from 'utils/i18n';
 import { DeliveryMap } from './DeliveryMap';
 interface DeliveryInfosProps {
   order: WithId<Order>;
-  setOutsource?(value: boolean): void;
   isBackofficeDrawer?: boolean;
 }
 
 export const DeliveryInfos = ({
   order,
-  setOutsource,
   isBackofficeDrawer = false,
 }: DeliveryInfosProps) => {
   // context
   const { getServerTime } = useContextServerTime();
-  const { isBackofficeUser } = useContextFirebaseUser();
   const courierLocationLogs = useObserveOrderLogs(
     order.id,
     'courier-location'
   ) as WithId<OrderCourierLocationLog>[];
   const courierPictureUrl = useCourierProfilePicture(order.courier?.id);
-  const { isMatched, orderDispatchingText, arrivalTime, isNoMatch } =
+  const { isMatched, orderDispatchingText, arrivalTime } =
     useOrderDeliveryInfos(getServerTime, order);
   // state
   const [joined, setJoined] = React.useState<string | null>();
@@ -97,25 +84,6 @@ export const DeliveryInfos = ({
           ) : (
             <Text fontSize="sm">{t(`Chega em menos de 1 minuto`)}</Text>
           ))}
-        {isNoMatch && !isBackofficeUser && (
-          <HStack spacing={2}>
-            {/*<Button
-              size="md"
-              variant="yellowDark"
-              onClick={() => setOutsource && setOutsource(true)}
-            >
-              {t('Assumir logística')}
-            </Button>*/}
-            <AlertWarning
-              maxW="320px"
-              fontSize="xs"
-              description={t(
-                'Não há entregadores disponíveis em nossa rede. Appjusto enviará um entregador de outra rede.'
-              )}
-              icon={false}
-            />
-          </HStack>
-        )}
       </Flex>
       {isMatched && (
         <Flex

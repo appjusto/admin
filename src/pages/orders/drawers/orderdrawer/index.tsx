@@ -264,10 +264,7 @@ export const OrderDrawer = (props: Props) => {
                     </Box>
                   )
                 ) : (
-                  <DeliveryInfos
-                    order={order}
-                    setOutsource={setIsOutsourceDelivery}
-                  />
+                  <DeliveryInfos order={order} />
                 ))}
               {order?.status === 'ready' && order.fulfillment === 'take-away' && (
                 <Box

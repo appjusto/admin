@@ -18,12 +18,8 @@ export const OrderReadyCard = ({ order }: Props) => {
   const { getServerTime } = useContextServerTime();
   const { changeOrderStatus } = useOrdersContext();
   const arrivalTime = useOrderArrivalTimes(getServerTime, order);
-  const {
-    isMatched,
-    isNoMatch,
-    isCurrierArrived,
-    orderDispatchingKanbanItemText,
-  } = useOrderDeliveryInfos(getServerTime, order);
+  const { isMatched, isCurrierArrived, orderDispatchingKanbanItemText } =
+    useOrderDeliveryInfos(getServerTime, order);
   // helpers
   const showArrivalTime =
     typeof arrivalTime === 'number' &&
@@ -45,37 +41,6 @@ export const OrderReadyCard = ({ order }: Props) => {
     }
   };
   // UI
-  if (isNoMatch) {
-    return (
-      <Box
-        position="relative"
-        borderRadius="lg"
-        borderColor="#FFBE00"
-        borderWidth="2px"
-        color="black"
-        boxShadow="0px 8px 16px -4px rgba(105,118,103,0.1)"
-        zIndex="100"
-      >
-        <Link to={`${url}/${order.id}`}>
-          <Box w="100%" h="100%" px="4" p="4">
-            <Flex flexDir="column" fontWeight="700">
-              <Text fontSize="lg" fontWeight="700">
-                #{order.code}
-              </Text>
-              <Text fontSize="xs" lineHeight="lg" fontWeight="500">
-                {`{${consumerName}}`}
-              </Text>
-              <Text mt="1" fontSize="xs" fontWeight="700">
-                {t(
-                  'Não há entregadores disponíveis em nossa rede. Appjusto enviará um entregador de outra rede.'
-                )}
-              </Text>
-            </Flex>
-          </Box>
-        </Link>
-      </Box>
-    );
-  }
   if (order.status === 'ready') {
     return (
       <Box
