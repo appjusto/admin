@@ -55,6 +55,7 @@ export const OrderDrawer = (props: Props) => {
   // helpers
   const cancellator = getOrderCancellator(orderCancellation?.issue?.type);
   const canAllocateCourier =
+    order?.fulfillment === 'delivery' &&
     (!order?.scheduledTo || isToday(order?.scheduledTo)) &&
     business?.tags &&
     business.tags.includes('can-match-courier') &&

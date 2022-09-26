@@ -337,7 +337,13 @@ export const OrderBaseDrawer = ({
                       fontWeight="500"
                       lineHeight="22px"
                     >
-                      {t('Cliente solicitou entrega entre:')}{' '}
+                      {t(
+                        `Cliente solicitou ${
+                          order?.fulfillment === 'take-away'
+                            ? 'retirada'
+                            : 'entrega'
+                        } entre:`
+                      )}{' '}
                       <Text as="span" color="black" fontWeight="700">
                         {getHourAndMinute(order?.scheduledTo!)}
                       </Text>
