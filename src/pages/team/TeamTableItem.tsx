@@ -1,5 +1,13 @@
 import { AdminRole, ManagerWithRole } from '@appjusto/types';
-import { Box, Button, HStack, RadioGroup, Td, Text, Tr } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  HStack,
+  RadioGroup,
+  Td,
+  Text,
+  Tr,
+} from '@chakra-ui/react';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import CustomRadio from 'common/components/form/CustomRadio';
 import React from 'react';
@@ -33,7 +41,10 @@ export const TeamTableItem = ({
   // helpers
   const userIsOwner = userAbility?.can('delete', 'businesses');
   const userCanUpdate = userAbility?.can('update', { kind: 'managers', role });
-  const versionLabelColor = getAppVersionLabelColor(minVersion, manager.appVersion);
+  const versionLabelColor = getAppVersionLabelColor(
+    minVersion,
+    manager.appVersion
+  );
   // haldlers
   // side effects
   React.useEffect(() => {
@@ -58,7 +69,13 @@ export const TeamTableItem = ({
   // UI
   if (isDeleting) {
     return (
-      <Tr color="black" fontSize="sm" h="66px" bg="rgba(254, 215, 215, 0.3)" pos="relative">
+      <Tr
+        color="black"
+        fontSize="sm"
+        h="66px"
+        bg="rgba(254, 215, 215, 0.3)"
+        pos="relative"
+      >
         <Td>{manager.email}</Td>
         <Td isNumeric>{t('Confirmar exclusão?')}</Td>
         <Td position="relative">
@@ -79,6 +96,7 @@ export const TeamTableItem = ({
             </HStack>
           </Box>
         </Td>
+        <Td></Td>
         <Td></Td>
       </Tr>
     );
@@ -113,7 +131,12 @@ export const TeamTableItem = ({
           <Box position="absolute" top="1">
             <Text>{t('Confirmar atualização?')}</Text>
             <HStack mt="1" spacing={4}>
-              <Button w="150px" size="sm" variant="danger" onClick={() => setIsUpdating(false)}>
+              <Button
+                w="150px"
+                size="sm"
+                variant="danger"
+                onClick={() => setIsUpdating(false)}
+              >
                 {t('Cancelar')}
               </Button>
               <Button
