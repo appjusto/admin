@@ -124,14 +124,18 @@ export const Participants = ({ order }: ParticipantsProps) => {
           </Text>
         </>
       )}
-      {isOrderActive && order?.fulfillment === 'delivery' ? (
-        <DeliveryInfos order={order!} isBackofficeDrawer />
-      ) : (
+      {order?.fulfillment === 'delivery' && (
         <>
-          <SectionTitle>{t('Destino do pedido')}</SectionTitle>
-          <Text mt="1" fontSize="15px" lineHeight="21px">
-            {order?.destination?.address.description ?? 'N/E'}
-          </Text>
+          {isOrderActive ? (
+            <DeliveryInfos order={order!} isBackofficeDrawer />
+          ) : (
+            <>
+              <SectionTitle>{t('Destino do pedido')}</SectionTitle>
+              <Text mt="1" fontSize="15px" lineHeight="21px">
+                {order?.destination?.address.description ?? 'N/E'}
+              </Text>
+            </>
+          )}
         </>
       )}
     </Box>
