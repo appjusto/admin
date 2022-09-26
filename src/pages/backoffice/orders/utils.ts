@@ -9,7 +9,11 @@ export const getFoodOrderTotal = (
   if (order.fare?.business?.status === 'partially_refunded') {
     businessValue = order.fare?.business.paid ?? 0;
   }
-  if (order.fare?.business?.status === 'canceled') {
+  if (
+    order.fare?.business?.status === 'canceled' ||
+    order.fare?.business?.status === 'refunded' ||
+    order.fare?.business?.status === 'chargeback'
+  ) {
     businessValue = 0;
   }
   if (order.outsourcedBy === 'business') {
@@ -17,7 +21,11 @@ export const getFoodOrderTotal = (
     if (order.fare?.courier?.status === 'partially_refunded') {
       courierValue = order.fare?.courier.paid ?? 0;
     }
-    if (order.fare?.courier?.status === 'canceled') {
+    if (
+      order.fare?.courier?.status === 'canceled' ||
+      order.fare?.courier?.status === 'refunded' ||
+      order.fare?.courier?.status === 'chargeback'
+    ) {
       courierValue = 0;
     }
     businessValue += courierValue;
