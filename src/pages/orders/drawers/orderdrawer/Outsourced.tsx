@@ -38,6 +38,7 @@ export const Outsourced = ({
   const isOrderActive =
     order?.status &&
     ['preparing', 'ready', 'dispatching'].includes(order?.status);
+  const isCourierFromNet = typeof order?.courier?.id === 'string';
   // side effects
   React.useEffect(() => {
     if (!order?.courier?.name) return;
@@ -108,7 +109,7 @@ export const Outsourced = ({
       </Box>
     );
   }
-  if (isOrderActive && canOutsource && isOrderFlagged) {
+  if (isOrderActive && !isCourierFromNet && canOutsource && isOrderFlagged) {
     return (
       <Box mt="4" border="2px solid #FFBE00" borderRadius="lg" bg="" p="4">
         <SectionTitle mt="0">{t('Você pode assumir a logística')}</SectionTitle>
