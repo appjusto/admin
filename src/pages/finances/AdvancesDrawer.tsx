@@ -95,7 +95,17 @@ export const AdvancesDrawer = ({
         requestId: 'AdvancesDrawer-valid-no-value',
         message: { title: 'O Id da simulação não foi encontrado' },
       });
-    await advanceReceivables(simulationId);
+    if (!advancedValue || !advanceFee)
+      return dispatchAppRequestResult({
+        status: 'error',
+        requestId: 'AdvancesDrawer-valid-no-value',
+        message: { title: 'Parâmetros do adiantamento não encontrados' },
+      });
+    await advanceReceivables({
+      simulationId,
+      amount: advancedValue,
+      fee: advanceFee,
+    });
   };
   // UI
   if (advanceReceivablesResult.isSuccess) {

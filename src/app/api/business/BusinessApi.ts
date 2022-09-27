@@ -847,12 +847,16 @@ export default class BusinessApi {
   }
   async advanceReceivables(
     accountId: string,
-    simulationId: string
+    simulationId: string,
+    amount: number,
+    fee: number
   ): Promise<any> {
     const payload: AdvanceReceivablesByAmountPayload = {
       accountType: 'business',
       accountId,
       simulationId,
+      amount,
+      fee,
       meta: { version: '1' }, // TODO: pass correct version on
     };
     if (process.env.NODE_ENV === 'development') {

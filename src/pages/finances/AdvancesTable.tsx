@@ -6,7 +6,6 @@ import { useRouteMatch } from 'react-router-dom';
 import { formatCurrency } from 'utils/formatters';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
-import { formatCents, formatIuguValueToDisplay } from './utils';
 
 interface AdvancesTableItemProps {
   advance: WithId<CustomAccountAdvance>;
@@ -15,18 +14,20 @@ interface AdvancesTableItemProps {
 const AdvancesTableItem = ({ advance }: AdvancesTableItemProps) => {
   // context
   const { url } = useRouteMatch();
+  // helpers
+  const received = (advance.amount ?? 0) - (advance.fee ?? 0);
   // UI
   return (
     <Tr color="black" fontSize="15px" lineHeight="21px" fontWeight="500">
       <Td>{getDateAndHour(advance.createdOn)}</Td>
       <Td isNumeric>
-        {formatIuguValueToDisplay(advance.data.total.advanced_value)}
+        {advance.amount ? formatCurrency(advance.amount) : 'N/E'}
       </Td>
       <Td color="red" isNumeric>
-        {'-' + formatIuguValueToDisplay(advance.data.total.advance_fee)}
+        {`- ${advance.fee ? formatCurrency(advance.fee) : 'N/E'}`}
       </Td>
       <Td color="green.700" isNumeric>
-        {formatIuguValueToDisplay(advance.data.total.received_value)}
+        {formatCurrency(received)}
       </Td>
       <Td>
         <CustomButton
@@ -48,17 +49,17 @@ export const AdvancesTable = ({ advances }: AdvancesTableProps) => {
   // helpers
   const totalRequested =
     advances?.reduce<number>((result, item) => {
-      const value = formatCents(item.data.total.advanced_value);
+      const value = item.amount ?? 0;
       return (result += value);
     }, 0) ?? 0;
   const totalFees =
     advances?.reduce<number>((result, item) => {
-      const value = formatCents(item.data.total.advance_fee);
+      const value = item.fee ?? 0;
       return (result += value);
     }, 0) ?? 0;
   const totalAdvanced =
     advances?.reduce<number>((result, item) => {
-      const value = formatCents(item.data.total.received_value);
+      const value = (item.amount ?? 0) - (item.fee ?? 0);
       return (result += value);
     }, 0) ?? 0;
   // UI
