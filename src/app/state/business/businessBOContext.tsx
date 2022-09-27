@@ -11,6 +11,7 @@ import * as cnpjutils from '@fnando/cnpj';
 import { useBusinessBankAccount } from 'app/api/business/profile/useBusinessBankAccount';
 import { useBusinessManagerAndBankAccountBatch } from 'app/api/business/profile/useBusinessManagerAndBankAccountBatch';
 import { useBusinessMarketPlace } from 'app/api/business/useBusinessMarketPlace';
+import { useGetManagers } from 'app/api/manager/useGetManagers';
 import { MutationResult } from 'app/api/mutation/useCustomMutation';
 import { BackofficeProfileValidation } from 'common/types';
 import { isEmpty, isEqual, pick } from 'lodash';
@@ -53,7 +54,7 @@ interface BusinessBOContextProps {
   deleteMarketPlace: UseMutateAsyncFunction<void, unknown, void, unknown>;
   deleteMarketPlaceResult: MutationResult;
   businessManagers?: ManagerWithRole[];
-  setIsGetManagersActive: React.Dispatch<React.SetStateAction<boolean>>;
+  // setIsGetManagersActive: React.Dispatch<React.SetStateAction<boolean>>;
   fetchManagers(): void;
 }
 
@@ -99,14 +100,13 @@ export const BusinessBOProvider = ({ children }: Props) => {
   // context
   const { dispatchAppRequestResult } = useContextAppRequests();
   const { businessId } = useParams<Params>();
-  const {
-    business,
-    setBusinessId,
-    clearBusiness,
-    businessManagers,
-    setIsGetManagersActive,
-    fetchManagers,
-  } = useContextBusiness();
+  const { business, setBusinessId, clearBusiness, fetchManagers } =
+    useContextBusiness();
+  const { managers: businessManagers } = useGetManagers(
+    businessId,
+    business?.managers,
+    true
+  );
   const { manager, setManagerEmail } = useContextManagerProfile();
   const { bankAccount } = useBusinessBankAccount();
   const { marketPlace, deleteMarketPlace, deleteMarketPlaceResult } =
@@ -316,7 +316,7 @@ export const BusinessBOProvider = ({ children }: Props) => {
         deleteMarketPlace,
         deleteMarketPlaceResult,
         businessManagers,
-        setIsGetManagersActive,
+        // setIsGetManagersActive,
         fetchManagers,
       }}
     >

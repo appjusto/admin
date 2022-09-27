@@ -1,9 +1,13 @@
-import { Business, ManagerWithRole, WithId } from '@appjusto/types';
+import { ManagerWithRole } from '@appjusto/types';
 import { useContextApi } from 'app/state/api/context';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import React from 'react';
 
-export const useGetManagers = (business?: WithId<Business> | null, isActive?: boolean) => {
+export const useGetManagers = (
+  businessId?: string,
+  managersList?: string[],
+  isActive?: boolean
+) => {
   // contex
   const api = useContextApi();
   const { userAbility } = useContextFirebaseUser();
@@ -14,14 +18,14 @@ export const useGetManagers = (business?: WithId<Business> | null, isActive?: bo
   // handlers
   const fetchManagers = React.useCallback(() => {
     if (!userCanRead) return;
-    if (!business?.id || !business?.managers) return;
-    api.manager().getBusinessManagers(business.id, setManagers);
-  }, [api, userCanRead, business?.id, business?.managers]);
+    if (!businessId) return;
+    api.manager().getBusinessManagers(businessId, setManagers);
+  }, [api, userCanRead, businessId]);
   // side effects
   React.useEffect(() => {
     if (!isActive) return;
     fetchManagers();
-  }, [isActive, business?.managers, fetchManagers]);
+  }, [isActive, businessId, managersList, fetchManagers]);
   // return
   return { managers, fetchManagers };
 };

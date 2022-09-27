@@ -76,7 +76,8 @@ export const BusinessProvider = ({ children }: Props) => {
   const [isGetManagersActive, setIsGetManagersActive] = React.useState(false);
   // business managers
   const { managers: businessManagers, fetchManagers } = useGetManagers(
-    business,
+    business?.id,
+    business?.managers,
     isGetManagersActive
   );
   // handlers
