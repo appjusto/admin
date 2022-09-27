@@ -1,4 +1,14 @@
-import { Box, Button, Flex, HStack, Input, RadioGroup, Stack, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Flex,
+  HStack,
+  Input,
+  RadioGroup,
+  Stack,
+  Text,
+} from '@chakra-ui/react';
+import { useTrackEvent } from 'app/api/measurement/useTrackEvent';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import CustomRadio from 'common/components/form/CustomRadio';
 import React from 'react';
@@ -30,13 +40,17 @@ export const LinkBoxWithOption = ({
   copy,
 }: LinkBoxProps) => {
   // state
+  const { trackEvent } = useTrackEvent();
   const [selectedMode, setSelectedMode] = React.useState<SelectedMode>('none');
   // helpers
-  const ModeStatus = (selectedMode === 'whatsapp' ? selectedMode : undefined) as Mode;
+  const ModeStatus = (
+    selectedMode === 'whatsapp' ? selectedMode : undefined
+  ) as Mode;
   const internalLink = getLink(ModeStatus);
   const internalSharingMessage = getSharingMessage(ModeStatus);
   // handlers
   const downloadQRCode = () => {
+    trackEvent({ eventName: 'share', params: { method: 'qr_code' } });
     try {
       const svg = document.getElementById(id);
       const svgData = new XMLSerializer().serializeToString(svg!);
@@ -69,7 +83,12 @@ export const LinkBoxWithOption = ({
       borderRadius="lg"
     >
       <Box w="100%">
-        <Text fontSize="24px" fontWeight="700" lineHeight="28.8px" color="black">
+        <Text
+          fontSize="24px"
+          fontWeight="700"
+          lineHeight="28.8px"
+          color="black"
+        >
           {title}
         </Text>
         <Text mt="1" fontSize="15px" fontWeight="500" lineHeight="21px">
@@ -87,10 +106,20 @@ export const LinkBoxWithOption = ({
           <HStack mt="6" spacing={4} alignItems="flex-start">
             <CustomRadio value="none" />
             <Box>
-              <Text color="black" fontSize="16px" lineHeight="22px" fontWeight="500">
+              <Text
+                color="black"
+                fontSize="16px"
+                lineHeight="22px"
+                fontWeight="500"
+              >
                 {t('Botão para AppJusto')}
               </Text>
-              <Text fontSize="15px" lineHeight="21px" fontWeight="500" color="#697667">
+              <Text
+                fontSize="15px"
+                lineHeight="21px"
+                fontWeight="500"
+                color="#697667"
+              >
                 {t(
                   'Cliente é levado a acessar a página do restaurante no app ou baixar o AppJusto'
                 )}
@@ -100,11 +129,23 @@ export const LinkBoxWithOption = ({
           <HStack mt="6" spacing={4} alignItems="flex-start">
             <CustomRadio value="whatsapp" />
             <Box>
-              <Text color="black" fontSize="16px" lineHeight="22px" fontWeight="500">
+              <Text
+                color="black"
+                fontSize="16px"
+                lineHeight="22px"
+                fontWeight="500"
+              >
                 {t('Botão para WhatsApp')}
               </Text>
-              <Text fontSize="15px" lineHeight="21px" fontWeight="500" color="#697667">
-                {t('Cliente é levado a enviar uma mensagem no WhatsApp com seu pedido')}
+              <Text
+                fontSize="15px"
+                lineHeight="21px"
+                fontWeight="500"
+                color="#697667"
+              >
+                {t(
+                  'Cliente é levado a enviar uma mensagem no WhatsApp com seu pedido'
+                )}
               </Text>
             </Box>
           </HStack>
@@ -122,7 +163,9 @@ export const LinkBoxWithOption = ({
         />
         <Stack mt="6" spacing={4} direction={{ base: 'column', md: 'row' }}>
           <Button fontSize="sm" onClick={() => copy(ModeStatus)}>
-            {copied.status && copied.mode === ModeStatus ? t('Copiado!') : t('Copiar link')}
+            {copied.status && copied.mode === ModeStatus
+              ? t('Copiado!')
+              : t('Copiar link')}
           </Button>
           <CustomButton
             mt="0"
@@ -133,7 +176,12 @@ export const LinkBoxWithOption = ({
             link={`https://api.whatsapp.com/send?text=${internalSharingMessage}`}
             isExternal
           />
-          <Button fontSize="sm" variant="outline" color="black" onClick={downloadQRCode}>
+          <Button
+            fontSize="sm"
+            variant="outline"
+            color="black"
+            onClick={downloadQRCode}
+          >
             {t('Salvar QR Code')}
           </Button>
         </Stack>

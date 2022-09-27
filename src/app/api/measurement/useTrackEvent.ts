@@ -7,7 +7,7 @@ export const useTrackEvent = () => {
   const api = useContextApi();
   // mutations
   const { mutate: trackEvent } = useCustomMutation(
-    async (data: { eventName: string; params: EventParams }) =>
+    async (data: { eventName: string; params?: EventParams }) =>
       api.measurement().trackEvent(data.eventName, data.params),
     'trackEvent',
     false

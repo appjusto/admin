@@ -12,7 +12,7 @@ export default class MeasurementApi {
     return setAnalyticsCollectionEnabled(this.analytics, true);
   }
 
-  trackEvent(eventName: string, params: EventParams) {
+  trackEvent(eventName: string, params?: EventParams) {
     return logEvent(this.analytics, eventName, params);
   }
 }

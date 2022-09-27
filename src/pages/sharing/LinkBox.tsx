@@ -1,4 +1,5 @@
 import { Box, Button, Flex, Input, Stack, Text } from '@chakra-ui/react';
+import { useTrackEvent } from 'app/api/measurement/useTrackEvent';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import QRCode from 'react-qr-code';
 import { t } from 'utils/i18n';
@@ -25,8 +26,11 @@ export const LinkBox = ({
   sharingMessage,
   copy,
 }: LinkBoxProps) => {
+  // context
+  const { trackEvent } = useTrackEvent();
   // handlers
   const downloadQRCode = () => {
+    trackEvent({ eventName: 'share', params: { method: 'qr_code' } });
     try {
       const svg = document.getElementById(id);
       const svgData = new XMLSerializer().serializeToString(svg!);
@@ -59,7 +63,12 @@ export const LinkBox = ({
       borderRadius="lg"
     >
       <Box w="100%">
-        <Text fontSize="24px" fontWeight="700" lineHeight="28.8px" color="black">
+        <Text
+          fontSize="24px"
+          fontWeight="700"
+          lineHeight="28.8px"
+          color="black"
+        >
           {title}
         </Text>
         <Text mt="1" fontSize="15px" fontWeight="500" lineHeight="21px">
@@ -78,7 +87,9 @@ export const LinkBox = ({
         />
         <Stack mt="6" spacing={4} direction={{ base: 'column', md: 'row' }}>
           <Button fontSize="sm" onClick={() => copy()}>
-            {copied.status && copied.mode === mode ? t('Copiado!') : t('Copiar link')}
+            {copied.status && copied.mode === mode
+              ? t('Copiado!')
+              : t('Copiar link')}
           </Button>
           <CustomButton
             mt="0"
@@ -89,7 +100,12 @@ export const LinkBox = ({
             link={`https://api.whatsapp.com/send?text=${sharingMessage}`}
             isExternal
           />
-          <Button fontSize="sm" variant="outline" color="black" onClick={downloadQRCode}>
+          <Button
+            fontSize="sm"
+            variant="outline"
+            color="black"
+            onClick={downloadQRCode}
+          >
             {t('Salvar QR Code')}
           </Button>
         </Stack>

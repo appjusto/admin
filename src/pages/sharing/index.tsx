@@ -1,5 +1,6 @@
 import { Box, Button, Center, Icon, Stack, Text } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
+import { useTrackEvent } from 'app/api/measurement/useTrackEvent';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { CustomInput } from 'common/components/form/input/CustomInput';
@@ -21,6 +22,7 @@ export type Copied = {
 
 const SharingPage = () => {
   // context
+  const { trackEvent } = useTrackEvent();
   const { userAbility } = useContextFirebaseUser();
   const { business } = useContextBusiness();
   const { updateBusinessSlug, updateSlugResult } = useBusinessProfile();
@@ -30,8 +32,10 @@ const SharingPage = () => {
   const [deeplink, setDeeplink] = React.useState('');
   const [isCopied, setIsCopied] = React.useState<Copied>({ status: false });
   // handlers
-  const getBusinessLinkByMode = (mode?: Mode) => `${deeplink}${mode ? `?mode=${mode}` : ''}`;
+  const getBusinessLinkByMode = (mode?: Mode) =>
+    `${deeplink}${mode ? `?mode=${mode}` : ''}`;
   const copyToClipboard = (mode?: 'whatsapp' | 'in-store') => {
+    trackEvent({ eventName: 'share', params: { method: 'link' } });
     const copied = { status: true, mode };
     setIsCopied(copied);
     setTimeout(() => setIsCopied({ status: false }), 2000);
@@ -39,7 +43,8 @@ const SharingPage = () => {
   };
   const getWhatsappSharingMessage = (mode?: Mode) => {
     return encodeURIComponent(
-      `Olá, queria indicar o ${business?.name
+      `Olá, queria indicar o ${
+        business?.name
       }! No AppJusto, os preços dos pratos são menores, e você valoriza mais ainda o restaurante e o entregador. Um delivery mais justo de verdade ;)\n\n${getBusinessLinkByMode(
         mode
       )}`
@@ -47,6 +52,7 @@ const SharingPage = () => {
   };
   const handleUpdate = () => {
     if (!business?.id || !slug) return;
+    trackEvent({ eventName: 'update_slug' });
     updateBusinessSlug({ businessId: business.id, slug });
   };
   // side effects
@@ -69,14 +75,18 @@ const SharingPage = () => {
         title={t('Compartilhamento')}
         subtitle={t('Crie e gerencie os seus links de compartilhamento.')}
       />
-      <SectionTitle mt="8">{t('Configure o nome do seu link de compartilhamento')}</SectionTitle>
+      <SectionTitle mt="8">
+        {t('Configure o nome do seu link de compartilhamento')}
+      </SectionTitle>
       <Text mt="4">
         {t(
           'Você pode compartilhar o acesso direto ao seu restaurante no AppJusto. Crie um identificador, com a sugestão abaixo ou digitando à sua escolha e clicando em salvar, depois copie o link gerado e divulgue nas suas redes!'
         )}
       </Text>
       <Stack
-        display={userAbility?.can('update', 'businesses', 'slug') ? 'flex' : 'none'}
+        display={
+          userAbility?.can('update', 'businesses', 'slug') ? 'flex' : 'none'
+        }
         mt="4"
         spacing={2}
         direction={{ base: 'column', md: 'row' }}
@@ -91,7 +101,12 @@ const SharingPage = () => {
           onChange={(e) => setSlug(slugify(e.target.value))}
           onBlur={(e) => setSlug(slugify(e.target.value, true))}
         />
-        <Button h="60px" minW="120px" onClick={handleUpdate} isLoading={isLoading}>
+        <Button
+          h="60px"
+          minW="120px"
+          onClick={handleUpdate}
+          isLoading={isLoading}
+        >
           {t('Salvar')}
         </Button>
       </Stack>
@@ -110,7 +125,12 @@ const SharingPage = () => {
             <Center p="2" bgColor="#fff" borderRadius="18px">
               <Icon as={MdInfoOutline} w="24px" h="24px" />
             </Center>
-            <Text maxW="847px" fontSize="16px" lineHeight="22px" fontWeight="500">
+            <Text
+              maxW="847px"
+              fontSize="16px"
+              lineHeight="22px"
+              fontWeight="500"
+            >
               {t(
                 'Caso o cliente tenha o aplicativo do AppJusto instalado, poderá abrir os links abaixo diretamente no app ou no navegador padrão. Se abrir pelo navegador, ele verá o cardápio digital com a opção do link selecionado.'
               )}
