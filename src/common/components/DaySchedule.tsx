@@ -1,5 +1,12 @@
 import { ScheduleObject } from '@appjusto/types';
-import { Flex, HStack, Link, RadioGroup } from '@chakra-ui/react';
+import {
+  Checkbox,
+  Flex,
+  HStack,
+  Link,
+  Radio,
+  RadioGroup,
+} from '@chakra-ui/react';
 import { CustomPatternInput as Input } from 'common/components/form/input/pattern-input/CustomPatternInput';
 import {
   timeFormatter,
@@ -8,8 +15,6 @@ import {
 import { numbersOnlyParser } from 'common/components/form/input/pattern-input/parsers';
 import React from 'react';
 import { t } from 'utils/i18n';
-import CustomCheckbox from './form/CustomCheckbox';
-import CustomRadio from './form/CustomRadio';
 
 export type Break = 'break' | 'no-break';
 
@@ -55,18 +60,17 @@ export const DaySchedule = ({
   }, [schedule]);
   return (
     <Flex flexDir="column" mt="8">
-      <CustomCheckbox
+      <Checkbox
         aria-label={`${weekDayLowerCase}-checkbox`}
         width="120px"
         colorScheme="green"
-        size="lg"
         spacing="1rem"
         iconSize="1rem"
         isChecked={checked}
         onChange={(e) => handleCheck(e.target.checked)}
       >
         {t(`${weekDay}`)}
-      </CustomCheckbox>
+      </Checkbox>
       {checked && (
         <RadioGroup
           mt="2"
@@ -77,20 +81,20 @@ export const DaySchedule = ({
           color="black"
         >
           <Flex flexDir="column" justifyContent="flex-start">
-            <CustomRadio
+            <Radio
               mt="2"
               value="no-break"
               aria-label={`${weekDayLowerCase}-no-break`}
             >
               {t('Sem pausa')}
-            </CustomRadio>
-            <CustomRadio
+            </Radio>
+            <Radio
               mt="2"
               value="break"
               aria-label={`${weekDayLowerCase}-break`}
             >
               {t('O restaurante faz uma pausa durante o dia')}
-            </CustomRadio>
+            </Radio>
           </Flex>
         </RadioGroup>
       )}

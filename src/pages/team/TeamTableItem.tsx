@@ -3,13 +3,13 @@ import {
   Box,
   Button,
   HStack,
+  Radio,
   RadioGroup,
   Td,
   Text,
   Tr,
 } from '@chakra-ui/react';
 import { useContextFirebaseUser } from 'app/state/auth/context';
-import CustomRadio from 'common/components/form/CustomRadio';
 import React from 'react';
 import { formatDate, formatTime } from 'utils/formatters';
 import { t } from 'utils/i18n';
@@ -121,9 +121,9 @@ export const TeamTableItem = ({
               fontSize="16px"
               lineHeight="22px"
             >
-              <CustomRadio value="owner">{t('Proprietário')}</CustomRadio>
-              <CustomRadio value="manager">{t('Gerente')}</CustomRadio>
-              <CustomRadio value="collaborator">{t('Colaborador')}</CustomRadio>
+              <Radio value="owner">{t('Proprietário')}</Radio>
+              <Radio value="manager">{t('Gerente')}</Radio>
+              <Radio value="collaborator">{t('Colaborador')}</Radio>
             </HStack>
           </RadioGroup>
         </Td>
@@ -180,15 +180,15 @@ export const TeamTableItem = ({
             fontSize="16px"
             lineHeight="22px"
           >
-            <CustomRadio value="owner" isDisabled={!userIsOwner}>
+            <Radio value="owner" isDisabled={!userIsOwner}>
               {t('Proprietário')}
-            </CustomRadio>
-            <CustomRadio value="manager" isDisabled={!userIsOwner}>
+            </Radio>
+            <Radio value="manager" isDisabled={!userIsOwner}>
               {t('Gerente')}
-            </CustomRadio>
-            <CustomRadio value="collaborator" isDisabled={!userIsOwner}>
+            </Radio>
+            <Radio value="collaborator" isDisabled={!userIsOwner}>
               {t('Colaborador')}
-            </CustomRadio>
+            </Radio>
           </HStack>
         </RadioGroup>
       </Td>

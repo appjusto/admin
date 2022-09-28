@@ -1,7 +1,6 @@
 import { CookingTimeMode } from '@appjusto/types';
-import { Flex, RadioGroup } from '@chakra-ui/react';
+import { Flex, Radio, RadioGroup } from '@chakra-ui/react';
 import { useContextFirebaseUser } from 'app/state/auth/context';
-import CustomRadio from 'common/components/form/CustomRadio';
 import React from 'react';
 import { t } from 'utils/i18n';
 
@@ -34,18 +33,23 @@ export const BusinessAverageCookingTime = ({
   }, [averageCookingTime]);
   // UI
   return (
-    <RadioGroup onChange={notifyParentWithTime} value={time} defaultValue="15" colorScheme="green">
+    <RadioGroup
+      onChange={notifyParentWithTime}
+      value={time}
+      defaultValue="15"
+      colorScheme="green"
+    >
       <Flex flexDir="column" justifyContent="flex-start">
         {radioOptions.map((option) => (
-          <CustomRadio
+          <Radio
             key={option}
             mt="4"
             value={option}
-            size="lg"
+            size="md"
             isDisabled={!isBackofficeUser && cookingTimeMode === 'auto'}
           >
             {t(`${option} minutos`)}
-          </CustomRadio>
+          </Radio>
         ))}
       </Flex>
     </RadioGroup>

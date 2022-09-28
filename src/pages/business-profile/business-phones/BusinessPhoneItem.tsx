@@ -1,14 +1,23 @@
 import { BusinessPhone } from '@appjusto/types';
-import { Box, Button, HStack, Icon, Stack, Tooltip } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Checkbox,
+  HStack,
+  Icon,
+  Stack,
+  Tooltip,
+} from '@chakra-ui/react';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { CloseButton } from 'common/components/buttons/CloseButton';
-import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import { CustomPatternInput as PatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';
-import { phoneFormatter, phoneMask } from 'common/components/form/input/pattern-input/formatters';
+import {
+  phoneFormatter,
+  phoneMask,
+} from 'common/components/form/input/pattern-input/formatters';
 import { numbersOnlyParser } from 'common/components/form/input/pattern-input/parsers';
 import { Select } from 'common/components/form/select/Select';
 import { ReactComponent as DragHandle } from 'common/img/drag-handle.svg';
-import React from 'react';
 import { Draggable } from 'react-beautiful-dnd';
 import { FaPhoneAlt, FaWhatsapp } from 'react-icons/fa';
 import { t } from 'utils/i18n';
@@ -55,7 +64,9 @@ export const BusinessPhoneItem = ({
             >
               <HStack>
                 <Box
-                  display={userAbility?.can('update', 'businesses') ? 'flex' : 'none'}
+                  display={
+                    userAbility?.can('update', 'businesses') ? 'flex' : 'none'
+                  }
                   px="2"
                   bg="white"
                   {...draggable.dragHandleProps}
@@ -70,7 +81,9 @@ export const BusinessPhoneItem = ({
                   label={t('Tipo')}
                   aria-label={t('tipo-de-telefone')}
                   value={phone.type}
-                  onChange={(e) => handlePhoneUpdate(index, 'type', e.target.value)}
+                  onChange={(e) =>
+                    handlePhoneUpdate(index, 'type', e.target.value)
+                  }
                 >
                   <option value="owner">{t('Dono')}</option>
                   <option value="manager">{t('Gerente')}</option>
@@ -87,7 +100,9 @@ export const BusinessPhoneItem = ({
                   parser={numbersOnlyParser}
                   formatter={phoneFormatter}
                   value={phone.number}
-                  onValueChange={(value) => handlePhoneUpdate(index, 'number', value)}
+                  onValueChange={(value) =>
+                    handlePhoneUpdate(index, 'number', value)
+                  }
                   validationLength={10}
                 />
               </HStack>
@@ -98,22 +113,26 @@ export const BusinessPhoneItem = ({
                 fontSize="16px"
                 lineHeight="22px"
               >
-                <CustomCheckbox
+                <Checkbox
                   colorScheme="green"
                   value="calls"
                   isChecked={phone.calls}
-                  onChange={(e) => handlePhoneUpdate(index, 'calls', e.target.checked)}
+                  onChange={(e) =>
+                    handlePhoneUpdate(index, 'calls', e.target.checked)
+                  }
                 >
                   <Icon w="20px" h="20px" as={FaPhoneAlt} />
-                </CustomCheckbox>
-                <CustomCheckbox
+                </Checkbox>
+                <Checkbox
                   colorScheme="green"
                   value="whatsapp"
                   isChecked={phone.whatsapp}
-                  onChange={(e) => handlePhoneUpdate(index, 'whatsapp', e.target.checked)}
+                  onChange={(e) =>
+                    handlePhoneUpdate(index, 'whatsapp', e.target.checked)
+                  }
                 >
                   <Icon w="22px" h="22px" as={FaWhatsapp} />
-                </CustomCheckbox>
+                </Checkbox>
                 {isRemoving && (
                   <>
                     <Button
@@ -191,24 +210,34 @@ export const BusinessPhoneItem = ({
         fontSize="16px"
         lineHeight="22px"
       >
-        <CustomCheckbox
+        <Checkbox
           colorScheme="green"
           value="calls"
           isChecked={phone.calls}
           onChange={(e) => handlePhoneUpdate(index, 'calls', e.target.checked)}
           aria-label={`calls-checkbox-${index}`}
         >
-          {isBackoffice ? <Icon w="20px" h="20px" as={FaPhoneAlt} /> : t('Chamadas')}
-        </CustomCheckbox>
-        <CustomCheckbox
+          {isBackoffice ? (
+            <Icon w="20px" h="20px" as={FaPhoneAlt} />
+          ) : (
+            t('Chamadas')
+          )}
+        </Checkbox>
+        <Checkbox
           colorScheme="green"
           value="whatsapp"
           isChecked={phone.whatsapp}
-          onChange={(e) => handlePhoneUpdate(index, 'whatsapp', e.target.checked)}
+          onChange={(e) =>
+            handlePhoneUpdate(index, 'whatsapp', e.target.checked)
+          }
           aria-label={`whatsapp-checkbox-${index}`}
         >
-          {isBackoffice ? <Icon w="22px" h="22px" as={FaWhatsapp} /> : t('Whatsapp')}
-        </CustomCheckbox>
+          {isBackoffice ? (
+            <Icon w="22px" h="22px" as={FaWhatsapp} />
+          ) : (
+            t('Whatsapp')
+          )}
+        </Checkbox>
         {isRemoving && (
           <>
             <Button
@@ -220,7 +249,11 @@ export const BusinessPhoneItem = ({
             >
               {t('Remover')}
             </Button>
-            <Tooltip placement="top" label={t('Remover telefone')} aria-label={t('Remover')}>
+            <Tooltip
+              placement="top"
+              label={t('Remover telefone')}
+              aria-label={t('Remover')}
+            >
               <CloseButton
                 display={{ base: 'none', md: 'block' }}
                 size="sm"

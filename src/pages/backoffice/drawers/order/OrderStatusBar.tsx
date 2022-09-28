@@ -9,10 +9,12 @@ import {
 } from '@appjusto/types';
 import {
   Box,
+  Checkbox,
   Flex,
   HStack,
   Icon,
   Link,
+  Radio,
   RadioGroup,
   Text,
   Textarea,
@@ -20,8 +22,6 @@ import {
 import { useObserveOrderPrivateConfirmation } from 'app/api/order/useObserveOrderPrivateConfirmation';
 import { useOrderNotes } from 'app/api/order/useOrderNotes';
 import { ProfileNotes } from 'common/components/backoffice/ProfileNotes';
-import CustomCheckbox from 'common/components/form/CustomCheckbox';
-import CustomRadio from 'common/components/form/CustomRadio';
 import { MdOpenInNew } from 'react-icons/md';
 import { formatCurrency } from 'utils/formatters';
 import { getOrderCancellator } from 'utils/functions';
@@ -96,41 +96,41 @@ export const OrderStatusBar = ({
             lineHeight="21px"
           >
             <Flex flexDir="column" justifyContent="flex-start">
-              <CustomRadio mt="2" value="confirming">
+              <Radio mt="2" value="confirming">
                 {t('Confirmando')}
-              </CustomRadio>
-              <CustomRadio mt="2" value="scheduled">
+              </Radio>
+              <Radio mt="2" value="scheduled">
                 {t('Agendado')}
-              </CustomRadio>
-              <CustomRadio
+              </Radio>
+              <Radio
                 mt="2"
                 value="confirmed"
                 isDisabled={orderStatus !== 'scheduled'}
               >
                 {t('Confirmado')}
-              </CustomRadio>
+              </Radio>
               {orderType === 'food' && (
                 <>
-                  <CustomRadio mt="2" value="preparing">
+                  <Radio mt="2" value="preparing">
                     {t('Em preparo')}
-                  </CustomRadio>
-                  <CustomRadio mt="2" value="ready">
+                  </Radio>
+                  <Radio mt="2" value="ready">
                     {t('Pronto - aguardando entregador')}
-                  </CustomRadio>
+                  </Radio>
                 </>
               )}
-              <CustomRadio mt="2" value="dispatching">
+              <Radio mt="2" value="dispatching">
                 {t('A caminho da entrega')}
-              </CustomRadio>
-              <CustomRadio mt="2" value="delivered">
+              </Radio>
+              <Radio mt="2" value="delivered">
                 {t('Entregue')}
-              </CustomRadio>
-              <CustomRadio mt="2" value="rejected" isDisabled>
+              </Radio>
+              <Radio mt="2" value="rejected" isDisabled>
                 {t('Rejeitado')}
-              </CustomRadio>
-              <CustomRadio mt="2" value="canceled">
+              </Radio>
+              <Radio mt="2" value="canceled">
                 {t('Cancelado')}
-              </CustomRadio>
+              </Radio>
             </Flex>
           </RadioGroup>
         </Box>
@@ -151,18 +151,18 @@ export const OrderStatusBar = ({
               lineHeight="21px"
             >
               <Flex flexDir="column" justifyContent="flex-start">
-                <CustomRadio mt="2" value="going-pickup">
+                <Radio mt="2" value="going-pickup">
                   {t('Entreg. a caminho da retirada')}
-                </CustomRadio>
-                <CustomRadio mt="2" value="arrived-pickup">
+                </Radio>
+                <Radio mt="2" value="arrived-pickup">
                   {t('Entreg. no local da retirada')}
-                </CustomRadio>
-                <CustomRadio mt="2" value="going-destination">
+                </Radio>
+                <Radio mt="2" value="going-destination">
                   {t('Entreg. a caminho da entrega')}
-                </CustomRadio>
-                <CustomRadio mt="2" value="arrived-destination">
+                </Radio>
+                <Radio mt="2" value="arrived-destination">
                   {t('Entreg. no local da entrega')}
-                </CustomRadio>
+                </Radio>
               </Flex>
             </RadioGroup>
           </Box>
@@ -294,9 +294,9 @@ export const OrderStatusBar = ({
               >
                 <Flex flexDir="column" justifyContent="flex-start">
                   {cancelOptions?.map((option) => (
-                    <CustomRadio key={option.id} mt="2" value={option.id}>
+                    <Radio key={option.id} mt="2" value={option.id}>
                       {option.title}
-                    </CustomRadio>
+                    </Radio>
                   ))}
                 </Flex>
               </RadioGroup>
@@ -313,7 +313,7 @@ export const OrderStatusBar = ({
             {t(`Valor do reembolso: ${formatCurrency(refundValue)}`)}
           </Text>
           <HStack mt="4" spacing={4}>
-            <CustomCheckbox
+            <Checkbox
               width="120px"
               colorScheme="green"
               size="lg"
@@ -323,8 +323,8 @@ export const OrderStatusBar = ({
               onChange={(e) => onRefundingChange('platform', e.target.checked)}
             >
               {t('Plataforma')}
-            </CustomCheckbox>
-            <CustomCheckbox
+            </Checkbox>
+            <Checkbox
               width="120px"
               colorScheme="green"
               size="lg"
@@ -334,8 +334,8 @@ export const OrderStatusBar = ({
               onChange={(e) => onRefundingChange('products', e.target.checked)}
             >
               {t('Produtos')}
-            </CustomCheckbox>
-            <CustomCheckbox
+            </Checkbox>
+            <Checkbox
               width="120px"
               colorScheme="green"
               size="lg"
@@ -345,8 +345,8 @@ export const OrderStatusBar = ({
               onChange={(e) => onRefundingChange('delivery', e.target.checked)}
             >
               {t('Entrega')}
-            </CustomCheckbox>
-            <CustomCheckbox
+            </Checkbox>
+            <Checkbox
               width="120px"
               colorScheme="green"
               size="lg"
@@ -356,8 +356,8 @@ export const OrderStatusBar = ({
               onChange={(e) => onRefundingChange('order', e.target.checked)}
             >
               {t('Pedido')}
-            </CustomCheckbox>
-            <CustomCheckbox
+            </Checkbox>
+            <Checkbox
               width="120px"
               colorScheme="green"
               size="lg"
@@ -367,7 +367,7 @@ export const OrderStatusBar = ({
               onChange={(e) => onRefundingChange('tip', e.target.checked)}
             >
               {t('Gorjeta')}
-            </CustomCheckbox>
+            </Checkbox>
           </HStack>
           <SectionTitle>{t('Comentário:')}</SectionTitle>
           <Textarea

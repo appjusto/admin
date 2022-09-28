@@ -1,7 +1,6 @@
 import { CookingTimeMode } from '@appjusto/types';
-import { Box, Flex, RadioGroup, Switch, Text } from '@chakra-ui/react';
+import { Box, Flex, Radio, RadioGroup, Switch, Text } from '@chakra-ui/react';
 import { useOrdersContext } from 'app/state/order';
-import CustomRadio from 'common/components/form/CustomRadio';
 import { CustomNumberInput } from 'common/components/form/input/CustomNumberInput';
 import React from 'react';
 import { t } from 'utils/i18n';
@@ -76,7 +75,13 @@ export const CookingTime = ({
       setRadiosValue(timeInMinutes);
       setOrderCookingTime(orderId, averageCookingTime);
     }
-  }, [cookingTimeMode, cookingTime, averageCookingTime, orderId, setOrderCookingTime]);
+  }, [
+    cookingTimeMode,
+    cookingTime,
+    averageCookingTime,
+    orderId,
+    setOrderCookingTime,
+  ]);
 
   //UI
   if (cookingTimeMode === 'auto') return <Box />;
@@ -108,14 +113,14 @@ export const CookingTime = ({
         >
           <Flex flexDir="column" justifyContent="flex-start">
             {radioOptions.map((option) => (
-              <CustomRadio key={option} mt="4" value={option} size="lg">
+              <Radio key={option} mt="4" value={option} size="lg">
                 {t(`${option} minutos`)}
-              </CustomRadio>
+              </Radio>
             ))}
             <Flex mt="4" flexDir="row" alignItems="center">
-              <CustomRadio w="360px" value="0" size="lg">
+              <Radio w="360px" value="0" size="lg">
                 {t('Definir manualmente')}
-              </CustomRadio>
+              </Radio>
               {radiosValue === '0' && (
                 <CustomNumberInput
                   ml="2"

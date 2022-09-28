@@ -9,76 +9,90 @@ export const Button = {
     borderRadius: 'lg',
     whiteSpace: 'normal',
     wordWrap: 'break-word',
-    _loading: { 
+    _loading: {
       opacity: 1,
       _hover: {
-        color: 'grey'
-      } 
-    }
+        color: 'grey',
+      },
+    },
+    _hover: {
+      _disabled: {
+        bg: 'initial',
+      },
+    },
+    _disabled: {
+      opacity: 0.4,
+      cursor: 'not-allowed',
+      boxShadow: 'none',
+      bg: 'gray.700',
+    },
   },
   // Variants
   variants: {
     solid: {
-      'bg': 'green.500',
-      'borderColor': 'green.500',
-      ':hover': {
+      bg: 'green.500',
+      borderColor: 'green.500',
+      _hover: {
         bg: 'green.300',
         borderColor: 'green.300',
+        _disabled: {
+          bg: 'initial',
+        },
       },
-      ':disabled': {
-        bg: 'gray.700',
-        borderColor: 'gray.700',
-        color: 'white',
-      },
+      // _disabled: {
+      //   bg: 'gray.700',
+      //   borderColor: 'gray.700',
+      //   color: 'white',
+      // },
     },
     secondary: {
-      'bg': 'gray.700',
-      'borderColor': 'gray.700',
-      'color': 'white',
-      'fontSize': '15px',
-      'fontWeight': '500',
-      ':hover': {
+      bg: 'gray.700',
+      borderColor: 'gray.700',
+      color: 'white',
+      fontSize: '15px',
+      fontWeight: '500',
+      _hover: {
         bg: 'gray.500',
         borderColor: 'gray.500',
       },
-      ':disabled': {
+      _disabled: {
         bg: 'gray.300',
         borderColor: 'gray.300',
       },
     },
     outline: {
-      'bg': 'white',
-      'borderColor': 'black',
-      ':hover': {
+      bg: 'white',
+      borderColor: 'black',
+      _hover: {
         color: 'gray.700',
         borderColor: 'gray.700',
       },
-      ':disabled': {
+      _disabled: {
         color: 'gray.500',
         borderColor: 'gray.500',
       },
     },
     outgreen: {
-      'bg': 'white',
-      'borderColor': 'green.600',
-      'color': 'green.600',
-      ':hover': {
+      bg: 'white',
+      borderColor: 'green.600',
+      color: 'green.600',
+      _hover: {
         color: 'gray.700',
         borderColor: 'gray.700',
       },
-      ':disabled': {
+      _disabled: {
         color: 'gray.500',
         borderColor: 'gray.500',
       },
     },
     white: {
-      'bg': 'white',
-      'color': 'black',
-      'borderColor': 'black',
-      ':hover': {
+      bg: 'white',
+      color: 'black',
+      borderColor: 'black',
+      _hover: {
         color: 'gray.700',
       },
-      ':disabled': {
+      _disabled: {
         color: 'gray.500',
         borderColor: 'gray.500',
       },
@@ -93,55 +107,55 @@ export const Button = {
       _hover: { bg: '#FFC093' },
     },
     danger: {
-      'bg': 'red',
-      'color': 'white',
-      'borderColor': 'red',
-      ':hover': {
+      bg: 'red',
+      color: 'white',
+      borderColor: 'red',
+      _hover: {
         color: 'gray.700',
         borderColor: 'gray.700',
       },
-      ':disabled': {
+      _disabled: {
         color: 'gray.500',
         borderColor: 'gray.500',
       },
     },
     dangerLight: {
-      'bg': 'white',
-      'color': 'red',
-      'borderColor': 'red',
-      ':hover': {
+      bg: 'white',
+      color: 'red',
+      borderColor: 'red',
+      _hover: {
         color: 'gray.700',
         borderColor: 'gray.700',
       },
-      ':disabled': {
+      _disabled: {
         color: 'gray.500',
         borderColor: 'gray.500',
       },
     },
     yellowDark: {
-      'bg': '#FFBE00',
-      'color': 'black',
-      'fontSize': '15px',
-      'fontWeight': '500',
-      ':hover': {
+      bg: '#FFBE00',
+      color: 'black',
+      fontSize: '15px',
+      fontWeight: '500',
+      _hover: {
         backgroundColor: '#FFE493',
       },
-      ':disabled': {
+      _disabled: {
         color: 'gray.700',
         borderColor: 'gray.500',
         backgroundColor: 'gray.200',
       },
     },
     black: {
-      'bg': '#000',
-      'color': 'white',
-      'fontSize': '15px',
-      'lineHeight': '21px',
-      'fontWeight': '700',
-      ':hover': {
+      bg: '#000',
+      color: 'white',
+      fontSize: '15px',
+      lineHeight: '21px',
+      fontWeight: '700',
+      _hover: {
         backgroundColor: 'gray.700',
       },
-      ':disabled': {
+      _disabled: {
         color: 'gray.700',
         borderColor: 'gray.500',
         backgroundColor: 'gray.200',

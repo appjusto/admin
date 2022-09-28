@@ -16,6 +16,7 @@ import {
   DrawerOverlay,
   HStack,
   Link,
+  Radio,
   RadioGroup,
   Text,
   VStack,
@@ -23,7 +24,6 @@ import {
 import { useObserveLedgerEntry } from 'app/api/ledger/useObserveLedgerEntry';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextAppRequests } from 'app/state/requests/context';
-import CustomRadio from 'common/components/form/CustomRadio';
 import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
@@ -384,24 +384,16 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                       lineHeight="21px"
                     >
                       <VStack mt="4" spacing={2} alignItems="flex-start">
-                        <CustomRadio value="pending">
-                          {t('Pendente')}
-                        </CustomRadio>
-                        <CustomRadio value="approved">
-                          {t('Aprovada')}
-                        </CustomRadio>
-                        <CustomRadio value="rejected">
-                          {t('Rejeitada')}
-                        </CustomRadio>
-                        <CustomRadio value="canceled">
-                          {t('Cancelada')}
-                        </CustomRadio>
-                        <CustomRadio value="processing" isDisabled>
+                        <Radio value="pending">{t('Pendente')}</Radio>
+                        <Radio value="approved">{t('Aprovada')}</Radio>
+                        <Radio value="rejected">{t('Rejeitada')}</Radio>
+                        <Radio value="canceled">{t('Cancelada')}</Radio>
+                        <Radio value="processing" isDisabled>
                           {t('Processando')}
-                        </CustomRadio>
-                        <CustomRadio value="paid" isDisabled>
+                        </Radio>
+                        <Radio value="paid" isDisabled>
                           {t('Paga')}
-                        </CustomRadio>
+                        </Radio>
                       </VStack>
                     </RadioGroup>
                   </>
@@ -518,11 +510,11 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 lineHeight="21px"
               >
                 <HStack spacing={4}>
-                  <CustomRadio value="delivery">{t('Delivery')}</CustomRadio>
-                  <CustomRadio value="same-owner-accounts">
+                  <Radio value="delivery">{t('Delivery')}</Radio>
+                  <Radio value="same-owner-accounts">
                     {t('Contas do mesmo usuário')}
-                  </CustomRadio>
-                  <CustomRadio value="others">{t('Outros')}</CustomRadio>
+                  </Radio>
+                  <Radio value="others">{t('Outros')}</Radio>
                 </HStack>
               </RadioGroup>
               <SectionTitle>{t('Conta de origem')}</SectionTitle>
@@ -537,14 +529,14 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 lineHeight="21px"
               >
                 <HStack spacing={4}>
-                  <CustomRadio
+                  <Radio
                     value="platform"
                     isDisabled={operation === 'same-owner-accounts'}
                   >
                     {t('Plataforma')}
-                  </CustomRadio>
-                  <CustomRadio value="courier">{t('Entregador')}</CustomRadio>
-                  <CustomRadio value="business">{t('Restaurante')}</CustomRadio>
+                  </Radio>
+                  <Radio value="courier">{t('Entregador')}</Radio>
+                  <Radio value="business">{t('Restaurante')}</Radio>
                 </HStack>
               </RadioGroup>
               {fromAccountType !== 'platform' &&
@@ -588,24 +580,24 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 lineHeight="21px"
               >
                 <HStack spacing={4}>
-                  <CustomRadio
+                  <Radio
                     value="platform"
                     isDisabled={operation === 'same-owner-accounts'}
                   >
                     {t('Plataforma')}
-                  </CustomRadio>
-                  <CustomRadio
+                  </Radio>
+                  <Radio
                     value="courier"
                     isDisabled={operation === 'same-owner-accounts'}
                   >
                     {t('Entregador')}
-                  </CustomRadio>
-                  <CustomRadio
+                  </Radio>
+                  <Radio
                     value="business"
                     isDisabled={operation === 'same-owner-accounts'}
                   >
                     {t('Restaurante')}
-                  </CustomRadio>
+                  </Radio>
                 </HStack>
               </RadioGroup>
               {toAccountType !== 'platform' && (

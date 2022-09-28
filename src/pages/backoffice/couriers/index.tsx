@@ -2,9 +2,9 @@ import { CourierAlgolia, CourierStatus } from '@appjusto/types';
 import { ArrowDownIcon } from '@chakra-ui/icons';
 import {
   Button,
+  Checkbox,
   CheckboxGroup,
   Flex,
-  HStack,
   Stack,
   Text,
 } from '@chakra-ui/react';
@@ -12,8 +12,6 @@ import { BasicUserFilter } from 'app/api/search/types';
 import { useBasicUsersSearch } from 'app/api/search/useBasicUsersSearch';
 import { ClearFiltersButton } from 'common/components/backoffice/ClearFiltersButton';
 import { FiltersScrollBar } from 'common/components/backoffice/FiltersScrollBar';
-import { FilterText } from 'common/components/backoffice/FilterText';
-import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import React from 'react';
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
@@ -23,6 +21,15 @@ import PageHeader from '../../PageHeader';
 import CourierDrawer from '../drawers/courier';
 import { StateAndCityFilter } from '../StateAndCityFilter';
 import { CouriersTable } from './CouriersTable';
+
+const statusFilterOptions = [
+  { label: 'Todos', value: 'all' },
+  { label: 'Aprovados', value: 'approved' },
+  { label: 'Verificados', value: 'verified' },
+  { label: 'Inválidos', value: 'invalid' },
+  { label: 'Pendentes', value: 'pending' },
+  { label: 'Bloqueados', value: 'blocked' },
+];
 
 const CouriersPage = () => {
   // context
@@ -135,40 +142,11 @@ const CouriersPage = () => {
         justifyContent="space-between"
         borderBottom="1px solid #C8D7CB"
       >
-        <FiltersScrollBar>
-          <HStack spacing={4}>
-            <FilterText
-              isActive={filterBar === 'all' ? true : false}
-              label={t('Todos')}
-              onClick={() => setFilterBar('all')}
-            />
-            <FilterText
-              isActive={filterBar === 'approved' ? true : false}
-              label={t('Aprovados')}
-              onClick={() => setFilterBar('approved')}
-            />
-            <FilterText
-              isActive={filterBar === 'verified' ? true : false}
-              label={t('Verificados')}
-              onClick={() => setFilterBar('verified')}
-            />
-            <FilterText
-              isActive={filterBar === 'invalid' ? true : false}
-              label={t('Inválidos')}
-              onClick={() => setFilterBar('invalid')}
-            />
-            <FilterText
-              isActive={filterBar === 'pending' ? true : false}
-              label={t('Pendentes')}
-              onClick={() => setFilterBar('pending')}
-            />
-            <FilterText
-              isActive={filterBar === 'blocked' ? true : false}
-              label={t('Bloqueados')}
-              onClick={() => setFilterBar('blocked')}
-            />
-          </HStack>
-        </FiltersScrollBar>
+        <FiltersScrollBar
+          filters={statusFilterOptions}
+          currentValue={filterBar}
+          selectFilter={setFilterBar}
+        />
         <ClearFiltersButton clearFunction={clearSearchAndFilters} />
       </Flex>
       <Stack
@@ -193,14 +171,9 @@ const CouriersPage = () => {
             fontSize="16px"
             lineHeight="22px"
           >
-            <CustomCheckbox value="available">{t('Disponível')}</CustomCheckbox>
-            <CustomCheckbox value="unavailable">
-              {t('Indisponível')}
-            </CustomCheckbox>
-            <CustomCheckbox value="dispatching">
-              {t('Realizando entrega')}
-            </CustomCheckbox>
-            <CustomCheckbox value="inactive">{t('Desativado')}</CustomCheckbox>
+            <Checkbox value="available">{t('Disponível')}</Checkbox>
+            <Checkbox value="unavailable">{t('Indisponível')}</Checkbox>
+            <Checkbox value="dispatching">{t('Realizando entrega')}</Checkbox>
           </Stack>
         </CheckboxGroup>
       </Stack>

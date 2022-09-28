@@ -1,5 +1,4 @@
-import { Flex, RadioGroup, Text } from '@chakra-ui/react';
-import CustomRadio from 'common/components/form/CustomRadio';
+import { Flex, Radio, RadioGroup, Text } from '@chakra-ui/react';
 import { timeFormatter } from 'common/components/form/input/pattern-input/formatters';
 import { useProductContext } from 'pages/menu/context/ProductContext';
 import React from 'react';
@@ -163,12 +162,12 @@ export const ProductAvailability = () => {
         size="lg"
       >
         <Flex flexDir="column" justifyContent="flex-start">
-          <CustomRadio mt="2" value="always-available">
+          <Radio mt="2" value="always-available">
             {t('Sempre disponível quando o restaurante estiver aberto')}
-          </CustomRadio>
-          <CustomRadio mt="2" value="availability-defined">
+          </Radio>
+          <Radio mt="2" value="availability-defined">
             {t('Disponível em dias e horários específicos')}
-          </CustomRadio>
+          </Radio>
         </Flex>
       </RadioGroup>
       {mainAvailability === 'availability-defined' && (

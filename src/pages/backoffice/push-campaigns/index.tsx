@@ -1,10 +1,9 @@
 import { PushCampaign } from '@appjusto/types';
 import { ArrowDownIcon } from '@chakra-ui/icons';
-import { Box, Button, Flex, HStack, Stack, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, Stack, Text } from '@chakra-ui/react';
 import { useObservePushCampaigns } from 'app/api/push-campaigns/useObservePushCampaigns';
 import { ClearFiltersButton } from 'common/components/backoffice/ClearFiltersButton';
 import { FiltersScrollBar } from 'common/components/backoffice/FiltersScrollBar';
-import { FilterText } from 'common/components/backoffice/FilterText';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { CustomDateFilter } from 'common/components/form/input/CustomDateFilter';
 import { CustomInput } from 'common/components/form/input/CustomInput';
@@ -15,6 +14,13 @@ import { t } from 'utils/i18n';
 import PageHeader from '../../PageHeader';
 import { PushDrawer } from '../drawers/push';
 import { PushCampaignTable } from './PushCampaignTable';
+
+const statusFilterOptions = [
+  { label: 'Todas', value: 'all' },
+  { label: 'Submetidas', value: 'submitted' },
+  { label: 'Aprovadas', value: 'approved' },
+  { label: 'Rejeitadas', value: 'rejected' },
+];
 
 const PushCampaignPage = () => {
   // state
@@ -81,30 +87,14 @@ const PushCampaignPage = () => {
         justifyContent="space-between"
         borderBottom="1px solid #C8D7CB"
       >
-        <FiltersScrollBar>
-          <HStack spacing={4}>
-            <FilterText
-              isActive={!filterBar}
-              label={t('Todas')}
-              onClick={() => setFilterBar(undefined)}
-            />
-            <FilterText
-              isActive={filterBar === 'submitted'}
-              label={t('Submetida')}
-              onClick={() => setFilterBar('submitted')}
-            />
-            <FilterText
-              isActive={filterBar === 'approved'}
-              label={t('Aprovada')}
-              onClick={() => setFilterBar('approved')}
-            />
-            <FilterText
-              isActive={filterBar === 'rejected'}
-              label={t('Rejeitada')}
-              onClick={() => setFilterBar('rejected')}
-            />
-          </HStack>
-        </FiltersScrollBar>
+        <FiltersScrollBar
+          filters={statusFilterOptions}
+          currentValue={filterBar ?? 'all'}
+          selectFilter={(value: string) => {
+            if (value !== 'all') setFilterBar(value as PushCampaign['status']);
+            else setFilterBar(undefined);
+          }}
+        />
         <ClearFiltersButton clearFunction={clearFilters} />
       </Flex>
       <Flex mt="6" color="black" justifyContent="space-between">

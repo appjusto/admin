@@ -1,6 +1,12 @@
 import { Fulfillment } from '@appjusto/types';
-import { Badge, Box, CheckboxGroup, HStack, Text } from '@chakra-ui/react';
-import CustomCheckbox from 'common/components/form/CustomCheckbox';
+import {
+  Badge,
+  Box,
+  Checkbox,
+  CheckboxGroup,
+  HStack,
+  Text,
+} from '@chakra-ui/react';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import { t } from 'utils/i18n';
 
@@ -18,7 +24,7 @@ export const BusinessFulfillment = ({
   return (
     <Box>
       <SectionTitle>
-        {t('Tipos de entrega')} 
+        {t('Tipos de entrega')}
         <Badge
           ml="2"
           mt="-12px"
@@ -52,8 +58,8 @@ export const BusinessFulfillment = ({
           fontSize="16px"
           lineHeight="22px"
         >
-          <CustomCheckbox value="delivery">{t('Delivery')}</CustomCheckbox>
-          <CustomCheckbox value="take-away">{t('Para retirar')}</CustomCheckbox>
+          <Checkbox value="delivery">{t('Delivery')}</Checkbox>
+          <Checkbox value="take-away">{t('Para retirar')}</Checkbox>
         </HStack>
       </CheckboxGroup>
     </Box>

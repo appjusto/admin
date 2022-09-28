@@ -1,11 +1,10 @@
 import { LedgerEntryStatus } from '@appjusto/types';
 import { ArrowDownIcon } from '@chakra-ui/icons';
-import { Box, Button, Flex, HStack, Stack, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, Stack, Text } from '@chakra-ui/react';
 import { useObserveLedger } from 'app/api/ledger/useObserveLedger';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { ClearFiltersButton } from 'common/components/backoffice/ClearFiltersButton';
 import { FiltersScrollBar } from 'common/components/backoffice/FiltersScrollBar';
-import { FilterText } from 'common/components/backoffice/FilterText';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { CustomDateFilter } from 'common/components/form/input/CustomDateFilter';
 import { CustomInput } from 'common/components/form/input/CustomInput';
@@ -16,6 +15,14 @@ import { t } from 'utils/i18n';
 import PageHeader from '../../PageHeader';
 import { LedgerEntryDrawer } from '../drawers/ledger-entry';
 import { EntriesTable } from './EntriesTable';
+
+const statusFilterOptions = [
+  { label: 'Todas', value: 'all' },
+  { label: 'Pendentes', value: 'pending' },
+  { label: 'Processando', value: 'processing' },
+  { label: 'Paga', value: 'paid' },
+  { label: 'Cancelada', value: 'canceled' },
+];
 
 const LedgerPage = () => {
   // state
@@ -85,35 +92,14 @@ const LedgerPage = () => {
         justifyContent="space-between"
         borderBottom="1px solid #C8D7CB"
       >
-        <FiltersScrollBar>
-          <HStack spacing={4}>
-            <FilterText
-              isActive={!filterBar}
-              label={t('Todas')}
-              onClick={() => setFilterBar(undefined)}
-            />
-            <FilterText
-              isActive={filterBar === 'pending'}
-              label={t('Pendente')}
-              onClick={() => setFilterBar('pending')}
-            />
-            <FilterText
-              isActive={filterBar === 'processing'}
-              label={t('Processando')}
-              onClick={() => setFilterBar('processing')}
-            />
-            <FilterText
-              isActive={filterBar === 'paid'}
-              label={t('Paga')}
-              onClick={() => setFilterBar('paid')}
-            />
-            <FilterText
-              isActive={filterBar === 'canceled'}
-              label={t('Cancelada')}
-              onClick={() => setFilterBar('canceled')}
-            />
-          </HStack>
-        </FiltersScrollBar>
+        <FiltersScrollBar
+          filters={statusFilterOptions}
+          currentValue={filterBar ?? 'all'}
+          selectFilter={(value: string) => {
+            if (value !== 'all') setFilterBar(value as LedgerEntryStatus);
+            else setFilterBar(undefined);
+          }}
+        />
         <ClearFiltersButton clearFunction={clearFilters} />
       </Flex>
       <Flex mt="6" color="black" justifyContent="space-between">

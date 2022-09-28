@@ -246,7 +246,6 @@ export const AdvancesDrawer = ({
           <Checkbox
             ref={acceptCheckBoxRef}
             mt="6"
-            size="lg"
             borderColor="black"
             borderRadius="lg"
             colorScheme="green"

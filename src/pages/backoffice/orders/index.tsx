@@ -2,6 +2,7 @@ import { OrderStatus, OrderType } from '@appjusto/types';
 import { ArrowDownIcon } from '@chakra-ui/icons';
 import {
   Button,
+  Checkbox,
   CheckboxGroup,
   Flex,
   HStack,
@@ -12,8 +13,6 @@ import { useObserveOrdersHistory } from 'app/api/order/useObserveOrdersHistory';
 import { InQueryArray } from 'app/api/types';
 import { ClearFiltersButton } from 'common/components/backoffice/ClearFiltersButton';
 import { FiltersScrollBar } from 'common/components/backoffice/FiltersScrollBar';
-import { FilterText } from 'common/components/backoffice/FilterText';
-import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import { CustomDateFilter } from 'common/components/form/input/CustomDateFilter';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import React from 'react';
@@ -36,6 +35,19 @@ const statuses = [
   'delivered',
   'canceled',
 ] as InQueryArray<OrderStatus>;
+
+const statusFilterOptions = [
+  { label: 'Todos', value: 'all' },
+  { label: 'Agendados', value: 'scheduled' },
+  { label: 'Confirmando', value: 'confirming' },
+  { label: 'Preparando', value: 'preparing' },
+  { label: 'Prontos', value: 'ready' },
+  { label: 'Despachando', value: 'dispatching' },
+  { label: 'Entregues', value: 'delivered' },
+  { label: 'Recusados', value: 'declined' },
+  { label: 'Rejeitados', value: 'rejected' },
+  { label: 'Cancelados', value: 'canceled' },
+];
 
 const OrdersPage = () => {
   // context
@@ -118,60 +130,11 @@ const OrdersPage = () => {
         justifyContent="space-between"
         borderBottom="1px solid #C8D7CB"
       >
-        <FiltersScrollBar>
-          <HStack spacing={4}>
-            <FilterText
-              isActive={filterBar === 'all' ? true : false}
-              label={t('Todos')}
-              onClick={() => setFilterBar('all')}
-            />
-            <FilterText
-              isActive={filterBar === 'scheduled' ? true : false}
-              label={t('Agendado')}
-              onClick={() => setFilterBar('scheduled')}
-            />
-            <FilterText
-              isActive={filterBar === 'confirming' ? true : false}
-              label={t('Confirmando')}
-              onClick={() => setFilterBar('confirming')}
-            />
-            <FilterText
-              isActive={filterBar === 'preparing' ? true : false}
-              label={t('Preparando')}
-              onClick={() => setFilterBar('preparing')}
-            />
-            <FilterText
-              isActive={filterBar === 'ready' ? true : false}
-              label={t('Prontos')}
-              onClick={() => setFilterBar('ready')}
-            />
-            <FilterText
-              isActive={filterBar === 'dispatching' ? true : false}
-              label={t('Despachando')}
-              onClick={() => setFilterBar('dispatching')}
-            />
-            <FilterText
-              isActive={filterBar === 'delivered' ? true : false}
-              label={t('Entregues')}
-              onClick={() => setFilterBar('delivered')}
-            />
-            <FilterText
-              isActive={filterBar === 'declined' ? true : false}
-              label={t('Recusados')}
-              onClick={() => setFilterBar('declined')}
-            />
-            <FilterText
-              isActive={filterBar === 'rejected' ? true : false}
-              label={t('Rejeitados')}
-              onClick={() => setFilterBar('rejected')}
-            />
-            <FilterText
-              isActive={filterBar === 'canceled' ? true : false}
-              label={t('Cancelados')}
-              onClick={() => setFilterBar('canceled')}
-            />
-          </HStack>
-        </FiltersScrollBar>
+        <FiltersScrollBar
+          filters={statusFilterOptions}
+          currentValue={filterBar}
+          selectFilter={setFilterBar}
+        />
         <ClearFiltersButton clearFunction={clearFilters} />
       </Flex>
       <Stack
@@ -195,8 +158,8 @@ const OrdersPage = () => {
             fontSize="16px"
             lineHeight="22px"
           >
-            <CustomCheckbox value="food">{t('Restaurantes')}</CustomCheckbox>
-            <CustomCheckbox value="p2p">{t('Encomendas')}</CustomCheckbox>
+            <Checkbox value="food">{t('Restaurantes')}</Checkbox>
+            <Checkbox value="p2p">{t('Encomendas')}</Checkbox>
           </HStack>
         </CheckboxGroup>
       </Stack>

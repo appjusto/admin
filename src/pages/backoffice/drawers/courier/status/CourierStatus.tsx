@@ -1,9 +1,11 @@
 import { CourierProfile, ProfileSituation } from '@appjusto/types';
 import {
   Box,
+  Checkbox,
   CheckboxGroup,
   Flex,
   HStack,
+  Radio,
   RadioGroup,
   Switch,
   Text,
@@ -12,8 +14,6 @@ import {
 } from '@chakra-ui/react';
 import { useContextCourierProfile } from 'app/state/courier/context';
 import { AlertError } from 'common/components/AlertError';
-import CustomCheckbox from 'common/components/form/CustomCheckbox';
-import CustomRadio from 'common/components/form/CustomRadio';
 import React from 'react';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../../generics/SectionTitle';
@@ -90,22 +90,22 @@ export const CourierStatus = () => {
         lineHeight="21px"
       >
         <Flex flexDir="column" justifyContent="flex-start">
-          <CustomRadio
+          <Radio
             mt="2"
             value="approved"
             isDisabled={courier?.situation !== 'verified'}
           >
-            {t('Aprovado')}
-          </CustomRadio>
-          <CustomRadio mt="2" value="rejected">
+            {t('Publicado')}
+          </Radio>
+          <Radio mt="2" value="rejected">
             {t('Recusado')}
-          </CustomRadio>
-          <CustomRadio mt="2" value="submitted">
+          </Radio>
+          <Radio mt="2" value="submitted">
             {t('Aguardando aprovação')}
-          </CustomRadio>
-          <CustomRadio mt="2" value="blocked">
+          </Radio>
+          <Radio mt="2" value="blocked">
             {t('Bloquear entregador')}
-          </CustomRadio>
+          </Radio>
         </Flex>
       </RadioGroup>
       {courier?.situation === 'rejected' && (
@@ -118,9 +118,9 @@ export const CourierStatus = () => {
           >
             <VStack alignItems="flex-start" mt="4" color="black" spacing={2}>
               {issueOptions?.map((issue) => (
-                <CustomCheckbox key={issue.id} value={issue.title}>
+                <Checkbox key={issue.id} value={issue.title}>
                   {issue.title}
-                </CustomCheckbox>
+                </Checkbox>
               ))}
             </VStack>
           </CheckboxGroup>

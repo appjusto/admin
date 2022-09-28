@@ -2,6 +2,7 @@ import { Fulfillment, OrderStatus } from '@appjusto/types';
 import { ArrowDownIcon } from '@chakra-ui/icons';
 import {
   Button,
+  Checkbox,
   CheckboxGroup,
   Flex,
   HStack,
@@ -12,9 +13,7 @@ import { useObserveBusinessOrdersHistory } from 'app/api/order/useObserveBusines
 import { useContextBusinessId } from 'app/state/business/context';
 import { ClearFiltersButton } from 'common/components/backoffice/ClearFiltersButton';
 import { FiltersScrollBar } from 'common/components/backoffice/FiltersScrollBar';
-import { FilterText } from 'common/components/backoffice/FilterText';
 import Container from 'common/components/Container';
-import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import { CustomDateFilter } from 'common/components/form/input/CustomDateFilter';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import { OrdersTable } from 'pages/backoffice/orders/OrdersTable';
@@ -33,6 +32,13 @@ const statuses = [
   'delivered',
   'canceled',
 ] as OrderStatus[];
+
+const statusFilterOptions = [
+  { label: 'Todos', value: 'all' },
+  { label: 'Agendados', value: 'scheduled' },
+  { label: 'Entregues', value: 'delivered' },
+  { label: 'Cancelados', value: 'canceled' },
+];
 
 const OrdersHistoryPage = () => {
   // context
@@ -120,30 +126,11 @@ const OrdersHistoryPage = () => {
         justifyContent="space-between"
         borderBottom="1px solid #C8D7CB"
       >
-        <FiltersScrollBar>
-          <HStack spacing={4}>
-            <FilterText
-              isActive={filterBar === 'all' ? true : false}
-              label={t('Todos')}
-              onClick={() => setFilterBar('all')}
-            />
-            <FilterText
-              isActive={filterBar === 'scheduled' ? true : false}
-              label={t('Agendados')}
-              onClick={() => setFilterBar('scheduled')}
-            />
-            <FilterText
-              isActive={filterBar === 'delivered' ? true : false}
-              label={t('Entregues')}
-              onClick={() => setFilterBar('delivered')}
-            />
-            <FilterText
-              isActive={filterBar === 'canceled' ? true : false}
-              label={t('Cancelados')}
-              onClick={() => setFilterBar('canceled')}
-            />
-          </HStack>
-        </FiltersScrollBar>
+        <FiltersScrollBar
+          filters={statusFilterOptions}
+          currentValue={filterBar}
+          selectFilter={setFilterBar}
+        />
         <ClearFiltersButton clearFunction={clearFilters} />
       </Flex>
       <HStack mt="6" spacing={8} color="black">
@@ -162,8 +149,8 @@ const OrdersHistoryPage = () => {
             fontSize="16px"
             lineHeight="22px"
           >
-            <CustomCheckbox value="delivery">{t('Delivery')}</CustomCheckbox>
-            <CustomCheckbox value="take-away">{t('Retirada')}</CustomCheckbox>
+            <Checkbox value="delivery">{t('Delivery')}</Checkbox>
+            <Checkbox value="take-away">{t('Retirada')}</Checkbox>
           </HStack>
         </CheckboxGroup>
       </HStack>

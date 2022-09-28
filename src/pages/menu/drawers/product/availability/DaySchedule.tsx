@@ -1,8 +1,13 @@
 import { ScheduleObject } from '@appjusto/types';
 import { CloseIcon, InfoOutlineIcon } from '@chakra-ui/icons';
-import { Button, Flex, RadioGroup, Text } from '@chakra-ui/react';
-import CustomCheckbox from 'common/components/form/CustomCheckbox';
-import CustomRadio from 'common/components/form/CustomRadio';
+import {
+  Button,
+  Checkbox,
+  Flex,
+  Radio,
+  RadioGroup,
+  Text,
+} from '@chakra-ui/react';
 import { CustomPatternInput as Input } from 'common/components/form/input/pattern-input/CustomPatternInput';
 import {
   timeFormatter,
@@ -76,7 +81,7 @@ export const DaySchedule = ({
   // UI
   return (
     <Flex flexDir="column" mt="8">
-      <CustomCheckbox
+      <Checkbox
         aria-label={`${weekDayLowerCase}-checkbox`}
         colorScheme="green"
         size="lg"
@@ -86,7 +91,7 @@ export const DaySchedule = ({
         onChange={(e) => handleCheck(e.target.checked)}
       >
         {weekDay}
-      </CustomCheckbox>
+      </Checkbox>
       {checked && (
         <RadioGroup
           mt="2"
@@ -97,20 +102,20 @@ export const DaySchedule = ({
           color="black"
         >
           <Flex flexDir="column" justifyContent="flex-start">
-            <CustomRadio
+            <Radio
               mt="2"
               value="when-is-open"
               aria-label={`${weekDayLowerCase}-no-break`}
             >
               {t('Enquanto estiver aberto')}
-            </CustomRadio>
-            <CustomRadio
+            </Radio>
+            <Radio
               mt="2"
               value="defined"
               aria-label={`${weekDayLowerCase}-defined`}
             >
               {t('Definir horário específico')}
-            </CustomRadio>
+            </Radio>
           </Flex>
         </RadioGroup>
       )}

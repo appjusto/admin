@@ -2,6 +2,7 @@ import { Flavor, NotificationChannel, PushCampaign } from '@appjusto/types';
 import {
   Box,
   Button,
+  Checkbox,
   Drawer,
   DrawerBody,
   DrawerCloseButton,
@@ -10,6 +11,7 @@ import {
   DrawerHeader,
   DrawerOverlay,
   HStack,
+  Radio,
   RadioGroup,
   Text,
   VStack,
@@ -17,8 +19,6 @@ import {
 import { useObservePushCampaign } from 'app/api/push-campaigns/useObservePushCampaign';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextAppRequests } from 'app/state/requests/context';
-import CustomCheckbox from 'common/components/form/CustomCheckbox';
-import CustomRadio from 'common/components/form/CustomRadio';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import { CustomNumberInput as NumberInput } from 'common/components/form/input/CustomNumberInput';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
@@ -200,9 +200,9 @@ export const PushDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 lineHeight="21px"
               >
                 <HStack spacing={4}>
-                  <CustomRadio value="consumer">{t('Consumidor')}</CustomRadio>
-                  <CustomRadio value="courier">{t('Entregador')}</CustomRadio>
-                  <CustomRadio value="business">{t('Restaurante')}</CustomRadio>
+                  <Radio value="consumer">{t('Consumidor')}</Radio>
+                  <Radio value="courier">{t('Entregador')}</Radio>
+                  <Radio value="business">{t('Restaurante')}</Radio>
                 </HStack>
               </RadioGroup>
               <SectionTitle>{t('Canal')}</SectionTitle>
@@ -217,20 +217,20 @@ export const PushDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 lineHeight="21px"
               >
                 <HStack spacing={4}>
-                  <CustomRadio value="marketing">{t('Marketing')}</CustomRadio>
-                  <CustomRadio value="status">{t('Status')}</CustomRadio>
-                  <CustomRadio value="general">{t('Geral')}</CustomRadio>
+                  <Radio value="marketing">{t('Marketing')}</Radio>
+                  <Radio value="status">{t('Status')}</Radio>
+                  <Radio value="general">{t('Geral')}</Radio>
                 </HStack>
               </RadioGroup>
               <SectionTitle>{t('Georreferenciada')}</SectionTitle>
-              <CustomCheckbox
+              <Checkbox
                 mt="4"
                 colorScheme="green"
                 isChecked={isGeo}
                 onChange={() => setIsGeo((prev) => !prev)}
               >
                 {t('É georreferenciada')}
-              </CustomCheckbox>
+              </Checkbox>
               {isGeo && (
                 <>
                   <HStack mt="4">
@@ -331,15 +331,9 @@ export const PushDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                     lineHeight="21px"
                   >
                     <VStack mt="4" spacing={2} alignItems="flex-start">
-                      <CustomRadio value="submitted">
-                        {t('Submetida')}
-                      </CustomRadio>
-                      <CustomRadio value="approved">
-                        {t('Aprovada')}
-                      </CustomRadio>
-                      <CustomRadio value="rejected">
-                        {t('Rejeitada')}
-                      </CustomRadio>
+                      <Radio value="submitted">{t('Submetida')}</Radio>
+                      <Radio value="approved">{t('Aprovada')}</Radio>
+                      <Radio value="rejected">{t('Rejeitada')}</Radio>
                     </VStack>
                   </RadioGroup>
                 </>

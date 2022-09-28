@@ -16,6 +16,7 @@ import {
   DrawerOverlay,
   Flex,
   HStack,
+  Radio,
   RadioGroup,
   Skeleton,
   Table,
@@ -28,7 +29,6 @@ import {
 import { useAuthentication } from 'app/api/auth/useAuthentication';
 import { useStaff } from 'app/api/staff/useStaff';
 import { useContextAppRequests } from 'app/state/requests/context';
-import CustomRadio from 'common/components/form/CustomRadio';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import { permissionsPTOptions } from 'pages/backoffice/utils';
 import React from 'react';
@@ -344,14 +344,12 @@ export const StaffBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 fontSize="16px"
                 lineHeight="22px"
               >
-                <CustomRadio value="owner">{t('Permtir tudo')}</CustomRadio>
-                <CustomRadio value="orders-manager">{t('Pedidos')}</CustomRadio>
-                <CustomRadio value="businesses-account-manager">
+                <Radio value="owner">{t('Permtir tudo')}</Radio>
+                <Radio value="orders-manager">{t('Pedidos')}</Radio>
+                <Radio value="businesses-account-manager">
                   {t('Chefe comercial')}
-                </CustomRadio>
-                <CustomRadio value="businesses-manager">
-                  {t('Restaurantes')}
-                </CustomRadio>
+                </Radio>
+                <Radio value="businesses-manager">{t('Restaurantes')}</Radio>
               </HStack>
               <HStack
                 mt="4"
@@ -361,14 +359,10 @@ export const StaffBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 fontSize="16px"
                 lineHeight="22px"
               >
-                <CustomRadio value="couriers-manager">
-                  {t('Entregadores')}
-                </CustomRadio>
-                <CustomRadio value="consumers-manager">
-                  {t('Consumidores')}
-                </CustomRadio>
-                <CustomRadio value="viewer">{t('Apenas leitura')}</CustomRadio>
-                <CustomRadio value="custom">{t('Customizado')}</CustomRadio>
+                <Radio value="couriers-manager">{t('Entregadores')}</Radio>
+                <Radio value="consumers-manager">{t('Consumidores')}</Radio>
+                <Radio value="viewer">{t('Apenas leitura')}</Radio>
+                <Radio value="custom">{t('Customizado')}</Radio>
               </HStack>
             </RadioGroup>
             <Box mt="6">
@@ -419,18 +413,18 @@ export const StaffBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                   lineHeight="21px"
                 >
                   <Flex flexDir="column" justifyContent="flex-start">
-                    <CustomRadio mt="2" value="approved">
+                    <Radio mt="2" value="approved">
                       {t('Aprovado')}
-                    </CustomRadio>
-                    <CustomRadio mt="2" value="verified" isDisabled>
+                    </Radio>
+                    <Radio mt="2" value="verified" isDisabled>
                       {t('Verificado')}
-                    </CustomRadio>
-                    <CustomRadio mt="2" value="pending" isDisabled>
+                    </Radio>
+                    <Radio mt="2" value="pending" isDisabled>
                       {t('Pendente')}
-                    </CustomRadio>
-                    <CustomRadio mt="2" value="blocked">
+                    </Radio>
+                    <Radio mt="2" value="blocked">
                       {t('Bloquear agente')}
-                    </CustomRadio>
+                    </Radio>
                   </Flex>
                 </RadioGroup>
               </>
