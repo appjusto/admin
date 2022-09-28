@@ -49,8 +49,10 @@ Cypress.Commands.add('userLogin', (email, password) => {
   cy.visit('/login');
   // filling login form
   cy.findByRole('textbox', { name: /e\-mail/i }).type(currentEmail);
-  cy.findByRole('checkbox', { name: /login\-password\-checkbox/i }).check({ force: true });
-  cy.findByLabelText(/senha/i).type(password ?? defaultPassword);
+  cy.findByRole('checkbox', { name: /login\-password\-checkbox/i }).check({
+    force: true,
+  });
+  cy.findByLabelText(/password\-input/i).type(password ?? defaultPassword);
   cy.findByRole('button', { name: /entrar/i }).click();
 });
 
@@ -94,20 +96,28 @@ Cypress.Commands.add('fillBusinessProfile', (business, isApproved) => {
   cy.findByRole('textbox', { name: /razão social \*/i })
     .clear()
     .type(business.corporateName);
-  cy.findByRole('combobox', { name: /tipo de cozinha \*/i }).select(business.cuisine);
+  cy.findByRole('combobox', { name: /tipo de cozinha \*/i }).select(
+    business.cuisine
+  );
   cy.findByRole('textbox', { name: /descrição/i })
     .clear()
     .type(business.description);
-  cy.findByRole('combobox', { name: /tipo\-de\-telefone\-0/i }).select(business.phoneType1);
+  cy.findByRole('combobox', { name: /tipo\-de\-telefone\-0/i }).select(
+    business.phoneType1
+  );
   cy.findByRole('textbox', { name: /numero\-do\-telefone\-0/i })
     .clear()
     .type(business.phone1);
-  cy.findByRole('checkbox', { name: /calls\-checkbox\-0/i }).uncheck({ force: true });
+  cy.findByRole('checkbox', { name: /calls\-checkbox\-0/i }).uncheck({
+    force: true,
+  });
   // cy.findByRole('checkbox', { name: /whatsapp\-checkbox\-0/i }).check({ force: true });
   cy.findByRole('button', {
     name: /adicionar telefone/i,
   }).click();
-  cy.findByRole('combobox', { name: /tipo\-de\-telefone\-1/i }).select(business.phoneType2);
+  cy.findByRole('combobox', { name: /tipo\-de\-telefone\-1/i }).select(
+    business.phoneType2
+  );
   cy.findByRole('textbox', { name: /numero\-do\-telefone\-1/i })
     .clear()
     .type(business.phone2);

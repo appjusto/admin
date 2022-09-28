@@ -212,6 +212,7 @@ const Login = () => {
                 isRequired={isPassword}
                 id="login-password"
                 label={t('Senha')}
+                aria-label="password-input"
                 placeholder={t('Senha de acesso')}
                 value={passwd}
                 handleChange={(ev) => setPasswd(ev.target.value)}
