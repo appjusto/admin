@@ -57,6 +57,9 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
   const [additional, setAdditional] = React.useState(
     business?.businessAddress?.additional ?? ''
   );
+  const [instructions, setInstructionsl] = React.useState(
+    business?.businessAddress?.instructions ?? ''
+  );
   const [deliveryRange, setDeliveryRange] = React.useState(
     String(business?.deliveryRange ?? defaultRadius)
   );
@@ -94,6 +97,7 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
       state,
       neighborhood,
       additional,
+      instructions,
     } as BusinessAddress;
     let profile: Partial<Business> = {
       deliveryRange: safeParseInt(deliveryRange, defaultRadius) * 1000,
@@ -136,6 +140,8 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
         setState(business.businessAddress.state);
       if (business.businessAddress?.additional)
         setAdditional(business.businessAddress.additional);
+      if (business.businessAddress?.instructions)
+        setInstructionsl(business.businessAddress.instructions);
       if (business.deliveryRange)
         setDeliveryRange(String(business.deliveryRange / 1000));
       if (business.averageCookingTime)
@@ -278,6 +284,13 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
           placeholder={t('Seu complemento')}
           value={additional}
           onChange={(ev) => setAdditional(ev.target.value)}
+        />
+        <Input
+          id="delivery-instructions"
+          label={t('Instruções para coleta')}
+          placeholder={t('Suas instruções')}
+          value={instructions}
+          onChange={(ev) => setInstructionsl(ev.target.value)}
         />
         <Text mt="8" fontSize="xl" color="black">
           {t('Raio de entrega')}

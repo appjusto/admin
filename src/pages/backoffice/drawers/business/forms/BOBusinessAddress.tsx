@@ -3,7 +3,10 @@ import { useContextBusinessBackoffice } from 'app/state/business/businessBOConte
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import { CustomNumberInput as NumberInput } from 'common/components/form/input/CustomNumberInput';
 import { CustomPatternInput as PatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';
-import { cepFormatter, cepMask } from 'common/components/form/input/pattern-input/formatters';
+import {
+  cepFormatter,
+  cepMask,
+} from 'common/components/form/input/pattern-input/formatters';
 import { numbersOnlyParser } from 'common/components/form/input/pattern-input/parsers';
 import { Select } from 'common/components/form/select/Select';
 import React from 'react';
@@ -20,7 +23,9 @@ export const BOBusinessAddress = () => {
   const [cities, setCities] = React.useState<string[]>([]);
   // helpers
   const deliveryRange =
-    typeof business?.deliveryRange === 'number' ? (business.deliveryRange / 1000).toString() : '';
+    typeof business?.deliveryRange === 'number'
+      ? (business.deliveryRange / 1000).toString()
+      : '';
   // side effects
   React.useEffect(() => {
     setCities([]);
@@ -53,7 +58,9 @@ export const BOBusinessAddress = () => {
           label="UF *"
           placeholder="UF"
           value={businessAddress?.state ?? ''}
-          onChange={(ev) => handleBusinessAddressChange('state', ev.target.value)}
+          onChange={(ev) =>
+            handleBusinessAddressChange('state', ev.target.value)
+          }
         >
           {ufs.map((uf) => (
             <option key={uf.id} value={uf.sigla}>
@@ -67,7 +74,9 @@ export const BOBusinessAddress = () => {
           label={t('Cidade *')}
           placeholder={t('Sua cidade')}
           value={businessAddress?.city ?? ''}
-          onChange={(ev) => handleBusinessAddressChange('city', ev.target.value)}
+          onChange={(ev) =>
+            handleBusinessAddressChange('city', ev.target.value)
+          }
           isDisabled={cities.length === 0}
         >
           {cities.map((city) => (
@@ -82,7 +91,9 @@ export const BOBusinessAddress = () => {
         label={t('Bairro *')}
         placeholder={t('Seu bairro')}
         value={businessAddress?.neighborhood ?? ''}
-        onChange={(ev) => handleBusinessAddressChange('neighborhood', ev.target.value)}
+        onChange={(ev) =>
+          handleBusinessAddressChange('neighborhood', ev.target.value)
+        }
         isRequired
       />
       <Flex flexDir={{ base: 'column', md: 'row' }}>
@@ -93,7 +104,9 @@ export const BOBusinessAddress = () => {
           label={t('Endereço *')}
           placeholder={t('Seu endereço')}
           value={businessAddress?.address ?? ''}
-          onChange={(ev) => handleBusinessAddressChange('address', ev.target.value)}
+          onChange={(ev) =>
+            handleBusinessAddressChange('address', ev.target.value)
+          }
         />
         <Input
           isRequired
@@ -103,7 +116,9 @@ export const BOBusinessAddress = () => {
           label={t('Número *')}
           placeholder={t('000')}
           value={businessAddress?.number ?? ''}
-          onChange={(ev) => handleBusinessAddressChange('number', ev.target.value)}
+          onChange={(ev) =>
+            handleBusinessAddressChange('number', ev.target.value)
+          }
         />
       </Flex>
       <Input
@@ -111,7 +126,18 @@ export const BOBusinessAddress = () => {
         label={t('Complemento')}
         placeholder={t('Seu complemento')}
         value={businessAddress?.additional ?? ''}
-        onChange={(ev) => handleBusinessAddressChange('additional', ev.target.value)}
+        onChange={(ev) =>
+          handleBusinessAddressChange('additional', ev.target.value)
+        }
+      />
+      <Input
+        id="delivery-instructions"
+        label={t('Instruções de coleta')}
+        placeholder={t('Suas instruções')}
+        value={businessAddress?.instructions ?? ''}
+        onChange={(ev) =>
+          handleBusinessAddressChange('instructions', ev.target.value)
+        }
       />
       <NumberInput
         isRequired
