@@ -135,26 +135,38 @@ export const OrderToPrinting = React.forwardRef<
           </Text>
         </Text>
       )}
-      <Text fontWeight="500" lineHeight="16px">
-        {t('Endereço:')}{' '}
-        <Text as="span" fontWeight="700">
-          {order?.destination?.address.main ?? 'N/E'}
+      {order?.fulfillment === 'take-away' && (
+        <Text fontWeight="500" lineHeight="16px">
+          {t('Tipo de entrega:')}{' '}
+          <Text as="span" fontWeight="700">
+            {t('Para retirar')}
+          </Text>
         </Text>
-      </Text>
-      <Text fontWeight="500" lineHeight="16px">
-        {t('Bairro:')}{' '}
-        <Text as="span" fontWeight="700">
-          {getOrderDestinationNeighborhood(
-            order?.destination?.address.secondary
-          )}
-        </Text>
-      </Text>
-      <Text fontWeight="500" lineHeight="16px">
-        {t('Complemento:')}{' '}
-        <Text as="span" fontWeight="700">
-          {isAdditional ? order?.destination?.additionalInfo : 'N/I'}
-        </Text>
-      </Text>
+      )}
+      {order?.fulfillment === 'delivery' && (
+        <>
+          <Text fontWeight="500" lineHeight="16px">
+            {t('Endereço:')}{' '}
+            <Text as="span" fontWeight="700">
+              {order?.destination?.address.main ?? 'N/E'}
+            </Text>
+          </Text>
+          <Text fontWeight="500" lineHeight="16px">
+            {t('Bairro:')}{' '}
+            <Text as="span" fontWeight="700">
+              {getOrderDestinationNeighborhood(
+                order?.destination?.address.secondary
+              )}
+            </Text>
+          </Text>
+          <Text fontWeight="500" lineHeight="16px">
+            {t('Complemento:')}{' '}
+            <Text as="span" fontWeight="700">
+              {isAdditional ? order?.destination?.additionalInfo : 'N/I'}
+            </Text>
+          </Text>
+        </>
+      )}
       <SectionTitle mt="2" fontSize="18px">
         {t('Detalhes do pedido')}
       </SectionTitle>
