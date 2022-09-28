@@ -36,7 +36,11 @@ export const OrdersTableItem = ({ order, isBackoffice }: ItemProps) => {
           ? orderStatusPTOptionsForTableItem[order.status as OrderStatus]
           : 'N/I'}
       </Td>
-      {isBackoffice && <Td>{order.business?.name ?? 'N/I'}</Td>}
+      {isBackoffice && (
+        <Td color={order.type === 'p2p' ? 'gray.500' : 'inherit'}>
+          {order.business?.name ?? 'Não se aplica'}
+        </Td>
+      )}
       <Td>{order.consumer.name ?? 'N/I'}</Td>
       <Td color={order.fulfillment === 'take-away' ? 'gray.500' : 'inherit'}>
         {order.dispatchingStatus === 'outsourced'
