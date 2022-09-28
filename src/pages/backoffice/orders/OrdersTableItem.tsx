@@ -38,9 +38,11 @@ export const OrdersTableItem = ({ order, isBackoffice }: ItemProps) => {
       </Td>
       {isBackoffice && <Td>{order.business?.name ?? 'N/I'}</Td>}
       <Td>{order.consumer.name ?? 'N/I'}</Td>
-      <Td>
+      <Td color={order.fulfillment === 'take-away' ? 'gray.500' : 'inherit'}>
         {order.dispatchingStatus === 'outsourced'
-          ? 'Fora da rede'
+          ? `(FR) ${order.courier?.name ?? 'N/E'}`
+          : order.fulfillment === 'take-away'
+          ? 'Não se aplica'
           : order.courier?.name ?? 'N/E'}
       </Td>
       <Td>{formatCurrency(total)}</Td>

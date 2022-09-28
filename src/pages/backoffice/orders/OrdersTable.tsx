@@ -1,5 +1,15 @@
 import { Order, WithId } from '@appjusto/types';
-import { Box, Table, Tbody, Td, Tfoot, Th, Thead, Tr } from '@chakra-ui/react';
+import {
+  Box,
+  Table,
+  Tbody,
+  Td,
+  Text,
+  Tfoot,
+  Th,
+  Thead,
+  Tr,
+} from '@chakra-ui/react';
 import { formatCurrency } from 'utils/formatters';
 import { t } from 'utils/i18n';
 import { OrdersTableItem } from './OrdersTableItem';
@@ -70,6 +80,9 @@ export const OrdersTable = ({ orders, isBackoffice }: OrdersTableProps) => {
           </Tfoot>
         )}
       </Table>
+      <Text mt="4" fontSize="sm">
+        {t('(FR) = Fora da rede.')}
+      </Text>
     </Box>
   );
 };
