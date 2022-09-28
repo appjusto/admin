@@ -1,6 +1,13 @@
 import { OrderStatus, OrderType } from '@appjusto/types';
 import { ArrowDownIcon } from '@chakra-ui/icons';
-import { Button, CheckboxGroup, Flex, HStack, Stack, Text } from '@chakra-ui/react';
+import {
+  Button,
+  CheckboxGroup,
+  Flex,
+  HStack,
+  Stack,
+  Text,
+} from '@chakra-ui/react';
 import { useObserveOrdersHistory } from 'app/api/order/useObserveOrdersHistory';
 import { InQueryArray } from 'app/api/types';
 import { ClearFiltersButton } from 'common/components/backoffice/ClearFiltersButton';
@@ -41,7 +48,10 @@ const OrdersPage = () => {
   const [searchTo, setSearchTo] = React.useState('');
 
   const [filterBar, setFilterBar] = React.useState('all');
-  const [orderType, setOrderType] = React.useState<OrderType[]>(['food', 'p2p']);
+  const [orderType, setOrderType] = React.useState<OrderType[]>([
+    'food',
+    'p2p',
+  ]);
   const [orderStatus, setOrderStatus] = React.useState<OrderStatus>();
 
   const [clearDateNumber, setClearDateNumber] = React.useState(0);
@@ -102,7 +112,12 @@ const OrdersPage = () => {
           />
         </Stack>
       </Flex>
-      <Flex mt="8" w="100%" justifyContent="space-between" borderBottom="1px solid #C8D7CB">
+      <Flex
+        mt="8"
+        w="100%"
+        justifyContent="space-between"
+        borderBottom="1px solid #C8D7CB"
+      >
         <FiltersScrollBar>
           <HStack spacing={4}>
             <FilterText
@@ -159,7 +174,12 @@ const OrdersPage = () => {
         </FiltersScrollBar>
         <ClearFiltersButton clearFunction={clearFilters} />
       </Flex>
-      <Stack mt="6" direction={{ base: 'column', md: 'row' }} spacing={8} color="black">
+      <Stack
+        mt="6"
+        direction={{ base: 'column', md: 'row' }}
+        spacing={8}
+        color="black"
+      >
         <Text fontSize="lg" fontWeight="700" lineHeight="26px">
           {t(`${orders?.length ?? '0'} itens na lista`)}
         </Text>
