@@ -1,4 +1,4 @@
-import { Order, OrderStatus, WithId } from '@appjusto/types';
+import { Fulfillment, Order, OrderStatus, WithId } from '@appjusto/types';
 import { useContextApi } from 'app/state/api/context';
 import dayjs from 'dayjs';
 import { DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
@@ -13,7 +13,8 @@ export const useObserveBusinessOrdersHistory = (
   orderCode?: string,
   start?: string,
   end?: string,
-  orderStatus?: OrderStatus
+  orderStatus?: OrderStatus,
+  fulfillment?: Fulfillment[]
 ) => {
   // context
   const api = useContextApi();
@@ -55,6 +56,7 @@ export const useObserveBusinessOrdersHistory = (
       startDate,
       endDate,
       orderStatus,
+      fulfillment,
       startAfter
     );
     return () => unsub();
@@ -68,6 +70,7 @@ export const useObserveBusinessOrdersHistory = (
     start,
     end,
     orderStatus,
+    fulfillment,
   ]);
   React.useEffect(() => {
     setOrders(

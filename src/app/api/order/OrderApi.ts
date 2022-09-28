@@ -1,6 +1,7 @@
 import {
   CancelOrderPayload,
   DropOrderPayload,
+  Fulfillment,
   Issue,
   MatchOrderPayload,
   Order,
@@ -312,6 +313,7 @@ export default class OrderApi {
     start?: Date | null,
     end?: Date | null,
     orderStatus?: OrderStatus,
+    fulfillment?: Fulfillment[],
     startAfterDoc?: FirebaseDocument
   ): Unsubscribe {
     let q = query(
@@ -342,6 +344,9 @@ export default class OrderApi {
       );
     // status
     if (orderStatus) q = query(q, where('status', '==', orderStatus));
+    // fulfillment
+    if (fulfillment && fulfillment.length === 1)
+      q = query(q, where('fulfillment', '==', fulfillment[0]));
     // Unsubscribe
     const unsubscribe = onSnapshot(
       q,

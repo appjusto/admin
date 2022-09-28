@@ -1,12 +1,20 @@
-import { OrderStatus } from '@appjusto/types';
+import { Fulfillment, OrderStatus } from '@appjusto/types';
 import { ArrowDownIcon } from '@chakra-ui/icons';
-import { Button, Flex, HStack, Stack, Text } from '@chakra-ui/react';
+import {
+  Button,
+  CheckboxGroup,
+  Flex,
+  HStack,
+  Stack,
+  Text,
+} from '@chakra-ui/react';
 import { useObserveBusinessOrdersHistory } from 'app/api/order/useObserveBusinessOrdersHistory';
 import { useContextBusinessId } from 'app/state/business/context';
 import { ClearFiltersButton } from 'common/components/backoffice/ClearFiltersButton';
 import { FiltersScrollBar } from 'common/components/backoffice/FiltersScrollBar';
 import { FilterText } from 'common/components/backoffice/FilterText';
 import Container from 'common/components/Container';
+import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import { CustomDateFilter } from 'common/components/form/input/CustomDateFilter';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import { OrdersTable } from 'pages/backoffice/orders/OrdersTable';
@@ -39,6 +47,10 @@ const OrdersHistoryPage = () => {
   const [clearDateNumber, setClearDateNumber] = React.useState(0);
   const [filterBar, setFilterBar] = React.useState('all');
   const [orderStatus, setOrderStatus] = React.useState<OrderStatus>();
+  const [fulfillment, setFulfillment] = React.useState<Fulfillment[]>([
+    'delivery',
+    'take-away',
+  ]);
 
   const { orders, fetchNextPage } = useObserveBusinessOrdersHistory(
     businessId,
@@ -46,7 +58,8 @@ const OrdersHistoryPage = () => {
     searchId,
     searchFrom,
     searchTo,
-    orderStatus
+    orderStatus,
+    fulfillment
   );
 
   // handlers
@@ -80,7 +93,11 @@ const OrdersHistoryPage = () => {
         maxW="700px"
       />
       <Flex mt="8">
-        <Stack alignItems={{ md: 'end' }} direction={{ base: 'column', md: 'row' }} spacing={4}>
+        <Stack
+          alignItems={{ md: 'end' }}
+          direction={{ base: 'column', md: 'row' }}
+          spacing={4}
+        >
           <CustomInput
             mt="0"
             maxW="212px"
@@ -97,7 +114,12 @@ const OrdersHistoryPage = () => {
           />
         </Stack>
       </Flex>
-      <Flex mt="8" w="100%" justifyContent="space-between" borderBottom="1px solid #C8D7CB">
+      <Flex
+        mt="8"
+        w="100%"
+        justifyContent="space-between"
+        borderBottom="1px solid #C8D7CB"
+      >
         <FiltersScrollBar>
           <HStack spacing={4}>
             <FilterText
@@ -128,8 +150,28 @@ const OrdersHistoryPage = () => {
         <Text fontSize="lg" fontWeight="700" lineHeight="26px">
           {t(`${orders?.length ?? '0'} itens na lista`)}
         </Text>
+        <CheckboxGroup
+          colorScheme="green"
+          value={fulfillment}
+          onChange={(values: Fulfillment[]) => setFulfillment(values)}
+        >
+          <HStack
+            alignItems="flex-start"
+            color="black"
+            spacing={8}
+            fontSize="16px"
+            lineHeight="22px"
+          >
+            <CustomCheckbox value="delivery">{t('Delivery')}</CustomCheckbox>
+            <CustomCheckbox value="take-away">{t('Retirada')}</CustomCheckbox>
+          </HStack>
+        </CheckboxGroup>
       </HStack>
-      {businessId ? <OrdersTable orders={orders} /> : <Text>{t('Carregando...')}</Text>}
+      {businessId ? (
+        <OrdersTable orders={orders} />
+      ) : (
+        <Text>{t('Carregando...')}</Text>
+      )}
       <Button mt="8" variant="secondary" onClick={fetchNextPage}>
         <ArrowDownIcon mr="2" />
         {t('Carregar mais')}
