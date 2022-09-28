@@ -8,8 +8,8 @@ import type {
 import { mode } from '@chakra-ui/theme-tools';
 
 const baseStyleControl: SystemStyleFunction = (props) => {
-  const { colorScheme: c } = props;
-
+  const { colorScheme: c, size } = props;
+  const beforeSize = size === 'sm' ? '14px' : size === 'lg' ? '20px' : '16px';
   return {
     w: '100%',
     transitionProperty: 'box-shadow',
@@ -27,8 +27,8 @@ const baseStyleControl: SystemStyleFunction = (props) => {
         content: `""`,
         display: 'block',
         pos: 'absolute',
-        w: '16px',
-        h: '16px',
+        w: beforeSize,
+        h: beforeSize,
         borderRadius: '4px',
         bg: 'currentColor',
       },
@@ -73,7 +73,7 @@ const baseStyle: PartsStyleFunction<typeof parts> = (props) => ({
 
 const sizes: Record<string, PartsStyleObject<typeof parts>> = {
   sm: {
-    control: { h: 4, w: 4 },
+    control: { h: 5, w: 5 },
     label: { fontSize: 'sm' },
     icon: { fontSize: '0' },
   },

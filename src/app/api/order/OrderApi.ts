@@ -263,7 +263,8 @@ export default class OrderApi {
     end: Date | null | undefined,
     orderStatus: OrderStatus | undefined,
     orderType: OrderType | null,
-    startAfterDoc: FirebaseDocument | undefined
+    fulfillment?: Fulfillment[],
+    startAfterDoc?: FirebaseDocument
   ): Unsubscribe {
     let q = query(
       this.refs.getOrdersRef(),
@@ -282,6 +283,9 @@ export default class OrderApi {
         where('updatedOn', '<=', end)
       );
     if (orderType) q = query(q, where('type', '==', orderType));
+    // fulfillment
+    if (orderType !== 'p2p' && fulfillment && fulfillment.length === 1)
+      q = query(q, where('fulfillment', '==', fulfillment[0]));
     const unsubscribe = onSnapshot(
       q,
       (snapshot) => {

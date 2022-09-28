@@ -1,4 +1,10 @@
-import { Order, OrderStatus, OrderType, WithId } from '@appjusto/types';
+import {
+  Fulfillment,
+  Order,
+  OrderStatus,
+  OrderType,
+  WithId,
+} from '@appjusto/types';
 import { useContextApi } from 'app/state/api/context';
 import dayjs from 'dayjs';
 import { DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
@@ -15,7 +21,8 @@ export const useObserveOrdersHistory = (
   start?: string,
   end?: string,
   orderStatus?: OrderStatus,
-  orderType?: OrderType[]
+  orderType?: OrderType[],
+  fulfillment?: Fulfillment[]
 ) => {
   // context
   const api = useContextApi();
@@ -59,6 +66,7 @@ export const useObserveOrdersHistory = (
       endDate,
       orderStatus,
       type,
+      fulfillment,
       startAfter
     );
     return () => unsub();
@@ -72,6 +80,7 @@ export const useObserveOrdersHistory = (
     start,
     end,
     orderStatus,
+    fulfillment,
     orderType,
   ]);
   React.useEffect(() => {

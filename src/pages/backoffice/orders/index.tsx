@@ -1,4 +1,4 @@
-import { OrderStatus, OrderType } from '@appjusto/types';
+import { Fulfillment, OrderStatus, OrderType } from '@appjusto/types';
 import { ArrowDownIcon } from '@chakra-ui/icons';
 import {
   Button,
@@ -8,6 +8,7 @@ import {
   HStack,
   Stack,
   Text,
+  VStack,
 } from '@chakra-ui/react';
 import { useObserveOrdersHistory } from 'app/api/order/useObserveOrdersHistory';
 import { InQueryArray } from 'app/api/types';
@@ -64,6 +65,10 @@ const OrdersPage = () => {
     'food',
     'p2p',
   ]);
+  const [fulfillment, setFulfillment] = React.useState<Fulfillment[]>([
+    'delivery',
+    'take-away',
+  ]);
   const [orderStatus, setOrderStatus] = React.useState<OrderStatus>();
 
   const [clearDateNumber, setClearDateNumber] = React.useState(0);
@@ -75,12 +80,31 @@ const OrdersPage = () => {
     searchFrom,
     searchTo,
     orderStatus,
-    orderType
+    orderType,
+    fulfillment
   );
 
   // handlers
   const closeDrawerHandler = () => {
     history.replace(path);
+  };
+
+  const handleOrderType = (value: OrderType[]) => {
+    if (value.length > 0) {
+      setOrderType(value);
+      if (value.length === 1 && value[0] === 'p2p') {
+        setFulfillment(['delivery', 'take-away']);
+      }
+    }
+  };
+
+  const handleFulfillment = (value: Fulfillment[]) => {
+    if (value.length > 0) {
+      setFulfillment(value);
+      if (value.length < 2) {
+        setOrderType(['food']);
+      }
+    }
   };
 
   const clearFilters = () => {
@@ -149,17 +173,23 @@ const OrdersPage = () => {
         <CheckboxGroup
           colorScheme="green"
           value={orderType}
-          onChange={(values: OrderType[]) => setOrderType(values)}
+          onChange={(values: OrderType[]) => handleOrderType(values)}
         >
-          <HStack
-            alignItems="flex-start"
-            color="black"
-            spacing={8}
-            fontSize="16px"
-            lineHeight="22px"
-          >
+          <VStack alignItems="flex-start" color="black" spacing={4}>
             <Checkbox value="food">{t('Restaurantes')}</Checkbox>
             <Checkbox value="p2p">{t('Encomendas')}</Checkbox>
+          </VStack>
+        </CheckboxGroup>
+        <CheckboxGroup
+          colorScheme="green"
+          size="sm"
+          value={fulfillment}
+          onChange={(values: Fulfillment[]) => handleFulfillment(values)}
+          isDisabled={!orderType.includes('food')}
+        >
+          <HStack mt="4" alignItems="flex-start" color="black" spacing={8}>
+            <Checkbox value="delivery">{t('Delivery')}</Checkbox>
+            <Checkbox value="take-away">{t('Retirada')}</Checkbox>
           </HStack>
         </CheckboxGroup>
       </Stack>
