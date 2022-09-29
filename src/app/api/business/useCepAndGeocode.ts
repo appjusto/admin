@@ -38,7 +38,9 @@ export const useCepAndGeocode = (
       console.log('Fetching new data');
       return api
         .maps()
-        .googleGeocode(`${address}, ${number}, ${neighborhood} - ${city} - ${state}`);
+        .googleGeocode(
+          `${address}, ${number}, ${neighborhood} - ${city} - ${state}`
+        );
     } else return savedAddress!.latlng;
   };
   const { data: geocodingResult } = useQuery(
