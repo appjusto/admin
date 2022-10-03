@@ -15,6 +15,7 @@ import { useContextBusinessId } from 'app/state/business/context';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput';
 import { ReactComponent as Checked } from 'common/img/icon-checked.svg';
+import { isNumber } from 'lodash';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import React from 'react';
 import { MdInfoOutline } from 'react-icons/md';
@@ -66,11 +67,7 @@ export const AdvancesDrawer = ({
     ? t('Simular antecipação')
     : t('Fora do horário');
   const isAmountInvalid =
-    simulateOption === 'auto'
-      ? false
-      : advanceableValue
-      ? amount > advanceableValue
-      : false;
+    !isNumber(advanceableValue) || amount === 0 || amount > advanceableValue;
   // handlers
   const handleReceivablesRequest = async () => {
     if (isAmountInvalid) {
@@ -78,16 +75,13 @@ export const AdvancesDrawer = ({
         status: 'error',
         requestId: 'AdvancesDrawer-invalid-amount',
         message: {
-          title:
-            'O valor solicitado é maior que o valor disponível para esta operação',
+          title: 'O valor solicitado não é válido',
         },
       });
     }
     if (!isReviewing) {
       try {
-        const requestedValue =
-          simulateOption === 'auto' ? advanceableValue! : amount;
-        await fetchReceivablesSimulation(requestedValue);
+        await fetchReceivablesSimulation(amount);
         setIsReviewing(true);
       } catch (error) {
         console.error(error);
@@ -112,6 +106,12 @@ export const AdvancesDrawer = ({
       fee: advanceFee,
     });
   };
+  // side effects
+  React.useEffect(() => {
+    if (simulateOption === 'auto' && advanceableValue) {
+      setAmount(advanceableValue);
+    }
+  }, [simulateOption, advanceableValue]);
   // UI
   if (advanceReceivablesResult.isSuccess) {
     return (
@@ -164,7 +164,7 @@ export const AdvancesDrawer = ({
       </Text>
       <BasicInfoBox
         mt="4"
-        label={t('Vendas a compensar')}
+        label={t('Vendas em processamento')}
         icon={Checked}
         value={formatIuguValueToDisplay(receivableBalance ?? 'R$ 0,00')}
       />
@@ -172,13 +172,13 @@ export const AdvancesDrawer = ({
         <Icon mt="1" as={MdInfoOutline} />
         <Text ml="2" fontSize="15px" fontWeight="500" lineHeight="22px">
           {t(
-            'Valores referêntes a pedidos agendados e pagos via PIX são disponibilizados diretamente na sua tela de saque em até 24h.'
+            'Valores referêntes a pedidos agendados e pagos via PIX são disponibilizados diretamente na sua tela de saque, em até 24h.'
           )}
         </Text>
       </Flex>
       <Box mt="8" borderTop="1px solid #C8D7CB">
         <Text mt="6" fontSize="2xl" fontWeight="700">
-          {t('Antecipação dos valores')}
+          {t('Antecipação de valores')}
         </Text>
         {/* <Text fontSize="16px" fontWeight="500" lineHeight="22px">
           {t(
@@ -187,7 +187,7 @@ export const AdvancesDrawer = ({
           </Text> */}
         <Text mt="4" fontSize="16px" fontWeight="500" lineHeight="22px">
           {t(
-            'Apenas as faturas pagas com cartão de crédito há mais de 2 dias úteis têm seus valores disponíveis para antecipação.'
+            'Do total em processamento, apenas as faturas pagas há mais de 2 dias úteis têm seus valores disponíveis para antecipação.'
           )}
         </Text>
         <BasicInfoBox

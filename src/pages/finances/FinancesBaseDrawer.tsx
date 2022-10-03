@@ -45,9 +45,7 @@ export const FinancesBaseDrawer = ({
               {title}
             </Text>
           </DrawerHeader>
-          <DrawerBody ref={bodyRef} pb="28">
-            {children}
-          </DrawerBody>
+          <DrawerBody ref={bodyRef}>{children}</DrawerBody>
           {footer && (
             <DrawerFooter borderTop="1px solid #F2F6EA">
               {footer()}

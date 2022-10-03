@@ -26,7 +26,7 @@ export const useReceivablesSimulation = (businessId?: string) => {
       if (result) setSimulation(result);
       return;
     },
-    'requestWithdraw',
+    'fetchReceivablesSimulation',
     false
   );
   // side effects
