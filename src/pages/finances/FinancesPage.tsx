@@ -15,7 +15,7 @@ import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router';
-import { formatCurrency, getMonthName } from 'utils/formatters';
+import { getMonthName } from 'utils/formatters';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { AdvanceDetailsDrawer } from './AdvanceDetailsDrawer';
@@ -23,6 +23,7 @@ import { AdvancesDrawer } from './AdvancesDrawer';
 import { AdvancesTable } from './AdvancesTable';
 import { BasicInfoBox } from './BasicInfoBox';
 import { PeriodTable } from './PeriodTable';
+import { formatIuguValueToDisplay } from './utils';
 import { WithdrawsDrawer } from './WithdrawsDrawer';
 import { WithdrawsTable } from './WithdrawsTable';
 
@@ -86,8 +87,8 @@ const FinancesPage = () => {
   React.useEffect(() => {
     if (accountInformation === undefined) return;
     setAvailableReceivable(
-      accountInformation?.advanceable_value
-        ? formatCurrency(accountInformation.advanceable_value)
+      accountInformation?.receivable_balance
+        ? formatIuguValueToDisplay(accountInformation.receivable_balance)
         : null
     );
     setAvailableWithdraw(
