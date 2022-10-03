@@ -103,7 +103,7 @@ export const AdvanceReview = ({
         isInfo={!isSameValueRequested}
       />
       <ReviewBox
-        label={t('Total de taxas de antecipação')}
+        label={t('Total de taxas de antecipação (Iugu)')}
         valueToDisplay={advanceFee}
         signal="-"
         description={feeDescription}

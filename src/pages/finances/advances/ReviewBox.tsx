@@ -78,6 +78,7 @@ export const ReviewBox = ({
             top="2"
             right="2"
             cursor="pointer"
+            color="gray.500"
             onClick={() => setShowInfo(false)}
           />
           {description &&
