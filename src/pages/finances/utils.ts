@@ -7,8 +7,13 @@ export const formatCents = (value: string) =>
   parseInt(value.replace(/\D+/g, ''));
 
 export const formatIuguValueToDisplay = (value: string) => {
-  if (value.includes('R$')) return value;
-  else return formatCurrency(formatCents(value));
+  try {
+    if (value.includes('R$')) return value;
+    else return formatCurrency(formatCents(value));
+  } catch (error) {
+    console.error(error);
+    return 'R$ 0,00';
+  }
 };
 
 export const formatIuguDateToDisplay = (date: string) => {

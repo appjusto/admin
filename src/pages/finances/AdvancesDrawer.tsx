@@ -1,11 +1,12 @@
 import {
   Box,
   Button,
-  Checkbox,
   Flex,
   Icon,
-  Skeleton,
+  Radio,
+  RadioGroup,
   Text,
+  VStack,
 } from '@chakra-ui/react';
 import { useAdvanceReceivables } from 'app/api/business/useAdvanceReceivables';
 import { useReceivablesSimulation } from 'app/api/business/useReceivablesSimulation';
@@ -16,18 +17,26 @@ import { CurrencyInput } from 'common/components/form/input/currency-input/Curre
 import { ReactComponent as Checked } from 'common/img/icon-checked.svg';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import React from 'react';
+import { MdInfoOutline } from 'react-icons/md';
 import { formatCurrency } from 'utils/formatters';
 import { t } from 'utils/i18n';
+import { AdvanceReview } from './advances/AdvanceReview';
+import { SuccessfullResponse } from './advances/SuccessfulResponse';
 import { BasicInfoBox } from './BasicInfoBox';
 import { FinancesBaseDrawer } from './FinancesBaseDrawer';
+import { formatIuguValueToDisplay } from './utils';
 
 interface WithdrawalsDrawerProps {
+  receivableBalance?: string;
   advanceableValue?: number;
   isOpen: boolean;
   onClose(): void;
 }
 
+type SimulateOptions = 'auto' | 'manual';
+
 export const AdvancesDrawer = ({
+  receivableBalance,
   advanceableValue,
   onClose,
   ...props
@@ -39,8 +48,9 @@ export const AdvancesDrawer = ({
     useAdvanceReceivables(businessId);
   const canAdvanceReceivables = useCanAdvanceReceivables();
   const [amount, setAmount] = React.useState<number>(0);
+  const [simulateOption, setSimulateOption] =
+    React.useState<SimulateOptions>('auto');
   const [isReviewing, setIsReviewing] = React.useState(false);
-  const [isFeesAccepted, setIsFeesAccepted] = React.useState(false);
   const {
     fetchReceivablesSimulation,
     receivablesSimulationResult,
@@ -50,25 +60,18 @@ export const AdvancesDrawer = ({
     receivedValue,
   } = useReceivablesSimulation(businessId);
   // refs
-  const acceptCheckBoxRef = React.useRef<HTMLInputElement>(null);
   const amountInputRef = React.useRef<HTMLInputElement>(null);
   // helpers
-  const isLoading =
-    receivablesSimulationResult.isLoading || advanceReceivablesResult.isLoading;
-  const actionLabel = isReviewing
-    ? t('Confirmar adiantamento')
-    : canAdvanceReceivables
-    ? t('Revisar adiantamento')
+  const actionLabel = canAdvanceReceivables
+    ? t('Simular antecipação')
     : t('Fora do horário');
-  const loadingText = isReviewing ? t('Confirmando') : t('Simulando');
-  const isAmountInvalid = advanceableValue ? amount > advanceableValue : false;
+  const isAmountInvalid =
+    simulateOption === 'auto'
+      ? false
+      : advanceableValue
+      ? amount > advanceableValue
+      : false;
   // handlers
-  const getActionDisabledSatus = () => {
-    if (!canAdvanceReceivables) return true;
-    if (amount === 0) return true;
-    if (isReviewing && !isFeesAccepted) return true;
-    return false;
-  };
   const handleReceivablesRequest = async () => {
     if (isAmountInvalid) {
       return dispatchAppRequestResult({
@@ -82,7 +85,9 @@ export const AdvancesDrawer = ({
     }
     if (!isReviewing) {
       try {
-        await fetchReceivablesSimulation(amount);
+        const requestedValue =
+          simulateOption === 'auto' ? advanceableValue! : amount;
+        await fetchReceivablesSimulation(requestedValue);
         setIsReviewing(true);
       } catch (error) {
         console.error(error);
@@ -110,182 +115,123 @@ export const AdvancesDrawer = ({
   // UI
   if (advanceReceivablesResult.isSuccess) {
     return (
-      <FinancesBaseDrawer
+      <SuccessfullResponse
+        receivedValue={receivedValue}
         onClose={onClose}
-        title={t('Antecipação dos valores')}
-        isReviewing={isReviewing}
         {...props}
-      >
-        <Flex w="100%" h="100%" flexDir="column" justifyContent="center">
-          <Box>
-            <Icon as={Checked} w="36px" h="36px" />
-            <Text
-              mt="2"
-              fontSize="24px"
-              fontWeight="500"
-              lineHeight="30px"
-              color="black"
-            >
-              {t('Antecipação realizada com sucesso!')}
-            </Text>
-            <Text mt="1" fontSize="18px" fontWeight="500" lineHeight="26px">
-              {t(
-                `Em até 1 dia útil o valor de ${formatCurrency(
-                  receivedValue!
-                )} estará disponível para saque.`
-              )}
-            </Text>
-          </Box>
-        </Flex>
-      </FinancesBaseDrawer>
+      />
+    );
+  }
+  if (isReviewing) {
+    return (
+      <AdvanceReview
+        amount={amount}
+        advancedValue={advancedValue}
+        advanceFee={advanceFee}
+        receivedValue={receivedValue}
+        handleReceivablesRequest={handleReceivablesRequest}
+        isLoading={advanceReceivablesResult.isLoading}
+        setIsReviewing={setIsReviewing}
+        onClose={onClose}
+        {...props}
+      />
     );
   }
   return (
     <FinancesBaseDrawer
       onClose={onClose}
-      title={t('Antecipação dos valores')}
-      description={t(
-        'O prazo padrão para processar os pagamentos é de 30 dias. Para antecipar, você paga uma taxa de até 2.75% por operação. Funciona assim: se for antecipar no primeiro dia útil após a corrida, você pagará o valor cheio de 2.75%, e a taxa diminui proporcionalmente a cada dia que passa. Se você esperar 15 dias, por exemplo, pagará 1.37%.'
-      )}
-      isReviewing={isReviewing}
+      title={t('Vendas em processamento')}
       footer={() => (
         <Flex w="100%" justifyContent="space-between">
           <Button
             minW="220px"
             fontSize="15px"
             onClick={handleReceivablesRequest}
-            isLoading={isLoading}
-            loadingText={loadingText}
-            isDisabled={getActionDisabledSatus()}
+            isLoading={receivablesSimulationResult.isLoading}
+            loadingText={t('Simulando')}
+            isDisabled={!canAdvanceReceivables}
           >
             {actionLabel}
           </Button>
-          {isReviewing && (
-            <Button
-              mr="16"
-              fontSize="15px"
-              variant="outline"
-              onClick={() => setIsReviewing(false)}
-            >
-              {t('Voltar')}
-            </Button>
-          )}
         </Flex>
       )}
       {...props}
     >
-      <Text mt="-2" color="red">
+      <Text mt="-2" fontSize="16px" fontWeight="500" lineHeight="22px">
         {t(
-          'Atenção: a Iugu só permite realizar antecipações em dias úteis, de 09:00 às 16:00 e só é possível antecipar faturas pagas há mais de 2 dias úteis.'
+          'Somatório de faturas pagas com cartão de crédito, há menos de 30 dias, e não antecipadas.'
         )}
       </Text>
-      {isReviewing ? (
-        <>
-          <Box mt="4">
-            <Text fontSize="15px" fontWeight="500" lineHeight="21px">
-              {t('Valor solicitado:')}
-            </Text>
-            <Text fontSize="24px" fontWeight="500" lineHeight="30px">
-              {formatCurrency(amount)}
-            </Text>
-          </Box>
-          <Box mt="6">
-            <Text fontSize="15px" fontWeight="500" lineHeight="21px">
-              {t('Total a antecipar')}
-            </Text>
-            {advancedValue === undefined ? (
-              <Skeleton
-                mt="1"
-                maxW="294px"
-                height="30px"
-                colorScheme="#9AA49C"
-              />
-            ) : advancedValue === null ? (
-              'N/E'
-            ) : (
-              <Text
-                fontSize="24px"
-                fontWeight="500"
-                lineHeight="30px"
-                color="green.700"
-              >
-                + {formatCurrency(advancedValue)}
-              </Text>
+      <BasicInfoBox
+        mt="4"
+        label={t('Vendas a compensar')}
+        icon={Checked}
+        value={formatIuguValueToDisplay(receivableBalance ?? 'R$ 0,00')}
+      />
+      <Flex mt="4" flexDir="row">
+        <Icon mt="1" as={MdInfoOutline} />
+        <Text ml="2" fontSize="15px" fontWeight="500" lineHeight="22px">
+          {t(
+            'Valores referêntes a pedidos agendados e pagos via PIX são disponibilizados diretamente na sua tela de saque em até 24h.'
+          )}
+        </Text>
+      </Flex>
+      <Box mt="8" borderTop="1px solid #C8D7CB">
+        <Text mt="6" fontSize="2xl" fontWeight="700">
+          {t('Antecipação dos valores')}
+        </Text>
+        {/* <Text fontSize="16px" fontWeight="500" lineHeight="22px">
+          {t(
+            'O prazo padrão para processar os pagamentos é de 30 dias. Para antecipar, você paga uma taxa de até 2.75% por operação. Funciona assim: se for antecipar no primeiro dia útil após a corrida, você pagará o valor cheio de 2.75%, e a taxa diminui proporcionalmente a cada dia que passa. Se você esperar 15 dias, por exemplo, pagará 1.37%.'
             )}
-          </Box>
-          <Box mt="6">
-            <Text fontSize="15px" fontWeight="500" lineHeight="21px">
-              {t('Total de taxas de antecipação')}
-            </Text>
-            {advanceFee === undefined ? (
-              <Skeleton
-                mt="1"
-                maxW="294px"
-                height="30px"
-                colorScheme="#9AA49C"
-              />
-            ) : advanceFee === null ? (
-              'N/E'
-            ) : (
-              <Text
-                fontSize="24px"
-                fontWeight="500"
-                lineHeight="30px"
-                color="red"
-              >
-                - {formatCurrency(advanceFee)}
-              </Text>
+          </Text> */}
+        <Text mt="4" fontSize="16px" fontWeight="500" lineHeight="22px">
+          {t(
+            'Apenas as faturas pagas com cartão de crédito há mais de 2 dias úteis têm seus valores disponíveis para antecipação.'
+          )}
+        </Text>
+        <BasicInfoBox
+          mt="4"
+          label={t('Disponível para antecipação')}
+          icon={Checked}
+          value={formatCurrency(advanceableValue ?? 0)}
+        />
+        <Flex mt="4" flexDir="row" color="red">
+          <Icon mt="1" as={MdInfoOutline} />
+          <Text ml="2" fontSize="15px" fontWeight="500" lineHeight="22px">
+            {t(
+              'A Iugu só permite realizar antecipações em dias úteis, de 09:00 às 16:00.'
             )}
-          </Box>
-          <BasicInfoBox
-            mt="6"
-            label={t('Total a receber na antecipação')}
-            icon={Checked}
-            value={formatCurrency(receivedValue ?? 0)}
+          </Text>
+        </Flex>
+        <SectionTitle>{t('Simular antecipação')}</SectionTitle>
+        <RadioGroup
+          mt="4"
+          value={simulateOption}
+          onChange={(value: SimulateOptions) => setSimulateOption(value)}
+        >
+          <VStack alignItems="flex-start">
+            <Radio value="auto">{t('Antecipar o valor total')}</Radio>
+            <Radio value="manual">
+              {t('Informar quanto desejo antecipar')}
+            </Radio>
+          </VStack>
+        </RadioGroup>
+        {simulateOption === 'manual' && (
+          <CurrencyInput
+            ref={amountInputRef}
+            isRequired
+            maxW="220px"
+            id="drawer-price"
+            value={amount}
+            label={t('Valor da antecipação')}
+            aria-label={t('valor-da-antecipacao')}
+            placeholder={t('0,00')}
+            onChangeValue={(value) => setAmount(value)}
+            isInvalid={isAmountInvalid}
           />
-          <Checkbox
-            ref={acceptCheckBoxRef}
-            mt="6"
-            borderColor="black"
-            borderRadius="lg"
-            colorScheme="green"
-            isChecked={isFeesAccepted}
-            onChange={(e) => setIsFeesAccepted(e.target.checked)}
-          >
-            <Text fontSize="15px" fontWeight="500" lineHeight="21px">
-              {t(
-                'Estou de acordo com as taxas cobradas para o adiantamento do valor'
-              )}
-            </Text>
-          </Checkbox>
-        </>
-      ) : (
-        <>
-          <BasicInfoBox
-            mt="4"
-            label={t('Disponível para adiantamento')}
-            icon={Checked}
-            value={formatCurrency(advanceableValue ?? 0)}
-          />
-          <Box mt="6" w="100%" py="2" borderTop="1px solid #C8D7CB">
-            <SectionTitle>
-              {t('Informe o valor que deseja antecipar')}
-            </SectionTitle>
-            <CurrencyInput
-              ref={amountInputRef}
-              isRequired
-              maxW="220px"
-              id="drawer-price"
-              value={amount}
-              label={t('Valor da antecipação')}
-              aria-label={t('valor-da-antecipacao')}
-              placeholder={t('0,00')}
-              onChangeValue={(value) => setAmount(value)}
-              isInvalid={isAmountInvalid}
-            />
-          </Box>
-        </>
-      )}
+        )}
+      </Box>
     </FinancesBaseDrawer>
   );
 };

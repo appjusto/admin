@@ -28,7 +28,7 @@ export const developmentFetchAccountInformation = (isError?: boolean) =>
       const result = {
         balance: 'R$ 5.000,00',
         balance_available_for_withdraw: availableWithdraw,
-        receivable_balance: 'R$ 2.000,00',
+        receivable_balance: 'R$ 2.460,00',
         advanceable_value: 200000,
       };
       accountInfoRequestNumber += 1;

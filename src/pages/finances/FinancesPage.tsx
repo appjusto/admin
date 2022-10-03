@@ -6,7 +6,6 @@ import { useObserveBusinessAdvances } from 'app/api/business/useObserveBusinessA
 import { useObserveBusinessWithdraws } from 'app/api/business/useObserveBusinessWithdraws';
 import { useObserveInvoicesStatusByPeriod } from 'app/api/invoices/useObserveInvoicesStatusByPeriod';
 import { useObserveLedgerStatusByPeriod } from 'app/api/ledger/useObserveLedgerStatusByPeriod';
-import { useCanAdvanceReceivables } from 'app/api/platform/useCanAdvanceReceivables';
 import { useContextBusinessId } from 'app/state/business/context';
 import { CustomMonthInput } from 'common/components/form/input/CustomMonthInput';
 import { ReactComponent as Checked } from 'common/img/icon-checked.svg';
@@ -41,11 +40,10 @@ const FinancesPage = () => {
   const businessId = useContextBusinessId();
   const { accountInformation, refreshAccountInformation } =
     useAccountInformation(businessId);
-  const canAdvanceReceivables = useCanAdvanceReceivables();
   // state
   const [dateTime, setDateTime] = React.useState('');
   const [month, setMonth] = React.useState<Date | null>(new Date());
-  const [availableReceivable, setAvailableReceivable] = React.useState<
+  const [receivableBalance, setReceivableBalance] = React.useState<
     string | null
   >();
   const [availableWithdraw, setAvailableWithdraw] = React.useState<
@@ -86,7 +84,7 @@ const FinancesPage = () => {
   }, []);
   React.useEffect(() => {
     if (accountInformation === undefined) return;
-    setAvailableReceivable(
+    setReceivableBalance(
       accountInformation?.receivable_balance
         ? formatIuguValueToDisplay(accountInformation.receivable_balance)
         : null
@@ -120,15 +118,11 @@ const FinancesPage = () => {
         <BasicInfoBox
           label={t('Vendas em processamento')}
           icon={Watch}
-          value={availableReceivable}
-          btnLabel={
-            canAdvanceReceivables
-              ? t('Pedir antecipação de valores')
-              : t('Fora do horário')
-          }
+          value={receivableBalance}
+          btnLabel={t('Ver detalhes')}
           btnVariant="outline"
           btnLink={`${url}/advances`}
-          isAvailable={canAdvanceReceivables}
+          // isAvailable={canAdvanceReceivables}
         />
       </Stack>
       <SectionTitle>{t('Período')}</SectionTitle>
@@ -157,6 +151,7 @@ const FinancesPage = () => {
           <AdvancesDrawer
             isOpen
             onClose={closeDrawerHandler}
+            receivableBalance={accountInformation?.receivable_balance}
             advanceableValue={accountInformation?.advanceable_value}
           />
         </Route>

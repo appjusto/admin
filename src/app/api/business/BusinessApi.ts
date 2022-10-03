@@ -801,7 +801,7 @@ export default class BusinessApi {
       accountId,
       meta: { version: '1' }, // TODO: pass correct version on
     };
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.REACT_APP_ENVIRONMENT !== 'live') {
       return await developmentFetchAccountInformation();
     } else {
       return (await this.refs.getFetchAccountInformationCallable()(payload))
