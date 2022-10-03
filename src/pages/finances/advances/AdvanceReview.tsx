@@ -1,10 +1,28 @@
-import { Box, Button, Checkbox, Flex, Skeleton, Text } from '@chakra-ui/react';
+import { Box, Button, Checkbox, Flex, Text } from '@chakra-ui/react';
 import { ReactComponent as Checked } from 'common/img/icon-checked.svg';
 import React from 'react';
 import { formatCurrency } from 'utils/formatters';
 import { t } from 'utils/i18n';
 import { BasicInfoBox } from '../BasicInfoBox';
 import { FinancesBaseDrawer } from '../FinancesBaseDrawer';
+import { ReviewBox } from './ReviewBox';
+
+const valueDescription = [
+  t(
+    'O valor a ser antecipado pode variar com relação ao valor solicitado. Isso acontece por que a Iugu seleciona o conjunto de faturas, priorizando aquelas mais próximas de sua data de compensação, em que a soma de seus valores se aproxima ao máximo do valor solicitado.'
+  ),
+];
+const feeDescription = [
+  t(
+    'A taxa cobrada pela Iugu é de 2,75% sobre o valor de cada fatura, decrescendo proporcionalmente durante o período de processamento (30 dias).'
+  ),
+  t(
+    'Ex: caso você solicite uma antecipação 15 dias após uma venda, a taxa cobrada para esta fatura será de 1,37% (metade dos 2,75%).'
+  ),
+  t(
+    'Desse modo, a Iugu calcula o valor das taxas cobradas em cada uma das faturas que compõem o total a ser antecipado e exibe aqui esse somatório.'
+  ),
+];
 
 interface AdvanceReviewProps {
   isOpen: boolean;
@@ -33,11 +51,13 @@ export const AdvanceReview = ({
   const [isFeesAccepted, setIsFeesAccepted] = React.useState(false);
   // refs
   const acceptCheckBoxRef = React.useRef<HTMLInputElement>(null);
+  // helpers
+  const isSameValueRequested = amount === advancedValue;
   // UI
   return (
     <FinancesBaseDrawer
       onClose={onClose}
-      title={t('Antecipação dos valores')}
+      title={t('Simulação da antecipação')}
       isReviewing
       footer={() => (
         <Flex w="100%" justifyContent="space-between">
@@ -49,7 +69,7 @@ export const AdvanceReview = ({
             loadingText={t('Confirmando')}
             isDisabled={!isFeesAccepted}
           >
-            {t('Confirmar adiantamento')}
+            {t('Confirmar antecipação')}
           </Button>
           <Button
             mr="16"
@@ -63,17 +83,12 @@ export const AdvanceReview = ({
       )}
       {...props}
     >
-      <Text mt="6" fontSize="16px" fontWeight="500" lineHeight="22px">
+      <Text mt="-2" fontSize="16px" fontWeight="500" lineHeight="22px">
         {t(
-          'O prazo padrão para processar os pagamentos é de 30 dias. Para antecipar, você paga uma taxa de até 2.75% por operação. Funciona assim: se for antecipar no primeiro dia útil após a corrida, você pagará o valor cheio de 2.75%, e a taxa diminui proporcionalmente a cada dia que passa. Se você esperar 15 dias, por exemplo, pagará 1.37%.'
+          'Abaixo são exibidos os valores referentes à operação. Se desejar prosseguir com a antecipação, basta marcar que está de acordo com a taxa cobrada pela Iugu e confirmar.'
         )}
       </Text>
-      <Text mt="-2" color="red">
-        {t(
-          'Atenção: a Iugu só permite realizar antecipações em dias úteis, de 09:00 às 16:00 e só é possível antecipar faturas pagas há mais de 2 dias úteis.'
-        )}
-      </Text>
-      <Box mt="4">
+      <Box mt="8">
         <Text fontSize="15px" fontWeight="500" lineHeight="21px">
           {t('Valor solicitado:')}
         </Text>
@@ -81,39 +96,19 @@ export const AdvanceReview = ({
           {formatCurrency(amount)}
         </Text>
       </Box>
-      <Box mt="6">
-        <Text fontSize="15px" fontWeight="500" lineHeight="21px">
-          {t('Total a antecipar')}
-        </Text>
-        {advancedValue === undefined ? (
-          <Skeleton mt="1" maxW="294px" height="30px" colorScheme="#9AA49C" />
-        ) : advancedValue === null ? (
-          'N/E'
-        ) : (
-          <Text
-            fontSize="24px"
-            fontWeight="500"
-            lineHeight="30px"
-            color="green.700"
-          >
-            + {formatCurrency(advancedValue)}
-          </Text>
-        )}
-      </Box>
-      <Box mt="6">
-        <Text fontSize="15px" fontWeight="500" lineHeight="21px">
-          {t('Total de taxas de antecipação')}
-        </Text>
-        {advanceFee === undefined ? (
-          <Skeleton mt="1" maxW="294px" height="30px" colorScheme="#9AA49C" />
-        ) : advanceFee === null ? (
-          'N/E'
-        ) : (
-          <Text fontSize="24px" fontWeight="500" lineHeight="30px" color="red">
-            - {formatCurrency(advanceFee)}
-          </Text>
-        )}
-      </Box>
+      <ReviewBox
+        label={t('Total a antecipar')}
+        valueToDisplay={advancedValue}
+        description={valueDescription}
+        isInfo={!isSameValueRequested}
+      />
+      <ReviewBox
+        label={t('Total de taxas de antecipação')}
+        valueToDisplay={advanceFee}
+        signal="-"
+        description={feeDescription}
+        isInfo
+      />
       <BasicInfoBox
         mt="6"
         label={t('Total a receber na antecipação')}
@@ -131,7 +126,7 @@ export const AdvanceReview = ({
       >
         <Text fontSize="15px" fontWeight="500" lineHeight="21px">
           {t(
-            'Estou de acordo com as taxas cobradas para o adiantamento do valor'
+            'Estou de acordo com as taxas cobradas para a antecipação do valor'
           )}
         </Text>
       </Checkbox>

@@ -110,8 +110,10 @@ export const AdvancesDrawer = ({
   React.useEffect(() => {
     if (simulateOption === 'auto' && advanceableValue) {
       setAmount(advanceableValue);
+    } else {
+      amountInputRef.current?.focus();
     }
-  }, [simulateOption, advanceableValue]);
+  }, [simulateOption, advanceableValue, amountInputRef]);
   // UI
   if (advanceReceivablesResult.isSuccess) {
     return (
@@ -172,6 +174,14 @@ export const AdvancesDrawer = ({
         <Icon mt="1" as={MdInfoOutline} />
         <Text ml="2" fontSize="15px" fontWeight="500" lineHeight="22px">
           {t(
+            'O prazo padrão para processar pagamentos em cartão de crédito e disponibilizar seus valores para saque é de 30 dias.'
+          )}
+        </Text>
+      </Flex>
+      <Flex mt="4" flexDir="row">
+        <Icon mt="1" as={MdInfoOutline} />
+        <Text ml="2" fontSize="15px" fontWeight="500" lineHeight="22px">
+          {t(
             'Valores referêntes a pedidos agendados e pagos via PIX são disponibilizados diretamente na sua tela de saque, em até 24h.'
           )}
         </Text>
@@ -196,7 +206,7 @@ export const AdvancesDrawer = ({
           icon={Checked}
           value={formatCurrency(advanceableValue ?? 0)}
         />
-        <Flex mt="4" flexDir="row" color="red">
+        <Flex mt="2" flexDir="row" color="red">
           <Icon mt="1" as={MdInfoOutline} />
           <Text ml="2" fontSize="15px" fontWeight="500" lineHeight="22px">
             {t(
@@ -204,7 +214,7 @@ export const AdvancesDrawer = ({
             )}
           </Text>
         </Flex>
-        <SectionTitle>{t('Simular antecipação')}</SectionTitle>
+        <SectionTitle mt="4">{t('Simular antecipação')}</SectionTitle>
         <RadioGroup
           mt="4"
           value={simulateOption}

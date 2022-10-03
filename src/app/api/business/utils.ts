@@ -42,7 +42,7 @@ export const developmentFetchAdvanceSimulation = (
 ) =>
   new Promise<IuguMarketplaceAccountAdvanceByAmountSimulation>(
     (resolve, reject) => {
-      const value = amount * 0.98;
+      const value = amount === 200000 ? 200000 : amount * 0.98;
       const fee = value * 0.024;
       const installments = round(value / 60);
       setTimeout(() => {
