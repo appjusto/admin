@@ -27,7 +27,7 @@ export const ManagerBar = (props: FlexProps) => {
       bgColor={{ base: '#F6F6F6', lg: '#EEEEEE' }}
       px="4"
       py="2"
-      pb={isEmulated ? '8' : '0'}
+      pb={isEmulated ? '8' : '1.5'}
       {...props}
     >
       <Flex mr="2" justifyContent="center" alignItems="center">
@@ -48,7 +48,9 @@ export const ManagerBar = (props: FlexProps) => {
             {t('Sair')}
           </Link>
         </Box>
-        <RouterLink to={isBackOffice ? `${url}/staff-profile` : `${url}/manager-profile`}>
+        <RouterLink
+          to={isBackOffice ? `${url}/staff-profile` : `${url}/manager-profile`}
+        >
           <EditButton />
         </RouterLink>
       </Flex>

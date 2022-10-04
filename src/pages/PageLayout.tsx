@@ -7,14 +7,17 @@ interface PageLayoutProps extends FlexProps {
   mt?: string;
 }
 
-const PageLayout = ({ maxW = '960px', mt = '0', children }: PageLayoutProps) => {
-  // context
+const PageLayout = ({
+  maxW = '960px',
+  mt = '0',
+  children,
+}: PageLayoutProps) => {
   // UI
   return (
-    <Flex w="100vw" minH="100vh" maxW="100vw" mt={mt}>
+    <Flex flex={1} minH="100vh" mt={mt}>
       <MenuMobile />
       <Sidebar />
-      <Flex w="100%" justifyContent="center">
+      <Flex flex={1} justifyContent="center">
         <Container
           w="100%"
           maxW={{ lg: maxW, xl: '1188px' }}
