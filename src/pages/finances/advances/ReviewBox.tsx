@@ -18,6 +18,7 @@ interface ReviewBoxProps extends BoxProps {
   signal?: '+' | '-';
   isInfo?: boolean;
   description?: string[];
+  showInfoDefault?: boolean;
 }
 
 export const ReviewBox = ({
@@ -26,10 +27,16 @@ export const ReviewBox = ({
   signal = '+',
   isInfo,
   description,
+  showInfoDefault = false,
   ...props
 }: ReviewBoxProps) => {
   // state
   const [showInfo, setShowInfo] = React.useState(false);
+  // side effects
+  React.useEffect(() => {
+    if (!showInfoDefault) return;
+    setShowInfo(showInfoDefault);
+  }, [showInfoDefault]);
   // UI
   return (
     <Box mt="6" {...props}>
@@ -72,15 +79,17 @@ export const ReviewBox = ({
           borderRadius="lg"
           position="relative"
         >
-          <Icon
-            as={MdClose}
-            position="absolute"
-            top="2"
-            right="2"
-            cursor="pointer"
-            color="gray.500"
-            onClick={() => setShowInfo(false)}
-          />
+          {!showInfoDefault && (
+            <Icon
+              as={MdClose}
+              position="absolute"
+              top="2"
+              right="2"
+              cursor="pointer"
+              color="gray.500"
+              onClick={() => setShowInfo(false)}
+            />
+          )}
           {description &&
             description.map((info, index) => {
               return (

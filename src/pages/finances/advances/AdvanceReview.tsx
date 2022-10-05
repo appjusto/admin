@@ -9,7 +9,7 @@ import { ReviewBox } from './ReviewBox';
 
 const valueDescription = [
   t(
-    'O valor a ser antecipado pode variar com relação ao valor solicitado. Isso acontece por que a Iugu seleciona o conjunto de faturas, priorizando aquelas mais próximas de sua data de compensação, em que a soma de seus valores se aproxima ao máximo do valor solicitado.'
+    'Houve uma diferença entre o valor solicitado e aquele que pode ser antecipado, por que a Iugu seleciona o conjunto de faturas - priorizando aquelas mais próximas de sua data de compensação - em que a soma de seus valores se aproxima ao máximo do valor solicitado.'
   ),
 ];
 const feeDescription = [
@@ -100,7 +100,7 @@ export const AdvanceReview = ({
         label={t('Total a antecipar')}
         valueToDisplay={advancedValue}
         description={valueDescription}
-        isInfo={!isSameValueRequested}
+        showInfoDefault={!isSameValueRequested}
       />
       <ReviewBox
         label={t('Total de taxas de antecipação (Iugu)')}
