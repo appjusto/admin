@@ -4,6 +4,7 @@ export const Button = {
     fontFamily: 'Barlow',
     fontWeight: 'medium',
     fontSize: 'sm',
+    bg: 'green.500',
     color: 'black',
     border: '1px solid',
     borderRadius: 'lg',
@@ -15,16 +16,12 @@ export const Button = {
         color: 'grey',
       },
     },
-    _hover: {
-      _disabled: {
-        bg: 'initial',
-      },
-    },
     _disabled: {
       opacity: 0.4,
       cursor: 'not-allowed',
       boxShadow: 'none',
       bg: 'gray.700',
+      border: 'none',
     },
   },
   // Variants
@@ -35,15 +32,11 @@ export const Button = {
       _hover: {
         bg: 'green.300',
         borderColor: 'green.300',
-        _disabled: {
-          bg: 'initial',
-        },
       },
-      // _disabled: {
-      //   bg: 'gray.700',
-      //   borderColor: 'gray.700',
-      //   color: 'white',
-      // },
+      _loading: {
+        bg: 'green.300',
+        borderColor: 'green.300',
+      },
     },
     secondary: {
       bg: 'gray.700',
@@ -67,10 +60,6 @@ export const Button = {
         color: 'gray.700',
         borderColor: 'gray.700',
       },
-      _disabled: {
-        color: 'gray.500',
-        borderColor: 'gray.500',
-      },
     },
     outgreen: {
       bg: 'white',
@@ -80,10 +69,6 @@ export const Button = {
         color: 'gray.700',
         borderColor: 'gray.700',
       },
-      _disabled: {
-        color: 'gray.500',
-        borderColor: 'gray.500',
-      },
     },
     white: {
       bg: 'white',
@@ -91,10 +76,6 @@ export const Button = {
       borderColor: 'black',
       _hover: {
         color: 'gray.700',
-      },
-      _disabled: {
-        color: 'gray.500',
-        borderColor: 'gray.500',
       },
     },
     registration: {
@@ -114,10 +95,6 @@ export const Button = {
         color: 'gray.700',
         borderColor: 'gray.700',
       },
-      _disabled: {
-        color: 'gray.500',
-        borderColor: 'gray.500',
-      },
     },
     dangerLight: {
       bg: 'white',
@@ -126,10 +103,6 @@ export const Button = {
       _hover: {
         color: 'gray.700',
         borderColor: 'gray.700',
-      },
-      _disabled: {
-        color: 'gray.500',
-        borderColor: 'gray.500',
       },
     },
     yellowDark: {
@@ -140,11 +113,6 @@ export const Button = {
       _hover: {
         backgroundColor: '#FFE493',
       },
-      _disabled: {
-        color: 'gray.700',
-        borderColor: 'gray.500',
-        backgroundColor: 'gray.200',
-      },
     },
     black: {
       bg: '#000',
@@ -154,11 +122,6 @@ export const Button = {
       fontWeight: '700',
       _hover: {
         backgroundColor: 'gray.700',
-      },
-      _disabled: {
-        color: 'gray.700',
-        borderColor: 'gray.500',
-        backgroundColor: 'gray.200',
       },
     },
   },
