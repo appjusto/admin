@@ -14,7 +14,7 @@ import {
   phoneMask,
 } from 'common/components/form/input/pattern-input/formatters';
 import { numbersOnlyParser } from 'common/components/form/input/pattern-input/parsers';
-import { NotificationPreferencies } from 'common/components/NotificationPreferencies';
+import { UserNotificationPreferences } from 'common/components/UserNotificationPreferences';
 import React from 'react';
 import { normalizeEmail } from 'utils/email';
 import { t } from 'utils/i18n';
@@ -130,7 +130,7 @@ export const PersonalProfile = () => {
         externalValidation={{ active: true, status: isCPFValid() }}
       />
       <SectionTitle>{t('Preferências de notificação')}</SectionTitle>
-      <NotificationPreferencies
+      <UserNotificationPreferences
         notificationPreferences={consumer?.notificationPreferences}
         handlePreferenciesChange={(values) => {
           handleInputChange('notificationPreferences', values);

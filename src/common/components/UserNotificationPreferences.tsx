@@ -2,7 +2,7 @@ import { NotificationPreferences } from '@appjusto/types';
 import { Box, Checkbox, CheckboxGroup, Stack, Text } from '@chakra-ui/react';
 import { t } from 'utils/i18n';
 
-interface NotificationPreferenciesProps {
+interface NotificationPreferencesProps {
   notificationPreferences?: NotificationPreferences;
   handlePreferenciesChange(preferencies: NotificationPreferences): void;
 }
@@ -12,10 +12,10 @@ const fixedNotifications = [
   'order-chat',
 ] as NotificationPreferences;
 
-export const NotificationPreferencies = ({
+export const UserNotificationPreferences = ({
   notificationPreferences,
   handlePreferenciesChange,
-}: NotificationPreferenciesProps) => {
+}: NotificationPreferencesProps) => {
   // handlers
   const handleChange = (values: NotificationPreferences) => {
     const editables = values.filter(

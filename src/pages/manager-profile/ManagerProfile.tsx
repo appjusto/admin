@@ -1,3 +1,4 @@
+import { NotificationPreferences } from '@appjusto/types';
 import { Box, Button, Heading, Text } from '@chakra-ui/react';
 import * as cpfutils from '@fnando/cpf';
 import { useAuthentication } from 'app/api/auth/useAuthentication';
@@ -14,15 +15,25 @@ import {
   cpfFormatter,
   cpfMask,
   phoneFormatter,
-  phoneMask
+  phoneMask,
 } from 'common/components/form/input/pattern-input/formatters';
 import { numbersOnlyParser } from 'common/components/form/input/pattern-input/parsers';
+import { UserNotificationPreferences } from 'common/components/UserNotificationPreferences';
+import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import { OnboardingProps } from 'pages/onboarding/types';
 import PageFooter from 'pages/PageFooter';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { t } from 'utils/i18n';
+
+const initialNotificationPreferences = [
+  'order-update',
+  'order-chat',
+  'status',
+  'general',
+  'marketing',
+] as NotificationPreferences;
 
 export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
   // context
@@ -47,6 +58,8 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const [passwdConfirm, setPasswdConfirm] = React.useState('');
   const [passwdIsValid, setPasswdIsValid] = React.useState(false);
   const [currentPasswd, setCurrentPasswd] = React.useState('');
+  const [notificationPreferences, setNotificationPreferences] =
+    React.useState<NotificationPreferences>();
 
   // refs
   const nameRef = React.useRef<HTMLInputElement>(null);
@@ -59,7 +72,11 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
   // helpers
   const isCPFValid = () => cpfutils.isValid(cpf);
   const isReauthenticationRequired = React.useCallback(() => {
-    if (updateError && JSON.stringify(updateError).includes('recent authentication')) return true;
+    if (
+      updateError &&
+      JSON.stringify(updateError).includes('recent authentication')
+    )
+      return true;
     else return false;
   }, [updateError]);
 
@@ -112,6 +129,7 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
           phone: phoneNumber,
           cpf,
           isPasswordActive: true,
+          notificationPreferences,
         },
         password: passwd,
         currentPassword: currentPasswd,
@@ -125,6 +143,7 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
           phone: phoneNumber,
           cpf,
           isPasswordActive: true,
+          notificationPreferences,
         },
       };
       updateProfile(data);
@@ -145,6 +164,9 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
       setPhoneNumber(manager.phone ?? '');
       setCPF(manager.cpf ?? '');
       if (manager.isPasswordActive) setIsEditingPasswd(false);
+      setNotificationPreferences(
+        manager.notificationPreferences ?? initialNotificationPreferences
+      );
     }
   }, [manager, clearState]);
 
@@ -208,7 +230,9 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
         />
         <CustomPatternInput
           isRequired
-          isDisabled={manager?.cpf !== undefined && business?.situation === 'approved'}
+          isDisabled={
+            manager?.cpf !== undefined && business?.situation === 'approved'
+          }
           ref={cpfRef}
           id="manager-cpf"
           label={t('CPF *')}
@@ -223,7 +247,9 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
         {isEditingPasswd ? (
           <>
             <Heading mt="8" color="black" fontSize="xl">
-              {manager?.isPasswordActive ? t('Alterar senha') : t('Senha de acesso')}
+              {manager?.isPasswordActive
+                ? t('Alterar senha')
+                : t('Senha de acesso')}
             </Heading>
             <Text mt="1" fontSize="sm" maxW="580px">
               {t(
@@ -308,7 +334,9 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
                   {sendingLinkResult.isSuccess && (
                     <AlertSuccess
                       title={t('Pronto!')}
-                      description={t('O link de acesso foi enviado para seu e-mail.')}
+                      description={t(
+                        'O link de acesso foi enviado para seu e-mail.'
+                      )}
                     />
                   )}
                 </Box>
@@ -356,6 +384,18 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
             </Text>
           </Text>
         )}
+        <SectionTitle>{t('Preferências de notificação')}</SectionTitle>
+        <Text mt="1" fontSize="sm" maxW="580px">
+          {t(
+            'Você pode escolher os tipos de comunicações que deseja receber do AppJusto.'
+          )}
+        </Text>
+        <UserNotificationPreferences
+          notificationPreferences={notificationPreferences}
+          handlePreferenciesChange={(values) =>
+            setNotificationPreferences(values)
+          }
+        />
         <PageFooter
           onboarding={onboarding}
           redirect={redirect}
