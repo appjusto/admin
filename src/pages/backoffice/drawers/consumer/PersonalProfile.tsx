@@ -1,4 +1,4 @@
-import { Box, Checkbox, CheckboxGroup, Stack, Text } from '@chakra-ui/react';
+import { Box, Text } from '@chakra-ui/react';
 import * as cpfutils from '@fnando/cpf';
 import { useConsumerUpdateProfile } from 'app/api/consumer/useConsumerUpdateProfile';
 import { useObserveConsumerProfileNotes } from 'app/api/consumer/useObserveConsumerProfileNotes';
@@ -14,6 +14,7 @@ import {
   phoneMask,
 } from 'common/components/form/input/pattern-input/formatters';
 import { numbersOnlyParser } from 'common/components/form/input/pattern-input/parsers';
+import { NotificationPreferencies } from 'common/components/NotificationPreferencies';
 import React from 'react';
 import { normalizeEmail } from 'utils/email';
 import { t } from 'utils/i18n';
@@ -29,22 +30,16 @@ export const PersonalProfile = () => {
     useConsumerUpdateProfile(consumer?.id);
   const { profileNotes, updateNote, deleteNote, updateResult, deleteResult } =
     useObserveConsumerProfileNotes(consumer?.id);
-
   // refs
   const nameRef = React.useRef<HTMLInputElement>(null);
   const cpfRef = React.useRef<HTMLInputElement>(null);
   const phoneNumberRef = React.useRef<HTMLInputElement>(null);
-
   // helpers
   const isCPFValid = () => cpfutils.isValid(consumer?.cpf!);
-
   // handlers
   const handleInputChange = (field: string, value: string | string[]) => {
     return handleProfileChange(field, value);
   };
-
-  // side effects
-
   // UI
   return (
     <Box>
@@ -135,47 +130,12 @@ export const PersonalProfile = () => {
         externalValidation={{ active: true, status: isCPFValid() }}
       />
       <SectionTitle>{t('Preferências de notificação')}</SectionTitle>
-      <CheckboxGroup
-        colorScheme="green"
-        value={consumer?.notificationPreferences}
-        onChange={(values: string[]) =>
-          handleInputChange('notificationPreferences', values)
-        }
-      >
-        <Stack
-          mt="6"
-          alignItems="flex-start"
-          color="black"
-          spacing={4}
-          fontSize="16px"
-          lineHeight="22px"
-        >
-          <Box>
-            <Checkbox value="status">{t('Comunicações operacionais')}</Checkbox>
-            <Text fontSize="13px">
-              {t('Para saber sobre novas versões, atualizações do app e mais.')}
-            </Text>
-          </Box>
-          <Box>
-            <Checkbox value="general">
-              {t('Comunicações institucionais')}
-            </Checkbox>
-            <Text fontSize="13px">
-              {t(
-                'Para conhecer mais sobre o AppJusto: propósito, impacto, crescimento, financiamento e mais.'
-              )}
-            </Text>
-          </Box>
-          <Box>
-            <Checkbox value="marketing">{t('Promoções e ofertas')}</Checkbox>
-            <Text fontSize="13px">
-              {t(
-                'Avisar sobre promoções e ofertas referentes aos restaurantes da rede.'
-              )}
-            </Text>
-          </Box>
-        </Stack>
-      </CheckboxGroup>
+      <NotificationPreferencies
+        notificationPreferences={consumer?.notificationPreferences}
+        handlePreferenciesChange={(values) => {
+          handleInputChange('notificationPreferences', values);
+        }}
+      />
       <SectionTitle>{t('Tags')}</SectionTitle>
       <ProfileTags
         profile={consumer}
