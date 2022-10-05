@@ -49,7 +49,6 @@ const FinancesPage = () => {
   const [availableWithdraw, setAvailableWithdraw] = React.useState<
     string | null
   >();
-  const [activeWithdraw, setActiveWithdraw] = React.useState<number>();
   // page data with filters
   const {
     periodProductAmount,
@@ -93,11 +92,6 @@ const FinancesPage = () => {
       accountInformation?.balance_available_for_withdraw ?? null
     );
   }, [accountInformation]);
-  React.useEffect(() => {
-    if (!withdraws) return;
-    const active = withdraws.filter((w) => w.status !== 'rejected');
-    setActiveWithdraw(active.length);
-  }, [withdraws]);
   // UI
   return (
     <>
@@ -158,7 +152,6 @@ const FinancesPage = () => {
         <Route path={`${path}/withdraw`}>
           <WithdrawsDrawer
             isOpen
-            totalWithdraws={activeWithdraw}
             withdrawValue={availableWithdraw}
             onClose={closeDrawerHandler}
           />

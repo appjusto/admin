@@ -126,7 +126,7 @@ export const AdvanceReview = ({
       >
         <Text fontSize="15px" fontWeight="500" lineHeight="21px">
           {t(
-            'Estou de acordo com as taxas cobradas para a antecipação do valor'
+            'Estou de acordo com as taxas cobradas para a antecipação do valor.'
           )}
         </Text>
       </Checkbox>

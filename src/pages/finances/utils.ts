@@ -6,7 +6,8 @@ export type InvoicesCosts = { value: number; fee: number };
 export const formatCents = (value: string) =>
   parseInt(value.replace(/\D+/g, ''));
 
-export const formatIuguValueToDisplay = (value: string) => {
+export const formatIuguValueToDisplay = (value?: string | null) => {
+  if (!value) return 'R$ 0,00';
   try {
     if (value.includes('R$')) return value;
     else return formatCurrency(formatCents(value));
