@@ -37,6 +37,7 @@ export const courierWatchedFields: (keyof CourierProfile)[] = [
   'company',
   'statistics',
   'appVersion',
+  'notificationPreferences',
   'createdOn',
   // 'updatedOn',
   'mode',

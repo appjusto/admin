@@ -65,7 +65,9 @@ export const PersonalProfile = ({ isCNPJ }: PersonalProfileProps) => {
             id="user-profile-email"
             label={t('E-mail')}
             value={courier?.email ?? ''}
-            onChange={(ev) => handleInputChange('email', normalizeEmail(ev.target.value))}
+            onChange={(ev) =>
+              handleInputChange('email', normalizeEmail(ev.target.value))
+            }
           />
         </Box>
       ) : (

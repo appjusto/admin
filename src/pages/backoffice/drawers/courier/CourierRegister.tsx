@@ -3,6 +3,7 @@ import { useCourierUpdateProfile } from 'app/api/courier/useCourierUpdateProfile
 import { useObserveCourierProfileNotes } from 'app/api/courier/useObserveCourierProfileNotes';
 import { useContextCourierProfile } from 'app/state/courier/context';
 import { ProfileNotes } from 'common/components/backoffice/ProfileNotes';
+import { UserNotificationPreferences } from 'common/components/UserNotificationPreferences';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
 import { ProfileTags } from '../ProfileTags';
@@ -15,7 +16,7 @@ import { ProfileBankingInfo } from './register/ProfileBankingInfo';
 
 export const CourierRegister = () => {
   // context
-  const { courier } = useContextCourierProfile();
+  const { courier, handleProfileChange } = useContextCourierProfile();
   const { updateProfile, updateResult: updateProfileResult } =
     useCourierUpdateProfile(courier?.id);
   const { profileNotes, updateNote, deleteNote, updateResult, deleteResult } =
@@ -35,6 +36,13 @@ export const CourierRegister = () => {
       <ActingCity />
       <SectionTitle>{t('Frota atual')}</SectionTitle>
       <Fleets />
+      <SectionTitle>{t('Preferências de notificação')}</SectionTitle>
+      <UserNotificationPreferences
+        notificationPreferences={courier?.notificationPreferences}
+        handlePreferenciesChange={(values) =>
+          handleProfileChange('notificationPreferences', values)
+        }
+      />
       <SectionTitle>{t('Tags')}</SectionTitle>
       <ProfileTags
         profile={courier}
