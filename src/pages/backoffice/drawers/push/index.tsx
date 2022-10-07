@@ -55,9 +55,8 @@ export const PushDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
     deletePushCampaignResult,
   } = useObservePushCampaign(campaignId !== 'new' ? campaignId : undefined);
   // state
-  const [flavor, setFlavor] = React.useState<Flavor>('consumer');
-  const [channel, setChannel] =
-    React.useState<NotificationChannel>('marketing');
+  const [flavor, setFlavor] = React.useState<Flavor>();
+  const [channel, setChannel] = React.useState<NotificationChannel>();
   const [isGeo, setIsGeo] = React.useState(false);
   const [latitude, setLatitude] = React.useState('');
   const [longitude, setLongitude] = React.useState('');
@@ -80,6 +79,16 @@ export const PushDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   // handlers
   const handleSubmit = () => {
     const scheduledDate = getScheduledDate(pushDate, pushTime);
+    if (!flavor || !channel) {
+      return dispatchAppRequestResult({
+        status: 'error',
+        requestId: 'PushDrawer-submit-error',
+        message: {
+          title: 'Informações incompletas.',
+          description: 'Favor informar o tipo de perfil e de canal.',
+        },
+      });
+    }
     if (!scheduledDate) {
       return dispatchAppRequestResult({
         status: 'error',
@@ -156,10 +165,11 @@ export const PushDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
     deletePushCampaignResult.isSuccess,
   ]);
   React.useEffect(() => {
+    if (campaign?.status === 'approved') return;
     if (!pushDate || !pushTime) return;
     const isValid = getScheduledDate(pushDate, pushTime, true);
     setIsDateValid(isValid as boolean);
-  }, [pushDate, pushTime]);
+  }, [campaign?.status, pushDate, pushTime]);
   //UI
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
