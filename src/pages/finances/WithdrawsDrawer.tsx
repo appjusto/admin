@@ -18,7 +18,7 @@ interface WithdrawsDrawerProps {
   onClose(): void;
 }
 
-const iuguFee: number = 100;
+const iuguFee: number = 200;
 
 export const WithdrawsDrawer = ({
   onClose,
@@ -137,7 +137,9 @@ export const WithdrawsDrawer = ({
         <Icon mt="1" as={MdInfoOutline} />
         <Text ml="2" fontSize="15px" fontWeight="500" lineHeight="22px">
           {t(
-            'Agora você pode realizar quantos saques desejar, ao longo do mês, porém a Iugu passou a cobrar uma taxa fixa de R$ 1,00 por operação.'
+            `Agora você pode realizar quantos saques desejar, ao longo do mês, porém a Iugu passou a cobrar uma taxa fixa de ${formatCurrency(
+              iuguFee
+            )} por operação.`
           )}
         </Text>
       </Flex>
