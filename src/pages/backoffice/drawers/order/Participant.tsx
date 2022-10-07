@@ -176,7 +176,7 @@ export const Participant = ({
           fontWeight="700"
           lineHeight="22px"
         >
-          {t('Nome:')}{' '}
+          {t('Instruçoes:')}{' '}
           <Text as="span" fontWeight="500">
             {instruction ?? 'N/E'}
           </Text>
