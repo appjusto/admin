@@ -39,8 +39,8 @@ export const useObserveBusinessOrdersHistory = (
   }, [orderCode, start, end, orderStatus]);
   React.useEffect(() => {
     if (!userCanRead) return;
-    let startDate = start ? dayjs(start).startOf('day').toDate() : null;
-    let endDate = end ? dayjs(end).endOf('day').toDate() : null;
+    const startDate = start ? dayjs(start).startOf('day').toDate() : null;
+    const endDate = end ? dayjs(end).endOf('day').toDate() : null;
     const unsub = api.order().observeBusinessOrdersHistory(
       (results, last) => {
         setOrdersMap((current) => {

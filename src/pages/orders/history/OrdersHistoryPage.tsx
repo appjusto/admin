@@ -16,12 +16,13 @@ import { FiltersScrollBar } from 'common/components/backoffice/FiltersScrollBar'
 import Container from 'common/components/Container';
 import { CustomDateFilter } from 'common/components/form/input/CustomDateFilter';
 import { CustomInput } from 'common/components/form/input/CustomInput';
-import { OrdersTable } from 'pages/backoffice/orders/OrdersTable';
+import { isEqual } from 'lodash';
 import React from 'react';
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import PageHeader from '../../PageHeader';
 import { OrderDrawer } from '../drawers/orderdrawer';
+import { BusinessOrdersTable } from './BusinessOrdersTable';
 
 const statuses = [
   'scheduled',
@@ -40,12 +41,13 @@ const statusFilterOptions = [
   { label: 'Cancelados', value: 'canceled' },
 ];
 
+const initialFulfillment = ['delivery', 'take-away'] as Fulfillment[];
+
 const OrdersHistoryPage = () => {
   // context
   const { path } = useRouteMatch();
   const history = useHistory();
   const businessId = useContextBusinessId();
-
   // state
   const [searchId, setSearchId] = React.useState('');
   const [searchFrom, setSearchFrom] = React.useState('');
@@ -53,11 +55,8 @@ const OrdersHistoryPage = () => {
   const [clearDateNumber, setClearDateNumber] = React.useState(0);
   const [filterBar, setFilterBar] = React.useState('all');
   const [orderStatus, setOrderStatus] = React.useState<OrderStatus>();
-  const [fulfillment, setFulfillment] = React.useState<Fulfillment[]>([
-    'delivery',
-    'take-away',
-  ]);
-
+  const [fulfillment, setFulfillment] =
+    React.useState<Fulfillment[]>(initialFulfillment);
   const { orders, fetchNextPage } = useObserveBusinessOrdersHistory(
     businessId,
     statuses,
@@ -67,26 +66,42 @@ const OrdersHistoryPage = () => {
     orderStatus,
     fulfillment
   );
-
   // handlers
   const closeDrawerHandler = () => {
     history.replace(path);
   };
-
-  const clearFilters = () => {
+  const clearFilters = (exceptId?: boolean) => {
     setClearDateNumber((prev) => prev + 1);
-    setSearchId('');
+    if (!exceptId) setSearchId('');
     setSearchFrom('');
     setSearchTo('');
     setFilterBar('all');
   };
-
+  const handleFulfillment = (values: Fulfillment[]) => {
+    if (values.length > 0) {
+      setFulfillment(values);
+    }
+  };
   // side effects
   React.useEffect(() => {
     if (filterBar === 'all') setOrderStatus(undefined);
     else setOrderStatus(filterBar as OrderStatus);
   }, [filterBar]);
-
+  React.useEffect(() => {
+    if (searchId.length > 0) {
+      clearFilters(true);
+    }
+  }, [searchId]);
+  React.useEffect(() => {
+    if (
+      searchFrom.length > 0 ||
+      searchTo.length > 0 ||
+      orderStatus ||
+      !isEqual(fulfillment, initialFulfillment)
+    ) {
+      setSearchId('');
+    }
+  }, [searchFrom, searchTo, orderStatus, fulfillment]);
   // UI
   return (
     <>
@@ -140,7 +155,7 @@ const OrdersHistoryPage = () => {
         <CheckboxGroup
           colorScheme="green"
           value={fulfillment}
-          onChange={(values: Fulfillment[]) => setFulfillment(values)}
+          onChange={(values: Fulfillment[]) => handleFulfillment(values)}
         >
           <HStack
             alignItems="flex-start"
@@ -155,7 +170,7 @@ const OrdersHistoryPage = () => {
         </CheckboxGroup>
       </HStack>
       {businessId ? (
-        <OrdersTable orders={orders} />
+        <BusinessOrdersTable orders={orders} />
       ) : (
         <Text>{t('Carregando...')}</Text>
       )}

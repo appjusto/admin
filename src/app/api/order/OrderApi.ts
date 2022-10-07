@@ -327,30 +327,33 @@ export default class OrderApi {
       where('business.id', '==', businessId),
       where('status', 'in', statuses)
     );
-    // orderBy
-    if (orderStatus !== 'scheduled') q = query(q, orderBy('updatedOn', 'desc'));
-    else q = query(q, orderBy('scheduledTo', 'desc'));
-    // filters
-    if (startAfterDoc) q = query(q, startAfter(startAfterDoc));
     if (orderCode) q = query(q, where('code', '==', orderCode));
-    // dates
-    if (orderStatus !== 'scheduled' && start && end)
-      q = query(
-        q,
-        where('updatedOn', '>=', start),
-        where('updatedOn', '<=', end)
-      );
-    if (orderStatus === 'scheduled' && start && end)
-      q = query(
-        q,
-        where('scheduledTo', '>=', start),
-        where('scheduledTo', '<=', end)
-      );
-    // status
-    if (orderStatus) q = query(q, where('status', '==', orderStatus));
-    // fulfillment
-    if (fulfillment && fulfillment.length === 1)
-      q = query(q, where('fulfillment', '==', fulfillment[0]));
+    else {
+      // orderBy
+      if (orderStatus !== 'scheduled')
+        q = query(q, orderBy('timestamps.charged', 'desc'));
+      else q = query(q, orderBy('scheduledTo', 'desc'));
+      // filters
+      if (startAfterDoc) q = query(q, startAfter(startAfterDoc));
+      // dates
+      if (orderStatus !== 'scheduled' && start && end)
+        q = query(
+          q,
+          where('timestamps.charged', '>=', start),
+          where('timestamps.charged', '<=', end)
+        );
+      if (orderStatus === 'scheduled' && start && end)
+        q = query(
+          q,
+          where('scheduledTo', '>=', start),
+          where('scheduledTo', '<=', end)
+        );
+      // status
+      if (orderStatus) q = query(q, where('status', '==', orderStatus));
+      // fulfillment
+      if (fulfillment && fulfillment.length === 1)
+        q = query(q, where('fulfillment', '==', fulfillment[0]));
+    }
     // Unsubscribe
     const unsubscribe = onSnapshot(
       q,
