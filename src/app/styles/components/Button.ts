@@ -10,17 +10,20 @@ export const Button = {
     borderRadius: 'lg',
     whiteSpace: 'normal',
     wordWrap: 'break-word',
-    _loading: {
-      opacity: 1,
-      _hover: {
-        color: 'grey',
+    _focus: {
+      boxShadow: 'none',
+    },
+    _hover: {
+      _disabled: {
+        bgColor: 'gray.500',
       },
     },
     _disabled: {
-      opacity: 0.4,
+      opacity: 1,
       cursor: 'not-allowed',
       boxShadow: 'none',
-      bg: 'gray.700',
+      color: 'gray.600',
+      bg: 'gray.500',
       border: 'none',
     },
   },
@@ -33,10 +36,6 @@ export const Button = {
         bg: 'green.300',
         borderColor: 'green.300',
       },
-      _loading: {
-        bg: 'green.300',
-        borderColor: 'green.300',
-      },
     },
     secondary: {
       bg: 'gray.700',
@@ -45,20 +44,15 @@ export const Button = {
       fontSize: '15px',
       fontWeight: '500',
       _hover: {
-        bg: 'gray.500',
+        bg: 'gray.600',
         borderColor: 'gray.500',
-      },
-      _disabled: {
-        bg: 'gray.300',
-        borderColor: 'gray.300',
       },
     },
     outline: {
       bg: 'white',
       borderColor: 'black',
       _hover: {
-        color: 'gray.700',
-        borderColor: 'gray.700',
+        bg: 'gray.50',
       },
     },
     outgreen: {
@@ -66,16 +60,7 @@ export const Button = {
       borderColor: 'green.600',
       color: 'green.600',
       _hover: {
-        color: 'gray.700',
-        borderColor: 'gray.700',
-      },
-    },
-    white: {
-      bg: 'white',
-      color: 'black',
-      borderColor: 'black',
-      _hover: {
-        color: 'gray.700',
+        bg: 'green.50',
       },
     },
     registration: {
@@ -92,8 +77,10 @@ export const Button = {
       color: 'white',
       borderColor: 'red',
       _hover: {
-        color: 'gray.700',
-        borderColor: 'gray.700',
+        opacity: 0.9,
+        _disabled: {
+          opacity: 1,
+        },
       },
     },
     dangerLight: {
@@ -101,8 +88,7 @@ export const Button = {
       color: 'red',
       borderColor: 'red',
       _hover: {
-        color: 'gray.700',
-        borderColor: 'gray.700',
+        bg: 'redLight',
       },
     },
     yellowDark: {
