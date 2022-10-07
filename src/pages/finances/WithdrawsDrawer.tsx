@@ -1,5 +1,6 @@
 import { Box, Button, Checkbox, Flex, Icon, Text } from '@chakra-ui/react';
 import { useRequestWithdraw } from 'app/api/business/useRequestWithdraw';
+import { usePlatformFees } from 'app/api/platform/usePlatformFees';
 import { useContextBusinessId } from 'app/state/business/context';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { ReactComponent as Checked } from 'common/img/icon-checked.svg';
@@ -18,7 +19,7 @@ interface WithdrawsDrawerProps {
   onClose(): void;
 }
 
-const iuguFee: number = 100;
+// const iuguFee: number = 100;
 
 export const WithdrawsDrawer = ({
   onClose,
@@ -26,13 +27,15 @@ export const WithdrawsDrawer = ({
   ...props
 }: WithdrawsDrawerProps) => {
   // context
+  const { platformFees } = usePlatformFees();
   const businessId = useContextBusinessId();
   const { dispatchAppRequestResult } = useContextAppRequests();
   const { requestWithdraw, requestWithdrawResult } =
     useRequestWithdraw(businessId);
   const { isLoading, isSuccess } = requestWithdrawResult;
   // state
-  const [requestedValue, setRequestedValue] = React.useState(0);
+  const [iuguFee, setIuguFee] = React.useState<number>();
+  const [netValue, setNetValue] = React.useState(0);
   const [withdrawIsAvailable, setWithdrawIsAvailable] =
     React.useState<boolean>();
   const [isFeesAccepted, setIsFeesAccepted] = React.useState(false);
@@ -51,12 +54,16 @@ export const WithdrawsDrawer = ({
   };
   // side effects
   React.useEffect(() => {
+    if (!platformFees?.processing.iugu.withdraw) return;
+    setIuguFee(platformFees.processing.iugu.withdraw);
+  }, [platformFees]);
+  React.useEffect(() => {
     if (!withdrawValue) return;
     const value = formatCents(withdrawValue);
     setWithdrawIsAvailable(value > 0);
-    const netValue = value - iuguFee;
-    if (value > 0) setRequestedValue(netValue);
-  }, [withdrawValue]);
+    const net = value - (iuguFee ?? 0);
+    if (value > 0) setNetValue(net);
+  }, [withdrawValue, iuguFee]);
   // UI
   if (isSuccess) {
     return (
@@ -80,7 +87,7 @@ export const WithdrawsDrawer = ({
             <Text mt="1" fontSize="18px" fontWeight="500" lineHeight="26px">
               {t(
                 `Em até 2 dias úteis o valor de ${
-                  requestedValue ? formatCurrency(requestedValue) : 'N/E'
+                  netValue ? formatCurrency(netValue) : 'N/E'
                 } estará disponível em sua conta.`
               )}
             </Text>
@@ -137,9 +144,9 @@ export const WithdrawsDrawer = ({
         <Icon mt="1" as={MdInfoOutline} />
         <Text ml="2" fontSize="15px" fontWeight="500" lineHeight="22px">
           {t(
-            `Agora você pode realizar quantos saques desejar, ao longo do mês, porém a Iugu passou a cobrar uma taxa fixa de ${formatCurrency(
-              iuguFee
-            )} por operação.`
+            `Agora você pode realizar quantos saques desejar, ao longo do mês, porém a Iugu passou a cobrar uma taxa fixa de ${
+              iuguFee ? formatCurrency(iuguFee) : 'N/E'
+            } por operação.`
           )}
         </Text>
       </Flex>
@@ -160,7 +167,7 @@ export const WithdrawsDrawer = ({
         mt="6"
         label={t('Total a ser transferido')}
         icon={Checked}
-        value={formatCurrency(requestedValue)}
+        value={formatCurrency(netValue)}
       />
       <Checkbox
         ref={acceptCheckBoxRef}
@@ -170,6 +177,7 @@ export const WithdrawsDrawer = ({
         colorScheme="green"
         isChecked={isFeesAccepted}
         onChange={(e) => setIsFeesAccepted(e.target.checked)}
+        isDisabled={!iuguFee}
       >
         <Text fontSize="15px" fontWeight="500" lineHeight="21px">
           {t(
