@@ -18,7 +18,7 @@ interface WithdrawsDrawerProps {
   onClose(): void;
 }
 
-const iuguFee: number = 200;
+const iuguFee: number = 100;
 
 export const WithdrawsDrawer = ({
   onClose,
