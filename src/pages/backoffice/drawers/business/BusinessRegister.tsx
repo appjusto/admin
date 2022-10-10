@@ -96,10 +96,10 @@ export const BusinessRegister = () => {
         }
         isBackoffice
       />
-      <SectionTitle>{t('Desconto médio')}</SectionTitle>
+      <SectionTitle>{t('% Preço Justo')}</SectionTitle>
       <CustomInput
         id="bo-business-average-discount"
-        label="Percentual de desconto"
+        label="repasse do restaurante"
         value={
           business?.averageDiscount ? business.averageDiscount.toString() : '0'
         }
