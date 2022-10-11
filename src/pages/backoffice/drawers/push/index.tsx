@@ -76,7 +76,8 @@ export const PushDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   const isLoading = isNew
     ? submitPushCampaignResult.isLoading
     : updatePushCampaignResult.isLoading;
-  const formDisabled = campaign?.status === 'approved';
+  const formDisabled =
+    campaign?.status && ['rejected', 'approved'].includes(campaign?.status);
   // handlers
   const handleSubmit = () => {
     const scheduledDate = getScheduledDate(pushDate, pushTime);
