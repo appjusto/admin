@@ -32,12 +32,13 @@ import { getCitiesByState, IBGEResult, UF } from '../../utils/ApiIBGE';
 import ufs from '../../utils/ufs';
 import { BusinessAverageCookingTime } from './BusinessAverageCookingTime';
 
+const defaultRadius = 10; // 10km
+
 const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
   // context
   const { business } = useContextBusiness();
   const { googleMapsApiKey } = getConfig().api;
   // state
-  const defaultRadius = 10; // 10km
   const [map, setMap] = React.useState<google.maps.Map>();
   const [range, setRange] = React.useState<google.maps.Circle>();
   const [cep, setCEP] = React.useState(business?.businessAddress?.cep ?? '');
