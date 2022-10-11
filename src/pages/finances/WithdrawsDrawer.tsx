@@ -6,7 +6,7 @@ import { useContextAppRequests } from 'app/state/requests/context';
 import { ReactComponent as Checked } from 'common/img/icon-checked.svg';
 import React from 'react';
 import { MdInfoOutline } from 'react-icons/md';
-import { convertBalance, formatCurrency } from 'utils/formatters';
+import { formatCurrency } from 'utils/formatters';
 import { t } from 'utils/i18n';
 import { ReviewBox } from './advances/ReviewBox';
 import { BasicInfoBox } from './BasicInfoBox';
@@ -49,7 +49,7 @@ export const WithdrawsDrawer = ({
         requestId: 'FinancesPage-valid',
         message: { title: 'Não existe valor disponível para transferência.' },
       });
-    const amount = convertBalance(withdrawValue);
+    const amount = formatCents(withdrawValue);
     requestWithdraw(amount);
   };
   // side effects
