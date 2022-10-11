@@ -6,7 +6,6 @@
   "private": true,
   "main": "build/desktop/main.js",
   "dependencies": {
-    "@appjusto/components": "../components",
     "@appjusto/menu": "^0.1.4",
     "@appjusto/types": "^7.15.5",
     "@casl/ability": "^5.4.3",

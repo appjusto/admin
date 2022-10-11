@@ -127,9 +127,6 @@
     jsonpointer "^5.0.0"
     leven "^3.1.0"
 
-"@appjusto/components@../components":
-  version "1.0.0"
-
 "@appjusto/menu@^0.1.4":
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/@appjusto/menu/-/menu-0.1.4.tgz#58359f20415468493c327d410ef18c8d672c1c85"
