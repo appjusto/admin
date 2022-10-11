@@ -76,6 +76,7 @@ export const PushDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   const isLoading = isNew
     ? submitPushCampaignResult.isLoading
     : updatePushCampaignResult.isLoading;
+  const formDisabled = campaign?.status === 'approved';
   // handlers
   const handleSubmit = () => {
     const scheduledDate = getScheduledDate(pushDate, pushTime);
@@ -208,6 +209,7 @@ export const PushDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 color="black"
                 fontSize="15px"
                 lineHeight="21px"
+                isDisabled={formDisabled}
               >
                 <HStack spacing={4}>
                   <Radio value="consumer">{t('Consumidor')}</Radio>
@@ -225,6 +227,7 @@ export const PushDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 color="black"
                 fontSize="15px"
                 lineHeight="21px"
+                isDisabled={formDisabled}
               >
                 <HStack spacing={4}>
                   <Radio value="marketing">{t('Marketing')}</Radio>
@@ -238,6 +241,7 @@ export const PushDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 colorScheme="green"
                 isChecked={isGeo}
                 onChange={() => setIsGeo((prev) => !prev)}
+                isDisabled={formDisabled}
               >
                 {t('É georreferenciada')}
               </Checkbox>
@@ -253,6 +257,7 @@ export const PushDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                       onChange={(ev) => setLatitude(ev.target.value)}
                       isCoordinates
                       isRequired
+                      isDisabled={formDisabled}
                     />
                     <NumberInput
                       mt="0"
@@ -263,6 +268,7 @@ export const PushDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                       onChange={(ev) => setLongitude(ev.target.value)}
                       isCoordinates
                       isRequired
+                      isDisabled={formDisabled}
                     />
                   </HStack>
                   <NumberInput
@@ -272,6 +278,7 @@ export const PushDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                     value={radius}
                     onChange={(ev) => setRadius(ev.target.value)}
                     isRequired
+                    isDisabled={formDisabled}
                   />
                 </>
               )}
@@ -283,6 +290,7 @@ export const PushDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 value={name}
                 onChange={(ev) => setName(ev.target.value)}
                 isRequired
+                isDisabled={formDisabled}
               />
               <CustomInput
                 id="push-title"
@@ -292,6 +300,7 @@ export const PushDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 onChange={(ev) => setTitle(ev.target.value)}
                 maxLength={65}
                 isRequired
+                isDisabled={formDisabled}
               />
               <InputCounter max={65} current={title.length} />
               <Textarea
@@ -301,6 +310,7 @@ export const PushDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 value={body}
                 onChange={(ev) => setBody(ev.target.value)}
                 maxLength={178 - title.length}
+                isDisabled={formDisabled}
               />
               <InputCounter max={178 - title.length} current={body.length} />
               <HStack mt="4" spacing={4}>
@@ -313,6 +323,7 @@ export const PushDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                   label={t('Data')}
                   isInvalid={!isDateValid}
                   isRequired
+                  isDisabled={formDisabled}
                 />
                 <CustomInput
                   mt="0"
@@ -323,6 +334,7 @@ export const PushDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                   label={t('Horário')}
                   isInvalid={!isDateValid}
                   isRequired
+                  isDisabled={formDisabled}
                 />
               </HStack>
               {canUpdate && (
@@ -341,7 +353,9 @@ export const PushDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                     lineHeight="21px"
                   >
                     <VStack mt="4" spacing={2} alignItems="flex-start">
-                      <Radio value="submitted">{t('Submetida')}</Radio>
+                      <Radio value="submitted" isDisabled={formDisabled}>
+                        {t('Submetida')}
+                      </Radio>
                       <Radio value="approved">{t('Aprovada')}</Radio>
                       <Radio value="rejected">{t('Rejeitada')}</Radio>
                     </VStack>
