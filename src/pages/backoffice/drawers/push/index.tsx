@@ -337,6 +337,11 @@ export const PushDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                   isDisabled={formDisabled}
                 />
               </HStack>
+              <Text mt="2" color="gray.600" fontSize="13px">
+                {t(
+                  'Obs: só é possível submeter/aprovar uma campanha com horário superior a 10min no futuro'
+                )}
+              </Text>
               {canUpdate && (
                 <>
                   <SectionTitle>{t('Status')}</SectionTitle>
