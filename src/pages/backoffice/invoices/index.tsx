@@ -24,7 +24,6 @@ const statusFilterOptions = [
   { label: 'Cancelada', value: 'canceled' },
   { label: 'Protesto', value: 'in_protest' },
   { label: 'Estorno', value: 'chargeback' },
-  { label: 'Cancelada', value: 'canceled' },
 ];
 
 const InvoicesPage = () => {
