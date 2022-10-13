@@ -15,6 +15,7 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
+import { useObserveBanner } from 'app/api/banners/useObserveBanner';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { CustomInput } from 'common/components/form/input/CustomInput';
@@ -29,6 +30,7 @@ import {
 } from 'common/imagesDimensions';
 import React from 'react';
 import { useParams } from 'react-router-dom';
+import { slugfyName } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
 import { Banner, TargetOptions } from './types';
@@ -48,6 +50,14 @@ export const BannerDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   const { bannerId } = useParams<Params>();
   const { userAbility } = useContextFirebaseUser();
   const { dispatchAppRequestResult } = useContextAppRequests();
+  const {
+    banner,
+    webImage,
+    mobileImage,
+    heroImage,
+    updateBanner,
+    updateBannerResult,
+  } = useObserveBanner(bannerId !== 'new' ? bannerId : undefined);
   // state
   const [flavor, setFlavor] = React.useState<Flavor>('consumer');
   const [target, setTarget] = React.useState<TargetOptions>('inner-page');
@@ -104,45 +114,54 @@ export const BannerDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
         message: { title: 'Informações incompletas' },
       });
     }
-    const filesValidation = getBannerFilesValidation(
-      flavor,
-      target,
-      bannerWebFiles,
-      bannerMobileFiles,
-      bannerHeroFiles
-    );
-    if (!filesValidation.status) {
-      return dispatchAppRequestResult({
-        status: 'error',
-        requestId: 'banner-valid-files',
-        message: { title: filesValidation.message! },
-      });
+    if (bannerId === 'new') {
+      const filesValidation = getBannerFilesValidation(
+        flavor,
+        target,
+        bannerWebFiles,
+        bannerMobileFiles,
+        bannerHeroFiles
+      );
+      if (!filesValidation.status) {
+        return dispatchAppRequestResult({
+          status: 'error',
+          requestId: 'banner-valid-files',
+          message: { title: filesValidation.message! },
+        });
+      }
     }
     // create new object
     const newBanner = {
       flavor,
       target,
-      pageTitle,
+      pageTitle: slugfyName(pageTitle),
       link: bannerLink,
-      enabled: Boolean(enabled),
+      enabled: enabled === 'true' ? true : false,
     } as Banner;
     // save data
     console.log(newBanner);
+    updateBanner({
+      id: bannerId,
+      changes: newBanner,
+      webFiles: bannerWebFiles,
+      mobileFiles: bannerMobileFiles,
+      heroFiles: bannerHeroFiles,
+    });
   };
   // side effects
-
-  // React.useEffect(() => {
-  //   if (
-  //     submitPushCampaignResult.isSuccess ||
-  //     deletePushCampaignResult.isSuccess
-  //   ) {
-  //     onClose();
-  //   }
-  // }, [
-  //   onClose,
-  //   submitPushCampaignResult.isSuccess,
-  //   deletePushCampaignResult.isSuccess,
-  // ]);
+  React.useEffect(() => {
+    if (!banner) return;
+    setFlavor(banner.flavor);
+    setTarget(banner.target);
+    if (banner.pageTitle) setPageTitle(banner.pageTitle);
+    setBannerLink(banner.link);
+    setEnabled(banner.enabled.toString());
+  }, [banner]);
+  React.useEffect(() => {
+    if (updateBannerResult.isSuccess) {
+      onClose();
+    }
+  }, [onClose, updateBannerResult.isSuccess]);
   //UI
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
@@ -235,13 +254,13 @@ export const BannerDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 mt="4"
                 width={600}
                 height={110}
-                imageUrl={null}
+                imageUrl={webImage ?? null}
                 ratios={bannerWebRatios}
                 resizedWidth={bannerWebResizedWidth}
                 placeholderText={t('PNG 980x180')}
                 getImages={getBannerWebFiles}
                 clearDrop={() => clearDropImages('banner-web')}
-                doubleSizeCropping={false}
+                imageType="image/png"
               />
               <Text mt="4" fontSize="md" color="black">
                 {t('Banner mobile (PNG - 320x100)')}
@@ -251,13 +270,13 @@ export const BannerDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 mt="4"
                 width={600}
                 height={187.5}
-                imageUrl={null}
+                imageUrl={mobileImage ?? null}
                 ratios={bannerMobileRatios}
                 resizedWidth={bannerMobileResizedWidth}
                 placeholderText={t('PNG - 320x100')}
                 getImages={getBannerMobileFiles}
                 clearDrop={() => clearDropImages('banner-mobile')}
-                doubleSizeCropping={false}
+                imageType="image/png"
               />
               <Text mt="4" fontSize="md" color="black">
                 {t('Banner hero (PNG - 980x980)')}
@@ -267,13 +286,13 @@ export const BannerDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 mt="4"
                 width={400}
                 height={400}
-                imageUrl={null}
+                imageUrl={heroImage ?? null}
                 ratios={bannerHeroRatios}
                 resizedWidth={bannerHeroResizedWidth}
                 placeholderText={t('PNG - 980x980')}
                 getImages={getBannerHeroFiles}
                 clearDrop={() => clearDropImages('hero')}
-                doubleSizeCropping={false}
+                imageType="image/png"
               />
               {canUpdate && (
                 <>
@@ -303,7 +322,7 @@ export const BannerDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                     width="full"
                     fontSize="15px"
                     type="submit"
-                    // isLoading={isLoading}
+                    isLoading={updateBannerResult.isLoading}
                     loadingText={t('Salvando')}
                   >
                     {t('Salvar')}
@@ -358,7 +377,7 @@ export const BannerDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                       width="full"
                       fontSize="15px"
                       type="submit"
-                      // isLoading={isLoading}
+                      isLoading={updateBannerResult.isLoading}
                       loadingText={t('Salvando')}
                     >
                       {t('Salvar alterações')}

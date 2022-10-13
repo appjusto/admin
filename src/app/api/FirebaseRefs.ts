@@ -1,3 +1,4 @@
+import { Flavor } from '@appjusto/types';
 import { collection, doc, Firestore, writeBatch } from 'firebase/firestore';
 import { Functions, httpsCallable } from 'firebase/functions';
 export default class FirebaseRefs {
@@ -219,10 +220,14 @@ export default class FirebaseRefs {
   getFleetRef = (fleetId: string) => doc(this.getFleetsRef(), fleetId);
   getAppJustoFleetRef = () => this.getFleetRef('appjusto');
 
-  // invoices
+  // recommendations
   getRecommendationsRef = () => collection(this.firestore, 'recommendations');
   getRecommendationRef = (recommendationsId: string) =>
     doc(this.getRecommendationsRef(), recommendationsId);
+
+  // banners
+  getBannersRef = () => collection(this.firestore, 'banners');
+  getBannerRef = (bannerId: string) => doc(this.getBannersRef(), bannerId);
 
   // storage
   // business
@@ -280,4 +285,7 @@ export default class FirebaseRefs {
     courierId: string,
     type: 'front' | 'package'
   ) => `${this.getOrderStoragePath(orderId)}/${courierId}/${type}.jpg`;
+  // banners
+  getBannerStoragePath = (flavor: Flavor, bannerId: string, size: string) =>
+    `banners/${flavor}/${bannerId}${size}.png`;
 }

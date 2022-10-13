@@ -26,6 +26,7 @@ import {
   getStorage,
 } from 'firebase/storage';
 import AuthApi from './auth/AuthApi';
+import BannersApi from './banners/BannersApi';
 import BusinessApi from './business/BusinessApi';
 import ChatApi from './chat/ChatApi';
 import ConsumerApi from './consumer/CosumerApi';
@@ -71,6 +72,7 @@ export default class Api {
   private _measurement: MeasurementApi;
   private _chat: ChatApi;
   private _push_campaigns: PushCampaignApi;
+  private _banners: BannersApi;
 
   constructor(config: ApiConfig) {
     if (!Api.app) {
@@ -123,6 +125,7 @@ export default class Api {
     this._measurement = new MeasurementApi(this._analytics);
     this._chat = new ChatApi(this._refs);
     this._push_campaigns = new PushCampaignApi(this._refs);
+    this._banners = new BannersApi(this._refs, this._files);
   }
 
   measurement() {
@@ -183,5 +186,9 @@ export default class Api {
 
   push_campaigns() {
     return this._push_campaigns;
+  }
+
+  banners() {
+    return this._banners;
   }
 }
