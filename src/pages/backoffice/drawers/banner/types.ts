@@ -9,3 +9,8 @@ export interface Banner {
   link: string;
   enabled: boolean;
 }
+
+export type BannerFilesValidationResult = {
+  status: boolean;
+  message?: string;
+};

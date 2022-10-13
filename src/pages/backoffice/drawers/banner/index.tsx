@@ -18,11 +18,21 @@ import {
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { CustomInput } from 'common/components/form/input/CustomInput';
+import { ImageUploads } from 'common/components/ImageUploads';
+import {
+  bannerHeroRatios,
+  bannerHeroResizedWidth,
+  bannerMobileRatios,
+  bannerMobileResizedWidth,
+  bannerWebRatios,
+  bannerWebResizedWidth,
+} from 'common/imagesDimensions';
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
-import { TargetOptions } from './types';
+import { Banner, TargetOptions } from './types';
+import { getBannerFilesValidation } from './utils';
 
 interface BaseDrawerProps {
   isOpen: boolean;
@@ -44,15 +54,80 @@ export const BannerDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   const [pageTitle, setPageTitle] = React.useState('');
   const [bannerLink, setBannerLink] = React.useState('');
   const [enabled, setEnabled] = React.useState('false');
+  const [bannerWebFiles, setBannerWebFiles] = React.useState<File[] | null>(
+    null
+  );
+  const [bannerMobileFiles, setBannerMobileFiles] = React.useState<
+    File[] | null
+  >(null);
+  const [bannerHeroFiles, setBannerHeroFiles] = React.useState<File[] | null>(
+    null
+  );
   const [isDeleting, setIsDeleting] = React.useState(false);
   // helpers
   const isNew = bannerId === 'new';
   const canUpdate = !isNew && userAbility?.can('update', 'banners');
   // handlers
+  const getBannerWebFiles = React.useCallback(async (files: File[]) => {
+    // setLogoExists(true);
+    setBannerWebFiles(files);
+  }, []);
+  const getBannerMobileFiles = React.useCallback(async (files: File[]) => {
+    // setLogoExists(true);
+    setBannerMobileFiles(files);
+  }, []);
+  const getBannerHeroFiles = React.useCallback(async (files: File[]) => {
+    // setLogoExists(true);
+    setBannerHeroFiles(files);
+  }, []);
+  const clearDropImages = React.useCallback(
+    (type: 'banner-web' | 'banner-mobile' | 'hero') => {
+      if (type === 'banner-web') {
+        // setLogoExists(false);
+        setBannerWebFiles(null);
+      } else if (type === 'banner-mobile') {
+        // setCoverExists(false);
+        setBannerMobileFiles(null);
+      } else {
+        // setCoverExists(false);
+        setBannerHeroFiles(null);
+      }
+    },
+    []
+  );
   const handleSubmit = () => {
     // validations
+    if (!flavor || !target || !bannerLink) {
+      return dispatchAppRequestResult({
+        status: 'error',
+        requestId: 'banner-valid-infos',
+        message: { title: 'Informações incompletas' },
+      });
+    }
+    const filesValidation = getBannerFilesValidation(
+      flavor,
+      target,
+      bannerWebFiles,
+      bannerMobileFiles,
+      bannerHeroFiles
+    );
+    if (!filesValidation.status) {
+      return dispatchAppRequestResult({
+        status: 'error',
+        requestId: 'banner-valid-files',
+        message: { title: filesValidation.message! },
+      });
+    }
     // create new object
+    const newBanner = {
+      flavor,
+      target,
+      pageTitle,
+      link: bannerLink,
+      enabled: Boolean(enabled),
+    } as Banner;
     // save data
+    console.log(newBanner);
   };
   // side effects
 
@@ -109,8 +184,8 @@ export const BannerDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
               >
                 <HStack spacing={4}>
                   <Radio value="consumer">{t('Consumidores')}</Radio>
-                  <Radio value="courier">{t('Entregadores')}</Radio>
                   <Radio value="business">{t('Restaurantes')}</Radio>
+                  <Radio value="courier">{t('Entregadores')}</Radio>
                 </HStack>
               </RadioGroup>
               <SectionTitle>{t('Target')}</SectionTitle>
@@ -132,11 +207,13 @@ export const BannerDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
               <SectionTitle>{t('Dados do banner')}</SectionTitle>
               <CustomInput
                 id="banner-title"
-                label={t('Título da página')}
+                label={t(
+                  `Título da página ${target === 'inner-page' ? '*' : ''}`
+                )}
                 placeholder={t('Juntos por um delivery mais justo')}
                 value={pageTitle}
                 onChange={(ev) => setPageTitle(ev.target.value)}
-                isRequired
+                isRequired={target === 'inner-page'}
               />
               <Text mt="2" color="gray.600" fontSize="13px">
                 {t('Slug: juntos-por-um-delivery-mais-justo')}
@@ -149,7 +226,55 @@ export const BannerDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 onChange={(ev) => setBannerLink(ev.target.value)}
                 isRequired
               />
-
+              <SectionTitle>{t('Imagens')}</SectionTitle>
+              <Text mt="4" fontSize="md" color="black">
+                {t('Banner web (PNG - 980x180)')}
+              </Text>
+              <ImageUploads
+                key="banner-web-image"
+                mt="4"
+                width={600}
+                height={110}
+                imageUrl={null}
+                ratios={bannerWebRatios}
+                resizedWidth={bannerWebResizedWidth}
+                placeholderText={t('PNG 980x180')}
+                getImages={getBannerWebFiles}
+                clearDrop={() => clearDropImages('banner-web')}
+                doubleSizeCropping={false}
+              />
+              <Text mt="4" fontSize="md" color="black">
+                {t('Banner mobile (PNG - 320x100)')}
+              </Text>
+              <ImageUploads
+                key="banner-mob-image"
+                mt="4"
+                width={600}
+                height={187.5}
+                imageUrl={null}
+                ratios={bannerMobileRatios}
+                resizedWidth={bannerMobileResizedWidth}
+                placeholderText={t('PNG - 320x100')}
+                getImages={getBannerMobileFiles}
+                clearDrop={() => clearDropImages('banner-mobile')}
+                doubleSizeCropping={false}
+              />
+              <Text mt="4" fontSize="md" color="black">
+                {t('Banner hero (PNG - 980x980)')}
+              </Text>
+              <ImageUploads
+                key="banner-hero-image"
+                mt="4"
+                width={400}
+                height={400}
+                imageUrl={null}
+                ratios={bannerHeroRatios}
+                resizedWidth={bannerHeroResizedWidth}
+                placeholderText={t('PNG - 980x980')}
+                getImages={getBannerHeroFiles}
+                clearDrop={() => clearDropImages('hero')}
+                doubleSizeCropping={false}
+              />
               {canUpdate && (
                 <>
                   <SectionTitle>{t('Status')}</SectionTitle>
