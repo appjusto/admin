@@ -1,16 +1,5 @@
-import { CRUD, UserPermissions } from '@appjusto/types';
-import { MongoQuery } from '@casl/ability';
-
-type Rule =
-  | {
-      rule: CRUD;
-      conditions: MongoQuery<string[]>;
-    }
-  | CRUD;
-
-export type FullPermissions = {
-  [key: string]: Rule[];
-};
+import { UserPermissions } from '@appjusto/types';
+import { FullPermissions } from './types';
 
 export const businessOwnerObject = {
   advances: ['c', 'r', 'u'],
@@ -21,7 +10,7 @@ export const businessOwnerObject = {
   menu: ['c', 'r', 'u', 'd'],
   orders: ['r', 'u'],
   withdraws: ['c', 'r', 'u'],
-} as FullPermissions;
+} as Partial<FullPermissions>;
 
 export const businessManagerObject = {
   advances: ['c', 'r', 'u'],
@@ -37,7 +26,7 @@ export const businessManagerObject = {
   menu: ['c', 'r', 'u', 'd'],
   orders: ['r', 'u'],
   withdraws: ['c', 'r', 'u'],
-} as FullPermissions;
+} as Partial<FullPermissions>;
 
 export const businessCollaboratorObject = {
   advances: [],
@@ -48,13 +37,33 @@ export const businessCollaboratorObject = {
   menu: ['r', 'u'],
   orders: ['r', 'u'],
   withdraws: [],
+} as Partial<FullPermissions>;
+
+export const fullStaffPermissions = {
+  orders: [],
+  account_manager: [],
+  businesses: [],
+  menu: [],
+  couriers: [],
+  consumers: [],
+  chats: [],
+  invoices: [],
+  withdraws: [],
+  advances: [],
+  managers: [],
+  recommendations: [],
+  push_campaigns: [],
+  staff: [],
+  users: [],
+  platform: [],
+  banners: [],
 } as FullPermissions;
 
 export const getStaffUIConditions = (
   userId: string,
   permissions: UserPermissions
 ): FullPermissions => {
-  let result = { ...permissions } as FullPermissions;
+  let result = { ...fullStaffPermissions, ...permissions } as FullPermissions;
   Object.keys(permissions).forEach((key) => {
     if (key === 'orders') {
       let keyPermissions = permissions[key].map((rule) => {

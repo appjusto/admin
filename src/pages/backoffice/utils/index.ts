@@ -154,6 +154,7 @@ export const permissionsPTOptions = {
   staff: 'Staff',
   users: 'Usuários',
   platform: 'Plataforma',
+  banners: 'Banners',
 } as { [key: string]: string };
 
 export const adminRolePTOptions = {

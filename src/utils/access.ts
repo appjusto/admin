@@ -5,6 +5,7 @@ type BackofficeAccess = {
   'couriers': string;
   'businesses': string;
   'consumers': string;
+  'banners': string;
   'invoices': string;
   'ledger': string;
   'push-campaigns': string;
@@ -20,6 +21,7 @@ const backofficeAccess = {
   'couriers': 'couriers',
   'businesses': 'businesses',
   'consumers': 'consumers',
+  'banners': 'banners',
   'invoices': 'invoices',
   'ledger': 'invoices',
   'push-campaigns': 'push_campaigns',
@@ -82,15 +84,19 @@ export const isAccessGranted = (args: IsAccessGrantedArgs) => {
       if (!page || adminRole === 'owner' || page === 'manager-profile')
         return true;
       if (adminRole === 'manager') {
-        return adminManagerPages.includes(page);
+        return adminManagerPages ? adminManagerPages.includes(page) : false;
       } else if (adminRole === 'collaborator') {
-        return adminCollaboratorPages.includes(page);
+        return adminCollaboratorPages
+          ? adminCollaboratorPages.includes(page)
+          : false;
       }
     } else if (type === 'backoffice' && backofficePermissions) {
       const page = path.split('/backoffice/')[1] as keyof BackofficeAccess;
       if (!page || page === 'staff-profile') return true;
       const accessProperty = backofficeAccess[page] as keyof UserPermissions;
-      return backofficePermissions[accessProperty].includes('r');
+      return backofficePermissions[accessProperty]
+        ? backofficePermissions[accessProperty].includes('r')
+        : false;
     }
     return false;
   } catch (error) {

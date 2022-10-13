@@ -1,4 +1,5 @@
 import { UserPermissions } from '@appjusto/types';
+import { fullStaffPermissions } from 'app/state/auth/utils';
 import { isEqual } from 'lodash';
 
 export type GenericMode =
@@ -11,30 +12,20 @@ export type GenericMode =
   | 'viewer'
   | 'custom';
 
-const backofficeOwnerObject = {
-  orders: ['c', 'r', 'u', 'd'],
-  couriers: ['c', 'r', 'u', 'd'],
-  consumers: ['c', 'r', 'u', 'd'],
-  account_manager: ['c', 'r', 'u', 'd'],
-  businesses: ['c', 'r', 'u', 'd'],
-  menu: ['c', 'r', 'u', 'd'],
-  chats: ['c', 'r', 'u', 'd'],
-  invoices: ['c', 'r', 'u', 'd'],
-  withdraws: ['c', 'r', 'u', 'd'],
-  advances: ['c', 'r', 'u', 'd'],
-  managers: ['c', 'r', 'u', 'd'],
-  recommendations: ['c', 'r', 'u', 'd'],
-  push_campaigns: ['c', 'r', 'u', 'd'],
-  staff: ['c', 'r', 'u', 'd'],
-  users: ['c', 'r', 'u', 'd'],
-  platform: ['c', 'r', 'u', 'd'],
-} as UserPermissions;
+const backofficeOwnerObject = (() => {
+  const permissions = {} as UserPermissions;
+  Object.keys(fullStaffPermissions).forEach((subject) => {
+    permissions[subject] = ['c', 'r', 'u', 'd'];
+  });
+  return permissions;
+})();
 
 const ordersManagerObject = {
+  ...(fullStaffPermissions as UserPermissions),
   orders: ['r', 'u'],
   couriers: ['r', 'u'],
   consumers: ['r'],
-  account_manager: [],
+  // account_manager: [],
   businesses: ['r', 'u'],
   menu: ['r'],
   chats: ['r'],
@@ -44,16 +35,17 @@ const ordersManagerObject = {
   managers: ['r', 'u'],
   recommendations: ['r', 'u'],
   push_campaigns: ['r'],
-  staff: [],
+  // staff: [],
   users: ['r'],
   platform: ['r'],
 } as UserPermissions;
 
 const consumersManagerObject = {
+  ...(fullStaffPermissions as UserPermissions),
   orders: ['r'],
-  couriers: [],
+  // couriers: [],
   consumers: ['r', 'u'],
-  account_manager: [],
+  // account_manager: [],
   businesses: ['r'],
   menu: ['r'],
   chats: ['r'],
@@ -63,16 +55,17 @@ const consumersManagerObject = {
   managers: ['r'],
   recommendations: ['r', 'u'],
   push_campaigns: ['r'],
-  staff: [],
+  // staff: [],
   users: ['r'],
-  platform: [],
+  // platform: [],
 } as UserPermissions;
 
 const couriersManagerObject = {
+  ...(fullStaffPermissions as UserPermissions),
   orders: ['r'],
   couriers: ['r', 'u'],
-  consumers: [],
-  account_manager: [],
+  // consumers: [],
+  // account_manager: [],
   businesses: ['r'],
   menu: ['r'],
   chats: ['r'],
@@ -82,67 +75,58 @@ const couriersManagerObject = {
   managers: ['r'],
   recommendations: ['r'],
   push_campaigns: ['r'],
-  staff: [],
+  // staff: [],
   users: ['r'],
-  platform: [],
+  // platform: [],
 } as UserPermissions;
 
 const businessesHeadManagerObject = {
+  ...(fullStaffPermissions as UserPermissions),
   orders: ['r'],
-  couriers: [],
-  consumers: [],
+  // couriers: [],
+  // consumers: [],
   account_manager: ['c', 'r', 'u', 'd'],
   businesses: ['c', 'r', 'u', 'd'],
   menu: ['c', 'r', 'u', 'd'],
-  chats: [],
+  // chats: [],
   invoices: ['r'],
   withdraws: ['r'],
   advances: ['r'],
   managers: ['c', 'r', 'u', 'd'],
   recommendations: ['c', 'r', 'u', 'd'],
-  push_campaigns: [],
+  // push_campaigns: [],
   staff: ['r'],
   users: ['r'],
-  platform: [],
+  // platform: [],
 } as UserPermissions;
 
 const businessesManagerObject = {
+  ...(fullStaffPermissions as UserPermissions),
   orders: ['r'],
-  couriers: [],
-  consumers: [],
+  // couriers: [],
+  // consumers: [],
   account_manager: ['c', 'r'],
   businesses: ['c', 'r', 'u', 'd'],
   menu: ['c', 'r', 'u', 'd'],
-  chats: [],
+  // chats: [],
   invoices: ['r'],
   withdraws: ['r'],
   advances: ['r'],
   managers: ['c', 'r', 'u', 'd'],
   recommendations: ['c', 'r', 'u', 'd'],
-  push_campaigns: [],
-  staff: [],
+  // push_campaigns: [],
+  // staff: [],
   users: ['r'],
-  platform: [],
+  // platform: [],
 } as UserPermissions;
 
-const viewerObject = {
-  orders: ['r'],
-  couriers: ['r'],
-  consumers: ['r'],
-  account_manager: ['r'],
-  businesses: ['r'],
-  menu: ['r'],
-  chats: ['r'],
-  invoices: ['r'],
-  withdraws: ['r'],
-  advances: ['r'],
-  managers: ['r'],
-  recommendations: ['r'],
-  push_campaigns: ['r'],
-  staff: ['r'],
-  users: ['r'],
-  platform: ['r'],
-} as UserPermissions;
+const viewerObject = (() => {
+  const permissions = {} as UserPermissions;
+  Object.keys(fullStaffPermissions).forEach((subject) => {
+    permissions[subject] = ['c', 'r', 'u', 'd'];
+  });
+  return permissions;
+})();
 
 export const getGenericModePermissions = (
   mode: GenericMode
@@ -156,23 +140,7 @@ export const getGenericModePermissions = (
     return businessesHeadManagerObject;
   else if (mode === 'viewer') return viewerObject;
   else {
-    return {
-      orders: [],
-      couriers: [],
-      consumers: [],
-      account_manager: [],
-      businesses: [],
-      menu: [],
-      chats: [],
-      invoices: [],
-      withdraws: [],
-      advances: [],
-      managers: [],
-      recommendations: [],
-      staff: [],
-      users: [],
-      platform: [],
-    };
+    return fullStaffPermissions as UserPermissions;
   }
 };
 
