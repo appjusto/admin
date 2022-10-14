@@ -33,9 +33,21 @@ const BannersPage = () => {
       <PageHeader title={t('Banners')} subtitle={t(`Atualizado ${dateTime}`)} />
       <CustomButton mt="4" label={t('Criar banner')} link={`${path}/new`} />
       <Box>
-        <BannersGroups title={t('Consumidores')} banners={consumersBanners} />
-        <BannersGroups title={t('Restaurantes')} banners={businessesBanners} />
-        <BannersGroups title={t('Entregadores')} banners={couriersBanners} />
+        <BannersGroups
+          title={t('Consumidores')}
+          flavor="consumer"
+          banners={consumersBanners}
+        />
+        <BannersGroups
+          title={t('Restaurantes')}
+          flavor="business"
+          banners={businessesBanners}
+        />
+        <BannersGroups
+          title={t('Entregadores')}
+          flavor="courier"
+          banners={couriersBanners}
+        />
       </Box>
       <Switch>
         <Route path={`${path}/:bannerId`}>

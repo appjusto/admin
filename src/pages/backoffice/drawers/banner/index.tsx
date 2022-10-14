@@ -18,6 +18,7 @@ import {
 import { useObserveBanner } from 'app/api/banners/useObserveBanner';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextAppRequests } from 'app/state/requests/context';
+import { useContextStaffProfile } from 'app/state/staff/context';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import { ImageUploads } from 'common/components/ImageUploads';
 import {
@@ -30,7 +31,7 @@ import {
 } from 'common/imagesDimensions';
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { slugfyName } from 'utils/functions';
+import { getDateAndHour, slugfyName } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
 import { Banner, TargetOptions } from './types';
@@ -49,6 +50,7 @@ export const BannerDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   //context
   const { bannerId } = useParams<Params>();
   const { userAbility } = useContextFirebaseUser();
+  const { staff } = useContextStaffProfile();
   const { dispatchAppRequestResult } = useContextAppRequests();
   const {
     banner,
@@ -79,6 +81,7 @@ export const BannerDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   // helpers
   const isNew = bannerId === 'new';
   const canUpdate = !isNew && userAbility?.can('update', 'banners');
+  const updatedBy = banner?.updatedBy.name ?? banner?.updatedBy.email ?? 'N/E';
   // handlers
   const getBannerWebFiles = React.useCallback(async (files: File[]) => {
     // setLogoExists(true);
@@ -109,6 +112,15 @@ export const BannerDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   );
   const handleSubmit = () => {
     // validations
+    if (!staff?.id || !staff?.email) {
+      return dispatchAppRequestResult({
+        status: 'error',
+        requestId: 'banner-valid-staff',
+        message: {
+          title: 'Não foi possível encontrar informações sobre o usuário',
+        },
+      });
+    }
     if (!flavor || !target || !bannerLink) {
       return dispatchAppRequestResult({
         status: 'error',
@@ -134,6 +146,11 @@ export const BannerDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
     }
     // create new object
     const newBanner = {
+      updatedBy: {
+        id: staff.id,
+        email: staff.email,
+        name: staff?.name ?? '',
+      },
       flavor,
       target,
       pageTitle: slugfyName(pageTitle),
@@ -200,6 +217,46 @@ export const BannerDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
               >
                 {t('Banner')}
               </Text>
+              {!isNew && (
+                <Box mb="6">
+                  <Text
+                    mt="1"
+                    fontSize="15px"
+                    color="black"
+                    fontWeight="700"
+                    lineHeight="22px"
+                  >
+                    {t('Criado em:')}{' '}
+                    <Text as="span" fontWeight="500">
+                      {getDateAndHour(banner?.createdOn)}
+                    </Text>
+                  </Text>
+                  <Text
+                    mt="1"
+                    fontSize="15px"
+                    color="black"
+                    fontWeight="700"
+                    lineHeight="22px"
+                  >
+                    {t('Atualizado em:')}{' '}
+                    <Text as="span" fontWeight="500">
+                      {getDateAndHour(banner?.updatedOn)}
+                    </Text>
+                  </Text>
+                  <Text
+                    mt="1"
+                    fontSize="15px"
+                    color="black"
+                    fontWeight="700"
+                    lineHeight="22px"
+                  >
+                    {t('Atualizado por:')}{' '}
+                    <Text as="span" fontWeight="500">
+                      {updatedBy}
+                    </Text>
+                  </Text>
+                </Box>
+              )}
             </DrawerHeader>
             <DrawerBody pb="28">
               <SectionTitle mt="0">{t('Público')}</SectionTitle>

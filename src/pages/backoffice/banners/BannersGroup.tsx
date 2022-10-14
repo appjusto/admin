@@ -1,4 +1,4 @@
-import { WithId } from '@appjusto/types';
+import { ClientFlavor, WithId } from '@appjusto/types';
 import { Box, Text } from '@chakra-ui/react';
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
 import { useRouteMatch } from 'react-router-dom';
@@ -10,10 +10,15 @@ import { BannerItem } from './BannerItem';
 
 interface BannersGroupsProps {
   title: string;
+  flavor: ClientFlavor;
   banners?: WithId<Banner>[] | null;
 }
 
-export const BannersGroups = ({ title, banners }: BannersGroupsProps) => {
+export const BannersGroups = ({
+  title,
+  flavor,
+  banners,
+}: BannersGroupsProps) => {
   // state
   const { url } = useRouteMatch();
   // handlers
@@ -55,7 +60,7 @@ export const BannersGroups = ({ title, banners }: BannersGroupsProps) => {
     >
       <SectionTitle mt="0">{title}</SectionTitle>
       <DragDropContext onDragEnd={onDragEnd}>
-        <Droppable droppableId="banners">
+        <Droppable droppableId={flavor}>
           {(droppable, snapshot) => (
             <Box
               mt="4"

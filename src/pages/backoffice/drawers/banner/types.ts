@@ -1,4 +1,4 @@
-import { Flavor } from '@appjusto/types';
+import { ClientFlavor } from '@appjusto/types';
 import { FieldValue } from 'firebase/firestore';
 
 export interface BannersOrdering {
@@ -14,8 +14,13 @@ export interface Banner {
   // withId
   id: string;
   // doc fields
-  ordering: number;
-  flavor: Flavor;
+  updatedBy: {
+    id: string;
+    email: string;
+    name?: string;
+  };
+  // ordering: number;
+  flavor: ClientFlavor;
   target: TargetOptions;
   pageTitle?: string;
   link: string;

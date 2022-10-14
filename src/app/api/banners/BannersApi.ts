@@ -1,4 +1,4 @@
-import { Flavor, WithId } from '@appjusto/types';
+import { ClientFlavor, WithId } from '@appjusto/types';
 import {
   addDoc,
   deleteDoc,
@@ -19,7 +19,7 @@ export default class BannersApi {
 
   // firestore
   observeBannersByFlavor(
-    flavor: Flavor,
+    flavor: ClientFlavor,
     resultHandler: (banners: WithId<Banner>[] | null) => void
   ): Unsubscribe {
     const q = query(this.refs.getBannersRef(), where('flavor', '==', flavor));
@@ -36,7 +36,7 @@ export default class BannersApi {
     return customDocumentSnapshot<Banner>(ref, resultHandler);
   }
 
-  async removeBanner(bannerId: string, flavor: Flavor) {
+  async removeBanner(bannerId: string, flavor: ClientFlavor) {
     await runTransaction(this.refs.getFirestoreRef(), async (transaction) => {
       const orderingRef = this.refs.getBannerOrderingRef();
       const orderingSnapshot = await transaction.get(orderingRef);
@@ -131,7 +131,7 @@ export default class BannersApi {
   }
 
   uploadBannerFiles(
-    flavor: Flavor,
+    flavor: ClientFlavor,
     bannerId: string,
     size: string,
     file: File,
@@ -144,7 +144,7 @@ export default class BannersApi {
     );
   }
 
-  getBannerImageURL(flavor: Flavor, bannerId: string, size: string) {
+  getBannerImageURL(flavor: ClientFlavor, bannerId: string, size: string) {
     return this.files.getDownloadURL(
       this.refs.getBannerStoragePath(flavor, bannerId, size)
     );

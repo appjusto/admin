@@ -1,9 +1,9 @@
-import { Flavor, WithId } from '@appjusto/types';
+import { ClientFlavor, WithId } from '@appjusto/types';
 import { useContextApi } from 'app/state/api/context';
 import { Banner } from 'pages/backoffice/drawers/banner/types';
 import React from 'react';
 
-export const useObserveBannersByFlavor = (flavor: Flavor) => {
+export const useObserveBannersByFlavor = (flavor: ClientFlavor) => {
   // context
   const api = useContextApi();
   // state
