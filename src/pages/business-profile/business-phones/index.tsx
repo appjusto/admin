@@ -29,7 +29,8 @@ export const BusinessPhones = ({
   // context
   const { userAbility } = useContextFirebaseUser();
   // helpers
-  const userCanUpdate = userAbility?.can('update', 'businesses') || isOnboarding;
+  const userCanUpdate =
+    userAbility?.can('update', 'businesses') || isOnboarding;
   // handlers
   const onDragEnd = (result: DropResult) => {
     const { destination, source } = result;
@@ -44,7 +45,8 @@ export const BusinessPhones = ({
         if (index === source.index) {
           // do nothing
         } else if (index === destination.index) {
-          if (source.index > destination.index) newArray.push(phones[source.index], phone);
+          if (source.index > destination.index)
+            newArray.push(phones[source.index], phone);
           else newArray.push(phone, phones[source.index]);
         } else newArray.push(phone);
       });

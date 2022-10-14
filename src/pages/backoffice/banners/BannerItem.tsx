@@ -41,48 +41,48 @@ export const BannerItem = ({ index, banner }: BannerItemProps) => {
   return (
     <Draggable draggableId={banner.id} index={index}>
       {(draggable) => (
-        <Box
+        <Flex
+          {...draggable.draggableProps}
+          ref={draggable.innerRef}
           mt="4"
           borderWidth="1px"
           borderRadius="lg"
+          justifyContent="space-between"
+          alignItems="center"
           bg="white"
           boxShadow="0px 8px 16px -4px rgba(105, 118, 103, 0.1)"
-          ref={draggable.innerRef}
-          {...draggable.draggableProps}
           w="100%"
           p="4"
         >
-          <Flex key={index} justifyContent="space-between" alignItems="center">
-            <Box
-              display={userAbility?.can('update', 'banners') ? 'flex' : 'none'}
-              px="2"
-              bg="white"
-              {...draggable.dragHandleProps}
-              ref={draggable.innerRef}
-            >
-              <DragHandle />
-            </Box>
-            <Text fontWeight="700">{banner.pageTitle ?? 'Não se aplica'}</Text>
-            <Text>
-              <Text as="span" fontWeight="700">
-                {t('Atualizado: ')}
-              </Text>
-              {getDateAndHour(banner.updatedOn)}
+          <Box
+            {...draggable.dragHandleProps}
+            display={userAbility?.can('update', 'banners') ? 'flex' : 'none'}
+            px="2"
+            bg="white"
+            ref={draggable.innerRef}
+          >
+            <DragHandle />
+          </Box>
+          <Text fontWeight="700">{banner.pageTitle ?? 'Não se aplica'}</Text>
+          <Text>
+            <Text as="span" fontWeight="700">
+              {t('Atualizado: ')}
             </Text>
-            <HStack>
-              <Switch
-                isChecked={banner.enabled}
-                onChange={(ev) => {
-                  ev.stopPropagation();
-                  handleEnabledChange(ev.target.checked);
-                }}
-              />
-              <Link as={RouterLink} to={`${url}/${banner.id}`}>
-                <EditButton />
-              </Link>
-            </HStack>
-          </Flex>
-        </Box>
+            {getDateAndHour(banner.updatedOn)}
+          </Text>
+          <HStack>
+            <Switch
+              isChecked={banner.enabled}
+              onChange={(ev) => {
+                ev.stopPropagation();
+                handleEnabledChange(ev.target.checked);
+              }}
+            />
+            <Link as={RouterLink} to={`${url}/${banner.id}`}>
+              <EditButton />
+            </Link>
+          </HStack>
+        </Flex>
       )}
     </Draggable>
   );

@@ -59,8 +59,8 @@ export const BannersGroups = ({
   };
   // side effects
   React.useEffect(() => {
-    sortBanners(ordering);
-  }, [sortBanners, ordering]);
+    setOrdered(banners);
+  }, [banners]);
   // UI
   return (
     <Box
@@ -76,9 +76,9 @@ export const BannersGroups = ({
         <Droppable droppableId={flavor}>
           {(droppable, snapshot) => (
             <Box
+              {...droppable.droppableProps}
               mt="4"
               ref={droppable.innerRef}
-              {...droppable.droppableProps}
               bg={snapshot.isDraggingOver ? 'gray.50' : 'white'}
               minH={100}
               w="100%"

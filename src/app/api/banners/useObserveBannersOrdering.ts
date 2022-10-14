@@ -12,9 +12,13 @@ export const useObserveBannersOrdering = () => {
   const {
     mutate: updateBannersOrdering,
     mutationResult: updateBannersOrderingResult,
-  } = useCustomMutation((ordering: BannersOrdering) => {
-    return api.banners().updatebannersOrdering(ordering);
-  }, 'updateBannersOrdering');
+  } = useCustomMutation(
+    (ordering: BannersOrdering) => {
+      return api.banners().updatebannersOrdering(ordering);
+    },
+    'updateBannersOrdering',
+    false
+  );
   // side effects
   React.useEffect(() => {
     api.banners().observeBannersOrdering(setOrdering);
