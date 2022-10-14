@@ -2,6 +2,7 @@ import { ClientFlavor, WithId } from '@appjusto/types';
 import {
   addDoc,
   deleteDoc,
+  onSnapshot,
   query,
   runTransaction,
   serverTimestamp,
@@ -27,6 +28,17 @@ export default class BannersApi {
     return customCollectionSnapshot<Banner>(q, resultHandler);
   }
 
+  observeBannersOrdering(
+    resultHandler: (ordering: BannersOrdering | null) => void
+  ): Unsubscribe {
+    const ref = this.refs.getBannerOrderingRef();
+    // returns the unsubscribe function
+    return onSnapshot(ref, (snapshot) => {
+      if (snapshot.exists()) resultHandler(snapshot.data());
+      else resultHandler(null);
+    });
+  }
+
   observeBannerById(
     id: string,
     resultHandler: (banners: WithId<Banner> | null) => void
@@ -36,26 +48,16 @@ export default class BannersApi {
     return customDocumentSnapshot<Banner>(ref, resultHandler);
   }
 
-  async removeBanner(bannerId: string, flavor: ClientFlavor) {
-    await runTransaction(this.refs.getFirestoreRef(), async (transaction) => {
-      const orderingRef = this.refs.getBannerOrderingRef();
-      const orderingSnapshot = await transaction.get(orderingRef);
-      const ordering = orderingSnapshot.data() as BannersOrdering;
-      const newOrdering = {
-        ...ordering,
-        [flavor]: ordering[flavor].filter((item) => item !== bannerId),
-      };
-      transaction.set(orderingRef, newOrdering);
-      transaction.delete(this.refs.getBannerRef(bannerId));
-    });
+  async updatebannersOrdering(ordering: BannersOrdering) {
+    return updateDoc(this.refs.getBannerOrderingRef(), ordering);
   }
 
   async updateBannerWithImages(
     bannerId: string,
     changes: Partial<Banner>,
-    webFiles: File[] | null,
-    mobileFiles: File[] | null,
-    heroFiles: File[] | null
+    webFiles?: File[] | null,
+    mobileFiles?: File[] | null,
+    heroFiles?: File[] | null
   ) {
     // banner
     let id = bannerId;
@@ -128,6 +130,20 @@ export default class BannersApi {
       );
     // result
     return true;
+  }
+
+  async removeBanner(bannerId: string, flavor: ClientFlavor) {
+    await runTransaction(this.refs.getFirestoreRef(), async (transaction) => {
+      const orderingRef = this.refs.getBannerOrderingRef();
+      const orderingSnapshot = await transaction.get(orderingRef);
+      const ordering = orderingSnapshot.data() as BannersOrdering;
+      const newOrdering = {
+        ...ordering,
+        [flavor]: ordering[flavor].filter((item) => item !== bannerId),
+      };
+      transaction.set(orderingRef, newOrdering);
+      transaction.delete(this.refs.getBannerRef(bannerId));
+    });
   }
 
   uploadBannerFiles(

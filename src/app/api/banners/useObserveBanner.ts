@@ -41,9 +41,9 @@ export const useObserveBanner = (bannerId?: string) => {
       (data: {
         id: string;
         changes: Partial<Banner>;
-        webFiles: File[] | null;
-        mobileFiles: File[] | null;
-        heroFiles: File[] | null;
+        webFiles?: File[] | null;
+        mobileFiles?: File[] | null;
+        heroFiles?: File[] | null;
       }) => {
         const { id, changes, webFiles, mobileFiles, heroFiles } = data;
         return api
@@ -58,7 +58,6 @@ export const useObserveBanner = (bannerId?: string) => {
       },
       'updateBanner'
     );
-  // mutations
   const { mutate: removeBanner, mutationResult: removeBannerResult } =
     useCustomMutation((data: { id: string; flavor: ClientFlavor }) => {
       const { id, flavor } = data;

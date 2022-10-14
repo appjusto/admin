@@ -23,6 +23,7 @@ export interface Banner {
   flavor: ClientFlavor;
   target: TargetOptions;
   pageTitle?: string;
+  slug?: string;
   link: string;
   enabled: boolean;
   createdOn: FieldValue;

@@ -1,53 +1,66 @@
 import { ClientFlavor, WithId } from '@appjusto/types';
 import { Box, Text } from '@chakra-ui/react';
+import React from 'react';
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
-import { useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
-import { Banner } from '../drawers/banner/types';
+import { Banner, BannersOrdering } from '../drawers/banner/types';
 import { SectionTitle } from '../drawers/generics/SectionTitle';
 import { BannerItem } from './BannerItem';
-// import { CategoryItem } from './CategoryItem';
+import { getBannersByFlavorOrdered, updateBannerOrdering } from './utils';
 
 interface BannersGroupsProps {
   title: string;
   flavor: ClientFlavor;
+  ordering?: BannersOrdering | null;
+  updateOrdering(ordering: BannersOrdering): void;
   banners?: WithId<Banner>[] | null;
 }
 
 export const BannersGroups = ({
   title,
   flavor,
+  ordering,
+  updateOrdering,
   banners,
 }: BannersGroupsProps) => {
   // state
-  const { url } = useRouteMatch();
+  const [ordered, setOrdered] = React.useState<WithId<Banner>[] | null>();
   // handlers
+  const sortBanners = React.useCallback(
+    (currentOrdering?: BannersOrdering | null) => {
+      if (!currentOrdering || !banners) return;
+      const orderingResult = getBannersByFlavorOrdered(
+        currentOrdering[flavor],
+        banners
+      );
+      setOrdered(orderingResult);
+    },
+    [flavor, banners]
+  );
   const onDragEnd = (result: DropResult) => {
-    const { destination, source, draggableId, type } = result;
+    const { destination, source } = result;
     if (!destination) return; // dropped outside
     if (
       source.droppableId === destination.droppableId &&
       source.index === destination.index
-    )
+    ) {
       return; // same location
-    if (type === 'product') {
-      // updateProductsOrdering(
-      //   menu.updateSecondLevelIndex(
-      //     productsOrdering,
-      //     draggableId, //product id
-      //     source.droppableId, // category from
-      //     destination.droppableId, // category to
-      //     source.index,
-      //     destination.index
-      //   )
-      // );
-    } else if (type === 'category') {
-      // updateProductsOrdering(
-      //   menu.updateFirstLevelIndex(productsOrdering, draggableId, destination.index)
-      // );
     }
+    if (!ordering) return;
+    if (source.droppableId !== destination.droppableId) return;
+    const newOrdering = updateBannerOrdering(
+      ordering,
+      flavor,
+      source.index,
+      destination.index
+    );
+    sortBanners(newOrdering);
+    updateOrdering(newOrdering);
   };
-
+  // side effects
+  React.useEffect(() => {
+    sortBanners(ordering);
+  }, [sortBanners, ordering]);
   // UI
   return (
     <Box
@@ -71,18 +84,13 @@ export const BannersGroups = ({
               w="100%"
               overflow="auto"
             >
-              {banners === undefined ? (
+              {ordered === undefined ? (
                 <Text color="gray.600">{t('Carregando...')}</Text>
-              ) : banners === null || banners.length === 0 ? (
+              ) : ordered === null || ordered.length === 0 ? (
                 <Text color="gray.600">{t('Nenhum banner adicionado')}</Text>
               ) : (
-                banners.map((banner, index) => (
-                  <BannerItem
-                    key={banner.id}
-                    index={index}
-                    banner={banner}
-                    handleUpdate={() => {}}
-                  />
+                ordered.map((banner, index) => (
+                  <BannerItem key={banner.id} index={index} banner={banner} />
                 ))
               )}
               {droppable.placeholder}

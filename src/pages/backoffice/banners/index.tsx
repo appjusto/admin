@@ -1,5 +1,6 @@
-import { Box } from '@chakra-ui/react';
+import { Box, Flex } from '@chakra-ui/react';
 import { useObserveBannersByFlavor } from 'app/api/banners/useObserveBannersByFlavor';
+import { useObserveBannersOrdering } from 'app/api/banners/useObserveBannersOrdering';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import React from 'react';
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
@@ -10,14 +11,15 @@ import { BannerDrawer } from '../drawers/banner';
 import { BannersGroups } from './BannersGroup';
 
 const BannersPage = () => {
-  // state
-  const [dateTime, setDateTime] = React.useState('');
   // context
   const { path } = useRouteMatch();
   const history = useHistory();
+  // state
+  const { ordering, updateBannersOrdering } = useObserveBannersOrdering();
   const consumersBanners = useObserveBannersByFlavor('consumer');
   const businessesBanners = useObserveBannersByFlavor('business');
   const couriersBanners = useObserveBannersByFlavor('courier');
+  const [dateTime, setDateTime] = React.useState('');
   // handlers
   const closeDrawerHandler = () => {
     history.replace(path);
@@ -31,21 +33,29 @@ const BannersPage = () => {
   return (
     <Box>
       <PageHeader title={t('Banners')} subtitle={t(`Atualizado ${dateTime}`)} />
-      <CustomButton mt="4" label={t('Criar banner')} link={`${path}/new`} />
+      <Flex mt="4" justifyContent="flex-end">
+        <CustomButton label={t('Criar banner')} link={`${path}/new`} />
+      </Flex>
       <Box>
         <BannersGroups
           title={t('Consumidores')}
           flavor="consumer"
+          ordering={ordering}
+          updateOrdering={updateBannersOrdering}
           banners={consumersBanners}
         />
         <BannersGroups
           title={t('Restaurantes')}
           flavor="business"
+          ordering={ordering}
+          updateOrdering={updateBannersOrdering}
           banners={businessesBanners}
         />
         <BannersGroups
           title={t('Entregadores')}
           flavor="courier"
+          ordering={ordering}
+          updateOrdering={updateBannersOrdering}
           banners={couriersBanners}
         />
       </Box>

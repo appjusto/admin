@@ -66,6 +66,7 @@ export const BannerDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   const [flavor, setFlavor] = React.useState<Flavor>('consumer');
   const [target, setTarget] = React.useState<TargetOptions>('inner-page');
   const [pageTitle, setPageTitle] = React.useState('');
+  const [slug, setSlug] = React.useState('');
   const [bannerLink, setBannerLink] = React.useState('');
   const [enabled, setEnabled] = React.useState('false');
   const [bannerWebFiles, setBannerWebFiles] = React.useState<File[] | null>(
@@ -81,8 +82,13 @@ export const BannerDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   // helpers
   const isNew = bannerId === 'new';
   const canUpdate = !isNew && userAbility?.can('update', 'banners');
-  const updatedBy = banner?.updatedBy.name ?? banner?.updatedBy.email ?? 'N/E';
+  const updatedBy =
+    banner?.updatedBy?.name ?? banner?.updatedBy?.email ?? 'N/E';
   // handlers
+  const handlePageTitle = (value: string) => {
+    setPageTitle(value);
+    setSlug(slugfyName(value));
+  };
   const getBannerWebFiles = React.useCallback(async (files: File[]) => {
     // setLogoExists(true);
     setBannerWebFiles(files);
@@ -153,7 +159,8 @@ export const BannerDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
       },
       flavor,
       target,
-      pageTitle: slugfyName(pageTitle),
+      pageTitle,
+      slug,
       link: bannerLink,
       enabled: enabled === 'true' ? true : false,
     } as Banner;
@@ -183,6 +190,7 @@ export const BannerDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
     setFlavor(banner.flavor);
     setTarget(banner.target);
     if (banner.pageTitle) setPageTitle(banner.pageTitle);
+    if (banner.slug) setSlug(banner.slug);
     setBannerLink(banner.link);
     setEnabled(banner.enabled.toString());
   }, [banner]);
@@ -300,11 +308,11 @@ export const BannerDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 )}
                 placeholder={t('Juntos por um delivery mais justo')}
                 value={pageTitle}
-                onChange={(ev) => setPageTitle(ev.target.value)}
+                onChange={(ev) => handlePageTitle(ev.target.value)}
                 isRequired={target === 'inner-page'}
               />
               <Text mt="2" color="gray.600" fontSize="13px">
-                {t('Slug: juntos-por-um-delivery-mais-justo')}
+                {t(`Slug: ${slug}`)}
               </Text>
               <CustomInput
                 id="banner-link"

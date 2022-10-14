@@ -1,6 +1,8 @@
 import { WithId } from '@appjusto/types';
 import { Box, Flex, HStack, Link, Switch, Text } from '@chakra-ui/react';
+import { useObserveBanner } from 'app/api/banners/useObserveBanner';
 import { useContextFirebaseUser } from 'app/state/auth/context';
+import { useContextStaffProfile } from 'app/state/staff/context';
 import { EditButton } from 'common/components/buttons/EditButton';
 import { ReactComponent as DragHandle } from 'common/img/drag-handle.svg';
 import { Draggable } from 'react-beautiful-dnd';
@@ -12,24 +14,32 @@ import { Banner } from '../drawers/banner/types';
 interface BannerItemProps {
   index: number;
   banner: WithId<Banner>;
-  // isRemoving: boolean;
-  handleUpdate(index: number, field: string, value: any): void;
-  // removePhone(index: number): void;
 }
 
-export const BannerItem = ({
-  index,
-  banner,
-  // isRemoving,
-  handleUpdate,
-}: // removePhone,
-BannerItemProps) => {
+export const BannerItem = ({ index, banner }: BannerItemProps) => {
   // context
   const { url } = useRouteMatch();
   const { userAbility } = useContextFirebaseUser();
+  const { staff } = useContextStaffProfile();
+  const { updateBanner } = useObserveBanner();
+  // handlers
+  const handleEnabledChange = (value: boolean) => {
+    if (!staff?.id || !staff.email) return;
+    updateBanner({
+      id: banner.id,
+      changes: {
+        updatedBy: {
+          id: staff.id,
+          email: staff.email,
+          name: staff.name ?? '',
+        },
+        enabled: value,
+      },
+    });
+  };
   // UI
   return (
-    <Draggable draggableId={`${index}`} index={index}>
+    <Draggable draggableId={banner.id} index={index}>
       {(draggable) => (
         <Box
           mt="4"
@@ -52,14 +62,19 @@ BannerItemProps) => {
             >
               <DragHandle />
             </Box>
-            <Text>{banner.pageTitle ?? 'Não se aplica'}</Text>
-            <Text>{t('Criado: ') + getDateAndHour(banner.createdOn)}</Text>
+            <Text fontWeight="700">{banner.pageTitle ?? 'Não se aplica'}</Text>
+            <Text>
+              <Text as="span" fontWeight="700">
+                {t('Atualizado: ')}
+              </Text>
+              {getDateAndHour(banner.updatedOn)}
+            </Text>
             <HStack>
               <Switch
                 isChecked={banner.enabled}
                 onChange={(ev) => {
                   ev.stopPropagation();
-                  // updateCategory({ enabled: ev.target.checked });
+                  handleEnabledChange(ev.target.checked);
                 }}
               />
               <Link as={RouterLink} to={`${url}/${banner.id}`}>
