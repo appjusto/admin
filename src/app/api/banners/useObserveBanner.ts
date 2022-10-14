@@ -1,4 +1,4 @@
-import { WithId } from '@appjusto/types';
+import { Flavor, WithId } from '@appjusto/types';
 import { useContextApi } from 'app/state/api/context';
 import { Banner } from 'pages/backoffice/drawers/banner/types';
 import React from 'react';
@@ -58,6 +58,12 @@ export const useObserveBanner = (bannerId?: string) => {
       },
       'updateBanner'
     );
+  // mutations
+  const { mutate: removeBanner, mutationResult: removeBannerResult } =
+    useCustomMutation((data: { id: string; flavor: Flavor }) => {
+      const { id, flavor } = data;
+      return api.banners().removeBanner(id, flavor);
+    }, 'removeBanner');
   // side effects
   React.useEffect(() => {
     if (!bannerId) return;
@@ -71,5 +77,7 @@ export const useObserveBanner = (bannerId?: string) => {
     heroImage,
     updateBanner,
     updateBannerResult,
+    removeBanner,
+    removeBannerResult,
   };
 };

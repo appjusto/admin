@@ -57,6 +57,8 @@ export const BannerDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
     heroImage,
     updateBanner,
     updateBannerResult,
+    removeBanner,
+    removeBannerResult,
   } = useObserveBanner(bannerId !== 'new' ? bannerId : undefined);
   // state
   const [flavor, setFlavor] = React.useState<Flavor>('consumer');
@@ -148,6 +150,16 @@ export const BannerDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
       heroFiles: bannerHeroFiles,
     });
   };
+  const handleRemoveBanner = () => {
+    if (!banner?.id || !banner.flavor) {
+      return dispatchAppRequestResult({
+        status: 'error',
+        requestId: 'banner-remove-error',
+        message: { title: 'Não foi possível encontrar os dados do banner' },
+      });
+    }
+    removeBanner({ id: banner.id, flavor: banner.flavor });
+  };
   // side effects
   React.useEffect(() => {
     if (!banner) return;
@@ -158,10 +170,10 @@ export const BannerDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
     setEnabled(banner.enabled.toString());
   }, [banner]);
   React.useEffect(() => {
-    if (updateBannerResult.isSuccess) {
+    if (updateBannerResult.isSuccess || removeBannerResult.isSuccess) {
       onClose();
     }
-  }, [onClose, updateBannerResult.isSuccess]);
+  }, [onClose, updateBannerResult.isSuccess, removeBannerResult.isSuccess]);
   //UI
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
@@ -364,8 +376,8 @@ export const BannerDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                         width="full"
                         variant="danger"
                         fontSize="15px"
-                        // onClick={() => deletePushCampaign(campaignId)}
-                        // isLoading={deletePushCampaignResult.isLoading}
+                        onClick={handleRemoveBanner}
+                        isLoading={removeBannerResult.isLoading}
                       >
                         {t(`Excluir`)}
                       </Button>

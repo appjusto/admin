@@ -1,11 +1,15 @@
 import { Flavor, WithId } from '@appjusto/types';
 import {
   addDoc,
+  deleteDoc,
+  query,
+  runTransaction,
   serverTimestamp,
   Unsubscribe,
   updateDoc,
+  where,
 } from 'firebase/firestore';
-import { Banner } from 'pages/backoffice/drawers/banner/types';
+import { Banner, BannersOrdering } from 'pages/backoffice/drawers/banner/types';
 import FilesApi from '../FilesApi';
 import FirebaseRefs from '../FirebaseRefs';
 import { customCollectionSnapshot, customDocumentSnapshot } from '../utils';
@@ -14,12 +18,13 @@ export default class BannersApi {
   constructor(private refs: FirebaseRefs, private files: FilesApi) {}
 
   // firestore
-  observeBanners(
+  observeBannersByFlavor(
+    flavor: Flavor,
     resultHandler: (banners: WithId<Banner>[] | null) => void
   ): Unsubscribe {
-    const ref = this.refs.getBannersRef();
+    const q = query(this.refs.getBannersRef(), where('flavor', '==', flavor));
     // returns the unsubscribe function
-    return customCollectionSnapshot<Banner>(ref, resultHandler);
+    return customCollectionSnapshot<Banner>(q, resultHandler);
   }
 
   observeBannerById(
@@ -29,6 +34,20 @@ export default class BannersApi {
     const ref = this.refs.getBannerRef(id);
     // returns the unsubscribe function
     return customDocumentSnapshot<Banner>(ref, resultHandler);
+  }
+
+  async removeBanner(bannerId: string, flavor: Flavor) {
+    await runTransaction(this.refs.getFirestoreRef(), async (transaction) => {
+      const orderingRef = this.refs.getBannerOrderingRef();
+      const orderingSnapshot = await transaction.get(orderingRef);
+      const ordering = orderingSnapshot.data() as BannersOrdering;
+      const newOrdering = {
+        ...ordering,
+        [flavor]: ordering[flavor].filter((item) => item !== bannerId),
+      };
+      transaction.set(orderingRef, newOrdering);
+      transaction.delete(this.refs.getBannerRef(bannerId));
+    });
   }
 
   async updateBannerWithImages(
@@ -43,13 +62,36 @@ export default class BannersApi {
     const flavor = changes.flavor;
     const timestamp = serverTimestamp();
     if (id === 'new') {
-      const fullChanges = {
-        ...changes,
-        createdOn: timestamp,
-        updatedOn: timestamp,
-      };
-      const newDoc = await addDoc(this.refs.getBannersRef(), fullChanges);
-      id = newDoc.id;
+      const newDocRef = await addDoc(this.refs.getBannersRef(), {});
+      try {
+        await runTransaction(
+          this.refs.getFirestoreRef(),
+          async (transaction) => {
+            const orderingRef = this.refs.getBannerOrderingRef();
+            let ordering: BannersOrdering = {
+              consumer: [],
+              business: [],
+              courier: [],
+            };
+            const orderingSnapshot = await transaction.get(orderingRef);
+            if (orderingSnapshot.exists()) {
+              console.log('Using saved ordering');
+              ordering = orderingSnapshot.data() as BannersOrdering;
+            }
+            const fullChanges = {
+              ...changes,
+              createdOn: timestamp,
+              updatedOn: timestamp,
+            };
+            transaction.set(newDocRef, fullChanges);
+            id = newDocRef.id;
+            ordering[flavor as string].push(id);
+            transaction.set(orderingRef, ordering);
+          }
+        );
+      } catch (error) {
+        deleteDoc(newDocRef);
+      }
     } else {
       const fullChanges = {
         ...changes,

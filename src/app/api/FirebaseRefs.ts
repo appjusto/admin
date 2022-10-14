@@ -44,6 +44,7 @@ export default class FirebaseRefs {
     httpsCallable(this.functions, 'advanceReceivablesByAmount');
 
   // firestore
+  getFirestoreRef = () => this.firestore;
   getBatchRef = () => writeBatch(this.firestore);
 
   // users
@@ -227,6 +228,7 @@ export default class FirebaseRefs {
 
   // banners
   getBannersRef = () => collection(this.firestore, 'banners');
+  getBannerOrderingRef = () => doc(this.getBannersRef(), 'ordering');
   getBannerRef = (bannerId: string) => doc(this.getBannersRef(), bannerId);
 
   // storage
