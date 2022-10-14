@@ -64,13 +64,13 @@ export const BannerItem = ({ index, banner }: BannerItemProps) => {
             <DragHandle />
           </Box>
           <Text fontWeight="700">{banner.pageTitle ?? 'Não se aplica'}</Text>
-          <Text>
-            <Text as="span" fontWeight="700">
-              {t('Atualizado: ')}
+          <HStack spacing={{ base: 1, md: 6 }}>
+            <Text display={{ base: 'none', md: 'block' }}>
+              <Text as="span" fontWeight="700">
+                {t('Atualizado: ')}
+              </Text>
+              {getDateAndHour(banner.updatedOn)}
             </Text>
-            {getDateAndHour(banner.updatedOn)}
-          </Text>
-          <HStack>
             <Switch
               isChecked={banner.enabled}
               onChange={(ev) => {
@@ -79,7 +79,7 @@ export const BannerItem = ({ index, banner }: BannerItemProps) => {
               }}
             />
             <Link as={RouterLink} to={`${url}/${banner.id}`}>
-              <EditButton />
+              <EditButton ml="0" />
             </Link>
           </HStack>
         </Flex>
