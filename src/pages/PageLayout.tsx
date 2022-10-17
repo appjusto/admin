@@ -19,7 +19,7 @@ const PageLayout = ({
       <Sidebar />
       <Flex flex={1} justifyContent="center">
         <Container
-          w="100%"
+          w="100vw"
           maxW={{ lg: maxW }}
           pt={{ base: '16', lg: '10' }}
           pb={{ base: '8', md: '14' }}
