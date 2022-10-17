@@ -28,6 +28,7 @@ export interface Banner {
   enabled: boolean;
   createdOn: FieldValue;
   updatedOn: FieldValue;
+  images?: (string | null)[];
 }
 
 export type BannerFilesValidationResult = {
