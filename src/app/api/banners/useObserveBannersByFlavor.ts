@@ -6,7 +6,8 @@ import React from 'react';
 
 export const useObserveBannersByFlavor = (
   flavor: ClientFlavor,
-  getImages?: boolean
+  getImages?: boolean,
+  onlyEnabled?: boolean
 ) => {
   // context
   const api = useContextApi();
@@ -19,31 +20,35 @@ export const useObserveBannersByFlavor = (
   }, [api]);
   React.useEffect(() => {
     if (!ordering) return;
-    api.banners().observeBannersByFlavor(flavor, async (data) => {
-      if (data) {
-        const ordered = getBannersByFlavorOrdered(ordering[flavor], data);
-        if (getImages) {
-          const orderedWithImages = await Promise.all(
-            ordered.map(async (item) => {
-              const images = [];
-              const mobile = await api
-                .banners()
-                .getBannerImageURL(flavor, item.id, '320x100');
-              const web = await api
-                .banners()
-                .getBannerImageURL(flavor, item.id, '980x180');
-              images.push(mobile);
-              images.push(web);
-              return { ...item, images };
-            })
-          );
-          setBanners(orderedWithImages);
-        } else {
-          setBanners(ordered);
-        }
-      } else setBanners(data);
-    });
-  }, [api, ordering, flavor, getImages]);
+    api.banners().observeBannersByFlavor(
+      flavor,
+      async (data) => {
+        if (data) {
+          const ordered = getBannersByFlavorOrdered(ordering[flavor], data);
+          if (getImages) {
+            const orderedWithImages = await Promise.all(
+              ordered.map(async (item) => {
+                const images = [];
+                const mobile = await api
+                  .banners()
+                  .getBannerImageURL(flavor, item.id, '320x100');
+                const web = await api
+                  .banners()
+                  .getBannerImageURL(flavor, item.id, '980x180');
+                images.push(mobile);
+                images.push(web);
+                return { ...item, images };
+              })
+            );
+            setBanners(orderedWithImages);
+          } else {
+            setBanners(ordered);
+          }
+        } else setBanners(data);
+      },
+      onlyEnabled
+    );
+  }, [api, ordering, flavor, getImages, onlyEnabled]);
   // result
   return banners;
 };

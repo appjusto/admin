@@ -21,9 +21,11 @@ export default class BannersApi {
   // firestore
   observeBannersByFlavor(
     flavor: ClientFlavor,
-    resultHandler: (banners: WithId<Banner>[] | null) => void
+    resultHandler: (banners: WithId<Banner>[] | null) => void,
+    onlyEnabled?: boolean
   ): Unsubscribe {
-    const q = query(this.refs.getBannersRef(), where('flavor', '==', flavor));
+    let q = query(this.refs.getBannersRef(), where('flavor', '==', flavor));
+    if (onlyEnabled) q = query(q, where('enabled', '==', true));
     // returns the unsubscribe function
     return customCollectionSnapshot<Banner>(q, resultHandler);
   }

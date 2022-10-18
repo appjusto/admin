@@ -22,7 +22,6 @@ export const BannerCard = ({ banner, baseWidth }: BannerCardProps) => {
     if (baseWidth < 700 && banner.images[0]) setImageUrl(banner.images![0]);
     else if (banner.images[1]) setImageUrl(banner.images[1]);
   }, [banner, baseWidth]);
-  console.log(baseWidth);
   // UI
   return (
     <Link href={link} isExternal>

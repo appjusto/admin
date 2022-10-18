@@ -77,7 +77,7 @@ export const BusinessProvider = ({ children }: Props) => {
   // state
   const [business, setBusiness] = React.useState<WithId<Business> | null>();
   const [isGetManagersActive, setIsGetManagersActive] = React.useState(false);
-  const banners = useObserveBannersByFlavor('business', true);
+  const banners = useObserveBannersByFlavor('business', true, true);
   // business managers
   const { managers: businessManagers, fetchManagers } = useGetManagers(
     business?.id,
