@@ -38,15 +38,30 @@ interface BannersProps {
 export const BannersContainer = ({ banners }: BannersProps) => {
   // state
   const [baseWidth, setBaseWidth] = React.useState(0);
+  const [autoPlay, setAutoPlay] = React.useState(true);
   const [transition, setTransition] = React.useState('');
   const [translateValue, setTranslateValue] = React.useState<number>();
   // refs
   const sliderRef = React.useRef<HTMLDivElement>(null);
   // handlers
+  const setInitialtransition = React.useCallback(() => {
+    if (!banners || banners.length < 2) return;
+    if (!baseWidth) return;
+    const initialtranslate = baseWidth * banners.length;
+    if (
+      !translateValue ||
+      translateValue === 0 ||
+      translateValue === initialtranslate * 2
+    ) {
+      setTransition('');
+      setTranslateValue(initialtranslate);
+    }
+  }, [banners, baseWidth, translateValue]);
   const handleTranslate = React.useCallback(
-    (direction: 'left' | 'right') => {
-      if (!banners) return;
+    (direction: 'left' | 'right', auto?: boolean) => {
+      if (!banners || banners.length < 2) return;
       if (!baseWidth) return;
+      if (auto && !autoPlay) return;
       setTranslateValue((prev) => {
         if (!prev) return;
         if (direction === 'right') {
@@ -56,8 +71,9 @@ export const BannersContainer = ({ banners }: BannersProps) => {
         }
       });
     },
-    [banners, baseWidth]
+    [banners, baseWidth, autoPlay]
   );
+  // console.log('baseWidth', baseWidth);
   console.log('tValue', translateValue);
   React.useEffect(() => {
     const handleResizing = () => {
@@ -66,7 +82,7 @@ export const BannersContainer = ({ banners }: BannersProps) => {
           window.innerWidth ||
           document.documentElement.clientWidth ||
           document.body.clientWidth;
-        const baseWidth = clientWidth < 760 ? clientWidth - 32 : 980;
+        const baseWidth = clientWidth > 1000 ? 980 : clientWidth - 32;
         setBaseWidth(baseWidth);
       }
     };
@@ -76,29 +92,41 @@ export const BannersContainer = ({ banners }: BannersProps) => {
   }, []);
   React.useEffect(() => {
     if (!banners) return;
+    if (banners.length < 2) {
+      setTranslateValue(0);
+      return;
+    }
     if (!baseWidth) return;
     const initialtranslate = baseWidth * banners.length;
     const restart = () =>
       setTimeout(() => {
-        setTransition('');
-        setTranslateValue(initialtranslate);
+        setInitialtransition();
       }, 2000);
     if (!translateValue || translateValue === initialtranslate * 2) restart();
     else if (translateValue === 0) restart();
     else {
       setTransition('transform 2s ease');
     }
-  }, [banners, baseWidth, translateValue, transition]);
+  }, [banners, baseWidth, translateValue, transition, setInitialtransition]);
   React.useEffect(() => {
+    if (!banners || banners.length < 2) return;
     const interval = setInterval(() => {
-      handleTranslate('right');
+      handleTranslate('right', true);
     }, 6000);
     return () => clearInterval(interval);
-  }, [handleTranslate]);
+  }, [banners, handleTranslate]);
   // UI
   if (!banners || translateValue === undefined) return <Box />;
   return (
-    <Box mt="6" w="100%" maxW="980px" pos="relative" overflow="hidden">
+    <Box
+      mt="6"
+      w="100%"
+      maxW="980px"
+      pos="relative"
+      overflow="hidden"
+      onMouseOver={() => setAutoPlay(false)}
+      onMouseLeave={() => setAutoPlay(true)}
+    >
       <Flex
         ref={sliderRef}
         flexDir="row"
@@ -106,9 +134,6 @@ export const BannersContainer = ({ banners }: BannersProps) => {
         transition={transition}
       >
         {renderCarouselSection(banners, baseWidth)}
-        {/* {banners.map((banner) => (
-          <BannerCard key={banner.id} banner={banner} baseWidth={baseWidth} />
-        ))} */}
       </Flex>
       {banners.length > 1 && (
         <>
