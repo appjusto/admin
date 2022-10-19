@@ -5,7 +5,6 @@ const BOBankingInformation = () => {
   // context
   const { bankAccount, handleBankingInfoChange, setContextValidation } =
     useContextBusinessBackoffice();
-  console.log(bankAccount);
   // UI
   return (
     <BankingForm
