@@ -17,7 +17,6 @@ import {
   FetchAccountInformationResponse,
   FetchAdvanceByAmountSimulationPayload,
   FetchReceivablesPayload,
-  ManagerProfile,
   MarketplaceAccountInfo,
   Ordering,
   Product,
@@ -236,11 +235,9 @@ export default class BusinessApi {
     return await updateDoc(this.refs.getBusinessRef(businessId), fullChanges);
   }
 
-  async updateBusinessManagerAndBankAccountBatch(
+  async updateBusinessAndBankAccountBatch(
     businessId: string,
     businessChanges: Partial<Business> | null,
-    managerId: string,
-    managerChanges: Partial<ManagerProfile> | null,
     bankChanges: Partial<BankAccount> | null
   ) {
     let batch = this.refs.getBatchRef();
@@ -252,9 +249,6 @@ export default class BusinessApi {
     };
     if (businessChanges)
       batch.update(this.refs.getBusinessRef(businessId), fullBusinessChanges);
-    // manager
-    if (managerChanges)
-      batch.update(this.refs.getManagerRef(managerId), managerChanges);
     // bank
     if (bankChanges)
       batch.set(this.refs.getBusinessBankAccountRef(businessId), bankChanges, {

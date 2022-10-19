@@ -13,12 +13,12 @@ import {
 } from '@chakra-ui/react';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusinessBackoffice } from 'app/state/business/businessBOContext';
-import { CustomButton } from 'common/components/buttons/CustomButton';
+import { useContextBusiness } from 'app/state/business/context';
 import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
 import React from 'react';
 import { MdThumbDownOffAlt, MdThumbUpOffAlt } from 'react-icons/md';
 import { useRouteMatch } from 'react-router';
-import { useLocation } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { situationPTOptions } from '../../utils';
@@ -39,11 +39,16 @@ export const BusinessBaseDrawer = ({
   ...props
 }: BaseDrawerProps) => {
   //context
-  const { userAbility } = useContextFirebaseUser();
   const { url } = useRouteMatch();
+  const history = useHistory();
+  const { userAbility } = useContextFirebaseUser();
   const { pathname } = useLocation();
+  const { setBusinessId, clearBusiness } = useContextBusiness();
   const { business, manager, handleSave, isLoading } =
     useContextBusinessBackoffice();
+  // state
+  const [personificationIsLoading, setPersonificationIsLoading] =
+    React.useState(false);
   // helpers
   const userCanUpdate = userAbility?.can('update', 'businesses');
   const situationAlert =
@@ -52,7 +57,21 @@ export const BusinessBaseDrawer = ({
   const pageHasAction = pageName
     ? !withoutActionPages.includes(pageName)
     : true;
+  // handlers
+  const handlePersonification = React.useCallback(() => {
+    if (!business?.id) return;
+    setPersonificationIsLoading(true);
+    setBusinessId(business.id);
+    setTimeout(() => {
+      history.push('/app');
+    }, 2000);
+  }, [business?.id, setBusinessId, history]);
+  // side effects
+  React.useEffect(() => {
+    clearBusiness();
+  }, [clearBusiness]);
   //UI
+  // if (adminBusiness) return <Redirect to="/app" />;
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
       <DrawerOverlay>
@@ -237,16 +256,19 @@ export const BusinessBaseDrawer = ({
               >
                 {t('Salvar alterações')}
               </Button>
-              <CustomButton
+              <Button
                 id="personification"
                 mt="0"
                 width="full"
                 maxW={{ base: '160px', md: '240px' }}
                 fontSize={{ base: '13px', md: '15px' }}
                 variant="secondary"
-                label={t('Personificar restaurante')}
-                link={'/app'}
-              />
+                onClick={handlePersonification}
+                isLoading={personificationIsLoading}
+                loadingText={t('Carregando')}
+              >
+                {t('Personificar restaurante')}
+              </Button>
             </Flex>
           </DrawerFooter>
         </DrawerContent>

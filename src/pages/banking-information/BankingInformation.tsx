@@ -41,7 +41,7 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
   const { dispatchAppRequestResult } = useContextAppRequests();
   const { business } = useContextBusiness();
   const { bankAccount, updateBankAccount, updateResult } =
-    useBusinessBankAccount(typeof onboarding === 'string');
+    useBusinessBankAccount(business?.id, typeof onboarding === 'string');
   const { isLoading, isSuccess } = updateResult;
   // state
   const [selectedBank, setSelectedBank] = React.useState<Bank>();
