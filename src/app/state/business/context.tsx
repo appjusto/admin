@@ -73,7 +73,6 @@ export const BusinessProvider = ({ children }: Props) => {
   const hookBusiness = useObserveBusinessProfile(businessId);
   // state
   const [business, setBusiness] = React.useState<WithId<Business> | null>();
-  console.log('context', business);
   const [isGetManagersActive, setIsGetManagersActive] = React.useState(false);
   // business managers
   const { managers: businessManagers, fetchManagers } = useGetManagers(

@@ -45,7 +45,6 @@ interface BusinessBOContextProps {
     args?: number | { index: number; field: BusinessPhoneField; value: any }
   ): void;
   handleBusinessPhoneOrdering(newPhones: BusinessPhone[]): void;
-  // handleManagerProfileChange(key: string, value: any): void;
   handleBusinessAddressChange(key: string, value: any): void;
   handleBankingInfoChange(newBankAccount: Partial<BankAccount>): void;
   setContextValidation: Dispatch<SetStateAction<BackofficeProfileValidation>>;
@@ -54,7 +53,6 @@ interface BusinessBOContextProps {
   deleteMarketPlace: UseMutateAsyncFunction<void, unknown, void, unknown>;
   deleteMarketPlaceResult: MutationResult;
   businessManagers?: ManagerWithRole[];
-  // setIsGetManagersActive: React.Dispatch<React.SetStateAction<boolean>>;
   fetchManagers(): void;
 }
 
@@ -111,7 +109,7 @@ export const BusinessBOProvider = ({ children }: Props) => {
   const { marketPlace, deleteMarketPlace, deleteMarketPlaceResult } =
     useBusinessMarketPlace(businessId);
   const { updateBusinessAndBankAccount, updateResult } =
-    useBusinessAndBankAccountBatch();
+    useBusinessAndBankAccountBatch(businessId);
   // state
   const [state, dispatch] = React.useReducer(
     businessBOReducer,
@@ -200,9 +198,6 @@ export const BusinessBOProvider = ({ children }: Props) => {
     });
   };
   // side effects
-  // React.useEffect(() => {
-  //   if (businessId) setBusinessId(businessId);
-  // }, [businessId, setBusinessId]);
   React.useEffect(() => {
     if (business && business?.managers) {
       setManagerEmail(business?.managers[0] ?? null);
@@ -291,7 +286,6 @@ export const BusinessBOProvider = ({ children }: Props) => {
         handleBusinessAddressChange,
         handleBussinesPhonesChange,
         handleBusinessPhoneOrdering,
-        // handleManagerProfileChange,
         handleBankingInfoChange,
         setContextValidation,
         handleSave,
@@ -299,7 +293,6 @@ export const BusinessBOProvider = ({ children }: Props) => {
         deleteMarketPlace,
         deleteMarketPlaceResult,
         businessManagers,
-        // setIsGetManagersActive,
         fetchManagers,
       }}
     >
