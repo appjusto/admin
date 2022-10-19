@@ -94,7 +94,6 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
     business?.minimumOrder ?? 0
   );
   const [enabled, setEnabled] = React.useState(business?.enabled ?? false);
-  console.log('enabled', enabled);
   const [status, setStatus] = React.useState(business?.status ?? 'closed');
   const [maxOrdersPerHour, setMaxOrdersPerHour] = React.useState(
     String(business?.maxOrdersPerHour ?? '0')

@@ -384,18 +384,22 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
             </Text>
           </Text>
         )}
-        <SectionTitle>{t('Preferências de notificação')}</SectionTitle>
-        <Text mt="1" fontSize="sm" maxW="580px">
-          {t(
-            'Você pode escolher os tipos de comunicações que deseja receber do AppJusto.'
-          )}
-        </Text>
-        <UserNotificationPreferences
-          notificationPreferences={notificationPreferences}
-          handlePreferenciesChange={(values) =>
-            setNotificationPreferences(values)
-          }
-        />
+        {!onboarding && (
+          <>
+            <SectionTitle>{t('Preferências de notificação')}</SectionTitle>
+            <Text mt="1" fontSize="sm" maxW="580px">
+              {t(
+                'Você pode escolher os tipos de comunicações que deseja receber do AppJusto.'
+              )}
+            </Text>
+            <UserNotificationPreferences
+              notificationPreferences={notificationPreferences}
+              handlePreferenciesChange={(values) =>
+                setNotificationPreferences(values)
+              }
+            />
+          </>
+        )}
         <PageFooter
           onboarding={onboarding}
           redirect={redirect}
