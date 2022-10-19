@@ -18,12 +18,18 @@ import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
 import React from 'react';
 import { MdThumbDownOffAlt, MdThumbUpOffAlt } from 'react-icons/md';
 import { useRouteMatch } from 'react-router';
-import { useHistory, useLocation } from 'react-router-dom';
+import { Redirect, useLocation } from 'react-router-dom';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { situationPTOptions } from '../../utils';
 
 const withoutActionPages = ['managers', 'iugu'];
+
+interface PersonificationStatus {
+  enabled: boolean;
+  ready?: boolean;
+  isLoading?: boolean;
+}
 
 interface BaseDrawerProps {
   staff: { id: string | undefined; name: string };
@@ -40,15 +46,18 @@ export const BusinessBaseDrawer = ({
 }: BaseDrawerProps) => {
   //context
   const { url } = useRouteMatch();
-  const history = useHistory();
   const { userAbility } = useContextFirebaseUser();
   const { pathname } = useLocation();
-  const { setBusinessId, clearBusiness } = useContextBusiness();
+  const {
+    business: adminBusiness,
+    setBusinessId,
+    clearBusiness,
+  } = useContextBusiness();
   const { business, manager, handleSave, isLoading } =
     useContextBusinessBackoffice();
   // state
-  const [personificationIsLoading, setPersonificationIsLoading] =
-    React.useState(false);
+  const [personificationStatus, setPersonificationStatus] =
+    React.useState<PersonificationStatus>({ enabled: false });
   // helpers
   const userCanUpdate = userAbility?.can('update', 'businesses');
   const situationAlert =
@@ -60,18 +69,33 @@ export const BusinessBaseDrawer = ({
   // handlers
   const handlePersonification = React.useCallback(() => {
     if (!business?.id) return;
-    setPersonificationIsLoading(true);
+    setPersonificationStatus({ enabled: true, isLoading: true });
     setBusinessId(business.id);
-    setTimeout(() => {
-      history.push('/app');
-    }, 2000);
-  }, [business?.id, setBusinessId, history]);
+  }, [business?.id, setBusinessId]);
   // side effects
   React.useEffect(() => {
     clearBusiness();
   }, [clearBusiness]);
+  React.useEffect(() => {
+    if (adminBusiness) {
+      setPersonificationStatus((prev) => {
+        return {
+          ...prev,
+          ready: true,
+        };
+      });
+    } else {
+      setPersonificationStatus((prev) => {
+        return {
+          ...prev,
+          ready: false,
+        };
+      });
+    }
+  }, [adminBusiness]);
   //UI
-  // if (adminBusiness) return <Redirect to="/app" />;
+  const { enabled, ready } = personificationStatus;
+  if (enabled && ready) return <Redirect to="/app" />;
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
       <DrawerOverlay>
@@ -264,7 +288,7 @@ export const BusinessBaseDrawer = ({
                 fontSize={{ base: '13px', md: '15px' }}
                 variant="secondary"
                 onClick={handlePersonification}
-                isLoading={personificationIsLoading}
+                isLoading={personificationStatus.isLoading}
                 loadingText={t('Carregando')}
               >
                 {t('Personificar restaurante')}
