@@ -18,6 +18,7 @@ import { useConsumerUpdateProfile } from 'app/api/consumer/useConsumerUpdateProf
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextConsumerProfile } from 'app/state/consumer/context';
 import { useContextAppRequests } from 'app/state/requests/context';
+import { AppVersionLabel } from 'common/components/backoffice/AppVersionLabel';
 import { getEditableProfile } from 'pages/backoffice/utils';
 import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
 import React from 'react';
@@ -169,9 +170,7 @@ export const ConsumerBaseDrawer = ({
               lineHeight="22px"
             >
               {t('Versão do app:')}{' '}
-              <Text as="span" fontWeight="500">
-                {consumer?.appVersion ?? 'N/E'}
-              </Text>
+              <AppVersionLabel type="courier" version={consumer?.appVersion} />
             </Text>
             <Text
               mt="1"

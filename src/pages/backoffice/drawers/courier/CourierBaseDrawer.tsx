@@ -19,6 +19,7 @@ import { useCourierUpdateProfile } from 'app/api/courier/useCourierUpdateProfile
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextCourierProfile } from 'app/state/courier/context';
 import { useContextAppRequests } from 'app/state/requests/context';
+import { AppVersionLabel } from 'common/components/backoffice/AppVersionLabel';
 import {
   getEditableProfile,
   modePTOptions,
@@ -214,9 +215,7 @@ export const CourierBaseDrawer = ({
               lineHeight="22px"
             >
               {t('Versão do app:')}{' '}
-              <Text as="span" fontWeight="500">
-                {courier?.appVersion ?? 'N/E'}
-              </Text>
+              <AppVersionLabel type="courier" version={courier?.appVersion} />
             </Text>
             {/*<Text mt="2" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
               {t('Agente responsável:')}{' '}
