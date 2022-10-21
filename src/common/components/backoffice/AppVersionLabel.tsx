@@ -1,6 +1,6 @@
 import { PlatformAccess } from '@appjusto/types';
 import { Text } from '@chakra-ui/react';
-import { useContextBackofficeDashboard } from 'app/state/dashboards/backoffice';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import { getAppVersionLabelColor } from 'utils/version';
 
 export type AppType = keyof PlatformAccess['currentVersions'];
@@ -12,7 +12,7 @@ interface AppVersionLabelProps {
 
 export const AppVersionLabel = ({ version, type }: AppVersionLabelProps) => {
   // context
-  const { platformAccess } = useContextBackofficeDashboard();
+  const { platformAccess } = useContextFirebaseUser();
   // helpers
   const current = platformAccess?.currentVersions[type];
   const color = getAppVersionLabelColor(current, version);

@@ -10,10 +10,10 @@ import {
   Tr,
 } from '@chakra-ui/react';
 import { useContextFirebaseUser } from 'app/state/auth/context';
+import { AppVersionLabel } from 'common/components/backoffice/AppVersionLabel';
 import React from 'react';
 import { formatDate, formatTime } from 'utils/formatters';
 import { t } from 'utils/i18n';
-import { getAppVersionLabelColor } from 'utils/version';
 interface TeamTableItemProps {
   manager: ManagerWithRole;
   minVersion?: string | null;
@@ -41,11 +41,6 @@ export const TeamTableItem = ({
   // helpers
   const userIsOwner = userAbility?.can('delete', 'businesses');
   const userCanUpdate = userAbility?.can('update', { kind: 'managers', role });
-  const versionLabelColor = getAppVersionLabelColor(
-    minVersion,
-    manager.appVersion
-  );
-  // haldlers
   // side effects
   React.useEffect(() => {
     if (!manager.role) return;
@@ -198,11 +193,9 @@ export const TeamTableItem = ({
           formatTime(manager.createdOn as unknown as Date)}
       </Td>
       <Td>
-        <Text as="span" color={versionLabelColor}>
-          {manager?.webAppVersion ?? 'N/E'}
-        </Text>
-        {' / '}
-        <Text as="span">{manager?.appVersion ?? 'N/E'}</Text>
+        (<AppVersionLabel type="businessWeb" version={manager?.webAppVersion} />
+        )/(
+        <AppVersionLabel type="businessApp" version={manager?.appVersion} />)
       </Td>
       <Td>
         <Button

@@ -1,5 +1,16 @@
 import { AdminRole, ManagerWithRole } from '@appjusto/types';
-import { Box, HStack, Icon, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
+import {
+  Box,
+  HStack,
+  Icon,
+  Table,
+  Tbody,
+  Td,
+  Text,
+  Th,
+  Thead,
+  Tr,
+} from '@chakra-ui/react';
 import { useManagers } from 'app/api/manager/useManagers';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusinessBackoffice } from 'app/state/business/businessBOContext';
@@ -11,7 +22,12 @@ export const ManagersTable = () => {
   // context
   const { minVersion } = useContextFirebaseUser();
   const { businessManagers, fetchManagers } = useContextBusinessBackoffice();
-  const { removeBusinessManager, createManager, createManagerResult, removeResult } = useManagers();
+  const {
+    removeBusinessManager,
+    createManager,
+    createManagerResult,
+    removeResult,
+  } = useManagers();
   // state
   const [managers, setManagers] = React.useState<ManagerWithRole[]>();
   const [isLoading, setIsLoading] = React.useState(false);
@@ -36,9 +52,11 @@ export const ManagersTable = () => {
     setManagers(businessManagers);
   }, [businessManagers]);
   React.useEffect(() => {
-    if (!createManagerResult.isLoading && !removeResult.isLoading) setIsLoading(false);
-    else if (createManagerResult.isLoading || removeResult.isLoading) setIsLoading(true);
-  }, [createManagerResult.isLoading, removeResult.isLoading])
+    if (!createManagerResult.isLoading && !removeResult.isLoading)
+      setIsLoading(false);
+    else if (createManagerResult.isLoading || removeResult.isLoading)
+      setIsLoading(true);
+  }, [createManagerResult.isLoading, removeResult.isLoading]);
   React.useEffect(() => {
     if (!createManagerResult.isSuccess) return;
     fetchManagers();
@@ -61,7 +79,7 @@ export const ManagersTable = () => {
             <Tr>
               <Th>{t('E-mail')}</Th>
               <Th>{t('Papel')}</Th>
-              <Th>{t('Versão web/mob')}</Th>
+              <Th>{t('Versão (web)/(mob)')}</Th>
               <Th minW="140px"></Th>
             </Tr>
           </Thead>
