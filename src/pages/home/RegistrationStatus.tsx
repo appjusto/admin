@@ -81,7 +81,9 @@ const initialState = [
 export const RegistrationStatus = () => {
   // context
   const { business } = useContextBusiness();
-  const { updateBusinessProfile, updateResult } = useBusinessProfile();
+  const { updateBusinessProfile, updateResult } = useBusinessProfile(
+    business?.id
+  );
   const { isLoading } = updateResult;
   const businessProfileValidation = useBusinessProfileValidation();
   // state

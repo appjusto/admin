@@ -7,7 +7,7 @@ import { t } from 'utils/i18n';
 export const PrintSwitch = () => {
   // context
   const { business, updateContextBusinessOrderPrint } = useContextBusiness();
-  const { updateBusinessProfile } = useBusinessProfile();
+  const { updateBusinessProfile } = useBusinessProfile(business?.id);
   //state
   const [enable, setEnable] = React.useState(false);
   //handlers

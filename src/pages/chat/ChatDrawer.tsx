@@ -20,6 +20,7 @@ import { useObserveBusinessOrderChatByType } from 'app/api/chat/useObserveBusine
 // import { useUpdateChatMessage } from 'app/api/business/chat/useUpdateChatMessage';
 import { useUpdateChatMessage } from 'app/api/chat/useUpdateChatMessage';
 import { getUnreadChatMessages } from 'app/api/chat/utils';
+import { useContextBusiness } from 'app/state/business/context';
 import { useContextServerTime } from 'app/state/server-time';
 import React, { KeyboardEvent } from 'react';
 import { useParams } from 'react-router';
@@ -46,7 +47,8 @@ type CurrentCounterPart = {
 export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
   //context
   const { getServerTime } = useContextServerTime();
-  const { logo } = useBusinessProfile();
+  const { business } = useContextBusiness();
+  const { logo } = useBusinessProfile(business?.id);
   const { orderId, counterpartId } = useParams<Params>();
   const { updateChatMessage } = useUpdateChatMessage();
   const {

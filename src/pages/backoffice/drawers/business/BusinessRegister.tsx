@@ -1,3 +1,4 @@
+import { BusinessTag } from '@appjusto/types';
 import { Box, Text } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useObserveBusinessProfileNotes } from 'app/api/business/profile/useObserveBusinessProfileNotes';
@@ -30,7 +31,7 @@ export const BusinessRegister = () => {
     handleBusinessPhoneOrdering,
   } = useContextBusinessBackoffice();
   const { updateBusinessProfile, updateResult: updateProfilteResult } =
-    useBusinessProfile();
+    useBusinessProfile(business?.id);
   const { profileNotes, updateNote, deleteNote, updateResult, deleteResult } =
     useObserveBusinessProfileNotes(business?.id);
   // UI
@@ -118,8 +119,15 @@ export const BusinessRegister = () => {
         <>
           <SectionTitle>{t('Tags')}</SectionTitle>
           <ProfileTags
-            profile={business}
-            updateProfile={(tags: string[]) => updateBusinessProfile({ tags })}
+            tags={business?.tags}
+            options={
+              [
+                'motorcycle-only',
+                'can-match-courier',
+                'can-outsource',
+              ] as BusinessTag[]
+            }
+            updateProfile={(tags) => updateBusinessProfile({ tags })}
             isLoading={updateProfilteResult.isLoading}
             isSuccess={updateProfilteResult.isSuccess}
           />

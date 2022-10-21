@@ -22,17 +22,24 @@ interface BaseDrawerProps {
   onClose(): void;
 }
 
-export const OrderAcceptanceTimeDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
+export const OrderAcceptanceTimeDrawer = ({
+  onClose,
+  ...props
+}: BaseDrawerProps) => {
   //context
   const { business } = useOrdersContext();
-  const { updateBusinessProfile, updateResult } = useBusinessProfile();
+  const { updateBusinessProfile, updateResult } = useBusinessProfile(
+    business?.id
+  );
   const { isLoading, isSuccess } = updateResult;
   //state
   const [minutes, setMinutes] = React.useState(5);
   const [acceptanceOn, setAcceptanceOn] = React.useState(false);
   // handlers
   const handleSave = async () => {
-    await updateBusinessProfile({ orderAcceptanceTime: acceptanceOn ? minutes * 60 : null });
+    await updateBusinessProfile({
+      orderAcceptanceTime: acceptanceOn ? minutes * 60 : null,
+    });
   };
   // side effects
   React.useEffect(() => {
@@ -51,7 +58,13 @@ export const OrderAcceptanceTimeDrawer = ({ onClose, ...props }: BaseDrawerProps
         <DrawerContent>
           <DrawerCloseButton />
           <DrawerHeader pb="2">
-            <Text color="black" fontSize="2xl" fontWeight="700" lineHeight="28px" mb="2">
+            <Text
+              color="black"
+              fontSize="2xl"
+              fontWeight="700"
+              lineHeight="28px"
+              mb="2"
+            >
               {t('Aceitar pedidos automaticamente')}
             </Text>
           </DrawerHeader>
@@ -79,7 +92,9 @@ export const OrderAcceptanceTimeDrawer = ({ onClose, ...props }: BaseDrawerProps
               <ItemsQtdButtons
                 value={minutes}
                 increment={() => setMinutes((prev) => prev + 1)}
-                decrement={() => setMinutes((prev) => (prev > 0 ? prev - 1 : 0))}
+                decrement={() =>
+                  setMinutes((prev) => (prev > 0 ? prev - 1 : 0))
+                }
               />
               {acceptanceOn && (
                 <Text fontSize="xs" lineHeight="21px">

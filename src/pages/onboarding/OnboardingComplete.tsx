@@ -7,7 +7,10 @@ import { Redirect } from 'react-router-dom';
 export const OnboardingComplete = () => {
   // context
   const { business } = useContextBusiness();
-  const { updateBusinessProfile, updateResult } = useBusinessProfile(true);
+  const { updateBusinessProfile, updateResult } = useBusinessProfile(
+    business?.id,
+    true
+  );
   const { isError } = updateResult;
   React.useEffect(() => {
     updateBusinessProfile({

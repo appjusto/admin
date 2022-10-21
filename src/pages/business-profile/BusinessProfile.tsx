@@ -126,7 +126,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
     logo,
     cover,
     updateWithImagesResult,
-  } = useBusinessProfile(isOnboarding);
+  } = useBusinessProfile(business?.id, isOnboarding);
   const { isSuccess } = updateWithImagesResult;
   // handlers
   const openDrawerHandler = () => history.push(`${path}/delete`);

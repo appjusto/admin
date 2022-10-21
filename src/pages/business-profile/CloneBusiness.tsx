@@ -15,10 +15,12 @@ export const CloneBusiness = () => {
   // context
   const history = useHistory();
   const { dispatchAppRequestResult } = useContextAppRequests();
-  const { setBusinessId } = useContextBusiness();
-  const { cloneBusiness, cloneResult } = useBusinessProfile();
+  const { business, setBusinessId } = useContextBusiness();
+  const { cloneBusiness, cloneResult } = useBusinessProfile(business?.id);
   // state
-  const [isCreating, setIsCreating] = React.useState<Creation>({ status: false });
+  const [isCreating, setIsCreating] = React.useState<Creation>({
+    status: false,
+  });
   // handlers
   const cloneHandler = async () => {
     if (!isCreating.type) {
@@ -49,13 +51,21 @@ export const CloneBusiness = () => {
           )}
         </Text>
         {isCreating.status ? (
-          <Box mt="4" bg="#FFF8F8" border="1px solid red" borderRadius="lg" p="6">
+          <Box
+            mt="4"
+            bg="#FFF8F8"
+            border="1px solid red"
+            borderRadius="lg"
+            p="6"
+          >
             <Text>
               {isCreating.type === 'clone'
                 ? t(
                     'Tem certeza que deseja criar um novo restaurante com as informações básicas e o cardápio do restaurante atual?'
                   )
-                : t('Tem certeza que deseja criar um novo restaurante do zero?')}
+                : t(
+                    'Tem certeza que deseja criar um novo restaurante do zero?'
+                  )}
             </Text>
             <Stack mt="4" spacing={4} direction={{ base: 'column', md: 'row' }}>
               <Button
@@ -71,7 +81,11 @@ export const CloneBusiness = () => {
                 size="md"
                 onClick={cloneHandler}
                 isLoading={cloneResult.isLoading}
-                loadingText={isCreating.type === 'clone' ? t('Clonando...') : t('Criando...')}
+                loadingText={
+                  isCreating.type === 'clone'
+                    ? t('Clonando...')
+                    : t('Criando...')
+                }
               >
                 {t('Confirmar')}
               </Button>

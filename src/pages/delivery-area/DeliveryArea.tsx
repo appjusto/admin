@@ -68,6 +68,7 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
   const [cities, setCities] = React.useState<string[]>([]);
   // business profile
   const { updateBusinessProfile, updateResult: result } = useBusinessProfile(
+    business?.id,
     typeof onboarding === 'string'
   );
   const { isLoading, isSuccess } = result;

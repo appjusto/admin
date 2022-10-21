@@ -1,74 +1,48 @@
 import {
-  Business,
-  ConsumerProfile,
-  CourierProfile,
-  WithId,
-} from '@appjusto/types';
-import {
   Box,
   Button,
+  Checkbox,
+  CheckboxGroup,
   Flex,
   HStack,
   Tag,
-  TagCloseButton,
   TagLabel,
   Text,
+  VStack,
 } from '@chakra-ui/react';
-import { CustomInput } from 'common/components/form/input/CustomInput';
 import React from 'react';
 import { t } from 'utils/i18n';
-
-type IsRemoving = {
-  status: boolean;
-  tag?: string;
-};
-
-interface ProfileTagsProps {
-  profile?: WithId<Business | ConsumerProfile | CourierProfile> | null;
-  updateProfile: (tags: string[]) => void;
+interface ProfileTagsProps<T> {
+  tags?: T[];
+  options: T[];
+  updateProfile: (tags: T[]) => void;
   isLoading: boolean;
   isSuccess: boolean;
 }
 
-export const ProfileTags = ({
-  profile,
+export const ProfileTags = <T,>({
+  tags,
+  options,
   updateProfile,
   isLoading,
   isSuccess,
-}: ProfileTagsProps) => {
+}: ProfileTagsProps<T>) => {
   // state
-  const [state, setState] = React.useState<string[]>([]);
-  const [newTag, setNewTag] = React.useState('');
-  const [isAdding, setIsAdding] = React.useState(false);
-  const [isRemoving, setIsRemoving] = React.useState<IsRemoving>({
-    status: false,
-  });
-  // helpers
-  const isRemovingTag = (tag: string) =>
-    isRemoving.status === true && isRemoving.tag === tag;
+  const [stateTags, setStateTags] = React.useState<T[]>([]);
+  const [isEditing, setIsEditing] = React.useState(false);
   // handlers
-  const handleAddNote = () => {
-    const tags = [...state, newTag];
-    updateProfile(tags);
-  };
-  const handleRemove = () => {
-    const tags = state.filter((tag) => tag !== isRemoving.tag);
-    updateProfile(tags);
+  const handleAddTag = () => {
+    updateProfile(stateTags);
   };
   // side effects
   React.useEffect(() => {
-    if (!profile?.tags) return;
-    setState(profile?.tags);
-  }, [profile?.tags]);
+    if (!tags) return;
+    setStateTags(tags);
+  }, [tags]);
   React.useEffect(() => {
     if (!isSuccess) return;
-    setIsAdding(false);
-    setIsRemoving({ status: false });
+    setIsEditing(false);
   }, [isSuccess]);
-  React.useEffect(() => {
-    if (isAdding) return;
-    setNewTag('');
-  }, [isAdding]);
   // UI
   return (
     <Box
@@ -79,28 +53,40 @@ export const ProfileTags = ({
       maxH="400px"
       overflowY="auto"
     >
-      {isAdding ? (
-        <Box>
-          <CustomInput
-            id="new-note"
-            bgColor="white"
-            label={'Nova tag'}
-            value={newTag}
-            onChange={(ev) => setNewTag(ev.target.value.toLowerCase())}
-          />
+      {isEditing ? (
+        <Box p="4" bgColor="white" borderRadius="lg">
+          <CheckboxGroup
+            colorScheme="green"
+            value={stateTags as unknown as string[]}
+            onChange={(values) => setStateTags(values as unknown as T[])}
+          >
+            <Text fontWeight="700">{t('Tags disponíveis:')}</Text>
+            <VStack mt="2" alignItems="flex-start">
+              {options.map((tag) => {
+                return (
+                  <Checkbox
+                    key={tag as unknown as string}
+                    value={tag as unknown as string}
+                  >
+                    {tag}
+                  </Checkbox>
+                );
+              })}
+            </VStack>
+          </CheckboxGroup>
           <HStack mt="4" justifyContent="flex-end" spacing={4}>
             <Button
               size="md"
               w={{ base: '90px', md: '160px' }}
               variant="dangerLight"
-              onClick={() => setIsAdding(false)}
+              onClick={() => setIsEditing(false)}
             >
               {t('Cancelar')}
             </Button>
             <Button
               size="md"
               w={{ base: '90px', md: '160px' }}
-              onClick={handleAddNote}
+              onClick={handleAddTag}
               isLoading={isLoading}
               loadingText={t('Salvando')}
             >
@@ -114,69 +100,29 @@ export const ProfileTags = ({
             color="green.600"
             textDecor="underline"
             cursor="pointer"
-            onClick={() => setIsAdding(true)}
+            onClick={() => setIsEditing(true)}
           >
-            {t('+ Adicionar tag')}
+            {t('Editar tags')}
           </Text>
         </Flex>
       )}
       <Box mt="4">
-        {state.length > 0 ? (
-          state.map((tag) => (
+        {stateTags.length > 0 ? (
+          stateTags.map((tag) => (
             <Tag
-              key={tag}
+              key={tag as unknown as string}
               px="4"
               py="1"
-              bgColor={isRemovingTag(tag) ? '#FFF8F8' : 'white'}
+              bgColor="white"
               mr="2"
             >
               <TagLabel>{tag}</TagLabel>
-              <TagCloseButton
-                onClick={() => setIsRemoving({ status: true, tag })}
-              />
             </Tag>
           ))
         ) : (
           <Text mt="6">{t('Ainda não há tags para este perfil.')}</Text>
         )}
       </Box>
-      {isRemoving.status && (
-        <Flex
-          mt="4"
-          p="4"
-          bgColor="#FFF8F8"
-          borderRadius="lg"
-          flexDir="column"
-          justifyContent="space-between"
-          alignItems="center"
-        >
-          <Text>
-            {t('Deseja remover a tag ')}
-            <Text as="span" fontWeight="700">
-              {isRemoving.tag}?
-            </Text>
-          </Text>
-          <HStack mt="4" justifyContent="flex-end" spacing={4}>
-            <Button
-              size="md"
-              w={{ base: '90px', md: '160px' }}
-              onClick={() => setIsRemoving({ status: false })}
-            >
-              {t('Manter')}
-            </Button>
-            <Button
-              size="md"
-              w={{ base: '90px', md: '160px' }}
-              variant="danger"
-              onClick={handleRemove}
-              isLoading={isRemoving.status && isLoading}
-              loadingText={t('Removendo')}
-            >
-              {t('Remover')}
-            </Button>
-          </HStack>
-        </Flex>
-      )}
     </Box>
   );
 };

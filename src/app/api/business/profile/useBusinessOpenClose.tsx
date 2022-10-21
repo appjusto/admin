@@ -10,7 +10,7 @@ import { businessShouldBeOpen } from './utils';
 export const useBusinessOpenClose = (business?: WithId<Business> | null) => {
   // context
   const { adminRole } = useContextFirebaseUser();
-  const { updateBusinessProfile } = useBusinessProfile();
+  const { updateBusinessProfile } = useBusinessProfile(business?.id);
   const { getServerTime } = useContextServerTime();
   // handlers
   const toast = useToast();
@@ -23,7 +23,10 @@ export const useBusinessOpenClose = (business?: WithId<Business> | null) => {
     if (shouldBeOpen && business?.status === 'closed') {
       updateBusinessProfile({ status: 'open' });
     } else if (!shouldBeOpen && business?.status === 'open') {
-      console.log('%cFechando restaurante de acordo com horários estabelecidos.', 'color: purple');
+      console.log(
+        '%cFechando restaurante de acordo com horários estabelecidos.',
+        'color: purple'
+      );
       updateBusinessProfile({ status: 'closed' });
       toast({
         duration: 12000,
@@ -59,5 +62,11 @@ export const useBusinessOpenClose = (business?: WithId<Business> | null) => {
       checkBusinessStatus();
     }, 5000);
     return () => clearInterval(openCloseInterval);
-  }, [adminRole, business?.situation, business?.enabled, business?.schedules, checkBusinessStatus]);
+  }, [
+    adminRole,
+    business?.situation,
+    business?.enabled,
+    business?.schedules,
+    checkBusinessStatus,
+  ]);
 };
