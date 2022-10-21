@@ -86,7 +86,7 @@ export const ProfileTags = ({
             bgColor="white"
             label={'Nova tag'}
             value={newTag}
-            onChange={(ev) => setNewTag(ev.target.value)}
+            onChange={(ev) => setNewTag(ev.target.value.toLowerCase())}
           />
           <HStack mt="4" justifyContent="flex-end" spacing={4}>
             <Button
