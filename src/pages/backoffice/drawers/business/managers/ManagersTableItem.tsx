@@ -20,7 +20,6 @@ import { adminRolePTOptions } from 'pages/backoffice/utils';
 import React from 'react';
 import { Link as RouterLink, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
-import { getAppVersionLabelColor } from 'utils/version';
 
 interface ManagersTableItemProps {
   manager: ManagerWithRole;
@@ -47,11 +46,6 @@ export const ManagersTableItem = ({
   const [role, setRole] = React.useState<AdminRole>();
   const [isDeleting, setIsDeleting] = React.useState(false);
   const [isUpdating, setIsUpdating] = React.useState(false);
-  //helpers
-  const versionLabelColor = getAppVersionLabelColor(
-    minVersion,
-    manager.appVersion
-  );
   // handlers
   const handleCancelUpdate = () => {
     setIsUpdating(false);
