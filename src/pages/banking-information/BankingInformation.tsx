@@ -12,10 +12,7 @@ import { useContextBusiness } from 'app/state/business/context';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { AlertWarning } from 'common/components/AlertWarning';
 import { CustomPatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';
-import {
-  addZerosToBeginning,
-  hyphenFormatter,
-} from 'common/components/form/input/pattern-input/formatters';
+import { hyphenFormatter } from 'common/components/form/input/pattern-input/formatters';
 import { numbersAndLettersParser } from 'common/components/form/input/pattern-input/parsers';
 import { BankSelect } from 'common/components/form/select/BankSelect';
 import { isEmpty } from 'lodash';
@@ -24,7 +21,7 @@ import PageFooter from 'pages/PageFooter';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
 import { Redirect } from 'react-router-dom';
-import { getCEFAccountCode } from 'utils/functions';
+import { getBankingAccountPattern, getCEFAccountCode } from 'utils/functions';
 import { t } from 'utils/i18n';
 
 const bankAccountSet = (bankAccount: BankAccount): boolean => {
@@ -63,18 +60,14 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
   // helpers
   const disabled = business?.situation === 'approved';
 
-  const agencyParser = selectedBank?.agencyPattern
-    ? numbersAndLettersParser(selectedBank?.agencyPattern)
-    : undefined;
-  const agencyFormatter = selectedBank?.agencyPattern
-    ? hyphenFormatter(selectedBank?.agencyPattern.indexOf('-'))
-    : undefined;
-  const accountParser = selectedBank?.accountPattern
-    ? numbersAndLettersParser(selectedBank?.accountPattern)
-    : undefined;
-  const accountFormatter = selectedBank?.accountPattern
-    ? hyphenFormatter(selectedBank?.accountPattern.indexOf('-'))
-    : undefined;
+  const agencyParser = numbersAndLettersParser(selectedBank?.agencyPattern);
+  const agencyFormatter = hyphenFormatter(selectedBank?.agencyPattern);
+  const accountPattern = React.useMemo(
+    () => getBankingAccountPattern(selectedBank, personType, type),
+    [selectedBank, personType, type]
+  );
+  const accountParser = numbersAndLettersParser(accountPattern);
+  const accountFormatter = hyphenFormatter(accountPattern);
 
   const bankWarning = selectedBank?.warning
     ? selectedBank?.warning.split(/\n/g)
@@ -88,15 +81,13 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
     },
     []
   );
-
-  const handleAccount = () => {
-    if (selectedBank?.accountPattern) {
-      const patterLen = selectedBank?.accountPattern.length - 1;
-      const result = addZerosToBeginning(account, patterLen);
-      setAccount(result);
+  const handleAccount = React.useCallback(() => {
+    if (account.length === 0) return;
+    if (accountPattern) {
+      const formatted = numbersAndLettersParser(accountPattern, true)!(account);
+      setAccount(formatted!);
     }
-  };
-
+  }, [account, accountPattern]);
   const onSubmitHandler = () => {
     let code = '';
     if (!validation.agency) {
@@ -166,12 +157,15 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
       setAccount('');
     }
   }, [bankAccount]);
-
   React.useEffect(() => {
     if (banks && name) {
       findSelectedBank(banks, name);
     }
   }, [banks, name, findSelectedBank]);
+  React.useEffect(() => {
+    handleAccount();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [type]);
   // UI
   if (isSuccess && redirect) return <Redirect to={redirect} push />;
   return (

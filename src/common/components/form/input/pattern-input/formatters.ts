@@ -71,8 +71,10 @@ export const timeFormatter = (value: string | undefined, isRaw?: boolean) => {
   return formatedNumber;
 };
 
-export const hyphenFormatter =
-  (hyphenLocation: number) => (value: string | undefined) => {
+export const hyphenFormatter = (mask?: string) => {
+  if (!mask) return undefined;
+  return (value: string | undefined) => {
+    const hyphenLocation = mask.indexOf('-');
     if (!value) return '';
     if (hyphenLocation < 0) return value;
     if (value.length <= hyphenLocation) return value;
@@ -80,6 +82,7 @@ export const hyphenFormatter =
       '-'
     );
   };
+};
 
 export const addZerosToBeginning = (account: string, patterLen: number) => {
   const accountLen = account.length;

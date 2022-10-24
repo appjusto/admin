@@ -1,12 +1,14 @@
 export const numbersOnlyParser = (value: string) =>
   value.replace(/[^0-9]/g, '');
+
 export const coordinatesOnlyParser = (value: string) =>
   value.replace(/[^0-9.-]/g, '');
 
 export const numbersAndLettersParser = (
-  mask: string,
+  mask?: string,
   padWithZeros?: boolean
 ) => {
+  if (!mask) return undefined;
   const regexp = (char: string): RegExp => {
     if (char === '9' || char === 'D') return /\d/;
     if (char === 'X') return /\w/;

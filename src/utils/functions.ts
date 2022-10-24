@@ -1,4 +1,6 @@
 import {
+  Bank,
+  BankAccountPersonType,
   BankAccountType,
   BusinessPhone,
   OrderItem,
@@ -371,22 +373,39 @@ export const getCEFAccountCode = (
   if (bankingCode !== '104') return operation;
   if (personType === 'Pessoa Jurídica') {
     if (type === 'Corrente') {
-      operation = '0030';
+      operation = '003';
     } else if (type === 'Poupança') {
-      operation = '0220';
+      operation = '022';
     }
   } else if (personType === 'Pessoa Física') {
     if (type === 'Corrente') {
-      operation = '0010';
+      operation = '001';
     } else if (type === 'Simples') {
-      operation = '0020';
+      operation = '002';
     } else if (type === 'Poupança') {
-      operation = '0130';
+      operation = '013';
     } else if (type === 'Nova Poupança') {
       operation = '1288';
     }
   }
   return operation;
+};
+
+export const getBankingAccountPattern = (
+  // bank: Bank | undefined,
+  // personType: BankAccountPersonType,
+  // type: BankAccountType
+  bank?: Bank,
+  personType?: BankAccountPersonType,
+  type?: BankAccountType
+) => {
+  if (!bank) return '';
+  if (!personType || !type) return bank.accountPattern;
+  if (bank.code !== '104') return bank.accountPattern;
+  const accountCode = getCEFAccountCode(bank.code, personType, type);
+  const patternPrefix = accountCode === '1288' ? '9' : '';
+  const pattern = `${patternPrefix}${bank.accountPattern}`;
+  return pattern;
 };
 
 export const slugfyName = (name: string) => {

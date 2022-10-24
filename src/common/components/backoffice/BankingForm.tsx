@@ -3,10 +3,7 @@ import { Box, Flex, Radio, RadioGroup, Stack, Text } from '@chakra-ui/react';
 import { useBanks } from 'app/api/business/profile/useBanks';
 import { AlertWarning } from 'common/components/AlertWarning';
 import { CustomPatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';
-import {
-  addZerosToBeginning,
-  hyphenFormatter,
-} from 'common/components/form/input/pattern-input/formatters';
+import { hyphenFormatter } from 'common/components/form/input/pattern-input/formatters';
 import { numbersAndLettersParser } from 'common/components/form/input/pattern-input/parsers';
 import { BankSelect } from 'common/components/form/select/BankSelect';
 import {
@@ -14,7 +11,7 @@ import {
   ProfileBankingFields,
 } from 'common/types';
 import React from 'react';
-import { getCEFAccountCode } from 'utils/functions';
+import { getBankingAccountPattern, getCEFAccountCode } from 'utils/functions';
 import { t } from 'utils/i18n';
 
 interface BankingFormProps {
@@ -30,6 +27,11 @@ export const BankingForm = ({
   handleBankAccountChange,
   handleContextValidation,
 }: BankingFormProps) => {
+  console.log('accountFormatted', bankAccount?.accountFormatted);
+  console.log(
+    'accountFormatted',
+    bankAccount?.accountFormatted && bankAccount?.accountFormatted?.length - 1
+  );
   // context
   const banks = useBanks();
   // state
@@ -45,42 +47,46 @@ export const BankingForm = ({
   const agencyRef = React.useRef<HTMLInputElement>(null);
   const accountRef = React.useRef<HTMLInputElement>(null);
   // helpers
-  const agencyParser = selectedBank?.agencyPattern
-    ? numbersAndLettersParser(selectedBank?.agencyPattern)
-    : undefined;
-  const agencyFormatter = selectedBank?.agencyPattern
-    ? hyphenFormatter(selectedBank?.agencyPattern.indexOf('-'))
-    : undefined;
-  const accountParser = selectedBank?.accountPattern
-    ? numbersAndLettersParser(selectedBank?.accountPattern)
-    : undefined;
-  const accountFormatter = selectedBank?.accountPattern
-    ? hyphenFormatter(selectedBank?.accountPattern.indexOf('-'))
-    : undefined;
+  const agencyParser = numbersAndLettersParser(selectedBank?.agencyPattern);
+  const agencyFormatter = hyphenFormatter(selectedBank?.agencyPattern);
+  const accountPattern = React.useMemo(
+    () =>
+      getBankingAccountPattern(
+        selectedBank,
+        bankAccount?.personType,
+        bankAccount?.type
+      ),
+    [selectedBank, bankAccount?.personType, bankAccount?.type]
+  );
+  const accountParser = numbersAndLettersParser(accountPattern);
+  const accountFormatter = hyphenFormatter(accountPattern);
   const bankWarning = selectedBank?.warning
     ? selectedBank?.warning.split(/\n/g)
     : [];
   // handlers
-  const handleInputChange = (field: ProfileBankingFields, value: string) => {
-    const newBankAccount = {
-      ...bankAccount,
-      [field]: value,
-    } as Partial<BankAccount>;
-    if (field === 'agency') {
-      newBankAccount.agencyFormatted = agencyFormatter!(value);
-    }
-    if (field === 'account') {
-      newBankAccount.accountFormatted = accountFormatter!(value);
-    }
-    if (
-      newBankAccount.personType === 'Pessoa Jurídica' &&
-      newBankAccount.type &&
-      !['Corrente', 'Poupança'].includes(newBankAccount.type)
-    ) {
-      newBankAccount.type = 'Corrente';
-    }
-    handleBankAccountChange(newBankAccount);
-  };
+  const handleInputChange = React.useCallback(
+    (field: ProfileBankingFields, value: string) => {
+      const newBankAccount = {
+        ...bankAccount,
+        [field]: value,
+      } as Partial<BankAccount>;
+      if (field === 'agency') {
+        newBankAccount.agencyFormatted = agencyFormatter!(value);
+      }
+      if (field === 'account') {
+        newBankAccount.accountFormatted = accountFormatter!(value);
+      }
+      if (
+        newBankAccount.personType === 'Pessoa Jurídica' &&
+        newBankAccount.type &&
+        !['Corrente', 'Poupança'].includes(newBankAccount.type)
+      ) {
+        newBankAccount.type = 'Corrente';
+      }
+      handleBankAccountChange(newBankAccount);
+    },
+    [bankAccount, handleBankAccountChange, agencyFormatter, accountFormatter]
+  );
   const findSelectedBank = React.useCallback(
     (banks: WithId<Bank>[], bankName: string) => {
       const bank = banks?.find((b) => b.name === bankName);
@@ -88,13 +94,15 @@ export const BankingForm = ({
     },
     []
   );
-  const handleAccount = () => {
-    if (selectedBank?.accountPattern && bankAccount?.account) {
-      const patterLen = selectedBank?.accountPattern.length - 1;
-      const result = addZerosToBeginning(bankAccount?.account, patterLen);
-      handleInputChange('account', result);
+  const handleAccount = React.useCallback(() => {
+    if (accountPattern && bankAccount?.account) {
+      const formatted = numbersAndLettersParser(accountPattern, true)!(
+        bankAccount.account
+      );
+      handleInputChange('account', formatted);
     }
-  };
+  }, [accountPattern, bankAccount?.account, handleInputChange]);
+
   // side effects
   React.useEffect(() => {
     if (banks && bankAccount?.name) {
@@ -140,6 +148,11 @@ export const BankingForm = ({
       }));
     }
   }, [selectedBank?.code, bankAccount?.agency]);
+  React.useEffect(() => {
+    if (!bankAccount?.type) return;
+    handleAccount();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bankAccount?.type]);
   React.useEffect(() => {
     handleContextValidation({
       agency: validation.agency,
