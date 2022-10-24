@@ -1,19 +1,17 @@
 import { useContextBusinessBackoffice } from 'app/state/business/businessBOContext';
 import { BankingForm } from 'common/components/backoffice/BankingForm';
-import React from 'react';
 
 const BOBankingInformation = () => {
   // context
-  const {
-    bankAccount,
-    handleBankingInfoChange,
-    setContextValidation,
-  } = useContextBusinessBackoffice();
+  const { bankAccount, handleBankingInfoChange, setContextValidation } =
+    useContextBusinessBackoffice();
   // UI
   return (
     <BankingForm
       bankAccount={bankAccount}
-      handleBankAccountChange={(newBankAccount) => handleBankingInfoChange(newBankAccount)}
+      handleBankAccountChange={(newBankAccount) =>
+        handleBankingInfoChange(newBankAccount)
+      }
       handleContextValidation={(validation) =>
         setContextValidation((prev) => ({ ...prev, validation }))
       }

@@ -11,6 +11,7 @@ import { SectionTitle } from '../drawers/generics/SectionTitle';
 import { BackofficeOrderDrawer } from '../drawers/order';
 import { BOChatDrawer } from './BOChatDrawer';
 import { BOList } from './BOList';
+import { PlatformVersions } from './PlatformVersions';
 import { FilterOptions } from './StaffFilter';
 // import { StaffFilterOptions } from './StaffFilter';
 
@@ -50,6 +51,7 @@ const BODashboard = () => {
   const { path } = useRouteMatch();
   const history = useHistory();
   const {
+    platformAccess,
     // activeOrders,
     unsafeOrders,
     warningOrders,
@@ -86,6 +88,7 @@ const BODashboard = () => {
         subtitle={t(`Atualizado ${dateTime}`)}
         showVersion
       />
+      <PlatformVersions currentVersions={platformAccess?.currentVersions} />
       <DirectAccessById />
       <SectionTitle>{t('Pedidos em andamento')}</SectionTitle>
       <Box mt="4">

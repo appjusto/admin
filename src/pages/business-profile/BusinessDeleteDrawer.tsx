@@ -48,7 +48,9 @@ export const BusinessDeleteDrawer = ({
   const { dispatchAppRequestResult } = useContextAppRequests();
   const { business } = useContextBusiness();
   const { updateLastBusinessId } = useContextManagerProfile();
-  const { deleteBusinessProfile, deleteResult } = useBusinessProfile();
+  const { deleteBusinessProfile, deleteResult } = useBusinessProfile(
+    business?.id
+  );
   const { isLoading, isSuccess } = deleteResult;
   // state
   const [survey, setSurvey] = React.useState(initialSurvey);

@@ -10,7 +10,7 @@ import { t } from 'utils/i18n';
 const FallbackErrorComponent = () => {
   // context
   const { business } = useContextBusiness();
-  const { updateBusinessProfile } = useBusinessProfile();
+  const { updateBusinessProfile } = useBusinessProfile(business?.id);
   // state
   const [businessExists, setBusinessExists] = React.useState<boolean>();
   // side effects
@@ -27,7 +27,13 @@ const FallbackErrorComponent = () => {
   if (businessExists === true) return <Redirect to="/app" />;
   if (businessExists === false) {
     return (
-      <Flex w="100vw" h="100vh" flexDir="column" justifyContent="center" alignItems="center">
+      <Flex
+        w="100vw"
+        h="100vh"
+        flexDir="column"
+        justifyContent="center"
+        alignItems="center"
+      >
         <Box>
           <Image src={logo} height="60px" />
         </Box>
@@ -36,10 +42,14 @@ const FallbackErrorComponent = () => {
             {t('Ocorreu um erro no seu cadastro')}
           </Text>
           <Text mt="4" fontSize="15px" lineHeight="18px">
-            {t('Caso seja a primeira vez, você pode tentar recarregar a página.')}
+            {t(
+              'Caso seja a primeira vez, você pode tentar recarregar a página.'
+            )}
           </Text>
           <Text mt="2" fontSize="15px" lineHeight="18px">
-            {t('Caso já tenha tentado, infelizmente não poderemos continuar agora =/')}
+            {t(
+              'Caso já tenha tentado, infelizmente não poderemos continuar agora =/'
+            )}
           </Text>
           <Text mt="2" fontSize="15px" lineHeight="18px">
             {t('Entra em contato com a gente e informa o que aconteceu?')}
@@ -52,7 +62,13 @@ const FallbackErrorComponent = () => {
     );
   }
   return (
-    <Flex w="100vw" h="100vh" flexDir="column" justifyContent="center" alignItems="center">
+    <Flex
+      w="100vw"
+      h="100vh"
+      flexDir="column"
+      justifyContent="center"
+      alignItems="center"
+    >
       <Box>
         <Image src={logo} height="60px" />
       </Box>

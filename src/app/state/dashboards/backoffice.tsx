@@ -2,11 +2,13 @@ import {
   Order,
   OrderFlag,
   OrderStatus,
+  PlatformAccess,
   ProfileChange,
   WithId,
 } from '@appjusto/types';
 import { useObserveFlaggedOrders } from 'app/api/order/useObserveFlaggedOrders';
 import { useObserveStaffOrders } from 'app/api/order/useObserveStaffOrders';
+import { usePlatformAccess } from 'app/api/platform/usePlatformAccess';
 import {
   ProfileChangesSituations,
   useObserveUsersChanges,
@@ -15,6 +17,7 @@ import React from 'react';
 import { useContextFirebaseUser } from '../auth/context';
 
 interface ContextProps {
+  platformAccess?: PlatformAccess;
   // lists
   // activeOrders: WithId<Order>[];
   unsafeOrders: WithId<Order>[];
@@ -61,6 +64,7 @@ const issueFlags = ['issue'];
 export const BackofficeDashboardProvider = ({ children }: Props) => {
   // context
   const { user, isBackofficeSuperuser } = useContextFirebaseUser();
+  const platformAccess = usePlatformAccess(typeof user?.uid === 'string');
   // state
   const [autoFlags, setAutoFlags] =
     React.useState<OrderFlag[]>(initialAutoFlags);
@@ -84,6 +88,7 @@ export const BackofficeDashboardProvider = ({ children }: Props) => {
   return (
     <BackofficeDashboardContext.Provider
       value={{
+        platformAccess,
         // activeOrders,
         unsafeOrders,
         warningOrders,

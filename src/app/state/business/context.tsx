@@ -86,7 +86,8 @@ export const BusinessProvider = ({ children }: Props) => {
   );
   // handlers
   const clearBusiness = React.useCallback(() => {
-    setBusiness(undefined);
+    setBusinessId(null);
+    setBusiness(null);
   }, []);
   const setBusinessIdByBusinesses = React.useCallback(() => {
     if (!businesses) return;

@@ -28,7 +28,9 @@ export const AccountManager = () => {
   //context
   const { user, userAbility } = useContextFirebaseUser();
   const { business } = useContextBusinessBackoffice();
-  const { updateBusinessProfile, updateResult } = useBusinessProfile();
+  const { updateBusinessProfile, updateResult } = useBusinessProfile(
+    business?.id
+  );
   // state
   const [search, setSearch] = React.useState('');
   const { staffs, fetchNextPage } = useStaffs(

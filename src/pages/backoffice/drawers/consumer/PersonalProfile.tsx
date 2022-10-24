@@ -1,3 +1,4 @@
+import { ProfileTag } from '@appjusto/types';
 import { Box, Text } from '@chakra-ui/react';
 import * as cpfutils from '@fnando/cpf';
 import { useConsumerUpdateProfile } from 'app/api/consumer/useConsumerUpdateProfile';
@@ -138,8 +139,9 @@ export const PersonalProfile = () => {
       />
       <SectionTitle>{t('Tags')}</SectionTitle>
       <ProfileTags
-        profile={consumer}
-        updateProfile={(tags: string[]) =>
+        tags={consumer?.tags}
+        options={['safe'] as ProfileTag[]}
+        updateProfile={(tags) =>
           updateProfile({
             changes: { tags },
             selfieFileToSave: null,

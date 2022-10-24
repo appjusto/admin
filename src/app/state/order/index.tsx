@@ -63,7 +63,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   const { dispatchAppRequestResult } = useContextAppRequests();
   const { isBackofficeUser } = useContextFirebaseUser();
   const { business } = useContextBusiness();
-  const { sendBusinessKeepAlive } = useBusinessProfile();
+  const { sendBusinessKeepAlive } = useBusinessProfile(business?.id);
   const { scheduledOrders, scheduledOrdersNumber, fetchNextScheduledOrders } =
     useObserveScheduledOrders(business?.id);
   const activeOrders = useObserveOrders(statuses, business?.id);
@@ -177,12 +177,11 @@ export const OrdersContextProvider = (props: ProviderProps) => {
     if (isBackofficeUser) return;
     if (!isPlatformLive) return;
     if (business?.situation !== 'approved') return;
-    if (business?.status !== 'open') return;
-    sendBusinessKeepAlive();
+    sendBusinessKeepAlive(business?.status);
     const time =
       process.env.REACT_APP_ENVIRONMENT === 'live' ? 300_000 : 30_000;
     const keepAliveInterval = setInterval(() => {
-      sendBusinessKeepAlive();
+      sendBusinessKeepAlive(business?.status);
     }, time);
     return () => clearInterval(keepAliveInterval);
   }, [

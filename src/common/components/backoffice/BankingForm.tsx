@@ -66,10 +66,12 @@ export const BankingForm = ({
       ...bankAccount,
       [field]: value,
     } as Partial<BankAccount>;
-    if (field === 'agency')
+    if (field === 'agency') {
       newBankAccount.agencyFormatted = agencyFormatter!(value);
-    if (field === 'account')
+    }
+    if (field === 'account') {
       newBankAccount.accountFormatted = accountFormatter!(value);
+    }
     if (
       newBankAccount.personType === 'Pessoa Jurídica' &&
       newBankAccount.type &&
@@ -214,7 +216,7 @@ export const BankingForm = ({
             : undefined
         }
         isRequired
-        isDisabled={bankAccount?.name === ''}
+        isDisabled={!selectedBank}
         notifyParentWithValidation={(isInvalid: boolean) => {
           setValidation((prevState) => ({ ...prevState, agency: !isInvalid }));
         }}
@@ -237,7 +239,7 @@ export const BankingForm = ({
           formatter={accountFormatter}
           onBlur={handleAccount}
           isRequired
-          isDisabled={bankAccount?.name === ''}
+          isDisabled={!selectedBank}
           notifyParentWithValidation={(isInvalid: boolean) => {
             setValidation((prevState) => ({
               ...prevState,

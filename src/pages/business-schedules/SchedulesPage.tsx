@@ -26,7 +26,9 @@ const SchedulesPage = () => {
   // context
   const { dispatchAppRequestResult } = useContextAppRequests();
   const { business } = useContextBusiness();
-  const { updateBusinessProfile, updateResult } = useBusinessProfile();
+  const { updateBusinessProfile, updateResult } = useBusinessProfile(
+    business?.id
+  );
   const { isLoading } = updateResult;
   // state
   const [schedules, setSchedules] =

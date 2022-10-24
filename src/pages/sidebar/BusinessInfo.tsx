@@ -14,10 +14,13 @@ const BusinessInfo = () => {
   // context
   const { business, setBusinessId, businesses } = useContextBusiness();
   const { updateLastBusinessId } = useContextManagerProfile();
-  const { logo } = useBusinessProfile();
+  const { logo } = useBusinessProfile(business?.id);
   // state
-  const [managerBusinesses, setManagerBusinesses] = React.useState<BusinessSelectOptions[]>([]);
-  const [selectedBusiness, setSelectedBusiness] = React.useState<BusinessSelectOptions>();
+  const [managerBusinesses, setManagerBusinesses] = React.useState<
+    BusinessSelectOptions[]
+  >([]);
+  const [selectedBusiness, setSelectedBusiness] =
+    React.useState<BusinessSelectOptions>();
   // handlers
   const handleSwitchBussines = (selected: BusinessSelectOptions) => {
     setSelectedBusiness(selected);

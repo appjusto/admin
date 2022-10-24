@@ -1,6 +1,7 @@
 import { Box, Button, Flex, HStack, Link, Text } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useFetchStaffProfile } from 'app/api/staff/useFetchStaffProfile';
+import { useContextBusinessBackoffice } from 'app/state/business/businessBOContext';
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { t } from 'utils/i18n';
@@ -16,7 +17,10 @@ export const AccountManagerCard = ({
 }: AccountManagerCardProps) => {
   // context
   const profile = useFetchStaffProfile(accountManagerId);
-  const { updateBusinessProfile, updateResult } = useBusinessProfile();
+  const { business } = useContextBusinessBackoffice();
+  const { updateBusinessProfile, updateResult } = useBusinessProfile(
+    business?.id
+  );
   // state
   const [isConfirming, setIsConfirming] = React.useState(false);
   // handlers

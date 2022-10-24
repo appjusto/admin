@@ -1,3 +1,4 @@
+import { ProfileTag } from '@appjusto/types';
 import { Box } from '@chakra-ui/react';
 import { useCourierUpdateProfile } from 'app/api/courier/useCourierUpdateProfile';
 import { useObserveCourierProfileNotes } from 'app/api/courier/useObserveCourierProfileNotes';
@@ -45,8 +46,9 @@ export const CourierRegister = () => {
       />
       <SectionTitle>{t('Tags')}</SectionTitle>
       <ProfileTags
-        profile={courier}
-        updateProfile={(tags: string[]) =>
+        tags={courier?.tags}
+        options={['safe'] as ProfileTag[]}
+        updateProfile={(tags) =>
           updateProfile({
             changes: { tags },
             selfieFileToSave: null,
