@@ -72,16 +72,21 @@ export const timeFormatter = (value: string | undefined, isRaw?: boolean) => {
 };
 
 export const hyphenFormatter = (mask?: string) => {
-  if (!mask) return undefined;
-  return (value: string | undefined) => {
-    const hyphenLocation = mask.indexOf('-');
-    if (!value) return '';
-    if (hyphenLocation < 0) return value;
-    if (value.length <= hyphenLocation) return value;
-    return [value.slice(0, hyphenLocation), value.slice(hyphenLocation)].join(
-      '-'
-    );
-  };
+  try {
+    if (!mask) return undefined;
+    return (value: string | undefined) => {
+      const hyphenLocation = mask.indexOf('-');
+      if (!value) return '';
+      if (hyphenLocation < 0) return value;
+      if (value.length <= hyphenLocation) return value;
+      return [value.slice(0, hyphenLocation), value.slice(hyphenLocation)].join(
+        '-'
+      );
+    };
+  } catch (error) {
+    console.error(error);
+    return undefined;
+  }
 };
 
 export const addZerosToBeginning = (account: string, patterLen: number) => {

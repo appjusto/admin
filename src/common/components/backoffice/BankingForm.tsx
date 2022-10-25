@@ -27,11 +27,6 @@ export const BankingForm = ({
   handleBankAccountChange,
   handleContextValidation,
 }: BankingFormProps) => {
-  console.log('accountFormatted', bankAccount?.accountFormatted);
-  console.log(
-    'accountFormatted',
-    bankAccount?.accountFormatted && bankAccount?.accountFormatted?.length - 1
-  );
   // context
   const banks = useBanks();
   // state

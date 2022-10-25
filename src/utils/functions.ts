@@ -392,20 +392,22 @@ export const getCEFAccountCode = (
 };
 
 export const getBankingAccountPattern = (
-  // bank: Bank | undefined,
-  // personType: BankAccountPersonType,
-  // type: BankAccountType
   bank?: Bank,
   personType?: BankAccountPersonType,
   type?: BankAccountType
 ) => {
-  if (!bank) return '';
-  if (!personType || !type) return bank.accountPattern;
-  if (bank.code !== '104') return bank.accountPattern;
-  const accountCode = getCEFAccountCode(bank.code, personType, type);
-  const patternPrefix = accountCode === '1288' ? '9' : '';
-  const pattern = `${patternPrefix}${bank.accountPattern}`;
-  return pattern;
+  try {
+    if (!bank) return '';
+    if (!personType || !type) return bank.accountPattern;
+    if (bank.code !== '104') return bank.accountPattern;
+    const accountCode = getCEFAccountCode(bank.code, personType, type);
+    const patternPrefix = accountCode === '1288' ? '9' : '';
+    const pattern = `${patternPrefix}${bank.accountPattern}`;
+    return pattern;
+  } catch (error) {
+    console.error(error);
+    return '';
+  }
 };
 
 export const slugfyName = (name: string) => {

@@ -33,7 +33,6 @@ const SchedulesPage = () => {
   // state
   const [schedules, setSchedules] =
     React.useState<BusinessSchedule>(initialState);
-
   // refs
   const submission = React.useRef(0);
 
