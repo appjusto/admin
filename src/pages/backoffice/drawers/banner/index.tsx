@@ -81,7 +81,7 @@ export const BannerDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
         },
       });
     }
-    if (!flavor || !target || !bannerLink) {
+    if (!flavor || !target) {
       return dispatchAppRequestResult({
         status: 'error',
         requestId: 'banner-valid-infos',
@@ -288,7 +288,7 @@ export const BannerDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 {t('Banner mobile (JPG - 320x100)')}
               </Text>
               <InputFile
-                id="input-banner-web"
+                id="input-banner-mobile"
                 imageUrl={mobileImage}
                 getFile={(file) => {
                   setBannerMobileFile(file);
