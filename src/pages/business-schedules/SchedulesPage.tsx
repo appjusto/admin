@@ -35,7 +35,6 @@ const SchedulesPage = () => {
     React.useState<BusinessSchedule>(initialState);
   // refs
   const submission = React.useRef(0);
-
   // handlers
   const handleCheck = (stateIndex: number, value: boolean) => {
     setSchedules((prevSchedule) => {
