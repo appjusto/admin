@@ -65,50 +65,59 @@ export default class BannersApi {
     let id = bannerId;
     const flavor = changes.flavor;
     const timestamp = serverTimestamp();
-    if (id === 'new') {
-      const newDocRef = await addDoc(this.refs.getBannersRef(), {});
-      try {
-        await runTransaction(
-          this.refs.getFirestoreRef(),
-          async (transaction) => {
-            const orderingRef = this.refs.getBannerOrderingRef();
-            let ordering: BannersOrdering = {
-              consumer: [],
-              business: [],
-              courier: [],
-            };
-            const orderingSnapshot = await transaction.get(orderingRef);
-            if (orderingSnapshot.exists()) {
-              console.log('Using saved ordering');
-              ordering = orderingSnapshot.data() as BannersOrdering;
+    const createOrUpdateDoc = async () => {
+      if (id === 'new') {
+        const newDocRef = await addDoc(this.refs.getBannersRef(), {});
+        id = newDocRef.id;
+        try {
+          await runTransaction(
+            this.refs.getFirestoreRef(),
+            async (transaction) => {
+              const orderingRef = this.refs.getBannerOrderingRef();
+              let ordering: BannersOrdering = {
+                consumer: [],
+                business: [],
+                courier: [],
+              };
+              const orderingSnapshot = await transaction.get(orderingRef);
+              if (orderingSnapshot.exists()) {
+                console.log('Using saved ordering');
+                ordering = orderingSnapshot.data() as BannersOrdering;
+              }
+              const fullChanges = {
+                ...changes,
+                createdOn: timestamp,
+                updatedOn: timestamp,
+              };
+              transaction.set(newDocRef, fullChanges);
+              id = newDocRef.id;
+              ordering[flavor as string].push(id);
+              transaction.set(orderingRef, ordering);
             }
-            const fullChanges = {
-              ...changes,
-              createdOn: timestamp,
-              updatedOn: timestamp,
-            };
-            transaction.set(newDocRef, fullChanges);
-            id = newDocRef.id;
-            ordering[flavor as string].push(id);
-            transaction.set(orderingRef, ordering);
-          }
-        );
-      } catch (error) {
-        deleteDoc(newDocRef);
+          );
+          return true;
+        } catch (error) {
+          console.error(error);
+          deleteDoc(newDocRef);
+          return false;
+        }
+      } else {
+        const fullChanges = {
+          ...changes,
+          updatedOn: timestamp,
+        };
+        await updateDoc(this.refs.getBannerRef(id), fullChanges);
+        return true;
       }
-    } else {
-      const fullChanges = {
-        ...changes,
-        updatedOn: timestamp,
-      };
-      await updateDoc(this.refs.getBannerRef(id), fullChanges);
-    }
+    };
+    const updateResult = await createOrUpdateDoc();
+    if (updateResult) return false;
     // web
     if (webFile && changes.webImageType)
       await this.uploadBannerFiles(
         flavor!,
         id,
-        '980x180',
+        '_980x180',
         webFile,
         changes.webImageType,
         () => {}
@@ -118,7 +127,7 @@ export default class BannersApi {
       await this.uploadBannerFiles(
         flavor!,
         id,
-        '320x100',
+        '_320x100',
         mobileFile,
         changes.mobileImageType,
         () => {}

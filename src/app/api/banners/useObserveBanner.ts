@@ -18,7 +18,7 @@ export const useObserveBanner = (bannerId?: string) => {
           .getBannerImageURL(
             banner.flavor,
             banner.id,
-            '980x180',
+            '_980x180',
             banner.webImageType
           )
       : null;
@@ -33,7 +33,7 @@ export const useObserveBanner = (bannerId?: string) => {
           .getBannerImageURL(
             banner.flavor,
             banner.id,
-            '320x100',
+            '_320x100',
             banner.mobileImageType
           )
       : null;

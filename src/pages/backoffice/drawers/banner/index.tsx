@@ -83,7 +83,7 @@ export const BannerDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
         },
       });
     }
-    if (!flavor || !target) {
+    if (!flavor || !target || (target !== 'disabled' && !bannerLink)) {
       return dispatchAppRequestResult({
         status: 'error',
         requestId: 'banner-valid-infos',
@@ -94,7 +94,9 @@ export const BannerDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
       const filesValidation = getBannerFilesValidation(
         flavor,
         bannerWebFile,
-        bannerMobileFile
+        bannerMobileFile,
+        bannerWebType,
+        bannerMobileType
       );
       if (!filesValidation.status) {
         return dispatchAppRequestResult({
@@ -114,11 +116,11 @@ export const BannerDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
       name,
       flavor,
       target,
-      webImageType: bannerWebType,
-      mobileImageType: bannerMobileType,
       enabled: enabled === 'true' ? true : false,
     } as Banner;
     if (bannerLink && bannerLink.length > 0) newBanner.link = bannerLink;
+    if (bannerWebType) newBanner.webImageType = bannerWebType;
+    if (bannerMobileType) newBanner.mobileImageType = bannerMobileType;
     // save data
     updateBanner({
       id: bannerId,
@@ -127,9 +129,6 @@ export const BannerDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
       mobileFile: bannerMobileFile,
     });
   };
-  console.log(bannerWebType);
-  console.log(bannerMobileType);
-  console.log(banner);
   const handleRemoveBanner = () => {
     if (!banner?.id || !banner.flavor) {
       return dispatchAppRequestResult({
@@ -154,6 +153,11 @@ export const BannerDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   React.useEffect(() => {
     if (target === 'disabled') setBannerLink('');
   }, [target]);
+  React.useEffect(() => {
+    if (flavor !== 'courier') return;
+    setBannerWebFile(null);
+    setBannerWebType(undefined);
+  }, [flavor]);
   React.useEffect(() => {
     if (!bannerWebFile) return;
     const imageType = bannerWebFile.type.split('/')[1];
@@ -275,7 +279,7 @@ export const BannerDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
               <CustomInput
                 id="banner-name"
                 label={t('Nome *')}
-                placeholder={t('Digite um identificador')}
+                placeholder={t('Digite o nome do banner')}
                 value={name}
                 onChange={(ev) => setName(ev.target.value)}
                 isRequired
@@ -291,16 +295,20 @@ export const BannerDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 />
               )}
               <SectionTitle>{t('Imagens')}</SectionTitle>
-              <Text mt="4" fontSize="md" color="black">
-                {t('Banner web (JPG ou GIF - 980x180)')}
-              </Text>
-              <InputFile
-                id="input-banner-web"
-                imageUrl={webImage}
-                getFile={(file) => {
-                  setBannerWebFile(file);
-                }}
-              />
+              {flavor !== 'courier' && (
+                <>
+                  <Text mt="4" fontSize="md" color="black">
+                    {t('Banner web (JPG ou GIF - 980x180)')}
+                  </Text>
+                  <InputFile
+                    id="input-banner-web"
+                    imageUrl={webImage}
+                    getFile={(file) => {
+                      setBannerWebFile(file);
+                    }}
+                  />
+                </>
+              )}
               <Text mt="4" fontSize="md" color="black">
                 {t('Banner mobile (JPG - 320x100)')}
               </Text>

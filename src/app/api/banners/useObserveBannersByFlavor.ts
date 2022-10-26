@@ -34,7 +34,7 @@ export const useObserveBannersByFlavor = (
                   .getBannerImageURL(
                     flavor,
                     item.id,
-                    '320x100',
+                    '_320x100',
                     item.mobileImageType
                   );
                 const web = await api
@@ -42,7 +42,7 @@ export const useObserveBannersByFlavor = (
                   .getBannerImageURL(
                     flavor,
                     item.id,
-                    '980x180',
+                    '_980x180',
                     item.webImageType
                   );
                 images.push(mobile);

@@ -7,7 +7,6 @@ import {
   Image,
   Input,
   Text,
-  useMultiStyleConfig,
 } from '@chakra-ui/react';
 import React from 'react';
 import { t } from 'utils/i18n';
@@ -25,7 +24,6 @@ export const InputFile = ({
   ...props
 }: InputFileProps) => {
   // state
-  const styles = useMultiStyleConfig('CustomInput', {});
   const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = React.useState<string>();
   // handlers
