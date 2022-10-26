@@ -17,6 +17,8 @@ export interface Banner {
   flavor: ClientFlavor;
   target: TargetOptions;
   link?: string;
+  webImageType?: string;
+  mobileImageType?: string;
   enabled: boolean;
   createdOn: FieldValue;
   updatedOn: FieldValue;

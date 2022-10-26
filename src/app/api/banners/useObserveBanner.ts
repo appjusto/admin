@@ -13,7 +13,14 @@ export const useObserveBanner = (bannerId?: string) => {
   // queries
   const getWebImageURL = () =>
     banner?.id
-      ? api.banners().getBannerImageURL(banner.flavor, banner.id, '980x180')
+      ? api
+          .banners()
+          .getBannerImageURL(
+            banner.flavor,
+            banner.id,
+            '980x180',
+            banner.webImageType
+          )
       : null;
   const { data: webImage } = useQuery(
     ['banner:web', banner?.id],
@@ -21,7 +28,14 @@ export const useObserveBanner = (bannerId?: string) => {
   );
   const getMobileImageURL = () =>
     banner?.id
-      ? api.banners().getBannerImageURL(banner.flavor, banner.id, '320x100')
+      ? api
+          .banners()
+          .getBannerImageURL(
+            banner.flavor,
+            banner.id,
+            '320x100',
+            banner.mobileImageType
+          )
       : null;
   const { data: mobileImage } = useQuery(
     ['banner:mobile', banner?.id],

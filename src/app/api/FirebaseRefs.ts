@@ -288,6 +288,10 @@ export default class FirebaseRefs {
     type: 'front' | 'package'
   ) => `${this.getOrderStoragePath(orderId)}/${courierId}/${type}.jpg`;
   // banners
-  getBannerStoragePath = (flavor: Flavor, bannerId: string, size: string) =>
-    `banners/${flavor}/${bannerId}${size}.png`;
+  getBannerStoragePath = (
+    flavor: Flavor,
+    bannerId: string,
+    size: string,
+    type: string
+  ) => `banners/${flavor}/${bannerId}${size}.${type}`;
 }

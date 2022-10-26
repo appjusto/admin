@@ -61,6 +61,7 @@ export default class BannersApi {
     mobileFile?: File | null
   ) {
     // banner
+    console.log(changes);
     let id = bannerId;
     const flavor = changes.flavor;
     const timestamp = serverTimestamp();
@@ -103,15 +104,23 @@ export default class BannersApi {
       await updateDoc(this.refs.getBannerRef(id), fullChanges);
     }
     // web
-    if (webFile)
-      await this.uploadBannerFiles(flavor!, id, '980x180', webFile, () => {});
+    if (webFile && changes.webImageType)
+      await this.uploadBannerFiles(
+        flavor!,
+        id,
+        '980x180',
+        webFile,
+        changes.webImageType,
+        () => {}
+      );
     // mobile
-    if (mobileFile)
+    if (mobileFile && changes.mobileImageType)
       await this.uploadBannerFiles(
         flavor!,
         id,
         '320x100',
         mobileFile,
+        changes.mobileImageType,
         () => {}
       );
     // result
@@ -137,18 +146,25 @@ export default class BannersApi {
     bannerId: string,
     size: string,
     file: File,
+    type: string,
     progressHandler?: (progress: number) => void
   ) {
     return this.files.upload(
       file,
-      this.refs.getBannerStoragePath(flavor, bannerId, size),
+      this.refs.getBannerStoragePath(flavor, bannerId, size, type),
       progressHandler
     );
   }
 
-  getBannerImageURL(flavor: ClientFlavor, bannerId: string, size: string) {
+  getBannerImageURL(
+    flavor: ClientFlavor,
+    bannerId: string,
+    size: string,
+    type?: string
+  ) {
+    if (!type) return null;
     return this.files.getDownloadURL(
-      this.refs.getBannerStoragePath(flavor, bannerId, size)
+      this.refs.getBannerStoragePath(flavor, bannerId, size, type)
     );
   }
 }

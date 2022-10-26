@@ -31,10 +31,20 @@ export const useObserveBannersByFlavor = (
                 const images = [];
                 const mobile = await api
                   .banners()
-                  .getBannerImageURL(flavor, item.id, '320x100');
+                  .getBannerImageURL(
+                    flavor,
+                    item.id,
+                    '320x100',
+                    item.mobileImageType
+                  );
                 const web = await api
                   .banners()
-                  .getBannerImageURL(flavor, item.id, '980x180');
+                  .getBannerImageURL(
+                    flavor,
+                    item.id,
+                    '980x180',
+                    item.webImageType
+                  );
                 images.push(mobile);
                 images.push(web);
                 return { ...item, images };

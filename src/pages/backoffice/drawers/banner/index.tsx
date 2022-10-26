@@ -60,9 +60,11 @@ export const BannerDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   const [bannerLink, setBannerLink] = React.useState('');
   const [enabled, setEnabled] = React.useState('false');
   const [bannerWebFile, setBannerWebFile] = React.useState<File | null>(null);
+  const [bannerWebType, setBannerWebType] = React.useState<string>();
   const [bannerMobileFile, setBannerMobileFile] = React.useState<File | null>(
     null
   );
+  const [bannerMobileType, setBannerMobileType] = React.useState<string>();
   const [isDeleting, setIsDeleting] = React.useState(false);
   // helpers
   const isNew = bannerId === 'new';
@@ -112,12 +114,12 @@ export const BannerDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
       name,
       flavor,
       target,
-      // link: bannerLink,
+      webImageType: bannerWebType,
+      mobileImageType: bannerMobileType,
       enabled: enabled === 'true' ? true : false,
     } as Banner;
     if (bannerLink && bannerLink.length > 0) newBanner.link = bannerLink;
     // save data
-    console.log(newBanner);
     updateBanner({
       id: bannerId,
       changes: newBanner,
@@ -125,6 +127,9 @@ export const BannerDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
       mobileFile: bannerMobileFile,
     });
   };
+  console.log(bannerWebType);
+  console.log(bannerMobileType);
+  console.log(banner);
   const handleRemoveBanner = () => {
     if (!banner?.id || !banner.flavor) {
       return dispatchAppRequestResult({
@@ -142,11 +147,23 @@ export const BannerDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
     setFlavor(banner.flavor);
     setTarget(banner.target);
     setBannerLink(banner.link ?? '');
+    if (banner.webImageType) setBannerWebType(banner.webImageType);
+    if (banner.mobileImageType) setBannerMobileType(banner.mobileImageType);
     setEnabled(banner.enabled.toString());
   }, [banner]);
   React.useEffect(() => {
     if (target === 'disabled') setBannerLink('');
   }, [target]);
+  React.useEffect(() => {
+    if (!bannerWebFile) return;
+    const imageType = bannerWebFile.type.split('/')[1];
+    setBannerWebType(imageType);
+  }, [bannerWebFile]);
+  React.useEffect(() => {
+    if (!bannerMobileFile) return;
+    const imageType = bannerMobileFile.type.split('/')[1];
+    setBannerMobileType(imageType);
+  }, [bannerMobileFile]);
   React.useEffect(() => {
     if (updateBannerResult.isSuccess || removeBannerResult.isSuccess) {
       onClose();
@@ -275,7 +292,7 @@ export const BannerDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
               )}
               <SectionTitle>{t('Imagens')}</SectionTitle>
               <Text mt="4" fontSize="md" color="black">
-                {t('Banner web (JPG - 980x180)')}
+                {t('Banner web (JPG ou GIF - 980x180)')}
               </Text>
               <InputFile
                 id="input-banner-web"
