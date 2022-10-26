@@ -63,7 +63,7 @@ export const BannerItem = ({ index, banner }: BannerItemProps) => {
           >
             <DragHandle />
           </Box>
-          <Text fontWeight="700">{banner.pageTitle ?? 'Não se aplica'}</Text>
+          <Text fontWeight="700">{banner.name ?? 'Não se aplica'}</Text>
           <HStack spacing={{ base: 1, md: 6 }}>
             <Text display={{ base: 'none', md: 'block' }}>
               <Text as="span" fontWeight="700">

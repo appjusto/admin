@@ -1,18 +1,11 @@
 import { Flavor } from '@appjusto/types';
-import { BannerFilesValidationResult, TargetOptions } from './types';
+import { BannerFilesValidationResult } from './types';
 
 export const getBannerFilesValidation = (
   flavor: Flavor,
-  target: TargetOptions,
-  webFile: File[] | null,
-  mobFile: File[] | null,
-  heroFile: File[] | null
+  webFile: File | null,
+  mobFile: File | null
 ): BannerFilesValidationResult => {
-  if (target === 'inner-page' && heroFile === null)
-    return {
-      status: false,
-      message: 'É preciso selecionar uma imagem de hero',
-    };
   if (flavor === 'courier' && mobFile === null)
     return {
       status: false,

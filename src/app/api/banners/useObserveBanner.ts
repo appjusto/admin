@@ -27,34 +27,19 @@ export const useObserveBanner = (bannerId?: string) => {
     ['banner:mobile', banner?.id],
     getMobileImageURL
   );
-  const getHeroImageURL = () =>
-    banner?.id
-      ? api.banners().getBannerImageURL(banner.flavor, banner.id, '980x980')
-      : null;
-  const { data: heroImage } = useQuery(
-    ['banner:hero', banner?.id],
-    getHeroImageURL
-  );
   // mutations
   const { mutate: updateBanner, mutationResult: updateBannerResult } =
     useCustomMutation(
       (data: {
         id: string;
         changes: Partial<Banner>;
-        webFiles?: File[] | null;
-        mobileFiles?: File[] | null;
-        heroFiles?: File[] | null;
+        webFile?: File | null;
+        mobileFile?: File | null;
       }) => {
-        const { id, changes, webFiles, mobileFiles, heroFiles } = data;
+        const { id, changes, webFile, mobileFile } = data;
         return api
           .banners()
-          .updateBannerWithImages(
-            id,
-            changes,
-            webFiles,
-            mobileFiles,
-            heroFiles
-          );
+          .updateBannerWithImages(id, changes, webFile, mobileFile);
       },
       'updateBanner'
     );
@@ -73,7 +58,6 @@ export const useObserveBanner = (bannerId?: string) => {
     banner,
     webImage,
     mobileImage,
-    heroImage,
     updateBanner,
     updateBannerResult,
     removeBanner,

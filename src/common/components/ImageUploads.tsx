@@ -9,7 +9,7 @@ import { AlertError } from './AlertError';
 import { FileDropzone } from './image-uploads/FileDropzone';
 import { ImageCropping } from './image-uploads/ImageCropping';
 
-export type ImageType = 'image/jpeg' | 'image/png';
+export type ImageType = 'image/jpeg' | 'image/png' | 'image/gif';
 
 interface Props extends BoxProps {
   width: number | string | undefined;

@@ -57,9 +57,8 @@ export default class BannersApi {
   async updateBannerWithImages(
     bannerId: string,
     changes: Partial<Banner>,
-    webFiles?: File[] | null,
-    mobileFiles?: File[] | null,
-    heroFiles?: File[] | null
+    webFile?: File | null,
+    mobileFile?: File | null
   ) {
     // banner
     let id = bannerId;
@@ -104,30 +103,15 @@ export default class BannersApi {
       await updateDoc(this.refs.getBannerRef(id), fullChanges);
     }
     // web
-    if (webFiles)
-      await this.uploadBannerFiles(
-        flavor!,
-        id,
-        '980x180',
-        webFiles[0],
-        () => {}
-      );
+    if (webFile)
+      await this.uploadBannerFiles(flavor!, id, '980x180', webFile, () => {});
     // mobile
-    if (mobileFiles)
+    if (mobileFile)
       await this.uploadBannerFiles(
         flavor!,
         id,
         '320x100',
-        mobileFiles[0],
-        () => {}
-      );
-    // hero
-    if (heroFiles)
-      await this.uploadBannerFiles(
-        flavor!,
-        id,
-        '980x980',
-        heroFiles[0],
+        mobileFile,
         () => {}
       );
     // result

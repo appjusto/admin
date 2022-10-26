@@ -20,20 +20,12 @@ import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { useContextStaffProfile } from 'app/state/staff/context';
 import { CustomInput } from 'common/components/form/input/CustomInput';
-import { ImageUploads } from 'common/components/ImageUploads';
-import {
-  bannerHeroRatios,
-  bannerHeroResizedWidth,
-  bannerMobileRatios,
-  bannerMobileResizedWidth,
-  bannerWebRatios,
-  bannerWebResizedWidth,
-} from 'common/imagesDimensions';
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { getDateAndHour, slugfyName } from 'utils/functions';
+import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
+import { InputFile } from './InputFile';
 import { Banner, TargetOptions } from './types';
 import { getBannerFilesValidation } from './utils';
 
@@ -56,7 +48,6 @@ export const BannerDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
     banner,
     webImage,
     mobileImage,
-    heroImage,
     updateBanner,
     updateBannerResult,
     removeBanner,
@@ -64,18 +55,12 @@ export const BannerDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   } = useObserveBanner(bannerId !== 'new' ? bannerId : undefined);
   // state
   const [flavor, setFlavor] = React.useState<Flavor>('consumer');
-  const [target, setTarget] = React.useState<TargetOptions>('inner-page');
-  const [pageTitle, setPageTitle] = React.useState('');
-  const [slug, setSlug] = React.useState('');
+  const [target, setTarget] = React.useState<TargetOptions>('disabled');
+  const [name, setName] = React.useState('');
   const [bannerLink, setBannerLink] = React.useState('');
   const [enabled, setEnabled] = React.useState('false');
-  const [bannerWebFiles, setBannerWebFiles] = React.useState<File[] | null>(
-    null
-  );
-  const [bannerMobileFiles, setBannerMobileFiles] = React.useState<
-    File[] | null
-  >(null);
-  const [bannerHeroFiles, setBannerHeroFiles] = React.useState<File[] | null>(
+  const [bannerWebFile, setBannerWebFile] = React.useState<File | null>(null);
+  const [bannerMobileFile, setBannerMobileFile] = React.useState<File | null>(
     null
   );
   const [isDeleting, setIsDeleting] = React.useState(false);
@@ -85,37 +70,6 @@ export const BannerDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   const updatedBy =
     banner?.updatedBy?.name ?? banner?.updatedBy?.email ?? 'N/E';
   // handlers
-  const handlePageTitle = (value: string) => {
-    setPageTitle(value);
-    setSlug(slugfyName(value));
-  };
-  const getBannerWebFiles = React.useCallback(async (files: File[]) => {
-    // setLogoExists(true);
-    setBannerWebFiles(files);
-  }, []);
-  const getBannerMobileFiles = React.useCallback(async (files: File[]) => {
-    // setLogoExists(true);
-    setBannerMobileFiles(files);
-  }, []);
-  const getBannerHeroFiles = React.useCallback(async (files: File[]) => {
-    // setLogoExists(true);
-    setBannerHeroFiles(files);
-  }, []);
-  const clearDropImages = React.useCallback(
-    (type: 'banner-web' | 'banner-mobile' | 'hero') => {
-      if (type === 'banner-web') {
-        // setLogoExists(false);
-        setBannerWebFiles(null);
-      } else if (type === 'banner-mobile') {
-        // setCoverExists(false);
-        setBannerMobileFiles(null);
-      } else {
-        // setCoverExists(false);
-        setBannerHeroFiles(null);
-      }
-    },
-    []
-  );
   const handleSubmit = () => {
     // validations
     if (!staff?.id || !staff?.email) {
@@ -137,10 +91,8 @@ export const BannerDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
     if (bannerId === 'new') {
       const filesValidation = getBannerFilesValidation(
         flavor,
-        target,
-        bannerWebFiles,
-        bannerMobileFiles,
-        bannerHeroFiles
+        bannerWebFile,
+        bannerMobileFile
       );
       if (!filesValidation.status) {
         return dispatchAppRequestResult({
@@ -157,21 +109,20 @@ export const BannerDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
         email: staff.email,
         name: staff?.name ?? '',
       },
+      name,
       flavor,
       target,
-      pageTitle,
-      slug,
-      link: bannerLink,
+      // link: bannerLink,
       enabled: enabled === 'true' ? true : false,
     } as Banner;
+    if (bannerLink && bannerLink.length > 0) newBanner.link = bannerLink;
     // save data
     console.log(newBanner);
     updateBanner({
       id: bannerId,
       changes: newBanner,
-      webFiles: bannerWebFiles,
-      mobileFiles: bannerMobileFiles,
-      heroFiles: bannerHeroFiles,
+      webFile: bannerWebFile,
+      mobileFile: bannerMobileFile,
     });
   };
   const handleRemoveBanner = () => {
@@ -187,13 +138,15 @@ export const BannerDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   // side effects
   React.useEffect(() => {
     if (!banner) return;
+    setName(banner.name);
     setFlavor(banner.flavor);
     setTarget(banner.target);
-    if (banner.pageTitle) setPageTitle(banner.pageTitle);
-    if (banner.slug) setSlug(banner.slug);
-    setBannerLink(banner.link);
+    setBannerLink(banner.link ?? '');
     setEnabled(banner.enabled.toString());
   }, [banner]);
+  React.useEffect(() => {
+    if (target === 'disabled') setBannerLink('');
+  }, [target]);
   React.useEffect(() => {
     if (updateBannerResult.isSuccess || removeBannerResult.isSuccess) {
       onClose();
@@ -296,80 +249,50 @@ export const BannerDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 lineHeight="21px"
               >
                 <HStack spacing={4}>
-                  <Radio value="inner-page">{t('Página interna')}</Radio>
-                  <Radio value="outer-page">{t('Página externa')}</Radio>
+                  <Radio value="disabled">{t('Desabilitado')}</Radio>
+                  <Radio value="page">{t('Página')}</Radio>
+                  <Radio value="download">{t('Download')}</Radio>
                 </HStack>
               </RadioGroup>
               <SectionTitle>{t('Dados do banner')}</SectionTitle>
               <CustomInput
-                id="banner-title"
-                label={t(
-                  `Título da página ${target === 'inner-page' ? '*' : ''}`
-                )}
-                placeholder={t('Juntos por um delivery mais justo')}
-                value={pageTitle}
-                onChange={(ev) => handlePageTitle(ev.target.value)}
-                isRequired={target === 'inner-page'}
-              />
-              <Text mt="2" color="gray.600" fontSize="13px">
-                {t(`Slug: ${slug}`)}
-              </Text>
-              <CustomInput
-                id="banner-link"
-                label={t('Link *')}
-                placeholder={t('Cole aqui a URL do link')}
-                value={bannerLink}
-                onChange={(ev) => setBannerLink(ev.target.value)}
+                id="banner-name"
+                label={t('Nome *')}
+                placeholder={t('Digite um identificador')}
+                value={name}
+                onChange={(ev) => setName(ev.target.value)}
                 isRequired
               />
+              {target !== 'disabled' && (
+                <CustomInput
+                  id="banner-link"
+                  label={t('Link *')}
+                  placeholder={t('Cole aqui a URL do link')}
+                  value={bannerLink}
+                  onChange={(ev) => setBannerLink(ev.target.value)}
+                  isRequired
+                />
+              )}
               <SectionTitle>{t('Imagens')}</SectionTitle>
               <Text mt="4" fontSize="md" color="black">
-                {t('Banner web (PNG - 980x180)')}
+                {t('Banner web (JPG - 980x180)')}
               </Text>
-              <ImageUploads
-                key="banner-web-image"
-                mt="4"
-                width={600}
-                height={110}
-                imageUrl={webImage ?? null}
-                ratios={bannerWebRatios}
-                resizedWidth={bannerWebResizedWidth}
-                placeholderText={t('PNG 980x180')}
-                getImages={getBannerWebFiles}
-                clearDrop={() => clearDropImages('banner-web')}
-                imageType="image/png"
+              <InputFile
+                id="input-banner-web"
+                imageUrl={webImage}
+                getFile={(file) => {
+                  setBannerWebFile(file);
+                }}
               />
               <Text mt="4" fontSize="md" color="black">
-                {t('Banner mobile (PNG - 320x100)')}
+                {t('Banner mobile (JPG - 320x100)')}
               </Text>
-              <ImageUploads
-                key="banner-mob-image"
-                mt="4"
-                width={600}
-                height={187.5}
-                imageUrl={mobileImage ?? null}
-                ratios={bannerMobileRatios}
-                resizedWidth={bannerMobileResizedWidth}
-                placeholderText={t('PNG - 320x100')}
-                getImages={getBannerMobileFiles}
-                clearDrop={() => clearDropImages('banner-mobile')}
-                imageType="image/png"
-              />
-              <Text mt="4" fontSize="md" color="black">
-                {t('Banner hero (PNG - 980x980)')}
-              </Text>
-              <ImageUploads
-                key="banner-hero-image"
-                mt="4"
-                width={400}
-                height={400}
-                imageUrl={heroImage ?? null}
-                ratios={bannerHeroRatios}
-                resizedWidth={bannerHeroResizedWidth}
-                placeholderText={t('PNG - 980x980')}
-                getImages={getBannerHeroFiles}
-                clearDrop={() => clearDropImages('hero')}
-                imageType="image/png"
+              <InputFile
+                id="input-banner-web"
+                imageUrl={mobileImage}
+                getFile={(file) => {
+                  setBannerMobileFile(file);
+                }}
               />
               {canUpdate && (
                 <>
