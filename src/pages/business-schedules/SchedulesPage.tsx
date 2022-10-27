@@ -31,7 +31,6 @@ const SchedulesPage = () => {
   // state
   const [schedules, setSchedules] =
     React.useState<BusinessSchedule>(initialState);
-
   // refs
   const submission = React.useRef(0);
 
@@ -87,9 +86,10 @@ const SchedulesPage = () => {
               let newValue = value;
               if (value.length === 1 && Number(value) > 2)
                 newValue = '0' + value;
+              const formatted = timeFormatter(newValue, true);
               const newSchedule = {
                 ...schedule,
-                [field]: timeFormatter(newValue, true),
+                [field]: formatted,
               };
               return newSchedule;
             } else {
@@ -114,12 +114,13 @@ const SchedulesPage = () => {
     if (value.length < 4) {
       newValue = value + '0'.repeat(4 - value.length);
     }
+    const formatted = timeFormatter(newValue, true);
     setSchedules((prevSchedule) => {
       const newState = prevSchedule.map((day, index1) => {
         if (index1 === stateIndex) {
           const newDaySchedule = day.schedule.map((schedule, index2) => {
             if (index2 === scheduleIndex) {
-              const newSchedule = { ...schedule, [field]: newValue };
+              const newSchedule = { ...schedule, [field]: formatted };
               return newSchedule;
             } else {
               return schedule;
