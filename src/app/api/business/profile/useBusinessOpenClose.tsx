@@ -1,11 +1,18 @@
 import { Business, WithId } from '@appjusto/types';
 import { useToast } from '@chakra-ui/toast';
+import * as Sentry from '@sentry/react';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextServerTime } from 'app/state/server-time';
 import { CustomToast } from 'common/components/CustomToast';
 import React from 'react';
 import { useBusinessProfile } from './useBusinessProfile';
 import { businessShouldBeOpen } from './utils';
+
+const bWithSchedulesProblems = [
+  'ptYK5Olovr5lSTut1Nos', // itapuama staging
+  'mAJlS0yWVTgKXMvwAD3B',
+  'SBGxAtt82iLhNRMKLiih',
+];
 
 export const useBusinessOpenClose = (business?: WithId<Business> | null) => {
   // context
@@ -20,10 +27,24 @@ export const useBusinessOpenClose = (business?: WithId<Business> | null) => {
     if (!business?.schedules) return;
     const today = getServerTime();
     const shouldBeOpen = businessShouldBeOpen(today, business.schedules);
+    if (business?.id && bWithSchedulesProblems.includes(business.id)) {
+      Sentry.captureEvent({
+        transaction: 'use-business-open-close',
+        extra: {
+          businessId: business.id,
+          adminRole: adminRole,
+          time: today,
+          shouldBeOpen: shouldBeOpen,
+        },
+      } as Sentry.Event);
+    }
     if (shouldBeOpen && business?.status === 'closed') {
       updateBusinessProfile({ status: 'open' });
     } else if (!shouldBeOpen && business?.status === 'open') {
-      console.log('%cFechando restaurante de acordo com horários estabelecidos.', 'color: purple');
+      console.log(
+        '%cFechando restaurante de acordo com horários estabelecidos.',
+        'color: purple'
+      );
       updateBusinessProfile({ status: 'closed' });
       toast({
         duration: 12000,
@@ -40,6 +61,8 @@ export const useBusinessOpenClose = (business?: WithId<Business> | null) => {
       });
     }
   }, [
+    adminRole,
+    business?.id,
     business?.situation,
     business?.enabled,
     business?.schedules,
@@ -59,5 +82,11 @@ export const useBusinessOpenClose = (business?: WithId<Business> | null) => {
       checkBusinessStatus();
     }, 5000);
     return () => clearInterval(openCloseInterval);
-  }, [adminRole, business?.situation, business?.enabled, business?.schedules, checkBusinessStatus]);
+  }, [
+    adminRole,
+    business?.situation,
+    business?.enabled,
+    business?.schedules,
+    checkBusinessStatus,
+  ]);
 };
