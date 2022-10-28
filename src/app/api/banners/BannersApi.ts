@@ -111,7 +111,7 @@ export default class BannersApi {
       }
     };
     const updateResult = await createOrUpdateDoc();
-    if (updateResult) return false;
+    if (!updateResult) return false;
     // web
     if (webFile && changes.webImageType)
       await this.uploadBannerFiles(

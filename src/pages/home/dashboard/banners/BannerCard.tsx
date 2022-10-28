@@ -1,5 +1,6 @@
 import { WithId } from '@appjusto/types';
 import { Box, Image, Link } from '@chakra-ui/react';
+import { isEqual } from 'lodash';
 import { Banner } from 'pages/backoffice/drawers/banner/types';
 import React from 'react';
 
@@ -8,7 +9,7 @@ interface BannerCardProps {
   baseWidth: number;
 }
 
-export const BannerCard = ({ banner, baseWidth }: BannerCardProps) => {
+const BannerCard = ({ banner, baseWidth }: BannerCardProps) => {
   // state
   const [imageUrl, setImageUrl] = React.useState<string>();
   // side effects
@@ -24,7 +25,8 @@ export const BannerCard = ({ banner, baseWidth }: BannerCardProps) => {
         position="relative"
         w={{ base: `${baseWidth}px`, lg: '100%' }}
         minW={{ base: '320px', md: '700px', lg: '980px' }}
-        // border="1px solid #C8D7CB"
+        maxH={{ base: '100px', md: '180px', lg: '180px' }}
+        border="1px solid #C8D7CB"
         borderRadius="12px"
         boxShadow="2px 3px 12px rgba(100, 100, 111, 0.1)"
         overflow="hidden"
@@ -39,7 +41,6 @@ export const BannerCard = ({ banner, baseWidth }: BannerCardProps) => {
         position="relative"
         w={{ base: `${baseWidth}px`, lg: '100%' }}
         minW={{ base: '320px', md: '700px', lg: '980px' }}
-        // border="1px solid #C8D7CB"
         borderRadius="12px"
         boxShadow="2px 3px 12px rgba(100, 100, 111, 0.1)"
         overflow="hidden"
@@ -49,3 +50,9 @@ export const BannerCard = ({ banner, baseWidth }: BannerCardProps) => {
     </Link>
   );
 };
+
+const areEqual = (prevProps: BannerCardProps, nextProps: BannerCardProps) => {
+  return isEqual(prevProps, nextProps);
+};
+
+export default React.memo(BannerCard, areEqual);

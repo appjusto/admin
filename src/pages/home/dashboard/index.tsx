@@ -13,7 +13,7 @@ import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import PageHeader from '../../PageHeader';
 import { RegistrationStatus } from '../RegistrationStatus';
-import { BannersContainer } from './banners/BannersContainer';
+import BannersContainer from './banners/BannersContainer';
 import InfoBox from './InfoBox';
 import LineChart from './LineChart';
 import { NewWindowButton } from './NewWindowButton';

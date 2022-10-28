@@ -1,15 +1,17 @@
 import { WithId } from '@appjusto/types';
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import { Box, Center, Flex, Icon } from '@chakra-ui/react';
+import { isEqual } from 'lodash';
 import { Banner } from 'pages/backoffice/drawers/banner/types';
 import React from 'react';
-import { BannerCard } from './BannerCard';
+import BannerCard from './BannerCard';
 
 const renderCarouselSection = (
   banners: WithId<Banner>[],
   baseWidth: number
 ) => {
   // state
+  console.log(banners);
   if (banners.length === 1) {
     const banner = banners[0];
     return <BannerCard key={banner.id} banner={banner} baseWidth={baseWidth} />;
@@ -30,7 +32,7 @@ interface BannersProps {
   banners?: WithId<Banner>[] | null;
 }
 
-export const BannersContainer = ({ banners }: BannersProps) => {
+const BannersContainer = ({ banners }: BannersProps) => {
   // state
   const [baseWidth, setBaseWidth] = React.useState(0);
   const [autoPlay, setAutoPlay] = React.useState(true);
@@ -158,3 +160,9 @@ export const BannersContainer = ({ banners }: BannersProps) => {
     </Box>
   );
 };
+
+const areEqual = (prevProps: BannersProps, nextProps: BannersProps) => {
+  return isEqual(prevProps, nextProps);
+};
+
+export default React.memo(BannersContainer, areEqual);
