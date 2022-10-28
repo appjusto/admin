@@ -33,6 +33,7 @@ import {
   IuguMarketplaceAccountReceivables,
 } from '@appjusto/types/payment/iugu';
 import * as Sentry from '@sentry/react';
+import { FirebaseError } from 'firebase/app';
 // import firebase from 'firebase/compat/app';
 import {
   addDoc,
@@ -172,7 +173,14 @@ export default class BusinessApi {
       this.refs.getBusinessesRef(),
       where('code', '==', businessCode)
     );
-    const businessId = await getDocs(q).then((snapshot) => snapshot.docs[0].id);
+    const businessId = await getDocs(q).then((snapshot) => {
+      if (!snapshot.empty) return snapshot.docs[0].id;
+      else
+        throw new FirebaseError(
+          'ignored-error',
+          'Não foi possível encontrar o restaurante.'
+        );
+    });
     return businessId;
   }
 
