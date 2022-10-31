@@ -1,6 +1,5 @@
-import { ClientFlavor, WithId } from '@appjusto/types';
+import { Banner, BannersOrdering, ClientFlavor, WithId } from '@appjusto/types';
 import { arrayMove } from 'app/utils/arrayMove';
-import { Banner, BannersOrdering } from '../drawers/banner/types';
 
 export const getBannersByFlavorOrdered = (
   flavorArray: string[],

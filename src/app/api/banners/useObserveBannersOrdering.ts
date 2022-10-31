@@ -1,5 +1,5 @@
+import { BannersOrdering } from '@appjusto/types';
 import { useContextApi } from 'app/state/api/context';
-import { BannersOrdering } from 'pages/backoffice/drawers/banner/types';
 import React from 'react';
 import { useCustomMutation } from '../mutation/useCustomMutation';
 

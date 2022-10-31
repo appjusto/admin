@@ -1,5 +1,9 @@
 import { Flavor } from '@appjusto/types';
-import { BannerFilesValidationResult } from './types';
+
+export type BannerFilesValidationResult = {
+  status: boolean;
+  message?: string;
+};
 
 export const getBannerFilesValidation = (
   flavor: Flavor,

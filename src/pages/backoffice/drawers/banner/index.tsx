@@ -1,4 +1,4 @@
-import { Flavor } from '@appjusto/types';
+import { Banner, BannerTargetOptions, Flavor } from '@appjusto/types';
 import {
   Box,
   Button,
@@ -26,7 +26,6 @@ import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
 import { InputFile } from './InputFile';
-import { Banner, TargetOptions } from './types';
 import { getBannerFilesValidation } from './utils';
 
 interface BaseDrawerProps {
@@ -55,7 +54,7 @@ export const BannerDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   } = useObserveBanner(bannerId !== 'new' ? bannerId : undefined);
   // state
   const [flavor, setFlavor] = React.useState<Flavor>('consumer');
-  const [target, setTarget] = React.useState<TargetOptions>('disabled');
+  const [target, setTarget] = React.useState<BannerTargetOptions>('disabled');
   const [name, setName] = React.useState('');
   const [bannerLink, setBannerLink] = React.useState('');
   const [enabled, setEnabled] = React.useState('false');
@@ -266,7 +265,7 @@ export const BannerDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
               <SectionTitle>{t('Target')}</SectionTitle>
               <RadioGroup
                 mt="4"
-                onChange={(value: TargetOptions) => setTarget(value)}
+                onChange={(value: BannerTargetOptions) => setTarget(value)}
                 value={target}
                 defaultValue="1"
                 colorScheme="green"

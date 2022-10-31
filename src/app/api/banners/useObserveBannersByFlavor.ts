@@ -1,7 +1,6 @@
-import { ClientFlavor, WithId } from '@appjusto/types';
+import { Banner, BannersOrdering, ClientFlavor, WithId } from '@appjusto/types';
 import { useContextApi } from 'app/state/api/context';
 import { getBannersByFlavorOrdered } from 'pages/backoffice/banners/utils';
-import { Banner, BannersOrdering } from 'pages/backoffice/drawers/banner/types';
 import React from 'react';
 
 export const useObserveBannersByFlavor = (

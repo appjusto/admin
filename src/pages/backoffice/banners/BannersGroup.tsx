@@ -1,9 +1,8 @@
-import { ClientFlavor, WithId } from '@appjusto/types';
+import { Banner, BannersOrdering, ClientFlavor, WithId } from '@appjusto/types';
 import { Box, Text } from '@chakra-ui/react';
 import React from 'react';
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
 import { t } from 'utils/i18n';
-import { Banner, BannersOrdering } from '../drawers/banner/types';
 import { SectionTitle } from '../drawers/generics/SectionTitle';
 import { BannerItem } from './BannerItem';
 import { getBannersByFlavorOrdered, updateBannerOrdering } from './utils';

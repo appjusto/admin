@@ -1,4 +1,4 @@
-import { ClientFlavor, WithId } from '@appjusto/types';
+import { Banner, BannersOrdering, ClientFlavor, WithId } from '@appjusto/types';
 import {
   addDoc,
   deleteDoc,
@@ -10,7 +10,6 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
-import { Banner, BannersOrdering } from 'pages/backoffice/drawers/banner/types';
 import FilesApi from '../FilesApi';
 import FirebaseRefs from '../FirebaseRefs';
 import { customCollectionSnapshot, customDocumentSnapshot } from '../utils';

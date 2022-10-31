@@ -1,8 +1,7 @@
-import { WithId } from '@appjusto/types';
+import { Banner, WithId } from '@appjusto/types';
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import { Box, Center, Flex, Icon } from '@chakra-ui/react';
 import { isEqual } from 'lodash';
-import { Banner } from 'pages/backoffice/drawers/banner/types';
 import React from 'react';
 import BannerCard from './BannerCard';
 

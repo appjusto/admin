@@ -1,9 +1,8 @@
-import { Business, ManagerWithRole, WithId } from '@appjusto/types';
+import { Banner, Business, ManagerWithRole, WithId } from '@appjusto/types';
 import { useObserveBannersByFlavor } from 'app/api/banners/useObserveBannersByFlavor';
 import { useObserveBusinessManagedBy } from 'app/api/business/profile/useObserveBusinessManagedBy';
 import { useObserveBusinessProfile } from 'app/api/business/profile/useObserveBusinessProfile';
 import { useGetManagers } from 'app/api/manager/useGetManagers';
-import { Banner } from 'pages/backoffice/drawers/banner/types';
 import React from 'react';
 import { useQueryClient } from 'react-query';
 import { useContextFirebaseUser } from '../auth/context';

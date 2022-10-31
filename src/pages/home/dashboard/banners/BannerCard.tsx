@@ -1,7 +1,6 @@
-import { WithId } from '@appjusto/types';
+import { Banner, WithId } from '@appjusto/types';
 import { Box, Image, Link } from '@chakra-ui/react';
 import { isEqual } from 'lodash';
-import { Banner } from 'pages/backoffice/drawers/banner/types';
 import React from 'react';
 
 interface BannerCardProps {

@@ -1,6 +1,5 @@
-import { ClientFlavor, WithId } from '@appjusto/types';
+import { Banner, ClientFlavor, WithId } from '@appjusto/types';
 import { useContextApi } from 'app/state/api/context';
-import { Banner } from 'pages/backoffice/drawers/banner/types';
 import React from 'react';
 import { useQuery } from 'react-query';
 import { useCustomMutation } from '../mutation/useCustomMutation';

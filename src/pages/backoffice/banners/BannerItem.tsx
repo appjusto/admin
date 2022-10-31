@@ -1,4 +1,4 @@
-import { WithId } from '@appjusto/types';
+import { Banner, WithId } from '@appjusto/types';
 import { Box, Flex, HStack, Link, Switch, Text } from '@chakra-ui/react';
 import { useObserveBanner } from 'app/api/banners/useObserveBanner';
 import { useContextFirebaseUser } from 'app/state/auth/context';
@@ -9,7 +9,6 @@ import { Draggable } from 'react-beautiful-dnd';
 import { Link as RouterLink, useRouteMatch } from 'react-router-dom';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
-import { Banner } from '../drawers/banner/types';
 
 interface BannerItemProps {
   index: number;
