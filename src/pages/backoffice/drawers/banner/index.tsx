@@ -137,7 +137,12 @@ export const BannerDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
         message: { title: 'Não foi possível encontrar os dados do banner' },
       });
     }
-    removeBanner({ id: banner.id, flavor: banner.flavor });
+    const images = [];
+    if (banner.mobileImageType)
+      images.push({ size: '_320x100', type: banner.mobileImageType });
+    if (banner.webImageType)
+      images.push({ size: '_980x180', type: banner.webImageType });
+    removeBanner({ id: banner.id, flavor: banner.flavor, images });
   };
   // side effects
   React.useEffect(() => {

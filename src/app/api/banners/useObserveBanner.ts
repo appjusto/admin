@@ -58,10 +58,17 @@ export const useObserveBanner = (bannerId?: string) => {
       'updateBanner'
     );
   const { mutate: removeBanner, mutationResult: removeBannerResult } =
-    useCustomMutation((data: { id: string; flavor: ClientFlavor }) => {
-      const { id, flavor } = data;
-      return api.banners().removeBanner(id, flavor);
-    }, 'removeBanner');
+    useCustomMutation(
+      (data: {
+        id: string;
+        flavor: ClientFlavor;
+        images: { size: string; type: string }[];
+      }) => {
+        const { id, flavor, images } = data;
+        return api.banners().removeBanner(id, flavor, images);
+      },
+      'removeBanner'
+    );
   // side effects
   React.useEffect(() => {
     if (!bannerId) return;

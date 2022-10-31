@@ -61,7 +61,6 @@ export default class BannersApi {
     mobileFile?: File | null
   ) {
     // banner
-    console.log(changes);
     let id = bannerId;
     const flavor = changes.flavor;
     const timestamp = serverTimestamp();
@@ -136,7 +135,11 @@ export default class BannersApi {
     return true;
   }
 
-  async removeBanner(bannerId: string, flavor: ClientFlavor) {
+  async removeBanner(
+    bannerId: string,
+    flavor: ClientFlavor,
+    images: { size: string; type: string }[]
+  ) {
     await runTransaction(this.refs.getFirestoreRef(), async (transaction) => {
       const orderingRef = this.refs.getBannerOrderingRef();
       const orderingSnapshot = await transaction.get(orderingRef);
@@ -148,6 +151,8 @@ export default class BannersApi {
       transaction.set(orderingRef, newOrdering);
       transaction.delete(this.refs.getBannerRef(bannerId));
     });
+    this.removeBannerFiles(flavor, bannerId, images);
+    return true;
   }
 
   uploadBannerFiles(
@@ -163,6 +168,29 @@ export default class BannersApi {
       this.refs.getBannerStoragePath(flavor, bannerId, size, type),
       progressHandler
     );
+  }
+
+  removeBannerFiles(
+    flavor: ClientFlavor,
+    bannerId: string,
+    images: {
+      size: string;
+      type: string;
+    }[]
+  ) {
+    images.forEach((image) => {
+      try {
+        const imageRef = this.refs.getBannerStoragePath(
+          flavor,
+          bannerId,
+          image.size,
+          image.type
+        );
+        this.files.removeFile(imageRef);
+      } catch (error) {
+        console.error(error);
+      }
+    });
   }
 
   getBannerImageURL(
