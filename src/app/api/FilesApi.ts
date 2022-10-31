@@ -1,14 +1,25 @@
-import { FirebaseStorage, getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
+import {
+  deleteObject,
+  FirebaseStorage,
+  getDownloadURL,
+  ref,
+  uploadBytesResumable,
+} from 'firebase/storage';
 export default class FilesApi {
   constructor(private storage: FirebaseStorage) {}
 
-  async upload(file: File, path: string, progressHandler?: (progress: number) => void) {
+  async upload(
+    file: File,
+    path: string,
+    progressHandler?: (progress: number) => void
+  ) {
     return new Promise<boolean>(async (resolve, reject) => {
       const reference = ref(this.storage, path);
       return uploadBytesResumable(reference, file).on(
         'state_changed',
         (snapshot) => {
-          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
           if (progressHandler) progressHandler(progress);
         },
         (error) => {
@@ -27,5 +38,10 @@ export default class FilesApi {
       .then((res: string | null) => res)
       .catch(() => null);
     return uri;
+  }
+
+  async removeFile(path: string) {
+    const reference = ref(this.storage, path);
+    return await deleteObject(reference);
   }
 }

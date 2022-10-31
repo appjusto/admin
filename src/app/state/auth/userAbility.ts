@@ -1,39 +1,17 @@
 import { AdminRole, CRUD, UserPermissions } from '@appjusto/types';
 import {
-  Ability,
   AbilityOptionsOf,
   defineAbility,
   detectSubjectType,
 } from '@casl/ability';
 import { FirebaseError } from 'firebase/app';
+import { Actions, AppAbility, Entities, FullPermissions } from './types';
 import {
   businessCollaboratorObject,
   businessManagerObject,
   businessOwnerObject,
-  FullPermissions,
   getStaffUIConditions,
 } from './utils';
-
-type Actions = 'create' | 'read' | 'update' | 'delete';
-export type Entities =
-  | 'orders'
-  | 'account_manager'
-  | 'businesses'
-  | 'menu'
-  | 'couriers'
-  | 'consumers'
-  | 'chats'
-  | 'invoices'
-  | 'withdraws'
-  | 'advances'
-  | 'managers'
-  | 'recommendations'
-  | 'push_campaigns'
-  | 'staff'
-  | 'users'
-  | 'platform';
-
-export type AppAbility = Ability<[Actions, Entities | any]>;
 
 const options: AbilityOptionsOf<AppAbility> = {
   detectSubjectType: (subject) => {
@@ -64,10 +42,10 @@ export const defineUserAbility = (
   return defineAbility<AppAbility>((can) => {
     // helper
     const defineAbilityByPermissionsObject = (
-      permissionsObject: FullPermissions | UserPermissions
+      permissionsObject: Partial<FullPermissions>
     ) => {
       Object.keys(permissionsObject).forEach((subject) => {
-        permissionsObject[subject].forEach((permission) => {
+        permissionsObject[subject as Entities]!.forEach((permission) => {
           if (typeof permission === 'object') {
             can(ruleParser(permission.rule), subject, permission.conditions);
           } else can(ruleParser(permission), subject);

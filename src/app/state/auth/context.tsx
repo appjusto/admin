@@ -5,7 +5,8 @@ import { usePlatformAccess } from 'app/api/platform/usePlatformAccess';
 import { User } from 'firebase/auth';
 import React from 'react';
 import { useContextAppRequests } from '../requests/context';
-import { AppAbility, defineUserAbility } from './userAbility';
+import { AppAbility } from './types';
+import { defineUserAbility } from './userAbility';
 
 interface FirebaseUserContextProps {
   user?: User | null;

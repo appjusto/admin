@@ -1,5 +1,5 @@
 import { useContextFirebaseUser } from 'app/state/auth/context';
-import { Entities } from 'app/state/auth/userAbility';
+import { Entities } from 'app/state/auth/types';
 import React from 'react';
 
 export const useUserCanReadEntity = (entity: Entities) => {

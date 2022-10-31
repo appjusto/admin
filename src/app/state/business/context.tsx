@@ -1,4 +1,5 @@
-import { Business, ManagerWithRole, WithId } from '@appjusto/types';
+import { Banner, Business, ManagerWithRole, WithId } from '@appjusto/types';
+import { useObserveBannersByFlavor } from 'app/api/banners/useObserveBannersByFlavor';
 import { useObserveBusinessManagedBy } from 'app/api/business/profile/useObserveBusinessManagedBy';
 import { useObserveBusinessProfile } from 'app/api/business/profile/useObserveBusinessProfile';
 import { useGetManagers } from 'app/api/manager/useGetManagers';
@@ -54,6 +55,7 @@ interface ContextProps {
   businessManagers?: ManagerWithRole[];
   setIsGetManagersActive: React.Dispatch<React.SetStateAction<boolean>>;
   fetchManagers(): void;
+  banners?: WithId<Banner>[] | null;
 }
 
 const BusinessContext = React.createContext<ContextProps>({} as ContextProps);
@@ -74,6 +76,7 @@ export const BusinessProvider = ({ children }: Props) => {
   // state
   const [business, setBusiness] = React.useState<WithId<Business> | null>();
   const [isGetManagersActive, setIsGetManagersActive] = React.useState(false);
+  const banners = useObserveBannersByFlavor('business', true, true);
   // business managers
   const { managers: businessManagers, fetchManagers } = useGetManagers(
     business?.id,
@@ -162,6 +165,7 @@ export const BusinessProvider = ({ children }: Props) => {
         businessManagers,
         setIsGetManagersActive,
         fetchManagers,
+        banners,
       }}
     >
       {children}

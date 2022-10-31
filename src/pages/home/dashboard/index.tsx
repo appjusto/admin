@@ -13,6 +13,7 @@ import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import PageHeader from '../../PageHeader';
 import { RegistrationStatus } from '../RegistrationStatus';
+import BannersContainer from './banners/BannersContainer';
 import InfoBox from './InfoBox';
 import LineChart from './LineChart';
 import { NewWindowButton } from './NewWindowButton';
@@ -21,7 +22,7 @@ const isDesktopApp = isElectron();
 
 const Dashboard = () => {
   // context
-  const { business } = useContextBusiness();
+  const { business, banners } = useContextBusiness();
   const {
     todayInvoices,
     todayValue,
@@ -97,6 +98,7 @@ const Dashboard = () => {
             btnLabel={t('Visualizar links')}
             isNew={false}
           /> */}
+          <BannersContainer banners={banners} />
           {!isDesktopApp && (
             <NewFeatureBox
               icon={ExtensionIcon}

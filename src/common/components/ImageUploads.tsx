@@ -9,6 +9,8 @@ import { AlertError } from './AlertError';
 import { FileDropzone } from './image-uploads/FileDropzone';
 import { ImageCropping } from './image-uploads/ImageCropping';
 
+export type ImageType = 'image/jpeg' | 'image/png' | 'image/gif';
+
 interface Props extends BoxProps {
   width: number | string | undefined;
   height: number | string | undefined;
@@ -17,13 +19,12 @@ interface Props extends BoxProps {
   resizedWidth: number[];
   placeholderText?: string;
   doubleSizeCropping?: boolean;
+  imageType?: ImageType;
   getImages(files: File[]): void;
   clearDrop(): void;
 }
 
 const initError = { status: false, message: { title: '', description: '' } };
-
-export type ImageType = 'image/jpeg' | 'image/png';
 
 export const ImageUploads = React.memo(
   ({
@@ -34,6 +35,7 @@ export const ImageUploads = React.memo(
     resizedWidth,
     placeholderText,
     doubleSizeCropping = false,
+    imageType = 'image/jpeg',
     getImages,
     clearDrop,
     ...props
@@ -114,8 +116,8 @@ export const ImageUploads = React.memo(
                 previewUrl as string,
                 area,
                 ratios[index],
-                resizedWidth[index]
-                //imageType
+                resizedWidth[index],
+                imageType
               );
               files.push(file as File);
             } catch (error) {
@@ -127,7 +129,7 @@ export const ImageUploads = React.memo(
         };
         getImageFiles(croppedAreas);
       }
-    }, [croppedAreas, previewUrl, getImages, ratios, resizedWidth]);
+    }, [croppedAreas, previewUrl, getImages, ratios, resizedWidth, imageType]);
     // UI
     if (imageExists.current && previewUrl) {
       return (

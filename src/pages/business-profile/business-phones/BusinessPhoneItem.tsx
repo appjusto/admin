@@ -47,120 +47,103 @@ export const BusinessPhoneItem = ({
     return (
       <Draggable draggableId={`${index}`} index={index}>
         {(draggable) => (
-          <Box
+          <HStack
+            {...draggable.draggableProps}
+            ref={draggable.innerRef}
             borderWidth="1px"
             borderRadius="lg"
             bg="white"
             boxShadow="0px 8px 16px -4px rgba(105, 118, 103, 0.1)"
-            ref={draggable.innerRef}
-            {...draggable.draggableProps}
             w="100%"
             p="2"
           >
-            <Stack
-              key={index}
-              spacing={{ base: 3, md: 4 }}
-              direction={{ base: 'column', md: 'row' }}
+            <Box
+              {...draggable.dragHandleProps}
+              ref={draggable.innerRef}
+              display={
+                userAbility?.can('update', 'businesses') ? 'flex' : 'none'
+              }
+              px="2"
+              bg="white"
             >
-              <HStack>
-                <Box
-                  display={
-                    userAbility?.can('update', 'businesses') ? 'flex' : 'none'
-                  }
-                  px="2"
-                  bg="white"
-                  {...draggable.dragHandleProps}
-                  ref={draggable.innerRef}
+              <DragHandle />
+            </Box>
+            <Select
+              mt="0"
+              w={{ base: '110px' }}
+              minW={{ base: '110px' }}
+              label={t('Tipo')}
+              aria-label={t('tipo-de-telefone')}
+              value={phone.type}
+              onChange={(e) => handlePhoneUpdate(index, 'type', e.target.value)}
+            >
+              <option value="owner">{t('Dono')}</option>
+              <option value="manager">{t('Gerente')}</option>
+              <option value="desk">{t('Balcão')}</option>
+            </Select>
+            <PatternInput
+              mt="0"
+              w={{ base: '100%' }}
+              minW={{ md: '220px' }}
+              isRequired={index === 0}
+              id={`business-phone-${index}`}
+              label={t(`Número do telefone ${index === 0 ? '*' : ''}`)}
+              placeholder={t('Nº de telefone ou celular')}
+              mask={phoneMask}
+              parser={numbersOnlyParser}
+              formatter={phoneFormatter}
+              value={phone.number}
+              onValueChange={(value) =>
+                handlePhoneUpdate(index, 'number', value)
+              }
+              validationLength={10}
+            />
+            <Checkbox
+              colorScheme="green"
+              value="calls"
+              isChecked={phone.calls}
+              onChange={(e) =>
+                handlePhoneUpdate(index, 'calls', e.target.checked)
+              }
+            >
+              <Icon w="20px" h="20px" as={FaPhoneAlt} />
+            </Checkbox>
+            <Checkbox
+              colorScheme="green"
+              value="whatsapp"
+              isChecked={phone.whatsapp}
+              onChange={(e) =>
+                handlePhoneUpdate(index, 'whatsapp', e.target.checked)
+              }
+            >
+              <Icon w="22px" h="22px" as={FaWhatsapp} />
+            </Checkbox>
+            {isRemoving && (
+              <>
+                <Button
+                  display={{ base: 'block', md: 'none' }}
+                  size="sm"
+                  variant="ghost"
+                  fontSize="13px"
+                  onClick={() => removePhone(index)}
                 >
-                  <DragHandle />
-                </Box>
-                <Select
-                  mt="0"
-                  w={{ base: '110px' }}
-                  minW={{ base: '110px' }}
-                  label={t('Tipo')}
-                  aria-label={t('tipo-de-telefone')}
-                  value={phone.type}
-                  onChange={(e) =>
-                    handlePhoneUpdate(index, 'type', e.target.value)
-                  }
+                  {t('Remover')}
+                </Button>
+                <Tooltip
+                  placement="top"
+                  label={t('Remover telefone')}
+                  aria-label={t('Remover')}
                 >
-                  <option value="owner">{t('Dono')}</option>
-                  <option value="manager">{t('Gerente')}</option>
-                  <option value="desk">{t('Balcão')}</option>
-                </Select>
-                <PatternInput
-                  w={{ base: '100%' }}
-                  minW={{ md: '220px' }}
-                  isRequired={index === 0}
-                  id={`business-phone-${index}`}
-                  label={t(`Número do telefone ${index === 0 ? '*' : ''}`)}
-                  placeholder={t('Nº de telefone ou celular')}
-                  mask={phoneMask}
-                  parser={numbersOnlyParser}
-                  formatter={phoneFormatter}
-                  value={phone.number}
-                  onValueChange={(value) =>
-                    handlePhoneUpdate(index, 'number', value)
-                  }
-                  validationLength={10}
-                />
-              </HStack>
-              <HStack
-                w={{ base: '100%' }}
-                spacing={{ base: 6, md: 4 }}
-                alignItems="center"
-                fontSize="16px"
-                lineHeight="22px"
-              >
-                <Checkbox
-                  colorScheme="green"
-                  value="calls"
-                  isChecked={phone.calls}
-                  onChange={(e) =>
-                    handlePhoneUpdate(index, 'calls', e.target.checked)
-                  }
-                >
-                  <Icon w="20px" h="20px" as={FaPhoneAlt} />
-                </Checkbox>
-                <Checkbox
-                  colorScheme="green"
-                  value="whatsapp"
-                  isChecked={phone.whatsapp}
-                  onChange={(e) =>
-                    handlePhoneUpdate(index, 'whatsapp', e.target.checked)
-                  }
-                >
-                  <Icon w="22px" h="22px" as={FaWhatsapp} />
-                </Checkbox>
-                {isRemoving && (
-                  <>
-                    <Button
-                      display={{ base: 'block', md: 'none' }}
-                      size="sm"
-                      variant="ghost"
-                      fontSize="13px"
-                      onClick={() => removePhone(index)}
-                    >
-                      {t('Remover')}
-                    </Button>
-                    <Tooltip
-                      placement="top"
-                      label={t('Remover telefone')}
-                      aria-label={t('Remover')}
-                    >
-                      <CloseButton
-                        display={{ base: 'none', md: 'block' }}
-                        size="sm"
-                        variant="dangerLight"
-                        onClick={() => removePhone(index)}
-                      />
-                    </Tooltip>
-                  </>
-                )}
-              </HStack>
-            </Stack>
-          </Box>
+                  <CloseButton
+                    display={{ base: 'none', md: 'block' }}
+                    size="sm"
+                    variant="dangerLight"
+                    onClick={() => removePhone(index)}
+                  />
+                </Tooltip>
+              </>
+            )}
+          </HStack>
         )}
       </Draggable>
     );

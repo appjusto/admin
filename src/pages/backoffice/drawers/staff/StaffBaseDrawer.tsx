@@ -28,6 +28,7 @@ import {
 } from '@chakra-ui/react';
 import { useAuthentication } from 'app/api/auth/useAuthentication';
 import { useStaff } from 'app/api/staff/useStaff';
+import { fullStaffPermissions } from 'app/state/auth/utils';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import { permissionsPTOptions } from 'pages/backoffice/utils';
@@ -42,24 +43,6 @@ import {
   getGenericModePermissions,
   getGenericModeRole,
 } from './utils';
-
-const initAcess = {
-  orders: [],
-  couriers: [],
-  consumers: [],
-  businesses: [],
-  account_manager: [],
-  menu: [],
-  chats: [],
-  invoices: [],
-  withdraws: [],
-  advances: [],
-  managers: [],
-  recommendations: [],
-  staff: [],
-  users: [],
-  platform: [],
-} as UserPermissions;
 
 type Situation = {
   before?: ProfileSituation;
@@ -104,7 +87,9 @@ export const StaffBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   const [email, setEmail] = React.useState('');
   const [staffProfile, setStaffProfile] =
     React.useState<WithId<StaffProfile> | null>();
-  const [permissions, setPermissions] = React.useState(initAcess);
+  const [permissions, setPermissions] = React.useState(
+    fullStaffPermissions as UserPermissions
+  );
   const [situation, setSituation] = React.useState<Situation>({});
   const [genericMode, setGenericMode] = React.useState<GenericMode>('custom');
   const [isDeleting, setIsDeleting] = React.useState(false);
@@ -152,7 +137,10 @@ export const StaffBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
         const data = await getStaff(staffId);
         setStaffProfile(data?.staff ?? null);
         if (data?.permissions) {
-          setPermissions(data.permissions);
+          setPermissions({
+            ...(fullStaffPermissions as UserPermissions),
+            ...data.permissions,
+          });
           const genericRole = getGenericModeRole(data.permissions);
           setGenericMode(genericRole);
         }

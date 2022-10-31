@@ -8,7 +8,7 @@ interface PageLayoutProps extends FlexProps {
 }
 
 const PageLayout = ({
-  maxW = '960px',
+  maxW = '1012px',
   mt = '0',
   children,
 }: PageLayoutProps) => {
@@ -19,8 +19,8 @@ const PageLayout = ({
       <Sidebar />
       <Flex flex={1} justifyContent="center">
         <Container
-          w="100%"
-          maxW={{ lg: maxW, xl: '1188px' }}
+          w="100vw"
+          maxW={{ lg: maxW }}
           pt={{ base: '16', lg: '10' }}
           pb={{ base: '8', md: '14' }}
         >
