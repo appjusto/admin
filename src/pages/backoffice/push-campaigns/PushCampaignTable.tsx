@@ -17,6 +17,7 @@ export const PushCampaignTable = ({ campaigns }: PushCampaignTableProps) => {
             <Th>{t('Criada em')}</Th>
             <Th>{t('Agendada para')}</Th>
             <Th>{t('Nome')}</Th>
+            <Th>{t('Perfil')}</Th>
             <Th>{t('Status')}</Th>
             <Th>{t('Audiência')}</Th>
             <Th></Th>
@@ -26,6 +27,7 @@ export const PushCampaignTable = ({ campaigns }: PushCampaignTableProps) => {
           {campaigns === undefined ? (
             <Tr color="black" fontSize="xs" fontWeight="700">
               <Td>{t('Carregando agentes...')}</Td>
+              <Td></Td>
               <Td></Td>
               <Td></Td>
               <Td></Td>
@@ -40,6 +42,7 @@ export const PushCampaignTable = ({ campaigns }: PushCampaignTableProps) => {
           ) : (
             <Tr color="black" fontSize="xs" fontWeight="700">
               <Td>{t('Não há campanhas adicionadas.')}</Td>
+              <Td></Td>
               <Td></Td>
               <Td></Td>
               <Td></Td>
