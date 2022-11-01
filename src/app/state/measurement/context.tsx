@@ -9,7 +9,9 @@ interface ContextProps {
   handleUserConsent(value: ConsentResponse): void;
 }
 
-const MeasurementContext = React.createContext<ContextProps>({} as ContextProps);
+const MeasurementContext = React.createContext<ContextProps>(
+  {} as ContextProps
+);
 
 interface Props {
   children: React.ReactNode | React.ReactNode[];
@@ -28,14 +30,15 @@ export const MeasurementProvider = ({ children }: Props) => {
   // side effects
   React.useEffect(() => {
     const consent = localStorage.getItem('appjusto-consent');
-    if (consent === 'true' || consent === 'accepted') setUserConsent('accepted');
-    else if (consent === 'false' || consent === 'refused') setUserConsent('refused');
+    if (consent === 'true' || consent === 'accepted')
+      setUserConsent('accepted');
+    else if (consent === 'false' || consent === 'refused')
+      setUserConsent('refused');
     else setUserConsent('pending');
   }, []);
   React.useEffect(() => {
-    //if(!analytics) return;
     if (!userConsent) return;
-    if (process.env.NODE_ENV !== 'production') return;
+    // if (process.env.NODE_ENV !== 'production') return;
     setAnalyticsConsent();
     // const PixelId = process.env.REACT_APP_FACEBOOK_PIXEL_ID;
     // if (PixelId) ReactPixel.init(PixelId);

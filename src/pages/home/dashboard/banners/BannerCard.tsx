@@ -1,5 +1,9 @@
 import { Banner, WithId } from '@appjusto/types';
 import { Box, Image, Link } from '@chakra-ui/react';
+import {
+  AnalyticsLogData,
+  useMeasurement,
+} from 'app/api/measurement/useMeasurement';
 import { isEqual } from 'lodash';
 import React from 'react';
 
@@ -9,8 +13,18 @@ interface BannerCardProps {
 }
 
 const BannerCard = ({ banner, baseWidth }: BannerCardProps) => {
+  // context
+  const { analyticsLogEvent } = useMeasurement();
   // state
   const [imageUrl, setImageUrl] = React.useState<string>();
+  // helpers
+  const logData = {
+    eventName: 'admin_banner_click',
+    eventParams: {
+      item_id: banner.id,
+      description: banner.name,
+    },
+  } as AnalyticsLogData;
   // side effects
   React.useEffect(() => {
     if (!baseWidth || !banner.images) return;
@@ -35,7 +49,11 @@ const BannerCard = ({ banner, baseWidth }: BannerCardProps) => {
     );
   }
   return (
-    <Link href={banner.link} isExternal>
+    <Link
+      href={banner.link}
+      onClick={() => analyticsLogEvent(logData)}
+      isExternal
+    >
       <Box
         position="relative"
         w={{ base: `${baseWidth}px`, lg: '100%' }}
