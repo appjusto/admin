@@ -20,6 +20,7 @@ import {
   query,
   serverTimestamp,
   Unsubscribe,
+  updateDoc,
   where,
 } from 'firebase/firestore';
 import { hash } from 'geokit';
@@ -61,6 +62,11 @@ export default class PlatformApi {
     );
     // returns the unsubscribe function
     return unsubscribe;
+  }
+
+  async updatePlatformAccess(changes: Partial<PlatformAccess>) {
+    const ref = this.refs.getPlatformAccessRef();
+    return updateDoc(ref, changes);
   }
 
   observeFlaggedLocations(
