@@ -132,7 +132,6 @@ export const BusinessRegister = () => {
             isLoading={updateProfilteResult.isLoading}
             isSuccess={updateProfilteResult.isSuccess}
           />
-          {/* <BusinessTags /> */}
         </>
       )}
       <SectionTitle>{t('Anotações')}</SectionTitle>

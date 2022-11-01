@@ -9,8 +9,7 @@ const renderCarouselSection = (
   banners: WithId<Banner>[],
   baseWidth: number
 ) => {
-  // state
-  console.log(banners);
+  // UI
   if (banners.length === 1) {
     const banner = banners[0];
     return <BannerCard key={banner.id} banner={banner} baseWidth={baseWidth} />;
