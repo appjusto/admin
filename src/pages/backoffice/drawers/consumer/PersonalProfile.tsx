@@ -140,7 +140,7 @@ export const PersonalProfile = () => {
       <SectionTitle>{t('Tags')}</SectionTitle>
       <ProfileTags
         tags={consumer?.tags}
-        options={['safe'] as ProfileTag[]}
+        options={['safe', 'unsafe'] as ProfileTag[]}
         updateProfile={(tags) =>
           updateProfile({
             changes: { tags },

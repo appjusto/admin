@@ -122,6 +122,7 @@ export const BusinessRegister = () => {
             tags={business?.tags}
             options={
               [
+                'safe',
                 'motorcycle-only',
                 'can-match-courier',
                 'can-outsource',
