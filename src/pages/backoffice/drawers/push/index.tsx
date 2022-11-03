@@ -81,6 +81,10 @@ export const PushDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   // handlers
   const handleSubmit = () => {
     const scheduledDate = getScheduledDate(pushDate, pushTime);
+    if (status === 'rejected') {
+      updatePushCampaign({ campaignId, changes: { status } });
+      return;
+    }
     if (!flavor || !channel) {
       return dispatchAppRequestResult({
         status: 'error',
