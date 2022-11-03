@@ -16,14 +16,16 @@ export const numbersAndLettersParser = (
   };
   return (value: string) => {
     let initialValue = '';
+    const isHyphen = mask.includes('-');
     if (padWithZeros) {
       const pad = mask.length - value.length - (mask.match(/-/g) ?? []).length;
       if (pad >= 0) initialValue = '0'.repeat(pad);
     }
     const isValueLengthIncreased = mask.length === value.length;
-    const currentValue = isValueLengthIncreased
-      ? value.split('').slice(1).join('')
-      : value;
+    const currentValue =
+      isHyphen && isValueLengthIncreased
+        ? value.split('').slice(1).join('')
+        : value;
     return mask.split('').reduce((result, letter, i, arr) => {
       const regex = letter === '-' ? regexp(arr[i + 1]) : regexp(letter);
       if (currentValue.charAt(i).match(regex))

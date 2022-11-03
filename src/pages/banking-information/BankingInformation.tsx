@@ -268,6 +268,15 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
           mask={selectedBank?.agencyPattern}
           parser={agencyParser}
           formatter={agencyFormatter}
+          onBlur={() => {
+            if (agency.length > 0) {
+              const padded = numbersAndLettersParser(
+                selectedBank?.agencyPattern,
+                true
+              )!(agency);
+              setAgency(padded);
+            }
+          }}
           validationLength={
             selectedBank?.agencyPattern
               ? selectedBank.agencyPattern.length - 1

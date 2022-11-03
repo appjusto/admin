@@ -218,11 +218,15 @@ export const BankingForm = ({
         mask={selectedBank?.agencyPattern}
         parser={agencyParser}
         formatter={agencyFormatter}
-        validationLength={
-          selectedBank?.agencyPattern
-            ? selectedBank.agencyPattern.length - 1
-            : undefined
-        }
+        onBlur={() => {
+          if (bankAccount?.agency && bankAccount.agency.length > 0) {
+            const padded = numbersAndLettersParser(
+              selectedBank?.agencyPattern,
+              true
+            )!(bankAccount.agency);
+            handleInputChange('agency', padded);
+          }
+        }}
         isRequired
         isDisabled={!selectedBank}
         notifyParentWithValidation={(isInvalid: boolean) => {
