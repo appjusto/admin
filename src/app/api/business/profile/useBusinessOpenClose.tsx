@@ -1,6 +1,6 @@
 import { Business, WithId } from '@appjusto/types';
 import { useToast } from '@chakra-ui/toast';
-import * as Sentry from '@sentry/react';
+// import * as Sentry from '@sentry/react';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextServerTime } from 'app/state/server-time';
 import { CustomToast } from 'common/components/CustomToast';
@@ -9,14 +9,14 @@ import { useBusinessProfile } from './useBusinessProfile';
 import { businessShouldBeOpen } from './utils';
 
 // 'ptYK5Olovr5lSTut1Nos', // itapuama staging
-const bWithSchedulesProblems = [
-  'mAJlS0yWVTgKXMvwAD3B',
-  'SBGxAtt82iLhNRMKLiih',
-  'KKriu277V1wlNYvmld9n',
-  'Mld19W2kAGgajoq6V7vD',
-];
+// const bWithSchedulesProblems = [
+//   'mAJlS0yWVTgKXMvwAD3B',
+//   'SBGxAtt82iLhNRMKLiih',
+//   'KKriu277V1wlNYvmld9n',
+//   'Mld19W2kAGgajoq6V7vD',
+// ];
 
-let eventCount = 0;
+// let eventCount = 0;
 
 export const useBusinessOpenClose = (business?: WithId<Business> | null) => {
   // context
@@ -31,30 +31,30 @@ export const useBusinessOpenClose = (business?: WithId<Business> | null) => {
     if (!business?.schedules) return;
     const today = getServerTime();
     const shouldBeOpen = businessShouldBeOpen(today, business.schedules);
-    if (
-      business?.id &&
-      bWithSchedulesProblems.includes(business.id) &&
-      eventCount < 10
-    ) {
-      eventCount++;
-      const day = today.getDay();
-      const dayIndex = day === 0 ? 6 : day - 1;
-      const daySchedule = business.schedules[dayIndex].schedule;
-      Sentry.captureEvent({
-        level: 'debug',
-        // message: 'business-open-close',
-        tags: {
-          name: 'business-open-close',
-        },
-        extra: {
-          businessId: business.id,
-          adminRole: adminRole,
-          time: today,
-          daySchedule: daySchedule,
-          shouldBeOpen: shouldBeOpen,
-        },
-      } as Sentry.Event);
-    }
+    // if (
+    //   business?.id &&
+    //   bWithSchedulesProblems.includes(business.id) &&
+    //   eventCount < 10
+    // ) {
+    //   eventCount++;
+    //   const day = today.getDay();
+    //   const dayIndex = day === 0 ? 6 : day - 1;
+    //   const daySchedule = business.schedules[dayIndex].schedule;
+    //   Sentry.captureEvent({
+    //     level: 'debug',
+    //     // message: 'business-open-close',
+    //     tags: {
+    //       name: 'business-open-close',
+    //     },
+    //     extra: {
+    //       businessId: business.id,
+    //       adminRole: adminRole,
+    //       time: today,
+    //       daySchedule: daySchedule,
+    //       shouldBeOpen: shouldBeOpen,
+    //     },
+    //   } as Sentry.Event);
+    // }
     if (shouldBeOpen && business?.status === 'closed') {
       updateBusinessProfile({ status: 'open' });
     } else if (!shouldBeOpen && business?.status === 'open') {
@@ -78,8 +78,8 @@ export const useBusinessOpenClose = (business?: WithId<Business> | null) => {
       });
     }
   }, [
-    adminRole,
-    business?.id,
+    // adminRole,
+    // business?.id,
     business?.situation,
     business?.enabled,
     business?.schedules,
