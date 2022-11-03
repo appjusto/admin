@@ -10,6 +10,7 @@ import {
   WithId,
 } from '@appjusto/types';
 import * as Sentry from '@sentry/react';
+import { FirebaseError } from 'firebase/app';
 import {
   addDoc,
   deleteDoc,
@@ -33,7 +34,10 @@ export default class CourierApi {
     statuses: CourierStatus[],
     resultHandler: (result: WithId<CourierProfile>[]) => void
   ): Unsubscribe {
-    const q = query(this.refs.getCouriersRef(), where('status', 'in', statuses));
+    const q = query(
+      this.refs.getCouriersRef(),
+      where('status', 'in', statuses)
+    );
     // returns the unsubscribe function
     return customCollectionSnapshot(q, resultHandler);
   }
@@ -51,7 +55,10 @@ export default class CourierApi {
     courierCode: string,
     resultHandler: (result: WithId<CourierProfile>[] | null) => void
   ): Unsubscribe {
-    const q = query(this.refs.getCouriersRef(), where('code', '==', courierCode));
+    const q = query(
+      this.refs.getCouriersRef(),
+      where('code', '==', courierCode)
+    );
     // returns the unsubscribe function
     return customCollectionSnapshot(q, resultHandler);
   }
@@ -60,7 +67,10 @@ export default class CourierApi {
     courierName: string,
     resultHandler: (result: WithId<CourierProfile>[] | null) => void
   ): Unsubscribe {
-    const q = query(this.refs.getCouriersRef(), where('name', '==', courierName));
+    const q = query(
+      this.refs.getCouriersRef(),
+      where('name', '==', courierName)
+    );
     // returns the unsubscribe function
     return customCollectionSnapshot(q, resultHandler);
   }
@@ -98,14 +108,27 @@ export default class CourierApi {
     courierId: string,
     resultHandler: (result: WithId<ProfileNote>[]) => void
   ): Unsubscribe {
-    const q = query(this.refs.getCourierProfileNotesRef(courierId), orderBy('createdOn', 'desc'));
+    const q = query(
+      this.refs.getCourierProfileNotesRef(courierId),
+      orderBy('createdOn', 'desc')
+    );
     // returns the unsubscribe function
     return customCollectionSnapshot(q, resultHandler);
   }
 
   async getCourierIdByCode(courierCode: string) {
-    const q = query(this.refs.getCouriersRef(), where('code', '==', courierCode));
-    const courierId = await getDocs(q).then((snapshot) => snapshot.docs[0].id);
+    const q = query(
+      this.refs.getCouriersRef(),
+      where('code', '==', courierCode)
+    );
+    const courierId = await getDocs(q).then((snapshot) => {
+      if (!snapshot.empty) return snapshot.docs[0].id;
+      else
+        throw new FirebaseError(
+          'ignored-error',
+          'Não foi possível encontrar o entregador.'
+        );
+    });
     return courierId;
   }
 
@@ -118,21 +141,32 @@ export default class CourierApi {
     } as ProfileNote);
   }
 
-  async updateProfileNote(courierId: string, profileNoteId: string, changes: Partial<ProfileNote>) {
+  async updateProfileNote(
+    courierId: string,
+    profileNoteId: string,
+    changes: Partial<ProfileNote>
+  ) {
     const timestamp = serverTimestamp();
-    await updateDoc(this.refs.getCourierProfileNoteRef(courierId, profileNoteId), {
-      ...changes,
-      updatedOn: timestamp,
-    } as Partial<ProfileNote>);
+    await updateDoc(
+      this.refs.getCourierProfileNoteRef(courierId, profileNoteId),
+      {
+        ...changes,
+        updatedOn: timestamp,
+      } as Partial<ProfileNote>
+    );
   }
 
   async deleteProfileNote(courierId: string, profileNoteId: string) {
-    await deleteDoc(this.refs.getCourierProfileNoteRef(courierId, profileNoteId));
+    await deleteDoc(
+      this.refs.getCourierProfileNoteRef(courierId, profileNoteId)
+    );
   }
 
   // courier profile picture
   async getCourierProfilePictureURL(courierId: string, size: string) {
-    return await this.files.getDownloadURL(this.refs.getCourierSelfieStoragePath(courierId, size));
+    return await this.files.getDownloadURL(
+      this.refs.getCourierSelfieStoragePath(courierId, size)
+    );
   }
 
   async getCourierDocumentPictureURL(courierId: string, size: string) {
@@ -147,7 +181,11 @@ export default class CourierApi {
   }
 
   // selfie
-  selfieUpload(courierId: string, file: File, progressHandler?: (progress: number) => void) {
+  selfieUpload(
+    courierId: string,
+    file: File,
+    progressHandler?: (progress: number) => void
+  ) {
     return this.files.upload(
       file,
       this.refs.getCourierSelfieStoragePath(courierId),
@@ -156,7 +194,11 @@ export default class CourierApi {
   }
 
   // document
-  documentUpload(courierId: string, file: File, progressHandler?: (progress: number) => void) {
+  documentUpload(
+    courierId: string,
+    file: File,
+    progressHandler?: (progress: number) => void
+  ) {
     return this.files.upload(
       file,
       this.refs.getCourierDocumentStoragePath(courierId),
@@ -181,7 +223,8 @@ export default class CourierApi {
       // logo
       if (selfieFile) await this.selfieUpload(courierId, selfieFile, () => {});
       //cover
-      if (documentFile) await this.documentUpload(courierId, documentFile, () => {});
+      if (documentFile)
+        await this.documentUpload(courierId, documentFile, () => {});
     } catch (error) {
       Sentry.captureException(error);
       throw error;

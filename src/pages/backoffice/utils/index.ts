@@ -131,7 +131,7 @@ export const iuguSituationPTOptions = {
 
 export const flavorsPTOptions = {
   courier: 'Entregador',
-  consumer: 'Cliente',
+  consumer: 'Consumidor',
   business: 'Restaurante',
   backoffice: 'Backoffice',
   platform: 'Plataforma',

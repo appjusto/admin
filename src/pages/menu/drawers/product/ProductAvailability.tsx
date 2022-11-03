@@ -17,7 +17,6 @@ export const ProductAvailability = () => {
     useProductContext();
   const { mainAvailability, product } = state;
   const { availability } = product;
-  //state
   // handlers
   const handleCheck = (stateIndex: number, value: boolean) => {
     const newAvailability = availability.map((item, index) => {
@@ -51,9 +50,10 @@ export const ProductAvailability = () => {
           if (index2 === scheduleIndex) {
             let newValue = value;
             if (value.length === 1 && Number(value) > 2) newValue = '0' + value;
+            const formatted = timeFormatter(newValue, true);
             const newSchedule = {
               ...schedule,
-              [field]: timeFormatter(newValue, true),
+              [field]: formatted,
             };
             return newSchedule;
           } else {
@@ -77,11 +77,12 @@ export const ProductAvailability = () => {
     if (value.length < 4) {
       newValue = value + '0'.repeat(4 - value.length);
     }
+    const formatted = timeFormatter(newValue, true);
     const newAvailability = availability.map((day, index1) => {
       if (index1 === stateIndex) {
         const newDaySchedule = day.schedule.map((schedule, index2) => {
           if (index2 === scheduleIndex) {
-            const newSchedule = { ...schedule, [field]: newValue };
+            const newSchedule = { ...schedule, [field]: formatted };
             return newSchedule;
           } else {
             return schedule;

@@ -48,7 +48,7 @@ export default class PushCampaignApi {
       orderBy('scheduledTo', 'desc'),
       limit(10)
     );
-    // if (name) q = query(q, where('name', '==', name));
+    if (name) q = query(q, where('name', '==', name));
     if (status) q = query(q, where('status', '==', status));
     if (startAfterDoc) q = query(q, startAfter(startAfterDoc));
     if (start && end)

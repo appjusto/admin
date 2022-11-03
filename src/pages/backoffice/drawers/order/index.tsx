@@ -211,27 +211,29 @@ export const BackofficeOrderDrawer = ({
         cancellation: preventionIssue,
       } as CancelOrderPayload;
       if (message) cancellationData.comment = message;
-      // add flagged location
-      const coordinates = new GeoPoint(
-        order?.destination?.location?.latitude!,
-        order?.destination?.location?.longitude!
-      );
-      const address = order?.destination?.address;
-      if (!coordinates || !address) {
-        return dispatchAppRequestResult({
-          status: 'error',
-          requestId: 'BackofficeOrderDrawer-cancellation-valid',
-          message: {
-            title: 'Não foi possível cancelar o pedido.',
-            description: 'Endereço de destino não encontrado.',
-          },
+      if (type === 'prevention') setLoadingState('preventCancel');
+      if (order?.fulfillment === 'delivery') {
+        // add flagged location
+        const coordinates = new GeoPoint(
+          order?.destination?.location?.latitude!,
+          order?.destination?.location?.longitude!
+        );
+        const address = order?.destination?.address;
+        if (!coordinates || !address) {
+          return dispatchAppRequestResult({
+            status: 'error',
+            requestId: 'BackofficeOrderDrawer-cancellation-valid',
+            message: {
+              title: 'Não foi possível cancelar o pedido.',
+              description: 'Endereço de destino não encontrado.',
+            },
+          });
+        }
+        addFlaggedLocation({
+          coordinates,
+          address,
         });
       }
-      if (type === 'prevention') setLoadingState('preventCancel');
-      addFlaggedLocation({
-        coordinates,
-        address,
-      });
       // cancel order
       return cancelOrder(cancellationData);
     }

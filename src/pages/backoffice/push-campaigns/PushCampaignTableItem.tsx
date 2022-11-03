@@ -4,7 +4,7 @@ import { CustomButton } from 'common/components/buttons/CustomButton';
 import { useRouteMatch } from 'react-router-dom';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
-import { pushStatusPTOptions } from '../utils';
+import { flavorsPTOptions, pushStatusPTOptions } from '../utils';
 
 interface PushCampaignTableItemProps {
   campaign: WithId<PushCampaign>;
@@ -22,6 +22,7 @@ export const PushCampaignTableItem = ({
       <Td>{getDateAndHour(campaign.createdOn)}</Td>
       <Td>{getDateAndHour(campaign.scheduledTo)}</Td>
       <Td>{campaign.name}</Td>
+      <Td>{campaign.to ? flavorsPTOptions[campaign.to] : 'N/E'}</Td>
       <Td>{pushStatusPTOptions[campaign.status]}</Td>
       <Td>{campaign.audience ?? 0}</Td>
       <Td>

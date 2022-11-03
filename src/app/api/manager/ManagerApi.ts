@@ -7,6 +7,7 @@ import {
   WithId,
 } from '@appjusto/types';
 import * as Sentry from '@sentry/react';
+import { FirebaseError } from 'firebase/app';
 import {
   getDoc,
   getDocs,
@@ -46,7 +47,14 @@ export default class ManagerApi {
 
   async getManagerIdByEmail(email: string) {
     const q = query(this.refs.getManagersRef(), where('email', '==', email));
-    const managerId = await getDocs(q).then((snapshot) => snapshot.docs[0].id);
+    const managerId = await getDocs(q).then((snapshot) => {
+      if (!snapshot.empty) return snapshot.docs[0].id;
+      else
+        throw new FirebaseError(
+          'ignored-error',
+          'Não foi possível encontrar o colaborador.'
+        );
+    });
     return managerId;
   }
 
@@ -60,7 +68,9 @@ export default class ManagerApi {
       businessId,
     };
     try {
-      const users = (await this.refs.getGetManagersCallable()(payload)) as unknown as {
+      const users = (await this.refs.getGetManagersCallable()(
+        payload
+      )) as unknown as {
         data: ManagerWithRole[];
       };
       resultHandler(users.data);
@@ -83,7 +93,10 @@ export default class ManagerApi {
 
   async updateProfile(id: string, changes: Partial<ManagerProfile>) {
     const timestamp = serverTimestamp();
-    await updateDoc(this.refs.getManagerRef(id), { ...changes, updatedOn: timestamp });
+    await updateDoc(this.refs.getManagerRef(id), {
+      ...changes,
+      updatedOn: timestamp,
+    });
   }
 
   async createManager(data: { key: string; managers: NewUserData[] }) {
