@@ -58,6 +58,7 @@ const BannerCard = ({ banner, baseWidth }: BannerCardProps) => {
         position="relative"
         w={{ base: `${baseWidth}px`, lg: '100%' }}
         minW={{ base: '320px', md: '700px', lg: '980px' }}
+        maxH={{ base: '100px', md: '180px', lg: '180px' }}
         borderRadius="12px"
         boxShadow="2px 3px 12px rgba(100, 100, 111, 0.1)"
         overflow="hidden"
