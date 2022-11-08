@@ -11,7 +11,7 @@ import {
   ProfileBankingFields,
 } from 'common/types';
 import React from 'react';
-import { getBankingAccountPattern, getCEFAccountCode } from 'utils/functions';
+import { getBankingAccountPattern } from 'utils/functions';
 import { t } from 'utils/i18n';
 
 interface BankingFormProps {
@@ -111,28 +111,6 @@ export const BankingForm = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [banks, bankAccount?.name, findSelectedBank]);
-  React.useEffect(() => {
-    if (!selectedBank?.code || selectedBank?.code !== '104') return;
-    if (!bankAccount?.account) return;
-    if (!bankAccount.personType) return;
-    if (!bankAccount.type) return;
-    const code = getCEFAccountCode(
-      selectedBank.code,
-      bankAccount.personType,
-      bankAccount.type
-    );
-    const newBankAccount = {
-      ...bankAccount,
-      accountFormatted: code + accountFormatter!(bankAccount.account),
-    };
-    handleBankAccountChange(newBankAccount);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    selectedBank?.code,
-    bankAccount?.account,
-    bankAccount?.personType,
-    bankAccount?.type,
-  ]);
   React.useEffect(() => {
     if (selectedBank?.code === '341' && bankAccount?.agency === '0500') {
       setValidation((prev) => ({

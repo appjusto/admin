@@ -21,6 +21,7 @@ import { BusinessPhoneField } from 'pages/business-profile/business-phones';
 import React, { Dispatch, SetStateAction } from 'react';
 import { UseMutateAsyncFunction } from 'react-query';
 import { useParams } from 'react-router';
+import { getCEFAccountCode } from 'utils/functions';
 import { useContextAppRequests } from '../requests/context';
 import { businessBOReducer, businessBOState } from './businessBOReducer';
 import { bankingInfoIsEmpty, getValidationStatus } from './utils';
@@ -190,7 +191,18 @@ export const BusinessBOProvider = ({ children }: Props) => {
       !bankingInfoIsEmpty(state.bankingInfo) &&
       !isEqual(state.bankingInfo, bankAccount)
     ) {
-      bankingChanges = state.bankingInfo;
+      let code = '';
+      if (state.bankingInfo.name === 'Caixa Econômica') {
+        code = getCEFAccountCode(
+          '104',
+          state.bankingInfo.personType,
+          state.bankingInfo.type
+        );
+      }
+      bankingChanges = {
+        ...state.bankingInfo,
+        accountFormatted: code + state.bankingInfo.accountFormatted,
+      };
     }
     updateBusinessAndBankAccount({
       businessChanges,
