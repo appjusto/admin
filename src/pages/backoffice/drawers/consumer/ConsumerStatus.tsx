@@ -1,24 +1,12 @@
 import { ProfileSituation } from '@appjusto/types';
-import {
-  Box,
-  Checkbox,
-  CheckboxGroup,
-  Flex,
-  Radio,
-  RadioGroup,
-  Textarea,
-  VStack,
-} from '@chakra-ui/react';
+import { Box, Flex, Radio, RadioGroup, Textarea } from '@chakra-ui/react';
 import { useContextConsumerProfile } from 'app/state/consumer/context';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
 
 export const ConsumerStatus = () => {
   // context
-  const { consumer, handleProfileChange, issueOptions } =
-    useContextConsumerProfile();
-  // helpers
-  const profileIssues = (consumer?.profileIssues as string[]) ?? [];
+  const { consumer, handleProfileChange } = useContextConsumerProfile();
   // UI
   return (
     <Box>
@@ -46,31 +34,13 @@ export const ConsumerStatus = () => {
             {t('Aprovado')}
           </Radio>
           <Radio mt="2" value="rejected">
-            {t('Rejeitado')}
+            {t('Rejeitado (confirmação de identidade solicitada no App)')}
           </Radio>
           <Radio mt="2" value="blocked">
             {t('Bloquear cliente')}
           </Radio>
         </Flex>
       </RadioGroup>
-      {consumer?.situation === 'rejected' && (
-        <>
-          <SectionTitle>{t('Motivo da recusa:')}</SectionTitle>
-          <CheckboxGroup
-            colorScheme="green"
-            value={profileIssues}
-            onChange={(value) => handleProfileChange('profileIssues', value)}
-          >
-            <VStack alignItems="flex-start" mt="4" color="black" spacing={2}>
-              {issueOptions?.map((issue) => (
-                <Checkbox key={issue.id} value={issue.title}>
-                  {issue.title}
-                </Checkbox>
-              ))}
-            </VStack>
-          </CheckboxGroup>
-        </>
-      )}
       {(consumer?.situation === 'rejected' ||
         consumer?.situation === 'blocked') && (
         <>

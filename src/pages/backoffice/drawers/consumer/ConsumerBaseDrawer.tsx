@@ -79,15 +79,6 @@ export const ConsumerBaseDrawer = ({
       : 'N/I';
   //handlers
   const handleSave = () => {
-    /*if (consumer?.situation === 'approved') {
-      if (!contextValidation.cpf) {
-        return setError({
-          status: true,
-          error: null,
-          message: { title: 'O CPF não foi informado ou não é válido.' },
-        });
-      }
-    }*/
     setIsEditingEmail(false);
     const changes = getEditableProfile(
       consumer,

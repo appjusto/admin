@@ -1,15 +1,8 @@
-import {
-  ConsumerProfile,
-  Issue,
-  IssueType,
-  Order,
-  WithId,
-} from '@appjusto/types';
+import { ConsumerProfile, Order, WithId } from '@appjusto/types';
 import * as cpfutils from '@fnando/cpf';
 import { useConsumerOrders } from 'app/api/consumer/useConsumerOrders';
 import { useConsumerProfilePictures } from 'app/api/consumer/useConsumerProfilePictures';
 import { useObserveConsumerProfile } from 'app/api/consumer/useObserveConsumerProfile';
-import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';
 import React, { Dispatch, SetStateAction } from 'react';
 import { useParams } from 'react-router';
 import { consumerReducer } from './consumerReducer';
@@ -30,7 +23,6 @@ interface ConsumerProfileContextProps {
   setIsEditingEmail: Dispatch<SetStateAction<boolean>>;
   handleProfileChange(key: string, value: any): void;
   setContextValidation: Dispatch<SetStateAction<Validation>>;
-  issueOptions?: Issue[] | null;
 }
 
 const ConsumerProfileContext = React.createContext<ConsumerProfileContextProps>(
@@ -45,14 +37,14 @@ type Params = {
   consumerId: string;
 };
 
-const issueOptionsArray = ['consumer-profile-invalid'] as IssueType[];
+// const issueOptionsArray = ['consumer-profile-invalid'] as IssueType[];
 
 export const ConsumerProvider = ({ children }: Props) => {
   // context
   const { consumerId } = useParams<Params>();
-  const profile = useObserveConsumerProfile(consumerId);
   // change to useConsumerProfilePictures
-  const issueOptions = useIssuesByType(issueOptionsArray);
+  const profile = useObserveConsumerProfile(consumerId);
+  // const issueOptions = useIssuesByType(issueOptionsArray);
   // state
   const [consumer, dispatch] = React.useReducer(
     consumerReducer,
@@ -119,7 +111,6 @@ export const ConsumerProvider = ({ children }: Props) => {
         setIsEditingEmail,
         handleProfileChange,
         setContextValidation,
-        issueOptions,
       }}
     >
       {children}
