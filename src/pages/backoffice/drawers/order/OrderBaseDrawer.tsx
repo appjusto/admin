@@ -25,6 +25,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { MutationResult } from 'app/api/mutation/useCustomMutation';
+import { useLalamoveApi } from 'app/api/order/useLalamoveApi';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { FiltersScrollBar } from 'common/components/backoffice/FiltersScrollBar';
@@ -82,6 +83,7 @@ export const OrderBaseDrawer = ({
   const { url } = useRouteMatch();
   const { user, userAbility, isBackofficeSuperuser } = useContextFirebaseUser();
   const { dispatchAppRequestResult } = useContextAppRequests();
+  const { getOrderQuotation, getOrderQuotationResult } = useLalamoveApi(order);
   // state
   const [isDeleting, setIsDeleting] = React.useState(false);
   // helpers
@@ -152,6 +154,13 @@ export const OrderBaseDrawer = ({
             >
               {order?.code ? `#${order.code}` : 'N/E'}
             </Text>
+            <Button
+              mt="4"
+              onClick={() => getOrderQuotation()}
+              isLoading={getOrderQuotationResult.isLoading}
+            >
+              Cotação
+            </Button>
             <Text
               mt="1"
               fontSize="15px"

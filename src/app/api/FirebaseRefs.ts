@@ -5,6 +5,8 @@ export default class FirebaseRefs {
   constructor(private functions: Functions, private firestore: Firestore) {}
 
   // functions
+  getOrderQuotationCallable = () =>
+    httpsCallable(this.functions, 'getOrderQuotation');
   getServerTimeCallable = () => httpsCallable(this.functions, 'getServerTime');
   getQueryGoogleMapsCallable = () =>
     httpsCallable(this.functions, 'queryGoogleMaps');
