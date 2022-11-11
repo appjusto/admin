@@ -1,6 +1,12 @@
-import { Order, OutsourceAccountType, WithId } from '@appjusto/types';
+import {
+  Order,
+  OrderCourier,
+  OutsourceAccountType,
+  WithId,
+} from '@appjusto/types';
 import { Box, Button, HStack, Radio, RadioGroup, Text } from '@chakra-ui/react';
 import { useGetOutsourceDelivery } from 'app/api/order/useGetOutsourceDelivery';
+import { useOrder } from 'app/api/order/useOrder';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput';
@@ -23,6 +29,7 @@ export const OutsouceDelivery = ({ order }: OutsouceDeliveryProps) => {
   // context
   const { userAbility } = useContextFirebaseUser();
   const { dispatchAppRequestResult } = useContextAppRequests();
+  const { updateOrder } = useOrder(order?.id);
   const {
     getOutsourceDelivery,
     outsourceDeliveryResult,
@@ -43,13 +50,13 @@ export const OutsouceDelivery = ({ order }: OutsouceDeliveryProps) => {
     ? ['confirmed', 'preparing', 'ready', 'dispatching'].includes(order.status)
     : false;
   // handlers
-  const handleOutsourcing = () => {
+  const handleOutsourcing = async () => {
     let priorityFee;
     if (outsourcingAccountType === 'platform') {
       if (additionalValue > 0 && additionalValue < 400) {
         return dispatchAppRequestResult({
           status: 'error',
-          requestId: 'Operação negada',
+          requestId: 'error-additionalValue',
           message: {
             title: 'O valor mínimo de adicional é R$ 4,00.',
           },
@@ -58,7 +65,27 @@ export const OutsouceDelivery = ({ order }: OutsouceDeliveryProps) => {
       priorityFee =
         additionalValue > 0 ? (additionalValue / 100).toString() : undefined;
     }
-    getOutsourceDelivery({ accountType: outsourcingAccountType, priorityFee });
+    const outsourcedResponse = await getOutsourceDelivery({
+      accountType: outsourcingAccountType,
+      priorityFee,
+    });
+    console.log('outsourcedResponse', outsourcedResponse);
+    if (!outsourcedResponse) {
+      return dispatchAppRequestResult({
+        status: 'error',
+        requestId: 'error-outsourcedOrder',
+        message: {
+          title: 'Ocorreu um erro ao assumir a logística.',
+        },
+      });
+    }
+    const courier: OrderCourier = {
+      ...(order?.courier ?? {}),
+      distanceToOrigin: null,
+      mode: 'motorcycle',
+      outsourcedOrderId: outsourcedResponse.data.lalamoveOrder?.id!,
+    };
+    updateOrder({ courier });
   };
   const handleOutsourcingCourierInfos = () => {
     if (
