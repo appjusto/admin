@@ -25,7 +25,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { MutationResult } from 'app/api/mutation/useCustomMutation';
-import { useGetOutsourceDelivery } from 'app/api/order/useGetOutsourceDelivery';
+import { useLalamoveApi } from 'app/api/order/useLalamoveApi';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { FiltersScrollBar } from 'common/components/backoffice/FiltersScrollBar';
@@ -84,8 +84,7 @@ export const OrderBaseDrawer = ({
   const { user, userAbility, isBackofficeSuperuser } = useContextFirebaseUser();
   const { dispatchAppRequestResult } = useContextAppRequests();
   // const { getOrderQuotation, getOrderQuotationResult } = useLalamoveApi(order);
-  const { getOutsourceDelivery, outsourceDeliveryResult } =
-    useGetOutsourceDelivery(order?.id);
+  const { getOrderQuotation, getOrderQuotationResult } = useLalamoveApi(order);
   // state
   const [isDeleting, setIsDeleting] = React.useState(false);
   // helpers
@@ -137,7 +136,7 @@ export const OrderBaseDrawer = ({
     } catch (error) {}
   };
   const handleOutsourcing = async () => {
-    const response = await getOutsourceDelivery({ accountType: 'platform' });
+    const response = await getOrderQuotation();
     console.log(response);
   };
   //UI
@@ -163,9 +162,9 @@ export const OrderBaseDrawer = ({
             <Button
               mt="4"
               onClick={handleOutsourcing}
-              isLoading={outsourceDeliveryResult.isLoading}
+              isLoading={getOrderQuotationResult.isLoading}
             >
-              Logística externa
+              Cotação
             </Button>
             <Text
               mt="1"
