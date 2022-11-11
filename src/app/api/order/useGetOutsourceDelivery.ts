@@ -10,9 +10,14 @@ export const useGetOutsourceDelivery = (orderId?: string) => {
     mutateAsync: getOutsourceDelivery,
     mutationResult: outsourceDeliveryResult,
   } = useCustomMutation(
-    async (data: { accountType?: OutsourceAccountType }) =>
+    async (data: {
+      accountType?: OutsourceAccountType;
+      priorityFee?: string;
+    }) =>
       orderId
-        ? api.order().getOutsourceDelivery(orderId, data?.accountType)
+        ? api
+            .order()
+            .getOutsourceDelivery(orderId, data?.accountType, data?.priorityFee)
         : null,
     'getOutsourceDelivery'
   );
