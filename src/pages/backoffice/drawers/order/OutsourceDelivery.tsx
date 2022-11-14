@@ -94,6 +94,7 @@ export const OutsouceDelivery = ({ order }: OutsouceDeliveryProps) => {
       });
     }
     const data = {
+      ...order?.courier,
       name: outsourcingCourierName,
       phone: outsourcingCourierPhone,
     };

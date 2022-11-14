@@ -1,4 +1,4 @@
-import { Order, OutsourceAccountType } from '@appjusto/types';
+import { Order, OrderCourier, OutsourceAccountType } from '@appjusto/types';
 import { useContextApi } from 'app/state/api/context';
 import { useCustomMutation } from '../mutation/useCustomMutation';
 
@@ -67,12 +67,12 @@ export const useGetOutsourceDelivery = (orderId?: string) => {
   const {
     mutateAsync: updateOutsourcingCourierInfos,
     mutationResult: updateOutsourcingCourierInfosResult,
-  } = useCustomMutation(async (data: { name: string; phone?: string }) => {
-    const { name, phone } = data;
+  } = useCustomMutation(async (data: Partial<OrderCourier>) => {
+    const { phone } = data;
     if (!orderId) return null;
     const partialOrder = {
       courier: {
-        name,
+        ...data,
         phone: phone ?? null,
       },
     } as Partial<Order>;
