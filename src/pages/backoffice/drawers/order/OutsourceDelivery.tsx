@@ -95,8 +95,10 @@ export const OutsouceDelivery = ({ order }: OutsouceDeliveryProps) => {
     };
     updateOrder({ courier });
   };
-  const getOutsourcedCourierInfos = () => {
-    getOutsourceDelivery({});
+  const getOutsourcedCourierInfos = async () => {
+    try {
+      await getOutsourceDelivery({});
+    } catch (error) {}
   };
   const handleOutsourcingCourierInfos = () => {
     if (
