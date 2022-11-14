@@ -4,7 +4,15 @@ import {
   OutsourceAccountType,
   WithId,
 } from '@appjusto/types';
-import { Box, Button, HStack, Radio, RadioGroup, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Flex,
+  HStack,
+  Radio,
+  RadioGroup,
+  Text,
+} from '@chakra-ui/react';
 import { useGetOutsourceDelivery } from 'app/api/order/useGetOutsourceDelivery';
 import { useOrder } from 'app/api/order/useOrder';
 import { useContextFirebaseUser } from 'app/state/auth/context';
@@ -87,6 +95,9 @@ export const OutsouceDelivery = ({ order }: OutsouceDeliveryProps) => {
     };
     updateOrder({ courier });
   };
+  const getOutsourcedCourierInfos = () => {
+    getOutsourceDelivery({});
+  };
   const handleOutsourcingCourierInfos = () => {
     if (
       outsourcingCourierName.length === 0 ||
@@ -165,9 +176,18 @@ export const OutsouceDelivery = ({ order }: OutsouceDeliveryProps) => {
               )}
             </Text>
           )}
-          <Text mt="4" fontWeight="700">
-            {t('Dados do entregador')}
-          </Text>
+          <Flex mt="4" justifyContent="space-between">
+            <Text fontWeight="700">{t('Dados do entregador')}</Text>
+            <Button
+              variant="secondary"
+              size="md"
+              onClick={getOutsourcedCourierInfos}
+              isLoading={outsourceDeliveryResult.isLoading}
+              loadingText={t('Buscando')}
+            >
+              Buscar Dados
+            </Button>
+          </Flex>
           <HStack mt="2">
             <CustomInput
               mt="0"
@@ -258,6 +278,7 @@ export const OutsouceDelivery = ({ order }: OutsouceDeliveryProps) => {
               mt="0"
               onClick={handleOutsourcing}
               isLoading={outsourceDeliveryResult.isLoading}
+              loadingText={t('Confirmando')}
             >
               {t('Confirmar')}
             </Button>
