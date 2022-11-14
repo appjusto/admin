@@ -1,12 +1,8 @@
-import {
-  Order,
-  OrderCourier,
-  OutsourceAccountType,
-  WithId,
-} from '@appjusto/types';
+import { Order, OutsourceAccountType, WithId } from '@appjusto/types';
 import {
   Box,
   Button,
+  Checkbox,
   Flex,
   HStack,
   Radio,
@@ -14,7 +10,6 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { useGetOutsourceDelivery } from 'app/api/order/useGetOutsourceDelivery';
-import { useOrder } from 'app/api/order/useOrder';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput';
@@ -37,7 +32,6 @@ export const OutsouceDelivery = ({ order }: OutsouceDeliveryProps) => {
   // context
   const { userAbility } = useContextFirebaseUser();
   const { dispatchAppRequestResult } = useContextAppRequests();
-  const { updateOrder } = useOrder(order?.id);
   const {
     getOutsourceDelivery,
     outsourceDeliveryResult,
@@ -48,6 +42,7 @@ export const OutsouceDelivery = ({ order }: OutsouceDeliveryProps) => {
   const [isOutsourcing, setIsOutsourcing] = React.useState<boolean>(false);
   const [outsourcingAccountType, setOutsourcingAccountType] =
     React.useState<OutsourceAccountType>('platform');
+  const [isOutsourcingAuto, setIsOutsourcingAuto] = React.useState(true);
   const [additionalValue, setAdditionalValue] = React.useState(400);
   const [outsourcingCourierName, setOutsourcingCourierName] =
     React.useState('');
@@ -73,27 +68,11 @@ export const OutsouceDelivery = ({ order }: OutsouceDeliveryProps) => {
       priorityFee =
         additionalValue > 0 ? (additionalValue / 100).toString() : undefined;
     }
-    const outsourcedResponse = await getOutsourceDelivery({
+    await getOutsourceDelivery({
       accountType: outsourcingAccountType,
+      isAuto: isOutsourcingAuto,
       priorityFee,
     });
-    console.log('outsourcedResponse', outsourcedResponse);
-    if (!outsourcedResponse) {
-      return dispatchAppRequestResult({
-        status: 'error',
-        requestId: 'error-outsourcedOrder',
-        message: {
-          title: 'Ocorreu um erro ao assumir a logística.',
-        },
-      });
-    }
-    const courier: OrderCourier = {
-      ...(order?.courier ?? {}),
-      distanceToOrigin: null,
-      mode: 'motorcycle',
-      outsourcedOrderId: outsourcedResponse.data.lalamoveOrder?.id!,
-    };
-    updateOrder({ courier });
   };
   const getOutsourcedCourierInfos = async () => {
     try {
@@ -171,6 +150,12 @@ export const OutsouceDelivery = ({ order }: OutsouceDeliveryProps) => {
                 : t('Plataforma')}
             </Text>
           </Text>
+          <Text mt="2">
+            {t('Id externo: ')}
+            <Text as="span" fontWeight="700">
+              {order.courier?.outsourcedOrderId ?? 'N/E'}
+            </Text>
+          </Text>
           {isOrderActive && order.outsourcedBy !== 'business' && (
             <Text mt="2">
               {t(
@@ -228,13 +213,7 @@ export const OutsouceDelivery = ({ order }: OutsouceDeliveryProps) => {
               `Ao realizar a logística de entrega fora da rede, restaurante e consumidor não serão informados, pelo Admin/App, sobre a localização do entregador.`
             )}
           </Text>
-          <HStack
-            mt="6"
-            spacing={4}
-            bgColor="#f6f6f67b"
-            borderRadius="lg"
-            p="4"
-          >
+          <HStack mt="6" spacing={4} bgColor="#f6f6f67b" borderRadius="lg">
             <Text fontWeight="700">
               {t(`O valor da entrega será destinado para:`)}
             </Text>
@@ -257,7 +236,18 @@ export const OutsouceDelivery = ({ order }: OutsouceDeliveryProps) => {
             </RadioGroup>
           </HStack>
           {outsourcingAccountType === 'platform' && (
-            <Box mt="2">
+            <Box mt="4">
+              <Checkbox
+                colorScheme="green"
+                isChecked={isOutsourcingAuto}
+                onChange={() => setIsOutsourcingAuto((prev) => !prev)}
+              >
+                {t('Solicitar entregador externo automaticamente')}
+              </Checkbox>
+            </Box>
+          )}
+          {outsourcingAccountType === 'platform' && isOutsourcingAuto && (
+            <Box mt="4">
               <CurrencyInput
                 mt="0"
                 id="outsource-priority-fee"
@@ -265,6 +255,7 @@ export const OutsouceDelivery = ({ order }: OutsouceDeliveryProps) => {
                 value={additionalValue}
                 onChangeValue={setAdditionalValue}
                 maxLength={6}
+                isInvalid={additionalValue > 0 && additionalValue < 400}
               />
             </Box>
           )}

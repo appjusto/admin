@@ -49,6 +49,7 @@ export const useGetOutsourceDelivery = (orderId?: string) => {
   } = useCustomMutation(
     async (data: {
       accountType?: OutsourceAccountType;
+      isAuto?: boolean;
       priorityFee?: string;
     }): Promise<OusourcedResponse | null> =>
       orderId
@@ -57,6 +58,7 @@ export const useGetOutsourceDelivery = (orderId?: string) => {
             .getOutsourceDelivery(
               orderId,
               data?.accountType,
+              data.isAuto,
               data?.priorityFee
             ) as Promise<OusourcedResponse>)
         : null,

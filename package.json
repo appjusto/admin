@@ -7,7 +7,7 @@
   "main": "build/desktop/main.js",
   "dependencies": {
     "@appjusto/menu": "^0.1.4",
-    "@appjusto/types": "10.0.1",
+    "@appjusto/types": "10.0.2",
     "@casl/ability": "^5.4.3",
     "@chakra-ui/icons": "^1.0.3",
     "@chakra-ui/react": "^1.6.3",
