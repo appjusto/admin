@@ -13,6 +13,7 @@ import { useProductImage } from 'app/api/business/products/useProductImage';
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusinessId } from 'app/state/business/context';
 import { EditButton } from 'common/components/buttons/EditButton';
+import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput';
 import { ImageFbLoading } from 'common/components/ImageFbLoading';
 import { ReactComponent as DragHandle } from 'common/img/drag-handle.svg';
 import React from 'react';
@@ -20,7 +21,6 @@ import { Draggable } from 'react-beautiful-dnd';
 import { Link as RouterLink, useRouteMatch } from 'react-router-dom';
 import { slugfyName } from 'utils/functions';
 import { t } from 'utils/i18n';
-import { CurrencyInput } from '../../../common/components/form/input/currency-input/CurrencyInput';
 
 interface Props {
   product: WithId<Product>;

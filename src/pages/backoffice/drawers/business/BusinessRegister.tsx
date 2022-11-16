@@ -2,7 +2,6 @@ import { BusinessTag } from '@appjusto/types';
 import { Box, Text } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useObserveBusinessProfileNotes } from 'app/api/business/profile/useObserveBusinessProfileNotes';
-import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusinessBackoffice } from 'app/state/business/businessBOContext';
 import { ProfileNotes } from 'common/components/backoffice/ProfileNotes';
 import { CustomInput } from 'common/components/form/input/CustomInput';
@@ -16,14 +15,12 @@ import { BusinessPreparationModes } from 'pages/business-profile/BusinessPrepara
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
 import { ProfileTags } from '../ProfileTags';
-// import { BusinessTags } from './BusinessTags';
 import BOBankingInformation from './forms/BOBankingInformation';
 import { BOBusinessAddress } from './forms/BOBusinessAddress';
 import { BOBusinessProfile } from './forms/BOBusinessProfile';
 
 export const BusinessRegister = () => {
   // context
-  const { isBackofficeSuperuser } = useContextFirebaseUser();
   const {
     business,
     handleBusinessProfileChange,
@@ -115,25 +112,21 @@ export const BusinessRegister = () => {
       <BOBusinessAddress />
       <SectionTitle>{t('Dados bancários')}</SectionTitle>
       <BOBankingInformation />
-      {isBackofficeSuperuser && (
-        <>
-          <SectionTitle>{t('Tags')}</SectionTitle>
-          <ProfileTags
-            tags={business?.tags}
-            options={
-              [
-                'safe',
-                'motorcycle-only',
-                'can-match-courier',
-                'can-outsource',
-              ] as BusinessTag[]
-            }
-            updateProfile={(tags) => updateBusinessProfile({ tags })}
-            isLoading={updateProfilteResult.isLoading}
-            isSuccess={updateProfilteResult.isSuccess}
-          />
-        </>
-      )}
+      <SectionTitle>{t('Tags')}</SectionTitle>
+      <ProfileTags
+        tags={business?.tags}
+        options={
+          [
+            'safe',
+            'motorcycle-only',
+            'can-match-courier',
+            'can-outsource',
+          ] as BusinessTag[]
+        }
+        updateProfile={(tags) => updateBusinessProfile({ tags })}
+        isLoading={updateProfilteResult.isLoading}
+        isSuccess={updateProfilteResult.isSuccess}
+      />
       <SectionTitle>{t('Anotações')}</SectionTitle>
       <ProfileNotes
         profileNotes={profileNotes}

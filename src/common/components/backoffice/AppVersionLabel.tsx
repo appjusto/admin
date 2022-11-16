@@ -14,7 +14,9 @@ export const AppVersionLabel = ({ version, type }: AppVersionLabelProps) => {
   // context
   const { platformAccess } = useContextFirebaseUser();
   // helpers
-  const current = platformAccess?.currentVersions[type];
+  const current = platformAccess?.currentVersions
+    ? platformAccess?.currentVersions[type]
+    : null;
   const color = getAppVersionLabelColor(current, version);
   // UI
   return (

@@ -143,7 +143,7 @@ export const CourierProvider = ({ children }: Props) => {
   // side effects
   React.useEffect(() => {
     if (!profile) return;
-    if (profile.coordinates) setCoordinates(profile.coordinates);
+    if (profile.coordinates) setCoordinates(profile.coordinates as GeoPoint);
     setUpdatedOn(profile.updatedOn);
     updateWatchedProfile(profile);
     // eslint-disable-next-line react-hooks/exhaustive-deps

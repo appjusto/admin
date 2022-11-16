@@ -129,7 +129,7 @@ export const OrderBaseDrawer = ({
       });
     }
     try {
-      await deleteOrder(order.id);
+      deleteOrder(order.id);
     } catch (error) {}
   };
   //UI

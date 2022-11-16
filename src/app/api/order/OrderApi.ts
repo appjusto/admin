@@ -707,11 +707,15 @@ export default class OrderApi {
 
   async getOutsourceDelivery(
     orderId: string,
-    accountType?: OutsourceAccountType
+    accountType?: OutsourceAccountType,
+    isAuto?: boolean,
+    priorityFee?: string
   ) {
     const payload: OutsourceDeliveryPayload = {
       meta: { version: '1' }, // TODO: pass correct version on
       orderId,
+      isAuto,
+      priorityFee,
     };
     if (accountType) payload.accountType = accountType;
     return await this.refs.getOutsourceDeliveryCallable()(payload);
