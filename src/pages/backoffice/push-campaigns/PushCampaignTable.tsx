@@ -19,8 +19,7 @@ export const PushCampaignTable = ({ campaigns }: PushCampaignTableProps) => {
             <Th>{t('Nome')}</Th>
             <Th>{t('Perfil')}</Th>
             <Th>{t('Status')}</Th>
-            <Th>{t('Audiência')}</Th>
-            <Th></Th>
+            <Th isNumeric>{t('Audiência')}</Th>
           </Tr>
         </Thead>
         <Tbody>
@@ -30,8 +29,7 @@ export const PushCampaignTable = ({ campaigns }: PushCampaignTableProps) => {
               <Td></Td>
               <Td></Td>
               <Td></Td>
-              <Td></Td>
-              <Td></Td>
+              <Td isNumeric></Td>
             </Tr>
           ) : campaigns.length > 0 ? (
             campaigns.map((campaign) => {
@@ -45,8 +43,7 @@ export const PushCampaignTable = ({ campaigns }: PushCampaignTableProps) => {
               <Td></Td>
               <Td></Td>
               <Td></Td>
-              <Td></Td>
-              <Td></Td>
+              <Td isNumeric></Td>
             </Tr>
           )}
         </Tbody>
