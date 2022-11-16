@@ -28,10 +28,10 @@ const TableItem = ({ link, columns }: TableItemProps) => {
       _hover={{ bgColor: 'gray.50' }}
       onClick={handleLink}
     >
-      {columns.map((column) => {
+      {columns.map((column, index) => {
         const styles = column.styles ?? {};
         return (
-          <Td key={column.value?.toString()} {...styles}>
+          <Td key={index} {...styles}>
             {column.value}
           </Td>
         );
