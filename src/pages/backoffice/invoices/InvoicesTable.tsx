@@ -19,14 +19,12 @@ export const InvoicesTable = ({ invoices }: InvoicesTableProps) => {
             <Th>{t('Tipo')}</Th>
             <Th>{t('Status')}</Th>
             <Th>{t('Valor')}</Th>
-            <Th></Th>
           </Tr>
         </Thead>
         <Tbody>
           {!invoices ? (
             <Tr color="black" fontSize="xs" fontWeight="700">
               <Td>{t('Carregando faturas...')}</Td>
-              <Td></Td>
               <Td></Td>
               <Td></Td>
               <Td></Td>
@@ -39,7 +37,6 @@ export const InvoicesTable = ({ invoices }: InvoicesTableProps) => {
           ) : (
             <Tr color="black" fontSize="xs" fontWeight="700">
               <Td>{t('Não foram encontrados resultados')}</Td>
-              <Td></Td>
               <Td></Td>
               <Td></Td>
               <Td></Td>

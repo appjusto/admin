@@ -1,11 +1,8 @@
 import { Invoice, WithId } from '@appjusto/types';
-import { Link, Td, Tr } from '@chakra-ui/react';
-import { CustomButton } from 'common/components/buttons/CustomButton';
+import TableItem from 'common/components/backoffice/TableItem';
 import { useRouteMatch } from 'react-router';
-import { Link as RouterLink } from 'react-router-dom';
 import { formatCurrency } from 'utils/formatters';
 import { getDateAndHour } from 'utils/functions';
-import { t } from 'utils/i18n';
 import { invoiceStatusPTOptions, invoiceTypePTOptions } from '../utils';
 
 interface ItemProps {
@@ -17,25 +14,24 @@ export const InvoicesTableItem = ({ invoice }: ItemProps) => {
   const { path } = useRouteMatch();
   // UI
   return (
-    <Tr color="black" fontSize="15px" lineHeight="21px">
-      <Td>
-        <Link as={RouterLink} to={`/backoffice/orders/${invoice.orderId}`}>
-          {invoice.orderCode ?? 'N/E'}
-        </Link>
-      </Td>
-      <Td>{getDateAndHour(invoice.createdOn)}</Td>
-      <Td>{invoice.invoiceType ? invoiceTypePTOptions[invoice.invoiceType] : 'N/E'}</Td>
-      <Td>{invoice.status ? invoiceStatusPTOptions[invoice.status] : 'N/E'}</Td>
-      <Td>{formatCurrency(invoice.value)}</Td>
-      <Td>
-        <CustomButton
-          mt="0"
-          variant="outline"
-          label={t('Detalhes')}
-          link={`${path}/${invoice.id}`}
-          size="sm"
-        />
-      </Td>
-    </Tr>
+    <TableItem
+      key={invoice.id}
+      link={`${path}/${invoice.id}`}
+      columns={[
+        { value: invoice.orderCode ?? 'N/E', styles: { maxW: '120px' } },
+        { value: getDateAndHour(invoice.createdOn) },
+        {
+          value: invoice.invoiceType
+            ? invoiceTypePTOptions[invoice.invoiceType]
+            : 'N/E',
+        },
+        {
+          value: invoice.status
+            ? invoiceStatusPTOptions[invoice.status]
+            : 'N/E',
+        },
+        { value: formatCurrency(invoice.value) },
+      ]}
+    />
   );
 };
