@@ -39,7 +39,6 @@ export const OrdersTable = ({ orders, isBackoffice }: OrdersTableProps) => {
               <Th>{t('Cliente')}</Th>
               <Th>{t('Entregador')}</Th>
               <Th>{t('Valor')}</Th>
-              <Th></Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -62,7 +61,6 @@ export const OrdersTable = ({ orders, isBackoffice }: OrdersTableProps) => {
                 <Td></Td>
                 <Td></Td>
                 <Td></Td>
-                <Td></Td>
               </Tr>
             )}
           </Tbody>
@@ -76,7 +74,6 @@ export const OrdersTable = ({ orders, isBackoffice }: OrdersTableProps) => {
                 <Td></Td>
                 <Td>{t('Total:')}</Td>
                 <Td>{formatCurrency(totalValue)}</Td>
-                <Td></Td>
               </Tr>
             </Tfoot>
           )}
