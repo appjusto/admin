@@ -5,7 +5,10 @@ import { useHistory } from 'react-router-dom';
 
 interface TableItemProps {
   link: string;
-  columns: { value: React.ReactNode; styles?: { [key: string]: string } }[];
+  columns: {
+    value: React.ReactNode;
+    styles?: { [key: string]: string | boolean };
+  }[];
 }
 
 const TableItem = ({ link, columns }: TableItemProps) => {
