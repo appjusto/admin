@@ -172,6 +172,7 @@ export const OutsouceDelivery = ({ order }: OutsouceDeliveryProps) => {
               onClick={getOutsourcedCourierInfos}
               isLoading={outsourceDeliveryResult.isLoading}
               loadingText={t('Buscando')}
+              isDisabled={!isOrderActive}
             >
               Buscar Dados
             </Button>
