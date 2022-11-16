@@ -57,7 +57,7 @@ export const OrdersTableItem = ({ order, isBackoffice }: ItemProps) => {
             color: order.fulfillment === 'take-away' ? 'gray.500' : 'inherit',
           },
         },
-        { value: formatCurrency(total) },
+        { value: formatCurrency(total), styles: { isNumeric: true } },
       ]}
     />
   );

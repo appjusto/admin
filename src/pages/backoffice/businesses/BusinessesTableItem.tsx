@@ -66,6 +66,7 @@ export const BusinessesTableItem = ({ business }: ItemProps) => {
               />
             </Icon>
           ),
+          styles: { textAlign: 'center' },
         },
       ]}
     />

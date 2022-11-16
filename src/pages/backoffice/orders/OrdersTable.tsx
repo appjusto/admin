@@ -38,7 +38,7 @@ export const OrdersTable = ({ orders, isBackoffice }: OrdersTableProps) => {
               {isBackoffice && <Th>{t('Restaurante')}</Th>}
               <Th>{t('Cliente')}</Th>
               <Th>{t('Entregador')}</Th>
-              <Th>{t('Valor')}</Th>
+              <Th isNumeric>{t('Valor')}</Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -60,7 +60,7 @@ export const OrdersTable = ({ orders, isBackoffice }: OrdersTableProps) => {
                 <Td></Td>
                 <Td></Td>
                 <Td></Td>
-                <Td></Td>
+                <Td isNumeric></Td>
               </Tr>
             )}
           </Tbody>
@@ -73,7 +73,7 @@ export const OrdersTable = ({ orders, isBackoffice }: OrdersTableProps) => {
                 <Td></Td>
                 <Td></Td>
                 <Td>{t('Total:')}</Td>
-                <Td>{formatCurrency(totalValue)}</Td>
+                <Td isNumeric>{formatCurrency(totalValue)}</Td>
               </Tr>
             </Tfoot>
           )}

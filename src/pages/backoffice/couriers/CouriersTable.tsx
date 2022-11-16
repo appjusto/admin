@@ -20,7 +20,7 @@ export const CouriersTable = ({ couriers }: CouriersTableProps) => {
             <Th>{t('Data do onboarding')}</Th>
             <Th>{t('Nome')}</Th>
             <Th>{t('Status')}</Th>
-            <Th>{t('Live')}</Th>
+            <Th textAlign="center">{t('Live')}</Th>
           </Tr>
         </Thead>
         <Tbody>
@@ -36,7 +36,7 @@ export const CouriersTable = ({ couriers }: CouriersTableProps) => {
               <Td></Td>
               <Td></Td>
               <Td></Td>
-              <Td></Td>
+              <Td textAlign="center"></Td>
             </Tr>
           )}
         </Tbody>

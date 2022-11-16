@@ -18,7 +18,7 @@ export const InvoicesTable = ({ invoices }: InvoicesTableProps) => {
             <Th>{t('Data')}</Th>
             <Th>{t('Tipo')}</Th>
             <Th>{t('Status')}</Th>
-            <Th>{t('Valor')}</Th>
+            <Th isNumeric>{t('Valor')}</Th>
           </Tr>
         </Thead>
         <Tbody>
@@ -28,7 +28,7 @@ export const InvoicesTable = ({ invoices }: InvoicesTableProps) => {
               <Td></Td>
               <Td></Td>
               <Td></Td>
-              <Td></Td>
+              <Td isNumeric></Td>
             </Tr>
           ) : invoices.length > 0 ? (
             invoices.map((invoice) => {
@@ -40,7 +40,7 @@ export const InvoicesTable = ({ invoices }: InvoicesTableProps) => {
               <Td></Td>
               <Td></Td>
               <Td></Td>
-              <Td></Td>
+              <Td isNumeric></Td>
             </Tr>
           )}
         </Tbody>

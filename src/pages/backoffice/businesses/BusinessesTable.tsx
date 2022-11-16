@@ -32,7 +32,7 @@ export const BusinessesTable = ({ businesses }: BusinessesTableProps) => {
             <Th>{t('Nome do restaurante')}</Th>
             <Th>{t('Situação')}</Th>
             <Th>{t('Etapa')}</Th>
-            <Th>{t('Status')}</Th>
+            <Th textAlign="center">{t('Status')}</Th>
           </Tr>
         </Thead>
         <Tbody>
@@ -52,7 +52,7 @@ export const BusinessesTable = ({ businesses }: BusinessesTableProps) => {
               <Td></Td>
               <Td></Td>
               <Td></Td>
-              <Td></Td>
+              <Td textAlign="center"></Td>
             </Tr>
           )}
         </Tbody>

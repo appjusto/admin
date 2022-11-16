@@ -30,7 +30,7 @@ export const InvoicesTableItem = ({ invoice }: ItemProps) => {
             ? invoiceStatusPTOptions[invoice.status]
             : 'N/E',
         },
-        { value: formatCurrency(invoice.value) },
+        { value: formatCurrency(invoice.value), styles: { isNumeric: true } },
       ]}
     />
   );

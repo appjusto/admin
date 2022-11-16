@@ -39,6 +39,7 @@ export const CouriersTableItem = ({ courier }: ItemProps) => {
               />
             </Icon>
           ),
+          styles: { textAlign: 'center' },
         },
       ]}
     />
