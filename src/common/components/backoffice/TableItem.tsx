@@ -27,7 +27,11 @@ const TableItem = ({ link, columns }: TableItemProps) => {
     >
       {columns.map((column) => {
         const styles = column.styles ?? {};
-        return <Td {...styles}>{column.value}</Td>;
+        return (
+          <Td key={column.value?.toString()} {...styles}>
+            {column.value}
+          </Td>
+        );
       })}
     </Tr>
   );
