@@ -26,6 +26,9 @@ export const CustomNumberInput = React.forwardRef<HTMLInputElement, Props>(
       label,
       value,
       maxLength,
+      w,
+      maxW,
+      minW,
       mt = '16px',
       mb,
       ml,
@@ -37,7 +40,7 @@ export const CustomNumberInput = React.forwardRef<HTMLInputElement, Props>(
     ref
   ) => {
     const [state, setState] = React.useState('');
-    const controlProps = { mt, mb, ml, mr, flex };
+    const controlProps = { mt, mb, ml, mr, flex, w, maxW, minW };
     const styles = useMultiStyleConfig('CustomInput', {});
     React.useLayoutEffect(() => {
       const newState = isCoordinates

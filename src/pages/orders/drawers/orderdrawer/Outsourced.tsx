@@ -47,7 +47,7 @@ export const Outsourced = ({
   // UI
   if (isOrderActive && order?.dispatchingStatus === 'outsourced') {
     return (
-      <Box mt="4" border="2px solid #FFBE00" borderRadius="lg" bg="" p="4">
+      <Box mt="4" border="2px solid #FFBE00" borderRadius="lg" p="4">
         <SectionTitle mt="0">
           {t('Logística fora da rede AppJusto')}
         </SectionTitle>
@@ -111,7 +111,7 @@ export const Outsourced = ({
   }
   if (isOrderActive && !isCourierFromNet && canOutsource && isOrderFlagged) {
     return (
-      <Box mt="4" border="2px solid #FFBE00" borderRadius="lg" bg="" p="4">
+      <Box mt="4" border="2px solid #FFBE00" borderRadius="lg" p="4">
         <SectionTitle mt="0">{t('Você pode assumir a logística')}</SectionTitle>
         <Text mt="2">
           {t(

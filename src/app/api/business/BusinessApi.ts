@@ -17,6 +17,7 @@ import {
   FetchAccountInformationResponse,
   FetchAdvanceByAmountSimulationPayload,
   FetchReceivablesPayload,
+  ImportMenuPayload,
   MarketplaceAccountInfo,
   Ordering,
   Product,
@@ -867,5 +868,18 @@ export default class BusinessApi {
       return (await this.refs.getAdvanceReceivablesByAmountCallable()(payload))
         .data as unknown as IuguMarketplaceAccountAdvanceByAmountResponse;
     }
+  }
+  async importMenu(
+    businessId: string,
+    url: string,
+    discount: number
+  ): Promise<unknown> {
+    const payload: ImportMenuPayload = {
+      meta: { version: '1' }, // TODO: pass correct version on
+      url,
+      businessId,
+      discount,
+    };
+    return await this.refs.getImportMenuCallable()(payload);
   }
 }

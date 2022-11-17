@@ -32,16 +32,13 @@ export default class FirebaseRefs {
     httpsCallable(this.functions, 'fetchAccountInformation');
   getFetchReceivablesCallable = () =>
     httpsCallable(this.functions, 'fetchReceivables');
-  // getFetchAdvanceSimulationCallable = () =>
-  //   httpsCallable(this.functions, 'fetchAdvanceSimulation');
   getFetchAdvanceByAmountSimulationCallable = () =>
     httpsCallable(this.functions, 'fetchAdvanceByAmountSimulation');
   getRequestWithdrawCallable = () =>
     httpsCallable(this.functions, 'requestWithdraw');
-  // getAdvanceReceivablesCallable = () =>
-  //   httpsCallable(this.functions, 'advanceReceivables');
   getAdvanceReceivablesByAmountCallable = () =>
     httpsCallable(this.functions, 'advanceReceivablesByAmount');
+  getImportMenuCallable = () => httpsCallable(this.functions, 'importMenu');
 
   // firestore
   getFirestoreRef = () => this.firestore;
