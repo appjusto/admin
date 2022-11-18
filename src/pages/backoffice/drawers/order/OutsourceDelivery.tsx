@@ -5,6 +5,7 @@ import {
   Checkbox,
   Flex,
   HStack,
+  Icon,
   Radio,
   RadioGroup,
   Text,
@@ -22,6 +23,7 @@ import {
 } from 'common/components/form/input/pattern-input/formatters';
 import { numbersOnlyParser } from 'common/components/form/input/pattern-input/parsers';
 import React from 'react';
+import { MdOutlineFileCopy } from 'react-icons/md';
 import { formatCurrency } from 'utils/formatters';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
@@ -106,6 +108,10 @@ export const OutsouceDelivery = ({ order }: OutsouceDeliveryProps) => {
       isAuto: isOutsourcingAuto,
       priorityFee,
     });
+  };
+  const copyToClipboard = () => {
+    if (!order?.courier?.externalLink) return;
+    return navigator.clipboard.writeText(order?.courier?.externalLink);
   };
   const getOutsourcedCourierInfos = async () => {
     try {
@@ -193,6 +199,22 @@ export const OutsouceDelivery = ({ order }: OutsouceDeliveryProps) => {
             <Text as="span" fontWeight="700">
               {order.courier?.outsourcedOrderId ?? 'N/E'}
             </Text>
+          </Text>
+          <Text
+            mt="2"
+            fontWeight="700"
+            textDecor="underline"
+            cursor="pointer"
+            onClick={copyToClipboard}
+          >
+            {t('Copiar link externo')}
+            <Icon
+              ml="1"
+              mb="-0.5"
+              as={MdOutlineFileCopy}
+
+              // color={isCopied ? 'green.700' : 'black'}
+            />
           </Text>
           {isOrderActive && order.outsourcedBy !== 'business' && (
             <Text mt="2">
@@ -292,34 +314,40 @@ export const OutsouceDelivery = ({ order }: OutsouceDeliveryProps) => {
                   <Text fontSize="17px" fontWeight="700">
                     {t('Cotação:')}
                   </Text>
-                  <Box pl="4">
-                    <Text fontSize="15px" lineHeight="22px">
-                      {t('Valor da corrida: ')}
-                      <Text as="span" fontWeight="500" color="black">
-                        {external ? formatCurrency(external) : 'N/E'}
+                  {isExternalQuotation ? (
+                    <Box pl="4">
+                      <Text fontSize="15px" lineHeight="22px">
+                        {t('Valor da corrida: ')}
+                        <Text as="span" fontWeight="500" color="black">
+                          {external ? formatCurrency(external) : 'N/E'}
+                        </Text>
                       </Text>
-                    </Text>
-                    <Text fontSize="15px" lineHeight="22px">
-                      {t('Externo líquido: ')}
-                      <Text as="span" fontWeight="500" color="red">
-                        {externalNet ? formatCurrency(externalNet) : 'N/E'}
+                      <Text fontSize="15px" lineHeight="22px">
+                        {t('Externo líquido: ')}
+                        <Text as="span" fontWeight="500" color="red">
+                          {externalNet ? formatCurrency(externalNet) : 'N/E'}
+                        </Text>
                       </Text>
-                    </Text>
-                    <Text fontSize="15px" lineHeight="22px">
-                      {t('Repasse do consumidor: ')}
-                      <Text as="span" fontWeight="500" color="black">
-                        {order?.fare?.courier?.value
-                          ? formatCurrency(order?.fare?.courier?.value)
-                          : 'N/E'}
+                      <Text fontSize="15px" lineHeight="22px">
+                        {t('Repasse do consumidor: ')}
+                        <Text as="span" fontWeight="500" color="black">
+                          {order?.fare?.courier?.value
+                            ? formatCurrency(order?.fare?.courier?.value)
+                            : 'N/E'}
+                        </Text>
                       </Text>
-                    </Text>
-                    <Text fontSize="15px" lineHeight="22px">
-                      {t('Valor extra mínimo: ')}
-                      <Text as="span" fontWeight="500" color="black">
-                        {extra ? formatCurrency(extra) : 'N/E'}
+                      <Text fontSize="15px" lineHeight="22px">
+                        {t('Valor extra mínimo: ')}
+                        <Text as="span" fontWeight="500" color="black">
+                          {extra ? formatCurrency(extra) : 'N/E'}
+                        </Text>
                       </Text>
+                    </Box>
+                  ) : (
+                    <Text fontSize="15px" lineHeight="22px">
+                      {t('É preciso solicitar a cotação')}
                     </Text>
-                  </Box>
+                  )}
                 </Box>
                 <Box>
                   <Button
