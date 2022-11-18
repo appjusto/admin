@@ -103,8 +103,6 @@ export default class Api {
       connectAuthEmulator(this._authentication, `http://${emulatorHost}:9099`);
       connectFirestoreEmulator(this._firestore, emulatorHost, 8080);
       connectFunctionsEmulator(this._functions, emulatorHost, 5001);
-      // this._storage = Api.app.storage('gs://default-bucket');
-      // this._storage.useEmulator(emulatorHost, 9199);
       connectStorageEmulator(this._storage, emulatorHost, 9199);
     }
 

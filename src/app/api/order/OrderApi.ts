@@ -12,6 +12,7 @@ import {
   OrderIssue,
   OrderLog,
   OrderMatching,
+  OrderPayload,
   OrderStatus,
   OrderType,
   OutsourceAccountType,
@@ -719,6 +720,14 @@ export default class OrderApi {
     };
     if (accountType) payload.accountType = accountType;
     return await this.refs.getOutsourceDeliveryCallable()(payload);
+  }
+
+  async getOutsourceDeliveryQuotation(orderId: string) {
+    const payload: OrderPayload = {
+      meta: { version: '1' }, // TODO: pass correct version on
+      orderId,
+    };
+    return await this.refs.getOutsourceDeliveryQuotationCallable()(payload);
   }
 
   // order notes

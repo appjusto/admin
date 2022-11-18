@@ -10,6 +10,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { useGetOutsourceDelivery } from 'app/api/order/useGetOutsourceDelivery';
+import { useGetOutsourceDeliveryQuotation } from 'app/api/order/useGetOutsourceDeliveryQuotation';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput';
@@ -21,6 +22,7 @@ import {
 } from 'common/components/form/input/pattern-input/formatters';
 import { numbersOnlyParser } from 'common/components/form/input/pattern-input/parsers';
 import React from 'react';
+import { formatCurrency } from 'utils/formatters';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
 
@@ -28,10 +30,29 @@ interface OutsouceDeliveryProps {
   order?: WithId<Order> | null;
 }
 
+const getOutsourceQuotationValues = (
+  consumerValue?: number,
+  externalTotal?: string
+) => {
+  if (!externalTotal || !consumerValue)
+    return {
+      external: null,
+      externalNet: null,
+      extra: null,
+    };
+  const external = parseInt(externalTotal.replace('.', ''));
+  const externalNet = Math.round(external * 0.84);
+  const extra =
+    consumerValue > externalNet ? Math.round(consumerValue - externalNet) : 0;
+  return { external, externalNet, extra };
+};
+
 export const OutsouceDelivery = ({ order }: OutsouceDeliveryProps) => {
   // context
   const { userAbility } = useContextFirebaseUser();
   const { dispatchAppRequestResult } = useContextAppRequests();
+  const { getOutsourceDeliveryQuotation, outsourceDeliveryQuotationResult } =
+    useGetOutsourceDeliveryQuotation(order?.id);
   const {
     getOutsourceDelivery,
     outsourceDeliveryResult,
@@ -52,7 +73,19 @@ export const OutsouceDelivery = ({ order }: OutsouceDeliveryProps) => {
   const isOrderActive = order?.status
     ? ['confirmed', 'preparing', 'ready', 'dispatching'].includes(order.status)
     : false;
+  const isExternalQuotation = typeof order?.courier?.quotation?.id === 'string';
+  const { external, externalNet, extra } = getOutsourceQuotationValues(
+    order?.fare?.courier?.value,
+    order?.courier?.quotation?.priceBreakdown.totalExcludePriorityFee
+  );
+  const isOutsourcingDisabled =
+    outsourcingAccountType === 'platform' &&
+    isOutsourcingAuto &&
+    !isExternalQuotation;
   // handlers
+  const handleOutsourceQuotation = () => {
+    getOutsourceDeliveryQuotation();
+  };
   const handleOutsourcing = async () => {
     let priorityFee;
     if (outsourcingAccountType === 'platform') {
@@ -112,6 +145,10 @@ export const OutsouceDelivery = ({ order }: OutsouceDeliveryProps) => {
       else setOutsourcingCourierPhone(order?.courier?.phone);
     }
   }, [order?.dispatchingStatus, order?.courier]);
+  React.useEffect(() => {
+    if (!extra) return;
+    setAdditionalValue(extra);
+  }, [extra]);
   // UI
   if (!isOutsourcing) {
     return (
@@ -216,7 +253,7 @@ export const OutsouceDelivery = ({ order }: OutsouceDeliveryProps) => {
             )}
           </Text>
           <HStack mt="6" spacing={4} bgColor="#f6f6f67b" borderRadius="lg">
-            <Text fontWeight="700">
+            <Text fontSize="17px" fontWeight="700">
               {t(`O valor da entrega será destinado para:`)}
             </Text>
             <RadioGroup
@@ -250,8 +287,54 @@ export const OutsouceDelivery = ({ order }: OutsouceDeliveryProps) => {
           )}
           {outsourcingAccountType === 'platform' && isOutsourcingAuto && (
             <Box mt="4">
+              <Flex justifyContent="space-between">
+                <Box>
+                  <Text fontSize="17px" fontWeight="700">
+                    {t('Cotação:')}
+                  </Text>
+                  <Box pl="4">
+                    <Text fontSize="15px" lineHeight="22px">
+                      {t('Valor da corrida: ')}
+                      <Text as="span" fontWeight="500" color="black">
+                        {external ? formatCurrency(external) : 'N/E'}
+                      </Text>
+                    </Text>
+                    <Text fontSize="15px" lineHeight="22px">
+                      {t('Externo líquido: ')}
+                      <Text as="span" fontWeight="500" color="red">
+                        {externalNet ? formatCurrency(externalNet) : 'N/E'}
+                      </Text>
+                    </Text>
+                    <Text fontSize="15px" lineHeight="22px">
+                      {t('Repasse do consumidor: ')}
+                      <Text as="span" fontWeight="500" color="black">
+                        {order?.fare?.courier?.value
+                          ? formatCurrency(order?.fare?.courier?.value)
+                          : 'N/E'}
+                      </Text>
+                    </Text>
+                    <Text fontSize="15px" lineHeight="22px">
+                      {t('Valor extra mínimo: ')}
+                      <Text as="span" fontWeight="500" color="black">
+                        {extra ? formatCurrency(extra) : 'N/E'}
+                      </Text>
+                    </Text>
+                  </Box>
+                </Box>
+                <Box>
+                  <Button
+                    size="md"
+                    variant="secondary"
+                    onClick={handleOutsourceQuotation}
+                    loadingText={t('Solicitando')}
+                    isLoading={outsourceDeliveryQuotationResult.isLoading}
+                  >
+                    {t('Solicitar cotação')}
+                  </Button>
+                </Box>
+              </Flex>
               <CurrencyInput
-                mt="0"
+                mt="4"
                 id="outsource-priority-fee"
                 label={t('Valor extra adicionado')}
                 value={additionalValue}
@@ -274,6 +357,7 @@ export const OutsouceDelivery = ({ order }: OutsouceDeliveryProps) => {
               onClick={handleOutsourcing}
               isLoading={outsourceDeliveryResult.isLoading}
               loadingText={t('Confirmando')}
+              isDisabled={isOutsourcingDisabled}
             >
               {t('Confirmar')}
             </Button>

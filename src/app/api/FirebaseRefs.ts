@@ -11,9 +11,6 @@ export default class FirebaseRefs {
   getUpdateEmailCallable = () => httpsCallable(this.functions, 'updateEmail');
   getDeleteAccountCallable = () =>
     httpsCallable(this.functions, 'deleteAccount');
-  // getCreateBusinessProfileCallable = () => httpsCallable(this.functions, 'createBusinessProfile');
-  // getUpdateBusinessSlugCallable = () => httpsCallable(this.functions, 'updateBusinessSlug');
-  // getCloneBusinessCallable = () => httpsCallable(this.functions, 'cloneBusiness');
   getBusinessProfileCallable = () =>
     httpsCallable(this.functions, 'businessProfile');
   getCloneComplementsGroupCallable = () =>
@@ -24,6 +21,8 @@ export default class FirebaseRefs {
   getCancelOrderCallable = () => httpsCallable(this.functions, 'cancelOrder');
   getMatchOrderCallable = () => httpsCallable(this.functions, 'matchOrder');
   getDropOrderCallable = () => httpsCallable(this.functions, 'dropOrder');
+  getOutsourceDeliveryQuotationCallable = () =>
+    httpsCallable(this.functions, 'getOutsourceDeliveryQuotation');
   getOutsourceDeliveryCallable = () =>
     httpsCallable(this.functions, 'outsourceDelivery');
   getReleaseCourierCallable = () =>
