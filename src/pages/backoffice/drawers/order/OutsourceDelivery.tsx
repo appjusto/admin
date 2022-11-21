@@ -71,6 +71,7 @@ export const OutsouceDelivery = ({ order }: OutsouceDeliveryProps) => {
     React.useState('');
   const [outsourcingCourierPhone, setOutsourcingCourierPhone] =
     React.useState('');
+  const [isCopied, setIsCopied] = React.useState(false);
   // helpers
   const isOrderActive = order?.status
     ? ['confirmed', 'preparing', 'ready', 'dispatching'].includes(order.status)
@@ -111,6 +112,8 @@ export const OutsouceDelivery = ({ order }: OutsouceDeliveryProps) => {
   };
   const copyToClipboard = () => {
     if (!order?.courier?.externalLink) return;
+    setIsCopied(true);
+    setTimeout(() => setIsCopied(false), 500);
     return navigator.clipboard.writeText(order?.courier?.externalLink);
   };
   const getOutsourcedCourierInfos = async () => {
@@ -212,8 +215,7 @@ export const OutsouceDelivery = ({ order }: OutsouceDeliveryProps) => {
               ml="1"
               mb="-0.5"
               as={MdOutlineFileCopy}
-
-              // color={isCopied ? 'green.700' : 'black'}
+              color={isCopied ? 'green.700' : 'black'}
             />
           </Text>
           {isOrderActive && order.outsourcedBy !== 'business' && (
