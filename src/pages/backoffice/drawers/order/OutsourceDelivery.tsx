@@ -203,21 +203,23 @@ export const OutsouceDelivery = ({ order }: OutsouceDeliveryProps) => {
               {order.courier?.outsourcedOrderId ?? 'N/E'}
             </Text>
           </Text>
-          <Text
-            mt="2"
-            fontWeight="700"
-            textDecor="underline"
-            cursor="pointer"
-            onClick={copyToClipboard}
-          >
-            {t('Copiar link externo')}
-            <Icon
-              ml="1"
-              mb="-0.5"
-              as={MdOutlineFileCopy}
-              color={isCopied ? 'green.700' : 'black'}
-            />
-          </Text>
+          {order.courier?.externalLink && (
+            <Text
+              mt="2"
+              fontWeight="700"
+              textDecor="underline"
+              cursor="pointer"
+              onClick={copyToClipboard}
+            >
+              {t('Copiar link externo')}
+              <Icon
+                ml="1"
+                mb="-0.5"
+                as={MdOutlineFileCopy}
+                color={isCopied ? 'green.700' : 'black'}
+              />
+            </Text>
+          )}
           {isOrderActive && order.outsourcedBy !== 'business' && (
             <Text mt="2">
               {t(
