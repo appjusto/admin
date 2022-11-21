@@ -51,7 +51,7 @@ const getOutsourceQuotationValues = (
 
 export const OutsouceDelivery = ({ order }: OutsouceDeliveryProps) => {
   // context
-  const { userAbility, isBackofficeSuperuser } = useContextFirebaseUser();
+  const { userAbility } = useContextFirebaseUser();
   const { dispatchAppRequestResult } = useContextAppRequests();
   const { getOutsourceDeliveryQuotation, outsourceDeliveryQuotationResult } =
     useGetOutsourceDeliveryQuotation(order?.id);
@@ -65,7 +65,7 @@ export const OutsouceDelivery = ({ order }: OutsouceDeliveryProps) => {
   const [isOutsourcing, setIsOutsourcing] = React.useState<boolean>(false);
   const [outsourcingAccountType, setOutsourcingAccountType] =
     React.useState<OutsourceAccountType>('platform');
-  const [isOutsourcingAuto, setIsOutsourcingAuto] = React.useState(false);
+  const [isOutsourcingAuto, setIsOutsourcingAuto] = React.useState(true);
   const [additionalValue, setAdditionalValue] = React.useState(400);
   const [outsourcingCourierName, setOutsourcingCourierName] =
     React.useState('');
@@ -232,11 +232,12 @@ export const OutsouceDelivery = ({ order }: OutsouceDeliveryProps) => {
             <Button
               display={
                 typeof order.courier?.outsourcedOrderId === 'string'
-                  ? 'initial'
+                  ? 'flex'
                   : 'none'
               }
               variant="secondary"
               size="md"
+              minW="140px"
               onClick={getOutsourcedCourierInfos}
               isLoading={outsourceDeliveryResult.isLoading}
               loadingText={t('Buscando')}
@@ -305,7 +306,7 @@ export const OutsouceDelivery = ({ order }: OutsouceDeliveryProps) => {
               </HStack>
             </RadioGroup>
           </HStack>
-          {outsourcingAccountType === 'platform' && isBackofficeSuperuser && (
+          {outsourcingAccountType === 'platform' && (
             <Box mt="4">
               <Checkbox
                 colorScheme="green"
