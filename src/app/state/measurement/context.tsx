@@ -1,12 +1,13 @@
 import { useMeasurement } from 'app/api/measurement/useMeasurement';
-// import ReactPixel from 'react-facebook-pixel';
 import React from 'react';
+import ReactPixel from 'react-facebook-pixel';
 
 type ConsentResponse = 'accepted' | 'refused' | 'pending';
 
 interface ContextProps {
   userConsent?: ConsentResponse;
   handleUserConsent(value: ConsentResponse): void;
+  handlePixelEvent(event: string): void;
 }
 
 const MeasurementContext = React.createContext<ContextProps>(
@@ -27,6 +28,17 @@ export const MeasurementProvider = ({ children }: Props) => {
     localStorage.setItem('appjusto-consent', response);
     setUserConsent(response);
   }, []);
+  const handlePixelEvent = React.useCallback(
+    (event: string) => {
+      if (userConsent !== 'accepted') return;
+      if (event === 'pageView') {
+        ReactPixel.pageView();
+      } else {
+        ReactPixel.trackCustom(event);
+      }
+    },
+    [userConsent]
+  );
   // side effects
   React.useEffect(() => {
     const consent = localStorage.getItem('appjusto-consent');
@@ -40,12 +52,14 @@ export const MeasurementProvider = ({ children }: Props) => {
     if (!userConsent) return;
     // if (process.env.NODE_ENV !== 'production') return;
     setAnalyticsConsent();
-    // const PixelId = process.env.REACT_APP_FACEBOOK_PIXEL_ID;
-    // if (PixelId) ReactPixel.init(PixelId);
+    const PixelId = process.env.REACT_APP_FACEBOOK_PIXEL_ID;
+    if (PixelId) ReactPixel.init(PixelId);
   }, [userConsent, setAnalyticsConsent]);
   // provider
   return (
-    <MeasurementContext.Provider value={{ userConsent, handleUserConsent }}>
+    <MeasurementContext.Provider
+      value={{ userConsent, handleUserConsent, handlePixelEvent }}
+    >
       {children}
     </MeasurementContext.Provider>
   );

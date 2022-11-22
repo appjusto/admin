@@ -10,6 +10,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { useAuthentication } from 'app/api/auth/useAuthentication';
+import { useContextMeasurement } from 'app/state/measurement/context';
 import { AlertSuccess } from 'common/components/AlertSuccess';
 import { AlertWarning } from 'common/components/AlertWarning';
 import Container from 'common/components/Container';
@@ -24,6 +25,7 @@ export const RegistrationForm = () => {
   // contex
   const { sendSignInLinkToEmail, sendingLinkResult } = useAuthentication();
   const { isLoading, isSuccess, isError, error } = sendingLinkResult;
+  const { handlePixelEvent } = useContextMeasurement();
   // state
   const [email, setEmail] = React.useState('');
   const [accept, setAccept] = React.useState(false);
@@ -36,6 +38,7 @@ export const RegistrationForm = () => {
   // handlers
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
+    handlePixelEvent('admin-registration');
     setFormMsg({ status: false, type: '', message: '' });
     if (!accept) {
       return setFormMsg({
