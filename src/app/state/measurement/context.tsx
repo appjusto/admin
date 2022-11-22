@@ -7,7 +7,7 @@ type ConsentResponse = 'accepted' | 'refused' | 'pending';
 interface ContextProps {
   userConsent?: ConsentResponse;
   handleUserConsent(value: ConsentResponse): void;
-  handlePixelEvent(event: string): void;
+  handlePixelEvent(event: string, options?: object): void;
 }
 
 const MeasurementContext = React.createContext<ContextProps>(

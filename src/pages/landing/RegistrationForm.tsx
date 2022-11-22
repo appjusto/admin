@@ -38,7 +38,7 @@ export const RegistrationForm = () => {
   // handlers
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
-    handlePixelEvent('admin-registration');
+    handlePixelEvent('admin-registration', { email });
     setFormMsg({ status: false, type: '', message: '' });
     if (!accept) {
       return setFormMsg({
