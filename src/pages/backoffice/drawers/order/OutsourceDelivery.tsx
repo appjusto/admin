@@ -155,8 +155,9 @@ export const OutsouceDelivery = ({ order }: OutsouceDeliveryProps) => {
     }
   }, [order?.dispatchingStatus, order?.courier]);
   React.useEffect(() => {
-    if (!extra) return;
-    setAdditionalValue(extra);
+    if (extra === null) return;
+    const autoFill = extra < 400 ? (extra === 0 ? 0 : 400) : extra;
+    setAdditionalValue(autoFill);
   }, [extra]);
   // UI
   if (!isOutsourcing) {
@@ -349,7 +350,7 @@ export const OutsouceDelivery = ({ order }: OutsouceDeliveryProps) => {
                       <Text fontSize="15px" lineHeight="22px">
                         {t('Valor extra mínimo: ')}
                         <Text as="span" fontWeight="500" color="black">
-                          {extra ? formatCurrency(extra) : 'N/E'}
+                          {extra !== null ? formatCurrency(extra) : 'N/E'}
                         </Text>
                       </Text>
                     </Box>
