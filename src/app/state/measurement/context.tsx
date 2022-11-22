@@ -1,6 +1,6 @@
 import { useMeasurement } from 'app/api/measurement/useMeasurement';
 import React from 'react';
-import ReactPixel from 'react-facebook-pixel';
+import { fbqConsent, fbqPageView, fbqTrackEvent } from './fpixel';
 
 type ConsentResponse = 'accepted' | 'refused' | 'pending';
 
@@ -29,12 +29,12 @@ export const MeasurementProvider = ({ children }: Props) => {
     setUserConsent(response);
   }, []);
   const handlePixelEvent = React.useCallback(
-    (event: string) => {
+    (name: string, options?: object) => {
       if (userConsent !== 'accepted') return;
-      if (event === 'pageView') {
-        ReactPixel.pageView();
+      if (name === 'pageView') {
+        fbqPageView();
       } else {
-        ReactPixel.trackCustom(event);
+        fbqTrackEvent(name, options);
       }
     },
     [userConsent]
@@ -49,11 +49,12 @@ export const MeasurementProvider = ({ children }: Props) => {
     else setUserConsent('pending');
   }, []);
   React.useEffect(() => {
-    if (!userConsent) return;
-    // if (process.env.NODE_ENV !== 'production') return;
+    if (userConsent !== 'accepted') {
+      fbqConsent('revoke');
+      return;
+    }
+    fbqConsent('grant');
     setAnalyticsConsent();
-    const PixelId = process.env.REACT_APP_FACEBOOK_PIXEL_ID;
-    if (PixelId) ReactPixel.init(PixelId);
   }, [userConsent, setAnalyticsConsent]);
   // provider
   return (
