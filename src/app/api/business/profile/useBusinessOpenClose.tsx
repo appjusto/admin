@@ -8,12 +8,35 @@ import { businessShouldBeOpen } from './utils';
 
 export const useBusinessOpenClose = (business?: WithId<Business> | null) => {
   // context
-  const { adminRole } = useContextFirebaseUser();
+  const { isBackofficeUser } = useContextFirebaseUser();
   const { getServerTime } = useContextServerTime();
   // state
   const [isOpen, setIsOpen] = React.useState(false);
   // handlers
   const toast = useToast();
+  const handleToast = React.useCallback(
+    (
+      type: 'error' | 'success' | 'warning',
+      title: string,
+      description?: string,
+      duration: number = 6000
+    ) => {
+      if (isBackofficeUser) return;
+      toast({
+        duration,
+        render: () => (
+          <CustomToast
+            type={type}
+            message={{
+              title,
+              description,
+            }}
+          />
+        ),
+      });
+    },
+    [isBackofficeUser, toast]
+  );
   const checkBusinessStatus = React.useCallback(() => {
     if (business?.situation !== 'approved') return;
     if (!business?.enabled) return;
@@ -27,17 +50,7 @@ export const useBusinessOpenClose = (business?: WithId<Business> | null) => {
         '%Abrindo restaurante de acordo com horários estabelecidos.',
         'color: purple'
       );
-      toast({
-        duration: 6000,
-        render: () => (
-          <CustomToast
-            type="success"
-            message={{
-              title: 'Seu restaurante está aberto!',
-            }}
-          />
-        ),
-      });
+      handleToast('success', 'Seu restaurante está aberto!');
     }
     if (!shouldBeOpen && isOpen) {
       console.log(
@@ -45,19 +58,12 @@ export const useBusinessOpenClose = (business?: WithId<Business> | null) => {
         'color: purple'
       );
       setIsOpen(false);
-      toast({
-        duration: 12000,
-        render: () => (
-          <CustomToast
-            type="warning"
-            message={{
-              title: 'Seu restaurante está fechado.',
-              description:
-                'Seu restaurante foi fechado de acordo com o horário de funcionamento definido. Para começar a receber pedidos ajuste estas configuração na tela de "Horários" ou contate o administrador desta unidade.',
-            }}
-          />
-        ),
-      });
+      handleToast(
+        'warning',
+        'Seu restaurante está fechado.',
+        'Seu restaurante foi fechado de acordo com o horário de funcionamento definido. Se deseja continuar a receber pedidos, ajuste estas configuração na tela de "Horários" ou contate o administrador desta unidade.',
+        12000
+      );
     }
   }, [
     business?.situation,
@@ -66,11 +72,10 @@ export const useBusinessOpenClose = (business?: WithId<Business> | null) => {
     business?.status,
     isOpen,
     getServerTime,
-    toast,
+    handleToast,
   ]);
   // side effects
   React.useEffect(() => {
-    if (!adminRole) return;
     if (business?.situation !== 'approved') return;
     if (!business?.enabled) return;
     if (!business?.schedules) return;
@@ -81,7 +86,6 @@ export const useBusinessOpenClose = (business?: WithId<Business> | null) => {
     }, 5000);
     return () => clearInterval(openCloseInterval);
   }, [
-    adminRole,
     business?.situation,
     business?.enabled,
     business?.schedules,

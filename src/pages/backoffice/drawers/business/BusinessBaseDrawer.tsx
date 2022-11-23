@@ -53,7 +53,7 @@ export const BusinessBaseDrawer = ({
     setBusinessId,
     clearBusiness,
   } = useContextBusiness();
-  const { business, manager, handleSave, isLoading } =
+  const { business, isBusinessOpen, manager, handleSave, isLoading } =
     useContextBusinessBackoffice();
   // state
   const [personificationStatus, setPersonificationStatus] =
@@ -214,7 +214,7 @@ export const BusinessBaseDrawer = ({
                 <Icon
                   mt="-2px"
                   viewBox="0 0 200 200"
-                  color={business?.enabled ? 'green.500' : 'red'}
+                  color={isBusinessOpen ? 'green.500' : 'red'}
                 >
                   <path
                     fill="currentColor"
