@@ -7,7 +7,6 @@ import {
 } from '@appjusto/types';
 import { useToast } from '@chakra-ui/react';
 import { useBusinessOpenClose } from 'app/api/business/profile/useBusinessOpenClose';
-import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useFreshDesk } from 'app/api/business/useFresdesk';
 import { OrderChatGroup } from 'app/api/chat/types';
 import { useBusinessChats } from 'app/api/chat/useBusinessChats';
@@ -27,6 +26,7 @@ import { useContextAppRequests } from '../requests/context';
 
 interface ContextProps {
   business: WithId<Business> | null | undefined;
+  isBusinessOpen: boolean;
   scheduledOrders: WithId<Order>[];
   scheduledOrdersNumber: number;
   orders: WithId<Order>[];
@@ -59,11 +59,10 @@ interface ProviderProps {
 export const OrdersContextProvider = (props: ProviderProps) => {
   // context
   const api = useContextApi();
-  const { platformParams, isPlatformLive } = usePlatformParams();
+  const { platformParams } = usePlatformParams();
   const { dispatchAppRequestResult } = useContextAppRequests();
   const { isBackofficeUser } = useContextFirebaseUser();
   const { business } = useContextBusiness();
-  const { sendBusinessKeepAlive } = useBusinessProfile(business?.id);
   const { scheduledOrders, scheduledOrdersNumber, fetchNextScheduledOrders } =
     useObserveScheduledOrders(business?.id);
   const activeOrders = useObserveOrders(statuses, business?.id);
@@ -75,7 +74,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   const businessPhone = business?.phones ? business?.phones[0].number : 'N/E';
   useFreshDesk(business?.id, business?.name, businessPhone);
   // automatic opening and closing of the business
-  useBusinessOpenClose(business);
+  const isBusinessOpen = useBusinessOpenClose(business);
   //state
   const [businessAlertDisplayed, setBusinessAlertDisplayed] =
     React.useState(false);
@@ -146,7 +145,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   }, []);
   // side effects
   React.useEffect(() => {
-    if (business?.situation !== 'approved' || business?.status !== 'open')
+    if (business?.situation !== 'approved' || business?.status !== 'available')
       return;
     setTimeout(() => {
       const root = document.getElementById('root');
@@ -172,25 +171,6 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   React.useEffect(() => {
     setOrders(activeOrders);
   }, [activeOrders]);
-  // business keep alive
-  React.useEffect(() => {
-    if (isBackofficeUser) return;
-    if (!isPlatformLive) return;
-    if (business?.situation !== 'approved') return;
-    sendBusinessKeepAlive(business?.status);
-    const time =
-      process.env.REACT_APP_ENVIRONMENT === 'live' ? 300_000 : 30_000;
-    const keepAliveInterval = setInterval(() => {
-      sendBusinessKeepAlive(business?.status);
-    }, time);
-    return () => clearInterval(keepAliveInterval);
-  }, [
-    isPlatformLive,
-    isBackofficeUser,
-    business?.situation,
-    business?.status,
-    sendBusinessKeepAlive,
-  ]);
   React.useEffect(() => {
     if (isBackofficeUser) return;
     if (business?.situation !== 'approved') return;
@@ -222,6 +202,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
     <OrdersContext.Provider
       value={{
         business,
+        isBusinessOpen,
         scheduledOrders,
         scheduledOrdersNumber,
         orders,

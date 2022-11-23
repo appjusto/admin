@@ -132,7 +132,11 @@ export const BusinessBOProvider = ({ children }: Props) => {
       if (key === 'situation' && value === 'blocked') {
         dispatch({
           type: 'update_business',
-          payload: { situation: 'blocked', enabled: false, status: 'closed' },
+          payload: {
+            situation: 'blocked',
+            enabled: false,
+            status: 'unavailable',
+          },
         });
       } else dispatch({ type: 'update_business', payload: { [key]: value } });
     },

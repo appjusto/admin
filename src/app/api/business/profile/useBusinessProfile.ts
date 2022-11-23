@@ -1,14 +1,8 @@
-import {
-  Business,
-  BusinessStatus,
-  DeleteBusinessPayload,
-} from '@appjusto/types';
-import * as Sentry from '@sentry/react';
+import { Business, DeleteBusinessPayload } from '@appjusto/types';
 import { useCustomMutation } from 'app/api/mutation/useCustomMutation';
 import { useContextApi } from 'app/state/api/context';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
-import React from 'react';
 import { useQuery } from 'react-query';
 
 export const useBusinessProfile = (
@@ -97,17 +91,6 @@ export const useBusinessProfile = (
       .cloneComplementsGroup(businessId!, data.groupId, data.name);
     return newGroupId;
   }, 'cloneComplementsGroup');
-  const sendBusinessKeepAlive = React.useCallback(
-    (status: BusinessStatus) => {
-      if (!businessId || status !== 'open') return;
-      try {
-        api.business().sendBusinessKeepAlive(businessId);
-      } catch (error) {
-        Sentry.captureException(error);
-      }
-    },
-    [api, businessId]
-  );
   const { mutate: updateBusinessSlug, mutationResult: updateSlugResult } =
     useCustomMutation(
       (data: { businessId: string; slug: string }) =>
@@ -131,6 +114,5 @@ export const useBusinessProfile = (
     deleteResult,
     cloneResult,
     cloneGroupResult,
-    sendBusinessKeepAlive,
   };
 };

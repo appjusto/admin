@@ -13,7 +13,7 @@ export const BusinessLive = () => {
 
   // state
   const [isOpen, setIsOpen] = React.useState<BusinessStatus>(
-    business?.status ?? 'closed'
+    business?.status ?? 'unavailable'
   );
   const [isEnabled, setIsEnabled] = React.useState(
     business?.enabled ? 'true' : 'false'
@@ -23,7 +23,7 @@ export const BusinessLive = () => {
   const handleEnabled = (enabled: string) => {
     if (enabled === 'true') setIsEnabled(enabled);
     else {
-      setIsOpen('closed');
+      setIsOpen('unavailable');
       setIsEnabled('false');
     }
   };

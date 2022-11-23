@@ -94,7 +94,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
     business?.minimumOrder ?? 0
   );
   const [enabled, setEnabled] = React.useState(business?.enabled ?? false);
-  const [status, setStatus] = React.useState(business?.status ?? 'closed');
+  const [status, setStatus] = React.useState(business?.status ?? 'unavailable');
   const [maxOrdersPerHour, setMaxOrdersPerHour] = React.useState(
     String(business?.maxOrdersPerHour ?? '0')
   );
@@ -135,7 +135,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const handleEnabled = (enabled: boolean) => {
     if (enabled) setEnabled(enabled);
     else {
-      setStatus('closed');
+      setStatus('unavailable');
       setEnabled(false);
     }
   };
@@ -494,6 +494,30 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
           {!isOnboarding && business?.situation === 'approved' && (
             <>
               <Text mt="8" fontSize="xl" color="black">
+                {t('Fechamento de emergência')}
+              </Text>
+              <Text mt="2" fontSize="md">
+                {t(
+                  'O restaurante aparecerá como fechado até que volte a ser configurado como dispoível'
+                )}
+              </Text>
+              <Flex mt="4" alignItems="center">
+                <ChakraSwitch
+                  isChecked={status === 'available'}
+                  onChange={(ev) => {
+                    ev.stopPropagation();
+                    setStatus(ev.target.checked ? 'available' : 'unavailable');
+                  }}
+                />
+                <Flex ml="4" flexDir="column" minW="280px">
+                  <Text fontSize="16px" fontWeight="700" lineHeight="22px">
+                    {status === 'available'
+                      ? t('Disponível')
+                      : t('Indisponível')}
+                  </Text>
+                </Flex>
+              </Flex>
+              <Text mt="6" fontSize="xl" color="black">
                 {t('Desligar restaurante do AppJusto')}
               </Text>
               <Text mt="2" fontSize="md">

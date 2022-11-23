@@ -1,68 +1,50 @@
 import { Business, WithId } from '@appjusto/types';
 import { useToast } from '@chakra-ui/toast';
-// import * as Sentry from '@sentry/react';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextServerTime } from 'app/state/server-time';
 import { CustomToast } from 'common/components/CustomToast';
 import React from 'react';
-import { useBusinessProfile } from './useBusinessProfile';
 import { businessShouldBeOpen } from './utils';
-
-// 'ptYK5Olovr5lSTut1Nos', // itapuama staging
-// const bWithSchedulesProblems = [
-//   'mAJlS0yWVTgKXMvwAD3B',
-//   'SBGxAtt82iLhNRMKLiih',
-//   'KKriu277V1wlNYvmld9n',
-//   'Mld19W2kAGgajoq6V7vD',
-// ];
-
-// let eventCount = 0;
 
 export const useBusinessOpenClose = (business?: WithId<Business> | null) => {
   // context
   const { adminRole } = useContextFirebaseUser();
-  const { updateBusinessProfile } = useBusinessProfile(business?.id);
   const { getServerTime } = useContextServerTime();
+  // state
+  const [isOpen, setIsOpen] = React.useState(false);
   // handlers
   const toast = useToast();
   const checkBusinessStatus = React.useCallback(() => {
     if (business?.situation !== 'approved') return;
     if (!business?.enabled) return;
     if (!business?.schedules) return;
+    if (business?.status === 'unavailable') return;
     const today = getServerTime();
     const shouldBeOpen = businessShouldBeOpen(today, business.schedules);
-    // if (
-    //   business?.id &&
-    //   bWithSchedulesProblems.includes(business.id) &&
-    //   eventCount < 10
-    // ) {
-    //   eventCount++;
-    //   const day = today.getDay();
-    //   const dayIndex = day === 0 ? 6 : day - 1;
-    //   const daySchedule = business.schedules[dayIndex].schedule;
-    //   Sentry.captureEvent({
-    //     level: 'debug',
-    //     // message: 'business-open-close',
-    //     tags: {
-    //       name: 'business-open-close',
-    //     },
-    //     extra: {
-    //       businessId: business.id,
-    //       adminRole: adminRole,
-    //       time: today,
-    //       daySchedule: daySchedule,
-    //       shouldBeOpen: shouldBeOpen,
-    //     },
-    //   } as Sentry.Event);
-    // }
-    if (shouldBeOpen && business?.status === 'closed') {
-      updateBusinessProfile({ status: 'open' });
-    } else if (!shouldBeOpen && business?.status === 'open') {
+    if (shouldBeOpen && !isOpen) {
+      setIsOpen(true);
+      console.log(
+        '%Abrindo restaurante de acordo com horários estabelecidos.',
+        'color: purple'
+      );
+      toast({
+        duration: 6000,
+        render: () => (
+          <CustomToast
+            type="success"
+            message={{
+              title: 'Seu restaurante está aberto!',
+            }}
+          />
+        ),
+      });
+    }
+    if (!shouldBeOpen && isOpen) {
       console.log(
         '%cFechando restaurante de acordo com horários estabelecidos.',
         'color: purple'
       );
-      updateBusinessProfile({ status: 'closed' });
+      setIsOpen(false);
       toast({
         duration: 12000,
         render: () => (
@@ -78,14 +60,12 @@ export const useBusinessOpenClose = (business?: WithId<Business> | null) => {
       });
     }
   }, [
-    // adminRole,
-    // business?.id,
     business?.situation,
     business?.enabled,
     business?.schedules,
     business?.status,
+    isOpen,
     getServerTime,
-    updateBusinessProfile,
     toast,
   ]);
   // side effects
@@ -94,6 +74,7 @@ export const useBusinessOpenClose = (business?: WithId<Business> | null) => {
     if (business?.situation !== 'approved') return;
     if (!business?.enabled) return;
     if (!business?.schedules) return;
+    if (business?.status === 'unavailable') return;
     checkBusinessStatus();
     const openCloseInterval = setInterval(() => {
       checkBusinessStatus();
@@ -104,6 +85,13 @@ export const useBusinessOpenClose = (business?: WithId<Business> | null) => {
     business?.situation,
     business?.enabled,
     business?.schedules,
+    business?.status,
     checkBusinessStatus,
   ]);
+  React.useEffect(() => {
+    if (business?.status === 'unavailable') {
+      setIsOpen(false);
+    }
+  }, [business?.status]);
+  return isOpen;
 };

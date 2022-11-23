@@ -28,7 +28,7 @@ export const BusinessesTableItem = ({ business }: ItemProps) => {
     if (business.situation !== 'approved') return;
     if (!business.enabled) return;
     if (!business.schedules) return;
-    if (business.status === 'open') {
+    if (business.status === 'available') {
       setOpeningColor('green.500');
       return;
     }

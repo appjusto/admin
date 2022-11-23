@@ -1,8 +1,7 @@
 import { Box, Circle, Flex, HStack, Image, Link, Text } from '@chakra-ui/react';
 import { useContextFirebaseUser } from 'app/state/auth/context';
-import { useContextBusiness } from 'app/state/business/context';
+import { useOrdersContext } from 'app/state/order';
 import logo from 'common/img/logo.svg';
-import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import packageInfo from '../../../package.json';
@@ -11,18 +10,31 @@ const version = packageInfo.version;
 export const OrdersHeader = () => {
   // context
   const { user, adminRole } = useContextFirebaseUser();
-  const { business } = useContextBusiness();
+  const { isBusinessOpen } = useOrdersContext();
   // UI
   return (
-    <Flex p="6" h="76px" flex={1} alignItems="center" justifyContent="space-between" bg="#EEEEEE">
+    <Flex
+      p="6"
+      h="76px"
+      flex={1}
+      alignItems="center"
+      justifyContent="space-between"
+      bg="#EEEEEE"
+    >
       <HStack spacing={6}>
         <Flex flexDir="row">
           <Box pt="7px" pr="2">
-            <Circle size="10px" bg={business?.status === 'open' ? 'green.500' : 'red'} />
+            <Circle size="10px" bg={isBusinessOpen ? 'green.500' : 'red'} />
           </Box>
           <Flex flexDir="column" minW={{ lg: '280px' }}>
-            <Text fontSize={{ base: '13px', lg: '16px' }} fontWeight="700" lineHeight="22px">
-              {business?.status === 'open' ? t('Restaurante aberto') : t('Restaurante fechado')}
+            <Text
+              fontSize={{ base: '13px', lg: '16px' }}
+              fontWeight="700"
+              lineHeight="22px"
+            >
+              {isBusinessOpen
+                ? t('Restaurante aberto')
+                : t('Restaurante fechado')}
               <Text
                 ml="2"
                 as="span"
@@ -36,7 +48,11 @@ export const OrdersHeader = () => {
             </Text>
             {adminRole === 'manager' && (
               <Link as={RouterLink} to="/app/business-schedules">
-                <Text fontSize={{ base: '13px', lg: '15px' }} fontWeight="500" textStyle="link">
+                <Text
+                  fontSize={{ base: '13px', lg: '15px' }}
+                  fontWeight="500"
+                  textStyle="link"
+                >
                   {t('Alterar horário de funcionamento')}
                 </Text>
               </Link>
@@ -48,7 +64,10 @@ export const OrdersHeader = () => {
       <HStack spacing={6} display={{ base: 'none', lg: 'flex' }}>
         <HStack spacing={1}>
           <Text fontSize="16px" fontWeight="700">
-            {adminRole === 'collaborator' ? t('Colaborador') : t('Administrador')}:
+            {adminRole === 'collaborator'
+              ? t('Colaborador')
+              : t('Administrador')}
+            :
           </Text>
           <Text fontSize="16px">{user?.email ?? 'N/E'}</Text>
         </HStack>
