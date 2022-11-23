@@ -310,13 +310,6 @@ export default class BusinessApi {
     return await updateDoc(this.refs.getBusinessRef(business.id), fullChanges);
   }
 
-  async sendBusinessKeepAlive(businessId: string) {
-    const timestamp = serverTimestamp();
-    return await updateDoc(this.refs.getBusinessRef(businessId), {
-      keepAlive: timestamp,
-    });
-  }
-
   async deleteBusinessProfile(data: Partial<DeleteBusinessPayload>) {
     const payload = {
       operation: 'delete',
