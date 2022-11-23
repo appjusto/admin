@@ -49,7 +49,7 @@ export const MeasurementProvider = ({ children }: Props) => {
     else setUserConsent('pending');
   }, []);
   React.useEffect(() => {
-    if (userConsent !== 'accepted') {
+    if (userConsent !== 'accepted' || process.env.NODE_ENV === 'development') {
       fbqConsent('revoke');
       return;
     }
