@@ -498,7 +498,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
               </Text>
               <Text mt="2" fontSize="md">
                 {t(
-                  'O restaurante aparecerá como fechado até que volte a ser configurado como dispoível'
+                  'O restaurante aparecerá como fechado até ser configurado como disponível novamente'
                 )}
               </Text>
               <Flex mt="4" alignItems="center">
