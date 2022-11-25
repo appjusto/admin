@@ -33,17 +33,19 @@ async function createWindow() {
     webPreferences: {
       // contextIsolation: true,
       // nodeIntegration: true,
-      preload: path.join(__dirname, 'preload.js')
-    }
-  })
-  console.log("NODE_ENV", process.env.NODE_ENV)
+      preload: path.join(__dirname, 'preload.js'),
+    },
+  });
+  console.log('NODE_ENV', process.env.NODE_ENV);
   // const baseURL = isDev ? 'http://localhost:3000' : url.format({
   //     pathname: path.join(__dirname, '../index.html'),
   //     protocol: 'file:',
   //     slashes: true
   // });
   // const baseURL = isDev ? 'http://localhost:3000' : `file://${__dirname}/../index.html`;
-  const baseURL = isDev ? 'http://localhost:3000' : `https://admin.appjusto.com.br`;
+  const baseURL = isDev
+    ? 'http://localhost:3000'
+    : `https://admin.appjusto.com.br`;
   mainWindow.loadURL(baseURL);
   // if (app.isPackaged) {
   //   // 'build/index.html'
@@ -51,19 +53,18 @@ async function createWindow() {
   // } else {
   //   mainWindow.loadURL('http://localhost:3000');
   //   }
-  if(isDebug) {
+  if (isDebug) {
     mainWindow.webContents.openDevTools();
   }
 }
 
-ipcMain.on('mainWindow-show', (event: IpcMainEvent, args?: IpcArgs[]) => {
-  console.log("Main Focus Call!", `${args}`)
-  if(mainWindow) mainWindow.show();
-  else console.log("mainWindow not found.")
-})
+ipcMain.on('mainWindow-show', (_event: IpcMainEvent, args?: IpcArgs[]) => {
+  console.log('Main Focus Call!', `${args}`);
+  if (mainWindow) mainWindow.show();
+  else console.log('mainWindow not found.');
+});
 
 app.whenReady().then(() => {
-
   createWindow();
 
   app.on('activate', () => {
