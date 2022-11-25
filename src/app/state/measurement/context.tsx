@@ -1,6 +1,9 @@
+import { isElectron } from '@firebase/util';
 import { useMeasurement } from 'app/api/measurement/useMeasurement';
 import React from 'react';
 import { fbqConsent, fbqPageView, fbqTrackEvent } from './fpixel';
+
+const isDesktopApp = isElectron();
 
 type ConsentResponse = 'accepted' | 'refused' | 'pending';
 
@@ -30,7 +33,7 @@ export const MeasurementProvider = ({ children }: Props) => {
   }, []);
   const handlePixelEvent = React.useCallback(
     (name: string, options?: object) => {
-      if (userConsent !== 'accepted') return;
+      if (userConsent !== 'accepted' || isDesktopApp) return;
       if (name === 'pageView') {
         fbqPageView();
       } else {

@@ -1,10 +1,12 @@
-import { app, BrowserWindow, ipcMain, IpcMainEvent } from 'electron';
+import { app, BrowserWindow, ipcMain, IpcMainEvent, session } from 'electron';
 import * as path from 'path';
 import { IpcArgs } from './types';
 
 const isDev = process.env.NODE_ENV === 'development';
 
 const isDebug = isDev || process.env.DEBUG_PROD === 'true';
+
+let baseURL = 'http://localhost:3000';
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -43,9 +45,7 @@ async function createWindow() {
   //     slashes: true
   // });
   // const baseURL = isDev ? 'http://localhost:3000' : `file://${__dirname}/../index.html`;
-  const baseURL = isDev
-    ? 'http://localhost:3000'
-    : `https://admin.appjusto.com.br`;
+  if (!isDev) baseURL = 'https://admin.appjusto.com.br';
   mainWindow.loadURL(baseURL);
   // if (app.isPackaged) {
   //   // 'build/index.html'
@@ -65,6 +65,21 @@ ipcMain.on('mainWindow-show', (_event: IpcMainEvent, args?: IpcArgs[]) => {
 });
 
 app.whenReady().then(() => {
+  session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
+    callback({
+      responseHeaders: {
+        ...details.responseHeaders,
+        'Content-Security-Policy': [
+          `script-src 'self' ${baseURL} 'unsafe-inline' blob:
+            https://connect.facebook.net
+            https://*.freshchat.com
+            https://*.freshworksapi.com
+            https://*.googletagmanager.com
+          `,
+        ],
+      },
+    });
+  });
   createWindow();
 
   app.on('activate', () => {
