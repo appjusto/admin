@@ -33,26 +33,12 @@ async function createWindow() {
     width: 1200,
     height: 800,
     webPreferences: {
-      // contextIsolation: true,
-      // nodeIntegration: true,
       preload: path.join(__dirname, 'preload.js'),
     },
   });
   console.log('NODE_ENV', process.env.NODE_ENV);
-  // const baseURL = isDev ? 'http://localhost:3000' : url.format({
-  //     pathname: path.join(__dirname, '../index.html'),
-  //     protocol: 'file:',
-  //     slashes: true
-  // });
-  // const baseURL = isDev ? 'http://localhost:3000' : `file://${__dirname}/../index.html`;
   if (!isDev) baseURL = 'https://admin.appjusto.com.br';
   mainWindow.loadURL(baseURL);
-  // if (app.isPackaged) {
-  //   // 'build/index.html'
-  //   mainWindow.loadURL(`file://${__dirname}/../index.html`);
-  // } else {
-  //   mainWindow.loadURL('http://localhost:3000');
-  //   }
   if (isDebug) {
     mainWindow.webContents.openDevTools();
   }
@@ -75,6 +61,7 @@ app.whenReady().then(() => {
             https://*.freshchat.com
             https://*.freshworksapi.com
             https://*.googletagmanager.com
+            https://maps.googleapis.com
           `,
         ],
       },
