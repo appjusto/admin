@@ -1,5 +1,16 @@
 import { BusinessAlgolia } from '@appjusto/types';
-import { Box, Circle, HStack, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
+import {
+  Box,
+  Circle,
+  HStack,
+  Table,
+  Tbody,
+  Td,
+  Text,
+  Th,
+  Thead,
+  Tr,
+} from '@chakra-ui/react';
 import { t } from 'utils/i18n';
 import { BusinessesTableItem } from './BusinessesTableItem';
 
@@ -21,14 +32,18 @@ export const BusinessesTable = ({ businesses }: BusinessesTableProps) => {
             <Th>{t('Nome do restaurante')}</Th>
             <Th>{t('Situação')}</Th>
             <Th>{t('Etapa')}</Th>
-            <Th>{t('Status')}</Th>
-            <Th></Th>
+            <Th textAlign="center">{t('Status')}</Th>
           </Tr>
         </Thead>
         <Tbody>
           {businesses && businesses.length > 0 ? (
             businesses.map((business) => {
-              return <BusinessesTableItem key={business.objectID} business={business} />;
+              return (
+                <BusinessesTableItem
+                  key={business.objectID}
+                  business={business}
+                />
+              );
             })
           ) : (
             <Tr color="black" fontSize="xs" fontWeight="700">
@@ -37,8 +52,7 @@ export const BusinessesTable = ({ businesses }: BusinessesTableProps) => {
               <Td></Td>
               <Td></Td>
               <Td></Td>
-              <Td></Td>
-              <Td></Td>
+              <Td textAlign="center"></Td>
             </Tr>
           )}
         </Tbody>

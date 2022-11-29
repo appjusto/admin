@@ -1,5 +1,6 @@
 import { Box, Button, Stack } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
+import { useContextBusinessId } from 'app/state/business/context';
 import { useContextMenu } from 'app/state/menu/context';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import React from 'react';
@@ -19,7 +20,9 @@ type Params = {
 export const GroupDuplicationDrawer = (props: Props) => {
   //context
   const { groupId } = useParams<Params>();
-  const { cloneComplementsGroup, cloneGroupResult } = useBusinessProfile();
+  const businessId = useContextBusinessId();
+  const { cloneComplementsGroup, cloneGroupResult } =
+    useBusinessProfile(businessId);
   const { getComplementsGroupById } = useContextMenu();
   // state
   const [currentGroupName, setCurrentGroupName] = React.useState<string>();
@@ -55,7 +58,12 @@ export const GroupDuplicationDrawer = (props: Props) => {
   // UI
   if (newGoupId) return <Redirect to={`/app/menu?group=${newGoupId}`} />;
   return (
-    <BaseDrawer {...props} title={t('Duplicar grupo')} type="group" headerMd="0">
+    <BaseDrawer
+      {...props}
+      title={t('Duplicar grupo')}
+      type="group"
+      headerMd="0"
+    >
       <Box>
         <form
           onSubmit={(ev) => {
@@ -81,7 +89,12 @@ export const GroupDuplicationDrawer = (props: Props) => {
             >
               {t('Duplicar')}
             </Button>
-            <Button width="full" variant="dangerLight" ml={3} onClick={props.onClose}>
+            <Button
+              width="full"
+              variant="dangerLight"
+              ml={3}
+              onClick={props.onClose}
+            >
               {t(`Cancelar`)}
             </Button>
           </Stack>

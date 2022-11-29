@@ -1,21 +1,37 @@
 import { BusinessAlgolia, BusinessStatus } from '@appjusto/types';
 import { ArrowDownIcon } from '@chakra-ui/icons';
-import { Button, CheckboxGroup, Flex, HStack, Stack, Text } from '@chakra-ui/react';
+import {
+  Button,
+  Checkbox,
+  CheckboxGroup,
+  Flex,
+  HStack,
+  Stack,
+  Text,
+} from '@chakra-ui/react';
 import { BusinessesFilter } from 'app/api/search/types';
 import { useBusinessesSearch } from 'app/api/search/useBusinessesSearch';
 import { ClearFiltersButton } from 'common/components/backoffice/ClearFiltersButton';
 import { FiltersScrollBar } from 'common/components/backoffice/FiltersScrollBar';
-import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import React from 'react';
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
-import { FilterText } from '../../../common/components/backoffice/FilterText';
 import PageHeader from '../../PageHeader';
-import { BusinessDrawer } from '../drawers/business';
+import BusinessDrawer from '../drawers/business';
 import { StateAndCityFilter } from '../StateAndCityFilter';
 import { BusinessesTable } from './BusinessesTable';
+
+const statusFilterOptions = [
+  { label: 'Todos', value: 'all' },
+  { label: 'Aprovados', value: 'approved' },
+  { label: 'Verificados', value: 'verified' },
+  { label: 'Inválidos', value: 'invalid' },
+  { label: 'Rejeitados', value: 'rejected' },
+  { label: 'Pendentes', value: 'pending' },
+  { label: 'Bloqueados', value: 'blocked' },
+];
 
 const BusinessesPage = () => {
   // context
@@ -27,7 +43,10 @@ const BusinessesPage = () => {
   const [state, setState] = React.useState('');
   const [city, setCity] = React.useState('');
   const [filterBar, setFilterBar] = React.useState('all');
-  const [filterCheck, setFilterCheck] = React.useState<BusinessStatus[]>(['open', 'closed']);
+  const [filterCheck, setFilterCheck] = React.useState<BusinessStatus[]>([
+    'open',
+    'closed',
+  ]);
   const [filters, setFilters] = React.useState<BusinessesFilter[]>([]);
   // search
   const {
@@ -63,14 +82,20 @@ const BusinessesPage = () => {
         { type: 'situation', value: 'submitted' },
         { type: 'situation', value: 'pending' },
       ];
-    else if (filterBar !== 'all') situationArray = [{ type: 'situation', value: filterBar }];
+    else if (filterBar !== 'all')
+      situationArray = [{ type: 'situation', value: filterBar }];
     // status
     let statusArray = filterCheck.map((str) => ({
       type: 'status',
       value: str,
     })) as BusinessesFilter[];
     // create filters
-    setFilters([...stateArray, ...cityArray, ...situationArray, ...statusArray]);
+    setFilters([
+      ...stateArray,
+      ...cityArray,
+      ...situationArray,
+      ...statusArray,
+    ]);
   }, [filterBar, state, city, filterCheck]);
   // side effects
   React.useEffect(() => {
@@ -83,7 +108,10 @@ const BusinessesPage = () => {
   // UI
   return (
     <>
-      <PageHeader title={t('Restaurantes')} subtitle={t(`Atualizado ${dateTime}`)} />
+      <PageHeader
+        title={t('Restaurantes')}
+        subtitle={t(`Atualizado ${dateTime}`)}
+      />
       <Stack mt="8" spacing={4} direction={{ base: 'column', md: 'row' }}>
         <CustomInput
           mt="0"
@@ -93,7 +121,9 @@ const BusinessesPage = () => {
           value={search}
           onChange={(event) => setSearch(event.target.value)}
           label={t('Buscar')}
-          placeholder={t('Buscar por ID, nome, CNPJ ou e-mail do administrador')}
+          placeholder={t(
+            'Buscar por ID, nome, CNPJ ou e-mail do administrador'
+          )}
         />
         <StateAndCityFilter
           state={state}
@@ -102,49 +132,25 @@ const BusinessesPage = () => {
           handleCityChange={setCity}
         />
       </Stack>
-      <Flex mt="8" w="100%" justifyContent="space-between" borderBottom="1px solid #C8D7CB">
-        <FiltersScrollBar>
-          <HStack spacing={4}>
-            <FilterText
-              isActive={filterBar === 'all' ? true : false}
-              label={t('Todos')}
-              onClick={() => setFilterBar('all')}
-            />
-            <FilterText
-              isActive={filterBar === 'approved' ? true : false}
-              label={t('Aprovados')}
-              onClick={() => setFilterBar('approved')}
-            />
-            <FilterText
-              isActive={filterBar === 'verified' ? true : false}
-              label={t('Verificados')}
-              onClick={() => setFilterBar('verified')}
-            />
-            <FilterText
-              isActive={filterBar === 'invalid' ? true : false}
-              label={t('Inválidos')}
-              onClick={() => setFilterBar('invalid')}
-            />
-            <FilterText
-              isActive={filterBar === 'rejected' ? true : false}
-              label={t('Rejeitados')}
-              onClick={() => setFilterBar('rejected')}
-            />
-            <FilterText
-              isActive={filterBar === 'pending' ? true : false}
-              label={t('Pendentes')}
-              onClick={() => setFilterBar('pending')}
-            />
-            <FilterText
-              isActive={filterBar === 'blocked' ? true : false}
-              label={t('Bloqueados')}
-              onClick={() => setFilterBar('blocked')}
-            />
-          </HStack>
-        </FiltersScrollBar>
+      <Flex
+        mt="8"
+        w="100%"
+        justifyContent="space-between"
+        borderBottom="1px solid #C8D7CB"
+      >
+        <FiltersScrollBar
+          filters={statusFilterOptions}
+          currentValue={filterBar}
+          selectFilter={setFilterBar}
+        />
         <ClearFiltersButton clearFunction={clearSearchAndFilters} />
       </Flex>
-      <Stack mt="6" spacing={8} color="black" direction={{ base: 'column', md: 'row' }}>
+      <Stack
+        mt="6"
+        spacing={8}
+        color="black"
+        direction={{ base: 'column', md: 'row' }}
+      >
         <Text fontSize="lg" fontWeight="700" lineHeight="26px">
           {t(`${businesses?.length ?? '0'} itens na lista`)}
         </Text>
@@ -160,8 +166,8 @@ const BusinessesPage = () => {
             fontSize="16px"
             lineHeight="22px"
           >
-            <CustomCheckbox value="open">{t('Aberto')}</CustomCheckbox>
-            <CustomCheckbox value="closed">{t('Fechado')}</CustomCheckbox>
+            <Checkbox value="open">{t('Aberto')}</Checkbox>
+            <Checkbox value="closed">{t('Fechado')}</Checkbox>
           </HStack>
         </CheckboxGroup>
       </Stack>

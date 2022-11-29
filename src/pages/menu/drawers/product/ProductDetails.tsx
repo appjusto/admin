@@ -1,172 +1,70 @@
-import { Button, CheckboxGroup, Flex, Link, Stack, Switch, Text, VStack } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Checkbox,
+  CheckboxGroup,
+  Flex,
+  Link,
+  Stack,
+  Switch,
+  Text,
+  VStack,
+} from '@chakra-ui/react';
 import { useClassifications } from 'app/api/platform/useClassifications';
-import CustomCheckbox from 'common/components/form/CustomCheckbox';
-import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput2';
+import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
 import { ImageUploads } from 'common/components/ImageUploads';
 import { productRatios, productResizedWidth } from 'common/imagesDimensions';
 import { useProductContext } from 'pages/menu/context/ProductContext';
 import React from 'react';
-import { Link as RouterLink, useHistory, useRouteMatch } from 'react-router-dom';
-import { slugfyName, useQuery } from 'utils/functions';
+import {
+  Link as RouterLink,
+  useHistory,
+  useRouteMatch,
+} from 'react-router-dom';
+import { slugfyName } from 'utils/functions';
 import { t } from 'utils/i18n';
-import { DrawerButtons } from '../DrawerButtons';
 import { CategorySelect } from './CategorySelect';
-import { productReducer } from './productReducer';
 
-const initialState = {
-  //product
-  name: '',
-  description: '',
-  price: 0,
-  classifications: [],
-  externalId: '',
-  enabled: true,
-  complementsEnabled: false,
-  imageExists: false,
-  //details
-  categoryId: '',
-  imageFiles: null,
-  isLoading: false,
-  isEditing: false,
-  saveSuccess: false,
-};
-
-interface DetailsProps {
-  onClose(): void;
-}
-
-export const ProductDetails = ({ onClose }: DetailsProps) => {
+export const ProductDetails = () => {
   //context
-  const query = useQuery();
-  const { url, path } = useRouteMatch();
+  const { url } = useRouteMatch();
   const { push } = useHistory();
-  const { contextCategoryId, productId, product, isValid, imageUrl, updateProduct, deleteProduct } =
-    useProductContext();
+  const {
+    productId,
+    state,
+    handleStateUpdate,
+    handleProductUpdate,
+    clearState,
+    imageUrl,
+  } = useProductContext();
   const platformClassifications = useClassifications();
   //state
-  const [state, dispatch] = React.useReducer(productReducer, initialState);
-  const {
-    //product
-    name,
-    description,
-    price,
-    classifications,
-    externalId,
-    enabled,
-    complementsEnabled,
-    imageExists,
-    //details
-    categoryId,
-    imageFiles,
-    isLoading,
-    isEditing,
-    saveSuccess,
-  } = state;
+  const { product, categoryId, saveSuccess } = state;
+  const { name, description, price, classifications, externalId, enabled } =
+    product;
   const inputRef = React.useRef<HTMLInputElement>(null);
   const priceRef = React.useRef<HTMLInputElement>(null);
-  //handlers
-  const handleStateUpdate = (key: string, value: any) => {
-    dispatch({ type: 'update_state', payload: { [key]: value } });
-  };
-
-  const clearState = () => {
-    dispatch({ type: 'update_state', payload: initialState });
-  };
-
+  // handlers
   const clearDropImages = React.useCallback(() => {
-    dispatch({
-      type: 'update_state',
-      payload: {
-        imageFiles: null,
-        imageExists: false,
-      },
-    });
-  }, []);
+    handleStateUpdate({ imageFiles: null });
+    handleProductUpdate({ imageExists: false });
+  }, [handleStateUpdate, handleProductUpdate]);
 
-  const handleImageFiles = React.useCallback((files: File[]) => {
-    handleStateUpdate('imageFiles', files);
-    handleStateUpdate('imageExists', true);
-  }, []);
+  const handleImageFiles = React.useCallback(
+    (files: File[]) => {
+      handleStateUpdate({ imageFiles: files });
+      handleProductUpdate({ imageExists: true });
+    },
+    [handleStateUpdate, handleProductUpdate]
+  );
 
-  const onSave = () => {
-    if (price === 0) {
-      priceRef.current?.focus();
-      return;
-    }
-    handleStateUpdate('isLoading', true);
-    (async () => {
-      const newId = await updateProduct({
-        changes: {
-          name,
-          description,
-          price,
-          classifications,
-          externalId,
-          enabled,
-          complementsEnabled,
-          imageExists,
-        },
-        categoryId,
-        imageFiles,
-      });
-      handleStateUpdate('isLoading', false);
-      if (url.includes('new') && newId) {
-        const newUrl = url.replace('new', newId);
-        push(newUrl);
-        handleStateUpdate('saveSuccess', true);
-      } else {
-        onClose();
-      }
-    })();
-  };
-
-  const handleSaveOther = () => {
+  const handleSaveOther = React.useCallback(() => {
     clearState();
     const newUrl = url.replace(productId, 'new');
     push(newUrl);
-  };
-
-  const handleDelete = async () => {
-    deleteProduct();
-    onClose();
-  };
-
-  //side effects
-  React.useEffect(() => {
-    if (!isValid) {
-      const newPath = path.replace(':productId', 'new');
-      push(newPath);
-    }
-  }, [isValid, path, push, url]);
-
-  React.useEffect(() => {
-    if (product && productId !== 'new') {
-      dispatch({
-        type: 'update_state',
-        payload: {
-          name: product.name ?? '',
-          description: product.description ?? '',
-          price: product.price ?? 0,
-          classifications: product.classifications ?? [],
-          externalId: product.externalId ?? '',
-          enabled: product.enabled ?? true,
-          complementsEnabled: product.complementsEnabled ?? false,
-          imageExists: product.imageExists ?? false,
-          categoryId: contextCategoryId ?? '',
-          isEditing: productId === 'new' ? false : true,
-        },
-      });
-    }
-  }, [product, productId, contextCategoryId]);
-
-  React.useEffect(() => {
-    if (!query) return;
-    if (categoryId) return;
-    const paramsId = query.get('categoryId');
-    if (paramsId) dispatch({ type: 'update_state', payload: { categoryId: paramsId } });
-  }, [query, categoryId]);
+  }, [clearState, url, push, productId]);
 
   //UI
   if (saveSuccess) {
@@ -176,26 +74,42 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
           {t('Produto salvo com sucesso!')}
         </Text>
         <Text>{t('O que gostaria de fazer agora?')}</Text>
-        <Stack mt="4" w="100%" direction={{ base: 'column', md: 'row' }} spacing="4">
-          <Button onClick={handleSaveOther} variant="outline" w="100%">
-            {t('Salvar um novo produto')}
-          </Button>
-          <Link as={RouterLink} to={`${url}/complements`} w="100%">
-            <Button variant="outline" w="100%">
-              {t('Adicionar complementos')}
+        <Stack
+          mt="4"
+          w="100%"
+          direction={{ base: 'column', md: 'row' }}
+          spacing={{ base: '4', md: '2' }}
+        >
+          <Box>
+            <Button
+              fontSize="15px"
+              onClick={handleSaveOther}
+              variant="outline"
+              w="100%"
+            >
+              {t('Salvar novo Produto')}
             </Button>
-          </Link>
+          </Box>
+          <Box>
+            <Link as={RouterLink} to={`${url}/complements`} w="100%">
+              <Button fontSize="15px" variant="outline" w="100%">
+                {t('Adicionar Complementos')}
+              </Button>
+            </Link>
+          </Box>
+          <Box>
+            <Link as={RouterLink} to={`${url}/availability`} w="100%">
+              <Button fontSize="15px" variant="outline" w="100%">
+                {t('Adicionar Disponibilidade')}
+              </Button>
+            </Link>
+          </Box>
         </Stack>
       </Flex>
     );
   }
   return (
-    <form
-      onSubmit={(ev) => {
-        ev.preventDefault();
-        onSave();
-      }}
-    >
+    <Box>
       <Input
         isRequired
         id="product-drawer-name"
@@ -203,12 +117,12 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
         value={name}
         label={t('Nome')}
         placeholder={t('Nome do produto')}
-        onChange={(ev) => handleStateUpdate('name', ev.target.value)}
+        onChange={(ev) => handleProductUpdate({ name: ev.target.value })}
       />
       <CategorySelect
         isRequired
         value={categoryId}
-        onChange={(ev) => handleStateUpdate('categoryId', ev.target.value)}
+        onChange={(ev) => handleStateUpdate({ categoryId: ev.target.value })}
       />
       <Textarea
         isRequired
@@ -216,7 +130,7 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
         value={description}
         label={t('Descrição')}
         placeholder={t('Descreva seu produto')}
-        onChange={(ev) => handleStateUpdate('description', ev.target.value)}
+        onChange={(ev) => handleProductUpdate({ description: ev.target.value })}
         maxLength={1000}
       />
       <Text fontSize="xs" color="gray.700">
@@ -231,11 +145,13 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
         label={t('Preço')}
         aria-label={t('preço-do-novo-produto')}
         placeholder={t('0,00')}
-        onChangeValue={(value) => handleStateUpdate('price', value)}
+        onChangeValue={(value) => handleProductUpdate({ price: value })}
         maxLength={6}
       />
       <Text mt="8" fontSize="sm" color="black">
-        {t('Caso possua um sistema de controle de PDV, insira o código abaixo:')}
+        {t(
+          'Caso possua um sistema de controle de PDV, insira o código abaixo:'
+        )}
       </Text>
       <Input
         id="product-pdv"
@@ -244,13 +160,17 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
         label="Código PDV"
         placeholder="000"
         value={externalId ? externalId : ''}
-        handleChange={(ev) => handleStateUpdate('externalId', ev.target.value)}
+        handleChange={(ev) =>
+          handleProductUpdate({ externalId: ev.target.value })
+        }
       />
       <Text mt="8" fontSize="xl" color="black">
         {t('Imagem do produto')}
       </Text>
       <Text>
-        {t('Recomendamos imagens na proporção retangular (16:9) com no mínimo 1280px de largura')}
+        {t(
+          'Recomendamos imagens na proporção retangular (16:9) com no mínimo 1280px de largura'
+        )}
       </Text>
       <ImageUploads
         mt="4"
@@ -269,38 +189,36 @@ export const ProductDetails = ({ onClose }: DetailsProps) => {
       <CheckboxGroup
         colorScheme="green"
         value={classifications}
-        onChange={(value) => handleStateUpdate('classifications', value)}
+        onChange={(value) =>
+          handleProductUpdate({ classifications: value as string[] })
+        }
       >
         <VStack alignItems="flex-start" mt="4" color="black" spacing={2}>
           {platformClassifications.map((item) => (
-            <CustomCheckbox
+            <Checkbox
               key={item.id}
               value={item.name}
               aria-label={`${slugfyName(item.name)}-checkbox`}
             >
               {item.name}
-            </CustomCheckbox>
+            </Checkbox>
           ))}
         </VStack>
-      </CheckboxGroup>{' '}
-      <Flex mt="8" flexDir="row" alignItems="center">
-        <Switch
-          isChecked={enabled}
-          onChange={(ev) => {
-            ev.stopPropagation();
-            handleStateUpdate('enabled', ev.target.checked);
-          }}
-        />
-        <Text ml="4" color="black">
-          {t('Ativar produto após a criação')}
-        </Text>
-      </Flex>
-      <DrawerButtons
-        type="produto"
-        isEditing={isEditing}
-        isLoading={isLoading}
-        onDelete={handleDelete}
-      />
-    </form>
+      </CheckboxGroup>
+      {productId === 'new' && (
+        <Flex mt="8" flexDir="row" alignItems="center">
+          <Switch
+            isChecked={enabled}
+            onChange={(ev) => {
+              ev.stopPropagation();
+              handleProductUpdate({ enabled: ev.target.checked });
+            }}
+          />
+          <Text ml="4" color="black">
+            {t('Ativar produto após a criação')}
+          </Text>
+        </Flex>
+      )}
+    </Box>
   );
 };

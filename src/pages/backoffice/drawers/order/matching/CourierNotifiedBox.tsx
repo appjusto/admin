@@ -3,6 +3,7 @@ import { Box, Flex, HStack, Text } from '@chakra-ui/react';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { Textarea } from 'common/components/form/input/Textarea';
+import { isEqual } from 'lodash';
 import React from 'react';
 import { t } from 'utils/i18n';
 import { NotifiedCouriers } from '../Matching';
@@ -18,7 +19,7 @@ interface CourierNotifiedBoxProps {
   isLoading?: boolean;
 }
 
-export const CourierNotifiedBox = ({
+const CourierNotifiedBox = ({
   isOrderActive,
   order,
   courier,
@@ -35,7 +36,9 @@ export const CourierNotifiedBox = ({
   const [isAllocating, setIsAllocating] = React.useState(false);
   const [comment, setComment] = React.useState('');
   // helpers
-  const nameToDisplay = courier.name ? courier.name : courier.id.substring(0, 7) + '...';
+  const nameToDisplay = courier.name
+    ? courier.name
+    : courier.id.substring(0, 7) + '...';
   // side effects
   React.useEffect(() => {
     if (dispatchingStatus === 'matched' || dispatchingStatus === 'confirmed')
@@ -60,46 +63,51 @@ export const CourierNotifiedBox = ({
             link={`/backoffice/couriers/${courier.id}`}
             variant="outline"
           />
-          {!isAllocating && userAbility?.can('update', { kind: 'orders', ...order }) && (
-            <>
-              <CustomButton
-                mt="0"
-                size="sm"
-                w="120px"
-                h="36px"
-                label={t('Remover')}
-                variant="danger"
-                isDisabled={
-                  !isOrderActive ||
-                  dispatchingStatus === 'matched' ||
-                  dispatchingStatus === 'confirmed'
-                }
-                isLoading={isLoading && courierRemoving === courier.id}
-                onClick={() => removeCourier!(courier.id)}
-              />
-              <CustomButton
-                mt="0"
-                size="sm"
-                w="120px"
-                h="36px"
-                label={t('Alocar')}
-                isDisabled={
-                  !isOrderActive ||
-                  dispatchingStatus === 'matched' ||
-                  dispatchingStatus === 'confirmed' ||
-                  dispatchingStatus === 'outsourced'
-                }
-                isLoading={isLoading && !courierRemoving}
-                onClick={() => setIsAllocating(true)}
-              />
-            </>
-          )}
+          {!isAllocating &&
+            userAbility?.can('update', { kind: 'orders', ...order }) && (
+              <>
+                <CustomButton
+                  mt="0"
+                  size="sm"
+                  w="120px"
+                  h="36px"
+                  label={t('Remover')}
+                  variant="danger"
+                  isDisabled={
+                    !isOrderActive ||
+                    dispatchingStatus === 'matched' ||
+                    dispatchingStatus === 'confirmed'
+                  }
+                  isLoading={isLoading && courierRemoving === courier.id}
+                  onClick={() => removeCourier!(courier.id)}
+                />
+                <CustomButton
+                  mt="0"
+                  size="sm"
+                  w="120px"
+                  h="36px"
+                  label={t('Alocar')}
+                  isDisabled={
+                    !isOrderActive ||
+                    dispatchingStatus === 'matched' ||
+                    dispatchingStatus === 'confirmed' ||
+                    dispatchingStatus === 'outsourced'
+                  }
+                  isLoading={isLoading && !courierRemoving}
+                  onClick={() => setIsAllocating(true)}
+                />
+              </>
+            )}
         </HStack>
       </Flex>
       {isAllocating && (
         <Box mt="4">
           <Text fontSize="lg">{t('Informe o motivo da alocação:')}</Text>
-          <Textarea mt="2" value={comment} onChange={(e) => setComment(e.target.value)} />
+          <Textarea
+            mt="2"
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+          />
           <Flex mt="4" justifyContent="flex-end">
             <CustomButton
               mt="0"
@@ -130,3 +138,12 @@ export const CourierNotifiedBox = ({
     </Box>
   );
 };
+
+const areEqual = (
+  prevProps: CourierNotifiedBoxProps,
+  nextProps: CourierNotifiedBoxProps
+) => {
+  return isEqual(prevProps, nextProps);
+};
+
+export default React.memo(CourierNotifiedBox, areEqual);

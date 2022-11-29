@@ -13,7 +13,7 @@ import { useObserveOrderChatByType } from 'app/api/chat/useObserveOrderChatByTyp
 import { getChatLastUpdate, getChatTypeLabel } from 'app/api/chat/utils';
 import restaurantIcon from 'common/img/restaurant.svg';
 import { FieldValue } from 'firebase/firestore';
-import { ChatMessages } from 'pages/chat/ChatMessages';
+import ChatMessages from 'pages/chat/ChatMessages';
 import React from 'react';
 import { useParams } from 'react-router';
 import { Link } from 'react-router-dom';
@@ -53,7 +53,10 @@ export const BOChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
   React.useEffect(() => {
     if (chat.length === 0) return;
     if (chat && messagesBox.current) {
-      messagesBox.current.scroll({ top: messagesBox.current.scrollHeight, behavior: 'smooth' });
+      messagesBox.current.scroll({
+        top: messagesBox.current.scrollHeight,
+        behavior: 'smooth',
+      });
     }
     setLastUpdate(getChatLastUpdate(chat));
   }, [chat]);
@@ -62,15 +65,31 @@ export const BOChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
       <DrawerOverlay>
         <DrawerContent>
-          <DrawerCloseButton bg="green.500" mr="12px" _focus={{ outline: 'none' }} />
+          <DrawerCloseButton
+            bg="green.500"
+            mr="12px"
+            _focus={{ outline: 'none' }}
+          />
           <DrawerHeader pb="4">
             <Flex justifyContent="space-between" alignItems="flex-end">
               <Flex flexDir="column">
-                <Text color="black" fontSize="2xl" fontWeight="700" lineHeight="28px" mb="2">
+                <Text
+                  color="black"
+                  fontSize="2xl"
+                  fontWeight="700"
+                  lineHeight="28px"
+                  mb="2"
+                >
                   {t('Tipo de chat: ')}
                   {getChatTypeLabel(type)}
                 </Text>
-                <Text mt="2" fontSize="md" color="black" fontWeight="700" lineHeight="22px">
+                <Text
+                  mt="2"
+                  fontSize="md"
+                  color="black"
+                  fontWeight="700"
+                  lineHeight="22px"
+                >
                   {t('ID do pedido:')}{' '}
                   <Link to={`/backoffice/order/${orderId}/chats`}>
                     <Text
@@ -83,7 +102,12 @@ export const BOChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
                     </Text>
                   </Link>
                 </Text>
-                <Text fontSize="md" color="black" fontWeight="700" lineHeight="22px">
+                <Text
+                  fontSize="md"
+                  color="black"
+                  fontWeight="700"
+                  lineHeight="22px"
+                >
                   {t('Atualizado em:')}{' '}
                   <Text as="span" color="gray.600" fontWeight="500">
                     {getDateAndHour(lastUpdate)}

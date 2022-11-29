@@ -1,4 +1,5 @@
-import { Business, ManagerWithRole, WithId } from '@appjusto/types';
+import { Banner, Business, ManagerWithRole, WithId } from '@appjusto/types';
+import { useObserveBannersByFlavor } from 'app/api/banners/useObserveBannersByFlavor';
 import { useObserveBusinessManagedBy } from 'app/api/business/profile/useObserveBusinessManagedBy';
 import { useObserveBusinessProfile } from 'app/api/business/profile/useObserveBusinessProfile';
 import { useGetManagers } from 'app/api/manager/useGetManagers';
@@ -35,6 +36,8 @@ const watchedFields: (keyof Business)[] = [
   'settings',
   'tags',
   'maxOrdersPerHour',
+  'minHoursForScheduledOrders',
+  'reviews',
   // object types
   'managers',
   'profileIssues',
@@ -52,6 +55,7 @@ interface ContextProps {
   businessManagers?: ManagerWithRole[];
   setIsGetManagersActive: React.Dispatch<React.SetStateAction<boolean>>;
   fetchManagers(): void;
+  banners?: WithId<Banner>[] | null;
 }
 
 const BusinessContext = React.createContext<ContextProps>({} as ContextProps);
@@ -65,19 +69,24 @@ export const BusinessProvider = ({ children }: Props) => {
   const queryClient = useQueryClient();
   const { user, isBackofficeUser, refreshUserToken } = useContextFirebaseUser();
   const businesses = useObserveBusinessManagedBy(user?.email);
-  const [businessId, setBusinessId] = React.useState<string | undefined | null>();
+  const [businessId, setBusinessId] = React.useState<
+    string | undefined | null
+  >();
   const hookBusiness = useObserveBusinessProfile(businessId);
   // state
   const [business, setBusiness] = React.useState<WithId<Business> | null>();
   const [isGetManagersActive, setIsGetManagersActive] = React.useState(false);
+  const banners = useObserveBannersByFlavor('business', true, true);
   // business managers
   const { managers: businessManagers, fetchManagers } = useGetManagers(
-    business,
+    business?.id,
+    business?.managers,
     isGetManagersActive
   );
   // handlers
   const clearBusiness = React.useCallback(() => {
-    setBusiness(undefined);
+    setBusinessId(null);
+    setBusiness(null);
   }, []);
   const setBusinessIdByBusinesses = React.useCallback(() => {
     if (!businesses) return;
@@ -114,11 +123,20 @@ export const BusinessProvider = ({ children }: Props) => {
       return;
     }
     if (isBackofficeUser === false) {
-      localStorage.setItem(`${user.email}-${process.env.REACT_APP_ENVIRONMENT}`, hookBusiness.id);
+      localStorage.setItem(
+        `${user.email}-${process.env.REACT_APP_ENVIRONMENT}`,
+        hookBusiness.id
+      );
     }
     updateContextBusiness(hookBusiness);
     queryClient.invalidateQueries();
-  }, [user, hookBusiness, isBackofficeUser, queryClient, updateContextBusiness]);
+  }, [
+    user,
+    hookBusiness,
+    isBackofficeUser,
+    queryClient,
+    updateContextBusiness,
+  ]);
   React.useEffect(() => {
     if (isBackofficeUser) return;
     if (!user?.email) return;
@@ -147,6 +165,7 @@ export const BusinessProvider = ({ children }: Props) => {
         businessManagers,
         setIsGetManagersActive,
         fetchManagers,
+        banners,
       }}
     >
       {children}

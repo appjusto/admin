@@ -1,4 +1,4 @@
-import { useObserveDashboardInvoices } from 'app/api/order/useObserveDashboardInvoices';
+import { useObserveDashboardInvoices } from 'app/api/invoices/useObserveDashboardInvoices';
 import { useObserveDashboardOrders } from 'app/api/order/useObserveDashboardOrders';
 import React from 'react';
 import { useContextBusinessId } from '../business/context';
@@ -20,7 +20,9 @@ interface ContextProps {
   lastWeekByDay?: number[];
 }
 
-const BusinessDashboardContext = React.createContext<ContextProps>({} as ContextProps);
+const BusinessDashboardContext = React.createContext<ContextProps>(
+  {} as ContextProps
+);
 
 interface Props {
   children: React.ReactNode | React.ReactNode[];

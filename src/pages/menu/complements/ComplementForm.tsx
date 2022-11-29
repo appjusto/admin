@@ -2,11 +2,14 @@ import { Complement, WithId } from '@appjusto/types';
 import { Box, Flex, HStack, Text, VStack } from '@chakra-ui/react';
 import { useComplementImage } from 'app/api/business/complements/useComplementImage';
 import { MutationResult } from 'app/api/mutation/useCustomMutation';
-import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput2';
+import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
 import { ImageUploads } from 'common/components/ImageUploads';
-import { complementsRatios, complementsResizedWidth } from 'common/imagesDimensions';
+import {
+  complementsRatios,
+  complementsResizedWidth,
+} from 'common/imagesDimensions';
 import React from 'react';
 import { MutateFunction } from 'react-query';
 import { t } from 'utils/i18n';
@@ -194,7 +197,13 @@ export const ComplementForm = ({
                 handleChange={(ev) => setExternalId(ev.target.value)}
               />
             </HStack>
-            <HStack mt="3" w="100%" spacing={4} alignItems="center" justifyContent="flex-end">
+            <HStack
+              mt="3"
+              w="100%"
+              spacing={4}
+              alignItems="center"
+              justifyContent="flex-end"
+            >
               <Text>{t('Qtd. máxima deste complemento por pedido:')}</Text>
               <ItemsQtdButtons
                 size="sm"

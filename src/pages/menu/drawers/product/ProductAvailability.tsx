@@ -1,70 +1,42 @@
-import { BusinessSchedule, ScheduleObject } from '@appjusto/types';
-import { Button, Flex, RadioGroup, Text } from '@chakra-ui/react';
-import { useContextAppRequests } from 'app/state/requests/context';
-import CustomRadio from 'common/components/form/CustomRadio';
+import { Flex, Radio, RadioGroup, Text } from '@chakra-ui/react';
+import { timeFormatter } from 'common/components/form/input/pattern-input/formatters';
 import { useProductContext } from 'pages/menu/context/ProductContext';
 import React from 'react';
 import { Redirect, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { DaySchedule } from './availability/DaySchedule';
 
-type Availability = 'always-available' | 'availability-defined';
+export type Availability = 'always-available' | 'availability-defined';
 
 const scheduleObj = { from: '', to: '' };
 
-const initialState = [
-  { day: 'Segunda', checked: true, schedule: [{ from: '', to: '' }] },
-  { day: 'Terça', checked: true, schedule: [{ from: '', to: '' }] },
-  { day: 'Quarta', checked: true, schedule: [{ from: '', to: '' }] },
-  { day: 'Quinta', checked: true, schedule: [{ from: '', to: '' }] },
-  { day: 'Sexta', checked: true, schedule: [{ from: '', to: '' }] },
-  { day: 'Sábado', checked: true, schedule: [{ from: '', to: '' }] },
-  { day: 'Domingo', checked: true, schedule: [{ from: '', to: '' }] },
-] as BusinessSchedule;
-
-const alwaysState = [
-  { day: 'Segunda', checked: true, schedule: [] },
-  { day: 'Terça', checked: true, schedule: [] },
-  { day: 'Quarta', checked: true, schedule: [] },
-  { day: 'Quinta', checked: true, schedule: [] },
-  { day: 'Sexta', checked: true, schedule: [] },
-  { day: 'Sábado', checked: true, schedule: [] },
-  { day: 'Domingo', checked: true, schedule: [] },
-] as BusinessSchedule;
-
 export const ProductAvailability = () => {
   //context
-  const { dispatchAppRequestResult } = useContextAppRequests();
   const { url } = useRouteMatch();
-  const { product, updateProduct, updateProductResult } = useProductContext();
-  const { isLoading } = updateProductResult;
-  //state
-  const [schedules, setSchedules] = React.useState<BusinessSchedule>(initialState);
-  const [mainAvailability, setMainAvailability] = React.useState<Availability>('always-available');
+  const { productId, state, handleStateUpdate, handleProductUpdate } =
+    useProductContext();
+  const { mainAvailability, product } = state;
+  const { availability } = product;
   // handlers
   const handleCheck = (stateIndex: number, value: boolean) => {
-    setSchedules((prevSchedule) => {
-      const newState = prevSchedule.map((item, index) => {
-        if (index === stateIndex) {
-          return { ...item, checked: value };
-        } else {
-          return item;
-        }
-      });
-      return newState;
+    const newAvailability = availability.map((item, index) => {
+      if (index === stateIndex) {
+        return { ...item, checked: value };
+      } else {
+        return item;
+      }
     });
+    handleProductUpdate({ availability: newAvailability });
   };
   const clearDaySchedule = (stateIndex: number) => {
-    setSchedules((prevSchedule) => {
-      const newState = prevSchedule.map((item, index) => {
-        if (index === stateIndex) {
-          return { ...item, schedule: [scheduleObj] };
-        } else {
-          return item;
-        }
-      });
-      return newState;
+    const newAvailability = availability.map((item, index) => {
+      if (index === stateIndex) {
+        return { ...item, schedule: [scheduleObj] };
+      } else {
+        return item;
+      }
     });
+    handleProductUpdate({ availability: newAvailability });
   };
   const handleChengeValue = (
     stateIndex: number,
@@ -72,26 +44,28 @@ export const ProductAvailability = () => {
     field: string,
     value: string
   ) => {
-    setSchedules((prevSchedule) => {
-      const newState = prevSchedule.map((day, index1) => {
-        if (index1 === stateIndex) {
-          const newDaySchedule = day.schedule.map((schedule, index2) => {
-            if (index2 === scheduleIndex) {
-              let newValue = value;
-              if (value.length === 1 && Number(value) > 2) newValue = '0' + value;
-              const newSchedule = { ...schedule, [field]: newValue };
-              return newSchedule;
-            } else {
-              return schedule;
-            }
-          });
-          return { ...day, schedule: newDaySchedule };
-        } else {
-          return day;
-        }
-      });
-      return newState;
+    const newAvailability = availability.map((day, index1) => {
+      if (index1 === stateIndex) {
+        const newDaySchedule = day.schedule.map((schedule, index2) => {
+          if (index2 === scheduleIndex) {
+            let newValue = value;
+            if (value.length === 1 && Number(value) > 2) newValue = '0' + value;
+            const formatted = timeFormatter(newValue, true);
+            const newSchedule = {
+              ...schedule,
+              [field]: formatted,
+            };
+            return newSchedule;
+          } else {
+            return schedule;
+          }
+        });
+        return { ...day, schedule: newDaySchedule };
+      } else {
+        return day;
+      }
     });
+    handleProductUpdate({ availability: newAvailability });
   };
   const autoCompleteSchedules = (
     stateIndex: number,
@@ -103,114 +77,67 @@ export const ProductAvailability = () => {
     if (value.length < 4) {
       newValue = value + '0'.repeat(4 - value.length);
     }
-    setSchedules((prevSchedule) => {
-      const newState = prevSchedule.map((day, index1) => {
-        if (index1 === stateIndex) {
-          const newDaySchedule = day.schedule.map((schedule, index2) => {
-            if (index2 === scheduleIndex) {
-              const newSchedule = { ...schedule, [field]: newValue };
-              return newSchedule;
-            } else {
-              return schedule;
-            }
-          });
-          return { ...day, schedule: newDaySchedule };
-        } else {
-          return day;
-        }
-      });
-      return newState;
+    const formatted = timeFormatter(newValue, true);
+    const newAvailability = availability.map((day, index1) => {
+      if (index1 === stateIndex) {
+        const newDaySchedule = day.schedule.map((schedule, index2) => {
+          if (index2 === scheduleIndex) {
+            const newSchedule = { ...schedule, [field]: formatted };
+            return newSchedule;
+          } else {
+            return schedule;
+          }
+        });
+        return { ...day, schedule: newDaySchedule };
+      } else {
+        return day;
+      }
     });
+    handleProductUpdate({ availability: newAvailability });
   };
   const addScheduleItem = (stateIndex: number) => {
-    setSchedules((prevSchedule) => {
-      const newState = prevSchedule.map((day, index1) => {
-        if (index1 === stateIndex) {
-          const newDaySchedule = [...day.schedule, scheduleObj];
-          return { ...day, schedule: newDaySchedule };
-        } else {
-          return day;
-        }
-      });
-      return newState;
+    const newAvailability = availability.map((day, index1) => {
+      if (index1 === stateIndex) {
+        const newDaySchedule = [...day.schedule, scheduleObj];
+        return { ...day, schedule: newDaySchedule };
+      } else {
+        return day;
+      }
     });
+    handleProductUpdate({ availability: newAvailability });
   };
   const removeScheduleItem = (stateIndex: number, itemIndex: number) => {
-    setSchedules((prevSchedule) => {
-      const newState = prevSchedule.map((day, index1) => {
-        if (index1 === stateIndex) {
-          const newDaySchedule = day.schedule.filter((item, index) => index !== itemIndex);
-          return { ...day, schedule: newDaySchedule };
-        } else {
-          return day;
-        }
-      });
-      return newState;
+    const newAvailability = availability.map((day, index1) => {
+      if (index1 === stateIndex) {
+        const newDaySchedule = day.schedule.filter(
+          (item, index) => index !== itemIndex
+        );
+        return { ...day, schedule: newDaySchedule };
+      } else {
+        return day;
+      }
     });
+    handleProductUpdate({ availability: newAvailability });
   };
   const replicateSchedule = (stateIndex: number) => {
-    setSchedules((prevSchedule) => {
-      const prevDay = prevSchedule[stateIndex - 1];
-      const newState = prevSchedule.map((day, dayIndex) => {
-        if (dayIndex === stateIndex) {
-          return { ...prevDay, day: day.day };
-        } else {
-          return day;
-        }
-      });
-      return newState;
+    const prevDay = availability[stateIndex - 1];
+    const newAvailability = availability.map((day, dayIndex) => {
+      if (dayIndex === stateIndex) {
+        return { ...prevDay, day: day.day };
+      } else {
+        return day;
+      }
     });
-  };
-  const schedulesValidation = (schedules: ScheduleObject[]) => {
-    let result = true;
-    schedules.forEach((scheduleObject) => {
-      scheduleObject.schedule.forEach((item, index) => {
-        if (item.from !== '' && item.to !== '') {
-          if (Number(item.from) >= Number(item.to)) result = false;
-          if (index > 0 && Number(item.from) <= Number(scheduleObject.schedule[index - 1].to))
-            result = false;
-        }
-      });
-    });
-    return result;
-  };
-  const handleUpdate = () => {
-    if (mainAvailability === 'always-available') {
-      setSchedules(initialState);
-      return updateProduct({ changes: { availability: alwaysState } });
-    }
-    const isValid = schedulesValidation(schedules);
-    if (!isValid)
-      return dispatchAppRequestResult({
-        status: 'error',
-        requestId: 'ProductAvailability-valid',
-        message: { title: 'Alguns horários não estão corretos.' },
-      });
-    const serializedSchedules = schedules.map((day) => {
-      const newSchedule = day.schedule.filter((obj) => obj.from !== '' && obj.to !== '');
-      return { ...day, schedule: newSchedule };
-    });
-    updateProduct({ changes: { availability: serializedSchedules } });
+    handleProductUpdate({ availability: newAvailability });
   };
   // side effects
   React.useEffect(() => {
-    if (!product?.availability) return;
-    if (
-      product.availability.find((item) => !item.checked) === undefined &&
-      product.availability.find((item) => item.schedule.length > 0) === undefined
-    ) {
-      setMainAvailability('always-available');
-      return;
+    if (state.saveSuccess) {
+      handleStateUpdate({ saveSuccess: false });
     }
-    const initialAvailability = product.availability.map((item) => {
-      if (item.schedule.length === 0) return { ...item, schedule: [scheduleObj] };
-      else return item;
-    });
-    setMainAvailability('availability-defined');
-    setSchedules(initialAvailability);
-  }, [product?.availability]);
+  }, [state, handleStateUpdate]);
   // UI
-  if (product?.id === 'new') {
+  if (productId === 'new') {
     const urlRedirect = url.split('/availability')[0];
     return <Redirect to={urlRedirect} />;
   }
@@ -220,11 +147,15 @@ export const ProductAvailability = () => {
         {t('Dias e horários')}
       </Text>
       <Text fontSize="sm" mt="2">
-        {t('Defina quais os dias e horários seus clientes poderão comprar esse ítem')}
+        {t(
+          'Defina quais os dias e horários seus clientes poderão comprar esse ítem'
+        )}
       </Text>
       <RadioGroup
         mt="2"
-        onChange={(value: Availability) => setMainAvailability(value)}
+        onChange={(value: Availability) =>
+          handleStateUpdate({ mainAvailability: value })
+        }
         value={mainAvailability}
         defaultValue="always"
         colorScheme="green"
@@ -232,17 +163,17 @@ export const ProductAvailability = () => {
         size="lg"
       >
         <Flex flexDir="column" justifyContent="flex-start">
-          <CustomRadio mt="2" value="always-available">
+          <Radio mt="2" value="always-available">
             {t('Sempre disponível quando o restaurante estiver aberto')}
-          </CustomRadio>
-          <CustomRadio mt="2" value="availability-defined">
+          </Radio>
+          <Radio mt="2" value="availability-defined">
             {t('Disponível em dias e horários específicos')}
-          </CustomRadio>
+          </Radio>
         </Flex>
       </RadioGroup>
       {mainAvailability === 'availability-defined' && (
         <Flex flexDir="column" mt="4">
-          {schedules.map((day, index) => {
+          {availability.map((day, index) => {
             return (
               <DaySchedule
                 index={index}
@@ -250,23 +181,26 @@ export const ProductAvailability = () => {
                 day={day}
                 handleCheck={(value: boolean) => handleCheck(index, value)}
                 clearDaySchedule={() => clearDaySchedule(index)}
-                onChangeValue={(scheduleIndex: number, field: string, value: string) =>
-                  handleChengeValue(index, scheduleIndex, field, value)
-                }
-                autoCompleteSchedules={(scheduleIndex: number, field: string, value: string) =>
-                  autoCompleteSchedules(index, scheduleIndex, field, value)
-                }
+                onChangeValue={(
+                  scheduleIndex: number,
+                  field: string,
+                  value: string
+                ) => handleChengeValue(index, scheduleIndex, field, value)}
+                autoCompleteSchedules={(
+                  scheduleIndex: number,
+                  field: string,
+                  value: string
+                ) => autoCompleteSchedules(index, scheduleIndex, field, value)}
                 addScheduleItem={() => addScheduleItem(index)}
-                removeScheduleItem={(itemIndex: number) => removeScheduleItem(index, itemIndex)}
+                removeScheduleItem={(itemIndex: number) =>
+                  removeScheduleItem(index, itemIndex)
+                }
                 replicate={() => replicateSchedule(index)}
               />
             );
           })}
         </Flex>
       )}
-      <Button mt="8" onClick={handleUpdate} isLoading={isLoading} loadingText={t('Salvando')}>
-        {t('Salvar disponibilidade')}
-      </Button>
     </>
   );
 };

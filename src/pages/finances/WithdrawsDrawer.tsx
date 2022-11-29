@@ -1,59 +1,93 @@
-import { Box, Button, Flex, Icon, Text } from '@chakra-ui/react';
+import { Box, Button, Checkbox, Flex, Icon, Text } from '@chakra-ui/react';
+import { useRequestWithdraw } from 'app/api/business/useRequestWithdraw';
+import { usePlatformFees } from 'app/api/platform/usePlatformFees';
+import { useContextBusinessId } from 'app/state/business/context';
+import { useContextAppRequests } from 'app/state/requests/context';
 import { ReactComponent as Checked } from 'common/img/icon-checked.svg';
 import React from 'react';
+import { MdInfoOutline } from 'react-icons/md';
+import { formatCurrency } from 'utils/formatters';
 import { t } from 'utils/i18n';
+import { ReviewBox } from './advances/ReviewBox';
 import { BasicInfoBox } from './BasicInfoBox';
 import { FinancesBaseDrawer } from './FinancesBaseDrawer';
 import { formatCents, formatIuguValueToDisplay } from './utils';
 
 interface WithdrawsDrawerProps {
   isOpen: boolean;
-  totalWithdraws?: number;
   withdrawValue?: string | null;
-  requestWithdraw(): void;
-  isLoading: boolean;
-  isSuccess?: boolean;
   onClose(): void;
 }
 
+// const iuguFee: number = 100;
+
 export const WithdrawsDrawer = ({
   onClose,
-  totalWithdraws,
   withdrawValue,
-  requestWithdraw,
-  isLoading,
-  isSuccess,
   ...props
 }: WithdrawsDrawerProps) => {
+  // context
+  const { platformFees } = usePlatformFees();
+  const businessId = useContextBusinessId();
+  const { dispatchAppRequestResult } = useContextAppRequests();
+  const { requestWithdraw, requestWithdrawResult } =
+    useRequestWithdraw(businessId);
+  const { isLoading, isSuccess } = requestWithdrawResult;
   // state
-  const [requestedValue, setRequestedValue] = React.useState<string | null>();
-  const [withdrawsLeft, setWithdrawsLeft] = React.useState<number | null>();
-  const [withdrawIsAvailable, setWithdrawIsAvailable] = React.useState<boolean>();
-  // helpers
+  const [iuguFee, setIuguFee] = React.useState<number>();
+  const [netValue, setNetValue] = React.useState(0);
+  const [withdrawIsAvailable, setWithdrawIsAvailable] =
+    React.useState<boolean>();
+  const [isFeesAccepted, setIsFeesAccepted] = React.useState(false);
+  // refs
+  const acceptCheckBoxRef = React.useRef<HTMLInputElement>(null);
+  // handlers
+  const handleWithdrawRequest = () => {
+    if (!withdrawValue)
+      return dispatchAppRequestResult({
+        status: 'error',
+        requestId: 'FinancesPage-valid',
+        message: { title: 'Não existe valor disponível para transferência.' },
+      });
+    const amount = formatCents(withdrawValue);
+    requestWithdraw(amount);
+  };
   // side effects
   React.useEffect(() => {
-    if (!withdrawValue || totalWithdraws === undefined) return;
+    if (!platformFees?.processing.iugu.withdraw) return;
+    setIuguFee(platformFees.processing.iugu.withdraw);
+  }, [platformFees]);
+  React.useEffect(() => {
+    if (!withdrawValue) return;
     const value = formatCents(withdrawValue);
-    const withdrawsLeft = 4 - totalWithdraws;
-    const isAvailable = value > 0 && withdrawsLeft > 0;
-    setWithdrawsLeft(withdrawsLeft);
-    setWithdrawIsAvailable(isAvailable);
-    if (value > 0) setRequestedValue(withdrawValue);
-  }, [withdrawValue, totalWithdraws]);
+    setWithdrawIsAvailable(value > 0);
+    const net = value - (iuguFee ?? 0);
+    if (value > 0) setNetValue(net);
+  }, [withdrawValue, iuguFee]);
   // UI
   if (isSuccess) {
     return (
-      <FinancesBaseDrawer onClose={onClose} title={t('Confirmação de Transferência')} {...props}>
+      <FinancesBaseDrawer
+        onClose={onClose}
+        title={t('Confirmação de Transferência')}
+        {...props}
+      >
         <Flex w="100%" h="100%" flexDir="column" justifyContent="center">
           <Box>
             <Icon as={Checked} w="36px" h="36px" />
-            <Text mt="2" fontSize="24px" fontWeight="500" lineHeight="30px" color="black">
+            <Text
+              mt="2"
+              fontSize="24px"
+              fontWeight="500"
+              lineHeight="30px"
+              color="black"
+            >
               {t('Transferência realizada com sucesso!')}
             </Text>
             <Text mt="1" fontSize="18px" fontWeight="500" lineHeight="26px">
               {t(
                 `Em até 2 dias úteis o valor de ${
-                  requestedValue ? formatIuguValueToDisplay(requestedValue) : 'N/E'
+                  netValue ? formatCurrency(netValue) : 'N/E'
                 } estará disponível em sua conta.`
               )}
             </Text>
@@ -64,7 +98,11 @@ export const WithdrawsDrawer = ({
   }
   if (withdrawIsAvailable === undefined) {
     return (
-      <FinancesBaseDrawer onClose={onClose} title={t('Confirmação de Transferência')} {...props}>
+      <FinancesBaseDrawer
+        onClose={onClose}
+        title={t('Confirmação de Transferência')}
+        {...props}
+      >
         <Text fontSize="18px" fontWeight="500" lineHeight="28px">
           {t('Carregando informações...')}
         </Text>
@@ -86,10 +124,10 @@ export const WithdrawsDrawer = ({
           <Button
             minW="220px"
             fontSize="15px"
-            onClick={requestWithdraw}
+            onClick={handleWithdrawRequest}
             isLoading={isLoading}
             loadingText={t('Confirmando')}
-            isDisabled={!withdrawIsAvailable}
+            isDisabled={!withdrawIsAvailable || !isFeesAccepted}
           >
             {t('Confirmar transferência')}
           </Button>
@@ -98,19 +136,55 @@ export const WithdrawsDrawer = ({
       {...props}
     >
       <Text fontSize="18px" fontWeight="500" lineHeight="28px">
-        {t('Você possui ')}
-        <Text as="span" color="black" fontWeight="700">
-          {withdrawsLeft}
-        </Text>
-        {t(' transferências disponíveis este mês (de um total de 4).')} <br />
-        {withdrawIsAvailable && t('Deseja confirmar a transferência do valor disponível abaixo?')}
+        {t(
+          'Abaixo são exibidos os valores referentes à operação. Para prosseguir com a transferência, basta marcar que está de acordo com a taxa cobrada pela Iugu e confirmar.'
+        )}
       </Text>
+      <Flex mt="4" flexDir="row">
+        <Icon mt="1" as={MdInfoOutline} />
+        <Text ml="2" fontSize="15px" fontWeight="500" lineHeight="22px">
+          {t(
+            `Agora você pode realizar quantos saques desejar, ao longo do mês, porém a Iugu passou a cobrar uma taxa fixa de ${
+              iuguFee ? formatCurrency(iuguFee) : 'N/E'
+            } por operação.`
+          )}
+        </Text>
+      </Flex>
+      <Box mt="8">
+        <Text fontSize="15px" fontWeight="500" lineHeight="21px">
+          {t('Valor disponível:')}
+        </Text>
+        <Text fontSize="24px" fontWeight="500" lineHeight="30px">
+          {formatIuguValueToDisplay(withdrawValue)}
+        </Text>
+      </Box>
+      <ReviewBox
+        label={t('Taxas de transferência (Iugu)')}
+        valueToDisplay={iuguFee}
+        signal="-"
+      />
       <BasicInfoBox
         mt="6"
-        label={t('Total disponível para transferência')}
+        label={t('Total a ser transferido')}
         icon={Checked}
-        value={withdrawValue}
+        value={formatCurrency(netValue)}
       />
+      <Checkbox
+        ref={acceptCheckBoxRef}
+        mt="6"
+        borderColor="black"
+        borderRadius="lg"
+        colorScheme="green"
+        isChecked={isFeesAccepted}
+        onChange={(e) => setIsFeesAccepted(e.target.checked)}
+        isDisabled={!iuguFee}
+      >
+        <Text fontSize="15px" fontWeight="500" lineHeight="21px">
+          {t(
+            'Estou de acordo com a taxa cobrada para a transferência do valor.'
+          )}
+        </Text>
+      </Checkbox>
     </FinancesBaseDrawer>
   );
 };

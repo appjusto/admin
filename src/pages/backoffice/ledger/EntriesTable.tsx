@@ -17,8 +17,7 @@ export const EntriesTable = ({ entries }: EntriesTableProps) => {
             <Th>{t('ID do pedido')}</Th>
             <Th>{t('Data')}</Th>
             <Th>{t('Status')}</Th>
-            <Th>{t('Valor')}</Th>
-            <Th></Th>
+            <Th isNumeric>{t('Valor')}</Th>
           </Tr>
         </Thead>
         <Tbody>
@@ -27,8 +26,7 @@ export const EntriesTable = ({ entries }: EntriesTableProps) => {
               <Td>{t('Carregando faturas...')}</Td>
               <Td></Td>
               <Td></Td>
-              <Td></Td>
-              <Td></Td>
+              <Td isNumeric></Td>
             </Tr>
           ) : entries.length > 0 ? (
             entries.map((entry) => {
@@ -39,8 +37,7 @@ export const EntriesTable = ({ entries }: EntriesTableProps) => {
               <Td>{t('Não foram encontrados resultados')}</Td>
               <Td></Td>
               <Td></Td>
-              <Td></Td>
-              <Td></Td>
+              <Td isNumeric></Td>
             </Tr>
           )}
         </Tbody>

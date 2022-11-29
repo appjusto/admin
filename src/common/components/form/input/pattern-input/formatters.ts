@@ -50,7 +50,7 @@ export const phoneFormatter = (value: string | undefined) => {
 };
 
 export const TimeMask = '00:00';
-export const TimeFormatter = (value: string | undefined) => {
+export const timeFormatter = (value: string | undefined, isRaw?: boolean) => {
   let formatedNumber = '';
   if (value) {
     let hours = value.slice(0, 2);
@@ -64,17 +64,29 @@ export const TimeFormatter = (value: string | undefined) => {
     if (minutes === '') {
       formatedNumber = `${hours}`;
     } else if (minutes !== '') {
-      formatedNumber = `${hours}:${minutes}`;
+      if (isRaw) formatedNumber = `${hours}${minutes}`;
+      else formatedNumber = `${hours}:${minutes}`;
     }
   }
   return formatedNumber;
 };
 
-export const hyphenFormatter = (hyphenLocation: number) => (value: string | undefined) => {
-  if (!value) return '';
-  if (hyphenLocation < 0) return value;
-  if (value.length <= hyphenLocation) return value;
-  return [value.slice(0, hyphenLocation), value.slice(hyphenLocation)].join('-');
+export const hyphenFormatter = (mask?: string) => {
+  try {
+    if (!mask) return undefined;
+    return (value: string | undefined) => {
+      const hyphenLocation = mask.indexOf('-');
+      if (!value) return '';
+      if (hyphenLocation < 0) return value;
+      if (value.length <= hyphenLocation) return value;
+      return [value.slice(0, hyphenLocation), value.slice(hyphenLocation)].join(
+        '-'
+      );
+    };
+  } catch (error) {
+    console.error(error);
+    return undefined;
+  }
 };
 
 export const addZerosToBeginning = (account: string, patterLen: number) => {

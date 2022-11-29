@@ -9,22 +9,27 @@ import {
   DrawerOverlay,
   Flex,
   Icon,
-  Text
+  Text,
 } from '@chakra-ui/react';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusinessBackoffice } from 'app/state/business/businessBOContext';
-import { CustomButton } from 'common/components/buttons/CustomButton';
-import { isObject } from 'lodash';
+import { useContextBusiness } from 'app/state/business/context';
 import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
 import React from 'react';
 import { MdThumbDownOffAlt, MdThumbUpOffAlt } from 'react-icons/md';
 import { useRouteMatch } from 'react-router';
-import { useLocation } from 'react-router-dom';
+import { Redirect, useLocation } from 'react-router-dom';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { situationPTOptions } from '../../utils';
 
 const withoutActionPages = ['managers', 'iugu'];
+
+interface PersonificationStatus {
+  enabled: boolean;
+  ready?: boolean;
+  isLoading?: boolean;
+}
 
 interface BaseDrawerProps {
   staff: { id: string | undefined; name: string };
@@ -33,43 +38,115 @@ interface BaseDrawerProps {
   children: React.ReactNode | React.ReactNode[];
 }
 
-export const BusinessBaseDrawer = ({ staff, onClose, children, ...props }: BaseDrawerProps) => {
+export const BusinessBaseDrawer = ({
+  staff,
+  onClose,
+  children,
+  ...props
+}: BaseDrawerProps) => {
   //context
-  const { userAbility } = useContextFirebaseUser();
   const { url } = useRouteMatch();
+  const { userAbility } = useContextFirebaseUser();
   const { pathname } = useLocation();
-  const { business, manager, handleSave, isLoading, marketPlace } = useContextBusinessBackoffice();
+  const {
+    business: adminBusiness,
+    setBusinessId,
+    clearBusiness,
+  } = useContextBusiness();
+  const { business, manager, handleSave, isLoading } =
+    useContextBusinessBackoffice();
+  // state
+  const [personificationStatus, setPersonificationStatus] =
+    React.useState<PersonificationStatus>({ enabled: false });
   // helpers
   const userCanUpdate = userAbility?.can('update', 'businesses');
-  const isMarketplace = isObject(marketPlace);
-  const situationAlert = business?.situation === 'rejected' || business?.situation === 'invalid';
+  const situationAlert =
+    business?.situation === 'rejected' || business?.situation === 'invalid';
   const pageName = pathname.split('/').pop();
-  const pageHasAction = pageName ? !withoutActionPages.includes(pageName) : true;
+  const pageHasAction = pageName
+    ? !withoutActionPages.includes(pageName)
+    : true;
+  // handlers
+  const handlePersonification = React.useCallback(() => {
+    if (!business?.id) return;
+    setPersonificationStatus({ enabled: true, isLoading: true });
+    setBusinessId(business.id);
+  }, [business?.id, setBusinessId]);
+  // side effects
+  React.useEffect(() => {
+    clearBusiness();
+  }, [clearBusiness]);
+  React.useEffect(() => {
+    if (adminBusiness) {
+      setPersonificationStatus((prev) => {
+        return {
+          ...prev,
+          ready: true,
+        };
+      });
+    } else {
+      setPersonificationStatus((prev) => {
+        return {
+          ...prev,
+          ready: false,
+        };
+      });
+    }
+  }, [adminBusiness]);
   //UI
+  const { enabled, ready } = personificationStatus;
+  if (enabled && ready) return <Redirect to="/app" />;
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
       <DrawerOverlay>
         <DrawerContent mt={{ base: '16', lg: '0' }}>
-          <DrawerCloseButton bg="green.500" mr="12px" _focus={{ outline: 'none' }} />
+          <DrawerCloseButton
+            bg="green.500"
+            mr="12px"
+            _focus={{ outline: 'none' }}
+          />
           <DrawerHeader pb="0">
-            <Text color="black" fontSize="2xl" fontWeight="700" lineHeight="28px" mb="2">
+            <Text
+              color="black"
+              fontSize="2xl"
+              fontWeight="700"
+              lineHeight="28px"
+              mb="2"
+            >
               {business?.name ?? 'Não foi possível carregar o nome'}
             </Text>
           </DrawerHeader>
           <DrawerBody pt="2" pb="28">
-            <Text fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+            <Text
+              fontSize="15px"
+              color="black"
+              fontWeight="700"
+              lineHeight="22px"
+            >
               {t('ID:')}{' '}
               <Text as="span" fontWeight="500">
                 {business?.code ?? 'N/E'}
               </Text>
             </Text>
-            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+            <Text
+              mt="1"
+              fontSize="15px"
+              color="black"
+              fontWeight="700"
+              lineHeight="22px"
+            >
               {t('Data do onboarding:')}{' '}
               <Text as="span" fontWeight="500">
                 {getDateAndHour(business?.createdOn)}
               </Text>
             </Text>
-            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+            <Text
+              mt="1"
+              fontSize="15px"
+              color="black"
+              fontWeight="700"
+              lineHeight="22px"
+            >
               {t('Atualizado em:')}{' '}
               <Text as="span" fontWeight="500">
                 {getDateAndHour(business?.updatedOn)}
@@ -81,19 +158,43 @@ export const BusinessBaseDrawer = ({ staff, onClose, children, ...props }: BaseD
                 *
               </Text>
               </Text>*/}
-            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+            <Text
+              mt="1"
+              fontSize="15px"
+              color="black"
+              fontWeight="700"
+              lineHeight="22px"
+            >
               {t('Administrador:')}{' '}
               <Text as="span" fontWeight="500">
                 {manager?.name ?? manager?.email ?? 'N/E'}
               </Text>
             </Text>
-            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+            <Text
+              mt="1"
+              fontSize="15px"
+              color="black"
+              fontWeight="700"
+              lineHeight="22px"
+            >
               {t('Status:')}{' '}
-              <Text as="span" fontWeight="500" color={situationAlert ? 'red' : 'black'}>
-                {business?.situation ? situationPTOptions[business?.situation] : 'N/E'}
+              <Text
+                as="span"
+                fontWeight="500"
+                color={situationAlert ? 'red' : 'black'}
+              >
+                {business?.situation
+                  ? situationPTOptions[business?.situation]
+                  : 'N/E'}
               </Text>
             </Text>
-            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+            <Text
+              mt="1"
+              fontSize="15px"
+              color="black"
+              fontWeight="700"
+              lineHeight="22px"
+            >
               {t('Etapa:')}{' '}
               <Text as="span" fontWeight="500">
                 {business?.onboarding === 'completed'
@@ -101,7 +202,13 @@ export const BusinessBaseDrawer = ({ staff, onClose, children, ...props }: BaseD
                   : t(`onboarding - ${business?.onboarding}`)}
               </Text>
             </Text>
-            <Text mt="1" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+            <Text
+              mt="1"
+              fontSize="15px"
+              color="black"
+              fontWeight="700"
+              lineHeight="22px"
+            >
               {t('Live:')}{' '}
               <Text as="span" fontWeight="500">
                 <Icon
@@ -117,14 +224,21 @@ export const BusinessBaseDrawer = ({ staff, onClose, children, ...props }: BaseD
               </Text>
             </Text>
             <Flex mt="1" alignItems="flex-end">
-              <Text fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+              <Text
+                fontSize="15px"
+                color="black"
+                fontWeight="700"
+                lineHeight="22px"
+              >
                 {t('Avaliações:')}
               </Text>
               <Text ml="3" as="span" fontWeight="500" color="green.600">
-                <Icon mr="1" as={MdThumbUpOffAlt} />({business?.statistics?.positiveReviews ?? 0})
+                <Icon mr="1" as={MdThumbUpOffAlt} />(
+                {business?.reviews?.positiveReviews ?? 0})
               </Text>
               <Text ml="4" as="span" fontWeight="500" color="red">
-                <Icon mr="1" as={MdThumbDownOffAlt} />({business?.statistics?.negativeReviews ?? 0})
+                <Icon mr="1" as={MdThumbDownOffAlt} />(
+                {business?.reviews?.negativeReviews ?? 0})
               </Text>
             </Flex>
             <Flex
@@ -141,7 +255,7 @@ export const BusinessBaseDrawer = ({ staff, onClose, children, ...props }: BaseD
                 <DrawerLink to={`${url}/live`} label={t('Live')} />
               )}
               <DrawerLink to={`${url}/status`} label={t('Status')} />
-              {isMarketplace && <DrawerLink to={`${url}/account`} label={t('Conta')} />}
+              <DrawerLink to={`${url}/account`} label={t('Conta')} />
             </Flex>
             {children}
           </DrawerBody>
@@ -149,10 +263,14 @@ export const BusinessBaseDrawer = ({ staff, onClose, children, ...props }: BaseD
             <Flex
               w="full"
               flexDir="row"
-              justifyContent={userCanUpdate && pageHasAction ? 'space-between' : 'flex-end'}
+              justifyContent={
+                userCanUpdate && pageHasAction ? 'space-between' : 'flex-end'
+              }
             >
               <Button
-                display={userCanUpdate && pageHasAction ? 'inline-flex' : 'none'}
+                display={
+                  userCanUpdate && pageHasAction ? 'inline-flex' : 'none'
+                }
                 width="full"
                 maxW={{ base: '160px', md: '240px' }}
                 fontSize={{ base: '13px', md: '15px' }}
@@ -162,16 +280,19 @@ export const BusinessBaseDrawer = ({ staff, onClose, children, ...props }: BaseD
               >
                 {t('Salvar alterações')}
               </Button>
-              <CustomButton
+              <Button
                 id="personification"
                 mt="0"
                 width="full"
                 maxW={{ base: '160px', md: '240px' }}
                 fontSize={{ base: '13px', md: '15px' }}
                 variant="secondary"
-                label={t('Personificar restaurante')}
-                link={'/app'}
-              />
+                onClick={handlePersonification}
+                isLoading={personificationStatus.isLoading}
+                loadingText={t('Carregando')}
+              >
+                {t('Personificar restaurante')}
+              </Button>
             </Flex>
           </DrawerFooter>
         </DrawerContent>

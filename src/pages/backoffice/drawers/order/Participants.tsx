@@ -1,10 +1,8 @@
 import { Issue, IssueType, Order, WithId } from '@appjusto/types';
 import { Box, Text } from '@chakra-ui/react';
 import { useOrderCourierRemoval } from 'app/api/order/useOrderCourierRemoval';
-import { useOrderDeliveryInfos } from 'app/api/order/useOrderDeliveryInfos';
 import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';
 import { useContextAppRequests } from 'app/state/requests/context';
-import { useContextServerTime } from 'app/state/server-time';
 import { DeliveryInfos } from 'pages/orders/drawers/orderdrawer/DeliveryInfos';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
@@ -13,16 +11,21 @@ interface ParticipantsProps {
   order?: WithId<Order> | null;
 }
 
+const activeOrderStatuses = ['confirmed', 'preparing', 'ready', 'dispatching'];
 const dropsFoodIssues = ['courier-drops-food-delivery'] as IssueType[];
 const dropsP2pIssues = ['courier-drops-p2p-delivery'] as IssueType[];
 
 export const Participants = ({ order }: ParticipantsProps) => {
   // context
   const { dispatchAppRequestResult } = useContextAppRequests();
-  const { getServerTime } = useContextServerTime();
-  const { isOrderActive } = useOrderDeliveryInfos(getServerTime, order);
-  const issues = useIssuesByType(order?.type === 'food' ? dropsFoodIssues : dropsP2pIssues);
+  const issues = useIssuesByType(
+    order?.type === 'food' ? dropsFoodIssues : dropsP2pIssues
+  );
   const { courierManualRemoval, removalResult } = useOrderCourierRemoval();
+  // helpers
+  const isOrderActive = order
+    ? activeOrderStatuses.includes(order?.status)
+    : false;
   // handlers
   const removeCourierFromOrder = (issue?: WithId<Issue>, comment?: string) => {
     if (!order?.id || !order?.courier?.id)
@@ -106,7 +109,14 @@ export const Participants = ({ order }: ParticipantsProps) => {
             isLoading={removalResult.isLoading}
           />
           <SectionTitle>{t('Frota')}</SectionTitle>
-          <Text mt="2" mb="10" fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+          <Text
+            mt="2"
+            mb="10"
+            fontSize="15px"
+            color="black"
+            fontWeight="700"
+            lineHeight="22px"
+          >
             {t('Nome:')}{' '}
             <Text as="span" fontWeight="500">
               {order?.fare?.fleet?.name ?? 'N/E'}
@@ -114,14 +124,18 @@ export const Participants = ({ order }: ParticipantsProps) => {
           </Text>
         </>
       )}
-      {isOrderActive && order?.fulfillment === 'delivery' ? (
-        <DeliveryInfos order={order!} isBackofficeDrawer />
-      ) : (
+      {order?.fulfillment === 'delivery' && (
         <>
-          <SectionTitle>{t('Destino do pedido')}</SectionTitle>
-          <Text mt="1" fontSize="15px" lineHeight="21px">
-            {order?.destination?.address.description ?? 'N/E'}
-          </Text>
+          {isOrderActive ? (
+            <DeliveryInfos order={order!} isBackofficeDrawer />
+          ) : (
+            <>
+              <SectionTitle>{t('Destino do pedido')}</SectionTitle>
+              <Text mt="1" fontSize="15px" lineHeight="21px">
+                {order?.destination?.address.description ?? 'N/E'}
+              </Text>
+            </>
+          )}
         </>
       )}
     </Box>

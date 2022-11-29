@@ -25,4 +25,5 @@ export const colors = {
   },
   yellow: '#FFE493',
   red: '#DC3545',
+  redLight: '#FFF8F8',
 };

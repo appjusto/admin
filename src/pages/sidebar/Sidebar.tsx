@@ -2,7 +2,6 @@ import { Badge, Box, Flex } from '@chakra-ui/react';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import Image from 'common/components/Image';
 import logo from 'common/img/logo.svg';
-import React from 'react';
 import { useRouteMatch } from 'react-router';
 import { BackOfficeLinks } from './BackOfficeLinks';
 import BusinessInfo from './BusinessInfo';
@@ -44,15 +43,22 @@ const Sidebar = () => {
   const { label, color, bg } = env ? envColors[env] : envColors['live'];
   // UI
   return (
-    <Box
+    <Flex
       position="relative"
       d={{ base: 'none', lg: 'block' }}
       w="220px"
       minW="220px"
       backgroundColor="#EEEEEE"
-      flexShrink={0}
+      flex={0}
     >
-      <Box position="fixed" top="4" w="220px" h="100vh" pb="24" overflowY="auto">
+      <Box
+        position="fixed"
+        top="4"
+        w="220px"
+        h="100vh"
+        pb="24"
+        overflowY="auto"
+      >
         <Flex mt="6" px="4" justifyContent="space-between" alignItems="center">
           <Box>
             <Image src={logo} eagerLoading height="40px" />
@@ -86,11 +92,10 @@ const Sidebar = () => {
             </Box>
           </Box>
         )}
+        {((!isBackOffice && !isBackofficeUser) ||
+          (isBackOffice && isBackofficeUser)) && <ManagerBar />}
       </Box>
-      {((!isBackOffice && !isBackofficeUser) || (isBackOffice && isBackofficeUser)) && (
-        <ManagerBar />
-      )}
-    </Box>
+    </Flex>
   );
 };
 

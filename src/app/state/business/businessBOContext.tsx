@@ -5,12 +5,15 @@ import {
   ManagerProfile,
   ManagerWithRole,
   MarketplaceAccountInfo,
-  WithId
+  WithId,
 } from '@appjusto/types';
 import * as cnpjutils from '@fnando/cnpj';
+import { useBusinessAndBankAccountBatch } from 'app/api/business/profile/useBusinessAndBankAccountBatch';
 import { useBusinessBankAccount } from 'app/api/business/profile/useBusinessBankAccount';
-import { useBusinessManagerAndBankAccountBatch } from 'app/api/business/profile/useBusinessManagerAndBankAccountBatch';
+import { useObserveBusinessProfile } from 'app/api/business/profile/useObserveBusinessProfile';
 import { useBusinessMarketPlace } from 'app/api/business/useBusinessMarketPlace';
+import { useGetManagers } from 'app/api/manager/useGetManagers';
+import { useManagerProfile } from 'app/api/manager/useManagerProfile';
 import { MutationResult } from 'app/api/mutation/useCustomMutation';
 import { BackofficeProfileValidation } from 'common/types';
 import { isEmpty, isEqual, pick } from 'lodash';
@@ -18,15 +21,16 @@ import { BusinessPhoneField } from 'pages/business-profile/business-phones';
 import React, { Dispatch, SetStateAction } from 'react';
 import { UseMutateAsyncFunction } from 'react-query';
 import { useParams } from 'react-router';
-import { useContextManagerProfile } from '../manager/context';
+import { getCEFAccountCode } from 'utils/functions';
 import { useContextAppRequests } from '../requests/context';
 import { businessBOReducer, businessBOState } from './businessBOReducer';
-import { useContextBusiness } from './context';
 import { bankingInfoIsEmpty, getValidationStatus } from './utils';
 
 const bankAccountSet = (bankAccount: BankAccount): boolean => {
   return (
-    !isEmpty(bankAccount.name) && !isEmpty(bankAccount.agency) && !isEmpty(bankAccount.account)
+    !isEmpty(bankAccount.name) &&
+    !isEmpty(bankAccount.agency) &&
+    !isEmpty(bankAccount.account)
   );
 };
 
@@ -42,7 +46,6 @@ interface BusinessBOContextProps {
     args?: number | { index: number; field: BusinessPhoneField; value: any }
   ): void;
   handleBusinessPhoneOrdering(newPhones: BusinessPhone[]): void;
-  // handleManagerProfileChange(key: string, value: any): void;
   handleBusinessAddressChange(key: string, value: any): void;
   handleBankingInfoChange(newBankAccount: Partial<BankAccount>): void;
   setContextValidation: Dispatch<SetStateAction<BackofficeProfileValidation>>;
@@ -51,11 +54,12 @@ interface BusinessBOContextProps {
   deleteMarketPlace: UseMutateAsyncFunction<void, unknown, void, unknown>;
   deleteMarketPlaceResult: MutationResult;
   businessManagers?: ManagerWithRole[];
-  setIsGetManagersActive: React.Dispatch<React.SetStateAction<boolean>>;
   fetchManagers(): void;
 }
 
-const BusinessBOContext = React.createContext<BusinessBOContextProps>({} as BusinessBOContextProps);
+const BusinessBOContext = React.createContext<BusinessBOContextProps>(
+  {} as BusinessBOContextProps
+);
 
 const businessKeys: (keyof Business)[] = [
   'accountManagerId',
@@ -80,6 +84,8 @@ const businessKeys: (keyof Business)[] = [
   'minimumOrder',
   'tags',
   'maxOrdersPerHour',
+  'minHoursForScheduledOrders',
+  'reviews',
 ];
 interface Props {
   children: React.ReactNode | React.ReactNode[];
@@ -93,43 +99,51 @@ export const BusinessBOProvider = ({ children }: Props) => {
   // context
   const { dispatchAppRequestResult } = useContextAppRequests();
   const { businessId } = useParams<Params>();
-  const {
-    business,
-    setBusinessId,
-    clearBusiness,
-    businessManagers,
-    setIsGetManagersActive,
-    fetchManagers,
-  } = useContextBusiness();
-  const { manager, setManagerEmail } = useContextManagerProfile();
-  const { bankAccount } = useBusinessBankAccount();
+  const business = useObserveBusinessProfile(businessId);
+  const { managers: businessManagers, fetchManagers } = useGetManagers(
+    businessId,
+    business?.managers,
+    true
+  );
+  const { manager, setManagerEmail } = useManagerProfile();
+  const { bankAccount } = useBusinessBankAccount(businessId);
   const { marketPlace, deleteMarketPlace, deleteMarketPlaceResult } =
     useBusinessMarketPlace(businessId);
-  const { updateBusinessManagerAndBankAccount, updateResult } =
-    useBusinessManagerAndBankAccountBatch();
+  const { updateBusinessAndBankAccount, updateResult } =
+    useBusinessAndBankAccountBatch(businessId);
   // state
-  const [state, dispatch] = React.useReducer(businessBOReducer, {} as businessBOState);
-  const [contextValidation, setContextValidation] = React.useState<BackofficeProfileValidation>({
-    cnpj: true,
-    profile: true,
-    cep: true,
-    address: true,
-    deliveryRange: true,
-    agency: true,
-    account: true,
-  });
+  const [state, dispatch] = React.useReducer(
+    businessBOReducer,
+    {} as businessBOState
+  );
+  const [contextValidation, setContextValidation] =
+    React.useState<BackofficeProfileValidation>({
+      cnpj: true,
+      profile: true,
+      cep: true,
+      address: true,
+      deliveryRange: true,
+      agency: true,
+      account: true,
+    });
   // handlers
-  const handleBusinessProfileChange = React.useCallback((key: string, value: any) => {
-    if (key === 'situation' && value === 'blocked') {
-      dispatch({
-        type: 'update_business',
-        payload: { situation: 'blocked', enabled: false, status: 'closed' },
-      });
-    } else dispatch({ type: 'update_business', payload: { [key]: value } });
-  }, []);
-  const handleBusinessAddressChange = React.useCallback((key: string, value: any) => {
-    dispatch({ type: 'update_business_address', payload: { [key]: value } });
-  }, []);
+  const handleBusinessProfileChange = React.useCallback(
+    (key: string, value: any) => {
+      if (key === 'situation' && value === 'blocked') {
+        dispatch({
+          type: 'update_business',
+          payload: { situation: 'blocked', enabled: false, status: 'closed' },
+        });
+      } else dispatch({ type: 'update_business', payload: { [key]: value } });
+    },
+    []
+  );
+  const handleBusinessAddressChange = React.useCallback(
+    (key: string, value: any) => {
+      dispatch({ type: 'update_business_address', payload: { [key]: value } });
+    },
+    []
+  );
   const handleBussinesPhonesChange = (
     operation: 'add' | 'remove' | 'update' | 'ordering',
     args?: number | { index: number; field: BusinessPhoneField; value: any }
@@ -141,7 +155,11 @@ export const BusinessBOProvider = ({ children }: Props) => {
     } else if (operation === 'update' && args && typeof args !== 'number') {
       return dispatch({
         type: 'update_business_phone',
-        payload: args as { index: number; field: BusinessPhoneField; value: any },
+        payload: args as {
+          index: number;
+          field: BusinessPhoneField;
+          value: any;
+        },
       });
     }
     dispatchAppRequestResult({
@@ -153,42 +171,50 @@ export const BusinessBOProvider = ({ children }: Props) => {
   const handleBusinessPhoneOrdering = (newPhones: BusinessPhone[]) => {
     return dispatch({ type: 'ordering_business_phone', payload: newPhones });
   };
-  // const handleManagerProfileChange = (key: string, value: any) => {
-  //   dispatch({ type: 'update_manager', payload: { [key]: value } });
-  // };
   const handleBankingInfoChange = (newBankAccount: Partial<BankAccount>) => {
     dispatch({ type: 'update_banking', payload: newBankAccount });
   };
   const handleSave = () => {
     if (state.businessProfile.situation === 'approved') {
-      const validation = getValidationStatus(contextValidation, dispatchAppRequestResult);
+      const validation = getValidationStatus(
+        contextValidation,
+        dispatchAppRequestResult
+      );
       if (!validation) return;
     }
     let businessChanges = null;
-    let managerChanges = null;
     let bankingChanges = null;
-    if (!isEqual(state.businessProfile, business))
+    if (!isEqual(state.businessProfile, business)) {
       businessChanges = pick(state.businessProfile, businessKeys);
-    // if (!isEqual(state.manager, manager)) managerChanges = state.manager;
-    if (!bankingInfoIsEmpty(state.bankingInfo) && !isEqual(state.bankingInfo, bankAccount))
-      bankingChanges = state.bankingInfo;
-    updateBusinessManagerAndBankAccount({ businessChanges, managerChanges, bankingChanges });
+    }
+    if (
+      !bankingInfoIsEmpty(state.bankingInfo) &&
+      !isEqual(state.bankingInfo, bankAccount)
+    ) {
+      let code = '';
+      if (state.bankingInfo.name === 'Caixa Econômica') {
+        code = getCEFAccountCode(
+          '104',
+          state.bankingInfo.personType,
+          state.bankingInfo.type
+        );
+      }
+      bankingChanges = {
+        ...state.bankingInfo,
+        accountFormatted: code + state.bankingInfo.accountFormatted,
+      };
+    }
+    updateBusinessAndBankAccount({
+      businessChanges,
+      bankingChanges,
+    });
   };
   // side effects
-  React.useEffect(() => {
-    clearBusiness();
-  }, [clearBusiness]);
-  React.useEffect(() => {
-    if (businessId) setBusinessId(businessId);
-  }, [businessId, setBusinessId]);
   React.useEffect(() => {
     if (business && business?.managers) {
       setManagerEmail(business?.managers[0] ?? null);
     } else setManagerEmail(null);
   }, [business, setManagerEmail]);
-  // React.useEffect(() => {
-  //   if (manager) dispatch({ type: 'load_manager', payload: manager });
-  // }, [manager]);
   React.useEffect(() => {
     if (bankAccount && bankAccountSet(bankAccount))
       dispatch({ type: 'update_banking', payload: bankAccount });
@@ -196,12 +222,6 @@ export const BusinessBOProvider = ({ children }: Props) => {
   React.useEffect(() => {
     if (business) dispatch({ type: 'load_business', payload: business });
   }, [business]);
-  // React.useEffect(() => {
-  //   if (state?.manager?.phone)
-  //     setContextValidation((prev) => ({ ...prev, phone: state.manager.phone?.length === 11 }));
-  //   if (state?.manager?.cpf)
-  //     setContextValidation((prev) => ({ ...prev, cpf: cpfutils.isValid(state.manager.cpf!) }));
-  // }, [state?.manager?.phone, state?.manager?.cpf]);
   React.useEffect(() => {
     if (state?.businessProfile?.cnpj) {
       setContextValidation((prev) => ({
@@ -212,7 +232,8 @@ export const BusinessBOProvider = ({ children }: Props) => {
   }, [state?.businessProfile?.cnpj]);
   React.useEffect(() => {
     if (state?.businessProfile) {
-      const { name, companyName, description, cuisine } = state?.businessProfile;
+      const { name, companyName, description, cuisine } =
+        state?.businessProfile;
       if (!name || !companyName || !description || !cuisine) {
         setContextValidation((prev) => ({
           ...prev,
@@ -277,7 +298,6 @@ export const BusinessBOProvider = ({ children }: Props) => {
         handleBusinessAddressChange,
         handleBussinesPhonesChange,
         handleBusinessPhoneOrdering,
-        // handleManagerProfileChange,
         handleBankingInfoChange,
         setContextValidation,
         handleSave,
@@ -285,7 +305,6 @@ export const BusinessBOProvider = ({ children }: Props) => {
         deleteMarketPlace,
         deleteMarketPlaceResult,
         businessManagers,
-        setIsGetManagersActive,
         fetchManagers,
       }}
     >

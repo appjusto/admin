@@ -1,23 +1,59 @@
 import { Business, Order, ProfileChange, WithId } from '@appjusto/types';
-import { Box, Circle, Flex, FlexProps, HStack, Text, VStack } from '@chakra-ui/react';
+import {
+  Box,
+  Center,
+  Circle,
+  Flex,
+  FlexProps,
+  HStack,
+  Text,
+  VStack,
+} from '@chakra-ui/react';
 import { ShowIf } from 'core/components/ShowIf';
 import React from 'react';
 import { BOBusinessListItem } from './BOBusinessListItem';
 import { BOOrderListItem } from './BOOrderListItem';
 import { BOProfileChangesListItem } from './BOProfileChangesListItem';
-import { StaffFilter, StaffFilterOptions } from './StaffFilter';
+import { FilterOptions, StaffFilter } from './StaffFilter';
 
-type ListType = 'orders' | 'businesses' | 'profile-changes';
+export type ListType =
+  | 'orders-unsafe'
+  | 'orders-warning'
+  | 'orders-issue'
+  | 'orders-watched'
+  | 'businesses'
+  | 'profile-changes';
+
+const renderList = (
+  data: WithId<Business>[] | WithId<Order>[] | WithId<ProfileChange>[],
+  listType: ListType
+) => {
+  if (listType === 'businesses') {
+    return (data as WithId<Business>[]).map((item) => (
+      <BOBusinessListItem key={item.id} business={item} />
+    ));
+  } else if (listType.includes('orders')) {
+    return (data as WithId<Order>[]).map((item) => (
+      <BOOrderListItem key={item.id} listType={listType} order={item} />
+    ));
+  } else {
+    return (data as WithId<ProfileChange>[]).map((item) => (
+      <BOProfileChangesListItem key={item.id} changes={item} />
+    ));
+  }
+};
 
 interface BOListProps extends FlexProps {
   title: string;
-  data: WithId<Business>[] | WithId<Order>[] | WithId<ProfileChange>[];
+  data: WithId<Order>[] | WithId<Business>[] | WithId<ProfileChange>[];
   dataLength?: number;
   listType: ListType;
   details?: string;
   infiniteScroll?: boolean;
-  staffFilter?: StaffFilterOptions;
-  handleStaffFilter?(value: StaffFilterOptions): void;
+  scrollTopLimit?: number;
+  filterOptions?: FilterOptions;
+  filterValue?: string[];
+  handleFilter?(value: string[]): void;
   loadData?(): void;
 }
 
@@ -28,33 +64,43 @@ export const BOList = ({
   listType,
   details,
   infiniteScroll = false,
-  staffFilter,
-  handleStaffFilter,
+  scrollTopLimit = 240,
+  filterOptions,
+  filterValue,
+  handleFilter,
   loadData,
   ...props
 }: BOListProps) => {
   // refs
   const listRef = React.useRef<HTMLDivElement>(null);
+  const listHeight = listType.includes('orders') ? '600px' : '300px';
   // helpers
-  const filterActive = staffFilter && staffFilter !== 'all';
+  const isFilter =
+    filterOptions !== undefined &&
+    filterValue !== undefined &&
+    handleFilter !== undefined;
   // side effects
   React.useEffect(() => {
     if (!infiniteScroll || !listRef.current || !loadData) return;
     const handleScrollTop = () => {
       if (listRef.current) {
-        let shouldLoad = listRef.current.scrollHeight - listRef.current.scrollTop < 240;
-        if (shouldLoad) loadData();
+        let shouldLoad =
+          listRef.current.scrollHeight - listRef.current.scrollTop <
+          scrollTopLimit;
+        if (shouldLoad) {
+          loadData();
+        }
       }
     };
     listRef.current.addEventListener('scroll', handleScrollTop);
     return () => document.removeEventListener('scroll', handleScrollTop);
-  }, [infiniteScroll, listRef, loadData]);
+  }, [infiniteScroll, scrollTopLimit, listRef, loadData]);
   // UI
   return (
     <Flex
       w="100%"
       position="relative"
-      h={listType === 'orders' ? '600px' : '300px'}
+      h={listHeight}
       borderRadius="lg"
       borderColor="gray.500"
       borderWidth="1px"
@@ -71,45 +117,47 @@ export const BOList = ({
         borderTopRadius="lg"
         borderBottomWidth="1px"
       >
-        <Flex alignItems="center" justifyContent={staffFilter ? 'space-between' : 'flex-start'}>
+        <Flex
+          alignItems="center"
+          justifyContent={isFilter ? 'space-between' : 'flex-start'}
+        >
           <HStack spacing={4}>
             <Circle minH="40px" minInlineSize="40px" px="1" bg="white">
               <Text fontSize="lg" color="black">
-                {filterActive && dataLength ? `${data.length}/${dataLength}` : data.length}
+                {data.length}
               </Text>
             </Circle>
-            <Text ml="4" fontSize={{ base: 'md', lg: 'lg' }} color="black" fontWeight="bold">
+            <Text
+              ml="4"
+              fontSize={{ base: 'md', lg: 'lg' }}
+              color="black"
+              fontWeight="bold"
+            >
               {title}
             </Text>
           </HStack>
-          {staffFilter && (
-            <StaffFilter currentValue={staffFilter} handleFilter={handleStaffFilter!} />
+          {isFilter && (
+            <StaffFilter
+              options={filterOptions!}
+              currentValue={filterValue!}
+              handleFilter={handleFilter!}
+            />
           )}
         </Flex>
       </Box>
-      <ShowIf test={data.length === 0 && Boolean(details)}>
+      <ShowIf test={data.length === 0}>
         {() => (
-          <Flex flex={1} p="6" alignItems="center" justifyContent="center">
-            <Text fontSize="sm" textColor="gray.700" align="center">
+          <Center ref={listRef} flex={1} p="4" overflowX="hidden">
+            <Text color="gray.600" textAlign="center">
               {details}
             </Text>
-          </Flex>
+          </Center>
         )}
       </ShowIf>
       <ShowIf test={data.length > 0}>
         {() => (
           <VStack ref={listRef} flex={1} p="4" overflowX="hidden">
-            {listType === 'businesses'
-              ? (data as WithId<Business>[]).map((item) => (
-                  <BOBusinessListItem key={item.id} business={item} />
-                ))
-              : listType === 'orders'
-              ? (data as WithId<Order>[]).map((item) => (
-                  <BOOrderListItem key={item.id} order={item} />
-                ))
-              : (data as WithId<ProfileChange>[]).map((item) => (
-                  <BOProfileChangesListItem key={item.id} changes={item} />
-                ))}
+            {renderList(data, listType)}
           </VStack>
         )}
       </ShowIf>

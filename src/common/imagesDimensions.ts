@@ -14,3 +14,10 @@ export const courierSelfieRatios = [1 / 1];
 export const courierSelfieResizedWidth = [600];
 export const courierDocRatios = [8.5 / 12];
 export const courierDocResizedWidth = [600];
+// banners
+export const bannerWebRatios = [980 / 180];
+export const bannerWebResizedWidth = [980];
+export const bannerMobileRatios = [320 / 100];
+export const bannerMobileResizedWidth = [320];
+export const bannerHeroRatios = [1 / 1];
+export const bannerHeroResizedWidth = [980];

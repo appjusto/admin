@@ -6,6 +6,7 @@ import {
   Issue,
   IssueType,
   PlatformAccess,
+  PlatformFees,
   PlatformParams,
   PlatformStatistics,
   WithId,
@@ -19,6 +20,7 @@ import {
   query,
   serverTimestamp,
   Unsubscribe,
+  updateDoc,
   where,
 } from 'firebase/firestore';
 import { hash } from 'geokit';
@@ -28,7 +30,9 @@ import FirebaseRefs from '../FirebaseRefs';
 export default class PlatformApi {
   constructor(private refs: FirebaseRefs) {}
   // firestore
-  observeStatistics(resultHandler: (result: PlatformStatistics) => void): Unsubscribe {
+  observeStatistics(
+    resultHandler: (result: PlatformStatistics) => void
+  ): Unsubscribe {
     const ref = this.refs.getPlatformStatisticsRef();
     const unsubscribe = onSnapshot(
       ref,
@@ -60,6 +64,11 @@ export default class PlatformApi {
     return unsubscribe;
   }
 
+  async updatePlatformAccess(changes: Partial<PlatformAccess>) {
+    const ref = this.refs.getPlatformAccessRef();
+    return updateDoc(ref, changes);
+  }
+
   observeFlaggedLocations(
     resultHandler: (locations: WithId<FlaggedLocation>[] | null) => void
   ): Unsubscribe {
@@ -67,7 +76,8 @@ export default class PlatformApi {
     const unsubscribe = onSnapshot(
       ref,
       (querySnapShot) => {
-        if (!querySnapShot.empty) resultHandler(documentsAs<FlaggedLocation>(querySnapShot.docs));
+        if (!querySnapShot.empty)
+          resultHandler(documentsAs<FlaggedLocation>(querySnapShot.docs));
         else resultHandler(null);
       },
       (error) => {
@@ -84,6 +94,20 @@ export default class PlatformApi {
       ref,
       (snapshot) => {
         if (snapshot.exists()) resultHandler(snapshot.data() as PlatformParams);
+        else resultHandler(null);
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+  }
+
+  observeFees(resultHandler: (fees: PlatformFees | null) => void) {
+    const ref = this.refs.getPlatformFeesRef();
+    return onSnapshot(
+      ref,
+      (snapshot) => {
+        if (snapshot.exists()) resultHandler(snapshot.data() as PlatformFees);
         else resultHandler(null);
       },
       (error) => {
@@ -121,9 +145,16 @@ export default class PlatformApi {
   }
 
   async fetchCuisines() {
-    const q = query(this.refs.getCuisinesRef(), orderBy('order', 'asc'));
-    const data = await getDocs(q);
-    return documentsAs<Cuisine>(data.docs);
+    try {
+      const q = query(this.refs.getCuisinesRef(), orderBy('name', 'asc'));
+      const data = await getDocs(q);
+      return documentsAs<Cuisine>(data.docs).sort(function (a, b) {
+        return a.name.localeCompare(b.name);
+      });
+    } catch (error) {
+      console.error(error);
+      return documentsAs<Cuisine>([]);
+    }
   }
 
   async fetchClassifications() {
@@ -146,7 +177,7 @@ export default class PlatformApi {
 
   async getServerTime(): Promise<number> {
     try {
-      const result = ((await this.refs.getServerTimeCallable()()) as unknown) as {
+      const result = (await this.refs.getServerTimeCallable()()) as unknown as {
         data: { time: number };
       };
       return result.data.time;

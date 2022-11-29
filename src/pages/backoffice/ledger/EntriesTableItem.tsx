@@ -1,11 +1,8 @@
 import { LedgerEntry, WithId } from '@appjusto/types';
-import { Link, Td, Tr } from '@chakra-ui/react';
-import { CustomButton } from 'common/components/buttons/CustomButton';
+import TableItem from 'common/components/backoffice/TableItem';
 import { useRouteMatch } from 'react-router';
-import { Link as RouterLink } from 'react-router-dom';
 import { formatCurrency } from 'utils/formatters';
 import { getDateAndHour } from 'utils/functions';
-import { t } from 'utils/i18n';
 import { ledgerEntryStatusPTOptions } from '../utils';
 
 interface ItemProps {
@@ -17,24 +14,22 @@ export const EntriesTableItem = ({ entry }: ItemProps) => {
   const { path } = useRouteMatch();
   // UI
   return (
-    <Tr color="black" fontSize="15px" lineHeight="21px">
-      <Td>
-        <Link as={RouterLink} to={`/backoffice/orders/${entry.orderId}`}>
-          {entry.orderId ?? 'N/E'}
-        </Link>
-      </Td>
-      <Td>{getDateAndHour(entry.createdOn)}</Td>
-      <Td>{entry.status ? ledgerEntryStatusPTOptions[entry.status] : 'N/E'}</Td>
-      <Td>{formatCurrency(entry.value)}</Td>
-      <Td>
-        <CustomButton
-          mt="0"
-          variant="outline"
-          label={t('Detalhes')}
-          link={`${path}/${entry.id}`}
-          size="sm"
-        />
-      </Td>
-    </Tr>
+    <TableItem
+      key={entry.id}
+      link={`${path}/${entry.id}`}
+      columns={[
+        {
+          value: entry.orderId ? entry.orderId : 'N/E',
+          styles: { maxW: '120px' },
+        },
+        { value: getDateAndHour(entry.createdOn) },
+        {
+          value: entry.status
+            ? ledgerEntryStatusPTOptions[entry.status]
+            : 'N/E',
+        },
+        { value: formatCurrency(entry.value), styles: { isNumeric: true } },
+      ]}
+    />
   );
 };

@@ -1,15 +1,21 @@
+import { isElectron } from '@firebase/util';
 import { useMeasurement } from 'app/api/measurement/useMeasurement';
-// import ReactPixel from 'react-facebook-pixel';
 import React from 'react';
+import { fbqConsent, fbqPageView, fbqTrackEvent } from './fpixel';
+
+const isDesktopApp = isElectron();
 
 type ConsentResponse = 'accepted' | 'refused' | 'pending';
 
 interface ContextProps {
   userConsent?: ConsentResponse;
   handleUserConsent(value: ConsentResponse): void;
+  handlePixelEvent(event: string, options?: object): void;
 }
 
-const MeasurementContext = React.createContext<ContextProps>({} as ContextProps);
+const MeasurementContext = React.createContext<ContextProps>(
+  {} as ContextProps
+);
 
 interface Props {
   children: React.ReactNode | React.ReactNode[];
@@ -25,24 +31,39 @@ export const MeasurementProvider = ({ children }: Props) => {
     localStorage.setItem('appjusto-consent', response);
     setUserConsent(response);
   }, []);
+  const handlePixelEvent = React.useCallback(
+    (name: string, options?: object) => {
+      if (userConsent !== 'accepted' || isDesktopApp) return;
+      if (name === 'pageView') {
+        fbqPageView();
+      } else {
+        fbqTrackEvent(name, options);
+      }
+    },
+    [userConsent]
+  );
   // side effects
   React.useEffect(() => {
     const consent = localStorage.getItem('appjusto-consent');
-    if (consent === 'true' || consent === 'accepted') setUserConsent('accepted');
-    else if (consent === 'false' || consent === 'refused') setUserConsent('refused');
+    if (consent === 'true' || consent === 'accepted')
+      setUserConsent('accepted');
+    else if (consent === 'false' || consent === 'refused')
+      setUserConsent('refused');
     else setUserConsent('pending');
   }, []);
   React.useEffect(() => {
-    //if(!analytics) return;
-    if (!userConsent) return;
-    if (process.env.NODE_ENV !== 'production') return;
+    if (userConsent !== 'accepted' || process.env.NODE_ENV === 'development') {
+      fbqConsent('revoke');
+      return;
+    }
+    fbqConsent('grant');
     setAnalyticsConsent();
-    // const PixelId = process.env.REACT_APP_FACEBOOK_PIXEL_ID;
-    // if (PixelId) ReactPixel.init(PixelId);
   }, [userConsent, setAnalyticsConsent]);
   // provider
   return (
-    <MeasurementContext.Provider value={{ userConsent, handleUserConsent }}>
+    <MeasurementContext.Provider
+      value={{ userConsent, handleUserConsent, handlePixelEvent }}
+    >
       {children}
     </MeasurementContext.Provider>
   );

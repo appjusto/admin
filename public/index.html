@@ -5,7 +5,10 @@
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
-    <meta name="description" content="Unidos por um delivery com regras e taxas justas para todos" />
+    <meta
+      name="description"
+      content="Unidos por um delivery com regras e taxas justas para todos"
+    />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     <!-- <meta
      http-equiv="Content-Security-Policy"
@@ -31,6 +34,40 @@
       rel="stylesheet"
     />
     <title>Seu Restaurante no AppJusto!</title>
+    <script>
+      !(function (f, b, e, v, n, t, s) {
+        if (f.fbq) return;
+        n = f.fbq = function () {
+          n.callMethod
+            ? n.callMethod.apply(n, arguments)
+            : n.queue.push(arguments);
+        };
+        if (!f._fbq) f._fbq = n;
+        n.push = n;
+        n.loaded = !0;
+        n.version = '2.0';
+        n.queue = [];
+        t = b.createElement(e);
+        t.async = !0;
+        t.src = v;
+        s = b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t, s);
+      })(
+        window,
+        document,
+        'script',
+        'https://connect.facebook.net/en_US/fbevents.js'
+      );
+      fbq('init', '949654075906261');
+      fbq('track', 'PageView');
+    </script>
+    <noscript
+      ><img
+        height="1"
+        width="1"
+        style="display: none"
+        src="https://www.facebook.com/tr?id=949654075906261&ev=PageView&noscript=1"
+    /></noscript>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
@@ -46,5 +83,8 @@
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
   </body>
-  <script id="Freshchat-js-sdk" src="https://wchat.freshchat.com/js/widget.js"></script>
+  <script
+    id="Freshchat-js-sdk"
+    src="https://wchat.freshchat.com/js/widget.js"
+  ></script>
 </html>

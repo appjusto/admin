@@ -1,6 +1,12 @@
-import { BusinessRecommendation, ConsumerProfile, ProfileNote, WithId } from '@appjusto/types';
+import {
+  BusinessRecommendation,
+  ConsumerProfile,
+  ProfileNote,
+  WithId,
+} from '@appjusto/types';
 import * as Sentry from '@sentry/react';
 import { documentAs, documentsAs, FirebaseDocument } from 'core/fb';
+import { FirebaseError } from 'firebase/app';
 import {
   addDoc,
   deleteDoc,
@@ -19,7 +25,11 @@ import {
 } from 'firebase/firestore';
 import FilesApi from '../FilesApi';
 import FirebaseRefs from '../FirebaseRefs';
-import { customCollectionSnapshot, customDocumentSnapshot, queryLimit } from '../utils';
+import {
+  customCollectionSnapshot,
+  customDocumentSnapshot,
+  queryLimit,
+} from '../utils';
 
 export default class ConsumerApi {
   constructor(private refs: FirebaseRefs, private files: FilesApi) {}
@@ -28,7 +38,10 @@ export default class ConsumerApi {
     resultHandler: (consumers: WithId<ConsumerProfile>[]) => void,
     start: Date
   ): Unsubscribe {
-    const q = query(this.refs.getConsumersRef(), where('createdOn', '>=', start));
+    const q = query(
+      this.refs.getConsumersRef(),
+      where('createdOn', '>=', start)
+    );
     // returns the unsubscribe function
     return customCollectionSnapshot(q, resultHandler);
   }
@@ -63,15 +76,26 @@ export default class ConsumerApi {
     );
     // search
     if (startAfterDoc) q = query(q, startAfter(startAfterDoc));
-    if (search) q = query(q, where('recommendedBusiness.address.main', '==', search));
+    if (search)
+      q = query(q, where('recommendedBusiness.address.main', '==', search));
     // filters
-    if (start && end) q = query(q, where('createdOn', '>=', start), where('createdOn', '<=', end));
+    if (start && end)
+      q = query(
+        q,
+        where('createdOn', '>=', start),
+        where('createdOn', '<=', end)
+      );
     // fetch
     getDocs(q)
       .then((querySnapshot) => {
         const last =
-          querySnapshot.docs.length > 0 ? querySnapshot.docs[querySnapshot.size - 1] : undefined;
-        resultHandler(documentsAs<BusinessRecommendation>(querySnapshot.docs), last);
+          querySnapshot.docs.length > 0
+            ? querySnapshot.docs[querySnapshot.size - 1]
+            : undefined;
+        resultHandler(
+          documentsAs<BusinessRecommendation>(querySnapshot.docs),
+          last
+        );
       })
       .catch((error) => {
         console.error(error);
@@ -86,8 +110,18 @@ export default class ConsumerApi {
   }
 
   async getConsumerIdByCode(consumerCode: string) {
-    const q = query(this.refs.getConsumersRef(), where('code', '==', consumerCode));
-    const consumerId = await getDocs(q).then((snapshot) => snapshot.docs[0].id);
+    const q = query(
+      this.refs.getConsumersRef(),
+      where('code', '==', consumerCode)
+    );
+    const consumerId = await getDocs(q).then((snapshot) => {
+      if (!snapshot.empty) return snapshot.docs[0].id;
+      else
+        throw new FirebaseError(
+          'ignored-error',
+          'Não foi possível encontrar o consumidor.'
+        );
+    });
     return consumerId;
   }
 
@@ -100,7 +134,10 @@ export default class ConsumerApi {
     consumerId: string,
     resultHandler: (result: WithId<ProfileNote>[]) => void
   ): Unsubscribe {
-    const q = query(this.refs.getConsumerProfileNotesRef(consumerId), orderBy('createdOn', 'desc'));
+    const q = query(
+      this.refs.getConsumerProfileNotesRef(consumerId),
+      orderBy('createdOn', 'desc')
+    );
     // returns the unsubscribe function
     return customCollectionSnapshot(q, resultHandler);
   }
@@ -120,14 +157,19 @@ export default class ConsumerApi {
     changes: Partial<ProfileNote>
   ) {
     const timestamp = serverTimestamp();
-    await updateDoc(this.refs.getConsumerProfileNoteRef(consumerId, profileNoteId), {
-      ...changes,
-      updatedOn: timestamp,
-    } as Partial<ProfileNote>);
+    await updateDoc(
+      this.refs.getConsumerProfileNoteRef(consumerId, profileNoteId),
+      {
+        ...changes,
+        updatedOn: timestamp,
+      } as Partial<ProfileNote>
+    );
   }
 
   async deleteProfileNote(consumerId: string, profileNoteId: string) {
-    await deleteDoc(this.refs.getConsumerProfileNoteRef(consumerId, profileNoteId));
+    await deleteDoc(
+      this.refs.getConsumerProfileNoteRef(consumerId, profileNoteId)
+    );
   }
 
   // consumer profile picture
@@ -144,7 +186,11 @@ export default class ConsumerApi {
   }
 
   // selfie
-  selfieUpload(consumerId: string, file: File, progressHandler?: (progress: number) => void) {
+  selfieUpload(
+    consumerId: string,
+    file: File,
+    progressHandler?: (progress: number) => void
+  ) {
     return this.files.upload(
       file,
       this.refs.getConsumerSelfieStoragePath(consumerId),
@@ -153,7 +199,11 @@ export default class ConsumerApi {
   }
 
   // document
-  documentUpload(consumerId: string, file: File, progressHandler?: (progress: number) => void) {
+  documentUpload(
+    consumerId: string,
+    file: File,
+    progressHandler?: (progress: number) => void
+  ) {
     return this.files.upload(
       file,
       this.refs.getConsumerDocumentStoragePath(consumerId),
@@ -178,7 +228,8 @@ export default class ConsumerApi {
       // logo
       if (selfieFile) await this.selfieUpload(consumerId, selfieFile, () => {});
       //cover
-      if (documentFile) await this.documentUpload(consumerId, documentFile, () => {});
+      if (documentFile)
+        await this.documentUpload(consumerId, documentFile, () => {});
     } catch (error) {
       Sentry.captureException(error);
       throw error;

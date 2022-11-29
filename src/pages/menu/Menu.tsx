@@ -1,5 +1,14 @@
-import { Box, Flex, HStack, Icon, Input, InputGroup, InputRightElement } from '@chakra-ui/react';
+import {
+  Box,
+  Flex,
+  HStack,
+  Icon,
+  Input,
+  InputGroup,
+  InputRightElement,
+} from '@chakra-ui/react';
 import { useContextFirebaseUser } from 'app/state/auth/context';
+import { useContextBusiness } from 'app/state/business/context';
 import { useContextMenu } from 'app/state/menu/context';
 import { FilterText } from 'common/components/backoffice/FilterText';
 import { NewFeatureBox } from 'common/components/NewFeatureBox';
@@ -18,14 +27,17 @@ import { GroupDrawer } from './drawers/GroupDrawer';
 import { GroupDuplicationDrawer } from './drawers/GroupDuplicationDrawer';
 import { MessageDrawer } from './drawers/MessageDrawer';
 import { ProductDrawer } from './drawers/ProductDrawer';
+import { ImportMenuCard } from './ImportMenuCard';
 import { MainButtons } from './MainButtons';
 
 const Menu = () => {
   // context
-  const { userAbility } = useContextFirebaseUser();
   const { path } = useRouteMatch();
   const history = useHistory();
-  const { setIsMenuActive, isProductsPage, setIsProductPage } = useContextMenu();
+  const { userAbility, isBackofficeUser } = useContextFirebaseUser();
+  const { business } = useContextBusiness();
+  const { setIsMenuActive, isProductsPage, setIsProductPage } =
+    useContextMenu();
   // state
   const [productSearch, setProductSearch] = React.useState('');
   // helpers
@@ -40,11 +52,19 @@ const Menu = () => {
   return (
     <Box>
       <Box pb="10">
-        <PageHeader title={t('Cardápio')} subtitle={t('Defina o cardápio do seu restaurante.')} />
+        <PageHeader
+          title={t('Cardápio')}
+          subtitle={t('Defina o cardápio do seu restaurante.')}
+        />
+        {isBackofficeUser && business?.situation !== 'approved' && (
+          <ImportMenuCard businessId={business?.id} />
+        )}
         <NewFeatureBox
           icon={BsChat}
           title={t('Adicionar mensagem para seus clientes')}
-          description={t('Adicione uma mensagem fixa como primeiro item dentro do seu cardápio.')}
+          description={t(
+            'Adicione uma mensagem fixa como primeiro item dentro do seu cardápio.'
+          )}
           link={`${path}/message`}
           btnLabel={t('Adicionar mensagem')}
           isNew={false}
@@ -80,13 +100,20 @@ const Menu = () => {
           mt="2"
           mb="8"
         >
-          <MainButtons isProducts={isProductsPage} display={isMenuCreator ? 'flex' : 'none'} />
+          <MainButtons
+            isProducts={isProductsPage}
+            display={isMenuCreator ? 'flex' : 'none'}
+          />
           <InputGroup maxW="360px">
             <Input
               size="lg"
               mt="16px"
               value={productSearch}
-              placeholder={isProductsPage ? t('Encontre um produto') : t('Encontre um complemento')}
+              placeholder={
+                isProductsPage
+                  ? t('Encontre um produto')
+                  : t('Encontre um complemento')
+              }
               onChange={(ev) => setProductSearch(ev.target.value)}
             />
             <InputRightElement

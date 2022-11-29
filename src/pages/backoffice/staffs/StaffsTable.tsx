@@ -1,6 +1,5 @@
 import { StaffProfile, WithId } from '@appjusto/types';
 import { Box, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
-import React from 'react';
 import { t } from 'utils/i18n';
 import { StaffsTableItem } from './StaffsTableItem';
 
@@ -16,18 +15,16 @@ export const StaffsTable = ({ staffs }: StaffsTableProps) => {
         <Thead>
           <Tr>
             <Th>{t('E-mail')}</Th>
+            <Th>{t('Adicionado em')}</Th>
             <Th>{t('Situação')}</Th>
             <Th>{t('Nome')}</Th>
             <Th>{t('Telefone')}</Th>
-            <Th>{t('Adicionado em')}</Th>
-            <Th></Th>
           </Tr>
         </Thead>
         <Tbody>
           {staffs === undefined ? (
             <Tr color="black" fontSize="xs" fontWeight="700">
               <Td>{t('Carregando agentes...')}</Td>
-              <Td></Td>
               <Td></Td>
               <Td></Td>
               <Td></Td>
@@ -40,7 +37,6 @@ export const StaffsTable = ({ staffs }: StaffsTableProps) => {
           ) : (
             <Tr color="black" fontSize="xs" fontWeight="700">
               <Td>{t('Não há agentes adicionados.')}</Td>
-              <Td></Td>
               <Td></Td>
               <Td></Td>
               <Td></Td>

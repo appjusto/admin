@@ -1,7 +1,6 @@
 import { ComplementGroup, WithId } from '@appjusto/types';
-import { Box, Flex, RadioGroup, Text } from '@chakra-ui/react';
+import { Box, Flex, Radio, RadioGroup, Text } from '@chakra-ui/react';
 import { useContextMenu } from 'app/state/menu/context';
-import CustomRadio from 'common/components/form/CustomRadio';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import React from 'react';
 import { t } from 'utils/i18n';
@@ -17,7 +16,12 @@ interface GroupFormProps {
 
 type RequiredOptions = 'Obrigatório' | 'Opcional';
 
-export const GroupForm = ({ atDrawer = false, groupId, groupData, onSuccess }: GroupFormProps) => {
+export const GroupForm = ({
+  atDrawer = false,
+  groupId,
+  groupData,
+  onSuccess,
+}: GroupFormProps) => {
   // context
   const {
     updateComplementsGroup,
@@ -59,7 +63,8 @@ export const GroupForm = ({ atDrawer = false, groupId, groupData, onSuccess }: G
     }
     if (field === 'max') {
       if (action === 'inc') setMax((prev) => prev + 1);
-      else if (action === 'dec') setMax((prev) => (prev > 1 && prev > minimum ? prev - 1 : prev));
+      else if (action === 'dec')
+        setMax((prev) => (prev > 1 && prev > minimum ? prev - 1 : prev));
     }
   };
   const handleSubmit = async () => {
@@ -113,7 +118,9 @@ export const GroupForm = ({ atDrawer = false, groupId, groupData, onSuccess }: G
         <Text mt="8" fontSize="xl" color="black">
           {t('Obrigatoriedade')}
         </Text>
-        <Text fontSize="sm">{t('Esse grupo é necessário para o pedido do prato?')}</Text>
+        <Text fontSize="sm">
+          {t('Esse grupo é necessário para o pedido do prato?')}
+        </Text>
         <RadioGroup
           onChange={(value) => handleIsRequired(value as RequiredOptions)}
           value={required ? 'Obrigatório' : 'Opcional'}
@@ -122,18 +129,24 @@ export const GroupForm = ({ atDrawer = false, groupId, groupData, onSuccess }: G
           color="black"
         >
           <Flex mt="2" flexDir="column" justifyContent="flex-start">
-            <CustomRadio mt="2" value="Opcional">
-              {t('Opcional: o cliente pode ou não selecionar itens desse grupo')}
-            </CustomRadio>
-            <CustomRadio mt="2" value="Obrigatório">
-              {t('Obrigatório: o cliente deve selecionar 1 ou mais itens desse grupo')}
-            </CustomRadio>
+            <Radio mt="2" value="Opcional">
+              {t(
+                'Opcional: o cliente pode ou não selecionar itens desse grupo'
+              )}
+            </Radio>
+            <Radio mt="2" value="Obrigatório">
+              {t(
+                'Obrigatório: o cliente deve selecionar 1 ou mais itens desse grupo'
+              )}
+            </Radio>
           </Flex>
         </RadioGroup>
         <Text mt="8" fontSize="xl" color="black">
           {t('Quantidade')}
         </Text>
-        <Text fontSize="sm">{t('Quantos itens podem ser selecionados pelos clientes?')}</Text>
+        <Text fontSize="sm">
+          {t('Quantos itens podem ser selecionados pelos clientes?')}
+        </Text>
         <Flex mt="4" flexDir="row" justifyContent="flex-start">
           <ItemsQtdButtons
             isDisabled={!required}

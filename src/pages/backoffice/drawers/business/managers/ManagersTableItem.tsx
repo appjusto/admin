@@ -1,6 +1,17 @@
 import { AdminRole, ManagerWithRole } from '@appjusto/types';
-import { Box, Button, HStack, Link, Select, Td, Text, Tooltip, Tr } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  HStack,
+  Link,
+  Select,
+  Td,
+  Text,
+  Tooltip,
+  Tr,
+} from '@chakra-ui/react';
 import { useContextFirebaseUser } from 'app/state/auth/context';
+import { AppVersionLabel } from 'common/components/backoffice/AppVersionLabel';
 import { CancelButton } from 'common/components/buttons/CancelButton';
 import { CheckButton } from 'common/components/buttons/CheckButton';
 import { DeleteButton } from 'common/components/buttons/DeleteButton';
@@ -9,7 +20,6 @@ import { adminRolePTOptions } from 'pages/backoffice/utils';
 import React from 'react';
 import { Link as RouterLink, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
-import { getAppVersionLabelColor } from 'utils/version';
 
 interface ManagersTableItemProps {
   manager: ManagerWithRole;
@@ -36,8 +46,6 @@ export const ManagersTableItem = ({
   const [role, setRole] = React.useState<AdminRole>();
   const [isDeleting, setIsDeleting] = React.useState(false);
   const [isUpdating, setIsUpdating] = React.useState(false);
-  //helpers
-  const versionLabelColor = getAppVersionLabelColor(minVersion, manager.appVersion);
   // handlers
   const handleCancelUpdate = () => {
     setIsUpdating(false);
@@ -56,7 +64,13 @@ export const ManagersTableItem = ({
   // UI
   if (isDeleting) {
     return (
-      <Tr color="black" fontSize="sm" h="66px" bg="rgba(254, 215, 215, 0.3)" pos="relative">
+      <Tr
+        color="black"
+        fontSize="sm"
+        h="66px"
+        bg="rgba(254, 215, 215, 0.3)"
+        pos="relative"
+      >
         <Td>{manager.email}</Td>
         <Td position="relative">
           <Box position="absolute" top="2">
@@ -77,6 +91,7 @@ export const ManagersTableItem = ({
             </HStack>
           </Box>
         </Td>
+        <Td></Td>
         <Td></Td>
       </Tr>
     );
@@ -100,7 +115,11 @@ export const ManagersTableItem = ({
           <Box position="absolute" top="1" minW="154px">
             <Text>{t('Confirmar atualização?')}</Text>
             <HStack mt="1" spacing={2}>
-              <Tooltip placement="top" label={t('Cancelar')} aria-label={t('cancelar-edicao')}>
+              <Tooltip
+                placement="top"
+                label={t('Cancelar')}
+                aria-label={t('cancelar-edicao')}
+              >
                 <CancelButton w="full" onClick={handleCancelUpdate} />
               </Tooltip>
               <Tooltip
@@ -136,18 +155,24 @@ export const ManagersTableItem = ({
       </Td>
       <Td>{adminRolePTOptions[manager.role as AdminRole]}</Td>
       <Td>
-        <Text as="span" color={versionLabelColor}>
-          {manager?.webAppVersion ?? 'N/E'}
-        </Text>
-        {' / '}
-        <Text as="span">{manager?.appVersion ?? 'N/E'}</Text>
+        (<AppVersionLabel type="businessWeb" version={manager?.webAppVersion} />
+        )/(
+        <AppVersionLabel type="businessApp" version={manager?.appVersion} />)
       </Td>
       {userAbility?.can('update', 'businesses') ? (
         <Td>
-          <Tooltip placement="top" label={t('Editar')} aria-label={t('editar-colaborador')}>
+          <Tooltip
+            placement="top"
+            label={t('Editar')}
+            aria-label={t('editar-colaborador')}
+          >
             <EditButton onClick={() => setIsUpdating(true)} />
           </Tooltip>
-          <Tooltip placement="top" label={t('Remover')} aria-label={t('remover-colaborador')}>
+          <Tooltip
+            placement="top"
+            label={t('Remover')}
+            aria-label={t('remover-colaborador')}
+          >
             <DeleteButton onClick={() => setIsDeleting(true)} />
           </Tooltip>
         </Td>

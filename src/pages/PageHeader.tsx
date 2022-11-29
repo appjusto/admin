@@ -1,5 +1,4 @@
 import { Box, Flex, Heading, Text, TextProps } from '@chakra-ui/react';
-import React from 'react';
 import { t } from 'utils/i18n';
 import packageInfo from '../../package.json';
 const version = packageInfo.version;
@@ -19,7 +18,13 @@ const PageHeader = ({ title, subtitle, showVersion, ...props }: Props) => {
           {title}
         </Heading>
         {showVersion && (
-          <Text mt="4" fontSize="11px" lineHeight="18px" fontWeight="700" letterSpacing="0.6px">
+          <Text
+            mt="4"
+            fontSize="11px"
+            lineHeight="18px"
+            fontWeight="700"
+            letterSpacing="0.6px"
+          >
             {t(`VERSÃO: ${version ?? 'N/E'}`)}
           </Text>
         )}

@@ -2,6 +2,7 @@ import { BusinessAddress } from '@appjusto/types';
 import { useContextApi } from 'app/state/api/context';
 import { fetchCEPInfo } from 'core/api/thirdparty/viacep';
 import { isEqual, omit } from 'lodash';
+import React from 'react';
 import { useQuery } from 'react-query';
 
 export const useCepAndGeocode = (
@@ -10,6 +11,8 @@ export const useCepAndGeocode = (
 ) => {
   // context
   const api = useContextApi();
+  // state
+  const [geocodingQueryStatus, setGeocodingQueryStatus] = React.useState(false);
   // helpers
   let shouldFetchNewData = true;
   const partialSavedAddress = omit(savedAddress, 'latlng');
@@ -34,20 +37,35 @@ export const useCepAndGeocode = (
   // geocoding
   const geocode = () => {
     if (!stateAddress) return;
+    if (!number) return;
     if (shouldFetchNewData) {
       console.log('Fetching new data');
       return api
         .maps()
-        .googleGeocode(`${address}, ${number}, ${neighborhood} - ${city} - ${state}`);
+        .googleGeocode(
+          `${address}, ${number}, ${neighborhood} - ${city} - ${state}`
+        );
     } else return savedAddress!.latlng;
   };
   const { data: geocodingResult } = useQuery(
     ['geocoding', address, number, neighborhood, city, state],
     geocode,
     {
-      enabled: address?.length > 0 && number!.length > 0,
+      enabled: geocodingQueryStatus,
     }
   );
+  // side effects
+  React.useEffect(() => {
+    let timeout: NodeJS.Timeout;
+    if (address?.length > 0 && number!.length > 0) {
+      timeout = setTimeout(() => {
+        setGeocodingQueryStatus(true);
+      }, 1500);
+    } else {
+      setGeocodingQueryStatus(false);
+    }
+    return () => clearTimeout(timeout);
+  }, [address, number]);
   // result
   return { cepResult, geocodingResult };
 };

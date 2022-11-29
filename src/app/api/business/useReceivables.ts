@@ -1,12 +1,13 @@
-import { useContextApi } from 'app/state/api/context';
 import { IuguMarketplaceAccountReceivables } from '@appjusto/types/payment/iugu';
+import { useContextApi } from 'app/state/api/context';
 import React from 'react';
 
 export const useReceivables = (businessId?: string) => {
   // context
   const api = useContextApi();
   // state
-  const [receivables, setReceivables] = React.useState<IuguMarketplaceAccountReceivables>();
+  const [receivables, setReceivables] =
+    React.useState<IuguMarketplaceAccountReceivables>();
   // side effects
   React.useEffect(() => {
     if (!businessId) return;

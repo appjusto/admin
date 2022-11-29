@@ -1,11 +1,19 @@
 import { AdminRole, ManagerWithRole } from '@appjusto/types';
-import { Box, Button, HStack, RadioGroup, Td, Text, Tr } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  HStack,
+  Radio,
+  RadioGroup,
+  Td,
+  Text,
+  Tr,
+} from '@chakra-ui/react';
 import { useContextFirebaseUser } from 'app/state/auth/context';
-import CustomRadio from 'common/components/form/CustomRadio';
+import { AppVersionLabel } from 'common/components/backoffice/AppVersionLabel';
 import React from 'react';
 import { formatDate, formatTime } from 'utils/formatters';
 import { t } from 'utils/i18n';
-import { getAppVersionLabelColor } from 'utils/version';
 interface TeamTableItemProps {
   manager: ManagerWithRole;
   minVersion?: string | null;
@@ -33,8 +41,6 @@ export const TeamTableItem = ({
   // helpers
   const userIsOwner = userAbility?.can('delete', 'businesses');
   const userCanUpdate = userAbility?.can('update', { kind: 'managers', role });
-  const versionLabelColor = getAppVersionLabelColor(minVersion, manager.appVersion);
-  // haldlers
   // side effects
   React.useEffect(() => {
     if (!manager.role) return;
@@ -58,7 +64,13 @@ export const TeamTableItem = ({
   // UI
   if (isDeleting) {
     return (
-      <Tr color="black" fontSize="sm" h="66px" bg="rgba(254, 215, 215, 0.3)" pos="relative">
+      <Tr
+        color="black"
+        fontSize="sm"
+        h="66px"
+        bg="rgba(254, 215, 215, 0.3)"
+        pos="relative"
+      >
         <Td>{manager.email}</Td>
         <Td isNumeric>{t('Confirmar exclusão?')}</Td>
         <Td position="relative">
@@ -79,6 +91,7 @@ export const TeamTableItem = ({
             </HStack>
           </Box>
         </Td>
+        <Td></Td>
         <Td></Td>
       </Tr>
     );
@@ -103,9 +116,9 @@ export const TeamTableItem = ({
               fontSize="16px"
               lineHeight="22px"
             >
-              <CustomRadio value="owner">{t('Proprietário')}</CustomRadio>
-              <CustomRadio value="manager">{t('Gerente')}</CustomRadio>
-              <CustomRadio value="collaborator">{t('Colaborador')}</CustomRadio>
+              <Radio value="owner">{t('Proprietário')}</Radio>
+              <Radio value="manager">{t('Gerente')}</Radio>
+              <Radio value="collaborator">{t('Colaborador')}</Radio>
             </HStack>
           </RadioGroup>
         </Td>
@@ -113,7 +126,12 @@ export const TeamTableItem = ({
           <Box position="absolute" top="1">
             <Text>{t('Confirmar atualização?')}</Text>
             <HStack mt="1" spacing={4}>
-              <Button w="150px" size="sm" variant="danger" onClick={() => setIsUpdating(false)}>
+              <Button
+                w="150px"
+                size="sm"
+                variant="danger"
+                onClick={() => setIsUpdating(false)}
+              >
                 {t('Cancelar')}
               </Button>
               <Button
@@ -157,15 +175,15 @@ export const TeamTableItem = ({
             fontSize="16px"
             lineHeight="22px"
           >
-            <CustomRadio value="owner" isDisabled={!userIsOwner}>
+            <Radio value="owner" isDisabled={!userIsOwner}>
               {t('Proprietário')}
-            </CustomRadio>
-            <CustomRadio value="manager" isDisabled={!userIsOwner}>
+            </Radio>
+            <Radio value="manager" isDisabled={!userIsOwner}>
               {t('Gerente')}
-            </CustomRadio>
-            <CustomRadio value="collaborator" isDisabled={!userIsOwner}>
+            </Radio>
+            <Radio value="collaborator" isDisabled={!userIsOwner}>
               {t('Colaborador')}
-            </CustomRadio>
+            </Radio>
           </HStack>
         </RadioGroup>
       </Td>
@@ -175,11 +193,9 @@ export const TeamTableItem = ({
           formatTime(manager.createdOn as unknown as Date)}
       </Td>
       <Td>
-        <Text as="span" color={versionLabelColor}>
-          {manager?.webAppVersion ?? 'N/E'}
-        </Text>
-        {' / '}
-        <Text as="span">{manager?.appVersion ?? 'N/E'}</Text>
+        (<AppVersionLabel type="businessWeb" version={manager?.webAppVersion} />
+        )/(
+        <AppVersionLabel type="businessApp" version={manager?.appVersion} />)
       </Td>
       <Td>
         <Button

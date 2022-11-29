@@ -1,13 +1,15 @@
 import { Box, BoxProps, Flex, Tooltip } from '@chakra-ui/react';
 import imageCompression from 'browser-image-compression';
 import { CloseButton } from 'common/components/buttons/CloseButton';
-import { CroppedAreaProps } from 'common/components/ImageCropping';
+import { CroppedAreaProps } from 'common/components/image-uploads/ImageCropping';
 import React from 'react';
 import { getCroppedImg } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { AlertError } from './AlertError';
-import { FileDropzone } from './FileDropzone';
-import { ImageCropping } from './ImageCropping';
+import { FileDropzone } from './image-uploads/FileDropzone';
+import { ImageCropping } from './image-uploads/ImageCropping';
+
+export type ImageType = 'image/jpeg' | 'image/png' | 'image/gif';
 
 interface Props extends BoxProps {
   width: number | string | undefined;
@@ -17,13 +19,12 @@ interface Props extends BoxProps {
   resizedWidth: number[];
   placeholderText?: string;
   doubleSizeCropping?: boolean;
+  imageType?: ImageType;
   getImages(files: File[]): void;
   clearDrop(): void;
 }
 
 const initError = { status: false, message: { title: '', description: '' } };
-
-export type ImageType = 'image/jpeg' | 'image/png';
 
 export const ImageUploads = React.memo(
   ({
@@ -34,12 +35,15 @@ export const ImageUploads = React.memo(
     resizedWidth,
     placeholderText,
     doubleSizeCropping = false,
+    imageType = 'image/jpeg',
     getImages,
     clearDrop,
     ...props
   }: Props) => {
     // state
-    const [croppedAreas, setCroppedAreas] = React.useState<CroppedAreaProps[]>([]);
+    const [croppedAreas, setCroppedAreas] = React.useState<CroppedAreaProps[]>(
+      []
+    );
     const [previewUrl, setPreviewUrl] = React.useState<string | null>(null);
     //const [imageType, setImageType] = React.useState<ImageType>('image/jpeg');
     const [error, setError] = React.useState(initError);
@@ -51,13 +55,16 @@ export const ImageUploads = React.memo(
     const croppingW = doubleSizeCropping ? (doubleW <= 833 ? doubleW : 833) : w;
     const croppingH = croppingW / ratios[0];
     // handlers
-    const handleCrop = React.useCallback((index: number, croppedArea: CroppedAreaProps) => {
-      setCroppedAreas((prevState) => {
-        const newAreas = [...prevState];
-        newAreas[index] = croppedArea;
-        return newAreas;
-      });
-    }, []);
+    const handleCrop = React.useCallback(
+      (index: number, croppedArea: CroppedAreaProps) => {
+        setCroppedAreas((prevState) => {
+          const newAreas = [...prevState];
+          newAreas[index] = croppedArea;
+          return newAreas;
+        });
+      },
+      []
+    );
     const onDropHandler = React.useCallback(
       async (acceptedFiles: File[]) => {
         const [file] = acceptedFiles;
@@ -109,8 +116,8 @@ export const ImageUploads = React.memo(
                 previewUrl as string,
                 area,
                 ratios[index],
-                resizedWidth[index]
-                //imageType
+                resizedWidth[index],
+                imageType
               );
               files.push(file as File);
             } catch (error) {
@@ -122,7 +129,7 @@ export const ImageUploads = React.memo(
         };
         getImageFiles(croppedAreas);
       }
-    }, [croppedAreas, previewUrl, getImages, ratios, resizedWidth]);
+    }, [croppedAreas, previewUrl, getImages, ratios, resizedWidth, imageType]);
     // UI
     if (imageExists.current && previewUrl) {
       return (

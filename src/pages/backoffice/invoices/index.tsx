@@ -1,10 +1,9 @@
 import { IuguInvoiceStatus } from '@appjusto/types/payment/iugu';
 import { ArrowDownIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, HStack, Stack, Text } from '@chakra-ui/react';
-import { useObserveInvoices } from 'app/api/order/useObserveInvoices';
+import { useObserveInvoices } from 'app/api/invoices/useObserveInvoices';
 import { ClearFiltersButton } from 'common/components/backoffice/ClearFiltersButton';
 import { FiltersScrollBar } from 'common/components/backoffice/FiltersScrollBar';
-import { FilterText } from 'common/components/backoffice/FilterText';
 import { CustomDateFilter } from 'common/components/form/input/CustomDateFilter';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import React from 'react';
@@ -12,8 +11,20 @@ import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import PageHeader from '../../PageHeader';
-import { InvoiceDrawer } from '../drawers/invoice';
+import InvoiceDrawer from '../drawers/invoice';
 import { InvoicesTable } from './InvoicesTable';
+
+const statusFilterOptions = [
+  { label: 'Todas', value: 'all' },
+  { label: 'Análise', value: 'in_analysis' },
+  { label: 'Pendentes', value: 'pending' },
+  { label: 'Paga', value: 'paid' },
+  { label: 'Reembol.', value: 'refunded' },
+  { label: 'Parc. Reembol.', value: 'partially_refunded' },
+  { label: 'Cancelada', value: 'canceled' },
+  { label: 'Protesto', value: 'in_protest' },
+  { label: 'Estorno', value: 'chargeback' },
+];
 
 const InvoicesPage = () => {
   // state
@@ -26,7 +37,12 @@ const InvoicesPage = () => {
   // context
   const { path } = useRouteMatch();
   const history = useHistory();
-  const { invoices, fetchNextPage } = useObserveInvoices(searchId, searchFrom, searchTo, filterBar);
+  const { invoices, fetchNextPage } = useObserveInvoices(
+    searchId,
+    searchFrom,
+    searchTo,
+    filterBar
+  );
   // handlers
   const closeDrawerHandler = () => {
     history.replace(path);
@@ -66,51 +82,20 @@ const InvoicesPage = () => {
           />
         </Stack>
       </Flex>
-      <Flex mt="8" w="100%" justifyContent="space-between" borderBottom="1px solid #C8D7CB">
-        <FiltersScrollBar>
-          <HStack spacing={4}>
-            <FilterText
-              isActive={!filterBar}
-              label={t('Todas')}
-              onClick={() => setFilterBar(undefined)}
-            />
-            <FilterText
-              isActive={filterBar === 'in_analysis'}
-              label={t('Análise')}
-              onClick={() => setFilterBar('in_analysis')}
-            />
-            <FilterText
-              isActive={filterBar === 'pending'}
-              label={t('Pendente')}
-              onClick={() => setFilterBar('pending')}
-            />
-            <FilterText
-              isActive={filterBar === 'paid'}
-              label={t('Paga')}
-              onClick={() => setFilterBar('paid')}
-            />
-            <FilterText
-              isActive={filterBar === 'refunded'}
-              label={t('Reembol.')}
-              onClick={() => setFilterBar('refunded')}
-            />
-            <FilterText
-              isActive={filterBar === 'canceled'}
-              label={t('Cancelada')}
-              onClick={() => setFilterBar('canceled')}
-            />
-            <FilterText
-              isActive={filterBar === 'in_protest'}
-              label={t('Protesto')}
-              onClick={() => setFilterBar('in_protest')}
-            />
-            <FilterText
-              isActive={filterBar === 'chargeback'}
-              label={t('Estorno')}
-              onClick={() => setFilterBar('chargeback')}
-            />
-          </HStack>
-        </FiltersScrollBar>
+      <Flex
+        mt="8"
+        w="100%"
+        justifyContent="space-between"
+        borderBottom="1px solid #C8D7CB"
+      >
+        <FiltersScrollBar
+          filters={statusFilterOptions}
+          currentValue={filterBar ?? 'all'}
+          selectFilter={(value: string) => {
+            if (value !== 'all') setFilterBar(value as IuguInvoiceStatus);
+            else setFilterBar(undefined);
+          }}
+        />
         <ClearFiltersButton clearFunction={clearFilters} />
       </Flex>
       <HStack mt="6" spacing={8} color="black">

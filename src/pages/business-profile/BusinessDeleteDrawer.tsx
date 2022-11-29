@@ -2,6 +2,7 @@ import { DeleteBusinessPayload } from '@appjusto/types';
 import {
   Box,
   Button,
+  Checkbox,
   Drawer,
   DrawerBody,
   DrawerCloseButton,
@@ -11,14 +12,13 @@ import {
   Flex,
   Stack,
   Text,
-  Textarea
+  Textarea,
 } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useContextFirebaseUserEmail } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextManagerProfile } from 'app/state/manager/context';
 import { useContextAppRequests } from 'app/state/requests/context';
-import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import React from 'react';
 import { Redirect } from 'react-router-dom';
@@ -39,13 +39,18 @@ interface BaseDrawerProps {
   onClose(): void;
 }
 
-export const BusinessDeleteDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
+export const BusinessDeleteDrawer = ({
+  onClose,
+  ...props
+}: BaseDrawerProps) => {
   //context
   const email = useContextFirebaseUserEmail();
   const { dispatchAppRequestResult } = useContextAppRequests();
   const { business } = useContextBusiness();
   const { updateLastBusinessId } = useContextManagerProfile();
-  const { deleteBusinessProfile, deleteResult } = useBusinessProfile();
+  const { deleteBusinessProfile, deleteResult } = useBusinessProfile(
+    business?.id
+  );
   const { isLoading, isSuccess } = deleteResult;
   // state
   const [survey, setSurvey] = React.useState(initialSurvey);
@@ -62,10 +67,15 @@ export const BusinessDeleteDrawer = ({ onClose, ...props }: BaseDrawerProps) => 
       return dispatchAppRequestResult({
         status: 'error',
         requestId: 'BusinessDeleteDrawer-valid',
-        message: { title: 'Favor preencher o nome do restaurante corretamente!' },
+        message: {
+          title: 'Favor preencher o nome do restaurante corretamente!',
+        },
       });
     } else {
-      if (email) localStorage.removeItem(`business-${process.env.REACT_APP_ENVIRONMENT}-${email}`);
+      if (email)
+        localStorage.removeItem(
+          `business-${process.env.REACT_APP_ENVIRONMENT}-${email}`
+        );
       let data = { ...survey } as Partial<DeleteBusinessPayload>;
       if (comment.length > 0) data.comment = comment;
       updateLastBusinessId(null);
@@ -78,11 +88,25 @@ export const BusinessDeleteDrawer = ({ onClose, ...props }: BaseDrawerProps) => 
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
       <DrawerOverlay>
         <DrawerContent>
-          <DrawerCloseButton bg="green.500" mr="12px" _focus={{ outline: 'none' }} />
+          <DrawerCloseButton
+            bg="green.500"
+            mr="12px"
+            _focus={{ outline: 'none' }}
+          />
           <DrawerHeader pb="2">
-            <Flex mt={{ base: '14', md: '0' }} justifyContent="space-between" alignItems="flex-end">
+            <Flex
+              mt={{ base: '14', md: '0' }}
+              justifyContent="space-between"
+              alignItems="flex-end"
+            >
               <Flex flexDir="column">
-                <Text color="black" fontSize="2xl" fontWeight="700" lineHeight="28px" mb="2">
+                <Text
+                  color="black"
+                  fontSize="2xl"
+                  fontWeight="700"
+                  lineHeight="28px"
+                  mb="2"
+                >
                   {t('Excluir restaurante')}
                 </Text>
                 <Text fontSize="16px" color="black" fontWeight="500">
@@ -96,7 +120,13 @@ export const BusinessDeleteDrawer = ({ onClose, ...props }: BaseDrawerProps) => 
           </DrawerHeader>
           <DrawerBody pb="28">
             {business?.situation === 'approved' && (
-              <Box borderRadius="lg" p="6" bgColor="#FFBE00" color="black" mb="4">
+              <Box
+                borderRadius="lg"
+                p="6"
+                bgColor="#FFBE00"
+                color="black"
+                mb="4"
+              >
                 <Text fontSize="18px" fontWeight="700" lineHeight="26px">
                   {t('Antes de excluir, considere desligar o restaurante')}
                 </Text>
@@ -123,62 +153,75 @@ export const BusinessDeleteDrawer = ({ onClose, ...props }: BaseDrawerProps) => 
               lineHeight="22px"
               flexDir="column"
             >
-              <CustomCheckbox
+              <Checkbox
                 colorScheme="green"
                 isChecked={survey.fewOrders}
                 onChange={(e) => handleSurvey('fewOrders', e.target.checked)}
                 value="fewOrders"
               >
                 {t('Recebi poucos pedidos')}
-              </CustomCheckbox>
-              <CustomCheckbox
+              </Checkbox>
+              <Checkbox
                 colorScheme="green"
                 isChecked={survey.appjustoProblems}
-                onChange={(e) => handleSurvey('appjustoProblems', e.target.checked)}
+                onChange={(e) =>
+                  handleSurvey('appjustoProblems', e.target.checked)
+                }
                 value="appjustoProblems"
               >
                 {t('Problemas com o Appjusto')}
-              </CustomCheckbox>
-              <CustomCheckbox
+              </Checkbox>
+              <Checkbox
                 colorScheme="green"
                 isChecked={survey.notFinanciallyViable}
-                onChange={(e) => handleSurvey('notFinanciallyViable', e.target.checked)}
+                onChange={(e) =>
+                  handleSurvey('notFinanciallyViable', e.target.checked)
+                }
                 value="notFinanciallyViable"
               >
                 {t('Não foi viável financeiramente')}
-              </CustomCheckbox>
-              <CustomCheckbox
+              </Checkbox>
+              <Checkbox
                 colorScheme="green"
                 isChecked={survey.didntAdaptToTheSystem}
-                onChange={(e) => handleSurvey('didntAdaptToTheSystem', e.target.checked)}
+                onChange={(e) =>
+                  handleSurvey('didntAdaptToTheSystem', e.target.checked)
+                }
                 value="didntAdaptToTheSystem"
               >
                 {t('Não me adaptei ao sistema')}
-              </CustomCheckbox>
-              <CustomCheckbox
+              </Checkbox>
+              <Checkbox
                 colorScheme="green"
                 isChecked={survey.closingThisRestaurant}
-                onChange={(e) => handleSurvey('closingThisRestaurant', e.target.checked)}
+                onChange={(e) =>
+                  handleSurvey('closingThisRestaurant', e.target.checked)
+                }
                 value="closingThisRestaurant"
               >
                 {t('Estou fechando este restaurante')}
-              </CustomCheckbox>
-              <CustomCheckbox
+              </Checkbox>
+              <Checkbox
                 colorScheme="green"
                 isChecked={survey.exclusivityWithAnotherPlatform}
-                onChange={(e) => handleSurvey('exclusivityWithAnotherPlatform', e.target.checked)}
+                onChange={(e) =>
+                  handleSurvey(
+                    'exclusivityWithAnotherPlatform',
+                    e.target.checked
+                  )
+                }
                 value="exclusivityWithAnotherPlatform"
               >
                 {t('Exclusividade com outra plataforma')}
-              </CustomCheckbox>
-              <CustomCheckbox
+              </Checkbox>
+              <Checkbox
                 colorScheme="green"
                 isChecked={survey.other}
                 onChange={(e) => handleSurvey('other', e.target.checked)}
                 value="other"
               >
                 {t('Outro')}
-              </CustomCheckbox>
+              </Checkbox>
             </Stack>
             {survey.other && (
               <Textarea
@@ -191,7 +234,13 @@ export const BusinessDeleteDrawer = ({ onClose, ...props }: BaseDrawerProps) => 
                 onChange={(e) => setComment(e.target.value)}
               />
             )}
-            <Box mt="8" bg="#FFF8F8" border="1px solid red" borderRadius="lg" p="6">
+            <Box
+              mt="8"
+              bg="#FFF8F8"
+              border="1px solid red"
+              borderRadius="lg"
+              p="6"
+            >
               <Text color="red">
                 {t(
                   'Ao excluir o restaurante, todo o seu histórico de pedidos, itens adicionados, categorias, informes de transação financeira, serão apagados. Tem certeza que deseja excluir o restaurante?'
@@ -200,7 +249,9 @@ export const BusinessDeleteDrawer = ({ onClose, ...props }: BaseDrawerProps) => 
               {business?.name && (
                 <>
                   <Text mt="4" color="red">
-                    {t(`Para confirmar, digite o nome do restaurante no campo abaixo: `)}
+                    {t(
+                      `Para confirmar, digite o nome do restaurante no campo abaixo: `
+                    )}
                   </Text>
                   <Input
                     mt="2"
@@ -224,7 +275,9 @@ export const BusinessDeleteDrawer = ({ onClose, ...props }: BaseDrawerProps) => 
                   onClick={handleDelete}
                   isLoading={isLoading}
                   loadingText={t('Excluindo')}
-                  isDisabled={business?.name ? businessName !== business?.name : false}
+                  isDisabled={
+                    business?.name ? businessName !== business?.name : false
+                  }
                 >
                   {t('Excluir restaurante')}
                 </Button>

@@ -1,21 +1,35 @@
 import { CourierAlgolia, CourierStatus } from '@appjusto/types';
 import { ArrowDownIcon } from '@chakra-ui/icons';
-import { Button, CheckboxGroup, Flex, HStack, Stack, Text } from '@chakra-ui/react';
+import {
+  Button,
+  Checkbox,
+  CheckboxGroup,
+  Flex,
+  Stack,
+  Text,
+} from '@chakra-ui/react';
 import { BasicUserFilter } from 'app/api/search/types';
 import { useBasicUsersSearch } from 'app/api/search/useBasicUsersSearch';
 import { ClearFiltersButton } from 'common/components/backoffice/ClearFiltersButton';
 import { FiltersScrollBar } from 'common/components/backoffice/FiltersScrollBar';
-import { FilterText } from 'common/components/backoffice/FilterText';
-import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import React from 'react';
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import PageHeader from '../../PageHeader';
-import { CourierDrawer } from '../drawers/courier';
+import CourierDrawer from '../drawers/courier';
 import { StateAndCityFilter } from '../StateAndCityFilter';
 import { CouriersTable } from './CouriersTable';
+
+const statusFilterOptions = [
+  { label: 'Todos', value: 'all' },
+  { label: 'Aprovados', value: 'approved' },
+  { label: 'Verificados', value: 'verified' },
+  { label: 'Inválidos', value: 'invalid' },
+  { label: 'Pendentes', value: 'pending' },
+  { label: 'Bloqueados', value: 'blocked' },
+];
 
 const CouriersPage = () => {
   // context
@@ -26,11 +40,12 @@ const CouriersPage = () => {
   const [search, setSearch] = React.useState('');
   const [state, setState] = React.useState('');
   const [city, setCity] = React.useState('');
-  const [filterBar, setFilterBar] = React.useState('invalid');
+  const [filterBar, setFilterBar] = React.useState('all');
   const [filterCheck, setFilterCheck] = React.useState<CourierStatus[]>([
     'available',
     'unavailable',
     'dispatching',
+    'inactive',
   ]);
   const [filters, setFilters] = React.useState<BasicUserFilter[]>([]);
 
@@ -71,14 +86,20 @@ const CouriersPage = () => {
         { type: 'situation', value: 'submitted' },
         { type: 'situation', value: 'pending' },
       ];
-    else if (filterBar !== 'all') situationArray = [{ type: 'situation', value: filterBar }];
+    else if (filterBar !== 'all')
+      situationArray = [{ type: 'situation', value: filterBar }];
     // status
     let statusArray = filterCheck.map((str) => ({
       type: 'status',
       value: str,
     })) as BasicUserFilter[];
     // create filters
-    setFilters([...stateArray, ...cityArray, ...situationArray, ...statusArray]);
+    setFilters([
+      ...stateArray,
+      ...cityArray,
+      ...situationArray,
+      ...statusArray,
+    ]);
   }, [state, city, filterBar, filterCheck]);
 
   // side effects
@@ -94,7 +115,10 @@ const CouriersPage = () => {
   // UI
   return (
     <>
-      <PageHeader title={t('Entregadores')} subtitle={t(`Atualizado ${dateTime}`)} />
+      <PageHeader
+        title={t('Entregadores')}
+        subtitle={t(`Atualizado ${dateTime}`)}
+      />
       <Stack mt="8" spacing={4} direction={{ base: 'column', md: 'row' }}>
         <CustomInput
           mt="0"
@@ -112,44 +136,25 @@ const CouriersPage = () => {
           handleCityChange={setCity}
         />
       </Stack>
-      <Flex mt="8" w="100%" justifyContent="space-between" borderBottom="1px solid #C8D7CB">
-        <FiltersScrollBar>
-          <HStack spacing={4}>
-            <FilterText
-              isActive={filterBar === 'all' ? true : false}
-              label={t('Todos')}
-              onClick={() => setFilterBar('all')}
-            />
-            <FilterText
-              isActive={filterBar === 'approved' ? true : false}
-              label={t('Aprovados')}
-              onClick={() => setFilterBar('approved')}
-            />
-            <FilterText
-              isActive={filterBar === 'verified' ? true : false}
-              label={t('Verificados')}
-              onClick={() => setFilterBar('verified')}
-            />
-            <FilterText
-              isActive={filterBar === 'invalid' ? true : false}
-              label={t('Inválidos')}
-              onClick={() => setFilterBar('invalid')}
-            />
-            <FilterText
-              isActive={filterBar === 'pending' ? true : false}
-              label={t('Pendentes')}
-              onClick={() => setFilterBar('pending')}
-            />
-            <FilterText
-              isActive={filterBar === 'blocked' ? true : false}
-              label={t('Bloqueados')}
-              onClick={() => setFilterBar('blocked')}
-            />
-          </HStack>
-        </FiltersScrollBar>
+      <Flex
+        mt="8"
+        w="100%"
+        justifyContent="space-between"
+        borderBottom="1px solid #C8D7CB"
+      >
+        <FiltersScrollBar
+          filters={statusFilterOptions}
+          currentValue={filterBar}
+          selectFilter={setFilterBar}
+        />
         <ClearFiltersButton clearFunction={clearSearchAndFilters} />
       </Flex>
-      <Stack mt="6" spacing={8} direction={{ base: 'column', md: 'row' }} color="black">
+      <Stack
+        mt="6"
+        spacing={8}
+        direction={{ base: 'column', md: 'row' }}
+        color="black"
+      >
         <Text fontSize="lg" fontWeight="700" lineHeight="26px">
           {t(`${couriers?.length ?? '0'} itens na lista`)}
         </Text>
@@ -166,9 +171,9 @@ const CouriersPage = () => {
             fontSize="16px"
             lineHeight="22px"
           >
-            <CustomCheckbox value="available">{t('Disponível')}</CustomCheckbox>
-            <CustomCheckbox value="unavailable">{t('Indisponível')}</CustomCheckbox>
-            <CustomCheckbox value="dispatching">{t('Realizando entrega')}</CustomCheckbox>
+            <Checkbox value="available">{t('Disponível')}</Checkbox>
+            <Checkbox value="unavailable">{t('Indisponível')}</Checkbox>
+            <Checkbox value="dispatching">{t('Realizando entrega')}</Checkbox>
           </Stack>
         </CheckboxGroup>
       </Stack>

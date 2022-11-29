@@ -1,9 +1,19 @@
-import { Box, Button, Flex, Heading, HStack, Image, Link, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Checkbox,
+  Flex,
+  Heading,
+  HStack,
+  Image,
+  Link,
+  Text,
+} from '@chakra-ui/react';
 import { useAuthentication } from 'app/api/auth/useAuthentication';
+import { useContextMeasurement } from 'app/state/measurement/context';
 import { AlertSuccess } from 'common/components/AlertSuccess';
 import { AlertWarning } from 'common/components/AlertWarning';
 import Container from 'common/components/Container';
-import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import delivery from 'common/img/big-delivery.svg';
 import React, { ChangeEvent, FormEvent } from 'react';
@@ -15,14 +25,20 @@ export const RegistrationForm = () => {
   // contex
   const { sendSignInLinkToEmail, sendingLinkResult } = useAuthentication();
   const { isLoading, isSuccess, isError, error } = sendingLinkResult;
+  const { handlePixelEvent } = useContextMeasurement();
   // state
   const [email, setEmail] = React.useState('');
   const [accept, setAccept] = React.useState(false);
-  const [formMsg, setFormMsg] = React.useState({ status: false, type: '', message: '' });
+  const [formMsg, setFormMsg] = React.useState({
+    status: false,
+    type: '',
+    message: '',
+  });
   const isEmailInvalid = React.useMemo(() => !isEmailValid(email), [email]);
   // handlers
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
+    handlePixelEvent('admin-registration', { email });
     setFormMsg({ status: false, type: '', message: '' });
     if (!accept) {
       return setFormMsg({
@@ -47,7 +63,8 @@ export const RegistrationForm = () => {
       setFormMsg({
         status: true,
         type: 'error',
-        message: 'Não foi possível acessar o servidor. Você poderia tentar novamente?',
+        message:
+          'Não foi possível acessar o servidor. Você poderia tentar novamente?',
       });
     }
     if (isSuccess) {
@@ -85,7 +102,9 @@ export const RegistrationForm = () => {
             {t('Cadastre-se agora!')}
           </Heading>
           <Text mt="3" fontSize="16px" fontFamily="Barlow">
-            {t('Ganhe mais e tenha uma relação mais justa com seus clientes e entregadores!')}
+            {t(
+              'Ganhe mais e tenha uma relação mais justa com seus clientes e entregadores!'
+            )}
           </Text>
           <form onSubmit={handleSubmit}>
             <CustomInput
@@ -103,7 +122,7 @@ export const RegistrationForm = () => {
               mb={['16px', null, '0']}
             />
             <HStack mt="4" spacing={2} alignItems="center">
-              <CustomCheckbox
+              <Checkbox
                 colorScheme="green"
                 isChecked={accept}
                 onChange={(event) => setAccept(event.target.checked)}

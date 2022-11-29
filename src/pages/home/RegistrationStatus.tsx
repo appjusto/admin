@@ -1,5 +1,4 @@
 import {
-  AspectRatio,
   Box,
   Button,
   Image,
@@ -82,7 +81,9 @@ const initialState = [
 export const RegistrationStatus = () => {
   // context
   const { business } = useContextBusiness();
-  const { updateBusinessProfile, updateResult } = useBusinessProfile();
+  const { updateBusinessProfile, updateResult } = useBusinessProfile(
+    business?.id
+  );
   const { isLoading } = updateResult;
   const businessProfileValidation = useBusinessProfileValidation();
   // state
@@ -91,7 +92,8 @@ export const RegistrationStatus = () => {
   const [rejection, setRejection] = React.useState<string[]>([]);
   const [isOusideArea, setIsOusideArea] = React.useState<boolean>();
   // helpers
-  const isValid = validation.filter((data) => data.status === false).length === 0;
+  const isValid =
+    validation.filter((data) => data.status === false).length === 0;
   const pendencies = validation.filter((item) => item.status === false).length;
   // handlers
   const handleSubmitRegistration = () => {
@@ -205,7 +207,7 @@ export const RegistrationStatus = () => {
     business?.situation === 'invalid'
   ) {
     return (
-      <Box maxW="708px" color="black">
+      <Box h="80%" maxW="708px" color="black">
         <Box mt="6" w="100%" maxW="406px">
           <Image src={submittedImg} />
         </Box>
@@ -215,13 +217,6 @@ export const RegistrationStatus = () => {
           Para mais detalhes, assista ao nosso vídeo de boas-vindas:`
           )}
         </Text>
-        <AspectRatio mt="6" maxW="708px" ratio={9 / 5}>
-          <iframe
-            title="appjusto"
-            src="https://www.youtube.com/embed/R_KyvxVk-U0"
-            allowFullScreen
-          />
-        </AspectRatio>
         <Social />
       </Box>
     );
@@ -256,7 +251,9 @@ export const RegistrationStatus = () => {
                 </Text>
               </Box>
             )}
-            <Text mt="4">{t('Após a correção, basta reenviar o cadastro.')}</Text>
+            <Text mt="4">
+              {t('Após a correção, basta reenviar o cadastro.')}
+            </Text>
           </AlertWarning>
           <Button
             mt="4"

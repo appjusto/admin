@@ -27,6 +27,7 @@ export const OrderSearchResult = ({ orders }: OrderSearchProps) => {
           <Tr>
             <Th>{t('Nº')}</Th>
             <Th>{t('Data/Horário')}</Th>
+            <Th>{t('Agendado para')}</Th>
             <Th>{t('Status')}</Th>
             <Th>{t('Entregador')}</Th>
             <Th isNumeric>{t('Valor total')}</Th>
@@ -40,11 +41,19 @@ export const OrderSearchResult = ({ orders }: OrderSearchProps) => {
                 <Tr key={order.code} color="black" fontSize="xs">
                   <Td maxW="120px">{order.code}</Td>
                   <Td>{getDateAndHour(order.createdOn)}</Td>
+                  <Td>
+                    {order.scheduledTo
+                      ? getDateAndHour(order.scheduledTo)
+                      : 'Tempo real'}
+                  </Td>
                   <Td>{getTranslatedOrderStatus(order.status)}</Td>
                   <Td>{order.courier?.name ?? t('Sem entregador')}</Td>
-                  <Td isNumeric>{getOrderTotalPriceToDisplay(order.items ?? [])}</Td>
+                  <Td isNumeric>
+                    {getOrderTotalPriceToDisplay(order.items ?? [])}
+                  </Td>
                   <Td>
                     <CustomButton
+                      mt="0"
                       label={t('Detalhes')}
                       link={`${url}/${order.id}`}
                       size="sm"
@@ -57,6 +66,7 @@ export const OrderSearchResult = ({ orders }: OrderSearchProps) => {
           ) : (
             <Tr color="black" fontSize="xs" fontWeight="700">
               <Td>{t('Sem resultados para o número informado')}</Td>
+              <Td></Td>
               <Td></Td>
               <Td></Td>
               <Td></Td>

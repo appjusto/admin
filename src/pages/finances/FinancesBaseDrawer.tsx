@@ -12,7 +12,6 @@ import React from 'react';
 
 interface BaseDrawerProps {
   title: string;
-  description?: string;
   isOpen: boolean;
   onClose(): void;
   isReviewing?: boolean;
@@ -22,7 +21,6 @@ interface BaseDrawerProps {
 
 export const FinancesBaseDrawer = ({
   title,
-  description,
   onClose,
   isReviewing,
   children,
@@ -46,16 +44,13 @@ export const FinancesBaseDrawer = ({
             <Text fontSize="2xl" fontWeight="700">
               {title}
             </Text>
-            {description && (
-              <Text mt="6" fontSize="16px" fontWeight="500" lineHeight="22px">
-                {description}
-              </Text>
-            )}
           </DrawerHeader>
-          <DrawerBody ref={bodyRef} pb="28">
-            {children}
-          </DrawerBody>
-          {footer && <DrawerFooter borderTop="1px solid #F2F6EA">{footer()}</DrawerFooter>}
+          <DrawerBody ref={bodyRef}>{children}</DrawerBody>
+          {footer && (
+            <DrawerFooter borderTop="1px solid #F2F6EA">
+              {footer()}
+            </DrawerFooter>
+          )}
         </DrawerContent>
       </DrawerOverlay>
     </Drawer>

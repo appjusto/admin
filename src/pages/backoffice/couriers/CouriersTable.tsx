@@ -20,14 +20,15 @@ export const CouriersTable = ({ couriers }: CouriersTableProps) => {
             <Th>{t('Data do onboarding')}</Th>
             <Th>{t('Nome')}</Th>
             <Th>{t('Status')}</Th>
-            <Th>{t('Live')}</Th>
-            <Th></Th>
+            <Th textAlign="center">{t('Live')}</Th>
           </Tr>
         </Thead>
         <Tbody>
           {couriers && couriers.length > 0 ? (
             couriers.map((courier) => {
-              return <CouriersTableItem key={courier.objectID} courier={courier} />;
+              return (
+                <CouriersTableItem key={courier.objectID} courier={courier} />
+              );
             })
           ) : (
             <Tr color="black" fontSize="xs" fontWeight="700">
@@ -35,8 +36,7 @@ export const CouriersTable = ({ couriers }: CouriersTableProps) => {
               <Td></Td>
               <Td></Td>
               <Td></Td>
-              <Td></Td>
-              <Td></Td>
+              <Td textAlign="center"></Td>
             </Tr>
           )}
         </Tbody>

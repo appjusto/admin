@@ -1,4 +1,8 @@
-import { ManagerProfile, WithId } from '@appjusto/types';
+import {
+  ManagerProfile,
+  NotificationPreferences,
+  WithId,
+} from '@appjusto/types';
 import { Box, Button, Flex } from '@chakra-ui/react';
 import * as cpfutils from '@fnando/cpf';
 import { useContextFirebaseUser } from 'app/state/auth/context';
@@ -12,6 +16,7 @@ import {
   phoneMask,
 } from 'common/components/form/input/pattern-input/formatters';
 import { numbersOnlyParser } from 'common/components/form/input/pattern-input/parsers';
+import { UserNotificationPreferences } from 'common/components/UserNotificationPreferences';
 import React, { FormEvent } from 'react';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
@@ -22,7 +27,11 @@ interface ManagerFormProps {
   isLoading: boolean;
 }
 
-export const ManagerForm = ({ manager, updateManager, isLoading }: ManagerFormProps) => {
+export const ManagerForm = ({
+  manager,
+  updateManager,
+  isLoading,
+}: ManagerFormProps) => {
   // context
   const { userAbility } = useContextFirebaseUser();
   const { dispatchAppRequestResult } = useContextAppRequests();
@@ -32,6 +41,8 @@ export const ManagerForm = ({ manager, updateManager, isLoading }: ManagerFormPr
   const [surname, setSurname] = React.useState('');
   const [phone, setPhone] = React.useState('');
   const [cpf, setCpf] = React.useState('');
+  const [notificationPreferences, setNotificationPreferences] =
+    React.useState<NotificationPreferences>();
   // refs
   const nameRef = React.useRef<HTMLInputElement>(null);
   const cpfRef = React.useRef<HTMLInputElement>(null);
@@ -54,6 +65,7 @@ export const ManagerForm = ({ manager, updateManager, isLoading }: ManagerFormPr
       surname,
       phone,
       cpf,
+      notificationPreferences,
     };
     updateManager(changes);
   };
@@ -63,6 +75,8 @@ export const ManagerForm = ({ manager, updateManager, isLoading }: ManagerFormPr
     if (manager?.surname) setSurname(manager.surname);
     if (manager?.phone) setPhone(manager.phone);
     if (manager?.cpf) setCpf(manager.cpf);
+    if (manager?.notificationPreferences)
+      setNotificationPreferences(manager.notificationPreferences);
   }, [manager]);
   // UI
   return (
@@ -70,7 +84,6 @@ export const ManagerForm = ({ manager, updateManager, isLoading }: ManagerFormPr
       flex={1}
       flexDir="column"
       maxW="464px"
-      h="100%"
       justifyContent="space-between"
       as="form"
       onSubmit={handleSubmit}
@@ -131,10 +144,18 @@ export const ManagerForm = ({ manager, updateManager, isLoading }: ManagerFormPr
           isDisabled={!userCanUpdateManager}
         />
       </Box>
+      <SectionTitle>{t('Preferências de notificação')}</SectionTitle>
+      <UserNotificationPreferences
+        notificationPreferences={notificationPreferences}
+        handlePreferenciesChange={(values) =>
+          setNotificationPreferences(values)
+        }
+      />
       {userCanUpdateManager && (
         <Button
-          mt="6"
+          mt="8"
           type="submit"
+          size="md"
           maxW="240px"
           isLoading={isLoading}
           loadingText={t('Salvando...')}

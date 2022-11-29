@@ -4,6 +4,7 @@ import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile'
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { Break, DaySchedule } from 'common/components/DaySchedule';
+import { timeFormatter } from 'common/components/form/input/pattern-input/formatters';
 import { isEqual } from 'lodash';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
@@ -25,14 +26,15 @@ const SchedulesPage = () => {
   // context
   const { dispatchAppRequestResult } = useContextAppRequests();
   const { business } = useContextBusiness();
-  const { updateBusinessProfile, updateResult } = useBusinessProfile();
+  const { updateBusinessProfile, updateResult } = useBusinessProfile(
+    business?.id
+  );
   const { isLoading } = updateResult;
   // state
-  const [schedules, setSchedules] = React.useState<BusinessSchedule>(initialState);
-
+  const [schedules, setSchedules] =
+    React.useState<BusinessSchedule>(initialState);
   // refs
   const submission = React.useRef(0);
-
   // handlers
   const handleCheck = (stateIndex: number, value: boolean) => {
     setSchedules((prevSchedule) => {
@@ -71,7 +73,7 @@ const SchedulesPage = () => {
       return newState;
     });
   };
-  const handleChengeValue = (
+  const handleChangeValue = (
     stateIndex: number,
     scheduleIndex: number,
     field: string,
@@ -83,8 +85,13 @@ const SchedulesPage = () => {
           const newDaySchedule = day.schedule.map((schedule, index2) => {
             if (index2 === scheduleIndex) {
               let newValue = value;
-              if (value.length === 1 && Number(value) > 2) newValue = '0' + value;
-              const newSchedule = { ...schedule, [field]: newValue };
+              if (value.length === 1 && Number(value) > 2)
+                newValue = '0' + value;
+              const formatted = timeFormatter(newValue, true);
+              const newSchedule = {
+                ...schedule,
+                [field]: formatted,
+              };
               return newSchedule;
             } else {
               return schedule;
@@ -108,12 +115,13 @@ const SchedulesPage = () => {
     if (value.length < 4) {
       newValue = value + '0'.repeat(4 - value.length);
     }
+    const formatted = timeFormatter(newValue, true);
     setSchedules((prevSchedule) => {
       const newState = prevSchedule.map((day, index1) => {
         if (index1 === stateIndex) {
           const newDaySchedule = day.schedule.map((schedule, index2) => {
             if (index2 === scheduleIndex) {
-              const newSchedule = { ...schedule, [field]: newValue };
+              const newSchedule = { ...schedule, [field]: formatted };
               return newSchedule;
             } else {
               return schedule;
@@ -145,13 +153,16 @@ const SchedulesPage = () => {
     schedules.forEach((scheduleObject) => {
       scheduleObject.schedule.forEach((item, index) => {
         if (Number(item.from) > Number(item.to)) result = false;
-        if (index > 0 && Number(item.from) < Number(scheduleObject.schedule[index - 1].to))
+        if (
+          index > 0 &&
+          Number(item.from) < Number(scheduleObject.schedule[index - 1].to)
+        )
           result = false;
       });
     });
     return result;
   };
-  const onSubmitHandler = async (event: any) => {
+  const onSubmitHandler = (event: any) => {
     event.preventDefault();
     const isValid = schedulesValidation(schedules);
     if (!isValid)
@@ -161,7 +172,7 @@ const SchedulesPage = () => {
         message: { title: 'Alguns horários não estão corretos.' },
       });
     submission.current += 1;
-    await updateBusinessProfile({ schedules });
+    updateBusinessProfile({ schedules });
   };
   // side effects
   React.useEffect(() => {
@@ -187,12 +198,16 @@ const SchedulesPage = () => {
               day={day}
               handleCheck={(value: boolean) => handleCheck(index, value)}
               handleBreak={(value: Break) => handleBreak(index, value)}
-              onChangeValue={(scheduleIndex: number, field: string, value: string) =>
-                handleChengeValue(index, scheduleIndex, field, value)
-              }
-              autoCompleteSchedules={(scheduleIndex: number, field: string, value: string) =>
-                autoCompleteSchedules(index, scheduleIndex, field, value)
-              }
+              onChangeValue={(
+                scheduleIndex: number,
+                field: string,
+                value: string
+              ) => handleChangeValue(index, scheduleIndex, field, value)}
+              autoCompleteSchedules={(
+                scheduleIndex: number,
+                field: string,
+                value: string
+              ) => autoCompleteSchedules(index, scheduleIndex, field, value)}
               replicate={() => replicateSchedule(index)}
             />
           ))}

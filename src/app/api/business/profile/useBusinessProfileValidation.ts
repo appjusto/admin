@@ -18,29 +18,34 @@ export const useBusinessProfileValidation = (businessId?: string) => {
   const { business, setBusinessId } = useContextBusiness();
   const { manager, setManagerEmail } = useContextManagerProfile();
   const products = useObserveProducts(true, business?.id);
-  const { bankAccount } = useBusinessBankAccount();
-
+  const { bankAccount } = useBusinessBankAccount(business?.id);
   // state
-  const [businessProfileValidation, setBusinessProfileValidation] = React.useState(initialState);
-
+  const [businessProfileValidation, setBusinessProfileValidation] =
+    React.useState(initialState);
   // side effects
   React.useEffect(() => {
     if (businessId) setBusinessId(businessId);
   }, [businessId, setBusinessId]);
-
   React.useEffect(() => {
     if (business?.managers) setManagerEmail(business.managers[0]);
   }, [business, setManagerEmail]);
-
   React.useEffect(() => {
     if (business) {
       const isManagerInfosOk = manager?.phone && manager.cpf ? true : false;
       const isBankingInfosOk =
-        bankAccount?.type && bankAccount?.name && bankAccount?.account && bankAccount.agency
+        bankAccount?.type &&
+        bankAccount?.name &&
+        bankAccount?.account &&
+        bankAccount.agency
           ? true
           : false;
       const isBusinessInfosOk =
-        business?.name && business?.description && business?.cnpj && business.phones ? true : false;
+        business?.name &&
+        business?.description &&
+        business?.cnpj &&
+        business.phones
+          ? true
+          : false;
       const isAddressInfosOk =
         business?.businessAddress?.address &&
         business?.businessAddress?.cep &&

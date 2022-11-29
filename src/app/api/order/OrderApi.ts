@@ -1,10 +1,8 @@
 import {
   CancelOrderPayload,
   DropOrderPayload,
-  Invoice,
+  Fulfillment,
   Issue,
-  LedgerEntry,
-  LedgerEntryStatus,
   MatchOrderPayload,
   Order,
   OrderCancellation,
@@ -14,14 +12,14 @@ import {
   OrderIssue,
   OrderLog,
   OrderMatching,
+  OrderPayload,
   OrderStatus,
   OrderType,
   OutsourceAccountType,
   OutsourceDeliveryPayload,
   ProfileNote,
-  WithId
+  WithId,
 } from '@appjusto/types';
-import { IuguInvoiceStatus } from '@appjusto/types/payment/iugu';
 import * as Sentry from '@sentry/react';
 import { documentAs, documentsAs, FirebaseDocument } from 'core/fb';
 import dayjs from 'dayjs';
@@ -42,12 +40,16 @@ import {
   Timestamp,
   Unsubscribe,
   updateDoc,
-  where
+  where,
 } from 'firebase/firestore';
 import FilesApi from '../FilesApi';
 import FirebaseRefs from '../FirebaseRefs';
 import { InQueryArray } from '../types';
-import { customCollectionSnapshot, customDocumentSnapshot, queryLimit } from '../utils';
+import {
+  customCollectionSnapshot,
+  customDocumentSnapshot,
+  queryLimit,
+} from '../utils';
 
 export type CancellationData = {
   issue: WithId<Issue>;
@@ -57,7 +59,12 @@ export type CancellationData = {
 
 export type Ordering = 'asc' | 'desc';
 
-export type OrderLogType = 'change' | 'payment' | 'info' | 'matching' | 'courier-location';
+export type OrderLogType =
+  | 'change'
+  | 'payment'
+  | 'info'
+  | 'matching'
+  | 'courier-location';
 
 export default class OrderApi {
   constructor(private refs: FirebaseRefs, private files: FilesApi) {}
@@ -67,14 +74,15 @@ export default class OrderApi {
     statuses: OrderStatus[],
     resultHandler: (orders: WithId<Order>[]) => void,
     businessId?: string,
-    ordering: Ordering = 'desc'
+    ordering: Ordering = 'desc',
+    queryLimit?: number
   ): Unsubscribe {
     let q = query(
       this.refs.getOrdersRef(),
       orderBy('timestamps.charged', ordering),
       where('status', 'in', statuses)
     );
-
+    if (queryLimit) q = query(q, limit(queryLimit));
     if (businessId) {
       q = query(q, where('business.id', '==', businessId));
     }
@@ -82,40 +90,133 @@ export default class OrderApi {
     return customCollectionSnapshot(q, resultHandler);
   }
 
-  observeScheduledOrders(
+  observeStaffOrders(
+    statuses: OrderStatus[],
     resultHandler: (orders: WithId<Order>[]) => void,
-    businessId?: string,
-    ordering: Ordering = 'asc'
+    staffId: string,
+    ordering: Ordering = 'desc'
   ): Unsubscribe {
-    const lastWeedDay = dayjs().add(7, 'day').toDate();
     let q = query(
       this.refs.getOrdersRef(),
-      orderBy('scheduledTo', ordering),
-      where('business.id', '==', businessId),
-      where('status', '==', 'scheduled'),
-      where('scheduledTo', '<=', lastWeedDay)
+      orderBy('timestamps.charged', ordering),
+      where('status', 'in', statuses),
+      where('staff.id', '==', staffId)
     );
     // returns the unsubscribe function
     return customCollectionSnapshot(q, resultHandler);
   }
 
-  observeBusinessOrdersCompletedInTheLastHour(
-    resultHandler: (orders: WithId<Order>[]) => void,
-    businessId?: string,
-    ordering: Ordering = 'desc'
+  observeBOActiveOrders(
+    statuses: OrderStatus[],
+    resultHandler: (
+      orders: WithId<Order>[],
+      last?: QueryDocumentSnapshot<DocumentData>
+    ) => void,
+    queryLimit: number = 10,
+    isNoStaff: boolean = true,
+    ordering: Ordering = 'asc'
   ): Unsubscribe {
-    const statuses = ['delivered', 'canceled'] as OrderStatus[];
-    const baseTim = new Date();
-    baseTim.setHours(baseTim.getHours() - 1);
-    const q = query(
+    let q = query(
       this.refs.getOrdersRef(),
-      orderBy('updatedOn', ordering),
-      where('business.id', '==', businessId),
+      orderBy('timestamps.charged', ordering),
       where('status', 'in', statuses),
-      where('updatedOn', '>', baseTim)
+      limit(queryLimit)
+    );
+    if (isNoStaff) q = query(q, where('staff', '==', null));
+    // returns the unsubscribe function
+    return customCollectionSnapshot(q, resultHandler);
+  }
+
+  observeFlaggedOrders(
+    flags: string[],
+    status: OrderStatus | undefined,
+    resultHandler: (
+      orders: WithId<Order>[],
+      last?: QueryDocumentSnapshot<DocumentData>
+    ) => void,
+    queryLimit: number = 10,
+    isNoStaff: boolean = true,
+    ordering: Ordering = 'asc'
+  ): Unsubscribe {
+    let q = query(
+      this.refs.getOrdersRef(),
+      orderBy('timestamps.charged', ordering),
+      where('flags', 'array-contains-any', flags),
+      limit(queryLimit)
+    );
+    if (status) q = query(q, where('status', '==', status));
+    if (isNoStaff) q = query(q, where('staff', '==', null));
+    // returns the unsubscribe function
+    return customCollectionSnapshot(q, resultHandler);
+  }
+
+  observeCanceledOrdersInTheLastHour(
+    resultHandler: (orders: WithId<Order>[]) => void,
+    queryLimit: number,
+    businessId?: string,
+    ordering: Ordering = 'asc'
+  ): Unsubscribe {
+    const baseTime = dayjs().subtract(1, 'hour').toDate();
+    let q = query(
+      this.refs.getOrdersRef(),
+      orderBy('timestamps.canceled', ordering),
+      where('business.id', '==', businessId),
+      where('status', '==', 'canceled'),
+      where('timestamps.canceled', '>=', baseTime),
+      limit(queryLimit)
     );
     // returns the unsubscribe function
     return customCollectionSnapshot(q, resultHandler);
+  }
+
+  observeScheduledOrders(
+    resultHandler: (orders: WithId<Order>[]) => void,
+    queryLimit: number,
+    businessId?: string,
+    ordering: Ordering = 'asc'
+  ): Unsubscribe {
+    const start = dayjs().startOf('day').toDate();
+    const end = dayjs().endOf('day').toDate();
+    let q = query(
+      this.refs.getOrdersRef(),
+      orderBy('confirmedScheduledTo', ordering),
+      where('business.id', '==', businessId),
+      where('status', '==', 'scheduled'),
+      where('confirmedScheduledTo', '>=', start),
+      where('confirmedScheduledTo', '<=', end),
+      limit(queryLimit)
+    );
+    // returns the unsubscribe function
+    return customCollectionSnapshot(q, resultHandler);
+  }
+
+  observeScheduledOrdersTotal(
+    resultHandler: (total: number) => void,
+    businessId?: string
+  ): Unsubscribe {
+    const start = dayjs().startOf('day').toDate();
+    const end = dayjs().endOf('day').toDate();
+    let q = query(
+      this.refs.getOrdersRef(),
+      where('business.id', '==', businessId),
+      where('status', '==', 'scheduled'),
+      where('scheduledTo', '>=', start),
+      where('scheduledTo', '<=', end)
+    );
+    // returns the unsubscribe function
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        if (snapshot.empty) resultHandler(0);
+        else resultHandler(snapshot.size);
+      },
+      (error) => {
+        console.error(error);
+        Sentry.captureException(error);
+      }
+    );
+    // returns the unsubscribe function
+    return unsubscribe;
   }
 
   observeDashboardOrders(
@@ -130,25 +231,6 @@ export default class OrderApi {
       orderBy('updatedOn', 'desc'),
       where('business.id', '==', businessId),
       where('status', '==', orderStatus),
-      where('updatedOn', '>=', start),
-      where('updatedOn', '<=', end)
-    );
-    // returns the unsubscribe function
-    return customCollectionSnapshot(q, resultHandler);
-  }
-
-  observeDashboardInvoices(
-    resultHandler: (orders: WithId<Invoice>[]) => void,
-    businessId?: string | null,
-    start?: Date | null,
-    end?: Date | null,
-    invoiceStatus?: IuguInvoiceStatus
-  ): Unsubscribe {
-    const q = query(
-      this.refs.getInvoicesRef(),
-      orderBy('updatedOn', 'desc'),
-      where('accountId', '==', businessId),
-      where('status', '==', invoiceStatus),
       where('updatedOn', '>=', start),
       where('updatedOn', '<=', end)
     );
@@ -171,7 +253,10 @@ export default class OrderApi {
   }
 
   observeOrdersHistory(
-    resultHandler: (orders: WithId<Order>[], last?: QueryDocumentSnapshot<DocumentData>) => void,
+    resultHandler: (
+      orders: WithId<Order>[],
+      last?: QueryDocumentSnapshot<DocumentData>
+    ) => void,
     businessId: string | null | undefined,
     statuses: InQueryArray<OrderStatus> | null,
     orderCode: string | null | undefined,
@@ -179,22 +264,37 @@ export default class OrderApi {
     end: Date | null | undefined,
     orderStatus: OrderStatus | undefined,
     orderType: OrderType | null,
-    startAfterDoc: FirebaseDocument | undefined
+    fulfillment?: Fulfillment[],
+    startAfterDoc?: FirebaseDocument
   ): Unsubscribe {
-    let q = query(this.refs.getOrdersRef(), orderBy('updatedOn', 'desc'), limit(queryLimit));
+    let q = query(
+      this.refs.getOrdersRef(),
+      orderBy('updatedOn', 'desc'),
+      limit(queryLimit)
+    );
     if (orderStatus) q = query(q, where('status', '==', orderStatus));
     else q = query(q, where('status', 'in', statuses));
     if (startAfterDoc) q = query(q, startAfter(startAfterDoc));
     if (businessId) q = query(q, where('business.id', '==', businessId));
     if (orderCode) q = query(q, where('code', '==', orderCode));
-    if (start && end) q = query(q, where('updatedOn', '>=', start), where('updatedOn', '<=', end));
+    if (start && end)
+      q = query(
+        q,
+        where('updatedOn', '>=', start),
+        where('updatedOn', '<=', end)
+      );
     if (orderType) q = query(q, where('type', '==', orderType));
+    // fulfillment
+    if (orderType !== 'p2p' && fulfillment && fulfillment.length === 1)
+      q = query(q, where('fulfillment', '==', fulfillment[0]));
     const unsubscribe = onSnapshot(
       q,
       (snapshot) => {
         if (!snapshot.metadata.hasPendingWrites) {
           const last =
-            snapshot.docs.length > 0 ? snapshot.docs[snapshot.docs.length - 1] : undefined;
+            snapshot.docs.length > 0
+              ? snapshot.docs[snapshot.docs.length - 1]
+              : undefined;
           resultHandler(documentsAs<Order>(snapshot.docs), last);
         }
       },
@@ -208,32 +308,62 @@ export default class OrderApi {
   }
 
   observeBusinessOrdersHistory(
-    resultHandler: (orders: WithId<Order>[], last?: QueryDocumentSnapshot<DocumentData>) => void,
+    resultHandler: (
+      orders: WithId<Order>[],
+      last?: QueryDocumentSnapshot<DocumentData>
+    ) => void,
     businessId: string | undefined,
     statuses: OrderStatus[] | null,
     orderCode?: string | null,
     start?: Date | null,
     end?: Date | null,
     orderStatus?: OrderStatus,
+    fulfillment?: Fulfillment[],
     startAfterDoc?: FirebaseDocument
   ): Unsubscribe {
     let q = query(
       this.refs.getOrdersRef(),
-      orderBy('updatedOn', 'desc'),
+      // orderBy('updatedOn', 'desc'),
       limit(queryLimit),
       where('business.id', '==', businessId),
       where('status', 'in', statuses)
     );
-    if (startAfterDoc) q = query(q, startAfter(startAfterDoc));
     if (orderCode) q = query(q, where('code', '==', orderCode));
-    if (start && end) q = query(q, where('updatedOn', '>=', start), where('updatedOn', '<=', end));
-    if (orderStatus) q = query(q, where('status', '==', orderStatus));
+    else {
+      // orderBy
+      if (orderStatus !== 'scheduled')
+        q = query(q, orderBy('timestamps.charged', 'desc'));
+      else q = query(q, orderBy('scheduledTo', 'desc'));
+      // filters
+      if (startAfterDoc) q = query(q, startAfter(startAfterDoc));
+      // dates
+      if (orderStatus !== 'scheduled' && start && end)
+        q = query(
+          q,
+          where('timestamps.charged', '>=', start),
+          where('timestamps.charged', '<=', end)
+        );
+      if (orderStatus === 'scheduled' && start && end)
+        q = query(
+          q,
+          where('scheduledTo', '>=', start),
+          where('scheduledTo', '<=', end)
+        );
+      // status
+      if (orderStatus) q = query(q, where('status', '==', orderStatus));
+      // fulfillment
+      if (fulfillment && fulfillment.length === 1)
+        q = query(q, where('fulfillment', '==', fulfillment[0]));
+    }
+    // Unsubscribe
     const unsubscribe = onSnapshot(
       q,
       (snapshot) => {
         if (!snapshot.metadata.hasPendingWrites) {
           const last =
-            snapshot.docs.length > 0 ? snapshot.docs[snapshot.docs.length - 1] : undefined;
+            snapshot.docs.length > 0
+              ? snapshot.docs[snapshot.docs.length - 1]
+              : undefined;
           resultHandler(documentsAs<Order>(snapshot.docs), last);
         }
       },
@@ -263,7 +393,10 @@ export default class OrderApi {
     return customCollectionSnapshot(q, resultHandler);
   }
 
-  observeOrder(orderId: string, resultHandler: (order: WithId<Order>) => void): Unsubscribe {
+  observeOrder(
+    orderId: string,
+    resultHandler: (order: WithId<Order>) => void
+  ): Unsubscribe {
     const ref = this.refs.getOrderRef(orderId);
     // returns the unsubscribe function
     return customDocumentSnapshot<Order>(ref, (result) => {
@@ -271,7 +404,10 @@ export default class OrderApi {
     });
   }
 
-  observeOrderByOrderCode(orderCode: string, resultHandler: (order: WithId<Order>) => void) {
+  observeOrderByOrderCode(
+    orderCode: string,
+    resultHandler: (order: WithId<Order>) => void
+  ) {
     const q = query(this.refs.getOrdersRef(), where('code', '==', orderCode));
     return onSnapshot(q, (snapshot) => {
       if (!snapshot.empty) resultHandler(documentAs<Order>(snapshot.docs[0]));
@@ -310,7 +446,10 @@ export default class OrderApi {
     orderId: string,
     resultHandler: (orderIssues: WithId<OrderIssue>[]) => void
   ): Unsubscribe {
-    const q = query(this.refs.getOrderIssuesRef(orderId), orderBy('createdOn', 'desc'));
+    const q = query(
+      this.refs.getOrderIssuesRef(orderId),
+      orderBy('createdOn', 'desc')
+    );
     // returns the unsubscribe function
     return customCollectionSnapshot(q, resultHandler);
   }
@@ -343,7 +482,8 @@ export default class OrderApi {
     const unsubscribe = onSnapshot(
       ref,
       (querySnapshot) => {
-        if (querySnapshot.exists()) resultHandler(querySnapshot.data() as OrderMatching);
+        if (querySnapshot.exists())
+          resultHandler(querySnapshot.data() as OrderMatching);
         else resultHandler(null);
       },
       (error) => {
@@ -362,7 +502,8 @@ export default class OrderApi {
     const unsubscribe = onSnapshot(
       ref,
       (querySnapshot) => {
-        if (querySnapshot.exists()) resultHandler(querySnapshot.data() as OrderConfirmation);
+        if (querySnapshot.exists())
+          resultHandler(querySnapshot.data() as OrderConfirmation);
         else resultHandler(null);
       },
       (error) => {
@@ -376,7 +517,7 @@ export default class OrderApi {
   observeOrdersByCourierId(
     courierId: string,
     resultHandler: (orders: WithId<Order>[]) => void,
-    statuses?: OrderStatus[], 
+    statuses?: OrderStatus[],
     start?: Date,
     end?: Date
   ): Unsubscribe {
@@ -385,145 +526,29 @@ export default class OrderApi {
       orderBy('timestamps.confirmed', 'desc'),
       where('courier.id', '==', courierId)
     );
-    if(statuses) {
-      q = query(q, where('status', 'in', statuses))
+    if (statuses) {
+      q = query(q, where('status', 'in', statuses));
     }
-    if(start && end) {
+    if (start && end) {
       q = query(
-        q, 
-        where('timestamps.confirmed', '>=', start), 
+        q,
+        where('timestamps.confirmed', '>=', start),
         where('timestamps.confirmed', '<=', end)
-      )
+      );
     }
     // returns the unsubscribe function
     return customCollectionSnapshot(q, resultHandler);
-  }
-
-  observeOrderInvoices(
-    orderId: string,
-    resultHandler: (invoices: WithId<Invoice>[]) => void,
-    businessId?: string
-  ): Unsubscribe {
-    let q = query(
-      this.refs.getInvoicesRef(),
-      orderBy('createdOn', 'asc'),
-      where('orderId', '==', orderId)
-    );
-    if (businessId) q = query(q, where('accountId', '==', businessId));
-    // returns the unsubscribe function
-    return customCollectionSnapshot(q, resultHandler);
-  }
-
-  observeInvoices(
-    resultHandler: (
-      invoices: WithId<Invoice>[],
-      last?: QueryDocumentSnapshot<DocumentData>
-    ) => void,
-    orderCode?: string | null,
-    start?: Date | null,
-    end?: Date | null,
-    startAfterDoc?: FirebaseDocument,
-    status?: IuguInvoiceStatus
-  ): Unsubscribe {
-    let q = query(this.refs.getInvoicesRef(), orderBy('createdOn', 'desc'), limit(queryLimit));
-    if (status) q = query(q, where('status', '==', status));
-    if (startAfterDoc) q = query(q, startAfter(startAfterDoc));
-    if (orderCode) q = query(q, where('orderCode', '==', orderCode));
-    if (start && end) q = query(q, where('createdOn', '>=', start), where('createdOn', '<=', end));
-    const unsubscribe = onSnapshot(
-      q,
-      (querySnapshot) => {
-        const last =
-          querySnapshot.docs.length > 0 ? querySnapshot.docs[querySnapshot.size - 1] : undefined;
-        resultHandler(documentsAs<Invoice>(querySnapshot.docs), last);
-      },
-      (error) => {
-        console.error(error);
-        Sentry.captureException(error);
-      }
-    );
-    // returns the unsubscribe function
-    return unsubscribe;
-  }
-
-  observeInvoicesStatusByPeriod(
-    businessId: string,
-    start: Date,
-    end: Date,
-    status: IuguInvoiceStatus,
-    resultHandler: (invoices: WithId<Invoice>[]) => void
-  ): Unsubscribe {
-    const q = query(
-      this.refs.getInvoicesRef(),
-      orderBy('createdOn', 'desc'),
-      where('accountId', '==', businessId),
-      where('status', '==', status),
-      where('createdOn', '>=', start),
-      where('createdOn', '<=', end)
-    );
-    // returns the unsubscribe function
-    return customCollectionSnapshot(q, resultHandler);
-  }
-
-  observeInvoice(
-    invoiceId: string,
-    resultHandler: (invoice: WithId<Invoice>) => void
-  ): Unsubscribe {
-    const ref = this.refs.getInvoiceRef(invoiceId);
-    // returns the unsubscribe function
-    return customDocumentSnapshot<Invoice>(ref, (result) => {
-      if (result) resultHandler(result);
-    });
-  }
-
-  observeLedger(
-    resultHandler: (
-      entries: WithId<LedgerEntry>[],
-      last?: QueryDocumentSnapshot<DocumentData>
-    ) => void,
-    orderId?: string | null,
-    start?: Date | null,
-    end?: Date | null,
-    startAfterDoc?: FirebaseDocument,
-    status?: LedgerEntryStatus
-  ): Unsubscribe {
-    let q = query(this.refs.getLedgerRef(), orderBy('createdOn', 'desc'), limit(queryLimit));
-    if (status) q = query(q, where('status', '==', status));
-    if (startAfterDoc) q = query(q, startAfter(startAfterDoc));
-    if (orderId) q = query(q, where('orderId', '==', orderId));
-    if (start && end) q = query(q, where('createdOn', '>=', start), where('createdOn', '<=', end));
-    const unsubscribe = onSnapshot(
-      q,
-      (querySnapshot) => {
-        const last =
-          querySnapshot.docs.length > 0 ? querySnapshot.docs[querySnapshot.size - 1] : undefined;
-        resultHandler(documentsAs<LedgerEntry>(querySnapshot.docs), last);
-      },
-      (error) => {
-        console.error(error);
-        Sentry.captureException(error);
-      }
-    );
-    // returns the unsubscribe function
-    return unsubscribe;
-  }
-
-  observeLedgerEntry(
-    entryId: string,
-    resultHandler: (entry: WithId<LedgerEntry>) => void
-  ): Unsubscribe {
-    const ref = this.refs.getLedgerEntryRef(entryId);
-    // returns the unsubscribe function
-    return customDocumentSnapshot<LedgerEntry>(ref, (result) => {
-      if (result) resultHandler(result);
-    });
   }
 
   async getOrderIdByCode(orderCode: string) {
     const q = query(this.refs.getOrdersRef(), where('code', '==', orderCode));
     const orderId = await getDocs(q).then((snapshot) => {
       if (!snapshot.empty) return snapshot.docs[0].id;
-      else throw new FirebaseError('ignored-error', 'Não foi possível encontrar o pedido.');
+      else
+        throw new FirebaseError(
+          'ignored-error',
+          'Não foi possível encontrar o pedido.'
+        );
     });
     return orderId;
   }
@@ -534,12 +559,20 @@ export default class OrderApi {
     return doc.data() as OrderCancellation;
   }
 
-  async updateOrderCourierNotified(orderId: string, couriersNotified: string[]) {
-    return updateDoc(this.refs.getOrderMatchingRef(orderId), { couriersNotified });
+  async updateOrderCourierNotified(
+    orderId: string,
+    couriersNotified: string[]
+  ) {
+    return updateDoc(this.refs.getOrderMatchingRef(orderId), {
+      couriersNotified,
+    });
   }
 
   async getOrderIssues(orderId: string) {
-    const q = query(this.refs.getOrderIssuesRef(orderId), orderBy('createdOn', 'desc'));
+    const q = query(
+      this.refs.getOrderIssuesRef(orderId),
+      orderBy('createdOn', 'desc')
+    );
     const data = await getDocs(q);
     return documentsAs<OrderIssue>(data.docs);
   }
@@ -547,6 +580,14 @@ export default class OrderApi {
   async fetchOrderById(orderId: string) {
     const data = await getDoc(this.refs.getOrderRef(orderId));
     if (data.exists()) return documentAs<Order>(data);
+    else return null;
+  }
+
+  async fetchOrderByCode(orderCode: string, businessId?: string) {
+    let q = query(this.refs.getOrdersRef(), where('code', '==', orderCode));
+    if (businessId) q = query(q, where('business.id', '==', businessId));
+    const data = await getDocs(q);
+    if (!data.empty) return documentsAs<Order>(data.docs);
     else return null;
   }
 
@@ -558,6 +599,27 @@ export default class OrderApi {
     );
     const data = await getDocs(q);
     return documentsAs<Order>(data.docs);
+  }
+
+  async fetchBusinessTotalOrdersByConsumer(
+    businessId: string,
+    consumerId: string,
+    statuses: OrderStatus[]
+  ) {
+    const q = query(
+      this.refs.getOrdersRef(),
+      orderBy('createdOn', 'desc'),
+      where('business.id', '==', businessId),
+      where('consumer.id', '==', consumerId),
+      where('status', 'in', statuses)
+    );
+    try {
+      const data = await getDocs(q);
+      return data.size;
+    } catch (error) {
+      Sentry.captureException(error);
+      return null;
+    }
   }
 
   async createFakeOrder(order: Order) {
@@ -581,7 +643,7 @@ export default class OrderApi {
             refund: [],
           }
         : {
-            refund: ['products', 'delivery', 'platform'],
+            refund: ['products', 'delivery', 'platform', 'order'],
           };
     const paramsData = params ?? defaultParams;
     const payload: CancelOrderPayload = {
@@ -596,7 +658,10 @@ export default class OrderApi {
     const orderRef = this.refs.getOrderRef(orderId);
     const orderSnapshot = await getDoc(orderRef);
     if (!orderSnapshot.exists()) {
-      throw new FirebaseError('ignored-error', 'O pedido informado não existe.');
+      throw new FirebaseError(
+        'ignored-error',
+        'O pedido informado não existe.'
+      );
     }
     const order = documentAs<Order>(orderSnapshot);
     if (order.status !== 'quote') {
@@ -610,9 +675,9 @@ export default class OrderApi {
   }
 
   async courierManualAllocation(
-    orderId: string, 
-    courierId: string | undefined, 
-    courierCode: string | undefined, 
+    orderId: string,
+    courierId: string | undefined,
+    courierCode: string | undefined,
     comment: string
   ) {
     const payload: MatchOrderPayload = {
@@ -641,13 +706,28 @@ export default class OrderApi {
     return await this.refs.getDropOrderCallable()(payload);
   }
 
-  async getOutsourceDelivery(orderId: string, accountType?: OutsourceAccountType) {
+  async getOutsourceDelivery(
+    orderId: string,
+    accountType?: OutsourceAccountType,
+    isAuto?: boolean,
+    priorityFee?: string
+  ) {
     const payload: OutsourceDeliveryPayload = {
       meta: { version: '1' }, // TODO: pass correct version on
       orderId,
+      isAuto,
+      priorityFee,
     };
     if (accountType) payload.accountType = accountType;
     return await this.refs.getOutsourceDeliveryCallable()(payload);
+  }
+
+  async getOutsourceDeliveryQuotation(orderId: string) {
+    const payload: OrderPayload = {
+      meta: { version: '1' }, // TODO: pass correct version on
+      orderId,
+    };
+    return await this.refs.getOutsourceDeliveryQuotationCallable()(payload);
   }
 
   // order notes
@@ -655,7 +735,10 @@ export default class OrderApi {
     orderId: string,
     resultHandler: (result: WithId<ProfileNote>[]) => void
   ): Unsubscribe {
-    const q = query(this.refs.getOrderNotesRef(orderId), orderBy('createdOn', 'desc'));
+    const q = query(
+      this.refs.getOrderNotesRef(orderId),
+      orderBy('createdOn', 'desc')
+    );
     // returns the unsubscribe function
     return customCollectionSnapshot(q, resultHandler);
   }
@@ -669,7 +752,11 @@ export default class OrderApi {
     } as ProfileNote);
   }
 
-  async updateOrderNote(orderId: string, orderNoteId: string, changes: Partial<ProfileNote>) {
+  async updateOrderNote(
+    orderId: string,
+    orderNoteId: string,
+    changes: Partial<ProfileNote>
+  ) {
     const timestamp = serverTimestamp();
     await updateDoc(this.refs.getOrderNoteRef(orderId, orderNoteId), {
       ...changes,

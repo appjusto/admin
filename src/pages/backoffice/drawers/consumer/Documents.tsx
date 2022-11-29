@@ -31,7 +31,12 @@ const ImagePreview = ({ src, onClose, ...props }: ImagePreviewProps) => {
       {...props}
     >
       {src ? (
-        <Image src={src} w="100%" fallback={<ImageFbLoading w="100%" h="100%" />} zIndex="100" />
+        <Image
+          src={src}
+          w="100%"
+          fallback={<ImageFbLoading w="100%" h="100%" />}
+          zIndex="100"
+        />
       ) : (
         <DropImage />
       )}
@@ -49,7 +54,8 @@ const ImagePreview = ({ src, onClose, ...props }: ImagePreviewProps) => {
 
 export const Documents = () => {
   // context
-  const { pictures, setSelfieFiles, setDocumentFiles } = useContextConsumerProfile();
+  const { handleActiveDocuments, pictures, setSelfieFiles, setDocumentFiles } =
+    useContextConsumerProfile();
   // state
   const [preview, setPreview] = React.useState<string | null>(null);
   // handlers
@@ -72,6 +78,10 @@ export const Documents = () => {
     },
     [setSelfieFiles, setDocumentFiles]
   );
+  // side effects
+  React.useEffect(() => {
+    handleActiveDocuments();
+  }, [handleActiveDocuments]);
   // UI
   return (
     <Box>
@@ -90,7 +100,12 @@ export const Documents = () => {
             clearDrop={() => clearDropImages('selfie')}
             doubleSizeCropping
           />
-          <Button mt="4" size="sm" variant="outline" onClick={() => setPreview('selfie')}>
+          <Button
+            mt="4"
+            size="sm"
+            variant="outline"
+            onClick={() => setPreview('selfie')}
+          >
             {t('Ampliar selfie')}
           </Button>
         </Box>
@@ -107,16 +122,27 @@ export const Documents = () => {
             clearDrop={() => clearDropImages('document')}
             doubleSizeCropping
           />
-          <Button mt="4" size="sm" variant="outline" onClick={() => setPreview('document')}>
+          <Button
+            mt="4"
+            size="sm"
+            variant="outline"
+            onClick={() => setPreview('document')}
+          >
             {t('Ampliar documento')}
           </Button>
         </Box>
       </HStack>
       {preview &&
         (preview === 'selfie' ? (
-          <ImagePreview src={pictures?.selfie} onClose={() => setPreview(null)} />
+          <ImagePreview
+            src={pictures?.selfie}
+            onClose={() => setPreview(null)}
+          />
         ) : (
-          <ImagePreview src={pictures?.document} onClose={() => setPreview(null)} />
+          <ImagePreview
+            src={pictures?.document}
+            onClose={() => setPreview(null)}
+          />
         ))}
     </Box>
   );

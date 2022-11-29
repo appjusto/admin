@@ -1,9 +1,8 @@
-import { Box, Button, Flex, Text } from '@chakra-ui/react';
+import { Box, Button, Checkbox, Flex, Text } from '@chakra-ui/react';
 import { isElectron } from '@firebase/util';
 import { useAuthentication } from 'app/api/auth/useAuthentication';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { AlertSuccess } from 'common/components/AlertSuccess';
-import CustomCheckbox from 'common/components/form/CustomCheckbox';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import { CustomPasswordInput } from 'common/components/form/input/CustomPasswordInput';
 import Image from 'common/components/Image';
@@ -39,7 +38,9 @@ const Login = () => {
       return dispatchAppRequestResult({
         status: 'error',
         requestId: 'handleSubmit-email-invalid',
-        message: { title: 'O e-mail informado não é válido. Corrija e tente novamente.' },
+        message: {
+          title: 'O e-mail informado não é válido. Corrija e tente novamente.',
+        },
       });
     }
     login({ email, password: passwd, isLogin });
@@ -97,28 +98,31 @@ const Login = () => {
               value={passwd}
               handleChange={(ev) => setPasswd(ev.target.value)}
             />
-            <Text 
-              mt="4" 
-              textAlign="center" 
-              fontSize="sm" 
-              textDecor="underline" 
-              cursor="pointer" 
+            <Text
+              mt="4"
+              textAlign="center"
+              fontSize="sm"
+              textDecor="underline"
+              cursor="pointer"
               onClick={() => setShowDesktopHelp(true)}
             >
-              {t(
-                'Esqueci minha senha'
-              )}
+              {t('Esqueci minha senha')}
             </Text>
-            <Text mt="4" fontSize="sm" display={showDesktopHelp ? "initial" : "none"}>
+            <Text
+              mt="4"
+              fontSize="sm"
+              display={showDesktopHelp ? 'initial' : 'none'}
+            >
               {t(
                 'Acesse o portal do seu restaurante pela web, com o seu e-mail, redefina sua senha e retorne para esta aplicação.'
               )}
             </Text>
-            <Button 
-              type="submit" 
-              width="full" 
-              h="60px" mt="6" 
-              isDisabled={email.length === 0 || passwd.length === 0} 
+            <Button
+              type="submit"
+              width="full"
+              h="60px"
+              mt="6"
+              isDisabled={email.length === 0 || passwd.length === 0}
               isLoading={isLoading}
             >
               {t('Entrar')}
@@ -129,7 +133,7 @@ const Login = () => {
           <Image src={rightImage} scrollCheck={false} w="100%" h="100vh" />
         </Box>
       </Flex>
-    )
+    );
   }
   return (
     <Flex w="100wh" h="100vh" justifyContent={{ sm: 'center' }}>
@@ -158,7 +162,12 @@ const Login = () => {
             <Text fontSize="xl" color="black" textAlign="center">
               {t('Criar novo cadastro')}
             </Text>
-            <Text maxW="360px" fontSize="md" textAlign="center" color="gray.700">
+            <Text
+              maxW="360px"
+              fontSize="md"
+              textAlign="center"
+              color="gray.700"
+            >
               {t(
                 'Você está prestes a ter uma experiência mais justa para seus clientes e entregadores!'
               )}
@@ -179,7 +188,7 @@ const Login = () => {
           />
           {isLogin && (
             <>
-              <CustomCheckbox
+              <Checkbox
                 mt="4"
                 aria-label="login-password-checkbox"
                 colorScheme="green"
@@ -188,9 +197,11 @@ const Login = () => {
                 onChange={(e) => setIsPassword(e.target.checked)}
               >
                 {t('Usar senha de acesso')}
-              </CustomCheckbox>
+              </Checkbox>
               <Text mt="2" fontSize="xs">
-                {t('Ao entrar sem senha, enviaremos um link de acesso para o e-mail cadastrado.')}
+                {t(
+                  'Ao entrar sem senha, enviaremos um link de acesso para o e-mail cadastrado.'
+                )}
               </Text>
             </>
           )}
@@ -201,6 +212,7 @@ const Login = () => {
                 isRequired={isPassword}
                 id="login-password"
                 label={t('Senha')}
+                aria-label="password-input"
                 placeholder={t('Senha de acesso')}
                 value={passwd}
                 handleChange={(ev) => setPasswd(ev.target.value)}
@@ -218,7 +230,13 @@ const Login = () => {
               description={t('O link de acesso foi enviado para seu e-mail.')}
             />
           )}
-          <Button type="submit" width="full" h="60px" mt="6" isLoading={isLoading}>
+          <Button
+            type="submit"
+            width="full"
+            h="60px"
+            mt="6"
+            isLoading={isLoading}
+          >
             {isLogin ? t('Entrar') : t('Cadastrar')}
           </Button>
           {isLogin ? (

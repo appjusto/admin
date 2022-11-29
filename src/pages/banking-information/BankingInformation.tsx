@@ -1,16 +1,18 @@
-import { Bank, BankAccount, BankAccountPersonType, BankAccountType, WithId } from '@appjusto/types';
-import { Box, Flex, RadioGroup, Stack, Text } from '@chakra-ui/react';
+import {
+  Bank,
+  BankAccount,
+  BankAccountPersonType,
+  BankAccountType,
+  WithId,
+} from '@appjusto/types';
+import { Box, Flex, Radio, RadioGroup, Stack, Text } from '@chakra-ui/react';
 import { useBanks } from 'app/api/business/profile/useBanks';
 import { useBusinessBankAccount } from 'app/api/business/profile/useBusinessBankAccount';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { AlertWarning } from 'common/components/AlertWarning';
-import CustomRadio from 'common/components/form/CustomRadio';
 import { CustomPatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';
-import {
-  addZerosToBeginning,
-  hyphenFormatter
-} from 'common/components/form/input/pattern-input/formatters';
+import { hyphenFormatter } from 'common/components/form/input/pattern-input/formatters';
 import { numbersAndLettersParser } from 'common/components/form/input/pattern-input/parsers';
 import { BankSelect } from 'common/components/form/select/BankSelect';
 import { isEmpty } from 'lodash';
@@ -19,12 +21,14 @@ import PageFooter from 'pages/PageFooter';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
 import { Redirect } from 'react-router-dom';
-import { getCEFAccountCode } from 'utils/functions';
+import { getBankingAccountPattern, getCEFAccountCode } from 'utils/functions';
 import { t } from 'utils/i18n';
 
 const bankAccountSet = (bankAccount: BankAccount): boolean => {
   return (
-    !isEmpty(bankAccount.name) && !isEmpty(bankAccount.agency) && !isEmpty(bankAccount.account)
+    !isEmpty(bankAccount.name) &&
+    !isEmpty(bankAccount.agency) &&
+    !isEmpty(bankAccount.account)
   );
 };
 
@@ -33,18 +37,22 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
   const banks = useBanks();
   const { dispatchAppRequestResult } = useContextAppRequests();
   const { business } = useContextBusiness();
-  const { bankAccount, updateBankAccount, updateResult } = useBusinessBankAccount(
-    typeof onboarding === 'string'
-  );
+  const { bankAccount, updateBankAccount, updateResult } =
+    useBusinessBankAccount(business?.id, typeof onboarding === 'string');
   const { isLoading, isSuccess } = updateResult;
   // state
   const [selectedBank, setSelectedBank] = React.useState<Bank>();
-  const [personType, setPersonType] = React.useState(bankAccount?.personType ?? 'Pessoa Jurídica');
+  const [personType, setPersonType] = React.useState(
+    bankAccount?.personType ?? 'Pessoa Jurídica'
+  );
   const [type, setType] = React.useState(bankAccount?.type ?? 'Corrente');
   const [name, setName] = React.useState(bankAccount?.name ?? '');
   const [agency, setAgency] = React.useState(bankAccount?.agency ?? '');
   const [account, setAccount] = React.useState(bankAccount?.account ?? '');
-  const [validation, setValidation] = React.useState({ agency: true, account: true });
+  const [validation, setValidation] = React.useState({
+    agency: true,
+    account: true,
+  });
   // refs
   const nameRef = React.useRef<HTMLSelectElement>(null);
   const agencyRef = React.useRef<HTMLInputElement>(null);
@@ -52,35 +60,34 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
   // helpers
   const disabled = business?.situation === 'approved';
 
-  const agencyParser = selectedBank?.agencyPattern
-    ? numbersAndLettersParser(selectedBank?.agencyPattern)
-    : undefined;
-  const agencyFormatter = selectedBank?.agencyPattern
-    ? hyphenFormatter(selectedBank?.agencyPattern.indexOf('-'))
-    : undefined;
-  const accountParser = selectedBank?.accountPattern
-    ? numbersAndLettersParser(selectedBank?.accountPattern)
-    : undefined;
-  const accountFormatter = selectedBank?.accountPattern
-    ? hyphenFormatter(selectedBank?.accountPattern.indexOf('-'))
-    : undefined;
+  const agencyParser = numbersAndLettersParser(selectedBank?.agencyPattern);
+  const agencyFormatter = hyphenFormatter(selectedBank?.agencyPattern);
+  const accountPattern = React.useMemo(
+    () => getBankingAccountPattern(selectedBank, personType, type),
+    [selectedBank, personType, type]
+  );
+  const accountParser = numbersAndLettersParser(accountPattern);
+  const accountFormatter = hyphenFormatter(accountPattern);
 
-  const bankWarning = selectedBank?.warning ? selectedBank?.warning.split(/\n/g) : [];
+  const bankWarning = selectedBank?.warning
+    ? selectedBank?.warning.split(/\n/g)
+    : [];
 
   // handlers
-  const findSelectedBank = React.useCallback((banks: WithId<Bank>[], bankName: string) => {
-    const bank = banks?.find((b) => b.name === bankName);
-    setSelectedBank(bank);
-  }, []);
-
-  const handleAccount = () => {
-    if (selectedBank?.accountPattern) {
-      const patterLen = selectedBank?.accountPattern.length - 1;
-      const result = addZerosToBeginning(account, patterLen);
-      setAccount(result);
+  const findSelectedBank = React.useCallback(
+    (banks: WithId<Bank>[], bankName: string) => {
+      const bank = banks?.find((b) => b.name === bankName);
+      setSelectedBank(bank);
+    },
+    []
+  );
+  const handleAccount = React.useCallback(() => {
+    if (account.length === 0) return;
+    if (accountPattern) {
+      const formatted = numbersAndLettersParser(accountPattern, true)!(account);
+      setAccount(formatted!);
     }
-  };
-
+  }, [account, accountPattern]);
   const onSubmitHandler = () => {
     let code = '';
     if (!validation.agency) {
@@ -103,7 +110,10 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
       dispatchAppRequestResult({
         status: 'error',
         requestId: 'BankingInformation-valid-bank',
-        message: { title: 'A iugu ainda não aceita contas Itaú - iti. Escolha outra, por favor.' },
+        message: {
+          title:
+            'A iugu ainda não aceita contas Itaú - iti. Escolha outra, por favor.',
+        },
       });
       return agencyRef?.current?.focus();
     }
@@ -147,12 +157,15 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
       setAccount('');
     }
   }, [bankAccount]);
-
   React.useEffect(() => {
     if (banks && name) {
       findSelectedBank(banks, name);
     }
   }, [banks, name, findSelectedBank]);
+  React.useEffect(() => {
+    handleAccount();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [type]);
   // UI
   if (isSuccess && redirect) return <Redirect to={redirect} push />;
   return (
@@ -196,23 +209,34 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
             fontSize="16px"
             lineHeight="22px"
           >
-            <CustomRadio isDisabled={disabled} value="Pessoa Jurídica" aria-label="pessoa jurídica">
+            <Radio
+              isDisabled={disabled}
+              value="Pessoa Jurídica"
+              aria-label="pessoa jurídica"
+            >
               {t('Pessoa Jurídica')}
-            </CustomRadio>
-            <CustomRadio isDisabled={disabled} value="Pessoa Física" aria-label="pessoa física">
+            </Radio>
+            <Radio
+              isDisabled={disabled}
+              value="Pessoa Física"
+              aria-label="pessoa física"
+            >
               {t('Pessoa Física')}
-            </CustomRadio>
+            </Radio>
           </Stack>
         </RadioGroup>
-        {business?.situation !== 'approved' && personType === 'Pessoa Física' && (
-          <AlertWarning
-            title={t('Tem certeza que a sua conta bancária é de Pessoa Física?')}
-            description={t(
-              'Essa informação é muito importante para que as transferências sejam feitas corretamente. Só escolha Pessoa Física caso tenha certeza que sua conta bancária está configurada dessa forma.'
-            )}
-            icon={false}
-          />
-        )}
+        {business?.situation !== 'approved' &&
+          personType === 'Pessoa Física' && (
+            <AlertWarning
+              title={t(
+                'Tem certeza que a sua conta bancária é de Pessoa Física?'
+              )}
+              description={t(
+                'Essa informação é muito importante para que as transferências sejam feitas corretamente. Só escolha Pessoa Física caso tenha certeza que sua conta bancária está configurada dessa forma.'
+              )}
+              icon={false}
+            />
+          )}
         <BankSelect
           mt="6"
           ref={nameRef}
@@ -244,12 +268,26 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
           mask={selectedBank?.agencyPattern}
           parser={agencyParser}
           formatter={agencyFormatter}
+          onBlur={() => {
+            if (agency.length > 0) {
+              const padded = numbersAndLettersParser(
+                selectedBank?.agencyPattern,
+                true
+              )!(agency);
+              setAgency(padded);
+            }
+          }}
           validationLength={
-            selectedBank?.agencyPattern ? selectedBank.agencyPattern.length - 1 : undefined
+            selectedBank?.agencyPattern
+              ? selectedBank.agencyPattern.length - 1
+              : undefined
           }
           isRequired
           notifyParentWithValidation={(isInvalid: boolean) => {
-            setValidation((prevState) => ({ ...prevState, agency: !isInvalid }));
+            setValidation((prevState) => ({
+              ...prevState,
+              agency: !isInvalid,
+            }));
           }}
         />
         <Flex>
@@ -272,7 +310,10 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
             onBlur={handleAccount}
             isRequired
             notifyParentWithValidation={(isInvalid: boolean) => {
-              setValidation((prevState) => ({ ...prevState, account: !isInvalid }));
+              setValidation((prevState) => ({
+                ...prevState,
+                account: !isInvalid,
+              }));
             }}
           />
         </Flex>
@@ -297,12 +338,12 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
                 fontSize="16px"
                 lineHeight="22px"
               >
-                <CustomRadio isDisabled={disabled} value="Corrente">
+                <Radio isDisabled={disabled} value="Corrente">
                   {t('003 – Conta Corrente')}
-                </CustomRadio>
-                <CustomRadio isDisabled={disabled} value="Poupança">
+                </Radio>
+                <Radio isDisabled={disabled} value="Poupança">
                   {t('022 – Conta Poupança')}
-                </CustomRadio>
+                </Radio>
               </Stack>
             ) : (
               <Stack
@@ -314,18 +355,18 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
                 fontSize="16px"
                 lineHeight="22px"
               >
-                <CustomRadio isDisabled={disabled} value="Corrente">
+                <Radio isDisabled={disabled} value="Corrente">
                   {t('001 – Conta Corrente')}
-                </CustomRadio>
-                <CustomRadio isDisabled={disabled} value="Simples">
+                </Radio>
+                <Radio isDisabled={disabled} value="Simples">
                   {t('002 – Conta Simples')}
-                </CustomRadio>
-                <CustomRadio isDisabled={disabled} value="Poupança">
+                </Radio>
+                <Radio isDisabled={disabled} value="Poupança">
                   {t('013 – Conta Poupança')}
-                </CustomRadio>
-                <CustomRadio isDisabled={disabled} value="Nova Poupança">
+                </Radio>
+                <Radio isDisabled={disabled} value="Nova Poupança">
                   {t('1288 – Conta Poupança (novo formato)')}
-                </CustomRadio>
+                </Radio>
               </Stack>
             )
           ) : (
@@ -337,12 +378,12 @@ const BankingInformation = ({ onboarding, redirect }: OnboardingProps) => {
               fontSize="16px"
               lineHeight="22px"
             >
-              <CustomRadio isDisabled={disabled} value="Corrente">
+              <Radio isDisabled={disabled} value="Corrente">
                 {t('Corrente')}
-              </CustomRadio>
-              <CustomRadio isDisabled={disabled} value="Poupança">
+              </Radio>
+              <Radio isDisabled={disabled} value="Poupança">
                 {t('Poupança')}
-              </CustomRadio>
+              </Radio>
             </Stack>
           )}
         </RadioGroup>

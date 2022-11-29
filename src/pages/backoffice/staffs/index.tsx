@@ -1,4 +1,4 @@
-import { StaffProfile, WithId } from '@appjusto/types';
+import { ProfileSituation } from '@appjusto/types';
 import { ArrowDownIcon } from '@chakra-ui/icons';
 import { Button, Flex, Text } from '@chakra-ui/react';
 import { useStaffs } from 'app/api/staff/useStaffs';
@@ -12,15 +12,16 @@ import { t } from 'utils/i18n';
 import { StaffBaseDrawer } from '../drawers/staff/StaffBaseDrawer';
 import { StaffsTable } from './StaffsTable';
 
+const situations = ['pending', 'approved'] as ProfileSituation[];
+
 const StaffsPage = () => {
   // context
   const { path } = useRouteMatch();
   const history = useHistory();
-  const { staffs, fetchNextPage } = useStaffs();
   // state
   const [dateTime, setDateTime] = React.useState('');
   const [search, setSearch] = React.useState('');
-  const [staffsList, setStaffsList] = React.useState<WithId<StaffProfile>[]>();
+  const { staffs, fetchNextPage } = useStaffs(situations, search);
   // handlers
   const closeDrawerHandler = () => {
     history.replace(path);
@@ -30,17 +31,13 @@ const StaffsPage = () => {
     const { date, time } = getDateTime();
     setDateTime(`${date} às ${time}`);
   }, []);
-  React.useEffect(() => {
-    let found = staffs ?? [];
-    if (staffs && search.length > 0) {
-      found = staffs.filter((agent) => agent.email.includes(search));
-    }
-    setStaffsList(found);
-  }, [staffs, search]);
   // UI
   return (
     <>
-      <PageHeader title={t('Agentes Appjusto')} subtitle={t(`Atualizado ${dateTime}`)} />
+      <PageHeader
+        title={t('Agentes Appjusto')}
+        subtitle={t(`Atualizado ${dateTime}`)}
+      />
       <Flex mt="8">
         <CustomInput
           mt="0"
@@ -67,11 +64,15 @@ const StaffsPage = () => {
         color="black"
       >
         <Text fontSize="lg" fontWeight="700" lineHeight="26px">
-          {t(`${staffsList?.length ?? '0'} agentes encontrados`)}
+          {t(`${staffs ? staffs?.length : '0'} agentes encontrados`)}
         </Text>
-        <CustomButton mt="0" label={t('Adicionar agente')} link={`${path}/new`} />
+        <CustomButton
+          mt="0"
+          label={t('Adicionar agente')}
+          link={`${path}/new`}
+        />
       </Flex>
-      <StaffsTable staffs={staffsList} />
+      <StaffsTable staffs={staffs ?? []} />
       <Button mt="8" variant="secondary" onClick={fetchNextPage}>
         <ArrowDownIcon mr="2" />
         {t('Carregar mais')}

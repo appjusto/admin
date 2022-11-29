@@ -1,10 +1,10 @@
 import { ConsumerProvider } from 'app/state/consumer/context';
 import { useContextStaffProfile } from 'app/state/staff/context';
-import React from 'react';
 import { Route, Switch, useRouteMatch } from 'react-router-dom';
 import { ConsumerBaseDrawer } from './ConsumerBaseDrawer';
 import { ConsumerOrders } from './ConsumerOrders';
 import { ConsumerStatus } from './ConsumerStatus';
+import { Documents } from './Documents';
 import { PaymentMethods } from './PaymentMethods';
 import { PersonalProfile } from './PersonalProfile';
 
@@ -13,17 +13,24 @@ interface ConsumerDrawerProps {
   onClose(): void;
 }
 
-export const ConsumerDrawer = ({ onClose, ...props }: ConsumerDrawerProps) => {
+const ConsumerDrawer = ({ onClose, ...props }: ConsumerDrawerProps) => {
   //context
   const { path } = useRouteMatch();
   const { staff, username } = useContextStaffProfile();
   //UI
   return (
     <ConsumerProvider>
-      <ConsumerBaseDrawer staff={{ id: staff?.id, name: username }} onClose={onClose} {...props}>
+      <ConsumerBaseDrawer
+        staff={{ id: staff?.id, name: username }}
+        onClose={onClose}
+        {...props}
+      >
         <Switch>
           <Route exact path={`${path}`}>
             <PersonalProfile />
+          </Route>
+          <Route exact path={`${path}/pictures`}>
+            <Documents />
           </Route>
           <Route exact path={`${path}/payment`}>
             <PaymentMethods />
@@ -39,3 +46,5 @@ export const ConsumerDrawer = ({ onClose, ...props }: ConsumerDrawerProps) => {
     </ConsumerProvider>
   );
 };
+
+export default ConsumerDrawer;

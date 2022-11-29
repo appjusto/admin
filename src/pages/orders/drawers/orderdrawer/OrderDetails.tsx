@@ -1,9 +1,24 @@
 import { Order, OrderItem, WithId } from '@appjusto/types';
-import { Box, Table, Tbody, Td, Text, Tfoot, Th, Thead, Tr } from '@chakra-ui/react';
+import {
+  Box,
+  Table,
+  Tbody,
+  Td,
+  Text,
+  Tfoot,
+  Th,
+  Thead,
+  Tr,
+} from '@chakra-ui/react';
 import * as cpfutils from '@fnando/cpf';
+import { paymentMethodPTOptions } from 'pages/backoffice/utils';
 import React from 'react';
 import { formatCurrency } from 'utils/formatters';
-import { getComplementQtd, getComplementSubtotal, getProductSubtotal } from 'utils/functions';
+import {
+  getComplementQtd,
+  getComplementSubtotal,
+  getProductSubtotal,
+} from 'utils/functions';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../../../backoffice/drawers/generics/SectionTitle';
 
@@ -45,7 +60,11 @@ export const OrderDetails = ({ order }: DetailsProps) => {
                     </Td>
                     <Td isNumeric>{item.quantity}</Td>
                     <Td isNumeric>{formatCurrency(item.product.price)}</Td>
-                    <Td isNumeric>{formatCurrency(getProductSubtotal(item.quantity, item.product.price))}</Td>
+                    <Td isNumeric>
+                      {formatCurrency(
+                        getProductSubtotal(item.quantity, item.product.price)
+                      )}
+                    </Td>
                   </Tr>
                   {item.complements &&
                     item.complements.map((complement) => (
@@ -60,18 +79,16 @@ export const OrderDetails = ({ order }: DetailsProps) => {
                         <Td isNumeric>
                           {getComplementQtd(item.quantity, complement.quantity)}
                         </Td>
-                        {/* <Td isNumeric>
-                          {item.quantity > 1 ? (
-                            <Multiplier
-                              products={item.quantity}
-                              complements={complement.quantity}
-                            />
-                          ) : (
-                            complement.quantity ?? 1
-                          )}
-                        </Td> */}
                         <Td isNumeric>{formatCurrency(complement.price)}</Td>
-                        <Td isNumeric>{formatCurrency(getComplementSubtotal(item.quantity, complement.quantity, complement.price))}</Td>
+                        <Td isNumeric>
+                          {formatCurrency(
+                            getComplementSubtotal(
+                              item.quantity,
+                              complement.quantity,
+                              complement.price
+                            )
+                          )}
+                        </Td>
                       </Tr>
                     ))}
                 </React.Fragment>
@@ -83,18 +100,26 @@ export const OrderDetails = ({ order }: DetailsProps) => {
                 <Th></Th>
                 <Th></Th>
                 <Th isNumeric>
-                  {order?.fare?.business?.value ? formatCurrency(order.fare.business.value) : 0}
+                  {order?.fare?.business?.value
+                    ? formatCurrency(order.fare.business.value)
+                    : 0}
                 </Th>
               </Tr>
             </Tfoot>
           </Table>
-          <Text mt="4" fontSize="xs">{t('* A coluna de quantidade (Qtd.) já exibe o valor total de cada item ou complemento para o pedido.')}</Text>
+          <Text mt="4" fontSize="xs">
+            {t(
+              '* A coluna de quantidade (Qtd.) já exibe o valor total de cada item ou complemento para o pedido.'
+            )}
+          </Text>
         </>
       )}
       <SectionTitle mt="10">{t('Observações')}</SectionTitle>
       {order?.consumer.cpf && (
         <Text mt="1" fontSize="md" color="red">
-          {t(`Incluir CPF na nota, CPF: ${cpfutils.format(order.consumer.cpf)}`)}
+          {t(
+            `Incluir CPF na nota, CPF: ${cpfutils.format(order.consumer.cpf)}`
+          )}
         </Text>
       )}
       {order?.additionalInfo && (
@@ -114,8 +139,11 @@ export const OrderDetails = ({ order }: DetailsProps) => {
             <Text mt="1" fontSize="md">
               {t('Valor do frete:')}{' '}
               <Text as="span" color="black">
-                {order?.fare?.courier?.value ? formatCurrency(order.fare.courier.value) : 'N/E'}
-                {order?.outsourcedBy === 'business' && ` (${t('Assumido pelo restaurante')})`}
+                {order?.fare?.courier?.value
+                  ? formatCurrency(order.fare.courier.value)
+                  : 'N/E'}
+                {order?.outsourcedBy === 'business' &&
+                  ` (${t('Assumido pelo restaurante')})`}
               </Text>
             </Text>
           )}
@@ -128,7 +156,9 @@ export const OrderDetails = ({ order }: DetailsProps) => {
           <Text mt="1" fontSize="md">
             {t('Método de pagamento:')}{' '}
             <Text as="span" color="black">
-              {t('cartão de crédito')}
+              {order?.paymentMethod
+                ? paymentMethodPTOptions[order.paymentMethod]
+                : 'N/E'}
             </Text>
           </Text>
         </>

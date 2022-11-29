@@ -1,5 +1,15 @@
 import { Order, WithId } from '@appjusto/types';
-import { Box, Link, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
+import {
+  Box,
+  Link,
+  Table,
+  Tbody,
+  Td,
+  Text,
+  Th,
+  Thead,
+  Tr,
+} from '@chakra-ui/react';
 import { useContextConsumerProfile } from 'app/state/consumer/context';
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
@@ -29,14 +39,13 @@ const ConsumerOrdersTableItem = ({ order }: ItemPros) => {
 
 export const ConsumerOrders = () => {
   // context
-  const { isOrdersActive, setIsOrdersActive, orders } = useContextConsumerProfile();
+  const { handleActiveOrders, orders } = useContextConsumerProfile();
   // helpers
   const totalOrders = orders.length ?? '0';
   // side effects
   React.useEffect(() => {
-    if (isOrdersActive) return;
-    setIsOrdersActive(true);
-  }, [isOrdersActive, setIsOrdersActive]);
+    handleActiveOrders();
+  }, [handleActiveOrders]);
   // UI
   return (
     <Box>

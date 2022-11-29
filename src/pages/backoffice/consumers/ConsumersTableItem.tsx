@@ -1,9 +1,7 @@
 import { ConsumerAlgolia } from '@appjusto/types';
-import { Td, Tr } from '@chakra-ui/react';
-import { CustomButton } from 'common/components/buttons/CustomButton';
+import TableItem from 'common/components/backoffice/TableItem';
 import { useRouteMatch } from 'react-router';
 import { getAlgoliaFieldDateAndHour } from 'utils/functions';
-import { t } from 'utils/i18n';
 
 interface ItemProps {
   consumer: ConsumerAlgolia;
@@ -13,22 +11,23 @@ export const ConsumersTableItem = ({ consumer }: ItemProps) => {
   // context
   const { path } = useRouteMatch();
   //  UI
-  const name = consumer.name ? `${consumer.name} ${consumer.surname ?? ''}` : 'N/I';
+  const name = consumer.name
+    ? `${consumer.name} ${consumer.surname ?? ''}`
+    : 'N/I';
   return (
-    <Tr key={consumer.objectID} color="black" fontSize="15px" lineHeight="21px">
-      <Td maxW="120px">{consumer.code ?? 'N/I'}</Td>
-      <Td>{consumer.createdOn ? getAlgoliaFieldDateAndHour(consumer.createdOn) : ''}</Td>
-      <Td>{name}</Td>
-      <Td isNumeric>{consumer.totalOrders ?? 0}</Td>
-      <Td>
-        <CustomButton
-          mt="0"
-          variant="outline"
-          label={t('Detalhes')}
-          link={`${path}/${consumer.objectID}`}
-          size="sm"
-        />
-      </Td>
-    </Tr>
+    <TableItem
+      key={consumer.objectID}
+      link={`${path}/${consumer.objectID}`}
+      columns={[
+        { value: consumer.code ?? 'N/I', styles: { maxW: '120px' } },
+        {
+          value: consumer.createdOn
+            ? getAlgoliaFieldDateAndHour(consumer.createdOn)
+            : 'N/E',
+        },
+        { value: name },
+        { value: consumer.totalOrders ?? 0, styles: { isNumeric: true } },
+      ]}
+    />
   );
 };

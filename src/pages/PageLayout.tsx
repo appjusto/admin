@@ -1,5 +1,4 @@
 import { Container, Flex, FlexProps } from '@chakra-ui/react';
-import React from 'react';
 import { MenuMobile } from './MenuMobile';
 import Sidebar from './sidebar/Sidebar';
 
@@ -8,17 +7,20 @@ interface PageLayoutProps extends FlexProps {
   mt?: string;
 }
 
-const PageLayout = ({ maxW = '960px', mt = '0', children }: PageLayoutProps) => {
-  // context
+const PageLayout = ({
+  maxW = '1012px',
+  mt = '0',
+  children,
+}: PageLayoutProps) => {
   // UI
   return (
-    <Flex w="100vw" minH="100vh" maxW="100vw" mt={mt}>
+    <Flex flex={1} minH="100vh" mt={mt}>
       <MenuMobile />
       <Sidebar />
-      <Flex w="100%" justifyContent="center">
+      <Flex flex={1} justifyContent="center">
         <Container
-          w="100%"
-          maxW={{ lg: maxW, xl: '1144px' }}
+          w="100vw"
+          maxW={{ lg: maxW }}
           pt={{ base: '16', lg: '10' }}
           pb={{ base: '8', md: '14' }}
         >

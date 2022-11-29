@@ -1,49 +1,46 @@
-import { DispatchingStatus, Fulfillment, OrderStatus } from '@appjusto/types';
+import { DispatchingStatus } from '@appjusto/types';
 
 export const getOrderMatchingColor = (
-  orderFulfillment: Fulfillment | undefined,
-  orderStatus: OrderStatus,
+  isFlagged: boolean,
   dispatchingStatus?: DispatchingStatus,
   courierId?: string
 ) => {
-  if (courierId)
+  if (isFlagged && courierId) {
     return {
       bg: '#6CE787',
+      border: '2px solid red',
       color: 'black',
     };
-  if (dispatchingStatus === 'idle' && orderFulfillment === 'delivery') {
-    if (['ready', 'dispatching'].includes(orderStatus) && !courierId) {
-      return {
-        bg: 'red',
-        color: 'white',
-      };
-    }
   }
-  if (dispatchingStatus === 'matching') {
-    if (['ready', 'dispatching'].includes(orderStatus) && !courierId) {
-      return {
-        bg: 'red',
-        color: 'white',
-      };
-    } else
-      return {
-        bg: '#055AFF',
-        color: 'white',
-      };
+  if (isFlagged && dispatchingStatus === 'outsourced') {
+    return {
+      bg: '#FFBE00',
+      border: '2px solid red',
+      color: 'black',
+    };
   }
-  if (dispatchingStatus === 'no-match') {
+  if (isFlagged) {
     return {
       bg: 'red',
+      border: 'none',
       color: 'white',
     };
   }
+  if (courierId)
+    return {
+      bg: '#6CE787',
+      border: 'none',
+      color: 'black',
+    };
   if (dispatchingStatus === 'outsourced')
     return {
       bg: '#FFBE00',
+      border: 'none',
       color: 'black',
     };
   return {
     bg: 'none',
+    border: 'none',
     color: '#C8D7CB',
   };
 };

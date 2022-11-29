@@ -1,11 +1,13 @@
 import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import React from 'react';
 import { Button } from './components/Button';
+import Checkbox from './components/Checkbox';
 import { CustomInput } from './components/CustomInput';
 import { CustomTextarea } from './components/CustomTextarea';
 import { IconButton } from './components/IconButton';
+import Radio from './components/Radio';
 import { Select } from './components/Select';
-import { Switch } from './components/Switch';
+import Switch from './components/Switch';
 import { colors } from './foundations/colors';
 import { typography } from './foundations/typography';
 
@@ -23,12 +25,14 @@ const theme = extendTheme({
     },
   },
   components: {
+    Button,
+    Checkbox,
     CustomInput,
     CustomTextarea,
-    Select,
-    Button,
-    Switch,
     IconButton,
+    Radio,
+    Select,
+    Switch,
   },
 });
 

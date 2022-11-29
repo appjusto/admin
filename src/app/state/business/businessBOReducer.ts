@@ -3,7 +3,6 @@ import {
   Business,
   BusinessAddress,
   BusinessPhone,
-  // ManagerProfile,
   WithId,
 } from '@appjusto/types';
 import { BusinessPhoneField } from 'pages/business-profile/business-phones';
@@ -16,7 +15,6 @@ const defaultPhone = {
 } as BusinessPhone;
 
 export interface businessBOState {
-  // manager: WithId<ManagerProfile>;
   bankingInfo: BankAccount;
   businessProfile: WithId<Business>;
 }
@@ -32,11 +30,12 @@ export type Actions =
       payload: { index: number; field: BusinessPhoneField; value: any };
     }
   | { type: 'ordering_business_phone'; payload: BusinessPhone[] }
-  // | { type: 'load_manager'; payload: WithId<ManagerProfile> }
-  // | { type: 'update_manager'; payload: Partial<WithId<ManagerProfile>> }
   | { type: 'update_banking'; payload: Partial<BankAccount> };
 
-export const businessBOReducer = (state: businessBOState, action: Actions): businessBOState => {
+export const businessBOReducer = (
+  state: businessBOState,
+  action: Actions
+): businessBOState => {
   switch (action.type) {
     case 'load_business':
       return {
@@ -88,13 +87,18 @@ export const businessBOReducer = (state: businessBOState, action: Actions): busi
         ...state,
         businessProfile: {
           ...state.businessProfile,
-          phones: [...(state.businessProfile.phones ?? [])].map((phone, index) => {
-            if (index === action.payload.index) {
-              return { ...phone, [action.payload.field]: action.payload.value };
-            } else {
-              return phone;
+          phones: [...(state.businessProfile.phones ?? [])].map(
+            (phone, index) => {
+              if (index === action.payload.index) {
+                return {
+                  ...phone,
+                  [action.payload.field]: action.payload.value,
+                };
+              } else {
+                return phone;
+              }
             }
-          }),
+          ),
         },
       };
     case 'ordering_business_phone':

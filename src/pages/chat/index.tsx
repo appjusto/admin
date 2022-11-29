@@ -1,48 +1,58 @@
 import { ArrowBackIcon } from '@chakra-ui/icons';
-import { Box, Button, Flex, Icon, Input, InputGroup, InputRightElement } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Flex,
+  Icon,
+  Input,
+  InputGroup,
+  InputRightElement,
+} from '@chakra-ui/react';
 import { OrderChatGroup } from 'app/api/chat/types';
-import { getOrderedChatPage } from 'app/api/chat/utils';
 import { useOrdersContext } from 'app/state/order';
 import Container from 'common/components/Container';
 import { ReactComponent as SearchIcon } from 'common/img/searchIcon.svg';
 import { OrdersHeader } from 'pages/orders/OrdersHeader';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
-import { Link, Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
+import {
+  Link,
+  Route,
+  Switch,
+  useHistory,
+  useRouteMatch,
+} from 'react-router-dom';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { ChatDrawer } from './ChatDrawer';
-import { ChatsTable } from './ChatsTable';
+import ChatsTable from './ChatsTable';
 
 export const ChatPage = () => {
   // context
   const { path } = useRouteMatch();
   const history = useHistory();
-  const { orders, chats } = useOrdersContext();
+  const { activeChat, chats } = useOrdersContext();
   // state
   const [search, setSearch] = React.useState('');
   const [dateTime, setDateTime] = React.useState('');
-  const [orderedChats, setOrderedChats] = React.useState<OrderChatGroup[]>([]);
   const [searchResult, setSearchResult] = React.useState<OrderChatGroup[]>([]);
   // handlers
   const closeDrawerHandler = () => history.replace(path);
   // side effects
   React.useEffect(() => {
+    if (activeChat) activeChat();
     const { date, time } = getDateTime();
     setDateTime(`${date} às ${time}`);
-  }, []);
-  React.useEffect(() => {
-    if (!chats || !orders) return;
-    const ordered = getOrderedChatPage(chats, orders);
-    setOrderedChats(ordered);
-  }, [orders, chats, setOrderedChats]);
+  }, [activeChat]);
   React.useEffect(() => {
     if (search) {
       const regexp = new RegExp(search, 'i');
-      const result = orderedChats.filter((chat) => regexp.test(chat.orderCode as string));
+      const result = chats.filter((chat) =>
+        regexp.test(chat.orderCode as string)
+      );
       setSearchResult(result);
     }
-  }, [orderedChats, search]);
+  }, [chats, search]);
   // UI
   return (
     // ChatContext
@@ -64,7 +74,10 @@ export const ChatPage = () => {
             justifyContent="space-between"
             alignItems={{ lg: 'flex-end' }}
           >
-            <PageHeader title={t('Chat')} subtitle={t(`Dados atualizados em ${dateTime}`)} />
+            <PageHeader
+              title={t('Chat')}
+              subtitle={t(`Dados atualizados em ${dateTime}`)}
+            />
             <InputGroup maxW="360px">
               <Input
                 mt={{ base: '4', lg: '0' }}
@@ -84,7 +97,7 @@ export const ChatPage = () => {
             </InputGroup>
           </Flex>
         </Box>
-        <ChatsTable chats={search ? searchResult : orderedChats} />
+        <ChatsTable chats={search ? searchResult : chats} />
       </Container>
       <Switch>
         <Route path={`${path}/:orderId/:counterpartId`}>

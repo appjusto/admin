@@ -1,13 +1,12 @@
+import { LedgerEntryStatus } from '@appjusto/types';
 import { IuguInvoiceStatus } from '@appjusto/types/payment/iugu';
 import { Box, Stack } from '@chakra-ui/react';
 import { useAccountInformation } from 'app/api/business/useAccountInformation';
 import { useObserveBusinessAdvances } from 'app/api/business/useObserveBusinessAdvances';
 import { useObserveBusinessWithdraws } from 'app/api/business/useObserveBusinessWithdraws';
-import { useRequestWithdraw } from 'app/api/business/useRequestWithdraw';
-import { useObserveInvoicesStatusByPeriod } from 'app/api/order/useObserveInvoicesStatusByPeriod';
-import { useCanAdvanceReceivables } from 'app/api/platform/useCanAdvanceReceivables';
+import { useObserveInvoicesStatusByPeriod } from 'app/api/invoices/useObserveInvoicesStatusByPeriod';
+import { useObserveLedgerStatusByPeriod } from 'app/api/ledger/useObserveLedgerStatusByPeriod';
 import { useContextBusinessId } from 'app/state/business/context';
-import { useContextAppRequests } from 'app/state/requests/context';
 import { CustomMonthInput } from 'common/components/form/input/CustomMonthInput';
 import { ReactComponent as Checked } from 'common/img/icon-checked.svg';
 import { ReactComponent as Watch } from 'common/img/icon-stopwatch.svg';
@@ -15,7 +14,7 @@ import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router';
-import { convertBalance, getMonthName } from 'utils/formatters';
+import { getMonthName } from 'utils/formatters';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { AdvanceDetailsDrawer } from './AdvanceDetailsDrawer';
@@ -23,52 +22,53 @@ import { AdvancesDrawer } from './AdvancesDrawer';
 import { AdvancesTable } from './AdvancesTable';
 import { BasicInfoBox } from './BasicInfoBox';
 import { PeriodTable } from './PeriodTable';
+import { formatIuguValueToDisplay } from './utils';
 import { WithdrawsDrawer } from './WithdrawsDrawer';
 import { WithdrawsTable } from './WithdrawsTable';
 
-const periodStatus = 'paid' as IuguInvoiceStatus;
+const periodStatuses = [
+  'paid',
+  'partially_refunded',
+  'partially_paid',
+] as IuguInvoiceStatus[];
+const ledgerEntriesStatuses = ['paid'] as LedgerEntryStatus[];
 
 const FinancesPage = () => {
   // context
-  const { dispatchAppRequestResult } = useContextAppRequests();
   const { path, url } = useRouteMatch();
   const history = useHistory();
   const businessId = useContextBusinessId();
-  const { accountInformation, refreshAccountInformation } = useAccountInformation(businessId);
-  const { requestWithdraw, requestWithdrawResult } = useRequestWithdraw(businessId);
-  const { isLoading, isSuccess } = requestWithdrawResult;
-  const canAdvanceReceivables = useCanAdvanceReceivables();
+  const { accountInformation, refreshAccountInformation } =
+    useAccountInformation(businessId);
   // state
   const [dateTime, setDateTime] = React.useState('');
   const [month, setMonth] = React.useState<Date | null>(new Date());
-  const [availableReceivable, setAvailableReceivable] = React.useState<string | null>();
-  const [availableWithdraw, setAvailableWithdraw] = React.useState<string | null>();
-  const [activeWithdraw, setActiveWithdraw] = React.useState<number>();
+  const [receivableBalance, setReceivableBalance] = React.useState<
+    string | null
+  >();
+  const [availableWithdraw, setAvailableWithdraw] = React.useState<
+    string | null
+  >();
   // page data with filters
-  const { periodAmount, appjustoFee, iuguFee } = useObserveInvoicesStatusByPeriod(
-    businessId,
-    month,
-    periodStatus
-  );
+  const {
+    periodProductAmount,
+    periodDeliveryAmount,
+    total,
+    appjustoCosts,
+    iuguCosts,
+  } = useObserveInvoicesStatusByPeriod(businessId, month, periodStatuses);
+  const { periodAmount: ledgerAmount, iuguValue: ledgerIuguValue } =
+    useObserveLedgerStatusByPeriod(businessId, month, ledgerEntriesStatuses);
   const advances = useObserveBusinessAdvances(businessId, month);
   const withdraws = useObserveBusinessWithdraws(businessId, month);
   // helpers
   const monthName = month ? getMonthName(month.getMonth()) : 'N/E';
   const year = month ? month.getFullYear() : 'N/E';
+  const iuguTotalCosts = iuguCosts + ledgerIuguValue;
   // handlers
   const closeDrawerHandler = () => {
     refreshAccountInformation();
     history.replace(path);
-  };
-  const handleWithdrawRequest = () => {
-    if (!availableWithdraw)
-      return dispatchAppRequestResult({
-        status: 'error',
-        requestId: 'FinancesPage-valid',
-        message: { title: 'Não existe valor disponível para transferência.' },
-      });
-    const amount = convertBalance(availableWithdraw);
-    requestWithdraw(amount);
   };
   const getAdvanceById = React.useCallback(
     (advanceId: string) => {
@@ -83,22 +83,22 @@ const FinancesPage = () => {
   }, []);
   React.useEffect(() => {
     if (accountInformation === undefined) return;
-    setAvailableReceivable(accountInformation?.receivable_balance ?? null);
-    setAvailableWithdraw(accountInformation?.balance_available_for_withdraw ?? null);
+    setReceivableBalance(
+      accountInformation?.receivable_balance
+        ? formatIuguValueToDisplay(accountInformation.receivable_balance)
+        : null
+    );
+    setAvailableWithdraw(
+      accountInformation?.balance_available_for_withdraw ?? null
+    );
   }, [accountInformation]);
-  React.useEffect(() => {
-    if (!withdraws) return;
-    const active = withdraws.filter((w) => w.status !== 'rejected');
-    setActiveWithdraw(active.length);
-  }, [withdraws]);
-  React.useEffect(() => {
-    if (!isSuccess) return;
-    refreshAccountInformation();
-  }, [isSuccess, refreshAccountInformation])
   // UI
   return (
     <>
-      <PageHeader title={t('Financeiro')} subtitle={t(`Dados atualizados em ${dateTime}`)} />
+      <PageHeader
+        title={t('Financeiro')}
+        subtitle={t(`Dados atualizados em ${dateTime}`)}
+      />
       <Stack mt="8" direction={{ base: 'column', md: 'row' }} spacing={4}>
         <BasicInfoBox
           label={t('Disponível para saque')}
@@ -112,13 +112,11 @@ const FinancesPage = () => {
         <BasicInfoBox
           label={t('Vendas em processamento')}
           icon={Watch}
-          value={availableReceivable}
-          btnLabel={
-            canAdvanceReceivables ? t('Pedir antecipação de valores') : t('Fora do horário')
-          }
+          value={receivableBalance}
+          btnLabel={t('Ver detalhes')}
           btnVariant="outline"
           btnLink={`${url}/advances`}
-          isAvailable={canAdvanceReceivables}
+          // isAvailable={canAdvanceReceivables}
         />
       </Stack>
       <SectionTitle>{t('Período')}</SectionTitle>
@@ -132,9 +130,11 @@ const FinancesPage = () => {
       </Box>
       <PeriodTable
         period={`${monthName} de ${year}`}
-        amount={periodAmount}
-        appjustoFee={appjustoFee}
-        iuguFee={iuguFee}
+        total={total}
+        amountProducts={periodProductAmount}
+        amountDelivery={periodDeliveryAmount + ledgerAmount}
+        appjustoCosts={appjustoCosts}
+        iuguCosts={iuguTotalCosts}
       />
       <SectionTitle>{t('Antecipações')}</SectionTitle>
       <AdvancesTable advances={advances} />
@@ -142,16 +142,17 @@ const FinancesPage = () => {
       <WithdrawsTable withdraws={withdraws} />
       <Switch>
         <Route path={`${path}/advances`}>
-          <AdvancesDrawer isOpen onClose={closeDrawerHandler} />
+          <AdvancesDrawer
+            isOpen
+            onClose={closeDrawerHandler}
+            receivableBalance={accountInformation?.receivable_balance}
+            advanceableValue={accountInformation?.advanceable_value}
+          />
         </Route>
         <Route path={`${path}/withdraw`}>
           <WithdrawsDrawer
             isOpen
-            totalWithdraws={activeWithdraw}
             withdrawValue={availableWithdraw}
-            requestWithdraw={handleWithdrawRequest}
-            isLoading={isLoading}
-            isSuccess={isSuccess}
             onClose={closeDrawerHandler}
           />
         </Route>

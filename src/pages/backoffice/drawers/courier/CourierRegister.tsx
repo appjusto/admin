@@ -1,10 +1,13 @@
+import { ProfileTag } from '@appjusto/types';
 import { Box } from '@chakra-ui/react';
+import { useCourierUpdateProfile } from 'app/api/courier/useCourierUpdateProfile';
 import { useObserveCourierProfileNotes } from 'app/api/courier/useObserveCourierProfileNotes';
 import { useContextCourierProfile } from 'app/state/courier/context';
 import { ProfileNotes } from 'common/components/backoffice/ProfileNotes';
-import React from 'react';
+import { UserNotificationPreferences } from 'common/components/UserNotificationPreferences';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
+import { ProfileTags } from '../ProfileTags';
 import { ActingCity } from './ActingCity';
 import { Documents } from './Documents';
 import { Fleets } from './Fleets';
@@ -14,14 +17,11 @@ import { ProfileBankingInfo } from './register/ProfileBankingInfo';
 
 export const CourierRegister = () => {
   // context
-  const { courier } = useContextCourierProfile();
-  const {
-    profileNotes,
-    updateNote,
-    deleteNote,
-    updateResult,
-    deleteResult,
-  } = useObserveCourierProfileNotes(courier?.id);
+  const { courier, handleProfileChange } = useContextCourierProfile();
+  const { updateProfile, updateResult: updateProfileResult } =
+    useCourierUpdateProfile(courier?.id);
+  const { profileNotes, updateNote, deleteNote, updateResult, deleteResult } =
+    useObserveCourierProfileNotes(courier?.id);
   // UI
   return (
     <Box>
@@ -37,6 +37,27 @@ export const CourierRegister = () => {
       <ActingCity />
       <SectionTitle>{t('Frota atual')}</SectionTitle>
       <Fleets />
+      <SectionTitle>{t('Preferências de notificação')}</SectionTitle>
+      <UserNotificationPreferences
+        notificationPreferences={courier?.notificationPreferences}
+        handlePreferenciesChange={(values) =>
+          handleProfileChange('notificationPreferences', values)
+        }
+      />
+      <SectionTitle>{t('Tags')}</SectionTitle>
+      <ProfileTags
+        tags={courier?.tags}
+        options={['safe', 'unsafe'] as ProfileTag[]}
+        updateProfile={(tags) =>
+          updateProfile({
+            changes: { tags },
+            selfieFileToSave: null,
+            documentFileToSave: null,
+          })
+        }
+        isLoading={updateProfileResult.isLoading}
+        isSuccess={updateProfileResult.isSuccess}
+      />
       <SectionTitle>{t('Anotações')}</SectionTitle>
       <ProfileNotes
         profileNotes={profileNotes}

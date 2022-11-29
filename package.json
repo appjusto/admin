@@ -1,13 +1,13 @@
 {
   "name": "appjusto-admin",
-  "version": "9.7.1",
+  "version": "10.9.2",
   "author": "AppJusto <contato@appjusto.com.br> (https://appjusto.com.br/)",
   "description": "AppJusto Admin Desktop",
   "private": true,
   "main": "build/desktop/main.js",
   "dependencies": {
     "@appjusto/menu": "^0.1.4",
-    "@appjusto/types": "7.6.1",
+    "@appjusto/types": "^10.2.1",
     "@casl/ability": "^5.4.3",
     "@chakra-ui/icons": "^1.0.3",
     "@chakra-ui/react": "^1.6.3",
@@ -57,7 +57,6 @@
     "react-dom": "^17.0.1",
     "react-dropzone": "^11.2.4",
     "react-easy-crop": "^3.5.1",
-    "react-facebook-pixel": "^1.0.4",
     "react-icons": "^4.3.1",
     "react-image-crop": "^8.6.6",
     "react-markdown": "^6.0.1",
@@ -90,6 +89,8 @@
     "deploy:staging": "ENV=staging yarn deploy",
     "deploy:community": "ENV=community yarn deploy",
     "deploy:live": "ENV=live yarn deploy",
+    "deploy:staging:preview": "env-cmd -f .env.staging yarn build && firebase use app-justo-staging && firebase hosting:channel:deploy preview --expires 4d",
+    "deploy:live:preview": "env-cmd -f .env.live yarn build && firebase use app-justo-live && firebase hosting:channel:deploy preview --expires 4d",
     "postversion": "git push && git push --tags && git fetch",
     "install-local-types": "yarn remove @appjusto/types && yarn add ../types",
     "cypress:emulator": "cross-env FIREBASE_AUTH_EMULATOR_HOST=localhost:9099 FIRESTORE_EMULATOR_HOST=localhost:8080",
@@ -102,7 +103,7 @@
     "electron:pack": "cross-env DEBUG_PROD=true tsc -p desktop && electron-builder --dir",
     "electron:build": "tsc -p desktop && electron-builder",
     "electron:build:beta": "env-cmd -f .env.live yarn build && tsc -p desktop && electron-builder --win portable --x64",
-    "electron:build:prod": "env-cmd -f .env.live yarn build && tsc -p desktop && electron-builder -mwl",
+    "electron:build:prod": "env-cmd -f .env.live yarn build && tsc -p desktop && electron-builder --win --x64",
     "postinstall": "electron-builder install-app-deps"
   },
   "eslintConfig": {
@@ -138,7 +139,13 @@
       "category": "public.app-category.business"
     },
     "win": {
-      "target": "nsis"
+      "target": "nsis",
+      "signingHashAlgorithms": [
+        "sha256"
+      ],
+      "publisherName": "JUSTO TECNOLOGIA E INOVACAO SOCIAL LTDA",
+      "signAndEditExecutable": true,
+      "verifyUpdateCodeSignature": true
     },
     "linux": {
       "target": "deb",
@@ -152,12 +159,12 @@
     "cross-env": "^7.0.3",
     "cypress": "9.5.1",
     "cypress-firebase": "^2.2.0",
-    "electron": "^19.0.8",
-    "electron-builder": "^23.1.0",
-    "electron-debug": "3.2.0",
+    "electron": "^21.3.1",
+    "electron-builder": "^23.6.0",
+    "electron-debug": "^3.2.0",
     "electron-devtools-installer": "^3.2.0",
     "electron-log": "^4.4.8",
-    "electron-updater": "5.0.5",
+    "electron-updater": "^5.3.0",
     "electronmon": "^2.0.2",
     "eslint-plugin-cypress": "^2.12.1",
     "firebase-admin": "9",

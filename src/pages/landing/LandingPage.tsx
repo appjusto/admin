@@ -1,5 +1,7 @@
 import { Box } from '@chakra-ui/react';
+import { useContextMeasurement } from 'app/state/measurement/context';
 import { CookiesBar } from 'common/components/CookiesBar';
+import React from 'react';
 import { CalculatorCall } from './CalculatorCall';
 import { ForYourBusiness } from './ForYourBusiness';
 import { Header } from './Header';
@@ -11,13 +13,11 @@ import { Transparency } from './Transparency';
 
 const LandingPage = () => {
   // context
-  // const { userConsent } = useContextMeasurement();
+  const { handlePixelEvent } = useContextMeasurement();
   // side effects
-  // React.useEffect(() => {
-  //   if (!userConsent) return;
-  //   if (process.env.NODE_ENV !== 'production') return;
-  //   ReactPixel.pageView();
-  // }, [userConsent]);
+  React.useEffect(() => {
+    handlePixelEvent('pageView');
+  }, [handlePixelEvent]);
   // UI
   return (
     <Box>

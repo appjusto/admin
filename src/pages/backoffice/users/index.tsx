@@ -1,12 +1,20 @@
 import { UserType } from '@appjusto/types';
 import { ArrowDownIcon } from '@chakra-ui/icons';
-import { Box, Button, Flex, HStack, RadioGroup, Stack, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Flex,
+  HStack,
+  Radio,
+  RadioGroup,
+  Stack,
+  Text,
+} from '@chakra-ui/react';
 import { useObserveUsers } from 'app/api/users/useObserveUsers';
 import { UsersSearchType } from 'app/api/users/UsersApi';
 import { ClearFiltersButton } from 'common/components/backoffice/ClearFiltersButton';
 import { FilterText } from 'common/components/backoffice/FilterText';
-//import CustomCheckbox from 'common/components/form/CustomCheckbox';
-import CustomRadio from 'common/components/form/CustomRadio';
+//import Checkbox from 'common/components/form/Checkbox';
 import { CustomDateFilter } from 'common/components/form/input/CustomDateFilter';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import React from 'react';
@@ -23,7 +31,11 @@ const UsersPage = () => {
   const history = useHistory();
   // state
   const [dateTime, setDateTime] = React.useState('');
-  const [loggedAt, setLoggedAt] = React.useState<UserType[]>(['manager', 'courier', 'consumer']);
+  const [loggedAt, setLoggedAt] = React.useState<UserType[]>([
+    'manager',
+    'courier',
+    'consumer',
+  ]);
   const [isBlocked, setIsBlocked] = React.useState(false);
   const [searchType, setSearchType] = React.useState<UsersSearchType>('email');
   const [search, setSearch] = React.useState('');
@@ -59,7 +71,10 @@ const UsersPage = () => {
   // UI
   return (
     <Box>
-      <PageHeader title={t('Usuários')} subtitle={t(`Atualizado ${dateTime}`)} />
+      <PageHeader
+        title={t('Usuários')}
+        subtitle={t(`Atualizado ${dateTime}`)}
+      />
       <Flex mt="8" flexDirection={{ base: 'column', md: 'row' }}>
         <Text mb="1" color="black" fontWeight="500">
           {t('Buscar por:')}
@@ -80,9 +95,9 @@ const UsersPage = () => {
             fontSize="16px"
             lineHeight="22px"
           >
-            <CustomRadio value="email">{t('E-mail')}</CustomRadio>
-            <CustomRadio value="phone">{t('Fone')}</CustomRadio>
-            <CustomRadio value="cpf">{t('CPF')}</CustomRadio>
+            <Radio value="email">{t('E-mail')}</Radio>
+            <Radio value="phone">{t('Fone')}</Radio>
+            <Radio value="cpf">{t('CPF')}</Radio>
           </HStack>
         </RadioGroup>
       </Flex>
@@ -104,7 +119,12 @@ const UsersPage = () => {
           />
         </Stack>
       </Flex>
-      <Flex mt="8" w="100%" justifyContent="space-between" borderBottom="1px solid #C8D7CB">
+      <Flex
+        mt="8"
+        w="100%"
+        justifyContent="space-between"
+        borderBottom="1px solid #C8D7CB"
+      >
         <HStack spacing={4} overflowX="auto">
           <FilterText
             isActive={!isBlocked}
@@ -135,9 +155,9 @@ const UsersPage = () => {
             fontSize="16px"
             lineHeight="22px"
           >
-            <CustomCheckbox value="manager">{t('Manager')}</CustomCheckbox>
-            <CustomCheckbox value="courier">{t('Entregador')}</CustomCheckbox>
-            <CustomCheckbox value="consumer">{t('Consumidor')}</CustomCheckbox>
+            <Checkbox value="manager">{t('Manager')}</Checkbox>
+            <Checkbox value="courier">{t('Entregador')}</Checkbox>
+            <Checkbox value="consumer">{t('Consumidor')}</Checkbox>
           </HStack>
         </CheckboxGroup>*/}
       </HStack>

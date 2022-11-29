@@ -1,5 +1,16 @@
 import { AdminRole, ManagerWithRole } from '@appjusto/types';
-import { Box, HStack, Icon, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
+import {
+  Box,
+  HStack,
+  Icon,
+  Table,
+  Tbody,
+  Td,
+  Text,
+  Th,
+  Thead,
+  Tr,
+} from '@chakra-ui/react';
 import { useManagers } from 'app/api/manager/useManagers';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
@@ -11,7 +22,12 @@ export const TeamTable = () => {
   // context
   const { minVersion } = useContextFirebaseUser();
   const { businessManagers } = useContextBusiness();
-  const { removeBusinessManager, createManager, createManagerResult, removeResult } = useManagers();
+  const {
+    removeBusinessManager,
+    createManager,
+    createManagerResult,
+    removeResult,
+  } = useManagers();
   // state
   const [managers, setManagers] = React.useState<ManagerWithRole[]>();
   const [isLoading, setIsLoading] = React.useState(false);
@@ -36,9 +52,11 @@ export const TeamTable = () => {
     setManagers(businessManagers);
   }, [businessManagers]);
   React.useEffect(() => {
-    if (!createManagerResult.isLoading && !removeResult.isLoading) setIsLoading(false);
-    else if (createManagerResult.isLoading || removeResult.isLoading) setIsLoading(true);
-  }, [createManagerResult.isLoading, removeResult.isLoading])
+    if (!createManagerResult.isLoading && !removeResult.isLoading)
+      setIsLoading(false);
+    else if (createManagerResult.isLoading || removeResult.isLoading)
+      setIsLoading(true);
+  }, [createManagerResult.isLoading, removeResult.isLoading]);
   // UI
   if (!managers) {
     return (
@@ -61,7 +79,7 @@ export const TeamTable = () => {
               <Th>{t('E-mail do colaborador')}</Th>
               <Th>{t('Papel do usuário')}</Th>
               <Th>{t('Adicionado em')}</Th>
-              <Th>{t('Versão web/mob')}</Th>
+              <Th>{t('Versão (web)/(mob)')}</Th>
               <Th></Th>
             </Tr>
           </Thead>

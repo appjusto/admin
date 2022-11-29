@@ -2,7 +2,11 @@ import { ApiConfig } from 'app/api/config/types';
 import MapsApi from 'core/api/thirdparty/maps/MapsApi';
 import dayjs from 'dayjs';
 import timezone from 'dayjs/plugin/timezone';
-import { Analytics, getAnalytics, setAnalyticsCollectionEnabled } from 'firebase/analytics';
+import {
+  Analytics,
+  getAnalytics,
+  setAnalyticsCollectionEnabled,
+} from 'firebase/analytics';
 import { FirebaseApp, initializeApp } from 'firebase/app';
 import { Auth, connectAuthEmulator, getAuth } from 'firebase/auth';
 import {
@@ -11,19 +15,31 @@ import {
   FirestoreSettings,
   initializeFirestore,
 } from 'firebase/firestore';
-import { connectFunctionsEmulator, Functions, getFunctions } from 'firebase/functions';
-import { connectStorageEmulator, FirebaseStorage, getStorage } from 'firebase/storage';
+import {
+  connectFunctionsEmulator,
+  Functions,
+  getFunctions,
+} from 'firebase/functions';
+import {
+  connectStorageEmulator,
+  FirebaseStorage,
+  getStorage,
+} from 'firebase/storage';
 import AuthApi from './auth/AuthApi';
+import BannersApi from './banners/BannersApi';
 import BusinessApi from './business/BusinessApi';
 import ChatApi from './chat/ChatApi';
 import ConsumerApi from './consumer/CosumerApi';
 import CourierApi from './courier/CourierApi';
 import FilesApi from './FilesApi';
 import FirebaseRefs from './FirebaseRefs';
+import InvoicesApi from './invoices/InvoicesApi';
+import LedgerApi from './ledger/LedgerApi';
 import ManagerApi from './manager/ManagerApi';
 import MeasurementApi from './measurement/MeasurementApi';
 import OrderApi from './order/OrderApi';
 import PlatformApi from './platform/PlatformApi';
+import PushCampaignApi from './push-campaigns/PushCampaignApi';
 import StaffApi from './staff/StaffApi';
 import UsersApi from './users/UsersApi';
 dayjs.extend(timezone);
@@ -48,11 +64,15 @@ export default class Api {
   private _manager: ManagerApi;
   private _business: BusinessApi;
   private _order: OrderApi;
+  private _invoices: InvoicesApi;
+  private _ledger: LedgerApi;
   private _courier: CourierApi;
   private _consumer: ConsumerApi;
   private _users: UsersApi;
   private _measurement: MeasurementApi;
   private _chat: ChatApi;
+  private _push_campaigns: PushCampaignApi;
+  private _banners: BannersApi;
 
   constructor(config: ApiConfig) {
     if (!Api.app) {
@@ -75,13 +95,14 @@ export default class Api {
     this._analytics = getAnalytics(Api.app);
     setAnalyticsCollectionEnabled(this._analytics, false);
 
-    if (config.firebase.options.useEmulator && config.firebase.options.emulatorHost) {
+    if (
+      config.firebase.options.useEmulator &&
+      config.firebase.options.emulatorHost
+    ) {
       const { emulatorHost } = config.firebase.options;
       connectAuthEmulator(this._authentication, `http://${emulatorHost}:9099`);
       connectFirestoreEmulator(this._firestore, emulatorHost, 8080);
       connectFunctionsEmulator(this._functions, emulatorHost, 5001);
-      // this._storage = Api.app.storage('gs://default-bucket');
-      // this._storage.useEmulator(emulatorHost, 9199);
       connectStorageEmulator(this._storage, emulatorHost, 9199);
     }
 
@@ -94,11 +115,15 @@ export default class Api {
     this._manager = new ManagerApi(this._refs);
     this._business = new BusinessApi(this._refs, this._files);
     this._order = new OrderApi(this._refs, this._files);
+    this._invoices = new InvoicesApi(this._refs);
+    this._ledger = new LedgerApi(this._refs);
     this._courier = new CourierApi(this._refs, this._files);
     this._consumer = new ConsumerApi(this._refs, this._files);
     this._users = new UsersApi(this._refs);
     this._measurement = new MeasurementApi(this._analytics);
     this._chat = new ChatApi(this._refs);
+    this._push_campaigns = new PushCampaignApi(this._refs);
+    this._banners = new BannersApi(this._refs, this._files);
   }
 
   measurement() {
@@ -133,6 +158,14 @@ export default class Api {
     return this._order;
   }
 
+  invoices() {
+    return this._invoices;
+  }
+
+  ledger() {
+    return this._ledger;
+  }
+
   courier() {
     return this._courier;
   }
@@ -147,5 +180,13 @@ export default class Api {
 
   chat() {
     return this._chat;
+  }
+
+  push_campaigns() {
+    return this._push_campaigns;
+  }
+
+  banners() {
+    return this._banners;
   }
 }

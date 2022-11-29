@@ -1,5 +1,8 @@
+import { OrderFlag } from '@appjusto/types';
 import {
   Center,
+  Checkbox,
+  CheckboxGroup,
   Flex,
   Icon,
   Popover,
@@ -9,33 +12,56 @@ import {
   PopoverContent,
   PopoverHeader,
   PopoverTrigger,
-  Text,
   Tooltip,
+  VStack,
 } from '@chakra-ui/react';
+import { initialAutoFlags } from 'app/state/dashboards/backoffice';
+import { isEqual } from 'lodash';
 import React from 'react';
-import { RiCheckLine, RiEqualizerLine } from 'react-icons/ri';
+import { RiEqualizerLine } from 'react-icons/ri';
 import { t } from 'utils/i18n';
 
-export type StaffFilterOptions = 'all' | 'my' | 'none';
+// where the first option should be all
+export type FilterOptions = {
+  label: string;
+  value: string;
+}[];
 
 interface StaffFilterProps {
-  currentValue: StaffFilterOptions;
-  handleFilter(value: StaffFilterOptions): void;
+  options: FilterOptions;
+  currentValue: string[];
+  handleFilter(value: string[]): void;
 }
 
-export const StaffFilter = ({ currentValue, handleFilter }: StaffFilterProps) => {
+export const StaffFilter = ({
+  options,
+  currentValue,
+  handleFilter,
+}: StaffFilterProps) => {
   // state
   const [isActive, setIsActive] = React.useState<boolean>(false);
   const [isOpen, setIsOpen] = React.useState(false);
   // handlers
   const open = () => setIsOpen(!isOpen);
   const close = () => setIsOpen(false);
-  const handleFilterSelect = (value: StaffFilterOptions) => {
-    close();
-    if (value === 'my' || value === 'none') setIsActive(true);
-    else setIsActive(false);
-    handleFilter(value);
+  const handleSelectAll = (isChecked: boolean) => {
+    setIsActive(!isChecked);
+    if (isChecked) {
+      handleFilter(initialAutoFlags);
+      close();
+    }
   };
+  const handleSelect = (values: string[]) => {
+    // avoid to make the query with empty an array
+    if (values.length > 0) {
+      handleFilter(values);
+    }
+  };
+  // side effects
+  React.useEffect(() => {
+    const isAllSelected = isEqual(currentValue.sort(), initialAutoFlags.sort());
+    setIsActive(!isAllSelected);
+  }, [currentValue]);
   // UI
   return (
     <Tooltip
@@ -43,7 +69,7 @@ export const StaffFilter = ({ currentValue, handleFilter }: StaffFilterProps) =>
       label={isActive ? t('Filtro ativo') : t('Filtro')}
       aria-label={t('filtro')}
     >
-      <Flex px="4" alignItems="center">
+      <Flex alignItems="center">
         <Popover placement="bottom-end" isOpen={isOpen} onClose={close}>
           <PopoverTrigger>
             <Center
@@ -62,47 +88,47 @@ export const StaffFilter = ({ currentValue, handleFilter }: StaffFilterProps) =>
               />
             </Center>
           </PopoverTrigger>
-          <PopoverContent maxW="160px" bg="#697667" color="white" _focus={{ outline: 'none' }}>
-            <PopoverHeader fontWeight="semibold">{t('Visualizar:')}</PopoverHeader>
+          <PopoverContent
+            maxW="220px"
+            bg="#697667"
+            color="white"
+            _focus={{ outline: 'none' }}
+          >
+            <PopoverHeader fontWeight="semibold">
+              {t('Visualizar:')}
+            </PopoverHeader>
             <PopoverArrow bg="#697667" />
             <PopoverCloseButton mt="1" />
-            <PopoverBody p="0" m="0">
-              <Flex
-                flexDir="row"
-                alignItems="center"
-                px="3"
-                py="1"
-                cursor="pointer"
-                _hover={{ bgColor: '#EEEEEE', color: '#697667' }}
-                onClick={() => handleFilterSelect('all')}
+            <PopoverBody
+              px="2"
+              py="2"
+              m="0"
+              bg="#EEEEEE"
+              border="2px solid #697667"
+              borderRadius="0 0 6px 6px"
+              color="black"
+            >
+              <Checkbox
+                mb="2"
+                colorScheme="green"
+                isChecked={!isActive}
+                onChange={(ev) => handleSelectAll(ev.target.checked)}
               >
-                <Text>{t('Todos')}</Text>
-                {currentValue === 'all' && <Icon ml="1" as={RiCheckLine} />}
-              </Flex>
-              <Flex
-                flexDir="row"
-                alignItems="center"
-                px="3"
-                py="1"
-                cursor="pointer"
-                _hover={{ bgColor: '#EEEEEE', color: '#697667' }}
-                onClick={() => handleFilterSelect('my')}
+                {t('Todos')}
+              </Checkbox>
+              <CheckboxGroup
+                colorScheme="green"
+                value={currentValue}
+                onChange={(values: OrderFlag[]) => handleSelect(values)}
               >
-                <Text>{t('Os meus')}</Text>
-                {currentValue === 'my' && <Icon ml="1" as={RiCheckLine} />}
-              </Flex>
-              <Flex
-                flexDir="row"
-                alignItems="center"
-                px="3"
-                py="1"
-                cursor="pointer"
-                _hover={{ bgColor: '#EEEEEE', color: '#697667' }}
-                onClick={() => handleFilterSelect('none')}
-              >
-                <Text>{t('Sem agente')}</Text>
-                {currentValue === 'none' && <Icon ml="1" as={RiCheckLine} />}
-              </Flex>
+                <VStack spacing={2} alignItems="flex-start">
+                  {options.map((option) => (
+                    <Checkbox key={option.value} value={option.value}>
+                      {option.label}
+                    </Checkbox>
+                  ))}
+                </VStack>
+              </CheckboxGroup>
             </PopoverBody>
           </PopoverContent>
         </Popover>

@@ -1,24 +1,25 @@
 import { Bank, BankAccount, WithId } from '@appjusto/types';
-import { Box, Flex, RadioGroup, Stack, Text } from '@chakra-ui/react';
+import { Box, Flex, Radio, RadioGroup, Stack, Text } from '@chakra-ui/react';
 import { useBanks } from 'app/api/business/profile/useBanks';
 import { AlertWarning } from 'common/components/AlertWarning';
-import CustomRadio from 'common/components/form/CustomRadio';
 import { CustomPatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';
-import {
-  addZerosToBeginning,
-  hyphenFormatter,
-} from 'common/components/form/input/pattern-input/formatters';
+import { hyphenFormatter } from 'common/components/form/input/pattern-input/formatters';
 import { numbersAndLettersParser } from 'common/components/form/input/pattern-input/parsers';
 import { BankSelect } from 'common/components/form/select/BankSelect';
-import { BackofficeProfileValidation, ProfileBankingFields } from 'common/types';
+import {
+  BackofficeProfileValidation,
+  ProfileBankingFields,
+} from 'common/types';
 import React from 'react';
-import { getCEFAccountCode } from 'utils/functions';
+import { getBankingAccountPattern } from 'utils/functions';
 import { t } from 'utils/i18n';
 
 interface BankingFormProps {
   bankAccount: Partial<BankAccount> | null | undefined;
   handleBankAccountChange(newBankAccount: Partial<WithId<BankAccount>>): void;
-  handleContextValidation(validation: Partial<BackofficeProfileValidation>): void;
+  handleContextValidation(
+    validation: Partial<BackofficeProfileValidation>
+  ): void;
 }
 
 export const BankingForm = ({
@@ -30,7 +31,9 @@ export const BankingForm = ({
   const banks = useBanks();
   // state
   const [selectedBank, setSelectedBank] = React.useState<Bank>();
-  const [validation, setValidation] = React.useState<Partial<BackofficeProfileValidation>>({
+  const [validation, setValidation] = React.useState<
+    Partial<BackofficeProfileValidation>
+  >({
     agency: true,
     account: true,
   });
@@ -39,47 +42,62 @@ export const BankingForm = ({
   const agencyRef = React.useRef<HTMLInputElement>(null);
   const accountRef = React.useRef<HTMLInputElement>(null);
   // helpers
-  const agencyParser = selectedBank?.agencyPattern
-    ? numbersAndLettersParser(selectedBank?.agencyPattern)
-    : undefined;
-  const agencyFormatter = selectedBank?.agencyPattern
-    ? hyphenFormatter(selectedBank?.agencyPattern.indexOf('-'))
-    : undefined;
-  const accountParser = selectedBank?.accountPattern
-    ? numbersAndLettersParser(selectedBank?.accountPattern)
-    : undefined;
-  const accountFormatter = selectedBank?.accountPattern
-    ? hyphenFormatter(selectedBank?.accountPattern.indexOf('-'))
-    : undefined;
-  const bankWarning = selectedBank?.warning ? selectedBank?.warning.split(/\n/g) : [];
+  const agencyParser = numbersAndLettersParser(selectedBank?.agencyPattern);
+  const agencyFormatter = hyphenFormatter(selectedBank?.agencyPattern);
+  const accountPattern = React.useMemo(
+    () =>
+      getBankingAccountPattern(
+        selectedBank,
+        bankAccount?.personType,
+        bankAccount?.type
+      ),
+    [selectedBank, bankAccount?.personType, bankAccount?.type]
+  );
+  const accountParser = numbersAndLettersParser(accountPattern);
+  const accountFormatter = hyphenFormatter(accountPattern);
+  const bankWarning = selectedBank?.warning
+    ? selectedBank?.warning.split(/\n/g)
+    : [];
   // handlers
-  const handleInputChange = (field: ProfileBankingFields, value: string) => {
-    const newBankAccount = {
-      ...bankAccount,
-      [field]: value,
-    } as Partial<BankAccount>;
-    if (field === 'agency') newBankAccount.agencyFormatted = agencyFormatter!(value);
-    if (field === 'account') newBankAccount.accountFormatted = accountFormatter!(value);
-    if (
-      newBankAccount.personType === 'Pessoa Jurídica' &&
-      newBankAccount.type &&
-      !['Corrente', 'Poupança'].includes(newBankAccount.type)
-    ) {
-      newBankAccount.type = 'Corrente';
+  const handleInputChange = React.useCallback(
+    (field: ProfileBankingFields, value: string) => {
+      const newBankAccount = {
+        ...bankAccount,
+        [field]: value,
+      } as Partial<BankAccount>;
+      if (field === 'agency') {
+        newBankAccount.agencyFormatted = agencyFormatter!(value);
+      }
+      if (field === 'account') {
+        newBankAccount.accountFormatted = accountFormatter!(value);
+      }
+      if (
+        newBankAccount.personType === 'Pessoa Jurídica' &&
+        newBankAccount.type &&
+        !['Corrente', 'Poupança'].includes(newBankAccount.type)
+      ) {
+        newBankAccount.type = 'Corrente';
+      }
+      handleBankAccountChange(newBankAccount);
+    },
+    [bankAccount, handleBankAccountChange, agencyFormatter, accountFormatter]
+  );
+  const findSelectedBank = React.useCallback(
+    (banks: WithId<Bank>[], bankName: string) => {
+      const bank = banks?.find((b) => b.name === bankName);
+      setSelectedBank(bank);
+    },
+    []
+  );
+  const handleAccount = React.useCallback(() => {
+    if (accountPattern && bankAccount?.account) {
+      const formatted = numbersAndLettersParser(accountPattern, true)!(
+        bankAccount.account
+      );
+      handleInputChange('account', formatted);
     }
-    handleBankAccountChange(newBankAccount);
-  };
-  const findSelectedBank = React.useCallback((banks: WithId<Bank>[], bankName: string) => {
-    const bank = banks?.find((b) => b.name === bankName);
-    setSelectedBank(bank);
-  }, []);
-  const handleAccount = () => {
-    if (selectedBank?.accountPattern && bankAccount?.account) {
-      const patterLen = selectedBank?.accountPattern.length - 1;
-      const result = addZerosToBeginning(bankAccount?.account, patterLen);
-      handleInputChange('account', result);
-    }
-  };
+  }, [accountPattern, bankAccount?.account, handleInputChange]);
+
   // side effects
   React.useEffect(() => {
     if (banks && bankAccount?.name) {
@@ -94,27 +112,20 @@ export const BankingForm = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [banks, bankAccount?.name, findSelectedBank]);
   React.useEffect(() => {
-    if (!selectedBank?.code || selectedBank?.code !== '104') return;
-    if (!bankAccount?.account) return;
-    if (!bankAccount.personType) return;
-    if (!bankAccount.type) return;
-    const code = getCEFAccountCode(selectedBank.code, bankAccount.personType, bankAccount.type);
-    const newBankAccount = {
-      ...bankAccount,
-      accountFormatted: code + accountFormatter!(bankAccount.account),
-    };
-    handleBankAccountChange(newBankAccount);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedBank?.code, bankAccount?.account, bankAccount?.personType, bankAccount?.type]);
-  React.useEffect(() => {
     if (selectedBank?.code === '341' && bankAccount?.agency === '0500') {
       setValidation((prev) => ({
         ...prev,
         agency: false,
-        message: 'A iugu ainda não aceita contas Itaú - iti. Escolha outra, por favor.',
+        message:
+          'A iugu ainda não aceita contas Itaú - iti. Escolha outra, por favor.',
       }));
     }
   }, [selectedBank?.code, bankAccount?.agency]);
+  React.useEffect(() => {
+    if (!bankAccount?.type) return;
+    handleAccount();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bankAccount?.type]);
   React.useEffect(() => {
     handleContextValidation({
       agency: validation.agency,
@@ -153,8 +164,8 @@ export const BankingForm = ({
           fontSize="16px"
           lineHeight="22px"
         >
-          <CustomRadio value="Pessoa Física">{t('Pessoa Física')}</CustomRadio>
-          <CustomRadio value="Pessoa Jurídica">{t('Pessoa Jurídica')}</CustomRadio>
+          <Radio value="Pessoa Física">{t('Pessoa Física')}</Radio>
+          <Radio value="Pessoa Jurídica">{t('Pessoa Jurídica')}</Radio>
         </Stack>
       </RadioGroup>
       <BankSelect
@@ -185,11 +196,17 @@ export const BankingForm = ({
         mask={selectedBank?.agencyPattern}
         parser={agencyParser}
         formatter={agencyFormatter}
-        validationLength={
-          selectedBank?.agencyPattern ? selectedBank.agencyPattern.length - 1 : undefined
-        }
+        onBlur={() => {
+          if (bankAccount?.agency && bankAccount.agency.length > 0) {
+            const padded = numbersAndLettersParser(
+              selectedBank?.agencyPattern,
+              true
+            )!(bankAccount.agency);
+            handleInputChange('agency', padded);
+          }
+        }}
         isRequired
-        isDisabled={bankAccount?.name === ''}
+        isDisabled={!selectedBank}
         notifyParentWithValidation={(isInvalid: boolean) => {
           setValidation((prevState) => ({ ...prevState, agency: !isInvalid }));
         }}
@@ -212,9 +229,12 @@ export const BankingForm = ({
           formatter={accountFormatter}
           onBlur={handleAccount}
           isRequired
-          isDisabled={bankAccount?.name === ''}
+          isDisabled={!selectedBank}
           notifyParentWithValidation={(isInvalid: boolean) => {
-            setValidation((prevState) => ({ ...prevState, account: !isInvalid }));
+            setValidation((prevState) => ({
+              ...prevState,
+              account: !isInvalid,
+            }));
           }}
         />
       </Flex>
@@ -239,8 +259,8 @@ export const BankingForm = ({
               fontSize="16px"
               lineHeight="22px"
             >
-              <CustomRadio value="Corrente">{t('003 – Conta Corrente')}</CustomRadio>
-              <CustomRadio value="Poupança">{t('022 – Conta Poupança')}</CustomRadio>
+              <Radio value="Corrente">{t('003 – Conta Corrente')}</Radio>
+              <Radio value="Poupança">{t('022 – Conta Poupança')}</Radio>
             </Stack>
           ) : (
             <Stack
@@ -252,12 +272,12 @@ export const BankingForm = ({
               fontSize="16px"
               lineHeight="22px"
             >
-              <CustomRadio value="Corrente">{t('001 – Conta Corrente')}</CustomRadio>
-              <CustomRadio value="Simples">{t('002 – Conta Simples')}</CustomRadio>
-              <CustomRadio value="Poupança">{t('013 – Conta Poupança')}</CustomRadio>
-              <CustomRadio value="Nova Poupança">
+              <Radio value="Corrente">{t('001 – Conta Corrente')}</Radio>
+              <Radio value="Simples">{t('002 – Conta Simples')}</Radio>
+              <Radio value="Poupança">{t('013 – Conta Poupança')}</Radio>
+              <Radio value="Nova Poupança">
                 {t('1288 – Conta Poupança (novo formato)')}
-              </CustomRadio>
+              </Radio>
             </Stack>
           )
         ) : (
@@ -269,8 +289,8 @@ export const BankingForm = ({
             fontSize="16px"
             lineHeight="22px"
           >
-            <CustomRadio value="Corrente">{t('Corrente')}</CustomRadio>
-            <CustomRadio value="Poupança">{t('Poupança')}</CustomRadio>
+            <Radio value="Corrente">{t('Corrente')}</Radio>
+            <Radio value="Poupança">{t('Poupança')}</Radio>
           </Stack>
         )}
       </RadioGroup>

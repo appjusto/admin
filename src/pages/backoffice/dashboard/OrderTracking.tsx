@@ -3,23 +3,24 @@ import {
   DispatchingStatus,
   OrderChangeLog,
   OrderStatus,
-  WithId,
+  WithId
 } from '@appjusto/types';
 import { Box, Circle, HStack, Icon, Skeleton, Text } from '@chakra-ui/react';
 import { useObserveOrderChangeLogs } from 'app/api/order/useObserveOrderChangeLogs';
 import { last } from 'lodash';
 import React from 'react';
-import { MdInfoOutline } from 'react-icons/md';
+import { MdAccessTime, MdInfoOutline } from 'react-icons/md';
 import { getFullTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { orderDispatchingStatusPTOptions, orderStatusPTOptions } from '../utils';
 
 interface OrderTrackingProps {
   orderId?: string;
+  warning?: string | null;
   isCompact?: boolean;
 }
 
-export const OrderTracking = ({ orderId, isCompact }: OrderTrackingProps) => {
+export const OrderTracking = ({ orderId, warning, isCompact }: OrderTrackingProps) => {
   // state
   const changeLogs = useObserveOrderChangeLogs(orderId) as WithId<OrderChangeLog>[] | undefined;
   const [filteredLogs, setFilteredLogs] = React.useState<WithId<OrderChangeLog>[]>();
@@ -88,15 +89,19 @@ export const OrderTracking = ({ orderId, isCompact }: OrderTrackingProps) => {
   }, [changeLogs]);
   React.useEffect(() => {
     if (!filteredLogs) return;
+    // get last logs
     const lastLog = last(filteredLogs);
     const lastLogWithStatus = last(filteredLogs.filter((log) => log.after.status));
+    // set current time and status
     if (lastLog) setCurrentTime(getFullTime(lastLog.timestamp));
     if (lastLogWithStatus) setCurrentStatus(lastLogWithStatus.after.status);
+    // set current dispatching state and status
     if (lastLog?.after.dispatchingStatus) {
       if (lastLog.after.dispatchingStatus === 'matching') setCurrentDispatchingState(undefined);
       setCurrentDispatchingStatus(lastLog.after.dispatchingStatus);
     }
     if (lastLog?.after.dispatchingState) setCurrentDispatchingState(lastLog.after.dispatchingState);
+    // handle scroll
     if (trackingBoxRef.current) {
       trackingBoxRef.current.scroll({
         top: trackingBoxRef.current.scrollHeight,
@@ -117,18 +122,34 @@ export const OrderTracking = ({ orderId, isCompact }: OrderTrackingProps) => {
   return (
     <Box w="100%">
       <Box>
-        <HStack spacing={2} alignItems="center">
-          <Text fontSize="12px" lineHeight="18px" fontWeight="700">
-            {currentStatus ? orderStatusPTOptions[currentStatus].toUpperCase() : 'N/E'}
-            {': '}
-            <Text as="span" color={matchingLabelColor}>
-              {getMatchingLabel()}
+        <HStack spacing={4} alignItems="center">
+          <HStack spacing={2} alignItems="center">
+            <Text fontSize="12px" lineHeight="18px" fontWeight="700">
+              {currentStatus ? orderStatusPTOptions[currentStatus].toUpperCase() : 'N/E'}
+              {': '}
+              <Text as="span" color={matchingLabelColor}>
+                {getMatchingLabel()}
+              </Text>
+              <Text as="span" fontWeight="500">
+                {t('às ') + currentTime}
+              </Text>
             </Text>
-            <Text as="span" fontWeight="500">
-              {t('às ') + currentTime}
-            </Text>
-          </Text>
-          <Icon as={MdInfoOutline} w="14px" h="14px" />
+            <Icon as={MdAccessTime} w="14px" h="14px" />
+          </HStack>
+          {
+            warning && (
+              <HStack spacing={2} alignItems="center" color="red">
+                <Text 
+                  fontSize="12px" 
+                  lineHeight="18px" 
+                  fontWeight="700" 
+                >
+                  {warning ?? 'N/E'}
+                </Text>
+                <Icon as={MdInfoOutline} w="14px" h="14px" />
+              </HStack>
+            )
+          }
         </HStack>
         <HStack mt="2" spacing={2}>
           <Box

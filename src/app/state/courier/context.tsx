@@ -4,7 +4,7 @@ import {
   IssueType,
   MarketplaceAccountInfo,
   Order,
-  WithId
+  WithId,
 } from '@appjusto/types';
 import * as cnpjutils from '@fnando/cnpj';
 import * as cpfutils from '@fnando/cpf';
@@ -37,12 +37,14 @@ export const courierWatchedFields: (keyof CourierProfile)[] = [
   'company',
   'statistics',
   'appVersion',
+  'notificationPreferences',
   'createdOn',
   // 'updatedOn',
   'mode',
   'bankAccount',
   'email',
   'fleet',
+  'tags',
 ];
 
 interface CourierProfileContextProps {
@@ -89,7 +91,11 @@ export const CourierProvider = ({ children }: Props) => {
   // context
   const { courierId } = useParams<Params>();
   const profile = useCourierProfile(courierId);
-  const pictures = useCourierProfilePictures(courierId, '_1024x1024', '_1024x1024');
+  const pictures = useCourierProfilePictures(
+    courierId,
+    '_1024x1024',
+    '_1024x1024'
+  );
   const { marketPlace, deleteMarketPlace, deleteMarketPlaceResult } =
     useCourierMarketPlace(courierId);
   const issueOptions = useIssuesByType(issueOptionsArray);
@@ -98,7 +104,10 @@ export const CourierProvider = ({ children }: Props) => {
   const [watchedProfile, setWatchedProfile] = React.useState<Partial<
     WithId<CourierProfile>
   > | null>();
-  const [courier, dispatch] = React.useReducer(courierReducer, {} as WithId<CourierProfile>);
+  const [courier, dispatch] = React.useReducer(
+    courierReducer,
+    {} as WithId<CourierProfile>
+  );
   const [coordinates, setCoordinates] = React.useState<GeoPoint>();
   const [updatedOn, setUpdatedOn] = React.useState<FieldValue>();
   const [isEditingEmail, setIsEditingEmail] = React.useState(false);
@@ -116,9 +125,13 @@ export const CourierProvider = ({ children }: Props) => {
   // handlers
   const updateWatchedProfile = React.useCallback(
     (newState: WithId<CourierProfile> | null) => {
-      if (!shouldUpdateState(watchedProfile, newState, courierWatchedFields)) return;
+      if (!shouldUpdateState(watchedProfile, newState, courierWatchedFields))
+        return;
       else {
-        const watched = { ...pick(newState!, courierWatchedFields), id: newState!.id };
+        const watched = {
+          ...pick(newState!, courierWatchedFields),
+          id: newState!.id,
+        };
         setWatchedProfile(watched);
       }
     },
@@ -130,7 +143,7 @@ export const CourierProvider = ({ children }: Props) => {
   // side effects
   React.useEffect(() => {
     if (!profile) return;
-    if (profile.coordinates) setCoordinates(profile.coordinates);
+    if (profile.coordinates) setCoordinates(profile.coordinates as GeoPoint);
     setUpdatedOn(profile.updatedOn);
     updateWatchedProfile(profile);
     // eslint-disable-next-line react-hooks/exhaustive-deps

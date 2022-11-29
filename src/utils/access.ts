@@ -5,8 +5,10 @@ type BackofficeAccess = {
   'couriers': string;
   'businesses': string;
   'consumers': string;
+  'banners': string;
   'invoices': string;
   'ledger': string;
+  'push-campaigns': string;
   'users': string;
   'recommendations': string;
   'fraud-prevention': string;
@@ -19,8 +21,10 @@ const backofficeAccess = {
   'couriers': 'couriers',
   'businesses': 'businesses',
   'consumers': 'consumers',
+  'banners': 'banners',
   'invoices': 'invoices',
   'ledger': 'invoices',
+  'push-campaigns': 'push_campaigns',
   'users': 'users',
   'recommendations': 'recommendations',
   'fraud-prevention': 'platform',
@@ -42,34 +46,6 @@ type AdminAccess = {
   'manager-profile': string;
 };
 
-// const adminAccess = {
-//   'orders': 'orders',
-//   'sharing': 'orders',
-//   'menu': 'menu',
-//   'business-schedules': 'businesses',
-//   'delivery-area': 'businesses',
-//   'orders-history': 'orders',
-//   'finances': 'withdraws',
-//   'business-profile': 'businesses',
-//   'banking-information': 'businesses',
-//   'team': 'managers',
-//   'chat': 'orders',
-// } as AdminAccess;
-
-// const adminOwnerPages = [
-//   'orders',
-//   'sharing',
-//   'menu',
-//   'business-schedules',
-//   'delivery-area',
-//   'orders-history',
-//   'finances',
-//   'business-profile',
-//   'banking-information',
-//   'team',
-//   'chat',
-// ]
-
 const adminManagerPages = [
   'orders',
   'sharing',
@@ -84,7 +60,13 @@ const adminManagerPages = [
   'chat',
 ];
 
-const adminCollaboratorPages = ['orders', 'sharing', 'menu', 'orders-history', 'chat'];
+const adminCollaboratorPages = [
+  'orders',
+  'sharing',
+  'menu',
+  'orders-history',
+  'chat',
+];
 
 type IsAccessGrantedArgs = {
   type: 'admin' | 'backoffice';
@@ -99,21 +81,26 @@ export const isAccessGranted = (args: IsAccessGrantedArgs) => {
     if (type === 'admin' && backofficePermissions) return true;
     if (type === 'admin' && adminRole) {
       const page = path.split('/app/')[1] as keyof AdminAccess;
-      if (!page || adminRole === 'owner' || page === 'manager-profile') return true;
+      if (!page || adminRole === 'owner' || page === 'manager-profile')
+        return true;
       if (adminRole === 'manager') {
-        return adminManagerPages.includes(page);
+        return adminManagerPages ? adminManagerPages.includes(page) : false;
       } else if (adminRole === 'collaborator') {
-        return adminCollaboratorPages.includes(page);
+        return adminCollaboratorPages
+          ? adminCollaboratorPages.includes(page)
+          : false;
       }
     } else if (type === 'backoffice' && backofficePermissions) {
       const page = path.split('/backoffice/')[1] as keyof BackofficeAccess;
       if (!page || page === 'staff-profile') return true;
       const accessProperty = backofficeAccess[page] as keyof UserPermissions;
-      return backofficePermissions[accessProperty].includes('r');
+      return backofficePermissions[accessProperty]
+        ? backofficePermissions[accessProperty].includes('r')
+        : false;
     }
     return false;
   } catch (error) {
-    console.error('isAccessGranted Error:', error);
+    console.error(`isAccessGranted Error on path: ${path}`, error);
     return false;
   }
 };

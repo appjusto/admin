@@ -24,6 +24,7 @@ export const courierLocationStatusPTOptions = {
   unavailable: 'Indisponível',
   available: 'Disponível',
   dispatching: 'Realizando entrega',
+  inactive: 'Inativo',
 };
 
 export const orderStatusPTOptions = {
@@ -77,6 +78,12 @@ export const invoiceTypePTOptions = {
   tip: 'Gorjeta',
 };
 
+export const paymentMethodPTOptions = {
+  credit_card: 'Cartão de crédito',
+  pix: 'Pix',
+  vr: 'VR',
+};
+
 export const invoiceStatusPTOptions = {
   in_analysis: 'Em análise',
   created: 'Criada',
@@ -93,10 +100,24 @@ export const invoiceStatusPTOptions = {
 };
 
 export const ledgerEntryStatusPTOptions = {
+  approved: 'Aprovada',
   canceled: 'Cancelada',
   paid: 'Paga',
   pending: 'Pendente',
   processing: 'Processando',
+  rejected: 'Rejeitada',
+};
+
+export const ledgerEntryOperationPTOptions = {
+  'delivery': 'Delivery',
+  'same-owner-accounts': 'Entre contas de um mesmo usuário',
+  'others': 'Outros',
+};
+
+export const pushStatusPTOptions = {
+  submitted: 'Submetida',
+  approved: 'Aprovada',
+  rejected: 'Rejeitada',
 };
 
 export const iuguSituationPTOptions = {
@@ -110,7 +131,7 @@ export const iuguSituationPTOptions = {
 
 export const flavorsPTOptions = {
   courier: 'Entregador',
-  consumer: 'Cliente',
+  consumer: 'Consumidor',
   business: 'Restaurante',
   backoffice: 'Backoffice',
   platform: 'Plataforma',
@@ -121,6 +142,7 @@ export const permissionsPTOptions = {
   couriers: 'Entregadores',
   consumers: 'Consumidores',
   businesses: 'Restaurantes',
+  account_manager: 'Ger. Contas',
   menu: 'Cardápios',
   chats: 'Chats',
   invoices: 'Faturas',
@@ -128,9 +150,11 @@ export const permissionsPTOptions = {
   advances: 'Adiantamentos',
   managers: 'Managers',
   recommendations: 'Recomendações',
+  push_campaigns: 'Campanhas',
   staff: 'Staff',
   users: 'Usuários',
   platform: 'Plataforma',
+  banners: 'Banners',
 } as { [key: string]: string };
 
 export const adminRolePTOptions = {
@@ -151,12 +175,13 @@ export const getEditableProfile = (profile: any, isEditingEmail: boolean) => {
     'appVersion',
     'fleet',
     'mode',
-    'status',
     'email',
   ];
   if (isEditingEmail) omittedKeys.pop();
   const editable = omit(profile, omittedKeys);
   const serialized = omitBy(editable, (value) => !value);
-  serialized.profileIssuesMessage = !isEmpty(profile.profileIssuesMessage) ? profile.profileIssuesMessage : null;
+  serialized.profileIssuesMessage = !isEmpty(profile.profileIssuesMessage)
+    ? profile.profileIssuesMessage
+    : null;
   return serialized;
 };

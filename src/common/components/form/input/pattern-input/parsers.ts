@@ -1,18 +1,36 @@
-export const numbersOnlyParser = (value: string) => value.replace(/[^0-9]/g, '');
+export const numbersOnlyParser = (value: string) =>
+  value.replace(/[^0-9]/g, '');
 
-export const numbersAndLettersParser = (mask: string, padWithZeros?: boolean) => {
+export const coordinatesOnlyParser = (value: string) =>
+  value.replace(/[^0-9.-]/g, '');
+
+export const numbersAndLettersParser = (
+  mask?: string,
+  padWithZeros?: boolean
+) => {
+  if (!mask) return undefined;
   const regexp = (char: string): RegExp => {
     if (char === '9' || char === 'D') return /\d/;
     if (char === 'X') return /\w/;
     throw new Error(`Unexpected character in mask: ${char}`);
   };
-  return (value: string) =>
-    mask.split('').reduce(
-      (result, letter, i, arr) => {
-        const regex = letter === '-' ? regexp(arr[i + 1]) : regexp(letter);
-        if (value.charAt(i).match(regex)) return result + value.charAt(i);
-        return result;
-      },
-      padWithZeros ? '0'.repeat(mask.length - value.length - (mask.match(/-/g) ?? []).length) : ''
-    );
+  return (value: string) => {
+    let initialValue = '';
+    const isHyphen = mask.includes('-');
+    if (padWithZeros) {
+      const pad = mask.length - value.length - (mask.match(/-/g) ?? []).length;
+      if (pad >= 0) initialValue = '0'.repeat(pad);
+    }
+    const isValueLengthIncreased = mask.length === value.length;
+    const currentValue =
+      isHyphen && isValueLengthIncreased
+        ? value.split('').slice(1).join('')
+        : value;
+    return mask.split('').reduce((result, letter, i, arr) => {
+      const regex = letter === '-' ? regexp(arr[i + 1]) : regexp(letter);
+      if (currentValue.charAt(i).match(regex))
+        return result + currentValue.charAt(i);
+      return result;
+    }, initialValue);
+  };
 };
