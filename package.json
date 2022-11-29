@@ -103,7 +103,7 @@
     "electron:pack": "cross-env DEBUG_PROD=true tsc -p desktop && electron-builder --dir",
     "electron:build": "tsc -p desktop && electron-builder",
     "electron:build:beta": "env-cmd -f .env.live yarn build && tsc -p desktop && electron-builder --win portable --x64",
-    "electron:build:prod": "env-cmd -f .env.live yarn build && tsc -p desktop && electron-builder -mwl",
+    "electron:build:prod": "env-cmd -f .env.live yarn build && tsc -p desktop && electron-builder --win --x64",
     "postinstall": "electron-builder install-app-deps"
   },
   "eslintConfig": {
@@ -139,7 +139,13 @@
       "category": "public.app-category.business"
     },
     "win": {
-      "target": "nsis"
+      "target": "nsis",
+      "signingHashAlgorithms": [
+        "sha256"
+      ],
+      "publisherName": "JUSTO TECNOLOGIA E INOVACAO SOCIAL LTDA",
+      "signAndEditExecutable": true,
+      "verifyUpdateCodeSignature": true
     },
     "linux": {
       "target": "deb",
