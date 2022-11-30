@@ -12,6 +12,7 @@ import {
   OrderIssue,
   OrderLog,
   OrderMatching,
+  OrderMatchingLog,
   OrderPayload,
   OrderStatus,
   OrderType,
@@ -440,6 +441,39 @@ export default class OrderApi {
     );
     // returns the unsubscribe function
     return customCollectionSnapshot(q, resultHandler);
+  }
+
+  observeOrderMatchingLogs(
+    orderId: string,
+    resultHandler: (
+      logs: WithId<OrderMatchingLog>[],
+      last?: QueryDocumentSnapshot<DocumentData>
+    ) => void,
+    startAfterDoc?: FirebaseDocument
+  ): Unsubscribe {
+    let q = query(
+      this.refs.getOrderLogsRef(orderId),
+      where('type', '==', 'matching'),
+      orderBy('timestamp', 'asc'),
+      limit(10)
+    );
+    if (startAfterDoc) q = query(q, startAfter(startAfterDoc));
+    // returns the unsubscribe function
+    const unsubscribe = onSnapshot(
+      q,
+      (querySnapshot) => {
+        const last =
+          querySnapshot.docs.length > 0
+            ? querySnapshot.docs[querySnapshot.size - 1]
+            : undefined;
+        resultHandler(documentsAs<OrderMatchingLog>(querySnapshot.docs), last);
+      },
+      (error) => {
+        console.error(error);
+        Sentry.captureException(error);
+      }
+    );
+    return unsubscribe;
   }
 
   observeOrderIssues(

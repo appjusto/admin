@@ -25,6 +25,7 @@ interface MatchingProps {
   order?: WithId<Order> | null;
   matching?: OrderMatching | null;
   logs?: WithId<OrderMatchingLog>[];
+  fetchNextMatchingLogs(): void;
   activeMatching(): void;
 }
 
@@ -32,6 +33,7 @@ export const Matching = ({
   order,
   matching,
   logs,
+  fetchNextMatchingLogs,
   activeMatching,
 }: MatchingProps) => {
   // context
@@ -209,15 +211,10 @@ export const Matching = ({
           )}
         </Box>
         <SectionTitle>{t('Logs do pedido')}</SectionTitle>
-        <Box
-          mt="4"
-          maxH="300px"
-          overflowY="scroll"
-          border="1px solid #ECF0E3"
-          borderRadius="lg"
-        >
-          <LogsTable logs={matching?.logs ?? logs} />
-        </Box>
+        <LogsTable
+          logs={matching?.logs ?? logs}
+          fetchNextLogs={fetchNextMatchingLogs}
+        />
       </Box>
     </>
   );
