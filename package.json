@@ -102,8 +102,8 @@
     "electron:start": "cross-env NODE_ENV=development electronmon .",
     "electron:pack": "cross-env DEBUG_PROD=true tsc -p desktop && electron-builder --dir",
     "electron:build": "tsc -p desktop && electron-builder",
-    "electron:build:beta": "env-cmd -f .env.live yarn build && tsc -p desktop && electron-builder --win portable --x64",
-    "electron:build:prod": "env-cmd -f .env.live yarn build && tsc -p desktop && electron-builder -mwl",
+    "electron:build:beta": "env-cmd -f .env.live yarn build && cross-env NODE_ENV=production tsc -p desktop && electron-builder --win portable --x64",
+    "electron:build:prod": "env-cmd -f .env.live yarn build && cross-env NODE_ENV=production tsc -p desktop && electron-builder --win --x64",
     "postinstall": "electron-builder install-app-deps"
   },
   "eslintConfig": {
@@ -139,7 +139,13 @@
       "category": "public.app-category.business"
     },
     "win": {
-      "target": "nsis"
+      "target": "nsis",
+      "signingHashAlgorithms": [
+        "sha256"
+      ],
+      "publisherName": "JUSTO TECNOLOGIA E INOVACAO SOCIAL LTDA",
+      "signAndEditExecutable": true,
+      "verifyUpdateCodeSignature": true
     },
     "linux": {
       "target": "deb",
@@ -153,9 +159,9 @@
     "cross-env": "^7.0.3",
     "cypress": "9.5.1",
     "cypress-firebase": "^2.2.0",
-    "electron": "18.2.3",
-    "electron-builder": "^23.1.0",
-    "electron-debug": "3.2.0",
+    "electron": "^21.3.1",
+    "electron-builder": "^23.6.0",
+    "electron-debug": "^3.2.0",
     "electron-devtools-installer": "^3.2.0",
     "electronmon": "^2.0.2",
     "eslint-plugin-cypress": "^2.12.1",
