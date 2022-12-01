@@ -1,4 +1,5 @@
 import { Container, Flex, FlexProps } from '@chakra-ui/react';
+import MainHeader from './MainHeader';
 import { MenuMobile } from './MenuMobile';
 import Sidebar from './sidebar/Sidebar';
 
@@ -24,6 +25,7 @@ const PageLayout = ({
           pt={{ base: '16', lg: '10' }}
           pb={{ base: '8', md: '14' }}
         >
+          <MainHeader />
           {children}
         </Container>
       </Flex>

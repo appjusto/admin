@@ -1,46 +1,25 @@
-import { Badge, Box, Flex } from '@chakra-ui/react';
+import { Box, Circle, Flex } from '@chakra-ui/react';
+import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useContextFirebaseUser } from 'app/state/auth/context';
+import { useContextBusinessId } from 'app/state/business/context';
 import Image from 'common/components/Image';
-import logo from 'common/img/logo.svg';
+import { ImageFbLoading } from 'common/components/ImageFbLoading';
+import appjustoLogo from 'common/img/logo.svg';
 import { useRouteMatch } from 'react-router';
 import { BackOfficeLinks } from './BackOfficeLinks';
-import BusinessInfo from './BusinessInfo';
+import { BusinessStatus } from './BusinessStatus';
 import { Links } from './Links';
 import { ManagerBar } from './ManagerBar';
 
-type Envs = 'community' | 'dev' | 'staging' | 'live';
-
-const envColors = {
-  community: {
-    label: 'COMMUNITY',
-    color: 'white',
-    bg: '#78E08F',
-  },
-  dev: {
-    label: 'DEV',
-    color: 'white',
-    bg: '#DC3545',
-  },
-  staging: {
-    label: 'STAGING',
-    color: 'black',
-    bg: '#FFBE00',
-  },
-  live: {
-    label: 'LIVE',
-    color: '',
-    bg: '',
-  },
-};
-
 const Sidebar = () => {
   // context
-  const env = process.env.REACT_APP_ENVIRONMENT as Envs;
   const { path } = useRouteMatch();
   const { isBackofficeUser } = useContextFirebaseUser();
+  const businessId = useContextBusinessId();
+  const { logo } = useBusinessProfile(businessId);
   // helpers
   const isBackOffice = path.includes('backoffice');
-  const { label, color, bg } = env ? envColors[env] : envColors['live'];
+  const marginTop = isBackofficeUser && !isBackOffice ? 16 : 0;
   // UI
   return (
     <Flex
@@ -53,39 +32,44 @@ const Sidebar = () => {
     >
       <Box
         position="fixed"
-        top="4"
+        top={marginTop}
         w="220px"
         h="100vh"
         pb="24"
         overflowY="auto"
       >
-        <Flex mt="6" px="4" justifyContent="space-between" alignItems="center">
-          <Box>
-            <Image src={logo} eagerLoading height="40px" />
-          </Box>
-          {env && env !== 'live' && (
-            <Badge
-              mt="1"
-              ml="1"
-              bg={bg}
-              color={color}
-              borderRadius="22px"
-              px="3"
-              py="1"
-              fontSize="xs"
-              lineHeight="lg"
-              fontWeight="700"
-            >
-              {label}
-            </Badge>
-          )}
-        </Flex>
+        {isBackOffice ? (
+          <Flex mt="6" px="4">
+            <Box>
+              <Image src={appjustoLogo} eagerLoading height="40px" />
+            </Box>
+          </Flex>
+        ) : (
+          <Flex mt="6" px="4" justifyContent="space-around" alignItems="center">
+            {logo ? (
+              <Box w="60px" h="60px">
+                <Image
+                  src={logo}
+                  borderRadius="30px"
+                  fallback={
+                    <ImageFbLoading w="60px" h="60px" borderRadius="20px" />
+                  }
+                />
+              </Box>
+            ) : (
+              <Circle size="60px" bg="gray.400" />
+            )}
+            <Box>
+              <Image src={appjustoLogo} eagerLoading height="36px" />
+            </Box>
+          </Flex>
+        )}
         {isBackOffice ? (
           <BackOfficeLinks />
         ) : (
           <Box position="relative">
             <Box ml="4" mt="6">
-              <BusinessInfo />
+              <BusinessStatus />
             </Box>
             <Box mt="6">
               <Links />

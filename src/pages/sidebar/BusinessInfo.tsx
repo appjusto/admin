@@ -1,20 +1,16 @@
-import { Box, Circle, Image, Text } from '@chakra-ui/react';
-import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
+import { Box, Text } from '@chakra-ui/react';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextManagerProfile } from 'app/state/manager/context';
 import {
   BusinessSelect,
   BusinessSelectOptions,
 } from 'common/components/form/select/BusinessSelect';
-import { ImageFbLoading } from 'common/components/ImageFbLoading';
 import React from 'react';
-import { BusinessStatus } from './BusinessStatus';
 
 const BusinessInfo = () => {
   // context
   const { business, setBusinessId, businesses } = useContextBusiness();
   const { updateLastBusinessId } = useContextManagerProfile();
-  const { logo } = useBusinessProfile(business?.id);
   // state
   const [managerBusinesses, setManagerBusinesses] = React.useState<
     BusinessSelectOptions[]
@@ -32,37 +28,24 @@ const BusinessInfo = () => {
     if (!business) return;
     setSelectedBusiness({
       value: business.id,
-      label: `${business.name ?? 'Sem nome'}: ${
-        business.businessAddress?.address ?? 'Não informado'
-      }`,
+      name: business.name ?? 'Sem nome',
+      address: business.businessAddress?.address ?? 'Não informado',
     });
   }, [business]);
   React.useEffect(() => {
     if (!businesses) return;
     const businessesList = businesses.map((business) => ({
       value: business.id,
-      label: `${business.name ?? 'Sem nome'}: ${
-        business.businessAddress?.address ?? 'Não informado'
-      }`,
+      name: business.name ?? 'Sem nome',
+      address: business.businessAddress?.address ?? 'Não informado',
     }));
     setManagerBusinesses(businessesList);
   }, [businesses]);
   // UI
   return (
     <Box>
-      {business?.logoExists && logo ? (
-        <Box w="40px" h="40px">
-          <Image
-            src={logo}
-            borderRadius="20px"
-            fallback={<ImageFbLoading w="40px" h="40px" borderRadius="20px" />}
-          />
-        </Box>
-      ) : (
-        <Circle size="40px" bg="gray.400" />
-      )}
       {managerBusinesses.length > 1 ? (
-        <Box mt="2" pr="4">
+        <Box mt="2" pr="4" minW={{ md: '250px' }}>
           <BusinessSelect
             options={managerBusinesses}
             selected={selectedBusiness}
@@ -74,7 +57,6 @@ const BusinessInfo = () => {
           {business?.name}
         </Text>
       )}
-      <BusinessStatus />
     </Box>
   );
 };

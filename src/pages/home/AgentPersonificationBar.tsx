@@ -70,7 +70,9 @@ export const AgentPersonificationBar = () => {
           {t('Atenção às modificações')}
         </Text>
         <Text fontSize="15px" lineHeight="21px">
-          {t('Os dados alterados podem impactar no funcionamento do restaurante')}
+          {t(
+            'Os dados alterados podem impactar no funcionamento do restaurante'
+          )}
         </Text>
       </Box>
     </Flex>
