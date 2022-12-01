@@ -394,6 +394,22 @@ export default class OrderApi {
     return customCollectionSnapshot(q, resultHandler);
   }
 
+  getBusinessDeliveredOrdersByStartDate(
+    businessId: string,
+    start: Date,
+    resultHandler: (orders: WithId<Order>[]) => void
+  ): Unsubscribe {
+    let q = query(
+      this.refs.getOrdersRef(),
+      orderBy('timestamps.delivered'),
+      where('business.id', '==', businessId),
+      where('timestamps.delivered', '<=', start),
+      limit(1)
+    );
+    // returns the unsubscribe function
+    return customCollectionSnapshot(q, resultHandler);
+  }
+
   observeOrder(
     orderId: string,
     resultHandler: (order: WithId<Order>) => void

@@ -127,6 +127,15 @@
     jsonpointer "^5.0.0"
     leven "^3.1.0"
 
+"@appjusto/dates@^0.7.1":
+  version "0.7.1"
+  resolved "https://registry.yarnpkg.com/@appjusto/dates/-/dates-0.7.1.tgz#cbf56d6df1067a19da8ff08cada7c3762d07b10c"
+  integrity sha512-L0fTrMyCKewjdCjKLYq7aCdgKj8K57slyp7cSTSPkV4cijbhPFuGoA+x/8/20TQMdMdjVHUMvASZ8w6bdU9g8A==
+  dependencies:
+    "@appjusto/types" "^7.6.13"
+    dayjs "^1.11.3"
+    lodash "^4.17.21"
+
 "@appjusto/menu@^0.1.4":
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/@appjusto/menu/-/menu-0.1.4.tgz#58359f20415468493c327d410ef18c8d672c1c85"
@@ -144,6 +153,13 @@
   version "5.3.0"
   resolved "https://registry.yarnpkg.com/@appjusto/types/-/types-5.3.0.tgz#ea07e868931b2d4fed4977478d9b7543b56a7740"
   integrity sha512-FasmsoJ588kWn1YWRQG1LiYROcz4kwdvNk9LTbB2AVsgaijKxvd5NBWZD7KvcI1Rg+SlSs5RSN5Me82ZGFdSWQ==
+  dependencies:
+    firebase "^9.6.7"
+
+"@appjusto/types@^7.6.13":
+  version "7.16.6"
+  resolved "https://registry.yarnpkg.com/@appjusto/types/-/types-7.16.6.tgz#06fbbaa34ed66e6ff3957415853ee4e4a20db1a6"
+  integrity sha512-gcdwtuXRoCSnumIGy6MVXhP/uNqEbVx6sB9WJ35+VG93jRASr9HLQGf8iWSo6BP2exzhNu8mpoiv+e5rn9iL5A==
   dependencies:
     firebase "^9.6.7"
 
@@ -6446,6 +6462,11 @@ dayjs@^1.10.4, dayjs@^1.10.6:
   version "1.11.0"
   resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.11.0.tgz#009bf7ef2e2ea2d5db2e6583d2d39a4b5061e805"
   integrity sha512-JLC809s6Y948/FuCZPm5IX8rRhQwOiyMb2TfVVQEixG7P8Lm/gt5S7yoQZmC8x1UehI9Pb7sksEt4xx14m+7Ug==
+
+dayjs@^1.11.3:
+  version "1.11.6"
+  resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.11.6.tgz#2e79a226314ec3ec904e3ee1dd5a4f5e5b1c7afb"
+  integrity sha512-zZbY5giJAinCG+7AGaw0wIhNZ6J8AhWuSXKvuc1KAyMiRsvGQWqh4L+MomvhdAYjN+lqvVCMq1I41e3YHvXkyQ==
 
 debug@2.6.9, debug@^2.6.0, debug@^2.6.8, debug@^2.6.9:
   version "2.6.9"
