@@ -82,7 +82,6 @@ const Dashboard = () => {
       <PageHeader
         title={t('Início')}
         subtitle={t(`Dados atualizados em ${dateTime}`)}
-        showVersion
       />
       {business?.situation === 'approved' ? (
         <Box>

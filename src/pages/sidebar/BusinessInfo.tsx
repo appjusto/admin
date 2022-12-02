@@ -1,4 +1,4 @@
-import { Box, Text } from '@chakra-ui/react';
+import { Box, BoxProps, Text } from '@chakra-ui/react';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextManagerProfile } from 'app/state/manager/context';
 import {
@@ -7,7 +7,7 @@ import {
 } from 'common/components/form/select/BusinessSelect';
 import React from 'react';
 
-const BusinessInfo = () => {
+const BusinessInfo = (props: BoxProps) => {
   // context
   const { business, setBusinessId, businesses } = useContextBusiness();
   const { updateLastBusinessId } = useContextManagerProfile();
@@ -43,9 +43,9 @@ const BusinessInfo = () => {
   }, [businesses]);
   // UI
   return (
-    <Box>
+    <Box {...props}>
       {managerBusinesses.length > 1 ? (
-        <Box mt="2" pr="4" minW={{ md: '250px' }}>
+        <Box pr="4" minW={{ md: '250px' }}>
           <BusinessSelect
             options={managerBusinesses}
             selected={selectedBusiness}
@@ -53,9 +53,7 @@ const BusinessInfo = () => {
           />
         </Box>
       ) : (
-        <Text fontSize="md" mt="2">
-          {business?.name}
-        </Text>
+        <Text fontSize="md">{business?.name}</Text>
       )}
     </Box>
   );
