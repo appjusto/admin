@@ -31,7 +31,7 @@ const envColors = {
 
 const MainHeader = (props: FlexProps) => {
   // context
-  const env = 'live'; //process.env.REACT_APP_ENVIRONMENT as Envs;
+  const env = process.env.REACT_APP_ENVIRONMENT as Envs;
   // helpers
   const { label, color, bg } = env ? envColors[env] : envColors['live'];
   // UI
@@ -70,10 +70,10 @@ const MainHeader = (props: FlexProps) => {
               bg={bg}
               color={color}
               borderRadius="22px"
-              px="3"
-              py="1"
-              fontSize="xs"
-              lineHeight="lg"
+              px="2"
+              size="xs"
+              // fontSize="xs"
+              // lineHeight="lg"
               fontWeight="700"
             >
               {label}
