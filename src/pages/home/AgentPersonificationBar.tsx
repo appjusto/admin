@@ -30,7 +30,7 @@ export const AgentPersonificationBar = () => {
       bg="gray.700"
       color="white"
       justifyContent="space-between"
-      zIndex="999"
+      zIndex="9999"
     >
       <Box>
         <HStack spacing={4}>

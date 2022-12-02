@@ -39,7 +39,7 @@ const MainHeader = (props: FlexProps) => {
     <Box
       position="fixed"
       top="0"
-      pt={{ base: '70px', lg: '4' }}
+      pt={{ base: '80px', lg: '4' }}
       w="100%"
       pr="32px"
       bgColor="white"
