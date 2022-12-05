@@ -19,7 +19,7 @@ const Sidebar = () => {
   const { logo } = useBusinessProfile(businessId);
   // helpers
   const isBackOffice = path.includes('backoffice');
-  const marginTop = isBackofficeUser && !isBackOffice ? 16 : 0;
+  const marginTop = isBackofficeUser && !isBackOffice ? 20 : 0;
   // UI
   return (
     <Flex
@@ -45,7 +45,7 @@ const Sidebar = () => {
             </Box>
           </Flex>
         ) : (
-          <Flex mt="6" px="4" justifyContent="space-around" alignItems="center">
+          <Flex mt="4" px="4" justifyContent="space-around" alignItems="center">
             {logo ? (
               <Box w="60px" h="60px">
                 <Image
@@ -68,7 +68,7 @@ const Sidebar = () => {
           <BackOfficeLinks />
         ) : (
           <Box position="relative">
-            <Box ml="4" mt="6">
+            <Box ml="3" mt="6">
               <BusinessStatus />
             </Box>
             <Box mt="6">

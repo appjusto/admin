@@ -3,8 +3,6 @@ import { isElectron } from '@firebase/util';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextBusinessDashboard } from 'app/state/dashboards/business';
 import { MaintenanceBox } from 'common/components/MaintenanceBox';
-import { NewFeatureBox } from 'common/components/NewFeatureBox';
-import { ReactComponent as ExtensionIcon } from 'common/img/chrome-extension-icon.svg';
 import I18n from 'i18n-js';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import React from 'react';
@@ -98,21 +96,6 @@ const Dashboard = () => {
             isNew={false}
           /> */}
           <BannersContainer banners={banners} />
-          {!isDesktopApp && (
-            <NewFeatureBox
-              icon={ExtensionIcon}
-              iconSize="lg"
-              title={t('Extensão para Google Chrome')}
-              description={t(
-                'Nova extensão Appjusto Admin para Google Chrome! Ela ajuda a manter sua aplicação sempre ativa para receber pedidos.'
-              )}
-              link="https://chrome.google.com/webstore/detail/appjusto-admin/mcmielagmkelelpmnmjlnlpeakdmmeap?hl=pt-br"
-              btnLabel={t('Instalar')}
-              btnVariant="solid"
-              isExternal
-              isNew
-            />
-          )}
           <Box mt="8" border="1px solid #E5E5E5" borderRadius="lg" p="4">
             <SectionTitle mt="0" fontWeight="700">
               {t('Acompanhamento diário')}

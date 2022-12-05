@@ -1,6 +1,5 @@
-import { Box, BoxProps } from '@chakra-ui/react';
+import { Box, BoxProps, Text } from '@chakra-ui/react';
 import { useContextBusiness } from 'app/state/business/context';
-import React from 'react';
 import { useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { LinkItem } from './LinkItem';
@@ -16,6 +15,9 @@ export const Links = (props: BoxProps) => {
   return (
     <Box {...props}>
       <Box>
+        <Text ml="3" mb="2" fontSize="xs" fontWeight="700" color="gray.600">
+          {t('GERAL')}
+        </Text>
         <LinkItem to={`${url}`} label={t('Início')} />
         <OrdersLinkItem to={`${url}/orders`} isDisabled={isBusinessPending} />
         <LinkItem
@@ -23,16 +25,30 @@ export const Links = (props: BoxProps) => {
           label={t('Compartilhamento')}
           isDisabled={isBusinessPending}
         />
+        <LinkItem
+          to={`${url}/orders-history`}
+          label={t('Histórico de pedidos')}
+        />
+        <LinkItem to={`${url}/finances`} label={t('Financeiro')} />
       </Box>
-      <Box mt="5">
+      <Box mt="6">
+        <Text ml="3" mb="2" fontSize="xs" fontWeight="700" color="gray.600">
+          {t('CONFIGURAÇÕES')}
+        </Text>
         <LinkItem to={`${url}/menu`} label={t('Cardápio')} />
         <LinkItem to={`${url}/business-schedules`} label={t('Horários')} />
         <LinkItem to={`${url}/delivery-area`} label={t('Área de entrega')} />
-        <LinkItem to={`${url}/orders-history`} label={t('Histórico de pedidos')} />
-        <LinkItem to={`${url}/finances`} label={t('Financeiro')} />
-        <LinkItem to={`${url}/business-profile`} label={t('Perfil do restaurante')} />
-        <LinkItem to={`${url}/banking-information`} label={t('Dados bancários')} />
+        <LinkItem
+          to={`${url}/business-profile`}
+          label={t('Perfil do restaurante')}
+        />
+        <LinkItem to={`${url}/team`} label={t('Operação')} />
         <LinkItem to={`${url}/team`} label={t('Colaboradores')} />
+        <LinkItem
+          to={`${url}/banking-information`}
+          label={t('Dados bancários')}
+        />
+        <LinkItem to={`${url}/insurance`} label={t('Seguro')} />
       </Box>
     </Box>
   );
