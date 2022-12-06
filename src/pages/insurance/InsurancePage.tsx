@@ -1,35 +1,67 @@
 import { BusinessService } from '@appjusto/types';
-import { Button, Flex, Radio, RadioGroup, VStack } from '@chakra-ui/react';
+import { Box, Radio, RadioGroup, VStack } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextAppRequests } from 'app/state/requests/context';
+import { OnboardingProps } from 'pages/onboarding/types';
+import PageFooter from 'pages/PageFooter';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
+import { Redirect } from 'react-router-dom';
 import { t } from 'utils/i18n';
 
-const InsurancePage = () => {
+const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
   // context
   const { dispatchAppRequestResult } = useContextAppRequests();
   const { business } = useContextBusiness();
   const { updateBusinessProfile, updateResult } = useBusinessProfile(
     business?.id
   );
-  const { isLoading } = updateResult;
+  const { isLoading, isSuccess } = updateResult;
   // state
-  const [selected, setSelected] = React.useState<BusinessService>();
-  // refs
-  const submission = React.useRef(0);
+  const [insuranceAvailable, setInsuranceAvailable] =
+    React.useState<BusinessService>();
+  const [insuranceAccepted, setInsuranceAccepted] =
+    React.useState<BusinessService>();
+  const [isAccept, setIsAccept] = React.useState(false);
   // handlers
   const onSubmitHandler = (event: any) => {
     event.preventDefault();
-    if (!selected)
+    if (!insuranceAvailable)
       return dispatchAppRequestResult({
         status: 'error',
-        requestId: 'SchedulesPage-valid',
-        message: { title: 'Alguns horários não estão corretos.' },
+        requestId: 'insurance-page-error',
+        message: { title: 'Nenhuma cobertura foi encontrada.' },
       });
-    submission.current += 1;
-    updateBusinessProfile({ services: [selected] });
+    if (isAccept && insuranceAccepted)
+      return dispatchAppRequestResult({
+        status: 'error',
+        requestId: 'insurance-page-error',
+        message: { title: 'A cobertura já foi contratada.' },
+      });
+    if (!isAccept && !insuranceAccepted)
+      return dispatchAppRequestResult({
+        status: 'error',
+        requestId: 'insurance-page-error',
+        message: { title: 'Nenhuma cobertura foi contratada.' },
+      });
+    try {
+      if (isAccept) {
+        updateBusinessProfile({ services: [insuranceAvailable] });
+      } else {
+        const services = business?.services?.filter(
+          (service) => service.name !== 'insurance'
+        );
+        updateBusinessProfile({ services });
+      }
+    } catch (error) {
+      console.log(error);
+      return dispatchAppRequestResult({
+        status: 'error',
+        requestId: 'insurance-page-error',
+        message: { title: 'Não foi possível acessar o servidor.' },
+      });
+    }
   };
   // side effects
   React.useEffect(() => {
@@ -37,36 +69,38 @@ const InsurancePage = () => {
     const insurance = business.services.find(
       (service) => service.name === 'insurance'
     );
-    setSelected(insurance);
+    setInsuranceAccepted(insurance);
   }, [business?.services]);
+  React.useEffect(() => {
+    setIsAccept(insuranceAccepted !== undefined);
+  }, [insuranceAccepted]);
   // UI
+  if (isSuccess && redirect) return <Redirect to={redirect} push />;
   return (
-    <>
-      <PageHeader
-        title={t('Cobertura')}
-        subtitle={t('Escolha a forma de contratação do AppJusto.')}
-      />
-      <Flex flexDir="column" mt="4">
-        <form onSubmit={onSubmitHandler}>
-          <RadioGroup mt="6">
-            <VStack alignItems="flex-start">
-              <Radio value="insurance">Com seguro</Radio>
-              <Radio value="no-insurance">Sem seguro</Radio>
-            </VStack>
-          </RadioGroup>
-          <Button
-            mt="8"
-            w="200px"
-            type="submit"
-            fontSize="15px"
-            isLoading={isLoading}
-            loadingText={t('Salvando')}
-          >
-            {t('Salvar opção')}
-          </Button>
-        </form>
-      </Flex>
-    </>
+    <Box maxW="756px">
+      <form onSubmit={onSubmitHandler}>
+        <PageHeader
+          title={t('Cobertura')}
+          subtitle={t('Escolha a forma de contratação do AppJusto.')}
+        />
+        <RadioGroup
+          mt="8"
+          value={isAccept ? 'insurance' : 'no-insurance'}
+          onChange={(value) => setIsAccept(value === 'insurance')}
+        >
+          <VStack alignItems="flex-start">
+            <Radio value="insurance">Com seguro</Radio>
+            <Radio value="no-insurance">Sem seguro</Radio>
+          </VStack>
+        </RadioGroup>
+        <PageFooter
+          onboarding={onboarding}
+          requiredLabel={false}
+          redirect={redirect}
+          isLoading={isLoading}
+        />
+      </form>
+    </Box>
   );
 };
 
