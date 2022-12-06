@@ -40,6 +40,9 @@ const BusinessProfile = React.lazy(
   () =>
     import(/* webpackPrefetch: true */ 'pages/business-profile/BusinessProfile')
 );
+const OperationPage = React.lazy(
+  () => import(/* webpackPrefetch: true */ 'pages/operation/OperationPage')
+);
 const ManagerProfilePage = React.lazy(
   () =>
     import(
@@ -142,6 +145,10 @@ const Home = () => {
                 <AdminAccessRoute
                   path={`${path}/business-profile`}
                   component={BusinessProfile}
+                />
+                <AdminAccessRoute
+                  path={`${path}/operation`}
+                  component={OperationPage}
                 />
                 <AdminAccessRoute
                   path={`${path}/manager-profile`}

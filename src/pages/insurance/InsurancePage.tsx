@@ -43,7 +43,7 @@ const InsurancePage = () => {
   return (
     <>
       <PageHeader
-        title={t('Seguro')}
+        title={t('Cobertura')}
         subtitle={t('Escolha a forma de contratação do AppJusto.')}
       />
       <Flex flexDir="column" mt="4">

@@ -42,13 +42,13 @@ export const Links = (props: BoxProps) => {
           to={`${url}/business-profile`}
           label={t('Perfil do restaurante')}
         />
-        <LinkItem to={`${url}/team`} label={t('Operação')} />
+        <LinkItem to={`${url}/operation`} label={t('Operação')} />
         <LinkItem to={`${url}/team`} label={t('Colaboradores')} />
         <LinkItem
           to={`${url}/banking-information`}
           label={t('Dados bancários')}
         />
-        <LinkItem to={`${url}/insurance`} label={t('Seguro')} />
+        <LinkItem to={`${url}/insurance`} label={t('Cobertura')} />
       </Box>
     </Box>
   );
