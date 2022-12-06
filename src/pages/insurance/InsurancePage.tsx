@@ -13,14 +13,12 @@ import { t } from 'utils/i18n';
 const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
   // context
   const { dispatchAppRequestResult } = useContextAppRequests();
-  const { business } = useContextBusiness();
+  const { business, insuranceAvailable } = useContextBusiness();
   const { updateBusinessProfile, updateResult } = useBusinessProfile(
     business?.id
   );
   const { isLoading, isSuccess } = updateResult;
   // state
-  const [insuranceAvailable, setInsuranceAvailable] =
-    React.useState<BusinessService>();
   const [insuranceAccepted, setInsuranceAccepted] =
     React.useState<BusinessService>();
   const [isAccept, setIsAccept] = React.useState(false);
