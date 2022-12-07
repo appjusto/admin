@@ -1,6 +1,7 @@
 import { BusinessService } from '@appjusto/types';
 import {
   Box,
+  Center,
   Flex,
   HStack,
   Icon,
@@ -11,19 +12,25 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextAppRequests } from 'app/state/requests/context';
+import { useContextServerTime } from 'app/state/server-time';
+import dayjs from 'dayjs';
 import { OnboardingProps } from 'pages/onboarding/types';
 import PageFooter from 'pages/PageFooter';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
-import { MdCheck } from 'react-icons/md';
+import { MdCheck, MdInfo } from 'react-icons/md';
 import { Redirect } from 'react-router-dom';
 import { formatPct } from 'utils/formatters';
+import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 
 const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
   // context
+  const { user, isBackofficeUser } = useContextFirebaseUser();
+  const { getServerTime } = useContextServerTime();
   const { dispatchAppRequestResult } = useContextAppRequests();
   const { business, insuranceAvailable } = useContextBusiness();
   const { updateBusinessProfile, updateResult } = useBusinessProfile(
@@ -38,9 +45,41 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
   const feeToDisplay =
     insuranceAccepted?.fee.percent ?? insuranceAvailable?.fee.percent;
   const totalFee = feeToDisplay ? 7.42 + feeToDisplay : undefined;
+  const insuranceActivationDate = insuranceAccepted?.createdOn
+    ? dayjs(insuranceAccepted.createdOn).toDate()
+    : null;
+  const insuranceActivatedAt = insuranceActivationDate
+    ? getDateAndHour(insuranceActivationDate)
+    : null;
   // handlers
+  // const observeContextServices = React.useCallback(() => {
+  //   console.log(">>> OBSERVER CALLED")
+  //   if (!business?.services) return;
+  //   const insurance = business.services.find(
+  //     (service) => service.name === 'insurance'
+  //   );
+  //   console.log('filtered: ', insurance);
+  //   setInsuranceAccepted(insurance);
+  // }, [business?.services])
   const onSubmitHandler = (event: any) => {
     event.preventDefault();
+    if (isBackofficeUser)
+      return dispatchAppRequestResult({
+        status: 'error',
+        requestId: 'insurance-page-error',
+        message: {
+          title:
+            'Apenas donos e gerentes de restaurantes podem ativar ou desativar a cobertura.',
+        },
+      });
+    if (!user?.uid || !user?.email)
+      return dispatchAppRequestResult({
+        status: 'error',
+        requestId: 'insurance-page-error',
+        message: {
+          title: 'Não foi possível acessar as credenciais do usuário.',
+        },
+      });
     if (!insuranceAvailable)
       return dispatchAppRequestResult({
         status: 'error',
@@ -61,7 +100,18 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
       });
     try {
       if (isAccept) {
-        updateBusinessProfile({ services: [insuranceAvailable] });
+        const time = getServerTime().getTime();
+        const newInsurance = {
+          ...insuranceAvailable,
+          createdBy: {
+            id: user.uid,
+            email: user.email,
+          },
+          createdOn: time,
+        } as BusinessService;
+        const services = business?.services ?? [];
+        services.push(newInsurance);
+        updateBusinessProfile({ services });
       } else {
         const services = business?.services?.filter(
           (service) => service.name !== 'insurance'
@@ -77,17 +127,25 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
       });
     }
   };
+  // to handle with useEffect dependencies bug
+  const servivesLength = business?.services
+    ? business.services.length
+    : undefined;
   // side effects
   React.useEffect(() => {
+    console.log('>>> Services effect');
     if (!business?.services) return;
     const insurance = business.services.find(
       (service) => service.name === 'insurance'
     );
+    console.log('filtered: ', insurance);
     setInsuranceAccepted(insurance);
-  }, [business?.services]);
+  }, [servivesLength, business?.services]);
   React.useEffect(() => {
     setIsAccept(insuranceAccepted !== undefined);
   }, [insuranceAccepted]);
+  console.log('servies: ', business?.services);
+  console.log('ACCEPTED: ', insuranceAccepted);
   // UI
   if (isSuccess && redirect) return <Redirect to={redirect} push />;
   return (
@@ -97,6 +155,60 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
           title={t('Cobertura')}
           subtitle={t('Escolha a forma de contratação do AppJusto.')}
         />
+        {insuranceAccepted && insuranceActivatedAt && (
+          <Flex
+            mt="8"
+            p="4"
+            flexDir="row"
+            border="1px solid #C8D7CB"
+            borderRadius="lg"
+            maxW="600px"
+          >
+            <Center>
+              <Icon as={MdInfo} w="24px" h="24px" />
+            </Center>
+            <Box ml="4">
+              <Text fontWeight="700">
+                {t(`Cobertura ativada em ${insuranceActivatedAt}`)}
+              </Text>
+              {insuranceAccepted.createdBy?.email && (
+                <Text fontSize="14px" fontWeight="700">
+                  {t('Solicitada por: ')}
+                  <Text as="span" fontWeight="500">
+                    {insuranceAccepted.createdBy.email}
+                  </Text>
+                </Text>
+              )}
+            </Box>
+          </Flex>
+        )}
+        {!insuranceAccepted && !onboarding ? (
+          <Flex
+            mt="8"
+            p="4"
+            flexDir="row"
+            border="1px solid #C8D7CB"
+            borderRadius="lg"
+            bgColor="yellow"
+            maxW="600px"
+          >
+            <Center>
+              <Icon as={MdInfo} w="24px" h="24px" />
+            </Center>
+            <Box ml="4">
+              <Text fontWeight="700">
+                {t('Seu restaurante ainda não possui cobertura')}
+              </Text>
+              <Text fontSize="13px">
+                {t(
+                  'Não se preocupe. É possível aderir à nossa cobertura a qualquer momento.'
+                )}
+              </Text>
+            </Box>
+          </Flex>
+        ) : (
+          <Box />
+        )}
         <RadioGroup
           mt="8"
           value={isAccept ? 'insurance' : 'no-insurance'}
@@ -174,14 +286,6 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
               <HStack mt="4" spacing={4}>
                 <Icon as={MdCheck} color="green.500" w="24px" h="24px" />
                 <Text fontWeight="700">
-                  {t(
-                    'Cancelamento após início do preparo por prevenção de fraude'
-                  )}
-                </Text>
-              </HStack>
-              <HStack spacing={4}>
-                <Icon as={MdCheck} color="green.500" w="24px" h="24px" />
-                <Text fontWeight="700">
                   {t('Cliente não consegue receber, por atraso na entrega')}
                 </Text>
               </HStack>
@@ -251,6 +355,31 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
             </Box>
           </VStack>
         </RadioGroup>
+        {!insuranceAccepted && onboarding && (
+          <Flex
+            mt="8"
+            p="4"
+            flexDir="row"
+            border="1px solid #C8D7CB"
+            borderRadius="lg"
+            bgColor="yellow"
+            maxW="600px"
+          >
+            <Center>
+              <Icon as={MdInfo} w="24px" h="24px" />
+            </Center>
+            <Box ml="4">
+              <Text fontWeight="700">
+                {t('Seu restaurante ainda não possui cobertura')}
+              </Text>
+              <Text fontSize="13px">
+                {t(
+                  'Não se preocupe. É possível aderir à nossa cobertura a qualquer momento.'
+                )}
+              </Text>
+            </Box>
+          </Flex>
+        )}
         <PageFooter
           onboarding={onboarding}
           requiredLabel={false}

@@ -35,7 +35,6 @@ export const BusinessSelect = ({
       setShowOptions(false);
     };
     window.addEventListener('click', (event) => {
-      // event.preventDefault();
       try {
         const boxRectsData = boxRef.current?.getClientRects();
         const clientX = event.clientX;

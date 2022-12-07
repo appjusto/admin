@@ -64,7 +64,12 @@ const PageFooter = ({
           </Button>
         )}
         {showSkip && (
-          <Link ml="8" as={RouterLink} to={redirect!}>
+          <Link
+            ml={{ base: '0', md: '8' }}
+            mt={{ base: '6', md: '0' }}
+            as={RouterLink}
+            to={redirect!}
+          >
             <Text textStyle="link">{t('Pular etapa e preencher depois')}</Text>
           </Link>
         )}
