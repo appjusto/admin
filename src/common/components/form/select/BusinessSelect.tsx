@@ -35,27 +35,27 @@ export const BusinessSelect = ({
       setShowOptions(false);
     };
     window.addEventListener('click', (event) => {
-      event.preventDefault();
-      const boxRects = boxRef.current?.getClientRects();
-      const clientX = event.clientX;
-      const clientY = event.clientY;
-      if (!boxRects) return;
-      let insideX = false;
-      let insideY = false;
-      if (
-        clientX > boxRects[0].left &&
-        clientX < boxRects[0].left + boxRects[0].width
-      )
-        insideX = true;
-      if (
-        clientY > boxRects[0].top &&
-        clientY < boxRects[0].top + boxRects[0].height
-      )
-        insideY = true;
-      if (insideX && insideY) return;
-      handleClick();
+      // event.preventDefault();
+      try {
+        const boxRectsData = boxRef.current?.getClientRects();
+        const clientX = event.clientX;
+        const clientY = event.clientY;
+        if (!boxRectsData) return;
+        const boxRects = boxRectsData[0];
+        if (!boxRects) return;
+        let insideX = false;
+        let insideY = false;
+        if (clientX > boxRects.left && clientX < boxRects.left + boxRects.width)
+          insideX = true;
+        if (clientY > boxRects.top && clientY < boxRects.top + boxRects.height)
+          insideY = true;
+        if (insideX && insideY) return;
+        handleClick();
+      } catch (error) {
+        console.log(error);
+      }
     });
-    return () => window.removeEventListener('click', () => {});
+    return () => window.removeEventListener('click', handleClick);
   }, [showOptions]);
   // UI
   return (
