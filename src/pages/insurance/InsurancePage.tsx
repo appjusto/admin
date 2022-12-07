@@ -52,15 +52,6 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
     ? getDateAndHour(insuranceActivationDate)
     : null;
   // handlers
-  // const observeContextServices = React.useCallback(() => {
-  //   console.log(">>> OBSERVER CALLED")
-  //   if (!business?.services) return;
-  //   const insurance = business.services.find(
-  //     (service) => service.name === 'insurance'
-  //   );
-  //   console.log('filtered: ', insurance);
-  //   setInsuranceAccepted(insurance);
-  // }, [business?.services])
   const onSubmitHandler = (event: any) => {
     event.preventDefault();
     if (isBackofficeUser)
@@ -133,19 +124,15 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
     : undefined;
   // side effects
   React.useEffect(() => {
-    console.log('>>> Services effect');
     if (!business?.services) return;
     const insurance = business.services.find(
       (service) => service.name === 'insurance'
     );
-    console.log('filtered: ', insurance);
     setInsuranceAccepted(insurance);
   }, [servivesLength, business?.services]);
   React.useEffect(() => {
     setIsAccept(insuranceAccepted !== undefined);
   }, [insuranceAccepted]);
-  console.log('servies: ', business?.services);
-  console.log('ACCEPTED: ', insuranceAccepted);
   // UI
   if (isSuccess && redirect) return <Redirect to={redirect} push />;
   return (
