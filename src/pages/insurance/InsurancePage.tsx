@@ -372,6 +372,7 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
           requiredLabel={false}
           redirect={redirect}
           isLoading={isLoading}
+          isDisabled={!isAccept && !insuranceAccepted}
         />
       </form>
     </Box>
