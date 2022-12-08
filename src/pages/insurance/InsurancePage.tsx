@@ -144,7 +144,7 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
         />
         {insuranceAccepted && insuranceActivatedAt && (
           <Flex
-            mt="8"
+            mt="4"
             p="4"
             flexDir="row"
             border="1px solid #C8D7CB"
@@ -171,7 +171,7 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
         )}
         {!insuranceAccepted && !onboarding ? (
           <Flex
-            mt="8"
+            mt="4"
             p="4"
             flexDir="row"
             border="1px solid #C8D7CB"
@@ -197,7 +197,7 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
           <Box />
         )}
         <RadioGroup
-          mt="8"
+          mt="4"
           value={isAccept ? 'insurance' : 'no-insurance'}
           onChange={(value) => setIsAccept(value === 'insurance')}
         >
