@@ -16,7 +16,6 @@ import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { useContextServerTime } from 'app/state/server-time';
-import dayjs from 'dayjs';
 import { OnboardingProps } from 'pages/onboarding/types';
 import PageFooter from 'pages/PageFooter';
 import PageHeader from 'pages/PageHeader';
@@ -24,8 +23,11 @@ import React from 'react';
 import { MdCheck, MdInfo } from 'react-icons/md';
 import { Redirect } from 'react-router-dom';
 import { formatPct } from 'utils/formatters';
-import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
+import {
+  getBusinessInsurance,
+  getBusinessInsuranceActivationDate,
+} from './utils';
 
 const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
   // context
@@ -45,12 +47,8 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
   const feeToDisplay =
     insuranceAccepted?.fee.percent ?? insuranceAvailable?.fee.percent;
   const totalFee = feeToDisplay ? 7.42 + feeToDisplay : undefined;
-  const insuranceActivationDate = insuranceAccepted?.createdOn
-    ? dayjs(insuranceAccepted.createdOn).toDate()
-    : null;
-  const insuranceActivatedAt = insuranceActivationDate
-    ? getDateAndHour(insuranceActivationDate)
-    : null;
+  const insuranceActivatedAt =
+    getBusinessInsuranceActivationDate(insuranceAccepted);
   // handlers
   const onSubmitHandler = (event: any) => {
     event.preventDefault();
@@ -125,9 +123,7 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
   // side effects
   React.useEffect(() => {
     if (!business?.services) return;
-    const insurance = business.services.find(
-      (service) => service.name === 'insurance'
-    );
+    const insurance = getBusinessInsurance(business.services);
     setInsuranceAccepted(insurance);
   }, [servivesLength, business?.services]);
   React.useEffect(() => {
