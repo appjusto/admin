@@ -7,7 +7,6 @@ import {
   Icon,
   Radio,
   RadioGroup,
-  Skeleton,
   Text,
   VStack,
 } from '@chakra-ui/react';
@@ -24,10 +23,17 @@ import { MdCheck, MdInfo } from 'react-icons/md';
 import { Redirect } from 'react-router-dom';
 import { formatPct } from 'utils/formatters';
 import { t } from 'utils/i18n';
+import { FeesBox, InsuranceFeeInfo } from './FeesBox';
 import {
   getBusinessInsurance,
   getBusinessInsuranceActivationDate,
 } from './utils';
+
+const defaultFees = [
+  { value: '5%', label: 'Comissão AppJusto' },
+  { value: '2,42%', label: 'Taxa Gateway' },
+  { value: '7,42%', label: 'Taxa Total' },
+] as InsuranceFeeInfo[];
 
 const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
   // context
@@ -206,46 +212,14 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
               boxShadow="0 1px 2px 0 rgb(60 64 67 / 30%), 0 1px 3px 1px rgb(60 64 67 / 15%)"
             >
               <Radio value="no-insurance">
-                <Text fontSize="18px" fontWeight="700">
-                  {t('Sem cobertura')}
-                </Text>
+                <Text fontSize="18px">{t('Sem cobertura')}</Text>
               </Radio>
               <Text mt="4">
                 {t(
                   'Ao optar por trabalhar com o AppJusto, no modelo sem cobertura, o restaurante está de acordo em assumir a responsabilidade financeira pelos eventuais problemas operacionais que venham a acontecer com seus pedidos.'
                 )}
               </Text>
-              <HStack
-                mt="4"
-                spacing={3}
-                justifyContent="flex-end"
-                alignItems="flex-start"
-              >
-                <Box maxW="70px" textAlign="center">
-                  <Flex h="40px" justifyContent="center" alignItems="flex-end">
-                    <Text fontSize="20px" fontWeight="700">
-                      {t('5%')}
-                    </Text>
-                  </Flex>
-                  <Text fontSize="13px">{t('Comissão AppJusto')}</Text>
-                </Box>
-                <Box maxW="70px" textAlign="center">
-                  <Flex h="40px" justifyContent="center" alignItems="flex-end">
-                    <Text fontSize="20px" fontWeight="700">
-                      {t('2,42%')}
-                    </Text>
-                  </Flex>
-                  <Text fontSize="13px">{t('Taxa Gateway')}</Text>
-                </Box>
-                <Box maxW="90px" textAlign="center">
-                  <Flex h="40px" justifyContent="center" alignItems="flex-end">
-                    <Text fontSize="28px" fontWeight="700">
-                      {t('7,42%')}
-                    </Text>
-                  </Flex>
-                  <Text fontSize="13px">{t('Taxa Total')}</Text>
-                </Box>
-              </HStack>
+              <FeesBox fees={defaultFees} />
             </Box>
             <Box
               p="6"
@@ -256,9 +230,7 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
               boxShadow="0 1px 2px 0 rgb(60 64 67 / 30%), 0 1px 3px 1px rgb(60 64 67 / 15%)"
             >
               <Radio value="insurance">
-                <Text fontSize="18px" fontWeight="700">
-                  {t('Com cobertura')}
-                </Text>
+                <Text fontSize="18px">{t('Com cobertura')}</Text>
               </Radio>
               <Text mt="4">
                 {t(
@@ -267,73 +239,36 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
               </Text>
               <HStack mt="4" spacing={4}>
                 <Icon as={MdCheck} color="green.500" w="24px" h="24px" />
-                <Text fontWeight="700">
+                <Text>
                   {t('Cliente não consegue receber, por atraso na entrega')}
                 </Text>
               </HStack>
               <HStack spacing={4}>
                 <Icon as={MdCheck} color="green.500" w="24px" h="24px" />
-                <Text fontWeight="700">
-                  {t('Produto sem qualidade (estragado)')}
-                </Text>
+                <Text>{t('Produto sem qualidade (estragado)')}</Text>
               </HStack>
               <HStack spacing={4}>
                 <Icon as={MdCheck} color="green.500" w="24px" h="24px" />
-                <Text fontWeight="700">
-                  {t('Produto chegou violado ou danificado')}
-                </Text>
+                <Text>{t('Produto chegou violado ou danificado')}</Text>
               </HStack>
               <HStack spacing={4}>
                 <Icon as={MdCheck} color="green.500" w="24px" h="24px" />
-                <Text fontWeight="700">{t('Fraude (chargeback)')}</Text>
+                <Text>{t('Fraude (chargeback)')}</Text>
               </HStack>
-              <HStack
-                mt="4"
-                spacing={3}
-                justifyContent="flex-end"
-                alignItems="flex-start"
-              >
-                <Box maxW="70px" textAlign="center">
-                  <Flex h="40px" justifyContent="center" alignItems="flex-end">
-                    <Text fontSize="20px" fontWeight="700">
-                      {t('5%')}
-                    </Text>
-                  </Flex>
-                  <Text fontSize="13px">{t('Comissão AppJusto')}</Text>
-                </Box>
-                <Box maxW="70px" textAlign="center">
-                  <Flex h="40px" justifyContent="center" alignItems="flex-end">
-                    <Text fontSize="20px" fontWeight="700">
-                      {t('2,42%')}
-                    </Text>
-                  </Flex>
-                  <Text fontSize="13px">{t('Taxa Gateway')}</Text>
-                </Box>
-                <Box maxW="70px" textAlign="center">
-                  <Flex h="40px" justifyContent="center" alignItems="flex-end">
-                    {feeToDisplay ? (
-                      <Text fontSize="20px" fontWeight="700">
-                        {formatPct(feeToDisplay, 1)}
-                      </Text>
-                    ) : (
-                      <Skeleton />
-                    )}
-                  </Flex>
-                  <Text fontSize="13px">{t('Taxa Cobertura')}</Text>
-                </Box>
-                <Box maxW="90px" textAlign="center">
-                  <Flex h="40px" justifyContent="center" alignItems="flex-end">
-                    {totalFee ? (
-                      <Text fontSize="28px" fontWeight="700">
-                        {formatPct(totalFee, 1)}
-                      </Text>
-                    ) : (
-                      <Skeleton />
-                    )}
-                  </Flex>
-                  <Text fontSize="13px">{t('Taxa Total')}</Text>
-                </Box>
-              </HStack>
+              <FeesBox
+                fees={[
+                  { value: '5%', label: 'Comissão AppJusto' },
+                  { value: '2,42%', label: 'Taxa Gateway' },
+                  {
+                    value: feeToDisplay ? formatPct(feeToDisplay, 1) : '...',
+                    label: 'Taxa Cobertura',
+                  },
+                  {
+                    value: totalFee ? formatPct(totalFee, 1) : '...',
+                    label: 'Taxa Total',
+                  },
+                ]}
+              />
             </Box>
           </VStack>
         </RadioGroup>
