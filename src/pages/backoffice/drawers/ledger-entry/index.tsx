@@ -158,6 +158,10 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
     //   setToAccountType('courier');
     if (operation === 'same-owner-accounts') setToAccountType(fromAccountType);
     if (operation !== 'same-owner-accounts') setFromToken('');
+    if (operation === 'business-insurance') {
+      setFromAccountType('platform');
+      setToAccountType('business');
+    }
   }, [operation, fromAccountType, toAccountType]);
   React.useEffect(() => {
     if (fromAccountType === 'platform') setFromAccountId('');
@@ -514,6 +518,9 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                   <Radio value="same-owner-accounts">
                     {t('Contas do mesmo usuário')}
                   </Radio>
+                  <Radio value="business-insurance">
+                    {t('Cobertura restaurante')}
+                  </Radio>
                   <Radio value="others">{t('Outros')}</Radio>
                 </HStack>
               </RadioGroup>
@@ -527,11 +534,15 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 color="black"
                 fontSize="15px"
                 lineHeight="21px"
+                isDisabled={operation === 'business-insurance'}
               >
                 <HStack spacing={4}>
                   <Radio
                     value="platform"
-                    isDisabled={operation === 'same-owner-accounts'}
+                    isDisabled={
+                      operation === 'same-owner-accounts' ||
+                      operation === 'business-insurance'
+                    }
                   >
                     {t('Plataforma')}
                   </Radio>
@@ -578,26 +589,15 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 color="black"
                 fontSize="15px"
                 lineHeight="21px"
+                isDisabled={
+                  operation === 'same-owner-accounts' ||
+                  operation === 'business-insurance'
+                }
               >
                 <HStack spacing={4}>
-                  <Radio
-                    value="platform"
-                    isDisabled={operation === 'same-owner-accounts'}
-                  >
-                    {t('Plataforma')}
-                  </Radio>
-                  <Radio
-                    value="courier"
-                    isDisabled={operation === 'same-owner-accounts'}
-                  >
-                    {t('Entregador')}
-                  </Radio>
-                  <Radio
-                    value="business"
-                    isDisabled={operation === 'same-owner-accounts'}
-                  >
-                    {t('Restaurante')}
-                  </Radio>
+                  <Radio value="platform">{t('Plataforma')}</Radio>
+                  <Radio value="courier">{t('Entregador')}</Radio>
+                  <Radio value="business">{t('Restaurante')}</Radio>
                 </HStack>
               </RadioGroup>
               {toAccountType !== 'platform' && (
