@@ -111,6 +111,7 @@ export const ledgerEntryStatusPTOptions = {
 export const ledgerEntryOperationPTOptions = {
   'delivery': 'Delivery',
   'same-owner-accounts': 'Entre contas de um mesmo usuário',
+  'tip': 'Gorjeta',
   'business-insurance': 'Cobertura restaurante',
   'others': 'Outros',
 };

@@ -22,7 +22,7 @@ import {
 import { useObserveOrderPrivateConfirmation } from 'app/api/order/useObserveOrderPrivateConfirmation';
 import { useOrderNotes } from 'app/api/order/useOrderNotes';
 import { ProfileNotes } from 'common/components/backoffice/ProfileNotes';
-import { MdOpenInNew } from 'react-icons/md';
+import { MdInfo, MdOpenInNew } from 'react-icons/md';
 import { formatCurrency } from 'utils/formatters';
 import { getOrderCancellator } from 'utils/functions';
 import { t } from 'utils/i18n';
@@ -46,6 +46,9 @@ interface OrderStatusProps {
     value: OrderStatus | DispatchingState | IssueType | string
   ): void;
   courierId?: string;
+  businessInsurance?: boolean;
+  businessIndemnity: boolean;
+  onBusinessIndemnityChange(value: boolean): void;
 }
 
 export const OrderStatusBar = ({
@@ -63,6 +66,9 @@ export const OrderStatusBar = ({
   onRefundingChange,
   updateState,
   courierId,
+  businessInsurance,
+  businessIndemnity,
+  onBusinessIndemnityChange,
 }: OrderStatusProps) => {
   // context
   const { confirmation, frontUrl, packageUrl } =
@@ -303,6 +309,33 @@ export const OrderStatusBar = ({
             </>
           )}
           <SectionTitle>{t('Reembolso:')}</SectionTitle>
+          {businessInsurance && (
+            <Box
+              mt="4"
+              p="4"
+              flexDir="row"
+              border="1px solid #C8D7CB"
+              borderRadius="lg"
+              // bgColor="yellow"
+              // maxW="600px"
+            >
+              <HStack>
+                <Icon as={MdInfo} w="24px" h="24px" />
+                <Text>
+                  {t('O restaurante possui cobertura para este pedido')}
+                </Text>
+              </HStack>
+              <Checkbox
+                mt="4"
+                isChecked={businessIndemnity}
+                onChange={(event) =>
+                  onBusinessIndemnityChange(event.target.checked)
+                }
+              >
+                {t('Realizar ressarcimento do valor dos produtos')}
+              </Checkbox>
+            </Box>
+          )}
           <Text
             mt="2"
             fontSize="15px"

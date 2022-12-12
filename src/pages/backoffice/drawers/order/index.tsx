@@ -97,6 +97,7 @@ export const BackofficeOrderDrawer = ({
     'order',
     'tip',
   ]);
+  const [businessIndemnity, setBusinessIndemnity] = React.useState(false);
   const [loadingState, setLoadingState] =
     React.useState<OrderDrawerLoadingState>('idle');
   const [invoicesActive, setInvoicesActive] = React.useState(false);
@@ -130,6 +131,9 @@ export const BackofficeOrderDrawer = ({
     refundValue += order.tip.value;
   const canUpdateOrderStaff =
     order?.staff?.id === staff?.id || isBackofficeSuperuser;
+  const businessInsurance = order?.fare?.business?.insurance
+    ? order.fare.business.insurance > 0
+    : false;
   //handlers
   const handleIssueOrder = () => {
     const oldFlags = order?.flags;
@@ -208,6 +212,7 @@ export const BackofficeOrderDrawer = ({
         params: {
           refund: ['platform', 'products', 'delivery', 'order', 'tip'],
         },
+        businessIndemnity,
         acknowledgedCosts: 0,
         cancellation: preventionIssue,
       } as CancelOrderPayload;
@@ -253,6 +258,7 @@ export const BackofficeOrderDrawer = ({
       params: { refund },
       acknowledgedCosts: orderCancellationCosts,
       cancellation: issue,
+      businessIndemnity,
     } as CancelOrderPayload;
     if (message) cancellationData.comment = message;
     return cancelOrder(cancellationData);
@@ -301,6 +307,10 @@ export const BackofficeOrderDrawer = ({
     else setLoadingState('idle');
   }, [updateResult.isLoading, cancelResult.isLoading]);
   React.useEffect(() => {
+    if (!businessInsurance) return;
+    setBusinessIndemnity(true);
+  }, [businessInsurance]);
+  React.useEffect(() => {
     if (!deleteOrderResult.isSuccess) return;
     onClose();
   }, [deleteOrderResult.isSuccess, onClose]);
@@ -325,7 +335,7 @@ export const BackofficeOrderDrawer = ({
       >
         <Switch>
           <Route exact path={`${path}`}>
-            <Participants order={order} />
+            <Participants order={order} businessInsurance={businessInsurance} />
           </Route>
           <Route exact path={`${path}/order`}>
             <>
@@ -365,6 +375,11 @@ export const BackofficeOrderDrawer = ({
               onRefundingChange={onRefundingChange}
               updateState={updateState}
               courierId={order?.courier?.id}
+              businessInsurance={businessInsurance}
+              businessIndemnity={businessIndemnity}
+              onBusinessIndemnityChange={(value: boolean) =>
+                setBusinessIndemnity(value)
+              }
             />
           </Route>
           <Route exact path={`${path}/chats`}>
