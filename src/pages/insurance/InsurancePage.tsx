@@ -122,8 +122,7 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
     : undefined;
   // side effects
   React.useEffect(() => {
-    if (!business?.services) return;
-    const insurance = getBusinessInsurance(business.services);
+    const insurance = getBusinessInsurance(business?.services);
     setInsuranceAccepted(insurance);
   }, [servivesLength, business?.services]);
   React.useEffect(() => {
