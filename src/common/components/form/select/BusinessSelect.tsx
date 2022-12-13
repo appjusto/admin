@@ -87,7 +87,7 @@ export const BusinessSelect = ({
             borderRight="1px solid #C8D7CB"
             borderRadius="sm"
             boxShadow="0 1px 2px 0 rgb(60 64 67 / 30%), 0 1px 3px 1px rgb(60 64 67 / 15%)"
-            zIndex="9999"
+            zIndex="1300"
           >
             <Box px="2" py="1">
               <Text fontSize="xs" color="gray.600">

@@ -43,7 +43,7 @@ const MainHeader = (props: FlexProps) => {
       w="100%"
       pr="32px"
       bgColor="white"
-      zIndex="9997"
+      zIndex="1200"
       {...props}
     >
       <Flex
