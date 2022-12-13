@@ -1,4 +1,9 @@
-import { LedgerEntry, LedgerEntryStatus, WithId } from '@appjusto/types';
+import {
+  LedgerEntry,
+  LedgerEntryOperation,
+  LedgerEntryStatus,
+  WithId,
+} from '@appjusto/types';
 import * as Sentry from '@sentry/react';
 import { documentsAs, FirebaseDocument } from 'core/fb';
 import {
@@ -84,6 +89,24 @@ export default class LedgerApi {
       where('status', 'in', statuses),
       where('createdOn', '>=', start),
       where('createdOn', '<=', end)
+    );
+    return customCollectionSnapshot(q, resultHandler);
+  }
+
+  observeLedgerByOrderIdAndOperation(
+    businessId: string,
+    orderId: string,
+    operation: LedgerEntryOperation,
+    statuses: LedgerEntryStatus[],
+    resultHandler: (entries: WithId<LedgerEntry>[]) => void
+  ): Unsubscribe {
+    const q = query(
+      this.refs.getLedgerRef(),
+      orderBy('createdOn', 'desc'),
+      where('to.accountId', '==', businessId),
+      where('orderId', '==', orderId),
+      where('operation', '==', operation),
+      where('status', 'in', statuses)
     );
     return customCollectionSnapshot(q, resultHandler);
   }
