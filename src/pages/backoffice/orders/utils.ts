@@ -6,15 +6,19 @@ export const getFoodOrderTotal = (
 ) => {
   if (isBackoffice) return order.fare?.total ?? 0;
   let businessValue = order.fare?.business?.value ?? 0;
-  if (order.fare?.business?.status === 'partially_refunded') {
-    businessValue = order.fare?.business.paid ?? 0;
-  }
-  if (
-    order.fare?.business?.status === 'canceled' ||
-    order.fare?.business?.status === 'refunded' ||
-    order.fare?.business?.status === 'chargeback'
-  ) {
-    businessValue = 0;
+  if (order.fare?.business?.insurance && order.fare.business.insurance > 0) {
+    businessValue = order.fare.business.paid ?? 0;
+  } else {
+    if (order.fare?.business?.status === 'partially_refunded') {
+      businessValue = order.fare?.business.paid ?? 0;
+    }
+    if (
+      order.fare?.business?.status === 'canceled' ||
+      order.fare?.business?.status === 'refunded' ||
+      order.fare?.business?.status === 'chargeback'
+    ) {
+      businessValue = 0;
+    }
   }
   if (order.outsourcedBy === 'business') {
     let courierValue = order.fare?.courier?.value ?? 0;
