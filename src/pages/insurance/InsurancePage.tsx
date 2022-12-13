@@ -2,9 +2,11 @@ import { BusinessService } from '@appjusto/types';
 import {
   Box,
   Center,
+  Checkbox,
   Flex,
   HStack,
   Icon,
+  Link,
   Radio,
   RadioGroup,
   Text,
@@ -49,6 +51,7 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
   const [insuranceAccepted, setInsuranceAccepted] =
     React.useState<BusinessService>();
   const [isAccept, setIsAccept] = React.useState(false);
+  const [agreed, setAgreed] = React.useState(false);
   // helpers
   const feeToDisplay =
     insuranceAccepted?.fee.percent ?? insuranceAvailable?.fee.percent;
@@ -56,6 +59,10 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
   const insuranceActivatedAt =
     getBusinessInsuranceActivationDate(insuranceAccepted);
   // handlers
+  const getActionButtonDisabledStatus = React.useCallback(() => {
+    if (!onboarding && !isAccept && !insuranceAccepted) return true;
+    return false;
+  }, [onboarding, isAccept, insuranceAccepted]);
   const onSubmitHandler = (event: any) => {
     event.preventDefault();
     if (isBackofficeUser)
@@ -87,11 +94,20 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
         requestId: 'insurance-page-error',
         message: { title: 'A cobertura já foi contratada.' },
       });
-    if (!isAccept && !insuranceAccepted)
+    if (!onboarding && !isAccept && !insuranceAccepted)
       return dispatchAppRequestResult({
         status: 'error',
         requestId: 'insurance-page-error',
         message: { title: 'Nenhuma cobertura foi contratada.' },
+      });
+    if (isAccept && !agreed)
+      return dispatchAppRequestResult({
+        status: 'error',
+        requestId: 'insurance-page-error',
+        message: {
+          title:
+            'Por favor, confirme que leu e está de acordo com os termos de cobertura.',
+        },
       });
     try {
       if (isAccept) {
@@ -268,7 +284,40 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
                     label: 'Taxa Total',
                   },
                 ]}
-              />
+              >
+                <Box
+                  mt="4"
+                  p="4"
+                  w="fit-content"
+                  minW={{ lg: '346px' }}
+                  bgColor="#F5F5F5"
+                  borderRadius="lg"
+                >
+                  <HStack>
+                    {isAccept && !insuranceAccepted && (
+                      <Checkbox
+                        size="sm"
+                        isChecked={agreed}
+                        onChange={(event) => setAgreed(event.target.checked)}
+                        isDisabled={!isAccept}
+                      />
+                    )}
+                    <Text>
+                      {isAccept && !insuranceAccepted
+                        ? t('Li e estou de acordo com os ')
+                        : t('Leia a versão completa dos ')}
+                      <Link
+                        href="https://appjusto.com.br"
+                        fontWeight="700"
+                        textDecor="underline"
+                        isExternal
+                      >
+                        {t('termos de cobertura.')}
+                      </Link>
+                    </Text>
+                  </HStack>
+                </Box>
+              </FeesBox>
             </Box>
           </VStack>
         </RadioGroup>
@@ -302,7 +351,7 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
           requiredLabel={false}
           redirect={redirect}
           isLoading={isLoading}
-          isDisabled={!isAccept && !insuranceAccepted}
+          isDisabled={getActionButtonDisabledStatus()}
         />
       </form>
     </Box>
