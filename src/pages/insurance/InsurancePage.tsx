@@ -232,8 +232,17 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
               </Radio>
               <Text mt="4">
                 {t(
-                  'Ao optar por trabalhar com o AppJusto, no modelo sem cobertura, o restaurante está de acordo em assumir a responsabilidade financeira pelos eventuais problemas operacionais que venham a acontecer com seus pedidos.'
+                  'Na opção sem cobertura, o restaurante será responsável pelas situações listadas nos nossos '
                 )}
+                <Link
+                  href="https://github.com/appjusto/docs/blob/main/legal/termos-de-uso-restaurantes.md#3-pre%C3%A7o"
+                  fontWeight="700"
+                  textDecor="underline"
+                  isExternal
+                >
+                  {t('termos de uso')}
+                </Link>
+                {t(' da plataforma, seção 3.3. Estornos e cancelamentos.')}
               </Text>
               <FeesBox fees={defaultFees} />
             </Box>
@@ -250,26 +259,59 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
               </Radio>
               <Text mt="4">
                 {t(
-                  'No modelo com cobertura, o AppJusto disponibiliza reembolsos automáticos, dos valores dos produtos, para os seguintes casos:'
+                  'Na opção com cobertura, o restaurante será reembolsado caso ocorram quaisquer das situações abaixo:'
                 )}
               </Text>
-              <HStack mt="4" spacing={4}>
-                <Icon as={MdCheck} color="green.500" w="24px" h="24px" />
-                <Text>
-                  {t('Cliente não consegue receber, por atraso na entrega')}
+              <VStack
+                mt="4"
+                spacing={1}
+                justifyContent="flex-start"
+                alignItems="flex-start"
+              >
+                <HStack spacing={2} alignItems="flex-start">
+                  <Icon as={MdCheck} color="green.500" w="24px" h="24px" />
+                  <Text>
+                    {t(
+                      'Cancelamento pelo cliente e/ou time AppJusto após início do preparo'
+                    )}
+                  </Text>
+                </HStack>
+                <HStack spacing={2} alignItems="flex-start">
+                  <Icon as={MdCheck} color="green.500" w="22px" h="22px" />
+                  <Text>{t('Cancelamento por atraso na entrega *')}</Text>
+                </HStack>
+                <HStack spacing={2} alignItems="flex-start">
+                  <Icon as={MdCheck} color="green.500" w="22px" h="22px" />
+                  <Text>
+                    {t(
+                      'Cancelamento por falta de disponibilidade de entregador da rede AppJusto'
+                    )}
+                  </Text>
+                </HStack>
+                <HStack spacing={2} alignItems="flex-start">
+                  <Icon as={MdCheck} color="green.500" w="22px" h="22px" />
+                  <Text>
+                    {t(
+                      'Defeito no produto (ex: embalagem violada, perda da qualidade do produto, etc) desde que ocasionado por problema na entrega *'
+                    )}
+                  </Text>
+                </HStack>
+                <HStack spacing={2} alignItems="flex-start">
+                  <Icon as={MdCheck} color="green.500" w="22px" h="22px" />
+                  <Text>{t('Extravio dos produtos *')}</Text>
+                </HStack>
+                <HStack spacing={2} alignItems="flex-start">
+                  <Icon as={MdCheck} color="green.500" w="22px" h="22px" />
+                  <Text>{t('Fraude (Chargeback)')}</Text>
+                </HStack>
+              </VStack>
+              <HStack mt="3" spacing={2} alignItems="flex-start">
+                <Text>{t('*')}</Text>
+                <Text fontSize="14px">
+                  {t(
+                    'A cobertura não se aplica caso a entrega seja assumida pelo estabelecimento.'
+                  )}
                 </Text>
-              </HStack>
-              <HStack spacing={4}>
-                <Icon as={MdCheck} color="green.500" w="24px" h="24px" />
-                <Text>{t('Produto sem qualidade (estragado)')}</Text>
-              </HStack>
-              <HStack spacing={4}>
-                <Icon as={MdCheck} color="green.500" w="24px" h="24px" />
-                <Text>{t('Produto chegou violado ou danificado')}</Text>
-              </HStack>
-              <HStack spacing={4}>
-                <Icon as={MdCheck} color="green.500" w="24px" h="24px" />
-                <Text>{t('Fraude (chargeback)')}</Text>
               </HStack>
               <FeesBox
                 fees={[
