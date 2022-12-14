@@ -1,9 +1,9 @@
 import {
   DispatchingState,
   Fulfillment,
-  InvoiceType,
   Issue,
   IssueType,
+  OrderRefundType,
   OrderStatus,
   OrderType,
 } from '@appjusto/types';
@@ -38,9 +38,9 @@ interface OrderStatusProps {
   issue?: Issue | null;
   message?: string;
   cancelOptions?: Issue[] | null;
-  refund: InvoiceType[];
+  refund: OrderRefundType[];
   refundValue: number;
-  onRefundingChange(type: InvoiceType, value: boolean): void;
+  onRefundingChange(type: OrderRefundType, value: boolean): void;
   updateState(
     type: string,
     value: OrderStatus | DispatchingState | IssueType | string
@@ -346,28 +346,33 @@ export const OrderStatusBar = ({
             {t(`Valor do reembolso: ${formatCurrency(refundValue)}`)}
           </Text>
           <HStack mt="4" spacing={4}>
-            <Checkbox
-              width="120px"
-              colorScheme="green"
-              size="lg"
-              spacing="1rem"
-              iconSize="1rem"
-              isChecked={refund.includes('platform')}
-              onChange={(e) => onRefundingChange('platform', e.target.checked)}
-            >
-              {t('Plataforma')}
-            </Checkbox>
-            <Checkbox
-              width="120px"
-              colorScheme="green"
-              size="lg"
-              spacing="1rem"
-              iconSize="1rem"
-              isChecked={refund.includes('products')}
-              onChange={(e) => onRefundingChange('products', e.target.checked)}
-            >
-              {t('Produtos')}
-            </Checkbox>
+            {orderType === 'food' ? (
+              <Checkbox
+                width="120px"
+                colorScheme="green"
+                size="lg"
+                spacing="1rem"
+                iconSize="1rem"
+                isChecked={refund.includes('products')}
+                onChange={(e) =>
+                  onRefundingChange('products', e.target.checked)
+                }
+              >
+                {t('Produtos')}
+              </Checkbox>
+            ) : (
+              <Checkbox
+                width="120px"
+                colorScheme="green"
+                size="lg"
+                spacing="1rem"
+                iconSize="1rem"
+                isChecked={refund.includes('service')}
+                onChange={(e) => onRefundingChange('service', e.target.checked)}
+              >
+                {t('Taxa AppJusto')}
+              </Checkbox>
+            )}
             <Checkbox
               width="120px"
               colorScheme="green"
@@ -378,17 +383,6 @@ export const OrderStatusBar = ({
               onChange={(e) => onRefundingChange('delivery', e.target.checked)}
             >
               {t('Entrega')}
-            </Checkbox>
-            <Checkbox
-              width="120px"
-              colorScheme="green"
-              size="lg"
-              spacing="1rem"
-              iconSize="1rem"
-              isChecked={refund.includes('order')}
-              onChange={(e) => onRefundingChange('order', e.target.checked)}
-            >
-              {t('Pedido')}
             </Checkbox>
             <Checkbox
               width="120px"

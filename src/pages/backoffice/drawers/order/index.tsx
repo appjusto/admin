@@ -1,10 +1,10 @@
 import {
   CancelOrderPayload,
   DispatchingState,
-  InvoiceType,
   Issue,
   IssueType,
   Order,
+  OrderRefundType,
   OrderStatus,
   WithId,
 } from '@appjusto/types';
@@ -90,13 +90,7 @@ export const BackofficeOrderDrawer = ({
   >(order?.dispatchingState);
   const [issue, setIssue] = React.useState<Issue | null>();
   const [message, setMessage] = React.useState<string>();
-  const [refund, setRefund] = React.useState<InvoiceType[]>([
-    'platform',
-    'products',
-    'delivery',
-    'order',
-    'tip',
-  ]);
+  const [refund, setRefund] = React.useState<OrderRefundType[]>([]);
   const [businessIndemnity, setBusinessIndemnity] = React.useState(false);
   const [loadingState, setLoadingState] =
     React.useState<OrderDrawerLoadingState>('idle');
@@ -119,14 +113,12 @@ export const BackofficeOrderDrawer = ({
   );
   // helpers
   let refundValue = 0;
-  if (refund.includes('platform') && order?.fare?.platform?.value)
+  if (refund.includes('service') && order?.fare?.platform?.value)
     refundValue += order.fare.platform.value;
   if (refund.includes('products') && order?.fare?.business?.value)
     refundValue += order.fare.business.value;
   if (refund.includes('delivery') && order?.fare?.courier?.value)
     refundValue += order.fare.courier.value;
-  if (refund.includes('order') && order?.fare?.total)
-    refundValue = order?.fare?.total;
   if (refund.includes('tip') && order?.tip?.value)
     refundValue += order.tip.value;
   const canUpdateOrderStaff =
@@ -178,8 +170,8 @@ export const BackofficeOrderDrawer = ({
       setIssue(cancelOptions?.find((item) => item.id === value) ?? null);
     else if (type === 'message') setMessage(value as string);
   };
-  const onRefundingChange = (type: InvoiceType, value: boolean) => {
-    setRefund((prev: InvoiceType[]) => {
+  const onRefundingChange = (type: OrderRefundType, value: boolean) => {
+    setRefund((prev: OrderRefundType[]) => {
       let newState = [...prev];
       if (value) {
         newState.push(type);
