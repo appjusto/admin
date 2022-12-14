@@ -693,7 +693,7 @@ export default class OrderApi {
             refund: [],
           }
         : {
-            refund: ['products', 'delivery', 'platform', 'order'],
+            refund: ['service', 'products', 'delivery', 'tip'],
           };
     const paramsData = params ?? defaultParams;
     const payload: CancelOrderPayload = {

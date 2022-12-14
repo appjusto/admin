@@ -255,7 +255,7 @@ const InvoiceDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
             ) : (
               <PaymentMethodCard method={paymentMethod} />
             )}
-            {invoice?.invoiceType !== 'platform' && (
+            {invoice?.invoiceType !== 'p2p' && (
               <>
                 <SectionTitle>{t('Subconta')}</SectionTitle>
                 {invoice?.accountType === 'platform' ? (
