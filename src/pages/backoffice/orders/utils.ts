@@ -4,22 +4,13 @@ export const getFoodOrderTotal = (
   order: WithId<Order>,
   isBackoffice?: boolean
 ) => {
+  // backoffice drawer and table items shows total value
   if (isBackoffice) return order.fare?.total ?? 0;
+  // business value to display in admin drawer and table items
   let businessValue = order.fare?.business?.value ?? 0;
-  if (order.fare?.business?.insurance && order.fare.business.insurance > 0) {
-    businessValue = order.fare.business.paid ?? 0;
-  } else {
-    if (order.fare?.business?.status === 'partially_refunded') {
-      businessValue = order.fare?.business.paid ?? 0;
-    }
-    if (
-      order.fare?.business?.status === 'canceled' ||
-      order.fare?.business?.status === 'refunded' ||
-      order.fare?.business?.status === 'chargeback'
-    ) {
-      businessValue = 0;
-    }
-  }
+  if (order.fare?.business?.paid !== undefined)
+    businessValue = order.fare.business.paid;
+  // if outsourced by business it should be added to courier`s value
   if (order.outsourcedBy === 'business') {
     let courierValue = order.fare?.courier?.value ?? 0;
     if (order.fare?.courier?.status === 'partially_refunded') {
@@ -34,6 +25,7 @@ export const getFoodOrderTotal = (
     }
     businessValue += courierValue;
   }
+  // return business value to display
   return businessValue;
 };
 

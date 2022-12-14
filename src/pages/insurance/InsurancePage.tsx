@@ -307,7 +307,7 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
                         ? t('Li e estou de acordo com os ')
                         : t('Leia a versão completa dos ')}
                       <Link
-                        href="https://appjusto.com.br"
+                        href="https://appjusto.freshdesk.com/support/solutions/articles/67000713547"
                         fontWeight="700"
                         textDecor="underline"
                         isExternal
