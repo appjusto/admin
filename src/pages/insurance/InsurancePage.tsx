@@ -242,7 +242,7 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
                 >
                   {t('termos de uso')}
                 </Link>
-                {t(' da plataforma, seção 3.3. Estornos e cancelamentos.')}
+                {t(' da plataforma.')}
               </Text>
               <FeesBox fees={defaultFees} />
             </Box>
@@ -271,9 +271,7 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
                 <HStack spacing={2} alignItems="flex-start">
                   <Icon as={MdCheck} color="green.500" w="24px" h="24px" />
                   <Text>
-                    {t(
-                      'Cancelamento pelo cliente e/ou time AppJusto após início do preparo'
-                    )}
+                    {t('Cancelamento pelo AppJusto após início do preparo')}
                   </Text>
                 </HStack>
                 <HStack spacing={2} alignItems="flex-start">
