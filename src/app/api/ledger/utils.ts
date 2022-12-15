@@ -6,6 +6,13 @@ export const getLedgerEntriesTotalValue = (entries: WithId<LedgerEntry>[]) => {
     return result + entry.value + fee;
   }, 0);
 };
+export const getLedgerEntriesTotalRawValue = (
+  entries: WithId<LedgerEntry>[]
+) => {
+  return entries.reduce((result, entry) => {
+    return result + entry.value;
+  }, 0);
+};
 export const getLedgerEntriesIuguTotalValue = (
   entries: WithId<LedgerEntry>[]
 ) => {

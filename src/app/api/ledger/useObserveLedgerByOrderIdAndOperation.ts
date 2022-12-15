@@ -7,7 +7,7 @@ import {
 import { useContextApi } from 'app/state/api/context';
 import React from 'react';
 import { useUserCanReadEntity } from '../auth/useUserCanReadEntity';
-import { getLedgerEntriesTotalValue } from './utils';
+import { getLedgerEntriesTotalRawValue } from './utils';
 
 const statuses = ['approved', 'processing', 'paid'] as LedgerEntryStatus[];
 
@@ -41,7 +41,7 @@ export const useObserveLedgerByOrderIdAndOperation = (
   }, [api, userCanRead, businessId, orderId, operation]);
   React.useEffect(() => {
     if (!entries) return;
-    const amount = getLedgerEntriesTotalValue(entries);
+    const amount = getLedgerEntriesTotalRawValue(entries);
     setAmount(amount);
   }, [entries]);
   // return
