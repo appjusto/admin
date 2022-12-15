@@ -2,6 +2,7 @@ import {
   Banner,
   Business,
   BusinessService,
+  Fee,
   ManagerWithRole,
   WithId,
 } from '@appjusto/types';
@@ -170,14 +171,12 @@ export const BusinessProvider = ({ children }: Props) => {
     setBusinessIdByBusinesses();
   }, [user?.email, isBackofficeUser, businessId, setBusinessIdByBusinesses]);
   React.useEffect(() => {
-    if (!areas && !platformFees) return;
-    const getInsuranceFee = () => {
-      if (areas && areas?.length > 0) {
+    if (!platformFees) return;
+    const getInsuranceFee = (): Fee | null => {
+      if (areas?.length > 0) {
         return areas[0].insurance;
-      } else if (platformFees?.insurance) {
-        return platformFees?.insurance;
       }
-      return null;
+      return platformFees?.insurance ?? null;
     };
     const fee = getInsuranceFee();
     if (!fee) return;

@@ -124,9 +124,10 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
         services.push(newInsurance);
         updateBusinessProfile({ services });
       } else {
-        const services = business?.services?.filter(
-          (service) => service.name !== 'insurance'
-        );
+        const services =
+          business?.services?.filter(
+            (service) => service.name !== 'insurance'
+          ) ?? [];
         updateBusinessProfile({ services });
       }
     } catch (error) {
@@ -143,6 +144,11 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
     ? business.services.length
     : undefined;
   // side effects
+  React.useEffect(() => {
+    if (onboarding) {
+      window?.scrollTo(0, 0);
+    }
+  }, [onboarding]);
   React.useEffect(() => {
     const insurance = getBusinessInsurance(business?.services);
     setInsuranceAccepted(insurance);
