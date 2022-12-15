@@ -13,15 +13,8 @@ export const getFoodOrderTotal = (
   // if outsourced by business it should be added to courier`s value
   if (order.outsourcedBy === 'business') {
     let courierValue = order.fare?.courier?.value ?? 0;
-    if (order.fare?.courier?.status === 'partially_refunded') {
-      courierValue = order.fare?.courier.paid ?? 0;
-    }
-    if (
-      order.fare?.courier?.status === 'canceled' ||
-      order.fare?.courier?.status === 'refunded' ||
-      order.fare?.courier?.status === 'chargeback'
-    ) {
-      courierValue = 0;
+    if (order.fare?.courier?.paid !== undefined) {
+      courierValue = order.fare?.courier?.paid;
     }
     businessValue += courierValue;
   }
