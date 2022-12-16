@@ -41,27 +41,31 @@ export const Invoices = ({ invoices, logs, activeInvoices }: InvoicesProps) => {
           </Thead>
           <Tbody>
             {invoices && invoices.length > 0 ? (
-              invoices?.map((invoice: WithId<Invoice>) => (
-                <Tr key={invoice.id} color="black" fontSize="sm">
-                  <Td>{getDateAndHour(invoice.createdOn)}</Td>
-                  <Td>
-                    {invoice.status
-                      ? invoiceStatusPTOptions[invoice.status]
-                      : 'N/E'}
-                  </Td>
-                  <Td>{invoiceTypePTOptions[invoice.invoiceType]}</Td>
-                  <Td isNumeric>{formatCurrency(invoice.value)}</Td>
-                  <Td>
-                    <CustomButton
-                      mt="0"
-                      variant="outline"
-                      label={t('Detalhes')}
-                      link={`/backoffice/invoices/${invoice.id}`}
-                      size="sm"
-                    />
-                  </Td>
-                </Tr>
-              ))
+              invoices?.map((invoice: WithId<Invoice>) => {
+                const invoiceValue =
+                  invoice.paid !== undefined ? invoice.paid : invoice.value;
+                return (
+                  <Tr key={invoice.id} color="black" fontSize="sm">
+                    <Td>{getDateAndHour(invoice.createdOn)}</Td>
+                    <Td>
+                      {invoice.status
+                        ? invoiceStatusPTOptions[invoice.status]
+                        : 'N/E'}
+                    </Td>
+                    <Td>{invoiceTypePTOptions[invoice.invoiceType]}</Td>
+                    <Td isNumeric>{formatCurrency(invoiceValue)}</Td>
+                    <Td>
+                      <CustomButton
+                        mt="0"
+                        variant="outline"
+                        label={t('Detalhes')}
+                        link={`/backoffice/invoices/${invoice.id}`}
+                        size="sm"
+                      />
+                    </Td>
+                  </Tr>
+                );
+              })
             ) : (
               <Tr color="black" fontSize="sm" fontWeight="700">
                 <Td>{t('Não foram encontradas faturas para este pedido.')}</Td>
