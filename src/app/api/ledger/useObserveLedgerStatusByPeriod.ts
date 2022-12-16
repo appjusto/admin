@@ -4,8 +4,8 @@ import dayjs from 'dayjs';
 import React from 'react';
 import { useUserCanReadEntity } from '../auth/useUserCanReadEntity';
 import {
-  getLedgerEntriesIuguTotalValue,
-  getLedgerEntriesTotalValue,
+  getLedgerEntriesTotalFee,
+  getLedgerEntriesTotalValueByOperation,
 } from './utils';
 
 export const useObserveLedgerStatusByPeriod = (
@@ -42,15 +42,15 @@ export const useObserveLedgerStatusByPeriod = (
   }, [api, userCanRead, businessId, month, statuses]);
   React.useEffect(() => {
     if (!entries) return;
-    const deliveryEntries = entries.filter(
-      (entry) => entry.operation === 'delivery'
+    const deliveryTotal = getLedgerEntriesTotalValueByOperation(
+      entries,
+      'delivery'
     );
-    const insuranceEntries = entries.filter(
-      (entry) => entry.operation === 'business-insurance'
+    const iugu = getLedgerEntriesTotalFee(entries);
+    const insuranceTotal = getLedgerEntriesTotalValueByOperation(
+      entries,
+      'business-insurance'
     );
-    const deliveryTotal = getLedgerEntriesTotalValue(deliveryEntries);
-    const iugu = getLedgerEntriesIuguTotalValue(deliveryEntries);
-    const insuranceTotal = getLedgerEntriesTotalValue(insuranceEntries);
     setDeliveryAmount(deliveryTotal);
     setInsuranceAmount(insuranceTotal);
     setIuguValue(iugu);
