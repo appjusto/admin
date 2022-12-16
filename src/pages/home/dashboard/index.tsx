@@ -85,16 +85,6 @@ const Dashboard = () => {
         <Box>
           {isDesktopApp && <NewWindowButton />}
           <MaintenanceBox />
-          {/* <NewFeatureBox
-            icon={BsShare}
-            title={t('Compartilhe seu restaurante como quiser!')}
-            description={t(
-              'Agora no AppJusto, você pode criar links diferentes para os seus clientes realizarem os pedidos: direto no app, pelo WhatsApp, ou apenas visualizar o cardápio na loja!'
-            )}
-            link={`${path}/sharing`}
-            btnLabel={t('Visualizar links')}
-            isNew={false}
-          /> */}
           <BannersContainer banners={banners} />
           <Box mt="8" border="1px solid #E5E5E5" borderRadius="lg" p="4">
             <SectionTitle mt="0" fontWeight="700">

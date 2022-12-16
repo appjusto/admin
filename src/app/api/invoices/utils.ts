@@ -45,6 +45,7 @@ export interface ItemByDay {
 
 export const splitInvoicesValuesByPeriod = (
   invoices: WithId<Invoice>[],
+  invoicesTypes: InvoiceType[],
   periodNumber: number,
   startDate: Date // milliseconds
 ) => {
@@ -54,7 +55,7 @@ export const splitInvoicesValuesByPeriod = (
     period.push({ date, value: 0 });
   }
   invoices.forEach((invoice) => {
-    if (['products', 'order'].includes(invoice.invoiceType)) {
+    if (invoicesTypes.includes(invoice.invoiceType)) {
       const date = (invoice.updatedOn as Timestamp).toDate().getDate();
       let item = period.find((item) => item.date === date);
       if (item) item.value += 1;

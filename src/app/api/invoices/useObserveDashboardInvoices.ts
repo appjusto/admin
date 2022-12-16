@@ -116,6 +116,7 @@ export const useObserveDashboardInvoices = (businessId?: string | null) => {
     setCurrentWeekValue(weekValue);
     const weekValuesByDay = splitInvoicesValuesByPeriod(
       currentWeekInvoices,
+      invoicesProductTypes,
       7,
       startDate
     );
@@ -147,6 +148,7 @@ export const useObserveDashboardInvoices = (businessId?: string | null) => {
     setLastWeekValue(lastWeekValue);
     const weekValuesByDay = splitInvoicesValuesByPeriod(
       lastWeekInvoices,
+      invoicesProductTypes,
       7,
       startDate
     );
