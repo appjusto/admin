@@ -74,7 +74,7 @@ export const invoiceTypePTOptions = {
   // order: 'Pedido',
   products: 'Produtos',
   delivery: 'Entrega',
-  // platform: 'Plataforma',
+  platform: 'Plataforma',
   food: 'Comida',
   p2p: 'p2p',
   tip: 'Gorjeta',
