@@ -202,7 +202,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
         message: {
           title: 'Seu restaurante está desligado.',
           description:
-            'Desligado, seu restaurante não aparecerá para seus clientes. Para ligá-lo, vá até o perfil do restaurante ou contate o administrador desta unidade.',
+            'Desligado, seu restaurante não aparecerá para seus clientes. Para ligá-lo, vá até o menu de operação ou contate o administrador desta unidade.',
         },
         duration: 12000,
       });
