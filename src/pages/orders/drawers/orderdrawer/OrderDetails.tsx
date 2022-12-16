@@ -31,10 +31,7 @@ interface DetailsProps {
 
 export const OrderDetails = ({ order }: DetailsProps) => {
   // helpers
-  const courierPaid =
-    order?.fare?.courier?.paid !== undefined
-      ? order.fare.courier.paid
-      : order?.fare?.courier?.value;
+  const courierPaid = order?.fare?.courier?.value;
   const businessPaid =
     order?.fare?.business?.paid !== undefined
       ? order.fare.business.paid

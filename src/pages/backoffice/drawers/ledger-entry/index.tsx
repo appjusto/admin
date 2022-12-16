@@ -388,10 +388,14 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                       lineHeight="21px"
                     >
                       <VStack mt="4" spacing={2} alignItems="flex-start">
-                        <Radio value="pending">{t('Pendente')}</Radio>
+                        <Radio value="pending" isDisabled>
+                          {t('Pendente')}
+                        </Radio>
                         <Radio value="approved">{t('Aprovada')}</Radio>
                         <Radio value="rejected">{t('Rejeitada')}</Radio>
-                        <Radio value="canceled">{t('Cancelada')}</Radio>
+                        <Radio value="canceled" isDisabled>
+                          {t('Cancelada')}
+                        </Radio>
                         <Radio value="processing" isDisabled>
                           {t('Processando')}
                         </Radio>

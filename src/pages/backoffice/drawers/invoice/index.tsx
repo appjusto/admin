@@ -239,7 +239,9 @@ const InvoiceDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
             >
               {t('Pago:')}{' '}
               <Text as="span" fontWeight="500">
-                {invoice?.paid ? formatCurrency(invoice.paid) : 'N/E'}
+                {invoice?.paid !== undefined
+                  ? formatCurrency(invoice.paid)
+                  : 'N/E'}
               </Text>
             </Text>
             <Box mt="4">
