@@ -1,6 +1,7 @@
-import { Badge, Box, Flex, FlexProps, HStack, Text } from '@chakra-ui/react';
+import { Box, Flex, FlexProps, HStack, Text } from '@chakra-ui/react';
 import { t } from 'utils/i18n';
 import packageInfo from '../../package.json';
+import { EnvBadge } from './EnvBadge';
 import BusinessInfo from './sidebar/BusinessInfo';
 const version = packageInfo.version;
 
@@ -63,22 +64,7 @@ const MainHeader = (props: FlexProps) => {
           >
             {t(`VERSÃO: ${version ?? 'N/E'}`)}
           </Text>
-          {env && env !== 'live' && (
-            <Badge
-              mt="1"
-              ml="1"
-              bg={bg}
-              color={color}
-              borderRadius="22px"
-              px="2"
-              size="xs"
-              // fontSize="xs"
-              // lineHeight="lg"
-              fontWeight="700"
-            >
-              {label}
-            </Badge>
-          )}
+          <EnvBadge />
         </HStack>
       </Flex>
     </Box>
