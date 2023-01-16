@@ -22,6 +22,7 @@ export const FeesBox = ({ fees, children }: FeesBoxProps) => {
           const isLast = index === fees.length - 1;
           return (
             <Box
+              key={fee.label}
               maxW="90px"
               textAlign="center"
               fontWeight={isLast ? '700' : '500'}
