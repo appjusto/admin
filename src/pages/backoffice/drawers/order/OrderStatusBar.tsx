@@ -308,34 +308,41 @@ export const OrderStatusBar = ({
               </RadioGroup>
             </>
           )}
-          <SectionTitle>{t('Reembolso:')}</SectionTitle>
           {businessInsurance && (
-            <Box
-              mt="4"
-              p="4"
-              flexDir="row"
-              border="1px solid #C8D7CB"
-              borderRadius="lg"
-              // bgColor="yellow"
-              // maxW="600px"
-            >
-              <HStack>
-                <Icon as={MdInfo} w="24px" h="24px" />
-                <Text>
-                  {t('O restaurante possui cobertura para este pedido')}
-                </Text>
-              </HStack>
-              <Checkbox
+            <>
+              <SectionTitle>
+                {t('Ressarcimento para restaurante:')}
+              </SectionTitle>
+              <Box
                 mt="4"
-                isChecked={businessIndemnity}
-                onChange={(event) =>
-                  onBusinessIndemnityChange(event.target.checked)
-                }
+                p="4"
+                flexDir="row"
+                border="1px solid #C8D7CB"
+                borderRadius="lg"
+                // bgColor="yellow"
+                // maxW="600px"
               >
-                {t('Realizar ressarcimento do valor dos produtos')}
-              </Checkbox>
-            </Box>
+                <HStack>
+                  <Icon as={MdInfo} w="24px" h="24px" />
+                  <Text>
+                    {t('O restaurante possui cobertura para este pedido')}
+                  </Text>
+                </HStack>
+                <Checkbox
+                  mt="4"
+                  isChecked={businessIndemnity}
+                  onChange={(event) =>
+                    onBusinessIndemnityChange(event.target.checked)
+                  }
+                >
+                  {t(
+                    'Realizar ressarcimento do valor dos produtos para o restaurante'
+                  )}
+                </Checkbox>
+              </Box>
+            </>
           )}
+          <SectionTitle>{t('Reembolso para consumidor:')}</SectionTitle>
           <Text
             mt="2"
             fontSize="15px"

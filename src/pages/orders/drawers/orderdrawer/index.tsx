@@ -176,7 +176,7 @@ export const OrderDrawer = (props: Props) => {
                     </Text>
                   </Text>
                   <Text mt="1" fontSize="md" fontWeight="700" color="black">
-                    {t('Reembolso para cliente:')}{' '}
+                    {t('Reembolso para consumidor:')}{' '}
                     <Text as="span" fontWeight="500">
                       {orderCancellation?.params?.refund.includes('products')
                         ? 'Sim'
