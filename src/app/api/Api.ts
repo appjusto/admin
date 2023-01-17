@@ -25,6 +25,7 @@ import {
   FirebaseStorage,
   getStorage,
 } from 'firebase/storage';
+import AreasApi from './areas/AreasApi';
 import AuthApi from './auth/AuthApi';
 import BannersApi from './banners/BannersApi';
 import BusinessApi from './business/BusinessApi';
@@ -59,6 +60,7 @@ export default class Api {
   private _auth: AuthApi;
   private _files: FilesApi;
   private _maps: MapsApi;
+  private _areas: AreasApi;
   private _platform: PlatformApi;
   private _staff: StaffApi;
   private _manager: ManagerApi;
@@ -124,6 +126,7 @@ export default class Api {
     this._chat = new ChatApi(this._refs);
     this._push_campaigns = new PushCampaignApi(this._refs);
     this._banners = new BannersApi(this._refs, this._files);
+    this._areas = new AreasApi(this._refs);
   }
 
   measurement() {
@@ -136,6 +139,10 @@ export default class Api {
 
   maps() {
     return this._maps;
+  }
+
+  areas() {
+    return this._areas;
   }
 
   platform() {

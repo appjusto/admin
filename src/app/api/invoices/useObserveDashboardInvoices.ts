@@ -16,8 +16,8 @@ const invoiceStatuses = [
   'partially_refunded',
   'partially_paid',
 ] as IuguInvoiceStatus[];
-const invoicesTypes = ['products', 'order'] as InvoiceType[]; // remove 'delivery' values from business dashboard
-const invoicesProductTypes = ['products', 'order'] as InvoiceType[];
+// const invoicesTypes = ['products', 'order'] as InvoiceType[]; // remove 'delivery' values from business dashboard
+const invoicesProductTypes = ['products', 'order', 'food'] as InvoiceType[];
 
 export const useObserveDashboardInvoices = (businessId?: string | null) => {
   // context
@@ -70,7 +70,7 @@ export const useObserveDashboardInvoices = (businessId?: string | null) => {
     setTodayInvoices(total);
     const todayTotal = getInvoicesTotalValueByTypes(
       todayInvoices,
-      invoicesTypes
+      invoicesProductTypes
     );
     setTodayValue(todayTotal);
   }, [invoices]);
@@ -89,7 +89,7 @@ export const useObserveDashboardInvoices = (businessId?: string | null) => {
     setMonthInvoices(total);
     const monthTotal = getInvoicesTotalValueByTypes(
       monthInvoices,
-      invoicesTypes
+      invoicesProductTypes
     );
     setMonthValue(monthTotal);
   }, [invoices]);
@@ -111,11 +111,12 @@ export const useObserveDashboardInvoices = (businessId?: string | null) => {
     setCurrentWeekInvoices(total);
     const weekValue = getInvoicesTotalValueByTypes(
       currentWeekInvoices,
-      invoicesTypes
+      invoicesProductTypes
     );
     setCurrentWeekValue(weekValue);
     const weekValuesByDay = splitInvoicesValuesByPeriod(
       currentWeekInvoices,
+      invoicesProductTypes,
       7,
       startDate
     );
@@ -142,11 +143,12 @@ export const useObserveDashboardInvoices = (businessId?: string | null) => {
     setLastWeekInvoices(total);
     const lastWeekValue = getInvoicesTotalValueByTypes(
       lastWeekInvoices,
-      invoicesTypes
+      invoicesProductTypes
     );
     setLastWeekValue(lastWeekValue);
     const weekValuesByDay = splitInvoicesValuesByPeriod(
       lastWeekInvoices,
+      invoicesProductTypes,
       7,
       startDate
     );

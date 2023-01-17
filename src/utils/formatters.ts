@@ -7,18 +7,24 @@ export const formatCurrency = (value: number, options?: ToCurrencyOptions) =>
 
 export const convertBalance = (value: string) => {
   if (value.includes('R$'))
-    return parseFloat(value.replace('R$', '').replaceAll('.', '').replace(',', '.'));
+    return parseFloat(
+      value.replace('R$', '').replaceAll('.', '').replace(',', '.')
+    );
   else return parseFloat(value.replace('BRL', '').replaceAll(',', ''));
 };
 
 // percentage
-export const formatPct = (value: number) => `${parseFloat((value * 100).toFixed(2))}%`;
+export const formatPct = (value: number, base: number = 100) =>
+  `${parseFloat((value * base).toFixed(2))}%`.replace('.', ',');
 
 // date & time
-export const formatDate = (date: Date, pattern: 'default' | 'monthYear' = 'default') =>
-  i18n.l(`date.formats.${pattern}`, date);
+export const formatDate = (
+  date: Date,
+  pattern: 'default' | 'monthYear' = 'default'
+) => i18n.l(`date.formats.${pattern}`, date);
 export const formatTime = (date: Date) => i18n.l('time.formats.default', date);
-export const getMonthName = (month: number) => i18n.strftime(new Date(2020, month, 1), '%B');
+export const getMonthName = (month: number) =>
+  i18n.strftime(new Date(2020, month, 1), '%B');
 
 export const formatDuration = (duration: number) => {
   return `${round(duration / 60, 0)} min`;

@@ -14,6 +14,7 @@ import {
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusinessBackoffice } from 'app/state/business/businessBOContext';
 import { useContextBusiness } from 'app/state/business/context';
+import { getBusinessInsurance } from 'pages/insurance/utils';
 import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
 import React from 'react';
 import { MdThumbDownOffAlt, MdThumbUpOffAlt } from 'react-icons/md';
@@ -66,6 +67,7 @@ export const BusinessBaseDrawer = ({
   const pageHasAction = pageName
     ? !withoutActionPages.includes(pageName)
     : true;
+  const insurance = getBusinessInsurance(business?.services);
   // handlers
   const handlePersonification = React.useCallback(() => {
     if (!business?.id) return;
@@ -200,6 +202,18 @@ export const BusinessBaseDrawer = ({
                 {business?.onboarding === 'completed'
                   ? t('Concluído')
                   : t(`onboarding - ${business?.onboarding}`)}
+              </Text>
+            </Text>
+            <Text
+              mt="1"
+              fontSize="15px"
+              color="black"
+              fontWeight="700"
+              lineHeight="22px"
+            >
+              {t('Cobertura:')}{' '}
+              <Text as="span" fontWeight="500">
+                {insurance ? t('Sim') : t('Não')}
               </Text>
             </Text>
             <Text

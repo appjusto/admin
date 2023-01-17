@@ -64,10 +64,7 @@ export const OrdersHeader = () => {
       <HStack spacing={6} display={{ base: 'none', lg: 'flex' }}>
         <HStack spacing={1}>
           <Text fontSize="16px" fontWeight="700">
-            {adminRole === 'collaborator'
-              ? t('Colaborador')
-              : t('Administrador')}
-            :
+            {t('Usuário')}:
           </Text>
           <Text fontSize="16px">{user?.email ?? 'N/E'}</Text>
         </HStack>

@@ -20,6 +20,7 @@ const statusFilterOptions = [
   { label: 'Todas', value: 'all' },
   { label: 'Pendentes', value: 'pending' },
   { label: 'Processando', value: 'processing' },
+  { label: 'Aprovada', value: 'approved' },
   { label: 'Paga', value: 'paid' },
   { label: 'Cancelada', value: 'canceled' },
 ];

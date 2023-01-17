@@ -8,6 +8,7 @@ import {
   DrawerOverlay,
   Text,
 } from '@chakra-ui/react';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import React from 'react';
 
 interface BaseDrawerProps {
@@ -27,6 +28,8 @@ export const FinancesBaseDrawer = ({
   footer,
   ...props
 }: BaseDrawerProps) => {
+  // context
+  const { isBackofficeUser } = useContextFirebaseUser();
   // refs
   const bodyRef = React.useRef<HTMLDivElement>(null);
   // side effects
@@ -38,7 +41,7 @@ export const FinancesBaseDrawer = ({
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
       <DrawerOverlay>
-        <DrawerContent pt={{ base: '76px', md: '0' }}>
+        <DrawerContent pt={{ base: '76px', md: isBackofficeUser ? '16' : '0' }}>
           <DrawerCloseButton mt={{ base: '80px', md: '0' }} />
           <DrawerHeader>
             <Text fontSize="2xl" fontWeight="700">

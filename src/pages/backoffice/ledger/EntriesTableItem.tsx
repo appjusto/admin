@@ -3,7 +3,10 @@ import TableItem from 'common/components/backoffice/TableItem';
 import { useRouteMatch } from 'react-router';
 import { formatCurrency } from 'utils/formatters';
 import { getDateAndHour } from 'utils/functions';
-import { ledgerEntryStatusPTOptions } from '../utils';
+import {
+  ledgerEntryOperationPTOptions,
+  ledgerEntryStatusPTOptions,
+} from '../utils';
 
 interface ItemProps {
   entry: WithId<LedgerEntry>;
@@ -21,6 +24,11 @@ export const EntriesTableItem = ({ entry }: ItemProps) => {
         {
           value: entry.orderId ? entry.orderId : 'N/E',
           styles: { maxW: '120px' },
+        },
+        {
+          value: entry?.operation
+            ? ledgerEntryOperationPTOptions[entry.operation]
+            : 'N/E',
         },
         { value: getDateAndHour(entry.createdOn) },
         {

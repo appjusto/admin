@@ -1,60 +1,108 @@
 import { OrderMatchingLog, WithId } from '@appjusto/types';
-import { Box, Table, Tbody, Td, Text, Tr } from '@chakra-ui/react';
+import { Box, Flex, Text } from '@chakra-ui/react';
 import React from 'react';
 import { getFullTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 
-interface LogsTableProps {
-  logs?: string[] | WithId<OrderMatchingLog>[];
-}
-
-export const LogsTable = ({ logs }: LogsTableProps) => {
+const renderList = (logs?: string[] | WithId<OrderMatchingLog>[]) => {
   // UI
   if (!logs)
     return (
-      <Table mt="4" size="md" variant="simple">
-        <Tbody>
-          <Tr color="black" fontSize="xs" fontWeight="700">
-            <Td>{t('Carregando registros...')}</Td>
-          </Tr>
-        </Tbody>
-      </Table>
+      <Flex flexDir="column">
+        <Box p="2" minH="60px" color="black" fontSize="xs" fontWeight="700">
+          <Text>{t('Carregando registros...')}</Text>
+        </Box>
+      </Flex>
     );
   return (
-    <Table mt="4" size="md" variant="simple">
-      <Tbody>
+    <Flex flexDir="column">
+      <Box>
         {logs && logs.length > 0 ? (
           logs.map((log, index) => {
             if (typeof log === 'string')
               return (
-                <Tr key={index} color="black" fontSize="xs" fontWeight="700">
-                  <Td>{log}</Td>
-                </Tr>
+                <Box key={`${log}-${index}`} px="4" py="2" minH="60px">
+                  <Text color="black" fontSize="xs" fontWeight="700">
+                    {log}
+                  </Text>
+                </Box>
               );
             return (
-              <Tr key={log.id} color="black" fontSize="xs" fontWeight="700">
-                <Td>{getFullTime(log.timestamp)}</Td>
-                <Td>
-                  <Box>
-                    {log.info.map((info, index) => {
-                      const isFunction = log.info.length === 2 && index === 0;
-                      return (
-                        <Text key={info} fontWeight={isFunction ? '700' : '500'}>
-                          {info}
-                        </Text>
-                      );
-                    })}
-                  </Box>
-                </Td>
-              </Tr>
+              <Flex
+                key={log.id}
+                flexDir="row"
+                color="black"
+                fontSize="xs"
+                fontWeight="700"
+                px="4"
+                py="2"
+                minH="60px"
+                // mb="2"
+                borderBottom="1px solid #ECF0E3"
+              >
+                <Box minW="80px">
+                  <Text>{getFullTime(log.timestamp)}</Text>
+                </Box>
+                <Box>
+                  {log.info.map((info, index) => {
+                    const isFunction = log.info.length === 2 && index === 0;
+                    return (
+                      <Text key={info} fontWeight={isFunction ? '700' : '500'}>
+                        {info}
+                      </Text>
+                    );
+                  })}
+                </Box>
+              </Flex>
             );
           })
         ) : (
-          <Tr color="black" fontSize="xs" fontWeight="700">
-            <Td>{t('Não foram encontrados registros')}</Td>
-          </Tr>
+          <Box px="4" py="2" minH="60px">
+            <Text color="black" fontSize="xs" fontWeight="700">
+              {t('Não foram encontrados registros')}
+            </Text>
+          </Box>
         )}
-      </Tbody>
-    </Table>
+      </Box>
+    </Flex>
+  );
+};
+
+interface LogsTableProps {
+  logs?: string[] | WithId<OrderMatchingLog>[];
+  fetchNextLogs?: () => void;
+}
+
+export const LogsTable = ({ logs, fetchNextLogs }: LogsTableProps) => {
+  // refs
+  const listRef = React.useRef<HTMLDivElement>(null);
+  // side effects
+  React.useEffect(() => {
+    if (!listRef.current || !fetchNextLogs) return;
+    const handleScrollTop = () => {
+      if (listRef.current) {
+        let shouldLoad =
+          listRef.current.scrollHeight - listRef.current.scrollTop < 350;
+        if (shouldLoad) {
+          fetchNextLogs();
+        }
+      }
+    };
+    listRef.current.addEventListener('scroll', handleScrollTop);
+    return () => document.removeEventListener('scroll', handleScrollTop);
+  }, [listRef, fetchNextLogs]);
+  // UI
+  return (
+    <Box
+      ref={listRef}
+      mt="4"
+      minH="200px"
+      maxH="300px"
+      overflowY="scroll"
+      border="1px solid #ECF0E3"
+      borderRadius="lg"
+    >
+      {renderList(logs)}
+    </Box>
   );
 };

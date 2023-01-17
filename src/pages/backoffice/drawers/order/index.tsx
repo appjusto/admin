@@ -1,10 +1,10 @@
 import {
   CancelOrderPayload,
   DispatchingState,
-  InvoiceType,
   Issue,
   IssueType,
   Order,
+  OrderRefundType,
   OrderStatus,
   WithId,
 } from '@appjusto/types';
@@ -90,13 +90,8 @@ export const BackofficeOrderDrawer = ({
   >(order?.dispatchingState);
   const [issue, setIssue] = React.useState<Issue | null>();
   const [message, setMessage] = React.useState<string>();
-  const [refund, setRefund] = React.useState<InvoiceType[]>([
-    'platform',
-    'products',
-    'delivery',
-    'order',
-    'tip',
-  ]);
+  const [refund, setRefund] = React.useState<OrderRefundType[]>([]);
+  const [businessIndemnity, setBusinessIndemnity] = React.useState(false);
   const [loadingState, setLoadingState] =
     React.useState<OrderDrawerLoadingState>('idle');
   const [invoicesActive, setInvoicesActive] = React.useState(false);
@@ -106,10 +101,11 @@ export const BackofficeOrderDrawer = ({
     orderId,
     invoicesActive
   );
-  const { matching, logs: matchingLogs } = useObserveOrderMatching(
-    orderId,
-    matchingActive
-  );
+  const {
+    matching,
+    logs: matchingLogs,
+    fetchNextMatchingLogs,
+  } = useObserveOrderMatching(orderId, matchingActive);
   const { orderChatGroup } = useObserveOrderChatMessages(
     orderId,
     undefined,
@@ -117,18 +113,19 @@ export const BackofficeOrderDrawer = ({
   );
   // helpers
   let refundValue = 0;
-  if (refund.includes('platform') && order?.fare?.platform?.value)
+  if (refund.includes('service') && order?.fare?.platform?.value)
     refundValue += order.fare.platform.value;
   if (refund.includes('products') && order?.fare?.business?.value)
     refundValue += order.fare.business.value;
   if (refund.includes('delivery') && order?.fare?.courier?.value)
     refundValue += order.fare.courier.value;
-  if (refund.includes('order') && order?.fare?.total)
-    refundValue = order?.fare?.total;
   if (refund.includes('tip') && order?.tip?.value)
     refundValue += order.tip.value;
   const canUpdateOrderStaff =
     order?.staff?.id === staff?.id || isBackofficeSuperuser;
+  const businessInsurance = order?.fare?.business?.insurance
+    ? order.fare.business.insurance > 0
+    : false;
   //handlers
   const handleIssueOrder = () => {
     const oldFlags = order?.flags;
@@ -173,8 +170,8 @@ export const BackofficeOrderDrawer = ({
       setIssue(cancelOptions?.find((item) => item.id === value) ?? null);
     else if (type === 'message') setMessage(value as string);
   };
-  const onRefundingChange = (type: InvoiceType, value: boolean) => {
-    setRefund((prev: InvoiceType[]) => {
+  const onRefundingChange = (type: OrderRefundType, value: boolean) => {
+    setRefund((prev: OrderRefundType[]) => {
       let newState = [...prev];
       if (value) {
         newState.push(type);
@@ -207,6 +204,7 @@ export const BackofficeOrderDrawer = ({
         params: {
           refund: ['platform', 'products', 'delivery', 'order', 'tip'],
         },
+        businessIndemnity,
         acknowledgedCosts: 0,
         cancellation: preventionIssue,
       } as CancelOrderPayload;
@@ -252,6 +250,7 @@ export const BackofficeOrderDrawer = ({
       params: { refund },
       acknowledgedCosts: orderCancellationCosts,
       cancellation: issue,
+      businessIndemnity,
     } as CancelOrderPayload;
     if (message) cancellationData.comment = message;
     return cancelOrder(cancellationData);
@@ -300,6 +299,10 @@ export const BackofficeOrderDrawer = ({
     else setLoadingState('idle');
   }, [updateResult.isLoading, cancelResult.isLoading]);
   React.useEffect(() => {
+    if (!businessInsurance) return;
+    setBusinessIndemnity(true);
+  }, [businessInsurance]);
+  React.useEffect(() => {
     if (!deleteOrderResult.isSuccess) return;
     onClose();
   }, [deleteOrderResult.isSuccess, onClose]);
@@ -324,7 +327,7 @@ export const BackofficeOrderDrawer = ({
       >
         <Switch>
           <Route exact path={`${path}`}>
-            <Participants order={order} />
+            <Participants order={order} businessInsurance={businessInsurance} />
           </Route>
           <Route exact path={`${path}/order`}>
             <>
@@ -344,6 +347,7 @@ export const BackofficeOrderDrawer = ({
               order={order}
               matching={matching}
               logs={matchingLogs}
+              fetchNextMatchingLogs={fetchNextMatchingLogs}
               activeMatching={handleActiveMatching}
             />
           </Route>
@@ -363,6 +367,11 @@ export const BackofficeOrderDrawer = ({
               onRefundingChange={onRefundingChange}
               updateState={updateState}
               courierId={order?.courier?.id}
+              businessInsurance={businessInsurance}
+              businessIndemnity={businessIndemnity}
+              onBusinessIndemnityChange={(value: boolean) =>
+                setBusinessIndemnity(value)
+              }
             />
           </Route>
           <Route exact path={`${path}/chats`}>

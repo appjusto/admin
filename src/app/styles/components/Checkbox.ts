@@ -18,6 +18,7 @@ const baseStyleControl: SystemStyleFunction = (props) => {
     borderColor: 'black',
     borderRadius: '4px',
     color: 'white',
+    bg: 'white',
 
     _checked: {
       bg: `radialGradient(circle, ${`${c}.500`} 60%, ${`${c}.500`} 30%, white 10%)`,

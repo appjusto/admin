@@ -13,7 +13,10 @@ interface ManualAllocationProps {
   dispatchingStatus?: DispatchingStatus;
 }
 
-export const ManualAllocation = ({ orderId, dispatchingStatus }: ManualAllocationProps) => {
+export const ManualAllocation = ({
+  orderId,
+  dispatchingStatus,
+}: ManualAllocationProps) => {
   // states
   const [searchId, setSearchId] = React.useState('');
   const [searchName, setSearchName] = React.useState('');
@@ -34,7 +37,7 @@ export const ManualAllocation = ({ orderId, dispatchingStatus }: ManualAllocatio
     }
   }, [isError, allocationError]);*/
   // UI
-  if (dispatchingStatus === 'matched' || dispatchingStatus === 'confirmed') {
+  if (dispatchingStatus === 'confirmed') {
     return (
       <Box>
         <SectionTitle>{t('Alocar entregador manualmente')}</SectionTitle>

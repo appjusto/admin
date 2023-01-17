@@ -70,7 +70,7 @@ export const calculateCancellationCosts = (
     costs += order.fare.business.value;
   if (order.fare?.courier && params.refund.indexOf('delivery') !== -1)
     costs += order.fare.courier.value;
-  if (order.fare?.platform && params.refund.indexOf('platform') !== -1)
+  if (order.fare?.platform && params.refund.indexOf('service') !== -1)
     costs += order.fare.platform.value;
   return costs;
 };

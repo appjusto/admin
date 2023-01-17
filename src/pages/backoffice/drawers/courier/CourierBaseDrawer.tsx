@@ -85,6 +85,12 @@ export const CourierBaseDrawer = ({
     courier?.city && courier?.state
       ? `${courier?.city} - ${courier?.state}`
       : 'N/I';
+  const LiveColor =
+    courier?.status === 'available'
+      ? 'green.500'
+      : courier?.status === 'dispatching'
+      ? 'yellow'
+      : 'red';
   //handlers
   let courierName = courier?.name ?? 'N/I';
   if (courier?.surname) courierName += ` ${courier.surname}`;
@@ -314,11 +320,7 @@ export const CourierBaseDrawer = ({
             >
               {t('Live:')}{' '}
               <Text as="span" fontWeight="500">
-                <Icon
-                  mt="-2px"
-                  viewBox="0 0 200 200"
-                  color={courier?.status === 'available' ? 'green.500' : 'red'}
-                >
+                <Icon mt="-2px" viewBox="0 0 200 200" color={LiveColor}>
                   <path
                     fill="currentColor"
                     d="M 100, 100 m -75, 0 a 75,75 0 1,0 150,0 a 75,75 0 1,0 -150,0"

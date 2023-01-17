@@ -12,6 +12,8 @@ interface ItemProps {
 export const InvoicesTableItem = ({ invoice }: ItemProps) => {
   // context
   const { path } = useRouteMatch();
+  // helpers
+  const value = invoice.paid !== undefined ? invoice.paid : invoice.value;
   // UI
   return (
     <TableItem
@@ -30,7 +32,7 @@ export const InvoicesTableItem = ({ invoice }: ItemProps) => {
             ? invoiceStatusPTOptions[invoice.status]
             : 'N/E',
         },
-        { value: formatCurrency(invoice.value), styles: { isNumeric: true } },
+        { value: formatCurrency(value), styles: { isNumeric: true } },
       ]}
     />
   );
