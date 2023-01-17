@@ -33,7 +33,7 @@ const OperationPage = () => {
     business?.minimumOrder ?? 0
   );
   const [enabled, setEnabled] = React.useState(business?.enabled ?? false);
-  const [status, setStatus] = React.useState(business?.status ?? 'closed');
+  const [status, setStatus] = React.useState(business?.status ?? 'unavailable');
   const [maxOrdersPerHour, setMaxOrdersPerHour] = React.useState(
     String(business?.maxOrdersPerHour ?? '0')
   );
@@ -47,15 +47,8 @@ const OperationPage = () => {
   ]);
   // refs
   const minimumOrderRef = React.useRef<HTMLInputElement>(null);
-  // handlers
-  const handleEnabled = (enabled: boolean) => {
-    if (enabled) setEnabled(enabled);
-    else {
-      setStatus('closed');
-      setEnabled(false);
-    }
-  };
   const onSubmitHandler = async () => {
+    console.log(status);
     const changes = {
       minimumOrder,
       enabled,
@@ -105,6 +98,28 @@ const OperationPage = () => {
             onSubmitHandler();
           }}
         >
+          <Text mt="8" fontSize="xl" color="black">
+            {t('Fechamento de emergência')}
+          </Text>
+          <Text mt="2" fontSize="md">
+            {t(
+              'Para realizar o fechamento de emergência basta alterar o status abaixo para indisponível. O restaurante aparecerá como fechado até ser configurado manualmente para disponível novamente'
+            )}
+          </Text>
+          <Flex mt="4" alignItems="center">
+            <ChakraSwitch
+              isChecked={status === 'available'}
+              onChange={(ev) => {
+                ev.stopPropagation();
+                setStatus(ev.target.checked ? 'available' : 'unavailable');
+              }}
+            />
+            <Flex ml="4" flexDir="column" minW="280px">
+              <Text fontSize="16px" fontWeight="700" lineHeight="22px">
+                {status === 'available' ? t('Disponível') : t('Indisponível')}
+              </Text>
+            </Flex>
+          </Flex>
           <Box maxW="400px">
             {isBackofficeUser && (
               <CurrencyInput
@@ -178,7 +193,7 @@ const OperationPage = () => {
               isChecked={enabled}
               onChange={(ev) => {
                 ev.stopPropagation();
-                handleEnabled(ev.target.checked);
+                setEnabled(ev.target.checked);
               }}
             />
             <Flex ml="4" flexDir="column" minW="280px">

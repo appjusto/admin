@@ -74,25 +74,6 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const [description, setDescription] = React.useState(
     business?.description ?? ''
   );
-<<<<<<< HEAD
-  const [minimumOrder, setMinimumOrder] = React.useState(
-    business?.minimumOrder ?? 0
-  );
-  const [enabled, setEnabled] = React.useState(business?.enabled ?? false);
-  const [status, setStatus] = React.useState(business?.status ?? 'unavailable');
-  const [maxOrdersPerHour, setMaxOrdersPerHour] = React.useState(
-    String(business?.maxOrdersPerHour ?? '0')
-  );
-  const [minHoursForScheduledOrders, setMinHoursForScheduledOrders] =
-    React.useState(String(business?.minHoursForScheduledOrders ?? '0'));
-  const [preparationModes, setPreparationModes] = React.useState<
-    PreparationMode[]
-  >(['realtime', 'scheduled']);
-  const [fulfillment, setFulfillment] = React.useState<Fulfillment[]>([
-    'delivery',
-  ]);
-=======
->>>>>>> staging
   const [logoExists, setLogoExists] = React.useState(false);
   const [coverExists, setCoverExists] = React.useState(false);
   const [logoFiles, setLogoFiles] = React.useState<File[] | null>(null);
@@ -118,16 +99,6 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const openDrawerHandler = () => history.push(`${path}/delete`);
   const closeDrawerHandler = () => history.replace(path);
   const isCNPJValid = () => cnpjutils.isValid(cnpj);
-<<<<<<< HEAD
-  const handleEnabled = (enabled: boolean) => {
-    if (enabled) setEnabled(enabled);
-    else {
-      setStatus('unavailable');
-      setEnabled(false);
-    }
-  };
-=======
->>>>>>> staging
   const addPhone = () => setPhones((prev) => [...prev, defaultPhone]);
   const removePhone = (stateIndex: number) => {
     setPhones((prevState) => {
@@ -368,62 +339,6 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
             clearDrop={() => clearDropImages('cover')}
             doubleSizeCropping={!isOnboarding}
           />
-<<<<<<< HEAD
-          {!isOnboarding && business?.situation === 'approved' && (
-            <>
-              <Text mt="8" fontSize="xl" color="black">
-                {t('Fechamento de emergência')}
-              </Text>
-              <Text mt="2" fontSize="md">
-                {t(
-                  'O restaurante aparecerá como fechado até ser configurado como disponível novamente'
-                )}
-              </Text>
-              <Flex mt="4" alignItems="center">
-                <ChakraSwitch
-                  isChecked={status === 'available'}
-                  onChange={(ev) => {
-                    ev.stopPropagation();
-                    setStatus(ev.target.checked ? 'available' : 'unavailable');
-                  }}
-                />
-                <Flex ml="4" flexDir="column" minW="280px">
-                  <Text fontSize="16px" fontWeight="700" lineHeight="22px">
-                    {status === 'available'
-                      ? t('Disponível')
-                      : t('Indisponível')}
-                  </Text>
-                </Flex>
-              </Flex>
-              <Text mt="6" fontSize="xl" color="black">
-                {t('Desligar restaurante do AppJusto')}
-              </Text>
-              <Text mt="2" fontSize="md">
-                {t(
-                  'O restaurante não aparecerá no app enquanto estiver desligado'
-                )}
-              </Text>
-              <Flex mt="4" pb="8" alignItems="center">
-                <ChakraSwitch
-                  isChecked={enabled}
-                  onChange={(ev) => {
-                    ev.stopPropagation();
-                    handleEnabled(ev.target.checked);
-                  }}
-                />
-                <Flex ml="4" flexDir="column" minW="280px">
-                  <Text fontSize="16px" fontWeight="700" lineHeight="22px">
-                    {enabled ? t('Ligado') : t('Desligado')}
-                  </Text>
-                </Flex>
-              </Flex>
-            </>
-          )}
-          {!isOnboarding &&
-            userAbility?.can('create', 'businesses') &&
-            typeof business?.companyName === 'string' && <CloneBusiness />}
-=======
->>>>>>> staging
           {/* submit */}
           <PageFooter
             onboarding={onboarding}
