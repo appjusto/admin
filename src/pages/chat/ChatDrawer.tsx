@@ -20,6 +20,7 @@ import { useObserveBusinessOrderChatByType } from 'app/api/chat/useObserveBusine
 // import { useUpdateChatMessage } from 'app/api/business/chat/useUpdateChatMessage';
 import { useUpdateChatMessage } from 'app/api/chat/useUpdateChatMessage';
 import { getUnreadChatMessages } from 'app/api/chat/utils';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextServerTime } from 'app/state/server-time';
 import React, { KeyboardEvent } from 'react';
@@ -47,6 +48,7 @@ type CurrentCounterPart = {
 export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
   //context
   const { getServerTime } = useContextServerTime();
+  const { isBackofficeUser } = useContextFirebaseUser();
   const { business } = useContextBusiness();
   const { logo } = useBusinessProfile(business?.id);
   const { orderId, counterpartId } = useParams<Params>();
@@ -154,7 +156,7 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
       <DrawerOverlay>
-        <DrawerContent>
+        <DrawerContent pt={isBackofficeUser ? '16' : 0}>
           <DrawerCloseButton
             bg="green.500"
             mr="12px"

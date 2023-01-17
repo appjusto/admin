@@ -51,6 +51,10 @@ export default class FirebaseRefs {
   getUsersChangeRef = (changeId: string) =>
     doc(this.getUsersChangesRef(), changeId);
 
+  // areas
+  getAreasRef = () => collection(this.firestore, 'areas');
+  getAreaRef = (areaId: string) => doc(this.getAreasRef(), areaId);
+
   // advances
   getAdvancesRef = () => collection(this.firestore, 'advances');
 

@@ -2,8 +2,8 @@ import { useContextFirebaseUser } from 'app/state/auth/context';
 import BankingInformation from 'pages/banking-information/BankingInformation';
 import BusinessProfile from 'pages/business-profile/BusinessProfile';
 import DeliveryArea from 'pages/delivery-area/DeliveryArea';
+import InsurancePage from 'pages/insurance/InsurancePage';
 import { ManagerProfile } from 'pages/manager-profile/ManagerProfile';
-import React from 'react';
 import { Redirect, Route, Switch, useRouteMatch } from 'react-router-dom';
 import { OnboardingComplete } from './OnboardingComplete';
 import { OnboardingErrorBoundary } from './OnboardingErrorBoundary';
@@ -44,6 +44,11 @@ const Onboarding = () => {
           </OnboardingStep>
         </Route>
         <Route path={`${path}/5`}>
+          <OnboardingStep>
+            <InsurancePage redirect={`${path}/6`} onboarding="5" />
+          </OnboardingStep>
+        </Route>
+        <Route path={`${path}/6`}>
           <OnboardingStep>
             <TermsOfUse redirect={`${path}/complete`} />
           </OnboardingStep>

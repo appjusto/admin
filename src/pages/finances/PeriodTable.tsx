@@ -19,6 +19,7 @@ interface PeriodTableProps {
   total: number;
   amountProducts: number;
   amountDelivery: number;
+  amountInsurance: number;
   appjustoCosts: number;
   iuguCosts: number;
 }
@@ -28,13 +29,15 @@ export const PeriodTable = ({
   total,
   amountProducts,
   amountDelivery,
+  amountInsurance,
   appjustoCosts,
   iuguCosts,
 }: PeriodTableProps) => {
   // context
   const { platformFees } = usePlatformFees();
   // helpers
-  const amountTotal = (amountProducts ?? 0) + (amountDelivery ?? 0);
+  const amountTotal =
+    (amountProducts ?? 0) + (amountDelivery ?? 0) + (amountInsurance ?? 0);
   // UI
   return (
     <Table mt="6" size="md" variant="simple">
@@ -102,6 +105,10 @@ export const PeriodTable = ({
               <Td color="red" isNumeric>
                 {`- ${formatCurrency(iuguCosts)}`}
               </Td>
+            </Tr>
+            <Tr color="black" fontSize="xs" fontWeight="500">
+              <Td>{t('Ressarcimentos (cobertura)')}</Td>
+              <Td isNumeric>{formatCurrency(amountInsurance)}</Td>
             </Tr>
           </>
         )}

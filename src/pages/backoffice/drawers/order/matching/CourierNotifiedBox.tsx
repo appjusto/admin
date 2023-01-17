@@ -41,8 +41,7 @@ const CourierNotifiedBox = ({
     : courier.id.substring(0, 7) + '...';
   // side effects
   React.useEffect(() => {
-    if (dispatchingStatus === 'matched' || dispatchingStatus === 'confirmed')
-      setIsAllocating(false);
+    if (dispatchingStatus === 'confirmed') setIsAllocating(false);
   }, [dispatchingStatus]);
   // UI
   return (
@@ -74,9 +73,7 @@ const CourierNotifiedBox = ({
                   label={t('Remover')}
                   variant="danger"
                   isDisabled={
-                    !isOrderActive ||
-                    dispatchingStatus === 'matched' ||
-                    dispatchingStatus === 'confirmed'
+                    !isOrderActive || dispatchingStatus === 'confirmed'
                   }
                   isLoading={isLoading && courierRemoving === courier.id}
                   onClick={() => removeCourier!(courier.id)}
@@ -89,7 +86,6 @@ const CourierNotifiedBox = ({
                   label={t('Alocar')}
                   isDisabled={
                     !isOrderActive ||
-                    dispatchingStatus === 'matched' ||
                     dispatchingStatus === 'confirmed' ||
                     dispatchingStatus === 'outsourced'
                   }
@@ -124,10 +120,7 @@ const CourierNotifiedBox = ({
               h="36px"
               label={t('Confirmar alocação')}
               isDisabled={
-                !isOrderActive ||
-                dispatchingStatus === 'matched' ||
-                dispatchingStatus === 'confirmed' ||
-                !comment
+                !isOrderActive || dispatchingStatus === 'confirmed' || !comment
               }
               isLoading={isLoading && !courierRemoving}
               onClick={() => allocateCourier(courier.id, comment)}

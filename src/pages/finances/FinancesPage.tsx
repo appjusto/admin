@@ -57,8 +57,11 @@ const FinancesPage = () => {
     appjustoCosts,
     iuguCosts,
   } = useObserveInvoicesStatusByPeriod(businessId, month, periodStatuses);
-  const { periodAmount: ledgerAmount, iuguValue: ledgerIuguValue } =
-    useObserveLedgerStatusByPeriod(businessId, month, ledgerEntriesStatuses);
+  const {
+    deliveryAmount: ledgerDeliveryAmount,
+    iuguValue: ledgerIuguValue,
+    insuranceAmount: ledgerInsuranceAmount,
+  } = useObserveLedgerStatusByPeriod(businessId, month, ledgerEntriesStatuses);
   const advances = useObserveBusinessAdvances(businessId, month);
   const withdraws = useObserveBusinessWithdraws(businessId, month);
   // helpers
@@ -132,7 +135,8 @@ const FinancesPage = () => {
         period={`${monthName} de ${year}`}
         total={total}
         amountProducts={periodProductAmount}
-        amountDelivery={periodDeliveryAmount + ledgerAmount}
+        amountDelivery={periodDeliveryAmount + ledgerDeliveryAmount}
+        amountInsurance={ledgerInsuranceAmount}
         appjustoCosts={appjustoCosts}
         iuguCosts={iuguTotalCosts}
       />

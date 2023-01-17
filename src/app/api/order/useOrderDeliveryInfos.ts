@@ -23,7 +23,7 @@ export const useOrderDeliveryInfos = (
     order?.dispatchingStatus === 'matching'
   );
   const [isMatched, setIsMatched] = React.useState<boolean>(
-    order?.dispatchingStatus === 'matched'
+    order?.dispatchingStatus === 'confirmed'
   );
   const [orderDispatchingKanbanItemText, setOrderDispatchingKanbanItemText] =
     React.useState<string>();
@@ -50,7 +50,7 @@ export const useOrderDeliveryInfos = (
       state?: DispatchingState | null
     ) => {
       let result = 'Buscando entregador...';
-      if (status === 'matched' || status === 'confirmed') {
+      if (status === 'confirmed') {
         result = 'Buscando localização';
         if (state === 'going-pickup') result = 'Entreg. a caminho';
         if (state === 'arrived-pickup') result = 'Entreg. no local';
@@ -71,7 +71,7 @@ export const useOrderDeliveryInfos = (
         ((matching?.attempt && matching?.attempt > 0) || !isBackofficeUser)
       )
         result = 'Buscando entregador...';
-      if (status === 'matched' || status === 'confirmed') {
+      if (status === 'confirmed') {
         result = 'Buscando localização';
         if (state === 'going-pickup')
           result = 'Entregador a caminho da retirada';
@@ -99,10 +99,7 @@ export const useOrderDeliveryInfos = (
   React.useEffect(() => {
     if (!order?.dispatchingStatus) return;
     setIsMatching(order.dispatchingStatus === 'matching');
-    setIsMatched(
-      order.dispatchingStatus === 'matched' ||
-        order.dispatchingStatus === 'confirmed'
-    );
+    setIsMatched(order.dispatchingStatus === 'confirmed');
   }, [order?.dispatchingStatus]);
   // result
   return {

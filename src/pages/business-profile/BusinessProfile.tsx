@@ -1,25 +1,11 @@
-import {
-  Business,
-  BusinessPhone,
-  Fulfillment,
-  PreparationMode,
-} from '@appjusto/types';
-import {
-  Badge,
-  Box,
-  Flex,
-  Switch as ChakraSwitch,
-  Text,
-  useBreakpoint,
-} from '@chakra-ui/react';
+import { Business, BusinessPhone } from '@appjusto/types';
+import { Box, Text, useBreakpoint } from '@chakra-ui/react';
 import * as cnpjutils from '@fnando/cnpj';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextAppRequests } from 'app/state/requests/context';
-import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
-import { CustomNumberInput as NumberInput } from 'common/components/form/input/CustomNumberInput';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
 import { CustomPatternInput as PatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';
 import {
@@ -52,8 +38,6 @@ import { assertPhonesIsValid, serializePhones } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { BusinessPhoneField, BusinessPhones } from './business-phones';
 import { BusinessDeleteDrawer } from './BusinessDeleteDrawer';
-import { BusinessFulfillment } from './BusinessFulfillment';
-import { BusinessPreparationModes } from './BusinessPreparationModes';
 import { CloneBusiness } from './CloneBusiness';
 
 const defaultPhone = {
@@ -72,7 +56,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const queryClient = useQueryClient();
   const { path } = useRouteMatch();
   const history = useHistory();
-  const { isBackofficeUser, userAbility } = useContextFirebaseUser();
+  const { userAbility } = useContextFirebaseUser();
   // state
   const devCNPJ = ['dev', 'staging'].includes(
     process.env.REACT_APP_ENVIRONMENT ?? ''
@@ -90,22 +74,6 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const [description, setDescription] = React.useState(
     business?.description ?? ''
   );
-  const [minimumOrder, setMinimumOrder] = React.useState(
-    business?.minimumOrder ?? 0
-  );
-  const [enabled, setEnabled] = React.useState(business?.enabled ?? false);
-  const [status, setStatus] = React.useState(business?.status ?? 'closed');
-  const [maxOrdersPerHour, setMaxOrdersPerHour] = React.useState(
-    String(business?.maxOrdersPerHour ?? '0')
-  );
-  const [minHoursForScheduledOrders, setMinHoursForScheduledOrders] =
-    React.useState(String(business?.minHoursForScheduledOrders ?? '0'));
-  const [preparationModes, setPreparationModes] = React.useState<
-    PreparationMode[]
-  >(['realtime', 'scheduled']);
-  const [fulfillment, setFulfillment] = React.useState<Fulfillment[]>([
-    'delivery',
-  ]);
   const [logoExists, setLogoExists] = React.useState(false);
   const [coverExists, setCoverExists] = React.useState(false);
   const [logoFiles, setLogoFiles] = React.useState<File[] | null>(null);
@@ -114,7 +82,6 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   // refs
   const cnpjRef = React.useRef<HTMLInputElement>(null);
   //const phoneRef = React.useRef<HTMLInputElement>(null);
-  const minimumOrderRef = React.useRef<HTMLInputElement>(null);
   const isMountedRef = React.useRef(false);
   // helpers
   const isOnboarding = typeof onboarding === 'string';
@@ -132,13 +99,6 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const openDrawerHandler = () => history.push(`${path}/delete`);
   const closeDrawerHandler = () => history.replace(path);
   const isCNPJValid = () => cnpjutils.isValid(cnpj);
-  const handleEnabled = (enabled: boolean) => {
-    if (enabled) setEnabled(enabled);
-    else {
-      setStatus('closed');
-      setEnabled(false);
-    }
-  };
   const addPhone = () => setPhones((prev) => [...prev, defaultPhone]);
   const removePhone = (stateIndex: number) => {
     setPhones((prevState) => {
@@ -162,7 +122,6 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
     });
   };
   const onSubmitHandler = async () => {
-    //if (minimumOrder === 0) return minimumOrderRef.current?.focus();
     if (!isCNPJValid()) {
       dispatchAppRequestResult({
         status: 'error',
@@ -184,18 +143,10 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
     const changes = {
       name: name.trim(),
       companyName: companyName.trim(),
-      //phone,
       phones: serializedPhones,
       cnpj,
       description,
-      minimumOrder,
-      enabled,
-      status,
       cuisine: cuisineName,
-      maxOrdersPerHour: parseInt(maxOrdersPerHour, 10),
-      minHoursForScheduledOrders: parseInt(minHoursForScheduledOrders, 10),
-      preparationModes,
-      fulfillment,
       logoExists: logoExists,
       coverImageExists: coverExists,
     } as Partial<Business>;
@@ -249,23 +200,12 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   }, [isOnboarding]);
   React.useEffect(() => {
     if (business) {
-      setEnabled(business.enabled ?? false);
       if (business.cnpj) setCNPJ(business.cnpj);
       setName(business.name ?? '');
       setCompanyName(business.companyName ?? '');
       if (business.phones) setPhones(business.phones);
       setDescription(business.description ?? '');
-      setMinimumOrder(business.minimumOrder ?? 0);
       setCuisineName(business.cuisine ?? '');
-      if (business.maxOrdersPerHour)
-        setMaxOrdersPerHour(String(business.maxOrdersPerHour));
-      if (business.minHoursForScheduledOrders)
-        setMinHoursForScheduledOrders(
-          String(business.minHoursForScheduledOrders)
-        );
-      if (business.preparationModes)
-        setPreparationModes(business.preparationModes);
-      if (business.fulfillment) setFulfillment(business.fulfillment);
       if (business.logoExists && logo) setLogoExists(true);
       if (business.coverImageExists && cover) setCoverExists(true);
     }
@@ -347,18 +287,6 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
               value={description}
               onChange={(ev) => setDescription(ev.target.value)}
             />
-            {isBackofficeUser && (
-              <CurrencyInput
-                ref={minimumOrderRef}
-                isRequired
-                id="business-min-price"
-                label={t('Valor mínimo do pedido')}
-                placeholder={t('R$ 0,00')}
-                value={minimumOrder}
-                onChangeValue={(value) => setMinimumOrder(value)}
-                maxLength={8}
-              />
-            )}
           </Box>
           <BusinessPhones
             phones={phones}
@@ -367,86 +295,6 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
             removePhone={removePhone}
             isOnboarding={isOnboarding}
           />
-          {!isOnboarding && (
-            <>
-              {/* preparation modes */}
-              <BusinessPreparationModes
-                preparationModes={preparationModes}
-                handleChange={setPreparationModes}
-              />
-              {/* maxOrdersPerHour */}
-              <Text mt="8" fontSize="xl" color="black">
-                {t('Máximo de pedidos')}
-                <Badge
-                  ml="2"
-                  mt="-12px"
-                  px="8px"
-                  py="2px"
-                  bgColor="#FFBE00"
-                  color="black"
-                  borderRadius="16px"
-                  fontSize="11px"
-                  lineHeight="18px"
-                  fontWeight="700"
-                >
-                  {t('NOVIDADE')}
-                </Badge>
-              </Text>
-              <Text mt="2" fontSize="md">
-                {t(
-                  'Caso aplicável, informe a quantidade máxima de pedidos que o restaurante aceita no intervalo de 1h (0 = desativado)'
-                )}
-              </Text>
-              <NumberInput
-                id="business-max-order-per-hour"
-                maxW="400px"
-                label={t('Número de pedidos por hora')}
-                value={maxOrdersPerHour}
-                onChange={(ev: React.ChangeEvent<HTMLInputElement>) =>
-                  setMaxOrdersPerHour(ev.target.value)
-                }
-                isRequired
-              />
-              {/* minHoursForScheduledOrders */}
-              <Text mt="8" fontSize="xl" color="black">
-                {t('Mínimo de horas de antecedência para pedidos agendados')}
-                <Badge
-                  ml="2"
-                  mt="-12px"
-                  px="8px"
-                  py="2px"
-                  bgColor="#FFBE00"
-                  color="black"
-                  borderRadius="16px"
-                  fontSize="11px"
-                  lineHeight="18px"
-                  fontWeight="700"
-                >
-                  {t('NOVIDADE')}
-                </Badge>
-              </Text>
-              <Text mt="2" fontSize="md">
-                {t(
-                  'Caso aplicável, informe o número mínimo de horas de antecedência para que o consumidor possa realizar um pedido agendado (0 = desativado)'
-                )}
-              </Text>
-              <NumberInput
-                id="business-min-hours-for-scheduled-orders"
-                maxW="400px"
-                label={t('Número mínimo de horas')}
-                value={minHoursForScheduledOrders}
-                onChange={(ev: React.ChangeEvent<HTMLInputElement>) =>
-                  setMinHoursForScheduledOrders(ev.target.value)
-                }
-                isRequired
-              />
-              {/* fulfillment */}
-              <BusinessFulfillment
-                fulfillment={fulfillment}
-                handleChange={setFulfillment}
-              />
-            </>
-          )}
           {/* logo */}
           <Text mt="8" fontSize="xl" color="black">
             {t('Logo do estabelecimento')}
@@ -491,35 +339,6 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
             clearDrop={() => clearDropImages('cover')}
             doubleSizeCropping={!isOnboarding}
           />
-          {!isOnboarding && business?.situation === 'approved' && (
-            <>
-              <Text mt="8" fontSize="xl" color="black">
-                {t('Desligar restaurante do AppJusto')}
-              </Text>
-              <Text mt="2" fontSize="md">
-                {t(
-                  'O restaurante não aparecerá no app enquanto estiver desligado'
-                )}
-              </Text>
-              <Flex mt="4" pb="8" alignItems="center">
-                <ChakraSwitch
-                  isChecked={enabled}
-                  onChange={(ev) => {
-                    ev.stopPropagation();
-                    handleEnabled(ev.target.checked);
-                  }}
-                />
-                <Flex ml="4" flexDir="column" minW="280px">
-                  <Text fontSize="16px" fontWeight="700" lineHeight="22px">
-                    {enabled ? t('Ligado') : t('Desligado')}
-                  </Text>
-                </Flex>
-              </Flex>
-            </>
-          )}
-          {!isOnboarding &&
-            userAbility?.can('create', 'businesses') &&
-            typeof business?.companyName === 'string' && <CloneBusiness />}
           {/* submit */}
           <PageFooter
             onboarding={onboarding}
@@ -537,6 +356,9 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
             }
           />
         </form>
+        {!isOnboarding &&
+          userAbility?.can('create', 'businesses') &&
+          typeof business?.companyName === 'string' && <CloneBusiness />}
       </Box>
       {!isOnboarding && (
         <Switch>

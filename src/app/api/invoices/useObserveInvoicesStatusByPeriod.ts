@@ -10,8 +10,7 @@ import React from 'react';
 import { useUserCanReadEntity } from '../auth/useUserCanReadEntity';
 import { getInvoicesTotalByTypes, getInvoicesTotalValueByTypes } from './utils';
 
-// const invoicesTypes = ['products', 'order'] as InvoiceType[];
-const invoicesProductTypes = ['products', 'order'] as InvoiceType[];
+const invoicesProductTypes = ['products', 'order', 'food'] as InvoiceType[];
 const invoicesDeliveryTypes = ['delivery'] as InvoiceType[];
 
 export const useObserveInvoicesStatusByPeriod = (

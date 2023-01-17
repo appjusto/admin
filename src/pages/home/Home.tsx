@@ -40,6 +40,9 @@ const BusinessProfile = React.lazy(
   () =>
     import(/* webpackPrefetch: true */ 'pages/business-profile/BusinessProfile')
 );
+const OperationPage = React.lazy(
+  () => import(/* webpackPrefetch: true */ 'pages/operation/OperationPage')
+);
 const ManagerProfilePage = React.lazy(
   () =>
     import(
@@ -61,6 +64,9 @@ const BankingInformation = React.lazy(
 );
 const TeamPage = React.lazy(
   () => import(/* webpackPrefetch: true */ 'pages/team/TeamPage')
+);
+const InsurancePage = React.lazy(
+  () => import(/* webpackPrefetch: true */ 'pages/insurance/InsurancePage')
 );
 
 const Home = () => {
@@ -141,6 +147,10 @@ const Home = () => {
                   component={BusinessProfile}
                 />
                 <AdminAccessRoute
+                  path={`${path}/operation`}
+                  component={OperationPage}
+                />
+                <AdminAccessRoute
                   path={`${path}/manager-profile`}
                   component={ManagerProfilePage}
                 />
@@ -157,6 +167,10 @@ const Home = () => {
                   component={BankingInformation}
                 />
                 <AdminAccessRoute path={`${path}/team`} component={TeamPage} />
+                <AdminAccessRoute
+                  path={`${path}/insurance`}
+                  component={InsurancePage}
+                />
               </PageLayout>
             </Switch>
           </MenuContextProvider>

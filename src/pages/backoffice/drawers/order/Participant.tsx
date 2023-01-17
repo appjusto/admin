@@ -35,6 +35,7 @@ interface ParticipantProps {
   removeCourier?(issue?: Issue, comment?: string): void;
   isLoading?: boolean;
   coordinates?: LatLng | null;
+  businessInsurance?: boolean;
 }
 
 export const Participant = ({
@@ -54,6 +55,7 @@ export const Participant = ({
   removeCourier,
   isLoading,
   coordinates,
+  businessInsurance,
 }: ParticipantProps) => {
   // state
   const [isRemoving, setIsRemoving] = React.useState(false);
@@ -261,6 +263,18 @@ export const Participant = ({
           {t('Complemento:')}{' '}
           <Text as="span" fontWeight="500">
             {additionalInfo ?? 'N/E'}
+          </Text>
+        </Text>
+        <Text
+          mt="2"
+          fontSize="15px"
+          color="black"
+          fontWeight="700"
+          lineHeight="22px"
+        >
+          {t('Cobertura AppJusto:')}{' '}
+          <Text as="span" fontWeight="500">
+            {businessInsurance ? t('Sim') : t('Não')}
           </Text>
         </Text>
         <CustomButton

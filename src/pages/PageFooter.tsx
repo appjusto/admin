@@ -9,6 +9,7 @@ interface Props extends OnboardingProps {
   deleteLabel?: string;
   onDelete?(): void;
   submitLabel?: string;
+  requiredLabel?: boolean;
 }
 
 const PageFooter = ({
@@ -19,6 +20,7 @@ const PageFooter = ({
   deleteLabel,
   onDelete,
   submitLabel,
+  requiredLabel = true,
 }: Props) => {
   // helpers
   const showSkip = onboarding && !['1', '2'].includes(onboarding) && redirect;
@@ -26,7 +28,7 @@ const PageFooter = ({
   // UI
   return (
     <Box mt="8">
-      <Text>* Campos obrigatórios</Text>
+      {requiredLabel && <Text>* Campos obrigatórios</Text>}
       <Flex
         mt="4"
         flexDir={{ base: 'column', md: 'row' }}
@@ -62,7 +64,12 @@ const PageFooter = ({
           </Button>
         )}
         {showSkip && (
-          <Link ml="8" as={RouterLink} to={redirect!}>
+          <Link
+            ml={{ base: '0', md: '8' }}
+            mt={{ base: '6', md: '0' }}
+            as={RouterLink}
+            to={redirect!}
+          >
             <Text textStyle="link">{t('Pular etapa e preencher depois')}</Text>
           </Link>
         )}

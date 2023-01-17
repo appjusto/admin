@@ -15,6 +15,7 @@ export const EntriesTable = ({ entries }: EntriesTableProps) => {
         <Thead>
           <Tr>
             <Th>{t('ID do pedido')}</Th>
+            <Th>{t('Operação')}</Th>
             <Th>{t('Data')}</Th>
             <Th>{t('Status')}</Th>
             <Th isNumeric>{t('Valor')}</Th>
@@ -26,6 +27,7 @@ export const EntriesTable = ({ entries }: EntriesTableProps) => {
               <Td>{t('Carregando faturas...')}</Td>
               <Td></Td>
               <Td></Td>
+              <Td></Td>
               <Td isNumeric></Td>
             </Tr>
           ) : entries.length > 0 ? (
@@ -35,6 +37,7 @@ export const EntriesTable = ({ entries }: EntriesTableProps) => {
           ) : (
             <Tr color="black" fontSize="xs" fontWeight="700">
               <Td>{t('Não foram encontrados resultados')}</Td>
+              <Td></Td>
               <Td></Td>
               <Td></Td>
               <Td isNumeric></Td>

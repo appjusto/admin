@@ -230,6 +230,20 @@ const InvoiceDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 {invoice?.value ? formatCurrency(invoice?.value) : 'N/E'}
               </Text>
             </Text>
+            <Text
+              mt="2"
+              fontSize="15px"
+              color="black"
+              fontWeight="700"
+              lineHeight="22px"
+            >
+              {t('Pago:')}{' '}
+              <Text as="span" fontWeight="500">
+                {invoice?.paid !== undefined
+                  ? formatCurrency(invoice.paid)
+                  : 'N/E'}
+              </Text>
+            </Text>
             <Box mt="4">
               <CustomButton
                 mt="0"
@@ -255,24 +269,11 @@ const InvoiceDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
             ) : (
               <PaymentMethodCard method={paymentMethod} />
             )}
-            {invoice?.invoiceType !== 'platform' && (
-              <>
-                <SectionTitle>{t('Subconta')}</SectionTitle>
-                {invoice?.accountType === 'platform' ? (
-                  <Text
-                    mt="2"
-                    fontSize="15px"
-                    color="black"
-                    fontWeight="700"
-                    lineHeight="22px"
-                  >
-                    {t('Nome:')}{' '}
-                    <Text as="span" fontWeight="500">
-                      {'Appjusto (Logística fora da rede)'}
-                    </Text>
-                  </Text>
-                ) : (
-                  <>
+            {invoice?.invoiceType !== 'p2p' &&
+              invoice?.invoiceType !== 'platform' && (
+                <>
+                  <SectionTitle>{t('Subconta')}</SectionTitle>
+                  {invoice?.accountType === 'platform' ? (
                     <Text
                       mt="2"
                       fontSize="15px"
@@ -282,38 +283,52 @@ const InvoiceDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                     >
                       {t('Nome:')}{' '}
                       <Text as="span" fontWeight="500">
-                        {invoice?.accountName ?? 'N/E'}
+                        {'Appjusto (Logística fora da rede)'}
                       </Text>
                     </Text>
-                    <Text
-                      mt="2"
-                      fontSize="15px"
-                      color="black"
-                      fontWeight="700"
-                      lineHeight="22px"
-                    >
-                      {t('ID:')}{' '}
-                      <Text as="span" fontWeight="500">
-                        {invoice?.accountExternalId ?? 'N/E'}
+                  ) : (
+                    <>
+                      <Text
+                        mt="2"
+                        fontSize="15px"
+                        color="black"
+                        fontWeight="700"
+                        lineHeight="22px"
+                      >
+                        {t('Nome:')}{' '}
+                        <Text as="span" fontWeight="500">
+                          {invoice?.accountName ?? 'N/E'}
+                        </Text>
                       </Text>
-                    </Text>
-                    <Box mt="4">
-                      {accountBtnLabel && (
-                        <CustomButton
-                          mt="0"
-                          minW="220px"
-                          color="black"
-                          variant="outline"
-                          label={accountBtnLabel}
-                          link={accountBtnLink}
-                          size="sm"
-                        />
-                      )}
-                    </Box>
-                  </>
-                )}
-              </>
-            )}
+                      <Text
+                        mt="2"
+                        fontSize="15px"
+                        color="black"
+                        fontWeight="700"
+                        lineHeight="22px"
+                      >
+                        {t('ID:')}{' '}
+                        <Text as="span" fontWeight="500">
+                          {invoice?.accountExternalId ?? 'N/E'}
+                        </Text>
+                      </Text>
+                      <Box mt="4">
+                        {accountBtnLabel && (
+                          <CustomButton
+                            mt="0"
+                            minW="220px"
+                            color="black"
+                            variant="outline"
+                            label={accountBtnLabel}
+                            link={accountBtnLink}
+                            size="sm"
+                          />
+                        )}
+                      </Box>
+                    </>
+                  )}
+                </>
+              )}
           </DrawerBody>
         </DrawerContent>
       </DrawerOverlay>
