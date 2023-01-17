@@ -94,25 +94,29 @@ export const BusinessSelect = ({
                 {t('Selecionar unidade:')}
               </Text>
             </Box>
-            {options.map((option) => {
-              return (
-                <Box
-                  key={option.value}
-                  p="2"
-                  cursor="pointer"
-                  _hover={{ bg: '#F6F6F6' }}
-                  color={
-                    selected?.value === option.value ? 'green.600' : 'gray.800'
-                  }
-                  onClick={() => handleSelect(option)}
-                >
-                  <Heading as="h3" fontSize="md">
-                    {option.name}
-                  </Heading>
-                  <Text fontSize="sm">{option.address}</Text>
-                </Box>
-              );
-            })}
+            <Box maxH="348px" overflowY="auto">
+              {options.map((option) => {
+                return (
+                  <Box
+                    key={option.value}
+                    p="2"
+                    cursor="pointer"
+                    _hover={{ bg: '#F6F6F6' }}
+                    color={
+                      selected?.value === option.value
+                        ? 'green.600'
+                        : 'gray.800'
+                    }
+                    onClick={() => handleSelect(option)}
+                  >
+                    <Heading as="h3" fontSize="md">
+                      {option.name}
+                    </Heading>
+                    <Text fontSize="sm">{option.address}</Text>
+                  </Box>
+                );
+              })}
+            </Box>
           </Box>
         )}
       </Box>
