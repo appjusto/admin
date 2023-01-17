@@ -13,6 +13,7 @@ import {
   Flex,
   Text,
 } from '@chakra-ui/react';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import { getFirebaseErrorMessage } from 'core/fb';
 import React from 'react';
 import { useRouteMatch } from 'react-router-dom';
@@ -42,11 +43,15 @@ export const BaseDrawer = ({
 }: BaseDrawerProps) => {
   // context
   const { url } = useRouteMatch();
+  const { isBackofficeUser } = useContextFirebaseUser();
   // UI
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
       <DrawerOverlay>
-        <DrawerContent mt={{ base: '16', lg: '0' }}>
+        <DrawerContent
+          mt={{ base: '16', lg: '0' }}
+          pt={isBackofficeUser ? '20' : 0}
+        >
           <DrawerCloseButton />
           <DrawerHeader
             borderBottom={type === 'product' ? '1px solid #C8D7CB' : 'none'}

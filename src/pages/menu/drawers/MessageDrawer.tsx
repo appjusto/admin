@@ -11,6 +11,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { useMenuMessage } from 'app/api/business/menu/useMenuMessage';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
 import React from 'react';
@@ -23,6 +24,7 @@ interface Props {
 
 export const MessageDrawer = ({ onClose, ...props }: Props) => {
   //context
+  const { isBackofficeUser } = useContextFirebaseUser();
   const {
     menuMessage,
     updateMenuMessage,
@@ -62,8 +64,12 @@ export const MessageDrawer = ({ onClose, ...props }: Props) => {
           handleSave();
         }}
       >
-        <DrawerContent>
-          <DrawerCloseButton bg="green.500" mr="12px" _focus={{ outline: 'none' }} />
+        <DrawerContent pt={isBackofficeUser ? '20' : 0}>
+          <DrawerCloseButton
+            bg="green.500"
+            mr="12px"
+            _focus={{ outline: 'none' }}
+          />
           <DrawerHeader pb="2">
             <Text fontSize="2xl" fontWeight="700">
               {t('Adicionar mensagem')}

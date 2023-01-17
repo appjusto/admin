@@ -16,6 +16,7 @@ import {
   Tooltip,
 } from '@chakra-ui/react';
 import { useBusinessTotalOrdersByConsumer } from 'app/api/order/useBusinessTotalOrdersByConsumer';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusinessId } from 'app/state/business/context';
 import { useOrdersContext } from 'app/state/order';
 import { CustomButton } from 'common/components/buttons/CustomButton';
@@ -56,6 +57,7 @@ export const OrderBaseDrawer = ({
 }: BaseDrawerProps) => {
   //context
   const { path } = useRouteMatch();
+  const { isBackofficeUser } = useContextFirebaseUser();
   const businessId = useContextBusinessId();
   const { changeOrderStatus } = useOrdersContext();
   const consumerTotalOrders = useBusinessTotalOrdersByConsumer(
@@ -127,7 +129,10 @@ export const OrderBaseDrawer = ({
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
       <DrawerOverlay>
-        <DrawerContent mt={isHistory ? { base: '16', lg: '0' } : '0'}>
+        <DrawerContent
+          mt={isHistory ? { base: '16', lg: '0' } : '0'}
+          pt={isBackofficeUser ? '16' : 0}
+        >
           <DrawerCloseButton
             bg="green.500"
             mr="12px"
