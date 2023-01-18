@@ -9,6 +9,8 @@ import { Timestamp } from 'firebase/firestore';
 import React from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
+import { OrderBaseCard } from './OrderBaseCard';
+import { OrderCodeBox } from './OrderCodeBox';
 
 interface Props {
   order: WithId<Order>;
@@ -23,6 +25,9 @@ export const OrderPreparingCard = ({ order }: Props) => {
   // state
   const [elapsedTime, setElapsedTime] = React.useState<number | null>(0);
   // helpers
+  const hasIssues = React.useMemo(() => {
+    return order.flags?.includes('issue');
+  }, [order.flags]);
   const preparingAt = React.useMemo(() => {
     return order.timestamps.preparing
       ? (order.timestamps.preparing as Timestamp).toDate()
@@ -65,10 +70,8 @@ export const OrderPreparingCard = ({ order }: Props) => {
   }, [order.id, elapsedTime, changeOrderStatus, cookingTime, isBackofficeUser]);
   // UI
   return (
-    <Box
-      position="relative"
-      borderRadius="lg"
-      borderColor="black"
+    <OrderBaseCard
+      borderColor={hasIssues ? 'red' : 'black'}
       borderWidth="2px"
       color="black"
       boxShadow="0px 8px 16px -4px rgba(105,118,103,0.1)"
@@ -84,9 +87,7 @@ export const OrderPreparingCard = ({ order }: Props) => {
           <Flex flexDir="column" fontWeight="700">
             <Flex justifyContent="space-between">
               <Box maxW="90px">
-                <Text fontSize="lg" fontWeight="700">
-                  #{order.code}
-                </Text>
+                <OrderCodeBox code={order.code} hasIssues={hasIssues} />
                 <Text fontSize="xs" lineHeight="lg" fontWeight="500">
                   {`{${consumerName}}`}
                 </Text>
@@ -108,7 +109,6 @@ export const OrderPreparingCard = ({ order }: Props) => {
                   size="sm"
                   value={cookingProgress}
                   colorScheme="green"
-                  borderRadius="lg"
                 />
               </Flex>
             </Flex>
@@ -135,6 +135,6 @@ export const OrderPreparingCard = ({ order }: Props) => {
           {t('Pedido pronto')}
         </Button>
       </Box>
-    </Box>
+    </OrderBaseCard>
   );
 };

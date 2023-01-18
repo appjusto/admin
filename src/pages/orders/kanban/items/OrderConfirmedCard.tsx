@@ -8,6 +8,8 @@ import { Timestamp } from 'firebase/firestore';
 import React from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
+import { OrderBaseCard } from './OrderBaseCard';
+import { OrderCodeBox } from './OrderCodeBox';
 
 interface Props {
   order: WithId<Order>;
@@ -22,6 +24,9 @@ export const OrderConfirmedCard = ({ order }: Props) => {
   // state
   const [elapsedTime, setElapsedTime] = React.useState<number | null>(0);
   // helpers
+  const hasIssues = React.useMemo(() => {
+    return order.flags?.includes('issue');
+  }, [order.flags]);
   const confirmedAt = React.useMemo(() => {
     return order.timestamps.confirmed
       ? (order.timestamps.confirmed as Timestamp).toDate()
@@ -69,20 +74,19 @@ export const OrderConfirmedCard = ({ order }: Props) => {
   // UI
   return (
     <Link to={`${url}/${order.id}`}>
-      <Box
+      <OrderBaseCard
         p="4"
         bg="green.300"
         borderRadius="lg"
-        borderColor="black"
+        borderColor={hasIssues ? 'red' : 'black'}
         borderWidth="2px"
         color="black"
         cursor="pointer"
+        flags={order.flags}
       >
         <Flex justifyContent="space-between" alignItems="center">
           <Box maxW="90px">
-            <Text fontSize="lg" fontWeight="700">
-              #{order.code}
-            </Text>
+            <OrderCodeBox code={order.code} hasIssues={hasIssues} />
             <Text fontSize="xs" lineHeight="lg">
               {`{${consumerName}}`}
             </Text>
@@ -93,7 +97,7 @@ export const OrderConfirmedCard = ({ order }: Props) => {
             <Text fontSize="sm">{t(`Agora`)}</Text>
           )}
         </Flex>
-      </Box>
+      </OrderBaseCard>
     </Link>
   );
 };
