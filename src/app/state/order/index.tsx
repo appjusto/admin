@@ -7,6 +7,7 @@ import {
 } from '@appjusto/types';
 import { useToast } from '@chakra-ui/react';
 import { useBusinessOpenClose } from 'app/api/business/profile/useBusinessOpenClose';
+import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useFreshDesk } from 'app/api/business/useFresdesk';
 import { OrderChatGroup } from 'app/api/chat/types';
 import { useBusinessChats } from 'app/api/chat/useBusinessChats';
@@ -63,6 +64,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   const { dispatchAppRequestResult } = useContextAppRequests();
   const { isBackofficeUser } = useContextFirebaseUser();
   const { business } = useContextBusiness();
+  const { sendBusinessKeepAlive } = useBusinessProfile(business?.id);
   const { scheduledOrders, scheduledOrdersNumber, fetchNextScheduledOrders } =
     useObserveScheduledOrders(business?.id);
   const activeOrders = useObserveOrders(statuses, business?.id);
@@ -144,6 +146,9 @@ export const OrdersContextProvider = (props: ProviderProps) => {
     setIsChatActive(true);
   }, []);
   // side effects
+  React.useEffect(() => {
+    sendBusinessKeepAlive();
+  }, [sendBusinessKeepAlive]);
   React.useEffect(() => {
     if (business?.situation !== 'approved' || business?.status !== 'available')
       return;

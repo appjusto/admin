@@ -1,8 +1,10 @@
 import { Business, DeleteBusinessPayload } from '@appjusto/types';
+import * as Sentry from '@sentry/react';
 import { useCustomMutation } from 'app/api/mutation/useCustomMutation';
 import { useContextApi } from 'app/state/api/context';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
+import React from 'react';
 import { useQuery } from 'react-query';
 
 export const useBusinessProfile = (
@@ -97,6 +99,14 @@ export const useBusinessProfile = (
         api.business().updateBusinessSlug(data),
       'updateBusinessSlug'
     );
+  const sendBusinessKeepAlive = React.useCallback(() => {
+    if (!businessId) return;
+    try {
+      api.business().sendBusinessKeepAlive(businessId);
+    } catch (error) {
+      Sentry.captureException(error);
+    }
+  }, [api, businessId]);
   // return
   return {
     logo,
@@ -114,5 +124,6 @@ export const useBusinessProfile = (
     deleteResult,
     cloneResult,
     cloneGroupResult,
+    sendBusinessKeepAlive,
   };
 };
