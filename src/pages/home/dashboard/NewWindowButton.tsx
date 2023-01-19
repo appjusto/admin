@@ -6,9 +6,6 @@ export const NewWindowButton = () => {
   return (
     <Tooltip label={t('Abrir nova janela')}>
       <Link
-        position="absolute"
-        top="4"
-        right="4"
         border="1px solid #E5E5E5"
         borderRadius="lg"
         px="1"

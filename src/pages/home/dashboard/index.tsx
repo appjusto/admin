@@ -1,5 +1,4 @@
 import { Box, Link, Stack, Text } from '@chakra-ui/react';
-import { isElectron } from '@firebase/util';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextBusinessDashboard } from 'app/state/dashboards/business';
 import { MaintenanceBox } from 'common/components/MaintenanceBox';
@@ -14,9 +13,6 @@ import { RegistrationStatus } from '../RegistrationStatus';
 import BannersContainer from './banners/BannersContainer';
 import InfoBox from './InfoBox';
 import LineChart from './LineChart';
-import { NewWindowButton } from './NewWindowButton';
-
-const isDesktopApp = isElectron();
 
 const Dashboard = () => {
   // context
@@ -83,7 +79,6 @@ const Dashboard = () => {
       />
       {business?.situation === 'approved' ? (
         <Box>
-          {isDesktopApp && <NewWindowButton />}
           <MaintenanceBox />
           <BannersContainer banners={banners} />
           <Box mt="8" border="1px solid #E5E5E5" borderRadius="lg" p="4">
