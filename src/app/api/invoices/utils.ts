@@ -30,13 +30,9 @@ export const getInvoicesTotalValueByTypes = (
 ) => {
   return invoices.reduce((result, invoice) => {
     if (types.includes(invoice.invoiceType)) {
-      let value = 0;
-      if (invoice.status === 'paid') {
-        value = invoice.fare?.value ?? 0;
-      } else {
-        value = invoice.paid ?? 0;
-      }
-      return result + value;
+      const delta = invoice.value - (invoice.paid ?? 0);
+      const valuePaid = invoice.fare.value - delta;
+      return result + valuePaid;
     }
     return result;
   }, 0);
@@ -49,6 +45,7 @@ export interface ItemByDay {
 
 export const splitInvoicesValuesByPeriod = (
   invoices: WithId<Invoice>[],
+  invoicesTypes: InvoiceType[],
   periodNumber: number,
   startDate: Date // milliseconds
 ) => {
@@ -58,7 +55,7 @@ export const splitInvoicesValuesByPeriod = (
     period.push({ date, value: 0 });
   }
   invoices.forEach((invoice) => {
-    if (['products', 'order'].includes(invoice.invoiceType)) {
+    if (invoicesTypes.includes(invoice.invoiceType)) {
       const date = (invoice.updatedOn as Timestamp).toDate().getDate();
       let item = period.find((item) => item.date === date);
       if (item) item.value += 1;

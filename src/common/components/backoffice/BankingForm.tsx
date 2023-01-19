@@ -2,6 +2,7 @@ import { Bank, BankAccount, WithId } from '@appjusto/types';
 import { Box, Flex, Radio, RadioGroup, Stack, Text } from '@chakra-ui/react';
 import { useBanks } from 'app/api/business/profile/useBanks';
 import { AlertWarning } from 'common/components/AlertWarning';
+import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import { CustomPatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';
 import { hyphenFormatter } from 'common/components/form/input/pattern-input/formatters';
 import { numbersAndLettersParser } from 'common/components/form/input/pattern-input/parsers';
@@ -31,6 +32,11 @@ export const BankingForm = ({
   const banks = useBanks();
   // state
   const [selectedBank, setSelectedBank] = React.useState<Bank>();
+  // pattern edition
+  const [patternEdition, setPatternEdition] = React.useState(false);
+  const [agencyPattern, setAgencyPattern] = React.useState<string>();
+  const [accountPattern, setAccountPattern] = React.useState<string>();
+  // validation
   const [validation, setValidation] = React.useState<
     Partial<BackofficeProfileValidation>
   >({
@@ -44,15 +50,6 @@ export const BankingForm = ({
   // helpers
   const agencyParser = numbersAndLettersParser(selectedBank?.agencyPattern);
   const agencyFormatter = hyphenFormatter(selectedBank?.agencyPattern);
-  const accountPattern = React.useMemo(
-    () =>
-      getBankingAccountPattern(
-        selectedBank,
-        bankAccount?.personType,
-        bankAccount?.type
-      ),
-    [selectedBank, bankAccount?.personType, bankAccount?.type]
-  );
   const accountParser = numbersAndLettersParser(accountPattern);
   const accountFormatter = hyphenFormatter(accountPattern);
   const bankWarning = selectedBank?.warning
@@ -111,6 +108,16 @@ export const BankingForm = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [banks, bankAccount?.name, findSelectedBank]);
+  React.useEffect(() => {
+    if (!selectedBank) return;
+    const pattern = getBankingAccountPattern(
+      selectedBank,
+      bankAccount?.personType,
+      bankAccount?.type
+    );
+    setAccountPattern(pattern);
+    setAgencyPattern(selectedBank?.agencyPattern);
+  }, [selectedBank, bankAccount?.personType, bankAccount?.type]);
   React.useEffect(() => {
     if (selectedBank?.code === '341' && bankAccount?.agency === '0500') {
       setValidation((prev) => ({
@@ -182,6 +189,37 @@ export const BankingForm = ({
             })}
         </AlertWarning>
       )}
+      <Box mt="4" p="4" bgColor="#F6F6F6" borderRadius="lg">
+        <Flex flexDir="row" justifyContent="space-between">
+          <Text>{t('Padrão de formatação do banco:')}</Text>
+          <Text
+            color={patternEdition ? 'red' : 'green.600'}
+            textDecor="underline"
+            cursor="pointer"
+            onClick={() => setPatternEdition(!patternEdition)}
+          >
+            {patternEdition ? t('Cancelar') : t('Editar')}
+          </Text>
+        </Flex>
+        <Input
+          mt="2"
+          id="agency-pattern-edition"
+          label={t('Padrão da agência')}
+          placeholder={t('9999')}
+          value={agencyPattern ?? ''}
+          onChange={(ev) => setAgencyPattern(ev.target.value)}
+          isDisabled={!patternEdition}
+        />
+        <Input
+          mt="4"
+          id="account-pattern-edition"
+          label={t('Padrão da conta')}
+          placeholder={t('99999999-D')}
+          value={accountPattern ?? ''}
+          onChange={(ev) => setAccountPattern(ev.target.value)}
+          isDisabled={!patternEdition}
+        />
+      </Box>
       <CustomPatternInput
         id="banking-agency"
         ref={agencyRef}

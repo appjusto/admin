@@ -105,7 +105,7 @@ const SharingPage = () => {
           onClick={handleUpdate}
           isLoading={isLoading}
         >
-          {t('Salvar')}
+          {business?.slug ? t('Salvar') : t('Salvar e gerar links')}
         </Button>
       </Stack>
       {business?.slug && (

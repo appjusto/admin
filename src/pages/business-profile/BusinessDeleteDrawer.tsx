@@ -132,11 +132,11 @@ export const BusinessDeleteDrawer = ({
                 </Text>
                 <Text mt="2" fontSize="16px" fontWeight="500" lineHeight="22px">
                   {t(
-                    'Você pode acessar o Perfil do restaurante e desligá-lo a qualquer momento para que não seja mais exibido na plataforma.'
+                    'Você pode acessar o menu "operação" e desligá-lo a qualquer momento para que não seja mais exibido na plataforma.'
                   )}
                 </Text>
                 <Button mt="4" variant="outline" onClick={onClose}>
-                  {t('Perfil do restaurante')}
+                  {t('Ir até o menu operação')}
                 </Button>
               </Box>
             )}

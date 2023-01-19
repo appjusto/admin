@@ -1,8 +1,17 @@
-import { Banner, Business, ManagerWithRole, WithId } from '@appjusto/types';
+import {
+  Banner,
+  Business,
+  BusinessService,
+  Fee,
+  ManagerWithRole,
+  WithId,
+} from '@appjusto/types';
+import { useFetchAreasByCity } from 'app/api/areas/useFetchAreasByCity';
 import { useObserveBannersByFlavor } from 'app/api/banners/useObserveBannersByFlavor';
 import { useObserveBusinessManagedBy } from 'app/api/business/profile/useObserveBusinessManagedBy';
 import { useObserveBusinessProfile } from 'app/api/business/profile/useObserveBusinessProfile';
 import { useGetManagers } from 'app/api/manager/useGetManagers';
+import { usePlatformFees } from 'app/api/platform/usePlatformFees';
 import React from 'react';
 import { useQueryClient } from 'react-query';
 import { useContextFirebaseUser } from '../auth/context';
@@ -38,6 +47,7 @@ const watchedFields: (keyof Business)[] = [
   'maxOrdersPerHour',
   'minHoursForScheduledOrders',
   'reviews',
+  'services',
   // object types
   'managers',
   'profileIssues',
@@ -55,6 +65,7 @@ interface ContextProps {
   businessManagers?: ManagerWithRole[];
   setIsGetManagersActive: React.Dispatch<React.SetStateAction<boolean>>;
   fetchManagers(): void;
+  insuranceAvailable?: BusinessService;
   banners?: WithId<Banner>[] | null;
 }
 
@@ -68,6 +79,7 @@ export const BusinessProvider = ({ children }: Props) => {
   // context
   const queryClient = useQueryClient();
   const { user, isBackofficeUser, refreshUserToken } = useContextFirebaseUser();
+  const { platformFees } = usePlatformFees();
   const businesses = useObserveBusinessManagedBy(user?.email);
   const [businessId, setBusinessId] = React.useState<
     string | undefined | null
@@ -76,6 +88,12 @@ export const BusinessProvider = ({ children }: Props) => {
   // state
   const [business, setBusiness] = React.useState<WithId<Business> | null>();
   const [isGetManagersActive, setIsGetManagersActive] = React.useState(false);
+  const areas = useFetchAreasByCity(
+    business?.businessAddress?.state,
+    business?.businessAddress?.city
+  );
+  const [insuranceAvailable, setInsuranceAvailable] =
+    React.useState<BusinessService>();
   const banners = useObserveBannersByFlavor('business', true, true);
   // business managers
   const { managers: businessManagers, fetchManagers } = useGetManagers(
@@ -152,6 +170,22 @@ export const BusinessProvider = ({ children }: Props) => {
     // manage any business
     setBusinessIdByBusinesses();
   }, [user?.email, isBackofficeUser, businessId, setBusinessIdByBusinesses]);
+  React.useEffect(() => {
+    if (!platformFees) return;
+    const getInsuranceFee = (): Fee | null => {
+      if (areas?.length > 0) {
+        return areas[0].insurance;
+      }
+      return platformFees?.insurance ?? null;
+    };
+    const fee = getInsuranceFee();
+    if (!fee) return;
+    const insurance: BusinessService = {
+      name: 'insurance',
+      fee,
+    };
+    setInsuranceAvailable(insurance);
+  }, [areas, platformFees]);
   // provider
   return (
     <BusinessContext.Provider
@@ -165,6 +199,7 @@ export const BusinessProvider = ({ children }: Props) => {
         businessManagers,
         setIsGetManagersActive,
         fetchManagers,
+        insuranceAvailable,
         banners,
       }}
     >

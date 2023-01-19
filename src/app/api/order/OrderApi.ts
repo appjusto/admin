@@ -12,6 +12,7 @@ import {
   OrderIssue,
   OrderLog,
   OrderMatching,
+  OrderMatchingLog,
   OrderPayload,
   OrderStatus,
   OrderType,
@@ -393,6 +394,22 @@ export default class OrderApi {
     return customCollectionSnapshot(q, resultHandler);
   }
 
+  getBusinessDeliveredOrdersByStartDate(
+    businessId: string,
+    start: Date,
+    resultHandler: (orders: WithId<Order>[]) => void
+  ): Unsubscribe {
+    let q = query(
+      this.refs.getOrdersRef(),
+      orderBy('timestamps.delivered'),
+      where('business.id', '==', businessId),
+      where('timestamps.delivered', '<=', start),
+      limit(1)
+    );
+    // returns the unsubscribe function
+    return customCollectionSnapshot(q, resultHandler);
+  }
+
   observeOrder(
     orderId: string,
     resultHandler: (order: WithId<Order>) => void
@@ -440,6 +457,39 @@ export default class OrderApi {
     );
     // returns the unsubscribe function
     return customCollectionSnapshot(q, resultHandler);
+  }
+
+  observeOrderMatchingLogs(
+    orderId: string,
+    resultHandler: (
+      logs: WithId<OrderMatchingLog>[],
+      last?: QueryDocumentSnapshot<DocumentData>
+    ) => void,
+    startAfterDoc?: FirebaseDocument
+  ): Unsubscribe {
+    let q = query(
+      this.refs.getOrderLogsRef(orderId),
+      where('type', '==', 'matching'),
+      orderBy('timestamp', 'asc'),
+      limit(10)
+    );
+    if (startAfterDoc) q = query(q, startAfter(startAfterDoc));
+    // returns the unsubscribe function
+    const unsubscribe = onSnapshot(
+      q,
+      (querySnapshot) => {
+        const last =
+          querySnapshot.docs.length > 0
+            ? querySnapshot.docs[querySnapshot.size - 1]
+            : undefined;
+        resultHandler(documentsAs<OrderMatchingLog>(querySnapshot.docs), last);
+      },
+      (error) => {
+        console.error(error);
+        Sentry.captureException(error);
+      }
+    );
+    return unsubscribe;
   }
 
   observeOrderIssues(
@@ -643,7 +693,7 @@ export default class OrderApi {
             refund: [],
           }
         : {
-            refund: ['products', 'delivery', 'platform', 'order'],
+            refund: ['service', 'products', 'delivery', 'tip'],
           };
     const paramsData = params ?? defaultParams;
     const payload: CancelOrderPayload = {

@@ -1,5 +1,6 @@
 import { CancelOrderPayload, Issue, WithId } from '@appjusto/types';
-import { Box, Text } from '@chakra-ui/react';
+import { Box, Icon, Text, Tooltip } from '@chakra-ui/react';
+import { useObserveLedgerByOrderIdAndOperation } from 'app/api/ledger/useObserveLedgerByOrderIdAndOperation';
 import { useOrder } from 'app/api/order/useOrder';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextManagerProfile } from 'app/state/manager/context';
@@ -7,8 +8,10 @@ import { useContextAppRequests } from 'app/state/requests/context';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import { isToday } from 'pages/orders/utils';
 import React from 'react';
+import { MdInfoOutline } from 'react-icons/md';
 import { useParams } from 'react-router-dom';
 import { useReactToPrint } from 'react-to-print';
+import { formatCurrency } from 'utils/formatters';
 import { getOrderCancellator } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { OrderBaseDrawer } from '../OrderBaseDrawer';
@@ -48,6 +51,11 @@ export const OrderDrawer = (props: Props) => {
     orderCancellationCosts,
   } = useOrder(orderId);
   const { manager } = useContextManagerProfile();
+  const { amount: insuranceAmount } = useObserveLedgerByOrderIdAndOperation(
+    business?.id,
+    orderId,
+    'business-insurance'
+  );
   // state
   const [isCanceling, setIsCanceling] = React.useState(false);
   // refs
@@ -168,12 +176,39 @@ export const OrderDrawer = (props: Props) => {
                     </Text>
                   </Text>
                   <Text mt="1" fontSize="md" fontWeight="700" color="black">
-                    {t('Reembolso:')}{' '}
+                    {t('Reembolso para consumidor:')}{' '}
                     <Text as="span" fontWeight="500">
                       {orderCancellation?.params?.refund.includes('products')
                         ? 'Sim'
                         : 'Não'}
                     </Text>
+                  </Text>
+                </>
+              )}
+              {insuranceAmount > 0 && (
+                <>
+                  <SectionTitle>{t('Cobertura AppJusto')}</SectionTitle>
+                  <Text mt="1" fontSize="md" fontWeight="700" color="black">
+                    {t('Valor ressarcido:')}{' '}
+                    <Text as="span" fontWeight="500">
+                      {formatCurrency(insuranceAmount)}
+                    </Text>
+                    <Tooltip
+                      placement="top"
+                      label={t(
+                        'Ressarcimento acontece 7 dias após o fechamento do pedido'
+                      )}
+                    >
+                      <Text as="span">
+                        <Icon
+                          ml="2"
+                          w="16px"
+                          h="16px"
+                          cursor="pointer"
+                          as={MdInfoOutline}
+                        />
+                      </Text>
+                    </Tooltip>
                   </Text>
                 </>
               )}

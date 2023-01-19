@@ -11,7 +11,10 @@ import {
   Tr,
 } from '@chakra-ui/react';
 import * as cpfutils from '@fnando/cpf';
-import { paymentMethodPTOptions } from 'pages/backoffice/utils';
+import {
+  invoiceStatusPTOptions,
+  paymentMethodPTOptions,
+} from 'pages/backoffice/utils';
 import React from 'react';
 import { formatCurrency } from 'utils/formatters';
 import {
@@ -27,6 +30,17 @@ interface DetailsProps {
 }
 
 export const OrderDetails = ({ order }: DetailsProps) => {
+  // helpers
+  const courierPaid = order?.fare?.courier?.value;
+  const businessPaid =
+    order?.fare?.business?.paid !== undefined
+      ? order.fare.business.paid
+      : order?.fare?.business?.value;
+  const totalPaid = (courierPaid ?? 0) + (businessPaid ?? 0);
+  const statusColor =
+    order?.fare?.business?.status && order?.fare?.business?.status !== 'paid'
+      ? 'red'
+      : 'black';
   // UI
   return (
     <Box>
@@ -134,23 +148,27 @@ export const OrderDetails = ({ order }: DetailsProps) => {
       )}
       {order?.status !== 'canceled' && (
         <>
-          <SectionTitle mt="10">{t('Forma de pagamento')}</SectionTitle>
+          <SectionTitle mt="10">{t('Dados do pagamento')}</SectionTitle>
           {order?.fulfillment === 'delivery' && (
             <Text mt="1" fontSize="md">
-              {t('Valor do frete:')}{' '}
+              {t('Frete:')}{' '}
               <Text as="span" color="black">
-                {order?.fare?.courier?.value
-                  ? formatCurrency(order.fare.courier.value)
-                  : 'N/E'}
+                {courierPaid ? formatCurrency(courierPaid) : 'N/E'}
                 {order?.outsourcedBy === 'business' &&
                   ` (${t('Assumido pelo restaurante')})`}
               </Text>
             </Text>
           )}
           <Text mt="1" fontSize="md">
+            {t('Produtos:')}{' '}
+            <Text as="span" color="black">
+              {businessPaid ? formatCurrency(businessPaid) : 'N/E'}
+            </Text>
+          </Text>
+          <Text mt="1" fontSize="md">
             {t('Total pago:')}{' '}
             <Text as="span" color="black">
-              {order?.fare?.total ? formatCurrency(order.fare.total) : 0}
+              {formatCurrency(totalPaid)}
             </Text>
           </Text>
           <Text mt="1" fontSize="md">
@@ -158,6 +176,14 @@ export const OrderDetails = ({ order }: DetailsProps) => {
             <Text as="span" color="black">
               {order?.paymentMethod
                 ? paymentMethodPTOptions[order.paymentMethod]
+                : 'N/E'}
+            </Text>
+          </Text>
+          <Text mt="1" fontSize="md">
+            {t('Status da fatura:')}{' '}
+            <Text as="span" color={statusColor} fontWeight="700">
+              {order?.fare?.business?.status
+                ? invoiceStatusPTOptions[order.fare.business.status]
                 : 'N/E'}
             </Text>
           </Text>

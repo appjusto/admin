@@ -71,10 +71,12 @@ export const orderDispatchingStatusPTOptions = {
 };
 
 export const invoiceTypePTOptions = {
-  order: 'Pedido',
+  // order: 'Pedido',
   products: 'Produtos',
   delivery: 'Entrega',
   platform: 'Plataforma',
+  food: 'Comida',
+  p2p: 'p2p',
   tip: 'Gorjeta',
 };
 
@@ -111,6 +113,8 @@ export const ledgerEntryStatusPTOptions = {
 export const ledgerEntryOperationPTOptions = {
   'delivery': 'Delivery',
   'same-owner-accounts': 'Entre contas de um mesmo usuário',
+  'tip': 'Gorjeta',
+  'business-insurance': 'Cobertura restaurante',
   'others': 'Outros',
 };
 

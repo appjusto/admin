@@ -9,6 +9,7 @@ import {
   Flex,
   Text,
 } from '@chakra-ui/react';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import React from 'react';
 import { Route, Switch, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
@@ -27,6 +28,7 @@ interface Props {
 export const ProductDrawer = (props: Props) => {
   // params
   const { path, url } = useRouteMatch();
+  const { isBackofficeUser } = useContextFirebaseUser();
   const {
     productId,
     onProductUpdate,
@@ -62,7 +64,10 @@ export const ProductDrawer = (props: Props) => {
             handleSubmit();
           }}
         >
-          <DrawerContent mt={{ base: '16', lg: '0' }}>
+          <DrawerContent
+            mt={{ base: '16', lg: '0' }}
+            pt={isBackofficeUser ? '20' : 0}
+          >
             <DrawerCloseButton />
             <DrawerHeader borderBottom="1px solid #C8D7CB" pb="0" mb="8">
               <Text fontSize="2xl" fontWeight="700">

@@ -133,6 +133,15 @@
     jsonpointer "^5.0.0"
     leven "^3.1.0"
 
+"@appjusto/dates@^0.7.1":
+  version "0.7.1"
+  resolved "https://registry.yarnpkg.com/@appjusto/dates/-/dates-0.7.1.tgz#cbf56d6df1067a19da8ff08cada7c3762d07b10c"
+  integrity sha512-L0fTrMyCKewjdCjKLYq7aCdgKj8K57slyp7cSTSPkV4cijbhPFuGoA+x/8/20TQMdMdjVHUMvASZ8w6bdU9g8A==
+  dependencies:
+    "@appjusto/types" "^7.6.13"
+    dayjs "^1.11.3"
+    lodash "^4.17.21"
+
 "@appjusto/menu@^0.1.4":
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/@appjusto/menu/-/menu-0.1.4.tgz#58359f20415468493c327d410ef18c8d672c1c85"
@@ -141,10 +150,10 @@
     "@appjusto/types" "^5.1.2"
     lodash "^4.17.21"
 
-"@appjusto/types@^10.2.1":
-  version "10.3.0"
-  resolved "https://registry.yarnpkg.com/@appjusto/types/-/types-10.3.0.tgz#9a2c945622e51f8bde80478d31f9a36cecee6d96"
-  integrity sha512-A2V7saj4SDedPYx9UNNVHZKQSOjuqAMaBWniBsw/0FUAwktUqmOqBRfsiVI0JodrxFJWygFETnbo6cGDdmcvhw==
+"@appjusto/types@12.4.8":
+  version "12.4.8"
+  resolved "https://registry.yarnpkg.com/@appjusto/types/-/types-12.4.8.tgz#0c91d1dc0bea4d03463de5361b34d6a82eda6d61"
+  integrity sha512-ecc4FcQqrkr/BOk/rmkYzHgO5XJZ3p5Q9OOtNCbCMf545XOpWVVkV5fN9P3Q92whWLZKkk1Ua4ilp5MTgpcR9A==
 
 "@appjusto/types@^5.1.2":
   version "5.11.0"
@@ -153,10 +162,17 @@
   dependencies:
     firebase "^9.6.7"
 
-"@babel/code-frame@^7.0.0", "@babel/code-frame@^7.10.4", "@babel/code-frame@^7.12.13", "@babel/code-frame@^7.16.0", "@babel/code-frame@^7.18.6", "@babel/code-frame@^7.8.3":
-  version "7.18.6"
-  resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.18.6.tgz#3b25d38c89600baa2dcc219edfa88a74eb2c427a"
-  integrity sha512-TDCmlK5eOvH+eH7cdAFlNXeVJqWIQ7gW9tY1GJIpUtFb6CmjVyq2VM3u71bOyR8CRihcCgMUYoDNyLXao3+70Q==
+"@appjusto/types@^7.6.13":
+  version "7.16.6"
+  resolved "https://registry.yarnpkg.com/@appjusto/types/-/types-7.16.6.tgz#06fbbaa34ed66e6ff3957415853ee4e4a20db1a6"
+  integrity sha512-gcdwtuXRoCSnumIGy6MVXhP/uNqEbVx6sB9WJ35+VG93jRASr9HLQGf8iWSo6BP2exzhNu8mpoiv+e5rn9iL5A==
+  dependencies:
+    firebase "^9.6.7"
+
+"@babel/code-frame@^7.0.0", "@babel/code-frame@^7.10.4", "@babel/code-frame@^7.12.13", "@babel/code-frame@^7.16.0", "@babel/code-frame@^7.16.7", "@babel/code-frame@^7.8.3":
+  version "7.16.7"
+  resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.16.7.tgz#44416b6bd7624b998f5b1af5d470856c40138789"
+  integrity sha512-iAXqUn8IIeBTNd72xsFlgaXHkMBMt6y4HJp1tIaK465CWLT/fG1aqB7ykr95gHHmlBdGbFeWWfyB4NJJ0nmeIg==
   dependencies:
     "@babel/highlight" "^7.18.6"
 
@@ -6755,6 +6771,11 @@ data-urls@^2.0.0:
     whatwg-url "^8.0.0"
 
 dayjs@^1.10.4, dayjs@^1.10.6:
+  version "1.11.6"
+  resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.11.6.tgz#2e79a226314ec3ec904e3ee1dd5a4f5e5b1c7afb"
+  integrity sha512-zZbY5giJAinCG+7AGaw0wIhNZ6J8AhWuSXKvuc1KAyMiRsvGQWqh4L+MomvhdAYjN+lqvVCMq1I41e3YHvXkyQ==
+
+dayjs@^1.11.3:
   version "1.11.6"
   resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.11.6.tgz#2e79a226314ec3ec904e3ee1dd5a4f5e5b1c7afb"
   integrity sha512-zZbY5giJAinCG+7AGaw0wIhNZ6J8AhWuSXKvuc1KAyMiRsvGQWqh4L+MomvhdAYjN+lqvVCMq1I41e3YHvXkyQ==

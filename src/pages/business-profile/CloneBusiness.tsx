@@ -40,7 +40,7 @@ export const CloneBusiness = () => {
   };
   // UI
   return (
-    <Box mt="4" mb="12">
+    <Box mt="16">
       <Box p="8" bgColor="#F6F6F6" border="1px solid #697667" borderRadius="lg">
         <Text fontSize="xl" color="black">
           {t('Criar um novo restaurante')}

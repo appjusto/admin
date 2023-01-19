@@ -1,12 +1,5 @@
 import { PreparationMode } from '@appjusto/types';
-import {
-  Badge,
-  Box,
-  Checkbox,
-  CheckboxGroup,
-  HStack,
-  Text,
-} from '@chakra-ui/react';
+import { Box, Checkbox, CheckboxGroup, HStack, Text } from '@chakra-ui/react';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import { t } from 'utils/i18n';
 
@@ -23,23 +16,7 @@ export const BusinessPreparationModes = ({
 }: BusinessPreparationModesProps) => {
   return (
     <Box>
-      <SectionTitle>
-        {t('Tipos de pedido')}
-        <Badge
-          ml="2"
-          mt="-12px"
-          px="8px"
-          py="2px"
-          bgColor="#FFBE00"
-          color="black"
-          borderRadius="16px"
-          fontSize="11px"
-          lineHeight="18px"
-          fontWeight="700"
-        >
-          {t('NOVIDADE')}
-        </Badge>
-      </SectionTitle>
+      <SectionTitle>{t('Tipos de pedido')}</SectionTitle>
       {!isBackoffice && (
         <Text mt="2" fontSize="md">
           {t('Selecione os tipos de pedido que o restaurante aceita receber')}

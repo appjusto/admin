@@ -1,9 +1,9 @@
 import {
   DispatchingState,
   Fulfillment,
-  InvoiceType,
   Issue,
   IssueType,
+  OrderRefundType,
   OrderStatus,
   OrderType,
 } from '@appjusto/types';
@@ -22,7 +22,7 @@ import {
 import { useObserveOrderPrivateConfirmation } from 'app/api/order/useObserveOrderPrivateConfirmation';
 import { useOrderNotes } from 'app/api/order/useOrderNotes';
 import { ProfileNotes } from 'common/components/backoffice/ProfileNotes';
-import { MdOpenInNew } from 'react-icons/md';
+import { MdInfo, MdOpenInNew } from 'react-icons/md';
 import { formatCurrency } from 'utils/formatters';
 import { getOrderCancellator } from 'utils/functions';
 import { t } from 'utils/i18n';
@@ -38,14 +38,17 @@ interface OrderStatusProps {
   issue?: Issue | null;
   message?: string;
   cancelOptions?: Issue[] | null;
-  refund: InvoiceType[];
+  refund: OrderRefundType[];
   refundValue: number;
-  onRefundingChange(type: InvoiceType, value: boolean): void;
+  onRefundingChange(type: OrderRefundType, value: boolean): void;
   updateState(
     type: string,
     value: OrderStatus | DispatchingState | IssueType | string
   ): void;
   courierId?: string;
+  businessInsurance?: boolean;
+  businessIndemnity: boolean;
+  onBusinessIndemnityChange(value: boolean): void;
 }
 
 export const OrderStatusBar = ({
@@ -63,6 +66,9 @@ export const OrderStatusBar = ({
   onRefundingChange,
   updateState,
   courierId,
+  businessInsurance,
+  businessIndemnity,
+  onBusinessIndemnityChange,
 }: OrderStatusProps) => {
   // context
   const { confirmation, frontUrl, packageUrl } =
@@ -302,7 +308,41 @@ export const OrderStatusBar = ({
               </RadioGroup>
             </>
           )}
-          <SectionTitle>{t('Reembolso:')}</SectionTitle>
+          {businessInsurance && (
+            <>
+              <SectionTitle>
+                {t('Ressarcimento para restaurante:')}
+              </SectionTitle>
+              <Box
+                mt="4"
+                p="4"
+                flexDir="row"
+                border="1px solid #C8D7CB"
+                borderRadius="lg"
+                // bgColor="yellow"
+                // maxW="600px"
+              >
+                <HStack>
+                  <Icon as={MdInfo} w="24px" h="24px" />
+                  <Text>
+                    {t('O restaurante possui cobertura para este pedido')}
+                  </Text>
+                </HStack>
+                <Checkbox
+                  mt="4"
+                  isChecked={businessIndemnity}
+                  onChange={(event) =>
+                    onBusinessIndemnityChange(event.target.checked)
+                  }
+                >
+                  {t(
+                    'Realizar ressarcimento do valor dos produtos para o restaurante'
+                  )}
+                </Checkbox>
+              </Box>
+            </>
+          )}
+          <SectionTitle>{t('Reembolso para consumidor:')}</SectionTitle>
           <Text
             mt="2"
             fontSize="15px"
@@ -313,28 +353,33 @@ export const OrderStatusBar = ({
             {t(`Valor do reembolso: ${formatCurrency(refundValue)}`)}
           </Text>
           <HStack mt="4" spacing={4}>
-            <Checkbox
-              width="120px"
-              colorScheme="green"
-              size="lg"
-              spacing="1rem"
-              iconSize="1rem"
-              isChecked={refund.includes('platform')}
-              onChange={(e) => onRefundingChange('platform', e.target.checked)}
-            >
-              {t('Plataforma')}
-            </Checkbox>
-            <Checkbox
-              width="120px"
-              colorScheme="green"
-              size="lg"
-              spacing="1rem"
-              iconSize="1rem"
-              isChecked={refund.includes('products')}
-              onChange={(e) => onRefundingChange('products', e.target.checked)}
-            >
-              {t('Produtos')}
-            </Checkbox>
+            {orderType === 'food' ? (
+              <Checkbox
+                width="120px"
+                colorScheme="green"
+                size="lg"
+                spacing="1rem"
+                iconSize="1rem"
+                isChecked={refund.includes('products')}
+                onChange={(e) =>
+                  onRefundingChange('products', e.target.checked)
+                }
+              >
+                {t('Produtos')}
+              </Checkbox>
+            ) : (
+              <Checkbox
+                width="120px"
+                colorScheme="green"
+                size="lg"
+                spacing="1rem"
+                iconSize="1rem"
+                isChecked={refund.includes('service')}
+                onChange={(e) => onRefundingChange('service', e.target.checked)}
+              >
+                {t('Taxa AppJusto')}
+              </Checkbox>
+            )}
             <Checkbox
               width="120px"
               colorScheme="green"
@@ -345,17 +390,6 @@ export const OrderStatusBar = ({
               onChange={(e) => onRefundingChange('delivery', e.target.checked)}
             >
               {t('Entrega')}
-            </Checkbox>
-            <Checkbox
-              width="120px"
-              colorScheme="green"
-              size="lg"
-              spacing="1rem"
-              iconSize="1rem"
-              isChecked={refund.includes('order')}
-              onChange={(e) => onRefundingChange('order', e.target.checked)}
-            >
-              {t('Pedido')}
             </Checkbox>
             <Checkbox
               width="120px"

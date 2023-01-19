@@ -9,13 +9,17 @@ import { SectionTitle } from '../generics/SectionTitle';
 import { Participant } from './Participant';
 interface ParticipantsProps {
   order?: WithId<Order> | null;
+  businessInsurance?: boolean;
 }
 
 const activeOrderStatuses = ['confirmed', 'preparing', 'ready', 'dispatching'];
 const dropsFoodIssues = ['courier-drops-food-delivery'] as IssueType[];
 const dropsP2pIssues = ['courier-drops-p2p-delivery'] as IssueType[];
 
-export const Participants = ({ order }: ParticipantsProps) => {
+export const Participants = ({
+  order,
+  businessInsurance,
+}: ParticipantsProps) => {
   // context
   const { dispatchAppRequestResult } = useContextAppRequests();
   const issues = useIssuesByType(
@@ -56,6 +60,7 @@ export const Participants = ({ order }: ParticipantsProps) => {
             name={order?.business?.name}
             address={order?.origin?.address?.description}
             additionalInfo={order?.origin?.additionalInfo}
+            businessInsurance={businessInsurance}
           />
           <SectionTitle>{t('Cliente')}</SectionTitle>
           <Participant

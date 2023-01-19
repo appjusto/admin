@@ -358,12 +358,14 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
             )}
           </>
         ) : (
-          <HStack mt="4" spacing={2} alignItems="center">
-            <Text fontSize="lg" fontWeight="500" lineHeight="21px">
-              {t('Buscando coordenadas para o endereço informado')}
-            </Text>
-            <Spinner size="sm" />
-          </HStack>
+          number.length > 0 && (
+            <HStack mt="4" spacing={2} alignItems="center">
+              <Text fontSize="lg" fontWeight="500" lineHeight="21px">
+                {t('Buscando coordenadas para o endereço informado')}
+              </Text>
+              <Spinner size="sm" />
+            </HStack>
+          )
         )}
         <Text mt="12" fontSize="xl" lineHeight="26px" color="black">
           {t('Tempo médio de preparo dos pratos')}
