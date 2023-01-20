@@ -1,5 +1,6 @@
 import { Business, Fulfillment, PreparationMode } from '@appjusto/types';
 import {
+  Badge,
   Box,
   Button,
   Flex,
@@ -47,6 +48,9 @@ const OperationPage = () => {
   ]);
   // refs
   const minimumOrderRef = React.useRef<HTMLInputElement>(null);
+  // helpers
+  const isBusinessApproved = business?.situation === 'approved';
+  // handlers
   const onSubmitHandler = async () => {
     console.log(status);
     const changes = {
@@ -100,6 +104,11 @@ const OperationPage = () => {
         >
           <Text mt="8" fontSize="xl" color="black">
             {t('Fechamento de emergência')}
+            {!isBusinessApproved && (
+              <Badge ml="2" px="2" borderRadius="lg" fontSize="12px">
+                {t('Disponível após aprovação')}
+              </Badge>
+            )}
           </Text>
           <Text mt="2" fontSize="md">
             {t(
@@ -113,9 +122,15 @@ const OperationPage = () => {
                 ev.stopPropagation();
                 setStatus(ev.target.checked ? 'available' : 'unavailable');
               }}
+              isDisabled={!isBusinessApproved}
             />
             <Flex ml="4" flexDir="column" minW="280px">
-              <Text fontSize="16px" fontWeight="700" lineHeight="22px">
+              <Text
+                fontSize="16px"
+                fontWeight="700"
+                lineHeight="22px"
+                opacity={!isBusinessApproved ? 0.6 : 1}
+              >
                 {status === 'available' ? t('Disponível') : t('Indisponível')}
               </Text>
             </Flex>
@@ -184,6 +199,11 @@ const OperationPage = () => {
           />
           <Text mt="8" fontSize="xl" color="black">
             {t('Desligar restaurante do AppJusto')}
+            {!isBusinessApproved && (
+              <Badge ml="2" px="2" borderRadius="lg" fontSize="12px">
+                {t('Disponível após aprovação')}
+              </Badge>
+            )}
           </Text>
           <Text mt="2" fontSize="md">
             {t('O restaurante não aparecerá no app enquanto estiver desligado')}
@@ -195,9 +215,15 @@ const OperationPage = () => {
                 ev.stopPropagation();
                 setEnabled(ev.target.checked);
               }}
+              isDisabled={!isBusinessApproved}
             />
             <Flex ml="4" flexDir="column" minW="280px">
-              <Text fontSize="16px" fontWeight="700" lineHeight="22px">
+              <Text
+                fontSize="16px"
+                fontWeight="700"
+                lineHeight="22px"
+                opacity={!isBusinessApproved ? 0.6 : 1}
+              >
                 {enabled ? t('Ligado') : t('Desligado')}
               </Text>
             </Flex>
