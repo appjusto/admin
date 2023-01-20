@@ -350,6 +350,18 @@ const ManagerBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 fontWeight="700"
                 lineHeight="22px"
               >
+                {t('Versão desktop:')}{' '}
+                <Text as="span" fontWeight="500">
+                  {manager.desktopAppVersion ?? 'N/E'}
+                </Text>
+              </Text>
+              <Text
+                mt="1"
+                fontSize="15px"
+                color="black"
+                fontWeight="700"
+                lineHeight="22px"
+              >
                 {t('Último restaurante acessado:')}{' '}
                 <Text as="span" fontWeight="500">
                   {manager.lastBusinessId ?? 'N/E'}
