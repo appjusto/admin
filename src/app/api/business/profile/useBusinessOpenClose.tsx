@@ -22,6 +22,7 @@ export const useBusinessOpenClose = (business?: WithId<Business> | null) => {
       duration: number = 6000
     ) => {
       if (isBackofficeUser) return;
+      if (toast.isActive(title)) return;
       toast({
         id: title,
         duration,
