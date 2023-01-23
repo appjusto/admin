@@ -208,17 +208,19 @@ export const OrderToPrinting = React.forwardRef<
           {t('Sem observações.')}
         </Text>
       )}
-      <SectionTitle mt="2" fontSize="18px">
-        {t('Frete')}
-      </SectionTitle>
-      <Text fontWeight="500" lineHeight="16px">
-        {t('Valor:')}{' '}
-        <Text as="span" fontWeight="700">
-          {order?.fare?.courier?.value
-            ? formatCurrency(order.fare.courier.value)
-            : 0}
-        </Text>
-      </Text>
+      {order?.fulfillment === 'delivery' && (
+        <>
+          <SectionTitle mt="2" fontSize="18px">
+            {t('Frete')}
+          </SectionTitle>
+          <Text fontWeight="500" lineHeight="16px">
+            {t('Valor:')}{' '}
+            <Text as="span" fontWeight="700">
+              {formatCurrency(order?.fare?.courier?.value ?? 0)}
+            </Text>
+          </Text>
+        </>
+      )}
       <Box mt="4" bg="black" textAlign="center">
         <Text fontSize="12px" fontWeight="700" color="white">
           {t('Este pedido já está pago')}
