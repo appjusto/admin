@@ -4,6 +4,8 @@ import {
   Box,
   Button,
   Flex,
+  HStack,
+  Icon,
   Switch as ChakraSwitch,
   Text,
 } from '@chakra-ui/react';
@@ -17,6 +19,7 @@ import { BusinessFulfillment } from 'pages/business-profile/BusinessFulfillment'
 import { BusinessPreparationModes } from 'pages/business-profile/BusinessPreparationModes';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
+import { RiErrorWarningLine } from 'react-icons/ri';
 import { t } from 'utils/i18n';
 
 const OperationPage = () => {
@@ -112,27 +115,37 @@ const OperationPage = () => {
           </Text>
           <Text mt="2" fontSize="md">
             {t(
-              'Para realizar o fechamento de emergência basta alterar o status abaixo para indisponível. O restaurante aparecerá como fechado até ser configurado manualmente para disponível novamente'
+              'Ao ativar o fechamento de emergência o seu restaurante aparecerá como fechado, desconsiderando os horários de funcionamento configurados, até que esta funcionalidade seja desativada manualmente'
             )}
           </Text>
           <Flex mt="4" alignItems="center">
             <ChakraSwitch
-              isChecked={status === 'available'}
+              isChecked={status !== 'available'}
               onChange={(ev) => {
                 ev.stopPropagation();
-                setStatus(ev.target.checked ? 'available' : 'unavailable');
+                setStatus(ev.target.checked ? 'unavailable' : 'available');
               }}
               isDisabled={!isBusinessApproved}
             />
-            <Flex ml="4" flexDir="column" minW="280px">
+            <Flex ml="4" flexDir="row" minW="280px">
               <Text
                 fontSize="16px"
                 fontWeight="700"
                 lineHeight="22px"
                 opacity={!isBusinessApproved ? 0.6 : 1}
               >
-                {status === 'available' ? t('Disponível') : t('Indisponível')}
+                {status === 'available' ? t('Desativado') : t('Ativado')}
               </Text>
+              {business?.status === 'unavailable' && (
+                <HStack px="4" color="red">
+                  <Icon as={RiErrorWarningLine} w="20px" h="20px" />
+                  <Text>
+                    {t(
+                      'Seu restaurante não está disponível para receber pedidos.'
+                    )}
+                  </Text>
+                </HStack>
+              )}
             </Flex>
           </Flex>
           <Box maxW="400px">

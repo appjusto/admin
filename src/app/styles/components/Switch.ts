@@ -3,7 +3,6 @@ import type {
   PartsStyleFunction,
   PartsStyleObject,
   SystemStyleFunction,
-  SystemStyleObject,
 } from '@chakra-ui/theme-tools';
 import { calc, cssVar } from '@chakra-ui/theme-tools';
 
@@ -35,7 +34,7 @@ const baseStyleTrack: SystemStyleFunction = (props) => {
   };
 };
 
-const baseStyleThumb: SystemStyleObject = {
+const baseStyleThumb = {
   bg: '#ffe493',
   border: '2px solid black',
   transitionProperty: 'transform',

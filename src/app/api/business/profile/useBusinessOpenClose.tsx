@@ -23,6 +23,7 @@ export const useBusinessOpenClose = (business?: WithId<Business> | null) => {
     ) => {
       if (isBackofficeUser) return;
       toast({
+        id: title,
         duration,
         render: () => (
           <CustomToast
@@ -95,7 +96,13 @@ export const useBusinessOpenClose = (business?: WithId<Business> | null) => {
   React.useEffect(() => {
     if (business?.status === 'unavailable') {
       setIsOpen(false);
+      handleToast(
+        'warning',
+        'Fechamento de emergência ativado.',
+        'Desative o fechamento de emergência para que seu restaurante possa funcionar de acordo com os horários configurados.',
+        12000
+      );
     }
-  }, [business?.status]);
+  }, [business?.status, handleToast]);
   return isOpen;
 };
