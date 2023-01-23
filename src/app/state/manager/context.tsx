@@ -50,7 +50,6 @@ export const ManagerProvider = ({ children }: Props) => {
     if (!user || !manager?.id) return;
     if (user.uid !== manager.id) return;
     updateVersionCalls++;
-    console.log('LOGGG!!!');
     if (isDesktopApp && manager?.desktopAppVersion !== version) {
       updateProfile({ changes: { desktopAppVersion: version } });
     } else if (manager?.webAppVersion !== version) {
