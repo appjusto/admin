@@ -1,6 +1,6 @@
 import { Fleet } from '@appjusto/types';
 import { Box, Text } from '@chakra-ui/react';
-import { useCourierFleet } from 'app/api/courier/useCourierFleet';
+import { useGetFleetById } from 'app/api/fleet/useGetFleetById';
 import { useContextCourierProfile } from 'app/state/courier/context';
 import React from 'react';
 import { t } from 'utils/i18n';
@@ -8,7 +8,7 @@ import { t } from 'utils/i18n';
 export const Fleets = () => {
   // context
   const { courier } = useContextCourierProfile();
-  const fleet = useCourierFleet(courier?.fleet?.id);
+  const fleet = useGetFleetById(courier?.fleet?.id);
   // state
   const [fleets, setFleets] = React.useState<Fleet[]>([]);
   // side effects
@@ -20,7 +20,12 @@ export const Fleets = () => {
     <Box mt="4">
       {fleets &&
         fleets.map((fleet) => (
-          <Box key={fleet.name} p="4" border="1px solid #C8D7CB" borderRadius="lg">
+          <Box
+            key={fleet.name}
+            p="4"
+            border="1px solid #C8D7CB"
+            borderRadius="lg"
+          >
             <Text color="black" fontSize="lg" lineHeight="26px">
               {fleet.name}
             </Text>
