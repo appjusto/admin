@@ -1,6 +1,7 @@
 import { Business, BusinessService, Fleet } from '@appjusto/types';
 import { Box, Button, Radio, RadioGroup, Stack, Text } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
+import { useFleet } from 'app/api/fleet/useFleet';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextAppRequests } from 'app/state/requests/context';
@@ -19,8 +20,9 @@ const LogisticsPage = () => {
   // context
   const { getServerTime } = useContextServerTime();
   const { dispatchAppRequestResult } = useContextAppRequests();
-  const { business, businessFleet } = useContextBusiness();
   const { user } = useContextFirebaseUser();
+  const { business, businessFleet } = useContextBusiness();
+  const { updateFleet } = useFleet();
   // queries & mutations
   const { updateBusinessProfile } = useBusinessProfile(business?.id);
   // state
@@ -61,6 +63,7 @@ const LogisticsPage = () => {
     setIsLoading(true);
     if (logistics === 'appjusto') {
       try {
+        // save logistics service in business document
         const time = getServerTime().getTime();
         const logisticsService = {
           name: 'logistics',
@@ -93,7 +96,6 @@ const LogisticsPage = () => {
           business?.services?.filter(
             (service) => service.name !== 'logistics'
           ) ?? [];
-        // updateBusinessProfile({ services });
         // create/update fleet
         const fleetChanges = {
           type: 'private',
@@ -109,8 +111,20 @@ const LogisticsPage = () => {
             id: business.id,
           },
         } as Fleet;
-        const fleetId = 'test';
+        const fleetId = await updateFleet({
+          changes: fleetChanges,
+          id: businessFleet?.id,
+        });
         // Add fleetId to business document
+        if (!fleetId) {
+          setIsLoading(false);
+          dispatchAppRequestResult({
+            status: 'error',
+            requestId: 'business-fleet-submit-error',
+            message: { title: 'Não foi possível criar a frota.' },
+          });
+          return;
+        }
         const fleetsIdsAllowed = business?.fleetsIdsAllowed ?? [];
         fleetsIdsAllowed.push(fleetId);
         const changes = {
@@ -130,6 +144,14 @@ const LogisticsPage = () => {
     }
   };
   // side effects
+  React.useEffect(() => {
+    if (!business) return;
+    const logisticsService = business.services?.find(
+      (service) => service.name === 'logistics'
+    );
+    if (logisticsService) setLogistics('appjusto');
+    else setLogistics('private');
+  }, [business]);
   React.useEffect(() => {
     if (businessFleet) {
       setName(businessFleet.name);
