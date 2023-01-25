@@ -13,6 +13,7 @@ import PageHeader from 'pages/PageHeader';
 import React from 'react';
 import { t } from 'utils/i18n';
 import { FleetIncrementalItem } from './FleetIncrementalItem';
+import { fleetValidation } from './utils';
 
 type LogisticsType = 'appjusto' | 'private';
 
@@ -111,6 +112,16 @@ const LogisticsPage = () => {
             id: business.id,
           },
         } as Fleet;
+        const isFleetvalid = fleetValidation(fleetChanges);
+        if (!isFleetvalid) {
+          setIsLoading(false);
+          dispatchAppRequestResult({
+            status: 'error',
+            requestId: 'business-fleet-submit-error',
+            message: { title: 'Os parâmetros da frota não são válidos.' },
+          });
+          return;
+        }
         const fleetId = await updateFleet({
           changes: fleetChanges,
           id: businessFleet?.id,
@@ -276,6 +287,7 @@ const LogisticsPage = () => {
                 onChange={setMaxDistance}
                 incrementNumber={1000}
                 unit="km"
+                minimum={1000}
               />
             </Box>
           )}
