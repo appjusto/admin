@@ -15,7 +15,8 @@ export const useFleet = () => {
         if (!data.id) return api.fleet().createFleet(data.changes);
         else return api.fleet().updateFleet(data.id, data.changes);
       },
-      'updateFleet'
+      'updateFleet',
+      false
     );
   // return
   return { updateFleet, updateFleetResult };

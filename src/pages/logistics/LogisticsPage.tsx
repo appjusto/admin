@@ -122,10 +122,11 @@ const LogisticsPage = () => {
           });
           return;
         }
-        const fleetId = await updateFleet({
+        const createdFleetId = await updateFleet({
           changes: fleetChanges,
           id: businessFleet?.id,
         });
+        const fleetId = businessFleet?.id ?? createdFleetId;
         // Add fleetId to business document
         if (!fleetId) {
           setIsLoading(false);
