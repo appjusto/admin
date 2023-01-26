@@ -298,10 +298,10 @@ export const BackofficeOrderDrawer = ({
       });
     else setLoadingState('idle');
   }, [updateResult.isLoading, cancelResult.isLoading]);
-  React.useEffect(() => {
-    if (!businessInsurance) return;
-    setBusinessIndemnity(true);
-  }, [businessInsurance]);
+  // React.useEffect(() => {
+  //   if (!businessInsurance) return;
+  //   setBusinessIndemnity(true);
+  // }, [businessInsurance]);
   React.useEffect(() => {
     if (!deleteOrderResult.isSuccess) return;
     onClose();
