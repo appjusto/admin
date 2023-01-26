@@ -34,6 +34,7 @@ import ConsumerApi from './consumer/CosumerApi';
 import CourierApi from './courier/CourierApi';
 import FilesApi from './FilesApi';
 import FirebaseRefs from './FirebaseRefs';
+import FleetApi from './fleet/FleetApi';
 import InvoicesApi from './invoices/InvoicesApi';
 import LedgerApi from './ledger/LedgerApi';
 import ManagerApi from './manager/ManagerApi';
@@ -75,6 +76,7 @@ export default class Api {
   private _chat: ChatApi;
   private _push_campaigns: PushCampaignApi;
   private _banners: BannersApi;
+  private _fleet: FleetApi;
 
   constructor(config: ApiConfig) {
     if (!Api.app) {
@@ -126,6 +128,7 @@ export default class Api {
     this._chat = new ChatApi(this._refs);
     this._push_campaigns = new PushCampaignApi(this._refs);
     this._banners = new BannersApi(this._refs, this._files);
+    this._fleet = new FleetApi(this._refs);
     this._areas = new AreasApi(this._refs);
   }
 
@@ -195,5 +198,9 @@ export default class Api {
 
   banners() {
     return this._banners;
+  }
+
+  fleet() {
+    return this._fleet;
   }
 }

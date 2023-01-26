@@ -1,7 +1,6 @@
 import {
   CourierProfile,
   CourierStatus,
-  Fleet,
   MarketplaceAccountInfo,
   OrderConsumerReview,
   ProfileNote,
@@ -14,7 +13,6 @@ import { FirebaseError } from 'firebase/app';
 import {
   addDoc,
   deleteDoc,
-  getDoc,
   getDocs,
   orderBy,
   query,
@@ -173,11 +171,6 @@ export default class CourierApi {
     return await this.files.getDownloadURL(
       this.refs.getCourierDocumentStoragePath(courierId, size)
     );
-  }
-
-  async getCourierFleet(fleetId: string) {
-    const fleet = await getDoc(this.refs.getFleetRef(fleetId));
-    return fleet.data() as Fleet;
   }
 
   // selfie

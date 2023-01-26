@@ -30,7 +30,7 @@ export const businessManagerObject = {
 
 export const businessCollaboratorObject = {
   advances: [],
-  businesses: ['r', { rule: 'u', conditions: ['status', 'keepAlive'] }],
+  businesses: ['r', { rule: 'u', conditions: ['status'] }],
   chats: ['c', 'r', 'u'],
   invoices: ['r'],
   managers: [],

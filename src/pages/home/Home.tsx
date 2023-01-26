@@ -65,6 +65,9 @@ const BankingInformation = React.lazy(
 const TeamPage = React.lazy(
   () => import(/* webpackPrefetch: true */ 'pages/team/TeamPage')
 );
+const LogisticsPage = React.lazy(
+  () => import(/* webpackPrefetch: true */ 'pages/logistics/LogisticsPage')
+);
 const InsurancePage = React.lazy(
   () => import(/* webpackPrefetch: true */ 'pages/insurance/InsurancePage')
 );
@@ -167,6 +170,10 @@ const Home = () => {
                   component={BankingInformation}
                 />
                 <AdminAccessRoute path={`${path}/team`} component={TeamPage} />
+                <AdminAccessRoute
+                  path={`${path}/logistics`}
+                  component={LogisticsPage}
+                />
                 <AdminAccessRoute
                   path={`${path}/insurance`}
                   component={InsurancePage}

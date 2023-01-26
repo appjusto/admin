@@ -44,8 +44,8 @@ const BusinessesPage = () => {
   const [city, setCity] = React.useState('');
   const [filterBar, setFilterBar] = React.useState('all');
   const [filterCheck, setFilterCheck] = React.useState<BusinessStatus[]>([
-    'open',
-    'closed',
+    'available',
+    'unavailable',
   ]);
   const [filters, setFilters] = React.useState<BusinessesFilter[]>([]);
   // search
@@ -166,8 +166,8 @@ const BusinessesPage = () => {
             fontSize="16px"
             lineHeight="22px"
           >
-            <Checkbox value="open">{t('Aberto')}</Checkbox>
-            <Checkbox value="closed">{t('Fechado')}</Checkbox>
+            <Checkbox value="available">{t('Disponível')}</Checkbox>
+            <Checkbox value="unavailable">{t('Indisponível')}</Checkbox>
           </HStack>
         </CheckboxGroup>
       </Stack>

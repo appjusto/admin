@@ -1,9 +1,13 @@
 import { Box, Flex, FlexProps, HStack, Text } from '@chakra-ui/react';
+import { isElectron } from '@firebase/util';
 import { t } from 'utils/i18n';
 import packageInfo from '../../package.json';
 import { EnvBadge } from './EnvBadge';
+import { NewWindowButton } from './home/dashboard/NewWindowButton';
 import BusinessInfo from './sidebar/BusinessInfo';
 const version = packageInfo.version;
+
+const isDesktopApp = isElectron();
 
 const MainHeader = (props: FlexProps) => {
   // UI
@@ -13,7 +17,7 @@ const MainHeader = (props: FlexProps) => {
       top="0"
       pt={{ base: '80px', lg: '4' }}
       w="100%"
-      pr="32px"
+      pr={{ base: '32px', lg: '0' }}
       bgColor="white"
       zIndex="1200"
       {...props}
@@ -36,6 +40,7 @@ const MainHeader = (props: FlexProps) => {
             {t(`VERSÃO: ${version ?? 'N/E'}`)}
           </Text>
           <EnvBadge />
+          {isDesktopApp && <NewWindowButton />}
         </HStack>
       </Flex>
     </Box>

@@ -24,7 +24,9 @@ export const formatIuguDateToDisplay = (date: string) => {
 
 export const calculateAppJustoCosts = (invoices: WithId<Invoice>[]) => {
   const value = invoices.reduce((total, invoice) => {
-    return (total += invoice.fare?.commission ?? 0);
+    const orderCommission =
+      (invoice.fare?.commission ?? 0) + (invoice.fare?.insurance ?? 0);
+    return (total += orderCommission);
   }, 0);
   return value;
 };

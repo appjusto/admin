@@ -10,6 +10,7 @@ import {
 import * as cnpjutils from '@fnando/cnpj';
 import { useBusinessAndBankAccountBatch } from 'app/api/business/profile/useBusinessAndBankAccountBatch';
 import { useBusinessBankAccount } from 'app/api/business/profile/useBusinessBankAccount';
+import { useBusinessOpenClose } from 'app/api/business/profile/useBusinessOpenClose';
 import { useObserveBusinessProfile } from 'app/api/business/profile/useObserveBusinessProfile';
 import { useBusinessMarketPlace } from 'app/api/business/useBusinessMarketPlace';
 import { useGetManagers } from 'app/api/manager/useGetManagers';
@@ -38,6 +39,7 @@ interface BusinessBOContextProps {
   manager?: WithId<ManagerProfile> | null;
   bankAccount?: Partial<BankAccount> | null;
   business?: WithId<Business> | null;
+  isBusinessOpen: boolean;
   contextValidation: BackofficeProfileValidation;
   isLoading: boolean;
   handleBusinessProfileChange(key: string, value: any): void;
@@ -112,6 +114,7 @@ export const BusinessBOProvider = ({ children }: Props) => {
     useBusinessMarketPlace(businessId);
   const { updateBusinessAndBankAccount, updateResult } =
     useBusinessAndBankAccountBatch(businessId);
+  const isBusinessOpen = useBusinessOpenClose(business);
   // state
   const [state, dispatch] = React.useReducer(
     businessBOReducer,
@@ -133,7 +136,11 @@ export const BusinessBOProvider = ({ children }: Props) => {
       if (key === 'situation' && value === 'blocked') {
         dispatch({
           type: 'update_business',
-          payload: { situation: 'blocked', enabled: false, status: 'closed' },
+          payload: {
+            situation: 'blocked',
+            enabled: false,
+            status: 'unavailable',
+          },
         });
       } else dispatch({ type: 'update_business', payload: { [key]: value } });
     },
@@ -293,6 +300,7 @@ export const BusinessBOProvider = ({ children }: Props) => {
         manager,
         bankAccount: state.bankingInfo,
         business: state.businessProfile,
+        isBusinessOpen,
         contextValidation,
         isLoading: updateResult.isLoading,
         handleBusinessProfileChange,

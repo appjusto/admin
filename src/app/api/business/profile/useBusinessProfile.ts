@@ -1,8 +1,4 @@
-import {
-  Business,
-  BusinessStatus,
-  DeleteBusinessPayload,
-} from '@appjusto/types';
+import { Business, DeleteBusinessPayload } from '@appjusto/types';
 import * as Sentry from '@sentry/react';
 import { useCustomMutation } from 'app/api/mutation/useCustomMutation';
 import { useContextApi } from 'app/state/api/context';
@@ -97,23 +93,20 @@ export const useBusinessProfile = (
       .cloneComplementsGroup(businessId!, data.groupId, data.name);
     return newGroupId;
   }, 'cloneComplementsGroup');
-  const sendBusinessKeepAlive = React.useCallback(
-    (status: BusinessStatus) => {
-      if (!businessId || status !== 'open') return;
-      try {
-        api.business().sendBusinessKeepAlive(businessId);
-      } catch (error) {
-        Sentry.captureException(error);
-      }
-    },
-    [api, businessId]
-  );
   const { mutate: updateBusinessSlug, mutationResult: updateSlugResult } =
     useCustomMutation(
       (data: { businessId: string; slug: string }) =>
         api.business().updateBusinessSlug(data),
       'updateBusinessSlug'
     );
+  const sendBusinessKeepAlive = React.useCallback(() => {
+    if (!businessId) return;
+    try {
+      api.business().sendBusinessKeepAlive(businessId);
+    } catch (error) {
+      Sentry.captureException(error);
+    }
+  }, [api, businessId]);
   // return
   return {
     logo,

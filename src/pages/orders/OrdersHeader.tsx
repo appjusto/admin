@@ -1,16 +1,21 @@
 import { Box, Circle, Flex, HStack, Image, Link, Text } from '@chakra-ui/react';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
+import { useOrdersContext } from 'app/state/order';
 import logo from 'common/img/logo.svg';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import packageInfo from '../../../package.json';
 const version = packageInfo.version;
 
 export const OrdersHeader = () => {
   // context
-  const { user, adminRole } = useContextFirebaseUser();
+  const { path } = useRouteMatch();
+  const { user } = useContextFirebaseUser();
   const { business } = useContextBusiness();
+  const { isBusinessOpen } = useOrdersContext();
+  // helpers
+  const isBusinessAvailable = business?.status === 'available';
   // UI
   return (
     <Flex
@@ -24,10 +29,7 @@ export const OrdersHeader = () => {
       <HStack spacing={6}>
         <Flex flexDir="row">
           <Box pt="7px" pr="2">
-            <Circle
-              size="10px"
-              bg={business?.status === 'open' ? 'green.500' : 'red'}
-            />
+            <Circle size="10px" bg={isBusinessOpen ? 'green.500' : 'red'} />
           </Box>
           <Flex flexDir="column" minW={{ lg: '280px' }}>
             <Text
@@ -35,7 +37,7 @@ export const OrdersHeader = () => {
               fontWeight="700"
               lineHeight="22px"
             >
-              {business?.status === 'open'
+              {isBusinessOpen
                 ? t('Restaurante aberto')
                 : t('Restaurante fechado')}
               <Text
@@ -49,17 +51,20 @@ export const OrdersHeader = () => {
                 {t(`v${version ?? 'N/E'}`)}
               </Text>
             </Text>
-            {adminRole === 'manager' && (
-              <Link as={RouterLink} to="/app/business-schedules">
-                <Text
-                  fontSize={{ base: '13px', lg: '15px' }}
-                  fontWeight="500"
-                  textStyle="link"
-                >
-                  {t('Alterar horário de funcionamento')}
-                </Text>
-              </Link>
-            )}
+            <Link
+              as={RouterLink}
+              to={`${path}/business-status`}
+              fontSize="13px"
+              lineHeight="16px"
+              textDecor="underline"
+              cursor="pointer"
+              color={isBusinessAvailable ? 'gray.800' : 'red'}
+              _focus={{ outline: 'none' }}
+            >
+              {isBusinessAvailable
+                ? t('Ativar fechamento de emergência')
+                : t('Desativar fechamento de emergência')}
+            </Link>
           </Flex>
         </Flex>
       </HStack>
