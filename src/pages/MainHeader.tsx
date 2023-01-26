@@ -17,7 +17,7 @@ const MainHeader = (props: FlexProps) => {
       top="0"
       pt={{ base: '80px', lg: '4' }}
       w="100%"
-      pr="32px"
+      pr={{ base: '32px', lg: '0' }}
       bgColor="white"
       zIndex="1200"
       {...props}

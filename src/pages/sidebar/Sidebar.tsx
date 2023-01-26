@@ -24,7 +24,7 @@ const Sidebar = () => {
   return (
     <Flex
       position="relative"
-      d={{ base: 'none', lg: 'block' }}
+      display={{ base: 'none', lg: 'block' }}
       w="220px"
       minW="220px"
       backgroundColor="#EEEEEE"
@@ -35,7 +35,7 @@ const Sidebar = () => {
         top={marginTop}
         w="220px"
         h="100vh"
-        pb="24"
+        pb="54px"
         overflowY="auto"
       >
         {isBackOffice ? (

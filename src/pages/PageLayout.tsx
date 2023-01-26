@@ -28,7 +28,7 @@ const PageLayout = ({
       <Flex flex={1} justifyContent="center">
         <Container
           position="relative"
-          w="100vw"
+          w="100%"
           maxW={{ lg: maxW }}
           pt={{
             base: isBackOffice ? '16' : isBackofficeUser ? '6' : '120px',
