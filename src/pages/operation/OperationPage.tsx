@@ -4,8 +4,6 @@ import {
   Box,
   Button,
   Flex,
-  HStack,
-  Icon,
   Switch as ChakraSwitch,
   Text,
 } from '@chakra-ui/react';
@@ -19,7 +17,6 @@ import { BusinessFulfillment } from 'pages/business-profile/BusinessFulfillment'
 import { BusinessPreparationModes } from 'pages/business-profile/BusinessPreparationModes';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
-import { RiErrorWarningLine } from 'react-icons/ri';
 import { t } from 'utils/i18n';
 
 const OperationPage = () => {
@@ -37,7 +34,7 @@ const OperationPage = () => {
     business?.minimumOrder ?? 0
   );
   const [enabled, setEnabled] = React.useState(business?.enabled ?? false);
-  const [status, setStatus] = React.useState(business?.status ?? 'unavailable');
+  // const [status, setStatus] = React.useState(business?.status ?? 'unavailable');
   const [maxOrdersPerHour, setMaxOrdersPerHour] = React.useState(
     String(business?.maxOrdersPerHour ?? '0')
   );
@@ -55,11 +52,10 @@ const OperationPage = () => {
   const isBusinessApproved = business?.situation === 'approved';
   // handlers
   const onSubmitHandler = async () => {
-    console.log(status);
     const changes = {
       minimumOrder,
       enabled,
-      status,
+      // status,
       maxOrdersPerHour: parseInt(maxOrdersPerHour, 10),
       minHoursForScheduledOrders: parseInt(minHoursForScheduledOrders, 10),
       preparationModes,
@@ -105,7 +101,7 @@ const OperationPage = () => {
             onSubmitHandler();
           }}
         >
-          <Text mt="8" fontSize="xl" color="black">
+          {/* <Text mt="8" fontSize="xl" color="black">
             {t('Fechamento de emergência')}
             {!isBusinessApproved && (
               <Badge ml="2" px="2" borderRadius="lg" fontSize="12px">
@@ -147,7 +143,7 @@ const OperationPage = () => {
                 </HStack>
               )}
             </Flex>
-          </Flex>
+          </Flex> */}
           <Box maxW="400px">
             {isBackofficeUser && (
               <CurrencyInput
@@ -211,7 +207,7 @@ const OperationPage = () => {
             handleChange={setFulfillment}
           />
           <Text mt="8" fontSize="xl" color="black">
-            {t('Desligar restaurante do AppJusto')}
+            {t('Visibilidade do restaurante')}
             {!isBusinessApproved && (
               <Badge ml="2" px="2" borderRadius="lg" fontSize="12px">
                 {t('Disponível após aprovação')}
@@ -219,7 +215,9 @@ const OperationPage = () => {
             )}
           </Text>
           <Text mt="2" fontSize="md">
-            {t('O restaurante não aparecerá no app enquanto estiver desligado')}
+            {t(
+              'Defina se o seu restaurante está visível para os consumidores do AppJusto'
+            )}
           </Text>
           <Flex mt="4" pb="8" alignItems="center">
             <ChakraSwitch
@@ -237,7 +235,7 @@ const OperationPage = () => {
                 lineHeight="22px"
                 opacity={!isBusinessApproved ? 0.6 : 1}
               >
-                {enabled ? t('Ligado') : t('Desligado')}
+                {enabled ? t('Visível') : t('Invisível')}
               </Text>
             </Flex>
           </Flex>
