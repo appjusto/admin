@@ -6,7 +6,7 @@ import { CustomToast } from 'common/components/CustomToast';
 import React from 'react';
 import { businessShouldBeOpen } from './utils';
 
-let statusUnavailableAlerted = false;
+// let statusUnavailableToastId: ;
 
 export const useBusinessOpenClose = (business?: WithId<Business> | null) => {
   // context
@@ -97,8 +97,7 @@ export const useBusinessOpenClose = (business?: WithId<Business> | null) => {
     checkBusinessStatus,
   ]);
   React.useEffect(() => {
-    if (business?.status === 'unavailable' && !statusUnavailableAlerted) {
-      statusUnavailableAlerted = true;
+    if (business?.status === 'unavailable') {
       setIsOpen(false);
       handleToast(
         'warning',
