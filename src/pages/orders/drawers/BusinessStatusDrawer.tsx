@@ -11,6 +11,7 @@ import {
   DrawerOverlay,
   Flex,
   HStack,
+  Icon,
   Image,
   Text,
 } from '@chakra-ui/react';
@@ -20,6 +21,7 @@ import { useContextBusiness } from 'app/state/business/context';
 import { useContextAppRequests } from 'app/state/requests/context';
 import iconTraffic from 'common/img/icon-traffic.svg';
 import React from 'react';
+import { FiClock } from 'react-icons/fi';
 import { t } from 'utils/i18n';
 
 interface BusinessStatusDrawerProps {
@@ -87,6 +89,23 @@ export const BusinessStatusDrawer = ({
             </Text>
           </DrawerHeader>
           <DrawerBody pos="relative" pb="28">
+            {business?.status === 'available' && (
+              <Flex
+                flexDir="row"
+                py="4"
+                px="6"
+                border="1px solid black"
+                borderRadius="lg"
+                mb="4"
+              >
+                <Icon mt="3px" as={FiClock} color="black" />
+                <Text ml="2" fontSize="md" lineHeight="22px">
+                  {t(
+                    'Seu restaurante está funcionando de acordo com os horários definidos.'
+                  )}
+                </Text>
+              </Flex>
+            )}
             <HStack
               spacing={6}
               py="4"
@@ -95,29 +114,29 @@ export const BusinessStatusDrawer = ({
               border="1px solid #DC3545"
               borderRadius="lg"
             >
-              <Box minW="60px">
+              <Box w="60px" minW="60px">
                 <Image src={iconTraffic} />
               </Box>
               {business?.status === 'unavailable' ? (
-                <Text fontSize="md">
-                  <Text as="span" fontWeight="700">
+                <Box>
+                  <Text fontWeight="700">
                     {t('Fechamento de emergência ativado. ')}
                   </Text>
-                  {t(
-                    'Seu restaurante não está disponível para receber pedidos.'
-                  )}
-                </Text>
+                  <Text fontSize="md">
+                    {t(
+                      'Seu restaurante não está disponível para receber pedidos.'
+                    )}
+                  </Text>
+                </Box>
               ) : (
                 <Text fontSize="md">
                   {t(
-                    'Ao ativar o fechamento de emergência o seu restaurante permanecerá como '
+                    'Ao ativar o fechamento de emergência, o seu restaurante '
                   )}
                   <Text as="span" fontWeight="700">
-                    {t('fechado')}
+                    {t('permanecerá fechado')}
                   </Text>
-                  {t(
-                    ' até que esta funcionalidade seja desativada manualmente.'
-                  )}
+                  {t(' até que você desative esta funcionalidade.')}
                 </Text>
               )}
             </HStack>
@@ -133,11 +152,6 @@ export const BusinessStatusDrawer = ({
                   borderRadius="lg"
                 >
                   <Text fontSize="15px" fontWeight="700">
-                    {t(
-                      'Seu restaurante ficará indisponível para novos pedidos.'
-                    )}
-                  </Text>
-                  <Text fontSize="15px">
                     {t(
                       'Tem certeza que deseja ativar o fechamento de emergência?'
                     )}

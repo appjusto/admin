@@ -185,9 +185,9 @@ export const OrdersContextProvider = (props: ProviderProps) => {
         status: 'error',
         requestId: 'disabled-business-alert',
         message: {
-          title: 'Seu restaurante está desligado.',
+          title: 'Seu restaurante não está visível.',
           description:
-            'Desligado, seu restaurante não aparecerá para seus clientes. Para ligá-lo, vá até o menu de operação ou contate o administrador desta unidade.',
+            'Seu restaurante não aparecerá para seus clientes. Para deixá-lo visível, vá até a seção de "visibilidade" no menu "operação" ou contate o administrador desta unidade.',
         },
         duration: 12000,
       });

@@ -102,7 +102,7 @@ export const useBusinessOpenClose = (business?: WithId<Business> | null) => {
       handleToast(
         'warning',
         'Fechamento de emergência ativado.',
-        'Desative o fechamento de emergência para que seu restaurante possa funcionar de acordo com os horários configurados.',
+        'Desative o fechamento de emergência para que seu restaurante possa funcionar de acordo com os horários definidos.',
         12000
       );
     }
