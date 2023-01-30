@@ -1,5 +1,6 @@
 import { Business, Fulfillment, PreparationMode } from '@appjusto/types';
 import {
+  Badge,
   Box,
   Button,
   Flex,
@@ -33,7 +34,7 @@ const OperationPage = () => {
     business?.minimumOrder ?? 0
   );
   const [enabled, setEnabled] = React.useState(business?.enabled ?? false);
-  const [status, setStatus] = React.useState(business?.status ?? 'closed');
+  // const [status, setStatus] = React.useState(business?.status ?? 'unavailable');
   const [maxOrdersPerHour, setMaxOrdersPerHour] = React.useState(
     String(business?.maxOrdersPerHour ?? '0')
   );
@@ -47,19 +48,14 @@ const OperationPage = () => {
   ]);
   // refs
   const minimumOrderRef = React.useRef<HTMLInputElement>(null);
+  // helpers
+  const isBusinessApproved = business?.situation === 'approved';
   // handlers
-  const handleEnabled = (enabled: boolean) => {
-    if (enabled) setEnabled(enabled);
-    else {
-      setStatus('closed');
-      setEnabled(false);
-    }
-  };
   const onSubmitHandler = async () => {
     const changes = {
       minimumOrder,
       enabled,
-      status,
+      // status,
       maxOrdersPerHour: parseInt(maxOrdersPerHour, 10),
       minHoursForScheduledOrders: parseInt(minHoursForScheduledOrders, 10),
       preparationModes,
@@ -105,6 +101,49 @@ const OperationPage = () => {
             onSubmitHandler();
           }}
         >
+          {/* <Text mt="8" fontSize="xl" color="black">
+            {t('Fechamento de emergência')}
+            {!isBusinessApproved && (
+              <Badge ml="2" px="2" borderRadius="lg" fontSize="12px">
+                {t('Disponível após aprovação')}
+              </Badge>
+            )}
+          </Text>
+          <Text mt="2" fontSize="md">
+            {t(
+              'Ao ativar o fechamento de emergência o seu restaurante aparecerá como fechado, desconsiderando os horários de funcionamento configurados, até que esta funcionalidade seja desativada manualmente'
+            )}
+          </Text>
+          <Flex mt="4" alignItems="center">
+            <ChakraSwitch
+              isChecked={status !== 'available'}
+              onChange={(ev) => {
+                ev.stopPropagation();
+                setStatus(ev.target.checked ? 'unavailable' : 'available');
+              }}
+              isDisabled={!isBusinessApproved}
+            />
+            <Flex ml="4" flexDir="row" minW="280px">
+              <Text
+                fontSize="16px"
+                fontWeight="700"
+                lineHeight="22px"
+                opacity={!isBusinessApproved ? 0.6 : 1}
+              >
+                {status === 'available' ? t('Desativado') : t('Ativado')}
+              </Text>
+              {business?.status === 'unavailable' && (
+                <HStack px="4" color="red">
+                  <Icon as={RiErrorWarningLine} w="20px" h="20px" />
+                  <Text>
+                    {t(
+                      'Seu restaurante não está disponível para receber pedidos.'
+                    )}
+                  </Text>
+                </HStack>
+              )}
+            </Flex>
+          </Flex> */}
           <Box maxW="400px">
             {isBackofficeUser && (
               <CurrencyInput
@@ -168,22 +207,35 @@ const OperationPage = () => {
             handleChange={setFulfillment}
           />
           <Text mt="8" fontSize="xl" color="black">
-            {t('Desligar restaurante do AppJusto')}
+            {t('Visibilidade do restaurante')}
+            {!isBusinessApproved && (
+              <Badge ml="2" px="2" borderRadius="lg" fontSize="12px">
+                {t('Disponível após aprovação')}
+              </Badge>
+            )}
           </Text>
           <Text mt="2" fontSize="md">
-            {t('O restaurante não aparecerá no app enquanto estiver desligado')}
+            {t(
+              'Defina se o seu restaurante estará visível, ou não, para os consumidores do AppJusto'
+            )}
           </Text>
           <Flex mt="4" pb="8" alignItems="center">
             <ChakraSwitch
               isChecked={enabled}
               onChange={(ev) => {
                 ev.stopPropagation();
-                handleEnabled(ev.target.checked);
+                setEnabled(ev.target.checked);
               }}
+              isDisabled={!isBusinessApproved}
             />
             <Flex ml="4" flexDir="column" minW="280px">
-              <Text fontSize="16px" fontWeight="700" lineHeight="22px">
-                {enabled ? t('Ligado') : t('Desligado')}
+              <Text
+                fontSize="16px"
+                fontWeight="700"
+                lineHeight="22px"
+                opacity={!isBusinessApproved ? 0.6 : 1}
+              >
+                {enabled ? t('Visível') : t('Invisível')}
               </Text>
             </Flex>
           </Flex>

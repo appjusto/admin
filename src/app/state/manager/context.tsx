@@ -1,13 +1,15 @@
 import { ManagerProfile, WithId } from '@appjusto/types';
+import { isElectron } from '@firebase/util';
 import { useManagerProfile } from 'app/api/manager/useManagerProfile';
 import { useUpdateManagerProfile } from 'app/api/manager/useUpdateManagerProfile';
 import React, { Dispatch, SetStateAction } from 'react';
 import { UseMutateFunction } from 'react-query';
 import packageInfo from '../../../../package.json';
 import { useContextFirebaseUser } from '../auth/context';
-// import { useContextBusiness } from '../business/context';
 
 const version = packageInfo.version;
+
+const isDesktopApp = isElectron();
 
 let updateUserAgentCalls = 0;
 let updateVersionCalls = 0;
@@ -34,7 +36,6 @@ interface Props {
 export const ManagerProvider = ({ children }: Props) => {
   // context
   const { user, isBackofficeUser } = useContextFirebaseUser();
-  // const { setBusinessId } = useContextBusiness();
   const { manager, setManagerEmail } = useManagerProfile();
   // set useUpdateManagerProfile isOnboarding to "true" to avoid dispatching update
   // manager webAppVersion changes results
@@ -42,20 +43,25 @@ export const ManagerProvider = ({ children }: Props) => {
     manager?.id,
     true
   );
-  // update business context with manager last business id
-  // React.useEffect(() => {
-  //   if (isBackofficeUser) return;
-  //   if (!manager?.lastBusinessId) return;
-  //   setBusinessId(manager.lastBusinessId);
-  // }, [isBackofficeUser, manager?.lastBusinessId, setBusinessId]);
+  // side effects
   React.useEffect(() => {
     if (updateVersionCalls > 0) return;
+    if (!version) return;
     if (!user || !manager?.id) return;
     if (user.uid !== manager.id) return;
-    if (!version || manager?.webAppVersion === version) return;
     updateVersionCalls++;
-    updateProfile({ changes: { webAppVersion: version } });
-  }, [user, manager?.id, manager?.webAppVersion, updateProfile]);
+    if (isDesktopApp && manager?.desktopAppVersion !== version) {
+      updateProfile({ changes: { desktopAppVersion: version } });
+    } else if (manager?.webAppVersion !== version) {
+      updateProfile({ changes: { webAppVersion: version } });
+    }
+  }, [
+    user,
+    manager?.id,
+    manager?.webAppVersion,
+    manager?.desktopAppVersion,
+    updateProfile,
+  ]);
   React.useEffect(() => {
     if (updateUserAgentCalls > 0) return;
     if (!manager) return;

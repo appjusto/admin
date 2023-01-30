@@ -56,7 +56,7 @@ const Menu = () => {
           title={t('Cardápio')}
           subtitle={t('Defina o cardápio do seu restaurante.')}
         />
-        {isBackofficeUser && business?.situation !== 'approved' && (
+        {isBackofficeUser && !business?.enabled && (
           <ImportMenuCard businessId={business?.id} />
         )}
         <NewFeatureBox

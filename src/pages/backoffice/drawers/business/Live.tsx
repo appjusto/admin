@@ -8,12 +8,12 @@ import { SectionTitle } from '../generics/SectionTitle';
 
 export const BusinessLive = () => {
   // context
-  const { business, handleBusinessProfileChange } =
+  const { business, isBusinessOpen, handleBusinessProfileChange } =
     useContextBusinessBackoffice();
 
   // state
-  const [isOpen, setIsOpen] = React.useState<BusinessStatus>(
-    business?.status ?? 'closed'
+  const [status, setStatus] = React.useState<BusinessStatus>(
+    business?.status ?? 'unavailable'
   );
   const [isEnabled, setIsEnabled] = React.useState(
     business?.enabled ? 'true' : 'false'
@@ -23,7 +23,7 @@ export const BusinessLive = () => {
   const handleEnabled = (enabled: string) => {
     if (enabled === 'true') setIsEnabled(enabled);
     else {
-      setIsOpen('closed');
+      setStatus('unavailable');
       setIsEnabled('false');
     }
   };
@@ -37,7 +37,7 @@ export const BusinessLive = () => {
 
   // side effects
   React.useEffect(() => {
-    if (business?.status) setIsOpen(business.status);
+    if (business?.status) setStatus(business.status);
   }, [business?.status]);
 
   React.useEffect(() => {
@@ -52,30 +52,16 @@ export const BusinessLive = () => {
   }, [business?.enabled]);
 
   React.useEffect(() => {
-    handleBusinessProfileChange('status', isOpen);
+    handleBusinessProfileChange('status', status);
     handleBusinessProfileChange('enabled', isEnabled === 'true' ? true : false);
-  }, [isOpen, isEnabled, handleBusinessProfileChange]);
+  }, [status, isEnabled, handleBusinessProfileChange]);
 
   // UI
   return (
     <Box>
-      <SectionTitle mt="0">{t('Restaurante agora:')}</SectionTitle>
-      <RadioGroup
-        mt="2"
-        onChange={(value) => {
-          if (isEnabled === 'true') setIsOpen(value as BusinessStatus);
-        }}
-        value={isOpen}
-      >
-        <Flex flexDir="column" justifyContent="flex-start">
-          <Radio mt="2" value="open">
-            {t('Aberto')}
-          </Radio>
-          <Radio mt="2" value="closed">
-            {t('Fechado')}
-          </Radio>
-        </Flex>
-      </RadioGroup>
+      <SectionTitle mt="0">
+        {t(`Restaurante ${isBusinessOpen ? 'aberto' : 'fechado'}`)}
+      </SectionTitle>
       <SectionTitle>
         {t('Modo do tempo de preparo (cooking time):')}
       </SectionTitle>
@@ -111,6 +97,27 @@ export const BusinessLive = () => {
         }
         cookingTimeMode={business?.settings?.cookingTimeMode}
       />
+      <SectionTitle>{t('Fechamento de emergência:')}</SectionTitle>
+      <Text fontSize="15px" lineHeight="21px">
+        {t(
+          'O restaurante aparecerá como fechado até ser configurado como disponível novamente'
+        )}
+      </Text>
+      <RadioGroup
+        mt="2"
+        onChange={(value: BusinessStatus) => setStatus(value)}
+        value={status}
+        color="black"
+      >
+        <Flex flexDir="column" justifyContent="flex-start">
+          <Radio mt="2" value="available">
+            {t('Disponível')}
+          </Radio>
+          <Radio mt="2" value="unavailable">
+            {t('Indisponível')}
+          </Radio>
+        </Flex>
+      </RadioGroup>
       <SectionTitle>{t('Desligar restaurante do AppJusto:')}</SectionTitle>
       <Text fontSize="15px" lineHeight="21px">
         {t(

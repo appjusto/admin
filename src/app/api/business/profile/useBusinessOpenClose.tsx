@@ -1,109 +1,111 @@
 import { Business, WithId } from '@appjusto/types';
 import { useToast } from '@chakra-ui/toast';
-// import * as Sentry from '@sentry/react';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextServerTime } from 'app/state/server-time';
 import { CustomToast } from 'common/components/CustomToast';
 import React from 'react';
-import { useBusinessProfile } from './useBusinessProfile';
 import { businessShouldBeOpen } from './utils';
 
-// 'ptYK5Olovr5lSTut1Nos', // itapuama staging
-// const bWithSchedulesProblems = [
-//   'mAJlS0yWVTgKXMvwAD3B',
-//   'SBGxAtt82iLhNRMKLiih',
-//   'KKriu277V1wlNYvmld9n',
-//   'Mld19W2kAGgajoq6V7vD',
-// ];
-
-// let eventCount = 0;
+// let statusUnavailableToastId: ;
 
 export const useBusinessOpenClose = (business?: WithId<Business> | null) => {
   // context
-  const { adminRole } = useContextFirebaseUser();
-  const { updateBusinessProfile } = useBusinessProfile(business?.id);
+  const { isBackofficeUser } = useContextFirebaseUser();
   const { getServerTime } = useContextServerTime();
+  // state
+  const [isOpen, setIsOpen] = React.useState(false);
   // handlers
   const toast = useToast();
-  const checkBusinessStatus = React.useCallback(() => {
-    if (business?.situation !== 'approved') return;
-    if (!business?.enabled) return;
-    if (!business?.schedules) return;
-    const today = getServerTime();
-    const shouldBeOpen = businessShouldBeOpen(today, business.schedules);
-    // if (
-    //   business?.id &&
-    //   bWithSchedulesProblems.includes(business.id) &&
-    //   eventCount < 10
-    // ) {
-    //   eventCount++;
-    //   const day = today.getDay();
-    //   const dayIndex = day === 0 ? 6 : day - 1;
-    //   const daySchedule = business.schedules[dayIndex].schedule;
-    //   Sentry.captureEvent({
-    //     level: 'debug',
-    //     // message: 'business-open-close',
-    //     tags: {
-    //       name: 'business-open-close',
-    //     },
-    //     extra: {
-    //       businessId: business.id,
-    //       adminRole: adminRole,
-    //       time: today,
-    //       daySchedule: daySchedule,
-    //       shouldBeOpen: shouldBeOpen,
-    //     },
-    //   } as Sentry.Event);
-    // }
-    if (shouldBeOpen && business?.status === 'closed') {
-      updateBusinessProfile({ status: 'open' });
-    } else if (!shouldBeOpen && business?.status === 'open') {
-      console.log(
-        '%cFechando restaurante de acordo com horários estabelecidos.',
-        'color: purple'
-      );
-      updateBusinessProfile({ status: 'closed' });
+  const handleToast = React.useCallback(
+    (
+      type: 'error' | 'success' | 'warning',
+      title: string,
+      description?: string,
+      duration: number = 6000
+    ) => {
+      if (isBackofficeUser) return;
+      if (toast.isActive(title)) return;
       toast({
-        duration: 12000,
+        id: title,
+        duration,
         render: () => (
           <CustomToast
-            type="warning"
+            type={type}
             message={{
-              title: 'Seu restaurante está fechado.',
-              description:
-                'Seu restaurante foi fechado de acordo com o horário de funcionamento definido. Para começar a receber pedidos ajuste estas configuração na tela de "Horários" ou contate o administrador desta unidade.',
+              title,
+              description,
             }}
           />
         ),
       });
+    },
+    [isBackofficeUser, toast]
+  );
+  const checkBusinessStatus = React.useCallback(() => {
+    if (business?.situation !== 'approved') return;
+    if (!business?.enabled) return;
+    if (!business?.schedules) return;
+    if (business?.status === 'unavailable') return;
+    const today = getServerTime();
+    const shouldBeOpen = businessShouldBeOpen(today, business.schedules);
+    if (shouldBeOpen && !isOpen) {
+      setIsOpen(true);
+      console.log(
+        '%Abrindo restaurante de acordo com horários estabelecidos.',
+        'color: purple'
+      );
+      handleToast('success', 'Seu restaurante está aberto!');
+    }
+    if (!shouldBeOpen && isOpen) {
+      console.log(
+        '%cFechando restaurante de acordo com horários estabelecidos.',
+        'color: purple'
+      );
+      setIsOpen(false);
+      handleToast(
+        'warning',
+        'Seu restaurante está fechado.',
+        'Seu restaurante foi fechado de acordo com o horário de funcionamento definido. Se deseja continuar a receber pedidos, ajuste estas configuração na tela de "Horários" ou contate o administrador desta unidade.',
+        12000
+      );
     }
   }, [
-    // adminRole,
-    // business?.id,
     business?.situation,
     business?.enabled,
     business?.schedules,
     business?.status,
+    isOpen,
     getServerTime,
-    updateBusinessProfile,
-    toast,
+    handleToast,
   ]);
   // side effects
   React.useEffect(() => {
-    if (!adminRole) return;
     if (business?.situation !== 'approved') return;
     if (!business?.enabled) return;
     if (!business?.schedules) return;
+    if (business?.status === 'unavailable') return;
     checkBusinessStatus();
     const openCloseInterval = setInterval(() => {
       checkBusinessStatus();
     }, 5000);
     return () => clearInterval(openCloseInterval);
   }, [
-    adminRole,
     business?.situation,
     business?.enabled,
     business?.schedules,
+    business?.status,
     checkBusinessStatus,
   ]);
+  React.useEffect(() => {
+    if (business?.status === 'unavailable') {
+      setIsOpen(false);
+      handleToast(
+        'warning',
+        'Fechamento de emergência ativado.',
+        'Desative o fechamento de emergência para que seu restaurante possa funcionar de acordo com os horários definidos.',
+        12000
+      );
+    }
+  }, [business?.status, handleToast]);
+  return isOpen;
 };

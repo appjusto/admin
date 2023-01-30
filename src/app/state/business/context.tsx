@@ -176,7 +176,7 @@ export const BusinessProvider = ({ children }: Props) => {
       if (areas?.length > 0) {
         return areas[0].insurance;
       }
-      return platformFees?.insurance ?? null;
+      return platformFees?.insurance.business ?? null;
     };
     const fee = getInsuranceFee();
     if (!fee) return;
