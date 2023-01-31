@@ -10,7 +10,6 @@ import {
 } from '@chakra-ui/react';
 import { useManagers } from 'app/api/manager/useManagers';
 import { useContextFirebaseUser } from 'app/state/auth/context';
-import { useContextBusiness } from 'app/state/business/context';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { CloseButton } from 'common/components/buttons/CloseButton';
 import { CustomInput } from 'common/components/form/input/CustomInput';
@@ -40,20 +39,29 @@ const collaboratorLabel = t(
 );
 
 interface AddMembersFormProps {
+  businessId?: string;
+  businessManagers?: string[];
   isBackoffice?: boolean;
 }
 
-export const AddMembersForm = ({ isBackoffice }: AddMembersFormProps) => {
+export const AddMembersForm = ({
+  businessId,
+  businessManagers,
+  isBackoffice,
+}: AddMembersFormProps) => {
   //context
   const { userAbility } = useContextFirebaseUser();
   const { dispatchAppRequestResult } = useContextAppRequests();
-  const { business } = useContextBusiness();
-  const { createManager, createManagerResult } = useManagers();
+  // const { business } = useContextBusiness();
+  const { createManager, createManagerResult } = useManagers(businessId);
   const { isLoading, isSuccess } = createManagerResult;
   // state
   const [members, setMembers] = React.useState<Member[]>([memberObj]);
   // helpers
-  const userIsOwner = userAbility?.can('delete', 'businesses');
+  const userIsOwner = userAbility?.can('delete', {
+    kind: 'businesses',
+    id: businessId,
+  });
   // handlers
   const AddMemberFields = () => {
     setMembers((prevState) => [...prevState, memberObj]);
@@ -80,7 +88,7 @@ export const AddMembersForm = ({ isBackoffice }: AddMembersFormProps) => {
     });
   };
   const handleSubmit = () => {
-    if (!business?.id)
+    if (!businessId)
       return dispatchAppRequestResult({
         status: 'error',
         requestId: 'AddMembersForm-valid-no-business',
@@ -97,7 +105,7 @@ export const AddMembersForm = ({ isBackoffice }: AddMembersFormProps) => {
     }
     const membersEmails = members.map((member) => member.email);
     const isIntersection =
-      intersection(business.managers, membersEmails).length > 0;
+      intersection(businessManagers, membersEmails).length > 0;
     if (isIntersection) {
       return dispatchAppRequestResult({
         status: 'error',
