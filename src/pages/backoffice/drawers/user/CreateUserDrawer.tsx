@@ -8,13 +8,17 @@ import {
   DrawerFooter,
   DrawerHeader,
   DrawerOverlay,
+  Flex,
   HStack,
+  Icon,
   Text,
 } from '@chakra-ui/react';
 import { useAuthentication } from 'app/api/auth/useAuthentication';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import React from 'react';
+import { MdInfoOutline } from 'react-icons/md';
 import { isEmailValid, normalizeEmail } from 'utils/email';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
@@ -27,18 +31,29 @@ interface BaseDrawerProps {
 
 export const CreateUserDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   // context
+  const { userAbility } = useContextFirebaseUser();
   const { createUserWithEmailAndPassword, createUserResult } =
     useAuthentication();
   const { dispatchAppRequestResult } = useContextAppRequests();
   // state
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
+  const [isSuccess, setIsSuccess] = React.useState(false);
   const isEmailInvalid = React.useMemo(() => !isEmailValid(email), [email]);
   // refs
   const emailRef = React.useRef<HTMLInputElement>(null);
   // handlers
   const createUser = () => {
     // validation
+    if (userAbility?.cannot('create', 'users')) {
+      return dispatchAppRequestResult({
+        status: 'error',
+        requestId: 'createUser-permission-denied',
+        message: {
+          title: 'O usuário não possui permissão para realizar esta operação.',
+        },
+      });
+    }
     if (isEmailInvalid) {
       return dispatchAppRequestResult({
         status: 'error',
@@ -66,6 +81,10 @@ export const CreateUserDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
     const random = generatePassword();
     setPassword(random);
   }, [password]);
+  React.useEffect(() => {
+    if (!createUserResult.isSuccess) return;
+    setIsSuccess(true);
+  }, [createUserResult.isSuccess]);
   //UI
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
@@ -90,10 +109,21 @@ export const CreateUserDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
           <DrawerBody pb="28">
             <Text fontSize="md">
               {t(
-                'O novo usuário será criado com uma senha aleatória. Lembre-se de copiar os dados de acesso após a criação do usuário, pois essa informação não poderá ser recuperada posteriormente.'
+                'É importante realizar uma troca de e-mails, para validar a existência e propriedade do e-mail que será utilizado para criar o novo usuário. Uma senha aleatória gerada será exibida após esta criação.'
               )}
             </Text>
-            {createUserResult.isSuccess ? (
+            <Flex mt="4" flexDir="row">
+              <Icon mt="1" as={MdInfoOutline} />
+              <Text ml="2" fontSize="15px" fontWeight="500" lineHeight="22px">
+                {t('Após a criação do usuário, ')}
+                <Text as="span" fontWeight="700">
+                  {t(
+                    'lembre-se de copiar os dados de acesso, pois essa informação não poderá ser recuperada posteriormente.'
+                  )}
+                </Text>
+              </Text>
+            </Flex>
+            {isSuccess ? (
               <Box>
                 <SectionTitle>{t('Dados de acesso:')}</SectionTitle>
                 <Text
@@ -137,28 +167,30 @@ export const CreateUserDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
               </Box>
             )}
           </DrawerBody>
-          <DrawerFooter borderTop="1px solid #F2F6EA">
-            <HStack w="100%" spacing={4}>
-              <Button
-                width="full"
-                fontSize="15px"
-                onClick={createUser}
-                isLoading={createUserResult.isLoading}
-                loadingText={t('Criando')}
-                isDisabled={email.length === 0 || isEmailInvalid}
-              >
-                {t('Criar usuário')}
-              </Button>
-              <Button
-                width="full"
-                fontSize="15px"
-                variant="dangerLight"
-                onClick={onClose}
-              >
-                {t('Cancelar')}
-              </Button>
-            </HStack>
-          </DrawerFooter>
+          {!isSuccess && (
+            <DrawerFooter borderTop="1px solid #F2F6EA">
+              <HStack w="100%" spacing={4}>
+                <Button
+                  width="full"
+                  fontSize="15px"
+                  onClick={createUser}
+                  isLoading={createUserResult.isLoading}
+                  loadingText={t('Criando')}
+                  isDisabled={email.length === 0 || isEmailInvalid}
+                >
+                  {t('Criar usuário')}
+                </Button>
+                <Button
+                  width="full"
+                  fontSize="15px"
+                  variant="dangerLight"
+                  onClick={onClose}
+                >
+                  {t('Cancelar')}
+                </Button>
+              </HStack>
+            </DrawerFooter>
+          )}
         </DrawerContent>
       </DrawerOverlay>
     </Drawer>

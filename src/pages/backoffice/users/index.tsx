@@ -169,7 +169,7 @@ const UsersPage = () => {
         {userAbility?.can('create', 'users') && (
           <CustomButton
             mt="0"
-            label={t('Criar Usuário')}
+            label={t('Criar usuário')}
             link={`${path}/new`}
           />
         )}

@@ -28,8 +28,26 @@ export const useAuthentication = () => {
     mutationResult: createUserResult,
   } = useCustomMutation(
     async (data: UserCreationData) => {
-      const { email, password } = data;
-      return api.auth().createUserWithEmailAndPassword(email, password);
+      try {
+        const { email, password } = data;
+        const newUser = await api
+          .auth()
+          .createUserWithEmailAndPassword(email, password);
+        return newUser;
+      } catch (error) {
+        const { code } = error as FirebaseError;
+        if (code === 'auth/email-already-in-use') {
+          // if user not exists return error
+          throw new FirebaseError(
+            'user-creation-email-already-in-use-error',
+            'O email informado já foi cadastrado.'
+          );
+        }
+        throw new FirebaseError(
+          'user-creation-error',
+          `Não foi possível criar o usuário (${code})`
+        );
+      }
     },
     'createUserWithEmailAndPassword',
     true,
