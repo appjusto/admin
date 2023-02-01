@@ -15,6 +15,8 @@ import { UsersSearchType } from 'app/api/users/UsersApi';
 import { ClearFiltersButton } from 'common/components/backoffice/ClearFiltersButton';
 import { FilterText } from 'common/components/backoffice/FilterText';
 //import Checkbox from 'common/components/form/Checkbox';
+import { useContextFirebaseUser } from 'app/state/auth/context';
+import { CustomButton } from 'common/components/buttons/CustomButton';
 import { CustomDateFilter } from 'common/components/form/input/CustomDateFilter';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import React from 'react';
@@ -22,6 +24,7 @@ import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import PageHeader from '../../PageHeader';
+import { CreateUserDrawer } from '../drawers/user/CreateUserDrawer';
 import { UserBaseDrawer } from '../drawers/user/UserBaseDrawer';
 import { UsersTable } from './UsersTable';
 
@@ -29,6 +32,7 @@ const UsersPage = () => {
   // context
   const { path } = useRouteMatch();
   const history = useHistory();
+  const { userAbility } = useContextFirebaseUser();
   // state
   const [dateTime, setDateTime] = React.useState('');
   const [loggedAt, setLoggedAt] = React.useState<UserType[]>([
@@ -139,34 +143,46 @@ const UsersPage = () => {
         </HStack>
         <ClearFiltersButton clearFunction={clearFilters} />
       </Flex>
-      <HStack mt="6" spacing={8} color="black">
-        <Text fontSize="lg" fontWeight="700" lineHeight="26px">
-          {t(`${users?.length ?? '0'} usuários na lista`)}
-        </Text>
-        {/*<CheckboxGroup
-          colorScheme="green"
-          value={loggedAt}
-          onChange={(values: UserType[]) => setLoggedAt(values)}
-        >
-          <HStack
-            alignItems="flex-start"
-            color="black"
-            spacing={8}
-            fontSize="16px"
-            lineHeight="22px"
+      <Flex mt="6" flexDir="row" justifyContent="space-between" color="black">
+        <HStack spacing={8}>
+          <Text fontSize="lg" fontWeight="700" lineHeight="26px">
+            {t(`${users?.length ?? '0'} usuários na lista`)}
+          </Text>
+          {/*<CheckboxGroup
+            colorScheme="green"
+            value={loggedAt}
+            onChange={(values: UserType[]) => setLoggedAt(values)}
           >
-            <Checkbox value="manager">{t('Manager')}</Checkbox>
-            <Checkbox value="courier">{t('Entregador')}</Checkbox>
-            <Checkbox value="consumer">{t('Consumidor')}</Checkbox>
-          </HStack>
-        </CheckboxGroup>*/}
-      </HStack>
+            <HStack
+              alignItems="flex-start"
+              color="black"
+              spacing={8}
+              fontSize="16px"
+              lineHeight="22px"
+            >
+              <Checkbox value="manager">{t('Manager')}</Checkbox>
+              <Checkbox value="courier">{t('Entregador')}</Checkbox>
+              <Checkbox value="consumer">{t('Consumidor')}</Checkbox>
+            </HStack>
+          </CheckboxGroup>*/}
+        </HStack>
+        {userAbility?.can('create', 'users') && (
+          <CustomButton
+            mt="0"
+            label={t('Criar Usuário')}
+            link={`${path}/new`}
+          />
+        )}
+      </Flex>
       <UsersTable users={users} />
       <Button mt="8" variant="secondary" onClick={fetchNextPage}>
         <ArrowDownIcon mr="2" />
         {t('Carregar mais')}
       </Button>
       <Switch>
+        <Route exact path={`${path}/new`}>
+          <CreateUserDrawer isOpen onClose={closeDrawerHandler} />
+        </Route>
         <Route path={`${path}/:userId`}>
           <UserBaseDrawer isOpen onClose={closeDrawerHandler} />
         </Route>

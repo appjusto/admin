@@ -49,8 +49,10 @@ dayjs.tz.setDefault('America/Sao_Paulo');
 
 export default class Api {
   private static app: FirebaseApp;
+  private static secondaryApp: FirebaseApp;
 
   private _authentication: Auth;
+  private _secondary_authentication: Auth;
   private _firestore: Firestore;
   private _functions: Functions;
   private _storage: FirebaseStorage;
@@ -80,7 +82,14 @@ export default class Api {
     if (!Api.app) {
       Api.app = initializeApp({ ...config.firebase.config });
     }
+    if (!Api.secondaryApp) {
+      Api.secondaryApp = initializeApp(
+        { ...config.firebase.config },
+        'secondaryApp'
+      );
+    }
     this._authentication = getAuth(Api.app);
+    this._secondary_authentication = getAuth(Api.secondaryApp);
     let firestoreSettings = {} as FirestoreSettings;
     // @ts-ignore
     if (window.Cypress) {
@@ -109,7 +118,12 @@ export default class Api {
     }
 
     this._refs = new FirebaseRefs(this._functions, this._firestore);
-    this._auth = new AuthApi(this._refs, this._authentication, config);
+    this._auth = new AuthApi(
+      this._refs,
+      this._authentication,
+      this._secondary_authentication,
+      config
+    );
     this._files = new FilesApi(this._storage);
     this._maps = new MapsApi(this._refs, config.googleMapsApiKey);
     this._platform = new PlatformApi(this._refs);
