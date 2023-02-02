@@ -34,7 +34,7 @@ const CourierNotifiedBox = ({
   // helpers
   const nameToDisplay = request.courierName
     ? request.courierName
-    : request.orderId.substring(0, 7) + '...';
+    : request.courierId.substring(0, 7) + '...';
   // side effects
   React.useEffect(() => {
     if (dispatchingStatus === 'confirmed') setIsAllocating(false);
