@@ -1,4 +1,5 @@
 import {
+  CourierOrderRequest,
   Order,
   OrderMatching,
   OrderMatchingLog,
@@ -17,15 +18,16 @@ import { SectionTitle } from '../generics/SectionTitle';
 import { CourierManualAllocation } from './CourierManualAllocation';
 import CourierNotifiedBox from './matching/CourierNotifiedBox';
 import { LogsTable } from './matching/LogsTable';
+import { NotifiedCouriers } from './matching/NotifiedCouriers';
 import { OutsouceDelivery } from './OutsourceDelivery';
-
-export type NotifiedCouriers = { id: string; name?: string };
 
 interface MatchingProps {
   order?: WithId<Order> | null;
   matching?: OrderMatching | null;
   logs?: WithId<OrderMatchingLog>[];
+  notifiedCouriers?: WithId<CourierOrderRequest>[];
   fetchNextMatchingLogs(): void;
+  fetchNextOrderNotifiedCouriers(): void;
   activeMatching(): void;
 }
 
@@ -33,47 +35,33 @@ export const Matching = ({
   order,
   matching,
   logs,
+  notifiedCouriers,
   fetchNextMatchingLogs,
+  fetchNextOrderNotifiedCouriers,
   activeMatching,
 }: MatchingProps) => {
   // context
   const { userAbility, isBackofficeSuperuser } = useContextFirebaseUser();
-  const {
-    updateCourierNotified,
-    updateResult,
-    restartMatching,
-    restartResult,
-  } = useOrderMatching(order?.id);
+  const { restartMatching, restartResult } = useOrderMatching(order?.id);
   const { courierManualAllocation, allocationResult } =
     useOrderCourierManualAllocation();
   // state
   const [attemps, setAttemps] = React.useState<number>(0);
-  const [couriersNotified, setCouriersNotified] = React.useState<
-    NotifiedCouriers[]
-  >([]);
-  const [courierRemoving, setCourierRemoving] = React.useState<string | null>(
-    null
-  );
   const [isRestarting, setIsRestarting] = React.useState<boolean>(false);
   // helpers
   const isOrderActive = order?.status
     ? ['confirmed', 'preparing', 'ready', 'dispatching'].includes(order.status)
     : false;
   const isNoMatch = order?.dispatchingStatus === 'no-match';
+  const canUpdateOrder = userAbility?.can('update', {
+    kind: 'orders',
+    ...order,
+  });
   const canAllocateCourierById =
     isBackofficeSuperuser &&
     (!order?.scheduledTo || isToday(order.scheduledTo)) &&
-    userAbility?.can('update', { kind: 'orders', ...order }) &&
     !order?.courier;
   // handlers
-  const removeCourierNotified = async (courierId: string) => {
-    setCourierRemoving(courierId);
-    const newArray = couriersNotified
-      .filter((courier) => courier.id !== courierId)
-      .map((courier) => courier.id);
-    await updateCourierNotified(newArray);
-    setCourierRemoving(null);
-  };
   const allocateCourier = (courierInfo: string, comment: string) => {
     if (!order?.id) return;
     let courierId = undefined;
@@ -96,12 +84,7 @@ export const Matching = ({
     activeMatching();
   }, [activeMatching, logs]);
   React.useEffect(() => {
-    if (matching === undefined) return;
-    if (matching === null) {
-      setCouriersNotified([]);
-      return;
-    }
-    setCouriersNotified(matching.notifiedCouriers);
+    if (!matching) return;
     setAttemps(matching.attempt);
   }, [matching]);
   React.useEffect(() => {
@@ -173,7 +156,7 @@ export const Matching = ({
         <SectionTitle mt="4">
           {t(
             `Entregadores notificados: ${
-              couriersNotified ? couriersNotified.length : 0
+              notifiedCouriers ? notifiedCouriers.length : 0
             }`
           )}
         </SectionTitle>
@@ -183,38 +166,27 @@ export const Matching = ({
             isLoading={allocationResult.isLoading}
           />
         )}
-        <Box
-          mt="4"
-          p="2"
-          minH="200px"
-          maxH="300px"
-          overflowY="scroll"
-          border="1px solid #ECF0E3"
-          borderRadius="lg"
+        <NotifiedCouriers
+          fetchNextOrderNotifiedCouriers={fetchNextOrderNotifiedCouriers}
         >
-          {!couriersNotified ? (
+          {!notifiedCouriers ? (
             <Text>{t('Carregando dados...')}</Text>
           ) : (
-            couriersNotified.map((courier) => (
+            notifiedCouriers.map((request) => (
               <CourierNotifiedBox
-                key={courier.id}
-                order={order}
+                key={request.id}
                 isOrderActive={isOrderActive}
-                courier={courier}
+                canUpdateOrder={canUpdateOrder}
+                request={request}
                 dispatchingStatus={order?.dispatchingStatus}
-                removeCourier={removeCourierNotified}
                 allocateCourier={allocateCourier}
-                courierRemoving={courierRemoving}
-                isLoading={updateResult.isLoading || allocationResult.isLoading}
+                isLoading={allocationResult.isLoading}
               />
             ))
           )}
-        </Box>
+        </NotifiedCouriers>
         <SectionTitle>{t('Logs do pedido')}</SectionTitle>
-        <LogsTable
-          logs={matching?.logs ?? logs}
-          fetchNextLogs={fetchNextMatchingLogs}
-        />
+        <LogsTable logs={logs} fetchNextLogs={fetchNextMatchingLogs} />
       </Box>
     </>
   );

@@ -1,5 +1,6 @@
 import {
   CancelOrderPayload,
+  CourierOrderRequest,
   DropOrderPayload,
   Fulfillment,
   Issue,
@@ -483,6 +484,42 @@ export default class OrderApi {
             ? querySnapshot.docs[querySnapshot.size - 1]
             : undefined;
         resultHandler(documentsAs<OrderMatchingLog>(querySnapshot.docs), last);
+      },
+      (error) => {
+        console.error(error);
+        Sentry.captureException(error);
+      }
+    );
+    return unsubscribe;
+  }
+
+  observeOrderNotifiedCouriers(
+    orderId: string,
+    resultHandler: (
+      notifiedCouriers: WithId<CourierOrderRequest>[],
+      last?: QueryDocumentSnapshot<DocumentData>
+    ) => void,
+    startAfterDoc?: FirebaseDocument
+  ): Unsubscribe {
+    let q = query(
+      this.refs.getCourierRequestsRef(),
+      where('orderId', '==', orderId),
+      orderBy('createdOn', 'asc'),
+      limit(10)
+    );
+    if (startAfterDoc) q = query(q, startAfter(startAfterDoc));
+    // returns the unsubscribe function
+    const unsubscribe = onSnapshot(
+      q,
+      (querySnapshot) => {
+        const last =
+          querySnapshot.docs.length > 0
+            ? querySnapshot.docs[querySnapshot.size - 1]
+            : undefined;
+        resultHandler(
+          documentsAs<CourierOrderRequest>(querySnapshot.docs),
+          last
+        );
       },
       (error) => {
         console.error(error);

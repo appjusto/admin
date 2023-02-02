@@ -104,7 +104,9 @@ export const BackofficeOrderDrawer = ({
   const {
     matching,
     logs: matchingLogs,
+    notifiedCouriers,
     fetchNextMatchingLogs,
+    fetchNextOrderNotifiedCouriers,
   } = useObserveOrderMatching(orderId, matchingActive);
   const { orderChatGroup } = useObserveOrderChatMessages(
     orderId,
@@ -344,7 +346,9 @@ export const BackofficeOrderDrawer = ({
               order={order}
               matching={matching}
               logs={matchingLogs}
+              notifiedCouriers={notifiedCouriers}
               fetchNextMatchingLogs={fetchNextMatchingLogs}
+              fetchNextOrderNotifiedCouriers={fetchNextOrderNotifiedCouriers}
               activeMatching={handleActiveMatching}
             />
           </Route>
