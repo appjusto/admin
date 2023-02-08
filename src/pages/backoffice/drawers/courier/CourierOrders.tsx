@@ -1,11 +1,18 @@
 import { Order, WithId } from '@appjusto/types';
 import {
-  Box, Button, HStack, Link, Table,
+  Box,
+  Button,
+  HStack,
+  Link,
+  Table,
   Tbody,
   Td,
-  Text, Textarea, Th,
+  Text,
+  Textarea,
+  Tfoot,
+  Th,
   Thead,
-  Tr
+  Tr,
 } from '@chakra-ui/react';
 import { useReleaseCourier } from 'app/api/courier/useReleaseCourier';
 import { useContextFirebaseUser } from 'app/state/auth/context';
@@ -36,7 +43,11 @@ const CourierOrdersTableItem = ({ order }: ItemPros) => {
       <Td>{getDateAndHour(order.timestamps?.confirmed)}</Td>
       <Td>{order.type === 'food' ? 'Comida' : 'p2p'}</Td>
       <Td>{order.business?.name ?? 'N/I'}</Td>
-      <Td>{order.fare?.courier?.value ? formatCurrency(order.fare?.courier.value) : 'N/E'}</Td>
+      <Td>
+        {order.fare?.courier?.netValue
+          ? formatCurrency(order.fare?.courier.netValue)
+          : 'N/E'}
+      </Td>
     </Tr>
   );
 };
@@ -46,13 +57,26 @@ export const CourierOrders = () => {
   const { userAbility } = useContextFirebaseUser();
   const { dispatchAppRequestResult } = useContextAppRequests();
   const { releaseCourier, releaseCourierResult } = useReleaseCourier();
-  const { courier, currentOrders, orders, dateStart, dateEnd, setDateStart, setDateEnd } =
-    useContextCourierProfile();
+  const {
+    courier,
+    currentOrders,
+    orders,
+    dateStart,
+    dateEnd,
+    setDateStart,
+    setDateEnd,
+  } = useContextCourierProfile();
   // state
   const [release, setRelease] = React.useState(false);
   const [releaseComment, setReleaseComment] = React.useState('');
   // helpers
   const totalOrders = orders?.length ?? '0';
+  const totalOrdersValue = React.useMemo(() => {
+    if (!orders) return 0;
+    return orders.reduce((result, order) => {
+      return (result += order.fare?.courier?.netValue ?? 0);
+    }, 0);
+  }, [orders]);
   // handlers
   const handleReleaseCourier = () => {
     if (!courier?.id) return;
@@ -73,8 +97,17 @@ export const CourierOrders = () => {
   return (
     <Box>
       {release ? (
-        <Box mt="4" minW="348px" bg="#FFF8F8" border="1px solid red" borderRadius="lg" p="4">
-          <Text color="red">{t(`Se deseja confirmar, informe o motivo da liberação:`)}</Text>
+        <Box
+          mt="4"
+          minW="348px"
+          bg="#FFF8F8"
+          border="1px solid red"
+          borderRadius="lg"
+          p="4"
+        >
+          <Text color="red">
+            {t(`Se deseja confirmar, informe o motivo da liberação:`)}
+          </Text>
           <Textarea
             mt="2"
             bg="white"
@@ -99,30 +132,34 @@ export const CourierOrders = () => {
           </HStack>
         </Box>
       ) : (
-        <Button 
-          size="md" 
-          variant="dangerLight" 
-          onClick={() => setRelease(true)} 
+        <Button
+          size="md"
+          variant="dangerLight"
+          onClick={() => setRelease(true)}
           display={userAbility?.can('update', 'couriers') ? 'initial' : 'none'}
         >
           {t('Liberar entregador')}
         </Button>
-      )} 
-      {
-        currentOrders.length > 0 && (
-          <>
-            <SectionTitle>{t('Pedidos ativos')}</SectionTitle>
-            {
-              currentOrders.map(order => (
-                <CurrentOrderCard key={order.id} courierId={courier?.id} order={order} />
-              ))
-            }
-          </>
-        )
-        
-      }
+      )}
+      {currentOrders.length > 0 && (
+        <>
+          <SectionTitle>{t('Pedidos ativos')}</SectionTitle>
+          {currentOrders.map((order) => (
+            <CurrentOrderCard
+              key={order.id}
+              courierId={courier?.id}
+              order={order}
+            />
+          ))}
+        </>
+      )}
       <SectionTitle>{t('Filtrar por período')}</SectionTitle>
-      <CustomDateFilter mt="4" getStart={setDateStart} getEnd={setDateEnd} showWarning />
+      <CustomDateFilter
+        mt="4"
+        getStart={setDateStart}
+        getEnd={setDateEnd}
+        showWarning
+      />
       {!dateStart || !dateEnd ? (
         <Text mt="4">{t('Selecione as datas que deseja buscar')}</Text>
       ) : !orders ? (
@@ -146,7 +183,9 @@ export const CourierOrders = () => {
               <Tbody>
                 {orders && orders.length > 0 ? (
                   orders.map((order) => {
-                    return <CourierOrdersTableItem key={order.id} order={order} />;
+                    return (
+                      <CourierOrdersTableItem key={order.id} order={order} />
+                    );
                   })
                 ) : (
                   <Tr color="black" fontSize="xs" fontWeight="700">
@@ -158,6 +197,15 @@ export const CourierOrders = () => {
                   </Tr>
                 )}
               </Tbody>
+              <Tfoot bgColor="gray.50">
+                <Tr color="black" fontSize="xs" fontWeight="700">
+                  <Td></Td>
+                  <Td></Td>
+                  <Td></Td>
+                  <Td>{t('Total recebido:')}</Td>
+                  <Td>{formatCurrency(totalOrdersValue)}</Td>
+                </Tr>
+              </Tfoot>
             </Table>
           </Box>
         </Box>
