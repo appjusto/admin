@@ -18,6 +18,7 @@ import { numbersOnlyParser } from 'common/components/form/input/pattern-input/pa
 import React from 'react';
 import { normalizeEmail } from 'utils/email';
 import { t } from 'utils/i18n';
+import { birthdayFormatter } from './utils';
 
 interface PersonalProfileProps {
   isCNPJ?: boolean;
@@ -145,6 +146,19 @@ export const PersonalProfile = ({ isCNPJ }: PersonalProfileProps) => {
         value={courier?.cpf ?? ''}
         onValueChange={(value) => handleInputChange('cpf', value)}
         externalValidation={{ active: true, status: isCPFValid() }}
+      />
+      <CustomInput
+        type="date"
+        id="birthday"
+        value={birthdayFormatter('date', courier?.birthday)}
+        onChange={(event) =>
+          handleInputChange(
+            'birthday',
+            birthdayFormatter('string', event.target.value)
+          )
+        }
+        label={t('Data de nascimento')}
+        // isInvalid={isDatesValid['message'] !== undefined}
       />
       {isCNPJ && (
         <CustomPatternInput

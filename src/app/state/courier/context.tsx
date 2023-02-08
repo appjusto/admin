@@ -32,6 +32,7 @@ export const courierWatchedFields: (keyof CourierProfile)[] = [
   'surname',
   'cpf',
   'phone',
+  'birthday',
   'profileIssues',
   'profileIssuesMessage',
   'company',
