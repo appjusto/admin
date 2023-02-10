@@ -305,10 +305,15 @@ export default class BusinessApi {
   }
 
   async sendBusinessKeepAlive(businessId: string) {
-    const timestamp = serverTimestamp();
-    return await updateDoc(this.refs.getBusinessRef(businessId), {
-      keepAlive: timestamp,
-    });
+    try {
+      const timestamp = serverTimestamp();
+      return await updateDoc(this.refs.getBusinessRef(businessId), {
+        keepAlive: timestamp,
+      });
+    } catch (error) {
+      console.log(error);
+      Sentry.captureException(error);
+    }
   }
 
   async deleteBusinessProfile(data: Partial<DeleteBusinessPayload>) {
