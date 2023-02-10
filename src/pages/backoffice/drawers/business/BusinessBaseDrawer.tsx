@@ -54,8 +54,14 @@ export const BusinessBaseDrawer = ({
     setBusinessId,
     clearBusiness,
   } = useContextBusiness();
-  const { business, isBusinessOpen, manager, handleSave, isLoading } =
-    useContextBusinessBackoffice();
+  const {
+    business,
+    isBusinessOpen,
+    lastKeepAlive,
+    manager,
+    handleSave,
+    isLoading,
+  } = useContextBusinessBackoffice();
   // state
   const [personificationStatus, setPersonificationStatus] =
     React.useState<PersonificationStatus>({ enabled: false });
@@ -190,20 +196,22 @@ export const BusinessBaseDrawer = ({
                   : 'N/E'}
               </Text>
             </Text>
-            <Text
-              mt="1"
-              fontSize="15px"
-              color="black"
-              fontWeight="700"
-              lineHeight="22px"
-            >
-              {t('Etapa:')}{' '}
-              <Text as="span" fontWeight="500">
-                {business?.onboarding === 'completed'
-                  ? t('Concluído')
-                  : t(`onboarding - ${business?.onboarding}`)}
+            {business?.situation !== 'approved' && (
+              <Text
+                mt="1"
+                fontSize="15px"
+                color="black"
+                fontWeight="700"
+                lineHeight="22px"
+              >
+                {t('Etapa:')}{' '}
+                <Text as="span" fontWeight="500">
+                  {business?.onboarding === 'completed'
+                    ? t('Concluído')
+                    : t(`onboarding - ${business?.onboarding}`)}
+                </Text>
               </Text>
-            </Text>
+            )}
             <Text
               mt="1"
               fontSize="15px"
@@ -214,6 +222,18 @@ export const BusinessBaseDrawer = ({
               {t('Cobertura:')}{' '}
               <Text as="span" fontWeight="500">
                 {insurance ? t('Sim') : t('Não')}
+              </Text>
+            </Text>
+            <Text
+              mt="1"
+              fontSize="15px"
+              color="black"
+              fontWeight="700"
+              lineHeight="22px"
+            >
+              {t('Último acesso:')}{' '}
+              <Text as="span" fontWeight="500">
+                {getDateAndHour(lastKeepAlive)}
               </Text>
             </Text>
             <Text
