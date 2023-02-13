@@ -105,6 +105,7 @@ export const BackofficeOrderDrawer = ({
     matching,
     logs: matchingLogs,
     notifiedCouriers,
+    clearLogsQueryLimit,
     fetchNextMatchingLogs,
     fetchNextOrderNotifiedCouriers,
   } = useObserveOrderMatching(orderId, matchingActive);
@@ -346,6 +347,7 @@ export const BackofficeOrderDrawer = ({
               order={order}
               matching={matching}
               logs={matchingLogs}
+              clearQueryLimit={clearLogsQueryLimit}
               notifiedCouriers={notifiedCouriers}
               fetchNextMatchingLogs={fetchNextMatchingLogs}
               fetchNextOrderNotifiedCouriers={fetchNextOrderNotifiedCouriers}

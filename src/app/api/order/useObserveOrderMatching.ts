@@ -23,6 +23,9 @@ export const useObserveOrderMatching = (
   const { isBackofficeUser } = useContextFirebaseUser();
   // state
   const [matching, setMatching] = React.useState<OrderMatching | null>();
+  const [logsQueryLimit, setlogsQueryLimit] = React.useState<
+    number | undefined
+  >(20);
   const [logsMap, setLogsMap] =
     React.useState<Map<string | undefined, WithId<OrderMatchingLog>[]>>(
       initialLogsMap
@@ -43,6 +46,9 @@ export const useObserveOrderMatching = (
   const [lastRequest, setLastRequest] =
     React.useState<QueryDocumentSnapshot<DocumentData>>();
   // handlers
+  const clearLogsQueryLimit = React.useCallback(() => {
+    setlogsQueryLimit(undefined);
+  }, []);
   const fetchNextMatchingLogs = React.useCallback(() => {
     setStartAfter(lastLog);
   }, [lastLog]);
@@ -74,10 +80,19 @@ export const useObserveOrderMatching = (
         });
         if (last) setLastLog(last);
       },
-      startAfter
+      startAfter,
+      logsQueryLimit
     );
     return () => unsub();
-  }, [api, userCanRead, orderId, isBackofficeUser, isActive, startAfter]);
+  }, [
+    api,
+    userCanRead,
+    orderId,
+    isBackofficeUser,
+    isActive,
+    startAfter,
+    logsQueryLimit,
+  ]);
   React.useEffect(() => {
     setLogs(
       Array.from(logsMap.values()).reduce(
@@ -126,6 +141,7 @@ export const useObserveOrderMatching = (
     matching,
     logs,
     notifiedCouriers,
+    clearLogsQueryLimit,
     fetchNextMatchingLogs,
     fetchNextOrderNotifiedCouriers,
   };

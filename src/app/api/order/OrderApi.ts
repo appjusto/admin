@@ -466,15 +466,16 @@ export default class OrderApi {
       logs: WithId<OrderMatchingLog>[],
       last?: QueryDocumentSnapshot<DocumentData>
     ) => void,
-    startAfterDoc?: FirebaseDocument
+    startAfterDoc?: FirebaseDocument,
+    queryLimit?: number
   ): Unsubscribe {
     let q = query(
       this.refs.getOrderLogsRef(orderId),
       where('type', '==', 'matching'),
-      orderBy('timestamp', 'asc'),
-      limit(10)
+      orderBy('timestamp', 'asc')
     );
     if (startAfterDoc) q = query(q, startAfter(startAfterDoc));
+    if (queryLimit) q = query(q, limit(queryLimit));
     // returns the unsubscribe function
     const unsubscribe = onSnapshot(
       q,

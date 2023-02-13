@@ -5,7 +5,7 @@ import {
   OrderMatchingLog,
   WithId,
 } from '@appjusto/types';
-import { Box, Flex, HStack, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, HStack, Text } from '@chakra-ui/react';
 import { useOrderCourierManualAllocation } from 'app/api/order/useOrderCourierManualAllocation';
 import { useOrderMatching } from 'app/api/order/useOrderMatching';
 import { useContextFirebaseUser } from 'app/state/auth/context';
@@ -26,6 +26,7 @@ interface MatchingProps {
   matching?: OrderMatching | null;
   logs?: WithId<OrderMatchingLog>[];
   notifiedCouriers?: WithId<CourierOrderRequest>[];
+  clearQueryLimit(): void;
   fetchNextMatchingLogs(): void;
   fetchNextOrderNotifiedCouriers(): void;
   activeMatching(): void;
@@ -36,6 +37,7 @@ export const Matching = ({
   matching,
   logs,
   notifiedCouriers,
+  clearQueryLimit,
   fetchNextMatchingLogs,
   fetchNextOrderNotifiedCouriers,
   activeMatching,
@@ -187,6 +189,9 @@ export const Matching = ({
         </NotifiedCouriers>
         <SectionTitle>{t('Logs do pedido')}</SectionTitle>
         <LogsTable logs={logs} fetchNextLogs={fetchNextMatchingLogs} />
+        <Button mt="4" variant="secondary" onClick={clearQueryLimit}>
+          {t('Carregar todos')}
+        </Button>
       </Box>
     </>
   );
