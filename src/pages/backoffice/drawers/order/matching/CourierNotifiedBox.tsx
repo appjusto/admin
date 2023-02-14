@@ -1,44 +1,40 @@
-import { DispatchingStatus, Order, WithId } from '@appjusto/types';
+import {
+  CourierOrderRequest,
+  DispatchingStatus,
+  WithId,
+} from '@appjusto/types';
 import { Box, Flex, HStack, Text } from '@chakra-ui/react';
-import { useContextFirebaseUser } from 'app/state/auth/context';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { Textarea } from 'common/components/form/input/Textarea';
 import { isEqual } from 'lodash';
 import React from 'react';
 import { t } from 'utils/i18n';
-import { NotifiedCouriers } from '../Matching';
 interface CourierNotifiedBoxProps {
   isOrderActive: boolean;
-  order?: WithId<Order> | null;
-  courier: NotifiedCouriers;
+  request: WithId<CourierOrderRequest>;
   issue?: string;
   dispatchingStatus?: DispatchingStatus;
-  removeCourier(courierId: string): void;
+  canUpdateOrder?: boolean;
   allocateCourier(courierId: string, comment: string): void;
-  courierRemoving?: string | null;
   isLoading?: boolean;
 }
 
 const CourierNotifiedBox = ({
   isOrderActive,
-  order,
-  courier,
+  request,
   issue,
   dispatchingStatus,
-  removeCourier,
+  canUpdateOrder,
   allocateCourier,
-  courierRemoving,
   isLoading = false,
 }: CourierNotifiedBoxProps) => {
-  // context
-  const { userAbility } = useContextFirebaseUser();
   // state
   const [isAllocating, setIsAllocating] = React.useState(false);
   const [comment, setComment] = React.useState('');
   // helpers
-  const nameToDisplay = courier.name
-    ? courier.name
-    : courier.id.substring(0, 7) + '...';
+  const nameToDisplay = request.courierName
+    ? request.courierName
+    : request.courierId.substring(0, 7) + '...';
   // side effects
   React.useEffect(() => {
     if (dispatchingStatus === 'confirmed') setIsAllocating(false);
@@ -59,41 +55,25 @@ const CourierNotifiedBox = ({
             w="120px"
             h="36px"
             label={t('Ver cadastro')}
-            link={`/backoffice/couriers/${courier.id}`}
+            link={`/backoffice/couriers/${request.courierId}`}
             variant="outline"
           />
-          {!isAllocating &&
-            userAbility?.can('update', { kind: 'orders', ...order }) && (
-              <>
-                <CustomButton
-                  mt="0"
-                  size="sm"
-                  w="120px"
-                  h="36px"
-                  label={t('Remover')}
-                  variant="danger"
-                  isDisabled={
-                    !isOrderActive || dispatchingStatus === 'confirmed'
-                  }
-                  isLoading={isLoading && courierRemoving === courier.id}
-                  onClick={() => removeCourier!(courier.id)}
-                />
-                <CustomButton
-                  mt="0"
-                  size="sm"
-                  w="120px"
-                  h="36px"
-                  label={t('Alocar')}
-                  isDisabled={
-                    !isOrderActive ||
-                    dispatchingStatus === 'confirmed' ||
-                    dispatchingStatus === 'outsourced'
-                  }
-                  isLoading={isLoading && !courierRemoving}
-                  onClick={() => setIsAllocating(true)}
-                />
-              </>
-            )}
+          {!isAllocating && canUpdateOrder && (
+            <CustomButton
+              mt="0"
+              size="sm"
+              w="120px"
+              h="36px"
+              label={t('Alocar')}
+              isDisabled={
+                !isOrderActive ||
+                dispatchingStatus === 'confirmed' ||
+                dispatchingStatus === 'outsourced'
+              }
+              isLoading={isLoading}
+              onClick={() => setIsAllocating(true)}
+            />
+          )}
         </HStack>
       </Flex>
       {isAllocating && (
@@ -122,8 +102,8 @@ const CourierNotifiedBox = ({
               isDisabled={
                 !isOrderActive || dispatchingStatus === 'confirmed' || !comment
               }
-              isLoading={isLoading && !courierRemoving}
-              onClick={() => allocateCourier(courier.id, comment)}
+              isLoading={isLoading}
+              onClick={() => allocateCourier(request.courierId, comment)}
             />
           </Flex>
         </Box>

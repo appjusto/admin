@@ -1,4 +1,9 @@
-import { OrderMatching, OrderMatchingLog, WithId } from '@appjusto/types';
+import {
+  CourierOrderRequest,
+  OrderMatching,
+  OrderMatchingLog,
+  WithId,
+} from '@appjusto/types';
 import { useContextApi } from 'app/state/api/context';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
@@ -6,6 +11,7 @@ import React from 'react';
 import { useUserCanReadEntity } from '../auth/useUserCanReadEntity';
 
 const initialLogsMap = new Map();
+const initialCouriersMap = new Map();
 
 export const useObserveOrderMatching = (
   orderId?: string,
@@ -17,6 +23,9 @@ export const useObserveOrderMatching = (
   const { isBackofficeUser } = useContextFirebaseUser();
   // state
   const [matching, setMatching] = React.useState<OrderMatching | null>();
+  const [logsQueryLimit, setlogsQueryLimit] = React.useState<
+    number | undefined
+  >(20);
   const [logsMap, setLogsMap] =
     React.useState<Map<string | undefined, WithId<OrderMatchingLog>[]>>(
       initialLogsMap
@@ -26,27 +35,42 @@ export const useObserveOrderMatching = (
     React.useState<QueryDocumentSnapshot<DocumentData>>();
   const [lastLog, setLastLog] =
     React.useState<QueryDocumentSnapshot<DocumentData>>();
+  const [notifiedCouriersMap, setNotifiedCouriersMap] =
+    React.useState<Map<string | undefined, WithId<CourierOrderRequest>[]>>(
+      initialCouriersMap
+    );
+  const [notifiedCouriers, setNotifiedCouriers] =
+    React.useState<WithId<CourierOrderRequest>[]>();
+  const [startAfterRequest, setStartAfterRequest] =
+    React.useState<QueryDocumentSnapshot<DocumentData>>();
+  const [lastRequest, setLastRequest] =
+    React.useState<QueryDocumentSnapshot<DocumentData>>();
   // handlers
+  const clearLogsQueryLimit = React.useCallback(() => {
+    setlogsQueryLimit(undefined);
+  }, []);
   const fetchNextMatchingLogs = React.useCallback(() => {
     setStartAfter(lastLog);
   }, [lastLog]);
+  const fetchNextOrderNotifiedCouriers = React.useCallback(() => {
+    setStartAfterRequest(lastRequest);
+  }, [lastRequest]);
   // side effects
   React.useEffect(() => {
     if (!userCanRead) return;
     if (!orderId) return;
     if (!isBackofficeUser) return;
     if (!isActive) return;
-    const unsub1 = api
-      .order()
-      .observeOrderPrivateMatching(orderId, setMatching);
-    return () => unsub1();
+    const unsub = api.order().observeOrderPrivateMatching(orderId, setMatching);
+    return () => unsub();
   }, [api, userCanRead, orderId, isBackofficeUser, isActive]);
+  // order matching logs
   React.useEffect(() => {
     if (!userCanRead) return;
     if (!orderId) return;
     if (!isBackofficeUser) return;
     if (!isActive) return;
-    const unsub2 = api.order().observeOrderMatchingLogs(
+    const unsub = api.order().observeOrderMatchingLogs(
       orderId,
       (results, last) => {
         setLogsMap((current) => {
@@ -56,10 +80,19 @@ export const useObserveOrderMatching = (
         });
         if (last) setLastLog(last);
       },
-      startAfter
+      startAfter,
+      logsQueryLimit
     );
-    return () => unsub2();
-  }, [api, userCanRead, orderId, isBackofficeUser, isActive, startAfter]);
+    return () => unsub();
+  }, [
+    api,
+    userCanRead,
+    orderId,
+    isBackofficeUser,
+    isActive,
+    startAfter,
+    logsQueryLimit,
+  ]);
   React.useEffect(() => {
     setLogs(
       Array.from(logsMap.values()).reduce(
@@ -68,6 +101,48 @@ export const useObserveOrderMatching = (
       )
     );
   }, [logsMap]);
+  // order couriers notified
+  React.useEffect(() => {
+    if (!userCanRead) return;
+    if (!orderId) return;
+    if (!isBackofficeUser) return;
+    if (!isActive) return;
+    const unsub = api.order().observeOrderNotifiedCouriers(
+      orderId,
+      (results, last) => {
+        setNotifiedCouriersMap((current) => {
+          const value = new Map(current.entries());
+          value.set(startAfterRequest?.id, results);
+          return value;
+        });
+        if (last) setLastRequest(last);
+      },
+      startAfterRequest
+    );
+    return () => unsub();
+  }, [
+    api,
+    userCanRead,
+    orderId,
+    isBackofficeUser,
+    isActive,
+    startAfterRequest,
+  ]);
+  React.useEffect(() => {
+    setNotifiedCouriers(
+      Array.from(notifiedCouriersMap.values()).reduce(
+        (result, orders) => [...result, ...orders],
+        []
+      )
+    );
+  }, [notifiedCouriersMap]);
   // return
-  return { matching, logs, fetchNextMatchingLogs };
+  return {
+    matching,
+    logs,
+    notifiedCouriers,
+    clearLogsQueryLimit,
+    fetchNextMatchingLogs,
+    fetchNextOrderNotifiedCouriers,
+  };
 };

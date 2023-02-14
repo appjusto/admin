@@ -1,5 +1,6 @@
 import {
   CancelOrderPayload,
+  CourierOrderRequest,
   DropOrderPayload,
   Fulfillment,
   Issue,
@@ -465,12 +466,46 @@ export default class OrderApi {
       logs: WithId<OrderMatchingLog>[],
       last?: QueryDocumentSnapshot<DocumentData>
     ) => void,
-    startAfterDoc?: FirebaseDocument
+    startAfterDoc?: FirebaseDocument,
+    queryLimit?: number
   ): Unsubscribe {
     let q = query(
       this.refs.getOrderLogsRef(orderId),
       where('type', '==', 'matching'),
-      orderBy('timestamp', 'asc'),
+      orderBy('timestamp', 'asc')
+    );
+    if (startAfterDoc) q = query(q, startAfter(startAfterDoc));
+    if (queryLimit) q = query(q, limit(queryLimit));
+    // returns the unsubscribe function
+    const unsubscribe = onSnapshot(
+      q,
+      (querySnapshot) => {
+        const last =
+          querySnapshot.docs.length > 0
+            ? querySnapshot.docs[querySnapshot.size - 1]
+            : undefined;
+        resultHandler(documentsAs<OrderMatchingLog>(querySnapshot.docs), last);
+      },
+      (error) => {
+        console.error(error);
+        Sentry.captureException(error);
+      }
+    );
+    return unsubscribe;
+  }
+
+  observeOrderNotifiedCouriers(
+    orderId: string,
+    resultHandler: (
+      notifiedCouriers: WithId<CourierOrderRequest>[],
+      last?: QueryDocumentSnapshot<DocumentData>
+    ) => void,
+    startAfterDoc?: FirebaseDocument
+  ): Unsubscribe {
+    let q = query(
+      this.refs.getCourierRequestsRef(),
+      where('orderId', '==', orderId),
+      orderBy('createdOn', 'asc'),
       limit(10)
     );
     if (startAfterDoc) q = query(q, startAfter(startAfterDoc));
@@ -482,7 +517,10 @@ export default class OrderApi {
           querySnapshot.docs.length > 0
             ? querySnapshot.docs[querySnapshot.size - 1]
             : undefined;
-        resultHandler(documentsAs<OrderMatchingLog>(querySnapshot.docs), last);
+        resultHandler(
+          documentsAs<CourierOrderRequest>(querySnapshot.docs),
+          last
+        );
       },
       (error) => {
         console.error(error);

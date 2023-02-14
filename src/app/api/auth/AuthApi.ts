@@ -19,7 +19,12 @@ import { addDoc, serverTimestamp } from 'firebase/firestore';
 import FirebaseRefs from '../FirebaseRefs';
 
 export default class AuthApi {
-  constructor(private refs: FirebaseRefs, private auth: Auth, private config: ApiConfig) {}
+  constructor(
+    private refs: FirebaseRefs,
+    private auth: Auth,
+    private secondaryAuth: Auth,
+    private config: ApiConfig
+  ) {}
 
   observeAuthState(handler: (a: User | null) => any): Unsubscribe {
     return this.auth.onAuthStateChanged(handler);
@@ -78,25 +83,43 @@ export default class AuthApi {
 
   async signInWithEmailAndPassword(email: string, password: string) {
     await this.auth.signOut();
-    const userCredential = await signInWithEmailAndPassword(this.auth, email, password);
+    const userCredential = await signInWithEmailAndPassword(
+      this.auth,
+      email,
+      password
+    );
     try {
       window.localStorage.removeItem('email');
     } catch (error) {}
     return userCredential.user;
   }
 
-  async createUserWithEmailAndPassword(email: string, password: string) {
-    await this.auth.signOut();
-    const userCredential = await createUserWithEmailAndPassword(this.auth, email, password);
-    try {
-      window.localStorage.removeItem('email');
-    } catch (error) {}
+  async createUserWithEmailAndPassword(
+    email: string,
+    password: string,
+    clearStorage?: boolean
+  ) {
+    await this.secondaryAuth.signOut();
+    const userCredential = await createUserWithEmailAndPassword(
+      this.secondaryAuth,
+      email,
+      password
+    );
+    if (clearStorage) {
+      try {
+        window.localStorage.removeItem('email');
+      } catch (error) {}
+    }
     return userCredential.user;
   }
 
   async updateUsersPassword(password: string, currentPassword?: string) {
     const user = this.auth.currentUser;
-    if (!user) throw new FirebaseError('ignored-error', 'Não foi possível encontrar o usuário.');
+    if (!user)
+      throw new FirebaseError(
+        'ignored-error',
+        'Não foi possível encontrar o usuário.'
+      );
     if (currentPassword && user.email)
       await reauthenticateWithCredential(
         user,

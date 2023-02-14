@@ -208,6 +208,9 @@ export default class FirebaseRefs {
   getCourierProfileNoteRef = (courierId: string, profileNoteId: string) =>
     doc(this.getCourierProfileNotesRef(courierId), profileNoteId);
 
+  // courier requests
+  getCourierRequestsRef = () => collection(this.firestore, 'courier-requests');
+
   // reviews
   getReviewsRef = () => collection(this.firestore, 'reviews');
 

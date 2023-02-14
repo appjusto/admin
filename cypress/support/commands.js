@@ -25,7 +25,7 @@ attachCustomCommands({ Cypress, cy, firebase, app });
 // handlers
 const createTestingUser = async (email, password) => {
   try {
-    await auth.createUserWithEmailAndPassword(email, password);
+    await auth.createUserWithEmailAndPassword(email, password, true);
   } catch (error) {
     console.log('createUserError', error);
   }

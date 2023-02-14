@@ -20,6 +20,7 @@ import React from 'react';
 import { useParams } from 'react-router';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
+import { birthdayFormatter } from '../courier/register/utils';
 import { SectionTitle } from '../generics/SectionTitle';
 
 interface BaseDrawerProps {
@@ -366,6 +367,20 @@ const UserChangeDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 {t('Fone:')}{' '}
                 <Text as="span" fontWeight="500">
                   {changes?.phone ? phoneFormatter(changes.phone) : 'N/I'}
+                </Text>
+              </Text>
+            )}
+            {changes?.birthday && (
+              <Text
+                mt="1"
+                fontSize="15px"
+                color="red"
+                fontWeight="700"
+                lineHeight="22px"
+              >
+                {t('Data de nascimento:')}{' '}
+                <Text as="span" fontWeight="500">
+                  {birthdayFormatter('display', changes?.birthday)}
                 </Text>
               </Text>
             )}
