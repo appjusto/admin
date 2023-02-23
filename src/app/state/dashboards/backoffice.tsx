@@ -59,7 +59,7 @@ export const initialAutoFlags = [
   'pick-up',
   'delivering',
 ] as OrderFlag[];
-const issueFlags = ['issue'];
+const issueFlags = ['issue', 'cancellation-denied'];
 
 export const BackofficeDashboardProvider = ({ children }: Props) => {
   // context
