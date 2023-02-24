@@ -60,9 +60,15 @@ export const Matching = ({
     ...order,
   });
   const canAllocateCourierById =
+    userAbility?.can('update', { kind: 'orders', ...order }) &&
     isBackofficeSuperuser &&
     (!order?.scheduledTo || isToday(order.scheduledTo)) &&
     !order?.courier;
+  const restartMatchingButtonDisplay =
+    !order?.courier?.id &&
+    userAbility?.can('update', { kind: 'orders', ...order })
+      ? 'inline-block'
+      : 'none';
   // handlers
   const allocateCourier = (courierInfo: string, comment: string) => {
     if (!order?.id) return;
@@ -137,11 +143,7 @@ export const Matching = ({
             </Flex>
           ) : (
             <CustomButton
-              display={
-                userAbility?.can('update', { kind: 'orders', ...order })
-                  ? 'inline-block'
-                  : 'none'
-              }
+              display={restartMatchingButtonDisplay}
               mt="2"
               h="38px"
               size="sm"
