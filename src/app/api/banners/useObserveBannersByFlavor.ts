@@ -5,6 +5,7 @@ import React from 'react';
 
 export const useObserveBannersByFlavor = (
   flavor: ClientFlavor,
+  isActive: boolean = true,
   getImages?: boolean,
   onlyEnabled?: boolean
 ) => {
@@ -15,11 +16,13 @@ export const useObserveBannersByFlavor = (
   const [ordering, setOrdering] = React.useState<BannersOrdering | null>();
   // side effects
   React.useEffect(() => {
-    api.banners().observeBannersOrdering(setOrdering);
-  }, [api]);
+    if (!isActive) return;
+    const unsub = api.banners().observeBannersOrdering(setOrdering);
+    return () => unsub();
+  }, [api, isActive]);
   React.useEffect(() => {
     if (!ordering) return;
-    api.banners().observeBannersByFlavor(
+    const unsub = api.banners().observeBannersByFlavor(
       flavor,
       async (data) => {
         if (data) {
@@ -57,6 +60,7 @@ export const useObserveBannersByFlavor = (
       },
       onlyEnabled
     );
+    return () => unsub();
   }, [api, ordering, flavor, getImages, onlyEnabled]);
   // result
   return banners;

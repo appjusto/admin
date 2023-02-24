@@ -94,7 +94,12 @@ export const BusinessProvider = ({ children }: Props) => {
   );
   const [insuranceAvailable, setInsuranceAvailable] =
     React.useState<BusinessService>();
-  const banners = useObserveBannersByFlavor('business', true, true);
+  const banners = useObserveBannersByFlavor(
+    'business',
+    typeof business?.id === 'string',
+    true,
+    true
+  );
   // business managers
   const { managers: businessManagers, fetchManagers } = useGetManagers(
     business?.id,
