@@ -28,28 +28,15 @@ import React from 'react';
 import { MdOutlineFileCopy } from 'react-icons/md';
 import { formatCurrency } from 'utils/formatters';
 import { t } from 'utils/i18n';
-import { SectionTitle } from '../generics/SectionTitle';
+import { SectionTitle } from '../../generics/SectionTitle';
+import {
+  getExternalQuotationStatus,
+  getOutsourceQuotationValues,
+} from './utils';
 
 interface OutsouceDeliveryProps {
   order?: WithId<Order> | null;
 }
-
-const getOutsourceQuotationValues = (
-  consumerValue?: number,
-  externalTotal?: string
-) => {
-  if (!externalTotal || !consumerValue)
-    return {
-      external: null,
-      externalNet: null,
-      extra: null,
-    };
-  const external = parseInt(externalTotal.replace('.', ''));
-  const externalNet = Math.round(external * 0.84);
-  const extra =
-    consumerValue > externalNet ? Math.round(consumerValue - externalNet) : 0;
-  return { external, externalNet, extra };
-};
 
 export const OutsouceDelivery = ({ order }: OutsouceDeliveryProps) => {
   // context
@@ -82,7 +69,10 @@ export const OutsouceDelivery = ({ order }: OutsouceDeliveryProps) => {
   const isOrderActive = order?.status
     ? ['confirmed', 'preparing', 'ready', 'dispatching'].includes(order.status)
     : false;
-  const isExternalQuotation = typeof lastQuotation?.quotation.id === 'string';
+  const isExternalQuotation = getExternalQuotationStatus(
+    lastQuotation?.quotation.id,
+    lastQuotation?.createdAt
+  );
   const { external, externalNet, extra } = getOutsourceQuotationValues(
     order?.fare?.courier?.value,
     lastQuotation?.quotation?.priceBreakdown.totalExcludePriorityFee
@@ -327,7 +317,7 @@ export const OutsouceDelivery = ({ order }: OutsouceDeliveryProps) => {
               <Flex justifyContent="space-between">
                 <Box>
                   <Text fontSize="17px" fontWeight="700">
-                    {t('Cotação:')}
+                    {t('Última cotação:')}
                   </Text>
                   {isExternalQuotation ? (
                     <Box pl="4">

@@ -19,7 +19,7 @@ import { CourierManualAllocation } from './CourierManualAllocation';
 import CourierNotifiedBox from './matching/CourierNotifiedBox';
 import { LogsTable } from './matching/LogsTable';
 import { NotifiedCouriers } from './matching/NotifiedCouriers';
-import { OutsouceDelivery } from './OutsourceDelivery';
+import { OutsouceDelivery } from './outsource/OutsourceDelivery';
 
 interface MatchingProps {
   order?: WithId<Order> | null;

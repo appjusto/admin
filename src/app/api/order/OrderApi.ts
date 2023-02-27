@@ -653,7 +653,7 @@ export default class OrderApi {
     const lalamoveOrdersRef = this.refs.getLalamoveOrdersRef();
     const q = query(
       lalamoveOrdersRef,
-      where('order.quotation.id', '==', quotationId),
+      where('order.quotationId', '==', quotationId),
       orderBy('createdAt', 'desc'),
       limit(1)
     );
