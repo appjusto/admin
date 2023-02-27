@@ -129,6 +129,8 @@ export const BackofficeOrderDrawer = ({
   const businessInsurance = order?.fare?.business?.insurance
     ? order.fare.business.insurance > 0
     : false;
+  const isCancellationDenied =
+    order?.flags && order.flags.includes('cancellation-denied');
   //handlers
   const handleIssueOrder = () => {
     const oldFlags = order?.flags;
@@ -332,7 +334,10 @@ export const BackofficeOrderDrawer = ({
           <Route exact path={`${path}/order`}>
             <>
               <OrderDetails order={order} />
-              <OrderIssuesTable issues={orderIssues} />
+              <OrderIssuesTable
+                issues={orderIssues}
+                isCancellationDenied={isCancellationDenied}
+              />
             </>
           </Route>
           <Route exact path={`${path}/invoices`}>

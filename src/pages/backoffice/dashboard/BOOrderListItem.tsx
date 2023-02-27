@@ -196,7 +196,10 @@ export const BOOrderListItem = ({ listType, order }: Props) => {
     iconsConfig.isUnsafe = order.flags && order.flags.includes('unsafe');
   }
   if (listType === 'orders-watched' || listType === 'orders-issue') {
-    iconsConfig.isIssue = order.flags && order.flags.includes('issue');
+    iconsConfig.isIssue =
+      order.flags &&
+      (order.flags.includes('issue') ||
+        order.flags.includes('cancellation-denied'));
   }
   if (listType === 'orders-watched' || listType === 'orders-warning') {
     const isConfirmedOverLimit =
