@@ -22,6 +22,10 @@ import {
   ProfileNote,
   WithId,
 } from '@appjusto/types';
+import {
+  LalamoveOrder,
+  LalamoveQuotation,
+} from '@appjusto/types/external/lalamove/index';
 import * as Sentry from '@sentry/react';
 import { documentAs, documentsAs, FirebaseDocument } from 'core/fb';
 import dayjs from 'dayjs';
@@ -625,6 +629,34 @@ export default class OrderApi {
       );
     }
     // returns the unsubscribe function
+    return customCollectionSnapshot(q, resultHandler);
+  }
+
+  observeOrderLalamoveQuotations(
+    orderId: string,
+    resultHandler: (quotations: WithId<LalamoveQuotation>[]) => void
+  ) {
+    const cotationsRef = this.refs.getLalamoveQuotationsRef();
+    const q = query(
+      cotationsRef,
+      where('orderId', '==', orderId),
+      orderBy('createdAt', 'desc'),
+      limit(1)
+    );
+    return customCollectionSnapshot(q, resultHandler);
+  }
+
+  observeOrderLalamoveOrders(
+    quotationId: string,
+    resultHandler: (lalamoveOrder: WithId<LalamoveOrder>[]) => void
+  ) {
+    const lalamoveOrdersRef = this.refs.getLalamoveOrdersRef();
+    const q = query(
+      lalamoveOrdersRef,
+      where('order.quotation.id', '==', quotationId),
+      orderBy('createdAt', 'desc'),
+      limit(1)
+    );
     return customCollectionSnapshot(q, resultHandler);
   }
 

@@ -12,6 +12,8 @@ import {
 } from '@chakra-ui/react';
 import { useGetOutsourceDelivery } from 'app/api/order/useGetOutsourceDelivery';
 import { useGetOutsourceDeliveryQuotation } from 'app/api/order/useGetOutsourceDeliveryQuotation';
+import { useObserveOrderLalamoveOrders } from 'app/api/order/useObserveOrderLalamoveOrders';
+import { useObserveOrderLalamoveQuotations } from 'app/api/order/useObserveOrderLalamoveQuotations';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput';
@@ -53,6 +55,10 @@ export const OutsouceDelivery = ({ order }: OutsouceDeliveryProps) => {
   // context
   const { userAbility } = useContextFirebaseUser();
   const { dispatchAppRequestResult } = useContextAppRequests();
+  const lastQuotation = useObserveOrderLalamoveQuotations(order?.id);
+  const lastLalamoveOrder = useObserveOrderLalamoveOrders(
+    lastQuotation?.quotation.id
+  );
   const { getOutsourceDeliveryQuotation, outsourceDeliveryQuotationResult } =
     useGetOutsourceDeliveryQuotation(order?.id);
   const {
@@ -76,10 +82,10 @@ export const OutsouceDelivery = ({ order }: OutsouceDeliveryProps) => {
   const isOrderActive = order?.status
     ? ['confirmed', 'preparing', 'ready', 'dispatching'].includes(order.status)
     : false;
-  const isExternalQuotation = typeof order?.courier?.quotation?.id === 'string';
+  const isExternalQuotation = typeof lastQuotation?.quotation.id === 'string';
   const { external, externalNet, extra } = getOutsourceQuotationValues(
     order?.fare?.courier?.value,
-    order?.courier?.quotation?.priceBreakdown.totalExcludePriorityFee
+    lastQuotation?.quotation?.priceBreakdown.totalExcludePriorityFee
   );
   const isOutsourcingDisabled =
     outsourcingAccountType === 'platform' &&
@@ -111,10 +117,10 @@ export const OutsouceDelivery = ({ order }: OutsouceDeliveryProps) => {
     });
   };
   const copyToClipboard = () => {
-    if (!order?.courier?.externalLink) return;
+    if (!lastLalamoveOrder?.order.shareLink) return;
     setIsCopied(true);
     setTimeout(() => setIsCopied(false), 500);
-    return navigator.clipboard.writeText(order?.courier?.externalLink);
+    return navigator.clipboard.writeText(lastLalamoveOrder.order.shareLink);
   };
   const getOutsourcedCourierInfos = async () => {
     try {
@@ -201,10 +207,10 @@ export const OutsouceDelivery = ({ order }: OutsouceDeliveryProps) => {
           <Text mt="2">
             {t('Id externo: ')}
             <Text as="span" fontWeight="700">
-              {order.courier?.outsourcedOrderId ?? 'N/E'}
+              {lastLalamoveOrder?.order.id ?? 'N/E'}
             </Text>
           </Text>
-          {order.courier?.externalLink && (
+          {lastLalamoveOrder?.order.shareLink && (
             <Text
               mt="2"
               fontWeight="700"
@@ -232,9 +238,7 @@ export const OutsouceDelivery = ({ order }: OutsouceDeliveryProps) => {
             <Text fontWeight="700">{t('Dados do entregador')}</Text>
             <Button
               display={
-                typeof order.courier?.outsourcedOrderId === 'string'
-                  ? 'flex'
-                  : 'none'
+                typeof lastLalamoveOrder?.id === 'string' ? 'flex' : 'none'
               }
               variant="secondary"
               size="md"
