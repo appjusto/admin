@@ -1,14 +1,37 @@
-import { Box, Flex, FlexProps } from '@chakra-ui/react';
+import { ArrowBackIcon } from '@chakra-ui/icons';
+import { Box, Flex, FlexProps, Icon, Tooltip } from '@chakra-ui/react';
 import Container from 'common/components/Container';
 import { ReactComponent as Logo } from 'common/img/logo.svg';
+import { Link, useRouteMatch } from 'react-router-dom';
+import { t } from 'utils/i18n';
 import { Checklist } from './checklist/Checklist';
 import OnbFooter from './OnbFooter';
 
 interface Props extends FlexProps {}
 
 const OnboardingStep = ({ children }: Props) => {
+  // context
+  const { path } = useRouteMatch();
+  const segments = path.split('/');
+  const lastSegment = parseInt(segments.pop()!);
+  const currentStepIndex = isNaN(lastSegment) ? 0 : lastSegment;
+  // UI
   return (
     <Box minW="100vw" minH="100vh">
+      {currentStepIndex > 1 && (
+        <Link to={`/onboarding/${currentStepIndex - 1}`}>
+          <Tooltip label={t('Voltar tela')}>
+            <Icon
+              as={ArrowBackIcon}
+              position="fixed"
+              top="6"
+              left="6"
+              w="26px"
+              h="26px"
+            />
+          </Tooltip>
+        </Link>
+      )}
       <Box
         position="absolute"
         top="0"
@@ -28,7 +51,7 @@ const OnboardingStep = ({ children }: Props) => {
           >
             <Box position={{ md: 'fixed' }} maxW={{ md: '240px', lg: '400px' }}>
               <Logo />
-              <Checklist mt="8" />
+              <Checklist mt="8" currentStepIndex={currentStepIndex} />
             </Box>
           </Box>
           <Flex

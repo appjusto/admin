@@ -40,10 +40,12 @@ const OnboardingOpening = ({ path }: OpeningProps) => {
           {'Você irá passar por essas etapas para cadastrar seu restaurante:'}
         </Text>
         <Box mb="8">
-          <Checklist disabled />
+          <Checklist disabled currentStepIndex={0} />
         </Box>
         <Text fontSize="md">
-          {'Não se preocupe, você poderá pular qualquer etapa e voltar para preencher depois.'}
+          {
+            'Não se preocupe, você poderá pular qualquer etapa e voltar para preencher depois.'
+          }
         </Text>
         <Text fontSize="md" mb="8">
           {
@@ -51,7 +53,13 @@ const OnboardingOpening = ({ path }: OpeningProps) => {
           }
         </Text>
         <Link to={`${path}/1`}>
-          <Button size="lg" fontSize="sm" fontWeight="500" fontFamily="Barlow" mb="10">
+          <Button
+            size="lg"
+            fontSize="sm"
+            fontWeight="500"
+            fontFamily="Barlow"
+            mb="10"
+          >
             {t('Começar')}
           </Button>
         </Link>

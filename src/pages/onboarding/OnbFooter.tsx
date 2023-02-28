@@ -4,7 +4,7 @@ import { Link as RouterLink } from 'react-router-dom';
 
 const OnbFooter = () => {
   return (
-    <Box w="100vw" minH="106px" bg="black">
+    <Box w="100vw" minH="106px" bg="black" zIndex="9999">
       <Container py="10">
         <Stack
           direction={{ base: 'column', md: 'row' }}

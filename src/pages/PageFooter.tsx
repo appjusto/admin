@@ -1,5 +1,4 @@
-import { Box, Button, Flex, Link, Text } from '@chakra-ui/react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Box, Button, Flex, Text } from '@chakra-ui/react';
 import { t } from 'utils/i18n';
 import { OnboardingProps } from './onboarding/types';
 
@@ -14,7 +13,6 @@ interface Props extends OnboardingProps {
 
 const PageFooter = ({
   onboarding,
-  redirect,
   isLoading,
   isDisabled = false,
   deleteLabel,
@@ -23,7 +21,6 @@ const PageFooter = ({
   requiredLabel = true,
 }: Props) => {
   // helpers
-  const showSkip = onboarding && !['1', '2'].includes(onboarding) && redirect;
   const buttonLabel = submitLabel ?? t('Salvar');
   // UI
   return (
@@ -62,16 +59,6 @@ const PageFooter = ({
           >
             {deleteLabel}
           </Button>
-        )}
-        {showSkip && (
-          <Link
-            ml={{ base: '0', md: '8' }}
-            mt={{ base: '6', md: '0' }}
-            as={RouterLink}
-            to={redirect!}
-          >
-            <Text textStyle="link">{t('Pular etapa e preencher depois')}</Text>
-          </Link>
         )}
       </Flex>
     </Box>

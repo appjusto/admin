@@ -3,6 +3,7 @@ import BankingInformation from 'pages/banking-information/BankingInformation';
 import BusinessProfile from 'pages/business-profile/BusinessProfile';
 import DeliveryArea from 'pages/delivery-area/DeliveryArea';
 import InsurancePage from 'pages/insurance/InsurancePage';
+import LogisticsPage from 'pages/logistics/LogisticsPage';
 import { ManagerProfile } from 'pages/manager-profile/ManagerProfile';
 import { Redirect, Route, Switch, useRouteMatch } from 'react-router-dom';
 import { OnboardingComplete } from './OnboardingComplete';
@@ -45,10 +46,15 @@ const Onboarding = () => {
         </Route>
         <Route path={`${path}/5`}>
           <OnboardingStep>
-            <InsurancePage redirect={`${path}/6`} onboarding="5" />
+            <LogisticsPage redirect={`${path}/6`} onboarding="5" />
           </OnboardingStep>
         </Route>
         <Route path={`${path}/6`}>
+          <OnboardingStep>
+            <InsurancePage redirect={`${path}/7`} onboarding="6" />
+          </OnboardingStep>
+        </Route>
+        <Route path={`${path}/7`}>
           <OnboardingStep>
             <TermsOfUse redirect={`${path}/complete`} />
           </OnboardingStep>

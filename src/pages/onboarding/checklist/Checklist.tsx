@@ -2,22 +2,24 @@ import { Box, BoxProps } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useContextBusiness } from 'app/state/business/context';
 import React from 'react';
-import { Link, useRouteMatch } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { OnboardingItem } from './ChecklistItem';
 
 interface ChecklistProps extends BoxProps {
   disabled?: boolean;
+  currentStepIndex: number;
 }
 
-export const Checklist = ({ disabled, ...props }: ChecklistProps) => {
+export const Checklist = ({
+  currentStepIndex,
+  disabled,
+  ...props
+}: ChecklistProps) => {
   // context
   const { business } = useContextBusiness();
   const { updateBusinessProfile } = useBusinessProfile(business?.id, true);
-  const { path } = useRouteMatch();
-  const segments = path.split('/');
-  const lastSegment = parseInt(segments.pop()!);
-  const currentStepIndex = isNaN(lastSegment) ? 0 : lastSegment;
+
   // state
   const [isDisabled, setIsDisabled] = React.useState(true);
   // side effects
@@ -39,6 +41,7 @@ export const Checklist = ({ disabled, ...props }: ChecklistProps) => {
     t('Criar perfil do restaurante'),
     t('Cadastrar dados bancários'),
     t('Definir endereço e raio de entrega'),
+    t('Modelo de logística'),
     t('Modelo de cobertura'),
     t('Contrato de serviço e termos de uso'),
   ];
