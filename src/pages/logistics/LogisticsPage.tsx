@@ -96,7 +96,7 @@ const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
           )}
         />
         <RadioGroup
-          mt="4"
+          mt="8"
           value={logistics}
           onChange={(value) => setLogistics(value as Logistic)}
         >

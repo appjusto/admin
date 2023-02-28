@@ -6,6 +6,7 @@ import { Link, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { Checklist } from './checklist/Checklist';
 import OnbFooter from './OnbFooter';
+import { Summary } from './Summary';
 
 interface Props extends FlexProps {}
 
@@ -15,6 +16,7 @@ const OnboardingStep = ({ children }: Props) => {
   const segments = path.split('/');
   const lastSegment = parseInt(segments.pop()!);
   const currentStepIndex = isNaN(lastSegment) ? 0 : lastSegment;
+  const showSummary = [5, 6].includes(currentStepIndex);
   // UI
   return (
     <Box minW="100vw" minH="100vh">
@@ -52,6 +54,7 @@ const OnboardingStep = ({ children }: Props) => {
             <Box position={{ md: 'fixed' }} maxW={{ md: '240px', lg: '400px' }}>
               <Logo />
               <Checklist mt="8" currentStepIndex={currentStepIndex} />
+              {showSummary && <Summary />}
             </Box>
           </Box>
           <Flex

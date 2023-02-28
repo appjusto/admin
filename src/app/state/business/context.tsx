@@ -4,6 +4,7 @@ import {
   BusinessService,
   Fee,
   ManagerWithRole,
+  PlatformFees,
   WithId,
 } from '@appjusto/types';
 import { useFetchAreasByCity } from 'app/api/areas/useFetchAreasByCity';
@@ -56,6 +57,7 @@ const watchedFields: (keyof Business)[] = [
 ];
 
 interface ContextProps {
+  platformFees?: PlatformFees | null;
   business?: WithId<Business> | null;
   clearBusiness(): void;
   setBusinessId(businessId?: string | null): void;
@@ -195,6 +197,7 @@ export const BusinessProvider = ({ children }: Props) => {
   return (
     <BusinessContext.Provider
       value={{
+        platformFees,
         business,
         clearBusiness,
         setBusinessId,
