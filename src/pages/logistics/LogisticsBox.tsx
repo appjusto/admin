@@ -9,7 +9,7 @@ interface LogisticsBoxProps {
 export const LogisticsBox = ({ isSelected, children }: LogisticsBoxProps) => {
   return (
     <Box
-      p="6"
+      p="8"
       w="100%"
       maxW="600px"
       border={isSelected ? '2px solid' : '1px solid'}

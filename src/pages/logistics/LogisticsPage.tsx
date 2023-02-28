@@ -2,7 +2,6 @@ import { BusinessService } from '@appjusto/types';
 import {
   Box,
   Flex,
-  HStack,
   Icon,
   Radio,
   RadioGroup,
@@ -21,10 +20,11 @@ import { OnboardingProps } from 'pages/onboarding/types';
 import PageFooter from 'pages/PageFooter';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
-import { MdCheck } from 'react-icons/md';
 import { Redirect } from 'react-router-dom';
 import { t } from 'utils/i18n';
+import { CommissionItem } from './CommissionItem';
 import { LogisticsBox } from './LogisticsBox';
+import { LogisticsItem } from './LogisticsItem';
 
 type Logistic = 'logistics' | 'logistics-by-partners' | 'own-logistics';
 
@@ -101,41 +101,88 @@ const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
           onChange={(value) => setLogistics(value as Logistic)}
         >
           <VStack spacing={4} alignItems="flex-start">
-            <LogisticsBox isSelected={logistics === 'own-logistics'}>
-              <Flex>
-                <Radio value="own-logistics">
-                  <Text fontSize="18px">{t('Logística Própria')}</Text>
-                </Radio>
-                <Icon as={motocycleGray} ml="6" w="48px" h="48px" />
-              </Flex>
-            </LogisticsBox>
             <LogisticsBox isSelected={logistics === 'logistics'}>
               <Flex>
                 <Radio value="logistics">
-                  <Text fontSize="18px">{t('Logística AppJusto')}</Text>
+                  <Text ml="2" fontSize="18px" fontWeight="700">
+                    {t('Logística AppJusto')}
+                  </Text>
                 </Radio>
                 <Icon as={motocycleGreen} ml="6" w="48px" h="48px" />
               </Flex>
-              <HStack spacing={2} alignItems="flex-start">
-                <Icon as={MdCheck} color="green.500" w="24px" h="24px" />
+              <LogisticsItem title={t('Com Logística AppJusto')} icon>
                 <Text>
-                  {t('Cancelamento pelo AppJusto após início do preparo')}
+                  {t('A entrega é feita por ')}
+                  <Text as="span" fontWeight="700">
+                    {t('nossa rede entregadores e por parceiros')}
+                  </Text>
                 </Text>
-              </HStack>
+              </LogisticsItem>
+              <LogisticsItem title={t('Sem Mensalidades')} icon>
+                <Text>
+                  {t('Uma vantagem do AppJusto é que ')}
+                  <Text as="span" fontWeight="700">
+                    {t('não cobramos mensalidade')}
+                  </Text>
+                </Text>
+              </LogisticsItem>
+              <CommissionItem fee="5%" highlight />
             </LogisticsBox>
             <LogisticsBox isSelected={logistics === 'logistics-by-partners'}>
               <Flex>
                 <Radio value="logistics-by-partners">
-                  <Text fontSize="18px">{t('Logística por Parceiros')}</Text>
+                  <Text ml="2" fontSize="18px" fontWeight="700">
+                    {t('Logística por Parceiros')}
+                  </Text>
                 </Radio>
                 <Icon as={motocycleYellow} ml="6" w="48px" h="48px" />
               </Flex>
-              <HStack spacing={2} alignItems="flex-start">
-                <Icon as={MdCheck} color="green.500" w="24px" h="24px" />
+              <LogisticsItem title={t('Com Logística por Parceiros')} icon>
                 <Text>
-                  {t('Cancelamento pelo AppJusto após início do preparo')}
+                  {t(
+                    'O AppJusto ainda está construindo a rede de entregadores na sua cidade. Até lá '
+                  )}
+                  <Text as="span" fontWeight="700">
+                    {t('suas entregas serão feitas por empresas parceiras')}
+                  </Text>
                 </Text>
-              </HStack>
+              </LogisticsItem>
+              <LogisticsItem title={t('Sem Mensalidades')} icon>
+                <Text>
+                  {t('Uma vantagem do AppJusto é que ')}
+                  <Text as="span" fontWeight="700">
+                    {t('não cobramos mensalidade')}
+                  </Text>
+                </Text>
+              </LogisticsItem>
+              <CommissionItem fee="5%" highlight />
+            </LogisticsBox>
+            <LogisticsBox isSelected={logistics === 'own-logistics'}>
+              <Flex>
+                <Radio value="own-logistics">
+                  <Text ml="2" fontSize="18px" fontWeight="700">
+                    {t('Logística Própria')}
+                  </Text>
+                </Radio>
+                <Icon as={motocycleGray} ml="6" w="48px" h="48px" />
+              </Flex>
+              <LogisticsItem title={t('Sem Logística AppJusto')}>
+                <Text>
+                  {t('A entrega é feita por ')}
+                  <Text as="span" fontWeight="700">
+                    {t('sua rede de entregadores')}
+                  </Text>
+                </Text>
+              </LogisticsItem>
+              <LogisticsItem title={t('Sem Mensalidades')} icon>
+                <Text>
+                  {t('Uma vantagem do AppJusto é que ')}
+                  <Text as="span" fontWeight="700">
+                    {t('não cobramos mensalidade')}
+                  </Text>
+                </Text>
+              </LogisticsItem>
+              <CommissionItem fee="3%" />
             </LogisticsBox>
           </VStack>
         </RadioGroup>
