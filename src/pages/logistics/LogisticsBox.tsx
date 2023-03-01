@@ -11,7 +11,6 @@ export const LogisticsBox = ({ isSelected, children }: LogisticsBoxProps) => {
     <Box
       p="8"
       w="100%"
-      maxW="600px"
       border={isSelected ? '2px solid' : '1px solid'}
       borderColor={isSelected ? 'green.500' : '#C8D7CB'}
       borderRadius="lg"

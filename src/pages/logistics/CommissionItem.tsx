@@ -2,7 +2,7 @@ import { Box, Center, Flex, Text } from '@chakra-ui/react';
 import { t } from 'utils/i18n';
 
 interface CommissionItemProps {
-  fee: string;
+  fee: number;
   highlight?: boolean;
 }
 
@@ -17,7 +17,7 @@ export const CommissionItem = ({ fee, highlight }: CommissionItemProps) => {
           borderRadius="23px"
           fontWeight="700"
         >
-          {fee}
+          {`${fee}%`}
         </Center>
       </Box>
       <Box ml="4">
