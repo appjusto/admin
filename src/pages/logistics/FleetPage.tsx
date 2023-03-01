@@ -129,7 +129,7 @@ export const FleetPage = () => {
       <form onSubmit={onSubmitHandler}>
         <Text mt="6" fontSize="xl" color="black">
           {t(
-            'Para realizar a logística de seus pedidos é preciso definir os parâmetros da sua frota'
+            'Para realizar logística própria é preciso definir os parâmetros da sua frota privada'
           )}
         </Text>
         <CustomInput

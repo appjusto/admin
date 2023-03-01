@@ -148,7 +148,7 @@ const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
           <LogisticsOptions
             logistics={logistics}
             logisticsAccepted={logisticsAccepted}
-            handleChange={onSubmitHandler}
+            handleChange={setLogistics}
           />
           <PageFooter
             onboarding={onboarding}
