@@ -32,6 +32,10 @@ const OrdersPage = () => {
     () => history.replace(path),
     [history, path]
   );
+  // side effects
+  React.useEffect(() => {
+    window?.scrollTo(0, 0);
+  }, []);
   // UI
   if (business?.situation !== 'approved') {
     return <Redirect to="/app" push />;

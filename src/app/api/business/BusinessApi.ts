@@ -295,26 +295,25 @@ export default class BusinessApi {
     return true;
   }
 
-  async removeBusinessManager(
-    business: WithId<Business>,
-    managerEmail: string
-  ) {
+  async updateBusinessManager(businessId: string, managers: string[]) {
     const timestamp = serverTimestamp();
-    const managers = business.managers?.filter(
-      (email) => email !== managerEmail
-    );
     const fullChanges = {
       managers,
       updatedOn: timestamp,
     };
-    return await updateDoc(this.refs.getBusinessRef(business.id), fullChanges);
+    return await updateDoc(this.refs.getBusinessRef(businessId), fullChanges);
   }
 
   async sendBusinessKeepAlive(businessId: string) {
-    const timestamp = serverTimestamp();
-    return await updateDoc(this.refs.getBusinessRef(businessId), {
-      keepAlive: timestamp,
-    });
+    try {
+      const timestamp = serverTimestamp();
+      return await updateDoc(this.refs.getBusinessRef(businessId), {
+        keepAlive: timestamp,
+      });
+    } catch (error) {
+      console.log(error);
+      Sentry.captureException(error);
+    }
   }
 
   async deleteBusinessProfile(data: Partial<DeleteBusinessPayload>) {

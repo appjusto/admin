@@ -7,7 +7,7 @@ import { TeamTable } from './TeamTable';
 
 const TeamPage = () => {
   // context
-  const { setIsGetManagersActive } = useContextBusiness();
+  const { business, setIsGetManagersActive } = useContextBusiness();
   // side effects
   React.useEffect(() => {
     setIsGetManagersActive(true);
@@ -22,7 +22,10 @@ const TeamPage = () => {
         )}
       />
       <TeamTable />
-      <AddMembersForm />
+      <AddMembersForm
+        businessId={business?.id}
+        businessManagers={business?.managers}
+      />
     </>
   );
 };

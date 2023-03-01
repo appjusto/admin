@@ -32,8 +32,9 @@ export const Outsourced = ({
     React.useState<string>();
   // helpers
   const isOrderFlagged = order?.flags?.includes('matching');
-  const deliveryFare = order?.fare?.courier?.value
-    ? formatCurrency(order.fare.courier.value)
+  const deliveryLocationFee = order?.fare?.courier?.locationFee ?? 0;
+  const deliveryFee = order?.fare?.courier?.netValue
+    ? formatCurrency(order.fare.courier.netValue + deliveryLocationFee)
     : 'N/E';
   const isOrderActive =
     order?.status &&
@@ -55,7 +56,7 @@ export const Outsourced = ({
           <>
             <Text mt="2">
               {t(
-                `Não foi possível encontrar entregadores disponíveis na nossa rede e você optou por assumir a logística, recebendo o repasse do valor do frete (${deliveryFare}).`
+                `Não foi possível encontrar entregadores disponíveis na nossa rede e você optou por assumir a logística, recebendo o repasse do valor do frete (${deliveryFee}).`
               )}
             </Text>
             <HStack mt="4">
@@ -115,7 +116,7 @@ export const Outsourced = ({
         <SectionTitle mt="0">{t('Você pode assumir a logística')}</SectionTitle>
         <Text mt="2">
           {t(
-            `Ao assumir a logística, iremos repassar o valor de ${deliveryFare} pelo custo da entrega, além do valor do pedido que já foi cobrado do cliente. Caso confirme, o AppJusto não terá como monitorar a entrega.`
+            `Ao assumir a logística, iremos repassar o valor de ${deliveryFee} pelo custo da entrega, além do valor do pedido que já foi cobrado do cliente. Caso confirme, o AppJusto não terá como monitorar a entrega.`
           )}
         </Text>
         <HStack mt="4">

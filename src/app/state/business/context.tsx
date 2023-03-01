@@ -5,6 +5,7 @@ import {
   Fee,
   Fleet,
   ManagerWithRole,
+  PlatformFees,
   WithId,
 } from '@appjusto/types';
 import { useFetchAreasByCity } from 'app/api/areas/useFetchAreasByCity';
@@ -58,6 +59,7 @@ const watchedFields: (keyof Business)[] = [
 ];
 
 interface ContextProps {
+  platformFees?: PlatformFees | null;
   business?: WithId<Business> | null;
   clearBusiness(): void;
   setBusinessId(businessId?: string | null): void;
@@ -97,7 +99,12 @@ export const BusinessProvider = ({ children }: Props) => {
   );
   const [insuranceAvailable, setInsuranceAvailable] =
     React.useState<BusinessService>();
-  const banners = useObserveBannersByFlavor('business', true, true);
+  const banners = useObserveBannersByFlavor(
+    'business',
+    typeof business?.id === 'string',
+    true,
+    true
+  );
   // business managers
   const { managers: businessManagers, fetchManagers } = useGetManagers(
     business?.id,
@@ -197,6 +204,7 @@ export const BusinessProvider = ({ children }: Props) => {
   return (
     <BusinessContext.Provider
       value={{
+        platformFees,
         business,
         clearBusiness,
         setBusinessId,

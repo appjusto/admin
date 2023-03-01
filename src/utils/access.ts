@@ -40,6 +40,7 @@ type AdminAccess = {
   'orders-history': string;
   'finances': string;
   'business-profile': string;
+  'operation': string;
   'banking-information': string;
   'team': string;
   'chat': string;
@@ -55,6 +56,7 @@ const adminManagerPages = [
   'orders-history',
   'finances',
   'business-profile',
+  'operation',
   'banking-information',
   'team',
   'chat',

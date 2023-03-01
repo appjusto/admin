@@ -104,7 +104,10 @@ export const BackofficeOrderDrawer = ({
   const {
     matching,
     logs: matchingLogs,
+    notifiedCouriers,
+    clearLogsQueryLimit,
     fetchNextMatchingLogs,
+    fetchNextOrderNotifiedCouriers,
   } = useObserveOrderMatching(orderId, matchingActive);
   const { orderChatGroup } = useObserveOrderChatMessages(
     orderId,
@@ -287,6 +290,7 @@ export const BackofficeOrderDrawer = ({
       setIssue(orderCancellation.issue ?? null);
       setMessage(orderCancellation.comment ?? '');
       setRefund(orderCancellation.params?.refund ?? []);
+      setBusinessIndemnity(orderCancellation.businessIndemnity ?? false);
     } else if (orderCancellation === null) setRefund([]);
   }, [orderCancellation]);
   React.useEffect(() => {
@@ -298,10 +302,6 @@ export const BackofficeOrderDrawer = ({
       });
     else setLoadingState('idle');
   }, [updateResult.isLoading, cancelResult.isLoading]);
-  React.useEffect(() => {
-    if (!businessInsurance) return;
-    setBusinessIndemnity(true);
-  }, [businessInsurance]);
   React.useEffect(() => {
     if (!deleteOrderResult.isSuccess) return;
     onClose();
@@ -347,7 +347,10 @@ export const BackofficeOrderDrawer = ({
               order={order}
               matching={matching}
               logs={matchingLogs}
+              clearQueryLimit={clearLogsQueryLimit}
+              notifiedCouriers={notifiedCouriers}
               fetchNextMatchingLogs={fetchNextMatchingLogs}
+              fetchNextOrderNotifiedCouriers={fetchNextOrderNotifiedCouriers}
               activeMatching={handleActiveMatching}
             />
           </Route>

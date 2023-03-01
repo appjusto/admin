@@ -208,6 +208,9 @@ export default class FirebaseRefs {
   getCourierProfileNoteRef = (courierId: string, profileNoteId: string) =>
     doc(this.getCourierProfileNotesRef(courierId), profileNoteId);
 
+  // courier requests
+  getCourierRequestsRef = () => collection(this.firestore, 'courier-requests');
+
   // reviews
   getReviewsRef = () => collection(this.firestore, 'reviews');
 
@@ -230,6 +233,25 @@ export default class FirebaseRefs {
   getBannersRef = () => collection(this.firestore, 'banners');
   getBannerOrderingRef = () => doc(this.getBannersRef(), 'ordering');
   getBannerRef = (bannerId: string) => doc(this.getBannersRef(), bannerId);
+
+  // integrations
+  // iza
+  getIntegrationsRef = () => collection(this.firestore, 'integrations');
+  getIzaIntegrationRef = () => doc(this.getIntegrationsRef(), 'iza');
+  getIzaPersonsRef = () => collection(this.getIzaIntegrationRef(), 'persons');
+  getIzaPersonRef = (id: string) => doc(this.getIzaPersonsRef(), id);
+  getIzaContractsRef = () =>
+    collection(this.getIzaIntegrationRef(), 'contracts');
+  getIzaContractRef = (id: string) => doc(this.getIzaContractsRef(), id);
+  getIzaPeriodsRef = () => collection(this.getIzaIntegrationRef(), 'periods');
+  getIzaPeriodRef = (id: string) => doc(this.getIzaPeriodsRef(), id);
+  // lalamove
+  getLalamoveIntegrationRef = () => doc(this.getIntegrationsRef(), 'lalamove');
+  getLalamoveQuotationsRef = () =>
+    collection(this.getLalamoveIntegrationRef(), 'quotations');
+  getLalamoveOrdersRef = () =>
+    collection(this.getLalamoveIntegrationRef(), 'orders');
+  getLalamoveOrderRef = (id: string) => doc(this.getLalamoveOrdersRef(), id);
 
   // storage
   // business

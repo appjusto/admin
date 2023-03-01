@@ -7,6 +7,7 @@ import {
   MarketplaceAccountInfo,
   WithId,
 } from '@appjusto/types';
+import { Timestamp } from '@appjusto/types/external/firebase';
 import * as cnpjutils from '@fnando/cnpj';
 import { useBusinessAndBankAccountBatch } from 'app/api/business/profile/useBusinessAndBankAccountBatch';
 import { useBusinessBankAccount } from 'app/api/business/profile/useBusinessBankAccount';
@@ -40,6 +41,7 @@ interface BusinessBOContextProps {
   bankAccount?: Partial<BankAccount> | null;
   business?: WithId<Business> | null;
   isBusinessOpen: boolean;
+  lastKeepAlive?: Timestamp;
   contextValidation: BackofficeProfileValidation;
   isLoading: boolean;
   handleBusinessProfileChange(key: string, value: any): void;
@@ -130,6 +132,7 @@ export const BusinessBOProvider = ({ children }: Props) => {
       agency: true,
       account: true,
     });
+  const [lastKeepAlive, setLastKeepAlive] = React.useState<Timestamp>();
   // handlers
   const handleBusinessProfileChange = React.useCallback(
     (key: string, value: any) => {
@@ -228,7 +231,9 @@ export const BusinessBOProvider = ({ children }: Props) => {
       dispatch({ type: 'update_banking', payload: bankAccount });
   }, [bankAccount]);
   React.useEffect(() => {
-    if (business) dispatch({ type: 'load_business', payload: business });
+    if (!business) return;
+    dispatch({ type: 'load_business', payload: business });
+    setLastKeepAlive(business.keepAlive);
   }, [business]);
   React.useEffect(() => {
     if (state?.businessProfile?.cnpj) {
@@ -301,6 +306,7 @@ export const BusinessBOProvider = ({ children }: Props) => {
         bankAccount: state.bankingInfo,
         business: state.businessProfile,
         isBusinessOpen,
+        lastKeepAlive,
         contextValidation,
         isLoading: updateResult.isLoading,
         handleBusinessProfileChange,

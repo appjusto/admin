@@ -1,30 +1,30 @@
 import { NewUserData } from '@appjusto/types';
 import { useContextApi } from 'app/state/api/context';
-import { useContextBusiness } from 'app/state/business/context';
 import { useCustomMutation } from '../mutation/useCustomMutation';
 
-export const useManagers = () => {
+export const useManagers = (businessId?: string) => {
   // contex
   const api = useContextApi();
-  const { business } = useContextBusiness();
   // mutations
-  const { mutate: createManager, mutationResult: createManagerResult } = useCustomMutation(
-    async (managers: NewUserData[]) => {
-      const dataWithKey = { key: business?.id!, managers };
+  const { mutate: createManager, mutationResult: createManagerResult } =
+    useCustomMutation(async (managers: NewUserData[]) => {
+      const dataWithKey = { key: businessId!, managers };
       return await api.manager().createManager(dataWithKey);
-    },
-    'createManager'
-  );
-  const { mutate: removeBusinessManager, mutationResult: removeResult } = useCustomMutation(
-    (managerEmail: string) => api.business().removeBusinessManager(business!, managerEmail),
-    'removeBusinessManager',
+    }, 'createManager');
+  const {
+    mutate: updateBusinessManager,
+    mutationResult: updateManagersResult,
+  } = useCustomMutation(
+    (managers: string[]) =>
+      api.business().updateBusinessManager(businessId!, managers),
+    'updateBusinessManager',
     false
   );
   // return
   return {
     createManager,
     createManagerResult,
-    removeBusinessManager,
-    removeResult,
+    updateBusinessManager,
+    updateManagersResult,
   };
 };

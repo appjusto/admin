@@ -14,6 +14,7 @@ import {
 import { useManagers } from 'app/api/manager/useManagers';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
+import { useContextAppRequests } from 'app/state/requests/context';
 import React from 'react';
 import { t } from 'utils/i18n';
 import { TeamTableItem } from './TeamTableItem';
@@ -21,13 +22,14 @@ import { TeamTableItem } from './TeamTableItem';
 export const TeamTable = () => {
   // context
   const { minVersion } = useContextFirebaseUser();
-  const { businessManagers } = useContextBusiness();
+  const { dispatchAppRequestResult } = useContextAppRequests();
+  const { business, businessManagers } = useContextBusiness();
   const {
-    removeBusinessManager,
+    updateBusinessManager,
     createManager,
     createManagerResult,
-    removeResult,
-  } = useManagers();
+    updateManagersResult,
+  } = useManagers(business?.id);
   // state
   const [managers, setManagers] = React.useState<ManagerWithRole[]>();
   const [isLoading, setIsLoading] = React.useState(false);
@@ -44,7 +46,21 @@ export const TeamTable = () => {
     createManager([{ email: managerEmail, permissions: role }]);
   };
   const deleteMember = (managerEmail: string) => {
-    removeBusinessManager(managerEmail);
+    if (!business?.managers) {
+      return dispatchAppRequestResult({
+        status: 'error',
+        requestId: 'ManagersTable-deleteMember-error',
+        message: {
+          title: 'Não foi possível encontrar os dados dos colaboradores.',
+          description:
+            'Recarregue a página, para tentar novamente, ou contate nosso suporte.',
+        },
+      });
+    }
+    const managers = business.managers.filter(
+      (email) => email !== managerEmail
+    );
+    updateBusinessManager(managers);
   };
   // side effects
   React.useEffect(() => {
@@ -52,11 +68,11 @@ export const TeamTable = () => {
     setManagers(businessManagers);
   }, [businessManagers]);
   React.useEffect(() => {
-    if (!createManagerResult.isLoading && !removeResult.isLoading)
+    if (!createManagerResult.isLoading && !updateManagersResult.isLoading)
       setIsLoading(false);
-    else if (createManagerResult.isLoading || removeResult.isLoading)
+    else if (createManagerResult.isLoading || updateManagersResult.isLoading)
       setIsLoading(true);
-  }, [createManagerResult.isLoading, removeResult.isLoading]);
+  }, [createManagerResult.isLoading, updateManagersResult.isLoading]);
   // UI
   if (!managers) {
     return (

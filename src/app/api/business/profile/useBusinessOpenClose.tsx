@@ -6,6 +6,8 @@ import { CustomToast } from 'common/components/CustomToast';
 import React from 'react';
 import { businessShouldBeOpen } from './utils';
 
+// let statusUnavailableToastId: ;
+
 export const useBusinessOpenClose = (business?: WithId<Business> | null) => {
   // context
   const { isBackofficeUser } = useContextFirebaseUser();
@@ -100,7 +102,7 @@ export const useBusinessOpenClose = (business?: WithId<Business> | null) => {
       handleToast(
         'warning',
         'Fechamento de emergência ativado.',
-        'Desative o fechamento de emergência para que seu restaurante possa funcionar de acordo com os horários configurados.',
+        'Desative o fechamento de emergência para que seu restaurante possa funcionar de acordo com os horários definidos.',
         12000
       );
     }
