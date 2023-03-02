@@ -1,4 +1,5 @@
 import {
+  AreaLogistics,
   Banner,
   Business,
   BusinessService,
@@ -69,6 +70,7 @@ interface ContextProps {
   businessManagers?: ManagerWithRole[];
   setIsGetManagersActive: React.Dispatch<React.SetStateAction<boolean>>;
   fetchManagers(): void;
+  logisticsAvailable: AreaLogistics;
   insuranceAvailable?: BusinessService;
   banners?: WithId<Banner>[] | null;
   businessFleet?: WithId<Fleet> | null;
@@ -97,6 +99,8 @@ export const BusinessProvider = ({ children }: Props) => {
     business?.businessAddress?.state,
     business?.businessAddress?.city
   );
+  const [logisticsAvailable, setLogisticsAvailable] =
+    React.useState<AreaLogistics>('none');
   const [insuranceAvailable, setInsuranceAvailable] =
     React.useState<BusinessService>();
   const banners = useObserveBannersByFlavor(
@@ -185,10 +189,16 @@ export const BusinessProvider = ({ children }: Props) => {
     setBusinessIdByBusinesses();
   }, [user?.email, isBackofficeUser, businessId, setBusinessIdByBusinesses]);
   React.useEffect(() => {
+    if (businessCityAreas?.length === 0) return;
+    const logistics = businessCityAreas[0].logistics;
+    if (logistics) setLogisticsAvailable(logistics);
+  }, [businessCityAreas]);
+  React.useEffect(() => {
     if (!platformFees) return;
     const getInsuranceFee = (): Fee | null => {
       if (businessCityAreas?.length > 0) {
-        return businessCityAreas[0].insurance;
+        if (businessCityAreas[0].insurance)
+          return businessCityAreas[0].insurance;
       }
       return platformFees?.insurance.business ?? null;
     };
@@ -214,6 +224,7 @@ export const BusinessProvider = ({ children }: Props) => {
         businessManagers,
         setIsGetManagersActive,
         fetchManagers,
+        logisticsAvailable,
         insuranceAvailable,
         banners,
         businessFleet,

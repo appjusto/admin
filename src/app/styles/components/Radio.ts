@@ -25,6 +25,9 @@ const baseStyleControl: SystemStyleFunction = (props) => {
         bg: 'currentColor',
       },
     },
+    _disabled: {
+      cursor: 'not-allowed',
+    },
   };
 };
 
