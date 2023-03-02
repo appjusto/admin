@@ -1,12 +1,12 @@
 import { Box } from '@chakra-ui/react';
 import React from 'react';
 
-interface LogisticsBoxProps {
+interface OptionCardProps {
   isSelected?: boolean;
   children: React.ReactNode;
 }
 
-export const LogisticsBox = ({ isSelected, children }: LogisticsBoxProps) => {
+export const OptionCard = ({ isSelected, children }: OptionCardProps) => {
   return (
     <Box
       p="8"

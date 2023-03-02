@@ -14,8 +14,8 @@ import { ReactComponent as motocycleGreen } from 'common/img/motocycle-green.svg
 import { ReactComponent as motocycleYellow } from 'common/img/motocycle-yellow.svg';
 import React from 'react';
 import { t } from 'utils/i18n';
-import { CommissionItem } from './CommissionItem';
-import { LogisticsBox } from './LogisticsBox';
+import { FeeDescriptionItem } from '../FeeDescriptionItem';
+import { OptionCard } from '../OptionCard';
 import { LogisticsItem } from './LogisticsItem';
 import { LogisticsType } from './LogisticsPage';
 
@@ -63,7 +63,7 @@ export const LogisticsOptions = ({
         onChange={(value) => handleChange(value as LogisticsType)}
       >
         <VStack spacing={4} alignItems="flex-start">
-          <LogisticsBox isSelected={logistics === 'appjusto'}>
+          <OptionCard isSelected={logistics === 'appjusto'}>
             <Flex>
               <Radio value="appjusto">
                 <Text ml="2" fontSize="18px" fontWeight="700">
@@ -88,9 +88,16 @@ export const LogisticsOptions = ({
                 </Text>
               </Text>
             </LogisticsItem>
-            <CommissionItem fee={availableFee} highlight />
-          </LogisticsBox>
-          <LogisticsBox isSelected={logistics === 'appjusto'}>
+            <FeeDescriptionItem
+              title={t('Comissão AppJusto')}
+              description={t(
+                'Taxa de comissão sobre pedidos pagos pelo AppJusto'
+              )}
+              fee={availableFee}
+              highlight
+            />
+          </OptionCard>
+          <OptionCard isSelected={logistics === 'appjusto'}>
             <Flex>
               <Radio value="appjusto">
                 <Text ml="2" fontSize="18px" fontWeight="700">
@@ -117,9 +124,16 @@ export const LogisticsOptions = ({
                 </Text>
               </Text>
             </LogisticsItem>
-            <CommissionItem fee={availableFee} highlight />
-          </LogisticsBox>
-          <LogisticsBox isSelected={logistics === 'private'}>
+            <FeeDescriptionItem
+              title={t('Comissão AppJusto')}
+              description={t(
+                'Taxa de comissão sobre pedidos pagos pelo AppJusto'
+              )}
+              fee={availableFee}
+              highlight
+            />
+          </OptionCard>
+          <OptionCard isSelected={logistics === 'private'}>
             <Flex>
               <Radio value="private">
                 <Text ml="2" fontSize="18px" fontWeight="700">
@@ -144,8 +158,14 @@ export const LogisticsOptions = ({
                 </Text>
               </Text>
             </LogisticsItem>
-            <CommissionItem fee={commissionBaseFee} />
-          </LogisticsBox>
+            <FeeDescriptionItem
+              title={t('Comissão AppJusto')}
+              description={t(
+                'Taxa de comissão sobre pedidos pagos pelo AppJusto'
+              )}
+              fee={commissionBaseFee}
+            />
+          </OptionCard>
         </VStack>
       </RadioGroup>
     </Box>

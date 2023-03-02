@@ -1,12 +1,18 @@
 import { Box, Center, Flex, Text } from '@chakra-ui/react';
-import { t } from 'utils/i18n';
 
-interface CommissionItemProps {
+interface FeeDescriptionItemProps {
+  title: string;
+  description: string;
   fee: number;
   highlight?: boolean;
 }
 
-export const CommissionItem = ({ fee, highlight }: CommissionItemProps) => {
+export const FeeDescriptionItem = ({
+  title,
+  description,
+  fee,
+  highlight,
+}: FeeDescriptionItemProps) => {
   return (
     <Flex mt="6">
       <Box minW="48px">
@@ -22,11 +28,9 @@ export const CommissionItem = ({ fee, highlight }: CommissionItemProps) => {
       </Box>
       <Box ml="4">
         <Text fontSize="16px" fontWeight="700">
-          {t('Comissão AppJusto')}
+          {title}
         </Text>
-        <Text fontSize="16px">
-          {t('Taxa de comissão sobre pedidos pagos pelo AppJusto')}
-        </Text>
+        <Text fontSize="16px">{description}</Text>
       </Box>
     </Flex>
   );

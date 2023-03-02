@@ -187,8 +187,13 @@ export const BusinessProvider = ({ children }: Props) => {
   React.useEffect(() => {
     if (!platformFees) return;
     const getInsuranceFee = (): Fee | null => {
-      if (areas?.length > 0) {
-        return areas[0].insurance;
+      if (business?.businessAddress?.city && areas?.length > 0) {
+        const businessArea = areas.find(
+          (area) => area.city === business?.businessAddress?.city
+        );
+        if (businessArea) {
+          return businessArea.insurance;
+        }
       }
       return platformFees?.insurance.business ?? null;
     };
@@ -199,7 +204,7 @@ export const BusinessProvider = ({ children }: Props) => {
       fee,
     };
     setInsuranceAvailable(insurance);
-  }, [areas, platformFees]);
+  }, [areas, platformFees, business?.businessAddress?.city]);
   // provider
   return (
     <BusinessContext.Provider
