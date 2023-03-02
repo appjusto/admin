@@ -31,7 +31,8 @@ export const FleetPage = () => {
   const [maxDistanceToOrigin, setMaxDistanceToOrigin] = React.useState(4000);
   const [isLoading, setIsLoading] = React.useState(false);
   // handlers
-  const onSubmitHandler = async () => {
+  const onSubmitHandler = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     if (!user?.uid) {
       dispatchAppRequestResult({
         status: 'error',

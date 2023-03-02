@@ -195,8 +195,10 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
     return unmount;
   }, []);
   React.useEffect(() => {
-    if (isOnboarding) window?.scrollTo(0, 0);
-    cnpjRef?.current?.focus();
+    window?.scrollTo(0, 0);
+  }, []);
+  React.useEffect(() => {
+    if (isOnboarding) cnpjRef?.current?.focus();
   }, [isOnboarding]);
   React.useEffect(() => {
     if (business) {

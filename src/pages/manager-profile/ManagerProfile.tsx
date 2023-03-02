@@ -152,9 +152,9 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
 
   // side effects
   React.useEffect(() => {
-    if (onboarding) window?.scrollTo(0, 0);
+    window?.scrollTo(0, 0);
     nameRef?.current?.focus();
-  }, [onboarding]);
+  }, []);
 
   React.useEffect(() => {
     clearState();

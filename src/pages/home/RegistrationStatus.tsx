@@ -60,6 +60,15 @@ const initialState = [
   },
   {
     status: false,
+    type: 'logistics',
+    label: 'Modelo de logística',
+    link: 'logistics',
+    helpText: 'Dúvidas sobre pendências com a logística',
+    helpLink:
+      'https://appjusto.freshdesk.com/support/solutions/articles/67000631084-saiba-como-definir-o-raio-de-entrega',
+  },
+  {
+    status: false,
     type: 'menu',
     label: 'Cardápio',
     link: 'menu',
@@ -118,6 +127,9 @@ export const RegistrationStatus = () => {
           return { ...data, status };
         } else if (data.type === 'address') {
           const status = businessProfileValidation.businessAddress;
+          return { ...data, status };
+        } else if (data.type === 'logistics') {
+          const status = businessProfileValidation.businessLogistics;
           return { ...data, status };
         } else if (data.type === 'menu') {
           const status = businessProfileValidation.businessMenu;

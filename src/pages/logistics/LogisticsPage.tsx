@@ -111,8 +111,10 @@ const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
     : undefined;
   // side effects
   React.useEffect(() => {
+    window?.scrollTo(0, 0);
+  }, []);
+  React.useEffect(() => {
     if (onboarding) {
-      window?.scrollTo(0, 0);
       if (logisticsAvailable === 'none') {
         setLogistics('private');
       } else {

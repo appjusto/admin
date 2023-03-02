@@ -138,10 +138,8 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
     : undefined;
   // side effects
   React.useEffect(() => {
-    if (onboarding) {
-      window?.scrollTo(0, 0);
-    }
-  }, [onboarding]);
+    window?.scrollTo(0, 0);
+  }, []);
   React.useEffect(() => {
     if (onboarding) {
       if (isAccept) {
