@@ -93,7 +93,7 @@ export const BusinessProvider = ({ children }: Props) => {
   // state
   const [business, setBusiness] = React.useState<WithId<Business> | null>();
   const [isGetManagersActive, setIsGetManagersActive] = React.useState(false);
-  const areas = useFetchAreasByCity(
+  const businessCityAreas = useFetchAreasByCity(
     business?.businessAddress?.state,
     business?.businessAddress?.city
   );
@@ -187,13 +187,8 @@ export const BusinessProvider = ({ children }: Props) => {
   React.useEffect(() => {
     if (!platformFees) return;
     const getInsuranceFee = (): Fee | null => {
-      if (business?.businessAddress?.city && areas?.length > 0) {
-        const businessArea = areas.find(
-          (area) => area.city === business?.businessAddress?.city
-        );
-        if (businessArea) {
-          return businessArea.insurance;
-        }
+      if (businessCityAreas?.length > 0) {
+        return businessCityAreas[0].insurance;
       }
       return platformFees?.insurance.business ?? null;
     };
@@ -204,7 +199,7 @@ export const BusinessProvider = ({ children }: Props) => {
       fee,
     };
     setInsuranceAvailable(insurance);
-  }, [areas, platformFees, business?.businessAddress?.city]);
+  }, [businessCityAreas, platformFees]);
   // provider
   return (
     <BusinessContext.Provider
