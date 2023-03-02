@@ -1,10 +1,10 @@
 import { Box, Center, Flex, Text } from '@chakra-ui/react';
 import { t } from 'utils/i18n';
-import { useContextSumarry } from './context/summary';
+import { useContextSummary } from './context/summary';
 
 export const Summary = () => {
   // context
-  const { commission, insurance, total } = useContextSumarry();
+  const { commission, insurance, total } = useContextSummary();
   // UI
   return (
     <Box

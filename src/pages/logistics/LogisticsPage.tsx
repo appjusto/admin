@@ -6,6 +6,7 @@ import { useContextBusiness } from 'app/state/business/context';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { useContextServerTime } from 'app/state/server-time';
 import { FilterText } from 'common/components/backoffice/FilterText';
+import { useContextSummary } from 'pages/onboarding/context/summary';
 import { OnboardingProps } from 'pages/onboarding/types';
 import PageFooter from 'pages/PageFooter';
 import PageHeader from 'pages/PageHeader';
@@ -23,7 +24,9 @@ const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
   const { user } = useContextFirebaseUser();
   const { getServerTime } = useContextServerTime();
   const { dispatchAppRequestResult } = useContextAppRequests();
-  const { business, businessFleet, platformFees } = useContextBusiness();
+  const { business, businessFleet, platformFees, logisticsAvailable } =
+    useContextBusiness();
+  const { updateState } = useContextSummary();
   const { updateBusinessProfile, updateResult } = useBusinessProfile(
     business?.id
   );
@@ -110,8 +113,28 @@ const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
   React.useEffect(() => {
     if (onboarding) {
       window?.scrollTo(0, 0);
+      if (logisticsAvailable === 'none') {
+        setLogistics('private');
+      } else {
+        setLogistics('appjusto');
+      }
     }
-  }, [onboarding]);
+  }, [onboarding, logisticsAvailable]);
+  React.useEffect(() => {
+    if (onboarding) {
+      if (logistics === 'appjusto') {
+        updateState({
+          state: 'logistics',
+          value: platformFees?.logistics.percent ?? 0,
+        });
+      } else {
+        updateState({
+          state: 'logistics',
+          value: 0,
+        });
+      }
+    }
+  }, [onboarding, logistics, platformFees?.logistics, updateState]);
   React.useEffect(() => {
     if (!business?.services) return;
     const logisticsService = getBusinessService(business.services, 'logistics');

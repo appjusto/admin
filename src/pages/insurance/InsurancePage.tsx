@@ -18,6 +18,7 @@ import { useContextBusiness } from 'app/state/business/context';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { useContextServerTime } from 'app/state/server-time';
 import { FeeDescriptionItem } from 'pages/FeeDescriptionItem';
+import { useContextSummary } from 'pages/onboarding/context/summary';
 import { OnboardingProps } from 'pages/onboarding/types';
 import { OptionCard } from 'pages/OptionCard';
 import PageFooter from 'pages/PageFooter';
@@ -35,6 +36,7 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
   const { getServerTime } = useContextServerTime();
   const { dispatchAppRequestResult } = useContextAppRequests();
   const { business, insuranceAvailable } = useContextBusiness();
+  const { updateState } = useContextSummary();
   const { updateBusinessProfile, updateResult } = useBusinessProfile(
     business?.id
   );
@@ -140,6 +142,21 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
       window?.scrollTo(0, 0);
     }
   }, [onboarding]);
+  React.useEffect(() => {
+    if (onboarding) {
+      if (isAccept) {
+        updateState({
+          state: 'insurance',
+          value: insuranceAvailable?.fee.percent ?? 0,
+        });
+      } else {
+        updateState({
+          state: 'insurance',
+          value: 0,
+        });
+      }
+    }
+  }, [onboarding, isAccept, insuranceAvailable?.fee, updateState]);
   React.useEffect(() => {
     const insurance = getBusinessService(business?.services, 'insurance');
     setInsuranceAccepted(insurance);
