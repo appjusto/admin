@@ -3,6 +3,8 @@ import {
   BankAccountPersonType,
   BankAccountType,
   BusinessPhone,
+  BusinessService,
+  BusinessServiceName,
   OrderItem,
   OrderItemComplement,
   OrderStatus,
@@ -15,6 +17,15 @@ import I18n from 'i18n-js';
 import { round } from 'lodash';
 import { useLocation } from 'react-router-dom';
 import { formatCurrency, formatDate } from './formatters';
+
+export const getBusinessService = (
+  services: BusinessService[] | undefined,
+  name: BusinessServiceName
+) => {
+  if (!services) return undefined;
+  const service = services.find((service) => service.name === name);
+  return service;
+};
 
 // translation
 export const getTranslatedOrderStatus = (status: OrderStatus) => {

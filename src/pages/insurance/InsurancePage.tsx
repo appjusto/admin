@@ -25,11 +25,9 @@ import PageHeader from 'pages/PageHeader';
 import React from 'react';
 import { MdCheck, MdInfo } from 'react-icons/md';
 import { Redirect } from 'react-router-dom';
+import { getBusinessService } from 'utils/functions';
 import { t } from 'utils/i18n';
-import {
-  getBusinessInsurance,
-  getBusinessInsuranceActivationDate,
-} from './utils';
+import { getBusinessInsuranceActivationDate } from './utils';
 
 const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
   // context
@@ -143,7 +141,7 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
     }
   }, [onboarding]);
   React.useEffect(() => {
-    const insurance = getBusinessInsurance(business?.services);
+    const insurance = getBusinessService(business?.services, 'insurance');
     setInsuranceAccepted(insurance);
   }, [servivesLength, business?.services]);
   React.useEffect(() => {

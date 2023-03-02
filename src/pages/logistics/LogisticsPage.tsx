@@ -11,6 +11,7 @@ import PageFooter from 'pages/PageFooter';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
 import { Redirect } from 'react-router-dom';
+import { getBusinessService } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { FleetPage } from './FleetPage';
 import { LogisticsOptions } from './LogisticsOptions';
@@ -113,9 +114,7 @@ const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
   }, [onboarding]);
   React.useEffect(() => {
     if (!business?.services) return;
-    const logisticsService = business.services?.find(
-      (service) => service.name === 'logistics'
-    );
+    const logisticsService = getBusinessService(business.services, 'logistics');
     if (logisticsService) {
       setLogistics('appjusto');
       setLogisticsAccepted(logisticsService);

@@ -14,17 +14,16 @@ import {
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusinessBackoffice } from 'app/state/business/businessBOContext';
 import { useContextBusiness } from 'app/state/business/context';
-import { getBusinessInsurance } from 'pages/insurance/utils';
 import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
 import React from 'react';
 import { MdThumbDownOffAlt, MdThumbUpOffAlt } from 'react-icons/md';
 import { useRouteMatch } from 'react-router';
 import { Redirect, useLocation } from 'react-router-dom';
-import { getDateAndHour } from 'utils/functions';
+import { getBusinessService, getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { situationPTOptions } from '../../utils';
 
-const withoutActionPages = ['managers', 'iugu'];
+const withoutActionPages = ['managers', 'account'];
 
 interface PersonificationStatus {
   enabled: boolean;
@@ -66,14 +65,23 @@ export const BusinessBaseDrawer = ({
   const [personificationStatus, setPersonificationStatus] =
     React.useState<PersonificationStatus>({ enabled: false });
   // helpers
-  const userCanUpdate = userAbility?.can('update', 'businesses');
+  const userCanUpdate = React.useMemo(
+    () => userAbility?.can('update', 'businesses'),
+    [userAbility]
+  );
   const situationAlert =
     business?.situation === 'rejected' || business?.situation === 'invalid';
   const pageName = pathname.split('/').pop();
-  const pageHasAction = pageName
-    ? !withoutActionPages.includes(pageName)
-    : true;
-  const insurance = getBusinessInsurance(business?.services);
+  const pageHasAction = React.useMemo(() => {
+    return pageName ? !withoutActionPages.includes(pageName) : true;
+  }, [pageName]);
+  const insurance = React.useMemo(() => {
+    return getBusinessService(business?.services, 'insurance');
+  }, [business?.services]);
+  const logistics = React.useMemo(() => {
+    return getBusinessService(business?.services, 'logistics');
+  }, [business?.services]);
+
   // handlers
   const handlePersonification = React.useCallback(() => {
     if (!business?.id) return;
@@ -212,6 +220,18 @@ export const BusinessBaseDrawer = ({
                 </Text>
               </Text>
             )}
+            <Text
+              mt="1"
+              fontSize="15px"
+              color="black"
+              fontWeight="700"
+              lineHeight="22px"
+            >
+              {t('Logística:')}{' '}
+              <Text as="span" fontWeight="500">
+                {logistics ? t('Sim') : t('Não')}
+              </Text>
+            </Text>
             <Text
               mt="1"
               fontSize="15px"
