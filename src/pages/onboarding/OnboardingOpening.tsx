@@ -29,7 +29,7 @@ const OnboardingOpening = ({ path }: OpeningProps) => {
       <Container minH="100vh" zIndex="10">
         <Image src={logo} mb="8" />
         <Text fontSize="xl" color="black">
-          {t('Olá,boas vindas ao seu cadastro no AppJusto.')}
+          {t('Olá, boas vindas ao seu cadastro no AppJusto.')}
         </Text>
         <Text fontSize="xl" color="black" mb="8">
           {t(
@@ -37,19 +37,14 @@ const OnboardingOpening = ({ path }: OpeningProps) => {
           )}
         </Text>
         <Text fontSize="md" mb="8">
-          {'Você irá passar por essas etapas para cadastrar seu restaurante:'}
+          {'Estas são as etapas preliminares de cadastro:'}
         </Text>
         <Box mb="8">
           <Checklist disabled currentStepIndex={0} />
         </Box>
-        <Text fontSize="md">
-          {
-            'Não se preocupe, você poderá pular qualquer etapa e voltar para preencher depois.'
-          }
-        </Text>
         <Text fontSize="md" mb="8">
           {
-            'No final desse processo, seu restaurante já estará cadastrado no AppJusto e pronto para receber pedidos. Vamos começar?'
+            'Ao final desse processo, a equipe do AppJusto estará pronta para te ajudar a concluir o seu cadastro. Vamos começar?'
           }
         </Text>
         <Link to={`${path}/1`}>

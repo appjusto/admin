@@ -21,7 +21,7 @@ import { useContextManagerProfile } from 'app/state/manager/context';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import React from 'react';
-import { Redirect } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { t } from 'utils/i18n';
 
 const initialSurvey = {
@@ -135,9 +135,11 @@ export const BusinessDeleteDrawer = ({
                     'Você pode acessar o menu "operação" e desligá-lo a qualquer momento para que não seja mais exibido na plataforma.'
                   )}
                 </Text>
-                <Button mt="4" variant="outline" onClick={onClose}>
-                  {t('Ir até o menu operação')}
-                </Button>
+                <Link to="/app/operation">
+                  <Button mt="4" variant="outline">
+                    {t('Ir até o menu operação')}
+                  </Button>
+                </Link>
               </Box>
             )}
             <Text mt="4" fontSize="18px" color="black">

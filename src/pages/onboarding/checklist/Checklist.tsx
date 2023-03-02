@@ -41,9 +41,9 @@ export const Checklist = ({
     t('Criar perfil do restaurante'),
     t('Cadastrar dados bancários'),
     t('Definir endereço e raio de entrega'),
-    t('Modelo de logística'),
-    t('Modelo de cobertura'),
-    t('Contrato de serviço e termos de uso'),
+    t('Escolher modelo de logística'),
+    t('Escolher modelo de cobertura'),
+    t('Confirmar contrato de serviço e termos de uso'),
   ];
   return (
     <Box {...props}>
