@@ -22,7 +22,7 @@ const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
   const { user } = useContextFirebaseUser();
   const { getServerTime } = useContextServerTime();
   const { dispatchAppRequestResult } = useContextAppRequests();
-  const { business, businessFleet } = useContextBusiness();
+  const { business, businessFleet, platformFees } = useContextBusiness();
   const { updateBusinessProfile, updateResult } = useBusinessProfile(
     business?.id
   );
@@ -33,7 +33,8 @@ const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
     React.useState<BusinessService>();
   const [logistics, setLogistics] = React.useState<LogisticsType>('appjusto');
   // handlers
-  const onSubmitHandler = async () => {
+  const onSubmitHandler = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     if (!user?.uid) {
       dispatchAppRequestResult({
         status: 'error',
@@ -56,14 +57,22 @@ const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
     }
     try {
       if (logistics === 'appjusto') {
+        if (!platformFees?.logistics) {
+          dispatchAppRequestResult({
+            status: 'error',
+            requestId: 'business-fleet-submit-error',
+            message: {
+              title:
+                'Os parâmetros da plataforma, para logística, não foram encontrados.',
+            },
+          });
+          return;
+        }
         // save logistics service in business document
         const time = getServerTime().getTime();
         const logisticsService = {
           name: 'logistics',
-          fee: {
-            fixed: 0,
-            percent: 0,
-          },
+          fee: platformFees.logistics,
           createdBy: {
             id: user.uid,
             email: user.email,
@@ -92,6 +101,10 @@ const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
       });
     }
   };
+  // to handle with useEffect dependencies bug
+  const servivesLength = business?.services
+    ? business.services.length
+    : undefined;
   // side effects
   React.useEffect(() => {
     if (onboarding) {
@@ -99,15 +112,18 @@ const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
     }
   }, [onboarding]);
   React.useEffect(() => {
-    if (!business) return;
+    if (!business?.services) return;
     const logisticsService = business.services?.find(
       (service) => service.name === 'logistics'
     );
     if (logisticsService) {
       setLogistics('appjusto');
       setLogisticsAccepted(logisticsService);
-    } else setLogistics('private');
-  }, [business]);
+    } else {
+      setLogisticsAccepted(undefined);
+      setLogistics('private');
+    }
+  }, [servivesLength, business?.services]);
   // UI
   if (isSuccess && redirect) return <Redirect to={redirect} push />;
   return (
@@ -118,7 +134,7 @@ const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
           'Defina como será a logística de entrega do seu restaurante.'
         )}
       />
-      {!onboarding && (
+      {!onboarding && !logisticsAccepted && (
         <Box mt="2">
           <Flex
             mt="8"
@@ -155,7 +171,6 @@ const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
             requiredLabel={false}
             redirect={redirect}
             isLoading={isLoading}
-            // isDisabled={getActionButtonDisabledStatus()}
           />
         </form>
       ) : (

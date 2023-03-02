@@ -162,7 +162,7 @@ const SchedulesPage = () => {
     });
     return result;
   };
-  const onSubmitHandler = (event: any) => {
+  const onSubmitHandler = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const isValid = schedulesValidation(schedules);
     if (!isValid)

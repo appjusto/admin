@@ -56,7 +56,7 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
     if (!onboarding && !isAccept && !insuranceAccepted) return true;
     return false;
   }, [onboarding, isAccept, insuranceAccepted]);
-  const onSubmitHandler = (event: any) => {
+  const onSubmitHandler = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (isBackofficeUser)
       return dispatchAppRequestResult({
@@ -217,7 +217,7 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
           value={isAccept ? 'insurance' : 'no-insurance'}
           onChange={(value) => setIsAccept(value === 'insurance')}
         >
-          <VStack spacing={4} alignItems="flex-start">
+          <VStack spacing={4} alignItems="flex-start" maxW="600px">
             <OptionCard isSelected={isAccept}>
               <Radio value="insurance">
                 <Text fontSize="18px">{t('Com cobertura')}</Text>
