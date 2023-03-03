@@ -39,6 +39,7 @@ import { FirebaseError } from 'firebase/app';
 import {
   addDoc,
   deleteDoc,
+  doc,
   DocumentData,
   getDoc,
   getDocs,
@@ -257,7 +258,7 @@ export default class BusinessApi {
     if (businessFleetId) {
       batch.update(this.refs.getFleetRef(businessFleetId), fleetChanges);
     } else {
-      const fleetId = (await addDoc(this.refs.getFleetsRef(), {})).id;
+      const fleetId = doc(this.refs.getFleetsRef()).id;
       batch.set(this.refs.getFleetRef(fleetId), {
         ...fleetChanges,
         createdOn: timestamp,

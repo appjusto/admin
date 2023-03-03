@@ -52,6 +52,7 @@ const watchedFields: (keyof Business)[] = [
   'minHoursForScheduledOrders',
   'reviews',
   'services',
+  'fleetsIdsAllowed',
   // object types
   'managers',
   'profileIssues',
