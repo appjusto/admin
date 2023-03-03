@@ -1,7 +1,14 @@
 import { Fleet, WithId } from '@appjusto/types';
-import { addDoc, getDoc, serverTimestamp, updateDoc } from 'firebase/firestore';
+import {
+  addDoc,
+  getDoc,
+  query,
+  serverTimestamp,
+  updateDoc,
+  where,
+} from 'firebase/firestore';
 import FirebaseRefs from '../FirebaseRefs';
-import { customDocumentSnapshot } from '../utils';
+import { customCollectionSnapshot, customDocumentSnapshot } from '../utils';
 
 export default class FleetApi {
   constructor(private refs: FirebaseRefs) {}
@@ -12,6 +19,17 @@ export default class FleetApi {
   ) {
     const fleetRef = this.refs.getFleetRef(fleetId);
     return customDocumentSnapshot(fleetRef, resultHandler);
+  }
+
+  observeBusinessFleet(
+    businessId: string,
+    resultHandler: (result: WithId<Fleet>[] | null) => void
+  ) {
+    const q = query(
+      this.refs.getFleetsRef(),
+      where('createdBy.id', '==', businessId)
+    );
+    return customCollectionSnapshot(q, resultHandler);
   }
 
   async getFleetById(fleetId: string) {

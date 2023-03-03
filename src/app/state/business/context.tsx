@@ -13,7 +13,7 @@ import { useFetchAreasByCity } from 'app/api/areas/useFetchAreasByCity';
 import { useObserveBannersByFlavor } from 'app/api/banners/useObserveBannersByFlavor';
 import { useObserveBusinessManagedBy } from 'app/api/business/profile/useObserveBusinessManagedBy';
 import { useObserveBusinessProfile } from 'app/api/business/profile/useObserveBusinessProfile';
-import { useObserveFleet } from 'app/api/fleet/useObserveFleet';
+import { useObserveBusinessFleet } from 'app/api/fleet/useObserveBusinessFleet';
 import { useGetManagers } from 'app/api/manager/useGetManagers';
 import { usePlatformFees } from 'app/api/platform/usePlatformFees';
 import React from 'react';
@@ -75,6 +75,7 @@ interface ContextProps {
   insuranceAvailable?: BusinessService;
   banners?: WithId<Banner>[] | null;
   businessFleet?: WithId<Fleet> | null;
+  isBusinessFleetIdActive: boolean;
 }
 
 const BusinessContext = React.createContext<ContextProps>({} as ContextProps);
@@ -116,10 +117,15 @@ export const BusinessProvider = ({ children }: Props) => {
     business?.managers,
     isGetManagersActive
   );
-  const businessFleetId = business?.fleetsIdsAllowed
-    ? business?.fleetsIdsAllowed[0]
-    : null;
-  const businessFleet = useObserveFleet(businessFleetId);
+  // business fleet
+  const businessFleet = useObserveBusinessFleet(business?.id);
+  const isBusinessFleetIdActive = React.useMemo(
+    () =>
+      business?.fleetsIdsAllowed
+        ? business.fleetsIdsAllowed[0] === businessFleet?.id
+        : false,
+    [business?.fleetsIdsAllowed, businessFleet?.id]
+  );
   // handlers
   const clearBusiness = React.useCallback(() => {
     setBusinessId(null);
@@ -229,6 +235,7 @@ export const BusinessProvider = ({ children }: Props) => {
         insuranceAvailable,
         banners,
         businessFleet,
+        isBusinessFleetIdActive,
       }}
     >
       {children}

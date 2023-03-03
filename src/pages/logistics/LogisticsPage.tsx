@@ -24,8 +24,13 @@ const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
   const { user } = useContextFirebaseUser();
   const { getServerTime } = useContextServerTime();
   const { dispatchAppRequestResult } = useContextAppRequests();
-  const { business, businessFleet, platformFees, logisticsAvailable } =
-    useContextBusiness();
+  const {
+    business,
+    businessFleet,
+    isBusinessFleetIdActive,
+    platformFees,
+    logisticsAvailable,
+  } = useContextBusiness();
   const { updateState: updateSummaryState } = useContextSummary();
   const { updateBusinessProfile, updateResult } = useBusinessProfile(
     business?.id
@@ -96,6 +101,11 @@ const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
         const changes = {
           services,
         } as Partial<Business>;
+        if (businessFleet?.id) {
+          const fleetsIdsAllowed = business.fleetsIdsAllowed;
+          fleetsIdsAllowed?.push(businessFleet.id);
+          changes.fleetsIdsAllowed = fleetsIdsAllowed;
+        }
         updateBusinessProfile(changes);
       }
     } catch (error) {
@@ -179,7 +189,7 @@ const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
                 isActive={page === 'fleet'}
                 label={t('Configure sua frota')}
                 onClick={() => setPage('fleet')}
-                isAlert={logistics === 'private' && !businessFleet}
+                isAlert={logistics === 'private' && !isBusinessFleetIdActive}
               />
             </HStack>
           </Flex>
