@@ -24,10 +24,11 @@ import { OptionCard } from 'pages/OptionCard';
 import PageFooter from 'pages/PageFooter';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
-import { MdCheck, MdInfo } from 'react-icons/md';
+import { MdInfo } from 'react-icons/md';
 import { Redirect } from 'react-router-dom';
 import { getBusinessService } from 'utils/functions';
 import { t } from 'utils/i18n';
+import { CoverageItem } from './CoverageItem';
 import { getBusinessInsuranceActivationDate } from './utils';
 
 const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
@@ -47,6 +48,8 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
   const [isAccept, setIsAccept] = React.useState(false);
   const [agreed, setAgreed] = React.useState(false);
   // helpers
+  const logisticsService = getBusinessService(business?.services, 'logistics');
+  const isLogistics = typeof logisticsService?.name === 'string';
   const feeToDisplay =
     insuranceAccepted?.fee.percent ?? insuranceAvailable?.fee.percent;
   const insuranceActivatedAt =
@@ -237,7 +240,7 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
               </Radio>
               <Text mt="4">
                 {t(
-                  'Na opção com cobertura, o restaurante será reembolsado caso ocorram quaisquer das situações abaixo:'
+                  'Na opção com cobertura, o restaurante será reembolsado caso ocorra:'
                 )}
               </Text>
               <VStack
@@ -246,54 +249,37 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
                 justifyContent="flex-start"
                 alignItems="flex-start"
               >
-                <HStack spacing={2} alignItems="flex-start">
-                  <Icon as={MdCheck} color="green.500" w="24px" h="24px" />
-                  <Text>
-                    {t('Cancelamento pelo AppJusto após início do preparo')}
-                  </Text>
-                </HStack>
-                <HStack spacing={2} alignItems="flex-start">
-                  <Icon as={MdCheck} color="green.500" w="22px" h="22px" />
-                  <Text>{t('Cancelamento por atraso na entrega *')}</Text>
-                </HStack>
-                <HStack spacing={2} alignItems="flex-start">
-                  <Icon as={MdCheck} color="green.500" w="22px" h="22px" />
-                  <Text>
-                    {t(
-                      'Cancelamento por falta de disponibilidade de entregador da rede AppJusto'
-                    )}
-                  </Text>
-                </HStack>
-                <HStack spacing={2} alignItems="flex-start">
-                  <Icon as={MdCheck} color="green.500" w="22px" h="22px" />
-                  <Text>
-                    {t(
-                      'Defeito no produto (ex: embalagem violada, perda da qualidade do produto, etc) desde que ocasionado por problema na entrega *'
-                    )}
-                  </Text>
-                </HStack>
-                <HStack spacing={2} alignItems="flex-start">
-                  <Icon as={MdCheck} color="green.500" w="22px" h="22px" />
-                  <Text>{t('Extravio dos produtos *')}</Text>
-                </HStack>
-                <HStack spacing={2} alignItems="flex-start">
-                  <Icon as={MdCheck} color="green.500" w="22px" h="22px" />
-                  <Text>{t('Fraude (Chargeback)')}</Text>
-                </HStack>
-              </VStack>
-              <HStack mt="3" spacing={2} alignItems="flex-start">
-                <Text>{t('*')}</Text>
-                <Text fontSize="14px">
-                  {t(
-                    'A cobertura não se aplica caso a entrega seja assumida pelo estabelecimento.'
+                <CoverageItem
+                  isVisible={isLogistics}
+                  label={t('Cancelamento pelo AppJusto após início do preparo')}
+                />
+                <CoverageItem
+                  isVisible={isLogistics}
+                  label={t('Cancelamento por atraso na entrega')}
+                />
+                <CoverageItem
+                  isVisible={isLogistics}
+                  label={t(
+                    'Cancelamento por falta de disponibilidade de entregador da rede AppJusto'
                   )}
-                </Text>
-              </HStack>
+                />
+                <CoverageItem
+                  isVisible={isLogistics}
+                  label={t(
+                    'Defeito no produto (ex: embalagem violada, perda da qualidade do produto, etc) desde que ocasionado por problema na entrega'
+                  )}
+                />
+                <CoverageItem
+                  isVisible={isLogistics}
+                  label={t('Extravio dos produtos')}
+                />
+                <CoverageItem isVisible label={t('Fraude (Chargeback)')} />
+              </VStack>
               {typeof feeToDisplay === 'number' && (
                 <FeeDescriptionItem
                   title={t('Taxa de cobertura')}
                   description={t(
-                    'Taxa de cobertura sobre pedidos pagos pelo AppJusto'
+                    'Taxa de cobertura sobre incidentes com pedidos'
                   )}
                   fee={feeToDisplay}
                   highlight
@@ -354,7 +340,7 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
               <FeeDescriptionItem
                 title={t('Taxa de cobertura')}
                 description={t(
-                  'Taxa de cobertura sobre pedidos pagos pelo AppJusto'
+                  'Taxa de cobertura sobre incidentes com pedidos'
                 )}
                 fee={0}
               />

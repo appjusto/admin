@@ -118,6 +118,7 @@ export const LogisticsOptions = ({
                 <Box
                   mt="4"
                   p="4"
+                  color="black"
                   bgColor="yellow"
                   border="1px solid black"
                   borderRadius="lg"

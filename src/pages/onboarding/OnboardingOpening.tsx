@@ -14,7 +14,7 @@ interface OpeningProps {
 
 const OnboardingOpening = ({ path }: OpeningProps) => {
   return (
-    <Box w="100%" position="relative">
+    <Box position="relative">
       <Box
         position="absolute"
         top="0"
@@ -53,8 +53,8 @@ const OnboardingOpening = ({ path }: OpeningProps) => {
           }
         </Text>
         <Link to={`${path}/1`}>
-          <Button minW="200px" mb="10">
-            {t('Começar')}
+          <Button minW="200px" fontSize="sm" mb="10">
+            {t('Começar!')}
           </Button>
         </Link>
       </Container>

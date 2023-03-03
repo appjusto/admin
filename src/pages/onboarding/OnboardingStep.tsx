@@ -19,7 +19,7 @@ const OnboardingStep = ({ children }: Props) => {
   const showSummary = [5, 6].includes(currentStepIndex);
   // UI
   return (
-    <Box minW="100vw" minH="100vh">
+    <Box minH="100vh">
       {currentStepIndex > 1 && (
         <Link to={`/onboarding/${currentStepIndex - 1}`}>
           <Tooltip label={t('Voltar tela')}>
@@ -39,7 +39,7 @@ const OnboardingStep = ({ children }: Props) => {
         top="0"
         left="0"
         w={{ base: '100%', md: '38%', lg: '45%' }}
-        minH={{ base: '420px', md: '100%' }}
+        minH={{ base: '446px', md: '100%' }}
         bg="gray.50"
         zIndex="-1"
       />

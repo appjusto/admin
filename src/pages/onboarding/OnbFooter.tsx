@@ -7,7 +7,7 @@ const OnbFooter = () => {
     <Box
       position="relative"
       mt="120px"
-      w="100vw"
+      w="100%"
       minH="106px"
       bg="black"
       zIndex="9999"
