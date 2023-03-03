@@ -118,7 +118,7 @@ export const BusinessProvider = ({ children }: Props) => {
   );
   const businessFleetId = business?.fleetsIdsAllowed
     ? business?.fleetsIdsAllowed[0]
-    : undefined;
+    : null;
   const businessFleet = useObserveFleet(businessFleetId);
   // handlers
   const clearBusiness = React.useCallback(() => {
