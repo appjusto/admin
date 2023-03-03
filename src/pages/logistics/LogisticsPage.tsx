@@ -26,7 +26,7 @@ const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
   const { dispatchAppRequestResult } = useContextAppRequests();
   const { business, businessFleet, platformFees, logisticsAvailable } =
     useContextBusiness();
-  const { updateState } = useContextSummary();
+  const { updateState: updateSummaryState } = useContextSummary();
   const { updateBusinessProfile, updateResult } = useBusinessProfile(
     business?.id
   );
@@ -85,7 +85,8 @@ const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
         } as BusinessService;
         const services = business?.services ?? [];
         services.push(logisticsService);
-        updateBusinessProfile({ services });
+        const fleetsIdsAllowed = [] as string[];
+        updateBusinessProfile({ services, fleetsIdsAllowed });
       } else {
         // removing logistics from business services
         const services =
@@ -120,34 +121,35 @@ const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
       } else {
         setLogistics('appjusto');
       }
+    } else {
+      const logisticsService = getBusinessService(
+        business?.services,
+        'logistics'
+      );
+      if (logisticsService) {
+        setLogistics('appjusto');
+        setLogisticsAccepted(logisticsService);
+      } else {
+        setLogisticsAccepted(undefined);
+        setLogistics('private');
+      }
     }
-  }, [onboarding, logisticsAvailable]);
+  }, [onboarding, logisticsAvailable, servivesLength, business?.services]);
   React.useEffect(() => {
     if (onboarding) {
       if (logistics === 'appjusto') {
-        updateState({
+        updateSummaryState({
           state: 'logistics',
           value: platformFees?.logistics.percent ?? 0,
         });
       } else {
-        updateState({
+        updateSummaryState({
           state: 'logistics',
           value: 0,
         });
       }
     }
-  }, [onboarding, logistics, platformFees?.logistics, updateState]);
-  React.useEffect(() => {
-    if (!business?.services) return;
-    const logisticsService = getBusinessService(business.services, 'logistics');
-    if (logisticsService) {
-      setLogistics('appjusto');
-      setLogisticsAccepted(logisticsService);
-    } else {
-      setLogisticsAccepted(undefined);
-      setLogistics('private');
-    }
-  }, [servivesLength, business?.services]);
+  }, [onboarding, logistics, platformFees?.logistics, updateSummaryState]);
   // UI
   if (isSuccess && redirect) return <Redirect to={redirect} push />;
   return (

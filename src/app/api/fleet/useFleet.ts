@@ -8,7 +8,7 @@ export const useFleet = () => {
   // mutations
   const { mutateAsync: updateFleet, mutationResult: updateFleetResult } =
     useCustomMutation(
-      (data: {
+      async (data: {
         changes: Partial<Fleet>;
         id?: string;
       }): Promise<string | null | void> => {

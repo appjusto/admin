@@ -1,7 +1,6 @@
-import { Business, Fleet } from '@appjusto/types';
+import { Fleet } from '@appjusto/types';
 import { Box, Button, Text } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
-import { useFleet } from 'app/api/fleet/useFleet';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextAppRequests } from 'app/state/requests/context';
@@ -17,9 +16,11 @@ export const FleetPage = () => {
   // context
   const { user } = useContextFirebaseUser();
   const { dispatchAppRequestResult } = useContextAppRequests();
-  const { updateFleet } = useFleet();
   const { business, businessFleet } = useContextBusiness();
-  const { updateBusinessProfile } = useBusinessProfile(business?.id);
+  const { updateBusinessFleet, updateBusinessFleetResult } = useBusinessProfile(
+    business?.id
+  );
+  const { isLoading } = updateBusinessFleetResult;
   // state
   const [name, setName] = React.useState('');
   const [description, setDescription] = React.useState('');
@@ -29,7 +30,6 @@ export const FleetPage = () => {
     React.useState(0);
   const [maxDistance, setMaxDistance] = React.useState(30000);
   const [maxDistanceToOrigin, setMaxDistanceToOrigin] = React.useState(4000);
-  const [isLoading, setIsLoading] = React.useState(false);
   // handlers
   const onSubmitHandler = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -53,9 +53,8 @@ export const FleetPage = () => {
       });
       return;
     }
-    setIsLoading(true);
     try {
-      // create/update fleet
+      // create fleet object
       const fleetChanges = {
         type: 'private',
         name,
@@ -79,30 +78,13 @@ export const FleetPage = () => {
         });
         return;
       }
-      const createdFleetId = await updateFleet({
-        changes: fleetChanges,
-        id: businessFleet?.id,
-      });
-      const fleetId = businessFleet?.id ?? createdFleetId;
-      // Add fleetId to business document
-      if (!fleetId) {
-        setIsLoading(false);
-        dispatchAppRequestResult({
-          status: 'error',
-          requestId: 'business-fleet-submit-error',
-          message: { title: 'Não foi possível criar a frota.' },
-        });
-        return;
-      }
       const fleetsIdsAllowed = business?.fleetsIdsAllowed ?? [];
-      fleetsIdsAllowed.push(fleetId);
-      const changes = {
+      return updateBusinessFleet({
+        fleetChanges,
         fleetsIdsAllowed,
-      } as Partial<Business>;
-      updateBusinessProfile(changes);
-      setIsLoading(false);
+        businessFleetId: businessFleet?.id,
+      });
     } catch (error) {
-      setIsLoading(false);
       dispatchAppRequestResult({
         status: 'error',
         requestId: 'business-fleet-submit-error',

@@ -1,4 +1,4 @@
-import { Business, DeleteBusinessPayload } from '@appjusto/types';
+import { Business, DeleteBusinessPayload, Fleet } from '@appjusto/types';
 import { useCustomMutation } from 'app/api/mutation/useCustomMutation';
 import { useContextApi } from 'app/state/api/context';
 import { useContextFirebaseUser } from 'app/state/auth/context';
@@ -67,6 +67,28 @@ export const useBusinessProfile = (
     'updateBusinessProfileWithImages',
     !isOnboarding
   );
+  const {
+    mutate: updateBusinessFleet,
+    mutationResult: updateBusinessFleetResult,
+  } = useCustomMutation(
+    (data: {
+      fleetChanges: Fleet;
+      fleetsIdsAllowed: string[];
+      businessFleetId?: string;
+    }) => {
+      const { fleetChanges, fleetsIdsAllowed, businessFleetId } = data;
+      // create or update fleet
+      return api
+        .business()
+        .updateBusinessFleet(
+          businessId!,
+          fleetChanges,
+          fleetsIdsAllowed,
+          businessFleetId
+        );
+    },
+    'updateBusinessFleet'
+  );
   const { mutateAsync: deleteBusinessProfile, mutationResult: deleteResult } =
     useCustomMutation(
       async (survey: Partial<DeleteBusinessPayload>) =>
@@ -105,12 +127,14 @@ export const useBusinessProfile = (
     updateBusinessProfile,
     updateBusinessProfileWithImages,
     updateBusinessSlug,
+    updateBusinessFleet,
     deleteBusinessProfile,
     cloneBusiness,
     cloneComplementsGroup,
     updateResult,
     updateWithImagesResult,
     updateSlugResult,
+    updateBusinessFleetResult,
     deleteResult,
     cloneResult,
     cloneGroupResult,
