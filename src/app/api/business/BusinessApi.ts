@@ -17,7 +17,6 @@ import {
   FetchAccountInformationResponse,
   FetchAdvanceByAmountSimulationPayload,
   FetchReceivablesPayload,
-  Fleet,
   ImportMenuPayload,
   MarketplaceAccountInfo,
   Ordering,
@@ -39,7 +38,6 @@ import { FirebaseError } from 'firebase/app';
 import {
   addDoc,
   deleteDoc,
-  doc,
   DocumentData,
   getDoc,
   getDocs,
@@ -246,38 +244,6 @@ export default class BusinessApi {
     return await updateDoc(this.refs.getBusinessRef(businessId), fullChanges);
   }
 
-  async updateBusinessFleet(
-    businessId: string,
-    fleetChanges: Partial<Fleet>,
-    fleetsIdsAllowed: string[],
-    businessFleetId?: string
-  ) {
-    let batch = this.refs.getBatchRef();
-    // business
-    const timestamp = serverTimestamp();
-    if (businessFleetId) {
-      batch.update(this.refs.getFleetRef(businessFleetId), fleetChanges);
-    } else {
-      const fleetId = doc(this.refs.getFleetsRef()).id;
-      batch.set(this.refs.getFleetRef(fleetId), {
-        ...fleetChanges,
-        createdOn: timestamp,
-      } as Fleet);
-      fleetsIdsAllowed.push(fleetId);
-      batch.update(this.refs.getBusinessRef(businessId), {
-        fleetsIdsAllowed,
-        updatedOn: timestamp,
-      } as Partial<Business>);
-    }
-    // commit
-    return batch
-      .commit()
-      .then(() => true)
-      .catch((error) => {
-        console.log(error);
-        throw new Error(error);
-      });
-  }
   async updateBusinessAndBankAccountBatch(
     businessId: string,
     businessChanges: Partial<Business> | null,

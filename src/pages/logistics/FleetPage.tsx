@@ -1,10 +1,9 @@
 import { Fleet } from '@appjusto/types';
 import { Box, Button, Text } from '@chakra-ui/react';
-import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
+import { useFleet } from 'app/api/fleet/useFleet';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextAppRequests } from 'app/state/requests/context';
-import { CustomInput } from 'common/components/form/input/CustomInput';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
 import { InputCounter } from 'pages/backoffice/drawers/push/InputCounter';
 import React from 'react';
@@ -17,12 +16,10 @@ export const FleetPage = () => {
   const { user } = useContextFirebaseUser();
   const { dispatchAppRequestResult } = useContextAppRequests();
   const { business, businessFleet } = useContextBusiness();
-  const { updateBusinessFleet, updateBusinessFleetResult } = useBusinessProfile(
-    business?.id
-  );
-  const { isLoading } = updateBusinessFleetResult;
+  const { updateFleet, updateFleetResult } = useFleet();
+  const { isLoading } = updateFleetResult;
   // state
-  const [name, setName] = React.useState('');
+  // const [name, setName] = React.useState('');
   const [description, setDescription] = React.useState('');
   const [distanceThreshold, setDistanceThreshold] = React.useState(0);
   const [minimumFee, setMinimumFee] = React.useState(0);
@@ -43,7 +40,7 @@ export const FleetPage = () => {
       });
       return;
     }
-    if (!business?.id) {
+    if (!business?.id || !business.name) {
       dispatchAppRequestResult({
         status: 'error',
         requestId: 'business-fleet-submit-error',
@@ -55,9 +52,9 @@ export const FleetPage = () => {
     }
     try {
       // create fleet object
-      const fleetChanges = {
+      const changes = {
         type: 'private',
-        name,
+        name: business.name,
         description,
         distanceThreshold,
         minimumFee,
@@ -69,7 +66,7 @@ export const FleetPage = () => {
           id: business.id,
         },
       } as Fleet;
-      const isFleetvalid = fleetValidation(fleetChanges);
+      const isFleetvalid = fleetValidation(changes);
       if (!isFleetvalid) {
         dispatchAppRequestResult({
           status: 'error',
@@ -78,12 +75,7 @@ export const FleetPage = () => {
         });
         return;
       }
-      const fleetsIdsAllowed = business?.fleetsIdsAllowed ?? [];
-      return updateBusinessFleet({
-        fleetChanges,
-        fleetsIdsAllowed,
-        businessFleetId: businessFleet?.id,
-      });
+      return updateFleet({ changes, id: businessFleet?.id });
     } catch (error) {
       dispatchAppRequestResult({
         status: 'error',
@@ -95,7 +87,6 @@ export const FleetPage = () => {
   // side effects
   React.useEffect(() => {
     if (businessFleet) {
-      setName(businessFleet.name);
       setDescription(businessFleet.description);
       setDistanceThreshold(businessFleet.distanceThreshold);
       setMinimumFee(businessFleet.minimumFee);
@@ -115,7 +106,7 @@ export const FleetPage = () => {
             'Para realizar logística própria é preciso definir os parâmetros da sua frota privada'
           )}
         </Text>
-        <CustomInput
+        {/* <CustomInput
           id="fleet-name"
           label={t('Nome da frota')}
           placeholder={t('Nome da frota em até 36 caracteres')}
@@ -123,8 +114,8 @@ export const FleetPage = () => {
           onChange={(ev) => setName(ev.target.value)}
           maxLength={36}
           isRequired
-        />
-        <InputCounter max={36} current={name.length} />
+        /> */}
+        {/* <InputCounter max={36} current={name.length} /> */}
         <Textarea
           id="fleet-description"
           label={t('Descrição')}
