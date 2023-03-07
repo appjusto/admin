@@ -59,6 +59,105 @@ export const LogisticsOptions = ({
     }
   }, [commissionBaseFee, logisticsBaseFee, logisticsAccepted]);
   // UI
+  if (logisticsDisabled) {
+    return (
+      <Box maxW="600px">
+        <RadioGroup
+          mt="8"
+          value={logistics}
+          onChange={(value) => handleChange(value as LogisticsType)}
+        >
+          <VStack spacing={4} alignItems="flex-start">
+            <OptionCard isSelected={logistics === 'private'}>
+              <Flex>
+                <Radio value="private">
+                  <Text ml="2" fontSize="18px" fontWeight="700">
+                    {t('Logística Própria')}
+                  </Text>
+                </Radio>
+                <Icon as={motocycleGray} ml="6" w="48px" h="48px" />
+              </Flex>
+              <LogisticsItem title={t('Sem Logística AppJusto')}>
+                <Text>
+                  {t('A entrega é feita por ')}
+                  <Text as="span" fontWeight="700">
+                    {t('sua rede de entregadores')}
+                  </Text>
+                </Text>
+              </LogisticsItem>
+              <LogisticsItem title={t('Sem Mensalidades')} icon>
+                <Text>
+                  {t('Uma vantagem do AppJusto é que ')}
+                  <Text as="span" fontWeight="700">
+                    {t('não cobramos mensalidade')}
+                  </Text>
+                </Text>
+              </LogisticsItem>
+              <FeeDescriptionItem
+                title={t('Comissão AppJusto')}
+                description={t(
+                  'Taxa de comissão sobre pedidos pagos pelo AppJusto'
+                )}
+                fee={commissionBaseFee}
+              />
+            </OptionCard>
+
+            <OptionCard isSelected={logistics === 'appjusto'}>
+              <Flex>
+                <Radio value="appjusto" isDisabled>
+                  <Text ml="2" fontSize="18px" fontWeight="700">
+                    {t('Logística AppJusto')}
+                  </Text>
+                </Radio>
+                <Icon as={motocycleGreen} ml="6" w="48px" h="48px" />
+              </Flex>
+              <Box
+                mt="4"
+                p="4"
+                color="black"
+                bgColor="yellow"
+                border="1px solid black"
+                borderRadius="lg"
+                opacity={1}
+              >
+                <Text>
+                  {t(
+                    'A Logística AppJusto ainda não chegou na sua região, mas não se preocupe! Assim que tivermos rede iremos informa-lo.'
+                  )}
+                </Text>
+              </Box>
+              <Box opacity={0.4}>
+                <LogisticsItem title={t('Com Logística AppJusto')} icon>
+                  <Text>
+                    {t('A entrega é feita por ')}
+                    <Text as="span" fontWeight="700">
+                      {t('nossa rede entregadores e por parceiros')}
+                    </Text>
+                  </Text>
+                </LogisticsItem>
+                <LogisticsItem title={t('Sem Mensalidades')} icon>
+                  <Text>
+                    {t('Uma vantagem do AppJusto é que ')}
+                    <Text as="span" fontWeight="700">
+                      {t('não cobramos mensalidade')}
+                    </Text>
+                  </Text>
+                </LogisticsItem>
+                <FeeDescriptionItem
+                  title={t('Comissão AppJusto')}
+                  description={t(
+                    'Taxa de comissão sobre pedidos pagos pelo AppJusto'
+                  )}
+                  fee={availableFee}
+                  highlight
+                />
+              </Box>
+            </OptionCard>
+          </VStack>
+        </RadioGroup>
+      </Box>
+    );
+  }
   return (
     <Box maxW="600px">
       <RadioGroup
@@ -107,31 +206,14 @@ export const LogisticsOptions = ({
           ) : (
             <OptionCard isSelected={logistics === 'appjusto'}>
               <Flex>
-                <Radio value="appjusto" isDisabled={logisticsDisabled}>
+                <Radio value="appjusto">
                   <Text ml="2" fontSize="18px" fontWeight="700">
                     {t('Logística AppJusto')}
                   </Text>
                 </Radio>
                 <Icon as={motocycleGreen} ml="6" w="48px" h="48px" />
               </Flex>
-              {logisticsDisabled && (
-                <Box
-                  mt="4"
-                  p="4"
-                  color="black"
-                  bgColor="yellow"
-                  border="1px solid black"
-                  borderRadius="lg"
-                  opacity={1}
-                >
-                  <Text>
-                    {t(
-                      'A Logística AppJusto ainda não chegou na sua região, mas não se preocupe! Assim que tivermos rede iremos informa-lo.'
-                    )}
-                  </Text>
-                </Box>
-              )}
-              <Box opacity={logisticsDisabled ? 0.4 : 1}>
+              <Box>
                 <LogisticsItem title={t('Com Logística AppJusto')} icon>
                   <Text>
                     {t('A entrega é feita por ')}
