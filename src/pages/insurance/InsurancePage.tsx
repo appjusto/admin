@@ -163,8 +163,12 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
     setInsuranceAccepted(insurance);
   }, [servivesLength, business?.services]);
   React.useEffect(() => {
-    setIsAccept(insuranceAccepted !== undefined);
-  }, [insuranceAccepted]);
+    if (onboarding) {
+      setIsAccept(true);
+    } else {
+      setIsAccept(insuranceAccepted !== undefined);
+    }
+  }, [onboarding, insuranceAccepted]);
   // UI
   if (isSuccess && redirect) return <Redirect to={redirect} push />;
   return (
@@ -347,31 +351,6 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
             </OptionCard>
           </VStack>
         </RadioGroup>
-        {!insuranceAccepted && onboarding && (
-          <Flex
-            mt="8"
-            p="4"
-            flexDir="row"
-            border="1px solid #C8D7CB"
-            borderRadius="lg"
-            bgColor="yellow"
-            maxW="600px"
-          >
-            <Center>
-              <Icon as={MdInfo} w="24px" h="24px" />
-            </Center>
-            <Box ml="4">
-              <Text fontWeight="700">
-                {t('Seu restaurante ainda não possui cobertura')}
-              </Text>
-              <Text fontSize="13px">
-                {t(
-                  'Não se preocupe. É possível aderir à nossa cobertura a qualquer momento.'
-                )}
-              </Text>
-            </Box>
-          </Flex>
-        )}
         <PageFooter
           onboarding={onboarding}
           requiredLabel={false}
