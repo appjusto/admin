@@ -25,7 +25,7 @@ const OnboardingStep = ({ children }: Props) => {
           <Tooltip label={t('Voltar tela')}>
             <Icon
               as={ArrowBackIcon}
-              position="fixed"
+              position={{ base: 'absolute', md: 'fixed' }}
               top="6"
               left="6"
               w="26px"
