@@ -24,6 +24,7 @@ interface FleetIncrementalItemProps {
   showCents?: boolean;
   unit?: string;
   minimum?: number;
+  maximum?: number;
 }
 
 export const FleetIncrementalItem = ({
@@ -36,6 +37,7 @@ export const FleetIncrementalItem = ({
   showCents,
   unit,
   minimum,
+  maximum,
 }: FleetIncrementalItemProps) => {
   // helpers
   const valueFormatted = isCurrency
@@ -48,7 +50,9 @@ export const FleetIncrementalItem = ({
     const increment = incrementNumber * (type === 'inc' ? 1 : -1);
     const result = value + increment;
     const minimumValid = minimum ?? 0;
-    if (result >= minimumValid) onChange(value + increment);
+    const maximumValid = maximum ?? 100000;
+    if (result >= minimumValid && result <= maximumValid)
+      onChange(value + increment);
   };
   // UI
   return (

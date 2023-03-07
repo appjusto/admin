@@ -176,6 +176,7 @@ export const FleetPage = () => {
           incrementNumber={1000}
           unit="km"
           minimum={1000}
+          maximum={30000}
         />
         <Button
           mt="6"
