@@ -51,7 +51,7 @@ export const BusinessSelect = ({
         if (insideX && insideY) return;
         handleClick();
       } catch (error) {
-        console.log(error);
+        console.log('BusinessSelect error: ', error);
       }
     });
     return () => window.removeEventListener('click', handleClick);

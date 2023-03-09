@@ -9,23 +9,28 @@ interface UpdateManagerData {
   currentPassword?: string;
 }
 
-export const useUpdateManagerProfile = (managerId?: string, isOnboarding: boolean = false) => {
+export const useUpdateManagerProfile = (
+  managerId?: string,
+  isOnboarding: boolean = false
+) => {
   // context
   const api = useContextApi();
   const { updateUsersPassword } = useAuthentication();
   // mutations
-  const { mutate: updateProfile, mutationResult: updateResult } = useCustomMutation(
-    async (data: UpdateManagerData) => {
-      if (data.password) {
-        await updateUsersPassword(data.password, data.currentPassword);
-      }
-      return api.manager().updateProfile(managerId!, data.changes);
-    },
-    'updateManagerProfile',
-    !isOnboarding
-  );
+  const { mutate: updateProfile, mutationResult: updateResult } =
+    useCustomMutation(
+      async (data: UpdateManagerData) => {
+        if (data.password) {
+          await updateUsersPassword(data.password, data.currentPassword);
+        }
+        return api.manager().updateProfile(managerId!, data.changes);
+      },
+      'updateManagerProfile',
+      !isOnboarding
+    );
   const { mutate: updateLastBusinessId } = useCustomMutation(
-    (businessId: string | null) => api.manager().updateProfile(managerId!, { lastBusinessId: businessId }),
+    (businessId: string | null) =>
+      api.manager().updateProfile(managerId!, { lastBusinessId: businessId }),
     'updateLastBusinessId',
     false
   );

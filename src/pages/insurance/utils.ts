@@ -17,6 +17,6 @@ export const getBusinessInsuranceActivationDate = (
     const insuranceActivatedAt = getDateAndHour(insuranceActivationDate);
     return insuranceActivatedAt;
   } catch (error) {
-    console.log(error);
+    console.log('getBusinessInsuranceActivationDate error: ', error);
   }
 };

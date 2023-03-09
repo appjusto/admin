@@ -268,7 +268,7 @@ export default class BusinessApi {
       .commit()
       .then(() => true)
       .catch((error) => {
-        console.log(error);
+        console.log('updateBusinessAndBankAccountBatch error:', error);
         throw new Error(error);
       });
   }
@@ -311,7 +311,7 @@ export default class BusinessApi {
         keepAlive: timestamp,
       });
     } catch (error) {
-      console.log(error);
+      console.log('sendBusinessKeepAlive error: ', error);
       Sentry.captureException(error);
     }
   }

@@ -53,7 +53,7 @@ export const DeliveryInfos = ({
         const joinDate = `${month}, ${year}`;
         setJoined(joinDate);
       } catch (error) {
-        console.log(error);
+        console.log('DeliveryInfos joined date error: ', error);
         setJoined(null);
       }
     }

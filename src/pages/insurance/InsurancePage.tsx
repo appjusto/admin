@@ -131,7 +131,7 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
         updateBusinessProfile({ services });
       }
     } catch (error) {
-      console.log(error);
+      console.log('InsurancePage onSubmit error: ', error);
       return dispatchAppRequestResult({
         status: 'error',
         requestId: 'insurance-page-error',
