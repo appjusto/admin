@@ -6,7 +6,7 @@ import { getFirebaseErrorMessage } from 'core/fb';
 import { isEmpty } from 'lodash';
 import React from 'react';
 
-const skippedExceptions = [
+const skippedExceptionsCode = [
   'ignored-error',
   'auth/user-not-found',
   'auth/wrong-password',
@@ -17,6 +17,17 @@ const skippedExceptions = [
   'permission-denied',
   'functions/already-exists',
 ];
+
+const skippedExceptionsMessage = [
+  'Não foi possível terceirizar a entrega. Tente novamente.',
+];
+
+const shouldCapture = (error: FirebaseError) => {
+  const { code, message } = error;
+  if (code && skippedExceptionsCode.includes(code)) return false;
+  if (message && skippedExceptionsMessage.includes(message)) return false;
+  return true;
+};
 
 type ErrorMessage = { title: string; description?: string };
 
@@ -48,7 +59,10 @@ const initErrorMsg = {
   description: 'Tenta novamente?',
 };
 
-const getErrorMessage = (errorMessage?: ErrorMessage, error?: unknown): ErrorMessage => {
+const getErrorMessage = (
+  errorMessage?: ErrorMessage,
+  error?: unknown
+): ErrorMessage => {
   if (errorMessage) return errorMessage;
   else if (error) {
     const message = getFirebaseErrorMessage(error);
@@ -70,8 +84,7 @@ export const AppRequestsProvider = ({ children }: Props) => {
       if (result.requestId === requestId) return;
       if (result.status === 'error') {
         if (result.error && !toast.isActive(result.requestId)) {
-          const { code } = result.error as FirebaseError;
-          if (!code || !skippedExceptions.includes(code)) {
+          if (shouldCapture(result.error as FirebaseError)) {
             Sentry.captureException(result.error);
           }
         }
@@ -95,7 +108,12 @@ export const AppRequestsProvider = ({ children }: Props) => {
           toast({
             id: result.requestId,
             duration: result.duration ?? 4000,
-            render: () => <CustomToast type="success" message={result.message ?? initSuccessMsg} />,
+            render: () => (
+              <CustomToast
+                type="success"
+                message={result.message ?? initSuccessMsg}
+              />
+            ),
           });
       }
       setRequestId(result.requestId);
