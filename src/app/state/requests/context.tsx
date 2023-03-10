@@ -5,29 +5,7 @@ import { CustomToast } from 'common/components/CustomToast';
 import { getFirebaseErrorMessage } from 'core/fb';
 import { isEmpty } from 'lodash';
 import React from 'react';
-
-const skippedExceptionsCode = [
-  'ignored-error',
-  'auth/user-not-found',
-  'auth/wrong-password',
-  'auth/invalid-action-code',
-  'auth/too-many-requests',
-  'auth/requires-recent-login',
-  'auth/network-request-failed',
-  'permission-denied',
-  'functions/already-exists',
-];
-
-const skippedExceptionsMessage = [
-  'Não foi possível terceirizar a entrega. Tente novamente.',
-];
-
-const shouldCapture = (error: FirebaseError) => {
-  const { code, message } = error;
-  if (code && skippedExceptionsCode.includes(code)) return false;
-  if (message && skippedExceptionsMessage.includes(message)) return false;
-  return true;
-};
+import { shouldCapture } from './utils';
 
 type ErrorMessage = { title: string; description?: string };
 
@@ -84,7 +62,8 @@ export const AppRequestsProvider = ({ children }: Props) => {
       if (result.requestId === requestId) return;
       if (result.status === 'error') {
         if (result.error && !toast.isActive(result.requestId)) {
-          if (shouldCapture(result.error as FirebaseError)) {
+          if (shouldCapture(result.requestId, result.error as FirebaseError)) {
+            console.log('CAPTURE!!!');
             Sentry.captureException(result.error);
           }
         }

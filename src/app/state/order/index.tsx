@@ -149,11 +149,17 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   }, []);
   // side effects
   React.useEffect(() => {
+    if (isBackofficeUser) return;
     if (!business?.id) return;
     if (manager?.lastBusinessId && manager.lastBusinessId === business.id)
       return;
     updateLastBusinessId(business.id);
-  }, [manager?.lastBusinessId, business?.id, updateLastBusinessId]);
+  }, [
+    isBackofficeUser,
+    business?.id,
+    manager?.lastBusinessId,
+    updateLastBusinessId,
+  ]);
   React.useEffect(() => {
     if (business?.situation !== 'approved' || business?.status !== 'available')
       return;
