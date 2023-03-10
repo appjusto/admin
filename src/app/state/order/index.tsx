@@ -64,7 +64,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   const { platformParams } = usePlatformParams();
   const { dispatchAppRequestResult } = useContextAppRequests();
   const { isBackofficeUser } = useContextFirebaseUser();
-  const { updateLastBusinessId } = useContextManagerProfile();
+  const { manager, updateLastBusinessId } = useContextManagerProfile();
   const { business } = useContextBusiness();
   useBusinessKeepAlive(business?.id);
   const { scheduledOrders, scheduledOrdersNumber, fetchNextScheduledOrders } =
@@ -150,8 +150,10 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   // side effects
   React.useEffect(() => {
     if (!business?.id) return;
+    if (manager?.lastBusinessId && manager.lastBusinessId === business.id)
+      return;
     updateLastBusinessId(business.id);
-  }, [business?.id, updateLastBusinessId]);
+  }, [manager?.lastBusinessId, business?.id, updateLastBusinessId]);
   React.useEffect(() => {
     if (business?.situation !== 'approved' || business?.status !== 'available')
       return;
