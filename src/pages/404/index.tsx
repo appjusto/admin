@@ -7,18 +7,24 @@ const PageNotFound = () => {
   // context
   const { url } = useRouteMatch();
   // UI
-  console.log("Not found url:", url);
+  console.log('Not found url:', url);
   return (
     <Center height="100vh">
       <Container mt="4">
         <Flex w="100%" justifyContent="center" alignItems="center">
           <Logo />
         </Flex>
-        <Text mt="10" fontSize="21px" lineHeight="28px" fontWeight="700" textAlign="center">
+        <Text
+          mt="10"
+          fontSize="21px"
+          lineHeight="28px"
+          fontWeight="700"
+          textAlign="center"
+        >
           {t('Página não encontrada =/')}
         </Text>
         <Flex mt="10" w="100%" justifyContent="center" alignItems="center">
-          <Link as={RouterLink} to="/" textDecor="underline">
+          <Link as={RouterLink} to="/app" textDecor="underline">
             {t('Voltar para a home')}
           </Link>
         </Flex>

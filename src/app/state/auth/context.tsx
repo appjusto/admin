@@ -72,7 +72,7 @@ export const FirebaseUserProvider = ({ children }: Props) => {
           setAdminRole(role ?? null);
         }
       } catch (error) {
-        console.dir('role_error', error);
+        console.log('%crefreshUserToken error:', 'color: red', error);
         Sentry.captureException(error);
       }
     },

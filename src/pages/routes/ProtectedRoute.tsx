@@ -9,9 +9,7 @@ import packageInfo from '../../../package.json';
 
 const version = packageInfo.version;
 
-type Status = 'initial' | 'unauthenticated' | 'authenticated' | 'profile-loaded';
-
-const delay = 4000; // delay to wait for firebase initialization
+type Status = 'initial' | 'unauthenticated' | 'profile-loaded';
 
 export const ProtectedRoute = (props: RouteProps) => {
   // context
@@ -22,11 +20,9 @@ export const ProtectedRoute = (props: RouteProps) => {
   const [status, setStatus] = React.useState<Status>('initial');
   // side effects
   React.useEffect(() => {
-    if (!user) {
-      const uid = setTimeout(() => {
-        setStatus(!user ? 'unauthenticated' : 'authenticated');
-      }, delay);
-      return () => clearTimeout(uid);
+    if (user === undefined) return;
+    if (user === null) {
+      setStatus('unauthenticated');
     }
     if (user && (manager || staff)) setStatus('profile-loaded');
   }, [user, staff, manager]);

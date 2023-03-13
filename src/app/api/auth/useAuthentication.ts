@@ -72,9 +72,16 @@ export const useAuthentication = () => {
           }
         }
       }
-      if (password)
-        return api.auth().signInWithEmailAndPassword(email, password);
-      else return api.auth().sendSignInLinkToEmail(email);
+      if (password) {
+        try {
+          await api.auth().signInWithEmailAndPassword(email, password);
+        } catch (error) {
+          throw new FirebaseError(
+            'ignored-error',
+            'E-mail ou senha incorretos.'
+          );
+        }
+      } else return api.auth().sendSignInLinkToEmail(email);
     },
     'login',
     false,
