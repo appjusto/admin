@@ -47,7 +47,7 @@ const Login = () => {
   };
   // side effects
   React.useEffect(() => {
-    signOut();
+    signOut({});
     emailRef?.current?.focus();
   }, [signOut]);
   React.useEffect(() => {

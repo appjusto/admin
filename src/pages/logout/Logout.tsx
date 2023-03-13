@@ -7,17 +7,15 @@ import { Redirect } from 'react-router-dom';
 const Logout = () => {
   // context
   const email = useContextFirebaseUserEmail();
-  const { signOut } = useAuthentication();
-  // state
-  const [isLogout, setIsLogout] = React.useState<boolean>();
+  const { signOut, signOutResult } = useAuthentication();
+  const { isSuccess } = signOutResult;
   // side effects
   React.useEffect(() => {
-    if (email) signOut(email);
-    else signOut();
-    setIsLogout(true);
+    if (email) signOut({ email });
+    else signOut({});
   }, [email, signOut]);
   // UI
-  if (isLogout) return <Redirect to="/" />;
+  if (isSuccess) return <Redirect to="/" />;
   return <Loading />;
 };
 
