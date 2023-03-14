@@ -14,7 +14,6 @@ export const AdminAccessRoute = (props: RouteProps) => {
       return <Route {...props} />;
     else return <Redirect to="/app" push />;
   }
-  // TODO: handle timeout to get adminRole
   // loading
   return <Loading />;
 };
