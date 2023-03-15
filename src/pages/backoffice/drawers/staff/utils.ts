@@ -39,6 +39,7 @@ const ordersManagerObject = {
   // staff: [],
   users: ['r'],
   platform: ['r'],
+  areas: ['r'],
 } as UserPermissions;
 
 const consumersManagerObject = {
@@ -59,6 +60,7 @@ const consumersManagerObject = {
   // staff: [],
   users: ['r'],
   // platform: [],
+  areas: ['r'],
 } as UserPermissions;
 
 const couriersManagerObject = {
@@ -79,6 +81,7 @@ const couriersManagerObject = {
   // staff: [],
   users: ['r'],
   // platform: [],
+  areas: ['r'],
 } as UserPermissions;
 
 const businessesHeadManagerObject = {
@@ -99,6 +102,7 @@ const businessesHeadManagerObject = {
   staff: ['r'],
   users: ['r'],
   // platform: [],
+  areas: ['r'],
 } as UserPermissions;
 
 const businessesManagerObject = {
@@ -119,6 +123,7 @@ const businessesManagerObject = {
   // staff: [],
   users: ['r'],
   // platform: [],
+  areas: ['r'],
 } as UserPermissions;
 
 const viewerObject = (() => {
@@ -162,13 +167,18 @@ export const getGenericModeRole = (
   else return 'custom';
 };
 
+const getPermissionPTOption = (k: keyof UserPermissions) =>
+  permissionsPTOptions[k].normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
 export const sortPermissionsKeys = (
   a: keyof UserPermissions,
   b: keyof UserPermissions
 ) => {
   try {
-    if (permissionsPTOptions[a] < permissionsPTOptions[b]) return -1;
-    if (permissionsPTOptions[a] > permissionsPTOptions[b]) return 1;
+    const an = getPermissionPTOption(a);
+    const bn = getPermissionPTOption(b);
+    if (an < bn) return -1;
+    if (an > bn) return 1;
     return 0;
   } catch (error) {
     return 0;

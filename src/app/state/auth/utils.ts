@@ -57,6 +57,7 @@ export const fullStaffPermissions = {
   users: [],
   platform: [],
   banners: [],
+  areas: [],
 } as FullPermissions;
 
 export const getStaffUIConditions = (

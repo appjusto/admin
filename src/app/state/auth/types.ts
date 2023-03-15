@@ -30,7 +30,8 @@ export type Entities =
   | 'staff'
   | 'users'
   | 'platform'
-  | 'banners';
+  | 'banners'
+  | 'areas';
 
 export type AppAbility = Ability<[Actions, Entities | any]>;
 
