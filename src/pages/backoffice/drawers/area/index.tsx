@@ -83,7 +83,6 @@ export const AreaDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
             fixed: insuranceFixed ? parseInt(insuranceFixed) : 0,
             percent: insurancePercent ? Number(insurancePercent) : 0,
           };
-        console.log(newArea);
         updateArea({ changes: newArea });
       } else {
         let changes = {
@@ -97,7 +96,6 @@ export const AreaDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
         } else {
           changes.insurance = null;
         }
-        console.log(changes);
         updateArea({ id: areaId, changes });
       }
     } catch (error) {}
@@ -107,6 +105,12 @@ export const AreaDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
     if (area) {
       setState(area.state);
       setCity(area.city);
+      setLogistics(area.logistics ?? 'none');
+      if (area.insurance) {
+        setIsInsurance(true);
+        setInsuranceFixed(area.insurance.fixed.toString());
+        setInsurancePercent(area.insurance.percent.toString());
+      }
     }
   }, [area]);
   //UI
