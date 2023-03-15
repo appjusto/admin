@@ -41,7 +41,9 @@ export const ImportMenuCard = ({ businessId }: ImportMenuCardProps) => {
         message: { title: 'Parâmetros inválidos.' },
       });
     }
-    importMenu({ url: menuUrl, discount });
+    try {
+      importMenu({ url: menuUrl, discount });
+    } catch (error) {}
   };
   // UI
   return (

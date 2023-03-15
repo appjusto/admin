@@ -83,28 +83,32 @@ export const OutsouceDelivery = ({ order }: OutsouceDeliveryProps) => {
     !isExternalQuotation;
   // handlers
   const handleOutsourceQuotation = () => {
-    getOutsourceDeliveryQuotation();
+    try {
+      getOutsourceDeliveryQuotation();
+    } catch (error) {}
   };
   const handleOutsourcing = async () => {
-    let priorityFee;
-    if (outsourcingAccountType === 'platform') {
-      if (additionalValue > 0 && additionalValue < 400) {
-        return dispatchAppRequestResult({
-          status: 'error',
-          requestId: 'error-additionalValue',
-          message: {
-            title: 'O valor mínimo de adicional é R$ 4,00.',
-          },
-        });
+    try {
+      let priorityFee;
+      if (outsourcingAccountType === 'platform') {
+        if (additionalValue > 0 && additionalValue < 400) {
+          return dispatchAppRequestResult({
+            status: 'error',
+            requestId: 'error-additionalValue',
+            message: {
+              title: 'O valor mínimo de adicional é R$ 4,00.',
+            },
+          });
+        }
+        priorityFee =
+          additionalValue > 0 ? (additionalValue / 100).toString() : undefined;
       }
-      priorityFee =
-        additionalValue > 0 ? (additionalValue / 100).toString() : undefined;
-    }
-    await getOutsourceDelivery({
-      accountType: outsourcingAccountType,
-      isAuto: isOutsourcingAuto,
-      priorityFee,
-    });
+      await getOutsourceDelivery({
+        accountType: outsourcingAccountType,
+        isAuto: isOutsourcingAuto,
+        priorityFee,
+      });
+    } catch (error) {}
   };
   const copyToClipboard = () => {
     if (!lastLalamoveOrder?.order.shareLink) return;
@@ -136,7 +140,9 @@ export const OutsouceDelivery = ({ order }: OutsouceDeliveryProps) => {
       name: outsourcingCourierName,
       phone: outsourcingCourierPhone,
     };
-    updateOutsourcingCourierInfos(data);
+    try {
+      updateOutsourcingCourierInfos(data);
+    } catch (error) {}
   };
   // side effects
   React.useEffect(() => {

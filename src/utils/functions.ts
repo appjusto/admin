@@ -134,7 +134,7 @@ export const getHourAndMinute = (timestamp?: FieldValue | Date) => {
     const hour = I18n.strftime(timeToDate, '%H:%M');
     return hour;
   } catch (error) {
-    console.log(error);
+    console.log('getHourAndMinute error: ', error);
     return 'N/E';
   }
 };
@@ -149,7 +149,7 @@ export const getFullTime = (timestamp?: FieldValue | Date) => {
     const hour = I18n.strftime(timeToDate, '%H:%M:%S');
     return hour;
   } catch (error) {
-    console.log(error);
+    console.log('getFullTime error: ', error);
     return 'N/E';
   }
 };
@@ -161,7 +161,7 @@ export const getAlgoliaFieldDateAndHour = (timestamp: FieldValue | number) => {
       const hour = new Date(timestamp).toLocaleTimeString();
       return `${date} - ${hour}`;
     } catch (error) {
-      console.log(error);
+      console.log('getAlgoliaFieldDateAndHour error: ', error);
       return 'Erro';
     }
   } else {
@@ -174,7 +174,7 @@ export const getAlgoliaFieldDateAndHour = (timestamp: FieldValue | number) => {
       ).toLocaleTimeString();
       return `${date} - ${hour}`;
     } catch (error) {
-      console.log(error);
+      console.log('getAlgoliaFieldDateAndHour error: ', error);
       return 'Erro';
     }
   }

@@ -1,7 +1,6 @@
 import { useContextApi } from 'app/state/api/context';
 import { FirebaseError } from 'firebase/app';
 import { nanoid } from 'nanoid';
-import React from 'react';
 import { useCustomMutation } from '../mutation/useCustomMutation';
 interface UserCreationData {
   email: string;
@@ -15,6 +14,9 @@ interface LoginData {
 interface SignInData {
   email: string;
   link: string;
+}
+interface SignOutData {
+  email?: string;
 }
 interface DeleteAccountData {
   accountId: string;
@@ -72,9 +74,16 @@ export const useAuthentication = () => {
           }
         }
       }
-      if (password)
-        return api.auth().signInWithEmailAndPassword(email, password);
-      else return api.auth().sendSignInLinkToEmail(email);
+      if (password) {
+        try {
+          await api.auth().signInWithEmailAndPassword(email, password);
+        } catch (error) {
+          throw new FirebaseError(
+            'ignored-error',
+            'E-mail ou senha incorretos.'
+          );
+        }
+      } else return api.auth().sendSignInLinkToEmail(email);
     },
     'login',
     false,
@@ -95,15 +104,17 @@ export const useAuthentication = () => {
       false,
       false
     );
-  const signOut = React.useCallback(
-    (email?: string) => {
+  const { mutate: signOut, mutationResult: signOutResult } = useCustomMutation(
+    (data: SignOutData) => {
+      const { email } = data;
       if (email)
         localStorage.removeItem(
           `${email}-${process.env.REACT_APP_ENVIRONMENT}`
         );
-      api.auth().signOut();
+      return api.auth().signOut();
     },
-    [api]
+    'signOut',
+    false
   );
   const { mutate: deleteAccount, mutationResult: deleteAccountResult } =
     useCustomMutation(
@@ -125,6 +136,7 @@ export const useAuthentication = () => {
     sendSignInLinkToEmail,
     sendingLinkResult,
     signOut,
+    signOutResult,
     deleteAccount,
     deleteAccountResult,
   };

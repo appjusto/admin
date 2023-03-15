@@ -5,18 +5,7 @@ import { CustomToast } from 'common/components/CustomToast';
 import { getFirebaseErrorMessage } from 'core/fb';
 import { isEmpty } from 'lodash';
 import React from 'react';
-
-const skippedExceptions = [
-  'ignored-error',
-  'auth/user-not-found',
-  'auth/wrong-password',
-  'auth/invalid-action-code',
-  'auth/too-many-requests',
-  'auth/requires-recent-login',
-  'auth/network-request-failed',
-  'permission-denied',
-  'functions/already-exists',
-];
+import { shouldCapture } from './utils';
 
 type ErrorMessage = { title: string; description?: string };
 
@@ -48,7 +37,10 @@ const initErrorMsg = {
   description: 'Tenta novamente?',
 };
 
-const getErrorMessage = (errorMessage?: ErrorMessage, error?: unknown): ErrorMessage => {
+const getErrorMessage = (
+  errorMessage?: ErrorMessage,
+  error?: unknown
+): ErrorMessage => {
   if (errorMessage) return errorMessage;
   else if (error) {
     const message = getFirebaseErrorMessage(error);
@@ -70,8 +62,8 @@ export const AppRequestsProvider = ({ children }: Props) => {
       if (result.requestId === requestId) return;
       if (result.status === 'error') {
         if (result.error && !toast.isActive(result.requestId)) {
-          const { code } = result.error as FirebaseError;
-          if (!code || !skippedExceptions.includes(code)) {
+          if (shouldCapture(result.requestId, result.error as FirebaseError)) {
+            console.log('CAPTURE!!!');
             Sentry.captureException(result.error);
           }
         }
@@ -95,7 +87,12 @@ export const AppRequestsProvider = ({ children }: Props) => {
           toast({
             id: result.requestId,
             duration: result.duration ?? 4000,
-            render: () => <CustomToast type="success" message={result.message ?? initSuccessMsg} />,
+            render: () => (
+              <CustomToast
+                type="success"
+                message={result.message ?? initSuccessMsg}
+              />
+            ),
           });
       }
       setRequestId(result.requestId);

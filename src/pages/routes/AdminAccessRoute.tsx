@@ -1,6 +1,5 @@
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { Loading } from 'common/components/Loading';
-import React from 'react';
 import { Redirect, Route, RouteProps } from 'react-router-dom';
 import { isAccessGranted } from 'utils/access';
 

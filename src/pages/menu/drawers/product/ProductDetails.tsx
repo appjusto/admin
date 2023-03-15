@@ -11,6 +11,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { useClassifications } from 'app/api/platform/useClassifications';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
@@ -31,6 +32,7 @@ export const ProductDetails = () => {
   //context
   const { url } = useRouteMatch();
   const { push } = useHistory();
+  const { userAbility } = useContextFirebaseUser();
   const {
     productId,
     state,
@@ -164,25 +166,29 @@ export const ProductDetails = () => {
           handleProductUpdate({ externalId: ev.target.value })
         }
       />
-      <Text mt="8" fontSize="xl" color="black">
-        {t('Imagem do produto')}
-      </Text>
-      <Text>
-        {t(
-          'Recomendamos imagens na proporção retangular (16:9) com no mínimo 1280px de largura'
-        )}
-      </Text>
-      <ImageUploads
-        mt="4"
-        width={464}
-        height={332}
-        imageUrl={imageUrl}
-        ratios={productRatios}
-        resizedWidth={productResizedWidth}
-        placeholderText={t('Imagem do produto')}
-        getImages={handleImageFiles}
-        clearDrop={clearDropImages}
-      />
+      {userAbility?.can('create', 'menu') && (
+        <>
+          <Text mt="8" fontSize="xl" color="black">
+            {t('Imagem do produto')}
+          </Text>
+          <Text>
+            {t(
+              'Recomendamos imagens na proporção retangular (16:9) com no mínimo 1280px de largura'
+            )}
+          </Text>
+          <ImageUploads
+            mt="4"
+            width={464}
+            height={332}
+            imageUrl={imageUrl}
+            ratios={productRatios}
+            resizedWidth={productResizedWidth}
+            placeholderText={t('Imagem do produto')}
+            getImages={handleImageFiles}
+            clearDrop={clearDropImages}
+          />
+        </>
+      )}
       <Text mt="8" fontSize="xl" color="black">
         {t('Classificações adicionais:')}
       </Text>

@@ -3,7 +3,8 @@ import React from 'react';
 import { MutationFunction, useMutation, UseMutationOptions } from 'react-query';
 
 const monitoringMutation =
-  process.env.REACT_APP_ENVIRONMENT === 'dev' || process.env.REACT_APP_ENVIRONMENT === 'staging';
+  process.env.REACT_APP_ENVIRONMENT === 'dev' ||
+  process.env.REACT_APP_ENVIRONMENT === 'staging';
 
 export interface MutationResult {
   isLoading: boolean;
@@ -22,21 +23,23 @@ export const useCustomMutation = <
   fnName: string,
   dispatching: boolean = true,
   resetting: boolean = true,
-  options?: Omit<UseMutationOptions<TData, TError, TVariables, TContext>, 'mutationFn'>
+  options?: Omit<
+    UseMutationOptions<TData, TError, TVariables, TContext>,
+    'mutationFn'
+  >
 ) => {
   const { dispatchAppRequestResult } = useContextAppRequests();
-  const { mutate, mutateAsync, isLoading, isSuccess, isError, error, reset } = useMutation(
-    mutationFn,
-    {
+  const { mutate, mutateAsync, isLoading, isSuccess, isError, error, reset } =
+    useMutation(mutationFn, {
       onSuccess: () => {
-        if (dispatching) dispatchAppRequestResult({ status: 'success', requestId: fnName });
+        if (dispatching)
+          dispatchAppRequestResult({ status: 'success', requestId: fnName });
       },
       onError: (error) => {
         dispatchAppRequestResult({ status: 'error', requestId: fnName, error });
       },
       ...options,
-    }
-  );
+    });
   React.useEffect(() => {
     if (!resetting) return;
     if (!isSuccess && !isError) return;
@@ -48,5 +51,9 @@ export const useCustomMutation = <
   if (monitoringMutation && isSuccess)
     console.log(`${fnName} - %cisSuccess: ${isSuccess}`, 'color: green');
   if (isError) console.log(`${fnName} - %cisError: ${isError}`, 'color: red');
-  return { mutate, mutateAsync, mutationResult: { isLoading, isSuccess, isError, error } };
+  return {
+    mutate,
+    mutateAsync,
+    mutationResult: { isLoading, isSuccess, isError, error },
+  };
 };

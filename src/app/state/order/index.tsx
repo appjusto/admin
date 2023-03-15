@@ -23,6 +23,7 @@ import { useContextBusiness } from 'app/state/business/context';
 import { CustomToastAutoPlay } from 'common/components/CustomToast';
 import React from 'react';
 import { useContextFirebaseUser } from '../auth/context';
+import { useContextManagerProfile } from '../manager/context';
 import { useContextAppRequests } from '../requests/context';
 
 interface ContextProps {
@@ -63,6 +64,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   const { platformParams } = usePlatformParams();
   const { dispatchAppRequestResult } = useContextAppRequests();
   const { isBackofficeUser } = useContextFirebaseUser();
+  const { manager, updateLastBusinessId } = useContextManagerProfile();
   const { business } = useContextBusiness();
   useBusinessKeepAlive(business?.id);
   const { scheduledOrders, scheduledOrdersNumber, fetchNextScheduledOrders } =
@@ -146,6 +148,18 @@ export const OrdersContextProvider = (props: ProviderProps) => {
     setIsChatActive(true);
   }, []);
   // side effects
+  React.useEffect(() => {
+    if (isBackofficeUser) return;
+    if (!business?.id) return;
+    if (manager?.lastBusinessId && manager.lastBusinessId === business.id)
+      return;
+    updateLastBusinessId(business.id);
+  }, [
+    isBackofficeUser,
+    business?.id,
+    manager?.lastBusinessId,
+    updateLastBusinessId,
+  ]);
   React.useEffect(() => {
     if (business?.situation !== 'approved' || business?.status !== 'available')
       return;
