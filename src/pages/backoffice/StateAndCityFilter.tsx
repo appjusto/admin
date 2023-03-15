@@ -11,6 +11,7 @@ interface StateAndCityFilterProps {
   city: string;
   handleStateChange(state: string): void;
   handleCityChange(city: string): void;
+  isRequired?: boolean;
 }
 
 type City = {
@@ -41,6 +42,7 @@ export const StateAndCityFilter = ({
   city,
   handleStateChange,
   handleCityChange,
+  isRequired,
 }: StateAndCityFilterProps) => {
   // state
   const [citiesList, setCitiesList] = React.useState<string[]>([]);
@@ -77,6 +79,7 @@ export const StateAndCityFilter = ({
           placeholder={t('Estado')}
           value={state}
           onChange={(e) => handleStateChange(e.target.value)}
+          isRequired={isRequired}
         >
           {ufs?.map((uf) => (
             <option key={uf.id} value={uf.sigla}>
@@ -92,6 +95,7 @@ export const StateAndCityFilter = ({
           placeholder={t(cityPlaceholder)}
           value={city}
           onChange={(e) => handleCityChange(e.target.value)}
+          isRequired={isRequired}
         >
           {citiesList?.map((city) => (
             <option key={city} value={city}>

@@ -1,17 +1,17 @@
 import { ArrowDownIcon } from '@chakra-ui/icons';
-import { Box, Button, Flex, HStack, Stack, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, HStack, Text } from '@chakra-ui/react';
 import { ClearFiltersButton } from 'common/components/backoffice/ClearFiltersButton';
 //import Checkbox from 'common/components/form/Checkbox';
 import { useObserveAreas } from 'app/api/areas/useObserveAreas';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { CustomButton } from 'common/components/buttons/CustomButton';
-import { CustomInput } from 'common/components/form/input/CustomInput';
 import React from 'react';
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import PageHeader from '../../PageHeader';
 import { AreaDrawer } from '../drawers/area';
+import { StateAndCityFilter } from '../StateAndCityFilter';
 import { AreasTable } from './AreasTable';
 
 const AreasPage = () => {
@@ -45,26 +45,14 @@ const AreasPage = () => {
         subtitle={t(`Atualizado ${dateTime}`)}
       />
       <Flex mt="2">
-        <Stack spacing={4} direction={{ base: 'column', md: 'row' }}>
-          <CustomInput
-            mt="0"
-            minW={{ lg: '260px' }}
-            id="search-id"
-            value={state}
-            onChange={(event) => setState(event.target.value)}
-            label={t('Estado')}
-            placeholder={t('Escolha o estado')}
+        <Box w="100%" maxW="600px">
+          <StateAndCityFilter
+            state={state}
+            city={city}
+            handleStateChange={setState}
+            handleCityChange={setCity}
           />
-          <CustomInput
-            mt="0"
-            minW={{ lg: '260px' }}
-            id="search-id"
-            value={city}
-            onChange={(event) => setCity(event.target.value)}
-            label={t('Cidade')}
-            placeholder={t('Escolha a cidade')}
-          />
-        </Stack>
+        </Box>
       </Flex>
       <Flex
         mt="8"

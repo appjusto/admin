@@ -18,8 +18,8 @@ import {
 import { useObserveArea } from 'app/api/areas/useObserveArea';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextAppRequests } from 'app/state/requests/context';
-import { CustomInput } from 'common/components/form/input/CustomInput';
 import { CustomNumberInput as NumberInput } from 'common/components/form/input/CustomNumberInput';
+import { StateAndCityFilter } from 'pages/backoffice/StateAndCityFilter';
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { t } from 'utils/i18n';
@@ -134,26 +134,15 @@ export const AreaDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
             </DrawerHeader>
             <DrawerBody pb="28">
               <SectionTitle mt="0">{t('Local')}</SectionTitle>
-              <HStack mt="4" spacing={4}>
-                <CustomInput
-                  mt="0"
-                  id="area-state"
-                  value={state}
-                  onChange={(event) => setState(event.target.value)}
-                  label={t('Estado')}
+              <Box mt="4" w="100%">
+                <StateAndCityFilter
+                  state={state}
+                  city={city}
+                  handleStateChange={setState}
+                  handleCityChange={setCity}
                   isRequired
-                  isDisabled={!isNew}
                 />
-                <CustomInput
-                  mt="0"
-                  id="area-city"
-                  value={city}
-                  onChange={(event) => setCity(event.target.value)}
-                  label={t('Cidade')}
-                  isRequired
-                  isDisabled={!isNew}
-                />
-              </HStack>
+              </Box>
               <SectionTitle>{t('Logística')}</SectionTitle>
               <RadioGroup
                 mt="2"
