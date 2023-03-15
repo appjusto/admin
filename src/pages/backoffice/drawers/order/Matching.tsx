@@ -51,24 +51,44 @@ export const Matching = ({
   const [attemps, setAttemps] = React.useState<number>(0);
   const [isRestarting, setIsRestarting] = React.useState<boolean>(false);
   // helpers
-  const isOrderActive = order?.status
-    ? ['confirmed', 'preparing', 'ready', 'dispatching'].includes(order.status)
-    : false;
-  const isNoMatch = order?.dispatchingStatus === 'no-match';
-  const canUpdateOrder = userAbility?.can('update', {
-    kind: 'orders',
-    ...order,
-  });
-  const canAllocateCourierById =
-    userAbility?.can('update', { kind: 'orders', ...order }) &&
-    isBackofficeSuperuser &&
-    (!order?.scheduledTo || isToday(order.scheduledTo)) &&
-    !order?.courier;
-  const restartMatchingButtonDisplay =
-    !order?.courier?.id &&
-    userAbility?.can('update', { kind: 'orders', ...order })
-      ? 'inline-block'
-      : 'none';
+  const isOrderActive = React.useMemo(
+    () =>
+      order?.status
+        ? ['confirmed', 'preparing', 'ready', 'dispatching'].includes(
+            order.status
+          )
+        : false,
+    [order?.status]
+  );
+  const isNoMatch = React.useMemo(
+    () => order?.dispatchingStatus === 'no-match',
+    [order?.dispatchingStatus]
+  );
+  const isOrderStaff = React.useMemo(
+    () =>
+      userAbility?.can('update', {
+        kind: 'orders',
+        ...order,
+      }),
+    [userAbility, order]
+  );
+  const canAllocateCourierById = React.useMemo(
+    () =>
+      isOrderStaff &&
+      isBackofficeSuperuser &&
+      (!order?.scheduledTo || isToday(order.scheduledTo)) &&
+      !order?.courier,
+    [isOrderStaff, isBackofficeSuperuser, order?.scheduledTo, order?.courier]
+  );
+  const restartMatchingButtonDisplay = React.useMemo(
+    () =>
+      order?.dispatchingStatus !== 'outsourced' &&
+      !order?.courier?.id &&
+      isOrderStaff
+        ? 'inline-block'
+        : 'none',
+    [order?.dispatchingStatus, order?.courier?.id, isOrderStaff]
+  );
   // handlers
   const allocateCourier = (courierInfo: string, comment: string) => {
     if (!order?.id) return;
@@ -101,7 +121,11 @@ export const Matching = ({
   // UI
   return (
     <>
-      <OutsouceDelivery order={order} />
+      <OutsouceDelivery
+        order={order}
+        isOrderActive={isOrderActive}
+        isOrderStaff={isOrderStaff}
+      />
       <Flex mt="5" justifyContent="space-between">
         <SectionTitle mt="0">
           {t('Status:')}{' '}
@@ -180,7 +204,7 @@ export const Matching = ({
               <CourierNotifiedBox
                 key={request.id}
                 isOrderActive={isOrderActive}
-                canUpdateOrder={canUpdateOrder}
+                canUpdateOrder={isOrderStaff}
                 request={request}
                 dispatchingStatus={order?.dispatchingStatus}
                 allocateCourier={allocateCourier}

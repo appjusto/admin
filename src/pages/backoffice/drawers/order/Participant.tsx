@@ -10,6 +10,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { CustomButton } from 'common/components/buttons/CustomButton';
+import { phoneFormatter } from 'common/components/form/input/pattern-input/formatters';
 import { Textarea } from 'common/components/form/input/Textarea';
 import { FieldValue } from 'firebase/firestore';
 import { modePTOptions } from 'pages/backoffice/utils';
@@ -24,6 +25,7 @@ interface ParticipantProps {
   isOutsource?: boolean;
   isOrderActive?: boolean;
   name?: string;
+  phone?: string;
   mode?: CourierMode;
   instruction?: string;
   deliveries?: number;
@@ -44,6 +46,7 @@ export const Participant = ({
   isOutsource,
   isOrderActive,
   name,
+  phone,
   mode,
   instruction,
   deliveries,
@@ -294,15 +297,41 @@ export const Participant = ({
   return (
     <Box mb="10">
       {isOutsource ? (
-        <Text
-          mt="2"
-          fontSize="15px"
-          color="black"
-          fontWeight="700"
-          lineHeight="22px"
-        >
-          {t('Logística fora da rede')}
-        </Text>
+        <>
+          <Text
+            mt="2"
+            fontSize="15px"
+            color="black"
+            // fontWeight="700"
+            lineHeight="22px"
+          >
+            {t('Logística fora da rede')}
+          </Text>
+          <Text
+            mt="2"
+            fontSize="15px"
+            color="black"
+            fontWeight="700"
+            lineHeight="22px"
+          >
+            {t('Nome:')}{' '}
+            <Text as="span" fontWeight="500">
+              {name ?? 'N/E'}
+            </Text>
+          </Text>
+          <Text
+            mt="2"
+            fontSize="15px"
+            color="black"
+            fontWeight="700"
+            lineHeight="22px"
+          >
+            {t('Telefone:')}{' '}
+            <Text as="span" fontWeight="500">
+              {phone ? phoneFormatter(phone) : 'N/E'}
+            </Text>
+          </Text>
+        </>
       ) : (
         <>
           <Text

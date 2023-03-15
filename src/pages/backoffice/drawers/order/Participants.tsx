@@ -106,6 +106,7 @@ export const Participants = ({
             isOutsource={order?.dispatchingStatus === 'outsourced'}
             isOrderActive={isOrderActive}
             name={order?.courier?.name}
+            phone={order?.courier?.phone}
             mode={order?.courier?.mode}
             deliveries={order?.courier?.statistics?.deliveries}
             rejected={order?.courier?.statistics?.rejected}
