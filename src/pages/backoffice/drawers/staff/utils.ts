@@ -1,6 +1,7 @@
 import { UserPermissions } from '@appjusto/types';
 import { fullStaffPermissions } from 'app/state/auth/utils';
 import { isEqual } from 'lodash';
+import { permissionsPTOptions } from 'pages/backoffice/utils';
 
 export type GenericMode =
   | 'owner'
@@ -159,4 +160,17 @@ export const getGenericModeRole = (
     return 'businesses-account-manager';
   else if (isEqual(permissions, viewerObject)) return 'viewer';
   else return 'custom';
+};
+
+export const sortPermissionsKeys = (
+  a: keyof UserPermissions,
+  b: keyof UserPermissions
+) => {
+  try {
+    if (permissionsPTOptions[a] < permissionsPTOptions[b]) return -1;
+    if (permissionsPTOptions[a] > permissionsPTOptions[b]) return 1;
+    return 0;
+  } catch (error) {
+    return 0;
+  }
 };

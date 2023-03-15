@@ -42,6 +42,7 @@ import {
   GenericMode,
   getGenericModePermissions,
   getGenericModeRole,
+  sortPermissionsKeys,
 } from './utils';
 
 type Situation = {
@@ -94,6 +95,10 @@ export const StaffBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   const [genericMode, setGenericMode] = React.useState<GenericMode>('custom');
   const [isDeleting, setIsDeleting] = React.useState(false);
   // helpers
+  const permissionsKeys = React.useMemo(
+    () => Object.keys(permissions).sort(sortPermissionsKeys),
+    [permissions]
+  );
   const isFetchingData = !isNew && staffProfile === undefined;
   const agentName =
     (staffProfile?.name ?? 'N/E') + ' ' + (staffProfile?.surname ?? '');
@@ -364,7 +369,7 @@ export const StaffBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                   </Tr>
                 </Thead>
                 <Tbody>
-                  {Object.keys(permissions).map((key) => (
+                  {permissionsKeys.map((key) => (
                     <EntityAccess
                       key={key}
                       name={permissionsPTOptions[key]}
