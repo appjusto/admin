@@ -11,8 +11,7 @@ import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import PageHeader from '../../PageHeader';
-import { CreateUserDrawer } from '../drawers/user/CreateUserDrawer';
-import { UserBaseDrawer } from '../drawers/user/UserBaseDrawer';
+import { AreaDrawer } from '../drawers/area';
 import { AreasTable } from './AreasTable';
 
 const AreasPage = () => {
@@ -121,11 +120,8 @@ const AreasPage = () => {
         {t('Carregar mais')}
       </Button>
       <Switch>
-        <Route exact path={`${path}/new`}>
-          <CreateUserDrawer isOpen onClose={closeDrawerHandler} />
-        </Route>
-        <Route path={`${path}/:userId`}>
-          <UserBaseDrawer isOpen onClose={closeDrawerHandler} />
+        <Route exact path={`${path}/:areaId`}>
+          <AreaDrawer isOpen onClose={closeDrawerHandler} />
         </Route>
       </Switch>
     </Box>

@@ -2,7 +2,7 @@ import { Area } from '@appjusto/types';
 import { useContextApi } from 'app/state/api/context';
 import React from 'react';
 
-export const useObserveArea = (areaId: string) => {
+export const useObserveArea = (areaId?: string) => {
   // context
   const api = useContextApi();
   // state
@@ -10,6 +10,7 @@ export const useObserveArea = (areaId: string) => {
   // side effects
   React.useEffect(() => {
     if (!api) return;
+    if (!areaId) return;
     const unsub = api.areas().observeArea(areaId, setArea);
     return () => unsub();
   }, [api, areaId]);
