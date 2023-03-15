@@ -1,32 +1,57 @@
 import { Area, WithId } from '@appjusto/types';
+import * as Sentry from '@sentry/react';
 import {
   addDoc,
   deleteDoc,
+  DocumentData,
   getDocs,
   limit,
+  onSnapshot,
+  orderBy,
   query,
+  QueryDocumentSnapshot,
   serverTimestamp,
+  startAt,
   Unsubscribe,
   updateDoc,
   where,
 } from 'firebase/firestore';
 import { documentsAs } from '../../../core/fb';
 import FirebaseRefs from '../FirebaseRefs';
-import { customCollectionSnapshot, customDocumentSnapshot } from '../utils';
+import { customDocumentSnapshot } from '../utils';
 
 export default class AreasApi {
   constructor(private refs: FirebaseRefs) {}
   // firestore
   observeAreas(
-    resultHandler: (areas: WithId<Area>[] | null) => void,
+    resultHandler: (
+      areas: WithId<Area>[],
+      last?: QueryDocumentSnapshot<DocumentData>
+    ) => void,
     state?: string,
-    city?: string
+    city?: string,
+    startAfter?: QueryDocumentSnapshot<DocumentData>
   ): Unsubscribe {
-    let q = query(this.refs.getAreasRef(), limit(20));
+    let q = query(this.refs.getAreasRef(), orderBy('state'), limit(20));
     if (state) q = query(q, where('state', '==', state));
     if (city) q = query(q, where('city', '==', city));
+    if (startAfter) q = query(q, startAt(startAfter));
+    const unsubscribe = onSnapshot(
+      q,
+      (querySnapshot) => {
+        const last =
+          querySnapshot.docs.length > 0
+            ? querySnapshot.docs[querySnapshot.size - 1]
+            : undefined;
+        resultHandler(documentsAs<Area>(querySnapshot.docs), last);
+      },
+      (error) => {
+        console.error(error);
+        Sentry.captureException(error);
+      }
+    );
     // returns the unsubscribe function
-    return customCollectionSnapshot<Area>(q, resultHandler);
+    return unsubscribe;
   }
   observeArea(
     id: string,

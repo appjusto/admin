@@ -8,7 +8,6 @@ export const BOAccessRoute = (props: RouteProps) => {
   const { isBackofficeUser, backofficePermissions } = useContextFirebaseUser();
   const path = props.path as string;
   // redirects
-  console.log('isBackofficeUser', isBackofficeUser);
   if (isBackofficeUser === false) return <Redirect to="/404" push />;
   if (path && backofficePermissions) {
     if (

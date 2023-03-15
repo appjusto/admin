@@ -43,6 +43,9 @@ const StaffProfile = React.lazy(
 const UsersPage = React.lazy(
   () => import(/* webpackPrefetch: true */ './users')
 );
+const AreasPage = React.lazy(
+  () => import(/* webpackPrefetch: true */ './areas')
+);
 const RecommendationsPage = React.lazy(
   () => import(/* webpackPrefetch: true */ './recommendations')
 );
@@ -83,6 +86,7 @@ const BackOffice = () => {
             path={`${path}/recommendations`}
             component={RecommendationsPage}
           />
+          <BOAccessRoute path={`${path}/areas`} component={AreasPage} />
           <BOAccessRoute path={path} component={BODashboard} />
         </Switch>
       </PageLayout>

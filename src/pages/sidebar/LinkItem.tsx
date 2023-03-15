@@ -1,6 +1,5 @@
 import { Box, Flex, Link, Text } from '@chakra-ui/react';
 import { useContextFirebaseUser } from 'app/state/auth/context';
-import React from 'react';
 import { Link as RouterLink, useRouteMatch } from 'react-router-dom';
 import { isAccessGranted } from 'utils/access';
 
@@ -11,7 +10,12 @@ interface LinkItemProps {
   isDisabled?: boolean;
 }
 
-export const LinkItem = ({ type = 'admin', to, label, isDisabled }: LinkItemProps) => {
+export const LinkItem = ({
+  type = 'admin',
+  to,
+  label,
+  isDisabled,
+}: LinkItemProps) => {
   // context
   const { backofficePermissions, adminRole } = useContextFirebaseUser();
   let match = useRouteMatch({
@@ -45,7 +49,9 @@ export const LinkItem = ({ type = 'admin', to, label, isDisabled }: LinkItemProp
       cursor="pointer"
       _hover={{ bg: 'white' }}
     >
-      {match ? <Box w="4px" h="36px" bg="green.500" borderRadius="8px" ml="1" mr="4" /> : null}
+      {match ? (
+        <Box w="4px" h="36px" bg="green.500" borderRadius="8px" ml="1" mr="4" />
+      ) : null}
       <Link
         as={RouterLink}
         to={to}
