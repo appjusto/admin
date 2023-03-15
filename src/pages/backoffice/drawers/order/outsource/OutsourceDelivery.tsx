@@ -46,7 +46,7 @@ export const OutsouceDelivery = ({
   isOrderStaff,
 }: OutsouceDeliveryProps) => {
   // context
-  const { userAbility, isBackofficeSuperuser } = useContextFirebaseUser();
+  const { isBackofficeSuperuser } = useContextFirebaseUser();
   const { dispatchAppRequestResult } = useContextAppRequests();
   const lastQuotation = useObserveOrderLalamoveQuotations(order?.id);
   const lastLalamoveOrder = useObserveOrderLalamoveOrders(
