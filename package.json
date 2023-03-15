@@ -8,7 +8,7 @@
   "dependencies": {
     "@appjusto/dates": "^0.7.1",
     "@appjusto/menu": "^0.1.4",
-    "@appjusto/types": "^19.2.0",
+    "@appjusto/types": "19.2.1",
     "@casl/ability": "^5.4.3",
     "@chakra-ui/icons": "^1.0.3",
     "@chakra-ui/react": "^1.6.3",

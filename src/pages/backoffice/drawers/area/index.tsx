@@ -15,6 +15,7 @@ import {
   RadioGroup,
   Text,
 } from '@chakra-ui/react';
+import { useAreas } from 'app/api/areas/useAreas';
 import { useObserveArea } from 'app/api/areas/useObserveArea';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextAppRequests } from 'app/state/requests/context';
@@ -39,6 +40,8 @@ export const AreaDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   const { areaId } = useParams<Params>();
   const { userAbility } = useContextFirebaseUser();
   const { dispatchAppRequestResult } = useContextAppRequests();
+  const { updateArea, updateAreaResult, deleteArea, deleteAreaResult } =
+    useAreas();
   const area = useObserveArea(areaId !== 'new' ? areaId : undefined);
   // state
   const [state, setState] = React.useState('');
@@ -50,7 +53,6 @@ export const AreaDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   const [isDeleting, setIsDeleting] = React.useState(false);
   // helpers
   const isNew = areaId === 'new';
-  console.log('areaId', areaId);
   const canUpdate = React.useMemo(
     () => userAbility?.can('update', 'areas'),
     [userAbility]
@@ -69,34 +71,36 @@ export const AreaDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
         },
       });
     }
-    if (isNew) {
-      let newArea = {
-        state,
-        city,
-        logistics,
-      } as Partial<Area>;
-      if (isInsurance)
-        newArea.insurance = {
-          fixed: insuranceFixed ? parseInt(insuranceFixed) : 0,
-          percent: insurancePercent ? Number(insurancePercent) : 0,
-        };
-      console.log(newArea);
-      // submitPushCampaign(newCampaign);
-    } else {
-      let changes = {
-        logistics,
-      } as Partial<Area>;
-      if (isInsurance) {
-        changes.insurance = {
-          fixed: insuranceFixed ? parseInt(insuranceFixed) : 0,
-          percent: insurancePercent ? Number(insurancePercent) : 0,
-        };
+    try {
+      if (isNew) {
+        let newArea = {
+          state,
+          city,
+          logistics,
+        } as Partial<Area>;
+        if (isInsurance)
+          newArea.insurance = {
+            fixed: insuranceFixed ? parseInt(insuranceFixed) : 0,
+            percent: insurancePercent ? Number(insurancePercent) : 0,
+          };
+        console.log(newArea);
+        updateArea({ changes: newArea });
       } else {
-        changes.insurance = null;
+        let changes = {
+          logistics,
+        } as Partial<Area>;
+        if (isInsurance) {
+          changes.insurance = {
+            fixed: insuranceFixed ? parseInt(insuranceFixed) : 0,
+            percent: insurancePercent ? Number(insurancePercent) : 0,
+          };
+        } else {
+          changes.insurance = null;
+        }
+        console.log(changes);
+        updateArea({ id: areaId, changes });
       }
-      console.log(changes);
-      // updatePushCampaign({ campaignId, changes: newCampaign });
-    }
+    } catch (error) {}
   };
   // side effects
   React.useEffect(() => {
@@ -223,7 +227,9 @@ export const AreaDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                         width="full"
                         variant="danger"
                         fontSize="15px"
-                        onClick={() => {}}
+                        onClick={() => deleteArea(areaId)}
+                        isLoading={deleteAreaResult.isLoading}
+                        loadingText={t('Excluindo')}
                       >
                         {t(`Excluir`)}
                       </Button>
@@ -232,21 +238,24 @@ export const AreaDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 ) : (
                   <HStack w="100%" spacing={4}>
                     <Button
-                      width="full"
+                      width={isNew ? '50%' : 'full'}
                       fontSize="15px"
                       type="submit"
                       loadingText={t('Salvando')}
+                      isLoading={updateAreaResult.isLoading}
                     >
                       {t('Salvar alterações')}
                     </Button>
-                    <Button
-                      width="full"
-                      fontSize="15px"
-                      variant="dangerLight"
-                      onClick={() => setIsDeleting(true)}
-                    >
-                      {t('Excluir área')}
-                    </Button>
+                    {!isNew && (
+                      <Button
+                        width="full"
+                        fontSize="15px"
+                        variant="dangerLight"
+                        onClick={() => setIsDeleting(true)}
+                      >
+                        {t('Excluir área')}
+                      </Button>
+                    )}
                   </HStack>
                 )}
               </DrawerFooter>

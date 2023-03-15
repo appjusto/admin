@@ -1,5 +1,16 @@
 import { Area, WithId } from '@appjusto/types';
-import { Box, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
+import {
+  Box,
+  HStack,
+  Icon,
+  Table,
+  Tbody,
+  Td,
+  Text,
+  Th,
+  Thead,
+  Tr,
+} from '@chakra-ui/react';
 import { t } from 'utils/i18n';
 import { AreasTableItem } from './AreasTableItem';
 
@@ -17,8 +28,8 @@ export const AreasTable = ({ areas }: AreasTableProps) => {
             <Th>{t('Estado')}</Th>
             <Th>{t('Cidade')}</Th>
             <Th>{t('Criada em')}</Th>
-            <Th>{t('Logística')}</Th>
             <Th>{t('Cobertura')}</Th>
+            <Th textAlign="center">{t('Logística')}</Th>
           </Tr>
         </Thead>
         <Tbody>
@@ -37,6 +48,35 @@ export const AreasTable = ({ areas }: AreasTableProps) => {
           )}
         </Tbody>
       </Table>
+      <HStack mt="8" spacing={6}>
+        <Text fontSize="sm">
+          <Icon mt="-3px" viewBox="0 0 200 200" color="green.500">
+            <path
+              fill="currentColor"
+              d="M 100, 100 m -75, 0 a 75,75 0 1,0 150,0 a 75,75 0 1,0 -150,0"
+            />
+          </Icon>
+          {t(' Logística AppJusto')}
+        </Text>
+        <Text fontSize="sm">
+          <Icon mt="-3px" viewBox="0 0 200 200" color="#FFBE00">
+            <path
+              fill="currentColor"
+              d="M 100, 100 m -75, 0 a 75,75 0 1,0 150,0 a 75,75 0 1,0 -150,0"
+            />
+          </Icon>
+          {t(' Logística Externa')}
+        </Text>
+        <Text fontSize="sm">
+          <Icon mt="-3px" viewBox="0 0 200 200" color="gray.200">
+            <path
+              fill="currentColor"
+              d="M 100, 100 m -75, 0 a 75,75 0 1,0 150,0 a 75,75 0 1,0 -150,0"
+            />
+          </Icon>
+          {t(' Sem logística')}
+        </Text>
+      </HStack>
     </Box>
   );
 };

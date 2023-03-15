@@ -4,6 +4,7 @@ import TableItem from 'common/components/backoffice/TableItem';
 import React from 'react';
 import { useRouteMatch } from 'react-router';
 import { getDateAndHour } from 'utils/functions';
+import { t } from 'utils/i18n';
 
 interface AreasTableItemProps {
   area: WithId<Area>;
@@ -28,23 +29,11 @@ export const AreasTableItem = ({ area }: AreasTableItemProps) => {
         { value: area.city },
         { value: getDateAndHour(area.createdAt) },
         {
-          value: (
-            <Icon mt="-2px" viewBox="0 0 200 200" color={logisticsColor}>
-              <path
-                fill="currentColor"
-                d="M 100, 100 m -75, 0 a 75,75 0 1,0 150,0 a 75,75 0 1,0 -150,0"
-              />
-            </Icon>
-          ),
-          styles: { textAlign: 'center' },
+          value: area.insurance ? t('Específica') : t('Padrão'),
         },
         {
           value: (
-            <Icon
-              mt="-2px"
-              viewBox="0 0 200 200"
-              color={area.insurance ? 'green.500' : 'gray.200'}
-            >
+            <Icon mt="-2px" viewBox="0 0 200 200" color={logisticsColor}>
               <path
                 fill="currentColor"
                 d="M 100, 100 m -75, 0 a 75,75 0 1,0 150,0 a 75,75 0 1,0 -150,0"

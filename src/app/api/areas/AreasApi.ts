@@ -7,7 +7,6 @@ import {
   getDocs,
   limit,
   onSnapshot,
-  orderBy,
   query,
   QueryDocumentSnapshot,
   serverTimestamp,
@@ -32,7 +31,7 @@ export default class AreasApi {
     city?: string,
     startAfter?: QueryDocumentSnapshot<DocumentData>
   ): Unsubscribe {
-    let q = query(this.refs.getAreasRef(), orderBy('state'), limit(20));
+    let q = query(this.refs.getAreasRef(), limit(20));
     if (state) q = query(q, where('state', '==', state));
     if (city) q = query(q, where('city', '==', city));
     if (startAfter) q = query(q, startAt(startAfter));

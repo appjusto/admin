@@ -1,9 +1,8 @@
 import { ArrowDownIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, HStack, Text } from '@chakra-ui/react';
-import { ClearFiltersButton } from 'common/components/backoffice/ClearFiltersButton';
-//import Checkbox from 'common/components/form/Checkbox';
 import { useObserveAreas } from 'app/api/areas/useObserveAreas';
 import { useContextFirebaseUser } from 'app/state/auth/context';
+import { ClearFiltersButton } from 'common/components/backoffice/ClearFiltersButton';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import React from 'react';
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
@@ -44,7 +43,7 @@ const AreasPage = () => {
         title={t('Áreas de atuação')}
         subtitle={t(`Atualizado ${dateTime}`)}
       />
-      <Flex mt="2">
+      <Flex mt="8">
         <Box w="100%" maxW="600px">
           <StateAndCityFilter
             state={state}
