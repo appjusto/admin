@@ -121,6 +121,7 @@ export const BusinessRegister = () => {
             'motorcycle-only',
             'can-match-courier',
             'can-outsource',
+            'appjusto-only',
           ] as BusinessTag[]
         }
         updateProfile={(tags) => updateBusinessProfile({ tags })}
