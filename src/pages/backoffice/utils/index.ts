@@ -116,6 +116,7 @@ export const ledgerEntryOperationPTOptions = {
   'tip': 'Gorjeta',
   'business-insurance': 'Cobertura restaurante',
   'others': 'Outros',
+  'outsource-credit': 'Crédito de terceirização',
 };
 
 export const pushStatusPTOptions = {
