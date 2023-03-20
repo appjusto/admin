@@ -4,6 +4,7 @@ import { useContextBusiness } from 'app/state/business/context';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { t } from 'utils/i18n';
+import { isNewValidOnboardingStep } from '../utils';
 import { OnboardingItem } from './ChecklistItem';
 
 interface ChecklistProps extends BoxProps {
@@ -19,31 +20,35 @@ export const Checklist = ({
   // context
   const { business } = useContextBusiness();
   const { updateBusinessProfile } = useBusinessProfile(business?.id, true);
-
-  // state
-  const [isDisabled, setIsDisabled] = React.useState(true);
+  // helpers
+  const shouldUpdate = React.useMemo(
+    () => isNewValidOnboardingStep(currentStepIndex, business?.onboarding, 2),
+    [currentStepIndex, business?.onboarding]
+  );
+  // handlers
+  const getLinkStatus = React.useCallback(
+    (elementIndex: number) =>
+      isNewValidOnboardingStep(elementIndex, business?.onboarding),
+    [business?.onboarding]
+  );
   // side effects
   React.useEffect(() => {
-    if (disabled || !business?.onboarding) return;
-    if (parseInt(business.onboarding, 10) > 2) setIsDisabled(false);
-  }, [disabled, business?.onboarding]);
-  React.useEffect(() => {
     if (disabled) return;
-    if (currentStepIndex > 2) {
+    if (shouldUpdate) {
       updateBusinessProfile({
         onboarding: String(currentStepIndex),
       });
     }
-  }, [disabled, currentStepIndex, updateBusinessProfile]);
+  }, [disabled, shouldUpdate, updateBusinessProfile, currentStepIndex]);
   // UI
   const items = [
-    t('Preencher dados pessoais do administrador'),
-    t('Criar perfil do restaurante'),
-    t('Cadastrar dados bancários'),
-    t('Definir endereço e raio de entrega'),
-    t('Escolher modelo de logística'),
-    t('Escolher modelo de cobertura'),
-    t('Confirmar contrato de serviço e termos de uso'),
+    t('Dados pessoais do administrador'),
+    t('Dados do restaurante'),
+    t('Dados bancários'),
+    t('Endereço e raio de entrega'),
+    t('Modelo de entrega'),
+    t('Modelo de cobertura'),
+    t('Compromissos'),
   ];
   return (
     <Box {...props}>
@@ -57,7 +62,7 @@ export const Checklist = ({
             currentStep={currentStepIndex === i + 1}
           />
         );
-        return isDisabled ? (
+        return getLinkStatus(i) ? (
           onboardingItem
         ) : (
           <Link key={item} to={`/onboarding/${i + 1}`}>

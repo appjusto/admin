@@ -18,6 +18,7 @@ import { useContextBusiness } from 'app/state/business/context';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { useContextServerTime } from 'app/state/server-time';
 import { OnboardingProps } from 'pages/onboarding/types';
+import { isNewValidOnboardingStep } from 'pages/onboarding/utils';
 import { OptionCard } from 'pages/OptionCard';
 import PageFooter from 'pages/PageFooter';
 import PageHeader from 'pages/PageHeader';
@@ -45,12 +46,28 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
   const [isAccept, setIsAccept] = React.useState(false);
   const [agreed, setAgreed] = React.useState(false);
   // helpers
-  const logisticsService = getBusinessService(business?.services, 'logistics');
-  const isLogistics = typeof logisticsService?.name === 'string';
+  const logisticsService = React.useMemo(
+    () => getBusinessService(business?.services, 'logistics'),
+    [business?.services]
+  );
+  const isLogistics = React.useMemo(
+    () => typeof logisticsService?.name === 'string',
+    [logisticsService?.name]
+  );
   const feeToDisplay =
     insuranceAccepted?.fee.percent ?? insuranceAvailable?.fee.percent;
-  const insuranceActivatedAt =
-    getBusinessInsuranceActivationDate(insuranceAccepted);
+  const isTermsCheckboxActive = React.useMemo(
+    () => onboarding !== undefined || (isAccept && !insuranceAccepted),
+    [onboarding, isAccept, insuranceAccepted]
+  );
+  const isNewOnboardingStep = React.useMemo(
+    () => isNewValidOnboardingStep(onboarding, business?.onboarding),
+    [business?.onboarding, onboarding]
+  );
+  const insuranceActivatedAt = React.useMemo(
+    () => getBusinessInsuranceActivationDate(insuranceAccepted),
+    [insuranceAccepted]
+  );
   // handlers
   const getActionButtonDisabledStatus = React.useCallback(() => {
     if (!onboarding && !isAccept && !insuranceAccepted) return true;
@@ -93,7 +110,7 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
         requestId: 'insurance-page-error',
         message: { title: 'Nenhuma cobertura foi contratada.' },
       });
-    if (isAccept && !agreed)
+    if (isTermsCheckboxActive && !agreed)
       return dispatchAppRequestResult({
         status: 'error',
         requestId: 'insurance-page-error',
@@ -145,12 +162,12 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
     setInsuranceAccepted(insurance);
   }, [servivesLength, business?.services]);
   React.useEffect(() => {
-    if (onboarding) {
+    if (isNewOnboardingStep) {
       setIsAccept(true);
     } else {
       setIsAccept(insuranceAccepted !== undefined);
     }
-  }, [onboarding, insuranceAccepted]);
+  }, [isNewOnboardingStep, insuranceAccepted]);
   // UI
   if (isSuccess && redirect) return <Redirect to={redirect} push />;
   return (
@@ -224,9 +241,11 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
               <Radio value="insurance">
                 <Text fontSize="18px">{t('Com cobertura')}</Text>
               </Radio>
-              <Text mt="4">
+              <Text mt="6">
+                {t('Mediante taxa de ')}
+                <Text as="span" fontWeight="700">{`${feeToDisplay}%`}</Text>
                 {t(
-                  'Na opção com cobertura, o restaurante será reembolsado caso ocorra:'
+                  ', sobre o valor dos pedidos, o restaurante será reembolsado caso aconteça:'
                 )}
               </Text>
               <VStack
@@ -261,55 +280,12 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
                 />
                 <CoverageItem isVisible label={t('Fraude (Chargeback)')} />
               </VStack>
-              {/* {typeof feeToDisplay === 'number' && (
-                <FeeDescriptionItem
-                  title={t('Taxa de cobertura')}
-                  description={t(
-                    'Taxa de cobertura sobre incidentes com pedidos'
-                  )}
-                  fee={feeToDisplay}
-                  highlight
-                />
-              )} */}
-              <Box
-                mt="4"
-                px="4"
-                py="2"
-                w="fit-content"
-                minW={{ lg: '346px' }}
-                bgColor="#F5F5F5"
-                borderRadius="lg"
-              >
-                <HStack>
-                  {isAccept && !insuranceAccepted && (
-                    <Checkbox
-                      size="sm"
-                      isChecked={agreed}
-                      onChange={(event) => setAgreed(event.target.checked)}
-                      isDisabled={!isAccept}
-                    />
-                  )}
-                  <Text>
-                    {isAccept && !insuranceAccepted
-                      ? t('Li e estou de acordo com os ')
-                      : t('Leia a versão completa dos ')}
-                    <Link
-                      href="https://appjusto.freshdesk.com/support/solutions/articles/67000713547"
-                      fontWeight="700"
-                      textDecor="underline"
-                      isExternal
-                    >
-                      {t('termos de cobertura.')}
-                    </Link>
-                  </Text>
-                </HStack>
-              </Box>
             </OptionCard>
             <OptionCard isSelected={!isAccept}>
               <Radio value="no-insurance">
                 <Text fontSize="18px">{t('Sem cobertura')}</Text>
               </Radio>
-              <Text mt="4">
+              <Text mt="6">
                 {t(
                   'Na opção sem cobertura, o restaurante será responsável pelas situações listadas nos nossos '
                 )}
@@ -323,14 +299,39 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
                 </Link>
                 {t(' da plataforma.')}
               </Text>
-              {/* <FeeDescriptionItem
-                title={t('Taxa de cobertura')}
-                description={t(
-                  'Taxa de cobertura sobre incidentes com pedidos'
-                )}
-                fee={0}
-              /> */}
             </OptionCard>
+            <Box
+              mt="6"
+              px="4"
+              py="2"
+              w="fit-content"
+              minW={{ lg: '346px' }}
+              bgColor="#F5F5F5"
+              borderRadius="lg"
+            >
+              <HStack>
+                {isTermsCheckboxActive && (
+                  <Checkbox
+                    size="sm"
+                    isChecked={agreed}
+                    onChange={(event) => setAgreed(event.target.checked)}
+                  />
+                )}
+                <Text>
+                  {isTermsCheckboxActive
+                    ? t('Li e estou de acordo com os ')
+                    : t('Leia a versão completa dos ')}
+                  <Link
+                    href="https://appjusto.freshdesk.com/support/solutions/articles/67000713547"
+                    fontWeight="700"
+                    textDecor="underline"
+                    isExternal
+                  >
+                    {t('termos de cobertura.')}
+                  </Link>
+                </Text>
+              </HStack>
+            </Box>
           </VStack>
         </RadioGroup>
         <PageFooter

@@ -7,6 +7,7 @@ import { useContextAppRequests } from 'app/state/requests/context';
 import { useContextServerTime } from 'app/state/server-time';
 import { FilterText } from 'common/components/backoffice/FilterText';
 import { OnboardingProps } from 'pages/onboarding/types';
+import { isNewValidOnboardingStep } from 'pages/onboarding/utils';
 import PageFooter from 'pages/PageFooter';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
@@ -34,6 +35,11 @@ const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
   const [logisticsAccepted, setLogisticsAccepted] =
     React.useState<BusinessService>();
   const [logistics, setLogistics] = React.useState<LogisticsType>('appjusto');
+  // helpers
+  const isNewOnboardingStep = React.useMemo(
+    () => isNewValidOnboardingStep(onboarding, business?.onboarding),
+    [business?.onboarding, onboarding]
+  );
   // handlers
   const onSubmitHandler = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -112,7 +118,7 @@ const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
     window?.scrollTo(0, 0);
   }, []);
   React.useEffect(() => {
-    if (onboarding) {
+    if (isNewOnboardingStep) {
       if (logisticsAvailable === 'none') {
         setLogistics('private');
       } else {
@@ -131,7 +137,12 @@ const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
         setLogistics('private');
       }
     }
-  }, [onboarding, logisticsAvailable, servivesLength, business?.services]);
+  }, [
+    isNewOnboardingStep,
+    logisticsAvailable,
+    servivesLength,
+    business?.services,
+  ]);
   // UI
   if (isSuccess && redirect) return <Redirect to={redirect} push />;
   return (

@@ -1,4 +1,4 @@
-import { Box, HStack, Icon, Text } from '@chakra-ui/react';
+import { HStack, Icon, Text } from '@chakra-ui/react';
 import { MdCheck } from 'react-icons/md';
 
 interface CoverageItemProps {
@@ -7,9 +7,12 @@ interface CoverageItemProps {
 }
 
 export const CoverageItem = ({ isVisible, label }: CoverageItemProps) => {
-  if (!isVisible) return <Box />;
   return (
-    <HStack spacing={2} alignItems="flex-start">
+    <HStack
+      spacing={2}
+      alignItems="flex-start"
+      display={isVisible ? 'flex' : 'none'}
+    >
       <Icon as={MdCheck} color="green.500" w="24px" h="24px" />
       <Text>{label}</Text>
     </HStack>

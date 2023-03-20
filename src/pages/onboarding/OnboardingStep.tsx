@@ -15,7 +15,6 @@ const OnboardingStep = ({ children }: Props) => {
   const segments = path.split('/');
   const lastSegment = parseInt(segments.pop()!);
   const currentStepIndex = isNaN(lastSegment) ? 0 : lastSegment;
-  const showSummary = [5, 6].includes(currentStepIndex);
   // UI
   return (
     <Box minH="100vh">
