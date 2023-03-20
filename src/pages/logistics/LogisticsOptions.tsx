@@ -11,7 +11,6 @@ import {
 import { useContextBusiness } from 'app/state/business/context';
 import { ReactComponent as motocycleGray } from 'common/img/motocycle-gray.svg';
 import { ReactComponent as motocycleGreen } from 'common/img/motocycle-green.svg';
-import { ReactComponent as motocycleYellow } from 'common/img/motocycle-yellow.svg';
 import React from 'react';
 import { t } from 'utils/i18n';
 import { FeeDescriptionItem } from '../FeeDescriptionItem';
@@ -61,7 +60,7 @@ export const LogisticsOptions = ({
   // UI
   if (logisticsDisabled) {
     return (
-      <Box maxW="600px">
+      <Box maxW="468px">
         <RadioGroup
           mt="8"
           value={logistics}
@@ -72,41 +71,23 @@ export const LogisticsOptions = ({
               <Flex>
                 <Radio value="private">
                   <Text ml="2" fontSize="18px" fontWeight="700">
-                    {t('Logística Própria')}
+                    {t('Entrega Própria')}
                   </Text>
                 </Radio>
                 <Icon as={motocycleGray} ml="6" w="48px" h="48px" />
               </Flex>
-              <LogisticsItem title={t('Sem Logística AppJusto')}>
-                <Text>
-                  {t('A entrega é feita por ')}
-                  <Text as="span" fontWeight="700">
-                    {t('sua rede de entregadores')}
-                  </Text>
-                </Text>
-              </LogisticsItem>
-              <LogisticsItem title={t('Sem Mensalidades')} icon>
-                <Text>
-                  {t('Uma vantagem do AppJusto é que ')}
-                  <Text as="span" fontWeight="700">
-                    {t('não cobramos mensalidade')}
-                  </Text>
-                </Text>
-              </LogisticsItem>
-              <FeeDescriptionItem
-                title={t('Comissão AppJusto')}
-                description={t(
-                  'Taxa de comissão sobre pedidos pagos pelo AppJusto'
-                )}
-                fee={commissionBaseFee}
-              />
+              <FeeDescriptionItem fee={commissionBaseFee} />
+              <LogisticsItem
+                title={t('A entrega será realizada pelo próprio restaurante')}
+                iconDisabled
+              ></LogisticsItem>
             </OptionCard>
 
             <OptionCard isSelected={logistics === 'appjusto'}>
               <Flex>
                 <Radio value="appjusto" isDisabled>
                   <Text ml="2" fontSize="18px" fontWeight="700">
-                    {t('Logística AppJusto')}
+                    {t('Entrega AppJusto')}
                   </Text>
                 </Radio>
                 <Icon as={motocycleGreen} ml="6" w="48px" h="48px" />
@@ -118,38 +99,20 @@ export const LogisticsOptions = ({
                 bgColor="yellow"
                 border="1px solid black"
                 borderRadius="lg"
-                opacity={1}
               >
                 <Text>
                   {t(
-                    'A Logística AppJusto ainda não chegou na sua região, mas não se preocupe! Assim que tivermos rede iremos informa-lo.'
+                    'O AppJusto ainda não possui rede de entregadores na sua cidade. Mas não se preocupe, avisaremos assim que este serviço estiver disponível.'
                   )}
                 </Text>
               </Box>
-              <Box opacity={0.4}>
-                <LogisticsItem title={t('Com Logística AppJusto')} icon>
-                  <Text>
-                    {t('A entrega é feita por ')}
-                    <Text as="span" fontWeight="700">
-                      {t('nossa rede entregadores e por parceiros')}
-                    </Text>
-                  </Text>
-                </LogisticsItem>
-                <LogisticsItem title={t('Sem Mensalidades')} icon>
-                  <Text>
-                    {t('Uma vantagem do AppJusto é que ')}
-                    <Text as="span" fontWeight="700">
-                      {t('não cobramos mensalidade')}
-                    </Text>
-                  </Text>
-                </LogisticsItem>
-                <FeeDescriptionItem
-                  title={t('Comissão AppJusto')}
-                  description={t(
-                    'Taxa de comissão sobre pedidos pagos pelo AppJusto'
+              <Box>
+                <FeeDescriptionItem fee={availableFee} isDisabled />
+                <LogisticsItem
+                  title={t(
+                    'A entrega será realizada por nossa rede de entregadores e por parceiros   '
                   )}
-                  fee={availableFee}
-                  highlight
+                  isDisabled
                 />
               </Box>
             </OptionCard>
@@ -159,120 +122,60 @@ export const LogisticsOptions = ({
     );
   }
   return (
-    <Box maxW="600px">
+    <Box maxW="468px">
       <RadioGroup
         mt="8"
         value={logistics}
         onChange={(value) => handleChange(value as LogisticsType)}
       >
         <VStack spacing={4} alignItems="flex-start">
-          {logisticsAvailable === 'external' ? (
-            <OptionCard isSelected={logistics === 'appjusto'}>
-              <Flex>
-                <Radio value="appjusto">
-                  <Text ml="2" fontSize="18px" fontWeight="700">
-                    {t('Logística por Parceiros')}
-                  </Text>
-                </Radio>
-                <Icon as={motocycleYellow} ml="6" w="48px" h="48px" />
-              </Flex>
-              <LogisticsItem title={t('Com Logística por Parceiros')} icon>
+          <OptionCard isSelected={logistics === 'appjusto'}>
+            <Flex>
+              <Radio value="appjusto">
+                <Text ml="2" fontSize="18px" fontWeight="700">
+                  {t('Entrega AppJusto')}
+                </Text>
+              </Radio>
+              <Icon as={motocycleGreen} ml="6" w="48px" h="48px" />
+            </Flex>
+            <FeeDescriptionItem fee={availableFee} />
+            {logisticsAvailable === 'appjusto' ? (
+              <LogisticsItem
+                title={t(
+                  'A entrega será realizada por nossa rede de entregadores e por parceiros   '
+                )}
+              />
+            ) : (
+              <Box
+                mt="4"
+                p="4"
+                color="black"
+                bgColor="yellow"
+                border="1px solid black"
+                borderRadius="lg"
+              >
                 <Text>
                   {t(
-                    'O AppJusto ainda está construindo a rede de entregadores na sua cidade. Até lá '
+                    'O AppJusto ainda não possui rede própria de entregadores na sua cidade. Mas não se preocupe, realizaremos suas entregas por meio de empresas parceiras.'
                   )}
-                  <Text as="span" fontWeight="700">
-                    {t('suas entregas serão feitas por empresas parceiras')}
-                  </Text>
                 </Text>
-              </LogisticsItem>
-              <LogisticsItem title={t('Sem Mensalidades')} icon>
-                <Text>
-                  {t('Uma vantagem do AppJusto é que ')}
-                  <Text as="span" fontWeight="700">
-                    {t('não cobramos mensalidade')}
-                  </Text>
-                </Text>
-              </LogisticsItem>
-              <FeeDescriptionItem
-                title={t('Comissão AppJusto')}
-                description={t(
-                  'Taxa de comissão sobre pedidos pagos pelo AppJusto'
-                )}
-                fee={availableFee}
-                highlight
-              />
-            </OptionCard>
-          ) : (
-            <OptionCard isSelected={logistics === 'appjusto'}>
-              <Flex>
-                <Radio value="appjusto">
-                  <Text ml="2" fontSize="18px" fontWeight="700">
-                    {t('Logística AppJusto')}
-                  </Text>
-                </Radio>
-                <Icon as={motocycleGreen} ml="6" w="48px" h="48px" />
-              </Flex>
-              <Box>
-                <LogisticsItem title={t('Com Logística AppJusto')} icon>
-                  <Text>
-                    {t('A entrega é feita por ')}
-                    <Text as="span" fontWeight="700">
-                      {t('nossa rede entregadores e por parceiros')}
-                    </Text>
-                  </Text>
-                </LogisticsItem>
-                <LogisticsItem title={t('Sem Mensalidades')} icon>
-                  <Text>
-                    {t('Uma vantagem do AppJusto é que ')}
-                    <Text as="span" fontWeight="700">
-                      {t('não cobramos mensalidade')}
-                    </Text>
-                  </Text>
-                </LogisticsItem>
-                <FeeDescriptionItem
-                  title={t('Comissão AppJusto')}
-                  description={t(
-                    'Taxa de comissão sobre pedidos pagos pelo AppJusto'
-                  )}
-                  fee={availableFee}
-                  highlight
-                />
               </Box>
-            </OptionCard>
-          )}
+            )}
+          </OptionCard>
           <OptionCard isSelected={logistics === 'private'}>
             <Flex>
               <Radio value="private">
                 <Text ml="2" fontSize="18px" fontWeight="700">
-                  {t('Logística Própria')}
+                  {t('Entrega Própria')}
                 </Text>
               </Radio>
               <Icon as={motocycleGray} ml="6" w="48px" h="48px" />
             </Flex>
-            <LogisticsItem title={t('Sem Logística AppJusto')}>
-              <Text>
-                {t('A entrega é feita por ')}
-                <Text as="span" fontWeight="700">
-                  {t('sua rede de entregadores')}
-                </Text>
-              </Text>
-            </LogisticsItem>
-            <LogisticsItem title={t('Sem Mensalidades')} icon>
-              <Text>
-                {t('Uma vantagem do AppJusto é que ')}
-                <Text as="span" fontWeight="700">
-                  {t('não cobramos mensalidade')}
-                </Text>
-              </Text>
-            </LogisticsItem>
-            <FeeDescriptionItem
-              title={t('Comissão AppJusto')}
-              description={t(
-                'Taxa de comissão sobre pedidos pagos pelo AppJusto'
-              )}
-              fee={commissionBaseFee}
-            />
+            <FeeDescriptionItem fee={commissionBaseFee} />
+            <LogisticsItem
+              title={t('A entrega será realizada pelo próprio restaurante')}
+              iconDisabled
+            ></LogisticsItem>
           </OptionCard>
         </VStack>
       </RadioGroup>

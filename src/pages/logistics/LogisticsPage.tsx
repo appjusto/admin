@@ -6,7 +6,6 @@ import { useContextBusiness } from 'app/state/business/context';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { useContextServerTime } from 'app/state/server-time';
 import { FilterText } from 'common/components/backoffice/FilterText';
-import { useContextSummary } from 'pages/onboarding/context/summary';
 import { OnboardingProps } from 'pages/onboarding/types';
 import PageFooter from 'pages/PageFooter';
 import PageHeader from 'pages/PageHeader';
@@ -26,7 +25,6 @@ const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
   const { dispatchAppRequestResult } = useContextAppRequests();
   const { business, businessFleet, platformFees, logisticsAvailable } =
     useContextBusiness();
-  const { updateState: updateSummaryState } = useContextSummary();
   const { updateBusinessProfile, updateResult } = useBusinessProfile(
     business?.id
   );
@@ -134,21 +132,6 @@ const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
       }
     }
   }, [onboarding, logisticsAvailable, servivesLength, business?.services]);
-  React.useEffect(() => {
-    if (onboarding) {
-      if (logistics === 'appjusto') {
-        updateSummaryState({
-          state: 'logistics',
-          value: platformFees?.logistics.percent ?? 0,
-        });
-      } else {
-        updateSummaryState({
-          state: 'logistics',
-          value: 0,
-        });
-      }
-    }
-  }, [onboarding, logistics, platformFees?.logistics, updateSummaryState]);
   // UI
   if (isSuccess && redirect) return <Redirect to={redirect} push />;
   return (
