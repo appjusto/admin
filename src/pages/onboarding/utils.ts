@@ -5,8 +5,6 @@ export const isNewValidOnboardingStep = (
   savedStep?: string,
   limit?: number
 ) => {
-  console.log('currentStep', currentStep);
-  console.log('savedStep', savedStep);
   if (!currentStep || !savedStep) return false;
   const currentIndex =
     typeof currentStep === 'number'

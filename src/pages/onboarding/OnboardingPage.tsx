@@ -6,11 +6,11 @@ import InsurancePage from 'pages/insurance/InsurancePage';
 import LogisticsPage from 'pages/logistics/LogisticsPage';
 import { ManagerProfile } from 'pages/manager-profile/ManagerProfile';
 import { Redirect, Route, Switch, useRouteMatch } from 'react-router-dom';
+import { Commitments } from './Commitments';
 import { OnboardingComplete } from './OnboardingComplete';
 import { OnboardingErrorBoundary } from './OnboardingErrorBoundary';
 import OnboardingOpening from './OnboardingOpening';
 import OnboardingStep from './OnboardingStep';
-import { TermsOfUse } from './TermsOfUse';
 
 const Onboarding = () => {
   // context
@@ -56,7 +56,7 @@ const Onboarding = () => {
         </Route>
         <Route path={`${path}/7`}>
           <OnboardingStep>
-            <TermsOfUse redirect={`${path}/complete`} />
+            <Commitments redirect={`${path}/complete`} />
           </OnboardingStep>
         </Route>
         <Route path={`${path}/complete`}>
