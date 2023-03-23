@@ -137,7 +137,7 @@ export const BusinessStatusDrawer = ({
                     {t('permanecerá fechado')}
                   </Text>
                   {t(
-                    ' até o horário de abertura definido para próximo dia de funcionamento.'
+                    ' até o horário de abertura do próximo dia de funcionamento.'
                   )}
                 </Text>
               )}

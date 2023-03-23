@@ -38,7 +38,7 @@ export const OrdersHeader = () => {
       bg="#EEEEEE"
     >
       <HStack spacing={6}>
-        <Link as={RouterLink} to="/app">
+        <Link as={RouterLink} to="/app" _focus={{ outline: 'none' }}>
           <Tooltip placement="top" label={t('Voltar')}>
             <ArrowBackIcon w="22px" h="22px" mr="2" mb="-2px" />
           </Tooltip>
