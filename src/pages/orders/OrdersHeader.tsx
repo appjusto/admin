@@ -29,7 +29,8 @@ export const OrdersHeader = () => {
   // UI
   return (
     <Flex
-      p="6"
+      py="6"
+      px={{ base: '4', md: '8' }}
       h="76px"
       flex={1}
       alignItems="center"
@@ -92,11 +93,6 @@ export const OrdersHeader = () => {
           <Text fontSize="16px">{user?.email ?? 'N/E'}</Text>
         </HStack>
       </HStack>
-      <Link as={RouterLink} to="/app" display={{ base: 'block', lg: 'none' }}>
-        <Text fontWeight="700" textStyle="link">
-          {t('Voltar')}
-        </Text>
-      </Link>
     </Flex>
   );
 };
