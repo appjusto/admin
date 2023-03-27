@@ -10,7 +10,6 @@ export const BusinessLive = () => {
   // context
   const { business, isBusinessOpen, handleBusinessProfileChange } =
     useContextBusinessBackoffice();
-
   // state
   const [status, setStatus] = React.useState<BusinessStatus>(
     business?.status ?? 'unavailable'
@@ -18,44 +17,30 @@ export const BusinessLive = () => {
   const [isEnabled, setIsEnabled] = React.useState(
     business?.enabled ? 'true' : 'false'
   );
-
   // handlers
-  const handleEnabled = (enabled: string) => {
-    if (enabled === 'true') setIsEnabled(enabled);
-    else {
-      setStatus('unavailable');
-      setIsEnabled('false');
-    }
-  };
-
   const handleCookingTimeMode = (mode: CookingTimeMode) => {
     handleBusinessProfileChange('settings', {
       ...business?.settings,
       cookingTimeMode: mode,
     });
   };
-
   // side effects
   React.useEffect(() => {
     if (business?.status) setStatus(business.status);
   }, [business?.status]);
-
   React.useEffect(() => {
     if (!business?.settings) {
       handleBusinessProfileChange('settings', { cookingTimeMode: 'manual' });
     }
   }, [business?.settings, handleBusinessProfileChange]);
-
   React.useEffect(() => {
     if (business?.enabled !== undefined)
       setIsEnabled(business.enabled.toString());
   }, [business?.enabled]);
-
   React.useEffect(() => {
     handleBusinessProfileChange('status', status);
     handleBusinessProfileChange('enabled', isEnabled === 'true' ? true : false);
   }, [status, isEnabled, handleBusinessProfileChange]);
-
   // UI
   return (
     <Box>
@@ -100,7 +85,7 @@ export const BusinessLive = () => {
       <SectionTitle>{t('Fechamento de emergência:')}</SectionTitle>
       <Text fontSize="15px" lineHeight="21px">
         {t(
-          'O restaurante aparecerá como fechado até ser configurado como disponível novamente'
+          'O restaurante ficará fechado até o horário de abertura do próximo dia de funcionamento'
         )}
       </Text>
       <RadioGroup
@@ -111,31 +96,31 @@ export const BusinessLive = () => {
       >
         <Flex flexDir="column" justifyContent="flex-start">
           <Radio mt="2" value="available">
-            {t('Disponível')}
+            {t('Fechamento desativado')}
           </Radio>
           <Radio mt="2" value="unavailable">
-            {t('Indisponível')}
+            {t('Fechamento ativado')}
           </Radio>
         </Flex>
       </RadioGroup>
-      <SectionTitle>{t('Desligar restaurante do AppJusto:')}</SectionTitle>
+      <SectionTitle>{t('Visibilidade do restaurante:')}</SectionTitle>
       <Text fontSize="15px" lineHeight="21px">
         {t(
-          'Ao desligar o restaurante, ele não aparecerá no app enquanto estiver desligado'
+          'Defina se o seu restaurante estará visível, ou não, para os consumidores do AppJusto'
         )}
       </Text>
       <RadioGroup
         mt="2"
-        onChange={(value) => handleEnabled(value.toString())}
+        onChange={(value) => setIsEnabled(value.toString())}
         value={isEnabled}
         color="black"
       >
         <Flex flexDir="column" justifyContent="flex-start">
           <Radio mt="2" value="true">
-            {t('Ligado')}
+            {t('Visível')}
           </Radio>
           <Radio mt="2" value="false">
-            {t('Desligado')}
+            {t('Invisível')}
           </Radio>
         </Flex>
       </RadioGroup>
