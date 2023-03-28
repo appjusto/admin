@@ -25,6 +25,8 @@ import {
   Th,
   Thead,
   Tr,
+  Wrap,
+  WrapItem,
 } from '@chakra-ui/react';
 import { useAuthentication } from 'app/api/auth/useAuthentication';
 import { useStaff } from 'app/api/staff/useStaff';
@@ -324,34 +326,34 @@ export const StaffBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
               >
                 {t('Definição geral:')}
               </Text>
-              <HStack
-                mt="4"
-                alignItems="flex-start"
-                color="black"
-                spacing={8}
-                fontSize="16px"
-                lineHeight="22px"
-              >
-                <Radio value="owner">{t('Permtir tudo')}</Radio>
-                <Radio value="orders-manager">{t('Pedidos')}</Radio>
-                <Radio value="businesses-account-manager">
-                  {t('Chefe comercial')}
-                </Radio>
-                <Radio value="businesses-manager">{t('Restaurantes')}</Radio>
-              </HStack>
-              <HStack
-                mt="4"
-                alignItems="flex-start"
-                color="black"
-                spacing={8}
-                fontSize="16px"
-                lineHeight="22px"
-              >
-                <Radio value="couriers-manager">{t('Entregadores')}</Radio>
-                <Radio value="consumers-manager">{t('Consumidores')}</Radio>
-                <Radio value="viewer">{t('Apenas leitura')}</Radio>
-                <Radio value="custom">{t('Customizado')}</Radio>
-              </HStack>
+              <Wrap mt="4" spacing={6}>
+                <WrapItem>
+                  <Radio value="owner">{t('Permtir tudo')}</Radio>
+                </WrapItem>
+                <WrapItem>
+                  <Radio value="orders-manager">{t('Pedidos')}</Radio>
+                </WrapItem>
+                <WrapItem>
+                  <Radio value="businesses-account-manager">
+                    {t('Chefe comercial')}
+                  </Radio>
+                </WrapItem>
+                <WrapItem>
+                  <Radio value="businesses-manager">{t('Restaurantes')}</Radio>
+                </WrapItem>
+                <WrapItem>
+                  <Radio value="couriers-manager">{t('Entregadores')}</Radio>
+                </WrapItem>
+                <WrapItem>
+                  <Radio value="consumers-manager">{t('Consumidores')}</Radio>
+                </WrapItem>
+                <WrapItem>
+                  <Radio value="viewer">{t('Apenas leitura')}</Radio>
+                </WrapItem>
+                <WrapItem>
+                  <Radio value="custom">{t('Customizado')}</Radio>
+                </WrapItem>
+              </Wrap>
             </RadioGroup>
             <Box mt="6">
               <Table size="sm">

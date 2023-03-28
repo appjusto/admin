@@ -227,6 +227,7 @@ export const ConsumerBaseDrawer = ({
               alignItems="flex-start"
               height="38px"
               borderBottom="1px solid #C8D7CB"
+              overflowX="auto"
             >
               <DrawerLink to={`${url}`} label={t('Cadastro')} />
               <DrawerLink to={`${url}/payment`} label={t('Pagamento')} />

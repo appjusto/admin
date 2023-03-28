@@ -307,7 +307,7 @@ export const OrderBaseDrawer = ({
             <Flex mt="8" mb="6" fontSize="lg" borderBottom="1px solid #C8D7CB">
               {isChatMessages ? (
                 <FiltersScrollBar>
-                  <HStack spacing={4}>
+                  <HStack spacing={4} overflowX="auto">
                     <DrawerLink to={`${url}`} label={t('Participantes')} />
                     <DrawerLink to={`${url}/order`} label={t('Pedido')} />
                     <DrawerLink to={`${url}/invoices`} label={t('Faturas')} />
@@ -322,7 +322,7 @@ export const OrderBaseDrawer = ({
                   </HStack>
                 </FiltersScrollBar>
               ) : (
-                <HStack spacing={4}>
+                <HStack spacing={4} overflowX="auto">
                   <DrawerLink to={`${url}`} label={t('Participantes')} />
                   <DrawerLink to={`${url}/order`} label={t('Pedido')} />
                   <DrawerLink to={`${url}/invoices`} label={t('Faturas')} />

@@ -18,6 +18,7 @@ import {
   Link,
   Radio,
   RadioGroup,
+  Stack,
   Text,
   VStack,
 } from '@chakra-ui/react';
@@ -519,7 +520,7 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 fontSize="15px"
                 lineHeight="21px"
               >
-                <HStack spacing={4}>
+                <Stack direction={{ base: 'column', md: 'row' }} spacing={4}>
                   <Radio value="delivery">{t('Delivery')}</Radio>
                   <Radio value="same-owner-accounts">
                     {t('Contas do mesmo usuário')}
@@ -528,7 +529,7 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                     {t('Cobertura restaurante')}
                   </Radio>
                   <Radio value="others">{t('Outros')}</Radio>
-                </HStack>
+                </Stack>
               </RadioGroup>
               <SectionTitle>{t('Conta de origem')}</SectionTitle>
               <RadioGroup
@@ -542,7 +543,7 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 lineHeight="21px"
                 isDisabled={operation === 'business-insurance'}
               >
-                <HStack spacing={4}>
+                <Stack direction={{ base: 'column', md: 'row' }} spacing={4}>
                   <Radio
                     value="platform"
                     isDisabled={
@@ -554,7 +555,7 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                   </Radio>
                   <Radio value="courier">{t('Entregador')}</Radio>
                   <Radio value="business">{t('Restaurante')}</Radio>
-                </HStack>
+                </Stack>
               </RadioGroup>
               {fromAccountType !== 'platform' &&
                 operation !== 'same-owner-accounts' && (
@@ -600,11 +601,11 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                   operation === 'business-insurance'
                 }
               >
-                <HStack spacing={4}>
+                <Stack direction={{ base: 'column', md: 'row' }} spacing={4}>
                   <Radio value="platform">{t('Plataforma')}</Radio>
                   <Radio value="courier">{t('Entregador')}</Radio>
                   <Radio value="business">{t('Restaurante')}</Radio>
-                </HStack>
+                </Stack>
               </RadioGroup>
               {toAccountType !== 'platform' && (
                 <CustomInput
