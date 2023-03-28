@@ -48,6 +48,8 @@ type Params = {
   entryId: string;
 };
 
+type StateAccountType = AccountType | 'consumer';
+
 export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   //context
   const { entryId } = useParams<Params>();
@@ -72,7 +74,7 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   const [fromToken, setFromToken] = React.useState('');
   const [toAccountId, setToAccountId] = React.useState('');
   const [toAccountType, setToAccountType] =
-    React.useState<AccountType>('courier');
+    React.useState<StateAccountType>('courier');
   const [description, setDescription] = React.useState('');
   const [entryValue, setEntryValue] = React.useState(0);
   const [status, setStatus] = React.useState<LedgerEntryStatus>('pending');

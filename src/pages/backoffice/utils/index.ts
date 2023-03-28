@@ -117,6 +117,7 @@ export const ledgerEntryOperationPTOptions = {
   'business-insurance': 'Cobertura restaurante',
   'others': 'Outros',
   'outsource-credit': 'Crédito de terceirização',
+  'balance-adjustment': 'Ajuste de balanço',
 };
 
 export const pushStatusPTOptions = {
