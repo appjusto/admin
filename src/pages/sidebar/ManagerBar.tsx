@@ -22,7 +22,8 @@ export const ManagerBar = (props: FlexProps) => {
       position={{ base: 'relative', lg: 'fixed' }}
       bottom={{ md: '0' }}
       left={{ md: '0' }}
-      w={{ base: isBackOffice ? '100vw' : '75vw', md: '220px' }}
+      w={{ base: isBackOffice ? '100vw' : '75vw', md: 'max-content' }}
+      minW="208px"
       borderTop={{ lg: '1px solid #C8D7CB' }}
       bgColor={{ base: '#F6F6F6', lg: '#EEEEEE' }}
       px="4"

@@ -24,61 +24,67 @@ const Sidebar = () => {
   return (
     <Flex
       position="relative"
-      d={{ base: 'none', lg: 'block' }}
-      w="220px"
-      minW="220px"
-      backgroundColor="#EEEEEE"
-      flex={0}
+      display={{ base: 'none', lg: 'block' }}
+      w={{ lg: '22%', xl: '15.27%' }}
+      minW="218.24px"
+      maxW="220px"
     >
       <Box
         position="fixed"
         top={marginTop}
-        w="220px"
+        w="max-content"
+        minW="218.24px"
         h="100vh"
-        pb="24"
-        overflowY="auto"
+        backgroundColor="#EEEEEE"
       >
-        {isBackOffice ? (
-          <Flex mt="6" px="4">
-            <Box>
-              <Image src={appjustoLogo} eagerLoading height="40px" />
-            </Box>
-          </Flex>
-        ) : (
-          <Flex mt="4" px="4" justifyContent="space-around" alignItems="center">
-            {logo ? (
-              <Box w="60px" h="60px">
-                <Image
-                  src={logo}
-                  borderRadius="30px"
-                  fallback={
-                    <ImageFbLoading w="60px" h="60px" borderRadius="20px" />
-                  }
-                />
+        <Box w="fill-available" pb="24" overflowY="auto">
+          {isBackOffice ? (
+            <Flex mt="6" px="4">
+              <Box>
+                <Image src={appjustoLogo} eagerLoading height="40px" />
               </Box>
-            ) : (
-              <Circle size="60px" bg="gray.400" />
-            )}
-            <Box>
-              <Image src={appjustoLogo} eagerLoading height="36px" />
+            </Flex>
+          ) : (
+            <Flex
+              mt="4"
+              px="4"
+              justifyContent="space-around"
+              alignItems="center"
+            >
+              {logo ? (
+                <Box w="60px" h="60px">
+                  <Image
+                    src={logo}
+                    borderRadius="30px"
+                    fallback={
+                      <ImageFbLoading w="60px" h="60px" borderRadius="20px" />
+                    }
+                  />
+                </Box>
+              ) : (
+                <Circle size="60px" bg="gray.400" />
+              )}
+              <Box>
+                <Image src={appjustoLogo} eagerLoading height="36px" />
+              </Box>
+            </Flex>
+          )}
+          {isBackOffice ? (
+            <BackOfficeLinks />
+          ) : (
+            <Box position="relative">
+              <Box ml="3" mt="6">
+                <BusinessStatus />
+              </Box>
+              <Box mt="6">
+                <Links />
+              </Box>
             </Box>
-          </Flex>
-        )}
-        {isBackOffice ? (
-          <BackOfficeLinks />
-        ) : (
-          <Box position="relative">
-            <Box ml="3" mt="6">
-              <BusinessStatus />
-            </Box>
-            <Box mt="6">
-              <Links />
-            </Box>
-          </Box>
-        )}
-        {((!isBackOffice && !isBackofficeUser) ||
-          (isBackOffice && isBackofficeUser)) && <ManagerBar />}
+          )}
+        </Box>
       </Box>
+      {((!isBackOffice && !isBackofficeUser) ||
+        (isBackOffice && isBackofficeUser)) && <ManagerBar />}
     </Flex>
   );
 };

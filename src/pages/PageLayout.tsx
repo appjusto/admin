@@ -5,6 +5,8 @@ import MainHeader from './MainHeader';
 import { MenuMobile } from './MenuMobile';
 import Sidebar from './sidebar/Sidebar';
 
+export const layoutFullWidth = 'fill-available';
+
 interface PageLayoutProps extends FlexProps {
   maxW?: string;
   mt?: string;
@@ -22,19 +24,24 @@ const PageLayout = ({
   const isBackOffice = path.includes('backoffice');
   // UI
   return (
-    <Flex flex={1} minH="100vh" mt={mt}>
+    <Flex w="100vw" minH="100vh" mt={mt}>
       <MenuMobile />
       <Sidebar />
-      <Flex flex={1} justifyContent="center">
+      <Flex
+        w={{ base: '100%', lg: '78%', xl: '84.73%' }}
+        justifyContent="center"
+        overflowX="hidden"
+      >
         <Container
           position="relative"
-          w="100vw"
+          w={layoutFullWidth}
           maxW={{ lg: maxW }}
           pt={{
             base: isBackOffice ? '16' : isBackofficeUser ? '6' : '120px',
             lg: isBackOffice ? '10' : isBackofficeUser ? '6' : '100px',
           }}
           pb={{ base: '8', md: '14' }}
+          overflowX="hidden"
         >
           {!isBackOffice && <MainHeader maxW={{ lg: maxW }} />}
           {children}

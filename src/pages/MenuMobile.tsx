@@ -40,7 +40,7 @@ export const MenuMobile = () => {
         zIndex="9999"
         display={{ base: 'flex', lg: 'none' }}
       >
-        <Container py="2">
+        <Container maxW="990px" py="2" px="4">
           <Flex
             flexDir="row"
             w="100%"
