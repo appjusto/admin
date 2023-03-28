@@ -30,7 +30,6 @@ const PageLayout = ({
       <Flex
         w={{ base: '100%', lg: '78%', xl: '84.73%' }}
         justifyContent="center"
-        overflowX="hidden"
       >
         <Container
           position="relative"
@@ -41,7 +40,6 @@ const PageLayout = ({
             lg: isBackOffice ? '10' : isBackofficeUser ? '6' : '100px',
           }}
           pb={{ base: '8', md: '14' }}
-          overflowX="hidden"
         >
           {!isBackOffice && <MainHeader maxW={{ lg: maxW }} />}
           {children}
