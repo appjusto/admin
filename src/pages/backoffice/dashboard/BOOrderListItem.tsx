@@ -255,7 +255,7 @@ export const BOOrderListItem = ({ listType, order }: Props) => {
             h="24px"
           />
         </Box>
-        <Text fontSize="sm" lineHeight="21px" color="black">
+        <Text fontSize="sm" lineHeight="21px" color="black" mr="2">
           #{order?.code}
         </Text>
         <Text fontSize="sm" lineHeight="21px">

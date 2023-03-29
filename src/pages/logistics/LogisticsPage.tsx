@@ -148,7 +148,7 @@ const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
   return (
     <Box>
       <PageHeader
-        title={t('Logística')}
+        title={t('Entrega')}
         subtitle={t(
           'Defina como será a logística de entrega do seu restaurante.'
         )}
@@ -165,12 +165,12 @@ const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
             <HStack spacing={4}>
               <FilterText
                 isActive={page === 'logistics'}
-                label={t('Escolha a Logística')}
+                label={t('Escolha o tipo de entrega')}
                 onClick={() => setPage('logistics')}
               />
               <FilterText
                 isActive={page === 'fleet'}
-                label={t('Configure sua frota')}
+                label={t('Configure sua entrega')}
                 onClick={() => setPage('fleet')}
                 isAlert={logistics === 'private' && !businessFleet}
               />

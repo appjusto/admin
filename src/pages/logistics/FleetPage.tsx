@@ -1,11 +1,9 @@
 import { Fleet } from '@appjusto/types';
-import { Box, Button, Text } from '@chakra-ui/react';
+import { Box, Button } from '@chakra-ui/react';
 import { useFleet } from 'app/api/fleet/useFleet';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextAppRequests } from 'app/state/requests/context';
-import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
-import { InputCounter } from 'pages/backoffice/drawers/push/InputCounter';
 import React from 'react';
 import { t } from 'utils/i18n';
 import { FleetIncrementalItem } from './FleetIncrementalItem';
@@ -20,13 +18,11 @@ export const FleetPage = () => {
   const { isLoading } = updateFleetResult;
   // state
   // const [name, setName] = React.useState('');
-  const [description, setDescription] = React.useState('');
+  // const [description, setDescription] = React.useState('');
   const [distanceThreshold, setDistanceThreshold] = React.useState(0);
   const [minimumFee, setMinimumFee] = React.useState(0);
   const [additionalPerKmAfterThreshold, setAdditionalPerKmAfterThreshold] =
     React.useState(0);
-  const [maxDistance, setMaxDistance] = React.useState(30000);
-  const [maxDistanceToOrigin, setMaxDistanceToOrigin] = React.useState(4000);
   // handlers
   const onSubmitHandler = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -55,12 +51,12 @@ export const FleetPage = () => {
       const changes = {
         type: 'private',
         name: business.name,
-        description,
+        description: `Entregas realizadas pelos entregadores do ${business.name}`,
         distanceThreshold,
         minimumFee,
         additionalPerKmAfterThreshold,
-        maxDistance,
-        maxDistanceToOrigin,
+        maxDistance: business?.deliveryRange ?? 30000,
+        maxDistanceToOrigin: 4000,
         createdBy: {
           flavor: 'business',
           id: business.id,
@@ -87,25 +83,22 @@ export const FleetPage = () => {
   // side effects
   React.useEffect(() => {
     if (businessFleet) {
-      setDescription(businessFleet.description);
+      // setDescription(businessFleet.description);
       setDistanceThreshold(businessFleet.distanceThreshold);
       setMinimumFee(businessFleet.minimumFee);
       setAdditionalPerKmAfterThreshold(
         businessFleet.additionalPerKmAfterThreshold
       );
-      setMaxDistance(businessFleet.maxDistance);
-      setMaxDistanceToOrigin(businessFleet.maxDistanceToOrigin);
     }
   }, [businessFleet]);
+  console.log(businessFleet?.id);
   // UI
   return (
     <Box maxW="600px">
       <form onSubmit={onSubmitHandler}>
-        <Text mt="6" fontSize="xl" color="black">
-          {t(
-            'Para realizar logística própria é preciso definir os parâmetros da sua frota privada'
-          )}
-        </Text>
+        {/* <Text mt="6" fontSize="xl" color="black">
+          {t('Configure seus parâmetros de entrega')}
+        </Text> */}
         {/* <CustomInput
           id="fleet-name"
           label={t('Nome da frota')}
@@ -116,7 +109,7 @@ export const FleetPage = () => {
           isRequired
         /> */}
         {/* <InputCounter max={36} current={name.length} /> */}
-        <Textarea
+        {/* <Textarea
           id="fleet-description"
           label={t('Descrição')}
           placeholder={t('Descreva sua frota em até 140 caracteres')}
@@ -125,11 +118,11 @@ export const FleetPage = () => {
           maxLength={140}
           isRequired
         />
-        <InputCounter max={140} current={description.length} />
+        <InputCounter max={140} current={description.length} /> */}
         <FleetIncrementalItem
           title={t('Pagamento Mínimo')}
           description={t(
-            'Defina o valor que os entregadores dessa frota receberão ao percorrer a Distância Inicial Mínima.'
+            'Defina o valor que os clientes pagarão por entregas até a Distância Inicial Mínima.'
           )}
           value={minimumFee}
           onChange={setMinimumFee}
@@ -139,7 +132,7 @@ export const FleetPage = () => {
         <FleetIncrementalItem
           title={t('Distância Inicial Mínima')}
           description={t(
-            'Defina em Km a distância para o Pagamento Mínimo. Abaixo dessa distância, os entregadores dessa frota receberão o Pagamento Mínimo. Acima dessa distância, os entregadores receberão um Valor Adicional por Km Rodado.'
+            'Defina a distância coberta pelo Pagamento Mínimo. Acima dessa distância, os clientes pagarão o Pagamento Mínimo mais o Valor Adicional por Km Rodado.'
           )}
           value={distanceThreshold}
           onChange={setDistanceThreshold}
@@ -149,25 +142,13 @@ export const FleetPage = () => {
         <FleetIncrementalItem
           title={t('Valor Adicional por Km Rodado')}
           description={t(
-            'Defina o valor adicional que os entregadores dessa frota receberão por Km ao percorrer uma distância acima da Distância Inicial Mínima.'
+            'Defina o valor adicional que os clientes pagarão por Km acima da Distância Inicial Mínima.'
           )}
           value={additionalPerKmAfterThreshold}
           onChange={setAdditionalPerKmAfterThreshold}
           incrementNumber={10}
           isCurrency
           showCents
-        />
-        <FleetIncrementalItem
-          title={t('Distância Máxima para Entrega')}
-          description={t(
-            'Defina em Km a distância máxima que os entregadores dessa frota poderão percorrer para fazer uma entrega. Pedidos recebidos com distância máxima acima da definida não serão exibidos.'
-          )}
-          value={maxDistance}
-          onChange={setMaxDistance}
-          incrementNumber={1000}
-          unit="km"
-          minimum={1000}
-          maximum={30000}
         />
         <Button
           mt="6"
