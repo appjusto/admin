@@ -32,7 +32,13 @@ export const Header = () => {
       zIndex="9999"
     >
       <Container py="2">
-        <Flex flexDir="row" w="100%" maxH="64px" justifyContent="space-between" alignItems="center">
+        <Flex
+          flexDir="row"
+          w="100%"
+          maxH="64px"
+          justifyContent="space-between"
+          alignItems="center"
+        >
           <HStack spacing={2}>
             <Box display={{ base: 'block', lg: 'none' }}>
               {isOpen ? (
@@ -55,12 +61,24 @@ export const Header = () => {
               )}
             </Box>
             {!isOpen && (
-              <Box _focus={{ outline: 'none' }} w={{ base: '100px', lg: '100px' }}>
-                <Image src={logo} alt="Logo AppJusto" width="100%" loading="eager" />
+              <Box
+                _focus={{ outline: 'none' }}
+                w={{ base: '100px', lg: '100px' }}
+              >
+                <Image
+                  src={logo}
+                  alt="Logo AppJusto"
+                  width="100%"
+                  loading="eager"
+                />
               </Box>
             )}
           </HStack>
-          <HStack spacing={8} display={{ base: 'none', lg: 'block' }} minW={{ lg: '712px' }}>
+          <HStack
+            spacing={8}
+            display={{ base: 'none', lg: 'block' }}
+            minW={{ lg: '712px' }}
+          >
             <Link
               fontSize="16px"
               lineHeight="22px"
@@ -92,7 +110,7 @@ export const Header = () => {
                 fontWeight="500"
                 borderColor="black"
               >
-                {t('Acessar portal do restaurante')}
+                {t('Acessar painel do restaurante')}
               </Button>
             </Link>
           </HStack>
@@ -111,7 +129,7 @@ export const Header = () => {
               fontWeight="500"
               borderColor="black"
             >
-              {t('Acessar portal')}
+              {t('Acessar painel')}
             </Button>
           </Link>
         </Flex>

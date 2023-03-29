@@ -72,7 +72,7 @@ const Login = () => {
         >
           <Image src={logo} scrollCheck={false} mb="8" />
           <Text fontSize="xl" color="black" textAlign="center">
-            {t('Entrar no portal do restaurante')}
+            {t('Entrar no painel do restaurante')}
           </Text>
           <Text fontSize="md" textAlign="center" color="gray.700">
             {t('Gerencie seu estabelecimento')}
@@ -114,7 +114,7 @@ const Login = () => {
               display={showDesktopHelp ? 'initial' : 'none'}
             >
               {t(
-                'Acesse o portal do seu restaurante pela web, com o seu e-mail, redefina sua senha e retorne para esta aplicação.'
+                'Acesse o painel do seu restaurante pela web, com o seu e-mail, redefina sua senha e retorne para esta aplicação.'
               )}
             </Text>
             <Button
@@ -151,7 +151,7 @@ const Login = () => {
         {isLogin ? (
           <>
             <Text fontSize="xl" color="black" textAlign="center">
-              {t('Entrar no portal do restaurante')}
+              {t('Entrar no painel do restaurante')}
             </Text>
             <Text fontSize="md" textAlign="center" color="gray.700">
               {t('Gerencie seu estabelecimento')}
