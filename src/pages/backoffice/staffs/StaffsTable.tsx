@@ -10,7 +10,7 @@ interface StaffsTableProps {
 export const StaffsTable = ({ staffs }: StaffsTableProps) => {
   // UI
   return (
-    <Box mt="8">
+    <Box mt="8" overflowX="auto">
       <Table mt="4" size="md" variant="simple">
         <Thead>
           <Tr>

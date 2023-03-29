@@ -228,11 +228,13 @@ export const ConsumerBaseDrawer = ({
               height="38px"
               borderBottom="1px solid #C8D7CB"
             >
-              <DrawerLink to={`${url}`} label={t('Cadastro')} />
-              <DrawerLink to={`${url}/payment`} label={t('Pagamento')} />
-              <DrawerLink to={`${url}/pictures`} label={t('Fotos')} />
-              <DrawerLink to={`${url}/orders`} label={t('Pedidos')} />
-              <DrawerLink to={`${url}/status`} label={t('Status')} />
+              <HStack spacing={4} overflowX="auto">
+                <DrawerLink to={`${url}`} label={t('Cadastro')} />
+                <DrawerLink to={`${url}/payment`} label={t('Pagamento')} />
+                <DrawerLink to={`${url}/pictures`} label={t('Fotos')} />
+                <DrawerLink to={`${url}/orders`} label={t('Pedidos')} />
+                <DrawerLink to={`${url}/status`} label={t('Status')} />
+              </HStack>
             </Flex>
             {children}
           </DrawerBody>

@@ -136,7 +136,9 @@ export const BusinessStatusDrawer = ({
                   <Text as="span" fontWeight="700">
                     {t('permanecerá fechado')}
                   </Text>
-                  {t(' até que você desative esta funcionalidade.')}
+                  {t(
+                    ' até o horário de abertura do próximo dia de funcionamento.'
+                  )}
                 </Text>
               )}
             </HStack>

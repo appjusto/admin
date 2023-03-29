@@ -4,6 +4,7 @@ import { t } from 'utils/i18n';
 import packageInfo from '../../package.json';
 import { EnvBadge } from './EnvBadge';
 import { NewWindowButton } from './home/dashboard/NewWindowButton';
+import { layoutFullWidth } from './PageLayout';
 import BusinessInfo from './sidebar/BusinessInfo';
 const version = packageInfo.version;
 
@@ -16,8 +17,8 @@ const MainHeader = (props: FlexProps) => {
       position="fixed"
       top="0"
       pt={{ base: '80px', lg: '4' }}
-      w="100%"
-      pr={{ base: '32px', lg: '0' }}
+      w={layoutFullWidth}
+      pr={{ base: '4', xl: '6' }}
       bgColor="white"
       zIndex="1200"
       {...props}
@@ -27,7 +28,6 @@ const MainHeader = (props: FlexProps) => {
         alignItems="flex-start"
         borderBottom="1px solid #EEEEEE"
         pb="4"
-        // mb="6"
       >
         <BusinessInfo display={{ base: 'none', lg: 'initial' }} />
         <HStack alignItems="flex-start" minW="84px">

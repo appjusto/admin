@@ -13,6 +13,7 @@ import {
   HStack,
   Radio,
   RadioGroup,
+  Stack,
   Text,
   VStack,
 } from '@chakra-ui/react';
@@ -216,11 +217,11 @@ export const PushDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 lineHeight="21px"
                 isDisabled={formDisabled}
               >
-                <HStack spacing={4}>
+                <Stack direction={{ base: 'column', md: 'row' }} spacing={4}>
                   <Radio value="consumer">{t('Consumidor')}</Radio>
                   <Radio value="courier">{t('Entregador')}</Radio>
                   <Radio value="business">{t('Restaurante')}</Radio>
-                </HStack>
+                </Stack>
               </RadioGroup>
               <SectionTitle>{t('Canal')}</SectionTitle>
               <RadioGroup
@@ -234,11 +235,11 @@ export const PushDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 lineHeight="21px"
                 isDisabled={formDisabled}
               >
-                <HStack spacing={4}>
+                <Stack direction={{ base: 'column', md: 'row' }} spacing={4}>
                   <Radio value="marketing">{t('Marketing')}</Radio>
                   <Radio value="status">{t('Status')}</Radio>
                   <Radio value="general">{t('Geral')}</Radio>
-                </HStack>
+                </Stack>
               </RadioGroup>
               <SectionTitle>{t('Georreferenciada')}</SectionTitle>
               <Checkbox

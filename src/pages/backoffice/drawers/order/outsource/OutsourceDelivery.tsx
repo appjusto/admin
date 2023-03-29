@@ -36,11 +36,17 @@ import {
 
 interface OutsouceDeliveryProps {
   order?: WithId<Order> | null;
+  isOrderActive: boolean;
+  isOrderStaff?: boolean;
 }
 
-export const OutsouceDelivery = ({ order }: OutsouceDeliveryProps) => {
+export const OutsouceDelivery = ({
+  order,
+  isOrderActive,
+  isOrderStaff,
+}: OutsouceDeliveryProps) => {
   // context
-  const { userAbility } = useContextFirebaseUser();
+  const { isBackofficeSuperuser } = useContextFirebaseUser();
   const { dispatchAppRequestResult } = useContextAppRequests();
   const lastQuotation = useObserveOrderLalamoveQuotations(order?.id);
   const lastLalamoveOrder = useObserveOrderLalamoveOrders(
@@ -66,21 +72,49 @@ export const OutsouceDelivery = ({ order }: OutsouceDeliveryProps) => {
     React.useState('');
   const [isCopied, setIsCopied] = React.useState(false);
   // helpers
-  const isOrderActive = order?.status
-    ? ['confirmed', 'preparing', 'ready', 'dispatching'].includes(order.status)
-    : false;
-  const isExternalQuotation = getExternalQuotationStatus(
-    lastQuotation?.quotation.id,
-    lastQuotation?.createdAt
+  const isExternalQuotation = React.useMemo(
+    () =>
+      getExternalQuotationStatus(
+        lastQuotation?.quotation.id,
+        lastQuotation?.createdAt
+      ),
+    [lastQuotation?.quotation.id, lastQuotation?.createdAt]
   );
-  const { external, externalNet, extra } = getOutsourceQuotationValues(
-    order?.fare?.courier?.value,
-    lastQuotation?.quotation?.priceBreakdown.totalExcludePriorityFee
+  const { external, externalNet, extra } = React.useMemo(
+    () =>
+      getOutsourceQuotationValues(
+        order?.fare?.courier?.value,
+        lastQuotation?.quotation?.priceBreakdown.totalExcludePriorityFee
+      ),
+    [
+      order?.fare?.courier?.value,
+      lastQuotation?.quotation?.priceBreakdown.totalExcludePriorityFee,
+    ]
   );
-  const isOutsourcingDisabled =
-    outsourcingAccountType === 'platform' &&
-    isOutsourcingAuto &&
-    !isExternalQuotation;
+  const isOutsourcingDisabled = React.useMemo(
+    () =>
+      outsourcingAccountType === 'platform' &&
+      isOutsourcingAuto &&
+      !isExternalQuotation,
+    [outsourcingAccountType, isOutsourcingAuto, isExternalQuotation]
+  );
+  const outsourceButtonDisplay = React.useMemo(
+    () => (isBackofficeSuperuser && isOrderStaff ? 'inline-block' : 'none'),
+    [isBackofficeSuperuser, isOrderStaff]
+  );
+  const getCourierInfoButtonDisplay = React.useMemo(
+    () =>
+      isBackofficeSuperuser &&
+      isOrderStaff &&
+      typeof lastLalamoveOrder?.id === 'string'
+        ? 'flex'
+        : 'none',
+    [isBackofficeSuperuser, isOrderStaff, lastLalamoveOrder?.id]
+  );
+  const canUpdateCourierInfos = React.useMemo(
+    () => isBackofficeSuperuser && isOrderStaff,
+    [isBackofficeSuperuser, isOrderStaff]
+  );
   // handlers
   const handleOutsourceQuotation = () => {
     try {
@@ -165,11 +199,7 @@ export const OutsouceDelivery = ({ order }: OutsouceDeliveryProps) => {
   if (!isOutsourcing) {
     return (
       <Button
-        display={
-          userAbility?.can('update', { kind: 'orders', ...order })
-            ? 'inline-block'
-            : 'none'
-        }
+        display={outsourceButtonDisplay}
         h="38px"
         w="220px"
         size="sm"
@@ -233,9 +263,7 @@ export const OutsouceDelivery = ({ order }: OutsouceDeliveryProps) => {
           <Flex mt="4" justifyContent="space-between">
             <Text fontWeight="700">{t('Dados do entregador')}</Text>
             <Button
-              display={
-                typeof lastLalamoveOrder?.id === 'string' ? 'flex' : 'none'
-              }
+              display={getCourierInfoButtonDisplay}
               variant="secondary"
               size="md"
               minW="140px"
@@ -244,38 +272,69 @@ export const OutsouceDelivery = ({ order }: OutsouceDeliveryProps) => {
               loadingText={t('Buscando')}
               isDisabled={!isOrderActive}
             >
-              Buscar Dados
+              {t('Buscar Dados')}
             </Button>
           </Flex>
-          <HStack mt="2">
-            <CustomInput
-              mt="0"
-              id="out-courier-name"
-              label={t('Nome *')}
-              value={outsourcingCourierName ?? ''}
-              onChange={(ev) => setOutsourcingCourierName(ev.target.value)}
-            />
-            <CustomPatternInput
-              isRequired
-              id="courier-phone"
-              label={t('Celular *')}
-              placeholder={t('Número do celular')}
-              mask={phoneMask}
-              parser={numbersOnlyParser}
-              formatter={phoneFormatter}
-              value={outsourcingCourierPhone}
-              onValueChange={(value) => setOutsourcingCourierPhone(value)}
-              validationLength={11}
-            />
-            <Button
-              h="60px"
-              onClick={handleOutsourcingCourierInfos}
-              isLoading={updateOutsourcingCourierInfosResult.isLoading}
-              isDisabled={!outsourcingCourierName || !isOrderActive}
-            >
-              {t('Salvar')}
-            </Button>
-          </HStack>
+          {canUpdateCourierInfos ? (
+            <HStack mt="2">
+              <CustomInput
+                mt="0"
+                id="out-courier-name"
+                label={t('Nome *')}
+                value={outsourcingCourierName ?? ''}
+                onChange={(ev) => setOutsourcingCourierName(ev.target.value)}
+              />
+              <CustomPatternInput
+                isRequired
+                id="courier-phone"
+                label={t('Celular *')}
+                placeholder={t('Número do celular')}
+                mask={phoneMask}
+                parser={numbersOnlyParser}
+                formatter={phoneFormatter}
+                value={outsourcingCourierPhone}
+                onValueChange={(value) => setOutsourcingCourierPhone(value)}
+                validationLength={11}
+              />
+              <Button
+                h="60px"
+                onClick={handleOutsourcingCourierInfos}
+                isLoading={updateOutsourcingCourierInfosResult.isLoading}
+                isDisabled={!outsourcingCourierName || !isOrderActive}
+              >
+                {t('Salvar')}
+              </Button>
+            </HStack>
+          ) : (
+            <Box>
+              <Text
+                mt="2"
+                fontSize="15px"
+                color="black"
+                fontWeight="700"
+                lineHeight="22px"
+              >
+                {t('Nome:')}{' '}
+                <Text as="span" fontWeight="500">
+                  {outsourcingCourierName ? outsourcingCourierName : 'N/E'}
+                </Text>
+              </Text>
+              <Text
+                mt="2"
+                fontSize="15px"
+                color="black"
+                fontWeight="700"
+                lineHeight="22px"
+              >
+                {t('Telefone:')}{' '}
+                <Text as="span" fontWeight="500">
+                  {outsourcingCourierPhone
+                    ? phoneFormatter(outsourcingCourierPhone)
+                    : 'N/E'}
+                </Text>
+              </Text>
+            </Box>
+          )}
         </Box>
       ) : (
         <Box mt="4" border="2px solid #FFBE00" borderRadius="lg" bg="" p="4">

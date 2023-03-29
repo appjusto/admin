@@ -12,6 +12,7 @@ import {
   HStack,
   Radio,
   RadioGroup,
+  Stack,
   Text,
   VStack,
 } from '@chakra-ui/react';
@@ -256,11 +257,11 @@ export const BannerDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 fontSize="15px"
                 lineHeight="21px"
               >
-                <HStack spacing={4}>
+                <Stack direction={{ base: 'column', md: 'row' }} spacing={4}>
                   <Radio value="consumer">{t('Consumidores')}</Radio>
                   <Radio value="business">{t('Restaurantes')}</Radio>
                   <Radio value="courier">{t('Entregadores')}</Radio>
-                </HStack>
+                </Stack>
               </RadioGroup>
               <SectionTitle>{t('Target')}</SectionTitle>
               <RadioGroup
@@ -273,11 +274,11 @@ export const BannerDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 fontSize="15px"
                 lineHeight="21px"
               >
-                <HStack spacing={4}>
+                <Stack direction={{ base: 'column', md: 'row' }} spacing={4}>
                   <Radio value="disabled">{t('Desabilitado')}</Radio>
                   <Radio value="page">{t('Página')}</Radio>
                   <Radio value="download">{t('Download')}</Radio>
-                </HStack>
+                </Stack>
               </RadioGroup>
               <SectionTitle>{t('Dados do banner')}</SectionTitle>
               <CustomInput

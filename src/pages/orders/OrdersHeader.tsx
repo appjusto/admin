@@ -1,4 +1,14 @@
-import { Box, Circle, Flex, HStack, Image, Link, Text } from '@chakra-ui/react';
+import { ArrowBackIcon } from '@chakra-ui/icons';
+import {
+  Box,
+  Circle,
+  Flex,
+  HStack,
+  Image,
+  Link,
+  Text,
+  Tooltip,
+} from '@chakra-ui/react';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { useOrdersContext } from 'app/state/order';
@@ -19,7 +29,8 @@ export const OrdersHeader = () => {
   // UI
   return (
     <Flex
-      p="6"
+      py="6"
+      px={{ base: '4', md: '8' }}
       h="76px"
       flex={1}
       alignItems="center"
@@ -27,6 +38,11 @@ export const OrdersHeader = () => {
       bg="#EEEEEE"
     >
       <HStack spacing={6}>
+        <Link as={RouterLink} to="/app" _focus={{ outline: 'none' }}>
+          <Tooltip placement="top" label={t('Voltar')}>
+            <ArrowBackIcon w="22px" h="22px" mr="2" mb="-2px" />
+          </Tooltip>
+        </Link>
         <Flex flexDir="row">
           <Box pt="7px" pr="2">
             <Circle size="10px" bg={isBusinessOpen ? 'green.500' : 'red'} />
@@ -76,22 +92,7 @@ export const OrdersHeader = () => {
           </Text>
           <Text fontSize="16px">{user?.email ?? 'N/E'}</Text>
         </HStack>
-        <Link as={RouterLink} to="/app">
-          <Text fontWeight="700" textStyle="link">
-            {t('Portal do parceiro')}
-          </Text>
-        </Link>
-        <Link ml="8" as={RouterLink} to="/logout">
-          <Text fontWeight="700" textStyle="link">
-            {t('Sair')}
-          </Text>
-        </Link>
       </HStack>
-      <Link as={RouterLink} to="/app" display={{ base: 'block', lg: 'none' }}>
-        <Text fontWeight="700" textStyle="link">
-          {t('Voltar')}
-        </Text>
-      </Link>
     </Flex>
   );
 };

@@ -67,7 +67,7 @@ const StaffsPage = () => {
           {t(`${staffs ? staffs?.length : '0'} agentes encontrados`)}
         </Text>
         <CustomButton
-          mt="0"
+          mt={{ base: '4', md: '0' }}
           label={t('Adicionar agente')}
           link={`${path}/new`}
         />

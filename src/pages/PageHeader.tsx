@@ -14,7 +14,7 @@ const PageHeader = ({ title, subtitle, showVersion, ...props }: Props) => {
   // UI
   return (
     <Box>
-      <Flex justifyContent="space-between" alignItems="center">
+      <Flex justifyContent="space-between" alignItems="flex-end">
         <Heading color="black" fontSize="2xl" mt="4" {...props}>
           {title}
         </Heading>

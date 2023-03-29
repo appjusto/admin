@@ -31,7 +31,7 @@ import { MdThumbDownOffAlt, MdThumbUpOffAlt } from 'react-icons/md';
 import { useQueryClient } from 'react-query';
 import { useRouteMatch } from 'react-router';
 import { useLocation } from 'react-router-dom';
-import { getDateAndHour } from 'utils/functions';
+import { getCEFAccountCode, getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
 
@@ -141,6 +141,21 @@ export const CourierBaseDrawer = ({
       courier,
       isEditingEmail
     ) as Partial<CourierProfile>;
+    if (courier?.bankAccount) {
+      let code = '';
+      if (courier.bankAccount.name === 'Caixa Econômica') {
+        code = getCEFAccountCode(
+          '104',
+          courier.bankAccount.personType,
+          courier.bankAccount.type
+        );
+      }
+      const bankAccount = {
+        ...courier.bankAccount,
+        accountFormatted: code + courier.bankAccount.accountFormatted,
+      };
+      changes.bankAccount = bankAccount;
+    }
     const selfieFileToSave = selfieFiles ? selfieFiles[0] : null;
     const documentFileToSave = documentFiles ? documentFiles[0] : null;
     updateProfile({ changes, selfieFileToSave, documentFileToSave });
