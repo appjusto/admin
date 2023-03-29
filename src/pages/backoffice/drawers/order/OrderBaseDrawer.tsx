@@ -27,7 +27,6 @@ import {
 import { MutationResult } from 'app/api/mutation/useCustomMutation';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextAppRequests } from 'app/state/requests/context';
-import { FiltersScrollBar } from 'common/components/backoffice/FiltersScrollBar';
 import { OrderTracking } from 'pages/backoffice/dashboard/OrderTracking';
 import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
 import React from 'react';
@@ -305,33 +304,18 @@ export const OrderBaseDrawer = ({
             </SectionTitle>
             <OrderTracking orderId={order?.id} />
             <Flex mt="8" mb="6" fontSize="lg" borderBottom="1px solid #C8D7CB">
-              {isChatMessages ? (
-                <FiltersScrollBar>
-                  <HStack spacing={4} overflowX="auto">
-                    <DrawerLink to={`${url}`} label={t('Participantes')} />
-                    <DrawerLink to={`${url}/order`} label={t('Pedido')} />
-                    <DrawerLink to={`${url}/invoices`} label={t('Faturas')} />
-                    {order?.fulfillment === 'delivery' && (
-                      <DrawerLink
-                        to={`${url}/matching`}
-                        label={t('Matching')}
-                      />
-                    )}
-                    <DrawerLink to={`${url}/status`} label={t('Status')} />
-                    <DrawerLink to={`${url}/chats`} label={t('Chats')} />
-                  </HStack>
-                </FiltersScrollBar>
-              ) : (
-                <HStack spacing={4} overflowX="auto">
-                  <DrawerLink to={`${url}`} label={t('Participantes')} />
-                  <DrawerLink to={`${url}/order`} label={t('Pedido')} />
-                  <DrawerLink to={`${url}/invoices`} label={t('Faturas')} />
-                  {order?.fulfillment === 'delivery' && (
-                    <DrawerLink to={`${url}/matching`} label={t('Matching')} />
-                  )}
-                  <DrawerLink to={`${url}/status`} label={t('Status')} />
-                </HStack>
-              )}
+              <HStack spacing={0} overflowX="auto">
+                <DrawerLink to={`${url}`} label={t('Participantes')} />
+                <DrawerLink to={`${url}/order`} label={t('Pedido')} />
+                <DrawerLink to={`${url}/invoices`} label={t('Faturas')} />
+                {order?.fulfillment === 'delivery' && (
+                  <DrawerLink to={`${url}/matching`} label={t('Matching')} />
+                )}
+                <DrawerLink to={`${url}/status`} label={t('Status')} />
+                {isChatMessages && (
+                  <DrawerLink to={`${url}/chats`} label={t('Chats')} />
+                )}
+              </HStack>
             </Flex>
             {children}
           </DrawerBody>

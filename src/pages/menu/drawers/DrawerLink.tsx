@@ -1,5 +1,4 @@
 import { Link, LinkProps, Text } from '@chakra-ui/react';
-import React from 'react';
 import { Link as RouterLink, useRouteMatch } from 'react-router-dom';
 
 interface DrawerLinkProps extends LinkProps {
@@ -8,14 +7,26 @@ interface DrawerLinkProps extends LinkProps {
   isDisabled?: boolean;
 }
 
-export const DrawerLink = ({ to, label, isDisabled, ...props }: DrawerLinkProps) => {
+export const DrawerLink = ({
+  to,
+  label,
+  isDisabled,
+  ...props
+}: DrawerLinkProps) => {
   let match = useRouteMatch({
     path: to,
     exact: to.includes('complements') ? false : true,
   });
   if (isDisabled) {
     return (
-      <Text pb="2" px="4" mr="4" fontSize="lg" fontWeight="500" color="gray.500">
+      <Text
+        pb="2"
+        px="4"
+        mr="4"
+        fontSize="lg"
+        fontWeight="500"
+        color="gray.500"
+      >
         {label}
       </Text>
     );
