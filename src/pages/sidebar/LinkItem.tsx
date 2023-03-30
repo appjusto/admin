@@ -1,7 +1,8 @@
-import { Box, Flex, Link, Text } from '@chakra-ui/react';
+import { Box, Flex, Link, Text, Tooltip } from '@chakra-ui/react';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { Link as RouterLink, useRouteMatch } from 'react-router-dom';
 import { isAccessGranted } from 'utils/access';
+import { t } from 'utils/i18n';
 
 interface LinkItemProps {
   type?: 'admin' | 'backoffice';
@@ -33,7 +34,15 @@ export const LinkItem = ({
   if (isDisabled) {
     return (
       <Flex pl="6" h="34px" alignItems="center">
-        <Text color="gray.600">{label}</Text>
+        <Tooltip
+          placement="right"
+          label={t('Disponível após aprovação')}
+          bg="yellow"
+          color="black"
+          hasArrow
+        >
+          <Text color="gray.600">{label}</Text>
+        </Tooltip>
       </Flex>
     );
   }

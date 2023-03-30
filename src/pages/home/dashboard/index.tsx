@@ -74,7 +74,11 @@ const Dashboard = () => {
   return (
     <>
       <PageHeader
-        title={t('Início')}
+        title={
+          business?.situation === 'pending'
+            ? t('Boas-vindas ao painel do seu restaurante! 🎉')
+            : t('Início')
+        }
         subtitle={t(`Dados atualizados em ${dateTime}`)}
       />
       {business?.situation === 'approved' ? (

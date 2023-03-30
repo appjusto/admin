@@ -33,7 +33,7 @@ const OnboardingOpening = ({ path }: OpeningProps) => {
             {t('Olá! 👋')}
           </Text>
           <Text fontSize="2xl" mb="4">
-            {t('Boas vindas ao AppJusto!')}
+            {t('Boas-vindas ao AppJusto!')}
           </Text>
           <Text fontSize="xl" mb="6">
             {t(

@@ -61,9 +61,9 @@ const initialState = [
   {
     status: false,
     type: 'logistics',
-    label: 'Modelo de logística',
+    label: 'Modelo de entrega',
     link: 'logistics',
-    helpText: 'Dúvidas sobre pendências com a logística',
+    helpText: 'Dúvidas sobre modelo de entrega',
     helpLink:
       'https://appjusto.freshdesk.com/support/solutions/articles/67000631084-saiba-como-definir-o-raio-de-entrega',
   },
@@ -159,24 +159,42 @@ export const RegistrationStatus = () => {
   }
   if (business?.situation === 'pending') {
     return (
-      <Box maxW="800px" color="black">
+      <Box mt="12" maxW="800px" color="black">
         {pendencies > 0 ? (
-          <Text mt="6" fontSize="lg" lineHeight="26px" maxW="530px">
-            {t(
-              `Para continuar, você precisa preencher o restante do seu cadastro. Você possui ${pendencies} itens pendentes:`
-            )}
-          </Text>
+          <Box fontSize="md" lineHeight="22px">
+            {/* <Text>
+              {t(
+                'Antes de submeter o seu cadastro, você precisa preencher os itens restantes.'
+              )}
+            </Text> */}
+            <Text>
+              {t(`${pendencies > 1 ? 'Restam apenas ' : 'Resta apenas '}`)}
+              <Text as="span" fontWeight="700">
+                {t(
+                  `${pendencies} ${pendencies > 1 ? 'itens' : 'item'} ${
+                    pendencies > 1 ? 'pendentes' : 'pendente'
+                  }, `
+                )}
+              </Text>
+              {t(
+                `${
+                  pendencies > 1
+                    ? 'a serem preenchidos, '
+                    : 'a ser preenchido, '
+                }`
+              )}
+              {t('antes que você possa submeter o seu cadastro.')}
+            </Text>
+            <Text>{t('Vamos lá!')}</Text>
+          </Box>
         ) : (
-          <>
-            <Text mt="6" fontSize="lg" lineHeight="26px" maxW="530px">
-              {t('Você preenchou todos os itens.')}
+          <Box fontSize="md" lineHeight="22px">
+            <Text>
+              {t('Ótimo! Agora basta enviar o seu cadastro para aprovação:')}
             </Text>
-            <Text fontSize="lg" lineHeight="26px" maxW="530px">
-              {t('Agora é só enviar o seu cadastro para aprovação:')}
-            </Text>
-          </>
+          </Box>
         )}
-        <VStack mt="4" spacing={4} alignItems="flex-start">
+        <VStack mt="6" spacing={4} alignItems="flex-start">
           {validation.map((data) => {
             return (
               <RegistrationItem
@@ -203,11 +221,16 @@ export const RegistrationStatus = () => {
           <Text mt="20" fontSize="24px" lineHeight="30px" fontWeight="700">
             {t('Divulgue esse movimento')}
           </Text>
-          <Text mt="6" mb="4" fontSize="15px" lineHeight="21px">
-            {t(
-              'Para chegar mais rápido a todas as cidades, o AppJusto precisa da sua ajuda. Divulgue nas suas rede e ajude o movimento a crescer:'
-            )}
-          </Text>
+          <Box my="6" fontSize="md" lineHeight="24px">
+            <Text>
+              {t(
+                'Para chegar mais rápido a todas as cidades, o AppJusto precisa da sua ajuda.'
+              )}
+            </Text>
+            <Text>
+              {t('Divulgue nas suas rede e ajude o movimento a crescer:')}
+            </Text>
+          </Box>
           <SharingBar />
         </Box>
       </Box>

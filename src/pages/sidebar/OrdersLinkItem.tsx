@@ -1,4 +1,4 @@
-import { Badge, Box, Flex, Link, Text } from '@chakra-ui/react';
+import { Badge, Box, Flex, Link, Text, Tooltip } from '@chakra-ui/react';
 import { useOrdersContext } from 'app/state/order';
 import React from 'react';
 import { Link as RouterLink, useRouteMatch } from 'react-router-dom';
@@ -38,7 +38,15 @@ export const OrdersLinkItem = ({ to, isDisabled }: LinkItemProps) => {
   if (isDisabled) {
     return (
       <Flex pl="6" h="34px" alignItems="center">
-        <Text color="gray.600">{t('Gerenciador de pedidos')}</Text>
+        <Tooltip
+          placement="right"
+          label={t('Disponível após aprovação')}
+          bg="yellow"
+          color="black"
+          hasArrow
+        >
+          <Text color="gray.600">{t('Gerenciador de pedidos')}</Text>
+        </Tooltip>
       </Flex>
     );
   }
@@ -53,7 +61,9 @@ export const OrdersLinkItem = ({ to, isDisabled }: LinkItemProps) => {
       cursor="pointer"
       _hover={{ bg: 'white' }}
     >
-      {match ? <Box w="4px" h="36px" bg="green.500" borderRadius="8px" ml="1" mr="4" /> : null}
+      {match ? (
+        <Box w="4px" h="36px" bg="green.500" borderRadius="8px" ml="1" mr="4" />
+      ) : null}
       <Link
         as={RouterLink}
         to={to}
