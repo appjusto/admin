@@ -1,13 +1,12 @@
 import { Box, HStack, Icon, Link, Text } from '@chakra-ui/react';
-import React from 'react';
 import { FaFacebookSquare, FaInstagram, FaLinkedin } from 'react-icons/fa';
 import { t } from 'utils/i18n';
 
 export const Social = () => {
   return (
     <Box color="black">
-      <HStack mt="16" spacing={2}>
-        <Text fontSize="24px" lineHeight="30px" fontWeight="700">
+      <HStack mt="12" spacing={2}>
+        <Text fontSize="xl" lineHeight="30px" fontWeight="700">
           {t('Aproveite para seguir o AppJusto nas redes sociais')}
         </Text>
         <Link

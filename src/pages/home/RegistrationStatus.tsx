@@ -235,16 +235,31 @@ export const RegistrationStatus = () => {
   ) {
     return (
       <Box h="80%" maxW="708px" color="black">
-        <Box mt="6" w="100%" maxW="406px">
-          <Image src={submittedImg} />
+        <Box mt="6" w="100%" maxW="460px">
+          <Image src={submittedImg} w="100%" />
         </Box>
         <Text mt="4" fontSize="lg" lineHeight="26px">
           {t(
-            `Seu cadastro foi enviado com sucesso e está em fase de análise. Em breve você receberá uma confirmação.
-          Para mais detalhes, assista ao nosso vídeo de boas-vindas:`
+            'Seu cadastro foi enviado com sucesso e está em fase de análise. Em breve você receberá uma confirmação.'
           )}
         </Text>
         <Social />
+        <Box>
+          <Text mt="12" fontSize="xl" lineHeight="30px" fontWeight="700">
+            {t('Você também pode ajudar a divulgar esse movimento!')}
+          </Text>
+          <Box mt="4" mb="6" fontSize="md" lineHeight="24px">
+            <Text>
+              {t(
+                'Para chegar mais rápido a todas as cidades, o AppJusto precisa da sua ajuda.'
+              )}
+            </Text>
+            <Text>
+              {t('Divulgue nas suas rede e ajude o movimento a crescer:')}
+            </Text>
+          </Box>
+          <SharingBar />
+        </Box>
       </Box>
     );
   }
