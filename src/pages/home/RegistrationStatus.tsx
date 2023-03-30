@@ -162,35 +162,27 @@ export const RegistrationStatus = () => {
       <Box mt="12" maxW="800px" color="black">
         {pendencies > 0 ? (
           <Box fontSize="md" lineHeight="22px">
-            {/* <Text>
-              {t(
-                'Antes de submeter o seu cadastro, você precisa preencher os itens restantes.'
-              )}
-            </Text> */}
             <Text>
-              {t(`${pendencies > 1 ? 'Restam apenas ' : 'Resta apenas '}`)}
+              {t('Falta pouco para que você possa submeter o seu cadastro!')}
+            </Text>
+            <Text>
+              {t('Você possui apenas ')}
               <Text as="span" fontWeight="700">
                 {t(
                   `${pendencies} ${pendencies > 1 ? 'itens' : 'item'} ${
                     pendencies > 1 ? 'pendentes' : 'pendente'
-                  }, `
+                  }`
                 )}
               </Text>
-              {t(
-                `${
-                  pendencies > 1
-                    ? 'a serem preenchidos, '
-                    : 'a ser preenchido, '
-                }`
-              )}
-              {t('antes que você possa submeter o seu cadastro.')}
+              {t('. Vamos lá!')}
             </Text>
-            <Text>{t('Vamos lá!')}</Text>
           </Box>
         ) : (
           <Box fontSize="md" lineHeight="22px">
             <Text>
-              {t('Ótimo! Agora basta enviar o seu cadastro para aprovação:')}
+              {t(
+                'Ótimo! Agora você já pode enviar o seu cadastro para aprovação:'
+              )}
             </Text>
           </Box>
         )}
