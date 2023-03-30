@@ -35,13 +35,29 @@ export const ManagerBar = (props: FlexProps) => {
         <Image src={managerIcon} width="24px" height="24px" />
       </Flex>
       <Flex w="100%" justifyContent="space-between" alignItems="center">
-        <Box maxW="160px">
+        <Box>
           {isBackOffice ? (
-            <Text color="black" fontSize="xs" lineHeight="lg" mb="-6px">
+            <Text
+              color="black"
+              fontSize="xs"
+              lineHeight="lg"
+              mb="-6px"
+              maxW="100px"
+              h="22px"
+              overflow="hidden"
+            >
               {username}
             </Text>
           ) : (
-            <Text color="black" fontSize="xs" lineHeight="lg" mb="-6px">
+            <Text
+              color="black"
+              fontSize="xs"
+              lineHeight="lg"
+              mb="-6px"
+              maxW="100px"
+              h="22px"
+              overflow="hidden"
+            >
               {t('Olá') + `${name}`}
             </Text>
           )}
