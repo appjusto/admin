@@ -22,25 +22,29 @@ export const BusinessStatus = (props: SquareProps) => {
     if (isBusinessOpen && business?.enabled) return 'green.500';
     else return 'red';
   }, [business?.enabled, isBusinessOpen]);
-  const label = React.useMemo(() => {
+  const statusLabel = React.useMemo(() => {
     if (!business?.enabled) return 'Invisível';
     if (isBusinessOpen) return 'Aberto agora';
     else return 'Fechado';
   }, [business?.enabled, isBusinessOpen]);
+  const tooltipLabel = React.useMemo(() => {
+    if (business?.situation === 'approved')
+      return 'O restaurante não aparecerá para seus clientes. Para deixá-lo visível, vá até a seção de "visibilidade" no menu "operação" ou contate o administrador desta unidade.';
+    else
+      return 'O restaurante ficará visível, para os seus clientes, após a aprovação.';
+  }, [business?.situation]);
   // UI
   return (
     <HStack mt="1" spacing={2} alignItems="center">
       <Circle mt="0.5px" size="8px" bg={color} {...props} />
-      <Text fontSize="md">{t(label)}</Text>
+      <Text fontSize="md">{t(statusLabel)}</Text>
       {!business?.enabled && (
         <Tooltip
           placement="right"
           bg="yellow"
           color="black"
           hasArrow
-          label={t(
-            'Seu restaurante não aparecerá para seus clientes. Para deixá-lo visível, vá até a seção de "visibilidade" no menu "operação" ou contate o administrador desta unidade.'
-          )}
+          label={t(tooltipLabel)}
         >
           <Center mt="0.5px">
             <Icon w="16px" h="16px" cursor="pointer" as={MdErrorOutline} />
