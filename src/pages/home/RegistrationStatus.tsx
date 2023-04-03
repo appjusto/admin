@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Center,
   Image,
   Link,
   ListItem,
@@ -155,7 +156,11 @@ export const RegistrationStatus = () => {
   }, [business]);
   // UI
   if (isFetching) {
-    return <Spinner size="sm" />;
+    return (
+      <Center>
+        <Spinner size="sm" />
+      </Center>
+    );
   }
   if (business?.situation === 'pending') {
     return (

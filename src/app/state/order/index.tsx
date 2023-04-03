@@ -5,10 +5,12 @@ import {
   PlatformParams,
   WithId,
 } from '@appjusto/types';
-import { useToast } from '@chakra-ui/react';
 import { useBusinessOpenClose } from 'app/api/business/profile/useBusinessOpenClose';
 import { useBusinessKeepAlive } from 'app/api/business/useBusinessKeepAlive';
+import { useCustomToastAutoPlay } from 'app/api/business/useCustomToastAutoPlay';
 import { useFreshDesk } from 'app/api/business/useFresdesk';
+import { useUpdateManagerLastBusinessId } from 'app/api/business/useUpdateManagerLastBusinessId';
+import { useVisibilityToast } from 'app/api/business/useVisibilityToast';
 import { OrderChatGroup } from 'app/api/chat/types';
 import { useBusinessChats } from 'app/api/chat/useBusinessChats';
 import { useNewChatMessages } from 'app/api/order/useNewChatMessages';
@@ -20,9 +22,7 @@ import { useObserveScheduledOrders } from 'app/api/order/useObserveScheduledOrde
 import { usePlatformParams } from 'app/api/platform/usePlatformParams';
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusiness } from 'app/state/business/context';
-import { CustomToastAutoPlay } from 'common/components/CustomToast';
 import React from 'react';
-import { useContextFirebaseUser } from '../auth/context';
 import { useContextManagerProfile } from '../manager/context';
 import { useContextAppRequests } from '../requests/context';
 
@@ -63,10 +63,12 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   const api = useContextApi();
   const { platformParams } = usePlatformParams();
   const { dispatchAppRequestResult } = useContextAppRequests();
-  const { isBackofficeUser } = useContextFirebaseUser();
-  const { manager, updateLastBusinessId } = useContextManagerProfile();
+  const { manager } = useContextManagerProfile();
   const { business } = useContextBusiness();
   useBusinessKeepAlive(business?.id);
+  useVisibilityToast(business);
+  useCustomToastAutoPlay(business);
+  useUpdateManagerLastBusinessId(manager, business?.id);
   const { scheduledOrders, scheduledOrdersNumber, fetchNextScheduledOrders } =
     useObserveScheduledOrders(business?.id);
   const activeOrders = useObserveOrders(statuses, business?.id);
@@ -80,15 +82,12 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   // automatic opening and closing of the business
   const isBusinessOpen = useBusinessOpenClose(business);
   //state
-  const [businessAlertDisplayed, setBusinessAlertDisplayed] =
-    React.useState(false);
   const [orders, setOrders] = React.useState<WithId<Order>[]>([]);
   const [isChatActive, setIsChatActive] = React.useState(false);
   const chats = useBusinessChats(business?.id, isChatActive);
   // handle new chat messages
   const newChatMessages = useNewChatMessages(business?.id);
   //handlers
-  const toast = useToast();
   const getOrderById = (id: string) => {
     const order = orders.find((order: WithId<Order>) => order.id === id);
     return order;
@@ -149,70 +148,8 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   }, []);
   // side effects
   React.useEffect(() => {
-    if (isBackofficeUser) return;
-    if (!business?.id) return;
-    if (manager?.lastBusinessId && manager.lastBusinessId === business.id)
-      return;
-    updateLastBusinessId(business.id);
-  }, [
-    isBackofficeUser,
-    business?.id,
-    manager?.lastBusinessId,
-    updateLastBusinessId,
-  ]);
-  React.useEffect(() => {
-    if (business?.situation !== 'approved' || business?.status !== 'available')
-      return;
-    setTimeout(() => {
-      const root = document.getElementById('root');
-      let audio = document.createElement('audio');
-      audio.setAttribute('id', 'audio-to-test');
-      root?.appendChild(audio);
-      audio
-        .play()
-        .then(() => console.log('Play success'))
-        .catch((err) => {
-          const isInteractionError = err.message.includes('user');
-          if (isInteractionError && !toast.isActive('AutoPlayToast')) {
-            toast({
-              id: 'AutoPlayToast',
-              duration: null,
-              render: () => <CustomToastAutoPlay />,
-            });
-          }
-        });
-      audio.remove();
-    }, 2000);
-  }, [toast, business?.situation, business?.status]);
-  React.useEffect(() => {
     setOrders(activeOrders);
   }, [activeOrders]);
-  React.useEffect(() => {
-    if (isBackofficeUser) return;
-    if (business?.situation !== 'approved') return;
-    if (businessAlertDisplayed) return;
-    if (!business?.enabled) {
-      dispatchAppRequestResult({
-        status: 'error',
-        requestId: 'disabled-business-alert',
-        message: {
-          title: 'Seu restaurante não está visível.',
-          description:
-            'Seu restaurante não aparecerá para seus clientes. Para deixá-lo visível, vá até a seção de "visibilidade" no menu "operação" ou contate o administrador desta unidade.',
-        },
-        duration: 12000,
-      });
-      setBusinessAlertDisplayed(true);
-      return;
-    }
-  }, [
-    isBackofficeUser,
-    business?.situation,
-    business?.enabled,
-    businessAlertDisplayed,
-    setBusinessAlertDisplayed,
-    dispatchAppRequestResult,
-  ]);
   // provider
   return (
     <OrdersContext.Provider
