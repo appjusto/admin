@@ -1,16 +1,9 @@
 import { AdminRole, ManagerWithRole } from '@appjusto/types';
-import {
-  Box,
-  Button,
-  HStack,
-  Radio,
-  RadioGroup,
-  Td,
-  Text,
-  Tr,
-} from '@chakra-ui/react';
+import { Box, Button, Flex, HStack, Td, Text, Tr } from '@chakra-ui/react';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { AppVersionLabel } from 'common/components/backoffice/AppVersionLabel';
+import { Select } from 'common/components/form/select/Select';
+import { adminRolePTOptions } from 'pages/backoffice/utils';
 import React from 'react';
 import { formatDate, formatTime } from 'utils/formatters';
 import { t } from 'utils/i18n';
@@ -100,30 +93,20 @@ export const TeamTableItem = ({
       <Tr color="black" fontSize="sm" h="66px" pos="relative" bg="green.50">
         <Td>{manager.email}</Td>
         <Td textAlign="center">
-          <RadioGroup
-            onChange={(value: AdminRole) => setRole(value)}
+          <Select
+            mt="0"
+            w="150px"
+            label={t('Papel do usuário:')}
             value={role}
-            defaultValue="1"
-            colorScheme="green"
-            color="black"
-            fontSize="15px"
-            lineHeight="21px"
+            onChange={(e) => setRole(e.target.value as AdminRole)}
           >
-            <HStack
-              alignItems="flex-start"
-              color="black"
-              spacing={8}
-              fontSize="16px"
-              lineHeight="22px"
-            >
-              <Radio value="owner">{t('Proprietário')}</Radio>
-              <Radio value="manager">{t('Gerente')}</Radio>
-              <Radio value="collaborator">{t('Colaborador')}</Radio>
-            </HStack>
-          </RadioGroup>
+            <option value="owner">{t('Proprietário')}</option>
+            <option value="manager">{t('Gerente')}</option>
+            <option value="collaborator">{t('Colaborador')}</option>
+          </Select>
         </Td>
         <Td position="relative">
-          <Box position="absolute" top="1">
+          <Flex position="absolute" bottom="2" flexDir="column">
             <Text>{t('Confirmar atualização?')}</Text>
             <HStack mt="1" spacing={4}>
               <Button
@@ -143,7 +126,7 @@ export const TeamTableItem = ({
                 {t('Atualizar')}
               </Button>
             </HStack>
-          </Box>
+          </Flex>
         </Td>
         <Td></Td>
       </Tr>
@@ -159,33 +142,23 @@ export const TeamTableItem = ({
     >
       <Td>{manager.email}</Td>
       <Td textAlign="center">
-        <RadioGroup
-          onChange={(value: AdminRole) => setRole(value)}
-          value={role}
-          defaultValue="1"
-          colorScheme="green"
-          color="black"
-          fontSize="15px"
-          lineHeight="21px"
-        >
-          <HStack
-            alignItems="flex-start"
-            color="black"
-            spacing={4}
-            fontSize="16px"
-            lineHeight="22px"
+        {userIsOwner ? (
+          <Select
+            mt="0"
+            w="150px"
+            label={t('Papel do usuário:')}
+            value={role}
+            onChange={(e) => setRole(e.target.value as AdminRole)}
           >
-            <Radio value="owner" isDisabled={!userIsOwner}>
-              {t('Proprietário')}
-            </Radio>
-            <Radio value="manager" isDisabled={!userIsOwner}>
-              {t('Gerente')}
-            </Radio>
-            <Radio value="collaborator" isDisabled={!userIsOwner}>
-              {t('Colaborador')}
-            </Radio>
-          </HStack>
-        </RadioGroup>
+            <option value="owner">{t('Proprietário')}</option>
+            <option value="manager">{t('Gerente')}</option>
+            <option value="collaborator">{t('Colaborador')}</option>
+          </Select>
+        ) : role ? (
+          adminRolePTOptions[role]
+        ) : (
+          'N/E'
+        )}
       </Td>
       <Td>
         {formatDate(manager.createdOn as unknown as Date) +

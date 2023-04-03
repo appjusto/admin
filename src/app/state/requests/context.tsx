@@ -63,7 +63,6 @@ export const AppRequestsProvider = ({ children }: Props) => {
       if (result.status === 'error') {
         if (result.error && !toast.isActive(result.requestId)) {
           if (shouldCapture(result.requestId, result.error as FirebaseError)) {
-            console.log('CAPTURE!!!');
             Sentry.captureException(result.error);
           }
         }

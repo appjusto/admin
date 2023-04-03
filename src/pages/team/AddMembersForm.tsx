@@ -1,13 +1,5 @@
 import { AdminRole } from '@appjusto/types';
-import {
-  Box,
-  Button,
-  Radio,
-  RadioGroup,
-  Stack,
-  Text,
-  Tooltip,
-} from '@chakra-ui/react';
+import { Box, Button, Stack, Text, Tooltip } from '@chakra-ui/react';
 import { useManagers } from 'app/api/manager/useManagers';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextAppRequests } from 'app/state/requests/context';
@@ -29,10 +21,10 @@ const memberObj = {
 } as Member;
 
 const ownerLabel = t(
-  'Como proprietário, o usuário terá total acesso à plataforma do restaurante. Sendo prerrogativa apenas sua, clonar ou excluir o restaurante e criar e alterar colaboradores com papel de proprietário ou gerente'
+  'Como proprietário, o usuário terá total acesso à plataforma do restaurante. Sendo prerrogativa apenas sua, clonar ou excluir o restaurante e criar e alterar usuários com papel de proprietário ou gerente'
 );
 const managerLabel = t(
-  'Como gerente, o usuário pode alterar dados do restaurante, adicionar, alterar ou excluir colaboradores com papel de "colaborador", realizar operações financeiras (como saques e antecipações), adicionar, alterar e excluir items do cardápio, gerenciar o fluxo dos pedidos e enviar e receber mensagens de chat'
+  'Como gerente, o usuário pode alterar dados do restaurante, adicionar, alterar ou excluir usuários com papel de "colaborador", realizar operações financeiras (como saques e antecipações), adicionar, alterar e excluir items do cardápio, gerenciar o fluxo dos pedidos e enviar e receber mensagens de chat'
 );
 const collaboratorLabel = t(
   'Como colaborador, o usuário pode realizar alterações em itens existentes do cardápio, gerenciar o fluxo dos pedidos e enviar e receber mensagens de chat'
@@ -142,13 +134,14 @@ export const AddMembersForm = ({
         <Box overflowX="auto">
           {members.map((member, index) => (
             <Stack
+              pos="relative"
               key={members.length + index}
               mt="4"
               w="100%"
+              h="62px"
               direction={{ base: 'column', md: 'row' }}
               spacing={4}
               alignItems={{ base: 'flex-start', md: 'center' }}
-              pos="relative"
             >
               <CustomInput
                 mt="0"
@@ -161,7 +154,7 @@ export const AddMembersForm = ({
                   updateMember(index, 'email', event.target.value)
                 }
               />
-              {isBackoffice ? (
+              <Tooltip label={ownerLabel}>
                 <Select
                   w="160px"
                   label={t('Papel do usuário:')}
@@ -170,57 +163,15 @@ export const AddMembersForm = ({
                     updateMember(index, 'role', e.target.value as AdminRole)
                   }
                 >
-                  <option value="owner">{t('Proprietário')}</option>
-                  <option value="manager">{t('Gerente')}</option>
+                  {userIsOwner && (
+                    <option value="owner">{t('Proprietário')}</option>
+                  )}
+                  {userIsOwner && (
+                    <option value="manager">{t('Gerente')}</option>
+                  )}
                   <option value="collaborator">{t('Colaborador')}</option>
                 </Select>
-              ) : (
-                <>
-                  <Text color="black" fontSize="sm" fontWeight="700">
-                    {t('Papel do usuário:')}
-                  </Text>
-                  <RadioGroup
-                    onChange={(value: AdminRole) =>
-                      updateMember(index, 'role', value)
-                    }
-                    value={member.role}
-                    defaultValue="1"
-                    colorScheme="green"
-                    color="black"
-                    fontSize="15px"
-                    lineHeight="21px"
-                  >
-                    <Stack
-                      direction={{ base: 'column', md: 'row' }}
-                      alignItems="flex-start"
-                      color="black"
-                      spacing={8}
-                      fontSize="16px"
-                      lineHeight="22px"
-                    >
-                      <Tooltip hasArrow label={ownerLabel} placement="top">
-                        <Box display={userIsOwner ? 'block' : 'none'}>
-                          <Radio value="owner">{t('Proprietário')}</Radio>
-                        </Box>
-                      </Tooltip>
-                      <Tooltip hasArrow label={managerLabel} placement="top">
-                        <Box display={userIsOwner ? 'block' : 'none'}>
-                          <Radio value="manager">{t('Gerente')}</Radio>
-                        </Box>
-                      </Tooltip>
-                      <Tooltip
-                        hasArrow
-                        label={collaboratorLabel}
-                        placement="top"
-                      >
-                        <Box>
-                          <Radio value="collaborator">{t('Colaborador')}</Radio>
-                        </Box>
-                      </Tooltip>
-                    </Stack>
-                  </RadioGroup>
-                </>
-              )}
+              </Tooltip>
               <Box w="40px">
                 {members.length > 1 && (
                   <Tooltip
