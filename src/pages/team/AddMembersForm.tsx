@@ -131,17 +131,17 @@ export const AddMembersForm = ({
         <Text fontSize="lg" color="black">
           {t('Adicionar novos colaboradores')}
         </Text>
-        <Text fontSize="md">
+        <Text mt="1" fontSize="md">
           {t('Os novos usuários podem conter os papéis de ')}
           <Tooltip label={ownerLabel}>
             <Text as="span" fontWeight="700" textDecor="underline">
               {t('proprietário')}
             </Text>
           </Tooltip>
-          ,
+          {', '}
           <Tooltip label={managerLabel}>
             <Text as="span" fontWeight="700" textDecor="underline">
-              {t(' gerente')}
+              {t('gerente')}
             </Text>
           </Tooltip>
           {t(' ou ')}
@@ -150,7 +150,7 @@ export const AddMembersForm = ({
               {t('colaborador')}
             </Text>
           </Tooltip>
-          ,
+          .
         </Text>
         <Box overflowX="auto">
           {members.map((member, index) => (
@@ -175,24 +175,20 @@ export const AddMembersForm = ({
                   updateMember(index, 'email', event.target.value)
                 }
               />
-              <Tooltip label={ownerLabel}>
-                <Select
-                  w="160px"
-                  label={t('Papel do usuário:')}
-                  value={member.role}
-                  onChange={(e) =>
-                    updateMember(index, 'role', e.target.value as AdminRole)
-                  }
-                >
-                  {userIsOwner && (
-                    <option value="owner">{t('Proprietário')}</option>
-                  )}
-                  {userIsOwner && (
-                    <option value="manager">{t('Gerente')}</option>
-                  )}
-                  <option value="collaborator">{t('Colaborador')}</option>
-                </Select>
-              </Tooltip>
+              <Select
+                w="160px"
+                label={t('Papel do usuário:')}
+                value={member.role}
+                onChange={(e) =>
+                  updateMember(index, 'role', e.target.value as AdminRole)
+                }
+              >
+                {userIsOwner && (
+                  <option value="owner">{t('Proprietário')}</option>
+                )}
+                {userIsOwner && <option value="manager">{t('Gerente')}</option>}
+                <option value="collaborator">{t('Colaborador')}</option>
+              </Select>
               <Box w="40px">
                 {members.length > 1 && (
                   <Tooltip
