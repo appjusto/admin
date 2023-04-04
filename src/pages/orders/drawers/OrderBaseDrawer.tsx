@@ -531,7 +531,7 @@ export const OrderBaseDrawer = ({
                     maxW="210px"
                     onClick={() => changeOrderStatus(order.id, 'delivered')}
                   >
-                    {t('Entregue ao cliente')}
+                    {t('Entrega realizada')}
                   </Button>
                 </Flex>
               </Flex>
