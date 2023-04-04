@@ -1,4 +1,6 @@
-import { DispatchingStatus } from '@appjusto/types';
+import { DispatchingStatus, Fare, OrderFlag, OrderType } from '@appjusto/types';
+import { ListType } from './BOList';
+import { IconsConfig } from './order-item/OrderItemIcons';
 
 export const getOrderMatchingColor = (
   isFlagged: boolean,
@@ -43,4 +45,55 @@ export const getOrderMatchingColor = (
     border: 'none',
     color: '#C8D7CB',
   };
+};
+
+export const getIconsConfig = (
+  isSuperuser?: boolean | null,
+  listType?: ListType,
+  staffId?: string,
+  orderType?: OrderType,
+  flags?: OrderFlag[],
+  orderFare?: Fare,
+  dispatchingStatus?: DispatchingStatus,
+  courierId?: string
+) => {
+  let iconsConfig = {} as IconsConfig;
+  if (isSuperuser) {
+    iconsConfig.isStaff = typeof staffId === 'string';
+  }
+  if (listType === 'orders-watched') {
+    iconsConfig.isMessages = flags && flags.includes('chat');
+  }
+  if (listType === 'orders-watched' || listType === 'orders-unsafe') {
+    iconsConfig.isUnsafe = flags && flags.includes('unsafe');
+  }
+  if (listType === 'orders-watched' || listType === 'orders-issue') {
+    iconsConfig.isIssue = flags && flags.includes('issue');
+  }
+  if (listType === 'orders-watched' || listType === 'orders-warning') {
+    const isConfirmedOverLimit =
+      orderType === 'food'
+        ? flags && flags.includes('waiting-confirmation')
+        : undefined;
+    const isMatchinFlag = flags ? flags.includes('matching') : false;
+    const courierIconStatus =
+      orderFare?.courier?.payee === 'platform'
+        ? getOrderMatchingColor(isMatchinFlag, dispatchingStatus, courierId)
+        : undefined;
+    const isPickupOverLimit =
+      orderFare?.courier?.payee === 'platform'
+        ? flags
+          ? flags.includes('pick-up')
+          : false
+        : undefined;
+    const isDispatchingOverLimit = flags ? flags.includes('delivering') : false;
+    iconsConfig = {
+      ...iconsConfig,
+      isConfirmedOverLimit,
+      courierIconStatus,
+      isPickupOverLimit,
+      isDispatchingOverLimit,
+    };
+  }
+  return iconsConfig;
 };

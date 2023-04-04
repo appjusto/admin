@@ -1,4 +1,4 @@
-import { Business, Order, ProfileChange, WithId } from '@appjusto/types';
+import { Order, ProfileChange, WithId } from '@appjusto/types';
 import {
   Box,
   Center,
@@ -11,9 +11,8 @@ import {
 } from '@chakra-ui/react';
 import { ShowIf } from 'core/components/ShowIf';
 import React from 'react';
-import { BOBusinessListItem } from './BOBusinessListItem';
-import { BOOrderListItem } from './BOOrderListItem';
 import { BOProfileChangesListItem } from './BOProfileChangesListItem';
+import { OrderListItem } from './order-item';
 import { FilterOptions, StaffFilter } from './StaffFilter';
 
 export type ListType =
@@ -21,31 +20,11 @@ export type ListType =
   | 'orders-warning'
   | 'orders-issue'
   | 'orders-watched'
-  | 'businesses'
   | 'profile-changes';
-
-const renderList = (
-  data: WithId<Business>[] | WithId<Order>[] | WithId<ProfileChange>[],
-  listType: ListType
-) => {
-  if (listType === 'businesses') {
-    return (data as WithId<Business>[]).map((item) => (
-      <BOBusinessListItem key={item.id} business={item} />
-    ));
-  } else if (listType.includes('orders')) {
-    return (data as WithId<Order>[]).map((item) => (
-      <BOOrderListItem key={item.id} listType={listType} order={item} />
-    ));
-  } else {
-    return (data as WithId<ProfileChange>[]).map((item) => (
-      <BOProfileChangesListItem key={item.id} changes={item} />
-    ));
-  }
-};
 
 interface BOListProps extends FlexProps {
   title: string;
-  data: WithId<Order>[] | WithId<Business>[] | WithId<ProfileChange>[];
+  data: WithId<Order>[] | WithId<ProfileChange>[];
   dataLength?: number;
   listType: ListType;
   details?: string;
@@ -73,12 +52,22 @@ export const BOList = ({
 }: BOListProps) => {
   // refs
   const listRef = React.useRef<HTMLDivElement>(null);
-  const listHeight = listType.includes('orders') ? '600px' : '300px';
   // helpers
-  const isFilter =
-    filterOptions !== undefined &&
-    filterValue !== undefined &&
-    handleFilter !== undefined;
+  const isOrderList = React.useMemo(
+    () => listType.includes('orders'),
+    [listType]
+  );
+  const listHeight = React.useMemo(
+    () => (isOrderList ? '600px' : '300px'),
+    [isOrderList]
+  );
+  const isFilter = React.useMemo(
+    () =>
+      filterOptions !== undefined &&
+      filterValue !== undefined &&
+      handleFilter !== undefined,
+    [filterOptions, filterValue, handleFilter]
+  );
   // side effects
   React.useEffect(() => {
     if (!infiniteScroll || !listRef.current || !loadData) return;
@@ -157,7 +146,17 @@ export const BOList = ({
       <ShowIf test={data.length > 0}>
         {() => (
           <VStack ref={listRef} flex={1} p="4" overflowX="hidden">
-            {renderList(data, listType)}
+            {isOrderList
+              ? (data as WithId<Order>[]).map((item) => (
+                  <OrderListItem
+                    key={item.id}
+                    listType={listType}
+                    order={item}
+                  />
+                ))
+              : (data as WithId<ProfileChange>[]).map((item) => (
+                  <BOProfileChangesListItem key={item.id} changes={item} />
+                ))}
           </VStack>
         )}
       </ShowIf>
