@@ -61,21 +61,51 @@ export const OrderDrawer = (props: Props) => {
   // refs
   const printComponent = React.useRef<HTMLDivElement>(null);
   // helpers
-  const cancellator = getOrderCancellator(orderCancellation?.issue?.type);
-  const canAllocateCourier =
-    order?.fulfillment === 'delivery' &&
-    (!order?.scheduledTo || isToday(order?.scheduledTo)) &&
-    business?.tags &&
-    business.tags.includes('can-match-courier') &&
-    order?.status &&
-    (['scheduled', 'confirmed', 'preparing'].includes(order.status) ||
-      (order.status === 'ready' && !order.courier));
-  const canOutsource =
-    business?.tags && business.tags.includes('can-outsource');
-  const showDeliveryInfos =
-    order?.fulfillment === 'delivery' &&
-    (order?.status === 'ready' || order?.status === 'dispatching') &&
-    order.dispatchingStatus !== 'outsourced';
+  const cancellator = React.useMemo(
+    () => getOrderCancellator(orderCancellation?.issue?.type),
+    [orderCancellation?.issue?.type]
+  );
+  const logisticsIncluded = React.useMemo(
+    () => order?.fare?.courier?.payee === 'platform',
+    [order?.fare?.courier?.payee]
+  );
+  const isDelivery = React.useMemo(
+    () => order?.fulfillment === 'delivery',
+    [order?.fulfillment]
+  );
+  const isOutsourced = React.useMemo(
+    () => order?.dispatchingStatus === 'outsourced',
+    [order?.dispatchingStatus]
+  );
+  const canAllocateCourier = React.useMemo(
+    () =>
+      isDelivery &&
+      (!order?.scheduledTo || isToday(order?.scheduledTo)) &&
+      business?.tags &&
+      business.tags.includes('can-match-courier') &&
+      order?.status &&
+      (['scheduled', 'confirmed', 'preparing'].includes(order.status) ||
+        (order.status === 'ready' && !order.courier)),
+    [
+      isDelivery,
+      order?.scheduledTo,
+      business?.tags,
+      order?.status,
+      order?.courier,
+    ]
+  );
+  const canOutsource = React.useMemo(
+    () => business?.tags && business.tags.includes('can-outsource'),
+    [business?.tags]
+  );
+  const showDeliveryInfos = React.useMemo(
+    () =>
+      logisticsIncluded &&
+      isDelivery &&
+      !isOutsourced &&
+      (order?.status === 'ready' || order?.status === 'dispatching'),
+    [logisticsIncluded, isDelivery, isOutsourced, order?.status]
+  );
   // handlers
   const handleCancel = (issue: WithId<Issue>) => {
     if (!manager?.id) {
@@ -215,7 +245,9 @@ export const OrderDrawer = (props: Props) => {
               {orderIssues && orderIssues.length > 0 && (
                 <OrderIssuesTable issues={orderIssues} />
               )}
-              {order?.status !== 'ready' && order?.status !== 'dispatching' && (
+              {(!logisticsIncluded ||
+                (order?.status !== 'ready' &&
+                  order?.status !== 'dispatching')) && (
                 <>
                   <Text mt="8" fontSize="xl" color="black">
                     {t('Destino do pedido')}

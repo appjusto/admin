@@ -21,16 +21,42 @@ export const OrderReadyCard = ({ order }: Props) => {
   const { isMatched, isCurrierArrived, orderDispatchingKanbanItemText } =
     useOrderDeliveryInfos(getServerTime, order);
   // helpers
-  const showArrivalTime =
-    typeof arrivalTime === 'number' &&
-    order.dispatchingState !== 'arrived-pickup' &&
-    order.dispatchingState !== 'arrived-destination';
-  const showArrivalTimeCalc =
-    order.dispatchingState !== 'arrived-pickup' &&
-    order.dispatchingState !== 'arrived-destination';
+  const logisticsIncluded = React.useMemo(
+    () => order.fare?.courier?.payee === 'platform',
+    [order.fare?.courier?.payee]
+  );
+  const isDelivery = React.useMemo(
+    () => order.fulfillment === 'delivery',
+    [order.fulfillment]
+  );
+  const isOutsourced = React.useMemo(
+    () => order?.dispatchingStatus === 'outsourced',
+    [order?.dispatchingStatus]
+  );
+  const showArrivalTime = React.useMemo(
+    () =>
+      typeof arrivalTime === 'number' &&
+      order.dispatchingState &&
+      !['arrived-pickup', 'arrived-destination'].includes(
+        order.dispatchingState
+      ),
+    [arrivalTime, order.dispatchingState]
+  );
+  const showArrivalTimeCalc = React.useMemo(
+    () =>
+      order.dispatchingState &&
+      !['arrived-pickup', 'arrived-destination'].includes(
+        order.dispatchingState
+      ),
+    [order.dispatchingState]
+  );
   const consumerName = React.useMemo(
     () => (order.consumer.name ? order.consumer.name.split(' ')[0] : 'N/E'),
     [order.consumer.name]
+  );
+  const btnIsDisabled = React.useMemo(
+    () => logisticsIncluded && isDelivery && !isCurrierArrived && !isOutsourced,
+    [logisticsIncluded, isDelivery, isCurrierArrived, isOutsourced]
   );
   // handlers
   const handleOrderDispatching = () => {
@@ -47,19 +73,9 @@ export const OrderReadyCard = ({ order }: Props) => {
         position="relative"
         borderRadius="lg"
         borderColor={
-          order?.dispatchingStatus === 'outsourced'
-            ? '#FFBE00'
-            : isCurrierArrived
-            ? 'black'
-            : 'gray'
+          isOutsourced ? '#FFBE00' : isCurrierArrived ? 'black' : 'gray'
         }
-        borderWidth={
-          order?.dispatchingStatus === 'outsourced'
-            ? '2px'
-            : isCurrierArrived
-            ? '2px'
-            : '1px'
-        }
+        borderWidth={isOutsourced ? '2px' : isCurrierArrived ? '2px' : '1px'}
         color="black"
         boxShadow="0px 8px 16px -4px rgba(105,118,103,0.1)"
         zIndex="100"
@@ -76,7 +92,7 @@ export const OrderReadyCard = ({ order }: Props) => {
                     {`{${consumerName}}`}
                   </Text>
                 </Box>
-                {order.fulfillment === 'delivery' ? (
+                {isDelivery && logisticsIncluded && (
                   <Box>
                     <Text
                       color={isCurrierArrived ? 'red' : 'gray.700'}
@@ -85,7 +101,7 @@ export const OrderReadyCard = ({ order }: Props) => {
                     >
                       {orderDispatchingKanbanItemText}
                     </Text>
-                    {order?.dispatchingStatus === 'outsourced' && (
+                    {isOutsourced && (
                       <Text mt="1" fontSize="xs" textAlign="end">
                         {t('Um entregador de outra rede fará a retirada.')}
                       </Text>
@@ -121,7 +137,18 @@ export const OrderReadyCard = ({ order }: Props) => {
                         </>
                       ))}
                   </Box>
-                ) : (
+                )}
+                {isDelivery && !logisticsIncluded && (
+                  <Box>
+                    <Text color="gray.700" fontWeight="700" textAlign="end">
+                      {t('Aguardando')}
+                    </Text>
+                    <Text color="gray.700" fontWeight="700" textAlign="end">
+                      {t('entregador próprio')}
+                    </Text>
+                  </Box>
+                )}
+                {!isDelivery && (
                   <Box>
                     <Text color="gray.700" fontWeight="700" textAlign="end">
                       {t('Aguardando retirada')}
@@ -137,16 +164,12 @@ export const OrderReadyCard = ({ order }: Props) => {
         </Link>
         <Box position="absolute" w="100%" bottom="0" px="4" mb="4" zIndex="999">
           <Button
-            isDisabled={
-              order.fulfillment === 'delivery' &&
-              !isCurrierArrived &&
-              order?.dispatchingStatus !== 'outsourced'
-            }
             w="full"
             maxH="34px"
             size="sm"
             fontSize="xs"
             onClick={handleOrderDispatching}
+            isDisabled={btnIsDisabled}
           >
             {t('Entregar pedido')}
           </Button>
@@ -160,10 +183,8 @@ export const OrderReadyCard = ({ order }: Props) => {
         px="4"
         py="2"
         borderRadius="lg"
-        borderColor={
-          order?.dispatchingStatus === 'outsourced' ? '#FFBE00' : 'gray'
-        }
-        borderWidth={order?.dispatchingStatus === 'outsourced' ? '2px' : '1px'}
+        borderColor={isOutsourced ? '#FFBE00' : 'gray'}
+        borderWidth={isOutsourced ? '2px' : '1px'}
         color="black"
         boxShadow="0px 8px 16px -4px rgba(105,118,103,0.1)"
       >
@@ -176,7 +197,7 @@ export const OrderReadyCard = ({ order }: Props) => {
               {`{${consumerName}}`}
             </Text>
           </Box>
-          {order.dispatchingStatus === 'outsourced' ? (
+          {isOutsourced && (
             <Flex
               flexDir="column"
               color="gray.700"
@@ -186,7 +207,19 @@ export const OrderReadyCard = ({ order }: Props) => {
               <Text fontWeight="700">{t('A caminho da entrega')}</Text>
               <Text fontWeight="500">{t('Logística fora da rede')}</Text>
             </Flex>
-          ) : (
+          )}
+          {!logisticsIncluded && (
+            <Flex
+              flexDir="column"
+              color="gray.700"
+              fontSize="xs"
+              alignItems="flex-end"
+            >
+              <Text fontWeight="700">{t('A caminho da entrega')}</Text>
+              <Text fontWeight="500">{t('Entrega própria')}</Text>
+            </Flex>
+          )}
+          {logisticsIncluded && !isOutsourced && (
             <Flex
               flexDir="column"
               color="gray.700"

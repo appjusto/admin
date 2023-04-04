@@ -67,64 +67,106 @@ export const OrderBaseDrawer = ({
   // refs
   const bodyRef = React.useRef<HTMLDivElement>(null);
   // helpers
-  const consumerOrders =
-    consumerTotalOrders === null
-      ? 'N/E'
-      : consumerTotalOrders === undefined
-      ? 'Carregando...'
-      : consumerTotalOrders;
-  const isScheduled = order?.scheduledTo && order?.status === 'scheduled';
   const isHistory = path.includes('orders-history');
-  const isCookingTimeModeAuto = cookingTimeMode === 'auto';
-  const isCurrierArrived = order?.dispatchingState === 'arrived-pickup';
-  const cannotCancelOrder =
-    typeof order?.courier?.id === 'string' ||
-    (order?.dispatchingStatus === 'outsourced' &&
-      order.outsourcedBy !== 'business');
+  const logisticsIncluded = React.useMemo(
+    () => order?.fare?.courier?.payee === 'platform',
+    [order?.fare?.courier?.payee]
+  );
+  const isDelivery = React.useMemo(
+    () => order?.fulfillment === 'delivery',
+    [order?.fulfillment]
+  );
+  const isOutsourced = React.useMemo(
+    () => order?.dispatchingStatus === 'outsourced',
+    [order?.dispatchingStatus]
+  );
+  const isOrderDispatched = React.useMemo(
+    () =>
+      ['dispatching', 'delivered'].includes(order?.status ?? 'not_included'),
+    [order?.status]
+  );
+  const consumerOrders = React.useMemo(
+    () =>
+      consumerTotalOrders === null
+        ? 'N/E'
+        : consumerTotalOrders === undefined
+        ? 'Carregando...'
+        : consumerTotalOrders,
+    [consumerTotalOrders]
+  );
+  const isScheduled = React.useMemo(
+    () => order?.scheduledTo && order?.status === 'scheduled',
+    [order?.scheduledTo, order?.status]
+  );
+  const isCookingTimeModeAuto = React.useMemo(
+    () => cookingTimeMode === 'auto',
+    [cookingTimeMode]
+  );
+  const isCurrierArrived = React.useMemo(
+    () => order?.dispatchingState === 'arrived-pickup',
+    [order?.dispatchingState]
+  );
+  const cannotCancelOrder = React.useMemo(
+    () =>
+      typeof order?.courier?.id === 'string' ||
+      (isOutsourced && order?.outsourcedBy !== 'business'),
+    [order?.courier?.id, isOutsourced, order?.outsourcedBy]
+  );
+  //UI conditions
+  const primaryButtonIsAble = React.useMemo(
+    () =>
+      (order?.status === 'scheduled' &&
+        isScheduledMarginValid(order.scheduledTo, 5400)) ||
+      (!(order?.status === 'preparing' && isCookingTimeModeAuto) &&
+        (['confirmed', 'preparing'].includes(order?.status ?? 'not_included') ||
+          (order?.status === 'ready' && !isDelivery) ||
+          (order?.status === 'ready' && isCurrierArrived) ||
+          !logisticsIncluded ||
+          isOutsourced)),
+    [
+      order?.status,
+      order?.scheduledTo,
+      isCookingTimeModeAuto,
+      isDelivery,
+      isCurrierArrived,
+      logisticsIncluded,
+      isOutsourced,
+    ]
+  );
+  const primaryButtonLabel = React.useMemo(() => {
+    if (order?.status === 'scheduled') return 'Avançar pedido';
+    if (order?.status === 'ready') return 'Entregar pedido';
+    return 'Pedido pronto';
+  }, [order?.status]);
   //handlers
-  const handlePrint = () => {
+  const handlePrint = React.useCallback(() => {
     if (printOrder) return printOrder();
     return null;
-  };
-  const orderConfirmation = () => {
-    if (!order) return;
+  }, [printOrder]);
+  const orderConfirmation = React.useCallback(() => {
+    if (!order?.id) return;
     if (orderPrinting) handlePrint();
     changeOrderStatus(order.id, 'preparing');
     onClose();
-  };
-  const PrimaryButtonFunction = () => {
+  }, [order?.id, orderPrinting, handlePrint, changeOrderStatus, onClose]);
+  const PrimaryButtonFunction = React.useCallback(() => {
     if (order?.status === 'scheduled') changeOrderStatus(order.id, 'confirmed');
     if (order?.status === 'preparing') changeOrderStatus(order.id, 'ready');
-    if (order?.status === 'ready' && order.fulfillment === 'delivery')
+    if (order?.status === 'ready' && isDelivery)
       changeOrderStatus(order.id, 'dispatching');
-    if (order?.status === 'ready' && order.fulfillment !== 'delivery')
+    if (order?.status === 'ready' && !isDelivery)
       changeOrderStatus(order.id, 'delivered');
     onClose();
-  };
-  const updateCookingTimeScroll = () => {
+  }, [order?.id, order?.status, isDelivery, changeOrderStatus, onClose]);
+  const updateCookingTimeScroll = React.useCallback(() => {
     if (!bodyRef.current) return;
     const scrollNumber = bodyRef.current.scrollHeight - 610;
     bodyRef.current.scrollTop = scrollNumber;
-  };
+  }, []);
   // side effects
   React.useEffect(() => {
     if (isCanceling && bodyRef.current) bodyRef.current.scrollTop = 0;
   }, [isCanceling]);
-  //UI conditions
-  let orderDispatched = ['dispatching', 'delivered'].includes(
-    order?.status ?? 'not_included'
-  );
-  let PrimaryButtonIsAble =
-    (order?.status === 'scheduled' &&
-      isScheduledMarginValid(order.scheduledTo, 5400)) ||
-    (!(order?.status === 'preparing' && isCookingTimeModeAuto) &&
-      (['confirmed', 'preparing'].includes(order?.status ?? 'not_included') ||
-        (order?.status === 'ready' && order.fulfillment !== 'delivery') ||
-        (order?.status === 'ready' && isCurrierArrived) ||
-        order?.dispatchingStatus === 'outsourced'));
-  let PrimaryButtonLabel = 'Pedido pronto';
-  if (order?.status === 'scheduled') PrimaryButtonLabel = 'Avançar pedido';
-  else if (order?.status === 'ready') PrimaryButtonLabel = 'Entregar pedido';
   //UI
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
@@ -404,7 +446,7 @@ export const OrderBaseDrawer = ({
             />
             {children}
           </DrawerBody>
-          {!isCanceling && !orderDispatched && order?.status !== 'canceled' && (
+          {!isCanceling && !isOrderDispatched && order?.status !== 'canceled' && (
             <DrawerFooter borderTop="1px solid #F2F6EA">
               <Flex w="full" justifyContent="flex-start">
                 <Flex
@@ -429,12 +471,12 @@ export const OrderBaseDrawer = ({
                   </Button>
                   {order?.status !== 'confirmed' && (
                     <Button
-                      isDisabled={!PrimaryButtonIsAble}
+                      isDisabled={!primaryButtonIsAble}
                       width="full"
                       maxW="200px"
                       onClick={PrimaryButtonFunction}
                     >
-                      {t(PrimaryButtonLabel)}
+                      {t(primaryButtonLabel)}
                     </Button>
                   )}
                 </Flex>
@@ -465,6 +507,36 @@ export const OrderBaseDrawer = ({
                 </Flex>
               </DrawerFooter>
             )}
+          {order?.status === 'dispatching' && !logisticsIncluded && (
+            <DrawerFooter borderTop="1px solid #F2F6EA">
+              <Flex w="full" justifyContent="flex-start">
+                <Flex
+                  w="full"
+                  maxW="607px"
+                  pr="12"
+                  flexDir="row"
+                  justifyContent="space-between"
+                >
+                  <Button
+                    width="full"
+                    maxW="210px"
+                    variant="dangerLight"
+                    onClick={cancel}
+                    isDisabled={cannotCancelOrder}
+                  >
+                    {t('Cancelar pedido')}
+                  </Button>
+                  <Button
+                    width="full"
+                    maxW="210px"
+                    onClick={() => changeOrderStatus(order.id, 'delivered')}
+                  >
+                    {t('Entregue ao cliente')}
+                  </Button>
+                </Flex>
+              </Flex>
+            </DrawerFooter>
+          )}
         </DrawerContent>
       </DrawerOverlay>
     </Drawer>
