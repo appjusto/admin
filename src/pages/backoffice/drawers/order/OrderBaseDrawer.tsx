@@ -84,25 +84,51 @@ export const OrderBaseDrawer = ({
   // state
   const [isDeleting, setIsDeleting] = React.useState(false);
   // helpers
-  const orderStatus = order?.status as OrderStatus;
-  const isFlagged =
-    order?.status === 'charged' &&
-    order?.flags &&
-    order?.flags?.includes('unsafe');
-  const isChatMessages = order?.flags && order.flags.includes('chat');
-  const canUpdateOrderStaff =
-    order?.staff?.id === user?.uid || isBackofficeSuperuser;
-  const canUpdateOrder = userAbility?.can('update', {
-    kind: 'orders',
-    ...order,
-  });
-  const canDeleteOrder =
-    order?.status === 'quote' &&
-    userAbility?.can('delete', { kind: 'orders', ...order });
-  const isIssueOrder =
-    order?.flags &&
-    order?.flags?.includes('issue') &&
-    userAbility?.can('update', { kind: 'orders', ...order });
+  const orderStatus = order?.status!;
+  const isFlagged = React.useMemo(
+    () =>
+      order?.status === 'charged' &&
+      order?.flags &&
+      order?.flags?.includes('unsafe'),
+    [order?.status, order?.flags]
+  );
+  const logisticsIncluded = React.useMemo(
+    () => order?.fare?.courier?.payee === 'platform',
+    [order?.fare?.courier?.payee]
+  );
+  const showMatchingTab = React.useMemo(
+    () => order?.fulfillment === 'delivery' && logisticsIncluded,
+    [order?.fulfillment, logisticsIncluded]
+  );
+  const isChatMessages = React.useMemo(
+    () => order?.flags && order.flags.includes('chat'),
+    [order?.flags]
+  );
+  const canUpdateOrderStaff = React.useMemo(
+    () => order?.staff?.id === user?.uid || isBackofficeSuperuser,
+    [order?.staff?.id, user?.uid, isBackofficeSuperuser]
+  );
+  const canUpdateOrder = React.useMemo(
+    () =>
+      userAbility?.can('update', {
+        kind: 'orders',
+        ...order,
+      }),
+    [userAbility, order]
+  );
+  const canDeleteOrder = React.useMemo(
+    () =>
+      order?.status === 'quote' &&
+      userAbility?.can('delete', { kind: 'orders', ...order }),
+    [order, userAbility]
+  );
+  const isIssueOrder = React.useMemo(
+    () =>
+      order?.flags &&
+      order?.flags?.includes('issue') &&
+      userAbility?.can('update', { kind: 'orders', ...order }),
+    [order, userAbility]
+  );
   // handlers
   const handleConfirm = (removeStaff: boolean) => {
     if (order?.scheduledTo) {
@@ -219,6 +245,12 @@ export const OrderBaseDrawer = ({
                           }
                         />
                       )}
+                      {order?.type === 'food' && (
+                        <BaseDrawerInfoItem
+                          label={t('Logística inclusa:')}
+                          value={logisticsIncluded ? 'Sim' : 'Não'}
+                        />
+                      )}
                       <BaseDrawerInfoItem
                         label={t('Pedido confirmado em:')}
                         value={getDateAndHour(order?.timestamps.confirmed)}
@@ -308,7 +340,7 @@ export const OrderBaseDrawer = ({
                 <DrawerLink to={`${url}`} label={t('Participantes')} />
                 <DrawerLink to={`${url}/order`} label={t('Pedido')} />
                 <DrawerLink to={`${url}/invoices`} label={t('Faturas')} />
-                {order?.fulfillment === 'delivery' && (
+                {showMatchingTab && (
                   <DrawerLink to={`${url}/matching`} label={t('Matching')} />
                 )}
                 <DrawerLink to={`${url}/status`} label={t('Status')} />

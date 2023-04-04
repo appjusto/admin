@@ -4,6 +4,7 @@ import { useOrderCourierRemoval } from 'app/api/order/useOrderCourierRemoval';
 import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { DeliveryInfos } from 'pages/orders/drawers/orderdrawer/DeliveryInfos';
+import React from 'react';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
 import { Participant } from './Participant';
@@ -27,9 +28,18 @@ export const Participants = ({
   );
   const { courierManualRemoval, removalResult } = useOrderCourierRemoval();
   // helpers
-  const isOrderActive = order
-    ? activeOrderStatuses.includes(order?.status)
-    : false;
+  const isOrderActive = React.useMemo(
+    () => (order?.status ? activeOrderStatuses.includes(order?.status) : false),
+    [order?.status]
+  );
+  const logisticsIncluded = React.useMemo(
+    () => order?.fare?.courier?.payee === 'platform',
+    [order?.fare?.courier?.payee]
+  );
+  const showDispatchingInfos = React.useMemo(
+    () => order?.fulfillment === 'delivery' && logisticsIncluded,
+    [order?.fulfillment, logisticsIncluded]
+  );
   // handlers
   const removeCourierFromOrder = (issue?: WithId<Issue>, comment?: string) => {
     if (!order?.id || !order?.courier?.id)
@@ -97,7 +107,7 @@ export const Participants = ({
           />
         </Box>
       )}
-      {order?.fulfillment === 'delivery' && (
+      {showDispatchingInfos && (
         <>
           <SectionTitle>{t('Entregador')}</SectionTitle>
           <Participant
@@ -130,7 +140,7 @@ export const Participants = ({
           </Text>
         </>
       )}
-      {order?.fulfillment === 'delivery' && (
+      {showDispatchingInfos && (
         <>
           {isOrderActive ? (
             <DeliveryInfos order={order!} isBackofficeDrawer />
