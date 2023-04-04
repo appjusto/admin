@@ -18,7 +18,7 @@ const TeamPage = () => {
       <PageHeader
         title={t('Colaboradores')}
         subtitle={t(
-          'Gerencie as pessoas que terão acesso ao painel do parceiro e ao Gerenciador de pedidos. Somente os administradores podem incluir novos colaboradores.'
+          'Gerencie as pessoas que terão acesso ao painel do parceiro e ao gerenciador de pedidos. Somente proprietários e gerentes podem incluir novos colaboradores.'
         )}
       />
       <TeamTable />

@@ -131,6 +131,27 @@ export const AddMembersForm = ({
         <Text fontSize="lg" color="black">
           {t('Adicionar novos colaboradores')}
         </Text>
+        <Text fontSize="md">
+          {t('Os novos usuários podem conter os papéis de ')}
+          <Tooltip label={ownerLabel}>
+            <Text as="span" fontWeight="700" textDecor="underline">
+              {t('proprietário')}
+            </Text>
+          </Tooltip>
+          ,
+          <Tooltip label={managerLabel}>
+            <Text as="span" fontWeight="700" textDecor="underline">
+              {t(' gerente')}
+            </Text>
+          </Tooltip>
+          {t(' ou ')}
+          <Tooltip label={collaboratorLabel}>
+            <Text as="span" fontWeight="700" textDecor="underline">
+              {t('colaborador')}
+            </Text>
+          </Tooltip>
+          ,
+        </Text>
         <Box overflowX="auto">
           {members.map((member, index) => (
             <Stack

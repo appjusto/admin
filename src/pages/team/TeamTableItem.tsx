@@ -105,8 +105,9 @@ export const TeamTableItem = ({
             <option value="collaborator">{t('Colaborador')}</option>
           </Select>
         </Td>
-        <Td position="relative">
-          <Flex position="absolute" bottom="2" flexDir="column">
+        <Td></Td>
+        <Td position="relative" colSpan={2}>
+          <Flex position="absolute" right="4" bottom="2" flexDir="column">
             <Text>{t('Confirmar atualização?')}</Text>
             <HStack mt="1" spacing={4}>
               <Button
@@ -128,7 +129,6 @@ export const TeamTableItem = ({
             </HStack>
           </Flex>
         </Td>
-        <Td></Td>
       </Tr>
     );
   }
