@@ -1,8 +1,7 @@
-import { Box, Circle, Flex } from '@chakra-ui/react';
+import { Box, Circle, Flex, Image } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusinessId } from 'app/state/business/context';
-import Image from 'common/components/Image';
 import { ImageFbLoading } from 'common/components/ImageFbLoading';
 import appjustoLogo from 'common/img/logo.svg';
 import { useRouteMatch } from 'react-router';
@@ -41,7 +40,7 @@ const Sidebar = () => {
           {isBackOffice ? (
             <Flex mt="6" px="4">
               <Box>
-                <Image src={appjustoLogo} eagerLoading height="40px" />
+                <Image src={appjustoLogo} height="40px" />
               </Box>
             </Flex>
           ) : (
@@ -57,7 +56,7 @@ const Sidebar = () => {
                     src={logo}
                     borderRadius="30px"
                     fallback={
-                      <ImageFbLoading w="60px" h="60px" borderRadius="20px" />
+                      <ImageFbLoading w="60px" h="60px" borderRadius="30px" />
                     }
                   />
                 </Box>
@@ -65,7 +64,7 @@ const Sidebar = () => {
                 <Circle size="60px" bg="gray.400" />
               )}
               <Box>
-                <Image src={appjustoLogo} eagerLoading height="36px" />
+                <Image src={appjustoLogo} height="36px" />
               </Box>
             </Flex>
           )}
