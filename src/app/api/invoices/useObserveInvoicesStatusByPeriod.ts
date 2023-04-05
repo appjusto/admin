@@ -8,7 +8,11 @@ import {
 } from 'pages/finances/utils';
 import React from 'react';
 import { useUserCanReadEntity } from '../auth/useUserCanReadEntity';
-import { getInvoicesTotalByTypes, getInvoicesTotalValueByTypes } from './utils';
+import {
+  getFoodInvoicesDeliveryTotalValue,
+  getInvoicesTotalByTypes,
+  getInvoicesTotalValueByTypes,
+} from './utils';
 
 const invoicesProductTypes = ['products', 'order', 'food'] as InvoiceType[];
 const invoicesDeliveryTypes = ['delivery'] as InvoiceType[];
@@ -53,10 +57,12 @@ export const useObserveInvoicesStatusByPeriod = (
       invoices,
       invoicesProductTypes
     );
-    const amountDelivery = getInvoicesTotalValueByTypes(
+    const ownLogistics = getFoodInvoicesDeliveryTotalValue(invoices);
+    const delivery = getInvoicesTotalValueByTypes(
       invoices,
       invoicesDeliveryTypes
     );
+    const amountDelivery = ownLogistics + delivery;
     const appjusto = calculateAppJustoCosts(invoices);
     const iugu = calculateIuguCosts(invoices);
     const total = getInvoicesTotalByTypes(invoices, invoicesProductTypes);

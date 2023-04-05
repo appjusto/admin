@@ -33,7 +33,11 @@ export const calculateAppJustoCosts = (invoices: WithId<Invoice>[]) => {
 
 export const calculateIuguCosts = (invoices: WithId<Invoice>[]) => {
   const value = invoices.reduce((total, invoice) => {
-    return (total += invoice.fare?.processing?.value ?? 0);
+    let value = invoice.fare?.processing?.value ?? 0;
+    if (invoice.deliveryFare && invoice.deliveryFare.payee === 'business') {
+      value += invoice.deliveryFare.processing?.value ?? 0;
+    }
+    return (total += value);
   }, 0);
   return value;
 };

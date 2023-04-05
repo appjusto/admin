@@ -38,6 +38,17 @@ export const getInvoicesTotalValueByTypes = (
   }, 0);
 };
 
+export const getFoodInvoicesDeliveryTotalValue = (
+  invoices: WithId<Invoice>[]
+) => {
+  return invoices.reduce((result, invoice) => {
+    if (invoice.deliveryFare && invoice.deliveryFare.payee === 'business') {
+      return result + (invoice.deliveryFare.value ?? 0);
+    }
+    return result;
+  }, 0);
+};
+
 export interface ItemByDay {
   date: number;
   value: number;
