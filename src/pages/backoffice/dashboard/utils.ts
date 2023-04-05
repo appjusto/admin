@@ -58,6 +58,7 @@ export const getIconsConfig = (
   courierId?: string
 ) => {
   let iconsConfig = {} as IconsConfig;
+  const isDeliveryByPlatform = orderFare?.courier?.payee === 'platform';
   if (isSuperuser) {
     iconsConfig.isStaff = typeof staffId === 'string';
   }
@@ -76,17 +77,19 @@ export const getIconsConfig = (
         ? flags && flags.includes('waiting-confirmation')
         : undefined;
     const isMatchinFlag = flags ? flags.includes('matching') : false;
-    const courierIconStatus =
-      orderFare?.courier?.payee === 'platform'
-        ? getOrderMatchingColor(isMatchinFlag, dispatchingStatus, courierId)
-        : undefined;
-    const isPickupOverLimit =
-      orderFare?.courier?.payee === 'platform'
-        ? flags
-          ? flags.includes('pick-up')
-          : false
-        : undefined;
-    const isDispatchingOverLimit = flags ? flags.includes('delivering') : false;
+    const courierIconStatus = isDeliveryByPlatform
+      ? getOrderMatchingColor(isMatchinFlag, dispatchingStatus, courierId)
+      : undefined;
+    const isPickupOverLimit = isDeliveryByPlatform
+      ? flags
+        ? flags.includes('pick-up')
+        : false
+      : undefined;
+    const isDispatchingOverLimit = isDeliveryByPlatform
+      ? flags
+        ? flags.includes('delivering')
+        : false
+      : undefined;
     iconsConfig = {
       ...iconsConfig,
       isConfirmedOverLimit,
