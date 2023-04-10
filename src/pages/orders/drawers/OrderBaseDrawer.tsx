@@ -73,7 +73,8 @@ export const OrderBaseDrawer = ({
       : consumerTotalOrders === undefined
       ? 'Carregando...'
       : consumerTotalOrders;
-  const isScheduled = order?.scheduledTo && order?.status === 'scheduled';
+  const isScheduled =
+    order?.scheduledTo !== undefined && order?.scheduledTo !== null;
   const isHistory = path.includes('orders-history');
   const isCookingTimeModeAuto = cookingTimeMode === 'auto';
   const isCurrierArrived = order?.dispatchingState === 'arrived-pickup';
@@ -327,16 +328,14 @@ export const OrderBaseDrawer = ({
                   </>
                 )}
               </Flex>
-              {!isScheduled && (
-                <Flex flexDir="column">
-                  <CustomButton
-                    label="Abrir chat com o cliente"
-                    link={`/app/orders/chat/${order?.id}/${order?.consumer?.id}`}
-                    size="sm"
-                    variant="outline"
-                  />
-                </Flex>
-              )}
+              <Flex flexDir="column">
+                <CustomButton
+                  label="Abrir chat com o cliente"
+                  link={`/app/orders/chat/${order?.id}/${order?.consumer?.id}`}
+                  size="sm"
+                  variant="outline"
+                />
+              </Flex>
             </Flex>
             {order?.status === 'confirmed' && (
               <Flex
