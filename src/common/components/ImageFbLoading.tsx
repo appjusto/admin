@@ -4,7 +4,10 @@ interface ImageFbProps extends FlexProps {
   spinnerSize?: string;
 }
 
-export const ImageFbLoading = ({ spinnerSize = 'sm', ...props }: ImageFbProps) => {
+export const ImageFbLoading = ({
+  spinnerSize = 'sm',
+  ...props
+}: ImageFbProps) => {
   return (
     <Flex
       bg="gray.50"
