@@ -36,8 +36,9 @@ const Sidebar = () => {
         minW="218.24px"
         h="100vh"
         backgroundColor="#EEEEEE"
+        overflowY="auto"
       >
-        <Box w="fill-available" pb="24" overflowY="auto">
+        <Box w="fill-available" pb="24">
           {isBackOffice ? (
             <Flex mt="6" px="4">
               <Box>
