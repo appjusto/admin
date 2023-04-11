@@ -66,7 +66,7 @@ const initialState = [
     link: 'logistics',
     helpText: 'Dúvidas sobre modelo de entrega',
     helpLink:
-      'https://appjusto.freshdesk.com/support/solutions/articles/67000631084-saiba-como-definir-o-raio-de-entrega',
+      'https://appjusto.freshdesk.com/support/solutions/articles/67000718105-d%C3%BAvidas-sobre-modelo-de-entrega',
   },
   {
     status: false,
