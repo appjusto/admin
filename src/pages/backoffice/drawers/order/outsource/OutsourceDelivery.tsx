@@ -225,7 +225,7 @@ export const OutsouceDelivery = ({
           <Text mt="4">
             {t('Responsável: ')}
             <Text as="span" fontWeight="700">
-              {order.outsourcedBy === 'business'
+              {order?.fare?.courier?.payee === 'business'
                 ? t('Restaurante')
                 : t('Plataforma')}
             </Text>
@@ -253,7 +253,7 @@ export const OutsouceDelivery = ({
               />
             </Text>
           )}
-          {isOrderActive && order.outsourcedBy !== 'business' && (
+          {isOrderActive && order.fare?.courier?.payee !== 'business' && (
             <Text mt="2">
               {t(
                 'Será necessário finalizar o pedido quando o mesmo for entregue.'

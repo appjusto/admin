@@ -52,7 +52,7 @@ export const Outsourced = ({
         <SectionTitle mt="0">
           {t('Logística fora da rede AppJusto')}
         </SectionTitle>
-        {order.outsourcedBy === 'business' ? (
+        {order.fare?.courier?.payee === 'business' ? (
           <>
             <Text mt="2">
               {t(

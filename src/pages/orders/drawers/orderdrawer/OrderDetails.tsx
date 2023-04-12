@@ -154,7 +154,7 @@ export const OrderDetails = ({ order }: DetailsProps) => {
               {t('Frete:')}{' '}
               <Text as="span" color="black">
                 {courierPaid ? formatCurrency(courierPaid) : 'N/E'}
-                {order?.outsourcedBy === 'business' &&
+                {order?.fare?.courier?.payee === 'business' &&
                   ` (${t('Assumido pelo restaurante')})`}
               </Text>
             </Text>

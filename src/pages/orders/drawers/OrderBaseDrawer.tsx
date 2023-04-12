@@ -109,8 +109,8 @@ export const OrderBaseDrawer = ({
   const cannotCancelOrder = React.useMemo(
     () =>
       typeof order?.courier?.id === 'string' ||
-      (isOutsourced && order?.outsourcedBy !== 'business'),
-    [order?.courier?.id, isOutsourced, order?.outsourcedBy]
+      (isOutsourced && order?.fare?.courier?.payee !== 'business'),
+    [order?.courier?.id, isOutsourced, order?.fare?.courier?.payee]
   );
   //UI conditions
   const primaryButtonIsAble = React.useMemo(
@@ -484,7 +484,7 @@ export const OrderBaseDrawer = ({
             </DrawerFooter>
           )}
           {order?.status === 'dispatching' &&
-            order.outsourcedBy === 'business' && (
+            order?.fare?.courier?.payee === 'business' && (
               <DrawerFooter borderTop="1px solid #F2F6EA">
                 <Flex w="full" justifyContent="flex-start">
                   <Flex

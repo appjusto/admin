@@ -11,7 +11,7 @@ export const getFoodOrderTotal = (
   if (order.fare?.business?.paid !== undefined)
     businessValue = order.fare.business.paid;
   // if outsourced by business it should be added to courier`s value
-  if (order.outsourcedBy === 'business') {
+  if (order.fare?.courier?.payee === 'business') {
     let courierValue = order.fare?.courier?.value ?? 0;
     // if (order.fare?.courier?.paid !== undefined) {
     //   courierValue = order.fare?.courier?.paid;
