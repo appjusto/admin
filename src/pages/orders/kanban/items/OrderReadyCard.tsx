@@ -197,17 +197,6 @@ export const OrderReadyCard = ({ order }: Props) => {
               {`{${consumerName}}`}
             </Text>
           </Box>
-          {isOutsourced && (
-            <Flex
-              flexDir="column"
-              color="gray.700"
-              fontSize="xs"
-              alignItems="flex-end"
-            >
-              <Text fontWeight="700">{t('A caminho da entrega')}</Text>
-              <Text fontWeight="500">{t('Logística fora da rede')}</Text>
-            </Flex>
-          )}
           {!logisticsIncluded && (
             <Flex
               flexDir="column"
@@ -217,6 +206,17 @@ export const OrderReadyCard = ({ order }: Props) => {
             >
               <Text fontWeight="700">{t('A caminho da entrega')}</Text>
               <Text fontWeight="500">{t('Entrega própria')}</Text>
+            </Flex>
+          )}
+          {logisticsIncluded && isOutsourced && (
+            <Flex
+              flexDir="column"
+              color="gray.700"
+              fontSize="xs"
+              alignItems="flex-end"
+            >
+              <Text fontWeight="700">{t('A caminho da entrega')}</Text>
+              <Text fontWeight="500">{t('Logística fora da rede')}</Text>
             </Flex>
           )}
           {logisticsIncluded && !isOutsourced && (

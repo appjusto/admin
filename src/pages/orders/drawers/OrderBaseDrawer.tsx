@@ -80,9 +80,8 @@ export const OrderBaseDrawer = ({
     () => order?.dispatchingStatus === 'outsourced',
     [order?.dispatchingStatus]
   );
-  const isOrderDispatched = React.useMemo(
-    () =>
-      ['dispatching', 'delivered'].includes(order?.status ?? 'not_included'),
+  const isOrderCompleted = React.useMemo(
+    () => ['canceled', 'delivered'].includes(order?.status ?? 'not_included'),
     [order?.status]
   );
   const consumerOrders = React.useMemo(
@@ -112,7 +111,13 @@ export const OrderBaseDrawer = ({
       (isOutsourced && order?.fare?.courier?.payee !== 'business'),
     [order?.courier?.id, isOutsourced, order?.fare?.courier?.payee]
   );
-  //UI conditions
+  const showFooter = React.useMemo(
+    () =>
+      !isCanceling &&
+      !isOrderCompleted &&
+      (order?.status !== 'dispatching' || !logisticsIncluded),
+    [isCanceling, isOrderCompleted, order?.status, logisticsIncluded]
+  );
   const primaryButtonIsAble = React.useMemo(
     () =>
       (order?.status === 'scheduled' &&
@@ -136,6 +141,7 @@ export const OrderBaseDrawer = ({
   const primaryButtonLabel = React.useMemo(() => {
     if (order?.status === 'scheduled') return 'Avançar pedido';
     if (order?.status === 'ready') return 'Entregar pedido';
+    if (order?.status === 'dispatching') return 'Entrega realizada';
     return 'Pedido pronto';
   }, [order?.status]);
   //handlers
@@ -156,8 +162,17 @@ export const OrderBaseDrawer = ({
       changeOrderStatus(order.id, 'dispatching');
     if (order?.status === 'ready' && !isDelivery)
       changeOrderStatus(order.id, 'delivered');
+    if (order?.status === 'dispatching' && !logisticsIncluded)
+      changeOrderStatus(order.id, 'delivered');
     onClose();
-  }, [order?.id, order?.status, isDelivery, changeOrderStatus, onClose]);
+  }, [
+    order?.id,
+    order?.status,
+    isDelivery,
+    changeOrderStatus,
+    logisticsIncluded,
+    onClose,
+  ]);
   const updateCookingTimeScroll = React.useCallback(() => {
     if (!bodyRef.current) return;
     const scrollNumber = bodyRef.current.scrollHeight - 610;
@@ -446,7 +461,7 @@ export const OrderBaseDrawer = ({
             />
             {children}
           </DrawerBody>
-          {!isCanceling && !isOrderDispatched && order?.status !== 'canceled' && (
+          {showFooter && (
             <DrawerFooter borderTop="1px solid #F2F6EA">
               <Flex w="full" justifyContent="flex-start">
                 <Flex
@@ -479,60 +494,6 @@ export const OrderBaseDrawer = ({
                       {t(primaryButtonLabel)}
                     </Button>
                   )}
-                </Flex>
-              </Flex>
-            </DrawerFooter>
-          )}
-          {order?.status === 'dispatching' &&
-            order?.fare?.courier?.payee === 'business' && (
-              <DrawerFooter borderTop="1px solid #F2F6EA">
-                <Flex w="full" justifyContent="flex-start">
-                  <Flex
-                    w="full"
-                    maxW="607px"
-                    pr="12"
-                    flexDir="row"
-                    justifyContent="flex-start"
-                  >
-                    <Button
-                      width="full"
-                      maxW="200px"
-                      variant="dangerLight"
-                      onClick={cancel}
-                      isDisabled={cannotCancelOrder}
-                    >
-                      {t('Cancelar pedido')}
-                    </Button>
-                  </Flex>
-                </Flex>
-              </DrawerFooter>
-            )}
-          {order?.status === 'dispatching' && !logisticsIncluded && (
-            <DrawerFooter borderTop="1px solid #F2F6EA">
-              <Flex w="full" justifyContent="flex-start">
-                <Flex
-                  w="full"
-                  maxW="607px"
-                  pr="12"
-                  flexDir="row"
-                  justifyContent="space-between"
-                >
-                  <Button
-                    width="full"
-                    maxW="210px"
-                    variant="dangerLight"
-                    onClick={cancel}
-                    isDisabled={cannotCancelOrder}
-                  >
-                    {t('Cancelar pedido')}
-                  </Button>
-                  <Button
-                    width="full"
-                    maxW="210px"
-                    onClick={() => changeOrderStatus(order.id, 'delivered')}
-                  >
-                    {t('Entrega realizada')}
-                  </Button>
                 </Flex>
               </Flex>
             </DrawerFooter>

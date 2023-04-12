@@ -49,14 +49,14 @@ export const Outsourced = ({
   if (isOrderActive && order?.dispatchingStatus === 'outsourced') {
     return (
       <Box mt="4" border="2px solid #FFBE00" borderRadius="lg" p="4">
-        <SectionTitle mt="0">
-          {t('Logística fora da rede AppJusto')}
-        </SectionTitle>
         {order.fare?.courier?.payee === 'business' ? (
           <>
+            <SectionTitle mt="0">
+              {t('Entrega própria do restaurante')}
+            </SectionTitle>
             <Text mt="2">
               {t(
-                `Não foi possível encontrar entregadores disponíveis na nossa rede e você optou por assumir a logística, recebendo o repasse do valor do frete (${deliveryFee}).`
+                `A entrega será realizada pelo próprio restaurante. Sempre que possível, informe ao cliente o nome da pessoa que realizará a entrega.`
               )}
             </Text>
             <HStack mt="4">
@@ -80,7 +80,7 @@ export const Outsourced = ({
                 {t('Salvar')}
               </Button>
             </HStack>
-            <Text mt="6">
+            {/* <Text mt="6">
               {t(`Após a realização da entrega, confirme com o botão abaixo:`)}
             </Text>
             <Button
@@ -90,10 +90,13 @@ export const Outsourced = ({
               isDisabled={order.status !== 'dispatching'}
             >
               {t('Confirmar que o pedido foi entregue ao cliente')}
-            </Button>
+            </Button> */}
           </>
         ) : (
           <>
+            <SectionTitle mt="0">
+              {t('Logística fora da rede AppJusto')}
+            </SectionTitle>
             <Text mt="2">
               {t(
                 'Não foi possível encontrar entregadores disponíveis na nossa rede. Um entregador de outra rede fará a retirada. A equipe AppJusto está monitorando o pedido e concluirá o mesmo após a realização da entrega.'
