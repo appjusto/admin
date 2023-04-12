@@ -108,8 +108,8 @@ export const OrderBaseDrawer = ({
   const cannotCancelOrder = React.useMemo(
     () =>
       typeof order?.courier?.id === 'string' ||
-      (isOutsourced && order?.fare?.courier?.payee !== 'business'),
-    [order?.courier?.id, isOutsourced, order?.fare?.courier?.payee]
+      (isOutsourced && logisticsIncluded),
+    [order?.courier?.id, isOutsourced, logisticsIncluded]
   );
   const showFooter = React.useMemo(
     () =>
