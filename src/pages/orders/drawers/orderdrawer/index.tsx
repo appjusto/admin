@@ -37,13 +37,10 @@ export const OrderDrawer = (props: Props) => {
   //context
   const { onClose } = props;
   const { dispatchAppRequestResult } = useContextAppRequests();
-  // const query = useQuery();
   const { orderId } = useParams<Params>();
   const { business } = useContextBusiness();
   const {
     order,
-    updateOrder,
-    updateResult,
     cancelOrder,
     cancelResult,
     orderIssues,
@@ -134,11 +131,6 @@ export const OrderDrawer = (props: Props) => {
     content: () => printComponent.current,
   });
   // side effects
-  // React.useEffect(() => {
-  //   if (!query || isOutsourceDelivery !== undefined) return;
-  //   if (order?.dispatchingStatus === 'outsourced') setIsOutsourceDelivery(true);
-  //   if (query.get('outsource')) setIsOutsourceDelivery(true);
-  // }, [query, isOutsourceDelivery, order]);
   React.useEffect(() => {
     if (!cancelResult.isSuccess) return;
     onClose();
@@ -170,12 +162,7 @@ export const OrderDrawer = (props: Props) => {
             />
           ) : (
             <>
-              <Outsourced
-                order={order}
-                canOutsource={canOutsource}
-                updateOrderStatus={(status) => updateOrder({ status })}
-                isLoading={updateResult.isLoading}
-              />
+              <Outsourced order={order} canOutsource={canOutsource} />
               {showDeliveryInfos && <DeliveryInfos order={order!} />}
               {order?.status === 'ready' && order.fulfillment === 'take-away' && (
                 <Box

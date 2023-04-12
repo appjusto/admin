@@ -21,6 +21,7 @@ export default class FirebaseRefs {
   getCancelOrderCallable = () => httpsCallable(this.functions, 'cancelOrder');
   getMatchOrderCallable = () => httpsCallable(this.functions, 'matchOrder');
   getDropOrderCallable = () => httpsCallable(this.functions, 'dropOrder');
+  getUpdateOrderCallable = () => httpsCallable(this.functions, 'updateOrder');
   getOutsourceDeliveryQuotationCallable = () =>
     httpsCallable(this.functions, 'getOutsourceDeliveryQuotation');
   getOutsourceDeliveryCallable = () =>

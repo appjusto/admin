@@ -97,8 +97,10 @@ export const OrderBaseDrawer = ({
     [order?.fare?.courier?.payee]
   );
   const showMatchingTab = React.useMemo(
-    () => order?.fulfillment === 'delivery' && logisticsIncluded,
-    [order?.fulfillment, logisticsIncluded]
+    () =>
+      order?.fulfillment === 'delivery' &&
+      (logisticsIncluded || order.dispatchingStatus === 'outsourced'),
+    [order?.fulfillment, logisticsIncluded, order?.dispatchingStatus]
   );
   const isChatMessages = React.useMemo(
     () => order?.flags && order.flags.includes('chat'),

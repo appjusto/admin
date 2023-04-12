@@ -2,6 +2,7 @@ import { Order, OutsourceAccountType, WithId } from '@appjusto/types';
 import {
   Box,
   Button,
+  Center,
   Checkbox,
   Flex,
   HStack,
@@ -9,9 +10,11 @@ import {
   Radio,
   RadioGroup,
   Text,
+  Tooltip,
 } from '@chakra-ui/react';
 import { useGetOutsourceDelivery } from 'app/api/order/useGetOutsourceDelivery';
 import { useGetOutsourceDeliveryQuotation } from 'app/api/order/useGetOutsourceDeliveryQuotation';
+import { useGetUpdateOrder } from 'app/api/order/useGetUpdateOrder';
 import { useObserveOrderLalamoveOrders } from 'app/api/order/useObserveOrderLalamoveOrders';
 import { useObserveOrderLalamoveQuotations } from 'app/api/order/useObserveOrderLalamoveQuotations';
 import { useContextFirebaseUser } from 'app/state/auth/context';
@@ -25,7 +28,7 @@ import {
 } from 'common/components/form/input/pattern-input/formatters';
 import { numbersOnlyParser } from 'common/components/form/input/pattern-input/parsers';
 import React from 'react';
-import { MdOutlineFileCopy } from 'react-icons/md';
+import { MdOutlineChangeCircle } from 'react-icons/md';
 import { formatCurrency } from 'utils/formatters';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../../generics/SectionTitle';
@@ -60,6 +63,7 @@ export const OutsouceDelivery = ({
     updateOutsourcingCourierInfos,
     updateOutsourcingCourierInfosResult,
   } = useGetOutsourceDelivery(order?.id);
+  const { getUpdateOrder, getUpdateOrderResult } = useGetUpdateOrder(order?.id);
   // state
   const [isOutsourcing, setIsOutsourcing] = React.useState<boolean>(false);
   const [outsourcingAccountType, setOutsourcingAccountType] =
@@ -71,7 +75,14 @@ export const OutsouceDelivery = ({
   const [outsourcingCourierPhone, setOutsourcingCourierPhone] =
     React.useState('');
   const [isCopied, setIsCopied] = React.useState(false);
+  React.useState('');
+  const [isChangingAccountType, setIsChangingAccountType] =
+    React.useState(false);
   // helpers
+  const isOutsourcedByBusiness = React.useMemo(
+    () => order?.fare?.courier?.payee === 'business',
+    [order?.fare?.courier?.payee]
+  );
   const isExternalQuotation = React.useMemo(
     () =>
       getExternalQuotationStatus(
@@ -115,6 +126,10 @@ export const OutsouceDelivery = ({
     () => isBackofficeSuperuser && isOrderStaff,
     [isBackofficeSuperuser, isOrderStaff]
   );
+  const canChangeAccountType = React.useMemo(
+    () => isOrderStaff && !order?.courier?.name,
+    [isOrderStaff, order?.courier?.name]
+  );
   // handlers
   const handleOutsourceQuotation = () => {
     try {
@@ -143,6 +158,10 @@ export const OutsouceDelivery = ({
         priorityFee,
       });
     } catch (error) {}
+  };
+  const handleChangeAccountType = async () => {
+    const accountType = isOutsourcedByBusiness ? 'platform' : 'business';
+    await getUpdateOrder({ accountType });
   };
   const copyToClipboard = () => {
     if (!lastLalamoveOrder?.order.shareLink) return;
@@ -195,6 +214,10 @@ export const OutsouceDelivery = ({
     const autoFill = extra < 400 ? (extra === 0 ? 0 : 400) : extra;
     setAdditionalValue(autoFill);
   }, [extra]);
+  React.useEffect(() => {
+    if (!getUpdateOrderResult.isSuccess) return;
+    setIsChangingAccountType(false);
+  }, [getUpdateOrderResult.isSuccess]);
   // UI
   if (!isOutsourcing) {
     return (
@@ -215,6 +238,43 @@ export const OutsouceDelivery = ({
       </Button>
     );
   }
+  if (isChangingAccountType) {
+    return (
+      <Box mt="4" border="2px solid #FFBE00" borderRadius="lg" bg="" p="4">
+        <SectionTitle mt="0">
+          {t('Logística fora da rede ativada')}
+        </SectionTitle>
+        <Text mt="2">
+          {t(
+            `Deseja transferir a responsabilidade pela entrega para ${
+              isOutsourcedByBusiness ? 'a' : 'o'
+            } `
+          )}
+          <Text as="span" fontWeight="700">
+            {isOutsourcedByBusiness ? 'Plataforma' : 'Restaurante'}
+          </Text>
+          ?
+        </Text>
+        <HStack mt="6" justifyContent="flex-end">
+          <Button
+            mt="0"
+            variant="dangerLight"
+            onClick={() => setIsChangingAccountType(false)}
+          >
+            {t('Cancelar')}
+          </Button>
+          <Button
+            mt="0"
+            onClick={handleChangeAccountType}
+            isLoading={getUpdateOrderResult.isLoading}
+            loadingText={t('Confirmando')}
+          >
+            {t('Confirmar')}
+          </Button>
+        </HStack>
+      </Box>
+    );
+  }
   return (
     <>
       {order?.dispatchingStatus === 'outsourced' ? (
@@ -222,36 +282,50 @@ export const OutsouceDelivery = ({
           <SectionTitle mt="0">
             {t('Logística fora da rede ativada')}
           </SectionTitle>
-          <Text mt="4">
-            {t('Responsável: ')}
-            <Text as="span" fontWeight="700">
-              {order?.fare?.courier?.payee === 'business'
-                ? t('Restaurante')
-                : t('Plataforma')}
+          <HStack mt="4" alignItems="flex-end">
+            <Text>
+              {t('Responsável: ')}
+              <Text as="span" fontWeight="700">
+                {isOutsourcedByBusiness ? t('Restaurante') : t('Plataforma')}
+              </Text>
             </Text>
-          </Text>
-          <Text mt="2">
-            {t('Id externo: ')}
-            <Text as="span" fontWeight="700">
-              {lastLalamoveOrder?.order.id ?? 'N/E'}
-            </Text>
-          </Text>
-          {lastLalamoveOrder?.order.shareLink && (
-            <Text
-              mt="2"
-              fontWeight="700"
-              textDecor="underline"
-              cursor="pointer"
-              onClick={copyToClipboard}
-            >
-              {t('Copiar link externo')}
-              <Icon
-                ml="1"
-                mb="-0.5"
-                as={MdOutlineFileCopy}
-                color={isCopied ? 'green.700' : 'black'}
-              />
-            </Text>
+            {canChangeAccountType && (
+              <Tooltip label={t('Trocar responsável')} hasArrow>
+                <Center>
+                  <Icon
+                    as={MdOutlineChangeCircle}
+                    w="6"
+                    h="6"
+                    cursor="pointer"
+                    _hover={{ color: 'green.600' }}
+                    onClick={() => setIsChangingAccountType(true)}
+                  />
+                </Center>
+              </Tooltip>
+            )}
+          </HStack>
+          {!isOutsourcedByBusiness && (
+            <>
+              <Text mt="2">
+                {t('Id externo: ')}
+                <Text as="span" fontWeight="700">
+                  {lastLalamoveOrder?.order.id ?? 'N/E'}
+                </Text>
+              </Text>
+              {lastLalamoveOrder?.order.shareLink && (
+                <Text
+                  mt="2"
+                  w="fit-content"
+                  fontWeight="700"
+                  textDecor="underline"
+                  cursor="pointer"
+                  color={isCopied ? 'green.600' : 'inherit'}
+                  onClick={copyToClipboard}
+                >
+                  {t('Copiar link externo')}
+                </Text>
+              )}
+            </>
           )}
           {isOrderActive && order.fare?.courier?.payee !== 'business' && (
             <Text mt="2">

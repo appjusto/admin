@@ -1,4 +1,4 @@
-import { Order, OrderStatus, WithId } from '@appjusto/types';
+import { Order, WithId } from '@appjusto/types';
 import { Box, Button, HStack, Text } from '@chakra-ui/react';
 import { useGetOutsourceDelivery } from 'app/api/order/useGetOutsourceDelivery';
 import { CustomInput } from 'common/components/form/input/CustomInput';
@@ -10,16 +10,9 @@ import { t } from 'utils/i18n';
 interface OutsourcedProps {
   order?: WithId<Order> | null;
   canOutsource?: boolean;
-  updateOrderStatus(status: OrderStatus): void;
-  isLoading: boolean;
 }
 
-export const Outsourced = ({
-  order,
-  canOutsource,
-  updateOrderStatus,
-  isLoading,
-}: OutsourcedProps) => {
+export const Outsourced = ({ order, canOutsource }: OutsourcedProps) => {
   // context
   const {
     getOutsourceDelivery,

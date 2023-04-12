@@ -20,6 +20,7 @@ import {
   OutsourceAccountType,
   OutsourceDeliveryPayload,
   ProfileNote,
+  UpdateOrderPayload,
   WithId,
 } from '@appjusto/types';
 import {
@@ -824,6 +825,16 @@ export default class OrderApi {
       comment,
     };
     return await this.refs.getDropOrderCallable()(payload);
+  }
+
+  async getUpdateOrder(orderId: string, accountType: OutsourceAccountType) {
+    const payload: UpdateOrderPayload = {
+      meta: { version: '1' }, // TODO: pass correct version on
+      orderId,
+      action: 'update-fare-courier-payee',
+      payee: accountType,
+    };
+    return await this.refs.getUpdateOrderCallable()(payload);
   }
 
   async getOutsourceDelivery(
