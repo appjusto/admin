@@ -4,6 +4,7 @@ import {
   Circle,
   Flex,
   HStack,
+  Icon,
   Image,
   Link,
   Text,
@@ -13,6 +14,8 @@ import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { useOrdersContext } from 'app/state/order';
 import logo from 'common/img/logo.svg';
+import React from 'react';
+import { MdErrorOutline } from 'react-icons/md';
 import { Link as RouterLink, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import packageInfo from '../../../package.json';
@@ -26,6 +29,11 @@ export const OrdersHeader = () => {
   const { isBusinessOpen } = useOrdersContext();
   // helpers
   const isBusinessAvailable = business?.status === 'available';
+  const statusLabel = React.useMemo(() => {
+    if (!business?.enabled) return 'Restaurante invisível';
+    if (isBusinessOpen) return 'Restaurante aberto';
+    else return 'Restaurante fechado';
+  }, [business?.enabled, isBusinessOpen]);
   // UI
   return (
     <Flex
@@ -53,9 +61,28 @@ export const OrdersHeader = () => {
               fontWeight="700"
               lineHeight="22px"
             >
-              {isBusinessOpen
-                ? t('Restaurante aberto')
-                : t('Restaurante fechado')}
+              {statusLabel}
+              {!business?.enabled && (
+                <Tooltip
+                  placement="right"
+                  bg="yellow"
+                  color="black"
+                  hasArrow
+                  label={t(
+                    'O restaurante não aparecerá para seus clientes. Para deixá-lo visível, vá até a seção de "visibilidade" no menu "operação" ou contate o administrador desta unidade.'
+                  )}
+                >
+                  <Text as="span" ml="2">
+                    <Icon
+                      mb="-2px"
+                      w="16px"
+                      h="16px"
+                      cursor="pointer"
+                      as={MdErrorOutline}
+                    />
+                  </Text>
+                </Tooltip>
+              )}
               <Text
                 ml="2"
                 as="span"
