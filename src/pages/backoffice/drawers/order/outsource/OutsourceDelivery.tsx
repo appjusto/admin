@@ -113,22 +113,26 @@ export const OutsouceDelivery = ({
     () => (isBackofficeSuperuser && isOrderStaff ? 'inline-block' : 'none'),
     [isBackofficeSuperuser, isOrderStaff]
   );
-  const getCourierInfoButtonDisplay = React.useMemo(
+  const getCourierInfoButtonIsVisible = React.useMemo(
     () =>
       isBackofficeSuperuser &&
       isOrderStaff &&
-      typeof lastLalamoveOrder?.id === 'string'
-        ? 'flex'
-        : 'none',
-    [isBackofficeSuperuser, isOrderStaff, lastLalamoveOrder?.id]
+      !isOutsourcedByBusiness &&
+      typeof lastLalamoveOrder?.id === 'string',
+    [
+      isBackofficeSuperuser,
+      isOrderStaff,
+      isOutsourcedByBusiness,
+      lastLalamoveOrder?.id,
+    ]
   );
   const canUpdateCourierInfos = React.useMemo(
     () => isBackofficeSuperuser && isOrderStaff,
     [isBackofficeSuperuser, isOrderStaff]
   );
   const canChangeAccountType = React.useMemo(
-    () => isOrderStaff && !order?.courier?.name,
-    [isOrderStaff, order?.courier?.name]
+    () => isOrderStaff && !isOutsourcedByBusiness && !order?.courier?.name,
+    [isOrderStaff, isOutsourcedByBusiness, order?.courier?.name]
   );
   // handlers
   const handleOutsourceQuotation = () => {
@@ -160,8 +164,7 @@ export const OutsouceDelivery = ({
     } catch (error) {}
   };
   const handleChangeAccountType = async () => {
-    const accountType = isOutsourcedByBusiness ? 'platform' : 'business';
-    await getUpdateOrder({ accountType });
+    await getUpdateOrder({ accountType: 'business' });
   };
   const copyToClipboard = () => {
     if (!lastLalamoveOrder?.order.shareLink) return;
@@ -244,14 +247,13 @@ export const OutsouceDelivery = ({
         <SectionTitle mt="0">
           {t('Logística fora da rede ativada')}
         </SectionTitle>
+        <Text mt="4" fontWeight="700">
+          {t('A troca de responsabilidade não poderá ser revertida!')}
+        </Text>
         <Text mt="2">
-          {t(
-            `Deseja transferir a responsabilidade pela entrega para ${
-              isOutsourcedByBusiness ? 'a' : 'o'
-            } `
-          )}
+          {t(' Deseja transferir a responsabilidade pela entrega para o ')}
           <Text as="span" fontWeight="700">
-            {isOutsourcedByBusiness ? 'Plataforma' : 'Restaurante'}
+            {'Restaurante'}
           </Text>
           ?
         </Text>
@@ -336,18 +338,19 @@ export const OutsouceDelivery = ({
           )}
           <Flex mt="4" justifyContent="space-between">
             <Text fontWeight="700">{t('Dados do entregador')}</Text>
-            <Button
-              display={getCourierInfoButtonDisplay}
-              variant="secondary"
-              size="md"
-              minW="140px"
-              onClick={getOutsourcedCourierInfos}
-              isLoading={outsourceDeliveryResult.isLoading}
-              loadingText={t('Buscando')}
-              isDisabled={!isOrderActive}
-            >
-              {t('Buscar Dados')}
-            </Button>
+            {getCourierInfoButtonIsVisible && (
+              <Button
+                variant="secondary"
+                size="md"
+                minW="140px"
+                onClick={getOutsourcedCourierInfos}
+                isLoading={outsourceDeliveryResult.isLoading}
+                loadingText={t('Buscando')}
+                isDisabled={!isOrderActive}
+              >
+                {t('Buscar Dados')}
+              </Button>
+            )}
           </Flex>
           {canUpdateCourierInfos ? (
             <HStack mt="2">

@@ -45,11 +45,11 @@ export const Outsourced = ({ order, canOutsource }: OutsourcedProps) => {
         {order.fare?.courier?.payee === 'business' ? (
           <>
             <SectionTitle mt="0">
-              {t('Entrega própria do restaurante')}
+              {t('Entrega assumida pelo restaurante')}
             </SectionTitle>
             <Text mt="2">
               {t(
-                `A entrega será realizada pelo próprio restaurante. Sempre que possível, informe ao cliente o nome da pessoa que realizará a entrega.`
+                `A entrega será realizada pelo próprio restaurante. Sempre que possível, informe ao cliente o nome da pessoa que realizará a entrega e confirme que a entrega foi realizada ao final do fluxo.`
               )}
             </Text>
             <HStack mt="4">
