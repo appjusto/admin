@@ -1,7 +1,6 @@
 import { Order, OrderItem, WithId } from '@appjusto/types';
 import { Box, Flex, HStack, Image, Text } from '@chakra-ui/react';
-import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
-import { useContextBusinessId } from 'app/state/business/context';
+import { useContextBusiness } from 'app/state/business/context';
 import logoAppjusto from 'common/img/logo-black.svg';
 import { getOrderDestinationNeighborhood } from 'pages/orders/utils';
 import React from 'react';
@@ -76,8 +75,7 @@ export const OrderToPrinting = React.forwardRef<
   OrderToPrintProps
 >(({ businessName, order }, ref) => {
   // context
-  const businessId = useContextBusinessId();
-  const { logo } = useBusinessProfile(businessId);
+  const { logo } = useContextBusiness();
   // helpers
   const isAdditional =
     order?.destination?.additionalInfo &&

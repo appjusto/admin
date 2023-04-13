@@ -5,13 +5,16 @@ export const isNewValidOnboardingStep = (
   savedStep?: string,
   limit?: number
 ) => {
-  if (!currentStep || !savedStep) return false;
+  if (!currentStep) return false;
   const currentIndex =
     typeof currentStep === 'number'
       ? currentStep
       : parseInt(currentStep as string, 10);
   if (limit && currentIndex <= limit) return false;
-  if (savedStep === 'complete' || parseInt(savedStep, 10) > currentIndex)
+  if (
+    savedStep === 'complete' ||
+    (savedStep && parseInt(savedStep, 10) > currentIndex)
+  )
     return false;
   return true;
 };

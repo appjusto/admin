@@ -89,6 +89,11 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
   // refs
   const cepRef = React.useRef<HTMLInputElement>(null);
   const numberRef = React.useRef<HTMLInputElement>(null);
+  // helpers
+  const isApproved = React.useMemo(
+    () => business?.situation === 'approved',
+    [business?.situation]
+  );
   // handlers
   const onSubmitHandler = () => {
     let addressObj = {
@@ -202,7 +207,7 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
         <PageHeader
           title={t('Endereço do restaurante')}
           subtitle={t(
-            'O raio de entrega é calculado a partir do endereço do seu restaurante'
+            'Defina o endereço, o raio de entrega e o tempo médio de preparo'
           )}
         />
         <Flex flexGrow={0}>
@@ -218,6 +223,7 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
             value={cep}
             onValueChange={(value) => setCEP(value)}
             validationLength={8}
+            isDisabled={isApproved}
           />
         </Flex>
         <Stack mt="4" spacing={4} direction="row">
@@ -229,6 +235,7 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
             placeholder="UF"
             value={state}
             onChange={(ev) => setState(ev.target.value)}
+            isDisabled={isApproved}
           >
             {ufs.map((uf) => (
               <option key={uf.id} value={uf.sigla}>
@@ -243,7 +250,7 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
             placeholder={t('Sua cidade')}
             value={city}
             onChange={(ev) => setCity(ev.target.value)}
-            isDisabled={cities.length === 0}
+            isDisabled={cities.length === 0 || isApproved}
           >
             {cities.map((city) => (
               <option key={city} value={city}>
@@ -258,6 +265,7 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
           placeholder={t('Seu bairro')}
           value={neighborhood}
           onChange={(ev) => setNeighborhood(ev.target.value)}
+          isDisabled={isApproved}
           isRequired
         />
         <Flex flexDir={{ base: 'column', md: 'row' }}>
@@ -269,6 +277,7 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
             placeholder={t('Seu endereço')}
             value={address}
             onChange={(ev) => setAddress(ev.target.value)}
+            isDisabled={isApproved}
           />
           <Input
             isRequired
@@ -280,6 +289,7 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
             placeholder={t('000')}
             value={number}
             onChange={(ev) => setNumber(ev.target.value)}
+            isDisabled={isApproved}
           />
         </Flex>
         <Input
@@ -288,6 +298,7 @@ const DeliveryArea = ({ onboarding, redirect }: OnboardingProps) => {
           placeholder={t('Seu complemento')}
           value={additional}
           onChange={(ev) => setAdditional(ev.target.value)}
+          isDisabled={isApproved}
         />
         <Input
           id="delivery-instructions"

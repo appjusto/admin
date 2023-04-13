@@ -52,7 +52,7 @@ const initialState = [defaultPhone];
 const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   // context
   const { dispatchAppRequestResult } = useContextAppRequests();
-  const { business } = useContextBusiness();
+  const { business, logo, cover } = useContextBusiness();
   const queryClient = useQueryClient();
   const { path } = useRouteMatch();
   const history = useHistory();
@@ -86,12 +86,10 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   // helpers
   const isOnboarding = typeof onboarding === 'string';
   const blockImagesOnLoading = isOnboarding && isLoading;
-  // queries & mutations
+  // mutations
   const {
     createBusinessProfile,
     updateBusinessProfileWithImages,
-    logo,
-    cover,
     updateWithImagesResult,
   } = useBusinessProfile(business?.id, isOnboarding);
   const { isSuccess } = updateWithImagesResult;

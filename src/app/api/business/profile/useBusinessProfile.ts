@@ -3,7 +3,6 @@ import { useCustomMutation } from 'app/api/mutation/useCustomMutation';
 import { useContextApi } from 'app/state/api/context';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
-import { useQuery } from 'react-query';
 
 export const useBusinessProfile = (
   businessId?: string,
@@ -14,21 +13,6 @@ export const useBusinessProfile = (
   const { setBusinessId } = useContextBusiness();
   // const businessId = business?.id;
   const { refreshUserToken } = useContextFirebaseUser();
-  // queries
-  const getBusinessLogoURL = () =>
-    businessId ? api.business().getBusinessLogoURL(businessId!) : null;
-  const { data: logo } = useQuery(
-    ['business:logo', businessId],
-    getBusinessLogoURL
-  );
-  const getBusinessCoverURL = () =>
-    businessId
-      ? api.business().getBusinessCoverURL(businessId!, '1008x360')
-      : null;
-  const { data: cover } = useQuery(
-    ['business:cover', businessId],
-    getBusinessCoverURL
-  );
   // mutations
   const { mutateAsync: createBusinessProfile } = useCustomMutation(
     async () => {
@@ -99,8 +83,6 @@ export const useBusinessProfile = (
     );
   // return
   return {
-    logo,
-    cover,
     createBusinessProfile,
     updateBusinessProfile,
     updateBusinessProfileWithImages,

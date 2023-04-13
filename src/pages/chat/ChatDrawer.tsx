@@ -14,7 +14,6 @@ import {
   Textarea,
   useToast,
 } from '@chakra-ui/react';
-import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 // import { Participants, useOrderChat } from 'app/api/order/useOrderChat';
 import { useObserveBusinessOrderChatByType } from 'app/api/chat/useObserveBusinessOrderChatByType';
 // import { useUpdateChatMessage } from 'app/api/business/chat/useUpdateChatMessage';
@@ -49,8 +48,7 @@ export const ChatDrawer = ({ onClose, ...props }: ChatDrawerProps) => {
   //context
   const { getServerTime } = useContextServerTime();
   const { isBackofficeUser } = useContextFirebaseUser();
-  const { business } = useContextBusiness();
-  const { logo } = useBusinessProfile(business?.id);
+  const { logo } = useContextBusiness();
   const { orderId, counterpartId } = useParams<Params>();
   const { updateChatMessage } = useUpdateChatMessage();
   const {

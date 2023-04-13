@@ -11,6 +11,8 @@ import {
 } from '@appjusto/types';
 import { useFetchAreasByCity } from 'app/api/areas/useFetchAreasByCity';
 import { useObserveBannersByFlavor } from 'app/api/banners/useObserveBannersByFlavor';
+import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
+import { useBusinessProfileImages } from 'app/api/business/profile/useBusinessProfileImages';
 import { useObserveBusinessManagedBy } from 'app/api/business/profile/useObserveBusinessManagedBy';
 import { useObserveBusinessProfile } from 'app/api/business/profile/useObserveBusinessProfile';
 import { useObserveBusinessFleet } from 'app/api/fleet/useObserveBusinessFleet';
@@ -63,6 +65,8 @@ const watchedFields: (keyof Business)[] = [
 interface ContextProps {
   platformFees?: PlatformFees | null;
   business?: WithId<Business> | null;
+  logo?: string | null;
+  cover?: string | null;
   clearBusiness(): void;
   setBusinessId(businessId?: string | null): void;
   updateContextBusinessOrderPrint(status: boolean): void;
@@ -71,7 +75,7 @@ interface ContextProps {
   businessManagers?: ManagerWithRole[];
   setIsGetManagersActive: React.Dispatch<React.SetStateAction<boolean>>;
   fetchManagers(): void;
-  logisticsAvailable: AreaLogistics;
+  logisticsAvailable?: AreaLogistics;
   insuranceAvailable?: BusinessService;
   banners?: WithId<Banner>[] | null;
   businessFleet?: WithId<Fleet> | null;
@@ -95,13 +99,15 @@ export const BusinessProvider = ({ children }: Props) => {
   const hookBusiness = useObserveBusinessProfile(businessId);
   // state
   const [business, setBusiness] = React.useState<WithId<Business> | null>();
+  const { logo, cover } = useBusinessProfileImages(business?.id);
+  const { updateBusinessProfile } = useBusinessProfile(business?.id, false);
   const [isGetManagersActive, setIsGetManagersActive] = React.useState(false);
   const businessCityAreas = useFetchAreasByCity(
     business?.businessAddress?.state,
     business?.businessAddress?.city
   );
   const [logisticsAvailable, setLogisticsAvailable] =
-    React.useState<AreaLogistics>('none');
+    React.useState<AreaLogistics>();
   const [insuranceAvailable, setInsuranceAvailable] =
     React.useState<BusinessService>();
   const banners = useObserveBannersByFlavor(
@@ -123,6 +129,12 @@ export const BusinessProvider = ({ children }: Props) => {
     setBusinessId(null);
     setBusiness(null);
   }, []);
+  const clearBusinessLogistics = React.useCallback(() => {
+    const services =
+      business?.services?.filter((service) => service.name !== 'logistics') ??
+      [];
+    updateBusinessProfile({ services });
+  }, [business?.services, updateBusinessProfile]);
   const setBusinessIdByBusinesses = React.useCallback(() => {
     if (!businesses) return;
     setBusinessId(businesses.find(() => true)?.id ?? null);
@@ -188,9 +200,9 @@ export const BusinessProvider = ({ children }: Props) => {
     setBusinessIdByBusinesses();
   }, [user?.email, isBackofficeUser, businessId, setBusinessIdByBusinesses]);
   React.useEffect(() => {
-    if (businessCityAreas?.length === 0) return;
-    const logistics = businessCityAreas[0].logistics;
+    const logistics = businessCityAreas[0]?.logistics;
     if (logistics) setLogisticsAvailable(logistics);
+    else setLogisticsAvailable('none');
   }, [businessCityAreas]);
   React.useEffect(() => {
     if (!platformFees) return;
@@ -209,12 +221,21 @@ export const BusinessProvider = ({ children }: Props) => {
     };
     setInsuranceAvailable(insurance);
   }, [businessCityAreas, platformFees]);
+  React.useEffect(() => {
+    if (logisticsAvailable !== 'none') return;
+    const logistic = business?.services?.find(
+      (service) => service.name === 'logistics'
+    );
+    if (logistic) clearBusinessLogistics();
+  }, [logisticsAvailable, business?.services, clearBusinessLogistics]);
   // provider
   return (
     <BusinessContext.Provider
       value={{
         platformFees,
         business,
+        logo,
+        cover,
         clearBusiness,
         setBusinessId,
         updateContextBusinessOrderPrint,

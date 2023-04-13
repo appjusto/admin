@@ -36,7 +36,7 @@ export const Checklist = ({
     if (disabled) return;
     if (shouldUpdate) {
       updateBusinessProfile({
-        onboarding: String(currentStepIndex),
+        onboarding: currentStepIndex.toString(),
       });
     }
   }, [disabled, shouldUpdate, updateBusinessProfile, currentStepIndex]);
