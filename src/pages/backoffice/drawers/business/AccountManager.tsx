@@ -39,7 +39,14 @@ export const AccountManager = () => {
     userAbility?.cannot('update', 'account_manager')
   );
   // helpers
-  const isHead = userAbility?.can('update', 'account_manager');
+  const canReadAccountManager = React.useMemo(
+    () => userAbility?.can('update', 'businesses'),
+    [userAbility]
+  );
+  const isHead = React.useMemo(
+    () => userAbility?.can('update', 'account_manager'),
+    [userAbility]
+  );
   // handlers
   const handleUpdateAccountManager = () => {
     if (!user?.uid) return;
@@ -50,7 +57,7 @@ export const AccountManager = () => {
     <Box mt="6">
       <SectionTitle>{t('Gerente da conta')}</SectionTitle>
       {business?.accountManagerId ? (
-        isHead || user?.uid === business.accountManagerId ? (
+        canReadAccountManager ? (
           <AccountManagerCard
             accountManagerId={business.accountManagerId}
             canRemove={isHead || user?.uid === business.accountManagerId}
