@@ -2,6 +2,7 @@ import { Business, BusinessPhone } from '@appjusto/types';
 import { Box, Text, useBreakpoint } from '@chakra-ui/react';
 import * as cnpjutils from '@fnando/cnpj';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
+import { useBusinessProfileImages } from 'app/api/business/profile/useBusinessProfileImages';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextAppRequests } from 'app/state/requests/context';
@@ -52,7 +53,8 @@ const initialState = [defaultPhone];
 const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
   // context
   const { dispatchAppRequestResult } = useContextAppRequests();
-  const { business, logo, cover } = useContextBusiness();
+  const { business } = useContextBusiness();
+  const { logo, cover } = useBusinessProfileImages(business?.id);
   const queryClient = useQueryClient();
   const { path } = useRouteMatch();
   const history = useHistory();
@@ -160,9 +162,6 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
         coverFilesToSave,
       });
       setIsLoading(false);
-      // invalidate logo query
-      if (logoFiles)
-        queryClient.invalidateQueries(['business:logo', business?.id]);
     } catch (error) {
       setIsLoading(false);
     }
@@ -210,6 +209,10 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
       if (business.coverImageExists && cover) setCoverExists(true);
     }
   }, [business, cover, logo]);
+  React.useEffect(() => {
+    if (!isSuccess) return;
+    queryClient.invalidateQueries({ queryKey: ['business_image'] });
+  }, [isSuccess, queryClient]);
   // UI
   const breakpoint = useBreakpoint();
   const coverWidth =

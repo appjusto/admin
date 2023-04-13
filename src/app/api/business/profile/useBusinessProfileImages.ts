@@ -8,7 +8,7 @@ export const useBusinessProfileImages = (businessId?: string) => {
   const getBusinessLogoURL = () =>
     businessId ? api.business().getBusinessLogoURL(businessId!) : null;
   const { data: logo } = useQuery(
-    ['business:logo', businessId],
+    ['business_image', { type: 'logo', businessId }],
     getBusinessLogoURL
   );
   const getBusinessCoverURL = () =>
@@ -16,7 +16,7 @@ export const useBusinessProfileImages = (businessId?: string) => {
       ? api.business().getBusinessCoverURL(businessId!, '1008x360')
       : null;
   const { data: cover } = useQuery(
-    ['business:cover', businessId],
+    ['business_image', { type: 'cover', businessId }],
     getBusinessCoverURL
   );
   // return
