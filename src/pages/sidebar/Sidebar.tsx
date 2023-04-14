@@ -1,9 +1,10 @@
-import { Box, Circle, Flex, Image } from '@chakra-ui/react';
+import { Box, Center, Flex, Image, Text } from '@chakra-ui/react';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { ImageFbLoading } from 'common/components/ImageFbLoading';
 import appjustoLogo from 'common/img/logo.svg';
 import { useRouteMatch } from 'react-router';
+import { t } from 'utils/i18n';
 import { BackOfficeLinks } from './BackOfficeLinks';
 import { BusinessStatus } from './BusinessStatus';
 import { Links } from './Links';
@@ -33,8 +34,9 @@ const Sidebar = () => {
         minW="218.24px"
         h="100vh"
         backgroundColor="#EEEEEE"
+        overflowY="auto"
       >
-        <Box w="fill-available" pb="24" overflowY="auto">
+        <Box w="fill-available" pb="24">
           {isBackOffice ? (
             <Flex mt="6" px="4">
               <Box>
@@ -48,19 +50,28 @@ const Sidebar = () => {
               justifyContent="space-around"
               alignItems="center"
             >
-              {logo ? (
-                <Box w="60px" h="60px">
+              <Center
+                w="60px"
+                h="60px"
+                bgColor="gray.400"
+                borderRadius="30px"
+                overflow="hidden"
+              >
+                {logo ? (
                   <Image
                     src={logo}
-                    borderRadius="30px"
+                    width="60px"
+                    height="60px"
                     fallback={
                       <ImageFbLoading w="60px" h="60px" borderRadius="30px" />
                     }
                   />
-                </Box>
-              ) : (
-                <Circle size="60px" bg="gray.400" />
-              )}
+                ) : (
+                  <Text color="gray.600" fontSize="xs">
+                    {t('Logo')}
+                  </Text>
+                )}
+              </Center>
               <Box>
                 <Image src={appjustoLogo} height="36px" />
               </Box>

@@ -384,16 +384,14 @@ export const OrderBaseDrawer = ({
                   </>
                 )}
               </Flex>
-              {!isScheduled && (
-                <Flex flexDir="column">
-                  <CustomButton
-                    label="Abrir chat com o cliente"
-                    link={`/app/orders/chat/${order?.id}/${order?.consumer?.id}`}
-                    size="sm"
-                    variant="outline"
-                  />
-                </Flex>
-              )}
+              <Flex flexDir="column">
+                <CustomButton
+                  label="Abrir chat com o cliente"
+                  link={`/app/orders/chat/${order?.id}/${order?.consumer?.id}`}
+                  size="sm"
+                  variant="outline"
+                />
+              </Flex>
             </Flex>
             {order?.status === 'confirmed' && (
               <Flex

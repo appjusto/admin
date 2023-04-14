@@ -17,6 +17,7 @@ import { useUserCanReadEntity } from '../auth/useUserCanReadEntity';
 import { useCustomMutation } from '../mutation/useCustomMutation';
 
 const orderActivedStatuses = [
+  'scheduled',
   'confirmed',
   'preparing',
   'ready',
