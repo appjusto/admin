@@ -155,7 +155,7 @@ export const OrderDetails = ({ order }: DetailsProps) => {
               <Text as="span" color="black">
                 {courierPaid ? formatCurrency(courierPaid) : 'N/E'}
                 {order?.fare?.courier?.payee === 'business' &&
-                  ` (${t('Assumido pelo restaurante')})`}
+                  ` (${t('recebido pelo restaurante')})`}
               </Text>
             </Text>
           )}
