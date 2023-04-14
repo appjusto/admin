@@ -54,7 +54,7 @@ const Sidebar = () => {
                 w="60px"
                 h="60px"
                 bgColor="gray.400"
-                borderRadius="30px"
+                borderRadius="lg"
                 overflow="hidden"
               >
                 {logo ? (
