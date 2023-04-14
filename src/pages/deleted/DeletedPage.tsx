@@ -13,13 +13,14 @@ import { t } from 'utils/i18n';
 const DeletedPage = () => {
   // context
   const history = useHistory();
-  const { businesses, setBusinessIdByBusinesses, setBusinessId } = useContextBusiness();
+  const { businesses, setBusinessIdByBusinesses, changeBusinessId } =
+    useContextBusiness();
   // helpers
   const businessesIsEmpty = businesses?.length === 0;
   // handlers
   const handleRedirect = (path: '/onboarding' | '/app') => {
     if (path === '/app') setBusinessIdByBusinesses();
-    else if (path === '/onboarding') setBusinessId(null);
+    else if (path === '/onboarding') changeBusinessId(null);
     return history.push(path);
   };
   // UI
@@ -57,23 +58,39 @@ const DeletedPage = () => {
             >
               {t('O seu restaurante foi excluido')}
             </Text>
-            <Text mt="4" fontSize="16px" lineHeight="22px" fontWeight="500" textAlign="center">
+            <Text
+              mt="4"
+              fontSize="16px"
+              lineHeight="22px"
+              fontWeight="500"
+              textAlign="center"
+            >
               {t(
                 'Lamentamos que você tenha excluido o seu restaurante do AppJusto. Nosso objetivo é ser uma alternativa de delivery mais justa para todos.'
               )}{' '}
               {businessesIsEmpty && (
                 <Text as="span">
-                  {t('Desejamos sorte e esperamos que junte-se a nós em breve!')}
+                  {t(
+                    'Desejamos sorte e esperamos que junte-se a nós em breve!'
+                  )}
                 </Text>
               )}
             </Text>
             <Box mt="6">
               {businessesIsEmpty ? (
-                <Button w="100%" h="60px" onClick={() => handleRedirect('/onboarding')}>
+                <Button
+                  w="100%"
+                  h="60px"
+                  onClick={() => handleRedirect('/onboarding')}
+                >
                   {t('Criar um novo restaurante')}
                 </Button>
               ) : (
-                <Button w="100%" h="60px" onClick={() => handleRedirect('/app')}>
+                <Button
+                  w="100%"
+                  h="60px"
+                  onClick={() => handleRedirect('/app')}
+                >
                   {t('Gerenciar seu outro restaurante')}
                 </Button>
               )}
@@ -97,9 +114,19 @@ const DeletedPage = () => {
             >
               {t('Vamos manter contato')}
             </Text>
-            <Text mt="4" fontSize="16px" lineHeight="22px" fontWeight="500" textAlign="center">
+            <Text
+              mt="4"
+              fontSize="16px"
+              lineHeight="22px"
+              fontWeight="500"
+              textAlign="center"
+            >
               {t('Para falar com o AppJusto, mande um e-mail para')}{' '}
-              <Link fontWeight="700" textDecor="underline" href="mailto:contato@appjusto.com.br">
+              <Link
+                fontWeight="700"
+                textDecor="underline"
+                href="mailto:contato@appjusto.com.br"
+              >
                 contato@appjusto.com.br
               </Link>{' '}
               {t('ou fale direto conosco no WhatsApp em')}{' '}

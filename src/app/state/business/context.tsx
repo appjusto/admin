@@ -68,7 +68,7 @@ interface ContextProps {
   logo?: string | null;
   cover?: string | null;
   clearBusiness(): void;
-  setBusinessId(businessId?: string | null): void;
+  changeBusinessId(businessId?: string | null, clearServices?: boolean): void;
   updateContextBusinessOrderPrint(status: boolean): void;
   businesses?: WithId<Business>[];
   setBusinessIdByBusinesses(): void;
@@ -139,6 +139,16 @@ export const BusinessProvider = ({ children }: Props) => {
     if (!businesses) return;
     setBusinessId(businesses.find(() => true)?.id ?? null);
   }, [businesses]);
+  const changeBusinessId = React.useCallback(
+    (businessId: string, clearServices: boolean = true) => {
+      if (clearServices) {
+        setLogisticsAvailable(undefined);
+        setInsuranceAvailable(undefined);
+      }
+      setBusinessId(businessId);
+    },
+    []
+  );
   const updateContextBusiness = React.useCallback(
     (newState: WithId<Business> | null) => {
       if (!shouldUpdateState(business, newState, watchedFields)) return;
@@ -222,6 +232,7 @@ export const BusinessProvider = ({ children }: Props) => {
     setInsuranceAvailable(insurance);
   }, [businessCityAreas, platformFees]);
   React.useEffect(() => {
+    console.log('logisticsAvailable', logisticsAvailable);
     if (logisticsAvailable !== 'none') return;
     const logistic = business?.services?.find(
       (service) => service.name === 'logistics'
@@ -237,7 +248,7 @@ export const BusinessProvider = ({ children }: Props) => {
         logo,
         cover,
         clearBusiness,
-        setBusinessId,
+        changeBusinessId,
         updateContextBusinessOrderPrint,
         businesses,
         setBusinessIdByBusinesses,

@@ -15,7 +15,7 @@ export const CloneBusiness = () => {
   // context
   const history = useHistory();
   const { dispatchAppRequestResult } = useContextAppRequests();
-  const { business, setBusinessId } = useContextBusiness();
+  const { business, changeBusinessId } = useContextBusiness();
   const { cloneBusiness, cloneResult } = useBusinessProfile(business?.id);
   // state
   const [isCreating, setIsCreating] = React.useState<Creation>({
@@ -34,7 +34,7 @@ export const CloneBusiness = () => {
     const isFromScratch = isCreating.type === 'new';
     const newBusiness = await cloneBusiness(isFromScratch);
     if (newBusiness?.id) {
-      setBusinessId(newBusiness.id);
+      changeBusinessId(newBusiness.id);
       history.push('/app');
     }
   };

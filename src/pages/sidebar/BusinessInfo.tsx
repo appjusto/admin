@@ -8,7 +8,7 @@ import React from 'react';
 
 const BusinessInfo = (props: BoxProps) => {
   // context
-  const { business, setBusinessId, businesses } = useContextBusiness();
+  const { business, changeBusinessId, businesses } = useContextBusiness();
   // state
   const [managerBusinesses, setManagerBusinesses] = React.useState<
     BusinessSelectOptions[]
@@ -18,7 +18,7 @@ const BusinessInfo = (props: BoxProps) => {
   // handlers
   const handleSwitchBussines = (selected: BusinessSelectOptions) => {
     setSelectedBusiness(selected);
-    setBusinessId(selected.value);
+    changeBusinessId(selected.value);
   };
   // side effects
   React.useEffect(() => {

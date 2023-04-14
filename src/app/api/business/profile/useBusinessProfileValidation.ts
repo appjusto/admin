@@ -17,7 +17,7 @@ const initialState = {
 
 export const useBusinessProfileValidation = (businessId?: string) => {
   // context
-  const { business, setBusinessId, businessFleet } = useContextBusiness();
+  const { business, changeBusinessId, businessFleet } = useContextBusiness();
   const { manager, setManagerEmail } = useContextManagerProfile();
   const products = useObserveProducts(true, business?.id);
   const { bankAccount } = useBusinessBankAccount(business?.id);
@@ -26,8 +26,8 @@ export const useBusinessProfileValidation = (businessId?: string) => {
     React.useState(initialState);
   // side effects
   React.useEffect(() => {
-    if (businessId) setBusinessId(businessId);
-  }, [businessId, setBusinessId]);
+    if (businessId) changeBusinessId(businessId);
+  }, [businessId, changeBusinessId]);
   React.useEffect(() => {
     if (business?.managers) setManagerEmail(business.managers[0]);
   }, [business, setManagerEmail]);

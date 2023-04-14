@@ -10,14 +10,14 @@ export const useBusinessProfile = (
 ) => {
   // context
   const api = useContextApi();
-  const { setBusinessId } = useContextBusiness();
+  const { changeBusinessId } = useContextBusiness();
   // const businessId = business?.id;
   const { refreshUserToken } = useContextFirebaseUser();
   // mutations
   const { mutateAsync: createBusinessProfile } = useCustomMutation(
     async () => {
       const business = await api.business().createBusinessProfile();
-      setBusinessId(business.id);
+      changeBusinessId(business.id, false);
       if (refreshUserToken) await refreshUserToken(business.id);
       return console.log('Restaurante criado!');
     },

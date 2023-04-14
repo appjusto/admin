@@ -50,7 +50,7 @@ export const BusinessBaseDrawer = ({
   const { pathname } = useLocation();
   const {
     business: adminBusiness,
-    setBusinessId,
+    changeBusinessId,
     clearBusiness,
   } = useContextBusiness();
   const {
@@ -86,8 +86,8 @@ export const BusinessBaseDrawer = ({
   const handlePersonification = React.useCallback(() => {
     if (!business?.id) return;
     setPersonificationStatus({ enabled: true, isLoading: true });
-    setBusinessId(business.id);
-  }, [business?.id, setBusinessId]);
+    changeBusinessId(business.id);
+  }, [business?.id, changeBusinessId]);
   // side effects
   React.useEffect(() => {
     clearBusiness();
