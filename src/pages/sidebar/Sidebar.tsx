@@ -26,6 +26,7 @@ const Sidebar = () => {
       w={{ lg: '22%', xl: '15.27%' }}
       minW="218.24px"
       maxW="220px"
+      backgroundColor="#EEEEEE"
     >
       <Box
         position="fixed"
@@ -33,10 +34,9 @@ const Sidebar = () => {
         w="max-content"
         minW="218.24px"
         h="100vh"
-        backgroundColor="#EEEEEE"
         overflowY="auto"
       >
-        <Box w="fill-available" pb="24">
+        <Box position="relative" w="fill-available" pb="16">
           {isBackOffice ? (
             <Flex mt="6" px="4">
               <Box>
