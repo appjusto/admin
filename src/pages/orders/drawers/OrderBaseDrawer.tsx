@@ -140,10 +140,13 @@ export const OrderBaseDrawer = ({
   );
   const primaryButtonLabel = React.useMemo(() => {
     if (order?.status === 'scheduled') return 'Avançar pedido';
-    if (order?.status === 'ready') return 'Entregar pedido';
+    if (order?.status === 'ready') {
+      if (isDelivery) return 'Despachar pedido';
+      return 'Entrega realizada';
+    }
     if (order?.status === 'dispatching') return 'Entrega realizada';
     return 'Pedido pronto';
-  }, [order?.status]);
+  }, [order?.status, isDelivery]);
   //handlers
   const handlePrint = React.useCallback(() => {
     if (printOrder) return printOrder();

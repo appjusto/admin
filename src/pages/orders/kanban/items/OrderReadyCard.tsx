@@ -58,14 +58,18 @@ export const OrderReadyCard = ({ order }: Props) => {
     () => logisticsIncluded && isDelivery && !isCurrierArrived && !isOutsourced,
     [logisticsIncluded, isDelivery, isCurrierArrived, isOutsourced]
   );
+  const readyBtnLabel = React.useMemo(() => {
+    if (isDelivery) return 'Despachar pedido';
+    return 'Entrega realizada';
+  }, [isDelivery]);
   // handlers
-  const handleOrderDispatching = () => {
-    if (order.fulfillment === 'delivery') {
+  const handleOrderDispatching = React.useCallback(() => {
+    if (isDelivery) {
       changeOrderStatus(order.id, 'dispatching');
     } else {
       changeOrderStatus(order.id, 'delivered');
     }
-  };
+  }, [isDelivery, changeOrderStatus, order.id]);
   // UI
   if (order.status === 'ready') {
     return (
@@ -171,7 +175,7 @@ export const OrderReadyCard = ({ order }: Props) => {
             onClick={handleOrderDispatching}
             isDisabled={btnIsDisabled}
           >
-            {t('Entregar pedido')}
+            {t(readyBtnLabel)}
           </Button>
         </Box>
       </Box>
