@@ -24,7 +24,7 @@ import PageFooter from 'pages/PageFooter';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
 import { MdInfo } from 'react-icons/md';
-import { Redirect } from 'react-router-dom';
+import { Redirect, useHistory } from 'react-router-dom';
 import { getBusinessService } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { CoverageItem } from './CoverageItem';
@@ -32,6 +32,7 @@ import { getBusinessInsuranceActivationDate } from './utils';
 
 const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
   // context
+  const { push } = useHistory();
   const { user, isBackofficeUser } = useContextFirebaseUser();
   const { getServerTime } = useContextServerTime();
   const { dispatchAppRequestResult } = useContextAppRequests();
@@ -98,12 +99,16 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
         requestId: 'insurance-page-error',
         message: { title: 'Nenhuma cobertura foi encontrada.' },
       });
-    if (isAccept && insuranceAccepted)
+    if (isAccept && insuranceAccepted) {
+      if (onboarding && redirect) {
+        return push(redirect);
+      }
       return dispatchAppRequestResult({
         status: 'error',
         requestId: 'insurance-page-error',
         message: { title: 'A cobertura já foi contratada.' },
       });
+    }
     if (!onboarding && !isAccept && !insuranceAccepted)
       return dispatchAppRequestResult({
         status: 'error',
