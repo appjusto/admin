@@ -6,7 +6,7 @@ export const useFetchAreasByCity = (state?: string, city?: string) => {
   // context
   const api = useContextApi();
   // state
-  const [areas, setAreas] = React.useState<Area[]>([]);
+  const [areas, setAreas] = React.useState<Area[] | null>();
   // side effects
   React.useEffect(() => {
     if (!api) return;

@@ -68,6 +68,7 @@ export default class AreasApi {
         where('city', '==', city)
       );
       const data = await getDocs(q);
+      if (data.empty) return null;
       return documentsAs<Area>(data.docs);
     } catch (error) {
       console.error(error);

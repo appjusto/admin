@@ -210,12 +210,17 @@ export const BusinessProvider = ({ children }: Props) => {
     setBusinessIdByBusinesses();
   }, [user?.email, isBackofficeUser, businessId, setBusinessIdByBusinesses]);
   React.useEffect(() => {
-    const logistics = businessCityAreas[0]?.logistics;
-    if (logistics) setLogisticsAvailable(logistics);
-    else setLogisticsAvailable('none');
+    if (businessCityAreas === undefined) return;
+    if (businessCityAreas === null) {
+      setLogisticsAvailable('none');
+    } else {
+      const logistics = businessCityAreas[0].logistics;
+      setLogisticsAvailable(logistics);
+    }
   }, [businessCityAreas]);
   React.useEffect(() => {
     if (!platformFees) return;
+    if (!businessCityAreas) return;
     const getInsuranceFee = (): Fee | null => {
       if (businessCityAreas?.length > 0) {
         if (businessCityAreas[0].insurance)
@@ -232,7 +237,6 @@ export const BusinessProvider = ({ children }: Props) => {
     setInsuranceAvailable(insurance);
   }, [businessCityAreas, platformFees]);
   React.useEffect(() => {
-    console.log('logisticsAvailable', logisticsAvailable);
     if (logisticsAvailable !== 'none') return;
     const logistic = business?.services?.find(
       (service) => service.name === 'logistics'
