@@ -40,6 +40,10 @@ const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
     () => isNewValidOnboardingStep(onboarding, business?.onboarding),
     [business?.onboarding, onboarding]
   );
+  const isFleetPending = React.useMemo(
+    () => logistics === 'private' && !businessFleet,
+    [logistics, businessFleet]
+  );
   // handlers
   const onSubmitHandler = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -143,6 +147,10 @@ const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
     servivesLength,
     business?.services,
   ]);
+  React.useEffect(() => {
+    if (!isFleetPending) return;
+    setPage('fleet');
+  }, [isFleetPending]);
   // UI
   if (isSuccess && redirect) return <Redirect to={redirect} push />;
   return (
@@ -172,7 +180,7 @@ const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
                 isActive={page === 'fleet'}
                 label={t('Configure sua entrega')}
                 onClick={() => setPage('fleet')}
-                isAlert={logistics === 'private' && !businessFleet}
+                isAlert={isFleetPending}
               />
             </HStack>
           </Flex>
