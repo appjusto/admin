@@ -1,4 +1,4 @@
-import { BusinessService } from '@appjusto/types';
+import { BusinessService, BusinessSettings } from '@appjusto/types';
 import {
   Box,
   Center,
@@ -125,6 +125,10 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
         },
       });
     try {
+      const settings = {
+        ...business?.settings,
+        acknowledgeInsurance: true,
+      } as BusinessSettings;
       if (isAccept) {
         const time = getServerTime().getTime();
         const newInsurance = {
@@ -137,13 +141,13 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
         } as BusinessService;
         const services = business?.services ?? [];
         services.push(newInsurance);
-        updateBusinessProfile({ services });
+        updateBusinessProfile({ services, settings });
       } else {
         const services =
           business?.services?.filter(
             (service) => service.name !== 'insurance'
           ) ?? [];
-        updateBusinessProfile({ services });
+        updateBusinessProfile({ services, settings });
       }
     } catch (error) {
       console.log('InsurancePage onSubmit error: ', error);

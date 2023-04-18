@@ -62,7 +62,7 @@ const adminManagerPages = [
   'banking-information',
   'team',
   'chat',
-  'fleet',
+  'logistics',
   'insurance',
 ];
 
