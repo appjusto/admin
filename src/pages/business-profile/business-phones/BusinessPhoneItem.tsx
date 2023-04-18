@@ -10,6 +10,7 @@ import {
 } from '@chakra-ui/react';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { CloseButton } from 'common/components/buttons/CloseButton';
+import { WhatsappButton } from 'common/components/buttons/WhatsappButton';
 import { CustomPatternInput as PatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';
 import {
   phoneFormatter,
@@ -55,14 +56,16 @@ export const BusinessPhoneItem = ({
             bg="white"
             boxShadow="0px 8px 16px -4px rgba(105, 118, 103, 0.1)"
             w="100%"
+            minW="609px"
             p="2"
           >
             <Box
               {...draggable.dragHandleProps}
               ref={draggable.innerRef}
-              display={
-                userAbility?.can('update', 'businesses') ? 'flex' : 'none'
-              }
+              display={{
+                base: 'none',
+                md: userAbility?.can('update', 'businesses') ? 'flex' : 'none',
+              }}
               px="2"
               bg="white"
             >
@@ -81,23 +84,36 @@ export const BusinessPhoneItem = ({
               <option value="manager">{t('Gerente')}</option>
               <option value="desk">{t('Balcão')}</option>
             </Select>
-            <PatternInput
-              mt="0"
-              w={{ base: '100%' }}
-              minW={{ md: '220px' }}
-              isRequired={index === 0}
-              id={`business-phone-${index}`}
-              label={t(`Número do telefone ${index === 0 ? '*' : ''}`)}
-              placeholder={t('Nº de telefone ou celular')}
-              mask={phoneMask}
-              parser={numbersOnlyParser}
-              formatter={phoneFormatter}
-              value={phone.number}
-              onValueChange={(value) =>
-                handlePhoneUpdate(index, 'number', value)
-              }
-              validationLength={10}
-            />
+            <Box position="relative" w="100%" minW="280px">
+              <PatternInput
+                mt="0"
+                w={{ base: '100%' }}
+                minW={{ md: '220px' }}
+                isRequired={index === 0}
+                id={`business-phone-${index}`}
+                label={t(`Número do telefone ${index === 0 ? '*' : ''}`)}
+                placeholder={t('Nº de telefone ou celular')}
+                mask={phoneMask}
+                parser={numbersOnlyParser}
+                formatter={phoneFormatter}
+                value={phone.number}
+                onValueChange={(value) =>
+                  handlePhoneUpdate(index, 'number', value)
+                }
+                validationLength={10}
+              />
+              {phone.whatsapp && (
+                <WhatsappButton
+                  phone={phone.number}
+                  label={t('Iniciar')}
+                  position="absolute"
+                  top="6px"
+                  right="8px"
+                  px="4"
+                  zIndex="9999"
+                />
+              )}
+            </Box>
             <Checkbox
               colorScheme="green"
               value="calls"
@@ -119,29 +135,18 @@ export const BusinessPhoneItem = ({
               <Icon w="22px" h="22px" as={FaWhatsapp} />
             </Checkbox>
             {isRemoving && (
-              <>
-                <Button
-                  display={{ base: 'block', md: 'none' }}
+              <Tooltip
+                placement="top"
+                label={t('Remover telefone')}
+                aria-label={t('Remover')}
+              >
+                <CloseButton
+                  // display={{ base: 'none', md: 'block' }}
                   size="sm"
-                  variant="ghost"
-                  fontSize="13px"
+                  variant="dangerLight"
                   onClick={() => removePhone(index)}
-                >
-                  {t('Remover')}
-                </Button>
-                <Tooltip
-                  placement="top"
-                  label={t('Remover telefone')}
-                  aria-label={t('Remover')}
-                >
-                  <CloseButton
-                    display={{ base: 'none', md: 'block' }}
-                    size="sm"
-                    variant="dangerLight"
-                    onClick={() => removePhone(index)}
-                  />
-                </Tooltip>
-              </>
+                />
+              </Tooltip>
             )}
           </HStack>
         )}
