@@ -1,5 +1,5 @@
 import { BusinessSettings } from '@appjusto/types';
-import { Box, Button, HStack, Image, Text } from '@chakra-ui/react';
+import { Box, Button, Image, Stack, Text } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextAppRequests } from 'app/state/requests/context';
@@ -59,14 +59,28 @@ export const InsuranceModal = ({ isOpen }: InsuranceModalProps) => {
       isOpen={isOpen}
       onClose={() => {}}
       footer={
-        <HStack mt="4" spacing={4}>
-          <Button variant="secondary" onClick={() => handleAcknownledgement()}>
+        <Stack
+          mt="4"
+          w="100%"
+          direction={{ base: 'column', md: 'row' }}
+          justifyContent={{ md: 'flex-end' }}
+          spacing={4}
+        >
+          <Button
+            w={{ base: '100%', md: 'auto' }}
+            variant="secondary"
+            onClick={() => handleAcknownledgement()}
+          >
             {t('Continuar sem cobertura')}
           </Button>
-          <Button fontSize="md" onClick={() => handleAcknownledgement(true)}>
+          <Button
+            w={{ base: '100%', md: 'auto' }}
+            fontSize="md"
+            onClick={() => handleAcknownledgement(true)}
+          >
             {t('Quero saber mais')}
           </Button>
-        </HStack>
+        </Stack>
       }
       closeButton={false}
     >

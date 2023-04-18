@@ -26,6 +26,7 @@ export const BaseModal = ({
   footer,
   ...props
 }: BaseModalProps) => {
+  // UI
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered {...props}>
       <ModalOverlay />
