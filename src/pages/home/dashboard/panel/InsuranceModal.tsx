@@ -100,7 +100,7 @@ export const InsuranceModal = ({ isOpen }: InsuranceModalProps) => {
           {t('Entretanto, ')}
           <Text as="span" fontWeight="700">
             {t(
-              'como forma de garantir que o seu restaurante não seja responsabilizado, o AppJusto está disponibilizando a opção de um plano de cobertura por + 3,5% por venda.'
+              'o AppJusto está disponibilizando a opção de um plano de cobertura por + 3,5% do valor da venda que cobre a maior parte desses problemas. Quer saber mais?'
             )}
           </Text>
         </Text>
