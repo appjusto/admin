@@ -40,9 +40,13 @@ const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
     () => isNewValidOnboardingStep(onboarding, business?.onboarding),
     [business?.onboarding, onboarding]
   );
+  const showTabs = React.useMemo(
+    () => !onboarding && !logisticsAccepted,
+    [onboarding, logisticsAccepted]
+  );
   const isFleetPending = React.useMemo(
-    () => logistics === 'private' && !businessFleet,
-    [logistics, businessFleet]
+    () => !logisticsAccepted && !businessFleet,
+    [logisticsAccepted, businessFleet]
   );
   // handlers
   const onSubmitHandler = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -149,9 +153,10 @@ const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
   ]);
   React.useEffect(() => {
     if (onboarding) return;
+    if (business?.situation === 'approved') return;
     if (!isFleetPending) return;
     setPage('fleet');
-  }, [onboarding, isFleetPending]);
+  }, [onboarding, business?.situation, isFleetPending]);
   // UI
   if (isSuccess && redirect) return <Redirect to={redirect} push />;
   return (
@@ -162,7 +167,7 @@ const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
           'Defina como será a logística de entrega do seu restaurante.'
         )}
       />
-      {!onboarding && !logisticsAccepted && (
+      {showTabs && (
         <Box mt="2">
           <Flex
             mt="8"

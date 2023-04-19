@@ -214,7 +214,7 @@ export const BusinessProvider = ({ children }: Props) => {
     if (businessCityAreas === null) {
       setLogisticsAvailable('none');
     } else {
-      const logistics = businessCityAreas[0].logistics;
+      const logistics = businessCityAreas[0]?.logistics;
       setLogisticsAvailable(logistics);
     }
   }, [businessCityAreas]);
@@ -237,12 +237,19 @@ export const BusinessProvider = ({ children }: Props) => {
     setInsuranceAvailable(insurance);
   }, [businessCityAreas, platformFees]);
   React.useEffect(() => {
+    if (!business?.situation) return;
+    if (business?.situation === 'approved') return;
     if (logisticsAvailable !== 'none') return;
     const logistic = business?.services?.find(
       (service) => service.name === 'logistics'
     );
     if (logistic) clearBusinessLogistics();
-  }, [logisticsAvailable, business?.services, clearBusinessLogistics]);
+  }, [
+    logisticsAvailable,
+    business?.situation,
+    business?.services,
+    clearBusinessLogistics,
+  ]);
   // provider
   return (
     <BusinessContext.Provider
