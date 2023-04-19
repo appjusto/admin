@@ -148,9 +148,10 @@ const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
     business?.services,
   ]);
   React.useEffect(() => {
+    if (onboarding) return;
     if (!isFleetPending) return;
     setPage('fleet');
-  }, [isFleetPending]);
+  }, [onboarding, isFleetPending]);
   // UI
   if (isSuccess && redirect) return <Redirect to={redirect} push />;
   return (
