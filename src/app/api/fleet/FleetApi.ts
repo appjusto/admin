@@ -1,4 +1,5 @@
 import { Fleet, WithId } from '@appjusto/types';
+import * as Sentry from '@sentry/react';
 import {
   addDoc,
   getDoc,
@@ -46,7 +47,7 @@ export default class FleetApi {
       });
       return fleetDoc.id;
     } catch (error) {
-      console.log(error);
+      Sentry.captureException(error);
       return null;
     }
   }

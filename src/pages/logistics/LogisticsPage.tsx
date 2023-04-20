@@ -45,12 +45,10 @@ const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
     () => !onboarding && !logisticsAccepted,
     [onboarding, logisticsAccepted]
   );
-  console.log('businessFleet', businessFleet);
   const isFleetPending = React.useMemo(
     () => logisticsAccepted === null && businessFleet === null,
     [logisticsAccepted, businessFleet]
   );
-  console.log('isFleetPending', isFleetPending);
   const showFleetPendingAlert = React.useMemo(
     () => !onboarding && isFleetPending && business?.situation === 'approved',
     [onboarding, isFleetPending, business?.situation]
