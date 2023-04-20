@@ -11,7 +11,7 @@ export const useObserveBusinessFleet = (businessId?: string | null) => {
   React.useEffect(() => {
     if (!businessId) return;
     const unsub = api.fleet().observeBusinessFleet(businessId, (fleets) => {
-      if (!fleets) setFleet(null);
+      if (!fleets || fleets.length === 0) setFleet(null);
       else setFleet(fleets[0]);
     });
     return () => unsub();

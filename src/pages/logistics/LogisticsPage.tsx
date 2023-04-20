@@ -1,5 +1,5 @@
 import { Business, BusinessService } from '@appjusto/types';
-import { Box, Flex, HStack } from '@chakra-ui/react';
+import { Box, Center, Flex, HStack, Icon, Text } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
@@ -11,6 +11,7 @@ import { isNewValidOnboardingStep } from 'pages/onboarding/utils';
 import PageFooter from 'pages/PageFooter';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
+import { MdInfo } from 'react-icons/md';
 import { Redirect } from 'react-router-dom';
 import { getBusinessService } from 'utils/functions';
 import { t } from 'utils/i18n';
@@ -33,7 +34,7 @@ const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
   // state
   const [page, setPage] = React.useState<'logistics' | 'fleet'>('logistics');
   const [logisticsAccepted, setLogisticsAccepted] =
-    React.useState<BusinessService>();
+    React.useState<BusinessService | null>();
   const [logistics, setLogistics] = React.useState<LogisticsType>('appjusto');
   // helpers
   const isNewOnboardingStep = React.useMemo(
@@ -44,9 +45,15 @@ const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
     () => !onboarding && !logisticsAccepted,
     [onboarding, logisticsAccepted]
   );
+  console.log('businessFleet', businessFleet);
   const isFleetPending = React.useMemo(
-    () => !logisticsAccepted && !businessFleet,
+    () => logisticsAccepted === null && businessFleet === null,
     [logisticsAccepted, businessFleet]
+  );
+  console.log('isFleetPending', isFleetPending);
+  const showFleetPendingAlert = React.useMemo(
+    () => !onboarding && isFleetPending && business?.situation === 'approved',
+    [onboarding, isFleetPending, business?.situation]
   );
   // handlers
   const onSubmitHandler = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -126,6 +133,10 @@ const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
     window?.scrollTo(0, 0);
   }, []);
   React.useEffect(() => {
+    if (!updateResult.isSuccess) return;
+    window?.scrollTo(0, 0);
+  }, [updateResult.isSuccess]);
+  React.useEffect(() => {
     if (isNewOnboardingStep) {
       if (logisticsAvailable === 'none') {
         setLogistics('private');
@@ -141,7 +152,7 @@ const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
         setLogistics('appjusto');
         setLogisticsAccepted(logisticsService);
       } else {
-        setLogisticsAccepted(undefined);
+        setLogisticsAccepted(null);
         setLogistics('private');
       }
     }
@@ -167,6 +178,34 @@ const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
           'Defina como será a logística de entrega do seu restaurante.'
         )}
       />
+      {showFleetPendingAlert && (
+        <Flex
+          mt="4"
+          p="4"
+          flexDir="row"
+          border="1px solid #C8D7CB"
+          borderRadius="lg"
+          bgColor="yellow"
+          maxW="468px"
+        >
+          <Center>
+            <Icon as={MdInfo} w="24px" h="24px" />
+          </Center>
+          <Box ml="4">
+            <Text fontWeight="700">
+              {t('Sua entrega própria ainda não está ativa')}
+            </Text>
+            <Text fontSize="13px">
+              {t(
+                'Para ativa-la é preciso configurar a sua entrega, na aba abaixo. Enquando isso, seus pedidos continuarão com a '
+              )}
+              <Text as="span" fontWeight="700">
+                {t('entrega AppJusto.')}
+              </Text>
+            </Text>
+          </Box>
+        </Flex>
+      )}
       {showTabs && (
         <Box mt="2">
           <Flex
