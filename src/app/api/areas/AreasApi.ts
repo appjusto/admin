@@ -60,6 +60,22 @@ export default class AreasApi {
     // returns the unsubscribe function
     return customDocumentSnapshot<Area>(areaRef, resultHandler);
   }
+  observeAreasByCity(
+    state: string,
+    city: string,
+    resultHandler: (area: WithId<Area>[] | null) => void
+  ) {
+    const q = query(
+      this.refs.getAreasRef(),
+      where('state', '==', state),
+      where('city', '==', city)
+    );
+    // returns the unsubscribe function
+    return onSnapshot(q, (snapshot) => {
+      if (snapshot.empty) resultHandler(null);
+      else resultHandler(documentsAs<Area>(snapshot.docs));
+    });
+  }
   async fetchAreaByCity(state: string, city: string) {
     try {
       const q = query(
@@ -71,7 +87,7 @@ export default class AreasApi {
       if (data.empty) return null;
       return documentsAs<Area>(data.docs);
     } catch (error) {
-      console.error(error);
+      Sentry.captureException(error);
       return documentsAs<Area>([]);
     }
   }

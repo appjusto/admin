@@ -1,7 +1,12 @@
 import { WithId } from '@appjusto/types';
 import * as Sentry from '@sentry/react';
 import { documentAs, documentsAs } from 'core/fb';
-import { DocumentData, DocumentReference, onSnapshot, Query } from 'firebase/firestore';
+import {
+  DocumentData,
+  DocumentReference,
+  onSnapshot,
+  Query,
+} from 'firebase/firestore';
 
 export const queryLimit = 10;
 interface customSnapshotOptions {
@@ -21,7 +26,8 @@ export const customCollectionSnapshot = <T extends object>(
   return onSnapshot(
     query,
     (snapshot) => {
-      if (options.monitoring) console.log('%cGot snapshot result!', 'color: blue');
+      if (options.monitoring)
+        console.log('%cGot snapshot result!', 'color: blue');
       if (options?.avoidPenddingWrites) {
         if (!snapshot.metadata.hasPendingWrites) {
           resultHandler(documentsAs<T>(snapshot.docs));
@@ -48,7 +54,8 @@ export const customDocumentSnapshot = <T extends object>(
   return onSnapshot(
     query,
     (snapshot) => {
-      if (options.monitoring) console.log('%cGot snapshot result!', 'color: blue');
+      if (options.monitoring)
+        console.log('%cGot snapshot result!', 'color: blue');
       if (options?.avoidPenddingWrites) {
         if (!snapshot.metadata.hasPendingWrites) {
           if (snapshot.exists()) resultHandler(documentAs<T>(snapshot));

@@ -9,7 +9,7 @@ import {
   PlatformFees,
   WithId,
 } from '@appjusto/types';
-import { useFetchAreasByCity } from 'app/api/areas/useFetchAreasByCity';
+import { useObserveAreasByCity } from 'app/api/areas/useObserveAreasByCity';
 import { useObserveBannersByFlavor } from 'app/api/banners/useObserveBannersByFlavor';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useBusinessProfileImages } from 'app/api/business/profile/useBusinessProfileImages';
@@ -102,7 +102,7 @@ export const BusinessProvider = ({ children }: Props) => {
   const { logo, cover } = useBusinessProfileImages(business?.id);
   const { updateBusinessProfile } = useBusinessProfile(business?.id, false);
   const [isGetManagersActive, setIsGetManagersActive] = React.useState(false);
-  const businessCityAreas = useFetchAreasByCity(
+  const businessCityAreas = useObserveAreasByCity(
     business?.businessAddress?.state,
     business?.businessAddress?.city
   );
@@ -130,6 +130,7 @@ export const BusinessProvider = ({ children }: Props) => {
     setBusiness(null);
   }, []);
   const clearBusinessLogistics = React.useCallback(() => {
+    console.log('Call clearBusinessLogistics');
     const services =
       business?.services?.filter((service) => service.name !== 'logistics') ??
       [];
@@ -214,8 +215,10 @@ export const BusinessProvider = ({ children }: Props) => {
     if (businessCityAreas === null) {
       setLogisticsAvailable('none');
     } else {
-      const logistics = businessCityAreas[0]?.logistics;
-      setLogisticsAvailable(logistics);
+      if (businessCityAreas.length > 0) {
+        const logistics = businessCityAreas[0].logistics;
+        setLogisticsAvailable(logistics);
+      }
     }
   }, [businessCityAreas]);
   React.useEffect(() => {
