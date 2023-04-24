@@ -50,6 +50,7 @@ export const FleetPage = () => {
       // create fleet object
       const changes = {
         type: 'private',
+        situation: 'approved',
         name: business.name,
         description: `Entregas realizadas pelos entregadores do ${business.name}`,
         distanceThreshold,
