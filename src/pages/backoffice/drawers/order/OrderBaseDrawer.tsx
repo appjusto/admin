@@ -93,7 +93,9 @@ export const OrderBaseDrawer = ({
     [order?.status, order?.flags]
   );
   const logisticsIncluded = React.useMemo(
-    () => order?.fare?.courier?.payee === 'platform',
+    () =>
+      !order?.fare?.courier?.payee ||
+      order?.fare?.courier?.payee === 'platform',
     [order?.fare?.courier?.payee]
   );
   const showMatchingTab = React.useMemo(
