@@ -31,12 +31,12 @@ interface DetailsProps {
 
 export const OrderDetails = ({ order }: DetailsProps) => {
   // helpers
-  const courierPaid = order?.fare?.courier?.value;
+  const courierPaid = order?.fare?.courier?.value ?? 0;
   const businessPaid =
     order?.fare?.business?.paid !== undefined
       ? order.fare.business.paid
       : order?.fare?.business?.value;
-  const totalPaid = (courierPaid ?? 0) + (businessPaid ?? 0);
+  const totalPaid = courierPaid + (businessPaid ?? 0);
   const statusColor =
     order?.fare?.business?.status && order?.fare?.business?.status !== 'paid'
       ? 'red'
@@ -153,8 +153,9 @@ export const OrderDetails = ({ order }: DetailsProps) => {
             <Text mt="1" fontSize="md">
               {t('Frete:')}{' '}
               <Text as="span" color="black">
-                {courierPaid ? formatCurrency(courierPaid) : 'N/E'}
-                {order?.fare?.courier?.payee === 'business' &&
+                {formatCurrency(courierPaid)}
+                {courierPaid > 0 &&
+                  order?.fare?.courier?.payee === 'business' &&
                   ` (${t('recebido pelo restaurante')})`}
               </Text>
             </Text>
