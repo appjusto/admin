@@ -97,6 +97,7 @@ export const useBusinessOpenClose = (business?: WithId<Business> | null) => {
     checkBusinessStatus,
   ]);
   React.useEffect(() => {
+    if (business?.situation !== 'approved') return;
     if (business?.status === 'unavailable') {
       setIsOpen(false);
       handleToast(
@@ -106,6 +107,6 @@ export const useBusinessOpenClose = (business?: WithId<Business> | null) => {
         12000
       );
     }
-  }, [business?.status, handleToast]);
+  }, [business?.situation, business?.status, handleToast]);
   return isOpen;
 };

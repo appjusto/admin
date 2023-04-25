@@ -6,6 +6,7 @@ import { useContextBusiness } from 'app/state/business/context';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { useContextServerTime } from 'app/state/server-time';
 import { FilterText } from 'common/components/backoffice/FilterText';
+import { getBusinessServiceActivationDate } from 'pages/insurance/utils';
 import { OnboardingProps } from 'pages/onboarding/types';
 import { isNewValidOnboardingStep } from 'pages/onboarding/utils';
 import PageFooter from 'pages/PageFooter';
@@ -22,7 +23,7 @@ export type LogisticsType = 'appjusto' | 'private';
 
 const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
   // context
-  const { user } = useContextFirebaseUser();
+  const { user, isBackofficeUser } = useContextFirebaseUser();
   const { getServerTime } = useContextServerTime();
   const { dispatchAppRequestResult } = useContextAppRequests();
   const { business, businessFleet, platformFees, logisticsAvailable } =
@@ -53,6 +54,10 @@ const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
     () => !onboarding && isFleetPending && business?.situation === 'approved',
     [onboarding, isFleetPending, business?.situation]
   );
+  const logisticsActivatedAt = React.useMemo(
+    () => getBusinessServiceActivationDate(logisticsAccepted),
+    [logisticsAccepted]
+  );
   // handlers
   const onSubmitHandler = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -76,6 +81,15 @@ const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
       });
       return;
     }
+    if (isBackofficeUser)
+      return dispatchAppRequestResult({
+        status: 'error',
+        requestId: 'logistics-page-error',
+        message: {
+          title:
+            'Apenas donos e gerentes de restaurantes podem ativar ou desativar a entrega AppJusto.',
+        },
+      });
     try {
       if (logistics === 'appjusto') {
         if (!platformFees?.logistics) {
@@ -201,6 +215,33 @@ const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
                 {t('entrega AppJusto.')}
               </Text>
             </Text>
+          </Box>
+        </Flex>
+      )}
+      {logisticsAccepted && logisticsActivatedAt && (
+        <Flex
+          mt="4"
+          p="4"
+          flexDir="row"
+          border="1px solid #C8D7CB"
+          borderRadius="lg"
+          maxW="468px"
+        >
+          <Center>
+            <Icon as={MdInfo} w="24px" h="24px" />
+          </Center>
+          <Box ml="4">
+            <Text fontWeight="700">
+              {t(`Entrega AppJusto ativada em ${logisticsActivatedAt}`)}
+            </Text>
+            {logisticsAccepted.createdBy?.email && (
+              <Text fontSize="14px" fontWeight="700">
+                {t('Solicitada por: ')}
+                <Text as="span" fontWeight="500">
+                  {logisticsAccepted.createdBy.email}
+                </Text>
+              </Text>
+            )}
           </Box>
         </Flex>
       )}

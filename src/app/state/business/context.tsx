@@ -223,9 +223,8 @@ export const BusinessProvider = ({ children }: Props) => {
   }, [businessCityAreas]);
   React.useEffect(() => {
     if (!platformFees) return;
-    if (!businessCityAreas) return;
     const getInsuranceFee = (): Fee | null => {
-      if (businessCityAreas?.length > 0) {
+      if (businessCityAreas && businessCityAreas.length > 0) {
         if (businessCityAreas[0].insurance)
           return businessCityAreas[0].insurance;
       }

@@ -60,9 +60,8 @@ export const LogisticsOptions = ({
   // UI
   if (logisticsDisabled) {
     return (
-      <Box maxW="468px">
+      <Box mt="4" maxW="468px">
         <RadioGroup
-          mt="8"
           value={logistics}
           onChange={(value) => handleChange(value as LogisticsType)}
         >
@@ -122,9 +121,8 @@ export const LogisticsOptions = ({
     );
   }
   return (
-    <Box maxW="468px">
+    <Box mt="4" maxW="468px">
       <RadioGroup
-        mt="8"
         value={logistics}
         onChange={(value) => handleChange(value as LogisticsType)}
       >

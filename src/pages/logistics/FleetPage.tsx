@@ -92,7 +92,7 @@ export const FleetPage = () => {
       );
     }
   }, [businessFleet]);
-  console.log(businessFleet?.id);
+  // console.log('businessFleet', businessFleet?.id);
   // UI
   return (
     <Box maxW="600px">

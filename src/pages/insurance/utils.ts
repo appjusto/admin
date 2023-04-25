@@ -2,15 +2,15 @@ import { BusinessService } from '@appjusto/types';
 import dayjs from 'dayjs';
 import { getDateAndHour } from 'utils/functions';
 
-export const getBusinessInsuranceActivationDate = (
-  insuranceAccepted?: BusinessService
+export const getBusinessServiceActivationDate = (
+  service?: BusinessService | null
 ) => {
-  if (!insuranceAccepted) return null;
+  if (!service) return null;
   try {
-    const insuranceActivationDate = dayjs(insuranceAccepted.createdOn).toDate();
-    const insuranceActivatedAt = getDateAndHour(insuranceActivationDate);
-    return insuranceActivatedAt;
+    const serviceActivationDate = dayjs(service.createdOn).toDate();
+    const serviceActivatedAt = getDateAndHour(serviceActivationDate);
+    return serviceActivatedAt;
   } catch (error) {
-    console.log('getBusinessInsuranceActivationDate error: ', error);
+    console.log('getBusinessServiceActivationDate error: ', error);
   }
 };

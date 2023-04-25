@@ -28,7 +28,7 @@ import { Redirect, useHistory } from 'react-router-dom';
 import { getBusinessService } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { CoverageItem } from './CoverageItem';
-import { getBusinessInsuranceActivationDate } from './utils';
+import { getBusinessServiceActivationDate } from './utils';
 
 const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
   // context
@@ -66,7 +66,7 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
     [business?.onboarding, onboarding]
   );
   const insuranceActivatedAt = React.useMemo(
-    () => getBusinessInsuranceActivationDate(insuranceAccepted),
+    () => getBusinessServiceActivationDate(insuranceAccepted),
     [insuranceAccepted]
   );
   // handlers
@@ -252,7 +252,9 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
               </Radio>
               <Text mt="6">
                 {t('Mediante taxa de ')}
-                <Text as="span" fontWeight="700">{`${feeToDisplay}%`}</Text>
+                <Text as="span" fontWeight="700">{`${
+                  feeToDisplay ?? 'N/E'
+                }%`}</Text>
                 {t(
                   ', sobre o valor dos pedidos, o restaurante será reembolsado caso aconteça:'
                 )}
