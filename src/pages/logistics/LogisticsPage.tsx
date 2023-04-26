@@ -281,6 +281,22 @@ const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
             logisticsAccepted={logisticsAccepted}
             handleChange={setLogistics}
           />
+          <Box
+            mt="4"
+            px="4"
+            py="2"
+            w="fit-content"
+            minW={{ lg: '346px' }}
+            bgColor="#F5F5F5"
+            borderRadius="lg"
+          >
+            <Text>
+              {t('Gateway de pagamento: ')}
+              <Text as="span" fontWeight="700">
+                {t('PIX 0,99% , Crédito 2,42% + R$ 0,09')}
+              </Text>
+            </Text>
+          </Box>
           <PageFooter
             onboarding={onboarding}
             requiredLabel={false}

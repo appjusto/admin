@@ -16,7 +16,7 @@ export const FeeDescriptionItem = ({
         <Text fontSize="20px" fontWeight="700">
           {`${fee}%`}
           <Text as="span" fontSize="16px" fontWeight="500">
-            {t(' de comissão AppJusto sobre o valor dos pedidos')}
+            {t(' de comissão AppJusto + gateway, sobre o valor dos pedidos')}
           </Text>
         </Text>
         <Text mt="4" fontSize="16px" fontWeight="700">
