@@ -8,6 +8,7 @@ import {
   DrawerHeader,
   DrawerOverlay,
   HStack,
+  Link,
   Skeleton,
   Text,
 } from '@chakra-ui/react';
@@ -17,7 +18,7 @@ import { useObserveUserChanges } from 'app/api/users/useObserveUserChanges';
 import { phoneFormatter } from 'common/components/form/input/pattern-input/formatters';
 import { situationPTOptions } from 'pages/backoffice/utils';
 import React from 'react';
-import { useParams } from 'react-router';
+import { Link as RouterLink, useParams } from 'react-router-dom';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { birthdayFormatter } from '../courier/register/utils';
@@ -47,6 +48,15 @@ const UserChangeDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   const user = useFetchUserData(changes?.accountId, changes?.userType);
   // refs
   const actionType = React.useRef<'approved' | 'rejected'>();
+  // helpers
+  const profileLink = React.useMemo(() => {
+    if (!user?.id) return undefined;
+    if (!['consumer', 'courier'].includes(changes?.userType ?? 'undefined'))
+      return undefined;
+    let page = 'consumers';
+    if (changes?.userType === 'courier') page = 'couriers';
+    return `/backoffice/${page}/${user?.id}`;
+  }, [user?.id, changes?.userType]);
   // handlers
   const updateChangesSituation = (situation: 'approved' | 'rejected') => {
     actionType.current = situation;
@@ -207,9 +217,20 @@ const UserChangeDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
               lineHeight="22px"
             >
               {t('AccountId:')}{' '}
-              <Text as="span" fontWeight="500">
-                {user?.id ?? 'N/E'}
-              </Text>
+              {profileLink ? (
+                <Link
+                  as={RouterLink}
+                  to={profileLink}
+                  fontWeight="500"
+                  textDecor="underline"
+                >
+                  {user?.id ?? 'N/E'}
+                </Link>
+              ) : (
+                <Text as="span" fontWeight="500">
+                  {user?.id ?? 'N/E'}
+                </Text>
+              )}
             </Text>
             <Text
               mt="1"
@@ -382,6 +403,17 @@ const UserChangeDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 <Text as="span" fontWeight="500">
                   {birthdayFormatter('display', changes?.birthday)}
                 </Text>
+              </Text>
+            )}
+            {changes?.images && (
+              <Text
+                mt="1"
+                fontSize="15px"
+                color="red"
+                fontWeight="700"
+                lineHeight="22px"
+              >
+                {t('Imagens pendentes')}
               </Text>
             )}
             <Text
