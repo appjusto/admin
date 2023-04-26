@@ -14,7 +14,7 @@ import PageHeader from 'pages/PageHeader';
 import React from 'react';
 import { MdInfo } from 'react-icons/md';
 import { Redirect } from 'react-router-dom';
-import { getBusinessService } from 'utils/functions';
+import { getBusinessService, getServiceCreatedByEmail } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { FleetPage } from './FleetPage';
 import { LogisticsOptions } from './LogisticsOptions';
@@ -56,6 +56,10 @@ const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
   );
   const logisticsActivatedAt = React.useMemo(
     () => getBusinessServiceActivationDate(logisticsAccepted),
+    [logisticsAccepted]
+  );
+  const createdByEmail = React.useMemo(
+    () => getServiceCreatedByEmail(logisticsAccepted),
     [logisticsAccepted]
   );
   // handlers
@@ -234,11 +238,11 @@ const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
             <Text fontWeight="700">
               {t(`Entrega AppJusto ativada em ${logisticsActivatedAt}`)}
             </Text>
-            {logisticsAccepted.createdBy?.email && (
+            {createdByEmail && (
               <Text fontSize="14px" fontWeight="700">
                 {t('Solicitada por: ')}
                 <Text as="span" fontWeight="500">
-                  {logisticsAccepted.createdBy.email}
+                  {createdByEmail}
                 </Text>
               </Text>
             )}

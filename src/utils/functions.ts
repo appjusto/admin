@@ -463,3 +463,13 @@ export const assertPhonesIsValid = (phones: BusinessPhone[]) => {
   }
   return result;
 };
+
+export const getServiceCreatedByEmail = (service?: BusinessService | null) => {
+  if (!service) return undefined;
+  return (
+    service.createdBy as {
+      id: string;
+      email: string;
+    }
+  ).email;
+};

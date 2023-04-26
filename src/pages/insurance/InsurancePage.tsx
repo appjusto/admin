@@ -25,7 +25,7 @@ import PageHeader from 'pages/PageHeader';
 import React from 'react';
 import { MdInfo } from 'react-icons/md';
 import { Redirect, useHistory } from 'react-router-dom';
-import { getBusinessService } from 'utils/functions';
+import { getBusinessService, getServiceCreatedByEmail } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { CoverageItem } from './CoverageItem';
 import { getBusinessServiceActivationDate } from './utils';
@@ -67,6 +67,10 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
   );
   const insuranceActivatedAt = React.useMemo(
     () => getBusinessServiceActivationDate(insuranceAccepted),
+    [insuranceAccepted]
+  );
+  const createdByEmail = React.useMemo(
+    () => getServiceCreatedByEmail(insuranceAccepted),
     [insuranceAccepted]
   );
   // handlers
@@ -202,11 +206,11 @@ const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
               <Text fontWeight="700">
                 {t(`Cobertura ativada em ${insuranceActivatedAt}`)}
               </Text>
-              {insuranceAccepted.createdBy?.email && (
+              {createdByEmail && (
                 <Text fontSize="14px" fontWeight="700">
                   {t('Solicitada por: ')}
                   <Text as="span" fontWeight="500">
-                    {insuranceAccepted.createdBy.email}
+                    {createdByEmail}
                   </Text>
                 </Text>
               )}
