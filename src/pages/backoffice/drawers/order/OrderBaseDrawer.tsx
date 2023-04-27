@@ -28,6 +28,7 @@ import { MutationResult } from 'app/api/mutation/useCustomMutation';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { OrderTracking } from 'pages/backoffice/dashboard/OrderTracking';
+import { isLogisticsIncluded } from 'pages/logistics/utils';
 import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
 import React from 'react';
 import { useRouteMatch } from 'react-router';
@@ -93,9 +94,7 @@ export const OrderBaseDrawer = ({
     [order?.status, order?.flags]
   );
   const logisticsIncluded = React.useMemo(
-    () =>
-      !order?.fare?.courier?.payee ||
-      order?.fare?.courier?.payee === 'platform',
+    () => isLogisticsIncluded(order?.fare?.courier?.payee),
     [order?.fare?.courier?.payee]
   );
   const showMatchingTab = React.useMemo(

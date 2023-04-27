@@ -3,6 +3,7 @@ import { Box, Text } from '@chakra-ui/react';
 import { useOrderCourierRemoval } from 'app/api/order/useOrderCourierRemoval';
 import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';
 import { useContextAppRequests } from 'app/state/requests/context';
+import { isLogisticsIncluded } from 'pages/logistics/utils';
 import { DeliveryInfos } from 'pages/orders/drawers/orderdrawer/DeliveryInfos';
 import React from 'react';
 import { t } from 'utils/i18n';
@@ -33,7 +34,7 @@ export const Participants = ({
     [order?.status]
   );
   const logisticsIncluded = React.useMemo(
-    () => order?.fare?.courier?.payee === 'platform',
+    () => isLogisticsIncluded(order?.fare?.courier?.payee),
     [order?.fare?.courier?.payee]
   );
   const showDispatchingInfos = React.useMemo(

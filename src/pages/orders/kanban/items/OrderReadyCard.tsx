@@ -4,6 +4,7 @@ import { useOrderArrivalTimes } from 'app/api/order/useOrderArrivalTimes';
 import { useOrderDeliveryInfos } from 'app/api/order/useOrderDeliveryInfos';
 import { useOrdersContext } from 'app/state/order';
 import { useContextServerTime } from 'app/state/server-time';
+import { isLogisticsIncluded } from 'pages/logistics/utils';
 import React from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
@@ -22,8 +23,8 @@ export const OrderReadyCard = ({ order }: Props) => {
     useOrderDeliveryInfos(getServerTime, order);
   // helpers
   const logisticsIncluded = React.useMemo(
-    () => order.fare?.courier?.payee === 'platform',
-    [order.fare?.courier?.payee]
+    () => isLogisticsIncluded(order?.fare?.courier?.payee),
+    [order?.fare?.courier?.payee]
   );
   const isDelivery = React.useMemo(
     () => order.fulfillment === 'delivery',

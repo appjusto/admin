@@ -22,6 +22,7 @@ import { useOrdersContext } from 'app/state/order';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { phoneFormatter } from 'common/components/form/input/pattern-input/formatters';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
+import { isLogisticsIncluded } from 'pages/logistics/utils';
 import React from 'react';
 import { MdPrint } from 'react-icons/md';
 import { useRouteMatch } from 'react-router-dom';
@@ -69,7 +70,7 @@ export const OrderBaseDrawer = ({
   // helpers
   const isHistory = path.includes('orders-history');
   const logisticsIncluded = React.useMemo(
-    () => order?.fare?.courier?.payee === 'platform',
+    () => isLogisticsIncluded(order?.fare?.courier?.payee),
     [order?.fare?.courier?.payee]
   );
   const isDelivery = React.useMemo(

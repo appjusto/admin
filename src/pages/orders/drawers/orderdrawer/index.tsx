@@ -6,6 +6,7 @@ import { useContextBusiness } from 'app/state/business/context';
 import { useContextManagerProfile } from 'app/state/manager/context';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
+import { isLogisticsIncluded } from 'pages/logistics/utils';
 import { isToday } from 'pages/orders/utils';
 import React from 'react';
 import { MdInfoOutline } from 'react-icons/md';
@@ -63,7 +64,7 @@ export const OrderDrawer = (props: Props) => {
     [orderCancellation?.issue?.type]
   );
   const logisticsIncluded = React.useMemo(
-    () => order?.fare?.courier?.payee === 'platform',
+    () => isLogisticsIncluded(order?.fare?.courier?.payee),
     [order?.fare?.courier?.payee]
   );
   const isDelivery = React.useMemo(
