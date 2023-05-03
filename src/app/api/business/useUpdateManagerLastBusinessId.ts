@@ -14,13 +14,6 @@ export const useUpdateManagerLastBusinessId = (
   React.useEffect(() => {
     if (isBackofficeUser) return;
     if (!businessId) return;
-    if (manager?.lastBusinessId && manager.lastBusinessId === businessId)
-      return;
     updateLastBusinessId(businessId);
-  }, [
-    isBackofficeUser,
-    businessId,
-    manager?.lastBusinessId,
-    updateLastBusinessId,
-  ]);
+  }, [isBackofficeUser, businessId, updateLastBusinessId]);
 };
