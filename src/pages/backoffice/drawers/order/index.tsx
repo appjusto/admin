@@ -115,15 +115,17 @@ export const BackofficeOrderDrawer = ({
     chatActive
   );
   // helpers
-  let refundValue = 0;
-  if (refund.includes('service') && order?.fare?.platform?.value)
-    refundValue += order.fare.platform.value;
-  if (refund.includes('products') && order?.fare?.business?.value)
-    refundValue += order.fare.business.value;
-  if (refund.includes('delivery') && order?.fare?.courier?.value)
-    refundValue += order.fare.courier.value;
-  if (refund.includes('tip') && order?.tip?.value)
-    refundValue += order.tip.value;
+  const refundValue = React.useMemo(() => {
+    let total = 0;
+    if (refund.includes('service') && order?.fare?.platform?.value)
+      total += order.fare.platform.value;
+    if (refund.includes('products') && order?.fare?.business?.value)
+      total += order.fare.business.value;
+    if (refund.includes('delivery') && order?.fare?.courier?.value)
+      total += order.fare.courier.value;
+    if (refund.includes('tip') && order?.tip?.value) total += order.tip.value;
+    return total;
+  }, [refund, order?.fare, order?.tip?.value]);
   const canUpdateOrderStaff =
     order?.staff?.id === staff?.id || isBackofficeSuperuser;
   const businessInsurance = order?.fare?.business?.insurance
@@ -268,6 +270,10 @@ export const BackofficeOrderDrawer = ({
       return;
     }
     let changes = { status } as Partial<Order>;
+    if (status === 'preparing') {
+      // When needed backoffice will change status to preparing with 40min of cookingTime
+      changes.cookingTime = 40 * 60;
+    }
     if (dispatchingState) changes.dispatchingState = dispatchingState;
     updateOrder(changes);
   };
