@@ -30,7 +30,10 @@ export default class FleetApi {
       this.refs.getFleetsRef(),
       where('createdBy.id', '==', businessId)
     );
-    return customCollectionSnapshot(q, resultHandler);
+    return customCollectionSnapshot(q, resultHandler, {
+      avoidPenddingWrites: false,
+      captureException: true,
+    });
   }
 
   async getFleetById(fleetId: string) {
