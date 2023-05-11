@@ -19,7 +19,13 @@ export const CustomTextarea = React.forwardRef<HTMLTextAreaElement, Props>(
     return (
       <FormControl id={id} sx={styles.control} {...controlProps}>
         {label && <FormLabel sx={styles.label}>{label}</FormLabel>}
-        <Textarea ref={ref} sx={styles.input} {...props} />
+        <Textarea
+          ref={ref}
+          sx={styles.input}
+          pt={label ? '30px' : '14px'}
+          h="150px"
+          {...props}
+        />
       </FormControl>
     );
   }

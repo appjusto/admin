@@ -1,10 +1,10 @@
 import { Fleet } from '@appjusto/types';
-import { Box, Button, Text } from '@chakra-ui/react';
+import { Box, Button, HStack, Text } from '@chakra-ui/react';
 import { useFleet } from 'app/api/fleet/useFleet';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextAppRequests } from 'app/state/requests/context';
-import { Textarea } from 'common/components/form/input/Textarea';
+import { CustomTextarea } from 'common/components/form/input/CustomTextarea';
 import { InputCounter } from 'pages/backoffice/drawers/push/InputCounter';
 import React from 'react';
 import { t } from 'utils/i18n';
@@ -94,9 +94,7 @@ export const FleetPage = () => {
         businessFleet.additionalPerKmAfterThreshold
       );
     } else {
-      setDescription(
-        `Entregas realizadas pelos entregadores do ${business.name}`
-      );
+      setDescription(`Entregas de responsabilidade do ${business.name}`);
     }
   }, [business?.name, businessFleet]);
   // console.log('businessFleet', businessFleet?.id);
@@ -112,11 +110,14 @@ export const FleetPage = () => {
             'Encorajamos que você descreva brevemente, para os seus clientes, como funciona sua entrega e como se dá a relação entre o restaurante e os seus entregadores, próprios ou parceiros.'
           )}
         </Text>
-        <Text mt="2" ml="4" fontSize="sm">
-          {t(
-            'Exemplo: Nossos entregadores recebem fixo de R$70,00 + XX por entregas'
-          )}
-        </Text>
+        <HStack mt="2" ml="4" alignItems="flex-start">
+          <Text fontSize="sm">{t('Exemplo:')}</Text>
+          <Text fontSize="sm">
+            {t(
+              'Nossas entregas são realizadas por entregadores _______ (da casa ou parceiros), que recebem um fixo de R$ __ + R$ __ por entrega.'
+            )}
+          </Text>
+        </HStack>
         {/* <CustomInput
           id="fleet-name"
           label={t('Nome da frota')}
@@ -127,10 +128,10 @@ export const FleetPage = () => {
           isRequired
         /> */}
         {/* <InputCounter max={36} current={name.length} /> */}
-        <Textarea
+        <CustomTextarea
           mt="4"
           id="fleet-description"
-          // label={t('Descrição')}
+          h="120px"
           placeholder={t('Descreva sua frota em até 140 caracteres')}
           value={description}
           onChange={(ev) => setDescription(ev.target.value)}
