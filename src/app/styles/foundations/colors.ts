@@ -12,7 +12,7 @@ export const colors = {
     900: '#234F13',
   },
   gray: {
-    50: '#F2F6EA',
+    50: '#F6F6F6',
     100: '#F0F4E7',
     200: '#ECF0E3',
     300: '#E7EDDC',

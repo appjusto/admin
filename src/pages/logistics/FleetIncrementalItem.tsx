@@ -56,7 +56,7 @@ export const FleetIncrementalItem = ({
   };
   // UI
   return (
-    <Box mt="6" mb="4">
+    <Box mt="8" mb="4">
       <Flex flexDir="row" justifyContent="space-between">
         <Text fontSize="xl" color="black">
           {title}

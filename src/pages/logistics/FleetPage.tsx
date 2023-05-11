@@ -110,11 +110,17 @@ export const FleetPage = () => {
             'Encorajamos que você descreva brevemente, para os seus clientes, como funciona sua entrega e como se dá a relação entre o restaurante e os seus entregadores, próprios ou parceiros.'
           )}
         </Text>
-        <HStack mt="2" ml="4" alignItems="flex-start">
+        <HStack
+          mt="2"
+          alignItems="flex-start"
+          p="4"
+          bgColor="gray.50"
+          borderRadius="lg"
+        >
           <Text fontSize="sm">{t('Exemplo:')}</Text>
           <Text fontSize="sm">
             {t(
-              'Nossas entregas são realizadas por entregadores _______ (da casa ou parceiros), que recebem um fixo de R$ __ + R$ __ por entrega.'
+              'Nossas entregas são realizadas por entregadores ___ (da casa ou parceiros), que recebem um fixo de R$ __ + R$ __ por entrega.'
             )}
           </Text>
         </HStack>
