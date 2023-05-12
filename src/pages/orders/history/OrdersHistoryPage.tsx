@@ -8,6 +8,7 @@ import {
   HStack,
   Stack,
   Text,
+  Tooltip,
 } from '@chakra-ui/react';
 import { useObserveBusinessOrdersHistory } from 'app/api/order/useObserveBusinessOrdersHistory';
 import { useContextBusinessId } from 'app/state/business/context';
@@ -18,11 +19,13 @@ import { CustomDateFilter } from 'common/components/form/input/CustomDateFilter'
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import { isEqual } from 'lodash';
 import React from 'react';
+import { CSVLink } from 'react-csv';
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import PageHeader from '../../PageHeader';
 import { OrderDrawer } from '../drawers/orderdrawer';
 import { BusinessOrdersTable } from './BusinessOrdersTable';
+import { getOrdersCsvData } from './utils';
 
 const statuses = [
   'scheduled',
@@ -66,6 +69,8 @@ const OrdersHistoryPage = () => {
     orderStatus,
     fulfillment
   );
+  // helpers
+  const ordersCsv = getOrdersCsvData(orders);
   // handlers
   const closeDrawerHandler = () => {
     history.replace(path);
@@ -174,10 +179,25 @@ const OrdersHistoryPage = () => {
       ) : (
         <Text>{t('Carregando...')}</Text>
       )}
-      <Button mt="8" variant="secondary" onClick={fetchNextPage}>
-        <ArrowDownIcon mr="2" />
-        {t('Carregar mais')}
-      </Button>
+      <Flex mt="8" justifyContent="space-between">
+        <Button variant="secondary" onClick={fetchNextPage}>
+          <ArrowDownIcon mr="2" />
+          {t('Carregar mais')}
+        </Button>
+        <CSVLink
+          filename="pedidos-appjusto.csv"
+          data={ordersCsv.data}
+          headers={ordersCsv.headers}
+        >
+          <Tooltip
+            label={t(
+              'Certifique-se de ter filtrado e carregado a lista completa dos pedidos que deseja exportar'
+            )}
+          >
+            <Button variant="outline">{t('Exportar .csv')}</Button>
+          </Tooltip>
+        </CSVLink>
+      </Flex>
       <Switch>
         <Route path={`${path}/:orderId`}>
           <OrderDrawer isOpen onClose={closeDrawerHandler} />

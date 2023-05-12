@@ -21,7 +21,7 @@ export const BusinessOrdersTableItem = ({ order }: ItemProps) => {
   return (
     <Tr key={order.id} color="black" fontSize="15px" lineHeight="21px">
       <Td maxW="120px">{order.code ?? 'N/I'}</Td>
-      <Td>{getDateAndHour(order.updatedOn)}</Td>
+      <Td>{getDateAndHour(order.timestamps.charged)}</Td>
       <Td>
         {order.scheduledTo ? getDateAndHour(order.scheduledTo) : 'Tempo real'}
       </Td>
