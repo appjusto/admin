@@ -97,7 +97,6 @@ export const FleetPage = () => {
       setDescription(`Entregas de responsabilidade do ${business.name}`);
     }
   }, [business?.name, businessFleet]);
-  // console.log('businessFleet', businessFleet?.id);
   // UI
   return (
     <Box maxW="600px">
