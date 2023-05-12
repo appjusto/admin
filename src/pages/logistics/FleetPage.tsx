@@ -1,11 +1,9 @@
 import { Fleet } from '@appjusto/types';
-import { Box, Button, HStack, Text } from '@chakra-ui/react';
+import { Box, Button } from '@chakra-ui/react';
 import { useFleet } from 'app/api/fleet/useFleet';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextAppRequests } from 'app/state/requests/context';
-import { CustomTextarea } from 'common/components/form/input/CustomTextarea';
-import { InputCounter } from 'pages/backoffice/drawers/push/InputCounter';
 import React from 'react';
 import { t } from 'utils/i18n';
 import { FleetIncrementalItem } from './FleetIncrementalItem';
@@ -20,7 +18,7 @@ export const FleetPage = () => {
   const { isLoading } = updateFleetResult;
   // state
   // const [name, setName] = React.useState('');
-  const [description, setDescription] = React.useState('');
+  // const [description, setDescription] = React.useState('');
   const [distanceThreshold, setDistanceThreshold] = React.useState(0);
   const [minimumFee, setMinimumFee] = React.useState(0);
   const [additionalPerKmAfterThreshold, setAdditionalPerKmAfterThreshold] =
@@ -54,7 +52,7 @@ export const FleetPage = () => {
         type: 'private',
         situation: 'approved',
         name: business.name,
-        description,
+        description: `Entregas de responsabilidade do ${business.name}`,
         distanceThreshold,
         minimumFee,
         additionalPerKmAfterThreshold,
@@ -87,43 +85,18 @@ export const FleetPage = () => {
   React.useEffect(() => {
     if (!business?.name) return;
     if (businessFleet) {
-      setDescription(businessFleet.description);
+      // setDescription(businessFleet.description);
       setDistanceThreshold(businessFleet.distanceThreshold);
       setMinimumFee(businessFleet.minimumFee);
       setAdditionalPerKmAfterThreshold(
         businessFleet.additionalPerKmAfterThreshold
       );
-    } else {
-      setDescription(`Entregas de responsabilidade do ${business.name}`);
     }
   }, [business?.name, businessFleet]);
-  // console.log('businessFleet', businessFleet?.id);
   // UI
   return (
     <Box maxW="600px">
       <form onSubmit={onSubmitHandler}>
-        <Text mt="6" fontSize="xl" color="black">
-          {t('Descreva seu modelo de entrega')}
-        </Text>
-        <Text mt="2" fontSize="md">
-          {t(
-            'Encorajamos que você descreva brevemente, para os seus clientes, como funciona sua entrega e como se dá a relação entre o restaurante e os seus entregadores, próprios ou parceiros.'
-          )}
-        </Text>
-        <HStack
-          mt="2"
-          alignItems="flex-start"
-          p="4"
-          bgColor="gray.50"
-          borderRadius="lg"
-        >
-          <Text fontSize="sm">{t('Exemplo:')}</Text>
-          <Text fontSize="sm">
-            {t(
-              'Nossas entregas são realizadas por entregadores ___ (da casa ou parceiros), que recebem um fixo de R$ __ + R$ __ por entrega.'
-            )}
-          </Text>
-        </HStack>
         {/* <CustomInput
           id="fleet-name"
           label={t('Nome da frota')}
@@ -132,9 +105,9 @@ export const FleetPage = () => {
           onChange={(ev) => setName(ev.target.value)}
           maxLength={36}
           isRequired
-        /> */}
-        {/* <InputCounter max={36} current={name.length} /> */}
-        <CustomTextarea
+        />
+        <InputCounter max={36} current={name.length} /> */}
+        {/* <CustomTextarea
           mt="4"
           id="fleet-description"
           h="120px"
@@ -144,7 +117,7 @@ export const FleetPage = () => {
           maxLength={240}
           isRequired
         />
-        <InputCounter max={240} current={description.length} />
+        <InputCounter max={240} current={description.length} /> */}
         <FleetIncrementalItem
           title={t('Pagamento Mínimo')}
           description={t(
