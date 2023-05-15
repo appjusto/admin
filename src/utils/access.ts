@@ -64,6 +64,7 @@ const adminManagerPages = [
   'chat',
   'logistics',
   'insurance',
+  'integrations',
 ];
 
 const adminCollaboratorPages = [

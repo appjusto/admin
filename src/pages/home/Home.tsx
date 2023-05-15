@@ -71,6 +71,10 @@ const LogisticsPage = React.lazy(
 const InsurancePage = React.lazy(
   () => import(/* webpackPrefetch: true */ 'pages/insurance/InsurancePage')
 );
+const IntegrationsPage = React.lazy(
+  () =>
+    import(/* webpackPrefetch: true */ 'pages/integrations/IntegrationsPage')
+);
 
 const Home = () => {
   // context
@@ -177,6 +181,10 @@ const Home = () => {
                 <AdminAccessRoute
                   path={`${path}/insurance`}
                   component={InsurancePage}
+                />
+                <AdminAccessRoute
+                  path={`${path}/integrations`}
+                  component={IntegrationsPage}
                 />
               </PageLayout>
             </Switch>
