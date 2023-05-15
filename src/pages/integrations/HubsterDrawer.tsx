@@ -1,3 +1,4 @@
+import { HubsterStoreStatus } from '@appjusto/types';
 import {
   Box,
   Button,
@@ -14,6 +15,8 @@ import {
   Switch as ChakraSwitch,
   Text,
 } from '@chakra-ui/react';
+import { useHubsterStore } from 'app/api/business/useHubsterStore';
+import { useObserveHubsterStore } from 'app/api/business/useObserveHubsterStore';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusinessId } from 'app/state/business/context';
 import { useContextAppRequests } from 'app/state/requests/context';
@@ -22,8 +25,6 @@ import logo from 'common/img/hubster-logo.png';
 import React from 'react';
 import { MdInfoOutline } from 'react-icons/md';
 import { t } from 'utils/i18n';
-
-type StoreStatus = 'available' | 'unavailable';
 
 interface HubsterDrawerProps {
   isOpen: boolean;
@@ -35,9 +36,12 @@ export const HubsterDrawer = ({ onClose, ...props }: HubsterDrawerProps) => {
   const { dispatchAppRequestResult } = useContextAppRequests();
   const { isBackofficeUser, userAbility } = useContextFirebaseUser();
   const businessId = useContextBusinessId();
+  const hubsterStore = useObserveHubsterStore(businessId);
+  const { updateHubsterStore, updateHubsterStoreResult } = useHubsterStore();
+  const { isLoading } = updateHubsterStoreResult;
   // state
   const [storeId, setStoreId] = React.useState('');
-  const [status, setStatus] = React.useState<StoreStatus>('available');
+  const [status, setStatus] = React.useState<HubsterStoreStatus>('available');
   // handlers
   const saveStore = () => {
     if (!businessId) {
@@ -64,8 +68,14 @@ export const HubsterDrawer = ({ onClose, ...props }: HubsterDrawerProps) => {
       storeId,
     };
     console.log(changes);
+    return updateHubsterStore({ docId: hubsterStore?.id, changes });
   };
   // side effects
+  React.useEffect(() => {
+    if (!hubsterStore) return;
+    setStoreId(hubsterStore.storeId);
+    setStatus(hubsterStore.status);
+  }, [hubsterStore]);
   // UI
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
@@ -178,7 +188,12 @@ export const HubsterDrawer = ({ onClose, ...props }: HubsterDrawerProps) => {
               borderTop="1px solid #F2F6EA"
               justifyContent="flex-start"
             >
-              <Button type="submit" fontSize="md">
+              <Button
+                type="submit"
+                fontSize="md"
+                loadingText={t('Salvando')}
+                isLoading={isLoading}
+              >
                 {t('Salvar as alterações')}
               </Button>
             </DrawerFooter>

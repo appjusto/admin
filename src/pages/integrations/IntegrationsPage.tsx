@@ -1,4 +1,6 @@
 import { Box } from '@chakra-ui/react';
+import { useObserveHubsterStore } from 'app/api/business/useObserveHubsterStore';
+import { useContextBusinessId } from 'app/state/business/context';
 import hubsterLogo from 'common/img/hubster-logo.png';
 import PageHeader from 'pages/PageHeader';
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
@@ -10,6 +12,9 @@ const IntegrationsPage = () => {
   // context
   const { path } = useRouteMatch();
   const history = useHistory();
+  const businessId = useContextBusinessId();
+  // state
+  const hubsterStore = useObserveHubsterStore(businessId);
   // handlers
   const closeDrawerHandler = () => {
     history.replace(path);
@@ -28,7 +33,7 @@ const IntegrationsPage = () => {
           <ServiceCard
             logo={hubsterLogo}
             name="Hubster"
-            enabled={true}
+            status={hubsterStore?.status}
             link="integrations/hubster"
           />
         </Box>

@@ -17,6 +17,7 @@ import {
   FetchAccountInformationResponse,
   FetchAdvanceByAmountSimulationPayload,
   FetchReceivablesPayload,
+  HubsterStore,
   ImportMenuPayload,
   MarketplaceAccountInfo,
   Ordering,
@@ -880,5 +881,31 @@ export default class BusinessApi {
       discount,
     };
     return await this.refs.getImportMenuCallable()(payload);
+  }
+
+  // integrations
+  // hubster
+  observeBusinessHubsterStore(
+    businessId: string,
+    resultHandler: (store: WithId<HubsterStore> | null) => void
+  ) {
+    const q = query(
+      this.refs.getHubsterStoresRef(),
+      where('businessId', '==', businessId)
+    );
+    return onSnapshot(q, (snapshot) => {
+      if (snapshot.empty) return resultHandler(null);
+      const storeDoc = snapshot.docs[0];
+      return resultHandler(documentAs<HubsterStore>(storeDoc));
+    });
+  }
+
+  async createHubsterStore(store: HubsterStore) {
+    const docRef = this.refs.getHubsterStoresRef();
+    return addDoc(docRef, store);
+  }
+  async updateHubsterStore(docId: string, changes: HubsterStore) {
+    const docRef = this.refs.getHubsterStoreRef(docId);
+    return updateDoc(docRef, changes);
   }
 }

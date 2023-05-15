@@ -253,6 +253,11 @@ export default class FirebaseRefs {
   getLalamoveOrdersRef = () =>
     collection(this.getLalamoveIntegrationRef(), 'orders');
   getLalamoveOrderRef = (id: string) => doc(this.getLalamoveOrdersRef(), id);
+  // hubster
+  getHubsterIntegrationRef = () => doc(this.getIntegrationsRef(), 'hubster');
+  getHubsterStoresRef = () =>
+    collection(this.getHubsterIntegrationRef(), 'stores');
+  getHubsterStoreRef = (id: string) => doc(this.getHubsterStoresRef(), id);
 
   // storage
   // business

@@ -6,15 +6,13 @@ interface ServiceCardProps {
   logo: string;
   name: string;
   link: string;
-  enabled?: boolean;
+  status?: 'available' | 'unavailable';
 }
 
-export const ServiceCard = ({
-  logo,
-  name,
-  link,
-  enabled,
-}: ServiceCardProps) => {
+export const ServiceCard = ({ logo, name, link, status }: ServiceCardProps) => {
+  // helpers
+  const isAvailable = status === 'available';
+  // UI
   return (
     <Flex
       mt="14px"
@@ -38,15 +36,15 @@ export const ServiceCard = ({
           <Text>{name}</Text>
         </Box>
         <Box w="100%" minW="80px">
-          {enabled !== undefined && (
+          {status !== undefined && (
             <Badge
               p="4px 8px"
-              color={enabled ? 'green.600' : 'black'}
-              bgColor={enabled ? 'green.100' : 'yellow'}
+              color={isAvailable ? 'green.600' : 'black'}
+              bgColor={isAvailable ? 'green.100' : 'yellow'}
               borderRadius="100px"
               fontSize="11px"
             >
-              {enabled ? t('Ativada') : t('Desativada')}
+              {isAvailable ? t('Ativada') : t('Desativada')}
             </Badge>
           )}
         </Box>
