@@ -10,6 +10,7 @@ export const businessOwnerObject = {
   menu: ['c', 'r', 'u', 'd'],
   orders: ['r', 'u'],
   withdraws: ['c', 'r', 'u'],
+  integrations: ['r', 'u'],
 } as Partial<FullPermissions>;
 
 export const businessManagerObject = {
@@ -26,6 +27,7 @@ export const businessManagerObject = {
   menu: ['c', 'r', 'u', 'd'],
   orders: ['r', 'u'],
   withdraws: ['c', 'r', 'u'],
+  integrations: ['r', 'u'],
 } as Partial<FullPermissions>;
 
 export const businessCollaboratorObject = {
@@ -58,6 +60,7 @@ export const fullStaffPermissions = {
   platform: [],
   banners: [],
   areas: [],
+  integrations: [],
 } as FullPermissions;
 
 export const getStaffUIConditions = (

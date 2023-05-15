@@ -31,7 +31,8 @@ export type Entities =
   | 'users'
   | 'platform'
   | 'banners'
-  | 'areas';
+  | 'areas'
+  | 'integrations';
 
 export type AppAbility = Ability<[Actions, Entities | any]>;
 
