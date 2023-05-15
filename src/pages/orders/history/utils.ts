@@ -20,7 +20,7 @@ export const getOrdersCsvData = (orders?: WithId<Order>[]) => {
       .toString()
       .replace('.', ',');
     return {
-      id: order.id,
+      id: order.code,
       createdAt: getDateAndHour(order.timestamps.charged),
       scheduledTo: order.scheduledTo
         ? getDateAndHour(order.scheduledTo)
