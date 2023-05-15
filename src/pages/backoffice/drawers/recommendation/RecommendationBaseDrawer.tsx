@@ -36,12 +36,11 @@ export const RecommendationBaseDrawer = ({
   // helpers
   const userLabel =
     recommendation?.flavor === 'courier' ? 'Entregador' : 'Consumidor';
-  const userLink =
-    recommendation?.userId || recommendation?.consumerId
-      ? `/backoffice/${
-          recommendation?.flavor ? recommendation?.flavor + 's' : 'consumers'
-        }/${recommendation?.userId ?? recommendation?.consumerId}`
-      : null;
+  const userLink = recommendation?.userId
+    ? `/backoffice/${
+        recommendation?.flavor ? recommendation?.flavor + 's' : 'consumers'
+      }/${recommendation?.userId}`
+    : null;
   //UI
   if (recommendation === undefined)
     return (
@@ -174,7 +173,7 @@ export const RecommendationBaseDrawer = ({
               {t(userLabel)}{' '}
               {userLink ? (
                 <Link as={RouterLink} to={userLink} fontWeight="500">
-                  {recommendation.userId ?? recommendation.consumerId}
+                  {recommendation.userId}
                 </Link>
               ) : (
                 <Text as="span" fontWeight="500">
