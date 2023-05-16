@@ -25,6 +25,7 @@ import logo from 'common/img/hubster-logo.png';
 import React from 'react';
 import { MdInfoOutline } from 'react-icons/md';
 import { t } from 'utils/i18n';
+import { isStoreIdValid } from './utils';
 
 interface HubsterDrawerProps {
   isOpen: boolean;
@@ -42,6 +43,7 @@ export const HubsterDrawer = ({ onClose, ...props }: HubsterDrawerProps) => {
   // state
   const [storeId, setStoreId] = React.useState('');
   const [status, setStatus] = React.useState<HubsterStoreStatus>('available');
+  const [isStoreIdInvalid, setisStoreIdInvalid] = React.useState(false);
   // handlers
   const saveStore = () => {
     if (!businessId) {
@@ -56,9 +58,18 @@ export const HubsterDrawer = ({ onClose, ...props }: HubsterDrawerProps) => {
     if (userAbility?.cannot('update', 'integrations')) {
       return dispatchAppRequestResult({
         status: 'error',
-        requestId: 'HubsterDrawer-not allowed',
+        requestId: 'HubsterDrawer-not-allowed',
         message: {
           title: 'Permissão negada.',
+        },
+      });
+    }
+    if (isStoreIdInvalid) {
+      return dispatchAppRequestResult({
+        status: 'error',
+        requestId: 'HubsterDrawer-storeId-invalid',
+        message: {
+          title: 'O storeId informado não é válido',
         },
       });
     }
@@ -76,6 +87,10 @@ export const HubsterDrawer = ({ onClose, ...props }: HubsterDrawerProps) => {
     setStoreId(hubsterStore.storeId);
     setStatus(hubsterStore.status);
   }, [hubsterStore]);
+  React.useEffect(() => {
+    const isValid = isStoreIdValid(storeId);
+    setisStoreIdInvalid(!isValid);
+  }, [storeId]);
   // UI
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
@@ -142,6 +157,7 @@ export const HubsterDrawer = ({ onClose, ...props }: HubsterDrawerProps) => {
                     placeholder={t('Cole o storeId obtido com o hubster')}
                     value={storeId}
                     onChange={(ev) => setStoreId(ev.target.value)}
+                    isInvalid={isStoreIdInvalid}
                     isRequired
                   />
                   <Flex mt="4" alignItems="center">

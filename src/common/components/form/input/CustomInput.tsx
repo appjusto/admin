@@ -1,4 +1,10 @@
-import { FormControl, FormLabel, Input, InputProps, useMultiStyleConfig } from '@chakra-ui/react';
+import {
+  FormControl,
+  FormLabel,
+  Input,
+  InputProps,
+  useMultiStyleConfig,
+} from '@chakra-ui/react';
 import React, { ChangeEvent, useState } from 'react';
 
 export interface CustomInputProps extends InputProps {
@@ -25,18 +31,19 @@ export const CustomInput = React.forwardRef<HTMLInputElement, CustomInputProps>(
       mr,
       ml,
       flex,
+      isInvalid,
       ...props
     }: CustomInputProps,
     ref
   ) => {
-    const [isInvalid, setIsInvalid] = useState(false);
+    const [isInvalidIn, setIsInvalidIn] = useState(false);
     const styles = useMultiStyleConfig('CustomInput', {});
     const controlProps = { maxW, mt, mb, mr, ml, flex };
     const handleValidity = (ev: ChangeEvent<HTMLInputElement>) => {
-      if (value !== '' && !ev.target.validity.valid) {
-        setIsInvalid(true);
+      if (value !== '' && (!ev.target.validity.valid || isInvalid)) {
+        setIsInvalidIn(true);
       } else {
-        setIsInvalid(false);
+        setIsInvalidIn(false);
       }
     };
     return (
@@ -44,7 +51,6 @@ export const CustomInput = React.forwardRef<HTMLInputElement, CustomInputProps>(
         {label && <FormLabel sx={styles.label}>{label}</FormLabel>}
         <Input
           ref={ref}
-          isInvalid={isInvalid}
           type={type}
           placeholder={placeholder}
           value={value}
@@ -52,6 +58,7 @@ export const CustomInput = React.forwardRef<HTMLInputElement, CustomInputProps>(
           onChange={handleChange}
           onBlur={handleValidity}
           errorBorderColor="red"
+          isInvalid={isInvalidIn}
           {...props}
         />
       </FormControl>
