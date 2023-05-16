@@ -162,6 +162,7 @@ export const permissionsPTOptions = {
   platform: 'Plataforma',
   banners: 'Banners',
   areas: 'Áreas',
+  integrations: 'Integrações',
 } as { [key: string]: string };
 
 export const adminRolePTOptions = {
