@@ -128,11 +128,13 @@ export const BusinessDeleteDrawer = ({
                 mb="4"
               >
                 <Text fontSize="18px" fontWeight="700" lineHeight="26px">
-                  {t('Antes de excluir, considere desligar o restaurante')}
+                  {t(
+                    'Antes de excluir, considere deixar o seu restaurante invisível'
+                  )}
                 </Text>
                 <Text mt="2" fontSize="16px" fontWeight="500" lineHeight="22px">
                   {t(
-                    'Você pode acessar o menu "operação" e desligá-lo a qualquer momento para que não seja mais exibido na plataforma.'
+                    'Você pode acessar o menu "operação" e alterar a visibilidade do seu restaurante, a qualquer momento e por quanto tempo precisar. Deixando o seu restaruante invisível, ele não será exibido na plataforma.'
                   )}
                 </Text>
                 <Link to="/app/operation">
