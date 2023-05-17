@@ -273,6 +273,7 @@ export const BackofficeOrderDrawer = ({
     if (status === 'preparing') {
       // When needed backoffice will change status to preparing with 40min of cookingTime
       changes.cookingTime = 40 * 60;
+      changes.acceptedFrom = 'backoffice';
     }
     if (dispatchingState) changes.dispatchingState = dispatchingState;
     updateOrder(changes);
