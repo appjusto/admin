@@ -23,8 +23,10 @@ import { usePlatformParams } from 'app/api/platform/usePlatformParams';
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusiness } from 'app/state/business/context';
 import React from 'react';
+import { useContextFirebaseUser } from '../auth/context';
 import { useContextManagerProfile } from '../manager/context';
 import { useContextAppRequests } from '../requests/context';
+import { getOrderAcceptedFrom } from './utils';
 
 interface ContextProps {
   business: WithId<Business> | null | undefined;
@@ -63,6 +65,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   const api = useContextApi();
   const { platformParams } = usePlatformParams();
   const { dispatchAppRequestResult } = useContextAppRequests();
+  const { isBackofficeUser } = useContextFirebaseUser();
   const { manager } = useContextManagerProfile();
   const { business } = useContextBusiness();
   useBusinessKeepAlive(business?.id);
@@ -110,7 +113,11 @@ export const OrdersContextProvider = (props: ProviderProps) => {
       });
       // firestore update
       try {
-        await api.order().updateOrder(orderId, { status });
+        const changes = { status } as Partial<Order>;
+        if (status === 'preparing') {
+          changes.acceptedFrom = getOrderAcceptedFrom(isBackofficeUser);
+        }
+        await api.order().updateOrder(orderId, changes);
       } catch (error) {
         dispatchAppRequestResult({
           status: 'error',
@@ -123,7 +130,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
         });
       }
     },
-    [api, dispatchAppRequestResult]
+    [api, dispatchAppRequestResult, isBackofficeUser]
   );
   const setOrderCookingTime = React.useCallback(
     async (orderId: string, cookingTime: number | null) => {
