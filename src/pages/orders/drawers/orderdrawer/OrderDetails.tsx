@@ -84,7 +84,7 @@ export const OrderDetails = ({ order }: DetailsProps) => {
                     item.complements.map((complement) => (
                       <Tr key={Math.random()} fontSize="sm">
                         <Td pl="10" fontWeight="700">
-                          {complement.groupName ?? 'N/E'}
+                          {complement.group.name ?? 'N/E'}
                           {' - '}
                           <Text as="span" fontWeight="500">
                             {complement.name}

@@ -161,7 +161,7 @@ export const ProductDetails = () => {
         maxW="220px"
         label="Código PDV"
         placeholder="000"
-        value={externalId ? externalId : ''}
+        value={externalId ?? ''}
         handleChange={(ev) =>
           handleProductUpdate({ externalId: ev.target.value })
         }
