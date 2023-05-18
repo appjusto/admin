@@ -1,2 +1,2 @@
-export type SignInStep = 'email' | 'passwd' | 'feedback';
-export type FeedbackType = 'login' | 'singup';
+export type SignInStep = 'email' | 'passwd' | 'reset' | 'feedback';
+export type FeedbackType = 'login' | 'singup' | 'reset';

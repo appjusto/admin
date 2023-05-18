@@ -9,6 +9,7 @@ import { Redirect } from 'react-router-dom';
 import { EmailForm } from './EmailForm';
 import { Feedback } from './Feedback';
 import { PasswordForm } from './PasswordForm';
+import { ResetForm } from './RecoveryForm';
 import { FeedbackType, SignInStep } from './types';
 
 const Login = () => {
@@ -18,6 +19,8 @@ const Login = () => {
     loginResult,
     sendSignInLinkToEmail,
     sendingLinkResult,
+    sendPasswordResetEmail,
+    sendPasswordResetEmailResult,
     signOut,
   } = useAuthentication();
   const { isLoading, isSuccess } = loginResult;
@@ -32,7 +35,12 @@ const Login = () => {
   };
   const handleSignInLink = (type: FeedbackType) => {
     setFeedbackType(type);
-    sendSignInLinkToEmail(email);
+    if (type !== 'reset') {
+      sendSignInLinkToEmail(email);
+    } else {
+      // recovery
+      sendPasswordResetEmail(email);
+    }
     setSignInStep('feedback');
   };
   const handleRestart = () => {
@@ -72,12 +80,23 @@ const Login = () => {
             handleSubmit={handleLogin}
             isLoading={isLoading}
             handleSignInLink={handleSignInLink}
+            handleStep={setSignInStep}
+            onRestart={handleRestart}
+          />
+        )}
+        {signInStep === 'reset' && (
+          <ResetForm
+            email={email}
+            onEmailChange={setEmail}
+            handleSignInLink={handleSignInLink}
+            onRestart={handleRestart}
           />
         )}
         {signInStep === 'feedback' && (
           <Feedback
             type={feedbackType}
             isSuccess={sendingLinkResult.isSuccess}
+            isResetSuccess={sendPasswordResetEmailResult.isSuccess}
             onRestart={handleRestart}
           />
         )}

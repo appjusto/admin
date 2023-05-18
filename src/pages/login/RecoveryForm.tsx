@@ -4,18 +4,21 @@ import { CustomInput } from 'common/components/form/input/CustomInput';
 import React from 'react';
 import { isEmailValid, normalizeEmail } from 'utils/email';
 import { t } from 'utils/i18n';
+import { FeedbackType } from './types';
 
-interface EmailFormProps {
+interface ResetFormProps {
   email: string;
   onEmailChange(email: string): void;
-  handleSubmit(): void;
+  handleSignInLink(type: FeedbackType): void;
+  onRestart(): void;
 }
 
-export const EmailForm = ({
+export const ResetForm = ({
   email,
   onEmailChange,
-  handleSubmit,
-}: EmailFormProps) => {
+  handleSignInLink,
+  onRestart,
+}: ResetFormProps) => {
   // context
   const { dispatchAppRequestResult } = useContextAppRequests();
   // state
@@ -34,7 +37,7 @@ export const EmailForm = ({
         },
       });
     }
-    handleSubmit();
+    handleSignInLink('reset');
   };
   // side effects
   React.useEffect(() => {
@@ -48,10 +51,10 @@ export const EmailForm = ({
   return (
     <Flex as="form" w="100%" flexDir="column" onSubmit={onSubmit}>
       <Text fontSize="xl" color="black" textAlign="center">
-        {t('Entrar no painel do restaurante')}
+        {t('Recuperação de senha')}
       </Text>
       <Text fontSize="md" textAlign="center" color="gray.700">
-        {t('Informe o seu e-mail')}
+        {t('Confirme o seu e-mail e solicite o link de recuperação')}
       </Text>
       <CustomInput
         ref={emailRef}
@@ -65,8 +68,18 @@ export const EmailForm = ({
         isInvalid={email !== '' && isEmailInvalid}
       />
       <Button type="submit" width="full" h="60px" mt="6">
-        {t('Continuar')}
+        {t('Solicitar link de recuperação')}
       </Button>
+      <Text mt="8" textAlign="center">
+        <Text
+          as="span"
+          textDecor="underline"
+          cursor="pointer"
+          onClick={onRestart}
+        >
+          {t('Voltar ao início')}
+        </Text>
+      </Text>
     </Flex>
   );
 };

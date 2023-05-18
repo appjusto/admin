@@ -74,6 +74,15 @@ export const useAuthentication = () => {
       false,
       false
     );
+  const {
+    mutate: sendPasswordResetEmail,
+    mutationResult: sendPasswordResetEmailResult,
+  } = useCustomMutation(
+    (email: string) => api.auth().sendPasswordResetEmail(email),
+    'sendPasswordResetEmail',
+    false,
+    false
+  );
   const { mutate: signInWithEmailLink, mutationResult: signInResult } =
     useCustomMutation(
       (data: SignInData) =>
@@ -113,6 +122,8 @@ export const useAuthentication = () => {
     updateUsersPassword,
     sendSignInLinkToEmail,
     sendingLinkResult,
+    sendPasswordResetEmail,
+    sendPasswordResetEmailResult,
     signOut,
     signOutResult,
     deleteAccount,

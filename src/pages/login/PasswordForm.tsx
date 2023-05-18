@@ -4,7 +4,7 @@ import { CustomPasswordInput } from 'common/components/form/input/CustomPassword
 import { AppJustoEnv } from 'pages/types';
 import React from 'react';
 import { t } from 'utils/i18n';
-import { FeedbackType } from './types';
+import { FeedbackType, SignInStep } from './types';
 
 const isDesktopApp = isElectron();
 
@@ -14,6 +14,8 @@ interface PasswordFormProps {
   handleSubmit(): void;
   isLoading: boolean;
   handleSignInLink(type: FeedbackType): void;
+  handleStep(step: SignInStep): void;
+  onRestart(): void;
 }
 
 export const PasswordForm = ({
@@ -22,6 +24,8 @@ export const PasswordForm = ({
   handleSubmit,
   isLoading,
   handleSignInLink,
+  handleStep,
+  onRestart,
 }: PasswordFormProps) => {
   // refs
   const passwdRef = React.useRef<HTMLInputElement>(null);
@@ -58,30 +62,27 @@ export const PasswordForm = ({
         value={passwd}
         handleChange={(ev) => onPasswdChange(ev.target.value)}
       />
+      <Text mt="2" fontSize="sm" textDecor="underline" color="green.700">
+        <Text as="span" cursor="pointer" onClick={() => handleStep('reset')}>
+          {t('Esqueci a senha')}
+        </Text>
+      </Text>
       <Button type="submit" width="full" h="60px" mt="6" isLoading={isLoading}>
         {t('Entrar')}
       </Button>
       <Box mt="8">
         {!isDesktopApp && (
-          <Text
-            textAlign="center"
-            textDecor="underline"
-            cursor="pointer"
-            onClick={() => handleSignInLink('login')}
-            color="green.700"
-          >
-            {t('Quero receber o link de acesso por email')}
+          <Text textAlign="center" textDecor="underline" color="green.700">
+            <Text
+              as="span"
+              cursor="pointer"
+              onClick={() => handleSignInLink('login')}
+            >
+              {t('Quero receber o link de acesso por e-mail')}
+            </Text>
           </Text>
         )}
-        <Text
-          mt={isDesktopApp ? '0' : '6'}
-          textAlign="center"
-          textDecor="underline"
-          cursor="pointer"
-          color="green.700"
-        >
-          {t('Quero redefinir a minha senha')}
-        </Text>
+
         <Text mt="6" textAlign="center">
           {t('Sou novo no AppJusto e ')}
           {!isDesktopApp ? (
@@ -106,6 +107,16 @@ export const PasswordForm = ({
               </Text>
             </Link>
           )}
+        </Text>
+        <Text mt="6" textAlign="center">
+          <Text
+            as="span"
+            textDecor="underline"
+            cursor="pointer"
+            onClick={onRestart}
+          >
+            {t('Voltar ao início')}
+          </Text>
         </Text>
       </Box>
     </Flex>
