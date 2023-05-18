@@ -1,140 +1,50 @@
-import { Box, Button, Checkbox, Flex, Text } from '@chakra-ui/react';
-import { isElectron } from '@firebase/util';
+import { Box, Flex } from '@chakra-ui/react';
 import { useAuthentication } from 'app/api/auth/useAuthentication';
-import { useContextAppRequests } from 'app/state/requests/context';
-import { AlertSuccess } from 'common/components/AlertSuccess';
-import { CustomInput } from 'common/components/form/input/CustomInput';
-import { CustomPasswordInput } from 'common/components/form/input/CustomPasswordInput';
 import Image from 'common/components/Image';
 import leftImage from 'common/img/login-left@2x.jpg';
 import rightImage from 'common/img/login-right@2x.jpg';
 import logo from 'common/img/logo.svg';
 import React from 'react';
 import { Redirect } from 'react-router-dom';
-import { isEmailValid, normalizeEmail } from 'utils/email';
-import { t } from 'utils/i18n';
-
-const isDesktopApp = isElectron();
+import { EmailForm } from './EmailForm';
+import { Feedback } from './Feedback';
+import { PasswordForm } from './PasswordForm';
+import { FeedbackType, SignInStep } from './types';
 
 const Login = () => {
   // context
-  const { dispatchAppRequestResult } = useContextAppRequests();
-  const { login, loginResult, signOut } = useAuthentication();
+  const {
+    login,
+    loginResult,
+    sendSignInLinkToEmail,
+    sendingLinkResult,
+    signOut,
+  } = useAuthentication();
   const { isLoading, isSuccess } = loginResult;
-  // refs
-  const emailRef = React.useRef<HTMLInputElement>(null);
-  const passwdRef = React.useRef<HTMLInputElement>(null);
   // state
-  const [isLogin, setIsLogin] = React.useState(true);
+  const [signInStep, setSignInStep] = React.useState<SignInStep>('email');
   const [email, setEmail] = React.useState('');
   const [passwd, setPasswd] = React.useState('');
-  const [isPassword, setIsPassword] = React.useState(isDesktopApp);
-  const [showDesktopHelp, setShowDesktopHelp] = React.useState(false);
-  const isEmailInvalid = React.useMemo(() => !isEmailValid(email), [email]);
+  const [feedbackType, setFeedbackType] = React.useState<FeedbackType>('login');
   // handlers
-  const handleSubmit = (event: React.FormEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    if (isEmailInvalid) {
-      return dispatchAppRequestResult({
-        status: 'error',
-        requestId: 'handleSubmit-email-invalid',
-        message: {
-          title: 'O e-mail informado não é válido. Corrija e tente novamente.',
-        },
-      });
-    }
-    login({ email, password: passwd, isLogin });
+  const handleLogin = () => {
+    login({ email, password: passwd });
+  };
+  const handleSignInLink = (type: FeedbackType) => {
+    setFeedbackType(type);
+    sendSignInLinkToEmail(email);
+    setSignInStep('feedback');
+  };
+  const handleRestart = () => {
+    setPasswd('');
+    setSignInStep('email');
   };
   // side effects
   React.useEffect(() => {
     signOut({});
-    emailRef?.current?.focus();
   }, [signOut]);
-  React.useEffect(() => {
-    if (!isPassword) {
-      setPasswd('');
-    }
-  }, [isPassword]);
   // UI
-  if (isPassword && isSuccess) return <Redirect to="/app" />;
-  if (isDesktopApp) {
-    return (
-      <Flex w="100wh" h="100vh" justifyContent={{ sm: 'center' }}>
-        <Box w={{ lg: 1 / 3 }} display={{ base: 'none', lg: 'block' }}>
-          <Image src={leftImage} scrollCheck={false} w="100%" h="100vh" />
-        </Box>
-        <Flex
-          flexDir="column"
-          justifyContent="center"
-          alignItems="center"
-          w={{ base: '100%', md: '80%', lg: 1 / 3 }}
-          px={{ base: '8', md: '24', lg: '8' }}
-        >
-          <Image src={logo} scrollCheck={false} mb="8" />
-          <Text fontSize="xl" color="black" textAlign="center">
-            {t('Entrar no painel do restaurante')}
-          </Text>
-          <Text fontSize="md" textAlign="center" color="gray.700">
-            {t('Gerencie seu estabelecimento')}
-          </Text>
-          <Flex as="form" w="100%" flexDir="column" onSubmit={handleSubmit}>
-            <CustomInput
-              ref={emailRef}
-              isRequired
-              type="email"
-              id="login-email"
-              label={t('E-mail')}
-              placeholder={t('Endereço de e-mail')}
-              value={email}
-              handleChange={(ev) => setEmail(normalizeEmail(ev.target.value))}
-              isInvalid={email !== '' && isEmailInvalid}
-            />
-            <CustomPasswordInput
-              ref={passwdRef}
-              isRequired={isPassword}
-              id="login-password"
-              label={t('Senha')}
-              placeholder={t('Senha de acesso')}
-              value={passwd}
-              handleChange={(ev) => setPasswd(ev.target.value)}
-            />
-            <Text
-              mt="4"
-              textAlign="center"
-              fontSize="sm"
-              textDecor="underline"
-              cursor="pointer"
-              onClick={() => setShowDesktopHelp(true)}
-            >
-              {t('Esqueci minha senha')}
-            </Text>
-            <Text
-              mt="4"
-              fontSize="sm"
-              display={showDesktopHelp ? 'initial' : 'none'}
-            >
-              {t(
-                'Acesse o painel do seu restaurante pela web, com o seu e-mail, redefina sua senha e retorne para esta aplicação.'
-              )}
-            </Text>
-            <Button
-              type="submit"
-              width="full"
-              h="60px"
-              mt="6"
-              isDisabled={email.length === 0 || passwd.length === 0}
-              isLoading={isLoading}
-            >
-              {t('Entrar')}
-            </Button>
-          </Flex>
-        </Flex>
-        <Box w={{ lg: 1 / 3 }} display={{ base: 'none', lg: 'block' }}>
-          <Image src={rightImage} scrollCheck={false} w="100%" h="100vh" />
-        </Box>
-      </Flex>
-    );
-  }
+  if (isSuccess) return <Redirect to="/app" />;
   return (
     <Flex w="100wh" h="100vh" justifyContent={{ sm: 'center' }}>
       <Box w={{ lg: 1 / 3 }} display={{ base: 'none', lg: 'block' }}>
@@ -148,121 +58,29 @@ const Login = () => {
         px={{ base: '8', md: '24', lg: '8' }}
       >
         <Image src={logo} scrollCheck={false} mb="8" />
-        {isLogin ? (
-          <>
-            <Text fontSize="xl" color="black" textAlign="center">
-              {t('Entrar no painel do restaurante')}
-            </Text>
-            <Text fontSize="md" textAlign="center" color="gray.700">
-              {t('Gerencie seu estabelecimento')}
-            </Text>
-          </>
-        ) : (
-          <>
-            <Text fontSize="xl" color="black" textAlign="center">
-              {t('Criar novo cadastro')}
-            </Text>
-            <Text
-              maxW="360px"
-              fontSize="md"
-              textAlign="center"
-              color="gray.700"
-            >
-              {t(
-                'Você está prestes a ter uma experiência mais justa para seus clientes e entregadores!'
-              )}
-            </Text>
-          </>
-        )}
-        <Flex as="form" w="100%" flexDir="column" onSubmit={handleSubmit}>
-          <CustomInput
-            ref={emailRef}
-            isRequired
-            type="email"
-            id="login-email"
-            label={t('E-mail')}
-            placeholder={t('Endereço de e-mail')}
-            value={email}
-            handleChange={(ev) => setEmail(normalizeEmail(ev.target.value))}
-            isInvalid={email !== '' && isEmailInvalid}
+        {signInStep === 'email' && (
+          <EmailForm
+            email={email}
+            onEmailChange={setEmail}
+            handleSubmit={() => setSignInStep('passwd')}
           />
-          {isLogin && (
-            <>
-              <Checkbox
-                mt="4"
-                aria-label="login-password-checkbox"
-                colorScheme="green"
-                value="available"
-                isChecked={isPassword}
-                onChange={(e) => setIsPassword(e.target.checked)}
-              >
-                {t('Usar senha de acesso')}
-              </Checkbox>
-              <Text mt="2" fontSize="xs">
-                {t(
-                  'Ao entrar sem senha, enviaremos um link de acesso para o e-mail cadastrado.'
-                )}
-              </Text>
-            </>
-          )}
-          {isPassword && (
-            <>
-              <CustomPasswordInput
-                ref={passwdRef}
-                isRequired={isPassword}
-                id="login-password"
-                label={t('Senha')}
-                aria-label="password-input"
-                placeholder={t('Senha de acesso')}
-                value={passwd}
-                handleChange={(ev) => setPasswd(ev.target.value)}
-              />
-              <Text mt="4" fontSize="sm" fontWeight="700">
-                {t(
-                  'Esqueceu a senha? Então desative essa opção e faça o login somente com o e-mail cadastrado. Você poderá criar uma nova senha na sua página de Perfil.'
-                )}
-              </Text>
-            </>
-          )}
-          {!isPassword && isSuccess && (
-            <AlertSuccess
-              title={t('Pronto!')}
-              description={t('O link de acesso foi enviado para seu e-mail.')}
-            />
-          )}
-          <Button
-            type="submit"
-            width="full"
-            h="60px"
-            mt="6"
+        )}
+        {signInStep === 'passwd' && (
+          <PasswordForm
+            passwd={passwd}
+            onPasswdChange={setPasswd}
+            handleSubmit={handleLogin}
             isLoading={isLoading}
-          >
-            {isLogin ? t('Entrar') : t('Cadastrar')}
-          </Button>
-          {isLogin ? (
-            <Text mt="4" textAlign="center">
-              {t('Ainda não possui uma conta? ')}
-              <Text
-                as="span"
-                textDecor="underline"
-                cursor="pointer"
-                onClick={() => setIsLogin(false)}
-              >
-                {t('Clique aqui.')}
-              </Text>
-            </Text>
-          ) : (
-            <Text
-              mt="4"
-              textAlign="center"
-              textDecor="underline"
-              cursor="pointer"
-              onClick={() => setIsLogin(true)}
-            >
-              {t('Já tenho uma conta')}
-            </Text>
-          )}
-        </Flex>
+            handleSignInLink={handleSignInLink}
+          />
+        )}
+        {signInStep === 'feedback' && (
+          <Feedback
+            type={feedbackType}
+            isSuccess={sendingLinkResult.isSuccess}
+            onRestart={handleRestart}
+          />
+        )}
       </Flex>
       <Box w={{ lg: 1 / 3 }} display={{ base: 'none', lg: 'block' }}>
         <Image src={rightImage} scrollCheck={false} w="100%" h="100vh" />
