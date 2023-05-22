@@ -8,24 +8,23 @@ import {
   HStack,
   Stack,
   Text,
-  Tooltip,
 } from '@chakra-ui/react';
 import { useObserveBusinessOrdersHistory } from 'app/api/order/useObserveBusinessOrdersHistory';
 import { useContextBusinessId } from 'app/state/business/context';
 import { ClearFiltersButton } from 'common/components/backoffice/ClearFiltersButton';
 import { FiltersScrollBar } from 'common/components/backoffice/FiltersScrollBar';
+import { CustomButton } from 'common/components/buttons/CustomButton';
 import Container from 'common/components/Container';
 import { CustomDateFilter } from 'common/components/form/input/CustomDateFilter';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import { isEqual } from 'lodash';
 import React from 'react';
-import { CSVLink } from 'react-csv';
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import PageHeader from '../../PageHeader';
 import { OrderDrawer } from '../drawers/orderdrawer';
 import { BusinessOrdersTable } from './BusinessOrdersTable';
-import { getOrdersCsvData } from './utils';
+import { OrderExportDrawer } from './OrderExportDrawer';
 
 const statuses = [
   'scheduled',
@@ -69,8 +68,6 @@ const OrdersHistoryPage = () => {
     orderStatus,
     fulfillment
   );
-  // helpers
-  const ordersCsv = getOrdersCsvData(orders);
   // handlers
   const closeDrawerHandler = () => {
     history.replace(path);
@@ -153,52 +150,52 @@ const OrdersHistoryPage = () => {
         />
         <ClearFiltersButton clearFunction={clearFilters} />
       </Flex>
-      <HStack mt="6" spacing={8} color="black">
-        <Text fontSize="lg" fontWeight="700" lineHeight="26px">
-          {t(`${orders?.length ?? '0'} itens na lista`)}
-        </Text>
-        <CheckboxGroup
-          colorScheme="green"
-          value={fulfillment}
-          onChange={(values: Fulfillment[]) => handleFulfillment(values)}
-        >
-          <HStack
-            alignItems="flex-start"
-            color="black"
-            spacing={8}
-            fontSize="16px"
-            lineHeight="22px"
+      <Flex mt="6" justifyContent="space-between">
+        <HStack spacing={8} color="black">
+          <Text fontSize="lg" fontWeight="700" lineHeight="26px">
+            {t(`${orders?.length ?? '0'} itens na lista`)}
+          </Text>
+          <CheckboxGroup
+            colorScheme="green"
+            value={fulfillment}
+            onChange={(values: Fulfillment[]) => handleFulfillment(values)}
           >
-            <Checkbox value="delivery">{t('Delivery')}</Checkbox>
-            <Checkbox value="take-away">{t('Retirada')}</Checkbox>
-          </HStack>
-        </CheckboxGroup>
-      </HStack>
+            <HStack
+              alignItems="flex-start"
+              color="black"
+              spacing={8}
+              fontSize="16px"
+              lineHeight="22px"
+            >
+              <Checkbox value="delivery">{t('Delivery')}</Checkbox>
+              <Checkbox value="take-away">{t('Retirada')}</Checkbox>
+            </HStack>
+          </CheckboxGroup>
+        </HStack>
+        <CustomButton
+          mt="0"
+          variant="outline"
+          fontSize="md"
+          label={t('Exportar dados')}
+          link={`${path}/export`}
+          // size="md"
+        />
+      </Flex>
       {businessId ? (
         <BusinessOrdersTable orders={orders} />
       ) : (
         <Text>{t('Carregando...')}</Text>
       )}
-      <Flex mt="8" justifyContent="space-between">
+      <Flex mt="8" justifyContent="flex-start">
         <Button variant="secondary" onClick={fetchNextPage}>
           <ArrowDownIcon mr="2" />
           {t('Carregar mais')}
         </Button>
-        <CSVLink
-          filename="pedidos-appjusto.csv"
-          data={ordersCsv.data}
-          headers={ordersCsv.headers}
-        >
-          <Tooltip
-            label={t(
-              'Certifique-se de ter filtrado e carregado a lista completa dos pedidos que deseja exportar'
-            )}
-          >
-            <Button variant="outline">{t('Exportar .csv')}</Button>
-          </Tooltip>
-        </CSVLink>
       </Flex>
       <Switch>
+        <Route exact path={`${path}/export`}>
+          <OrderExportDrawer isOpen onClose={closeDrawerHandler} />
+        </Route>
         <Route path={`${path}/:orderId`}>
           <OrderDrawer isOpen onClose={closeDrawerHandler} />
         </Route>

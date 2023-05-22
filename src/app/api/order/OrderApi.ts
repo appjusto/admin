@@ -382,6 +382,25 @@ export default class OrderApi {
     // returns the unsubscribe function
     return unsubscribe;
   }
+  async fetchBusinessOrdersToExport(
+    businessId: string,
+    statuses: OrderStatus[],
+    start: Date,
+    end: Date
+  ): Promise<WithId<Order>[]> {
+    let q = query(
+      this.refs.getOrdersRef(),
+      orderBy('timestamps.charged', 'asc'),
+      where('business.id', '==', businessId),
+      where('status', 'in', statuses),
+      where('timestamps.charged', '>=', start),
+      where('timestamps.charged', '<=', end)
+    );
+    // Unsubscribe
+    const data = await getDocs(q);
+    const orders = documentsAs<Order>(data.docs);
+    return orders;
+  }
 
   observeBusinessCanceledOrders(
     resultHandler: (orders: WithId<Order>[]) => void,
