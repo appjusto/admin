@@ -10,6 +10,7 @@ import {
   addDoc,
   deleteDoc,
   DocumentData,
+  getDocs,
   limit,
   onSnapshot,
   orderBy,
@@ -91,6 +92,35 @@ export default class LedgerApi {
       where('createdOn', '<=', end)
     );
     return customCollectionSnapshot(q, resultHandler);
+  }
+
+  async fetchBusinessLedgerByPeriod(
+    businessId: string,
+    statuses: LedgerEntryStatus[],
+    start: Date,
+    end: Date
+  ) {
+    const toQ = query(
+      this.refs.getLedgerRef(),
+      orderBy('createdOn', 'desc'),
+      where('to.accountId', '==', businessId),
+      where('status', 'in', statuses),
+      where('createdOn', '>=', start),
+      where('createdOn', '<=', end)
+    );
+    const toSnapshot = await getDocs(toQ);
+    const toBusiness = documentsAs<LedgerEntry>(toSnapshot.docs);
+    const fromQ = query(
+      this.refs.getLedgerRef(),
+      orderBy('createdOn', 'desc'),
+      where('from.accountId', '==', businessId),
+      where('status', 'in', statuses),
+      where('createdOn', '>=', start),
+      where('createdOn', '<=', end)
+    );
+    const fromSnapshot = await getDocs(fromQ);
+    const fromBusiness = documentsAs<LedgerEntry>(fromSnapshot.docs);
+    return toBusiness.concat(fromBusiness);
   }
 
   observeLedgerByOrderIdAndOperation(
