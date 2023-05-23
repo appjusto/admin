@@ -1,4 +1,4 @@
-import { Fare, Order, WithId } from '@appjusto/types';
+import { Fare, LedgerEntry, Order, WithId } from '@appjusto/types';
 import dayjs from 'dayjs';
 import { orderStatusPTOptionsForTableItem } from 'pages/backoffice/utils';
 import { getDateAndHour } from 'utils/functions';
@@ -12,34 +12,40 @@ const getOrderValue = (fare?: Fare) => {
   if (fare?.courier?.payee === 'business') {
     businessValue += fare?.courier?.value ?? 0;
   }
-  // return business total value
-  return serializeValue(businessValue);
-};
-const getOrderNetValue = (fare?: Fare) => {
-  let businessValue = fare?.business?.netValue ?? 0;
-  // if outsourced by business it should be added to courier`s netValue
-  if (fare?.courier?.payee === 'business') {
-    businessValue += fare?.courier?.netValue ?? 0;
-  }
-  // return business total value
   return serializeValue(businessValue);
 };
 const getOrderIuguValue = (fare?: Fare) => {
-  // business value to display in admin drawer and table items
   let result = fare?.business?.processing?.value ?? 0;
   // if outsourced by business it should be added to courier`s value
   if (fare?.courier?.payee === 'business') {
     result += fare?.courier?.processing?.value ?? 0;
   }
-  // return business total value
-  return serializeValue(result);
+  return { iugu: serializeValue(result), iuguNumber: result };
 };
 const getOrderAppJustoComission = (fare?: Fare) => {
   // business value to display in admin drawer and table items
   let result = fare?.business?.commission ?? 0;
-  result = fare?.business?.insurance ?? 0;
-  // return business total value
-  return serializeValue(result);
+  result += fare?.business?.insurance ?? 0;
+  return { appjusto: serializeValue(result), appjustoNumber: result };
+};
+const getOrderNetValue = (
+  fare: Fare | undefined,
+  iugu: number,
+  appjusto: number
+) => {
+  let businessValue = fare?.business?.paid ?? 0;
+  // if order was paid
+  if (businessValue > 0) {
+    businessValue -= iugu + appjusto;
+    // if outsourced by business it should be added to courier`s netValue
+    if (fare?.courier?.payee === 'business') {
+      businessValue += fare?.courier?.paid ?? 0;
+    }
+  }
+  return {
+    netValue: serializeValue(businessValue),
+    netValueNumber: businessValue,
+  };
 };
 
 const getPaymentDate = (order: WithId<Order>): string => {
@@ -62,22 +68,92 @@ const getPaymentDate = (order: WithId<Order>): string => {
   return 'Não encontrado';
 };
 
+const getEntriesByOperation = (entries?: LedgerEntry[]) => {
+  const insuranceEntries = (entries ?? []).filter(
+    (entry) => entry.operation === 'business-insurance'
+  );
+  const deliveryAndOthersEntries = (entries ?? []).filter(
+    (entry) => entry.operation === 'delivery' || entry.operation === 'others'
+  );
+  return {
+    insuranceEntries,
+    deliveryAndOthersEntries,
+  };
+};
+const getOrderInsuranceValue = (orderId: string, entries: LedgerEntry[]) => {
+  const filteredEntries = entries.filter((entry) => entry.orderId === orderId);
+  const result = filteredEntries.reduce((total, entry) => {
+    let value = entry.value;
+    if (
+      entry.from.accountType === 'business' &&
+      entry.to.accountType === 'platform'
+    ) {
+      value = value * -1;
+    }
+    return (total += value);
+  }, 0);
+  return { insurance: serializeValue(result), insuranceNumber: result };
+};
+const getOrderLedgerValue = (
+  orderId: string,
+  isDeliveredByBusiness: boolean,
+  entries: LedgerEntry[]
+) => {
+  const filteredEntries = entries.filter((entry) => {
+    // if is a regular delivery ledger ignore it
+    // because it`s already computed in field "value"
+    if (
+      isDeliveredByBusiness &&
+      entry.operation === 'delivery' &&
+      entry.to.accountType === 'business'
+    ) {
+      return false;
+    }
+    return entry.orderId === orderId;
+  });
+  const result = filteredEntries.reduce((total, entry) => {
+    let value = entry.value;
+    // if is from business to platform make a debit
+    if (
+      entry.from.accountType === 'business' &&
+      entry.to.accountType === 'platform'
+    ) {
+      value = value * -1;
+    }
+    return (total += value);
+  }, 0);
+  return { ledger: serializeValue(result), ledgerNumber: result };
+};
+
 const headers = [
   { label: 'ID', key: 'id' },
   { label: 'Criado em', key: 'charged' },
   { label: 'Agendado para', key: 'scheduledTo' },
   { label: 'Entregue em', key: 'delivered' },
   { label: 'Status', key: 'status' },
-  { label: 'Valor dos produtos', key: 'value' },
+  { label: 'Valor do pedido', key: 'value' },
   { label: 'Taxa (IUGU)', key: 'iugu' },
   { label: 'Comissão (AppJusto)', key: 'appjusto' },
   { label: 'Valor líquido', key: 'netValue' },
+  { label: 'Cobertura', key: 'insurance' },
+  { label: 'Conciliações', key: 'ledger' },
+  { label: 'Valor recebido', key: 'result' },
   { label: 'Método de pagamento', key: 'paymentMethod' },
   { label: 'Data de recebimento', key: 'paymentDate' },
+  { label: 'Nome do cliente', key: 'consumerName' },
+  { label: 'Tel. do cliente', key: 'consumerPhone' },
+  { label: 'E-mail do cliente', key: 'consumerEmail' },
 ];
 
-export const getOrdersCsvData = (orders?: WithId<Order>[]) => {
+export const getOrdersCsvData = (
+  orders?: WithId<Order>[],
+  entries?: LedgerEntry[]
+) => {
   if (!orders) return { headers, data: [] };
+
+  const { insuranceEntries, deliveryAndOthersEntries } =
+    getEntriesByOperation(entries);
+
   const data = orders.map((order) => {
     // helpers
     const charged = getDateAndHour(order.timestamps.charged);
@@ -89,11 +165,30 @@ export const getOrdersCsvData = (orders?: WithId<Order>[]) => {
       : 'Não encontrado';
     const status = orderStatusPTOptionsForTableItem[order.status];
     const value = getOrderValue(order.fare);
-    const iugu = getOrderIuguValue(order.fare);
-    const appjusto = getOrderAppJustoComission(order.fare);
-    const netValue = getOrderNetValue(order.fare);
+    const { iugu, iuguNumber } = getOrderIuguValue(order.fare);
+    const { appjusto, appjustoNumber } = getOrderAppJustoComission(order.fare);
+    const { netValue, netValueNumber } = getOrderNetValue(
+      order.fare,
+      iuguNumber,
+      appjustoNumber
+    );
+    const { insurance, insuranceNumber } = getOrderInsuranceValue(
+      order.id,
+      insuranceEntries
+    );
+    const { ledger, ledgerNumber } = getOrderLedgerValue(
+      order.id,
+      order.fare?.courier?.payee === 'business',
+      deliveryAndOthersEntries
+    );
+    const result = serializeValue(
+      netValueNumber + insuranceNumber + ledgerNumber
+    );
     const paymentMethod = order.paymentMethod ?? 'Não encontrado';
     const paymentDate = getPaymentDate(order);
+    const consumerName = order.consumer.name;
+    const consumerPhone = order.consumer.phone ?? 'Não informado';
+    const consumerEmail = order.consumer.email ?? 'Não informado';
     return {
       id: order.code,
       charged,
@@ -104,8 +199,14 @@ export const getOrdersCsvData = (orders?: WithId<Order>[]) => {
       iugu,
       appjusto,
       netValue,
+      insurance,
+      ledger,
+      result,
       paymentMethod,
       paymentDate,
+      consumerName,
+      consumerPhone,
+      consumerEmail,
     };
   });
   return { headers, data };
