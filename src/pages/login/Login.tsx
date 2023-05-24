@@ -1,11 +1,13 @@
-import { Box, Flex } from '@chakra-ui/react';
+import { Box, Flex, HStack, Icon, Text } from '@chakra-ui/react';
 import { useAuthentication } from 'app/api/auth/useAuthentication';
 import Image from 'common/components/Image';
 import leftImage from 'common/img/login-left@2x.jpg';
 import rightImage from 'common/img/login-right@2x.jpg';
 import logo from 'common/img/logo.svg';
 import React from 'react';
+import { MdArrowBack } from 'react-icons/md';
 import { Redirect } from 'react-router-dom';
+import { t } from 'utils/i18n';
 import { EmailForm } from './EmailForm';
 import { Feedback } from './Feedback';
 import { PasswordForm } from './PasswordForm';
@@ -59,12 +61,27 @@ const Login = () => {
         <Image src={leftImage} scrollCheck={false} w="100%" h="100vh" />
       </Box>
       <Flex
+        position="relative"
         flexDir="column"
         justifyContent="center"
         alignItems="center"
         w={{ base: '100%', md: '80%', lg: 1 / 3 }}
         px={{ base: '8', md: '24', lg: '8' }}
       >
+        {signInStep !== 'email' && (
+          <HStack
+            position="absolute"
+            top="8"
+            left="6"
+            w="fit-content"
+            alignItems="center"
+            cursor="pointer"
+            onClick={handleRestart}
+          >
+            <Icon as={MdArrowBack} mt="2px" />
+            <Text>{t('Voltar')}</Text>
+          </HStack>
+        )}
         <Image src={logo} scrollCheck={false} mb="8" />
         {signInStep === 'email' && (
           <EmailForm
@@ -81,7 +98,6 @@ const Login = () => {
             isLoading={isLoading}
             handleSignInLink={handleSignInLink}
             handleStep={setSignInStep}
-            onRestart={handleRestart}
           />
         )}
         {signInStep === 'reset' && (
@@ -89,7 +105,6 @@ const Login = () => {
             email={email}
             onEmailChange={setEmail}
             handleSignInLink={handleSignInLink}
-            onRestart={handleRestart}
           />
         )}
         {signInStep === 'feedback' && (
@@ -97,7 +112,6 @@ const Login = () => {
             type={feedbackType}
             isSuccess={sendingLinkResult.isSuccess}
             isResetSuccess={sendPasswordResetEmailResult.isSuccess}
-            onRestart={handleRestart}
           />
         )}
       </Flex>

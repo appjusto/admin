@@ -1,6 +1,7 @@
-import { Box, Center, Flex, Spinner, Text } from '@chakra-ui/react';
+import { Box, Center, Flex, Icon, Spinner, Text } from '@chakra-ui/react';
 import { AlertSuccess } from 'common/components/AlertSuccess';
 import React from 'react';
+import { MdCheck } from 'react-icons/md';
 import { t } from 'utils/i18n';
 import { FeedbackType } from './types';
 
@@ -8,14 +9,12 @@ interface FeedbackProps {
   type: FeedbackType;
   isSuccess: boolean;
   isResetSuccess: boolean;
-  onRestart(): void;
 }
 
 export const Feedback = ({
   type,
   isSuccess,
   isResetSuccess,
-  onRestart,
 }: FeedbackProps) => {
   // UI
   if (type === 'reset') {
@@ -40,16 +39,6 @@ export const Feedback = ({
             )}
           />
         )}
-        <Box mt="8">
-          <Text
-            textAlign="center"
-            textDecor="underline"
-            cursor="pointer"
-            onClick={onRestart}
-          >
-            {t('Voltar ao início')}
-          </Text>
-        </Box>
       </Flex>
     );
   }
@@ -66,36 +55,28 @@ export const Feedback = ({
           <Text mr="2">{t('Enviando link de acesso')}</Text>
           <Spinner size="sm" />
         </Center>
-      ) : type === 'login' ? (
-        <AlertSuccess
-          title={t('Link enviado!')}
-          description={t('O link de acesso foi enviado para seu e-mail.')}
-        />
       ) : (
-        <AlertSuccess
-          title={t('Link enviado!')}
-          description={t(
-            'Vá até o seu e-mail e clique no link de acesso para iniciar o seu cadastro. '
-          )}
-        />
+        <Flex mt="8" flexDirection="column" alignItems="center" color="black">
+          <Center w="80px" h="80px" bgColor="green.500" borderRadius="full">
+            <Icon as={MdCheck} w="42px" h="42px" color="white" />
+          </Center>
+          <Text mt="4" textAlign="center">
+            {t('Link enviado para o seu e-mail!')}
+          </Text>
+          <Text textAlign="center">
+            {t('Continue o acesso clicando no link')}
+          </Text>
+        </Flex>
       )}
-      <Box mt="8">
-        <Text
-          textAlign="center"
-          textDecor="underline"
-          cursor="pointer"
-          // onClick={onRestart}
-        >
+      <Box mt="10">
+        <Box
+          mb="10"
+          borderTop="1px solid"
+          borderColor="gray.500"
+          mx={{ base: '0', md: '10%' }}
+        />
+        <Text textAlign="center" textDecor="underline" cursor="pointer">
           {t('Preciso de ajuda')}
-        </Text>
-        <Text
-          mt="6"
-          textAlign="center"
-          textDecor="underline"
-          cursor="pointer"
-          onClick={onRestart}
-        >
-          {t('Voltar ao início')}
         </Text>
       </Box>
     </Flex>

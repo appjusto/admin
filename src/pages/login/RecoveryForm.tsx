@@ -10,14 +10,12 @@ interface ResetFormProps {
   email: string;
   onEmailChange(email: string): void;
   handleSignInLink(type: FeedbackType): void;
-  onRestart(): void;
 }
 
 export const ResetForm = ({
   email,
   onEmailChange,
   handleSignInLink,
-  onRestart,
 }: ResetFormProps) => {
   // context
   const { dispatchAppRequestResult } = useContextAppRequests();
@@ -70,16 +68,6 @@ export const ResetForm = ({
       <Button type="submit" width="full" h="60px" mt="6">
         {t('Solicitar link de recuperação')}
       </Button>
-      <Text mt="8" textAlign="center">
-        <Text
-          as="span"
-          textDecor="underline"
-          cursor="pointer"
-          onClick={onRestart}
-        >
-          {t('Voltar ao início')}
-        </Text>
-      </Text>
     </Flex>
   );
 };

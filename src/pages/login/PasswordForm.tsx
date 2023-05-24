@@ -15,7 +15,6 @@ interface PasswordFormProps {
   isLoading: boolean;
   handleSignInLink(type: FeedbackType): void;
   handleStep(step: SignInStep): void;
-  onRestart(): void;
 }
 
 export const PasswordForm = ({
@@ -25,7 +24,6 @@ export const PasswordForm = ({
   isLoading,
   handleSignInLink,
   handleStep,
-  onRestart,
 }: PasswordFormProps) => {
   // refs
   const passwdRef = React.useRef<HTMLInputElement>(null);
@@ -70,7 +68,13 @@ export const PasswordForm = ({
       <Button type="submit" width="full" h="60px" mt="6" isLoading={isLoading}>
         {t('Entrar')}
       </Button>
-      <Box mt="8">
+      <Box mt="12">
+        <Box
+          mb="8"
+          borderTop="1px solid"
+          borderColor="gray.500"
+          mx={{ base: '0', md: '10%' }}
+        />
         {!isDesktopApp && (
           <Text textAlign="center" textDecor="underline" color="green.700">
             <Text
@@ -83,7 +87,7 @@ export const PasswordForm = ({
           </Text>
         )}
 
-        <Text mt="6" textAlign="center">
+        <Text mt="6" textAlign="center" fontSize="xs">
           {t('Sou novo no AppJusto e ')}
           {!isDesktopApp ? (
             <Text
@@ -107,16 +111,6 @@ export const PasswordForm = ({
               </Text>
             </Link>
           )}
-        </Text>
-        <Text mt="6" textAlign="center">
-          <Text
-            as="span"
-            textDecor="underline"
-            cursor="pointer"
-            onClick={onRestart}
-          >
-            {t('Voltar ao início')}
-          </Text>
         </Text>
       </Box>
     </Flex>
