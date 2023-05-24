@@ -111,7 +111,9 @@ const Login = () => {
           <Feedback
             type={feedbackType}
             isSuccess={sendingLinkResult.isSuccess}
+            isError={sendingLinkResult.isError}
             isResetSuccess={sendPasswordResetEmailResult.isSuccess}
+            isResetError={sendPasswordResetEmailResult.isError}
           />
         )}
       </Flex>

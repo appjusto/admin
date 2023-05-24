@@ -78,7 +78,13 @@ export const useAuthentication = () => {
     mutate: sendPasswordResetEmail,
     mutationResult: sendPasswordResetEmailResult,
   } = useCustomMutation(
-    (email: string) => api.auth().sendPasswordResetEmail(email),
+    async (email: string) => {
+      try {
+        await api.auth().sendPasswordResetEmail(email);
+      } catch (error) {
+        throw new FirebaseError('ignored-error', 'E-mail ou senha incorretos.');
+      }
+    },
     'sendPasswordResetEmail',
     false,
     false
