@@ -234,7 +234,8 @@ export const OrderDrawer = (props: Props) => {
                 <OrderIssuesTable issues={orderIssues} />
               )}
               {(!logisticsIncluded ||
-                (order?.status !== 'ready' &&
+                (order?.fulfillment === 'delivery' &&
+                  order?.status !== 'ready' &&
                   order?.status !== 'dispatching')) && (
                 <>
                   <Text mt="8" fontSize="xl" color="black">
