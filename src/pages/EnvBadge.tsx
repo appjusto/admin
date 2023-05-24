@@ -1,6 +1,5 @@
 import { Badge, BadgeProps, Box } from '@chakra-ui/react';
-
-type Envs = 'community' | 'dev' | 'staging' | 'live';
+import { AppJustoEnv } from './types';
 
 const envColors = {
   community: {
@@ -27,7 +26,7 @@ const envColors = {
 
 export const EnvBadge = (props: BadgeProps) => {
   // context
-  const env = process.env.REACT_APP_ENVIRONMENT as Envs;
+  const env = process.env.REACT_APP_ENVIRONMENT as AppJustoEnv;
   // helpers
   const { label, color, bg } = env ? envColors[env] : envColors['live'];
   // UI

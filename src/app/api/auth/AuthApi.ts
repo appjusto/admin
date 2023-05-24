@@ -8,6 +8,7 @@ import {
   EmailAuthProvider,
   isSignInWithEmailLink,
   reauthenticateWithCredential,
+  sendPasswordResetEmail,
   sendSignInLinkToEmail,
   signInWithEmailAndPassword,
   signInWithEmailLink,
@@ -70,6 +71,10 @@ export default class AuthApi {
     } catch (error) {
       Sentry.captureException(error);
     }
+  }
+
+  async sendPasswordResetEmail(email: string): Promise<void> {
+    return await sendPasswordResetEmail(this.auth, email);
   }
 
   async signInWithEmailLink(email: string, link: string) {

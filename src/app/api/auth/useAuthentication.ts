@@ -1,6 +1,5 @@
 import { useContextApi } from 'app/state/api/context';
 import { FirebaseError } from 'firebase/app';
-import { nanoid } from 'nanoid';
 import { useCustomMutation } from '../mutation/useCustomMutation';
 interface UserCreationData {
   email: string;
@@ -8,8 +7,8 @@ interface UserCreationData {
 }
 interface LoginData {
   email: string;
-  password?: string;
-  isLogin?: boolean;
+  password: string;
+  // isLogin?: boolean;
 }
 interface SignInData {
   email: string;
@@ -57,33 +56,12 @@ export const useAuthentication = () => {
   );
   const { mutate: login, mutationResult: loginResult } = useCustomMutation(
     async (data: LoginData) => {
-      const { email, password, isLogin } = data;
-      if (isLogin && !password) {
-        // if user is trying to login with email link
-        // check if the user exists
-        try {
-          await api.auth().signInWithEmailAndPassword(email, nanoid(8));
-        } catch (error) {
-          const { code } = error as FirebaseError;
-          if (code === 'auth/user-not-found') {
-            // if user not exists return error
-            throw new FirebaseError(
-              'ignored-error',
-              'Não foi possível enviar o link de acesso para o e-mail informado.'
-            );
-          }
-        }
+      const { email, password } = data;
+      try {
+        await api.auth().signInWithEmailAndPassword(email, password);
+      } catch (error) {
+        throw new FirebaseError('ignored-error', 'E-mail ou senha incorretos.');
       }
-      if (password) {
-        try {
-          await api.auth().signInWithEmailAndPassword(email, password);
-        } catch (error) {
-          throw new FirebaseError(
-            'ignored-error',
-            'E-mail ou senha incorretos.'
-          );
-        }
-      } else return api.auth().sendSignInLinkToEmail(email);
     },
     'login',
     false,
@@ -96,6 +74,15 @@ export const useAuthentication = () => {
       false,
       false
     );
+  const {
+    mutate: sendPasswordResetEmail,
+    mutationResult: sendPasswordResetEmailResult,
+  } = useCustomMutation(
+    (email: string) => api.auth().sendPasswordResetEmail(email),
+    'sendPasswordResetEmail',
+    false,
+    false
+  );
   const { mutate: signInWithEmailLink, mutationResult: signInResult } =
     useCustomMutation(
       (data: SignInData) =>
@@ -135,6 +122,8 @@ export const useAuthentication = () => {
     updateUsersPassword,
     sendSignInLinkToEmail,
     sendingLinkResult,
+    sendPasswordResetEmail,
+    sendPasswordResetEmailResult,
     signOut,
     signOutResult,
     deleteAccount,
