@@ -84,6 +84,7 @@ export const paymentMethodPTOptions = {
   credit_card: 'Cartão de crédito',
   pix: 'Pix',
   vr: 'VR',
+  credits: 'Créditos',
 };
 
 export const invoiceStatusPTOptions = {
