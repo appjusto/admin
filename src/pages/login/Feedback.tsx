@@ -1,5 +1,4 @@
-import { Box, Center, Flex, Icon, Spinner, Text } from '@chakra-ui/react';
-import React from 'react';
+import { Box, Center, Flex, Icon, Link, Spinner, Text } from '@chakra-ui/react';
 import { MdCheck, MdClose } from 'react-icons/md';
 import { t } from 'utils/i18n';
 import { FeedbackType } from './types';
@@ -67,9 +66,15 @@ export const Feedback = ({
             borderColor="gray.500"
             mx={{ base: '0', md: '10%' }}
           />
-          <Text textAlign="center" textDecor="underline" cursor="pointer">
-            {t('Preciso de ajuda')}
-          </Text>
+          <Link
+            href="https://sites.google.com/appjusto.com.br/restaurantes/faq/acesso-plataforma"
+            _focus={{ outline: 'none' }}
+            isExternal
+          >
+            <Text textAlign="center" textDecor="underline" cursor="pointer">
+              {t('Preciso de ajuda')}
+            </Text>
+          </Link>
         </Box>
       </Flex>
     );
@@ -116,9 +121,15 @@ export const Feedback = ({
           borderColor="gray.500"
           mx={{ base: '0', md: '10%' }}
         />
-        <Text textAlign="center" textDecor="underline" cursor="pointer">
-          {t('Preciso de ajuda')}
-        </Text>
+        <Link
+          href="https://sites.google.com/appjusto.com.br/restaurantes/faq/acesso-plataforma"
+          _focus={{ outline: 'none' }}
+          isExternal
+        >
+          <Text textAlign="center" textDecor="underline" cursor="pointer">
+            {t('Preciso de ajuda')}
+          </Text>
+        </Link>
       </Box>
     </Flex>
   );
