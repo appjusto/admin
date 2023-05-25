@@ -40,8 +40,8 @@ export const useAuthentication = () => {
         if (code === 'auth/email-already-in-use') {
           // if user not exists return error
           throw new FirebaseError(
-            'user-creation-email-already-in-use-error',
-            'O email informado já foi cadastrado.'
+            'ignored-error',
+            'O e-mail informado já foi cadastrado.'
           );
         }
         throw new FirebaseError(
@@ -82,7 +82,15 @@ export const useAuthentication = () => {
       try {
         await api.auth().sendPasswordResetEmail(email);
       } catch (error) {
-        throw new FirebaseError('ignored-error', 'E-mail ou senha incorretos.');
+        const { code } = error as FirebaseError;
+        if (code === 'auth/user-not-found') {
+          // if user not exists return error
+          throw new FirebaseError('ignored-error', 'Usuário não encontrado.');
+        }
+        throw new FirebaseError(
+          'ignored-error',
+          'Não foi possível enviar o link para o e-mail informado.'
+        );
       }
     },
     'sendPasswordResetEmail',
