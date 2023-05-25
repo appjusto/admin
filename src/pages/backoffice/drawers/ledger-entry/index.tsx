@@ -521,7 +521,6 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 lineHeight="21px"
               >
                 <Stack direction={{ base: 'column', md: 'row' }} spacing={4}>
-                  <Radio value="delivery">{t('Delivery')}</Radio>
                   <Radio value="same-owner-accounts">
                     {t('Contas do mesmo usuário')}
                   </Radio>
