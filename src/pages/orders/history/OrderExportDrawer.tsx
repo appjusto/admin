@@ -13,7 +13,6 @@ import {
   Icon,
   Text,
 } from '@chakra-ui/react';
-import { useFetchBusinessLedgerByPeriod } from 'app/api/ledger/fetchBusinessLedgerByPeriod';
 import { useFetchBusinessOrdersToExport } from 'app/api/order/useFetchBusinessOrdersToExport';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusinessId } from 'app/state/business/context';
@@ -39,14 +38,9 @@ export const OrderExportDrawer = (props: OrderExportDrawerProps) => {
   const [clearDateNumber, setClearDateNumber] = React.useState(0);
 
   const orders = useFetchBusinessOrdersToExport(businessId, start, end);
-  const entries = useFetchBusinessLedgerByPeriod(businessId, start, end);
   // helpers
-  const ordersCsv = getOrdersCsvData(orders, entries);
-  const isFetched =
-    start.length > 0 &&
-    end.length > 0 &&
-    orders !== undefined &&
-    entries !== undefined;
+  const ordersCsv = getOrdersCsvData(orders);
+  const isFetched = start.length > 0 && end.length > 0 && orders !== undefined;
   const isActive = isFetched && orders!.length > 0;
   // handlers
   const clearFilters = () => {

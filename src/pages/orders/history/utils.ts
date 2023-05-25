@@ -1,4 +1,4 @@
-import { Fare, LedgerEntry, Order, WithId } from '@appjusto/types';
+import { Fare, FareDetails, Order, WithId } from '@appjusto/types';
 import dayjs from 'dayjs';
 import { orderStatusPTOptionsForTableItem } from 'pages/backoffice/utils';
 import { getDateAndHour } from 'utils/functions';
@@ -31,7 +31,8 @@ const getOrderAppJustoComission = (fare?: Fare) => {
 const getOrderNetValue = (
   fare: Fare | undefined,
   iugu: number,
-  appjusto: number
+  appjusto: number,
+  extras: number
 ) => {
   let businessValue = fare?.business?.paid ?? 0;
   // if order was paid
@@ -42,10 +43,8 @@ const getOrderNetValue = (
       businessValue += fare?.courier?.paid ?? 0;
     }
   }
-  return {
-    netValue: serializeValue(businessValue),
-    netValueNumber: businessValue,
-  };
+  businessValue += extras;
+  return serializeValue(businessValue);
 };
 
 const getPaymentDate = (order: WithId<Order>): string => {
@@ -68,61 +67,14 @@ const getPaymentDate = (order: WithId<Order>): string => {
   return 'Não encontrado';
 };
 
-const getEntriesByOperation = (entries?: LedgerEntry[]) => {
-  const insuranceEntries = (entries ?? []).filter(
-    (entry) => entry.operation === 'business-insurance'
-  );
-  const deliveryAndOthersEntries = (entries ?? []).filter(
-    (entry) => entry.operation === 'delivery' || entry.operation === 'others'
-  );
-  return {
-    insuranceEntries,
-    deliveryAndOthersEntries,
-  };
-};
-const getOrderInsuranceValue = (orderId: string, entries: LedgerEntry[]) => {
-  const filteredEntries = entries.filter((entry) => entry.orderId === orderId);
-  const result = filteredEntries.reduce((total, entry) => {
-    let value = entry.value;
-    if (
-      entry.from.accountType === 'business' &&
-      entry.to.accountType === 'platform'
-    ) {
-      value = value * -1;
-    }
-    return (total += value);
+const getOrderExtrasValue = (businessFare?: FareDetails | null) => {
+  if (!businessFare || !businessFare.extras)
+    return { extras: '0', extrasNumber: 0 };
+  const { extras: businessExtras } = businessFare;
+  const result = businessExtras.reduce((total, extra) => {
+    return (total += extra.value);
   }, 0);
-  return { insurance: serializeValue(result), insuranceNumber: result };
-};
-const getOrderLedgerValue = (
-  orderId: string,
-  isDeliveredByBusiness: boolean,
-  entries: LedgerEntry[]
-) => {
-  const filteredEntries = entries.filter((entry) => {
-    // if is a regular delivery ledger ignore it
-    // because it`s already computed in field "value"
-    if (
-      isDeliveredByBusiness &&
-      entry.operation === 'delivery' &&
-      entry.to.accountType === 'business'
-    ) {
-      return false;
-    }
-    return entry.orderId === orderId;
-  });
-  const result = filteredEntries.reduce((total, entry) => {
-    let value = entry.value;
-    // if is from business to platform make a debit
-    if (
-      entry.from.accountType === 'business' &&
-      entry.to.accountType === 'platform'
-    ) {
-      value = value * -1;
-    }
-    return (total += value);
-  }, 0);
-  return { ledger: serializeValue(result), ledgerNumber: result };
+  return { extras: serializeValue(result), extrasNumber: result };
 };
 
 const headers = [
@@ -134,10 +86,8 @@ const headers = [
   { label: 'Valor do pedido', key: 'value' },
   { label: 'Taxa (IUGU)', key: 'iugu' },
   { label: 'Comissão (AppJusto)', key: 'appjusto' },
+  { label: 'Extras', key: 'extras' },
   { label: 'Valor líquido', key: 'netValue' },
-  { label: 'Cobertura', key: 'insurance' },
-  { label: 'Conciliações', key: 'ledger' },
-  { label: 'Valor recebido', key: 'result' },
   { label: 'Método de pagamento', key: 'paymentMethod' },
   { label: 'Data de recebimento', key: 'paymentDate' },
   { label: 'Nome do cliente', key: 'consumerName' },
@@ -145,14 +95,8 @@ const headers = [
   { label: 'E-mail do cliente', key: 'consumerEmail' },
 ];
 
-export const getOrdersCsvData = (
-  orders?: WithId<Order>[],
-  entries?: LedgerEntry[]
-) => {
+export const getOrdersCsvData = (orders?: WithId<Order>[]) => {
   if (!orders) return { headers, data: [] };
-
-  const { insuranceEntries, deliveryAndOthersEntries } =
-    getEntriesByOperation(entries);
 
   const data = orders.map((order) => {
     // helpers
@@ -167,22 +111,12 @@ export const getOrdersCsvData = (
     const value = getOrderValue(order.fare);
     const { iugu, iuguNumber } = getOrderIuguValue(order.fare);
     const { appjusto, appjustoNumber } = getOrderAppJustoComission(order.fare);
-    const { netValue, netValueNumber } = getOrderNetValue(
+    const { extras, extrasNumber } = getOrderExtrasValue(order.fare?.business);
+    const netValue = getOrderNetValue(
       order.fare,
       iuguNumber,
-      appjustoNumber
-    );
-    const { insurance, insuranceNumber } = getOrderInsuranceValue(
-      order.id,
-      insuranceEntries
-    );
-    const { ledger, ledgerNumber } = getOrderLedgerValue(
-      order.id,
-      order.fare?.courier?.payee === 'business',
-      deliveryAndOthersEntries
-    );
-    const result = serializeValue(
-      netValueNumber + insuranceNumber + ledgerNumber
+      appjustoNumber,
+      extrasNumber
     );
     const paymentMethod = order.paymentMethod ?? 'Não encontrado';
     const paymentDate = getPaymentDate(order);
@@ -198,10 +132,8 @@ export const getOrdersCsvData = (
       value,
       iugu,
       appjusto,
+      extras,
       netValue,
-      insurance,
-      ledger,
-      result,
       paymentMethod,
       paymentDate,
       consumerName,
