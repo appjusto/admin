@@ -1,19 +1,7 @@
 import { Order, WithId } from '@appjusto/types';
-import {
-  Box,
-  Table,
-  Tbody,
-  Td,
-  Text,
-  Tfoot,
-  Th,
-  Thead,
-  Tr,
-} from '@chakra-ui/react';
-import { formatCurrency } from 'utils/formatters';
+import { Box, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
 import { t } from 'utils/i18n';
 import { OrdersTableItem } from './OrdersTableItem';
-import { getOrdersTableTotal } from './utils';
 
 interface OrdersTableProps {
   orders?: WithId<Order>[] | null;
@@ -21,8 +9,6 @@ interface OrdersTableProps {
 }
 
 export const OrdersTable = ({ orders, isBackoffice }: OrdersTableProps) => {
-  // helpers
-  const totalValue = isBackoffice ? 0 : getOrdersTableTotal(orders);
   // UI
   return (
     <>
@@ -64,19 +50,6 @@ export const OrdersTable = ({ orders, isBackoffice }: OrdersTableProps) => {
               </Tr>
             )}
           </Tbody>
-          {!isBackoffice && (
-            <Tfoot bgColor="gray.50">
-              <Tr color="black" fontSize="xs" fontWeight="700">
-                <Td></Td>
-                <Td></Td>
-                <Td></Td>
-                <Td></Td>
-                <Td></Td>
-                <Td>{t('Total:')}</Td>
-                <Td isNumeric>{formatCurrency(totalValue)}</Td>
-              </Tr>
-            </Tfoot>
-          )}
         </Table>
       </Box>
       <Text mt="4" fontSize="sm">
