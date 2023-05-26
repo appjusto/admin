@@ -7,6 +7,26 @@ import { useUserCanReadEntity } from '../auth/useUserCanReadEntity';
 
 const statuses = ['delivered', 'scheduled', 'canceled'] as OrderStatus[];
 
+interface Balance {
+  productsAmount: number;
+  deliveryAmount: number;
+  iuguCosts: number;
+  comission: number;
+  extras: number;
+  netValue: number;
+  ordersNumber: number;
+}
+
+export const initialBalance: Balance = {
+  productsAmount: 0,
+  deliveryAmount: 0,
+  iuguCosts: 0,
+  comission: 0,
+  extras: 0,
+  netValue: 0,
+  ordersNumber: 0,
+};
+
 export const useFetchBusinessOrdersByMonth = (
   businessId: string | undefined,
   currentDate?: Date | null
@@ -16,13 +36,7 @@ export const useFetchBusinessOrdersByMonth = (
   const userCanRead = useUserCanReadEntity('orders');
   // state
   const [orders, setOrders] = React.useState<WithId<Order>[]>();
-  const [productsAmount, setProductsAmount] = React.useState(0);
-  const [deliveryAmount, setDeliveryAmount] = React.useState(0);
-  const [iuguCosts, setIuguCosts] = React.useState(0);
-  const [comission, setComission] = React.useState(0);
-  const [extras, setExtras] = React.useState(0);
-  const [netValue, setNetValue] = React.useState(0);
-  const [ordersNumber, setOrdersNumber] = React.useState(0);
+  const [balance, setBalance] = React.useState<Balance>(initialBalance);
   // side effects
   React.useEffect(() => {
     if (!userCanRead) return;
@@ -38,31 +52,10 @@ export const useFetchBusinessOrdersByMonth = (
     })();
   }, [api, userCanRead, businessId, currentDate]);
   React.useEffect(() => {
-    const {
-      products,
-      delivery,
-      iugu,
-      comission,
-      extras,
-      netValue,
-      ordersNumber,
-    } = getPeriodBalance(orders);
-    setProductsAmount(products);
-    setDeliveryAmount(delivery);
-    setIuguCosts(iugu);
-    setComission(comission);
-    setExtras(extras);
-    setNetValue(netValue);
-    setOrdersNumber(ordersNumber);
+    if (!orders) return;
+    const periodBalance = getPeriodBalance(orders);
+    setBalance(periodBalance);
   }, [orders]);
   // return
-  return {
-    productsAmount,
-    deliveryAmount,
-    iuguCosts,
-    comission,
-    extras,
-    netValue,
-    ordersNumber,
-  };
+  return balance;
 };

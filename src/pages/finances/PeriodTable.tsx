@@ -9,34 +9,35 @@ import {
   Tooltip,
   Tr,
 } from '@chakra-ui/react';
+import { useFetchBusinessOrdersByMonth } from 'app/api/order/useFetchBusinessOrdersByMonth';
 import { usePlatformFees } from 'app/api/platform/usePlatformFees';
+import { useContextBusinessId } from 'app/state/business/context';
+import React from 'react';
 import { MdInfoOutline } from 'react-icons/md';
-import { formatCurrency } from 'utils/formatters';
+import { formatCurrency, getMonthName } from 'utils/formatters';
 import { t } from 'utils/i18n';
 
 interface PeriodTableProps {
-  period: string;
-  productsAmount: number;
-  deliveryAmount: number;
-  iuguCosts: number;
-  appjustoCosts: number;
-  extrasAmount: number;
-  ordersNumber: number;
-  netValue: number;
+  month: Date | null;
 }
 
-export const PeriodTable = ({
-  period,
-  productsAmount,
-  deliveryAmount,
-  appjustoCosts,
-  iuguCosts,
-  extrasAmount,
-  ordersNumber,
-  netValue,
-}: PeriodTableProps) => {
+export const PeriodTable = ({ month }: PeriodTableProps) => {
   // context
   const { platformFees } = usePlatformFees();
+  const businessId = useContextBusinessId();
+  // state
+  const {
+    productsAmount,
+    deliveryAmount,
+    iuguCosts,
+    comission,
+    extras,
+    netValue,
+    ordersNumber,
+  } = useFetchBusinessOrdersByMonth(businessId, month);
+  // helpers
+  const monthName = month ? getMonthName(month.getMonth()) : 'N/E';
+  const year = month ? month.getFullYear() : 'N/E';
   // UI
   return (
     <Table mt="6" size="md" variant="simple">
@@ -73,7 +74,7 @@ export const PeriodTable = ({
                 </Tooltip>
               </Td>
               <Td color="red" isNumeric>
-                {`- ${formatCurrency(appjustoCosts)}`}
+                {`- ${formatCurrency(comission)}`}
               </Td>
             </Tr>
             <Tr color="black" fontSize="xs" fontWeight="500">
@@ -107,7 +108,7 @@ export const PeriodTable = ({
             </Tr>
             <Tr color="black" fontSize="xs" fontWeight="500">
               <Td>{t('Extras (cobertura e conciliações)')}</Td>
-              <Td isNumeric>{formatCurrency(extrasAmount)}</Td>
+              <Td isNumeric>{formatCurrency(extras)}</Td>
             </Tr>
           </>
         )}
@@ -115,7 +116,9 @@ export const PeriodTable = ({
       <Tfoot bgColor="gray.50">
         <Tr>
           <Th>
-            {t(`Resultado para ${period} (Total de pedidos: ${ordersNumber})`)}
+            {t(
+              `Resultado para ${monthName} de ${year} (Total de pedidos: ${ordersNumber})`
+            )}
           </Th>
           <Th color="green.700" isNumeric>
             {formatCurrency(netValue)}

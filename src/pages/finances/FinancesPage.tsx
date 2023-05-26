@@ -2,7 +2,6 @@ import { Box, Stack } from '@chakra-ui/react';
 import { useAccountInformation } from 'app/api/business/useAccountInformation';
 import { useObserveBusinessAdvances } from 'app/api/business/useObserveBusinessAdvances';
 import { useObserveBusinessWithdraws } from 'app/api/business/useObserveBusinessWithdraws';
-import { useFetchBusinessOrdersByMonth } from 'app/api/order/useFetchBusinessOrdersByMonth';
 import { useContextBusinessId } from 'app/state/business/context';
 import { CustomMonthInput } from 'common/components/form/input/CustomMonthInput';
 import { ReactComponent as Checked } from 'common/img/icon-checked.svg';
@@ -11,7 +10,6 @@ import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router';
-import { getMonthName } from 'utils/formatters';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { AdvanceDetailsDrawer } from './AdvanceDetailsDrawer';
@@ -40,21 +38,8 @@ const FinancesPage = () => {
     string | null
   >();
   // page data with filters
-  const {
-    productsAmount,
-    deliveryAmount,
-    iuguCosts,
-    comission,
-    extras,
-    netValue,
-    ordersNumber,
-  } = useFetchBusinessOrdersByMonth(businessId, month);
-
   const advances = useObserveBusinessAdvances(businessId, month);
   const withdraws = useObserveBusinessWithdraws(businessId, month);
-  // helpers
-  const monthName = month ? getMonthName(month.getMonth()) : 'N/E';
-  const year = month ? month.getFullYear() : 'N/E';
   // handlers
   const closeDrawerHandler = () => {
     refreshAccountInformation();
@@ -118,16 +103,7 @@ const FinancesPage = () => {
           handleChange={setMonth}
         />
       </Box>
-      <PeriodTable
-        period={`${monthName} de ${year}`}
-        productsAmount={productsAmount}
-        deliveryAmount={deliveryAmount}
-        iuguCosts={iuguCosts}
-        appjustoCosts={comission}
-        extrasAmount={extras}
-        ordersNumber={ordersNumber}
-        netValue={netValue}
-      />
+      <PeriodTable month={month} />
       <SectionTitle>{t('Antecipações')}</SectionTitle>
       <AdvancesTable advances={advances} />
       <SectionTitle>{t('Transferências')}</SectionTitle>

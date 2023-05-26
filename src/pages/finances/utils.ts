@@ -1,4 +1,5 @@
 import { Fare, Order, WithId } from '@appjusto/types';
+import { initialBalance } from 'app/api/order/useFetchBusinessOrdersByMonth';
 import { formatCurrency } from 'utils/formatters';
 
 export const formatCents = (value: string) =>
@@ -81,24 +82,65 @@ export const getOrderNetValue = (
 export const getOrderExtrasValue = (fare?: Fare) => {
   if (!isOrdersCount(fare)) return 0;
   if (!fare?.business?.extras) return 0;
-  const { extras: businessExtras } = fare?.business;
-  return businessExtras.reduce((total, extra) => {
-    return (total += extra.value);
-  }, 0);
+  const { extras } = fare?.business;
+  let result = 0;
+  extras.forEach((extra) => {
+    result += extra.value;
+  });
+  return result;
 };
 
-const initialBalance = {
-  products: 0,
-  delivery: 0,
-  iugu: 0,
-  comission: 0,
-  extras: 0,
-  netValue: 0,
-  ordersNumber: 0,
-};
+// export const getPeriodBalance = (orders?: WithId<Order>[]) => {
+//   if (!orders) return initialBalance;
+//   console.log('getPeriodBalance IN: ', orders.length);
+//   const balance = orders.reduce((result, order) => {
+//     // products
+//     const productsAmount = getOrderProductsValue(order.fare);
+//     // delivery
+//     const deliveryAmount = getOrderDeliveryValue(order.fare);
+//     // iugu
+//     const iuguCosts = getOrderIuguValue(order.fare);
+//     // comission
+//     const comission = getOrderComission(order.fare);
+//     // extras
+//     const extras = getOrderExtrasValue(order.fare);
+//     // netValue
+//     const netValue = getOrderNetValue(order.fare, iuguCosts, comission, extras);
+//     // item counts
+//     const count = isOrdersCount(order.fare) ? 1 : 0;
+//     // result
+//     result.productsAmount += productsAmount;
+//     result.deliveryAmount += deliveryAmount;
+//     result.iuguCosts += iuguCosts;
+//     result.comission += comission;
+//     result.extras += extras;
+//     result.netValue += netValue;
+//     result.ordersNumber += count;
+//     return result;
+//     // return {
+//     //   productsAmount: (result.productsAmount += productsAmount),
+//     //   deliveryAmount: (result.deliveryAmount += deliveryAmount),
+//     //   iuguCosts: (result.iuguCosts += iuguCosts),
+//     //   comission: (result.comission += comission),
+//     //   extras: (result.extras += extras),
+//     //   netValue: (result.netValue += netValue),
+//     //   ordersNumber: (result.ordersNumber += count),
+//     // };
+//   }, initialBalance);
+//   console.log('getPeriodBalance valid OUT: ', balance.ordersNumber);
+//   return balance;
+// };
 
-const getOrdersBalance = (orders: WithId<Order>[]) => {
-  return orders.reduce((result, order) => {
+export const getPeriodBalance = (orders?: WithId<Order>[]) => {
+  if (!orders) return initialBalance;
+  let productsAmount = 0;
+  let deliveryAmount = 0;
+  let iuguCosts = 0;
+  let comission = 0;
+  let extras = 0;
+  let netValue = 0;
+  let ordersNumber = 0;
+  orders.forEach((order) => {
     // products
     const products = getOrderProductsValue(order.fare);
     // delivery
@@ -106,42 +148,26 @@ const getOrdersBalance = (orders: WithId<Order>[]) => {
     // iugu
     const iugu = getOrderIuguValue(order.fare);
     // comission
-    const comission = getOrderComission(order.fare);
+    const comiss = getOrderComission(order.fare);
     // extras
-    const extras = getOrderExtrasValue(order.fare);
+    const ext = getOrderExtrasValue(order.fare);
     // netValue
-    const netValue = getOrderNetValue(order.fare, iugu, comission, extras);
+    const net = getOrderNetValue(order.fare, iugu, comiss, ext);
     // item counts
     const count = isOrdersCount(order.fare) ? 1 : 0;
     // result
-    return {
-      products: (result.products += products),
-      delivery: (result.delivery += delivery),
-      iugu: (result.iugu += iugu),
-      comission: (result.comission += comission),
-      extras: (result.extras += extras),
-      netValue: (result.netValue += netValue),
-      ordersNumber: (result.ordersNumber += count),
-    };
-  }, initialBalance);
-};
-
-export const getPeriodBalance = (orders?: WithId<Order>[]) => {
-  if (!orders) return initialBalance;
-  console.log('getPeriodBalance n: ', orders.length);
-  const {
-    products,
-    delivery,
-    iugu,
-    comission,
-    extras,
-    netValue,
-    ordersNumber,
-  } = getOrdersBalance(orders);
+    productsAmount += products;
+    deliveryAmount += delivery;
+    iuguCosts += iugu;
+    comission += comiss;
+    extras += ext;
+    netValue += net;
+    ordersNumber += count;
+  });
   return {
-    products,
-    delivery,
-    iugu,
+    productsAmount,
+    deliveryAmount,
+    iuguCosts,
     comission,
     extras,
     netValue,
