@@ -1,6 +1,12 @@
-import { Fare, FareDetails, Order, WithId } from '@appjusto/types';
+import { Fare, Order, WithId } from '@appjusto/types';
 import dayjs from 'dayjs';
 import { orderStatusPTOptionsForTableItem } from 'pages/backoffice/utils';
+import {
+  getOrderComission,
+  getOrderExtrasValue,
+  getOrderIuguValue,
+  getOrderNetValue,
+} from 'pages/finances/utils';
 import { getDateAndHour } from 'utils/functions';
 
 const serializeValue = (value: number) =>
@@ -14,36 +20,21 @@ const getOrderValue = (fare?: Fare) => {
   }
   return serializeValue(businessValue);
 };
-const getOrderIuguValue = (fare?: Fare) => {
-  let result = fare?.business?.processing?.value ?? 0;
-  // if outsourced by business it should be added to courier`s value
-  if (fare?.courier?.payee === 'business') {
-    result += fare?.courier?.processing?.value ?? 0;
-  }
+const getOrderIuguValueSerialized = (fare?: Fare) => {
+  let result = getOrderIuguValue(fare);
   return { iugu: serializeValue(result), iuguNumber: result };
 };
-const getOrderAppJustoComission = (fare?: Fare) => {
-  // business value to display in admin drawer and table items
-  let result = fare?.business?.commission ?? 0;
-  result += fare?.business?.insurance ?? 0;
+const getOrderComissionSerialized = (fare?: Fare) => {
+  let result = getOrderComission(fare);
   return { appjusto: serializeValue(result), appjustoNumber: result };
 };
-const getOrderNetValue = (
+const getOrderNetValueSerialized = (
   fare: Fare | undefined,
   iugu: number,
   appjusto: number,
   extras: number
 ) => {
-  let businessValue = fare?.business?.paid ?? 0;
-  // if order was paid
-  if (businessValue > 0) {
-    businessValue -= iugu + appjusto;
-    // if outsourced by business it should be added to courier`s netValue
-    if (fare?.courier?.payee === 'business') {
-      businessValue += fare?.courier?.paid ?? 0;
-    }
-  }
-  businessValue += extras;
+  let businessValue = getOrderNetValue(fare, iugu, appjusto, extras);
   return serializeValue(businessValue);
 };
 
@@ -67,13 +58,8 @@ const getPaymentDate = (order: WithId<Order>): string => {
   return 'Não encontrado';
 };
 
-const getOrderExtrasValue = (businessFare?: FareDetails | null) => {
-  if (!businessFare || !businessFare.extras)
-    return { extras: '0', extrasNumber: 0 };
-  const { extras: businessExtras } = businessFare;
-  const result = businessExtras.reduce((total, extra) => {
-    return (total += extra.value);
-  }, 0);
+const getOrderExtrasValueSerialazed = (fare?: Fare) => {
+  const result = getOrderExtrasValue(fare);
   return { extras: serializeValue(result), extrasNumber: result };
 };
 
@@ -109,10 +95,12 @@ export const getOrdersCsvData = (orders?: WithId<Order>[]) => {
       : 'Não encontrado';
     const status = orderStatusPTOptionsForTableItem[order.status];
     const value = getOrderValue(order.fare);
-    const { iugu, iuguNumber } = getOrderIuguValue(order.fare);
-    const { appjusto, appjustoNumber } = getOrderAppJustoComission(order.fare);
-    const { extras, extrasNumber } = getOrderExtrasValue(order.fare?.business);
-    const netValue = getOrderNetValue(
+    const { iugu, iuguNumber } = getOrderIuguValueSerialized(order.fare);
+    const { appjusto, appjustoNumber } = getOrderComissionSerialized(
+      order.fare
+    );
+    const { extras, extrasNumber } = getOrderExtrasValueSerialazed(order.fare);
+    const netValue = getOrderNetValueSerialized(
       order.fare,
       iuguNumber,
       appjustoNumber,

@@ -16,33 +16,32 @@ import { t } from 'utils/i18n';
 
 interface PeriodTableProps {
   period: string;
-  total: number;
-  amountProducts: number;
-  amountDelivery: number;
-  amountInsurance: number;
-  appjustoCosts: number;
+  productsAmount: number;
+  deliveryAmount: number;
   iuguCosts: number;
+  appjustoCosts: number;
+  extrasAmount: number;
+  ordersNumber: number;
+  netValue: number;
 }
 
 export const PeriodTable = ({
   period,
-  total,
-  amountProducts,
-  amountDelivery,
-  amountInsurance,
+  productsAmount,
+  deliveryAmount,
   appjustoCosts,
   iuguCosts,
+  extrasAmount,
+  ordersNumber,
+  netValue,
 }: PeriodTableProps) => {
   // context
   const { platformFees } = usePlatformFees();
-  // helpers
-  const amountTotal =
-    (amountProducts ?? 0) + (amountDelivery ?? 0) + (amountInsurance ?? 0);
   // UI
   return (
     <Table mt="6" size="md" variant="simple">
       <Tbody>
-        {amountProducts === undefined ? (
+        {productsAmount === undefined ? (
           <Tr color="black" fontSize="xs" fontWeight="700">
             <Td>{t('Carregando...')}</Td>
             <Td></Td>
@@ -51,7 +50,7 @@ export const PeriodTable = ({
           <>
             <Tr color="black" fontSize="xs" fontWeight="500">
               <Td>{t('Total de vendas de produtos')}</Td>
-              <Td isNumeric>{formatCurrency(amountProducts)}</Td>
+              <Td isNumeric>{formatCurrency(productsAmount)}</Td>
             </Tr>
             <Tr fontSize="xs" fontWeight="500">
               <Td color="black">
@@ -79,7 +78,7 @@ export const PeriodTable = ({
             </Tr>
             <Tr color="black" fontSize="xs" fontWeight="500">
               <Td>{t('Total recebido por entregas')}</Td>
-              <Td isNumeric>{formatCurrency(amountDelivery)}</Td>
+              <Td isNumeric>{formatCurrency(deliveryAmount)}</Td>
             </Tr>
             <Tr fontSize="xs" fontWeight="500">
               <Td color="black">
@@ -107,17 +106,19 @@ export const PeriodTable = ({
               </Td>
             </Tr>
             <Tr color="black" fontSize="xs" fontWeight="500">
-              <Td>{t('Ressarcimentos (cobertura)')}</Td>
-              <Td isNumeric>{formatCurrency(amountInsurance)}</Td>
+              <Td>{t('Extras (cobertura e conciliações)')}</Td>
+              <Td isNumeric>{formatCurrency(extrasAmount)}</Td>
             </Tr>
           </>
         )}
       </Tbody>
       <Tfoot bgColor="gray.50">
         <Tr>
-          <Th>{t(`Resultado para ${period} (Total de pedidos: ${total})`)}</Th>
+          <Th>
+            {t(`Resultado para ${period} (Total de pedidos: ${ordersNumber})`)}
+          </Th>
           <Th color="green.700" isNumeric>
-            {formatCurrency(amountTotal - appjustoCosts - iuguCosts)}
+            {formatCurrency(netValue)}
           </Th>
         </Tr>
       </Tfoot>

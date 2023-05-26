@@ -382,7 +382,7 @@ export default class OrderApi {
     // returns the unsubscribe function
     return unsubscribe;
   }
-  async fetchBusinessOrdersToExport(
+  async fetchBusinessOrdersByPeriod(
     businessId: string,
     statuses: OrderStatus[],
     start: Date,

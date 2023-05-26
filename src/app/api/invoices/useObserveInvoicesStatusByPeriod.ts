@@ -2,10 +2,10 @@ import { Invoice, InvoiceType, WithId } from '@appjusto/types';
 import { IuguInvoiceStatus } from '@appjusto/types/payment/iugu';
 import { useContextApi } from 'app/state/api/context';
 import dayjs from 'dayjs';
-import {
-  calculateAppJustoCosts,
-  calculateIuguCosts,
-} from 'pages/finances/utils';
+// import {
+//   calculateAppJustoCosts,
+//   calculateIuguCosts,
+// } from 'pages/finances/utils';
 import React from 'react';
 import { useUserCanReadEntity } from '../auth/useUserCanReadEntity';
 import {
@@ -63,8 +63,8 @@ export const useObserveInvoicesStatusByPeriod = (
       invoicesDeliveryTypes
     );
     const amountDelivery = ownLogistics + delivery;
-    const appjusto = calculateAppJustoCosts(invoices);
-    const iugu = calculateIuguCosts(invoices);
+    const appjusto = 0; //calculateAppJustoCosts(invoices);
+    const iugu = 0; //calculateIuguCosts(invoices);
     const total = getInvoicesTotalByTypes(invoices, invoicesProductTypes);
     setTotal(total);
     setPeriodProductAmount(amountProducts);

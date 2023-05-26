@@ -1,11 +1,8 @@
-import { LedgerEntryStatus } from '@appjusto/types';
-import { IuguInvoiceStatus } from '@appjusto/types/payment/iugu';
 import { Box, Stack } from '@chakra-ui/react';
 import { useAccountInformation } from 'app/api/business/useAccountInformation';
 import { useObserveBusinessAdvances } from 'app/api/business/useObserveBusinessAdvances';
 import { useObserveBusinessWithdraws } from 'app/api/business/useObserveBusinessWithdraws';
-import { useObserveInvoicesStatusByPeriod } from 'app/api/invoices/useObserveInvoicesStatusByPeriod';
-import { useObserveLedgerStatusByPeriod } from 'app/api/ledger/useObserveLedgerStatusByPeriod';
+import { useFetchBusinessOrdersByMonth } from 'app/api/order/useFetchBusinessOrdersByMonth';
 import { useContextBusinessId } from 'app/state/business/context';
 import { CustomMonthInput } from 'common/components/form/input/CustomMonthInput';
 import { ReactComponent as Checked } from 'common/img/icon-checked.svg';
@@ -26,13 +23,6 @@ import { formatIuguValueToDisplay } from './utils';
 import { WithdrawsDrawer } from './WithdrawsDrawer';
 import { WithdrawsTable } from './WithdrawsTable';
 
-const periodStatuses = [
-  'paid',
-  'partially_refunded',
-  'partially_paid',
-] as IuguInvoiceStatus[];
-const ledgerEntriesStatuses = ['paid'] as LedgerEntryStatus[];
-
 const FinancesPage = () => {
   // context
   const { path, url } = useRouteMatch();
@@ -51,23 +41,20 @@ const FinancesPage = () => {
   >();
   // page data with filters
   const {
-    periodProductAmount,
-    periodDeliveryAmount,
-    total,
-    appjustoCosts,
+    productsAmount,
+    deliveryAmount,
     iuguCosts,
-  } = useObserveInvoicesStatusByPeriod(businessId, month, periodStatuses);
-  const {
-    deliveryAmount: ledgerDeliveryAmount,
-    iuguValue: ledgerIuguValue,
-    insuranceAmount: ledgerInsuranceAmount,
-  } = useObserveLedgerStatusByPeriod(businessId, month, ledgerEntriesStatuses);
+    comission,
+    extras,
+    netValue,
+    ordersNumber,
+  } = useFetchBusinessOrdersByMonth(businessId, month);
+
   const advances = useObserveBusinessAdvances(businessId, month);
   const withdraws = useObserveBusinessWithdraws(businessId, month);
   // helpers
   const monthName = month ? getMonthName(month.getMonth()) : 'N/E';
   const year = month ? month.getFullYear() : 'N/E';
-  const iuguTotalCosts = iuguCosts + ledgerIuguValue;
   // handlers
   const closeDrawerHandler = () => {
     refreshAccountInformation();
@@ -133,12 +120,13 @@ const FinancesPage = () => {
       </Box>
       <PeriodTable
         period={`${monthName} de ${year}`}
-        total={total}
-        amountProducts={periodProductAmount}
-        amountDelivery={periodDeliveryAmount + ledgerDeliveryAmount}
-        amountInsurance={ledgerInsuranceAmount}
-        appjustoCosts={appjustoCosts}
-        iuguCosts={iuguTotalCosts}
+        productsAmount={productsAmount}
+        deliveryAmount={deliveryAmount}
+        iuguCosts={iuguCosts}
+        appjustoCosts={comission}
+        extrasAmount={extras}
+        ordersNumber={ordersNumber}
+        netValue={netValue}
       />
       <SectionTitle>{t('Antecipações')}</SectionTitle>
       <AdvancesTable advances={advances} />
