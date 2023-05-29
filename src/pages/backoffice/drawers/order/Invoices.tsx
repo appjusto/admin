@@ -1,4 +1,4 @@
-import { Invoice, OrderPaymentLog, WithId } from '@appjusto/types';
+import { Invoice, OrderPaymentLog, Payment, WithId } from '@appjusto/types';
 import { Box, Table, Tbody, Td, Tfoot, Th, Thead, Tr } from '@chakra-ui/react';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import {
@@ -14,11 +14,21 @@ import { LogsTable } from './invoices/LogsTable';
 
 interface InvoicesProps {
   invoices?: WithId<Invoice>[] | null;
+  payments?: WithId<Payment>[] | null;
   logs?: WithId<OrderPaymentLog>[];
   activeInvoices(): void;
 }
 
-export const Invoices = ({ invoices, logs, activeInvoices }: InvoicesProps) => {
+export const Invoices = ({
+  invoices,
+  payments,
+  logs,
+  activeInvoices,
+}: InvoicesProps) => {
+  // helpers
+  const isEmpty =
+    (!invoices || invoices.length === 0) &&
+    (!payments || payments.length === 0);
   // side effects
   React.useEffect(() => {
     if (invoices && invoices?.length > 0) return;
@@ -40,7 +50,33 @@ export const Invoices = ({ invoices, logs, activeInvoices }: InvoicesProps) => {
             </Tr>
           </Thead>
           <Tbody>
-            {invoices && invoices.length > 0 ? (
+            {payments &&
+              payments?.map((payment: WithId<Payment>) => {
+                const paymentValue =
+                  payment.paid !== undefined ? payment.paid : payment.value;
+                return (
+                  <Tr key={payment.id} color="black" fontSize="sm">
+                    <Td>{getDateAndHour(payment.createdAt)}</Td>
+                    <Td>
+                      {payment.status
+                        ? invoiceStatusPTOptions[payment.status]
+                        : 'N/E'}
+                    </Td>
+                    <Td>'N/A'</Td>
+                    <Td isNumeric>{formatCurrency(paymentValue)}</Td>
+                    <Td>
+                      <CustomButton
+                        mt="0"
+                        variant="outline"
+                        label={t('Detalhes')}
+                        link={`/backoffice/invoices/${payment.id}`}
+                        size="sm"
+                      />
+                    </Td>
+                  </Tr>
+                );
+              })}
+            {invoices &&
               invoices?.map((invoice: WithId<Invoice>) => {
                 const invoiceValue =
                   invoice.paid !== undefined ? invoice.paid : invoice.value;
@@ -65,8 +101,8 @@ export const Invoices = ({ invoices, logs, activeInvoices }: InvoicesProps) => {
                     </Td>
                   </Tr>
                 );
-              })
-            ) : (
+              })}
+            {isEmpty && (
               <Tr color="black" fontSize="sm" fontWeight="700">
                 <Td>{t('Não foram encontradas faturas para este pedido.')}</Td>
                 <Td></Td>

@@ -49,7 +49,7 @@ export default class PaymentsApi {
     let q = query(
       this.refs.getPaymentsRef(),
       orderBy('createdAt', 'asc'),
-      where('orderId', '==', orderId)
+      where('order.id', '==', orderId)
     );
     // if (businessId) q = query(q, where('accountId', '==', businessId));
     // returns the unsubscribe function
@@ -77,7 +77,7 @@ export default class PaymentsApi {
     );
     if (status) q = query(q, where('status', '==', status));
     if (startAfterDoc) q = query(q, startAfter(startAfterDoc));
-    if (orderCode) q = query(q, where('orderCode', '==', orderCode));
+    if (orderCode) q = query(q, where('order.code', '==', orderCode));
     if (start && end)
       q = query(
         q,

@@ -12,6 +12,7 @@ import { useObserveOrderChatMessages } from 'app/api/chat/useObserveOrderChatMes
 import { useObserveOrderInvoices } from 'app/api/invoices/useObserveOrderInvoices';
 import { useObserveOrderMatching } from 'app/api/order/useObserveOrderMatching';
 import { useOrder } from 'app/api/order/useOrder';
+import { useObserveOrderPayments } from 'app/api/payments/useObserveOrderPayments';
 import { useFlaggedLocations } from 'app/api/platform/useFlaggedLocations';
 import { useIssuesByType } from 'app/api/platform/useIssuesByTypes';
 import { useContextFirebaseUser } from 'app/state/auth/context';
@@ -94,12 +95,13 @@ export const BackofficeOrderDrawer = ({
   const [businessIndemnity, setBusinessIndemnity] = React.useState(false);
   const [loadingState, setLoadingState] =
     React.useState<OrderDrawerLoadingState>('idle');
-  const [invoicesActive, setInvoicesActive] = React.useState(false);
+  const [paymentsActive, setPaymentsActive] = React.useState(false);
   const [matchingActive, setMatchingActive] = React.useState(false);
   const [chatActive, setChatActive] = React.useState(false);
-  const { invoices, logs: invoicesLogs } = useObserveOrderInvoices(
+  const invoices = useObserveOrderInvoices(orderId, paymentsActive);
+  const { payments, logs: paymentsLogs } = useObserveOrderPayments(
     orderId,
-    invoicesActive
+    paymentsActive
   );
   const {
     matching,
@@ -279,7 +281,7 @@ export const BackofficeOrderDrawer = ({
     updateOrder(changes);
   };
   const handleActiveInvoices = React.useCallback(
-    () => setInvoicesActive(true),
+    () => setPaymentsActive(true),
     []
   );
   const handleActiveMatching = React.useCallback(
@@ -345,7 +347,8 @@ export const BackofficeOrderDrawer = ({
           <Route exact path={`${path}/invoices`}>
             <Invoices
               invoices={invoices}
-              logs={invoicesLogs}
+              payments={payments}
+              logs={paymentsLogs}
               activeInvoices={handleActiveInvoices}
             />
           </Route>

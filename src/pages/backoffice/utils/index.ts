@@ -100,6 +100,8 @@ export const invoiceStatusPTOptions = {
   canceled: 'Cancelada',
   in_protest: 'Em protesto',
   chargeback: 'Estornada',
+  // to payment
+  unauthorized: 'Não autorizado',
 };
 
 export const ledgerEntryStatusPTOptions = {
