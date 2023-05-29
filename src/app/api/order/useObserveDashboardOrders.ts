@@ -103,14 +103,13 @@ export const useObserveDashboardOrders = (businessId?: string | null) => {
     );
     const lastWeekBilling = getBusinessOrdersBilling(lastWeekOrders);
     const lastWeekValuesByDay = splitOrdersValuesByPeriod(
-      weekOrders,
+      lastWeekOrders,
       7,
       lastWeekStart
     );
     setLastWeekCount(lastWeekOrders.length);
     setLastWeekValue(lastWeekBilling);
     setLastWeekByDay(lastWeekValuesByDay);
-    // last week
   }, [orders]);
   // return
   return {
