@@ -29,6 +29,7 @@ import AreasApi from './areas/AreasApi';
 import AuthApi from './auth/AuthApi';
 import BannersApi from './banners/BannersApi';
 import BusinessApi from './business/BusinessApi';
+import CardsApi from './cards/CardsApi';
 import ChatApi from './chat/ChatApi';
 import ConsumerApi from './consumer/CosumerApi';
 import CourierApi from './courier/CourierApi';
@@ -72,6 +73,7 @@ export default class Api {
   private _order: OrderApi;
   private _invoices: InvoicesApi;
   private _payments: PaymentsApi;
+  private _cards: CardsApi;
   private _ledger: LedgerApi;
   private _courier: CourierApi;
   private _consumer: ConsumerApi;
@@ -137,6 +139,7 @@ export default class Api {
     this._order = new OrderApi(this._refs, this._files);
     this._invoices = new InvoicesApi(this._refs);
     this._payments = new PaymentsApi(this._refs);
+    this._cards = new CardsApi(this._refs);
     this._ledger = new LedgerApi(this._refs);
     this._courier = new CourierApi(this._refs, this._files);
     this._consumer = new ConsumerApi(this._refs, this._files);
@@ -191,6 +194,10 @@ export default class Api {
 
   payments() {
     return this._payments;
+  }
+
+  cards() {
+    return this._cards;
   }
 
   ledger() {

@@ -1,4 +1,4 @@
-import { IuguPayment } from '@appjusto/types';
+import { IuguCard, IuguPayment, WithId } from '@appjusto/types';
 import { IuguCustomerPaymentMethod } from '@appjusto/types/payment/iugu';
 import {
   Box,
@@ -11,6 +11,7 @@ import {
   Link,
   Text,
 } from '@chakra-ui/react';
+import { useFetchCardByTokenId } from 'app/api/cards/useFetchCardByTokenId';
 import { useObservePayment } from 'app/api/payments/useObservePayment';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { invoiceStatusPTOptions } from 'pages/backoffice/utils';
@@ -36,7 +37,9 @@ const PaymentDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   //context
   const { paymentId } = useParams<Params>();
   const payment = useObservePayment(paymentId);
-  // const consumer = useConsumerProfile(payment?.from.accountId);
+  // state
+  const [cardTokenId, setCardTokenId] = React.useState<string | null>();
+  const consumerCard = useFetchCardByTokenId(cardTokenId);
   // state
   const [paymentMethod, setPaymentMethod] = React.useState<
     IuguCustomerPaymentMethod | string | null
@@ -46,24 +49,25 @@ const PaymentDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   const accountBtnLink = getAccountBtnLink(payment);
   // side effects
   React.useEffect(() => {
+    if (!payment) return;
     if (payment?.method && payment?.method !== 'credit_card') {
       setPaymentMethod(payment.method.toUpperCase());
       return;
     }
-    // if (!payment?.customerPaymentMethodId) return;
-    // get from new collection card
-    // type => Card => IuguCard
-    // if (!consumer?.paymentChannel?.methods) return;
-
-    // if (payment?.processor === 'iugu' && payment?.method === 'credit_card') {
-    //   const iuguPayment = payment as IuguPayment;
-    //   const method = consumer.paymentChannel.methods.find(
-    //     (method) => method.id === iuguPayment.cardTokenId
-    //   );
-    //   if (method) setPaymentMethod(method);
-    //   else setPaymentMethod(null);
-    // }
-  }, [payment?.method]);
+    const tokenId =
+      payment?.processor === 'iugu'
+        ? (payment as IuguPayment).cardTokenId ?? null
+        : null;
+    setCardTokenId(tokenId);
+  }, [payment]);
+  React.useEffect(() => {
+    if (consumerCard === undefined) return;
+    if (consumerCard === null) {
+      setPaymentMethod(null);
+      return;
+    }
+    setPaymentMethod((consumerCard as WithId<IuguCard>).token);
+  }, [payment?.processor, consumerCard]);
   //UI
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>

@@ -156,6 +156,7 @@ export const permissionsPTOptions = {
   chats: 'Chats',
   invoices: 'Faturas',
   payments: 'Faturas (P)',
+  cards: 'Cartões',
   withdraws: 'Saques',
   advances: 'Adiantamentos',
   managers: 'Managers',

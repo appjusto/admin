@@ -23,6 +23,7 @@ export type Entities =
   | 'chats'
   | 'invoices'
   | 'payments'
+  | 'cards'
   | 'withdraws'
   | 'advances'
   | 'managers'

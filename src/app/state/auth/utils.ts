@@ -51,6 +51,7 @@ export const fullStaffPermissions = {
   chats: [],
   invoices: [],
   payments: [],
+  cards: [],
   withdraws: [],
   advances: [],
   managers: [],
