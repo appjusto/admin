@@ -22,6 +22,7 @@ export type Entities =
   | 'consumers'
   | 'chats'
   | 'invoices'
+  | 'payments'
   | 'withdraws'
   | 'advances'
   | 'managers'

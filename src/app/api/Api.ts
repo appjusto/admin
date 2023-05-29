@@ -40,6 +40,7 @@ import LedgerApi from './ledger/LedgerApi';
 import ManagerApi from './manager/ManagerApi';
 import MeasurementApi from './measurement/MeasurementApi';
 import OrderApi from './order/OrderApi';
+import PaymentsApi from './payments/PaymentsApi';
 import PlatformApi from './platform/PlatformApi';
 import PushCampaignApi from './push-campaigns/PushCampaignApi';
 import StaffApi from './staff/StaffApi';
@@ -70,6 +71,7 @@ export default class Api {
   private _business: BusinessApi;
   private _order: OrderApi;
   private _invoices: InvoicesApi;
+  private _payments: PaymentsApi;
   private _ledger: LedgerApi;
   private _courier: CourierApi;
   private _consumer: ConsumerApi;
@@ -134,6 +136,7 @@ export default class Api {
     this._business = new BusinessApi(this._refs, this._files);
     this._order = new OrderApi(this._refs, this._files);
     this._invoices = new InvoicesApi(this._refs);
+    this._payments = new PaymentsApi(this._refs);
     this._ledger = new LedgerApi(this._refs);
     this._courier = new CourierApi(this._refs, this._files);
     this._consumer = new ConsumerApi(this._refs, this._files);
@@ -184,6 +187,10 @@ export default class Api {
 
   invoices() {
     return this._invoices;
+  }
+
+  payments() {
+    return this._payments;
   }
 
   ledger() {

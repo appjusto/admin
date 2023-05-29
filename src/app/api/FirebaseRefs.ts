@@ -184,6 +184,10 @@ export default class FirebaseRefs {
   getInvoicesRef = () => collection(this.firestore, 'invoices');
   getInvoiceRef = (invoiceId: string) => doc(this.getInvoicesRef(), invoiceId);
 
+  // payments
+  getPaymentsRef = () => collection(this.firestore, 'payments');
+  getPaymentRef = (paymentId: string) => doc(this.getPaymentsRef(), paymentId);
+
   // ledger
   getLedgerRef = () => collection(this.firestore, 'ledger');
   getLedgerEntryRef = (entryId: string) => doc(this.getLedgerRef(), entryId);
