@@ -71,7 +71,7 @@ export default class PaymentsApi {
     status?: PaymentStatus
   ): Unsubscribe {
     let q = query(
-      this.refs.getInvoicesRef(),
+      this.refs.getPaymentsRef(),
       orderBy('createdAt', 'desc'),
       limit(queryLimit)
     );

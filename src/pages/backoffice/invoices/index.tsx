@@ -2,6 +2,7 @@ import { IuguInvoiceStatus } from '@appjusto/types/payment/iugu';
 import { ArrowDownIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, HStack, Stack, Text } from '@chakra-ui/react';
 import { useObserveInvoices } from 'app/api/invoices/useObserveInvoices';
+import { useObservePayments } from 'app/api/payments/useObservePayments';
 import { ClearFiltersButton } from 'common/components/backoffice/ClearFiltersButton';
 import { FiltersScrollBar } from 'common/components/backoffice/FiltersScrollBar';
 import { CustomDateFilter } from 'common/components/form/input/CustomDateFilter';
@@ -12,6 +13,7 @@ import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import PageHeader from '../../PageHeader';
 import InvoiceDrawer from '../drawers/invoice';
+import PaymentDrawer from '../drawers/payment';
 import { InvoicesTable } from './InvoicesTable';
 
 const statusFilterOptions = [
@@ -37,6 +39,12 @@ const InvoicesPage = () => {
   // context
   const { path } = useRouteMatch();
   const history = useHistory();
+  const { payments, fetchNextPage: fetchNextPaymentsPage } = useObservePayments(
+    searchId,
+    searchFrom,
+    searchTo,
+    filterBar
+  );
   const { invoices, fetchNextPage } = useObserveInvoices(
     searchId,
     searchFrom,
@@ -100,7 +108,17 @@ const InvoicesPage = () => {
       </Flex>
       <HStack mt="6" spacing={8} color="black">
         <Text fontSize="lg" fontWeight="700" lineHeight="26px">
-          {t(`${invoices?.length ?? '0'} itens na lista`)}
+          {t(`Nova fatura: ${payments?.length ?? '0'} itens na lista`)}
+        </Text>
+      </HStack>
+      <InvoicesTable payments={payments} />
+      <Button mt="8" variant="secondary" onClick={fetchNextPaymentsPage}>
+        <ArrowDownIcon mr="2" />
+        {t('Carregar mais')}
+      </Button>
+      <HStack mt="6" spacing={8} color="black">
+        <Text fontSize="lg" fontWeight="700" lineHeight="26px">
+          {t(`Fatura: ${invoices?.length ?? '0'} itens na lista`)}
         </Text>
       </HStack>
       <InvoicesTable invoices={invoices} />
@@ -109,6 +127,9 @@ const InvoicesPage = () => {
         {t('Carregar mais')}
       </Button>
       <Switch>
+        <Route path={`${path}/payments/:paymentId`}>
+          <PaymentDrawer isOpen onClose={closeDrawerHandler} />
+        </Route>
         <Route path={`${path}/:invoiceId`}>
           <InvoiceDrawer isOpen onClose={closeDrawerHandler} />
         </Route>

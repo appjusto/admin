@@ -3,7 +3,7 @@ import { useContextApi } from 'app/state/api/context';
 import React from 'react';
 import { useUserCanReadEntity } from '../auth/useUserCanReadEntity';
 
-export const useConsumerProfile = (consumerId?: string) => {
+export const useConsumerProfile = (consumerId?: string | null) => {
   // context
   const api = useContextApi();
   const userCanRead = useUserCanReadEntity('consumers');
