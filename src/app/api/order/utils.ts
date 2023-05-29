@@ -1,4 +1,5 @@
 import { Order, OrderCancellationParams, WithId } from '@appjusto/types';
+import dayjs from 'dayjs';
 import { Timestamp } from 'firebase/firestore';
 import { omit } from 'lodash';
 import { getTimeUntilNow } from 'utils/functions';
@@ -73,6 +74,58 @@ export const calculateCancellationCosts = (
   if (order.fare?.platform && params.refund.indexOf('service') !== -1)
     costs += order.fare.platform.value;
   return costs;
+};
+
+export const getBusinessOrdersByPeriod = (
+  orders: WithId<Order>[],
+  start: Date,
+  end?: Date
+) => {
+  const filtered = orders.filter((order) => {
+    const baseTime = (order.createdOn as Timestamp).toDate();
+    if (!end) return dayjs(baseTime).isAfter(start);
+    else return dayjs(baseTime).isAfter(start) && dayjs(baseTime).isBefore(end);
+  });
+  return filtered.filter((order) => {
+    if (order.status === 'canceled' && !order.fare?.business?.paid) {
+      return false;
+    }
+    return true;
+  });
+};
+
+export const getBusinessOrdersBilling = (orders: WithId<Order>[]) => {
+  let result = 0;
+  orders.forEach((order) => {
+    result += order.fare?.business?.value ?? 0;
+    if (order.fare?.courier?.payee === 'business') {
+      result += order.fare.courier.value ?? 0;
+    }
+  });
+  return result;
+};
+
+export interface ItemByDay {
+  date: number;
+  value: number;
+}
+
+export const splitOrdersValuesByPeriod = (
+  orders: WithId<Order>[],
+  periodNumber: number,
+  startDate: Date // milliseconds
+) => {
+  let period = [] as ItemByDay[];
+  for (let i = 0; i < periodNumber; i++) {
+    const date = dayjs(startDate).add(i, 'day').date();
+    period.push({ date, value: 0 });
+  }
+  orders.forEach((order) => {
+    const date = (order.timestamps.charged as Timestamp).toDate().getDate();
+    let item = period.find((item) => item.date === date);
+    if (item) item.value += 1;
+  });
+  return period.map((item) => item.value);
 };
 
 export const findMostFrequentProduct = (products: string[]) => {

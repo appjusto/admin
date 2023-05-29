@@ -36,7 +36,7 @@ export const useFetchBusinessOrdersByMonth = (
   const userCanRead = useUserCanReadEntity('orders');
   // state
   const [orders, setOrders] = React.useState<WithId<Order>[]>();
-  const [balance, setBalance] = React.useState<Balance>(initialBalance);
+  const [balance, setBalance] = React.useState<Balance>({ ...initialBalance });
   // side effects
   React.useEffect(() => {
     if (!userCanRead) return;

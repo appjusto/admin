@@ -228,16 +228,16 @@ export default class OrderApi {
 
   observeDashboardOrders(
     resultHandler: (orders: WithId<Order>[]) => void,
-    businessId?: string | null,
-    start?: Date | null,
-    end?: Date | null,
-    orderStatus?: OrderStatus
+    businessId: string,
+    start: Date,
+    end: Date,
+    statuses: OrderStatus[]
   ): Unsubscribe {
     const q = query(
       this.refs.getOrdersRef(),
       orderBy('updatedOn', 'desc'),
       where('business.id', '==', businessId),
-      where('status', '==', orderStatus),
+      where('status', 'in', statuses),
       where('updatedOn', '>=', start),
       where('updatedOn', '<=', end)
     );

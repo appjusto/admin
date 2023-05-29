@@ -18,18 +18,18 @@ export const Panel = () => {
   const { adminRole } = useContextFirebaseUser();
   const { business, banners } = useContextBusiness();
   const {
-    todayInvoices,
+    todayCount,
     todayValue,
     todayAverage,
-    monthInvoices,
+    currentWeekProduct,
+    monthCount,
     monthValue,
     monthAverage,
-    currentWeekInvoices,
+    currentWeekCount,
     currentWeekValue,
     currentWeekAverage,
-    currentWeekProduct,
     currentWeekByDay,
-    lastWeekInvoices,
+    lastWeekCount,
     lastWeekValue,
     lastWeekByDay,
   } = useContextBusinessDashboard();
@@ -63,8 +63,8 @@ export const Panel = () => {
     return `${sign} (${result})`;
   }, [currentWeekValue, lastWeekValue]);
   const showChart = React.useMemo(
-    () => currentWeekInvoices! > 0 || lastWeekInvoices! > 0,
-    [currentWeekInvoices, lastWeekInvoices]
+    () => currentWeekCount! > 0 || lastWeekCount! > 0,
+    [currentWeekCount, lastWeekCount]
   );
   const insuranceModalIsOpen = React.useMemo(() => {
     const isUserTarget = adminRole === 'owner' || adminRole === 'manager';
@@ -101,7 +101,7 @@ export const Panel = () => {
             <InfoBox
               minW="140px"
               isJoined
-              data={todayInvoices}
+              data={todayCount}
               title={t('Pedidos/ Hoje')}
               titleColor="green.600"
             >
@@ -112,7 +112,7 @@ export const Panel = () => {
                 fontSize="2xl"
                 lineHeight="30px"
               >
-                {`${todayInvoices ?? 'N/E'} pedidos`}
+                {`${todayCount ?? 'N/E'} pedidos`}
               </Text>
               <Text mt="1" fontSize="md" lineHeight="22px">
                 {todayValue !== undefined ? formatCurrency(todayValue) : 'N/E'}
@@ -130,7 +130,7 @@ export const Panel = () => {
             </InfoBox>
           </Stack>
           <Stack direction={{ base: 'column', md: 'row' }}>
-            <InfoBox data={monthInvoices} title={t(`Pedidos/ ${currentMonth}`)}>
+            <InfoBox data={monthCount} title={t(`Pedidos/ ${currentMonth}`)}>
               <Text
                 mt="1"
                 color="black"
@@ -138,7 +138,7 @@ export const Panel = () => {
                 fontSize="2xl"
                 lineHeight="30px"
               >
-                {`${monthInvoices ?? 'N/E'} pedidos`}
+                {`${monthCount ?? 'N/E'} pedidos`}
               </Text>
               <Text mt="1" fontSize="md" lineHeight="22px">
                 {monthValue ? formatCurrency(monthValue) : 'R$ 0,00'}
@@ -163,7 +163,7 @@ export const Panel = () => {
           <Stack w="100%" direction={{ base: 'column', md: 'row' }}>
             <InfoBox
               w="100%"
-              data={currentWeekInvoices}
+              data={currentWeekCount}
               title={t('Total de pedidos')}
               circleBg="green.600"
             >
@@ -174,7 +174,7 @@ export const Panel = () => {
                 fontSize="2xl"
                 lineHeight="30px"
               >
-                {`${currentWeekInvoices ?? 'N/E'} pedidos`}
+                {`${currentWeekCount ?? 'N/E'} pedidos`}
               </Text>
               <Text mt="1" fontSize="md" lineHeight="22px">
                 {currentWeekValue
@@ -207,7 +207,7 @@ export const Panel = () => {
 
             <InfoBox
               w="100%"
-              data={lastWeekInvoices}
+              data={lastWeekCount}
               title={t('Semana anterior')}
               circleBg="gray.500"
             >
@@ -218,7 +218,7 @@ export const Panel = () => {
                 fontSize="2xl"
                 lineHeight="30px"
               >
-                {`${lastWeekInvoices ?? 'N/E'} pedidos`}
+                {`${lastWeekCount ?? 'N/E'} pedidos`}
               </Text>
               <Text mt="1" color="black" fontSize="sm" lineHeight="22px">
                 {getRevenueDifference()}

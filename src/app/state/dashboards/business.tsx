@@ -1,21 +1,20 @@
-import { useObserveDashboardInvoices } from 'app/api/invoices/useObserveDashboardInvoices';
 import { useObserveDashboardOrders } from 'app/api/order/useObserveDashboardOrders';
 import React from 'react';
 import { useContextBusinessId } from '../business/context';
 
 interface ContextProps {
-  todayInvoices?: number;
+  todayCount?: number;
   todayValue?: number;
   todayAverage?: number;
-  monthInvoices?: number;
+  monthCount?: number;
   monthValue?: number;
   monthAverage?: number;
-  currentWeekInvoices?: number;
+  currentWeekCount?: number;
   currentWeekValue?: number;
   currentWeekAverage?: number;
   currentWeekProduct?: string;
   currentWeekByDay?: number[];
-  lastWeekInvoices?: number;
+  lastWeekCount?: number;
   lastWeekValue?: number;
   lastWeekByDay?: number[];
 }
@@ -32,38 +31,38 @@ export const BusinessDashboardProvider = ({ children }: Props) => {
   // context
   const businessId = useContextBusinessId();
   const {
-    todayInvoices,
+    todayCount,
     todayValue,
     todayAverage,
-    monthInvoices,
+    currentWeekProduct,
+    monthCount,
     monthValue,
     monthAverage,
-    currentWeekInvoices,
+    currentWeekCount,
     currentWeekValue,
     currentWeekAverage,
     currentWeekByDay,
-    lastWeekInvoices,
+    lastWeekCount,
     lastWeekValue,
     lastWeekByDay,
-  } = useObserveDashboardInvoices(businessId);
-  const { currentWeekProduct } = useObserveDashboardOrders(businessId);
+  } = useObserveDashboardOrders(businessId);
   // state
   // provider
   return (
     <BusinessDashboardContext.Provider
       value={{
-        todayInvoices,
+        todayCount,
         todayValue,
         todayAverage,
-        monthInvoices,
+        currentWeekProduct,
+        monthCount,
         monthValue,
         monthAverage,
-        currentWeekInvoices,
+        currentWeekCount,
         currentWeekValue,
         currentWeekAverage,
-        currentWeekProduct,
         currentWeekByDay,
-        lastWeekInvoices,
+        lastWeekCount,
         lastWeekValue,
         lastWeekByDay,
       }}
