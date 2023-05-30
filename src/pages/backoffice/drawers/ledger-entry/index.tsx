@@ -82,7 +82,11 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   const [isDeleting, setIsDeleting] = React.useState(false);
   // helpers
   const isNew = entryId === 'new';
-  const canUpdate = !isNew && userAbility?.can('update', 'invoices');
+  const canUpdate =
+    !isNew &&
+    userAbility?.can('update', 'invoices') &&
+    entry?.status &&
+    !['paid', 'processing', 'canceled'].includes(entry.status);
   // handlers
   const handleSubmit = () => {
     if (!user) {
