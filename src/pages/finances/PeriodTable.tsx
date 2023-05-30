@@ -106,7 +106,11 @@ export const PeriodTable = ({ month }: PeriodTableProps) => {
                 {`- ${formatCurrency(iuguCosts)}`}
               </Td>
             </Tr>
-            <Tr color="black" fontSize="xs" fontWeight="500">
+            <Tr
+              color={extras < 0 ? 'red' : 'black'}
+              fontSize="xs"
+              fontWeight="500"
+            >
               <Td>{t('Extras (cobertura e conciliações)')}</Td>
               <Td isNumeric>{formatCurrency(extras)}</Td>
             </Tr>
