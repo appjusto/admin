@@ -59,7 +59,7 @@ export const PeriodTable = ({ month }: PeriodTableProps) => {
                 <Tooltip
                   placement="top"
                   label={t(
-                    '5% de comissão do AppJusto que incide somente sobre o valor dos produtos vendidos'
+                    'A comissão AppJusto, escolhida no modelo de entrega, mais taxa de cobertura (caso exista cobertura para o pedido) que incidem somente sobre o valor dos produtos vendidos'
                   )}
                 >
                   <Text as="span">
