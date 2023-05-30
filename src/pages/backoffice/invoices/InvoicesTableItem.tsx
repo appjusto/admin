@@ -16,7 +16,7 @@ export const InvoicesTableItem = ({ data }: ItemProps) => {
   const value = data.paid !== undefined ? data.paid : data.value;
   const isPayment = 'createdAt' in data;
   if (isPayment) {
-    const { id, order, createdAt, status } = data as WithId<Payment>;
+    const { id, order, createdAt, status, service } = data as WithId<Payment>;
     return (
       <TableItem
         key={id}
@@ -25,7 +25,7 @@ export const InvoicesTableItem = ({ data }: ItemProps) => {
           { value: order?.code ?? 'N/E', styles: { maxW: '120px' } },
           { value: getDateAndHour(createdAt) },
           {
-            value: 'N/A',
+            value: service ? invoiceTypePTOptions[service] : 'N/E',
           },
           {
             value: status ? invoiceStatusPTOptions[status] : 'N/E',

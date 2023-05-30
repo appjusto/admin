@@ -14,7 +14,10 @@ import {
 import { useFetchCardByTokenId } from 'app/api/cards/useFetchCardByTokenId';
 import { useObservePayment } from 'app/api/payments/useObservePayment';
 import { CustomButton } from 'common/components/buttons/CustomButton';
-import { invoiceStatusPTOptions } from 'pages/backoffice/utils';
+import {
+  invoiceStatusPTOptions,
+  invoiceTypePTOptions,
+} from 'pages/backoffice/utils';
 import React from 'react';
 import { Link as RouterLink, useParams } from 'react-router-dom';
 import { formatCurrency } from 'utils/formatters';
@@ -151,7 +154,9 @@ const PaymentDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
             >
               {t('Tipo:')}{' '}
               <Text as="span" fontWeight="500">
-                {'N/A'}
+                {payment?.service
+                  ? invoiceTypePTOptions[payment.service]
+                  : 'N/E'}
               </Text>
             </Text>
             <Text
