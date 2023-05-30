@@ -220,7 +220,7 @@ export const BusinessProvider = ({ children }: Props) => {
         setLogisticsAvailable(logistics);
       }
     }
-  }, [businessCityAreas]);
+  }, [business?.id, businessCityAreas]);
   React.useEffect(() => {
     if (!platformFees) return;
     const getInsuranceFee = (): Fee | null => {
