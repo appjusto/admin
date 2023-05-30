@@ -22,11 +22,11 @@ const getOrderValue = (fare?: Fare) => {
 };
 const getOrderIuguValueSerialized = (fare?: Fare) => {
   let result = getOrderIuguValue(fare);
-  return { iugu: serializeValue(result), iuguNumber: result };
+  return { iugu: serializeValue(result * -1), iuguNumber: result };
 };
 const getOrderComissionSerialized = (fare?: Fare) => {
   let result = getOrderComission(fare);
-  return { appjusto: serializeValue(result), appjustoNumber: result };
+  return { appjusto: serializeValue(result * -1), appjustoNumber: result };
 };
 const getOrderNetValueSerialized = (
   fare: Fare | undefined,
