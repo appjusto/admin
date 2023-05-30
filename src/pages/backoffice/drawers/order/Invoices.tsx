@@ -69,7 +69,7 @@ export const Invoices = ({
                         mt="0"
                         variant="outline"
                         label={t('Detalhes')}
-                        link={`/backoffice/invoices/${payment.id}`}
+                        link={`/backoffice/invoices/payments/${payment.id}`}
                         size="sm"
                       />
                     </Td>
