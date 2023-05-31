@@ -42,7 +42,8 @@ export const getOrderDeliveryValue = (fare?: Fare) => {
   return value;
 };
 export const getOrderIuguValue = (fare?: Fare) => {
-  if (!isOrdersCount(fare)) return 0;
+  // if (!isOrdersCount(fare)) return 0;
+  if (!fare?.business?.paid) return 0;
   let result = fare?.business?.processing?.value ?? 0;
   // if outsourced by business it should be added to courier`s value
   if (fare?.courier?.payee === 'business') {
@@ -52,7 +53,8 @@ export const getOrderIuguValue = (fare?: Fare) => {
 };
 
 export const getOrderComission = (fare?: Fare) => {
-  if (!isOrdersCount(fare)) return 0;
+  // if (!isOrdersCount(fare)) return 0;
+  if (!fare?.business?.paid) return 0;
   const result =
     (fare?.business?.commission ?? 0) + (fare?.business?.insurance ?? 0);
   return result;
