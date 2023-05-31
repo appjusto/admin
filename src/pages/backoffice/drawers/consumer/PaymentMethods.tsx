@@ -1,4 +1,6 @@
+import { IuguCard, WithId } from '@appjusto/types';
 import { Box, HStack, Text } from '@chakra-ui/react';
+import { useFetchCardsByAccountId } from 'app/api/cards/useFetchCardsByAccountId';
 import { useContextConsumerProfile } from 'app/state/consumer/context';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
@@ -8,8 +10,8 @@ export interface IuguCustomerPaymentMethod {
   description: string;
   item_type: 'credit_card';
   data: {
-    brand: string; // VISA, MASTERCARD, ...
-    display_number: string; // XXXX-XXXX-XXXX-1111
+    brand: string;
+    display_number: string;
     last_digits: string;
     holder_name: string;
     month: number;
@@ -85,16 +87,22 @@ export const PaymentMethodCard = ({ method }: PaymentMethodCardProps) => {
 export const PaymentMethods = () => {
   // context
   const { consumer } = useContextConsumerProfile();
+  const cards = useFetchCardsByAccountId(consumer?.id);
   // UI
   return (
     <Box>
       <SectionTitle mt="0">{t('Métodos de pagamento:')}</SectionTitle>
-      {consumer?.paymentChannel?.methods ? (
-        consumer?.paymentChannel?.methods.map((method) => (
-          <PaymentMethodCard key={method.id} method={method} />
-        ))
-      ) : (
+      {cards === undefined ? (
+        <Text>{t('Carregando métodos de pagamento...')}</Text>
+      ) : cards === null ? (
         <Text>{t('Ainda não há métodos de pagamento cadastrados')}</Text>
+      ) : (
+        cards.map((card) => (
+          <PaymentMethodCard
+            key={card.id}
+            method={(card as WithId<IuguCard>).token ?? 'credit_card'}
+          />
+        ))
       )}
     </Box>
   );

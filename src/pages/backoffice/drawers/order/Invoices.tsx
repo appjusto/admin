@@ -62,7 +62,11 @@ export const Invoices = ({
                         ? invoiceStatusPTOptions[payment.status]
                         : 'N/E'}
                     </Td>
-                    <Td>'N/A'</Td>
+                    <Td>
+                      {payment?.service
+                        ? invoiceTypePTOptions[payment.service]
+                        : 'N/E'}
+                    </Td>
                     <Td isNumeric>{formatCurrency(paymentValue)}</Td>
                     <Td>
                       <CustomButton

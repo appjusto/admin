@@ -1,5 +1,5 @@
 import { Card, WithId } from '@appjusto/types';
-import { documentAs } from 'core/fb';
+import { documentAs, documentsAs } from 'core/fb';
 import { getDocs, query, where } from 'firebase/firestore';
 import FirebaseRefs from '../FirebaseRefs';
 
@@ -14,5 +14,17 @@ export default class CardsApi {
     const snapshot = await getDocs(q);
     if (snapshot.empty) return null;
     return documentAs<Card>(snapshot.docs[0]);
+  }
+
+  async fetchCardsByAccountId(
+    accountId: string
+  ): Promise<WithId<Card>[] | null> {
+    const q = query(
+      this.refs.getCardsRef(),
+      where('accountId', '==', accountId)
+    );
+    const snapshot = await getDocs(q);
+    if (snapshot.empty) return null;
+    return documentsAs<Card>(snapshot.docs);
   }
 }
