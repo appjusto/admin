@@ -2,6 +2,7 @@ import { Order, OrderCancellationParams, WithId } from '@appjusto/types';
 import dayjs from 'dayjs';
 import { Timestamp } from 'firebase/firestore';
 import { omit } from 'lodash';
+import { getOrderExtrasValue, isOrdersCount } from 'pages/finances/utils';
 import { getTimeUntilNow } from 'utils/functions';
 import { use } from 'utils/local';
 import { Acknowledgement, OrderAcknowledgement } from './types';
@@ -87,19 +88,21 @@ export const getBusinessOrdersByPeriod = (
     else return dayjs(baseTime).isAfter(start) && dayjs(baseTime).isBefore(end);
   });
   return filtered.filter((order) => {
-    if (order.status === 'canceled' && !order.fare?.business?.paid) {
-      return false;
-    }
-    return true;
+    return isOrdersCount(order.fare);
   });
 };
 
 export const getBusinessOrdersBilling = (orders: WithId<Order>[]) => {
   let result = 0;
   orders.forEach((order) => {
-    result += order.fare?.business?.value ?? 0;
-    if (order.fare?.courier?.payee === 'business') {
-      result += order.fare.courier.value ?? 0;
+    if (order.fare?.business?.paid === 0) {
+      const extras = getOrderExtrasValue(order.fare);
+      result += extras;
+    } else {
+      result += order.fare?.business?.value ?? 0;
+      if (order.fare?.courier?.payee === 'business') {
+        result += order.fare.courier.value ?? 0;
+      }
     }
   });
   return result;
