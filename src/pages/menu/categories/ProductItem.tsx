@@ -32,7 +32,11 @@ export const ProductItem = React.memo(({ product, index }: Props) => {
   const { url } = useRouteMatch();
   const api = useContextApi();
   const businessId = useContextBusinessId();
-  const hookImageUrl = useProductImage(product.id, '288x288');
+  const hookImageUrl = useProductImage(
+    product.id,
+    '288x288',
+    !product.imageUrls
+  );
   //state
   const [imageUrl, setImageUrl] = React.useState<string>('');
   const [price, setPrice] = React.useState(0);
@@ -53,10 +57,14 @@ export const ProductItem = React.memo(({ product, index }: Props) => {
 
   //side effects
   React.useEffect(() => {
+    if (product.imageUrls) {
+      setImageUrl(product.imageUrls[0] ?? null);
+      return;
+    }
     if (!product?.imageExists)
       setImageUrl('/static/media/product-placeholder.png');
     else if (hookImageUrl) setImageUrl(hookImageUrl);
-  }, [product?.imageExists, hookImageUrl]);
+  }, [product.imageUrls, product?.imageExists, hookImageUrl]);
 
   React.useEffect(() => {
     updatePriceState(product.price);
@@ -98,6 +106,8 @@ export const ProductItem = React.memo(({ product, index }: Props) => {
               src={imageUrl}
               width="100%"
               objectFit="cover"
+              // width="96px"
+              // height="96px"
               borderRadius="lg"
               alt="Product image"
               fallback={<ImageFbLoading width="96px" height="96px" />}

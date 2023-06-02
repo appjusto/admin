@@ -21,21 +21,25 @@ export const useObserveProduct = (
   }, [api, businessId, imageDim, productId]);
   // side effects
   React.useEffect(() => {
+    if (!businessId) return;
     if (productId === 'new') {
       setImageUrl(null);
       return;
     }
-    if (!businessId) return;
     const unsub = api
       .business()
       .observeProduct(businessId, productId, setProduct);
     return () => unsub();
   }, [api, businessId, productId]);
   React.useEffect(() => {
+    if (product?.imageUrls) {
+      setImageUrl(product.imageUrls[1] ?? null);
+      return;
+    }
     if (product?.imageExists) {
       getImageUrl();
     }
-  }, [product?.imageExists, getImageUrl]);
+  }, [product?.imageUrls, product?.imageExists, getImageUrl]);
   // result
   return { product, imageUrl };
 };

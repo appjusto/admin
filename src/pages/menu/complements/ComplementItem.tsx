@@ -30,7 +30,7 @@ export const ComplementItem = React.memo(({ complement, index }: Props) => {
   // context
   const { url } = useRouteMatch();
   const { updateComplement } = useContextMenu();
-  const hookImageUrl = useComplementImage(complement.id);
+  const hookImageUrl = useComplementImage(complement.id, !complement.imageUrls);
   //state
   const [imageUrl, setImageUrl] = React.useState<string>('');
   const [price, setPrice] = React.useState(0);
@@ -60,10 +60,14 @@ export const ComplementItem = React.memo(({ complement, index }: Props) => {
   };
   //side effects
   React.useEffect(() => {
+    if (complement?.imageUrls) {
+      setImageUrl(complement.imageUrls[0] ?? null);
+      return;
+    }
     if (!complement?.imageExists || hookImageUrl === null)
       setImageUrl('/static/media/product-placeholder.png');
     else if (hookImageUrl) setImageUrl(hookImageUrl);
-  }, [complement?.imageExists, hookImageUrl]);
+  }, [complement?.imageUrls, complement?.imageExists, hookImageUrl]);
   React.useEffect(() => {
     updatePriceState(complement.price);
   }, [complement.price]);

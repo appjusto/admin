@@ -584,15 +584,33 @@ export default class BusinessApi {
     // creating product
     const timestamp = serverTimestamp();
     const productId = this.refs.getBusinessProductNewRef(businessId);
+    let image_url_288_288 = null;
+    let image_url_1008_720 = null;
     if (imageFiles) {
       await this.uploadProductPhoto(businessId, productId, imageFiles);
+      image_url_288_288 = await this.getProductImageURL(
+        businessId,
+        productId,
+        '288x288'
+      );
+      image_url_1008_720 = await this.getProductImageURL(
+        businessId,
+        productId,
+        '1008x720'
+      );
     }
     try {
-      await setDoc(this.refs.getBusinessProductRef(businessId, productId), {
+      const changes = {
         ...product,
         createdOn: timestamp,
         updatedOn: timestamp,
-      } as Product);
+      } as Product;
+      if (image_url_288_288 && image_url_1008_720)
+        changes.imageUrls = [image_url_288_288, image_url_1008_720];
+      await setDoc(
+        this.refs.getBusinessProductRef(businessId, productId),
+        changes
+      );
       return productId;
     } catch (error) {
       throw new Error(`createProductError: ${error}`);
@@ -606,21 +624,29 @@ export default class BusinessApi {
     imageFiles?: File[] | null
   ) {
     const timestamp = serverTimestamp();
-    let newProductObject = {};
+    let image_url_288_288 = null;
+    let image_url_1008_720 = null;
     if (changes.imageExists) {
       if (imageFiles) {
         await this.uploadProductPhoto(businessId, productId, imageFiles);
+        image_url_288_288 = await this.getProductImageURL(
+          businessId,
+          productId,
+          '288x288'
+        );
+        image_url_1008_720 = await this.getProductImageURL(
+          businessId,
+          productId,
+          '1008x720'
+        );
       }
-      newProductObject = {
-        ...changes,
-        updatedOn: timestamp,
-      };
-    } else {
-      newProductObject = {
-        ...changes,
-        updatedOn: timestamp,
-      };
     }
+    const newProductObject = {
+      ...changes,
+      updatedOn: timestamp,
+    } as Product;
+    if (image_url_288_288 && image_url_1008_720)
+      changes.imageUrls = [image_url_288_288, image_url_1008_720];
     try {
       await setDoc(
         this.refs.getBusinessProductRef(businessId, productId),
