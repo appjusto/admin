@@ -104,10 +104,10 @@ export const ProductItem = React.memo(({ product, index }: Props) => {
           >
             <Image
               src={imageUrl}
-              width="100%"
+              // width="100%"
               objectFit="cover"
               // width="96px"
-              // height="96px"
+              height="96px"
               borderRadius="lg"
               alt="Product image"
               fallback={<ImageFbLoading width="96px" height="96px" />}

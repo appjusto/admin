@@ -587,17 +587,23 @@ export default class BusinessApi {
     let image_url_288_288 = null;
     let image_url_1008_720 = null;
     if (imageFiles) {
-      await this.uploadProductPhoto(businessId, productId, imageFiles);
-      image_url_288_288 = await this.getProductImageURL(
+      const uploadIsSuccess = await this.uploadProductPhoto(
         businessId,
         productId,
-        '288x288'
+        imageFiles
       );
-      image_url_1008_720 = await this.getProductImageURL(
-        businessId,
-        productId,
-        '1008x720'
-      );
+      if (uploadIsSuccess) {
+        image_url_288_288 = await this.getProductImageURL(
+          businessId,
+          productId,
+          '288x288'
+        );
+        image_url_1008_720 = await this.getProductImageURL(
+          businessId,
+          productId,
+          '1008x720'
+        );
+      }
     }
     try {
       const changes = {
@@ -628,17 +634,23 @@ export default class BusinessApi {
     let image_url_1008_720 = null;
     if (changes.imageExists) {
       if (imageFiles) {
-        await this.uploadProductPhoto(businessId, productId, imageFiles);
-        image_url_288_288 = await this.getProductImageURL(
+        const uploadIsSuccess = await this.uploadProductPhoto(
           businessId,
           productId,
-          '288x288'
+          imageFiles
         );
-        image_url_1008_720 = await this.getProductImageURL(
-          businessId,
-          productId,
-          '1008x720'
-        );
+        if (uploadIsSuccess) {
+          image_url_288_288 = await this.getProductImageURL(
+            businessId,
+            productId,
+            '288x288'
+          );
+          image_url_1008_720 = await this.getProductImageURL(
+            businessId,
+            productId,
+            '1008x720'
+          );
+        }
       }
     }
     const newProductObject = {
@@ -646,7 +658,7 @@ export default class BusinessApi {
       updatedOn: timestamp,
     } as Product;
     if (image_url_288_288 && image_url_1008_720)
-      changes.imageUrls = [image_url_288_288, image_url_1008_720];
+      newProductObject.imageUrls = [image_url_288_288, image_url_1008_720];
     try {
       await setDoc(
         this.refs.getBusinessProductRef(businessId, productId),
@@ -756,18 +768,27 @@ export default class BusinessApi {
   ) {
     const timestamp = serverTimestamp();
     const complementId = this.refs.getBusinessComplementNewRef(businessId);
+    const newComplement = {
+      ...item,
+      enabled: true,
+      createdOn: timestamp,
+      updatedOn: timestamp,
+    } as Complement;
     if (imageFile) {
-      await this.uploadComplementPhoto(businessId, complementId, imageFile);
+      const uploadIsSuccess = await this.uploadComplementPhoto(
+        businessId,
+        complementId,
+        imageFile
+      );
+      if (uploadIsSuccess) {
+        const url = await this.getComplementImageURL(businessId, complementId);
+        if (url) newComplement.imageUrls = [url];
+      }
     }
     try {
       await setDoc(
         this.refs.getBusinessComplementRef(businessId, complementId),
-        {
-          ...item,
-          enabled: true,
-          createdOn: timestamp,
-          updatedOn: timestamp,
-        } as Complement
+        newComplement
       );
       return complementId;
     } catch (error) {
@@ -781,15 +802,24 @@ export default class BusinessApi {
     changes: Partial<Complement>,
     imageFile?: File | null
   ) {
-    // let newItem = {
-    //   ...item,
-    // };
+    const complementChanges = {
+      ...changes,
+      enabled: true,
+    } as Partial<Complement>;
     const ref = this.refs.getBusinessComplementRef(businessId, complementId);
     if (imageFile) {
-      await this.uploadComplementPhoto(businessId, complementId, imageFile);
+      const uploadIsSuccess = await this.uploadComplementPhoto(
+        businessId,
+        complementId,
+        imageFile
+      );
+      if (uploadIsSuccess) {
+        const url = await this.getComplementImageURL(businessId, complementId);
+        if (url) complementChanges.imageUrls = [url];
+      }
     }
     try {
-      return await updateDoc(ref, changes);
+      return await updateDoc(ref, complementChanges);
     } catch (error) {
       throw new Error(`updateComplementError: ${error}`);
     }
