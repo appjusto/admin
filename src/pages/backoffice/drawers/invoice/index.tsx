@@ -1,3 +1,4 @@
+import { IuguCard, WithId } from '@appjusto/types';
 import { IuguCustomerPaymentMethod } from '@appjusto/types/payment/iugu';
 import {
   Box,
@@ -10,7 +11,7 @@ import {
   Link,
   Text,
 } from '@chakra-ui/react';
-import { useConsumerProfile } from 'app/api/consumer/useConsumerProfile';
+import { useFetchCardByTokenId } from 'app/api/cards/useFetchCardByTokenId';
 import { useObserveInvoice } from 'app/api/invoices/useObserveInvoice';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import {
@@ -39,8 +40,9 @@ const InvoiceDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   //context
   const { invoiceId } = useParams<Params>();
   const invoice = useObserveInvoice(invoiceId);
-  const consumer = useConsumerProfile(invoice?.consumerId);
   // state
+  const [cardTokenId, setCardTokenId] = React.useState<string | null>();
+  const consumerCard = useFetchCardByTokenId(cardTokenId);
   const [paymentMethod, setPaymentMethod] = React.useState<
     IuguCustomerPaymentMethod | string | null
   >();
@@ -63,22 +65,22 @@ const InvoiceDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   // }/${invoice?.accountId}`}
   // side effects
   React.useEffect(() => {
+    if (!invoice) return;
     if (invoice?.paymentMethod && invoice?.paymentMethod !== 'credit_card') {
       setPaymentMethod(invoice.paymentMethod.toUpperCase());
       return;
     }
-    if (!invoice?.customerPaymentMethodId) return;
-    if (!consumer?.paymentChannel?.methods) return;
-    const method = consumer.paymentChannel.methods.find(
-      (method) => method.id === invoice?.customerPaymentMethodId
-    );
-    if (method) setPaymentMethod(method);
-    else setPaymentMethod(null);
-  }, [
-    invoice?.paymentMethod,
-    invoice?.customerPaymentMethodId,
-    consumer?.paymentChannel?.methods,
-  ]);
+    const tokenId = invoice.customerPaymentMethodId;
+    setCardTokenId(tokenId);
+  }, [invoice]);
+  React.useEffect(() => {
+    if (consumerCard === undefined) return;
+    if (consumerCard === null) {
+      setPaymentMethod(null);
+      return;
+    }
+    setPaymentMethod((consumerCard as WithId<IuguCard>).token);
+  }, [invoice, consumerCard]);
   //UI
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
@@ -259,13 +261,7 @@ const InvoiceDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
             {paymentMethod === undefined ? (
               <Text>{t('Carregando método de pagamento...')}</Text>
             ) : paymentMethod === null ? (
-              <Text>
-                {t(
-                  `Método de pagamento com ID: ${
-                    invoice?.customerPaymentMethodId ?? 'N/E'
-                  } não encontrado`
-                )}
-              </Text>
+              <Text>{t('Método de pagamento não encontrado')}</Text>
             ) : (
               <PaymentMethodCard method={paymentMethod} />
             )}

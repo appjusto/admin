@@ -42,12 +42,12 @@ export const PaymentMethodCard = ({ method }: PaymentMethodCardProps) => {
   }
   return (
     <Box mt="4" border="1px solid #E5E5E5" borderRadius="lg" p="4">
-      <Text fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
+      {/* <Text fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
         {t('ID:')}{' '}
         <Text as="span" fontWeight="500">
           {method.id ?? 'N/E'}
         </Text>
-      </Text>
+      </Text> */}
       <HStack spacing={4}>
         <Text fontSize="15px" color="black" fontWeight="700" lineHeight="22px">
           {t('Tipo:')}{' '}
