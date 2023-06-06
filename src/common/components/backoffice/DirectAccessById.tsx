@@ -15,7 +15,14 @@ const courierIdLength = 28;
 const consumerIdLength = 28;
 // const managerIdLength = 28;
 
-type DataType = 'order' | 'business' | 'courier' | 'consumer' | 'invoice' | 'manager';
+type DataType =
+  | 'order'
+  | 'business'
+  | 'courier'
+  | 'consumer'
+  | 'invoice'
+  | 'payment'
+  | 'manager';
 
 export const DirectAccessById = ({ ...props }: BoxProps) => {
   // context
@@ -65,7 +72,14 @@ export const DirectAccessById = ({ ...props }: BoxProps) => {
   };
   // UI
   return (
-    <Box mt="4" border="1px solid #E5E5E5" borderRadius="lg" py="6" px="8" {...props}>
+    <Box
+      mt="4"
+      border="1px solid #E5E5E5"
+      borderRadius="lg"
+      py="6"
+      px="8"
+      {...props}
+    >
       <Text fontSize="20px" fontWeight="500" color="black">
         {t('Acesso direto:')}
       </Text>
@@ -77,7 +91,9 @@ export const DirectAccessById = ({ ...props }: BoxProps) => {
           value={type}
           onChange={(e) => setType(e.target.value as DataType)}
         >
-          {userAbility?.can('read', 'orders') && <option value="order">{t('Pedido')}</option>}
+          {userAbility?.can('read', 'orders') && (
+            <option value="order">{t('Pedido')}</option>
+          )}
           {userAbility?.can('read', 'couriers') && (
             <option value="courier">{t('Entregador')}</option>
           )}
@@ -90,7 +106,12 @@ export const DirectAccessById = ({ ...props }: BoxProps) => {
           {userAbility?.can('read', 'consumers') && (
             <option value="consumer">{t('Consumidor')}</option>
           )}
-          {userAbility?.can('read', 'invoices') && <option value="invoice">{t('Fatura')}</option>}
+          {userAbility?.can('read', 'invoices') && (
+            <option value="invoice">{t('Fatura')}</option>
+          )}
+          {userAbility?.can('read', 'payments') && (
+            <option value="payment">{t('Nova fatura')}</option>
+          )}
         </Select>
         <CustomInput
           mt="0"

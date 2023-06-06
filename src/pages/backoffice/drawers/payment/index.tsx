@@ -43,7 +43,6 @@ const PaymentDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   // state
   const [cardTokenId, setCardTokenId] = React.useState<string | null>();
   const consumerCard = useFetchCardByTokenId(cardTokenId);
-  // state
   const [paymentMethod, setPaymentMethod] = React.useState<
     IuguCustomerPaymentMethod | string | null
   >();
