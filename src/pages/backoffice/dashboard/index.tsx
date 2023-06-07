@@ -31,6 +31,9 @@ const CourierDrawer = React.lazy(
 const InvoiceDrawer = React.lazy(
   () => import(/* webpackPrefetch: true */ '../drawers/invoice')
 );
+const PaymentDrawer = React.lazy(
+  () => import(/* webpackPrefetch: true */ '../drawers/payment')
+);
 const UserChangeDrawer = React.lazy(
   () =>
     import(
@@ -182,6 +185,9 @@ const BODashboard = () => {
         </Route>
         <Route path={`${path}/invoice/:invoiceId`}>
           <InvoiceDrawer isOpen onClose={closeDrawerHandler} />
+        </Route>
+        <Route path={`${path}/payment/:paymentId`}>
+          <PaymentDrawer isOpen onClose={closeDrawerHandler} />
         </Route>
         <Route path={`${path}/manager/:managerId`}>
           <ManagerBaseDrawer isOpen onClose={closeDrawerHandler} />
