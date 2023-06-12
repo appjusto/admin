@@ -151,9 +151,7 @@ export const ProductDetails = () => {
         maxLength={6}
       />
       <Text mt="8" fontSize="sm" color="black">
-        {t(
-          'Caso possua um sistema de controle de PDV, insira o código abaixo:'
-        )}
+        {t('Código do item no seu sistema de controle de PDV:')}
       </Text>
       <Input
         id="product-pdv"

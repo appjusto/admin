@@ -121,6 +121,7 @@ export const ledgerEntryOperationPTOptions = {
   'others': 'Outros',
   'outsource-credit': 'Crédito de terceirização',
   'balance-adjustment': 'Ajuste de balanço',
+  'commission': 'Comissão',
 };
 
 export const pushStatusPTOptions = {

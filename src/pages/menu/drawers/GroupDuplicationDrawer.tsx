@@ -1,4 +1,4 @@
-import { Box, Button, Stack } from '@chakra-ui/react';
+import { Button, Stack } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useContextBusinessId } from 'app/state/business/context';
 import { useContextMenu } from 'app/state/menu/context';
@@ -51,55 +51,43 @@ export const GroupDuplicationDrawer = (props: Props) => {
       });
     }
   }, [groupId, getComplementsGroupById]);
-  // React.useEffect(() => {
-  //   if (!newGoupId) return;
-  //   setTimeout(() => push(), 1000);
-  // }, [newGoupId, push]);
   // UI
   if (newGoupId) return <Redirect to={`/app/menu?group=${newGoupId}`} />;
   return (
     <BaseDrawer
-      {...props}
       title={t('Duplicar grupo')}
-      type="group"
-      headerMd="0"
+      onSubmitHandler={handleSubmit}
+      footer={() => (
+        <Stack w="100%" spacing={4} direction="row">
+          <Button
+            type="submit"
+            width="full"
+            maxW="50%"
+            isLoading={cloneGroupResult.isLoading}
+            loadingText={t('Duplicando')}
+          >
+            {t('Duplicar')}
+          </Button>
+          <Button
+            width="full"
+            variant="dangerLight"
+            ml={3}
+            onClick={props.onClose}
+          >
+            {t(`Cancelar`)}
+          </Button>
+        </Stack>
+      )}
+      {...props}
     >
-      <Box>
-        <form
-          onSubmit={(ev) => {
-            ev.preventDefault();
-            handleSubmit();
-          }}
-        >
-          <Input
-            ref={inputRef}
-            id="complements-group-name"
-            label="Nome do novo grupo"
-            placeholder="Nome do grupo"
-            value={name}
-            handleChange={(ev) => setName(ev.target.value)}
-          />
-          <Stack mt="8" spacing={4} direction="row">
-            <Button
-              type="submit"
-              width="full"
-              maxW="50%"
-              isLoading={cloneGroupResult.isLoading}
-              loadingText={t('Salvando')}
-            >
-              {t('Duplicar')}
-            </Button>
-            <Button
-              width="full"
-              variant="dangerLight"
-              ml={3}
-              onClick={props.onClose}
-            >
-              {t(`Cancelar`)}
-            </Button>
-          </Stack>
-        </form>
-      </Box>
+      <Input
+        ref={inputRef}
+        id="complements-group-name"
+        label="Nome do novo grupo"
+        placeholder="Nome do grupo"
+        value={name}
+        handleChange={(ev) => setName(ev.target.value)}
+      />
     </BaseDrawer>
   );
 };
