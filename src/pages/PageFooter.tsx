@@ -25,7 +25,7 @@ const PageFooter = ({
   // UI
   return (
     <Box mt="8">
-      {requiredLabel && <Text>* Campos obrigatórios</Text>}
+      {requiredLabel && <Text>(*) campos obrigatórios</Text>}
       <Flex
         mt="4"
         flexDir={{ base: 'column', md: 'row' }}

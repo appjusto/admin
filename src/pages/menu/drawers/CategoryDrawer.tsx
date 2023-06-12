@@ -98,8 +98,8 @@ export const CategoryDrawer = (props: Props) => {
         placeholder={t('000')}
         onChange={(ev) => setExternalId(ev.target.value)}
       />
-      <Text mt="4" fontSize="15px">
-        {t('* campos obrigatórios')}
+      <Text mt="6" fontSize="15px">
+        {t('(*) campos obrigatórios')}
       </Text>
     </BaseDrawer>
   );

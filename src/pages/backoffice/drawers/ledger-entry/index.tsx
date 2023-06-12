@@ -638,7 +638,7 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 isRequired
               />
               <Text mt="4" fontSize="15px">
-                {t('* campos obrigatórios')}
+                {t('(*) campos obrigatórios')}
               </Text>
             </DrawerBody>
             <DrawerFooter borderTop="1px solid #F2F6EA">

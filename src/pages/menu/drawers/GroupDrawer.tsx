@@ -121,8 +121,8 @@ export const GroupDrawer = ({ onClose, ...props }: Props) => {
         ref={inputRef}
         isRequired
         id="complements-group-name"
-        label="Grupo de complementos"
-        placeholder="Nome da grupo"
+        label={t('Grupo de complementos *')}
+        placeholder={t('Nome da grupo')}
         value={name}
         handleChange={(ev) => setName(ev.target.value)}
       />
@@ -172,6 +172,9 @@ export const GroupDrawer = ({ onClose, ...props }: Props) => {
           decrement={() => handleMaxAndMin('max', 'dec')}
         />
       </Flex>
+      <Text mt="6" fontSize="15px">
+        {t('(*) campos obrigatórios')}
+      </Text>
     </BaseDrawer>
   );
 };

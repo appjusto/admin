@@ -159,7 +159,7 @@ export const ComplementDrawer = ({ onClose, ...props }: Props) => {
             isRequired
             mt="0"
             id="complements-item-name"
-            label={t('Nome do item')}
+            label={t('Nome do item *')}
             placeholder={t('Nome do item')}
             value={name}
             handleChange={(ev) => setName(ev.target.value)}
@@ -224,6 +224,9 @@ export const ComplementDrawer = ({ onClose, ...props }: Props) => {
               }
             />
           </HStack>
+          <Text mt="6" fontSize="15px" textAlign="end">
+            {t('(*) campos obrigatórios')}
+          </Text>
         </Flex>
       </VStack>
     </BaseDrawer>

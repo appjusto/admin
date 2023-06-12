@@ -117,7 +117,7 @@ export const ProductDetails = () => {
         id="product-drawer-name"
         ref={inputRef}
         value={name}
-        label={t('Nome')}
+        label={t('Nome *')}
         placeholder={t('Nome do produto')}
         onChange={(ev) => handleProductUpdate({ name: ev.target.value })}
       />
@@ -130,7 +130,7 @@ export const ProductDetails = () => {
         isRequired
         id="product-drawer-description"
         value={description}
-        label={t('Descrição')}
+        label={t('Descrição *')}
         placeholder={t('Descreva seu produto')}
         onChange={(ev) => handleProductUpdate({ description: ev.target.value })}
         maxLength={1000}
@@ -144,7 +144,7 @@ export const ProductDetails = () => {
         maxW="220px"
         id="drawer-price"
         value={price}
-        label={t('Preço')}
+        label={t('Preço *')}
         aria-label={t('preço-do-novo-produto')}
         placeholder={t('0,00')}
         onChangeValue={(value) => handleProductUpdate({ price: value })}
@@ -223,6 +223,9 @@ export const ProductDetails = () => {
           </Text>
         </Flex>
       )}
+      <Text mt="6" fontSize="15px">
+        {t('(*) campos obrigatórios')}
+      </Text>
     </Box>
   );
 };
