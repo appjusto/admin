@@ -10,10 +10,14 @@ import {
   DrawerHeader,
   DrawerOverlay,
   Flex,
+  HStack,
   Icon,
   Image,
+  Radio,
+  RadioGroup,
   Switch as ChakraSwitch,
   Text,
+  Tooltip,
 } from '@chakra-ui/react';
 import { useHubsterStore } from 'app/api/business/useHubsterStore';
 import { useObserveHubsterStore } from 'app/api/business/useObserveHubsterStore';
@@ -43,7 +47,10 @@ export const HubsterDrawer = ({ onClose, ...props }: HubsterDrawerProps) => {
   // state
   const [storeId, setStoreId] = React.useState('');
   const [status, setStatus] = React.useState<HubsterStoreStatus>('available');
-  const [isStoreIdInvalid, setisStoreIdInvalid] = React.useState(false);
+  const [isMenuSync, setIsMenuSync] = React.useState(false);
+  const [isStoreIdInvalid, setIsStoreIdInvalid] = React.useState(false);
+  // helpers
+  const storeExists = hubsterStore !== undefined && hubsterStore !== null;
   // handlers
   const saveStore = () => {
     if (!businessId) {
@@ -86,10 +93,13 @@ export const HubsterDrawer = ({ onClose, ...props }: HubsterDrawerProps) => {
     if (!hubsterStore) return;
     setStoreId(hubsterStore.storeId);
     setStatus(hubsterStore.status);
+    if (hubsterStore.menu) {
+      setIsMenuSync(hubsterStore.menu.sync);
+    }
   }, [hubsterStore]);
   React.useEffect(() => {
     const isValid = isStoreIdValid(storeId);
-    setisStoreIdInvalid(!isValid);
+    setIsStoreIdInvalid(!isValid);
   }, [storeId]);
   // UI
   return (
@@ -143,11 +153,11 @@ export const HubsterDrawer = ({ onClose, ...props }: HubsterDrawerProps) => {
                     </Box>
                   </Flex>
                   <Text mt="6" fontSize="xl" fontWeight="700">
-                    {t('Configuração')}
+                    {t('Configurações')}
                   </Text>
                   <Text mt="4" color="gray.700">
                     {t(
-                      'Informe o storeId que você recebeu do suporte do hubster e salve as alterações'
+                      'Informe o storeId que você recebeu do suporte do hubster'
                     )}
                   </Text>
                   <Input
@@ -160,24 +170,73 @@ export const HubsterDrawer = ({ onClose, ...props }: HubsterDrawerProps) => {
                     isInvalid={isStoreIdInvalid}
                     isRequired
                   />
-                  <Flex mt="4" alignItems="center">
-                    <ChakraSwitch
-                      isChecked={status === 'available'}
-                      onChange={(ev) => {
-                        ev.stopPropagation();
-                        setStatus(
-                          ev.target.checked ? 'available' : 'unavailable'
-                        );
-                      }}
-                    />
-                    <Flex ml="4" flexDir="column" minW="280px">
-                      <Text fontSize="16px" fontWeight="700" lineHeight="22px">
-                        {status === 'available'
-                          ? t('Integração ativada')
-                          : t('Integração desativada')}
+                  <HStack mt="6" spacing={2}>
+                    <Text color="gray.700">
+                      {t('Escolha onde deseja gerenciar o seu cardápio')}
+                    </Text>
+                    <Tooltip
+                      label={t(
+                        'Caso tenha configurado um cardápio no Hubster, integrado ao serviço do AppJusto, é possível fazer sua gestão diretamente por lá. Nesse caso, qualquer modificação nos itens deve ser realizada na interface do Hubster.'
+                      )}
+                    >
+                      <Box cursor="pointer">
+                        <Icon mt="1" as={MdInfoOutline} />
+                      </Box>
+                    </Tooltip>
+                  </HStack>
+                  <RadioGroup
+                    mt="2"
+                    onChange={(value) => setIsMenuSync(value === 'husbter')}
+                    value={isMenuSync ? 'hubster' : 'appjusto'}
+                    colorScheme="green"
+                    color="black"
+                    fontSize="15px"
+                    lineHeight="21px"
+                  >
+                    <HStack
+                      alignItems="flex-start"
+                      color="black"
+                      spacing={8}
+                      fontSize="16px"
+                      lineHeight="22px"
+                    >
+                      <Radio value="hubster">
+                        {t('Usar cardápio do Hubster')}
+                      </Radio>
+                      <Radio value="appjusto">
+                        {t('Usar cardápio do AppJusto')}
+                      </Radio>
+                    </HStack>
+                  </RadioGroup>
+                  {storeExists && (
+                    <>
+                      <Text mt="6" fontSize="xl" fontWeight="700">
+                        {t('Status da integração')}
                       </Text>
-                    </Flex>
-                  </Flex>
+                      <Flex mt="4" alignItems="center">
+                        <ChakraSwitch
+                          isChecked={status === 'available'}
+                          onChange={(ev) => {
+                            ev.stopPropagation();
+                            setStatus(
+                              ev.target.checked ? 'available' : 'unavailable'
+                            );
+                          }}
+                        />
+                        <Flex ml="4" flexDir="column" minW="280px">
+                          <Text
+                            fontSize="16px"
+                            fontWeight="700"
+                            lineHeight="22px"
+                          >
+                            {status === 'available'
+                              ? t('Integração ativada')
+                              : t('Integração desativada')}
+                          </Text>
+                        </Flex>
+                      </Flex>
+                    </>
+                  )}
                 </Box>
                 <Flex
                   mt="4"
