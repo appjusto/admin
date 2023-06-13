@@ -1,19 +1,35 @@
 import * as menu from '@appjusto/menu';
-import { Category, Complement, ComplementGroup, Ordering, WithId } from '@appjusto/types';
+import {
+  Category,
+  Complement,
+  ComplementGroup,
+  Ordering,
+  WithId,
+} from '@appjusto/types';
 import { useObserveCategories } from 'app/api/business/categories/useObserveCategories';
 import { useObserveComplements } from 'app/api/business/complements/useObserveComplements';
 import { useObserveMenuOrdering } from 'app/api/business/menu/useObserveMenuOrdering';
 import { useObserveProducts } from 'app/api/business/products/useObserveProducts';
-import { MutationResult, useCustomMutation } from 'app/api/mutation/useCustomMutation';
+import { useObserveHubsterStore } from 'app/api/business/useObserveHubsterStore';
+import {
+  MutationResult,
+  useCustomMutation,
+} from 'app/api/mutation/useCustomMutation';
 import React from 'react';
 import { MutateFunction } from 'react-query';
 import { useContextApi } from '../api/context';
 import { useContextBusinessId } from '../business/context';
 
+interface IntegrationStatus {
+  source: 'hubster' | 'appjusto';
+  isReadOnly: boolean;
+}
+
 interface ContextProps {
   setIsMenuActive: (value: boolean) => void;
   isProductsPage: boolean;
   setIsProductPage(value: boolean): void;
+  integrationStatus?: IntegrationStatus;
   categories: WithId<Category>[];
   productsOrdering: Ordering;
   updateProductsOrdering: (ordering: Ordering) => void;
@@ -23,7 +39,9 @@ interface ContextProps {
   complementsGroupsWithItems: WithId<ComplementGroup>[];
   complements: WithId<Complement>[];
   sortedComplementsGroups: WithId<ComplementGroup>[];
-  getComplementsGroupById: (groupId?: string) => WithId<ComplementGroup> | undefined;
+  getComplementsGroupById: (
+    groupId?: string
+  ) => WithId<ComplementGroup> | undefined;
   updateComplementsGroup: MutateFunction<
     void,
     unknown,
@@ -76,9 +94,12 @@ export const MenuContextProvider = (props: ProviderProps) => {
   // context
   const api = useContextApi();
   const businessId = useContextBusinessId();
+  const hubsterStore = useObserveHubsterStore(businessId);
   // state
   const [isMenuActive, setIsMenuActive] = React.useState(false);
   const [isProductsPage, setIsProductPage] = React.useState(true);
+  const [integrationStatus, setIntegrationStatus] =
+    React.useState<IntegrationStatus>();
   // hooks
   const unorderedCategories = useObserveCategories(isMenuActive, businessId);
   const products = useObserveProducts(isMenuActive, businessId);
@@ -88,9 +109,16 @@ export const MenuContextProvider = (props: ProviderProps) => {
     complementsOrdering,
     updateComplementsOrdering,
   } = useObserveMenuOrdering(isMenuActive, businessId);
-  const { complementsGroups, complements } = useObserveComplements(isMenuActive, businessId);
+  const { complementsGroups, complements } = useObserveComplements(
+    isMenuActive,
+    businessId
+  );
   // helpers
-  const categories = menu.getSorted(unorderedCategories, products, productsOrdering);
+  const categories = menu.getSorted(
+    unorderedCategories,
+    products,
+    productsOrdering
+  );
   const complementsGroupsWithItems = menu.getSorted(
     complementsGroups,
     complements,
@@ -110,10 +138,16 @@ export const MenuContextProvider = (props: ProviderProps) => {
   } = useCustomMutation(
     async (data: { groupId: string | undefined; changes: ComplementGroup }) => {
       if (data.groupId) {
-        await api.business().updateComplementsGroup(businessId!, data.groupId, data.changes);
+        await api
+          .business()
+          .updateComplementsGroup(businessId!, data.groupId, data.changes);
       } else {
-        const newGroup = await api.business().createComplementsGroup(businessId!, data.changes);
-        updateComplementsOrdering(menu.addFirstLevel(complementsOrdering, newGroup.id));
+        const newGroup = await api
+          .business()
+          .createComplementsGroup(businessId!, data.changes);
+        updateComplementsOrdering(
+          menu.addFirstLevel(complementsOrdering, newGroup.id)
+        );
       }
     },
     'updateComplementsGroup',
@@ -124,11 +158,14 @@ export const MenuContextProvider = (props: ProviderProps) => {
     mutationResult: deleteGroupResult,
   } = useCustomMutation(
     async (groupId: string) => {
-      const complementsIds = complementsOrdering.secondLevelIdsByFirstLevelId[groupId];
+      const complementsIds =
+        complementsOrdering.secondLevelIdsByFirstLevelId[groupId];
       complementsIds.forEach(async (id) => {
         await api.business().deleteComplement(businessId!, id);
       });
-      updateComplementsOrdering(menu.removeFirstLevel(complementsOrdering, groupId));
+      updateComplementsOrdering(
+        menu.removeFirstLevel(complementsOrdering, groupId)
+      );
       await api.business().deleteComplementsGroup(businessId!, groupId);
     },
     'deleteComplementsGroup',
@@ -136,8 +173,11 @@ export const MenuContextProvider = (props: ProviderProps) => {
   );
   // complements
   const getComplementData = (complementId: string, groupId?: string) => {
-    const complement = complements.find((complement) => complement.id === complementId);
-    const parentId = groupId ?? menu.getParentId(complementsOrdering, complementId);
+    const complement = complements.find(
+      (complement) => complement.id === complementId
+    );
+    const parentId =
+      groupId ?? menu.getParentId(complementsOrdering, complementId);
     const group = complementsGroups.find((group) => group.id === parentId);
     return { group, complement };
   };
@@ -155,14 +195,21 @@ export const MenuContextProvider = (props: ProviderProps) => {
       if (data.complementId && data.complementId !== 'new') {
         await api
           .business()
-          .updateComplement(businessId!, data.complementId, data.changes, data.imageFile);
+          .updateComplement(
+            businessId!,
+            data.complementId,
+            data.changes,
+            data.imageFile
+          );
       } else {
         currentId = await api
           .business()
           .createComplement(businessId!, data.changes, data.imageFile);
       }
       if (data.groupId)
-        updateComplementsOrdering(menu.updateParent(complementsOrdering, currentId!, data.groupId));
+        updateComplementsOrdering(
+          menu.updateParent(complementsOrdering, currentId!, data.groupId)
+        );
     },
     'updateComplement',
     false
@@ -170,10 +217,25 @@ export const MenuContextProvider = (props: ProviderProps) => {
   const {
     mutateAsync: deleteComplement,
     mutationResult: deleteComplementResult,
-  } = useCustomMutation(async (data: { complementId: string; imageExists: boolean }) => {
-    updateComplementsOrdering(menu.removeSecondLevel(complementsOrdering, data.complementId));
-    await api.business().deleteComplement(businessId!, data.complementId);
-  }, 'deleteComplement');
+  } = useCustomMutation(
+    async (data: { complementId: string; imageExists: boolean }) => {
+      updateComplementsOrdering(
+        menu.removeSecondLevel(complementsOrdering, data.complementId)
+      );
+      await api.business().deleteComplement(businessId!, data.complementId);
+    },
+    'deleteComplement'
+  );
+  React.useEffect(() => {
+    if (!hubsterStore || !hubsterStore.menu) {
+      setIntegrationStatus(undefined);
+    } else {
+      setIntegrationStatus({
+        source: hubsterStore.menu.source,
+        isReadOnly: hubsterStore.menu.sync,
+      });
+    }
+  }, [hubsterStore]);
   // provider
   return (
     <MenuContext.Provider
@@ -181,6 +243,7 @@ export const MenuContextProvider = (props: ProviderProps) => {
         setIsMenuActive,
         isProductsPage,
         setIsProductPage,
+        integrationStatus,
         categories,
         productsOrdering,
         updateProductsOrdering,

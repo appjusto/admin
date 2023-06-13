@@ -6,6 +6,8 @@ import {
   Input,
   InputGroup,
   InputRightElement,
+  Link,
+  Text,
 } from '@chakra-ui/react';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
@@ -16,7 +18,14 @@ import { ReactComponent as SearchIcon } from 'common/img/searchIcon.svg';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
 import { BsChat } from 'react-icons/bs';
-import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
+import { MdInfoOutline } from 'react-icons/md';
+import {
+  Link as RouterLink,
+  Route,
+  Switch,
+  useHistory,
+  useRouteMatch,
+} from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { Categories } from './categories/Categories';
 import { Complements } from './complements/Complements';
@@ -36,12 +45,21 @@ const Menu = () => {
   const history = useHistory();
   const { userAbility, isBackofficeUser } = useContextFirebaseUser();
   const { business } = useContextBusiness();
-  const { setIsMenuActive, isProductsPage, setIsProductPage } =
-    useContextMenu();
+  const {
+    setIsMenuActive,
+    isProductsPage,
+    setIsProductPage,
+    integrationStatus,
+  } = useContextMenu();
   // state
   const [productSearch, setProductSearch] = React.useState('');
   // helpers
-  const isMenuCreator = userAbility?.can('create', 'menu');
+  const menuSource = integrationStatus?.source
+    ? integrationStatus.source.charAt(0).toUpperCase() +
+      integrationStatus.source.slice(1)
+    : undefined;
+  const isMenuCreator =
+    userAbility?.can('create', 'menu') && !integrationStatus?.isReadOnly;
   // handler
   const closeDrawerHandler = () => history.replace(path);
   // side effects
@@ -69,6 +87,54 @@ const Menu = () => {
           btnLabel={t('Adicionar mensagem')}
           isNew={false}
         />
+        {integrationStatus?.isReadOnly && (
+          <Flex
+            mt="6"
+            p="4"
+            flexDir="row"
+            border="1px solid black"
+            borderRadius="lg"
+            bgColor="yellow"
+          >
+            <Icon mt="2" as={MdInfoOutline} color="black" />
+            <Box ml="2">
+              <Text mt="1" color="black" fontSize="md" fontWeight="700">
+                {t('Seu cardápio está no modo leitura')}
+              </Text>
+              <Text
+                color="black"
+                minW="140px"
+                fontSize="md"
+                lineHeight="22px"
+                fontWeight="500"
+              >
+                {t(
+                  `Você optou por gerenciar o seu cardápio diretamente no ${menuSource}. Desse modo, não será possível realizar alterações por aqui.`
+                )}
+              </Text>
+              <Text
+                color="black"
+                minW="140px"
+                fontSize="md"
+                lineHeight="22px"
+                fontWeight="500"
+              >
+                {t(
+                  'Para gerenciar o seu cardápio pelo AppJusto, vá até a tela de '
+                )}
+                <Link
+                  as={RouterLink}
+                  to={`/app/integrations/${integrationStatus.source}`}
+                  textDecor="underline"
+                >
+                  {t('integrações')}
+                </Link>
+                {t(' e selecione a opção "Usar cardápio do AppJusto".')}
+              </Text>
+              {/* link para app/integrations/hubster */}
+            </Box>
+          </Flex>
+        )}
         <Box mt="2">
           <Flex
             mt="8"

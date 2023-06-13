@@ -50,7 +50,7 @@ export const HubsterDrawer = ({ onClose, ...props }: HubsterDrawerProps) => {
   const [isMenuSync, setIsMenuSync] = React.useState(false);
   const [isStoreIdInvalid, setIsStoreIdInvalid] = React.useState(false);
   // helpers
-  const storeExists = hubsterStore !== undefined && hubsterStore !== null;
+  const storeExists = hubsterStore?.status !== undefined;
   // handlers
   const saveStore = () => {
     if (!businessId) {
@@ -147,7 +147,7 @@ export const HubsterDrawer = ({ onClose, ...props }: HubsterDrawerProps) => {
                       </Text>
                       <Text color="gray.700">
                         {t(
-                          'O hubster é um centralizador de pedidos que permite que você controle o fluxo de pedidos de várias plataformas numa só ferramenta'
+                          'O Hubster é um centralizador de pedidos que permite que você controle o fluxo de pedidos de várias plataformas numa só ferramenta'
                         )}
                       </Text>
                     </Box>
@@ -157,14 +157,14 @@ export const HubsterDrawer = ({ onClose, ...props }: HubsterDrawerProps) => {
                   </Text>
                   <Text mt="4" color="gray.700">
                     {t(
-                      'Informe o storeId que você recebeu do suporte do hubster'
+                      'Informe o storeId que você recebeu do suporte do Hubster'
                     )}
                   </Text>
                   <Input
                     mt="2"
                     id="store-id"
                     label={t('StoreId *')}
-                    placeholder={t('Cole o storeId obtido com o hubster')}
+                    placeholder={t('Cole o storeId obtido com o Hubster')}
                     value={storeId}
                     onChange={(ev) => setStoreId(ev.target.value)}
                     isInvalid={isStoreIdInvalid}
