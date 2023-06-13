@@ -18,7 +18,6 @@ import { ReactComponent as SearchIcon } from 'common/img/searchIcon.svg';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
 import { BsChat } from 'react-icons/bs';
-import { MdInfoOutline } from 'react-icons/md';
 import {
   Link as RouterLink,
   Route,
@@ -89,14 +88,14 @@ const Menu = () => {
         {integrationStatus?.isReadOnly && (
           <Flex
             mt="6"
-            p="4"
+            py="4"
+            px="8"
             flexDir="row"
             border="1px solid black"
             borderRadius="lg"
             bgColor="yellow"
           >
-            <Icon mt="2" as={MdInfoOutline} color="black" />
-            <Box ml="2">
+            <Box>
               <Text mt="1" color="black" fontSize="md" fontWeight="700">
                 {t('Seu cardápio está no modo leitura')}
               </Text>
@@ -130,7 +129,6 @@ const Menu = () => {
                 </Link>
                 {t(' e selecione a opção "Usar cardápio do AppJusto".')}
               </Text>
-              {/* link para app/integrations/hubster */}
             </Box>
           </Flex>
         )}
