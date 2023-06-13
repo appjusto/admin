@@ -43,13 +43,14 @@ const Menu = () => {
   // context
   const { path } = useRouteMatch();
   const history = useHistory();
-  const { userAbility, isBackofficeUser } = useContextFirebaseUser();
+  const { isBackofficeUser } = useContextFirebaseUser();
   const { business } = useContextBusiness();
   const {
     setIsMenuActive,
     isProductsPage,
     setIsProductPage,
     integrationStatus,
+    userCanCreateMenu,
   } = useContextMenu();
   // state
   const [productSearch, setProductSearch] = React.useState('');
@@ -58,8 +59,6 @@ const Menu = () => {
     ? integrationStatus.source.charAt(0).toUpperCase() +
       integrationStatus.source.slice(1)
     : undefined;
-  const isMenuCreator =
-    userAbility?.can('create', 'menu') && !integrationStatus?.isReadOnly;
   // handler
   const closeDrawerHandler = () => history.replace(path);
   // side effects
@@ -162,13 +161,13 @@ const Menu = () => {
         </Box>
         <Flex
           flexDir={{ base: 'column', lg: 'row' }}
-          justifyContent={isMenuCreator ? 'space-between' : 'flex-end'}
+          justifyContent={userCanCreateMenu ? 'space-between' : 'flex-end'}
           mt="2"
           mb="8"
         >
           <MainButtons
             isProducts={isProductsPage}
-            display={isMenuCreator ? 'flex' : 'none'}
+            display={userCanCreateMenu ? 'flex' : 'none'}
           />
           <InputGroup maxW="360px">
             <Input

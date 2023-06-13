@@ -18,6 +18,7 @@ import {
 import React from 'react';
 import { MutateFunction } from 'react-query';
 import { useContextApi } from '../api/context';
+import { useContextFirebaseUser } from '../auth/context';
 import { useContextBusinessId } from '../business/context';
 
 interface IntegrationStatus {
@@ -30,6 +31,8 @@ interface ContextProps {
   isProductsPage: boolean;
   setIsProductPage(value: boolean): void;
   integrationStatus?: IntegrationStatus;
+  userCanCreateMenu?: boolean;
+  userCanUpdateMenu?: boolean;
   categories: WithId<Category>[];
   productsOrdering: Ordering;
   updateProductsOrdering: (ordering: Ordering) => void;
@@ -93,6 +96,7 @@ const MenuContext = React.createContext<ContextProps>({} as ContextProps);
 export const MenuContextProvider = (props: ProviderProps) => {
   // context
   const api = useContextApi();
+  const { userAbility } = useContextFirebaseUser();
   const businessId = useContextBusinessId();
   const hubsterStore = useObserveHubsterStore(businessId);
   // state
@@ -114,6 +118,11 @@ export const MenuContextProvider = (props: ProviderProps) => {
     businessId
   );
   // helpers
+  const userCanCreateMenu =
+    userAbility?.can('create', 'menu') && !integrationStatus?.isReadOnly;
+  const userCanUpdateMenu =
+    (userCanCreateMenu || userAbility?.can('update', 'menu')) &&
+    !integrationStatus?.isReadOnly;
   const categories = menu.getSorted(
     unorderedCategories,
     products,
@@ -244,6 +253,8 @@ export const MenuContextProvider = (props: ProviderProps) => {
         isProductsPage,
         setIsProductPage,
         integrationStatus,
+        userCanCreateMenu,
+        userCanUpdateMenu,
         categories,
         productsOrdering,
         updateProductsOrdering,

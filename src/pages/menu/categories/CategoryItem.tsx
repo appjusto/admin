@@ -1,7 +1,7 @@
 import { Category, Product, WithId } from '@appjusto/types';
 import { Box, Flex, Heading, Spacer, Switch, Tooltip } from '@chakra-ui/react';
 import { useCategory } from 'app/api/business/categories/useCategory';
-import { useContextFirebaseUser } from 'app/state/auth/context';
+import { useContextMenu } from 'app/state/menu/context';
 import { CustomButton as Button } from 'common/components/buttons/CustomButton';
 import { EditButton } from 'common/components/buttons/EditButton';
 import { ReactComponent as DragHandle } from 'common/img/drag-handle.svg';
@@ -20,77 +20,98 @@ interface Props {
   url: string;
 }
 
-export const CategoryItem = React.memo(({ category, products, index, hidden, url }: Props) => {
-  // context
-  const { userAbility } = useContextFirebaseUser();
-  // mutations
-  const { updateCategory } = useCategory(category.id);
-  // UI
-  return (
-    <Draggable draggableId={category.id} index={index}>
-      {(draggable) => (
-        <Box
-          borderWidth="1px"
-          borderRadius="lg"
-          bg="white"
-          boxShadow="0px 8px 16px -4px rgba(105, 118, 103, 0.1)"
-          ref={draggable.innerRef}
-          {...draggable.draggableProps}
-          p="6"
-          mb="6"
-          d={hidden ? 'none' : 'block'}
-          w="100%"
-        >
-          <Flex alignItems="center" mb="6">
-            <Box bg="white" {...draggable.dragHandleProps} ref={draggable.innerRef}>
-              <DragHandle />
-            </Box>
-            <Heading fontSize="3xl" ml="4">
-              {category.name}
-            </Heading>
-            <Spacer />
-            <Switch
-              isChecked={category.enabled}
-              onChange={(ev) => {
-                ev.stopPropagation();
-                updateCategory({ enabled: ev.target.checked });
-              }}
-            />
-            <Link to={`${url}/category/${category.id}`}>
-              <Tooltip placement="top" label={t('Editar')} aria-label={t('Editar')}>
-                <EditButton aria-label={`editar-categoria-${slugfyName(category.name)}`} />
-              </Tooltip>
-            </Link>
-          </Flex>
-          <Droppable droppableId={category.id} type="product">
-            {(droppable, snapshot) => (
+export const CategoryItem = React.memo(
+  ({ category, products, index, hidden, url }: Props) => {
+    // context
+    const { userCanCreateMenu, userCanUpdateMenu } = useContextMenu();
+    // mutations
+    const { updateCategory } = useCategory(category.id);
+    // UI
+    return (
+      <Draggable draggableId={category.id} index={index}>
+        {(draggable) => (
+          <Box
+            borderWidth="1px"
+            borderRadius="lg"
+            bg="white"
+            boxShadow="0px 8px 16px -4px rgba(105, 118, 103, 0.1)"
+            ref={draggable.innerRef}
+            {...draggable.draggableProps}
+            p="6"
+            mb="6"
+            d={hidden ? 'none' : 'block'}
+            w="100%"
+          >
+            <Flex alignItems="center" mb="6">
               <Box
-                ref={droppable.innerRef}
-                {...droppable.droppableProps}
-                bg={snapshot.isDraggingOver ? 'gray.50' : 'white'}
-                minH={100}
-                w="100%"
-                overflow="auto"
+                bg="white"
+                {...draggable.dragHandleProps}
+                ref={draggable.innerRef}
               >
-                {products &&
-                  products.map((product, index) => (
-                    <ProductItem key={product.id} product={product} index={index} />
-                  ))}
-                {droppable.placeholder}
+                <DragHandle />
               </Box>
-            )}
-          </Droppable>
-          <Button
-            mt="0"
-            display={userAbility?.can('create', 'menu') ? 'inline-block' : 'none'}
-            w={{ base: '100%', md: '300px' }}
-            link={`${url}/product/new?categoryId=${category.id}`}
-            label={t('Adicionar produto à categoria')}
-            aria-label={`adicionar-produto-${slugfyName(category.name)}`}
-            variant="outline"
-          />
-        </Box>
-      )}
-    </Draggable>
-  );
-});
+              <Heading fontSize="3xl" ml="4">
+                {category.name}
+              </Heading>
+              <Spacer />
+              <Switch
+                isChecked={category.enabled}
+                onChange={(ev) => {
+                  ev.stopPropagation();
+                  updateCategory({ enabled: ev.target.checked });
+                }}
+                isDisabled={!userCanUpdateMenu}
+              />
+              {userCanUpdateMenu && (
+                <Link to={`${url}/category/${category.id}`}>
+                  <Tooltip
+                    placement="top"
+                    label={t('Editar')}
+                    aria-label={t('Editar')}
+                  >
+                    <EditButton
+                      aria-label={`editar-categoria-${slugfyName(
+                        category.name
+                      )}`}
+                    />
+                  </Tooltip>
+                </Link>
+              )}
+            </Flex>
+            <Droppable droppableId={category.id} type="product">
+              {(droppable, snapshot) => (
+                <Box
+                  ref={droppable.innerRef}
+                  {...droppable.droppableProps}
+                  bg={snapshot.isDraggingOver ? 'gray.50' : 'white'}
+                  minH={100}
+                  w="100%"
+                  overflow="auto"
+                >
+                  {products &&
+                    products.map((product, index) => (
+                      <ProductItem
+                        key={product.id}
+                        product={product}
+                        index={index}
+                      />
+                    ))}
+                  {droppable.placeholder}
+                </Box>
+              )}
+            </Droppable>
+            <Button
+              mt="0"
+              display={userCanCreateMenu ? 'inline-block' : 'none'}
+              w={{ base: '100%', md: '300px' }}
+              link={`${url}/product/new?categoryId=${category.id}`}
+              label={t('Adicionar produto à categoria')}
+              aria-label={`adicionar-produto-${slugfyName(category.name)}`}
+              variant="outline"
+            />
+          </Box>
+        )}
+      </Draggable>
+    );
+  }
+);

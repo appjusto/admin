@@ -29,7 +29,7 @@ interface Props {
 export const ComplementItem = React.memo(({ complement, index }: Props) => {
   // context
   const { url } = useRouteMatch();
-  const { updateComplement } = useContextMenu();
+  const { updateComplement, userCanUpdateMenu } = useContextMenu();
   const hookImageUrl = useComplementImage(complement.id, !complement.imageUrls);
   //state
   const [imageUrl, setImageUrl] = React.useState<string>('');
@@ -128,6 +128,7 @@ export const ComplementItem = React.memo(({ complement, index }: Props) => {
                 onChangeValue={updatePriceState}
                 onBlur={() => onUpdateComplement()}
                 maxLength={6}
+                isDisabled={!userCanUpdateMenu}
               />
             </Flex>
           </Flex>
@@ -138,18 +139,23 @@ export const ComplementItem = React.memo(({ complement, index }: Props) => {
               ev.stopPropagation();
               onUpdateComplement(true, ev.target.checked);
             }}
+            isDisabled={!userCanUpdateMenu}
           />
-          <Link as={RouterLink} to={`${url}/complement/${complement.id}`}>
-            <Tooltip
-              placement="top"
-              label={t('Editar')}
-              aria-label={t('Editar')}
-            >
-              <EditButton
-                aria-label={`editar-complemento-${slugfyName(complement.name)}`}
-              />
-            </Tooltip>
-          </Link>
+          {userCanUpdateMenu && (
+            <Link as={RouterLink} to={`${url}/complement/${complement.id}`}>
+              <Tooltip
+                placement="top"
+                label={t('Editar')}
+                aria-label={t('Editar')}
+              >
+                <EditButton
+                  aria-label={`editar-complemento-${slugfyName(
+                    complement.name
+                  )}`}
+                />
+              </Tooltip>
+            </Link>
+          )}
         </Flex>
       )}
     </Draggable>

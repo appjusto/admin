@@ -12,6 +12,7 @@ import {
 import { useProductImage } from 'app/api/business/products/useProductImage';
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusinessId } from 'app/state/business/context';
+import { useContextMenu } from 'app/state/menu/context';
 import { EditButton } from 'common/components/buttons/EditButton';
 import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput';
 import { ImageFbLoading } from 'common/components/ImageFbLoading';
@@ -32,12 +33,13 @@ export const ProductItem = React.memo(({ product, index }: Props) => {
   const { url } = useRouteMatch();
   const api = useContextApi();
   const businessId = useContextBusinessId();
+  const { userCanUpdateMenu } = useContextMenu();
+  //state
   const hookImageUrl = useProductImage(
     product.id,
     '288x288',
     !product.imageUrls
   );
-  //state
   const [imageUrl, setImageUrl] = React.useState<string>('');
   const [price, setPrice] = React.useState(0);
 
@@ -129,6 +131,7 @@ export const ProductItem = React.memo(({ product, index }: Props) => {
                 onChangeValue={updatePriceState}
                 onBlur={() => onUpdateProduct('price', price)}
                 maxLength={6}
+                isDisabled={!userCanUpdateMenu}
               />
             </Flex>
           </Flex>
@@ -139,18 +142,21 @@ export const ProductItem = React.memo(({ product, index }: Props) => {
               ev.stopPropagation();
               onUpdateProduct('enabled', ev.target.checked);
             }}
+            isDisabled={!userCanUpdateMenu}
           />
-          <Link as={RouterLink} to={`${url}/product/${product.id}`}>
-            <Tooltip
-              placement="top"
-              label={t('Editar')}
-              aria-label={t('Editar')}
-            >
-              <EditButton
-                aria-label={`editar-produto-${slugfyName(product.name)}`}
-              />
-            </Tooltip>
-          </Link>
+          {userCanUpdateMenu && (
+            <Link as={RouterLink} to={`${url}/product/${product.id}`}>
+              <Tooltip
+                placement="top"
+                label={t('Editar')}
+                aria-label={t('Editar')}
+              >
+                <EditButton
+                  aria-label={`editar-produto-${slugfyName(product.name)}`}
+                />
+              </Tooltip>
+            </Link>
+          )}
         </Flex>
       )}
     </Draggable>

@@ -21,140 +21,172 @@ interface Props {
   hidden?: boolean;
 }
 
-export const GroupItem = React.memo(({ group, complements, index, hidden }: Props) => {
-  // context
-  const { userAbility } = useContextFirebaseUser();
-  const { url } = useRouteMatch();
-  const { updateComplementsGroup } = useContextMenu();
-  // state
-  const [showComplements, setShowComplements] = React.useState(true);
-  // helpers
-  const itemsQtd = group.items?.length ?? 0;
-  // side effects
-  // UI
-  return (
-    <Draggable draggableId={group.id} index={index}>
-      {(draggable) => (
-        <Box
-          id={group.id}
-          borderWidth="1px"
-          borderRadius="lg"
-          bg="white"
-          boxShadow="0px 8px 16px -4px rgba(105, 118, 103, 0.1)"
-          ref={draggable.innerRef}
-          {...draggable.draggableProps}
-          p="6"
-          mb="6"
-          d={hidden ? 'none' : 'block'}
-          w="100%"
-        >
-          <Flex alignItems="center" mb="6">
-            <Flex
-              alignItems="center"
-              mr="4"
-              {...draggable.dragHandleProps}
-              ref={draggable.innerRef}
-            >
-              <DragHandle />
-            </Flex>
-            <Flex w="100%" flexDir="row" justifyContent="space-between">
-              <Flex flexDir="column">
-                <Text fontSize="xl" color="black">
-                  {group.name}
-                </Text>
-                <Text fontSize="sm" color="grey.700">
-                  {t(
-                    `${group.required ? 'Obrigatório' : 'Opcional'}, mínimo: (${
-                      group.minimum
-                    }), máximo: (${group.maximum}), total de itens: (${itemsQtd})`
-                  )}
-                </Text>
-              </Flex>
-              <Flex flexDir="row" alignItems="center">
-                <Tooltip
-                  key="available"
-                  placement="top"
-                  label={t('Disponibilidade do grupo')}
-                  aria-label={t('Disponibilidade do grupo')}
-                >
-                  <Box>
-                    <Switch
-                      size="lg"
-                      isChecked={group.enabled}
-                      onChange={(ev) => {
-                        ev.stopPropagation();
-                        // update
-                        updateComplementsGroup({
-                          groupId: group.id,
-                          changes: { ...group, enabled: ev.target.checked },
-                        });
-                      }}
-                    />
-                  </Box>
-                </Tooltip>
-                <Tooltip placement="top" label={t('Editar')} aria-label={t('Editar')}>
-                  <Link to={`${url}/complementsgroup/${group.id}`}>
-                    <EditButton
-                      ml="2"
-                      title={t('Editar')}
-                      aria-label={`editar-grupo-${slugfyName(group.name)}`}
-                    />
-                  </Link>
-                </Tooltip>
-                <Tooltip placement="top" label={t('Duplicar')} aria-label={t('Duplicar')}>
-                  <Link to={`${url}/complementsgroup-duplication/${group.id}`}>
-                    <DuplicateButton
-                      display={userAbility?.can('create', 'menu') ? 'flex' : 'none'}
-                      ml="2"
-                      title={t('Duplicar')}
-                      aria-label={`duplicar-grupo-${slugfyName(group.name)}`}
-                    />
-                  </Link>
-                </Tooltip>
-                <Tooltip
-                  placement="top"
-                  label={showComplements ? t('Recolher') : t('Expandir')}
-                  aria-label={showComplements ? t('Recolher') : t('Expandir')}
-                >
-                  <DropdownButton
-                    title={t('Expandir')}
-                    isExpanded={showComplements}
-                    onClick={() => setShowComplements(!showComplements)}
-                  />
-                </Tooltip>
-              </Flex>
-            </Flex>
-          </Flex>
-          <Droppable droppableId={group.id} type="coplement">
-            {(droppable, snapshot) => (
-              <Box
-                ref={droppable.innerRef}
-                {...droppable.droppableProps}
-                bg={snapshot.isDraggingOver ? 'gray.50' : 'white'}
-                w="100%"
-                overflow="auto"
-                minH="15px"
+export const GroupItem = React.memo(
+  ({ group, complements, index, hidden }: Props) => {
+    // context
+    const { userAbility } = useContextFirebaseUser();
+    const { url } = useRouteMatch();
+    const { updateComplementsGroup, userCanCreateMenu, userCanUpdateMenu } =
+      useContextMenu();
+    // state
+    const [showComplements, setShowComplements] = React.useState(true);
+    // helpers
+    const itemsQtd = group.items?.length ?? 0;
+    // side effects
+    // UI
+    return (
+      <Draggable draggableId={group.id} index={index}>
+        {(draggable) => (
+          <Box
+            id={group.id}
+            borderWidth="1px"
+            borderRadius="lg"
+            bg="white"
+            boxShadow="0px 8px 16px -4px rgba(105, 118, 103, 0.1)"
+            ref={draggable.innerRef}
+            {...draggable.draggableProps}
+            p="6"
+            mb="6"
+            d={hidden ? 'none' : 'block'}
+            w="100%"
+          >
+            <Flex alignItems="center" mb="6">
+              <Flex
+                alignItems="center"
+                mr="4"
+                {...draggable.dragHandleProps}
+                ref={draggable.innerRef}
               >
-                {showComplements &&
-                  complements &&
-                  complements.map((complement, index) => (
-                    <ComplementItem key={complement.id} complement={complement} index={index} />
-                  ))}
-                {droppable.placeholder}
-              </Box>
-            )}
-          </Droppable>
-          <Button
-            mt="0"
-            display={userAbility?.can('create', 'menu') ? 'inline-block' : 'none'}
-            w={{ base: '100%', md: '260px' }}
-            link={`${url}/complement/new?groupId=${group.id}`}
-            label={t('Adicionar complemento')}
-            aria-label={`adicionar-complemento-${slugfyName(group.name)}`}
-            variant="outline"
-          />
-        </Box>
-      )}
-    </Draggable>
-  );
-});
+                <DragHandle />
+              </Flex>
+              <Flex w="100%" flexDir="row" justifyContent="space-between">
+                <Flex flexDir="column">
+                  <Text fontSize="xl" color="black">
+                    {group.name}
+                  </Text>
+                  <Text fontSize="sm" color="grey.700">
+                    {t(
+                      `${
+                        group.required ? 'Obrigatório' : 'Opcional'
+                      }, mínimo: (${group.minimum}), máximo: (${
+                        group.maximum
+                      }), total de itens: (${itemsQtd})`
+                    )}
+                  </Text>
+                </Flex>
+                <Flex flexDir="row" alignItems="center">
+                  <Tooltip
+                    key="available"
+                    placement="top"
+                    label={t('Disponibilidade do grupo')}
+                    aria-label={t('Disponibilidade do grupo')}
+                  >
+                    <Box>
+                      <Switch
+                        size="lg"
+                        isChecked={group.enabled}
+                        onChange={(ev) => {
+                          ev.stopPropagation();
+                          // update
+                          updateComplementsGroup({
+                            groupId: group.id,
+                            changes: { ...group, enabled: ev.target.checked },
+                          });
+                        }}
+                        isDisabled={!userCanUpdateMenu}
+                      />
+                    </Box>
+                  </Tooltip>
+                  {userCanUpdateMenu && (
+                    <>
+                      <Tooltip
+                        placement="top"
+                        label={t('Editar')}
+                        aria-label={t('Editar')}
+                      >
+                        <Link to={`${url}/complementsgroup/${group.id}`}>
+                          <EditButton
+                            ml="2"
+                            title={t('Editar')}
+                            aria-label={`editar-grupo-${slugfyName(
+                              group.name
+                            )}`}
+                          />
+                        </Link>
+                      </Tooltip>
+                      <Tooltip
+                        placement="top"
+                        label={t('Duplicar')}
+                        aria-label={t('Duplicar')}
+                      >
+                        <Link
+                          to={`${url}/complementsgroup-duplication/${group.id}`}
+                        >
+                          <DuplicateButton
+                            display={
+                              userAbility?.can('create', 'menu')
+                                ? 'flex'
+                                : 'none'
+                            }
+                            ml="2"
+                            title={t('Duplicar')}
+                            aria-label={`duplicar-grupo-${slugfyName(
+                              group.name
+                            )}`}
+                          />
+                        </Link>
+                      </Tooltip>
+                    </>
+                  )}
+                  <Tooltip
+                    placement="top"
+                    label={showComplements ? t('Recolher') : t('Expandir')}
+                    aria-label={showComplements ? t('Recolher') : t('Expandir')}
+                  >
+                    <DropdownButton
+                      title={t('Expandir')}
+                      isExpanded={showComplements}
+                      onClick={() => setShowComplements(!showComplements)}
+                    />
+                  </Tooltip>
+                </Flex>
+              </Flex>
+            </Flex>
+            <Droppable droppableId={group.id} type="coplement">
+              {(droppable, snapshot) => (
+                <Box
+                  ref={droppable.innerRef}
+                  {...droppable.droppableProps}
+                  bg={snapshot.isDraggingOver ? 'gray.50' : 'white'}
+                  w="100%"
+                  overflow="auto"
+                  minH="15px"
+                >
+                  {showComplements &&
+                    complements &&
+                    complements.map((complement, index) => (
+                      <ComplementItem
+                        key={complement.id}
+                        complement={complement}
+                        index={index}
+                      />
+                    ))}
+                  {droppable.placeholder}
+                </Box>
+              )}
+            </Droppable>
+            <Button
+              mt="0"
+              display={userCanCreateMenu ? 'inline-block' : 'none'}
+              w={{ base: '100%', md: '260px' }}
+              link={`${url}/complement/new?groupId=${group.id}`}
+              label={t('Adicionar complemento')}
+              aria-label={`adicionar-complemento-${slugfyName(group.name)}`}
+              variant="outline"
+            />
+          </Box>
+        )}
+      </Draggable>
+    );
+  }
+);
