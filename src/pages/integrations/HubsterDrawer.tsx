@@ -1,4 +1,4 @@
-import { HubsterStoreStatus } from '@appjusto/types';
+import { HubsterStoreMenuSource, HubsterStoreStatus } from '@appjusto/types';
 import {
   Box,
   Button,
@@ -47,7 +47,8 @@ export const HubsterDrawer = ({ onClose, ...props }: HubsterDrawerProps) => {
   // state
   const [storeId, setStoreId] = React.useState('');
   const [status, setStatus] = React.useState<HubsterStoreStatus>('available');
-  const [isMenuSync, setIsMenuSync] = React.useState(false);
+  const [menuSource, setMenuSource] =
+    React.useState<HubsterStoreMenuSource>('hubster');
   const [isStoreIdInvalid, setIsStoreIdInvalid] = React.useState(false);
   // helpers
   const storeExists = hubsterStore?.status !== undefined;
@@ -84,6 +85,7 @@ export const HubsterDrawer = ({ onClose, ...props }: HubsterDrawerProps) => {
       businessId,
       status,
       storeId,
+      menuSource,
     };
     console.log(changes);
     return updateHubsterStore({ docId: hubsterStore?.id, changes });
@@ -93,8 +95,8 @@ export const HubsterDrawer = ({ onClose, ...props }: HubsterDrawerProps) => {
     if (!hubsterStore) return;
     setStoreId(hubsterStore.storeId);
     setStatus(hubsterStore.status);
-    if (hubsterStore.menu) {
-      setIsMenuSync(hubsterStore.menu.sync);
+    if (hubsterStore.menuSource) {
+      setMenuSource(hubsterStore.menuSource);
     }
   }, [hubsterStore]);
   React.useEffect(() => {
@@ -186,8 +188,10 @@ export const HubsterDrawer = ({ onClose, ...props }: HubsterDrawerProps) => {
                   </HStack>
                   <RadioGroup
                     mt="2"
-                    onChange={(value) => setIsMenuSync(value === 'husbter')}
-                    value={isMenuSync ? 'hubster' : 'appjusto'}
+                    onChange={(value) =>
+                      setMenuSource(value as HubsterStoreMenuSource)
+                    }
+                    value={menuSource}
                     colorScheme="green"
                     color="black"
                     fontSize="15px"

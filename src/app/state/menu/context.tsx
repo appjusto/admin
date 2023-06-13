@@ -236,12 +236,12 @@ export const MenuContextProvider = (props: ProviderProps) => {
     'deleteComplement'
   );
   React.useEffect(() => {
-    if (!hubsterStore || !hubsterStore.menu) {
+    if (!hubsterStore || !hubsterStore.menuSource) {
       setIntegrationStatus(undefined);
     } else {
       setIntegrationStatus({
-        source: hubsterStore.menu.source,
-        isReadOnly: hubsterStore.menu.sync,
+        source: hubsterStore.menuSource,
+        isReadOnly: hubsterStore.menuSource === 'hubster',
       });
     }
   }, [hubsterStore]);
