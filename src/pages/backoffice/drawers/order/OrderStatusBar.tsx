@@ -22,6 +22,7 @@ import {
 import { useObserveOrderPrivateConfirmation } from 'app/api/order/useObserveOrderPrivateConfirmation';
 import { useOrderNotes } from 'app/api/order/useOrderNotes';
 import { ProfileNotes } from 'common/components/backoffice/ProfileNotes';
+import React from 'react';
 import { MdInfo, MdOpenInNew } from 'react-icons/md';
 import { formatCurrency } from 'utils/formatters';
 import { getOrderCancellator } from 'utils/functions';
@@ -36,6 +37,7 @@ interface OrderStatusProps {
   status?: OrderStatus;
   dispatchingState?: DispatchingState | null;
   issue?: Issue | null;
+  canceledBy?: string;
   message?: string;
   cancelOptions?: Issue[] | null;
   refund: OrderRefundType[];
@@ -59,6 +61,7 @@ export const OrderStatusBar = ({
   status,
   dispatchingState,
   issue,
+  canceledBy,
   message,
   cancelOptions,
   refund,
@@ -84,7 +87,10 @@ export const OrderStatusBar = ({
   const isOrderActive = orderStatus
     ? ['preparing', 'ready', 'dispatching'].includes(orderStatus)
     : false;
-  const cancelator = getOrderCancellator(issue?.type);
+  const cancellator = React.useMemo(
+    () => getOrderCancellator(issue?.type ?? canceledBy),
+    [issue?.type, canceledBy]
+  );
   // UI
   return (
     <Box px="4">
@@ -261,7 +267,7 @@ export const OrderStatusBar = ({
               >
                 {t('Cancelado por:')}{' '}
                 <Text as="span" fontWeight="500">
-                  {cancelator}
+                  {cancellator}
                 </Text>
               </Text>
               <Text

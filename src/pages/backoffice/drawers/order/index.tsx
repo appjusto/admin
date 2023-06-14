@@ -373,6 +373,7 @@ export const BackofficeOrderDrawer = ({
               status={status}
               dispatchingState={dispatchingState}
               issue={issue}
+              canceledBy={orderCancellation?.canceledBy}
               message={message}
               cancelOptions={cancelOptions}
               refund={refund}

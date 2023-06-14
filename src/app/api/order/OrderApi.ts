@@ -58,12 +58,6 @@ import {
   queryLimit,
 } from '../utils';
 
-export type CancellationData = {
-  issue: WithId<Issue>;
-  canceledById: string;
-  comment?: string;
-};
-
 export type Ordering = 'asc' | 'desc';
 
 export type OrderLogType =

@@ -60,8 +60,11 @@ export const OrderDrawer = (props: Props) => {
   const printComponent = React.useRef<HTMLDivElement>(null);
   // helpers
   const cancellator = React.useMemo(
-    () => getOrderCancellator(orderCancellation?.issue?.type),
-    [orderCancellation?.issue?.type]
+    () =>
+      getOrderCancellator(
+        orderCancellation?.issue?.type ?? orderCancellation?.canceledBy
+      ),
+    [orderCancellation?.issue?.type, orderCancellation?.canceledBy]
   );
   const logisticsIncluded = React.useMemo(
     () => isLogisticsIncluded(order?.fare?.courier?.payee),
