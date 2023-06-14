@@ -97,6 +97,8 @@ export const HubsterDrawer = ({ onClose, ...props }: HubsterDrawerProps) => {
     setStatus(hubsterStore.status);
     if (hubsterStore.menuSource) {
       setMenuSource(hubsterStore.menuSource);
+    } else {
+      setMenuSource('appjusto');
     }
   }, [hubsterStore]);
   React.useEffect(() => {
