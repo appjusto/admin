@@ -26,6 +26,7 @@ import {
   ProfileSituation,
   RequestWithdrawPayload,
   UpdateBusinessSlugPayload,
+  VRStore,
   WithId,
 } from '@appjusto/types';
 import {
@@ -963,5 +964,20 @@ export default class BusinessApi {
   async updateHubsterStore(docId: string, changes: HubsterStore) {
     const docRef = this.refs.getHubsterStoreRef(docId);
     return updateDoc(docRef, changes);
+  }
+  // VR
+  observeBusinessVrStore(
+    businessId: string,
+    resultHandler: (store: WithId<VRStore> | null) => void
+  ) {
+    const q = query(
+      this.refs.getVrStoresRef(),
+      where('businessId', '==', businessId)
+    );
+    return onSnapshot(q, (snapshot) => {
+      if (snapshot.empty) return resultHandler(null);
+      const storeDoc = snapshot.docs[0];
+      return resultHandler(documentAs<VRStore>(storeDoc));
+    });
   }
 }

@@ -1,18 +1,29 @@
-import { Business, Fulfillment, PreparationMode } from '@appjusto/types';
+import {
+  Business,
+  Fulfillment,
+  PayableWith,
+  PreparationMode,
+  VRPayableWith,
+} from '@appjusto/types';
 import {
   Badge,
   Box,
   Button,
+  Checkbox,
+  CheckboxGroup,
   Flex,
+  HStack,
   Switch as ChakraSwitch,
   Text,
 } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
+import { useObserveVrStore } from 'app/api/business/useObserveVrStore';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput';
 import { CustomNumberInput as NumberInput } from 'common/components/form/input/CustomNumberInput';
+import { paymentMethodPTOptions } from 'pages/backoffice/utils';
 import { BusinessFulfillment } from 'pages/business-profile/BusinessFulfillment';
 import { BusinessPreparationModes } from 'pages/business-profile/BusinessPreparationModes';
 import PageHeader from 'pages/PageHeader';
@@ -24,37 +35,46 @@ const OperationPage = () => {
   const { dispatchAppRequestResult } = useContextAppRequests();
   const { business } = useContextBusiness();
   const { isBackofficeUser } = useContextFirebaseUser();
+  const vrStore = useObserveVrStore(business?.id);
   // queries & mutations
   const { updateBusinessProfile, updateResult } = useBusinessProfile(
     business?.id
   );
   const { isLoading } = updateResult;
   // state
-  const [minimumOrder, setMinimumOrder] = React.useState(
-    business?.minimumOrder ?? 0
-  );
-  const [enabled, setEnabled] = React.useState(business?.enabled ?? false);
-  // const [status, setStatus] = React.useState(business?.status ?? 'unavailable');
+  const [preparationModes, setPreparationModes] = React.useState<
+    PreparationMode[]
+  >(['realtime', 'scheduled']);
   const [maxOrdersPerHour, setMaxOrdersPerHour] = React.useState(
     String(business?.maxOrdersPerHour ?? '0')
   );
   const [minHoursForScheduledOrders, setMinHoursForScheduledOrders] =
     React.useState(String(business?.minHoursForScheduledOrders ?? '0'));
-  const [preparationModes, setPreparationModes] = React.useState<
-    PreparationMode[]
-  >(['realtime', 'scheduled']);
   const [fulfillment, setFulfillment] = React.useState<Fulfillment[]>([
     'delivery',
   ]);
+  const [acceptedPaymentMethods, setAcceptedPaymentMethods] = React.useState<
+    PayableWith[]
+  >(['credit_card', 'pix']);
+  const [availableVrMethods, setAvailableVrMethods] = React.useState<
+    VRPayableWith[]
+  >([]);
+  // const [status, setStatus] = React.useState(business?.status ?? 'unavailable');
+  const [enabled, setEnabled] = React.useState(business?.enabled ?? false);
+  const [minimumOrder, setMinimumOrder] = React.useState(
+    business?.minimumOrder ?? 0
+  );
   // refs
   const minimumOrderRef = React.useRef<HTMLInputElement>(null);
   // helpers
   const isBusinessApproved = business?.situation === 'approved';
   // handlers
   const onSubmitHandler = async () => {
+    console.log('acceptedPaymentMethods: ', acceptedPaymentMethods);
     const changes = {
       minimumOrder,
       enabled,
+      acceptedPaymentMethods,
       // status,
       maxOrdersPerHour: parseInt(maxOrdersPerHour, 10),
       minHoursForScheduledOrders: parseInt(minHoursForScheduledOrders, 10),
@@ -74,6 +94,10 @@ const OperationPage = () => {
   };
   // side effects
   React.useEffect(() => {
+    if (!vrStore) return;
+    setAvailableVrMethods(vrStore.paymentMethods);
+  }, [vrStore]);
+  React.useEffect(() => {
     if (business) {
       setMinimumOrder(business.minimumOrder ?? 0);
       if (business.maxOrdersPerHour)
@@ -85,6 +109,8 @@ const OperationPage = () => {
       if (business.preparationModes)
         setPreparationModes(business.preparationModes);
       if (business.fulfillment) setFulfillment(business.fulfillment);
+      if (business.acceptedPaymentMethods)
+        setAcceptedPaymentMethods(business.acceptedPaymentMethods);
     }
   }, [business]);
   // UI
@@ -206,6 +232,40 @@ const OperationPage = () => {
             fulfillment={fulfillment}
             handleChange={setFulfillment}
           />
+          <Text mt="8" fontSize="xl" color="black">
+            {t('Métodos de pagamento')}
+          </Text>
+          <Text mt="2" fontSize="md">
+            {t('Métodos de pagamento disponíveis para seu restaurante')}
+          </Text>
+          <CheckboxGroup
+            colorScheme="green"
+            value={acceptedPaymentMethods}
+            onChange={(values: PayableWith[]) =>
+              setAcceptedPaymentMethods(values)
+            }
+          >
+            <HStack
+              mt="4"
+              alignItems="flex-start"
+              color="black"
+              spacing={8}
+              fontSize="16px"
+              lineHeight="22px"
+            >
+              <Checkbox value="credit_card" isDisabled>
+                {t('Cartão de crédito')}
+              </Checkbox>
+              <Checkbox value="pix" isDisabled>
+                {t('Pix')}
+              </Checkbox>
+              {availableVrMethods.map((method) => (
+                <Checkbox key={method} value={method}>
+                  {paymentMethodPTOptions[method]}
+                </Checkbox>
+              ))}
+            </HStack>
+          </CheckboxGroup>
           <Text mt="8" fontSize="xl" color="black">
             {t('Visibilidade do restaurante')}
             {!isBusinessApproved && (

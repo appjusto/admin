@@ -266,6 +266,10 @@ export default class FirebaseRefs {
   getHubsterStoresRef = () =>
     collection(this.getHubsterIntegrationRef(), 'stores');
   getHubsterStoreRef = (id: string) => doc(this.getHubsterStoresRef(), id);
+  // Vr
+  getVrIntegrationRef = () => doc(this.getIntegrationsRef(), 'vr');
+  getVrStoresRef = () => collection(this.getVrIntegrationRef(), 'stores');
+  getVrStoreRef = (id: string) => doc(this.getVrStoresRef(), id);
 
   // storage
   // business

@@ -81,10 +81,11 @@ export const invoiceTypePTOptions = {
 };
 
 export const paymentMethodPTOptions = {
-  credit_card: 'Cartão de crédito',
-  pix: 'Pix',
-  vr: 'VR',
-  credits: 'Créditos',
+  'credit_card': 'Cartão de crédito',
+  'pix': 'Pix',
+  'vr-alimentação': 'VR Alimentação',
+  'vr-refeição': 'VR Refeição',
+  'credits': 'Créditos',
 };
 
 export const invoiceStatusPTOptions = {
@@ -118,10 +119,13 @@ export const ledgerEntryOperationPTOptions = {
   'same-owner-accounts': 'Entre contas de um mesmo usuário',
   'tip': 'Gorjeta',
   'business-insurance': 'Cobertura restaurante',
+  'business-credit': 'Crédido de consumidor para restaurante',
   'others': 'Outros',
   'outsource-credit': 'Crédito de terceirização',
   'balance-adjustment': 'Ajuste de balanço',
   'commission': 'Comissão',
+  'refund-credit': 'Crédito de reembolso',
+  'marketing-credit': 'Crédito de marketing',
 };
 
 export const pushStatusPTOptions = {
