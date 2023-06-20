@@ -55,6 +55,9 @@ const getPaymentDate = (order: WithId<Order>): string => {
       return getDateAndHour(date, true);
     }
   }
+  if (paymentMethod === 'vr-alimentação' || paymentMethod === 'vr-refeição') {
+    return 'Consultar prazo com processador do pagamento';
+  }
   return 'Não encontrado';
 };
 
@@ -70,7 +73,7 @@ const headers = [
   { label: 'Entregue em', key: 'delivered' },
   { label: 'Status', key: 'status' },
   { label: 'Valor do pedido', key: 'value' },
-  { label: 'Taxa (IUGU)', key: 'iugu' },
+  { label: 'Taxa financeira', key: 'iugu' },
   { label: 'Comissão (AppJusto)', key: 'appjusto' },
   { label: 'Extras', key: 'extras' },
   { label: 'Valor líquido', key: 'netValue' },
