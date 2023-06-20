@@ -55,6 +55,7 @@ const watchedFields: (keyof Business)[] = [
   'reviews',
   'services',
   'fleetsIdsAllowed',
+  'acceptedPaymentMethods',
   // object types
   'managers',
   'profileIssues',
