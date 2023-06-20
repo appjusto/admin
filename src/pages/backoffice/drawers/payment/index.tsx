@@ -2,18 +2,23 @@ import { IuguCard, IuguPayment, WithId } from '@appjusto/types';
 import { IuguCustomerPaymentMethod } from '@appjusto/types/payment/iugu';
 import {
   Box,
+  Button,
   Drawer,
   DrawerBody,
   DrawerCloseButton,
   DrawerContent,
   DrawerHeader,
   DrawerOverlay,
+  HStack,
   Link,
   Text,
 } from '@chakra-ui/react';
 import { useFetchCardByTokenId } from 'app/api/cards/useFetchCardByTokenId';
 import { useObservePayment } from 'app/api/payments/useObservePayment';
+import { useUpdatePayment } from 'app/api/payments/useUpdatePayment';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import { CustomButton } from 'common/components/buttons/CustomButton';
+import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput';
 import {
   invoiceStatusPTOptions,
   invoiceTypePTOptions,
@@ -38,17 +43,29 @@ type Params = {
 
 const PaymentDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   //context
+  const { userAbility } = useContextFirebaseUser();
   const { paymentId } = useParams<Params>();
   const payment = useObservePayment(paymentId);
+  const { updatePayment, updatePaymentResult } = useUpdatePayment();
   // state
   const [cardTokenId, setCardTokenId] = React.useState<string | null>();
   const consumerCard = useFetchCardByTokenId(cardTokenId);
   const [paymentMethod, setPaymentMethod] = React.useState<
     IuguCustomerPaymentMethod | string | null
   >();
+  const [refundValue, setRefundValue] = React.useState(0);
   // helpers
   const accountBtnLabel = getAccountBtnLabel(payment);
   const accountBtnLink = getAccountBtnLink(payment);
+  const canRefund =
+    userAbility?.can('update', 'payments') &&
+    payment?.paid !== undefined &&
+    payment?.paid > 0;
+  // handlers
+  const handleRefund = () => {
+    if (!payment?.id) return;
+    updatePayment({ paymentId, value: refundValue });
+  };
   // side effects
   React.useEffect(() => {
     if (!payment) return;
@@ -70,6 +87,10 @@ const PaymentDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
     }
     setPaymentMethod((consumerCard as WithId<IuguCard>).token);
   }, [payment?.processor, consumerCard]);
+  React.useEffect(() => {
+    if (!updatePaymentResult.isSuccess) return;
+    setRefundValue(0);
+  }, [updatePaymentResult.isSuccess]);
   //UI
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
@@ -305,6 +326,34 @@ const PaymentDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                     </Box>
                   </>
                 )}
+              </>
+            )}
+            {canRefund && (
+              <>
+                <SectionTitle>{t('Reembolso')}</SectionTitle>
+                <Box mt="2">
+                  <Text>{t('Informe o valor que deseja reembolsar')}</Text>
+                  <HStack mt="2">
+                    <CurrencyInput
+                      mt="0"
+                      id="payment-refund"
+                      label={t('Valor reembolsado')}
+                      placeholder={t('R$ 0,00')}
+                      value={refundValue}
+                      onChangeValue={(value) => setRefundValue(value)}
+                      maxLength={8}
+                    />
+                    <Button
+                      variant="secondary"
+                      h="60px"
+                      onClick={handleRefund}
+                      isLoading={updatePaymentResult.isLoading}
+                      isDisabled={!refundValue}
+                    >
+                      {t('Reembolsar')}
+                    </Button>
+                  </HStack>
+                </Box>
               </>
             )}
           </DrawerBody>

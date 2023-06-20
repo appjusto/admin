@@ -39,6 +39,8 @@ export default class FirebaseRefs {
   getAdvanceReceivablesByAmountCallable = () =>
     httpsCallable(this.functions, 'advanceReceivablesByAmount');
   getImportMenuCallable = () => httpsCallable(this.functions, 'importMenu');
+  getUpdatePaymentCallable = () =>
+    httpsCallable(this.functions, 'updatePayment');
 
   // firestore
   getFirestoreRef = () => this.firestore;

@@ -1,4 +1,9 @@
-import { Payment, PaymentStatus, WithId } from '@appjusto/types';
+import {
+  Payment,
+  PaymentStatus,
+  RefundPaymentPayload,
+  WithId,
+} from '@appjusto/types';
 import * as Sentry from '@sentry/react';
 import { documentsAs, FirebaseDocument } from 'core/fb';
 import {
@@ -130,5 +135,15 @@ export default class PaymentsApi {
     return customDocumentSnapshot<Payment>(ref, (result) => {
       if (result) resultHandler(result);
     });
+  }
+
+  async updatePayment(paymentId: string, value: number): Promise<unknown> {
+    const payload: RefundPaymentPayload = {
+      meta: { version: '1' }, // TODO: pass correct version on
+      action: 'refund',
+      paymentId,
+      value,
+    };
+    return await this.refs.getUpdatePaymentCallable()(payload);
   }
 }
