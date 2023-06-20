@@ -17,7 +17,7 @@ import {
   RadioGroup,
   Switch as ChakraSwitch,
   Text,
-  Tooltip,
+  Tooltip
 } from '@chakra-ui/react';
 import { useHubsterStore } from 'app/api/business/useHubsterStore';
 import { useObserveHubsterStore } from 'app/api/business/useObserveHubsterStore';
@@ -164,9 +164,9 @@ export const HubsterDrawer = ({ onClose, ...props }: HubsterDrawerProps) => {
                       'Informe o storeId que você recebeu do suporte do Hubster'
                     )}
                   </Text>
-                  <Input
-                    mt="2"
-                    id="store-id"
+                  <Input 
+                    mt="2" 
+                    id="store-id" 
                     label={t('StoreId *')}
                     placeholder={t('Cole o storeId obtido com o Hubster')}
                     value={storeId}
@@ -199,13 +199,7 @@ export const HubsterDrawer = ({ onClose, ...props }: HubsterDrawerProps) => {
                     fontSize="15px"
                     lineHeight="21px"
                   >
-                    <HStack
-                      alignItems="flex-start"
-                      color="black"
-                      spacing={8}
-                      fontSize="16px"
-                      lineHeight="22px"
-                    >
+                    <HStack alignItems="flex-start" color="black" spacing={8} fontSize="16px" lineHeight="22px">
                       <Radio value="hubster">
                         {t('Usar cardápio do Hubster')}
                       </Radio>
