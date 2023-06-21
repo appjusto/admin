@@ -7,8 +7,11 @@ export const useUpdatePayment = () => {
   // mutations
   const { mutate: updatePayment, mutationResult: updatePaymentResult } =
     useCustomMutation(
-      async (data: { paymentId: string; value: number }) =>
-        api.payments().updatePayment(data.paymentId, data.value),
+      async (data: {
+        paymentId: string;
+        from: 'platform' | 'business';
+        value: number;
+      }) => api.payments().updatePayment(data.paymentId, data.from, data.value),
       'updatePayment'
     );
   // result

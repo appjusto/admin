@@ -11,6 +11,8 @@ import {
   DrawerOverlay,
   HStack,
   Link,
+  Radio,
+  RadioGroup,
   Text,
 } from '@chakra-ui/react';
 import { useFetchCardByTokenId } from 'app/api/cards/useFetchCardByTokenId';
@@ -41,6 +43,8 @@ type Params = {
   paymentId: string;
 };
 
+type RefundFrom = 'platform' | 'business';
+
 const PaymentDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   //context
   const { userAbility } = useContextFirebaseUser();
@@ -53,6 +57,7 @@ const PaymentDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   const [paymentMethod, setPaymentMethod] = React.useState<
     IuguCustomerPaymentMethod | string | null
   >();
+  const [refundFrom, setRefundFrom] = React.useState<RefundFrom>();
   const [refundValue, setRefundValue] = React.useState(0);
   // helpers
   const accountBtnLabel = getAccountBtnLabel(payment);
@@ -64,7 +69,8 @@ const PaymentDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   // handlers
   const handleRefund = () => {
     if (!payment?.id) return;
-    updatePayment({ paymentId, value: refundValue });
+    if (!refundFrom) return;
+    updatePayment({ paymentId, from: refundFrom, value: refundValue });
   };
   // side effects
   React.useEffect(() => {
@@ -331,7 +337,34 @@ const PaymentDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
             {canRefund && (
               <>
                 <SectionTitle>{t('Reembolso')}</SectionTitle>
-                <Box mt="2">
+                <Box mt="4">
+                  <Text>{t('Informe quem pagará pelo reembolso')}</Text>
+                  <RadioGroup
+                    aria-label="refund-from"
+                    onChange={(value) => setRefundFrom(value as RefundFrom)}
+                    value={refundFrom}
+                    defaultValue="1"
+                    colorScheme="green"
+                    color="black"
+                    fontSize="15px"
+                    lineHeight="21px"
+                  >
+                    <HStack
+                      mt="2"
+                      spacing={8}
+                      fontSize="16px"
+                      lineHeight="22px"
+                    >
+                      <Radio value="platform" aria-label="plataforma">
+                        {t('Plataforma')}
+                      </Radio>
+                      <Radio value="business" aria-label="restaurante">
+                        {t('Restaurante')}
+                      </Radio>
+                    </HStack>
+                  </RadioGroup>
+                </Box>
+                <Box mt="4">
                   <Text>{t('Informe o valor que deseja reembolsar')}</Text>
                   <HStack mt="2">
                     <CurrencyInput
@@ -348,7 +381,7 @@ const PaymentDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                       h="60px"
                       onClick={handleRefund}
                       isLoading={updatePaymentResult.isLoading}
-                      isDisabled={!refundValue}
+                      isDisabled={!refundValue || !refundFrom}
                     >
                       {t('Reembolsar')}
                     </Button>

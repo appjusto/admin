@@ -126,6 +126,7 @@ export const ledgerEntryOperationPTOptions = {
   'commission': 'Comissão',
   'refund-credit': 'Crédito de reembolso',
   'marketing-credit': 'Crédito de marketing',
+  'services-debit': 'Débito de serviço contratado',
 };
 
 export const pushStatusPTOptions = {
