@@ -70,8 +70,7 @@ const PaymentDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
     payment?.service === 'food' ? !refundValue || !refundFrom : !refundValue;
   // handlers
   const handleRefund = () => {
-    if (!payment?.id) return;
-    if (payment.service === 'food' && !refundFrom) return;
+    if (payment?.service === 'food' && !refundFrom) return;
     updatePayment({ paymentId, from: refundFrom, value: refundValue });
   };
   // side effects

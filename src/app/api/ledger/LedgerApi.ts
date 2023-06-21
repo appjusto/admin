@@ -123,6 +123,20 @@ export default class LedgerApi {
     return toBusiness.concat(fromBusiness);
   }
 
+  async fetchBusinessApprovedLedgersByOperation(
+    businessId: string,
+    operations: LedgerEntryOperation[]
+  ) {
+    const q = query(
+      this.refs.getLedgerRef(),
+      where('from.accountId', '==', businessId),
+      where('status', '==', 'approved'),
+      where('operation', 'in', operations)
+    );
+    const snapshot = await getDocs(q);
+    return documentsAs<LedgerEntry>(snapshot.docs);
+  }
+
   observeLedgerByOrderIdAndOperation(
     businessId: string,
     orderId: string,

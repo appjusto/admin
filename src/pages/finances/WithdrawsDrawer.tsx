@@ -1,5 +1,6 @@
 import { Box, Button, Checkbox, Flex, Icon, Text } from '@chakra-ui/react';
 import { useRequestWithdraw } from 'app/api/business/useRequestWithdraw';
+import { useFetchBusinessLedgerDebits } from 'app/api/ledger/useFetchBusinessLedgerDebits';
 import { usePlatformFees } from 'app/api/platform/usePlatformFees';
 import { useContextBusinessId } from 'app/state/business/context';
 import { useContextAppRequests } from 'app/state/requests/context';
@@ -34,6 +35,8 @@ export const WithdrawsDrawer = ({
     useRequestWithdraw(businessId);
   const { isLoading, isSuccess } = requestWithdrawResult;
   // state
+  const { comissionDebit, servicesDebit } =
+    useFetchBusinessLedgerDebits(businessId);
   const [iuguFee, setIuguFee] = React.useState<number>();
   const [netValue, setNetValue] = React.useState(0);
   const [withdrawIsAvailable, setWithdrawIsAvailable] =
@@ -61,9 +64,9 @@ export const WithdrawsDrawer = ({
     if (!withdrawValue) return;
     const value = formatCents(withdrawValue);
     setWithdrawIsAvailable(value > 0);
-    const net = value - (iuguFee ?? 0);
+    const net = value - (iuguFee ?? 0) - comissionDebit - servicesDebit;
     if (value > 0) setNetValue(net);
-  }, [withdrawValue, iuguFee]);
+  }, [withdrawValue, iuguFee, comissionDebit, servicesDebit]);
   // UI
   if (isSuccess) {
     return (
@@ -163,6 +166,20 @@ export const WithdrawsDrawer = ({
         valueToDisplay={iuguFee}
         signal="-"
       />
+      {comissionDebit > 0 && (
+        <ReviewBox
+          label={t('Débitos por pagamentos em VR')}
+          valueToDisplay={comissionDebit}
+          signal="-"
+        />
+      )}
+      {servicesDebit > 0 && (
+        <ReviewBox
+          label={t('Débitos por contratação de serviços')}
+          valueToDisplay={servicesDebit}
+          signal="-"
+        />
+      )}
       <BasicInfoBox
         mt="6"
         label={t('Total a ser transferido')}

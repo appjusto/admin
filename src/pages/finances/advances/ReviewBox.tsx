@@ -39,7 +39,7 @@ export const ReviewBox = ({
   }, [showInfoDefault]);
   // UI
   return (
-    <Box mt="6" {...props}>
+    <Box mt="4" {...props}>
       <HStack>
         <Text fontSize="15px" fontWeight="500" lineHeight="21px">
           {label}
