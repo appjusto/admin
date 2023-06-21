@@ -9,7 +9,7 @@ export const useUpdatePayment = () => {
     useCustomMutation(
       async (data: {
         paymentId: string;
-        from: 'platform' | 'business';
+        from?: 'platform' | 'business';
         value: number;
       }) => api.payments().updatePayment(data.paymentId, data.from, data.value),
       'updatePayment'

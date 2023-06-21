@@ -66,10 +66,12 @@ const PaymentDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
     userAbility?.can('update', 'payments') &&
     payment?.paid !== undefined &&
     payment?.paid > 0;
+  const refundDisabled =
+    payment?.service === 'food' ? !refundValue || !refundFrom : !refundValue;
   // handlers
   const handleRefund = () => {
     if (!payment?.id) return;
-    if (!refundFrom) return;
+    if (payment.service === 'food' && !refundFrom) return;
     updatePayment({ paymentId, from: refundFrom, value: refundValue });
   };
   // side effects
@@ -287,7 +289,7 @@ const PaymentDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
             ) : (
               <PaymentMethodCard method={paymentMethod} />
             )}
-            {payment?.order.type !== 'p2p' && (
+            {payment?.service !== 'p2p' && (
               <>
                 <SectionTitle>{t('Subconta')}</SectionTitle>
                 {payment?.from.accountType === 'platform' ? (
@@ -337,33 +339,35 @@ const PaymentDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
             {canRefund && (
               <>
                 <SectionTitle>{t('Reembolso')}</SectionTitle>
-                <Box mt="4">
-                  <Text>{t('Informe quem pagará pelo reembolso')}</Text>
-                  <RadioGroup
-                    aria-label="refund-from"
-                    onChange={(value) => setRefundFrom(value as RefundFrom)}
-                    value={refundFrom}
-                    defaultValue="1"
-                    colorScheme="green"
-                    color="black"
-                    fontSize="15px"
-                    lineHeight="21px"
-                  >
-                    <HStack
-                      mt="2"
-                      spacing={8}
-                      fontSize="16px"
-                      lineHeight="22px"
+                {payment?.service === 'food' && (
+                  <Box mt="4">
+                    <Text>{t('Informe quem pagará pelo reembolso')}</Text>
+                    <RadioGroup
+                      aria-label="refund-from"
+                      onChange={(value) => setRefundFrom(value as RefundFrom)}
+                      value={refundFrom}
+                      defaultValue="1"
+                      colorScheme="green"
+                      color="black"
+                      fontSize="15px"
+                      lineHeight="21px"
                     >
-                      <Radio value="platform" aria-label="plataforma">
-                        {t('Plataforma')}
-                      </Radio>
-                      <Radio value="business" aria-label="restaurante">
-                        {t('Restaurante')}
-                      </Radio>
-                    </HStack>
-                  </RadioGroup>
-                </Box>
+                      <HStack
+                        mt="2"
+                        spacing={8}
+                        fontSize="16px"
+                        lineHeight="22px"
+                      >
+                        <Radio value="platform" aria-label="plataforma">
+                          {t('Plataforma')}
+                        </Radio>
+                        <Radio value="business" aria-label="restaurante">
+                          {t('Restaurante')}
+                        </Radio>
+                      </HStack>
+                    </RadioGroup>
+                  </Box>
+                )}
                 <Box mt="4">
                   <Text>{t('Informe o valor que deseja reembolsar')}</Text>
                   <HStack mt="2">
@@ -381,7 +385,7 @@ const PaymentDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                       h="60px"
                       onClick={handleRefund}
                       isLoading={updatePaymentResult.isLoading}
-                      isDisabled={!refundValue || !refundFrom}
+                      isDisabled={refundDisabled}
                     >
                       {t('Reembolsar')}
                     </Button>
