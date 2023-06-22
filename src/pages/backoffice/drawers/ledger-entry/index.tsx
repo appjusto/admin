@@ -159,15 +159,17 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
     setStatus(entry.status);
   }, [entry]);
   React.useEffect(() => {
-    if (operation === 'same-owner-accounts' && fromAccountType === 'platform')
-      setFromAccountType('courier');
-    // if (operation === 'same-owner-accounts' && toAccountType === 'platform')
-    //   setToAccountType('courier');
-    if (operation === 'same-owner-accounts') setToAccountType(fromAccountType);
-    if (operation !== 'same-owner-accounts') setFromToken('');
+    if (operation === 'same-owner-accounts') {
+      if (fromAccountType === 'platform') setFromAccountType('courier');
+      setToAccountType(fromAccountType);
+    } else {
+      setFromToken('');
+    }
     if (operation === 'business-insurance') {
       setFromAccountType('platform');
       setToAccountType('business');
+    } else if (operation === 'refund-credit') {
+      setToAccountType('consumer');
     }
   }, [operation, fromAccountType, toAccountType]);
   React.useEffect(() => {
@@ -531,6 +533,9 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                   <Radio value="business-insurance">
                     {t('Cobertura restaurante')}
                   </Radio>
+                  <Radio value="refund-credit">
+                    {t('Crédito de reembolso')}
+                  </Radio>
                   <Radio value="others">{t('Outros')}</Radio>
                 </Stack>
               </RadioGroup>
@@ -592,7 +597,7 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
               <SectionTitle>{t('Conta de destino')}</SectionTitle>
               <RadioGroup
                 mt="2"
-                onChange={(value: AccountType) => setToAccountType(value)}
+                onChange={(value: StateAccountType) => setToAccountType(value)}
                 value={toAccountType}
                 defaultValue="1"
                 colorScheme="green"
@@ -601,13 +606,15 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 lineHeight="21px"
                 isDisabled={
                   operation === 'same-owner-accounts' ||
-                  operation === 'business-insurance'
+                  operation === 'business-insurance' ||
+                  operation === 'refund-credit'
                 }
               >
                 <Stack direction={{ base: 'column', md: 'row' }} spacing={4}>
                   <Radio value="platform">{t('Plataforma')}</Radio>
                   <Radio value="courier">{t('Entregador')}</Radio>
                   <Radio value="business">{t('Restaurante')}</Radio>
+                  <Radio value="consumer">{t('Consumidor')}</Radio>
                 </Stack>
               </RadioGroup>
               {toAccountType !== 'platform' && (
