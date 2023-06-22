@@ -35,7 +35,7 @@ export const WithdrawsDrawer = ({
     useRequestWithdraw(businessId);
   const { isLoading, isSuccess } = requestWithdrawResult;
   // state
-  const { comissionDebit, servicesDebit } =
+  const { comissionDebit, refundDebit, servicesDebit } =
     useFetchBusinessLedgerDebits(businessId);
   const [iuguFee, setIuguFee] = React.useState<number>();
   const [netValue, setNetValue] = React.useState(0);
@@ -170,6 +170,13 @@ export const WithdrawsDrawer = ({
         <ReviewBox
           label={t('Débitos por pagamentos em VR')}
           valueToDisplay={comissionDebit}
+          signal="-"
+        />
+      )}
+      {refundDebit > 0 && (
+        <ReviewBox
+          label={t('Débitos por reembolsos a consumidores')}
+          valueToDisplay={refundDebit}
           signal="-"
         />
       )}

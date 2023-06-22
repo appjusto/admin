@@ -120,6 +120,7 @@ export const ledgerEntryOperationPTOptions = {
   'tip': 'Gorjeta',
   'business-insurance': 'Cobertura restaurante',
   'business-credit': 'Crédido de consumidor para restaurante',
+  'business-refund-debit': 'Débito por reembolsos a consumidores',
   'others': 'Outros',
   'outsource-credit': 'Crédito de terceirização',
   'balance-adjustment': 'Ajuste de balanço',

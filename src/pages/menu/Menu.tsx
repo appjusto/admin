@@ -95,7 +95,7 @@ const Menu = () => {
               <Box color="black" minW="140px">
                 <Text mt="2">
                   {t(
-                    'Usa o centralizador de pedidos do Hubster? Agora você pode importar o cardápio e fazer sua gestão por lá!'
+                    'Se você usa o centralizador de pedidos do Hubster, agora você pode importar o cardápio e fazer sua gestão por lá!'
                   )}
                 </Text>
                 <Text>
