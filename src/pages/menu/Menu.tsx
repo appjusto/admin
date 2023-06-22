@@ -81,9 +81,38 @@ const Menu = () => {
           description={t(
             'Adicione uma mensagem fixa como primeiro item dentro do seu cardápio.'
           )}
-          link={`${path}/message`}
-          btnLabel={t('Adicionar mensagem')}
+          button={{
+            link: `${path}/message`,
+            label: t('Adicionar mensagem'),
+          }}
           isNew={false}
+        />
+        <NewFeatureBox
+          mt="4"
+          title={t('Importar cardápio do Hubster')}
+          description={
+            <Box color="black" minW="140px">
+              <Text mt="2">
+                {t(
+                  'Usa o centralizador de pedidos do Hubster? Agora você pode importar o cardápio e fazer sua gestão por lá!'
+                )}
+              </Text>
+              <Text>
+                {t('Vá até a página de ')}
+                <Link
+                  as={RouterLink}
+                  to={`/app/integrations/hubster`}
+                  textDecor="underline"
+                >
+                  {t('integrações')}
+                </Link>
+                {t(
+                  ' e siga os passos para ativar sua intergração de cardápio.'
+                )}
+              </Text>
+            </Box>
+          }
+          isNew
         />
         {integrationStatus?.isReadOnly && (
           <Flex

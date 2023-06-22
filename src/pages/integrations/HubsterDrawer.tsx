@@ -2,6 +2,7 @@ import { HubsterStoreMenuSource, HubsterStoreStatus } from '@appjusto/types';
 import {
   Box,
   Button,
+  Collapse,
   Drawer,
   DrawerBody,
   DrawerCloseButton,
@@ -13,11 +14,13 @@ import {
   HStack,
   Icon,
   Image,
+  ListItem,
+  OrderedList,
   Radio,
   RadioGroup,
   Switch as ChakraSwitch,
   Text,
-  Tooltip
+  Tooltip,
 } from '@chakra-ui/react';
 import { useHubsterStore } from 'app/api/business/useHubsterStore';
 import { useObserveHubsterStore } from 'app/api/business/useObserveHubsterStore';
@@ -27,6 +30,7 @@ import { useContextAppRequests } from 'app/state/requests/context';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import logo from 'common/img/hubster-logo.png';
 import React from 'react';
+import { FaAngleDown, FaAngleUp } from 'react-icons/fa';
 import { MdInfoOutline } from 'react-icons/md';
 import { t } from 'utils/i18n';
 import { isStoreIdValid } from './utils';
@@ -45,6 +49,7 @@ export const HubsterDrawer = ({ onClose, ...props }: HubsterDrawerProps) => {
   const { updateHubsterStore, updateHubsterStoreResult } = useHubsterStore();
   const { isLoading } = updateHubsterStoreResult;
   // state
+  const [isInstructionOpen, setIsInstructionOpen] = React.useState(false);
   const [storeId, setStoreId] = React.useState('');
   const [status, setStatus] = React.useState<HubsterStoreStatus>('available');
   const [menuSource, setMenuSource] =
@@ -156,6 +161,43 @@ export const HubsterDrawer = ({ onClose, ...props }: HubsterDrawerProps) => {
                       </Text>
                     </Box>
                   </Flex>
+                  <Flex
+                    mt="6"
+                    flexDir="row"
+                    justifyContent="space-between"
+                    alignItems="center"
+                    cursor="pointer"
+                    onClick={() => setIsInstructionOpen((prev) => !prev)}
+                  >
+                    <Text fontSize="xl" fontWeight="700">
+                      {t('Como realizar a integração')}
+                    </Text>
+                    <Icon
+                      ml="1"
+                      mb="-1"
+                      as={isInstructionOpen ? FaAngleUp : FaAngleDown}
+                    />
+                  </Flex>
+                  <Collapse in={isInstructionOpen} animateOpacity>
+                    <Box px="4" py="2">
+                      <OrderedList>
+                        <ListItem>
+                          {t(
+                            'Solicite ao suporte do Hubster a integração com o serviço do AppJusto;'
+                          )}
+                        </ListItem>
+                        <ListItem>
+                          {t(
+                            'Após a integração do serviço, informe abaixo o storeId que você recebeu do suporte do Hubster;'
+                          )}
+                        </ListItem>
+                        <ListItem>
+                          {t('Escolha onde deseja gerenciar o seu cardápio;')}
+                        </ListItem>
+                        <ListItem>{t('E salve suas alterações.')}</ListItem>
+                      </OrderedList>
+                    </Box>
+                  </Collapse>
                   <Text mt="6" fontSize="xl" fontWeight="700">
                     {t('Configurações')}
                   </Text>
@@ -164,9 +206,9 @@ export const HubsterDrawer = ({ onClose, ...props }: HubsterDrawerProps) => {
                       'Informe o storeId que você recebeu do suporte do Hubster'
                     )}
                   </Text>
-                  <Input 
-                    mt="2" 
-                    id="store-id" 
+                  <Input
+                    mt="2"
+                    id="store-id"
                     label={t('StoreId *')}
                     placeholder={t('Cole o storeId obtido com o Hubster')}
                     value={storeId}
@@ -180,7 +222,7 @@ export const HubsterDrawer = ({ onClose, ...props }: HubsterDrawerProps) => {
                     </Text>
                     <Tooltip
                       label={t(
-                        'Caso tenha configurado um cardápio no Hubster, integrado ao serviço do AppJusto, é possível fazer sua gestão diretamente por lá. Nesse caso, qualquer modificação nos itens deve ser realizada na interface do Hubster.'
+                        'Caso tenha configurado um cardápio no Hubster, integrado ao serviço do AppJusto, é possível importa-lo e fazer sua gestão diretamente por lá. Nesse caso, qualquer modificação nos itens deve ser realizada na aplicação do Hubster.'
                       )}
                     >
                       <Box cursor="pointer">
@@ -199,7 +241,13 @@ export const HubsterDrawer = ({ onClose, ...props }: HubsterDrawerProps) => {
                     fontSize="15px"
                     lineHeight="21px"
                   >
-                    <HStack alignItems="flex-start" color="black" spacing={8} fontSize="16px" lineHeight="22px">
+                    <HStack
+                      alignItems="flex-start"
+                      color="black"
+                      spacing={8}
+                      fontSize="16px"
+                      lineHeight="22px"
+                    >
                       <Radio value="hubster">
                         {t('Usar cardápio do Hubster')}
                       </Radio>

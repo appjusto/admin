@@ -3,6 +3,7 @@
   "typescript.updateImportsOnFileMove.enabled": "always",
   "prettier.singleQuote": true,
   "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
   "[typescriptreact]": {
     "editor.codeActionsOnSave": {
       "source.organizeImports": true
