@@ -87,34 +87,35 @@ const Menu = () => {
           }}
           isNew={false}
         />
-        <NewFeatureBox
-          mt="4"
-          title={t('Importar cardápio do Hubster')}
-          description={
-            <Box color="black" minW="140px">
-              <Text mt="2">
-                {t(
-                  'Usa o centralizador de pedidos do Hubster? Agora você pode importar o cardápio e fazer sua gestão por lá!'
-                )}
-              </Text>
-              <Text>
-                {t('Vá até a página de ')}
-                <Link
-                  as={RouterLink}
-                  to={`/app/integrations/hubster`}
-                  textDecor="underline"
-                >
-                  {t('integrações')}
-                </Link>
-                {t(
-                  ' e siga os passos para ativar sua intergração de cardápio.'
-                )}
-              </Text>
-            </Box>
-          }
-          isNew
-        />
-        {integrationStatus?.isReadOnly && (
+        {!integrationStatus?.isReadOnly ? (
+          <NewFeatureBox
+            mt="6"
+            title={t('Importar cardápio do Hubster')}
+            description={
+              <Box color="black" minW="140px">
+                <Text mt="2">
+                  {t(
+                    'Usa o centralizador de pedidos do Hubster? Agora você pode importar o cardápio e fazer sua gestão por lá!'
+                  )}
+                </Text>
+                <Text>
+                  {t('Vá até a página de ')}
+                  <Link
+                    as={RouterLink}
+                    to={`/app/integrations/hubster`}
+                    textDecor="underline"
+                  >
+                    {t('integrações')}
+                  </Link>
+                  {t(
+                    ' e siga os passos para ativar sua intergração de cardápio.'
+                  )}
+                </Text>
+              </Box>
+            }
+            isNew
+          />
+        ) : (
           <Flex
             mt="6"
             py="4"
