@@ -10,10 +10,10 @@ import {
   DrawerHeader,
   DrawerOverlay,
   HStack,
+  Icon,
   Link,
-  Radio,
-  RadioGroup,
   Text,
+  Tooltip,
 } from '@chakra-ui/react';
 import { useFetchCardByTokenId } from 'app/api/cards/useFetchCardByTokenId';
 import { useObservePayment } from 'app/api/payments/useObservePayment';
@@ -26,6 +26,7 @@ import {
   invoiceTypePTOptions,
 } from 'pages/backoffice/utils';
 import React from 'react';
+import { MdInfoOutline } from 'react-icons/md';
 import { Link as RouterLink, useParams } from 'react-router-dom';
 import { formatCurrency } from 'utils/formatters';
 import { getDateAndHour } from 'utils/functions';
@@ -43,8 +44,6 @@ type Params = {
   paymentId: string;
 };
 
-type RefundFrom = 'platform' | 'business';
-
 const PaymentDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   //context
   const { userAbility } = useContextFirebaseUser();
@@ -57,7 +56,6 @@ const PaymentDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   const [paymentMethod, setPaymentMethod] = React.useState<
     IuguCustomerPaymentMethod | string | null
   >();
-  const [refundFrom, setRefundFrom] = React.useState<RefundFrom>();
   const [refundValue, setRefundValue] = React.useState(0);
   // helpers
   const accountBtnLabel = getAccountBtnLabel(payment);
@@ -66,12 +64,16 @@ const PaymentDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
     userAbility?.can('update', 'payments') &&
     payment?.paid !== undefined &&
     payment?.paid > 0;
-  const refundDisabled =
-    payment?.service === 'food' ? !refundValue || !refundFrom : !refundValue;
+  const refundValueInvalid =
+    refundValue > (payment?.paid ?? 0) ||
+    (payment?.method !== 'credit_card' &&
+      refundValue > 0 &&
+      refundValue !== payment?.paid);
+  const refundDisabled = !refundValue || refundValueInvalid;
   // handlers
   const handleRefund = () => {
-    if (payment?.service === 'food' && !refundFrom) return;
-    updatePayment({ paymentId, from: refundFrom, value: refundValue });
+    if (refundValueInvalid) return;
+    updatePayment({ paymentId, value: refundValue });
   };
   // side effects
   React.useEffect(() => {
@@ -338,37 +340,19 @@ const PaymentDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
             {canRefund && (
               <>
                 <SectionTitle>{t('Reembolso')}</SectionTitle>
-                {payment?.service === 'food' && (
-                  <Box mt="4">
-                    <Text>{t('Informe quem pagará pelo reembolso')}</Text>
-                    <RadioGroup
-                      aria-label="refund-from"
-                      onChange={(value) => setRefundFrom(value as RefundFrom)}
-                      value={refundFrom}
-                      defaultValue="1"
-                      colorScheme="green"
-                      color="black"
-                      fontSize="15px"
-                      lineHeight="21px"
-                    >
-                      <HStack
-                        mt="2"
-                        spacing={8}
-                        fontSize="16px"
-                        lineHeight="22px"
-                      >
-                        <Radio value="platform" aria-label="plataforma">
-                          {t('Plataforma')}
-                        </Radio>
-                        <Radio value="business" aria-label="restaurante">
-                          {t('Restaurante')}
-                        </Radio>
-                      </HStack>
-                    </RadioGroup>
-                  </Box>
-                )}
                 <Box mt="4">
-                  <Text>{t('Informe o valor que deseja reembolsar')}</Text>
+                  <HStack>
+                    <Text>{t('Informe o valor que deseja reembolsar')}</Text>
+                    <Tooltip
+                      label={t(
+                        'Com exceção do cartão de crédito, os demais meios de pagamento só permitem reembolso integral'
+                      )}
+                    >
+                      <Box cursor="pointer">
+                        <Icon mt="1" as={MdInfoOutline} />
+                      </Box>
+                    </Tooltip>
+                  </HStack>
                   <HStack mt="2">
                     <CurrencyInput
                       mt="0"
@@ -378,6 +362,7 @@ const PaymentDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                       value={refundValue}
                       onChangeValue={(value) => setRefundValue(value)}
                       maxLength={8}
+                      isInvalid={refundValueInvalid}
                     />
                     <Button
                       variant="secondary"

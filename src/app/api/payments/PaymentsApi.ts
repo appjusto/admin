@@ -137,16 +137,11 @@ export default class PaymentsApi {
     });
   }
 
-  async updatePayment(
-    paymentId: string,
-    from: RefundPaymentPayload['from'],
-    value: number
-  ): Promise<unknown> {
+  async updatePayment(paymentId: string, value: number): Promise<unknown> {
     const payload: RefundPaymentPayload = {
       meta: { version: '1' }, // TODO: pass correct version on
       action: 'refund',
       paymentId,
-      from,
       value,
     };
     return await this.refs.getUpdatePaymentCallable()(payload);
