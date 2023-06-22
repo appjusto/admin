@@ -64,9 +64,10 @@ export const WithdrawsDrawer = ({
     if (!withdrawValue) return;
     const value = formatCents(withdrawValue);
     setWithdrawIsAvailable(value > 0);
-    const net = value - (iuguFee ?? 0) - comissionDebit - servicesDebit;
+    const net =
+      value - (iuguFee ?? 0) - comissionDebit - refundDebit - servicesDebit;
     if (value > 0) setNetValue(net);
-  }, [withdrawValue, iuguFee, comissionDebit, servicesDebit]);
+  }, [withdrawValue, iuguFee, comissionDebit, refundDebit, servicesDebit]);
   // UI
   if (isSuccess) {
     return (
