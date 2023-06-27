@@ -284,24 +284,28 @@ export const StaffBaseDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                   lineHeight="22px"
                 >
                   {t('Token de notificação:')}{' '}
-                  {staffProfile?.notificationToken ? (
+                  {staffProfile?.notificationToken && (
                     <Text as="span" fontWeight="500">
                       {t('Copiado')}
                     </Text>
-                  ) : (
-                    <Text
-                      as="span"
-                      fontWeight="500"
-                      color="green.600"
-                      textDecor="underline"
-                      cursor="pointer"
-                      onClick={() => getNotificationToken(staffId)}
-                    >
-                      {getNotificationTokenResult.isLoading
-                        ? t('Buscando...')
-                        : t('Buscar')}
-                    </Text>
                   )}
+                  <Button
+                    h="24px"
+                    ml="1"
+                    fontSize="xs"
+                    variant="secondary"
+                    onClick={() => getNotificationToken(staffId)}
+                    loadingText={
+                      staffProfile?.notificationToken
+                        ? t('Revalidando')
+                        : t('Buscaando')
+                    }
+                    isLoading={getNotificationTokenResult.isLoading}
+                  >
+                    {staffProfile?.notificationToken
+                      ? t('Revalidar')
+                      : t('Buscar')}
+                  </Button>
                 </Text>
               </>
             )}
