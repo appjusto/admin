@@ -23,6 +23,7 @@ export const InvoicesTable = ({ invoices, payments }: InvoicesTableProps) => {
             <Th>{t('ID do pedido')}</Th>
             <Th>{t('Data')}</Th>
             <Th>{t('Tipo')}</Th>
+            <Th>{t('Método de Pag.')}</Th>
             <Th>{t('Status')}</Th>
             <Th isNumeric>{t('Valor')}</Th>
           </Tr>
@@ -34,12 +35,14 @@ export const InvoicesTable = ({ invoices, payments }: InvoicesTableProps) => {
               <Td></Td>
               <Td></Td>
               <Td></Td>
+              <Td></Td>
               <Td isNumeric></Td>
             </Tr>
           )}
           {isEmpty && (
             <Tr color="black" fontSize="xs" fontWeight="700">
               <Td>{t('Não foram encontrados resultados')}</Td>
+              <Td></Td>
               <Td></Td>
               <Td></Td>
               <Td></Td>

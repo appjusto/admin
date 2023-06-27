@@ -3,7 +3,11 @@ import TableItem from 'common/components/backoffice/TableItem';
 import { useRouteMatch } from 'react-router';
 import { formatCurrency } from 'utils/formatters';
 import { getDateAndHour } from 'utils/functions';
-import { invoiceStatusPTOptions, invoiceTypePTOptions } from '../utils';
+import {
+  invoiceStatusPTOptions,
+  invoiceTypePTOptions,
+  paymentMethodPTOptions,
+} from '../utils';
 
 interface ItemProps {
   data: WithId<Invoice | Payment>;
@@ -16,7 +20,8 @@ export const InvoicesTableItem = ({ data }: ItemProps) => {
   const value = data.paid !== undefined ? data.paid : data.value;
   const isPayment = 'createdAt' in data;
   if (isPayment) {
-    const { id, order, createdAt, status, service } = data as WithId<Payment>;
+    const { id, order, createdAt, status, service, method } =
+      data as WithId<Payment>;
     return (
       <TableItem
         key={id}
@@ -28,6 +33,9 @@ export const InvoicesTableItem = ({ data }: ItemProps) => {
             value: service ? invoiceTypePTOptions[service] : 'N/E',
           },
           {
+            value: method ? paymentMethodPTOptions[method] : 'N/E',
+          },
+          {
             value: status ? invoiceStatusPTOptions[status] : 'N/E',
           },
           { value: formatCurrency(value), styles: { isNumeric: true } },
@@ -35,7 +43,7 @@ export const InvoicesTableItem = ({ data }: ItemProps) => {
       />
     );
   }
-  const { id, orderCode, createdOn, invoiceType, status } =
+  const { id, orderCode, createdOn, invoiceType, status, paymentMethod } =
     data as WithId<Invoice>;
   // UI
   return (
@@ -47,6 +55,9 @@ export const InvoicesTableItem = ({ data }: ItemProps) => {
         { value: getDateAndHour(createdOn) },
         {
           value: invoiceType ? invoiceTypePTOptions[invoiceType] : 'N/E',
+        },
+        {
+          value: paymentMethod ? paymentMethodPTOptions[paymentMethod] : 'N/E',
         },
         {
           value: status ? invoiceStatusPTOptions[status] : 'N/E',
