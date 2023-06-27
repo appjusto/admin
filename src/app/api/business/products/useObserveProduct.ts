@@ -34,7 +34,7 @@ export const useObserveProduct = (
   React.useEffect(() => {
     if (!product) return;
     if (product?.imageUrls) {
-      setImageUrl(product.imageUrls[1] ?? product.imageUrls[0]);
+      setImageUrl(product.imageUrls[0]);
       return;
     } else {
       if (product?.imageExists) {
