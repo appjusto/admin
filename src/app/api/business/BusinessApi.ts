@@ -764,7 +764,7 @@ export default class BusinessApi {
 
   async createComplement(
     businessId: string,
-    item: Complement,
+    item: Partial<Complement>,
     imageFile?: File | null
   ) {
     const timestamp = serverTimestamp();
@@ -805,7 +805,6 @@ export default class BusinessApi {
   ) {
     const complementChanges = {
       ...changes,
-      enabled: true,
     } as Partial<Complement>;
     const ref = this.refs.getBusinessComplementRef(businessId, complementId);
     if (imageFile) {

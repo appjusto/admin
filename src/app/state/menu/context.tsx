@@ -70,8 +70,8 @@ interface ContextProps {
     {
       groupId: string | undefined;
       complementId: string | undefined;
-      changes: Complement;
-      imageFile?: File | null | undefined;
+      changes: Partial<Complement>;
+      imageFile?: File | null;
     },
     unknown
   >;
@@ -197,10 +197,11 @@ export const MenuContextProvider = (props: ProviderProps) => {
     async (data: {
       groupId: string | undefined;
       complementId: string | undefined;
-      changes: Complement;
+      changes: Partial<Complement>;
       imageFile?: File | null;
     }) => {
       let currentId = data.complementId;
+      console.log('currentId: ', currentId);
       if (data.complementId && data.complementId !== 'new') {
         await api
           .business()

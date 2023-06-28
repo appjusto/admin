@@ -39,23 +39,20 @@ export const ComplementItem = React.memo(({ complement, index }: Props) => {
     if (value || value === 0) setPrice(value);
   };
   const onUpdateComplement = async (
-    updateEnabled?: boolean,
+    field: 'price' | 'enabled',
     value?: boolean
   ) => {
-    let dataToUpdate = { ...complement };
-    //@ts-ignore
-    delete dataToUpdate.id;
-    if (updateEnabled) {
+    if (field === 'enabled') {
       await updateComplement({
         groupId: undefined,
         complementId: complement.id,
-        changes: { ...dataToUpdate, price, enabled: value },
+        changes: { enabled: value },
       });
     } else
       await updateComplement({
         groupId: undefined,
         complementId: complement.id,
-        changes: { ...dataToUpdate, price },
+        changes: { price },
       });
   };
   //side effects
@@ -126,7 +123,7 @@ export const ComplementItem = React.memo(({ complement, index }: Props) => {
                 label={t('Preço')}
                 value={price}
                 onChangeValue={updatePriceState}
-                onBlur={() => onUpdateComplement()}
+                onBlur={() => onUpdateComplement('price')}
                 maxLength={6}
                 isDisabled={!userCanUpdateMenu}
               />
@@ -137,7 +134,7 @@ export const ComplementItem = React.memo(({ complement, index }: Props) => {
             isChecked={complement.enabled}
             onChange={(ev) => {
               ev.stopPropagation();
-              onUpdateComplement(true, ev.target.checked);
+              onUpdateComplement('enabled', ev.target.checked);
             }}
             isDisabled={!userCanUpdateMenu}
           />
