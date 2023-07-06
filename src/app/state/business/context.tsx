@@ -103,18 +103,12 @@ export const BusinessProvider = ({ children }: Props) => {
     businessId,
     isBackofficeUser
   );
-  console.log('>>> user: ', user?.uid);
-  console.log('>>> isBackofficeUser: ', isBackofficeUser);
-  console.log('>>> businessId: ', businessId);
-  console.log('>>> current: ', current?.id);
   const personificationBusiness = useObserveBusinessProfile(
     businessId,
     isBackofficeUser
   );
-  console.log('>>> personificationBusiness: ', personificationBusiness?.id);
   // state
   const [business, setBusiness] = React.useState<WithId<Business> | null>();
-  console.log('>>> business: ', business?.id);
   const { logo, cover } = useBusinessProfileImages(business?.id);
   const { updateBusinessProfile } = useBusinessProfile(business?.id, false);
   const [isGetManagersActive, setIsGetManagersActive] = React.useState(false);
@@ -184,11 +178,8 @@ export const BusinessProvider = ({ children }: Props) => {
   };
   // side effects
   React.useEffect(() => {
-    if (!user) setBusinessId(null);
-  }, [user]);
-  React.useEffect(() => {
     if (!user) return;
-    if (isBackofficeUser) return;
+    if (isBackofficeUser !== false) return;
     const localBusinessId = localStorage.getItem(
       `${process.env.REACT_APP_ENVIRONMENT}-${user.email}`
     );
@@ -199,7 +190,7 @@ export const BusinessProvider = ({ children }: Props) => {
   }, [user, isBackofficeUser]);
   React.useEffect(() => {
     if (!user) return;
-    if (isBackofficeUser) return;
+    if (isBackofficeUser !== false) return;
     if (!business?.id) return;
     localStorage.setItem(
       `${process.env.REACT_APP_ENVIRONMENT}-${user.email}`,
@@ -210,12 +201,12 @@ export const BusinessProvider = ({ children }: Props) => {
     if (business?.id && refreshUserToken) refreshUserToken(business?.id);
   }, [business?.id, refreshUserToken]);
   React.useEffect(() => {
-    if (!current) return;
+    if (current === undefined) return;
     updateContextBusiness(current);
     queryClient.invalidateQueries();
   }, [current, updateContextBusiness, queryClient]);
   React.useEffect(() => {
-    if (!personificationBusiness) return;
+    if (personificationBusiness === undefined) return;
     updateContextBusiness(personificationBusiness);
   }, [personificationBusiness, updateContextBusiness]);
   React.useEffect(() => {

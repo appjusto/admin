@@ -13,7 +13,7 @@ interface FirebaseUserContextProps {
   platformAccess?: PlatformAccess;
   minVersion?: string | null;
   adminRole?: AdminRole | null;
-  backofficePermissions?: UserPermissions;
+  backofficePermissions?: UserPermissions | null;
   adminPermissions?: UserPermissions;
   isBackofficeUser?: boolean | null;
   isBackofficeSuperuser?: boolean | null;
@@ -33,7 +33,7 @@ export const FirebaseUserProvider = ({ children }: Props) => {
   // states
   const [adminRole, setAdminRole] = React.useState<AdminRole | null>();
   const [backofficePermissions, setBackofficePermissions] =
-    React.useState<UserPermissions>();
+    React.useState<UserPermissions | null>();
   const [isBackofficeUser, setIsBackofficeUser] = React.useState<
     boolean | null
   >();
@@ -50,6 +50,7 @@ export const FirebaseUserProvider = ({ children }: Props) => {
       if (user === undefined) return;
       if (user === null) {
         setAdminRole(null);
+        setBackofficePermissions(null);
         setIsBackofficeUser(null);
         return;
       }

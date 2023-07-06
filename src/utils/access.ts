@@ -78,7 +78,7 @@ const adminCollaboratorPages = [
 type IsAccessGrantedArgs = {
   type: 'admin' | 'backoffice';
   path: string;
-  backofficePermissions?: UserPermissions;
+  backofficePermissions?: UserPermissions | null;
   adminRole?: AdminRole | null;
 };
 
