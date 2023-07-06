@@ -103,12 +103,18 @@ export const BusinessProvider = ({ children }: Props) => {
     businessId,
     isBackofficeUser
   );
+  console.log('>>> user: ', user?.uid);
+  console.log('>>> isBackofficeUser: ', isBackofficeUser);
+  console.log('>>> businessId: ', businessId);
+  console.log('>>> current: ', current?.id);
   const personificationBusiness = useObserveBusinessProfile(
     businessId,
     isBackofficeUser
   );
+  console.log('>>> personificationBusiness: ', personificationBusiness?.id);
   // state
   const [business, setBusiness] = React.useState<WithId<Business> | null>();
+  console.log('>>> business: ', business?.id);
   const { logo, cover } = useBusinessProfileImages(business?.id);
   const { updateBusinessProfile } = useBusinessProfile(business?.id, false);
   const [isGetManagersActive, setIsGetManagersActive] = React.useState(false);
@@ -181,8 +187,28 @@ export const BusinessProvider = ({ children }: Props) => {
     if (!user) setBusinessId(null);
   }, [user]);
   React.useEffect(() => {
-    if (businessId && refreshUserToken) refreshUserToken(businessId);
-  }, [businessId, refreshUserToken]);
+    if (!user) return;
+    if (isBackofficeUser) return;
+    const localBusinessId = localStorage.getItem(
+      `${process.env.REACT_APP_ENVIRONMENT}-${user.email}`
+    );
+    if (localBusinessId) {
+      setBusinessId(localBusinessId);
+      return;
+    }
+  }, [user, isBackofficeUser]);
+  React.useEffect(() => {
+    if (!user) return;
+    if (isBackofficeUser) return;
+    if (!business?.id) return;
+    localStorage.setItem(
+      `${process.env.REACT_APP_ENVIRONMENT}-${user.email}`,
+      business.id
+    );
+  }, [user, isBackofficeUser, business?.id]);
+  React.useEffect(() => {
+    if (business?.id && refreshUserToken) refreshUserToken(business?.id);
+  }, [business?.id, refreshUserToken]);
   React.useEffect(() => {
     if (!current) return;
     updateContextBusiness(current);
@@ -192,43 +218,6 @@ export const BusinessProvider = ({ children }: Props) => {
     if (!personificationBusiness) return;
     updateContextBusiness(personificationBusiness);
   }, [personificationBusiness, updateContextBusiness]);
-  // React.useEffect(() => {
-  //   if (!user?.email) return;
-  //   if (hookBusiness === undefined) return;
-  //   if (hookBusiness === null) {
-  //     setBusiness(null);
-  //     return;
-  //   }
-  //   if (isBackofficeUser === false) {
-  //     localStorage.setItem(
-  //       `${user.email}-${process.env.REACT_APP_ENVIRONMENT}`,
-  //       hookBusiness.id
-  //     );
-  //   }
-  //   updateContextBusiness(hookBusiness);
-  //   queryClient.invalidateQueries();
-  // }, [
-  //   user,
-  //   hookBusiness,
-  //   isBackofficeUser,
-  //   queryClient,
-  //   updateContextBusiness,
-  // ]);
-  // React.useEffect(() => {
-  //   if (isBackofficeUser) return;
-  //   if (!user?.email) return;
-  //   if (businessId) return;
-  //   const localBusinessId = localStorage.getItem(
-  //     `${user.email}-${process.env.REACT_APP_ENVIRONMENT}`
-  //   );
-  //   if (localBusinessId) {
-  //     setBusinessId(localBusinessId);
-  //     return;
-  //   }
-  //   // select first business, or first business approved, or set it to null to indicate that user doesn't
-  //   // manage any business
-  //   setBusinessIdByBusinesses();
-  // }, [user?.email, isBackofficeUser, businessId, setBusinessIdByBusinesses]);
   React.useEffect(() => {
     if (businessCityAreas === undefined) return;
     if (businessCityAreas === null) {

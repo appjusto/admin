@@ -104,7 +104,7 @@ export const BusinessBOProvider = ({ children }: Props) => {
   // context
   const { dispatchAppRequestResult } = useContextAppRequests();
   const { businessId } = useParams<Params>();
-  const business = useObserveBusinessProfile(businessId);
+  const business = useObserveBusinessProfile(businessId, true);
   const { managers: businessManagers, fetchManagers } = useGetManagers(
     businessId,
     business?.managers,
