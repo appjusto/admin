@@ -62,6 +62,7 @@ import { documentAs, documentsAs } from '../../../core/fb';
 import FilesApi from '../FilesApi';
 import FirebaseRefs from '../FirebaseRefs';
 import { customCollectionSnapshot, customDocumentSnapshot } from '../utils';
+import { ObserveBusinessesManagedByResponse } from './types';
 import {
   developmentAdvanceReceivables,
   developmentFetchAccountInformation,
@@ -339,6 +340,33 @@ export default class BusinessApi {
     );
     // returns the unsubscribe function
     return customCollectionSnapshot(q, resultHandler);
+  }
+  observeBusinessesManagedBy(
+    email: string,
+    resultHandler: (result: ObserveBusinessesManagedByResponse) => void,
+    businessId?: string | null
+  ): Unsubscribe {
+    const q = query(
+      this.refs.getBusinessesRef(),
+      where('managers', 'array-contains', email),
+      orderBy('createdOn', 'desc')
+    );
+    // returns the unsubscribe function
+    return onSnapshot(q, (snapshot) => {
+      if (snapshot.empty) resultHandler({ current: null, units: null });
+      const businesses = documentsAs<Business>(snapshot.docs);
+      let current = businesses[0];
+      if (businessId && businesses.length > 1) {
+        const found = businesses.find((business) => business.id === businessId);
+        if (found) current = found;
+      }
+      const units = businesses.map((business) => ({
+        id: business.id,
+        name: business.name ?? 'Sem nome',
+        address: business.businessAddress?.address ?? 'Não informado',
+      }));
+      resultHandler({ current, units });
+    });
   }
 
   // profile notes

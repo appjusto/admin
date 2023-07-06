@@ -13,14 +13,15 @@ import { t } from 'utils/i18n';
 const DeletedPage = () => {
   // context
   const history = useHistory();
-  const { businesses, setBusinessIdByBusinesses, changeBusinessId } =
-    useContextBusiness();
+  const { businessUnits, changeBusinessId } = useContextBusiness();
   // helpers
-  const businessesIsEmpty = businesses?.length === 0;
+  const businessesIsEmpty = businessUnits?.length === 0;
   // handlers
   const handleRedirect = (path: '/onboarding' | '/app') => {
-    if (path === '/app') setBusinessIdByBusinesses();
-    else if (path === '/onboarding') changeBusinessId(null);
+    if (path === '/app') {
+      const newId = businessUnits![0].id;
+      changeBusinessId(newId);
+    } else if (path === '/onboarding') changeBusinessId(null);
     return history.push(path);
   };
   // UI

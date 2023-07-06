@@ -8,7 +8,7 @@ import React from 'react';
 
 const BusinessInfo = (props: BoxProps) => {
   // context
-  const { business, changeBusinessId, businesses } = useContextBusiness();
+  const { business, businessUnits, changeBusinessId } = useContextBusiness();
   // state
   const [managerBusinesses, setManagerBusinesses] = React.useState<
     BusinessSelectOptions[]
@@ -18,26 +18,26 @@ const BusinessInfo = (props: BoxProps) => {
   // handlers
   const handleSwitchBussines = (selected: BusinessSelectOptions) => {
     setSelectedBusiness(selected);
-    changeBusinessId(selected.value);
+    changeBusinessId(selected.id);
   };
   // side effects
   React.useEffect(() => {
     if (!business) return;
     setSelectedBusiness({
-      value: business.id,
+      id: business.id,
       name: business.name ?? 'Sem nome',
       address: business.businessAddress?.address ?? 'Não informado',
     });
   }, [business]);
   React.useEffect(() => {
-    if (!businesses) return;
-    const businessesList = businesses.map((business) => ({
-      value: business.id,
-      name: business.name ?? 'Sem nome',
-      address: business.businessAddress?.address ?? 'Não informado',
-    }));
-    setManagerBusinesses(businessesList);
-  }, [businesses]);
+    if (!businessUnits) return;
+    // const businessesList = businesses.map((business) => ({
+    //   value: business.id,
+    //   name: business.name ?? 'Sem nome',
+    //   address: business.businessAddress?.address ?? 'Não informado',
+    // }));
+    setManagerBusinesses(businessUnits);
+  }, [businessUnits]);
   // UI
   return (
     <Box {...props}>

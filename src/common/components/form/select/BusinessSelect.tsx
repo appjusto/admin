@@ -4,7 +4,7 @@ import { MdArrowDropDown } from 'react-icons/md';
 import { t } from 'utils/i18n';
 
 export type BusinessSelectOptions = {
-  value: string;
+  id: string;
   name: string;
   address: string;
 };
@@ -98,14 +98,12 @@ export const BusinessSelect = ({
               {options.map((option) => {
                 return (
                   <Box
-                    key={option.value}
+                    key={option.id}
                     p="2"
                     cursor="pointer"
                     _hover={{ bg: '#F6F6F6' }}
                     color={
-                      selected?.value === option.value
-                        ? 'green.600'
-                        : 'gray.800'
+                      selected?.id === option.id ? 'green.600' : 'gray.800'
                     }
                     onClick={() => handleSelect(option)}
                   >

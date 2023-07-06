@@ -13,8 +13,9 @@ import { useObserveAreasByCity } from 'app/api/areas/useObserveAreasByCity';
 import { useObserveBannersByFlavor } from 'app/api/banners/useObserveBannersByFlavor';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useBusinessProfileImages } from 'app/api/business/profile/useBusinessProfileImages';
-import { useObserveBusinessManagedBy } from 'app/api/business/profile/useObserveBusinessManagedBy';
+import { useObserveBusinessesManagedBy } from 'app/api/business/profile/useObserveBusinessesManagedBy';
 import { useObserveBusinessProfile } from 'app/api/business/profile/useObserveBusinessProfile';
+import { BusinessUnit } from 'app/api/business/types';
 import { useObserveBusinessFleet } from 'app/api/fleet/useObserveBusinessFleet';
 import { useGetManagers } from 'app/api/manager/useGetManagers';
 import { usePlatformFees } from 'app/api/platform/usePlatformFees';
@@ -71,8 +72,8 @@ interface ContextProps {
   clearBusiness(): void;
   changeBusinessId(businessId?: string | null, clearServices?: boolean): void;
   updateContextBusinessOrderPrint(status: boolean): void;
-  businesses?: WithId<Business>[];
-  setBusinessIdByBusinesses(): void;
+  businessUnits?: BusinessUnit[] | null;
+  // setBusinessIdByBusinesses(): void;
   businessManagers?: ManagerWithRole[];
   setIsGetManagersActive: React.Dispatch<React.SetStateAction<boolean>>;
   fetchManagers(): void;
@@ -93,11 +94,19 @@ export const BusinessProvider = ({ children }: Props) => {
   const queryClient = useQueryClient();
   const { user, isBackofficeUser, refreshUserToken } = useContextFirebaseUser();
   const { platformFees } = usePlatformFees();
-  const businesses = useObserveBusinessManagedBy(user?.email);
+  // const businesses = useObserveBusinessManagedBy(user?.email);
   const [businessId, setBusinessId] = React.useState<
     string | undefined | null
   >();
-  const hookBusiness = useObserveBusinessProfile(businessId);
+  const { current, businessUnits } = useObserveBusinessesManagedBy(
+    user?.email,
+    businessId,
+    isBackofficeUser
+  );
+  const personificationBusiness = useObserveBusinessProfile(
+    businessId,
+    isBackofficeUser
+  );
   // state
   const [business, setBusiness] = React.useState<WithId<Business> | null>();
   const { logo, cover } = useBusinessProfileImages(business?.id);
@@ -137,10 +146,10 @@ export const BusinessProvider = ({ children }: Props) => {
       [];
     updateBusinessProfile({ services });
   }, [business?.services, updateBusinessProfile]);
-  const setBusinessIdByBusinesses = React.useCallback(() => {
-    if (!businesses) return;
-    setBusinessId(businesses.find(() => true)?.id ?? null);
-  }, [businesses]);
+  // const setBusinessIdByBusinesses = React.useCallback(() => {
+  //   if (!businesses) return;
+  //   setBusinessId(businesses.find(() => true)?.id ?? null);
+  // }, [businesses]);
   const changeBusinessId = React.useCallback(
     (businessId: string, clearServices: boolean = true) => {
       if (clearServices) {
@@ -175,42 +184,51 @@ export const BusinessProvider = ({ children }: Props) => {
     if (businessId && refreshUserToken) refreshUserToken(businessId);
   }, [businessId, refreshUserToken]);
   React.useEffect(() => {
-    if (!user?.email) return;
-    if (hookBusiness === undefined) return;
-    if (hookBusiness === null) {
-      setBusiness(null);
-      return;
-    }
-    if (isBackofficeUser === false) {
-      localStorage.setItem(
-        `${user.email}-${process.env.REACT_APP_ENVIRONMENT}`,
-        hookBusiness.id
-      );
-    }
-    updateContextBusiness(hookBusiness);
+    if (!current) return;
+    updateContextBusiness(current);
     queryClient.invalidateQueries();
-  }, [
-    user,
-    hookBusiness,
-    isBackofficeUser,
-    queryClient,
-    updateContextBusiness,
-  ]);
+  }, [current, updateContextBusiness, queryClient]);
   React.useEffect(() => {
-    if (isBackofficeUser) return;
-    if (!user?.email) return;
-    if (businessId) return;
-    const localBusinessId = localStorage.getItem(
-      `${user.email}-${process.env.REACT_APP_ENVIRONMENT}`
-    );
-    if (localBusinessId) {
-      setBusinessId(localBusinessId);
-      return;
-    }
-    // select first business, or first business approved, or set it to null to indicate that user doesn't
-    // manage any business
-    setBusinessIdByBusinesses();
-  }, [user?.email, isBackofficeUser, businessId, setBusinessIdByBusinesses]);
+    if (!personificationBusiness) return;
+    updateContextBusiness(personificationBusiness);
+  }, [personificationBusiness, updateContextBusiness]);
+  // React.useEffect(() => {
+  //   if (!user?.email) return;
+  //   if (hookBusiness === undefined) return;
+  //   if (hookBusiness === null) {
+  //     setBusiness(null);
+  //     return;
+  //   }
+  //   if (isBackofficeUser === false) {
+  //     localStorage.setItem(
+  //       `${user.email}-${process.env.REACT_APP_ENVIRONMENT}`,
+  //       hookBusiness.id
+  //     );
+  //   }
+  //   updateContextBusiness(hookBusiness);
+  //   queryClient.invalidateQueries();
+  // }, [
+  //   user,
+  //   hookBusiness,
+  //   isBackofficeUser,
+  //   queryClient,
+  //   updateContextBusiness,
+  // ]);
+  // React.useEffect(() => {
+  //   if (isBackofficeUser) return;
+  //   if (!user?.email) return;
+  //   if (businessId) return;
+  //   const localBusinessId = localStorage.getItem(
+  //     `${user.email}-${process.env.REACT_APP_ENVIRONMENT}`
+  //   );
+  //   if (localBusinessId) {
+  //     setBusinessId(localBusinessId);
+  //     return;
+  //   }
+  //   // select first business, or first business approved, or set it to null to indicate that user doesn't
+  //   // manage any business
+  //   setBusinessIdByBusinesses();
+  // }, [user?.email, isBackofficeUser, businessId, setBusinessIdByBusinesses]);
   React.useEffect(() => {
     if (businessCityAreas === undefined) return;
     if (businessCityAreas === null) {
@@ -264,8 +282,8 @@ export const BusinessProvider = ({ children }: Props) => {
         clearBusiness,
         changeBusinessId,
         updateContextBusinessOrderPrint,
-        businesses,
-        setBusinessIdByBusinesses,
+        businessUnits,
+        // setBusinessIdByBusinesses,
         businessManagers,
         setIsGetManagersActive,
         fetchManagers,
