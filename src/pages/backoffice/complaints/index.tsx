@@ -8,9 +8,11 @@ import { CustomDateFilter } from 'common/components/form/input/CustomDateFilter'
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import { Select } from 'common/components/form/select/Select';
 import React from 'react';
+import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import PageHeader from '../../PageHeader';
+import { ComplaintDrawer } from '../drawers/complaint';
 import { ComplaintsTable } from './ComplaintsTable';
 
 const statusFilterOptions = [
@@ -24,6 +26,9 @@ const statusFilterOptions = [
 type SearchType = 'order' | 'complainant' | 'date';
 
 const ComplaintsPage = () => {
+  // context
+  const { path } = useRouteMatch();
+  const history = useHistory();
   // state
   const [dateTime, setDateTime] = React.useState('');
   const [type, setType] = React.useState<SearchType>('order');
@@ -42,9 +47,9 @@ const ComplaintsPage = () => {
   );
 
   // handlers
-  //const closeDrawerHandler = () => {
-  //  history.replace(path);
-  //};
+  const closeDrawerHandler = () => {
+    history.replace(path);
+  };
 
   const clearFilters = () => {
     setClearDateNumber((prev) => prev + 1);
@@ -124,6 +129,11 @@ const ComplaintsPage = () => {
         <ArrowDownIcon mr="2" />
         {t('Carregar mais')}
       </Button>
+      <Switch>
+        <Route exact path={`${path}/:complaintId`}>
+          <ComplaintDrawer isOpen onClose={closeDrawerHandler} />
+        </Route>
+      </Switch>
     </>
   );
 };

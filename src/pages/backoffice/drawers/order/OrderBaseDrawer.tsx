@@ -27,6 +27,8 @@ import {
 import { MutationResult } from 'app/api/mutation/useCustomMutation';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextAppRequests } from 'app/state/requests/context';
+import { BaseDrawerInfoItem } from 'common/components/backoffice/BaseDrawerInfoItem';
+import { BaseDrawerStaff } from 'common/components/backoffice/BaseDrawerStaff';
 import { OrderTracking } from 'pages/backoffice/dashboard/OrderTracking';
 import { isLogisticsIncluded } from 'pages/logistics/utils';
 import { DrawerLink } from 'pages/menu/drawers/DrawerLink';
@@ -37,7 +39,6 @@ import { t } from 'utils/i18n';
 import { OrderDrawerLoadingState } from '.';
 import { orderStatusPTOptions } from '../../utils/index';
 import { SectionTitle } from '../generics/SectionTitle';
-import { BaseDrawerInfoItem } from './BaseDrawerInfoItem';
 import { FraudPrevention } from './FraudPrevention';
 
 interface BaseDrawerProps {
@@ -108,7 +109,7 @@ export const OrderBaseDrawer = ({
     [order?.flags]
   );
   const canUpdateOrderStaff = React.useMemo(
-    () => order?.staff?.id === user?.uid || isBackofficeSuperuser,
+    () => order?.staff?.id === user?.uid || isBackofficeSuperuser === true,
     [order?.staff?.id, user?.uid, isBackofficeSuperuser]
   );
   const canUpdateOrder = React.useMemo(
@@ -180,50 +181,14 @@ export const OrderBaseDrawer = ({
             >
               {order?.code ? `#${order.code}` : 'N/E'}
             </Text>
-            <Text
-              mt="1"
-              fontSize="15px"
-              color="black"
-              fontWeight="700"
-              lineHeight="22px"
-            >
-              {t('Agente responsável:')}{' '}
-              {typeof order?.staff?.id === 'string' ? (
-                <>
-                  <Text as="span" fontWeight="500">
-                    {order.staff?.name ?? order.staff.email}
-                  </Text>
-                  {canUpdateOrderStaff && (
-                    <Text
-                      as="span"
-                      ml="2"
-                      fontWeight="500"
-                      color="red"
-                      textDecor="underline"
-                      cursor="pointer"
-                      onClick={() => updateOrderStaff('release')}
-                    >
-                      {updateStaffResult.isLoading
-                        ? t('(Saindo...)')
-                        : t('(Sair)')}
-                    </Text>
-                  )}
-                </>
-              ) : (
-                <Text
-                  as="span"
-                  fontWeight="500"
-                  color="green.600"
-                  textDecor="underline"
-                  cursor="pointer"
-                  onClick={() => updateOrderStaff('assume')}
-                >
-                  {updateStaffResult.isLoading
-                    ? t('Assumindo...')
-                    : t('Assumir')}
-                </Text>
-              )}
-            </Text>
+            <BaseDrawerStaff
+              staffId={order?.staff?.id}
+              staffName={order?.staff?.name ?? order?.staff?.email}
+              canUpdate={canUpdateOrderStaff}
+              handleAssume={() => updateOrderStaff('assume')}
+              handleRelease={() => updateOrderStaff('release')}
+              isLoading={updateStaffResult.isLoading}
+            />
             <BaseDrawerInfoItem label={t('ID:')} value={order?.id ?? 'N/E'} />
             <BaseDrawerInfoItem
               label={t('Nome do cliente:')}
