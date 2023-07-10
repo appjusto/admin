@@ -34,6 +34,9 @@ const StaffsPage = React.lazy(
 const FraudPreventionPage = React.lazy(
   () => import(/* webpackPrefetch: true */ './fraud-prevention')
 );
+const ComplaintsPage = React.lazy(
+  () => import(/* webpackPrefetch: true */ './complaints')
+);
 const PushCampaignPage = React.lazy(
   () => import(/* webpackPrefetch: true */ './push-campaigns')
 );
@@ -87,6 +90,10 @@ const BackOffice = () => {
             component={RecommendationsPage}
           />
           <BOAccessRoute path={`${path}/areas`} component={AreasPage} />
+          <BOAccessRoute
+            path={`${path}/complaints`}
+            component={ComplaintsPage}
+          />
           <BOAccessRoute path={path} component={BODashboard} />
         </Switch>
       </PageLayout>

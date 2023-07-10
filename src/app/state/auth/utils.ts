@@ -49,6 +49,7 @@ export const fullStaffPermissions = {
   couriers: [],
   consumers: [],
   chats: [],
+  complaints: [],
   invoices: [],
   payments: [],
   cards: [],

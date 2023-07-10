@@ -21,6 +21,7 @@ export type Entities =
   | 'couriers'
   | 'consumers'
   | 'chats'
+  | 'complaints'
   | 'invoices'
   | 'payments'
   | 'cards'

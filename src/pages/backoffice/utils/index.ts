@@ -153,6 +153,13 @@ export const flavorsPTOptions = {
   platform: 'Plataforma',
 };
 
+export const complaintStatusPTOptions = {
+  pending: 'Pendente',
+  investigating: 'Investigando',
+  upheld: 'Aceita',
+  inconclusive: 'Inconclusivas',
+};
+
 export const permissionsPTOptions = {
   orders: 'Pedidos',
   couriers: 'Entregadores',
@@ -161,6 +168,7 @@ export const permissionsPTOptions = {
   account_manager: 'Ger. Contas',
   menu: 'Cardápios',
   chats: 'Chats',
+  complaints: 'Denúncias',
   invoices: 'Faturas',
   payments: 'Faturas (P)',
   cards: 'Cartões',

@@ -5,6 +5,7 @@ type BackofficeAccess = {
   'couriers': string;
   'businesses': string;
   'consumers': string;
+  'complaints': string;
   'banners': string;
   'invoices': string;
   'ledger': string;
@@ -22,6 +23,7 @@ const backofficeAccess = {
   'couriers': 'couriers',
   'businesses': 'businesses',
   'consumers': 'consumers',
+  'complaints': 'complaints',
   'banners': 'banners',
   'invoices': 'invoices',
   'ledger': 'invoices',

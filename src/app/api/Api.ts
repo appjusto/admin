@@ -31,6 +31,7 @@ import BannersApi from './banners/BannersApi';
 import BusinessApi from './business/BusinessApi';
 import CardsApi from './cards/CardsApi';
 import ChatApi from './chat/ChatApi';
+import ComplaintsApi from './complaints/ComplaintsApi';
 import ConsumerApi from './consumer/CosumerApi';
 import CourierApi from './courier/CourierApi';
 import FilesApi from './FilesApi';
@@ -83,6 +84,7 @@ export default class Api {
   private _push_campaigns: PushCampaignApi;
   private _banners: BannersApi;
   private _fleet: FleetApi;
+  private _complaints: ComplaintsApi;
 
   constructor(config: ApiConfig) {
     if (!Api.app) {
@@ -150,6 +152,7 @@ export default class Api {
     this._banners = new BannersApi(this._refs, this._files);
     this._fleet = new FleetApi(this._refs);
     this._areas = new AreasApi(this._refs);
+    this._complaints = new ComplaintsApi(this._refs);
   }
 
   measurement() {
@@ -230,5 +233,9 @@ export default class Api {
 
   fleet() {
     return this._fleet;
+  }
+
+  complaints() {
+    return this._complaints;
   }
 }
