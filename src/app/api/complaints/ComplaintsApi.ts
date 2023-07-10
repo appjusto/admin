@@ -45,8 +45,8 @@ export default class ComplaintsApi {
     if (start && end)
       q = query(
         q,
-        where('scheduledTo', '>=', start),
-        where('scheduledTo', '<=', end)
+        where('createdAt', '>=', start),
+        where('createdAt', '<=', end)
       );
     const unsubscribe = onSnapshot(
       q,

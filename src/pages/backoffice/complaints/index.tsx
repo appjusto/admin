@@ -51,18 +51,21 @@ const ComplaintsPage = () => {
     history.replace(path);
   };
 
-  const clearFilters = () => {
+  const clearFilters = React.useCallback(() => {
     setClearDateNumber((prev) => prev + 1);
     setSearch('');
     setSearchFrom('');
     setSearchTo('');
-  };
+  }, []);
 
   // side effects
   React.useEffect(() => {
     const { date, time } = getDateTime();
     setDateTime(`${date} às ${time}`);
   }, []);
+  React.useEffect(() => {
+    clearFilters();
+  }, [type, clearFilters]);
 
   // UI
   return (
@@ -112,9 +115,9 @@ const ComplaintsPage = () => {
         <FiltersScrollBar
           filters={statusFilterOptions}
           currentValue={status ?? 'all'}
-          selectFilter={(value: string) => {
+          selectFilter={(value: ComplaintStatus | 'all') => {
             if (value === 'all') setStatus(undefined);
-            else setStatus(undefined);
+            else setStatus(value);
           }}
         />
         <ClearFiltersButton clearFunction={clearFilters} />
