@@ -27,7 +27,7 @@ import { useParams } from 'react-router-dom';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
-import { formattComplaintDate } from './utils';
+import { formatComplaintDate } from './utils';
 
 interface BaseDrawerProps {
   isOpen: boolean;
@@ -53,7 +53,7 @@ export const ComplaintDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
     () => userAbility?.can('update', 'complaints'),
     [userAbility]
   );
-  const date = formattComplaintDate(complaint?.date);
+  const date = formatComplaintDate(complaint?.date);
   // handlers
   const handleUpdateStaff = (operation: 'assume' | 'release') => {
     if (!staff) {
@@ -168,6 +168,15 @@ export const ComplaintDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
             <Box mt="4" p="4" bgColor="gray.50" borderRadius="lg">
               <Text mt="">{complaint?.description}</Text>
             </Box>
+            <SectionTitle>{t('Denunciado')}</SectionTitle>
+            <BaseDrawerInfoItem
+              label={t('Nome:')}
+              value={complaint?.against ?? 'N/E'}
+            />
+            <BaseDrawerInfoItem
+              label={t('Local:')}
+              value={complaint?.place ?? 'N/E'}
+            />
             <SectionTitle>{t('Status')}</SectionTitle>
             <RadioGroup
               mt="4"
