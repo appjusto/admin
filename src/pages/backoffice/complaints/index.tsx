@@ -23,7 +23,7 @@ const statusFilterOptions = [
   { label: 'Inconclusivas', value: 'inconclusive' },
 ];
 
-type SearchType = 'order' | 'complainant' | 'date';
+type SearchType = 'order' | 'complaint' | 'complainant' | 'date';
 
 const ComplaintsPage = () => {
   // context
@@ -31,7 +31,7 @@ const ComplaintsPage = () => {
   const history = useHistory();
   // state
   const [dateTime, setDateTime] = React.useState('');
-  const [type, setType] = React.useState<SearchType>('order');
+  const [type, setType] = React.useState<SearchType>('complaint');
   const [search, setSearch] = React.useState('');
   const [searchFrom, setSearchFrom] = React.useState('');
   const [searchTo, setSearchTo] = React.useState('');
@@ -40,6 +40,7 @@ const ComplaintsPage = () => {
 
   const { complaints, fetchNextPage } = useObserveComplaints(
     status,
+    type === 'complaint' ? search : undefined,
     type === 'order' ? search : undefined,
     type === 'complainant' ? search : undefined,
     searchFrom,
@@ -83,6 +84,7 @@ const ComplaintsPage = () => {
             value={type}
             onChange={(e) => setType(e.target.value as SearchType)}
           >
+            <option value="complaint">{t('Denúncia')}</option>
             <option value="order">{t('Pedido')}</option>
             <option value="complainant">{t('Autor')}</option>
             <option value="date">{t('Data')}</option>

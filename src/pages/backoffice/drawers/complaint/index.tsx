@@ -21,6 +21,7 @@ import { useContextAppRequests } from 'app/state/requests/context';
 import { useContextStaffProfile } from 'app/state/staff/context';
 import { BaseDrawerInfoItem } from 'common/components/backoffice/BaseDrawerInfoItem';
 import { BaseDrawerStaff } from 'common/components/backoffice/BaseDrawerStaff';
+import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
 import { flavorsPTOptions } from 'pages/backoffice/utils';
 import React from 'react';
 import { useParams } from 'react-router-dom';
@@ -48,12 +49,18 @@ export const ComplaintDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
     useObserveComplaint(complaintId);
   // state
   const [status, setStatus] = React.useState<ComplaintStatus>();
+  const [conclusion, setConclusion] = React.useState('');
   // helpers
   const canUpdate = React.useMemo(
-    () => userAbility?.can('update', 'complaints'),
-    [userAbility]
+    () =>
+      userAbility?.can('update', 'complaints') &&
+      complaint?.staff?.id === staff?.id,
+    [userAbility, complaint?.staff?.id, staff?.id]
   );
   const date = formatComplaintDate(complaint?.date);
+  const flavor = complaint?.createdBy.flavor
+    ? flavorsPTOptions[complaint.createdBy.flavor]
+    : 'N/E';
   // handlers
   const handleUpdateStaff = (operation: 'assume' | 'release') => {
     if (!staff) {
@@ -88,12 +95,13 @@ export const ComplaintDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
       });
     }
     try {
-      updateComplaint({ status });
+      updateComplaint({ status, conclusion });
     } catch (error) {}
   };
   // side effects
   React.useEffect(() => {
     if (complaint) {
+      setConclusion(complaint.conclusion ?? '');
       setStatus(complaint.status);
     }
   }, [complaint]);
@@ -115,7 +123,7 @@ export const ComplaintDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
               lineHeight="28px"
               mb="4"
             >
-              {t('Denúncia')}
+              {t(`Denúncia: ${complaint?.code ?? 'N/E'}`)}
             </Text>
             <BaseDrawerStaff
               staffId={complaint?.staff?.id}
@@ -135,19 +143,18 @@ export const ComplaintDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
               }
             />
             <BaseDrawerInfoItem
-              label={t('Perfil do autor:')}
-              value={
-                complaint?.flavor ? flavorsPTOptions[complaint.flavor] : 'N/E'
-              }
-            />
-            <BaseDrawerInfoItem
               label={t('ID do autor:')}
-              value={complaint?.createdBy ?? 'N/E'}
+              value={complaint?.createdBy.id ?? 'N/E'}
               valueLink={
                 complaint?.createdBy
                   ? `/backoffice/couriers/${complaint.createdBy}`
                   : undefined
               }
+            />
+            <BaseDrawerInfoItem label={t('Perfil do autor:')} value={flavor} />
+            <BaseDrawerInfoItem
+              label={t('Nome do autor:')}
+              value={complaint?.createdBy.name ?? 'N/E'}
             />
             <BaseDrawerInfoItem label={t('Data da ocorrência:')} value={date} />
             <BaseDrawerInfoItem
@@ -177,6 +184,15 @@ export const ComplaintDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
               label={t('Local:')}
               value={complaint?.place ?? 'N/E'}
             />
+            <SectionTitle>{t('Conclusão')}</SectionTitle>
+            <Textarea
+              id="complaint-conclusion"
+              bgColor="white"
+              label={'Descreva como a denúncia foi tratada'}
+              value={conclusion}
+              onChange={(ev) => setConclusion(ev.target.value)}
+              isDisabled={!canUpdate}
+            />
             <SectionTitle>{t('Status')}</SectionTitle>
             <RadioGroup
               mt="4"
@@ -187,6 +203,7 @@ export const ComplaintDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
               color="black"
               fontSize="15px"
               lineHeight="21px"
+              isDisabled={!canUpdate}
             >
               <VStack spacing={2} alignItems="flex-start">
                 <Radio value="pending">{t('Pendente')}</Radio>

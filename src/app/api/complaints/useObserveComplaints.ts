@@ -9,6 +9,7 @@ const initialMap = new Map();
 
 export const useObserveComplaints = (
   status?: ComplaintStatus,
+  complaintCode?: string,
   orderId?: string,
   courierId?: string,
   start?: string,
@@ -49,6 +50,7 @@ export const useObserveComplaints = (
         if (last) setLastPush(last);
       },
       status,
+      complaintCode,
       orderId,
       courierId,
       startDate,
@@ -56,7 +58,17 @@ export const useObserveComplaints = (
       startAfter
     );
     return () => unsub();
-  }, [api, userCanRead, startAfter, orderId, courierId, start, end, status]);
+  }, [
+    api,
+    userCanRead,
+    startAfter,
+    complaintCode,
+    orderId,
+    courierId,
+    start,
+    end,
+    status,
+  ]);
   React.useEffect(() => {
     setComplaints(
       Array.from(complaintsMap.values()).reduce(

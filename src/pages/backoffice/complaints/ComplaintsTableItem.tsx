@@ -11,21 +11,21 @@ interface ItemProps {
 export const ComplaintsTableItem = ({ data }: ItemProps) => {
   // context
   const { path } = useRouteMatch();
-  // helpers
-  const { id, orderId, createdAt, flavor, status } = data as WithId<Complaint>;
+  const { id, code, createdAt, createdBy, status } = data as WithId<Complaint>;
+  const { flavor, name } = createdBy;
   // UI
   return (
     <TableItem
       key={id}
       link={`${path}/${id}`}
       columns={[
-        { value: orderId ?? 'N/E', styles: { maxW: '120px' } },
-        { value: getDateAndHour(createdAt) },
+        { value: code ?? 'N/E', styles: { maxW: '120px' } },
+        { value: getDateAndHour(createdAt, true) },
         {
           value: flavor ? flavorsPTOptions[flavor] : 'N/E',
         },
         {
-          value: 'N/E',
+          value: name ?? 'N/E',
         },
         {
           value: status ? complaintStatusPTOptions[status] : 'N/E',

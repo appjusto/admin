@@ -17,9 +17,9 @@ export const ComplaintsTable = ({ complaints }: ComplaintsTableProps) => {
       <Table mt="4" size="md" variant="simple" pos="relative">
         <Thead>
           <Tr>
-            <Th>{t('ID do pedido')}</Th>
+            <Th>{t('ID')}</Th>
             <Th>{t('Criada em')}</Th>
-            <Th>{t('Autor')}</Th>
+            <Th>{t('Perfil')}</Th>
             <Th>{t('Nome')}</Th>
             <Th>{t('Status')}</Th>
           </Tr>

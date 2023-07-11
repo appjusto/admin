@@ -27,6 +27,7 @@ export default class ComplaintsApi {
       last?: QueryDocumentSnapshot<DocumentData>
     ) => void,
     status?: ComplaintStatus,
+    complaintCode?: string,
     orderId?: string,
     courierId?: string,
     start?: Date | null,
@@ -38,7 +39,8 @@ export default class ComplaintsApi {
       orderBy('createdAt', 'desc'),
       limit(10)
     );
-    if (orderId) q = query(q, where('orderId', '==', orderId));
+    if (complaintCode) q = query(q, where('code', '==', complaintCode));
+    else if (orderId) q = query(q, where('orderId', '==', orderId));
     else if (courierId) q = query(q, where('createdBy', '==', courierId));
     if (status) q = query(q, where('status', '==', status));
     if (startAfterDoc) q = query(q, startAfter(startAfterDoc));
