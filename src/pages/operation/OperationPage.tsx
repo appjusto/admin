@@ -18,9 +18,9 @@ import {
 } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useObserveVrStore } from 'app/api/business/useObserveVrStore';
-import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextAppRequests } from 'app/state/requests/context';
+import { useContextStaffProfile } from 'app/state/staff/context';
 import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput';
 import { CustomNumberInput as NumberInput } from 'common/components/form/input/CustomNumberInput';
 import { paymentMethodPTOptions } from 'pages/backoffice/utils';
@@ -34,7 +34,7 @@ const OperationPage = () => {
   // context
   const { dispatchAppRequestResult } = useContextAppRequests();
   const { business } = useContextBusiness();
-  const { isBackofficeUser } = useContextFirebaseUser();
+  const { isBackofficeUser } = useContextStaffProfile();
   const vrStore = useObserveVrStore(business?.id);
   // queries & mutations
   const { updateBusinessProfile, updateResult } = useBusinessProfile(

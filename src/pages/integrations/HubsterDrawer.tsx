@@ -27,6 +27,7 @@ import { useObserveHubsterStore } from 'app/api/business/useObserveHubsterStore'
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusinessId } from 'app/state/business/context';
 import { useContextAppRequests } from 'app/state/requests/context';
+import { useContextStaffProfile } from 'app/state/staff/context';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import logo from 'common/img/hubster-logo.png';
 import React from 'react';
@@ -43,7 +44,8 @@ interface HubsterDrawerProps {
 export const HubsterDrawer = ({ onClose, ...props }: HubsterDrawerProps) => {
   // context
   const { dispatchAppRequestResult } = useContextAppRequests();
-  const { isBackofficeUser, userAbility } = useContextFirebaseUser();
+  const { userAbility } = useContextFirebaseUser();
+  const { isBackofficeUser } = useContextStaffProfile();
   const businessId = useContextBusinessId();
   const hubsterStore = useObserveHubsterStore(businessId);
   const { updateHubsterStore, updateHubsterStoreResult } = useHubsterStore();

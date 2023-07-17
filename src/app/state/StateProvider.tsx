@@ -17,11 +17,11 @@ export const StateProvider = ({ children }: Props) => {
       <FirebaseUserProvider>
         <ServerTimeProvider>
           <StaffProvider>
-            <BusinessProvider>
-              <ManagerProvider>
+            <ManagerProvider>
+              <BusinessProvider>
                 <MeasurementProvider>{children}</MeasurementProvider>
-              </ManagerProvider>
-            </BusinessProvider>
+              </BusinessProvider>
+            </ManagerProvider>
           </StaffProvider>
         </ServerTimeProvider>
       </FirebaseUserProvider>

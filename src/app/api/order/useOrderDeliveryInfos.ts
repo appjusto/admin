@@ -4,7 +4,7 @@ import {
   Order,
   WithId,
 } from '@appjusto/types';
-import { useContextFirebaseUser } from 'app/state/auth/context';
+import { useContextStaffProfile } from 'app/state/staff/context';
 import React from 'react';
 import { useObserveOrderMatching } from './useObserveOrderMatching';
 import { useOrderArrivalTimes } from './useOrderArrivalTimes';
@@ -14,7 +14,7 @@ export const useOrderDeliveryInfos = (
   order?: WithId<Order> | null
 ) => {
   // context
-  const { isBackofficeUser } = useContextFirebaseUser();
+  const { isBackofficeUser } = useContextStaffProfile();
   const { matching } = useObserveOrderMatching(order?.id);
   const arrivalTime = useOrderArrivalTimes(getServerTime, order);
   // state

@@ -9,7 +9,7 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
-import { useContextFirebaseUser } from 'app/state/auth/context';
+import { useContextStaffProfile } from 'app/state/staff/context';
 import Container from 'common/components/Container';
 import logo from 'common/img/logo.svg';
 import { BackOfficeLinks } from 'pages/sidebar/BackOfficeLinks';
@@ -22,7 +22,7 @@ export const MenuMobile = () => {
   // context
   const { path } = useRouteMatch();
   const { isOpen, onToggle } = useDisclosure();
-  const { isBackofficeUser } = useContextFirebaseUser();
+  const { isBackofficeUser } = useContextStaffProfile();
   const isBackOffice = path.includes('backoffice');
   //UI
   return (

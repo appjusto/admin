@@ -3,6 +3,7 @@ import { useContextBusiness } from 'app/state/business/context';
 import { BusinessDashboardProvider } from 'app/state/dashboards/business';
 import { MenuContextProvider } from 'app/state/menu/context';
 import { OrdersContextProvider } from 'app/state/order';
+import { useContextStaffProfile } from 'app/state/staff/context';
 import { Loading } from 'common/components/Loading';
 import { BasicErrorPage } from 'pages/error/BasicErrorPage';
 import PageLayout from 'pages/PageLayout';
@@ -78,7 +79,8 @@ const IntegrationsPage = React.lazy(
 
 const Home = () => {
   // context
-  const { isBackofficeUser, adminRole } = useContextFirebaseUser();
+  const { adminRole } = useContextFirebaseUser();
+  const { isBackofficeUser } = useContextStaffProfile();
   const { business } = useContextBusiness();
   const { path } = useRouteMatch();
   // states

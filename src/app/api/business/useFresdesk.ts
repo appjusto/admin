@@ -1,4 +1,5 @@
 import { useContextFirebaseUser } from 'app/state/auth/context';
+import { useContextStaffProfile } from 'app/state/staff/context';
 import React from 'react';
 import { useRouteMatch } from 'react-router-dom';
 
@@ -9,7 +10,7 @@ export const useFreshDesk = (
 ) => {
   // context
   const { user } = useContextFirebaseUser();
-  const { isBackofficeUser } = useContextFirebaseUser();
+  const { isBackofficeUser } = useContextStaffProfile();
   const { path } = useRouteMatch();
   // handlers
   const initFreshChat = React.useCallback(() => {

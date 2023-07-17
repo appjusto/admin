@@ -1,7 +1,7 @@
 import { InfoOutlineIcon } from '@chakra-ui/icons';
 import { HStack, Link, Text, VStack } from '@chakra-ui/react';
-import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusinessId } from 'app/state/business/context';
+import { useContextStaffProfile } from 'app/state/staff/context';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { ReactComponent as CheckmarkChecked } from 'common/img/checkmark-checked.svg';
 import { ReactComponent as Checkmark } from 'common/img/checkmark.svg';
@@ -29,7 +29,7 @@ export const RegistrationItem = ({
 }: RegistrationItemProps) => {
   // context
   const businessId = useContextBusinessId();
-  const { isBackofficeUser } = useContextFirebaseUser();
+  const { isBackofficeUser } = useContextStaffProfile();
   const { path } = useRouteMatch();
   return (
     <HStack
@@ -63,7 +63,13 @@ export const RegistrationItem = ({
       </VStack>
       <HStack spacing={2}>
         <InfoOutlineIcon w="16px" h="16px" />
-        <Link href={helpLink} isExternal fontSize="15px" lineHeight="21px" textDecor="underline">
+        <Link
+          href={helpLink}
+          isExternal
+          fontSize="15px"
+          lineHeight="21px"
+          textDecor="underline"
+        >
           {helpText}
         </Link>
       </HStack>

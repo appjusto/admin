@@ -8,7 +8,7 @@ import {
   DrawerOverlay,
   Text,
 } from '@chakra-ui/react';
-import { useContextFirebaseUser } from 'app/state/auth/context';
+import { useContextStaffProfile } from 'app/state/staff/context';
 import React from 'react';
 
 interface BaseDrawerProps {
@@ -29,7 +29,7 @@ export const FinancesBaseDrawer = ({
   ...props
 }: BaseDrawerProps) => {
   // context
-  const { isBackofficeUser } = useContextFirebaseUser();
+  const { isBackofficeUser } = useContextStaffProfile();
   // refs
   const bodyRef = React.useRef<HTMLDivElement>(null);
   // side effects

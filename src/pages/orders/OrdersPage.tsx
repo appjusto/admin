@@ -1,7 +1,7 @@
 import { Box } from '@chakra-ui/react';
-import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { useOrdersContext } from 'app/state/order';
+import { useContextStaffProfile } from 'app/state/staff/context';
 import Container from 'common/components/Container';
 import { ChatDrawer } from 'pages/chat/ChatDrawer';
 import React from 'react';
@@ -20,7 +20,7 @@ import { OrdersHeader } from './OrdersHeader';
 
 const OrdersPage = () => {
   // context
-  const { isBackofficeUser } = useContextFirebaseUser();
+  const { isBackofficeUser } = useContextStaffProfile();
   const { business } = useContextBusiness();
   const { scheduledOrders } = useOrdersContext();
   const { path } = useRouteMatch();

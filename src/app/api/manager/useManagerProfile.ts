@@ -1,10 +1,10 @@
 import { ManagerProfile, WithId } from '@appjusto/types';
 import { useContextApi } from 'app/state/api/context';
 import {
-  useContextFirebaseUser,
   useContextFirebaseUserEmail,
   useContextFirebaseUserId,
 } from 'app/state/auth/context';
+import { useContextStaffProfile } from 'app/state/staff/context';
 import React from 'react';
 
 export const useManagerProfile = () => {
@@ -12,14 +12,18 @@ export const useManagerProfile = () => {
   const api = useContextApi();
   const id = useContextFirebaseUserId();
   const email = useContextFirebaseUserEmail();
-  const { isBackofficeUser } = useContextFirebaseUser();
+  const { isBackofficeUser } = useContextStaffProfile();
   // state
-  const [managerEmail, setManagerEmail] = React.useState<string | undefined | null>();
-  const [manager, setManager] = React.useState<WithId<ManagerProfile> | undefined | null>();
+  const [managerEmail, setManagerEmail] = React.useState<
+    string | undefined | null
+  >();
+  const [manager, setManager] = React.useState<
+    WithId<ManagerProfile> | undefined | null
+  >();
   // side effects
   // observe profile for regular users
   React.useEffect(() => {
-    if (isBackofficeUser || !id) return;
+    if (isBackofficeUser !== false || !id) return;
     const unsub = api.manager().observeProfile(id, setManager);
     return () => unsub();
   }, [api, id, isBackofficeUser]);
@@ -34,7 +38,7 @@ export const useManagerProfile = () => {
   // if manager is null for backoffice purposes, the createProfile func
   // will check the manager existence before create a new one
   React.useEffect(() => {
-    if (isBackofficeUser) return;
+    if (isBackofficeUser !== false) return;
     if (!id || !email) return;
     if (manager === null) {
       api.manager().createProfile(id, email);

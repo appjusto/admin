@@ -11,7 +11,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { useMenuMessage } from 'app/api/business/menu/useMenuMessage';
-import { useContextFirebaseUser } from 'app/state/auth/context';
+import { useContextStaffProfile } from 'app/state/staff/context';
 import { CustomInput as Input } from 'common/components/form/input/CustomInput';
 import { CustomTextarea as Textarea } from 'common/components/form/input/CustomTextarea';
 import React from 'react';
@@ -24,7 +24,7 @@ interface Props {
 
 export const MessageDrawer = ({ onClose, ...props }: Props) => {
   //context
-  const { isBackofficeUser } = useContextFirebaseUser();
+  const { isBackofficeUser } = useContextStaffProfile();
   const {
     menuMessage,
     updateMenuMessage,

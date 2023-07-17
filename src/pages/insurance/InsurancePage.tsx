@@ -17,6 +17,7 @@ import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { useContextServerTime } from 'app/state/server-time';
+import { useContextStaffProfile } from 'app/state/staff/context';
 import { OnboardingProps } from 'pages/onboarding/types';
 import { isNewValidOnboardingStep } from 'pages/onboarding/utils';
 import { OptionCard } from 'pages/OptionCard';
@@ -33,7 +34,8 @@ import { getBusinessServiceActivationDate } from './utils';
 const InsurancePage = ({ onboarding, redirect }: OnboardingProps) => {
   // context
   const { push } = useHistory();
-  const { user, isBackofficeUser } = useContextFirebaseUser();
+  const { user } = useContextFirebaseUser();
+  const { isBackofficeUser } = useContextStaffProfile();
   const { getServerTime } = useContextServerTime();
   const { dispatchAppRequestResult } = useContextAppRequests();
   const { business, insuranceAvailable } = useContextBusiness();

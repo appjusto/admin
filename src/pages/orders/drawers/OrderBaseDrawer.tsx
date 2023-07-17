@@ -16,9 +16,9 @@ import {
   Tooltip,
 } from '@chakra-ui/react';
 import { useBusinessTotalOrdersByConsumer } from 'app/api/order/useBusinessTotalOrdersByConsumer';
-import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusinessId } from 'app/state/business/context';
 import { useOrdersContext } from 'app/state/order';
+import { useContextStaffProfile } from 'app/state/staff/context';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { phoneFormatter } from 'common/components/form/input/pattern-input/formatters';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
@@ -58,7 +58,7 @@ export const OrderBaseDrawer = ({
 }: BaseDrawerProps) => {
   //context
   const { path } = useRouteMatch();
-  const { isBackofficeUser } = useContextFirebaseUser();
+  const { isBackofficeUser } = useContextStaffProfile();
   const businessId = useContextBusinessId();
   const { changeOrderStatus } = useOrdersContext();
   const consumerTotalOrders = useBusinessTotalOrdersByConsumer(

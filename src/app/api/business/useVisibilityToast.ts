@@ -1,11 +1,11 @@
 import { Business, WithId } from '@appjusto/types';
-import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextAppRequests } from 'app/state/requests/context';
+import { useContextStaffProfile } from 'app/state/staff/context';
 import React from 'react';
 
 export const useVisibilityToast = (business?: WithId<Business> | null) => {
   // context
-  const { isBackofficeUser } = useContextFirebaseUser();
+  const { isBackofficeUser } = useContextStaffProfile();
   const { dispatchAppRequestResult } = useContextAppRequests();
   // refs
   const enabledRef = React.useRef({ value: false, active: false });
@@ -29,7 +29,7 @@ export const useVisibilityToast = (business?: WithId<Business> | null) => {
     enabledRef.current.value = business?.enabled ?? false;
   }, [business?.enabled]);
   React.useEffect(() => {
-    if (isBackofficeUser) return;
+    if (isBackofficeUser !== false) return;
     if (business?.situation !== 'approved') return;
     if (business.enabled) return;
     const timer = setTimeout(() => handleVisibilityAlert(), 2000);

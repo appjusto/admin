@@ -5,7 +5,7 @@ import {
   WithId,
 } from '@appjusto/types';
 import { useContextApi } from 'app/state/api/context';
-import { useContextFirebaseUser } from 'app/state/auth/context';
+import { useContextStaffProfile } from 'app/state/staff/context';
 import { DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
 import React from 'react';
 import { useUserCanReadEntity } from '../auth/useUserCanReadEntity';
@@ -20,7 +20,7 @@ export const useObserveOrderMatching = (
   // context
   const api = useContextApi();
   const userCanRead = useUserCanReadEntity('orders');
-  const { isBackofficeUser } = useContextFirebaseUser();
+  const { isBackofficeUser } = useContextStaffProfile();
   // state
   const [matching, setMatching] = React.useState<OrderMatching | null>();
   const [logsQueryLimit, setlogsQueryLimit] = React.useState<

@@ -23,9 +23,9 @@ import { usePlatformParams } from 'app/api/platform/usePlatformParams';
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusiness } from 'app/state/business/context';
 import React from 'react';
-import { useContextFirebaseUser } from '../auth/context';
 import { useContextManagerProfile } from '../manager/context';
 import { useContextAppRequests } from '../requests/context';
+import { useContextStaffProfile } from '../staff/context';
 import { getOrderAcceptedFrom } from './utils';
 
 interface ContextProps {
@@ -65,7 +65,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   const api = useContextApi();
   const { platformParams } = usePlatformParams();
   const { dispatchAppRequestResult } = useContextAppRequests();
-  const { isBackofficeUser } = useContextFirebaseUser();
+  const { isBackofficeUser } = useContextStaffProfile();
   const { manager } = useContextManagerProfile();
   const { business } = useContextBusiness();
   useBusinessKeepAlive(business?.id);

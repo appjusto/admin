@@ -18,7 +18,7 @@ export const useObserveBusinessesManagedBy = (
   // side effects
   React.useEffect(() => {
     if (!email) return; // during initialization
-    if (isBackofficeUser) return;
+    if (isBackofficeUser !== false) return;
     const unsub = api.business().observeBusinessesManagedBy(
       email,
       ({ current, units }) => {

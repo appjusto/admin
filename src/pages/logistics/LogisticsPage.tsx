@@ -5,6 +5,7 @@ import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { useContextServerTime } from 'app/state/server-time';
+import { useContextStaffProfile } from 'app/state/staff/context';
 import { FilterText } from 'common/components/backoffice/FilterText';
 import { getBusinessServiceActivationDate } from 'pages/insurance/utils';
 import { OnboardingProps } from 'pages/onboarding/types';
@@ -23,7 +24,8 @@ export type LogisticsType = 'appjusto' | 'private';
 
 const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
   // context
-  const { user, isBackofficeUser } = useContextFirebaseUser();
+  const { user } = useContextFirebaseUser();
+  const { isBackofficeUser } = useContextStaffProfile();
   const { getServerTime } = useContextServerTime();
   const { dispatchAppRequestResult } = useContextAppRequests();
   const { business, businessFleet, platformFees, logisticsAvailable } =

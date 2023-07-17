@@ -1,7 +1,7 @@
 import { isElectron } from '@firebase/util';
 import * as Sentry from '@sentry/react';
 import { useContextApi } from 'app/state/api/context';
-import { useContextFirebaseUser } from 'app/state/auth/context';
+import { useContextStaffProfile } from 'app/state/staff/context';
 import { useNotificationPermission } from 'app/utils/notifications/useNotificationPermission';
 //@ts-ignore
 import newMessageSound from 'common/sounds/new-message.mp3';
@@ -20,7 +20,7 @@ export const useNewChatMessages = (businessId?: string) => {
   // context
   const api = useContextApi();
   const userCanRead = useUserCanReadEntity('chats');
-  const { isBackofficeUser } = useContextFirebaseUser();
+  const { isBackofficeUser } = useContextStaffProfile();
   const permission = useNotificationPermission();
   const redirectToOrders = useRedirectToOrders(['/app/orders', '/app/chat']);
   // state
@@ -37,7 +37,7 @@ export const useNewChatMessages = (businessId?: string) => {
     return () => unsub();
   }, [api, userCanRead, businessId]);
   React.useEffect(() => {
-    if (isBackofficeUser) return;
+    if (isBackofficeUser !== false) return;
     if (newChatMessages.length === 0) return;
     if (!isEqual(messagesToNotify, newChatMessages)) {
       if (isDesktopApp) {

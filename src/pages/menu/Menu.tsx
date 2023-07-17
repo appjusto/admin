@@ -9,9 +9,9 @@ import {
   Link,
   Text,
 } from '@chakra-ui/react';
-import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextMenu } from 'app/state/menu/context';
+import { useContextStaffProfile } from 'app/state/staff/context';
 import { FilterText } from 'common/components/backoffice/FilterText';
 import { NewFeatureBox } from 'common/components/NewFeatureBox';
 import { ReactComponent as SearchIcon } from 'common/img/searchIcon.svg';
@@ -42,7 +42,7 @@ const Menu = () => {
   // context
   const { path } = useRouteMatch();
   const history = useHistory();
-  const { isBackofficeUser } = useContextFirebaseUser();
+  const { isBackofficeUser } = useContextStaffProfile();
   const { business } = useContextBusiness();
   const {
     setIsMenuActive,

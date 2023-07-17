@@ -6,6 +6,7 @@ import React, { Dispatch, SetStateAction } from 'react';
 import { UseMutateFunction } from 'react-query';
 import packageInfo from '../../../../package.json';
 import { useContextFirebaseUser } from '../auth/context';
+import { useContextStaffProfile } from '../staff/context';
 
 const version = packageInfo.version;
 
@@ -35,7 +36,8 @@ interface Props {
 
 export const ManagerProvider = ({ children }: Props) => {
   // context
-  const { user, isBackofficeUser } = useContextFirebaseUser();
+  const { user } = useContextFirebaseUser();
+  const { isBackofficeUser } = useContextStaffProfile();
   const { manager, setManagerEmail } = useManagerProfile();
   // set useUpdateManagerProfile isOnboarding to "true" to avoid dispatching update
   // manager webAppVersion changes results

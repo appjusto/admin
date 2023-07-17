@@ -1,7 +1,14 @@
-import { Button, Center, Container, Flex, FormControl, Text } from '@chakra-ui/react';
+import {
+  Button,
+  Center,
+  Container,
+  Flex,
+  FormControl,
+  Text,
+} from '@chakra-ui/react';
 import { useAuthentication } from 'app/api/auth/useAuthentication';
 import { useContextApi } from 'app/state/api/context';
-import { useContextFirebaseUser } from 'app/state/auth/context';
+import { useContextStaffProfile } from 'app/state/staff/context';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import { Loading } from 'common/components/Loading';
 import { ReactComponent as Logo } from 'common/img/logo.svg';
@@ -23,7 +30,7 @@ const Join = () => {
   const savedEmail = api.auth().getSignInEmail();
   const isLinkValid = api.auth().isSignInWithEmailLink(link);
   const isEmailSaved = Boolean(savedEmail);
-  const { isBackofficeUser } = useContextFirebaseUser();
+  const { isBackofficeUser } = useContextStaffProfile();
   // state
   const [email, setEmail] = React.useState('');
   const [isTimeout, setIsTimeout] = React.useState(false);

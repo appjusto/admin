@@ -14,8 +14,8 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { useFetchBusinessOrdersToExport } from 'app/api/order/useFetchBusinessOrdersToExport';
-import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusinessId } from 'app/state/business/context';
+import { useContextStaffProfile } from 'app/state/staff/context';
 import { CustomDateFilter } from 'common/components/form/input/CustomDateFilter';
 import React from 'react';
 import { CSVLink } from 'react-csv';
@@ -30,7 +30,7 @@ interface OrderExportDrawerProps {
 
 export const OrderExportDrawer = (props: OrderExportDrawerProps) => {
   //context
-  const { isBackofficeUser } = useContextFirebaseUser();
+  const { isBackofficeUser } = useContextStaffProfile();
   const businessId = useContextBusinessId();
   // stat
   const [start, setStart] = React.useState('');

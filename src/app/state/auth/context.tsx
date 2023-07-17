@@ -15,7 +15,6 @@ interface FirebaseUserContextProps {
   adminRole?: AdminRole | null;
   backofficePermissions?: UserPermissions | null;
   adminPermissions?: UserPermissions;
-  isBackofficeUser?: boolean | null;
   isBackofficeSuperuser?: boolean | null;
   userAbility?: AppAbility;
   refreshUserToken?(businessId?: string): Promise<void>;
@@ -34,9 +33,6 @@ export const FirebaseUserProvider = ({ children }: Props) => {
   const [adminRole, setAdminRole] = React.useState<AdminRole | null>();
   const [backofficePermissions, setBackofficePermissions] =
     React.useState<UserPermissions | null>();
-  const [isBackofficeUser, setIsBackofficeUser] = React.useState<
-    boolean | null
-  >();
   const [userAbility, setUserAbility] = React.useState<AppAbility>();
   const [isBackofficeSuperuser, setIsBackofficeSuperuser] = React.useState<
     boolean | null
@@ -51,7 +47,6 @@ export const FirebaseUserProvider = ({ children }: Props) => {
       if (user === null) {
         setAdminRole(null);
         setBackofficePermissions(null);
-        setIsBackofficeUser(null);
         return;
       }
       try {
@@ -106,7 +101,6 @@ export const FirebaseUserProvider = ({ children }: Props) => {
     if (!backofficePermissions) return;
     const ability = handleUserAbility(backofficePermissions, user.uid);
     setUserAbility(ability);
-    setIsBackofficeUser(true);
     // there is no practical need for backoffice users to create orders. So
     // we use the permission to 'create' 'orders' as superuser characteristic
     setIsBackofficeSuperuser(ability?.can('create', 'orders'));
@@ -115,7 +109,6 @@ export const FirebaseUserProvider = ({ children }: Props) => {
     if (!adminRole) return;
     const ability = handleUserAbility(adminRole);
     setUserAbility(ability);
-    setIsBackofficeUser(false);
   }, [adminRole, handleUserAbility]);
   // provider
   return (
@@ -126,7 +119,6 @@ export const FirebaseUserProvider = ({ children }: Props) => {
         minVersion,
         adminRole,
         backofficePermissions,
-        isBackofficeUser,
         isBackofficeSuperuser,
         userAbility,
         refreshUserToken,

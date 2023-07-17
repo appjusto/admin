@@ -1,6 +1,6 @@
 import { Box, Center, Flex, Image, Text } from '@chakra-ui/react';
-import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
+import { useContextStaffProfile } from 'app/state/staff/context';
 import { ImageFbLoading } from 'common/components/ImageFbLoading';
 import appjustoLogo from 'common/img/logo.svg';
 import { useRouteMatch } from 'react-router';
@@ -13,7 +13,7 @@ import { ManagerBar } from './ManagerBar';
 const Sidebar = () => {
   // context
   const { path } = useRouteMatch();
-  const { isBackofficeUser } = useContextFirebaseUser();
+  const { isBackofficeUser } = useContextStaffProfile();
   const { logo } = useContextBusiness();
   // helpers
   const isBackOffice = path.includes('backoffice');

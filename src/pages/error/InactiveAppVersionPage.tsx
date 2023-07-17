@@ -12,6 +12,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { useContextFirebaseUser } from 'app/state/auth/context';
+import { useContextStaffProfile } from 'app/state/staff/context';
 import { ReactComponent as Logo } from 'common/img/logo.svg';
 import React from 'react';
 import { FaAngleDown, FaAngleUp } from 'react-icons/fa';
@@ -24,7 +25,8 @@ const version = packageInfo.version;
 
 const InactiveAppVersionPage = () => {
   // context
-  const { minVersion, isBackofficeUser } = useContextFirebaseUser();
+  const { minVersion } = useContextFirebaseUser();
+  const { isBackofficeUser } = useContextStaffProfile();
   const { isOpen, onToggle } = useDisclosure();
   // handlers
   const handleHardReload = () => {
@@ -52,10 +54,22 @@ const InactiveAppVersionPage = () => {
         <Flex w="100%" justifyContent="center" alignItems="center">
           <Logo />
         </Flex>
-        <Text mt="8" fontSize="18px" lineHeight="22px" fontWeight="700" textAlign="center">
+        <Text
+          mt="8"
+          fontSize="18px"
+          lineHeight="22px"
+          fontWeight="700"
+          textAlign="center"
+        >
           {t('Sua versão do AppJusto Admin está desatualizada')}
         </Text>
-        <Text mt="4" fontSize="15px" lineHeight="21px" fontWeight="500" textAlign="center">
+        <Text
+          mt="4"
+          fontSize="15px"
+          lineHeight="21px"
+          fontWeight="500"
+          textAlign="center"
+        >
           {t(
             `A sua versão atual (v${version}) é inferior à versão mínima necessária para utilizar a plataforma (v${minVersion}). Clique no botão abaixo para atualizá-la:`
           )}
@@ -104,18 +118,40 @@ const InactiveAppVersionPage = () => {
             </Code>
           </Flex>
         </Collapse>
-        <Text mt="8" fontSize="15px" lineHeight="21px" fontWeight="500" textAlign="center">
+        <Text
+          mt="8"
+          fontSize="15px"
+          lineHeight="21px"
+          fontWeight="500"
+          textAlign="center"
+        >
           {t(
             'Se o problema persistir, você pode entrar em contato com o nosso suporte pelos canais abaixo:'
           )}
         </Text>
-        <Text mt="6" fontSize="15px" lineHeight="21px" fontWeight="700" textAlign="center">
+        <Text
+          mt="6"
+          fontSize="15px"
+          lineHeight="21px"
+          fontWeight="700"
+          textAlign="center"
+        >
           {t('e-mail: ')}
-          <Link color="blue.500" textDecor="underline" href="mailto:contato@appjusto.com.br">
+          <Link
+            color="blue.500"
+            textDecor="underline"
+            href="mailto:contato@appjusto.com.br"
+          >
             contato@appjusto.com.br
           </Link>
         </Text>
-        <Text mt="4" fontSize="15px" lineHeight="21px" fontWeight="700" textAlign="center">
+        <Text
+          mt="4"
+          fontSize="15px"
+          lineHeight="21px"
+          fontWeight="700"
+          textAlign="center"
+        >
           {t('Whatsapp: ')}
           <Link
             color="blue.500"

@@ -8,9 +8,12 @@ let updateUserAgentCount = 0;
 interface ContextProps {
   staff: WithId<StaffProfile> | undefined | null;
   username: string;
+  isBackofficeUser?: boolean;
 }
 
-const StaffProfileContext = React.createContext<ContextProps>({} as ContextProps);
+const StaffProfileContext = React.createContext<ContextProps>(
+  {} as ContextProps
+);
 
 interface Props {
   children: React.ReactNode | React.ReactNode[];
@@ -19,12 +22,19 @@ interface Props {
 export const StaffProvider = ({ children }: Props) => {
   // state
   const staff = useStaffProfile();
+  const [isBackofficeUser, setIsBackofficeUser] = React.useState<boolean>();
   const { updateProfile } = useUpdateStaffProfile(staff, false);
-  const username = staff?.name ?? (staff?.email ? staff?.email.split('@')[0] : '');
+  const username =
+    staff?.name ?? (staff?.email ? staff?.email.split('@')[0] : '');
   // side effects
   React.useEffect(() => {
-    if (!staff) return;
+    if (staff === undefined) return;
+    if (staff === null) {
+      setIsBackofficeUser(false);
+      return;
+    }
     if (updateUserAgentCount > 0) return;
+    setIsBackofficeUser(true);
     const userAgent = window?.navigator?.userAgent;
     if (userAgent && staff.userAgent !== userAgent) {
       updateUserAgentCount++;
@@ -33,7 +43,7 @@ export const StaffProvider = ({ children }: Props) => {
   }, [staff, updateProfile]);
   // provider
   return (
-    <StaffProfileContext.Provider value={{ staff, username }}>
+    <StaffProfileContext.Provider value={{ staff, username, isBackofficeUser }}>
       {children}
     </StaffProfileContext.Provider>
   );

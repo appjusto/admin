@@ -6,7 +6,7 @@ import React from 'react';
 export const useStaffProfile = () => {
   // contex
   const api = useContextApi();
-  const { user, isBackofficeUser } = useContextFirebaseUser();
+  const { user } = useContextFirebaseUser();
   // state
   const [profile, setProfile] = React.useState<
     WithId<StaffProfile> | undefined | null
@@ -14,16 +14,16 @@ export const useStaffProfile = () => {
   // side effects
   // observe profile
   React.useEffect(() => {
-    if (!user?.uid || !isBackofficeUser) return;
+    if (!user?.uid) return;
     const unsub = api.staff().observeProfile(user.uid, setProfile);
     return () => unsub();
-  }, [api, user?.uid, isBackofficeUser]);
+  }, [api, user?.uid]);
   React.useEffect(() => {
-    if (!user?.uid || !isBackofficeUser) return;
+    if (!user?.uid) return;
     if (profile?.situation === 'pending') {
       api.staff().updateProfile(user.uid, { situation: 'approved' });
     }
-  }, [api, user?.uid, isBackofficeUser, profile]);
+  }, [api, user?.uid, profile]);
   // return
   return profile;
 };

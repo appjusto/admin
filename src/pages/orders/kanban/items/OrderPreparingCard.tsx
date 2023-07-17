@@ -1,8 +1,8 @@
 import { Order, WithId } from '@appjusto/types';
 import { Box, Button, Flex, HStack, Progress, Text } from '@chakra-ui/react';
-import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useOrdersContext } from 'app/state/order';
 import { useContextServerTime } from 'app/state/server-time';
+import { useContextStaffProfile } from 'app/state/staff/context';
 import { ReactComponent as Alarm } from 'common/img/alarm_outlined.svg';
 import dayjs from 'dayjs';
 import { Timestamp } from 'firebase/firestore';
@@ -19,7 +19,7 @@ export const OrderPreparingCard = ({ order }: Props) => {
   const { url } = useRouteMatch();
   const { getServerTime } = useContextServerTime();
   const { business, changeOrderStatus } = useOrdersContext();
-  const { isBackofficeUser } = useContextFirebaseUser();
+  const { isBackofficeUser } = useContextStaffProfile();
   // state
   const [elapsedTime, setElapsedTime] = React.useState<number | null>(0);
   // helpers

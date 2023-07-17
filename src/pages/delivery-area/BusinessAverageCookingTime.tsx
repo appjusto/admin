@@ -1,6 +1,6 @@
 import { CookingTimeMode } from '@appjusto/types';
 import { Flex, Radio, RadioGroup } from '@chakra-ui/react';
-import { useContextFirebaseUser } from 'app/state/auth/context';
+import { useContextStaffProfile } from 'app/state/staff/context';
 import React from 'react';
 import { t } from 'utils/i18n';
 
@@ -18,7 +18,7 @@ export const BusinessAverageCookingTime = ({
   cookingTimeMode,
 }: BusinessAverageCookingTimeProps) => {
   // context
-  const { isBackofficeUser } = useContextFirebaseUser();
+  const { isBackofficeUser } = useContextStaffProfile();
   // state
   const [time, setTime] = React.useState('30');
   // handlers

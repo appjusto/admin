@@ -9,7 +9,7 @@ import {
   Flex,
   Text,
 } from '@chakra-ui/react';
-import { useContextFirebaseUser } from 'app/state/auth/context';
+import { useContextStaffProfile } from 'app/state/staff/context';
 import React from 'react';
 import { Route, Switch, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
@@ -28,7 +28,7 @@ interface Props {
 export const ProductDrawer = (props: Props) => {
   // params
   const { path, url } = useRouteMatch();
-  const { isBackofficeUser } = useContextFirebaseUser();
+  const { isBackofficeUser } = useContextStaffProfile();
   const {
     productId,
     onProductUpdate,

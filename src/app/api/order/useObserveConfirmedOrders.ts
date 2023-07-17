@@ -2,7 +2,7 @@ import { OrderStatus } from '@appjusto/types';
 import { isElectron } from '@firebase/util';
 import * as Sentry from '@sentry/react';
 import { useObserveOrders } from 'app/api/order/useObserveOrders';
-import { useContextFirebaseUser } from 'app/state/auth/context';
+import { useContextStaffProfile } from 'app/state/staff/context';
 import { useNotificationPermission } from 'app/utils/notifications/useNotificationPermission';
 //@ts-ignore
 import newOrderSound from 'common/sounds/bell-ding-v3.mp3';
@@ -34,7 +34,7 @@ export const useObserveConfirmedOrders = (
   notify: boolean = true
 ) => {
   // context
-  const { isBackofficeUser } = useContextFirebaseUser();
+  const { isBackofficeUser } = useContextStaffProfile();
   const permission = useNotificationPermission();
   const confirmedOrders = useObserveOrders(statuses, businessId);
   const redirectToOrders = useRedirectToOrders(['/app/orders', '/app/chat']);
@@ -45,7 +45,7 @@ export const useObserveConfirmedOrders = (
   const [playSound] = useSound(newOrderSound, { volume: 1 });
   // side effects
   React.useEffect(() => {
-    if (isBackofficeUser) return;
+    if (isBackofficeUser !== false) return;
     if (confirmedOrders.length === 0) return;
     const confirmedIds = confirmedOrders.map((order) => order.id);
     if (!isEqual(ordersToNotify, confirmedIds)) {

@@ -22,6 +22,7 @@ import { usePlatformFees } from 'app/api/platform/usePlatformFees';
 import React from 'react';
 import { useQueryClient } from 'react-query';
 import { useContextFirebaseUser } from '../auth/context';
+import { useContextStaffProfile } from '../staff/context';
 import { shouldUpdateState } from '../utils';
 
 const watchedFields: (keyof Business)[] = [
@@ -92,7 +93,8 @@ interface Props {
 export const BusinessProvider = ({ children }: Props) => {
   // context
   const queryClient = useQueryClient();
-  const { user, isBackofficeUser, refreshUserToken } = useContextFirebaseUser();
+  const { user, refreshUserToken } = useContextFirebaseUser();
+  const { isBackofficeUser } = useContextStaffProfile();
   const { platformFees } = usePlatformFees();
   // const businesses = useObserveBusinessManagedBy(user?.email);
   const [businessId, setBusinessId] = React.useState<

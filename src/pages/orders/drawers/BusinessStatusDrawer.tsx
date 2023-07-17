@@ -16,9 +16,9 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
-import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextAppRequests } from 'app/state/requests/context';
+import { useContextStaffProfile } from 'app/state/staff/context';
 import iconTraffic from 'common/img/icon-traffic.svg';
 import React from 'react';
 import { FiClock } from 'react-icons/fi';
@@ -34,7 +34,7 @@ export const BusinessStatusDrawer = ({
   ...props
 }: BusinessStatusDrawerProps) => {
   //context
-  const { isBackofficeUser } = useContextFirebaseUser();
+  const { isBackofficeUser } = useContextStaffProfile();
   const { dispatchAppRequestResult } = useContextAppRequests();
   const { business } = useContextBusiness();
   const { updateBusinessProfile, updateResult } = useBusinessProfile(

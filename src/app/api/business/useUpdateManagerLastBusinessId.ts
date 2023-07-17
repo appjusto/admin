@@ -1,5 +1,5 @@
 import { ManagerProfile, WithId } from '@appjusto/types';
-import { useContextFirebaseUser } from 'app/state/auth/context';
+import { useContextStaffProfile } from 'app/state/staff/context';
 import React from 'react';
 import { useUpdateManagerProfile } from '../manager/useUpdateManagerProfile';
 
@@ -8,11 +8,11 @@ export const useUpdateManagerLastBusinessId = (
   businessId?: string
 ) => {
   // context
-  const { isBackofficeUser } = useContextFirebaseUser();
+  const { isBackofficeUser } = useContextStaffProfile();
   const { updateLastBusinessId } = useUpdateManagerProfile(manager?.id, true);
   // side effects
   React.useEffect(() => {
-    if (isBackofficeUser) return;
+    if (isBackofficeUser !== false) return;
     if (!businessId) return;
     updateLastBusinessId(businessId);
   }, [isBackofficeUser, businessId, updateLastBusinessId]);

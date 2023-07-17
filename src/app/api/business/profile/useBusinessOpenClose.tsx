@@ -1,7 +1,7 @@
 import { Business, WithId } from '@appjusto/types';
 import { useToast } from '@chakra-ui/toast';
-import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextServerTime } from 'app/state/server-time';
+import { useContextStaffProfile } from 'app/state/staff/context';
 import { CustomToast } from 'common/components/CustomToast';
 import React from 'react';
 import { businessShouldBeOpen } from './utils';
@@ -10,7 +10,7 @@ import { businessShouldBeOpen } from './utils';
 
 export const useBusinessOpenClose = (business?: WithId<Business> | null) => {
   // context
-  const { isBackofficeUser } = useContextFirebaseUser();
+  const { isBackofficeUser } = useContextStaffProfile();
   const { getServerTime } = useContextServerTime();
   // state
   const [isOpen, setIsOpen] = React.useState(false);
@@ -23,7 +23,7 @@ export const useBusinessOpenClose = (business?: WithId<Business> | null) => {
       description?: string,
       duration: number = 6000
     ) => {
-      if (isBackofficeUser) return;
+      if (isBackofficeUser !== false) return;
       if (toast.isActive(title)) return;
       toast({
         id: title,

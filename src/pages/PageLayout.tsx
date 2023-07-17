@@ -1,5 +1,5 @@
 import { Container, Flex, FlexProps } from '@chakra-ui/react';
-import { useContextFirebaseUser } from 'app/state/auth/context';
+import { useContextStaffProfile } from 'app/state/staff/context';
 import { useRouteMatch } from 'react-router-dom';
 import MainHeader from './MainHeader';
 import { MenuMobile } from './MenuMobile';
@@ -19,7 +19,7 @@ const PageLayout = ({
 }: PageLayoutProps) => {
   // context
   const { path } = useRouteMatch();
-  const { isBackofficeUser } = useContextFirebaseUser();
+  const { isBackofficeUser } = useContextStaffProfile();
   // helpers
   const isBackOffice = path.includes('backoffice');
   // UI
