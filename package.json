@@ -86,6 +86,7 @@
     "test-env": "yarn env-cmd -f .env.$ENV yarn test",
     "test:community": "ENV=community yarn test-env",
     "eject": "react-scripts eject",
+    "deploy:preview": "yarn version && env-cmd -f .env.$ENV yarn build && firebase use app-justo-$ENV && firebase hosting:channel:deploy preview --expires 12h",
     "deploy": "git checkout $ENV && git pull && yarn version && env-cmd -f .env.$ENV yarn build && firebase use app-justo-$ENV && firebase deploy",
     "deploy:dev": "ENV=dev yarn deploy",
     "deploy:staging": "ENV=staging yarn deploy",
