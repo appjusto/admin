@@ -43,11 +43,7 @@ const CourierOrdersTableItem = ({ order }: ItemPros) => {
       <Td>{getDateAndHour(order.timestamps?.confirmed)}</Td>
       <Td>{order.type === 'food' ? 'Comida' : 'p2p'}</Td>
       <Td>{order.business?.name ?? 'N/I'}</Td>
-      <Td>
-        {order.fare?.courier?.netValue
-          ? formatCurrency(order.fare?.courier.netValue)
-          : 'N/E'}
-      </Td>
+      <Td>{formatCurrency(order.fare?.courier?.paid ?? 0)}</Td>
     </Tr>
   );
 };
@@ -74,7 +70,7 @@ export const CourierOrders = () => {
   const totalOrdersValue = React.useMemo(() => {
     if (!orders) return 0;
     return orders.reduce((result, order) => {
-      return (result += order.fare?.courier?.netValue ?? 0);
+      return (result += order.fare?.courier?.paid ?? 0);
     }, 0);
   }, [orders]);
   // handlers
