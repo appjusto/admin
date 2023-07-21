@@ -122,6 +122,11 @@ export const BusinessRegister = () => {
             'can-match-courier',
             'can-outsource',
             'appjusto-only',
+            'investor',
+            'cultural-fit',
+            'in-person-onboarding',
+            'link-on-social',
+            'ads',
           ] as BusinessTag[]
         }
         updateProfile={(tags) => updateBusinessProfile({ tags })}

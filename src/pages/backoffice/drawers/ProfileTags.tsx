@@ -8,7 +8,8 @@ import {
   Tag,
   TagLabel,
   Text,
-  VStack,
+  Wrap,
+  WrapItem,
 } from '@chakra-ui/react';
 import React from 'react';
 import { t } from 'utils/i18n';
@@ -61,18 +62,15 @@ export const ProfileTags = <T,>({
             onChange={(values) => setStateTags(values as unknown as T[])}
           >
             <Text fontWeight="700">{t('Tags disponíveis:')}</Text>
-            <VStack mt="2" alignItems="flex-start">
+            <Wrap mt="2" spacing={6}>
               {options.map((tag) => {
                 return (
-                  <Checkbox
-                    key={tag as unknown as string}
-                    value={tag as unknown as string}
-                  >
-                    {tag}
-                  </Checkbox>
+                  <WrapItem key={tag as unknown as string}>
+                    <Checkbox value={tag as unknown as string}>{tag}</Checkbox>
+                  </WrapItem>
                 );
               })}
-            </VStack>
+            </Wrap>
           </CheckboxGroup>
           <HStack mt="4" justifyContent="flex-end" spacing={4}>
             <Button
