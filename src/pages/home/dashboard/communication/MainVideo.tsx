@@ -1,4 +1,4 @@
-import { Box, Text } from '@chakra-ui/react';
+import { AspectRatio, Box, Text } from '@chakra-ui/react';
 import { t } from 'utils/i18n';
 import { BaseAccordion } from './BaseAccordion';
 
@@ -19,8 +19,14 @@ export const MainVideo = () => {
       }
       defaultIndex={[0]}
     >
-      <Box w="full" h="500px">
-        video
+      <Box mt="6" w="full" borderRadius="lg" overflow="hidden">
+        <AspectRatio ratio={9 / 5}>
+          <iframe
+            title="AppJusto é o app de delivery bom pra todos"
+            src="https://www.youtube.com/embed/BaEiVN7OZWE"
+            allowFullScreen
+          />
+        </AspectRatio>
       </Box>
     </BaseAccordion>
   );
