@@ -42,9 +42,10 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
   const { sendSignInLinkToEmail, sendingLinkResult } = useAuthentication();
   const { business } = useContextBusiness();
   const { manager } = useContextManagerProfile();
+  const isOnboarding = typeof onboarding === 'string';
   const { updateProfile, updateResult } = useUpdateManagerProfile(
     manager?.id,
-    typeof onboarding === 'string'
+    isOnboarding
   );
   const { isLoading, isSuccess, error: updateError } = updateResult;
 
@@ -266,6 +267,7 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
                 value={currentPasswd}
                 handleChange={(ev) => setCurrentPasswd(ev.target.value)}
                 getValidity={setPasswdIsValid}
+                isRequired
               />
               <Text mt="4" fontSize="xs" maxW="580px">
                 {t(
@@ -281,6 +283,7 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
                 value={passwd}
                 handleChange={(ev) => setPasswd(ev.target.value)}
                 getValidity={setPasswdIsValid}
+                isRequired
               />
               <CustomPasswordInput
                 ref={passwdConfirmRef}
@@ -337,27 +340,27 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
               ref={passwdRef}
               mt="2"
               id="manager-password"
-              label={t('Senha de acesso *')}
+              label={t(`Senha de acesso ${isOnboarding ? '*' : ''}`)}
               placeholder={t('Digite uma senha')}
               value={passwd}
               handleChange={(ev) => setPasswd(ev.target.value)}
               getValidity={setPasswdIsValid}
-              isRequired
+              isRequired={isOnboarding}
             />
             <CustomPasswordInput
               ref={passwdConfirmRef}
               // isRequired={passwd ? true : false}
               isDisabled={!passwd ? true : false}
               id="manager-password-confirmation"
-              label={t('Confirmar senha *')}
+              label={t(`Confirmar senha ${isOnboarding ? '*' : ''}`)}
               placeholder={t('Digite a senha novamente')}
               value={passwdConfirm}
               handleChange={(ev) => setPasswdConfirm(ev.target.value)}
-              isRequired
+              isRequired={isOnboarding}
             />
           </>
         )}
-        {!onboarding && (
+        {!isOnboarding && (
           <>
             <SectionTitle>{t('Preferências de notificação')}</SectionTitle>
             <Text mt="1" fontSize="sm" maxW="580px">
@@ -378,7 +381,7 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
           redirect={redirect}
           isLoading={isLoading}
           submitLabel={t('Salvar dados pessoais')}
-          isDisabled={reauthRequired}
+          isDisabled={isOnboarding && reauthRequired}
         />
       </form>
     </Box>
