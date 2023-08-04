@@ -2,11 +2,7 @@ import { Box, BoxProps, Center, Image, Text } from '@chakra-ui/react';
 import visionImg from 'common/img/collective-vision.png';
 import { t } from 'utils/i18n';
 
-const Root = () => {
-  return <Box></Box>;
-};
-
-const Body = (props: BoxProps) => {
+export const CollectiveVision = (props: BoxProps) => {
   return (
     <Box {...props}>
       <Box mt="6" borderBottom="1px solid" borderColor="gray.400">
@@ -113,9 +109,4 @@ const Body = (props: BoxProps) => {
       </Box>
     </Box>
   );
-};
-
-export const CollectiveVision = {
-  Root,
-  Body,
 };

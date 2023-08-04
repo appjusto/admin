@@ -28,7 +28,7 @@ export const Commitments = ({ redirect }: CommitmentsProps) => {
           'Alinhamento de expectativas para a construção de uma comunidade forte, engajada e com bons resultados'
         )}
       </Text>
-      <CollectiveVision.Body />
+      <CollectiveVision />
       <Text mt="6">
         {t('Veja a íntegra dos compromissos nos nossos ')}
         <Link

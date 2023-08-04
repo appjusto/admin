@@ -4,7 +4,7 @@ import React from 'react';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
 import PageHeader from '../../PageHeader';
-import { RegistrationStatus } from '../RegistrationStatus';
+import { RegistrationStatus } from '../registration/RegistrationStatus';
 import { Panel } from './panel';
 
 const Dashboard = () => {

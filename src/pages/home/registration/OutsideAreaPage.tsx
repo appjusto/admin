@@ -1,7 +1,7 @@
 import { Box, Text } from '@chakra-ui/react';
 import { t } from 'utils/i18n';
+import { Social } from '../Social';
 import { NewRegistrationItem } from './NewRegistrationItem';
-import { Social } from './Social';
 
 export const OutsideAreaPage = () => {
   return (
@@ -15,7 +15,9 @@ export const OutsideAreaPage = () => {
         )}
       </Text>
       <Text mt="6" fontSize="lg">
-        {t('Assim que liberarmos a região você será avisado por e-mail e whatsapp!')}
+        {t(
+          'Assim que liberarmos a região você será avisado por e-mail e whatsapp!'
+        )}
       </Text>
       <Text mt="6" fontSize="lg">
         {t(

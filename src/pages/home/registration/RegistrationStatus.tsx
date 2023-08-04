@@ -2,7 +2,6 @@ import {
   Box,
   Button,
   Center,
-  Image,
   Link,
   ListItem,
   Spinner,
@@ -14,13 +13,12 @@ import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile'
 import { useBusinessProfileValidation } from 'app/api/business/profile/useBusinessProfileValidation';
 import { useContextBusiness } from 'app/state/business/context';
 import { AlertWarning } from 'common/components/AlertWarning';
-import submittedImg from 'common/img/submitted.svg';
 import React from 'react';
 import { t } from 'utils/i18n';
 import { OutsideAreaPage } from './OutsideAreaPage';
 import { RegistrationItem } from './RegistrationItem';
 import { RegistrationModal } from './RegistrationModal';
-import { Social } from './Social';
+import { Submitted } from './Submitted';
 
 const initialState = [
   {
@@ -235,19 +233,7 @@ export const RegistrationStatus = () => {
     business?.situation === 'verified' ||
     business?.situation === 'invalid'
   ) {
-    return (
-      <Box h="80%" maxW="708px" color="black">
-        <Box mt="6" w="100%" maxW="460px">
-          <Image src={submittedImg} w="100%" />
-        </Box>
-        <Text mt="4" fontSize="lg" lineHeight="26px">
-          {t(
-            'Seu cadastro foi enviado com sucesso e está em fase de análise. Em breve você receberá uma confirmação.'
-          )}
-        </Text>
-        <Social />
-      </Box>
-    );
+    return <Submitted />;
   }
   if (business?.situation === 'rejected') {
     if (isOusideArea) {

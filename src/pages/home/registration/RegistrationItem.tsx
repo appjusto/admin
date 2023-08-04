@@ -55,25 +55,27 @@ export const RegistrationItem = ({
         </HStack>
         <Stack direction={{ base: 'column', md: 'row' }} spacing={4}>
           {!status && (
-            <CustomButton
-              mt="0"
-              variant="outline"
-              label={t('Preencher')}
-              link={
-                type === 'manager' && isBackofficeUser
-                  ? `/backoffice/businesses/${businessId}`
-                  : `${path}/${link}`
-              }
-            />
-          )}
-          {secondarylabel && secondaryAction && (
-            <CustomButton
-              mt="0"
-              h="48px"
-              variant="outline"
-              label={secondarylabel}
-              onClick={secondaryAction}
-            />
+            <>
+              <CustomButton
+                mt="0"
+                variant="outline"
+                label={t('Preencher')}
+                link={
+                  type === 'manager' && isBackofficeUser
+                    ? `/backoffice/businesses/${businessId}`
+                    : `${path}/${link}`
+                }
+              />
+              {secondarylabel && secondaryAction && (
+                <CustomButton
+                  mt="0"
+                  h="48px"
+                  variant="outline"
+                  label={secondarylabel}
+                  onClick={secondaryAction}
+                />
+              )}
+            </>
           )}
         </Stack>
       </VStack>
