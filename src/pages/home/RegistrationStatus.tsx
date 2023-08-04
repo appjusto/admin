@@ -19,6 +19,7 @@ import React from 'react';
 import { t } from 'utils/i18n';
 import { OutsideAreaPage } from './OutsideAreaPage';
 import { RegistrationItem } from './RegistrationItem';
+import { RegistrationModal } from './RegistrationModal';
 import { Social } from './Social';
 
 const initialState = [
@@ -100,6 +101,7 @@ export const RegistrationStatus = () => {
   const [validation, setValidation] = React.useState(initialState);
   const [rejection, setRejection] = React.useState<string[]>([]);
   const [isOusideArea, setIsOusideArea] = React.useState<boolean>();
+  const [isMenuModalOpen, setIsMenuModalOpen] = React.useState<boolean>(false);
   // helpers
   const isValid =
     validation.filter((data) => data.status === false).length === 0;
@@ -163,59 +165,69 @@ export const RegistrationStatus = () => {
   }
   if (business?.situation === 'pending') {
     return (
-      <Box mt="12" maxW="800px" color="black">
-        {pendencies > 0 ? (
-          <Box fontSize="md" lineHeight="22px">
-            <Text>
-              {t('Falta pouco para que você possa submeter o seu cadastro!')}
-            </Text>
-            <Text>
-              {t('Você possui apenas ')}
-              <Text as="span" fontWeight="700">
+      <>
+        <Box mt="12" maxW="800px" color="black">
+          {pendencies > 0 ? (
+            <Box fontSize="md" lineHeight="22px">
+              <Text>
+                {t('Falta pouco para que você possa submeter o seu cadastro!')}
+              </Text>
+              <Text>
+                {t('Você possui apenas ')}
+                <Text as="span" fontWeight="700">
+                  {t(
+                    `${pendencies} ${pendencies > 1 ? 'itens' : 'item'} ${
+                      pendencies > 1 ? 'pendentes' : 'pendente'
+                    }`
+                  )}
+                </Text>
+                {t('. Vamos lá!')}
+              </Text>
+            </Box>
+          ) : (
+            <Box fontSize="md" lineHeight="22px">
+              <Text>
                 {t(
-                  `${pendencies} ${pendencies > 1 ? 'itens' : 'item'} ${
-                    pendencies > 1 ? 'pendentes' : 'pendente'
-                  }`
+                  'Ótimo! Agora você já pode enviar o seu cadastro para aprovação:'
                 )}
               </Text>
-              {t('. Vamos lá!')}
-            </Text>
-          </Box>
-        ) : (
-          <Box fontSize="md" lineHeight="22px">
-            <Text>
-              {t(
-                'Ótimo! Agora você já pode enviar o seu cadastro para aprovação:'
-              )}
-            </Text>
-          </Box>
-        )}
-        <VStack mt="6" spacing={4} alignItems="flex-start">
-          {validation.map((data) => {
-            return (
-              <RegistrationItem
-                key={data.type}
-                type={data.type}
-                status={data.status}
-                label={data.label}
-                link={data.link}
-                helpText={data.helpText}
-                helpLink={data.helpLink}
-                secondarylabel={data.type === 'menu' ? 'Importar' : undefined}
-                secondaryAction={data.type === 'menu' ? () => {} : undefined}
-              />
-            );
-          })}
-        </VStack>
-        <Button
-          mt="4"
-          onClick={handleSubmitRegistration}
-          isDisabled={!isValid}
-          isLoading={isLoading}
-        >
-          {t('Enviar cadastro para aprovação')}
-        </Button>
-      </Box>
+            </Box>
+          )}
+          <VStack mt="6" spacing={4} alignItems="flex-start">
+            {validation.map((data) => {
+              return (
+                <RegistrationItem
+                  key={data.type}
+                  type={data.type}
+                  status={data.status}
+                  label={data.label}
+                  link={data.link}
+                  helpText={data.helpText}
+                  helpLink={data.helpLink}
+                  secondarylabel={data.type === 'menu' ? 'Importar' : undefined}
+                  secondaryAction={
+                    data.type === 'menu'
+                      ? () => setIsMenuModalOpen(true)
+                      : undefined
+                  }
+                />
+              );
+            })}
+          </VStack>
+          <Button
+            mt="4"
+            onClick={handleSubmitRegistration}
+            isDisabled={!isValid}
+            isLoading={isLoading}
+          >
+            {t('Enviar cadastro para aprovação')}
+          </Button>
+        </Box>
+        <RegistrationModal
+          isOpen={isMenuModalOpen}
+          onClose={() => setIsMenuModalOpen(false)}
+        />
+      </>
     );
   }
   if (
