@@ -1,5 +1,5 @@
 import { InfoOutlineIcon } from '@chakra-ui/icons';
-import { HStack, Link, Text, VStack } from '@chakra-ui/react';
+import { HStack, Link, Stack, Text, VStack } from '@chakra-ui/react';
 import { useContextBusinessId } from 'app/state/business/context';
 import { useContextStaffProfile } from 'app/state/staff/context';
 import { CustomButton } from 'common/components/buttons/CustomButton';
@@ -14,6 +14,8 @@ interface RegistrationItemProps {
   status: boolean;
   label: string;
   link: string;
+  secondarylabel?: string;
+  secondaryAction?(): void;
   helpText: string;
   helpLink: string;
 }
@@ -23,6 +25,8 @@ export const RegistrationItem = ({
   status,
   label,
   link,
+  secondarylabel,
+  secondaryAction,
   helpText,
   helpLink,
   ...props
@@ -42,24 +46,36 @@ export const RegistrationItem = ({
       py={status ? '4' : '8'}
       {...props}
     >
-      <VStack spacing={1} alignItems="flex-start">
+      <VStack spacing={4} alignItems="flex-start">
         <HStack spacing={4}>
           {status ? <CheckmarkChecked /> : <Checkmark />}
           <Text fontSize="16px" lineHeight="22px" fontWeight="700">
             {label}
           </Text>
         </HStack>
-        {!status && (
-          <CustomButton
-            variant="outline"
-            label={t('Preencher')}
-            link={
-              type === 'manager' && isBackofficeUser
-                ? `/backoffice/businesses/${businessId}`
-                : `${path}/${link}`
-            }
-          />
-        )}
+        <Stack direction={{ base: 'column', md: 'row' }} spacing={4}>
+          {!status && (
+            <CustomButton
+              mt="0"
+              variant="outline"
+              label={t('Preencher')}
+              link={
+                type === 'manager' && isBackofficeUser
+                  ? `/backoffice/businesses/${businessId}`
+                  : `${path}/${link}`
+              }
+            />
+          )}
+          {secondarylabel && secondaryAction && (
+            <CustomButton
+              mt="0"
+              h="48px"
+              variant="outline"
+              label={secondarylabel}
+              onClick={secondaryAction}
+            />
+          )}
+        </Stack>
       </VStack>
       <HStack spacing={2}>
         <InfoOutlineIcon w="16px" h="16px" />

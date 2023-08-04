@@ -14,7 +14,6 @@ import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile'
 import { useBusinessProfileValidation } from 'app/api/business/profile/useBusinessProfileValidation';
 import { useContextBusiness } from 'app/state/business/context';
 import { AlertWarning } from 'common/components/AlertWarning';
-import SharingBar from 'common/components/landing/share/SharingBar';
 import submittedImg from 'common/img/submitted.svg';
 import React from 'react';
 import { t } from 'utils/i18n';
@@ -202,6 +201,8 @@ export const RegistrationStatus = () => {
                 link={data.link}
                 helpText={data.helpText}
                 helpLink={data.helpLink}
+                secondarylabel={data.type === 'menu' ? 'Importar' : undefined}
+                secondaryAction={data.type === 'menu' ? () => {} : undefined}
               />
             );
           })}
@@ -214,22 +215,6 @@ export const RegistrationStatus = () => {
         >
           {t('Enviar cadastro para aprovação')}
         </Button>
-        <Box>
-          <Text mt="20" fontSize="24px" lineHeight="30px" fontWeight="700">
-            {t('Divulgue esse movimento')}
-          </Text>
-          <Box my="6" fontSize="md" lineHeight="24px">
-            <Text>
-              {t(
-                'Para chegar mais rápido a todas as cidades, o AppJusto precisa da sua ajuda.'
-              )}
-            </Text>
-            <Text>
-              {t('Divulgue nas suas rede e ajude o movimento a crescer:')}
-            </Text>
-          </Box>
-          <SharingBar />
-        </Box>
       </Box>
     );
   }
@@ -249,22 +234,6 @@ export const RegistrationStatus = () => {
           )}
         </Text>
         <Social />
-        <Box>
-          <Text mt="12" fontSize="xl" lineHeight="30px" fontWeight="700">
-            {t('Você também pode ajudar a divulgar esse movimento!')}
-          </Text>
-          <Box mt="4" mb="6" fontSize="md" lineHeight="24px">
-            <Text>
-              {t(
-                'Para chegar mais rápido a todas as cidades, o AppJusto precisa da sua ajuda.'
-              )}
-            </Text>
-            <Text>
-              {t('Divulgue nas suas rede e ajude o movimento a crescer:')}
-            </Text>
-          </Box>
-          <SharingBar />
-        </Box>
       </Box>
     );
   }
