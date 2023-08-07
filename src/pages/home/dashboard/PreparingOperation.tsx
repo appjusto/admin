@@ -16,7 +16,12 @@ export const PreparingOperation = () => {
           'Juntos, construindo uma plataforma de delivery mais justa e humana para todos!'
         )}
       </Text>
-      <Flex mt="6" justifyContent="space-between" alignItems="flex-end">
+      <Flex
+        mt="6"
+        flexDir={{ base: 'column', md: 'row' }}
+        justifyContent="space-between"
+        alignItems="flex-end"
+      >
         <Box>
           <Text fontSize="2xl" color="black">
             {t('Vamos começar?')}
@@ -51,6 +56,7 @@ export const PreparingOperation = () => {
         borderRadius="lg"
         px="4"
         py="6"
+        flexDir={{ base: 'column', md: 'row' }}
         justifyContent="space-between"
         alignItems="center"
       >
@@ -64,8 +70,20 @@ export const PreparingOperation = () => {
             )}
           </Text>
         </Box>
-        <Link href="https/appjusto.com.br" isExternal>
-          <Button variant="secondary">{t('Acessar')}</Button>
+        <Link
+          href="https/appjusto.com.br"
+          w={{ base: '100%', md: 'auto' }}
+          isExternal
+        >
+          <Button
+            mt={{ base: '4', md: '0' }}
+            size="md"
+            fontSize="sm"
+            variant="secondary"
+            w={{ base: '100%', md: 'auto' }}
+          >
+            {t('Acessar')}
+          </Button>
         </Link>
       </Flex>
     </Box>

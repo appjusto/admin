@@ -30,6 +30,7 @@ export const OperationStep = ({
   return (
     <Flex
       mt="4"
+      flexDir={{ base: 'column', md: 'row' }}
       justifyContent="space-between"
       alignItems="center"
       px="4"
@@ -38,7 +39,13 @@ export const OperationStep = ({
       borderRadius="lg"
     >
       <Flex>
-        <Center bgColor="#C8D7CB" borderRadius="lg" w="56px" h="56px">
+        <Center
+          bgColor="#C8D7CB"
+          borderRadius="lg"
+          w="56px"
+          minW="56px"
+          h="56px"
+        >
           <Icon as={icon} w="6" h="6" />
         </Center>
         <Box ml="4">
@@ -54,8 +61,13 @@ export const OperationStep = ({
           </HStack>
         </Box>
       </Flex>
-      <Link href={link} isExternal>
-        <Button size="md" fontSize="sm">
+      <Link href={link} w={{ base: '100%', md: 'auto' }} isExternal>
+        <Button
+          mt={{ base: '4', md: '0' }}
+          size="md"
+          fontSize="sm"
+          w={{ base: '100%', md: 'auto' }}
+        >
           {btnLabel}
         </Button>
       </Link>
