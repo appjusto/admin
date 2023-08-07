@@ -81,7 +81,7 @@ export const Panel = () => {
   }, []);
   // UI
   return (
-    <Box>
+    <Box mt="6">
       <MaintenanceBox />
       <BannersContainer banners={banners} />
       <Box mt="8" border="1px solid #E5E5E5" borderRadius="lg" p="4">
