@@ -36,6 +36,7 @@ export const useCustomMutation = <
           dispatchAppRequestResult({ status: 'success', requestId: fnName });
       },
       onError: (error) => {
+        if (!dispatching) return;
         dispatchAppRequestResult({ status: 'error', requestId: fnName, error });
       },
       ...options,

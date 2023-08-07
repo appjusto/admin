@@ -81,18 +81,27 @@ export const useBusinessProfile = (
         api.business().updateBusinessSlug(data),
       'updateBusinessSlug'
     );
+  const { mutateAsync: createBusinessSlug, mutationResult: createSlugResult } =
+    useCustomMutation(
+      async (data: { businessId: string; slug: string }) =>
+        api.business().updateBusinessSlug(data),
+      'updateBusinessSlug',
+      false
+    );
   // return
   return {
     createBusinessProfile,
     updateBusinessProfile,
     updateBusinessProfileWithImages,
     updateBusinessSlug,
+    createBusinessSlug,
     deleteBusinessProfile,
     cloneBusiness,
     cloneComplementsGroup,
     updateResult,
     updateWithImagesResult,
     updateSlugResult,
+    createSlugResult,
     deleteResult,
     cloneResult,
     cloneGroupResult,

@@ -1,9 +1,14 @@
-import { ReactComponent as play } from 'common/img/play.svg';
+import { useContextFirebaseUser } from 'app/state/auth/context';
+import { ReactComponent as like } from 'common/img/like.svg';
 import { t } from 'utils/i18n';
 import { BaseAccordion } from './BaseAccordion';
 import { OperationStep } from './OperationStep';
+import { SharingCard } from './SharingCard';
 
 export const Operation3 = () => {
+  // context
+  const { userAbility } = useContextFirebaseUser();
+  // UI
   return (
     <BaseAccordion
       title={t('🚩 Passo 3')}
@@ -11,14 +16,15 @@ export const Operation3 = () => {
         'Divulgue que seu restaurante agora faz parte de uma plataforma de impacto social!'
       )}
     >
+      {userAbility?.can('update', 'businesses', 'slug') && <SharingCard />}
       <OperationStep
-        icon={play}
+        icon={like}
         title={t('Divulgue em canais digitais')}
         description={t(
           'Baixe gratuitamente um enxoval de divulgação digital pro seu restaurante'
         )}
         time={t('2 minutos')}
-        btnLabel={t('Criar')}
+        btnLabel={t('Baixar')}
         link="http://localhost:3000"
       />
     </BaseAccordion>

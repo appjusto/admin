@@ -15,8 +15,9 @@ interface OperationStepProps {
   title: string;
   description: string | React.ReactNode;
   time: string;
-  btnLabel: string;
-  link: string;
+  btnLabel?: string;
+  link?: string;
+  action?: React.ReactNode;
 }
 
 export const OperationStep = ({
@@ -26,6 +27,7 @@ export const OperationStep = ({
   time,
   btnLabel,
   link,
+  action,
 }: OperationStepProps) => {
   return (
     <Flex
@@ -48,7 +50,7 @@ export const OperationStep = ({
         >
           <Icon as={icon} w="6" h="6" />
         </Center>
-        <Box ml="4">
+        <Box ml="4" maxW="554px">
           <Text fontWeight="semibold">{title}</Text>
           {typeof description === 'string' ? (
             <Text>{description}</Text>
@@ -61,16 +63,20 @@ export const OperationStep = ({
           </HStack>
         </Box>
       </Flex>
-      <Link href={link} w={{ base: '100%', md: 'auto' }} isExternal>
-        <Button
-          mt={{ base: '4', md: '0' }}
-          size="md"
-          fontSize="sm"
-          w={{ base: '100%', md: 'auto' }}
-        >
-          {btnLabel}
-        </Button>
-      </Link>
+      {link && btnLabel && (
+        <Link href={link} w={{ base: '100%', md: 'auto' }} isExternal>
+          <Button
+            mt={{ base: '4', md: '0' }}
+            size="md"
+            fontSize="sm"
+            minW="112px"
+            w={{ base: '100%', md: 'auto' }}
+          >
+            {btnLabel}
+          </Button>
+        </Link>
+      )}
+      {action}
     </Flex>
   );
 };

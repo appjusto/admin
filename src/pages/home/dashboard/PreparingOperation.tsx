@@ -1,4 +1,5 @@
 import { Box, Button, Flex, Icon, Link, Text } from '@chakra-ui/react';
+import React from 'react';
 import { IoMdTime } from 'react-icons/io';
 import { t } from 'utils/i18n';
 import { Operation1 } from './communication/Operation1';
@@ -6,6 +7,9 @@ import { Operation2 } from './communication/Operation2';
 import { Operation3 } from './communication/Operation3';
 
 export const PreparingOperation = () => {
+  React.useEffect(() => {
+    window?.scrollTo(0, 0);
+  }, []);
   return (
     <Box mt="6">
       <Text fontSize="4xl" color="black">
@@ -80,6 +84,7 @@ export const PreparingOperation = () => {
             size="md"
             fontSize="sm"
             variant="secondary"
+            minW="112px"
             w={{ base: '100%', md: 'auto' }}
           >
             {t('Acessar')}
