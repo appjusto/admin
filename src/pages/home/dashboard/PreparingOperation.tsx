@@ -37,7 +37,9 @@ export const PreparingOperation = () => {
           color="black"
         >
           <Icon as={IoMdTime} />
-          <Text ml="2">{t('20 minutos')}</Text>
+          <Text ml="2" fontSize="sm">
+            {t('20 minutos')}
+          </Text>
         </Flex>
       </Flex>
       <Operation1 />
