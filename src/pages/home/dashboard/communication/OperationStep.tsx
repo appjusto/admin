@@ -11,10 +11,10 @@ import {
 import { IoMdTime } from 'react-icons/io';
 
 interface OperationStepProps {
-  icon: any;
+  icon?: any;
   title: string;
   description: string | React.ReactNode;
-  time: string;
+  time?: string;
   btnLabel?: string;
   link?: string;
   action?: React.ReactNode;
@@ -41,15 +41,17 @@ export const OperationStep = ({
       borderRadius="lg"
     >
       <Flex>
-        <Center
-          bgColor="#C8D7CB"
-          borderRadius="lg"
-          w="56px"
-          minW="56px"
-          h="56px"
-        >
-          <Icon as={icon} w="6" h="6" />
-        </Center>
+        {icon && (
+          <Center
+            bgColor="#C8D7CB"
+            borderRadius="lg"
+            w="56px"
+            minW="56px"
+            h="56px"
+          >
+            <Icon as={icon} w="6" h="6" />
+          </Center>
+        )}
         <Box ml="4" maxW="554px">
           <Text fontWeight="semibold">{title}</Text>
           {typeof description === 'string' ? (
@@ -57,10 +59,12 @@ export const OperationStep = ({
           ) : (
             description
           )}
-          <HStack mt="2">
-            <Icon as={IoMdTime} />
-            <Text fontSize="sm">{time}</Text>
-          </HStack>
+          {time && (
+            <HStack mt="2">
+              <Icon as={IoMdTime} />
+              <Text fontSize="sm">{time}</Text>
+            </HStack>
+          )}
         </Box>
       </Flex>
       {link && btnLabel && (

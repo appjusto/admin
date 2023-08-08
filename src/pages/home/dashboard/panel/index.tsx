@@ -8,6 +8,7 @@ import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import React from 'react';
 import { formatCurrency, formatPct } from 'utils/formatters';
 import { t } from 'utils/i18n';
+import { SupportMaterials } from '../communication/SupportMaterials';
 import BannersContainer from './banners/BannersContainer';
 import InfoBox from './InfoBox';
 import { InsuranceModal } from './InsuranceModal';
@@ -90,10 +91,11 @@ export const Panel = () => {
         </SectionTitle>
         <Stack mt="4" direction={{ base: 'column', lg: 'row' }} spacing={2}>
           <Stack
+            minW={{ lg: '334px' }}
             h={{ base: 'auto', md: '132px' }}
             py="4"
             px="6"
-            border="1px solid #6CE787"
+            bgColor="#F2FFE8"
             borderRadius="lg"
             alignItems="flex-start"
             direction={{ base: 'column', md: 'row' }}
@@ -129,8 +131,65 @@ export const Panel = () => {
               </Text>
             </InfoBox>
           </Stack>
-          <Stack direction={{ base: 'column', md: 'row' }}>
-            <InfoBox data={monthCount} title={t(`Pedidos/ ${currentMonth}`)}>
+          <Stack
+            minW={{ lg: '400px' }}
+            h={{ base: 'auto', md: '132px' }}
+            py="4"
+            px="6"
+            bgColor="#FFF8F8"
+            borderRadius="lg"
+            alignItems="flex-start"
+            direction={{ base: 'column', md: 'row' }}
+            spacing={6}
+          >
+            <InfoBox
+              minW="140px"
+              isJoined
+              data={todayCount}
+              title={t('Pedidos Cancelados/ Hoje')}
+              titleColor="red"
+            >
+              <Text
+                mt="1"
+                color="black"
+                minW="140px"
+                fontSize="2xl"
+                lineHeight="30px"
+              >
+                {`${todayCount ?? 'N/E'} pedidos`}
+              </Text>
+              <Text mt="1" fontSize="md" lineHeight="22px">
+                {todayValue !== undefined ? formatCurrency(todayValue) : 'N/E'}
+              </Text>
+            </InfoBox>
+            <InfoBox
+              isJoined
+              data={todayAverage}
+              title={t('Ticket médio/ Hoje')}
+              titleColor="red"
+            >
+              <Text mt="1" color="black" fontSize="2xl" lineHeight="30px">
+                {todayAverage ? formatCurrency(todayAverage) : 'R$ 0,00'}
+              </Text>
+            </InfoBox>
+          </Stack>
+        </Stack>
+        <Stack mt="2" direction={{ base: 'column', lg: 'row' }} spacing={2}>
+          <Stack
+            minW={{ lg: '334px' }}
+            h={{ base: 'auto', md: '132px' }}
+            py="4"
+            px="6"
+            bgColor="#F6F6F6"
+            borderRadius="lg"
+            alignItems="flex-start"
+            direction={{ base: 'column', md: 'row' }}
+          >
+            <InfoBox
+              isJoined
+              data={monthCount}
+              title={t(`Pedidos/ ${currentMonth}`)}
+            >
               <Text
                 mt="1"
                 color="black"
@@ -145,6 +204,46 @@ export const Panel = () => {
               </Text>
             </InfoBox>
             <InfoBox
+              isJoined
+              data={monthAverage}
+              title={t(`Ticket médio/ ${currentMonth}`)}
+            >
+              <Text mt="1" color="black" fontSize="2xl" lineHeight="30px">
+                {monthAverage ? formatCurrency(monthAverage) : 'R$ 0,00'}
+              </Text>
+            </InfoBox>
+          </Stack>
+          <Stack
+            minW={{ lg: '400px' }}
+            h={{ base: 'auto', md: '132px' }}
+            py="4"
+            px="6"
+            bgColor="#F6F6F6"
+            borderRadius="lg"
+            alignItems="flex-start"
+            direction={{ base: 'column', md: 'row' }}
+            spacing={6}
+          >
+            <InfoBox
+              isJoined
+              data={monthCount}
+              title={t(`Pedidos Cancelados/ ${currentMonth}`)}
+            >
+              <Text
+                mt="1"
+                color="black"
+                minW="140px"
+                fontSize="2xl"
+                lineHeight="30px"
+              >
+                {`${monthCount ?? 'N/E'} pedidos`}
+              </Text>
+              <Text mt="1" fontSize="md" lineHeight="22px">
+                {monthValue ? formatCurrency(monthValue) : 'R$ 0,00'}
+              </Text>
+            </InfoBox>
+            <InfoBox
+              isJoined
               data={monthAverage}
               title={t(`Ticket médio/ ${currentMonth}`)}
             >
@@ -236,6 +335,7 @@ export const Panel = () => {
           />
         )}
       </Box>
+      <SupportMaterials />
       <InsuranceModal isOpen={insuranceModalIsOpen} />
     </Box>
   );
