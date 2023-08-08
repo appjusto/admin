@@ -17,7 +17,7 @@ import { MdErrorOutline } from 'react-icons/md';
 import { slugify } from 'utils/formatters';
 import { t } from 'utils/i18n';
 
-export const SharingCard = () => {
+export const DeeplinkCard = () => {
   // context
   const { business } = useContextBusiness();
   const { createBusinessSlug, updateBusinessSlug, updateSlugResult } =

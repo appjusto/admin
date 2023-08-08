@@ -2,8 +2,8 @@ import { useContextFirebaseUser } from 'app/state/auth/context';
 import { ReactComponent as like } from 'common/img/like.svg';
 import { t } from 'utils/i18n';
 import { BaseAccordion } from './BaseAccordion';
+import { DeeplinkCard } from './DeeplinkCard';
 import { OperationStep } from './OperationStep';
-import { SharingCard } from './SharingCard';
 
 export const Operation3 = () => {
   // context
@@ -16,7 +16,7 @@ export const Operation3 = () => {
         'Divulgue que seu restaurante agora faz parte de uma plataforma de impacto social!'
       )}
     >
-      {userAbility?.can('update', 'businesses', 'slug') && <SharingCard />}
+      {userAbility?.can('update', 'businesses', 'slug') && <DeeplinkCard />}
       <OperationStep
         icon={like}
         title={t('Divulgue em canais digitais')}
