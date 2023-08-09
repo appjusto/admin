@@ -1,4 +1,4 @@
-import { Box, Stack, Text } from '@chakra-ui/react';
+import { Box, Flex, Stack, Text, Tooltip } from '@chakra-ui/react';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextBusinessDashboard } from 'app/state/dashboards/business';
@@ -6,6 +6,7 @@ import { MaintenanceBox } from 'common/components/MaintenanceBox';
 import I18n from 'i18n-js';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import React from 'react';
+import { MdOutlineInfo } from 'react-icons/md';
 import { formatCurrency, formatPct } from 'utils/formatters';
 import { t } from 'utils/i18n';
 import { SharingMessages } from '../communication/SharingMessages';
@@ -114,7 +115,7 @@ export const Panel = () => {
             <InfoBox
               minW="140px"
               isJoined
-              data={todayCount}
+              isLoading={todayCount === undefined}
               title={t('Pedidos/ Hoje')}
               titleColor="green.600"
             >
@@ -133,7 +134,7 @@ export const Panel = () => {
             </InfoBox>
             <InfoBox
               isJoined
-              data={todayAverage}
+              isLoading={todayAverage === undefined}
               title={t('Ticket médio/ Hoje')}
               titleColor="green.600"
             >
@@ -156,7 +157,7 @@ export const Panel = () => {
             <InfoBox
               minW="140px"
               isJoined
-              data={todayCanceledCount}
+              isLoading={todayCanceledCount === undefined}
               title={t('Cancelados/ Hoje')}
               titleColor="red"
             >
@@ -175,27 +176,42 @@ export const Panel = () => {
                   : 'N/E'}
               </Text>
             </InfoBox>
-            <InfoBox
-              isJoined
-              data={todayAverage}
-              title={t('Por inatividade')}
-              titleColor="red"
-            >
-              <Text
-                mt="1"
-                color="black"
-                minW="140px"
-                fontSize="2xl"
-                lineHeight="30px"
+            <Flex>
+              <InfoBox
+                isJoined
+                isLoading={todayAverage === undefined}
+                title={t('Por inatividade')}
+                titleColor="red"
               >
-                {`${todayInactivityCount ?? 'N/E'} pedidos`}
-              </Text>
-              <Text mt="1" fontSize="md" lineHeight="22px">
-                {todayInactivityValue !== undefined
-                  ? formatCurrency(todayInactivityValue)
-                  : 'N/E'}
-              </Text>
-            </InfoBox>
+                <Text
+                  mt="1"
+                  color="black"
+                  minW="140px"
+                  fontSize="2xl"
+                  lineHeight="30px"
+                >
+                  {`${todayInactivityCount ?? 'N/E'} pedidos`}
+                </Text>
+                <Text mt="1" fontSize="md" lineHeight="22px">
+                  {todayInactivityValue !== undefined
+                    ? formatCurrency(todayInactivityValue)
+                    : 'N/E'}
+                </Text>
+              </InfoBox>
+              <Box ml="-4">
+                <Tooltip
+                  placement="top"
+                  label={t(
+                    'Pedidos cancelados após excederem o tempo limite para o aceite do restaurante'
+                  )}
+                  aria-label={t('cancelados-por-inatividade')}
+                >
+                  <Box>
+                    <MdOutlineInfo />
+                  </Box>
+                </Tooltip>
+              </Box>
+            </Flex>
           </Stack>
         </Stack>
         <Stack mt="2" direction={{ base: 'column', lg: 'row' }} spacing={2}>
@@ -212,7 +228,7 @@ export const Panel = () => {
           >
             <InfoBox
               isJoined
-              data={monthCount}
+              isLoading={monthCount === undefined}
               title={t(`Pedidos/ ${currentMonth}`)}
             >
               <Text
@@ -230,7 +246,7 @@ export const Panel = () => {
             </InfoBox>
             <InfoBox
               isJoined
-              data={monthAverage}
+              isLoading={monthAverage === undefined}
               title={t(`Ticket médio/ ${currentMonth}`)}
             >
               <Text mt="1" color="black" fontSize="2xl" lineHeight="30px">
@@ -251,7 +267,7 @@ export const Panel = () => {
           >
             <InfoBox
               isJoined
-              data={monthCanceledCount}
+              isLoading={monthCanceledCount === undefined}
               title={t(`Cancelados/ ${currentMonth}`)}
             >
               <Text
@@ -269,7 +285,11 @@ export const Panel = () => {
                   : 'R$ 0,00'}
               </Text>
             </InfoBox>
-            <InfoBox isJoined data={monthAverage} title={t(`Por inatividade`)}>
+            <InfoBox
+              isJoined
+              isLoading={monthAverage === undefined}
+              title={t(`Por inatividade`)}
+            >
               <Text
                 mt="1"
                 color="black"
@@ -296,7 +316,7 @@ export const Panel = () => {
           <Stack w="100%" direction={{ base: 'column', md: 'row' }}>
             <InfoBox
               w="100%"
-              data={currentWeekCount}
+              isLoading={currentWeekCount === undefined}
               title={t('Total de pedidos')}
               circleBg="green.600"
             >
@@ -317,7 +337,7 @@ export const Panel = () => {
             </InfoBox>
             <InfoBox
               w="100%"
-              data={currentWeekAverage}
+              isLoading={currentWeekAverage === undefined}
               title={t('Ticket médio')}
             >
               <Text mt="1" color="black" fontSize="2xl" lineHeight="30px">
@@ -330,7 +350,7 @@ export const Panel = () => {
           <Stack w="100%" direction={{ base: 'column', md: 'row' }}>
             <InfoBox
               w="100%"
-              data={currentWeekProduct}
+              isLoading={currentWeekProduct === undefined}
               title={t('Prato mais vendido')}
             >
               <Text mt="1" color="black" fontSize="md" lineHeight="22px">
@@ -340,7 +360,7 @@ export const Panel = () => {
 
             <InfoBox
               w="100%"
-              data={lastWeekCount}
+              isLoading={lastWeekCount === undefined}
               title={t('Semana anterior')}
               circleBg="gray.500"
             >

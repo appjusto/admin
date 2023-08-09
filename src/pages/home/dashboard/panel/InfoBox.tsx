@@ -10,20 +10,20 @@ import { isEqual } from 'lodash';
 import React from 'react';
 
 interface InfoBoxProps extends BoxProps {
-  isJoined?: boolean;
-  data?: any;
   title: string;
   titleColor?: string;
   circleBg?: string;
+  isLoading?: boolean;
+  isJoined?: boolean;
   children: React.ReactNode | React.ReactNode[];
 }
 
 const InfoBox = ({
-  isJoined,
-  data,
   title,
   titleColor = '#505A4F',
   circleBg,
+  isLoading,
+  isJoined,
   children,
   ...props
 }: InfoBoxProps) => {
@@ -33,7 +33,7 @@ const InfoBox = ({
         <Text color={titleColor} fontSize="15px" lineHeight="21px">
           {title}
         </Text>
-        {data !== undefined ? (
+        {!isLoading ? (
           children
         ) : (
           <Box>
@@ -49,7 +49,7 @@ const InfoBox = ({
       h="132px"
       py="4"
       px="6"
-      border="1px solid #E5E5E5"
+      bgColor="#F6F6F6"
       borderRadius="lg"
       alignItems="flex-start"
       {...props}
@@ -60,7 +60,7 @@ const InfoBox = ({
           {title}
         </Text>
       </HStack>
-      {data !== undefined ? (
+      {!isLoading ? (
         children
       ) : (
         <Box>
