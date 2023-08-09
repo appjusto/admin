@@ -1,21 +1,19 @@
 import { Box, HStack, Text, Wrap, WrapItem } from '@chakra-ui/react';
 import ShareLink from 'common/components/landing/share/ShareLink';
+import React from 'react';
 import {
   FaFacebookSquare,
   FaLinkedin,
   FaTwitterSquare,
   FaWhatsappSquare,
-  FaYoutube,
 } from 'react-icons/fa';
 import { t } from 'utils/i18n';
 import { MessageCard } from './MessageCard';
 
 const mainUrl = 'https://appjusto.com.br/';
-const sharingMsg = encodeURIComponent(
-  `AppJusto. Mais do que um app de entregas. Somo um movimento por relações mais justas e transparentes. Faça parte agora!\n\n${mainUrl}`
-);
 
 export const SharingMessages = () => {
+  const [selected, setSelected] = React.useState<string>();
   return (
     <Box mt="6" border="1px solid #C8D7CB" borderRadius="lg" px="4" py="6">
       <Text fontSize="2xl" fontWeight="semibold">
@@ -38,19 +36,21 @@ export const SharingMessages = () => {
             body={t(
               'O AppJusto é uma plataforma que oferece regras e taxas justas para entregadores e restaurantes. Com o compromisso de ganhar apenas o mínimo necessário para se manter, a plataforma permite que os consumidores economizem enquanto entregadores e restaurantes ganham mais 💚👊'
             )}
+            notifySelected={(msg) => setSelected(msg)}
           />
           <MessageCard
             title={t('Você conhece o AppJusto?')}
             body={t(
               'O AppJusto é uma plataforma que oferece regras e taxas justas para entregadores e restaurantes. Com o compromisso de ganhar apenas o mínimo necessário para se manter, a plataforma permite que os consumidores economizem enquanto entregadores e restaurantes ganham mais 💚👊'
             )}
+            notifySelected={(msg) => setSelected(msg)}
           />
         </HStack>
       </Box>
       <Wrap mt="6" w="100%" gap={4}>
         <WrapItem w="100%" maxW={{ lg: '140px' }}>
           <ShareLink
-            link={`https://api.whatsapp.com/send?text=${sharingMsg}`}
+            link={`https://api.whatsapp.com/send?text=${selected ?? mainUrl}`}
             label="Whatsapp"
             icon={FaWhatsappSquare}
             variant="dark"
@@ -66,7 +66,9 @@ export const SharingMessages = () => {
         </WrapItem>
         <WrapItem w="100%" maxW={{ lg: '140px' }}>
           <ShareLink
-            link={`https://twitter.com/intent/tweet?text=${sharingMsg}`}
+            link={`https://twitter.com/intent/tweet?text=${
+              selected ?? mainUrl
+            }`}
             label="Twitter"
             icon={FaTwitterSquare}
             variant="dark"
@@ -77,14 +79,6 @@ export const SharingMessages = () => {
             link={`https://www.linkedin.com/sharing/share-offsite/?url=${mainUrl}`}
             label="Linkedin"
             icon={FaLinkedin}
-            variant="dark"
-          />
-        </WrapItem>
-        <WrapItem w="100%" maxW={{ lg: '140px' }}>
-          <ShareLink
-            link="https://www.youtube.com/@appjusto"
-            label="YouTube"
-            icon={FaYoutube}
             variant="dark"
           />
         </WrapItem>
