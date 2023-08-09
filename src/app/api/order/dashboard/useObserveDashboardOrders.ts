@@ -2,13 +2,15 @@ import { Order, OrderStatus, WithId } from '@appjusto/types';
 import { useContextApi } from 'app/state/api/context';
 import dayjs from 'dayjs';
 import React from 'react';
-import { useUserCanReadEntity } from '../auth/useUserCanReadEntity';
+import { useUserCanReadEntity } from '../../auth/useUserCanReadEntity';
 import {
   findMostFrequentProduct,
   getBusinessOrdersBilling,
   getBusinessOrdersByPeriod,
+  getBusinessOrdersCanceledBilling,
   splitOrdersValuesByPeriod,
-} from './utils';
+} from '../utils';
+import { DashboardProps, dashboardReducer } from './reducer';
 
 const statuses = ['delivered', 'scheduled', 'canceled'] as OrderStatus[];
 
@@ -18,24 +20,10 @@ export const useObserveDashboardOrders = (businessId?: string | null) => {
   const userCanRead = useUserCanReadEntity('orders');
   // state
   const [orders, setOrders] = React.useState<WithId<Order>[] | null>();
-  const [currentWeekProduct, setCurrentWeekProduct] = React.useState<string>();
-  // today
-  const [todayCount, setTodayCount] = React.useState<number>();
-  const [todayValue, setTodayValue] = React.useState<number>();
-  const [todayAverage, setTodayAverage] = React.useState<number>();
-  // month
-  const [monthCount, setMonthCount] = React.useState<number>();
-  const [monthValue, setMonthValue] = React.useState<number>();
-  const [monthAverage, setMonthAverage] = React.useState<number>();
-  // current week
-  const [currentWeekCount, setCurrentWeekCount] = React.useState<number>();
-  const [currentWeekValue, setCurrentWeekValue] = React.useState<number>();
-  const [currentWeekAverage, setCurrentWeekAverage] = React.useState<number>();
-  const [currentWeekByDay, setCurrentWeekByDay] = React.useState<number[]>();
-  // last week
-  const [lastWeekCount, setLastWeekCount] = React.useState<number>();
-  const [lastWeekValue, setLastWeekValue] = React.useState<number>();
-  const [lastWeekByDay, setLastWeekByDay] = React.useState<number[]>();
+  const [state, dispatch] = React.useReducer(
+    dashboardReducer,
+    {} as DashboardProps
+  );
   // side effects
   // current week orders
   React.useEffect(() => {
@@ -69,30 +57,45 @@ export const useObserveDashboardOrders = (businessId?: string | null) => {
         currentWeekProducts.push(item.product.name)
       )
     );
-    setCurrentWeekProduct(findMostFrequentProduct(currentWeekProducts));
     // today
     const today = dayjs().startOf('day').toDate();
     const todayOrders = getBusinessOrdersByPeriod(orders, today);
     const todayBilling = getBusinessOrdersBilling(todayOrders);
-    setTodayCount(todayOrders.length);
-    setTodayValue(todayBilling);
-    setTodayAverage(todayBilling / todayOrders.length);
+    // today canceled
+    const todayCanceled = getBusinessOrdersByPeriod(
+      orders,
+      today,
+      undefined,
+      true
+    ).filter((order) => order.status === 'canceled');
+    const canceledBilling = getBusinessOrdersCanceledBilling(todayCanceled);
+    const todayInactivity = todayCanceled.filter((order) =>
+      (order.flags ?? []).includes('inactivity')
+    );
+    const inactivityBilling = getBusinessOrdersCanceledBilling(todayInactivity);
     // month
     const month = dayjs().startOf('month').toDate();
     const monthOrders = getBusinessOrdersByPeriod(orders, month);
     const monthBilling = getBusinessOrdersBilling(monthOrders);
-    setMonthCount(monthOrders.length);
-    setMonthValue(monthBilling);
-    setMonthAverage(monthBilling / monthOrders.length);
+    // month canceled
+    const monthCanceled = getBusinessOrdersByPeriod(
+      orders,
+      month,
+      undefined,
+      true
+    ).filter((order) => order.status === 'canceled');
+    const monthCanceledBilling =
+      getBusinessOrdersCanceledBilling(monthCanceled);
+    const monthInactivity = monthCanceled.filter((order) =>
+      (order.flags ?? []).includes('inactivity')
+    );
+    const monthInactivityBilling =
+      getBusinessOrdersCanceledBilling(monthInactivity);
     // current week
     const startWeek = dayjs().startOf('day').subtract(6, 'day').toDate();
     const weekOrders = getBusinessOrdersByPeriod(orders, startWeek);
     const weekBilling = getBusinessOrdersBilling(weekOrders);
     const weekValuesByDay = splitOrdersValuesByPeriod(weekOrders, 7, startWeek);
-    setCurrentWeekCount(weekOrders.length);
-    setCurrentWeekValue(weekBilling);
-    setCurrentWeekAverage(weekBilling / weekOrders.length);
-    setCurrentWeekByDay(weekValuesByDay);
     // last week
     const lastWeekStart = dayjs().startOf('day').subtract(13, 'day').toDate();
     const lastWeekEnd = dayjs().startOf('day').subtract(7, 'day').toDate();
@@ -107,25 +110,34 @@ export const useObserveDashboardOrders = (businessId?: string | null) => {
       7,
       lastWeekStart
     );
-    setLastWeekCount(lastWeekOrders.length);
-    setLastWeekValue(lastWeekBilling);
-    setLastWeekByDay(lastWeekValuesByDay);
+    dispatch({
+      type: 'update_dashboard',
+      payload: {
+        todayCount: todayOrders.length,
+        todayValue: todayBilling,
+        todayAverage: todayBilling / todayOrders.length,
+        todayCanceledCount: todayCanceled.length,
+        todayCanceledValue: canceledBilling,
+        todayInactivityCount: todayInactivity.length,
+        todayInactivityValue: inactivityBilling,
+        monthCount: monthOrders.length,
+        monthValue: monthBilling,
+        monthAverage: monthBilling / monthOrders.length,
+        monthCanceledCount: monthCanceled.length,
+        monthCanceledValue: monthCanceledBilling,
+        monthInactivityCount: monthInactivity.length,
+        monthInactivityValue: monthInactivityBilling,
+        currentWeekCount: weekOrders.length,
+        currentWeekValue: weekBilling,
+        currentWeekAverage: weekBilling / weekOrders.length,
+        currentWeekProduct: findMostFrequentProduct(currentWeekProducts),
+        currentWeekByDay: weekValuesByDay,
+        lastWeekCount: lastWeekOrders.length,
+        lastWeekValue: lastWeekBilling,
+        lastWeekByDay: lastWeekValuesByDay,
+      },
+    });
   }, [orders]);
   // return
-  return {
-    todayCount,
-    todayValue,
-    todayAverage,
-    currentWeekProduct,
-    monthCount,
-    monthValue,
-    monthAverage,
-    currentWeekCount,
-    currentWeekValue,
-    currentWeekAverage,
-    currentWeekByDay,
-    lastWeekCount,
-    lastWeekValue,
-    lastWeekByDay,
-  };
+  return state;
 };

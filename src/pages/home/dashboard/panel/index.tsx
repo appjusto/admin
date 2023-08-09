@@ -24,10 +24,18 @@ export const Panel = () => {
     todayCount,
     todayValue,
     todayAverage,
+    todayCanceledCount,
+    todayCanceledValue,
+    todayInactivityCount,
+    todayInactivityValue,
     currentWeekProduct,
     monthCount,
     monthValue,
     monthAverage,
+    monthCanceledCount,
+    monthCanceledValue,
+    monthInactivityCount,
+    monthInactivityValue,
     currentWeekCount,
     currentWeekValue,
     currentWeekAverage,
@@ -93,7 +101,7 @@ export const Panel = () => {
         </SectionTitle>
         <Stack mt="4" direction={{ base: 'column', lg: 'row' }} spacing={2}>
           <Stack
-            minW={{ lg: '334px' }}
+            minW={{ lg: '354px' }}
             h={{ base: 'auto', md: '132px' }}
             py="4"
             px="6"
@@ -101,6 +109,7 @@ export const Panel = () => {
             borderRadius="lg"
             alignItems="flex-start"
             direction={{ base: 'column', md: 'row' }}
+            spacing={6}
           >
             <InfoBox
               minW="140px"
@@ -134,7 +143,7 @@ export const Panel = () => {
             </InfoBox>
           </Stack>
           <Stack
-            minW={{ lg: '400px' }}
+            minW={{ lg: '354px' }}
             h={{ base: 'auto', md: '132px' }}
             py="4"
             px="6"
@@ -147,8 +156,8 @@ export const Panel = () => {
             <InfoBox
               minW="140px"
               isJoined
-              data={todayCount}
-              title={t('Pedidos Cancelados/ Hoje')}
+              data={todayCanceledCount}
+              title={t('Cancelados/ Hoje')}
               titleColor="red"
             >
               <Text
@@ -158,27 +167,40 @@ export const Panel = () => {
                 fontSize="2xl"
                 lineHeight="30px"
               >
-                {`${todayCount ?? 'N/E'} pedidos`}
+                {`${todayCanceledCount ?? 'N/E'} pedidos`}
               </Text>
               <Text mt="1" fontSize="md" lineHeight="22px">
-                {todayValue !== undefined ? formatCurrency(todayValue) : 'N/E'}
+                {todayCanceledValue !== undefined
+                  ? formatCurrency(todayCanceledValue)
+                  : 'N/E'}
               </Text>
             </InfoBox>
             <InfoBox
               isJoined
               data={todayAverage}
-              title={t('Ticket médio/ Hoje')}
+              title={t('Por inatividade')}
               titleColor="red"
             >
-              <Text mt="1" color="black" fontSize="2xl" lineHeight="30px">
-                {todayAverage ? formatCurrency(todayAverage) : 'R$ 0,00'}
+              <Text
+                mt="1"
+                color="black"
+                minW="140px"
+                fontSize="2xl"
+                lineHeight="30px"
+              >
+                {`${todayInactivityCount ?? 'N/E'} pedidos`}
+              </Text>
+              <Text mt="1" fontSize="md" lineHeight="22px">
+                {todayInactivityValue !== undefined
+                  ? formatCurrency(todayInactivityValue)
+                  : 'N/E'}
               </Text>
             </InfoBox>
           </Stack>
         </Stack>
         <Stack mt="2" direction={{ base: 'column', lg: 'row' }} spacing={2}>
           <Stack
-            minW={{ lg: '334px' }}
+            minW={{ lg: '354px' }}
             h={{ base: 'auto', md: '132px' }}
             py="4"
             px="6"
@@ -186,6 +208,7 @@ export const Panel = () => {
             borderRadius="lg"
             alignItems="flex-start"
             direction={{ base: 'column', md: 'row' }}
+            spacing={6}
           >
             <InfoBox
               isJoined
@@ -216,7 +239,7 @@ export const Panel = () => {
             </InfoBox>
           </Stack>
           <Stack
-            minW={{ lg: '400px' }}
+            minW={{ lg: '354px' }}
             h={{ base: 'auto', md: '132px' }}
             py="4"
             px="6"
@@ -228,8 +251,8 @@ export const Panel = () => {
           >
             <InfoBox
               isJoined
-              data={monthCount}
-              title={t(`Pedidos Cancelados/ ${currentMonth}`)}
+              data={monthCanceledCount}
+              title={t(`Cancelados/ ${currentMonth}`)}
             >
               <Text
                 mt="1"
@@ -238,19 +261,28 @@ export const Panel = () => {
                 fontSize="2xl"
                 lineHeight="30px"
               >
-                {`${monthCount ?? 'N/E'} pedidos`}
+                {`${monthCanceledCount ?? 'N/E'} pedidos`}
               </Text>
               <Text mt="1" fontSize="md" lineHeight="22px">
-                {monthValue ? formatCurrency(monthValue) : 'R$ 0,00'}
+                {monthCanceledValue
+                  ? formatCurrency(monthCanceledValue)
+                  : 'R$ 0,00'}
               </Text>
             </InfoBox>
-            <InfoBox
-              isJoined
-              data={monthAverage}
-              title={t(`Ticket médio/ ${currentMonth}`)}
-            >
-              <Text mt="1" color="black" fontSize="2xl" lineHeight="30px">
-                {monthAverage ? formatCurrency(monthAverage) : 'R$ 0,00'}
+            <InfoBox isJoined data={monthAverage} title={t(`Por inatividade`)}>
+              <Text
+                mt="1"
+                color="black"
+                minW="140px"
+                fontSize="2xl"
+                lineHeight="30px"
+              >
+                {`${monthInactivityCount ?? 'N/E'} pedidos`}
+              </Text>
+              <Text mt="1" fontSize="md" lineHeight="22px">
+                {monthInactivityValue
+                  ? formatCurrency(monthInactivityValue)
+                  : 'R$ 0,00'}
               </Text>
             </InfoBox>
           </Stack>

@@ -113,7 +113,8 @@ const BannersContainer = ({ banners }: BannersProps) => {
     return <Box />;
   return (
     <Box
-      mt="6"
+      display={{ base: 'none', lg: 'inline-block' }}
+      mt="4"
       w="100%"
       maxW="980px"
       pos="relative"

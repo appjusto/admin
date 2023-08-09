@@ -80,13 +80,15 @@ export const calculateCancellationCosts = (
 export const getBusinessOrdersByPeriod = (
   orders: WithId<Order>[],
   start: Date,
-  end?: Date
+  end?: Date,
+  ignoreCount?: boolean
 ) => {
   const filtered = orders.filter((order) => {
     const baseTime = (order.createdOn as Timestamp).toDate();
     if (!end) return dayjs(baseTime).isAfter(start);
     else return dayjs(baseTime).isAfter(start) && dayjs(baseTime).isBefore(end);
   });
+  if (ignoreCount) return filtered;
   return filtered.filter((order) => {
     return isOrdersCount(order.fare);
   });
@@ -106,6 +108,12 @@ export const getBusinessOrdersBilling = (orders: WithId<Order>[]) => {
     }
   });
   return result;
+};
+
+export const getBusinessOrdersCanceledBilling = (orders: WithId<Order>[]) => {
+  return orders.reduce<number>((result, order) => {
+    return (result += order.fare?.business?.value ?? 0);
+  }, 0);
 };
 
 export interface ItemByDay {
