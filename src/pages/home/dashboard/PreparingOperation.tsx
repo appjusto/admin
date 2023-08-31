@@ -75,7 +75,7 @@ export const PreparingOperation = () => {
           </Text>
         </Box>
         <Link
-          href="https/appjusto.com.br"
+          href="https://sites.google.com/appjusto.com.br/restaurantes/treinamentos"
           w={{ base: '100%', md: 'auto' }}
           isExternal
         >

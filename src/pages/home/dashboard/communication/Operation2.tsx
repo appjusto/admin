@@ -21,7 +21,11 @@ export const Operation2 = () => {
         )}
         description={
           <Text>
-            <Link href="" textDecor="underline">
+            <Link
+              href="https://youtu.be/pMKgXHwnwDo"
+              textDecor="underline"
+              isExternal
+            >
               {t('Assista o tutorial')}
             </Link>
             {t(' sobre como criar acessos para gerentes, caixa e atendentes')}
@@ -50,7 +54,7 @@ export const Operation2 = () => {
         )}
         time={t('2 minutos')}
         btnLabel={t('Acessar')}
-        link="http://localhost:3000"
+        link="https://sites.google.com/appjusto.com.br/restaurantes/treinamentos"
       />
     </BaseAccordion>
   );
