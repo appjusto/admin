@@ -25,7 +25,7 @@ export const Operation3 = () => {
         )}
         time={t('2 minutos')}
         btnLabel={t('Baixar')}
-        link="http://localhost:3000"
+        link="https://drive.google.com/drive/folders/1FMVItN3OCNBuIfgr-Y0JNspcsl5JrwmF"
       />
     </BaseAccordion>
   );

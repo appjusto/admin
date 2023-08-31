@@ -18,16 +18,16 @@ export const SupportMaterials = () => {
           'Confira materiais úteis para divulgar o seu restaurante nas redes sociais e whatsapp!'
         )}
         btnLabel={t('Acessar materiais')}
-        link="http://localhost:3000"
+        link="https://drive.google.com/drive/folders/1FMVItN3OCNBuIfgr-Y0JNspcsl5JrwmF"
       />
-      <OperationStep
+      {/* <OperationStep
         title={t('Flyers e display de mesa')}
         description={t(
           'Disponibilizamos essas ferramentas para seus clientes saberem que você tem um delivery melhor pra todos!'
         )}
         btnLabel={t('Acessar materiais')}
         link="http://localhost:3000"
-      />
+      /> */}
     </BaseAccordion>
   );
 };
