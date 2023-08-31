@@ -35,21 +35,23 @@ const Dashboard = () => {
         }
         subtitle={t(`Dados atualizados em ${dateTime}`)}
       />
-      <Flex
-        mt="6"
-        border="1px solid #FFBE00"
-        borderRadius="lg"
-        bgColor="#FFF6D9"
-        px="6"
-        py="5"
-      >
-        <Icon as={IoIosWarning} w="6" h="6" color="#FFBE00" />
-        <Text color="black" ml="2">
-          {t(
-            'Deixe sempre a janela do painel aberta e o som do computador ligado.'
-          )}
-        </Text>
-      </Flex>
+      {business?.situation === 'approved' && (
+        <Flex
+          mt="6"
+          border="1px solid #FFBE00"
+          borderRadius="lg"
+          bgColor="#FFF6D9"
+          px="6"
+          py="5"
+        >
+          <Icon as={IoIosWarning} w="6" h="6" color="#FFBE00" />
+          <Text color="black" ml="2">
+            {t(
+              'Deixe sempre a janela do painel aberta e o som do computador ligado.'
+            )}
+          </Text>
+        </Flex>
+      )}
       {business?.situation !== 'approved' ? (
         <RegistrationStatus />
       ) : isOperationValidated ? (
