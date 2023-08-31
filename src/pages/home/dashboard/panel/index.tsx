@@ -9,9 +9,7 @@ import React from 'react';
 import { MdOutlineInfo } from 'react-icons/md';
 import { formatCurrency, formatPct } from 'utils/formatters';
 import { t } from 'utils/i18n';
-import { SharingMessages } from '../communication/SharingMessages';
 import { SupportMaterials } from '../communication/SupportMaterials';
-import { WhatsGroups } from '../communication/WhatsGroups';
 import BannersContainer from './banners/BannersContainer';
 import InfoBox from './InfoBox';
 import { InsuranceModal } from './InsuranceModal';
@@ -390,8 +388,6 @@ export const Panel = () => {
         )}
       </Box>
       <SupportMaterials />
-      <WhatsGroups />
-      <SharingMessages />
       <InsuranceModal isOpen={insuranceModalIsOpen} />
     </Box>
   );
