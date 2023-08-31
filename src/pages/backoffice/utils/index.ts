@@ -126,6 +126,7 @@ export const ledgerEntryOperationPTOptions = {
   'balance-adjustment': 'Ajuste de balanço',
   'commission': 'Comissão',
   'refund-credit': 'Crédito de reembolso',
+  'delivery-credit': 'Crédito de delivery para consumidor',
   'marketing-credit': 'Crédito de marketing',
   'services-debit': 'Débito de serviço contratado',
 };

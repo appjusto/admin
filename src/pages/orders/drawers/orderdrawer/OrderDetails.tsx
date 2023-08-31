@@ -37,6 +37,7 @@ export const OrderDetails = ({ order }: DetailsProps) => {
       ? order.fare.business.paid
       : order?.fare?.business?.value;
   const totalPaid = courierPaid + (businessPaid ?? 0);
+  const consumerCredits = order?.fare?.credits ?? 0;
   const statusColor =
     order?.fare?.business?.status && order?.fare?.business?.status !== 'paid'
       ? 'red'
@@ -171,23 +172,35 @@ export const OrderDetails = ({ order }: DetailsProps) => {
             <Text as="span" color="black">
               {formatCurrency(totalPaid)}
             </Text>
+            {consumerCredits > 0 ? (
+              <Text ml="2" as="span" color="black" fontSize="sm">
+                (
+                {formatCurrency(consumerCredits) +
+                  t(' via créditos do consumidor')}
+                )
+              </Text>
+            ) : null}
           </Text>
-          <Text mt="1" fontSize="md">
-            {t('Método de pagamento:')}{' '}
-            <Text as="span" color="black">
-              {order?.paymentMethod
-                ? paymentMethodPTOptions[order.paymentMethod]
-                : 'N/E'}
-            </Text>
-          </Text>
-          <Text mt="1" fontSize="md">
-            {t('Status da fatura:')}{' '}
-            <Text as="span" color={statusColor} fontWeight="700">
-              {order?.fare?.business?.status
-                ? invoiceStatusPTOptions[order.fare.business.status]
-                : 'N/E'}
-            </Text>
-          </Text>
+          {order?.fare?.business?.status !== undefined && (
+            <>
+              <Text mt="1" fontSize="md">
+                {t('Método de pagamento:')}{' '}
+                <Text as="span" color="black">
+                  {order?.paymentMethod
+                    ? paymentMethodPTOptions[order.paymentMethod]
+                    : 'N/E'}
+                </Text>
+              </Text>
+              <Text mt="1" fontSize="md">
+                {t('Status da fatura:')}{' '}
+                <Text as="span" color={statusColor} fontWeight="700">
+                  {order?.fare?.business?.status
+                    ? invoiceStatusPTOptions[order.fare.business.status]
+                    : 'N/E'}
+                </Text>
+              </Text>
+            </>
+          )}
         </>
       )}
     </Box>
