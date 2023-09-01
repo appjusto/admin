@@ -1,3 +1,4 @@
+import { ProfileChange } from '@appjusto/types';
 import {
   Button,
   Drawer,
@@ -16,12 +17,12 @@ import * as cpfutils from '@fnando/cpf';
 import { useFetchUserData } from 'app/api/users/useFetchUserData';
 import { useObserveUserChanges } from 'app/api/users/useObserveUserChanges';
 import { phoneFormatter } from 'common/components/form/input/pattern-input/formatters';
+import { keys, omit } from 'lodash';
 import { situationPTOptions } from 'pages/backoffice/utils';
 import React from 'react';
 import { Link as RouterLink, useParams } from 'react-router-dom';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
-import { birthdayFormatter } from '../courier/register/utils';
 import { SectionTitle } from '../generics/SectionTitle';
 
 interface BaseDrawerProps {
@@ -57,6 +58,17 @@ const UserChangeDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
     if (changes?.userType === 'courier') page = 'couriers';
     return `/backoffice/${page}/${user?.id}`;
   }, [user?.id, changes?.userType]);
+  const changesKeys = React.useMemo(() => {
+    if (!changes) return [];
+    const serialized = omit<ProfileChange>(changes, [
+      'id',
+      'accountId',
+      'userType',
+      'situation',
+      'createdOn',
+    ]);
+    return keys(serialized);
+  }, [changes]);
   // handlers
   const updateChangesSituation = (situation: 'approved' | 'rejected') => {
     actionType.current = situation;
@@ -335,7 +347,26 @@ const UserChangeDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
             <SectionTitle mb="5">
               {t('Solicitando alteração dos seguintes dados:')}
             </SectionTitle>
-            {changes?.name && (
+            {changesKeys.map((key) => {
+              const value = changes[key as keyof ProfileChange];
+              return (
+                <Text
+                  key={key}
+                  mt="1"
+                  fontSize="15px"
+                  color="red"
+                  fontWeight="700"
+                  lineHeight="22px"
+                >
+                  {key}
+                  {': '}
+                  <Text as="span" fontWeight="500">
+                    {JSON.stringify(value)}
+                  </Text>
+                </Text>
+              );
+            })}
+            {/* {changes?.name && (
               <Text
                 mt="1"
                 fontSize="15px"
@@ -415,7 +446,7 @@ const UserChangeDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
               >
                 {t('Imagens pendentes')}
               </Text>
-            )}
+            )} */}
             <Text
               mt="1"
               fontSize="15px"
