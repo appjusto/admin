@@ -1,5 +1,5 @@
 import { useContextApi } from 'app/state/api/context';
-import { useContextFirebaseUserEmail } from 'app/state/auth/context';
+import { useContextFirebaseUserId } from 'app/state/auth/context';
 import { useContextBusinessId } from 'app/state/business/context';
 import { EventParams } from 'firebase/analytics';
 import { useCustomMutation } from '../mutation/useCustomMutation';
@@ -12,7 +12,7 @@ export type AnalyticsLogData = {
 export const useMeasurement = () => {
   // context
   const api = useContextApi();
-  const email = useContextFirebaseUserEmail();
+  const userId = useContextFirebaseUserId();
   const businessId = useContextBusinessId();
   // mutations
   const { mutate: setAnalyticsConsent, mutationResult: consentResult } =
@@ -26,7 +26,7 @@ export const useMeasurement = () => {
       const eventParams = {
         ...data.eventParams,
         businessId,
-        email,
+        userId,
       };
       return api.measurement().analyticsLogEvent(data.eventName, eventParams);
     },
