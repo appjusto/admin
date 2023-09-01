@@ -19,6 +19,7 @@ export const SupportMaterials = () => {
         )}
         btnLabel={t('Acessar materiais')}
         link="https://drive.google.com/drive/folders/1FMVItN3OCNBuIfgr-Y0JNspcsl5JrwmF"
+        eventName="admin_marketing_material_click"
       />
       {/* <OperationStep
         title={t('Flyers e display de mesa')}

@@ -10,6 +10,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
+import { useMeasurement } from 'app/api/measurement/useMeasurement';
 import { useContextBusiness } from 'app/state/business/context';
 import React from 'react';
 import { FiShare2 } from 'react-icons/fi';
@@ -19,6 +20,7 @@ import { t } from 'utils/i18n';
 
 export const DeeplinkCard = () => {
   // context
+  const { analyticsLogEvent } = useMeasurement();
   const { business } = useContextBusiness();
   const { createBusinessSlug, updateBusinessSlug, updateSlugResult } =
     useBusinessProfile(business?.id);
@@ -47,6 +49,7 @@ export const DeeplinkCard = () => {
   };
   const copyToClipboard = () => {
     setIsCopied(true);
+    analyticsLogEvent({ eventName: 'admin_deeplink_copy' });
     setTimeout(() => setIsCopied(false), 500);
     return navigator.clipboard.writeText(deeplink);
   };

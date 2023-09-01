@@ -8,6 +8,7 @@ import {
   Link,
   Text,
 } from '@chakra-ui/react';
+import { useMeasurement } from 'app/api/measurement/useMeasurement';
 import { IoMdTime } from 'react-icons/io';
 
 interface OperationStepProps {
@@ -17,6 +18,7 @@ interface OperationStepProps {
   time?: string;
   btnLabel?: string;
   link?: string;
+  eventName?: string;
   action?: React.ReactNode;
 }
 
@@ -27,8 +29,14 @@ export const OperationStep = ({
   time,
   btnLabel,
   link,
+  eventName,
   action,
 }: OperationStepProps) => {
+  const { analyticsLogEvent } = useMeasurement();
+  const logEvent = () => {
+    if (!eventName) return;
+    analyticsLogEvent({ eventName });
+  };
   return (
     <Flex
       mt="4"
@@ -75,6 +83,7 @@ export const OperationStep = ({
             fontSize="sm"
             minW="112px"
             w={{ base: '100%', md: 'auto' }}
+            onClick={logEvent}
           >
             {btnLabel}
           </Button>

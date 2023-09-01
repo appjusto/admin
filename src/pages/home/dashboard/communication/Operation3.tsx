@@ -26,6 +26,7 @@ export const Operation3 = () => {
         time={t('2 minutos')}
         btnLabel={t('Baixar')}
         link="https://drive.google.com/drive/folders/1FMVItN3OCNBuIfgr-Y0JNspcsl5JrwmF"
+        eventName="admin_marketing_material_new_click"
       />
     </BaseAccordion>
   );

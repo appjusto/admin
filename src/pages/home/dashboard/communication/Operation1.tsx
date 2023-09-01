@@ -1,5 +1,6 @@
 import { CheckIcon } from '@chakra-ui/icons';
 import { Button } from '@chakra-ui/react';
+import { useMeasurement } from 'app/api/measurement/useMeasurement';
 import { ReactComponent as android } from 'common/img/android.svg';
 import { ReactComponent as monitor } from 'common/img/monitor.svg';
 import React from 'react';
@@ -11,11 +12,14 @@ const appLink =
   'https://play.google.com/store/apps/details?id=br.com.appjusto.business.live&hl=pt_BR&gl=US';
 
 export const Operation1 = () => {
+  // context
+  const { analyticsLogEvent } = useMeasurement();
   // state
   const [isCopied, setIsCopied] = React.useState(false);
   // handlers
   const copyToClipboard = () => {
     setIsCopied(true);
+    analyticsLogEvent({ eventName: 'admin_business_app_click' });
     setTimeout(() => setIsCopied(false), 500);
     return navigator.clipboard.writeText(appLink);
   };
@@ -39,6 +43,7 @@ export const Operation1 = () => {
         time={t('2 minutos')}
         btnLabel={t('Baixar')}
         link="https://chrome.google.com/webstore/detail/appjusto-admin/mcmielagmkelelpmnmjlnlpeakdmmeap?hl=pt-BR"
+        eventName="admin_chrome_ex_click"
       />
       <OperationStep
         icon={android}

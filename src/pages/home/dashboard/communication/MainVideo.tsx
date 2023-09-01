@@ -1,8 +1,10 @@
 import { AspectRatio, Box, Text } from '@chakra-ui/react';
+import { useMeasurement } from 'app/api/measurement/useMeasurement';
 import { t } from 'utils/i18n';
 import { BaseAccordion } from './BaseAccordion';
 
 export const MainVideo = () => {
+  const { analyticsLogEvent } = useMeasurement();
   return (
     <BaseAccordion
       title={t(
@@ -24,6 +26,9 @@ export const MainVideo = () => {
           <iframe
             title="AppJusto é o app de delivery bom pra todos"
             src="https://www.youtube.com/embed/BaEiVN7OZWE"
+            onPlay={() =>
+              analyticsLogEvent({ eventName: 'admin_main_video_play' })
+            }
             allowFullScreen
           />
         </AspectRatio>

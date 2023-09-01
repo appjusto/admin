@@ -1,4 +1,5 @@
 import { Button, Link, Text } from '@chakra-ui/react';
+import { useMeasurement } from 'app/api/measurement/useMeasurement';
 import { ReactComponent as monitor } from 'common/img/monitor.svg';
 import { ReactComponent as play } from 'common/img/play.svg';
 import { Link as RouterLink } from 'react-router-dom';
@@ -7,6 +8,8 @@ import { BaseAccordion } from './BaseAccordion';
 import { OperationStep } from './OperationStep';
 
 export const Operation2 = () => {
+  // context
+  const { analyticsLogEvent } = useMeasurement();
   return (
     <BaseAccordion
       title={t('🚩 Passo 2')}
@@ -24,6 +27,9 @@ export const Operation2 = () => {
             <Link
               href="https://youtu.be/pMKgXHwnwDo"
               textDecor="underline"
+              onClick={() =>
+                analyticsLogEvent({ eventName: 'admin_tutorial_team_click' })
+              }
               isExternal
             >
               {t('Assista o tutorial')}
@@ -55,6 +61,7 @@ export const Operation2 = () => {
         time={t('2 minutos')}
         btnLabel={t('Acessar')}
         link="https://sites.google.com/appjusto.com.br/restaurantes/treinamentos"
+        eventName="admin_training_click"
       />
     </BaseAccordion>
   );
