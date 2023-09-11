@@ -1,4 +1,4 @@
-import { Order, OrderItem, WithId } from '@appjusto/types';
+import { Order, OrderItem, OrderStatus, WithId } from '@appjusto/types';
 import {
   Box,
   Table,
@@ -24,6 +24,8 @@ import {
 } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../../../backoffice/drawers/generics/SectionTitle';
+
+const completedStatuses: OrderStatus[] = ['scheduled', 'delivered', 'canceled'];
 
 interface DetailsProps {
   order?: WithId<Order> | null;
@@ -191,14 +193,16 @@ export const OrderDetails = ({ order }: DetailsProps) => {
                     : 'N/E'}
                 </Text>
               </Text>
-              <Text mt="1" fontSize="md">
-                {t('Status da fatura:')}{' '}
-                <Text as="span" color={statusColor} fontWeight="700">
-                  {order?.fare?.business?.status
-                    ? invoiceStatusPTOptions[order.fare.business.status]
-                    : 'N/E'}
+              {completedStatuses.includes(order.status) && (
+                <Text mt="1" fontSize="md">
+                  {t('Status da fatura:')}{' '}
+                  <Text as="span" color={statusColor} fontWeight="700">
+                    {order?.fare?.business?.status
+                      ? invoiceStatusPTOptions[order.fare.business.status]
+                      : 'N/E'}
+                  </Text>
                 </Text>
-              </Text>
+              )}
             </>
           )}
         </>
