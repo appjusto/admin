@@ -24,6 +24,13 @@ import { StaffsTableItem } from './account-manager/StaffsTableItem';
 
 const situations = ['approved'] as ProfileSituation[];
 
+export type UpdatedField = 'accountManagerId' | 'customerSuccessId';
+
+type Updating = {
+  field: UpdatedField;
+  userId: string;
+};
+
 export const AccountManager = () => {
   //context
   const { user, userAbility } = useContextFirebaseUser();
@@ -31,7 +38,9 @@ export const AccountManager = () => {
   const { updateBusinessProfile, updateResult } = useBusinessProfile(
     business?.id
   );
+  const { isLoading, isSuccess } = updateResult;
   // state
+  const [updating, setUpdating] = React.useState<Updating | null>(null);
   const [search, setSearch] = React.useState('');
   const { staffs, fetchNextPage } = useStaffs(
     situations,
@@ -48,10 +57,20 @@ export const AccountManager = () => {
     [userAbility]
   );
   // handlers
-  const handleUpdateAccountManager = () => {
-    if (!user?.uid) return;
-    return updateBusinessProfile({ accountManagerId: user.uid });
+  const handleUpdateAccountManager = (field: UpdatedField, userId?: string) => {
+    if (!userId) return;
+    setUpdating({ field, userId });
+    return updateBusinessProfile({ [field]: userId });
   };
+  const handleRemoveAccountManager = (field: UpdatedField) => {
+    if (!user?.uid) return;
+    return updateBusinessProfile({ [field]: null });
+  };
+  // side effects
+  React.useEffect(() => {
+    if (!isSuccess) return;
+    setUpdating(null);
+  }, [isSuccess]);
   //UI
   return (
     <Box mt="6">
@@ -61,6 +80,8 @@ export const AccountManager = () => {
           <AccountManagerCard
             accountManagerId={business.accountManagerId}
             canRemove={isHead || user?.uid === business.accountManagerId}
+            onRemove={() => handleRemoveAccountManager('accountManagerId')}
+            isLoading={isLoading && updating?.field === 'accountManagerId'}
           />
         ) : (
           <Box mt="4">
@@ -76,10 +97,44 @@ export const AccountManager = () => {
             mt="4"
             variant="outline"
             size="md"
-            onClick={handleUpdateAccountManager}
-            isLoading={updateResult.isLoading}
+            onClick={() =>
+              handleUpdateAccountManager('accountManagerId', user?.uid)
+            }
+            isLoading={isLoading && updating?.field === 'accountManagerId'}
           >
-            {t('Assumir restaurante')}
+            {t('Assumir como gerente de conta')}
+          </Button>
+        </Box>
+      )}
+      <SectionTitle>{t('Customer success')}</SectionTitle>
+      {business?.customerSuccessId ? (
+        canReadAccountManager ? (
+          <AccountManagerCard
+            accountManagerId={business.customerSuccessId}
+            canRemove={isHead || user?.uid === business.customerSuccessId}
+            onRemove={() => handleRemoveAccountManager('customerSuccessId')}
+            isLoading={isLoading && updating?.field === 'customerSuccessId'}
+          />
+        ) : (
+          <Box mt="4">
+            <Text>{t('Este restaurante já possui um customer success')}</Text>
+          </Box>
+        )
+      ) : (
+        <Box mt="4">
+          <Text>
+            {t('Este restaurante ainda não possui um customer success')}
+          </Text>
+          <Button
+            mt="4"
+            variant="outline"
+            size="md"
+            onClick={() =>
+              handleUpdateAccountManager('customerSuccessId', user?.uid)
+            }
+            isLoading={isLoading && updating?.field === 'customerSuccessId'}
+          >
+            {t('Assumir como customer success')}
           </Button>
         </Box>
       )}
@@ -107,7 +162,21 @@ export const AccountManager = () => {
               <Tbody>
                 {staffs && staffs.length > 0 ? (
                   staffs.map((staff) => (
-                    <StaffsTableItem key={staff.id} staff={staff} />
+                    <StaffsTableItem
+                      key={staff.id}
+                      staff={staff}
+                      handleUpdate={handleUpdateAccountManager}
+                      isLoadingManager={
+                        isLoading &&
+                        updating?.field === 'accountManagerId' &&
+                        updating.userId === staff.id
+                      }
+                      isLoadingCustomer={
+                        isLoading &&
+                        updating?.field === 'customerSuccessId' &&
+                        updating.userId === staff.id
+                      }
+                    />
                   ))
                 ) : (
                   <Tr color="black" fontSize="xs" fontWeight="700">

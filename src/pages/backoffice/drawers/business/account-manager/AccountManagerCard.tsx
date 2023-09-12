@@ -1,7 +1,5 @@
 import { Box, Button, Flex, HStack, Link, Text } from '@chakra-ui/react';
-import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useFetchStaffProfile } from 'app/api/staff/useFetchStaffProfile';
-import { useContextBusinessBackoffice } from 'app/state/business/businessBOContext';
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { t } from 'utils/i18n';
@@ -9,26 +7,20 @@ import { t } from 'utils/i18n';
 interface AccountManagerCardProps {
   accountManagerId: string;
   canRemove?: boolean;
+  onRemove(): void;
+  isLoading: boolean;
 }
 
 export const AccountManagerCard = ({
   accountManagerId,
   canRemove,
+  onRemove,
+  isLoading,
 }: AccountManagerCardProps) => {
   // context
   const profile = useFetchStaffProfile(accountManagerId);
-  const { business } = useContextBusinessBackoffice();
-  const { updateBusinessProfile, updateResult } = useBusinessProfile(
-    business?.id
-  );
   // state
   const [isConfirming, setIsConfirming] = React.useState(false);
-  // handlers
-  const handleRemoveAccountManager = () => {
-    return updateBusinessProfile({
-      accountManagerId: null,
-    });
-  };
   // UI
   if (!profile) {
     return (
@@ -102,8 +94,8 @@ export const AccountManagerCard = ({
                   w="100%"
                   size="sm"
                   variant="danger"
-                  onClick={handleRemoveAccountManager}
-                  isLoading={updateResult.isLoading}
+                  onClick={onRemove}
+                  isLoading={isLoading}
                   loadingText={t('Removendo...')}
                 >
                   {t('Remover')}
