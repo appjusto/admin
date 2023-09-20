@@ -1,7 +1,7 @@
 import { StaffProfile, WithId } from '@appjusto/types';
 import { Button, Icon, Link, Td, Tr } from '@chakra-ui/react';
 import React from 'react';
-import { MdPersonAddAlt1 } from 'react-icons/md';
+import { BiUserPlus } from 'react-icons/bi';
 import { Link as RouterLink } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { UpdatedField } from '../AccountManager';
@@ -37,7 +37,7 @@ export const StaffsTableItem = ({
           onClick={() => handleUpdate('accountManagerId', staff.id)}
           isLoading={isLoadingManager}
         >
-          <Icon as={MdPersonAddAlt1} mr="2" />
+          <Icon as={BiUserPlus} mr="2" />
           {t('Gerente')}
         </Button>
         <Button
@@ -48,7 +48,7 @@ export const StaffsTableItem = ({
           onClick={() => handleUpdate('customerSuccessId', staff.id)}
           isLoading={isLoadingCustomer}
         >
-          <Icon as={MdPersonAddAlt1} mr="2" />
+          <Icon as={BiUserPlus} mr="2" />
           {t('Customer success')}
         </Button>
       </Td>

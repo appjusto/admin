@@ -1,5 +1,14 @@
-import { BellIcon, SmallCloseIcon, WarningIcon } from '@chakra-ui/icons';
-import { Box, Button, HStack, Text, useToast } from '@chakra-ui/react';
+import { SmallCloseIcon, WarningIcon } from '@chakra-ui/icons';
+import {
+  Box,
+  Button,
+  Flex,
+  HStack,
+  Icon,
+  Text,
+  useToast,
+} from '@chakra-ui/react';
+import { LuBellRing } from 'react-icons/lu';
 import { t } from 'utils/i18n';
 
 type Message = { title: string; description?: string };
@@ -37,7 +46,9 @@ export const CustomToast = ({ type, message }: CustomToastProps) => {
         <WarningIcon />
         <Box>
           <Text>{message.title}</Text>
-          {message?.description && <Text fontSize="xs">{message.description}</Text>}
+          {message?.description && (
+            <Text fontSize="xs">{message.description}</Text>
+          )}
         </Box>
       </HStack>
     </Box>
@@ -51,30 +62,38 @@ export const CustomToastAutoPlay = () => {
   return (
     <Box
       pos="relative"
-      color="white"
-      p="8"
-      bg="#F6F6F6"
-      border="1px solid black"
+      p="6"
+      bg="#FFF6D9"
+      border="1px solid #FFBE00"
       borderRadius="lg"
       w={{ base: '100%', md: 'auto' }}
       maxW={{ base: '100vw', md: 'auto' }}
+      mb="6"
     >
-      <SmallCloseIcon
-        pos="absolute"
-        top="2"
-        right="3"
-        cursor="pointer"
-        onClick={() => toast.closeAll()}
-      />
-      <HStack spacing={4} pr="6">
-        <BellIcon color="black" />
-        <Box>
-          <Text color="black">{t('Clique para habilitar a campainha dos pedidos!')}</Text>
+      <Flex w="full" justifyContent="space-between" alignItems="center">
+        <Box pr="4">
+          <HStack spacing={2} w="full" alignItems="center">
+            <Icon as={LuBellRing} color="#FFBE00" w="4" h="4" />
+            <Text color="black" fontSize="lg" fontWeight="medium">
+              {t('Clique para habilitar a campainha dos pedidos!')}
+            </Text>
+          </HStack>
+          <Text fontSize="sm">
+            {t(
+              'Esta ação é necessária sempre que a aba for carregada, devido a uma restrição imposta pelos navegadores.'
+            )}
+          </Text>
         </Box>
-        <Button size="md" onClick={() => toast.closeAll()}>
-          {t('Ok')}
+        <Button
+          size="md"
+          variant="yellowDark"
+          border="none"
+          px="6"
+          onClick={() => toast.closeAll()}
+        >
+          {t('Habilitar')}
         </Button>
-      </HStack>
+      </Flex>
     </Box>
   );
 };
