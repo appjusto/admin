@@ -47,7 +47,7 @@ export const CourierRegister = () => {
       <SectionTitle>{t('Tags')}</SectionTitle>
       <ProfileTags
         tags={courier?.tags}
-        options={['safe', 'unsafe', 'RPO', 'investor', 'staff'] as ProfileTag[]}
+        options={['safe', 'unsafe', 'RPO'] as ProfileTag[]}
         updateProfile={(tags) =>
           updateProfile({
             changes: { tags },
