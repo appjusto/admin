@@ -3,11 +3,11 @@ import { Box } from '@chakra-ui/react';
 import { useCourierUpdateProfile } from 'app/api/courier/useCourierUpdateProfile';
 import { useObserveCourierProfileNotes } from 'app/api/courier/useObserveCourierProfileNotes';
 import { useContextCourierProfile } from 'app/state/courier/context';
-import { ProfileNotes } from 'common/components/backoffice/ProfileNotes';
 import { UserNotificationPreferences } from 'common/components/UserNotificationPreferences';
+import { ProfileNotes } from 'common/components/backoffice/ProfileNotes';
 import { t } from 'utils/i18n';
-import { SectionTitle } from '../generics/SectionTitle';
 import { ProfileTags } from '../ProfileTags';
+import { SectionTitle } from '../generics/SectionTitle';
 import { ActingCity } from './ActingCity';
 import { Documents } from './Documents';
 import { Fleets } from './Fleets';
@@ -47,7 +47,7 @@ export const CourierRegister = () => {
       <SectionTitle>{t('Tags')}</SectionTitle>
       <ProfileTags
         tags={courier?.tags}
-        options={['safe', 'unsafe'] as ProfileTag[]}
+        options={['safe', 'unsafe', 'RPO', 'investor', 'staff'] as ProfileTag[]}
         updateProfile={(tags) =>
           updateProfile({
             changes: { tags },
