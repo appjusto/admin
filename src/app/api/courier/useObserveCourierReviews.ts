@@ -1,4 +1,4 @@
-import { OrderConsumerReview, ReviewType, WithId } from '@appjusto/types';
+import { OrderReview, ReviewType, WithId } from '@appjusto/types';
 import { useContextApi } from 'app/state/api/context';
 import dayjs from 'dayjs';
 import React from 'react';
@@ -14,9 +14,7 @@ export const useObserveCourierReviews = (
   const api = useContextApi();
   const userCanRead = useUserCanReadEntity('couriers');
   // state
-  const [reviews, setReviews] = React.useState<
-    WithId<OrderConsumerReview>[] | null
-  >();
+  const [reviews, setReviews] = React.useState<WithId<OrderReview>[] | null>();
   // side effects
   React.useEffect(() => {
     if (!userCanRead) return;

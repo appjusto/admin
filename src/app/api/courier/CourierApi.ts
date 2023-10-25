@@ -2,7 +2,7 @@ import {
   CourierProfile,
   CourierStatus,
   MarketplaceAccountInfo,
-  OrderConsumerReview,
+  OrderReview,
   ProfileNote,
   ReleaseCourierPayload,
   ReviewType,
@@ -11,13 +11,13 @@ import {
 import * as Sentry from '@sentry/react';
 import { FirebaseError } from 'firebase/app';
 import {
+  Unsubscribe,
   addDoc,
   deleteDoc,
   getDocs,
   orderBy,
   query,
   serverTimestamp,
-  Unsubscribe,
   updateDoc,
   where,
 } from 'firebase/firestore';
@@ -78,7 +78,7 @@ export default class CourierApi {
     types: ReviewType[],
     start: Date,
     end: Date,
-    resultHandler: (result: WithId<OrderConsumerReview>[] | null) => void
+    resultHandler: (result: WithId<OrderReview>[] | null) => void
   ): Unsubscribe {
     const q = query(
       this.refs.getReviewsRef(),

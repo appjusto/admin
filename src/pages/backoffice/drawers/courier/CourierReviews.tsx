@@ -1,4 +1,4 @@
-import { OrderConsumerReview, ReviewType, WithId } from '@appjusto/types';
+import { OrderReview, ReviewType, WithId } from '@appjusto/types';
 import {
   Box,
   Checkbox,
@@ -21,7 +21,7 @@ import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
 
 interface ItemPros {
-  review: WithId<OrderConsumerReview>;
+  review: WithId<OrderReview>;
 }
 
 const CourierReviewsItem = ({ review }: ItemPros) => {
