@@ -95,14 +95,14 @@ export const Participants = ({
           <SectionTitle>{t('Origem')}</SectionTitle>
           <Participant
             type="p2p-instructions"
-            instruction={order?.origin?.intructions}
+            instruction={order?.origin?.instructions}
             address={order?.origin?.address?.description}
             additionalInfo={order?.origin?.additionalInfo}
           />
           <SectionTitle>{t('Destino')}</SectionTitle>
           <Participant
             type="p2p-instructions"
-            instruction={order?.destination?.intructions}
+            instruction={order?.destination?.instructions}
             address={order?.destination?.address?.description}
             additionalInfo={order?.destination?.additionalInfo}
           />
