@@ -64,7 +64,7 @@ export const FirebaseUserProvider = ({ children }: Props) => {
               'refreshUserToken: Não foi possível encontrar as permissões do usuário.'
             );
           }
-          setAdminRole(role);
+          setAdminRole(role ?? 'collaborator');
         }
       } catch (error) {
         console.log('%crefreshUserToken error:', 'color: red', error);
