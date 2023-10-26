@@ -122,6 +122,7 @@ export const PersonalProfile = ({ isCNPJ }: PersonalProfileProps) => {
           value={courier?.phone ?? ''}
           onValueChange={(value) => handleInputChange('phone', value)}
           validationLength={11}
+          isDisabled
         />
         {courier?.phone && (
           <WhatsappButton
