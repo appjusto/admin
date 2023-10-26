@@ -1,4 +1,9 @@
-import { ConsumerProfile, Order, WithId } from '@appjusto/types';
+import {
+  ConsumerProfile,
+  InstallReferrer,
+  Order,
+  WithId,
+} from '@appjusto/types';
 import * as cpfutils from '@fnando/cpf';
 import { useConsumerOrders } from 'app/api/consumer/useConsumerOrders';
 import { useConsumerProfilePictures } from 'app/api/consumer/useConsumerProfilePictures';
@@ -10,6 +15,7 @@ import { consumerReducer } from './consumerReducer';
 type Validation = { cpf: boolean };
 interface ConsumerProfileContextProps {
   consumer?: WithId<ConsumerProfile> | null;
+  isInstallationReferred: boolean;
   pictures: { selfie?: string | null; document?: string | null };
   contextValidation: Validation;
   orders: WithId<Order>[];
@@ -22,6 +28,10 @@ interface ConsumerProfileContextProps {
   setDocumentFiles(files: File[] | null): void;
   setIsEditingEmail: Dispatch<SetStateAction<boolean>>;
   handleProfileChange(key: string, value: any): void;
+  handleProfileInstallReferrerChange(
+    key: keyof InstallReferrer,
+    value: string
+  ): void;
   setContextValidation: Dispatch<SetStateAction<Validation>>;
 }
 
@@ -45,6 +55,7 @@ export const ConsumerProvider = ({ children }: Props) => {
   // change to useConsumerProfilePictures
   const profile = useObserveConsumerProfile(consumerId);
   // const issueOptions = useIssuesByType(issueOptionsArray);
+  const isInstallationReferred = profile?.installReferrer !== undefined;
   // state
   const [consumer, dispatch] = React.useReducer(
     consumerReducer,
@@ -74,8 +85,14 @@ export const ConsumerProvider = ({ children }: Props) => {
     () => setIsDocumentsActive(true),
     []
   );
-  const handleProfileChange = (key: string, value: any) => {
+  const handleProfileChange = (key: keyof ConsumerProfile, value: any) => {
     dispatch({ type: 'update_state', payload: { [key]: value } });
+  };
+  const handleProfileInstallReferrerChange = (
+    key: keyof InstallReferrer,
+    value: string
+  ) => {
+    dispatch({ type: 'update_install_referrer', payload: { [key]: value } });
   };
   // side effects
   React.useEffect(() => {
@@ -98,6 +115,7 @@ export const ConsumerProvider = ({ children }: Props) => {
     <ConsumerProfileContext.Provider
       value={{
         consumer,
+        isInstallationReferred,
         pictures,
         contextValidation,
         orders,
@@ -110,6 +128,7 @@ export const ConsumerProvider = ({ children }: Props) => {
         setDocumentFiles,
         setIsEditingEmail,
         handleProfileChange,
+        handleProfileInstallReferrerChange,
         setContextValidation,
       }}
     >

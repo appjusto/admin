@@ -1,9 +1,11 @@
 import {
   BusinessRecommendation,
   ConsumerProfile,
+  InstallReferrer,
   ProfileNote,
   WithId,
 } from '@appjusto/types';
+import { Timestamp } from '@appjusto/types/external/firebase';
 import * as Sentry from '@sentry/react';
 import { documentAs, documentsAs, FirebaseDocument } from 'core/fb';
 import { FirebaseError } from 'firebase/app';
@@ -223,6 +225,14 @@ export default class ConsumerApi {
       ...changes,
       updatedOn: timestamp,
     };
+    if (changes.installReferrer && !changes.installReferrer.installedAt) {
+      const installReferrer: InstallReferrer = {
+        ...changes.installReferrer,
+        installedAt: timestamp as Timestamp,
+        updatedAt: timestamp as Timestamp,
+      };
+      fullChanges.installReferrer = installReferrer;
+    }
     try {
       await updateDoc(this.refs.getConsumerRef(consumerId), fullChanges);
       // logo

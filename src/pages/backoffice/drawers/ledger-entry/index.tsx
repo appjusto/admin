@@ -526,7 +526,7 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 fontSize="15px"
                 lineHeight="21px"
               >
-                <Stack direction={{ base: 'column', md: 'row' }} spacing={4}>
+                <Stack direction="column" spacing={2}>
                   <Radio value="same-owner-accounts">
                     {t('Contas do mesmo usuário')}
                   </Radio>
@@ -535,6 +535,9 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                   </Radio>
                   <Radio value="refund-credit">
                     {t('Crédito de reembolso')}
+                  </Radio>
+                  <Radio value="marketing-credit">
+                    {t('Crédito de marketing')}
                   </Radio>
                   <Radio value="others">{t('Outros')}</Radio>
                 </Stack>

@@ -21,6 +21,7 @@ import { normalizeEmail } from 'utils/email';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
 import { ProfileTags } from '../ProfileTags';
+import { ProfileInstallReferrer } from './ProfileInstallReferrer';
 
 export const PersonalProfile = () => {
   // context
@@ -130,6 +131,7 @@ export const PersonalProfile = () => {
         onValueChange={(value) => handleInputChange('cpf', value)}
         externalValidation={{ active: true, status: isCPFValid() }}
       />
+      <ProfileInstallReferrer />
       <SectionTitle>{t('Preferências de notificação')}</SectionTitle>
       <UserNotificationPreferences
         notificationPreferences={consumer?.notificationPreferences}
