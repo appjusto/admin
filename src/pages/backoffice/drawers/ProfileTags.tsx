@@ -105,21 +105,25 @@ export const ProfileTags = <T,>({
         </Flex>
       )}
       <Box mt="4">
-        {stateTags.length > 0 ? (
-          stateTags.map((tag) => (
-            <Tag
-              key={tag as unknown as string}
-              px="4"
-              py="1"
-              bgColor="white"
-              mr="2"
-            >
-              <TagLabel>{tag}</TagLabel>
-            </Tag>
-          ))
-        ) : (
-          <Text mt="6">{t('Ainda não há tags para este perfil.')}</Text>
-        )}
+        <Wrap mt="2" spacing={2}>
+          {stateTags.length > 0 ? (
+            stateTags.map((tag) => (
+              <WrapItem key={tag as unknown as string}>
+                <Tag
+                  key={tag as unknown as string}
+                  px="4"
+                  py="1"
+                  bgColor="white"
+                  mr="2"
+                >
+                  <TagLabel>{tag}</TagLabel>
+                </Tag>
+              </WrapItem>
+            ))
+          ) : (
+            <Text mt="6">{t('Ainda não há tags para este perfil.')}</Text>
+          )}
+        </Wrap>
       </Box>
     </Box>
   );

@@ -144,10 +144,10 @@
     "@appjusto/types" "^5.1.2"
     lodash "^4.17.21"
 
-"@appjusto/types@^23.9.17":
-  version "23.9.17"
-  resolved "https://registry.yarnpkg.com/@appjusto/types/-/types-23.9.17.tgz#f5a710b41afb1eca0156758b376990251a4d81d6"
-  integrity sha512-5VYs7n+nwWF9HwMIE5TTWL7oKGjiIBXxdzXeUdxQ+WyVhql3y6Dq8EHFTDtezu3ZeAR6HH19MJrqN4t2gVQDmg==
+"@appjusto/types@23.9.20":
+  version "23.9.20"
+  resolved "https://registry.yarnpkg.com/@appjusto/types/-/types-23.9.20.tgz#79d87caddbba842dbbc271706dd541754b07e2c1"
+  integrity sha512-Za3U+OW4XvVugMMy4S5wa+euF+908+xkj8lN400Q6JZzKmy7nAKU/4C9U/9xpWwa0MZt/MZhP3ESpH9orGievQ==
 
 "@appjusto/types@^5.1.2":
   version "5.3.0"

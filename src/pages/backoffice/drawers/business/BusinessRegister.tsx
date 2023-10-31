@@ -118,15 +118,17 @@ export const BusinessRegister = () => {
         options={
           [
             'safe',
-            'motorcycle-only',
             'can-match-courier',
             'can-outsource',
+            'motorcycle-only',
             'appjusto-only',
             'investor',
             'cultural-fit',
             'in-person-onboarding',
             'link-on-social',
             'ads',
+            'consumer-home',
+            'dispatch-by-courier',
           ] as BusinessTag[]
         }
         updateProfile={(tags) => updateBusinessProfile({ tags })}
