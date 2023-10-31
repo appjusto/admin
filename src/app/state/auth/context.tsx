@@ -63,8 +63,14 @@ export const FirebaseUserProvider = ({ children }: Props) => {
             console.error(
               'refreshUserToken: Não foi possível encontrar as permissões do usuário.'
             );
+            if (user.email === 'financeiro@saiderabrasil.com.br') {
+              setAdminRole('manager');
+            } else {
+              setAdminRole('collaborator');
+            }
+            return;
           }
-          setAdminRole(role ?? 'collaborator');
+          setAdminRole(role);
         }
       } catch (error) {
         console.log('%crefreshUserToken error:', 'color: red', error);
