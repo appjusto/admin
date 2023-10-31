@@ -178,6 +178,11 @@ export default class FirebaseRefs {
   getOrderFraudPreventionRef = (orderId: string) =>
     doc(this.getOrderPrivateRef(orderId), 'fraudprevention');
 
+  // incidents
+  getIncidentsRef = () => collection(this.firestore, 'incidents');
+  getIncidentRef = (incidentsId: string) =>
+    doc(this.getIncidentsRef(), incidentsId);
+
   // chats
   getChatsRef = () => collection(this.firestore, 'chats');
   getChatMessageRef = (messageId: string) => doc(this.getChatsRef(), messageId);

@@ -3,6 +3,7 @@ import {
   CourierOrderRequest,
   DropOrderPayload,
   Fulfillment,
+  Incident,
   Issue,
   MatchOrderPayload,
   Order,
@@ -555,6 +556,19 @@ export default class OrderApi {
     const q = query(
       this.refs.getOrderIssuesRef(orderId),
       orderBy('createdOn', 'desc')
+    );
+    // returns the unsubscribe function
+    return customCollectionSnapshot(q, resultHandler);
+  }
+
+  observeOrderIncidentes(
+    orderId: string,
+    resultHandler: (incidents: WithId<Incident>[]) => void
+  ): Unsubscribe {
+    const q = query(
+      this.refs.getIncidentsRef(),
+      where('orderId', '==', orderId),
+      orderBy('createdAt', 'desc')
     );
     // returns the unsubscribe function
     return customCollectionSnapshot(q, resultHandler);

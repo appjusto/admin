@@ -1,6 +1,7 @@
 import { CancelOrderPayload, Issue, WithId } from '@appjusto/types';
 import { Box, Icon, Text, Tooltip } from '@chakra-ui/react';
 import { useObserveLedgerByOrderIdAndOperation } from 'app/api/ledger/useObserveLedgerByOrderIdAndOperation';
+import { useObserveOrderIncidents } from 'app/api/order/useObserveOrderIncidents';
 import { useOrder } from 'app/api/order/useOrder';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextManagerProfile } from 'app/state/manager/context';
@@ -21,7 +22,7 @@ import { CookingTime } from './CookingTime';
 import { CourierAllocation } from './CourierAllocation';
 import { DeliveryInfos } from './DeliveryInfos';
 import { OrderDetails } from './OrderDetails';
-import { OrderIssuesTable } from './OrderIssuesTable';
+import { OrderIncidentsTable } from './OrderIncidentsTable';
 import { OrderToPrinting } from './OrderToPrinting';
 import { Outsourced } from './Outsourced';
 
@@ -44,10 +45,10 @@ export const OrderDrawer = (props: Props) => {
     order,
     cancelOrder,
     cancelResult,
-    orderIssues,
     orderCancellation,
     orderCancellationCosts,
   } = useOrder(orderId);
+  const incidents = useObserveOrderIncidents(orderId);
   const { manager } = useContextManagerProfile();
   const { amount: insuranceAmount } = useObserveLedgerByOrderIdAndOperation(
     business?.id,
@@ -233,9 +234,12 @@ export const OrderDrawer = (props: Props) => {
                   </Text>
                 </>
               )}
-              {orderIssues && orderIssues.length > 0 && (
-                <OrderIssuesTable issues={orderIssues} />
+              {incidents && incidents.length > 0 && (
+                <OrderIncidentsTable incidents={incidents} />
               )}
+              {/* {orderIssues && orderIssues.length > 0 && (
+                <OrderIssuesTable issues={orderIssues} />
+              )} */}
               {(!logisticsIncluded ||
                 (order?.fulfillment === 'delivery' &&
                   order?.status !== 'ready' &&

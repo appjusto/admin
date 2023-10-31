@@ -3,7 +3,6 @@ import {
   // InvoiceType,
   Order,
   OrderCancellation,
-  OrderIssue,
   OrderStaff,
   WithId,
 } from '@appjusto/types';
@@ -21,9 +20,6 @@ export const useOrder = (orderId?: string) => {
   const userCanRead = useUserCanReadEntity('orders');
   // state
   const [order, setOrder] = React.useState<WithId<Order> | null>();
-  const [orderIssues, setOrderIssues] = React.useState<
-    WithId<OrderIssue>[] | null
-  >();
   const [orderCancellation, setOrderCancellation] =
     React.useState<OrderCancellation | null>();
   // const [orderCancellationCosts, setOrderCancellationCosts] = React.useState<number>(0);
@@ -58,11 +54,6 @@ export const useOrder = (orderId?: string) => {
     return () => unsub();
   }, [api, userCanRead, orderId]);
   React.useEffect(() => {
-    if (!order?.id) return;
-    const unsub = api.order().observeOrderIssues(order.id, setOrderIssues);
-    return () => unsub();
-  }, [api, order?.id]);
-  React.useEffect(() => {
     if (!order?.id || !['canceled', 'rejected'].includes(order?.status)) return;
     (async () => {
       const cancellation = await api
@@ -90,7 +81,6 @@ export const useOrder = (orderId?: string) => {
     updateOrderStaffResult,
     cancelResult,
     deleteOrderResult,
-    orderIssues,
     orderCancellation,
     orderCancellationCosts,
   };

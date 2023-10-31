@@ -10,6 +10,7 @@ import {
 } from '@appjusto/types';
 import { useObserveOrderChatMessages } from 'app/api/chat/useObserveOrderChatMessages';
 import { useObserveOrderInvoices } from 'app/api/invoices/useObserveOrderInvoices';
+import { useObserveOrderIncidents } from 'app/api/order/useObserveOrderIncidents';
 import { useObserveOrderMatching } from 'app/api/order/useObserveOrderMatching';
 import { useOrder } from 'app/api/order/useOrder';
 import { useObserveOrderPayments } from 'app/api/payments/useObserveOrderPayments';
@@ -21,7 +22,7 @@ import { useContextAppRequests } from 'app/state/requests/context';
 import { useContextStaffProfile } from 'app/state/staff/context';
 import { GeoPoint } from 'firebase/firestore';
 import { OrderDetails } from 'pages/orders/drawers/orderdrawer/OrderDetails';
-import { OrderIssuesTable } from 'pages/orders/drawers/orderdrawer/OrderIssuesTable';
+import { OrderIncidentsTable } from 'pages/orders/drawers/orderdrawer/OrderIncidentsTable';
 import React from 'react';
 import { Route, Switch, useParams, useRouteMatch } from 'react-router-dom';
 import { Invoices } from './Invoices';
@@ -76,10 +77,10 @@ export const BackofficeOrderDrawer = ({
     cancelResult,
     deleteQuoteOrder,
     deleteOrderResult,
-    orderIssues,
     orderCancellation,
     orderCancellationCosts,
   } = useOrder(orderId);
+  const incidents = useObserveOrderIncidents(orderId);
   const cancelOptions = useIssuesByType(cancelOptionsArray);
   const { addFlaggedLocation } = useFlaggedLocations();
   // state
@@ -341,7 +342,8 @@ export const BackofficeOrderDrawer = ({
           <Route exact path={`${path}/order`}>
             <>
               <OrderDetails order={order} />
-              <OrderIssuesTable issues={orderIssues} />
+              <OrderIncidentsTable incidents={incidents} />
+              {/* <OrderIssuesTable issues={orderIssues} /> */}
             </>
           </Route>
           <Route exact path={`${path}/invoices`}>
