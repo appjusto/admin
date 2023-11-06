@@ -17,10 +17,12 @@ interface FirebaseUserContextProps {
   adminPermissions?: UserPermissions;
   isBackofficeSuperuser?: boolean | null;
   userAbility?: AppAbility;
-  refreshUserToken?(businessId?: string): Promise<void>;
+  refreshUserToken(adminRole?: AdminRole | null): Promise<void>;
 }
 
-const FirebaseUserContext = React.createContext<FirebaseUserContextProps>({});
+const FirebaseUserContext = React.createContext<FirebaseUserContextProps>(
+  {} as FirebaseUserContextProps
+);
 interface Props {
   children: React.ReactNode | React.ReactNode[];
 }
@@ -42,11 +44,15 @@ export const FirebaseUserProvider = ({ children }: Props) => {
   const minVersion = platformAccess?.minVersions.businessWeb;
   // handlers
   const refreshUserToken = React.useCallback(
-    async (businessId?: string) => {
+    async (role?: AdminRole | null) => {
       if (user === undefined) return;
-      if (user === null) {
+      if (user === null || role === null) {
         setAdminRole(null);
         setBackofficePermissions(null);
+        return;
+      }
+      if (role) {
+        setAdminRole(role);
         return;
       }
       try {
@@ -54,23 +60,6 @@ export const FirebaseUserProvider = ({ children }: Props) => {
         const claims: { [key: string]: any } = token.claims ?? {};
         if (Object.keys(claims).includes('permissions')) {
           setBackofficePermissions(claims.permissions as UserPermissions);
-        } else if (businessId) {
-          const role = claims.businesses
-            ? (claims.businesses[businessId] as AdminRole)
-            : null;
-          if (!role) {
-            // error
-            console.error(
-              'refreshUserToken: Não foi possível encontrar as permissões do usuário.'
-            );
-            if (user.email === 'financeiro@saiderabrasil.com.br') {
-              setAdminRole('manager');
-            } else {
-              setAdminRole('collaborator');
-            }
-            return;
-          }
-          setAdminRole(role);
         }
       } catch (error) {
         console.log('%crefreshUserToken error:', 'color: red', error);

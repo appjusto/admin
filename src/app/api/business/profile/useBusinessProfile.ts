@@ -18,7 +18,7 @@ export const useBusinessProfile = (
     async () => {
       const business = await api.business().createBusinessProfile();
       changeBusinessId(business.id, false);
-      if (refreshUserToken) await refreshUserToken(business.id);
+      // if (refreshUserToken) await refreshUserToken(business.id);
       return console.log('Restaurante criado!');
     },
     'createBusinessProfile',
@@ -63,7 +63,7 @@ export const useBusinessProfile = (
       const newBusiness = await api
         .business()
         .cloneBusiness(businessId!, isFromScratch);
-      if (refreshUserToken && newBusiness?.id) refreshUserToken(newBusiness.id);
+      // if (refreshUserToken && newBusiness?.id) refreshUserToken(newBusiness.id);
       return newBusiness;
     }, 'cloneBusiness');
   const {
